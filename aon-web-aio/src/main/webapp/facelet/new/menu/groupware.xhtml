@@ -29,6 +29,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="project"
+										rendered="#{actionDenied.renderedGroup('project_search')}"
 										action="project_search"
 										actionListener="#{project.onEditSearch}"
 										value="#{bundle.aon_module_groupware}" />
@@ -36,12 +37,14 @@
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="project_type"
+											rendered="#{actionDenied.renderedGroup('projectType_list')}"
 											action="projectType_list"
 											actionListener="#{projectType.onSearch}"
 											value="#{bundle.project_project_type}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="activity_type"
+											rendered="#{actionDenied.renderedGroup('activityTypeStandalone_grid')}"
 											action="activityTypeStandalone_grid"
 											actionListener="#{activityTypeStandalone.onSearch}"
 											value="#{bundle.project_activity_type}" />
@@ -59,6 +62,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="groupware_taskInbox"
+										rendered="#{actionDenied.renderedGroup('task_list')}"
 										action="task_list"
 										actionListener="#{task.onLaunch}"
 										value="#{bundle.groupware_task_inbox}" />
@@ -66,6 +70,7 @@
 								<aon:if test="#{aonRole.statisticsOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="groupware_gantt"
+											rendered="#{actionDenied.renderedGroup('gantt_form')}"
 											action="gantt_form"
 											actionListener="#{gantt.onLaunch}"
 											value="#{bundle.groupware_gantt_diagram}" />
@@ -83,6 +88,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="groupware_dailyTracking"
+										rendered="#{actionDenied.renderedGroup('dailyTracking_form')}"
 										action="dailyTracking_form"
 										actionListener="#{dailyTracking.onReset}"
 										value="#{bundle.aon_daily_tracking_module}" />
@@ -90,6 +96,7 @@
 								<aon:if test="#{aonRole.statisticsOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="groupware_dailyTracking_reports"
+											rendered="#{actionDenied.renderedGroup('daily_tracking_report')}"
 											actionListener="#{dailyTrackingReport.onResetReportSearch}"
 											action="daily_tracking_report"
 											value="#{bundle.aon_reports}" />
@@ -98,6 +105,7 @@
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="groupware_job_type"
+											rendered="#{actionDenied.renderedGroup('job_type')}"
 											action="job_type"
 											value="#{bundle.aon_job_type_module}" />
 									</aon:div>
@@ -118,12 +126,14 @@
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_process"
+												rendered="#{actionDenied.renderedGroup('process_list')}"
 												action="process_list"
 												actionListener="#{process.onSearch}"
 												value="#{bundle.aon_processes}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_processTransitionType"
+												rendered="#{actionDenied.renderedGroup('process_transition_type')}"
 												action="process_transition_type"
 												actionListener="#{processTransitionType.onSearch}"
 												value="#{bundle.groupware_process_transition_types}" />
@@ -149,6 +159,7 @@
 									<aon:if test="#{aonRole.taskMonitor}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_campaigns"
+												rendered="#{actionDenied.renderedGroup('campaign_search')}"
 												action="campaign_search"
 												actionListener="#{campaign.onEditSearch}"
 												value="#{bundle.groupware_campaign_monitor}" />
@@ -157,6 +168,7 @@
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_campaignTypes"
+												rendered="#{actionDenied.renderedGroup('campaign_type')}"
 												action="campaign_type"
 												actionListener="#{campaignType.onSearch}"
 												value="#{bundle.groupware_campaign_types}" />
@@ -175,12 +187,14 @@
 									<aon:div styleClass="aon-direct-access-list">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="taskHolder-management"
+												rendered="#{actionDenied.renderedGroup('taskHolder_search')}"
 												action="taskHolder_search"
 												actionListener="#{taskHolder.onEditSearch}"
 												value="#{bundle.groupware_taskHolders}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="workgroup-management"
+												rendered="#{actionDenied.renderedGroup('workgroup_list')}"
 												action="workgroup_list"
 												actionListener="#{workGroup.onEditSearch}"
 												value="#{bundle.config_workgroup_module}" />
@@ -188,6 +202,7 @@
 										
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="costProfile-management"
+												rendered="#{actionDenied.renderedGroup('costProfile_list')}"
 												action="costProfile_list"
 												actionListener="#{costProfile.onSearch}"
 												value="#{bundle.groupware_cost_profiles}" />

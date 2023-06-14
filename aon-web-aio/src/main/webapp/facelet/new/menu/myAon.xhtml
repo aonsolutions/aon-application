@@ -28,24 +28,28 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="customer-myAon"
+											rendered="#{actionDenied.renderedGroup('customer_search-myAon')}"
 											action="customer_search-myAon"
 											actionListener="#{customer.onEditSearch}"
 											value="#{bundle.customer_finance_checking}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoice-myAon"
+											rendered="#{actionDenied.renderedGroup('saleInvoice_search-myAon')}"
 											action="saleInvoice_search-myAon"
 											actionListener="#{saleInvoice.onEditSearch}"
 											value="#{bundle.finance_sale_invoice_management_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="invoicePrint-myAon"
+											rendered="#{actionDenied.renderedGroup('invoicePrint_search-myAon')}"
 											action="invoicePrint_search-myAon"
 											actionListener="#{invoicePrint.onEditSearch}"
 											value="#{bundle.finance_invoice_print_module}"/>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sales-myAon" 
+											rendered="#{actionDenied.renderedGroup('sales_search-myAon')}"
 											action="sales_search-myAon"
 											actionListener="#{sales.onEditSearch}"
 											value="#{bundle.sales_module}" />
@@ -53,18 +57,21 @@
 									<aon:if test="#{actionDenied.moduleEnabled['hotel']}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="advanceInvoice" 
+												rendered="#{actionDenied.renderedGroup('advanceInvoice_search')}"
 												action="advanceInvoice_search"
 												actionListener="#{advanceInvoice.onEditSearch}"
 												value="#{bundle.pms_advance_invoice_module}"/>
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="noShowInvoice" 
+												rendered="#{actionDenied.renderedGroup('noShowInvoice_search')}"
 												action="noShowInvoice_search"
 												actionListener="#{noShowInvoice.onEditSearch}"
 												value="#{bundle.pms_noShow_invoice_module}"/>
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="cancellationInvoice" 
+												rendered="#{actionDenied.renderedGroup('cancellationInvoice_search')}"
 												action="cancellationInvoice_search"
 												actionListener="#{cancellationInvoice.onEditSearch}"
 												value="#{bundle.pms_cancellation_invoice_module}"/>
@@ -86,12 +93,14 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="supplier-myAon" 
+											rendered="#{actionDenied.renderedGroup('supplier_search-myAon')}"
 											action="supplier_search-myAon"
 											actionListener="#{supplier.onEditSearch}"
 											value="#{bundle.aon_suppliers}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseInvoice-myAon"
+											rendered="#{actionDenied.renderedGroup('purchaseInvoice_search-myAon')}"
 											action="purchaseInvoice_search-myAon"
 											actionListener="#{purchaseInvoice.onEditSearch}"
 											value="#{bundle.finance_purchase_invoice_management_module}" />
@@ -99,6 +108,7 @@
 									<aon:if test="#{aonRole.productOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="product-myAon" 
+												rendered="#{actionDenied.renderedGroup('product_search-myAon')}"
 												action="product_search-myAon"
 												actionListener="#{product.onEditSearch}"
 												value="#{bundle.aon_role_product}" />
@@ -106,6 +116,7 @@
 									</aon:if>									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchase-myAon" 
+											rendered="#{actionDenied.renderedGroup('purchase_search-myAon')}"
 											action="purchase_search-myAon"
 											actionListener="#{purchase.onEditSearch}"
 											value="#{bundle.purchase_module2}" />
@@ -114,12 +125,14 @@
 										<aon:if test="#{aonRole.warehouseOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="proposal"
+													rendered="#{actionDenied.renderedGroup('proposal_search')}"
 													action="proposal_search"
 													actionListener="#{proposal.onEditSearch}"
 													value="#{bundle.purchase_proposal_module}" />
 											</aon:div>				
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="purchaseOrder"
+													rendered="#{actionDenied.renderedGroup('purchaseOrder_grid')}"
 													action="purchaseOrder_grid"
 													actionListener="#{purchaseOrder.onInit}"
 													value="#{bundle.purchase_purchaseOrder_module}" />
@@ -139,18 +152,21 @@
 									<aon:div styleClass="aon-direct-access-list">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="amazonSalesImporter"
+												rendered="#{actionDenied.renderedGroup('salesImporter_form-amazonSales')}"
 												action="salesImporter_form-amazonSales"
 												actionListener="#{salesImporter.onInitAmazonItem}"
 												value="#{bundle.sales_amazon_sales_integration}"/>
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="amazonSalesShipmentImporter"
+												rendered="#{actionDenied.renderedGroup('salesImporter_form-amazonSalesShipment')}"
 												action="salesImporter_form-amazonSalesShipment"
 												actionListener="#{salesImporter.onInitAmazonShipment}"
 												value="#{bundle.sales_amazon_shipment_integration}"/>
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="amazonSalesReturnImporter"
+												rendered="#{actionDenied.renderedGroup('salesImporter_form-amazonSalesReturn')}"
 												action="salesImporter_form-amazonSalesReturn"
 												actionListener="#{salesImporter.onInitAmazonItemReturn}"
 												value="#{bundle.sales_amazon_sales_return_integration}"/>

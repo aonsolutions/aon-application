@@ -5,7 +5,8 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j">
+	xmlns:a4j="http://richfaces.org/a4j"
+>
 
 	<aon:div id="accountingMenuPopup" style="display:none" 
 	onclick="javascript:selectItemHeader(this.id)"
@@ -30,6 +31,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountEntryTEDI"
+										rendered="#{actionDenied.renderedGroup('gwt_accountEntryTEDI')}"
 										action="gwt_accountEntryTEDI-deposit"
 										title="#{bundle.accounting_entry_module}"
 										value="#{bundle.accounting_entry_module}" >
@@ -38,6 +40,7 @@
 <!-- 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountEntry"
+										rendered="#{actionDenied.renderedGroup('gwt_accountEntry')}"
 										action="gwt_accountEntry-deposit"
 										title="#{bundle.accounting_entry_module}"
 										value="#{bundle.accounting_entry_module}" />
@@ -45,23 +48,27 @@
  -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="periodAmortization"
+										rendered="#{actionDenied.renderedGroup('periodAmortization_search')}"
 										action="periodAmortization_search"
 										value="#{bundle.accounting_period_amortization_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="endPeriodEntries"
+										rendered="#{actionDenied.renderedGroup('endPeriodEntries_form')}"
 										action="endPeriodEntries_form"
 										actionListener="#{endPeriodEntries.onInit}"
 										value="#{bundle.accounting_en_period_entries_management}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="invoiceRecorder-accounting"
+										rendered="#{actionDenied.renderedGroup('invoiceRecorder_search')}"
 										action="invoiceRecorder_search-accounting"
 										actionListener="#{invoiceRecorder.onEditSearch}"
 										value="#{bundle.finance_invoice_recording_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financeTrackingEntry-accounting"
+										rendered="#{actionDenied.renderedGroup('financeTrackingEntry_form')}"
 										action="financeTrackingEntry_form-accounting"
 										actionListener="#{financeTrackingEntry.onReset}"
 										value="#{bundle.accounting_entry_finance_tracking_module}" />
@@ -70,6 +77,7 @@
 								<aon:if test="#{marketplace.suitePortal}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_rawdoc-accounting"
+											rendered="#{actionDenied.renderedGroup('gwt_rawdoc')}"
 											action="gwt_rawdoc-accounting"
 											title="Documentos Pendientes">
 											<aon:outputText
@@ -93,29 +101,35 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountStatement"
-										action="gwt_accountStatement-acc" title="Extracto de cuenta"
+										rendered="#{actionDenied.renderedGroup('gwt_accountStatement')}"
+										action="gwt_accountStatement-acc"
+										title="Extracto de cuenta"
 										value="Extracto de cuenta" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountOperatingStatement"
+										rendered="#{actionDenied.renderedGroup('gwt_accountOperatingStatement')}"
 										action="gwt_accountOperatingStatement-acc"
 										title="#{bundle.accounting_profit_and_loss_module}"
 										value="#{bundle.accounting_profit_and_loss_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountTrialBalance"
+										rendered="#{actionDenied.renderedGroup('gwt_accountTrialBalance')}"
 										action="gwt_accountTrialBalance-acc"
 										title="#{bundle.account_trial_balance_report}"
 										value="#{bundle.account_trial_balance_report}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountJournal"
+										rendered="#{actionDenied.renderedGroup('gwt_accountJournal')}"
 										action="gwt_accountJournal-acc"
 										title="#{bundle.account_journal_report}"
 										value="#{bundle.account_journal_report}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountLedger"
+										rendered="#{actionDenied.renderedGroup('gwt_accountLedger')}"
 										action="gwt_accountLedger-acc"
 										title="#{bundle.accounting_ledger_module}"
 										value="#{bundle.accounting_ledger_module}" >
@@ -123,6 +137,7 @@
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountBalance"
+										rendered="#{actionDenied.renderedGroup('gwt_accountBalance')}"
 										action="gwt_accountBalance-acc"
 										title="#{bundle.accounting_balance_sheet}">
 										<aon:outputText
@@ -133,6 +148,7 @@
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountAnalyticStatement"
+										rendered="#{actionDenied.renderedGroup('gwt_accountAnalyticStatement')}"
 										action="gwt_accountAnalyticStatement-acc"
 										title="#{bundle.accounting_profit_and_loss_module} ANALÍTICA">
 										<aon:outputText
@@ -154,12 +170,15 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="account" action="account_list"
+									<aon:commandLink id="account" 
+										rendered="#{actionDenied.renderedGroup('account_list')}"
+										action="account_list"
 										value="#{bundle.account_module}" />
 								</aon:div>
 								
 								<!-- <aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_account"
+										rendered="#{actionDenied.renderedGroup('gwt_account')}"
 										action="gwt_account-acc"
 										title="PLAN GENERAL CONTABLE">
 										<aon:outputText
@@ -172,15 +191,19 @@
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="autConcept-account"
+											rendered="#{actionDenied.renderedGroup('autConcept')}"
 											action="autConcept-account"
 											value="#{bundle.accounting_aut_concept_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="costCenter" action="costCenter"
+										<aon:commandLink id="costCenter" 
+											rendered="#{actionDenied.renderedGroup('costCenter')}"
+											action="costCenter"
 											value="#{bundle.accounting_cost_center_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="accPeriod-accounting"
+											rendered="#{actionDenied.renderedGroup('accPeriod')}"
 											action="accPeriod-accounting"
 											actionListener="#{accPeriod.onSearch}"
 											value="#{bundle.accounting_period_module}" />
@@ -189,6 +212,7 @@
 								<!-- <aon:if test="#{domainSwitcher.alphaUser}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_accountingPeriod"
+											rendered="#{actionDenied.renderedGroup('gwt_accountingPeriod')}"
 											action="gwt_accountingPeriod-acc"
 											title="#{bundle.accounting_period_module}">
 											<aon:outputText
@@ -199,6 +223,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_customer-accounting"
+											rendered="#{actionDenied.renderedGroup('gwt_customer')}"
 											action="gwt_customer-accounting"
 											title="Clientes">
 											<aon:outputText
@@ -209,6 +234,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_supplier-accounting"
+											rendered="#{actionDenied.renderedGroup('gwt_supplier')}"
 											action="gwt_supplier-accounting"
 											title="Proveedores">
 											<aon:outputText
@@ -219,6 +245,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_creditor-accounting"
+											rendered="#{actionDenied.renderedGroup('gwt_creditor')}"
 											action="gwt_creditor-accounting"
 											title="Acreedores">
 											<aon:outputText
@@ -239,13 +266,16 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="amortization" action="amortization_list"
+									<aon:commandLink id="amortization"
+										rendered="#{actionDenied.renderedGroup('amortization_list')}"
+										action="amortization_list"
 										value="#{bundle.accounting_amortization_form_module}" />
 								</aon:div>
 								
 								<!-- <aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="amortizationType"
+											rendered="#{actionDenied.renderedGroup('amortizationType_list')}"
 											action="amortizationType_list"
 											value="#{bundle.accounting_amortization_type_module}" />
 									</aon:div>
@@ -254,13 +284,16 @@
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_amortizationType"
+											rendered="#{actionDenied.renderedGroup('gwt_amortization_type')}"
 											action="gwt_amortization_type"
 											value="#{bundle.accounting_amortization_type_module}" />
 									</aon:div>
 								</aon:if>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="investAsset" action="investAsset_search"
+									<aon:commandLink id="investAsset" 
+										rendered="#{actionDenied.renderedGroup('investAsset_search')}"
+										action="investAsset_search"
 										value="#{bundle.accounting_invest_asset_form_module}" />
 								</aon:div>
 							</aon:div>
@@ -275,22 +308,28 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_vatReport"
-										action="gwt_vatReport-deposit" title="Panel de control de IVA"
+										rendered="#{actionDenied.renderedGroup('gwt_vatReport')}"
+										action="gwt_vatReport-deposit" 
+										title="Panel de control de IVA"
 										value="Panel de control de IVA" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_irpfReport-acc"
-										action="gwt_irpfReport-acc" title="Panel de control de IRPF"
+										rendered="#{actionDenied.renderedGroup('gwt_irpfReport')}"
+										action="gwt_irpfReport-acc" 
+										title="Panel de control de IRPF"
 										value="Panel de control de IRPF" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountingOperationReport-acc"
+										rendered="#{actionDenied.renderedGroup('gwt_accountingOperationReport')}"
 										action="gwt_accountingOperationReport-acc"
 										title="Panel de Compras y Gastos / Ventas e Ingresos"
 										value="Panel de Compras y Gastos / Ventas e Ingresos" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="invoice_report"
+										rendered="#{actionDenied.renderedGroup('invoiceReport_search')}"
 										action="invoiceReport_search"
 										actionListener="#{invoiceReport.onReset}"
 										value="#{bundle.fiscal_invoice_report}" />
@@ -307,28 +346,35 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountingUtilities-child"
+										rendered="#{actionDenied.renderedGroup('gwt_accountingUtilities')}"
 										action="gwt_accountingUtilities-child"
 										title="Utilidades y chequeos contables"
 										value="Utilidades y chequeos contables" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountChange" action="accountChange_form"
+									<aon:commandLink id="accountChange" 
+										rendered="#{actionDenied.renderedGroup('accountChange_form')}"
+										action="accountChange_form"
 										actionListener="#{accountChange.onReset}"
 										value="#{bundle.accounting_change_account}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="regenerateVat" action="regenerateVat"
+									<aon:commandLink id="regenerateVat" 
+										rendered="#{actionDenied.renderedGroup('regenerateVat')}"
+										action="regenerateVat"
 										actionListener="#{vatRegenerator.onEditSearch}"
 										value="#{bundle.accounting_regenerate_vat_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="invoiceIntegrity"
+										rendered="#{actionDenied.renderedGroup('invoiceIntegrity_search')}"
 										action="invoiceIntegrity_search"
 										actionListener="#{invoiceIntegrity.onStart}"
 										value="#{bundle.finance_invoice_integrity_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_financeUtilities-acc"
+										rendered="#{actionDenied.renderedGroup('gwt_financeUtilities')}"
 										action="gwt_financeUtilities-acc"
 										title="#{bundle.aon_utilities_treasury}">
 										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
@@ -351,8 +397,9 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="bankStatement-myAon"
-												action="bankStatement_search-myAon"
+											<aon:commandLink id="bankStatement-accounting"
+												rendered="#{actionDenied.renderedGroup('bankStatement_search')}"
+												action="bankStatement_search-accounting"
 												actionListener="#{bankStatement.onEditSearch}"
 												value="Conciliador Bancario" />
 										</aon:div>
@@ -361,6 +408,7 @@
 									<aon:if test="#{dur.bank}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_nordigen-accounting"
+												rendered="#{actionDenied.renderedGroup('gwt_nordigen')}"
 												action="gwt_nordigen-accounting"
 												title="Agregador Bancario">
 												<aon:outputText value="Agregador Bancario" />
@@ -369,6 +417,7 @@
 									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_finance-accounting"
+											rendered="#{actionDenied.renderedGroup('gwt_finance')}"
 											action="gwt_finance-accounting"
 											title="Cartera de cobros y pagos">
 											<aon:outputText
@@ -379,6 +428,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_payMethod-accounting"
+											rendered="#{actionDenied.renderedGroup('gwt_payMethod')}"
 											action="gwt_payMethod-accounting"
 											title="Formas de pago">
 											<aon:outputText
@@ -400,6 +450,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="accountingBook_report"
+										rendered="#{actionDenied.renderedGroup('accountingBook_search')}"
 										action="accountingBook_search"
 										actionListener="#{accountingBook.onReset}"
 										value="#{bundle.accounting_book_module}" />
@@ -407,7 +458,9 @@
 
 								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_deposit_new" action="gwt_deposit_new"
+										<aon:commandLink id="gwt_deposit_new" 
+											rendered="#{actionDenied.renderedGroup('gwt_deposit_new')}"
+											action="gwt_deposit_new"
 											title="#{bundle.accounting_annual_financial_statements_module}"
 											value="#{bundle.accounting_annual_financial_statements_module}" />
 									</aon:div>
@@ -415,7 +468,9 @@
 								
 								<aon:if test="#{domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_deposit_text_mode" action="gwt_deposit_text_mode"
+										<aon:commandLink id="gwt_deposit_text_mode" 
+											rendered="#{actionDenied.renderedGroup('gwt_deposit_text_mode')}"
+											action="gwt_deposit_text_mode"
 											title="#{bundle.accounting_annual_financial_statements_module}"
 											value="#{bundle.accounting_annual_financial_statements_module}" />
 									</aon:div>
@@ -435,6 +490,7 @@
 								<!-- Gestión de Cobros -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financeCharge-accounting"
+										rendered="#{actionDenied.renderedGroup('finance_search-charge')}"
 										action="finance_search-charge-accounting"
 										actionListener="#{finance.onEditSearchCharge}"
 										value="#{bundle.finance_charge_module}" />
@@ -442,7 +498,8 @@
 									
 								<!-- Remesas de Cobro -->
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="fbatchCharge-accounting" 
+									<aon:commandLink id="fbatchCharge-accounting"
+										rendered="#{actionDenied.renderedGroup('fbatch_search-charge')}" 
 										action="fbatch_search-charge-accounting"
 										actionListener="#{fbatch.onEditSearchCharge}"
 										value="#{bundle.finance_fbatch_charge_module}">
@@ -454,6 +511,7 @@
 								<!-- Gestión de Pagos -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financePayment-accounting"
+										rendered="#{actionDenied.renderedGroup('finance_search-payment')}"
 										action="finance_search-payment-accounting"
 										actionListener="#{finance.onEditSearchPayment}"
 										value="#{bundle.finance_payment_module}" />
@@ -462,6 +520,7 @@
 								<!-- Remesas de Pago -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="fbatchPayment-accounting" 
+										rendered="#{actionDenied.renderedGroup('fbatch_search-payment')}"
 										action="fbatch_search-payment-accounting"
 										actionListener="#{fbatch.onEditSearchPayment}"
 										value="#{bundle.finance_fbatch_payment_module}">
@@ -484,26 +543,32 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="account-parent"
-										action="account_list-parent" value="#{bundle.account_module}" />
+										rendered="#{actionDenied.renderedGroup('account_list')}"
+										action="account_list-parent" 
+										value="#{bundle.account_module}" />
 								</aon:div>
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="autConcept-parent"
+											rendered="#{actionDenied.renderedGroup('autConcept')}"
 											action="autConcept-parent"
 											value="#{bundle.accounting_aut_concept_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="accounting_balance-parent"
+											rendered="#{actionDenied.renderedGroup('balance_list')}"
 											action="balance_list-parent"
 											value="#{bundle.accounting_balance_menu2}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="amortizationType-parent"
+											rendered="#{actionDenied.renderedGroup('amortizationType_list')}"
 											action="amortizationType_list-parent"
 											value="#{bundle.accounting_amortization_type_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_accountingUtilities-parent"
+											rendered="#{actionDenied.renderedGroup('gwt_accountingUtilities')}"
 											action="gwt_accountingUtilities-parent"
 											title="Utilidades y chequeos contables"
 											value="Utilidades y chequeos contables" />
@@ -512,6 +577,7 @@
 										test="#{domainSwitcher.udapa || domainSwitcher.paturpat || domainSwitcher.accountingConsolidationEnabled}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="accPeriod-parent"
+												rendered="#{actionDenied.renderedGroup('accPeriod')}"
 												action="accPeriod-parent"
 												actionListener="#{accPeriod.onSearch}"
 												value="#{bundle.accounting_period_module}" />
@@ -531,6 +597,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_accountConsolidatedBalance"
+											rendered="#{actionDenied.renderedGroup('gwt_accountConsolidatedBalance')}"
 											action="gwt_accountConsolidatedBalance-acc"
 											title="Balances consolidados">
 											<aon:outputText
@@ -552,6 +619,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_deposit_text_mode"
+										rendered="#{actionDenied.renderedGroup('gwt_deposit_text_mode')}"
 										action="gwt_deposit_text_mode"
 										title="#{bundle.accounting_annual_financial_statements_module}">
 										<aon:outputText styleClass="aon-fiscal-link-label"

@@ -32,6 +32,7 @@
 									<!-- Clientes -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="customer-management"
+											rendered="#{actionDenied.renderedGroup('customer_search-management')}"
 											action="customer_search-management"
 											actionListener="#{customer.onEditSearch}"
 											value="#{bundle.customer_finance_checking}" />
@@ -40,6 +41,7 @@
 									<!-- Facturas de Venta -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoiceManagement"
+											rendered="#{actionDenied.renderedGroup('saleInvoice_search')}"
 											action="saleInvoice_search"
 											actionListener="#{saleInvoice.onEditSearch}"
 											value="#{bundle.finance_sale_invoice_management_module}" />
@@ -48,6 +50,7 @@
 									<!-- Impresión / eMail de Facturas -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="invoicePrint"
+											rendered="#{actionDenied.renderedGroup('invoicePrint_search')}"
 											action="invoicePrint_search"
 											actionListener="#{invoicePrint.onEditSearch}"
 											value="#{bundle.finance_invoice_print_module}"/>
@@ -57,6 +60,7 @@
 										<!-- Pedidos de Venta -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="sales-management" 
+												rendered="#{actionDenied.renderedGroup('sales_search-management')}"
 												action="sales_search-management"
 												actionListener="#{sales.onEditSearch}"
 												value="#{bundle.sales_module}" />
@@ -66,6 +70,7 @@
 										<!-- Facturación masiva de Albaranes -->			
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="delivery_invoicing"
+												rendered="#{actionDenied.renderedGroup('deliveryInvoicing')}"
 												action="deliveryInvoicing"
 												actionListener="#{deliveryInvoicing.onInitialize}"
 												value="#{bundle.finance_delivery_invoicing_module}"/>
@@ -85,6 +90,7 @@
 									<!-- Gestion de Cobros -->									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financeCharge-management"
+										rendered="#{actionDenied.renderedGroup('finance_search-charge-management')}"
 										action="finance_search-charge-management"
 										actionListener="#{finance.onEditSearchCharge}"
 										value="#{bundle.finance_charge_module}" />
@@ -93,6 +99,7 @@
 									<!-- Gestión de Pagos -->									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financePayment-management"
+											rendered="#{actionDenied.renderedGroup('finance_search-payment-management')}"
 										action="finance_search-payment-management"
 										actionListener="#{finance.onEditSearchPayment}"
 										value="#{bundle.finance_payment_module}" />
@@ -101,6 +108,7 @@
 									<!-- Cartera cobros y pagos GWT -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_finance-accounting"
+											rendered="#{actionDenied.renderedGroup('gwt_finance-accounting')}"
 											action="gwt_finance-accounting"
 											title="Cartera de cobros y pagos"
 											value="Cartera de cobros y pagos">
@@ -111,6 +119,7 @@
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="payMethod-management"
+												rendered="#{actionDenied.renderedGroup('payMethod-management')}"
 												action="payMethod-management"
 												value="#{bundle.config_paymethod_module}" />
 										</aon:div>
@@ -119,6 +128,7 @@
 									<!-- Borrado de Facturas -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="invoiceRemover-management"
+											rendered="#{actionDenied.renderedGroup('invoiceRemover_search-management')}"
 											action="invoiceRemover_search-management"
 											actionListener="#{invoiceRemover.onEditSearch}"
 											value="#{bundle.finance_invoice_removing_module}"/>
@@ -127,6 +137,7 @@
 									<!-- Estadisticas Globales -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_invoiceStats-management"
+											rendered="#{actionDenied.renderedGroup('gwt_invoiceStat-management')}"
 											action="gwt_invoiceStat-management"
 											title="#{bundle.aon_global_statistics}"
 											value="#{bundle.aon_global_statistics}" />												
@@ -149,6 +160,7 @@
 									<!-- Proveedores -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="supplier-management" 
+											rendered="#{actionDenied.renderedGroup('supplier_search-management')}"
 											action="supplier_search-management"
 											actionListener="#{supplier.onEditSearch}"
 											value="#{bundle.aon_suppliers}" />
@@ -157,6 +169,7 @@
 									<!-- Facturas de Compra -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseInvoiceManagement"
+											rendered="#{actionDenied.renderedGroup('purchaseInvoice_search')}"
 											action="purchaseInvoice_search"
 											actionListener="#{purchaseInvoice.onEditSearch}"
 											value="#{bundle.finance_purchase_invoice_management_module}" />
@@ -166,6 +179,7 @@
 										<!-- Pedidos de Compra -->								
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="purchase" 
+												rendered="#{actionDenied.renderedGroup('purchase_search')}"
 												action="purchase_search"
 												actionListener="#{purchase.onEditSearch}"
 												value="#{bundle.purchase_module2}" />
@@ -175,6 +189,7 @@
 									<!-- Solicitudes de Compra -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="proposal"
+											rendered="#{actionDenied.renderedGroup('proposal_search')}"
 											action="proposal_search"
 											actionListener="#{proposal.onEditSearch}"
 											value="#{bundle.purchase_proposal_module}" />
@@ -195,6 +210,7 @@
 									<!-- Panel de control de IVA -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_vatReport-management"
+											rendered="#{actionDenied.renderedGroup('gwt_vatReport-management')}"
 											action="gwt_vatReport-management" title="Panel de control de IVA"
 											value="Panel de control de IVA" />
 									</aon:div>
@@ -202,6 +218,7 @@
 									<!-- Panel de control de IRPF -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_irpfReport-management"
+											rendered="#{actionDenied.renderedGroup('gwt_irpfReport-management')}"
 											action="gwt_irpfReport-management" title="Panel de control de IRPF"
 											value="Panel de control de IRPF" />
 									</aon:div>
@@ -209,6 +226,7 @@
 									<!-- SII -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_sii-management"
+											rendered="#{actionDenied.renderedGroup('gwt_sii-management')}"
 											action="gwt_sii-management"
 											title="SII - Suministro Inmediato de Información"
 											value="SII - Suministro Inmediato de Información" />
@@ -217,6 +235,7 @@
 									<!-- Modelo 347 --> 
 									<aon:div styleClass="aon-direct-access-list-element"> 
 										<aon:commandLink id="gwt_mod347-smb" 
+											rendered="#{actionDenied.renderedGroup('gwt_mod347-smb')}"
 											action="gwt_mod347-smb" 
 											title="#{bundle.fiscal_model_347_module}"
 											value="Modelo 347 - #{bundle.fiscal_model_347_module}"/>
@@ -239,6 +258,7 @@
 									<!-- Acreedores -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="creditor-management" 
+											rendered="#{actionDenied.renderedGroup('creditor_search-management')}"
 											action="creditor_search-management"
 											actionListener="#{creditor.onEditSearch}"
 											value="#{bundle.finance_creditor_module}" />
@@ -247,6 +267,7 @@
 									<!-- Facturas de Gastos -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseInvoice-management"
+											rendered="#{actionDenied.renderedGroup('expenseInvoice_search-management')}"
 											action="expenseInvoice_search-management"
 											actionListener="#{expenseInvoice.onEditSearch}"
 											value="#{bundle.finance_expense_invoice_management_module}" />
@@ -255,6 +276,7 @@
 									<!-- Gastos no Deducibles en IVA -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="undeductibleInvoiceManagement"
+											rendered="#{actionDenied.renderedGroup('undeductibleInvoice_search')}"
 											action="undeductibleInvoice_search"
 											actionListener="#{undeductibleInvoice.onEditSearch}"
 											value="#{bundle.finance_undeductible_invoice_management_module}" />
@@ -274,6 +296,7 @@
 										<!-- Productos -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="product-management" 
+												rendered="#{actionDenied.renderedGroup('product_search-management')}"
 												action="product_search-management"
 												actionListener="#{product.onEditSearch}"
 												value="#{bundle.aon_role_product}" />
@@ -283,6 +306,7 @@
 									<!-- Gastos -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseItem-management" 
+											rendered="#{actionDenied.renderedGroup('expenseItem-management')}"
 											action="expenseItem-management" 
 											value="#{bundle.aon_expenses}" />
 									</aon:div>	
@@ -291,6 +315,7 @@
 										<!-- Categorias -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="productCategory-management"
+												rendered="#{actionDenied.renderedGroup('productCategory-management')}"
 												action="productCategory-management"
 												value="#{bundle.aon_categories}" />
 										</aon:div>
@@ -298,6 +323,7 @@
 										<!-- País / Provincia -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="geotreeParent_list-management"
+												rendered="#{actionDenied.renderedGroup('geotreeParent_list-financePortal')}"
 												action="geotreeParent_list-financePortal"
 												actionListener="#{geotreeParent.onSearch}"
 												value="#{bundle.geozone_module}" />
@@ -307,6 +333,7 @@
 									<!-- Segmentación -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="segment_form-management"
+											rendered="#{actionDenied.renderedGroup('segment_form-management')}"
 											action="segment_form-management"
 											value="#{bundle.registry_segment_module}" />
 									</aon:div>

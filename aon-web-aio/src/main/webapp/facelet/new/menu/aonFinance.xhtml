@@ -28,18 +28,21 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="customer-aonFinance"
+											rendered="#{actionDenied.renderedGroup('customer_search')}"
 											action="customer_search-aonFinance"
 											actionListener="#{customer.onEditSearch}"
 											value="#{bundle.customer_finance_checking}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoice-aonFinance"
+											rendered="#{actionDenied.renderedGroup('saleInvoice_search')}"
 											action="saleInvoice_search-aonFinance"
 											actionListener="#{saleInvoice.onEditSearch}"
 											value="#{bundle.finance_sale_invoice_management_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="invoicePrint-aonFinance"
+											rendered="#{actionDenied.renderedGroup('invoicePrint_search')}"
 											action="invoicePrint_search-aonFinance"
 											actionListener="#{invoicePrint.onEditSearch}"
 											value="#{bundle.finance_invoice_print_module}"/>
@@ -60,12 +63,14 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="supplier-aonFinance" 
+											rendered="#{actionDenied.renderedGroup('supplier_search')}"
 											action="supplier_search-aonFinance"
 											actionListener="#{supplier.onEditSearch}"
 											value="#{bundle.aon_suppliers}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseInvoice-aonFinance"
+											rendered="#{actionDenied.renderedGroup('purchaseInvoice_search')}"
 											action="purchaseInvoice_search-aonFinance"
 											actionListener="#{purchaseInvoice.onEditSearch}"
 											value="#{bundle.finance_purchase_invoice_management_module}" />
@@ -86,6 +91,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="creditor-aonFinance" 
+											rendered="#{actionDenied.renderedGroup('creditor_search')}"
 											action="creditor_search-aonFinance"
 											actionListener="#{creditor.onEditSearch}"
 											value="#{bundle.finance_creditor_module}" >
@@ -93,12 +99,14 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseInvoice-aonFinance"
+											rendered="#{actionDenied.renderedGroup('expenseInvoice_search')}"
 											action="expenseInvoice_search-aonFinance"
 											actionListener="#{expenseInvoice.onEditSearch}"
 											value="#{bundle.finance_expense_invoice_management_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="undeductibleInvoice-aonFinance"
+											rendered="#{actionDenied.renderedGroup('undeductibleInvoice_search')}"
 											action="undeductibleInvoice_search-aonFinance"
 											actionListener="#{undeductibleInvoice.onEditSearch}"
 											value="#{bundle.finance_undeductible_invoice_management_module}" />
@@ -119,12 +127,14 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financeCharge-aonFinance"
+											rendered="#{actionDenied.renderedGroup('finance_search-charge')}"
 											action="finance_search-charge-aonFinance"
 											actionListener="#{finance.onEditSearchCharge}"
 											value="#{bundle.finance_charge_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="fbatchCharge-aonFinance" 
+											rendered="#{actionDenied.renderedGroup('fbatch_search-charge')}"
 											action="fbatch_search-charge-aonFinance"
 											actionListener="#{fbatch.onEditSearchCharge}"
 											value="#{bundle.finance_fbatch_charge_module}">
@@ -148,12 +158,14 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financePayment-aonFinance"
+											rendered="#{actionDenied.renderedGroup('finance_search-payment')}"
 											action="finance_search-payment-aonFinance"
 											actionListener="#{finance.onEditSearchPayment}"
 											value="#{bundle.finance_payment_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="fbatchPayment-aonFinance" 
+											rendered="#{actionDenied.renderedGroup('fbatch_search-payment')}"
 											action="fbatch_search-payment-aonFinance"
 											actionListener="#{fbatch.onEditSearchPayment}"
 											value="#{bundle.finance_fbatch_payment_module}">
@@ -178,12 +190,14 @@
 									<aon:if test="#{cashFlowForecast.availableRegistryBanks > 0}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="cashFlowForecast-aonFinance"
+												rendered="#{actionDenied.renderedGroup('cashFlowForecast_search')}"
 												action="cashFlowForecast_search-aonFinance"
 												actionListener="#{cashFlowForecast.onEditSearch}"
 												value="#{bundle.finance_cashflow_forecast_module}"/>
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="cashFlowForecastReport-aonFinance"
+												rendered="#{actionDenied.renderedGroup('cashFlowForecastReport_search')}"
 												action="cashFlowForecastReport_search-aonFinance"
 												actionListener="#{cashFlowForecastReport.onEditSearch}"
 												value="#{bundle.finance_cashflow_forecast_report_module}"/>
@@ -206,6 +220,7 @@
 									<aon:if test="#{aonRole.productOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="product-aonFinance"
+												rendered="#{actionDenied.renderedGroup('product_search')}"
 												action="product_search-aonFinance"
 												actionListener="#{product.onEditSearch}"
 												value="#{bundle.aon_role_product}" />
@@ -214,6 +229,7 @@
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="productCategory-aonFinance"
+												rendered="#{actionDenied.renderedGroup('productCategory')}"
 												action="productCategory-aonFinance"
 												value="#{bundle.aon_categories}" />
 										</aon:div>
@@ -234,18 +250,21 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="vat_report-aonFinance"
+											rendered="#{actionDenied.renderedGroup('vat_report_search')}"
 											action="vat_report_search-aonFinance"
 											actionListener="#{vatReport.onReset}"
 											value="#{bundle.finance_vat_report_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="retention_report-aonFinance"
+											rendered="#{actionDenied.renderedGroup('retention_report_search')}"
 											action="retention_report_search-aonFinance"
 											actionListener="#{retentionReport.onReset}"
 											value="#{bundle.fiscal_retention_report_module}" />
 									</aon:div>	
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_sii-aonFinance"
+											rendered="#{actionDenied.renderedGroup('gwt_sii')}"
 											action="gwt_sii-aonFinance"
 											title="SII - Suministro Inmediato de Información"
 											value="SII - Suministro Inmediato de Información" />
@@ -253,6 +272,7 @@
 									<!-- *********************** [MODELO 347] --> 
 									<aon:div styleClass="aon-direct-access-list-element"> 
 										<aon:commandLink id="gwt_mod347-smb" 
+											rendered="#{actionDenied.renderedGroup('gwt_mod347')}"
 											action="gwt_mod347-smb" 
 											title="#{bundle.fiscal_model_347_module}"
 											value="Modelo 347 - #{bundle.fiscal_model_347_module}"/>
@@ -274,17 +294,20 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="payMethod-aonFinance"
+											rendered="#{actionDenied.renderedGroup('payMethod')}"
 											action="payMethod-aonFinance"
 											value="#{bundle.config_paymethod_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="geotreeParent_list-aonFinance"
+											rendered="#{actionDenied.renderedGroup('geotreeParent_list')}"
 											action="geotreeParent_list-aonFinance"
 											actionListener="#{geotreeParent.onSearch}"
 											value="#{bundle.geozone_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="segment_form-aonFinance"
+											rendered="#{actionDenied.renderedGroup('segment_form')}"
 											action="segment_form-aonFinance"
 											value="#{bundle.registry_segment_module}" />
 									</aon:div>				
@@ -305,6 +328,7 @@
 									<aon:if test="#{aonRole.financeOperator and bankStatement.availableRegistryBanks > 0}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="bankStatement-aonFinance"
+												rendered="#{actionDenied.renderedGroup('bankStatement_search')}"
 												action="bankStatement_search-aonFinance"
 												actionListener="#{bankStatement.onEditSearch}"
 												value="Conciliador Bancario"/>
@@ -361,6 +385,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_invoiceStats-aonFinance"
+											rendered="#{actionDenied.renderedGroup('gwt_invoiceStat')}"
 											action="gwt_invoiceStat-aonFinance"
 											title="#{bundle.aon_global_statistics}"
 											value="#{bundle.aon_global_statistics}" />												
@@ -381,6 +406,7 @@
 								<aon:if test="#{aonRole.accountingOperator and (domainSwitcher.parentDomainUserInChildDomain or domainSwitcher.parentDomain) and !actionDenied.moduleEnabled['accounting']}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="account-aonFinance"
+											rendered="#{actionDenied.renderedGroup('account_list')}"
 											action="account_list-aonFinance"
 											value="#{bundle.account_module}" />
 									</aon:div>
@@ -388,12 +414,14 @@
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="globalConfiguration-aonFinance"
+											rendered="#{actionDenied.renderedGroup('globalConfig_form')}"
 											action="globalConfig_form-aonFinance"
 											actionListener="#{globalConfig.onInit}"
 											value="#{bundle.admin_global_configuration}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="aonLoader-aonFinance"
+											rendered="#{actionDenied.renderedGroup('aonLoader_form')}"
 											action="aonLoader_form-aonFinance"
 											actionListener="#{aonLoader.onStart}"
 											value="#{bundle.aon_loader_module}" />
@@ -402,6 +430,7 @@
 								<aon:if test="#{domainSwitcher.parentDomainUserInChildDomain}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="invoiceRemover"
+											rendered="#{actionDenied.renderedGroup('invoiceRemover_search')}"
 											action="invoiceRemover_search"
 											actionListener="#{invoiceRemover.onEditSearch}"
 											value="#{bundle.finance_invoice_removing_module}"/>
@@ -410,6 +439,7 @@
 								<aon:if test="#{aonRole.ESignature and company.EInvoice and certificate.certificateCount > 0}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoiceSigner-aonFinance"
+											rendered="#{actionDenied.renderedGroup('invoiceSigner_search')}"
 											action="invoiceSigner_search-aonFinance"
 											actionListener="#{invoiceSigner.onEditSearch}"
 											value="#{bundle.finance_invoice_signing_module}"/>

@@ -30,17 +30,23 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mailAccount" action="mailAccount_list"
+									<aon:commandLink id="mailAccount" 
+										rendered="#{actionDenied.renderedGroup('mailAccount_list')}"
+										action="mailAccount_list"
 										actionListener="#{mailConfig.onInitMailAccount}"
 										value="#{bundle.webmail_mailAccount_full}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="signature" action="signature_list"
+									<aon:commandLink id="signature" 
+										rendered="#{actionDenied.renderedGroup('signature_list')}"
+										action="signature_list"
 										actionListener="#{mailConfig.onInitSignature}"
 										value="#{bundle.webmail_signature_full}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contact" action="contact_list"
+									<aon:commandLink id="contact"
+										rendered="#{actionDenied.renderedGroup('contact_list')}"
+										action="contact_list"
 										actionListener="#{mailConfig.onInitContact}"
 										value="#{bundle.aon_contacts}" />
 								</aon:div>
@@ -57,6 +63,7 @@
 								<aon:if test="#{aonRole.admin or aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="globalConfiguration"
+											rendered="#{actionDenied.renderedGroup('globalConfig_form')}"
 											action="globalConfig_form"
 											actionListener="#{globalConfig.onInit}"
 											value="#{bundle.admin_global_configuration}" />
@@ -87,11 +94,15 @@
 								
 								<aon:if test="#{actionDenied.moduleEnabled['hotel'] and aonRole.purchaseOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="hotel" action="hotel_list"
+										<aon:commandLink id="hotel" 
+											rendered="#{actionDenied.renderedGroup('hotel_list')}"
+											action="hotel_list"
 											value="#{bundle.pms_hotel_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="department" action="department_grid"
+										<aon:commandLink id="department" 
+											rendered="#{actionDenied.renderedGroup('department_grid')}"
+											action="department_grid"
 											value="#{bundle.company_department_module}" />
 									</aon:div>
 								</aon:if>
@@ -99,6 +110,7 @@
 								<aon:if test="#{aonRole.sysAdmin}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="applicationParameter"
+											rendered="#{actionDenied.renderedGroup('applicationParameter_list')}"
 											action="applicationParameter_list"
 											actionListener="#{applicationParameter.onSearch}"
 											value="#{bundle.config_app_param_module}" />
@@ -121,12 +133,14 @@
 										<aon:if test="#{aonRole.saleOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="customer-configuration"
+													rendered="#{actionDenied.renderedGroup('customer_search')}"
 													action="customer_search-configuration"
 													actionListener="#{customer.onEditSearch}"
 													value="#{bundle.customer_finance_checking}" />
 											</aon:div>
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="aon_invoicing_group-configuration"
+													rendered="#{actionDenied.renderedGroup('invoicingGroup_list')}"
 													action="invoicingGroup_list-configuration"
 													value="#{bundle.customer_invoicing_group_module}" />
 											</aon:div>
@@ -134,12 +148,14 @@
 										<aon:if test="#{aonRole.purchaseOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="supplier-configuration"
+													rendered="#{actionDenied.renderedGroup('supplier_search')}"
 													action="supplier_search-configuration"
 													actionListener="#{supplier.onEditSearch}"
 													value="#{bundle.aon_suppliers}" />
 											</aon:div>
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="creditor-configuration"
+													rendered="#{actionDenied.renderedGroup('creditor_search')}"
 													action="creditor_search-configuration"
 													actionListener="#{creditor.onEditSearch}"
 													value="#{bundle.finance_creditor_module}" />
@@ -149,6 +165,7 @@
 									<aon:if test="#{aonRole.productOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="product-configuration"
+												rendered="#{actionDenied.renderedGroup('product_search')}"
 												action="product_search-configuration"
 												actionListener="#{product.onEditSearch}"
 												value="#{bundle.aon_role_product}" />
@@ -158,6 +175,7 @@
 										test="#{aonRole.productOperator or aonRole.purchaseOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="expenseItem-configuration"
+												rendered="#{actionDenied.renderedGroup('expenseItem')}"
 												action="expenseItem-configuration"
 												value="#{bundle.aon_expenses}" />
 										</aon:div>
@@ -167,12 +185,14 @@
 										<aon:if test="#{aonRole.commercialOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="target-configuration"
+													rendered="#{actionDenied.renderedGroup('target_search')}"
 													action="target_search-configuration"
 													actionListener="#{target.onEditSearch}"
 													value="#{bundle.commercial_target_module}" />
 											</aon:div>
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="seller-configuration"
+													rendered="#{actionDenied.renderedGroup('seller_search')}"
 													action="seller_search-configuration"
 													actionListener="#{seller.onEditSearch}"
 													value="#{bundle.seller_module}" />
@@ -196,43 +216,53 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="payMethod-configuration"
+											rendered="#{actionDenied.renderedGroup('payMethod')}"
 											action="payMethod-configuration"
 											value="#{bundle.config_paymethod_module}" />
 									</aon:div>
 									<aon:if test="#{aonRole.accountingOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="paymethodTypeDetail-configuration"
+												rendered="#{actionDenied.renderedGroup('paymethodTypeDetail')}"
 												action="paymethodTypeDetail-configuration"
 												value="#{bundle.config_paymethodTypeDetail_module}" />
 										</aon:div>
 									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="bankConcept" action="bankConcept"
+										<aon:commandLink id="bankConcept" 
+											rendered="#{actionDenied.renderedGroup('bankConcept')}"
+											action="bankConcept"
 											value="#{bundle.finance_bank_concept_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="series-configuration"
+											rendered="#{actionDenied.renderedGroup('series')}"
 											action="series-configuration"
 											value="#{bundle.config_series_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="tax-configuration"
+											rendered="#{actionDenied.renderedGroup('tax_list')}"
 											action="tax_list-configuration"
 											value="#{bundle.config_tax_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="geotreeParent_list-configuration"
+											rendered="#{actionDenied.renderedGroup('geotreeParent_list')}"
 											action="geotreeParent_list-configuration"
 											actionListener="#{geotreeParent.onSearch}"
 											value="#{bundle.geozone_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="segment_form-configuration"
+											rendered="#{actionDenied.renderedGroup('segment_form')}"
 											action="segment_form-configuration"
 											value="#{bundle.registry_segment_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="relationship" action="relationship_form"
+										<aon:commandLink id="relationship" 
+											rendered="#{actionDenied.renderedGroup('relationship_form')}"
+											action="relationship_form"
 											value="#{bundle.registry_relationship_module}" />
 									</aon:div>
 								</aon:div>
@@ -249,33 +279,41 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="productTag" action="productTag_form"
+										<aon:commandLink id="productTag" 
+											rendered="#{actionDenied.renderedGroup('productTag_form')}"
+											action="productTag_form"
 											actionListener="#{productTag.onCancel}"
 											value="#{bundle.product_tag_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="packingTag" action="packingTag_form"
+										<aon:commandLink id="packingTag" 
+											rendered="#{actionDenied.renderedGroup('packingTag_form')}"
+											action="packingTag_form"
 											actionListener="#{packingTag.onCancel}"
 											value="#{bundle.product_packing_tag_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="productCategory-configuration"
+											rendered="#{actionDenied.renderedGroup('productCategory')}"
 											action="productCategory-configuration"
 											value="#{bundle.aon_categories}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="brand-configuration"
+											rendered="#{actionDenied.renderedGroup('brand')}"
 											action="brand-configuration"
 											value="#{bundle.product_brand_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="tariff-configuration"
+											rendered="#{actionDenied.renderedGroup('tariff_list')}"
 											action="tariff_list-configuration"
 											actionListener="#{tariff.onSearch}"
 											value="#{bundle.product_tariff_module2}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="catalogue-configuration"
+											rendered="#{actionDenied.renderedGroup('catalogue_search')}"
 											action="catalogue_search-configuration"
 											actionListener="#{catalogue.onEditSearch}"
 											value="#{bundle.product_catalogue_module}" />
@@ -297,6 +335,7 @@
 									<aon:if  test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable  }">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="template-import-configuration"
+													rendered="#{actionDenied.renderedGroup('gwt_import')}"
 													action="gwt_import" title="Importar Excel">
 												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
 													style="margin-left: 5px; padding-left: 20px;"
@@ -306,6 +345,7 @@
 									</aon:if>								
 									<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="template-configuration"
+													rendered="#{actionDenied.renderedGroup('gwt_templates')}"
 													action="gwt_templates" title="#{bundle.aon_templates}">
 												<aon:outputText value="Gestión Plantillas para carga de datos" />
 											</aon:commandLink>
@@ -313,13 +353,16 @@
 									<aon:if
 										test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="aonLoader" action="aonLoader_form"
+											<aon:commandLink id="aonLoader" 
+												rendered="#{actionDenied.renderedGroup('aonLoader_form')}"
+												action="aonLoader_form"
 												actionListener="#{aonLoader.onStart}"
 												value="Carga de datos desde ficheros Texto (CSV)" />
 										</aon:div>
 										
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_invoiceReport"
+												rendered="#{actionDenied.renderedGroup('gwt_invoiceReport')}"
 												action="gwt_invoiceReport"
 												title="Descarga de datos en formato Excel">
 												<aon:outputText value="Descarga de datos en formato Excel" />
@@ -365,7 +408,9 @@
 									<aon:if test="#{company.dsiLoaderEnabled}">
 										<aon:if test="#{!domainSwitcher.childDomain}">
 											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="boe_import" action="boe_import_form"
+												<aon:commandLink id="boe_import" 
+													rendered="#{actionDenied.renderedGroup('boe_import_form')}"
+													action="boe_import_form"
 													title="#{bundle.boe_import_module}">
 													<aon:outputText styleClass="aon-icon-aeat"
 														style="white-space: normal; margin-left: 5px; padding-left: 20px;"
@@ -374,7 +419,9 @@
 												</aon:commandLink>
 											</aon:div>
 											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="zip_dsi_import" action="aonZipLoader_form"
+												<aon:commandLink id="zip_dsi_import" 
+													rendered="#{actionDenied.renderedGroup('aonZipLoader_form')}"
+													action="aonZipLoader_form"
 													actionListener="#{aonZipLoader.onStart}"
 													title="Carga de empresas DSI (formato ZIP)">
 													<aon:outputText styleClass="aon-icon-dsi-gestion"
@@ -390,6 +437,7 @@
 									test="#{aonRole.accountingOperator and !domainSwitcher.childDomain and !actionDenied.moduleEnabled['accounting']}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="account-configuration"
+											rendered="#{actionDenied.renderedGroup('account_list')}"
 											action="account_list-configuration"
 											value="#{bundle.account_module}" />
 									</aon:div>
@@ -398,6 +446,7 @@
 								<aon:if test="#{company.ediSupportEnabled and domainSwitcher.betaDomain}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_seres"
+												rendered="#{actionDenied.renderedGroup('gwt_seres')}"
 												action="gwt_seres"
 												title="Comunicaciones Seres">
 												<aon:outputText
@@ -407,7 +456,9 @@
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_communication" action="gwt_communication"
+										<aon:commandLink id="gwt_communication"
+											rendered="#{actionDenied.renderedGroup('gwt_communication')}"
+											action="gwt_communication"
 											title="Consola de comunicaciones">
 											<aon:outputText value="Consola de comunicaciones"
 												styleClass="aon-fiscal-link-label aon-icon-beta-text"

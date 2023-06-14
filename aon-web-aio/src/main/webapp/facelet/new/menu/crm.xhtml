@@ -33,6 +33,7 @@
 								<!-- Operación Comercial -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="commercialOperation"
+										rendered="#{actionDenied.renderedGroup('projectCommercial_search')}"
 										action="projectCommercial_search"
 										actionListener="#{projectCommercial.onEditSearch}"
 										value="#{bundle.commercial_operation_module}" />
@@ -41,6 +42,7 @@
 								<!-- Agenda Comercial -->					
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="commercialTracking"
+										rendered="#{actionDenied.renderedGroup('commercialTracking_search')}"
 										action="commercialTracking_search"
 										actionListener="#{commercialTracking.onEditSearch}"
 										value="#{bundle.commercial_tracking_module}" />
@@ -50,6 +52,7 @@
 									<!-- Tipos de Actividades Comerciales -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commercialActivity"
+											rendered="#{actionDenied.renderedGroup('commercialActivity')}"
 											action="commercialActivity"
 											actionListener="#{commercialActivity.onSearch}" 
 											value="#{bundle.commercial_activity_module}" />
@@ -75,6 +78,7 @@
 									<!-- CM de Agentes Comerciales -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl2"
+											rendered="#{actionDenied.renderedGroup('commercial_search_view-seller')}"
 											action="commercial_search_view-seller"
 											actionListener="#{commercialStat.onReset}"
 											value="#{bundle.seller_stat_control_seller}">
@@ -85,6 +89,7 @@
 									<!-- CM de Clientes Potenciales -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl3"
+											rendered="#{actionDenied.renderedGroup('commercial_search_view-target')}"
 											action="commercial_search_view-target"
 											actionListener="#{commercialStat.onReset}"
 											value="#{bundle.seller_stat_control_target}">
@@ -95,6 +100,7 @@
 									<!-- CM de Productos -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl4"
+											rendered="#{actionDenied.renderedGroup('commercial_search_view-product')}"
 											action="commercial_search_view-product"
 											actionListener="#{commercialStat.onReset}"
 											value="#{bundle.seller_stat_control_product}">
@@ -105,6 +111,7 @@
 									<!-- CM de Categorias -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl5"
+											rendered="#{actionDenied.renderedGroup('commercial_search_view-category')}"
 											action="commercial_search_view-category"
 											actionListener="#{commercialStat.onReset}"
 											value="#{bundle.seller_stat_control_category}">
@@ -128,6 +135,7 @@
 								<!-- Presupuestos de Ventas -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="offer" 
+										rendered="#{actionDenied.renderedGroup('offer_search')}"
 										action="offer_search"
 										actionListener="#{offer.onEditSearch}"
 										value="#{bundle.commercial_offer_module}" />
@@ -136,6 +144,7 @@
 								<!-- Pedidos de Venta -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="sales-commercial" 
+										rendered="#{actionDenied.renderedGroup('sales_search-commercial')}"
 										action="sales_search-commercial"
 										actionListener="#{sales.onEditSearch}"
 										value="#{bundle.sales_module}" />
@@ -144,6 +153,7 @@
 								<!-- Condiciones Comerciales -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="commercialTerm"
+										rendered="#{actionDenied.renderedGroup('commercialTerm')}"
 										action="commercialTerm"
 										actionListener="#{commercialTerm.onSearch}" 
 										value="#{bundle.commercial_term_module}" />
@@ -163,6 +173,7 @@
 									<!-- Presupuestos por categoría y Productos -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statCategory"
+											rendered="#{actionDenied.renderedGroup('commercial_category_stat_search')}"
 											action="commercial_category_stat_search"
 											actionListener="#{commercialStat.onReset}"
 											value="#{bundle.stat_report_commercial_category}">
@@ -173,6 +184,7 @@
 									<!-- Presupuestos por Zona -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statZone"
+											rendered="#{actionDenied.renderedGroup('commercial_geozone_stat_search')}"
 											action="commercial_geozone_stat_search"
 											actionListener="#{commercialStat.onReset}"
 											value="#{bundle.stat_report_commercial_geozone}">
@@ -183,6 +195,7 @@
 									<!-- Presupuestos por Agente Comercial -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statSeller"
+											rendered="#{actionDenied.renderedGroup('commercial_seller_stat_search')}"
 											action="commercial_seller_stat_search"
 											actionListener="#{commercialStat.onReset}"
 											value="#{bundle.stat_report_commercial_seller}">
@@ -193,6 +206,7 @@
 									<!-- Presupuestos por Cliente Potencial -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statTarget"
+											rendered="#{actionDenied.renderedGroup('commercial_target_stat_search')}"
 											action="commercial_target_stat_search"
 											actionListener="#{commercialStat.onReset}"
 											value="#{bundle.stat_report_commercial_target}">
@@ -203,6 +217,7 @@
 									<!-- Presupuestos por Producto -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statProduct"
+											rendered="#{actionDenied.renderedGroup('commercial_product_stat_search')}"
 											action="commercial_product_stat_search"
 											actionListener="#{commercialStat.onReset}"
 											value="#{bundle.stat_report_commercial_product}">
@@ -226,7 +241,8 @@
 
 								<!-- Agentes Comerciales -->
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="seller-commercial" 
+									<aon:commandLink id="seller-commercial"
+										rendered="#{actionDenied.renderedGroup('')}" 
 										action="seller_search-commercial" 
 										actionListener="#{seller.onEditSearch}"
 										value="#{bundle.seller_module}" />
@@ -235,6 +251,7 @@
 								<!-- Clientes Potenciales -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="target-commercial" 
+										rendered="#{actionDenied.renderedGroup('target_search')}"
 										action="target_search-commercial" 
 										actionListener="#{target.onEditSearch}"
 										value="#{bundle.commercial_target_module}" />
@@ -243,6 +260,7 @@
 								<!-- Deduplicación de Clientes Potenciales -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="targetDeduplication-commercial" 
+										rendered="#{actionDenied.renderedGroup('targetDeduplication_search')}"
 										action="targetDeduplication_search-commercial" 
 										actionListener="#{targetDeduplication.onEditSearch}"
 										value="#{bundle.commercial_target_deduplication_module}">
@@ -263,6 +281,7 @@
 									<!-- Comisiones GWT -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_commercial-commission-calculate"
+											rendered="#{actionDenied.renderedGroup('gwt_commercial_commission_calculate')}"
 											action="gwt_commercial_commission_calculate"
 											title="Comisiones"
 											value="Comisiones">
@@ -272,6 +291,7 @@
 									<!-- Cálculo de Comisiones -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commercial-commision-calculation"
+											rendered="#{actionDenied.renderedGroup('commissionCalculation')}"
 											action="commissionCalculation"
 											actionListener="#{commissionCalculation.onInitialize}" 
 											value="#{bundle.commercial_commission_calculation_module}" />
@@ -280,6 +300,7 @@
 									<!-- Control de Comisiones Calculadas -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="offer-detail-commision" 
+											rendered="#{actionDenied.renderedGroup('offerDetailCommission_search')}"
 											action="offerDetailCommission_search"
 											actionListener="#{offerDetailCommission.onEditSearch}"
 											value="#{bundle.commercial_commission_control_module}" />
@@ -288,6 +309,7 @@
 									<!-- Tipos de Comisión -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commission-type" 
+											rendered="#{actionDenied.renderedGroup('commissionType_list')}"
 											action="commissionType_list"
 											actionListener="#{commissionType.onSearch}"
 											value="#{bundle.commercial_commission_type_module}" />
@@ -296,6 +318,7 @@
 									<!-- Definición de tramos de comisiones -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commission" 
+											rendered="#{actionDenied.renderedGroup('commission_search')}"
 											action="commission_search"
 											actionListener="#{commission.onEditSearch}"
 											value="#{bundle.commercial_commission_module}" />

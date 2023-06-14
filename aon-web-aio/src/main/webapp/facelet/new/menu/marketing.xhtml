@@ -30,6 +30,7 @@
 								<!-- Mensajes -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="news_messages"
+										rendered="#{actionDenied.renderedGroup('news_list-messages')}"
 										action="news_list-messages"
 										actionListener="#{news.onSetTypeMessage}"
 										value="#{bundle.aon_messages}">
@@ -41,6 +42,7 @@
 								<!-- Noticias -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="news_news"
+										rendered="#{actionDenied.renderedGroup('news_list-news')}"
 										action="news_list-news"
 										actionListener="#{news.onSetTypeNews}"
 										value="#{bundle.marketing_newss}">
@@ -52,6 +54,7 @@
 								<!-- Boletines -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="newsletter"
+										rendered="#{actionDenied.renderedGroup('newsletter_list')}"
 										action="newsletter_list"
 										actionListener="#{newsletter.onSearch}"
 										value="#{bundle.marketing_newsletter_module}" />
@@ -70,6 +73,7 @@
 									<!-- Cabeceras y Pies de Plantilla -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="htmlTemplate" 
+											rendered="#{actionDenied.renderedGroup('htmlTemplate_list')}"
 											action="htmlTemplate_list"
 											actionListener="#{htmlTemplate.onEditSearch}"
 											value="#{bundle.marketing_html_template_module}" />
@@ -78,6 +82,7 @@
 									<!-- Plantillas de Correo -->								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="marketingTemplate-commercial"
+											rendered="#{actionDenied.renderedGroup('marketingTemplate_list-commercial')}"
 											action="marketingTemplate_list-commercial"
 											actionListener="#{marketingTemplate.onSearch}" 
 											value="#{bundle.marketing_template_module}" />
@@ -95,7 +100,9 @@
 									
 									<!-- Personalización de Envío Email -->
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="mailProcess" action="mailProcess_form"
+										<aon:commandLink id="mailProcess" 
+											rendered="#{actionDenied.renderedGroup('mailProcess_form')}"
+											action="mailProcess_form"
 											actionListener="#{mailProcess.onInit}"
 											value="#{bundle.webmail_mailAccount_process}" />
 									</aon:div>
@@ -116,6 +123,7 @@
 								<!-- Campañas -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="marketingCampaign"
+										rendered="#{actionDenied.renderedGroup('')}"
 										action="marketingCampaign_list"
 										actionListener="#{marketingCampaign.onSearch}"
 										value="#{bundle.marketing_campaign_module}" />
@@ -124,6 +132,7 @@
 								<!-- Centro de Comunicaciones -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="communicationCenter"
+										rendered="#{actionDenied.renderedGroup('communicationCenter')}"
 										action="communicationCenter"
 										actionListener="#{communicationCenter.onInit}"
 										value="#{bundle.commercial_communication_center_module}" />										
@@ -149,6 +158,7 @@
 									<!-- Preguntas -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="question-commercial"
+											rendered="#{actionDenied.renderedGroup('question_list-commercial')}"
 											action="question_list-commercial"
 											actionListener="#{question.onSearch}"
 											value="#{bundle.registry_question_module}" />
@@ -157,6 +167,7 @@
 									<!-- Cuestionarios -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="survey-commercial"
+											rendered="#{actionDenied.renderedGroup('survey_list-commercial')}"
 											action="survey_list-commercial"
 											actionListener="#{survey.onSearch}" 
 											value="#{bundle.marketing_survey_module}" />
@@ -165,6 +176,7 @@
 									<!-- Respuestas de Cuestionarios -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="surveyResponse"
+											rendered="#{actionDenied.renderedGroup('surveyResponse_search')}"
 											action="surveyResponse_search"
 											actionListener="#{surveyResponse.onEditSearch}"
 											value="#{bundle.marketing_survey_response_module}" />
