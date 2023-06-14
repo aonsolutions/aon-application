@@ -1,26 +1,20 @@
 <app-content>
-  <div class="containerSelectEnterprise">
-    <app-list-element [widthContainer]="'41erm'">
-      <div class="contTitleSelectEnterprise">
-        <h4 class="titleLogin">Selecciona una empresa</h4>
-        <span>Entra en la empresa que desees operar</span>
-      </div>
-      <app-list-element widthContainer="'100%'" heightContainer="22rem" [border]="'1px'" color="gray" class="auxTest">
-        <div class="allSize contEnterprise">
-          <div class="" *ngFor="let enterprise of empresas">
-            <div class="itemEnterprise" (click)="selectEnterprise(enterprise)">
-              <app-icon [shape]="'business'"></app-icon>
-              <caption>{{ enterprise.Name }}</caption>
-              <span>{{ enterprise.Document }}</span>
-            </div>
+  <mat-grid-list [cols]="24" rowHeight="fit" [style.height]="'100%'">
+    <mat-grid-tile [gridCols]="{xs:0,sm:8,md:8,lg:8,xl:8}"></mat-grid-tile>
+    <mat-grid-tile [gridCols]="{xs:0,sm:8,md:8,lg:9,xl:9}">
+      <div class="containerSelectEnterprise">
+        <app-list-element>
+          <div class="contTitleSelectEnterprise">
+            <h4 class="titleLogin">Selecciona una empresa</h4>
+            <span>Entra en la empresa que desees operar</span>
           </div>
-          <app-list-element widthContainer="'100%'" heightContainer="22rem" [border]="'1px'" color="gray" class="auxTest">
-            <div class="allSize contEnterprise">
-              <div class="" *ngFor="let enterprise of empresas">
+          <app-list-element widthContainer="'100%'" heightContainer="22rem" [border]="'1px'" color="gray" class="">
+            <div class="contEnterprise">
+              <div class="" *ngFor="let enterprise of enterprises">
                 <div class="itemEnterprise" (click)="selectEnterprise(enterprise)">
                   <app-icon [shape]="'business'"></app-icon>
-                  <caption>{{ enterprise.name }}</caption>
-                  <span>{{ enterprise.document }}</span>
+                  <caption>{{ enterprise.Name }}</caption>
+                  <span>{{ enterprise.Document }}</span>
                 </div>
               </div>
             </div>
