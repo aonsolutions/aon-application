@@ -2,7 +2,6 @@ package net.aonsolutions.infovox;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -13,10 +12,14 @@ import java.util.function.Supplier;
 import org.json.JSONObject;
 
 import net.aonsolutions.infovox.json.OCRCompaniesResponseJSON;
+import net.aonsolutions.infovox.json.OCRCompanyJSON;
+import net.aonsolutions.infovox.json.OCRCompanyResponseJSON;
 import net.aonsolutions.infovox.json.OCRDocumentResponseJSON;
 import net.aonsolutions.infovox.json.OCRDocumentsResponseJSON;
 import net.aonsolutions.infovox.json.OCRErrorJSON;
 import net.aonsolutions.infovox.model.OCRCompaniesResponse;
+import net.aonsolutions.infovox.model.OCRCompany;
+import net.aonsolutions.infovox.model.OCRCompanyResponse;
 import net.aonsolutions.infovox.model.OCRDocumentResponse;
 import net.aonsolutions.infovox.model.OCRDocumentsResponse;
 import net.aonsolutions.infovox.model.OCRError;
@@ -25,6 +28,7 @@ import net.aonsolutions.infovox.model.OCRResponse;
 public class OCRInvofox {
 	private static final String BASE_URL = "https://prod.kinequo.com/backends/midas";
 	private static final String COMPANIES = BASE_URL + "/companies";
+	private static final String COMPANY = COMPANIES + "/{0}";
 	private static final String DOCUMENTS = BASE_URL + "/documents";
 	private static final String DOCUMENT = DOCUMENTS + "/{0}";
 	private static final String TOKEN = "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi";
@@ -34,7 +38,31 @@ public class OCRInvofox {
 	private OCRInvofox() {
 	}
 
-	private static HttpResponse<String> get(String url) throws URISyntaxException, IOException, InterruptedException {
+	private static HttpResponse<String> post(String url, JSONObject json) throws IOException, InterruptedException {
+		HttpRequest request = HttpRequest.newBuilder()
+			.uri( URI.create(url) )
+			.header("x-api-key", TOKEN)
+			.header("accept", "application/json")
+			.header("Content-Type", "application/json")
+			.POST( HttpRequest.BodyPublishers.ofString(json.toString()) )
+			.build();
+		return HttpClient.newBuilder()
+			.build()
+			.send(request, BodyHandlers.ofString());
+	}
+
+	private static HttpResponse<String> delete(String url) throws IOException, InterruptedException {
+		HttpRequest request = HttpRequest.newBuilder()
+			.uri( URI.create(url) )
+			.header("x-api-key", TOKEN)
+			.DELETE()
+			.build();
+		return HttpClient.newBuilder()
+			.build()
+			.send(request, BodyHandlers.ofString());
+	}
+
+	private static HttpResponse<String> get(String url) throws IOException, InterruptedException {
 		
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
@@ -62,6 +90,7 @@ public class OCRInvofox {
 		return resp; 
 	}
 
+	// ---------------------------------------------------------------------- [DOCUMENTS]
 	public static OCRDocumentResponse getDocument(String documentId) {
 		try {
 			HttpResponse<String> response = get(MessageFormat.format(DOCUMENT, documentId)); 
@@ -76,14 +105,11 @@ public class OCRInvofox {
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return internalErrorResponse(e, OCRDocumentResponse::new);
-		} catch (IOException | URISyntaxException e) {
+		} catch (IOException  e) {
 			return internalErrorResponse(e, OCRDocumentResponse::new);
 		}
 	}
 
-	// ******************************************************************
-	// *************************************************** [DOCUMENTS] **
-	// ******************************************************************
 	public static OCRDocumentsResponse getDocuments() {
 		try {
 			HttpResponse<String> response = get(DOCUMENTS); 
@@ -97,11 +123,48 @@ public class OCRInvofox {
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return internalErrorResponse(e, OCRDocumentsResponse::new);
-		} catch (IOException | URISyntaxException e) {
+		} catch (IOException e) {
 			return internalErrorResponse(e, OCRDocumentsResponse::new);
 		}
 	}
 
+	// ---------------------------------------------------------------------- [COMPANIES]
+	public static OCRCompanyResponse postCompany(OCRCompany company) {
+		try {
+			JSONObject companyJson = OCRCompanyJSON.to(company);
+			HttpResponse<String> response = post(COMPANIES, companyJson );
+			JSONObject responseJson = new JSONObject(response.body());
+			if (STATUS_OK != response.statusCode()) {
+				return errorResponse(response.statusCode(), responseJson, OCRCompanyResponse::new);
+			} 
+			return OCRCompanyResponseJSON
+					.from(responseJson)
+					.setHttpCode(response.statusCode());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			Thread.currentThread().interrupt();
+			return internalErrorResponse(e, OCRCompanyResponse::new);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return internalErrorResponse(e, OCRCompanyResponse::new);
+		}
+	}
+	
+	public static OCRResponse deleteCompany(String companyId) {
+		try {
+			HttpResponse<String> response = delete(MessageFormat.format(COMPANY, companyId)); 
+			JSONObject responseJson = new JSONObject(response.body());
+			if (STATUS_OK != response.statusCode()) {
+				return errorResponse(response.statusCode(), responseJson, OCRCompanyResponse::new);
+			} 
+			return new OCRResponse().setHttpCode(response.statusCode());
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return internalErrorResponse(e, OCRResponse::new);
+		} catch (IOException e) {
+			return internalErrorResponse(e, OCRResponse::new);
+		}
+	}
 	public static OCRCompaniesResponse getCompanies() {
 		try {
 			HttpResponse<String> response = get(COMPANIES); 
@@ -115,7 +178,7 @@ public class OCRInvofox {
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return internalErrorResponse(e, OCRCompaniesResponse::new);
-		} catch (IOException | URISyntaxException e) {
+		} catch (IOException e) {
 			return internalErrorResponse(e, OCRCompaniesResponse::new);
 		}
 	}

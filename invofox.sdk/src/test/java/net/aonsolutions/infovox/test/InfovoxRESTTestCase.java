@@ -10,13 +10,18 @@ import org.junit.jupiter.api.Test;
 
 import net.aonsolutions.infovox.OCRInvofox;
 import net.aonsolutions.infovox.json.OCRCompaniesResponseJSON;
+import net.aonsolutions.infovox.json.OCRCompanyJSON;
+import net.aonsolutions.infovox.json.OCRCompanyResponseJSON;
 import net.aonsolutions.infovox.json.OCRDocumentResponseJSON;
 import net.aonsolutions.infovox.json.OCRDocumentsResponseJSON;
 import net.aonsolutions.infovox.json.OCRErrorJSON;
 import net.aonsolutions.infovox.model.OCRCompaniesResponse;
+import net.aonsolutions.infovox.model.OCRCompany;
+import net.aonsolutions.infovox.model.OCRCompanyResponse;
 import net.aonsolutions.infovox.model.OCRDocumentResponse;
 import net.aonsolutions.infovox.model.OCRDocumentsResponse;
 import net.aonsolutions.infovox.model.OCRError;
+import net.aonsolutions.infovox.model.OCRResponse;
 
 class InfovoxRESTTestCase {
 	
@@ -32,7 +37,6 @@ class InfovoxRESTTestCase {
 		OCRError ocrError = response.getError().get(); 
 		assertTrue(ocrError.getCode().isPresent());
 		assertEquals( "ERR_WRONG_PARAM", ocrError.getCode().get());
-		System.out.println( OCRErrorJSON.to(ocrError).toString(1) );
 	}
 	
 	@Test
@@ -45,7 +49,6 @@ class InfovoxRESTTestCase {
 		assertTrue(response.getDocument().isPresent());
 		assertTrue(response.getDocument().get().getId().isPresent());
 		assertEquals( documentId, response.getDocument().get().getId().get());
-		System.out.println( OCRDocumentResponseJSON.to(response).toString(1) );
 	}
 	
 	@Test
@@ -56,10 +59,28 @@ class InfovoxRESTTestCase {
 		assertEquals( 200, response.getHttpCode().get());
 		assertTrue(response.getDocuments().isPresent());
 		assertNotEquals(0 , response.getDocuments().get().size());
-		System.out.println( OCRDocumentsResponseJSON.to(response).toString(1) );
-		System.out.println( "Documents ..: " + response.getDocuments().get().size() );
 	}
 	
+	@Test
+	void createCompany() {
+		OCRCompany company = OCRFaker.getCompany();
+		System.out.println( OCRCompanyJSON.to(company).toString(1) );
+		OCRCompanyResponse response = OCRInvofox.postCompany( company );
+		assertNotNull(response);
+		assertTrue(response.getHttpCode().isPresent());
+		assertTrue( response.getHttpCode().get() == 200 
+			|| response.getHttpCode().get() == 201
+			|| response.getHttpCode().get() == 409, OCRCompanyResponseJSON.to(response).toString());
+//		if ( response.getHttpCode().get() == 200 || response.getHttpCode().get() == 201) {
+//			assertTrue(response.getCompany().isPresent());
+//			assertNotEquals(0 , response.getCompany().get().getId());
+//		} else {
+//			assertTrue(response.getError().isPresent());
+//			assertTrue(response.getError().get().getCode().isPresent());
+//			System.out.println( response.getError().get().getCode().orElse(null) );
+//		}
+	}
+
 	@Test
 	void getCompanies() {
 		OCRCompaniesResponse response = OCRInvofox.getCompanies();
@@ -68,7 +89,5 @@ class InfovoxRESTTestCase {
 		assertEquals( 200, response.getHttpCode().get());
 		assertTrue(response.getCompanies().isPresent());
 		assertNotEquals(0 , response.getCompanies().get().size());
-		System.out.println( OCRCompaniesResponseJSON.to(response).toString(1) );
-		System.out.println( "Companies..: " + response.getCompanies().get().size() );
 	}
 }

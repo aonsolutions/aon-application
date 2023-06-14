@@ -10,25 +10,25 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
-import net.aonsolutions.infovox.model.OCRDocumentsResponse;
+import net.aonsolutions.infovox.model.OCRCompanyResponse;
 
-public class OCRDocumentsResponseJSON {
+public class OCRCompanyResponseJSON {
 	
-	private OCRDocumentsResponseJSON() {
+	private OCRCompanyResponseJSON() {
 	}
 	
-	public static List<OCRDocumentsResponse> from(JSONArray array) {
+	public static List<OCRCompanyResponse> from(JSONArray array) {
 		if (array == null || array.isEmpty()) return new LinkedList<>();
 		return OCRJSONUtils.stream(array)
-			.map(OCRDocumentsResponseJSON::from)
+			.map(OCRCompanyResponseJSON::from)
 			.toList();		
 	}
 	
-	public static OCRDocumentsResponse from(JSONObject json) {
+	public static OCRCompanyResponse from(JSONObject json) {
 		if (json == null) return null; 
-		return new OCRDocumentsResponse()
+		return new OCRCompanyResponse()
 			.setHttpCode(OCRJSONUtils.getInteger(json, OCRNames.HTTP_CODE))
-			.setDocuments(OCRDocumentJSON.from(OCRJSONUtils.getArray(json, OCRNames.RESULT)))
+			.setCompanies(OCRCompanyJSON.from(OCRJSONUtils.getObject(json, OCRNames.RESULT)))
 			.setError(OCRErrorJSON.from(OCRJSONUtils.getObject(json, OCRNames.ERROR)))
 			.setSkip(OCRJSONUtils.getInteger(json, OCRNames.SKIP))		
 			.setLimit(OCRJSONUtils.getInteger(json, OCRNames.LIMIT)) 
@@ -36,23 +36,24 @@ public class OCRDocumentsResponseJSON {
 		;
 	}
 	
-	public static JSONArray to(List<OCRDocumentsResponse> list) {
+	public static JSONArray to(List<OCRCompanyResponse> list) {
 		if (AonCollectionUtils.isEmpty(list)) return new JSONArray();
 		return to(list.stream());
 	}
 	
-	public static JSONArray to(Stream<OCRDocumentsResponse> stream) {
+	public static JSONArray to(Stream<OCRCompanyResponse> stream) {
 		return stream
-			.map(OCRDocumentsResponseJSON::to)
+			.map(OCRCompanyResponseJSON::to)
 			.collect(Collector.of(JSONArray::new,JSONArray::put,JSONArray::put));
 	}
 	
-	public static JSONObject to(OCRDocumentsResponse response) {
+	public static JSONObject to(OCRCompanyResponse response) {
 		if (response == null) return null;
+		;
 		return new JSONObject()
 			.putOpt(OCRNames.HTTP_CODE, response.getHttpCode().orElse(null))
-			.putOpt(OCRNames.RESULT, response.getDocuments().map(OCRDocumentJSON::to).orElse(null))
-			.putOpt(OCRNames.ERROR, response.getError().map( OCRErrorJSON::to).orElse(null))
+			.putOpt(OCRNames.RESULT, response.getCompany().map( OCRCompanyJSON::to ).orElse(null))
+			.putOpt(OCRNames.ERROR, response.getError().map(OCRErrorJSON::to).orElse(null))
 			;
 	}
 }
