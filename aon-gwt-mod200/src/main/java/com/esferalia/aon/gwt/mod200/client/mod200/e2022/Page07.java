@@ -6,7 +6,7 @@ import java.text.ParseException;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.EcpnType;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -118,7 +118,7 @@ public class Page07 extends PageAbs {
 		}
 	}
 
-	public Page07( Model200PageCallback callback ) {
+	public Page07( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 

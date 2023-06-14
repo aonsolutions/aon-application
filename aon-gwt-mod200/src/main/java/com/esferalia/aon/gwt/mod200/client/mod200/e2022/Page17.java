@@ -3,7 +3,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LM1494Key;
@@ -20,7 +20,7 @@ public class Page17 extends PageAbs {
 	private static final String FOOTER_1535 = "(*) Activos por impuesto diferido con derecho a conversi\u00F3n en cr\u00E9dito exigible (art. 130 LIS).";
 	private static final String FOOTER_1579 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene dotaciones pendientes de integrar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2022.";
 
-	public Page17( Model200PageCallback callback ) {
+	public Page17( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 

@@ -13,12 +13,6 @@ import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.esferalia.aon.gwt.mod200.server.ModelAdmonUtils;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -29,6 +23,12 @@ import com.esferalia.aon.occam.mod200.server.format.mod200_2022.Mod2002022Writer
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Mod200 2022 Validate Print AEAT", urlPatterns = { "/aon_gwt_mod200/ms/Mod2002022ValidatePrintAEAT" })
 public class Mod2002022ValidatePrintAEAT extends HttpServlet {

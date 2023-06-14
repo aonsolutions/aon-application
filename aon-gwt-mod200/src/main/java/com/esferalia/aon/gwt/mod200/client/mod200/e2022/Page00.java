@@ -19,7 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.mod200.api.model.BalanceType;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
@@ -154,7 +154,7 @@ public class Page00 extends PageAbs {
 	private ListBox opeVol;
 	private CheckBox agriculturalActivities;
 	
-	public Page00( Model200PageCallback callback ) {
+	public Page00( Model2002022PageCallback callback ) {
 		super(callback);		
 	}
 	

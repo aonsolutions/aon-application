@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2022.ParticipationPanel.ParticipationPanelCallback;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -28,7 +28,7 @@ public class Page02 extends PageAbs {
 	
 	private ParticipationPanel participationPanel;
 
-	public Page02( Model200PageCallback callback ) {
+	public Page02( Model2002022PageCallback callback ) {
 		super(callback);	
 		
 		participationPanel = new ParticipationPanel( new ParticipationPanelCallback() {

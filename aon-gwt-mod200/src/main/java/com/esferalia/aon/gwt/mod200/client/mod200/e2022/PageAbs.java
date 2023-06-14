@@ -14,7 +14,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
@@ -42,13 +42,13 @@ public abstract class PageAbs extends ResizeComposite {
 	protected HashMap<IMod200Key, AonDoubleBox> inputs = new HashMap<IMod200Key, AonDoubleBox>();
 	protected ArrayList<Widget> otherInputs = new ArrayList<Widget>();
 	protected FlowPanel basePanel;
-	protected Model200PageCallback callback = null;
+	protected Model2002022PageCallback callback = null;
 	
 	protected PageAbs() {
 		super();
 	}
 	
-	protected PageAbs(Model200PageCallback callback) {
+	protected PageAbs(Model2002022PageCallback callback) {
 		this.callback = callback;
 		
 		callback.getMod200Object().register(mod200 -> {

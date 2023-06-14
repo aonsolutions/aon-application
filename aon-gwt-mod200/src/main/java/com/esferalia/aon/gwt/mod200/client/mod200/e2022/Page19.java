@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.mod200.api.model.GroupEntitie;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page19 extends PageAbs {
 
-	public Page19( Model200PageCallback callback ) {
+	public Page19( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 

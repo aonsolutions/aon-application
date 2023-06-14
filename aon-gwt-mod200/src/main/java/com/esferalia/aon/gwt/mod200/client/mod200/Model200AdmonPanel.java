@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.mod200.client;
+package com.esferalia.aon.gwt.mod200.client.mod200;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -9,15 +9,13 @@ import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
+import com.esferalia.aon.gwt.mod200.client.AonCertificationPopup;
 import com.esferalia.aon.gwt.mod200.client.AonCertificationPopup.AonCertificationPopupParams;
 import com.esferalia.aon.gwt.mod200.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.mod200.shared.JsonParams;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -43,29 +41,30 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
-public class FiscalModel200AdmonPanel_OLD<T extends IFiscalModel,O extends FiscalModelModuleOptions<T>> extends DockLayoutPanel {
+public class Model200AdmonPanel extends DockLayoutPanel {
 	
-	public static interface IFiscalModelAdmonPanelCallback<T,O> {
-		O getOptions();
-		T getModel();
-		void showError(String string);
-		
-		String getModelInformationURL();
-		String getValidatePrintAction();
-		String getDownloadFileAction();
-		String getSendAction();
-		void sendSuccessfully();
-		String getCheckAction();
-		String getCheckDataResponseDataAction();
-//		default boolean isBoeFormatEnabled() {
-//			return false;
-//		}
-		boolean isDirty();
-		String getImportAccountingAction();
-	}
+//	public static interface IFiscalModelAdmonPanelCallback<T,O> {
+//		O getOptions();
+//		T getModel();
+//		void showError(String string);
+//		
+//		String getModelInformationURL();
+//		String getValidatePrintAction();
+//		String getDownloadFileAction();
+//		String getSendAction();
+//		void sendSuccessfully();
+//		String getCheckAction();
+//		String getCheckDataResponseDataAction();
+////		default boolean isBoeFormatEnabled() {
+////			return false;
+////		}
+//		boolean isDirty();
+//		String getImportAccountingAction();
+//	}
 	
 	private API api;
-	private IFiscalModelAdmonPanelCallback<T,O> callback;
+//	private IFiscalModelAdmonPanelCallback<T,O> callback;
+	private IModel200PageCallback callback;
 	
 	private FormPanel diskForm = new FormPanel("_blank");
 	private Hidden mod200Hidden = new Hidden("modelID");
@@ -98,7 +97,7 @@ public class FiscalModel200AdmonPanel_OLD<T extends IFiscalModel,O extends Fisca
 	private boolean checkingAEAT;
 	private boolean uploadingPDFData;
 	
-	public FiscalModel200AdmonPanel_OLD(IFiscalModelAdmonPanelCallback<T,O> callback) {
+	public Model200AdmonPanel(IModel200PageCallback callback) {
 		super(Unit.PX);
 		this.callback = callback;
 		this.api = new API(GWT.getModuleBaseURL(), 
@@ -171,8 +170,8 @@ public class FiscalModel200AdmonPanel_OLD<T extends IFiscalModel,O extends Fisca
 		
 		manageLinks();
 	}
-	
-	public IFiscalModelAdmonPanelCallback<T,O> getCallback() {
+ 
+	public IModel200PageCallback getCallback() {
 		return callback;
 	}
 
@@ -265,6 +264,7 @@ public class FiscalModel200AdmonPanel_OLD<T extends IFiscalModel,O extends Fisca
 	private void importAccounting() {
 		// FALTA 
 		cleanViewers();
+		getCallback().importAccountingFile();		
 	}
 	
 	private void exportAccounting() {
@@ -278,7 +278,7 @@ public class FiscalModel200AdmonPanel_OLD<T extends IFiscalModel,O extends Fisca
 				
 				@Override
 				public void onAccept() {
-					submitForm(getCallback().getImportAccountingAction());
+					submitForm(getCallback().getExportAccountingAction());
 				}
 			}
 		);
@@ -493,45 +493,44 @@ public class FiscalModel200AdmonPanel_OLD<T extends IFiscalModel,O extends Fisca
 		xhr.send(requestData.toString());
 	}
 	
-	protected void uploadPDFData() {
-		// FALTA - MOVER EL CODIGO de FiscalMSService a CommonService
-//		if (!uploadingPDFData) {
-//			if (!getCallback().getModel().isSent()) {
-//				getCallback().showError("El modelo no est\u00E1 presentado.");	
-//			} else {
-//				cleanViewers();
-//				
-//				Upload upload = new Upload() {
-//					
-//					@Override
-//					protected void onUpload(String data) {
-//						uploadingPDFData = true;
-//						
-//						// Grabar el fichero en data_response - data_attach
-//						CommonServiceAsync serviceRaw = GWT.create(CommonService.class);
-//						CommonServiceAsync service = new CommonServiceAsyncDecorator(serviceRaw);
-//						
-//						service.savePDFModel(getCallback().getOptions().getOccam(), getCallback().getModel(),  data,
-//								new AsyncCallback<Void>() {
-//									
-//									@Override
-//									public void onSuccess(Void result) {										
-//										uploadingPDFData = false;
-//										// Si se ha cargado de forma correcta, se muestra en pantalla
-//										checkDataResponseData();
-//									}
-//									
-//									@Override
-//									public void onFailure(Throwable caught) {										
-//										uploadingPDFData = false;
-//										getCallback().showError("Error al cargar el archivo.");
-//									}
-//								});
-//					}							
-//				};
-//				upload.upload();				
-//			}
-//		}
+	protected void uploadPDFData() {		
+		if (!uploadingPDFData) {
+			if (!getCallback().getModel().isSent()) {
+				getCallback().showError("El modelo no est\u00E1 presentado.");	
+			} else {
+				cleanViewers();
+				
+				Upload upload = new Upload() {
+					
+					@Override
+					protected void onUpload(String data) {
+						uploadingPDFData = true;
+						
+						// Grabar el fichero en data_response - data_attach
+						CommonServiceAsync serviceRaw = GWT.create(CommonService.class);
+						CommonServiceAsync service = new CommonServiceAsyncDecorator(serviceRaw);
+						
+						service.savePDFModel(getCallback().getOptions().getOccam(), getCallback().getModel(),  data,
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {										
+										uploadingPDFData = false;
+										// Si se ha cargado de forma correcta, se muestra en pantalla
+										checkDataResponseData();
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {										
+										uploadingPDFData = false;
+										getCallback().showError("Error al cargar el archivo.");
+									}
+								});
+					}							
+				};
+				upload.upload();				
+			}
+		}
 	}
 	
 	protected void showPDF(String dataURI) {
@@ -577,15 +576,8 @@ public class FiscalModel200AdmonPanel_OLD<T extends IFiscalModel,O extends Fisca
 	}
 
 	public void manageLinks() {
-//		validateLink.setVisible( false );
-//		sendLink.setVisible( false );
-//		checkLink.setVisible( false  ); 
-//		viewDocumentLink.setVisible( false  );
-//		uploadPDFLink.setVisible( false );
-//		downloadLink.setVisible( false );
-//		boeDownloadLink.setVisible( false );		
-		
-		modelInfoLink.setVisible(true);  // Información del modelo		
+		modelInfoLink.setVisible(true);  // Información del modelo
+		importAccountingLink.setVisible(!getCallback().getModel().isFinished() && !getCallback().getModel().isSent());
 		exportAccountingLink.setVisible(!getCallback().isDirty());		
 		validateLink.setVisible( !getCallback().isDirty() && (getCallback().getModel().getStatus() == FiscalStatus.PENDING || getCallback().getModel().getStatus() == FiscalStatus.FINISHED) );  // Validación y Borrador AEAT
 		downloadLink.setVisible( getCallback().getModel().canBeSent() );  // Descarga fichero para presentación
@@ -593,25 +585,6 @@ public class FiscalModel200AdmonPanel_OLD<T extends IFiscalModel,O extends Fisca
 		checkLink.setVisible( getCallback().getModel().isSent() );  // Consulta presentación AEAT
 		viewDocumentLink.setVisible( getCallback().getModel().isSent() );  // Consulta presentacion guardada
 		uploadPDFLink.setVisible( viewDocumentLink.isVisible() );  // Cargar manualmente PDF presentado		
-		
-//		downloadLink.setVisible( getCallback().getModel().canBeSent() );
-//		boeDownloadLink.setVisible( getCallback().isBoeFormatEnabled() && getCallback().getModel().canBeSent() );
-//		if (getCallback().getModel().isAEAT() &&
-//		   ((getCallback().getModel().getYear() > 2021)  
-//		   || (getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester())
-//		   || (getCallback().getModel().getModel() == FiscalModelType.M202 && getCallback().getModel().getPeriod() == Period.T2))) {
-//			validateLink.setVisible( getCallback().getModel().canBeValidated() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
-//			sendLink.setVisible( getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getSendAction() ));
-//			checkLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckAction() ));
-//			viewDocumentLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckDataResponseDataAction() ));
-//			// La opción para cargar el PDF presentado del modelo, se pone visible igual que la de consulta del documento presentado
-//			uploadPDFLink.setVisible( viewDocumentLink.isVisible() );
-//		} else {
-//			validateLink.setVisible( false );
-//			sendLink.setVisible( false );
-//			checkLink.setVisible( false  ); 
-//			viewDocumentLink.setVisible( false  );
-//			uploadPDFLink.setVisible( false );
-//		}
 	}
+	
 }

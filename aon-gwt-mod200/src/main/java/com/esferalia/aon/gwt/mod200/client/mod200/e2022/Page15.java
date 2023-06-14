@@ -2,7 +2,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LM1212Key;
@@ -16,7 +16,7 @@ public class Page15 extends PageAbs {
 	private static final String FOOTER_538_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado por otro per\u00EDodo impositivo iniciado en 2022, pero inferior a 12 meses y previo al declarado.";
 	private static final String FOOTER_538_2 = "(**) S\u00F3lo debe cumplimentarse si la entidad tiene pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado, generado en el propio per\u00EDodo impositivo, aplicable en los pr\u00F3ximos per\u00EDodos impositivos.";	
 
-	public Page15( Model200PageCallback callback ) {
+	public Page15( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 

@@ -2,7 +2,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -25,7 +25,7 @@ public class Page12 extends PageAbs {
 			"D.Forales/Navarra (totales)"
 	};
 	
-	public Page12( Model200PageCallback callback ) {
+	public Page12( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 	

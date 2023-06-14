@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
@@ -45,7 +45,7 @@ public class Page20 extends PageAbs {
 	AonIbanTextBox ibanD;
 	AonIbanTextBox ibanP;
 	
-	public Page20( Model200PageCallback callback ) {
+	public Page20( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 

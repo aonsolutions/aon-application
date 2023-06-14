@@ -5,7 +5,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN082Key;
@@ -76,7 +76,7 @@ public class Page11 extends PageAbs {
 	
 	private FlowPanel filmPanel;
 
-	public Page11( Model200PageCallback callback ) {
+	public Page11( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 	

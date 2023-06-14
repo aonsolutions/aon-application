@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -32,7 +32,7 @@ public class Page01 extends PageAbs {
 	private AonTextBox ultimateName;				
 	private CountryListBox ultimateCountry;
 	
-	public Page01( Model200PageCallback callback ) {
+	public Page01( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 

@@ -2,7 +2,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
@@ -54,7 +54,7 @@ public class Page09 extends PageAbs {
 	private static final String FOOTER_1032 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene reservas pendientes de integrar en un per\u00EDodo impositivo anterior iniciado en 2022.";
 	private static final String FOOTER_1033 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene reducciones pendientes de integrar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2022.";
 	
-	public Page09( Model200PageCallback callback ) {
+	public Page09( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 	

@@ -2,10 +2,10 @@ package com.esferalia.aon.gwt.mod200.server.e2013;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 //@SuppressWarnings("serial")
 //@WebServlet(name = "Mod200 - 2013 File download", urlPatterns = { "/aon_gwt_mod200/Model2002013File" })

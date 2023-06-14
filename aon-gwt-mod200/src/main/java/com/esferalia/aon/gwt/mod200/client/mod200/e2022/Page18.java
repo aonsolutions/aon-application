@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.UteBase;
@@ -29,7 +29,7 @@ public class Page18 extends PageAbs {
 	private FlowPanel panelB6;
 	private FlowPanel panelB11; 
 
-	public Page18( Model200PageCallback callback ) {
+	public Page18( Model2002022PageCallback callback ) {
 		super(callback);		
 		callback.getMod200Object().register( mod200 -> paintB11Panel() ); // La tabla del panel del apartado B11 lleva un dato calculado, por lo tanto es necesario repintarlo, si se recalcula el modelo por cualquier otra casilla
 	}

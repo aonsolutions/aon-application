@@ -1,6 +1,5 @@
-package com.esferalia.aon.gwt.mod200.client;
+package com.esferalia.aon.gwt.mod200.client.mod200;
 
-import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 
 public interface IModel200PageCallback {
@@ -20,6 +19,5 @@ public interface IModel200PageCallback {
 	public void sendSuccessfully();
 	public String getCheckAction();
 	public String getCheckDataResponseDataAction();
-
 
 }

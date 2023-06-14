@@ -12,7 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.mod200.client.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.mod200.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.mod200.client.IModel200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.IModel200PageCallback;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200.Model200Callback;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
@@ -25,13 +25,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -42,7 +39,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model2002022 extends DockLayoutPanel {
 	
-	protected interface Model200PageCallback extends IModel200PageCallback {	
+	protected interface Model2002022PageCallback extends IModel200PageCallback {	
 		public Mod2002022Object getMod200Object();
 //		public void markAsDirty(); 
 //		public Model200Callback getMod200Callback();
@@ -50,8 +47,9 @@ public class Model2002022 extends DockLayoutPanel {
 	}
 	
 	private PageAbs[] PAGES = new PageAbs[22];
-	private int P00 = 0;
-	private PageAEAT pageAEAT = null;
+//	private int P00 = 0;
+//	private PageAEAT pageAEAT = null;
+	private PageAbs pageAEAT = PAGES[PAGES.length-1];
 	private WestFocusPanel westFocusPanelAEAT = null;
 	
 	protected Mod2002022Object mod200Object;
@@ -61,6 +59,7 @@ public class Model2002022 extends DockLayoutPanel {
 	AonToolbarButton saveButton;
 	AonToolbarButton removeButton;
 	AonToolbarButton resetButton;
+// ESTAS OPCIONES SE PASAN A LA PAGINA DE LA AGENCIA TRIBUTARIA
 //	AonToolbarButton importAccountingButton;
 //	AonToolbarButton aeatAccountingFileButton;
 //	AonToolbarButton aeatFileButton;
@@ -156,8 +155,10 @@ public class Model2002022 extends DockLayoutPanel {
 	}
 
 	private void dumpP00() {
-		ensurePage(P00).dump();		
-		pageContainer.setWidget(getPage(P00));
+//		ensurePage(P00).dump();		
+//		pageContainer.setWidget(getPage(P00));
+		ensurePage(0).dump();		
+		pageContainer.setWidget(getPage(0));
 		refreshButtonsVisibility();
 	}
 	
@@ -233,17 +234,12 @@ public class Model2002022 extends DockLayoutPanel {
 			container.add( cardLabel );
 			setWidget(container);
 			
-			addClickHandler( new  ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					int realPag = (pag - 1);
-					if (realPag > 0) {
-						checkAndShowPage(realPag);	
-					} else {
-						showPage(realPag);
-					}
-					
+			addClickHandler(event -> {
+				int realPag = (pag - 1);
+				if (realPag > 0) {
+					checkAndShowPage(realPag);	
+				} else {
+					showPage(realPag);
 				}
 			});
 		}
@@ -279,10 +275,9 @@ public class Model2002022 extends DockLayoutPanel {
 		return PAGES[i];
 	}
 	
-	//private PageAbs ensurePage(int i,Model200PageCallback cbk) {
 	private PageAbs ensurePage(int i) {
 		
-		Model200PageCallback cbk = new Model200PageCallback(){
+		Model2002022PageCallback cbk = new Model2002022PageCallback(){
 
 			@Override
 			public Mod2002022Object getMod200Object() {
@@ -388,8 +383,7 @@ public class Model2002022 extends DockLayoutPanel {
 						});				
 					}
 				};
-				upload.upload();				
-				
+				upload.upload();
 			}
 
 		};		
@@ -416,10 +410,11 @@ public class Model2002022 extends DockLayoutPanel {
 			if (i == 18) PAGES[i] = new Page18(cbk); 
 			if (i == 19) PAGES[i] = new Page19(cbk); 
 			if (i == 20) PAGES[i] = new Page20(cbk);
-			if (i == 21) {
-				pageAEAT = new PageAEAT(cbk);
-				PAGES[i] = pageAEAT;
-			}
+			if (i == 21) PAGES[i] = new PageAEAT(cbk);
+//			if (i == 21) {
+//				pageAEAT = new PageAEAT(cbk);
+//				PAGES[i] = pageAEAT;
+//			}
 		}
 		return getPage(i);
 	}
@@ -704,7 +699,7 @@ public class Model2002022 extends DockLayoutPanel {
 		aeatButton = new AonToolbarButton("Agencia Tributaria", AON.CSS.aonIconAeat());
 		aeatButton.addClickHandler(event -> {
 			mod200Callback.cleanErrorPanel();
-			westFocusPanelAEAT.checkAndShowPage(PAGES.length-1);  // La página de la Agencia Tributaria, es la última
+			westFocusPanelAEAT.checkAndShowPage(PAGES.length-1);  // La página de la Agencia Tributaria, es la última			
 		});
 		toolbarPanel.add(aeatButton);
 		
@@ -802,8 +797,8 @@ public class Model2002022 extends DockLayoutPanel {
 		linkContainer.add(new WestFocusPanel(18,"Dotaciones por deterioro, Conversi\u00F3n de activos"));
 		linkContainer.add(new WestFocusPanel(19,"Agrupaciones de inter\u00E9s econ\u00F3mico y UTES (r\u00E9gimen especial)"));
 		linkContainer.add(new WestFocusPanel(20,"Comunicaci\u00F3n importe neto cifra de negocios: Grupos de sociedades, No residentes"));
-		linkContainer.add(new WestFocusPanel(21,AON.MSG.idDocument()));
-		
+		linkContainer.add(new WestFocusPanel(21,AON.MSG.idDocument()));		
+
 		westFocusPanelAEAT = new WestFocusPanel(22,"Agencia Tributaria");
 		linkContainer.add(westFocusPanelAEAT);
 		
