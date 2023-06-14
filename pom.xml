@@ -33,6 +33,9 @@
 		<module>jakarta.persistence-api</module>
 		-->
 
+		<!-- NET AONSULTIONS PLUGINS -->
+		<module>invofox.sdk</module>
+
 		<!-- MAVEN PLUGINS -->
 		<module>aon-alias-maven-plugin</module>
 		<module>aon-maven-plugin</module>

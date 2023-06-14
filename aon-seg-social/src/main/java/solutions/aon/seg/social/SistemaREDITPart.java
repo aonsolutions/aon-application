@@ -40,6 +40,7 @@ import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSection;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableCell;
@@ -193,6 +194,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 		return null; 
@@ -541,23 +543,19 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			form.getInputByName("nafEmision").setValue(nss);
 			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBajaMedEmision").setValue(d));
 			
-//			//DATES
-//			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaDesdeEmision").setValue(d));
-//			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaHastaEmision").setValue(d));
-			
 			HtmlButton continueIn = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_EMISION\"]")).orElseThrow();
 			htmlPage = continueIn.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 
-			HtmlAnchor firstColumn = getOneAnchorPaginate(htmlPage, partType, dateProcess);
+			HtmlAnchor firstColumn = getOneAnchorPaginate2(htmlPage, partType, dateBj);
 			
 			if (firstColumn == null) {				
 				throw new NoQueryData("Sin datos de consulta");
 			}
 			
 			htmlPage = setUrlParseRemoveXml(htmlPage, firstColumn);
-
-			return getPdfProcess(htmlPage, "#ENVIO_13");
+			
+			return getPdfProcess2(htmlPage);
 		}
 	}
 	
@@ -703,6 +701,34 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		throw new SegSocialException(MESSAGE_ERROR);
 	}
 	
+	private static byte[] getPdfProcess2(HtmlPage htmlPage) throws InterruptedException, IOException, SegSocialException {
+		
+		HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		
+		formTwo.getInputByName(ARQ_SPM_OUT).remove(); //PREVENT XML
+
+		HtmlButton doc = (HtmlButton) wait4(htmlPage, p ->p.getElementByName("SPM.ACC.GENERAR_INFORME_EMISION")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		htmlPage = doc.click();
+		
+		wait4(htmlPage, p -> p.getElementById("prevdocumentoseinformes"));
+		
+		HtmlAnchor docAnchor = htmlPage.querySelector("#CONTENEDOR_prevdocumentoseinformes > ul > li > a");
+		
+		Page page = docAnchor.click();
+		
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		} else {
+			try {
+				return page.getWebResponse().getContentAsStream().readAllBytes();
+			} catch (Exception e) {
+				throw new InvalidDataException();
+			}
+		}
+		throw new SegSocialException(MESSAGE_ERROR);
+	}
+	
 	private static HtmlAnchor getOneAnchorPaginate(HtmlPage htmlPage, SistemaRED.PartType partType, Date date)
 			throws IOException {
 		
@@ -737,6 +763,55 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 					if (
 							fCell.getVisibleText().contains(dateStr)
 							&& typeCell.getVisibleText().toLowerCase().contains(partType.getDescription().substring(0, 4).toLowerCase())
+							&& anulCell.getVisibleText().contains("N")
+					) {
+						firstColumn = row.getCell(0).querySelector("a");
+						break;
+					}
+				}
+				
+				if (firstColumn == null && next != null) {					
+					htmlPage = setUrlParseRemoveXml(htmlPage, next);
+				} else {					
+					last = true;
+				}
+			}
+		}
+		return firstColumn;
+	}
+	
+	private static HtmlAnchor getOneAnchorPaginate2(HtmlPage htmlPage, SistemaRED.PartType partType, Date date)
+			throws IOException {
+		
+		String dateStr = Toolkit.formatDate(date, DATE_FORMAT).orElse(null);
+		
+		HtmlTable table = (HtmlTable) htmlPage.querySelector("#TABLA_15");
+		HtmlAnchor next = null;		
+		HtmlAnchor firstColumn = null;
+		boolean last = false;
+		int numberCell = 0;
+		
+		switch (partType) {
+			case ALTA:
+				numberCell = 2;
+				break;
+			case BAJA:
+				numberCell = 3;
+				break;
+			case CONFIRMACION:
+				numberCell = 4;
+				break;
+		}
+		
+		if (table != null) {
+			
+			while (!last) {
+				next = (HtmlAnchor) getElConstains(htmlPage, "#FORMULARIO_6 a", "Siguiente");
+				for (final HtmlTableRow row : table.getRows()) {
+					HtmlTableCell fCell = row.getCell(numberCell);
+					HtmlTableCell anulCell = row.getCell(7);
+					if (
+							fCell.getVisibleText().contains(dateStr)
 							&& anulCell.getVisibleText().contains("N")
 					) {
 						firstColumn = row.getCell(0).querySelector("a");
