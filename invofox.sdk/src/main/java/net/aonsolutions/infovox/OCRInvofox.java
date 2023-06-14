@@ -137,8 +137,8 @@ public class OCRInvofox {
 	public static OCRDocumentResponse getDocument(String documentId) {
 		return get(MessageFormat.format(DOCUMENT, documentId), OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
 	}
-	public static OCRDocumentsResponse getDocuments() {
-		return get(DOCUMENTS, OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
+	public static OCRDocumentsResponse getDocuments(OCRDocumentsParams params) {
+		return get(DOCUMENTS + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
 	}
 
 	// ---------------------------------------------------------------------- [COMPANIES]

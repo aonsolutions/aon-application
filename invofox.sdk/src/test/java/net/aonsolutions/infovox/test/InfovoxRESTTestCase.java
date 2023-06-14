@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import net.aonsolutions.infovox.OCRCompanyParams;
+import net.aonsolutions.infovox.OCRDocumentsParams;
 import net.aonsolutions.infovox.OCRInvofox;
 import net.aonsolutions.infovox.json.OCRCompanyJSON;
 import net.aonsolutions.infovox.json.OCRCompanyResponseJSON;
@@ -18,6 +19,7 @@ import net.aonsolutions.infovox.model.OCRCompanyResponse;
 import net.aonsolutions.infovox.model.OCRDocumentResponse;
 import net.aonsolutions.infovox.model.OCRDocumentsResponse;
 import net.aonsolutions.infovox.model.OCRError;
+import net.aonsolutions.infovox.model.OCRType;
 
 class InfovoxRESTTestCase {
 	
@@ -49,7 +51,8 @@ class InfovoxRESTTestCase {
 	
 	@Test
 	void getDocuments() {
-		OCRDocumentsResponse response = OCRInvofox.getDocuments();
+		OCRDocumentsResponse response = OCRInvofox.getDocuments(
+				OCRDocumentsParams.get().withType(OCRType.invoice) );
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
 		assertEquals( 200, response.getHttpCode().get());
