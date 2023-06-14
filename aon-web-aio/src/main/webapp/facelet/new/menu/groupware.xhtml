@@ -21,6 +21,7 @@
 
 					<aon:panelGroup>
 						<aon:panelGrid id="group_project_management"
+							rendered="#{actionDenied.renderedGroup('group_project_management')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-statistics">
 							<f:facet name="header">
@@ -29,6 +30,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="project"
+										rendered="#{actionDenied.renderedOption('project_search')}"
 										action="project_search"
 										actionListener="#{project.onEditSearch}"
 										value="#{bundle.aon_module_groupware}" />
@@ -36,12 +38,14 @@
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="project_type"
+											rendered="#{actionDenied.renderedOption('projectType_list')}"
 											action="projectType_list"
 											actionListener="#{projectType.onSearch}"
 											value="#{bundle.project_project_type}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="activity_type"
+											rendered="#{actionDenied.renderedOption('activityTypeStandalone_grid')}"
 											action="activityTypeStandalone_grid"
 											actionListener="#{activityTypeStandalone.onSearch}"
 											value="#{bundle.project_activity_type}" />
@@ -51,6 +55,7 @@
 						</aon:panelGrid>
 					
 						<aon:panelGrid id="group_general_task"
+							rendered="#{actionDenied.renderedGroup('group_general_task')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-task">
 							<f:facet name="header">
@@ -59,6 +64,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="groupware_taskInbox"
+										rendered="#{actionDenied.renderedOption('task_list')}"
 										action="task_list"
 										actionListener="#{task.onLaunch}"
 										value="#{bundle.groupware_task_inbox}" />
@@ -66,6 +72,7 @@
 								<aon:if test="#{aonRole.statisticsOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="groupware_gantt"
+											rendered="#{actionDenied.renderedOption('gantt_form')}"
 											action="gantt_form"
 											actionListener="#{gantt.onLaunch}"
 											value="#{bundle.groupware_gantt_diagram}" />
@@ -75,6 +82,7 @@
 						</aon:panelGrid>
 					
 						<aon:panelGrid id="group_general_dailyTracking"
+							rendered="#{actionDenied.renderedGroup('group_general_dailyTracking')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-version">
 							<f:facet name="header">
@@ -83,6 +91,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="groupware_dailyTracking"
+										rendered="#{actionDenied.renderedOption('dailyTracking_form')}"
 										action="dailyTracking_form"
 										actionListener="#{dailyTracking.onReset}"
 										value="#{bundle.aon_daily_tracking_module}" />
@@ -90,6 +99,7 @@
 								<aon:if test="#{aonRole.statisticsOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="groupware_dailyTracking_reports"
+											rendered="#{actionDenied.renderedOption('daily_tracking_report')}"
 											actionListener="#{dailyTrackingReport.onResetReportSearch}"
 											action="daily_tracking_report"
 											value="#{bundle.aon_reports}" />
@@ -98,6 +108,7 @@
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="groupware_job_type"
+											rendered="#{actionDenied.renderedOption('job_type')}"
 											action="job_type"
 											value="#{bundle.aon_job_type_module}" />
 									</aon:div>
@@ -109,6 +120,7 @@
 					<aon:if test="#{aonRole.config or aonRole.taskMonitor}">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_general_processes"
+								rendered="#{actionDenied.renderedGroup('group_general_processes')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-tree-root">
 								<f:facet name="header">
@@ -118,12 +130,14 @@
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_process"
+												rendered="#{actionDenied.renderedOption('process_list')}"
 												action="process_list"
 												actionListener="#{process.onSearch}"
 												value="#{bundle.aon_processes}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_processTransitionType"
+												rendered="#{actionDenied.renderedOption('process_transition_type')}"
 												action="process_transition_type"
 												actionListener="#{processTransitionType.onSearch}"
 												value="#{bundle.groupware_process_transition_types}" />
@@ -140,6 +154,7 @@
 							</aon:panelGrid>
 	
 							<aon:panelGrid id="group_general_campaigns"
+								rendered="#{actionDenied.renderedGroup('group_general_campaigns')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-campaign">
 								<f:facet name="header">
@@ -149,6 +164,7 @@
 									<aon:if test="#{aonRole.taskMonitor}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_campaigns"
+												rendered="#{actionDenied.renderedOption('campaign_search')}"
 												action="campaign_search"
 												actionListener="#{campaign.onEditSearch}"
 												value="#{bundle.groupware_campaign_monitor}" />
@@ -157,6 +173,7 @@
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_campaignTypes"
+												rendered="#{actionDenied.renderedOption('campaign_type')}"
 												action="campaign_type"
 												actionListener="#{campaignType.onSearch}"
 												value="#{bundle.groupware_campaign_types}" />
@@ -167,6 +184,7 @@
 	
 							<aon:if test="#{aonRole.config}">
 								<aon:panelGrid id="group_general_taskHolders"
+									rendered="#{actionDenied.renderedGroup('group_general_taskHolders')}"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-direct-access-panel aon-icon-contactGroup">
 									<f:facet name="header">
@@ -175,12 +193,14 @@
 									<aon:div styleClass="aon-direct-access-list">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="taskHolder-management"
+												rendered="#{actionDenied.renderedOption('taskHolder_search')}"
 												action="taskHolder_search"
 												actionListener="#{taskHolder.onEditSearch}"
 												value="#{bundle.groupware_taskHolders}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="workgroup-management"
+												rendered="#{actionDenied.renderedOption('workgroup_list')}"
 												action="workgroup_list"
 												actionListener="#{workGroup.onEditSearch}"
 												value="#{bundle.config_workgroup_module}" />
@@ -188,6 +208,7 @@
 										
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="costProfile-management"
+												rendered="#{actionDenied.renderedOption('costProfile_list')}"
 												action="costProfile_list"
 												actionListener="#{costProfile.onSearch}"
 												value="#{bundle.groupware_cost_profiles}" />

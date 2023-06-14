@@ -21,6 +21,7 @@
 				             , aon-vertical-align-top aon-width-200">
 					<aon:panelGroup>	
 						<aon:panelGrid id="group_marketing_news"
+							rendered="#{actionDenied.renderedGroup('group_marketing_news')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-report aon-direct-access-panel">
 							<f:facet name="header">
@@ -30,6 +31,7 @@
 								<!-- Mensajes -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="news_messages"
+										rendered="#{actionDenied.renderedOption('news_list-messages')}"
 										action="news_list-messages"
 										actionListener="#{news.onSetTypeMessage}"
 										value="#{bundle.aon_messages}">
@@ -41,6 +43,7 @@
 								<!-- Noticias -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="news_news"
+										rendered="#{actionDenied.renderedOption('news_list-news')}"
 										action="news_list-news"
 										actionListener="#{news.onSetTypeNews}"
 										value="#{bundle.marketing_newss}">
@@ -52,6 +55,7 @@
 								<!-- Boletines -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="newsletter"
+										rendered="#{actionDenied.renderedOption('newsletter_list')}"
 										action="newsletter_list"
 										actionListener="#{newsletter.onSearch}"
 										value="#{bundle.marketing_newsletter_module}" />
@@ -61,6 +65,7 @@
 	
 						<aon:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_commercial_templates"
+								rendered="#{actionDenied.renderedGroup('group_commercial_templates')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-general">
 								<f:facet name="header">
@@ -70,6 +75,7 @@
 									<!-- Cabeceras y Pies de Plantilla -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="htmlTemplate" 
+											rendered="#{actionDenied.renderedOption('htmlTemplate_list')}"
 											action="htmlTemplate_list"
 											actionListener="#{htmlTemplate.onEditSearch}"
 											value="#{bundle.marketing_html_template_module}" />
@@ -78,6 +84,7 @@
 									<!-- Plantillas de Correo -->								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="marketingTemplate-commercial"
+											rendered="#{actionDenied.renderedOption('marketingTemplate_list-commercial')}"
 											action="marketingTemplate_list-commercial"
 											actionListener="#{marketingTemplate.onSearch}" 
 											value="#{bundle.marketing_template_module}" />
@@ -95,7 +102,9 @@
 									
 									<!-- Personalización de Envío Email -->
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="mailProcess" action="mailProcess_form"
+										<aon:commandLink id="mailProcess" 
+											rendered="#{actionDenied.renderedOption('mailProcess_form')}"
+											action="mailProcess_form"
 											actionListener="#{mailProcess.onInit}"
 											value="#{bundle.webmail_mailAccount_process}" />
 									</aon:div>
@@ -107,6 +116,7 @@
 
 					<aon:panelGroup>
 						<aon:panelGrid id="group_marketing_communications"
+							rendered="#{actionDenied.renderedGroup('group_marketing_communications')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-marketing">
 							<f:facet name="header">
@@ -116,6 +126,7 @@
 								<!-- Campañas -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="marketingCampaign"
+										rendered="#{actionDenied.renderedOption('')}"
 										action="marketingCampaign_list"
 										actionListener="#{marketingCampaign.onSearch}"
 										value="#{bundle.marketing_campaign_module}" />
@@ -124,6 +135,7 @@
 								<!-- Centro de Comunicaciones -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="communicationCenter"
+										rendered="#{actionDenied.renderedOption('communicationCenter')}"
 										action="communicationCenter"
 										actionListener="#{communicationCenter.onInit}"
 										value="#{bundle.commercial_communication_center_module}" />										
@@ -139,6 +151,7 @@
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_commercial_survey"
+								rendered="#{actionDenied.renderedGroup('group_commercial_survey')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-task">
 								<f:facet name="header">
@@ -149,6 +162,7 @@
 									<!-- Preguntas -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="question-commercial"
+											rendered="#{actionDenied.renderedOption('question_list-commercial')}"
 											action="question_list-commercial"
 											actionListener="#{question.onSearch}"
 											value="#{bundle.registry_question_module}" />
@@ -157,6 +171,7 @@
 									<!-- Cuestionarios -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="survey-commercial"
+											rendered="#{actionDenied.renderedOption('survey_list-commercial')}"
 											action="survey_list-commercial"
 											actionListener="#{survey.onSearch}" 
 											value="#{bundle.marketing_survey_module}" />
@@ -165,6 +180,7 @@
 									<!-- Respuestas de Cuestionarios -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="surveyResponse"
+											rendered="#{actionDenied.renderedOption('surveyResponse_search')}"
 											action="surveyResponse_search"
 											actionListener="#{surveyResponse.onEditSearch}"
 											value="#{bundle.marketing_survey_response_module}" />

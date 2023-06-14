@@ -431,7 +431,7 @@ public enum StreetType {
 				}
 			}
 		}
-		return null;
+		return safeValueOf(aeatCode);
 	}
 	
 	public static StreetType safeValueOf( String value ) {

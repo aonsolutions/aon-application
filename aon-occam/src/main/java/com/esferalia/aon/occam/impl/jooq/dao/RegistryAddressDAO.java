@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.StreetType;
@@ -85,7 +86,7 @@ public class RegistryAddressDAO {
 					.setRegistry(r.getValue(RADDRESS.REGISTRY))
 					.setMain(r.getValue(RADDRESS.TYPE)==MAIN_ADDRESS)
 					.setRecipient(r.getValue(RADDRESS.RECIPIENT))
-					.setStreetType(StreetType.safeValueOf(r.getValue(RADDRESS.STREET_TYPE)))
+					.setStreetType(StreetType.getForAeatCode(r.getValue(RADDRESS.STREET_TYPE), AonLanguage.SPANISH))
 					.setAddress(r.getValue(RADDRESS.ADDRESS))
 					.setNumber(r.getValue(RADDRESS.NUMBER))
 					.setAddress2(r.getValue(RADDRESS.ADDRESS2))
