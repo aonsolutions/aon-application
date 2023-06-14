@@ -197,6 +197,7 @@ export class AonReg extends AonElement {
 		card.title = MSG.GENERAL_INFORMATION;
 		card.style.width = '50%';
 		parent.appendChild(card);
+		card.firstChild.firstChild.style.marginBottom = "5px";
 
 		if(this.registry.id){
 			if(this.isCustomer()){
@@ -226,7 +227,7 @@ export class AonReg extends AonElement {
 		segmentsDiv.style.flexDirection = "row"
 		segmentsDiv.style.width = "100%";
 		segmentsDiv.style.flexWrap = "wrap";
-		segmentsDiv.style.justifyContent = "flex-start";
+		segmentsDiv.style.justifyContent = "flex-end";
 		segmentsDiv.style.alignItems = "flex-start";
 		segmentsDiv.style.gap = "10px";
 		registrySegment.forEach((seg, ind) => {
@@ -244,6 +245,7 @@ export class AonReg extends AonElement {
 				segmentLabel.style.padding = "5px";
 				segmentLabel.style.borderRadius  = "5px";
 				segmentLabel.style.backgroundColor = "lavender";
+				segmentLabel.style.color = "#1f2120";
 				segmentLabel.style.textAlign = "center";
 				segmentLabel.title = segmentName;
 				segmentLabel.innerText = segmentName;
