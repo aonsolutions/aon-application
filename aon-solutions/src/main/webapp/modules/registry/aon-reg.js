@@ -237,11 +237,15 @@ export class AonReg extends AonElement {
 				segmentLabel.style.display = "flex";
 				segmentLabel.style.alignItems = "center";
 				segmentLabel.style.width = "fit-content";
+				segmentLabel.style.maxWidth = "350px";
+				segmentLabel.style.overflow = "hidden";
+				segmentLabel.style.textOverflow = "ellipsis";
 				segmentLabel.style.height =  "25px";
 				segmentLabel.style.padding = "5px";
 				segmentLabel.style.borderRadius  = "5px";
 				segmentLabel.style.backgroundColor = "lavender";
 				segmentLabel.style.textAlign = "center";
+				segmentLabel.title = segmentName;
 				segmentLabel.innerText = segmentName;
 				segmentsDiv.appendChild(segmentLabel);
 			}
