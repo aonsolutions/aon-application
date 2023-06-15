@@ -1,32 +1,110 @@
 <app-content>
-  <div class="custom-grid">
-    <div class="upload">Subir archivos</div>
-    <div class="dashboard">Dashboard</div>
-    <div class="buttons">
-      <div class="button-style">MIS ÚLTIMAS FACTURAS</div>
-      <div class="button-style">CREAR FACTURA</div>
-      <div class="button-style">DAR DE ALTA EMPLEADO</div>
-      <div class="button-style">CREAR CONSULTA</div>
-      <div class="button-style">CONTRATAR SERVICIOS</div>
-      <div class="button-style">MARCAJE</div>
-    </div>
-    <div class="summary">
-      <div class="summary-view">Ventas/Gastos</div>
-      <div class="summary-view">Cobros/Pagos</div>
-      <div class="summary-view">Impuestos</div>
-      <div class="summary-view">Tus bancos</div>
-    </div>
-    <hr class="line" style="width: calc(100% - 32px);">
-    <div class="email-table">Bandeja</div>
-    <div class="panel">Bandeja</div>
-    <div></div>
-  </div>
+  <mat-grid-list class="upload1"[cols]="24" [rowHeight]="'56px'">
+    <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+    <mat-grid-tile class="upload2" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">Subir archivos</mat-grid-tile>
+    <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+  </mat-grid-list>
+
+    <mat-grid-list class="dashboard1"[cols]="24" [rowHeight]="'44px'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile class="dashboard2" [gridCols]="{xs:3,sm:3,md:3,lg:3,xl:3}">Dashboard</mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:20,sm:20,md:20,lg:20,xl:20}"></mat-grid-tile>
+    </mat-grid-list>
+
+    <mat-grid-list class="buttons1"[cols]="24" [rowHeight]="'61px'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile class="buttons2" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22} " >
+         <div class="button-style">MIS ÚLTIMAS FACTURAS</div>
+          <div class="button-style">CREAR FACTURA</div>
+          <div class="button-style">DAR DE ALTA EMPLEADO</div>
+          <div class="button-style">CREAR CONSULTA</div>
+          <div class="button-style">CONTRATAR SERVICIOS</div>
+          <div class="button-style">MARCAJE</div>
+      </mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+    </mat-grid-list>
+
+
+     <mat-grid-list class="summary1"[cols]="24" [rowHeight]="'332px'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile class="summary2" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
+        <div class="summary-view">Ventas/Gastos</div>
+        <div class="summary-view">Cobros/Pagos</div>
+        <div class="summary-view">Impuestos</div>
+        <div class="summary-view">Tus bancos</div>
+      </mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+    </mat-grid-list>
+
+    <mat-grid-list [cols]="24" [rowHeight]="'1px'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile class="line" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
+        <hr>
+      </mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+    </mat-grid-list>
+
+    <!-- <mat-grid-list class="email1" [cols]="24" [rowHeight]="'463px'">
+      <mat-grid-tile [colspan]="1"></mat-grid-tile>
+      <mat-grid-tile class= "email2" [colspan]="22">Ventas/Gastos</mat-grid-tile>
+      <mat-grid-tile class="summary-view-tile" [colspan]="22" >Cobros/Pagos</mat-grid-tile>
+      <mat-grid-tile class="summary-view-tile" [colspan]="22">Impuestos</mat-grid-tile>
+      <mat-grid-tile class="summary-view-tile" [colspan]="22">Tus bancos</mat-grid-tile>
+      <mat-grid-tile [colspan]="1"></mat-grid-tile>
+    </mat-grid-list> -->
+
+<mat-grid-list class="email1"[cols]="24" [rowHeight]="'463px'" >
+
+    <mat-grid-list class="email3" [cols]="24" [rowHeight]="'60px'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        <mat-grid-tile class="email3" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid blue" >
+          <span>Bandeja</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid blue" >
+          <span>Nombre1</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid green">
+          <span>Nombre2</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid green">
+          <span>Nombre3</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid green">
+          <span>Nombre4</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile>
+
+        <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid green">
+          <span>Todos los Mensajes</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile>
+
+    </mat-grid-list>
+
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+    </mat-grid-list>
+
+
+    <mat-grid-list class="gestion1"[cols]="24" [rowHeight]="'149px'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile class="gestion2" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22} " >
+         <div class="gestion-style">Gestión</div>
+          <div class="gestion-style">Panel de impuestos</div>
+          <div class="gestion-style">Panel de empleados</div>
+          <div class="gestion-style">Documentación</div>
+          <div class="gestion-style">Asesoría</div>
+      </mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+    </mat-grid-list>
+
 </app-content>
 
-
-<div class="allsize">
-    <mat-grid-list [cols]="24" [rowHeight]="'100px'">
-        <mat-grid-tile [gridCols]="{xs:4,sm:8,md:12,lg:16,xl:20}" [style.backgroundColor]="'lightgrey'">asd</mat-grid-tile>
-        <mat-grid-tile [gridCols]="{xs:20,sm:16,md:12,lg:8,xl:4}" [style.backgroundColor]="'lightgreen'">123</mat-grid-tile>
-    </mat-grid-list>
-</div>
