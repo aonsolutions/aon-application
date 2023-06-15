@@ -189,78 +189,77 @@
 
 </style>
 
-	<div class="channelMenu">
-		<div class="channelItem #{help.currentNewsCategory == null || help.currentNewsCategory.isEmpty() ? 'selectedChannel' : ''}">
-			<aon:form>
-				<aon:commandLink>
-					<aon:outputText value="TODO"/>
-					<f:setPropertyActionListener target="#{help.currentNewsCategory}"
-						value="#{null}" reRender="channelMenu" />
-				</aon:commandLink>
-			</aon:form>
-		</div>
-		<c:forEach items="#{help.getNews().keySet()}" var="categoryName">
-
-			<div class="channelItem #{help.currentNewsCategory.equals(categoryName) ? 'selectedChannel' : ''}">
-
-				<aon:form>
-					<aon:commandLink>
-						<aon:outputText value="#{categoryName}" />
+	<aon:form id="newsForm" >
+	<aon:div id="newsContent" >
+		<div class="channelMenu">
+			<div class="channelItem #{help.currentNewsCategory == null || help.currentNewsCategory.isEmpty() ? 'selectedChannel' : ''}">
+					<aon:commandLink reRender="newsContent"  >
+						<aon:outputText value="TODO"/>
 						<f:setPropertyActionListener target="#{help.currentNewsCategory}"
-							value="#{categoryName}" reRender="channelMenu"/>
+							value="#{null}" />
 					</aon:commandLink>
-				</aon:form>
 			</div>
-
-		</c:forEach>
-	</div>
-
-	<div class="menu-panel-categoryNews">
-		<c:forEach items="#{help.getNewsByCategory(help.currentNewsCategory)}" var="news">
-
-			<aon:div styleClass="nyuusuKaado">
-				<aon:div styleClass="imageContainer">
-					<aon:div
-						styleClass="newsImgDiv #{help.categoryImgClass(news, help.getNewsCategoryName(news))}"
-						style="#{help.getNewsImgStyle(news)}">
-					</aon:div>
-					<c:if test="#{help.currentNewsCategory == null || help.currentNewsCategory.isEmpty()}">
-						<aon:div styleClass="imgChannelName">
-						<h:outputText value="#{help.getNewsCategoryName(news)}"></h:outputText>
+			<c:forEach items="#{help.getNews().keySet()}" var="categoryName">
+	
+				<div class="channelItem #{help.currentNewsCategory.equals(categoryName) ? 'selectedChannel' : ''}">
+	
+						<aon:commandLink reRender="newsContent" >
+							<aon:outputText value="#{categoryName}" />
+							<f:setPropertyActionListener target="#{help.currentNewsCategory}"
+								value="#{categoryName}" />
+						</aon:commandLink>
+				</div>
+	
+			</c:forEach>
+		</div>
+	
+		<div class="menu-panel-categoryNews">
+			<c:forEach items="#{help.getNewsByCategory(help.currentNewsCategory)}" var="news">
+	
+				<aon:div styleClass="nyuusuKaado">
+					<aon:div styleClass="imageContainer">
+						<aon:div
+							styleClass="newsImgDiv #{help.categoryImgClass(news, help.getNewsCategoryName(news))}"
+							style="#{help.getNewsImgStyle(news)}">
 						</aon:div>
-					</c:if>
-					
-					<aon:div styleClass="newsDateContainer">
-						<aon:div styleClass="newsDate">
-							<aon:outputText value="#{help.formatDate(news)}" />
+						<c:if test="#{help.currentNewsCategory == null || help.currentNewsCategory.isEmpty()}">
+							<aon:div styleClass="imgChannelName">
+							<h:outputText value="#{help.getNewsCategoryName(news)}"></h:outputText>
+							</aon:div>
+						</c:if>
+						
+						<aon:div styleClass="newsDateContainer">
+							<aon:div styleClass="newsDate">
+								<aon:outputText value="#{help.formatDate(news)}" />
+							</aon:div>
+						</aon:div>
+					</aon:div>
+					<aon:div styleClass="contentContainer">
+						<aon:div styleClass="menu-panel-news">
+							<aon:div styleClass="newsHead">
+								<aon:div styleClass="newsTitle">
+									<aon:outputText value="#{news.getTitle()}"
+										style="font-weight: bold; text-transform: uppercase;" />
+								</aon:div>
+	
+							</aon:div>
+							<aon:div styleClass="newsDescriptionContainer">
+								<aon:div styleClass="newsDescription">
+									<aon:outputText value="#{news.getDescription().orElse('')}"
+										escape="true" />
+								</aon:div>
+							</aon:div>
+							<aon:div styleClass="newsContent">
+								<aon:outputText value="#{news.getContent()}" escape="false" />
+							</aon:div>
 						</aon:div>
 					</aon:div>
 				</aon:div>
-				<aon:div styleClass="contentContainer">
-					<aon:div styleClass="menu-panel-news">
-						<aon:div styleClass="newsHead">
-							<aon:div styleClass="newsTitle">
-								<aon:outputText value="#{news.getTitle()}"
-									style="font-weight: bold; text-transform: uppercase;" />
-							</aon:div>
-
-						</aon:div>
-						<aon:div styleClass="newsDescriptionContainer">
-							<aon:div styleClass="newsDescription">
-								<aon:outputText value="#{news.getDescription().orElse('')}"
-									escape="true" />
-							</aon:div>
-						</aon:div>
-						<aon:div styleClass="newsContent">
-							<aon:outputText value="#{news.getContent()}" escape="false" />
-						</aon:div>
-					</aon:div>
-				</aon:div>
-			</aon:div>
-
-		</c:forEach>
-	</div>
-
+	
+			</c:forEach>
+		</div>
+	</aon:div>
+	</aon:form>
 
 
 

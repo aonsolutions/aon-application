@@ -38,7 +38,9 @@
 					-->
 					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
-							<aon:panelGrid id="group_main_payroll" styleClass="aon-width-all"
+							<aon:panelGrid id="group_main_payroll" 
+								rendered="#{actionDenied.renderedGroup('group_main_payroll')}"
+								styleClass="aon-width-all"
 								columnClasses="aon-padding"
 								headerClass="aon-icon-general aon-direct-access-panel">
 								<f:facet name="header">
@@ -46,14 +48,17 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_employee" action="gwt_employee_tree"
+										<aon:commandLink id="gwt_employee" 
+											rendered="#{actionDenied.renderedOption('gwt_employee_tree')}"
+											action="gwt_employee_tree"
 											value="#{bundle.menu_integral}" target="gwt">
 											<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
 											<aon:actionListener method="#{enterprise.onEditSearch}" />
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_main_contrata" 
+										<aon:commandLink id="gwt_main_contrata"
+											rendered="#{actionDenied.renderedOption('gwt_main_contrata')}" 
 											action="gwt_main_contrata"
 											title="#{bundle.payroll_contract_module}"
 											value="#{bundle.payroll_contract_module}" 
@@ -62,6 +67,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_main_it" 
+											rendered="#{actionDenied.renderedOption('gwt_main_it')}"
 											action="gwt_main_it"
 											title="#{bundle.payroll_contractLeave_module_new}"
 											value="#{bundle.payroll_contractLeave_module_new}" 
@@ -70,6 +76,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_agreement"
+											rendered="#{actionDenied.renderedOption('gwt_main_agreement')}"
 											action="gwt_main_agreement"
 											title="#{bundle.payroll_agreement_module}"
 											value="#{bundle.payroll_agreement_module}" target="gwt">
@@ -79,6 +86,7 @@
 									<aon:if test="#{!domainSwitcher.domainManagementAvailable}">		
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_calculator"
+												rendered="#{actionDenied.renderedOption('gwt_main_calculator')}"
 												action="gwt_main_calculator"
 												value="#{bundle.menu_main_calculator}" target="gwt">
 											</aon:commandLink>
@@ -87,6 +95,7 @@
 									<!-- 
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="contractLeave-payroll"
+											rendered="#{actionDenied.renderedOption('contractLeave_search')}"
 											action="contractLeave_search-payroll"
 											actionListener="#{contractLeave.onEditSearch}"
 											value="#{bundle.payroll_contractLeave_module}" />
@@ -103,6 +112,7 @@
 									<!--
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_calculator"
+											rendered="#{actionDenied.renderedOption('gwt_main_calculator')}"
 											action="gwt_main_calculator"
 											value="#{bundle.menu_main_calculator}" target="gwt">
 										</aon:commandLink>
@@ -119,6 +129,7 @@
 					-->
 					<aon:panelGroup>
 						<aon:panelGrid id="group_seguridad_social"
+							rendered="#{actionDenied.renderedGroup('group_seguridad_social')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-winsuite aon-direct-access-panel">
 							<f:facet name="header">
@@ -137,11 +148,13 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt-creta-payroll"
+										rendered="#{actionDenied.renderedOption('gwt_main_creta')}"
 										action="gwt_main_creta"
 										value="#{bundle.payroll_creta_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt-cra-payroll"
+										rendered="#{actionDenied.renderedOption('gwt_main_cra')}"
 										action="gwt_main_cra"
 										title="#{bundle.payroll_cra_module}"
 										value="#{bundle.payroll_cra_module}">											
@@ -149,17 +162,20 @@
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contractBatch-payroll"
+										rendered="#{actionDenied.renderedOption('contractBatch_search-payroll')}"
 										action="contractBatch_search-payroll"
 										actionListener="#{contractBatch.onEditSearch}"
 										value="#{bundle.payroll_contrata_contractBatch_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt-afi-payroll"
+										rendered="#{actionDenied.renderedOption('gwt_main_afi')}"
 										action="gwt_main_afi"
 										value="#{bundle.payroll_afi_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="leaveBatch-payroll"
+										rendered="#{actionDenied.renderedOption('leaveBatch_search-payroll')}"
 										action="leaveBatch_search-payroll"
 										actionListener="#{leaveBatch.onEditSearch}"
 										value="#{bundle.payroll_leaveBatchWizard_module}" />
@@ -182,6 +198,7 @@
 					<aon:if test="#{domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_payroll_contrata_auxiliaries2"
+								rendered="#{actionDenied.renderedGroup('group_payroll_contrata_auxiliaries2')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-utilities aon-direct-access-panel">
 								<f:facet name="header">
@@ -190,6 +207,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_agreement2"
+											rendered="#{actionDenied.renderedOption('gwt_main_agreement')}"
 											action="gwt_main_agreement"
 											title="#{bundle.payroll_agreement_module}"
 											value="#{bundle.payroll_agreement_module}" target="gwt">
@@ -197,17 +215,21 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="contractMode-payroll2"
+											rendered="#{actionDenied.renderedOption('contractOption_list-payroll')}"
 											action="contractOption_list-payroll"
 											actionListener="#{contractModel.onReset}"
 											value="#{bundle.payroll_contract_mode_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="trainingCenter-payroll2"
+											rendered="#{actionDenied.renderedOption('trainingCenter_list-payroll')}"
 											action="trainingCenter_list-payroll"
 											value="#{bundle.payroll_trainingCenter_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="holiday-payroll2" action="holiday_search"
+										<aon:commandLink id="holiday-payroll2" 
+											rendered="#{actionDenied.renderedOption('holiday_search')}"
+											action="holiday_search"
 											actionListener="#{holiday.onEditSearch}"
 											value="#{bundle.calendar_holidays}" />
 									</aon:div>
@@ -221,6 +243,7 @@
 						 -->
 					<aon:panelGroup>
 						<aon:panelGrid id="group_process_payroll"
+							rendered="#{actionDenied.renderedGroup('group_process_payroll')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-task aon-direct-access-panel">
 							<f:facet name="header">
@@ -230,6 +253,7 @@
 								<aon:if test="#{domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_calculator2"
+											rendered="#{actionDenied.renderedOption('gwt_main_calculator')}"
 											action="gwt_main_calculator"
 											value="#{bundle.menu_main_calculator}" target="gwt">
 										</aon:commandLink>
@@ -238,6 +262,7 @@
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_salary_print"
+										rendered="#{actionDenied.renderedOption('gwt_main_salary_print')}"
 										action="gwt_main_salary_print"
 										title="#{bundle.payroll_salaryPrint_module}"
 										value="#{bundle.payroll_salaryPrint_module}" target="gwt">
@@ -247,6 +272,7 @@
 								<!-- 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="salaryPrint-payroll"
+										rendered="#{actionDenied.renderedOption('')}"
 										action="salaryPrint_search-payroll"
 										actionListener="#{salaryPrint.onInit}"
 										value="#{bundle.payroll_salaryPrint_module}" />
@@ -255,12 +281,14 @@
 								 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reportPrint-payroll"
+										rendered="#{actionDenied.renderedOption('reportPrint_search-payroll')}"
 										action="reportPrint_search-payroll"
 										actionListener="#{reportPrint.onInit}"
 										value="Listado de costes" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_activitySummary"
+										rendered="#{actionDenied.renderedOption('gwt_activity_summary')}"
 										action="gwt_activity_summary"
 										value="Resumen de actividad" target="gwt">
 									</aon:commandLink>
@@ -269,6 +297,7 @@
 								<aon:if test="#{domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_massive_fie"
+											rendered="#{actionDenied.renderedOption('gwt_main_massive_fie')}"
 											action="gwt_main_massive_fie"
 											title="#{bundle.payroll_massive_fie_module}"
 											value="#{bundle.payroll_massive_fie_module}" target="gwt">
@@ -279,6 +308,7 @@
 								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_contractMedia"
+											rendered="#{actionDenied.renderedOption('gwt_contract_media')}"
 											action="gwt_contract_media"
 											value="Informe de personal asalariado" target="gwt">
 										</aon:commandLink>
@@ -288,6 +318,7 @@
 								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_massive_contracts"
+											rendered="#{actionDenied.renderedOption('gwt_main_massive_contracts')}"
 											action="gwt_main_massive_contracts"
 											title="#{bundle.payroll_massive_contracts_module}"
 											value="#{bundle.payroll_massive_contracts_module}" target="gwt">
@@ -316,6 +347,7 @@
 					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_payroll_contrata"
+								rendered="#{actionDenied.renderedGroup('group_payroll_contrata')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-sepe-contrata">
 								<f:facet name="header">
@@ -324,6 +356,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="fbatchPayment-payroll"
+											rendered="#{actionDenied.renderedOption('fbatch_search-Payroll')}"
 											action="fbatch_search-Payroll"
 											actionListener="#{fbatch.onEditSearchPayment}"
 											value="#{bundle.payroll_fbatch_payment_module}">
@@ -333,12 +366,14 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financePayment-payroll"
+											rendered="#{actionDenied.renderedOption('finance_search-Payroll')}"
 											action="finance_search-Payroll"
 											actionListener="#{finance.onEditSearchPayroll}"
 											value="#{bundle.payroll_finance_payment_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseInvoice-payroll"
+											rendered="#{actionDenied.renderedOption('expenseInvoice_search-payroll')}"
 											action="expenseInvoice_search-payroll"
 											actionListener="#{expenseInvoice.onEditSearch}"
 											value="#{bundle.finance_expense_invoice_management_module}" />
@@ -353,6 +388,7 @@
 					 -->
 					<aon:panelGroup>
 						<aon:panelGrid id="group_payroll_contrata_batch"
+							rendered="#{actionDenied.renderedGroup('group_payroll_contrata_batch')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-sepe aon-direct-access-panel">
 							<f:facet name="header">
@@ -371,6 +407,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contrataBatch-payroll"
+										rendered="#{actionDenied.renderedOption('contrataBatch_search-payroll')}"
 										action="contrataBatch_search-payroll"
 										value="#{bundle.sepe_contrataBatch_module}">
 										<aon:actionListener method="#{contrataBatch.onEditSearch}" />
@@ -378,6 +415,7 @@
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="certifica2Batch-payroll"
+										rendered="#{actionDenied.renderedOption('certifica2Batch_search-payroll')}"
 										action="certifica2Batch_search-payroll"
 										actionListener="#{certifica2Batch.onEditSearch}"
 										value="#{bundle.sepe_certifica2Batch_module}" />
@@ -392,6 +430,7 @@
 					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_payroll_contrata_auxiliaries"
+								rendered="#{actionDenied.renderedGroup('group_payroll_contrata_auxiliaries')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-utilities aon-direct-access-panel">
 								<f:facet name="header">
@@ -400,17 +439,21 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="contractMode-payroll"
+											rendered="#{actionDenied.renderedOption('contractOption_list-payroll')}"
 											action="contractOption_list-payroll"
 											actionListener="#{contractModel.onReset}"
 											value="#{bundle.payroll_contract_mode_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="trainingCenter-payroll"
+											rendered="#{actionDenied.renderedOption('trainingCenter_list-payroll')}"
 											action="trainingCenter_list-payroll"
 											value="#{bundle.payroll_trainingCenter_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="holiday-payroll" action="holiday_search"
+										<aon:commandLink id="holiday-payroll" 
+											rendered="#{actionDenied.renderedOption('holiday_search')}"
+											action="holiday_search"
 											actionListener="#{holiday.onEditSearch}"
 											value="#{bundle.calendar_holidays}" />
 									</aon:div>
@@ -424,6 +467,7 @@
 						 -->
 					<aon:panelGroup>
 						<aon:panelGrid id="group_configuration_utilities"
+							rendered="#{actionDenied.renderedGroup('group_configuration_utilities')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-utilities aon-direct-access-panel">
 							<f:facet name="header">
@@ -432,6 +476,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_main_certificates" 
+										rendered="#{actionDenied.renderedOption('gwt_main_certificates')}"
 										action="gwt_main_certificates"
 										title="#{bundle.certificate_management_menu}"
 										value="#{bundle.certificate_management_menu}" 
@@ -440,6 +485,7 @@
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_main_trash"
+										rendered="#{actionDenied.renderedOption('gwt_main_trash')}"
 										action="gwt_main_trash"
 										value="#{bundle.trash}" target="gwt">
 									</aon:commandLink>
@@ -447,6 +493,7 @@
 								<aon:if test="#{domainSwitcher.betaUser}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_main_ccc" 
+											rendered="#{actionDenied.renderedOption('gwt_main_ccc')}"
 											action="gwt_main_ccc"
 											title="#{bundle.payroll_ccc_maintenance}"
 											value="#{bundle.payroll_ccc_maintenance}" 
@@ -467,6 +514,7 @@
 									 -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="aon_comunica" 
+											rendered="#{actionDenied.renderedOption('portal_comunica')}"
 											title="Comunic@"
 											value="Comunic@"
 											action="portal_comunica" />
@@ -481,7 +529,9 @@
 						 -->
 					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
-							<aon:panelGrid id="group_hacienda" styleClass="aon-width-all"
+							<aon:panelGrid id="group_hacienda" 
+								rendered="#{actionDenied.renderedGroup('group_hacienda')}"
+								styleClass="aon-width-all"
 								columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel">
 								<f:facet name="header">
@@ -540,6 +590,7 @@
 								<aon:div styleClass="aon-direct-access-list">				
 									<aon:div>
 										<aon:commandLink id="irpfData-payroll"
+											rendered="#{actionDenied.renderedOption('irpfData_search-payroll')}"
 											action="irpfData_search-payroll" style="white-space: nowrap;"
 											actionListener="#{irpfData.onEditSearch}"
 											title="#{bundle.payroll_model_145_module}">
@@ -552,6 +603,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-margin-top">
 										<aon:commandLink id="mod111-payroll" 
+											rendered="#{actionDenied.renderedOption('gwt_mod111-payroll')}"
 											action="gwt_mod111-payroll" style="white-space: nowrap;"
 											title="#{bundle.fiscal_model_111_module}">
 											<!-- aon:outputText styleClass="aon-fiscal-link-box" value="111" / -->
@@ -562,6 +614,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-margin-top">
 										<aon:commandLink id="gwt_mod190-payroll"
+											rendered="#{actionDenied.renderedOption('gwt_mod190-payroll')}"
 											action="gwt_mod190-payroll" style="white-space: nowrap;"
 											title="#{bundle.fiscal_model_190_module}">
 											<!-- aon:outputText styleClass="aon-fiscal-link-box" value="190"/ -->

@@ -388,33 +388,23 @@ public class HelpController implements Serializable {
 		return Collections.emptyList();
 	}
 	
-	public String getNewsImgUrl(Integer attachId) {
-		Domain domain = new Domain().setName(AonUtil.getDomainName()).setId(DomainManager.getCurrentDomain());
-		Attach a = AON.getAttach(domain.getName(), domain.getId(), AonUtil.getRemoteUser(), f -> f.getIdProperty().eq(attachId), AttachType.REGISTRY);
-		if(a != null && a.getId() != null && !AonStringUtils.isBlank(domain.getName())) {
-			JSONObject data = new JSONObject();
-			data.put("domain_name", domain.getName());
-			data.put("domain_id", domain.getId());
-			data.put(IJsonNames.ID, a.getId());
-			data.put("attach_type", AttachType.REGISTRY.getName());
-			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			return "ms/api/file/" +  result;
-		}
-		return "";
+	public String getNewsImgUrl(News news) {
+		Integer attachId =  news.getRattach().orElse( news.getCategory().getRattach() );
+		if ( attachId == null || attachId <= 0  )
+		    return "";
+		JSONObject data = new JSONObject();
+		data.put("domain_name", news.getDomain().getName());
+		data.put("domain_id", news.getDomain().getId());
+		data.put(IJsonNames.ID, attachId);
+		data.put("attach_type", AttachType.REGISTRY.getName());
+		String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+		return news.getUrl().map(url -> url + "/" ).orElse("") + "ms/api/file/" + result;
 	}
 	
+
 	public String getNewsImgStyle(News news) {
-		
-		if (news.getRattach().isPresent()) {			
-			String url = getNewsImgUrl(news.getRattach().orElse(null));
-			return !AonStringUtils.isBlank(url) ? "background-image: url(" + url + ");" : "";
-		}
-		Category cat = news.getCategory();
-		if (cat != null && cat.getRattach() != null && cat.getRattach() > 0) {
-			String url = getNewsImgUrl(cat.getRattach());
-			return !AonStringUtils.isBlank(url) ? "background-image: url(" + url + ");" : "";
-		}
-		return "";
+		String url = getNewsImgUrl(news);
+		return !AonStringUtils.isBlank(url) ? "background-image: url(" + url + ");" : "";
 	}
 	
 	public static boolean kinouDesuKa(Calendar cal) {
