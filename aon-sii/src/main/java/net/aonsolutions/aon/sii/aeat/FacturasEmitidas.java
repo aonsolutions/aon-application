@@ -178,9 +178,14 @@ public class FacturasEmitidas extends SIIBuilt {
 		// BODY
 
 		VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
-	
+		
 		EnterpriseActivity activity = AON.getEnterpriseActivity(domain.getName(), domain.getId(), login, vat.getActivity());
-		boolean exempt = activity.getVatRegime().isExempt() || vat.isIntracommunity() || vat.isExtracommunity();
+		if(activity == null) {
+			activity = AON.getEnterpriseActivities(domain.getName(), domain.getId(), login)
+					.findFirst().orElse(new EnterpriseActivity());
+		}
+		boolean exempt = (activity.getVatRegime() != null && activity.getVatRegime().isExempt()) 
+				|| vat.isIntracommunity() || vat.isExtracommunity();
 		
 		Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 				.mapToDouble(f -> f.getBase()).sum();
@@ -544,7 +549,12 @@ public class FacturasEmitidas extends SIIBuilt {
 			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
 
 			EnterpriseActivity activity = AON.getEnterpriseActivity(domain.getName(), domain.getId(), login, vat.getActivity());
-			boolean exempt = activity.getVatRegime().isExempt() || vat.isIntracommunity() || vat.isExtracommunity();
+			if(activity == null) {
+				activity = AON.getEnterpriseActivities(domain.getName(), domain.getId(), login)
+						.findFirst().orElse(new EnterpriseActivity());
+			}
+			boolean exempt = (activity.getVatRegime() != null && activity.getVatRegime().isExempt()) 
+					|| vat.isIntracommunity() || vat.isExtracommunity();
 			
 			Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.mapToDouble(f -> f.getBase()).sum();
