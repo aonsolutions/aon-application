@@ -276,6 +276,25 @@ public class ActionDeniedController implements Serializable {
 		}
 	}
 
+	public boolean renderedGroup(String component) {
+		OptionGroup group = getOptionController().getGroupMap().get(component);
+		if ( group != null ) {
+			if ( group.isRendered() ) {
+				for( ApplicationOption option : group.getOptions() ) {
+					boolean denied = getManager().isDenied(option.getAction()); 
+					if ( (!denied) && option.isRendered() ) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean renderedOption(String component) {
+		return !getManager().isDenied(component);
+	}
+	
 	public void renderedModule( UIComponent component, UIComponent parent ) {
 		if ( component.isRendered() ) {
 			String id = StringUtils.removeStart(component.getId(), MenuParser.MENU_ACTION_PREFFIX);

@@ -1,8 +1,11 @@
 package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
@@ -10,8 +13,10 @@ public class BookingResume implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	private List<Domain> childs;
 	
-	private Map<DomainType, Long> domainTypes;
+	
+	private Map<DomainType, DomainTypeInfo> domainTypes;
 	private Map<UserType, Long> userTypes;
 	private Map<AonApp, Long> childApps;
 	
@@ -22,12 +27,24 @@ public class BookingResume implements Serializable {
 	public BookingResume() {
 
 	}
+
+	public List<Domain> getChilds() {
+		if(childs == null) {
+			childs = new LinkedList<>();
+		}
+		return childs;
+	}
 	
-	public Map<DomainType, Long> getDomainTypes() {
+	public BookingResume setChilds(List<Domain> childs) {
+		this.childs = childs;
+		return this;
+	}
+	
+	public Map<DomainType, DomainTypeInfo> getDomainTypes() {
 		return domainTypes;
 	}
 	
-	public BookingResume setDomainTypes(Map<DomainType, Long> domainTypes) {
+	public BookingResume setDomainTypes(Map<DomainType, DomainTypeInfo> domainTypes) {
 		this.domainTypes = domainTypes;
 		return this;
 	}

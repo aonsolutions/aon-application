@@ -234,7 +234,9 @@ export class AonSelect extends AonElement {
           this.keyboardSelected(ev);
         } 
       });
-
+      if (this.multiple) {
+        this.displayMultiple();
+      }
     }
   }
 
@@ -328,6 +330,7 @@ export class AonSelect extends AonElement {
         } else {
           this.removeSelectable(option);
         }
+        this.dispatchEvent(new Event(EVENT.CHANGE));
       });
     }
   
@@ -351,12 +354,13 @@ export class AonSelect extends AonElement {
     const selectable = this.getSelectable();
     const length = selectable.length;
 
-    if(length){
-      input.value = selectable[0][this.nameAlias];
-      input.setLabelCount(length - 1);
-    } else {
-      input.value ="";
-    }
+    this.displayMultiple();
+    // if(length){
+    //   input.value = selectable[0][this.nameAlias];
+    //   input.setLabelCount(length - 1);
+    // } else {
+    //   input.value ="";
+    // }
 
     this.dispatchEvent(new CustomEvent(EVENT.SELECT, {
       detail: {
@@ -365,6 +369,18 @@ export class AonSelect extends AonElement {
         option
       }
     }))
+  }
+
+  displayMultiple() {
+    const input = this.getInput();
+    const selectable = this.getSelectable();
+    const length = selectable.length;
+    if(length){
+      input.value = selectable[0][this.nameAlias];
+      input.setLabelCount(length - 1);
+    } else {
+      input.value ="";
+    }
   }
 
   keyboardSelected({key}){

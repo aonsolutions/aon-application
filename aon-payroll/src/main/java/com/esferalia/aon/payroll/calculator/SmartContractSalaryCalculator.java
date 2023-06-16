@@ -1938,6 +1938,14 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 				};
 				
+				double totalExtra  = 
+				expressionContext.getVariables(ContextVariable.EXTRA_PAYMENT)
+				.stream().map( v -> (Number) v.getValue(v.getPeriod()))
+				.collect(Collectors.summingDouble( Number::doubleValue));
+				totalExtra += extra.getTotalPayment();
+				expressionContext.setVariable(ContextVariable.EXTRA_PAYMENT, totalExtra , paymentStart, paymentEnd);
+				
+				
 				DelegateContractPayment salaryExtraContractPayment = new DelegateContractPayment(contractPayment) {
 					@Override
 					public SalaryType getSalaryType() {

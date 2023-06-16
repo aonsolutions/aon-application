@@ -545,6 +545,20 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertText("fogasa_cost", cgpBase*0.2/100.00);
 		assertText("cgc_bonus", (cgcBase*23.60/100.00)*0.20);
 		assertText("desmpl_bonus", (cgpBase*6.90/100.00)*0.80);
+
+		draft("TRAMO, 4 (DÍAS)");
+		calculate(Calendar.JUNE, 2023);
+		assertValue("cgpBaseLabel", 694.00/30.00*10);
+		assertValue("cgcBaseLabel", 694.00/30.00*10);
+		cgcBase = getValue("cgcBaseLabel");
+		assertText("common_contingency", cgcBase*4.70/100.00);
+		assertText("unemployment", cgcBase*1.55/100.00);
+		calculate(Calendar.JULY, 2023);
+		assertValue("cgpBaseLabel", 694.00);
+		assertValue("cgcBaseLabel", 694.00);
+		cgcBase = getValue("cgcBaseLabel");
+		assertText("common_contingency", cgcBase*4.70/100.00);
+		assertText("unemployment", cgcBase*1.55/100.00);
 	}
 
 

@@ -18,6 +18,11 @@
     background-color: var(--aonBlue) !important;
     color: white;
 }
+.selectedDomain .domainLinkA {
+    color: white !important;
+}
+
+
 .selectedCustomer i {
     color: white;
 }
@@ -71,6 +76,15 @@
 .linkLoadSpinner {
     animation: rotate 1.5s linear infinite; 
 }
+.domainLinkA {
+    color: black;
+    text-decoration: none;
+}
+
+.domainLinkA:hover {
+    text-decoration: underline;
+}
+
 @keyframes rotate{
     to{ transform: rotate(360deg); }
   }

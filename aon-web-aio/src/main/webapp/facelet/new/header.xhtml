@@ -2509,28 +2509,23 @@
 								</aon:if>
 							</aon:menuGroup>	
 													
+							<!--  
 							<aon:if test="#{dur.aula or domainSwitcher.snapshot}">
 								<aon:menuItem submitMode="none" reRender="aonStatus"
 									rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 									iconClass="aon-icon-menu-help">
 	
-									<!-- OLD HELP -->
-									<!--<h:outputLink style="font-size:1em;"
-											value="#{aonConfiguration.helpURL}"
-											target="_blank" >
-											<aon:outputText value="#{bundle.aon_help}" />
-										</h:outputLink> -->
 									<aon:htmlCommandLink id="help" value="#{bundle.aon_help}" target="_blank" action="main_help">
 									</aon:htmlCommandLink>
 								</aon:menuItem>
 							</aon:if>
-							
 							<aon:menuItem id="about" reRender="aboutWindowPanel"
 								rendered="#{!aonConfiguration.properties.hideMenuAbout}"
 								iconClass="aon-icon-about"
 								value="#{bundle.aon_about}" >
 								<f:setPropertyActionListener target="#{aonConfiguration.properties.showAbout}" value="#{true}" />
 							</aon:menuItem>
+							-->
 						</aon:dropDownMenu>
 
 						<aon:commandLink id="logout"
