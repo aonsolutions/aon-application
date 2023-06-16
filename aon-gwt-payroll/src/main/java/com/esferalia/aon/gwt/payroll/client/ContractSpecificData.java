@@ -1728,6 +1728,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			case "403":
 				set403View();
 				break;
+			case "407":
+				set402View();
+				break;
 			case "410":
 				set410View();
 				break;
@@ -1760,6 +1763,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 				break;
 			case "503":
 				set503View();
+				break;
+			case "507":
+				set502View();
 				break;
 			case "510":
 				set510View();
