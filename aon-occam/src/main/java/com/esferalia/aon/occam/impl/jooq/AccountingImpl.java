@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IAccounting;
 import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.Account;
@@ -33,6 +34,8 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
@@ -57,6 +60,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingOperationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingUtilitiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AmortizationTypeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AnalyticalAccountingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
@@ -86,6 +90,10 @@ public class AccountingImpl implements IAccounting {
 	@Override
 	public Stream<Account> getAccounts(AONContext ctx, AccountParams params) {
 		return AccountDAO.getAccounts(ctx, params);
+	}
+	@Override
+	public List<Account> getAccountsList(AONContext ctx, AccountParams params) {
+		return AccountDAO.getAccountsList(ctx, params);
 	}
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter) {
 		return AccountDAO.getAccounts(ctx, filter);
@@ -628,4 +636,22 @@ public class AccountingImpl implements IAccounting {
 				,domain
 				,params);
 	}
+	
+	// AMORTIZATION TYPE
+	
+	@Override
+	public List<AmortizationType> getAmortizationTypeList(CloseableAONContext ctx, AmortizationTypeParams params) throws AonCoreException {
+		return ctx.getDslContext().transactionResult( configuration -> AmortizationTypeDAO.getList(ctx, params) );	
+	}
+	
+	@Override
+	public void deleteAmortizationTypes(CloseableAONContext ctx, List<Integer> deleteIds) throws AonCoreException {
+		ctx.getDslContext().transaction( configuration -> AmortizationTypeDAO.delete(ctx, deleteIds) );	
+	}
+	
+	@Override
+	public void saveAmortizationType(CloseableAONContext ctx, AmortizationType amortizationType) throws AonCoreException {
+		ctx.getDslContext().transaction( configuration -> AmortizationTypeDAO.save(ctx, amortizationType) );	
+	}
+	
 }

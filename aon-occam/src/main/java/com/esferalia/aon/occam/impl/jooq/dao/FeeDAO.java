@@ -116,7 +116,10 @@ public class FeeDAO {
 				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
-			fromCustomerRecords = fromCustomerRecords 	
+			if(customerFeeParams.getSegment() == -1)
+				fromCustomerRecords = fromCustomerRecords 	
+				.leftJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
+			else fromCustomerRecords = fromCustomerRecords 	
 				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
 		}
 				
@@ -142,7 +145,7 @@ public class FeeDAO {
 		}
 		
 		if(null != customerFeeParams.getMonth() && null == customerFeeParams.getYear()) {
-			condition = condition.and(DSL.month(CUSTOMER_FEE.BILLING_DATE).eq(customerFeeParams.getMonth()));
+			condition = condition.and(DSL.month(CUSTOMER_FEE.BILLING_DATE).eq(customerFeeParams.getMonth() + 1));
 		} else if(null == customerFeeParams.getMonth() && null != customerFeeParams.getYear()) {
 			Date startBillingDate = new Date(customerFeeParams.getYear(), 0, 1);
 			Date endBillingDate = new Date(customerFeeParams.getYear(), 11, 31);
@@ -163,7 +166,7 @@ public class FeeDAO {
 		if(null != customerFeeParams.getCustomerStatus())
 			condition = condition.and(CUSTOMER.STATUS.eq(customerFeeParams.getCustomerStatus()));
 		
-		if(null != customerFeeParams.getSegment()) 
+		if(null != customerFeeParams.getSegment() && customerFeeParams.getSegment() != -1) 
 			condition = condition.and(RSEGMENT.SEGMENT.eq(customerFeeParams.getSegment()));
 		
 		if(null != customerFeeParams.getStartDate()){
@@ -711,7 +714,10 @@ public class FeeDAO {
 				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
-			fromCustomerRecords = fromCustomerRecords 	
+			if(customerFeeParams.getSegment() == -1)
+				fromCustomerRecords = fromCustomerRecords 	
+				.leftJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
+			else fromCustomerRecords = fromCustomerRecords 	
 				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
 		}
 		Result<Record1<Integer>> customerFeeRecords = fromCustomerRecords	
@@ -770,7 +776,10 @@ public class FeeDAO {
 				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
-			fromCustomerRecords = fromCustomerRecords 	
+			if(customerFeeParams.getSegment() == -1)
+				fromCustomerRecords = fromCustomerRecords 	
+				.leftJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
+			else fromCustomerRecords = fromCustomerRecords 	
 				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
 		}
 		Result<Record1<Integer>> customerRecords = fromCustomerRecords 

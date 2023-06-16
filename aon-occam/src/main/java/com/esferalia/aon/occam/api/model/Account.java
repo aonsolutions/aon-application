@@ -15,7 +15,7 @@ public class Account implements Serializable {
 	public Account(Integer id, Integer domain,
 			String code, String description, String alias,
 			boolean entryEnabled, byte level,
-			boolean active, String costCenter) {
+			boolean active, String costCenter, boolean hasRegistry) {
 		setId(id);
 		setDomain(domain);
 		setCode(code);
@@ -25,6 +25,7 @@ public class Account implements Serializable {
 		setLevel(level);
 		setActive(active);
 		setCostCenter(costCenter);
+		setHasRegistry(hasRegistry);
 	}	
 	
 	private Integer id;
@@ -36,6 +37,8 @@ public class Account implements Serializable {
 	private byte level;
 	private boolean active;
 	private String costCenter;
+	
+	private boolean hasRegistry;
 
 	public Integer getId() {
 		return id;
@@ -118,6 +121,15 @@ public class Account implements Serializable {
 		return this;
 	}
 
+	public boolean hasRegistry() {
+		return hasRegistry;
+	}
+
+	public Account setHasRegistry(boolean hasRegistry) {
+		this.hasRegistry = hasRegistry;
+		return this;
+	}
+
 	public String getFullName() {
 		return (AonStringUtils.join(
 				 AonStringUtils.defaultString(getCode())
@@ -139,6 +151,7 @@ public class Account implements Serializable {
 			.setLevel( getLevel())
 			.setActive( isActive())
 			.setCostCenter( getCostCenter())
+			.setHasRegistry( hasRegistry())
 			;
 	}
 }

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.widget.DateListBox;
@@ -438,6 +439,37 @@ public class SalarySelect extends Composite {
 			}
 
 		});
+		
+		try {
+		    payDateLabel.setVisible(true);
+		    payDateListBox.setVisible(true);
+
+		    Date endDate = SalarySelect.this.salaryPreview.getEndDate();
+
+		    Date payStartDate = DateUtils.copyDateOnly(endDate);
+		    payStartDate = DateUtils.addDays2Date(payStartDate, -20);
+
+		    Date selectedDate = payDateListBox.getSelectedDate();
+		    if (!hasChanged && selectedDate != null)
+			return;
+
+		    Date payDate = getPayDate();
+		    Date defautlPayDate = payDate != null ? payDate : DateUtils.after(new Date(), endDate);
+
+		    int index = DateUtils.getDaysBetween(payStartDate, defautlPayDate);
+		    int length = payDateListBox.getPageSize();
+		    int start = Math.max(0, index - length / 2);
+
+		    payDateListBox.setVisibleRangeAndClearData(new Range(start, length), true);
+		    Scheduler.get().scheduleFinally(() -> payDateListBox.setSelected(defautlPayDate, true));
+		    salaryPreview.setChargeDate(defautlPayDate);
+		
+		} catch( Exception e ) {
+			payDateLabel.setVisible(false);
+			payDateListBox.setVisible(false);
+		}
+		
+		
 	}
 
 	private void syncDateListBox(Type type) {
@@ -611,34 +643,6 @@ public class SalarySelect extends Composite {
 
 		});
 		
-		try {
-			payDateLabel.setVisible(true);
-			payDateListBox.setVisible(true);
-
-        		Date endDate = SalarySelect.this.salaryPreview.getEndDate();
-        		
-        		Date payStartDate = DateUtils.copyDateOnly(endDate);
-        		payStartDate  = DateUtils.addDays2Date(payStartDate, -20);
-
-        		Date selectedDate = payDateListBox.getSelectedDate();
-        		if ( !hasChanged  && selectedDate != null ) 
-        		    return;
-        		
-        		Date payDate = getPayDate();
-        		Date defautlPayDate = payDate != null ? payDate : DateUtils.after(new Date(), endDate);
-        		
-        		int index = DateUtils.getDaysBetween(payStartDate, defautlPayDate);
-        		int length = payDateListBox.getPageSize();
-        		int start = Math.max(0, index - length / 2);
-        
-        		payDateListBox.setVisibleRangeAndClearData(new Range(start, length), true);
-        		Scheduler.get().scheduleFinally(() -> payDateListBox.setSelected(defautlPayDate, true));
-		
-		} catch( Exception e ) {
-			payDateLabel.setVisible(false);
-			payDateListBox.setVisible(false);
-		}
-		
 	}
 
 	private void syncTypeListBox() {
@@ -802,6 +806,18 @@ public class SalarySelect extends Composite {
 	    }
 	    
 	    Salary [] salaries = salaryPreview.getEmployee().getSalaries();
+	    
+	    Date startDate = salaryPreview.getStartDate();
+	    
+	    Optional<Salary> salary = 
+            Arrays.stream(salaries)
+	    .filter(s -> s.getType() == type )
+	    .filter( s-> DateUtils.equals(startDate, s.getStartDate()) )
+	    .findFirst();
+	    if ( salary.isPresent() ) {
+		return salary.get().getChargeDate();
+	    }
+	    
 	    
 	    Map<String, Integer> payDays = 
             Arrays.stream(salaries)

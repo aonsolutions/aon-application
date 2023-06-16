@@ -88,6 +88,11 @@ public class Sepe {
 				certificates);
 	}
 
+	public static void sendLlamamiento(InputStream certificateIS, String password, String type, String cif, String ccc,
+			String nif, Date startDate, Date endDate, String ide) throws SepeException {
+		Contrata.sendLlamamiento(certificateIS, password, type, cif, ccc, nif, startDate, endDate, ide);
+	}
+	
 	public static String sendContract(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Contract cto) throws SepeException {
 		return Contrata.sendContrata(certificateInputStream, certificatePassword, certificateType, cto);

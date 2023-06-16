@@ -16,7 +16,8 @@ public class Mod111Araba2023Declaration extends Mod111Declaration {
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
-		 AR_907(Mod111Key.AR_907,false,null,null,null,null,null)
+		 CM_002(Mod111Key.CM_002,false,null,null,null,null,null)
+		,AR_907(Mod111Key.AR_907,false,null,null,null,null,null)
 		,AR_908(Mod111Key.AR_908,false,null,null,null,null,null)
 		,AR_909(Mod111Key.AR_909,false,null,null,null,null,null)
 		

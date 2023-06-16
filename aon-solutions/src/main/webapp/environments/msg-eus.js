@@ -1,5 +1,6 @@
 // ----- A
 
+export const ABOUT = 'Guri buruz';
 export const ACCEPT = 'Onartu';
 export const ACCESS = "Sarbidea";
 export const ACCOUNT = 'Kuenta';
@@ -159,6 +160,7 @@ export const FILE = 'Fitxategia';
 export const FILE_DATA = 'Fitxategiaren Datuak';
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
+export const FIND_LINKED_DOMAINS = "Estekatutako domeinuak bilatu";
 export const FOOTER = 'Oina';
 
 // ----- G

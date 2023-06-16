@@ -235,11 +235,14 @@ public class InvoiceAutoComplete {
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
 							inv.setRegistryData(c);
-							if(!inv.getAddress().isEmpty())
-								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
+							if(!inv.getAddress().isEmpty()) {
+								RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 									.setId(null)
 									.setDomain(c.getDomain().getId())
 									.setRegistry(c.getId()));
+								inv.setRegistryAddress(raddress.getId());
+								inv.setAddress(raddress);
+							}
 						}
 					}
 				} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
@@ -261,10 +264,12 @@ public class InvoiceAutoComplete {
 							inv.setRegistry(s.getId());
 							inv.setRegistryData(s);
 							if ( !inv.getAddress().isEmpty() ) {
-								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
+								RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 										.setId(null)
 										.setDomain(s.getDomain().getId())
 										.setRegistry(s.getId()));
+								inv.setRegistryAddress(raddress.getId());
+								inv.setAddress(raddress);
 							}
 						}
 					}
@@ -287,11 +292,14 @@ public class InvoiceAutoComplete {
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
 							inv.setRegistryData(c);
-							if(!inv.getAddress().isEmpty())
-								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
+							if(!inv.getAddress().isEmpty()) {
+								RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 									.setId(null)
 									.setDomain(c.getDomain().getId())
 									.setRegistry(c.getId()));
+								inv.setRegistryAddress(raddress.getId());
+								inv.setAddress(raddress);
+							}
 						}
 					}
 				}
@@ -466,6 +474,16 @@ public class InvoiceAutoComplete {
 		inv.getDetails().stream().forEach(detail -> {
 
 			detail.setDomain(inv.getDomain());
+			
+			if(detail.getItem() != null && detail.getItem().isEmpty()) {
+				String code = detail.getItem().getProduct().getCode();
+				if(!AonStringUtils.isBlank(code)) {
+					Item i = ItemDAO.get(ctx.getContext(), f -> 
+						f.getDomainProperty().eq(inv.getDomain())
+						.and(f.getProductCodeProperty().eq(code)));
+					detail.setItem(i);
+				}
+			}
 			
 			InvoiceTax it = new InvoiceTax();
 			for(Integer i = 0;  i< detail.getInvoiceTaxes().size() ; i++ ) {

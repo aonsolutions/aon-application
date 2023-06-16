@@ -11,6 +11,11 @@ import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -50,6 +55,7 @@ import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection.Filter;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.SalaryException;
@@ -59,6 +65,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -126,6 +133,30 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
+	}
+	
+	@Override
+	protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
+	    	Date endDate = SmartSQLContractSettleCalculatorContext.this.settleEndDate;
+	    	Date startDate = SmartSQLContractSettleCalculatorContext.this.getStartDate();
+		ITimedVariable<Double> days = new ITimedVariable<Double>() {
+			@Override
+			public Period getPeriod() {
+				return new Period(startDate,endDate);
+			}
+
+			@Override
+			public Double getValue(Period p) {
+				return ((Long)p.getDays()).doubleValue();
+			}
+
+		};
+		for ( ContextVariable ctxVar : new ContextVariable [] {WORKED_DAYS, SALARY_DAYS, QUOTE_DAYS} ) {
+		    if ( !ctx.containsVariable(ctxVar.getName(), startDate, endDate) ) {
+			ctx.putVariable(ctxVar, days);
+		    }
+		}
+		
 	}
 	
 	// ------------------------------------------------------------------------

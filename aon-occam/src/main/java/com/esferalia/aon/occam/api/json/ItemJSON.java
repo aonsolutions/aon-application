@@ -29,6 +29,7 @@ public class ItemJSON {
 	}
 	
 	public static Item fromJSON(JSONObject json) {
+		if(json == null) return new Item();
 		return new Item()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN)))
@@ -43,7 +44,7 @@ public class ItemJSON {
 	
 				.setStatus(ProductStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.STATUS)))
 				.setProduct(ProductJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PRODUCT)))
-				.setPrice(JsonUtils.getDouble(json, IJsonNames.PRICE))
+				.setPrice(JsonUtils.getdouble(json, IJsonNames.PRICE))
 				.setExpensesPercent(JsonUtils.getdouble(json, IJsonNames.EXPENSES_PERCENT))
 				.setProfitPercent(JsonUtils.getdouble(json, IJsonNames.PROFIT_PERCENT))
 				.setPurchasePrice(JsonUtils.getdouble(json, IJsonNames.PURCHASE_PRICE))

@@ -52,6 +52,8 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.jooq.tables.records.ContractInfoRecord;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
 
 public class JooqContrataContract {
 	
@@ -702,6 +704,137 @@ public class JooqContrataContract {
 		}
 		
 		return employeesInfo;
+	}
+	
+	public static List<EmployeeContractInfo> getFJEmployeesInfo(Connection conn, Integer domainId) {
+		return getFJEmployeesInfoDB(DSL.using(conn, getDefaultSettings()), domainId);
+	}
+	
+	private static List<EmployeeContractInfo> getFJEmployeesInfoDB(DSLContext dslContext, Integer domainId) {
+		List<EmployeeContractInfo> employeesInfo = new ArrayList<>();
+		List<Integer> visitedPerson = new ArrayList<>();
+		
+		List<String> fjTypes = new ArrayList<>();
+		fjTypes.add("\"300\"");
+		fjTypes.add("\"309\"");
+		fjTypes.add("\"330\"");
+		fjTypes.add("\"350\"");
+		fjTypes.add("\"389\"");
+		
+		Result<Record> contractRecords = dslContext.select().from(PERSON)
+				.innerJoin(REGISTRY)
+				.on(PERSON.REGISTRY.eq(REGISTRY.ID))
+				.innerJoin(CONTRACT)
+				.on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+				.innerJoin(WORKPLACE)
+				.on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+				.join(CONTRACT_DATA)
+				.on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID))
+				.where(CONTRACT.DOMAIN.eq(domainId))
+				.and(CONTRACT.ID.gt(0))
+				.and(CONTRACT_DATA.NAME.eq("TC2"))
+				.and(CONTRACT_DATA.EXPRESSION.in(fjTypes))
+				.orderBy(CONTRACT.PERSON, CONTRACT.START_DATE.desc())
+				.fetch();
+		
+		
+		for(Record contractRecord : contractRecords) {
+			
+			if(visitedPerson.contains(contractRecord.get(CONTRACT.PERSON))) continue;
+			
+			// --------------------------------------------- Init
+			
+			EmployeeContractInfo employeeContractInfo = new EmployeeContractInfo();
+			ContractInfo contractData = new ContractInfo();
+			EmployeeInfo employeeData = new EmployeeInfo();
+			
+			// --------------------------------------------- Employee Info
+			
+			employeeData.setEmployeeId(contractRecord.get(PERSON.REGISTRY));
+			employeeData.setDomain(contractRecord.get(PERSON.DOMAIN));
+			employeeData.setSsNumber(contractRecord.get(PERSON.SOCIAL_SECURITY_NUM));
+			employeeData.setName(contractRecord.get(PERSON.NAME));
+			employeeData.setSurName(contractRecord.get(PERSON.FIRST_SURNAME));
+			employeeData.setSecondSurName(contractRecord.get(PERSON.SECOND_SURNAME));
+			employeeData.setDocument(contractRecord.get(REGISTRY.DOCUMENT));
+			
+			// --------------------------------------------- Contract Info
+			
+			// CONTRACT TABLE
+			contractData.setContractId(contractRecord.get(CONTRACT.ID));
+			contractData.setStartDate(contractRecord.get(CONTRACT.START_DATE));
+			contractData.setEndDate(contractRecord.get(CONTRACT.END_DATE));
+			contractData.setSsRegimen(contractRecord.get(CONTRACT.SS_REGIME));
+			contractData.setAgreementCategory(contractRecord.get(CONTRACT.CATEGORY_DESCRIPTION));
+			
+			// ENTERPRISE CCC
+			Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
+				.where(ENTERPRISE_CCC.ID.eq(contractRecord.get(CONTRACT.ENTERPRISE_CCC)))
+				.fetchOne();
+			
+			if(null!= enterpriseCCCRecord) {
+				contractData.setCccId(enterpriseCCCRecord.get(ENTERPRISE_CCC.ID));
+				contractData.setCccType(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE));
+				contractData.setCompleteCCC(getCCCRegimeCode(contractData.getCccType())+enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC));	
+			}
+			
+			// WORKPLACE TABLE		
+			contractData.setWorkplaceId(contractRecord.get(WORKPLACE.ID));
+			contractData.setWorkplaceName(contractRecord.get(WORKPLACE.DESCRIPTION));
+			
+			// SS & Sepe status
+			Result<ContractInfoRecord> ssRecords = dslContext.selectFrom(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_INFO.NAME.eq("SS_ALTA")).fetch();
+			Result<ContractInfoRecord> sepeRecords = dslContext.selectFrom(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_INFO.NAME.eq("SEPE_CONTRATO")).fetch();
+			
+			contractData.setSSComunicate(ssRecords.isNotEmpty() && ssRecords.get(0).getExpression().equals("ACCEPTED"));
+			contractData.setSepeComunicate(sepeRecords.isNotEmpty() && sepeRecords.get(0).getExpression().equals("ACCEPTED"));
+			
+			employeeContractInfo.setEmployeeInfo(employeeData);
+			employeeContractInfo.setContractInfo(contractData);
+			
+			// --------------------------------------------- Add employeeContractInfo
+		
+			visitedPerson.add(contractRecord.get(CONTRACT.PERSON));
+			
+			employeesInfo.add(employeeContractInfo);
+			
+		}
+		
+		return employeesInfo;
+	}
+	
+	public static void duplicateContract(Connection conn, EmployeeContractInfo employeeContractInfo, java.util.Date newStartDate) {
+		try {
+			JooqEmployees.paste(
+					conn, 
+					employeeContractInfo.getEmployeeInfo().getDomain(), 
+					employeeContractInfo.getContractInfo().getWorkplaceId(), 
+					employeeContractInfo.getContractInfo().getContractId(), 
+					employeeContractInfo.getEmployeeInfo().getDocument(), 
+					newStartDate, 
+					null, 
+					true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void duplicateContract(Connection conn, List<EmployeeContractInfo> employees, java.util.Date newStartDate) {
+		for(EmployeeContractInfo employeeContractInfo : employees) {
+			try {
+				JooqEmployees.paste(
+						conn, 
+						employeeContractInfo.getEmployeeInfo().getDomain(), 
+						employeeContractInfo.getContractInfo().getWorkplaceId(), 
+						employeeContractInfo.getContractInfo().getContractId(), 
+						employeeContractInfo.getEmployeeInfo().getDocument(), 
+						newStartDate, 
+						null, 
+						true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public static EmployeeContractInfo getEmployeeInfo(Connection conn, Integer contractId) {
@@ -1634,6 +1767,68 @@ public class JooqContrataContract {
 		}catch (SQLException e) {
 			throw new RuntimeException(e);
 		} 
+	}
+	
+	public static void setSepeStatus(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+		
+			ContractRecord contractRecord = dslContext.selectFrom(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
+			
+			Result<ContractInfoRecord> contractInfos = dslContext.selectFrom(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.eq(contractId)).and(CONTRACT_INFO.NAME.eq("SEPE_CONTRATO")).fetch();
+			
+			if(contractInfos.isEmpty()) {
+				dslContext.insertInto(CONTRACT_INFO)
+					.set(CONTRACT_INFO.DOMAIN, domainId)
+					.set(CONTRACT_INFO.CONTRACT, contractId)
+					.set(CONTRACT_INFO.NAME, "SEPE_CONTRATO")
+					.set(CONTRACT_INFO.EXPRESSION, "ACCEPTED")
+					.set(CONTRACT_INFO.START_DATE, contractRecord.getStartDate())
+					.set(CONTRACT_INFO.END_DATE, contractRecord.getEndDate())
+					.execute();
+			} else {
+				dslContext.update(CONTRACT_INFO)
+					.set(CONTRACT_INFO.EXPRESSION, "ACCEPTED")
+					.where(CONTRACT_INFO.ID.eq(contractInfos.get(0).getId()))
+					.execute();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		
+	}
+	
+	public static void setSSStatus(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+		
+			ContractRecord contractRecord = dslContext.selectFrom(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
+			
+			Result<ContractInfoRecord> contractInfos = dslContext.selectFrom(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.eq(contractId)).and(CONTRACT_INFO.NAME.eq("SS_ALTA")).fetch();
+			
+			if(contractInfos.isEmpty()) {
+				dslContext.insertInto(CONTRACT_INFO)
+					.set(CONTRACT_INFO.DOMAIN, domainId)
+					.set(CONTRACT_INFO.CONTRACT, contractId)
+					.set(CONTRACT_INFO.NAME, "SS_ALTA")
+					.set(CONTRACT_INFO.EXPRESSION, "ACCEPTED")
+					.set(CONTRACT_INFO.START_DATE, contractRecord.getStartDate())
+					.set(CONTRACT_INFO.END_DATE, contractRecord.getEndDate())
+					.execute();
+			} else {
+				dslContext.update(CONTRACT_INFO)
+					.set(CONTRACT_INFO.EXPRESSION, "ACCEPTED")
+					.where(CONTRACT_INFO.ID.eq(contractInfos.get(0).getId()))
+					.execute();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		
 	}
 
 	public static void removeSepeId(String domainName, Integer contractId, String sepeId) {

@@ -4,7 +4,7 @@ import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
 import { waitEl } from "../services/utils.js";
 import { MOBILE_ACTION, mobileAction, closeSession, getDomainUserRoles, uploadFileDocumental } from "../services/service.js";
-import { CONSTANT, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import * as LS from '../services/localStorageService.js';
 import { AonNotification } from "./notification/aon-notification.js";
 import { AonApps } from "./aon-apps.js";
@@ -431,7 +431,7 @@ export class AonMobileMenu extends AonElement {
     }
     d.clear();
     if(!this.isMobile()) d.width = '400px';
-    d.setTitle('Cerrar Sesión');
+    d.setTitle(MSG.CLOSE_SESSION);
     d.setContentHTML(`Estás seguro de cerrar sesión`);
     d.addAcceptAction(() => closeSession());
     d.open();

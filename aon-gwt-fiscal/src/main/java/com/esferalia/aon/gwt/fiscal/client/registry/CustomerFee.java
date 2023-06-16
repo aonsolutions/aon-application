@@ -77,6 +77,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 public class CustomerFee extends MainEntryPoint {
 
@@ -342,6 +343,7 @@ public class CustomerFee extends MainEntryPoint {
 			segmentListBox.setHeight("2em");
 			segmentListBox.getElement().getStyle().setProperty("padding", "0 5px");
 			segmentListBox.addItem("-", "");
+			segmentListBox.addItem("SIN SEGMENTO", "-1");
 			segmentListBox.setSelectedIndex(0);
 			
 			for (Segment ea : opt.getConfiguration().getSegments()) {
@@ -1282,9 +1284,9 @@ public class CustomerFee extends MainEntryPoint {
 		Label quantity = new Label("CANTIDAD");
 		Label price = new Label("PRECIO");
 		Label discount = new Label("DESCUENTO");
-		Label billingDate = new Label("F. FACTURACI\u00f3N");
 		Label startDate = new Label("F. DESDE");
 		startDate.setTitle("F. DESDE FACTURACI\u00f3N");
+		Label billingDate = new Label("F. FACTURACI\u00f3N");
 		Label endDate = new Label("F. HASTA");
 		endDate.setTitle("F. HASTA FACTURACI\u00f3N");
 		Label info = new Label("");
@@ -1298,8 +1300,8 @@ public class CustomerFee extends MainEntryPoint {
 		quantity.addStyleName(AON.CSS.aonHeaderTable());
 		price.addStyleName(AON.CSS.aonHeaderTable());
 		discount.addStyleName(AON.CSS.aonHeaderTable());
-		billingDate.addStyleName(AON.CSS.aonHeaderTable());
 		startDate.addStyleName(AON.CSS.aonHeaderTable());
+		billingDate.addStyleName(AON.CSS.aonHeaderTable());
 		endDate.addStyleName(AON.CSS.aonHeaderTable());
 		info.addStyleName(AON.CSS.aonHeaderTable());
 
@@ -1311,8 +1313,8 @@ public class CustomerFee extends MainEntryPoint {
 		feeTable.setWidget(row, 5, quantity);
 		feeTable.setWidget(row, 6, price);
 		feeTable.setWidget(row, 7, discount);
-		feeTable.setWidget(row, 8, billingDate);
-		feeTable.setWidget(row, 9, startDate);
+		feeTable.setWidget(row, 8, startDate);
+		feeTable.setWidget(row, 9, billingDate);
 		feeTable.setWidget(row, 10, endDate);
 		feeTable.setWidget(row, 11, info);
 
@@ -1383,7 +1385,6 @@ public class CustomerFee extends MainEntryPoint {
 		});
 		
 		Label customerLabel = new Label(fee.getCustomer().getName());
-		checkFeeStatus(customerLabel, fee);
 
 		ListBox statusListBox = createStatusListBox(fee, row);
 		statusListBox.setWidth("85px");
@@ -1442,28 +1443,6 @@ public class CustomerFee extends MainEntryPoint {
 			
 		});
 		
-		HTMLPanel billingDatePanel = new HTMLPanel("");
-		billingDatePanel.addStyleName(AON.CSS.aonItemFlex());
-		
-		ListBox monthLB = createMonthListBox();
-		ListBox yearLB = createYearListBox();
-		
-		monthLB.addChangeHandler(e -> {
-			fee.setBillingDate(createBillingDate(monthLB.getSelectedValue(), yearLB.getSelectedValue()));
-			setFeeModify(fee, row);
-		});
-		
-		yearLB.addChangeHandler(e -> {
-			fee.setBillingDate(createBillingDate(monthLB.getSelectedValue(), yearLB.getSelectedValue()));
-			setFeeModify(fee, row);
-		});
-		
-		setSelectedValueLB(monthLB, fee.getBillingDate().getMonth() + "");
-		setSelectedValueLB(yearLB, fee.getBillingDate().getYear() + "");
-		
-		billingDatePanel.add(monthLB);
-		billingDatePanel.add(yearLB);
-
 		AonDateBox startDateBox = new AonDateBox();
 		startDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		startDateBox.addStyleName("gwt-TextBox");
@@ -1473,6 +1452,28 @@ public class CustomerFee extends MainEntryPoint {
 			fee.setStartDate(e.getValue());
 			setFeeModify(fee, row);
 		});
+
+		HTMLPanel billingDatePanel = new HTMLPanel("");
+		billingDatePanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		ListBox monthLB = createMonthListBox();
+		TextBox yearTB = createYearTextBox();
+		
+		monthLB.addChangeHandler(e -> {
+			fee.setBillingDate(createBillingDate(monthLB.getSelectedValue(), yearTB.getValue()));
+			setFeeModify(fee, row);
+		});
+		
+		yearTB.addValueChangeHandler(e -> {
+			fee.setBillingDate(createBillingDate(monthLB.getSelectedValue(), yearTB.getValue()));
+			setFeeModify(fee, row);
+		});
+		
+		setSelectedValueLB(monthLB, fee.getBillingDate().getMonth() + "");
+		yearTB.setValue((fee.getBillingDate().getYear() + 1900) + "");
+		
+		billingDatePanel.add(monthLB);
+		billingDatePanel.add(yearTB);
 
 		AonDateBox endDateBox = new AonDateBox();
 		endDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
@@ -1486,6 +1487,8 @@ public class CustomerFee extends MainEntryPoint {
 		
 		AonToolbarSmallButton infoBtn = new AonToolbarSmallButton("", AON.CSS.aonIconInfo());
 		infoBtn.setTitle(createFeeInfo(fee));
+		
+		checkFeeStatus(customerLabel, startDateBox, endDateBox, fee);
 
 		checkRowAndModify(feeTable, row, fee, select);
 		checkRowAndModify(feeTable, row, fee, customerLabel);
@@ -1495,8 +1498,8 @@ public class CustomerFee extends MainEntryPoint {
 		checkRowAndModify(feeTable, row, fee, quantityTextBox);
 		checkRowAndModify(feeTable, row, fee, priceTextBox);
 		checkRowAndModify(feeTable, row, fee, discountTextBox);
-		checkRowAndModify(feeTable, row, fee, billingDatePanel);
 		checkRowAndModify(feeTable, row, fee, startDateBox);
+		checkRowAndModify(feeTable, row, fee, billingDatePanel);
 		checkRowAndModify(feeTable, row, fee, endDateBox);
 		checkRowAndModify(feeTable, row, fee, infoBtn);
 
@@ -1508,8 +1511,8 @@ public class CustomerFee extends MainEntryPoint {
 		feeTable.setWidget(row, 5, quantityTextBox);
 		feeTable.setWidget(row, 6, priceTextBox);
 		feeTable.setWidget(row, 7, discountTextBox);
-		feeTable.setWidget(row, 8, billingDatePanel);
-		feeTable.setWidget(row, 9, startDateBox);
+		feeTable.setWidget(row, 8, startDateBox);
+		feeTable.setWidget(row, 9, billingDatePanel);
 		feeTable.setWidget(row, 10, endDateBox);
 		feeTable.setWidget(row, 11, infoBtn);
 
@@ -1543,34 +1546,44 @@ public class CustomerFee extends MainEntryPoint {
 		selectionModel.put(select, fee);
 	}
 
-	private ListBox createYearListBox() {
-		ListBox lb = new ListBox();
-		lb.setHeight("2em");
-		lb.getElement().getStyle().setProperty("padding", "0 5px");
-		lb.addItem("-", "");
+	private TextBox createYearTextBox() {
+		TextBox tb = new TextBox();
+		tb.setMaxLength(4);
+		tb.setHeight("2em");
+		tb.setWidth("4em");
+		tb.setAlignment(TextAlignment.CENTER);
+		tb.getElement().getStyle().setProperty("padding", "0 5px");
+		tb.getElement().getStyle().setProperty("placeholder", "aaaa");
 		
-		Integer itYear = maxYear;
-		
-		while(itYear >= minYear) {
-			lb.addItem(itYear.toString(), (itYear - 1900) + "");
-			itYear--;
-		}
-		
-		return lb;
+		return tb;
 	}
 
 	private Date createBillingDate(String monthStr, String yearStr) {
 		if(AonStringUtils.isBlank(monthStr) || AonStringUtils.isBlank(yearStr))
 			return null;
 		
-		return new Date(Integer.parseInt(yearStr), Integer.parseInt(monthStr), 1);
+		return new Date(Integer.parseInt(yearStr) - 1900, Integer.parseInt(monthStr), 1);
 	}
 
-	private void checkFeeStatus(Label label, Fee fee) {
+	private void checkFeeStatus(Label label, AonDateBox startDateBox, AonDateBox endDateBox, Fee fee) {
 		if(null != fee.getEndDate() && fee.getEndDate().before(fee.getBillingDate())) {
 			label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 			label.getElement().getStyle().setColor("red");
 			label.setTitle("La fecha fin es anterior a la fecha de facturaci\u00f3n");
+			
+			endDateBox.getElement().getStyle().setColor("red");
+			endDateBox.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			endDateBox.setTitle("La fecha fin es anterior a la fecha de facturaci\u00f3n");
+			
+		} else if(null != fee.getStartDate() && fee.getStartDate().after(fee.getBillingDate())) {
+			label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			label.getElement().getStyle().setColor("red");
+			label.setTitle("La fecha inicion es posterior a la fecha de facturaci\u00f3n");
+			
+			startDateBox.getElement().getStyle().setColor("red");
+			startDateBox.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			startDateBox.setTitle("La fecha inicio es posterior a la fecha de facturaci\u00f3n");
+			
 		}
 	}
 

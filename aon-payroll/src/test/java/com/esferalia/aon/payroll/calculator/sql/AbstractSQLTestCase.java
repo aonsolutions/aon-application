@@ -105,6 +105,7 @@ import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.HolidayRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
@@ -193,6 +194,18 @@ public abstract class AbstractSQLTestCase {
 		return ctx;
 	}
 
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
+		Connection connection, Date startDate, Date endDate,
+		Date issueDate, Date chargeDate, Criteria criteria, IContractSalaryCalculatorContext.IListener listener) throws ExpressionException,
+		SQLException {
+	    ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(connection, startDate,
+		    endDate, chargeDate, issueDate, criteria);
+	    if (listener != null)
+		ctx.setListener(listener);
+	    ctx.next();
+	    return ctx;
+	}
+
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, null);
@@ -204,6 +217,21 @@ public abstract class AbstractSQLTestCase {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, listener);
+	}
+
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+		Date startDate, Date endDate, Date issueDate, Date chargeDate, ContractRecord contract ) throws ExpressionException, SQLException {
+        	Criteria criteria = new Criteria();
+        	criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+        	return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, chargeDate, criteria, null);
+	}
+
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+		Date startDate, Date endDate, Date issueDate, Date chargeDate, ContractRecord contract,
+		IContractSalaryCalculatorContext.IListener listener) throws ExpressionException, SQLException {
+        	Criteria criteria = new Criteria();
+        	criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+        	return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, chargeDate, criteria, listener);
 	}
 
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
@@ -1005,8 +1033,10 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
-
-
+	public static PersonRecord getPerson(AONContext aonContext, int personId) {
+	    return aonContext.getDslContext().select().from(PERSON).where(PERSON.REGISTRY.eq(personId)).fetchOneInto(PERSON);
+	}
+	
 	public static final RegistryRecord newPerson(AONContext aonContext, int domainId, String document) {
 		return newPerson(aonContext, domainId, document, "");
 	}

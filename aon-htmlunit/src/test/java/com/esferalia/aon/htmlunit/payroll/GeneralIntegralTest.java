@@ -3,12 +3,14 @@ package com.esferalia.aon.htmlunit.payroll;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -18,6 +20,7 @@ import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlSpan;
 import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableDataCell;
@@ -357,9 +360,17 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		wait4Id("cotizacion,_cero");
 
+		Calendar calendar = Calendar.getInstance();
+
+		draft("FIN, CONTRATO TEMPORAL");
+
+		calendar.set(2017, Calendar.FEBRUARY, 23);
+		settle(calendar.getTime());
+		double salarioDia = getValue("editor-salario_dia");
+		assertValue("db-amount-label-2", salarioDia * 12 * 11 / 365.00  , DELTA);
+
 		draft("COTIZACIÓN, CERO");
 
-		Calendar calendar = Calendar.getInstance();
 		calendar.set(2016, Calendar.JUNE, 25);
 		settle(calendar.getTime());
 		
@@ -977,8 +988,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.JUNE,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_interrupcion_embarazo_21");
+		assertNotElement("editor-dias_interrupcion_embarazo_1_20");
+		double remuneration = getText("remunerationLabel");
+		assertText("irpfBaseLabel", remuneration);
 		calculate(Calendar.JULY,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_menstruacion_21");
+		assertNotElement("editor-dias_menstruacion_1_20");
 		click("costsCheck-input");
 		assertText("totalEnterpriseLabel", cgcBase * 31.90 / 100.00 - ( cgcBase / 30.00 * 7 * 0.75 ) );
 		click("costsCheck-input");
@@ -989,16 +1008,28 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.JUNE,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_menstruacion_21");
+		assertNotElement("editor-dias_menstruacion_1_20");
 		calculate(Calendar.JULY,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_interrupcion_embarazo_21");
+		assertNotElement("editor-dias_interrupcion_embarazo_1_20");
 
 		draft("INTERRUPCIÓN DEL, EMBARAZO");
 		calculate(Calendar.MAY,2023);
 		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.JUNE,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_interrupcion_embarazo_21");
+		assertNotElement("editor-dias_interrupcion_embarazo_1_20");
 		calculate(Calendar.JULY,2023);
+		assertDisplay("eventsCheck", false);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertNotElement("editor-dias_menstruacion_21");
+		assertNotElement("editor-dias_menstruacion_1_20");
 	}
 
 	@Test
@@ -2378,16 +2409,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
 		Date endDate = calendar.getTime();
 				
-		
 		delay(startDate, endDate);
 		assertValue("totalPaymentLabel", 0.00, 0.00);
 		assertValue("totalLiquidLabel", 00.00, 0.00);
 		
 		// set pay date
-		getElementById("payDateListBox").click();
-		scroll2ListBox(endDate, "payDateListBox");
-		((HtmlSpan)((HtmlDivision)getElementById("payDateListBox-celllist"))
-		.getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", endDate)+"']")).click();
+		//getElementById("payDateListBox").click();
+		//scroll2ListBox(endDate, "payDateListBox");
+		//((HtmlSpan)((HtmlDivision)getElementById("payDateListBox-celllist"))
+		//.getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", endDate)+"']")).click();
 		
 		
 		setValue("db-amount-label-5", "11.11");
@@ -2395,20 +2425,41 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		setValue("db-amount-label-4", "22.22");
 		wait4Value("totalPaymentLabel", 33.33);
 		
-		setValue("irpfPercentTexTBox", "15.00");
+		assertValue("irpfPercentTexTBox", "15,00 %" );
 		wait4Text("irpf", "5,00" );
 		
+		setValue("irpfPercentTexTBox", "30.00" );
+		wait4Text("irpf", "10,00" );
+
 		click("delayButton");
 		
 		wait4Id("dbSalaryCheck");
 		assertDisplay("dbSalaryCheck", true);
-		assertText("irpf", "5,00" );
-		assertValue("irpfPercentTexTBox", "15,00 %" );
+		assertText("irpf", "10,00" );
+		assertValue("irpfPercentTexTBox", "30,00 %" );
 		
 		
 		
 	}
 
+	@Test
+	public void TestIrpfIngresoAcuenta() throws Exception {
+		
+
+		if (!isDisplayed("i.r.p.f_ingreso_a_cuenta,_empresa"))
+			open("i.r.p.f_-_estatal");
+
+		wait4Id("i.r.p.f_ingreso_a_cuenta,_empresa");
+
+		draft("I.R.P.F INGRESO A CUENTA, EMPRESA");
+		
+		calculate(Calendar.APRIL, 2023);
+		
+		assertText("in_kind", 1000.00);
+		
+		List<DomElement> irpfs = getElementsById("irpf");
+		assertEquals(3,irpfs.size() );
+	}
 
 	@Test
 	public void TestEmbargos() throws Exception {

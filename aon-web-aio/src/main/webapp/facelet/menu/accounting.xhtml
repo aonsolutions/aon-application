@@ -237,13 +237,15 @@
 									<aon:commandLink id="amortization" action="amortization_list"
 										value="#{bundle.accounting_amortization_form_module}" />
 								</aon:div>
+								
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="amortizationType"
-											action="amortizationType_list"
+										<aon:commandLink id="gwt_amortizationType"
+											action="gwt_amortization_type"
 											value="#{bundle.accounting_amortization_type_module}" />
 									</aon:div>
 								</aon:if>
+								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="investAsset" action="investAsset_search"
 										value="#{bundle.accounting_invest_asset_form_module}" />
@@ -341,22 +343,12 @@
 										</aon:div>
 									</aon:div>
 
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_checkIt-accounting"
-											action="gwt_checkIt-accounting"
-											title="Agregador Bancario (expira Enero/2023)">
-											<aon:outputText	value="Agregador Bancario (expira Enero/2023)" />
-										</aon:commandLink>
-									</aon:div>
 									<aon:if test="#{dur.bank}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_nordigen-accounting"
 												action="gwt_nordigen-accounting"
 												title="Agregador Bancario">
-												<aon:outputText
-													styleClass="aon-fiscal-link-label aon-icon-new-text"
-													style="margin-left: 5px; padding-left: 20px;"
-													value="Agregador Bancario" />
+												<aon:outputText	value="Agregador Bancario" />
 											</aon:commandLink>
 										</aon:div>
 									</aon:if>
@@ -427,7 +419,7 @@
 								<!-- Gestión de Cobros -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financeCharge-accounting"
-										action="finance_search-charge-treasury"
+										action="finance_search-charge-accounting"
 										actionListener="#{finance.onEditSearchCharge}"
 										value="#{bundle.finance_charge_module}" />
 								</aon:div>
@@ -435,7 +427,7 @@
 								<!-- Remesas de Cobro -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="fbatchCharge-accounting" 
-										action="fbatch_search-charge-treasury"
+										action="fbatch_search-charge-accounting"
 										actionListener="#{fbatch.onEditSearchCharge}"
 										value="#{bundle.finance_fbatch_charge_module}">
 										<f:setPropertyActionListener target="#{fbatch.payroll}"
@@ -446,7 +438,7 @@
 								<!-- Gestión de Pagos -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financePayment-accounting"
-										action="finance_search-payment-treasury"
+										action="finance_search-payment-accounting"
 										actionListener="#{finance.onEditSearchPayment}"
 										value="#{bundle.finance_payment_module}" />
 								</aon:div>
@@ -454,7 +446,7 @@
 								<!-- Remesas de Pago -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="fbatchPayment-accounting" 
-										action="fbatch_search-payment-treasury"
+										action="fbatch_search-payment-accounting"
 										actionListener="#{fbatch.onEditSearchPayment}"
 										value="#{bundle.finance_fbatch_payment_module}">
 										<f:setPropertyActionListener target="#{fbatch.payroll}"
@@ -696,6 +688,23 @@
  -->
 										</aon:div>
 									</aon:panelGrid>
+									
+									<aon:panelGrid id="group_acc_bank"
+										styleClass="aon-width-all" columnClasses="aon-padding"
+										headerClass="aon-icon-balance aon-direct-access-panel">
+										<f:facet name="header">
+											<aon:outputText value="MOVIMIENTOS BANCARIOS" />
+										</f:facet>
+										<aon:div styleClass="aon-direct-access-list">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="gwt_checkIt-accounting"
+													action="gwt_checkIt-accounting"
+													title="Agregador Bancario (expira Enero/2024)">
+													<aon:outputText	value="Agregador Bancario (expira Enero/2024)" />
+												</aon:commandLink>
+											</aon:div>
+										</aon:div>
+									</aon:panelGrid>
 								</aon:if>
 							</aon:panelGroup>
 
@@ -785,6 +794,21 @@
 											</aon:div>
  -->							
 										</aon:div>
+									</aon:panelGrid>
+									
+									<aon:panelGrid id="group_fixed_assets2"
+										styleClass="aon-width-all" columnClasses="aon-padding"
+										headerClass="aon-icon-utilities aon-direct-access-panel">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.menu_fixed_assets}" />
+										</f:facet>
+										<aon:if test="#{aonRole.config}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="amortizationType"
+													action="amortizationType_list"
+													value="#{bundle.accounting_amortization_type_module}" />
+											</aon:div>
+										</aon:if>
 									</aon:panelGrid>
 
 							</aon:panelGroup>

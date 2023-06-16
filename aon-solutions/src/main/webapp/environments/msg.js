@@ -26,6 +26,7 @@ if(Language.ENGLISH === language) {
 
 // ----- A
 
+export const ABOUT = MSG.ABOUT;
 export const ACCEPT = MSG.ACCEPT;
 export const ACCESS = MSG.ACCESS;
 export const ACCOUNT = MSG.ACCOUNT;
@@ -241,6 +242,7 @@ export const FILTERS = "Filtros";//TODO
 export const FISCAL = 'Fiscal';//TODO
 export const FISCAL_DATA = 'Datos Fiscales'; // TODO
 export const FOLIO = 'Folio';
+export const FIND_LINKED_DOMAINS = MSG.FIND_LINKED_DOMAINS;
 export const FOOTER = MSG.FOOTER;
 export const FORMALITIES = 'Trámites';//TODO
 

@@ -211,7 +211,14 @@ class PECListener  implements IdcParserListener {
 	public void onContractEnd(Date end) {
 		this.contractEnd = end;
 	}
-
+	
+	@Override
+	public void onEmployeeQuoteTRL(String nss, String ccc, String description, Date start, Date end) {
+	    if ( description.matches("\\s*PROGRAMAS\\s*DE\\s*FORMACION\\s*")) {
+        	    ssPECs.add(newRemovePEC(new PEC.Cost(), nss, ccc, "986", description, start, end, ContextVariable.MEI_ENTERPRISE));
+        	    ssPECs.add(newRemovePEC(new PEC.Deduction(), nss, ccc, "986",description, start, end,  ContextVariable.MEI_EMPLOYEE));
+	    }
+	}
 	@Override
 	public void onEmployeeQuotePEC(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) {
@@ -433,6 +440,31 @@ class PECListener  implements IdcParserListener {
 	}
 
 	private static <T extends PEC> T newRemovePEC(
+		T t,
+		String nss, 
+		String ccc, 
+		String trl,
+		String description, 
+		Date start, 
+		Date end ,
+		ContextVariable var){
+	
+        	t.setCcc(ccc);
+        	t.setNss(nss);
+        	t.setStartDate(start);
+        	t.setEndDate(end);
+        	t.setFormula(String.format(Locale.ROOT,
+        			"/*epoch:%d,trl:%s*//*read-only*/REMOVE()/**/", 
+        			Calendar.getInstance().getTimeInMillis(),
+        			trl 
+        			));
+        	t.setDescription(String.format(new Locale("es", "ES"),"%s %s", description, getDescription(var)));
+        	t.setName(var.getName());
+        	
+        	return t;
+	}
+
+	private static <T extends PEC> T newRemovePEC(
 			T t,
 			String nss, 
 			String ccc, 
@@ -527,6 +559,9 @@ class PECListener  implements IdcParserListener {
 			return "IT";
 		case IMS_ENTERPRISE:
 			return "IMS";
+		case MEI_EMPLOYEE:
+		case MEI_ENTERPRISE:
+			return "MEI";
 		case FP_EMPLOYEE:
 		case FP_ENTERPRISE:
 			return "F.P";

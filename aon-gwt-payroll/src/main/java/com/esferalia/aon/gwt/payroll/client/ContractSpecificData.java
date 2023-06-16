@@ -2450,6 +2450,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		if(Boolean.TRUE.equals(isTransform) || AonStringUtils.isNotBlank(contractSpecificData.getTransformIde())) {
 			ideTransformTB.setValue(this.contractSpecificData.getTransformIde());
 			comunicationTransformDateBx.setValue(this.contractSpecificData.getComunicationTransformDate());
+			comunicationTransformDateBx.addValueChangeHandler(e -> this.contractSpecificData.setComunicationTransformDate(e.getValue()));
 		}
 		
 		if(Boolean.TRUE.equals(isExtension) || !contractSpecificData.getExtensions().isEmpty()) {

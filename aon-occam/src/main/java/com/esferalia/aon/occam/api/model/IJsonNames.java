@@ -44,6 +44,7 @@ public final class IJsonNames {
 	public static final String AP1 = "ap1";
 	public static final String AP2 = "ap2";
 	public static final String APA = "apa";
+	public static final String APP = "app";
 	public static final String APPS = "apps";
 	public static final String ATTACH = "attach";
 	public static final String ATTACH_MODULE = "attachModule";
@@ -71,7 +72,8 @@ public final class IJsonNames {
 	public static final String BEFORE_PERIOD_CREDIT = "beforePeriodCredit";
 	public static final String BIC = "bic";
 	public static final String BILLABLE = "billable";
-	public static final String BLOCKED = "blocked";
+	public static final String BLOCKED = "blocked";	
+	public static final String BOOKING = "booking";
 	public static final String BORDER = "border";
 	public static final String BOX_BORDER_COLOR = "boxBorderColor";
 	public static final String BOX_BODY_BACKGROUND_COLOR = "boxBodyBackgroundColor";
@@ -85,9 +87,11 @@ public final class IJsonNames {
 	public static final String CALLBACK = "callback";
 	public static final String CARRIER = "carrier";
 	public static final String CARRIER_PACKING = "carrierPacking";
+	public static final String CARRIER_REFERENCE = "carrierReference";
 	public static final String CATEGORY = "category";
 	public static final String CATEGORY_IDS = "categoryIds";
 	public static final String CITY = "city";
+	public static final String CHARGE_DATE = "chargeDate";
 	public static final String CHILD_COUNT = "childCount";
 	public static final String CLASS_NAME = "class_name";
 	public static final String CLOSING_ENTRIES_EXCLUDED = "closingEntriesExcluded";
@@ -142,6 +146,7 @@ public final class IJsonNames {
 	public static final String DELIVERY = "delivery";
 	public static final String DELIVERY_DATE = "deliveryDate";
 	public static final String DELIVERY_GROUPED = "deliveryGrouped";
+	public static final String DELIVERY_LINE = "deliveryLine";
 	public static final String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	public static final String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
 	public static final String DELIVERY_VALUATED = "deliveryValuated";
@@ -174,6 +179,7 @@ public final class IJsonNames {
 	public static final String DRIVE_ID = "driveId";
 	public static final String DRIVER = "driver";
 	public static final String DRIVER_DOCUMENT = "driverDocument";
+	public static final String DRIVER_NAME = "driverName";
 	public static final String DRS = "drs";
 	public static final String DUA_LINKED = "duaLinked";
 	public static final String DUE_DATE = "due_date";
@@ -192,6 +198,7 @@ public final class IJsonNames {
 	public static final String EPIGRAPH = "epigraph";
 	public static final String EPIGRAPH_SECTION = "epigraphSection";
 	public static final String ERROR = "error";
+	public static final String ERRORS = "errors";
 	public static final String EXPENSES = "expenses";
 	public static final String EXPENSES_FIXED = "expensesFixed";
 	public static final String EXPENSES_PERCENT = "expensesPercent";
@@ -517,6 +524,7 @@ public final class IJsonNames {
 	public static final String SIZE = "size";
 	public static final String SOURCE = "source";
 	public static final String SOURCE_ID = "source_id";
+	public static final String SSCC = "sscc";
 	public static final String START_DATE = "start_date";
 	public static final String STATEMENT = "statement";
 	public static final String STATEMENTS = "statements";

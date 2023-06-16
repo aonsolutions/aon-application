@@ -37,6 +37,7 @@
 		<module>watson</module>
 		<module>occam</module>
 		<module>api</module>
+		<module>invofox.sdk</module>
 
 		<!-- MAVEN PLUGINS -->
 		<module>aon-alias-maven-plugin</module>
@@ -93,6 +94,7 @@
 		<module>aon-sii</module>
 		<module>aon-seres</module>
 		<module>aon-tbai</module>
+		<module>aon-invoice-communication</module>
 		<module>aon-external-sources</module>
 		<module>aon-sign</module>		
 		<module>aon-bank</module>

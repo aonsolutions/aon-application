@@ -76,7 +76,7 @@ public class ITPDFServlet extends HttpServlet {
 	        if(isPartenityPart(itType)) {
 	            certificatePDF = SistemaRED.getCertificatePdf(certificate.getData(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, optionalStartDate);
 	        } else {
-	            certificatePDF = SistemaRED.getITReport(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, contributionAccount, affiliationNumber, partType, dateFrom, dateTo);
+	            certificatePDF = SistemaRED.getITReport(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, contributionAccount, affiliationNumber, partType, startDate, dateTo);
 	        }
 
 	        new AonApiHttpServlet().responseFile(res, "PART.pdf", certificatePDF, MimeType.PDF);

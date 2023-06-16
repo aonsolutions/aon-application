@@ -67,7 +67,6 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
@@ -761,17 +760,9 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	@Override
 	public int getAñoNacimiento() {
-		int añoNacimiento = ctx.getInt(SQLConstants.PERSON,
-				PersonColumns.BIRTH_DATE);
-
-		// Caused by: com.esferalia.aon.salary.expression.CheckException:
-		// cvc-minInclusive-valid: Value '0' is not facet-valid with respect to
-		// minInclusive '1905' for type
-		// '#AnonType_AñoNacimientotipo_RetenidoEntrada2015'.
-
-		// TODO: Ask for correct year...
-		
-		return añoNacimiento < 1905 ? 1905 : añoNacimiento;
+		Date birthDate = ctx.getDate(SQLConstants.PERSON,
+			PersonColumns.BIRTH_DATE);
+		return birthDate != null ? AonDateUtils.getYear(birthDate) : 0;
 	}
 
 	@Override

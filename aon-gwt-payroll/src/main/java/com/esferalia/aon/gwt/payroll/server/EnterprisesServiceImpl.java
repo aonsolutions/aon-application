@@ -43,8 +43,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.annotation.WebServlet;
-
 import org.jooq.DSLContext;
 import org.jooq.tools.json.JSONObject;
 import org.mvel2.CompileException;
@@ -249,6 +247,7 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.sun.xml.messaging.saaj.util.ByteOutputStream;
 
 import aon.sepe.objects.Contract;
+import jakarta.servlet.annotation.WebServlet;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -2317,6 +2316,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public List<EmployeeContractInfo> getFJEmployeesInfo(String domainName) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.getFJEmployeesInfo(connection, domainId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
 	public EmployeeContractInfo getEmployeeInfo(String domainName, Integer contractId) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqContrataContract.getEmployeeInfo(connection, contractId);
@@ -3256,7 +3265,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public void deleteComunicateIT(String domainName, String userLogin, String affiliationNumber,
 			String regime, String contributionAccount, java.util.Date dateFrom, java.util.Date dateTo,
-			java.util.Date startDate) {
+			java.util.Date startDate) throws IllegalArgumentException {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -3267,8 +3276,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			SistemaRED.removePaternity(certificate.getData(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
 		
-		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
@@ -4776,7 +4785,25 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public void duplicateContract(String domainName, String user, EmployeeContractInfo employee, java.util.Date newStartDate) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqContrataContract.duplicateContract(connection, employee, newStartDate);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
+	@Override
+	public void duplicateContract(String domainName, String user, List<EmployeeContractInfo> employees, java.util.Date newStartDate) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqContrataContract.duplicateContract(connection, employees, newStartDate);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
 	// ------------------------------------------------ Partes IT
 
 	@Override

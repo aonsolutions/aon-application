@@ -82,6 +82,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class JooqPayrollBuilder {
 	
 	private static String[] WEEK_DAYS = {"DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"};
+	private static List<String> PRESTATION_CONCEPTS = Arrays.asList("PREST_IT", "MTNAD", "ERE");
 	
 	/**
 	 * Method to generate a PDF payroll from database data and place it on the
@@ -361,17 +362,26 @@ public class JooqPayrollBuilder {
 					if(null == p.getPaymentType())
 						p.setPaymentType(com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0001);
 					
-					if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
-						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<PDFPayment>());
+					
+					int craKey = p.getPaymentType().ordinal();
+					if (com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0001.equals(p.getPaymentType())) {
+						//TODO: COMPROBAR PREST_IT, ERE% Y MTNAD
+						if (PRESTATION_CONCEPTS.contains(p.getName()) || AonStringUtils.equals("ERE_", AonStringUtils.substring(p.getName(), 0, 4))) {
+							craKey = 100;
+						}
+					}
+					if (!paymentMap.containsKey(craKey)) {
+						paymentMap.put(craKey, new ArrayList<PDFPayment>());						
+					}
 					
 					
-					Optional<PDFPayment> repeated = paymentMap.get(p.getPaymentType().ordinal()).stream().filter(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().orElse(null))).findFirst();
+					Optional<PDFPayment> repeated = paymentMap.get(craKey).stream().filter(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().orElse(null))).findFirst();
 					
 					if (repeated.isPresent()) {
 						PDFPayment repAcc = repeated.get();
 						repAcc.setAmount(repAcc.getAmount().orElse(0d) + p.getAmount());
 					} else {
-						paymentMap.get(p.getPaymentType().ordinal()).add(accrual);						
+						paymentMap.get(craKey).add(accrual);						
 					}
 				});
 				payrollBuilder.setAccruals(paymentMap);
@@ -752,21 +762,18 @@ public class JooqPayrollBuilder {
 			
 
 			List<SalaryData> holidays = contractDataTmp.getOrDefault("DIAS_VACACIONES", Collections.emptyList());
+			List<SalaryData> noWorkDays = contractDataTmp.getOrDefault("NO_LABORABLE", Collections.emptyList());
 			List<Date> holidayList = listHolidays(holidays, salaryEnd);
+			List<Date> noWorkDaysList = listHolidays(noWorkDays, salaryEnd);
 			
-			params.getEntries().entrySet().stream()
-			.filter(entry -> holidayList.stream()
-					.filter(d -> salaryPeriod.intersects(new Period(d, d)))
-					.map(AonDateUtils::getDay)
-					.anyMatch(d -> AonNumberUtils.equals(d, entry.getKey()))
-			).forEach(entry -> entry.getValue().setHoliday(true));
-			
+			setHolidays(params, holidayList, salaryPeriod, entry -> entry.setHoliday(true));
+			setHolidays(params, noWorkDaysList, salaryPeriod, entry -> entry.setNotWorkingDay(true));
 			
 			Set<Date> workedDaysSet = new LinkedHashSet<>();
 			while (date.compareTo(salary.getEndDate()) <= 0) {
 				int day = AonDateUtils.getDay(date);
 				PartTimeEntry entry = new PartTimeEntry();
-				if (isWorkedDay(date, salaryData, salary.getEndDate(), holidayList)) {
+				if (isWorkedDay(date, salaryData, salary.getEndDate(), holidayList, noWorkDaysList)) {
 					Double dayHours = getDayHours(date, salaryData, salary.getEndDate());
 					entry.setOrdinary(dayHours);
 					if (dayHours != null && dayHours > 0) {
@@ -846,15 +853,33 @@ public class JooqPayrollBuilder {
 		}
 	}
 	
+	@FunctionalInterface
+	private static interface HolidayCallback {
+		void set(PartTimeEntry entry);
+	}
+	
+	private static void setHolidays(PartTimeParams params, List<Date> holidayList, Period salaryPeriod, HolidayCallback callback) {
+		params.getEntries().entrySet().stream()
+		.filter(entry -> holidayList.stream()
+				.filter(d -> salaryPeriod.intersects(new Period(d, d)))
+				.map(AonDateUtils::getDay)
+				.anyMatch(d -> AonNumberUtils.equals(d, entry.getKey()))
+		).forEach(entry -> callback.set(entry.getValue()));
+	}
+	
 	private static List<Date> listHolidays(List<SalaryData> holidaysData, Date salaryEndDate) {
 		if (holidaysData != null) {
 			List<Date> dateList = new ArrayList<>();
 			holidaysData.stream().filter(Objects::nonNull).forEach(data -> {
 				Date sd = data.getStartDate();
 				Date ed = data.getEndDate() != null ? data.getEndDate() : salaryEndDate;
-				new Period(sd, ed).forEachDay(cal -> {
-					dateList.add(cal.getTime());
-				});
+				try {
+					new Period(sd, ed).forEachDay(cal -> {
+						dateList.add(cal.getTime());
+					});					
+				} catch (Exception e) {
+					//Falla porque alguien ha puesto la fecha de fin menor que la de inicio
+				}
 			});
 			return dateList;
 		}
@@ -959,10 +984,13 @@ public class JooqPayrollBuilder {
 		}));
 	}
 
-	private static boolean isWorkedDay(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd,List<Date> holidayList) {
+	private static boolean isWorkedDay(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd,List<Date> holidayList, List<Date> noWorkDaysList) {
 		if (salaryData == null || date == null || salaryEnd == null)
 			return false;
 		if (holidayList != null && holidayList.contains(date)) {
+			return false;
+		}
+		if (noWorkDaysList != null && noWorkDaysList.contains(date)) {
 			return false;
 		}
 		List<SalaryData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());

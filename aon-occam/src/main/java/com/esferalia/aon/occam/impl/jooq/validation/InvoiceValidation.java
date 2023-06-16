@@ -17,9 +17,9 @@ import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -285,7 +285,7 @@ public class InvoiceValidation {
 			boolean accepted = true;
 			if(tbai.isBizkaia()) {
 				InvoiceInfo info = InvoiceInfoDAO.get(ctx.getContext(), f -> f.getInvoiceProperty().eq(inv.getId())
-						.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE_1_1.value())));
+						.and(f.getTypeProperty().eq(OldInvoiceCommunicationType.LROE_1_1.value())));
 				accepted = info.isAccepted() || info.isAcceptedWithErrors();
 			}
 			

@@ -257,9 +257,10 @@ public class SalaryDraft extends ResizeComposite
 	};
 
 
-	private static Deduction.Type SYSTEM_DEDUCTION[] = { Deduction.Type.IRPF, Deduction.Type.COMMON_CONTINGENCY,
+	private static Deduction.Type SYSTEM_DEDUCTION[] = { 
+			Deduction.Type.IRPF, Deduction.Type.COMMON_CONTINGENCY,
 			Deduction.Type.PROFESSIONAL_CONTINGENCY, Deduction.Type.UNEMPLOYMENT, Deduction.Type.JOB_TRAINING,
-			Deduction.Type.STRUCTURAL_OVERTIME, Deduction.Type.NON_STRUCTURAL_OVERTIME, Deduction.Type.FOGASA };
+			Deduction.Type.STRUCTURAL_OVERTIME, Deduction.Type.NON_STRUCTURAL_OVERTIME, Deduction.Type.FOGASA , Deduction.Type.MEI};
 
 
 	private List<Scope> SCOPE_STEPS = Arrays.asList(Scope.CONTRACT, Scope.AGREEMENT, Scope.SYSTEM);
@@ -294,6 +295,10 @@ public class SalaryDraft extends ResizeComposite
 			"BASE_PAGO_DIRECTO_BRUTA",
 			"BASE_MTNAD",
 			"BASE_MTNAD_BRUTA",
+			"BASE_EXCESO",
+			
+			"BASE_IRPF_DINERO",
+			"BASE_IRPF_ESPECIE",
 			
 			"BASE_CGC_MAX_MES", "BASE_CGC_MIN_MES", 
 			"BASE_CGP_MAX_MES", "BASE_CGP_MIN_MES",
@@ -310,6 +315,12 @@ public class SalaryDraft extends ResizeComposite
 			"DIAS_ENFERMEDAD_COMUN_16_20", // internals
 			"DIAS_ENFERMEDAD_COMUN_21", // internals
 			"DIAS_ENFERMEDAD_COMUN_366", // internals
+			"DIAS_MENSTRUACION_1_20", // internals
+			"DIAS_MENSTRUACION_21", // internals
+			"DIAS_INTERRUPCION_EMBARAZO_1_20", // internals
+			"DIAS_INTERRUPCION_EMBARAZO_21", // internals
+			"DIAS_SEMANA_39_EMBARAZO_1_20", // internals
+			"DIAS_SEMANA_39_EMBARAZO_21", // internals
 			"DIAS_ENFERMEDAD_PROFESIONAL_366", // internals
 			"DIAS_ENFERMEDAD_COMUN_CARENCIA", // internals
 			"DIAS_ERE","DIAS_ERE_FZA", "DIAS_ERE_FZA_EXONERADO",
@@ -1063,12 +1074,13 @@ public class SalaryDraft extends ResizeComposite
 	
 
 	static class BooleanEditorFactory implements VariableEditorFactory<TextListBox> {
-
+	    
 		public BooleanEditorFactory() {
 		}
 
 		@Override
 		public boolean accept(Variable variable) {
+		    
 			Object value = variable.getValue();
 
 			if (value == null)
@@ -1090,6 +1102,49 @@ public class SalaryDraft extends ResizeComposite
 			// textListBox.setC
 			textListBox.addItem("SI", String.valueOf(true));
 			textListBox.addItem("NO", String.valueOf(false));
+
+			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
+
+			return textListBox;
+		}
+
+	}
+
+	static class UndefEditorFactory implements VariableEditorFactory<TextListBox> {
+	    
+		private String name;
+		private String value;
+
+		public UndefEditorFactory(String name, String value) {
+			this.name = name;
+			this.value = value;
+		}
+
+		@Override
+		public boolean accept(Variable variable) {
+			return name.equals(variable.getName());
+		}
+
+		@Override
+		public TextListBox create(Variable variable) {
+			TextListBox textListBox = new TextListBox() {
+				@Override
+				public String getValue() {
+					return getValue(getSelectedIndex());
+				}
+				
+				@Override
+				protected void selectValue(String str) {
+				    try {
+					setSelectedIndex(AonStringUtils.isNotBlank(str) ? 1 : 0 );
+				    } catch ( Exception e ) {
+					setSelectedIndex(0);
+				    }
+				}
+				
+			};
+			textListBox.addItem("NO", "UNDEFINED('"+variable.getName()+"')");
+			textListBox.addItem("SI", value);
 
 			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
 
@@ -7097,6 +7152,9 @@ public class SalaryDraft extends ResizeComposite
 		// IRPF quotas & bases
 		if ( AonStringUtils.startsWith(name, "CRA_00"))
 			return true;
+		// ROUND
+		if ( AonStringUtils.startsWith(name, "DECIMAL_"))
+			return true;
 		
 		for (String skip : SKIP_VARIABLES) {
 			if (skip.equals(name))
@@ -7512,6 +7570,7 @@ public class SalaryDraft extends ResizeComposite
 			new AgreementConstantEditorFactory(), 
 			new ConstantEditorFactory("SMI"), 
 			new BooleanEditorFactory(), 
+			new UndefEditorFactory("COTIZA_EXCESO", "1.00"), 
 			new DefaultEditorFactory() };
 	
 	private final static VariableEditorFactory MONTHLY_VARIABLE_EDITOR_FACTORIES[] = { 

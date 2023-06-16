@@ -103,6 +103,9 @@ public class ContractInfo implements Serializable{
 	
 	private boolean discontinuos;
 	
+	private boolean isSSComunicate;
+	private boolean isSepeComunicate;
+	
 	public ContractInfo() {
 		super();
 		this.contractId = null;
@@ -162,6 +165,9 @@ public class ContractInfo implements Serializable{
 		this.hasCbc = false;
 		
 		this.discontinuos = false;
+		
+		this.isSSComunicate = false;
+		this.isSepeComunicate = false;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -720,6 +726,22 @@ public class ContractInfo implements Serializable{
 		this.discontinuos = discontinuos;
 	}
 	
+	public boolean isSSComunicate() {
+		return isSSComunicate;
+	}
+
+	public void setSSComunicate(boolean isSSComunicate) {
+		this.isSSComunicate = isSSComunicate;
+	}
+
+	public boolean isSepeComunicate() {
+		return isSepeComunicate;
+	}
+
+	public void setSepeComunicate(boolean isSepeComunicate) {
+		this.isSepeComunicate = isSepeComunicate;
+	}
+
 	public boolean isPartial() {
 		if(contractType!=null) {
 			int type = Integer.parseInt(contractType);

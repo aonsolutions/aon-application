@@ -149,6 +149,7 @@ export const INBOX = 'inbox';
 export const INFO = 'info';
 export const INFO_OUTLINE = 'info_outline';
 export const INSERT_DRIVE_FILE = "insert_drive_file";
+export const INVENTORY = "inventory";
 export const INVENTORY_2 = "inventory_2";
 export const IOS_SHARE = 'ios_share';
 
@@ -222,6 +223,7 @@ export const STORE_MALL_DIRECTORY = 'store_mall_directory';
 export const SUPPORT_AGENT = "support_agent";
 export const SWAP_CALLS = 'swap_calls';
 export const SYNC = 'sync';
+export const SYNC_ALT = 'sync_alt';
 
 // ----- T
 

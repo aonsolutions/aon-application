@@ -558,6 +558,169 @@ export const BookingApps = {
   WAREHOUSE
 };
 
+export const KIT_DIGITAL_FACE = {
+  app: "kit_digital_face",
+  icon: AON_ICONS.AON_KIT_DIGITAL,
+  title: "FACe",
+  subtitle: " Factura Electrónica",
+  color: "#002469",
+  apps: [],
+  price: " ",
+};
+
+export const KIT_DIGITAL_CRM = {
+  app: "kit_digital_crm",
+  icon: AON_ICONS.AON_KIT_DIGITAL,
+  title: "CRM",
+  subtitle: " Gestión de Clientes",
+  color: "#002469",
+  apps: [],
+  price: " ",
+};
+
+export const KIT_DIGITAL_ERP = {
+  app: "kit_digital_erp",
+  icon: AON_ICONS.AON_KIT_DIGITAL,
+  title: "ERP",
+  subtitle: " Gestión de Procesos",
+  color: "#002469",
+  apps: [],
+  price: " ",
+};
+
+export const BASIC_MANAGEMENT = {
+  app: "basic_management",
+  icon: AON_ICONS.AON_MANAGEMENT,
+  title: "Gestión Básica",
+  subtitle: " Facturas | Comercial",
+  color: "#002469",
+  apps: [Apps.INVOICE, COMMERCIAL],
+  price: " ",
+};
+
+export const STANDAR_MANAGEMENT = {
+  app: "standar_management",
+  icon: AON_ICONS.AON_MANAGEMENT,
+  title: "Gestión Estándar",
+  subtitle: " Gestión Básica | Marketing | Tesoreria ",
+  color: "#002469",
+  apps: [Apps.INVOICE, COMMERCIAL, TREASURY, MARKETING],
+  price: " ",
+};
+
+export const PROFESSIONAL_MANAGEMENT = {
+  app: "professional_management",
+  icon: AON_ICONS.AON_MANAGEMENT,
+  title: "Gestión Profesional",
+  subtitle: " Gestión Estándar | Expedientes | Almacén ",
+  color: "#002469",
+  apps: [Apps.INVOICE, COMMERCIAL, TREASURY, MARKETING, Apps.WAREHOUSE, GROUPWARE],
+  price: " ",
+};
+
+export const ENTERPRISE = {
+  app: "enterprise",
+  icon: AON_ICONS.AON_ENTERPRISE,
+  title: "Empresa",
+  color: "black",
+  domainType: true,
+};
+
+
+
+export const ACADEMY = {
+  app: "academy",
+  icon: AON_ICONS.AON_ACADEMY,
+  title: "Academia",
+  color: "black",
+  domainType: true,
+};
+
+export const GARAGE = {
+  app: "garage",
+  icon: AON_ICONS.AON_GTA,
+  title: "Taller",
+  color: "black",
+  domainType: true,
+};
+
+export const COMMERCE = {
+  app: CONSTANT.COMMERCE,
+  icon: AON_ICONS.AON_COMMERCE,
+  title: "Comercio",
+  color: "black",
+  domainType: true,
+};
+
+export const HOTEL = {
+  app: "hotel",
+  icon: AON_ICONS.AON_HOTEL,
+  title: "Hotel",
+  color: "black",
+  domainType: true,
+};
+
+export const PACK_SUITE = {
+  app: "pack_suite",
+  icon: "aon_app",
+  title: "Suite Completa",
+  subtitle: " Pack Portal | Pack Cotización | Pack Tributación",
+  color: "black",
+  apps: [
+    Apps.ACCOUNTING,
+    Apps.FISCAL,
+    Apps.PAYROLL,
+    Apps.COMUNICA,
+    Apps.DOCUMENTAL,
+    Apps.TIMECONTROL,
+    Apps.INVOICE,
+    Apps.MESSENGER
+  ],
+  price: " ", // '295€/mes'
+};
+
+export const PACK_PORTAL = {
+  app: "pack_portal",
+  icon: AON_ICONS.AON_PORTAL,
+  title: "Pack Portal",
+  subtitle: " Documental | Horario | Facturas | Mensajería",
+  color: "#002469",
+  apps: [
+    Apps.DOCUMENTAL,
+    Apps.TIMECONTROL,
+    Apps.INVOICE,
+    Apps.MESSENGER
+  ],
+  price: " ", // '120€/mes'
+};
+
+export const PACK_PAYROLL = {
+  app: "pack_payroll",
+  icon: AON_ICONS.AON_PACK,
+  title: "Pack Cotización",
+  subtitle: " Laboral | Comunic@",
+  color: "#002469",
+  apps: [Apps.PAYROLL, Apps.COMUNICA],
+  price: " ", // '120€/mes'
+};
+
+export const PACK_FISCAL_ACCOUNTING = {
+  app: "pack_fiscal_accounting",
+  icon: AON_ICONS.AON_PACK,
+  title: "Pack Tributación",
+  subtitle: " Fiscal | Contabilidad",
+  color: "#002469",
+  apps: [Apps.FISCAL, Apps.ACCOUNTING],
+  price: " ", // '120€/mes'
+};
+
+export const Packs = {
+  SUITE: PACK_SUITE,
+  PORTAL: PACK_PORTAL,
+  PAYROLL: PACK_PAYROLL,
+  FISCAL_ACCOUNTING: PACK_FISCAL_ACCOUNTING
+};
+
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
 export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE, CUSTOM_VIEW };
@@ -585,22 +748,67 @@ export const AllApps = {
   AON_SALTRA
 };
 
+export const AllApps2 = {
+  INVOICE,
+  DOCUMENTAL,
+  MESSENGER,
+  ACCOUNTING,
+  FISCAL,
+  PAYROLL,
+  OCR,
+  AON_SOLUTIONS,
+  ALMA,
+  COMUNICA,
+  BIDOQ,
+  CONVENIOS,
+  BANK,
+  TIMECONTROL,
+  //MANAGEMENT,
+  PACK_SUITE,
+  PACK_PORTAL,
+  PACK_PAYROLL,
+  PACK_FISCAL_ACCOUNTING,
+  SELFCONTA,
+  CUSTOM_VIEW,
+  AULA,
+  NOTES,
+  AON_SALTRA,
+  BASIC_MANAGEMENT,
+  STANDAR_MANAGEMENT,
+  PROFESSIONAL_MANAGEMENT,
+  KIT_DIGITAL_FACE,
+  KIT_DIGITAL_CRM,
+  KIT_DIGITAL_ERP,
+  API_SERVICE,
+  WAREHOUSE,
+  COMMERCIAL,
+  MARKETING,
+  TREASURY,
+  GROUPWARE
+};
+
 export const getApp = (name) => {
-  for (let key in BookingApps) {
-    if (name.toLowerCase() === BookingApps[key].app) {
-      return BookingApps[key];
-    }
-  }
+  // for (let key in BookingApps) {
+  //   if (name.toLowerCase() === BookingApps[key].app) {
+  //     return BookingApps[key];
+  //   }
+  // }
 
-  for (let key in Services) {
-    if (name.toLowerCase() === Services[key].app) {
-      return Services[key];
-    }
-  }
+  // for (let key in Services) {
+  //   if (name.toLowerCase() === Services[key].app) {
+  //     return Services[key];
+  //   }
+  // }
 
-  for (let key in ClassicApps) {
-    if (name.toLowerCase() === ClassicApps[key].app) {
-      return ClassicApps[key];
+  // for (let key in ClassicApps) {
+  //   if (name.toLowerCase() === ClassicApps[key].app) {
+  //     return ClassicApps[key];
+  //   }
+  // }
+
+  for (let key in AllApps2) {
+    if (name.toLowerCase() === AllApps2[key].app) {
+      return AllApps2[key];
     }
   }
   return undefined;
@@ -1180,160 +1388,5 @@ export const AeatFiscalMenu = [
     entryPoint: "sii",
   },
 ];
-
-export const Packs = {
-  SUITE: {
-    app: "pack_suite",
-    icon: "aon_app",
-    title: "Suite Completa",
-    subtitle: " Pack Portal | Pack Cotización | Pack Tributación",
-    color: "black",
-    apps: [
-      Apps.ACCOUNTING,
-      Apps.FISCAL,
-      Apps.PAYROLL,
-      Apps.COMUNICA,
-      Apps.DOCUMENTAL,
-      Apps.TIMECONTROL,
-      Apps.INVOICE,
-      Apps.MESSENGER
-    ],
-    price: " ", // '295€/mes'
-  },
-  PORTAL: {
-    app: "pack_portal",
-    icon: AON_ICONS.AON_PORTAL,
-    title: "Pack Portal",
-    subtitle: " Documental | Horario | Facturas | Mensajería",
-    color: "#002469",
-    apps: [
-      Apps.DOCUMENTAL,
-      Apps.TIMECONTROL,
-      Apps.INVOICE,
-      Apps.MESSENGER
-    ],
-    price: " ", // '120€/mes'
-  },
-  PAYROLL: {
-    app: "pack_payroll",
-    icon: AON_ICONS.AON_PACK,
-    title: "Pack Cotización",
-    subtitle: " Laboral | Comunic@",
-    color: "#002469",
-    apps: [Apps.PAYROLL, Apps.COMUNICA],
-    price: " ", // '120€/mes'
-  },
-  FISCAL_ACCOUNTING: {
-    app: "pack_fiscal_accounting",
-    icon: AON_ICONS.AON_PACK,
-    title: "Pack Tributación",
-    subtitle: " Fiscal | Contabilidad",
-    color: "#002469",
-    apps: [Apps.FISCAL, Apps.ACCOUNTING],
-    price: " ", // '120€/mes'
-  },
-};
-
-export const KIT_DIGITAL_FACE = {
-  app: "kit_digital_face",
-  icon: AON_ICONS.AON_KIT_DIGITAL,
-  title: "FACe",
-  subtitle: " Factura Electrónica",
-  color: "#002469",
-  apps: [],
-  price: " ",
-};
-
-export const KIT_DIGITAL_CRM = {
-  app: "kit_digital_crm",
-  icon: AON_ICONS.AON_KIT_DIGITAL,
-  title: "CRM",
-  subtitle: " Gestión de Clientes",
-  color: "#002469",
-  apps: [],
-  price: " ",
-};
-
-export const KIT_DIGITAL_ERP = {
-  app: "kit_digital_erp",
-  icon: AON_ICONS.AON_KIT_DIGITAL,
-  title: "ERP",
-  subtitle: " Gestión de Procesos",
-  color: "#002469",
-  apps: [],
-  price: " ",
-};
-
-export const BASIC_MANAGEMENT = {
-  app: "basic_management",
-  icon: AON_ICONS.AON_MANAGEMENT,
-  title: "Básico",
-  subtitle: " Facturas | Comercial",
-  color: "#002469",
-  apps: [Apps.INVOICE, COMMERCIAL],
-  price: " ",
-};
-
-export const STANDAR_MANAGEMENT = {
-  app: "standar_management",
-  icon: AON_ICONS.AON_MANAGEMENT,
-  title: "Estándar",
-  subtitle: " Gestión Básica | Marketing | Tesoreria ",
-  color: "#002469",
-  apps: [Apps.INVOICE, COMMERCIAL, TREASURY, MARKETING],
-  price: " ",
-};
-
-export const PROFESSIONAL_MANAGEMENT = {
-  app: "professional_management",
-  icon: AON_ICONS.AON_MANAGEMENT,
-  title: "Profesional",
-  subtitle: " Gestión Estándar | Expedientes | Almacén ",
-  color: "#002469",
-  apps: [Apps.INVOICE, COMMERCIAL, TREASURY, MARKETING, Apps.WAREHOUSE, GROUPWARE],
-  price: " ",
-};
-
-export const ENTERPRISE = {
-  app: "enterprise",
-  icon: AON_ICONS.AON_ENTERPRISE,
-  title: "Empresa",
-  color: "black",
-  domainType: true,
-};
-
-
-
-export const ACADEMY = {
-  app: "academy",
-  icon: AON_ICONS.AON_ACADEMY,
-  title: "Academia",
-  color: "black",
-  domainType: true,
-};
-
-export const GARAGE = {
-  app: "garage",
-  icon: AON_ICONS.AON_GTA,
-  title: "Taller",
-  color: "black",
-  domainType: true,
-};
-
-export const COMMERCE = {
-  app: CONSTANT.COMMERCE,
-  icon: AON_ICONS.AON_COMMERCE,
-  title: "Comercio",
-  color: "black",
-  domainType: true,
-};
-
-export const HOTEL = {
-  app: "hotel",
-  icon: AON_ICONS.AON_HOTEL,
-  title: "Hotel",
-  color: "black",
-  domainType: true,
-};
 
 export default Apps;

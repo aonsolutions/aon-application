@@ -7,9 +7,9 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.SiiService;
-import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationService;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -73,10 +73,10 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 		Style dataGridStyle();
 	}
 
-	private static final SiiServiceAsync SII_SERVICE;
+	private static final InvoiceCommunicationServiceAsync SII_SERVICE;
 	static {
-		SiiServiceAsync siiServiceRaw = GWT.create(SiiService.class);
-		SII_SERVICE = new SiiServiceAsyncDecorator(siiServiceRaw); 
+		InvoiceCommunicationServiceAsync siiServiceRaw = GWT.create(InvoiceCommunicationService.class);
+		SII_SERVICE = new InvoiceCommunicationServiceAsyncDecorator(siiServiceRaw); 
 	}
 	
 	
@@ -281,9 +281,9 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 			}
 		};
 
-		dataGrid.addColumn(checkColumn, new CheckboxHeader(selectionModel, dataProvider));
+		dataGrid.addColumn(checkColumn, new CheckboxHeader(selectionModel));
 		dataGrid.setColumnWidth(checkColumn, 3, Unit.PCT);
-
+		
 		/** code Column **/
 		Column<Invoice, String> codeColumn = new Column<Invoice, String>(new TextCell()) {
 
@@ -471,18 +471,15 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 	public final class CheckboxHeader extends Header {
 
 	    private final MultiSelectionModel<Invoice> selectionModel;
-	    private final ListDataProvider<Invoice> provider;
 
-	    public CheckboxHeader(MultiSelectionModel<Invoice> selectionModel,
-	    		ListDataProvider<Invoice> provider) {
+	    public CheckboxHeader(MultiSelectionModel<Invoice> selectionModel) {
 	        super(new CheckboxCell());
 	        this.selectionModel = selectionModel;
-	        this.provider = provider;
 	    }
 
 	    @Override
 	    public Boolean getValue() {
-	        boolean allItemsSelected = selectionModel.getSelectedSet().size() == provider
+	        boolean allItemsSelected = selectionModel.getSelectedSet().size() == dataProvider
 	                .getList().size();
 	        return allItemsSelected;
 	    }
@@ -493,8 +490,8 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 	        Boolean isChecked = input.isChecked();
 //	        parent.getSend().setVisible(isChecked);
 //	        parent.getBaja().setVisible(isChecked);
-	        for (Invoice element : provider.getList()) {
-	            selectionModel.setSelected(element, isChecked);
+	        for (Invoice element : dataProvider.getList()) {
+	        	selectionModel.setSelected(element, isChecked);
 	            if(isChecked){
 					selFiles.add(element);
 				}

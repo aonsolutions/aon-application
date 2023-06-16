@@ -4,17 +4,13 @@
 	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
-	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainMassiveContracts.MyStyle">
 	
 		.container { margin: 0 1rem; }
 		
-		.dockLayoutPanel {
-			margin: 1rem;
-			border-radius: 1rem;
-			background-color: #ffffff !important;
-		}
+		.dockLayoutPanel { margin: 1rem 0; }
 		
 		.emptyMessage{
 			text-align: center;
@@ -32,6 +28,7 @@
 		.flex{
 			display: flex;
 			align-items: center;
+			gap: .5rem;
 		}
 	
 		.flexColumn {
@@ -70,30 +67,51 @@
 		
 		.widthAll { width: 100%; }
 		
+		.center{
+			display: flex;
+			justify-content: center;
+		}
+		
+		.mt10{
+			margin-top: 10px;
+		}
+		
 		@external dockLayoutPanel;
 		
 	</ui:style>
 
-	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
+	<g:DockLayoutPanel ui:field="dockLayoutPanel" styleName="{style.dockLayoutPanel}" unit="PX">
 		<g:north size="50">
 			<aon:AonToolbar ui:field="toolbar" />
 		</g:north>
 		<g:center>
-			<g:HTMLPanel styleName="{style.flexColumn}">
-				<g:HTMLPanel ui:field="messagePanel" />
-				<g:HTMLPanel ui:field="filterEmployeePanel" />
+			<g:DeckPanel ui:field="mainDeckPanel">
+		
+				<g:HTMLPanel styleName="{style.flexColumn}">
+					<g:HTMLPanel ui:field="messagePanel" />
+					<g:HTMLPanel ui:field="filterEmployeePanel" styleName="{style.container}" />
+					
+					<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
+						<g:Grid ui:field="contractsDataTableHeader" styleName="{style.widthAll}" />
+			    		<g:ScrollPanel ui:field="scrollPanel">
+			    			<g:DeckPanel styleName="{style.widthAll} {style.heigthAll}" ui:field="deckPanel">
+			    				<g:Grid ui:field="contractDataTable" styleName="{style.heigthAuto}"/>
+			    				<g:Label text="No existe contratos para este filtro" styleName="{style.emptyMessage}" />
+			    			</g:DeckPanel>
+			    		</g:ScrollPanel>
+					</g:HTMLPanel>
 				
-				<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
-					<g:Grid ui:field="contractsDataTableHeader" styleName="{style.widthAll}" />
-		    		<g:ScrollPanel ui:field="scrollPanel">
-		    			<g:DeckPanel styleName="{style.widthAll} {style.heigthAll}" ui:field="deckPanel">
-		    				<g:Grid ui:field="contractDataTable" styleName="{style.heigthAuto}"/>
-		    				<g:Label text="No existe contratos en este dominio" styleName="{style.emptyMessage}" />
-		    			</g:DeckPanel>
-		    		</g:ScrollPanel>
 				</g:HTMLPanel>
-			
-			</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
+					<g:SimpleLayoutPanel ui:field="scrolledPDFPanel" styleName="{style.center}">
+						<g:HTMLPanel styleName="{style.mt10} {style.center}">
+					 		<p:FullViewer styleName="reset" ui:field='pdfViewer' />
+				 		</g:HTMLPanel>
+					</g:SimpleLayoutPanel> 
+				 </g:HTMLPanel>
+				 
+			 </g:DeckPanel>
 			
 		</g:center>
 	</g:DockLayoutPanel>

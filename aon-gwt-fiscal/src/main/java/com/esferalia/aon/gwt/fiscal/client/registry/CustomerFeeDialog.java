@@ -2,10 +2,8 @@ package com.esferalia.aon.gwt.fiscal.client.registry;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryService;
@@ -30,7 +28,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -39,6 +36,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 public abstract class CustomerFeeDialog extends AonCustomDialog {
 
@@ -71,7 +69,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	
 	private HTMLPanel periodicityPanel;
 	private ListBox monthListBox;
-	private ListBox yearListBox;
+	private TextBox yearTextBox;
 	private Label periodLabel;
 	private ListBox periodListBox;
 	
@@ -272,7 +270,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		lineTextBox = new TextBox();
 		lineTextBox.setHeight("2em");
-		lineTextBox.setWidth("8.2em");
+		lineTextBox.setWidth("8.8em");
 		lineTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 		lineTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setLine(Double.parseDouble(e.getValue()));});
 		if(null != fee) lineTextBox.setValue(fee.getLine().toString());
@@ -402,7 +400,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			quantityLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 			
 			quantityTextBox = new TextBox();
-			quantityTextBox.setWidth("8.2em");
+			quantityTextBox.setWidth("8.8em");
 			quantityTextBox.setHeight("2em");
 			quantityTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 			quantityTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setQuantity(Double.parseDouble(e.getValue()));});
@@ -416,7 +414,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		priceTextBox = new TextBox();
 		priceTextBox.setHeight("2em");
-		priceTextBox.setWidth("8.2em");
+		priceTextBox.setWidth("8.8em");
 		priceTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 		priceTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setPrice(Double.parseDouble(e.getValue()));});
 		if(null != fee && null != fee.getPrice()) priceTextBox.setValue(fee.getPrice().toString());
@@ -427,7 +425,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		discountTextBox = new TextBox();
 		discountTextBox.setHeight("2em");
-		discountTextBox.setWidth("8.2em");
+		discountTextBox.setWidth("8.8em");
 		discountTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 		discountTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setDiscountExpr(e.getValue());});
 		if(null != fee) discountTextBox.setValue(fee.getDiscountExpr());
@@ -456,7 +454,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		startDateBox = new AonDateBox();
 		startDateBox.setHeight("2em");
-		startDateBox.setWidth("8.2em");
+		startDateBox.setWidth("8.8em");
 		startDateBox.getElement().getStyle().setProperty("padding", "0 5px");
 		startDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		startDateBox.addStyleName("gwt-TextBox");
@@ -469,7 +467,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		endDateBox = new AonDateBox();
 		endDateBox.setHeight("2em");
-		endDateBox.setWidth("8.2em");
+		endDateBox.setWidth("8.8em");
 		endDateBox.getElement().getStyle().setProperty("padding", "0 5px");
 		endDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		endDateBox.addStyleName("gwt-TextBox");
@@ -498,24 +496,15 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		});
 		if(null != fee) setSelectedValueLB(monthListBox, fee.getBillingDate().getMonth() + "");
 		
-		createYearListBox(lb -> {
-			yearListBox = lb;
-			yearListBox.addChangeHandler(e -> {
-				if(null != fee) fee.setBillingDate(createBillingDate());
-			});
-			
-			periodicityPanel.add(billingLabel);
-			periodicityPanel.add(monthListBox);
-			periodicityPanel.add(yearListBox);
-			
-			if(null != fee) setSelectedValueLB(yearListBox, fee.getBillingDate().getYear() + "");
-			
-			if(null != this.fee || this.isNewFee) {
-				periodicityPanel.add(periodLabel);
-				periodicityPanel.add(periodListBox);
-			}
-			
+		yearTextBox = createYearTextBox();
+		yearTextBox.addValueChangeHandler(e -> {
+			if(null != fee) fee.setBillingDate(createBillingDate());
 		});
+		if(null != fee) yearTextBox.setValue((fee.getBillingDate().getYear() + 1900) + "");
+		
+		periodicityPanel.add(billingLabel);
+		periodicityPanel.add(monthListBox);
+		periodicityPanel.add(yearTextBox);
 		
 		periodLabel = new Label();
 		if(null != this.fee || this.isNewFee) {
@@ -535,9 +524,24 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			periodListBox.addItem("Anual", "6");
 			periodListBox.addChangeHandler(e -> { if(null != fee) fee.setPeriod(BillingPeriod.safeValueOf(periodListBox.getSelectedValue()));});
 			if(null != fee) setSelectedValueLB(periodListBox, fee.getPeriod().getValue().toString());
+			
+			periodicityPanel.add(periodLabel);
+			periodicityPanel.add(periodListBox);
 		}
 		
 		container.add(periodicityPanel);
+	}
+	
+	private TextBox createYearTextBox() {
+		TextBox tb = new TextBox();
+		tb.setMaxLength(4);
+		tb.setHeight("2em");
+		tb.setWidth("4em");
+		tb.setAlignment(TextAlignment.CENTER);
+		tb.getElement().getStyle().setProperty("padding", "0 5px");
+		tb.getElement().getStyle().setProperty("placeholder", "aaaa");
+		
+		return tb;
 	}
 
 	private void createWorkplacePanel() {
@@ -559,6 +563,10 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		workplaceSuggestBox.addSelectionHandler(e -> {
 			workplaceSuggestBox.hideSuggestionList();
 			if(null != fee) fee.setWorkplace(workplaceSuggestions.get(workplaceSuggestBox.getValue()));
+		});
+		
+		workplaceSuggestBox.addValueChangeHandler(e -> {
+			if(null != fee && AonStringUtils.isBlank(workplaceSuggestBox.getValue())) AonMessagePanel.showError(messagePanel, "El campo centro de trabajo es obligatorio");
 		});
 		
 		workplaceSuggestBox.addKeyUpHandler(e -> {
@@ -683,6 +691,10 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			if(null != fee) fee.setInvoicingGroup(invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()));
 		});
 		
+		invoicingGroupSuggestBox.addValueChangeHandler(e -> {
+			if(null != fee && AonStringUtils.isBlank(invoicingGroupSuggestBox.getValue())) fee.setInvoicingGroup(null);
+		});
+		
 		invoicingGroupSuggestBox.addKeyUpHandler(e -> {
 			String invoicingGroupQuery = invoicingGroupSuggestBox.getValue();
 			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
@@ -742,6 +754,10 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			if(null != fee) fee.setProject(projectSuggestions.get(projectSuggestBox.getValue()));
 		});
 		
+		projectSuggestBox.addValueChangeHandler(e -> {
+			if(null != fee && AonStringUtils.isBlank(projectSuggestBox.getValue())) fee.setProject(null);
+		});
+		
 		projectSuggestBox.addKeyUpHandler(e -> {
 			String projectQuery = projectSuggestBox.getValue();
 			
@@ -789,9 +805,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 
 	private Date createBillingDate() {
-		if(AonStringUtils.isBlank(monthListBox.getSelectedValue()) || AonStringUtils.isBlank(yearListBox.getSelectedValue())) return null;
+		if(AonStringUtils.isBlank(monthListBox.getSelectedValue()) || AonStringUtils.isBlank(yearTextBox.getValue())) return null;
 		
-		return new Date(Integer.parseInt(yearListBox.getSelectedValue()), Integer.parseInt(monthListBox.getSelectedValue()), 1);
+		return new Date(Integer.parseInt(yearTextBox.getValue()) - 1900, Integer.parseInt(monthListBox.getSelectedValue()), 1);
 	}
 
 	private ListBox createMonthListBox() {
@@ -814,39 +830,6 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		lb.addItem("Dic.", "11");
 
 		return lb;
-	}
-	
-	private void createYearListBox(Consumer<ListBox> consumer) {
-		SERVICE.getMinMaxCustomerFeeYear(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<Map<Integer, Integer>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onSuccess(Map<Integer, Integer> minMaxYear) {
-				Optional<Entry<Integer, Integer>> firstEntry = minMaxYear.entrySet().stream().findFirst();
-				Integer minYear = firstEntry.get().getKey();
-				Integer maxYear = firstEntry.get().getValue();
-				
-				Integer currentYear = new Date().getYear() + 1900;
-				if(currentYear > maxYear) maxYear = currentYear;
-				
-				ListBox lb = new ListBox();
-				lb.setHeight("2em");
-				lb.getElement().getStyle().setProperty("padding", "0 5px");
-				lb.addItem("-", "");
-				
-				while(maxYear >= minYear) {
-					lb.addItem(maxYear.toString(), (maxYear - 1900) + "");
-					maxYear--;
-				}
-
-				consumer.accept(lb);
-			}
-			
-		});
 	}
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {

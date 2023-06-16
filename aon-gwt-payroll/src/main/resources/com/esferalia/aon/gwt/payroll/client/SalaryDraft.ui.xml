@@ -646,7 +646,7 @@
 													<g:Label styleName="{style.cell-label}">BASE IRPF</g:Label>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueInlineHTML
-															changeDisplayStyleName="{style.value-changed}" ui:field="irpfBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
+															changeDisplayStyleName="{style.value-changed}" debugId="irpfBaseLabel" ui:field="irpfBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 														<g:InlineHTML ui:field="dbIrpfBaseLabel"
 															visible="false" />
 													</g:HTMLPanel>

@@ -7,6 +7,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public enum Mod111Key implements IFiscalModelKey {
 	
 	 CM_001("111-CM-01", 1)  // Deshabilitado el cálculo por diferencias (0-Habilitado, 1-Deshabilitado)
+	,CM_002("111-CM-02", 2)  // Seleccion nominas por fecha de pago 
 	
 	// ------------------------------------------------------------------ ALAVA
 	,AR_907("111-AR-907", 907)

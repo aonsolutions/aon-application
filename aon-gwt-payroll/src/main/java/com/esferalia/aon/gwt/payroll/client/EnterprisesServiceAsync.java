@@ -138,6 +138,7 @@ public interface EnterprisesServiceAsync {
 			AsyncCallback<String> asyncCallback);
 	void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback);
 	void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
+	void getFJEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 	void getEmployeesITInfo(String currentDomainName, Boolean allEmployees,
 			AsyncCallback<List<ITEmployee>> asyncCallback);
 	void getEmployeesITInfo(String currentDomainName, Integer ids [],
@@ -183,7 +184,7 @@ public interface EnterprisesServiceAsync {
 			String contributionAccount, String docType, String docNum, String applicantType, String reason,
 			Date dateFrom, Date dateTo, float baseCC, float baseCP, int days, AsyncCallback<Boolean> asyncCallback);
 	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
-			String contributionAccount, Date dateFrom, Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback);
+			String contributionAccount, Date dateFrom, Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void syncITs(String currentDomainName, String currentUser, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it,
 			AsyncCallback<Void> asyncCallback);
@@ -317,5 +318,9 @@ public interface EnterprisesServiceAsync {
 	void getMassiveCNOs(String currentDomainName, String currentUser, AsyncCallback<List<ContractData>> asyncCallback) throws IllegalArgumentException;
 	
 	void updateMassiveCNOs(String currentDomainName, String currentUser, List<ContractData> contractDatas, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	void duplicateContract(String currentDomainName, String currentUser, EmployeeContractInfo employee, Date newStartDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	void duplicateContract(String currentDomainName, String currentUser, List<EmployeeContractInfo> employees, Date newStartDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 }

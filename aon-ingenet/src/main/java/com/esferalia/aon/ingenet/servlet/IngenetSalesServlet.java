@@ -288,7 +288,6 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		String xml = IngenetXmlValidator.convertToXml(pedidos, RESPUESTAPEDIDOS.class);
 		
 		httpResponse.setContentType("application/xml");
-		httpResponse.setContentLength(xml.length());
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
 		out.flush();

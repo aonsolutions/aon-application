@@ -213,9 +213,13 @@ public class MainCRA extends MainEntryPoint {
 
 		year.addItem(yearInt + "", yearInt + "");
 		year.addItem((yearInt - 1) + "", (yearInt - 1) + "");
+		year.addItem((yearInt - 2) + "", (yearInt - 2) + "");
+		year.addItem((yearInt - 3) + "", (yearInt - 3) + "");
 
 		yearTillT.addItem(yearInt + "", yearInt + "");
 		yearTillT.addItem((yearInt - 1) + "", (yearInt - 1) + "");
+		yearTillT.addItem((yearInt - 2) + "", (yearInt - 2) + "");
+		yearTillT.addItem((yearInt - 3) + "", (yearInt - 3) + "");
 
 		// Type List
 		typeList.clear();
