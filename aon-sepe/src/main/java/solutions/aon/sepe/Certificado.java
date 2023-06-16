@@ -326,79 +326,91 @@ public class Certificado {
 					
 						HtmlForm formContingence = (HtmlForm) HtmlUnitToolkit
 								.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-
-						HtmlInput yearCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srAnyoCotizacion");
-
-						if (yearCtzInput == null) 
-							yearCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAPre.srAnyoCotizacion");
 						
-						yearCtzInput.setValue(qdata.getAnio().toString());
-
-						HtmlInput monthCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srMesCotizacion");
-
-						if (monthCtzInput == null)
-							monthCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAPre.srMesCotizacion");
-
-						monthCtzInput.setValue(qdata.getMonth().toString());
-
-						HtmlInput dayCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion");
-
-						if (dayCtzInput == null)
-							dayCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAPre.srMesesCotizados");
-						
-						dayCtzInput.setValue(qdata.getDays().toString());
-
-						qdata.getBccc().ifPresent(d -> 
-							formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes").setValue(decimalFormat.format(d))
-						);
-
-						qdata.getBcd().ifPresent(d -> {
-							HtmlInput input = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo");
-
-							if (input == null) 
-								input = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAPre.srCotizacionDesempleo");
-
-							if (input != null)
-								input.setValue(decimalFormat.format(d));
+						if(certificates.getRegimen().equals("0163")) {
+							HtmlInput yearCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAPre.srAnyoCotizacion");
+							yearCtzInput.setValue(qdata.getAnio().toString());
 							
-						});
+							HtmlInput monthCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAPre.srMesCotizacion");
+							monthCtzInput.setValue(qdata.getMonth().toString());
+							
+							HtmlInput dayCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAPre.srMesesCotizados");
+							dayCtzInput.setValue(qdata.getDays().toString());
+							
+							qdata.getBcd().ifPresent(d -> {
+								HtmlInput input = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAPre.srCotizacionDesempleo");
+
+								if (input != null)
+									input.setValue(decimalFormat.format(d));
+								
+							});
+						} else {
+							HtmlInput yearCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srAnyoCotizacion");
+							yearCtzInput.setValue(qdata.getAnio().toString());
+							
+							HtmlInput monthCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srMesCotizacion");
+							monthCtzInput.setValue(qdata.getMonth().toString());
+							
+							HtmlInput dayCtzInput = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion");
+							dayCtzInput.setValue(qdata.getDays().toString());
+							
+							qdata.getBccc().ifPresent(d -> 
+								formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes").setValue(decimalFormat.format(d))
+							);
+							
+							qdata.getBcd().ifPresent(d -> {
+								HtmlInput input = formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo");
+
+								if (input != null)
+									input.setValue(decimalFormat.format(d));
+								
+							});
+						}
 
 						htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btAnadir]")).click();
 						
 					}
 
 					handleSepeExceptions(htmlPage);
-
 				}
 
 				{// DATA VACATION
 					HtmlForm formVacation = (HtmlForm) HtmlUnitToolkit
 							.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 					if(certificates.getDaysCtzVc() != null && certificates.getDaysCtzVc() != 0) {
-						if (certificates.getDaysCtzVc() != null) {
-							HtmlInput input = formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srDiasCotizacion");
+						
+						if(certificates.getRegimen().equals("0163")) {
+							if (certificates.getDaysCtzVc() != null) {
+								HtmlInput input = formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAVacacionesPre.srMesesCotizados");
+								
+								if (input != null)
+									input.setValue(certificates.getDaysCtzVc().toString());
+							}
+							
+							certificates.getBcdVc().ifPresent(d -> {
+								HtmlInput input = formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAVacacionesPre.srCotizacionDesempleo");
+								
+								if (input != null) input.setValue(decimalFormat.format(d));
+								
+							});
+						} else {
+							if (certificates.getDaysCtzVc() != null) {
+								HtmlInput input = formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srDiasCotizacion");
 
-							if (input == null) 
-								input = formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAVacacionesPre.srMesesCotizados");
+								if (input != null)
+									input.setValue(certificates.getDaysCtzVc().toString());
+							}
 							
-							if (input != null)
-								input.setValue(certificates.getDaysCtzVc().toString());
+							certificates.getBcccVc().ifPresent(d ->
+								formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes").setValue(decimalFormat.format(d))
+							);
 							
+							certificates.getBcdVc().ifPresent(d -> {
+								HtmlInput input = formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo");
+
+								if (input != null) input.setValue(decimalFormat.format(d));
+							});
 						}
-	
-						certificates.getBcccVc().ifPresent(d ->
-							formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes").setValue(decimalFormat.format(d))
-						);
-	
-						certificates.getBcdVc().ifPresent(d -> {
-							HtmlInput input = formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo");
-
-							if (input == null)
-								input = formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionREAVacacionesPre.srCotizacionDesempleo");
-							
-							if (input != null) input.setValue(decimalFormat.format(d));
-							
-						});
 					}
 					
 					htmlPage = ((HtmlSubmitInput) htmlPage
