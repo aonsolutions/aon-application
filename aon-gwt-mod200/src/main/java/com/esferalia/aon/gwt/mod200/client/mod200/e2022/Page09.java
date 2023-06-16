@@ -156,7 +156,9 @@ public class Page09 extends PageAbs {
 					table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft20());
 				}				
 				
-				if (key == Mod2002022Key.LQ1890) {
+				if (key == Mod2002022Key.LQ1890
+						&& callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0009) 
+						&& callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010)) {
 					row = paintKeyBreakdownLink(table, row, Mod2002022Key.LQ1887, Mod2002022LQ243Key.values(), HEADERS_4, FOOTER_547);
 				}
 				
@@ -273,9 +275,8 @@ public class Page09 extends PageAbs {
 	
 	@Override
 	protected boolean isDisabled(IMod200Key key) {
-		if (key == Mod2002022Key.LQ1032 
-				&& (callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0009) 
-				|| callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0010))) {
+		if ((key == Mod2002022Key.LQ1032 || key == Mod2002022Key.LQ1887 || key == Mod2002022Key.LQ1890) && 
+			(callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0009) || callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0010))) {
 			return false;
 		}
 		if (key == Mod2002022Key.LQ562 

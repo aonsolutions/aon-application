@@ -2,29 +2,32 @@ package com.esferalia.aon.gwt.common.server;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
-
-import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Common", "/aon_gwt_mod200/ms/Common", "/aon_gwt_aio/ms/Common"})
 public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implements CommonService {
@@ -167,13 +170,38 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	// Para carga del PDF del modelo
+	// **************************************************
+	// *************************************** [REGISTRY]
+	// **************************************************
+	
 	@Override
-	public void savePDFModel(Occam occam, IFiscalModel model, String data) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			DataResponseDAO.insertPDFModel(ctx, model, data);
-		} 
+	public List<Customer> getCustomers(String domainName, int domain, String user, Integer account) throws AonCoreException {
+		return AON.getCustomerList(domainName, account, user, f -> f.getAccountProperty().eq(account));
 	}
-
+	
+	@Override
+	public CustomerFull getCustomer(String domainName, int domain, String user, Integer registry) throws AonCoreException {
+		return AON.getCustomerFull(domainName, domain, user, registry);
+	}
+	
+	@Override
+	public List<Supplier> getSuppliers(String domainName, int domain, String user, Integer account) throws AonCoreException {
+		return AON.getSupplierList(domainName, account, user, f -> f.getAccountProperty().eq(account));
+	}
+	
+	@Override
+	public SupplierFull getSupplier(String domainName, int domain, String user, Integer registry) throws AonCoreException {
+		return AON.getSupplierFull(domainName, domain, user, registry);
+	}
+	
+	@Override
+	public List<Creditor> getCreditors(String domainName, int domain, String user, Integer account) throws AonCoreException {
+		return AON.getCreditorList(domainName, account, user, f -> f.getAccountProperty().eq(account));
+	}
+	
+	@Override
+	public CreditorFull getCreditor(String domainName, int domain, String user, Integer registry) throws AonCoreException {
+		return AON.getCreditorFull(domainName, domain, user, registry);
+	}
 	
 }

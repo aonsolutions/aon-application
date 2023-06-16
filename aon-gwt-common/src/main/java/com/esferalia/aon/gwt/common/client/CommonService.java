@@ -2,17 +2,23 @@ package com.esferalia.aon.gwt.common.client;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -65,7 +71,16 @@ public interface CommonService extends RemoteService {
 	LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName,int domain, String user,String query) throws AonCoreException;
 	LinkedList<OldProduct> getInvoiceProducts(String domainName,int domain, String user,String query) throws AonCoreException;
 	
-	// Para carga del PDF del modelo
-	void savePDFModel(Occam occam, IFiscalModel model, String data);
+	// **************************************************
+	// *************************************** [REGISTRY]
+	// **************************************************
+	
+	List<Customer> getCustomers(String domainName, int domain, String user, Integer account) throws AonCoreException;
+	List<Supplier> getSuppliers(String domainName, int domain, String user, Integer account) throws AonCoreException;
+	List<Creditor> getCreditors(String domainName, int domain, String user, Integer account) throws AonCoreException;
+	
+	CustomerFull getCustomer(String domainName, int domain, String user, Integer registry) throws AonCoreException;
+	SupplierFull getSupplier(String domainName, int domain, String user, Integer registry) throws AonCoreException;
+	CreditorFull getCreditor(String domainName, int domain, String user, Integer registry) throws AonCoreException;
 	
 }

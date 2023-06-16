@@ -1509,6 +1509,7 @@ public class Mod2002022Writer {
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022LQ547Key.values())
+				// FALTA - ESTE DESGLOSE NO SE CUMPLIMENTA SI ESTAN MARCADOS LOS CARACTERES 9 O 10, EN TAL CASO VER SI TAMPOCO HAY QUE PONER LAS CASILLAS 1887 Y 1890
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022LQ243Key.values())
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
@@ -1633,7 +1634,9 @@ public class Mod2002022Writer {
 		, PAG20B("T20020B00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")
+				// FALTA - SI CARACTERES 9 O 10 MARCADOS LA CASILLA 1032 ES DE CUMPLIMENTACION DIRECTA, POR LO TANTO IGUAL TODAS LAS CASILLAS DE ESTE DESGLOSE DEBEN IR A CERO
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022LQ1032Key.values())
+				
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022LQ1033_1Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022LQ1033_2Key.values())
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT

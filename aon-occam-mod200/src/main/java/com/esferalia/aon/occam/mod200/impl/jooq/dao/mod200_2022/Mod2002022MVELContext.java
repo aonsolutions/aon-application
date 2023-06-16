@@ -27,11 +27,13 @@ import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0047;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0048;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0049;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0056;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0057;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0058;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0063;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0064;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0066;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0069;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0071;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0072;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0078;
@@ -39,6 +41,8 @@ import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0080;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0081;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0082;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0083;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0084;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.LQ520;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.LQ521;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.LQ552;
@@ -527,9 +531,13 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 			 isChecked(C0047) ||
 			 isChecked(C0078) || 
 			 isChecked(C0081) ||
-			 isChecked(C0082) )
+			 isChecked(C0082) ||
+			 isChecked(C0056) ||
+			 isChecked(C0069) ||
+			 isChecked(C0084) )
 			return roundKey(LQ558);
 		
+		if ( isChecked(C0083) ) return 15.0;
 		if ( isChecked(C0063) ) return 15.0;
 		if ( isChecked(C0066) ) return 25.0;
 		if ( isChecked(C0071) ) return 15.0;
@@ -582,6 +590,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 	}
 	
 	// FALTA - CREO QUE NO SE USA, PERO DEBERIA USARSE PARA NO CALCULAR EL DESGLOSE DE ESTA CASILLA CUANDO ESTA MARCADO 9 O 10 PUES ES DE CUMPLIMENTACION DIRECTA
+	// YA SE HACE EL CONTROL EN 
 //	public double computeLQ1032() throws AonCoreException {
 //		if (isGroup() && getContainsKey(Mod2002022Key.LQ1032)) {
 //			return getValue(Mod2002022Key.LQ1032);
@@ -602,6 +611,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		}
 	}
 	
+	// Cuota Integra (Casilla 562)
 	public double computeLQ562() throws AonCoreException {
 		
 		double lq558 = roundKey(LQ558);
@@ -655,6 +665,9 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 			return 0;
 		}
 
+		// FALTA - REVISAR CUANDO ESTE DISPONIBLE EL SERVICIO DE VALIDACION
+//		Si marca la casilla 00057 y Siempre que la (01330 - 00521) > 0:
+//			Cuando esté combinada con la clave 00006 (empresa de reducida dimensión), o clave 00063 (aplicable el tipo de gravamen reducido para entidades de nueva creación), o clave 00071, o clave 00083 => sustituir todas las referencias a la 01330 por (01330- 00521)		
 		if (isChecked(C0057)) {
 			double lq521 = roundKey(LQ521);
 			if (round(lq1330-lq521) > 0) {
@@ -662,6 +675,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 			}
 			return 0;
 		}
+		// Cálculo de la cuota integra con caracter general
 		return round(lq1330 * lq558 / 100);
 	}
 	
@@ -971,13 +985,15 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 	// La clave 01034 sólo puede tener contenido si se ha marcado la clave 00006 de caracteres de la
 	// declaración.
 	// La clave 01034 (disminuciones) sólo podrá tener contenido cuando la base imponible (clave
-	// 00552) sea positiva, y su importe máximo será el 10% de dicha base positiva y no puede superar
+	// 00552) sea positiva(excepto en los supuestos que también se haya marcado la clave 00072 de 
+	// caracteres "extinción de entidad", en cuyo caso la clave 01034 permanecerá cerrada sin posibilidad 
+	// de cumplimentación), y su importe máximo será el 10% de dicha base positiva y no puede superar
 	// el millón de euros si el periodo impositivo es igual al año o si su período impositivo tiene una
 	// duración inferior al año el importe máximo será = 1.000.000 x d/365.	
 	public double computeLQ1034A() throws AonCoreException {
 		
 		double lq552 = getValue(Mod2002022Key.LQ552);
-		if (isChecked(Mod2002022Key.C0006) && lq552 > 0) {
+		if (isChecked(Mod2002022Key.C0006) && !isChecked(Mod2002022Key.C0072) && lq552 > 0) {
 			double lq1034 = roundKey(Mod2002022Key.LQ1034A);
 			if (lq1034 > round(lq552*10/100))
 				lq1034 = round(lq552*10/100);
@@ -987,6 +1003,28 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		} else {
 			return 0.0;
 		}
+		
+	}
+	
+	// Base Imponible (Casilla 552)
+	// Caso General: 00552 = 00550 - 01032 - 00547
+	// Para el régimen especial de buques y empresas navieras en Canarias (caracter 69)
+	// 1. Cuando 00541 (BI régimen especial) sea positiva y 00564 negativa o cero: 00552 = 00541- 00564 - 00547
+	// 2. Cuando 00541 sea negativa y 00564 positiva o cero: 00552 = 00564 - 00547			
+	public double computeLQ552() throws AonCoreException {
+		
+		double lq550 = roundKey(Mod2002022Key.LQ550);
+		double lq1032 = roundKey(Mod2002022Key.LQ1032);
+		double lq547 = roundKey(Mod2002022Key.LQ547);
+		double lq541 = roundKey(Mod2002022Key.LQ541);
+		double lq564 = roundKey(Mod2002022Key.LQ564);
+
+		if (isChecked(C0069) && lq541 > 0 && lq564 <= 0)
+			return lq541 - lq564 - lq547;
+		else if (isChecked(C0069) && lq541 < 0 && lq564 >= 0)
+			return lq564 - lq547;
+		else
+			return lq550 - lq1032 - lq547;
 		
 	}
 			
