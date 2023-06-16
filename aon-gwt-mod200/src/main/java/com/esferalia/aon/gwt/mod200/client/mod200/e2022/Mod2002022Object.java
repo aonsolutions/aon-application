@@ -110,6 +110,7 @@ public class Mod2002022Object implements Serializable {
 			
 			@Override
 			public void onSuccess(Mod2002022 result) {
+				Window.alert("onSuccess");
 				mod200 = result;
 				calculate();
 				fireMod200Changed(mod200);
@@ -118,6 +119,7 @@ public class Mod2002022Object implements Serializable {
 			
 			@Override
 			public void onFailure(Throwable caught) {
+				Window.alert("onFailure");
 				initialized = false;
 				callback.onFailure(caught);
 			}

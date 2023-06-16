@@ -58,6 +58,23 @@ public class Mod2002022ServiceImpl extends AonStatelessRemoteServiceServlet impl
 		MODEL2002022.deleteMod2002022(occam, mod200);
 	}
 
+	// FALTA
+//	@Override
+//	public Mod2002022 fillMod2002022AccountingData(Occam occam, Mod2002022 mod200, String base64) {
+//		byte[] fileData = Base64.getDecoder().decode(base64);
+//		ByteArrayInputStream input = new ByteArrayInputStream(fileData);
+//		try {
+//			JAXBContext context = JAXBContext.newInstance(MOD2002022.class);
+//			Unmarshaller um = context.createUnmarshaller();
+//			MOD2002022 mod = (MOD2002022) um.unmarshal(input);
+//			if (mod200 != null && mod != null) {
+//				XMLtoMod2002022.fillMod2002022(mod, mod200);
+//			}
+//		} catch (JAXBException e) {
+//			e.printStackTrace();
+//		}		
+//		return mod200;
+//	}
 	@Override
 	public Mod2002022 fillMod2002022AccountingData(Occam occam, Mod2002022 mod200, String base64) {
 		byte[] fileData = Base64.getDecoder().decode(base64);
@@ -70,10 +87,13 @@ public class Mod2002022ServiceImpl extends AonStatelessRemoteServiceServlet impl
 				XMLtoMod2002022.fillMod2002022(mod, mod200);
 			}
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			// FALTA - MENSAJE DESCRIPTIVO DEL ERROR
+			throw new AonCoreException("Error al cargar el archivo. El archivo debe ser un archivo XML con el formato indicado por la Agencia Tributaria " + e.getMessage());
 		}		
 		return mod200;
 	}
+	
 	
 	@Override
 	public LinkedList<CompanyBank> getCompanyBanks(Occam occam) throws AonCoreException {

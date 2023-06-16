@@ -115,7 +115,6 @@ public abstract class PageAbs extends ResizeComposite {
 	// Habilitar/Deshabilitar los controles de edicion de la página 
 	protected void setEnabled() {
 		
-		// FALTA - PRUEBA ESTO ES POR LA PAGINA DE AEAT, MIRAR SI AL FINAL SE QUEDA ASI ??
 		if (callback != null) {		
 			// Se habilitan si el modelo es editable y la casilla no está deshabilitada
 			for (IMod200Key key : inputs.keySet()) {
@@ -142,7 +141,7 @@ public abstract class PageAbs extends ResizeComposite {
 		basePanel = new FlowPanel();		
 		basePanel.addStyleName(AON.CSS.aonPaddingBottom());
 		// FALTA - PRUEBA PARA QUE NO OCUPEN TODA LA PANTALLA DE ANCHO SINO QUE COMO MAXIMO SE AJUSTE MAS O MENOS AL CONTENIDO QUE TIENE O A UN ANCHO MAXIMO
-		//basePanel.getElement().getStyle().setProperty("max-width", "fit-content");
+		//basePanel.getElement().getStyle().setProperty("max-width", "max-content");
 		basePanel.getElement().getStyle().setProperty("max-width", "1200px");
 		
 		scroll.add(basePanel);

@@ -49,7 +49,7 @@ public class Model2002022 extends DockLayoutPanel {
 	private PageAbs[] PAGES = new PageAbs[22];
 //	private int P00 = 0;
 //	private PageAEAT pageAEAT = null;
-	private PageAbs pageAEAT = PAGES[PAGES.length-1];
+//	private PageAbs pageAEAT = PAGES[PAGES.length-1];
 	private WestFocusPanel westFocusPanelAEAT = null;
 	
 	protected Mod2002022Object mod200Object;
@@ -375,7 +375,8 @@ public class Model2002022 extends DockLayoutPanel {
 					protected void onUpload(String data) {
 						mod200Object.fillMod2002022AccountingData(options.getDomainName(), options.getDomain(), options.getUser(), data, new AsyncCallback<Mod2002022>() {
 							@Override public void onSuccess(Mod2002022 result) {	
-								markAsDirty();
+								//markAsDirty();
+								Model2002022.this.markAsDirty();
 							}
 							@Override public void onFailure(Throwable caught) {
 								mod200Callback.showError(caught.getMessage());
@@ -803,11 +804,6 @@ public class Model2002022 extends DockLayoutPanel {
 		linkContainer.add(westFocusPanelAEAT);
 		
 		//linkContainer.add(new WestFocusPanel(22,"Agencia Tributaria"));
-
-		// PAGINA AGENCIA TRIBUTARIA CON INFO, FICHERO Y BORRADOR - POR AHORA SE PONEN 
-		// LOS BOTONES COMO ESTABAN ANTES, PUES EN LOS OTROS MODELOS SE ESTA LLAMANDO A UNA CLASE
-		// DE AON-GWT-FISCAL LA CUAL LLAMA A VARIAS CLASES DEL MISMO PROYECTO, ADEMAS SE REQUIERE
-		// QUE YA ESTE DESARROLLADO LO DEL ESTADO DEL MODELO (FINALIZADO, ENVIADO, ETC..)
 		
 		scrollPanel.add(linkContainer);
 		return scrollPanel;
@@ -828,8 +824,11 @@ public class Model2002022 extends DockLayoutPanel {
 		this.dirty = dirty;
 		styleDirtyLabel();
 		refreshButtonsVisibility();
-		if (pageAEAT != null)
-			pageAEAT.setEnabled();
+		// FALTA 
+//		if (pageAEAT != null)
+//			pageAEAT.setEnabled();
+		if (PAGES[PAGES.length-1] != null)
+			PAGES[PAGES.length-1].setEnabled();
 	}
 	
 	private void audit() {

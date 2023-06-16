@@ -524,7 +524,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		return 365;
 	}
 	
-	// Tipo de Gravamen
+	// Tipo de Gravamen (Casilla 558)
 	public double computeLQ558() throws AonCoreException {
 		
 		if ( isChecked(C0030) || 
@@ -1009,8 +1009,8 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 	// Base Imponible (Casilla 552)
 	// Caso General: 00552 = 00550 - 01032 - 00547
 	// Para el régimen especial de buques y empresas navieras en Canarias (caracter 69)
-	// 1. Cuando 00541 (BI régimen especial) sea positiva y 00564 negativa o cero: 00552 = 00541- 00564 - 00547
-	// 2. Cuando 00541 sea negativa y 00564 positiva o cero: 00552 = 00564 - 00547			
+	// 1. Cuando 00541 sea positiva y 00564 negativa: 00552 = 00541 + 00564 - 00547
+	// 2. Cuando 00541 sea negativa y 00564 positiva o cero: 00552 = 00564 - 01032 - 00547			
 	public double computeLQ552() throws AonCoreException {
 		
 		double lq550 = roundKey(Mod2002022Key.LQ550);
@@ -1019,10 +1019,10 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		double lq541 = roundKey(Mod2002022Key.LQ541);
 		double lq564 = roundKey(Mod2002022Key.LQ564);
 
-		if (isChecked(C0069) && lq541 > 0 && lq564 <= 0)
-			return lq541 - lq564 - lq547;
+		if (isChecked(C0069) && lq541 > 0 && lq564 < 0)
+			return lq541 + lq564 - lq547;
 		else if (isChecked(C0069) && lq541 < 0 && lq564 >= 0)
-			return lq564 - lq547;
+			return lq564 - lq1032 - lq547;
 		else
 			return lq550 - lq1032 - lq547;
 		

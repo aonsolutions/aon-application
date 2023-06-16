@@ -92,7 +92,6 @@ public class PageAEAT extends PageAbs {
 	@Override
 	protected void setEnabled() {
 		admonPanel.manageLinks();		
-		// FALTA - IGUAL TAMBIEN HABRIA QUE LIMPIAR LA PANTALLA ??
 	}
 	
 }
