@@ -25,8 +25,8 @@ export class TopBarComponent implements OnInit, OnChanges {
   @ViewChild('first') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
   menuItem: MenuItem [] = [
     {root:true, text:'Editar perfil', icon:'home', colorIcon:'black'},
-    {root:true, text:'Ayuda', icon:'person', colorIcon:'black', click:() => this.logout()},
-    {root:true, text:'Cerrar sesión', icon:'person_pin', colorIcon:'black'},
+    {root:true, text:'Ayuda', icon:'help', colorIcon:'black'},
+    {root:true, text:'Cerrar sesión', icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
   ]
   displayHomeIcon: boolean = false;
   usserLoggged: boolean = this.auth.isLoggedIn();

@@ -12,7 +12,7 @@ import { EnterpriseService } from 'src/app/core/services/enterprise.service';
 })
 export class SelectEnterpriseComponent implements OnInit {
 
-  empresas: Enterprise[] = [];
+  enterprises: Enterprise[] = [];
 
   constructor(private authService: AuthService, private enterpriseService: EnterpriseService, private router: Router) {
     // this.empresas = this.auth.auxEmpresas();
@@ -21,7 +21,7 @@ export class SelectEnterpriseComponent implements OnInit {
 
   ngOnInit() {
     this.enterpriseService.getEnterprises().subscribe((enterprises) => {
-      this.empresas = enterprises;
+      this.enterprises = enterprises;
     });
   }
 
