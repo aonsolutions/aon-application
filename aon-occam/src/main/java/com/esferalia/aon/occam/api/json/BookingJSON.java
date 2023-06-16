@@ -106,6 +106,7 @@ public class BookingJSON {
 			JSONObject json = new JSONObject();
 			json.put(IJsonNames.ID, d.getId());
 			json.put(IJsonNames.NAME, d.getName());
+			json.put(IJsonNames.DESCRIPTION, d.getDescription());
 			json.put(IJsonNames.APPS, apps);
 			array.put(json);
 		});

@@ -917,9 +917,13 @@ export class AonDomainCustomer extends AonElement {
     domainOptionName.style.width = "calc(100% - 25px)";
     domainOptionName.title = `${domain.active ? MSG.ACTIVE : MSG.INACTIVE}`;
     
-    let domainOptionNameSpan = document.createElement("span");
+    let domainOptionNameSpan = document.createElement("a");
     domainOptionNameSpan.style.fontWeight = "bold";
+    domainOptionNameSpan.classList.add("domainLinkA");
+    domainOptionNameSpan.target = "_blank";
+    domainOptionNameSpan.href = `https://${domain.name}`;
     domainOptionNameSpan.innerText = `${domain.name}`;
+    domainOptionNameSpan.addEventListener("click", e => e.stopPropagation());
     if (!domain.active) {
       domainOptionNameSpan.classList.add(`inactiveDomainName`);
     }
@@ -1188,7 +1192,7 @@ export class AonDomainCustomer extends AonElement {
     let text = "";
     if (users) {
       users.forEach(user => {
-        text += `${user.name}\n`;
+        text += `${user.description}\t\t${user.name}\n`;
       })
     }
 
@@ -1426,28 +1430,53 @@ export class AonDomainCustomer extends AonElement {
     usersContainer.style.display = "flex";
     usersContainer.style.flexDirection = "column";
     usersContainer.style.gap = "3px";
+    usersContainer.style.overflowY = "auto";
+    usersContainer.style.maxHeight = "75vh";
 
     users.forEach((user, ind) => {
 
       let userContainer = document.createElement("div");
       userContainer.style.display = "flex";
-      userContainer.style.justifyContent = "flex-start";
+      userContainer.style.justifyContent = "center";
       userContainer.style.alignItems = "center";
       userContainer.style.marginLeft = "10px";
       userContainer.style.fontSize = "1.2em";
-      userContainer.innerText = user.name;
+
+      let userDescriptionContainer = document.createElement("div");
+      userDescriptionContainer.style.width = "47.5%";
+      userDescriptionContainer.style.textAlign = "right";
+      userDescriptionContainer.innerText = user.description;
+      
+      
+      let userSeparatorContainer = document.createElement("div");
+      userSeparatorContainer.style.width = "5%";
+      userSeparatorContainer.style.textAlign = "center";
+      userSeparatorContainer.innerText = "-";
+      
+      let userNameContainer = document.createElement("div");
+      userNameContainer.style.width = "47.5%";
+      userNameContainer.style.textAlign = "left";
+      userNameContainer.innerText = user.name;
+
+      userContainer.appendChild(userDescriptionContainer);
+      userContainer.appendChild(userSeparatorContainer);
+      userContainer.appendChild(userNameContainer);
+      
       usersContainer.appendChild(userContainer);
 
     });
 
     let downloadButton = new AonButton();
     downloadButton.title = MSG.DOWNLOAD;
+    downloadButton.style.width = "50%";
+    downloadButton.style.marginTop = "10px";
+    downloadButton.style.alignSelf = "center";
     downloadButton.addEventListener("click", event => {
-      this.generateUsersFile(itemTitle, users);
+      this.generateUsersFile(applicationName, users);
     });
     usersContainer.appendChild(downloadButton);
 
-    dialog.width = "500px";
+    // dialog.width = "500px";
     dialog.setContent(usersContainer);
     dialog.autoclose = true;
     dialog.open();
