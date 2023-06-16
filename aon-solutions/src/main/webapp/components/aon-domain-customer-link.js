@@ -917,9 +917,13 @@ export class AonDomainCustomer extends AonElement {
     domainOptionName.style.width = "calc(100% - 25px)";
     domainOptionName.title = `${domain.active ? MSG.ACTIVE : MSG.INACTIVE}`;
     
-    let domainOptionNameSpan = document.createElement("span");
+    let domainOptionNameSpan = document.createElement("a");
     domainOptionNameSpan.style.fontWeight = "bold";
+    domainOptionNameSpan.classList.add("domainLinkA");
+    domainOptionNameSpan.target = "_blank";
+    domainOptionNameSpan.href = `https://${domain.name}`;
     domainOptionNameSpan.innerText = `${domain.name}`;
+    domainOptionNameSpan.addEventListener("click", e => e.stopPropagation());
     if (!domain.active) {
       domainOptionNameSpan.classList.add(`inactiveDomainName`);
     }
