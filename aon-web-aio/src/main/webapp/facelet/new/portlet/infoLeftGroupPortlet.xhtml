@@ -100,10 +100,12 @@
 
 			<aon:if test="#{!domainSwitcher.childDomain}">
 			<ui:include src="/facelet/new/portlet/summaryControlPortlet.xhtml" /> 
-				<ui:include src="/facelet/new/portlet/filterControlPortlet.xhtml" />
+			<ui:include src="/facelet/new/portlet/filterControlPortlet.xhtml" />
 			</aon:if>
-
-			
+			<aon:if test="#{dur.aula or domainSwitcher.snapshot}">
+				<ui:include src="/facelet/new/portlet/infoControlPortlet.xhtml" />
+				<ui:include src="/facelet/new/portlet/helpControlPortlet.xhtml" />
+			</aon:if>
 			<aon:if test="#{timeControl.active}">
 				<ui:include src="/facelet/new/portlet/timeControlPortlet.xhtml" />
 			</aon:if>

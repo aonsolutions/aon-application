@@ -56,8 +56,9 @@ public class HelpController implements Serializable {
 	private Collection<GFile> faqs;
 	private LinkedHashMap<String,GFile> breadcrumb;
 	
-	private boolean notificationsEnabled;
 	private boolean linksEnabled;
+	private boolean contentEnabled;
+	private boolean notificationsEnabled;
 	
 	private String currentNewsCategory;
 	public String getCurrentNewsCategory() {
@@ -326,7 +327,11 @@ public class HelpController implements Serializable {
 	public boolean isLinksEnabled() {
 		return linksEnabled;
 	}
-
+	
+	public boolean isContentEnabled() {
+	    return contentEnabled;
+	}
+	
 
 	public void setNotificationsEnabled(boolean notificationsEnabled) {
 		this.notificationsEnabled = notificationsEnabled;
@@ -335,6 +340,12 @@ public class HelpController implements Serializable {
 	public void setLinksEnabled(boolean linksEnabled) {
 		this.linksEnabled = linksEnabled;
 	}
+	
+	public void setContentEnabled(boolean contentEnabled) {
+	    this.contentEnabled = contentEnabled;
+	}
+	
+	
 	
 	public String getNewsCategoryName(News news) {
 		if (news != null && news.getCategory() != null) {
