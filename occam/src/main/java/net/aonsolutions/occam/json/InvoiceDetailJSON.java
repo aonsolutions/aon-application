@@ -68,7 +68,7 @@ public class InvoiceDetailJSON {
 			.putOpt(AonNames.DISCOUNT, invoice.getDiscountExpression())
 			.putOpt(AonNames.TAXABLE_BASE, invoice.getTaxableBase())
 			.putOpt(AonNames.PREPAYMENT, invoice.isPrepayment())
-			.putOpt(AonNames.SOURCE, AonObjectUtils.ifNotNullDo(invoice.getSource(), Object::toString ))
+			.putOpt(AonNames.SOURCE, AonObjectUtils.ifNotNullGet(invoice.getSource(), Object::toString ))
 			.putOpt(AonNames.SOURCE_ID, invoice.getSourceId())
 			.putOpt(AonNames.TAXES, InvoiceTaxJSON.to(invoice.getTaxes().orElse(null)))
 			.putOpt(AonNames.AUDIT, AuditJSON.to(invoice.getAudit().orElse(null)))

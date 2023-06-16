@@ -1,6 +1,5 @@
 package net.aonsolutions.watson.server;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 import net.aonsolutions.watson.client.util.AonNumberUtils;
@@ -36,11 +35,7 @@ public class AonObjectUtils {
 		return object != null ? object : defaultValue;
 	}
 
-	public static <T, R> R ifOptionalPresent(Optional<T> value, Function<T, R> action) {
-		return ifNotNullDo(value.orElse(null), action);
-	}
-
-	public static <T, R> R ifNotNullDo(final T object, Function<T, R> value) {
+	public static <T, R> R ifNotNullGet(final T object, Function<T, R> value) {
 		return object == null ? null : value.apply(object);
 	}
 

@@ -4,20 +4,20 @@ import java.io.Serializable;
 
 public enum ActivityMetadata implements Serializable {
 	 ID
-		{ @Override public <R,T> R visit(ActivityMetadataVisitor<R,T> v, T t) { return v.visitId(t);} }
+		{ @Override public <R> R visit(ActivityMetadataVisitor<R> v) { return v.visitId();} }
 	,DOMAIN 
-		{ @Override public <R,T> R visit(ActivityMetadataVisitor<R,T> v, T t) { return v.visitDomain(t);} }
+		{ @Override public <R> R visit(ActivityMetadataVisitor<R> v) { return v.visitDomain();} }
 	,DESCRIPTION
-		{ @Override public <R,T> R visit(ActivityMetadataVisitor<R,T> v, T t) { return v.visitDescription(t);} }
+		{ @Override public <R> R visit(ActivityMetadataVisitor<R> v) { return v.visitDescription();} }
 	,EPIGRAPH
-		{ @Override public <R,T> R visit(ActivityMetadataVisitor<R,T> v, T t) { return v.visitEpigraph(t);} }
+		{ @Override public <R> R visit(ActivityMetadataVisitor<R> v) { return v.visitEpigraph();} }
 	;
-	public abstract <R,T> R visit(ActivityMetadataVisitor<R,T> visitor, T t);
+	public abstract <R> R visit(ActivityMetadataVisitor<R> visitor);
 
-	public static interface ActivityMetadataVisitor<R,T> {
-		 R visitId( T t );
-		 R visitDomain( T t );
-		 R visitDescription( T t );
-		 R visitEpigraph( T t );
+	public static interface ActivityMetadataVisitor<R> {
+		 R visitId();
+		 R visitDomain();
+		 R visitDescription();
+		 R visitEpigraph();
 	}
 }

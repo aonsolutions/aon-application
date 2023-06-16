@@ -60,7 +60,7 @@ public class InvoiceBreakdownJSON {
 		if (tax == null) return null;
 		return new JSONObject()
 			.put(AonNames.ID, tax.getId())
-			.putOpt(AonNames.TAX_TYPE, AonObjectUtils.ifNotNullDo(tax.getTaxType(), Object::toString ))
+			.putOpt(AonNames.TAX_TYPE, AonObjectUtils.ifNotNullGet(tax.getTaxType(), Object::toString ))
 			.putOpt(AonNames.BASE, tax.getBase())
 			.putOpt(AonNames.PERCENT, tax.getPercent())
 			.putOpt(AonNames.QUOTA, tax.getQuota())
@@ -68,8 +68,8 @@ public class InvoiceBreakdownJSON {
 			.putOpt(AonNames.SURCHARGE_QUOTA, tax.getSurchargeQuota())
 			.putOpt(AonNames.DEDUCTIBLE_PERCENT, tax.getDeductiblePercent())
 			.putOpt(AonNames.DEDUCTIBLE_QUOTA, tax.getDeductibleQuota())
-			.putOpt(AonNames.VAT_DEDUCTION_TYPE, AonObjectUtils.ifNotNullDo(tax.getVatDeductionType(), Object::toString ))
-			.putOpt(AonNames.WITHHOLDING_TYPE, AonObjectUtils.ifNotNullDo(tax.getWithholdingType(), Object::toString ))
+			.putOpt(AonNames.VAT_DEDUCTION_TYPE, AonObjectUtils.ifNotNullGet(tax.getVatDeductionType(), Object::toString ))
+			.putOpt(AonNames.WITHHOLDING_TYPE, AonObjectUtils.ifNotNullGet(tax.getWithholdingType(), Object::toString ))
 			;
 	}
 }

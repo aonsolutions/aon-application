@@ -4,30 +4,30 @@ import java.io.Serializable;
 
 public enum DomainAuditMetadata implements Serializable {
 	 ID
-		{ @Override public <R,T> R visit(DomainAuditMetadataVisitor<R,T> v, T t) { return v.visitId(t);} }
+		{ @Override public <R> R visit(DomainAuditMetadataVisitor<R> v) { return v.visitId();} }
 	,LAST_ACCESS_USER
-		{ @Override public <R,T> R visit(DomainAuditMetadataVisitor<R,T> v, T t) { return v.visitLastAccessDate(t);} }
+		{ @Override public <R> R visit(DomainAuditMetadataVisitor<R> v) { return v.visitLastAccessUser();} }
 	,LAST_ACCESS_DATE
-		{ @Override public <R,T> R visit(DomainAuditMetadataVisitor<R,T> v, T t) { return v.visitLastAccessDate(t);} }
+		{ @Override public <R> R visit(DomainAuditMetadataVisitor<R> v) { return v.visitLastAccessDate();} }
 	,CREATION_USER
-		{ @Override public <R,T> R visit(DomainAuditMetadataVisitor<R,T> v, T t) { return v.visitCreationUser(t);} }
+		{ @Override public <R> R visit(DomainAuditMetadataVisitor<R> v) { return v.visitCreationUser();} }
 	,CREATION_DATE
-		{ @Override public <R,T> R visit(DomainAuditMetadataVisitor<R,T> v, T t) { return v.visitCreationDate(t);} }
+		{ @Override public <R> R visit(DomainAuditMetadataVisitor<R> v) { return v.visitCreationDate();} }
 	,MODIFICATION_USER
-		{ @Override public <R,T> R visit(DomainAuditMetadataVisitor<R,T> v, T t) { return v.visitModificationUser(t);} }
+		{ @Override public <R> R visit(DomainAuditMetadataVisitor<R> v) { return v.visitModificationUser();} }
 	,MODIFICATION_DATE
-		{ @Override public <R,T> R visit(DomainAuditMetadataVisitor<R,T> v, T t) { return v.visitModificationDate(t);} }
+		{ @Override public <R> R visit(DomainAuditMetadataVisitor<R> v) { return v.visitModificationDate();} }
 	;
-	public abstract <R,T> R visit(DomainAuditMetadataVisitor<R,T> visitor, T t);
+	public abstract <R> R visit(DomainAuditMetadataVisitor<R> visitor);
 
-	public static interface DomainAuditMetadataVisitor<R,T> {
-		R visitId( T t );
-		R visitLastAccessUser( T t );
-		R visitLastAccessDate( T t );
-		R visitCreationUser( T t );
-		R visitCreationDate( T t );
-		R visitModificationUser( T t );
-		R visitModificationDate( T t );
+	public static interface DomainAuditMetadataVisitor<R> {
+		R visitId();
+		R visitLastAccessUser();
+		R visitLastAccessDate();
+		R visitCreationUser();
+		R visitCreationDate();
+		R visitModificationUser();
+		R visitModificationDate();
 		 
 	}
 }

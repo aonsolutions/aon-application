@@ -5,11 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import net.aonsolutions.occam.api.config.ApplicationParameter;
 import net.aonsolutions.occam.api.constants.AppParam;
+import net.aonsolutions.occam.api.metadata.ApplicationParameterMetadata;
+import net.aonsolutions.occam.api.metadata.ApplicationParameterMetadata.ApplicationParameterMetadataVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonEnumRandom;
@@ -76,4 +80,17 @@ class ApplicationParameterTest extends AbstractOccamTest {
 		assertEquals(d1,d2);
 	}
 
+	@Test()
+	void metadataVisitorTest() {
+		ApplicationParameterMetadataVisitor<ApplicationParameterMetadata> visitor = new ApplicationParameterMetadataVisitor<>() {
+			@Override public ApplicationParameterMetadata visitId() { return ApplicationParameterMetadata.ID; }
+			@Override public ApplicationParameterMetadata visitDomain() { return ApplicationParameterMetadata.DOMAIN; }
+			@Override public ApplicationParameterMetadata visitName() { return ApplicationParameterMetadata.NAME; }
+			@Override public ApplicationParameterMetadata visitValue() { return ApplicationParameterMetadata.VALUE; }
+		};
+
+		Arrays.stream(ApplicationParameterMetadata.values()).forEach( dm -> {
+			assertEquals( dm, dm.visit(visitor));
+		});		
+	}	
 }

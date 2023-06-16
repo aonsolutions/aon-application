@@ -4,36 +4,36 @@ import java.io.Serializable;
 
 public enum RegistryMetadata implements Serializable {
 	 ID
-		{ @Override public <R,T> R visit(RegistryMetadataVisitor<R,T> v, T t) { return v.visitId(t);} }
+		{ @Override public <R> R visit(RegistryMetadataVisitor<R> v) { return v.visitId();} }
 	,DOMAIN 
-		{ @Override public <R,T> R visit(RegistryMetadataVisitor<R,T> v, T t) { return v.visitDomain(t);} }
+		{ @Override public <R> R visit(RegistryMetadataVisitor<R> v) { return v.visitDomain();} }
 	,DOCUMENT
-		{ @Override public <R,T> R visit(RegistryMetadataVisitor<R,T> v, T t) { return v.visitDocument(t);} }
+		{ @Override public <R> R visit(RegistryMetadataVisitor<R> v) { return v.visitDocument();} }
 	,DOCUMENT_TYPE
-		{ @Override public <R,T> R visit(RegistryMetadataVisitor<R,T> v, T t) { return v.visitDocumentType(t);} }
+		{ @Override public <R> R visit(RegistryMetadataVisitor<R> v) { return v.visitDocumentType();} }
 	,DOCUMENT_COUNTRY
-		{ @Override public <R,T> R visit(RegistryMetadataVisitor<R,T> v, T t) { return v.visitDocumentCountry(t);} }
+		{ @Override public <R> R visit(RegistryMetadataVisitor<R> v) { return v.visitDocumentCountry();} }
 	,NAME
-		{ @Override public <R,T> R visit(RegistryMetadataVisitor<R,T> v, T t) { return v.visitName(t);} }
+		{ @Override public <R> R visit(RegistryMetadataVisitor<R> v) { return v.visitName();} }
 	,ALIAS
-		{ @Override public <R,T> R visit(RegistryMetadataVisitor<R,T> v, T t) { return v.visitAlias(t);} }
+		{ @Override public <R> R visit(RegistryMetadataVisitor<R> v) { return v.visitAlias();} }
 	,NATIONALITY
-		{ @Override public <R,T> R visit(RegistryMetadataVisitor<R,T> v, T t) { return v.visitNationality(t);} }
+		{ @Override public <R> R visit(RegistryMetadataVisitor<R> v) { return v.visitNationality();} }
 	,CONFIDENTIAL
-		{ @Override public <R,T> R visit(RegistryMetadataVisitor<R,T> v, T t) { return v.visitConfidential(t);} }	
+		{ @Override public <R> R visit(RegistryMetadataVisitor<R> v) { return v.visitConfidential();} }	
 	;
-	public abstract <R,T> R visit(RegistryMetadataVisitor<R,T> visitor, T t);
+	public abstract <R> R visit(RegistryMetadataVisitor<R> visitor);
 
-	public static interface RegistryMetadataVisitor<R,T> {
-		 R visitId( T t );
-		 R visitDomain( T t );
-		 R visitDocument( T t );
-		 R visitDocumentType( T t );
-		 R visitDocumentCountry( T t );
-		 R visitName( T t );
-		 R visitAlias( T t );
-		 R visitNationality( T t );
-		 R visitConfidential( T t );
+	public static interface RegistryMetadataVisitor<R> {
+		 R visitId();
+		 R visitDomain();
+		 R visitDocument();
+		 R visitDocumentType();
+		 R visitDocumentCountry();
+		 R visitName();
+		 R visitAlias();
+		 R visitNationality();
+		 R visitConfidential();
 		 
 	}
 }

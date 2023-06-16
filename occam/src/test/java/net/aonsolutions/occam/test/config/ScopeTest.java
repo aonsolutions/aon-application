@@ -5,10 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import net.aonsolutions.occam.api.config.Scope;
+import net.aonsolutions.occam.api.metadata.ScopeMetadata;
+import net.aonsolutions.occam.api.metadata.ScopeMetadata.ScopeMetadataVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonRandom;
@@ -75,4 +79,16 @@ class ScopeTest extends AbstractOccamTest {
 		assertEquals(d1,d2);
 	}
 	
+	@Test()
+	void metadataVisitorTest() {
+		ScopeMetadataVisitor<ScopeMetadata> visitor = new ScopeMetadataVisitor<>() {
+			@Override public ScopeMetadata visitId() { return ScopeMetadata.ID; }
+			@Override public ScopeMetadata visitDomain() { return  ScopeMetadata.DOMAIN; }
+			@Override public ScopeMetadata visitDescription() {return  ScopeMetadata.DESCRIPTION; }
+		};
+		
+		Arrays.stream(ScopeMetadata.values()).forEach( dm -> {
+			assertEquals( dm, dm.visit(visitor));
+		});		
+	}
 }

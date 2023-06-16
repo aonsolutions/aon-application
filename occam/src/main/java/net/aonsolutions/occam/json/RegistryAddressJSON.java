@@ -67,7 +67,7 @@ public class RegistryAddressJSON {
 			.put(AonNames.REGISTRY, registryAddress.getRegistry())
 			.put(AonNames.MAIN, registryAddress.isMain())
 			.putOpt(AonNames.RECIPIENT, registryAddress.getRecipient())
-			.putOpt(AonNames.STREET_TYPE, AonObjectUtils.ifNotNullDo(registryAddress.getStreetType(), Object::toString ))
+			.putOpt(AonNames.STREET_TYPE, AonObjectUtils.ifNotNullGet(registryAddress.getStreetType(), Object::toString ))
 			.putOpt(AonNames.ADDRESS, registryAddress.getAddress())
 			.putOpt(AonNames.NUMBER, registryAddress.getNumber())
 			.putOpt(AonNames.ADDRESS2, registryAddress.getAddress2())

@@ -94,7 +94,7 @@ public class DomainAudit extends OccamEntity<DomainAuditMetadata> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
-		if (obj instanceof Registry other) {
+		if (obj instanceof DomainAudit other) {
 			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
 		}
 	    return false;

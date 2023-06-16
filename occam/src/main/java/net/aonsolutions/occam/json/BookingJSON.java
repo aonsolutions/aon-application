@@ -58,7 +58,7 @@ public class BookingJSON {
 			.putOpt(AonNames.DOMAIN_MANAGEMENT, booking.isDomainManagement())
 			.putOpt(AonNames.DISABLE_DOMAIN_MANAGEMENT, booking.isDisableDomainManagement())
 			.putOpt(AonNames.MAX_DEFINED_USERS, booking.getMaxDefinedUsers().orElse(null))
-			.putOpt(AonNames.AON_STATUS, AonObjectUtils.ifNotNullDo(booking.getAonStatus(), Object::toString) )
+			.putOpt(AonNames.AON_STATUS, AonObjectUtils.ifNotNullGet(booking.getAonStatus(), Object::toString) )
 			.putOpt(AonNames.AON_CUSTOMER, booking.getAonCustomer().orElse(null))
 			;
 	}

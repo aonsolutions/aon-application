@@ -10,7 +10,6 @@ import org.json.JSONObject;
 
 import net.aonsolutions.infovox.model.OCRResponse;
 import net.aonsolutions.watson.client.util.AonCollectionUtils;
-import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class OCRResponseJSON {
 	
@@ -51,8 +50,8 @@ public class OCRResponseJSON {
 		if (response == null) return null;
 		return new JSONObject()
 			.putOpt(OCRNames.HTTP_CODE, response.getHttpCode().orElse(null))
-			.putOpt(OCRNames.RESULT, AonObjectUtils.ifOptionalPresent(response.getResult(), OCRDocumentJSON::to ) )
-			.putOpt(OCRNames.ERROR, AonObjectUtils.ifOptionalPresent(response.getError(), OCRErrorJSON::to ) )
+			.putOpt(OCRNames.RESULT, response.getResult().map(OCRDocumentJSON::to).orElse(null))
+			.putOpt(OCRNames.ERROR, response.getError().map(OCRErrorJSON::to).orElse(null))
 			;
 	}
 }

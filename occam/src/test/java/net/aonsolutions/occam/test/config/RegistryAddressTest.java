@@ -5,11 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import net.aonsolutions.occam.api.config.RegistryAddress;
 import net.aonsolutions.occam.api.constants.StreetType;
+import net.aonsolutions.occam.api.metadata.RegistryAddressMetadata;
+import net.aonsolutions.occam.api.metadata.RegistryAddressMetadata.RegistryAddressMetadataVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonFaker;
@@ -166,4 +170,29 @@ class RegistryAddressTest extends AbstractOccamTest {
 		assertEquals(d1,d2);
 	}
 
+	@Test()
+	void metadataVisitorTest() {
+		RegistryAddressMetadataVisitor<RegistryAddressMetadata> visitor = new RegistryAddressMetadataVisitor<>() {
+			@Override public RegistryAddressMetadata visitId() { return RegistryAddressMetadata.ID; }
+			@Override public RegistryAddressMetadata visitDomain() { return RegistryAddressMetadata.DOMAIN; }
+			@Override public RegistryAddressMetadata visitRegistry() { return RegistryAddressMetadata.REGISTRY; }
+			@Override public RegistryAddressMetadata visitMain() { return RegistryAddressMetadata.MAIN; }
+			@Override public RegistryAddressMetadata visitRecipient() { return RegistryAddressMetadata.RECIPIENT; }
+			@Override public RegistryAddressMetadata visitStreetType() { return RegistryAddressMetadata.STREET_TYPE; }
+			@Override public RegistryAddressMetadata visitAddress() { return RegistryAddressMetadata.ADDRESS; }
+			@Override public RegistryAddressMetadata visitNumber() { return RegistryAddressMetadata.NUMBER; }
+			@Override public RegistryAddressMetadata visitAddress2() { return RegistryAddressMetadata.ADDRESS2; }
+			@Override public RegistryAddressMetadata visitAddress3() { return RegistryAddressMetadata.ADDRESS3; }
+			@Override public RegistryAddressMetadata visitGeozone() { return RegistryAddressMetadata.GEOZONE; }
+			@Override public RegistryAddressMetadata visitParentGeozone() { return RegistryAddressMetadata.PARENT_GEOZONE; }
+			@Override public RegistryAddressMetadata visitZip() { return RegistryAddressMetadata.ZIP; }
+			@Override public RegistryAddressMetadata visitCity() { return RegistryAddressMetadata.CITY; }
+			@Override public RegistryAddressMetadata visitAlias() { return RegistryAddressMetadata.ALIAS; }
+			@Override public RegistryAddressMetadata visitMunicipalityCode() { return RegistryAddressMetadata.MUNICIPALITY_CODE; }
+		};
+
+		Arrays.stream(RegistryAddressMetadata.values()).forEach( dm -> {
+			assertEquals( dm, dm.visit(visitor));
+		});		
+	}
 }

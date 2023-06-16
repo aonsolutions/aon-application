@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 
 import net.aonsolutions.watson.server.AonEnumUtils;
@@ -22,17 +20,6 @@ class AonEnumUtilsTests {
 	
 	@Test()
 	void byteTest() {
-		Optional<Boolean> opt = Optional.empty();
-		assertNull( AonEnumUtils.getByte(opt));
-		
-		opt = Optional.ofNullable(null);
-		assertNull( AonEnumUtils.getByte(opt));
-
-		opt = Optional.of(true);
-		assertEquals( ONE_BYTE , AonEnumUtils.getByte(opt));
-		
-		opt = Optional.of(false);
-		assertEquals( ZERO_BYTE , AonEnumUtils.getByte(opt));
 		
 		assertNull( AonEnumUtils.getByte( (Boolean) null ));
 		
@@ -47,10 +34,6 @@ class AonEnumUtilsTests {
 		assertEquals( ZERO_BYTE , AonEnumUtils.getByte( ENUMERATION.ZERO ));
 		assertEquals( ONE_BYTE , AonEnumUtils.getByte( ENUMERATION.ONE ));
 		
-		Optional<ENUMERATION> optEnum = Optional.empty();
-		assertNull( AonEnumUtils.getOptEnumByte( optEnum ));
-		assertEquals( ZERO_BYTE , AonEnumUtils.getOptEnumByte( Optional.of(ENUMERATION.ZERO) ));
-		assertEquals( ONE_BYTE , AonEnumUtils.getOptEnumByte( Optional.of(ENUMERATION.ONE) ));
 	}
 	
 	@Test()

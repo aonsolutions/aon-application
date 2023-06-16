@@ -31,7 +31,7 @@ public class Invoice extends OccamEntity<InvoiceMetadata> {
 	private Integer number;
 	private String referenceCode;
 	private Date issueDate;
-	private Date taxDate;
+			private Date taxDate;
 	private boolean confidential;
 	private Integer registry;
 	private String document;

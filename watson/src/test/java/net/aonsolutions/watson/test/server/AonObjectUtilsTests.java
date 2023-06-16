@@ -64,10 +64,10 @@ class AonObjectUtilsTests {
 	
 	@Test()
 	void ifNotNullDoTest() {
-		assertNull( AonObjectUtils.ifNotNullDo(null, x -> x));
+		assertNull( AonObjectUtils.ifNotNullGet(null, x -> x));
 		
 		MutableBoolean bool = new MutableBoolean( false );
-		AonObjectUtils.ifNotNullDo(bool, x -> {
+		AonObjectUtils.ifNotNullGet(bool, x -> {
 			x.setValue(true);
 			return x;
 		});

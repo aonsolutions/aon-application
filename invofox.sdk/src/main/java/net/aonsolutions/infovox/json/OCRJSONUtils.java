@@ -32,13 +32,13 @@ public class OCRJSONUtils {
 	
 	public static JSONObject getObject(JSONObject json, String key ) {
 		if(json == null) return null;
-		return AonObjectUtils.ifNotNullDo(json.opt(key)
+		return AonObjectUtils.ifNotNullGet(json.opt(key)
 			, t -> json.optJSONObject(key, null));
 	}
 	
 	public static JSONArray getArray(JSONObject json, String key ) {
 		if(json == null) return null;
-		return AonObjectUtils.ifNotNullDo(json.opt(key)
+		return AonObjectUtils.ifNotNullGet(json.opt(key)
 			, t -> json.optJSONArray(key));
 	}
 
@@ -49,13 +49,13 @@ public class OCRJSONUtils {
 
 	public static Integer getInteger(JSONObject json, String key ) {
 		if(json == null) return null;
-		return AonObjectUtils.ifNotNullDo(json.opt(key)
+		return AonObjectUtils.ifNotNullGet(json.opt(key)
 			, t -> AonNumberUtils.toInteger(json.optNumber(key, null)));
 	}
 	
 	public static Double getDouble(JSONObject json, String key ) {
 		if(json == null) return null;
-		return AonObjectUtils.ifNotNullDo(json.opt(key)
+		return AonObjectUtils.ifNotNullGet(json.opt(key)
 			, t -> AonNumberUtils.toDouble(json.optNumber(key, null)));
 	}
 

@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public enum AccountingConfigurationMetadata implements Serializable {
 	 ID
-		{ @Override public <R,T> R visit(AccountingConfigurationMetadataVisitor<R,T> v, T t) { return v.visitId(t);} }
+		{ @Override public <R> R visit(AccountingConfigurationMetadataVisitor<R> v) { return v.visitId();} }
 	,ACCOUNTS 
-		{ @Override public <R,T> R visit(AccountingConfigurationMetadataVisitor<R,T> v, T t) { return v.visitAccounts(t);} }
+		{ @Override public <R> R visit(AccountingConfigurationMetadataVisitor<R> v) { return v.visitAccounts();} }
 	;
-	public abstract <R,T> R visit(AccountingConfigurationMetadataVisitor<R,T> visitor, T t);
+	public abstract <R> R visit(AccountingConfigurationMetadataVisitor<R> visitor);
 
-	public static interface AccountingConfigurationMetadataVisitor<R,T> {
-		 R visitId( T t );
-		 R visitAccounts( T t );
+	public static interface AccountingConfigurationMetadataVisitor<R> {
+		 R visitId();
+		 R visitAccounts();
 	}
 }

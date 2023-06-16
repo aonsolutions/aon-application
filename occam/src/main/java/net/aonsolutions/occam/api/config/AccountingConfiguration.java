@@ -14,15 +14,16 @@ public class AccountingConfiguration extends OccamEntity<AccountingConfiguration
 
 	private static final long serialVersionUID = -4608981705550453419L;
 
-	private Integer uuid;
+	private String uuid;
 	private EnumMap<AppParam, Account> accounts = new EnumMap<>(AppParam.class);
 
 	@Override
-	protected Object getUuid() {
+	public Object getUuid() {
 		return uuid;
 	}
-	public void setUuid(Integer uuid) {
+	public AccountingConfiguration setUuid(String uuid) {
 		this.uuid = uuid;
+		return this;
 	}
 
 	public Map<AppParam, Account> getAccounts() {

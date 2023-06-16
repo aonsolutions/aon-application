@@ -4,7 +4,6 @@ import org.json.JSONObject;
 
 import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.config.Configuration;
-import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class ConfigurationJSON {
 	
@@ -21,7 +20,7 @@ public class ConfigurationJSON {
 	public static JSONObject to(Configuration config) {
 		if (config == null) return null;
 		return new JSONObject()
-			.putOpt(AonNames.ACCOUNTING, AonObjectUtils.ifOptionalPresent(config.accounting(), AccountingConfigurationJSON::to ) )
+			.putOpt(AonNames.ACCOUNTING, config.accounting().map(AccountingConfigurationJSON::to).orElse(null) )
 			;
 	}
 }

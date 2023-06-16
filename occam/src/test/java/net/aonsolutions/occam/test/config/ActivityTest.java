@@ -1,12 +1,18 @@
 package net.aonsolutions.occam.test.config;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import net.aonsolutions.occam.api.config.Activity;
+import net.aonsolutions.occam.api.metadata.ActivityMetadata;
+import net.aonsolutions.occam.api.metadata.ActivityMetadata.ActivityMetadataVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonRandom;
@@ -64,5 +70,33 @@ class ActivityTest extends AbstractOccamTest {
 		Activity a = new Activity();
 		a.setSelected( true );
 		assertTrue(a.isSelected());
+	}
+
+	@Test()
+	void equalsTest() {
+		Activity d1 = new Activity();
+		Activity d2 = null;
+		assertNotEquals(d1,d2);
+		assertEquals(d1,d1);
+		d2 = new Activity();
+		assertEquals(d1,d2);
+		d1.setId(1);
+		assertNotEquals(d1,d2);
+		d2.setId(1);
+		assertEquals(d1,d2);
+	}
+	
+	@Test()
+	void metadataVisitorTest() {
+		ActivityMetadataVisitor<ActivityMetadata> visitor = new ActivityMetadataVisitor<>() {
+			@Override public ActivityMetadata visitId() { return ActivityMetadata.ID; }
+			@Override public ActivityMetadata visitDomain() { return  ActivityMetadata.DOMAIN; }
+			@Override public ActivityMetadata visitDescription() {return  ActivityMetadata.DESCRIPTION; }
+			@Override public ActivityMetadata visitEpigraph() {return  ActivityMetadata.EPIGRAPH; }
+		};
+		
+		Arrays.stream(ActivityMetadata.values()).forEach( dm -> {
+			assertEquals( dm, dm.visit(visitor));
+		});		
 	}
 }

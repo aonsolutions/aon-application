@@ -3,7 +3,6 @@ package net.aonsolutions.occam.test.config;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -13,7 +12,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import net.aonsolutions.occam.api.AonCoreException;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
@@ -228,27 +226,22 @@ class DomainTest extends AbstractOccamTest {
 	
 	@Test()
 	void metadataVisitorTest() {
-		DomainMetadataVisitor visitor = new DomainMetadataVisitor() {
-			
-			private void throwException(DomainMetadata dm) {
-				throw new AonCoreException( dm.toString() );
-			}
-			@Override public void visitId() {throwException(DomainMetadata.ID); }
-			@Override public void visitName() {throwException(DomainMetadata.NAME); }
-			@Override public void visitDescription() {throwException(DomainMetadata.DESCRIPTION); }
-			@Override public void visitType() {throwException(DomainMetadata.TYPE); }
-			@Override public void visitActive() {throwException(DomainMetadata.ACTIVE); }
-			@Override public void visitScope() {throwException(DomainMetadata.SCOPE); }
-			@Override public void visitParent() {throwException(DomainMetadata.PARENT); }
-			@Override public void visitInheritance() {throwException(DomainMetadata.INHERITANCE); }
-			@Override public void visitBooking() {throwException(DomainMetadata.BOOKING); }
-			@Override public void visitAudit() {throwException(DomainMetadata.AUDIT); }
-			@Override public void visitConfiguration() {throwException(DomainMetadata.CONFIGURATION); }
-			@Override public void visitCompany() {throwException(DomainMetadata.COMPANY); }
+		DomainMetadataVisitor<DomainMetadata> visitor = new DomainMetadataVisitor<>() {
+			@Override public DomainMetadata visitId() { return DomainMetadata.ID; }
+			@Override public DomainMetadata visitName() { return DomainMetadata.NAME; }
+			@Override public DomainMetadata visitDescription() { return DomainMetadata.DESCRIPTION; }
+			@Override public DomainMetadata visitType() { return DomainMetadata.TYPE; }
+			@Override public DomainMetadata visitActive() { return DomainMetadata.ACTIVE; }
+			@Override public DomainMetadata visitScope() { return DomainMetadata.SCOPE; }
+			@Override public DomainMetadata visitParent() { return DomainMetadata.PARENT; }
+			@Override public DomainMetadata visitInheritance() { return DomainMetadata.INHERITANCE; }
+			@Override public DomainMetadata visitBooking() { return DomainMetadata.BOOKING; }
+			@Override public DomainMetadata visitAudit() { return DomainMetadata.AUDIT; }
+			@Override public DomainMetadata visitConfiguration() { return DomainMetadata.CONFIGURATION; }
+			@Override public DomainMetadata visitCompany() { return DomainMetadata.COMPANY; }
 		}; 
 		Arrays.stream(DomainMetadata.values()).forEach( dm -> {
-			AonCoreException e = assertThrows(AonCoreException.class , () -> dm.visit(visitor));
-			assertEquals( dm.toString(), e.getMessage());
+			assertEquals( dm, dm.visit(visitor));
 		});		
 	}
 	

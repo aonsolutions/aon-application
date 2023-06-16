@@ -4,32 +4,32 @@ import java.io.Serializable;
 
 public enum AccountingPeriodMetadata implements Serializable {
 	 ID
-		{ @Override public <R,T> R visit(AccountingPeriodMetadataVisitor<R,T> v, T t) { return v.visitId(t);} }
+		{ @Override public <R> R visit(AccountingPeriodMetadataVisitor<R> v) { return v.visitId();} }
 	,DOMAIN 
-		{ @Override public <R,T> R visit(AccountingPeriodMetadataVisitor<R,T> v, T t) { return v.visitDomain(t);} }
+		{ @Override public <R> R visit(AccountingPeriodMetadataVisitor<R> v) { return v.visitDomain();} }
 	,NAME
-		{ @Override public <R,T> R visit(AccountingPeriodMetadataVisitor<R,T> v, T t) { return v.visitName(t);} }
+		{ @Override public <R> R visit(AccountingPeriodMetadataVisitor<R> v) { return v.visitName();} }
 	,START_DATE
-		{ @Override public <R,T> R visit(AccountingPeriodMetadataVisitor<R,T> v, T t) { return v.visitStartDate(t);} }
+		{ @Override public <R> R visit(AccountingPeriodMetadataVisitor<R> v) { return v.visitStartDate();} }
 	,END_DATE
-		{ @Override public <R,T> R visit(AccountingPeriodMetadataVisitor<R,T> v, T t) { return v.visitEndDate(t);} }
+		{ @Override public <R> R visit(AccountingPeriodMetadataVisitor<R> v) { return v.visitEndDate();} }
 	,STATUS
-		{ @Override public <R,T> R visit(AccountingPeriodMetadataVisitor<R,T> v, T t) { return v.visitStatus(t);} }
+		{ @Override public <R> R visit(AccountingPeriodMetadataVisitor<R> v) { return v.visitStatus();} }
 	,DEFAULT_PERIOD
-		{ @Override public <R,T> R visit(AccountingPeriodMetadataVisitor<R,T> v, T t) { return v.visitDefaultPeriod(t);} }
+		{ @Override public <R> R visit(AccountingPeriodMetadataVisitor<R> v) { return v.visitDefaultPeriod();} }
 	,AUDIT
-		{ @Override public <R,T> R visit(AccountingPeriodMetadataVisitor<R,T> v, T t) { return v.visitAudit(t);} }
+		{ @Override public <R> R visit(AccountingPeriodMetadataVisitor<R> v) { return v.visitAudit();} }
 	;
-	public abstract <R,T> R visit(AccountingPeriodMetadataVisitor<R,T> visitor, T t);
+	public abstract <R> R visit(AccountingPeriodMetadataVisitor<R> visitor);
 
-	public static interface AccountingPeriodMetadataVisitor<R,T> {
-		 R visitId( T t );
-		 R visitDomain( T t );
-		 R visitName( T t );
-		 R visitStartDate( T t );
-		 R visitEndDate( T t );
-		 R visitStatus( T t );
-		 R visitDefaultPeriod( T t );
-		 R visitAudit( T t );
+	public static interface AccountingPeriodMetadataVisitor<R> {
+		 R visitId();
+		 R visitDomain();
+		 R visitName();
+		 R visitStartDate();
+		 R visitEndDate();
+		 R visitStatus();
+		 R visitDefaultPeriod();
+		 R visitAudit();
 	}
 }

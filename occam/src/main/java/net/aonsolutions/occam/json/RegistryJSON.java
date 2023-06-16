@@ -58,12 +58,12 @@ public class RegistryJSON {
 		return new JSONObject()
 			.put(AonNames.ID, registry.getId())
 			.put(AonNames.DOMAIN, registry.getDomain())
-			.putOpt(AonNames.DOCUMENT_TYPE, AonObjectUtils.ifNotNullDo(registry.getDocumentType(), Object::toString ))
-			.putOpt(AonNames.DOCUMENT_COUNTRY, AonObjectUtils.ifNotNullDo(registry.getDocumentCountry(), Object::toString ))
+			.putOpt(AonNames.DOCUMENT_TYPE, AonObjectUtils.ifNotNullGet(registry.getDocumentType(), Object::toString ))
+			.putOpt(AonNames.DOCUMENT_COUNTRY, AonObjectUtils.ifNotNullGet(registry.getDocumentCountry(), Object::toString ))
 			.putOpt(AonNames.DOCUMENT, registry.getDocument())
 			.putOpt(AonNames.NAME, registry.getName())
 			.putOpt(AonNames.ALIAS, registry.getAlias())
-			.putOpt(AonNames.NATIONALITY, AonObjectUtils.ifNotNullDo(registry.getNationality(), Object::toString ))
+			.putOpt(AonNames.NATIONALITY, AonObjectUtils.ifNotNullGet(registry.getNationality(), Object::toString ))
 			.putOpt(AonNames.CONFIDENTIAL, registry.isConfidential())
 			;
 	}

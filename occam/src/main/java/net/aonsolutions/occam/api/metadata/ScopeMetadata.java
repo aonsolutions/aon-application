@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 public enum ScopeMetadata implements Serializable {
 	 ID
-		{ @Override public <R,T> R visit(ScopeMetadataVisitor<R,T> v, T t) { return v.visitId(t);} }
+		{ @Override public <R> R visit(ScopeMetadataVisitor<R> v) { return v.visitId();} }
 	,DOMAIN 
-		{ @Override public <R,T> R visit(ScopeMetadataVisitor<R,T> v, T t) { return v.visitDomain(t);} }
+		{ @Override public <R> R visit(ScopeMetadataVisitor<R> v) { return v.visitDomain();} }
 	,DESCRIPTION
-		{ @Override public <R,T> R visit(ScopeMetadataVisitor<R,T> v, T t) { return v.visitDescription(t);} }
+		{ @Override public <R> R visit(ScopeMetadataVisitor<R> v) { return v.visitDescription();} }
 	;
-	public abstract <R,T> R visit(ScopeMetadataVisitor<R,T> visitor, T t);
+	public abstract <R> R visit(ScopeMetadataVisitor<R> visitor);
 
-	public static interface ScopeMetadataVisitor<R,T> {
-		 R visitId( T t );
-		 R visitDomain( T t );
-		 R visitDescription( T t );
+	public static interface ScopeMetadataVisitor<R> {
+		 R visitId();
+		 R visitDomain();
+		 R visitDescription();
 	}
 }

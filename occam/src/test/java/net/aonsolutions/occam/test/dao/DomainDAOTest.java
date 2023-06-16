@@ -31,7 +31,6 @@ import net.aonsolutions.watson.client.util.AonCollectionUtils;
 import net.aonsolutions.watson.client.util.AonStringUtils;
 import net.aonsolutions.watson.server.AonDateUtils;
 import net.aonsolutions.watson.server.AonEnumUtils;
-import net.aonsolutions.watson.server.AonObjectUtils;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -96,26 +95,27 @@ class DomainDAOTest extends AbstractOccamTest {
 			,p -> p.withId().eq( expected.getId() )
 				.and(p.withName().eq( expected.getName() )) 
 				.and(p.withDescription().eq( expected.getDescription() ))
-				.and(p.withParent().eq( AonObjectUtils.ifOptionalPresent(expected.getParent(), o -> o.getId()) ))
+				.and(p.withParent().eq( expected.getParent().map(o -> o.getId()).orElse(null) ))
 				.and(p.withType().eq( AonEnumUtils.getByte(expected.getType())))
-				.and(p.withScope().eq( AonObjectUtils.ifOptionalPresent(expected.getScope(), o -> o.getId()) ))
+				.and(p.withScope().eq( expected.getScope().map(o -> o.getId()).orElse(null) ))
 				.and(p.withInheritance().eq( AonEnumUtils.getByte(expected.hasInheritance())))
 				.and(p.withActive().eq( AonEnumUtils.getByte(expected.isActive())))
 				// Booking
-				.and(p.withOwner().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getOwner())))
-				.and(p.withExpirationDate().eq( AonDateUtils.toSql(AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getExpirationDate().orElse(null)))))
-				.and(p.withDomainManagement().eq(AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.isDomainManagement()))))
-				.and(p.withDisableDomainManagement().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.isDisableDomainManagement()))))
-				.and(p.withMaxDefinedUsers().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getMaxDefinedUsers().orElse(null))))
-				.and(p.withAonCustomer().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getAonCustomer().orElse(null))))
-				.and(p.withAonStatus().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.getAonStatus()))))
+				.and(p.withOwner().eq( expected.getBooking().map(a -> a.getOwner()).orElse(null)))
+				.and(p.withExpirationDate().eq( AonDateUtils.toSql( expected.getBooking().map(a -> a.getExpirationDate().orElse(null)).orElse(null) )))
+				.and(p.withDomainManagement().eq(AonEnumUtils.getByte(expected.getBooking().map( a -> a.isDomainManagement()).orElse(null))))
+				.and(p.withDisableDomainManagement().eq( AonEnumUtils.getByte(expected.getBooking().map( a -> a.isDisableDomainManagement()).orElse(null))))
+				.and(p.withMaxDefinedUsers().eq( expected.getBooking().map(a -> a.getMaxDefinedUsers().orElse(null)).orElse(null)))
+				.and(p.withAonCustomer().eq( expected.getBooking().map( a -> a.getAonCustomer().orElse(null)).orElse(null)))
+				.and(p.withAonStatus().eq( AonEnumUtils.getByte( expected.getBooking().map( a -> a.getAonStatus()).orElse(null))))
 				// Audit
-				.and(p.withLastAccessDate().eq( AonDateUtils.toTimestamp(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getLastAccessDate().orElse(null)))))
-				.and(p.withLastAccessUser().eq( AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getLastAccessUser().orElse(null))))
-				.and(p.withCreationUser().eq(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getCreationUser().orElse(null))))
-				.and(p.withCreationDate().eq(AonDateUtils.toTimestamp(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getCreationDate().orElse(null)))))
-				.and(p.withModificationUser().eq(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getModificationUser().orElse(null))))
-				.and(p.withModificationDate().eq(AonDateUtils.toTimestamp(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getModificationDate().orElse(null)))))
+				.and(p.withLastAccessDate().eq( AonDateUtils.toTimestamp(expected.getAudit().map( a -> a.getLastAccessDate().orElse(null)).orElse(null))))
+				
+				.and(p.withLastAccessUser().eq( expected.getAudit().map( a -> a.getLastAccessUser().orElse(null)).orElse(null)))
+				.and(p.withCreationUser().eq(expected.getAudit().map( a -> a.getCreationUser().orElse(null)).orElse(null)))
+				.and(p.withCreationDate().eq(AonDateUtils.toTimestamp(expected.getAudit().map( a -> a.getCreationDate().orElse(null)).orElse(null))))
+				.and(p.withModificationUser().eq(expected.getAudit().map( a -> a.getModificationUser().orElse(null)).orElse(null)))
+				.and(p.withModificationDate().eq(AonDateUtils.toTimestamp(expected.getAudit().map( a -> a.getModificationDate().orElse(null)).orElse(null))))
 				
 			,b -> b.full()
 		);

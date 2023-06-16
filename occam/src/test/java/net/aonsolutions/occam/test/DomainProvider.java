@@ -43,7 +43,6 @@ import net.aonsolutions.occam.test.faker.AonFaker;
 import net.aonsolutions.watson.client.Pair;
 import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.server.AonEnumUtils;
-import net.aonsolutions.watson.server.AonObjectUtils;
 
 class DomainProvider {
 	
@@ -156,7 +155,7 @@ class DomainProvider {
 			.set(RADDRESS.ADDRESS3,address.getAddress3())
 			.set(RADDRESS.ZIP,address.getZip())
 			.set(RADDRESS.CITY,address.getCity())
-			.set(RADDRESS.GEOZONE, AonObjectUtils.<Geozone,Integer>ifOptionalPresent(address.getGeozone(), g -> g.getId()) )	
+			.set(RADDRESS.GEOZONE, address.getGeozone().map( g -> g.getId() ).orElse(null) )	
 			.set(RADDRESS.ALIAS,address.getAlias())
 			.set(RADDRESS.MUNICIPALITY_CODE,address.getMunicipalityCode())
 			.returning(RADDRESS.ID).fetchOne()

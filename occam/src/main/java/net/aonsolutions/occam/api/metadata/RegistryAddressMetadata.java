@@ -4,56 +4,56 @@ import java.io.Serializable;
 
 public enum RegistryAddressMetadata implements Serializable {
 	 ID
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitId(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitId();} }
 	,DOMAIN 
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitDomain(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitDomain();} }
 	,REGISTRY
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitRegistry(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitRegistry();} }
 	,MAIN
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitMain(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitMain();} }
 	,RECIPIENT
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitRecipient(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitRecipient();} }
 	,STREET_TYPE
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitStreetType(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitStreetType();} }
 	,ADDRESS
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitAddress(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitAddress();} }
 	,NUMBER
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitNumber(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitNumber();} }
 	,ADDRESS2
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitAddress2(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitAddress2();} }
 	,ADDRESS3
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitAddress3(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitAddress3();} }
 	,GEOZONE
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitGeozone(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitGeozone();} }
 	,PARENT_GEOZONE
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitParentGeozone(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitParentGeozone();} }
 	,ZIP
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitZip(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitZip();} }
 	,CITY
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitCity(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitCity();} }
 	,ALIAS
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitAlias(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitAlias();} }
 	,MUNICIPALITY_CODE
-		{ @Override public <R,T> R visit(RegistryAddressMetadataVisitor<R,T> v, T t) { return v.visitMunicipalityCode(t);} }
+		{ @Override public <R> R visit(RegistryAddressMetadataVisitor<R> v) { return v.visitMunicipalityCode();} }
 	;
-	public abstract <R,T> R visit(RegistryAddressMetadataVisitor<R,T> visitor, T t);
+	public abstract <R> R visit(RegistryAddressMetadataVisitor<R> visitor);
 
-	public static interface RegistryAddressMetadataVisitor<R,T> {
-		 R visitId( T t );
-		 R visitDomain( T t );
-		 R visitRegistry( T t );
-		 R visitMain( T t );
-		 R visitRecipient( T t );
-		 R visitStreetType( T t );
-		 R visitAddress( T t );
-		 R visitNumber( T t );
-		 R visitAddress2( T t );
-		 R visitAddress3( T t );
-		 R visitGeozone( T t );
-		 R visitParentGeozone( T t );
-		 R visitZip( T t );
-		 R visitCity( T t );
-		 R visitAlias( T t );
-		 R visitMunicipalityCode( T t );
+	public static interface RegistryAddressMetadataVisitor<R> {
+		 R visitId();
+		 R visitDomain();
+		 R visitRegistry();
+		 R visitMain();
+		 R visitRecipient();
+		 R visitStreetType();
+		 R visitAddress();
+		 R visitNumber();
+		 R visitAddress2();
+		 R visitAddress3();
+		 R visitGeozone();
+		 R visitParentGeozone();
+		 R visitZip();
+		 R visitCity();
+		 R visitAlias();
+		 R visitMunicipalityCode();
 	}
 }

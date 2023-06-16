@@ -5,12 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import net.aonsolutions.occam.api.config.Registry;
 import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
+import net.aonsolutions.occam.api.metadata.RegistryMetadata;
+import net.aonsolutions.occam.api.metadata.RegistryMetadata.RegistryMetadataVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonRandom;
@@ -118,4 +122,22 @@ class RegistryTest extends AbstractOccamTest {
 		assertEquals(d1,d2);
 	}
 
+	@Test()
+	void metadataVisitorTest() {
+		RegistryMetadataVisitor<RegistryMetadata> visitor = new RegistryMetadataVisitor<>() {
+			@Override public RegistryMetadata visitId() { return RegistryMetadata.ID; }
+			@Override public RegistryMetadata visitDomain() { return RegistryMetadata.DOMAIN; }
+			@Override public RegistryMetadata visitDocument() { return RegistryMetadata.DOCUMENT; }
+			@Override public RegistryMetadata visitDocumentType() { return RegistryMetadata.DOCUMENT_TYPE; }
+			@Override public RegistryMetadata visitDocumentCountry() { return RegistryMetadata.DOCUMENT_COUNTRY; }
+			@Override public RegistryMetadata visitName() { return RegistryMetadata.NAME; }
+			@Override public RegistryMetadata visitAlias() { return RegistryMetadata.ALIAS; }
+			@Override public RegistryMetadata visitNationality() { return RegistryMetadata.NATIONALITY; }
+			@Override public RegistryMetadata visitConfidential() { return RegistryMetadata.CONFIDENTIAL; }
+		};
+
+		Arrays.stream(RegistryMetadata.values()).forEach( dm -> {
+			assertEquals( dm, dm.visit(visitor));
+		});		
+	}
 }

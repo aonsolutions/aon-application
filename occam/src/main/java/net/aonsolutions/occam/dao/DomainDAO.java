@@ -25,7 +25,6 @@ import org.jooq.SelectLimitStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.SelectWithTiesAfterOffsetStep;
 import org.jooq.UpdateSetMoreStep;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -54,7 +53,6 @@ import net.aonsolutions.watson.client.MutableObject;
 import net.aonsolutions.watson.client.util.AonStringUtils;
 import net.aonsolutions.watson.server.AonDateUtils;
 import net.aonsolutions.watson.server.AonEnumUtils;
-import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class DomainDAO {
 	
@@ -522,15 +520,15 @@ public class DomainDAO {
 			.set(DOMAIN.DESCRIPTION, domain.getDescription())
 			.set(DOMAIN.TYPE, AonEnumUtils.getByte(domain.getType() ))
 			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive() ))
-			.set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId))
-			.set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId))
+			.set(DOMAIN.SCOPE, domain.getScope().map(Scope::getId).orElse(null))
+			.set(DOMAIN.PARENT, domain.getParent().map(Domain::getId).orElse(null))
 			.set(DOMAIN.ENABLEHEREDITY, AonEnumUtils.getByte(domain.hasInheritance() ))
-			.set(DOMAIN.OWNER, AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getOwner))
-			.set(DOMAIN.DOMAINMANAGEMENT, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDomainManagement)))
-			.set(DOMAIN.DISABLEDOMAINMANAGEMENT, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDisableDomainManagement)))
-			.set(DOMAIN.MAXDEFINEDUSERS,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), b -> b.getMaxDefinedUsers().orElse(null)))
-			.set(DOMAIN.AONCUSTOMER,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), a -> a.getAonCustomer().orElse(null)))
-			.set(DOMAIN.AONSTATUS,AonEnumUtils.getByte(AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getAonStatus)))
+			.set(DOMAIN.OWNER, domain.getBooking().map(Booking::getOwner).orElse(null))
+			.set(DOMAIN.DOMAINMANAGEMENT, AonEnumUtils.getByte( domain.getBooking().map(Booking::isDomainManagement).orElse(null)))
+			.set(DOMAIN.DISABLEDOMAINMANAGEMENT, AonEnumUtils.getByte( domain.getBooking().map(Booking::isDisableDomainManagement).orElse(null)))
+			.set(DOMAIN.MAXDEFINEDUSERS,domain.getBooking().map( b -> b.getMaxDefinedUsers().orElse(null) ).orElse(null) )
+			.set(DOMAIN.AONCUSTOMER,domain.getBooking().map( b -> b.getAonCustomer().orElse(null) ).orElse(null))
+			.set(DOMAIN.AONSTATUS,AonEnumUtils.getByte(domain.getBooking().map(Booking::getAonStatus).orElse(null)))
 			.set(DOMAIN.CREATION_USER, audit.getCreationUser().orElse(ctx.getUser()) )
 			.set(DOMAIN.CREATION_DATE, new Timestamp(audit.getCreationDate().orElse(new Date()).getTime())) 
 			.returning(DOMAIN.ID)
@@ -551,47 +549,45 @@ public class DomainDAO {
 			.set(DOMAIN.MODIFICATION_DATE, new Timestamp(audit.getModificationDate().orElse(new Date()).getTime()));
 		MutableObject<UpdateSetMoreStep<DomainRecord>> sw = new MutableObject<>(updateStmt);
 		
-		DomainMetadataVisitor updateVisitor = new  DomainMetadataVisitor() {
-			private <T> void set(Field<T> field,T value) {
-				sw.setValue( sw.getValue().set(field,value));	
+		DomainMetadataVisitor<Void> updateVisitor = new  DomainMetadataVisitor<>() {
+			private <T> Void set(Field<T> field,T value) {
+				sw.setValue( sw.getValue().set(field,value));
+				return null;
 			}
-			@Override public void visitName() { set(DOMAIN.NAME, domain.getName()); }
-			@Override public void visitDescription() {set(DOMAIN.DESCRIPTION, domain.getDescription());}
-			@Override public void visitType() {set(DOMAIN.TYPE, AonEnumUtils.getByte(domain.getType()));}
-			@Override public void visitActive() {set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive()));}
-			@Override public void visitScope() {set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId));}
-			@Override public void visitParent() {set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId));}
-			@Override public void visitInheritance() {set(DOMAIN.ENABLEHEREDITY, AonEnumUtils.getByte(domain.hasInheritance()));}
-			@Override public void visitBooking() {
-				if (domain.getBooking().isPresent()) {
-					Booking booking = domain.getBooking().get(); 
-					BookingMetadataVisitor updateBookingVisitor = new  BookingMetadataVisitor() {
-						@Override public void visitId() { /* Nothing */ }
-						@Override public void visitExpirationDate() { set(DOMAIN.EXPIRATIONDATE, AonDateUtils.toSql( booking.getExpirationDate().orElse(null)));}
-						@Override public void visitOwner() {set(DOMAIN.OWNER,  booking.getOwner());}
-						@Override public void visitDomainManagement() {set(DOMAIN.DOMAINMANAGEMENT,  AonEnumUtils.getByte(booking.isDomainManagement()));}
-						@Override public void visitDisableDomainManagement() {set(DOMAIN.DISABLEDOMAINMANAGEMENT,  AonEnumUtils.getByte(booking.isDisableDomainManagement()));}
-						@Override public void visitMaxDefinedUsers() {set(DOMAIN.MAXDEFINEDUSERS,  booking.getMaxDefinedUsers().orElse(null));}
-						@Override public void visitAonCustomer() {set(DOMAIN.AONCUSTOMER,  booking.getAonCustomer().orElse(null));}
-						@Override public void visitAonStatus() {set(DOMAIN.AONSTATUS,  AonEnumUtils.getByte(booking.getAonStatus()));}
+			@Override public Void visitName() { return set(DOMAIN.NAME, domain.getName()); }
+			@Override public Void visitDescription() { return set(DOMAIN.DESCRIPTION, domain.getDescription());}
+			@Override public Void visitType() { return set(DOMAIN.TYPE, AonEnumUtils.getByte(domain.getType()));}
+			@Override public Void visitActive() { return set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive()));}
+			@Override public Void visitScope() { return set(DOMAIN.SCOPE, domain.getScope().map( Scope::getId ).orElse(null));}
+			@Override public Void visitParent() { return set(DOMAIN.PARENT, domain.getParent().map( Domain::getId ).orElse(null));}
+			@Override public Void visitInheritance() { return set(DOMAIN.ENABLEHEREDITY, AonEnumUtils.getByte(domain.hasInheritance()));}
+			@Override public Void visitBooking() {
+				Optional<Booking> optBooking = domain.getBooking();
+				if (optBooking.isPresent()) {
+					Booking booking = optBooking.get(); 
+					BookingMetadataVisitor<Void> updateBookingVisitor = new  BookingMetadataVisitor<>() {
+						@Override public Void visitId() { return null; }
+						@Override public Void visitExpirationDate() { return set(DOMAIN.EXPIRATIONDATE, AonDateUtils.toSql( booking.getExpirationDate().orElse(null)));}
+						@Override public Void visitOwner() { return set(DOMAIN.OWNER,  booking.getOwner());}
+						@Override public Void visitDomainManagement() { return set(DOMAIN.DOMAINMANAGEMENT,  AonEnumUtils.getByte(booking.isDomainManagement()));}
+						@Override public Void visitDisableDomainManagement() { return set(DOMAIN.DISABLEDOMAINMANAGEMENT,  AonEnumUtils.getByte(booking.isDisableDomainManagement()));}
+						@Override public Void visitMaxDefinedUsers() { return set(DOMAIN.MAXDEFINEDUSERS,  booking.getMaxDefinedUsers().orElse(null));}
+						@Override public Void visitAonCustomer() { return set(DOMAIN.AONCUSTOMER,  booking.getAonCustomer().orElse(null));}
+						@Override public Void visitAonStatus() { return set(DOMAIN.AONSTATUS,  AonEnumUtils.getByte(booking.getAonStatus()));}
 					};
 					booking.getDirtySet().stream().forEach(dm -> dm.visit(updateBookingVisitor));
 				}
+				return null;
 			}
-			@Override public void visitId() { /* Nothing */ }
-			@Override public void visitAudit() { /* Nothing */ }
-			@Override public void visitConfiguration() { /* Nothing */ }
-			@Override public void visitCompany() { /* Nothing */ }
+			@Override public Void visitId() { return null; }
+			@Override public Void visitAudit() { return null; }
+			@Override public Void visitConfiguration() { return null; }
+			@Override public Void visitCompany() { return null; }
 	
 		};
 		
 		domain.getDirtySet().stream().forEach(dm -> dm.visit(updateVisitor));
-		
-		System.out.println( sw.getValue()
-			.where(DOMAIN.ID.eq(domain.getId()))
-			.getSQL(ParamType.INLINED) 
-		);
-		
+
 		int count = updateStmt
 			.where(DOMAIN.ID.eq(domain.getId()))
 			.execute();

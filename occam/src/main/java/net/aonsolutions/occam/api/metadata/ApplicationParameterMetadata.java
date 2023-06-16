@@ -4,20 +4,20 @@ import java.io.Serializable;
 
 public enum ApplicationParameterMetadata implements Serializable {
 	 ID
-		{ @Override public <R,T> R visit(ApplicationParameterMetadataVisitor<R,T> v, T t) { return v.visitId(t);} }
+		{ @Override public <R> R visit(ApplicationParameterMetadataVisitor<R> v) { return v.visitId();} }
 	,DOMAIN 
-		{ @Override public <R,T> R visit(ApplicationParameterMetadataVisitor<R,T> v, T t) { return v.visitDomain(t);} }
+		{ @Override public <R> R visit(ApplicationParameterMetadataVisitor<R> v) { return v.visitDomain();} }
 	,NAME
-		{ @Override public <R,T> R visit(ApplicationParameterMetadataVisitor<R,T> v, T t) { return v.visitName(t);} }
+		{ @Override public <R> R visit(ApplicationParameterMetadataVisitor<R> v) { return v.visitName();} }
 	,VALUE
-		{ @Override public <R,T> R visit(ApplicationParameterMetadataVisitor<R,T> v, T t) { return v.visitValue(t);} }
+		{ @Override public <R> R visit(ApplicationParameterMetadataVisitor<R> v) { return v.visitValue();} }
 	;
-	public abstract <R,T> R visit(ApplicationParameterMetadataVisitor<R,T> visitor, T t);
+	public abstract <R> R visit(ApplicationParameterMetadataVisitor<R> visitor);
 
-	public static interface ApplicationParameterMetadataVisitor<R,T> {
-		 R visitId( T t );
-		 R visitDomain( T t );
-		 R visitName( T t );
-		 R visitValue( T t );
+	public static interface ApplicationParameterMetadataVisitor<R> {
+		 R visitId();
+		 R visitDomain();
+		 R visitName();
+		 R visitValue();
 	}
 }

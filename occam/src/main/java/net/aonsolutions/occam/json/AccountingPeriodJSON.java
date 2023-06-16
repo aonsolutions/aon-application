@@ -59,7 +59,7 @@ public class AccountingPeriodJSON {
 			.putOpt(AonNames.NAME, ap.getName())
 			.putOpt(AonNames.START_DATE, AonJSONUtils.formatDate( ap.getStartDate() ))
 			.putOpt(AonNames.END_DATE, AonJSONUtils.formatDate( ap.getEndDate() ))
-			.putOpt(AonNames.STATUS, AonObjectUtils.ifNotNullDo(ap.getStatus(), Object::toString ))
+			.putOpt(AonNames.STATUS, AonObjectUtils.ifNotNullGet(ap.getStatus(), Object::toString ))
 			.putOpt(AonNames.DEFAULT_PERIOD, ap.isDefaultPeriod())
 			.putOpt(AonNames.AUDIT, AuditJSON.to(ap.getAudit().orElse(null)))
 			;

@@ -56,12 +56,12 @@ public class InvoiceTaxJSON {
 		if (tax == null) return null;
 		return new JSONObject()
 			.put(AonNames.ID, tax.getId())
-			.putOpt(AonNames.TAX_TYPE, AonObjectUtils.ifNotNullDo(tax.getTaxType(), Object::toString ))
+			.putOpt(AonNames.TAX_TYPE, AonObjectUtils.ifNotNullGet(tax.getTaxType(), Object::toString ))
 			.putOpt(AonNames.PERCENT, tax.getPercent())
 			.putOpt(AonNames.SURCHARGE_PERCENT, tax.getSurchargePercent())
 			.putOpt(AonNames.DEDUCTIBLE_PERCENT, tax.getDeductiblePercent())
-			.putOpt(AonNames.VAT_DEDUCTION_TYPE, AonObjectUtils.ifNotNullDo(tax.getVatDeductionType(), Object::toString ))
-			.putOpt(AonNames.WITHHOLDING_TYPE, AonObjectUtils.ifNotNullDo(tax.getWithholdingType(), Object::toString ))
+			.putOpt(AonNames.VAT_DEDUCTION_TYPE, AonObjectUtils.ifNotNullGet(tax.getVatDeductionType(), Object::toString ))
+			.putOpt(AonNames.WITHHOLDING_TYPE, AonObjectUtils.ifNotNullGet(tax.getWithholdingType(), Object::toString ))
 			;
 	}
 }

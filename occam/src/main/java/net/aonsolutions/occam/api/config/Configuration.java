@@ -10,7 +10,7 @@ public class Configuration extends OccamEntity<ConfigurationMetadata> {
 
 	private static final long serialVersionUID = 7723888010939038114L;
 
-	private Integer uuid;
+	private String uuid;
 	private AccountingConfiguration accountingConfiguration;
 
 	public Optional<AccountingConfiguration> accounting() {
@@ -23,10 +23,11 @@ public class Configuration extends OccamEntity<ConfigurationMetadata> {
 	}
 	
 	@Override
-	protected Object getUuid() {
+	public Object getUuid() {
 		return uuid;
 	}
-	public void setUuid(Integer uuid) {
+	public Configuration setUuid(String uuid) {
 		this.uuid = uuid;
+		return this;
 	}
 }

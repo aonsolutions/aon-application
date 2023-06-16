@@ -7,8 +7,10 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @SelectClasses({
 	ActivityTest.class
+	,ConfigurationTest.class
 	,ApplicationParameterTest.class
 	,BookingTest.class
+	,DomainAuditTest.class
 	,DomainTest.class
 	,GeozoneTest.class
 	,RegistryTest.class

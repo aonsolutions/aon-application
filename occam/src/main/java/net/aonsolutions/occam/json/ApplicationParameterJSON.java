@@ -52,7 +52,7 @@ public class ApplicationParameterJSON {
 		return new JSONObject()
 			.put(AonNames.ID, parameter.getId())
 			.put(AonNames.DOMAIN, parameter.getDomain())
-			.putOpt(AonNames.NAME, AonObjectUtils.ifNotNullDo(parameter.getName(), Object::toString ))
+			.putOpt(AonNames.NAME, AonObjectUtils.ifNotNullGet(parameter.getName(), Object::toString ))
 			.putOpt(AonNames.VALUE, parameter.getValue())
 			;
 	}

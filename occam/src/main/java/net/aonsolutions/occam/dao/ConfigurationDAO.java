@@ -29,7 +29,7 @@ public class ConfigurationDAO {
 		private final Configuration conf;
 		
 		public ConfigurationBuilderDAO( AONContext ctx, Domain domain ) {
-			conf = new Configuration();
+			conf = new Configuration().setUuid(ctx.getDomainName());
 			addBuilder(new AccountingBuilder(ctx, domain, conf));
 		}
 		
@@ -57,7 +57,8 @@ public class ConfigurationDAO {
 		
 		@Override
 		public ConfigurationBuilder withAccountingConfiguration() {
-			conf.setAccounting(new AccountingConfiguration());
+			conf.setAccounting(new AccountingConfiguration()
+				.setUuid(ctx.getDomainName()));
 			fillAccountingParameters(ctx);
 			return this;
 		}

@@ -4,44 +4,44 @@ import java.io.Serializable;
 
 public enum DomainMetadata implements Serializable {
 	 ID
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitId();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitId();} }
 	,NAME
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitName();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitName();} }
 	,DESCRIPTION
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitDescription();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitDescription();} }
 	,TYPE
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitType();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitType();} }
 	,ACTIVE
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitActive();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitActive();} }
 	,SCOPE
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitScope();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitScope();} }
 	,PARENT
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitParent();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitParent();} }
 	,INHERITANCE
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitInheritance();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitInheritance();} }
 	, BOOKING
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitBooking();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitBooking();} }
 	, AUDIT
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitAudit();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitAudit();} }
 	, CONFIGURATION
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitConfiguration();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitConfiguration();} }
 	, COMPANY
-		{ @Override public void visit(DomainMetadataVisitor v) { v.visitCompany();} }
+		{ @Override public <R> R visit(DomainMetadataVisitor<R> v) { return v.visitCompany();} }
 	;
-	public abstract void visit(DomainMetadataVisitor visitor);
+	public abstract <R> R visit(DomainMetadataVisitor<R> visitor);
 
-	public static interface DomainMetadataVisitor {
-		void visitId();
-		void visitName();
-		void visitDescription();
-		void visitType();
-		void visitActive();
-		void visitScope();
-		void visitParent();
-		void visitInheritance();
-		void visitBooking();
-		void visitAudit();
-		void visitConfiguration();
-		void visitCompany();
+	public static interface DomainMetadataVisitor<R> {
+		R visitId();
+		R visitName();
+		R visitDescription();
+		R visitType();
+		R visitActive();
+		R visitScope();
+		R visitParent();
+		R visitInheritance();
+		R visitBooking();
+		R visitAudit();
+		R visitConfiguration();
+		R visitCompany();
 	}
 }

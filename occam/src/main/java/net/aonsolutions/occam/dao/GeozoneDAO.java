@@ -261,44 +261,12 @@ public class GeozoneDAO {
 		if (geozone == null) throw new AonCoreException(AonError.SAVE_EMPTY.getMessage());
 		if (geozone.isDirty()) { 
 			GeoZoneValidation.validate(ctx, geozone);
-//			return (geozone.getId() == null)
-//				?insert(ctx,geozone)
-//				:update(ctx,geozone);
 		} else {
 			ctx.log().debug(AonError.NOT_DIRTY.format("GeoZone",geozone.getId()));
 		}
 		return geozone;  
 	}
 	
-//	private static GeoZone insert(AONContext ctx, GeoZone geozone) {
-//		Integer id = ctx.getDslContext()
-//			.insertInto(GEOZONE)
-//			.set(GEOZONE.DOMAIN,geozone.getDomain())
-//			.set(GEOZONE.CODE,geozone.getCode())
-//			.set(GEOZONE.NAME,geozone.getName())
-//			.set(GEOZONE.SYSTEM, AonEnumUtils.getByte(geozone.isSystem()))
-//			.returning(GEOZONE.ID)
-//			.fetchOne()
-//			.getValue(GEOZONE.ID);
-//		geozone.setId(id);
-//		ctx.log().info("INSERT GEOZONE id: {0} - {1}", geozone.getId(), geozone.getName());	
-//		return geozone;
-//	}
-//	
-//	private static GeoZone update(AONContext ctx, GeoZone geozone) {
-//		throw new UnsupportedOperationException("Not implemented!");
-//	}
-
-//	public static void bind(AONContext ctx, Integer domain, Integer parentId, Integer childId) {
-//		ctx.checkWrite();
-//		ctx.getDslContext()
-//			.insertInto(GEOTREE)
-//			.set(GEOTREE.DOMAIN, domain)
-//			.set(GEOTREE.PARENT,parentId)
-//			.set(GEOTREE.CHILD,childId)
-//			.execute();
-//	}
-
 	private static class GeoZoneValidation {
 		
 		public static final BiConsumer<AONContext,Geozone> VALIDATE_DOMAIN = (ctx,geozone) -> {

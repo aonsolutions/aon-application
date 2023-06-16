@@ -25,6 +25,7 @@ class ConfigurationDAOTest extends AbstractOccamTest {
 	void DomainneTest() {
 		Configuration config = ConfigurationDAO.getConfiguration(ctx,b -> b);
 		assertNotNull(config);
+		assertNotNull(config.getUuid());
 		assertFalse(config.accounting().isPresent());
 	}
 	
@@ -35,6 +36,7 @@ class ConfigurationDAOTest extends AbstractOccamTest {
 		Configuration config = ConfigurationDAO.getConfiguration(ctx, b -> b.withAccountingConfiguration());
 		assertNotNull(config);
 		assertTrue(config.accounting().isPresent());
+		assertNotNull(config.accounting().get().getUuid());
 		assertTrue(config.accounting().get().getAccount(AppParam.ACC_DEFAULT_CASH_ACC).isPresent());
 	}
 }
