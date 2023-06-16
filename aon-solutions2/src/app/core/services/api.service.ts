@@ -13,17 +13,25 @@ export class ApiService implements IApi {
 
   constructor(private http: HttpClient) { }
 
-  get(method: string): Observable<any> {
-    return this.http.get(this.urlBase+method)
+  get(method: string, params?: any): Observable<any> {
+    let headers = this.setHeaders();
+    return this.http.get(this.urlBase+method, { headers, params });
   }
-
-  getWithHeaders(method: string, headers: HttpHeaders): Observable<any> {
-    return this.http.get(this.urlBase+method, { headers });
-  }
-
 
   post(method: string, data: any): Observable<any> {
-    return this.http.post(this.urlBase+method, data);
+    let headers = this.setHeaders();
+    return this.http.post(this.urlBase+method, data, { headers });
+  }
+
+  setHeaders(): HttpHeaders{
+    let token = sessionStorage.getItem(environment.localStorageJwt.accessToken);
+    let domainName = environment.headerApi.domainName;
+    let headers = new HttpHeaders();
+    if (token !== null) {
+      headers = headers.set('session_id', token);
+    }
+    headers = headers.set('domain_name', domainName);
+    return headers;
   }
 
 }

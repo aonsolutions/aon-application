@@ -1,0 +1,14 @@
+{
+  "name": "aon-domain-dump",
+  "version": "1.0.0",
+  "description": "A domain Download Program ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "author": "Raúl Trepiana <rtrepiana@aonsolutions.es>",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.18.1"
+  }
+}

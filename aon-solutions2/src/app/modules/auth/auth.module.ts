@@ -10,6 +10,7 @@ import { NgModule } from '@angular/core';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
 import { SharedModule } from "../../shared/shared.module";
 import { SelectEnterpriseComponent } from './components/select-enterprise/select-enterprise.component';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { SelectEnterpriseComponent } from './components/select-enterprise/select
         MatInputModule,
         SetMaterialModule,
         SharedModule,
+        MatGridListModule
     ]
 })
 export class AuthModule { }

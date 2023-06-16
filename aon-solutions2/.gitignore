@@ -46,4 +46,7 @@ testem.log
 Thumbs.db
 
 #setProduct
-/libraries/*
+/libraries/setproduct*
+
+#AonSDK
+/libraries/AonSDK/node_modules
