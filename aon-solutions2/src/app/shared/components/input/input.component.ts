@@ -29,7 +29,6 @@ export class InputComponent implements OnInit {
 
   ngOnInit(): void {
     this.suffixBehavior != '' ? this.classSuffix = '' : this.classSuffix = 'cursor';
-    console.log(this.appearanceDetail);
   }
 
   selectFunction() {
