@@ -579,16 +579,31 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		}
 	
 		Employee employee = builder.build();
+		byte[] pdf = null;
 		
-		byte[] pdf = AonComunica.communicateAlta(employee, certificate);
-
-		try {AonComunica.addContract(domain, EmployeeParse.toEmployeeOccam(employee), certificate);} 
-		catch (Exception e) {}
-
-		if(employee.getName().isPresent()) {			
-			sendMovEmailNotification(api, employee, fra, SituationType.ALTA, certificate);
+		try {
+			pdf = AonComunica.communicateAlta(employee, certificate);
+			
+			try {
+				if(employee.getName().isPresent()) {			
+					sendMovEmailNotification(api, employee, fra, SituationType.ALTA, certificate);
+				}
+			} catch (Exception e) {
+				System.out.println("FALLO MANDANDO EMAIL");
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			System.out.println("FALLO COMUNICANDO");
+			e.printStackTrace();
 		}
 		
+		try {
+			AonComunica.addContract(domain, EmployeeParse.toEmployeeOccam(employee), certificate);
+		} catch (Exception e) {
+			System.out.println("FALLO CREANDO CONTRATO");
+			e.printStackTrace();
+		}
+
 		String base64 = new String(Base64.getEncoder().encode(pdf));
 		
 		return new JSONObject().put(IJsonNames.FILE, base64);
