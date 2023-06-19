@@ -1,11 +1,10 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
-import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-input',
   templateUrl: './input.component.html',
-  styleUrls: ['./input.component.scss']
+  styleUrls: ['./input.component.scss'],
 })
 export class InputComponent implements OnInit {
 
@@ -23,12 +22,13 @@ export class InputComponent implements OnInit {
   @Input() classes : string = '';
   @Input() maxRow : string = '3';
   @Input() minRow : string = '10';
+  @Input() appearanceDetail: string = '';
   classSuffix :string = '';
 
   constructor() { }
 
   ngOnInit(): void {
-    this.suffixBehavior != '' ? this.classSuffix = '' : this.classSuffix = 'cursor'
+    this.suffixBehavior != '' ? this.classSuffix = '' : this.classSuffix = 'cursor';
   }
 
   selectFunction() {

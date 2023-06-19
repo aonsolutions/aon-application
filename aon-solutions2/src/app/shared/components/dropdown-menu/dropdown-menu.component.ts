@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 @Component({
   selector: 'app-dropdown-menu',

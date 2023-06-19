@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es-ES">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>AON SDK for JavaScript Code Examples</title>
+		<script src="https://tjx4cclp6g7yzeloe23lowb6ka0gphmh.lambda-url.eu-west-1.on.aws/?domain=b72384936-ayudat.aonsolutions.net" type="text/javascript" ></script>
+		<script type="text/javascript" src="aon-sdk.js" ></script>
+		<script type="text/javascript" >
+			function showEnterprises(){
+				getEnterprises().then( enterprises => alert(enterprises) );
+			}
+		</script>
+	</head>
+	<body>
+		<button onclick="javascript:showEnterprises()" >getEnterprises</button>
+	</body>
+</html>
