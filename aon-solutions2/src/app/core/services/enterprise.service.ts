@@ -17,7 +17,7 @@ export class EnterpriseService {
         this.aonSDK.model('enterprise').getElementList('enterprise')
         .then(
           (response: any) => {
-            resolve(response.result);
+            resolve(new Enterprise().deserializeArray(response.result));
           }
         )
         .catch(

@@ -4,11 +4,10 @@ export class Enterprise implements Deserializable {
 
   private name: string;
   private document: string;
-
   
-  constructor(name: string, document: string){
-    this.name = name;
-    this.document = document;
+  constructor(name?: string, document?: string){
+    this.name = name || '';
+    this.document = document || '';
   }
   
   public get Name(): string {
@@ -30,6 +29,16 @@ export class Enterprise implements Deserializable {
   deserialize(input: any): this {
     Object.assign(this, input);
     return this;
+  }
+
+  deserializeArray(input: any): Array<Enterprise> {
+    let enterprises = []
+    for(let i = 0; i < input.length; i++){
+      let aux = new Enterprise()
+      aux.deserialize(input[i])
+      enterprises.push(aux)
+    }
+    return enterprises;
   }
 
 }
