@@ -36,18 +36,18 @@ export class AuthService {
       }
     ).catch(
       (error: any) => {
-        throw new Error(error.description + error.result)
+        throw new Error(error.description + ' - ' + error.result)
       }
     )
   }
 
   isLoggedIn(): boolean {
-    if(this.aonSDK.model('auth').getSession().result){
+    if(this.aonSDK.model('auth').getSession().result.token){
       return true;
     }else {
       return false;
     }
   }
-  
+
 }
 

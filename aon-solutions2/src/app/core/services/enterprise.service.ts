@@ -22,7 +22,7 @@ export class EnterpriseService {
         )
         .catch(
           (error:any) => {
-            throw new Error(error.description + error.result)
+            throw new Error(error.description + ' - ' + error.result)
           }
         )
     })
@@ -55,10 +55,18 @@ export class EnterpriseService {
         )
         .catch(
           (error:any) => {
-            throw new Error(error.description + error.result)
+            throw new Error(error.description + ' - ' + error.result)
           }
         )
     })
+  }
+
+  isEnterpriseSelected(): boolean {
+    if(this.aonSDK.model('auth').getSession().result.enterprise){
+      return true;
+    }else {
+      return false;
+    }
   }
 
 }
