@@ -19,31 +19,35 @@ export class AuthService {
         if(response.result == true){
           this.router.navigate(['/auth/selectEnterprise']);
         }
-      },
-      (error:any) => {
-          throw new Error(error.description + error.result)
       }
-    )
-  }
-
-  logout() {
-    this.aonSDK.model('auth').logout().then(
-      (response: any) => {
-        if(response.result == true)
-          this.router.navigate(['/auth']);
-      },
+    ).catch(
       (error: any) => {
         throw new Error(error.description + error.result)
       }
     )
   }
 
+  logout() {
+    this.aonSDK.model('auth').logout()
+    .then(
+      (response: any) => {
+        if(response.result == true)
+          this.router.navigate(['/auth']);
+      }
+    ).catch(
+      (error: any) => {
+        throw new Error(error.description + ' - ' + error.result)
+      }
+    )
+  }
+
   isLoggedIn(): boolean {
-    if(this.aonSDK.model('auth').getSession().result){
+    if(this.aonSDK.model('auth').getSession().result.token){
       return true;
     }else {
       return false;
     }
   }
+
 }
 
