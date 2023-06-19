@@ -794,12 +794,14 @@ class ServiceAuth {
 
     login(username : string, password : string): Promise<Response> {
         return new Promise((resolve, reject) => {
-            if( username == 'prueba' && password == 'prueba'){
-                sessionStorage.setItem('token','testToken')
-                resolve(new Response('0000',true))
-            }else{
-                throw new Response('0101')
+            for(let i = 0; i < users.length; i++){
+                if( username == users[i].username && password == users[i].password){
+                    sessionStorage.setItem('token','testToken')
+                    resolve(new Response('0000',true))
+                }
             }
+            throw new Response('0101')
+            
         });
     }
 
@@ -811,8 +813,9 @@ class ServiceAuth {
     }
 
     getSession(): Response {
-        return new Response('0000',sessionStorage.getItem('token'))
+        return new Response('0000',sessionStorage)
     }
+    
 }
 
 export class AonSDK {
@@ -909,6 +912,9 @@ export class AonSDK {
 
 }
 
+let users = [
+    {username: 'test@aonsolutions.test', password: 'test'}
+]
 
 let enterprises = [
     new Enterprise('Pet Estudio', 'B16880148'),

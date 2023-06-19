@@ -21,7 +21,7 @@ export class AuthService {
         }
       },
       (error:any) => {
-          throw new Error(error.description + error.result)
+          throw new Error(error.description + ' - ' + error.result)
       }
     )
   }
@@ -33,13 +33,13 @@ export class AuthService {
           this.router.navigate(['/auth']);
       },
       (error: any) => {
-        throw new Error(error.description + error.result)
+        throw new Error(error.description + ' - ' + error.result)
       }
     )
   }
 
   isLoggedIn(): boolean {
-    if(this.aonSDK.model('auth').getSession().result){
+    if(this.aonSDK.model('auth').getSession().result.token){
       return true;
     }else {
       return false;
