@@ -16,21 +16,50 @@
 		</aon:div>
 	</aon:div>
 
-	<aon:div styleClass="aon-dataScroller aonDataScroller" rendered="#{rowCount>0}">					
+	<aon:div styleClass="aon-dataScroller aonDataScroller" rendered="#{rowCount>0}">
 	    <aon:panelGrid id="#{dataTable}MessageDataScroller" 
-	    	columns="3" columnClasses="aon-dataScroller2-text aon-nowrap,aon-width-all,aon-dataScroller2-text aon-nowrap aon-float-right">
+	    	columns="3" columnClasses=" ,aon-dataScroller2-text aon-nowrap aon-width-all, aon-nowrap  aon-float-right">
 	    	<aon:panelGroup>
-				<aon:aonPaginator for="#{dataTable}" fastStep="5" paginator="true"
-					paginatorMaxPages="11"
-					rendered="#{(pageSize > 0) and (rowCount > pageSize)}"
+				<aon:aonPaginator 
+					for="#{dataTable}" 
+					fastStep="5" 
+					paginator="true"
+					paginatorMaxPages="7"
 					ajaxSingle="true"
 					oncomplete="#{oncomplete}" 
 					page="#{page}"
 					fastControls="#{'hide'}"
 					boundaryControls="#{'hide'}"
+					reRender="#{dataTable}PaginatorInfo" 
 					styleClass="aon-dataScroller-buttons"
-					reRender="#{dataTable}PaginatorInfo" />
+					rendered="#{(pageSize > 0) and (rowCount > pageSize)}"
+					>
+					</aon:aonPaginator>
 			</aon:panelGroup>			    			    	
+			<aon:panelGroup style="padding-left: 4rem; display: block;" >
+				<aon:outputFormat rendered="#{(rowCount &lt;= pageSize) or (pageSize &lt; 1)}"
+					value="{0} - {1} de {2}">
+					<f:param value="#{1}" />
+					<f:param value="#{rowCount}" />
+					<f:param value="#{rowCount}" />
+				</aon:outputFormat>		    	
+				<aon:dataPaginator
+					for="#{dataTable}" 
+					id="#{dataTable}PaginatorInfo" 
+					page="#{page}"
+					rowsCountVar="rowsCount" 
+					firstRowIndexVar="firstRowIndex" 
+					lastRowIndexVar="lastRowIndex"
+					styleClass="aon-dataScroller-text">
+					<f:facet name="pages">
+						<h:outputFormat value="{0} - {1} de {2}">
+							<f:param value="#{firstRowIndex}" />
+							<f:param value="#{lastRowIndex}" />
+							<f:param value="#{rowsCount}" />
+						</h:outputFormat>
+					</f:facet>
+				</aon:dataPaginator>
+			</aon:panelGroup>
 			<aon:panelGroup rendered="#{!hidePageSizeSelector}" styleClass="text-right">
 				<aon:outputText styleClass="aon-margin-right"
 					value="#{bundle.aon_row_number}"

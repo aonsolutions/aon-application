@@ -42,12 +42,27 @@
 			<aon:outputText 
 			value="expand_more"
 			styleClass="material-icons aon-vertical-middle" />
-			<aon:outputText value="AYUDA/CONTENIDOS" />
+			<aon:outputText value="AYUDA/INFORMACIÓN" />
 		</aon:div>
 		
 		<aon:div styleClass="aon-portlet-body aon-box-outstanding2" >
 			<aon:div 
 				id="helpMenuPortlet" >
+
+				<aon:div styleClass="aon-direct-access-list ">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{help.notificationsEnabled ? 'selected':''}">
+						<aon:commandLink id="infoNotifications"
+							styleClass="aon-width-all aon-black "
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="rss_feed" />
+							<aon:outputText value=" Notificaciones" />
+							<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+							<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{true}" />
+						</aon:commandLink> 	
+					</aon:div>
+						
+				</aon:div>
+
 				<aon:div styleClass="aon-direct-access-list">
 					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{help.contentEnabled ? 'selected':''}">
 						

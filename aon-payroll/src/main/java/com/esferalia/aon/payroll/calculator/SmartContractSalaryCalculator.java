@@ -271,8 +271,13 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		public Optional<Double> get() {
 			if ( extra == 0.00 )
 				return Optional.empty();
-			long d = defined.stream().collect(Collectors.summingLong(p-> p.daysStream().count()));
-			long u = undefined.stream().collect(Collectors.summingLong(p-> p.daysStream().count()));
+			
+			//long d = defined.stream().collect(Collectors.summingLong(p-> p.daysStream().count()));
+			//long u = undefined.stream().collect(Collectors.summingLong(p-> p.daysStream().count()));
+			
+			long d = defined.stream().flatMap(Period::daysStream).map( c -> c.get(Calendar.MONTH) ).distinct().count();
+			long u = undefined.stream().flatMap(Period::daysStream).map( c -> c.get(Calendar.MONTH) ).distinct().count();
+			
 			return Optional.of(extra * ( d + u ) / d);
 		}
 		

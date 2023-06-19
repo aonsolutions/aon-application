@@ -8960,5 +8960,62 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	protected ContextVariable getPeriodVariable() {
 		return MONTH_DAYS;
 	}
+
+	@Test
+	public void testExtrasAtSalaryXX() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+	
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+	
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				},
+				new Payment[] {
+						new Payment() {
+							{
+								this.concept = conceptSalarioBase.getId();
+								this.expression = "SALARIO_MENSUAL * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptPlusSalarial.getId();
+								this.expression = "PLUS_MENSUAL * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						}
+				});
+		
+		addData(aonContext, category, getFirstDayOfYear(getToday()), null, new HashMap<String,String>(){
+			{
+				put("PLUS_MENSUAL", "100.00");
+				put("SALARIO_MENSUAL", "1000.00");
+			}
+		});
+		
+		Date firstDayOfYear = getFirstDayOfYear( getToday());
+		Date contractStartDate = add(getFirstDayOfYear( getToday()), Calendar.YEAR, -1);
+	
+		ContractRecord contract = newContract(
+				aonContext
+				,contractStartDate
+				,new String[] {} 
+				,new String[] {} 
+				,category);
+		
+		addPayment(aonContext, contract, firstDayOfYear, null, conceptPagaExtra, "PAGA EXTRA JUNIO", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, Month.JUNE);
+		addPayment(aonContext, contract, firstDayOfYear, null, conceptPagaExtra, "PAGA EXTRA DICIEMBRE", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, Month.DECEMBER);
+		
+		Date startDate = add(firstDayOfYear, Calendar.MONTH, 5);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+	
+		org.junit.Assert.assertEquals(1100.00 *2, salary.getTotalPayment(), DELTA);
+	}
 	
 }
