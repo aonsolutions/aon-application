@@ -44,6 +44,7 @@ import solutions.aon.seg.social.exception.OutOfServiceException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
+import solutions.aon.seg.social.exception.invalid.NoMoreDataException;
 
 public class HtmlUnitToolkit {
 
@@ -170,7 +171,11 @@ public class HtmlUnitToolkit {
 					else
 						return Integer.parseInt(status.substring(0, status.indexOf("-")));
 				
-				return Integer.parseInt(status.substring(0, status.indexOf("*")));
+				int statusCode = Integer.parseInt(status.substring(0, status.indexOf("*")));
+				
+				if(statusCode == 3037) throw new NoMoreDataException();
+				else return statusCode;
+			
 			} else
 				return 0;
 			
