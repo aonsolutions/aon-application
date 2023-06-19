@@ -19,19 +19,22 @@ export class AuthService {
         if(response.result == true){
           this.router.navigate(['/auth/selectEnterprise']);
         }
-      },
-      (error:any) => {
-          throw new Error(error.description + error.result)
+      }
+    ).catch(
+      (error: any) => {
+        throw new Error(error.description + error.result)
       }
     )
   }
 
   logout() {
-    this.aonSDK.model('auth').logout().then(
+    this.aonSDK.model('auth').logout()
+    .then(
       (response: any) => {
         if(response.result == true)
           this.router.navigate(['/auth']);
-      },
+      }
+    ).catch(
       (error: any) => {
         throw new Error(error.description + error.result)
       }
@@ -45,5 +48,6 @@ export class AuthService {
       return false;
     }
   }
+  
 }
 
