@@ -247,6 +247,7 @@ public class BookingDAO {
 				.and(DOMAIN.ACTIVE.eq((byte) 1))
 				.and(DOMAIN.AONSTATUS.eq(AonStatus.BILLABLE.value()))
 				.and(DOMAIN.AONCUSTOMER.isNull())
+				.and(DOMAIN_APP.ACTIVE.eq((byte) 1))
 				.fetch()
 				.stream().toList();
 				
