@@ -307,15 +307,23 @@ class ServiceEnterprise implements IService {
         });
     }
 
-    setEnterprise(model:string, pKey: any): Promise <Response> {
+    setEnterprise(model:string, pKey: any): Promise <Response> {        
         return new Promise((resolve, reject) => {
             try {
-                if(this.getElement('enteprise',pKey) != null){
-                    sessionStorage.setItem('enterprise','')
-                    resolve(new Response('0000',true))
-                }else{
-                    reject(new Response('0201'))    
-                }
+                this.getElement('enterprise',pKey).then(
+                    (response) => {
+                        if(response != null){
+                            sessionStorage.setItem('enterprise', pKey)
+                            resolve(new Response('0000',true))
+                        }else{
+                            reject(new Response('0201'))    
+                        }
+                    }
+                    ).catch(
+                        (error) => {
+                        reject(new Response('0201'))
+                    }
+                )
             } catch (error) {
                 reject(new Response('0201'))
             }
@@ -809,7 +817,7 @@ class ServiceAuth {
 
 export class AonSDK {
 
-    factory: Factory;    
+    private factory: Factory;    
 
     constructor(){
         this.factory = new Factory();
