@@ -1432,8 +1432,30 @@ export class AonDomainCustomer extends AonElement {
     usersContainer.style.gap = "3px";
     usersContainer.style.overflowY = "auto";
     usersContainer.style.maxHeight = "75vh";
+    usersContainer.style.justifyContent = "center";
+    usersContainer.style.alignItems = "center";
 
-    users.forEach((user, ind) => {
+    let infoContainer = document.createElement("div");
+    infoContainer.style.width = "100%";
+    infoContainer.style.display = "flex";
+    infoContainer.style.flexDirection = "column";
+
+    usersContainer.appendChild(infoContainer);
+    let textToCopy = "";
+
+    users
+    .sort((a, b) => {
+      const descA = (a.description ? a.description.toLowerCase() : "").trim();
+      const descB = (b.description ? b.description.toLowerCase() : "").trim();
+
+      if (descA < descB) {
+        return -1;
+      } else if (descA > descB) {
+        return 1;
+      }
+      return 0;
+    })
+    .forEach((user, ind) => {
 
       let userContainer = document.createElement("div");
       userContainer.style.display = "flex";
@@ -1458,23 +1480,51 @@ export class AonDomainCustomer extends AonElement {
       userNameContainer.style.textAlign = "left";
       userNameContainer.innerText = user.name;
 
+      textToCopy += `${user.description} - ${user.name}` + (ind < users.length - 1 ? "\n" : "");
+
       userContainer.appendChild(userDescriptionContainer);
       userContainer.appendChild(userSeparatorContainer);
       userContainer.appendChild(userNameContainer);
       
-      usersContainer.appendChild(userContainer);
+      infoContainer.appendChild(userContainer);
 
     });
 
-    let downloadButton = new AonButton();
+    let buttonContainer = document.createElement("div");
+    buttonContainer.style.width = "100%";
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.flexDirection = "row";
+    buttonContainer.style.justifyContent = "center";
+    buttonContainer.style.alignItems = "center";
+    buttonContainer.style.gap = "3%";
+    usersContainer.appendChild(buttonContainer);
+
+    let downloadButton = new AonIconButton();
+    downloadButton.icon = "download";
+    downloadButton.background = "var(--aonBlue)";
+    downloadButton.color = "white";
     downloadButton.title = MSG.DOWNLOAD;
-    downloadButton.style.width = "50%";
+    // downloadButton.style.width = "15%";
     downloadButton.style.marginTop = "10px";
-    downloadButton.style.alignSelf = "center";
     downloadButton.addEventListener("click", event => {
       this.generateUsersFile(applicationName, users);
     });
-    usersContainer.appendChild(downloadButton);
+    buttonContainer.appendChild(downloadButton);
+
+    let copyButton = new AonIconButton();
+    copyButton.icon = "content_copy";
+    copyButton.title = "Copiar";
+    copyButton.background = "var(--aonBlue)";
+    copyButton.color = "white";
+    copyButton.style.marginTop = "10px";
+    copyButton.addEventListener("click", event => {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        this.showToast({message: "Copiado al portapapeles"});
+      }, err => {
+        this.showError(err);
+      })
+    });
+    buttonContainer.appendChild(copyButton);
 
     // dialog.width = "500px";
     dialog.setContent(usersContainer);
