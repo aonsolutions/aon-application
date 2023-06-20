@@ -242,7 +242,8 @@ public class ProductServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONArray saveRegistryItem(AonApiData api) {
-		 List<Item> items          = ItemJSON.fromJSON(api.getData().optJSONArray(IJsonNames.ITEMS));
+		JSONArray itemsJson = api.getData().optJSONArray(IJsonNames.ITEMS);
+		 List<Item> items          = ItemJSON.fromJSON(itemsJson);
 		 List<Customer> customers  = CustomerJSON.fromJSON(api.getData().optJSONArray(IJsonNames.CUSTOMERS));
 		 RegistryItemStatus status = RegistryItemStatus.INTERESTED; // RegistryItemStatus.safeValueOf(api.getData().optString(IJsonNames.STATUS));
 		 String typeStr = api.getData().optString(IJsonNames.TYPE);
@@ -254,8 +255,15 @@ public class ProductServlet extends AonApiHttpServlet {
 		 
 		 customers.forEach(customer->{
 			 items.forEach(item-> {
+				 Integer domainId = null;
+				 if (itemsJson.length() == 1 && item.getDomain() == null || item.getDomain().getId() == null ) {
+					 domainId = itemsJson.getJSONObject(0).optInt("domain");
+				 } else {
+					 domainId = item.getDomain().getId();
+				 }
+				 
 				 RegistryItem ritem = new RegistryItem()
-						 .setDomain(item.getDomain().getId())
+						 .setDomain(domainId)
 						 .setRegistry(customer.getId())
 						 .setItem(item)
 						 .setPrice(item.getPrice())

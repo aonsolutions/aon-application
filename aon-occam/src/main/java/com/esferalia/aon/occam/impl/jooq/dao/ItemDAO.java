@@ -313,7 +313,8 @@ public class ItemDAO {
 			Optional<RitemRecord> opt = getRItemRecordStream(ctx, 
 					f-> f.getDomainProperty().eq(ritem.getDomain())
 					.and(f.getRegistryProperty().eq(ritem.getRegistry()))
-					.and(f.getItemProperty().eq(ritem.getItem() != null ? ritem.getItem().getId() : null))
+					.and(f.getItemProperty().eq(ritem.getItem() != null ? ritem.getItem().getId() : null)
+					.and(f.getTypeProperty().eq(ritem.getType() != null ? ritem.getType().value() : null)))
 			).findFirst();
 			
 			if(opt.isPresent()) { 		//------------------UPDATE ----------
@@ -361,7 +362,6 @@ public class ItemDAO {
 		}
 		
 		if(null!=insertRItem) {
-			System.out.println(insertRItem);
 			return insertRItem.returning().fetchStreamInto(RITEM).map(r -> new RegistryItem()
 					.setId(r.getId())
 					.setDomain(r.getDomain())

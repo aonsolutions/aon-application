@@ -5,6 +5,7 @@ import { getItems, getRItems } from '../../../../services/productService.js';
 import { AonTargetItemAdd } from './aon-target-item-add.js';
 import { BookingItemStatus, RegistryItemStatus } from '../../../../models/product/RegistryItemStatus.js';
 import { AonBookingItemAdd } from './aon-booking-item-add.js';
+import { Item } from '../../../../models/product/Item.js';
 
 export class AonBookingItemList extends AonElement {
 	more;
@@ -79,14 +80,14 @@ export class AonBookingItemList extends AonElement {
 		this.more = false;
 		if(this.TABLE && this.filter.page) {
 			this.filter.page = this.filter.page + 1;
-			this.getRItems(this.filter)
+			this.getData(this.filter)
 			.then(items => {
 				if(items.length > 0)
 					this.more = true;
 				items.forEach((item) => {
 					this.buildIconRemove(item);
 					this.TABLE.addRow(item, () => {
-						this.openDialogItems(item);
+						// this.openDialogItems(item);
 					});
 				});
 			});
@@ -99,10 +100,9 @@ export class AonBookingItemList extends AonElement {
 			.then(items => {
 				this.TABLE.removeRows();
 				items.forEach((item) => {
-					console.log(item);
 					this.buildIconRemove(item);
 					this.TABLE.addRow(item, () => {
-						this.openDialogItems(item);
+						// this.openDialogItems(item);
 					});
 				});
 			});	
@@ -121,12 +121,13 @@ export class AonBookingItemList extends AonElement {
 			return data
 			.map(ritem =>{
 				let p = ritem.item;
-				ritem.productName = p.product.name;
-				ritem.productCode = p.product.code;
-				ritem.startDate = ritem.start_date;
-				ritem.endDate = ritem.end_date;
-				ritem.statusText = BookingItemStatus.getText(ritem.bookingStatus);
-				return ritem;
+				p.productName = p.product.name;
+				p.productCode = p.product.code;
+				p.startDate = ritem.start_date;
+				p.endDate = ritem.end_date;
+				p.statusText = BookingItemStatus.getText(ritem.bookingStatus);
+				p.ritem = JSON.parse(JSON.stringify(ritem));
+				return p;
 			});
 		} catch (error) {
 			this.showError(error);
@@ -154,7 +155,7 @@ export class AonBookingItemList extends AonElement {
 	
 		const aonTargetItemAdd = new AonBookingItemAdd();
 		if (selectedItem) {
-			aonTargetItemAdd.setSelectedRItem(selectedItem);
+			aonTargetItemAdd.setSelectedRItem(selectedItem.ritem);
 		}
 	
 		dialog.setContent(aonTargetItemAdd);

@@ -262,7 +262,7 @@ export class AonCustomer extends AonReg {
 			let aonItemList = new AonItemList();
 			aonItemList.style.width = "100%";
 			aonItemList.registry = this.registry;
-			aonItemList.filter = { page: 1, perPage: 200, registry:registryId};
+			aonItemList.filter = { page: 1, perPage: 200, registry:registryId, type: "TARGET"};
 			main.appendChild(aonItemList);
 		}
 	}

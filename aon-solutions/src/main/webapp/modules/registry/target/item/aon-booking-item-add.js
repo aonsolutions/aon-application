@@ -136,8 +136,8 @@ export class AonBookingItemAdd extends AonElement {
 		this.START_DATE_INPUT.id = this.id+"startDateInput";
 		this.START_DATE_INPUT.title = MSG.START_DATE;
 		this.DIV.appendChild(this.START_DATE_INPUT);
-		if (this.getSelectedRItem() && this.getSelectedRItem().startDate) {
-			this.START_DATE_INPUT.setDate(this.getSelectedRItem().startDate);
+		if (this.getSelectedRItem() && this.getSelectedRItem().start_date) {
+			this.START_DATE_INPUT.setDate(this.getSelectedRItem().start_date);
 			this.setStartDate(this.START_DATE_INPUT.value);
 		}
 		this.START_DATE_INPUT.addEventListener("change", event => {
@@ -148,8 +148,8 @@ export class AonBookingItemAdd extends AonElement {
 		this.END_DATE_INPUT.id = this.id+"endDateInput";
 		this.END_DATE_INPUT.title = MSG.END_DATE;
 		this.DIV.appendChild(this.END_DATE_INPUT);
-		if (this.getSelectedRItem() && this.getSelectedRItem().endDate) {
-			this.END_DATE_INPUT.setDate(this.getSelectedRItem().endDate);
+		if (this.getSelectedRItem() && this.getSelectedRItem().end_date) {
+			this.END_DATE_INPUT.setDate(this.getSelectedRItem().end_date);
 			this.setEndDate(this.END_DATE_INPUT.value);
 		}
 		this.END_DATE_INPUT.addEventListener("change", event => {
@@ -187,7 +187,9 @@ export class AonBookingItemAdd extends AonElement {
 				this.ITEM_SELECT.loading(false);
 				this.ITEM_SELECT.value = this.getSelectedRItem() && this.getSelectedRItem().item && this.getSelectedRItem().item.id ? this.getSelectedRItem().item.id : "";
 				this.ITEM_SELECT.closeOptions();
-				this.setItem(this.ITEM_SELECT.value);
+				if (this.ITEM_SELECT.value) {
+					this.setItem(this.ITEM_SELECT.value);
+				}
 			}
 			);
 		}
@@ -256,7 +258,7 @@ export class AonBookingItemAdd extends AonElement {
 		if (this.getStatus()) {
 			params.bookingStatus = this.getStatus();
 		}
-
+		
 		if (!this.getSelectedRItem()) {
 			await saveRegistryItem(params);
 		} else {
