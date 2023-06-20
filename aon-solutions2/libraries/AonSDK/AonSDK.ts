@@ -18,15 +18,9 @@ class Response implements IResponse {
     result: any = '';
 
     constructor(code: string, result?:any){
-        if(code.slice(0,2) == '00'){
-            this.code = code;
-            this.description = ERRORS[code as keyof typeof ERRORS].description;
-            this.result = result;
-        }else{
-            this.code = code;
-            this.description = ERRORS[code as keyof typeof ERRORS].description;
-            this.result = ERRORS[code as keyof typeof ERRORS].result;
-        }
+        this.code = code;
+        this.description = ERRORS[code as keyof typeof ERRORS].description;
+        this.result = code.slice(0,2) == '00' ? result : ERRORS[code as keyof typeof ERRORS].result
     }
 }
 
@@ -41,7 +35,7 @@ export interface Optional {
 export interface Filters {
     date?: string;
     endDate?: string;
-    filterFields?: {}
+    filterFields?: {};
 }
 
 interface Collection {
@@ -219,6 +213,8 @@ class Factory implements IFactory {
                 return new ServiceDocument();
             case 'auth':
                 return new ServiceAuth();
+            case 'taxmodel':
+                return new ServiceTaxModel();
             default:
                 throw new Response('0201');
         }
@@ -587,7 +583,8 @@ class ServiceTaxModel implements IService {
     getElementList(model: string, optional?: Optional) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
-                resolve(new Response('0000',taxModels))
+                if(optional) resolve(new Response('0000', applyFilters(optional,taxModels))) 
+                else resolve(new Response('0000', taxModels))
             } catch (error) {
                 reject(new Response('0201'))
             }
@@ -640,6 +637,25 @@ class ServiceTaxModel implements IService {
         });
     }
 
+}
+
+function applyFilters(optional: Optional, data: any): any{
+    let result = []
+    if(optional.filters?.filterFields){
+        let filters = optional.filters?.filterFields
+        for(let i = 0; i < data.length; i++){
+            let aux = true;
+            for(const k in filters){
+                if(data[i][k] && data[i][k] != filters[k as keyof typeof filters]){
+                    aux = false;
+                }
+            }
+            if(aux) result.push(data[i])
+        }
+    }else{
+        result = data
+    }
+    return result;
 }
 
 class ServiceMessage implements IService {
@@ -949,9 +965,10 @@ let banks = [
 ]
 
 let taxModels = [
-    new TaxModel( 180,'303','baja','domicialición','result1',4,2021),
-    new TaxModel( 303,'120','alta','tranferencia','result2',2,2020),
-    new TaxModel( 180,'303','baja','domicialición','result1',1,2022)
+    new TaxModel( 180,'IVA','en proceso','domicialición bancaria','result1',4,2021),
+    new TaxModel( 303,'IVA','pendiente','tranferencia','result2',2,2020),
+    new TaxModel( 180,'IVA','rectificado','domicialición bancaria','result1',1,2022),
+    new TaxModel( 180,'IVA','presentado','domicialición bancaria','result1',2,2022)
 ]
 
 let messages = [
