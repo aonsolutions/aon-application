@@ -42,13 +42,13 @@ export class Bank implements Deserializable{
     }
     
     deserializeArray(input: any): Array<Bank> {
-        let taxModels = []
+        let array = []
         for(let i = 0; i < input.length; i++){
             let aux = new Bank()
             aux.deserialize(input[i])
-            taxModels.push(aux)
+            array.push(aux)
         }
-        return taxModels;
+        return array;
     }
 
 }

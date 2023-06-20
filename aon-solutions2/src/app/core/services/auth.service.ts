@@ -12,20 +12,22 @@ export class AuthService {
   constructor(private router: Router) {
   }
   
-  login(email: string, password: string): boolean {
-    return this.aonSDK.model('auth').login(email,password)
-    .then(
-      (response: any) => {
-        if(response.result == true){
-          this.router.navigate(['/auth/selectEnterprise']);
+  login(email: string, password: string): Promise<boolean> {
+    return new Promise((resolve,reject) => {
+      this.aonSDK.model('auth').login(email,password)
+      .then(
+        (response: any) => {
+          if(response.result == true){
+            this.router.navigate(['/auth/selectEnterprise']);
+          }
+          resolve(true);
         }
-        return true;
-      }
-    ).catch(
-      (error: any) => {
-        throw new Error(error.description + error.result)
-      }
-    )
+      ).catch(
+        (error: any) => {
+          reject(error.description + error.result)
+        }
+      )
+    })
   }
 
   logout(): void {
