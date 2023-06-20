@@ -284,9 +284,6 @@ public class ItemDAO {
 
 	public static void deleteRItem(AONContext ctx, RegistryItemFilter filter) {
 		ctx.checkWrite();
-		System.out.println(ctx.getDslContext()
-			.delete(RITEM)
-			.where(RITEM_PROPERTIES.getConditions(filter)));
 		ctx.getDslContext()
 			.delete(RITEM)
 			.where(RITEM_PROPERTIES.getConditions(filter))
