@@ -215,6 +215,8 @@ class Factory implements IFactory {
                 return new ServiceAuth();
             case 'taxmodel':
                 return new ServiceTaxModel();
+            case 'bank':
+                return new ServiceBanks();
             default:
                 throw new Response('0201');
         }
@@ -959,9 +961,9 @@ let documentNotes =[
 ]
 
 let banks = [
-    new Banks('Caixa Bank',1.500,'/logo/caixa'),
+    new Banks('Caixa Bank',1500,'/logo/caixa'),
     new Banks('Banco Nación',500,'/logo/logo3'),
-    new Banks('Bankinter',2.500,'/logo/logo2')
+    new Banks('Bankinter',2500,'/logo/logo2')
 ]
 
 let taxModels = [
