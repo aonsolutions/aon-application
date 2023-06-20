@@ -134,6 +134,11 @@ public class JsonParser {
 		if (level!= null) {
 			params.setLevel(level.byteValue());	
 		}
+		// *******************  DESCRIPTION ******************* 
+		String costCenter = (String) jsonParams.get(IRequestParamsNames.COST_CENTER);
+		if (AonStringUtils.isNotBlank(costCenter)) {
+			params.setCostCenter(costCenter);			
+		}
 		// ******************* PAGE OFFSET ******************* 
 		Long pageOffset = (Long) jsonParams.get(IRequestParamsNames.OFFSET);
 		if (pageOffset!= null) {

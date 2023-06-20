@@ -167,6 +167,10 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
     	return buttons;
     	
 	}
+	
+	public void setAccountEnabled(boolean enabled) {
+		setAccountEnable(enabled);
+	}
 
 }
 

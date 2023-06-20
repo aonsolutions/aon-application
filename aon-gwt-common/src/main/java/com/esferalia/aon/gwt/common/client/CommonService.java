@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Enterprise;
@@ -82,5 +83,7 @@ public interface CommonService extends RemoteService {
 	CustomerFull getCustomer(String domainName, int domain, String user, Integer registry) throws AonCoreException;
 	SupplierFull getSupplier(String domainName, int domain, String user, Integer registry) throws AonCoreException;
 	CreditorFull getCreditor(String domainName, int domain, String user, Integer registry) throws AonCoreException;
+	
+	List<ApplicationParameter> getCostCenters(String domainName, int domain, String user) throws AonCoreException;
 	
 }
