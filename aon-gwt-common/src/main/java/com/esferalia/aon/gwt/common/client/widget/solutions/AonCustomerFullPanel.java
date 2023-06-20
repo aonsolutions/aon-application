@@ -175,6 +175,10 @@ public class AonCustomerFullPanel extends AonRegistryFullPanel<CustomerFull> imp
     	return buttons;
     	
 	}
+
+	public void setAccountEnabled(boolean enabled) {
+		setAccountEnable(enabled);
+	}
 	
 }
 

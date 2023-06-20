@@ -200,9 +200,15 @@ public class AonAccountBox extends ResizeComposite implements HasValue<String>
 		accountTextBox.setMaxLength(9);
 		
 		descriptionLabel = new InlineLabel();
-		descriptionLabel.addStyleName(AON.CSS.aonMarginLeft() );
 		descriptionLabel.addStyleName(AON.CSS.aonFontSmall());
 		descriptionLabel.setVisible(showDescription);
+		
+		AonTableButton cleanAccount = new AonTableButton("Limpiar", AON.CSS.aonIconRefresh());
+		cleanAccount.addClickHandler(e -> {
+			setValue(null);
+			accountTextBox.addStyleName(AON.CSS.aonInputTextError() );
+			SelectionEvent.fire(AonAccountBox.this, null );
+		});
 		
 		account.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
@@ -233,9 +239,10 @@ public class AonAccountBox extends ResizeComposite implements HasValue<String>
 		
 		rootPanel = new FlowPanel();
 		rootPanel.addStyleName(AON.CSS.aonNowrap() );
-		rootPanel.addStyleName(AON.CSS.aonInline() );
+		rootPanel.addStyleName(AON.CSS.aonItemFlex() );
 		rootPanel.add(account);
 		rootPanel.add(descriptionLabel);
+		rootPanel.add(showDescription ? cleanAccount : new InlineLabel());
 		initWidget(rootPanel);
 	}
 	
