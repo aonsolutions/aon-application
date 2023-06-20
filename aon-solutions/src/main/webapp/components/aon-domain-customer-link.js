@@ -917,9 +917,13 @@ export class AonDomainCustomer extends AonElement {
     domainOptionName.style.width = "calc(100% - 25px)";
     domainOptionName.title = `${domain.active ? MSG.ACTIVE : MSG.INACTIVE}`;
     
-    let domainOptionNameSpan = document.createElement("span");
+    let domainOptionNameSpan = document.createElement("a");
     domainOptionNameSpan.style.fontWeight = "bold";
+    domainOptionNameSpan.classList.add("domainLinkA");
+    domainOptionNameSpan.target = "_blank";
+    domainOptionNameSpan.href = `https://${domain.name}`;
     domainOptionNameSpan.innerText = `${domain.name}`;
+    domainOptionNameSpan.addEventListener("click", e => e.stopPropagation());
     if (!domain.active) {
       domainOptionNameSpan.classList.add(`inactiveDomainName`);
     }
@@ -1184,6 +1188,29 @@ export class AonDomainCustomer extends AonElement {
     return customerOptionContainer;
   }
 
+  generateUsersFile(applicationName, users) {
+    let text = "";
+    if (users) {
+      users.forEach(user => {
+        text += `${user.description}\t\t${user.name}\n`;
+      })
+    }
+
+    let file = new Blob([text], { type: "text/plain" });
+
+    let a = document.createElement("a");
+    let url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = `usuarios_de_${applicationName}.txt`;
+    a.style.display = "none";
+    this.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      this.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 0);
+  }
+
   createBookingElement(booking) {
     if (booking) {
 
@@ -1295,13 +1322,13 @@ export class AonDomainCustomer extends AonElement {
         let summaryDomains = summary ? summary.domain : {};
 
         this.createSummaryItem(summaryContainer, MSG.APPLICATIONS, summaryApps);
-        this.createSummaryItem(summaryContainer, MSG.USERS, summaryUsers, "user");
+        this.createSummaryItem(summaryContainer, MSG.USERS, summaryUsers, [], "user");
 
         for (let dt in summaryDomains) {
           let domainType = this.getDomainTypeDescription(dt);
           let application = summaryDomains[dt];
           
-          this.createSummaryItem(summaryContainer, `${domainType}: ${application.number}`, application.apps, "domain");
+          this.createSummaryItem(summaryContainer, `${domainType}: ${application.number}`, application.apps, application.childs, "domain");
         }
         
 
@@ -1330,7 +1357,7 @@ export class AonDomainCustomer extends AonElement {
     }
   }
 
-  createSummaryItem(summaryContainer, title, summaryElements, type) {
+  createSummaryItem(summaryContainer, title, summaryElements, childs, type) {
     if (summaryElements) {
       let summaryElementsContainer = document.createElement("div");
       summaryElementsContainer.style.display = "flex";
@@ -1344,6 +1371,12 @@ export class AonDomainCustomer extends AonElement {
       summaryElementsTitle.style.marginLeft = "5px";
       summaryElementsTitle.innerText = title;
       summaryElementsContainer.appendChild(summaryElementsTitle);
+      if (type === "domain" && childs && childs.length > 0)  {
+        summaryElementsTitle.style.cursor = "pointer";
+        summaryElementsTitle.addEventListener("click", event => {
+          this.createUsersList(childs, title ? title.split(":")[0] : "");
+        });
+      }
 
       for (const summaryElement in summaryElements) {
         let summaryElementsItem = document.createElement("div");
@@ -1376,8 +1409,127 @@ export class AonDomainCustomer extends AonElement {
 
         summaryElementsItem.innerText = `${itemTitle}: ${summaryElements[summaryElement]}`;
         summaryElementsContainer.appendChild(summaryElementsItem);
+        if (type === "domain" && childs && childs.length > 0)  {
+          summaryElementsItem.style.cursor = "pointer";
+          summaryElementsItem.addEventListener("click", event => {
+            let users = childs.filter(c => c.apps && c.apps.includes(summaryElement))
+            this.createUsersList(users, itemTitle);
+          });
+        }
       }
     }
+  }
+
+  createUsersList(users, applicationName) {
+
+    let dialog = this.getApplication().getDialog();
+    dialog.clear();
+    dialog.setTitle(`Usuarios de "${applicationName}"`);
+
+    let usersContainer = document.createElement("div");
+    usersContainer.style.display = "flex";
+    usersContainer.style.flexDirection = "column";
+    usersContainer.style.gap = "3px";
+    usersContainer.style.overflowY = "auto";
+    usersContainer.style.maxHeight = "75vh";
+    usersContainer.style.justifyContent = "center";
+    usersContainer.style.alignItems = "center";
+
+    let infoContainer = document.createElement("div");
+    infoContainer.style.width = "100%";
+    infoContainer.style.display = "flex";
+    infoContainer.style.flexDirection = "column";
+
+    usersContainer.appendChild(infoContainer);
+    let textToCopy = "";
+
+    users
+    .sort((a, b) => {
+      const descA = (a.description ? a.description.toLowerCase() : "").trim();
+      const descB = (b.description ? b.description.toLowerCase() : "").trim();
+
+      if (descA < descB) {
+        return -1;
+      } else if (descA > descB) {
+        return 1;
+      }
+      return 0;
+    })
+    .forEach((user, ind) => {
+
+      let userContainer = document.createElement("div");
+      userContainer.style.display = "flex";
+      userContainer.style.justifyContent = "center";
+      userContainer.style.alignItems = "center";
+      userContainer.style.marginLeft = "10px";
+      userContainer.style.fontSize = "1.2em";
+
+      let userDescriptionContainer = document.createElement("div");
+      userDescriptionContainer.style.width = "47.5%";
+      userDescriptionContainer.style.textAlign = "right";
+      userDescriptionContainer.innerText = user.description;
+      
+      
+      let userSeparatorContainer = document.createElement("div");
+      userSeparatorContainer.style.width = "5%";
+      userSeparatorContainer.style.textAlign = "center";
+      userSeparatorContainer.innerText = "-";
+      
+      let userNameContainer = document.createElement("div");
+      userNameContainer.style.width = "47.5%";
+      userNameContainer.style.textAlign = "left";
+      userNameContainer.innerText = user.name;
+
+      textToCopy += `${user.description} - ${user.name}` + (ind < users.length - 1 ? "\n" : "");
+
+      userContainer.appendChild(userDescriptionContainer);
+      userContainer.appendChild(userSeparatorContainer);
+      userContainer.appendChild(userNameContainer);
+      
+      infoContainer.appendChild(userContainer);
+
+    });
+
+    let buttonContainer = document.createElement("div");
+    buttonContainer.style.width = "100%";
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.flexDirection = "row";
+    buttonContainer.style.justifyContent = "center";
+    buttonContainer.style.alignItems = "center";
+    buttonContainer.style.gap = "3%";
+    usersContainer.appendChild(buttonContainer);
+
+    let downloadButton = new AonIconButton();
+    downloadButton.icon = "download";
+    downloadButton.background = "var(--aonBlue)";
+    downloadButton.color = "white";
+    downloadButton.title = MSG.DOWNLOAD;
+    // downloadButton.style.width = "15%";
+    downloadButton.style.marginTop = "10px";
+    downloadButton.addEventListener("click", event => {
+      this.generateUsersFile(applicationName, users);
+    });
+    buttonContainer.appendChild(downloadButton);
+
+    let copyButton = new AonIconButton();
+    copyButton.icon = "content_copy";
+    copyButton.title = "Copiar";
+    copyButton.background = "var(--aonBlue)";
+    copyButton.color = "white";
+    copyButton.style.marginTop = "10px";
+    copyButton.addEventListener("click", event => {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        this.showToast({message: "Copiado al portapapeles"});
+      }, err => {
+        this.showError(err);
+      })
+    });
+    buttonContainer.appendChild(copyButton);
+
+    // dialog.width = "500px";
+    dialog.setContent(usersContainer);
+    dialog.autoclose = true;
+    dialog.open();
   }
 
   // -----------------------------

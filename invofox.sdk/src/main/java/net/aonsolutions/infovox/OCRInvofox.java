@@ -7,6 +7,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.text.MessageFormat;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.json.JSONObject;
@@ -38,19 +39,43 @@ public class OCRInvofox {
 	private OCRInvofox() {
 	}
 
-	private static HttpResponse<String> post(String url, JSONObject json) throws IOException, InterruptedException {
+	// ---------------------------------------------------------------------- [POST METHOD]
+	private static <T extends OCRResponse> T post(String url, JSONObject postData, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
+		try {
+			HttpResponse<String> response = post(url, postData);
+			return giveBack(response, supplier, jsonResponseBuilder);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return internalErrorResponse(e, supplier);
+		} catch (IOException  e) {
+			return internalErrorResponse(e, supplier);
+		}
+	}
+	private static HttpResponse<String> post(String url, JSONObject postData) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
 			.header("x-api-key", TOKEN)
 			.header("accept", "application/json")
 			.header("Content-Type", "application/json")
-			.POST( HttpRequest.BodyPublishers.ofString(json.toString()) )
+			.POST( HttpRequest.BodyPublishers.ofString(postData.toString()) )
 			.build();
 		return HttpClient.newBuilder()
 			.build()
 			.send(request, BodyHandlers.ofString());
 	}
 
+	// ---------------------------------------------------------------------- [DELETE METHOD]
+	private static <T extends OCRResponse> T delete(String url, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
+		try {
+			HttpResponse<String> response = delete(url);
+			return giveBack(response, supplier, jsonResponseBuilder);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return internalErrorResponse(e, supplier);
+		} catch (IOException  e) {
+			return internalErrorResponse(e, supplier);
+		}
+	}
 	private static HttpResponse<String> delete(String url) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
@@ -62,8 +87,20 @@ public class OCRInvofox {
 			.send(request, BodyHandlers.ofString());
 	}
 
+	// ---------------------------------------------------------------------- [GET METHOD]
+	private static <T extends OCRResponse> T get(String url, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
+		try {
+			HttpResponse<String> response = get(url);
+			return giveBack(response, supplier, jsonResponseBuilder);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return internalErrorResponse(e, supplier);
+		} catch (IOException  e) {
+			return internalErrorResponse(e, supplier);
+		}
+	}
 	private static HttpResponse<String> get(String url) throws IOException, InterruptedException {
-		
+		System.out.println( "Attempt to request ..: " + url );
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
 			.header("x-api-key", TOKEN)
@@ -72,13 +109,6 @@ public class OCRInvofox {
 		return HttpClient.newBuilder()
 			.build()
 			.send(request, BodyHandlers.ofString());
-	}
-
-	private static <T extends OCRResponse> T errorResponse(int statusCode,JSONObject responseJson, Supplier<T> supplier) {
-		T t = supplier.get(); 
-		t.setError(OCRErrorJSON.from(responseJson));
-		t.setHttpCode(statusCode);
-		return t;
 	}
 
 	private static <T extends OCRResponse> T internalErrorResponse(Exception e, Supplier<T> supplier) {
@@ -90,97 +120,36 @@ public class OCRInvofox {
 		return resp; 
 	}
 
-	// ---------------------------------------------------------------------- [DOCUMENTS]
-	public static OCRDocumentResponse getDocument(String documentId) {
-		try {
-			HttpResponse<String> response = get(MessageFormat.format(DOCUMENT, documentId)); 
-			JSONObject responseJson = new JSONObject(response.body());
-			if (STATUS_OK != response.statusCode()) {
-				return errorResponse(response.statusCode(), responseJson, OCRDocumentResponse::new);
-			} 
-			return OCRDocumentResponseJSON
-				.from(responseJson)
-				.setHttpCode(response.statusCode());
-			
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			return internalErrorResponse(e, OCRDocumentResponse::new);
-		} catch (IOException  e) {
-			return internalErrorResponse(e, OCRDocumentResponse::new);
+	private static <T extends OCRResponse> T giveBack(HttpResponse<String> response, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
+		JSONObject responseJson = new JSONObject(response.body());
+		T t = null;
+		if (STATUS_OK != response.statusCode()) {
+			t = supplier.get(); 
+			t.setError(OCRErrorJSON.from(responseJson));
+		} else {
+			t = jsonResponseBuilder.apply(responseJson);
 		}
+		t.setHttpCode(response.statusCode());
+		return t; 
 	}
 
-	public static OCRDocumentsResponse getDocuments() {
-		try {
-			HttpResponse<String> response = get(DOCUMENTS); 
-			JSONObject responseJson = new JSONObject(response.body());
-			if (STATUS_OK != response.statusCode()) {
-				return errorResponse(response.statusCode(), responseJson, OCRDocumentsResponse::new);
-			} 
-			return OCRDocumentsResponseJSON
-				.from(responseJson)
-				.setHttpCode(response.statusCode());
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			return internalErrorResponse(e, OCRDocumentsResponse::new);
-		} catch (IOException e) {
-			return internalErrorResponse(e, OCRDocumentsResponse::new);
-		}
+	// ---------------------------------------------------------------------- [DOCUMENTS]
+	public static OCRDocumentResponse getDocument(String documentId) {
+		return get(MessageFormat.format(DOCUMENT, documentId), OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+	}
+	public static OCRDocumentsResponse getDocuments(OCRDocumentsParams params) {
+		return get(DOCUMENTS + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
 	}
 
 	// ---------------------------------------------------------------------- [COMPANIES]
 	public static OCRCompanyResponse postCompany(OCRCompany company) {
-		try {
-			JSONObject companyJson = OCRCompanyJSON.to(company);
-			HttpResponse<String> response = post(COMPANIES, companyJson );
-			JSONObject responseJson = new JSONObject(response.body());
-			if (STATUS_OK != response.statusCode()) {
-				return errorResponse(response.statusCode(), responseJson, OCRCompanyResponse::new);
-			} 
-			return OCRCompanyResponseJSON
-					.from(responseJson)
-					.setHttpCode(response.statusCode());
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			Thread.currentThread().interrupt();
-			return internalErrorResponse(e, OCRCompanyResponse::new);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return internalErrorResponse(e, OCRCompanyResponse::new);
-		}
+		return  post(COMPANIES, OCRCompanyJSON.to(company), OCRCompanyResponse::new, OCRCompanyResponseJSON::from);
 	}
-	
 	public static OCRResponse deleteCompany(String companyId) {
-		try {
-			HttpResponse<String> response = delete(MessageFormat.format(COMPANY, companyId)); 
-			JSONObject responseJson = new JSONObject(response.body());
-			if (STATUS_OK != response.statusCode()) {
-				return errorResponse(response.statusCode(), responseJson, OCRCompanyResponse::new);
-			} 
-			return new OCRResponse().setHttpCode(response.statusCode());
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			return internalErrorResponse(e, OCRResponse::new);
-		} catch (IOException e) {
-			return internalErrorResponse(e, OCRResponse::new);
-		}
+		return delete(MessageFormat.format(COMPANY, companyId), OCRCompanyResponse::new, OCRCompanyResponseJSON::from);
 	}
-	public static OCRCompaniesResponse getCompanies() {
-		try {
-			HttpResponse<String> response = get(COMPANIES); 
-			JSONObject responseJson = new JSONObject(response.body());
-			if (STATUS_OK != response.statusCode()) {
-				return errorResponse(response.statusCode(), responseJson, OCRCompaniesResponse::new);
-			} 
-			return OCRCompaniesResponseJSON
-					.from(responseJson)
-					.setHttpCode(response.statusCode());
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			return internalErrorResponse(e, OCRCompaniesResponse::new);
-		} catch (IOException e) {
-			return internalErrorResponse(e, OCRCompaniesResponse::new);
-		}
+	public static OCRCompaniesResponse getCompanies(OCRCompanyParams params) {
+		return get(COMPANIES + params.build(), OCRCompaniesResponse::new, OCRCompaniesResponseJSON::from);
 	}
 
 }

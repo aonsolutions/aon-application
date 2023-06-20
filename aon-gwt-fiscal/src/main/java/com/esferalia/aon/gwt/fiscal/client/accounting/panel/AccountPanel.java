@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -13,6 +16,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCreditorFullPanel
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistrySelectionDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSupplierFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -22,8 +26,11 @@ import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -528,18 +535,24 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 	}
 	
 	private void registryDialog(Account account, AonTableButton clientButton, AccountParams params, Label msg) {
-		if(!account.hasRegistry()) {
-			RegistryModuleOptions options = new RegistryModuleOptions();
-			options.setDomainName(params.getDomainName());
-			options.setDomain(params.getDomain());
-			options.setUser(params.getUser());
-			
-			COMMON_SERVICE.getAonConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<AonConfiguration>() {
-						
-				@Override
-				public void onSuccess(AonConfiguration result) {
-					options.setConfiguration(result);
-					
+		RegistryModuleOptions options = new RegistryModuleOptions();
+		options.setDomainName(params.getDomainName());
+		options.setDomain(params.getDomain());
+		options.setUser(params.getUser());
+		
+		COMMON_SERVICE.getAonConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<AonConfiguration>() {
+
+			@Override
+			public void onFailure(Throwable arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(AonConfiguration result) {
+				options.setConfiguration(result);
+				
+				if(!account.hasRegistry()) {
 					if(account.getCode().startsWith("40")) { // Proveedores
 						final AonSimpleDialog dialog = createDialog(AON.MSG.supplier());
 						
@@ -558,7 +571,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 							@Override
 							public void onAccept(SupplierFull rf) {
 								dialog.hide();
-								updateAccountRegistry(params, account, msg, clientButton);
+								updateAccountRegistry(params, account, msg, clientButton, true);
 							}
 
 							@Override public void onDocumenthanged(SupplierFull registryFull) { /* Nothing to do here */ }
@@ -585,9 +598,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 							@Override
 							public void onAccept(CreditorFull rf) {
 								dialog.hide();
-								account.setHasRegistry(true);
-								setActivePersonButton(clientButton);
-								saveAccount(params, account, msg);
+								updateAccountRegistry(params, account, msg, clientButton, true);
 							}
 
 							@Override public void onDocumenthanged(CreditorFull registryFull) { /* Nothing to do here */ }
@@ -614,9 +625,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 							@Override
 							public void onAccept(CustomerFull rf) {
 								dialog.hide();
-								account.setHasRegistry(true);
-								setActivePersonButton(clientButton);
-								saveAccount(params, account, msg);
+								updateAccountRegistry(params, account, msg, clientButton, true);
 							}
 
 							@Override public void onDocumenthanged(CustomerFull registryFull) { /* Nothing to do here */ }
@@ -626,15 +635,126 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						showDialog(dialog, customerPanel);
 						
 					}
-				}
+				} else { // Editor 
+					if(account.getCode().startsWith("40")) { // Proveedores
+						
+						getSuppliers(account.getId(), options, suppliers -> {
+							if(suppliers.size() == 1) getSupplier(suppliers.get(0).getId(), options, suppliersFull -> showSupplierEditor(suppliersFull, options, params, account, msg, clientButton));
+							else {
+								new AonRegistrySelectionDialog(AON.MSG.supplier(), suppliers.stream().map(supplier -> supplier.get()).collect(Collectors.toList())) {
+									
+									@Override public void onAccept(Integer registry) {
+										getSupplier(registry, options, suppliersFull -> showSupplierEditor(suppliersFull, options, params, account, msg, clientButton));
+									}
+									
+								};
+							}
+						});
+						
+					} else if(account.getCode().startsWith("41")) { // Acreedores
+						
+						getCreditors(account.getId(), options, creditors -> {
+							if(creditors.size() == 1) getCreditor(creditors.get(0).getId(), options, creditorFull -> showCreditorEditor(creditorFull, options, params, account, msg, clientButton));
+							else {
+								new AonRegistrySelectionDialog(AON.MSG.creditor(), creditors.stream().map(creditor -> creditor.get()).collect(Collectors.toList())) {
+									
+									@Override public void onAccept(Integer registry) {
+										getCreditor(registry, options, creditorFull -> showCreditorEditor(creditorFull, options, params, account, msg, clientButton));
+									}
+									
+								};
+							}
+						});
+						
+					} else if(account.getCode().startsWith("43")) { // Clientes
 
-				@Override
-				public void onFailure(Throwable caught) {
-					// Error
+						getCustomers(account.getId(), options, customers -> {
+							if(customers.size() == 1) getCustomer(customers.get(0).getId(), options, customerFull -> showCustomerEditor(customerFull, options, params, account, msg, clientButton));
+							else {
+								new AonRegistrySelectionDialog(AON.MSG.customer(), customers.stream().map(customer -> customer.get()).collect(Collectors.toList())) {
+									
+									@Override public void onAccept(Integer registry) {
+										getCustomer(registry, options, customerFull -> showCustomerEditor(customerFull, options, params, account, msg, clientButton));
+									}
+									
+								};
+							}
+						});
+						
+					}
 				}
-				
-			});
-		}
+			}
+			
+		});
+	}
+	
+	private void showSupplierEditor(SupplierFull supplierFull, RegistryModuleOptions options, AccountParams params, Account account, Label msg, AonTableButton clientButton) {
+		final AonSimpleDialog dialog = createDialog(AON.MSG.supplier());
+		
+		AonSupplierFullPanel supplierPanel = new AonSupplierFullPanel(options, supplierFull, new AonRegistryFullPanelCallback<SupplierFull>() {
+			
+			@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+			
+			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+			
+			@Override public void onCancel() { dialog.hide(); }
+			
+			@Override public void onAccept(SupplierFull rf) {
+				dialog.hide();
+				if(null == rf.getAccount()) updateAccountRegistry(params, account, msg, clientButton, false);
+			}
+
+			@Override public void onDocumenthanged(SupplierFull registryFull) { /* Nothing to do here */ }
+		
+		});
+		
+		showDialog(dialog, supplierPanel);
+	}
+	
+	private void showCreditorEditor(CreditorFull creditorFull, RegistryModuleOptions options, AccountParams params, Account account, Label msg, AonTableButton clientButton) {
+		final AonSimpleDialog dialog = createDialog(AON.MSG.creditor());
+
+		AonCreditorFullPanel creditorPanel = new AonCreditorFullPanel(options, creditorFull, new AonRegistryFullPanelCallback<CreditorFull>() {
+			
+			@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+			
+			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+			
+			@Override public void onCancel() { dialog.hide(); }
+			
+			@Override public void onAccept(CreditorFull rf) { 
+				dialog.hide(); 
+				if(null == rf.getAccount()) updateAccountRegistry(params, account, msg, clientButton, false);
+			}
+
+			@Override public void onDocumenthanged(CreditorFull registryFull) { /* Nothing to do here */ }
+			
+		});
+		
+		showDialog(dialog, creditorPanel);
+	}
+	
+	private void showCustomerEditor(CustomerFull customerFull, RegistryModuleOptions options, AccountParams params, Account account, Label msg, AonTableButton clientButton) {
+		final AonSimpleDialog dialog = createDialog(AON.MSG.customer());
+
+		AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(options, customerFull, new AonRegistryFullPanelCallback<CustomerFull>() {
+			
+			@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+			
+			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+			
+			@Override public void onCancel() { dialog.hide(); }
+			
+			@Override public void onAccept(CustomerFull rf) { 
+				dialog.hide(); 
+				if(null == rf.getAccount()) updateAccountRegistry(params, account, msg, clientButton, false);
+			}
+
+			@Override public void onDocumenthanged(CustomerFull registryFull) { /* Nothing to do here */ }
+			
+		});
+		
+		showDialog(dialog, customerPanel);
 	}
 	
 	private AonSimpleDialog createDialog(String caption) {
@@ -657,16 +777,106 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 	    });		
 	}
 	
-	private void updateAccountRegistry(AccountParams params, Account account, Label msg, AonTableButton clientButton) {
-		account.setHasRegistry(true);
-		setActivePersonButton(clientButton);
+	private void updateAccountRegistry(AccountParams params, Account account, Label msg, AonTableButton clientButton, boolean hasRegistry) {
+		account.setHasRegistry(hasRegistry);
+		setActivePersonButton(hasRegistry, clientButton);
 		saveAccount(params, account, msg);
 	}
 	
-	private void setActivePersonButton(AonTableButton button) {
-		button.setTitle("Vinculado");
-		button.removeStyleName(AON.CSS.aonIconPersonOff());
-		button.addStyleName(AON.CSS.aonIconPerson());
+	private void setActivePersonButton(boolean hasRegistry, AonTableButton button) {
+		button.setTitle(hasRegistry ? "Vinculado" : "No Vinculado");
+		button.removeStyleName(hasRegistry ? AON.CSS.aonIconPersonOff() : AON.CSS.aonIconPerson());
+		button.addStyleName(hasRegistry ? AON.CSS.aonIconPerson() : AON.CSS.aonIconPersonOff());
+	}
+	
+	private void getSuppliers(Integer account, RegistryModuleOptions options, Consumer<List<Supplier>> success) {
+		COMMON_SERVICE.getSuppliers(options.getDomainName(), options.getDomain(), options.getUser(), account, new AsyncCallback<List<Supplier>>() {
+			
+			@Override
+			public void onSuccess(List<Supplier> suppliers) {
+				success.accept(suppliers);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getCreditors(Integer account, RegistryModuleOptions options, Consumer<List<Creditor>> success) {
+		COMMON_SERVICE.getCreditors(options.getDomainName(), options.getDomain(), options.getUser(), account, new AsyncCallback<List<Creditor>>() {
+			
+			@Override
+			public void onSuccess(List<Creditor> creditors) {
+				success.accept(creditors);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getCustomers(Integer account, RegistryModuleOptions options, Consumer<List<Customer>> success) {
+		COMMON_SERVICE.getCustomers(options.getDomainName(), options.getDomain(), options.getUser(), account, new AsyncCallback<List<Customer>>() {
+			
+			@Override
+			public void onSuccess(List<Customer> customers) {
+				success.accept(customers);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getSupplier(Integer registry, RegistryModuleOptions options, Consumer<SupplierFull> success) {
+		COMMON_SERVICE.getSupplier(options.getDomainName(), options.getDomain(), options.getUser(), registry, new AsyncCallback<SupplierFull>() {
+			
+			@Override
+			public void onSuccess(SupplierFull supplier) {
+				success.accept(supplier);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getCreditor(Integer registry, RegistryModuleOptions options, Consumer<CreditorFull> success) {
+		COMMON_SERVICE.getCreditor(options.getDomainName(), options.getDomain(), options.getUser(), registry, new AsyncCallback<CreditorFull>() {
+			
+			@Override
+			public void onSuccess(CreditorFull creditor) {
+				success.accept(creditor);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getCustomer(Integer registry, RegistryModuleOptions options, Consumer<CustomerFull> success) {
+		COMMON_SERVICE.getCustomer(options.getDomainName(), options.getDomain(), options.getUser(), registry, new AsyncCallback<CustomerFull>() {
+			
+			@Override
+			public void onSuccess(CustomerFull customer) {
+				success.accept(customer);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
 	}
 	
 	private void saveAccount(AccountParams params, Account account, Label msg) {
