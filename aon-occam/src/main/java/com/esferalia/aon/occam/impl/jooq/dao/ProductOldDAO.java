@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
+import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.sql.Date;
@@ -143,6 +144,7 @@ public class ProductOldDAO {
 		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
 
 		@Override public Property<Integer> getRegistryProperty() {return null;}
+		@Override public Property<Byte> getTypeProperty() {return null;}
 	}
 	
 	protected static class ProductTagPropertiesDAO implements ProductTagProperties {

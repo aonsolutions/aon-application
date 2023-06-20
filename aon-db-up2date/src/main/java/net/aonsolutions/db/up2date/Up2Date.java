@@ -20,6 +20,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.cgpj.CGPJInsert;
+import net.aonsolutions.db.up2date.management.AlterRitem;
+import net.aonsolutions.db.up2date.management.AlterRsellerAddType;
 import net.aonsolutions.db.up2date.payroll.IndemnizacionTemporalUpdate;
 import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthInsert;
 import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthIrpfFix;
@@ -380,7 +382,8 @@ public class Up2Date {
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
 			
 		UdpateAonSmb.UPDATE_AON_SMB,
-		UdpateAonProfessional.UPDATE_AON_PROFESSIONAL
+		UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
+		AlterRitem.ALTER_RITEM
 	};
 
     // ------------------------------------------------------------------------

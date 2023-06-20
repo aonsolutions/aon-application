@@ -5444,6 +5444,18 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<RegistryItem> getRItemList(String domainName, Integer domainId, String login, RegistryItemFilter filter, int limit, int offset) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRItemStream(ctx, filter, limit, offset)
+					.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static RegistryItem getRItem(String domainName, Integer domainId, String login, RegistryItemFilter filter) {
 		CloseableAONContext ctx = null;
 		try {

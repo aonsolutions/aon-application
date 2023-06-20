@@ -271,6 +271,7 @@ public interface Properties {
 		Property<String> getProductNameProperty();
 		
 		Property<Integer> getRegistryProperty();
+		Property<Byte> getTypeProperty();
 	}
 	
 	public interface ItemCompositionProperties {
@@ -551,6 +552,7 @@ public interface Properties {
 		Property<Date> getStartDateProperty();
 		Property<Date> getEndDateProperty();
 		Property<Byte> getStatusProperty();
+		Property<Byte> getTypeProperty();
 	}
 	
 	public interface RegistryMediaProperties{
