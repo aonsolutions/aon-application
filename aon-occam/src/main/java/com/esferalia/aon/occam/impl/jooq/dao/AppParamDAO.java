@@ -4,7 +4,11 @@ import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.jooq.Condition;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -61,6 +65,16 @@ public class AppParamDAO {
 						.setId(r.getValue(APP_PARAM.ID))
 						.setName(r.getValue(APP_PARAM.NAME))
 						.setValue(r.getValue(APP_PARAM.VALUE)));
+	}
+	
+	public static List<ApplicationParameter> getApplicationParameters(AONContext ctx, Condition condition) {
+		return ctx.getDslContext().selectFrom(APP_PARAM)
+				.where(condition)
+				.fetch().stream().map(r -> new ApplicationParameter()
+						.setDomain(r.getValue(APP_PARAM.DOMAIN))
+						.setId(r.getValue(APP_PARAM.ID))
+						.setName(r.getValue(APP_PARAM.NAME))
+						.setValue(r.getValue(APP_PARAM.VALUE))).collect(Collectors.toList());
 	}
 	
 	public static void deleteApplicationParameter(AONContext ctx, ApplicationParameterFilter filter) {
