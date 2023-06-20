@@ -92,13 +92,13 @@ export class Message implements Deserializable{
     }
     
     deserializeArray(input: any): Array<Message> {
-        let taxModels = []
+        let array = []
         for(let i = 0; i < input.length; i++){
             let aux = new Message()
             aux.deserialize(input[i])
-            taxModels.push(aux)
+            array.push(aux)
         }
-        return taxModels;
+        return array;
     }
 
 }

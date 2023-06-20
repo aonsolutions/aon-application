@@ -32,13 +32,13 @@ export class Enterprise implements Deserializable {
   }
 
   deserializeArray(input: any): Array<Enterprise> {
-    let enterprises = []
+    let array = []
     for(let i = 0; i < input.length; i++){
       let aux = new Enterprise()
       aux.deserialize(input[i])
-      enterprises.push(aux)
+      array.push(aux)
     }
-    return enterprises;
+    return array;
   }
 
 }

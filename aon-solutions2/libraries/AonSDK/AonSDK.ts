@@ -353,7 +353,9 @@ class ServiceDocument implements IService {
     getElementList(model: string, optional?: Optional) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
-                resolve(new Response('0000',documents))
+                let data = copyObjectArray(documents);
+                if(optional?.filters?.filterFields) data = applyFilters(optional,data);
+                resolve(new Response('0000',data))
             } catch (error) {
                 reject(new Response('0201'))
             }
@@ -439,7 +441,7 @@ class ServiceFolder implements IService {
             try {
                 for(let i = 0; i < collection.length; i++){
                     folders.push(collection[0] as Folder)
-                }
+                }                
                 resolve(new Response('0000',true))
             } catch (error) {
                 reject(new Response('0201'))
@@ -998,8 +1000,9 @@ let enterprises = [
 ]
 
 let folders = [
-    new Folder('nameFolder', '/folder'),
-    new Folder('nameFolder2', '/folder2')
+    new Folder('A contabilizar', '/A contabilizar'),
+    new Folder('Contabilizado', '/Contabilizado'),
+    new Folder('Papelera', '/Papelera')
 ]
 
 let documents = [
