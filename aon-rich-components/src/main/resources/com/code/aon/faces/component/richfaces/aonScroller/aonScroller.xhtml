@@ -18,7 +18,7 @@
 
 	<aon:div styleClass="aon-dataScroller aonDataScroller" rendered="#{rowCount>0}">
 	    <aon:panelGrid id="#{dataTable}MessageDataScroller" 
-	    	columns="3" columnClasses=" ,aon-dataScroller2-text aon-nowrap aon-width-all, aon-nowrap  aon-float-right">
+	    	columns="3" columnClasses=" aon-width-all,aon-dataScroller2-text aon-nowrap, aon-dataScroller2-text aon-nowrap  ">
 	    	<aon:panelGroup>
 				<aon:aonPaginator 
 					for="#{dataTable}" 
@@ -61,9 +61,7 @@
 				</aon:dataPaginator>
 			</aon:panelGroup>
 			<aon:panelGroup rendered="#{!hidePageSizeSelector}" styleClass="text-right">
-				<aon:outputText styleClass="aon-margin-right"
-					value="#{bundle.aon_row_number}"
-					/>
+				<aon:outputText styleClass=""  value="Mostrar "/>
 				<aon:selectOneMenu value="#{aonConfiguration.pageLimit}" 
 				>
 					<f:selectItems value="#{commonCollections.pageLimits}"/>
