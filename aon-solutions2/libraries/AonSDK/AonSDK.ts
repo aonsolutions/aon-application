@@ -219,6 +219,8 @@ class Factory implements IFactory {
                 return new ServiceBanks();
             case 'message':
                 return new ServiceMessage();
+            case 'reporting':
+                return new ServiceReporting();
             default:
                 throw new Response('0201');
         }
@@ -788,6 +790,37 @@ class ServiceMessageChat implements IService {
                     }
                 }
                 resolve(new Response('0000',true));
+            } catch (error) {
+                reject(new Response('0201'))
+            }
+        });
+    }
+}
+
+class ServiceReporting {
+
+    getVentasGastos(): Promise<Response> {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(new Response('0000',{
+                    label: [500,231,653,413,3364,856,2513,543,1244,543,754,1456],
+                    data: [1,2,3,4,5,6,7,8,9,10,11,12]
+                }
+                ))
+            } catch (error) {
+                reject(new Response('0201'))
+            }
+        });
+    }
+
+    getCobrosPagos(): Promise<Response> {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(new Response('0000',{
+                    label: [500,231,653,413,3364,856,2513,543,1244,543,754,1456],
+                    data: [1,2,3,4,5,6,7,8,9,10,11,12]
+                }
+                ))
             } catch (error) {
                 reject(new Response('0201'))
             }
