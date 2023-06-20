@@ -69,4 +69,8 @@ export class EnterpriseService {
     }
   }
 
+  getEnterpriseSelected(): string {
+    return this.aonSDK.model('auth').getSession().result.enterprise
+  }
+
 }
