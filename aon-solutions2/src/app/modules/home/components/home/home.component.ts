@@ -1,9 +1,7 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Enterprise } from 'src/app/core/models/class/enterprise';
-import { AuthService } from 'src/app/core/services/auth.service';
-import { EnterpriseService } from 'src/app/core/services/enterprise.service';
-import { ExampleServiceService } from 'src/app/core/services/example-service.service';
-import { ContainerService } from 'src/app/shared/services/container.service';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -12,11 +10,21 @@ import { ContainerService } from 'src/app/shared/services/container.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() {
+  // constructor(public invoiceService: InvoiceService) {
+  //   this.invoiceService.getInvoices().subscribe((response)=>{
+  //     console.log(response)
+  //   })
+  // }
+
+
+  constructor(breakpointObserver: BreakpointObserver){
+
   }
 
   ngOnInit(): void {
     
   }
+
+  
   
 }

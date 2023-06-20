@@ -12,7 +12,7 @@ import { EnterpriseService } from 'src/app/core/services/enterprise.service';
 })
 export class SelectEnterpriseComponent implements OnInit {
 
-  empresas: Enterprise[] = [];
+  enterprises: Enterprise[] = [];
 
   constructor(private authService: AuthService, private enterpriseService: EnterpriseService, private router: Router) {
     // this.empresas = this.auth.auxEmpresas();
@@ -20,14 +20,15 @@ export class SelectEnterpriseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.enterpriseService.getEnterprises().subscribe((enterprises) => {
-      this.empresas = enterprises;
+    this.enterpriseService.getEnterprises().then((enterprises) => {
+      this.enterprises = enterprises;
     });
   }
 
   selectEnterprise(enterprise: Enterprise) {
     // TODO: Llamar servicio JWT(generico) para que establezca empresa seleccionada en session
     // TODO: Establecer si guardamos toda la empresa, o por el contrario usar id/document
+    this.enterpriseService.setEnterprise(enterprise.Document)
     this.router.navigate(['']);
   }
 

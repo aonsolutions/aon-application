@@ -5,3 +5,4 @@ aon-suite/.vscode/settings.json
 # JetBrains IDE
 .idea/
 .metadata
+js-domain-dump/node_modules/

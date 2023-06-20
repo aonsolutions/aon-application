@@ -10,9 +10,9 @@
         <ng-container *ngIf="item.children != null">
             <app-dropdown-menu [submenu]="item" [menuItem]="item.children"></app-dropdown-menu>
         </ng-container>
-        <a mat-menu-item *ngIf="item.children == null" [routerLink]="item.routerlink" 
+        <a mat-menu-item *ngIf="item.children == null" [routerLink]="item.routerlink"
         (click)="item.click != undefined ? item.click() : '';">
-            <app-icon *ngIf="item.icon != undefined" [attr.shape]="item.icon" [size]="'1.2rem'" [attr.color]="item.colorIcon"></app-icon>
+            <app-icon *ngIf="item.icon != undefined" shape="{{ item.icon }}" size="'1.2rem'" color="{{ item.colorIcon }}"></app-icon>
             <ng-container *ngIf="item.icon != undefined">&nbsp;&nbsp;</ng-container>
             <span>{{item.text}}</span>
         </a>
