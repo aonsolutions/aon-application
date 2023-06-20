@@ -18,15 +18,9 @@ class Response implements IResponse {
     result: any = '';
 
     constructor(code: string, result?:any){
-        if(code.slice(0,2) == '00'){
-            this.code = code;
-            this.description = ERRORS[code as keyof typeof ERRORS].description;
-            this.result = result;
-        }else{
-            this.code = code;
-            this.description = ERRORS[code as keyof typeof ERRORS].description;
-            this.result = ERRORS[code as keyof typeof ERRORS].result;
-        }
+        this.code = code;
+        this.description = ERRORS[code as keyof typeof ERRORS].description;
+        this.result = code.slice(0,2) == '00' ? result : ERRORS[code as keyof typeof ERRORS].result
     }
 }
 
@@ -41,7 +35,7 @@ export interface Optional {
 export interface Filters {
     date?: string;
     endDate?: string;
-    filterFields?: {}
+    filterFields?: {};
 }
 
 interface Collection {
@@ -219,6 +213,12 @@ class Factory implements IFactory {
                 return new ServiceDocument();
             case 'auth':
                 return new ServiceAuth();
+            case 'taxmodel':
+                return new ServiceTaxModel();
+            case 'bank':
+                return new ServiceBanks();
+            case 'message':
+                return new ServiceMessage();
             default:
                 throw new Response('0201');
         }
@@ -587,7 +587,9 @@ class ServiceTaxModel implements IService {
     getElementList(model: string, optional?: Optional) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
-                resolve(new Response('0000',taxModels))
+                let data = copyObjectArray(taxModels);
+                if(optional?.filters?.filterFields) data = applyFilters(optional,data);
+                resolve(new Response('0000', data))
             } catch (error) {
                 reject(new Response('0201'))
             }
@@ -662,7 +664,10 @@ class ServiceMessage implements IService {
     getElementList(model: string, optional?: Optional) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
-                resolve(new Response('0000',messages))
+                let data = copyObjectArray(messages);
+                if(optional?.filters?.filterFields) data = applyFilters(optional,data);
+                if(optional?.filters?.date && optional?.filters?.endDate) data = applyInterval(optional, data, 'date')
+                resolve(new Response('0000',data))
             } catch (error) {
                 reject(new Response('0201'))
             }
@@ -818,6 +823,43 @@ class ServiceAuth {
     
 }
 
+function applyFilters(optional: Optional, data: any): any{
+    let result = []
+    if(optional.filters?.filterFields){
+        let filters = optional.filters?.filterFields
+        for(let i = 0; i < data.length; i++){
+            let aux = true;
+            for(const k in filters){
+                if(data[i][k] && data[i][k] != filters[k as keyof typeof filters]){
+                    aux = false;
+                }
+            }
+            if(aux) result.push(data[i])
+        }
+    }else{
+        result = data
+    }
+    return result;
+}
+
+function applyInterval(optional: Optional, data: any, key:string){
+    for(let i = 0; i < data.length; i++){
+        if(!(new Date(optional.filters?.date || '') <= data[i][key] && data[i][key] <= new Date(optional.filters?.endDate || ''))){
+            data.splice(i,1);
+        }
+    }
+    return data;
+}
+
+function copyObjectArray(data:any): any{
+    let newData = []
+    for(let i = 0; i < data.length; i++){
+        newData.push(new Object())
+        Object.assign(newData[i],data[i])
+    }
+    return newData;
+}
+
 export class AonSDK {
 
     private factory: Factory;    
@@ -943,21 +985,22 @@ let documentNotes =[
 ]
 
 let banks = [
-    new Banks('Caixa Bank',1.500,'/logo/caixa'),
+    new Banks('Caixa Bank',1500,'/logo/caixa'),
     new Banks('Banco Nación',500,'/logo/logo3'),
-    new Banks('Bankinter',2.500,'/logo/logo2')
+    new Banks('Bankinter',2500,'/logo/logo2')
 ]
 
 let taxModels = [
-    new TaxModel( 180,'303','baja','domicialición','result1',4,2021),
-    new TaxModel( 303,'120','alta','tranferencia','result2',2,2020),
-    new TaxModel( 180,'303','baja','domicialición','result1',1,2022)
+    new TaxModel( 180,'IVA','en proceso','domicialición bancaria','result1',4,2021),
+    new TaxModel( 303,'IVA','pendiente','tranferencia','result2',2,2020),
+    new TaxModel( 180,'IVA','rectificado','domicialición bancaria','result1',1,2022),
+    new TaxModel( 180,'IVA','presentado','domicialición bancaria','result1',2,2022)
 ]
 
 let messages = [
-    new Message(1,'Maria Rico Gómez','Asunto 1','sunt in culpa qui officia deserunt',new Date,'consulta','pendiente',new Date),
-    new Message(2,'Jesús Pérez Álvarez','Asunto 2','sunt in culpa qui officia deserunt',new Date,'tarea','Nueva',new Date),
-    new Message(3,'Juan Carlos Aragón Pérez','Asunto 3','sunt in culpa qui officia deserunt',new Date,'notificación','Abierta',new Date)
+    new Message(1,'Maria Rico Gómez','Asunto 1','sunt in culpa qui officia deserunt',new Date("2021-01-16"),'consulta','pendiente',new Date("2021-05-16")),
+    new Message(2,'Jesús Pérez Álvarez','Asunto 2','sunt in culpa qui officia deserunt',new Date("2022-01-16"),'tarea','Nueva',new Date("2022-05-16")),
+    new Message(3,'Juan Carlos Aragón Pérez','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-01-16"),'notificación','Abierta',new Date("2023-05-16"))
 ]
 
 let messageChats = [

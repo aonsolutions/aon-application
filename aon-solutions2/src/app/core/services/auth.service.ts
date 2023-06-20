@@ -12,13 +12,14 @@ export class AuthService {
   constructor(private router: Router) {
   }
   
-  login(email: string, password: string): void{
-    this.aonSDK.model('auth').login(email,password)
+  login(email: string, password: string): boolean {
+    return this.aonSDK.model('auth').login(email,password)
     .then(
       (response: any) => {
         if(response.result == true){
           this.router.navigate(['/auth/selectEnterprise']);
         }
+        return true;
       }
     ).catch(
       (error: any) => {
@@ -27,7 +28,7 @@ export class AuthService {
     )
   }
 
-  logout() {
+  logout(): void {
     this.aonSDK.model('auth').logout()
     .then(
       (response: any) => {
