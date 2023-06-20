@@ -1,11 +1,12 @@
 import {AonElement} from '../../../../components/AonElement.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../../../../environments/environments.js';
 import { AonTable } from '../../../../components/aon-table.js';
-import { getItems } from '../../../../services/productService.js';
+import { getItems, getRItems } from '../../../../services/productService.js';
 import { AonTargetItemAdd } from './aon-target-item-add.js';
-import { RegistryItemStatus } from '../../../../models/product/RegistryItemStatus.js';
+import { BookingItemStatus, RegistryItemStatus } from '../../../../models/product/RegistryItemStatus.js';
+import { AonBookingItemAdd } from './aon-booking-item-add.js';
 
-export class AonItemList extends AonElement {
+export class AonBookingItemList extends AonElement {
 	more;
 	filter;	
 	TABLE;
@@ -62,9 +63,10 @@ export class AonItemList extends AonElement {
         this.appendChild(div);
 
 		div.appendChild(this.TABLE);
-		this.TABLE.addColumn(MSG.CODE, 'string', 'productCode', '30%');
-		this.TABLE.addColumn(MSG.NAME, 'string', 'productName', '30%');
-		this.TABLE.addColumn(MSG.CATEGORY, 'string', 'productCategory', '30%');
+		this.TABLE.addColumn(MSG.CODE, 'string', 'productCode', '22.5%');
+		this.TABLE.addColumn(MSG.NAME, 'string', 'productName', '22.5%');
+		this.TABLE.addColumn(MSG.START_DATE, 'date', 'startDate', '22.5%');
+		this.TABLE.addColumn(MSG.END_DATE, 'date', 'endDate', '22.5%');
 		this.TABLE.addColumn(MSG.STATUS, 'string', 'statusText', '10%');
 		this.TABLE.addColumn("", 'icon', 'icon', '5%');
 		this.TABLE.addColumnIcon({title:MSG.ADD+" "+MSG.PRODUCTS, name:MATERIAL_ICONS.ADD, type:"string", width:"5%", id:"option"}, 
@@ -77,13 +79,15 @@ export class AonItemList extends AonElement {
 		this.more = false;
 		if(this.TABLE && this.filter.page) {
 			this.filter.page = this.filter.page + 1;
-			this.getData(this.filter)
+			this.getRItems(this.filter)
 			.then(items => {
 				if(items.length > 0)
 					this.more = true;
 				items.forEach((item) => {
 					this.buildIconRemove(item);
-					this.TABLE.addRow(item, () => {});
+					this.TABLE.addRow(item, () => {
+						this.openDialogItems(item);
+					});
 				});
 			});
 		}
@@ -95,8 +99,11 @@ export class AonItemList extends AonElement {
 			.then(items => {
 				this.TABLE.removeRows();
 				items.forEach((item) => {
+					console.log(item);
 					this.buildIconRemove(item);
-					this.TABLE.addRow(item, () => {});
+					this.TABLE.addRow(item, () => {
+						this.openDialogItems(item);
+					});
 				});
 			});	
 		}
@@ -110,16 +117,16 @@ export class AonItemList extends AonElement {
 
 	async getData(filter){
 		try {
-			const data = await getItems(filter);
+			const data = await getRItems(filter);
 			return data
-			.map(p =>{
-				p.productName = p.product.name;
-				p.productCode = p.product.code;
-				p.productCategory = (p.product.category && p.product.category.name)  ? p.product.category.name : "";
-				
-				p.statusText = RegistryItemStatus.getText(p.status);
-
-				return p;
+			.map(ritem =>{
+				let p = ritem.item;
+				ritem.productName = p.product.name;
+				ritem.productCode = p.product.code;
+				ritem.startDate = ritem.start_date;
+				ritem.endDate = ritem.end_date;
+				ritem.statusText = BookingItemStatus.getText(ritem.bookingStatus);
+				return ritem;
 			});
 		} catch (error) {
 			this.showError(error);
@@ -137,7 +144,7 @@ export class AonItemList extends AonElement {
 	}
 	
 
-	openDialogItems(){
+	openDialogItems(selectedItem){
 		const application = this.getApplication();
 		const dialog = application.getDialog();
 		dialog.autoclose = false;
@@ -145,7 +152,10 @@ export class AonItemList extends AonElement {
 		dialog.clear();
 		dialog.setTitle(MSG.ASSIGN+" "+MSG.PRODUCTS);
 	
-		const aonTargetItemAdd = new AonTargetItemAdd();
+		const aonTargetItemAdd = new AonBookingItemAdd();
+		if (selectedItem) {
+			aonTargetItemAdd.setSelectedRItem(selectedItem);
+		}
 	
 		dialog.setContent(aonTargetItemAdd);
 		
@@ -171,7 +181,7 @@ export class AonItemList extends AonElement {
 			this.getApplication().startLoading();
 
 			try {
-				const aonTargetItemAdd = new AonTargetItemAdd();
+				const aonTargetItemAdd = new AonBookingItemAdd();
 
 				aonTargetItemAdd.addCustomer(this.registry);
 				aonTargetItemAdd.addItem(item);
@@ -193,6 +203,6 @@ export class AonItemList extends AonElement {
 
 }
 
-if(!window.customElements.get("aon-item-list")) {
-	window.customElements.define("aon-item-list", AonItemList);
+if(!window.customElements.get("aon-booking-item-list")) {
+	window.customElements.define("aon-booking-item-list", AonBookingItemList);
 }

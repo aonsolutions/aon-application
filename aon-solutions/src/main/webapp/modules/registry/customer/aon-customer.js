@@ -12,6 +12,7 @@ import { getScopes } from '../../../services/documentalService.js';
 import { getDomainCompanies, saveCompany } from '../../../services/companyService.js';
 import { AonItemList } from '../target/item/aon-item-list.js';
 import { AonProjectList } from '../../project/aon-project-list.js';
+import { AonBookingItemList } from '../target/item/aon-booking-item-list.js';
 
 export class AonCustomer extends AonReg {
 
@@ -32,6 +33,7 @@ export class AonCustomer extends AonReg {
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
 			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional()},
 			{ title: "Expedientes", fn: () => this.buildExpedienteData()},
+			{ title: MSG.BOOKING, fn: () => this.buildBookingData()},
 		];
 
 
@@ -264,6 +266,22 @@ export class AonCustomer extends AonReg {
 			main.appendChild(aonItemList);
 		}
 	}
+
+		//BOOKING PRODUCTS
+		buildBookingData() {
+			let main = this.getElement(this.DIV);
+			this.clearElement(main);
+	
+			let registryId = this.registry.getId();
+			
+			if(registryId){
+				let aonItemList = new AonBookingItemList();
+				aonItemList.style.width = "100%";
+				aonItemList.registry = this.registry;
+				aonItemList.filter = { page: 1, perPage: 200, registry:registryId, type: "BOOKING"};
+				main.appendChild(aonItemList);
+			}
+		}
 
 	getOptionsLinked(element, rrelationship=undefined){
 		let options = [];

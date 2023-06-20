@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
@@ -57,7 +58,7 @@ public class TargetItemDAO {
 					.setType(RegistryMode.TARGET)
 					.setStatus(RegistryItemStatus.ACTIVE)
 					.setPriority(Priority.NORMAL)
-					.setItem(item)).toArray(RegistryItem[]::new);
+					.setItem(new Item().setId(item))).toArray(RegistryItem[]::new);
 			
 			ItemDAO.saveRItem(ctx, ritemArray);
 		}

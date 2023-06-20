@@ -226,8 +226,8 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 							RegistryItem newRitem = new RegistryItem()
 									.setDomain(api.getDomain().getId())
 									.setRegistry(aonCustomer)
-									.setItem(item.getId())
-									.setType(RegistryMode.TARGET)
+									.setItem(item)
+									.setType(RegistryMode.BOOKING)
 									.setStatus(RegistryItemStatus.ACTIVE)
 									.setPriority(Priority.NONE)
 									.setCode("CONSOLE");
@@ -236,7 +236,6 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 							} catch (Exception e) {
 								errors.put(createError(barCode, domainType, app, "No se pudo guardar [" + e.getMessage() + "]"));
 							}
-							
 						}
 					} else {
 						errors.put(createError(barCode, domainType, app, "Item no encontrado"));
@@ -257,9 +256,9 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		int customer = api.getData().optInt(IJsonNames.CUSTOMER);
 		boolean removeAll = api.getData().optBoolean("all");
 		if (!removeAll && customer > 0) {
-			AON.deleteRItem(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(customer).and(f.getCodeProperty().eq("CONSOLE").and(f.getTypeProperty().eq(RegistryMode.TARGET.value()))));
+			AON.deleteRItem(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(customer).and(f.getTypeProperty().eq(RegistryMode.BOOKING.value())));
 		} else if (removeAll){
-			AON.deleteRItem(api.getDomain(), api.getUser(), f -> f.getCodeProperty().eq("CONSOLE").and(f.getTypeProperty().eq(RegistryMode.TARGET.value())));
+			AON.deleteRItem(api.getDomain(), api.getUser(), f -> f.getTypeProperty().eq(RegistryMode.BOOKING.value()));
 		}
 		return new JSONObject();
 	}
