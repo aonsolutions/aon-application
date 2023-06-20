@@ -59,7 +59,6 @@ const routes: Routes = [
           import('src/app/modules/auth/auth.module').then((m) => m.AuthModule),
       }
     ]
-
   },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];

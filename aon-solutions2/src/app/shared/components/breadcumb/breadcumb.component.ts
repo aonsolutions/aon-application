@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { DropdownMenuComponent } from '../dropdown-menu/dropdown-menu.component';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { EnterpriseService } from 'src/app/core/services/enterprise.service';
 
 @Component({
   selector: 'app-breadcumb',
@@ -12,29 +13,42 @@ export class BreadcumbComponent implements OnInit {
 
   @ViewChild('enterpriseSelector') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
   currentRoute: string = this.router.url.replace('/','');
-  selectedEnterprise: string = 'Nombre de empresa 1';
-  menuItem: MenuItem [] = [
-    {root:true, text: 'Nombre de empresa 1', click: () => this.setEnterpriseSelected('Nombre de empresa 1')},
-    {root:true, text: 'Nombre de empresa 2', click: () => this.setEnterpriseSelected('Nombre de empresa 2')},
-    {root:true, text: 'Nombre de empresa 3', click: () => this.setEnterpriseSelected('Nombre de empresa 3')},
-    {root:true, text: 'Nombre de empresa 4', click: () => this.setEnterpriseSelected('Nombre de empresa 4')},
-  ];
+  selectedEnterprise: string = '';
+  menuItem: MenuItem [] = []
+  haveData: boolean = false
 
-  constructor(private router: Router) {
+  constructor(private router: Router, public enterpriseService: EnterpriseService) {
     this.router.events.subscribe((event) => {       
       event instanceof NavigationEnd ? this.checkCurrentRoute() : null     
     })
   }
   
   ngOnInit(): void {
+    this.enterpriseService.getEnterprises()
+    .then(
+      (response:any) => {
+        let actualDocument = this.enterpriseService.getEnterpriseSelected();
+        for(let i = 0; i < response.length; i++){
+          this.menuItem.push({root:true, text:response[i].name, click: () => this.setEnterpriseSelected(response[i].name,response[i].document)})
+          if(response[i].document == actualDocument) this.selectedEnterprise = response[i].name;
+        }
+        this.haveData = true;
+      }
+    )
+    .catch(
+      (error:any) => {
+        console.log(error);
+      }
+    )
   }
 
   checkCurrentRoute() {
     this.currentRoute = this.router.url.replace('/','');
   }
 
-  setEnterpriseSelected(value : any){
-    this.selectedEnterprise = value;
+  setEnterpriseSelected(name : any, cif: any){
+    this.selectedEnterprise = name;
+    this.enterpriseService.setEnterprise(cif)
   }
 
 }
