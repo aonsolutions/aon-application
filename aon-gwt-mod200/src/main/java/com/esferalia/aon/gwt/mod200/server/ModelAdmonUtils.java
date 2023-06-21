@@ -93,6 +93,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.mod200.api.MODEL2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.esferalia.aon.occam.mod200.server.format.mod200_2022.Mod2002022Writer;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
@@ -416,187 +417,195 @@ public class ModelAdmonUtils {
 		return buff;
 	}
 	
-	private static Mod111 getMod111(IFiscalModel fm) {
-		return (fm instanceof Mod111)?(Mod111)fm:null;
-	}
-	private static Mod115 getMod115(IFiscalModel fm) {
-		return (fm instanceof Mod115)?(Mod115)fm:null;
-	}
-	private static Mod123 getMod123(IFiscalModel fm) {
-		return (fm instanceof Mod123)?(Mod123)fm:null;
-	}
-	private static Mod130 getMod130(IFiscalModel fm) {
-		return (fm instanceof Mod130)?(Mod130)fm:null;
-	}
-	private static Mod131 getMod131(IFiscalModel fm) {
-		return (fm instanceof Mod131)?(Mod131)fm:null;
-	}
-	private static Mod190 getMod190(IFiscalModel fm) {
-		return (fm instanceof Mod190)?(Mod190)fm:null;
-	}
-	private static Mod202 getMod202(IFiscalModel fm) {
-		return (fm instanceof Mod202)?(Mod202)fm:null;
-	}
-	private static Mod303 getMod303(IFiscalModel fm) {
-		return (fm instanceof Mod303)?(Mod303)fm:null;
-	}
-	private static Mod180 getMod180(IFiscalModel fm) {
-		return (fm instanceof Mod180)?(Mod180)fm:null;
-	}
-	private static Mod193 getMod193(IFiscalModel fm) {
-		return (fm instanceof Mod193)?(Mod193)fm:null;
-	}
-	private static Mod184 getMod184(IFiscalModel fm) {
-		return (fm instanceof Mod184)?(Mod184)fm:null;
-	}
-	private static Mod347 getMod347(IFiscalModel fm) {
-		return (fm instanceof Mod347)?(Mod347)fm:null;
-	}
-	private static Mod349 getMod349(IFiscalModel fm) {
-		return (fm instanceof Mod349)?(Mod349)fm:null;
-	}
+//	private static Mod111 getMod111(IFiscalModel fm) {
+//		return (fm instanceof Mod111)?(Mod111)fm:null;
+//	}
+//	private static Mod115 getMod115(IFiscalModel fm) {
+//		return (fm instanceof Mod115)?(Mod115)fm:null;
+//	}
+//	private static Mod123 getMod123(IFiscalModel fm) {
+//		return (fm instanceof Mod123)?(Mod123)fm:null;
+//	}
+//	private static Mod130 getMod130(IFiscalModel fm) {
+//		return (fm instanceof Mod130)?(Mod130)fm:null;
+//	}
+//	private static Mod131 getMod131(IFiscalModel fm) {
+//		return (fm instanceof Mod131)?(Mod131)fm:null;
+//	}
+//	private static Mod190 getMod190(IFiscalModel fm) {
+//		return (fm instanceof Mod190)?(Mod190)fm:null;
+//	}
+//	private static Mod202 getMod202(IFiscalModel fm) {
+//		return (fm instanceof Mod202)?(Mod202)fm:null;
+//	}
+//	private static Mod303 getMod303(IFiscalModel fm) {
+//		return (fm instanceof Mod303)?(Mod303)fm:null;
+//	}
+//	private static Mod180 getMod180(IFiscalModel fm) {
+//		return (fm instanceof Mod180)?(Mod180)fm:null;
+//	}
+//	private static Mod193 getMod193(IFiscalModel fm) {
+//		return (fm instanceof Mod193)?(Mod193)fm:null;
+//	}
+//	private static Mod184 getMod184(IFiscalModel fm) {
+//		return (fm instanceof Mod184)?(Mod184)fm:null;
+//	}
+//	private static Mod347 getMod347(IFiscalModel fm) {
+//		return (fm instanceof Mod347)?(Mod347)fm:null;
+//	}
+//	private static Mod349 getMod349(IFiscalModel fm) {
+//		return (fm instanceof Mod349)?(Mod349)fm:null;
+//	}
 	
 	private static byte[] getModelFile(IFiscalModel fm) throws AonCoreException {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
-		fm.getModel().visit(new IFiscalModelTypeVisitor() {
-			
-			@Override 
-			public void visitM111() {
-				try {
-					Mod111Writer.fillWriter( getMod111(fm) , writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
+//		fm.getModel().visit(new IFiscalModelTypeVisitor() {
+//			
+//			@Override 
+//			public void visitM111() {
+//				try {
+//					Mod111Writer.fillWriter( getMod111(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			
+//			@Override public void visitM115() { 
+//				try {
+//					Mod115Writer.fillWriter( getMod115(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			@Override 
+//			public void visitM123() { 
+//				try {
+//					Mod123Writer.fillWriter( getMod123(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			@Override 
+//			public void visitM130() { 
+//				try {
+//					Mod130Writer.fillWriter( getMod130(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			@Override 
+//			public void visitM131() { 
+//				try {
+//					Mod131Writer.fillWriter( getMod131(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			@Override 
+//			public void visitM202() { 
+//				try {
+//					Mod202Writer.fillWriter( getMod202(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			@Override 
+//			public void visitM303() { 
+//				try {
+//					Mod303Writer.fillWriter( getMod303(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			@Override 
+//			public void visitM190() { 
+//				try {
+//					Mod190Writer.fillWriter( getMod190(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			
+//			@Override 
+//			public void visitM390() { 
+//				try {
+//					if (fm instanceof Mod3902022) {
+//						Mod3902022 mod = (Mod3902022) fm;
+//						Mod3902022Writer.fillWriter( mod , writer);
+//					} else  if (fm instanceof Mod3902021) {
+//						Mod3902021 mod = (Mod3902021) fm;
+//						Mod3902021Writer.fillWriter( mod , writer);
+//					}
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			@Override public void visitM390HF() { /* Auto-generated method stub */}
+//			@Override 
+//			public void visitM349() { 
+//				try {
+//					Mod349Writer.fillWriter( getMod349(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			
+//			@Override 
+//			public void visitM347() { 
+//				try {
+//					Mod347Writer.fillWriter( getMod347(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			
+//			@Override public void visitM200() { 
+//				try {
+//					if (fm instanceof Mod2002022) {
+//						Mod2002022 mod = (Mod2002022) fm;
+//						Mod2002022Writer.fillWriter( mod , writer);
+//					} 
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			
+//			@Override 
+//			public void visitM193() { 
+//				try {
+//					Mod193Writer.fillWriter( getMod193(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			
+//			@Override 
+//			public void visitM184() { 
+//				try {
+//					Mod184Writer.fillWriter( getMod184(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//			
+//			@Override 
+//			public void visitM180() {				
+//				try {
+//					Mod180Writer.fillWriter( getMod180(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+//			}
+//		});
+		try {
+			if (fm instanceof Mod2002022) {
+				Mod2002022 mod = (Mod2002022) fm;
+				Mod2002022Writer.fillWriter(mod, writer);
 			}
-			
-			@Override public void visitM115() { 
-				try {
-					Mod115Writer.fillWriter( getMod115(fm), writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			@Override 
-			public void visitM123() { 
-				try {
-					Mod123Writer.fillWriter( getMod123(fm) , writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			@Override 
-			public void visitM130() { 
-				try {
-					Mod130Writer.fillWriter( getMod130(fm) , writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			@Override 
-			public void visitM131() { 
-				try {
-					Mod131Writer.fillWriter( getMod131(fm) , writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			@Override 
-			public void visitM202() { 
-				try {
-					Mod202Writer.fillWriter( getMod202(fm) , writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			@Override 
-			public void visitM303() { 
-				try {
-					Mod303Writer.fillWriter( getMod303(fm) , writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			@Override 
-			public void visitM190() { 
-				try {
-					Mod190Writer.fillWriter( getMod190(fm) , writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			
-			@Override 
-			public void visitM390() { 
-				try {
-					if (fm instanceof Mod3902022) {
-						Mod3902022 mod = (Mod3902022) fm;
-						Mod3902022Writer.fillWriter( mod , writer);
-					} else  if (fm instanceof Mod3902021) {
-						Mod3902021 mod = (Mod3902021) fm;
-						Mod3902021Writer.fillWriter( mod , writer);
-					}
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			@Override public void visitM390HF() { /* Auto-generated method stub */}
-			@Override 
-			public void visitM349() { 
-				try {
-					Mod349Writer.fillWriter( getMod349(fm), writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			
-			@Override 
-			public void visitM347() { 
-				try {
-					Mod347Writer.fillWriter( getMod347(fm), writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			
-			@Override public void visitM200() { 
-				try {
-					if (fm instanceof Mod2002022) {
-						Mod2002022 mod = (Mod2002022) fm;
-						Mod2002022Writer.fillWriter( mod , writer);
-					} 
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			
-			@Override 
-			public void visitM193() { 
-				try {
-					Mod193Writer.fillWriter( getMod193(fm), writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			
-			@Override 
-			public void visitM184() { 
-				try {
-					Mod184Writer.fillWriter( getMod184(fm), writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-			
-			@Override 
-			public void visitM180() {				
-				try {
-					Mod180Writer.fillWriter( getMod180(fm), writer);
-				} catch (IOException e) {
-					throw new AonCoreException(e);
-				}
-			}
-		});
+		} catch (IOException e) {
+			throw new AonCoreException(e);
+		}
 		return output.toByteArray();
 	}
 
@@ -613,100 +622,104 @@ public class ModelAdmonUtils {
 				.setDomainName(aeatParams.getDomainName())
 				.setDomain(aeatParams.getDomainId())
 				.setUser(aeatParams.getUser());
-		fm.getModel().visit(new IFiscalModelTypeVisitor() {
-			
-			@Override 
-			public void visitM111() {
-				MODEL111.aeatPresentation(occam, getMod111(fm) , aeatResponse);
-			}
-			@Override 
-			public void visitM115() { 
-				MODEL115.aeatPresentation(occam, getMod115(fm) , aeatResponse);
-			}
-			@Override 
-			public void visitM123() { 
-				MODEL123.aeatPresentation(occam, getMod123(fm) , aeatResponse);
-			}
-			@Override 
-			public void visitM130() { 
-				MODEL130.aeatPresentation(occam, getMod130(fm) , aeatResponse);
-			}
-			@Override 
-			public void visitM131() { 
-				MODEL131.aeatPresentation(occam, getMod131(fm) , aeatResponse);
-			}
-			@Override 
-			public void visitM202() { 
-				MODEL202.aeatPresentation(occam, getMod202(fm) , aeatResponse);
-			}
-			@Override 
-			public void visitM303() { 
-				MODEL303.aeatPresentation(occam, getMod303(fm) , aeatResponse);
-			}
-			@Override 
-			public void visitM390() { 
-				if (fm instanceof Mod3902021) {
-					Mod3902021 mod = (Mod3902021) fm;
-					MODEL3902021.aeatPresentation(occam, mod , aeatResponse);
-				}
-				if (fm instanceof Mod3902022) {
-					Mod3902022 mod = (Mod3902022) fm;
-					MODEL3902022.aeatPresentation(occam, mod , aeatResponse);
-				}
-			}
-			@Override public void visitM390HF() { /* Auto-generated method stub */}
-			
-			@Override 
-			public void visitM349() {
-				MODEL349.aeatPresentation(occam, getMod349(fm) , aeatResponse);
-			}
-			
-			@Override 
-			public void visitM347() { 
-				MODEL347.aeatPresentation(occam, getMod347(fm) , aeatResponse);
-			}
-			
-			// FALTA - LLAMADA PARA GRABAR RESPUESTA DE LA AEAT Y PONER ESTADO ENVIADO
-			// SI ESTO LO LLEVAMOS A AON.GWT.COMMON TENDREMOS QUE HACERLO DEPENDER DE AON.OCCAM.MOD200
-			@Override public void visitM200() {
-				//MODEL2002022.aeatPresentation(occam, ((fm instanceof Mod2002022)?(Mod2002022)fm:null) , aeatResponse);				
-			}
-			
-			@Override 
-			public void visitM193() { 
-				MODEL193.aeatPresentation(occam, getMod193(fm) , aeatResponse);				
-			}
-			
-			@Override 
-			public void visitM190() { 
-				MODEL190.aeatPresentation(occam, getMod190(fm) , aeatResponse);
-			}
-			
-			@Override 
-			public void visitM184() { 
-				MODEL184.aeatPresentation(occam, getMod184(fm) , aeatResponse);
-			}
-			
-			@Override 
-			public void visitM180() {
-				MODEL180.aeatPresentation(occam, getMod180(fm) , aeatResponse);
-			}
-			
-		});
+		// FALTA - DEJAR SOLO M200
+//		fm.getModel().visit(new IFiscalModelTypeVisitor() {
+//			
+//			@Override 
+//			public void visitM111() {
+//				MODEL111.aeatPresentation(occam, getMod111(fm) , aeatResponse);
+//			}
+//			@Override 
+//			public void visitM115() { 
+//				MODEL115.aeatPresentation(occam, getMod115(fm) , aeatResponse);
+//			}
+//			@Override 
+//			public void visitM123() { 
+//				MODEL123.aeatPresentation(occam, getMod123(fm) , aeatResponse);
+//			}
+//			@Override 
+//			public void visitM130() { 
+//				MODEL130.aeatPresentation(occam, getMod130(fm) , aeatResponse);
+//			}
+//			@Override 
+//			public void visitM131() { 
+//				MODEL131.aeatPresentation(occam, getMod131(fm) , aeatResponse);
+//			}
+//			@Override 
+//			public void visitM202() { 
+//				MODEL202.aeatPresentation(occam, getMod202(fm) , aeatResponse);
+//			}
+//			@Override 
+//			public void visitM303() { 
+//				MODEL303.aeatPresentation(occam, getMod303(fm) , aeatResponse);
+//			}
+//			@Override 
+//			public void visitM390() { 
+//				if (fm instanceof Mod3902021) {
+//					Mod3902021 mod = (Mod3902021) fm;
+//					MODEL3902021.aeatPresentation(occam, mod , aeatResponse);
+//				}
+//				if (fm instanceof Mod3902022) {
+//					Mod3902022 mod = (Mod3902022) fm;
+//					MODEL3902022.aeatPresentation(occam, mod , aeatResponse);
+//				}
+//			}
+//			@Override public void visitM390HF() { /* Auto-generated method stub */}
+//			
+//			@Override 
+//			public void visitM349() {
+//				MODEL349.aeatPresentation(occam, getMod349(fm) , aeatResponse);
+//			}
+//			
+//			@Override 
+//			public void visitM347() { 
+//				MODEL347.aeatPresentation(occam, getMod347(fm) , aeatResponse);
+//			}
+//			
+//			@Override public void visitM200() {
+//				MODEL2002022.aeatPresentation(occam, ((fm instanceof Mod2002022)?(Mod2002022)fm:null) , aeatResponse);				
+//			}
+//			
+//			@Override 
+//			public void visitM193() { 
+//				MODEL193.aeatPresentation(occam, getMod193(fm) , aeatResponse);				
+//			}
+//			
+//			@Override 
+//			public void visitM190() { 
+//				MODEL190.aeatPresentation(occam, getMod190(fm) , aeatResponse);
+//			}
+//			
+//			@Override 
+//			public void visitM184() { 
+//				MODEL184.aeatPresentation(occam, getMod184(fm) , aeatResponse);
+//			}
+//			
+//			@Override 
+//			public void visitM180() {
+//				MODEL180.aeatPresentation(occam, getMod180(fm) , aeatResponse);
+//			}
+//			
+//		});		
+		if (fm instanceof Mod2002022) {
+			Mod2002022 mod = (Mod2002022) fm;
+			MODEL2002022.aeatPresentation(occam, mod, aeatResponse);
+		}
 		giveDataResponseDataBack(resp, aeatParams, fm);
 	}
 	
 	public static void send(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
 		try {
-			String period = model.getPeriod().getName();
-			if ( model.getModel() == FiscalModelType.M202) {
-				if ( model.getPeriod() == Period.T1) period = "1P";
-				else if ( model.getPeriod() == Period.T2) period = "2P";
-				else if ( model.getPeriod() == Period.T3) period = "3P";
-			}
-			if (model.getModel() == FiscalModelType.M390 || model.getModel() == FiscalModelType.M200) {
-				period = "0A";	
-			}
+//			String period = model.getPeriod().getName();
+//			if ( model.getModel() == FiscalModelType.M202) {
+//				if ( model.getPeriod() == Period.T1) period = "1P";
+//				else if ( model.getPeriod() == Period.T2) period = "2P";
+//				else if ( model.getPeriod() == Period.T3) period = "3P";
+//			}
+//			if (model.getModel() == FiscalModelType.M390 || model.getModel() == FiscalModelType.M200) {
+//				period = "0A";	
+//			}
+			String period = "0A";
 			byte[] fileContent = getModelFile(model);
 			JSONObject params = new JSONObject();
 			params.put("MODELO", FiscalModelUtils.getModelName(model));
@@ -765,7 +778,8 @@ public class ModelAdmonUtils {
 	public static void checkAEAT(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
 		try {
 			String year = AonNumberUtils.toString(model.getYear());
-			String period = model.getPeriod() == Period.YEAR ? "0A" : model.getPeriod().getName();
+			//String period = model.getPeriod() == Period.YEAR ? "0A" : model.getPeriod().getName();
+			String period = "0A";
 			
 			String urlParameters = MessageFormat.format(
 					"NIF={0}"

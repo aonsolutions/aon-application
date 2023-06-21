@@ -94,12 +94,15 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 			
 			final int year = i;
 			
-			menu.addItem("200", msg, new ScheduledCommand() {
-				
-				@Override
-				public void execute() {
-					cbk.onNew(year);
-				}
+//			menu.addItem("200", msg, new ScheduledCommand() {
+//				
+//				@Override
+//				public void execute() {
+//					cbk.onNew(year);
+//				}
+//			});
+			menu.addItem("200", msg, () -> {
+				cbk.onNew(year);				
 			});
 		}
 						

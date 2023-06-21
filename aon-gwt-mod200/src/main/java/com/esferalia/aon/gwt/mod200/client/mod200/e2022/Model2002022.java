@@ -367,15 +367,13 @@ public class Model2002022 extends DockLayoutPanel {
 
 			@Override
 			public void importAccountingFile() {
-				// FALTA - SI DA ERROR LA CARGA PORQUE EL ARCHIVO NO ES CORRECTO O ALGO ASI, NO SALE NADA EN PANTALLA
 				mod200Callback.cleanErrorPanel();			
 				Upload upload = new Upload() {
 					
 					@Override
 					protected void onUpload(String data) {
-						mod200Object.fillMod2002022AccountingData(options.getDomainName(), options.getDomain(), options.getUser(), data, new AsyncCallback<Mod2002022>() {
+						mod200Object.fillMod2002022AccountingData(data, new AsyncCallback<Mod2002022>() {
 							@Override public void onSuccess(Mod2002022 result) {	
-								//markAsDirty();
 								Model2002022.this.markAsDirty();
 							}
 							@Override public void onFailure(Throwable caught) {
@@ -824,9 +822,6 @@ public class Model2002022 extends DockLayoutPanel {
 		this.dirty = dirty;
 		styleDirtyLabel();
 		refreshButtonsVisibility();
-		// FALTA 
-//		if (pageAEAT != null)
-//			pageAEAT.setEnabled();
 		if (PAGES[PAGES.length-1] != null)
 			PAGES[PAGES.length-1].setEnabled();
 	}

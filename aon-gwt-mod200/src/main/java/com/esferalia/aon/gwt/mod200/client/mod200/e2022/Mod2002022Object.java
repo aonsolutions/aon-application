@@ -35,6 +35,7 @@ public class Mod2002022Object implements Serializable {
 		this.options = options;
 		this.mod200 = mod200;
 		initialized = (mod200.getId() != null);
+		
 	}
 
 	public boolean isInitialized() {
@@ -105,12 +106,11 @@ public class Mod2002022Object implements Serializable {
 		});
 	}
 	
-	public void fillMod2002022AccountingData(String domainName, int domain, String user, String data, final AsyncCallback<Mod2002022> callback) {
+	public void fillMod2002022AccountingData(String data, final AsyncCallback<Mod2002022> callback) {
 		Model200.getMod2002022Service().fillMod2002022AccountingData(options.getOccam(), mod200, data, new AsyncCallback<Mod2002022>() {
 			
 			@Override
-			public void onSuccess(Mod2002022 result) {
-				Window.alert("onSuccess");
+			public void onSuccess(Mod2002022 result) {				
 				mod200 = result;
 				calculate();
 				fireMod200Changed(mod200);
@@ -118,10 +118,8 @@ public class Mod2002022Object implements Serializable {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("onFailure");
-				initialized = false;
-				callback.onFailure(caught);
+			public void onFailure(Throwable caught) {				
+				callback.onFailure(caught);				
 			}
 		});
 	}

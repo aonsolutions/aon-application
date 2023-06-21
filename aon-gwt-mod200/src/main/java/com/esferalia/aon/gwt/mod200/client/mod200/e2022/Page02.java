@@ -72,7 +72,7 @@ public class Page02 extends PageAbs {
 		basePanel.add(getTitle(AON.MSG.participationsOut()));
 		
 		addLabel(PARTICIPATIONS_LABEL, true);
-		
+		// FALTA - ANCHURA DEL GRID
 		AonDisplayGrid grid = new AonDisplayGrid();
 //		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
 //		grid.addStyleName(AON.CSS.aonBlockCenter());

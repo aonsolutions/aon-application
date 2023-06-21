@@ -510,7 +510,7 @@ public class Page00 extends PageAbs {
 	    	.addLabelWidgetRow(AON.MSG.nonFixedPersonal(), c042);
 		
 		// CIFRA DE NEGOCIOS
-		// FALTA - REVISASR SI SE MODIFICA ESTE VALOR SI ES NECESARIO RECALCULAR EL MODELO, HABRA QUE VERLO AL REVISAR LOS CALCULOS
+		// FALTA - REVISAR SI SE MODIFICA ESTE VALOR SI ES NECESARIO RECALCULAR EL MODELO, HABRA QUE VERLO AL REVISAR LOS CALCULOS
 		
 		basePanel.add(getTitle("Cifra de negocios"));
 		
@@ -527,7 +527,7 @@ public class Page00 extends PageAbs {
 			DoubleVariableEx bv = new DoubleVariableEx(Mod2002022Key.VOLOPE);
 			bv.setValue((double)opeVol.getSelectedIndex());
 			callback.getMod200Object().getMod200().addVariable(bv);
-			callback.markAsDirty();
+			callback.markAsDirty();			
 		});
 		otherInputs.add(opeVol);
 		

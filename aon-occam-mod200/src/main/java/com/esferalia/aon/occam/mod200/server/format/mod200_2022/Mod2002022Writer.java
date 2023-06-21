@@ -1560,11 +1560,12 @@ public class Mod2002022Writer {
 					while (!isComplementary || c < mod200.getFilmProductions().size()) {
 						addStartLabel(line, label);
 						line.append(isComplementary ? "C" : " ");						
-						addBreakdown(line, mod200, Mod2002022BN588Key.values(), Mod2002022Key.BN1626, Mod2002022Key.BN1195, isComplementary);
 						
 						for (int i = 1; i <= 6; i++) {
 							addNIF(line, mod200.getFilmProductions(), c++);
 						}
+						
+						addBreakdown(line, mod200, Mod2002022BN588Key.values(), Mod2002022Key.BN1626, Mod2002022Key.BN1195, isComplementary);
 						
 						line.append(AonFiscalFileUtils.spaces(200)); // Reservado para la AEAT
 		

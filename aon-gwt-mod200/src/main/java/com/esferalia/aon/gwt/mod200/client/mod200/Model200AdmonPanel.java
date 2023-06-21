@@ -262,7 +262,6 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 //	}
 	
 	private void importAccounting() {
-		// FALTA 
 		cleanViewers();
 		getCallback().importAccountingFile();		
 	}
@@ -274,7 +273,8 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 			new AonConfirmDialogCallback() {
 				
 				@Override
-				public void onCancel() {}
+				public void onCancel() {					
+				}
 				
 				@Override
 				public void onAccept() {
