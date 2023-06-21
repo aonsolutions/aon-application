@@ -7764,4 +7764,24 @@ public class AON {
 		}
 	}
 	
+	// ---------------- Cost Center
+
+	public static List<ApplicationParameter> getCostCenters(String domainName, int domainId, String login) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getCostCenters(ctx);
+		}
+	}
+	
+	public static void saveCostCenter(String domainName, int domainId, String login, ApplicationParameter costCenter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getCommon().saveCostCenter(ctx, costCenter);
+		}
+	}
+	
+	public static void deleteCostCenter(String domainName, int domainId, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getCommon().deleteCostCenter(ctx, id);
+		}
+	}
+	
 }

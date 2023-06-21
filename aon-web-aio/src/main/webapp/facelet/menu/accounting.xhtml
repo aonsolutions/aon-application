@@ -171,7 +171,7 @@
 											value="#{bundle.accounting_aut_concept_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="costCenter" action="costCenter"
+										<aon:commandLink id="costCenter" action="gwt_accountCostCenter"
 											value="#{bundle.accounting_cost_center_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -768,6 +768,12 @@
 													actionListener="#{accountingFinanceChecker.onStart}"
 													value="#{bundle.accounting_finance_checker_module}" />
 											</aon:div>
+											
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="costCenter2" action="costCenter"
+													value="#{bundle.accounting_cost_center_module}" />
+											</aon:div>
+											
 <!-- 
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="regenerateAccount"
