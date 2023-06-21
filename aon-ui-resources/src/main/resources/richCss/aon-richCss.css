@@ -2240,6 +2240,9 @@ color:#000;
 	position: fixed;
   
 }
+.aon-scroll-area .aon-dataTable {
+	margin-bottom: 68px;
+}
 
 
 .aonDataScroller .aon-dataScroller-buttons tr {
