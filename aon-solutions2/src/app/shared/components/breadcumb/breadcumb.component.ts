@@ -24,7 +24,7 @@ export class BreadcumbComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    this.enterpriseService.getEnterprises()
+    this.enterpriseService.getEnterpriseList()
     .then(
       (response:any) => {
         let actualDocument = this.enterpriseService.getEnterpriseSelected();
