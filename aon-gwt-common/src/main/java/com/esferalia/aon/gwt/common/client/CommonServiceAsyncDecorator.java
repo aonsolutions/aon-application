@@ -202,11 +202,27 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getCreditor(domainName, domain, user, registry, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	// **************************************************
+	// ************************************ [COST CENTER]
+	// **************************************************	
 
 	@Override
 	public void getCostCenters(String domainName, int domain, String user, AsyncCallback<List<ApplicationParameter>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getCostCenters(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void saveCostCenter(String domainName, int domain, String user, ApplicationParameter costCenter, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveCostCenter(domainName, domain, user, costCenter, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void deleteCostCenter(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteCostCenter(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -201,5 +200,10 @@ public interface ICommon {
 	
 	//WORKGROUP
 	public List<Cno> getCno(CloseableAONContext ctx);
+	
+	// COST CENTER
+	public List<ApplicationParameter> getCostCenters(CloseableAONContext ctx);
+	public void saveCostCenter(CloseableAONContext ctx, ApplicationParameter costCenter);
+	public void deleteCostCenter(CloseableAONContext ctx, Integer id);
 
 }
