@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.Priority;
 
 public class RegistryItem implements Serializable {
@@ -14,7 +16,7 @@ public class RegistryItem implements Serializable {
 	private Integer id;
 	private Integer domain;
 	private Integer registry;
-	private Integer item;
+	private Item item;
 	private RegistryMode type;
 	private String code;
 	private Double price;
@@ -22,6 +24,13 @@ public class RegistryItem implements Serializable {
 	private Priority priority;
 	private Integer workplace;
 	private RegistryItemStatus status;
+	private String quantity;
+	private Date startDate;
+	private Date endDate;
+	private Date creationDate;
+	private String creationUser;
+	private Date modificationDate;
+	private String modificationUser;
 	
 	private boolean removed;
 
@@ -52,11 +61,11 @@ public class RegistryItem implements Serializable {
 		return this;
 	}
 
-	public Integer getItem() {
+	public Item getItem() {
 		return item;
 	}
 
-	public RegistryItem setItem(Integer item) {
+	public RegistryItem setItem(Item item) {
 		this.item = item;
 		return this;
 	}
@@ -132,4 +141,82 @@ public class RegistryItem implements Serializable {
 		this.removed = removed;
 		return this;
 	}
+
+	public String getQuantity() {
+		return quantity;
+	}
+
+	public RegistryItem setQuantity(String quantity) {
+		this.quantity = quantity;
+		return this;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public RegistryItem setStartDate(Date startDate) {
+		this.startDate = startDate;
+		return this;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public RegistryItem setEndDate(Date endDate) {
+		this.endDate = endDate;
+		return this;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public RegistryItem setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+
+	public String getCreationUser() {
+		return creationUser;
+	}
+
+	public RegistryItem setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public RegistryItem setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+
+	public String getModificationUser() {
+		return modificationUser;
+	}
+
+	public RegistryItem setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	
+	public RegistryItem setBookingStatus(BookingStatus bookingStatus) {
+		if (bookingStatus != null && RegistryMode.BOOKING.equals(type)) {
+			this.status = RegistryItemStatus.safeValueOf(bookingStatus.value());
+		}
+		return this;
+	}
+	
+	public BookingStatus getBookingStatus() {
+		if (RegistryMode.BOOKING.equals(this.type) && this.status != null) {
+			return BookingStatus.safeValueOf(status.value());
+		}
+		return null;
+	}
+	
 }

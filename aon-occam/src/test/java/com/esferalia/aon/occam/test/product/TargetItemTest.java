@@ -121,7 +121,7 @@ public class TargetItemTest extends AbstractOccamTest {
 		.setType(RegistryMode.TARGET)
 		.setStatus(RegistryItemStatus.ACTIVE)
 		.setPriority(Priority.NORMAL)
-		.setItem(item.getId());
+		.setItem(item);
 		
 		
 		RegistryItem[] ritemArr = ItemDAO.saveRItem(ctx, ritem);

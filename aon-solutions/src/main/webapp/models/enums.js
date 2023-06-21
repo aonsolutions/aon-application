@@ -272,3 +272,17 @@ export const DomainType = {
 	COMMERCE: "Comercio",
 	KIT_DIGITAL: "Kit Digital"
 }
+
+export const RegistryItemStatus = {
+	ACTIVE: 'Activo',
+	INTERESTED: 'Interesado',
+	REFUSED: 'Rechazado',
+	INACTIVE: 'Inactivo'
+}
+
+export const BookingItemStatus = {
+	BILLABLE: 'Facturable',
+	NOT_BILLABLE: 'No facturable',
+	NOT_CONTRACTABLE: 'No contratable',
+	INACTIVE: 'Inactivo'
+}
