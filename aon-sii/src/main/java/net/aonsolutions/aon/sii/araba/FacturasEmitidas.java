@@ -187,7 +187,7 @@ public class FacturasEmitidas extends SIIBuilt{
 					.findFirst().orElse(new EnterpriseActivity());
 		}
 		boolean exempt = (activity.getVatRegime() != null && activity.getVatRegime().isExempt()) 
-				|| vat.isIntracommunity() || vat.isExtracommunity();
+				|| vat.isIntracommunity() || vat.isExtracommunity() || vat.isCanCeuMel();
 		
 		Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.mapToDouble(f -> f.getBase()).sum();
