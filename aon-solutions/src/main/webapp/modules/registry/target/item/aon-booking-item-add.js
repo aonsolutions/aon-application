@@ -247,7 +247,8 @@ export class AonBookingItemAdd extends AonElement {
 		
 	}
 
-	async save(){
+	async save(remove){
+		let error = false;
 		let params = {
 			type: "BOOKING",
 			items: this.getItems(),
@@ -260,14 +261,22 @@ export class AonBookingItemAdd extends AonElement {
 		}
 		
 		if (!this.getSelectedRItem()) {
-			await saveRegistryItem(params);
+			error = this.checkError(params, "save", remove);
+			if (!error) {
+				await saveRegistryItem(params);
+			}
 		} else {
 			params.ritem = this.getSelectedRItem();
 			params.item = this.getItem();
-			await updateRegistryItem(params);
+			error = this.checkError(params, "update", remove);
+			if (!error) {
+				await updateRegistryItem(params);
+			}
 		}
 		
-		this.showMessage();
+		if (!error) {
+			this.showMessage();
+		}
 	}
 
 	async remove(id){
@@ -277,7 +286,28 @@ export class AonBookingItemAdd extends AonElement {
 			this.getItems().forEach(item=> item.remove());
 		}
 
-		await this.save();
+		await this.save(true);
+	}
+
+	checkError(params, type, remove) {
+		if (type == "update") {
+			if (!params.item) {
+				this.showMessageError("El producto no puede quedar vacío");
+				return true;
+			} else if (!remove && !params.bookingStatus) {
+				this.showMessageError("El estado no puede quedar vacío");
+				return true;
+			}
+		} else {
+			if (!remove && !params.bookingStatus) {
+				this.showMessageError("El estado no puede quedar vacío");
+				return true;
+			} else if(!remove && (!this.getItems() || this.getItems().length === 0)) {
+				this.showMessageError("Es obligatorio seleccionar un producto");
+				return true;
+			}
+		}
+		return false;
 	}
 }
 

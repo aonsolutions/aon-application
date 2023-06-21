@@ -255,15 +255,9 @@ public class ProductServlet extends AonApiHttpServlet {
 		 
 		 customers.forEach(customer->{
 			 items.forEach(item-> {
-				 Integer domainId = null;
-				 if (itemsJson.length() == 1 && item.getDomain() == null || item.getDomain().getId() == null ) {
-					 domainId = itemsJson.getJSONObject(0).optInt("domain");
-				 } else {
-					 domainId = item.getDomain().getId();
-				 }
 				 
 				 RegistryItem ritem = new RegistryItem()
-						 .setDomain(domainId)
+						 .setDomain(item.getDomain().getId())
 						 .setRegistry(customer.getId())
 						 .setItem(item)
 						 .setPrice(item.getPrice())
