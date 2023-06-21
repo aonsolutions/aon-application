@@ -158,6 +158,7 @@ public interface IRegistry {
 	public Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, CompanyFilter filter, Integer page, Integer perPage);
 	public Company saveCompany(AONContext ctx, Company company);
 	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter);
+	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter, int limit, int offset);
 
 	// ------------------- PERSON
 	public Stream<Person> getPersonStream(AONContext ctx, PersonFilter filter);

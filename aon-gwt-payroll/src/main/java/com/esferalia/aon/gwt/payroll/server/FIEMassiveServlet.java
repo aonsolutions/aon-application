@@ -511,6 +511,8 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 				.where(CONTRACT_LEAVE.CONTRACT.eq(contractRecord.getId()))
 				.and(CONTRACT_LEAVE.END_DATE.isNull().or(CONTRACT_LEAVE.END_DATE.ge(itStartDate)))
 				.and(DSL.condition(itEndDate == null ).or(CONTRACT_LEAVE.START_DATE.le(itEndDate)))
+				.orderBy(CONTRACT_LEAVE.ID.desc())
+				.limit(1)
 				.fetchOptionalInto(CONTRACT_LEAVE)
 				.orElseGet(() -> {
 					ContractLeaveRecord r = ctx.newRecord(CONTRACT_LEAVE);
@@ -610,6 +612,7 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			throw new EmployeeNotFoundexception(e);
 		}
 		catch ( Exception e) {
+			e.printStackTrace();
 			throw new TooManyEmployeesException(e);
 		}
 		

@@ -2154,7 +2154,7 @@ color:#000;
 .aon-dataScroller table{border:0 !important;}
 .aon-dataScroller table, .aon-dataScroller table td{	
 	border:0;
-	background-color:transparent !important;
+	background-color:transparent;
 	padding:0;
 	vertical-align:middle;
 	}
@@ -2234,7 +2234,13 @@ color:#000;
 .aonDataScroller {
 	padding: 0;
 	padding-left: 3rem;
+	width: 97%;
+	left: 24px;
+	bottom: 24px;
+	position: fixed;
+  
 }
+
 
 .aonDataScroller .aon-dataScroller-buttons tr {
 	display: flex;
@@ -2256,65 +2262,41 @@ color:#000;
 	cursor: pointer;
 }
 
-.aonDataScroller .rich-datascr-button:nth-child(1)::before {
-	background: url(images/a.svg);	
-	background-size: 90%;
-	background-repeat: no-repeat;
-	margin-top: 0;
-	position: relative;
-	margin-bottom: 0.2rem;
+.aonDataScroller .aon-dataScroller-buttons tr td {
+	margin: 3px;
+	height: 34px;
+	min-width: 34px;
+	padding-top: 7px;
+	border-radius: 17px;
+	background-color: #f6f8fc ;
 }
 
-.aonDataScroller .rich-datascr-button:last-child::before {
-	background: url(images/n.svg);	
-	background-size: 90%;
-	background-repeat: no-repeat;
-	margin-top: 0;
-	position: relative;
-	margin-bottom: 0.2rem;
-}
-
-.aonDataScroller .aon-dataScroller-buttons tr td::before {
-	content : '';
-	display: block;
-	width: 1.2rem;
-	height: 1.2rem;
-	margin: 0 auto;
-}
 
 .aonDataScroller .aon-dataScroller-button-next::before {
-	content : 'Siguiente';
 	display: block;
-	margin-left: 1rem;
-	margin-top: -.15rem;
+	margin-left: 42px;
+	content : 'Siguiente';
 }
 
 .aonDataScroller .aon-dataScroller-button-previous::before {
-	content : 'Anterior';
 	display: block;
-	margin-left: -4rem;
-	margin-top: -.15rem;
-	height: 100%;
+	margin-left: -98px;
+	content : 'Anterior';
 }
 
-.aonDataScroller .aon-dataScroller-buttons tr td {
-  padding: .1rem;
-  width: fit-content;
-  height: 2.5rem;
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
 
 .aonDataScroller .aon-dataScroller-button-next , .aonDataScroller .aon-dataScroller-button-previous {
 	opacity: .5 !important;
 }
 
 .aonDataScroller .aon-dataScroller-button-next {
+	width: 34px;
+	height: 17px;
 	background-image: url(images/aon-icon-arrow-right.svg)
 }
 .aonDataScroller .aon-dataScroller-button-previous {
+	width: 34px;
+	height: 17px;
 	background-image: url(images/aon-icon-arrow-left.svg)
 }
 
@@ -2328,36 +2310,12 @@ color:#000;
 	text-decoration:none;
 }
 
-.aon-aonScroller-selected::before , .aon-aonScroller-inactive::before {
-
-	/* border: .1rem solid #404040; */
-	background: url(images/o.svg);	
-	background-size: 90%;
-	background-repeat: no-repeat;
-	position: relative;
-	transition: transform .15s, filter .15s;
-}
-
-.aon-aonScroller-selected:hover::before , .aon-aonScroller-inactive:hover::before {
-	transform:translateY(-5%);
-}
-
-.aon-aonScroller-inactive:hover::before {
-	filter: brightness(1.5) grayscale(0) !important;
-}
 
 .aon-aonScroller-selected{
 	font-weight:bold;
+	background-color: #d3e3fd !important;
 }
 
-
-.aon-aonScroller-selected::before {
-	filter: brightness(1.5) grayscale(0) !important;
-}
-	
-.aon-aonScroller-inactive::before {
-	filter: brightness(5) grayscale(100);aon-dataScroller-button-next
-}
 
 /**********************************************/
 /************   SELECT INPUT DATE *************/

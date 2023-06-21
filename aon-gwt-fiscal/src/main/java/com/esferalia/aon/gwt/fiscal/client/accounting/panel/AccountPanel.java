@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -26,6 +27,7 @@ import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -40,6 +42,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -63,6 +66,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -89,6 +93,8 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 	private SimplePanel container;
 	private FlexTable tab;
 	private int lastScrollPos = 0;
+	
+	private List<ApplicationParameter> costCenters = new ArrayList<>();
 	
 	private static enum COLS {
 		  NUM(AonStringUtils.EMPTY		,"20px"  ,AON.CSS.aonTextCenter())
@@ -154,7 +160,14 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				}
 			}
 		});
-		onSearch(params);
+		
+		getCostCenters(params, costCenterStream -> {
+			costCenters.clear();
+			costCenters = costCenterStream;
+			
+			onSearch(params);
+		});
+		
 	}
 
 	public boolean isSearchEnabled() {
@@ -242,19 +255,23 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 							offset.setValue(ofs + count - 1);
 							enableMoreData();
 						}
+						
 					} catch (IndexOutOfBoundsException e) {
 						FlowPanel line = new FlowPanel();
 						InlineLabel label = new InlineLabel(e.getMessage());
 						line.add(label);
+						container.clear();
 						container.add(line);
 						enableSearch();
 					}
 				}
+				
 				if (state == XMLHttpRequest.DONE) {
 					if (!something) {
 						FlowPanel line = new FlowPanel();
 						InlineLabel label = new InlineLabel(AON.MSG.noData());
 						line.add(label);
+						container.clear();
 						container.add(line);
 						disableMoreData();
 					}
@@ -390,7 +407,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				TextBox codeBox = new TextBox();
 				TextBox descriptionBox = new TextBox();
 				TextBox aliasBox = new TextBox();
-				TextBox costCenterBox = new TextBox();
+				ListBox costCenterBox = new ListBox();
 				CheckBox activeCheck = new CheckBox();
 
 				ValueChangeHandler<String> valueChangeHandler = new ValueChangeHandler<String>() {
@@ -400,7 +417,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						account.setCode(codeBox.getValue());
 						account.setDescription(descriptionBox.getValue());
 						account.setAlias(aliasBox.getValue());
-						account.setCostCenter(costCenterBox.getValue());
+						account.setCostCenter(costCenterBox.getSelectedValue());
 						account.setActive(activeCheck.getValue());
 						saveAccount(params, account, msg);
 					}
@@ -409,7 +426,14 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				codeBox.addValueChangeHandler(valueChangeHandler);
 				descriptionBox.addValueChangeHandler(valueChangeHandler);
 				aliasBox.addValueChangeHandler(valueChangeHandler);
-				costCenterBox.addValueChangeHandler(valueChangeHandler);
+				costCenterBox.addChangeHandler(e -> {
+					account.setCode(codeBox.getValue());
+					account.setDescription(descriptionBox.getValue());
+					account.setAlias(aliasBox.getValue());
+					account.setCostCenter(costCenterBox.getSelectedValue());
+					account.setActive(activeCheck.getValue());
+					saveAccount(params, account, msg);
+				});
 				
 				
 				activeCheck.addClickHandler(new ClickHandler() {
@@ -419,7 +443,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						account.setCode(codeBox.getValue());
 						account.setDescription(descriptionBox.getValue());
 						account.setAlias(aliasBox.getValue());
-						account.setCostCenter(costCenterBox.getValue());
+						account.setCostCenter(costCenterBox.getSelectedValue());
 						account.setActive(activeCheck.getValue());
 						saveAccount(params, account, msg);
 					}
@@ -453,8 +477,10 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 
 				costCenterBox.setStyleName(AON.CSS.aonBorderNone());
 				costCenterBox.addStyleName(AON.CSS.aonWidthAll());
-				costCenterBox.setMaxLength(32);
-				costCenterBox.setValue(account.getCostCenter());
+				costCenterBox.clear();
+				costCenterBox.addItem("-", "");
+				costCenters.forEach(costCenter -> costCenterBox.addItem(costCenter.getValue(), costCenter.getValue()));
+				setSelectedValueLB(costCenterBox, account.getCostCenter());
 				tab.setWidget(r, col, costCenterBox);
 				col++;
 
@@ -465,6 +491,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				col++;
 				
 				FlowPanel buttonContainer = new FlowPanel();
+				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 				
 				AonTableButton clientButton = new AonTableButton(account.hasRegistry() ? "Vinculado" : "No Vinculado", account.hasRegistry() ? AON.CSS.aonIconPerson() : AON.CSS.aonIconPersonOff());
 				clientButton.addClickHandler(e -> registryDialog(account, clientButton, params, msg));
@@ -533,6 +560,18 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 		requestData.append("&"+IRequestParamsNames.ACCOUNT_PARAMS +"=" + JsonParams.convert( params ));
 		xhr.send(requestData.toString());
 	}
+
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
 	
 	private void registryDialog(Account account, AonTableButton clientButton, AccountParams params, Label msg) {
 		RegistryModuleOptions options = new RegistryModuleOptions();
@@ -578,6 +617,8 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						
 						});
 						
+						supplierPanel.setAccountEnabled(false);
+						
 						showDialog(dialog, supplierPanel);
 						
 					} else if(account.getCode().startsWith("41")) { // Acreedores
@@ -605,6 +646,8 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 							
 						});
 						
+						creditorPanel.setAccountEnabled(false);
+						
 						showDialog(dialog, creditorPanel);
 
 					} else if(account.getCode().startsWith("43")) { // Clientes
@@ -631,6 +674,8 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 							@Override public void onDocumenthanged(CustomerFull registryFull) { /* Nothing to do here */ }
 							
 						});
+						
+						customerPanel.setAccountEnabled(false);
 						
 						showDialog(dialog, customerPanel);
 						
@@ -708,6 +753,8 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 		
 		});
 		
+		supplierPanel.setAccountEnabled(false);
+		
 		showDialog(dialog, supplierPanel);
 	}
 	
@@ -731,6 +778,8 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 			
 		});
 		
+		creditorPanel.setAccountEnabled(false);
+		
 		showDialog(dialog, creditorPanel);
 	}
 	
@@ -753,6 +802,8 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 			@Override public void onDocumenthanged(CustomerFull registryFull) { /* Nothing to do here */ }
 			
 		});
+		
+		customerPanel.setAccountEnabled(false);
 		
 		showDialog(dialog, customerPanel);
 	}
@@ -869,6 +920,21 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 			
 			@Override
 			public void onSuccess(CustomerFull customer) {
+				success.accept(customer);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getCostCenters(AccountParams params, Consumer<List<ApplicationParameter>> success) {
+		COMMON_SERVICE.getCostCenters(params.getDomainName(), params.getDomain(), params.getUser(), new AsyncCallback<List<ApplicationParameter>>() {
+			
+			@Override
+			public void onSuccess(List<ApplicationParameter> customer) {
 				success.accept(customer);
 			}
 			

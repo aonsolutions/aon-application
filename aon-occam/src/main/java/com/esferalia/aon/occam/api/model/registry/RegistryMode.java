@@ -7,7 +7,8 @@ public enum RegistryMode implements Serializable {
 	TARGET(),
 	CUSTOMER(),
 	SUPPLIER(),
-	CREDITOR;
+	CREDITOR,
+	BOOKING;
 	
 	public byte value() {
 		return (byte) this.ordinal();

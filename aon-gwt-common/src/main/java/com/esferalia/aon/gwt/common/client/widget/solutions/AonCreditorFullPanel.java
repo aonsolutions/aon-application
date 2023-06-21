@@ -150,5 +150,9 @@ public class AonCreditorFullPanel extends AonRegistryFullPanel<CreditorFull> imp
     	
 	}
 	
+	public void setAccountEnabled(boolean enabled) {
+		setAccountEnable(enabled);
+	}
+	
 }
 

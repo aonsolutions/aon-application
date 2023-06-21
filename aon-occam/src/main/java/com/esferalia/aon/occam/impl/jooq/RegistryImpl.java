@@ -415,6 +415,12 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getRItemStream(ctx, filter));
 	}
+	
+	@Override
+	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter, int limit, int offset) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.getRItemStream(ctx, filter, limit, offset));
+	}
 
 	// -------------------- SUPPLIER
 

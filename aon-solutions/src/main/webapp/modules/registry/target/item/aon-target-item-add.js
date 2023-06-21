@@ -13,7 +13,7 @@ export class AonTargetItemAdd extends AonElement {
 
 	_items  = [];
 	_customers = [];
-	_status    = null;
+	_status    = "INTERESTED";
 
 	setItems(items) {
 		this._items = [];
@@ -170,7 +170,8 @@ export class AonTargetItemAdd extends AonElement {
 		let params = {
 			status: this.getStatus(),
 			items: this.getItems(),
-			customers: this.getCustomers()
+			customers: this.getCustomers(),
+			type: "TARGET"
 		}
 
 		await saveRegistryItem(params);
