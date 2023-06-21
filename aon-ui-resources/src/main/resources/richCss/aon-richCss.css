@@ -2234,7 +2234,13 @@ color:#000;
 .aonDataScroller {
 	padding: 0;
 	padding-left: 3rem;
+	width: 97%;
+	left: 24px;
+	bottom: 24px;
+	position: fixed;
+  
 }
+
 
 .aonDataScroller .aon-dataScroller-buttons tr {
 	display: flex;
