@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ChartType } from 'chart.js';
 import { MultiDataSet, Label, Color } from 'ng2-charts';
 
@@ -9,30 +9,21 @@ import { MultiDataSet, Label, Color } from 'ng2-charts';
 })
 export class ChartComponent implements OnInit {
 
-  public doughnutChartLabels: Label[] = ['Lorem', 'Ipsum', 'Dolor'];
-  public doughnutChartData: MultiDataSet = [
-    [350, 450, 100],
-    [50, 150, 120],
-    [250, 130, 70],
-  ];
-  public doughnutChartType: ChartType = 'doughnut';
-  public colors: Color[] = [{
-      backgroundColor: [
-        '#6CF58E','#FF624E','#FA64B1'
-      ]
-    }
-  ]
+  @Input() doughnutChartLabels: Label[] = [];
+  @Input() doughnutChartData: MultiDataSet = [];
+  @Input() doughnutChartType: ChartType = "doughnut";
+  @Input() colors: Color[] = [];
 
   constructor() { }
 
   ngOnInit(): void { }
 
   // events
-  public chartClicked({ event, active }: { event: MouseEvent, active: {}[] }): void {
+  chartClicked({ event, active }: { event: MouseEvent, active: {}[] }): void {
     console.log(event, active);
   }
 
-  public chartHovered({ event, active }: { event: MouseEvent, active: {}[] }): void {
+  chartHovered({ event, active }: { event: MouseEvent, active: {}[] }): void {
     console.log(event, active);
   }
 }
