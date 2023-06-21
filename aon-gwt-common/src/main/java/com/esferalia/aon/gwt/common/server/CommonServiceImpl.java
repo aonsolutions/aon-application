@@ -5,21 +5,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jooq.Condition;
-import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
-
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Enterprise;
-import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -31,7 +25,6 @@ import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -212,16 +205,23 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getCreditorFull(domainName, domain, user, registry);
 	}
 	
+	// **************************************************
+	// ************************************ [COST CENTER]
+	// **************************************************
+	
 	@Override
 	public List<ApplicationParameter> getCostCenters(String domainName, int domain, String user) throws AonCoreException {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
-			Condition condition = APP_PARAM.DOMAIN.eq(domain).and(APP_PARAM.NAME.like("%ACC_COST_CENTER_%"));
-			List<ApplicationParameter> result = AppParamDAO.getApplicationParameters(ctx, condition);
-			return result;
-		} catch (Exception e) {
-			new AonCoreException(e.getMessage());
-			return null;
-		}
+		return AON.getCostCenters(domainName, domain, user);
+	}
+	
+	@Override
+	public void saveCostCenter(String domainName, int domain, String user, ApplicationParameter costCenter) throws AonCoreException {
+		AON.saveCostCenter(domainName, domain, user, costCenter);
+	}
+	
+	@Override
+	public void deleteCostCenter(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteCostCenter(domainName, domain, user, id);
 	}
 	
 }

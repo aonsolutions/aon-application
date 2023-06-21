@@ -109,6 +109,26 @@ public class AppParamDAO {
 		return ap.getId() != null ? ap : null;
 	}
 	
+	public static ApplicationParameter fetchOne(AONContext ctx, Integer id) {
+		ctx.checkRead();
+		final ApplicationParameter ap = new ApplicationParameter();
+		ctx.getDslContext()
+			.select(APP_PARAM.ID,APP_PARAM.DOMAIN,APP_PARAM.NAME,APP_PARAM.VALUE)
+			.from(APP_PARAM)
+			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())
+			.and(APP_PARAM.ID.eq(id)))
+			.fetch()
+			.stream()
+			.findFirst()
+			.ifPresent( record  -> ap
+					.setId(record.getValue(APP_PARAM.ID))
+					.setDomain(record.getValue(APP_PARAM.DOMAIN))
+					.setName(record.getValue(APP_PARAM.NAME))
+					.setValue(record.getValue(APP_PARAM.VALUE)) );
+			;
+		return ap.getId() != null ? ap : null;
+	}
+	
 
 	public static Administration parseDefaultAdministration(String paramValue) {
 		if (AonStringUtils.isNotBlank(paramValue)) {

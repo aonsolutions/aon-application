@@ -199,10 +199,16 @@
 											action="autConcept-account"
 											value="#{bundle.accounting_aut_concept_module}" />
 									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
+									<!-- aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="costCenter" 
 											rendered="#{actionDenied.renderedOption('costCenter')}"
 											action="costCenter"
+											value="#{bundle.accounting_cost_center_module}" />
+									</aon:div  -->
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="costCenter" 
+											rendered="#{actionDenied.renderedOption('costCenter')}"
+											action="gwt_accountCostCenter"
 											value="#{bundle.accounting_cost_center_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">

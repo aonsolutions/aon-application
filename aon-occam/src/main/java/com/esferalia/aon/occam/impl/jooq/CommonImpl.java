@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -58,6 +57,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CnoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CostCenterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -545,6 +545,25 @@ public class CommonImpl implements ICommon {
 	@Override
 	public List<Cno> getCno(CloseableAONContext ctx) {
 		return ctx.getDslContext().transactionResult(configuration -> CnoDAO.getList(ctx));
+	}
+	
+	// -------------------- Cost Center
+	
+	@Override
+	public List<ApplicationParameter> getCostCenters(CloseableAONContext ctx) {
+		return ctx.getDslContext().transactionResult(configuration -> CostCenterDAO.getList(ctx));
+	}
+	
+	@Override
+	public void saveCostCenter(CloseableAONContext ctx, ApplicationParameter costCenter) {
+		ctx.getDslContext().transaction(configuration -> 
+		CostCenterDAO.save(ctx, costCenter));
+	}
+	
+	@Override
+	public void deleteCostCenter(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> 
+		CostCenterDAO.delete(ctx, id));
 	}
 	
 }

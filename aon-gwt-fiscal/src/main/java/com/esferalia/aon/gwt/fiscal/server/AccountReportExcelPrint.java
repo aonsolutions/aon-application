@@ -3,13 +3,6 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -30,6 +23,12 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "AccountReport Excel Print ", urlPatterns = { "/aon_gwt_fiscal/roms/AccountReportExcelPrint" })
 public class AccountReportExcelPrint extends HttpServlet {

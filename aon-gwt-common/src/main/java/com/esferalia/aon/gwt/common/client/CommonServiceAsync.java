@@ -84,6 +84,12 @@ public interface CommonServiceAsync {
 	void getSupplier(String domainName, int domain, String user, Integer registry, AsyncCallback<SupplierFull> asyncCallback) throws AonCoreException;
 	void getCreditor(String domainName, int domain, String user, Integer registry, AsyncCallback<CreditorFull> asyncCallback) throws AonCoreException;
 	
+	// **************************************************
+	// ************************************ [COST CENTER]
+	// **************************************************
+	
 	void getCostCenters(String domainName, int domain, String user, AsyncCallback<List<ApplicationParameter>> asyncCallback) throws AonCoreException;
+	void saveCostCenter(String domainName, int domain, String user, ApplicationParameter costCenter, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void deleteCostCenter(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 
 }
