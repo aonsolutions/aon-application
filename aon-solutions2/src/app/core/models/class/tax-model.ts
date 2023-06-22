@@ -82,13 +82,13 @@ export class TaxModel implements Deserializable{
     }
     
     deserializeArray(input: any): Array<TaxModel> {
-        let taxModels = []
+        let array = []
         for(let i = 0; i < input.length; i++){
             let aux = new TaxModel()
             aux.deserialize(input[i])
-            taxModels.push(aux)
+            array.push(aux)
         }
-        return taxModels;
+        return array;
     }
 
 }
