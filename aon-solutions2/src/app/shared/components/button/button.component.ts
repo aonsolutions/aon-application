@@ -7,18 +7,19 @@ import { Component, HostBinding, Input, OnInit } from '@angular/core';
 })
 export class ButtonComponent implements OnInit {
 
-  @Input() width : string = 'auto';
-  @Input() height : string = 'auto';
+  @Input() width : string = '11.6rem';
+  @Input() height : string = '2.4rem';
   @Input() color : string = '';
   @Input() backgroundColor : string = '';
   @Input() border : string = '';
   @Input() borderRadius : string = '';
-  @Input() padding : string = '';
+  @Input() padding : string = '0.948rem';
   @Input() hoverBackgroundColor : string = '';
   @Input() hoverBorderColor : string = '';
   @Input() hoverColor : string = '';
-  @Input() fontSize : string = '1rem';
-  @Input() align : string = '';
+  @Input() fontSize : string = '';
+  @Input() align : string = 'center';
+  @Input() class : string = '';
   @HostBinding('style.--widthHost') widthHost = '';
   @HostBinding('style.--heightHost') heightHost = '';
 
