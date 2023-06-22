@@ -1,80 +1,41 @@
 <app-content>
   <mat-grid-list [cols]="24" rowHeight="fit" [style.height]="'100%'">
     <!-- Tratar de omitir primet tiel, a favor de un offset o colspan -->
-    <mat-grid-tile [gridCols]="{xs:0,sm:8,md:8,lg:8,xl:8}"></mat-grid-tile>
-    <mat-grid-tile [gridCols]="{xs:24,sm:8,md:9,lg:9,xl:9}">
+    <mat-grid-tile [gridCols]="{xs:2,sm:2,md:8,lg:8,xl:8}"></mat-grid-tile>
+    <mat-grid-tile [gridCols]="{xs:20,sm:20,md:8,lg:8,xl:8}">
       <div class="contTitleLogin">
-        <div class="titleLogin">
-          <h4 class="">Inicia Sesión</h4>
+        <div class="titleAuth">
+          <div>Inicia Sesión</div>
           <span>Entra en tu cuenta de AON</span>
         </div>
-
         <app-list-element class="inptCont" widthContainer="'100%'">
-        <div class="cardBody">
-          <app-input
-              (inputValue)="username=$event"
-              [appearance]="'outline'"
-              appearanceDetail= "mat-form-field-appearance-bold-outline"
-              [type]="'text'"
-              [label]="'Usuario'"
-              [placeholder]="'usuario'"
-              [width]="'100%'"
-              class="inputLogin"
-              style="margin-bottom: 1.6rem;"
-          ></app-input>
-
-          <app-input
-              (inputValue)="password=$event"
-              [appearance]="'outline'"
-              appearanceDetail= "mat-form-field-appearance-bold-outline"
-              [type]="'password'"
-              [label]="'Contraseña'"
-              [placeholder]="'Contraseña'"
-              [width]="'100%'"
-              class="inputLogin"
-              style="margin-bottom: 0.95rem;"
-          ></app-input>
-
-          <app-button [width]="'100%'"
-            [height]="'2.8rem'"
-            [border]="'.0625rem solid black'"
-            [borderRadius]="'0.4rem'"
-            [backgroundColor]="'white'"
-            [color]="'black'"
-            [hoverBackgroundColor]="'black'"
-            [hoverBorderColor]="'black'"
-            [padding]="'.5rem'"
-            [align]="'center'"
-            [fontSize]="'14px'"
-            [hoverColor]="'white'"
-            (click)="loginUser()"
-          >
-          INICIAR SESIÓN
-          </app-button>
-          <div class="divider">
-            O INICIA SESIÓN
+          <div class="cardBody">
+            <app-input
+                (inputValue)="username=$event"
+                [type]="'text'"
+                [label]="'Usuario'"
+                [placeholder]="'Usuario'"
+                class="inputLogin"
+            ></app-input>
+            <app-input
+                (inputValue)="password=$event"
+                [type]="'password'"
+                [label]="'Contraseña'"
+                [placeholder]="'Contraseña'"
+                class="inputLogin"
+            ></app-input>
+            <app-button [class]="'white'" [width]="'100%'" (click)="loginUser()">
+              INICIAR SESIÓN
+            </app-button>
+            <div class="divider">
+              O INICIA SESIÓN
+            </div>
+            <app-button [class]="'dark'" [width]="'100%'">
+              SIN CONTRASEÑA
+            </app-button>
           </div>
-          <app-button
-            [width]="'100%'"
-            [height]="'2.8rem'"
-            [border]="'.0625rem solid black'"
-            [borderRadius]="'0.4rem'"
-            [backgroundColor]="'black'"
-            [color]="'white'"
-            [hoverBackgroundColor]="'#292a31'"
-            [hoverBorderColor]="'#292a31'"
-            [padding]="'.5rem'"
-            [align]="'center'"
-            [fontSize]="'14px'"
-            [hoverColor]="'white'"
-          >
-          SIN CONTRASEÑA
-        </app-button>
-        </div>
-      </app-list-element>
+        </app-list-element>
       </div>
-
     </mat-grid-tile>
-
   </mat-grid-list>
 </app-content>
