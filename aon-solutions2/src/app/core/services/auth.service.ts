@@ -1,44 +1,49 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { JwtAuthService } from './jwt-auth.service';
 import { Router } from '@angular/router';
-import { ApiService } from './api.service';
+import { AonSDK } from 'libraries/AonSDK/AonSDK';
 
 @Injectable({
-  providedIn: 'root' 
+  providedIn: 'root',
 })
 export class AuthService {
+  aonSDK: AonSDK = new AonSDK();
 
-  constructor(private jwtAuthService: JwtAuthService, private apiService: ApiService, private router: Router) { }
-  
-  login(email: string, password: string): void{
-    let body = {
-      username: email,
-      password: password
-    };
+  constructor(private router: Router) {}
 
-    this.apiService.post('login', body).subscribe(
-      (response) => {
-        // Si ha ido bien la petición de login
-        if (response.session_id) {
-          this.jwtAuthService.setJwt(response.session_id)
-          // sessionStorage.setItem(environment.localStorageJwt.accessToken, response.session_id);
-          this.router.navigate(['/auth/selectEnterprise']);
-        }
-      },
-      (error) => {
-        console.error(`Se ha producido un error al realizar login: ${error}`)
-      }
-    );
-
+  login(email: string, password: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.aonSDK
+        .model('auth')
+        .login(email, password)
+        .then((response: any) => {
+          if (response.result == true) {
+            this.router.navigate(['/auth/selectEnterprise']);
+          }
+          resolve(true);
+        })
+        .catch((error: any) => {
+          reject(error);
+        });
+    });
   }
 
-  logout() {
-    this.jwtAuthService.logout();
+  logout(): void {
+    this.aonSDK
+      .model('auth')
+      .logout()
+      .then((response: any) => {
+        if (response.result == true) this.router.navigate(['/auth']);
+      })
+      .catch((error: any) => {
+        throw new Error(error);
+      });
   }
 
   isLoggedIn(): boolean {
-    return this.jwtAuthService.isLoggedIn();
+    if (this.aonSDK.model('auth').getSession().result.token) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
-

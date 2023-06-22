@@ -6,3 +6,4 @@ aon-suite/.vscode/settings.json
 .idea/
 .metadata
 js-domain-dump/node_modules/
+nb-configuration.xml
