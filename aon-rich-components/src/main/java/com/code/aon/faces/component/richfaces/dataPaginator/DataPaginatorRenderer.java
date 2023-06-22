@@ -100,16 +100,9 @@ public class DataPaginatorRenderer extends DatascrollerTemplate {
 	@Override
 	public void renderPager(FacesContext context, UIComponent component, int pageIndex, int count)
 		throws IOException {
-	    try  {
-		ExternalContext externalContext = context.getExternalContext();
-		ServletRequest request = (( ServletRequest ) externalContext.getRequest());
-		String serverName = request.getServerName();
-		if ( serverName.endsWith("aonsolutions.org") ) {
-		    ellipsisRenderPager(context, component, pageIndex, count);
-		} else {
-		    super.renderPager(context, component, pageIndex, count);
-		}
-	    } catch ( Exception e ) {
+	    try {
+		ellipsisRenderPager(context, component, pageIndex, count);
+	    } catch (Exception e) {
 		super.renderPager(context, component, pageIndex, count);
 	    }
 	}
