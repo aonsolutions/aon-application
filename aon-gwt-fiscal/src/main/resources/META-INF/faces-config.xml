@@ -251,6 +251,10 @@
 			<from-outcome>gwt_amortization_type</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/amortizationType.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_accountCostCenter</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountCostCenter.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 </faces-config>
 		

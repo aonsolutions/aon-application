@@ -108,6 +108,7 @@ public class BookingJSON {
 			json.put(IJsonNames.NAME, d.getName());
 			json.put(IJsonNames.DESCRIPTION, d.getDescription());
 			json.put(IJsonNames.APPS, apps);
+			json.put(IJsonNames.MAX_DEFINED_USERS, d.getMaxDefinedUsers());
 			array.put(json);
 		});
 		return array;
