@@ -20,7 +20,7 @@ export class SelectEnterpriseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.enterpriseService.getEnterprises().then((enterprises) => {
+    this.enterpriseService.getEnterpriseList().then((enterprises) => {
       this.enterprises = enterprises;
     });
   }

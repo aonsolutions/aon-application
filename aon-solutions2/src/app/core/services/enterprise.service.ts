@@ -3,29 +3,25 @@ import { Enterprise } from '../models/class/enterprise';
 import { AonSDK } from 'libraries/AonSDK/AonSDK';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EnterpriseService {
-
   aonSDK: AonSDK = new AonSDK();
 
-  constructor() { }
+  constructor() {}
 
-  getEnterprises(): Promise<Enterprise[]> {
-    return new Promise(
-      (resolve, reject) => {
-        this.aonSDK.model('enterprise').getElementList('enterprise')
-        .then(
-          (response: any) => {
-            resolve(new Enterprise().deserializeArray(response.result));
-          }
-        )
-        .catch(
-          (error:any) => {
-            throw new Error(error.description + ' - ' + error.result)
-          }
-        )
-    })
+  getEnterpriseList(): Promise<Enterprise[]> {
+    return new Promise((resolve, reject) => {
+      this.aonSDK
+        .model('enterprise')
+        .getElementList('enterprise')
+        .then((response: any) => {
+          resolve(new Enterprise().deserializeArray(response.result));
+        })
+        .catch((error: any) => {
+          reject(error);
+        });
+    });
 
     // return this.apiService.get('company').pipe(
     //   map((res) => {
@@ -44,29 +40,29 @@ export class EnterpriseService {
     // );
   }
 
-  setEnterprise(cif: string): Promise<boolean>{    
-    return new Promise(
-      (resolve, reject) => {
-        this.aonSDK.model('enterprise').setEnterprise('enteprise', cif)
-        .then(
-          (response: any) => {
-            resolve(response.result);
-          }
-        )
-        .catch(
-          (error:any) => {
-            throw new Error(error.description + ' - ' + error.result)
-          }
-        )
-    })
+  setEnterprise(cif: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.aonSDK
+        .model('enterprise')
+        .setEnterprise('enteprise', cif)
+        .then((response: any) => {
+          resolve(response.result);
+        })
+        .catch((error: any) => {
+          reject(error);
+        });
+    });
   }
 
   isEnterpriseSelected(): boolean {
-    if(this.aonSDK.model('auth').getSession().result.enterprise){
+    if (this.aonSDK.model('auth').getSession().result.enterprise) {
       return true;
-    }else {
+    } else {
       return false;
     }
   }
 
+  getEnterpriseSelected(): string {
+    return this.aonSDK.model('auth').getSession().result.enterprise;
+  }
 }
