@@ -66,6 +66,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
@@ -484,6 +485,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		private static Collection<IrpfContractSalaryCalculatorContext> getContexts(
 				ISQLContractSalaryCalculatorContext ctx) {
 			List<Period> periods = getPeriods(ctx);
+			Collections.sort(periods, (p1,p2) -> p2.compareTo(p1));
 			List<IrpfContractSalaryCalculatorContext> ctxs = new ArrayList<IrpfContractSalaryCalculatorContext>(
 					periods.size());
 			for (Period period : periods)
@@ -662,6 +664,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			public double getIrpf() {
 				return 0.00;
 			}
+			
+		    @Override
+		    protected void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
+		    }
 		});
 	}
 
@@ -681,6 +687,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		salaryStmt.setDate(2, new java.sql.Date(start.getTimeInMillis()));
 		Calendar end = Calendar.getInstance();
 		end.setTime(startDate);
+		end.add(Calendar.YEAR, 1);
+		end.set(Calendar.DAY_OF_YEAR, 1);
 		end.add(Calendar.DAY_OF_YEAR, -1);
 		salaryStmt.setDate(3, new java.sql.Date(end.getTimeInMillis()));
 

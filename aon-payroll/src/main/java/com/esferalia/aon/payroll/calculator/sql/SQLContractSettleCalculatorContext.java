@@ -145,6 +145,11 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 				public double getIrpf() {
 					return 0.00;
 				}
+				
+			    @Override
+			    protected void loadContractLeave(ExpressionContext ctx)
+				    throws SQLException, ExpressionException {
+			    }
 			};
 			// TODO: ctx.leaveLoader = leaveLoader;????
 			return new SQLIrpfCalculatorContext(connection, startDate, endDate, ctx) {
