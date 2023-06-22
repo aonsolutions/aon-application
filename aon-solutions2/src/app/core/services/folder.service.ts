@@ -11,7 +11,7 @@ export class FolderService {
 
   constructor(){}
 
-  getFolders(optional?: Optional): Promise<Folder[]> {
+  getFolderList(optional?: Optional): Promise<Folder[]> {
     return new Promise((resolve, reject) => {
       this.aonSDK.model('folder').getElementList('folder', optional)
       .then(
