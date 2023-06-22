@@ -1,0 +1,104 @@
+<app-content>
+  <mat-grid-list class="upload" [cols]="24" [rowHeight]="'2.8rem'">
+    <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+    <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
+      <app-file-upload-button [width]="'100%'" [height]="'100%'">
+        Subir documentación
+        <set-icon shape="cloud_upload" style="margin-left: 15px;" set-color color="black" size="24"></set-icon>
+      </app-file-upload-button>
+    </mat-grid-tile>
+    <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+  </mat-grid-list>
+
+
+  <mat-grid-list class="buttonsShortCut" [cols]="24" [rowHeight]="'3.05rem'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
+        <div class="button-style" *ngFor="let shortcut of shortcuts">
+          <app-shortcut-dashboard  [shape]="shortcut.shape" [name]="shortcut.name"></app-shortcut-dashboard>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+  </mat-grid-list>
+
+
+  <mat-grid-list class="summary1"[cols]="24" [rowHeight]="'16.6rem'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:12,sm:12,md:12,lg:12,xl:12}">
+        <div class="summary-view-chart"*ngFor="let chartItem of chartItems">
+          <app-chart-dashboard [name]="chartItem.name" [chart]="chartItem.chart" [shape]="chartItem.shape"></app-chart-dashboard>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:10,sm:10,md:10,lg:10,xl:10}">
+        <app-models-dashboard class="summary-view"></app-models-dashboard>
+        <app-banks-dashboard class="summary-view"></app-banks-dashboard>
+      </mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+  </mat-grid-list>
+
+
+  <mat-grid-list [cols]="24" [rowHeight]="'1px'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile class="line" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
+        <hr>
+      </mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+  </mat-grid-list>
+
+
+  <mat-grid-list class="email1"[cols]="24" [rowHeight]="'23.15rem'" >
+    <mat-grid-list class="email3" [cols]="24" [rowHeight]="'3rem'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+  <!-- <app-inbox></app-inbox> -->
+
+
+
+<!--
+
+         <mat-grid-tile class="email3" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid blue" >
+          <span>Bandeja</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid blue" >
+          <span>Nombre1</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid green">
+          <span>Nombre2</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid green">
+          <span>Nombre3</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid green">
+          <span>Nombre4</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile>
+
+        <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" style="border: 1px solid green">
+          <span>Todos los Mensajes</span>
+          <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+        </mat-grid-tile> -->
+    </mat-grid-list>
+
+        <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+  </mat-grid-list>
+
+
+  <mat-grid-list class="gestion1"[cols]="24" [rowHeight]="'7.45rem'">
+     <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+     <mat-grid-tile class="gestion2" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
+       <div class="gestion-style" *ngFor="let menuItem of menuItems">
+           <app-menu-button-dashboard [shape]="menuItem.shape" [name]="menuItem.name" [color]="menuItem.color"></app-menu-button-dashboard>
+       </div>
+    </mat-grid-tile>
+
+     <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+  </mat-grid-list>
+ </app-content>

@@ -3,12 +3,12 @@ input[type="file"] {
 }
 
 .custom-file-upload {
-    border: .1rem solid lightgrey;
-    border-radius: .4rem;
+    border: .1rem dashed lightgrey;
+    border-radius: .2rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-style: dashed;
+    box-sizing: border-box;
 }
 
 :host {

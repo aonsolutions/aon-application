@@ -1,0 +1,50 @@
+<div class="chartDashboard">
+    <div class="chartHeader">
+        <div class="chartHeaderName">
+            <div class="chartHeaderLine"></div>
+            <div class="chartHeaderText">
+                {{name}}
+            </div>
+        </div>
+        <div class="chartHeaderFilters">
+            <div class="chartHeaderFilterText">
+                {{selected}}
+            </div>
+            <div class="chartHeaderFilterIcon" [matMenuTriggerFor]="menu">
+                <set-icon shape="more_vert" set-color [ngStyle]="{'color': 'black'}" size="21"></set-icon>
+            </div>
+            <mat-menu #menu="matMenu" xPosition="before">
+                <button *ngFor="let item of items" mat-menu-item (click)="selected=item" class="menuText">{{item}}</button>
+            </mat-menu>
+        </div>
+    </div>
+    <div class="chartContent">
+        chartComponent
+    </div>
+    <div class="chartFooter">
+        <div class="chartFooterButton">
+            <set-icon [attr.shape]="shape" set-color [ngStyle]="{'color': 'black'}" size="21"></set-icon>
+        </div>
+    </div>
+</div>
+<!-- 
+<div class="chartDashboard">
+<app-card
+    [headerHeight]="''"
+    [footerHeight]="''"
+    [padding]="''"
+    [width]="''"
+    [height]="''"
+    [border]="''"
+    >
+        <div header class="" >
+
+        </div>
+        <div body class="" >
+
+        </div>
+        <div footer class="" >
+
+        </div>
+    </app-card>
+  </div> -->
