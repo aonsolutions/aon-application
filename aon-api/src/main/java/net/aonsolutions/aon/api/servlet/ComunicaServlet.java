@@ -586,7 +586,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			
 			try {
 				if(employee.getName().isPresent()) {			
-					sendMovEmailNotification(api, employee, fra, SituationType.ALTA, certificate);
+					sendMovEmailNotification2(api, employee, fra, SituationType.ALTA, certificate, pdf);
 				}
 			} catch (Exception e) {
 				System.out.println("FALLO MANDANDO EMAIL");
@@ -871,6 +871,61 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				}catch (Exception e) {
 					e.printStackTrace();
 				}
+				
+				sendEmail(api, subject, body, files);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		newThread.start();
+	}
+	
+	private void sendMovEmailNotification2(AonApiData api, Employee employee, Date date, SituationType situation, Certificate certificate, byte[] ta){
+		Thread newThread = new Thread(() -> {
+			try {
+				User user = api.getUser();
+				String pre =  situation.equals(SituationType.ALTA) ? "el" : "la";
+				Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), user.getLogin());
+				String subject = "TGSS | "+situation.getName()+" de "+employee.getName().get();
+				String body = "La Tesorer\u00eda General de la Seguridad Social ha procedido a reconocer "+pre+" <b>"+situation.getName()+"</b> "
+						+ "en el R\u00e9gimen General de D./D\u00f1a. <b>"+employee.getName().get()+"</b>, "
+						+ "con n\u00famero de afiliaci\u00f3n <b>"+employee.getNss()+"</b> y DNI/NIE <b>"+employee.getIpf()+"</b>, con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>, "
+						+ "como trabajador de <b>"+company.getName()+"</b> "
+						+ "con c\u00f3digo de cuenta de cotizaci\u00f3n <b>"+employee.getRegime()+" "+ employee.getCtaCti().get()+"</b>.";
+			
+				//---------------------------SEND NOTIFICATION
+				sendNotification(api, body); 
+
+				//--------------------SEND EMAIL
+				String regime = employee.getRegime();
+				String ccc = employee.getCtaCti().get();
+				String nss = employee.getNss();
+
+				LinkedList<File> files = new LinkedList<>();
+				
+				try {
+					File file = File.createTempFile("duplicateTA", ".pdf");
+					FileOutputStream os = new FileOutputStream(file);
+		            os.write(ta);
+		            os.close();
+					files.add(file);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				try {
+					Date now = new Date();
+					Date newDate = date.compareTo(now) > 0 ? now : date;
+					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, newDate);
+					File file = File.createTempFile("duplicadoIDC", ".pdf");
+					FileOutputStream os = new FileOutputStream(file);
+		            os.write(fileByte);
+		            os.close();
+					files.add(file);
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+				
 				sendEmail(api, subject, body, files);
 			} catch (Exception e) {
 				e.printStackTrace();
