@@ -50,5 +50,12 @@ public class OCRResponse {
 		return this;
 	}
 
-	
+	public <T extends OCRResponse> T copy(T t) {
+		t.setHttpCode( this.httpCode );
+		t.setError( this.error );
+		t.setSkip( this.skip );
+		t.setLimit( this.limit );
+		t.setCount( this.count );
+		return t;
+	}
 }

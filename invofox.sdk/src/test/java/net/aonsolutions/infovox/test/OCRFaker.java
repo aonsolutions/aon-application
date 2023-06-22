@@ -7,7 +7,7 @@ import com.github.javafaker.Faker;
 import net.aonsolutions.infovox.model.OCRCompany;
 
 public class OCRFaker {
-	private static Faker faker = new Faker(new Locale("es"));
+	private static Faker faker = new Faker(Locale.of("es"));
 	private static String documentRegexp = "(\\d|[XYZ])\\d{7}[A-Z]";
 	
 	public static OCRCompany getCompany() {

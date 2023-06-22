@@ -90,4 +90,16 @@ class InfovoxRESTTestCase {
 		assertTrue(response.getCompanies().isPresent());
 		assertNotEquals(0 , response.getCompanies().get().size());
 	}
+	
+	@Test
+	void getCompanyInvoices() {
+		OCRDocumentsResponse response = OCRInvofox.getCompanyInvoices( "B01487271" );
+		
+		assertNotNull(response);
+		assertTrue(response.getHttpCode().isPresent());
+		assertEquals( 200, response.getHttpCode().get());
+		assertTrue(response.getDocuments().isPresent());
+		assertNotEquals(0 , response.getDocuments().get().size());
+	}
+		
 }
