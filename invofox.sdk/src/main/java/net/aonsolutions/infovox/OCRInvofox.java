@@ -7,6 +7,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.text.MessageFormat;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -115,8 +117,8 @@ public class OCRInvofox {
 		T resp = supplier.get(); 
 		resp.setHttpCode(500);
 		resp.setError(new OCRError()
-				.setCode("INTERNAL")
-				.setInfo(e.getMessage()));
+			.setCode("INTERNAL")
+			.setInfo(e.getMessage()));
 		return resp; 
 	}
 
@@ -139,6 +141,17 @@ public class OCRInvofox {
 	}
 	public static OCRDocumentsResponse getDocuments(OCRDocumentsParams params) {
 		return get(DOCUMENTS + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
+	}
+	public static OCRDocumentsResponse getCompanyInvoices(String taxId) {
+		OCRCompaniesResponse resp = getCompanies(OCRCompanyParams.get().withTaxId(taxId));
+		Optional<List<OCRCompany>> companiesOpt = resp.getCompanies(); 
+		if (resp.getError().isPresent() || !companiesOpt.isPresent()) {
+			return resp.copy(new OCRDocumentsResponse());
+		}
+		return companiesOpt.get().stream()
+			.findFirst()
+			.map( company -> get(DOCUMENTS + OCRDocumentsParams.get().withCompany(company.getId()).build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from))
+			.orElse( resp.copy(new OCRDocumentsResponse()) );
 	}
 
 	// ---------------------------------------------------------------------- [COMPANIES]
