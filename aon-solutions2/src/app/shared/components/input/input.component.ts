@@ -9,8 +9,8 @@ import { MatFormFieldAppearance } from '@angular/material/form-field';
 export class InputComponent implements OnInit {
 
   @Input() type : string = '';
-  @Input() appearance : MatFormFieldAppearance = 'legacy';
-  @Input() width : string = '';
+  @Input() appearance : MatFormFieldAppearance = 'outline';
+  @Input() width : string = '100%'; 
   @Input() label : string = '';
   @Input() hint : string = '';
   @Input() placeholder : string = '';
@@ -22,9 +22,9 @@ export class InputComponent implements OnInit {
   @Input() classes : string = '';
   @Input() maxRow : string = '3';
   @Input() minRow : string = '10';
-  @Input() appearanceDetail: string = '';
+  @Input() appearanceDetail: string = 'mat-form-field-appearance-bold-outline';
   classSuffix :string = '';
-
+  
   constructor() { }
 
   ngOnInit(): void {

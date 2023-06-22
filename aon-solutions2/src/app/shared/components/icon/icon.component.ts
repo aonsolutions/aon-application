@@ -8,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class IconComponent implements OnInit {
 
   @Input() shape : string = '';
-  @Input() size : string = '1.5rem';
+  @Input() size : string = '1.2rem';
   @Input() color : string = 'black';
   @Input() backgroundColor : string = '';
   @Input() border : string = '';
