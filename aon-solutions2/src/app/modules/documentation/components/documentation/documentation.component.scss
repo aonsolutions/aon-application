@@ -1,3 +1,17 @@
+.upDoc, .inSearch {
+  border: 1px solid green;
+  margin-top: 1.5rem;
+}
+
+.inSearch {
+  margin-bottom: 1.85rem;
+}
+
+.listFolders {
+  margin-top: 1.85rem;
+  // border: 1px solid green;
+}
+
 .dashed {
   height: 100%;
   border-radius: 4px;
@@ -8,5 +22,33 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 32px;
+}
+
+
+.inptSearch {
+  border: 1px solid red;
+}
+
+.gestion2{
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  grid-column: 1 / span 22;
+}
+
+.container-folder {
+  display: flex;
+}
+
+.folder-item {
+  flex: 1;
+  // border: 1px solid #d2d2d6;
+  display: flex;
+  margin-right: 2.9rem;
+  height: 100%;
+}
+
+.folder-item:last-child {
+  margin-right: 0rem;
 }
