@@ -48,6 +48,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SystemPayment;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.QuoteCalculator;
@@ -230,7 +231,13 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 					
 					// TODO: Extract to method ?
 					SQLExtraSalaryCalculatorContext extraCtx = 
-							new SQLExtraSalaryCalculatorContext(getConnection(), extra.getId(), year, settleEndDate, getChargeDate(), criteria) ;
+							new SQLExtraSalaryCalculatorContext(getConnection(), extra.getId(), year, settleEndDate, getChargeDate(), criteria) {
+					    @Override
+					    public Collection<IContractDeduction> getContractDeductions()
+					            throws AonException {
+					        return Collections.emptyList();
+					    }
+					};
 					if ( !extraCtx.next() )
 						break;
 					

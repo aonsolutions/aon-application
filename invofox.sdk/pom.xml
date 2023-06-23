@@ -7,7 +7,7 @@
 	</parent>
 	<groupId>net.aonsolutions</groupId>
 	<artifactId>invofox.sdk</artifactId>
-	<name>NET AONSOLUTIONS INFOVOX SDK</name>
+	<name>NET AONSOLUTIONS INVOFOX SDK</name>
 <!--
 	<properties>
 		<compileSource>19</compileSource>
@@ -32,7 +32,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
  					<includes>
- 						<include>**/InfovoxTestSuite.class</include>
+ 						<include>**/InvofoxTestSuite.class</include>
  					</includes>
 				</configuration>
 			</plugin>
@@ -92,6 +92,18 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.occam</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.tedi</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 		    <version>20230227</version>
@@ -102,6 +114,26 @@
 			TEST DEPENDENCIES  
 			*****************
 		 -->
+		<dependency>
+			<groupId>net.aonsolutions.core</groupId>
+			<artifactId>pool</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<version>2.4.2</version>
+			<scope>test</scope>
+		</dependency>
+		<!--
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.13</version>
+			<scope>test</scope>
+		</dependency>
+		-->
 		<dependency>
 		    <groupId>org.junit.jupiter</groupId>
 		    <artifactId>junit-jupiter-engine</artifactId>

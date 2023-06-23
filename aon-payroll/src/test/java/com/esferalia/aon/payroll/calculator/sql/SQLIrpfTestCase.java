@@ -2087,9 +2087,9 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			@Override
 			public void onIrpf(IrpfOutcome irpfOutcome) {
 				assertAnnualRemuneration(3300.00 * 14, irpfOutcome.getIrpfResult().getAnnualRemuneration());
-				org.junit.Assert.assertEquals( 3300.00  * irpf[0] * 6 / 100.00, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
 				org.junit.Assert.assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
 				org.junit.Assert.assertEquals(irpf[0], irpfOutcome.getIrpfResult().getIrpf(), 0.0);
+				org.junit.Assert.assertEquals( 3300.00  * irpf[0] * 6 / 100.00 + 3300.00 / 2  * irpf[0] / 100.00 , irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.0);
 			}
 		});
 		ctx.getIrpf();

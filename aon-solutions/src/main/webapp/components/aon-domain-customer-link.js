@@ -1229,7 +1229,7 @@ export class AonDomainCustomer extends AonElement {
       let bookingTitleContainer = document.createElement("div");
       bookingTitleContainer.style.display = "block";
       bookingTitleContainer.style.width = "100%";
-      bookingTitleContainer.style.textAlign = "center";
+      bookingTitleContainer.style.textAlign = "left";
       bookingTitleContainer.style.fontWeight = "bold";
       bookingTitleContainer.style.textTransform = "uppercase";
       bookingTitleContainer.innerText = "Datos de contratación";
@@ -1252,14 +1252,17 @@ export class AonDomainCustomer extends AonElement {
       childAppsTitleContainer.style.width = "100%";
       childAppsTitleContainer.style.textAlign = "left";
       childAppsTitleContainer.style.fontWeight = "bold";
-      childAppsTitleContainer.innerText = MSG.APPLICATIONS;
+      let selectedDomainType = this.selectedDomain && this.selectedDomain.domain ? this.selectedDomain.domain.domainType : "";
+      let selectedDomainTypeDesc = this.getDomainTypeDescription(selectedDomainType);
+      childAppsTitleContainer.innerText = `${MSG.APPLICATIONS} ${selectedDomainTypeDesc ? `: ${selectedDomainTypeDesc}` : ""}`;
 
       childAppsContainer.appendChild(childAppsTitleContainer);
       let childApps = booking.apps;
       if (childApps) {
-        childApps.forEach(app => {
+        childApps.sort(this.appsComparator).forEach(app => {
           let childApp = document.createElement("div");
           childApp.style.display = "block";
+          childApp.style.marginLeft = "5px";
           childApp.style.width = "100%";
           let application = getApp(app);
           childApp.innerText = application ? application.title : app;
@@ -1311,7 +1314,7 @@ export class AonDomainCustomer extends AonElement {
         summaryTitleContainer.style.width = "100%";
         summaryTitleContainer.style.textAlign = "left";
         summaryTitleContainer.style.fontWeight = "bold";
-        summaryTitleContainer.innerText = "Resumen de contratación";
+        summaryTitleContainer.innerText = "Contratación adicional";
 
         summaryContainer.appendChild(summaryTitleContainer);
 
@@ -1327,7 +1330,7 @@ export class AonDomainCustomer extends AonElement {
         for (let dt in summaryDomains) {
           let domainType = this.getDomainTypeDescription(dt);
           let application = summaryDomains[dt];
-          
+
           this.createSummaryItem(summaryContainer, `${domainType}: ${application.number}`, application.apps, application.childs, "domain");
         }
         
@@ -1357,6 +1360,35 @@ export class AonDomainCustomer extends AonElement {
     }
   }
 
+  appsComparator(a, b) {
+    let elementA = a ? a.toLowerCase().trim() : "";
+    let elementB = b ? b.toLowerCase().trim() : "";
+
+    if (elementA.includes("suite") && !elementB.includes("suite")) {
+      return -1;
+    } else if (!elementA.includes("suite") && elementB.includes("suite")) {
+      return 1;
+    }
+
+    if (elementA.includes("pack") && !elementB.includes("pack")) {
+      return -1;
+    } else if (!elementA.includes("pack") && elementB.includes("pack")) {
+      return 1;
+    }
+
+    if (elementA.includes("management") && !elementB.includes("management")) {
+      return -1;
+    } else if (!elementA.includes("management") && elementB.includes("management")) {
+      return 1;
+    }
+    let appA = getApp(elementA);
+    let appB = getApp(elementB);
+    let appAName = appA ? appA.title : elementA;
+    let appBName = appB ? appB.title : elementB;
+    return appAName.localeCompare(appBName);
+
+  }
+
   createSummaryItem(summaryContainer, title, summaryElements, childs, type) {
     if (summaryElements) {
       let summaryElementsContainer = document.createElement("div");
@@ -1377,8 +1409,10 @@ export class AonDomainCustomer extends AonElement {
           this.createUsersList(childs, title ? title.split(":")[0] : "");
         });
       }
+      let sumElements = Object.keys(summaryElements);
+      sumElements.sort(this.appsComparator);
 
-      for (const summaryElement in summaryElements) {
+      for (const summaryElement of sumElements) {
         let summaryElementsItem = document.createElement("div");
         summaryElementsItem.style.display = "block";
         summaryElementsItem.style.width = "100%";
@@ -1406,13 +1440,13 @@ export class AonDomainCustomer extends AonElement {
           itemTitle = application ? application.title : summaryElement;
         }
 
-
-        summaryElementsItem.innerText = `${itemTitle}: ${summaryElements[summaryElement]}`;
+        let users = childs.filter(c => c.apps && c.apps.includes(summaryElement));
+        let totalUsers = users.map(c => c.maxDefinedUsers).reduce((a, b) => a + b, 0);
+        summaryElementsItem.innerText = `${itemTitle}: ${summaryElements[summaryElement]}/${totalUsers} usr.`;
         summaryElementsContainer.appendChild(summaryElementsItem);
         if (type === "domain" && childs && childs.length > 0)  {
           summaryElementsItem.style.cursor = "pointer";
           summaryElementsItem.addEventListener("click", event => {
-            let users = childs.filter(c => c.apps && c.apps.includes(summaryElement))
             this.createUsersList(users, itemTitle);
           });
         }
@@ -1424,7 +1458,8 @@ export class AonDomainCustomer extends AonElement {
 
     let dialog = this.getApplication().getDialog();
     dialog.clear();
-    dialog.setTitle(`Usuarios de "${applicationName}"`);
+    let title = `Empresas con "${applicationName}"`;
+    dialog.setTitle(title);
 
     let usersContainer = document.createElement("div");
     usersContainer.style.display = "flex";
@@ -1441,7 +1476,7 @@ export class AonDomainCustomer extends AonElement {
     infoContainer.style.flexDirection = "column";
 
     usersContainer.appendChild(infoContainer);
-    let textToCopy = "";
+    let textToCopy = `${title}\n`;
 
     users
     .sort((a, b) => {
