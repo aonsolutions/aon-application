@@ -2,14 +2,14 @@ input[type="file"] {
     display: none;
 }
 
-.custom-file-upload {
-    border: .1rem solid lightgrey;
-    border-radius: .4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-style: dashed;
-}
+// .custom-file-upload {
+//     border: .1rem dashed lightgrey;
+//     border-radius: .2rem;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     box-sizing: border-box;
+// }
 
 :host {
     display: flex;
