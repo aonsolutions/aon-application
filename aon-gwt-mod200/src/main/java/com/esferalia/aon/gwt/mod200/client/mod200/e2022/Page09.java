@@ -178,8 +178,8 @@ public class Page09 extends PageAbs {
 				}
     			if (key == Mod2002022Key.LQ547 && !callback.getMod200Object().getMod200().isCooperativa()) {
 					row = paintKeyBreakdownLink(table, row, Mod2002022Key.LQ547, Mod2002022LQ547Key.values(), HEADERS_4, FOOTER_547);    				
-				}    			
-    			if (key == Mod2002022Key.LQ1034) {
+				} 
+    			if (key == Mod2002022Key.LQ1034 && callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0006)) {
 					row = paintKeyBreakdownLinkLQ1033(table, row);
 				}
 			}

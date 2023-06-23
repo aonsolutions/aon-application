@@ -225,5 +225,16 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.deleteCostCenter(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	// **************************************************
+	// ********************************* [LOAD PDF MODEL]
+	// **************************************************
+
+	@Override
+	public void savePDFModel(Occam occam, IFiscalModel model, String data, AsyncCallback<Void> callback) {		
+		AON.start();		
+		serviceAsync.savePDFModel(occam, model, data, new AsyncCallbackWrapper<Void>(callback));		
+	}
+	
 
 }

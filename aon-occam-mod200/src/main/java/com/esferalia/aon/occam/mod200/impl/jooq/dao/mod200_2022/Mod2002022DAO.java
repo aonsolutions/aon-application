@@ -1007,26 +1007,24 @@ public class Mod2002022DAO  {
 	}
 	
 	private static void fillMod202(AONContext ctx,Mod2002022 mod200) {
-		// FALTA - REVISAR LECTURA DEL MODELO 202, AHORA SOLO SE LEEN LOS QUE ESTAN FINALIZADOS Y SI ESTAN ENVIADOS ??
 		Mod202DAO.getMod202s(ctx, mod200.getDomain())
-			.filter(mod -> mod.getYear() == mod200.getYear() && (mod.getStatus() == FiscalStatus.FINISHED || mod.getStatus() == FiscalStatus.SENT))
-			
-			.forEach( mod -> {
-				Mod202 mod202 = Mod202DAO.getMod202(ctx, mod.getId());		
-				Mod2002022Key key = null;
-				if (mod202.getPeriod() == Period.T1) {
-					key = Mod2002022Key.BN601;
-				} else if (mod202.getPeriod() == Period.T2) {
-					key = Mod2002022Key.BN603;
-				} else if (mod202.getPeriod() == Period.T3) {
-					key = Mod2002022Key.BN605;
-				}
-				if (key != null) {
-					DoubleVariableEx dv = new DoubleVariableEx( key );
-					dv.setValue( mod202.getResult() );
-					mod200.addVariable( dv );
-				}
-			});
+				.filter(mod -> mod.getYear() == mod200.getYear() && (mod.isFinished() || mod.isSent()))
+				.forEach(mod -> {
+					Mod202 mod202 = Mod202DAO.getMod202(ctx, mod.getId());
+					Mod2002022Key key = null;
+					if (mod202.getPeriod() == Period.T1) {
+						key = Mod2002022Key.BN601;
+					} else if (mod202.getPeriod() == Period.T2) {
+						key = Mod2002022Key.BN603;
+					} else if (mod202.getPeriod() == Period.T3) {
+						key = Mod2002022Key.BN605;
+					}
+					if (key != null) {
+						DoubleVariableEx dv = new DoubleVariableEx(key);
+						dv.setValue(mod202.getResult());
+						mod200.addVariable(dv);
+					}
+				});
 	}
 
 	public static Mod2002022 calculate(Mod2002022 mod200) {
@@ -1174,10 +1172,14 @@ public class Mod2002022DAO  {
 		return Mod2002022Import2021.import2021(old);
 	}
 	
-	// FALTA - REVISARLO CUANDO ESTE ACTIVO EL ENTORNO DE PRUEBAS PARA EL 2022
 	// Presentación Directa del Modelo: Grabar Respuesta AEAT (PDF) y marcar el modelo como enviado
 	public static Mod2002022 aeatPresentation(AONContext ctx, Mod2002022 mod, String aeatResponse) {
 		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			
+			// Primero borramos el que ya exista previamente, para que se quede solo el último PDF presentado (bien cargado manualmente o grabado por la AEAT)
+			DataResponseDAO.deleteAEATResponse(ctx, mod);
+			
+			// Ahora grabamos el PDF que nos haya devuelto la AEAT
 			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
 			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
 			if (mod != null && mod.getId() != null) {
@@ -1190,8 +1192,7 @@ public class Mod2002022DAO  {
 			}
 		}
 		return mod;
-	}
-	
+	}	
 	
 }
 

@@ -307,7 +307,8 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 					.setName(getCallback().getOptions().getConfiguration().fiscal().getCertificateName())
 					.setTestEnvironment(getCallback().getOptions().getConfiguration().fiscal().isTestEnvironment())
 					.setShowNRC(getCallback().getModel().isStrictToDeposit())
-					.setInfoMessage("Va a proceder a la presentaci\u00F3n del Modelo.");
+					//.setInfoMessage("Va a proceder a la presentaci\u00F3n del Modelo.");
+					.setInfoMessage("Presentaci\u00F3n del Modelo 200");
 				AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
 					
 					@Override
@@ -386,7 +387,8 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 						.setDocument(doc)
 						.setName(name)
 						.setShowNRC(false)
-						.setTestEnvironment(getCallback().getOptions().getConfiguration().fiscal().isTestEnvironment());
+						.setTestEnvironment(getCallback().getOptions().getConfiguration().fiscal().isTestEnvironment())
+				        .setInfoMessage("Consulta del Modelo 200");
 				AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
 					
 					@Override
@@ -506,27 +508,26 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 					protected void onUpload(String data) {
 						uploadingPDFData = true;
 						
-						// FALTA - PONERLO EN COMMONSERVICE 
 						// Grabar el fichero en data_response - data_attach
-//						CommonServiceAsync serviceRaw = GWT.create(CommonService.class);
-//						CommonServiceAsync service = new CommonServiceAsyncDecorator(serviceRaw);
-//						
-//						service.savePDFModel(getCallback().getOptions().getOccam(), getCallback().getModel(),  data,
-//								new AsyncCallback<Void>() {
-//									
-//									@Override
-//									public void onSuccess(Void result) {										
-//										uploadingPDFData = false;
-//										// Si se ha cargado de forma correcta, se muestra en pantalla
-//										checkDataResponseData();
-//									}
-//									
-//									@Override
-//									public void onFailure(Throwable caught) {										
-//										uploadingPDFData = false;
-//										getCallback().showError("Error al cargar el archivo.");
-//									}
-//								});
+						CommonServiceAsync serviceRaw = GWT.create(CommonService.class);
+						CommonServiceAsync service = new CommonServiceAsyncDecorator(serviceRaw);
+						
+						service.savePDFModel(getCallback().getOptions().getOccam(), getCallback().getModel(),  data,
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {										
+										uploadingPDFData = false;
+										// Si se ha cargado de forma correcta, se muestra en pantalla
+										checkDataResponseData();
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {										
+										uploadingPDFData = false;
+										getCallback().showError("Error al cargar el archivo.");
+									}
+								});
 					}							
 				};
 				upload.upload();				

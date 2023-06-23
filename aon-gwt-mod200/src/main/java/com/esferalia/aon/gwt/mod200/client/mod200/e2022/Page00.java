@@ -153,6 +153,8 @@ public class Page00 extends PageAbs {
 	private AonDoubleBox c042;	
 	private ListBox opeVol;
 	private CheckBox agriculturalActivities;
+	private InlineLabel receiptNumberLabel;
+	private AonTextBox receiptNumber;
 	
 	public Page00( Model2002022PageCallback callback ) {
 		super(callback);		
@@ -167,8 +169,8 @@ public class Page00 extends PageAbs {
 		phone2.setValue(callback.getMod200Object().getMod200().getEnterprisePhone2());
 		complementary.setValue(callback.getMod200Object().getMod200().isComplementary());
 		complementaryReceipt.setValue(callback.getMod200Object().getMod200().getReplacedNumber());
-		
 		agriculturalActivities.setValue(callback.getMod200Object().getMod200().getBooleanValue(Mod2002022Key.X0001));
+		receiptNumber.setValue(callback.getMod200Object().getMod200().getNumber());
 		
 		periodType.setSelectedIndex(callback.getMod200Object().getMod200().getPeriodType() - 1 );
 		periodPanel.setVisible((periodType.getSelectedIndex() != 0));
@@ -226,7 +228,13 @@ public class Page00 extends PageAbs {
     	
     	super.setEnabled();
     	
-    	complementaryReceipt.setEnabled(isEditable() && complementary.getValue());
+    	// El número de justificante no se deja modificar y solo se muestra cuando esta presentado y contiene algun valor, es decir se ha presentado de forma directa
+        receiptNumberLabel.setVisible((callback.getMod200Object().getMod200().isSent() && AonStringUtils.isNotEmpty(callback.getMod200Object().getMod200().getNumber())));
+		receiptNumber.setVisible(receiptNumberLabel.isVisible());
+        receiptNumber.setEnabled(false);
+    	
+    	// Número de justificante declaración anterior
+        complementaryReceipt.setEnabled(isEditable() && complementary.getValue());
 		
 		// Determinados campos y los caracteres, se desabilitan si ya está inicializado el modelo
 		boolean enabled = !callback.getMod200Object().isInitialized();
@@ -415,6 +423,12 @@ public class Page00 extends PageAbs {
 		});
 		otherInputs.add(agriculturalActivities);
 		
+		receiptNumberLabel = new InlineLabel("N\u00FAmero de justificante");
+		receiptNumber = new AonTextBox();		
+		receiptNumber.setVisibleLength(13);
+		receiptNumber.setMaxLength(13);
+		receiptNumber.setEnabled(false);
+		
 		tab.addLabelWidgetRow(AON.MSG.document(), nif)
 		   .addLabelWidgetRow("Apellidos y nombre o raz\u00F3n social", companyName)
 		   .addLabelWidgetRow(AON.MSG.phone(), phones)
@@ -422,7 +436,8 @@ public class Page00 extends PageAbs {
 		   .addLabelWidgetRow(AON.MSG.periodType(), periodType)
 		   .addLabelWidgetRow("", periodPanel)
 		   .addLabelWidgetRow(AON.MSG.complementary(), complementaryPanel)
-		   .addLabelWidgetRow(Mod2002022Key.X0001.getDescription(), agriculturalActivities);
+		   .addLabelWidgetRow(Mod2002022Key.X0001.getDescription(), agriculturalActivities)
+		   .addLabelWidgetRow(receiptNumberLabel, receiptNumber);
 		
 		// ESTADOS DE CUENTAS
 		
@@ -510,7 +525,6 @@ public class Page00 extends PageAbs {
 	    	.addLabelWidgetRow(AON.MSG.nonFixedPersonal(), c042);
 		
 		// CIFRA DE NEGOCIOS
-		// FALTA - REVISAR SI SE MODIFICA ESTE VALOR SI ES NECESARIO RECALCULAR EL MODELO, HABRA QUE VERLO AL REVISAR LOS CALCULOS
 		
 		basePanel.add(getTitle("Cifra de negocios"));
 		
@@ -524,10 +538,8 @@ public class Page00 extends PageAbs {
 		opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
 		opeVol.addItem("3 - Al menos 60 millones de euros");
 		opeVol.addChangeHandler( event -> {
-			DoubleVariableEx bv = new DoubleVariableEx(Mod2002022Key.VOLOPE);
-			bv.setValue((double)opeVol.getSelectedIndex());
-			callback.getMod200Object().getMod200().addVariable(bv);
-			callback.markAsDirty();			
+			callback.getMod200Object().doubleValueChanged(Mod2002022Key.VOLOPE, opeVol.getSelectedIndex());
+			callback.markAsDirty();
 		});
 		otherInputs.add(opeVol);
 		

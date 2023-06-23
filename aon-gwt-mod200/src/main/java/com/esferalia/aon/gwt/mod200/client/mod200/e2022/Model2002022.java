@@ -201,6 +201,10 @@ public class Model2002022 extends DockLayoutPanel {
 		markAsPendingButton.setEnabled(!isDirty());
 		styleStatusLabel();
 		
+		// Pagina Agencia Tributaria
+		if (PAGES[PAGES.length-1] != null)
+			PAGES[PAGES.length-1].setEnabled();
+		
 	}
 	
 //	private void submitForm(String action) {
@@ -289,8 +293,6 @@ public class Model2002022 extends DockLayoutPanel {
 				Model2002022.this.markAsDirty();
 			}
 			
-			// FALTA - AQUI ESTAN LAS OPCIONES PARA LA PAGINA DE LA AGENCIA TRIBUTARIA
-
 			@Override
 			public String getCheckAction() {
 				return GWT.getHostPageBaseURL() +"aon_gwt_mod200/ms/Mod2002022CheckAEAT";
@@ -343,7 +345,7 @@ public class Model2002022 extends DockLayoutPanel {
 
 			@Override
 			public void sendSuccessfully() {
-				// FALTA - RECARGAR EL MODELO UNA VEZ QUE SE HA ENVIADO CORRECTAMENTE A LA AEAT (SE HABRA GRABADO EL ESTADO Y EL NUMERO DE DECLARACION)
+				// Recargar el modelo una vez que se ha enviado correctamente a la AEAT (Se habrá grabado el estado y el número de justificante)
 				Model200.getMod2002022Service().getMod2002022ById(options.getOccam(), mod200Object.getMod200().getId()
 						, new AsyncCallback<Mod2002022>() {
 
@@ -787,7 +789,7 @@ public class Model2002022 extends DockLayoutPanel {
 		linkContainer.add(new WestFocusPanel( 9,AON.MSG.liquidacionI() + ": Resultado PyG, Correcciones"));
 		linkContainer.add(new WestFocusPanel(10,AON.MSG.liquidacionII() + ": Base imponible, Cuota \u00EDntegra"));
 		linkContainer.add(new WestFocusPanel(11,AON.MSG.liquidacionIII() + ": Bonificaciones, Deducciones por doble imposici\u00F3n"));
-		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() + ": Otras deducciones"));
+		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() + ": Otras deducciones, Cuota L\u00EDquida"));
 		linkContainer.add(new WestFocusPanel(13,AON.MSG.liquidacionV() + ": Cuota del ejercicio, Pagos fraccionados, L\u00EDquido a ingresar o devolver"));
 		linkContainer.add(new WestFocusPanel(14,AON.MSG.combinedTaxationAbbrv()));
 		linkContainer.add(new WestFocusPanel(15,"Aplicaci\u00F3n de resultados, Documentaci\u00F3n previa"));
@@ -822,8 +824,8 @@ public class Model2002022 extends DockLayoutPanel {
 		this.dirty = dirty;
 		styleDirtyLabel();
 		refreshButtonsVisibility();
-		if (PAGES[PAGES.length-1] != null)
-			PAGES[PAGES.length-1].setEnabled();
+//		if (PAGES[PAGES.length-1] != null)
+//			PAGES[PAGES.length-1].setEnabled();
 	}
 	
 	private void audit() {
