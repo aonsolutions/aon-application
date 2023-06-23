@@ -140,8 +140,6 @@ public abstract class PageAbs extends ResizeComposite {
 		ScrollPanel scroll = new ScrollPanel();
 		basePanel = new FlowPanel();		
 		basePanel.addStyleName(AON.CSS.aonPaddingBottom());
-		// FALTA - PRUEBA PARA QUE NO OCUPEN TODA LA PANTALLA DE ANCHO SINO QUE COMO MAXIMO SE AJUSTE MAS O MENOS AL CONTENIDO QUE TIENE O A UN ANCHO MAXIMO
-		//basePanel.getElement().getStyle().setProperty("max-width", "max-content");
 		basePanel.getElement().getStyle().setProperty("max-width", "1200px");
 		
 		scroll.add(basePanel);
@@ -533,7 +531,6 @@ public abstract class PageAbs extends ResizeComposite {
 	
 	public AonDisplayTable addRegistryTable(String... headers) {
 		AonDisplayTable tab = new AonDisplayTable();
-// FALTA - PRUEBA PARA QUE NO OCUPE TODA LA PANTALLA SINO LA PARTE IZQUIERDA UNICAMENTE, ASI LAS COLUMNAS SALEN MAS JUNTAS
 //		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
 //		tab4.addStyleName(AON.CSS.aonBlockCenter());
 		tab.getElement().getStyle().setProperty("margin-left", "1%");		

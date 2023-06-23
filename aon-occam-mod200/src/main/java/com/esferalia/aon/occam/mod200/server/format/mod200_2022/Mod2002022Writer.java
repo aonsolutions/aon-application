@@ -588,7 +588,7 @@ public class Mod2002022Writer {
 				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002022Key.VOLOPE) == 1.0?"1":"0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - inferior a 20 millones de euros
 				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002022Key.VOLOPE) == 2.0?"1":"0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - de al menos 20 millones de euros pero inferior a 60 millones de euros
 				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002022Key.VOLOPE) == 3.0?"1":"0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - de al menos 60 millones de euros				
-				,(line, mod200, label) -> line.append(AonStringUtils.isEmpty(mod200.getFiscalGroup()) ? AonFiscalFileUtils.spaces(7) : AonFiscalFileUtils.unsigned(mod200.getFiscalGroup(), 7, 0))
+				,(line, mod200, label) -> line.append(AonStringUtils.isEmpty(mod200.getFiscalGroup()) ? AonFiscalFileUtils.spaces(7) : AonFiscalFileUtils.number(mod200.getFiscalGroup(), 7))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantDocument(), 9))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(), 15))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF o equivalente.
@@ -1509,7 +1509,6 @@ public class Mod2002022Writer {
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022LQ547Key.values())
-				// FALTA - ESTE DESGLOSE NO SE CUMPLIMENTA SI ESTAN MARCADOS LOS CARACTERES 9 O 10, EN TAL CASO VER SI TAMPOCO HAY QUE PONER LAS CASILLAS 1887 Y 1890
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022LQ243Key.values())
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
@@ -1580,7 +1579,7 @@ public class Mod2002022Writer {
 				,(line, mod200, label) -> line.append(" ") 
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022BN588Key.values(), Mod2002022Key.BN1197, null)
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022BN2315Key.values())
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022BN1039Key.values())
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022BN1039Key.values())				
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022BN2314Key.values())
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
@@ -1635,9 +1634,7 @@ public class Mod2002022Writer {
 		, PAG20B("T20020B00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")
-				// FALTA - SI CARACTERES 9 O 10 MARCADOS LA CASILLA 1032 ES DE CUMPLIMENTACION DIRECTA, POR LO TANTO IGUAL TODAS LAS CASILLAS DE ESTE DESGLOSE DEBEN IR A CERO
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022LQ1032Key.values())
-				
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022LQ1033_1Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002022LQ1033_2Key.values())
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
@@ -1878,7 +1875,7 @@ public class Mod2002022Writer {
 				,(line, mod200, label) -> {
 					
 					double importe = mod200.getDoubleValue(Mod2002022Key.BN621); // importe a ingresar o a devolver
-
+					
 					line.append(AonFiscalFileUtils.text(importe < 0 ? ("V".equals(mod200.getDevType()) ? "" : mod200.getDevType()) : "", 1)); // Devolución - Renuncia o por Transferencia ("blanco","R","D")
 					line.append(AonFiscalFileUtils.signedZero(importe < 0 ? Math.abs(importe) : 0.0, DS, DD)); 						          // Devolución - Importe a devolver
 					line.append(importe < 0 && "D".equals(mod200.getDevType()) ? "1" : "0");                                                  // Devolución - Marca SEPA (0 Vacía, 1 Cuenta España, 2 Unión Europea SEPA, 3 Resto Países) (Se asume cuenta de España)					

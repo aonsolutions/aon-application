@@ -405,16 +405,6 @@ public class Mod2002022Compute {
 		// Casilla 1032: Reserva de capitalización		
 		addBreakdown(Mod2002022LQ1032Key.values(), Mod2002022Key.LQ1032);
 		
-		// FALTA - CONTROL CASILLA 1032
-		// Si 1032 > 10% (00550 - 00415 + 00211 - 00416 + 00543); hacer 01032 = 10% (00550 - 00415 + 00211 - 00416 + 00543)
-		// SI LA CASILLA 1032 LLEVA DESGLOSE Y SE DEBE RECALCULAR, HABRIA QUE RECALCULAR TAMBIEN LAS CASILLAS DEL DESGLOSE EN ORDEN INVERSO SUPONGO
-		
-		// FALTA - NUEVAS CASILLAS 541 Y 564 NO SE SI LLEVAN ALGUN CALCULO ESPECIAL
-//		Para el régimen especial de buques y empresas navieras, para el cálculo de la clave 00550 no se ha realizado aún el desglose de bases imponibles (claves 00541 y 00564), por lo que deberá tenerse en cuenta la limitación de que las bases negativas del régimen especial no pueden compersarse con las positivas del resto de actividades. Por tanto, en aquellos supuestos que 00541 tenga importe negativo y 00564 positivo, se sustituirá 00550 por 00564.
-//		Si marca 00069 y 00541 con importe negativo y 00564 con importe positivo, entonces:
-//		01032 <= 10% (00564 - 00415 + 00211 - 00416 + 00543);
-//		Si 1032 > 10% (00564 - 00415 + 00211 - 00416 + 00543); hacer 01032 = 10% (00564 - 00415 + 00211 - 00416 + 00543)
-
 		// Casilla 547: Compensación de bases imponibles negativas de períodos anteriores
 		addBreakdown(Mod2002022LQ547Key.values(), Mod2002022Key.LQ547);
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1049,"LQ1048");

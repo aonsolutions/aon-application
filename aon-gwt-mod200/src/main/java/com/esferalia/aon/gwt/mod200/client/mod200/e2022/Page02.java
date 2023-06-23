@@ -72,7 +72,7 @@ public class Page02 extends PageAbs {
 		basePanel.add(getTitle(AON.MSG.participationsOut()));
 		
 		addLabel(PARTICIPATIONS_LABEL, true);
-		// FALTA - ANCHURA DEL GRID
+
 		AonDisplayGrid grid = new AonDisplayGrid();
 //		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
 //		grid.addStyleName(AON.CSS.aonBlockCenter());
@@ -439,7 +439,16 @@ public class Page02 extends PageAbs {
 		
 		// NIF de la/las sociedad/es disuelta/s
 		
-		AonDisplayTable tabSicav1 = addRegistryTable("NIF de la/las sociedad/es disuelta/s");
+		//AonDisplayTable tabSicav1 = addRegistryTable("NIF de la/las sociedad/es disuelta/s");
+		
+		AonDisplayTable tabSicav1 = new AonDisplayTable();
+		tabSicav1.setWidth("30%");
+		tabSicav1.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tabSicav1);
+				
+		tabSicav1.addRow()
+			.addCell( new Label("NIF de la/las sociedad/es disuelta/s"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
+			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());		
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getSicav1().size(); i++) {
 			final int idx = i;
@@ -478,7 +487,15 @@ public class Page02 extends PageAbs {
 		
 		// NIF de la/las IIC donde reinvierte
 		
-		AonDisplayTable tabSicav2 = addRegistryTable("NIF de la/las IIC donde reinvierte");		
+//		AonDisplayTable tabSicav2 = addRegistryTable("NIF de la/las IIC donde reinvierte");
+		AonDisplayTable tabSicav2 = new AonDisplayTable();
+		tabSicav2.setWidth("30%");
+		tabSicav2.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tabSicav2);
+				
+		tabSicav2.addRow()
+			.addCell( new Label("NIF de la/las IIC donde reinvierte"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
+			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());		
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getSicav2().size(); i++) {
 			final int idx = i;

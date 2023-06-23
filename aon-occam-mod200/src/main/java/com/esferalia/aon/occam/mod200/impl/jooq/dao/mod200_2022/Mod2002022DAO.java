@@ -1009,7 +1009,7 @@ public class Mod2002022DAO  {
 	private static void fillMod202(AONContext ctx,Mod2002022 mod200) {
 		// FALTA - REVISAR LECTURA DEL MODELO 202, AHORA SOLO SE LEEN LOS QUE ESTAN FINALIZADOS Y SI ESTAN ENVIADOS ??
 		Mod202DAO.getMod202s(ctx, mod200.getDomain())
-			.filter(mod -> mod.getYear() == mod200.getYear() && mod.getStatus() == FiscalStatus.FINISHED )
+			.filter(mod -> mod.getYear() == mod200.getYear() && (mod.getStatus() == FiscalStatus.FINISHED || mod.getStatus() == FiscalStatus.SENT))
 			
 			.forEach( mod -> {
 				Mod202 mod202 = Mod202DAO.getMod202(ctx, mod.getId());		
