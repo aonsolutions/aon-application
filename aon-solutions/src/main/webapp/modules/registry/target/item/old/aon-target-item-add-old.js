@@ -1,10 +1,10 @@
-import { AonSelect } from '../../../../components/aon-select.js';
-import { AonElement } from '../../../../components/AonElement.js';
-import { EVENT, MSG } from '../../../../environments/environments.js';
-import { getItems } from '../../../../services/productService.js';
-import { saveRegistryItem } from '../../../../services/productService.js';
-import { Customer } from '../../../../models/registry/Customer.js';
-import { Item } from '../../../../models/product/Item.js';
+import { AonSelect } from '../../../../../components/aon-select.js';
+import { AonElement } from '../../../../../components/AonElement.js';
+import { EVENT, MSG } from '../../../../../environments/environments.js';
+import { getItems } from '../../../../../services/productService.js';
+import { saveRegistryItem } from '../../../../../services/productService.js';
+import { Customer } from '../../../../../models/registry/Customer.js';
+import { Item } from '../../../../../models/product/Item.js';
 
 export class AonTargetItemAdd extends AonElement {
 	DIV;

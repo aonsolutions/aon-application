@@ -10,9 +10,9 @@ import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer } f
 import { AonCustomerList } from './aon-customer-list.js';
 import { getScopes } from '../../../services/documentalService.js';
 import { getDomainCompanies, saveCompany } from '../../../services/companyService.js';
-import { AonItemList } from '../target/item/aon-item-list.js';
 import { AonProjectList } from '../../project/aon-project-list.js';
 import { AonBookingItemList } from '../target/item/aon-booking-item-list.js';
+import { AonItemList } from '../target/item/aon-item-list.js';
 
 export class AonCustomer extends AonReg {
 

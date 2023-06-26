@@ -6,10 +6,10 @@ import { getItems, updateRegistryItem } from '../../../../services/productServic
 import { saveRegistryItem } from '../../../../services/productService.js';
 import { Customer } from '../../../../models/registry/Customer.js';
 import { Item } from '../../../../models/product/Item.js';
-import { BookingItemStatus, RegistryItemStatus } from '../../../../models/enums.js';
+import { RegistryItemStatus } from '../../../../models/enums.js';
 import { AonDateUtils } from '../../../utils/AonDateUtils.js';
 
-export class AonBookingItemAdd extends AonElement {
+export class AonItemAdd extends AonElement {
 	DIV;
 	ITEM_SELECT;
 	STATUS_SELECT
@@ -123,7 +123,7 @@ export class AonBookingItemAdd extends AonElement {
     }
 
 	initialize() {
-		this.id = this.id || "aonBookingItem";
+		this.id = this.id || "aonTargetItem";
 	}
 
 	build(){
@@ -157,8 +157,8 @@ export class AonBookingItemAdd extends AonElement {
 		});
 
 		this.buildSelectStatus();
-		if (this.getSelectedRItem() && this.getSelectedRItem().bookingStatus) {
-			this.STATUS_SELECT.value = this.getSelectedRItem().bookingStatus;
+		if (this.getSelectedRItem() && this.getSelectedRItem().status) {
+			this.STATUS_SELECT.value = this.getSelectedRItem().status;
 		}
 	}
 
@@ -214,7 +214,6 @@ export class AonBookingItemAdd extends AonElement {
 		this.ITEM_SELECT.addEventListener(EVENT.SELECT, ({detail}) => {
             let selectable = (this.ITEM_SELECT.getSelectable() || []);
 			let value = this.ITEM_SELECT.value;
-			console.log("seleccion")
             // if(detail && detail.option){
             //     if(detail.add){ // add
             //     } else { // remove
@@ -235,8 +234,8 @@ export class AonBookingItemAdd extends AonElement {
 		this.STATUS_SELECT.autocomplete = true;
 
 		let options = [];
-		for(let status in BookingItemStatus) {
-			options.push({name: BookingItemStatus[status], value:status});
+		for(let status in RegistryItemStatus) {
+			options.push({name: RegistryItemStatus[status], value:status});
 		}
 
 		this.STATUS_SELECT.setOptions(options);
@@ -255,14 +254,14 @@ export class AonBookingItemAdd extends AonElement {
 	async save(remove){
 		let error = false;
 		let params = {
-			type: "BOOKING",
+			type: "TARGET",
 			items: this.getItems(),
 			customers: this.getCustomers(),
 			start_date: this.getStartDate(),
 			end_date: this.getEndDate(),
 		}
 		if (this.getStatus()) {
-			params.bookingStatus = this.getStatus();
+			params.status = this.getStatus();
 		}
 		
 		if (!this.getSelectedRItem()) {
@@ -299,15 +298,9 @@ export class AonBookingItemAdd extends AonElement {
 			if (!params.item) {
 				this.showMessageError(MSG.PRODUCT_NOT_EMPTY);
 				return true;
-			} else if (!remove && !params.bookingStatus) {
-				this.showMessageError(MSG.STATUS_NOT_EMPTY);
-				return true;
 			}
 		} else {
-			if (!remove && !params.bookingStatus) {
-				this.showMessageError(MSG.PRODUCT_NOT_EMPTY);
-				return true;
-			} else if(!remove && (!this.getItems() || this.getItems().length === 0)) {
+			if(!remove && (!this.getItems() || this.getItems().length === 0)) {
 				this.showMessageError(MSG.PRODUCT_MUST_BE_SELECTED);
 				return true;
 			}
@@ -316,6 +309,6 @@ export class AonBookingItemAdd extends AonElement {
 	}
 }
 
-if(!window.customElements.get("aon-booking-item-add")){
-	window.customElements.define("aon-booking-item-add", AonBookingItemAdd);
+if(!window.customElements.get("aon-item-add")){
+	window.customElements.define("aon-item-add", AonItemAdd);
 }
