@@ -12,8 +12,8 @@
 }
 
 .titleAuth div{
+  font-family   : 'Roboto-Bold';
   font-size     : $font-size-head;
-  font-weight   : bold;
   margin-bottom : $margin-bottom;
 }
 
@@ -22,23 +22,33 @@
   color       : $color-secondary;
 }
 
-.contTitleSelectEnterprise {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-bottom: 2rem;
-}
-
-.itemEnterprise {
-  align-items: center;
-  border-radius: 4px;
-  border: solid 1px $color-border-primary;
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  gap: 36.8px;
-  justify-content: flex-start;
-  margin: 1rem;
-  padding:  16px 2rem;
-}
+/*
+  Select enterprise
+*/
+  #itemEnterprise{
+    border        : $border;
+    border-radius : $border-radius;
+  }
+  #itemEnterprise div div {
+    flex-direction: row;
+    display       : flex;
+    gap           : 36.8px;
+    padding       : $padding;
+    justify-content: flex-start;
+    align-items   : center;
+    cursor        : pointer;
+    font-size     : $font-size-24;
+    margin        : $margin;
+    border-radius : $border-radius;
+    border        : $border;
+  }  
+  #itemEnterprise caption{
+    white-space   : nowrap;
+    overflow      : hidden;
+    text-overflow : ellipsis;
+    font-family   : 'Roboto-Bold';
+    font-size     : $font-size-24;
+  }
+  #itemEnterprise span{
+    color         : $color-secondary;
+  }
