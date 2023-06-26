@@ -187,7 +187,7 @@ public class FacturasEmitidas extends SIIBuilt{
 					.findFirst().orElse(new EnterpriseActivity());
 		}
 		boolean exempt = (activity.getVatRegime() != null && activity.getVatRegime().isExempt()) 
-				|| vat.isIntracommunity() || vat.isExtracommunity();
+				|| vat.isIntracommunity() || vat.isExtracommunity() || vat.isCanCeuMel();
 		
 		Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.mapToDouble(f -> f.getBase()).sum();
@@ -420,7 +420,8 @@ public class FacturasEmitidas extends SIIBuilt{
 						}	
 						st3.setNoExenta(noExenta3);
 					}
-					prestacion.setSujeta(st3);		
+					if(st3.getExenta() != null || st3.getNoExenta() != null)
+						prestacion.setSujeta(st3);		
 					tcdt.setPrestacionServicios(prestacion);
 				} else {
 					TipoSinDesgloseType entrega = new TipoSinDesgloseType();
@@ -466,7 +467,8 @@ public class FacturasEmitidas extends SIIBuilt{
 						noExenta2.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
 						st2.setNoExenta(noExenta2); // TODO
 					}
-					entrega.setSujeta(st2);
+					if(st2.getExenta() != null || st2.getNoExenta() != null)
+						entrega.setSujeta(st2);
 					tcdt.setEntrega(entrega);
 				}				
 				tipoDesglose.setDesgloseTipoOperacion(tcdt);
@@ -530,7 +532,8 @@ public class FacturasEmitidas extends SIIBuilt{
 					noExenta1.setTipoNoExenta(noExType); // TODO 
 					st.setNoExenta(noExenta1);
 				}
-				tsdt.setSujeta(st);
+				if(st.getExenta() != null || st.getNoExenta() != null)
+					tsdt.setSujeta(st);
 				tipoDesglose.setDesgloseFactura(tsdt);
 			}
 			fet.setTipoDesglose(tipoDesglose);

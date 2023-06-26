@@ -1961,7 +1961,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			long prevDays = getDays(prevStart, prevEnd);
 			
 			try {
-				Number prevValue = prev.getValue(prev.getPeriod());
+				Number prevValue  ;
+				try {
+				    prevValue = prev.getValue(prev.getPeriod());
+				} catch ( Exception e ) {
+				    prevValue = 0.00;
+				}
 				if (valueStart.compareTo(prevStart) < 0) {
 					Date valueEnd = prev(prevStart);
 					long valueDays = getDays(valueStart, valueEnd);

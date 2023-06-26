@@ -382,10 +382,11 @@ public class Up2Date {
 			
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
 			
-		UdpateAonSmb.UPDATE_AON_SMB,
-		UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
+		//	UdpateAonSmb.UPDATE_AON_SMB,
+		//	UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
 		AlterRitem.ALTER_RITEM,
-		ContractSepeIdUpdate.CONTRACTSEPEIDUPDATE
+		AlterRsellerAddType.ALTER_RSELLER_ADD_TYPE,
+    ContractSepeIdUpdate.CONTRACTSEPEIDUPDATE
 	};
 
     // ------------------------------------------------------------------------

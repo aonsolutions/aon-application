@@ -29,7 +29,7 @@ export class AonBookingItemList extends AonElement {
 
 	build() {
 		this.TABLE = new AonTable();
-		this.TABLE.id = 'aoItemListTable';
+		this.TABLE.id = 'aonItemListTable';
 		this.TABLE.selectedColor = true;
 
 		this.TABLE.style.width = "100%";
@@ -87,7 +87,7 @@ export class AonBookingItemList extends AonElement {
 				items.forEach((item) => {
 					this.buildIconRemove(item);
 					this.TABLE.addRow(item, () => {
-						// this.openDialogItems(item);
+						this.openDialogItems(item);
 					});
 				});
 			});
@@ -102,7 +102,7 @@ export class AonBookingItemList extends AonElement {
 				items.forEach((item) => {
 					this.buildIconRemove(item);
 					this.TABLE.addRow(item, () => {
-						// this.openDialogItems(item);
+						this.openDialogItems(item);
 					});
 				});
 			});	
@@ -126,7 +126,7 @@ export class AonBookingItemList extends AonElement {
 				p.startDate = ritem.start_date;
 				p.endDate = ritem.end_date;
 				p.statusText = BookingItemStatus.getText(ritem.bookingStatus);
-				p.ritem = JSON.parse(JSON.stringify(ritem));
+				p.ritem = JSON.parse(JSON.stringify(ritem)); // clone object
 				return p;
 			});
 		} catch (error) {
