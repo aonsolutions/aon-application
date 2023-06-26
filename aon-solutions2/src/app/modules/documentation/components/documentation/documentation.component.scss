@@ -1,4 +1,4 @@
-.upDoc, .inSearch {
+.upDoc, .inSearch, .inSearch {
   border: 1px solid green;
   margin-top: 1.5rem;
 }
@@ -6,6 +6,7 @@
 .inSearch {
   margin-bottom: 1.85rem;
 }
+
 
 .listFolders {
   margin-top: 1.85rem;
@@ -29,14 +30,6 @@
   border: 1px solid red;
 }
 
-.gestion2{
-  border: 1px solid black;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  grid-column: 1 / span 22;
-}
-
 .container-folder {
   display: flex;
 }
@@ -47,8 +40,20 @@
   display: flex;
   margin-right: 2.9rem;
   height: 100%;
+  word-wrap: break-word;
 }
 
 .folder-item:last-child {
-  margin-right: 0rem;
+  margin-right: 0rem;;
+}
+
+.txtBtn {
+  width: 100%;
+  text-align: left;
+  margin-left: 0.75rem;
+}
+
+.iconArrow {
+  width: fit-content;
+  text-align: right;
 }

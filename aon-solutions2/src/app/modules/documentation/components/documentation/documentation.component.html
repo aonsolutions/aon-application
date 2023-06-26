@@ -15,14 +15,14 @@
     <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
     <mat-grid-tile class="inptSearch" [gridCols]="{xs:7,sm:7,md:7,lg:7,xl:7}">
       <app-input
-        [appearance]="'outline'"
-        appearanceDetail= "mat-form-field-appearance-bold-outline"
         [type]="'search'"
-        [placeholder]="'Texto'"
         [width]="'100%'"
-        class="inptSearch2"
-        style="margin-bottom: 1.6rem;"
+        [appearance]="'outline'"
+        [appearanceDetail]= "'mat-form-field-appearance-bold-outline'"
+        [placeholder]="'Texto'"
+        class="detSearch"
       ></app-input>
+
     </mat-grid-tile>
   </mat-grid-list>
 
@@ -34,7 +34,7 @@
     <mat-grid-tile class="container-folder" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
       <app-button
         [class]="'folder-item'"
-        [padding]="'1rem'"
+        [padding]="'1rem 0.25rem 1rem 1rem'"
         [color]="'#292a31'"
         [backgroundColor]="'#fff'"
         [border]="'.1rem solid #d2d2d6'"
@@ -47,19 +47,19 @@
           shape="folder_open"
           [color]="'#f6655a'"
           [backgroundColor]="'#fdedf2'"
-          [padding]="'0.5rem'"
           [borderRadius]="'0.2rem'"
+          [padding]="'0.5rem'"
         ></app-icon>
-        &nbsp;&nbsp;A contabilizar
+        <span class="txtBtn">A contabilizar</span>
         <app-icon
+          class="iconArrow"
           shape="keyboard_arrow_right"
           [color]="'#d2d2d6'"
-          [padding]="'0.5rem'"
         ></app-icon>
       </app-button>
       <app-button
         [class]="'folder-item'"
-        [padding]="'1rem'"
+        [padding]="'1rem 0.25rem 1rem 1rem'"
         [color]="'#292a31'"
         [backgroundColor]="'#fff'"
         [border]="'.1rem solid #d2d2d6'"
@@ -72,19 +72,19 @@
           shape="folder_open"
           [color]="'#f6655a'"
           [backgroundColor]="'#fdedf2'"
-          [padding]="'0.5rem'"
           [borderRadius]="'0.2rem'"
+          [padding]="'0.5rem'"
         ></app-icon>
-        &nbsp;&nbsp;Contabilizados
+        <span class="txtBtn">Contabilizados</span>
         <app-icon
+          class="iconArrow"
           shape="keyboard_arrow_right"
           [color]="'#d2d2d6'"
-          [padding]="'0.5rem'"
         ></app-icon>
       </app-button>
       <app-button
         [class]="'folder-item'"
-        [padding]="'1rem'"
+        [padding]="'1rem 0.25rem 1rem 1rem'"
         [color]="'#292a31'"
         [backgroundColor]="'#fff'"
         [border]="'.1rem solid #d2d2d6'"
@@ -97,19 +97,19 @@
           shape="folder_open"
           [color]="'#f6655a'"
           [backgroundColor]="'#fdedf2'"
-          [padding]="'0.5rem'"
           [borderRadius]="'0.2rem'"
+          [padding]="'0.5rem'"
         ></app-icon>
-        &nbsp;&nbsp;Fiscal
+        <span class="txtBtn">Fiscal</span>
         <app-icon
+          class="iconArrow"
           shape="keyboard_arrow_right"
           [color]="'#d2d2d6'"
-          [padding]="'0.5rem'"
         ></app-icon>
       </app-button>
       <app-button
         [class]="'folder-item'"
-        [padding]="'1rem'"
+        [padding]="'1rem 0.25rem 1rem 1rem'"
         [color]="'#292a31'"
         [backgroundColor]="'#fff'"
         [border]="'.1rem solid #d2d2d6'"
@@ -122,19 +122,19 @@
           shape="folder_open"
           [color]="'#f6655a'"
           [backgroundColor]="'#fdedf2'"
-          [padding]="'0.5rem'"
           [borderRadius]="'0.2rem'"
+          [padding]="'0.5rem'"
         ></app-icon>
-        &nbsp;&nbsp;Laboral
+        <span class="txtBtn">Laboral</span>
         <app-icon
+          class="iconArrow"
           shape="keyboard_arrow_right"
           [color]="'#d2d2d6'"
-          [padding]="'0.5rem'"
         ></app-icon>
       </app-button>
       <app-button
         [class]="'folder-item'"
-        [padding]="'1rem'"
+        [padding]="'1rem 0.25rem 1rem 1rem'"
         [color]="'#292a31'"
         [backgroundColor]="'#fff'"
         [border]="'.1rem solid #d2d2d6'"
@@ -147,14 +147,14 @@
           shape="folder_open"
           [color]="'#f6655a'"
           [backgroundColor]="'#fdedf2'"
-          [padding]="'0.5rem'"
           [borderRadius]="'0.2rem'"
+          [padding]="'0.5rem'"
         ></app-icon>
-        &nbsp;&nbsp;Papelera
+        <span class="txtBtn">Papelera</span>
         <app-icon
+          class="iconArrow"
           shape="keyboard_arrow_right"
           [color]="'#d2d2d6'"
-          [padding]="'0.5rem'"
         ></app-icon>
       </app-button>
     </mat-grid-tile>
