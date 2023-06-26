@@ -1,8 +1,9 @@
 import { AonElement } from "./AonElement.js";
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
+import { AON_ICONS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
 import { AonIconButton } from "./aon-icon-button.js";
 import { AonCheckbox } from "./aon-checkbox.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
+import { AonIcon } from "./aon-icon.js";
 
 export class AonTable extends AonElement {
   columns;
@@ -172,7 +173,7 @@ export class AonTable extends AonElement {
     tr.style.cursor = "pointer";
     
     if(this.selectedColor){
-      tr.addEventListener(EVENT.CLICK, () => this.addBackgroundTr(tr, "#f1f1f1"));
+      tr.addEventListener(EVENT.CLICK, () => this.addBackgroundTr(tr, "#d3e3fd"));
     }
 
     body.appendChild(tr);
@@ -206,7 +207,6 @@ export class AonTable extends AonElement {
       td.style.width = item.width;
 
       let id = item.id;
-      
       if ("option" === id && value[id]) {
         let aonIconB = new AonIconButton();
         aonIconB.id = this.getId()+"IconOption";
@@ -221,6 +221,14 @@ export class AonTable extends AonElement {
         icon.style.color = value[id + '_color'] || "#5f6368";
         icon.title = value.icon_title;
         td.appendChild(icon);
+        if(value.fn){
+          td.addEventListener(EVENT.CLICK, value.fn);
+        }
+      } else if("aonIcon" === item.type && value[id]) {
+        let aonIcon = new AonIcon();
+        aonIcon.id = this.getId()+ "AonIcon";
+        aonIcon.icon = value[id];
+        td.appendChild(aonIcon);
         if(value.fn){
           td.addEventListener(EVENT.CLICK, value.fn);
         }

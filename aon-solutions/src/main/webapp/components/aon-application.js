@@ -10,6 +10,7 @@ import "./aon-dialog-menu.js";
 import "./aon-toast.js";
 
 export class AonApplication extends AonElement {
+  
   SIDENAV;
   TOOLBAR;
   LOADER;
@@ -555,17 +556,12 @@ export class AonApplication extends AonElement {
 
       if(!option.options || option.clickable){
         li.addEventListener(EVENT.CLICK, () => {
-          let backgroundEl = li.style.backgroundColor;
           // ul
           this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
             if (el.id !== sidenavId)
-              el.style.backgroundColor = "transparent";
-            else {
-              // console.log(el.style.backgroundColor);
-            }
+              el.style.fontWeight= "400";  
           });
-        
-          li.style.backgroundColor = (!backgroundEl || backgroundEl.indexOf("transparent")>=0) ? "#ddd" : "transparent";
+          li.style.fontWeight= "bold"
 
           this.selected = id;
           let toolbar = this.getElement(this.TOOLBAR);
@@ -639,7 +635,7 @@ export class AonApplication extends AonElement {
   removeBackgroundSidenavAll(){
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((li) => {
-      li.style.backgroundColor = 'transparent';
+      li.style.backgroundColor = null;
     });
   }
 
@@ -647,7 +643,7 @@ export class AonApplication extends AonElement {
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     const li =  this.getElement(sidenavId + id);
     if(li){
-      li.style.backgroundColor = "#ddd";
+      li.style.backgroundColor = "#d3e3fd";
     }
   }
 
@@ -704,7 +700,7 @@ export class AonApplication extends AonElement {
       toolbar.setAttribute("option", title);
       //----------ADD COLOR SIDENAV SELECTED---------
       let li = this.getElement(this.SIDENAV+title);
-      if(li) li.style.backgroundColor = "#ddd";  
+      if(li) li.style.backgroundColor = "#d3e3fd";  
     } 
   }
 
