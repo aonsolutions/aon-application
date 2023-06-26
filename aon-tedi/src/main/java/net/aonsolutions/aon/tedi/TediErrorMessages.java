@@ -36,6 +36,7 @@ public enum TediErrorMessages implements Serializable {
 	C015("Cuenta Bancaria incorrecta."),
 	C016("No se ha podido determinar un centro de trabajo (workplace)"),
 	C017("No se han podido determinar bases y cuotas de la factura"),
+	C018("No se ha podido determinar el tipo de factura"),
 	C500("Error desconocido");
 	;
 	private String message;

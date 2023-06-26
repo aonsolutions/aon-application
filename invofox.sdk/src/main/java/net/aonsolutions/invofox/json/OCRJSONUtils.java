@@ -81,6 +81,17 @@ public class OCRJSONUtils {
 		return retAray;
 	}
 
+	public static BigDecimal[] getBigDecimalArray(JSONObject json, String key ) {
+		if(json == null) return null;
+		JSONArray arr = getArray(json, key);
+		if(arr == null) return null;
+		BigDecimal[] retAray = new BigDecimal[arr.length()];
+		for (int i = 0; i < arr.length(); i++) {
+			retAray[i] = (BigDecimal) arr.get(i);
+		}
+		return retAray;
+	}
+
 	public static BigDecimal getNumber(JSONObject json, String key ) {
 		if(json == null) return null;
 		return json.optBigDecimal(key,null);
