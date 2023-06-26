@@ -1,37 +1,45 @@
-<div class="models">
-    <div class="modelsHeader">
-        <div class="modelsHeaderName">
-            <div class="modelsHeaderLine"></div>
-            <div class="modelsHeaderText">
-                Impuestos
-            </div>
-        </div>
-        <div class="modelsHeaderFilters">
-            <div class="modelsHeaderFilterText">
-                {{selected}}
-            </div>
-            <div class="modelsHeaderFilterIcon" [matMenuTriggerFor]="menu">
-                <set-icon shape="more_vert" set-color [ngStyle]="{'color': 'black'}" size="21"></set-icon>
-            </div>
-            <mat-menu #menu="matMenu" xPosition="before">
-                <button *ngFor="let item of items" mat-menu-item (click)="selected=item" class="menuText">{{item}}</button>
-            </mat-menu>
-        </div>
+<app-card
+  [headerHeight]="' 10%'"
+  [padding]="'.75rem'"
+  [width]="'100%'"
+  [height]="'16.6rem'"
+  [border]="'0.05rem solid #D2D2D6 '"
+  [borderRadius]="'.2rem'"
+>
+  <div header class="models-header">
+    <div class="models-header-name">
+      <div class="models-header-line"></div>
+      <div class="models-header-text"> Impuestos </div>
     </div>
-    <div class="modelsContent">
-        <div *ngFor="let model of models" class="modelsContentElement">
-            <div class="modelsContentElementName">{{model.name}}</div>
-            <div class="modelsContentElementAmount">
-                <div class="modelsContentElementAmountText">
-                    <div stlye="width=10px;">
-                        <div class="modelsContentElementAmountPoint"></div>
-                    </div>
-                    {{model.amount}}
+    <div class="models-header-filters">
+      <div class="models-header-filter-text"> {{ selected }} </div>
+      <div class="models-header-filter-icon" [matMenuTriggerFor]="menu">
+        <set-icon shape="more_vert" set-color [ngStyle]="{ color: 'black' }" size="21"></set-icon>
+      </div>
+      <mat-menu #menu="matMenu" xPosition="before">
+        <button *ngFor="let item of items" mat-menu-item (click)="selected = item" class="menuText">
+          {{ item }}
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+    <div body class="models-content">
+    <div *ngFor="let model of models" class="models-content-element">
+        <div class="models-content-element-name">{{model.name}}</div>
+        <div class="models-content-element-tax">{{ model.tax }}</div> 
+        <div class="models-content-element-amount">
+            <div class="models-content-element-amount-text">
+                <div stlye="width=10px;">
+                    <div class="models-content-element-amount-text-point"></div>
                 </div>
-                <div class="modelsContentElementAmountIcon">
-                    <set-icon shape="arrow_forward_ios" set-color [ngStyle]="{'color': '#b4b4bb'}" size="21"></set-icon>
-                </div>
+                {{model.amount}}
             </div>
         </div>
     </div>
 </div>
+
+</app-card>
+
+
+
+

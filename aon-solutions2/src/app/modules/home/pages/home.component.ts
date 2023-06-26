@@ -29,7 +29,7 @@ export interface MenuItems {
 
 
 export class HomeComponent implements OnInit {
-  
+
 
   shortcuts : ShortcutDashboard[] = [
     {shape: 'add_box',name:'CREAR FACTURA'},

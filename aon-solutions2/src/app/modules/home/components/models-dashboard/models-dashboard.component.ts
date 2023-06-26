@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 export interface Models {
   name: string;
   amount: string;
+  tax: string;
 }
 
 @Component({
@@ -23,11 +24,11 @@ export class ModelsDashboardComponent implements OnInit {
   items : string[] = ["1 trimestre","2 trimestre","3 trimestre", "4 trimestre"];
 
   models : Models[] = [
-    {name: 'Modelo 000', amount: '150,00 €'},
-    {name: 'Modelo 000', amount: '150,00 €'},
-    {name: 'Modelo 000', amount: '150,00 €'},
-    {name: 'Modelo 000', amount: '150,00 €'},
-    {name: 'Modelo 000', amount: '150,00 €'},
+    {name: 'Modelo 000', tax: 'Tipo impuesto', amount: '150,00 €'},
+    {name: 'Modelo 000', tax: 'Tipo impuesto', amount: '150,00 €'},
+    {name: 'Modelo 000', tax: 'Tipo impuesto', amount: '150,00 €'},
+    {name: 'Modelo 000', tax: 'Tipo impuesto', amount: '150,00 €'},
+    {name: 'Modelo 000', tax: 'Tipo impuesto', amount: '150,00 €'},
   ]
 
   ngOnInit(): void {

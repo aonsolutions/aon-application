@@ -11,7 +11,7 @@
       align-items     : center;
       text-transform  : uppercase;
       margin-bottom   : $margin-bottom;
-      font-size       : $font-size-button; 
+      font-size       : $font-size-button;
       color           : $color-primary;
       border          : $border-button;
       border-radius   : $border-button-radius;
@@ -258,7 +258,7 @@
         .appButton.border-orange:hover set-icon path{
           color         : $background-button-orange;
         }
-    
+
   :host {
     display: flex;
     width: var(--widthHost);

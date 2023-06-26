@@ -1,4 +1,3 @@
-
 @import "src/styles.scss";
 
 .upload {
@@ -6,34 +5,19 @@
   margin-top: 1.335rem;
 }
 
-// .upload2 {
-//   height: 100%;
-//   box-sizing: border-box;
-//   background-color: #fff;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   margin-bottom: 1.6rem;
-// }
-
-.buttonsShortCut {
-  margin-bottom: 1.6rem;
+#list-Dashboard app-button {
+  margin-right: $margin-right;
+  float: left;
 }
 
-.button-style {
-  margin-right: 1rem;
-  height: 100%;
-}
-
-.summary1 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.summary {
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
   margin-bottom: 1.55rem;
 }
 
-
-.summary-view-chart{
+.summary-view-chart {
   flex-grow: 1;
   display: flex;
   justify-content: space-between;
@@ -43,7 +27,6 @@
   justify-content: center;
   align-items: center;
 }
-
 
 .summary-view {
   flex-grow: 1;
@@ -71,9 +54,9 @@
   margin-bottom: 1.6rem;
 }
 
-.email2{
+.email2 {
   display: flex;
-  border: .05rem solid red;
+  border: 0.05rem solid red;
   width: 100%;
   display: flex;
   justify-content: flex-start;
@@ -82,14 +65,13 @@
 
 .panel {
   display: flex;
-  border: .05rem solid black;
+  border: 0.05rem solid black;
   height: 100%;
   margin-left: 32px;
   width: 100%;
-
 }
 
-.gestion1{
+.gestion1 {
   // border: solid .05rem purple;
   // display: flex;
   // justify-content: center;

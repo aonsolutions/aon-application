@@ -1,57 +1,38 @@
-.chartDashboard {
-    height: 16.6rem;
-    width: 100%;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    border: solid;
-    border-radius: 4px;
-    border-width: 1px;
-    border-color: #D2D2D6;
-    box-sizing: border-box;
-}
-.chartDashboard:hover {
-   cursor: pointer;
+
+
+.app-card:hover {
   border-color: black;
+  cursor: pointer;
 }
 
-.chartContent:hover {
-  transform: scale(0.9);
-}
 
-.chartHeader {
-    height: 10%;
+.chart-header {
     width: 100%;
     display: flex;
+    height: 100%;
 }
 
-.chartHeaderName {
-    height: 100%;
+.chart-header-name {
     width: 50%;
     display: flex;
     align-items: center;
 }
 
-.chartHeaderLine {
-    width: 6px;
+.chart-header-line {
+    width: .3rem;
     height: 100%;
-    margin: 0 12px 0 0;
-    border-radius: 31px;
+    margin: 0 .6rem 0 0;
+    border-radius: 1.55rem;
     background-color: #4f91ff;
 }
 
-.chartHeaderText {
-
-    font-size: 24px;
+.chart-header-text {
+    font-size: 1.2rem;
     font-family: 'Roboto-Bold';
-    font-stretch: normal;
-    font-style: normal;
-    overflow: hidden;
     width: calc(auto);
-    text-overflow: ellipsis;
 }
 
-.chartHeaderFilters {
+.chart-header-filters {
     height: 100%;
     width: 50%;
     display: flex;
@@ -59,11 +40,8 @@
     justify-content: flex-end;
 }
 
-.chartHeaderFilterText {
-    font-size: 14px;
-    font-weight: 500;
-    font-stretch: normal;
-    font-style: normal;
+.chart-header-filter-text {
+    font-size: .7rem;
     color: #b4b4bb;
     text-align: right;
     text-transform: uppercase;
@@ -73,25 +51,30 @@
     white-space: nowrap;
 }
 
-.chartHeaderFilterIcon {
+.chart-header-filter-icon {
     cursor: pointer;
 }
 
-.chartContent {
+.chart-content {
     height: 80%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.chartFooter {
+.chart-content:hover {
+  transform: scale(0.9);
+
+}
+
+.chart-footer {
     height: 10%;
     display: flex;
     align-items: center;
     justify-content: flex-end;
 }
 
-.chartFooterButton {
+.chart-footer-button{
     height: 100%;
     display: flex;
     align-items: center;
@@ -105,11 +88,11 @@
     box-sizing: border-box;
 }
 
-.chartFooterButton:hover {
+.chart-footer-button:hover {
     border-color: black;
     cursor: pointer;
 }
 
-.menuText{
+.menu-text{
     text-transform: uppercase;
 }

@@ -1,54 +1,35 @@
-.models {
-    height: 100%;
-    width: 100%;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    border: solid;
-    border-radius: 4px;
-    border-width: 1px;
-    border-color: #D2D2D6;
-    box-sizing: border-box;
-    font-size: 14px;
-}
-
-.models:hover {
-  cursor: pointer;
+.app-card:hover {
   border-color: black;
+  cursor: pointer;
 }
 
-.modelsHeader {
-    height: 10%;
+.models-header{
     width: 100%;
     display: flex;
+    height: 100%;
 }
 
-.modelsHeaderName {
-    height: 100%;
+.models-header-name {
     width: 50%;
     display: flex;
     align-items: center;
 }
 
-.modelsHeaderLine {
-    width: 6px;
-    height: 100%;
-    margin: 0 12px 0 0;
-    border-radius: 31px;
-    background-color: #fb982e;
+.models-header-line{
+  width: .3rem;
+  height: 100%;
+  margin: 0 .6rem 0 0;
+  border-radius: 1.55rem;
+  background-color: #fb982e;
 }
 
-.modelsHeaderText {
-    font-size: 24px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    overflow: hidden;
-    width: calc(auto);
-    text-overflow: ellipsis;
+.models-header-text {
+  font-size: 1.2rem;
+  font-family: 'Roboto-Bold';
+  width: calc(auto);
 }
 
-.modelsHeaderFilters {
+.models-header-filters{
     height: 100%;
     width: 50%;
     display: flex;
@@ -56,102 +37,105 @@
     justify-content: flex-end;
 }
 
-.modelsHeaderFilterText {
-    font-size: 14px;
-    font-weight: 500;
-    font-stretch: normal;
-    font-style: normal;
-    color: #b4b4bb;
-    text-align: right;
-    text-transform: uppercase;
-    width: calc(auto);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.models-header-filter-text{
+  font-size: .7rem;
+  color: #b4b4bb;
+  text-align: right;
+  text-transform: uppercase;
+  overflow: hidden;
+  width: calc(auto);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.modelsHeaderFilterIcon {
+.models-header-filter-icon {
     cursor: pointer;
 }
 
-.modelsContent {
+.models-content{
     width: 100%;
     height: 90%;
-    margin-top: 15px;
+    margin-top: .75rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.modelsContentElement {
+.models-content-element {
     height: 15%;
     width: 100%;
     display: flex;
     border: solid;
-    border-radius: 4px;
-    border-width: 1px;
-    border-color: #D2D2D6;
+    border-width: .05rem;
+    border-color: transparent transparent #D2D2D6 transparent;
     box-sizing: border-box;
-    justify-content: space-between;
+
 }
 
-.modelsContentElementName {
+.models-content-element-name{
     height: 100%;
     width: calc(auto);
     color: #fb982e;
     display: flex;
-    padding-left: 15px;
+    font-size: .7rem;
+    font-family: Roboto-Medium;
     align-items: center;
     justify-content: flex-start;
     text-transform: uppercase;
-    font-weight: 600;
-    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.modelsContentElementAmount {
-    height: 100%;
-    width: calc(auto);
-    padding-left: 20%;
     display: flex;
-    align-items: center;
-    justify-content: space-around;
 }
 
-.modelsContentElementAmountPoint {
-    width: 6px;
-    height: 6px;
-    margin-right: 5px;
+.models-content-element-tax{
+
+  height: 100%;
+  width: calc(auto);
+  color: #787885;
+  display: flex;
+  font-size: .7rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+}
+
+.models-content-element-amount {
+  height: 100%;
+  width: calc(auto);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.models-content-element-amount-text-point{
+    width: .3rem;
+    height: .3rem;
+    margin-right: .2rem;
     border: solid;
-    border-radius: 4px;
-    border-width: 1px;
+    border-radius: .2rem;
+    border-width: .05rem;
     border-color: #fb982e;
     box-sizing: border-box;
     background-color: #fb982e;
+
 }
 
-.modelsContentElementAmountText {
+.models-content-element-amount-text {
     width: calc(auto);
     height: 100%;
     display: flex;
     align-items: center;
-    // justify-content: flex-start;
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: 0.7rem;
+    margin-left: auto;
+
 }
 
-.modelsContentElementAmountIcon {
-    width: calc(auto);
-    margin-left: 10px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-}
-
-.modelsContentElementAmountIcon:hover {
-    cursor: pointer;
-}
