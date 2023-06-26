@@ -1,22 +1,32 @@
-package net.aonsolutions.invofox;
+package net.aonsolutions.invofox.aon;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
+import com.esferalia.aon.occam.api.model.tedi.TediError;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
+import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tedi.TediErrorMessages;
+import net.aonsolutions.invofox.OCRResult;
+import net.aonsolutions.invofox.aon.OCRInvoiceBuilderRegistry.IRegistryFiller;
 import net.aonsolutions.invofox.model.OCRDocument;
+import net.aonsolutions.invofox.model.OCRInvoice;
 import net.aonsolutions.invofox.model.OCRType;
 
 public class OCRInvoiceBuilder {
@@ -146,50 +156,7 @@ public class OCRInvoiceBuilder {
 //		}
 //	}
 
-	private enum OCRInvoiceTransfer {
-		ISSUE_DATE {
-
-			@Override
-			OCRResult visit(AONContext ctx, AonConfiguration aonCtx, OCRResult result) {
-				String issueDateString = result.getOCRInvoice().getIssueDate()
-					.flatMap( s -> s.getValue() ).orElse(null);
-				if (AonStringUtils.isNotBlank( issueDateString)) {
-					SimpleDateFormat formatter = new SimpleDateFormat("yyy-MM-dd");
-					try {
-						Date issueDate = formatter.parse(issueDateString);
-						result.getInvoice().setIssueDate(issueDate);
-						result.getInvoice().setTaxDate(issueDate);
-					} catch (ParseException e) {
-						result.add( TediErrorMessages.C001.err(TediContextKey.ISSUE_DATE,TediContextKey.ISSUE_DATE.getDescription()) );
-					}
-				}
-				return result;
-			}
-			
-		}
-		
-		,TYPE {
-			@Override
-			OCRResult visit(AONContext ctx, AonConfiguration aonCtx, OCRResult result) {
-				Optional<OCRType> optType = result.getOCRDocument().getType();
-				if (optType.isPresent()) {
-					OCRType ocrType = optType.get();
-					if (ocrType == OCRType.ticket) {
-						result.getInvoice().setType( InvoiceType.UNDEDUCTIBLE );	
-					} else if (ocrType == OCRType.invoice) {
-						String issuerTaxId = result.getOCRInvoice().getIssuerTaxId().flatMap( s -> s.getValue() ).orElse(null);
-						String issuerDocument = toAonDocument( issuerTaxId );
-						boolean outputInvoice = AonStringUtils.equals( aonCtx.getCompany().getDocument(), issuerDocument); 
-						if (outputInvoice) {
-							result.getInvoice().setType( InvoiceType.SALES );	
-						} else {
-							result.getInvoice().setType( InvoiceType.EXPENSES );	
-						}
-					}
-				};
-				return result;
-			}
-		}
+//	private enum OCRInvoiceTransfer {
 //		TOTAL( (ctx, aonCtx,result) -> {
 //			double total = AonNumberUtils.todouble(result.getTedi().getTotal());
 //			result.getInvoice().setTotal( total );
@@ -214,32 +181,6 @@ public class OCRInvoiceBuilder {
 //				TediInvoiceDetailTransfer.toAon(result,tid,id);
 //			}
 //		}),
-//		DOMAIN ( (ctx, aonCtx,result) -> {
-//			Invoice invoice = result.getInvoice();
-//			invoice.setDomain(ctx.getDomainId());
-//		}),		
-//		REGISTRY ( (ctx, aonCtx,result) -> OCRInvoiceBuilder.fillRegistry(ctx, aonCtx,result)),
-//		SERIES	( (ctx, aonCtx,result) -> {
-//			if (result.getTedi().isEmitida()) {
-//				result.getInvoice().setSeries(result.getTedi().getSeries());
-//			}
-//		}), 
-//		NUMBER	( (ctx, aonCtx,result) -> {
-//			if (result.getTedi().isEmitida()) {
-//				if (result.getTedi().getNumber() != null) {
-//					result.getInvoice().setNumber(result.getTedi().getNumber());
-//				} else {
-//					result.add( TediErrorMessages.C003.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription(), 0) );
-//					result.getInvoice().setNumber(0);
-//				}
-//			}
-//		}), 
-//		REFERENCE_CODE( (ctx, aonCtx,result) -> {
-//			result.getInvoice().setReferenceCode(result.getTedi().getReference());
-//			if (result.getTedi().isTicket() && AonStringUtils.isBlank(result.getTedi().getReference())) {
-//				result.getInvoice().setReferenceCode("<auto>"); 
-//			}
-//		}), 
 //		COMMENTS( (ctx, aonCtx,result) -> {
 //				if (result.getTedi().getComments() != null) {
 //					StringBuilder builder = new StringBuilder();
@@ -386,16 +327,16 @@ public class OCRInvoiceBuilder {
 //				TediFinanceTransfer.toAon(aonCtx,result,tfin,fin);
 //			}
 //		})
-		;
-		
-		abstract OCRResult visit(AONContext ctx, AonConfiguration aonCtx,OCRResult result);
-
-		static OCRResult build(AONContext ctx, AonConfiguration aonCtx,OCRResult result) {
-			Arrays.stream(OCRInvoiceTransfer.values())
-				.forEach( token -> token.visit(ctx, aonCtx, result) );
-			return result;
-		}
-	}
+//		;
+//		
+//		abstract OCRResult visit(AONContext ctx, AonConfiguration aonCtx,OCRResult result);
+//
+//		static OCRResult build(AONContext ctx, AonConfiguration aonCtx,OCRResult result) {
+//			Arrays.stream(OCRInvoiceTransfer.values())
+//				.forEach( token -> token.visit(ctx, aonCtx, result) );
+//			return result;
+//		}
+//	}
 	
 //	private static void setReceiver(AonConfiguration aonCtx, TediInvoice tedi) {
 //		if ( tedi.getReceiver() != null )
@@ -594,114 +535,6 @@ public class OCRInvoiceBuilder {
 //		}
 //	}
 //
-//	private static interface IRegistryFiller {
-//		boolean accept(TediResult result);
-//		void fill(AONContext ctx, AonConfiguration aonCtx, TediResult result);	
-//	}
-//	private static IRegistryFiller[] FILLERS = new IRegistryFiller[] {new EmitidaFiller(),new RecibidaFiller(),new TicketFiller() };
-//
-//	private static abstract class RegistryFiller implements IRegistryFiller {
-//		
-//		protected boolean fillRegistry(AONContext ctx, AonConfiguration aonCtx, TediResult result,Predicate<AccountingRegistry> filterExpression) {
-//			Invoice invoice = result.getInvoice();
-//			if (result.getTedi().getRegistry() != null) {
-//				invoice.setRegistryDocument(result.getTedi().getRegistry().getDocument());
-//				invoice.setRegistryName(result.getTedi().getRegistry().getName());
-//				invoice.setRegistryDocumentCountry(Country.safeValueOf(result.getTedi().getRegistry().getDocumentCountry()));
-//			}
-//			LinkedList<AccountingRegistry> registries = AccountingRegistryDAO
-//					.getAccountingRegistries(ctx, f -> f.getDocumentProperty().eq(invoice.getRegistryDocument()))
-//					.filter(filterExpression)
-//					.collect(Collectors.toCollection(LinkedList::new));
-//			if (registries != null && registries.size() > 0) {
-//				if (registries.size() == 1) {
-//					AccountingRegistry ar = registries.get(0);
-//					AccountingInvoice ai = result.getAccountingInvoice();
-//					ai.setRegistry(ar);
-//					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId()));
-//					invoice.setRegistry(ar.getId())
-//						.setTransaction(ar.getTransaction());
-//					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
-//					return true;
-//				} else {
-//					result.setPosibleRegistries(registries);
-//					result.add( TediErrorMessages.C011.err(TediContextKey.AMBIGUOUS_REGISTRY));
-//				}
-//			}
-//			if (result.getInvoice().getRegistryDocumentCountry() == null) {
-//				result.getInvoice().setRegistryDocumentCountry(Country.ES);
-//				result.add( TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,TediContextKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
-//			}
-//			return false;
-//		}		
-//	}
-//	
-//	private static class EmitidaFiller extends RegistryFiller {
-//		@Override
-//		public boolean accept(TediResult result) {
-//			return result.getTedi().isEmitida();
-//		}
-//
-//		@Override
-//		public void fill(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-//			fillRegistry(ctx, aonCtx, result, ar -> result.getInvoice().isSales() && ar.getType() == AccountingRegistryType.CUSTOMER);
-//		}
-//	}
-//
-//	private static class RecibidaFiller extends RegistryFiller {
-//		@Override
-//		public boolean accept(TediResult result) {
-//			return result.getTedi().isRecibida();
-//		}
-//
-//		@Override
-//		public void fill(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-//			boolean filled = fillRegistry(ctx, aonCtx, result, ar -> !result.getInvoice().isSales() 
-//				&& (ar.getType() == AccountingRegistryType.SUPPLIER || ar.getType() == AccountingRegistryType.CREDITOR));
-//			if (filled) {
-//				AccountingRegistry ar = result.getAccountingInvoice().getRegistry();
-//				if (ar.getType() == AccountingRegistryType.CREDITOR) {
-//					if (result.getInvoice().getType() == InvoiceType.PURCHASE) {
-//						result.getInvoice().setType( InvoiceType.EXPENSES );
-//						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
-//					}
-//				} else  if (ar.getType() == AccountingRegistryType.SUPPLIER) {
-//					if (result.getInvoice().getType() != InvoiceType.PURCHASE) {
-//						result.getInvoice().setType( InvoiceType.PURCHASE );
-//						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
-//					}
-//				}
-//			}
-//		}
-//		
-//	}
-//	private static class TicketFiller extends RegistryFiller {
-//		@Override
-//		public boolean accept(TediResult result) {
-//			return result.getTedi().isTicket();
-//		}
-//
-//		@Override
-//		public void fill(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-//			if (!fillRegistry(ctx, aonCtx, result, ar -> !result.getInvoice().isSales() && ar.getType() == AccountingRegistryType.CREDITOR)){
-//				if (aonCtx.getDefaultCreditor() != null) {
-//					AccountingRegistry ar = aonCtx.getDefaultCreditor();
-//					AccountingInvoice ai = result.getAccountingInvoice();
-//					Invoice invoice = result.getInvoice();
-//					TediInvoice tedi = result.getTedi();
-//					ai.setRegistry(ar);
-//					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId()));
-//					invoice
-//						.setRegistry(ar.getId())
-//						.setTransaction(ar.getTransaction());
-//					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
-//					if (tedi.getSender() != null) {
-//						invoice.setRegistryDocument(tedi.getSender().getDocument());
-//						invoice.setRegistryName(tedi.getSender().getName());
-//					}
-//				}
-//			};
-//		}
 //	}
 //
 //	private static Account getSalesAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
@@ -747,12 +580,202 @@ public class OCRInvoiceBuilder {
 	// ***********************************************************************	
 	// ***********************************************************************	
 	// ***********************************************************************	
-	
-	
-	private static String toAonDocument(String rawDocument) {
-		return null;
+	static class OCRContext {
+		private final AONContext ctx;
+		private final AonConfiguration config;
+		private final OCRResult result;
+		
+		public OCRContext(AONContext ctx, AonConfiguration config, OCRResult result) {
+			this.ctx = ctx;
+			this.config = config;
+			this.result = result;
+		}
+		
+		public AONContext getCtx() {
+			return ctx;
+		}
+		public AonConfiguration getConfig() {
+			return config;
+		}
+		public OCRResult getResult() {
+			return result;
+		}
+		public OCRDocument getOCRDocument() {
+			return getResult().getOCRDocument();
+		}
+		public OCRInvoice getOCRInvoice() {
+			return getResult().getOCRInvoice();
+		}
+		public Invoice getInvoice() {
+			return getResult().getInvoice();
+		}
+
+		public void add(TediError err) {
+			result.add(err);
+		}
 	}
 	
+	private static String toAonDocument(String rawDocument) {
+		if (AonStringUtils.length(rawDocument) > 9) {
+			String c = AonStringUtils.substring(rawDocument,0,2);
+			Country country = Country.safeValueOf(c);
+			if (country != null) {
+				return AonStringUtils.substring(rawDocument,2); 
+			}
+		}
+		return rawDocument;
+	}
+	
+	private static final Consumer<OCRContext> INVOICE_ISSUE_DATE = (ocr) -> {
+		String issueDateString = ocr.getOCRInvoice().getIssueDate()
+				.flatMap( s -> s.getValue() ).orElse(null);
+		if (AonStringUtils.isNotBlank( issueDateString)) {
+			SimpleDateFormat formatter = new SimpleDateFormat("yyy-MM-dd");
+			try {
+				Date issueDate = formatter.parse(issueDateString);
+				ocr.getInvoice().setIssueDate(issueDate);
+				ocr.getInvoice().setTaxDate(issueDate);
+			} catch (ParseException e) {
+				ocr.add( TediErrorMessages.C001.err(TediContextKey.ISSUE_DATE,TediContextKey.ISSUE_DATE.getDescription()) );
+			}
+		}
+	};
+	
+	private static final Consumer<OCRContext> INVOICE_TYPE = (ocr) -> {
+		Optional<OCRType> optType = ocr.getOCRDocument().getType();
+		if (optType.isPresent()) {
+			OCRType ocrType = optType.get();
+			if (ocrType == OCRType.ticket) {
+				ocr.getInvoice().setType( InvoiceType.UNDEDUCTIBLE );	
+			} else if (ocrType == OCRType.invoice) {
+				String issuerTaxId = ocr.getOCRInvoice().getIssuerDocument();
+				String issuerDocument = toAonDocument( issuerTaxId );
+				boolean outputInvoice = AonStringUtils.equals( ocr.getConfig().getCompany().getDocument(), issuerDocument); 
+				if (outputInvoice) {
+					ocr.getInvoice().setType( InvoiceType.SALES );
+				} else {
+					ocr.getInvoice().setType( InvoiceType.EXPENSES );	
+				}
+			}
+		}
+	};
+	
+	private static final Consumer<OCRContext> INVOICE_REGISTRY_DOCUMENT = (ocr) -> {
+		InvoiceType invoiceType = ocr.getInvoice().getType();
+		if (invoiceType == null) {
+			ocr.add( TediErrorMessages.C018.err(TediContextKey.TYPE));
+		} else {
+			invoiceType.visit(ocr.getInvoice(), new IInvoiceTypeVisitor() {
+				@Override
+				public void visitSales(Invoice invoice) {
+					String recipientDocument = toAonDocument( ocr.getOCRInvoice().getRecipientDocument() );
+					String recipientCountry = ocr.getOCRInvoice().getRecipientCountry().flatMap( s -> s.getValue() ).orElse(null);
+					Country country = Country.safeValueOf( recipientCountry );
+					invoice
+						.setRegistryDocument( recipientDocument )
+						.setRegistryDocumentCountry( country );					
+				}
+				
+				@Override
+				public void visitPurchase(Invoice invoice) {
+					String issuerDocument = toAonDocument( ocr.getOCRInvoice().getIssuerDocument() );
+					String issuerCountry = ocr.getOCRInvoice().getIssuerCountry().flatMap( s -> s.getValue() ).orElse(null);
+					Country country = Country.safeValueOf( issuerCountry );
+					invoice
+						.setRegistryDocument( issuerDocument )
+						.setRegistryDocumentCountry( country );					
+				}
+				
+				@Override public void visitExpenses(Invoice invoice) { visitPurchase(invoice); }
+				@Override public void visitUndeductible(Invoice invoice) { visitPurchase(invoice);} 
+			});
+		}
+	};
+	
+	private static final Consumer<OCRContext> INVOICE_DOMAIN = (ocr) -> {
+		ocr.getInvoice().setDomain(ocr.getConfig().getDomain().getId());
+	};
+	
+	private static final Consumer<OCRContext> INVOICE_TRANSACTION = (ocr) -> {
+		ocr.getInvoice().setTransaction( InvoiceTransactionType.NATIONAL );
+	};
+
+	private static final Consumer<OCRContext> INVOICE_REGISTRY = (ocr) -> {
+		for ( IRegistryFiller filler : OCRInvoiceBuilderRegistry.FILLERS ) {
+			boolean accepted = filler.accept(ocr);
+			if (accepted) {
+				filler.fill(ocr);
+				break;
+			}
+		}
+	};
+	
+	private static final Consumer<OCRContext> INVOICE_REFERENCE_CODE = (ocr) -> {
+		Optional<String> optDocument = ocr.getOCRInvoice().getDocumentNumber().flatMap( o -> o.getValue() );
+		if (optDocument.isPresent()) {
+			String reference = optDocument.orElse(null);
+			if (!ocr.getInvoice().isSales()) {
+				ocr.getInvoice().setReferenceCode(reference);		
+			} 
+		} else { 
+			ocr.getInvoice().setNumber(0);
+			ocr.add( TediErrorMessages.C003.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription(), 0) );
+		}
+		if (AonStringUtils.isBlank(ocr.getInvoice().getReferenceCode())) {
+			ocr.add( TediErrorMessages.C001.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription()) );
+		}
+	};
+	
+	private static final Consumer<OCRContext> INVOICE_DETAILS = ocr -> {
+		MutableInt i = new MutableInt(0);
+		if ( ocr.getOCRInvoice().getLines().isPresent() ) {
+			ocr.getOCRInvoice().getLines().get()
+				.stream()
+				.forEach( line -> {
+					i.add(1);
+					String description = line.getDescription().flatMap( d -> d.getValue() ).orElse(null);
+					InvoiceDetail id = new InvoiceDetail()
+						.setDescription( description )
+						.setSource(InvoiceSource.DIRECT_INVOICE)
+						.setLine( i.getValue().shortValue() )
+						;
+					ocr.getInvoice().getDetails().add(id);
+				})
+			;
+				
+//			for ( int i = 0; i < result.getTedi().getDetails().size(); i++) {
+//				TediInvoiceDetail tid = result.getTedi().getDetails().get(i);
+//				if (tid.getVat() != null) {
+//					InvoiceDetail id = new InvoiceDetail()
+//							.setSource(InvoiceSource.ACCOUNT)
+//							.setLine( (short) (1 + i));
+//					if (result.getInvoice().getDetails() == null) {
+//						result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
+//					}
+//					result.getInvoice().getDetails().add(id);
+//					TediInvoiceDetailTransfer.toAon(result,tid,id);
+//				}
+//				
+//			}
+		}
+	};
+	
+	private static class OCRInvoiceTransfer {
+
+		static OCRResult build(AONContext ctx, AonConfiguration aonCtx,OCRResult result) {
+			INVOICE_DOMAIN
+				.andThen(INVOICE_TRANSACTION)
+				.andThen(INVOICE_ISSUE_DATE)
+				.andThen(INVOICE_TYPE)
+				.andThen(INVOICE_REGISTRY_DOCUMENT)
+				.andThen(INVOICE_REGISTRY)
+				.andThen(INVOICE_REFERENCE_CODE)
+				.andThen(INVOICE_DETAILS)
+			.accept(new OCRContext(ctx, aonCtx, result));
+			return result;
+		}
+	}
+
 	public static OCRResult toInvoice(AONContext ctx, OCRDocument ocrDocument) {
 		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
 		aonCtx.setPayMethods(PayMethodDAO.getOrderByIds(ctx));
@@ -777,7 +800,7 @@ public class OCRInvoiceBuilder {
 //		TediValidator.validateInvoice(ctx,result);
 		return result; 
 	}
-	
+
 	
 }
  

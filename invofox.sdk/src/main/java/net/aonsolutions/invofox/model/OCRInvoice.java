@@ -481,5 +481,12 @@ public class OCRInvoice implements Serializable {
 		return this;
 	}
 	
+	public String getIssuerDocument() {
+		return getIssuerTaxId().flatMap( s -> s.getValue() ).orElse(null);
+	}
+	public String getRecipientDocument() {
+		return getRecipientTaxId().flatMap( s -> s.getValue() ).orElse(null);
+	}
+	
 	
 }
