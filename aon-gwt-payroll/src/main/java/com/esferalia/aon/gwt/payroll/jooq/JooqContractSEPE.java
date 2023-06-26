@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
@@ -225,26 +226,26 @@ public class JooqContractSEPE {
 	}
 	
 	private static void getContractIDE(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
-		Result<Record> ideRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.eq("SEPE_ID"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		Result<Record> ideRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.NAME.eq("SEPE_ID"))
+				.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 				.fetch();
 		
 		if(ideRecords.isNotEmpty()) {
-			contractSpecificData.setIde(ideRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+			contractSpecificData.setIde(ideRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
 		}
 	}
 	
 	private static void getContractComunicationDate(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
-		Result<Record> comunicateDateRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.eq("COMUNICATION_DATE"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		Result<Record> comunicateDateRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.NAME.eq("COMUNICATION_DATE"))
+				.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 				.fetch();
 		
 		if(comunicateDateRecords.isNotEmpty()) {
 			java.util.Date comunicationDate;
 			try {
-				comunicationDate = dateFormat.parse(comunicateDateRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+				comunicationDate = dateFormat.parse(comunicateDateRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
 				contractSpecificData.setComunicationDate(comunicationDate);
 			} catch (IllegalArgumentException | ParseException e) {
 				e.printStackTrace();
@@ -253,26 +254,26 @@ public class JooqContractSEPE {
 	}
 	
 	private static void getContractTransformIDE(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
-		Result<Record> ideRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.eq("SEPE_TRANSFORM_ID"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		Result<Record> ideRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.NAME.eq("SEPE_TRANSFORM_ID"))
+				.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 				.fetch();
 		
 		if(ideRecords.isNotEmpty()) {
-			contractSpecificData.setTransformIde(ideRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+			contractSpecificData.setTransformIde(ideRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
 		}
 	}
 	
 	private static void getContractTransformComunicationDate(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
-		Result<Record> comunicateDateRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.eq("COMUNICATION_TRANSFORM_DATE"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		Result<Record> comunicateDateRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.NAME.eq("COMUNICATION_TRANSFORM_DATE"))
+				.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 				.fetch();
 		
 		if(comunicateDateRecords.isNotEmpty()) {
 			java.util.Date comunicationDate;
 			try {
-				comunicationDate = dateFormat.parse(comunicateDateRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+				comunicationDate = dateFormat.parse(comunicateDateRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
 				contractSpecificData.setComunicationTransformDate(comunicationDate);
 			} catch (IllegalArgumentException | ParseException e) {
 				e.printStackTrace();
@@ -331,17 +332,17 @@ public class JooqContractSEPE {
 	}
 	
 	private static void getContractExtensions(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
-		Result<Record> extensionRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.contains("SEPE_EXTENSION_ID").or(CONTRACT_DATA.NAME.contains("COMUNICATION_EXTENSION_DATE")))
-				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		Result<Record> extensionRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.NAME.contains("SEPE_EXTENSION_ID").or(CONTRACT_INFO.NAME.contains("COMUNICATION_EXTENSION_DATE")))
+				.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 				.fetch();
 		
 		if(extensionRecords.isNotEmpty()) {
 			for(Record record : extensionRecords) {
-				String contractDataName = record.get(CONTRACT_DATA.NAME);
+				String contractDataName = record.get(CONTRACT_INFO.NAME);
 				if(AonStringUtils.contains(contractDataName, "SEPE_EXTENSION_ID")) {
 					String extensionIdx = contractDataName.length() > 1 ? contractDataName.substring(contractDataName.length() - 1) : contractDataName;
-					String extensionIde = record.get(CONTRACT_DATA.EXPRESSION);
+					String extensionIde = record.get(CONTRACT_INFO.EXPRESSION);
 					java.util.Date extensionDate = getExtensionDate(extensionRecords, extensionIdx);
 					
 					contractSpecificData.addExtension(extensionIde, extensionDate);
@@ -351,9 +352,9 @@ public class JooqContractSEPE {
 	}
 
 	private static java.util.Date getExtensionDate(Result<Record> extensionRecords, String extensionIdx) {
-		Optional<Record> extensionRecord = extensionRecords.stream().filter(record -> AonStringUtils.equalsIgnoreCase(record.get(CONTRACT_DATA.NAME), "COMUNICATION_EXTENSION_DATE_" + extensionIdx )).findFirst();
+		Optional<Record> extensionRecord = extensionRecords.stream().filter(record -> AonStringUtils.equalsIgnoreCase(record.get(CONTRACT_INFO.NAME), "COMUNICATION_EXTENSION_DATE_" + extensionIdx )).findFirst();
 		try {
-			return extensionRecord.isPresent() ? dateFormat.parse(extensionRecord.get().get(CONTRACT_DATA.EXPRESSION)) : null;
+			return extensionRecord.isPresent() ? dateFormat.parse(extensionRecord.get().get(CONTRACT_INFO.EXPRESSION)) : null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -440,19 +441,19 @@ public class JooqContractSEPE {
 	private static void updateContractIDE(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
 			Date endDate, String ide) {
 		
-		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("SEPE_ID"))
-			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.NAME.eq("SEPE_ID"))
+			.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 			.execute();
 		
 		if(AonStringUtils.isNotBlank(ide)) {
-			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, domainId)
-				.set(CONTRACT_DATA.NAME, "SEPE_ID")
-				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.set(CONTRACT_DATA.EXPRESSION, ide)
-				.set(CONTRACT_DATA.START_DATE, startDate)
-				.set(CONTRACT_DATA.END_DATE, endDate)
+			dslContext.insertInto(CONTRACT_INFO)
+				.set(CONTRACT_INFO.DOMAIN, domainId)
+				.set(CONTRACT_INFO.NAME, "SEPE_ID")
+				.set(CONTRACT_INFO.CONTRACT, contractId)
+				.set(CONTRACT_INFO.EXPRESSION, ide)
+				.set(CONTRACT_INFO.START_DATE, startDate)
+				.set(CONTRACT_INFO.END_DATE, endDate)
 				.execute();
 		}
 	}
@@ -460,19 +461,19 @@ public class JooqContractSEPE {
 	private static void updateContractComunicationDate(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
 			Date endDate, java.util.Date comunicationDate) {
 		
-		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("COMUNICATION_DATE"))
-			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.NAME.eq("COMUNICATION_DATE"))
+			.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 			.execute();
 		
 		if(null != comunicationDate) {
-			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, domainId)
-				.set(CONTRACT_DATA.NAME, "COMUNICATION_DATE")
-				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.set(CONTRACT_DATA.EXPRESSION, dateFormat.format(comunicationDate))
-				.set(CONTRACT_DATA.START_DATE, startDate)
-				.set(CONTRACT_DATA.END_DATE, endDate)
+			dslContext.insertInto(CONTRACT_INFO)
+				.set(CONTRACT_INFO.DOMAIN, domainId)
+				.set(CONTRACT_INFO.NAME, "COMUNICATION_DATE")
+				.set(CONTRACT_INFO.CONTRACT, contractId)
+				.set(CONTRACT_INFO.EXPRESSION, dateFormat.format(comunicationDate))
+				.set(CONTRACT_INFO.START_DATE, startDate)
+				.set(CONTRACT_INFO.END_DATE, endDate)
 				.execute();
 		}
 	}
@@ -480,33 +481,33 @@ public class JooqContractSEPE {
 	public static void deleteContractTransformData(Connection conn, Integer contractId) {
 		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
 		
-		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("SEPE_TRANSFORM_ID"))
-			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.NAME.eq("SEPE_TRANSFORM_ID"))
+			.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 			.execute();
 		
-		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("COMUNICATION_TRANSFORM_DATE"))
-			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.NAME.eq("COMUNICATION_TRANSFORM_DATE"))
+			.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 			.execute();
 	}
 	
 	private static void updateContractTransformIDE(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
 			Date endDate, String ide) {
 		
-		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("SEPE_TRANSFORM_ID"))
-			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.NAME.eq("SEPE_TRANSFORM_ID"))
+			.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 			.execute();
 		
 		if(AonStringUtils.isNotBlank(ide)) {
-			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, domainId)
-				.set(CONTRACT_DATA.NAME, "SEPE_TRANSFORM_ID")
-				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.set(CONTRACT_DATA.EXPRESSION, ide)
-				.set(CONTRACT_DATA.START_DATE, startDate)
-				.set(CONTRACT_DATA.END_DATE, endDate)
+			dslContext.insertInto(CONTRACT_INFO)
+				.set(CONTRACT_INFO.DOMAIN, domainId)
+				.set(CONTRACT_INFO.NAME, "SEPE_TRANSFORM_ID")
+				.set(CONTRACT_INFO.CONTRACT, contractId)
+				.set(CONTRACT_INFO.EXPRESSION, ide)
+				.set(CONTRACT_INFO.START_DATE, startDate)
+				.set(CONTRACT_INFO.END_DATE, endDate)
 				.execute();
 		}
 	}
@@ -514,19 +515,19 @@ public class JooqContractSEPE {
 	private static void updateContractTransformComunicationDate(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
 			Date endDate, java.util.Date comunicationDate) {
 		
-		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("COMUNICATION_TRANSFORM_DATE"))
-			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.NAME.eq("COMUNICATION_TRANSFORM_DATE"))
+			.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 			.execute();
 		
 		if(null != comunicationDate) {
-			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, domainId)
-				.set(CONTRACT_DATA.NAME, "COMUNICATION_TRANSFORM_DATE")
-				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.set(CONTRACT_DATA.EXPRESSION, dateFormat.format(comunicationDate))
-				.set(CONTRACT_DATA.START_DATE, startDate)
-				.set(CONTRACT_DATA.END_DATE, endDate)
+			dslContext.insertInto(CONTRACT_INFO)
+				.set(CONTRACT_INFO.DOMAIN, domainId)
+				.set(CONTRACT_INFO.NAME, "COMUNICATION_TRANSFORM_DATE")
+				.set(CONTRACT_INFO.CONTRACT, contractId)
+				.set(CONTRACT_INFO.EXPRESSION, dateFormat.format(comunicationDate))
+				.set(CONTRACT_INFO.START_DATE, startDate)
+				.set(CONTRACT_INFO.END_DATE, endDate)
 				.execute();
 		}
 	}
@@ -534,19 +535,19 @@ public class JooqContractSEPE {
 	private static void updateContractExtensionIDE(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
 			Date endDate, String ide, String extensionIdx) {
 		
-		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("SEPE_EXTENSION_ID_" + extensionIdx))
-			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.NAME.eq("SEPE_EXTENSION_ID_" + extensionIdx))
+			.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 			.execute();
 		
 		if(AonStringUtils.isNotBlank(ide)) {
-			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, domainId)
-				.set(CONTRACT_DATA.NAME, "SEPE_EXTENSION_ID_" + extensionIdx)
-				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.set(CONTRACT_DATA.EXPRESSION, ide)
-				.set(CONTRACT_DATA.START_DATE, startDate)
-				.set(CONTRACT_DATA.END_DATE, endDate)
+			dslContext.insertInto(CONTRACT_INFO)
+				.set(CONTRACT_INFO.DOMAIN, domainId)
+				.set(CONTRACT_INFO.NAME, "SEPE_EXTENSION_ID_" + extensionIdx)
+				.set(CONTRACT_INFO.CONTRACT, contractId)
+				.set(CONTRACT_INFO.EXPRESSION, ide)
+				.set(CONTRACT_INFO.START_DATE, startDate)
+				.set(CONTRACT_INFO.END_DATE, endDate)
 				.execute();
 		}
 	}
@@ -554,19 +555,19 @@ public class JooqContractSEPE {
 	private static void updateContractExtensionComunicationDate(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
 			Date endDate, java.util.Date comunicationDate, String extensionIdx) {
 		
-		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("COMUNICATION_EXTENSION_DATE_" + extensionIdx))
-			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.NAME.eq("COMUNICATION_EXTENSION_DATE_" + extensionIdx))
+			.and(CONTRACT_INFO.CONTRACT.eq(contractId))
 			.execute();
 		
 		if(null != comunicationDate) {
-			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, domainId)
-				.set(CONTRACT_DATA.NAME, "COMUNICATION_EXTENSION_DATE_" + extensionIdx)
-				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.set(CONTRACT_DATA.EXPRESSION, dateFormat.format(comunicationDate))
-				.set(CONTRACT_DATA.START_DATE, startDate)
-				.set(CONTRACT_DATA.END_DATE, endDate)
+			dslContext.insertInto(CONTRACT_INFO)
+				.set(CONTRACT_INFO.DOMAIN, domainId)
+				.set(CONTRACT_INFO.NAME, "COMUNICATION_EXTENSION_DATE_" + extensionIdx)
+				.set(CONTRACT_INFO.CONTRACT, contractId)
+				.set(CONTRACT_INFO.EXPRESSION, dateFormat.format(comunicationDate))
+				.set(CONTRACT_INFO.START_DATE, startDate)
+				.set(CONTRACT_INFO.END_DATE, endDate)
 				.execute();
 		}
 	}
