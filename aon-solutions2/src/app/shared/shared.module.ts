@@ -44,6 +44,7 @@ import { PaginationContainerComponent } from './components/pagination-container/
 import { PaginationControllerComponent } from './components/pagination-controller/pagination-controller.component';
 import { GridLayoutComponent } from './layouts/grid-layout/grid-layout.component';
 import { GridColsDirective } from './directives/grid-cols.directive';
+import { ChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -96,7 +97,8 @@ import { GridColsDirective } from './directives/grid-cols.directive';
     MatMenuModule,
     MatTabsModule,
     MatExpansionModule,
-    MatDialogModule
+    MatDialogModule,
+    ChartsModule
   ],
   exports:[
     SidenavHoverDirective,
