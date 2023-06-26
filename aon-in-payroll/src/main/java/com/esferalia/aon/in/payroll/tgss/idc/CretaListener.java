@@ -40,6 +40,11 @@ public class CretaListener implements IdcParserListener {
 			return datosMap.isEmpty();
 		}
 		
+		public boolean hasDato(Predicate<DatoSolicitado> filter) {
+		    return datosMap.keySet().stream()
+		    	.anyMatch(key -> filter.test(datosMap.get(key)));
+		}
+		
 		@Override
 		public TramoBuilder addDato(DatoSolicitado dato) {
 		    	if (!filter(dato))
@@ -167,7 +172,7 @@ public class CretaListener implements IdcParserListener {
 	@Override
 	public void onEmployeeQuoteGroup(String group, boolean monthly) {
 		tramoBuilder.ifPresent(b -> b.setGrupoCotizacion(group));
-		if ( !monthly && isDaily(group ) ) {
+		if ( /*!monthly &&*/ isDaily(group ) ) {
 			tramoBuilder.ifPresent(b -> addModalidadSalario(b));
 		}
 	}
@@ -244,7 +249,8 @@ public class CretaListener implements IdcParserListener {
 			default:
 				break;
 			}
-			onNoEmployeeQuotePEC(ssNum, ccc, start, end);
+			if ( !b.hasDato(d -> "C".equalsIgnoreCase(d.getTipoDato()) ))
+			    onNoEmployeeQuotePEC(ssNum, ccc, start, end);
 		});
 	}
 	
