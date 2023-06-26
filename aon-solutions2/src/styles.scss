@@ -12,14 +12,16 @@ $Large: 1919.98px;
 $XLarge: 1920px;
 
 // Font-size
-$font-size-established: 20px;
-$font-size-primary: 0.8rem;
-$font-size-head: 1.7rem;
-$font-size-head-span: 1rem;
-// button
-$font-size-button: 0.7rem;
-// Input
-$font-size-input-label: 0.7rem;
+  $font-size-established: 20px;
+  $font-size-primary    : 0.8rem;
+  $font-size-head       : 1.7rem;
+  $font-size-head-span  : 1rem;
+  $font-size-24         : 1.2rem; // 24px
+  $font-size-42         : 2.1rem; // 42px
+  // button
+    $font-size-button       : 0.7rem;
+  // Input
+    $font-size-input-label  : 0.7rem;
 
 // Colors
 $color-primary: #19191d;
@@ -37,18 +39,26 @@ $border: solid $border-size-primary $color-border-primary;
 $border-radius: 0.2rem;
 
 // margin
-// 20px
-$margin: 1rem;
-$margin-top: 1rem;
-$margin-left: 1rem;
-$margin-right: 1rem;
-$margin-bottom: 1rem;
+  // 20px
+  $margin       : 1rem;
+  $margin-top   : 1rem;
+  $margin-left  : 1rem;
+  $margin-right : 1rem;
+  $margin-bottom: 1rem;
 
-$margin-head: 2rem;
-$margin-head-top: 2rem;
-$margin-head-left: 2rem;
-$margin-head-right: 2rem;
-$margin-head-bottom: 2rem;
+  $margin-head       : 2rem;
+  $margin-head-top   : 2rem;
+  $margin-head-left  : 2rem;
+  $margin-head-right : 2rem;
+  $margin-head-bottom: 2rem;
+
+// padding
+  // 20px
+  $padding       : 1rem;
+  $padding-top   : 1rem;
+  $padding-left  : 1rem;
+  $padding-right : 1rem;
+  $padding-bottom: 1rem;
 
 // Buton
 $top-button-icon: -0.075rem;
@@ -199,3 +209,5 @@ a:visited {
     justify-content: left !important;
 
 }
+
+

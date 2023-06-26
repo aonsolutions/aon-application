@@ -1,7 +1,7 @@
-.app-card:hover {
-  border-color: black;
+app-card{
   cursor: pointer;
 }
+
 
 .models-header{
     width: 100%;
@@ -88,7 +88,6 @@
 }
 
 .models-content-element-tax{
-
   height: 100%;
   width: calc(auto);
   color: #787885;
@@ -100,7 +99,6 @@
   text-transform: uppercase;
   text-overflow: ellipsis;
   white-space: nowrap;
-
 }
 
 .models-content-element-amount {

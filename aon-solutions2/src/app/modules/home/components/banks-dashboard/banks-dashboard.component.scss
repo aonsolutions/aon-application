@@ -1,153 +1,50 @@
-.banks {
-    width: 100%;
-    height: 100%;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: solid;
-    border-radius: 4px;
-    border-width: 1px;
-    border-color: #D2D2D6;
-    box-sizing: border-box;
-    font-size: 14px;
-}
-
-.banks:hover {
+app-card{
   cursor: pointer;
   border-color: black;
 }
-.banksHeader {
-    width: 100%;
-    height: 10%;
+
+.banks-header {
+  width: 100%;
+  display: flex;
+  height: 100%;
 }
 
-.banksHeaderName {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
+.banks-header-name{
+  width: 50%;
+  display: flex;
+  align-items: center;
 }
 
-.banksHeaderLine {
-    width: 6px;
-    height: 100%;
-    margin: 0 12px 0 0;
-    border-radius: 31px;
+.banks-header-line {
+  width: .3rem;
+  height: 100%;
+  margin: 0 .6rem 0 0;
+  border-radius: 1.55rem;
     background-color: #4f91ff;
 }
 
-.banksHeaderText {
-    font-size: 24px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    overflow: hidden;
-    width: calc(100%-6px);
-    text-overflow: ellipsis;
+.banks-header-text {
+  font-size: 1.2rem;
+  font-family: 'Roboto-Bold';
+  width: calc(auto);
 }
 
-.banksCreate {
+.banks-create{
   display: flex;
   flex-direction: column;
   text-align: center;
   justify-content: center;
-  margin: 74px 30px;
+  margin: 3.7rem 1.5rem;
 }
 
-.bankLinkCreate{
+.bank-link-create{
   margin-bottom: 13px;
   color: #4f91ff;
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 500;
 }
 
-.banksCreateText{
-  font-size: 14px;
+.banks-create-text{
+  font-size: .7rem;
   color: #9696A0;
 }
-
-// .banksContent {
-//     padding-top: 15px;
-//     width: 100%;
-//     height: 60%;
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-//     justify-content: space-around;
-// }
-
-// .banksContentElement {
-//     width: 100%;
-//     height: auto;
-//     display: flex;
-//     align-items: center;
-// }
-
-// .banksContentElementName {
-//     width: calc(50%);
-//     height: 100%;
-//     display: flex;
-//     align-items: center;
-//     justify-content: flex-start;
-//     font-size: 16px;
-//     font-weight: normal;
-//     font-stretch: normal;
-//     font-style: normal;
-//     line-height: 1.5;
-//     letter-spacing: 0.44px;
-//     text-align: left;
-//     color: #b4b4bb;
-//     overflow: hidden;
-//     text-overflow: ellipsis;
-//     white-space: nowrap;
-// }
-
-// .banksContentElementAmount {
-//     width: calc(50%);
-//     height: 100%;
-//     display: flex;
-//     align-items: center;
-//     justify-content: flex-end;
-//     font-size: 20px;
-//     font-weight: normal;
-//     font-stretch: normal;
-//     font-style: normal;
-//     line-height: 1.6;
-//     letter-spacing: 0.15px;
-//     text-align: right;
-//     color: #292a31;
-//     overflow: hidden;
-//     text-overflow: ellipsis;
-//     white-space: nowrap;
-// }
-
-// .dividerParent {
-//     display: flex;
-//     align-items: center;
-//     width: 100%;
-//     height: 10%;
-// }
-
-// .divider {
-//     width: 100%;
-// }
-
-// .banksFooter {
-//     width: calc(100%);
-//     height: 20%;
-//     display: flex;
-//     align-items: center;
-//     justify-content: flex-end;
-//     font-size: 24px;
-//     font-weight: bold;
-//     font-stretch: normal;
-//     font-style: normal;
-//     line-height: 1.5;
-//     letter-spacing: normal;
-//     text-align: left;
-//     color: #292a31;
-//     overflow: hidden;
-//     text-overflow: ellipsis;
-//     white-space: nowrap;
-// }

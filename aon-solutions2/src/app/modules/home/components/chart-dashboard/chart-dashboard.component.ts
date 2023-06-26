@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { ReportingService } from '../../../../core/services/reporting.service';
 
 @Component({
   selector: 'app-chart-dashboard',
@@ -19,7 +20,13 @@ export class ChartDashboardComponent implements OnInit {
 
   items : string[] = ["Últimos 12 meses","Últimos 6 meses","Trimestral"];
 
-  constructor() { }
+  constructor(
+    public reportingService :ReportingService
+  ) {
+    reportingService.getCobrosPagos().then(
+      (response) => {console.log(response)}
+    )
+  }
 
   ngOnInit(): void {
   }

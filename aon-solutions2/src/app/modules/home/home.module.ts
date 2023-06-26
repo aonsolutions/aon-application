@@ -15,6 +15,8 @@ import { ChartDashboardComponent } from './components/chart-dashboard/chart-dash
 import { ModelsDashboardComponent } from './components/models-dashboard/models-dashboard.component';
 import { BanksDashboardComponent } from './components/banks-dashboard/banks-dashboard.component';
 import { MenuButtonDashboardComponent } from './components/menu-button-dashboard/menu-button-dashboard.component';
+import { InboxDashboardComponent } from './components/inbox-dashboard/inbox-dashboard.component';
+import { ListDashboardComponent } from './components/list-dashboard/list-dashboard.component';
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import { MenuButtonDashboardComponent } from './components/menu-button-dashboard
     ChartDashboardComponent,
     ModelsDashboardComponent,
     BanksDashboardComponent,
-    MenuButtonDashboardComponent
+    MenuButtonDashboardComponent,
+    InboxDashboardComponent,
+    ListDashboardComponent
   ],
   imports: [
     CommonModule,

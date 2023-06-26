@@ -1,0 +1,19 @@
+<div class="containerCard">
+  <div class="headCard">
+    <div class="lineHead"></div>
+    <div class="text">
+      Bandeja
+    </div>
+  </div>
+  <div class="contentCenter">
+    <app-list-dashboard *ngFor="let item of messages"[name]="item.name" [type]="item.type" [subject]="item.subject"
+      [date]="item.date"[description]="item.description"></app-list-dashboard>
+  </div>
+  <div class="footer">
+    <mat-divider></mat-divider>
+    <div class="seeAllMessages">
+      <div class="seeAll">Ver todos los mensajes</div>
+      <div class="circle"><span class ="numberCircle">14</span></div>
+    </div>
+  </div>
+</div>

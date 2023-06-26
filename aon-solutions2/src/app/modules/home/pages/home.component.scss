@@ -1,8 +1,8 @@
 @import "src/styles.scss";
 
 .upload {
-  margin-bottom: 1.6rem;
-  margin-top: 1.335rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 
 #list-Dashboard app-button {
@@ -11,9 +11,6 @@
 }
 
 .summary {
-  // display: flex;
-  // justify-content: center;
-  // align-items: center;
   margin-bottom: 1.55rem;
 }
 
@@ -89,7 +86,6 @@
 
 .gestion-style {
   flex: 1;
-  // border: .05rem solid red;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -102,10 +98,3 @@
   margin-right: 0;
 }
 
-// .dashboardShortcuts {
-//   display: flex;
-//   overflow: auto;
-//   justify-content: space-between;
-//   height: 100%;
-//   width: 100%;
-// }

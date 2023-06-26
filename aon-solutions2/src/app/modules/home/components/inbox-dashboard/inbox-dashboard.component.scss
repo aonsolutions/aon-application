@@ -1,0 +1,116 @@
+.containerCard{
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  margin: 0 auto;
+  border: 1px solid #D2D2D6;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.containerCard .headCard{
+  width: 100%;
+  height: 10%;
+  display: flex;
+  align-items: center;
+
+}
+.headCard .lineHead{
+  width: 6px;
+  height: 33px;
+  margin: 0 12px 0 0;
+  border-radius: 31px;
+  background-color: #f6655a;
+}
+.headCard .text {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 36px;
+  font-weight: bold;
+}
+.contentCenter{
+  width: 100%;
+  height: 70%;
+  //background-color: aqua;
+
+}
+.footer {
+  width: 100%;
+  height: 17%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.footer .seeAll{
+  color: #f6655a;
+  cursor: pointer;
+  margin-right: 1% ;
+}
+.footer .circle{
+  width: 28px;
+  height: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  background-color: #feedec;
+}
+.circle .numberCircle{
+  font-size: 14px;
+  font-weight: 500;
+}
+.seeAllMessages{
+  display: flex;
+}
+
+
+
+
+
+
+
+// .container .head{
+//   height:33px ;
+//   display: flex;
+//   align-items: center;
+// }
+// .container .head div{
+//   //margin-right: 22px;
+//   display: inline-flex;
+// }
+// .head .line{
+//   width: 6px;
+//   height: 33px;
+//   background-color: #F6655A;
+//   border-radius: 33px;
+//   border: 4px;
+// }
+// .head .text{
+//   font-weight: 900;
+//   font-size: 24px ;
+//   padding: 3px 17px;
+// }
+// .container .contentCenter{
+//   margin-top:25px ;
+//   width: 100%;
+// }
+// .container .footer{
+//   margin-top:10px ;
+//   padding: 15px 0 8px 0;
+//   line-height: 16px;
+//   font-weight: 500;
+//   border-top: 1px solid #D2D2D6;
+// }
+// .footer .seeAll{
+//   color: #F6655A ;
+//   font-size: 14px;
+//   text-decoration: none;
+// }
+// .seeAll .circle{
+//   width: 100px;
+//   height: 100px;
+//   border-radius: 50%;
+//   background-color: black;
+// }
+

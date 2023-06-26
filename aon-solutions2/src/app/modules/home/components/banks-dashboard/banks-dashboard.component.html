@@ -1,30 +1,24 @@
-<div class="banks">
-    <div class="banksHeader">
-        <div class="banksHeaderName">
-            <div class="banksHeaderLine"></div>
-            <div class="banksHeaderText">
-                Tus Bancos
-            </div>
-        </div>
+<app-card
+  [headerHeight]="'10%'"
+  [padding]="'.75rem'"
+  [width]="'100%'"
+  [height]="'16.6rem'"
+  [border]="'0.05rem solid #D2D2D6 '"
+  [borderRadius]="'.2rem'"
+>
+  <div header class="banks-header">
+    <div class="banks-header-name">
+      <div class="banks-header-line"></div>
+      <div class="banks-header-text">Tus Bancos</div>
     </div>
-<div class="banksCreate">
-    <div class="bankLinkCreate">Crea tu primer banco</div>
-    <div class="banksCreateText">Conecta AON con tus bancos para tener un control de tus movimientos</div>
-</div>
-    <!-- <div class="banksContent">
-        <div *ngFor="let bank of banks" class="banksContentElement">
-            <div class="banksContentElementName">
-                {{bank.name}}
-            </div>
-            <div class="banksContentElementAmount">
-                {{bank.amount}}
-            </div>
-        </div>
+  </div>
+    <div body class="banks-create">
+      <div class="bank-link-create">Crea tu primer banco</div>
+      <div class="banks-create-text">
+        Conecta AON con tus bancos para tener un control de tus movimientos
+      </div>
     </div>
-    <div class="dividerParent">
-        <mat-divider class="divider"></mat-divider>
-    </div>
-    <div class="banksFooter">
-        {{totalAmount}}
-    </div> -->
-</div>
+
+</app-card>
+
+
