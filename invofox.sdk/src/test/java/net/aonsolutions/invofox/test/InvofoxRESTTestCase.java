@@ -58,6 +58,19 @@ class InvofoxRESTTestCase {
 		assertEquals( 200, response.getHttpCode().get());
 		assertTrue(response.getDocuments().isPresent());
 		assertNotEquals(0 , response.getDocuments().get().size());
+		
+		response.getDocuments().get()
+			.stream()
+			.forEach( d -> {
+				System.out.println(
+					d.getCompany().orElse("<NO COMP>")
+					+ " " + 
+					d.getId().orElse("<NO ID>")
+					+ " [" +
+					d.getName().orElse("<NO NAME>")
+					+ "]"
+				);
+			});
 	}
 	
 	@Test

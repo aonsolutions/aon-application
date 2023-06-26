@@ -1,5 +1,6 @@
 package net.aonsolutions.invofox.aon;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,6 +11,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
@@ -17,9 +19,13 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.watson.mutable.MutableInt;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tedi.TediErrorMessages;
@@ -27,6 +33,8 @@ import net.aonsolutions.invofox.OCRResult;
 import net.aonsolutions.invofox.aon.OCRInvoiceBuilderRegistry.IRegistryFiller;
 import net.aonsolutions.invofox.model.OCRDocument;
 import net.aonsolutions.invofox.model.OCRInvoice;
+import net.aonsolutions.invofox.model.OCRInvoiceBreakdown;
+import net.aonsolutions.invofox.model.OCRInvoiceLine;
 import net.aonsolutions.invofox.model.OCRType;
 
 public class OCRInvoiceBuilder {
@@ -615,6 +623,51 @@ public class OCRInvoiceBuilder {
 		}
 	}
 	
+
+	static class OCRContextDetail extends  OCRContext {
+		private final OCRInvoiceLine ocrLine;
+		private final InvoiceDetail detail;
+		
+		public OCRContextDetail(OCRContext ocr, OCRInvoiceLine line, InvoiceDetail id) {
+			this(ocr.getCtx(), ocr.getConfig(), ocr.getResult(), line , id);
+		}
+
+		public OCRContextDetail(AONContext ctx, AonConfiguration config, OCRResult result, OCRInvoiceLine ocrLine, InvoiceDetail detail) {
+			super(ctx, config, result);
+			this.ocrLine = ocrLine;
+			this.detail = detail;
+		}
+		
+		public OCRInvoiceLine getOcrLine() {
+			return ocrLine;
+		}
+		public InvoiceDetail getDetail() {
+			return detail;
+		}
+	}
+	
+	static class OCRContextBreakdown extends  OCRContext {
+		private final OCRInvoiceBreakdown ocrBreakdown;
+		private final InvoiceBreakdown breakdown;
+		
+		public OCRContextBreakdown(OCRContext ocr, OCRInvoiceBreakdown ocrBreakdown, InvoiceBreakdown breakdown) {
+			this(ocr.getCtx(), ocr.getConfig(), ocr.getResult(), ocrBreakdown , breakdown);
+		}
+
+		public OCRContextBreakdown(AONContext ctx, AonConfiguration config, OCRResult result, OCRInvoiceBreakdown ocrBreakdown, InvoiceBreakdown breakdown) {
+			super(ctx, config, result);
+			this.ocrBreakdown = ocrBreakdown;
+			this.breakdown = breakdown;
+		}
+		
+		public OCRInvoiceBreakdown getOcrBreakdown() {
+			return ocrBreakdown;
+		}
+		public InvoiceBreakdown getBreakdown() {
+			return breakdown;
+		}
+	}
+
 	private static String toAonDocument(String rawDocument) {
 		if (AonStringUtils.length(rawDocument) > 9) {
 			String c = AonStringUtils.substring(rawDocument,0,2);
@@ -626,7 +679,7 @@ public class OCRInvoiceBuilder {
 		return rawDocument;
 	}
 	
-	private static final Consumer<OCRContext> INVOICE_ISSUE_DATE = (ocr) -> {
+	private static final Consumer<OCRContext> INVOICE_ISSUE_DATE = ocr -> {
 		String issueDateString = ocr.getOCRInvoice().getIssueDate()
 				.flatMap( s -> s.getValue() ).orElse(null);
 		if (AonStringUtils.isNotBlank( issueDateString)) {
@@ -641,7 +694,7 @@ public class OCRInvoiceBuilder {
 		}
 	};
 	
-	private static final Consumer<OCRContext> INVOICE_TYPE = (ocr) -> {
+	private static final Consumer<OCRContext> INVOICE_TYPE = ocr -> {
 		Optional<OCRType> optType = ocr.getOCRDocument().getType();
 		if (optType.isPresent()) {
 			OCRType ocrType = optType.get();
@@ -660,7 +713,7 @@ public class OCRInvoiceBuilder {
 		}
 	};
 	
-	private static final Consumer<OCRContext> INVOICE_REGISTRY_DOCUMENT = (ocr) -> {
+	private static final Consumer<OCRContext> INVOICE_REGISTRY_DOCUMENT = ocr -> {
 		InvoiceType invoiceType = ocr.getInvoice().getType();
 		if (invoiceType == null) {
 			ocr.add( TediErrorMessages.C018.err(TediContextKey.TYPE));
@@ -692,15 +745,11 @@ public class OCRInvoiceBuilder {
 		}
 	};
 	
-	private static final Consumer<OCRContext> INVOICE_DOMAIN = (ocr) -> {
-		ocr.getInvoice().setDomain(ocr.getConfig().getDomain().getId());
-	};
+	private static final Consumer<OCRContext> INVOICE_DOMAIN = ocr -> ocr.getInvoice().setDomain(ocr.getConfig().getDomain().getId());
 	
-	private static final Consumer<OCRContext> INVOICE_TRANSACTION = (ocr) -> {
-		ocr.getInvoice().setTransaction( InvoiceTransactionType.NATIONAL );
-	};
+	private static final Consumer<OCRContext> INVOICE_TRANSACTION = ocr -> ocr.getInvoice().setTransaction( InvoiceTransactionType.NATIONAL );
 
-	private static final Consumer<OCRContext> INVOICE_REGISTRY = (ocr) -> {
+	private static final Consumer<OCRContext> INVOICE_REGISTRY = ocr -> {
 		for ( IRegistryFiller filler : OCRInvoiceBuilderRegistry.FILLERS ) {
 			boolean accepted = filler.accept(ocr);
 			if (accepted) {
@@ -710,7 +759,7 @@ public class OCRInvoiceBuilder {
 		}
 	};
 	
-	private static final Consumer<OCRContext> INVOICE_REFERENCE_CODE = (ocr) -> {
+	private static final Consumer<OCRContext> INVOICE_REFERENCE_CODE = ocr -> {
 		Optional<String> optDocument = ocr.getOCRInvoice().getDocumentNumber().flatMap( o -> o.getValue() );
 		if (optDocument.isPresent()) {
 			String reference = optDocument.orElse(null);
@@ -726,6 +775,18 @@ public class OCRInvoiceBuilder {
 		}
 	};
 	
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_DESCRIPTION = ocr -> {
+		ocr.getDetail().setDescription( ocr.getOcrLine().getDescription().flatMap( d -> d.getValue() ).orElse(null) );
+	};
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_QUANTITY = ocr -> {
+		BigDecimal quantity = ocr.getOcrLine().getQuantity().flatMap( d -> d.getValue() ).orElse(null);
+		ocr.getDetail().setQuantity( AonNumberUtils.zeroIfNull(quantity));
+	};
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_PRICE = ocr -> {
+		BigDecimal price = ocr.getOcrLine().getGrossUnitPrice().flatMap( d -> d.getValue() ).orElse(null);
+		ocr.getDetail().setPrice( AonNumberUtils.zeroIfNull(price));
+	};
+
 	private static final Consumer<OCRContext> INVOICE_DETAILS = ocr -> {
 		MutableInt i = new MutableInt(0);
 		if ( ocr.getOCRInvoice().getLines().isPresent() ) {
@@ -733,33 +794,82 @@ public class OCRInvoiceBuilder {
 				.stream()
 				.forEach( line -> {
 					i.add(1);
-					String description = line.getDescription().flatMap( d -> d.getValue() ).orElse(null);
 					InvoiceDetail id = new InvoiceDetail()
-						.setDescription( description )
-						.setSource(InvoiceSource.DIRECT_INVOICE)
-						.setLine( i.getValue().shortValue() )
-						;
+							.setSource(InvoiceSource.DIRECT_INVOICE)
+							.setLine( i.getValue().shortValue() )
+							;
+					INVOICE_DETAIL_DESCRIPTION
+						.andThen(INVOICE_DETAIL_QUANTITY)
+						.andThen(INVOICE_DETAIL_PRICE)
+					.accept(new OCRContextDetail(ocr, line, id));
+					
 					ocr.getInvoice().getDetails().add(id);
 				})
 			;
-				
-//			for ( int i = 0; i < result.getTedi().getDetails().size(); i++) {
-//				TediInvoiceDetail tid = result.getTedi().getDetails().get(i);
-//				if (tid.getVat() != null) {
-//					InvoiceDetail id = new InvoiceDetail()
-//							.setSource(InvoiceSource.ACCOUNT)
-//							.setLine( (short) (1 + i));
-//					if (result.getInvoice().getDetails() == null) {
-//						result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
-//					}
-//					result.getInvoice().getDetails().add(id);
-//					TediInvoiceDetailTransfer.toAon(result,tid,id);
-//				}
-//				
-//			}
 		}
 	};
+
+	private static final Consumer<OCRContextBreakdown> INVOICE_BREAKDOWN_BASE = ocr -> {
+		BigDecimal base = ocr.getOcrBreakdown().getTaxBaseAmount().flatMap( d -> d.getValue() ).orElse(null); 
+		ocr.getBreakdown().setBase( AonNumberUtils.zeroIfNull(base) );
+	};
 	
+	private static final Consumer<OCRContextBreakdown> INVOICE_BREAKDOWN_PERCENTAGE = ocr -> {
+		BigDecimal percentage = ocr.getOcrBreakdown().getTaxRate().flatMap( d -> d.getValue() ).orElse(null); 
+		ocr.getBreakdown().setPercentage( AonNumberUtils.zeroIfNull(percentage) );
+	};
+
+	private static final Consumer<OCRContextBreakdown> INVOICE_BREAKDOWN_QUOTA = ocr -> {
+		BigDecimal quota = ocr.getOcrBreakdown().getTaxAmount().flatMap( d -> d.getValue() ).orElse(null); 
+		ocr.getBreakdown().setQuota( AonNumberUtils.zeroIfNull(quota) );
+	};
+
+	private static final Consumer<OCRContextBreakdown> INVOICE_BREAKDOWN_SURCHARGE_PERCENTAGE = ocr -> {
+		BigDecimal surchargePercentage = ocr.getOcrBreakdown().getReRate().flatMap( d -> d.getValue() ).orElse(null); 
+		ocr.getBreakdown().setSurcharge( AonNumberUtils.zeroIfNull(surchargePercentage) );
+	};
+
+	private static final Consumer<OCRContextBreakdown> INVOICE_BREAKDOWN_SURCHARGE_QUOTA = ocr -> {
+		BigDecimal surchargeQuota = ocr.getOcrBreakdown().getReAmount().flatMap( d -> d.getValue() ).orElse(null); 
+		ocr.getBreakdown().setSurchargeQuota( AonNumberUtils.zeroIfNull(surchargeQuota) );
+	};
+
+	private static final Consumer<OCRContext> INVOICE_BREAKDOWN = ocr -> {
+		if ( ocr.getOCRInvoice().getBreakdowns().isPresent() ) {
+			ocr.getOCRInvoice().getBreakdowns().get()
+			.stream()
+			.forEach( br -> {
+				InvoiceBreakdown ib = new InvoiceBreakdown()
+					.setTaxType( TaxType.VAT );
+				INVOICE_BREAKDOWN_BASE
+					.andThen(INVOICE_BREAKDOWN_PERCENTAGE)
+					.andThen(INVOICE_BREAKDOWN_QUOTA)
+					.andThen(INVOICE_BREAKDOWN_SURCHARGE_PERCENTAGE)
+					.andThen(INVOICE_BREAKDOWN_SURCHARGE_QUOTA)
+				.accept(new OCRContextBreakdown(ocr, br, ib));
+			ocr.getInvoice().getBreakdown().add(ib);
+				
+			});
+		}
+	};
+
+	private static final Consumer<OCRContext> INVOICE_WITHOLDING = ocr -> {
+		BigDecimal irpfPercentage = ocr.getOCRInvoice().getWithholdingTaxRate().flatMap( d -> d.getValue() ).orElse(null);
+		if ( irpfPercentage != null && AonMathUtils.isNotZero( irpfPercentage ) ) {
+			BigDecimal irpfBase = ocr.getOCRInvoice().getTotalTaxBaseAmount().flatMap( d -> d.getValue() ).orElse(null);
+			BigDecimal irpfQuota = ocr.getOCRInvoice().getWithholdingTaxAmount().flatMap( d -> d.getValue() ).orElse(null);
+
+			InvoiceBreakdown ib = new InvoiceBreakdown()
+				.setTaxType( TaxType.RETENTION )
+				.setBase( AonNumberUtils.zeroIfNull(irpfBase) )
+				.setPercentage( AonNumberUtils.zeroIfNull(irpfPercentage) )
+				.setQuota( AonNumberUtils.zeroIfNull(irpfQuota) )
+				.setWithholdingType( guessWitholdingType( ocr.getInvoice() ) )
+				;
+			ocr.getInvoice().getBreakdown().add(ib);
+		}
+	};
+
 	private static class OCRInvoiceTransfer {
 
 		static OCRResult build(AONContext ctx, AonConfiguration aonCtx,OCRResult result) {
@@ -770,6 +880,8 @@ public class OCRInvoiceBuilder {
 				.andThen(INVOICE_REGISTRY_DOCUMENT)
 				.andThen(INVOICE_REGISTRY)
 				.andThen(INVOICE_REFERENCE_CODE)
+				.andThen(INVOICE_BREAKDOWN)
+				.andThen(INVOICE_WITHOLDING)
 				.andThen(INVOICE_DETAILS)
 			.accept(new OCRContext(ctx, aonCtx, result));
 			return result;
@@ -782,25 +894,20 @@ public class OCRInvoiceBuilder {
 		
 		OCRResult result = new OCRResult(ocrDocument, new Invoice());
 		OCRInvoiceTransfer.build(ctx, aonCtx,result);
-//		fillVats(ctx, aonCtx, result);
-//		if (ai.getInvoice().getFinances() == null || ai.getInvoice().getFinances().size() == 0) {
-//			ai.getInvoice().addFinance(new Finance()
-//					.setDueDate(ai.getInvoice().getIssueDate())
-//					.setAmount(ai.getInvoice().getTotal())
-//					.setPayment(!ai.isSales())
-//					.setFinanceStatus(FinanceStatus.PENDING));
-//		}
-//		ai.setAccountEntry(getEntryBase(ctx,aonCtx,ai));
-//		if (result.isImportable()) {
-//			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));
-//		}
-//		// ----------
-//		InvoiceCalculator.calculate(ai);
-//		// ----------
-//		TediValidator.validateInvoice(ctx,result);
 		return result; 
 	}
 
+	// ****************************************************************************
+	// *************************************************************** TO DO ******
+	// ****************************************************************************
+
+	// Buscar en facturas anteriores para suponer el tipo de retención con mas seguridad.
+	private static WithholdingType guessWitholdingType(Invoice invoice) {
+		return WithholdingType.PROFESSIONAL;
+	}
+	// ****************************************************************************
+	// ****************************************************************************
+	// ****************************************************************************
 	
 }
  
