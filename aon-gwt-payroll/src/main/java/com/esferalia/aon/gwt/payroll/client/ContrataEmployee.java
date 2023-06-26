@@ -2274,21 +2274,21 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void sendContract() {
-		showLoading("Notificando contrato...");
-		contrataEmployeeObject.sendContract(s -> {
-			showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
-			downloadCto(
-				su -> sendBasicCopyTimer(
-						success -> downloadCbc(suc -> loadWindow(succe -> {})),
-						failure -> loadWindow(succe -> {})), 
-				fa -> loadWindow(succe -> {}));
-			contrataEmployeeObject.getComunicationInfo();
-		}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
-		
-//		contrataEmployeeObject.sendContract(s -> {
-//			showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
-//			sendBasicCopyTimer(su -> downloadCto(suc -> downloadCbc(succ -> loadWindow(succe -> {}))));
-//		}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+		String contractType = contrataEmployeeObject.getContractData().getContractType();
+		if(AonStringUtils.isNotBlank(contractType) && (AonStringUtils.equalsIgnoreCase(contractType, "402") || AonStringUtils.equalsIgnoreCase(contractType, "502")))
+			showWarning("Fecha fin", "Los contratos 402 y 502 deben tener definido la fecha fin del contrato");
+		else {
+			showLoading("Notificando contrato...");
+			contrataEmployeeObject.sendContract(s -> {
+				showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
+				downloadCto(
+					su -> sendBasicCopyTimer(
+							success -> downloadCbc(suc -> loadWindow(succe -> {})),
+							failure -> loadWindow(succe -> {})), 
+					fa -> loadWindow(succe -> {}));
+				contrataEmployeeObject.getComunicationInfo();
+			}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+		}
 	}
 
 	private void downloadCto(Consumer<Void> succes, Consumer<Void> failure) {
