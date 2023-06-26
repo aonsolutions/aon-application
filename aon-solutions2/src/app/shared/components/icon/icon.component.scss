@@ -1,0 +1,19 @@
+@import 'src/styles.scss';
+
+::ng-deep{
+/*
+  Size
+*/
+  .size-42 set-icon{
+    width   : $font-size-42 !important;
+    height  : $font-size-42 !important;
+  }
+  
+/*
+  Color
+*/
+  .griss set-icon path{
+    color   : $color-secondary;
+  }
+  
+}

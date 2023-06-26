@@ -11,22 +11,12 @@
       <mat-grid-tile colspan="1" *ngIf="usserLoggged">
         <div class="allSize" style="display:flex; justify-content: right; align-items: center;">
           <app-button 
-          width="2rem"
-          height="2rem"
-          [backgroundColor]="'#f9f9fa'" 
-          [border]="'#f9f9fa solid .05rem'" 
-          [borderRadius]="'1rem'"
-          [align]="'center'"
-          (click)="this.dropdownMenuComponent.openDropdownMenu();"
+            class="icon-only"
+            (click)="this.dropdownMenuComponent.openDropdownMenu();"
           >
-          <app-icon 
-          [shape]="'person'" 
-          [color]="'#292a31'"
-          size="1.2rem"
-          >
-          </app-icon>
-          <app-dropdown-menu #first [menuItem]="this.menuItem"></app-dropdown-menu>
-        </app-button>
+            <app-icon [shape]="'person'"></app-icon>
+            <app-dropdown-menu #first [menuItem]="this.menuItem"></app-dropdown-menu>
+          </app-button>
         </div>
         <!-- <div class="toolbarIcons">
           <div *ngIf="this.displayHomeIcon" class="buttonTopbar" routerLink="home">
