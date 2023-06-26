@@ -592,15 +592,15 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				System.out.println("FALLO MANDANDO EMAIL");
 				e.printStackTrace();
 			}
+			
+			try {
+				AonComunica.addContract(domain, EmployeeParse.toEmployeeOccam(employee), certificate);
+			} catch (Exception e) {
+				System.out.println("FALLO CREANDO CONTRATO");
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
 			System.out.println("FALLO COMUNICANDO");
-			e.printStackTrace();
-		}
-		
-		try {
-			AonComunica.addContract(domain, EmployeeParse.toEmployeeOccam(employee), certificate);
-		} catch (Exception e) {
-			System.out.println("FALLO CREANDO CONTRATO");
 			e.printStackTrace();
 		}
 
