@@ -28,7 +28,7 @@ public class OCRBoxJSON {
 		if (json == null) return null; 
 		return new OCRBox()
 			.setPageIndex(OCRJSONUtils.getInteger(json, OCRNames.PAGE))
-			.setCoordinates(OCRJSONUtils.getIntegerArray(json, OCRNames.BOX))
+			.setCoordinates(OCRJSONUtils.getBigDecimalArray(json, OCRNames.BOX))
 		;
 	}
 	

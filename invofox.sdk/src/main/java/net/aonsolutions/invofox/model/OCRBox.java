@@ -1,6 +1,7 @@
 package net.aonsolutions.invofox.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public class OCRBox implements Serializable {
@@ -8,7 +9,7 @@ public class OCRBox implements Serializable {
 	private static final long serialVersionUID = 6066950745149021691L;
 	
 	private Integer pageIndex;
-	private Integer[] coordinates;
+	private BigDecimal[] coordinates;
 	
 	public Optional<Integer >getPageIndex() {
 		return Optional.ofNullable(pageIndex);
@@ -18,10 +19,10 @@ public class OCRBox implements Serializable {
 		return this;
 	}
 	
-	public Optional<Integer[]> getCoordinates() {
+	public Optional<BigDecimal[]> getCoordinates() {
 		return Optional.ofNullable(coordinates);
 	}
-	public OCRBox setCoordinates(Integer[] coordinates) {
+	public OCRBox setCoordinates(BigDecimal[] coordinates) {
 		this.coordinates = coordinates;
 		return this;
 	}
