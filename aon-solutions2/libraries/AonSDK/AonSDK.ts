@@ -221,6 +221,8 @@ class Factory implements IFactory {
                 return new ServiceBanks();
             case 'message':
                 return new ServiceMessage();
+            case 'messagechat':
+                return new ServiceMessageChat();
             case 'reporting':
                 return new ServiceReporting();
             case 'documentnote':
@@ -271,7 +273,7 @@ class ServiceEnterprise implements IService {
         return new Promise((resolve, reject) => {
             try {
                 for(let i = 0; i < collection.length; i++){
-                    enterprises.push(collection[0] as Enterprise)
+                    enterprises.push(collection[i] as Enterprise)
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
@@ -371,7 +373,7 @@ class ServiceDocument implements IService {
         return new Promise((resolve, reject) => {
             try {
                 for(let i = 0; i < collection.length; i++){
-                    documents.push(collection[0] as Document)
+                    documents.push(collection[i] as Document)
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
@@ -471,7 +473,7 @@ class ServiceDocumentNote implements IService {
         return new Promise((resolve, reject) => {
             try {
                 for(let i = 0; i < collection.length; i++){
-                    documentNotes.push(collection[0] as DocumentNote)
+                    documentNotes.push(collection[i] as DocumentNote)
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
@@ -549,7 +551,7 @@ class ServiceFolder implements IService {
         return new Promise((resolve, reject) => {
             try {
                 for(let i = 0; i < collection.length; i++){
-                    folders.push(collection[0] as Folder)
+                    folders.push(collection[i] as Folder)
                 }                
                 resolve(new Response('0000',true))
             } catch (error) {
@@ -636,7 +638,7 @@ class ServiceBanks implements IService {
         return new Promise((resolve, reject) => {
             try {
                 for(let i = 0; i < collection.length; i++){
-                    banks.push(collection[0] as Banks)
+                    banks.push(collection[i] as Banks)
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
@@ -713,7 +715,7 @@ class ServiceTaxModel implements IService {
         return new Promise((resolve, reject) => {
             try {
                 for(let i = 0; i < collection.length; i++){
-                    taxModels.push(collection[0] as TaxModel)
+                    taxModels.push(collection[i] as TaxModel)
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
@@ -787,11 +789,25 @@ class ServiceMessage implements IService {
         });
     }
 
+    getElementCount(model: string, optional?: Optional) : Promise<Response> {
+        return new Promise((resolve, reject) => {
+            try {
+                let data = copyObjectArray(messages);
+                if(optional?.filters?.filterFields) data = applyFilters(optional,data);
+                if(optional?.filters?.date && optional?.filters?.endDate) data = applyInterval(optional, data, 'date')
+                resolve(new Response('0000',data.length))
+            } catch (error) {
+                reject(new Response('0201'))
+            }
+        });
+    }
+
     createElement(model: string, collection: Message[]) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 for(let i = 0; i < collection.length; i++){
-                    messages.push(collection[0] as Message)
+                    collection[i].id = messages[messages.length - 1].id + 1;
+                    messages.push(collection[i] as Message)
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
@@ -854,7 +870,10 @@ class ServiceMessageChat implements IService {
     getElementList(model: string, optional?: Optional) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
-                resolve(new Response('0000',messageChats))
+                let data = copyObjectArray(messageChats);
+                if(optional?.filters?.filterFields) data = applyFilters(optional,data);
+                if(optional?.filters?.date && optional?.filters?.endDate) data = applyInterval(optional, data, 'date')
+                resolve(new Response('0000',data))
             } catch (error) {
                 reject(new Response('0201'))
             }
@@ -865,7 +884,7 @@ class ServiceMessageChat implements IService {
         return new Promise((resolve, reject) => {
             try {
                 for(let i = 0; i < collection.length; i++){
-                    messageChats.push(collection[0] as MessageChat)
+                    messageChats.push(collection[i] as MessageChat)
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
@@ -1144,8 +1163,8 @@ let taxModels = [
 
 let messages = [
     new Message(1,'Maria Rico Gómez','Asunto 1','sunt in culpa qui officia deserunt',new Date("2021-01-16"),'consulta','pendiente',new Date("2021-05-16")),
-    new Message(2,'Jesús Pérez Álvarez','Asunto 2','sunt in culpa qui officia deserunt',new Date("2022-01-16"),'tarea','Nueva',new Date("2022-05-16")),
-    new Message(3,'Juan Carlos Aragón Pérez','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-01-16"),'notificación','Abierta',new Date("2023-05-16"))
+    new Message(2,'Jesús Pérez Álvarez','Asunto 2','sunt in culpa qui officia deserunt',new Date("2022-01-16"),'tarea','nueva',new Date("2022-05-16")),
+    new Message(3,'Juan Carlos Aragón Pérez','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-01-16"),'notificación','abierta',new Date("2023-05-16"))
 ]
 
 let messageChats = [
