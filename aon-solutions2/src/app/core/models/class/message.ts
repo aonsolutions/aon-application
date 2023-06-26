@@ -11,8 +11,8 @@ export class Message implements Deserializable{
     private status: string;
     private endDate: Date;
     
-    constructor(id?:number, name?: string, title?: string,description?: string,date?: Date,type?: string,status?: string,endDate?: Date){
-        this.id = id || 0;
+    constructor(name?: string, title?: string,description?: string,date?: Date,type?: string,status?: string,endDate?: Date){
+        this.id = 0;
         this.name = name || '';
         this.title = title || '';
         this.description = description || '';
