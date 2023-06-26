@@ -28,8 +28,9 @@ class InvofoxToAonTestCase {
 	@Test
 	void getValidDocument() {
 		// String documentId = "648088d6c632f4000891fa82";
+		// String documentId = "648991a57e00c10008d56923"; // BIP & DRIVE
 		String companyId = "6480556355f159000abb18eb";
-		String companyDocument = "ESB01487271"; 
+		String companyDocument = "ESA86969607";
 		OCRDocumentsParams params = OCRDocumentsParams.get()
 				.withCompany( companyId );
 				
