@@ -1,38 +1,54 @@
 @import 'src/styles.scss';
 
-.containerSelectEnterprise {
-  align-items: center;
-  display: flex;
-  height: 100%;
-  justify-content: center;
+.contTitleEnterprise {
   width: 100%;
 }
 
-.contTitleSelectEnterprise {
-  align-items: center;
-  display: flex;
+.titleAuth{
+  display       : flex;
   flex-direction: column;
-  justify-content: center;
+  align-items   : center;
+  margin-bottom : $margin-head-bottom;
 }
 
-.contTitleSelectEnterprise {
-  padding-bottom: 2rem;
+.titleAuth div{
+  font-family   : 'Roboto-Bold';
+  font-size     : $font-size-head;
+  margin-bottom : $margin-bottom;
 }
 
-.titleLogin {
-  margin-bottom: 0;
-  padding-bottom: 0.5rem;
+.titleAuth span{
+  font-size   : $font-size-head-span;
+  color       : $color-secondary;
 }
 
-.itemEnterprise {
-  align-items: center;
-  border-radius: 4px;
-  border: solid 1px $col-gray-light;
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  gap: 36.8px;
-  justify-content: flex-start;
-  margin: 1.05rem 1.20rem;
-  padding:  16px 2rem;
-}
+/*
+  Select enterprise
+*/
+  #itemEnterprise{
+    border        : $border;
+    border-radius : $border-radius;
+  }
+  #itemEnterprise div div {
+    flex-direction: row;
+    display       : flex;
+    gap           : 36.8px;
+    padding       : $padding;
+    justify-content: flex-start;
+    align-items   : center;
+    cursor        : pointer;
+    font-size     : $font-size-24;
+    margin        : $margin;
+    border-radius : $border-radius;
+    border        : $border;
+  }  
+  #itemEnterprise caption{
+    white-space   : nowrap;
+    overflow      : hidden;
+    text-overflow : ellipsis;
+    font-family   : 'Roboto-Bold';
+    font-size     : $font-size-24;
+  }
+  #itemEnterprise span{
+    color         : $color-secondary;
+  }

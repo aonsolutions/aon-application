@@ -1,28 +1,50 @@
 @import 'src/styles.scss';
 
-.cursor {
-    cursor: pointer;
-}
+::ng-deep{
+  /*
+    Border
+  */
+    mat-form-field .mat-form-field-outline-start,
+    mat-form-field .mat-form-field-outline-end {
+      border-width: $border-size-primary !important;
+      border-color: $color-border-primary !important;
+    }
 
-/* Color border input */
-::ng-deep .mat-form-field-outline-start, ::ng-deep .mat-form-field-outline-end  {
-  border-color: $col-gray-light !important;
-  z-index: -0;
-}
+    mat-form-field .mat-form-field-outline-gap {
+      border-width       : $border-size-primary !important;
+      border-bottom-color: $color-border-primary !important;
+    }
 
+    mat-form-field .mat-form-field-outline-gap {
+      border-width       : $border-size-primary !important;
+      border-bottom-color: $color-border-primary !important;
+    }
+  
+  /*
+    Border FOCUS
+  */
+    mat-form-field:focus-within .mat-form-field-outline-start,
+    mat-form-field:focus-within .mat-form-field-outline-end  {
+      border-color: $color-border-secondary !important;
+    }
+    mat-form-field:focus-within .mat-form-field-outline-gap {
+      border-bottom-color : $color-border-secondary !important;
+    }
 
-::ng-deep .mat-form-field-outline-gap {
-  border-bottom-color: $col-gray-light !important;
-}
+  /*
+    Shadow
+  */
+    mat-form-field .mat-form-field-outline{
+      box-shadow: none !important;
+    }
+    
+    
+    mat-form-field mat-label{
+      font-size   : $font-size-input-label!important;
+      font-weight : normal!important;
+      font-stretch: normal!important;
+      font-style  : normal!important;
+    }
 
-/* Color label focus y Color label por defecto */
-::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-label,
-::ng-deep .mat-form-field-label-wrapper .mat-form-field-label {
-  color: $col-black-light !important;
-  font-weight: normal !important;
-}
+} 
 
-
-::ng-deep .mat-form-field-flex {
-  height: 2.8rem !important;
-}

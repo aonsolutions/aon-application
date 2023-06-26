@@ -2,44 +2,38 @@ import { Injectable } from '@angular/core';
 import { AonSDK } from 'libraries/AonSDK/AonSDK';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ReportingService {
-
   private aonSDK: AonSDK = new AonSDK();
 
-  constructor(){}
+  constructor() {}
 
-  getVentasGastos(): Promise<any>{
-    return new Promise( (resolve,reject) => {
-      this.aonSDK.model('reporting').getVentasGastos()
-      .then(
-        (response: any) => {
+  getVentasGastos(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.aonSDK
+        .model('reporting')
+        .getVentasGastos()
+        .then((response: any) => {
           resolve(response);
-        }
-      )
-      .catch(
-        (error: any) => {
+        })
+        .catch((error: any) => {
           reject(error);
-        }
-      )
-    })
+        });
+    });
   }
 
-  getCobrosPagos(): Promise<any>{
-    return new Promise( (resolve,reject) => {
-      this.aonSDK.model('reporting').getCobrosPagos()
-      .then(
-        (response: any) => {
+  getCobrosPagos(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.aonSDK
+        .model('reporting')
+        .getCobrosPagos()
+        .then((response: any) => {
           resolve(response);
-        }
-      )
-      .catch(
-        (error: any) => {
+        })
+        .catch((error: any) => {
           reject(error);
-        }
-      )
-    })
+        });
+    });
   }
-
 }

@@ -1,54 +1,50 @@
 @import "src/styles.scss";
 
-.containerLogin {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-}
-
-.inptCont {
-  border: 1px solid $col-gray-light;
-  border-radius: 4px;
-  padding: 1.85rem 1.25rem;
-}
-
 .contTitleLogin {
   width: 100%;
 }
 
-
-.titleLogin {
-  display: flex;
+.titleAuth{
+  display       : flex;
   flex-direction: column;
-  align-items: center;
-  margin: 0 5.05rem 1.9937rem 5.3rem;
+  align-items   : center;
+  margin-bottom : $margin-head-bottom;
+}
+
+.titleAuth div{
+  font-family   : 'Roboto-Bold';
+  font-size     : $font-size-head;
+  margin-bottom : $margin-bottom;
+}
+
+.titleAuth span{
+  font-size   : $font-size-head-span;
+  color       : $color-secondary;
+}
+
+.inptCont {
+  border        : $border;
+  border-radius : $border-radius;
+  padding       : 1.85rem 1.25rem;
 }
 
 .inputLogin {
   display: flex;
+  margin-bottom: $margin-bottom;
 }
 
 .divider {
-  display: flex;
-  align-items: center;
-  margin: 1rem 0;
-  font-size: 0.625rem;;
+  display     : flex;
+  align-items : center;
+  margin      : 1rem 0;
+  color       : $color-third;
+  font-size   : 0.5rem;;
 }
 
 .divider::before, .divider::after {
-  flex: 1;
-  content: '';
-  padding: 0.025rem;
-  background-color: #5a5b6a;
-  margin: 0.25rem;
-}
-
-// Media Queries
-@media (max-width:$Small) {
-  .titleLogin {
-    margin: auto;
-    margin-bottom: 3rem;
-  }
+  flex            : 1;
+  content         : '';
+  padding         : 0.025rem;
+  background-color: $color-border-primary!important;
+  margin          : 0.25rem;
 }
