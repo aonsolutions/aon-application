@@ -23,7 +23,7 @@
     .appButton:hover{
       background-color: $background-button-hover;
     }
-    
+
     // Buton icon
       .appButton set-icon{
         margin-right  : $margin-button-icon-right;
@@ -31,8 +31,8 @@
       }
       .appButton set-icon path{
         color         : $color-primary;
-      } 
-        
+      }
+
     // Text aling
       .appButton.left{
         justify-content: left!important;
@@ -265,7 +265,7 @@
         .appButton.border-orange:hover set-icon path{
           color         : $background-button-orange;
         }
-  
+
   //
   // buton icon with background
   //
@@ -278,7 +278,7 @@
     .appButton.icon-background-orange{
       height          : 3.05rem!important;
     }
-    
+
     .appButton.icon-background app-icon,
     .appButton.icon-background-red app-icon,
     .appButton.icon-background-blue app-icon,
@@ -295,7 +295,7 @@
       margin-right    : $margin-button-icon-right;
       justify-content : center;
     }
-    
+
     .appButton.icon-background app-icon:nth-child(2),
     .appButton.icon-background-red app-icon:nth-child(2),
     .appButton.icon-background-blue app-icon:nth-child(2),
@@ -309,7 +309,7 @@
       background-color: $background-button-primary;
       margin          : 0
     }
-    
+
     .appButton.icon-background app-icon:nth-child(2) set-icon,
     .appButton.icon-background-red app-icon:nth-child(2) set-icon,
     .appButton.icon-background-blue app-icon:nth-child(2) set-icon,
@@ -319,7 +319,7 @@
     .appButton.icon-background-orange app-icon:nth-child(2) set-icon{
       margin          : 0
     }
-    
+
     .appButton.icon-background app-icon:nth-child(2) path,
     .appButton.icon-background-red app-icon:nth-child(2) path,
     .appButton.icon-background-blue app-icon:nth-child(2) path,
@@ -330,14 +330,14 @@
       color: $color-icon;
       margin: 0
     }
-    
+
     // colors
       .appButton.icon-background app-icon{
         background-color: $background-button-hover;
       }
       .appButton.icon-background:hover app-icon{
         background-color: $background-button-primary;
-        opacity: 0.7; 
+        opacity: 0.7;
       }
       .appButton.icon-background-red:hover,
       .appButton.icon-background-blue:hover,
@@ -347,7 +347,7 @@
       .appButton.icon-background-orange:hover{
         background-color: $background-button-primary;
       }
-      
+
       // red
       .appButton.icon-background-red:hover{
         border: solid $border-size-primary $color-red;
@@ -423,7 +423,7 @@
     .appButton.icon-only set-icon{
       margin-right    : 0;
     }
-    
+
   :host {
     display: flex;
     width: var(--widthHost);

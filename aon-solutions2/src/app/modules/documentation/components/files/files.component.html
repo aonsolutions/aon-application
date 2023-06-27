@@ -1,0 +1,32 @@
+<app-grid-layout
+  [navCols]="5"
+  [contentCols]="9"
+  [detailCols]="10"
+  [showDetail]="detail"
+>
+<!-- Bloque submenu izquierda -->
+  <div class="allSize" nav style="overflow: auto;">
+    <mat-grid-list class="nav-documentation" [cols]="24" [rowHeight]="'4.2rem'">
+
+      <mat-grid-tile [gridCols]="{xs:24,sm:24,md:24,lg:24,xl:24}" *ngFor="let folder of documentationListFolders">
+        <app-button class="icon-background-pink bold item-folder left" [width]="'100%'">
+          <app-icon [shape]="'folder_open'"></app-icon>
+          {{ folder.Name }}
+          <app-icon [shape]="'keyboard_arrow_right'"></app-icon>
+        </app-button>
+      </mat-grid-tile>
+
+    </mat-grid-list>
+  </div>
+
+  <!-- Bloque contenido -->
+  <div class="allSize" content style="overflow: auto;">
+    <button (click)="detail ? detail = false : detail = true">showDetail</button>
+    Content
+  </div>
+
+  <!-- Bloque detalles -->
+  <div class="allSize" detail style="overflow: auto;">
+    Detail
+  </div>
+</app-grid-layout>
