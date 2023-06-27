@@ -1,8 +1,17 @@
 const ERRORS = {
-    '0000' : {description:'OK. OPERATION SUCCED.', result:''},
-    '0101': {description:'ERROR_LOGIN_CREDENTIALS- INVALID CREDENTIALS', result:'Error al iniciar sesión'},
-    '0201': {description:'ERROR_MODEL', result:'Error al intentar acceder al modelo'},
-    '0299': {description:'ERROR_MODEL', result:'Método en construcción'},
+    '0000' : {description:'OK_OPERATION_SUCCEED', result:''},
+    '0101': {description:'ERROR_LOGIN_INVALID_CREDENTIALS', result:'Error al iniciar sesión'},
+    '0111': {description:'SESSION_EXPIRED', result:'No existe sesión'},
+    '0112': {description:'ERROR_SESSION', result:'No se ha seleccionado empresa'},
+    '0123': {description:'ERROR_MODEL', result:'Error al intentar acceder al modelo'},
+    '0124': {description:'ERROR_DENIED', result:'No tiene permiso para acceder al recurso'},
+    '0199': {description:'ERROR_NOT_IMPLEMENTED', result:'Paciencia amigo, paciencia'},
+    '0201': {description:'ERROR_MODEL_CREATE', result:'Error en la creación'},
+    '0202': {description:'ERROR_MODEL_UPDATE', result:'Error en la edición'},
+    '0203': {description:'ERROR_MODEL_DELETE', result:'Error al intentar eliminar'},
+    '0204': {description:'ERROR_MODEL_FILTER', result:'Los filtros introducidos son incorrectos'},
+    '0205': {description:'ERROR_MODEL_ELEMENT', result:'No se encontró ningún elemento para la clave introducida'},
+    '0206': {description:'ERROR_MODEL_ELEMENT', result:'Error al intentar obtener el elemento'},
 }
 
 interface IResponse {
@@ -228,7 +237,7 @@ class Factory implements IFactory {
             case 'documentnote':
                 return new ServiceDocumentNote();
             default:
-                throw new Response('0201');
+                throw new Response('0123');
         }
     }
 }
@@ -252,9 +261,9 @@ class ServiceEnterprise implements IService {
                         resolve(new Response('0000',enterprises[i]))
                     }
                 }
-                reject(new Response('0201'))
+                reject(new Response('0205'))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0206'))
             }
         });
     }
@@ -264,7 +273,7 @@ class ServiceEnterprise implements IService {
             try {
                 resolve(new Response('0000',enterprises))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0204'))
             }
         });
     }
@@ -294,7 +303,7 @@ class ServiceEnterprise implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0202'))
             }
             
         });
@@ -310,31 +319,25 @@ class ServiceEnterprise implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0203'))
             }
         });
     }
 
     setEnterprise(model:string, pKey: any): Promise <Response> {        
         return new Promise((resolve, reject) => {
-            try {
-                this.getElement('enterprise',pKey).then(
-                    (response) => {
-                        if(response != null){
-                            sessionStorage.setItem('enterprise', pKey)
-                            resolve(new Response('0000',true))
-                        }else{
-                            reject(new Response('0201'))    
-                        }
+            this.getElement('enterprise',pKey).then(
+                (response) => {
+                    if(response != null){
+                        sessionStorage.setItem('enterprise', pKey)
+                        resolve(new Response('0000',true))
+                    }else{
+                        reject(new Response('0205'))    
                     }
-                    ).catch(
-                        (error) => {
-                        reject(new Response('0201'))
-                    }
-                )
-            } catch (error) {
-                reject(new Response('0201'))
-            }
+            }).catch(
+                (error) => {
+                    reject(new Response('0199'))
+            })
         });
     }
 }
@@ -349,9 +352,9 @@ class ServiceDocument implements IService {
                         resolve(new Response('0000',documents[i]))
                     }                    
                 }
-                reject(new Response('0201'))
+                reject(new Response('0205'))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0206'))
             }
         });
     }
@@ -364,8 +367,8 @@ class ServiceDocument implements IService {
                 if(optional?.filters?.date && optional?.filters?.endDate) data = applyInterval(optional, data, 'date')
                 resolve(new Response('0000',data))
             } catch (error) {
-                reject(new Response('0201'))
-            }
+                reject(new Response('0204'))
+            } 
         });
     }
 
@@ -393,11 +396,10 @@ class ServiceDocument implements IService {
                         }
                     }
                 }
-                reject(new Response('0201'))
+                reject(new Response('0202'))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0202'))
             }
-            
         });
     }
 
@@ -411,33 +413,10 @@ class ServiceDocument implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0203'))
             }
         });
     }
-
-    // moveElement(model: string, data: Document[], path: string): Promise <Response> {
-    //     return new Promise((resolve, reject) => {
-    //         try {
-    //             for(let i = 0; i < documents.length; i++){
-    //                 for(let j = 0; j < data.length; j++){
-    //                     if(documents[i].path == data[j].path){
-    //                         let aux = true;
-    //                         for(let k = 0; k < documents.length; k++){
-    //                             if(documents[k].path == path + '/' + data[j].fileName){
-    //                                 aux = false;
-    //                             }
-    //                         }
-    //                         if(aux) documents[i].path = path + '/' + data[j].fileName;
-    //                     }
-    //                 }
-    //             }
-    //             resolve(new Response('0000',true))
-    //         } catch (error) {
-    //             reject(new Response('0201'))
-    //         }
-    //     });
-    // }
 
 }
 
@@ -451,9 +430,9 @@ class ServiceDocumentNote implements IService {
                         resolve(new Response('0000',documentNotes[i]))
                     }                    
                 }
-                reject(new Response('0201'))
+                reject(new Response('0205'))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0206'))
             }
         });
     }
@@ -464,7 +443,7 @@ class ServiceDocumentNote implements IService {
                 let data = copyObjectArray(documentNotes);
                 resolve(new Response('0000',data))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0204'))
             }
         });
     }
@@ -493,9 +472,9 @@ class ServiceDocumentNote implements IService {
                         }
                     }
                 }
-                reject(new Response('0201'))
+                reject(new Response('0202'))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0202'))
             }
             
         });
@@ -511,7 +490,7 @@ class ServiceDocumentNote implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0203'))
             }
         });
     }
@@ -528,9 +507,9 @@ class ServiceFolder implements IService {
                         resolve(new Response('0000',folders[i]))
                     }
                 }
-                reject(new Response('0201'))
+                reject(new Response('0205'))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0206'))
             }
         });
     }
@@ -542,7 +521,7 @@ class ServiceFolder implements IService {
                 if(optional?.filters?.filterFields) data = applyFilters(optional,data);
                 resolve(new Response('0000',data))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0204'))
             }
         });
     }
@@ -572,7 +551,7 @@ class ServiceFolder implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0202'))
             }
             
         });
@@ -588,22 +567,10 @@ class ServiceFolder implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0203'))
             }
         });
     }
-
-    // downloadFolder(): Promise<Response> {
-    //     return new Promise((resolve, reject) => {
-    //         fetch('https://dummyjson.com/products/1')
-    //         .then(res => {
-    //             throw new Response('0000');
-    //         })
-    //         .catch((error) => {
-    //             reject(error);
-    //         })
-    //     });
-    // }
 
 }
 
@@ -617,9 +584,9 @@ class ServiceBanks implements IService {
                         resolve(new Response('0000',banks[i]))
                     }
                 }
-                reject(new Response('0201'))
+                reject(new Response('0205'))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0206'))
             }
         });
     }
@@ -629,7 +596,7 @@ class ServiceBanks implements IService {
             try {
                 resolve(new Response('0000',banks))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0204'))
             }
         });
     }
@@ -659,7 +626,7 @@ class ServiceBanks implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0202'))
             }
             
         });
@@ -675,7 +642,7 @@ class ServiceBanks implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0203'))
             }
         });
     }
@@ -692,9 +659,9 @@ class ServiceTaxModel implements IService {
                         resolve(new Response('0000',taxModels[i]))
                     }
                 }
-                reject(new Response('0201'))
+                reject(new Response('0205'))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0206'))
             }
         });
     }
@@ -706,7 +673,7 @@ class ServiceTaxModel implements IService {
                 if(optional?.filters?.filterFields) data = applyFilters(optional,data);
                 resolve(new Response('0000', data))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0204'))
             }
         });
     }
@@ -736,7 +703,7 @@ class ServiceTaxModel implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0202'))
             }
             
         });
@@ -752,7 +719,7 @@ class ServiceTaxModel implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0203'))
             }
         });
     }
@@ -769,9 +736,9 @@ class ServiceMessage implements IService {
                         resolve(new Response('0000',messages[i]))
                     }
                 }
-                reject(new Response('0201'))
+                reject(new Response('0205'))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0206'))
             }
         });
     }
@@ -784,7 +751,7 @@ class ServiceMessage implements IService {
                 if(optional?.filters?.date && optional?.filters?.endDate) data = applyInterval(optional, data, 'date')
                 resolve(new Response('0000',data))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0204'))
             }
         });
     }
@@ -797,7 +764,7 @@ class ServiceMessage implements IService {
                 if(optional?.filters?.date && optional?.filters?.endDate) data = applyInterval(optional, data, 'date')
                 resolve(new Response('0000',data.length))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0123'))
             }
         });
     }
@@ -828,7 +795,7 @@ class ServiceMessage implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0202'))
             }
             
         });
@@ -844,7 +811,7 @@ class ServiceMessage implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0203'))
             }
         });
     }
@@ -860,9 +827,9 @@ class ServiceMessageChat implements IService {
                         resolve(new Response('0000',messageChats[i]))
                     }
                 }
-                reject(new Response('0201'))
+                reject(new Response('0205'))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0206'))
             }
         });
     }
@@ -875,7 +842,7 @@ class ServiceMessageChat implements IService {
                 if(optional?.filters?.date && optional?.filters?.endDate) data = applyInterval(optional, data, 'date')
                 resolve(new Response('0000',data))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0204'))
             }
         });
     }
@@ -905,7 +872,7 @@ class ServiceMessageChat implements IService {
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0202'))
             }
             
         });
@@ -921,7 +888,7 @@ class ServiceMessageChat implements IService {
                 }
                 resolve(new Response('0000',true));
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0203'))
             }
         });
     }
@@ -938,7 +905,7 @@ class ServiceReporting {
                 }
                 ))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0123'))
             }
         });
     }
@@ -952,7 +919,7 @@ class ServiceReporting {
                 }
                 ))
             } catch (error) {
-                reject(new Response('0201'))
+                reject(new Response('0123'))
             }
         });
     }
@@ -969,7 +936,6 @@ class ServiceAuth {
                 }
             }
             throw new Response('0101')
-            
         });
     }
 
