@@ -1,5 +1,5 @@
 import { AonElement } from "./AonElement.js";
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../environments/environments.js";3
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../environments/environments.js";
 import { AonIconButton } from "./aon-icon-button.js";
 import { AonIcon } from "./aon-icon.js";
 import "./aon-toolbar.js";
