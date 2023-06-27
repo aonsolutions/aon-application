@@ -1,0 +1,42 @@
+<app-card
+  [headerHeight]="'10%'"
+  [footerHeight]="'10%'"
+  [padding]="'0.75rem'"
+  [width]="'100%;'"
+  [height]="'16.6rem'"
+  [border]="'0.05rem solid #D2D2D6'"
+  [borderRadius]="'0.2rem'"
+>
+  <div header class="chart-header">
+    <div class="chart-header-name">
+      <div class="chart-header-line"></div>
+      <div class="chart-header-text"> {{ name }} </div>
+    </div>
+    <div class="chart-header-filters">
+      <div class="chart-header-filter-text"> {{ selected }} </div>
+      <div class="chart-header-filter-icon" [matMenuTriggerFor]="menu">
+        <set-icon shape="more_vert" set-color [ngStyle]="{ color: 'black' }" size="21"></set-icon>
+      </div>
+      <mat-menu #menu="matMenu" xPosition="before">
+        <button *ngFor="let item of items" mat-menu-item (click)="selected = item" class="menu-text">
+          {{ item }}
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+  <div body class="chart-content">
+    <app-chart
+      [chartLabels]="['Lorem', 'Ipsum', 'Dolor']"
+      [chartType]="'line'"
+      [chartData]="[
+        [350, 450, 100]
+     ]"
+    >
+    </app-chart>
+  </div>
+  <div footer class="chart-footer">
+    <div class="chart-footer-button">
+      <set-icon [attr.shape]="shape" set-color [ngStyle]="{ color: 'black' }" size="21"></set-icon>
+    </div>
+  </div>
+</app-card>

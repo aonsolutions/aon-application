@@ -45,6 +45,7 @@ import { PaginationControllerComponent } from './components/pagination-controlle
 import { GridLayoutComponent } from './layouts/grid-layout/grid-layout.component';
 import { GridColsDirective } from './directives/grid-cols.directive';
 import { ChartsModule } from 'ng2-charts';
+import { ChartComponent } from './components/chart/chart.component';
 
 
 @NgModule({
@@ -76,7 +77,8 @@ import { ChartsModule } from 'ng2-charts';
     PaginationContainerComponent,
     PaginationControllerComponent,
     GridLayoutComponent,
-    GridColsDirective
+    GridColsDirective,
+    ChartComponent
   ],
   imports: [
     CommonModule,
@@ -125,7 +127,8 @@ import { ChartsModule } from 'ng2-charts';
     PaginationContainerComponent,
     PaginationControllerComponent,
     GridLayoutComponent,
-    GridColsDirective
+    GridColsDirective,
+    ChartComponent
   ]
 })
 export class SharedModule { }
