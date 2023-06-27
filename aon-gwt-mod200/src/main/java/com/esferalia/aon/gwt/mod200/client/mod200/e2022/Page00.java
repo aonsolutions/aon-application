@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.mod200.api.model.BalanceType;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.EcpnType;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -538,6 +539,9 @@ public class Page00 extends PageAbs {
 		opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
 		opeVol.addItem("3 - Al menos 60 millones de euros");
 		opeVol.addChangeHandler( event -> {
+			DoubleVariableEx bv = new DoubleVariableEx(Mod2002022Key.VOLOPE);
+			bv.setValue((double)opeVol.getSelectedIndex());
+			callback.getMod200Object().getMod200().addVariable(bv);
 			callback.getMod200Object().doubleValueChanged(Mod2002022Key.VOLOPE, opeVol.getSelectedIndex());
 			callback.markAsDirty();
 		});
