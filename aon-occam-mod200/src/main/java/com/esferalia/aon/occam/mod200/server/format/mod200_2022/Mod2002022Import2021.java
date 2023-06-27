@@ -1028,18 +1028,18 @@ public class Mod2002022Import2021 {
 		}
 	}
 
-	public static Mod2002022 import2021(Mod2002021 mod200old) {
-		
-		try {
-			// Creamos el objeto Mod200 del ejercicio actual, donde importaremos los datos del ejercicio anterior
-			Mod2002022 mod200new = new Mod2002022();
-			import2021(mod200new, mod200old);
-			return mod200new;
-		} catch (Exception e) {
-			throw new AonCoreException(e);
-		}
-		
-	}
+//	public static Mod2002022 import2021(Mod2002021 mod200old) {
+//		
+//		try {
+//			// Creamos el objeto Mod200 del ejercicio actual, donde importaremos los datos del ejercicio anterior
+//			Mod2002022 mod200new = new Mod2002022();
+//			import2021(mod200new, mod200old);
+//			return mod200new;
+//		} catch (Exception e) {
+//			throw new AonCoreException(e);
+//		}
+//		
+//	}
 	
 	// ---- PRUEBAS ---- 
 	
@@ -1192,56 +1192,56 @@ public class Mod2002022Import2021 {
 		
 	}
 	
-	public static void main(String[] argv) {
-		
-		// Esta prueba unicamente crea un objeto del año anterior e inicializa sus casillas con 
-		// los códigos, posteriormente llama a la importacion para ver que se trasladan correctamente
-		try {			
-			Mod2002021 mod200old = new Mod2002021();
-
-			// PRUEBA - Inicializamos todas las claves con sus numeros
-
-			mod200old.setBalanceType(2); // PYMES
-			mod200old.setPygType(2); // PYMES
-			mod200old.setEcpnType(3); // No consta
-
-			for (Mod2002021Key key : Mod2002021Key.values()) {
-				try {
-					setDoubleValue2021(mod200old, key, Double.parseDouble(key.name().substring(2)));
-				} catch (NumberFormatException e) {
-					// nothing
-				}
-			}
-			for (Mod2002021KeyDC key : Mod2002021KeyDC.values()) {
-				try {
-					setDoubleValue2021(mod200old, key, Double.parseDouble(key.name().substring(2)));
-				} catch (NumberFormatException e) {
-					//// nothing
-				}
-			}
-
-			// Prueba base imponible negativa (casilla 552)
-			setDoubleValue2021(mod200old, Mod2002021Key.LQ552, -552);
-
-			// Cooperativas Casillas 17, 18 y 19. Cuota compensacion negativa (casilla 560)
-			setDoubleValue2021(mod200old, Mod2002021Key.C0017, 0);
-			setDoubleValue2021(mod200old, Mod2002021Key.C0018, 0);
-			setDoubleValue2021(mod200old, Mod2002021Key.C0019, 0);
-			setDoubleValue2021(mod200old, Mod2002021Key.LQ560, 0);
-
-			// FIN PRUEBA
-
-			Mod2002022 mod200new = import2021(mod200old);
-			toString(mod200new);
-				
-		}
-        catch (Exception e) {
-		    e.printStackTrace();
-        }
-		finally {
-			System.exit(0);
-		}
-	}
+//	public static void main(String[] argv) {
+//		
+//		// Esta prueba unicamente crea un objeto del año anterior e inicializa sus casillas con 
+//		// los códigos, posteriormente llama a la importacion para ver que se trasladan correctamente
+//		try {			
+//			Mod2002021 mod200old = new Mod2002021();
+//
+//			// PRUEBA - Inicializamos todas las claves con sus numeros
+//
+//			mod200old.setBalanceType(2); // PYMES
+//			mod200old.setPygType(2); // PYMES
+//			mod200old.setEcpnType(3); // No consta
+//
+//			for (Mod2002021Key key : Mod2002021Key.values()) {
+//				try {
+//					setDoubleValue2021(mod200old, key, Double.parseDouble(key.name().substring(2)));
+//				} catch (NumberFormatException e) {
+//					// nothing
+//				}
+//			}
+//			for (Mod2002021KeyDC key : Mod2002021KeyDC.values()) {
+//				try {
+//					setDoubleValue2021(mod200old, key, Double.parseDouble(key.name().substring(2)));
+//				} catch (NumberFormatException e) {
+//					//// nothing
+//				}
+//			}
+//
+//			// Prueba base imponible negativa (casilla 552)
+//			setDoubleValue2021(mod200old, Mod2002021Key.LQ552, -552);
+//
+//			// Cooperativas Casillas 17, 18 y 19. Cuota compensacion negativa (casilla 560)
+//			setDoubleValue2021(mod200old, Mod2002021Key.C0017, 0);
+//			setDoubleValue2021(mod200old, Mod2002021Key.C0018, 0);
+//			setDoubleValue2021(mod200old, Mod2002021Key.C0019, 0);
+//			setDoubleValue2021(mod200old, Mod2002021Key.LQ560, 0);
+//
+//			// FIN PRUEBA
+//
+//			Mod2002022 mod200new = import2021(mod200old);
+//			toString(mod200new);
+//				
+//		}
+//        catch (Exception e) {
+//		    e.printStackTrace();
+//        }
+//		finally {
+//			System.exit(0);
+//		}
+//	}
 	
 }
 

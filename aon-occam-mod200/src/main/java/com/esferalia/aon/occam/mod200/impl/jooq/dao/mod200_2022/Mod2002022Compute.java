@@ -841,7 +841,7 @@ public class Mod2002022Compute {
 				}
 				
 				// Desglose [565], subtotales [1695] y [1729] solo leen filas pares
-				// Desglose [1890][243], subtotal [1889] solo lee filas impares
+				// Desglose [1890][243], subtotal [1889] solo lee filas pares
 				if (totalRowKey == Mod2002022Key.BN1695 || totalRowKey == Mod2002022Key.BN1729 ||
 					totalRowKey == Mod2002022Key.LQ1889) {
 					if (row % 2 != 0)
@@ -968,14 +968,14 @@ public class Mod2002022Compute {
 		}		
 	}	
 	
-	public static void main(String[] args) {
-				
-		for (int i = 0; i < COMPUTE_EXPRESSION_MAP.size(); i++) {
-			System.out.println(
-					COMPUTE_EXPRESSION_MAP.keySet().toArray()[i] + " -> " +
-					COMPUTE_EXPRESSION_MAP.values().toArray()[i]   );			
-		}
-		
-    }
+//	public static void main(String[] args) {
+//				
+//		for (int i = 0; i < COMPUTE_EXPRESSION_MAP.size(); i++) {
+//			System.out.println(
+//					COMPUTE_EXPRESSION_MAP.keySet().toArray()[i] + " -> " +
+//					COMPUTE_EXPRESSION_MAP.values().toArray()[i]   );			
+//		}
+//		
+//    }
 
 }

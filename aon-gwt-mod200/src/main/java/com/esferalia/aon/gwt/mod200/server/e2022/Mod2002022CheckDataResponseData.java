@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.mod200.server.e2022;
 
 import java.io.IOException;
 
-import com.esferalia.aon.gwt.mod200.server.ModelAdmonUtils;
+import com.esferalia.aon.gwt.mod200.server.Model200AdmonUtils;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.mod200.api.MODEL2002022;
@@ -23,19 +23,19 @@ public class Mod2002022CheckDataResponseData extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
-			AEATParams params = ModelAdmonUtils.getAEATParams(req);
+			AEATParams params = Model200AdmonUtils.getAEATParams(req);
 			Occam occam = new Occam()
 					.setDomainName(params.getDomainName())
 					.setDomain(params.getDomainId())
 					.setUser(params.getUser());
 			Mod2002022 mod2002022 = MODEL2002022.getMod2002022ById(occam, params.getMod());
 			if (mod2002022 == null) {
-				ModelAdmonUtils.giveExceptionBack(resp, "Declaración no encontrada" );
+				Model200AdmonUtils.giveExceptionBack(resp, "Declaración no encontrada" );
 			}
-			ModelAdmonUtils.giveDataResponseDataBack(resp, params, mod2002022);			
+			Model200AdmonUtils.giveDataResponseDataBack(resp, params, mod2002022);			
 			
 		} catch (AonCoreException e ) {
-			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			Model200AdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
 	}
 }

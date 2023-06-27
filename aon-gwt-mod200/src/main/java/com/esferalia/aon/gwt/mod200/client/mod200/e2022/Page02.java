@@ -439,8 +439,6 @@ public class Page02 extends PageAbs {
 		
 		// NIF de la/las sociedad/es disuelta/s
 		
-		//AonDisplayTable tabSicav1 = addRegistryTable("NIF de la/las sociedad/es disuelta/s");
-		
 		AonDisplayTable tabSicav1 = new AonDisplayTable();
 		tabSicav1.setWidth("30%");
 		tabSicav1.addStyleName(AON.CSS.aonBlockCenter());
@@ -487,7 +485,6 @@ public class Page02 extends PageAbs {
 		
 		// NIF de la/las IIC donde reinvierte
 		
-//		AonDisplayTable tabSicav2 = addRegistryTable("NIF de la/las IIC donde reinvierte");
 		AonDisplayTable tabSicav2 = new AonDisplayTable();
 		tabSicav2.setWidth("30%");
 		tabSicav2.addStyleName(AON.CSS.aonBlockCenter());

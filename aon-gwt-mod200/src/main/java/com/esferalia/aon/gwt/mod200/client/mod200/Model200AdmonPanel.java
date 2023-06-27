@@ -43,27 +43,7 @@ import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class Model200AdmonPanel extends DockLayoutPanel {
 	
-//	public static interface IFiscalModelAdmonPanelCallback<T,O> {
-//		O getOptions();
-//		T getModel();
-//		void showError(String string);
-//		
-//		String getModelInformationURL();
-//		String getValidatePrintAction();
-//		String getDownloadFileAction();
-//		String getSendAction();
-//		void sendSuccessfully();
-//		String getCheckAction();
-//		String getCheckDataResponseDataAction();
-////		default boolean isBoeFormatEnabled() {
-////			return false;
-////		}
-//		boolean isDirty();
-//		String getImportAccountingAction();
-//	}
-	
 	private API api;
-//	private IFiscalModelAdmonPanelCallback<T,O> callback;
 	private IModel200PageCallback callback;
 	
 	private FormPanel diskForm = new FormPanel("_blank");
@@ -71,7 +51,6 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 	private Hidden domainIdHidden = new Hidden("domainId");
 	private Hidden domainNameHidden = new Hidden("domainName");
 	private Hidden userHidden = new Hidden("user");
-//	private Hidden boeFormatHidden = new Hidden("boeFormat");
 	
 	private DeckLayoutPanel deckLayoutPanel;
 	private SimpleLayoutPanel aeatPanel;
@@ -85,7 +64,6 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 	
 	private AonLink validateLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconValid(), "Validar / Borrador PDF via AEAT");
 	private AonLink downloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n");
-//	private AonLink boeDownloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n. [Formato BOE]");
 	private AonLink sendLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconSend(), "Envio de la presentaci\u00F3n a la AEAT.");
 	private AonLink checkLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconAeatBw(), "Consultar Presentaci\u00F3n en AEAT.");
 	private AonLink viewDocumentLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconPdf(), "Consultar Presentaci\u00F3n guardada.");
@@ -112,7 +90,6 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 		diskFormPanel.add(domainIdHidden);
 		diskFormPanel.add(domainNameHidden);
 		diskFormPanel.add(userHidden);
-//		diskFormPanel.add(boeFormatHidden);
 		diskForm.setWidget(diskFormPanel);
 		
 		FlowPanel formContainer = new FlowPanel();
@@ -141,9 +118,6 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 		downloadLink.addClickHandler(event -> downloadFile()); 
 		cards.add( downloadLink );
 		
-//		boeDownloadLink.addClickHandler(event -> downloadFile(true)); 
-//		cards.add( boeDownloadLink );
-
 		sendLink.addClickHandler(event -> sendToAdministration()); 
 		cards.add( sendLink );
 		
@@ -179,7 +153,8 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 		return this.api;
 	}
 	
-	private void cleanViewers() {
+	//private void cleanViewers() {
+	public void cleanViewers() {
 		if (aeatPanel != null) {
 			aeatPanel.clear();
 		}
@@ -246,20 +221,6 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 		requestData.append("&"+IRequestParamsNames.AEAT_PARAMS +"=" + JsonParams.convert( params ));
 		xhr.send(requestData.toString());
 	}
-	
-//	private void downloadFile() {
-//		cleanViewers();
-//		downloadFile(false);	
-//	}
-//
-//	private void downloadFile (boolean boeFormat) {
-//		if (getCallback().getModel().canBeSent() || getCallback().getModel().isSent()) {
-//			boeFormatHidden.setValue(Boolean.toString(boeFormat));
-//			submitForm(getCallback().getDownloadFileAction());
-//		} else {
-//			getCallback().showError(AON.MSG.mustFinishModel());
-//		}
-//	}
 	
 	private void importAccounting() {
 		cleanViewers();

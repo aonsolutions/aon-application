@@ -83,11 +83,6 @@ public class Model200 extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	
-// POR AHORA NO SE MUESTRA NADA EN EL PANEL DE INFORMACION DE LA PARTE INFERIOR, POR LO TANTO NO SE UTILIZA
-// ANTES EN LA PARTE INFERIOR DEL MODELO 200 SE MOSTRABAN LOS ERRORES, PERO AHORA LOS ERRORES APARECEN EN EL 
-// PANEL SUPERIOR POR LO TANTO EL PANEL INFERIOR POR AHORA NO CONTIENE NADA
-//	private static final int INFORMATION_TAB = 0;
-	
 	public static final Mod200ServiceAsync MOD200_SERVICE;
 	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
@@ -112,14 +107,9 @@ public class Model200 extends MainEntryPoint {
 	private Model200ModuleOptions options;
 
 	private AonLayoutPanel aonLayout;
-//	private SplitLayoutPanel splitLayoutPanel;
 	private SimpleLayoutPanel declarationContainer;
 	
 	private Model200Table model200Table;
-	
-//	private AonMinimizePanel footPanel;
-//	private TabLayoutPanel tabLayout;
-//	private ScrollPanel breakdownPanel;
 	
 	public static Mod2002022ServiceAsync getMod2002022Service() {
 		if (mod2002022Service == null) {
@@ -208,7 +198,6 @@ public class Model200 extends MainEntryPoint {
 			cleanErrorMessage();
 			declarationContainer.setWidget(model200Table);
 			model200Table.refresh( new Model200Callback() );
-//			closeFootPanel();
 		}
 		public void removed() {
 			canceled();
@@ -242,7 +231,6 @@ public class Model200 extends MainEntryPoint {
 				cleanErrorMessage();
 				declarationContainer.setWidget(model200Table);
 				model200Table.refresh( new Model200Callback() );
-//				closeFootPanel();
 			}
 		}
 		
@@ -265,19 +253,10 @@ public class Model200 extends MainEntryPoint {
 		
 		@Override
 		public void showInfoPanel(String htmlText) {
-//			openFootPanelIfNeeded();
-//			tabLayout.selectTab(INFORMATION_TAB);
-//			HTMLPanel panel = new HTMLPanel(htmlText);
-//			breakdownPanel.setWidget(panel);
-//			breakdownPanel.scrollToTop();
 		}
 
 		@Override
 		public void cleanInfoPanel() {
-//			Widget w = breakdownPanel.getWidget();
-//			if (w != null) {
-//				breakdownPanel.remove( breakdownPanel.getWidget() ); 
-//			}
 		}
 
 		public void reset(Model200ModuleOptions options, Mod200 mod200) {
@@ -333,16 +312,7 @@ public class Model200 extends MainEntryPoint {
 
 		aonLayout = new AonLayoutPanel();
 		
-// POR AHORA NO APARECE NADA EN LA PARTE INFERIOR DE INFORMACION, APARECIAN LOS ERRORES QUE
-// AHORA APARECEN EN EL PANEL SUPERIOR DE ERRORES, POR ESO NO LO MUESTRO
-// SE PODRIA PONER POR EJEMPLO AL INFORMACION DE LAS CASILLAS CALCULADAS O ALGO ASI, PERO PARA 
-// ESO HABRIA QUE PREPARARLO CON LO QUE QUERAMOS QUE SALGA
-//		splitLayoutPanel = new SplitLayoutPanel( 2 );
-//		aonLayout.add(splitLayoutPanel);
-		
 		declarationContainer = new SimpleLayoutPanel();
-//		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
-//		splitLayoutPanel.add(declarationContainer);
 		aonLayout.add(declarationContainer);
 		
 		model200Table = new Model200Table(new Model200Callback());
@@ -359,38 +329,6 @@ public class Model200 extends MainEntryPoint {
 			model200Table.refresh(new Model200Callback());
 		}
 	}
-	
-//	private AonMinimizePanel getMinimizePanel() {
-//		footPanel = new AonMinimizePanel();
-//		footPanel.addMinimizeHandler( event -> closeFootPanel() );
-//		footPanel.addMaximizeHandler( event -> {
-//			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
-//			splitLayoutPanel.animate(500);
-//		});
-//		footPanel.setStyleName(AON.CSS.aonSelector());
-//		tabLayout = new TabLayoutPanel(26, Unit.PX);
-//		tabLayout.setWidth("100%");
-//		footPanel.add(tabLayout);
-//		
-//		breakdownPanel = new ScrollPanel();
-//		tabLayout.add(breakdownPanel, AON.MSG.informationBreakdown());
-//
-//		tabLayout.setAnimationDuration(300);
-//		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
-//		return footPanel; 
-//	}
-	
-//	private void closeFootPanel() {
-//		splitLayoutPanel.setWidgetSize(footPanel, 30);
-//		splitLayoutPanel.animate(500);
-//	}
-	
-//	private void openFootPanelIfNeeded() {
-//		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
-//			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
-//			splitLayoutPanel.animate(500);
-//		}
-//	}
 	
 	private void onSelectionChange(Model200ModuleOptions options, SelectionEvent<Mod200> event) {
 		Mod200 sel = event.getSelectedItem();

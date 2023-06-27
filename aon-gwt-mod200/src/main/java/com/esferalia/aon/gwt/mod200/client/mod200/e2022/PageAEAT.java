@@ -19,7 +19,7 @@ public class PageAEAT extends PageAbs {
 	
 	@Override
 	protected void setEnabled() {
-		admonPanel.manageLinks();		
+		admonPanel.manageLinks();
 	}
 	
 }

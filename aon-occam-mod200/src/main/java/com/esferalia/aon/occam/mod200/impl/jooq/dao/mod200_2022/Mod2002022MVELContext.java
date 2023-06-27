@@ -1006,8 +1006,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		
 	}
 	
-	// FALTA - Casilla 619: Cuota líquida mínima (art. 30 bis.2 LIS)  
-	// PAGINAS 175-185 DEL PADIS - NUEVA CASILLA COMPROBAR COMO SE CALCULA
+	// Casilla 619: Cuota líquida mínima (art. 30 bis.2 LIS)  
 	public double computeBN619() throws AonCoreException {
 		
 		// Estarán excluidos de la tributación mínima los contribuyentes que hayan marcado alguno de los 
@@ -1033,61 +1032,6 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 
 			// CALCULO DE LA TRIBUTACION MINIMA
 
-//		Se podrá marcar un check que llevará el siguiente texto
-//		:
-//		"Inoperatividad del orden de cumplimentación de deduccionesdel tramo 2".
-//		En el caso de que se marque este check será el contribuyente el que cumplimente de forma manual los importes de las deducciones del tramo 2 correspondientes a la columna deducción aplicada (no estará operativo el check de aplicar el importe máximo). Los importes de deducciones que ya se hubieran cumplimentado en el tramo 2 se mantendrán en las casillas correspondientes a las columnas "importe pendiente ejercicios anteriores/generado en el ejercicio" pero se borrarán los importes que figuren en las casillas "importe deducción aplicada en esta liquidación" para que sea el contribuyente quien introduzca de forma manual los importes que desee aplicar. En caso de desmarcar el check se volverá a la situación anterior
-
-// CALCULO DE LA CASILLA 619
-			
-//			ESPECIFICACIONES INCLUIDAS EN SOCIEDADES WEB 2022 
-//			M1 = clave 01330 x 0,15 
-//			 Si 00071--> M1 = clave 01330 x 0,10 
-//
-//			 Si 00024 y 00034--> M1= clave 01330 x 0,18 
-//
-//			 Si 00017, 00018 y 00019--> M1 = clave 00562 x 0,60 
-//
-//			 Si 00015 y 00079 --> M1= clave (01330 - 00559) x 0,15 
-//
-//			 Si 00015 o 00079 con 00024--> M1= clave (01330 - 00559) x 0,18 
-//
-//			M2 = 00562 + 01038 - tramo1 
-//			M3 = M2 - tramo3 
-//			M4= M3 - tramo 2 (aplicado con su límite) - tramo 4. 
-//
-//			Empresas de desarrollo de software 
-//			SOCIEDADES WEB 2022 Página 14 
-//			184 
-//			 Si M3 > M1 Aviso POP UP: "Podrá aplicarse deducciones del tramo 2 (casillas 00583, 00585, 00584, 00588, 00565, 01040 y/o 01041)por el importe de XXXXX euros (será la diferencia entre M3 y M1)". 
-//
-//			 Si M3 < M1 Tramo 2 = 0. Si tramo 2 (deducciones aplicadas) distinto de 0 Error POP UP 
-//
-//			 Si deducciones aplicadas de tramo 2 > M3 - M1 Error POP UP 
-//
-//			Traslado a la casilla 00619 : 
-//			Si M4 > M1  M1 a la 00619 
-//			Si M1 >= M4  M4 a la 00619
-		
-			
-//Cuando se marque el check : "Inoperatividad del orden de cumplimentación de deducciones del tramo 2", el cálculo se realizará: 
-//Con carácter general--> M1 = clave 01330 x 0,15 
-//Si 00071--> M1 = clave 01330 x 0,10 
-//Si 00024 y 00034--> M1= clave 01330 x 0,18 
-//Si 00017, 00018 y 00019--> M1 = clave 00562 + 01038 x 0,60 
-//Si 00015 y 00079 --> M1= clave (01330 - 00559) x 0,15 
-//Si 00015 o 00079 con 00024--> M1= clave (01330 - 00559) x 0,18 
-//M2 = 00562 + 01038 - tramo1 
-//M3 = M2 - tramo 2 aplicado con su límite - tramo 4 
-//M4= M3 - tramo4 
-//
-//Si M2 > M1 Aviso: "Podrá aplicarse deducciones del tramo 2 (casillas 00583, 00585, 00584, 00588, 00565, 01040 y/o 01041)por el importe XXXXX euros (será la diferencia entre M2 y M1)". POP UP 
-//Si M2 < M1 Tramo 2 = 0. Si tramo 2 distinto de 0 Error POP UP 
-//Si deducciones aplicadas de tramo 2 > M2 - M1 Error POP UP 
-//Traslado a la 00619 
-//Si M4 > M1 M1 a la 00619 
-//Si M1 >= M4 M4 a la 00619
-
 			double lq1330 = roundKey(Mod2002022Key.LQ1330);
 			double lq562 = roundKey(Mod2002022Key.LQ562);
 			double lq1038 = roundKey(Mod2002022Key.LQ1038);
@@ -1111,21 +1055,21 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 					m1 = (lq1330 - lq559) * 0.15;
 			}
 			
-			// ESTO ES HACIENDO EL CALCULO DE LA SEGUNDA FORMA, IGUAL HAY QUE HACERLO DE LA PRIMERA
-
-			double tramo1 = ComputeTramo(TRAMO_1); // FALTA
-			double tramo2 = ComputeTramo(TRAMO_2); // FALTA tramo 2 aplicado con su límite
-			double tramo4 = ComputeTramo(TRAMO_4); // FALTA
-
-			double m2 = lq562 + lq1038 - tramo1;
-			double m3 = m2 - tramo2 - tramo4;
-			double m4 = m3 - tramo4;
-
-			// Traslado a la 00619
-			// Si M4 > M1 M1 a la 00619
-			// Si M1 >= M4 M4 a la 00619
+			double tramo1 = computeSection(TRAMO_1); 
+			double tramo2 = computeSection(TRAMO_2); 
+			double tramo3 = computeSection(TRAMO_3); 
+			double tramo4 = computeSection(TRAMO_4); 
 			
-			System.out.println("CUOTA MINIMA: M1="+m1+" M2="+m2+" M3="+m3+" M4="+m4+" tramo1="+tramo1+" tramo2="+tramo2+" tramo4="+tramo4);
+			double m2 = lq562 + lq1038 - tramo1; 
+			double m3 = m2 - tramo3;			
+			if (m3<m1)
+				tramo2 = 0;
+			else if (tramo2 > m3-m1) {
+				tramo2 = m3-m1;
+			}
+			double m4 = m3 - tramo2 - tramo4;
+			
+			// System.out.println("CUOTA MINIMA: M1="+m1+" M2="+m2+" M3="+m3+" M4="+m4+" tramo1="+tramo1+" tramo2="+tramo2+" tramo3="+tramo3+" tramo4="+tramo4);
 
 			if (m4 > m1)
 				return m1;
@@ -1134,80 +1078,22 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		}
 		else {
 			// La tributación mínima no es aplicable
-			System.out.println("CUOTA MINIMA: NO APLICABLE");
 			return 0.0;
 		}		
 	
 	}
 	
-	private double ComputeTramo(Mod2002022Key[] tramo) {
+	private double computeSection(Mod2002022Key[] section) {
 		double result = 0;
 		
-		for (Mod2002022Key key : tramo) {
+		for (Mod2002022Key key : section) {
 			result = result + roundKey(key);
 		}
 		
 		return result;
 	}
 	
-//	TRAMO 1 DE DEDUCCIONES Y BONIFICACIONES
-//	BONIFICACIONES
-//	- 00567 Bonificación rentas obtenidas en Ceuta y Melilla (artículo 33 L.I.S.)
-//	- 00568 Bonificaciones por prestación de servicios (artículo 34 L.I.S.)
-//	- 00563 Bonificación rendimientos por ventas bienes corporales producidos en Canarias (artículo 26 de la Ley 19/1994)
-//	- 00566 Bonificaciones sociedades cooperativas (Ley 20/1990) Empresas de desarrollo de software
-//	- 00576 Bonificaciones entidades dedicadas al arrendamiento de viviendas
-//	- 00569 Otras bonificaciones
-//	BONIFICACIONES NAVIERAS EN CANARIAS
-//	- 00581 Bonificaciones empresas navieras en Canarias (artículo 76 de la Ley 19/1994)
-//	DEDUCCIÓN POR INVERSIONES Y GASTOS REALIZADOS POR LAS AUTORIDADES PORTUARIAS
-//	- 01287 Deducción autoridades portuarias 2020
-//	- 01290 Deducción autoridades portuarias 2021
-//	- 01293 Deducción autoridades portuarias 2022 (*)
-//	- 01296 Deducción autoridades portuarias 2022
-//	DEDUCCIONES DOBLE IMPOSICIÓN
-//	Para su aplicación se tendrá en cuenta el año límite de aplicación:
-//	- 00575 Transparencia fiscal internacional
-//	- 00577 Deducciones por doble imposición intersocietaria al 5/10% (cooperativas)
-//	- 00847 Deduc. doble imp. interna 2008
-//	- 00638 Deduc. doble imp. Internacional 2005
-//	- 00283 Deduc. doble imp. interna 2009
-//	- 00894 Deduc. doble imp. internacional 2006
-//	- 00703 Deduc. doble imp. interna 2010
-//	- 00286 Deduc. doble imp. internacional 2007
-//	- 00187 Deduc. doble imp. interna 2011
-//	- 00826 Deduc. doble imp. internacional 2008
-//	- 00026 Deduc. doble imp. interna 2012
-//	- 00002 Deduc. doble imp. internacional 2009
-//	- 00715 Deduc. doble imp. interna 2013
-//	- 00029 Deduc. doble imp. internacional 2010 Empresas de desarrollo de software
-//	SOCIEDADES WEB 2022 Páginas 17, 18, 18 bis y 18 ter
-//	317
-//	- 00737 Deduc. doble imp. interna 2014
-//	- 00718 Deduc. doble imp. internacional 2011
-//	- 00120 Deduc. doble imp. interna DT 23.1 LIS 2015
-//	- 00723 Deduc. doble imp. internacional 2012
-//	- 00125 Deduc. doble imp. Interna DT 23.1 LIS 2016
-//	- 00741 Deduc. doble imp. internacional 2013
-//	- 01598 Deduc. doble imp. interna DT 23.1 LIS 2017
-//	- 00136 Deduc. doble imp. internacional 2014
-//	- 01831 Deduc. doble imp. interna DT 23.1 LIS 2018
-//	- 01052 Deduc. doble imp. internacional 2015
-//	- 02199 Deduc. doble imp. interna DT 23.1 LIS 2019
-//	- 01351 Deduc. doble imp. internacional 2016
-//	- 02322 Deduc. doble imp. interna DT 23.1 LIS 2020
-//	- 01773 Deduc. doble imp. internacional 2017
-//	- 00205 Deduc. doble imp. interna DT 23.1 LIS 2021
-//	- 01836 Deduc. doble imp. internacional 2018
-//	- 00438 Deduc. doble imp. interna DT 23.1 LIS 2022 (*)
-//	- 00128 Deduc. doble imp. interna DT 23.1 LIS 2022
-//	- 02204 Deduc. doble imp. internacional 2019
-//	- 02327 Deduc. doble imp. internacional 2020
-//	- 00212 Deduc. doble imp. internacional 2021
-//	- 00493 Deduc. doble imp. internacional 2022(*)
-//	- 00165 Deduc. doble imp. internacional 2022 Imp. soportado por el contribuyente
-//	- 00169 Deduc. doble imp. internacional 2022: Dividendos y particip. en beneficios
-	
+	// TRAMO 1 DE DEDUCCIONES Y BONIFICACIONES
 	private static final Mod2002022Key[] TRAMO_1 = new Mod2002022Key[] {
 			Mod2002022Key.BN567,
 			Mod2002022Key.BN568,
@@ -1260,341 +1146,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 			Mod2002022Key.BN169
 	};
 	
-	
-//	TRAMO 2 DEDUCCIONES
-//	OTRAS DEDUCCIONES
-//	- 00583 Apoyo fiscal a la inversión y otras
-//	DEDUCCIONES DE AÑOS ANTERIORES POR INVERSIONES (EXCEPTO CANARIAS) Empresas de desarrollo de software
-//	2004
-//	- 00289 Suma deducciones Cap. IV Tít. VI Ley 43/95 2004
-//	2005
-//	- 00467 Suma deducciones Cap. IV Tít. VI Ley 43/95 y RDLeg. 4/2004 2005
-//	2006
-//	- 00498 Suma deducciones Cap. IV Tít. VI Ley 43/95 y RDLeg. 4/2004 2006
-//	2007
-//	- 00473 Suma deducciones Cap. IV Tít. VI Ley 43/95 y RDLeg. 4/2004 2007
-//	- 00005 Deducción art. 42 RDLeg. 4/2004 2007
-//	2008
-//	- 00181 Suma deducciones Cap. IV Tít. VI Ley 43/95 y RDLeg. 4/2004 2008
-//	- 00032 Deducción art. 42 RDLeg. 4/2004 2008
-//	2009
-//	- 00532 Suma deducciones Cap. IV Tít. VI Ley 43/95 y RDLeg. 4/2004 2009
-//	- 00023 Deducción art. 42 RDLeg. 4/2004 2009
-//	2010
-//	- 00946 Suma deducciones Cap. IV Tít. VI Ley 43/95 y RDLeg. 4/2004 2010
-//	- 00041 Deducción art. 42 RDLeg. 4/2004 2010
-//	2011
-//	- 00961 Suma deducciones Cap. IV Tít. VI Ley 43/95 y RDLeg. 4/2004 2011
-//	- 00139 Deducción art. 42 RDLeg. 4/2004 2011
-//	2012
-//	- 00185 Suma deducciones Cap. IV Tít. VI Ley 43/95 y RDLeg. 4/2004 2012
-//	- 00142 Deducción art. 42 RDLeg. 4/2004 2012
-//	2013
-//	- 00458 Investigación y desarrollo (CT) 2013
-//	- 00461 Innovación tecnológica (IT) 2013
-//	- 00967 Suma deducciones Cap. IV Tít. VI Ley 43/95 y RDLeg. 4/2004 2013
-//	- 00189 Deducción art. 42 RDLeg. 4/2004 2013
-//	2014
-//	- 01067 Investigación y desarrollo (CT) 2014
-//	- 01070 Innovación tecnológica (IT) 2014
-//	- 01064 Suma deducciones Cap. IV Tít. VI Ley 43/95, RDLeg. 4/2004 y LIS 2014
-//	- 00804 Deducción art. 42 RDLeg. 4/2004 2014
-//	2015
-//	- 00810 Investigación y desarrollo (CT) 2015
-//	- 00591 Innovación tecnológica (IT) 2015
-//	- 02295 Suma deducciones Cap. IV Tít. VI Ley 43/95, RDLeg. 4/2004 y LIS 2015
-//	- 01056 Deducción DT 24ª. 7 LIS 2015
-//	2016
-//	- 01618 Investigación y desarrollo (CT) 2016
-//	- 01621 Innovación tecnológica (IT) 2016
-//	- 02298 Suma deducciones Cap. IV Tít. VI Ley 43/95, RDLeg. 4/2004 y LIS 2016
-//	- 00708 Deducción DT 24ª. 7 LIS 2016
-//	2017
-//	- 00750 Periodificación 2017
-//	- 01851 Investigación y desarrollo (CT) 2017
-//	- 01854 Innovación tecnológica (IT) 2017
-//	- 02500 Suma deducciones Cap. IV Tít. VI Ley 43/95, RDLeg. 4/2004 y LIS 2017
-//	- 01354 Deducción DT 24ª. 7 LIS 2017
-//	02018
-//	- 00753 Periodificación 2018
-//	- 02222 Investigación y desarrollo (CT) 2018 Empresas de desarrollo de software
-//	- 02225 Innovación tecnológica (IT) 2018
-//	- 02092 Suma deducciones Cap. IV Tít. VI Ley 43/95, RDLeg. 4/2004 y LIS 2018
-//	- 01776 Deducción DT 24ª. 7 LIS 2018
-//	2019
-//	- 00756 Periodificación 2019
-//	- 02357 Investigación y desarrollo (CT) 2019
-//	- 02360 Innovación tecnológica (IT) 2019
-//	- 02095 Suma deducciones Cap. IV Tít. VI Ley 43/95, RDLeg. 4/2004 y LIS 2019
-//	- 01839 Deducción DT 24ª. 7 LIS 2019
-//	2020
-//	- 00759 Periodificación 2020
-//	- 00229 Investigación y desarrollo (CT) 2020
-//	- 00235 Innovación tecnológica (IT) 2020
-//	- 02098 Suma deducciones Cap. IV Tít. VI Ley 43/95, RDLeg. 4/2004 y LIS 2020
-//	- 02207 Deducción DT 24ª. 7 LIS 2020
-//	2021
-//	- 00762 Periodificación 2021
-//	- 00781 Investigación y desarrollo (CT) 2021
-//	- 00787 Innovación tecnológica (IT) 2021
-//	- 02146 Suma deducciones Cap. IV Tít. VI Ley 43/95, RDLeg. 4/2004 y LIS 2021
-//	- 02330 Deducción DT 24ª. 7 LIS 2021
-//	DEDUCCIONES DE 2022 POR INVERSIONES (EXCEPTO CANARIAS)
-//	- 00745 Periodificación 2022(*)
-//	- 00783 Periodificación 2022
-//	- 02450 Suma deducciones Cap. IV Tít. VI Ley 43/95, RDLeg. 4/2004 y LIS 2022(*)
-//	- 01364 Investigación y desarrollo (CT) 2022(*)
-//	- 01367 Innovación tecnológica (IT) 2022(*)
-//	- 00796 Deducción por creación empleo trabaj. con discapacidad (CE) Empresas de desarrollo de software
-//	- 00793 Contribuciones empresariales a sistemas de previsión social empresarial (CPS)
-//	- 00799 Investigación y desarrollo (CT)
-//	- 00698 Innovación tecnológica (IT)
-//	- 00888 Deducción por inversión de beneficios (IB)
-//	- 00808 Producciones cinematográficas españolas (PC)
-//	- 02463 Financiador: producciones cinematográficas españolas (FPC)
-//	- 01076 Productor: Espectáculos en vivo de artes escénicas y musicales (EV)
-//	- 02456 Financiador: espectáculos en vivo de artes escénicas y musicales (FEV)
-//	- 01370 Gastos e inversiones de sociedades forestales (SF)
-//	- 01627 4ª Edición de la Barcelona World Race (4BWR)
-//	- 01639 V Centenario de la expedición de la primera vuelta al mundo de Fernando de Magallanes y Juan Sebastián Elcano (EPVM)
-//	- 01708 Plan Decenio Millarium Monserrat 1025-2025 (PDMM)
-//	- 01908 Año Santo Jacobeo 2021 (J21)
-//	- 01911 VIII Centenario de la Catedral de Burgos 2021 (CB21)
-//	- 01935 Expo Dubai 2020 (D20)
-//	- 02363 Plan Berlanga (PB)
-//	- 02366 Alicante 2021. Salida vuelta al mundo a vela (A21)
-//	- 02369 España País Invitado de Honor en la Feria del Libro de Fráncfort en 2022 (E22)
-//	- 02372 Plan de Fomento de la ópera en la Calle del Teatro Real (FO)
-//	- 02375 175 Aniversario de la construcción del Gran Teatre del Liceu (TL)
-//	- 02378 Gran Premio de España de Fórmula 1 (F1)
-//	- 00255 El tiempo de la Libertad. Comuneros V Centenario (CVC)
-//	- 00260 Bicentenario de la independencia de las Repúblicas Iberoamericanas (BIR)
-//	- 00263 150 aniversario de creación de la Academia de España en Roma (AER)
-//	- 00269 Celebración del Summit MADBLUE (SM)
-//	- 00273 30 aniversario de la Escuela Superior de Música Reina Sofía (RS)
-//	- 00292 Año Santo Guadalupense 2021 (G21)
-//	- 00295 Torneo Davis Cup Madrid (DCM)
-//	- 00298 Madrid Horse Week 21/23 (HW21)
-//	- 00316 Centenario del Rugby en España y de la Unió Esportiva Santboiana (CRE)
-//	- 00349 Solheim Cup 2023 (SC23)
-//	- 00353 IX Centenario de la Reconquista de Sigüenza (CRS) Empresas de desarrollo de software
-//	- 00367 Barcelona Mobile World Capital (BMWC)
-//	- 00401 Valencia, Capital Mundial del Diseño 2022/Valencia World Design Capital 2022 (VD22)
-//	- 00407 Cincuenta aniversario de la Universidad Nacional de Educación a Distancia (UNED)
-//	- 00423 Centenario de Revista de Occidente (RO)
-//	- 00428 50 aniversario del fallecimiento de Clara Campoamor. 90 años del inicio de una democracia plena (CC)
-//	- 00431 V Centenario del fallecimiento de Elio Antonio de Nebrija (FN)
-//	- 00434 Nuevas Metas II (NMII)
-//	- 00440 Andalucía Región Europea del Deporte 2021 (AD21)
-//	- 00453 75 aniversario de la Ópera en Oviedo (OD)
-//	- 00456 Hábitos saludables para el control del riesgo Cardiovascular	«Aprender a cuidarnos» (HSRC)
-//	- 00469 Mundiales Bádminton España (MBE)
-//	- 00479 Centenario de la Batalla de Covadonga-Cuadonga (CBC)
-//	- 00502 VII Centenario de la Catedral de Palencia 2021-2022 (CCP)
-//	- 00511 FITUR especial: recuperación turismo (FE)
-//	- 00523 Programa Deporte Inclusivo II (DI2)
-//	- 00542 Valencia 2020-2021, Año Jubilar. Camino del Santo Cáliz (VAJ)
-//	- 00801 Enfermedades Neurodegenerativas. Año Internacional de la Investigación e Innovación. Período 2021-2022 (EN21)
-//	- 00816 50 aniversario del Hospital Sant Joan de Deu (HSJD)
-//	- 02459 Andalucía Valderrama Masters 2022/2024 (AVM22)
-//	- 00875 Bicentenario de la Policía Nacional (PN)
-//	- 00879 Centenario Federación Aragonesa de Fútbol (FAF)
-//	- 00906 Plan 2030 de Apoyo al Deporte de Base (P30)
-//	- 00955 Universo Mujer III (UM3)
-//	- 01087 Programa de preparación de los deportistas españoles de los Juegos de París 2024 (P24)
-//	- 01110 100 años del fallecimiento de Joaquín Sorolla (JS)
-//	- 01144 20 Aniversario de Primavera Sound (PS)
-//	- 01150 Centenario del nacimiento de Victoria de los Ángeles (VA)
-//	- 01153 Conmemoración del 50 aniversario de la muerte del artista español Pablo Picasso (50P) Empresas de desarrollo de software
-//	- 01156 Todos contra el cáncer (TC)
-//	- 01180 Año de Investigación Santiago Ramón y Cajal 2022 (RC)
-//	- 01207 Año Jubilar Lebaniego 2023-2024 (L23)
-//	- 01218 Mundo Voluntario 2030/35º Aniversario Plataforma del Voluntariado de España (V30)
-//	- 01221 7ª Conferencia Mundial sobre Turismo Enológico de la OMT 2023 (7TE)
-//	- 01229 Caravaca de la Cruz 2024. Año Jubilar (C24)
-//	- 01235 Bicentenario del Ateneo de Madrid (BA)
-//	- 01238 Barcelona Equestrian Challenge (4ª Edición) (BE4)
-//	- 01262 200 Aniversario del Passeig de Grácia (PG)
-//	- 01265 Reconstrucción de la Piscina Histórica cubierta de saltos del Club Natació Barcelona (CNB)
-//	- 01268 ALIMENTARIA 2022 y HOSTELCO 2022 (AH)
-//	- 01273 Barcelona Music Lab. El futuro de la música (ML)
-//	- 01278 Global Mobility Call (GM)
-//	- 01282 South Summit 2022-2024 (SS)
-//	- 01684 Otras deducciones relativas a programas de apoyo a acontecimientos de excepcional interés público
-//	- 00829 Diferimiento deducc. Cap. IV Tít. VI Ley 43/95, RDLeg. 4/2004 (DT 24ª.3 LIS) y LIS 2022
-//	- 00252 Deducción DT 24ª. 7 LIS 2022(*)
-//	- 00697 Deducción DT 24ª. 7 LIS 2022
-//	DEDUCCIONES LEY 49/2002. AÑOS 2012 A 2022
-//	- 00905 Donac. a ent. sin fines de lucro (Ley 49/2002) 2012
-//	- 00901 Donac. Actividades prioritarias de mecenazgo 2012
-//	- 00991 Donac. a ent. sin fines de lucro (Ley 49/2002) 2013
-//	- 00917 Donac. Actividades prioritarias de mecenazgo 2013
-//	- 00998 Donac. a ent. sin fines de lucro (Ley 49/2002) 2014
-//	- 00931 Donac. Actividades prioritarias de mecenazgo 2014
-//	- 00247 Donac. a ent. sin fines de lucro (Ley 49/2002) sin reiteración 2015
-//	- 00819 Donac. a ent. sin fines de lucro (Ley 49/2002) con reiteración 2015
-//	- 00934 Donac. Actividades prioritarias de mecenazgo sin reiteración 2015 Empresas de desarrollo de software
-//	- 00944 Donac. Actividades prioritarias de mecenazgo con reiteración 2015
-//	- 00994 Donac. a ent. sin fines de lucro (Ley 49/2002) sin reiteración 2016
-//	- 00833 Donac. a ent. sin fines de lucro (Ley 49/2002) con reiteración 2016
-//	- 00950 Donac. Actividades prioritarias de mecenazgo sin reiteración 2016
-//	- 00953 Donac. Actividades prioritarias de mecenazgo con reiteración 2016
-//	- 01435 Donac. a ent. sin fines de lucro (Ley 49/2002) sin reiteración 2017
-//	- 00836 Donac. a ent. sin fines de lucro (Ley 49/2002) con reiteración 2017
-//	- 02473 Donac. Actividades prioritarias de mecenazgo sin reiteración 2017
-//	- 00959 Donac. Actividades prioritarias de mecenazgo con reiteración 2017
-//	- 01719 Donac. a ent. sin fines de lucro (Ley 49/2002) sin reiteración 2018
-//	- 00839 Donac. a ent. sin fines de lucro (Ley 49/2002) con reiteración 2018
-//	- 00965 Donac. Actividades prioritarias de mecenazgo sin reiteración 2018
-//	- 00971 Donac. Actividades prioritarias de mecenazgo con reiteración 2018
-//	- 01951 Donac. a ent. sin fines de lucro (Ley 49/2002) sin reiteración 2019
-//	- 00844 Donac. a ent. sin fines de lucro (Ley 49/2002) con reiteración 2019
-//	- 00975 Donac. Actividades prioritarias de mecenazgo sin reiteración 2019
-//	- 00981 Donac. Actividades prioritarias de mecenazgo con reiteración 2019
-//	- 02228 Donac. a ent. sin fines de lucro (Ley 49/2002) sin reiteración 2020
-//	- 00869 Donac. a ent. sin fines de lucro (Ley 49/2002) con reiteración 2020
-//	- 00984 Donac. Actividades prioritarias de mecenazgo sin reiteración 2020
-//	- 01001 Donac. Actividades prioritarias de mecenazgo con reiteración 2020
-//	- 02381 Donac. a ent. sin fines de lucro (Ley 49/2002) sin reiteración 2021
-//	- 00873 Donac. a ent. sin fines de lucro (Ley 49/2002) con reiteración 2021
-//	- 01017 Donac. Actividades prioritarias de mecenazgo sin reiteración 2021
-//	- 01035 Donac. Actividades prioritarias de mecenazgo con reiteración 2021
-//	- 00876 Donac. a ent. sin fines de lucro (Ley 49/2002) sin reiteración 2022 (*)
-//	- 00892 Donac. a ent. sin fines de lucro (Ley 49/2002) con reiteración 2022 (*)
-//	- 01062 Donac. Actividades prioritarias de mecenazgo sin reiteración 2022 (*)
-//	- 01074 Donac. Actividades prioritarias de mecenazgo con reiteración 2022 (*)
-//	- 01324 Donac. a ent. sin fines de lucro (Ley 49/2002) sin reiteración 2022
-//	- 01327 Donac. a ent. sin fines de lucro (Ley 49/2002) con reiteración 2022
-//	- 01372 Donac. Actividades prioritarias de mecenazgo sin reiteración 2022
-//	- 01375 Donac. Actividades prioritarias de mecenazgo con reiteración 2022 Empresas de desarrollo de software
-//	DEDUCCIONES POR REVERSIÓN DE MEDIDAS TEMPORALES
-//	- 01437 Deducción por reversión de medidas temporales DT 37ª.1 LIS 2015
-//	- 01440 Deducción por reversión de medidas temporales DT 37ª.1 LIS 2016
-//	- 01444 Deducción por reversión de medidas temporales DT 37ª.1 LIS 2017
-//	- 01723 Deducción por reversión de medidas temporales DT 37ª.1 LIS 2018
-//	- 01955 Deducción por reversión de medidas temporales DT 37ª.1 LIS 2019
-//	- 02232 Deducción por reversión de medidas temporales DT 37ª.1 LIS 2020
-//	- 02385 Deducción por reversión de medidas temporales DT 37ª.1 LIS 2021
-//	- 01084 Deducción por reversión de medidas temporales DT 37ª.1 LIS 2022 (*)
-//	- 01379 Deducción por reversión de medidas temporales DT 37ª.1 LIS 2022
-//	- 01446 Deducción por reversión de medidas temporales DT 37ª.2 LIS 2015
-//	- 01449 Deducción por reversión de medidas temporales DT 37ª.2 LIS 2016
-//	- 01453 Deducción por reversión de medidas temporales DT 37ª.2 LIS 2017
-//	- 01727 Deducción por reversión de medidas temporales DT 37ª.2 LIS 2018
-//	- 01959 Deducción por reversión de medidas temporales DT 37ª.2 LIS 2019
-//	- 02236 Deducción por reversión de medidas temporales DT 37ª.2 LIS 2020
-//	- 02389 Deducción por reversión de medidas temporales DT 37ª.2 LIS 2021
-//	- 02478 Deducción por reversión de medidas temporales DT 37ª.2 LIS 2022 (*)
-//	- 01383 Deducción por reversión de medidas temporales DT 37ª.2 LIS 2022
-//
-//	TRAMO 3 DE DEDUCCIONES Empresas de desarrollo de software
-//	DEDUCCIONES POR INVERSIONES EN CANARIAS (LEY 20/1991 y LEY 19/1994) (excepto cinematográficas extranjeras en Canarias)
-//	- 02082 Inversiones en territ. África occidental y gastos de propaganda y publicidad 2015
-//	- 02085 Inversiones en territ. África occidental y gastos de propaganda y publicidad 2016
-//	- 02089 Inversiones en territ. África occidental y gastos de propaganda y publicidad 2017
-//	- 01917 Inversiones en territ. África occidental y gastos de propaganda y publicidad 2018
-//	- 01920 Inversiones en territ. África occidental y gastos de propaganda y publicidad 2019
-//	- 01923 Inversiones en territ. África occidental y gastos de propaganda y publicidad 2020
-//	- 01926 Inversiones en territ. África occidental y gastos de propaganda y publicidad 2021
-//	- 01929 Inversiones en territ. África occidental y gastos de propaganda y publicidad 2022(*)
-//	- 02191 Inversiones en territ. África occidental y gastos de propaganda y publicidad 2022
-//	- 00881 Inversiones en Canarias (Ley 20/91) 2004
-//	- 00867 Inversiones en Canarias (Ley 20/91) 2005
-//	- 00940 Inversiones en Canarias (Ley 20/91) 2006
-//	- 00192 Inversiones en Canarias (Ley 20/91) 2007
-//	- 00614 Inversiones en Canarias (Ley 20/91) 2008
-//	- 00257 Inversiones en Canarias (Ley 20/91) 2009
-//	- 00855 Activos fijos (Ley 20/91) 2010
-//	- 00038 Inversiones en Canarias (Ley 20/91) 2010
-//	- 00858 Activos fijos (Ley 20/91) 2011
-//	- 00045 Inversiones en Canarias (Ley 20/91) 2011
-//	- 00861 Activos fijos (Ley 20/91) 2012
-//	- 00529 Inversiones en Canarias (Ley 20/91) 2012
-//	- 00864 Activos fijos (Ley 20/91) 2013
-//	- 00145 Inversiones en Canarias (Ley 20/91) 2013
-//	- 00884 Activos fijos (Ley 20/91) 2014
-//	- 00148 Inversiones en Canarias (Ley 20/91) 2014
-//	- 00789 Activos fijos (Ley 20/91) 2015
-//	- 00241 Inversiones en Canarias (Ley 20/91) 2015
-//	- 01358 Activos fijos (Ley 20/91) 2016
-//	- 01059 Inversiones en Canarias (Ley 20/91) 2016
-//	- 01779 Activos fijos (Ley 20/91) 2017 Empresas de desarrollo de software
-//	- 00802 Inversiones en Canarias (Ley 20/91) 2017
-//	- 00853 Activos fijos (Ley 20/91) 2018
-//	- 02336 Activos fijos en La Palma, La Gomera y El Hierro 2018
-//	- 01782 Inversiones en Canarias (Ley 20/91) 2018
-//	- 02120 Inversiones en La Palma, La Gomera y El Hierro 2018
-//	- 02117 Activos fijos (Ley 20/91) 2019
-//	- 02339 Activos fijos en La Palma, La Gomera y El Hierro 2019
-//	- 02123 Inversiones en Canarias (Ley 20/91) 2019
-//	- 02126 Inversiones en La Palma, La Gomera y El Hierro 2019
-//	- 02210 Activos fijos (Ley 20/91) 2020
-//	- 02342 Activos fijos en La Palma, La Gomera y El Hierro 2020
-//	- 02213 Inversiones en Canarias (Ley 20/91) 2020
-//	- 02216 Inversiones en La Palma, La Gomera y El Hierro 2020
-//	- 02333 Activos fijos (Ley 20/91) 2021
-//	- 02345 Activos fijos en La Palma, La Gomera y El Hierro 2021
-//	- 02348 Inversiones en Canarias (Ley 20/91) 2021
-//	- 02351 Inversiones en La Palma, La Gomera y El Hierro 2021
-//	- 00238 Activos fijos (Ley 20/91) 2022(*)
-//	- 00245 Activos fijos en La Palma, La Gomera y El Hierro 2022(*)
-//	- 00218 Inversiones en Canarias (Ley 20/91) 2022(*)
-//	- 00221 Inversiones en La Palma, La Gomera y El Hierro 2022(*)
-//	- 00712 Activos fijos (Ley 20/91) 2022
-//	- 01913 Activos fijos en La Palma, La Gomera y El Hierro 2022
-//	- 00768 Inversiones en Canarias (Ley 20/91) 2022
-//	- 00771 Inversiones en La Palma, La Gomera y El Hierro 2022
-
-	
-	
-	
-//	TRAMO 4 DEDUCCIONES
-//	DEDUCCIONES POR PRODUCCIONES CINEMATOGRÁFICAS EXTRANJERAS (ART. 36.2 LIS) Y PRODUCCIONES CINEMATOGRÁFICAS EXTRANJERAS EN CANARIAS (ART. 36.2 LIS Y DA 14 LEY 19/1994)
-//	- 01932 Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS) 2015 Empresas de desarrollo de software
-//	- 02149 Deducciones por producciones cinematográficas extranjeras en Canarias (art. 36.2 LIS y DA 14ª Ley 19/1994) 2015
-//	- 01939 Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS) 2016
-//	- 02153 Deducciones por producciones cinematográficas extranjeras en Canarias (art. 36.2 LIS y DA 14ª Ley 19/1994) 2016
-//	- 01943 Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS) 2017
-//	- 02157 Deducciones por producciones cinematográficas extranjeras en Canarias (art. 36.2 LIS y DA 14ª Ley 19/1994) 2017
-//	- 01947 Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS) 2018
-//	- 02161 Deducciones por producciones cinematográficas extranjeras en Canarias (art. 36.2 LIS y DA 14ª Ley 19/1994) 2018
-//	- 02110 Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS) 2019
-//	- 02165 Deducciones por producciones cinematográficas extranjeras en Canarias (art. 36.2 LIS y DA 14ª Ley 19/1994) 2019
-//	- 02129 Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS) 2020
-//	- 02169 Deducciones por producciones cinematográficas extranjeras en Canarias (art. 36.2 LIS y DA 14ª Ley 19/1994) 2020
-//	- 02133 Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS) 2021
-//	- 02173 Deducciones por producciones cinematográficas extranjeras en Canarias (art. 36.2 LIS y DA 14ª Ley 19/1994) 2021
-//	- 02137 Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS) 2022 (*)
-//	- 01310 Deducciones por producciones cinematográficas extranjeras en Canarias (art. 36.2 LIS y DA 14ª Ley 19/1994) 2022 (*)
-//	- 02141 Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS) 2022
-//	- 01314 Deducciones por producciones cinematográficas extranjeras en Canarias (art. 36.2 LIS y DA 14ª Ley 19/1994) 2022
-//	DEDUCCIONES I+D+I EXCLUIDAS DE LÍMITE
-//	- 00574 Deducciones I+D+i excluidas de límite. Investigación y desarrollo (CTE) 2013
-//	- 00977 Deducciones I+D+i excluidas de límite. Innovación tecnológica (ITE) 2013
-//	- 00824 Deducciones I+D+i excluidas de límite. Investigación y desarrollo (CTE) 2014
-//	- 00850 Deducciones I+D+i excluidas de límite. Innovación tecnológica (ITE) 2014 Empresas de desarrollo de software
-//	- 01125 Deducciones I+D+i excluidas de límite. Investigación y desarrollo (CTE) 2015
-//	- 01129 Deducciones I+D+i excluidas de límite. Innovación tecnológica (ITE) 2015
-//	- 01428 Deducciones I+D+i excluidas de límite. Investigación y desarrollo (CTE) 2016
-//	- 01432 Deducciones I+D+i excluidas de límite. Innovación tecnológica (ITE) 2016
-//	- 01712 Deducciones I+D+i excluidas de límite. Investigación y desarrollo (CTE) 2017
-//	- 01716 Deducciones I+D+i excluidas de límite. Innovación tecnológica (ITE) 2017
-//	- 01970 Deducciones I+D+i excluidas de límite. Investigación y desarrollo (CTE) 2018
-//	- 01974 Deducciones I+D+i excluidas de límite. Innovación tecnológica (ITE) 2018
-//	- 02247 Deducciones I+D+i excluidas de límite. Investigación y desarrollo (CTE) 2019
-//	- 02251 Deducciones I+D+i excluidas de límite. Innovación tecnológica (ITE) 2019
-//	- 02393 Deducciones I+D+i excluidas de límite. Investigación y desarrollo (CTE) 2020
-//	- 02397 Deducciones I+D+i excluidas de límite. Innovación tecnológica (ITE) 2020
-//	- 01092 Deducciones I + D + i excluidas de límite. Investigación y desarrollo (CTE) 2021
-//	- 01096 Deducciones I + D + i excluidas de límite. Innovación tecnológica (ITE) 2021
-//	- 01387 Deducciones I + D + i excluidas de límite. Investigación y desarrollo (CTE) 2022 (*)
-//	- 01391 Deducciones I + D + i excluidas de límite. Innovación tecnológica (ITE) 2022 (*)	
-//
-	
-	///////////////////////////// AQUI ESTAN LOS ARRAYS
-	
-//	TRAMO 2 DEDUCCIONES
-	
+	// TRAMO 2 DEDUCCIONES
 	private static final Mod2002022Key[] TRAMO_2 = new Mod2002022Key[] {			
 			Mod2002022Key.BN583,
 			Mod2002022Key.BN289,
@@ -1798,7 +1350,8 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 			Mod2002022Key.BN2478,
 			Mod2002022Key.BN1383
 	};
-	
+
+	// TRAMO 3 DE DEDUCCIONES 
 	private static final Mod2002022Key[] TRAMO_3 = new Mod2002022Key[] {			
 			Mod2002022Key.BN2082,
 			Mod2002022Key.BN2085,
@@ -1857,7 +1410,8 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 			Mod2002022Key.BN771,
 	};
 	
-	private static final Mod2002022Key[] TRAMO_4 = new Mod2002022Key[] {	
+	// TRAMO 4 DEDUCCIONES
+	private static final Mod2002022Key[] TRAMO_4 = new Mod2002022Key[] {			
 			Mod2002022Key.BN1932,
 			Mod2002022Key.BN2149,
 			Mod2002022Key.BN1939,
@@ -1897,8 +1451,5 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 			Mod2002022Key.BN1387,
 			Mod2002022Key.BN1391	
 	};	
-	
 			
 }
-
-

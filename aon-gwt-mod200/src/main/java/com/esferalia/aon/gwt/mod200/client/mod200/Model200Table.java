@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -93,13 +92,6 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 			
 			final int year = i;
 			
-//			menu.addItem("200", msg, new ScheduledCommand() {
-//				
-//				@Override
-//				public void execute() {
-//					cbk.onNew(year);
-//				}
-//			});
 			menu.addItem("200", msg, () -> {
 				cbk.onNew(year);				
 			});

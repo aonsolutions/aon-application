@@ -13,7 +13,7 @@ import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.esferalia.aon.gwt.mod200.server.ModelAdmonUtils;
+import com.esferalia.aon.gwt.mod200.server.Model200AdmonUtils;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -56,7 +56,7 @@ public class Mod2002022ValidatePrintAEAT extends HttpServlet {
 				Mod2002022Writer.fillWriter(mod200, writer);
 				return MessageFormat.format("MOD=200&EJF={0}&FIC={1}&IDI=ES"
 						,AonNumberUtils.toString( mod200.getYear())
-						,ModelAdmonUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1));
+						,Model200AdmonUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1));
 			}
 		};
 		private static AeatUrl getAeatUrl(Mod2002022 mod200) {
@@ -79,12 +79,12 @@ public class Mod2002022ValidatePrintAEAT extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
-			AEATParams aeatParams = ModelAdmonUtils.getAEATParams(req);
+			AEATParams aeatParams = Model200AdmonUtils.getAEATParams(req);
 			Occam occam = new Occam()
 					.setDomainName(aeatParams.getDomainName())
 					.setDomain(aeatParams.getDomainId())
 					.setUser(aeatParams.getUser());
-			Mod2002022 mod200 = MODEL2002022.getMod2002022ById(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			Mod2002022 mod200 = MODEL2002022.getMod2002022ById(occam, Model200AdmonUtils.getFiscalModelId(aeatParams));
 			
 			if (mod200 == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
@@ -102,15 +102,15 @@ public class Mod2002022ValidatePrintAEAT extends HttpServlet {
 	            .build();
 			HttpResponse<byte[]> response = httpClient
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
-			String headerValue = ModelAdmonUtils.getContentTypeHeader( response );  
+			String headerValue = Model200AdmonUtils.getContentTypeHeader( response );  
 			boolean pdfContentType = MimeType.PDF.getName().equals(headerValue); 
-			ModelAdmonUtils.giveBase64Back(resp, response.body(), (pdfContentType?MimeType.PDF:MimeType.HTML));
+			Model200AdmonUtils.giveBase64Back(resp, response.body(), (pdfContentType?MimeType.PDF:MimeType.HTML));
 		} catch (InterruptedException e) {	
 			LOGGER.log(Level.WARNING,"Thread Interrupted! [{0}] ", e.getMessage());
 		    // Restore interrupted state...
 		    Thread.currentThread().interrupt();
 		} catch (IOException | AonCoreException e ) {
-			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			Model200AdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
 	}
 }

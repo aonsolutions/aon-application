@@ -1411,7 +1411,7 @@ public class Mod2002022Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002022Key.BN592)				
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002022Key.BN1039M)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002022Key.BN2314M)
-				,(line, mod200, label) -> line.append("X") // FALTA - NO SE QUE ES ESTE CAMPO - Inoperatividad del orden de cumplimentación de las deducciones del Tramo 2 
+				,(line, mod200, label) -> line.append(" ") // Inoperatividad del orden de cumplimentación de las deducciones del Tramo 2 
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(165)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
