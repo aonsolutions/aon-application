@@ -275,7 +275,6 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		log(IngenetLogLevel.ERROR, subject, content, "pedidos", xml, RECIPIENTS_TO_FAILURES);
 		
 		httpResponse.setContentType("application/xml");
-		httpResponse.setContentLength(xml.length());
 		
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);

@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
@@ -58,6 +59,7 @@ import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
@@ -578,8 +580,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
 			tbaiConfiguration.setCertificate(checkCertificate(api));
+			
+			tbaiValidation(invoice);
+
 			Invoice lastInvoice = AON.getLastSaleInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), 
-						invoice.getSeries());
+					invoice.getSeries());
 			if(lastInvoice.getIssueDate() != null && invoice.getIssueDate().compareTo(lastInvoice.getIssueDate()) < 0) {
 				throw new Exception("Existe una factura con la misma serie y fecha posterior.");
 			}
@@ -915,6 +920,33 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put("total", 0);
 		return json;
 	}
+	
+	private static  void tbaiValidation(Invoice invoice) throws Exception {
+		checkInvoice(invoice);
+		checkRegistry(invoice);
+	}
+	
+	private static  void checkInvoice(Invoice invoice) throws Exception {
+		if(invoice.isRectifier() && AonStringUtils.isBlank(invoice.getSeries())) {
+			throw new Exception("Las Facturas rectificativas tienen que tener serie.");
+		}
+		
+		Date date = AonDateUtils.getDateWithoutTime(invoice.getIssueDate());
+		if(date.after(new Date())) {
+			throw new Exception("Las Fecha de la factura no puede ser superior a la fecha actual.");
+		}
+	}
+	
+	private static void checkRegistry(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
+		if(AonStringUtils.isBlank(invoice.getRegistryDocument()) && !invoice.isSimplified()) {
+			throw new Exception("El Documento del cliente está vacio.");
+		}
+			
+		if(Country.ES.equals(invoice.getRegistryDocumentCountry()) && !AonDocumentUtil.isValid(invoice.getRegistryDocument())) {
+			throw new Exception("El Documento del cliente no es válido.");
+		}
+	}
+	
 	
 	public static void main(String[] args) {
 		JSONObject data = new JSONObject();
