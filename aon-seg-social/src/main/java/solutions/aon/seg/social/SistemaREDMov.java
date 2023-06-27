@@ -406,12 +406,26 @@ class SistemaREDMov {
 			((HtmlSelect)printType).setSelectedAttribute("OnLine", true);
 		}
 		
+//		Toolkit.buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/altaTgss.html");
 
-		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
-		if (htmlPage.isHtmlPage()) {
+		Page pageResult = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
+		
+//		try {
+//			if (pageResult.isHtmlPage()) {
+//				Toolkit.buildFile(((HtmlPage) pageResult).asXml().getBytes(), "/Users/svaldepenas/Desktop/altaTgss_2.html");
+//			} else {
+//				Toolkit.buildFile(pageResult.getWebResponse().getContentAsStream().readAllBytes(), "/Users/svaldepenas/Desktop/ta.pdf");
+//			}
+//		} catch (Exception e) {
+//			System.out.println("PARSER PAGE : " + e.getMessage());
+//		}
+		
+		if (pageResult.isHtmlPage()) {
 //			htmlPage = (HtmlPage) htmlPage;
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
+			htmlPage = ((HtmlPage) pageResult);
+			
 			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
 			if (msg1 != null && msg1.getTextContent().trim().toLowerCase().contains("la mecanizacion de este tipo de registros puede implicar")) {
 				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
@@ -428,15 +442,15 @@ class SistemaREDMov {
 			}
 		}
 
-		if (htmlPage.isHtmlPage()) {
+		if (pageResult.isHtmlPage()) {
 //			htmlPage = (HtmlPage) htmlPage;
-			DomNode message = htmlPage.querySelector("#DIL"); 
+			DomNode message = ((HtmlPage) pageResult).querySelector("#DIL"); 
 			if(message!=null) {
 				throw new SegSocialException(message.getTextContent().trim());
 			}
 		} else {
 			try {
-				return htmlPage.getWebResponse().getContentAsStream().readAllBytes();
+				return pageResult.getWebResponse().getContentAsStream().readAllBytes();
 			} catch (Exception e) {
 				throw new InvalidDataException();
 			}

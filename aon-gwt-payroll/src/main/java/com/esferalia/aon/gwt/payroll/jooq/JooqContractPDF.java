@@ -366,12 +366,12 @@ public class JooqContractPDF {
 	}
 
 	private static String getSepeIde(DSLContext dslContext, Integer contractId) {
-		Result<Record> ideRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq("SEPE_ID"))
+		Result<Record> ideRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.NAME.eq("SEPE_ID"))
 				.fetch();
 		
-		return ideRecords.isEmpty() ? null : ideRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+		return ideRecords.isEmpty() ? null : ideRecords.get(0).get(CONTRACT_INFO.EXPRESSION);
 	}
 
 	private static java.util.Date getComunicationDate(DSLContext dslContext, Integer contractId) {
@@ -388,22 +388,22 @@ public class JooqContractPDF {
 	}
 
 	private static String getSepeTransformIde(DSLContext dslContext, Integer contractId) {
-		Result<Record> ideRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq("SEPE_TRANSFORM_ID"))
+		Result<Record> ideRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.NAME.eq("SEPE_TRANSFORM_ID"))
 				.fetch();
 		
-		return ideRecords.isEmpty() ? null : ideRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+		return ideRecords.isEmpty() ? null : ideRecords.get(0).get(CONTRACT_INFO.EXPRESSION);
 	}
 
 	private static java.util.Date getComunicationTransformDate(DSLContext dslContext, Integer contractId) {
-		Result<Record> comunicationDateRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq("COMUNICATION_TRANSFORM_DATE"))
+		Result<Record> comunicationDateRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.NAME.eq("COMUNICATION_TRANSFORM_DATE"))
 				.fetch();
 		
 		try {
-			return comunicationDateRecords.isEmpty() ? null : dateFormat.parse(comunicationDateRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+			return comunicationDateRecords.isEmpty() ? null : dateFormat.parse(comunicationDateRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
 		} catch (IllegalArgumentException | ParseException e) {
 			return null;
 		}

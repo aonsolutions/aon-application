@@ -3461,6 +3461,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Cuenta contable")
  	String account();
  	
+ 	@DefaultMessage("Bien Afectos o de Inversi\u00f3n")
+ 	String investAssetPanel();
+ 	
  	@DefaultMessage("Nivel")
  	String level();
  	
