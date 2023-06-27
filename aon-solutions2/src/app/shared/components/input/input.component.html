@@ -1,16 +1,16 @@
 <mat-form-field
-    [appearance]="appearance"
-    [ngStyle]="{
-      'width': width
-    }"
-    [class]="appearanceDetail"
+  [appearance]="appearance"
+  [ngStyle]="{
+    'width': width
+  }"
+  [class]="appearanceDetail"
 >
     <mat-label *ngIf="label != ''">{{label}}</mat-label>
     <span matPrefix><ng-content select="[prefix]"></ng-content></span>
 
     <!-- INPUTS TIPO TEXT,PASSWORD,DATETIME -->
     <input
-        *ngIf="type != 'select' && type != 'textarea'"
+        *ngIf="type != 'select' && type != 'textarea' && type != 'search'"
         matInput
         [(ngModel)]="value"
         [ngClass]="['ng-pending']"
@@ -20,7 +20,29 @@
         (ngModelChange)="returnValue($event)"
         [class]="appearanceDetail"
     />
-
+    
+    <div 
+      class='search-componet'
+      *ngIf="type == 'search'"
+    >
+      <div>
+        <app-icon [shape]="'search'"></app-icon>
+      </div>
+      <div class="search-componet-input">
+        <input
+          matInput
+          [(ngModel)]="value"
+          [ngClass]="['ng-pending']"
+          [disabled]="disabled"
+          [type]="type"
+          [placeholder]="placeholder"
+          (ngModelChange)="returnValue($event)"
+          [class]="appearanceDetail"
+        />
+      </div>
+    </div>
+        
+         
     <!-- INPUTS TIPO SELECT -->
     <mat-select
         *ngIf="type=='select'"
