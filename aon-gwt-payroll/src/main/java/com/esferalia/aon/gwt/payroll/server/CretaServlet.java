@@ -167,7 +167,9 @@ public class CretaServlet extends HttpServlet
 		public boolean isPartTimeEmployee(String naf, String ccc, Date start, Date end) {
 			return 
 			getEmployee(naf, start)
-			.map( e -> !isFullTime(e, start) &&( isPartialTime(e, start) || is2XX(e, start) || is3XX(e, start) || is5XX(e, start)))
+			.map( e -> is3XX(e, start) // INDEFINIDO, FIJO DISCONTINUO
+				|| ( !isFullTime(e, start) &&( isPartialTime(e, start) || is2XX(e, start) || is5XX(e, start)))
+			)
 			.orElse(TrabajadoresTramosCallback.super.isPartTimeEmployee(naf, ccc, start, end))
 			;
 		}
