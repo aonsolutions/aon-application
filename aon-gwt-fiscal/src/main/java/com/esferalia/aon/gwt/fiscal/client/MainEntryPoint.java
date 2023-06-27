@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountStatementReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountTrialBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AmortizationType;
 import com.esferalia.aon.gwt.fiscal.client.accounting.CostCenterModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.InvestAssetModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.period.AccountingPeriodModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilities;
 import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
@@ -225,6 +226,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String ACC_ACCOUNTING_CONSOLIDATED_BALANCE_REPORT_ENTRY_POINT = "AccountConsolidatedBalanceReport";
 	private static final String ACC_AMORTIZATION_TYPE_ENTRY_POINT = "AmortizationType";
 	private static final String ACC_COST_CENTER_ENTRY_POINT = "CostCenterModule";
+	private static final String INVEST_ASSET_ENTRY_POINT = "InvestAssetModule";
 	//
 	//    ================================================================== RAWDOC
 	//
@@ -683,6 +685,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					AmortizationType amortizationType = new AmortizationType();
 					amortizationType.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(INVEST_ASSET_ENTRY_POINT)) {
+			GWT.runAsync(InvestAssetModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					InvestAssetModule investAssetModule = new InvestAssetModule();
+					investAssetModule.onModuleLoad();
 				}
 				
 			});

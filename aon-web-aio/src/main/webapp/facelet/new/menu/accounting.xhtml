@@ -303,9 +303,9 @@
 								</aon:if>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="investAsset" 
+									<aon:commandLink id="gwt_investAsset" 
 										rendered="#{actionDenied.renderedOption('investAsset_search')}"
-										action="investAsset_search"
+										action="gwt_invest_asset"
 										value="#{bundle.accounting_invest_asset_form_module}" />
 								</aon:div>
 							</aon:div>
@@ -583,6 +583,12 @@
 											rendered="#{actionDenied.renderedOption('amortizationType_list-parent')}"
 											action="amortizationType_list-parent"
 											value="#{bundle.accounting_amortization_type_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="investAsset" 
+											rendered="#{actionDenied.renderedOption('investAsset_search')}"
+											action="investAsset_search"
+											value="#{bundle.accounting_invest_asset_form_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_accountingUtilities-parent"

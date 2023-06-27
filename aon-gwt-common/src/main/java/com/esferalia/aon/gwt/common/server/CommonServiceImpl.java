@@ -8,15 +8,19 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -222,6 +226,34 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void deleteCostCenter(String domainName, int domain, String user, Integer id) throws AonCoreException {
 		AON.deleteCostCenter(domainName, domain, user, id);
+	}
+	
+	// **************************************************
+	// *********************************** [INVEST ASSET]
+	// **************************************************
+	
+	@Override
+	public List<InvestAsset> getInvestAssets(InvestAssetParams params) throws AonCoreException {
+		return AON.getInvestAssetList(params);
+	}
+	
+	@Override
+	public void deleteInvestAsset(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteInvestAsset(domainName, domain, user, id);
+	}
+	
+	@Override
+	public InvestAsset saveInvestAsset(String domainName, int domain, String user, InvestAsset investAsset) throws AonCoreException {
+		return AON.saveInvestAsset(domainName, domain, user, investAsset);
+	}
+	
+	@Override
+	public List<Activity> getActivities(String domainName, int domain, String user) throws AonCoreException {
+		return PAYROLL.getActivities(domainName, domain, user, f -> f.getDomainProperty().eq(domain));
+	}
+	@Override
+	public InvestAsset getInvestAsset(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		return AON.getInvestAsset(domainName, domain, user, id);
 	}
 	
 }

@@ -10,9 +10,12 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -22,6 +25,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -91,5 +95,15 @@ public interface CommonService extends RemoteService {
 	List<ApplicationParameter> getCostCenters(String domainName, int domain, String user) throws AonCoreException;
 	void saveCostCenter(String domainName, int domain, String user, ApplicationParameter costCenter) throws AonCoreException;
 	void deleteCostCenter(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	
+	// **************************************************
+	// *********************************** [INVEST ASSET]
+	// **************************************************
+	
+	List<InvestAsset> getInvestAssets(InvestAssetParams params) throws AonCoreException;
+	void deleteInvestAsset(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	InvestAsset saveInvestAsset(String domainName, int domain, String user, InvestAsset investAsset) throws AonCoreException;
+	List<Activity> getActivities(String domainName, int domain, String user) throws AonCoreException;
+	InvestAsset getInvestAsset(String domainName, int domain, String user, Integer id) throws AonCoreException;
 	
 }
