@@ -265,9 +265,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		String content = fillErrorMessage(respuesta.getERRORES(), errorList);
 		log(IngenetLogLevel.ERROR, subject, content, "elaboraciones", xml, RECIPIENTS_TO_FAILURES);
 		
-		httpResponse.setContentType("application/xml");
-		httpResponse.setContentLength(xml.length());
-		
+		httpResponse.setContentType("application/xml");		
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
 		out.flush();
@@ -279,7 +277,6 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		String xml = IngenetXmlValidator.convertToXml(elaboraciones, RESPUESTAELABORACIONES.class);
 		
 		httpResponse.setContentType("application/xml");
-		httpResponse.setContentLength(xml.length());
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
 		out.flush();
