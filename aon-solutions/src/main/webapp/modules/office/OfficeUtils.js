@@ -4,7 +4,7 @@ import { AonSwitch } from "../../components/aon-switch.js";
 import { MSG, EVENT } from "../../environments/environments.js";
 import { Project } from "../../models/project/Project.js";
 import { updateAllTargetItem } from "../../services/productService.js";
-import { AonTargetItemAdd } from "../registry/target/item/aon-target-item-add.js";
+import { AonItemAdd } from "../registry/target/item/aon-item-add.js";
 import { AonOfficeLinkSimpleList } from "./aon-office-link-simple-list.js";
 
 
@@ -119,7 +119,7 @@ const buildDialogProducts = (aonOfficePanel) => {
     dialog.clear();
     dialog.setTitle(MSG.ASSIGN+" "+MSG.PRODUCTS);
 
-    let aonTargetItemAdd = new AonTargetItemAdd();
+    let aonTargetItemAdd = new AonItemAdd();
 
     dialog.setContent(aonTargetItemAdd);
     
