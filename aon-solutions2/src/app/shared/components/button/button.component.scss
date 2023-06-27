@@ -327,7 +327,7 @@
     .appButton.icon-background-purple app-icon:nth-child(2) path,
     .appButton.icon-background-green app-icon:nth-child(2) path,
     .appButton.icon-background-orange app-icon:nth-child(2) path{
-      color: #b4b4bb;
+      color: $color-icon;
       margin: 0
     }
     
