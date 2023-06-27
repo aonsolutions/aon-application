@@ -10,8 +10,11 @@
       display         : flex;
       align-items     : center;
       text-transform  : uppercase;
+      white-space     : nowrap;
+      overflow        : hidden;
+      text-overflow   : ellipsis;
       margin-bottom   : $margin-bottom;
-      font-size       : $font-size-button; 
+      font-size       : $font-size-button;
       color           : $color-primary;
       border          : $border-button;
       border-radius   : $border-button-radius;
@@ -20,12 +23,16 @@
     .appButton:hover{
       background-color: $background-button-hover;
     }
+    
     // Buton icon
       .appButton set-icon{
-        color         : $color-primary;
-        margin-right  : $margin-button-icon-left;
-        top           : $top-button-icon;
+        margin-right  : $margin-button-icon-right;
+        top           : $top-button-icon !important;
       }
+      .appButton set-icon path{
+        color         : $color-primary;
+      } 
+        
     // Text aling
       .appButton.left{
         justify-content: left!important;
@@ -258,6 +265,164 @@
         .appButton.border-orange:hover set-icon path{
           color         : $background-button-orange;
         }
+  
+  //
+  // buton icon with background
+  //
+    .appButton.icon-background,
+    .appButton.icon-background-red,
+    .appButton.icon-background-blue,
+    .appButton.icon-background-pink,
+    .appButton.icon-background-purple,
+    .appButton.icon-background-green,
+    .appButton.icon-background-orange{
+      height          : 3.05rem!important;
+    }
+    
+    .appButton.icon-background app-icon,
+    .appButton.icon-background-red app-icon,
+    .appButton.icon-background-blue app-icon,
+    .appButton.icon-background-pink app-icon,
+    .appButton.icon-background-purple app-icon,
+    .appButton.icon-background-green app-icon,
+    .appButton.icon-background-orange app-icon{
+      display         : flex;
+      align-items     : center;
+      width           : 1.7rem;
+      height          : 2.2rem;
+      border-radius   : $border-button-radius;
+      padding-left    : $margin-button-icon-left;
+      margin-right    : $margin-button-icon-right;
+      justify-content : center;
+    }
+    
+    .appButton.icon-background app-icon:nth-child(2),
+    .appButton.icon-background-red app-icon:nth-child(2),
+    .appButton.icon-background-blue app-icon:nth-child(2),
+    .appButton.icon-background-pink app-icon:nth-child(2),
+    .appButton.icon-background-purple app-icon:nth-child(2),
+    .appButton.icon-background-green app-icon:nth-child(2),
+    .appButton.icon-background-orange app-icon:nth-child(2){
+      width           : 1.2;
+      height          : 1.2;
+      align-items     : right;
+      background-color: $background-button-primary;
+      margin          : 0
+    }
+    
+    .appButton.icon-background app-icon:nth-child(2) set-icon,
+    .appButton.icon-background-red app-icon:nth-child(2) set-icon,
+    .appButton.icon-background-blue app-icon:nth-child(2) set-icon,
+    .appButton.icon-background-pink app-icon:nth-child(2) set-icon,
+    .appButton.icon-background-purple app-icon:nth-child(2) set-icon,
+    .appButton.icon-background-green app-icon:nth-child(2) set-icon,
+    .appButton.icon-background-orange app-icon:nth-child(2) set-icon{
+      margin          : 0
+    }
+    
+    .appButton.icon-background app-icon:nth-child(2) path,
+    .appButton.icon-background-red app-icon:nth-child(2) path,
+    .appButton.icon-background-blue app-icon:nth-child(2) path,
+    .appButton.icon-background-pink app-icon:nth-child(2) path,
+    .appButton.icon-background-purple app-icon:nth-child(2) path,
+    .appButton.icon-background-green app-icon:nth-child(2) path,
+    .appButton.icon-background-orange app-icon:nth-child(2) path{
+      color: #b4b4bb;
+      margin: 0
+    }
+    
+    // colors
+      .appButton.icon-background app-icon{
+        background-color: $background-button-hover;
+      }
+      .appButton.icon-background:hover app-icon{
+        background-color: $background-button-primary;
+        opacity: 0.7; 
+      }
+      .appButton.icon-background-red:hover,
+      .appButton.icon-background-blue:hover,
+      .appButton.icon-background-pink:hover,
+      .appButton.icon-background-purple:hover,
+      .appButton.icon-background-green:hover,
+      .appButton.icon-background-orange:hover{
+        background-color: $background-button-primary;
+      }
+      
+      // red
+      .appButton.icon-background-red:hover{
+        border: solid $border-size-primary $color-red;
+      }
+      .appButton.icon-background-red app-icon path{
+        color: $color-red;
+      }
+      .appButton.icon-background-red app-icon{
+        background-color: $background-button-red-hover2;
+      }
+      // blue
+      .appButton.icon-background-blue:hover{
+        border: solid $border-size-primary $color-blue;
+      }
+      .appButton.icon-background-blue app-icon path{
+        color: $color-blue;
+      }
+      .appButton.icon-background-blue app-icon{
+        background-color: $background-button-blue-hover2;
+      }
+      // Pink
+      .appButton.icon-background-pink:hover{
+        border: solid $border-size-primary $color-pink;
+      }
+      .appButton.icon-background-pink app-icon path{
+        color: $color-pink;
+      }
+      .appButton.icon-background-pink app-icon{
+        background-color: $background-button-pink-hover2;
+      }
+      // purple
+      .appButton.icon-background-purple:hover{
+        border: solid $border-size-primary $color-purple;
+      }
+      .appButton.icon-background-purple app-icon path{
+        color: $color-purple;
+      }
+      .appButton.icon-background-purple app-icon{
+        background-color: $background-button-purple-hover2;
+      }
+      // green
+      .appButton.icon-background-green:hover{
+        border: solid $border-size-primary $color-green;
+      }
+      .appButton.icon-background-green app-icon path{
+        color: $color-green;
+      }
+      .appButton.icon-background-green app-icon{
+        background-color: $background-button-green-hover2;
+      }
+      // orange
+      .appButton.icon-background-orange:hover{
+        border: solid $border-size-primary $color-orange;
+      }
+      .appButton.icon-background-orange app-icon path{
+        color: $color-orange;
+      }
+      .appButton.icon-background-orange app-icon{
+        background-color: $background-button-orange-hover2;
+      }
+
+  //
+  // Buton only icon
+  //
+    .appButton.icon-only{
+      border          : none;
+      background-color: #f9f9fa;
+      justify-content : center;
+      border-radius   : 50rem;
+      width           : 2rem!important;
+      height          : 2rem!important;
+    }
+    .appButton.icon-only set-icon{
+      margin-right    : 0;
+    }
     
   :host {
     display: flex;
