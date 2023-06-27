@@ -24,7 +24,6 @@ import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.mod200.api.model.BalanceType;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.EcpnType;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
