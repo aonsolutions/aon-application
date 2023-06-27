@@ -87,7 +87,15 @@ public class OCRJSONUtils {
 		if(arr == null) return null;
 		BigDecimal[] retAray = new BigDecimal[arr.length()];
 		for (int i = 0; i < arr.length(); i++) {
-			retAray[i] = (BigDecimal) arr.get(i);
+			Number number = (Number) arr.get(i);
+			if (number instanceof Integer
+				|| number instanceof Long
+	            || number instanceof Short
+	            || number instanceof Byte) {
+				retAray[i] = BigDecimal.valueOf(number.longValue());
+	        } else {
+	        	retAray[i] = BigDecimal.valueOf(number.doubleValue());
+	        }
 		}
 		return retAray;
 	}
