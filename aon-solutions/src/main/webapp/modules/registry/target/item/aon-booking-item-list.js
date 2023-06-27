@@ -29,7 +29,7 @@ export class AonBookingItemList extends AonElement {
 
 	build() {
 		this.TABLE = new AonTable();
-		this.TABLE.id = 'aoItemListTable';
+		this.TABLE.id = 'aonItemListTable';
 		this.TABLE.selectedColor = true;
 
 		this.TABLE.style.width = "100%";

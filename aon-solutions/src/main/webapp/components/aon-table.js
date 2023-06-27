@@ -1,9 +1,11 @@
 import { AonElement } from "./AonElement.js";
-import { AON_ICONS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
 import { AonIconButton } from "./aon-icon-button.js";
 import { AonCheckbox } from "./aon-checkbox.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
 import { AonIcon } from "./aon-icon.js";
+import { AonDateUtils } from "../modules/utils/AonDateUtils.js";
+
 
 export class AonTable extends AonElement {
   columns;
@@ -253,6 +255,34 @@ export class AonTable extends AonElement {
       
       } else if(item.type && item.type ==="html") {
         td.appendChild(value[id])
+        td.addEventListener(EVENT.CLICK, fn);
+        if (contextMenu) {
+          td.addEventListener("contextmenu", () => {
+            let cb = this.getElement(checkBoxId + "Input");
+            if(cb && !cb.checked){
+              this.deselectAll();
+              cb.click();
+            } 
+          });
+          td.addEventListener("contextmenu", contextMenu);
+        }
+      } else if(item.type && item.type ==="date") {
+        const dateRegex = /\d{2,4}\-\d{1,2}\-\d{1,2}(?:T.*)?/;
+        const dateValue = value[id] !== undefined? value[id] : "";
+        let val = "";
+        try {
+          if (dateValue && (dateValue instanceof Date)) {
+            val = AonDateUtils.formatDate(dateValue);
+          } else if (dateValue && dateRegex.test(dateValue)) {
+            let date = new Date(dateValue);
+            val = AonDateUtils.formatDate(date);
+          } else {
+            val = dateValue;  
+          }
+        } catch (error) {
+          val = dateValue;
+        }
+        td.innerHTML = val;
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
