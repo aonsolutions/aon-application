@@ -26,7 +26,7 @@ public enum Mod2002022BN572Key implements Serializable, IMod200KeysProvider {
 	,C09(new Mod2002022Key[]{Mod2002022Key.BN739,Mod2002022Key.BN921 ,Mod2002022Key.BN740,Mod2002022Key.BN741,Mod2002022Key.BN742},"D.I. internacional 2013")
 	,C10(new Mod2002022Key[]{Mod2002022Key.BN134,Mod2002022Key.BN926 ,Mod2002022Key.BN135,Mod2002022Key.BN136,Mod2002022Key.BN137},"D.I. internacional 2014")
 	,C11(new Mod2002022Key[]{Mod2002022Key.BN160,null  				 ,Mod2002022Key.BN161,Mod2002022Key.BN572,Mod2002022Key.BN162},"Total")
-	,C12(new Mod2002022Key[]{null  				,Mod2002022Key.BN103C,null  			 ,null  			 ,null               },"Tipo de gravamen 2021")
+	,C12(new Mod2002022Key[]{null  				,Mod2002022Key.BN103C,null  			 ,null  			 ,null               },"Tipo de gravamen 2022")
 	;
 	 
     private String description;

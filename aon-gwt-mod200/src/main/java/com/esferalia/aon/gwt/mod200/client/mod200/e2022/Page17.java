@@ -3,7 +3,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LM1494Key;
@@ -15,12 +15,12 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page17 extends PageAbs {
 	
-	private static final String FOOTER_1494_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene dotaciones pendientes de integrar en un per\u00EDodo impositivo anterior iniciado en 2021.";
+	private static final String FOOTER_1494_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene dotaciones pendientes de integrar en un per\u00EDodo impositivo anterior iniciado en 2022.";
 	private static final String FOOTER_1494_2 = "(**) Los importes se consignar\u00E1n a nivel de base. Cooperativas: sus importes deben ir referidos a cuota.";
 	private static final String FOOTER_1535 = "(*) Activos por impuesto diferido con derecho a conversi\u00F3n en cr\u00E9dito exigible (art. 130 LIS).";
-	private static final String FOOTER_1579 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene dotaciones pendientes de integrar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2021.";
+	private static final String FOOTER_1579 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene dotaciones pendientes de integrar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2022.";
 
-	public Page17( Model200PageCallback callback ) {
+	public Page17( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 
@@ -39,15 +39,14 @@ public class Page17 extends PageAbs {
 		addHeaderCell(table, row, 4, AON.MSG.dot2());
 		table.getFlexCellFormatter().setColSpan(row, 4, 2);
 		row++;
-		paintKeysProvider(Mod2002022LM1494Key.values(), table, row, false, new String[] {
+		paintKeysProvider(Mod2002022LM1494Key.values(), table, row, false, 
 				AON.MSG.liquiMsg1(),
 				AON.MSG.dot11(),
 				AON.MSG.dot12(),
 				AON.MSG.dot22(),
 				AON.MSG.dot23(),
 				AON.MSG.dot11(),
-				AON.MSG.dot12()
-			});
+				AON.MSG.dot12() );
 		
 		paintFooterNote(basePanel, FOOTER_1494_1, FOOTER_1494_2);
 				
@@ -62,7 +61,7 @@ public class Page17 extends PageAbs {
 		addHeaderCell(table2,row, 5,AON.MSG.dot4_2());
 		table2.getFlexCellFormatter().setColSpan(row, 5, 4);
 		row++;
-		paintKeysProvider(Mod2002022LM1535Key.values(), table2, row, false, new String[] {
+		paintKeysProvider(Mod2002022LM1535Key.values(), table2, row, false, 
 				AON.MSG.liquiMsg1(),  
 				AON.MSG.dot30() + " (*)",
 				AON.MSG.dot41(),
@@ -71,8 +70,7 @@ public class Page17 extends PageAbs {
 				AON.MSG.dot33(),
 				AON.MSG.dot34(),
 				AON.MSG.dot35(),
-				AON.MSG.dot36() + " (*)"
-			});
+				AON.MSG.dot36() + " (*)" );
 		
 		paintFooterNote(basePanel, FOOTER_1535);
 		
@@ -89,7 +87,7 @@ public class Page17 extends PageAbs {
 		addHeaderCell(table3,row, 6,AON.MSG.dot4_2());
 		table3.getFlexCellFormatter().setColSpan(row, 6, 3);
 		row++;
-		paintKeysProvider(Mod2002022LM1561Key.values(), table3, row, false, new String[] {
+		paintKeysProvider(Mod2002022LM1561Key.values(), table3, row, false, 
 				AON.MSG.liquiMsg1(),
 				AON.MSG.dot40(),
 				AON.MSG.dot41(),
@@ -101,7 +99,7 @@ public class Page17 extends PageAbs {
 				AON.MSG.dot47(),
 				AON.MSG.dot48(),
 				AON.MSG.dot49()
-			});
+			);		
 		
 		// Conversión de activos por impuesto diferido ...
 		
@@ -131,14 +129,12 @@ public class Page17 extends PageAbs {
 		FlexTable table5 = addTable("", 4);
 		paintAmountLabel(table5);
 		
-		paintKeysProvider(Mod2002022LM1579Key.values(), table5, 1, false, new String[] {
+		paintKeysProvider(Mod2002022LM1579Key.values(), table5, 1, false, 
 				AON.MSG.liquiMsg1(),
 				AON.MSG.dot50(),
 				AON.MSG.dot51(),
 				AON.MSG.dot52(),
-				AON.MSG.dot53()
-			});
-	
+				AON.MSG.dot53() );		
 		paintFooterNote(basePanel, FOOTER_1579);
 						
 	}

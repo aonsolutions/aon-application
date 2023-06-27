@@ -36,6 +36,5 @@ public enum Mod2002022BN573Key implements Serializable, IMod200KeysProvider {
 		return keys;
 	}
 
-
 }
 

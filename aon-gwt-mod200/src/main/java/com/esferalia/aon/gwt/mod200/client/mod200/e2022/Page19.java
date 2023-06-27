@@ -6,18 +6,16 @@ import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.mod200.api.model.GroupEntitie;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 
 public class Page19 extends PageAbs {
 
-	public Page19( Model200PageCallback callback ) {
+	public Page19( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 
@@ -28,10 +26,10 @@ public class Page19 extends PageAbs {
 
 	@Override
 	protected boolean isAvailable() {
-		boolean av = super.isAvailable() && 
+		return super.isAvailable() && 
 				     (callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0021) || 
-				      callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0039));
-		return av;
+				      callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0039) ||
+				      callback.getMod200Object().getMod200().isChecked(Mod2002022Key.X0001) );
 	}
 	
 	private void paint() {
@@ -67,12 +65,9 @@ public class Page19 extends PageAbs {
 			CountryListBox country = new CountryListBox();
 			country.setWidth("140px");
 			country.setValue(Country.safeValueOf(callback.getMod200Object().getMod200().getGroupEntities().get(idx).getCountry()));
-			country.addChangeHandler(new ChangeHandler() {			
-				@Override
-				public void onChange(ChangeEvent event) {
-					callback.getMod200Object().getMod200().getGroupEntities().get(idx).setCountry(Country.safeIso2(country.getValue()));
-					callback.markAsDirty();
-				}
+			country.addChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getGroupEntities().get(idx).setCountry(Country.safeIso2(country.getValue()));
+				callback.markAsDirty();
 			});
 			otherInputs.add(country);
 			
@@ -103,6 +98,11 @@ public class Page19 extends PageAbs {
 		
 		paintFooterNote(basePanel, "(*) Grupos mercantiles con entidad dominante residente en territorio espa\u00F1ol; s\u00F3lo deber\u00E1 cumplimentar el cuadro dicha entidad dominante.");
 		paintFooterNote(basePanel, "(**) NIF de las entidades del grupo (o equivalente al NIF del pa\u00EDs de residencia, si no tiene NIF en Espa\u00F1a) (excepto el de la entidad declarante)");
+				
+		// Actividades agrícolas y/o ganaderas		
+		FlexTable tab21 = addTable("Actividades agr\u00EDcolas y/o ganaderas");
+		paintKey(tab21, Mod2002022Key.CN1897, 0);
+		paintKey(tab21, Mod2002022Key.CN1901, 1);
 		
 		// No residentes con más de un establecimiento permanente
 		
@@ -148,7 +148,7 @@ public class Page19 extends PageAbs {
 		// Botón añadir 
 		AonTableButton addButton4 = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
 		addButton4.addClickHandler(event -> {
-			callback.getMod200Object().getMod200().getEstablishments().add(new String());
+			callback.getMod200Object().getMod200().getEstablishments().add("");
 			paint();
 		});
 		otherInputs.add(addButton4);

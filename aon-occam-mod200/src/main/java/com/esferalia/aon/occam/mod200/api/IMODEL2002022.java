@@ -11,5 +11,6 @@ public interface IMODEL2002022 {
 	public Mod2002022 saveMod2002022(AONContext ctx, Mod2002022 mod200);
 	public void deleteMod2002022(AONContext ctx, Mod2002022 mod200);
 	public Mod2002022 calculateMod2002022(Mod2002022 mod200);
+	public Mod2002022 aeatPresentation(AONContext ctx, Mod2002022 mod200, String aeatResponse);
 	
 }

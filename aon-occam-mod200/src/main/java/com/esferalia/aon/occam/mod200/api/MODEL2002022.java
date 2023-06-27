@@ -49,5 +49,12 @@ public class MODEL2002022 {
 			getImpl().deleteMod2002022(ctx, mod200);
 		} 
 	}
+	
+	public static Mod2002022 aeatPresentation(Occam occam, Mod2002022 mod200, String aeatResponse) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().aeatPresentation(ctx, mod200, aeatResponse);
+		}
+	}
+
 
 }
