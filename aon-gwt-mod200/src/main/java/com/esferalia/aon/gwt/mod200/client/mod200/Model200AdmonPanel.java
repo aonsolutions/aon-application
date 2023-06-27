@@ -153,18 +153,11 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 		return this.api;
 	}
 	
-	//private void cleanViewers() {
 	public void cleanViewers() {
 		if (aeatPanel != null) {
 			aeatPanel.clear();
 		}
-		if (pdfViewer != null) {
-			pdfViewer.open("data:application/pdf;base64," +
-				"JVBERi0xLjAKMSAwIG9iajw8L1BhZ2VzIDIgMCBSPj5lbmRvYmogMiAwIG9iajw8L0tpZHNbMy" +
-				"Aw\nIFJdL0NvdW50IDE+PmVuZG9iaiAzIDAgb2JqPDwvTWVkaWFCb3hbMCAwIDMgM10+PmVuZG" +
-				"9iagp0\ncmFpbGVyPDwvUm9vdCAxIDAgUj4+Cg=="
-				);
-		}
+		deckLayoutPanel.setWidget(aeatPanel);
 	}
 
 	private void submitForm(String action) {
@@ -181,8 +174,6 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 			validating = true;
 			if (getCallback().getModel().isSent()) {
 				getCallback().showError("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");	
-//			} else if (!getCallback().getModel().canBeValidated()) {
-//				getCallback().showError(AON.MSG.mustFinishModel());	
 			} else {
 				validateAEAT(new AEATParams()
 						.setDomainName(getCallback().getOptions().getDomainName())
@@ -232,7 +223,7 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 		AonConfirmDialog cd = new AonConfirmDialog();
 		cd.confirm(AON.MSG.confirmAccountingFileMod200(),			
 			new AonConfirmDialogCallback() {
-				
+			
 				@Override
 				public void onCancel() {					
 				}
@@ -268,7 +259,6 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 					.setName(getCallback().getOptions().getConfiguration().fiscal().getCertificateName())
 					.setTestEnvironment(getCallback().getOptions().getConfiguration().fiscal().isTestEnvironment())
 					.setShowNRC(getCallback().getModel().isStrictToDeposit())
-					//.setInfoMessage("Va a proceder a la presentaci\u00F3n del Modelo.");
 					.setInfoMessage("Presentaci\u00F3n del Modelo 200");
 				AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
 					
@@ -338,10 +328,11 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 
 	private void checkAEAT() {
 		if (!checkingAEAT) {
-			checkingAEAT = true;
+			checkingAEAT = true;			
 			if (!getCallback().getModel().isSent()) {
 				getCallback().showError("El modelo no est\u00E1 presentado.");	
 			} else {
+				cleanViewers();
 				String doc = getCallback().getOptions().getConfiguration().fiscal().getCertificateDocument();
 				String name = getCallback().getOptions().getConfiguration().fiscal().getCertificateName();
 				AonCertificationPopupParams params = new AonCertificationPopupParams()
@@ -388,9 +379,8 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 		popup.add( new AonSplash());
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
-		popup.center();
+		popup.center();		
 		
-		cleanViewers();
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open(FormPanel.METHOD_POST, getCallback().getCheckAction());
 		xhr.setRequestHeader(AonHttpUtils.CONTENT_TYPE,AonHttpUtils.APPLICATION_FORM_URLENCODED);
@@ -497,6 +487,7 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 	}
 	
 	protected void showPDF(String dataURI) {
+		aeatPanel.clear();
 		deckLayoutPanel.setWidget(pdfViewerPanel);
 		pdfViewer.open("data:application/pdf;base64," + dataURI);
 	}
@@ -547,7 +538,11 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 		sendLink.setVisible( getCallback().getModel().canBeSent() );  // Presentación directa
 		checkLink.setVisible( getCallback().getModel().isSent() );  // Consulta presentación AEAT
 		viewDocumentLink.setVisible( getCallback().getModel().isSent() );  // Consulta presentacion guardada
-		uploadPDFLink.setVisible( viewDocumentLink.isVisible() );  // Cargar manualmente PDF presentado		
+		uploadPDFLink.setVisible( viewDocumentLink.isVisible() );  // Cargar manualmente PDF presentado
+		
+		if (!pdfViewer.isAttached()) {
+			deckLayoutPanel.setWidget(aeatPanel);
+		}
 	}
 	
 }

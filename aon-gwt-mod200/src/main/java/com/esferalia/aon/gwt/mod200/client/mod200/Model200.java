@@ -259,14 +259,14 @@ public class Model200 extends MainEntryPoint {
 		public void cleanInfoPanel() {
 		}
 
-		public void reset(Model200ModuleOptions options, Mod200 mod200) {
+		public void reset(Mod200 mod200) {
 			// El botón inicializar, se utiliza a partir del 2020
 			if (mod200.getYear() == 2020)
-				changeView2020(options, (Mod2002020) mod200);
+				changeView2020((Mod2002020) mod200);
 			else if (mod200.getYear() == 2021)
-				changeView2021(options, (Mod2002021) mod200);
+				changeView2021((Mod2002021) mod200);
 			else if (mod200.getYear() == 2022)
-				changeView2022(options, (Mod2002022) mod200);
+				changeView2022((Mod2002022) mod200);
 		}
 		
 		public void cleanErrorPanel() {
@@ -452,7 +452,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onSuccess(Mod2002020 mod200) {
-							changeView2020(options, mod200);
+							changeView2020(mod200);
 						}
 
 						@Override
@@ -465,7 +465,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onSuccess(Mod2002021 mod200) {
-							changeView2021(options, mod200);
+							changeView2021(mod200);
 						}
 
 						@Override
@@ -478,7 +478,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onSuccess(Mod2002022 mod200) {
-							changeView2022(options, mod200);
+							changeView2022(mod200);
 						}
 
 						@Override
@@ -539,15 +539,15 @@ public class Model200 extends MainEntryPoint {
 		declarationContainer.setWidget(model2002019);
 	}
 	
-	private void changeView2020(Model200ModuleOptions options, Mod2002020 mod200) {
+	private void changeView2020(Mod2002020 mod200) {
 		declarationContainer.setWidget(new Model2002020(new Model200Callback(), mod200));
 	}
 	
-	private void changeView2021(Model200ModuleOptions options, Mod2002021 mod200) {
+	private void changeView2021(Mod2002021 mod200) {
 		declarationContainer.setWidget(new Model2002021(new Model200Callback(), mod200));
 	}
 	
-	private void changeView2022(Model200ModuleOptions options, Mod2002022 mod200) {
+	private void changeView2022(Mod2002022 mod200) {
 		declarationContainer.setWidget(new Model2002022(new Model200Callback(), mod200));
 	}
 	
@@ -695,7 +695,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onSuccess(Mod2002020 mod200) {				
-				changeView2020(options, mod200);
+				changeView2020(mod200);
 			}
 
 			@Override
@@ -710,7 +710,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onSuccess(Mod2002021 mod200) {				
-				changeView2021(options, mod200);
+				changeView2021(mod200);
 			}
 
 			@Override
@@ -725,7 +725,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onSuccess(Mod2002022 mod200) {				
-				changeView2022(options, mod200);
+				changeView2022(mod200);
 			}
 
 			@Override
@@ -734,7 +734,7 @@ public class Model200 extends MainEntryPoint {
 		});
 	}	
 	
-	public native static double resolve(String expression) /*-{
+	public static native double resolve(String expression) /*-{
 		d = eval(expression);
 		return d;
 	}-*/;	

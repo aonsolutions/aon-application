@@ -296,7 +296,6 @@ public class Model2002022 extends DockLayoutPanel {
 							@Override
 							public void onSuccess(Mod2002022 mod200) {
 								mod200Object.setMod200(mod200);
-								// ACTUALIZAR BOTONES DEL ESTADO
 								refreshButtonsVisibility();
 							}
 
@@ -424,6 +423,7 @@ public class Model2002022 extends DockLayoutPanel {
 						if (page != null) 
 							page.removeAonChanged();
 					refreshButtonsVisibility();
+					cleanAEATViewers();
 				}
 				@Override
 				public void onFailure(Throwable caught) {
@@ -513,7 +513,7 @@ public class Model2002022 extends DockLayoutPanel {
 											@Override
 											public void onSuccess(Mod2002022 mod200) {
 												popup.hide();
-												mod200Callback.reset(options, mod200);
+												mod200Callback.reset(mod200);
 												markAsDirty();
 											}
 
@@ -739,6 +739,12 @@ public class Model2002022 extends DockLayoutPanel {
 		statusLabel.addStyleName(AON.CSS.aonTextCenter());
 		statusLabel.addStyleName(AON.CSS.aonBorder());
 		statusLabel.addStyleName(AON.CSS.aonNowrap());
+	}
+	
+	protected void cleanAEATViewers() {
+		// Pagina Agencia Tributaria
+		if (PAGES[PAGES.length-1] != null)
+			((PageAEAT)PAGES[PAGES.length-1]).cleanViewers();
 	}
 
 }

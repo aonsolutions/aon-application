@@ -22,4 +22,8 @@ public class PageAEAT extends PageAbs {
 		admonPanel.manageLinks();
 	}
 	
+	protected void cleanViewers() {
+		admonPanel.cleanViewers();
+	}
+	
 }

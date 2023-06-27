@@ -471,7 +471,7 @@ public class Model2002021 extends DockLayoutPanel {
 											@Override
 											public void onSuccess(Mod2002021 mod200) {
 												popup.hide();
-												mod200Callback.reset(options, mod200);
+												mod200Callback.reset(mod200);
 												markAsDirty();
 											}
 
