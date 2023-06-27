@@ -1,0 +1,50 @@
+app-card{
+  cursor: pointer;
+  border-color: black;
+}
+
+.banks-header {
+  width: 100%;
+  display: flex;
+  height: 100%;
+}
+
+.banks-header-name{
+  width: 50%;
+  display: flex;
+  align-items: center;
+}
+
+.banks-header-line {
+  width: .3rem;
+  height: 100%;
+  margin: 0 .6rem 0 0;
+  border-radius: 1.55rem;
+    background-color: #4f91ff;
+}
+
+.banks-header-text {
+  font-size: 1.2rem;
+  font-family: 'Roboto-Bold';
+  width: calc(auto);
+}
+
+.banks-create{
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  margin: 3.7rem 1.5rem;
+}
+
+.bank-link-create{
+  margin-bottom: 13px;
+  color: #4f91ff;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.banks-create-text{
+  font-size: .7rem;
+  color: #9696A0;
+}

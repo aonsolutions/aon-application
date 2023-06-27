@@ -1,0 +1,100 @@
+@import "src/styles.scss";
+
+.upload {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+#list-Dashboard app-button {
+  margin-right: $margin-right;
+  float: left;
+}
+
+.summary {
+  margin-bottom: 1.55rem;
+}
+
+.summary-view-chart {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 1rem;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.summary-view {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 1rem;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.summary-view:last-child {
+  margin-right: 0;
+}
+
+.line-div {
+  border: none;
+  border-top: 1px solid #d2d2d6;
+}
+
+.email1 {
+  margin-top: 1.6rem;
+  // border: 1px solid green;
+  margin-bottom: 1.6rem;
+}
+
+.email2 {
+  display: flex;
+  border: 0.05rem solid red;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  text-align: start;
+}
+
+.panel {
+  display: flex;
+  border: 0.05rem solid black;
+  height: 100%;
+  margin-left: 32px;
+  width: 100%;
+}
+
+.gestion1 {
+  // border: solid .05rem purple;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+  margin-bottom: 1.6rem;
+}
+
+// .gestion2{
+//   border: .05rem solid black;
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   grid-column: 1 / span 22;
+// }
+
+.gestion-style {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 1rem;
+  height: 100%;
+  word-wrap: break-word;
+}
+
+.button-style:last-child {
+  margin-right: 0;
+}
+
