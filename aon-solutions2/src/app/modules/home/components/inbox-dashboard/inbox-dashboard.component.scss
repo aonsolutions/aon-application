@@ -1,52 +1,52 @@
-.containerCard{
-  width: 100%;
-  height: 100%;
-  padding: 15px;
-  margin: 0 auto;
-  border: 1px solid #D2D2D6;
-  border-radius: 4px;
-  box-sizing: border-box;
+app-card{
+  cursor: pointer;
 }
-.containerCard .headCard{
+
+.head-card {
   width: 100%;
   height: 10%;
   display: flex;
   align-items: center;
-
+  padding-top: 1rem;
 }
-.headCard .lineHead{
+
+.head-card .line-head {
   width: 6px;
   height: 33px;
   margin: 0 12px 0 0;
   border-radius: 31px;
   background-color: #f6655a;
 }
-.headCard .text {
+
+.head-card .text {
   font-style: normal;
   font-weight: 700;
   font-size: 24px;
   line-height: 36px;
-  font-weight: bold;
 }
-.contentCenter{
+
+.content-center {
   width: 100%;
   height: 70%;
-  //background-color: aqua;
+  padding-top: 20px;
 
 }
-.footer {
+
+.messages-footer {
   width: 100%;
-  height: 17%;
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+  font-size: 14px;
+  padding-top: 25px;
+  border-top: .05rem solid #d2d2d6;
 }
-.footer .seeAll{
+
+.messages-footer .see-all {
   color: #f6655a;
   cursor: pointer;
-  margin-right: 1% ;
+  margin-right: 1%;
 }
-.footer .circle{
+
+.messages-footer .circle {
   width: 28px;
   height: 28px;
   display: flex;
@@ -55,15 +55,17 @@
   align-items: center;
   border-radius: 16px;
   background-color: #feedec;
+
 }
-.circle .numberCircle{
+
+.circle .number-circle {
   font-size: 14px;
   font-weight: 500;
 }
-.seeAllMessages{
+
+.see-all-messages {
   display: flex;
 }
-
 
 
 
