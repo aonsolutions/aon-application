@@ -24,11 +24,13 @@ import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202.Mod202DAO;
 import com.esferalia.aon.occam.mod200.api.model.BalanceType;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
@@ -49,7 +51,8 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022KeyDC;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2021.Mod2002021DAO;
-import com.esferalia.aon.occam.mod200.server.format.Mod2002022Import2021;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2022.Mod2002022Import2021;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -63,7 +66,7 @@ public class Mod2002022DAO  {
 		boolean populate(Mod2002022 mod, FsModel200RegistryRecord reg);
 	}
 
-	private static enum Mod2002022RegistryType {
+	private enum Mod2002022RegistryType {
 		 ADMINISTRATOR ( 
 			(mod,reg) -> mod.getAdministrators().add(new Mod200CompanyAdministrator()
 				.setDocument( reg.getDocument())
@@ -141,11 +144,15 @@ public class Mod2002022DAO  {
 					.setName( reg.getName())))
 		,FILM_PRODUCTIONS( 
 			(mod,reg) -> mod.getFilmProductions().add(reg.getDocument()))
+		,SICAV_1( 
+			(mod,reg) -> mod.getSicav1().add(reg.getDocument()))
+		,SICAV_2( 
+			(mod,reg) -> mod.getSicav2().add(reg.getDocument()))
 		;
 		
 		private IPopulater populater;
 		
-		private Mod2002022RegistryType( IPopulater populater){
+		private Mod2002022RegistryType(IPopulater populater){
 			this.populater = populater;
 		}
 		
@@ -183,23 +190,19 @@ public class Mod2002022DAO  {
 		
 	}
 	
-	private static final IAccMiningKeyAccept ACCEPTER = new IAccMiningKeyAccept() {
-		
-		@Override
-		public boolean acceptKey(Object key) {
+	private static final IAccMiningKeyAccept ACCEPTER = key -> {
+		try {
+			// Comprobar si la clave está en Mod2002022Key
+			return (Mod2002022Key.valueOf((String) key) != null);
+		} catch (IllegalArgumentException e) {
 			try {
-				// Comprobar si la clave está en Mod2002022Key
-				return (Mod2002022Key.valueOf((String) key) != null);	
-			} catch (IllegalArgumentException e) {
-				try {
-					// Si no lo está, comprobar si está en Mod2002022KeyDC (Detalle correcciones)
-					return (Mod2002022KeyDC.valueOf((String) key) != null);	
-				} catch (IllegalArgumentException e2) {
-					return false;
-				}				
+				// Si no lo está, comprobar si está en Mod2002022KeyDC (Detalle correcciones)
+				return (Mod2002022KeyDC.valueOf((String) key) != null);
+			} catch (IllegalArgumentException e2) {
+				return false;
 			}
 		}
-	};
+	};	
 
 	public static Mod2002022 save(AONContext ctx, Mod2002022 mod200) {
 		try {
@@ -257,7 +260,7 @@ public class Mod2002022DAO  {
 	private static Mod2002022 insert(AONContext ctx, Mod2002022 mod200)  {
         mod200.setCreationUser(ctx.getUser());
 		mod200.setCreationDate(new Timestamp(System.currentTimeMillis()));        
-//		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); // Se utilizará a partir del ejercicio 2022
+		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); 
 		FsModel200Record record = ctx.getDslContext()
 			.insertInto(FS_MODEL200)
 			 .set(FS_MODEL200.DOMAIN, mod200.getDomain() )
@@ -499,7 +502,35 @@ public class Mod2002022DAO  {
 					list.add(detail);
 				}
 			}
-		}		
+		}
+		
+		// E. Socios SICAV: Nif sociedades disueltas
+		if (mod200.getSicav1() != null) {
+			for ( String s1 : mod200.getSicav1() ) {
+				if (AonStringUtils.isNotBlank(s1)) {
+					detail = new FsModel200RegistryRecord();
+					detail.setFsModel200(mod200.getId());
+					detail.setDomain(mod200.getDomain());
+					detail.setType(Mod2002022RegistryType.SICAV_1.byteValue());
+					detail.setDocument(AonStringUtils.substring(s1,0,9));  
+					list.add(detail);
+				}
+			}
+		}
+		
+		// E. Socios SICAV: Nif de la/las IIC donde reinvierte
+		if (mod200.getSicav2() != null) {
+			for ( String s2 : mod200.getSicav2() ) {
+				if (AonStringUtils.isNotBlank(s2)) {
+					detail = new FsModel200RegistryRecord();
+					detail.setFsModel200(mod200.getId());
+					detail.setDomain(mod200.getDomain());
+					detail.setType(Mod2002022RegistryType.SICAV_2.byteValue());
+					detail.setDocument(AonStringUtils.substring(s2,0,9));  
+					list.add(detail);
+				}
+			}
+		}				
 		
 		if (!list.isEmpty()) {
 			ctx.getDslContext().batchStore(list).execute();
@@ -551,7 +582,7 @@ public class Mod2002022DAO  {
 	private static Mod2002022 update(AONContext ctx, Mod2002022 mod200)  {		
         mod200.setModificationUser(ctx.getUser());
 		mod200.setModificationDate(new Timestamp( System.currentTimeMillis()));
-//		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); // Se utilizará a partir del ejercicio 2022
+		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); 
 		ctx.getDslContext().update(FS_MODEL200)
 		 .set(FS_MODEL200.DOMAIN, mod200.getDomain() )
 		 .set(FS_MODEL200.ENTERPRISE, mod200.getEnterprise())
@@ -630,7 +661,7 @@ public class Mod2002022DAO  {
 			int count = ctx.getDslContext().delete(FS_MODEL200)
 				.where(FS_MODEL200.ID.equal(id) )
 				.execute();
-//			Mod200DAO.deleteFsModel(ctx, mod200.getFsModel()); // Se utilizará a partir del ejercicio 2022
+			Mod200DAO.deleteFsModel(ctx, mod200.getFsModel()); 
 			ctx.log().info("------ [END OK] DELETE MOD 200 ["+id+"] (" + count +" rows )");
 		} catch (Throwable t) {
 			ctx.log().info("------ [END FAIL] DELETE MOD 200 [" + t.getMessage() + "]");
@@ -640,11 +671,11 @@ public class Mod2002022DAO  {
 	}
 
 	public static Mod2002022 getById(AONContext ctx, int id ) {
-		FsModel200Record record = ctx.getDslContext()
+		FsModel200Record rec = ctx.getDslContext()
 				.selectFrom(FS_MODEL200)
 				.where(FS_MODEL200.ID.equal(id))
 				.fetchOne();
-		Mod2002022 mod200 = populateMod200(ctx,record);
+		Mod2002022 mod200 = populateMod200(ctx,rec);
 		initializeActiveMap(mod200);
 		return mod200;
 	}
@@ -675,11 +706,11 @@ public class Mod2002022DAO  {
 				.where(FS_MODEL200.DOMAIN.equal(ctx.getDomainId()))
 				.and(FS_MODEL200.YEAR.equal(year))
 				.fetch();
-		FsModel200Record record = null;
+		FsModel200Record rec = null;
 		Mod2002022 mod200 = null; 
 		if (result != null && result.isNotEmpty()) {
-			record = result.get(0);
-			mod200 = populateMod200(ctx,record);
+			rec = result.get(0);
+			mod200 = populateMod200(ctx,rec);
 		}
 		if (initialize) {
 			if (mod200 == null) {
@@ -694,7 +725,6 @@ public class Mod2002022DAO  {
 	private static Mod2002022 getMod200(FsModel200Record record) {
 		
 		Mod2002022 mod200 = new Mod2002022();
-		mod200 = new Mod2002022();
 		mod200.setId(record.getId());
 		mod200.setYear(record.getYear());
 		mod200.setDomain(record.getDomain());
@@ -978,24 +1008,23 @@ public class Mod2002022DAO  {
 	
 	private static void fillMod202(AONContext ctx,Mod2002022 mod200) {
 		Mod202DAO.getMod202s(ctx, mod200.getDomain())
-			.filter(mod -> mod.getYear() == mod200.getYear() && mod.getStatus() == FiscalStatus.FINISHED )
-			
-			.forEach( mod -> {
-				Mod202 mod202 = Mod202DAO.getMod202(ctx, mod.getId());		
-				Mod2002022Key key = null;
-				if (mod202.getPeriod() == Period.T1) {
-					key = Mod2002022Key.BN601;
-				} else if (mod202.getPeriod() == Period.T2) {
-					key = Mod2002022Key.BN603;
-				} if (mod202.getPeriod() == Period.T3) {
-					key = Mod2002022Key.BN605;
-				}
-				if (key != null) {
-					DoubleVariableEx dv = new DoubleVariableEx( key );
-					dv.setValue( (Double) mod202.getResult() );
-					mod200.addVariable( dv );
-				}
-			});
+				.filter(mod -> mod.getYear() == mod200.getYear() && (mod.isFinished() || mod.isSent()))
+				.forEach(mod -> {
+					Mod202 mod202 = Mod202DAO.getMod202(ctx, mod.getId());
+					Mod2002022Key key = null;
+					if (mod202.getPeriod() == Period.T1) {
+						key = Mod2002022Key.BN601;
+					} else if (mod202.getPeriod() == Period.T2) {
+						key = Mod2002022Key.BN603;
+					} else if (mod202.getPeriod() == Period.T3) {
+						key = Mod2002022Key.BN605;
+					}
+					if (key != null) {
+						DoubleVariableEx dv = new DoubleVariableEx(key);
+						dv.setValue(mod202.getResult());
+						mod200.addVariable(dv);
+					}
+				});
 	}
 
 	public static Mod2002022 calculate(Mod2002022 mod200) {
@@ -1138,9 +1167,32 @@ public class Mod2002022DAO  {
 		ctx.put(Mod2002022Key.C0055.toString(), mod200.getPygType() == BalanceType.PYMES);
 	}
 
-	public static Mod2002022 importMod2002021(AONContext ctx, Mod2002022 mod200) {
-		Mod2002021 old = Mod2002021DAO.getByYear(ctx, 2021);
-		return Mod2002022Import2021.import2021(old);
-	}
+//	public static Mod2002022 importMod2002021(AONContext ctx, Mod2002022 mod200) {
+//		Mod2002021 old = Mod2002021DAO.getByYear(ctx, 2021);
+//		return Mod2002022Import2021.import2021(old);
+//	}
+	
+	// Presentación Directa del Modelo: Grabar Respuesta AEAT (PDF) y marcar el modelo como enviado
+	public static Mod2002022 aeatPresentation(AONContext ctx, Mod2002022 mod, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			
+			// Primero borramos el que ya exista previamente, para que se quede solo el último PDF presentado (bien cargado manualmente o grabado por la AEAT)
+			DataResponseDAO.deleteAEATResponse(ctx, mod);
+			
+			// Ahora grabamos el PDF que nos haya devuelto la AEAT
+			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
+			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
+			if (mod != null && mod.getId() != null) {
+				ctx.getDslContext().update(FS_MODEL200)
+					.set(FS_MODEL200.RECEIPT, response.getJustificante())
+					.set(FS_MODEL200.STATUS, FiscalStatus.SENT.value())
+					.where(FS_MODEL200.ID.equal(mod.getId()))
+					.execute();
+				return getById(ctx, mod.getId());
+			}
+		}
+		return mod;
+	}	
 	
 }
+

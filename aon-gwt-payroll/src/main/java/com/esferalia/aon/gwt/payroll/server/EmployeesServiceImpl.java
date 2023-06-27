@@ -845,11 +845,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					cost.getEnterpriseId(), cost.getWorkplaceId(), occamTypes);
 
 			byte bytes[] = oos.toByteArray();
-			
-			FileOutputStream is = new FileOutputStream("/tmp/x.pdf");
-			is.write(bytes);
-			is.close();
-			
+						
 			InputStream data = new ByteArrayInputStream(bytes);
 
 			StringWriter writer = new StringWriter();

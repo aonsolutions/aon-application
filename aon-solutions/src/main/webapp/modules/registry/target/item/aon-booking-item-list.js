@@ -2,7 +2,6 @@ import {AonElement} from '../../../../components/AonElement.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../../../../environments/environments.js';
 import { AonTable } from '../../../../components/aon-table.js';
 import { getItems, getRItems } from '../../../../services/productService.js';
-import { AonTargetItemAdd } from './aon-target-item-add.js';
 import { BookingItemStatus, RegistryItemStatus } from '../../../../models/product/RegistryItemStatus.js';
 import { AonBookingItemAdd } from './aon-booking-item-add.js';
 import { Item } from '../../../../models/product/Item.js';
@@ -29,7 +28,7 @@ export class AonBookingItemList extends AonElement {
 
 	build() {
 		this.TABLE = new AonTable();
-		this.TABLE.id = 'aonItemListTable';
+		this.TABLE.id = 'aonBookingItemListTable';
 		this.TABLE.selectedColor = true;
 
 		this.TABLE.style.width = "100%";
@@ -151,7 +150,7 @@ export class AonBookingItemList extends AonElement {
 		dialog.autoclose = false;
 		dialog.width = '40%';
 		dialog.clear();
-		dialog.setTitle(MSG.ASSIGN+" "+MSG.PRODUCTS);
+		dialog.setTitle(MSG.ASSIGN + " " + MSG.CONTRACTED_PRODUCTS);
 	
 		const aonTargetItemAdd = new AonBookingItemAdd();
 		if (selectedItem) {

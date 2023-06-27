@@ -11,18 +11,39 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.mod200.client.IFiscalModelCallback;
 import com.esferalia.aon.gwt.mod200.client.MainEntryPoint;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2013.Mod2002013Object;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2013.Mod2002013Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2013.Mod2002013ServiceAsync;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2013.Mod2002013ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2013.Model2002013;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2014.Mod2002014Object;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2014.Mod2002014Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2014.Mod2002014ServiceAsync;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2014.Mod2002014ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2014.Model2002014;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2015.Mod2002015Object;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2015.Mod2002015Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2015.Mod2002015ServiceAsync;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2015.Mod2002015ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2015.Model2002015;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2016.Mod2002016Object;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2016.Mod2002016Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2016.Mod2002016ServiceAsync;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2016.Mod2002016ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2016.Model2002016;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2017.Mod2002017Object;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2017.Mod2002017Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2017.Mod2002017ServiceAsync;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2017.Mod2002017ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2017.Model2002017;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2018.Mod2002018Object;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2018.Mod2002018Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2018.Mod2002018ServiceAsync;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2018.Mod2002018ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2018.Model2002018;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Mod2002019Object;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Mod2002019Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Mod2002019ServiceAsync;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Mod2002019ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Model2002019;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Service;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020ServiceAsync;
@@ -62,11 +83,6 @@ public class Model200 extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	
-// POR AHORA NO SE MUESTRA NADA EN EL PANEL DE INFORMACION DE LA PARTE INFERIOR, POR LO TANTO NO SE UTILIZA
-// ANTES EN LA PARTE INFERIOR DEL MODELO 200 SE MOSTRABAN LOS ERRORES, PERO AHORA LOS ERRORES APARECEN EN EL 
-// PANEL SUPERIOR POR LO TANTO EL PANEL INFERIOR POR AHORA NO CONTIENE NADA
-//	private static final int INFORMATION_TAB = 0;
-	
 	public static final Mod200ServiceAsync MOD200_SERVICE;
 	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
@@ -91,14 +107,9 @@ public class Model200 extends MainEntryPoint {
 	private Model200ModuleOptions options;
 
 	private AonLayoutPanel aonLayout;
-//	private SplitLayoutPanel splitLayoutPanel;
 	private SimpleLayoutPanel declarationContainer;
 	
 	private Model200Table model200Table;
-	
-//	private AonMinimizePanel footPanel;
-//	private TabLayoutPanel tabLayout;
-//	private ScrollPanel breakdownPanel;
 	
 	public static Mod2002022ServiceAsync getMod2002022Service() {
 		if (mod2002022Service == null) {
@@ -187,7 +198,6 @@ public class Model200 extends MainEntryPoint {
 			cleanErrorMessage();
 			declarationContainer.setWidget(model200Table);
 			model200Table.refresh( new Model200Callback() );
-//			closeFootPanel();
 		}
 		public void removed() {
 			canceled();
@@ -221,7 +231,6 @@ public class Model200 extends MainEntryPoint {
 				cleanErrorMessage();
 				declarationContainer.setWidget(model200Table);
 				model200Table.refresh( new Model200Callback() );
-//				closeFootPanel();
 			}
 		}
 		
@@ -244,29 +253,20 @@ public class Model200 extends MainEntryPoint {
 		
 		@Override
 		public void showInfoPanel(String htmlText) {
-//			openFootPanelIfNeeded();
-//			tabLayout.selectTab(INFORMATION_TAB);
-//			HTMLPanel panel = new HTMLPanel(htmlText);
-//			breakdownPanel.setWidget(panel);
-//			breakdownPanel.scrollToTop();
 		}
 
 		@Override
 		public void cleanInfoPanel() {
-//			Widget w = breakdownPanel.getWidget();
-//			if (w != null) {
-//				breakdownPanel.remove( breakdownPanel.getWidget() ); 
-//			}
 		}
 
-		public void reset(Model200ModuleOptions options, Mod200 mod200) {
+		public void reset(Mod200 mod200) {
 			// El botón inicializar, se utiliza a partir del 2020
 			if (mod200.getYear() == 2020)
-				changeView2020(options, (Mod2002020) mod200);
+				changeView2020((Mod2002020) mod200);
 			else if (mod200.getYear() == 2021)
-				changeView2021(options, (Mod2002021) mod200);
+				changeView2021((Mod2002021) mod200);
 			else if (mod200.getYear() == 2022)
-				changeView2022(options, (Mod2002022) mod200);
+				changeView2022((Mod2002022) mod200);
 		}
 		
 		public void cleanErrorPanel() {
@@ -312,16 +312,7 @@ public class Model200 extends MainEntryPoint {
 
 		aonLayout = new AonLayoutPanel();
 		
-// POR AHORA NO APARECE NADA EN LA PARTE INFERIOR DE INFORMACION, APARECIAN LOS ERRORES QUE
-// AHORA APARECEN EN EL PANEL SUPERIOR DE ERRORES, POR ESO NO LO MUESTRO
-// SE PODRIA PONER POR EJEMPLO AL INFORMACION DE LAS CASILLAS CALCULADAS O ALGO ASI, PERO PARA 
-// ESO HABRIA QUE PREPARARLO CON LO QUE QUERAMOS QUE SALGA
-//		splitLayoutPanel = new SplitLayoutPanel( 2 );
-//		aonLayout.add(splitLayoutPanel);
-		
 		declarationContainer = new SimpleLayoutPanel();
-//		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
-//		splitLayoutPanel.add(declarationContainer);
 		aonLayout.add(declarationContainer);
 		
 		model200Table = new Model200Table(new Model200Callback());
@@ -338,38 +329,6 @@ public class Model200 extends MainEntryPoint {
 			model200Table.refresh(new Model200Callback());
 		}
 	}
-	
-//	private AonMinimizePanel getMinimizePanel() {
-//		footPanel = new AonMinimizePanel();
-//		footPanel.addMinimizeHandler( event -> closeFootPanel() );
-//		footPanel.addMaximizeHandler( event -> {
-//			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
-//			splitLayoutPanel.animate(500);
-//		});
-//		footPanel.setStyleName(AON.CSS.aonSelector());
-//		tabLayout = new TabLayoutPanel(26, Unit.PX);
-//		tabLayout.setWidth("100%");
-//		footPanel.add(tabLayout);
-//		
-//		breakdownPanel = new ScrollPanel();
-//		tabLayout.add(breakdownPanel, AON.MSG.informationBreakdown());
-//
-//		tabLayout.setAnimationDuration(300);
-//		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
-//		return footPanel; 
-//	}
-	
-//	private void closeFootPanel() {
-//		splitLayoutPanel.setWidgetSize(footPanel, 30);
-//		splitLayoutPanel.animate(500);
-//	}
-	
-//	private void openFootPanelIfNeeded() {
-//		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
-//			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
-//			splitLayoutPanel.animate(500);
-//		}
-//	}
 	
 	private void onSelectionChange(Model200ModuleOptions options, SelectionEvent<Mod200> event) {
 		Mod200 sel = event.getSelectedItem();
@@ -493,7 +452,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onSuccess(Mod2002020 mod200) {
-							changeView2020(options, mod200);
+							changeView2020(mod200);
 						}
 
 						@Override
@@ -506,7 +465,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onSuccess(Mod2002021 mod200) {
-							changeView2021(options, mod200);
+							changeView2021(mod200);
 						}
 
 						@Override
@@ -519,7 +478,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onSuccess(Mod2002022 mod200) {
-							changeView2022(options, mod200);
+							changeView2022(mod200);
 						}
 
 						@Override
@@ -580,15 +539,15 @@ public class Model200 extends MainEntryPoint {
 		declarationContainer.setWidget(model2002019);
 	}
 	
-	private void changeView2020(Model200ModuleOptions options, Mod2002020 mod200) {
+	private void changeView2020(Mod2002020 mod200) {
 		declarationContainer.setWidget(new Model2002020(new Model200Callback(), mod200));
 	}
 	
-	private void changeView2021(Model200ModuleOptions options, Mod2002021 mod200) {
+	private void changeView2021(Mod2002021 mod200) {
 		declarationContainer.setWidget(new Model2002021(new Model200Callback(), mod200));
 	}
 	
-	private void changeView2022(Model200ModuleOptions options, Mod2002022 mod200) {
+	private void changeView2022(Mod2002022 mod200) {
 		declarationContainer.setWidget(new Model2002022(new Model200Callback(), mod200));
 	}
 	
@@ -736,7 +695,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onSuccess(Mod2002020 mod200) {				
-				changeView2020(options, mod200);
+				changeView2020(mod200);
 			}
 
 			@Override
@@ -751,7 +710,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onSuccess(Mod2002021 mod200) {				
-				changeView2021(options, mod200);
+				changeView2021(mod200);
 			}
 
 			@Override
@@ -766,7 +725,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onSuccess(Mod2002022 mod200) {				
-				changeView2022(options, mod200);
+				changeView2022(mod200);
 			}
 
 			@Override
@@ -775,7 +734,7 @@ public class Model200 extends MainEntryPoint {
 		});
 	}	
 	
-	public native static double resolve(String expression) /*-{
+	public static native double resolve(String expression) /*-{
 		d = eval(expression);
 		return d;
 	}-*/;	

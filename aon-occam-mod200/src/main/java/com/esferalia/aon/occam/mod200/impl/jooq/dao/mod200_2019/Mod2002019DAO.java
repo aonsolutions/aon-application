@@ -56,7 +56,7 @@ import com.esferalia.aon.occam.mod200.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2018.Mod2002018DAO;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2019.jaxb.MOD2002019;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2019.jaxb.Mod2002019toMOD2002019;
-import com.esferalia.aon.occam.mod200.server.format.Mod2002019Import2018;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2019.Mod2002019Import2018;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;

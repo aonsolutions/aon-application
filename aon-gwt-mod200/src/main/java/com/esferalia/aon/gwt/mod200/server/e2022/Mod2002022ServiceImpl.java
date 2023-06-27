@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.util.Base64;
 import java.util.LinkedList;
 
-import jakarta.servlet.annotation.WebServlet;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -19,6 +18,8 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2022.jaxb.MOD2002022;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2022.jaxb.XMLtoMod2002022;
 import com.esferalia.aon.watson.error.AonCoreException;
+
+import jakarta.servlet.annotation.WebServlet;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod200 2022 Servlet", urlPatterns = { "/aon_gwt_mod200/ms/Mod2002022" })
@@ -59,7 +60,7 @@ public class Mod2002022ServiceImpl extends AonStatelessRemoteServiceServlet impl
 	}
 
 	@Override
-	public Mod2002022 fillMod2002022AccountingData(Occam occam, Mod2002022 mod200, String base64) {
+	public Mod2002022 fillMod2002022AccountingData(Occam occam, Mod2002022 mod200, String base64) throws AonCoreException {
 		byte[] fileData = Base64.getDecoder().decode(base64);
 		ByteArrayInputStream input = new ByteArrayInputStream(fileData);
 		try {
@@ -70,7 +71,7 @@ public class Mod2002022ServiceImpl extends AonStatelessRemoteServiceServlet impl
 				XMLtoMod2002022.fillMod2002022(mod, mod200);
 			}
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			throw new AonCoreException(e);
 		}		
 		return mod200;
 	}

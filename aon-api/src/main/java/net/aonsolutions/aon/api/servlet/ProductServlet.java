@@ -245,11 +245,11 @@ public class ProductServlet extends AonApiHttpServlet {
 		JSONArray itemsJson = api.getData().optJSONArray(IJsonNames.ITEMS);
 		 List<Item> items          = ItemJSON.fromJSON(itemsJson);
 		 List<Customer> customers  = CustomerJSON.fromJSON(api.getData().optJSONArray(IJsonNames.CUSTOMERS));
-		 RegistryItemStatus status = RegistryItemStatus.INTERESTED; // RegistryItemStatus.safeValueOf(api.getData().optString(IJsonNames.STATUS));
 		 String typeStr = api.getData().optString(IJsonNames.TYPE);
 		 RegistryMode type = AonStringUtils.isNotBlank(typeStr) ? RegistryMode.valueOf(typeStr) : RegistryMode.TARGET;
 		 Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE);
 		 Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE);
+		 
 		 
 		 List<RegistryItem>registryItems = new ArrayList<>();
 		 
@@ -269,8 +269,11 @@ public class ProductServlet extends AonApiHttpServlet {
 				 if (api.getData().opt("bookingStatus") != null && AonStringUtils.isNotBlank(api.getData().optString("bookingStatus"))) {
 					 BookingStatus bookingStatus = BookingStatus.valueOf(api.getData().optString("bookingStatus"));
 					 ritem.setBookingStatus(bookingStatus);
-				 } else {
+				 } else if (api.getData().opt("status") != null && AonStringUtils.isNotBlank(api.getData().optString("status"))) {
+					 RegistryItemStatus status = RegistryItemStatus.valueOf(api.getData().optString("status"));
 					 ritem.setStatus(status);
+				 } else {
+					 ritem.setStatus(RegistryItemStatus.INTERESTED);
 				 }
 				 registryItems.add(ritem);
 			 });
@@ -312,7 +315,7 @@ public class ProductServlet extends AonApiHttpServlet {
 			BookingStatus bookingStatus = api.getData().getEnum(BookingStatus.class, "bookingStatus");
 			status = RegistryItemStatus.safeValueOf(bookingStatus.value());
 		} else if (api.getData().opt(IJsonNames.STATUS) != null) {
-			api.getData().getEnum(RegistryItemStatus.class, IJsonNames.STATUS);
+			status = api.getData().getEnum(RegistryItemStatus.class, IJsonNames.STATUS);
 		}
 		
 		Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE);	//NULLABLE
