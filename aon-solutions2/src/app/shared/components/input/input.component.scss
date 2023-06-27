@@ -47,6 +47,10 @@
       float: left;
     }
     
+    .search .search-componet-input{
+      width: calc(100% - 1.2rem);
+    }
+    
     .search mat-form-field .mat-form-field-outline-start,
     .search mat-form-field .mat-form-field-outline-end,
     .search mat-form-field .mat-form-field-outline-gap {
