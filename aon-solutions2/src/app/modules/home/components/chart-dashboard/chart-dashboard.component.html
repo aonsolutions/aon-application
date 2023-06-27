@@ -24,7 +24,16 @@
       </mat-menu>
     </div>
   </div>
-  <div body class="chart-content">chartComponent</div>
+  <div body class="chart-content">
+    <app-chart
+      [chartLabels]="['Lorem', 'Ipsum', 'Dolor']"
+      [chartType]="'line'"
+      [chartData]="[
+        [350, 450, 100]
+     ]"
+    >
+    </app-chart>
+  </div>
   <div footer class="chart-footer">
     <div class="chart-footer-button">
       <set-icon [attr.shape]="shape" set-color [ngStyle]="{ color: 'black' }" size="21"></set-icon>
