@@ -2,6 +2,7 @@
   --aonBlue : #002469;
   --aonBackground: #f6f8fc;
   --aonLightBlue: #eaf1fb;
+  --aonSelectedBlue: #d3e3fd;
   --aonGray : gray;
   --aonLightGray : #f1f1f1;
   --aonDarkGray : #5F6368;
@@ -13,6 +14,10 @@
   --materialBlack : #404040;
   --materialRed : #f44336;
   --materialSoftBlack : #202020;
+  --aonAeat: #005eb5;
+  --aonGipuzkoa: #004996;
+  --aonAraba: #c70061;
+  --aonBizkaia: #d20a11;
   --sat: env(safe-area-inset-top);
   --sar: env(safe-area-inset-right);
   --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
@@ -68,7 +73,8 @@
 }
 
 .aonAppLi:hover {
-  background-color: var(--aonLightGray);
+  /* background-color: var(--aonLightGray); */
+  background-color: var(--aonLightBlue);
 }
 
 .aonListGroup {
@@ -346,7 +352,8 @@
 }
 
 .sidenavHover:hover{
-  background-color: var(--aonLightGray);
+  /* background-color: var(--aonLightGray); */
+  background-color: var(--aonLightBlue);
 }
 
 .aonMenuLink {
@@ -560,7 +567,8 @@
 }
 
 .aonTable tbody tr:hover {
-  background-color: var(--aonLightGray);
+  /* background-color: var(--aonLightGray); */
+  background-color: var(--aonLightBlue);
 }
 
 .aonTable tbody tr:active {

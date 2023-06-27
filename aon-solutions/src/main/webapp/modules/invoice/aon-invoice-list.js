@@ -3,7 +3,7 @@ import { AonSelect } from '../../components/aon-select.js';
 
 import { Paymethods } from '../../services/paymethod.js';
 import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices,
-	 sendInvoiceMail, downloadInvoices, getDomainUserRoles, getAeatCertificates } from '../../services/service.js';
+	 sendInvoiceMail, downloadInvoices, getDomainUserRoles, getAeatCertificates, getInvofoxDocuments } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
@@ -62,10 +62,10 @@ export class AonInvoiceList extends AonElement {
  	build() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '10%');
-		aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '20%');
+		aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '25%');
 		aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', '35%');
 		aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '10%');
-		aonInvoiceTable.addColumn(MSG.PAYMETHOD, 'string', 'paymethod', '15%');	
+		aonInvoiceTable.addColumn('', 'aonIcon', 'aonIcon', '5%');
 		aonInvoiceTable.addColumn('', 'icon', 'icon', '5%');
 		// INFO
 		// aonInvoiceTable.addColumn('', '', '');
@@ -156,6 +156,36 @@ export class AonInvoiceList extends AonElement {
 					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});
+
+			
+			if(this.isBeta()) {
+				let data = {
+					skip:0,
+					limit: 10,
+					company: "6480556355f159000abb18eb",
+					publicState: "pendingCorrection"
+				};
+				getInvofoxDocuments(data).then(r => {
+					r.forEach((invoice, i) => {
+
+					invoice.name = invoice.data.issuerName.value;
+					
+					let date = new Date(invoice.data.issueDate.value);
+					let day = date.getDate();
+					let month = date.getMonth() + 1;
+					let year = date.getFullYear();
+					invoice.dateTable = day + '/' + month + '/' + year;
+					
+					invoice.totalParse = formatNumber(invoice.data.totalAmount.value, 2, "EUR");
+					invoice.icon = MATERIAL_ICONS.ARCHIVE;
+					invoice.aonIcon = "invofox";
+					invoice.icon_title = "Recibida"
+					invoice.icon_color = "#5f6368";
+					aonInvoiceTable.addRow(invoice, () => alert("FACTURA INVOFOX"),
+						() => {});
+					});
+				});
+			}
 		}
 	}
 
