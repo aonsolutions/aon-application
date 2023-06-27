@@ -1,4 +1,4 @@
-import { post, get, remove, put } from "./request.js";
+import { post, get, remove, put, getInvofox } from "./request.js";
 import { openFileUrl } from "./fileService.js";
 import { API_URL } from "../environments/environments.js";
 
@@ -45,3 +45,6 @@ export const signInvoice = (id) => put(`${API_URL}/invoice/sign`, {id});
 export const downloadFacturae = (data) => 
     openFileUrl(`${API_URL}/face?id=${data.id}&domainName=${data.domainName}&domainId=${data.domainId}&cert=${data.cert}`);
 export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invoice});
+
+
+export const getInvofoxDocuments = (data) => getInvofox("https://prod.kinequo.com/backends/midas/documents", data)

@@ -174,7 +174,6 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		System.out.println(" | host "+httpRequest.getHeader("host"));
 
 		httpResponse.setContentType("application/xml");
-		httpResponse.setContentLength(xml.length());
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
 		out.flush();

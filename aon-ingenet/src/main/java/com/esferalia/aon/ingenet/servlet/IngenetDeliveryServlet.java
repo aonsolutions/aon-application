@@ -191,7 +191,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		log(IngenetLogLevel.ERROR, subject, content, "albaranes", xml, RECIPIENTS_TO_FAILURES);
 		
 		httpResponse.setContentType("application/xml");
-		httpResponse.setContentLength(xml.length());
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
 		out.flush();
