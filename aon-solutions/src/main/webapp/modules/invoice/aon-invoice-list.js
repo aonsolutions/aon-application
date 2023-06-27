@@ -166,23 +166,20 @@ export class AonInvoiceList extends AonElement {
 					publicState: "pendingCorrection"
 				};
 				getInvofoxDocuments(data).then(r => {
-					r.forEach((invoice, i) => {
-
-					invoice.name = invoice.data.issuerName.value;
+					r.forEach((invoice, i) => {	
+						let date = new Date(invoice.date);
+						let day = date.getDate();
+						let month = date.getMonth() + 1;
+						let year = date.getFullYear();
+						invoice.dateTable = day + '/' + month + '/' + year;
 					
-					let date = new Date(invoice.data.issueDate.value);
-					let day = date.getDate();
-					let month = date.getMonth() + 1;
-					let year = date.getFullYear();
-					invoice.dateTable = day + '/' + month + '/' + year;
-					
-					invoice.totalParse = formatNumber(invoice.data.totalAmount.value, 2, "EUR");
-					invoice.icon = MATERIAL_ICONS.ARCHIVE;
-					invoice.aonIcon = "invofox";
-					invoice.icon_title = "Recibida"
-					invoice.icon_color = "#5f6368";
-					aonInvoiceTable.addRow(invoice, () => alert("FACTURA INVOFOX"),
-						() => {});
+						invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+						invoice.icon = MATERIAL_ICONS.ARCHIVE;
+						invoice.aonIcon = "invofox";
+						invoice.icon_title = "Recibida"
+						invoice.icon_color = "#5f6368";
+						aonInvoiceTable.addRow(invoice, () => alert("FACTURA INVOFOX"),
+							() => {});
 					});
 				});
 			}
