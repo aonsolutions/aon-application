@@ -1,11 +1,14 @@
 const ERRORS = {
+    /* 00XX */
     '0000' : {description:'OK_OPERATION_SUCCEED', result:''},
+    /* 01XX */
     '0101': {description:'ERROR_LOGIN_INVALID_CREDENTIALS', result:'Error al iniciar sesión'},
     '0111': {description:'SESSION_EXPIRED', result:'No existe sesión'},
     '0112': {description:'ERROR_SESSION', result:'No se ha seleccionado empresa'},
     '0123': {description:'ERROR_MODEL', result:'Error al intentar acceder al modelo'},
     '0124': {description:'ERROR_DENIED', result:'No tiene permiso para acceder al recurso'},
     '0199': {description:'ERROR_NOT_IMPLEMENTED', result:'Paciencia amigo, paciencia'},
+    /* 02XX */
     '0201': {description:'ERROR_MODEL_CREATE', result:'Error en la creación'},
     '0202': {description:'ERROR_MODEL_UPDATE', result:'Error en la edición'},
     '0203': {description:'ERROR_MODEL_DELETE', result:'Error al intentar eliminar'},
@@ -61,6 +64,10 @@ class Enterprise implements Collection {
         this.document = document;
     }
 
+    getfolder(){
+        console.log('asd');
+    }
+
 }
 
 class Folder implements Collection {
@@ -103,7 +110,7 @@ class DocumentNote implements Collection {
     }
 }
 
-class Banks implements Collection {
+class Bank implements Collection {
     name: string;
     total: number;
     logo: string;
@@ -200,19 +207,28 @@ class Factory implements IFactory {
 
     constructor(){}
 
-    // ¿?¿?¿?¿?¿?¿?¿?
-    // buildModel(objType: string): any {
-    //     switch(objType){
-    //         case 'enterprise':
-    //             return new Enterprise('','');
-    //         case 'folder':
-    //             return new Folder('','');
-    //         case 'document':
-    //             return new Document('','',0,'','');
-    //         default:
-    //             throw new Response('0201');
-    //     }
-    // }
+    buildModel(objType: string): any {
+        switch(objType){
+            case 'enterprise':
+                return new Enterprise('','');
+            case 'folder':
+                return new Folder('','');
+            case 'document':
+                return new Document('','',0,'','','');
+            case 'taxmodel':
+                return new TaxModel(0,'','','','',0,0);
+            case 'bank':
+                return new Bank('',0,'');
+            case 'message':
+                return new Message(0,'','','',new Date(),'','',new Date());
+            case 'messagechat':
+                return new MessageChat(0,0,'','',new Date(),'');
+            case 'documentnote':
+                return new DocumentNote('','');
+            default:
+                throw new Response('0201');
+        }
+    }
 
     buildService(objType: string): IService | any {
         switch(objType){
@@ -227,7 +243,7 @@ class Factory implements IFactory {
             case 'taxmodel':
                 return new ServiceTaxModel();
             case 'bank':
-                return new ServiceBanks();
+                return new ServiceBank();
             case 'message':
                 return new ServiceMessage();
             case 'messagechat':
@@ -574,7 +590,7 @@ class ServiceFolder implements IService {
 
 }
 
-class ServiceBanks implements IService {
+class ServiceBank implements IService {
 
     getElement(model: string, pKey: any) : Promise<Response> { 
         return new Promise((resolve, reject) => {
@@ -601,11 +617,11 @@ class ServiceBanks implements IService {
         });
     }
 
-    createElement(model: string, collection: Banks[]) : Promise<Response> {
+    createElement(model: string, collection: Bank[]) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 for(let i = 0; i < collection.length; i++){
-                    banks.push(collection[i] as Banks)
+                    banks.push(collection[i] as Bank)
                 }
                 resolve(new Response('0000',true))
             } catch (error) {
@@ -614,7 +630,7 @@ class ServiceBanks implements IService {
         });
     }
 
-    updateElement(model: string, collection: Banks[]) : Promise<Response> {
+    updateElement(model: string, collection: Bank[]) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 for(let i = 0; i < banks.length; i++){
@@ -989,6 +1005,26 @@ function copyObjectArray(data:any): any{
     return newData;
 }
 
+function saveToLocalStorage(model: string, array: any){
+    let arrayAux = []
+    for(let i = 0; i < array.length; i++){
+        arrayAux.push(JSON.stringify(array[i]))
+    }
+    localStorage.setItem(model,JSON.stringify(arrayAux))
+    localStorage.setItem('dump','true')
+}
+
+function getFromLocalStorage(model: string): any{
+    let factory: Factory = new Factory()
+    let array = JSON.parse(localStorage.getItem(model) || '')
+    let type = factory.buildModel(model)
+    let arrayAux: typeof type [] = []
+    for(let i = 0; i < array.length; i++){
+        arrayAux.push(Object.assign(factory.buildModel(model),JSON.parse(array[i])))
+    }
+    return arrayAux;
+}
+
 export class AonSDK {
 
     private factory: Factory;    
@@ -1115,9 +1151,9 @@ let documentNotes =[
 ]
 
 let banks = [
-    new Banks('Caixa Bank',1500,'mypathtofolder3'),
-    new Banks('Banco Nación',500,'mypathtofolder3'),
-    new Banks('Bankinter',2500,'mypathtofolder3')
+    new Bank('Caixa Bank',1500,'mypathtofolder3'),
+    new Bank('Banco Nación',500,'mypathtofolder3'),
+    new Bank('Bankinter',2500,'mypathtofolder3')
 ]
 
 let taxModels = [
@@ -1145,3 +1181,8 @@ let employees = [
     new Employee('Juan Carlos','Aragón Pérez','11556837G','exampleemail@gmail.com','619068048','490423363729',true)
 ]
 
+if(!localStorage.getItem('dump')){
+    saveToLocalStorage('enterprise', enterprises);
+}
+console.log(getFromLocalStorage('enterprise'));
+// console.log(employees)
