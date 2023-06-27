@@ -1,3 +1,5 @@
+@import 'src/styles.scss';
+
 .toolBar {
   width: 100%;
   background-color: white;
@@ -50,7 +52,7 @@
 }
 
 .buttonTopbar:hover {
-  box-shadow: 0 2px 4px 0 #d2d2d6, 0 1px 2px 0 #b4b4bb;
+  box-shadow: 0 2px 4px 0 #d2d2d6, 0 1px 2px 0 $color-icon;
   background-color: #fff;
 }
 
