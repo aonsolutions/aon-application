@@ -1,5 +1,6 @@
-import { Folder } from './../../../../core/models/class/folder';
 import { Component, OnInit } from '@angular/core';
+
+import { Folder } from './../../../../core/models/class/folder';
 import { FolderService } from 'src/app/core/services/folder.service';
 
 @Component({

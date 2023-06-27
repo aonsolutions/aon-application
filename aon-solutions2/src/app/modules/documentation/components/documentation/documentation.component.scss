@@ -1,10 +1,7 @@
 .up-doc, .in-search {
-  border: 1px solid green;
-  margin-top: 1.5rem;
-}
-
-.in-search {
-  margin-bottom: 1.85rem;
+  // border: 1px solid green;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
 }
 
 .list-folders {
@@ -23,35 +20,24 @@
   align-items: center;
 }
 
-
-.inpt-search {
-  border: 1px solid red;
-}
-
 .container-folder {
   display: flex;
 }
 
 .folder-item {
-  flex: 1;
+  // flex: 1;
   // border: 1px solid #d2d2d6;
   display: flex;
   margin-right: 2.9rem;
   height: 100%;
-  word-wrap: break-word;
 }
 
 .folder-item:last-child {
-  margin-right: 0rem;;
+  margin-right: 0rem;
 }
 
 .txt-btn {
   width: 100%;
   text-align: left;
   margin-left: 0.75rem;
-}
-
-.icon-arrow {
-  width: fit-content;
-  text-align: right;
 }
