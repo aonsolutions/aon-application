@@ -10,7 +10,7 @@ import { AonSelect } from './aon-select.js';
 import { AonCheckbox } from './aon-checkbox.js';
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
 import { getApp } from '../services/app.js';
-import { DomainType } from '../models/enums.js';
+import { AonStatus, DomainType, RegistryStatus } from '../models/enums.js';
 
 export class AonDomainCustomer extends AonElement {
 
@@ -194,8 +194,8 @@ export class AonDomainCustomer extends AonElement {
     this.noCustomerDomainsOnlyCheck.style.marginLeft = "0";
     this.noCustomerDomainsOnlyCheck.id = this.id + "CustomersSearchCheck";
     this.noCustomerDomainsOnlyCheck.checked = false;
-    this.noCustomerDomainsOnlyCheck.description = "No vinculados"; 
-    this.noCustomerDomainsOnlyCheck.title  = "Solo dominios sin cliente vinculado"
+    this.noCustomerDomainsOnlyCheck.description = MSG.NOT_LINKED1; 
+    this.noCustomerDomainsOnlyCheck.title  = MSG.ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER;
 
     let domainTypeFilterContainer = document.createElement('div');
     domainTypeFilterContainer.style.width = "24%";
@@ -208,7 +208,7 @@ export class AonDomainCustomer extends AonElement {
     this.domainTypeFilter = new AonSelect();
     this.domainTypeFilter.id = this.id + "domainTypeFilter";
     this.domainTypeFilter.classList.add("domainLinkAonSelect");
-    this.domainTypeFilter.title = "Tipo";
+    this.domainTypeFilter.title = MSG.TYPE;
     this.domainTypeFilter.readonly = false;
     this.domainTypeFilter.multiple = true;
     let domainTypeFilterOptions = [];
@@ -227,7 +227,7 @@ export class AonDomainCustomer extends AonElement {
     this.linkStatusFilter = new AonSelect();
     this.linkStatusFilter.id = this.id + "linkStatusFilter";
     this.linkStatusFilter.classList.add("domainLinkAonSelect");
-    this.linkStatusFilter.title = "Vinculación";
+    this.linkStatusFilter.title = MSG.LINKING;
     this.linkStatusFilter.readonly = false;
     let linkStatusFilterOptions =
     [ {value: "", name: MSG.ALL1},
@@ -418,7 +418,7 @@ export class AonDomainCustomer extends AonElement {
     this.customerLinkStatusFilter = new AonSelect();
     this.customerLinkStatusFilter.id = this.id + "CustomerLinkStatusFilter";
     this.customerLinkStatusFilter.classList.add("domainLinkAonSelect");
-    this.customerLinkStatusFilter.title = "Vinculación";
+    this.customerLinkStatusFilter.title = MSG.LINKING;
     this.customerLinkStatusFilter.readonly = false;
     let domainAonLinkStatusFilterOptions =
     [ {value: "", name: MSG.ALL1},
@@ -1232,7 +1232,7 @@ export class AonDomainCustomer extends AonElement {
       bookingTitleContainer.style.textAlign = "left";
       bookingTitleContainer.style.fontWeight = "bold";
       bookingTitleContainer.style.textTransform = "uppercase";
-      bookingTitleContainer.innerText = "Datos de contratación";
+      bookingTitleContainer.innerText = MSG.HIRING_DATA;
       bookingContainer.appendChild(bookingTitleContainer);
       
       let appsContainer = document.createElement("div");
@@ -1291,8 +1291,10 @@ export class AonDomainCustomer extends AonElement {
         parentApps.forEach(app => {
           let parentApp = document.createElement("div");
           parentApp.style.display = "block";
+          parentApp.style.marginLeft = "5px";
           parentApp.style.width = "100%";
-          parentApp.innerText = app;
+          let application = getApp(app);
+          parentApp.innerText = application ? application.title : app;
           parentAppsContainer.appendChild(parentApp);
         });
       }
@@ -1314,7 +1316,7 @@ export class AonDomainCustomer extends AonElement {
         summaryTitleContainer.style.width = "100%";
         summaryTitleContainer.style.textAlign = "left";
         summaryTitleContainer.style.fontWeight = "bold";
-        summaryTitleContainer.innerText = "Contratación adicional";
+        summaryTitleContainer.innerText = MSG.ADDITIONAL_HIRING;
 
         summaryContainer.appendChild(summaryTitleContainer);
 
@@ -1423,13 +1425,13 @@ export class AonDomainCustomer extends AonElement {
           let elementName = (summaryElement ? summaryElement : "").toLowerCase().trim();
           switch (elementName) {
             case "shared":
-              itemTitle = "Compartido"
+              itemTitle = MSG.SHARED;
               break;
             case "childdefinedusers":
-              itemTitle = "Usuarios contratados";
+              itemTitle = MSG.CONTRACTED_USERS;
               break;
             case "childbillingusers":
-              itemTitle = "Usuarios facturables";
+              itemTitle = MSG.BILLABLE_USERS;
               break;
             default:
               itemTitle = summaryElement;
@@ -1548,13 +1550,13 @@ export class AonDomainCustomer extends AonElement {
 
     let copyButton = new AonIconButton();
     copyButton.icon = "content_copy";
-    copyButton.title = "Copiar";
+    copyButton.title = MSG.COPY;
     copyButton.background = "var(--aonBlue)";
     copyButton.color = "white";
     copyButton.style.marginTop = "10px";
     copyButton.addEventListener("click", event => {
       navigator.clipboard.writeText(textToCopy).then(() => {
-        this.showToast({message: "Copiado al portapapeles"});
+        this.showToast({message: MSG.COPIED_TO_CLIPBOARD});
       }, err => {
         this.showError(err);
       })
@@ -1703,54 +1705,15 @@ export class AonDomainCustomer extends AonElement {
   // --- FUNCIONES DE ENUMERADOS ---
 
   getDomainStatusDescription(status) {
-    switch (status) {
-      case "NOT_BILLABLE":
-        return "No facturable";
-        case "BILLABLE":
-          return "Facturable";
-      default:
-        return "";
-    }
+    return AonStatus[status] ? AonStatus[status] : status;
   }
-
+  
   getCustomerStatusDescription(status) {
-    switch (status) {
-      case "ACTIVE":
-        return "Activo";
-        case "INACTIVE":
-          return "Inactivo";
-        case "BLOCKED":
-          return "Bloqueado";
-      default:
-        return "";
-    }
+    return RegistryStatus[status] ? RegistryStatus[status] : status;
   }
 
   getDomainTypeDescription(type) {
-    switch (type) {
-      case "ENTERPRISE":
-        return "Empresa";
-      case "CONSULTANCY":
-        return "Asesoría";
-      case "GARAGE":
-        return "Garaje";
-      case "ACADEMY":
-        return "Academia";
-      case "HOTEL":  
-        return "Hotel";
-      case "ADMIN":
-        return "Administración";
-      case "OFFICE":
-        return "Despacho";
-      case "GENERIC":
-        return "Genérico";
-      case "COMMERCE":
-        return "Comercio";
-      case "KIT_DIGITAL":
-        return "Kit Digital";
-      default:
-        return type;
-    }
+    return DomainType[type] ? DomainType[type] : type;
   }
 
   // -------------------------------

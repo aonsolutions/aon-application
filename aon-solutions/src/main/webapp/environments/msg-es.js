@@ -188,6 +188,7 @@ export const GROUPS = 'Grupos';
 export const HEADER = 'Cabecera';
 export const HELP = 'Ayuda';
 export const HIRING = 'Contratación';
+export const HIRING_DATA = "Datos de contratación";
 export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulares';
 export const HOURS = "Horas";
@@ -229,6 +230,7 @@ export const LAST_LOCATION = 'Última ubicación';
 export const LAST_STATUS = 'Último estado';
 export const LINK = 'Vincular';
 export const LINK_CLIENT = "Vincular Cliente";
+export const LINKING = "Vinculación";
 export const LINKED = 'Vinculado';
 export const LINKED1 = 'Vinculados';
 export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
@@ -261,6 +263,8 @@ export const NEW_REQUEST = 'Nueva Solicitud';
 export const NEW_WAREHOUSE = 'Nuevo Almacén';
 export const NEXT = 'Siguiente';
 export const NIF = 'NIF';
+export const NOT_LINKED = 'No vinculado';
+export const NOT_LINKED1 = 'No vinculados';
 export const NOTIFICATION = 'Notificación';
 export const NOTIFICATIONS = 'Notificaciones';
 export const NOTES = 'Notas';
@@ -272,6 +276,7 @@ export const NUMBER_OF_USERS = 'Número de usuarios';
 
 export const OBSERVATION = 'Observación';
 export const OFFICE = 'Despacho';
+export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Solo dominios sin cliente vinculado";
 export const ONLY_PORTAL = 'Solo Portal';
 export const OPEN = 'Abrir';
 export const OPEN_MENU = 'Abrir Menú';
@@ -282,7 +287,7 @@ export const OTHER_SERVICES = 'Otros Servicios';
 
 // ----- P
 
-export const PARENT_APPS = 'Aplicacionesd del padre';
+export const PARENT_APPS = 'Aplicaciones del padre';
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Contraseña';
 export const PAYMETHOD = 'Forma de Pago';
