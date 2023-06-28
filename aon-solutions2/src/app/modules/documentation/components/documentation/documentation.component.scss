@@ -1,13 +1,11 @@
 @import "src/styles.scss";
 
-.up-doc, .in-search {
-  // border: 1px solid green;
-  // margin-top: 0px;
+.up-doc {
   margin-bottom: 30px;
 }
 
 .in-search {
-  margin-top: 0.5rem;;
+  margin-top: 0.5rem;
 }
 
 .list-folders {
@@ -34,7 +32,7 @@
   // flex: 1;
   // border: 1px solid #d2d2d6;
   display: flex;
-  margin-right: 2.9rem;
+  margin-right: 2rem;
   height: 100%;
 }
 
@@ -46,4 +44,16 @@
   width: 100%;
   text-align: left;
   margin-left: 0.75rem;
+}
+
+.mt {
+  margin-top: $margin-top;
+}
+
+.mb {
+  margin-bottom: $margin-bottom;
+}
+
+.ml {
+  margin-left: $margin-left;
 }

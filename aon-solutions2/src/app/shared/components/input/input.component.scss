@@ -14,7 +14,7 @@
       border-width       : $border-size-primary !important;
       border-bottom-color: $color-border-primary !important;
     }
-  
+
   /*
     Border FOCUS
   */
@@ -32,7 +32,7 @@
     mat-form-field .mat-form-field-outline{
       box-shadow: none !important;
     }
-    
+
     mat-form-field mat-label{
       font-size   : $font-size-input-label!important;
       font-weight : normal!important;
@@ -46,23 +46,23 @@
     .search mat-form-field .search-componet div{
       float: left;
     }
-    
+
     .search .search-componet-input{
       width: calc(100% - 1.2rem);
     }
-    
+
     .search mat-form-field .mat-form-field-outline-start,
     .search mat-form-field .mat-form-field-outline-end,
     .search mat-form-field .mat-form-field-outline-gap {
       border: none;
     }
-    
+
     .search mat-form-field .mat-form-field-outline{
       /*border        : solid $border-size-primary $color-border-primary;*/
       border-radius : 20rem !important;
       box-shadow    : 0 2px 4px 0 #d2d2d6, 0 1px 2px 0 #b4b4bb !important;
     }
-    
+
     .search app-icon{
       position: relative;
       top     : -0.3rem;
@@ -71,4 +71,4 @@
     .search app-icon path{
       color: $color-icon;
     }
-} 
+}

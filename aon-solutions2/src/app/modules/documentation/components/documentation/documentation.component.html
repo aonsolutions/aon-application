@@ -4,13 +4,13 @@
     <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
     <mat-grid-tile  [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
       <app-file-upload-button> Subir documentación
-        <app-icon shape="cloud_upload" style="margin-left: 15px" set-color color="black" size="24"></app-icon>
+        <app-icon shape="cloud_upload" class="ml" set-color color="black" size="24"></app-icon>
       </app-file-upload-button>
     </mat-grid-tile>
   </mat-grid-list>
 
   <!-- Búsqueda -->
-  <mat-grid-list class="in-search" [cols]="24" [rowHeight]="''">
+  <mat-grid-list class="" [cols]="24" [rowHeight]="''">
     <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
     <mat-grid-tile class="" [gridCols]="{xs:8,sm:8,md:8,lg:8,xl:8}">
       <app-input
@@ -26,15 +26,14 @@
   <hr>
 
   <!-- Listado carpetas -->
-  <!-- list-folders -->
   <mat-grid-list class="list-folders" [cols]="24" [rowHeight]="'4.6rem'">
     <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
     <mat-grid-tile class="container-folder left-content" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
       <app-button class="icon-background-pink bold folder-item" [width]="'width'" *ngFor="let folder of documentationListFolders" routerLink="{{ folder.Path.split('/')[1] }}">
         <app-icon [shape]="'folder_open'"></app-icon>
         {{ folder.Name }}
-        <app-icon [shape]="'keyboard_arrow_right'"></app-icon>
+        <app-icon [shape]="'arrow_forward_ios'"></app-icon>
       </app-button>
-  </mat-grid-tile>
-</mat-grid-list>
+    </mat-grid-tile>
+  </mat-grid-list>
 </app-content>

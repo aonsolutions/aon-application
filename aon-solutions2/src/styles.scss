@@ -207,14 +207,6 @@ html {
   height: calc(100%);
 }
 
-.mt {
-  margin-top: $margin-top;
-}
-
-.mb {
-  margin-bottom: $margin-bottom;
-}
-
 /*
   Link
 */
@@ -229,7 +221,6 @@ a:visited {
 
 .left-content figure{
     justify-content: left !important;
-
 }
 
 

@@ -5,14 +5,14 @@
   [showDetail]="detail"
 >
 <!-- Bloque submenu izquierda -->
-  <div class="allSize" nav style="overflow: auto;">
+  <div id="documentation-menu" detail class="allSize" nav style="overflow: auto;">
     <mat-grid-list class="nav-documentation" [cols]="24" [rowHeight]="'4.2rem'">
 
       <mat-grid-tile [gridCols]="{xs:24,sm:24,md:24,lg:24,xl:24}" *ngFor="let folder of documentationListFolders">
         <app-button class="icon-background-pink bold item-folder left" [width]="'100%'">
           <app-icon [shape]="'folder_open'"></app-icon>
           {{ folder.Name }}
-          <app-icon [shape]="'keyboard_arrow_right'"></app-icon>
+          <app-icon [shape]="'arrow_forward_ios'" class="iconRight"></app-icon>
         </app-button>
       </mat-grid-tile>
 
@@ -20,13 +20,75 @@
   </div>
 
   <!-- Bloque contenido -->
-  <div class="allSize" content style="overflow: auto;">
-    <button (click)="detail ? detail = false : detail = true">showDetail</button>
-    Content
+  <div id="documentation-content" class="allSize" content style="overflow: auto;">
+
+    <!-- Subir documentación -->
+    <mat-grid-list class="mt mb" [cols]="24" [rowHeight]="'2.8rem'">
+      <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
+      <mat-grid-tile  [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
+        <app-file-upload-button> Subir documentación
+          <app-icon shape="cloud_upload" class="ml" set-color color="black" size="24"></app-icon>
+        </app-file-upload-button>
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <!-- Búsqueda -->
+    <mat-grid-list class="mt mb" [cols]="24" [rowHeight]="''">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile class="" [gridCols]="{xs:8,sm:8,md:8,lg:8,xl:8}">
+        <app-input
+          [appearance]="'outline'"
+          [appearanceDetail]="''"
+          [class]="'search allSize'"
+          [type]="'search'"
+        ></app-input>
+
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <hr>
+
+    <!-- Listado carpetas -->
+    <mat-grid-list class="list-folders mt" [cols]="24" [rowHeight]="'4.6rem'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile class="container-folder left-content" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
+        <app-button
+          class="icon-background-pink bold folder-item"
+          [width]="'width'"
+          *ngFor="let folder of documentationListFolders"
+          (click)="detail ? detail = false : detail = true"
+        >
+          <app-icon [shape]="'folder_open'"></app-icon>
+          {{ folder.Name }}
+          <app-icon [shape]="'arrow_forward_ios'"></app-icon>
+        </app-button>
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <!-- Listado ficheros -->
+    <!-- <mat-grid-list class="list-folders mt" [cols]="24" [rowHeight]="'4.6rem'">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile class="container-folder left-content" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
+        <app-button
+        class="icon-background-pink bold folder-item"
+        [width]="'7.7rem'"
+        [height]="'7.7rem'"
+        *ngFor="let file of documentsList"
+        >
+      <app-icon [shape]="'picture_as_pdf'"></app-icon>
+      <app-icon [shape]="'more_vert'"></app-icon>
+        {{ file.FileName }}
+        <span>dd/mm/aa</span>
+      </app-button>
+
+
+      </mat-grid-tile>
+    </mat-grid-list> -->
+
   </div>
 
   <!-- Bloque detalles -->
-  <div class="allSize" detail style="overflow: auto;">
-    Detail
+  <div id="documentation-detail" class="allSize" detail style="overflow: auto;">
+    <p>Aqui se mostrara el componente "FileViewer"</p>
   </div>
 </app-grid-layout>
