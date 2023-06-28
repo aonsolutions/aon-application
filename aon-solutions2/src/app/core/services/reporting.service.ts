@@ -15,7 +15,7 @@ export class ReportingService {
         .model('reporting')
         .getVentasGastos()
         .then((response: any) => {
-          resolve(response);
+          resolve(response.result);
         })
         .catch((error: any) => {
           reject(error);
@@ -29,7 +29,7 @@ export class ReportingService {
         .model('reporting')
         .getCobrosPagos()
         .then((response: any) => {
-          resolve(response);
+          resolve(response.result);
         })
         .catch((error: any) => {
           reject(error);
