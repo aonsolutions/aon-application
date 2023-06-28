@@ -189,7 +189,7 @@ $bottom-button-icon: 0.5rem;
 }
 
 /*
-  Genral
+  General
 */
 * {
   font-family: "Roboto";
@@ -205,6 +205,14 @@ html {
 .allSize {
   width: calc(100%);
   height: calc(100%);
+}
+
+.mt {
+  margin-top: $margin-top;
+}
+
+.mb {
+  margin-bottom: $margin-bottom;
 }
 
 /*

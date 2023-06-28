@@ -1,7 +1,13 @@
+@import "src/styles.scss";
+
 .up-doc, .in-search {
   // border: 1px solid green;
-  margin-top: 3rem;
-  margin-bottom: 1.5rem;
+  // margin-top: 0px;
+  margin-bottom: 30px;
+}
+
+.in-search {
+  margin-top: 0.5rem;;
 }
 
 .list-folders {
