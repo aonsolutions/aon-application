@@ -4320,7 +4320,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		ctx.setListener(irpfOutcome -> {
 		    System.out.println("AnnualRemuneration : " + irpfOutcome.getIrpfResult().getAnnualRemuneration() );
-		    org.junit.Assert.assertEquals(2250.00 * 12 , irpfOutcome.getIrpfResult().getAnnualRemuneration() , DELTA);
+		    assertAnnualRemuneration(2250.00 * 12 , irpfOutcome.getIrpfResult().getAnnualRemuneration() , DELTA);
 		});
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
@@ -4329,7 +4329,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		ctx.setListener(irpfOutcome -> {
 		    System.out.println("AnnualRemuneration : " + irpfOutcome.getIrpfResult().getAnnualRemuneration() );
-		    org.junit.Assert.assertEquals(2250.00 * 12 , irpfOutcome.getIrpfResult().getAnnualRemuneration() , DELTA);
+		    assertAnnualRemuneration(2250.00 * 12 , irpfOutcome.getIrpfResult().getAnnualRemuneration() , DELTA);
 		});
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
