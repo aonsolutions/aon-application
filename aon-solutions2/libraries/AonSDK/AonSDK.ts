@@ -64,10 +64,6 @@ class Enterprise implements Collection {
         this.document = document;
     }
 
-    getfolder(){
-        console.log('asd');
-    }
-
 }
 
 class Folder implements Collection {
@@ -199,7 +195,7 @@ class Employee implements Collection {
 }
 
 interface IFactory {
-    // buildModel(objType: string) : any;
+    buildModel(objType: string) : any;
     buildService(obj:string): any;
 }
 
@@ -207,7 +203,7 @@ class Factory implements IFactory {
 
     constructor(){}
 
-    buildModel(objType: string): any {
+    buildModel(objType: string): Collection {
         switch(objType){
             case 'enterprise':
                 return new Enterprise('','');
@@ -225,6 +221,8 @@ class Factory implements IFactory {
                 return new MessageChat(0,0,'','',new Date(),'');
             case 'documentnote':
                 return new DocumentNote('','');
+            case 'employee':
+                return new Employee('','','','','','',false);
             default:
                 throw new Response('0201');
         }
@@ -1027,7 +1025,7 @@ function getFromLocalStorage(model: string): any{
 
 export class AonSDK {
 
-    private factory: Factory;    
+    private factory: Factory;
 
     constructor(){
         this.factory = new Factory();
@@ -1181,8 +1179,46 @@ let employees = [
     new Employee('Juan Carlos','Aragón Pérez','11556837G','exampleemail@gmail.com','619068048','490423363729',true)
 ]
 
-if(!localStorage.getItem('dump')){
-    saveToLocalStorage('enterprise', enterprises);
+function getLambda() : Promise<any>{
+    return new Promise((resolve,reject) => {
+        fetch('https://tjx4cclp6g7yzeloe23lowb6ka0gphmh.lambda-url.eu-west-1.on.aws/?domain=despacho-ayudatdemo.aonsolutions.net')
+        .then((response) => {
+            resolve(response);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
 }
-console.log(getFromLocalStorage('enterprise'));
-// console.log(employees)
+
+
+function proccessReadable(response:any): Promise<string>{
+    return new Promise((resolve,reject) => {
+        let result: string = '';
+        const reader = response.body?.getReader();
+        if(reader){
+            reader.read().then(function processText({ done, value }:any):any {
+                if(done){
+                    resolve(result);                    
+                    return;
+                }
+                if(value)
+                    result += new TextDecoder().decode(value)
+                return reader.read().then(processText);
+            });
+        }else{
+            reject(new Response('0101'))
+        }
+    })
+}
+
+// if(!localStorage.getItem('dump')){
+//     getLambda().then((response) => {
+//         proccessReadable(response)
+//         .then((result) => {
+//             result = result.split('var').join('');
+//             eval(result);
+//             saveToLocalStorage('enterprise', enterprises);
+//             saveToLocalStorage('employee', employees);
+//         });
+//     });
+// }
