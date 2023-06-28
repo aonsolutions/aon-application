@@ -687,8 +687,6 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		salaryStmt.setDate(2, new java.sql.Date(start.getTimeInMillis()));
 		Calendar end = Calendar.getInstance();
 		end.setTime(startDate);
-		end.add(Calendar.YEAR, 1);
-		end.set(Calendar.DAY_OF_YEAR, 1);
 		end.add(Calendar.DAY_OF_YEAR, -1);
 		salaryStmt.setDate(3, new java.sql.Date(end.getTimeInMillis()));
 
