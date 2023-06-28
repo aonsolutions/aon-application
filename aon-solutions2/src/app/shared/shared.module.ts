@@ -47,7 +47,7 @@ import { GridColsDirective } from './directives/grid-cols.directive';
 import { ChartsModule } from 'ng2-charts';
 import { ChartComponent } from './components/chart/chart.component';
 import { FileViewerComponent } from './components/file-viewer/file-viewer.component';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
 
 @NgModule({
   declarations: [
@@ -103,7 +103,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     MatExpansionModule,
     MatDialogModule,
     ChartsModule,
-    PdfViewerModule
+    PdfJsViewerModule
   ],
   exports:[
     SidenavHoverDirective,
