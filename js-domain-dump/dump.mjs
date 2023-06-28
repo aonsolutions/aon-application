@@ -1,5 +1,6 @@
 
 function dump(connection, domain, stream) {
+	stream.write( "var test = 'test';\r\n" );
 	stream.write( "var enterprises = enterprises || [];\r\n" );
 	stream.write( "var employees  = employees || [];\r\n" );
 	return new Promise(( resolve, reject ) => {

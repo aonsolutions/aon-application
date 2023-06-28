@@ -1,15 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
-@import '../libraries/setproduct-ui/set-theming';
+@import "../libraries/setproduct-ui/set-theming";
 
 /* $roboto-font-path: "~roboto-fontface/fonts" !default; */
 // @import "~roboto-fontface/css/roboto/sass/roboto-fontface";
 
 // Predefined breakpoints sizes
-$XSmall : 599.98px;
-$Small  : 959.98px;
-$Medium : 1279.98px;
-$Large  : 1919.98px;
-$XLarge : 1920px;
+$XSmall: 599.98px;
+$Small: 959.98px;
+$Medium: 1279.98px;
+$Large: 1919.98px;
+$XLarge: 1920px;
 
 // Font-size
   $font-size-established: 20px;
@@ -22,12 +22,13 @@ $XLarge : 1920px;
     $font-size-button       : 0.7rem;
   // Input
     $font-size-input-label  : 0.7rem;
-  
+
 // Colors
 $color-primary    : #19191d;
 $color-secondary  : #787885;
 $color-third      : #5a5b6a;
 $color-quarter    : #fff;
+$color-icon       : #b4b4bb;
   /* Red */
     $color-red    : #f6655a;
   /* Blue */
@@ -43,13 +44,13 @@ $color-quarter    : #fff;
 
 
 // Colors Border
-$color-border-primary   : #d2d2d6;
-$color-border-secondary : #787885;
+$color-border-primary: #d2d2d6;
+$color-border-secondary: #787885;
 
 // Border
-$border-size-primary  : 0.05rem;
-$border               : solid $border-size-primary $color-border-primary;
-$border-radius        : 0.2rem;
+$border-size-primary: 0.05rem;
+$border: solid $border-size-primary $color-border-primary;
+$border-radius: 0.2rem;
 
 // margin
   // 20px
@@ -74,10 +75,10 @@ $border-radius        : 0.2rem;
   $padding-bottom: 1rem;
 
 // Buton
-  $top-button-icon                : -0.075rem;
-  $right-button-icon              : 0.5rem;
-  $left-button-icon               : 0.5rem;
-  $bottom-button-icon             : 0.5rem;
+$top-button-icon: -0.075rem;
+$right-button-icon: 0.5rem;
+$left-button-icon: 0.5rem;
+$bottom-button-icon: 0.5rem;
 
   $margin-button-icon             : 0.5rem;
   $margin-button-icon-top         : 0.5rem;
@@ -127,91 +128,102 @@ $border-radius        : 0.2rem;
 /*
   FONT
 */
-  @font-face {
-    font-family: 'Roboto';
-    src: url(assets/fonts/Roboto/Roboto-Regular.ttf);
-  }
+@font-face {
+  font-family: "Roboto";
+  src: url(assets/fonts/Roboto/Roboto-Regular.ttf);
+}
 
-  @font-face {
-    font-family: 'Roboto-Black';
-    src: url(assets/fonts/Roboto/Roboto-Black.ttf);
-  }
+@font-face {
+  font-family: "Roboto-Black";
+  src: url(assets/fonts/Roboto/Roboto-Black.ttf);
+}
 
-  @font-face {
-    font-family: 'Roboto-BlackItalic';
-    src: url(assets/fonts/Roboto/Roboto-BlackItalic.ttf);
-  }
+@font-face {
+  font-family: "Roboto-BlackItalic";
+  src: url(assets/fonts/Roboto/Roboto-BlackItalic.ttf);
+}
 
-  @font-face {
-    font-family: 'Roboto-Bold';
-    src: url(assets/fonts/Roboto/Roboto-Bold.ttf);
-  }
+@font-face {
+  font-family: "Roboto-Bold";
+  src: url(assets/fonts/Roboto/Roboto-Bold.ttf);
+}
 
-  @font-face {
-    font-family: 'Roboto-BoldItalic';
-    src: url(assets/fonts/Roboto/Roboto-BoldItalic.ttf);
-  }
+@font-face {
+  font-family: "Roboto-BoldItalic";
+  src: url(assets/fonts/Roboto/Roboto-BoldItalic.ttf);
+}
 
-  @font-face {
-    font-family: 'Roboto-Italic';
-    src: url(assets/fonts/Roboto/Roboto-Italic.ttf);
-  }
+@font-face {
+  font-family: "Roboto-Italic";
+  src: url(assets/fonts/Roboto/Roboto-Italic.ttf);
+}
 
-  @font-face {
-    font-family: 'Roboto-Light';
-    src: url(assets/fonts/Roboto/Roboto-Light.ttf);
-  }
+@font-face {
+  font-family: "Roboto-Light";
+  src: url(assets/fonts/Roboto/Roboto-Light.ttf);
+}
 
-  @font-face {
-    font-family: 'Roboto-LightItalic';
-    src: url(assets/fonts/Roboto/Roboto-LightItalic.ttf);
-  }
+@font-face {
+  font-family: "Roboto-LightItalic";
+  src: url(assets/fonts/Roboto/Roboto-LightItalic.ttf);
+}
 
-  @font-face {
-    font-family: 'Roboto-Medium';
-    src: url(assets/fonts/Roboto/Roboto-Medium.ttf);
-  }
+@font-face {
+  font-family: "Roboto-Medium";
+  src: url(assets/fonts/Roboto/Roboto-Medium.ttf);
+}
 
-  @font-face {
-    font-family: 'Roboto-MediumItalic';
-    src: url(assets/fonts/Roboto/Roboto-MediumItalic.ttf);
-  }
+@font-face {
+  font-family: "Roboto-MediumItalic";
+  src: url(assets/fonts/Roboto/Roboto-MediumItalic.ttf);
+}
 
-  @font-face {
-    font-family: 'Roboto-Thin';
-    src: url(assets/fonts/Roboto/Roboto-Thin.ttf);
-  }
+@font-face {
+  font-family: "Roboto-Thin";
+  src: url(assets/fonts/Roboto/Roboto-Thin.ttf);
+}
 
-  @font-face {
-    font-family: 'Roboto-ThinItalic';
-    src: url(assets/fonts/Roboto/Roboto-ThinItalic.ttf);
-  }
+@font-face {
+  font-family: "Roboto-ThinItalic";
+  src: url(assets/fonts/Roboto/Roboto-ThinItalic.ttf);
+}
 
 /*
   Genral
 */
-  *{
-    font-family : 'Roboto' ;
-    color       : $color-primary;
-    font-size   : $font-size-primary;
-    caret-color : $color-primary!important;
-  }
+* {
+  font-family: "Roboto";
+  color: $color-primary;
+  font-size: $font-size-primary;
+  caret-color: $color-primary !important;
+}
 
-  html {
-    font-size: $font-size-established!important;
-  }
+html {
+  font-size: $font-size-established !important;
+}
 
-  .allSize {
-    width : calc(100%);
-    height: calc(100%);
-  }
+.allSize {
+  width: calc(100%);
+  height: calc(100%);
+}
 
 /*
   Link
 */
-  a, u {
-    text-decoration: none;
-  }
+a,
+u {
+  text-decoration: none;
+}
+
+a:visited {
+  color: black;
+}
+
+.left-content figure{
+    justify-content: left !important;
+
+}
+
 
   a:visited {
     color: black;

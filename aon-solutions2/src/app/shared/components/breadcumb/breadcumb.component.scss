@@ -1,3 +1,5 @@
+@import 'src/styles.scss';
+
 .breadcumb {
     width: calc(100%);
     height: 100%;
@@ -29,7 +31,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #b4b4bb;
+    background-color: $color-icon;
     border-radius: 4px;
     background-color: #f9f9fa;
     padding: .5rem;

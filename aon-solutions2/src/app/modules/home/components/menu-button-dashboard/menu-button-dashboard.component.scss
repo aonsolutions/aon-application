@@ -1,0 +1,63 @@
+.menu-button-dashboard {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+app-card:hover {
+  cursor: pointer;
+  border-color: black;
+}
+
+.menu-button-dashboard-line-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 10%;
+}
+
+.menu-button-dashboard-line {
+  width: 6px;
+  height: 80%;
+  flex-grow: 0;
+  border-radius: 31px;
+}
+
+.menu-button-dashboard-content {
+  width: 90%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-button-dashboard-content-icon {
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.menu-button-dashboard-content-text {
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.menu-button-dashboard-content-text-name {
+  font-size: 24px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  width: calc(80%);
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.menu-button-dashboard-content-text-icon {
+  width: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
