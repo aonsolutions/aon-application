@@ -119,7 +119,7 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
     MatRippleModule,
     LayoutModule,
     FormsModule,
-    RouterModule
+    RouterModule,
   ],
   providers: [
     {

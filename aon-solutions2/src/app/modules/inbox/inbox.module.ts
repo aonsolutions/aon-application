@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { InboxRoutingModule } from './inbox-routing.module';
 import { InboxComponent } from './components/inbox/inbox.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -12,6 +13,7 @@ import { InboxComponent } from './components/inbox/inbox.component';
   imports: [
     CommonModule,
     InboxRoutingModule,
+    SharedModule
   ]
 })
 export class InboxModule { }
