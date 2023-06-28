@@ -61,13 +61,34 @@ class InvofoxRESTTestCase {
 		
 		response.getDocuments().get()
 			.stream()
+			.filter( d ->
+				d.getData()
+				.flatMap( i -> i.getRecipientTaxId() )
+				.flatMap( n -> n.getValue() )
+				.filter( doc -> "ESB01487271".equals(doc))
+				.isPresent()
+			)
 			.forEach( d -> {
 				System.out.println(
 					d.getCompany().orElse("<NO COMP>")
 					+ " " + 
 					d.getId().orElse("<NO ID>")
+					+ " [Issuer: " +
+					d.getData()
+						.flatMap( i -> i.getIssuerTaxId() )
+						.flatMap( n -> n.getValue() )
+					.orElse("<NO NAME>")
+					+ ", "
+					+ d.getData()
+						.flatMap( i -> i.getIssuerName() )
+						.flatMap( n -> n.getValue() )
+					.orElse("<NO NAME>")
+					+ "]"
 					+ " [" +
-					d.getName().orElse("<NO NAME>")
+					d.getData()
+						.flatMap( i -> i.getTotalAmount() )
+						.flatMap( n -> n.getValue() )
+					.orElse(null)
 					+ "]"
 				);
 			});

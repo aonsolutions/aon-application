@@ -29,6 +29,8 @@ import net.aonsolutions.invofox.model.OCRError;
 import net.aonsolutions.invofox.model.OCRResponse;
 
 public class OCRInvofox {
+	private static final String X_API_KEY = "x-api-key";
+	
 	private static final String BASE_URL = "https://prod.kinequo.com/backends/midas";
 	private static final String COMPANIES = BASE_URL + "/companies";
 	private static final String COMPANY = COMPANIES + "/{0}";
@@ -56,7 +58,7 @@ public class OCRInvofox {
 	private static HttpResponse<String> post(String url, JSONObject postData) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
-			.header("x-api-key", TOKEN)
+			.header(X_API_KEY, TOKEN)
 			.header("accept", "application/json")
 			.header("Content-Type", "application/json")
 			.POST( HttpRequest.BodyPublishers.ofString(postData.toString()) )
@@ -81,7 +83,7 @@ public class OCRInvofox {
 	private static HttpResponse<String> delete(String url) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
-			.header("x-api-key", TOKEN)
+			.header(X_API_KEY, TOKEN)
 			.DELETE()
 			.build();
 		return HttpClient.newBuilder()
@@ -102,10 +104,9 @@ public class OCRInvofox {
 		}
 	}
 	private static HttpResponse<String> get(String url) throws IOException, InterruptedException {
-		System.out.println( "Attempt to request ..: " + url );
 		HttpRequest request = HttpRequest.newBuilder()
 			.uri( URI.create(url) )
-			.header("x-api-key", TOKEN)
+			.header(X_API_KEY, TOKEN)
 			.GET()
 			.build();
 		return HttpClient.newBuilder()
@@ -164,5 +165,5 @@ public class OCRInvofox {
 	public static OCRCompaniesResponse getCompanies(OCRCompanyParams params) {
 		return get(COMPANIES + params.build(), OCRCompaniesResponse::new, OCRCompaniesResponseJSON::from);
 	}
-
+	
 }

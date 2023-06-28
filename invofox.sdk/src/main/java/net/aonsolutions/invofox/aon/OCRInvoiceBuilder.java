@@ -3,9 +3,11 @@ package net.aonsolutions.invofox.aon;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -13,6 +15,7 @@ import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -20,10 +23,9 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
-import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -39,555 +41,10 @@ import net.aonsolutions.invofox.model.OCRType;
 
 public class OCRInvoiceBuilder {
 	
-//	private enum TediFinanceTransfer {
-//		PAYMENT( (aonCtx,result,tedi,aon) -> aon.setPayment( !result.getInvoice().isSales())),
-//		DUE_DATE( (aonCtx,result,tedi,aon) -> aon.setDueDate( tedi.getDueDate() == null? result.getTedi().getDate() : tedi.getDueDate() )),
-//		AMOUNT( (aonCtx,result,tedi,aon) ->{
-//			aon.setAmount( tedi != null && tedi.getAmount() != null && AonMathUtils.isNotZero(tedi.getAmount())
-//					? tedi.getAmount() 
-//					: AonNumberUtils.zeroIfNull( result.getTedi().getTotal()));
-//		}),
-//		IBAN( (aonCtx,result,tedi,aon) -> aon.setBankAccount( new BankAccount(tedi.getIban()))),
-//		PAYMETHOD( (aonCtx,result,tedi,aon) -> {
-//			if ( tedi.getPayMethod() != null) {
-//				PayMethodType temp = null;
-//				if (tedi.getPayMethod() == TediPayMethod.CASH) {
-//					temp = PayMethodType.CASH_BASIS;	
-//				} else if (tedi.getPayMethod() == TediPayMethod.CARD) {
-//					temp = PayMethodType.CREDIT_CARD;
-//				} else if (tedi.getPayMethod() == TediPayMethod.TRANSFER) {
-//					temp = PayMethodType.BANK_TRANSFER;
-//				} else if (tedi.getPayMethod() == TediPayMethod.BANK) {
-//					temp = PayMethodType.NEGOTIABLE_DOCUMENT;
-//				} else if (tedi.getPayMethod() == TediPayMethod.DRAFT) {
-//					temp = PayMethodType.CHEQUE;
-//				}
-//				if (temp != null) {
-//					boolean hasPaymethods = aonCtx.getPayMethods() != null && aonCtx.getPayMethods().size() > 0;
-//					if (hasPaymethods) {
-//						for ( PayMethod paymethod : aonCtx.getPayMethods() ) {
-//							if ( temp == paymethod.getType() ) {
-//								aon.setPayMethod(paymethod.getId());								
-//								aon.setPayMethodName(paymethod.getName());
-//								if ( temp == PayMethodType.CASH_BASIS ) {
-//									Account cashAccount = aonCtx.accounting().getDefaultCashAccount();
-//									if (cashAccount != null) {
-//										result.getAccountingInvoice().setPayAccountId(cashAccount.getId());	
-//										result.getAccountingInvoice().setPayAccountCode(cashAccount.getCode());
-//										result.getAccountingInvoice().setPayAccountDescription(cashAccount.getDescription());
-//										aon.setRecordable(true);
-//									}
-//								}
-//								break;
-//							}
-//						}
-//					}
-//					aon.setPayMethodType(temp);
-//				}
-//			}
-//		}),
-//		PENDING( (aonCtx,result,tedi,aon) -> aon.setFinanceStatus(FinanceStatus.PENDING ))
-//		;
-//		
-//		private ITediFinanceToAonFinance toAon;
-//
-//		private TediFinanceTransfer(ITediFinanceToAonFinance toAon) {
-//			this.toAon = toAon;
-//		}
-//
-//
-//		private TediResult to(AonConfiguration aonCtx,TediResult result,TediFinance tediFinance,Finance finance) {
-//			toAon.to(aonCtx,result,tediFinance,finance);
-//			return result;
-//		}
-//
-//		private static TediResult toAon(AonConfiguration aonCtx,TediResult result,TediFinance tediFinance,Finance finance) {
-//			for (TediFinanceTransfer token : TediFinanceTransfer.values()) {
-//				token.to(aonCtx,result,tediFinance,finance);
-//			}
-//			return result;
-//		}
-//	}
-
-//	private enum TediInvoiceDetailTransfer {
-//		DESCRIPTION( (result,tedi,aon) -> aon.setDescription( tedi.getDescription())),
-//		QUANTITY( (result,tedi,aon) -> aon.setQuantity( AonNumberUtils.zeroIfNull(tedi.getQuantity()))),
-//		PRICE( (result,tedi,aon) -> aon.setPrice( AonNumberUtils.zeroIfNull(tedi.getPrice()))),
-//		DISCOUNT( (result,tedi,aon) -> aon.setDiscountExpression( AonNumberUtils.toString(tedi.getDiscount()))),
-//		AMOUNT( (result,tedi,aon) -> aon.setTaxableBase( AonNumberUtils.zeroIfNull(tedi.getAmount()))),
-//		BASE( (result,tedi,aon) -> {
-//			if (AonMathUtils.isZero(aon.getTaxableBase())) {
-//				aon.setTaxableBase( AonNumberUtils.zeroIfNull(tedi.getBase()));	
-//			}
-//		}),
-//		VAT( (result,tedi,aon) -> {
-//			if (tedi.getVat() != null) {
-//				double base = AonNumberUtils.zeroIfNull(tedi.getAmount());
-//				double percent = AonNumberUtils.zeroIfNull(tedi.getVat());
-//				double surcharge = AonNumberUtils.zeroIfNull(tedi.getSurcharge());
-//				double quota = AonMathUtils.round( base * percent / 100 );
-//				double surchargeQuota = AonMathUtils.round( base * surcharge / 100 );
-//				double deductibleQuota = AonMathUtils.round( quota );
-//				aon.addInvoiceTax( 
-//					new InvoiceTax()
-//						.setTaxType( TaxType.VAT )
-//						.setBase( base )
-//						.setPercentage( percent )
-//						.setQuota( quota )
-//						.setSurcharge( surcharge )
-//						.setSurchargeQuota( surchargeQuota )
-//						.setVatDeductionType( VatDeductionType.WITH_RIGHT )
-//						.setDeductiblePercent( 100.0 )
-//						.setDeductibleQuota( deductibleQuota )
-//						); 
-//			}
-//		}),
-//		;
-//		
-//		private ITediInvoiceDetailToAonInvoiceDetail toAon;
-//
-//		private TediInvoiceDetailTransfer(ITediInvoiceDetailToAonInvoiceDetail toAon) {
-//			this.toAon = toAon;
-//		}
-//
-//
-//		private TediResult to(TediResult result,TediInvoiceDetail tediDetail,InvoiceDetail aonDetail) {
-//			toAon.to(result,tediDetail,aonDetail);
-//			return result;
-//		}
-//
-//		private static TediResult toAon(TediResult result,TediInvoiceDetail tediDetail,InvoiceDetail aonDetail) {
-//			for (TediInvoiceDetailTransfer token : TediInvoiceDetailTransfer.values()) {
-//				token.to(result,tediDetail,aonDetail);
-//			}
-//			return result;
-//		}
-//	}
-
-//	private enum OCRInvoiceTransfer {
-//		TOTAL( (ctx, aonCtx,result) -> {
-//			double total = AonNumberUtils.todouble(result.getTedi().getTotal());
-//			result.getInvoice().setTotal( total );
-//			boolean hasDetails = result.getTedi().getDetails() != null && result.getTedi().getDetails().size() > 0; 
-//			boolean hasTaxes = result.getTedi().getTaxes() != null && result.getTedi().getTaxes().size() > 0;
-//			if ( !hasDetails && !hasTaxes ) {
-//				TediInvoiceDetail tid = new TediInvoiceDetail()
-//						.setDescription("AutoGenerated")
-//						.setQuantity(1.0)
-//						.setPrice(total)
-//						.setDiscount(0.0)
-//						.setAmount(total)
-//						.setVat(null)
-//						.setSurcharge(null);
-//				InvoiceDetail id = new InvoiceDetail()
-//					.setSource(InvoiceSource.ACCOUNT)
-//					.setLine( (short) (1));
-//				if (result.getInvoice().getDetails() == null) {
-//					result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
-//				}
-//				result.getInvoice().getDetails().add(id);
-//				TediInvoiceDetailTransfer.toAon(result,tid,id);
-//			}
-//		}),
-//		COMMENTS( (ctx, aonCtx,result) -> {
-//				if (result.getTedi().getComments() != null) {
-//					StringBuilder builder = new StringBuilder();
-//					boolean counter = result.getTedi().getComments().size() > 1;
-//					int c = 1;
-//					for (TediComments comment : result.getTedi().getComments()) {
-//						if (AonStringUtils.isNotBlank(builder.toString())){
-//							builder.append(AonStringUtils.CR_LF);
-//						}
-//						if (counter) {
-//							builder.append(c + " - ");
-//						}
-//						builder.append(comment.getComment());
-//						c++;
-//					}
-//					result.getInvoice().setComments(builder.toString());	
-//				}
-//			}
-//		),
-//		ADDRESS( (ctx, aonCtx,result) -> {
-//			if (result.getTedi().getRegistry() != null && result.getTedi().getRegistry().getAddress() != null) {
-//				result.getInvoice().setAddress(new RegistryAddress()
-//					.setAddress(result.getTedi().getRegistry().getAddress().getAddress())
-//					.setCity(result.getTedi().getRegistry().getAddress().getCity())
-//					.setZip(result.getTedi().getRegistry().getAddress().getPostalCode())
-//					.setProvince(result.getTedi().getRegistry().getAddress().getProvince())
-//					.setCountry(Country.safeValueOf(result.getTedi().getRegistry().getAddress().getCountry())));
-//			}
-//		}),
-//		DETAILS( (ctx, aonCtx,result) -> {
-//			if ( result.getTedi().getDetails() != null) {
-//				for ( int i = 0; i < result.getTedi().getDetails().size(); i++) {
-//					TediInvoiceDetail tid = result.getTedi().getDetails().get(i);
-//					if (tid.getVat() != null) {
-//						InvoiceDetail id = new InvoiceDetail()
-//								.setSource(InvoiceSource.ACCOUNT)
-//								.setLine( (short) (1 + i));
-//						if (result.getInvoice().getDetails() == null) {
-//							result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
-//						}
-//						result.getInvoice().getDetails().add(id);
-//						TediInvoiceDetailTransfer.toAon(result,tid,id);
-//					}
-//					
-//				}
-//			}
-//		}),
-//		TAXES( (ctx, aonCtx,result) -> {
-//			boolean hasDetails = (result.getInvoice().getDetails() != null && result.getInvoice().getDetails().size() > 0);
-//			if ( result.getTedi().getTaxes() != null) {
-//				InvoiceBreakdown irpfTax = null;
-//				if (result.getInvoice().getBreakdown() == null) {
-//					result.getInvoice().setBreakdown( new LinkedList<InvoiceBreakdown>());
-//				}
-//				for ( int i = 0; i < result.getTedi().getTaxes().size(); i++) {
-//					TediInvoiceTax tit = result.getTedi().getTaxes().get(i);
-//					double quota = result.getInvoice().isUndeductible()
-//						?0.0
-//						:AonNumberUtils.todouble(tit.getQuota());
-//					double base = result.getInvoice().isUndeductible()
-//						?AonMathUtils.round(AonNumberUtils.zeroIfNull(tit.getBase()) + quota)
-//						:AonNumberUtils.zeroIfNull(tit.getBase());
-//					double percent = result.getInvoice().isUndeductible()
-//						?0.0
-//						:AonNumberUtils.zeroIfNull(tit.getPercentage());
-//					InvoiceBreakdown ib = new InvoiceBreakdown()
-//							.setTaxType(tit.getTaxType() == TediTaxType.IVA? TaxType.VAT : TaxType.RETENTION )
-//							.setBase( base )
-//							.setPercentage( percent )
-//							.setQuota( quota )
-//							.setSurcharge( result.getInvoice().isUndeductible()?0.0:AonNumberUtils.todouble( tit.getSurcharge()) )
-//							.setSurchargeQuota( result.getInvoice().isUndeductible()?0.0:AonNumberUtils.todouble( tit.getSurchargeQuota()))
-//							;
-//					if (tit.getTaxType() == TediTaxType.IRPF) {
-//						irpfTax = ib;
-//					} else {
-//						result.getInvoice().getBreakdown().add(ib);
-//						
-//						if (!hasDetails) {
-//							InvoiceDetail id = new InvoiceDetail()
-//									.setSource(InvoiceSource.ACCOUNT)
-//									.setLine( (short) (1 + i))
-//									.setDescription("AutoGenerated")
-//									.setQuantity(1.0)
-//									.setPrice(ib.getBase())
-//									.setDiscountExpression("0.0")
-//									.setTaxableBase(ib.getBase())
-//									;
-//							if (tit.getTaxType() == TediTaxType.IVA) {
-//								id.addInvoiceTax( 
-//										new InvoiceTax()
-//											.setTaxType( TaxType.VAT )
-//											.setBase( ib.getBase() )
-//											.setPercentage( ib.getPercentage() )
-//											.setQuota( ib.getQuota() )
-//											.setSurcharge( ib.getSurcharge() )
-//											.setSurchargeQuota( ib.getSurchargeQuota() )
-//											.setVatDeductionType( VatDeductionType.WITH_RIGHT )
-//											.setDeductiblePercent( 100.0 )
-//											.setDeductibleQuota( ib.getQuota() )
-//											); 
-//							}
-//							if (result.getInvoice().getDetails() == null) {
-//								result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
-//							}
-//							result.getInvoice().getDetails().add(id);
-//						}
-//					}
-//				}
-//				if (irpfTax != null && result.getInvoice().getDetails() != null) {
-//					result.getInvoice().getBreakdown().add(irpfTax);
-//					for ( InvoiceDetail id : result.getInvoice().getDetails()) {
-//						double irpfQuota = AonMathUtils.round(id.getTaxableBase() * irpfTax.getPercentage() / 100);
-//						id.addInvoiceTax( 
-//								new InvoiceTax()
-//									.setTaxType( TaxType.RETENTION )
-//									.setBase( id.getTaxableBase() )
-//									.setPercentage( irpfTax.getPercentage() )
-//									.setQuota( irpfQuota )
-//									.setWithholdingType( WithholdingType.PROFESSIONAL )
-//									.setDeductiblePercent( 100.0 )
-//									.setDeductibleQuota( irpfQuota )
-//									); 
-//					}
-//				}
-//			}
-//		}),
-//		FINANCE( (ctx, aonCtx,result) -> {
-//			boolean hasFinances = (result.getTedi().getFinances() != null && result.getTedi().getFinances().size() > 0);
-//			if (hasFinances) {
-//				for ( int i = 0; i < result.getTedi().getFinances().size(); i++) {
-//					TediFinance tfin = result.getTedi().getFinances().get(i);
-//					Finance fin = new Finance();
-//					result.getAccountingInvoice().getInvoice().addFinance(fin);
-//					TediFinanceTransfer.toAon(aonCtx,result,tfin,fin);
-//				}
-//			} else if (result.getTedi().isTicket()) {
-//				TediFinance tfin = new TediFinance()
-//					.setDueDate(result.getInvoice().getIssueDate())
-//					.setAmount( result.getInvoice().getTotal())
-//					.setPayMethod(TediPayMethod.CASH);
-//				Finance fin = new Finance();
-//				result.getAccountingInvoice().getInvoice().addFinance(fin);
-//				TediFinanceTransfer.toAon(aonCtx,result,tfin,fin);
-//			}
-//		})
-//		;
-//		
-//		abstract OCRResult visit(AONContext ctx, AonConfiguration aonCtx,OCRResult result);
-//
-//		static OCRResult build(AONContext ctx, AonConfiguration aonCtx,OCRResult result) {
-//			Arrays.stream(OCRInvoiceTransfer.values())
-//				.forEach( token -> token.visit(ctx, aonCtx, result) );
-//			return result;
-//		}
-//	}
+	private OCRInvoiceBuilder() {
+		
+	}
 	
-//	private static void setReceiver(AonConfiguration aonCtx, TediInvoice tedi) {
-//		if ( tedi.getReceiver() != null )
-//			return ;
-//		if ( tedi.getInsight() == null )
-//			return;
-//		if ( tedi.getInsight().getNifs() == null )
-//			return;
-//		if ( tedi.getInsight().getNifs().length == 0 )
-//			return;
-//		
-//		Company company = aonCtx.getCompany();
-//		TediNif[] nifs = tedi.getInsight().getNifs();
-//		
-//		if ( nifs.length == 1  ) {
-//			tedi.setReceiver(newRegistry(company));
-//			tedi.setCompany(company.getName());
-//			return;
-//		}
-//		
-//		for (TediNif nif : nifs) {
-//			if ( AonStringUtils.equalsIgnoreCase(nif.getStr(), company.getDocument()) ) {
-//				tedi.setReceiver(newRegistry(company));
-//				tedi.setCompany(company.getName());
-//			}
-//		}
-//		
-//		
-//	}
-//
-//	private static TediRegistry newRegistry(String document) {
-//		TediRegistry registry = new TediRegistry();
-//		registry.setDocument(document);
-//		registry.setDocumentCountry(Country.ES.getIso2());
-//		return registry;
-//	}
-//	
-//	private static TediRegistry newRegistry(Company company) {
-//		TediRegistry registry = new TediRegistry();
-//		registry.setName(company.getName());
-//		registry.setDocument(company.getDocument());
-//		if ( company.getDocumentCountry() != null )
-//			registry.setDocumentCountry(company.getDocumentCountry().getIso2());
-//		else 
-//			registry.setDocumentCountry(Country.ES.getIso2());
-//		
-//		if ( company.getMainAddress() == null ) 
-//			return registry;
-//		
-//		TediAddress address = new TediAddress();
-//		address.setCity(company.getMainAddress().getCity());
-//		address.setProvince(company.getMainAddress().getGeozoneName());
-//		address.setAddress(company.getMainAddress().getFullAddress());
-//		address.setPostalCode(company.getMainAddress().getZip());
-//		registry.setAddress(address);
-//		
-//		if ( address.getCountry() == null )
-//			return registry;
-//		
-//		address.setCountry(company.getMainAddress().getCountry().getIso2());		
-//		
-//		return registry;
-//	}
-//	
-//	private static AccountEntry getEntryBase(AONContext ctx, AonConfiguration aonCtx,AccountingInvoice ai) {
-//		EnterpriseActivity ea = aonCtx.getMainActivity();
-//		Integer activity = (ea==null?null:ea.getId());
-//		Integer periodId = null;
-//		if (ai.getInvoice().getIssueDate() != null) {
-//			AccountPeriod period = AccountPeriodDAO.getPeriod(ctx, ai.getInvoice().getIssueDate());
-//			periodId = (period == null? null : period.getId());
-//		}
-//		AccountEntry accountEntry = new AccountEntry()
-//				.setPeriod(periodId)
-//				.setDomain(ai.getInvoice().getDomain())
-//				.setConfidential(false)
-//				.setEntryDate(ai.getInvoice().getIssueDate())
-//				.setActivity(activity)
-//				.setComments(ai.getInvoice().getComments())
-//				.setDirty(false);
-//		ai.getInvoice().getType().visit(ai.getInvoice(),  new IInvoiceTypeVisitor() {
-//			@Override public void visitUndeductible(Invoice invoice) {
-//				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-//				accountEntry.setUndeductible(true);
-//			}
-//			@Override public void visitSales(Invoice invoice) {accountEntry.setEntryType(AccountEntryType.SALES_INVOICE);}
-//			@Override public void visitPurchase(Invoice invoice) {accountEntry.setEntryType(AccountEntryType.PURCHASE_INVOICE);}
-//			@Override public void visitExpenses(Invoice invoice) {
-//				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
-//				accountEntry.setUndeductible(false);
-//			}
-//		});
-//		return accountEntry;
-//	}
-//	
-//
-//	private static void fillVats(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-//		AccountingInvoice ai = result.getAccountingInvoice();
-//		Invoice invoice = result.getInvoice();
-//				
-//		if (ai.getVats() == null) {
-//			ai.setVats( new LinkedList<InvoiceVAT>());
-//		}
-//
-//		boolean withholding = false;
-//		if (invoice.getBreakdown() != null) {
-//			for (InvoiceBreakdown ib : invoice.getBreakdown() ) {
-//				if (ib.getTaxType() == TaxType.RETENTION) {
-//					Account retentionAccount =(invoice.isSales() )
-//						?aonCtx.accounting().getDefaultPaidRetAccount()
-//						:aonCtx.accounting().getDefaultChargedRetAccount();
-//					withholding = true;
-//					invoice.setWithholding(true);
-//					InvoiceWithholding iw = new InvoiceWithholding()
-//						.setWithholdingType( WithholdingType.PROFESSIONAL )
-//						.setBase( ib.getBase() )
-//						.setPercentage( ib.getPercentage() )
-//						.setQuota( ib.getQuota() )
-//						.setAccountId( retentionAccount == null? null : retentionAccount.getId() )
-//						.setAccountCode( retentionAccount == null? null : retentionAccount.getCode() )
-//						.setAccountDescription( retentionAccount == null? null : retentionAccount.getDescription() )
-//						;
-//					ai.setWithholdingData(iw);
-//					break;
-//				}
-//			}
-//		}
-//		
-//		Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
-//		Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
-//		Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
-//		
-//		Account expAccount = null;
-//		if (invoice.isSales() ) {
-//			expAccount = getSalesAccount( ctx,aonCtx,result);
-//		} else if (invoice.isPurchase() ) {
-//			expAccount = getPurchaseAccount( ctx,aonCtx,result);
-//		} else if (invoice.isExpenses() ) {
-//			expAccount = getExpenseAccount( ctx,aonCtx,result);
-//		} else if (invoice.isUndeductible() ) {
-//			expAccount = getUndeductibleAccount( ctx,aonCtx,result);
-//		}
-//		if (invoice.getDetails() != null) {
-//			for (InvoiceDetail detail : invoice.getDetails()) {
-//				InvoiceVAT vat = null;
-//				if (detail.getInvoiceTaxes() != null && detail.getInvoiceTaxes().size() > 0) {
-//					for (InvoiceTax tax : detail.getInvoiceTaxes()) {
-//						if (tax.getTaxType() == TaxType.VAT) {
-//							vat = getInvoiceVAT( detail, tax,outputAccount,inputAccount,adjAccount,expAccount, withholding);					
-//						}
-//					}
-//				} else {
-//					vat = getInvoiceVAT( detail, new InvoiceTax(),outputAccount,inputAccount,adjAccount,expAccount, withholding);
-//				}
-//				ai.addVat(vat);
-//			}
-//		}
-//	}
-//	
-//	private static InvoiceVAT getInvoiceVAT( InvoiceDetail detail, InvoiceTax tax,Account outputAccount,Account inputAccount,Account adjAccount,Account expAccount, boolean withholding) {
-//		return new InvoiceVAT()
-//				.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-//				.setBase(detail.getTaxableBase())
-//				.setPercentage(tax.getPercentage())
-//				.setQuota(tax.getQuota())
-//				.setSurcharge(tax.getSurcharge())
-//				.setSurchargeQuota(tax.getSurchargeQuota())
-//				.setInvestAsset(tax.getInvestAsset())
-//				.setDeductiblePercent(tax.getDeductiblePercent())
-//				.setDeductibleQuota(tax.getDeductibleQuota()).setWithholding(withholding)
-//
-//				.setOutputAccountId(outputAccount == null ? null : outputAccount.getId())
-//				.setOutputAccountCode(outputAccount == null ? null : outputAccount.getCode())
-//				.setOutputAccountDescription(outputAccount == null ? null : outputAccount.getDescription())
-//
-//				.setInputAccountId(inputAccount == null ? null : inputAccount.getId())
-//				.setInputAccountCode(inputAccount == null ? null : inputAccount.getCode())
-//				.setInputAccountDescription(inputAccount == null ? null : inputAccount.getDescription())
-//
-//				.setAdjAccountId(adjAccount == null ? null : adjAccount.getId())
-//				.setAdjAccountCode(adjAccount == null ? null : adjAccount.getCode())
-//				.setAdjAccountDescription(adjAccount == null ? null : adjAccount.getDescription())
-//
-//				.setExpAccountId(expAccount == null ? null : expAccount.getId())
-//				.setExpAccountCode(expAccount == null ? null : expAccount.getCode())
-//				.setExpAccountDescription(expAccount == null ? null : expAccount.getDescription());
-//	}
-//	
-//	public static void fillRegistry(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-//		for ( IRegistryFiller filler : FILLERS ) {
-//			boolean accepted = filler.accept(result);
-//			if (accepted) {
-//				filler.fill(ctx, aonCtx, result);
-//				break;
-//			}
-//		}
-//	}
-//
-//	}
-//
-//	private static Account getSalesAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-//		return aonCtx.accounting().getDefaultSalesAccount();
-//	}
-//	
-//	private static Account getPurchaseAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-//		Account purchaseAccount = aonCtx.accounting().getDefaultPurchaseAccount(); 
-//		return purchaseAccount;
-//	}
-//	private static Account getUndeductibleAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-//		return getExpenseAccount(ctx, aonCtx, result);
-//	}
-//	
-//	private static Account getExpenseAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-//		AccountingInvoice ai = result.getAccountingInvoice();
-//		Account expAccount;
-//		if ( ai.getSuggestedAccounts() != null && ai.getSuggestedAccounts().size() > 0) {
-//			expAccount = ai.getSuggestedAccounts().get(0);
-//		} else {
-//			expAccount = AccountDAO.get(ctx, "629000000");
-//			if (expAccount == null) {
-//				expAccount = AccountDAO.getAccounts(ctx, filter -> filter.getCodeProperty().like("629%") )
-//						.findFirst()
-//						.orElse(null);
-//			}
-//		}
-//		return expAccount;
-//	}
-//
-//	public static AccountingInvoice build(OCRInvoice invoice) {
-//		AccountingInvoice ai = new AccountingInvoice();
-//		return ai;
-//	}
-
-	// ***********************************************************************	
-	// ***********************************************************************	
-	// ***********************************************************************	
-	// ***********************************************************************	
-	// ***********************************************************************	
-	// ***********************************************************************	
-	// ***********************************************************************	
-	// ***********************************************************************	
-	// ***********************************************************************	
-	// ***********************************************************************	
 	static class OCRContext {
 		private final AONContext ctx;
 		private final AonConfiguration config;
@@ -627,6 +84,8 @@ public class OCRInvoiceBuilder {
 	static class OCRContextDetail extends  OCRContext {
 		private final OCRInvoiceLine ocrLine;
 		private final InvoiceDetail detail;
+		private InvoiceTax vat;
+		private InvoiceTax retention;
 		
 		public OCRContextDetail(OCRContext ocr, OCRInvoiceLine line, InvoiceDetail id) {
 			this(ocr.getCtx(), ocr.getConfig(), ocr.getResult(), line , id);
@@ -644,6 +103,35 @@ public class OCRInvoiceBuilder {
 		public InvoiceDetail getDetail() {
 			return detail;
 		}
+
+		public boolean hasVat() {
+			return vat != null;
+		}
+		public InvoiceTax ensureVat() {
+			if ( vat == null) {
+				setVat(new InvoiceTax().setTaxType(TaxType.VAT).setVatDeductionType(VatDeductionType.WITH_RIGHT));
+			}
+			return vat;
+		}
+
+		public void setVat(InvoiceTax vat) {
+			this.vat = vat;
+		}
+
+		public boolean hasRetention() {
+			return retention != null;
+		}
+		public InvoiceTax ensureRetention() {
+			if ( retention == null) {
+				setRetention(new InvoiceTax().setTaxType(TaxType.RETENTION).setWithholdingType(WithholdingType.PROFESSIONAL));
+			}
+			return retention;
+		}
+
+		public void setRetention(InvoiceTax retention) {
+			this.retention = retention;
+		}
+		
 	}
 	
 	static class OCRContextBreakdown extends  OCRContext {
@@ -775,9 +263,17 @@ public class OCRInvoiceBuilder {
 		}
 	};
 	
-	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_DESCRIPTION = ocr -> {
-		ocr.getDetail().setDescription( ocr.getOcrLine().getDescription().flatMap( d -> d.getValue() ).orElse(null) );
+	private static final Consumer<OCRContext> INVOICE_TOTAL = ocr -> {
+		Optional<BigDecimal> optTotal = ocr.getOCRInvoice().getTotalAmount().flatMap( o -> o.getValue() );
+		ocr.getInvoice().setTotal( AonNumberUtils.zeroIfNull(optTotal.orElse( null )) );
 	};
+	
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_DESCRIPTION = ocr -> 
+		ocr.getDetail().setDescription( ocr.getOcrLine().getDescription().flatMap( d -> d.getValue() ).orElse(null) );
+		
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_SOURCE = ocr -> 
+		ocr.getDetail().setSource( InvoiceSource.DIRECT_INVOICE );
+	
 	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_QUANTITY = ocr -> {
 		BigDecimal quantity = ocr.getOcrLine().getQuantity().flatMap( d -> d.getValue() ).orElse(null);
 		ocr.getDetail().setQuantity( AonNumberUtils.zeroIfNull(quantity));
@@ -786,33 +282,75 @@ public class OCRInvoiceBuilder {
 		BigDecimal price = ocr.getOcrLine().getGrossUnitPrice().flatMap( d -> d.getValue() ).orElse(null);
 		ocr.getDetail().setPrice( AonNumberUtils.zeroIfNull(price));
 	};
-
-	private static final Consumer<OCRContext> INVOICE_DETAILS = ocr -> {
-		MutableInt i = new MutableInt(0);
-		if ( ocr.getOCRInvoice().getLines().isPresent() ) {
-			ocr.getOCRInvoice().getLines().get()
-				.stream()
-				.forEach( line -> {
-					i.add(1);
-					InvoiceDetail id = new InvoiceDetail()
-							.setSource(InvoiceSource.DIRECT_INVOICE)
-							.setLine( i.getValue().shortValue() )
-							;
-					INVOICE_DETAIL_DESCRIPTION
-						.andThen(INVOICE_DETAIL_QUANTITY)
-						.andThen(INVOICE_DETAIL_PRICE)
-					.accept(new OCRContextDetail(ocr, line, id));
-					
-					ocr.getInvoice().getDetails().add(id);
-				})
-			;
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_AMOUNT = ocr -> {
+		BigDecimal price = ocr.getOcrLine().getTotalAmount().flatMap( d -> d.getValue() ).orElse(null);
+		ocr.getDetail().setTaxableBase( AonNumberUtils.zeroIfNull(price));
+	};
+	
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_TAX_VAT = ocr -> {
+		BigDecimal taxableBase = ocr.getOcrLine().getTaxBaseAmount().flatMap( d -> d.getValue() ).orElse(null);
+		BigDecimal percentage = ocr.getOcrLine().getTaxRate().flatMap( d -> d.getValue() ).orElse(null);
+		BigDecimal quota = ocr.getOcrLine().getTaxAmount().flatMap( d -> d.getValue() ).orElse(null);
+		if ( AonMathUtils.isNotZero(taxableBase) && AonMathUtils.isNotZero(percentage) && AonMathUtils.isNotZero(quota)) {
+			ocr.ensureVat().setBase( AonNumberUtils.zeroIfNull(taxableBase));
+			ocr.ensureVat().setPercentage( AonNumberUtils.zeroIfNull(percentage));
+			ocr.ensureVat().setQuota( AonNumberUtils.zeroIfNull(quota));
+			ocr.ensureVat().setDeductibleQuota( AonNumberUtils.zeroIfNull(quota));
 		}
 	};
+
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_AUTOCOMPLETE = ocr -> {
+		InvoiceDetail id = ocr.getDetail();
+		if ( AonMathUtils.isZero(id.getPrice()) &&  AonMathUtils.isZero(id.getQuantity()) ) {
+			id.setQuantity(1);
+			id.setPrice(id.getTaxableBase());
+		}
+	};
+	
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_ADD_VAT = ocr -> {
+		if (ocr.hasVat()) {
+			ocr.getDetail().getInvoiceTaxes().add( ocr.ensureVat() );	
+		}
+	};
+	
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_ADD_RETENTION = ocr -> {
+		if (ocr.hasRetention()) {
+			ocr.getDetail().getInvoiceTaxes().add( ocr.ensureRetention() );	
+		}
+	};
+	
+	private static final Consumer<OCRContextDetail> ADD_INVOICE_DETAIL = ocr -> 
+		ocr.getInvoice().getDetails().add( ocr.getDetail() );
+	
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_GUESS_ITEMS = OCRInvoiceBuilder::guessItems;		
+
+	private static final Consumer<OCRContext> INVOICE_DETAILS = ocr -> 
+		Stream.of( ocr.getOCRInvoice().getLines() )
+			.filter( Optional::isPresent )
+			.map( Optional::get )
+			.flatMap( Collection::stream )
+			.map( line -> new OCRContextDetail(ocr, line, new InvoiceDetail())) 
+			.forEach( ocrDetail -> 
+				INVOICE_DETAIL_DESCRIPTION
+					.andThen(INVOICE_DETAIL_SOURCE)
+					.andThen(INVOICE_DETAIL_QUANTITY)
+					.andThen(INVOICE_DETAIL_PRICE)
+					.andThen(INVOICE_DETAIL_AMOUNT)
+					.andThen(INVOICE_DETAIL_TAX_VAT)
+					.andThen(INVOICE_DETAIL_AUTOCOMPLETE)
+					.andThen(INVOICE_DETAIL_ADD_VAT)
+					.andThen(INVOICE_DETAIL_ADD_RETENTION)
+					.andThen(INVOICE_DETAIL_GUESS_ITEMS)
+					.andThen(ADD_INVOICE_DETAIL)
+				.accept(ocrDetail));
 
 	private static final Consumer<OCRContextBreakdown> INVOICE_BREAKDOWN_BASE = ocr -> {
 		BigDecimal base = ocr.getOcrBreakdown().getTaxBaseAmount().flatMap( d -> d.getValue() ).orElse(null); 
 		ocr.getBreakdown().setBase( AonNumberUtils.zeroIfNull(base) );
 	};
+	
+	private static final Consumer<OCRContextBreakdown> INVOICE_BREAKDOWN_TAX_TYPE = ocr -> 
+		ocr.getBreakdown().setTaxType( TaxType.VAT );
 	
 	private static final Consumer<OCRContextBreakdown> INVOICE_BREAKDOWN_PERCENTAGE = ocr -> {
 		BigDecimal percentage = ocr.getOcrBreakdown().getTaxRate().flatMap( d -> d.getValue() ).orElse(null); 
@@ -833,25 +371,26 @@ public class OCRInvoiceBuilder {
 		BigDecimal surchargeQuota = ocr.getOcrBreakdown().getReAmount().flatMap( d -> d.getValue() ).orElse(null); 
 		ocr.getBreakdown().setSurchargeQuota( AonNumberUtils.zeroIfNull(surchargeQuota) );
 	};
+	
+	private static final Consumer<OCRContextBreakdown> ADD_INVOICE_BREAKDOWN = ocr -> 
+		ocr.getInvoice().getBreakdown().add(ocr.getBreakdown());
 
-	private static final Consumer<OCRContext> INVOICE_BREAKDOWN = ocr -> {
-		if ( ocr.getOCRInvoice().getBreakdowns().isPresent() ) {
-			ocr.getOCRInvoice().getBreakdowns().get()
-			.stream()
-			.forEach( br -> {
-				InvoiceBreakdown ib = new InvoiceBreakdown()
-					.setTaxType( TaxType.VAT );
+	private static final Consumer<OCRContext> INVOICE_BREAKDOWN = ocr -> 
+		Stream.of( ocr.getOCRInvoice().getBreakdowns() )
+			.filter( Optional::isPresent )
+			.map( Optional::get )
+			.flatMap( Collection::stream )
+			.map( br -> new OCRContextBreakdown(ocr, br, new InvoiceBreakdown())) 
+			.forEach( ocrDetail ->
 				INVOICE_BREAKDOWN_BASE
+					.andThen(INVOICE_BREAKDOWN_TAX_TYPE)
 					.andThen(INVOICE_BREAKDOWN_PERCENTAGE)
 					.andThen(INVOICE_BREAKDOWN_QUOTA)
 					.andThen(INVOICE_BREAKDOWN_SURCHARGE_PERCENTAGE)
 					.andThen(INVOICE_BREAKDOWN_SURCHARGE_QUOTA)
-				.accept(new OCRContextBreakdown(ocr, br, ib));
-			ocr.getInvoice().getBreakdown().add(ib);
-				
-			});
-		}
-	};
+					.andThen(ADD_INVOICE_BREAKDOWN)
+				.accept(ocrDetail)
+			);
 
 	private static final Consumer<OCRContext> INVOICE_WITHOLDING = ocr -> {
 		BigDecimal irpfPercentage = ocr.getOCRInvoice().getWithholdingTaxRate().flatMap( d -> d.getValue() ).orElse(null);
@@ -883,6 +422,7 @@ public class OCRInvoiceBuilder {
 				.andThen(INVOICE_BREAKDOWN)
 				.andThen(INVOICE_WITHOLDING)
 				.andThen(INVOICE_DETAILS)
+				.andThen(INVOICE_TOTAL)
 			.accept(new OCRContext(ctx, aonCtx, result));
 			return result;
 		}
@@ -890,8 +430,6 @@ public class OCRInvoiceBuilder {
 
 	public static OCRResult toInvoice(AONContext ctx, OCRDocument ocrDocument) {
 		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
-		aonCtx.setPayMethods(PayMethodDAO.getOrderByIds(ctx));
-		
 		OCRResult result = new OCRResult(ocrDocument, new Invoice());
 		OCRInvoiceTransfer.build(ctx, aonCtx,result);
 		return result; 
@@ -901,6 +439,10 @@ public class OCRInvoiceBuilder {
 	// *************************************************************** TO DO ******
 	// ****************************************************************************
 
+	// Buscar artículos para resolver el artículo
+	private static void guessItems(OCRContext ocr) {
+		// 
+	}
 	// Buscar en facturas anteriores para suponer el tipo de retención con mas seguridad.
 	private static WithholdingType guessWitholdingType(Invoice invoice) {
 		return WithholdingType.PROFESSIONAL;
