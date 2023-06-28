@@ -21,6 +21,7 @@ import net.aonsolutions.invofox.json.OCRInvoiceJSON;
 import net.aonsolutions.invofox.model.OCRDocument;
 import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
+import net.aonsolutions.invofox.model.OCRSeverity;
 
 class InvofoxToAonTestCase {
 	
@@ -60,6 +61,13 @@ class InvofoxToAonTestCase {
 			.filter( d -> AonArrayUtils.constains(companyDocuments, d.getData().get().getIssuerDocument())
 					|| AonArrayUtils.constains(companyDocuments, d.getData().get().getRecipientDocument()) )
 			.forEach( optDocument -> {
+				OCRSeverity state = optDocument.getPublicState().get();
+				System.out.println( "************************************** " );
+				System.out.println( "**************** STATE *************** " );
+				System.out.println( "************************************** " );
+				System.out.println( state );
+				System.out.println( );
+				
 				String documentId = optDocument.getId().get();
 				OCRDocumentResponse docResponse = OCRInvofox.getDocument(documentId);		
 				assertNotNull(docResponse);

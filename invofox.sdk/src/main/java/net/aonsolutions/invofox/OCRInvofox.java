@@ -20,6 +20,7 @@ import net.aonsolutions.invofox.json.OCRCompanyResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentsResponseJSON;
 import net.aonsolutions.invofox.json.OCRErrorJSON;
+import net.aonsolutions.invofox.json.OCRNames;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
 import net.aonsolutions.invofox.model.OCRCompany;
 import net.aonsolutions.invofox.model.OCRCompanyResponse;
@@ -27,6 +28,7 @@ import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
 import net.aonsolutions.invofox.model.OCRError;
 import net.aonsolutions.invofox.model.OCRResponse;
+import net.aonsolutions.invofox.model.OCRSeverity;
 
 public class OCRInvofox {
 	private static final String X_API_KEY = "x-api-key";
@@ -90,6 +92,30 @@ public class OCRInvofox {
 			.build()
 			.send(request, BodyHandlers.ofString());
 	}
+	// ---------------------------------------------------------------------- [PUT METHOD]
+	private static <T extends OCRResponse> T put(String url, JSONObject putData, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
+		try {
+			HttpResponse<String> response = put(url, putData);
+			return giveBack(response, supplier, jsonResponseBuilder);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return internalErrorResponse(e, supplier);
+		} catch (IOException  e) {
+			return internalErrorResponse(e, supplier);
+		}
+	}
+	private static HttpResponse<String> put(String url, JSONObject putData) throws IOException, InterruptedException {
+		HttpRequest request = HttpRequest.newBuilder()
+			.uri( URI.create(url) )
+			.header(X_API_KEY, TOKEN)
+			.header("accept", "application/json")
+			.header("Content-Type", "application/json")
+			.PUT( HttpRequest.BodyPublishers.ofString(putData.toString()) )
+			.build();
+		return HttpClient.newBuilder()
+			.build()
+			.send(request, BodyHandlers.ofString());
+	}
 
 	// ---------------------------------------------------------------------- [GET METHOD]
 	private static <T extends OCRResponse> T get(String url, Supplier<T> supplier, Function<JSONObject,T> jsonResponseBuilder) {
@@ -137,9 +163,6 @@ public class OCRInvofox {
 	}
 
 	// ---------------------------------------------------------------------- [DOCUMENTS]
-	public static OCRDocumentResponse getDocument(String documentId) {
-		return get(MessageFormat.format(DOCUMENT, documentId), OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
-	}
 	public static OCRDocumentsResponse getDocuments(OCRDocumentsParams params) {
 		return get(DOCUMENTS + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
 	}
@@ -154,7 +177,15 @@ public class OCRInvofox {
 			.map( company -> get(DOCUMENTS + OCRDocumentsParams.get().withCompany(company.getId()).build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from))
 			.orElse( resp.copy(new OCRDocumentsResponse()) );
 	}
-
+	// ---------------------------------------------------------------------- [DOCUMENT]
+	public static OCRDocumentResponse getDocument(String documentId) {
+		return get(MessageFormat.format(DOCUMENT, documentId), OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+	}
+	public static OCRDocumentResponse markAsExported(String documentId) {
+		JSONObject putData = new JSONObject();
+		putData.put( OCRNames.PUBLIC_STATE, OCRSeverity.exported );
+		return put(MessageFormat.format(DOCUMENT, documentId), putData, OCRDocumentResponse::new, OCRDocumentResponseJSON::from);
+	}
 	// ---------------------------------------------------------------------- [COMPANIES]
 	public static OCRCompanyResponse postCompany(OCRCompany company) {
 		return  post(COMPANIES, OCRCompanyJSON.to(company), OCRCompanyResponse::new, OCRCompanyResponseJSON::from);
