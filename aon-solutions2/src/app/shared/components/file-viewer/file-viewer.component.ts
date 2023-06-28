@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-file-viewer',
@@ -7,11 +7,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FileViewerComponent implements OnInit {
 
-  pdfSrc = "https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf";
+  @Input() pdfSrc: string = "https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf";
+  @Input() zoom: string = 'page-width'
+  @Input() locale: string = 'es-ES';
 
   constructor() { }
 
   ngOnInit(): void {
   }
+
 
 }
