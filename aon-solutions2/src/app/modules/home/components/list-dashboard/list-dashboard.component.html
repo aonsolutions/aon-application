@@ -1,0 +1,31 @@
+<mat-grid-list cols="24" rowHeight="60px" gutterSize="15px" class="contentMessage">
+  <mat-grid-tile colspan="1" rowspan="1" [ngSwitch]="type">
+    <div class="typeIcon" [ngSwitch]="type">
+      <set-icon class="icon" shape="message"  *ngSwitchCase="1"></set-icon>
+      <set-icon class="icon" shape="playlist_add_check" *ngSwitchCase="2"></set-icon>
+      <set-icon class="icon" shape="notifications" *ngSwitchCase="3"></set-icon>
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="3" rowspan="1">
+    <div class="textMessage">{{name}}</div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="2" rowspan="1">
+    <div *ngIf="type==1" class="statusMessage">
+      <set-icon class="icon " shape="watch_later"></set-icon>
+      <div class="pending">Pendiente</div>
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="3" rowspan="1">
+    <div class="subjectMessage">{{subject}}</div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="12" rowspan="1">
+    <div class= "descriptionMessage">
+      {{description}}
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="3" rowspan="1">
+    <div class="dateMessage">
+      {{date}}
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>

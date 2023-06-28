@@ -28,7 +28,7 @@
     "strictTemplates": true
   },
   "paths": {
-    "@crionic/system-angular": ["./lib/setproduct-angular-material"],
+    "@crionic/system-angular": ["./libraries/setproduct-angular-material"],
   }
 
 }

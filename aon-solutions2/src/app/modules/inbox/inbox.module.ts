@@ -7,11 +7,11 @@ import { InboxComponent } from './components/inbox/inbox.component';
 
 @NgModule({
   declarations: [
-    InboxComponent
+    InboxComponent,
   ],
   imports: [
     CommonModule,
-    InboxRoutingModule
+    InboxRoutingModule,
   ]
 })
 export class InboxModule { }

@@ -1,0 +1,26 @@
+<app-card
+  [padding]="'.75rem'"
+  [width]="'100%'"
+  [height]="'7.45rem'"
+  [border]="'.05rem solid #D2D2D6'"
+  [borderRadius]="'.2rem'"
+>
+<div body class="menu-button-dashboard">
+      <div class="menu-button-dashboard-line-div">
+          <div class="menu-button-dashboard-line" [ngStyle]="{'backgroundColor': color}"></div>
+      </div>
+      <div class="menu-button-dashboard-content">
+          <div class="menu-button-dashboard-content-icon">
+              <set-icon [attr.shape]="shape" set-color size="21" [ngStyle]="{'color': color}"></set-icon>
+          </div>
+          <div class="menu-button-dashboard-content-text">
+              <div class="menu-button-dashboard-content-text-name">
+                  {{name}}
+              </div>
+              <div class="menu-button-dashboard-content-text-icon">
+                  <app-icon class="menuButtonDashboardArrow" shape="arrow_forward_ios" set-color size="21" color="black"></app-icon>
+              </div>
+          </div>
+      </div>
+  </div>
+</app-card>

@@ -1,60 +1,60 @@
+@import 'src/styles.scss';
+
 .toolBar {
-    width: 100%;
-    background-color: white;
-    border: solid;
-    border-width: 1px;
-    border-color: lightgrey;
-    height: calc(4rem);
-    justify-content: space-between;
+  width: 100%;
+  background-color: white;
+  border: solid;
+  border-width: 1px;
+  border-color: lightgrey;
+  height: calc(4rem);
+  justify-content: space-between;
 }
 
 .logo {
-    width: calc(100%);
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: left;
+  width: calc(100%);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: left;
 }
 
 .toolbarIcons {
-    width: calc(100%);
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: right;
-    gap: 1.5rem;
+  width: calc(100%);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  gap: 1.5rem;
 }
 
 .iconToolbar {
-    width: 1.5rem;
-    height: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .iconToolbar:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .logoAon:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .buttonTopbar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    padding: .5rem;
-    border-radius: 99px;
-    background-color: #f9f9fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: .5rem;
+  border-radius: 99px;
+  background-color: #f9f9fa;
 }
 
 .buttonTopbar:hover {
-    box-shadow: 0 2px 4px 0 #d2d2d6, 0 1px 2px 0 #b4b4bb;
-    background-color: #fff;
+  box-shadow: 0 2px 4px 0 #d2d2d6, 0 1px 2px 0 $color-icon;
+  background-color: #fff;
 }
-
-
 
 ///// DROPDOWN MENU
 

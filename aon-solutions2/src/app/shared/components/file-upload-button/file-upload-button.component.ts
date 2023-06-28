@@ -7,8 +7,8 @@ import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@an
 })
 export class FileUploadButtonComponent implements OnInit {
 
-  @Input() width : string = 'auto';
-  @Input() height : string = 'auto';
+  @Input() width : string = '100%';
+  @Input() height : string = '100%';
   @HostBinding('style.--widthHost') widthHost = '';
   @HostBinding('style.--heightHost') heightHost = '';
 
