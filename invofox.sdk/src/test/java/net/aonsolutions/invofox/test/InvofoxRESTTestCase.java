@@ -40,6 +40,18 @@ class InvofoxRESTTestCase {
 	
 	@Test
 	void getValidDocument() {
+		String documentId = "648088d6c632f4000891fa82";
+		OCRDocumentResponse response = OCRInvofox.getDocument(documentId);
+		assertNotNull(response);
+		assertTrue(response.getHttpCode().isPresent());
+		assertEquals( 200, response.getHttpCode().get());
+		assertTrue(response.getDocument().isPresent());
+		assertTrue(response.getDocument().get().getId().isPresent());
+		assertEquals( documentId, response.getDocument().get().getId().get());
+	}
+	
+	@Test
+	void markAsExported() {
 		String documentId = "648991a5226c11000964a87b";
 		OCRDocumentResponse response = OCRInvofox.markAsExported(documentId);
 		assertNotNull(response);
@@ -50,18 +62,6 @@ class InvofoxRESTTestCase {
 		assertEquals( documentId, response.getDocument().get().getId().get());
 		assertTrue(response.getDocument().get().getPublicState().isPresent());
 		assertEquals( OCRSeverity.exported, response.getDocument().get().getPublicState().get());
-	}
-	
-	@Test
-	void markAsExported() {
-		String documentId = "648088d6c632f4000891fa82";
-		OCRDocumentResponse response = OCRInvofox.getDocument(documentId);
-		assertNotNull(response);
-		assertTrue(response.getHttpCode().isPresent());
-		assertEquals( 200, response.getHttpCode().get());
-		assertTrue(response.getDocument().isPresent());
-		assertTrue(response.getDocument().get().getId().isPresent());
-		assertEquals( documentId, response.getDocument().get().getId().get());
 	}
 
 	@Test

@@ -144,7 +144,7 @@ public final class OCRNames {
 	public static final String SHIPPING_ADDRESS = "shippingAddress";
 	public static final String SKIP = "skip";	
 	public static final String SPLIT_INDEX = "splitIndex";
-	public static final String STEPS = "Steps";
+	public static final String STEPS = "steps";
 	public static final String STREET = "street";
 	public static final String SUB_REGION = "subRegion";
 	public static final String SUPPLY_NUMBER = "supplyNumber";
