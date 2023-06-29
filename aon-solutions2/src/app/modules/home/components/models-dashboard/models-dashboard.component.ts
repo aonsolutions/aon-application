@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { TaxModelService } from '../../../../core/services/tax-model.service';
 export interface Models {
   name: string;
   amount: string;
@@ -17,8 +17,6 @@ export interface Models {
 })
 export class ModelsDashboardComponent implements OnInit {
 
-  constructor() { }
-
   selected : string = "1 trimestre";
 
   items : string[] = ["1 trimestre","2 trimestre","3 trimestre", "4 trimestre"];
@@ -31,7 +29,18 @@ export class ModelsDashboardComponent implements OnInit {
     {name: 'Modelo 000', tax: 'Tipo impuesto', amount: '150,00 €'},
   ]
 
+
+  constructor(
+     public taxModelService :TaxModelService
+   ) {
+     taxModelService.getTaxModelList() .then(
+       (response) => {console.log(response)}
+     )
+   }
+
+
   ngOnInit(): void {
   }
 
 }
+

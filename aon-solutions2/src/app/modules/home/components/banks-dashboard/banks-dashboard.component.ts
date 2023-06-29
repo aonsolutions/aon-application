@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BankService } from '../../../../core/services/bank.service';
 
 export interface Banks {
   name: string;
@@ -16,7 +17,6 @@ export interface Banks {
 })
 export class BanksDashboardComponent implements OnInit {
 
-  constructor() { }
 
   totalAmount: string = '29.987,76 €';
 
@@ -26,7 +26,18 @@ export class BanksDashboardComponent implements OnInit {
     {name: 'BBVA', amount: '15.345,12'},
   ]
 
+  constructor(
+     public bankService :BankService
+   ) {
+     bankService.getBankList().then(
+       (response) => {console.log(response)}
+     )
+   }
+
+
   ngOnInit(): void {
   }
 
 }
+
+

@@ -25,15 +25,17 @@
     </div>
   </div>
   <div body class="chart-content">
-    <app-chart
-      [chartLabels]="['Lorem', 'Ipsum', 'Dolor']"
-      [chartType]="'line'"
-      [chartData]="[
-        [350, 450, 100]
-     ]"
-    >
+    <div class="chart-content-wrapper">
+       <app-chart
+      [chartLabels]="labels"
+      [chartType]="chartType"
+      [chartData]="data"
+      [colors]="colors"
+      >
     </app-chart>
+    </div>
   </div>
+
   <div footer class="chart-footer">
     <div class="chart-footer-button">
       <set-icon [attr.shape]="shape" set-color [ngStyle]="{ color: 'black' }" size="21"></set-icon>
