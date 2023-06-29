@@ -2,7 +2,6 @@ app-card{
   cursor: pointer;
 }
 
-
 .models-header{
     width: 100%;
     display: flex;
@@ -69,7 +68,6 @@ app-card{
     border-width: .05rem;
     border-color: transparent transparent #D2D2D6 transparent;
     box-sizing: border-box;
-
 }
 
 .models-content-element-name{
@@ -120,7 +118,6 @@ app-card{
     border-color: #fb982e;
     box-sizing: border-box;
     background-color: #fb982e;
-
 }
 
 .models-content-element-amount-text {
@@ -134,6 +131,5 @@ app-card{
     white-space: nowrap;
     font-size: 0.7rem;
     margin-left: auto;
-
 }
 
