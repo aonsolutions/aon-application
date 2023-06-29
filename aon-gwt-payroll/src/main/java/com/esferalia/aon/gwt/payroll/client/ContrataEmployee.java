@@ -2275,7 +2275,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void sendContract() {
 		String contractType = contrataEmployeeObject.getContractData().getContractType();
-		if(AonStringUtils.isNotBlank(contractType) && (AonStringUtils.equalsIgnoreCase(contractType, "402") || AonStringUtils.equalsIgnoreCase(contractType, "502")))
+		Date endDate = contrataEmployeeObject.getContractData().getEndDate();
+		if(AonStringUtils.isNotBlank(contractType) && (AonStringUtils.equalsIgnoreCase(contractType, "402") || AonStringUtils.equalsIgnoreCase(contractType, "502"))
+				&& null == endDate)
 			showWarning("Fecha fin", "Los contratos 402 y 502 deben tener definido la fecha fin del contrato");
 		else {
 			showLoading("Notificando contrato...");
@@ -2800,7 +2802,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void optionNotAllowed() {
-		AonDialog dialog = new AonDialog("Informaci\u00f3n", new HTML("Opci\u00f3n no permitida"));
+		AonDialog dialog = new AonDialog("Informaci\u00f3n", new HTML("Opci\u00f3n no permitida ya que existen n\u00f3minas emitidas. Debe realizar este cambio manualmente a traves de Cambios AFI, creando un tramo con su fecha correspondiente."));
 		dialog.info();
 	}
 	
