@@ -4,6 +4,15 @@
   display: flex;
 }
 
+.menu-button-dashboard:hover .menuButtonDashboardArrow {
+  display: none;
+}
+
+.menu-button-dashboard:hover {
+  transform: translateX(2rem);
+  transition-duration: 300ms;
+}
+
 app-card:hover {
   cursor: pointer;
   border-color: black;
@@ -18,7 +27,7 @@ app-card:hover {
 }
 
 .menu-button-dashboard-line {
-  width: 6px;
+  width: .3rem;
   height: 80%;
   flex-grow: 0;
   border-radius: 31px;
@@ -46,7 +55,7 @@ app-card:hover {
 }
 
 .menu-button-dashboard-content-text-name {
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: bold;
   font-stretch: normal;
   font-style: normal;

@@ -11,24 +11,29 @@ import { ReportingService } from '../../../../core/services/reporting.service';
   },
 })
 export class ChartDashboardComponent implements OnInit {
+  @Input() name: string = '';
+  @Input() chart: string = '';
+  @Input() shape: string = '';
+  @Input() labels: any = [];
+  @Input() data: any = [];
+  @Input() colors: any = [];
+  @Input() chartType: any = '';
+  @Input() chartData: string[] = [];
 
-  @Input() name : string = '';
-  @Input() chart : string = '';
-  @Input() shape : string = '';
+  selected: string = 'Últimos 12 meses';
 
-  selected : string = "Últimos 12 meses";
-
-  items : string[] = ["Últimos 12 meses","Últimos 6 meses","Trimestral"];
+  items: string[] = ['Últimos 12 meses', 'Últimos 6 meses', 'Trimestral'];
 
   constructor(
-    public reportingService :ReportingService
-  ) {
-    reportingService.getCobrosPagos().then(
-      (response) => {console.log(response)}
-    )
+    public reportingService: ReportingService) {
+    reportingService.getVentasGastos().then((response) => {
+      console.log(response);
+
+      reportingService.getCobrosPagos().then((response) => {
+        console.log(response);
+      });
+    });
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }
