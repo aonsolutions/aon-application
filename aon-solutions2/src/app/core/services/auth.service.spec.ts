@@ -1,4 +1,3 @@
-
 import { TestBed } from '@angular/core/testing';
 
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
@@ -7,7 +6,6 @@ import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
 import { AonSDK } from 'libraries/AonSDK/AonSDK';
-
 
 describe('AuthService', () => {
   let service : AuthService; //servicio
@@ -40,39 +38,61 @@ describe('AuthService', () => {
   //evita peticiones pendientes entre cada test. Para que no se lance el siguiente test mientras exista una pendiente.
   afterEach (() =>{
      httpMock.verify();
-
   });
 
   it ('should create',()=>{
     expect(service).toBeTruthy();
   });
 
-  // it('login behaves correctly when response is ok',()=>{
-  //   const user = 'user';
-  //   const password = 'password';
-  //   const responseOK = {
-  //     'code' : '0000',
-  //     'description': '',
-  //     'result':true
-  //   };
-  //   const spy = spyOn(aonSDK, 'model').and.returnValue(new Promise((resolve,reject) => {
-  //           resolve(responseOK);
-  //       }));
-
-  //  const navigateSpy = spyOn(router,'navigate');
-  //   service.login(user,password);
-  //   expect(spy).toHaveBeenCalled();
-  //   expect(navigateSpy).toHaveBeenCalledWith(['/auth/selectEnterprise']);
-
-  // });
-
-  it('logout',()=>{
-    let aonSdk = new AonSDK();
-    const spyAonSDK = spyOn(aonSDK, 'model');
-    const callLogout =  service.logout();
-
-    expect(callLogout).toHaveBeenCalled();
+  it('login behaves correctly when response is ok',(done: DoneFn)=>{
+    const user = 'test@aonsolutions.test';
+    const password = 'test';
+    spyOn(router,'navigate');
+    service.login(user,password).then(value => {
+      expect(value).toBe(true);
+      done();
+    }).catch(
+      (error) => {
+        expect(error).toBeTruthy();
+        done();
+      }
+    )
   });
+
+  it('login returns an error ',(done: DoneFn)=>{
+  const user = 'test';
+  const password = 'testaa';
+  spyOn(router,'navigate');
+  service.login(user,password).then(value => {
+  expect(value).toBe(true);
+    done();
+  }).catch(
+     (error) => {
+  expect(error).toBeTruthy();
+      done();
+    }
+  )
+});
+
+it('logout method executes correctly',(done: DoneFn) =>{
+  spyOn(router,'navigate');
+
+  expect(service.logout()).toBe(void 0);
+  done();
+});
+
+it('isLoggedIn return true',  () =>{
+  aonSDK.model('auth').login('test@aonsolutions.test','test');
+
+  expect(service.isLoggedIn()).toBe(true);
+});
+
+it('isLoggedIn return false',  () =>{
+  aonSDK.model('auth').logout();
+
+  expect(service.isLoggedIn()).toBe(false)
+});
+
 });
 
 

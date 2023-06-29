@@ -54,13 +54,14 @@ describe('LoginComponent', () => {
 
   it('loginUser is defined', () => {
     component.loginUser();
+
     expect(component.auth).toBeDefined();
   });
 
   it('loginUser checks that the login method of AuthService mock is called', () => {
     const spyLogin = spyOn (mockedAuthService,'login');
     component.loginUser();
-    expect(spyLogin).toHaveBeenCalled();
 
+    expect(spyLogin).toHaveBeenCalled();
   });
 });
