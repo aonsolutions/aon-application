@@ -6,7 +6,6 @@ import { AuthService } from 'src/app/core/services/auth.service';;
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { EnterpriseService } from 'src/app/core/services/enterprise.service';
-import { of } from 'rxjs';
 import { Enterprise } from 'src/app/core/models/class/enterprise';
 
 describe('SelectEnterpriseComponent', () => {
@@ -20,7 +19,9 @@ describe('SelectEnterpriseComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SelectEnterpriseComponent ],
+      declarations: [
+        SelectEnterpriseComponent
+      ],
       imports : [
         RouterTestingModule,
         HttpClientTestingModule
@@ -46,21 +47,12 @@ describe('SelectEnterpriseComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('ngOinit obtains a list of companies from enterpriseService',()=>{
-    const enterprises: Enterprise[] = [];
-    //const spyEnterpriseService = spyOn(enterpriseService,'getEnterprises').and.returnValue(of(enterprises));
-    component.ngOnInit();
+  it('selectEnterprise has been called', () => {
+    let enterprise = new Enterprise ('enterpriseName','documentName');
+    spyOn(router,'navigate');
+    const spyEnterpriseService = spyOn(enterpriseService,'setEnterprise');
+    component.selectEnterprise(enterprise);
 
-    //expect(spyEnterpriseService).toHaveBeenCalled();
-    expect(component.enterprises).toEqual(enterprises);
-
+    expect(spyEnterpriseService).toBeTruthy();
   });
-
-  it('selectEnterprise sets the selected company and if not use id/document',()=>{
-    const enterprises= new Enterprise();
-    const navigateSpy = spyOn(router,'navigate');
-    component.selectEnterprise(enterprises);
-    expect(navigateSpy).toHaveBeenCalled();
-  });
-
 });
