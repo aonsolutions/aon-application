@@ -46,7 +46,8 @@ import { GridLayoutComponent } from './layouts/grid-layout/grid-layout.component
 import { GridColsDirective } from './directives/grid-cols.directive';
 import { ChartsModule } from 'ng2-charts';
 import { ChartComponent } from './components/chart/chart.component';
-
+import { FileViewerComponent } from './components/file-viewer/file-viewer.component';
+import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,8 @@ import { ChartComponent } from './components/chart/chart.component';
     PaginationControllerComponent,
     GridLayoutComponent,
     GridColsDirective,
-    ChartComponent
+    ChartComponent,
+    FileViewerComponent,
   ],
   imports: [
     CommonModule,
@@ -100,7 +102,8 @@ import { ChartComponent } from './components/chart/chart.component';
     MatTabsModule,
     MatExpansionModule,
     MatDialogModule,
-    ChartsModule
+    ChartsModule,
+    PdfJsViewerModule
   ],
   exports:[
     SidenavHoverDirective,
@@ -128,7 +131,8 @@ import { ChartComponent } from './components/chart/chart.component';
     PaginationControllerComponent,
     GridLayoutComponent,
     GridColsDirective,
-    ChartComponent
+    ChartComponent,
+    FileViewerComponent
   ]
 })
 export class SharedModule { }

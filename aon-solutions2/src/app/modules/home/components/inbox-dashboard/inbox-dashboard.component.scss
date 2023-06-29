@@ -11,32 +11,31 @@ app-card{
 }
 
 .head-card .line-head {
-  width: 6px;
-  height: 33px;
-  margin: 0 12px 0 0;
-  border-radius: 31px;
+  width: .3rem;
+  height: 1.65rem;
+  margin: 0 .6rem 0 0;
+  border-radius: 1.55rem;
   background-color: #f6655a;
 }
 
 .head-card .text {
   font-style: normal;
   font-weight: 700;
-  font-size: 24px;
-  line-height: 36px;
+  font-size: 1.2rem;
+  line-height: 1.8rem;
 }
 
 .content-center {
   width: 100%;
   height: 70%;
-  padding-top: 20px;
-
+  padding-top: 1rem;
 }
 
 .messages-footer {
   width: 100%;
   display: flex;
-  font-size: 14px;
-  padding-top: 25px;
+  font-size: .7rem;
+  padding-top: 1.25rem;
   border-top: .05rem solid #d2d2d6;
 }
 
@@ -47,72 +46,22 @@ app-card{
 }
 
 .messages-footer .circle {
-  width: 28px;
-  height: 28px;
+  width: 1.4rem;
+  height: 1.4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 16px;
+  border-radius: .8rem;
   background-color: #feedec;
-
 }
 
 .circle .number-circle {
-  font-size: 14px;
+  font-size: .7rem;
   font-weight: 500;
 }
 
 .see-all-messages {
   display: flex;
 }
-
-
-
-
-
-
-// .container .head{
-//   height:33px ;
-//   display: flex;
-//   align-items: center;
-// }
-// .container .head div{
-//   //margin-right: 22px;
-//   display: inline-flex;
-// }
-// .head .line{
-//   width: 6px;
-//   height: 33px;
-//   background-color: #F6655A;
-//   border-radius: 33px;
-//   border: 4px;
-// }
-// .head .text{
-//   font-weight: 900;
-//   font-size: 24px ;
-//   padding: 3px 17px;
-// }
-// .container .contentCenter{
-//   margin-top:25px ;
-//   width: 100%;
-// }
-// .container .footer{
-//   margin-top:10px ;
-//   padding: 15px 0 8px 0;
-//   line-height: 16px;
-//   font-weight: 500;
-//   border-top: 1px solid #D2D2D6;
-// }
-// .footer .seeAll{
-//   color: #F6655A ;
-//   font-size: 14px;
-//   text-decoration: none;
-// }
-// .seeAll .circle{
-//   width: 100px;
-//   height: 100px;
-//   border-radius: 50%;
-//   background-color: black;
-// }
 
