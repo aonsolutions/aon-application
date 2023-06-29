@@ -46,7 +46,12 @@
       </mat-grid-tile>
     </mat-grid-list>
 
-    <hr>
+    <!-- linea divisoria -->
+    <mat-grid-list [cols]="24" [rowHeight]="'1px'">
+      <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
+      <mat-grid-tile class="line-div" [gridCols]="{ xs: 24, sm: 24, md: 24, lg: 24, xl: 24 }">
+      </mat-grid-tile>
+    </mat-grid-list>
 
     <!-- Listado carpetas -->
     <mat-grid-list class="list-folders mt" [cols]="24" [rowHeight]="'4.6rem'">
@@ -89,6 +94,10 @@
 
   <!-- Bloque detalles -->
   <div id="documentation-detail" class="allSize" detail style="overflow: auto;">
-    <p>Aqui se mostrara el componente "FileViewer"</p>
+    <app-file-viewer
+      [locale]="'es-ES'"
+      [zoom]="'auto'"
+      [pdfSrc]="'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf'"
+    ></app-file-viewer>
   </div>
 </app-grid-layout>
