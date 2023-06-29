@@ -47,7 +47,8 @@ import { SidenavLayoutComponent } from './layouts/sidenav-layout/sidenav-layout.
 import { TabsComponent } from './components/tabs/tabs.component';
 import { TagComponent } from './components/tag/tag.component';
 import { TopBarComponent } from './layouts/top-bar/top-bar.component';
-
+import { FileViewerComponent } from './components/file-viewer/file-viewer.component';
+import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { TopBarComponent } from './layouts/top-bar/top-bar.component';
     SidenavLayoutComponent,
     TabsComponent,
     TagComponent,
-    TopBarComponent
+    TopBarComponent,
+    FileViewerComponent,
   ],
   imports: [
     ChartsModule,
@@ -101,7 +103,8 @@ import { TopBarComponent } from './layouts/top-bar/top-bar.component';
     MatToolbarModule,
     ReactiveFormsModule,
     RouterModule,
-    SetMaterialModule
+    SetMaterialModule,
+    PdfJsViewerModule
   ],
   exports:[
     AccordionComponent,
@@ -129,7 +132,8 @@ import { TopBarComponent } from './layouts/top-bar/top-bar.component';
     SidenavLayoutComponent,
     TabsComponent,
     TagComponent,
-    TopBarComponent
+    TopBarComponent,
+    FileViewerComponent
   ]
 })
 export class SharedModule { }
