@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 import net.aonsolutions.aon.gwt.ccaa.client.DepositTextMode;
 

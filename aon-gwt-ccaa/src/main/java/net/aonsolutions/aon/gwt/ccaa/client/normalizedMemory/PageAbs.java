@@ -36,7 +36,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 
-import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 import net.aonsolutions.aon.gwt.ccaa.client.DepositTextMode;
 
