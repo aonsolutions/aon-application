@@ -304,6 +304,17 @@ public class D2DepositConstants {
 		,new D2DepositKey[]{D2DepositKey.MA391012, D2DepositKey.MA3910129}
 	};
 	
+	public static D2DepositKey[][] MRN_ABREVIATE_KEYS_2_2022 = new D2DepositKey[][]{
+		new D2DepositKey[]{D2DepositKey.MA391005, D2DepositKey.MA3910059}
+		,new D2DepositKey[]{D2DepositKey.MA391007, D2DepositKey.MA3910079}
+		,new D2DepositKey[]{D2DepositKey.MA391008, D2DepositKey.MA3910089}
+		,new D2DepositKey[]{D2DepositKey.MA391009, D2DepositKey.MA3910099}
+		,new D2DepositKey[]{D2DepositKey.MA391010, D2DepositKey.MA3910109}
+		,new D2DepositKey[]{D2DepositKey.MA391011, D2DepositKey.MA3910119}
+		,new D2DepositKey[]{D2DepositKey.MA391012, D2DepositKey.MA3910129}
+	};
+	
+	
 	public static D2DepositKey[][] MRN_ABREVIATE_KEYS_3 = new D2DepositKey[][]{
 		new D2DepositKey[]{D2DepositKey.MA394705, D2DepositKey.MA3947059}
 	};

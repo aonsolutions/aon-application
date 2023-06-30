@@ -21,7 +21,6 @@ public class PageM3_2 extends PageAbs {
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
-	@UiField TabPanel tabPanel;
 	@UiField(provided = true) FlexTable table1;
 	@UiField(provided = true) FlexTable table2;
 		
@@ -55,14 +54,15 @@ public class PageM3_2 extends PageAbs {
 			AON.MSG.fiscalYear() + " " + getYear() ,
 			AON.MSG.fiscalYear() + " " + (getYear() -1)
 		};
-		tabPanel.selectTab(0);
 		
 		if (isPymes()) {
 			defineMRNTable(table, MRN_HEADER_1, D2PDepositConstants.MRN_PYMES_KEYS_1);
 			defineMRNTable(table1, MRN_HEADER_2, D2PDepositConstants.MRN_PYMES_KEYS_2);
 		} else {
 			defineMRNTable(table, MRN_HEADER_1, D2DepositConstants.MRN_ABREVIATE_KEYS_1);
-			defineMRNTable(table1, MRN_HEADER_2, D2DepositConstants.MRN_ABREVIATE_KEYS_2);
+			defineMRNTable(table1, MRN_HEADER_2, getYear() >= 2022
+					? D2DepositConstants.MRN_ABREVIATE_KEYS_2_2022
+					: D2DepositConstants.MRN_ABREVIATE_KEYS_2);
 		}		
 		if(getYear() >= 2016){
 			defineMRNTable(table2, MRN_HEADER_3, D2DepositConstants.MRN_ABREVIATE_KEYS_3);
