@@ -38,13 +38,11 @@ describe('ApiService', () => {
     service.post('method',body);
     expect(spyHttp).toHaveBeenCalledWith('method',body);
   });
-  // getWithHeaders(method: string, headers: HttpHeaders): Observable<any> {
-  //   return this.http.get(this.urlBase+method, { headers });
-  // }
-  it('getWithHeaders method calls to the url + the method in parameter and headers',()=>{
+
+  it('get method calls to the url + the method in parameter and headers',()=>{
     const headers = new HttpHeaders();// se crean los headers que se envian en la request
-    const spyHttp = spyOn(service,'getWithHeaders').and.callThrough();//lanza una llamada http
-    service.getWithHeaders('method',headers);
+    const spyHttp = spyOn(service,'get').and.callThrough();//lanza una llamada http
+    service.get('method',headers);
 
     expect(spyHttp).toHaveBeenCalledWith('method',headers);
   });

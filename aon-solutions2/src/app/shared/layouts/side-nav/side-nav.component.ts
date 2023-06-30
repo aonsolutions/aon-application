@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, ViewChild, Input } from '@angular/core';
 import { Shortcut } from 'src/app/core/models/interface/shortcut';
-import { MenuButton } from 'src/app/core/models/interface/menu-button'; 
+import { MenuButton } from 'src/app/core/models/interface/menu-button';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
@@ -18,14 +18,14 @@ export class SideNavComponent implements OnInit {
   subMenuOpened: boolean;
   @Input() hide : boolean;
   @Output() onSelected = new EventEmitter<any>();
-  @ViewChild('iconHover') iconHover : any; 
+  @ViewChild('iconHover') iconHover : any;
 
   constructor(private router: Router) {
     this.hide = false;
     this.opened = true;
     this.resize = 1;
     this.router.events.subscribe((event) => {
-      event instanceof NavigationEnd ? this.currentRoute = this.router.url.replace('/','') : null     
+      event instanceof NavigationEnd ? this.currentRoute = this.router.url.replace('/','') : null
     })
     this.subMenuOpened = false;
     this.opened = false;
@@ -42,7 +42,7 @@ export class SideNavComponent implements OnInit {
   setOpened(state:boolean){
     this.opened = state;
   }
-  
+
   setResize(state:number){
     this.resize = state
   }

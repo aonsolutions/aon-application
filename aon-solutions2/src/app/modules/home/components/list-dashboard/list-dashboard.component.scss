@@ -1,0 +1,115 @@
+
+.defaultMargin {
+  margin: .75rem;
+}
+
+.content-message {
+  width: 100%;
+  height: 20%;
+  margin: .5rem 0rem .25rem 0rem;
+  border: .05rem solid #f6655a;
+  border-radius: .2rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+}
+
+.content-message .nameAndIcon {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.type-icon{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.text-message {
+  width: calc(100%);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: .7rem;
+  font-weight: 600;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: .0375rem;
+  text-align: left;
+  color: #292a31;
+}
+
+.date-message{
+  width: calc(100%);
+  font-size: .7rem;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: .7rem;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.43;
+  letter-spacing: .0125rem;
+  color: #787885;
+}
+
+.status-message {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: .7rem;
+  font-weight: 600;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.57;
+  letter-spacing: .005rem;
+  text-align: left;
+  color: #292a31;
+}
+
+.pending {
+  padding: .25rem;
+  display: flex;
+  border-radius: .2rem;
+  align-items: center;
+  background-color: #fddcda;
+}
+
+.subject-message{
+  width: calc(100%);
+  display: flex;
+  align-items: center;
+  font-size: .7rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.description-message {
+  width: calc(100%);
+  font-size: .7rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .8rem;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: .022rem;
+  text-align: left;
+  color: #787885;
+}
+
+.icon {
+  color: #f6655a;
+}

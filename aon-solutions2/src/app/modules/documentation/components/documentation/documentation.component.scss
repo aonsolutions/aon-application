@@ -1,0 +1,64 @@
+@import "src/styles.scss";
+
+.up-doc {
+  margin-bottom: 30px;
+}
+
+.in-search {
+  margin-top: 0.5rem;
+}
+
+.list-folders {
+  margin-top: 1.85rem;
+}
+
+.dashed {
+  height: 100%;
+  border-radius: 4px;
+  border-style: dashed;
+  border-color: gray;
+  border-width: 2px;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-folder {
+  display: flex;
+}
+
+.folder-item {
+  // flex: 1;
+  // border: 1px solid #d2d2d6;
+  display: flex;
+  margin-right: 2rem;
+  height: 100%;
+}
+
+.folder-item:last-child {
+  margin-right: 0rem;
+}
+
+.txt-btn {
+  width: 100%;
+  text-align: left;
+  margin-left: 0.75rem;
+}
+
+.mt {
+  margin-top: $margin-top;
+}
+
+.mb {
+  margin-bottom: $margin-bottom;
+}
+
+.ml {
+  margin-left: $margin-left;
+}
+
+.line-div {
+  border: none;
+  border-top: 1px solid #d2d2d6;
+}

@@ -30,6 +30,11 @@ const routes: Routes = [
         loadChildren: () =>
           import('src/app/modules/inbox/inbox.module').then((m) => m.InboxModule),
       },
+      {
+        path: 'documentation',
+        loadChildren: () =>
+          import('src/app/modules/documentation/documentation.module').then((m) => m.DocumentationModule),
+      },
       // {
       //   path: 'billing',
       //   loadChildren: () =>
@@ -39,11 +44,6 @@ const routes: Routes = [
       //   path: 'consulting',
       //   loadChildren: () =>
       //     import('src/app/modules/consulting/consulting.module').then((m) => m.ConsultingModule),
-      // },
-      // {
-      //   path: 'documentation',
-      //   loadChildren: () =>
-      //     import('src/app/modules/documentation/documentation.module').then((m) => m.DocumentationModule),
       // },
       // {
       //   path: 'employee-panel',
