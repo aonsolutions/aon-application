@@ -143,6 +143,8 @@ public final class IJsonNames {
 	public static final String DEDUCTIBLE_QUOTA = "deductibleQuota";
 	public static final String DEFAULT_CERTIFICATE = "defaultCertificate";
 	public static final String DEFINED_USERS = "definedUsers";
+	public static final String DELETE = "delete";
+	public static final String DELETED = "deleted";
 	public static final String DELIVERY = "delivery";
 	public static final String DELIVERY_DATE = "deliveryDate";
 	public static final String DELIVERY_GROUPED = "deliveryGrouped";
@@ -478,6 +480,7 @@ public final class IJsonNames {
 	public static final String RNAME = "rname";
 	public static final String ROLES = "roles";
 	public static final String ROOT_BAR = "/";
+	public static final String RSELLER = "rseller";
 	public static final String RSS = "rss";
 	// ---------------------------------------------------------------------------------------------	[S] 
 	public static final String SALES  = "sales";

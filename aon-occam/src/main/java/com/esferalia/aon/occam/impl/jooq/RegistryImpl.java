@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -74,6 +75,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryNoteDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryPayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySegmentDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistrySellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -326,6 +328,44 @@ public class RegistryImpl implements IRegistry{
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> SellerDAO.getStream(ctx, filter));
+	}
+
+	@Override
+	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SellerDAO.getStream(ctx, filter, offset, limit));
+	}
+	
+	// -------------------- RSELLER
+	
+	@Override
+	public RegistrySeller getRegistrySeller(AONContext ctx, RegistrySellerFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistrySellerDAO.get(ctx, filter));
+	}
+	
+	@Override
+	public Stream<RegistrySeller> getRegistrySellerStream(AONContext ctx, RegistrySellerFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistrySellerDAO.getStream(ctx, filter));
+	}
+	
+	@Override
+	public Stream<RegistrySeller> getRegistrySellerStream(AONContext ctx, RegistrySellerFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistrySellerDAO.getStream(ctx, filter, offset, limit));
+	}
+	
+	@Override
+	public RegistrySeller saveRegistrySeller(AONContext ctx, RegistrySeller registrySeller) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistrySellerDAO.save(ctx, registrySeller));
+	}
+	
+	@Override
+	public int deleteRegistrySeller(AONContext ctx, RegistrySellerFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistrySellerDAO.delete(ctx, filter));
 	}
 	
 	// -------------------- CARRIER
