@@ -36,18 +36,18 @@ class Response implements IResponse {
     }
 }
 
-export interface Optional {
-    fields?: any;
+export interface Filter {
+    selectedFields?: any;
     pageNum?: number;
     pageItems?: number;
-    filters?: Filters;
+    filterFields?: FilterFields;
     orderBy?: string;
 }
 
-export interface Filters {
+export interface FilterFields {
     date?: string;
     endDate?: string;
-    filterFields?: {};
+    fields?: {};
 }
 
 interface Collection {
@@ -259,7 +259,7 @@ class Factory implements IFactory {
 interface IService {
     [x: string]: any;
     getElement(model: string, pKey: any) : Promise<Response>;
-    getElementList(model: string, optional?: Optional) : Promise<Response>;
+    getElementList(model: string, filter?: Filter) : Promise<Response>;
     createElement(model: string, collection: Collection[]) : Promise<Response>;
     updateElement(model: string, collection: Collection[]) : Promise<Response>;
     deleteElement(model: string, pKey: any) : Promise<Response>;
@@ -282,7 +282,7 @@ class ServiceEnterprise implements IService {
         });
     }
 
-    getElementList(model: string, optional?: Optional) : Promise<Response> {
+    getElementList(model: string, filter?: Filter) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 resolve(new Response('0000',enterprises))
@@ -373,12 +373,12 @@ class ServiceDocument implements IService {
         });
     }
 
-    getElementList(model: string, optional?: Optional) : Promise<Response> {
+    getElementList(model: string, filter?: Filter) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 let data = copyObjectArray(documents);
-                if(optional?.filters?.filterFields) data = applyFilters(optional,data);
-                if(optional?.filters?.date && optional?.filters?.endDate) data = applyInterval(optional, data, 'date')
+                if(filter?.filterFields?.fields) data = applyFilters(filter,data);
+                if(filter?.filterFields?.date && filter?.filterFields?.endDate) data = applyInterval(filter, data, 'date')
                 resolve(new Response('0000',data))
             } catch (error) {
                 reject(new Response('0204'))
@@ -451,7 +451,7 @@ class ServiceDocumentNote implements IService {
         });
     }
 
-    getElementList(model: string, optional?: Optional) : Promise<Response> {
+    getElementList(model: string, filter?: Filter) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 let data = copyObjectArray(documentNotes);
@@ -528,11 +528,11 @@ class ServiceFolder implements IService {
         });
     }
 
-    getElementList(model: string, optional?: Optional) : Promise<Response> {
+    getElementList(model: string, filter?: Filter) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 let data = copyObjectArray(folders);
-                if(optional?.filters?.filterFields) data = applyFilters(optional,data);
+                if(filter?.filterFields?.fields) data = applyFilters(filter,data);
                 resolve(new Response('0000',data))
             } catch (error) {
                 reject(new Response('0204'))
@@ -605,7 +605,7 @@ class ServiceBank implements IService {
         });
     }
 
-    getElementList(model: string, optional?: Optional) : Promise<Response> {
+    getElementList(model: string, filter?: Filter) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 resolve(new Response('0000',banks))
@@ -680,11 +680,11 @@ class ServiceTaxModel implements IService {
         });
     }
 
-    getElementList(model: string, optional?: Optional) : Promise<Response> {
+    getElementList(model: string, filter?: Filter) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 let data = copyObjectArray(taxModels);
-                if(optional?.filters?.filterFields) data = applyFilters(optional,data);
+                if(filter?.filterFields?.fields) data = applyFilters(filter,data);
                 resolve(new Response('0000', data))
             } catch (error) {
                 reject(new Response('0204'))
@@ -757,12 +757,12 @@ class ServiceMessage implements IService {
         });
     }
 
-    getElementList(model: string, optional?: Optional) : Promise<Response> {
+    getElementList(model: string, filter?: Filter) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 let data = copyObjectArray(messages);
-                if(optional?.filters?.filterFields) data = applyFilters(optional,data);
-                if(optional?.filters?.date && optional?.filters?.endDate) data = applyInterval(optional, data, 'date')
+                if(filter?.filterFields?.fields) data = applyFilters(filter,data);
+                if(filter?.filterFields?.date && filter?.filterFields?.endDate) data = applyInterval(filter, data, 'date')
                 resolve(new Response('0000',data))
             } catch (error) {
                 reject(new Response('0204'))
@@ -770,12 +770,12 @@ class ServiceMessage implements IService {
         });
     }
 
-    getElementCount(model: string, optional?: Optional) : Promise<Response> {
+    getElementCount(model: string, filter?: Filter) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 let data = copyObjectArray(messages);
-                if(optional?.filters?.filterFields) data = applyFilters(optional,data);
-                if(optional?.filters?.date && optional?.filters?.endDate) data = applyInterval(optional, data, 'date')
+                if(filter?.filterFields?.fields) data = applyFilters(filter,data);
+                if(filter?.filterFields?.date && filter?.filterFields?.endDate) data = applyInterval(filter, data, 'date')
                 resolve(new Response('0000',data.length))
             } catch (error) {
                 reject(new Response('0123'))
@@ -848,12 +848,12 @@ class ServiceMessageChat implements IService {
         });
     }
 
-    getElementList(model: string, optional?: Optional) : Promise<Response> {
+    getElementList(model: string, filter?: Filter) : Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
                 let data = copyObjectArray(messageChats);
-                if(optional?.filters?.filterFields) data = applyFilters(optional,data);
-                if(optional?.filters?.date && optional?.filters?.endDate) data = applyInterval(optional, data, 'date')
+                if(filter?.filterFields?.fields) data = applyFilters(filter,data);
+                if(filter?.filterFields?.date && filter?.filterFields?.endDate) data = applyInterval(filter, data, 'date')
                 resolve(new Response('0000',data))
             } catch (error) {
                 reject(new Response('0204'))
@@ -975,10 +975,10 @@ class ServiceAuth {
     
 }
 
-function applyFilters(optional: Optional, data: any): any{
+function applyFilters(filter: Filter, data: any): any{
     let result = []
-    if(optional.filters?.filterFields){
-        let filters = optional.filters?.filterFields
+    if(filter.filterFields?.fields){
+        let filters = filter.filterFields?.fields
         for(let i = 0; i < data.length; i++){
             let aux = true;
             for(const k in filters){
@@ -994,9 +994,9 @@ function applyFilters(optional: Optional, data: any): any{
     return result;
 }
 
-function applyInterval(optional: Optional, data: any, key:string){
+function applyInterval(filter: Filter, data: any, key:string){
     for(let i = 0; i < data.length; i++){
-        if(!(new Date(optional.filters?.date || '') <= data[i][key] && data[i][key] <= new Date(optional.filters?.endDate || ''))){
+        if(!(new Date(filter.filterFields?.date || '') <= data[i][key] && data[i][key] <= new Date(filter.filterFields?.endDate || ''))){
             data.splice(i,1);
         }
     }
@@ -1084,7 +1084,7 @@ export class AonSDK {
     //     });
     // }
 
-    // getElementList(model: string, optional?: Optional): Promise<IResponse> {
+    // getElementList(model: string, filter?: Filter): Promise<IResponse> {
     //     return new Promise((resolve,reject) => {
     //         this.factory.buildService(model).getElementList(model).then((response: any) => {
     //                 resolve(new Response('0000', response));

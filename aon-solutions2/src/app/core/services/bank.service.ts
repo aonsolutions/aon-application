@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AonSDK, Optional } from 'libraries/AonSDK/AonSDK';
+import { AonSDK, Filter } from 'libraries/AonSDK/AonSDK';
 import { Bank } from '../models/class/bank';
 
 @Injectable({
@@ -10,7 +10,7 @@ export class BankService {
 
   constructor() {}
 
-  getBankList(optional?: Optional): Promise<Bank[]> {
+  getBankList(filter?: Filter): Promise<Bank[]> {
     return new Promise((resolve, reject) => {
       this.aonSDK
         .model('bank')
