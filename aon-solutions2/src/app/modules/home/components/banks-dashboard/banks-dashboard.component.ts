@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BankService } from '../../../../core/services/bank.service';
-
-export interface Banks {
-  name: string;
-  amount: string;
-}
+import { Bank } from 'src/app/core/models/class/bank';
 
 @Component({
   selector: 'app-banks-dashboard',
@@ -16,28 +12,27 @@ export interface Banks {
   },
 })
 export class BanksDashboardComponent implements OnInit {
+  banks: Bank[] = [];
 
+  totalAmount: number = 0;
 
-  totalAmount: string = '29.987,76 €';
-
-  banks : Banks[] = [
-    {name: 'CaixaBank', amount: '5.487,23'},
-    {name: 'Bankinter', amount: '8.457,43'},
-    {name: 'BBVA', amount: '15.345,12'},
-  ]
-
-  constructor(
-     public bankService :BankService
-   ) {
-     bankService.getBankList().then(
-       (response) => {console.log(response)}
-     )
-   }
-
-
-  ngOnInit(): void {
+  constructor(public bankService: BankService) {
+    bankService.getBankList().then((response) => {
+      this.banks = response;
+      this.calculateTotalAmount();
+    });
   }
 
+  ngOnInit(): void {}
+
+  calculateTotalAmount(): void {
+    this.totalAmount = this.banks.reduce((sum, bank) => sum + bank.Total, 0);
+  }
+
+  hasBanks(): boolean {
+    return this.banks.length > 0;
+  }
+
+
+
 }
-
-
