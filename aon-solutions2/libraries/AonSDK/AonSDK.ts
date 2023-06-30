@@ -955,6 +955,13 @@ class ServiceAuth {
         });
     }
 
+    magicLogin(token: string): Promise<Response> {
+        return new Promise((resolve, reject) => {
+            sessionStorage.setItem('token',token)
+            resolve(new Response('0000',true))
+        });
+    }
+
     logout() : Promise<Response> {
         return new Promise((resolve, reject) => {
             sessionStorage.clear()

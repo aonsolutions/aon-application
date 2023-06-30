@@ -6,6 +6,7 @@ import { AonSDK } from 'libraries/AonSDK/AonSDK';
   providedIn: 'root',
 })
 export class AuthService {
+  
   aonSDK: AonSDK = new AonSDK();
 
   constructor(private router: Router) {}
@@ -46,4 +47,21 @@ export class AuthService {
       return false;
     }
   }
+
+  magicLogin(token: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.aonSDK
+        .model('auth')
+        .magicLogin(token)
+        .then((response: any) => {
+          if (response.result == true) {
+            this.router.navigate(['/auth/selectEnterprise']);
+          }
+        })
+        .catch((error: any) => {
+          reject(error);
+        });
+    });
+  }
+
 }
