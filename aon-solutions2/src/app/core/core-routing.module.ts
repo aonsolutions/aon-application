@@ -6,6 +6,17 @@ import { SidenavLayoutComponent } from '../shared/layouts/sidenav-layout/sidenav
 
 const routes: Routes = [
   {
+    path: 'auth',
+    component: BasicLayoutComponent,
+    children:[
+      {
+        path: '',
+        loadChildren: () =>
+          import('src/app/modules/auth/auth.module').then((m) => m.AuthModule),
+      }
+    ]
+  },
+  {
     path: '',
     component: SidenavLayoutComponent,
     children: [
@@ -47,18 +58,7 @@ const routes: Routes = [
       {
         path: '', redirectTo: 'home', pathMatch: 'full'
       },
-    ], canActivate: [AuthGuard],
-  },
-  {
-    path: 'auth',
-    component: BasicLayoutComponent,
-    children:[
-      {
-        path: '',
-        loadChildren: () =>
-          import('src/app/modules/auth/auth.module').then((m) => m.AuthModule),
-      }
-    ]
+     ], canActivate: [AuthGuard],
   },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
