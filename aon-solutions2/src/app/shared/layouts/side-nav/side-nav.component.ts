@@ -52,21 +52,21 @@ export class SideNavComponent implements OnInit {
   }
 
   items: MenuButton[] = [
-    {routerlink: 'inbox', shape: 'inbox', text: 'BANDEJA', color: '#f6655a', hover: '#feedec', selected: 'false'},
-    {routerlink: 'billing', shape: 'assessment', text: 'FACTURACIÓN', color: '#4f91ff', hover: '#ebf2ff', selected: 'false'},
-    {routerlink: 'tax-panel', shape: 'euro_symbol', text: 'PANEL DE IMPUESTOS', color: '#fb982e', hover: '#fef3e7', selected: 'false'},
-    {routerlink: 'employee-panel', shape: 'people', text: 'PANEL DE EMPLEADOS', color: '#33a9a9', hover: '#e8f5f5', selected: 'false'},
-    {routerlink: 'documentation', shape: 'description', text: 'DOCUMENTACIÓN', color: '#ef6292', hover: '#fdedf2', selected: 'false'},
-    {routerlink: 'consulting', shape: 'work', text: 'ASESORÍA', color: '#7985cb', hover: '#f0f1f9', selected: 'false'}
+    {routerlink: 'inbox',           shape: 'inbox',       text: 'BANDEJA',            class: 'red',     selected: 'false'},
+    {routerlink: 'billing',         shape: 'assessment',  text: 'GESTIÓN',            class: 'blue',    selected: 'false'},
+    {routerlink: 'tax-panel',       shape: 'euro_symbol', text: 'PANEL DE IMPUESTOS', class: 'orange',  selected: 'false'},
+    {routerlink: 'employee-panel',  shape: 'people',      text: 'PANEL DE EMPLEADOS', class: 'green',   selected: 'false'},
+    {routerlink: 'documentation',   shape: 'description', text: 'DOCUMENTACIÓN',      class: 'pink',    selected: 'false'},
+//    {routerlink: 'consulting',      shape: 'work',        text: 'ASESORÍA',           class: 'purple',  selected: 'false'}
   ];
-
+  
   shortcuts: Shortcut[] = [
-    {routerlink: 'home', shape: 'inbox'},
-    {routerlink: 'home', shape: 'assessment'},
-    {routerlink: 'home', shape: 'inbox'},
-    {routerlink: 'home', shape: 'assessment'},
-    {routerlink: 'home', shape: 'inbox'},
-    {routerlink: 'home', shape: 'assessment'}
+    {routerlink: 'home', shape: 'receipt'},
+    {routerlink: 'home', shape: 'add_box'},
+    {routerlink: 'home', shape: 'person_add'},
+    {routerlink: 'home', shape: 'add_comment'},
+    {routerlink: 'home', shape: 'add_shopping_cart'},
+    {routerlink: 'home', shape: 'alarm'}
   ];
 
   select(item: MenuButton){

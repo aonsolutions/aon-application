@@ -1,46 +1,20 @@
 @import 'src/styles.scss';
 
-.breadcumb {
-    width: calc(100%);
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .5rem;
-}
+::ng-deep{
+  #breadcumb{
+    display     : flex;
+    align-items : center;
+  }
 
-.enterpriseSelector {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.5;
-    letter-spacing: 0.44px;
-    text-align: right;
-    color: #787885;
-}
-
-.enterpriseSelector:hover {
+  #breadcumb #enterprise-selector{
     cursor: pointer;
-}
-
-.currentRoute {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: $color-icon;
+    
+  }
+  
+  #breadcumb .current-route{
+    /*margin-left: $margin-left;*/
+    padding: 8px 0 8px 10px;
     border-radius: 4px;
-    background-color: #f9f9fa;
-    padding: .5rem;
-    font-size: 1rem;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.5;
-    letter-spacing: 0.44px;
-    text-align: right;
-    color: #5a5b6a;
+    background-color: $background-button-hover;
+  }
 }

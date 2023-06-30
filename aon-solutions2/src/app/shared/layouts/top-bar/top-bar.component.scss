@@ -1,21 +1,34 @@
 @import 'src/styles.scss';
 
-.toolBar {
-  width: 100%;
-  background-color: white;
-  border: solid;
-  border-width: 1px;
-  border-color: lightgrey;
-  height: calc(4rem);
-  justify-content: space-between;
-}
+::ng-deep{
+  #tool-bar {
+    width         : 100vw;
+    border-bottom : solid $border-size-primary $color-border-primary;
+    height        : $header-height;
+  }
 
-.logo {
+  #tool-bar mat-grid-list{
+    width  : 100vw;
+  }
+
+  #tool-bar #tool-bar-logo .mat-figure{
+    justify-content : flex-start;
+  }
+  
+  #tool-bar #tool-bar-routes .mat-figure{
+  }
+  
+  #tool-bar #tool-bar-icons .mat-figure{
+    top             : $margin-top/2;
+    justify-content : flex-end;
+  
+  }
+}
+/*
   width: calc(100%);
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: left;
 }
 
 .toolbarIcons {
@@ -55,42 +68,4 @@
   box-shadow: 0 2px 4px 0 #d2d2d6, 0 1px 2px 0 $color-icon;
   background-color: #fff;
 }
-
-///// DROPDOWN MENU
-
-// .hoverMenu:hover {
-//     background-color: #f0f0f1;
-//     border-radius: 7px;
-// }
-
-// .hoverMenu {
-//     padding-left: .5rem;
-//     padding-right: .5rem;
-// }
-
-// .mat-menu-item:hover:not(.set-menu-item-active) {
-//     background:none;
-// }
-
-// .mat-menu-item:hover {
-//     background:none;
-// }
-
-// .mat-menu-item {
-//     margin: .5rem;
-//     width: calc(auto);
-//     text-overflow: ellipsis;
-//     white-space: nowrap;
-//     color:#19191d!important;
-//     height: 2.5rem!important;
-//     line-height: 2.5rem!important;
-//     padding: 0rem 0rem!important;
-//     font-size: 1rem;
-//     font-weight: normal;
-//     font-stretch: normal;
-//     font-style: normal;
-//     line-height: 1.5;
-//     letter-spacing: 0.44px;
-//     text-align: left;
-//     color: #19191d;
-// }
+*/
