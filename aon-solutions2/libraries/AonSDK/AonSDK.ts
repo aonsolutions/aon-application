@@ -228,7 +228,7 @@ class Factory implements IFactory {
         }
     }
 
-    buildService(objType: string): IService | any {
+    buildService(objType: string): IService {
         switch(objType){
             case 'enterprise':
                 return new ServiceEnterprise();
@@ -258,6 +258,10 @@ class Factory implements IFactory {
 
 interface IService {
     [x: string]: any;
+    //TODO
+}
+
+interface ICollection extends IService {
     getElement(model: string, pKey: any) : Promise<Response>;
     getElementList(model: string, filter?: Filter) : Promise<Response>;
     createElement(model: string, collection: Collection[]) : Promise<Response>;
@@ -265,7 +269,7 @@ interface IService {
     deleteElement(model: string, pKey: any) : Promise<Response>;
 }
 
-class ServiceEnterprise implements IService {
+class ServiceEnterprise implements ICollection {
 
     getElement(model: string, pKey: any) : Promise<Response> { 
         return new Promise((resolve, reject) => {
@@ -356,7 +360,7 @@ class ServiceEnterprise implements IService {
     }
 }
 
-class ServiceDocument implements IService {
+class ServiceDocument implements ICollection {
 
     getElement(model: string, pKey: any) : Promise<Response> { 
         return new Promise((resolve, reject) => {
@@ -434,7 +438,7 @@ class ServiceDocument implements IService {
 
 }
 
-class ServiceDocumentNote implements IService {
+class ServiceDocumentNote implements ICollection {
 
     getElement(model: string, pKey: any) : Promise<Response> { 
         return new Promise((resolve, reject) => {
@@ -511,7 +515,7 @@ class ServiceDocumentNote implements IService {
 
 }
 
-class ServiceFolder implements IService {
+class ServiceFolder implements ICollection {
 
     getElement(model: string, pKey: any) : Promise<Response> { 
         return new Promise((resolve, reject) => {
@@ -588,7 +592,7 @@ class ServiceFolder implements IService {
 
 }
 
-class ServiceBank implements IService {
+class ServiceBank implements ICollection {
 
     getElement(model: string, pKey: any) : Promise<Response> { 
         return new Promise((resolve, reject) => {
@@ -663,7 +667,7 @@ class ServiceBank implements IService {
 
 }
 
-class ServiceTaxModel implements IService {
+class ServiceTaxModel implements ICollection {
 
     getElement(model: string, pKey: any) : Promise<Response> { 
         return new Promise((resolve, reject) => {
@@ -740,7 +744,7 @@ class ServiceTaxModel implements IService {
 
 }
 
-class ServiceMessage implements IService {
+class ServiceMessage implements ICollection {
 
     getElement(model: string, pKey: any) : Promise<Response> { 
         return new Promise((resolve, reject) => {
@@ -831,7 +835,7 @@ class ServiceMessage implements IService {
     }
 }
 
-class ServiceMessageChat implements IService {
+class ServiceMessageChat implements ICollection {
 
     getElement(model: string, pKey: any) : Promise<Response> { 
         return new Promise((resolve, reject) => {
@@ -908,7 +912,7 @@ class ServiceMessageChat implements IService {
     }
 }
 
-class ServiceReporting {
+class ServiceReporting implements IService {
 
     getVentasGastos(): Promise<Response> {
         return new Promise((resolve, reject) => {
@@ -941,7 +945,7 @@ class ServiceReporting {
     }
 }
 
-class ServiceAuth {
+class ServiceAuth implements IService {
 
     login(username : string, password : string): Promise<Response> {
         return new Promise((resolve, reject) => {
@@ -1034,7 +1038,7 @@ function getFromLocalStorage(model: string): any{
 
 export class AonSDK {
 
-    private factory: Factory;
+    private factory: IFactory;
 
     constructor(){
         this.factory = new Factory();
