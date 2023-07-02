@@ -22,6 +22,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -38,12 +39,32 @@ public class PageITR extends PageAbs {
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 	
 	private static final String ITR8080829TXT = "La entidad est\u00e1 sujeta a la obligaci\u00f3n de identificar al titular real proque no cotiza en mercados regulados";
+	private static final String ITR8234001TXT = "Indique el tipo de actualizaci\u00f3n de los datos de indentificaci\u00f3n del titular real";
+	private static final String ITR8234002TXT = "Fecha en la que debe reputarse que se ha producido el cambio de datos.";
 
+	
 	@UiField Label ITR8080829lbl;
 	@UiField CheckBox ITR8080829;
 	
+	@UiField Label ITR8234001lbl;
+	@UiField ListBox ITR8234001;
+	
+	@UiField Label ITR8234002lbl;
+	@UiField DateBox ITR8234002;
+
+	
+	@UiField HTMLPanel table1Panel;
+	@UiField HTMLPanel table2Panel;
+	@UiField HTMLPanel table3Panel;
+	@UiField HTMLPanel table4Panel;
+	@UiField HTMLPanel table5Panel;
+	@UiField HTMLPanel table6Panel;
+	
 	@UiField(provided = true) FlexTable table2;
 	@UiField(provided = true) FlexTable table3;
+	@UiField(provided = true) FlexTable table4;
+	@UiField(provided = true) FlexTable table5;
+	@UiField(provided = true) FlexTable table6;
 	
 	String codeAux;
 	
@@ -52,10 +73,13 @@ public class PageITR extends PageAbs {
 		
 		table2 = new FlexTable();
 		table3 = new FlexTable();
+		table4 = new FlexTable();
+		table5 = new FlexTable();
+		table6 = new FlexTable();
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
-		
+				
 		initializeTable();
 	}
 
@@ -72,14 +96,82 @@ public class PageITR extends PageAbs {
 				onEdit(D2DepositHeaderKey.ITR8080829.getCode(), ITR8080829.getValue() ? "1" : "2", false);
 			}
 		});
+		if(getYear() >= 2022) {
+			ITR8234001lbl.setText(ITR8234001TXT);
+			ITR8234001 = new ListBox();
+			ITR8234001.addItem("Primera", "1");
+			ITR8234001.addItem("Actualizaci\u00f3n", "2");
+			ITR8234001.addItem("Rectificaci\u00f3n", "3");
+		
+			if(getMap().containsKey(D2DepositHeaderKey.ITR8234001.getCode())){
+				String value = getMap().get(D2DepositHeaderKey.ITR8234001.getCode());
+				if("1".equals(value)) ITR8234001.setSelectedIndex(0);
+				else if("2".equals(value)) ITR8234001.setSelectedIndex(1);
+				else if("3".equals(value)) ITR8234001.setSelectedIndex(2);
+			}
+			ITR8234001.addChangeHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					Integer value = ITR8234001.getSelectedIndex() + 1;
+					onEdit(D2DepositHeaderKey.ITR8234001.getCode(), value.toString());
+				}	
+			});
+		
+			ITR8234002lbl.setText(ITR8234002TXT);
+			
+			ITR8234002 = new DateBox();
+			if(getMap().containsKey(D2DepositHeaderKey.ITR8234002.getCode())) {
+				String datestr = getMap().get(D2DepositHeaderKey.ITR8234002.getCode());
+				getDeposit().getInma().getDate(datestr, new AsyncCallback<Date>() {
+					@Override
+					public void onSuccess(Date result) {
+						ITR8234002.setValue(result); 
+					}	
+			
+					@Override
+					public void onFailure(Throwable caught) {
+						
+					}
+				});
+			}
+			ITR8234002.addValueChangeHandler(new ValueChangeHandler<Date>() {
+
+				@Override
+				public void onValueChange(ValueChangeEvent<Date> event) {
+					Integer day = ITR8234002.getValue().getDate();
+					Integer month = ITR8234002.getValue().getMonth()+1;
+					Integer year = ITR8234002.getValue().getYear()+1900;
+					String value = day+"."+month+"."+year;
+					onEdit(D2DepositHeaderKey.ITR8234002.getCode(), value);
+				}
+			});
+		} else {
+			ITR8234001lbl.setVisible(false);
+			ITR8234001.setVisible(false);
+			ITR8234002lbl.setVisible(false);
+			ITR8234002.setVisible(false);
+		}
 	}
 	
 	@Override
 	protected void initializeTable() {
 		init();
-		table();
-		table2();
-		table3();
+		if(getYear() >= 2022) {
+			table1Panel.setVisible(false);
+			table2Panel.setVisible(false);
+			table3Panel.setVisible(false);
+			table4();
+			table5();
+			table6();
+		} else {
+			table4Panel.setVisible(false);
+			table5Panel.setVisible(false);
+			table6Panel.setVisible(false);
+			table();
+			table2();
+			table3();
+		}
 	}
 	
 	private void table(){
@@ -151,6 +243,176 @@ public class PageITR extends PageAbs {
 		}
 	}
 	
+	private void table4(){
+		table4.setWidth("100%");
+		table4.setCellSpacing(0);
+		table4.getColumnFormatter().setWidth(0, "200px");
+		table4.getColumnFormatter().setWidth(1, "50px");
+		table4.getColumnFormatter().setWidth(2, "50px");
+		table4.getColumnFormatter().setWidth(3, "100px");
+		table4.getColumnFormatter().setWidth(4, "70px");
+		table4.getColumnFormatter().setWidth(5, "70px");
+		table4.getColumnFormatter().setWidth(6, "70px");
+		table4.getColumnFormatter().setWidth(7, "70px");
+		table4.getColumnFormatter().setWidth(8, "70px");
+		int row = 0;
+		table4.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table4.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		table4.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
+		table4.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		
+		table4.setWidget(row, 1, new Label("Pais Documento"));
+		table4.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		table4.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		table4.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		
+		table4.setWidget(row, 2, new Label("Tipo Documento"));
+		table4.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+		table4.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
+		table4.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+
+		table4.setWidget(row, 3, new Label("DNI / C\u00f3digo de Identificaci\u00f3n Extranjero"));
+		table4.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
+		table4.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
+		table4.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
+		table4.setWidget(row, 4, new Label("Fecha de Nacimiento"));
+		table4.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBold());
+		table4.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBorderBottom());
+		table4.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonTextCenter());
+		table4.setWidget(row, 5, new Label("Nacionalidad"));
+		table4.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonBold());
+		table4.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonBorderBottom());
+		table4.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonTextCenter());
+		table4.setWidget(row, 6, new Label("Pa\u00eds de Residencia"));
+		table4.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonBold());
+		table4.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonBorderBottom());
+		table4.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonTextCenter());
+		
+		table4.setWidget(row, 7, new Label("% Participaci\u00f3n Directa"));
+		table4.getFlexCellFormatter().addStyleName(row, 7, AON.AON_CSS.aonBold());
+		table4.getFlexCellFormatter().addStyleName(row, 7, AON.AON_CSS.aonBorderBottom());
+		table4.getFlexCellFormatter().addStyleName(row, 7, AON.AON_CSS.aonTextCenter());
+		table4.setWidget(row, 8, new Label("% Participaci\u00f3n Indirecta"));
+		table4.getFlexCellFormatter().addStyleName(row, 8, AON.AON_CSS.aonBold());
+		table4.getFlexCellFormatter().addStyleName(row, 8, AON.AON_CSS.aonBorderBottom());
+		table4.getFlexCellFormatter().addStyleName(row, 8, AON.AON_CSS.aonTextCenter());
+		++row;
+		
+		for(Integer i = 0; i< D2DepositConstants.ITR_KEYS_4.length; i+=9){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2DepositConstants.ITR_KEYS_4[i],
+					D2DepositConstants.ITR_KEYS_4[i+1],
+					D2DepositConstants.ITR_KEYS_4[i+2],
+					D2DepositConstants.ITR_KEYS_4[i+3],
+					D2DepositConstants.ITR_KEYS_4[i+4],
+					D2DepositConstants.ITR_KEYS_4[i+5],
+					D2DepositConstants.ITR_KEYS_4[i+6],
+					D2DepositConstants.ITR_KEYS_4[i+7],
+					D2DepositConstants.ITR_KEYS_4[i+8]
+			};
+			for (Integer j = 0; j < d2.length ;j++) {
+				if(j == 0 || j == 3) {
+					paintTextKeyField(table4, d2[j], row, j);
+				} else if(j == 4) {
+					paintDateKeyField(table4, d2[j], row, j);
+				} else if(j == 5 || j == 6 || j==1) {
+					paintListKeyField(table4, d2[j], row, j);
+				} else if(j == 7 || j == 8) {
+					paintDoubleKeyField(table4, d2[j], row, j);
+				} else if(j == 2) {
+					paintDocumentTypeListKeyField(table4, d2[j], row, j);
+				}
+			}
+			++row;		
+		}
+	}
+	
+	private void table5(){
+		table5.setWidth("100%");
+		table5.setCellSpacing(0);
+		table5.getColumnFormatter().setWidth(0, "200px");
+		table5.getColumnFormatter().setWidth(1, "50px");
+		table5.getColumnFormatter().setWidth(2, "50px");
+		table5.getColumnFormatter().setWidth(3, "100px");
+		table5.getColumnFormatter().setWidth(4, "70px");
+		table5.getColumnFormatter().setWidth(5, "70px");
+		table5.getColumnFormatter().setWidth(6, "70px");
+		table5.getColumnFormatter().setWidth(7, "70px");
+		table5.getColumnFormatter().setWidth(8, "70px");
+	
+		int row = 0;
+		table5.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table5.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		table5.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
+		table5.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		
+		table5.setWidget(row, 1, new Label("Pais Documento"));
+		table5.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		table5.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		table5.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		
+		table5.setWidget(row, 2, new Label("Tipo Documento"));
+		table5.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+		table5.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
+		table5.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+
+		table5.setWidget(row, 3, new Label("DNI / C\u00f3digo de Identificaci\u00f3n Extranjero"));
+		table5.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
+		table5.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
+		table5.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
+		table5.setWidget(row, 4, new Label("Fecha de Nacimiento"));
+		table5.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBold());
+		table5.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBorderBottom());
+		table5.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonTextCenter());
+		table5.setWidget(row, 5, new Label("Nacionalidad"));
+		table5.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonBold());
+		table5.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonBorderBottom());
+		table5.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonTextCenter());
+		table5.setWidget(row, 6, new Label("Pa\u00eds de Residencia"));
+		table5.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonBold());
+		table5.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonBorderBottom());
+		table5.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonTextCenter());
+		
+		table5.setWidget(row, 7, new Label("% Participaci\u00f3n Directa"));
+		table5.getFlexCellFormatter().addStyleName(row, 7, AON.AON_CSS.aonBold());
+		table5.getFlexCellFormatter().addStyleName(row, 7, AON.AON_CSS.aonBorderBottom());
+		table5.getFlexCellFormatter().addStyleName(row, 7, AON.AON_CSS.aonTextCenter());
+		table5.setWidget(row, 8, new Label("% Participaci\u00f3n Indirecta"));
+		table5.getFlexCellFormatter().addStyleName(row, 8, AON.AON_CSS.aonBold());
+		table5.getFlexCellFormatter().addStyleName(row, 8, AON.AON_CSS.aonBorderBottom());
+		table5.getFlexCellFormatter().addStyleName(row, 8, AON.AON_CSS.aonTextCenter());
+	
+		++row;
+		
+		for(Integer i = 0; i< D2DepositConstants.ITR_KEYS_5.length; i+=9){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2DepositConstants.ITR_KEYS_5[i],
+					D2DepositConstants.ITR_KEYS_5[i+1],
+					D2DepositConstants.ITR_KEYS_5[i+2],
+					D2DepositConstants.ITR_KEYS_5[i+3],
+					D2DepositConstants.ITR_KEYS_5[i+4],
+					D2DepositConstants.ITR_KEYS_5[i+5],
+					D2DepositConstants.ITR_KEYS_5[i+6],
+					D2DepositConstants.ITR_KEYS_5[i+7],
+					D2DepositConstants.ITR_KEYS_5[i+8]
+			};
+			for (Integer j = 0; j < d2.length ;j++) {
+				if(j == 0 || j == 3) {
+					paintTextKeyField(table5, d2[j], row, j);
+				} else if(j == 4) {
+					paintDateKeyField(table5, d2[j], row, j);
+				} else if(j == 5 || j == 6 || j==1) {
+					paintListKeyField(table5, d2[j], row, j);
+				} else if(j == 7 || j == 8) {
+					paintDoubleKeyField(table5, d2[j], row, j);
+				} else if(j == 2) {
+					paintDocumentTypeListKeyField(table5, d2[j], row, j);
+				}
+			}
+			++row;		
+		}
+	}
+	
 	private void table2(){
 		table2.setWidth("100%");
 		table2.setCellSpacing(0);
@@ -199,6 +461,77 @@ public class PageITR extends PageAbs {
 					paintDateKeyField(table2, d2[j], row, j);
 				} else if(j == 3 || j == 4) {
 					paintListKeyField(table2, d2[j], row, j);
+				}
+			}
+			++row;		
+		}
+	}
+	
+	private void table6(){
+		table6.setWidth("100%");
+		table6.setCellSpacing(0);
+		table6.getColumnFormatter().setWidth(0, "200px");
+		table6.getColumnFormatter().setWidth(1, "50px");
+		table6.getColumnFormatter().setWidth(2, "50px");
+		table6.getColumnFormatter().setWidth(3, "100px");
+		table6.getColumnFormatter().setWidth(4, "70px");
+		table6.getColumnFormatter().setWidth(5, "70px");
+		table6.getColumnFormatter().setWidth(6, "70px");
+	
+		int row = 0;
+		table6.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table6.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		table6.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
+		table6.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		table6.setWidget(row, 1, new Label("Pais Documento"));
+		table6.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		table6.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		table6.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+		
+		table6.setWidget(row, 2, new Label("Tipo Documento"));
+		table6.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+		table6.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
+		table6.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+
+		
+		table6.setWidget(row, 3, new Label("DNI / C\u00f3digo de Identificaci\u00f3n Extranjero"));
+		table6.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
+		table6.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
+		table6.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
+		table6.setWidget(row, 4, new Label("Fecha de Nacimiento"));
+		table6.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBold());
+		table6.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBorderBottom());
+		table6.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonTextCenter());
+		table6.setWidget(row, 5, new Label("Nacionalidad"));
+		table6.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonBold());
+		table6.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonBorderBottom());
+		table6.getFlexCellFormatter().addStyleName(row, 5, AON.AON_CSS.aonTextCenter());
+		table6.setWidget(row, 6, new Label("Pa\u00eds de Residencia"));
+		table6.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonBold());
+		table6.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonBorderBottom());
+		table6.getFlexCellFormatter().addStyleName(row, 6, AON.AON_CSS.aonTextCenter());
+		
+		++row;
+		
+		for(Integer i = 0; i< D2DepositConstants.ITR_KEYS_6.length; i+=7){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2DepositConstants.ITR_KEYS_6[i],
+					D2DepositConstants.ITR_KEYS_6[i+1],
+					D2DepositConstants.ITR_KEYS_6[i+2],
+					D2DepositConstants.ITR_KEYS_6[i+3],
+					D2DepositConstants.ITR_KEYS_6[i+4],
+					D2DepositConstants.ITR_KEYS_6[i+5],
+					D2DepositConstants.ITR_KEYS_6[i+6]
+			};
+			for (Integer j = 0; j < d2.length ;j++) {
+				if(j == 0 || j == 3) {
+					paintTextKeyField(table6, d2[j], row, j);
+				} else if(j == 4) {
+					paintDateKeyField(table6, d2[j], row, j);
+				} else if(j == 5 || j == 6 || j==1) {
+					paintListKeyField(table6, d2[j], row, j);
+				} else if(j == 2) {
+					paintDocumentTypeListKeyField(table6, d2[j], row, j);
 				}
 			}
 			++row;		
@@ -409,7 +742,7 @@ public class PageITR extends PageAbs {
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 	}
  	
-	private void paintListKeyField(FlexTable tab, D2DepositHeaderKey key,  int row, int col){
+	private void paintListKeyField(FlexTable tab, D2DepositHeaderKey key, int row, int col){
 		FlowPanel panel = new FlowPanel();
 		String codeId = key.getCode();
 		
@@ -453,6 +786,52 @@ public class PageITR extends PageAbs {
 		for(Integer i = 0 ; i < Country.values().length; i++) {
 			lb.addItem(Country.values()[i].getIso2());
 		}
+	}
+	
+	
+	private void paintDocumentTypeListKeyField(FlexTable tab, D2DepositHeaderKey key, int row, int col){
+		FlowPanel panel = new FlowPanel();
+		String codeId = key.getCode();
+		
+		final ListBox text = new ListBox();
+		documentTypeListBox(text);
+		codeAux = codeId;
+		text.setTitle(codeId);
+		text.addChangeHandler(new ChangeHandler() {
+			String code = codeAux;
+			@Override
+			public void onChange(ChangeEvent event) {
+		
+					if (AonStringUtils.isEmpty(text.getSelectedItemText())) {
+						text.setSelectedIndex(0);
+					}
+					Integer d = text.getSelectedIndex() + 1;
+					
+					onEdit(code, d.toString());		
+			}
+		});
+		if(getMap().containsKey(key.getCode())){
+			String d = getMap().get(key.getCode());
+			Integer index = Integer.parseInt(d) - 1;
+			text.setSelectedIndex(index);
+		} else text.setSelectedIndex(0);
+		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		
+		panel.add(text);
+		
+		tab.setWidget(row, col, panel);
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
+	}
+	
+	private void documentTypeListBox(ListBox lb){
+		lb.addItem("DNI", "1");
+		lb.addItem("NIF", "2");
+		lb.addItem("NIE", "3");
+		lb.addItem("TIN", "4");
+		lb.addItem("Pasaporte", "5");
+		lb.addItem("Otros", "6");
 	}
 	
 	protected void onEdit(String key, String value) {
