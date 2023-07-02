@@ -11,10 +11,13 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -94,8 +97,19 @@ public interface CommonServiceAsync {
 	void deleteCostCenter(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	// **************************************************
+	// *********************************** [INVEST ASSET]
+	// **************************************************
+	
+	void getInvestAssets(InvestAssetParams params, AsyncCallback<List<InvestAsset>> asyncCallback) throws AonCoreException;
+	void deleteInvestAsset(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveInvestAsset(String domainName, int domain, String user, InvestAsset investAsset, AsyncCallback<InvestAsset> asyncCallback) throws AonCoreException;
+	void getActivities(String domainName, int domain, String user, AsyncCallback<List<Activity>> asyncCallback) throws AonCoreException;
+	void getInvestAsset(String domainName, int domain, String user, Integer id, AsyncCallback<InvestAsset> asyncCallback) throws AonCoreException;
+
+	// **************************************************
 	// ********************************* [LOAD PDF MODEL]
 	// **************************************************
+	
 	void savePDFModel(Occam occam, IFiscalModel model, String data, AsyncCallback<Void> callback);
 
 }

@@ -143,6 +143,7 @@ import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -7793,6 +7794,32 @@ public class AON {
 	public static void deleteCostCenter(String domainName, int domainId, String login, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getCommon().deleteCostCenter(ctx, id);
+		}
+	}
+	
+	// ---------------- Invest Asset
+
+	public static List<InvestAsset> getInvestAssetList(InvestAssetParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getNewProduct().getInvestAssetList(ctx, params);
+		}
+	}
+
+	public static void deleteInvestAsset(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getNewProduct().deleteInvestAsset(ctx, id);
+		}
+	}
+
+	public static InvestAsset saveInvestAsset(String domainName, int domain, String user, InvestAsset investAsset) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getNewProduct().saveInvestAsset(ctx, investAsset);
+		}
+	}
+
+	public static InvestAsset getInvestAsset(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getNewProduct().getInvestAsset(ctx, id);
 		}
 	}
 	

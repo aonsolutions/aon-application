@@ -48,6 +48,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("ACTORES_ACTRICES_SECUNDARIO_DIARIO", "SECUNDARIO");
 		variablesMap.put("ACTORES_ACTRICES_SECUNDARIO_MENSUAL", "SECUNDARIO");
 		
+		variablesMap.put("ACTUACION_(BOLO)_ANUAL", "ACT_BOLO_A");
+		
 		variablesMap.put("AD_PERSONAM_ANUAL","AD_PERSONAM_A");
 		variablesMap.put("AD_PERSONAM_MENSUAL","AD_PERSONAM_M");
 		variablesMap.put("AD_PERSONAM_HORAS","AD_PERSONAM_H");
@@ -136,6 +138,11 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("ANTIGUEDAD_2_QUINQUENIOS_ANUAL","ANTIGUEDAD_2");
 		variablesMap.put("ANTIGUEDAD_3_QUINQUENIOS_ANUAL","ANTIGUEDAD_3");
 		variablesMap.put("ANTIGUEDAD_4_QUINQUENIOS_ANUAL","ANTIGUEDAD_4");
+		
+		variablesMap.put("ANTIGUEDAD_6_AÑOS_ANUAL","ANTIGUEDAD_6");
+		variablesMap.put("ANTIGUEDAD_7_AÑOS_ANUAL","ANTIGUEDAD_6");
+		variablesMap.put("ANTIGUEDAD_8_AÑOS_ANUAL","ANTIGUEDAD_6");
+		variablesMap.put("ANTIGUEDAD_9_AÑOS_ANUAL","ANTIGUEDAD_6");
 		
 		variablesMap.put("ANTIGUEDAD_1_AÑO_DIARIO","ANTIGUEDAD_1");
 		variablesMap.put("ANTIGUEDAD_1_AÑOS_DIARIO","ANTIGUEDAD_1");
@@ -484,6 +491,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("COMPLEMENTO_24_Y_31_DICIEMBRE_Y_5_ENERO_DIARIO", "COMPL_DIC_ENE_D");
 		variablesMap.put("COMPLEMENTO_24_O_31_DICIEMBRE_DIARIO", "COMPL_24_31_DIC_D");
 		variablesMap.put("COMPLEMENTO_24_O_31_DICIEMBRE_MENSUAL", "COMPL_24_31_DIC_M");
+		variablesMap.put("COMPLEMENTO_APODERADOS_MENSUAL", "C_APODERADOS_M");
 		variablesMap.put("COMPLEMENTO_ATENCION_CONTINUADA_MENSUAL", "COMPL_ATEN_CONT_M");
 		variablesMap.put("COMPLEMENTO_ATENCION_CONTINUADA_RVOG_MENSUAL", "COMPL_ATEN_CONT_RVOG_M");
 		variablesMap.put("COMPLEMENTO_ATENCION_PRIMARIA_ANUAL", "COMP_ATEN_PRIM_A");
@@ -1365,6 +1373,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_NOCTURNIDAD_DE_22_A_00_HORAS_MENSUAL", "PLUS_NOCTURNIDAD_22_A_00_M");
 		variablesMap.put("PLUS_NOCTURNIDAD_DE_00_A_08_HORAS_HORAS", "PLUS_NOCTURNIDAD_00_A_08_H");
 		variablesMap.put("PLUS_NOCTURNIDAD_DE_22_A_00_HORAS_HORAS", "PLUS_NOCTURNIDAD_22_A_00_H");
+		variablesMap.put("PLUS_NOCTURNIDAD_5_O_MAS_HORAS_DE_00_A_08_HORAS", "NOCTURNIDAD_5H_00_A_08_H");
 		variablesMap.put("PLUS_NOCTURNIDAD_RVOG_ANUAL", "P_NOCT_RVOG_A");
 		variablesMap.put("PLUS_NOCTURNIDAD_RVOG_MENSUAL", "P_NOCT_RVOG_M");
 		variablesMap.put("PLUS_NOCTURNIDAD_TURNO_10_HORAS_DIARIO", "P_NOCTURNIDAD_10");
@@ -1745,7 +1754,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("SALARIO_HORA_HORAS", "SALARIO_HORAS");
 		variablesMap.put("SALARIO_INICIAL_MENSUAL", "SALARIO_INICIAL");
 		variablesMap.put("SALARIO_INICIAL_DIARIO", "SALARIO_INICIAL");
-		variablesMap.put("SALARIO_MINIMO_CONVENIO_MENSUAL", "SM_CONVENIO");
+		variablesMap.put("SALARIO_MINIMO_CONVENIO_ANUAL", "SM_CONVENIO_A");
+		variablesMap.put("SALARIO_MINIMO_CONVENIO_MENSUAL", "SM_CONVENIO_M");
 		variablesMap.put("SALARIO_MINIMO_GARANTIZADO_ANUAL", "S_MIN_GARANT");
 		variablesMap.put("SALARIO_MINIMO_GARANTIZADO_MENSUAL", "S_MIN_GARANT");
 		variablesMap.put("SALARIO_SEMANA_MENSUAL", "SALARIO_SEMANA");

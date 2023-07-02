@@ -19,6 +19,7 @@ import net.aonsolutions.invofox.model.OCRCompanyResponse;
 import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
 import net.aonsolutions.invofox.model.OCRError;
+import net.aonsolutions.invofox.model.OCRSeverity;
 import net.aonsolutions.invofox.model.OCRType;
 
 class InvofoxRESTTestCase {
@@ -50,6 +51,20 @@ class InvofoxRESTTestCase {
 	}
 	
 	@Test
+	void markAsExported() {
+		String documentId = "648991a5226c11000964a87b";
+		OCRDocumentResponse response = OCRInvofox.markAsExported(documentId);
+		assertNotNull(response);
+		assertTrue(response.getHttpCode().isPresent());
+		assertEquals( 200, response.getHttpCode().get());
+		assertTrue(response.getDocument().isPresent());
+		assertTrue(response.getDocument().get().getId().isPresent());
+		assertEquals( documentId, response.getDocument().get().getId().get());
+		assertTrue(response.getDocument().get().getPublicState().isPresent());
+		assertEquals( OCRSeverity.exported, response.getDocument().get().getPublicState().get());
+	}
+
+	@Test
 	void getDocuments() {
 		OCRDocumentsResponse response = OCRInvofox.getDocuments(
 				OCRDocumentsParams.get().withType(OCRType.invoice) );
@@ -61,13 +76,34 @@ class InvofoxRESTTestCase {
 		
 		response.getDocuments().get()
 			.stream()
+			.filter( d ->
+				d.getData()
+				.flatMap( i -> i.getRecipientTaxId() )
+				.flatMap( n -> n.getValue() )
+				.filter( doc -> "ESB01487271".equals(doc))
+				.isPresent()
+			)
 			.forEach( d -> {
 				System.out.println(
 					d.getCompany().orElse("<NO COMP>")
 					+ " " + 
 					d.getId().orElse("<NO ID>")
+					+ " [Issuer: " +
+					d.getData()
+						.flatMap( i -> i.getIssuerTaxId() )
+						.flatMap( n -> n.getValue() )
+					.orElse("<NO NAME>")
+					+ ", "
+					+ d.getData()
+						.flatMap( i -> i.getIssuerName() )
+						.flatMap( n -> n.getValue() )
+					.orElse("<NO NAME>")
+					+ "]"
 					+ " [" +
-					d.getName().orElse("<NO NAME>")
+					d.getData()
+						.flatMap( i -> i.getTotalAmount() )
+						.flatMap( n -> n.getValue() )
+					.orElse(null)
 					+ "]"
 				);
 			});

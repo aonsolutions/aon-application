@@ -931,12 +931,6 @@ public class JooqEmployee {
 				contractData.setCno(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "IRPF_TYPE")) {
 				contractData.setMdTBT(Byte.parseByte(parseContractTable(r.get(CONTRACT_DATA.EXPRESSION))));
-			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_ID")) {
-				contractData.setSepeId(r.get(CONTRACT_DATA.EXPRESSION));
-			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_EXTENSION_ID")) {
-				contractData.setSepeExtensionId(r.get(CONTRACT_DATA.EXPRESSION));
-			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_TRANSFORM_ID")) {
-				contractData.setSepeTransformId(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "TRANSFORM_DATE")) {
 				try {
 					contractData.setTransformDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
@@ -1140,16 +1134,26 @@ public class JooqEmployee {
 			contractData.setHasCertifica2(sepeBatchAttachRecords.isNotEmpty());
 		}
 		
-		// ---------------------------------------------- Sepe Id
+		// ---------------------------------------------- Sepe Comunications
 		
-		Result<Record> sepeIdRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.eq("SEPE_ID"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contract))
-				.orderBy(CONTRACT_DATA.START_DATE.desc())
+		Result<Record> sepeIdRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(
+					CONTRACT_INFO.NAME.eq("SEPE_ID")
+					.or(CONTRACT_INFO.NAME.eq("SEPE_TRANSFORM_ID"))
+					.or(CONTRACT_INFO.NAME.eq("SEPE_EXTENSION_ID"))
+				)
+				.and(CONTRACT_INFO.CONTRACT.eq(contract))
+				.orderBy(CONTRACT_INFO.START_DATE.desc())
 				.fetch();
 		
-		if(sepeIdRecords.isNotEmpty())
-			contractData.setSepeId(sepeIdRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+		for(Record sepeIdRecord : sepeIdRecords) {
+			if(AonStringUtils.equalsIgnoreCase(sepeIdRecord.get(CONTRACT_INFO.NAME), "SEPE_ID"))
+				contractData.setSepeId(sepeIdRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
+			else if(AonStringUtils.equalsIgnoreCase(sepeIdRecord.get(CONTRACT_INFO.NAME), "SEPE_TRANSFORM_ID"))
+				contractData.setSepeTransformId(sepeIdRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
+			else if(AonStringUtils.equalsIgnoreCase(sepeIdRecord.get(CONTRACT_INFO.NAME), "SEPE_EXTENSION_ID"))
+				contractData.setSepeExtensionId(sepeIdRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
+		}
 		
 		// ---------------------------------------------- Contract Extension
 		

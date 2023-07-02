@@ -1740,28 +1740,28 @@ public class JooqContrataContract {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
-			Result<Record> sepeIdRecords = dslContext.select().from(CONTRACT_DATA)
-					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-					.and(CONTRACT_DATA.NAME.eq("SEPE_ID"))
+			Result<Record> sepeIdRecords = dslContext.select().from(CONTRACT_INFO)
+					.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+					.and(CONTRACT_INFO.NAME.eq("SEPE_ID"))
 					.fetch();
 			
 			if(sepeIdRecords.isEmpty()) {
-				dslContext.insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, domainId)
-					.set(CONTRACT_DATA.NAME, "SEPE_ID")
-					.set(CONTRACT_DATA.EXPRESSION, ide)
-					.set(CONTRACT_DATA.START_DATE, new Date(new java.util.Date().getTime()))
-					.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
-					.set(CONTRACT_DATA.CONTRACT, contractId)
+				dslContext.insertInto(CONTRACT_INFO)
+					.set(CONTRACT_INFO.DOMAIN, domainId)
+					.set(CONTRACT_INFO.NAME, "SEPE_ID")
+					.set(CONTRACT_INFO.EXPRESSION, ide)
+					.set(CONTRACT_INFO.START_DATE, new Date(new java.util.Date().getTime()))
+					.set(CONTRACT_INFO.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
+					.set(CONTRACT_INFO.CONTRACT, contractId)
 					.execute();
 			
-				dslContext.insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, domainId)
-					.set(CONTRACT_DATA.NAME, "COMUNICATION_DATE")
-					.set(CONTRACT_DATA.EXPRESSION, dateFormat.format(new java.util.Date()))
-					.set(CONTRACT_DATA.START_DATE, new Date(new java.util.Date().getTime()))
-					.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
-					.set(CONTRACT_DATA.CONTRACT, contractId)
+				dslContext.insertInto(CONTRACT_INFO)
+					.set(CONTRACT_INFO.DOMAIN, domainId)
+					.set(CONTRACT_INFO.NAME, "COMUNICATION_DATE")
+					.set(CONTRACT_INFO.EXPRESSION, dateFormat.format(new java.util.Date()))
+					.set(CONTRACT_INFO.START_DATE, new Date(new java.util.Date().getTime()))
+					.set(CONTRACT_INFO.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
+					.set(CONTRACT_INFO.CONTRACT, contractId)
 					.execute();
 			}
 		}catch (SQLException e) {
@@ -1835,15 +1835,15 @@ public class JooqContrataContract {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			
-			dslContext.delete(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq("SEPE_ID"))
-				.and(CONTRACT_DATA.EXPRESSION.eq(sepeId))
+			dslContext.delete(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.NAME.eq("SEPE_ID"))
+				.and(CONTRACT_INFO.EXPRESSION.eq(sepeId))
 				.execute();
 			
-			dslContext.delete(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq("COMUNICATION_DATE"))
+			dslContext.delete(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.NAME.eq("COMUNICATION_DATE"))
 				.execute();
 			
 		}catch (SQLException e) {

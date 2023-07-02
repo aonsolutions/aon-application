@@ -174,23 +174,12 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="account" 
-										rendered="#{actionDenied.renderedOption('account_list')}"
-										action="account_list"
-										value="#{bundle.account_module}" />
-								</aon:div>
-								
-								<!-- <aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_account"
-										rendered="#{actionDenied.renderedOption('gwt_account-acc')}"
 										action="gwt_account-acc"
-										title="PLAN GENERAL CONTABLE">
-										<aon:outputText
-											styleClass="aon-fiscal-link-label aon-icon-beta-text"
-											style="margin-left: 5px; padding-left: 20px;"
-											value="PLAN GENERAL CONTABLE" />
+										title="PLAN GENERAL CONTABLE"
+										value="Plan General Contable">
 									</aon:commandLink>
-								</aon:div> -->
+								</aon:div>
 
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -303,9 +292,9 @@
 								</aon:if>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="investAsset" 
+									<aon:commandLink id="gwt_investAsset" 
 										rendered="#{actionDenied.renderedOption('investAsset_search')}"
-										action="investAsset_search"
+										action="gwt_invest_asset"
 										value="#{bundle.accounting_invest_asset_form_module}" />
 								</aon:div>
 							</aon:div>
@@ -583,6 +572,12 @@
 											rendered="#{actionDenied.renderedOption('amortizationType_list-parent')}"
 											action="amortizationType_list-parent"
 											value="#{bundle.accounting_amortization_type_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="investAsset" 
+											rendered="#{actionDenied.renderedOption('investAsset_search')}"
+											action="investAsset_search"
+											value="#{bundle.accounting_invest_asset_form_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_accountingUtilities-parent"
