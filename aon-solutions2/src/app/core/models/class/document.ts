@@ -8,6 +8,15 @@ export class Document implements Deserializable{
     private fileType: string;
     private folder: string;
     private path: string;
+    private date: Date;
+
+    public get Date(): Date {
+        return this.date;
+    }
+
+    public set Date(value: Date) {
+        this.date = value;
+    }
     
     public get File(): string {
         return this.file;
@@ -57,13 +66,14 @@ export class Document implements Deserializable{
     //     this.path = value;
     // }
 
-    constructor(file?: string,fileName?: string,fileSize?: number,fileType?: string, folder?: string, path?: string,){
+    constructor(file?: string,fileName?: string,fileSize?: number,fileType?: string, folder?: string, path?: string, date?: Date){
         this.file = file || '';
         this.fileName = fileName || '';
         this.fileSize = fileSize || 0;
         this.fileType = fileType || '';
         this.folder = folder || '';
         this.path = path || '';
+        this.date = date || new Date();
     }
 
     deserialize(input: any): this {

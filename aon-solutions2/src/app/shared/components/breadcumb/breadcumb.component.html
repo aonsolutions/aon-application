@@ -1,13 +1,13 @@
 <ng-container *ngIf="haveData == true">
-  <div id="breadcumb" *ngIf="this.currentRoute.split('/')[0] != 'auth'">
+  <div id="breadcumb" *ngIf="this.currentRoute != 'selectEnterprise'">
     <div mat-button id="enterprise-selector" (click)="this.dropdownMenuComponent.openDropdownMenu();">
       {{this.selectedEnterprise}}
-      <set-icon shape="arrow_drop_down"></set-icon>
+      <app-icon shape="arrow_drop_down"></app-icon>
       <app-dropdown-menu #enterpriseSelector [menuItem]="this.menuItem"></app-dropdown-menu>
     </div>
     <div class="current-route" *ngIf="this.currentRoute != 'home'">
       {{this.currentRoute}}
-      <set-icon shape="arrow_right"></set-icon>
+      <app-icon shape="arrow_right"></app-icon>
     </div>
   </div>
 </ng-container>

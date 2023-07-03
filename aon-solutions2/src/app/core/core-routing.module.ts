@@ -6,7 +6,7 @@ import { SidenavLayoutComponent } from '../shared/layouts/sidenav-layout/sidenav
 
 const routes: Routes = [
   {
-    path: 'auth',
+    path: '',
     component: BasicLayoutComponent,
     children:[
       {
