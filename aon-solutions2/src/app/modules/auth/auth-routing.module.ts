@@ -12,11 +12,6 @@ const routes: Routes = [
     canActivate: [LoginGuard],
   },
   {
-    path: 'magicLink/:token',
-    component: LoginComponent,
-    canActivate: [LoginGuard],
-  },
-  {
     path: 'selectEnterprise',
     component: SelectEnterpriseComponent,
     canActivate: [EnterpriseGuard],

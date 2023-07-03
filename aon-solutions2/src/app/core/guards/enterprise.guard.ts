@@ -21,7 +21,7 @@ export class EnterpriseGuard implements CanActivate {
       const isLoggedIn = this.authService.isLoggedIn();
       const isEnterpriseSelected = this.enterpriseService.isEnterpriseSelected();
       if(isEnterpriseSelected){
-        this.location.back();
+        this.router.navigate(['home'])
         return false;
       }else if(!isLoggedIn && !isEnterpriseSelected){
         this.router.navigate([''])

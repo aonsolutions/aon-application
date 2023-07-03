@@ -17,10 +17,10 @@ export class LoginComponent implements OnInit {
   constructor(public auth: AuthService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.sub = this.activatedRoute.params.subscribe(params => {
+    this.sub = this.activatedRoute.queryParams.subscribe(params => {
       if(params['token'] != undefined)
         this.auth.magicLogin(params['token'])
-   });
+    });
   }
 
   loginUser() {

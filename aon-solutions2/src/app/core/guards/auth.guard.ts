@@ -18,10 +18,10 @@ export class AuthGuard implements CanActivate {
         const isEnterpriseSelected = this.enterpriseService.isEnterpriseSelected();
 
         if(!isLoggedIn) {
-            this.router.navigate(['auth']);
+            this.router.navigate(['']);
             return false;
         } else if(!isEnterpriseSelected){
-            this.router.navigate(['auth/selectEnterprise']);
+            this.router.navigate(['/selectEnterprise']);
             return false;
         }else {
           return true;
