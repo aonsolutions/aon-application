@@ -26,7 +26,6 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA391003,"Otras reservas de libre disposici\u00f3n");
 		DESCRIPTION_MAP.put(D2DepositKey.MA391004,"TOTAL BASES DE REPARTO = TOTAL APLICACI\u00d3N");
 
-		
 		DESCRIPTION_MAP.put(D2DepositKey.MA391005,"Reserva Legal");
 		DESCRIPTION_MAP.put(D2DepositKey.MA391006, "Reserva por fondo de comercio");
 		DESCRIPTION_MAP.put(D2DepositKey.MA391007,"Reservas especiales");
@@ -525,6 +524,14 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.SRP831041 ,"Facilitar direcci\u00F3n postal, fiscal, social o similar a una persona jur\u00EDdica");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.SRP831051 ,"Funciones fiduciarias en un fideicomiso");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.SRP831061 ,"Funciones de accionistas por cuenta ajena");
+	}
+	
+	static {
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.IMA8099020 ,"Emisiones Alcance 1 (TnC02)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.IMA8099030 ,"Emisiones Alcance 2 (TnC02)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.IMA8099040 ,"Emisiones Alcance 3 (TnC02)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.IMA8099050 ,"Consumo de energia dentro de la organizacion (Kwh)");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.IMA8099060 ,"Consumo de agua (m3)");
 	}
 	
 	static { 
