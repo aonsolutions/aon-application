@@ -1,37 +1,38 @@
-import { AonSelect } from '../../../../components/aon-select.js';
-import { AonDate } from '../../../../components/aon-date.js';
-import { AonElement } from '../../../../components/AonElement.js';
-import { EVENT, MSG } from '../../../../environments/environments.js';
-import { getItems, updateRegistryItem } from '../../../../services/productService.js';
-import { saveRegistryItem } from '../../../../services/productService.js';
-import { Customer } from '../../../../models/registry/Customer.js';
-import { Item } from '../../../../models/product/Item.js';
-import { RegistryItemStatus } from '../../../../models/enums.js';
-import { AonDateUtils } from '../../../utils/AonDateUtils.js';
+import { AonSelect } from '../../../components/aon-select.js';
+import { AonDate } from '../../../components/aon-date.js';
+import { AonElement } from '../../../components/AonElement.js';
+import { EVENT, MSG } from '../../../environments/environments.js';
+import { getItems, updateRegistryItem } from '../../../services/productService.js';
+import { saveRegistryItem } from '../../../services/productService.js';
+import { Customer } from '../../../models/registry/Customer.js';
+import { Item } from '../../../models/product/Item.js';
+import { RegistryItemStatus, RegistrySellerStatus, RegistrySellerType } from '../../../models/enums.js';
+import { deleteRegistrySeller, getSellers, saveRsellers, updateRegistrySeller } from '../../../services/commercialService.js';
 
-export class AonItemAdd extends AonElement {
+export class AonSellerAdd extends AonElement {
 	DIV;
 	ITEM_SELECT;
 	STATUS_SELECT
 	START_DATE_INPUT
 	END_DATE_INPUT;
 
-	_items  = [];
-	_item = null;
+	_sellers  = [];
+	_seller = null;
 	_customers = [];
 	_status    = null;
 	_startDate = null;
 	_endDate = null;
+	_type    = null;
 
-	_selectedRItem;
+	_selectedRSeller;
 
-	setItems(items) {
-		this._items = [];
+	setSellers(items) {
+		this._sellers = [];
 		items.forEach(item => this.addSeller(item));
 	}
 
-	getItems() {
-		return this._items || [];
+	getSellers() {
+		return this._sellers || [];
 	}
 
 	setCustomers(customers) {
@@ -51,6 +52,14 @@ export class AonItemAdd extends AonElement {
 		return this._status;
 	}
 
+	setType(type) {
+		this._type = type;
+	}
+
+	getType() {
+		return this._type;
+	}
+
 	setStartDate(startDate) {
 		this._startDate = startDate;
 	}
@@ -67,34 +76,34 @@ export class AonItemAdd extends AonElement {
 		return this._endDate;
 	}
 
-	setItem(item) {
-		this._item = item;
+	setSeller(seller) {
+		this._seller = seller;
 	}
 
-	getItem() {
-		return this._item;
+	getSeller() {
+		return this._seller;
 	}
 
-	setSelectedRItem(selectedRItem) {
-		this._selectedRItem = selectedRItem;
+	setSelectedRSeller(selectedRSeller) {
+		this._selectedRSeller = selectedRSeller;
 	}
 
-	getSelectedRItem() {
-		return this._selectedRItem;
+	getSelectedRSeller() {
+		return this._selectedRSeller;
 	}
 
-	addSeller(item) {
-		let items = this.getItems();
-		const isSome = items.some(({id}) => id == item.id);
+	addSeller(seller) {
+		let items = this.getSellers();
+		const isSome = items.some(({id}) => id == seller.id);
 
 		if(!isSome) {
-			items.push( new Item(item) );
+			items.push(seller);
 		}
 	}
 
 	removeItem(item) {
-		this.setItems(
-			this.getItems().filter(({id}) => id !== item.id)
+		this.setSellers(
+			this.getSellers().filter(({id}) => id !== item.id)
 		);
 	}
 
@@ -136,8 +145,8 @@ export class AonItemAdd extends AonElement {
 		this.START_DATE_INPUT.id = this.id+"startDateInput";
 		this.START_DATE_INPUT.title = MSG.START_DATE;
 		this.DIV.appendChild(this.START_DATE_INPUT);
-		if (this.getSelectedRItem() && this.getSelectedRItem().start_date) {
-			this.START_DATE_INPUT.setDate(this.getSelectedRItem().start_date);
+		if (this.getSelectedRSeller() && this.getSelectedRSeller().start_date) {
+			this.START_DATE_INPUT.setDate(this.getSelectedRSeller().start_date);
 			this.setStartDate(this.START_DATE_INPUT.value);
 		}
 		this.START_DATE_INPUT.addEventListener("change", event => {
@@ -148,8 +157,8 @@ export class AonItemAdd extends AonElement {
 		this.END_DATE_INPUT.id = this.id+"endDateInput";
 		this.END_DATE_INPUT.title = MSG.END_DATE;
 		this.DIV.appendChild(this.END_DATE_INPUT);
-		if (this.getSelectedRItem() && this.getSelectedRItem().end_date) {
-			this.END_DATE_INPUT.setDate(this.getSelectedRItem().end_date);
+		if (this.getSelectedRSeller() && this.getSelectedRSeller().end_date) {
+			this.END_DATE_INPUT.setDate(this.getSelectedRSeller().end_date);
 			this.setEndDate(this.END_DATE_INPUT.value);
 		}
 		this.END_DATE_INPUT.addEventListener("change", event => {
@@ -157,18 +166,19 @@ export class AonItemAdd extends AonElement {
 		});
 
 		this.buildSelectStatus();
-		if (this.getSelectedRItem() && this.getSelectedRItem().status) {
-			this.STATUS_SELECT.value = this.getSelectedRItem().status;
+		this.buildSelectType();
+		if (this.getSelectedRSeller() && this.getSelectedRSeller().status) {
+			this.STATUS_SELECT.value = this.getSelectedRSeller().status;
 		}
 	}
 
 	buildSelectItem(){
 		this.ITEM_SELECT = new AonSelect();
 		this.ITEM_SELECT.title = MSG.PRODUCTS;
-		this.ITEM_SELECT.id = this.id+"item";
+		this.ITEM_SELECT.id = this.id+"seller";
 		this.ITEM_SELECT.autocomplete = true;
 		this.ITEM_SELECT.default = true;
-		if (!this.getSelectedRItem()) {
+		if (!this.getSelectedRSeller()) {
 			this.ITEM_SELECT.multiple = true;
 		}
 		this.DIV.appendChild(this.ITEM_SELECT);
@@ -179,7 +189,7 @@ export class AonItemAdd extends AonElement {
 
 		const buildItems = (params) => {
 			this.ITEM_SELECT.loading(true);
-			getItems(params).then(opts => 
+			getSellers(params).then(opts => 
 				this.ITEM_SELECT.setOptionsBuild( 
 					opts.map(p=> ({...p, value: p.id})) 
 				)
@@ -188,9 +198,9 @@ export class AonItemAdd extends AonElement {
 				this.ITEM_SELECT.loading(false);
 				if (firstTime) {
 					firstTime = false;
-					if (this.getSelectedRItem() && this.getSelectedRItem().item && this.getSelectedRItem().item.id) {
-						this.ITEM_SELECT.value = this.getSelectedRItem().item.id;
-						this.setItem(this.ITEM_SELECT.value);
+					if (this.getSelectedRSeller() && this.getSelectedRSeller().seller && this.getSelectedRSeller().seller.id) {
+						this.ITEM_SELECT.value = this.getSelectedRSeller().seller.id;
+						this.setSeller(this.ITEM_SELECT.value);
 					}
 					this.ITEM_SELECT.closeOptions();
 				}
@@ -219,8 +229,8 @@ export class AonItemAdd extends AonElement {
             //     } else { // remove
             //     }
             // } else {
-				this.setItems(selectable);
-				this.setItem(value);
+				this.setSellers(selectable);
+				this.setSeller(value);
             // }
         });
 
@@ -234,15 +244,40 @@ export class AonItemAdd extends AonElement {
 		this.STATUS_SELECT.autocomplete = true;
 
 		let options = [];
-		for(let status in RegistryItemStatus) {
-			options.push({name: RegistryItemStatus[status], value:status});
+		for(let status in RegistrySellerStatus) {
+			options.push({name: RegistrySellerStatus[status], value:status});
 		}
 
 		this.STATUS_SELECT.setOptions(options);
 
 		this.DIV.appendChild(this.STATUS_SELECT);
-		if (this.getSelectedRItem()) {
-			this.STATUS_SELECT.value = this.getSelectedRItem().status;
+		if (this.getSelectedRSeller()) {
+			this.STATUS_SELECT.value = this.getSelectedRSeller().status;
+		}
+
+		this.STATUS_SELECT.addEventListener(EVENT.CHANGE, ()=>{
+			this.setStatus(this.STATUS_SELECT.value);
+		});
+		
+	}
+
+	buildSelectType() {
+		this.STATUS_SELECT = new AonSelect();
+		this.STATUS_SELECT.title = MSG.TYPE;
+		this.STATUS_SELECT.id = this.id+"TYPE";
+		this.STATUS_SELECT.default = true;
+		this.STATUS_SELECT.autocomplete = true;
+
+		let options = [];
+		for(let type in RegistrySellerType) {
+			options.push({name: RegistrySellerType[type], value: type});
+		}
+
+		this.STATUS_SELECT.setOptions(options);
+
+		this.DIV.appendChild(this.STATUS_SELECT);
+		if (this.getSelectedRSeller()) {
+			this.STATUS_SELECT.value = this.getSelectedRSeller().status;
 		}
 
 		this.STATUS_SELECT.addEventListener(EVENT.CHANGE, ()=>{
@@ -254,8 +289,8 @@ export class AonItemAdd extends AonElement {
 	async save(remove){
 		let error = false;
 		let params = {
-			type: "TARGET",
-			items: this.getItems(),
+			type: this.getType(),
+			sellers: this.getSellers(),
 			customers: this.getCustomers(),
 			start_date: this.getStartDate(),
 			end_date: this.getEndDate(),
@@ -264,17 +299,17 @@ export class AonItemAdd extends AonElement {
 			params.status = this.getStatus();
 		}
 		
-		if (!this.getSelectedRItem()) {
+		if (!this.getSelectedRSeller()) {
 			error = this.checkError(params, "save", remove);
 			if (!error) {
-				await saveRegistryItem(params);
+				await saveRsellers(params);
 			}
 		} else {
-			params.ritem = this.getSelectedRItem();
-			params.item = this.getItem();
+			params.rseller = this.getSelectedRSeller();
+			params.seller = this.getSeller();
 			error = this.checkError(params, "update", remove);
 			if (!error) {
-				await updateRegistryItem(params);
+				await updateRegistrySeller(params);
 			}
 		}
 		
@@ -283,14 +318,19 @@ export class AonItemAdd extends AonElement {
 		}
 	}
 
+	async delete(id) {
+		let params = {id: id};
+		await deleteRegistrySeller(params);
+	}
+
 	async remove(id){
 		if(id){
-			this.getItems().filter(r=> r.id === id).forEach(item=> item.remove());
+			this.getSellers().filter(r=> r.id === id).forEach(item=> item.removed = true);
 		} else {
-			this.getItems().forEach(item=> item.remove());
+			this.getSellers().forEach(item=> item.removed = true);
 		}
 
-		await this.save(true);
+		await this.delete(id);
 	}
 
 	checkError(params, type, remove) {
@@ -300,8 +340,11 @@ export class AonItemAdd extends AonElement {
 				return true;
 			}
 		} else {
-			if(!remove && (!this.getItems() || this.getItems().length === 0)) {
+			if(!remove && (!this.getSellers() || this.getSellers().length === 0)) {
 				this.showMessageError(MSG.PRODUCT_MUST_BE_SELECTED);
+				return true;
+			} else if(!remove && (!this.getStartDate())) {
+				this.showMessageError("La fecha de inicio no puede quedar vacía");
 				return true;
 			}
 		}
@@ -309,6 +352,6 @@ export class AonItemAdd extends AonElement {
 	}
 }
 
-if(!window.customElements.get("aon-item-add")){
-	window.customElements.define("aon-item-add", AonItemAdd);
+if(!window.customElements.get("aon-seller-add")){
+	window.customElements.define("aon-seller-add", AonSellerAdd);
 }

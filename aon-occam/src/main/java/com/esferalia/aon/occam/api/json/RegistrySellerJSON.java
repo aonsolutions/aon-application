@@ -37,6 +37,7 @@ public class RegistrySellerJSON {
 				.setEndDate(JsonUtils.getDate(json, IJsonNames.END_DATE))
 				.setStatus(RegistrySellerStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.STATUS)))
 				.setType(RegistrySellerType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
+				.setRemoved(JsonUtils.getBoolean(json, IJsonNames.REMOVED))
 				;
 	}
 	
@@ -62,6 +63,7 @@ public class RegistrySellerJSON {
 				.put(IJsonNames.END_DATE, seller.getEndDate())
 				.put(IJsonNames.STATUS, seller.getStatus())
 				.put(IJsonNames.TYPE, seller.getType())
+				.put(IJsonNames.REMOVED, seller.isRemoved())
 				;
 	}
 }

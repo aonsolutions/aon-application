@@ -1,5 +1,8 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -7,16 +10,22 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.CustomerJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistrySellerJSON;
 import com.esferalia.aon.occam.api.json.SellerJSON;
+import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.RegistrySellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.RegistrySellerStatus;
 import com.esferalia.aon.occam.api.model.type.RegistrySellerType;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -69,7 +78,14 @@ public class SellerServlet extends AonApiHttpServlet {
 				break;
 			case "/rseller":
 			case "/rseller/":
-				response(req, resp, saveRSeller(api));
+				response(req, resp, saveRegistrySeller(api));
+			case "/rseller/update":
+			case "/rseller/update/":
+				response(req, resp, updateRegistrySeller(api));
+				break;
+			case "/rsellers":
+			case "/rsellers/":
+				response(req, resp, saveRegistrySeller(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -112,6 +128,7 @@ public class SellerServlet extends AonApiHttpServlet {
 //				response(req, resp, getResponseObject());
 				break;
 			case "/rseller":
+			case "/rseller/":
 				response(req, resp, deleteRSeller(api));
 				break;
 			default:
@@ -137,8 +154,9 @@ public class SellerServlet extends AonApiHttpServlet {
 				? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
 		
 		Stream<RegistrySeller> rsellers = AON.getRegistrySellerStream(api.getDomain(), api.getUser().getLogin(),
-				f -> rsellerFilter(api, f), perPage, perPage * (page -1));
-		return RegistrySellerJSON.toJSON(rsellers);
+				f -> rsellerFilter(api, f), perPage * (page -1), perPage);
+		List<RegistrySeller> sl = rsellers.toList();
+		return RegistrySellerJSON.toJSON(sl);
 	}
 	
 	private JSONArray getSellers(AonApiData api) {
@@ -163,6 +181,94 @@ public class SellerServlet extends AonApiHttpServlet {
 			return RegistrySellerJSON.toJSON(rseller);
 		}
 		return new JSONObject();
+	}
+	
+	private static JSONArray saveRegistrySeller(AonApiData api) {
+		JSONArray sellersJson = api.getData().optJSONArray(IJsonNames.SELLERS);
+		 List<Seller> sellers = SellerJSON.fromJSON(sellersJson);
+		 List<Customer> customers  = CustomerJSON.fromJSON(api.getData().optJSONArray(IJsonNames.CUSTOMERS));
+		 RegistrySellerType type = RegistrySellerType.safeValueOf(api.getData().optString(IJsonNames.TYPE));
+		 RegistrySellerStatus status = RegistrySellerStatus.safeValueOf(api.getData().optString(IJsonNames.STATUS));
+		 Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE);
+		 Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE);
+		 
+		 
+		 List<RegistrySeller> registrySellers = new ArrayList<>();
+		 
+		 customers.forEach(customer->{
+			 sellers.forEach(seller-> {
+				 RegistrySeller rseller = new RegistrySeller()
+						 .setDomain(seller.getDomain())
+						 .setRegistry(customer.getId())
+						 .setSeller(seller)
+						 .setStartDate(startDate)
+						 .setEndDate(endDate)
+						 .setType(type)
+						 .setStatus(status);
+				 registrySellers.add(rseller);
+			 });
+			 
+		 });
+		
+		 if(!registrySellers.isEmpty()) {
+			 //SAVE RITEM
+			 RegistrySeller[] add = registrySellers.stream()
+			 .filter(r-> !r.isRemoved()).toArray(RegistrySeller[]::new);
+			 
+			 if(add.length>0) {
+				 for(int i=0;i<add.length; i++) {
+					 AON.saveRegistrySeller(api.getDomain(), api.getUser().getLogin(), add[i]); 
+				 }
+			 }
+			 
+			 //DELETE RITEM
+			 registrySellers.stream()
+			 .filter(RegistrySeller::isRemoved)
+			 .forEach(r->{
+				 AON.deleteRegistrySeller(api.getDomain(), api.getUser().getLogin(),
+						 f-> f.getDomainProperty().eq(r.getDomain().getId())
+						 .and(f.getSellerProperty().eq(r.getSeller() != null ? r.getSeller().getId() : null))
+						 .and(f.getRegistryProperty().eq(r.getRegistry()))
+						 );
+			 });
+		 }
+		 
+		 return SellerJSON.toJSON(sellers);
+	}
+	
+	private static JSONObject updateRegistrySeller(AonApiData api) {
+		Domain domain = api.getDomain();
+		User user = api.getUser();
+		JSONObject rsellerJson = api.getData().optJSONObject("rseller");		//NOT NULL
+		Integer sellerId = api.getData().optInt(IJsonNames.SELLER);				//NOT NULL
+		RegistrySellerType type = RegistrySellerType.safeValueOf(api.getData().optString(IJsonNames.TYPE));
+		RegistrySellerStatus status = RegistrySellerStatus.safeValueOf(api.getData().optString(IJsonNames.STATUS));
+		
+		Date startDate = JsonUtils.getDate(api.getData(), IJsonNames.START_DATE);	//NULLABLE
+		Date endDate = JsonUtils.getDate(api.getData(), IJsonNames.END_DATE);		//NULLABLE
+		if (rsellerJson != null && sellerId > 0 && status != null) {
+			RegistrySeller rseller = RegistrySellerJSON.fromJSON(rsellerJson);
+			Seller seller = new Seller().setId(sellerId);
+			if (AonNumberUtils.zeroIfNull(rseller.getId()) > 0) {
+				AON.deleteRItem(domain, user, f -> f.getIdProperty().eq(rseller.getId()));
+				
+				rseller
+				.setSeller(seller)
+				.setStartDate(startDate)
+				.setEndDate(endDate)
+				.setStatus(status)
+				.setType(type);
+				
+				RegistrySeller updatedRSellers = AON.saveRegistrySeller(domain, user.getLogin(), rseller);
+				if (updatedRSellers != null) {
+					return RegistrySellerJSON.toJSON(updatedRSellers);
+				}
+			}
+			
+		}
+		
+		return new JSONObject();
+		
 	}
 	
 	private JSONObject deleteRSeller(AonApiData api) {

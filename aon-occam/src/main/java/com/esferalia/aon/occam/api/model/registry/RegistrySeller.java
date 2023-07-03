@@ -20,6 +20,8 @@ public class RegistrySeller implements Serializable {
 	private RegistrySellerStatus status;
 	private RegistrySellerType type;
 	
+	private boolean removed;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -76,6 +78,12 @@ public class RegistrySeller implements Serializable {
 		this.type = type;
 		return this;
 	}
-	
+	public boolean isRemoved() {
+		return removed;
+	}
+	public RegistrySeller setRemoved(boolean removed) {
+		this.removed = removed;
+		return this;
+	}
 	
 }

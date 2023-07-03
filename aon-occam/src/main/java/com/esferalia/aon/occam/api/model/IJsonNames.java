@@ -496,6 +496,7 @@ public final class IJsonNames {
 	public static final String SELECTED_ACTIVITY = "selectedActivity";
 	public static final String SELECTED_PERIOD = "selectedPeriod";
 	public static final String SELLER = "seller";
+	public static final String SELLERS = "sellers";
 	public static final String SELLER_IDS = "sellerIds";
 	public static final String SENDER = "sender";
 	public static final String SERFRUIT = "serfruit";
