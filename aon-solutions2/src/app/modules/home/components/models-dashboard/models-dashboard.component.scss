@@ -41,10 +41,10 @@ app-card{
   color: #b4b4bb;
   text-align: right;
   text-transform: uppercase;
-  overflow: hidden;
   width: calc(auto);
   text-overflow: ellipsis;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .models-header-filter-icon {
@@ -64,9 +64,7 @@ app-card{
     height: 15%;
     width: 100%;
     display: flex;
-    border: solid;
-    border-width: .05rem;
-    border-color: transparent transparent #D2D2D6 transparent;
+    border-bottom: .05rem solid #D2D2D6;
     box-sizing: border-box;
 }
 
