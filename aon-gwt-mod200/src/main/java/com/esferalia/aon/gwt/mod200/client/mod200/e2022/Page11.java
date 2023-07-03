@@ -128,30 +128,30 @@ public class Page11 extends PageAbs {
 					if (callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0009) && 
 						callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010))
 						row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN1039,Mod2002022BN1039Key.values(),HEADERS_1039_2314, FOOTER_1);
-					// Casilla Importe Máximo para la casilla 1039
-					FlexTable table2 = new FlexTable();
-					table2.setWidth("100%");
-					table2.setCellSpacing(0);
-					table2.getColumnFormatter().setWidth(1, "150px");
-					table2.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());					
-					paintKey(table2,Mod2002022Key.BN1039M,0);
-					table.setWidget(row, 0, table2);
-					row++;
+					// Casilla Importe Máximo para la casilla 1039 (Se elimina a primeros de julio de 2023)
+//					FlexTable table2 = new FlexTable();
+//					table2.setWidth("100%");
+//					table2.setCellSpacing(0);
+//					table2.getColumnFormatter().setWidth(1, "150px");
+//					table2.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());					
+//					paintKey(table2,Mod2002022Key.BN1039M,0);
+//					table.setWidget(row, 0, table2);
+//					row++;
 				}	
 				
 				if (key == Mod2002022Key.BN2314) {  
 					if (callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0009) && 
 						callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010))
 						row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN2314,Mod2002022BN2314Key.values(),HEADERS_1039_2314, FOOTER_1);
-					// Casilla Importe Máximo para la casilla 2314
-					FlexTable table2 = new FlexTable();
-					table2.setWidth("100%");
-					table2.setCellSpacing(0);
-				   	table2.getColumnFormatter().setWidth(1, "150px");
-					table2.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());					
-					paintKey(table2,Mod2002022Key.BN2314M,0);
-					table.setWidget(row, 0, table2);
-					row++;
+					// Casilla Importe Máximo para la casilla 2314 (Se elimina a primeros de julio de 2023)
+//					FlexTable table2 = new FlexTable();
+//					table2.setWidth("100%");
+//					table2.setCellSpacing(0);
+//				   	table2.getColumnFormatter().setWidth(1, "150px");
+//					table2.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());					
+//					paintKey(table2,Mod2002022Key.BN2314M,0);
+//					table.setWidget(row, 0, table2);
+//					row++;
 				}
 				
 			}
