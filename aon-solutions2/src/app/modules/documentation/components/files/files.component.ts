@@ -21,6 +21,7 @@ export class FilesComponent implements OnInit {
 
     documentService.getDocumentList().then(documentsList => {
       this.documentsList = documentsList;
+      console.log(documentsList);
     });
 
     folderService.getFolderList().then(listFolders => {
@@ -29,6 +30,22 @@ export class FilesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  getNameWithExtension(name: string, extension: string): string {
+    const finalExtension = extension.split('/').pop();
+
+    return name+'.'+finalExtension;
+  }
+
+  getFormattedDate(): string {
+    const currentDate = new Date();
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = String(currentDate.getFullYear()).slice(-2);
+    const formattedDate = `${day}/${month}/${year}`;
+
+    return formattedDate;
   }
 
 }
