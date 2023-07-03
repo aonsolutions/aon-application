@@ -16,9 +16,6 @@ export class ReportingService {
         .getVentasGastos()
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -30,9 +27,6 @@ export class ReportingService {
         .getCobrosPagos()
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }

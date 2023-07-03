@@ -12,7 +12,7 @@ export class AuthService {
   constructor(private router: Router) {}
 
   login(email: string, password: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.aonSDK
         .model('auth')
         .login(email, password)
@@ -21,9 +21,6 @@ export class AuthService {
             this.router.navigate(['/selectEnterprise']);
           }
           resolve(true);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -34,9 +31,6 @@ export class AuthService {
       .logout()
       .then((response: any) => {
         if (response.result == true) this.router.navigate(['/']);
-      })
-      .catch((error: any) => {
-        throw new Error(error);
       });
   }
 
@@ -49,7 +43,7 @@ export class AuthService {
   }
 
   magicLogin(token: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.aonSDK
         .model('auth')
         .magicLogin(token)
@@ -57,9 +51,7 @@ export class AuthService {
           if (response.result == true) {
             this.router.navigate(['/selectEnterprise']);
           }
-        })
-        .catch((error: any) => {
-          reject(error);
+          resolve(true);
         });
     });
   }

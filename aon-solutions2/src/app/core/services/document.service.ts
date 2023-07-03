@@ -19,9 +19,6 @@ export class DocumentService {
         .getElementList('document', filter)
         .then((response: any) => {
           resolve(new Document().deserializeArray(response.result));
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -33,9 +30,6 @@ export class DocumentService {
         .getElement('document', pkey)
         .then((response: any) => {
           resolve(new Document().deserialize(response.result));
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -47,9 +41,6 @@ export class DocumentService {
         .updateElement('document', documents)
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -61,9 +52,6 @@ export class DocumentService {
         .deleteElement('document', pkey)
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -75,9 +63,6 @@ export class DocumentService {
         .createElement('document', documents)
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -89,9 +74,6 @@ export class DocumentService {
         .getElement('documentnote', pkey)
         .then((response: any) => {
           resolve(new DocumentNote().deserialize(response.result));
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -103,9 +85,6 @@ export class DocumentService {
         .deleteElement('documentnote', pkey)
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -117,9 +96,6 @@ export class DocumentService {
         .createElement('documentnote', documentnotes)
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -137,9 +113,6 @@ export class DocumentService {
           a.download = response.result.fileName;
           a.click();
           URL.revokeObjectURL(blobUrl);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }

@@ -17,10 +17,8 @@ export class BankService {
         .getElementList('bank')
         .then((response: any) => {
           resolve(new Bank().deserializeArray(response.result));
-        })
-        .catch((error: any) => {
-          throw new Error(error.description + ' - ' + error.result);
         });
     });
   }
+  
 }
