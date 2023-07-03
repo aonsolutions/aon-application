@@ -86,8 +86,11 @@ import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.persistence.Transient;
@@ -703,13 +706,22 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	private void checkInvoice(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
 		if(invoice.isRectifier() && AonStringUtils.isBlank(invoice.getSeries())) {
-			throw new Exception("Las Facturas rectificativas tienen que tener serie");
+			throw new Exception("Las Facturas rectificativas tienen que tener serie.");
+		}
+		
+		Date date = AonDateUtils.getDateWithoutTime(invoice.getIssueDate());
+		if(date.after(new Date())) {
+			throw new Exception("La Fecha de la factura no puede ser superior a la fecha actual.");
 		}
 	}
 	
 	private void checkRegistry(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
 		if(AonStringUtils.isBlank(invoice.getRegistryDocument()) && !invoice.isSimplified()) {
 			throw new Exception("El Documento del cliente está vacio.");
+		}
+			
+		if(Country.ES.equals(invoice.getRegistryDocumentCountry()) && !AonDocumentUtil.isValid(invoice.getRegistryDocument())) {
+			throw new Exception("El Documento del cliente no es válido.");
 		}
 	}
 	

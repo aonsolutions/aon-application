@@ -6,6 +6,7 @@ import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0004;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0005;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0006;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0008;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0009;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0010;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0012;
@@ -27,11 +28,13 @@ import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0047;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0048;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0049;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0056;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0057;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0058;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0063;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0064;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0066;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0069;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0071;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0072;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0078;
@@ -39,6 +42,8 @@ import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0080;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0081;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0082;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0083;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.C0084;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.LQ520;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.LQ521;
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key.LQ552;
@@ -223,11 +228,6 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		context = null;
-	}
-	
 	// ***********************************************************************
 	// Métodos disponibles en las expresiones MVEL.
 	// ***********************************************************************
@@ -519,16 +519,20 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		return 365;
 	}
 	
-	// Tipo de Gravamen
+	// Tipo de Gravamen (Casilla 558)
 	public double computeLQ558() throws AonCoreException {
 		
 		if ( isChecked(C0030) || 
 			 isChecked(C0047) ||
 			 isChecked(C0078) || 
 			 isChecked(C0081) ||
-			 isChecked(C0082) )
+			 isChecked(C0082) ||
+			 isChecked(C0056) ||
+			 isChecked(C0069) ||
+			 isChecked(C0084) )
 			return roundKey(LQ558);
 		
+		if ( isChecked(C0083) ) return 15.0;
 		if ( isChecked(C0063) ) return 15.0;
 		if ( isChecked(C0066) ) return 25.0;
 		if ( isChecked(C0071) ) return 15.0;
@@ -580,18 +584,6 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		return AonMathUtils.round( (double) limit * getDays() / 365);	
 	}
 	
-	public double computeLQ1032() throws AonCoreException {
-		if (isGroup() && getContainsKey(Mod2002022Key.LQ1032)) {
-			return getValue(Mod2002022Key.LQ1032);
-		}
-		if (isGroup()) {
-			return 0.0;
-		}		
-		double lq1745 = roundKey(Mod2002022Key.LQ1745);
-		double lq1986 = roundKey(Mod2002022Key.LQ1986);
-		return round(lq1745+lq1986);
-	}
-
 	public double computeD1004(double d1004) throws AonCoreException {
 		if (d1004>getLimit(LIM_3)){
 			return getLimit(LIM_3);			
@@ -600,6 +592,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		}
 	}
 	
+	// Cuota Integra (Casilla 562)
 	public double computeLQ562() throws AonCoreException {
 		
 		double lq558 = roundKey(LQ558);
@@ -660,6 +653,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 			}
 			return 0;
 		}
+		// Cálculo de la cuota integra con caracter general
 		return round(lq1330 * lq558 / 100);
 	}
 	
@@ -728,7 +722,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		double lq554 = roundKey(LQ554);
 		double lq558 = roundKey(LQ558);
 		if (isChecked(C0017) || isChecked(C0018)) {
-			if (isChecked(C0071)) {
+			if (isChecked(C0071) || isChecked(C0083)) {
 				return round(lq552*15/100);
 			}
 			if (isChecked(C0057) && !isChecked(C0063)) {
@@ -745,7 +739,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100));
 			}
 		} else if (isChecked(C0019) ) {
-			if (isChecked(C0071)) {
+			if (isChecked(C0071) || isChecked(C0083)) {
 				return round(lq552*15/100);
 			}
 			if (isChecked(C0030) || isChecked(C0047)) {
@@ -969,13 +963,15 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 	// La clave 01034 sólo puede tener contenido si se ha marcado la clave 00006 de caracteres de la
 	// declaración.
 	// La clave 01034 (disminuciones) sólo podrá tener contenido cuando la base imponible (clave
-	// 00552) sea positiva, y su importe máximo será el 10% de dicha base positiva y no puede superar
+	// 00552) sea positiva(excepto en los supuestos que también se haya marcado la clave 00072 de 
+	// caracteres "extinción de entidad", en cuyo caso la clave 01034 permanecerá cerrada sin posibilidad 
+	// de cumplimentación), y su importe máximo será el 10% de dicha base positiva y no puede superar
 	// el millón de euros si el periodo impositivo es igual al año o si su período impositivo tiene una
 	// duración inferior al año el importe máximo será = 1.000.000 x d/365.	
 	public double computeLQ1034A() throws AonCoreException {
 		
 		double lq552 = getValue(Mod2002022Key.LQ552);
-		if (isChecked(Mod2002022Key.C0006) && lq552 > 0) {
+		if (isChecked(Mod2002022Key.C0006) && !isChecked(Mod2002022Key.C0072) && lq552 > 0) {
 			double lq1034 = roundKey(Mod2002022Key.LQ1034A);
 			if (lq1034 > round(lq552*10/100))
 				lq1034 = round(lq552*10/100);
@@ -987,5 +983,473 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		}
 		
 	}
+	
+	// Base Imponible (Casilla 552)
+	// Caso General: 00552 = 00550 - 01032 - 00547
+	// Para el régimen especial de buques y empresas navieras en Canarias (caracter 69)
+	// 1. Cuando 00541 sea positiva y 00564 negativa: 00552 = 00541 + 00564 - 00547
+	// 2. Cuando 00541 sea negativa y 00564 positiva o cero: 00552 = 00564 - 01032 - 00547			
+	public double computeLQ552() throws AonCoreException {
+		
+		double lq550 = roundKey(Mod2002022Key.LQ550);
+		double lq1032 = roundKey(Mod2002022Key.LQ1032);
+		double lq547 = roundKey(Mod2002022Key.LQ547);
+		double lq541 = roundKey(Mod2002022Key.LQ541);
+		double lq564 = roundKey(Mod2002022Key.LQ564);
+
+		if (isChecked(C0069) && lq541 > 0 && lq564 < 0)
+			return lq541 + lq564 - lq547;
+		else if (isChecked(C0069) && lq541 < 0 && lq564 >= 0)
+			return lq564 - lq1032 - lq547;
+		else
+			return lq550 - lq1032 - lq547;
+		
+	}
+	
+	// Casilla 619: Cuota líquida mínima (art. 30 bis.2 LIS)  
+	public double computeBN619() throws AonCoreException {
+		
+		// Estarán excluidos de la tributación mínima los contribuyentes que hayan marcado alguno de los 
+		// caracteres 00001, 00003, 00004, 00009, 00010, 00012, 00047, 00048 y 00064. También estarán excluidos los 
+		// contribuyentes que marquen el carácter 00008 junto con el 00084 que tributen al tipo de gravamen 
+		// del 1% y los contribuyentes que hayan marcado la clave 00014 de caracteres (agrupaciones europeas de interés económico).		
+		
+		if (isChecked(C0001) || isChecked(C0003) || isChecked(C0004) || isChecked(C0009) || isChecked(C0010) || 
+			isChecked(C0012) || isChecked(C0047) || isChecked(C0048) || isChecked(C0064) || isChecked(C0014)) {
+			return 0.0;			
+		}
+		
+		double lq558 = roundKey(Mod2002022Key.LQ558);  // Tipo de Gravamen
+		if (isChecked(C0008) && isChecked(C0084) && lq558 == 1.0) {
+			return 0.0;
+		}
+		
+		// La tributación mínima es aplicable en los siguientes casos:
+		// - Contribuyentes que marquen los supuestos 2 (INCN de al menos 20 millones de euros pero inferior a 60) o 3 (INCN de al menos 60 millones de euros) del apartado de importe neto de la cifra de negocios de la página 1 de la declaración (excepto supuestos excluidos).
+		// - Contribuyentes que marquen el caracter 00079 de la página 1 de la declaración (excepto supuestos excluidos).
+		int volope = getValue(Mod2002022Key.VOLOPE).intValue();
+		if (volope == 2 || volope == 3 || isChecked(C0079)) {
+
+			// CALCULO DE LA TRIBUTACION MINIMA
+
+			double lq1330 = roundKey(Mod2002022Key.LQ1330);
+			double lq562 = roundKey(Mod2002022Key.LQ562);
+			double lq1038 = roundKey(Mod2002022Key.LQ1038);
+			double lq559 = roundKey(Mod2002022Key.LQ559);
+
+			double m1 = lq1330 * 0.15;
+
+			if (isChecked(C0071))
+				m1 = lq1330 * 0.10;
+
+			if (isChecked(C0024) || isChecked(C0034))
+				m1 = lq1330 * 0.18;
+
+			if (isChecked(C0017) || isChecked(C0018) || isChecked(C0019))
+				m1 = (lq562 + lq1038) * 0.60;
+
+			if (isChecked(C0015) || isChecked(C0079)) {
+				if (isChecked(C0024))
+					m1 = (lq1330 - lq559) * 0.18;
+				else
+					m1 = (lq1330 - lq559) * 0.15;
+			}
+			
+			double tramo1 = computeSection(TRAMO_1); 
+			double tramo2 = computeSection(TRAMO_2); 
+			double tramo3 = computeSection(TRAMO_3); 
+			double tramo4 = computeSection(TRAMO_4); 
+			
+			double m2 = lq562 + lq1038 - tramo1; 
+			double m3 = m2 - tramo3;			
+			if (m3<m1)
+				tramo2 = 0;
+			else if (tramo2 > m3-m1) {
+				tramo2 = m3-m1;
+			}
+			double m4 = m3 - tramo2 - tramo4;
+			
+			// System.out.println("CUOTA MINIMA: M1="+m1+" M2="+m2+" M3="+m3+" M4="+m4+" tramo1="+tramo1+" tramo2="+tramo2+" tramo3="+tramo3+" tramo4="+tramo4);
+
+			if (m4 > m1)
+				return m1;
+			else
+				return m4;
+		}
+		else {
+			// La tributación mínima no es aplicable
+			return 0.0;
+		}		
+	
+	}
+	
+	private double computeSection(Mod2002022Key[] section) {
+		double result = 0;
+		
+		for (Mod2002022Key key : section) {
+			result = result + roundKey(key);
+		}
+		
+		return result;
+	}
+	
+	// TRAMO 1 DE DEDUCCIONES Y BONIFICACIONES
+	private static final Mod2002022Key[] TRAMO_1 = new Mod2002022Key[] {
+			Mod2002022Key.BN567,
+			Mod2002022Key.BN568,
+			Mod2002022Key.BN563,
+			Mod2002022Key.BN566,
+			Mod2002022Key.BN576,
+			Mod2002022Key.BN569,
+			Mod2002022Key.BN581,
+			Mod2002022Key.BN1287,
+			Mod2002022Key.BN1290,
+			Mod2002022Key.BN1293,
+			Mod2002022Key.BN1296,
+			Mod2002022Key.BN575,
+			Mod2002022Key.BN577,
+			Mod2002022Key.BN847,
+			Mod2002022Key.BN638,
+			Mod2002022Key.BN283,
+			Mod2002022Key.BN894,
+			Mod2002022Key.BN703,
+			Mod2002022Key.BN286,
+			Mod2002022Key.BN187,
+			Mod2002022Key.BN826,
+			Mod2002022Key.BN026,
+			Mod2002022Key.BN002,
+			Mod2002022Key.BN715,
+			Mod2002022Key.BN029,
+			Mod2002022Key.BN737,
+			Mod2002022Key.BN718,
+			Mod2002022Key.BN120,
+			Mod2002022Key.BN723,
+			Mod2002022Key.BN125,
+			Mod2002022Key.BN741,
+			Mod2002022Key.BN1598,
+			Mod2002022Key.BN136,
+			Mod2002022Key.BN1831,
+			Mod2002022Key.BN1052,
+			Mod2002022Key.BN2199,
+			Mod2002022Key.BN1351,
+			Mod2002022Key.BN2322,
+			Mod2002022Key.BN1773,
+			Mod2002022Key.BN205,
+			Mod2002022Key.BN1836,
+			Mod2002022Key.BN438,
+			Mod2002022Key.BN128,
+			Mod2002022Key.BN2204,
+			Mod2002022Key.BN2327,
+			Mod2002022Key.BN212,
+			Mod2002022Key.BN493,
+			Mod2002022Key.BN165,
+			Mod2002022Key.BN169
+	};
+	
+	// TRAMO 2 DEDUCCIONES
+	private static final Mod2002022Key[] TRAMO_2 = new Mod2002022Key[] {			
+			Mod2002022Key.BN583,
+			Mod2002022Key.BN289,
+			Mod2002022Key.BN467,
+			Mod2002022Key.BN498,
+			Mod2002022Key.BN473,
+			Mod2002022Key.BN005,
+			Mod2002022Key.BN181,
+			Mod2002022Key.BN032,
+			Mod2002022Key.BN532,
+			Mod2002022Key.BN023,
+			Mod2002022Key.BN946,
+			Mod2002022Key.BN041,
+			Mod2002022Key.BN961,
+			Mod2002022Key.BN139,
+			Mod2002022Key.BN185,
+			Mod2002022Key.BN142,
+			Mod2002022Key.BN458,
+			Mod2002022Key.BN461,
+			Mod2002022Key.BN967,
+			Mod2002022Key.BN189,
+			Mod2002022Key.BN1067,
+			Mod2002022Key.BN1070,
+			Mod2002022Key.BN1064,
+			Mod2002022Key.BN804,
+			Mod2002022Key.BN810,
+			Mod2002022Key.BN591,
+			Mod2002022Key.BN2295,
+			Mod2002022Key.BN1056,
+			Mod2002022Key.BN1618,
+			Mod2002022Key.BN1621,
+			Mod2002022Key.BN2298,
+			Mod2002022Key.BN708,
+			Mod2002022Key.BN750,
+			Mod2002022Key.BN1851,
+			Mod2002022Key.BN1854,
+			Mod2002022Key.BN2500,
+			Mod2002022Key.BN1354,
+			Mod2002022Key.BN753,
+			Mod2002022Key.BN2222,
+			Mod2002022Key.BN2225,
+			Mod2002022Key.BN2092,
+			Mod2002022Key.BN1776,
+			Mod2002022Key.BN756,
+			Mod2002022Key.BN2357,
+			Mod2002022Key.BN2360,
+			Mod2002022Key.BN2095,
+			Mod2002022Key.BN1839,
+			Mod2002022Key.BN759,
+			Mod2002022Key.BN229,
+			Mod2002022Key.BN235,
+			Mod2002022Key.BN2098,
+			Mod2002022Key.BN2207,
+			Mod2002022Key.BN762,
+			Mod2002022Key.BN781,
+			Mod2002022Key.BN787,
+			Mod2002022Key.BN2146,
+			Mod2002022Key.BN2330,
+			Mod2002022Key.BN745,
+			Mod2002022Key.BN783,
+			Mod2002022Key.BN2450,
+			Mod2002022Key.BN1364,
+			Mod2002022Key.BN1367,
+			Mod2002022Key.BN796,
+			Mod2002022Key.BN793,
+			Mod2002022Key.BN799,
+			Mod2002022Key.BN698,
+			Mod2002022Key.BN888,
+			Mod2002022Key.BN808,
+			Mod2002022Key.BN2463,
+			Mod2002022Key.BN1076,
+			Mod2002022Key.BN2456,
+			Mod2002022Key.BN1370,
+			Mod2002022Key.BN1627,
+			Mod2002022Key.BN1639,
+			Mod2002022Key.BN1708,
+			Mod2002022Key.BN1908,
+			Mod2002022Key.BN1911,
+			Mod2002022Key.BN1935,
+			Mod2002022Key.BN2363,
+			Mod2002022Key.BN2366,
+			Mod2002022Key.BN2369,
+			Mod2002022Key.BN2372,
+			Mod2002022Key.BN2375,
+			Mod2002022Key.BN2378,
+			Mod2002022Key.BN255,
+			Mod2002022Key.BN260,
+			Mod2002022Key.BN263,
+			Mod2002022Key.BN269,
+			Mod2002022Key.BN273,
+			Mod2002022Key.BN292,
+			Mod2002022Key.BN295,
+			Mod2002022Key.BN298,
+			Mod2002022Key.BN316,
+			Mod2002022Key.BN349,
+			Mod2002022Key.BN353,
+			Mod2002022Key.BN367,
+			Mod2002022Key.BN401,
+			Mod2002022Key.BN407,
+			Mod2002022Key.BN423,
+			Mod2002022Key.BN428,
+			Mod2002022Key.BN431,
+			Mod2002022Key.BN434,
+			Mod2002022Key.BN440,
+			Mod2002022Key.BN453,
+			Mod2002022Key.BN456,
+			Mod2002022Key.BN469,
+			Mod2002022Key.BN479,
+			Mod2002022Key.BN502,
+			Mod2002022Key.BN511,
+			Mod2002022Key.BN523,
+			Mod2002022Key.BN542,
+			Mod2002022Key.BN801,
+			Mod2002022Key.BN816,
+			Mod2002022Key.BN2459,
+			Mod2002022Key.BN875,
+			Mod2002022Key.BN879,
+			Mod2002022Key.BN906,
+			Mod2002022Key.BN955,
+			Mod2002022Key.BN1087,
+			Mod2002022Key.BN1110,
+			Mod2002022Key.BN1144,
+			Mod2002022Key.BN1150,
+			Mod2002022Key.BN1153,
+			Mod2002022Key.BN1156,
+			Mod2002022Key.BN1180,
+			Mod2002022Key.BN1207,
+			Mod2002022Key.BN1218,
+			Mod2002022Key.BN1221,
+			Mod2002022Key.BN1229,
+			Mod2002022Key.BN1235,
+			Mod2002022Key.BN1238,
+			Mod2002022Key.BN1262,
+			Mod2002022Key.BN1265,
+			Mod2002022Key.BN1268,
+			Mod2002022Key.BN1273,
+			Mod2002022Key.BN1278,
+			Mod2002022Key.BN1282,
+			Mod2002022Key.BN1684,
+			Mod2002022Key.BN829,
+			Mod2002022Key.BN252,
+			Mod2002022Key.BN697,
+			Mod2002022Key.BN905,
+			Mod2002022Key.BN901,
+			Mod2002022Key.BN991,
+			Mod2002022Key.BN917,
+			Mod2002022Key.BN998,
+			Mod2002022Key.BN931,
+			Mod2002022Key.BN247,
+			Mod2002022Key.BN819,
+			Mod2002022Key.BN934,
+			Mod2002022Key.BN944,
+			Mod2002022Key.BN994,
+			Mod2002022Key.BN833,
+			Mod2002022Key.BN950,
+			Mod2002022Key.BN953,
+			Mod2002022Key.BN1435,
+			Mod2002022Key.BN836,
+			Mod2002022Key.BN2473,
+			Mod2002022Key.BN959,
+			Mod2002022Key.BN1719,
+			Mod2002022Key.BN839,
+			Mod2002022Key.BN965,
+			Mod2002022Key.BN971,
+			Mod2002022Key.BN1951,
+			Mod2002022Key.BN844,
+			Mod2002022Key.BN975,
+			Mod2002022Key.BN981,
+			Mod2002022Key.BN2228,
+			Mod2002022Key.BN869,
+			Mod2002022Key.BN984,
+			Mod2002022Key.BN1001,
+			Mod2002022Key.BN2381,
+			Mod2002022Key.BN873,
+			Mod2002022Key.BN1017,
+			Mod2002022Key.BN1035,
+			Mod2002022Key.BN876,
+			Mod2002022Key.BN892,
+			Mod2002022Key.BN1062,
+			Mod2002022Key.BN1074,
+			Mod2002022Key.BN1324,
+			Mod2002022Key.BN1327,
+			Mod2002022Key.BN1372,
+			Mod2002022Key.BN1375,
+			Mod2002022Key.BN1437,
+			Mod2002022Key.BN1440,
+			Mod2002022Key.BN1444,
+			Mod2002022Key.BN1723,
+			Mod2002022Key.BN1955,
+			Mod2002022Key.BN2232,
+			Mod2002022Key.BN2385,
+			Mod2002022Key.BN1084,
+			Mod2002022Key.BN1379,
+			Mod2002022Key.BN1446,
+			Mod2002022Key.BN1449,
+			Mod2002022Key.BN1453,
+			Mod2002022Key.BN1727,
+			Mod2002022Key.BN1959,
+			Mod2002022Key.BN2236,
+			Mod2002022Key.BN2389,
+			Mod2002022Key.BN2478,
+			Mod2002022Key.BN1383
+	};
+
+	// TRAMO 3 DE DEDUCCIONES 
+	private static final Mod2002022Key[] TRAMO_3 = new Mod2002022Key[] {			
+			Mod2002022Key.BN2082,
+			Mod2002022Key.BN2085,
+			Mod2002022Key.BN2089,
+			Mod2002022Key.BN1917,
+			Mod2002022Key.BN1920,
+			Mod2002022Key.BN1923,
+			Mod2002022Key.BN1926,
+			Mod2002022Key.BN1929,
+			Mod2002022Key.BN2191,
+			Mod2002022Key.BN881,
+			Mod2002022Key.BN867,
+			Mod2002022Key.BN940,
+			Mod2002022Key.BN192,
+			Mod2002022Key.BN614,
+			Mod2002022Key.BN257,
+			Mod2002022Key.BN855,
+			Mod2002022Key.BN038,
+			Mod2002022Key.BN858,
+			Mod2002022Key.BN045,
+			Mod2002022Key.BN861,
+			Mod2002022Key.BN529,
+			Mod2002022Key.BN864,
+			Mod2002022Key.BN145,
+			Mod2002022Key.BN884,
+			Mod2002022Key.BN148,
+			Mod2002022Key.BN789,
+			Mod2002022Key.BN241,
+			Mod2002022Key.BN1358,
+			Mod2002022Key.BN1059,
+			Mod2002022Key.BN1779,
+			Mod2002022Key.BN802,
+			Mod2002022Key.BN853,
+			Mod2002022Key.BN2336,
+			Mod2002022Key.BN1782,
+			Mod2002022Key.BN2120,
+			Mod2002022Key.BN2117,
+			Mod2002022Key.BN2339,
+			Mod2002022Key.BN2123,
+			Mod2002022Key.BN2126,
+			Mod2002022Key.BN2210,
+			Mod2002022Key.BN2342,
+			Mod2002022Key.BN2213,
+			Mod2002022Key.BN2216,
+			Mod2002022Key.BN2333,
+			Mod2002022Key.BN2345,
+			Mod2002022Key.BN2348,
+			Mod2002022Key.BN2351,
+			Mod2002022Key.BN238,
+			Mod2002022Key.BN245,
+			Mod2002022Key.BN218,
+			Mod2002022Key.BN221,
+			Mod2002022Key.BN712,
+			Mod2002022Key.BN1913,
+			Mod2002022Key.BN768,
+			Mod2002022Key.BN771,
+	};
+	
+	// TRAMO 4 DEDUCCIONES
+	private static final Mod2002022Key[] TRAMO_4 = new Mod2002022Key[] {			
+			Mod2002022Key.BN1932,
+			Mod2002022Key.BN2149,
+			Mod2002022Key.BN1939,
+			Mod2002022Key.BN2153,
+			Mod2002022Key.BN1943,
+			Mod2002022Key.BN2157,
+			Mod2002022Key.BN1947,
+			Mod2002022Key.BN2161,
+			Mod2002022Key.BN2110,
+			Mod2002022Key.BN2165,
+			Mod2002022Key.BN2129,
+			Mod2002022Key.BN2169,
+			Mod2002022Key.BN2133,
+			Mod2002022Key.BN2173,
+			Mod2002022Key.BN2137,
+			Mod2002022Key.BN1310,
+			Mod2002022Key.BN2141,
+			Mod2002022Key.BN1314,
+			Mod2002022Key.BN574,
+			Mod2002022Key.BN977,
+			Mod2002022Key.BN824,
+			Mod2002022Key.BN850,
+			Mod2002022Key.BN1125,
+			Mod2002022Key.BN1129,
+			Mod2002022Key.BN1428,
+			Mod2002022Key.BN1432,
+			Mod2002022Key.BN1712,
+			Mod2002022Key.BN1716,
+			Mod2002022Key.BN1970,
+			Mod2002022Key.BN1974,
+			Mod2002022Key.BN2247,
+			Mod2002022Key.BN2251,
+			Mod2002022Key.BN2393,
+			Mod2002022Key.BN2397,
+			Mod2002022Key.BN1092,
+			Mod2002022Key.BN1096,
+			Mod2002022Key.BN1387,
+			Mod2002022Key.BN1391	
+	};	
 			
 }

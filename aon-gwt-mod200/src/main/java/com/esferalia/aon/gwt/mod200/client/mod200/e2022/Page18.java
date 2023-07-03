@@ -8,20 +8,14 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Mod2002022Object.IMod200ChangeListener;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.UteBase;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -35,17 +29,9 @@ public class Page18 extends PageAbs {
 	private FlowPanel panelB6;
 	private FlowPanel panelB11; 
 
-	public Page18( Model200PageCallback callback ) {
-		super(callback);
-		
-		callback.getMod200Object().register( new IMod200ChangeListener() {
-			
-			@Override
-			public void mod200Changed(Mod2002022 mod200) {
-				paintB11Panel(); // La tabla del panel del apartado B11 lleva un dato calculado, por lo tanto es necesario repintarlo, si se recalcula el modelo por cualquier otra casilla
-			}
-		});
-		
+	public Page18( Model2002022PageCallback callback ) {
+		super(callback);		
+		callback.getMod200Object().register( mod200 -> paintB11Panel() ); // La tabla del panel del apartado B11 lleva un dato calculado, por lo tanto es necesario repintarlo, si se recalcula el modelo por cualquier otra casilla
 	}
 
 	@Override
@@ -55,10 +41,9 @@ public class Page18 extends PageAbs {
 	
 	@Override
 	protected boolean isAvailable() {
-		boolean av = super.isAvailable()
-  		  && (callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0013) 
-		   || callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0014));
-		return av;
+		return super.isAvailable()
+  		  && (callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0013) || 
+  			  callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0014));
 	}
 	
 	private void paint() {
@@ -203,12 +188,9 @@ public class Page18 extends PageAbs {
 			
 			CheckBox rep = new CheckBox();
 			rep.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).isRepresentative());
-			rep.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					callback.getMod200Object().getMod200().getUteParticipations().get(idx).setRepresentative(rep.getValue());
-					callback.markAsDirty();
-				}
+			rep.addClickHandler(event -> {
+				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setRepresentative(rep.getValue());
+				callback.markAsDirty();				
 			});
 			otherInputs.add(rep);
 			
@@ -232,19 +214,16 @@ public class Page18 extends PageAbs {
 			} else if (c != null) {				
 				provinceCountry.setSelectedIndex(Province.values().length + c.ordinal());
 			}	
-			provinceCountry.addChangeHandler(new ChangeHandler() {			
-				@Override
-				public void onChange(ChangeEvent event) {
-					int index = provinceCountry.getSelectedIndex();
-					if (index < Province.values().length) {
-						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setProvince(index);
-						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setCountry(null);
-					} else {				
-						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setProvince(0);
-						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setCountry(Country.safeIso2(Country.values()[index-Province.values().length]));
-					}
-					callback.markAsDirty();
+			provinceCountry.addChangeHandler(event -> {
+				int index = provinceCountry.getSelectedIndex();
+				if (index < Province.values().length) {
+					callback.getMod200Object().getMod200().getUteParticipations().get(idx).setProvince(index);
+					callback.getMod200Object().getMod200().getUteParticipations().get(idx).setCountry(null);
+				} else {				
+					callback.getMod200Object().getMod200().getUteParticipations().get(idx).setProvince(0);
+					callback.getMod200Object().getMod200().getUteParticipations().get(idx).setCountry(Country.safeIso2(Country.values()[index-Province.values().length]));
 				}
+				callback.markAsDirty();
 			});
 			otherInputs.add(provinceCountry);
 			
@@ -305,3 +284,4 @@ public class Page18 extends PageAbs {
 	}
 	
 }
+

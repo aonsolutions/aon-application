@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IProduct2;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -12,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
@@ -153,6 +156,18 @@ public class Product2Impl implements IProduct2{
 		// TODO Auto-generated method stub
 		ctx.getDslContext().transaction( configuration -> 
 		InvestAssetDAO.assignInvestAsset2Invoice(ctx, investAssetId, invoice));
+	}
+
+	@Override
+	public List<InvestAsset> getInvestAssetList(CloseableAONContext ctx, InvestAssetParams params) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		InvestAssetDAO.getInvestAssetList(ctx, params));
+	}
+
+	@Override
+	public InvestAsset getInvestAsset(CloseableAONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		InvestAssetDAO.getInvestAsset(ctx, id));
 	}
 
 }

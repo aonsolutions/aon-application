@@ -175,6 +175,7 @@ export class AonBookingItemAdd extends AonElement {
 
 		const params = {page:1, perPage:20};
 		let timeOut = null;
+		let firstTime = true;
 
 		const buildItems = (params) => {
 			this.ITEM_SELECT.loading(true);
@@ -185,16 +186,20 @@ export class AonBookingItemAdd extends AonElement {
 			)
 			.finally(()=> {
 				this.ITEM_SELECT.loading(false);
-				this.ITEM_SELECT.value = this.getSelectedRItem() && this.getSelectedRItem().item && this.getSelectedRItem().item.id ? this.getSelectedRItem().item.id : "";
-				this.ITEM_SELECT.closeOptions();
-				if (this.ITEM_SELECT.value) {
-					this.setItem(this.ITEM_SELECT.value);
+				if (firstTime) {
+					firstTime = false;
+					if (this.getSelectedRItem() && this.getSelectedRItem().item && this.getSelectedRItem().item.id) {
+						this.ITEM_SELECT.value = this.getSelectedRItem().item.id;
+						this.setItem(this.ITEM_SELECT.value);
+					}
+					this.ITEM_SELECT.closeOptions();
 				}
 			}
 			);
 		}
 
 		buildItems(params);
+
 		
 		this.ITEM_SELECT.addEventListener(EVENT.INPUT, async({target})=>{
 			clearTimeout(timeOut);
@@ -292,18 +297,18 @@ export class AonBookingItemAdd extends AonElement {
 	checkError(params, type, remove) {
 		if (type == "update") {
 			if (!params.item) {
-				this.showMessageError("El producto no puede quedar vacío");
+				this.showMessageError(MSG.PRODUCT_NOT_EMPTY);
 				return true;
 			} else if (!remove && !params.bookingStatus) {
-				this.showMessageError("El estado no puede quedar vacío");
+				this.showMessageError(MSG.STATUS_NOT_EMPTY);
 				return true;
 			}
 		} else {
 			if (!remove && !params.bookingStatus) {
-				this.showMessageError("El estado no puede quedar vacío");
+				this.showMessageError(MSG.PRODUCT_NOT_EMPTY);
 				return true;
 			} else if(!remove && (!this.getItems() || this.getItems().length === 0)) {
-				this.showMessageError("Es obligatorio seleccionar un producto");
+				this.showMessageError(MSG.PRODUCT_MUST_BE_SELECTED);
 				return true;
 			}
 		}

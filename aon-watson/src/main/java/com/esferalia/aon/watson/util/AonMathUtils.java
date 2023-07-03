@@ -290,4 +290,11 @@ public class AonMathUtils {
     public static double zeroIfPositive(double value) {
     	return isGreatherThanZero(value)?0.0:value;
     }
+
+	public static boolean isZero(BigDecimal value) {
+		return value != null && BigDecimal.ZERO.equals(value);
+	}
+	public static boolean isNotZero(BigDecimal value) {
+		return !isZero(value);
+	}
 }

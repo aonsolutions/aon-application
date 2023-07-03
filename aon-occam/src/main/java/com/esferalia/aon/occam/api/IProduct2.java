@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -10,6 +12,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
@@ -45,6 +48,8 @@ public interface IProduct2 {
 	public InvestAsset saveInvestAsset(AONContext ctx, InvestAsset investAsset);
 	public void deleteInvestAsset(AONContext ctx, Integer id);
 	public void assignInvestAsset2Invoice(AONContext ctx, Integer investAssetId, Invoice invoice);
+	public List<InvestAsset> getInvestAssetList(CloseableAONContext ctx, InvestAssetParams params);
+	public InvestAsset getInvestAsset(CloseableAONContext ctx, Integer id);
 
 	
 }

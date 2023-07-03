@@ -286,3 +286,14 @@ export const BookingItemStatus = {
 	NOT_CONTRACTABLE: 'No contratable',
 	INACTIVE: 'Inactivo'
 }
+
+export const AonStatus = {
+	BILLABLE: 'Facturable',
+	NOT_BILLABLE: 'No facturable'
+}
+
+export const RegistryStatus = {
+	ACTIVE: 'Activo',
+	INACTIVE: 'Inactivo',
+	BLOCKED: 'Bloqueado'
+}
