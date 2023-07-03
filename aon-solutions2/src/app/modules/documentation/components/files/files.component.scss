@@ -1,0 +1,17 @@
+@import "src/app/modules/documentation/components/documentation/documentation.component.scss";
+
+.nav-documentation {
+  align-items: center;
+}
+
+.item-folder {
+  margin-top: 1.5rem;
+  width: 80%;
+}
+
+.iconRight {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
+}

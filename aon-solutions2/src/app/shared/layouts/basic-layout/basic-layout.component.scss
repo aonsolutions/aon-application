@@ -1,0 +1,7 @@
+@import 'src/styles.scss';
+
+#basic-contet{
+  width: 100%;
+  // Se pasan los pixeles de la cabecera en PX no permite restar de otra manera
+  height: calc(100vh - 65.3px);
+}
