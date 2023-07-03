@@ -1,3 +1,5 @@
+@import 'src/styles.scss';
+
 app-card{
   cursor: pointer;
 }
@@ -19,7 +21,6 @@ app-card{
 }
 
 .head-card .text {
-  font-style: normal;
   font-weight: 700;
   font-size: 1.2rem;
   line-height: 1.8rem;

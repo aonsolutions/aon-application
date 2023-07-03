@@ -24,16 +24,33 @@ export class ChartDashboardComponent implements OnInit {
 
   items: string[] = ['Últimos 12 meses', 'Últimos 6 meses', 'Trimestral'];
 
-  constructor(
-    public reportingService: ReportingService) {
-    reportingService.getVentasGastos().then((response) => {
-      console.log(response);
+  constructor(public reportingService: ReportingService) {}
 
-      reportingService.getCobrosPagos().then((response) => {
-        console.log(response);
-      });
-    });
+  ngOnInit(): void {
+    this.loadData();
   }
 
-  ngOnInit(): void {}
+  loadData(): void {
+    this.reportingService.getVentasGastos().then((response) => {
+      console.log(response);
+
+
+      this.labels = response.label;
+      this.data = [response.ventas, response.gastos];
+      this.colors = ['', ''];
+      this.chartType = 'bar';
+
+
+      this.reportingService.getCobrosPagos().then((response) => {
+        console.log(response);
+
+
+        this.chartData = [response.cobros, response.pagos];
+      }).catch((error) => {
+        console.error(error);
+      });
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
 }

@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Message } from './../../../../core/models/class/message';
+import { MessageService } from './../../../../core/services/message.service';
 
-export interface Message{
-  type : number;
-  name : string;
-  subject : string;
-  date : string;
-  description : string;
-}
 @Component({
   selector: 'app-inbox',
   templateUrl: './inbox-dashboard.component.html',
@@ -18,14 +13,38 @@ export interface Message{
 })
 export class InboxDashboardComponent implements OnInit {
 
-  messages : Message[] = [
-    {name : "Nombre ", type : 1, subject : "Asunto", date:"dia,00:00", description:"Descripción del mensaje"},
-    {name : "Nombre ", type : 2,subject : "Asunto",date:"dia,00:00", description:"Descripción del mensaje"},
-    {name : "Nombre ", type : 3,subject : "Asunto",date:"dia,00:00", description:"Descripción del mensaje"},
-    {name : "Nombre ", type : 2,subject : "Asunto",date:"dia,00:00", description:"Descripción del mensaje"}
-  ]
-  constructor() { }
+  messages: Message[] = [];
+
+  totalMessages: number = 0;
+
+
+  constructor(private messageService: MessageService) {}
 
   ngOnInit(): void {
+    this.loadMessages();
+  }
+
+  private loadMessages(): void {
+    this.messageService.getMessageList().then((response: Message[]) => {
+      this.messages = response.map((message: Message) => {
+        message.Status = this.getStatusByType(message.Type);
+        return message;
+
+      });
+      this.totalMessages = this.messages.length;
+    });
+  }
+
+  private getStatusByType(type: string): string {
+    switch (type) {
+      case 'consulta':
+        return 'abierta';
+      case 'tarea':
+        return 'pendiente';
+      case 'notificacion':
+        return 'nueva';
+      default:
+        return '';
+    }
   }
 }
