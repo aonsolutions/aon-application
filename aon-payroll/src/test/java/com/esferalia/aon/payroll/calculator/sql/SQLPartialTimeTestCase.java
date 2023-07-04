@@ -905,8 +905,10 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 			for ( SalaryData data: salary.getSalaryDatas() ) {
 				System.out.println(data.getName() + " = " + data.getExpression() );
 			}
-			org.junit.Assert.assertEquals( 1750.00 / 2 / 30 *  get(endDate, DAY_OF_MONTH),  salary.getTotalPayment() , DELTA );
-			org.junit.Assert.assertEquals( 1750.00 / 2 / 30 *  get(endDate, DAY_OF_MONTH),  salary.getCommonBase() , DELTA );
+			int monthDays = get(endDate, DAY_OF_MONTH);
+			int itDays = monthDays - 15;
+			org.junit.Assert.assertEquals( 1750.00 / 2 / 30 * 15 +  1750.00 / 2 / monthDays * itDays ,  salary.getTotalPayment() , DELTA );
+			org.junit.Assert.assertEquals( 1750.00 / 2 / 30 * 15 + 1750.00 / 2 / monthDays * itDays ,  salary.getCommonBase() , DELTA );
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
 		}
