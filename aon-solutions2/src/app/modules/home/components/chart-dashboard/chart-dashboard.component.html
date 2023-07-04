@@ -15,7 +15,7 @@
     <div class="chart-header-filters">
       <div class="chart-header-filter-text"> {{ selected }} </div>
       <div class="chart-header-filter-icon" [matMenuTriggerFor]="menu">
-        <set-icon shape="more_vert" set-color [ngStyle]="{ color: 'black' }" size="21"></set-icon>
+        <app-icon shape="more_vert" class="black" size="21"></app-icon>
       </div>
       <mat-menu #menu="matMenu" xPosition="before">
         <button *ngFor="let item of items" mat-menu-item (click)="selected = item" class="menu-text">
@@ -39,7 +39,7 @@
 
   <div footer class="chart-footer">
     <div class="chart-footer-button">
-      <set-icon [attr.shape]="shape" set-color [ngStyle]="{ color: 'black' }" size="21"></set-icon>
+      <app-icon [shape]="shape" class="black" size="21"></app-icon>
     </div>
   </div>
 </app-card>

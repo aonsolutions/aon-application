@@ -28,10 +28,10 @@ export class ListDashboardComponent implements OnInit {
   private setIcon(): void {
     switch (this.type) {
       case 1:
-        this.icon = "message";
+        this.icon = "playlist_add_check";
         break;
       case 2:
-        this.icon = "playlist_add_check";
+        this.icon = "message";
         break;
       case 3:
         this.icon = "notifications";

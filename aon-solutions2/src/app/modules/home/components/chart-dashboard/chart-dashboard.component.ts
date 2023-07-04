@@ -34,7 +34,7 @@ export class ChartDashboardComponent implements OnInit {
     this.reportingService.getVentasGastos().then((response) => {
       console.log(response);
 
-
+      
       this.labels = response.label;
       this.data = [response.ventas, response.gastos];
       this.colors = ['', ''];
