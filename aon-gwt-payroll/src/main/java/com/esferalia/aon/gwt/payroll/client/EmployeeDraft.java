@@ -328,6 +328,12 @@ public abstract class EmployeeDraft extends Composite {
 		public void fireError(String title, String message) {
 			showError(title, message);
 		}
+
+		@Override
+		public void onUploadDni() {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 	

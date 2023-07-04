@@ -58,4 +58,7 @@ public class MyDniDataListener implements DniDataListener{
 	    public void onNombreMadreData(String nombreMadre) {
 	    	System.out.println("Nombre de madre: " +nombreMadre);
 	    }
+	    
+	   
+	   
 }

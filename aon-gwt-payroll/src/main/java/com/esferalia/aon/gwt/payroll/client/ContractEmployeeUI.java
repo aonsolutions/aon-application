@@ -345,6 +345,12 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		public void fireError(String title, String message) {
 			showError2(title, message);
 		}
+
+		@Override
+		public void onUploadDni() {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	// ------------------------------------------------- UiFields
