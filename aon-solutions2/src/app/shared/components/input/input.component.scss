@@ -43,11 +43,16 @@
   /*
     Shearch
   */
+    .search {
+      padding-top: 0.03rem;
+      width: 99.8% !important;
+    }
+
     .search mat-form-field .search-componet div{
       float: left;
     }
 
-    .search .search-componet-input{
+    .search-componet-input{
       width: calc(100% - 1.2rem);
     }
 
