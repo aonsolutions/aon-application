@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AonSDK, Optional } from 'libraries/AonSDK/AonSDK';
+import { AonSDK, Filter } from 'libraries/AonSDK/AonSDK';
 import { Folder } from '../models/class/folder';
 
 @Injectable({
@@ -11,9 +11,9 @@ export class FolderService {
 
   constructor(){}
 
-  getFolderList(optional?: Optional): Promise<Folder[]> {
+  getFolderList(filter?: Filter): Promise<Folder[]> {
     return new Promise((resolve, reject) => {
-      this.aonSDK.model('folder').getElementList('folder', optional)
+      this.aonSDK.model('folder').getElementList('folder', filter)
       .then(
         (response:any) => {
           resolve(new Folder().deserializeArray(response.result));

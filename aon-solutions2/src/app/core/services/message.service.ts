@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AonSDK, Optional } from 'libraries/AonSDK/AonSDK';
+import { AonSDK, Filter } from 'libraries/AonSDK/AonSDK';
 import { Message } from '../models/class/message';
 import { MessageChat } from '../models/class/message-chat';
 
@@ -11,11 +11,11 @@ export class MessageService {
 
   constructor() {}
 
-  getMessageList(optional?: Optional): Promise<Message[]> {
+  getMessageList(filter?: Filter): Promise<Message[]> {
     return new Promise((resolve, reject) => {
       this.aonSDK
         .model('message')
-        .getElementList('message', optional)
+        .getElementList('message', filter)
         .then((response: any) => {
           resolve(new Message().deserializeArray(response.result));
         })
@@ -25,11 +25,11 @@ export class MessageService {
     });
   }
 
-  getMessageCount(optional?: Optional): Promise<number> {
+  getMessageCount(filter?: Filter): Promise<number> {
     return new Promise((resolve, reject) => {
       this.aonSDK
         .model('message')
-        .getElementCount('message', optional)
+        .getElementCount('message', filter)
         .then((response: any) => {
           resolve(response.result);
         })
@@ -95,11 +95,11 @@ export class MessageService {
     });
   }
 
-  getMessageChatList(optional: Optional): Promise<MessageChat[]> {
+  getMessageChatList(filter: Filter): Promise<MessageChat[]> {
     return new Promise((resolve, reject) => {
       this.aonSDK
         .model('messagechat')
-        .getElementList('messagechat', optional)
+        .getElementList('messagechat', filter)
         .then((response: any) => {
           resolve(new MessageChat().deserializeArray(response.result));
         })

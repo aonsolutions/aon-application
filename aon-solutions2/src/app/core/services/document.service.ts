@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AonSDK, Optional } from 'libraries/AonSDK/AonSDK';
+import { AonSDK, Filter } from 'libraries/AonSDK/AonSDK';
 import { Document } from '../models/class/document';
 import { DocumentNote } from '../models/class/document-note';
 import { b64toBlob } from '../utilities/file';
@@ -12,11 +12,11 @@ export class DocumentService {
 
   constructor() {}
 
-  getDocumentList(optional?: Optional): Promise<Document[]> {
+  getDocumentList(filter?: Filter): Promise<Document[]> {
     return new Promise((resolve, reject) => {
       this.aonSDK
         .model('document')
-        .getElementList('document', optional)
+        .getElementList('document', filter)
         .then((response: any) => {
           resolve(new Document().deserializeArray(response.result));
         })
