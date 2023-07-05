@@ -6091,8 +6091,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public void fillContractExtension(String domainName, EmployeeInfo employeeData, ContractInfo contractData) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 
-			byte[] pdfBytes = JooqContractPDF.contractExtensionFill(connection, employeeData, contractData);
+			byte[] pdfBytes = JooqContractPDF.contractExtensionFill(connection, domainId, parentDomainId, employeeData, contractData);
 
 			JooqContractPDF.saveDraftContractExtension(domainName, domainId, contractData.getContractId(), pdfBytes);
 			

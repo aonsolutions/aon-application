@@ -10,9 +10,12 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvestAssetPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonInvestAssetPanel.AonInvestAssetPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.InvestAsset;
@@ -72,6 +75,7 @@ public class InvestAssetPanel extends ScrollPanel implements HasSelectionHandler
 	
 	private static enum COLS {
 		  NUM(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
+		, SEL(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
 		, DES(AON.MSG.description()					,"auto"  ,null)
 		, ALI(AON.MSG.activity()					,"220px" ,null)
 		, TYP(AON.MSG.type()						,"180px" ,null)
@@ -257,6 +261,10 @@ public class InvestAssetPanel extends ScrollPanel implements HasSelectionHandler
 		tab.setWidget(r, col, msg);
 		col++;
 		
+		Label sel = new Label("");
+		tab.setWidget(r, col, sel);
+		col++;
+		
 		tab.setWidget(r, col, new Label(investAsset.getDescription()));
 		col++;
 		
@@ -284,6 +292,9 @@ public class InvestAssetPanel extends ScrollPanel implements HasSelectionHandler
 
 	private void paintActiveRow(final int r, int col, InvestAsset investAsset) {
 		Label msg = new Label("");
+		Label sel = new Label("");
+		sel.setStyleName(AON.CSS.aonTabIcon());
+		sel.addStyleName(AON.CSS.aonIconRight());
 		TextBox descriptionBox = new TextBox();
 		ListBox activityBox = new ListBox();
 		ListBox typeBox = new ListBox();
@@ -357,6 +368,32 @@ public class InvestAssetPanel extends ScrollPanel implements HasSelectionHandler
 			}
 		};
 		
+		sel.addClickHandler(e -> {
+			final AonCustomDialog dialog = new AonCustomDialog();
+			dialog.setCaption(AON.MSG.investAssetPanel());
+			final AonInvestAssetPanel accountPanel = new AonInvestAssetPanel( params.getDomainName(), params.getDomain(), params.getUser(), investAsset.getId(), new AonInvestAssetPanelCallback() {
+				
+				@Override
+				public void onCancel() {
+					dialog.hide();
+				}
+				
+				@Override
+				public void onAccept() {
+					dialog.hide();
+					onSearch();
+				}
+			}) {
+
+				@Override
+				protected void onResize() {
+					dialog.showLoaded();
+				}};
+			
+			dialog.add( accountPanel );
+			dialog.showLoaded();
+		});
+		
 		descriptionBox.addValueChangeHandler(valueChangeHandlerString);
 		activityBox.addChangeHandler(changeHandler);
 		typeBox.addChangeHandler(changeHandler);
@@ -368,6 +405,9 @@ public class InvestAssetPanel extends ScrollPanel implements HasSelectionHandler
 		
 		msg.setStyleName(AON.CSS.aonTabIcon());
 		tab.setWidget(r, col, msg);
+		col++;
+		
+		tab.setWidget(r, col, sel);
 		col++;
 		
 		descriptionBox.setStyleName(AON.CSS.aonBorderNone());

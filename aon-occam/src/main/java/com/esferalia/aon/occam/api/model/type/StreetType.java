@@ -411,6 +411,12 @@ public enum StreetType {
 		}
 		
 	}
+	
+	public static List<StreetType> getSpanishTypes() {
+		return Arrays.stream(values())
+				.filter(st -> st != null && null != st.getLanguage() && st.getLanguage().equals(SPANISH))
+				.collect(Collectors.toList());
+	}
 
 	public static StreetType getForIneCode( String ineCode ) {
 		if (ineCode != null) {
