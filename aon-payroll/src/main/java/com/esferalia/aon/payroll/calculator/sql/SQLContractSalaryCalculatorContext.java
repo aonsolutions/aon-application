@@ -3900,6 +3900,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		double br = 0.00;
 
 		try {
+		    	boolean partial = !fullTime;
 			Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON.getSalaries(new AONContext(connection),
 					p -> p.getIsSalaryProperty().eq(true).and(p.getContractProperty().eq(contractId))
 							.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
@@ -3907,7 +3908,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			Pair<Double, Double> pair = new Pair<Double, Double>(0.00, 0.00);
 			salaries.forEach(s-> {
 				pair.fst += s.getCommonContingenciesBase();
-				pair.snd += s.getContextData(QUOTE_DAYS.getName(), summingDouble(Double::parseDouble));
+				
+				double monthDays = s.getContextData(MONTH_DAYS.getName(), summingDouble(Double::parseDouble));; 
+				double quoteDays = s.getContextData(QUOTE_DAYS.getName(), summingDouble(Double::parseDouble));
+				double naturalDays = quoteDays == monthDays ? AonDateUtils.getMax(s.getEndDate(), Calendar.DAY_OF_MONTH) : quoteDays;
+				
+				pair.snd += partial ? naturalDays: quoteDays ;
 			} )
 			;
 			br = pair.fst / pair.snd;
@@ -4007,8 +4013,23 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				};
 
 			}.calculate(ctx);
-			Object br =  salary.getCommonBase() / ctx.getExpressionContext().getVariable(QUOTE_DAYS, ctx.getStartDate(),
-					ctx.getEndDate(), Double.class);
+
+			boolean fullTime = true ;
+			try {
+				fullTime = isFullTime();
+			} catch ( Throwable t ) {
+			}
+			
+			double monthDays = AonDateUtils.getMax(date, Calendar.DAY_OF_MONTH);
+			try {
+			    monthDays = ctx.getExpressionContext().eval(MONTH_DAYS.getName(), date, date).stream().map( v -> (Double)v.getValue() ).findAny().get();
+			} catch ( Exception  e ) {
+			}
+			double quoteDays = ctx.getExpressionContext().getVariable(QUOTE_DAYS, ctx.getStartDate(),
+				ctx.getEndDate(), Double.class);
+			double naturalDays = quoteDays == monthDays ? AonDateUtils.getMax(date, Calendar.DAY_OF_MONTH) : quoteDays;
+
+			Object br =  salary.getCommonBase() / ( fullTime ? quoteDays : naturalDays);
 			
 			return br;
 		} catch (Throwable t) {
