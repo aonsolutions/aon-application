@@ -849,6 +849,7 @@ public class VATDAO  {
 			.where(INVOICE.DOMAIN.equal(mod.getDomain()))
 			.and(FINANCE_TRACKING.TRACKING_DATE.between( modYearFirstDay, periodFirstDay ))
 			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
+			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
 			.orderBy(INVOICE.TAX_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 			.fetch()
 			.stream()
