@@ -716,11 +716,14 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 	
 	private void checkRegistry(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
-		if(AonStringUtils.isBlank(invoice.getRegistryDocument()) && !invoice.isSimplified()) {
+		if(AonStringUtils.isBlank(invoice.getRegistryDocument()) 
+				&& !invoice.isSimplified()) {
 			throw new Exception("El Documento del cliente está vacio.");
 		}
 			
-		if(Country.ES.equals(invoice.getRegistryDocumentCountry()) && !AonDocumentUtil.isValid(invoice.getRegistryDocument())) {
+		if(Country.ES.equals(invoice.getRegistryDocumentCountry()) 
+				&& !AonDocumentUtil.isValid(invoice.getRegistryDocument())
+				&& !invoice.isSimplified()) {
 			throw new Exception("El Documento del cliente no es válido.");
 		}
 	}

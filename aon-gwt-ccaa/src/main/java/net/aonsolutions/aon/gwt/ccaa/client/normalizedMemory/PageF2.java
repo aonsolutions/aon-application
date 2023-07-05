@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageF2 extends PageAbs {
@@ -79,7 +78,10 @@ public class PageF2 extends PageAbs {
 	
 	@UiField TextBox ROAC; // ROAC
 	@UiField Label ROACLabel; // ROAC
-	
+	@UiField TextBox ROAC2; // ROAC
+	@UiField Label ROACDateLabel; // ROAC
+	@UiField DateBox ROACDate; // ROAC
+
 	public PageF2(Deposit2 deposit) {
 		super(deposit);
 		
@@ -127,6 +129,10 @@ public class PageF2 extends PageAbs {
 		
 		ROAC = new TextBox();
 		ROACLabel = new Label();
+		
+		ROAC2 = new TextBox();
+		ROACDateLabel = new Label();
+		ROACDate = new DateBox();		
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
@@ -199,10 +205,19 @@ public class PageF2 extends PageAbs {
 		if(getYear() > 2014) {
 			ROACLabel.setText("Codigo ROAC del Auditor firmante");
 			keyExe("8081320", ROAC, "text", true);
-		}
-		else {
+		} else {
 			ROAC.setVisible(false);
 			ROACLabel.setVisible(false);
+		}
+		
+		if(getYear() >= 2022) {
+			ROACDateLabel.setText("Fecha de emision del informe de Auditoria");
+			keyExe("8081330", ROAC2, "text", true);
+			keyExe("8081340", ROACDate, "date", true);
+		} else {
+			ROAC2.setVisible(false);
+			ROACDate.setVisible(false);
+			ROACDateLabel.setVisible(false);
 		}
 		
 		if(getYear() >= 2016) {
