@@ -63,7 +63,8 @@ public class InvestAssetDAO {
 				.where(INVEST_ASSET.ID.eq(id))
 				.fetchOne();
 		
-		return new InvestAssetFiller().apply(investAssetRecord);
+		InvestAsset investAsset = new InvestAssetFiller().apply(investAssetRecord);
+		return investAsset;
 	}
 	
 	public static List<InvestAsset> getInvestAssetList(CloseableAONContext ctx, InvestAssetParams params) {
@@ -144,6 +145,7 @@ public class InvestAssetDAO {
 				.set(INVEST_ASSET.END_DATE, AonDateUtils.toSql(investAsset.getEndDate()))
 				.set(INVEST_ASSET.VAT_PERCENT, investAsset.getVatPercent())
 				.set(INVEST_ASSET.RETENTION_PERCENT, investAsset.getRetentionPercent())
+				.set(INVEST_ASSET.PROPERTIES, investAsset.getProperties())
 				.returning(INVEST_ASSET.ID).fetchOne().getValue(INVEST_ASSET.ID);
 		ctx.log().debug("INSERT INVEST_ASSET id: " +id);	
 		return investAsset.setId(id);
@@ -160,6 +162,7 @@ public class InvestAssetDAO {
 				.set(INVEST_ASSET.END_DATE, AonDateUtils.toSql(investAsset.getEndDate()))
 				.set(INVEST_ASSET.VAT_PERCENT, investAsset.getVatPercent())
 				.set(INVEST_ASSET.RETENTION_PERCENT, investAsset.getRetentionPercent())
+				.set(INVEST_ASSET.PROPERTIES, investAsset.getProperties())
 				.where(INVEST_ASSET.ID.eq(investAsset.getId())).execute();
 		ctx.log().debug("UPDATE INVEST_ASSET id:" + investAsset.getId());
 		return investAsset;
@@ -206,7 +209,8 @@ public class InvestAssetDAO {
 				.setEndDate(r.getValue(INVEST_ASSET.END_DATE))
 				.setRetentionPercent(r.getValue(INVEST_ASSET.RETENTION_PERCENT))
 				.setVatPercent(r.getValue(INVEST_ASSET.VAT_PERCENT))
-				.setPercent(r.getValue(INVEST_ASSET.VAT_PERCENT));
+				.setPercent(r.getValue(INVEST_ASSET.VAT_PERCENT))
+				.setProperties(r.getValue(INVEST_ASSET.PROPERTIES));
 		}
 	}
 }

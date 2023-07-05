@@ -65,11 +65,15 @@ public class InvestAssetModule extends MainEntryPoint {
 				dialog.hide();
 				investAssetPanel.onSearch(options);
 			}
-		});
+		}) {
+
+			@Override
+			protected void onResize() {
+				dialog.showLoaded();
+			}};
 		
 		dialog.add( accountPanel );
-		dialog.center();
-		dialog.show();
+		dialog.showLoaded();
 	}
 	
 }
