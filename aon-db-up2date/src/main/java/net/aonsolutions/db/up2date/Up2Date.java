@@ -30,6 +30,7 @@ import net.aonsolutions.db.up2date.security.UdpateAonProfessional;
 import net.aonsolutions.db.up2date.security.UdpateAonSmb;
 import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIII;
 import net.aonsolutions.db.up2date.tgss.Trainning421ExcessQuote;
+import net.aonsolutions.db.up2date.tgss.TrainningBaseCgcMinUndo;
 import net.aonsolutions.db.up2date.tgss.TrainningBases2023Fix;
 
 public class Up2Date {
@@ -365,28 +366,26 @@ public class Up2Date {
 	    // PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
 	    // IndemnizacionTemporalUpdate.INDEMNIZACIONTEMPORALUPDATE,
             // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
-	    //	TrainningBases2023Fix.TRAINNINGBASES2023FIX,
-	    //	CGPJInsert.CGPJINSERT,
-	    //	Trainning421ExcessQuote.TRAINNING421EXCESSQUOTE,
-		HomeBases2023UpdateIII.HOMEBASES2023UPDATEIII,
+	    // TrainningBases2023Fix.TRAINNINGBASES2023FIX,
+	    // CGPJInsert.CGPJINSERT,
+	    // Trainning421ExcessQuote.TRAINNING421EXCESSQUOTE,
+	    // HomeBases2023UpdateIII.HOMEBASES2023UPDATEIII,
+		TrainningBaseCgcMinUndo.TRAINNINGBASECGCMINUNDO,
 
 		
-	    //DOMAIN
 	    // DomainAonStatus.DOMAIN_AON_STATUS,
 	    // DomainAonCustomer.DOMAIN_AON_CUSTOMER,
 
 	    // Important, not remove
+		AlterRitem.ALTER_RITEM,
+		AlterRsellerAddType.ALTER_RSELLER_ADD_TYPE,
+		ContractSepeIdUpdate.CONTRACTSEPEIDUPDATE
 	    // AgreementPurge.AGREEMENTPURGE,
 	    // SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
 	    // SagardoBusUpdate.SAGARDOBUS_UPDATE
-			
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
-			
-		//	UdpateAonSmb.UPDATE_AON_SMB,
-		//	UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
-		AlterRitem.ALTER_RITEM,
-		AlterRsellerAddType.ALTER_RSELLER_ADD_TYPE,
-    ContractSepeIdUpdate.CONTRACTSEPEIDUPDATE
+	    // UdpateAonSmb.UPDATE_AON_SMB,
+	    // UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
 	};
 
     // ------------------------------------------------------------------------
