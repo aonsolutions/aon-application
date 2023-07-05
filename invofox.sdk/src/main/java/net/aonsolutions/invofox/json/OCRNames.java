@@ -54,6 +54,7 @@ public final class OCRNames {
 	public static final String ENVIRONMENT = "environment";
 	public static final String ERROR = "error";
 	public static final String ERRORS = "errors";
+	public static final String EXPIRATION = "expiration";
 	public static final String EXPORTS = "exports";
 	// ---------------------------------------------------------------------------------------------	[F] 
 	public static final String FEES_AMOUNT = "feesAmount";
@@ -158,6 +159,7 @@ public final class OCRNames {
 	public static final String TAX_BASE_AMOUNT = "taxBaseAmount";
 	public static final String TEXT = "text";
 	public static final String TIMESTAMP = "timestamp";
+	public static final String TOKEN = "token";
 	public static final String TOTAL_AMOUNT = "totalAmount";
 	public static final String TOTAL_DUE_AMOUNT = "totalDueAmount";
 	public static final String TOTAL_DISCOUNT_AMOUNT = "totalDiscountAmount";

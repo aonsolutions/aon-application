@@ -33,6 +33,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	private void get(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
+			String token = OCRInvofox.getLoginToken().getLoginToken().get().getToken().orElse(null);
 			OCRDocumentsResponse response = OCRInvofox.getDocuments(
 					OCRDocumentsParams.get().withType(OCRType.invoice)
 					.withPublicState(OCRSeverity.pendingCorrection)
@@ -42,10 +43,12 @@ public class InvofoxServlet extends AonApiHttpServlet {
 
 			response.getDocuments().get().stream().forEach(r -> {
 				JSONObject json = new JSONObject();
+				json.put("id", r.getId().get());
 				json.put("reference", r.getData().get().getDocumentNumber().get().getValue().orElse(""));
 				json.put("name", r.getData().get().getIssuerName().get().getValue().orElse(""));
 				json.put("date", r.getData().get().getIssueDate().get().getValue().orElse(""));
 				json.put("total", r.getData().get().getTotalAmount().get().getValue().orElse(new BigDecimal(0)));
+				json.put("token", token);
 				array.put(json);
 			});			
 			

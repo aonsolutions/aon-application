@@ -19,6 +19,7 @@ import net.aonsolutions.invofox.model.OCRCompanyResponse;
 import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
 import net.aonsolutions.invofox.model.OCRError;
+import net.aonsolutions.invofox.model.OCRLoginTokenResponse;
 import net.aonsolutions.invofox.model.OCRSeverity;
 import net.aonsolutions.invofox.model.OCRType;
 
@@ -151,4 +152,14 @@ class InvofoxRESTTestCase {
 		assertNotEquals(0 , response.getDocuments().get().size());
 	}
 		
+	@Test
+	void getLoginnToken() {
+		OCRLoginTokenResponse response = OCRInvofox.getLoginToken();
+		
+		assertNotNull(response);
+		assertTrue(response.getHttpCode().isPresent());
+		assertEquals( 200, response.getHttpCode().get());
+		assertTrue(response.getLoginToken().isPresent());
+		assertTrue(response.getLoginToken().get().getToken().isPresent());
+	}
 }
