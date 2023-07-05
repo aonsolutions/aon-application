@@ -214,6 +214,14 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		Assert.assertEquals(1, getElementsById("unemployment").size());
 		Assert.assertEquals(1, getElementsById("job_training").size());
 
+		draft("FORMACION APRENDIZAJE, ALTERNANCIA (PARCIAL)");
+		calculate(Calendar.AUGUST, 2023);
+		assertValue("cgcBaseLabel", 1260.00);
+		assertValue("cgpBaseLabel", 1260.00);
+		assertText("common_contingency", 10.18);
+		assertText("unemployment", 19.53);
+		assertText("job_training", 0.25);
+		assertText("mei", 1.26);
 	}
 
 
