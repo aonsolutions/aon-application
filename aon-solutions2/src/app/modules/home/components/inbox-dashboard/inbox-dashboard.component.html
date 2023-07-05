@@ -13,16 +13,20 @@
   </div>
   <div body class="content-center">
     <app-list-dashboard
-      *ngFor="let item of messages"
-      [name]="item.name"
-      [type]="item.type"
-      [subject]="item.subject"
-      [date]="item.date"
-      [description]="item.description"
-    ></app-list-dashboard>
+    *ngFor="let item of messages"
+    [type]="item.Type === 'consulta' ? 1 : (item.Type === 'tarea' ? 2 : (item.Type === 'notificación' ? 3 : 0))"
+    [name]="item.Name"
+    [title]="item.Title"
+    [date]="item.Date | date:'EEE, HH:mm'"
+    [description]="item.Description"
+  ></app-list-dashboard>
+
   </div>
   <div footer class="messages-footer">
     <div class="see-all">Ver todos los mensajes</div>
-    <div class="circle"><span class="number-circle">14</span></div>
+    <div class="circle"><span class="number-circle"> {{ totalMessages }} </span></div>
   </div>
 </app-card>
+
+
+

@@ -1,3 +1,5 @@
+@import 'src/styles.scss';
+
 app-card{
   cursor: pointer;
 }
@@ -123,7 +125,7 @@ app-card{
     height: 100%;
     display: flex;
     align-items: center;
-    font-weight: 600;
+    font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -131,3 +133,6 @@ app-card{
     margin-left: auto;
 }
 
+.models-content-element-name {
+  white-space: pre-wrap;
+}

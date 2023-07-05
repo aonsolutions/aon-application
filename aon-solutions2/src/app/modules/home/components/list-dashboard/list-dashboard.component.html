@@ -1,33 +1,39 @@
 <mat-grid-list cols="24" rowHeight="3rem" gutterSize=".75rem" class="content-message">
   <mat-grid-tile colspan="1" rowspan="1" [ngSwitch]="type">
     <div class="type-icon" [ngSwitch]="type">
-      <set-icon class="icon" shape="message"  *ngSwitchCase="1"></set-icon>
-      <set-icon class="icon" shape="playlist_add_check" *ngSwitchCase="2"></set-icon>
-      <set-icon class="icon" shape="notifications" *ngSwitchCase="3"></set-icon>
+      <app-icon class="red" [shape]="'playlist_add_check'" *ngSwitchCase="1"></app-icon>
+      <app-icon class="red" [shape]="'message'" *ngSwitchCase="2"></app-icon>
+      <app-icon class="red" [shape]="'notifications'" *ngSwitchCase="3"></app-icon>
     </div>
   </mat-grid-tile>
   <mat-grid-tile colspan="3" rowspan="1">
-    <div class="text-message">{{name}}</div>
+    <div class="text-message">{{ name }}</div>
   </mat-grid-tile>
   <mat-grid-tile colspan="2" rowspan="1">
-    <div *ngIf="type==1" class="status-message">
-      <set-icon class="icon " shape="watch_later"></set-icon>
-      <div class="pending">Pendiente</div>
+    <div *ngIf="type === 1" class="status-message">
+      <!-- <app-icon class="red" shape="watch_later"></app-icon> -->
+      <div class="status">Pendiente</div>
+    </div>
+    <div *ngIf="type === 2" class="status-message">
+      <app-icon class="green" shape="reply_all"></app-icon>
+      <div class="status">Abierta</div>
+    </div>
+    <div *ngIf="type === 3" class="status-message">
+      <!-- <app-icon class="red" shape="notifications"></app-icon> -->
+      <div class="status">Nueva</div>
     </div>
   </mat-grid-tile>
   <mat-grid-tile colspan="3" rowspan="1">
-    <div class="subject-message">{{subject}}</div>
+    <div class="title-message">{{ title }}</div>
   </mat-grid-tile>
   <mat-grid-tile colspan="12" rowspan="1">
-    <div class= "description-message">
-      {{description}}
+    <div class="description-message">
+      {{ description }}
     </div>
   </mat-grid-tile>
   <mat-grid-tile colspan="3" rowspan="1">
     <div class="date-message">
-      {{date}}
+      {{ date }}
     </div>
   </mat-grid-tile>
 </mat-grid-list>
-
-
