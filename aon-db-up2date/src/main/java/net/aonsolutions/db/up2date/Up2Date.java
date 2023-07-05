@@ -23,10 +23,7 @@ import net.aonsolutions.db.up2date.fiscal.AlterInvestAsset;
 import net.aonsolutions.db.up2date.management.AlterRitem;
 import net.aonsolutions.db.up2date.management.AlterRsellerAddType;
 import net.aonsolutions.db.up2date.payroll.ContractSepeIdUpdate;
-import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIII;
-import net.aonsolutions.db.up2date.tgss.Trainning421ExcessQuote;
 import net.aonsolutions.db.up2date.tgss.TrainningBaseCgcMinUndo;
-import net.aonsolutions.db.up2date.tgss.TrainningBases2023Fix;
 
 public class Up2Date {
 
@@ -374,7 +371,8 @@ public class Up2Date {
 	    // Important, not remove
 		AlterRitem.ALTER_RITEM,
 		AlterRsellerAddType.ALTER_RSELLER_ADD_TYPE,
-		ContractSepeIdUpdate.CONTRACTSEPEIDUPDATE
+		ContractSepeIdUpdate.CONTRACTSEPEIDUPDATE,
+		AlterInvestAsset.ALTER_INVEST_ASSET
 	    // AgreementPurge.AGREEMENTPURGE,
 	    // SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
 	    // SagardoBusUpdate.SAGARDOBUS_UPDATE
@@ -384,10 +382,6 @@ public class Up2Date {
 			
 		//	UdpateAonSmb.UPDATE_AON_SMB,
 		//	UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
-		AlterRitem.ALTER_RITEM,
-		AlterRsellerAddType.ALTER_RSELLER_ADD_TYPE,
-		ContractSepeIdUpdate.CONTRACTSEPEIDUPDATE,
-		AlterInvestAsset.ALTER_INVEST_ASSET
 	};
 
     // ------------------------------------------------------------------------
