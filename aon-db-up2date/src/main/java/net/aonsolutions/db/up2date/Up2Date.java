@@ -19,15 +19,10 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.cgpj.CGPJInsert;
+import net.aonsolutions.db.up2date.fiscal.AlterInvestAsset;
 import net.aonsolutions.db.up2date.management.AlterRitem;
 import net.aonsolutions.db.up2date.management.AlterRsellerAddType;
 import net.aonsolutions.db.up2date.payroll.ContractSepeIdUpdate;
-import net.aonsolutions.db.up2date.payroll.IndemnizacionTemporalUpdate;
-import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthInsert;
-import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthIrpfFix;
-import net.aonsolutions.db.up2date.security.UdpateAonProfessional;
-import net.aonsolutions.db.up2date.security.UdpateAonSmb;
 import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIII;
 import net.aonsolutions.db.up2date.tgss.Trainning421ExcessQuote;
 import net.aonsolutions.db.up2date.tgss.TrainningBaseCgcMinUndo;
@@ -386,6 +381,13 @@ public class Up2Date {
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
 	    // UdpateAonSmb.UPDATE_AON_SMB,
 	    // UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
+			
+		//	UdpateAonSmb.UPDATE_AON_SMB,
+		//	UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
+		AlterRitem.ALTER_RITEM,
+		AlterRsellerAddType.ALTER_RSELLER_ADD_TYPE,
+		ContractSepeIdUpdate.CONTRACTSEPEIDUPDATE,
+		AlterInvestAsset.ALTER_INVEST_ASSET
 	};
 
     // ------------------------------------------------------------------------

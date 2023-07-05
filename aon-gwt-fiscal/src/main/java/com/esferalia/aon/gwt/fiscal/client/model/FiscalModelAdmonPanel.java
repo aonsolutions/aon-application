@@ -460,7 +460,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 				Upload upload = new Upload() {
 					
 					@Override
-					protected void onUpload(String data) {
+					protected void onUpload(String data, String type) {
 						uploadingPDFData = true;
 						
 						// Grabar el fichero en data_response - data_attach

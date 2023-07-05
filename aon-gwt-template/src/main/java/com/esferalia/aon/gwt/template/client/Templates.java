@@ -248,7 +248,7 @@ public class Templates extends Composite implements EntryPoint {
 		Upload upload = new Upload() {
 			
 			@Override
-			protected void onUpload(String data) {
+			protected void onUpload(String data, String type) {
 				startAonProgressBar();
 				if(ImportType.FEE.equals(type)) {
 					importFee(data);

@@ -2118,7 +2118,7 @@ public class CustomerFee extends MainEntryPoint {
 			Upload upload = new Upload() {
 				
 				@Override
-				protected void onUpload(String data) {
+				protected void onUpload(String data, String type) {
 					pbd = new AonProgressBarDialog("Procesando Excel...") {};
 					pbd.addStyleName("gwt-PopupPanel-template");
 					pbd.setGlassEnabled(true);

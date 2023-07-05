@@ -27,7 +27,7 @@ export class AonItemAdd extends AonElement {
 
 	setItems(items) {
 		this._items = [];
-		items.forEach(item => this.addItem(item));
+		items.forEach(item => this.addSeller(item));
 	}
 
 	getItems() {
@@ -83,7 +83,7 @@ export class AonItemAdd extends AonElement {
 		return this._selectedRItem;
 	}
 
-	addItem(item) {
+	addSeller(item) {
 		let items = this.getItems();
 		const isSome = items.some(({id}) => id == item.id);
 

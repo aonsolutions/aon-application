@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -122,6 +123,14 @@ public interface IRegistry {
 	
 	// ------------------- SELLER
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter);
+	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter, int offset, int limit);
+	
+	// ------------------- RSELLER
+	public RegistrySeller getRegistrySeller(AONContext ctx, RegistrySellerFilter filter);
+	public Stream<RegistrySeller> getRegistrySellerStream(AONContext ctx, RegistrySellerFilter filter);
+	public Stream<RegistrySeller> getRegistrySellerStream(AONContext ctx, RegistrySellerFilter filter, int offset, int limit);
+	public RegistrySeller saveRegistrySeller(AONContext ctx, RegistrySeller registrySeller);
+	public int deleteRegistrySeller(AONContext ctx, RegistrySellerFilter filter);
 	
 	// ------------------- CARRIER
 	public Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter);

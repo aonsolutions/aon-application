@@ -277,6 +277,17 @@ export const getInvofox = (url, data) => {
   });
 };
 
+export const postInvofox = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestInvofox("POST", url, data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
 export const getPro = (url, data) => {
   return new Promise((resolve, reject) => {
     requestPro("GET", url, data, (result, error) => {
