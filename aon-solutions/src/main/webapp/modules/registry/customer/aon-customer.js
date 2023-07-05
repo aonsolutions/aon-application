@@ -13,6 +13,7 @@ import { getDomainCompanies, saveCompany } from '../../../services/companyServic
 import { AonProjectList } from '../../project/aon-project-list.js';
 import { AonBookingItemList } from '../target/item/aon-booking-item-list.js';
 import { AonItemList } from '../target/item/aon-item-list.js';
+import { AonSellerList } from '../seller/aon-seller-list.js';
 
 export class AonCustomer extends AonReg {
 
@@ -34,6 +35,7 @@ export class AonCustomer extends AonReg {
 			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional()},
 			{ title: "Expedientes", fn: () => this.buildExpedienteData()},
 			{ title: MSG.BOOKING, fn: () => this.buildBookingData()},
+			{ title: MSG.COMMERCIAL, fn: () => this.buildSellerData()},
 		];
 
 
@@ -267,19 +269,35 @@ export class AonCustomer extends AonReg {
 		}
 	}
 
-		//BOOKING PRODUCTS
-		buildBookingData() {
+	//BOOKING PRODUCTS
+	buildBookingData() {
+		let main = this.getElement(this.DIV);
+		this.clearElement(main);
+
+		let registryId = this.registry.getId();
+		
+		if(registryId){
+			let aonItemList = new AonBookingItemList();
+			aonItemList.style.width = "100%";
+			aonItemList.registry = this.registry;
+			aonItemList.filter = { page: 1, perPage: 200, registry:registryId, type: "BOOKING"};
+			main.appendChild(aonItemList);
+		}
+	}
+
+		//SELLERS
+		buildSellerData() {
 			let main = this.getElement(this.DIV);
 			this.clearElement(main);
 	
 			let registryId = this.registry.getId();
 			
 			if(registryId){
-				let aonItemList = new AonBookingItemList();
-				aonItemList.style.width = "100%";
-				aonItemList.registry = this.registry;
-				aonItemList.filter = { page: 1, perPage: 200, registry:registryId, type: "BOOKING"};
-				main.appendChild(aonItemList);
+				let aonSellerList = new AonSellerList();
+				aonSellerList.style.width = "100%";
+				aonSellerList.registry = this.registry;
+				aonSellerList.filter = { page: 1, perPage: 200, registry:registryId};
+				main.appendChild(aonSellerList);
 			}
 		}
 
