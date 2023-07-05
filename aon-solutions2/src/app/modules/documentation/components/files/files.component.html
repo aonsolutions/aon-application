@@ -73,17 +73,24 @@
     <!-- Listado ficheros -->
     <mat-grid-list class="list-folders mt" [cols]="24" [rowHeight]="'8rem'">
       <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
-      <mat-grid-tile class="" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
-        <div class="card-file" *ngFor="let cardFile of documentsList" (click)="detail ? detail = false : detail = true">
+      <mat-grid-tile class="" [gridCols]="{xs:22,sm:22,md:22,lg:20,xl:22}">
+        <div class="card-file" *ngFor="let cardFile of documentsList" >
           <app-card
             [headerHeight]="'35px'"
             [padding]="'0.2rem 0.5rem'"
+            (click)="detail ? detail = false : detail = true"
           >
             <div header class="card-file-header">
               <input type="checkbox">
-              <div class="iconRight">
+              <div class="iconRight" [matMenuTriggerFor]="menu">
                 <set-icon shape="more_vert" set-color [ngStyle]="{ color: 'black' }" size="21"></set-icon>
               </div>
+              <mat-menu #menu="matMenu" xPosition="before">
+                <button *ngFor="let item of fileOptions" mat-menu-item (click)="item" class="menuText">
+                  <app-icon shape="{{ item.shape }}"></app-icon>
+                  {{ item.text }}
+                </button>
+              </mat-menu>
             </div>
             <div body class="card-file-body">
               <app-icon

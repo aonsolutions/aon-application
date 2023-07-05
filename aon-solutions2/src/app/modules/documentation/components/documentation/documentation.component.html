@@ -14,10 +14,10 @@
     <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
     <mat-grid-tile class="" [gridCols]="{xs:8,sm:8,md:8,lg:8,xl:8}">
       <app-input
-        [appearance]="'outline'"
-        [appearanceDetail]="''"
-        [class]="'search allSize'"
-        [type]="'search'"
+      [appearance]="'outline'"
+      [appearanceDetail]="''"
+      [class]="'search allSize'"
+      [type]="'search'"
       ></app-input>
 
     </mat-grid-tile>
@@ -31,14 +31,20 @@
   </mat-grid-list>
 
   <!-- Listado carpetas -->
-  <mat-grid-list class="list-folders" [cols]="24" [rowHeight]="'4.6rem'">
+  <mat-grid-list class="" cols="24" [rowHeight]="'1:3'" >
     <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
-    <mat-grid-tile class="container-folder left-content" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
-      <app-button class="icon-background-pink bold folder-item" [width]="'width'" *ngFor="let folder of documentationListFolders" routerLink="{{ folder.Path.split('/')[1] }}">
-        <app-icon [shape]="'folder_open'"></app-icon>
-        {{ folder.Name }}
-        <app-icon [shape]="'arrow_forward_ios'"></app-icon>
-      </app-button>
+    <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" class="">
+
+      <mat-grid-list cols="24" class="grid-list-folders left-content" [rowHeight]="'4.2rem'" [gutterSize]="'1rem'">
+        <mat-grid-tile [gridCols]="{xs:24,sm:12,md:10,lg:6,xl:4}" *ngFor="let folder of documentationListFolders">
+          <app-button class="icon-background-pink bold left" routerLink="{{ folder.Path.split('/')[1] }}">
+            <app-icon [shape]="'folder_open'"></app-icon>
+            {{ folder.Name }}
+            <app-icon [shape]="'arrow_forward_ios'" class="icon-right"></app-icon>
+          </app-button>
+        </mat-grid-tile>
+      </mat-grid-list>
     </mat-grid-tile>
   </mat-grid-list>
+
 </app-content>
