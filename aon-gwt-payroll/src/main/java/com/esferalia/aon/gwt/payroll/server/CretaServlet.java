@@ -21,7 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,13 +39,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -86,7 +78,6 @@ import com.esferalia.aon.occam.api.model.payroll.Employee.ExpressionData;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Pair;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.ConstantDatoBasesCallback;
@@ -106,6 +97,13 @@ import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import net.aonsolutions.core.tgss.creta.jaxb.Dato;
 import net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.Fecha;
@@ -838,7 +836,7 @@ public class CretaServlet extends HttpServlet
 	}
 	
 	
-	private static Map<String, List<Employee>> getEmployees(AONContext ctx, Date date, String ccc, String [] nafs) {
+	private static Map<String, List<Employee>> getEmployees(AONContext ctx, Date date, String ccc, String ...nafs) {
 		try {
 			String login = ctx.getUser();
 			Integer domainId = ctx.getDomainId();
@@ -846,18 +844,17 @@ public class CretaServlet extends HttpServlet
 			
 			java.sql.Date startDate = new java.sql.Date(AonDateUtils.getFirstDayOfMonth(date).getTime());
 			java.sql.Date endDate = new java.sql.Date(AonDateUtils.getLastDayOfMonth(date).getTime());
-			
 			String cccN = AonStringUtils.substring(ccc, 4);
-			
 			return 
 			PAYROLL.getEmployees(
 			domainName, 
 			domainId, 
 			login, 
 			p -> p.getCCCProperty().eq(cccN)
-			.and(p.getNafProperty().in(nafs))
 			.and(p.getStartDateProperty().le(endDate)
 			.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(startDate))))
+			.and((nafs != null && nafs.length > 0 ) ?  p.getNafProperty().in(nafs) : p.getNafProperty().isNotNull()) // Non Freak way ( KISS ) 
+			//.and(Arrays.stream(nafs).map(naf -> p.getNafProperty().eq(naf)).reduce(Filter::or).orElse(p.getNafProperty().isNotNull())) 
 			).collect(Collectors.groupingBy(Employee::getNaf))
 			;
 		} catch ( Exception e) {
