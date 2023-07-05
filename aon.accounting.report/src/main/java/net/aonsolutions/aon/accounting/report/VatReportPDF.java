@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -28,13 +29,27 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class VatReportPDF {
+public class VatReportPDF implements IAccountReportPDF {
 
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00;(#,##0.00)");
 	private static final Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 7);
 	private static final Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD);
 	
 	private final DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+	
+	@Override
+	public String getDefaultTitle() {
+		return "Listado de IVA";
+	}
+
+	@Override
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {
+		try {
+			printReport(outputStream, params);
+		} catch (DocumentException e) {
+			throw new AonCoreException(e);
+		}		
+	}
 
 	public void printReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
 		
@@ -266,4 +281,5 @@ public class VatReportPDF {
 		}
 
 	}
+
 }

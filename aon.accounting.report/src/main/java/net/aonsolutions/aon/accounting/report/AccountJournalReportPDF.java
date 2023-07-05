@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.itextpdf.text.BaseColor;
@@ -32,12 +34,35 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class AccountJournalReportPDF {
+public class AccountJournalReportPDF implements IAccountReportPDF {
 
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00;(#,##0.00)");
 	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8);
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
+	
+	@Override
+	public String getDefaultTitle() {
+		return "Listado diario de movimientos";
+	}
+	
+	@Override
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {
+		AccountEntryParams aeParams = new AccountEntryParams()
+				.setDomain(params.getDomain())
+				.setDomainName(params.getDomainName())
+				.setUser(params.getUser())
+				.setFromDate(params.getFromDate())
+				.setToDate(params.getToDate())
+				.setActivity(params.getActivity())
+				.setTitle(params.getTitle())
+				.setPageOffset(params.getPageOffset());
+		try {
+			printBalanceReport(outputStream, aeParams);
+		} catch (DocumentException e) {
+			throw new AonCoreException(e);
+		}
+	}
 
 	public void printBalanceReport(OutputStream outputStream, AccountEntryParams params) throws DocumentException {
 		
@@ -132,7 +157,9 @@ public class AccountJournalReportPDF {
 		stream.close();
 	    
 		document.add(table);
+
 		document.close();
+
 	}
 
 	private void concat(StringBuffer buf, String string) {

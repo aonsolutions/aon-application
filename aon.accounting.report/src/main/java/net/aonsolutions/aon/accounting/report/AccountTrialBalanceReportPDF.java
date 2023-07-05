@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.itextpdf.text.Chunk;
@@ -27,12 +28,26 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class AccountTrialBalanceReportPDF {
+public class AccountTrialBalanceReportPDF implements IAccountReportPDF {
 
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00"); //;(#,##0.00)
 	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL);
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
+	
+	@Override
+	public String getDefaultTitle() {
+		return "Balance de sumas y saldos";
+	}
+
+	@Override
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {
+		try {
+			trialBalanceReportReport(outputStream, params);
+		} catch (DocumentException e) {
+			throw new AonCoreException(e);
+		}
+	}
 
 	public void trialBalanceReportReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
 		
@@ -262,7 +277,9 @@ public class AccountTrialBalanceReportPDF {
 			totalAction.accept(report.getTotalBalance());
 		}
 		document.add(table);
+
 		document.close();
+
 	}
 
 	private float getDescriptionColumnWidth(int columns) {
@@ -425,5 +442,6 @@ public class AccountTrialBalanceReportPDF {
 			table.addCell(apcCell);
 		}
 	}
+
 	
 }
