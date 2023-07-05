@@ -297,3 +297,13 @@ export const RegistryStatus = {
 	INACTIVE: 'Inactivo',
 	BLOCKED: 'Bloqueado'
 }
+
+export const RegistrySellerStatus = {
+	ACTIVE: 'Activo',
+    INACTIVE: 'Inactivo'
+}
+
+export const RegistrySellerType = {
+    COMERCIAL: 'Comercial',
+    SOPORTE: 'Soporte'
+}

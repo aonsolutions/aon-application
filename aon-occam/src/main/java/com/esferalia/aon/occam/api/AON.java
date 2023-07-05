@@ -240,6 +240,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -4971,6 +4972,16 @@ public class AON {
 		}
 	}
 	
+	public static Stream<Seller> getSellerStream(String domainName, Integer domainId, String login, SellerFilter filter, int offset, int limit){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getSellerStream(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	public static LinkedList<Seller> getSellerList(String domainName, Integer domainId, String login, SellerFilter filter){
 		return getSellerStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
@@ -4984,6 +4995,39 @@ public class AON {
 	public static Seller getSeller(String domainName, Integer domainId, String login, Integer registry){
 		return getSeller(domainName, domainId, login, f -> f.getRegistryProperty().eq(registry));
 	}
+	
+	// ------------------- RSELLER
+	public static RegistrySeller getRegistrySeller(Domain domain, String login, RegistrySellerFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
+			return getRegistry().getRegistrySeller(ctx, filter);
+		}
+	}
+	
+	public static Stream<RegistrySeller> getRegistrySellerStream(Domain domain, String login, RegistrySellerFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
+			return getRegistry().getRegistrySellerStream(ctx, filter);			
+		}
+	}
+
+	public static Stream<RegistrySeller> getRegistrySellerStream(Domain domain, String login, RegistrySellerFilter filter, int offset, int limit) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
+			return getRegistry().getRegistrySellerStream(ctx, filter, offset, limit);			
+		}
+	}
+	
+	public static RegistrySeller saveRegistrySeller(Domain domain, String login, RegistrySeller registrySeller) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
+			return getRegistry().saveRegistrySeller(ctx, registrySeller);
+		}
+	}
+	
+	public static int deleteRegistrySeller(Domain domain, String login, RegistrySellerFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
+			return getRegistry().deleteRegistrySeller(ctx, filter);
+		}
+	}
+	
+	
 	// ------------------------------------- CATEGORY
 	/**
 	 * @deprecated  Replaced by AON_SOLUTIONS.getCategory
