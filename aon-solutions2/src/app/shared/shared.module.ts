@@ -49,6 +49,7 @@ import { TagComponent } from './components/tag/tag.component';
 import { TopBarComponent } from './layouts/top-bar/top-bar.component';
 import { FileViewerComponent } from './components/file-viewer/file-viewer.component';
 import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
+import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack-bar.component';
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
     TagComponent,
     TopBarComponent,
     FileViewerComponent,
+    ErrorSnackBarComponent,
   ],
   imports: [
     ChartsModule,

@@ -15,13 +15,6 @@ export class LoginComponent implements OnInit {
   private sub : any = null
   username :string = "";
   password :string = "";
-  filter: Filter = {
-    filterFields:{
-      fields:{
-        name:12903
-      }
-    }
-  };
 
   constructor(public auth: AuthService, private router: Router, private activatedRoute: ActivatedRoute, public taxModelService: TaxModelService) { }
 
@@ -30,10 +23,6 @@ export class LoginComponent implements OnInit {
       if(params['token'] != undefined)
         this.auth.magicLogin(params['token'])
     });
-    
-    this.taxModelService.getTaxModelList(this.filter).then((response) => {
-      console.log(response);
-    })
   }
 
   loginUser() {

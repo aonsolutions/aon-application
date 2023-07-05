@@ -17,13 +17,13 @@ const ERRORS = {
     '0206': {description:'ERROR_MODEL_ELEMENT', result:'Error al intentar obtener el elemento'},
 }
 
-interface IResponse {
+export interface IResponse {
     code: string;
     description: string;
     result: any;
 }
 
-class Response implements IResponse {
+export class Response implements IResponse {
 
     code: string = '';
     description: string = '';
@@ -688,6 +688,7 @@ class ServiceTaxModel implements ICollection {
 
     getElementList(model: string, filter?: Filter) : Promise<Response> {
         return new Promise((resolve, reject) => {
+            // reject(new Response('0206'))
             try {
                 let data = copyObjectArray(taxModels);
                 if(filter?.filterFields?.fields) data = applyFilters(filter,data);

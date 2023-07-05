@@ -1,18 +1,30 @@
 import { ErrorHandler, Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
+import { ErrorService } from './error.service';
+import { CustomError } from '../models/class/custom-error';
+import { Response } from 'libraries/AonSDK/AonSDK';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GlobalErrorHandlerService implements ErrorHandler{
   
-  constructor() { }
+  constructor(public errorService: ErrorService) { }
 
   handleError(error: any): void {
-    if (error.promise && error.rejection) {
-      console.log(error.rejection);
-    }else {
+    if(environment.production == false){
       console.log(error);
     }
+    if (error.promise && error.rejection) {
+      this.launchError(error.rejection)
+    }else {
+      this.launchError(error)
+    }
+  }
+
+  launchError(errorList: any){
+    if(errorList instanceof CustomError || errorList instanceof Response)
+      this.errorService.displayError(errorList)
   }
   
 }
