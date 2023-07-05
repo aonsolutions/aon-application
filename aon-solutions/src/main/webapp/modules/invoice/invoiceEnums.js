@@ -175,13 +175,7 @@ export const TaxWithholdingType = [
 export const TaxIVAPercentage = [
   {value:21.0, name:'21%'},
   {value:10.0, name:'10%'},
-  {value:4.0, name:'4%'},
-  {value:0.0, name:'0%'}
-];
-
-export const TaxVATPercentage = [
-  {value:21.0, name:'21%'},
-  {value:10.0, name:'10%'},
+  {value:5.0, name:'5%'},
   {value:4.0, name:'4%'},
   {value:0.0, name:'0%'}
 ];
@@ -189,6 +183,7 @@ export const TaxVATPercentage = [
 export const TaxVatREPercentage = [
   {value:21.0, name:'21%+5,2%'},
   {value:10.0, name:'10%+1,4%'},
+  {value:4.0, name:'5%+0,5%'},
   {value:4.0, name:'4%+0,5%'},
   {value:0.0, name:'0%'}
 ];

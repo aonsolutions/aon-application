@@ -43,13 +43,6 @@
 		</dependency>
 		
 		<dependency>
-  		  	<groupId>com.vaadin.polymer</groupId>
-    		<artifactId>vaadin-gwt-polymer-elements</artifactId>
-    		<version>1.7.0.0</version>
-    	 	<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
  			<groupId>com.esferalia.aon</groupId>
  			<artifactId>aon.gwt.common</artifactId>
  			<version>${project.version}</version>
@@ -103,13 +96,6 @@
 			<version>${project.version}</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
-		</dependency>
-
-		<dependency>
-			<groupId>net.aonsolutions.polymer</groupId>
-			<artifactId>aon.gwt.polymer</artifactId>
-			<version>${project.version}</version> 
-			<scope>provided</scope>
 		</dependency>
 		
 	    <dependency>

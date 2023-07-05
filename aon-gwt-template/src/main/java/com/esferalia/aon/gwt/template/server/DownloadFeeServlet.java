@@ -279,7 +279,7 @@ public class DownloadFeeServlet extends HttpServlet {
 		
 		if(filterJSON.opt("segment") != null) {
 			Integer segment = filterJSON.optInt("segment");
-			if(segment != -1) filter = filter.and(f.getSegmentProperty().eq(segment));
+			if(segment > 0) filter = filter.and(f.getSegmentProperty().eq(segment));
 		}
 		
 		if(filterJSON.opt("startDate") != null) {

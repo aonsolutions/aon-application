@@ -316,7 +316,7 @@ public class Model2002022 extends DockLayoutPanel {
 				Upload upload = new Upload() {
 					
 					@Override
-					protected void onUpload(String data) {
+					protected void onUpload(String data, String type) {
 						mod200Object.fillMod2002022AccountingData(data, new AsyncCallback<Mod2002022>() {
 							@Override public void onSuccess(Mod2002022 result) {	
 								Model2002022.this.markAsDirty();
