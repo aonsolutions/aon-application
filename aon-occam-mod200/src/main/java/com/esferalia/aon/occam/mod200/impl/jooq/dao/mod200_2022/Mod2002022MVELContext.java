@@ -722,7 +722,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		double lq554 = roundKey(LQ554);
 		double lq558 = roundKey(LQ558);
 		if (isChecked(C0017) || isChecked(C0018)) {
-			if (isChecked(C0071)) {
+			if (isChecked(C0071) || isChecked(C0083)) {
 				return round(lq552*15/100);
 			}
 			if (isChecked(C0057) && !isChecked(C0063)) {
@@ -739,7 +739,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100));
 			}
 		} else if (isChecked(C0019) ) {
-			if (isChecked(C0071)) {
+			if (isChecked(C0071) || isChecked(C0083)) {
 				return round(lq552*15/100);
 			}
 			if (isChecked(C0030) || isChecked(C0047)) {
@@ -1010,12 +1010,12 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 	public double computeBN619() throws AonCoreException {
 		
 		// Estarán excluidos de la tributación mínima los contribuyentes que hayan marcado alguno de los 
-		// caracteres 00001, 00003, 00004, 00012, 00047, 00048 y 00064. También estarán excluidos los 
+		// caracteres 00001, 00003, 00004, 00009, 00010, 00012, 00047, 00048 y 00064. También estarán excluidos los 
 		// contribuyentes que marquen el carácter 00008 junto con el 00084 que tributen al tipo de gravamen 
 		// del 1% y los contribuyentes que hayan marcado la clave 00014 de caracteres (agrupaciones europeas de interés económico).		
 		
-		if (isChecked(C0001) || isChecked(C0003) || isChecked(C0004) || isChecked(C0012) ||
-			isChecked(C0047) || isChecked(C0048) || isChecked(C0064) || isChecked(C0014)) {
+		if (isChecked(C0001) || isChecked(C0003) || isChecked(C0004) || isChecked(C0009) || isChecked(C0010) || 
+			isChecked(C0012) || isChecked(C0047) || isChecked(C0048) || isChecked(C0064) || isChecked(C0014)) {
 			return 0.0;			
 		}
 		

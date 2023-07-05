@@ -1111,7 +1111,6 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 	}
 
-	@Ignore("Comming soon")
 	@Test
 	public void testBRPartialTimeII() throws ExpressionException, SQLException,
 			SalaryException {
@@ -1126,7 +1125,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 					{
 						put(MONTH_DAYS.getName(), format("%f", 30.00));
 						put(ContextVariable.TC2.getName(), format("\"%s\"",
-								ContractCode.C501.getValue()));
+						ContractCode.C501.getValue()));
 					}
 				}, new String[] { 
 						"3000.00 * DIAS_TRABAJADOS / DIAS_MES" 
@@ -1140,52 +1139,132 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				null, 
 				new HashMap<String, String>() {
 					{
-						put(MONDAY_HOURS.getName(), format("%f", 3.72));
-						put(TUESDAY_HOURS.getName(), format("%f", 3.72));
-						put(WEDNESDAY_HOURS.getName(), format("%f", 3.72));
-						put(THURSDAY_HOURS.getName(), format("%f", 3.71));
-						put(FRIDAY_HOURS.getName(), format("%f", 3.71));
-						put(SATURDAY_HOURS.getName(), format("%f", 3.71));
-						put(SUNDAY_HOURS.getName(), format("%f", 3.71));
+						put(MONDAY_HOURS.getName(), format("%f", 4.00));
+						put(TUESDAY_HOURS.getName(), format("%f", 4.00));
+						put(WEDNESDAY_HOURS.getName(), format("%f", 4.00));
+						put(THURSDAY_HOURS.getName(), format("%f", 4.00));
+						put(FRIDAY_HOURS.getName(), format("%f", 4.00));
+						put(SATURDAY_HOURS.getName(), format("%f", 0.00));
+						put(SUNDAY_HOURS.getName(), format("%f", 0.00));
 					}
 				}
 				);
 		
-		Date startIt = add(add(startDate, MONTH, 1), DAY_OF_MONTH, 10);
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, null, null);
-
 		//@formatter:off
 		
 		Date endDate = getLastDayOfMonth(startDate);
+		
+		// JANUARY
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+		// FEBRUARY
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+		// MARCH
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+		
+		// APRIL
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+		
+		
+		// MAY
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+
+		// JUNE
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		Date startIt = add(startDate, DAY_OF_MONTH, 10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, null, null);
+		
+		double br = 1500.00 * 3 / ( 31 + 30 + 31);
+		
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, contract);
-
-		Assert.assertEquals(30, ctx.getExpressionContext().eval("DIAS_COTIZADOS", startDate, endDate, Double.class).get(0).getValue(), DELTA);
-
-		double br = (3000.00 * (26.00 /40.00) ) / 30.00;
-		
-		
-		
-		
-		startDate = add(startDate, MONTH,1);
-		endDate = getLastDayOfMonth(startDate);
-
-		ctx = getContractSalaryCalculatorContext(
 				connection, 
 				startDate, 
 				endDate, 
 				endDate, 
 				contract);
 		
-		Assert.assertEquals(30, 
-				ctx.getExpressionContext()
-				.eval("DIAS_COTIZADOS", startDate, endDate, Double.class)
-				.stream().collect(Collectors.summingDouble(d->d.getValue())), 
-				DELTA);
+		//ctx.getExpressionContext().setVariable("TODAY", startIt, startDate, endDate);
+		//Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+		org.junit.Assert.assertEquals(br, ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+	}
+
+	@Test
+	public void testBRPartialTimeIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		Date startDate = getFirstDayOfYear(getToday());
+		ContractRecord contract = newContract(aonContext, 
+				startDate,
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+						ContractCode.C501.getValue()));
+					}
+				}, new String[] { 
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+				new String[] {}, 
+				null);
+
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				null, 
+				new HashMap<String, String>() {
+					{
+						put(MONDAY_HOURS.getName(), format("%f", 4.00));
+						put(TUESDAY_HOURS.getName(), format("%f", 4.00));
+						put(WEDNESDAY_HOURS.getName(), format("%f", 4.00));
+						put(THURSDAY_HOURS.getName(), format("%f", 4.00));
+						put(FRIDAY_HOURS.getName(), format("%f", 4.00));
+						put(SATURDAY_HOURS.getName(), format("%f", 0.00));
+						put(SUNDAY_HOURS.getName(), format("%f", 0.00));
+					}
+				}
+				);
 		
-		ctx.getExpressionContext().setVariable("TODAY", startIt, startDate, endDate);
-		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+		//@formatter:off
+		
+		Date endDate = getLastDayOfMonth(startDate);
+		
+
+		// FEBRUARY
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		Date startIt = add(startDate, DAY_OF_MONTH, 10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, null, null);
+		
+		double br = 1500.00 / get(endDate, Calendar.DAY_OF_MONTH);
+		
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		
+		//ctx.getExpressionContext().setVariable("TODAY", startIt, startDate, endDate);
+		//Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+		org.junit.Assert.assertEquals(br, ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 	}
 
 	// ------------------------------------------------------------------------

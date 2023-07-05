@@ -7261,10 +7261,12 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		.map(SalaryData::getExpression)
 		.collect(Collectors.summingDouble(Double::parseDouble))
 		;
+		// It's partial so not adjust.
+		long monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		if ( endDate.equals(getLastDayOfMonth(endDate)))
-			assertEquals(1750.00 / 30.00 * 30, baseCgp, 0.05);
+			assertEquals(1750.00 / 30.00 * monthDays, baseCgp, 0.05);
 		else
-		    assertEquals(1750.00 / 30.00 * Math.min(30.00,get(endDate, Calendar.DAY_OF_MONTH)), baseCgp, 0.05);
+		    assertEquals(1750.00 / 30.00 * monthDays, baseCgp, 0.05);
 	}
 
 	@Test
