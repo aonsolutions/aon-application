@@ -20,9 +20,13 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import org.jooq.DSLContext;
@@ -40,6 +44,7 @@ import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.payroll.contract.ContractFill;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqContractPDF {
@@ -194,11 +199,12 @@ public class JooqContractPDF {
 			}
 	}
 	
-	public static byte[] contractExtensionFill(Connection connection, EmployeeInfo employeeData, ContractInfo contractData) {
+	public static byte[] contractExtensionFill(Connection connection, Integer domainId, Integer parentDomainId, EmployeeInfo employeeData, ContractInfo contractData) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
 		try {
-			Map<String, String> contractExtensionFillInfo = getContractExtensionFillInfoDB(dslContext, employeeData, contractData);
+			Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractData.getContractId(), Integer.parseInt(contractData.getContractType()));
+			Map<String, String> contractExtensionFillInfo = getContractExtensionFillInfoDB(dslContext, employeeData, contractData, contractOtherInfo);
 			
 			return ContractFill.fillContractExtension(contractExtensionFillInfo);
 		} catch (IllegalArgumentException e) {
@@ -206,7 +212,7 @@ public class JooqContractPDF {
 		}
 	}
 
-	private static Map<String, String> getContractExtensionFillInfoDB(DSLContext dslContext, EmployeeInfo employeeData, ContractInfo contractData) {
+	private static Map<String, String> getContractExtensionFillInfoDB(DSLContext dslContext, EmployeeInfo employeeData, ContractInfo contractData, Map<String, String> contractOtherInfo) {
 		Map<String, String> extensionInfo = new HashMap<>();
 		Municipalities municipalities = new Municipalities();
 		
@@ -227,6 +233,15 @@ public class JooqContractPDF {
 			String zip = enterpriseRecord.get(RADDRESS.ZIP);
 			
 			extensionInfo.put("Texto1", contractData.getEnterpriseCIF());
+			
+			Optional<Entry<String, String>> representative = contractOtherInfo.entrySet().stream().filter(e -> AonStringUtils.containsIgnoreCase(e.getKey(), "ENTERPRISE_DIR_STAFF_NAME")).findAny();
+			Optional<Entry<String, String>> representativeNif = contractOtherInfo.entrySet().stream().filter(e -> AonStringUtils.containsIgnoreCase(e.getKey(), "ENTERPRISE_DIR_STAFF_NIF")).findAny();
+			Optional<Entry<String, String>> representativeCharge = contractOtherInfo.entrySet().stream().filter(e -> AonStringUtils.containsIgnoreCase(e.getKey(), "ENTERPRISE_DIR_STAFF_CHARGE")).findAny();
+			
+			extensionInfo.put("Texto2", representative.isPresent() ? representative.get().getValue() : "");
+			extensionInfo.put("Texto3", representativeNif.isPresent() ? representativeNif.get().getValue() : "");
+			extensionInfo.put("Texto4", representativeCharge.isPresent() ? representativeCharge.get().getValue() : "");
+			
 			extensionInfo.put("Texto5", contractData.getEnterpriseName());
 			extensionInfo.put("Texto6", address);
 			extensionInfo.put("Texto7", "ESPA\u00D1A");
@@ -358,9 +373,24 @@ public class JooqContractPDF {
 		Date startDate = contractRecord.get(CONTRACT.START_DATE);
 		Date endDate = contractRecord.get(CONTRACT.END_DATE);
 		
+		LocalDate localExtensionDate = LocalDate.of(contractData.getExtensionDate().getYear() + 1900, contractData.getExtensionDate().getMonth() + 1, contractData.getExtensionDate().getDate());
+		LocalDate localStartDate = LocalDate.of(startDate.getYear() + 1900, startDate.getMonth() + 1, startDate.getDate());
+		LocalDate localEndDate = LocalDate.of(endDate.getYear() + 1900, endDate.getMonth() + 1, endDate.getDate());
+		
+		extensionInfo.put("Renglon6", raddressRecord.get(RADDRESS.CITY));
+		extensionInfo.put("Renglon8", Period.between(localExtensionDate, localEndDate).getMonths() + "");
 		extensionInfo.put("Renglon9", fullDateFormat.format(contractData.getExtensionDate()));
 		extensionInfo.put("Renglon10", fullDateFormat.format(endDate));
 		extensionInfo.put("Renglon11", fullDateFormat.format(startDate));
+		extensionInfo.put("Renglon12", Period.between(localStartDate, localExtensionDate).getMonths() + "");
+		extensionInfo.put("Renglon13", raddressRecord.get(RADDRESS.CITY));
+		extensionInfo.put("Renglon14", fullDateFormat.format(getComunicationExtensionDate(dslContext, contractData.getContractId())));
+		extensionInfo.put("Renglon15", getSepeExtensionIde(dslContext, contractData.getContractId()));
+		
+		extensionInfo.put("Renglon18", raddressRecord.get(RADDRESS.CITY));
+		extensionInfo.put("Renglon19", dayFormat.format(new java.util.Date()));
+		extensionInfo.put("Renglon20", monthFormat.format(new java.util.Date()));
+		extensionInfo.put("Renglon21", yearFormat.format(new java.util.Date()));
 		
 		return extensionInfo;
 	}
@@ -375,9 +405,9 @@ public class JooqContractPDF {
 	}
 
 	private static java.util.Date getComunicationDate(DSLContext dslContext, Integer contractId) {
-		Result<Record> comunicationDateRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq("COMUNICATION_DATE"))
+		Result<Record> comunicationDateRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.NAME.eq("COMUNICATION_DATE"))
 				.fetch();
 		
 		try {
@@ -400,6 +430,30 @@ public class JooqContractPDF {
 		Result<Record> comunicationDateRecords = dslContext.select().from(CONTRACT_INFO)
 				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
 				.and(CONTRACT_INFO.NAME.eq("COMUNICATION_TRANSFORM_DATE"))
+				.fetch();
+		
+		try {
+			return comunicationDateRecords.isEmpty() ? null : dateFormat.parse(comunicationDateRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
+		} catch (IllegalArgumentException | ParseException e) {
+			return null;
+		}
+	}
+	
+	private static String getSepeExtensionIde(DSLContext dslContext, Integer contractId) {
+		Result<Record> ideRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.NAME.like("SEPE_EXTENSION_ID_%"))
+				.orderBy(CONTRACT_INFO.ID.desc())
+				.fetch();
+		
+		return ideRecords.isEmpty() ? null : ideRecords.get(0).get(CONTRACT_INFO.EXPRESSION);
+	}
+
+	private static java.util.Date getComunicationExtensionDate(DSLContext dslContext, Integer contractId) {
+		Result<Record> comunicationDateRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.NAME.like("COMUNICATION_EXTENSION_DATE_%"))
+				.orderBy(CONTRACT_INFO.ID.desc())
 				.fetch();
 		
 		try {
