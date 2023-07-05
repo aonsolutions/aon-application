@@ -31,46 +31,55 @@ public class DNIServlet extends HttpServlet {
 		Part filePart = req.getPart("archivo");
 		String fileName = filePart.getSubmittedFileName();
 		System.out.println(fileName);
-		
-		
+
+		EmployeeData ed = new EmployeeData();
+		String text;
+		String json;
+		PrintWriter os;
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		int action;
+
 		if (fileName.contains(".pdf")) {
+			action = 0;
+		} else if (fileName.contains(".jpg") || fileName.contains(".png")) {
+			action = 1;
+		} else {
+			action = 2;
+		}
+		switch (action) {
+
+		case 0:
 			InputStream is = filePart.getInputStream();
 
 			DNIParser.parse(is);
-			String text = DNIParser.getText();
+			text = DNIParser.getText();
 			DNIParser.getNewDniBothPdf(text, listener);
-//			DNIParser.getNewDniFront(text, listener);
-
-			EmployeeData ed = new EmployeeData();
-
 			ed.setDni(DNIParser.dni.replaceAll("\\r", ""));
 			ed.setNacionalidad(DNIParser.nacionalidad.replaceAll("\\r", ""));
 			ed.setNombre(DNIParser.nombre.replaceAll("\\r", ""));
 			ed.setApellido1(DNIParser.apellido1.replaceAll("\\r", ""));
 			ed.setApellido2(DNIParser.apellido2.replaceAll("\\r", ""));
 
-			ObjectMapper objectMapper = new ObjectMapper();
-
-			String json = objectMapper.writeValueAsString(ed);
+			json = objectMapper.writeValueAsString(ed);
 
 			resp.setContentType("text/html");
 
-
-			PrintWriter os = resp.getWriter();
+			os = resp.getWriter();
 
 			os.println(json);
 			os.flush();
 			os.close();
 
 			System.out.println(json);
+			
+			break;
 
-		} else if (fileName.contains(".jpg")) {
+		case 1:
 			InputStream prueba2 = filePart.getInputStream();
 			byte[] bytes = IOUtils.toByteArray(prueba2);
-			String text = DNIParser.extractImage(bytes);
+			text = DNIParser.extractImage(bytes);
 			DNIParser.getNewDniBothJpg(text, listener);
-
-			EmployeeData ed = new EmployeeData();
 
 			ed.setDni(DNIParser.dni.replaceAll("\\r", ""));
 			ed.setNacionalidad(DNIParser.nacionalidad.replaceAll("\\r", ""));
@@ -78,22 +87,23 @@ public class DNIServlet extends HttpServlet {
 			ed.setApellido1(DNIParser.apellido1.replaceAll("\\r", ""));
 			ed.setApellido2(DNIParser.apellido2.replaceAll("\\r", ""));
 
-			ObjectMapper objectMapper = new ObjectMapper();
-
-			String json = objectMapper.writeValueAsString(ed);
+			json = objectMapper.writeValueAsString(ed);
 
 			resp.setContentType("text/html");
 
-			PrintWriter os = resp.getWriter();
+			os = resp.getWriter();
 
 			os.println(json);
 			os.flush();
 			os.close();
-			
+
 			System.out.println(json);
 
+			break;
 			
-		} 
+		case 2:
+				throw new IOException();
+		}
 	}
 
 	@Override

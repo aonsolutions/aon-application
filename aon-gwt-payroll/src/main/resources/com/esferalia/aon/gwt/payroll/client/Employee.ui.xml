@@ -132,8 +132,8 @@
 		
 		.uploaded{
 			border: 2px solid green;
-			padding-right: 20px;
-			padding-bottom: 20px;
+			padding-right: 25px;
+			padding-bottom: 25px;
 		}
 		
 		.uploadedFail{
@@ -164,10 +164,10 @@
 						<g:HTMLPanel > 											
 						  <g:FormPanel ui:field="formPanel" visible="true" method="POST" action="DNIServlet" encoding="multipart/form-data">
 						    <g:HTMLPanel styleName="{style.flex}">
-						       <g:Button ui:field="uploadButton" styleName="{style.iconButton}"  >
+						       <g:Button ui:field="uploadButton" styleName="{style.iconButton}" >
 						        <i class="material-icons">publish</i>
 						      </g:Button>
-						      <g:FileUpload ui:field="fileUpload" visible= "false" styleName="{style.gwt-fileUpload}" />
+						      <g:FileUpload ui:field="fileUpload" visible= "true" styleName="{style.gwt-fileUpload}"/>
 						    </g:HTMLPanel>
 						  </g:FormPanel>
 						</g:HTMLPanel>

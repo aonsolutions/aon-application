@@ -52,6 +52,12 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.DragOverEvent;
+import com.google.gwt.event.dom.client.DragOverHandler;
+import com.google.gwt.event.dom.client.DragStartEvent;
+import com.google.gwt.event.dom.client.DragStartHandler;
+import com.google.gwt.event.dom.client.DropEvent;
+import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -289,6 +295,7 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiField
 	Button uploadButton;
+	
 
 	// ------------------------------------------------- Class variables
 
@@ -316,7 +323,7 @@ public abstract class Employee extends ResizeComposite {
 
 		initializeView();
 		addReformatAccount();
-
+		
 		impl.getCountries(new AsyncCallback<List<com.esferalia.aon.gwt.payroll.shared.Country>>() {
 
 			@Override
@@ -429,103 +436,21 @@ public abstract class Employee extends ResizeComposite {
 			removeErrorBorder(this.document);
 	}
 
-//	public static String url = URL.encode(GWT.getModuleBaseURL() +"DNIServlet");
-
-//	public void requestData(final AsyncCallback<EmployeeDataResult> callback) {
-//		XMLHttpRequest xhr = XMLHttpRequest.create();
-//		// CAMBIAR URL CUANDO FUNCIONE
-//		xhr.open("POST", "b72329949-grupoayudat.aonsolutions.org:8080/aon-aio/DNIServlet");
-//
-//		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-//
-////	        xhr.getResponseHeader("JSON");
-//		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
-//
-//			@Override
-//			public void onReadyStateChange(XMLHttpRequest xhr) {
-//				int state = xhr.getReadyState();
-//				String ss = Integer.toString(state);
-//				Window.alert(ss);
-//				if (state == XMLHttpRequest.DONE) {
-//					String text = xhr.getResponseType();
-//					Window.alert("TEXT" + text);
-//
-//					EmployeeDataResult result = JsonUtils.safeEval(text);
-//					Window.alert("RESULT" + result.toString());
-//
-//					document.setValue(result.getDni());
-//					nationality.setValue(result.getNationality());
-//					name.setValue(result.getName());
-//					firstSurname.setValue(result.getFirstSurname());
-//					secondSurname.setValue(result.getSecondSurname());
-//
-//					callback.onSuccess(result);
-//
-//				} else {
-//					callback.onFailure(new Exception("Error en la solicitud. Código de estado: "));
-//				}
-//			}
-//		});
-//		xhr.send("key=value");
-//	}
-//
-//	public static String url = URL.encode(GWT.getModuleBaseURL() + "DNIServlet");
-//
-//	public void fillFormFields() {
-//		Window.alert("PruebaFill");
-//
-//		// Crear el FormPanel
-//		FormPanel formPanelPrueba = new FormPanel(/*"_blank"*/);
-//		formPanelPrueba.setAction("/DNIServlet");
-//		formPanelPrueba.setMethod(FormPanel.METHOD_POST);
-//
-//		formPanelPrueba.addSubmitCompleteHandler(e -> {
-//			Window.alert("ENTRA EN EL EVENTO");
-//
-//			EmployeeDataResult eps = JsonUtils.safeEval(e.getResults());
-//			JSONObject json = new JSONObject(JsonUtils.safeEval(e.getResults()));
-//			JSONValue dni = json.get("dni");
-//			Window.alert("RESULT" + json.toString());
-//
-//			document.setValue(dni.toString());
-//			nationality.setValue(eps.getDni());
-//
-//		});
-//		
-//		FileUpload fileUploadPrueba = new FileUpload();
-//		fileUploadPrueba.setName("archivo");
-//		formPanelPrueba.add(fileUploadPrueba);
-//
-//		formPanelPrueba.add(new Button("Submit", new ClickHandler() {
-//			public void onClick(ClickEvent event) {
-//				Window.alert("ENTRO POR EL BOTON");
-//			}
-//		}));
-//
-//		employeeTablePanel.add(formPanelPrueba);
-//
-//		formPanelPrueba.submit();
-//
-//	}
 	
-	public void fillFormTwo(){
+	public void fillFormDniData(){
 		
 		formPanel.addSubmitCompleteHandler(event -> {
 			EmployeeDataResult eps = JsonUtils.safeEval(event.getResults());
-				String dni = eps.getDni();
-				document.setValue(dni);
-				String nacionalidad = eps.getNationality();
-				nationality.setValue(nacionalidad);
-				String nombre = eps.getName();
-				name.setValue(nombre);
-				String primerApellido = eps.getFirstSurname();
-				firstSurname.setValue(primerApellido);
-				String segundoApellido = eps.getSecondSurname();
-				secondSurname.setValue(segundoApellido);
-
+				document.setValue(eps.getDni());
+				nationality.setValue(eps.getNationality());
+				name.setValue(eps.getName());
+				firstSurname.setValue(eps.getFirstSurname());
+				secondSurname.setValue(eps.getSecondSurname());
 			});
+		
 		formPanel.submit();
 	}
+	
 
 	@UiHandler("uploadButton")
 	void onUploadButtonClick(ClickEvent event) {
@@ -537,7 +462,7 @@ public abstract class Employee extends ResizeComposite {
 		fileUpload.setName("archivo");
 		if (fileUpload.getFilename().contains(".jpg") || fileUpload.getFilename().contains(".pdf")) {
 			addUploadedBorder(this.uploadButton);
-			fillFormTwo();
+			fillFormDniData();
 		}else {
 			addUploadedFail(this.uploadButton);
 			Window.alert("El archivo no es valido");
