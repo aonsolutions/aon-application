@@ -30,10 +30,10 @@
     </div>
   </mat-grid-tile>
   <mat-grid-tile [gridCols]="{ xs: 10, sm: 10, md: 10, lg: 10, xl: 10 }">
-    <app-models-dashboard class="summary-view"></app-models-dashboard>
-    <app-banks-dashboard [bankList]="banks$" class="summary-view">
+    <app-models-dashboard [taxModelList]="models$" class="summary-view">
 
-    </app-banks-dashboard>
+    </app-models-dashboard>
+    <app-banks-dashboard [bankList]="banks$" class="summary-view"> </app-banks-dashboard>
   </mat-grid-tile>
 </mat-grid-list>
 

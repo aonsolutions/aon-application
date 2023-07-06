@@ -3,7 +3,9 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Bank } from 'src/app/core/models/class/bank';
+import { TaxModel } from 'src/app/core/models/class/tax-model';
 import { BankService } from 'src/app/core/services/bank.service';
+import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 export interface ShortcutDashboard {
   shape: string;
@@ -36,6 +38,11 @@ export class HomeComponent implements OnInit {
   banks: Bank[] = [];
   private banksSubject = new BehaviorSubject<any[]>([]);
   public banks$ = this.banksSubject.asObservable();
+
+  //modelTax area
+  models: TaxModel[] = [];
+  private modelsSubject = new BehaviorSubject<any[]>([]);
+  public models$ = this.modelsSubject.asObservable();
 
   shortcuts: ShortcutDashboard[] = [
     { shape: 'add_box', name: 'CREAR FACTURA' },
@@ -98,7 +105,10 @@ export class HomeComponent implements OnInit {
     { shape: 'description', name: 'Documentación', color: '#ef6292' },
   ];
 
-  constructor(public bankService: BankService) {}
+  constructor(
+    public bankService: BankService,
+    public taxModelService: TaxModelService
+  ) {}
 
   ngOnInit(): void {
     //bankService
@@ -106,5 +116,14 @@ export class HomeComponent implements OnInit {
       this.banks = response;
       this.banksSubject.next(this.banks);
     });
+    //taxmodelService
+      this.taxModelService.getTaxModelList().then((response) => {
+      this.models = response;
+      this.modelsSubject.next(this.models);
+    });
+
   }
 }
+
+
+
