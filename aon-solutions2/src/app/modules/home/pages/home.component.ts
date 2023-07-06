@@ -1,10 +1,13 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChartType } from 'chart.js';
+import { MultiDataSet } from 'ng2-charts';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Bank } from 'src/app/core/models/class/bank';
 import { TaxModel } from 'src/app/core/models/class/tax-model';
 import { BankService } from 'src/app/core/services/bank.service';
+import { ReportingService } from 'src/app/core/services/reporting.service';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 export interface ShortcutDashboard {
@@ -17,8 +20,8 @@ interface ChartItem {
   name: string;
   chart: string;
   chartLabels: string[];
-  chartData: number[];
-  chartType: string;
+  chartData: MultiDataSet;
+  chartType: ChartType;
   colors: string[];
 }
 
@@ -56,21 +59,8 @@ export class HomeComponent implements OnInit {
       shape: 'show_chart',
       name: 'Ventas/Gastos',
       chart: '',
-      chartLabels: [
-        'ene-22',
-        'feb-22',
-        'mar-22',
-        'abr-22',
-        'may-22',
-        'jun-22',
-        'jul-22',
-        'ago-22',
-        'sep-22',
-        'oct-22',
-        'nov-22',
-        'dic-22',
-      ],
-      chartData: [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000],
+      chartLabels:[],
+      chartData: [],
       chartType: 'line',
       colors: [''],
     },
@@ -78,21 +68,8 @@ export class HomeComponent implements OnInit {
       shape: 'bar_chart',
       name: 'Cobros/Pagos',
       chart: '',
-      chartLabels: [
-        'ene-22',
-        'feb-22',
-        'mar-22',
-        'abr-22',
-        'may-22',
-        'jun-22',
-        'jul-22',
-        'ago-22',
-        'sep-22',
-        'oct-22',
-        'nov-22',
-        'dic-22',
-      ],
-      chartData: [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000],
+      chartLabels: [],
+      chartData: [],
       chartType: 'bar',
       colors: [''],
     },
@@ -107,7 +84,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     public bankService: BankService,
-    public taxModelService: TaxModelService
+    public taxModelService: TaxModelService,
+    public reportingService: ReportingService
   ) {}
 
   ngOnInit(): void {
@@ -121,6 +99,24 @@ export class HomeComponent implements OnInit {
       this.models = response;
       this.modelsSubject.next(this.models);
     });
+
+    this.reportingService.getVentasGastos().then((response) => {
+      console.log(response);
+      this.chartItems[0].chartType = 'line';
+      this.chartItems[0].chartData = [response.ventas, response.gastos];
+      this.chartItems[0].chartLabels = response.label;
+
+    })
+
+    this.reportingService.getCobrosPagos().then((response) => {
+      console.log(response);
+      this.chartItems[1].chartType = 'bar';
+      this.chartItems[1].chartData = [response.cobros, response.pagos];
+      this.chartItems[1].chartLabels = response.label;
+
+    })
+
+
 
   }
 }
