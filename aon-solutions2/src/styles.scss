@@ -5,11 +5,11 @@
 // @import "~roboto-fontface/css/roboto/sass/roboto-fontface";
 
 // Predefined breakpoints sizes
-$XSmall: 599.98px;
-$Small: 959.98px;
-$Medium: 1279.98px;
-$Large: 1919.98px;
-$XLarge: 1920px;
+$XSmall : 599.98px;
+$Small  : 959.98px;
+$Medium : 1279.98px;
+$Large  : 1919.98px;
+$XLarge : 1920px;
 
   // Header
   $header-height  : 3.265rem;
@@ -19,7 +19,12 @@ $XLarge: 1920px;
   $menu-width-open  : 12.6rem;
   
 // Font-size
-  $font-size-established: 20px;
+  // default is 20px
+  $font-size-4k       : 40px;
+  $font-size-2k       : 23px;
+  $font-size-fullHD   : 20px;
+  $font-size-default  : 20px;
+  
   $font-size-primary    : 0.8rem;
   $font-size-head       : 1.7rem;
   $font-size-head-span  : 1rem;
@@ -48,7 +53,6 @@ $color-icon       : #b4b4bb;
     $color-green  : #33a9a9;
   /* Orange */
     $color-orange : #fb982e;
-
 
 // Colors Border
 $color-border-primary: #d2d2d6;
@@ -199,14 +203,29 @@ $bottom-button-icon: 0.5rem;
   General
 */
 * {
-  font-family: "Roboto";
-  color: $color-primary;
-  font-size: $font-size-primary;
-  caret-color: $color-primary !important;
+  font-family : "Roboto";
+  color       : $color-primary;
+  font-size   : $font-size-primary;
+  caret-color : $color-primary !important;
 }
-
+ 
 html {
-  font-size: $font-size-established !important;
+  @media screen and (min-width: 4001px) {
+    font-size: $font-size-4k !important;
+    /*background: yellow;*/
+  }
+  @media screen and (min-width: 2501px) and (max-width: 4000px) {
+    font-size: $font-size-2k !important;
+    /*background: green;*/
+  }
+  @media screen and (min-width: 1600px) and (max-width: 2500px) {
+    font-size: $font-size-fullHD !important;
+    /*background: blue;*/
+  }
+  @media screen and (max-width: 1599px) {
+    font-size: $font-size-default !important;
+    /*background: purple;*/
+  }
 }
 
 .allSize {
@@ -217,19 +236,18 @@ html {
 /*
   Link
 */
-a,
-u {
-  text-decoration: none;
-}
+  a,
+  u {
+    text-decoration: none;
+  }
 
-a:visited {
-  color: black;
-}
+  a:visited {
+    color: black;
+  }
 
-.left-content figure{
-    justify-content: left !important;
+  .left-content figure{
+      justify-content: left !important;
 }
-
 
   a:visited {
     color: black;
