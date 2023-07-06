@@ -62,7 +62,7 @@
   }
   #menu-left .float-button-open set-icon{
     position        : relative;
-    left            : -0.125rem;
+    left            : -0.05rem;
   }
 
   // Icon options
@@ -90,21 +90,27 @@
       padding-left    : $margin-button-icon-left;
     }
     // colores estan predefinidos en el componente icon
+    #menu-left .menu-select .red,
     #menu-left .menu-left-option:hover .red{
       background-color: $background-button-red-hover2;
     }
+    #menu-left .menu-select .blue,
     #menu-left .menu-left-option:hover .blue{
       background-color: $background-button-blue-hover2;
     }
+    #menu-left .menu-select .orange,
     #menu-left .menu-left-option:hover .orange{
       background-color: $background-button-orange-hover2;
     }
+    #menu-left .menu-select .green,
     #menu-left .menu-left-option:hover .green{
       background-color: $background-button-green-hover2;
     }
+    #menu-left .menu-select .pink,
     #menu-left .menu-left-option:hover .pink{
       background-color: $background-button-pink-hover2;
     }
+    #menu-left .menu-select .purple,
     #menu-left .menu-left-option:hover .purple{
       background-color: $background-button-purple-hover2;
     }
