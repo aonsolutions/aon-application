@@ -25,13 +25,25 @@
   <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
   <mat-grid-tile [gridCols]="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }">
     <div class="summary-view-chart" *ngFor="let chartItem of chartItems">
-      <app-chart-dashboard [name]="chartItem.name" [chart]="chartItem.chart" [shape]="chartItem.shape" [labels]="chartItem.chartLabels" [data]="chartItem.chartData"  [colors]="chartItem.colors"
-      [chartType]="chartItem.chartType"></app-chart-dashboard>
+      <!-- <app-chart-dashboard [name]="chartItem.name" [chart]="chartItem.chart" [shape]="chartItem.shape" [labels]="chartItem.chartLabels" [data]="chartItem.chartData"  [colors]="chartItem.colors"
+      [chartType]="chartItem.chartType"></app-chart-dashboard> -->
+
+      <app-chart
+  [chartLabels]= chartItem.chartLabels
+  [chartType]= chartItem.chartType
+  [chartData]= chartItem.chartData
+  >
+</app-chart>
+
+
+
     </div>
   </mat-grid-tile>
   <mat-grid-tile [gridCols]="{ xs: 10, sm: 10, md: 10, lg: 10, xl: 10 }">
-    <app-models-dashboard class="summary-view"></app-models-dashboard>
-    <app-banks-dashboard class="summary-view"></app-banks-dashboard>
+    <app-models-dashboard [taxModelList]="models$" class="summary-view">
+
+    </app-models-dashboard>
+    <app-banks-dashboard [bankList]="banks$" class="summary-view"> </app-banks-dashboard>
   </mat-grid-tile>
 </mat-grid-list>
 
