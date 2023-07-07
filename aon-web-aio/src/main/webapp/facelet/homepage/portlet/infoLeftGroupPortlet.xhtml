@@ -81,49 +81,39 @@
 			el.onclick=function() { collapseMenuPortlet(el); };
 		} 
 
-		function showInfoGroupOld() {
-			document.getElementById("aonContent:mainForm:showButton").style.display='none';
-			document.getElementById("aonContent:mainForm:hideButton").style.display='initial';
+		function showInfoGroup() {
 			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='250px';
 			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='100%';
 			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='block';
 		}
 		
-		function hideInfoGroupOld() {
-			document.getElementById("aonContent:mainForm:showButton").style.display='initial';
-			document.getElementById("aonContent:mainForm:hideButton").style.display='none';
+		function hideInfoGroup() {
 			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='30px';
 			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='30px';
 			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='none';
 		}
 	</script>
 
-		<h:graphicImage 
-		id="showButton"
-		styleClass="aon-show-button"
-		url="#{aonResource.resolve['/images/aon-right-arrow.png']}" 
-		onclick="javascript:showInfoGroupOld()"/>	
-		
-		<h:graphicImage 
-		id="hideButton"
-		style="display:none"
-		styleClass="aon-hide-button"
-		url="#{aonResource.resolve['/images/aon-right-arrow.png']}" 
-		onclick="javascript:hideInfoGroupOld()"/>	
-
-		<aon:div id="infoGroupDiv" style="display:none;  position:relative; top: -32px" >
+		<aon:div id="infoGroupDiv" style="display:none;  position:relative; top: -0px" >
 
 			<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
 
 			<aon:if test="#{!domainSwitcher.childDomain}">
-				<ui:include src="/facelet/new/portlet/filterControlPortlet.xhtml" />
+			<ui:include src="/facelet/new/portlet/summaryControlPortlet.xhtml" /> 
+			<ui:include src="/facelet/new/portlet/filterControlPortlet.xhtml" />
+			</aon:if>
+			<aon:if test="#{dur.aula or domainSwitcher.snapshot}">
+				<ui:include src="/facelet/new/portlet/helpControlPortlet.xhtml" />
+			</aon:if>
+			<aon:if test="#{timeControl.active}">
+				<ui:include src="/facelet/new/portlet/timeControlPortlet.xhtml" />
 			</aon:if>
 
 		</aon:div>
 		
 		<aon:if test="#{!domainSwitcher.childDomain or timeControl.active}">
 			<script type='text/javascript' >
-				showInfoGroupOld();
+				showInfoGroup();
 			</script>
 		</aon:if>
 	
