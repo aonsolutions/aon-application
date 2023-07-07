@@ -311,19 +311,17 @@ public class Mod130AEAT2023Declaration extends Mod130Declaration {
 
 	private static double getInitialC13(AONContext ctx, final Mod130 mod) {
 		double c13 = 0.0;
-		Mod130 previous = Mod130DAO.getMod130s(ctx, mod.getDomain())
+		Mod130 previousModels = Mod130DAO.getMod130s(ctx, mod.getDomain())
 		 .filter(model -> model.getYear() == (mod.getYear() - 1))
 		 .filter(model -> model.getPeriod() == Period.T4)
 		 .findFirst()
 		 .orElse(null);
 		
-		if (previous != null) {
-			double c03 = 0.0;
-			double c08 = 0.0;
-			double rn = 0.0;
-			c03 = previous.getAmount(Mod130Key.C03);
-			c08 = (previous.getAmount(Mod130Key.C08) * 25 / 100);
-			rn = AonMathUtils.round(c03 + c08);
+		if (previousModels != null) {
+			Mod130 previous = Mod130DAO.get(ctx, previousModels.getId());
+			double c03 = previous.getAmount(Mod130Key.C03);
+			double c08 = (previous.getAmount(Mod130Key.C08) * 25 / 100);
+			double rn = AonMathUtils.round(c03 + c08);
 			if (rn <= 9000) {
 				c13 = 100;
 			} else if (rn > 9000 && rn <= 10000) {

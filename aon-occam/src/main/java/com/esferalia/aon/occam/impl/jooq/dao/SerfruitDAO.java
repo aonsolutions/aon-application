@@ -183,9 +183,10 @@ public class SerfruitDAO {
                                 .and(f.getSerialDateProperty().isNull())
                                 .and(f.getSerialNumberProperty()
                                         .isNull()));
+        
         Item item = new Item()
-                .setDomain(baseItem.getDomain())
-                .setProduct(baseItem.getProduct())
+                .setDomain(product.getDomain())
+                .setProduct(product)
                 .setBarcode(null)
                 .setDescription(dp.getProduct().getName())
                 .setPackFormatTag(baseItem.getPackFormatTag())
