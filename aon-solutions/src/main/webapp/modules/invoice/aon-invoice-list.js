@@ -160,7 +160,7 @@ export class AonInvoiceList extends AonElement {
 			});
 
 			
-			if(this.isBeta()) {
+			if(this.isBeta() && this.getFilter().status === 'inbox') {
 				let data = {
 					skip:0,
 					limit: 10,

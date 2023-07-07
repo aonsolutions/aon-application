@@ -380,13 +380,8 @@ export class AonHeader extends AonElement {
 	buildLogo() {
 		let aonLogo = this.getElement('aonLogo');
 
-		if(window.location.href.includes('ayudat')){
-			aonLogo.src = '../assets/ayudat-logo2.png';
-		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
-			aonLogo.src = '../assets/ayudat-logo3.png';
-			// aonLogo.src = '../assets/tedi-logo.png';
-			// aonLogo.style.top = '0px';
-		} else aonLogo.src = '../assets/aon-logo2.png';
+		aonLogo.src = '../assets/aon-logo.svg';
+
 		aonLogo.addEventListener('click', () => {
 			if(LS.getDomainId()){
 				this.rootPanelHtml(this.isMobile()
