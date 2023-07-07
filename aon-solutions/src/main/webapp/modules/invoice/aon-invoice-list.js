@@ -182,7 +182,7 @@ export class AonInvoiceList extends AonElement {
 						invoice.icon_color = "#5f6368";
 						aonInvoiceTable.addRow(invoice, () => {
 							let iframe = this.createElement(TAG.IFRAME);
-							iframe.src = `https://app.invofox.com/documents/${invoice.id}?token=$${invoice.token}`;
+							iframe.src = `https://app.invofox.com/documents/${invoice.id}?token=${invoice.token}`;
 							iframe.style.height = '100%';
 							iframe.style.width = '100%';
 							iframe.style.border = '0';
