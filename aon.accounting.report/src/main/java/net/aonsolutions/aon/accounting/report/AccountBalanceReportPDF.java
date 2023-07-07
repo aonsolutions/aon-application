@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -38,12 +37,8 @@ public class AccountBalanceReportPDF implements IAccountReportPDF {
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 	
 	@Override
-	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {
-		try {
-			printBalanceReport(outputStream, params);
-		} catch (DocumentException e) {
-			throw new AonCoreException(e);
-		}		
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
+		printBalanceReport(outputStream, params);
 	}
 
 	public void printBalanceReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {

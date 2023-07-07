@@ -13,7 +13,6 @@ import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
@@ -24,12 +23,8 @@ public class AccountMultiCoverPDF implements IAccountReportPDF {
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
-	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {		
-		try {
-			printMultiCoverReport(outputStream, params);
-		} catch (DocumentException e) {			
-			throw new AonCoreException(e);
-		}
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) throws DocumentException {		
+		printMultiCoverReport(outputStream, params);
 	}
 
 	public void printMultiCoverReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {

@@ -17,11 +17,12 @@ import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfReader;
 
 public class AccountMultiReportPDF {
 
-	public void printMultiReportPDF(OutputStream out, LinkedHashMap<IAccountReportPDF,AccountingReportParams> reports) throws IOException {
+	public void printMultiReportPDF(OutputStream out, LinkedHashMap<IAccountReportPDF,AccountingReportParams> reports) throws IOException, DocumentException {
 		
 		LinkedList<File> filesToDelete = new LinkedList<File>(); 
 		File mainTempFile = File.createTempFile("merge", ".pdf");

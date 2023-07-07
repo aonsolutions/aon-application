@@ -20,7 +20,6 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.itextpdf.text.BaseColor;
@@ -42,7 +41,7 @@ public class AccountJournalReportPDF implements IAccountReportPDF {
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 	
 	@Override
-	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
 		// TODO
 		// ESTE LISTADO USA OTRA CLASE PARA LOS PARAMETROS, POR LO TANTO AQUI HABRIA QUE ASIGNARLOS 
 		// DEPENDIENDO DE LOS PARAMETROS QUE NOS LLEGUEN, O BIEN HABRIA QUE ADAPTAR ESTE LISTADO PARA 
@@ -57,11 +56,7 @@ public class AccountJournalReportPDF implements IAccountReportPDF {
 				.setActivity(params.getActivity())
 				.setTitle(params.getTitle())
 				.setPageOffset(params.getPageOffset());
-		try {
-			printBalanceReport(outputStream, aeParams);
-		} catch (DocumentException e) {
-			throw new AonCoreException(e);
-		}
+		printBalanceReport(outputStream, aeParams);
 	}
 
 	public void printBalanceReport(OutputStream outputStream, AccountEntryParams params) throws DocumentException {

@@ -15,7 +15,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -38,12 +37,8 @@ public class VatReportPDF implements IAccountReportPDF {
 	private final DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
-	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {
-		try {
-			printReport(outputStream, params);
-		} catch (DocumentException e) {
-			throw new AonCoreException(e);
-		}		
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
+		printReport(outputStream, params);
 	}
 
 	public void printReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {

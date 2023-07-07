@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -44,12 +43,8 @@ public class AccountLedgerReportPDF implements IAccountReportPDF {
 	private static final Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 	
 	@Override
-	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {		
-		try {
-			printLedgerReport(outputStream, params);
-		} catch (DocumentException e) {			
-			throw new AonCoreException(e);
-		}
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) throws DocumentException {		
+		printLedgerReport(outputStream, params);
 	}
 
 	public void printLedgerReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
