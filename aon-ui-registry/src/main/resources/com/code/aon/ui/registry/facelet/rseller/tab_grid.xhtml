@@ -35,6 +35,25 @@
 				</f:facet>
 			</aon:column>
 
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+				alias="RegistrySeller.type" >
+				<f:facet name="header">
+					<aon:outputLabel for="RegistrySeller_type" value="#{bundle.aon_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.type}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="RegistrySeller_type" rendered="#{formEdit}"
+					required="true" value="#{controller.to.type}">
+					<f:selectItems value="#{registryCollections.registrySellerTypes}" />
+				</aon:selectOneMenu>								
+				<f:facet name="footer">
+					<aon:selectOneMenu id="RegistrySeller_type-New" rendered="#{formNew}"
+						required="true" value="#{controller.to.type}">
+						<f:selectItems value="#{registryCollections.registrySellerTypes}" />
+					</aon:selectOneMenu>								
+				</f:facet>
+			</aon:column>
+			
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-120"
 				alias="RegistrySeller.startDate" >
 				<f:facet name="header">
