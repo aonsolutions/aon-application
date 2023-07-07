@@ -86,7 +86,7 @@
         class="line"
         [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
       >
-        <app-inbox></app-inbox>
+        <app-inbox [messageList]="messages$" ></app-inbox>
       </mat-grid-tile>
     </mat-grid-list>
   </mat-grid-list>
