@@ -44,11 +44,6 @@ public class AccountOperatingReportPDF implements IAccountReportPDF {
 	private static Font BODY_RED_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.RED);
 	
 	@Override
-	public String getDefaultTitle() {
-		return "Cuenta de explotación";
-	}
-
-	@Override
 	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {
 		try {
 			printOperatingReport(outputStream, params);

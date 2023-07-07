@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -26,7 +27,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class AccountBalanceReportPDF {
+public class AccountBalanceReportPDF implements IAccountReportPDF {
 
 	private static final BaseColor SUPER_LIGHT_GRAY = new BaseColor(220, 220, 220);
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00;(#,##0.00)");
@@ -35,6 +36,15 @@ public class AccountBalanceReportPDF {
 	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8);
 	private static Font ITALIC_FONT = new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC);
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
+	
+	@Override
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {
+		try {
+			printBalanceReport(outputStream, params);
+		} catch (DocumentException e) {
+			throw new AonCoreException(e);
+		}		
+	}
 
 	public void printBalanceReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
 		AonConfiguration config = AON.getConfiguration(params.getDomainName(), params.getDomain(), params.getUser());
@@ -214,5 +224,6 @@ public class AccountBalanceReportPDF {
 		}
 		return buf.toString();
 	}
+
 	
 }

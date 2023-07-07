@@ -36,11 +36,6 @@ public class AccountTrialBalanceReportPDF implements IAccountReportPDF {
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 	
 	@Override
-	public String getDefaultTitle() {
-		return "Balance de sumas y saldos";
-	}
-
-	@Override
 	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {
 		try {
 			trialBalanceReportReport(outputStream, params);

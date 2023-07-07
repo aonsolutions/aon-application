@@ -38,11 +38,6 @@ public class VatReportPDF implements IAccountReportPDF {
 	private final DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
-	public String getDefaultTitle() {
-		return "Listado de IVA";
-	}
-
-	@Override
 	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {
 		try {
 			printReport(outputStream, params);

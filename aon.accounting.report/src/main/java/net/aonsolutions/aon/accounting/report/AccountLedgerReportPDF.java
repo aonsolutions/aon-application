@@ -44,11 +44,6 @@ public class AccountLedgerReportPDF implements IAccountReportPDF {
 	private static final Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 	
 	@Override
-	public String getDefaultTitle() {
-		return "Mayor de cuentas";
-	}
-
-	@Override
 	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {		
 		try {
 			printLedgerReport(outputStream, params);

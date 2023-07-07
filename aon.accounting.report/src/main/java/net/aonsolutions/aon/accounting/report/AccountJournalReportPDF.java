@@ -42,16 +42,16 @@ public class AccountJournalReportPDF implements IAccountReportPDF {
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 	
 	@Override
-	public String getDefaultTitle() {
-		return "Listado diario de movimientos";
-	}
-	
-	@Override
 	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) {
+		// TODO
+		// ESTE LISTADO USA OTRA CLASE PARA LOS PARAMETROS, POR LO TANTO AQUI HABRIA QUE ASIGNARLOS 
+		// DEPENDIENDO DE LOS PARAMETROS QUE NOS LLEGUEN, O BIEN HABRIA QUE ADAPTAR ESTE LISTADO PARA 
+		// QUE USE LA CLASE DE PARAMETROS QUE USAN EL RESTO DE LISTADOS
 		AccountEntryParams aeParams = new AccountEntryParams()
 				.setDomain(params.getDomain())
 				.setDomainName(params.getDomainName())
 				.setUser(params.getUser())
+				.setPeriod(params.getPeriod())
 				.setFromDate(params.getFromDate())
 				.setToDate(params.getToDate())
 				.setActivity(params.getActivity())
