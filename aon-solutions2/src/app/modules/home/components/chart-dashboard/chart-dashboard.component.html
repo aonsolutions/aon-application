@@ -38,8 +38,9 @@
   </div>
 
   <div footer class="chart-footer">
-    <div class="chart-footer-button">
-      <app-icon [shape]="shape" class="black" size="21"></app-icon>
+    <div class="chart-footer-button" (click)="toggleChartType()">
+      <app-icon [shape]="getToggleIcon()" class="black" size="21"></app-icon>
     </div>
   </div>
+
 </app-card>
