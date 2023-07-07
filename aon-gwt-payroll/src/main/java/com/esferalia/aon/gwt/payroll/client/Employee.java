@@ -45,10 +45,12 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
-
+import com.google.gwt.event.dom.client.DragEndEvent;
+import com.google.gwt.event.dom.client.DragEndHandler;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DragStartHandler;
-
+import com.google.gwt.event.dom.client.DropEvent;
+import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -282,6 +284,9 @@ public abstract class Employee extends ResizeComposite {
 
 	// ------------------------------------------------- Constructor
 
+	private static final String [] ALLOWED_DOMAINS = {".aonsolutions.org" ,"ayudat.aonsolutions.net."};
+
+	
 	protected Employee() {
 		// Initialize Nationality SuggestBox
 		providedNationality();
@@ -294,6 +299,9 @@ public abstract class Employee extends ResizeComposite {
 
 		initializeView();
 		addReformatAccount();
+		
+		checkDomain();
+		
 		
 		impl.getCountries(new AsyncCallback<List<com.esferalia.aon.gwt.payroll.shared.Country>>() {
 
@@ -373,6 +381,34 @@ public abstract class Employee extends ResizeComposite {
 		this.nationality = new SuggestBox(oracleCountries);
 		this.nationality.setAutoSelectEnabled(true);
 	}
+	
+	public void checkDomain() {
+	    String currentDomain = Window.Location.getHostName();
+	    boolean isAllowedDomain = false;
+
+	    for (String allowedDomain : ALLOWED_DOMAINS) {
+	        if (currentDomain.endsWith(allowedDomain)) {
+	            isAllowedDomain = true;
+	            break;
+	        }
+	    }
+
+	    uploadButton.setVisible(isAllowedDomain);
+	}
+	
+	public void fillFormDniData(){
+		
+		formPanel.addSubmitCompleteHandler(event -> {
+			EmployeeDataResult eps = JsonUtils.safeEval(event.getResults());
+				document.setValue(eps.getDni());
+				nationality.setValue(eps.getNationality());
+				name.setValue(eps.getName());
+				firstSurname.setValue(eps.getFirstSurname());
+				secondSurname.setValue(eps.getSecondSurname());
+			});
+		
+		formPanel.submit();
+	}
 
 	// ------------------------------------------------- UiHandlers
 
@@ -405,33 +441,6 @@ public abstract class Employee extends ResizeComposite {
 			onEmployeeDocumentChange(documentStr, documentTypeStr);
 		} else
 			removeErrorBorder(this.document);
-	}
-	
-	
-	public void dragAndDrop() {
-		uploadButton.addDragStartHandler(new DragStartHandler() {
-			
-			@Override
-			public void onDragStart(DragStartEvent arg0) {
-				Window.alert("hola");
-				
-			}
-		});
-	}
-
-	
-	public void fillFormDniData(){
-		
-		formPanel.addSubmitCompleteHandler(event -> {
-			EmployeeDataResult eps = JsonUtils.safeEval(event.getResults());
-				document.setValue(eps.getDni());
-				nationality.setValue(eps.getNationality());
-				name.setValue(eps.getName());
-				firstSurname.setValue(eps.getFirstSurname());
-				secondSurname.setValue(eps.getSecondSurname());
-			});
-		
-		formPanel.submit();
 	}
 	
 

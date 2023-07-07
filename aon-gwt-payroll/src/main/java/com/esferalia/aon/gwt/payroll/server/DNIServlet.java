@@ -47,6 +47,7 @@ public class DNIServlet extends HttpServlet {
 		} else {
 			action = 2;
 		}
+		
 		switch (action) {
 
 		case 0:
