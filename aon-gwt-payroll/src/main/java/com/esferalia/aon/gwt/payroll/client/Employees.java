@@ -395,7 +395,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		initWidget(binder.createAndBindUi(this));
 		
-		if(!Wnd.isNewAONTheme()) employeesDeck.getElement().getStyle().setProperty("margin-top", ".5rem");
+		employeesDeck.getElement().getStyle().setProperty("margin-top", ".5rem");
 		showEmployees();
 		
 		createEmployeesToolbar();
@@ -2904,14 +2904,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 		
 		enterprisePanel.addDomHandler(e -> {
-			showMenuButton.setTitle("Ocultar");
-			showMenuButton.removeStyleName(AON.CSS.aonIconMenu());
-			showMenuButton.addStyleName(AON.CSS.aonIconMenuCollapse());
-			addStyleName(style.staticEmployees());
-			if ( !Wnd.isNewAONTheme() ) getElement().getStyle().setBackgroundColor("white");
-			else getElement().getStyle().setBackgroundColor("transparent");
-			scrollPanel.setHeight("85%");
-			onShowEmployees(true);
+		    showMenuButton.setTitle("Ocultar");
+		    showMenuButton.removeStyleName(AON.CSS.aonIconMenu());
+		    showMenuButton.addStyleName(AON.CSS.aonIconMenuCollapse());
+		    addStyleName(style.staticEmployees());
+		    getElement().getStyle().setBackgroundColor("white");
+		    scrollPanel.setHeight("85%");
+		    onShowEmployees(true);
 		}, MouseOverEvent.getType());
 		
 		staticEmployees.add(enterprisePanel);

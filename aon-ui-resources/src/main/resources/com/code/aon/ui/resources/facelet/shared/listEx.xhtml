@@ -83,17 +83,8 @@
 
 	<ui:insert name="additionalDataTableContent"/>
 
-	<aon:if test="#{showDataScroller and userUtils.newAONTheme}">
-
-		<aon:aonScroller for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();"
+	<aon:aonScroller for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();"
 			rowCount="#{dataModel.rowCount}" page="#{controller.page}" pageSize="#{rows}" />
-	
-	</aon:if>
-	
-	<aon:if test="#{showDataScroller and !userUtils.newAONTheme}">
-	<aon:dataScroller for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();"
-			rowCount="#{dataModel.rowCount}" page="#{controller.page}" pageSize="#{rows}" />
-	</aon:if>
 	 
 
 </ui:composition>
