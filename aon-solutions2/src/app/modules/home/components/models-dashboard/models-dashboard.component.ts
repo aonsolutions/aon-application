@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { TaxModelService } from '../../../../core/services/tax-model.service';
 import { TaxModel } from 'src/app/core/models/class/tax-model';
 import { Observable } from 'rxjs';
 
@@ -30,9 +29,8 @@ export class ModelsDashboardComponent implements OnInit {
   ngOnInit(): void {
     if (this.taxModelList) {
       this.taxModelList.subscribe((taxModel) => {
-        this.models = taxModel
-
-        });
+        this.models = taxModel;
+      });
     }
   }
 }
