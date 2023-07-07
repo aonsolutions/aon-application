@@ -1,5 +1,16 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ReportingService } from '../../../../core/services/reporting.service';
+import { Component, OnInit, Input } from '@angular/core';import { ReportingService } from '../../../../core/services/reporting.service'
+import { Observable } from 'rxjs';
+import { MultiDataSet } from 'ng2-charts';
+import { ChartType } from 'chart.js';
+
+interface ChartItem {
+  shape: string;
+  name: string;
+  chartLabels: string[];
+  chartData: MultiDataSet;
+  chartType: ChartType;
+  colors: string[];
+}
 
 @Component({
   selector: 'app-chart-dashboard',
@@ -11,14 +22,17 @@ import { ReportingService } from '../../../../core/services/reporting.service';
   },
 })
 export class ChartDashboardComponent implements OnInit {
+  chartItems: ChartItem[] = []
   @Input() name: string = '';
-  @Input() chart: string = '';
   @Input() shape: string = '';
   @Input() labels: any = [];
   @Input() data: any = [];
   @Input() colors: any = [];
   @Input() chartType: any = '';
   @Input() chartData: string[] = [];
+
+  @Input() public chartItemList: Observable<ChartItem[]> | undefined;
+
 
   selected: string = 'Últimos 12 meses';
 
@@ -27,10 +41,14 @@ export class ChartDashboardComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    this.loadData();
+    if (this.chartItemList) {
+      this.chartItemList.subscribe((chartItem) => {
+        this.chartItems = chartItem;
+      });
+    }
   }
 
-  loadData(): void {
 
-  }
+
+
 }

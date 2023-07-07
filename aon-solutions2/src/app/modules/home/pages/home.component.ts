@@ -18,7 +18,6 @@ export interface ShortcutDashboard {
 interface ChartItem {
   shape: string;
   name: string;
-  chart: string;
   chartLabels: string[];
   chartData: MultiDataSet;
   chartType: ChartType;
@@ -37,6 +36,36 @@ export interface MenuItems {
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
+  //botones area
+  shortcuts: ShortcutDashboard[] = [
+    { shape: 'add_box', name: 'CREAR FACTURA' },
+    { shape: 'person_add', name: 'DAR DE ALTA EMPLEADO' },
+    { shape: 'add_comment', name: 'CREAR CONSULTA' },
+    { shape: 'alarm', name: 'MARCAJE' },
+  ];
+
+  //chart area
+  chartItems: ChartItem[] = [
+    {
+      shape: 'show_chart',
+      name: 'Ventas/Gastos',
+      chartLabels:[],
+      chartData: [],
+      chartType: 'line' ,
+      colors: [],
+    },
+    {
+      shape: 'bar_chart',
+      name: 'Cobros/Pagos',
+      chartLabels: [],
+      chartData: [],
+      chartType: 'bar',
+      colors: [],
+    },
+  ];
+  private chartItemsSubject = new BehaviorSubject<any[]>([]);
+  public chartItems$ = this.chartItemsSubject.asObservable();
+
   //banks area
   banks: Bank[] = [];
   private banksSubject = new BehaviorSubject<any[]>([]);
@@ -47,34 +76,7 @@ export class HomeComponent implements OnInit {
   private modelsSubject = new BehaviorSubject<any[]>([]);
   public models$ = this.modelsSubject.asObservable();
 
-  shortcuts: ShortcutDashboard[] = [
-    { shape: 'add_box', name: 'CREAR FACTURA' },
-    { shape: 'person_add', name: 'DAR DE ALTA EMPLEADO' },
-    { shape: 'add_comment', name: 'CREAR CONSULTA' },
-    { shape: 'alarm', name: 'MARCAJE' },
-  ];
-
-  chartItems: ChartItem[] = [
-    {
-      shape: 'show_chart',
-      name: 'Ventas/Gastos',
-      chart: '',
-      chartLabels:[],
-      chartData: [],
-      chartType: 'line',
-      colors: [''],
-    },
-    {
-      shape: 'bar_chart',
-      name: 'Cobros/Pagos',
-      chart: '',
-      chartLabels: [],
-      chartData: [],
-      chartType: 'bar',
-      colors: [''],
-    },
-  ];
-
+  //botones Menu
   menuItems: MenuItems[] = [
     { shape: 'assessment', name: 'Gestión', color: '#4f91ff' },
     { shape: 'euro_symbol', name: 'Panel de Impuestos', color: '#fb982e' },
@@ -94,27 +96,28 @@ export class HomeComponent implements OnInit {
       this.banks = response;
       this.banksSubject.next(this.banks);
     });
+
     //taxmodelService
       this.taxModelService.getTaxModelList().then((response) => {
       this.models = response;
       this.modelsSubject.next(this.models);
     });
 
+    //reportingService
     this.reportingService.getVentasGastos().then((response) => {
-      console.log(response);
       this.chartItems[0].chartType = 'line';
       this.chartItems[0].chartData = [response.ventas, response.gastos];
       this.chartItems[0].chartLabels = response.label;
-
+      this.chartItemsSubject.next(this.chartItems);
     })
 
     this.reportingService.getCobrosPagos().then((response) => {
-      console.log(response);
       this.chartItems[1].chartType = 'bar';
       this.chartItems[1].chartData = [response.cobros, response.pagos];
       this.chartItems[1].chartLabels = response.label;
-
+      this.chartItemsSubject.next(this.chartItems);
     })
+
 
 
 
