@@ -24,6 +24,8 @@ public interface Constants {
 	public static final String MAIN_CONFIG_COMUNICA_ENTRY_POINT = "MainConfigComunica";
 	public static final String ACTIVITY_SUMMARY_ENTRY_POINT = "ActivitySummary";
 	
+	public static final String MAIN_CUSTOMER_FEE_ENTRY_POINT = "CustomerFee";
+	
 	public static final String MODULE_ENTRY_POINT = "module";	
 	public static final String DSI_IMPORT_ENTRY_POINT = "DSIImportForm";
 	public static final String BOE_IMPORT_ENTRY_POINT = "BOEImportForm";
