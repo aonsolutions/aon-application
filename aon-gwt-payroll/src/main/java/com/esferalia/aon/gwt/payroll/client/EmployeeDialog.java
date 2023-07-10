@@ -360,6 +360,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 					f -> {}
 			);	
 		}
+
+		@Override
+		public void onUploadDni() {
+			
+		}
 		
 	}	
 

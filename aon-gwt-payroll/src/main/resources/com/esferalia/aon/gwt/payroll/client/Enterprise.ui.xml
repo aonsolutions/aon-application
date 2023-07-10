@@ -3,8 +3,8 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.Enterprise.MyStyle">
-	
+	<ui:style
+		type="com.esferalia.aon.gwt.payroll.client.Enterprise.MyStyle">
 		.container {
 			min-width: 600px;
 			padding: 0 1rem;
@@ -13,14 +13,18 @@
 			flex-direction: column;
 		}
 		
-		.documentError { border: 1.5px solid #ad0000; }
+		.documentError {
+			border: 1.5px solid #ad0000;
+		}
 		
-		.emptyLabel { height: 12px; }
+		.emptyLabel {
+			height: 12px;
+		}
 		
 		.firstColumn {
 			min-width: 150px;
 			padding: 5px;
-			background-color: #f6f6f6; 
+			background-color: #f6f6f6;
 		}
 		
 		.flex {
@@ -38,44 +42,55 @@
 			flex-direction: column;
 		}
 		
-		.heightAll { height: 100%; }
+		.heightAll {
+			height: 100%;
+		}
 		
-		.inputPadding { padding: 0 0 0 .5rem; }
-
-		.inputLBHeight { 
-			height: 1.4rem !important; 
+		.inputPadding {
+			padding: 0 0 0 .5rem;
+		}
+		
+		.inputLBHeight {
+			height: 1.4rem !important;
 			border-radius: 0;
 			text-transform: uppercase;
 		}
 		
-		.inputTextHeight { 
-			height: 1.2rem !important; 
-			text-transform: uppercase;	
+		.inputTextHeight {
+			height: 1.2rem !important;
+			text-transform: uppercase;
 		}
 		
-		.mt20 { margin-top: 20px; }
+		.mt20 {
+			margin-top: 20px;
+		}
 		
-		.mw30 { min-width: 30px; }
-
-		.mw50{
+		.mw30 {
+			min-width: 30px;
+		}
+		
+		.mw50 {
 			max-width: 50px;
 			text-align: center;
 		}
 		
-		.mw75{
+		.mw75 {
 			min-width: 75px;
 			text-align: center;
 		}
 		
-		
-		.mw100 { min-width: 100px !important; }
-		
-		.mw150 { 
-			min-width: 150px;
-			width: 100%;	
+		.mw100 {
+			min-width: 100px !important;
 		}
 		
-		.mw180 { width: 180px; }
+		.mw150 {
+			min-width: 150px;
+			width: 100%;
+		}
+		
+		.mw180 {
+			width: 180px;
+		}
 		
 		.requiredColor {
 			color: #2152A5;
@@ -105,96 +120,139 @@
 			color: #be0000;
 		}
 		
-		.warningTB { border: 1.5px solid #ad0000; }
+		.warningTB {
+			border: 1.5px solid #ad0000;
+		}
 		
-		.widthAll { width: 100%; }
-		
+		.widthAll {
+			width: 100%;
+		}
 		@external documentError;
-		
-	</ui:style>
+		</ui:style>
 
 	<g:HTMLPanel styleName="{style.container}">
-		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll}" debugId="enterpriseHTMLPanel">
-	   		<g:HTMLPanel styleName="{style.styleBorder}">
-	    		<g:Label styleName='{style.tittle}'>Datos empresa</g:Label>
-		    	<g:HTMLPanel ui:field="activityDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Nombre</g:Label>
-		    			<g:TextBox ui:field="enterpriseName" debugId="enterpriseNameTB"  styleName='aon-inputText {style.inputTextHeight}  {style.inputPadding} {style.widthAll}'></g:TextBox>
+		<g:HTMLPanel
+			styleName="{style.widthAll} {style.heightAll}"
+			debugId="enterpriseHTMLPanel">
+			<g:HTMLPanel styleName="{style.styleBorder}">
+				<g:Label styleName='{style.tittle}'>Datos empresa</g:Label>
+				<g:HTMLPanel ui:field="activityDataTable"
+					styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label
+							styleName='{style.requiredColor} {style.firstColumn}'>Nombre</g:Label>
+						<g:TextBox ui:field="enterpriseName"
+							debugId="enterpriseNameTB"
+							styleName='aon-inputText {style.inputTextHeight}  {style.inputPadding} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.firstColumn}'>Nombre Comercial / Alias</g:Label>
-		    			<g:TextBox ui:field="enterpriseAlias" styleName='aon-inputText {style.inputTextHeight}  {style.inputPadding} {style.widthAll}'></g:TextBox>
+						<g:Label styleName='{style.firstColumn}'>Nombre Comercial / Alias</g:Label>
+						<g:TextBox ui:field="enterpriseAlias"
+							styleName='aon-inputText {style.inputTextHeight}  {style.inputPadding} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.firstColumn}'>Documento</g:Label>
-		    			<g:Label ui:field="documentType" debugId="enterpriseDocumentType"></g:Label>
-		    			<g:TextBox ui:field="document" debugId="enterpriseDocumentTB" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
-						<aon:AonToolbarSmallButton ui:field="documentStatus"/>	
-		    			<g:Label ui:field="nationalityLabel" styleName="{style.mw75}">País Emisión</g:Label>
-		    			<g:SuggestBox ui:field="nationality" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:SuggestBox>
-		    		</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.requiredColor} {style.firstColumn}'>Dirección</g:Label>
-		    			<g:ListBox ui:field="streetType" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.mw180}'></g:ListBox>
-		    			<g:TextBox ui:field="address" styleName='aon-inputText {style.inputTextHeight} {style.widthAll}'></g:TextBox>
-		    			<g:Label>Nº</g:Label>
-		    			<g:TextBox ui:field="addressNum" styleName='aon-inputText {style.mw50} {style.inputTextHeight} {style.widthAll} {style.mw30}'></g:TextBox>
-		    			<g:Label>C.P.</g:Label>
-		    			<g:TextBox ui:field="addressZip" debugId="enterpriseZipAddressTB" styleName='aon-inputText {style.mw50} {style.inputTextHeight} {style.widthAll}'></g:TextBox>
+						<g:Label styleName='{style.firstColumn}'>Documento</g:Label>
+						<g:Label ui:field="documentType"
+							debugId="enterpriseDocumentType"></g:Label>
+						<g:TextBox ui:field="document"
+							debugId="enterpriseDocumentTB"
+							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
+						<aon:AonToolbarSmallButton
+							ui:field="documentStatus" />
+						<g:Label ui:field="nationalityLabel"
+							styleName="{style.mw75}">País Emisión</g:Label>
+						<g:SuggestBox ui:field="nationality"
+							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:SuggestBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName='{style.firstColumn} {style.emptyLabel} {style.inputTextHeight}'></g:Label>
-		    			<g:Label>Provincia</g:Label>
-		    			<g:ListBox ui:field="addressProvince" debugId="enterpriseProvinceAddressTB" styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw150}'></g:ListBox>
-		    			<g:Label>Municipio</g:Label>
-		    			<g:ListBox ui:field="addressCity" styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw150}'></g:ListBox>
+						<g:Label
+							styleName='{style.requiredColor} {style.firstColumn}'>Dirección</g:Label>
+						<g:ListBox ui:field="streetType"
+							styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.mw180}'></g:ListBox>
+						<g:TextBox ui:field="address"
+							styleName='aon-inputText {style.inputTextHeight} {style.widthAll}'></g:TextBox>
+						<g:Label>Nº</g:Label>
+						<g:TextBox ui:field="addressNum"
+							styleName='aon-inputText {style.mw50} {style.inputTextHeight} {style.widthAll} {style.mw30}'></g:TextBox>
+						<g:Label>C.P.</g:Label>
+						<g:TextBox ui:field="addressZip"
+							debugId="enterpriseZipAddressTB"
+							styleName='aon-inputText {style.mw50} {style.inputTextHeight} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.firstColumn}'>Contacto</g:Label>
-		    			<g:Label>Móvil</g:Label>
-		    			<g:TextBox ui:field="mobile" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
-		    			<g:Label>Teléfono</g:Label>
-		    			<g:TextBox ui:field="phone" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
-		    			<g:Label>eMail</g:Label>
-		    			<g:TextBox ui:field="email" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
+						<g:Label
+							styleName='{style.firstColumn} {style.emptyLabel} {style.inputTextHeight}'></g:Label>
+						<g:Label>Provincia</g:Label>
+						<g:ListBox ui:field="addressProvince"
+							debugId="enterpriseProvinceAddressTB"
+							styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw150}'></g:ListBox>
+						<g:Label>Municipio</g:Label>
+						<g:ListBox ui:field="addressCity"
+							styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw150}'></g:ListBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.firstColumn}'>Web</g:Label>
-		    			<g:TextBox ui:field="enterpriseWeb" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
+						<g:Label styleName='{style.firstColumn}'>Contacto</g:Label>
+						<g:Label>Móvil</g:Label>
+						<g:TextBox ui:field="mobile"
+							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
+						<g:Label>Teléfono</g:Label>
+						<g:TextBox ui:field="phone"
+							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
+						<g:Label>eMail</g:Label>
+						<g:TextBox ui:field="email"
+							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.firstColumn}'>Ámbito</g:Label>
-		    			<g:HTMLPanel ui:field="enterpriseScopePanel" styleName="{style.widthAll}"></g:HTMLPanel>
-					</g:HTMLPanel>	
-		    	</g:HTMLPanel>
-		    </g:HTMLPanel>
-	   	</g:HTMLPanel>
-	   	
-	   	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.mt20}" debugId="otherDataHTMLPanel">
-	   		<g:HTMLPanel styleName="{style.styleBorder}">
-	    		<g:Label styleName='{style.tittle}'>Otros datos</g:Label>
-		    	<g:HTMLPanel ui:field="otherDataDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
-		    		<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.firstColumn}'>Modelo Recibo Salarial</g:Label>
-		    			<g:ListBox ui:field="enterprisePaysheetModel" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll} '></g:ListBox>
+						<g:Label styleName='{style.firstColumn}'>Web</g:Label>
+						<g:TextBox ui:field="enterpriseWeb"
+							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.firstColumn}'>Envío Nóminas</g:Label>
-		    			<g:ListBox ui:field="enterprisePaysheetSendType" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll} '></g:ListBox>
-		    			<g:HTMLPanel ui:field="enterprisePaysheetSendPanel" styleName='{style.flex} {style.widthAll}'>
-		    				<g:Label styleName='{style.mw100} {style.firstColumn}'>A la dirección : </g:Label>
-							<g:TextBox ui:field="enterprisePaysheetSendEmail" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
-		    			</g:HTMLPanel>
+						<g:Label styleName='{style.firstColumn}'>Ámbito</g:Label>
+						<g:HTMLPanel ui:field="enterpriseScopePanel"
+							styleName="{style.widthAll}"></g:HTMLPanel>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+
+		<g:HTMLPanel
+			styleName="{style.widthAll} {style.heightAll} {style.mt20}"
+			debugId="otherDataHTMLPanel">
+			<g:HTMLPanel styleName="{style.styleBorder}">
+				<g:Label styleName='{style.tittle}'>Otros datos</g:Label>
+				<g:HTMLPanel ui:field="otherDataDataTable"
+					styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.firstColumn}'>Modelo Recibo Salarial</g:Label>
+						<g:ListBox ui:field="enterprisePaysheetModel"
+							styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll} '></g:ListBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.firstColumn}'>Convenio</g:Label>
-		    			<g:SuggestBox ui:field="enterpriseAgreement" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}' />
+						<g:Label styleName='{style.firstColumn}'>Envío Nóminas</g:Label>
+						<g:ListBox ui:field="enterprisePaysheetSendType"
+							styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll} '></g:ListBox>
+						<g:HTMLPanel ui:field="enterprisePaysheetSendPanel"
+							styleName='{style.flex} {style.widthAll}'>
+							<g:Label styleName='{style.mw100} {style.firstColumn}'>A la dirección : </g:Label>
+							<g:TextBox ui:field="enterprisePaysheetSendEmail"
+								styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
+						</g:HTMLPanel>
 					</g:HTMLPanel>
-		    	</g:HTMLPanel>
-		    </g:HTMLPanel>
-	   	</g:HTMLPanel>	
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.firstColumn}'>Convenio</g:Label>
+						<g:SuggestBox ui:field="enterpriseAgreement"
+							styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}' />
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
 	</g:HTMLPanel>
-			
+
+
+
+
+
+
 </ui:UiBinder> 
 
