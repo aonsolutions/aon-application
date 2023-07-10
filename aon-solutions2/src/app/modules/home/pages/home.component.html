@@ -1,78 +1,114 @@
 <app-content>
   <!-- Subir documentación -->
   <mat-grid-list class="upload" [cols]="24" [rowHeight]="'2.8rem'">
-    <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
-    <mat-grid-tile  [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
-      <app-file-upload-button> Subir documentación
-        <app-icon shape="cloud_upload" style="margin-left: 15px" set-color color="black" size="24"></app-icon>
+    <mat-grid-tile
+      [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+    ></mat-grid-tile>
+    <mat-grid-tile [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
+      <app-file-upload-button>
+        Subir documentación
+        <app-icon
+          shape="cloud_upload"
+          style="margin-left: 15px"
+          set-color
+          color="black"
+          size="24"
+        ></app-icon>
       </app-file-upload-button>
     </mat-grid-tile>
   </mat-grid-list>
 
-<!-- botones dashboard -->
-  <mat-grid-list [cols]="24" [rowHeight]="'4.05rem'" >
-    <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
-    <mat-grid-tile id="list-Dashboard" [class]="'left-content'"[gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
-      <app-button *ngFor="let shortcut of shortcuts" class="icon-background" [width]="'width'">
+  <!-- botones dashboard -->
+  <mat-grid-list [cols]="24" [rowHeight]="'4.05rem'">
+    <mat-grid-tile
+      [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+    ></mat-grid-tile>
+    <mat-grid-tile
+      id="list-Dashboard"
+      [class]="'left-content'"
+      [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
+    >
+      <app-button
+        *ngFor="let shortcut of shortcuts"
+        class="icon-background"
+        [width]="'width'"
+      >
         <app-icon [shape]="shortcut.shape"> </app-icon>
         {{ shortcut.name }}
       </app-button>
     </mat-grid-tile>
   </mat-grid-list>
 
-<!-- Ventas, Cobros, Impuestos, tus bancos -->
-<mat-grid-list class="summary" [cols]="24" [rowHeight]="'16.6rem'">
-  <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
-  <mat-grid-tile [gridCols]="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }">
-    <div class="summary-view-chart" *ngFor="let chartItem of chartItems">
-      <!-- <app-chart-dashboard [name]="chartItem.name" [chart]="chartItem.chart" [shape]="chartItem.shape" [labels]="chartItem.chartLabels" [data]="chartItem.chartData"  [colors]="chartItem.colors"
-      [chartType]="chartItem.chartType"></app-chart-dashboard> -->
-
-      <app-chart
-  [chartLabels]= chartItem.chartLabels
-  [chartType]= chartItem.chartType
-  [chartData]= chartItem.chartData
-  >
-</app-chart>
-
-
-
-    </div>
-  </mat-grid-tile>
-  <mat-grid-tile [gridCols]="{ xs: 10, sm: 10, md: 10, lg: 10, xl: 10 }">
-    <app-models-dashboard [taxModelList]="models$" class="summary-view">
-
-    </app-models-dashboard>
-    <app-banks-dashboard [bankList]="banks$" class="summary-view"> </app-banks-dashboard>
-  </mat-grid-tile>
-</mat-grid-list>
+  <!-- Ventas, Cobros, Impuestos, tus bancos -->
+  <mat-grid-list class="summary" [cols]="24" [rowHeight]="'16.6rem'">
+    <mat-grid-tile
+      [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+    ></mat-grid-tile>
+    <mat-grid-tile [gridCols]="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }">
+      <div class="summary-view-chart" *ngFor="let chartItem of chartItems">
+        <app-chart-dashboard [chartItemList]="chartItems$"
+          [labels]="chartItem.chartLabels"
+          [chartType]="chartItem.chartType"
+          [data]="chartItem.chartData"
+          [name]="chartItem.name"
+          [shape]="chartItem.shape"
+        >
+        </app-chart-dashboard>
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile [gridCols]="{ xs: 10, sm: 10, md: 10, lg: 10, xl: 10 }">
+      <app-models-dashboard [taxModelList]="models$" class="summary-view">
+      </app-models-dashboard>
+      <app-banks-dashboard [bankList]="banks$" class="summary-view">
+      </app-banks-dashboard>
+    </mat-grid-tile>
+  </mat-grid-list>
 
   <!-- linea divisoria -->
   <mat-grid-list [cols]="24" [rowHeight]="'1px'">
-    <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
-    <mat-grid-tile class="line-div" [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
+    <mat-grid-tile
+      [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+    ></mat-grid-tile>
+    <mat-grid-tile
+      class="line-div"
+      [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
+    >
     </mat-grid-tile>
   </mat-grid-list>
 
   <!-- Bandeja de email -->
   <mat-grid-list class="inbox" [cols]="24" [rowHeight]="'23.15rem'">
     <mat-grid-list [cols]="24" [rowHeight]="'23.15rem'">
-      <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
-    <mat-grid-tile class="line" [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
-      <app-inbox></app-inbox>
-    </mat-grid-tile>
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
+      <mat-grid-tile
+        class="line"
+        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
+      >
+        <app-inbox [messageList]="messages$" ></app-inbox>
+      </mat-grid-tile>
     </mat-grid-list>
   </mat-grid-list>
 
   <!-- Acceso a gestión, panel de impuestos, empleados y doc -->
   <mat-grid-list class="button-dashboard" [cols]="24" [rowHeight]="'7.45rem'">
-    <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
+    <mat-grid-tile
+      [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+    ></mat-grid-tile>
     <mat-grid-tile [gridCols]="{ xs: 18, sm: 18, md: 18, lg: 18, xl: 18 }">
       <div class="button-dashboard-style" *ngFor="let menuItem of menuItems">
-        <app-menu-button-dashboard [shape]="menuItem.shape" [name]="menuItem.name" [color]="menuItem.color"></app-menu-button-dashboard>
+        <app-menu-button-dashboard
+          [shape]="menuItem.shape"
+          [name]="menuItem.name"
+          [color]="menuItem.color"
+        ></app-menu-button-dashboard>
       </div>
     </mat-grid-tile>
-    <mat-grid-tile class="" [gridCols]="{ xs: 24, sm: 24, md: 24, lg: 24, xl: 24 }">
+    <mat-grid-tile
+      class=""
+      [gridCols]="{ xs: 24, sm: 24, md: 24, lg: 24, xl: 24 }"
+    >
     </mat-grid-tile>
   </mat-grid-list>
 </app-content>

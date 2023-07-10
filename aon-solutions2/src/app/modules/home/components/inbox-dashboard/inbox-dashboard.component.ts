@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Message } from './../../../../core/models/class/message';
 import { MessageService } from './../../../../core/services/message.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-inbox',
@@ -12,39 +13,46 @@ import { MessageService } from './../../../../core/services/message.service';
   },
 })
 export class InboxDashboardComponent implements OnInit {
+  @Input() public messageList: Observable<Message[]> | undefined;
 
   messages: Message[] = [];
-
   totalMessages: number = 0;
 
-
-  constructor(private messageService: MessageService) {}
+  constructor() {}
 
   ngOnInit(): void {
-    this.loadMessages();
-  }
+    if (this.messageList) {
+      this.messageList.subscribe((messages) => {
+        this.messages = messages;
 
-  private loadMessages(): void {
-    this.messageService.getMessageList().then((response: Message[]) => {
-      this.messages = response.map((message: Message) => {
-        message.Status = this.getStatusByType(message.Type);
-        return message;
-
+        this.totalMessages = this.messages.length;
       });
-      this.totalMessages = this.messages.length;
-    });
-  }
-
-  private getStatusByType(type: string): string {
-    switch (type) {
-      case 'consulta':
-        return 'abierta';
-      case 'tarea':
-        return 'pendiente';
-      case 'notificacion':
-        return 'nueva';
-      default:
-        return '';
     }
   }
+
+  // private getStatusByType(type: string): string {
+  //   switch (type) {
+  //     case 'consulta':
+  //       return 'abierta';
+  //     case 'tarea':
+  //       return 'pendiente';
+  //     case 'notificacion':
+  //       return 'nueva';
+  //     default:
+  //       return '';
+  //   }
+  // }
+
+  // getTypeByMessage(message: Message): number {
+  //   switch (message.Type) {
+  //     case 'consulta':
+  //       return 1;
+  //     case 'tarea':
+  //       return 2;
+  //     case 'notificacion':
+  //       return 3;
+  //     default:
+  //       return 0;
+  //   }
+  // }
 }

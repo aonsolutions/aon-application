@@ -50,11 +50,11 @@ const routes: Routes = [
       //   loadChildren: () =>
       //     import('src/app/modules/employee-panel/employee-panel.module').then((m) => m.EmployeePanelModule),
       // },
-      // {
-      //   path: 'tax-panel',
-      //   loadChildren: () =>
-      //     import('src/app/modules/tax-panel/tax-panel.module').then((m) => m.TaxPanelModule),
-      // },
+      {
+        path: 'tax-panel',
+        loadChildren: () =>
+          import('src/app/modules/tax-panel/tax-panel.module').then((m) => m.TaxPanelModule),
+      },
       {
         path: '', redirectTo: 'home', pathMatch: 'full'
       },
