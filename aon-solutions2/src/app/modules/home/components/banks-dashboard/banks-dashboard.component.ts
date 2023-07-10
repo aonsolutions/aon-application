@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { BankService } from '../../../../core/services/bank.service';
 import { Bank } from 'src/app/core/models/class/bank';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-banks-dashboard',
@@ -13,18 +14,21 @@ import { Bank } from 'src/app/core/models/class/bank';
 })
 export class BanksDashboardComponent implements OnInit {
   banks: Bank[] = [];
-
   totalAmount: number = 0;
+  @Input() public bankList: Observable<Bank[]> | undefined;
 
-  constructor(public bankService: BankService) {
-    bankService.getBankList().then((response) => {
-      this.banks = response;
-      this.calculateTotalAmount();
-    });
+  constructor() {}
+
+  ngOnInit(): void {
+    if (this.bankList) {
+      this.bankList.subscribe((banks) => {
+        this.banks = banks
+        this.calculateTotalAmount()
+
+
+        });
+    }
   }
-
-  ngOnInit(): void {}
-
   calculateTotalAmount(): void {
     this.totalAmount = this.banks.reduce((sum, bank) => sum + bank.Total, 0);
   }
@@ -32,7 +36,5 @@ export class BanksDashboardComponent implements OnInit {
   hasBanks(): boolean {
     return this.banks.length > 0;
   }
-
-
 
 }

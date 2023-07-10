@@ -1,3 +1,5 @@
+@import 'src/styles.scss';
+
 .app-card:hover {
   border-color: black;
   cursor: pointer;
@@ -28,7 +30,7 @@
     font-size: 1.2rem;
     font-family: 'Roboto-Bold';
     width: calc(auto);
-  
+
 }
 
 .chart-header-filters {

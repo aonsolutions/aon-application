@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
 import { AppRoutingModule } from './app-routing.module';
@@ -55,6 +55,7 @@ import { CoreModule } from './core/core.module';
 import { LayoutModule } from '@angular/cdk/layout';
 import { RouterModule } from '@angular/router';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { GlobalErrorHandlerService } from './core/services/global-error-handler.service';
 
 
 @NgModule({
@@ -126,7 +127,8 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
       multi: true
-    }
+    },
+    {provide: ErrorHandler, useClass: GlobalErrorHandlerService}
   ],
   bootstrap: [AppComponent]
 })

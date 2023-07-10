@@ -3,5 +3,5 @@ export interface MenuButton {
   shape     : string,
   class     : string,
   text      : string,
-  selected  : string
+  selected  : boolean
 }

@@ -15,7 +15,8 @@
           <app-icon shape="keyboard_arrow_left"></app-icon>
         </div>
       </div>
-      <div #iconHover appSidenavHover class="menu-left-option" selected="{{item.selected}}" 
+      <div #iconHover appSidenavHover class="menu-left-option"
+        [ngClass]="item.selected ? {'menu-select' : true} : {'menu-select' : false}"
         *ngFor="let item of items;" 
         (click)="deselectAll();select(item);"
         routerLink={{item.routerlink}}

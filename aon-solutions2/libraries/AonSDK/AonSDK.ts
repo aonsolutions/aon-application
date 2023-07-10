@@ -17,13 +17,13 @@ const ERRORS = {
     '0206': {description:'ERROR_MODEL_ELEMENT', result:'Error al intentar obtener el elemento'},
 }
 
-interface IResponse {
+export interface IResponse {
     code: string;
     description: string;
     result: any;
 }
 
-class Response implements IResponse {
+export class Response implements IResponse {
 
     code: string = '';
     description: string = '';
@@ -70,10 +70,12 @@ class Folder implements Collection {
 
     name: string;
     path: string;
+    parent: string;
     
-    constructor(name: string, path: string){
+    constructor(name: string, path: string, parent:string){
         this.name = name;
         this.path = path;
+        this.parent = parent;
     }
 
 }
@@ -210,7 +212,7 @@ class Factory implements IFactory {
             case 'enterprise':
                 return new Enterprise('','');
             case 'folder':
-                return new Folder('','');
+                return new Folder('','','');
             case 'document':
                 return new Document('','',0,'','','', new Date());
             case 'taxmodel':
@@ -688,6 +690,7 @@ class ServiceTaxModel implements ICollection {
 
     getElementList(model: string, filter?: Filter) : Promise<Response> {
         return new Promise((resolve, reject) => {
+            // reject(new Response('0206'))
             try {
                 let data = copyObjectArray(taxModels);
                 if(filter?.filterFields?.fields) data = applyFilters(filter,data);
@@ -919,12 +922,17 @@ class ServiceReporting implements IService {
     getVentasGastos(): Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
-                resolve(new Response('0000',{
-                    ventas: [200,331,453,513,364,956,213,1543,144,2543,1754,156],
-                    gastos: [500,231,653,413,3364,856,2513,543,1244,543,754,1456],
-                    label: [1,2,3,4,5,6,7,8,9,10,11,12]
+                let datasets: any[] = [], ventas: any[] = [], gastos: any[] = [], label: any[] = [];
+                for(let i = 0; i < 12; i++){
+                    ventas.push(Math.floor(Math.random()*2000))
+                    gastos.push(Math.floor(Math.random()*2000))
                 }
-                ))
+                datasets.push({data:ventas, label:'ventas'})
+                datasets.push({data:gastos, label:'gastos'})
+                resolve(new Response('0000',{
+                    datasets: datasets,
+                    label: [1,2,3,4,5,6,7,8,9,10,11,12]
+                }))
             } catch (error) {
                 reject(new Response('0123'))
             }
@@ -934,12 +942,17 @@ class ServiceReporting implements IService {
     getCobrosPagos(): Promise<Response> {
         return new Promise((resolve, reject) => {
             try {
-                resolve(new Response('0000',{
-                    cobros: [200,331,453,513,364,956,213,1543,144,2543,1754,156],
-                    pagos: [500,231,653,413,3364,856,2513,543,1244,543,754,1456],
-                    label: [1,2,3,4,5,6,7,8,9,10,11,12]
+                let datasets: any[] = [], cobros: any[] = [], pagos: any[] = [], label: any[] = [];
+                for(let i = 0; i < 12; i++){
+                    cobros.push(Math.floor(Math.random()*2000))
+                    pagos.push(Math.floor(Math.random()*2000))
                 }
-                ))
+                datasets.push({data:cobros, label:'cobros'})
+                datasets.push({data:pagos, label:'pagos'})
+                resolve(new Response('0000',{
+                    datasets: datasets,
+                    label: [1,2,3,4,5,6,7,8,9,10,11,12]
+                }))
             } catch (error) {
                 reject(new Response('0123'))
             }
@@ -1143,14 +1156,14 @@ let enterprises = [
 ]
 
 let folders = [
-    new Folder('A contabilizar', '/a_contabilizar'),
-    new Folder('Contabilizado', '/contabilizado'),
-    new Folder('Papelera', '/papelera'),
-    new Folder('Fiscal', '/fiscal'),
-    new Folder('Laboral', '/laboral'),
-    new Folder('Maria Rico Gómez', '/laboral/48150243L'),
-    new Folder('Juan Carlos Aragón Pérez', '/laboral/11556837G'),
-    new Folder('Maria Rico Álvarez', '/laboral/86638678R'),
+    new Folder('A contabilizar', '/a_contabilizar','/'),
+    new Folder('Contabilizado', '/contabilizado','/'),
+    new Folder('Papelera', '/papelera','/'),
+    new Folder('Fiscal', '/fiscal','/'),
+    new Folder('Laboral', '/laboral','/'),
+    new Folder('Maria Rico Gómez', '/laboral/48150243L','/laboral'),
+    new Folder('Juan Carlos Aragón Pérez', '/laboral/11556837G','/laboral'),
+    new Folder('Maria Rico Álvarez', '/laboral/86638678R','/laboral'),
 ]
 
 let documents = [

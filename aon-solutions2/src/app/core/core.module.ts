@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { SharedModule } from '../shared/shared.module';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   exports: [
@@ -35,7 +36,8 @@ import { SharedModule } from '../shared/shared.module';
     MatButtonModule,
     MatListModule,
     MatMenuModule,
-    SharedModule
+    SharedModule,
+    MatSnackBarModule
   ]
 })
 

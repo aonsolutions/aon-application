@@ -18,9 +18,6 @@ export class MessageService {
         .getElementList('message', filter)
         .then((response: any) => {
           resolve(new Message().deserializeArray(response.result));
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -32,9 +29,6 @@ export class MessageService {
         .getElementCount('message', filter)
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -46,9 +40,6 @@ export class MessageService {
         .getElement('message', pkey)
         .then((response: any) => {
           resolve(new Message().deserialize(response.result));
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -60,9 +51,6 @@ export class MessageService {
         .updateElement('message', messages)
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -74,9 +62,6 @@ export class MessageService {
         .deleteElement('message', pkey)
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -88,9 +73,6 @@ export class MessageService {
         .createElement('message', messages)
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -102,9 +84,6 @@ export class MessageService {
         .getElementList('messagechat', filter)
         .then((response: any) => {
           resolve(new MessageChat().deserializeArray(response.result));
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
@@ -116,9 +95,6 @@ export class MessageService {
         .createElement('messagechat', messageChats)
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }

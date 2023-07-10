@@ -1,0 +1,9 @@
+<div class="header" style="width: 100%;display: flex; justify-content: space-between; align-items: center;">
+    Error
+    <app-icon matSnackBarAction style="cursor: pointer;" shape="close" (click)="this.destroy()"></app-icon>
+</div>
+<div class="red" style="width: 100%;">
+    <p *ngFor="let item of data.errorList">
+        {{item}}
+    </p>
+</div>

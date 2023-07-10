@@ -1,6 +1,8 @@
 import { Component, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { Filter } from 'libraries/AonSDK/AonSDK';
+import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 
 @Component({
@@ -14,7 +16,7 @@ export class LoginComponent implements OnInit {
   username :string = "";
   password :string = "";
 
-  constructor(public auth: AuthService, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(public auth: AuthService, private router: Router, private activatedRoute: ActivatedRoute, public taxModelService: TaxModelService) { }
 
   ngOnInit(): void {
     this.sub = this.activatedRoute.queryParams.subscribe(params => {

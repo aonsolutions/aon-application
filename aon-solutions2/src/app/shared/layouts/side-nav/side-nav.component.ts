@@ -21,7 +21,7 @@ export class SideNavComponent implements OnInit {
   @ViewChild('iconHover') iconHover : any;
 
   constructor(private router: Router) {
-    this.hide = false;
+    this.hide   = false;
     this.opened = true;
     this.resize = 1;
     this.router.events.subscribe((event) => {
@@ -34,7 +34,7 @@ export class SideNavComponent implements OnInit {
   ngOnInit(): void {
     this.items.forEach(element => {
       if(element.routerlink == this.currentRoute){
-        element.selected = "true";
+        element.selected = true;
       }
     });
   }
@@ -52,12 +52,12 @@ export class SideNavComponent implements OnInit {
   }
 
   items: MenuButton[] = [
-    {routerlink: 'inbox',           shape: 'inbox',       text: 'BANDEJA',            class: 'red',     selected: 'false'},
-    {routerlink: 'billing',         shape: 'assessment',  text: 'GESTIÓN',            class: 'blue',    selected: 'false'},
-    {routerlink: 'tax-panel',       shape: 'euro_symbol', text: 'PANEL DE IMPUESTOS', class: 'orange',  selected: 'false'},
-    {routerlink: 'employee-panel',  shape: 'people',      text: 'PANEL DE EMPLEADOS', class: 'green',   selected: 'false'},
-    {routerlink: 'documentation',   shape: 'description', text: 'DOCUMENTACIÓN',      class: 'pink',    selected: 'false'},
-//    {routerlink: 'consulting',      shape: 'work',        text: 'ASESORÍA',           class: 'purple',  selected: 'false'}
+    {routerlink: 'inbox',           shape: 'inbox',       text: 'BANDEJA',            class: 'red',     selected: false},
+    {routerlink: 'billing',         shape: 'assessment',  text: 'GESTIÓN',            class: 'blue',    selected: false},
+    {routerlink: 'tax-panel',       shape: 'euro_symbol', text: 'PANEL DE IMPUESTOS', class: 'orange',  selected: false},
+    {routerlink: 'employee-panel',  shape: 'people',      text: 'PANEL DE EMPLEADOS', class: 'green',   selected: false},
+    {routerlink: 'documentation',   shape: 'description', text: 'DOCUMENTACIÓN',      class: 'pink',    selected: false},
+//    {routerlink: 'consulting',      shape: 'work',        text: 'ASESORÍA',           class: 'purple',  selected: false}
   ];
   
   shortcuts: Shortcut[] = [
@@ -72,14 +72,14 @@ export class SideNavComponent implements OnInit {
   select(item: MenuButton){
     this.items.forEach(element => {
       if(element.routerlink == item.routerlink){
-        element.selected = "true";
+        element.selected = true;
       }
     });
   }
 
   deselectAll(){
     this.items.forEach(element => {
-      element.selected = "false";
+      element.selected = false;
     });
   }
 

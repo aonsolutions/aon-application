@@ -17,9 +17,6 @@ export class EnterpriseService {
         .getElementList('enterprise')
         .then((response: any) => {
           resolve(new Enterprise().deserializeArray(response.result));
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
 
@@ -47,9 +44,6 @@ export class EnterpriseService {
         .setEnterprise('enteprise', cif)
         .then((response: any) => {
           resolve(response.result);
-        })
-        .catch((error: any) => {
-          reject(error);
         });
     });
   }
