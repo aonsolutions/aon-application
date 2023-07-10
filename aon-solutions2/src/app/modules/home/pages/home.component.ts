@@ -85,8 +85,6 @@ export class HomeComponent implements OnInit {
   public messages$ = this.messagesSubject.asObservable();
 
 
-
-
   //botones Menu
   menuItems: MenuItems[] = [
     { shape: 'assessment', name: 'Gestión', color: '#4f91ff' },
@@ -115,14 +113,14 @@ export class HomeComponent implements OnInit {
       this.modelsSubject.next(this.models);
     });
 
-    //reportingService
+    //reportingService-VentasGastos
     this.reportingService.getVentasGastos().then((response) => {
       this.chartItems[0].chartType = 'line';
       this.chartItems[0].chartData = [response.ventas, response.gastos];
       this.chartItems[0].chartLabels = response.label;
       this.chartItemsSubject.next(this.chartItems);
     })
-
+    //reportingService-CobrosPagos
     this.reportingService.getCobrosPagos().then((response) => {
       this.chartItems[1].chartType = 'bar';
       this.chartItems[1].chartData = [response.cobros, response.pagos];
