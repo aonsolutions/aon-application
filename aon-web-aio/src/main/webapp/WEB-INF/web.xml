@@ -204,6 +204,7 @@
 		<url-pattern>*.contractImage</url-pattern>
 	</servlet-mapping>
 
+	
 	<!-- SignIn with Fnmt Servlet -->
 	<servlet>
 		<servlet-name>OAuth2FnmtServlet</servlet-name>
