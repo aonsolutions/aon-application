@@ -1,5 +1,7 @@
 :root{
   --aonBlue : #002469;
+  --aonSecondary: #b10d4c;
+  --aonOldSecondary: #12ccd1;
   --aonBackground: #f6f8fc;
   --aonLightBlue: #eaf1fb;
   --aonSelectedBlue: #d3e3fd;
@@ -114,13 +116,13 @@
 }
 
 .aonLink {
-  color: #12ccd1 !important;
+  color: var(--aonSecondary) !important;
   background: transparent !important;
   cursor: pointer;
 }
 
 .aonLink:hover {
-  color: #12ccd1 !important;
+  color: var(--aonSecondary) !important;
   text-decoration: underline;
 }
 
@@ -177,7 +179,7 @@
 }
 
 .aonColorSecondary {
-  color: #12ccd1;
+  color: var(--aonSecondary);
 }
 
 .aonTitle {
@@ -251,7 +253,7 @@
 }
 
 .aonLogo {
-  max-width: 250px;
+  max-width: 200px;
   max-height: 60px;
   padding: 5px;
 }
@@ -741,11 +743,11 @@
 }
 
 .aonAppMenuSidenavList {
-  /* height: 30px; */
   line-height: 30px;
   margin: 0;
   padding: 0 26px;
   cursor: pointer;
+  border-radius: 20px;
 }
 
 .aonVerticalMiddle {

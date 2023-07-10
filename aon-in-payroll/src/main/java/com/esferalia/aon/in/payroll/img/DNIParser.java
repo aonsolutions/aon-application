@@ -33,7 +33,12 @@ import solutions.aon.in.invoice.img.InvoiceIMGException;
 import solutions.aon.in.invoice.pdf.InvoicePDFException;
 
 public class DNIParser {
-	private static String text;
+	public static String text;
+	public static String dni;
+	public static String nombre;
+	public static String apellido1;
+	public static String apellido2;
+	public static String nacionalidad;
 
 	// CONVIERTE IMAGEN DEL DNI A DOCUMENT USANDO BYTES
 	public static String extractImage(byte[] bytes) throws InvoiceIMGException {
@@ -443,14 +448,9 @@ public class DNIParser {
 	// FORMATO PARA DNI POSTERIOR A 2021 Y VIENEN LAS DOS PARTES JUNTAS EN PDF
 	public static void getNewDniBothPdf(String text, DniDataListener listener) {
 		String[] lineas = text.split("\n");
-		String dni = null;
-		String nombre = null;
-		String apellido1 = null;
-		String apellido2 = null;
 		String fechaNacimiento = null;
 		Date fechaNac = null;
 		String sexo = null;
-		String nacionalidad = null;
 		String direccion = null;
 		String localidad = null;
 		String lugarNacimiento = null;

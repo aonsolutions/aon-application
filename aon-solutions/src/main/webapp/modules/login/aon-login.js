@@ -20,6 +20,7 @@ import { AonDialog } from "../../components/aon-dialog.js";
 import { AonToast } from "../../components/aon-toast.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { Language } from "../../models/Language.js";
+import * as COLORS from "../../environments/colors.js";
 
 export class AonLogin extends AonElement {
   tag;
@@ -35,13 +36,12 @@ export class AonLogin extends AonElement {
 
   build() {
     if(!this.isMobile()){
-      document.body.style.background = 'linear-gradient(to right, aliceblue, #002469)';
+      document.body.style.background = `linear-gradient(to right, ${this.getSecondaryColor()}, ${this.getPrimaryColor()})`;
     }
 
     let div = this.createElement(TAG.DIV);
     div.className = CSS.AON_FORM_CENTER;
     this.appendChild(div);
-
 
     let div2 = this.createElement(TAG.DIV);
     div2.classList.add(CSS.AON_VERTICAL_CENTER);
@@ -78,8 +78,8 @@ export class AonLogin extends AonElement {
 
     let logo = this.createElement(TAG.IMG);
     logo.id = 'aonLoginLogoImg';
-    logo.style.width = '250px';
-    logo.style.marginLeft = '25px';
+    logo.style.width = '200px';
+    logo.style.marginLeft = '40px';
     divLogo.appendChild(logo);
 
     let divContent = this.createElement(TAG.DIV);
@@ -129,7 +129,7 @@ export class AonLogin extends AonElement {
     magicLinkButton.setIcon(MATERIAL_ICONS.AUTO_FIX_HIGH);
     magicLinkButton.setTitle(MSG.SIGN_IN_WITHOUT_PASSWORD);
     magicLinkButton.setDisabled(true);
-    magicLinkButton.setColor("#12ccd1");
+    magicLinkButton.setColor(this.getSecondaryColor());
     magicLinkButton.addEventListener(EVENT.CLICK, () => this.magicLink(userInput.value));
     divButtons.appendChild(magicLinkButton);
 
@@ -331,15 +331,7 @@ export class AonLogin extends AonElement {
   buildLogo() {
     let logo = this.getElement("aonLoginLogoImg");
     const href = window.location.href;
-    let src = "assets/aon-logo2.png"; 
-    if (href.includes("ayudat")) {
-      src = "assets/img/ayudat-logo.png";
-    } else if (href.includes("translogia") || href.includes("tedi")) {
-      src = "assets/ayudat-logo4.png";
-    } else if (href.includes("aonsolutions.org")){
-     src = "assets/beta-logo.svg";
-    }
-
+    let src = "assets/aon-logo.svg";
     logo.src = src;
     logo.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;

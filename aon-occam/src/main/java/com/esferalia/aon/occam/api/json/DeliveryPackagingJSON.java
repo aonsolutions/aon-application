@@ -16,6 +16,7 @@ public class DeliveryPackagingJSON {
 	}
 
 	public static List<DeliveryPackaging> fromJSON(JSONArray array) {
+		if(array == null) return null;
 		LinkedList<DeliveryPackaging> list = new LinkedList<>();
 		for(Integer i = 0; i < array.length(); i++) {
 			list.add(fromJSON(array.getJSONObject(i)));

@@ -559,9 +559,11 @@ export class AonApplication extends AonElement {
           // ul
           this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
             if (el.id !== sidenavId)
-              el.style.fontWeight= "400";  
+              el.style.removeProperty("background-color");
+              el.style.removeProperty("font-weight");
           });
           li.style.fontWeight= "bold"
+          li.style.backgroundColor = "#d3e3fd";
 
           this.selected = id;
           let toolbar = this.getElement(this.TOOLBAR);
