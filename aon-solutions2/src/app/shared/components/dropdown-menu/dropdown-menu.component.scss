@@ -1,0 +1,21 @@
+@import 'src/styles.scss';
+
+::ng-deep{
+  .mat-menu-panel {
+    padding         : $padding / 2;
+    border-radius   : 0.55rem;
+    box-shadow      : $box-shadow;
+    background-color: $color-quarter;
+  }
+  
+  .mat-menu-panel set-icon{
+    margin-right: $margin-right / 2;
+    color: $color-primary;
+  }
+  
+  .mat-menu-item:hover:not(.set-menu-item-active) {
+    background    : $background-button-hover;
+    border-radius : $border-radius;
+    color         : $color-primary;
+  }
+}
