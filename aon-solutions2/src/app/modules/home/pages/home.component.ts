@@ -1,12 +1,15 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ChartType } from 'chart.js';
 import { MultiDataSet } from 'ng2-charts';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Bank } from 'src/app/core/models/class/bank';
+import { Message } from 'src/app/core/models/class/message';
 import { TaxModel } from 'src/app/core/models/class/tax-model';
 import { BankService } from 'src/app/core/services/bank.service';
+import { MessageService } from 'src/app/core/services/message.service';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
@@ -76,6 +79,12 @@ export class HomeComponent implements OnInit {
   private modelsSubject = new BehaviorSubject<any[]>([]);
   public models$ = this.modelsSubject.asObservable();
 
+  //Inbox area
+  messages: Message[] = [];
+  private messagesSubject = new BehaviorSubject<any[]>([]);
+  public messages$ = this.messagesSubject.asObservable();
+
+
   //botones Menu
   menuItems: MenuItems[] = [
     { shape: 'assessment', name: 'Gestión', color: '#4f91ff' },
@@ -87,7 +96,8 @@ export class HomeComponent implements OnInit {
   constructor(
     public bankService: BankService,
     public taxModelService: TaxModelService,
-    public reportingService: ReportingService
+    public reportingService: ReportingService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -103,20 +113,26 @@ export class HomeComponent implements OnInit {
       this.modelsSubject.next(this.models);
     });
 
-    //reportingService
+    //reportingService-VentasGastos
     this.reportingService.getVentasGastos().then((response) => {
       this.chartItems[0].chartType = 'line';
       this.chartItems[0].chartData = [response.ventas, response.gastos];
       this.chartItems[0].chartLabels = response.label;
       this.chartItemsSubject.next(this.chartItems);
     })
-
+    //reportingService-CobrosPagos
     this.reportingService.getCobrosPagos().then((response) => {
       this.chartItems[1].chartType = 'bar';
       this.chartItems[1].chartData = [response.cobros, response.pagos];
       this.chartItems[1].chartLabels = response.label;
       this.chartItemsSubject.next(this.chartItems);
     })
+
+    //MessageService
+    this.messageService.getMessageList().then((response) => {
+      this.messages = response;
+      this.messagesSubject.next(this.messages);
+      });
 
 
 

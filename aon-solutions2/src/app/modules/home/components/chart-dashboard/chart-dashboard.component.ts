@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';import { ReportingService } from '../../../../core/services/reporting.service'
+import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MultiDataSet } from 'ng2-charts';
 import { ChartType } from 'chart.js';
@@ -22,7 +22,7 @@ interface ChartItem {
   },
 })
 export class ChartDashboardComponent implements OnInit {
-  chartItems: ChartItem[] = []
+  chartItems: ChartItem[] = [];
   @Input() name: string = '';
   @Input() shape: string = '';
   @Input() labels: any = [];
@@ -33,10 +33,21 @@ export class ChartDashboardComponent implements OnInit {
 
   @Input() public chartItemList: Observable<ChartItem[]> | undefined;
 
-
   selected: string = 'Últimos 12 meses';
 
   items: string[] = ['Últimos 12 meses', 'Últimos 6 meses', 'Trimestral'];
+
+  toggleChartType() {
+    if (this.chartType === 'line') {
+      this.chartType = 'bar';
+    } else if (this.chartType === 'bar') {
+      this.chartType = 'line';
+    }
+  }
+
+  getToggleIcon(): string {
+    return this.chartType === 'line' ? 'bar_chart' : 'show_chart';
+  }
 
   constructor() {}
 
@@ -47,8 +58,4 @@ export class ChartDashboardComponent implements OnInit {
       });
     }
   }
-
-
-
-
 }
