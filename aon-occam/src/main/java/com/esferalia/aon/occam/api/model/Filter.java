@@ -21,6 +21,7 @@ public interface Filter extends Serializable{
 		Filter isNull();
 		Filter isNotNull();
 		Filter like(T t);
+		Filter match(T t);
 		Filter between(T min, T max);
 	}
 	
