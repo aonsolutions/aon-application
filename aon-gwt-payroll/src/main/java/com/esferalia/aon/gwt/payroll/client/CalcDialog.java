@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraDate;
+import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraEndDate;
+import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraIssueDate;
+import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraStartDate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -373,8 +376,8 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 				Collections.sort(this.extras, new Comparator<Extra>(){
 					@Override
 					public int compare(Extra e1, Extra e2) {
-						Date d1 = parseExtraDate(e1.getIssueDate(), ExtrasDateProvider.this.startDate);
-						Date d2 = parseExtraDate(e2.getIssueDate(), ExtrasDateProvider.this.startDate);
+						Date d1 = parseExtraIssueDate(e1.getIssueDate(), ExtrasDateProvider.this.startDate);
+						Date d2 = parseExtraIssueDate(e2.getIssueDate(), ExtrasDateProvider.this.startDate);
 						return d1.compareTo(d2);
 					}
 				});
@@ -407,9 +410,9 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 							.setId(extra.getId())
 							.setPaymentDescription(extra.getPaymentDescription())
 							.setAgreementDescription(extra.getAgreementDescription())
-							.setEndDate(parseExtraDate(extra.getEndDate(), extraDate ))
-							.setStartDate(parseExtraDate(extra.getStartDate(), extraDate ))
-							.setIssueDate(parseExtraDate(extra.getIssueDate(), extraDate ))
+							.setEndDate(parseExtraEndDate(extra.getEndDate(), extraDate ))
+							.setStartDate(parseExtraStartDate(extra.getStartDate(), extraDate ))
+							.setIssueDate(parseExtraIssueDate(extra.getIssueDate(), extraDate ))
 							);
 
 				}
