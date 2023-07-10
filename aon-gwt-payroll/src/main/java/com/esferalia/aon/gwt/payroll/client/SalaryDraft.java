@@ -2944,7 +2944,7 @@ public class SalaryDraft extends ResizeComposite
 	
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
-		if (Wnd.isNewAONTheme()) createCollapContextPanel();
+		createCollapContextPanel();
 		initPaymentsTable();
 		initPrintPreview();
 		scope = Scope.CONTRACT;
@@ -3755,14 +3755,10 @@ public class SalaryDraft extends ResizeComposite
 		
 		//dumpContext(constants, Scope.CONTRACT, true, null);
 		
-		if ( Wnd.isNewAONTheme() ) {
-		    if(contextMenuShowed) showContextAtLeft();
-		    dumpContextAtLeft(visibleContext);
-		    notDefinedVarsCheck.removeFromParent();
-		} else {
-		    hideContextAtLeft();
-		    dumpContextAtTop(visibleContext);
-		}
+		if (contextMenuShowed)
+		    showContextAtLeft();
+		dumpContextAtLeft(visibleContext);
+		notDefinedVarsCheck.removeFromParent();
 		
 		initTgssCheck();
 		initDbSalaryCheck();		
@@ -5279,23 +5275,19 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private void hideContextAtLeft() {
-		if ( Wnd.isNewAONTheme() ) {
-			collapseContextBtn.setTitle("Mostrar");
-			collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentIncrease());
-			collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentDecrease());
-		}
-		drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
-		drafSplitLayoutPanel.animate(500);
+	    collapseContextBtn.setTitle("Mostrar");
+	    collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentIncrease());
+	    collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentDecrease());
+	    drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
+	    drafSplitLayoutPanel.animate(500);
 	}
 	
 	private void showContextAtLeft() {
-		if ( Wnd.isNewAONTheme() ) {
-			collapseContextBtn.setTitle("Ocultar");
-			collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentDecrease());
-			collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentIncrease());
-		}
-		drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 275);
-		drafSplitLayoutPanel.animate(500);
+	    collapseContextBtn.setTitle("Ocultar");
+	    collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentDecrease());
+	    collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentIncrease());
+	    drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 275);
+	    drafSplitLayoutPanel.animate(500);
 	}
 
 	private void dumpContextAtTop(List<Variable> visibleContext) {

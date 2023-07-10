@@ -23,7 +23,7 @@ import net.aonsolutions.db.up2date.fiscal.AlterInvestAsset;
 import net.aonsolutions.db.up2date.management.AlterRitem;
 import net.aonsolutions.db.up2date.management.AlterRsellerAddType;
 import net.aonsolutions.db.up2date.payroll.ContractSepeIdUpdate;
-import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateIII;
+import net.aonsolutions.db.up2date.tgss.TrainningBaseCgcMinUndo;
 
 public class Up2Date {
 
@@ -358,29 +358,30 @@ public class Up2Date {
 	    // PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
 	    // IndemnizacionTemporalUpdate.INDEMNIZACIONTEMPORALUPDATE,
             // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
-	    //	TrainningBases2023Fix.TRAINNINGBASES2023FIX,
-	    //	CGPJInsert.CGPJINSERT,
-	    //	Trainning421ExcessQuote.TRAINNING421EXCESSQUOTE,
-		HomeBases2023UpdateIII.HOMEBASES2023UPDATEIII,
+	    // TrainningBases2023Fix.TRAINNINGBASES2023FIX,
+	    // CGPJInsert.CGPJINSERT,
+	    // Trainning421ExcessQuote.TRAINNING421EXCESSQUOTE,
+	    // HomeBases2023UpdateIII.HOMEBASES2023UPDATEIII,
+		TrainningBaseCgcMinUndo.TRAINNINGBASECGCMINUNDO,
 
 		
-	    //DOMAIN
 	    // DomainAonStatus.DOMAIN_AON_STATUS,
 	    // DomainAonCustomer.DOMAIN_AON_CUSTOMER,
 
 	    // Important, not remove
-	    // AgreementPurge.AGREEMENTPURGE,
-	    // SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
-	    // SagardoBusUpdate.SAGARDOBUS_UPDATE
-			
-	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
-			
-		//	UdpateAonSmb.UPDATE_AON_SMB,
-		//	UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
 		AlterRitem.ALTER_RITEM,
 		AlterRsellerAddType.ALTER_RSELLER_ADD_TYPE,
 		ContractSepeIdUpdate.CONTRACTSEPEIDUPDATE,
 		AlterInvestAsset.ALTER_INVEST_ASSET
+	    // AgreementPurge.AGREEMENTPURGE,
+	    // SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
+	    // SagardoBusUpdate.SAGARDOBUS_UPDATE
+	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
+	    // UdpateAonSmb.UPDATE_AON_SMB,
+	    // UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
+			
+		//	UdpateAonSmb.UPDATE_AON_SMB,
+		//	UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
 	};
 
     // ------------------------------------------------------------------------

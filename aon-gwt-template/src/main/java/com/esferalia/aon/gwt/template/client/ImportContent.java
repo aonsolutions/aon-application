@@ -92,19 +92,19 @@ public class ImportContent extends Composite {
 		importation(type);
 	}	
 	
-	private void importation(ImportType type){	
+	private void importation(ImportType importType){	
 		verror = new LinkedList<>();
 		werror = new LinkedList<>();
 		Upload upload = new Upload() {
 			
 			@Override
-			protected void onUpload(String data) {
+			protected void onUpload(String data, String type) {
 				pbd = new AonProgressBarDialog("Procesando Excel...") {};
 				pbd.addStyleName("gwt-PopupPanel-template");
 				pbd.setGlassEnabled(true);
 				pbd.show();
 				
-				if(ImportType.INVOICE.equals(type)) {
+				if(ImportType.INVOICE.equals(importType)) {
 					item.executeInvoice(getDomain(), getUser(), data, new AsyncCallback<List<InvoiceImportClass>>() {
 						@Override
 						public void onSuccess(List<InvoiceImportClass> result) {
@@ -115,7 +115,7 @@ public class ImportContent extends Composite {
 						@Override
 						public void onFailure(Throwable caught) {}
 					});
-				} else if(ImportType.REGISTRY.equals(type)) {
+				} else if(ImportType.REGISTRY.equals(importType)) {
 					item.executeRegistry(getDomain(), getUser(), data, new AsyncCallback<List<RegistryImportClass>>() {
 						@Override
 						public void onSuccess(List<RegistryImportClass> result) {
@@ -126,7 +126,7 @@ public class ImportContent extends Composite {
 						@Override
 						public void onFailure(Throwable caught) {}
 					});
-				} else if(ImportType.PGC.equals(type)) { 
+				} else if(ImportType.PGC.equals(importType)) { 
 					item.executePGC(getDomain(), getUser(), data, new AsyncCallback<List<AccountImportClass>>() {
 						@Override
 						public void onSuccess(List<AccountImportClass> result) {
@@ -137,7 +137,7 @@ public class ImportContent extends Composite {
 						@Override
 						public void onFailure(Throwable caught) {}
 					});
-				} else if(ImportType.DIARY.equals(type)) {
+				} else if(ImportType.DIARY.equals(importType)) {
 					item.executeDiary(getDomain(), getUser(), data, new AsyncCallback<List<AccountEntryImportClass>>() {
 						@Override
 						public void onSuccess(List<AccountEntryImportClass> result) {
@@ -148,7 +148,7 @@ public class ImportContent extends Composite {
 						@Override
 						public void onFailure(Throwable caught) {}
 					});
-				} else if(ImportType.FEE.equals(type)) {
+				} else if(ImportType.FEE.equals(importType)) {
 					SERVICE.parseFeeFile(getDomain(), getUser(), data, new AsyncCallback<List<Fee>>() {
 						@Override
 						public void onSuccess(List<Fee> result) {

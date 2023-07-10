@@ -20,6 +20,7 @@ import net.aonsolutions.invofox.json.OCRCompanyResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentResponseJSON;
 import net.aonsolutions.invofox.json.OCRDocumentsResponseJSON;
 import net.aonsolutions.invofox.json.OCRErrorJSON;
+import net.aonsolutions.invofox.json.OCRLoginTokenResponseJSON;
 import net.aonsolutions.invofox.json.OCRNames;
 import net.aonsolutions.invofox.model.OCRCompaniesResponse;
 import net.aonsolutions.invofox.model.OCRCompany;
@@ -27,6 +28,7 @@ import net.aonsolutions.invofox.model.OCRCompanyResponse;
 import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
 import net.aonsolutions.invofox.model.OCRError;
+import net.aonsolutions.invofox.model.OCRLoginTokenResponse;
 import net.aonsolutions.invofox.model.OCRResponse;
 import net.aonsolutions.invofox.model.OCRSeverity;
 
@@ -34,6 +36,7 @@ public class OCRInvofox {
 	private static final String X_API_KEY = "x-api-key";
 	
 	private static final String BASE_URL = "https://prod.kinequo.com/backends/midas";
+	private static final String LOGIN_TOKEN = BASE_URL + "/auth/login-token";
 	private static final String COMPANIES = BASE_URL + "/companies";
 	private static final String COMPANY = COMPANIES + "/{0}";
 	private static final String DOCUMENTS = BASE_URL + "/documents";
@@ -162,10 +165,17 @@ public class OCRInvofox {
 		return t; 
 	}
 
+	// ---------------------------------------------------------------------- [LOGIN TOKEN]
+	
+	public static OCRLoginTokenResponse getLoginToken() {
+		return post(LOGIN_TOKEN, new JSONObject(), OCRLoginTokenResponse::new, OCRLoginTokenResponseJSON::from);
+	}
+	
 	// ---------------------------------------------------------------------- [DOCUMENTS]
 	public static OCRDocumentsResponse getDocuments(OCRDocumentsParams params) {
 		return get(DOCUMENTS + params.build(), OCRDocumentsResponse::new, OCRDocumentsResponseJSON::from);
 	}
+	
 	public static OCRDocumentsResponse getCompanyInvoices(String taxId) {
 		OCRCompaniesResponse resp = getCompanies(OCRCompanyParams.get().withTaxId(taxId));
 		Optional<List<OCRCompany>> companiesOpt = resp.getCompanies(); 

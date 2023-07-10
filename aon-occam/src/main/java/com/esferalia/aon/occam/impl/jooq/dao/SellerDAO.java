@@ -88,6 +88,14 @@ public class SellerDAO {
 			.fetch().stream().map(new SellerFiller());
 	}	
 	
+	public static Stream<Seller> getStream(AONContext ctx, SellerFilter filter, int offset, int limit){
+		return select(ctx, filter)
+				.orderBy(SELLER_ALIAS.NAME)
+				.offset(offset)
+				.limit(limit)
+				.fetch().stream().map(new SellerFiller());
+	}	
+	
 	public static Seller save(AONContext ctx, Seller seller) {
 		ctx.checkWrite();
 		// TODO AUTOCOMPLETE && VALIDATION

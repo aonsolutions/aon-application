@@ -218,9 +218,13 @@ export class AonSelect extends AonElement {
 
       input.onInput(({target})=>{
         if(this.disableKeyUp) {
-          let optios = this.getOptions().filter(opt => {
-            return opt[this.nameAlias].toUpperCase().includes(target.value.toUpperCase()) || this.checkSelectable(opt);
-          })
+          let val = target.value.toUpperCase();
+          let optios = this.getOptions();
+          if (val) {
+            optios = this.getOptions().filter(opt => {
+              return opt[this.nameAlias].toUpperCase().includes(val) || this.checkSelectable(opt);
+            })
+          }
           this.buildOptions(optios);
         }
       });

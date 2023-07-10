@@ -10,12 +10,14 @@ import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 
 import '../../components/aon-table.js';
 
-import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
+import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { formatNumber } from '../../services/utils.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import * as LS from '../../services/localStorageService.js';
+import { AonIframe } from '../../components/aon-iframe.js';
+import { getInvofoxToken } from '../../services/invofoxService.js';
 
 export class AonInvoiceList extends AonElement {
 
@@ -158,7 +160,7 @@ export class AonInvoiceList extends AonElement {
 			});
 
 			
-			if(this.isBeta()) {
+			if(this.isBeta() && this.getFilter().status === 'inbox') {
 				let data = {
 					skip:0,
 					limit: 10,
@@ -166,23 +168,26 @@ export class AonInvoiceList extends AonElement {
 					publicState: "pendingCorrection"
 				};
 				getInvofoxDocuments(data).then(r => {
-					r.forEach((invoice, i) => {
-
-					invoice.name = invoice.data.issuerName.value;
+					r.forEach((invoice, i) => {	
+						let date = new Date(invoice.date);
+						let day = date.getDate();
+						let month = date.getMonth() + 1;
+						let year = date.getFullYear();
+						invoice.dateTable = day + '/' + month + '/' + year;
 					
-					let date = new Date(invoice.data.issueDate.value);
-					let day = date.getDate();
-					let month = date.getMonth() + 1;
-					let year = date.getFullYear();
-					invoice.dateTable = day + '/' + month + '/' + year;
-					
-					invoice.totalParse = formatNumber(invoice.data.totalAmount.value, 2, "EUR");
-					invoice.icon = MATERIAL_ICONS.ARCHIVE;
-					invoice.aonIcon = "invofox";
-					invoice.icon_title = "Recibida"
-					invoice.icon_color = "#5f6368";
-					aonInvoiceTable.addRow(invoice, () => alert("FACTURA INVOFOX"),
-						() => {});
+						invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+						invoice.icon = MATERIAL_ICONS.ARCHIVE;
+						invoice.aonIcon = "invofox";
+						invoice.icon_title = "Recibida"
+						invoice.icon_color = "#5f6368";
+						aonInvoiceTable.addRow(invoice, () => {
+							let iframe = this.createElement(TAG.IFRAME);
+							iframe.src = `https://app.invofox.com/documents/${invoice.id}?token=${invoice.token}`;
+							iframe.style.height = '100%';
+							iframe.style.width = '100%';
+							iframe.style.border = '0';
+							this.getApplication().setContent(iframe);
+						},() => {});
 					});
 				});
 			}

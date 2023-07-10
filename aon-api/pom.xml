@@ -66,6 +66,13 @@
 		</dependency>
 	
 		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>invofox.sdk</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>solutions.aon</groupId>
 			<artifactId>aon.seg.social</artifactId>
 			<version>${project.version}</version>

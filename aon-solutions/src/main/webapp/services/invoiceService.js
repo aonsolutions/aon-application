@@ -47,4 +47,6 @@ export const downloadFacturae = (data) =>
 export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invoice});
 
 
-export const getInvofoxDocuments = (data) => getInvofox("https://prod.kinequo.com/backends/midas/documents", data)
+// export const getInvofoxDocuments = (data) => getInvofox("https://prod.kinequo.com/backends/midas/documents", data);
+
+export const getInvofoxDocuments = (data) => get(`${API_URL}/invofox`, data)

@@ -40,6 +40,7 @@ import com.code.aon.registry.enumeration.QuestionType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.RegistryItemStatus;
 import com.code.aon.registry.enumeration.RegistrySellerStatus;
+import com.code.aon.registry.enumeration.RegistrySellerType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.registry.enumeration.TaxRegime;
@@ -66,6 +67,7 @@ public class RegistryCollectionsController implements Serializable {
 	private List<SelectItem> taxRegimes;
 	private List<SelectItem> registryItemStatuses;
 	private List<SelectItem> registrySellerStatuses;
+	private List<SelectItem> registrySellerTypes;
 	private List<SelectItem> questionTypes;
 	private Category emptyCategory;
 	private RegistryBank rBank; // No Borrar. Euke.
@@ -370,6 +372,24 @@ public class RegistryCollectionsController implements Serializable {
 			}
 		}
 		return registrySellerStatuses;
+	}
+	
+	/**
+	 * Gets the registry item types.
+	 * 
+	 * @return the registry item types
+	 */
+	public List<SelectItem> getRegistrySellerTypes() {
+		if ( registrySellerTypes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			registrySellerTypes = new LinkedList<SelectItem>();
+			for (RegistrySellerType status : RegistrySellerType.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				registrySellerTypes.add(item);
+			}
+		}
+		return registrySellerTypes;
 	}
 	
 	public static List<SelectItem> getQuestionValues( Question question ) throws ManagerBeanException {
