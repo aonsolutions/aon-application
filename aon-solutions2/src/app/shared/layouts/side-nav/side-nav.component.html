@@ -11,7 +11,7 @@
         <div class="float-button-close griss" (click)="opened = !opened; resize = resize + 1; onSelectedProduct(opened);" *ngIf="!opened" >
           <app-icon shape="keyboard_arrow_right"></app-icon>
         </div>
-        <div class="float-button-open griss" (click)="opened = !opened; onSelectedProduct(opened);" *ngIf="opened" >
+        <div id="button-open" class="float-button-open griss" (click)="opened = !opened; onSelectedProduct(opened);" *ngIf="opened" >
           <app-icon shape="keyboard_arrow_left"></app-icon>
         </div>
       </div>
