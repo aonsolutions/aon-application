@@ -362,7 +362,7 @@ public class Up2Date {
 	    // CGPJInsert.CGPJINSERT,
 	    // Trainning421ExcessQuote.TRAINNING421EXCESSQUOTE,
 	    // HomeBases2023UpdateIII.HOMEBASES2023UPDATEIII,
-		TrainningBaseCgcMinUndo.TRAINNINGBASECGCMINUNDO,
+	    // TrainningBaseCgcMinUndo.TRAINNINGBASECGCMINUNDO,
 
 		
 	    // DomainAonStatus.DOMAIN_AON_STATUS,

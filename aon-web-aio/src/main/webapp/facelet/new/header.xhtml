@@ -93,7 +93,13 @@
 	.aon-top-menu-item-select {
     	background-color: #f6f8fc !important;
 		font-weight: bold;
-		border-bottom: 2px solid #2152a5;
+		<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border-bottom: 2px solid #002469;
+    	</c:if>
+	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border-bottom: 2px solid #2152a5;
+	 	</c:if>
+
 	}
 	
 	.aon-top-menu-item-select-inner {}
@@ -1246,12 +1252,12 @@
 		opacity:0.94;
 		border-radius: 16px;	 
 	 	color: #FFF !important;
-	 	box-shadow: 3px 6px 12px #2152A5;
 	 	<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-    	background: linear-gradient(to right, #b10d4c, #002469) !important;
+    		background: linear-gradient(to top, #b10d4c, #002469) !important;
     	</c:if>
 	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-	 	background-color: #2152A5 !important;
+		 	background-color: #2152A5 !important;
+		 	box-shadow: 3px 6px 12px #2152A5;
 	 	</c:if>
     }
     
@@ -1263,6 +1269,7 @@
     	white-space: nowrap;
     	
 	}   
+
     .aon-menu-popup .aon-icon-new-text,
     .aon-menu-popup .aon-icon-beta-text{
     	background: none;
@@ -1290,14 +1297,24 @@
     .aon-menu-popup .aon-menu-icon-gipuzkoa,
     .aon-menu-popup .aon-menu-icon-navarra
      {
-    	border-color: #2152A5;
+		<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border: none;
+    	</c:if>
+	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border-color: #2152A5;
+	 	</c:if>
     }
     
     .aon-menu-popup .aon-menu-fiscal-label {
     	background-image: none;
     }
 	.aon-menu-popup .aon-menu-fiscal{
-		border-bottom: 1px solid #2152A5;
+		<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border: none;
+    	</c:if>
+	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border-bottom: 1px solid #2152A5;
+	 	</c:if>
 	}
     
     .aon-menu-popup .aon-direct-access-list-element {
@@ -1332,7 +1349,7 @@
     	border-top-left-radius: 6px;
     	border-top-right-radius: 6px;
 	 	<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-    	background: linear-gradient(to right, #b10d4c, #002469) !important;
+    	background: #002469 !important;
     	</c:if>
 	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
 	 	background-color: #2152A5 !important;
@@ -1686,6 +1703,11 @@
 		opacity: 1;
 	}	
 	
+    .search-results-popup .aon-note-new {
+	  padding: 0px ;
+	  margin: 6px auto ;
+    }
+
 	.search-results-popup tr .clipboard-icon {
 		font-size: 1.2rem; 
 		color: transparent;

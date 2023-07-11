@@ -6,9 +6,12 @@ import java.util.Date;
 
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Name;
+import org.jooq.Param;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -83,6 +86,15 @@ public class FilterDAO implements Filter {
 		}
 		
 		@Override
+		public Filter match(T t) {
+		    Param<T> val = DSL.val(t);
+		    String str = t.toString();
+		    String mode = str.contains("*") ?  "BOOLEAN" : "NATURAL LANGUAGE";
+		    Name name = field.getQualifiedName();
+		    return new FilterDAO( DSL.condition("match({0}) against({1} IN "+ mode +" MODE)", name, val));
+		}
+
+		@Override
 		public Filter between(T min, T max) {
 			return new FilterDAO(field.between(min, max));
 		}
@@ -151,6 +163,12 @@ public class FilterDAO implements Filter {
 
 		@Override
 		public Filter like(Date t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter match(Date t) {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -227,6 +245,11 @@ public class FilterDAO implements Filter {
 		}
 		
 		@Override
+		public Filter match(Date date) {
+			throw new UnsupportedOperationException();				
+		}
+
+		@Override
 		public Filter between(Date min, Date max) {
 			return new FilterDAO(field.between(new java.sql.Date(min.getTime()), new java.sql.Date(max.getTime())));
 		}
@@ -295,6 +318,11 @@ public class FilterDAO implements Filter {
 			throw new UnsupportedOperationException();				
 		}
 		
+		@Override
+		public Filter match(Timestamp date) {
+			throw new UnsupportedOperationException();				
+		}
+
 		@Override
 		public Filter between(Timestamp min, Timestamp max) {
 			return new FilterDAO(field.between(min, max));
@@ -368,6 +396,11 @@ public class FilterDAO implements Filter {
 		}
 		
 		@Override
+		public Filter match(Boolean t) {
+			throw new UnsupportedOperationException();				
+		}
+
+		@Override
 		public Filter between(Boolean min, Boolean max) {
 			throw new UnsupportedOperationException();
 		}
@@ -437,6 +470,11 @@ public class FilterDAO implements Filter {
 			throw new UnsupportedOperationException();				
 		}
 		
+		@Override
+		public Filter match(Boolean t) {
+			throw new UnsupportedOperationException();				
+		}
+
 		@Override
 		public Filter between(Boolean min, Boolean max) {
 			throw new UnsupportedOperationException();
@@ -519,5 +557,6 @@ public class FilterDAO implements Filter {
 		}
 		return select.where(getCondition());
 	}
+	
 	
 }
