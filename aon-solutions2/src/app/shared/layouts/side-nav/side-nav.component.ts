@@ -19,7 +19,7 @@ export class SideNavComponent implements OnInit {
   @Input() hide : boolean;
   @Output() onSelected = new EventEmitter<any>();
   @ViewChild('iconHover') iconHover : any;
-
+ 
   constructor(private router: Router) {
     this.hide   = false;
     this.opened = true;
@@ -49,6 +49,17 @@ export class SideNavComponent implements OnInit {
 
   onSelectedProduct(selected:any) {
     this.selectedProduct = selected;
+      // Coger el ancho del menu, para saber donde posicionar el boton
+      setTimeout(function(){
+        let menu    = document.getElementById('menu-left');   // Menu
+        let button  = document.getElementById('button-open'); // Button open menu
+        if(selected && menu && button){
+          // Cogemos el ancho del menu abierto, menos lo que ocupa el boton (teniendo en cuenta su borde)
+          const menuWidth = menu.getBoundingClientRect().width - 13;
+          // Posicionamos el boton
+          button.style.left = menuWidth+"px";
+        }
+      }, 1);
   }
 
   items: MenuButton[] = [

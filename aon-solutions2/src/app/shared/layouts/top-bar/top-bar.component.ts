@@ -16,7 +16,7 @@ export class Enterprise {
   templateUrl: './top-bar.component.html',
   styleUrls: ['./top-bar.component.scss'],
   host: {
-    '[style.width]': "'100%'",
+    '[style.width]' : "'100%'",
     '[style.height]': "'100%'",
   },
 })
@@ -24,13 +24,14 @@ export class TopBarComponent implements OnInit, OnChanges {
 
   @ViewChild('first') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
   menuItem: MenuItem [] = [
-    {root:true, text:'Editar perfil', icon:'home', colorIcon:'black'},
-    {root:true, text:'Ayuda', icon:'help', colorIcon:'black'},
-    {root:true, text:'Cerrar sesión', icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
+    {root:true, text:'Editar perfil'  , icon:'person_pin' , colorIcon:'black'},
+    {root:true, text:'Ayuda'          , icon:'help'       , colorIcon:'black'},
+    {root:true, text:'Cerrar sesión' , icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
   ]
-  displayHomeIcon: boolean = false;
-  usserLoggged: boolean = this.auth.isLoggedIn();
-  currentRoute: string = this.router.url.replace('/','');
+  
+  displayHomeIcon : boolean = false;
+  usserLoggged    : boolean = this.auth.isLoggedIn();
+  currentRoute    : string  = this.router.url.replace('/','');
 
   constructor(private router: Router, public auth: AuthService) {
     this.router.events.subscribe((event) => {
@@ -42,12 +43,8 @@ export class TopBarComponent implements OnInit, OnChanges {
   }
 
   checkCurrentRoute() {
-    if(this.router.url != '/home'){
-      this.displayHomeIcon = true;
-    }else{
-      this.displayHomeIcon = false;
-    }
-    this.currentRoute = this.router.url.replace('/','');
+    this.displayHomeIcon = this.router.url != '/home'? true : false;
+    this.currentRoute    = this.router.url.replace('/','');
   }
 
   ngOnChanges(): void {
