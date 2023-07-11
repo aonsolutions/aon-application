@@ -51,6 +51,7 @@ import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack
 import { TableComponent } from './components/table/table.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -108,7 +109,8 @@ import { MatSortModule } from '@angular/material/sort';
     SetMaterialModule,
     PdfJsViewerModule,
     MatTableModule,
-    MatSortModule
+    MatSortModule,
+    MatPaginatorModule
   ],
   exports:[
     AccordionComponent,
@@ -135,7 +137,8 @@ import { MatSortModule } from '@angular/material/sort';
     TabsComponent,
     TagComponent,
     TopBarComponent,
-    FileViewerComponent
+    FileViewerComponent,
+    TableComponent
   ]
 })
 export class SharedModule { }

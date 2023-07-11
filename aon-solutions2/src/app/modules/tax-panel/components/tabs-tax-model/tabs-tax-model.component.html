@@ -1,0 +1,26 @@
+<app-tabs
+[tabs]="tabs"
+(changeTabIndex)="this.tabIndex = $event"
+[tabColor]="'#2eb8a1'"
+[paddingLeftHeader]="'1rem'"
+>
+<div tool>
+  <span>Example</span>&nbsp;&nbsp;<app-icon
+    shape="create"
+    color="black"
+    size="1.2rem"
+  ></app-icon>
+  <span>Example</span>&nbsp;&nbsp;<app-icon
+    shape="create"
+    color="black"
+    size="1.2rem"
+  ></app-icon>
+</div>
+<div content *ngIf="this.tabIndex == 0">
+  <app-table></app-table>
+</div>
+<div content *ngIf="this.tabIndex == 1">content 2</div>
+<div content *ngIf="this.tabIndex == 2">asdasd</div>
+
+<div content *ngIf="this.tabIndex == 3">todos</div>
+</app-tabs>

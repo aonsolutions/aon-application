@@ -11,11 +11,14 @@ import { FormsModule } from '@angular/forms';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import { TabsTaxModelComponent } from './components/tabs-tax-model/tabs-tax-model.component';
+import { MatTab, MatTabsModule } from '@angular/material/tabs';
 
 
 @NgModule({
   declarations: [
-    TaxPanelComponent
+    TaxPanelComponent,
+    TabsTaxModelComponent
   ],
 
   imports: [
@@ -23,12 +26,15 @@ import { MatDividerModule } from '@angular/material/divider';
     TaxPanelRoutingModule,
     SharedModule,
 
+
     MatMenuModule,
     MatGridListModule,
     FormsModule,
     SetMaterialModule,
     MatIconModule,
     MatDividerModule,
+    MatTabsModule
+
   ]
 })
 export class TaxPanelModule { }
