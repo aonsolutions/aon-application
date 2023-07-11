@@ -408,16 +408,14 @@ public abstract class Employee extends ResizeComposite {
 				firstSurname.setValue(e.getFirstSurname(),true);
 				secondSurname.setValue(e.getSecondSurname(),true);
 			}
-			//ARREGLAR INSERCION DATOS
 			@Override
 			public void onFailure(Throwable f) {
-				Window.alert("fail");
+				
 			}
 		};
 		formPanel.addSubmitCompleteHandler(event -> {
 				EmployeeDataResult eps = JsonUtils.safeEval(event.getResults());
 				callback.onSuccess(eps);
-				Window.alert("onSucces");
 			});
 		
 		formPanel.submit();
