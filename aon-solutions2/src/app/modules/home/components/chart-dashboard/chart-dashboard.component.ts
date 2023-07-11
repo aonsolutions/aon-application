@@ -55,6 +55,8 @@ export class ChartDashboardComponent implements OnInit {
     if (this.chartItemList) {
       this.chartItemList.subscribe((chartItem) => {
         this.chartItems = chartItem;
+
+
       });
     }
   }
