@@ -4,12 +4,6 @@
  */
 package com.code.aon.company;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -20,6 +14,12 @@ import com.code.aon.common.domain.IDomain;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name="company")
@@ -36,14 +36,15 @@ public class Company extends Registry implements ITaxInfo, IDomain {
     private boolean eInvoice;
     
 	@Column(name="domain", nullable=false)
-	public int getDomain() {
+	public int getCompanyDomain() {
 		return this.domain;
 	}
-	public void setDomain(int domain) {
+
+	public void setCompanyDomain(int domain) {
 		this.domain = domain;
 	}
-
-    @Column(nullable=true)
+	
+	@Column(nullable=true)
 	public boolean isActive() {
 		return active;
 	}
