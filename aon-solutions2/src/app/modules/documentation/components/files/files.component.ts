@@ -18,11 +18,11 @@ export class FilesComponent implements OnInit {
   documentationListFolders: Folder[] = [];
   documentsList: Document[] = [];
   fileOptions: MenuButton[] = [
-    {routerlink: '#', shape: 'eye', text: 'Vista previa', class: '', selected: 'false'},
-    {routerlink: '#', shape: 'edit', text: 'Cambiar nombre', class: '', selected: 'false'},
-    {routerlink: '#', shape: 'bookmark', text: 'Etiquetar como', class: '', selected: 'false'},
-    {routerlink: '#', shape: 'cloud_download', text: 'Descargar', class: '', selected: 'false'},
-    {routerlink: '#', shape: 'delete', text: 'Eliminar', class: '', selected: 'false'}
+    {routerlink: '#', shape: 'eye', text: 'Vista previa', class: '', selected: false},
+    {routerlink: '#', shape: 'edit', text: 'Cambiar nombre', class: '', selected: false},
+    {routerlink: '#', shape: 'bookmark', text: 'Etiquetar como', class: '', selected: false},
+    {routerlink: '#', shape: 'cloud_download', text: 'Descargar', class: '', selected: false},
+    {routerlink: '#', shape: 'delete', text: 'Eliminar', class: '', selected: false}
   ];
 
 
