@@ -14,6 +14,8 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -111,5 +113,15 @@ public interface CommonServiceAsync {
 	// **************************************************
 	
 	void savePDFModel(Occam occam, IFiscalModel model, String data, AsyncCallback<Void> callback);
+	
+	// **************************************************
+	// *************************************** [QUESTION]
+	// **************************************************
+	
+	void getQuestions(QuestionParams params, AsyncCallback<List<Question>> asyncCallback) throws AonCoreException;
+	void deleteQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveQuestion(String domainName, int domain, String user, Question question, AsyncCallback<Question> asyncCallback) throws AonCoreException;
+	void getQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Question> asyncCallback) throws AonCoreException;
+	void checkQuestionAlias(String domainName, Integer domain, String user, String alias, AsyncCallback<Boolean> asyncCallback) throws AonCoreException;
 
 }

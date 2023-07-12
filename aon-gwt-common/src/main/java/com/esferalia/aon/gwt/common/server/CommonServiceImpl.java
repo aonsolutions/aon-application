@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -38,7 +40,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 
-@WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Common", "/aon_gwt_mod200/ms/Common", "/aon_gwt_aio/ms/Common"})
+@WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Common", "/aon_gwt_mod200/ms/Common", "/aon_gwt_aio/ms/Common", "/aon_gwt_marketing/ms/Common"})
 public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implements CommonService {
 
 	private static final long serialVersionUID = -6555645829679341214L;
@@ -269,6 +271,35 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			DataResponseDAO.insertPDFModel(ctx, model, data);
 		} 
+	}
+	
+	// **************************************************
+	// *************************************** [QUESTION]
+	// **************************************************
+
+	
+	@Override
+	public List<Question> getQuestions(QuestionParams params) throws AonCoreException {
+		return AON.getQuestionList(params);
+	}
+	
+	@Override
+	public void deleteQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteQuestion(domainName, domain, user, id);
+	}
+	
+	@Override
+	public Question saveQuestion(String domainName, int domain, String user, Question question) throws AonCoreException {
+		return AON.saveQuestion(domainName, domain, user, question);
+	}
+	
+	@Override
+	public Question getQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		return AON.getQuestion(domainName, domain, user, id);
+	}
+	@Override
+	public Boolean checkQuestionAlias(String domainName, Integer domain, String user, String alias) throws AonCoreException {
+		return AON.checkQuestionAlias(domainName, domain, user, alias);
 	}
 	
 }

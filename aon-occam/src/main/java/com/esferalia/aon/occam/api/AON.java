@@ -151,6 +151,8 @@ import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
+import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
@@ -226,7 +228,6 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
-import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -6567,7 +6568,7 @@ public class AON {
 		}
 	}
 
-	public static Stream<Question> getRegistryQuestionStream(String domainName, Integer domainId, String login, Integer registry){
+	public static Stream<com.esferalia.aon.occam.api.model.registry.Question> getRegistryQuestionStream(String domainName, Integer domainId, String login, Integer registry){
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -7864,6 +7865,38 @@ public class AON {
 	public static InvestAsset getInvestAsset(String domainName, int domain, String user, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getNewProduct().getInvestAsset(ctx, id);
+		}
+	}
+
+	// ---------------- Question
+	
+	public static List<Question> getQuestionList(QuestionParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getQuestionList(ctx, params);
+		}
+	}
+
+	public static void deleteQuestion(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getRegistry().deleteQuestion(ctx, id);
+		}
+	}
+
+	public static Question saveQuestion(String domainName, int domain, String user, Question question) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().saveQuestion(ctx, question);
+		}
+	}
+
+	public static Question getQuestion(String domainName, int domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().getQuestion(ctx, id);
+		}
+	}
+	
+	public static Boolean checkQuestionAlias(String domainName, int domain, String user, String alias) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getRegistry().checkQuestionAlias(ctx, alias);
 		}
 	}
 	

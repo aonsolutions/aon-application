@@ -3464,6 +3464,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Bien Afectos o de Inversi\u00f3n")
  	String investAssetPanel();
  	
+ 	@DefaultMessage("Pregunta")
+ 	String questionPanel();
+ 	
  	@DefaultMessage("Nivel")
  	String level();
  	

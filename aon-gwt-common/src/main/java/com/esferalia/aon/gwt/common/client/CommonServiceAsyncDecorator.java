@@ -13,6 +13,8 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -271,6 +273,40 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void savePDFModel(Occam occam, IFiscalModel model, String data, AsyncCallback<Void> callback) {		
 		AON.start();		
 		serviceAsync.savePDFModel(occam, model, data, new AsyncCallbackWrapper<Void>(callback));		
+	}
+
+	// **************************************************
+	// *************************************** [QUESTION]
+	// **************************************************
+	
+	@Override
+	public void getQuestions(QuestionParams params, AsyncCallback<List<Question>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getQuestions(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteQuestion(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveQuestion(String domainName, int domain, String user, Question question, AsyncCallback<Question> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveQuestion(domainName, domain, user, question, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Question> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getQuestion(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void checkQuestionAlias(String domainName, Integer domain, String user, String alias, AsyncCallback<Boolean> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.checkQuestionAlias(domainName, domain, user, alias, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

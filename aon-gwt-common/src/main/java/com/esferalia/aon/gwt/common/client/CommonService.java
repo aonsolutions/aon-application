@@ -13,6 +13,8 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -26,6 +28,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -111,5 +114,15 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	void savePDFModel(Occam occam, IFiscalModel model, String data);	
+	
+	// **************************************************
+	// *************************************** [QUESTION]
+	// **************************************************
+	
+	List<Question> getQuestions(QuestionParams params) throws AonCoreException;
+	void deleteQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	Question saveQuestion(String domainName, int domain, String user, Question question) throws AonCoreException;
+	Question getQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	Boolean checkQuestionAlias(String domainName, Integer domain, String user, String alias) throws AonCoreException;
 	
 }
