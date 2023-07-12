@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.test;
 
-import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementDate;
+import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementEndDate;
+import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementStartDate;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -81,8 +82,9 @@ public class ContractExtraCalculatorTest extends AbstractSalaryCalculatorTest{
 		AgreementExtra extra = getExtra(contract, chargeDate);
 		
 		if ( extra != null ) {
-			endDate = parseAgreementDate(extra.getEndDate(), CommonUtil.getYear(chargeDate));
-			startDate = parseAgreementDate(extra.getStartDate(), CommonUtil.getYear(chargeDate));
+		    
+			endDate = parseAgreementEndDate(extra.getEndDate(), CommonUtil.getYear(chargeDate));
+			startDate = parseAgreementStartDate(extra.getStartDate(), CommonUtil.getYear(chargeDate));
 		}
 		
 		return new SQLContractExtraCalculatorContext(connection, startDate, endDate, endDate, chargeDate, criteria, ISQLContractSalaryCalculatorContext.OLDER);

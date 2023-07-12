@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.type.QuoteGroup;
 import com.esferalia.aon.occam.api.model.type.RLCE;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Document;
@@ -397,14 +398,26 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	public void fillFormDniData(){
-		
+		AsyncCallback<EmployeeDataResult> callback = new AsyncCallback<EmployeeDataResult>() {
+			
+			@Override
+			public void onSuccess(EmployeeDataResult e) {
+				document.setValue(e.getDni(),true);
+				nationality.setValue(e.getNationality(),true);
+				name.setValue(e.getName(),true);
+				firstSurname.setValue(e.getFirstSurname(),true);
+				secondSurname.setValue(e.getSecondSurname(),true);
+			}
+			//ARREGLAR INSERCION DATOS
+			@Override
+			public void onFailure(Throwable f) {
+				Window.alert("fail");
+			}
+		};
 		formPanel.addSubmitCompleteHandler(event -> {
-			EmployeeDataResult eps = JsonUtils.safeEval(event.getResults());
-				document.setValue(eps.getDni());
-				nationality.setValue(eps.getNationality());
-				name.setValue(eps.getName());
-				firstSurname.setValue(eps.getFirstSurname());
-				secondSurname.setValue(eps.getSecondSurname());
+				EmployeeDataResult eps = JsonUtils.safeEval(event.getResults());
+				callback.onSuccess(eps);
+				Window.alert("onSucces");
 			});
 		
 		formPanel.submit();

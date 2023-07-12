@@ -28,6 +28,12 @@
 	<aon:selectOneMenu id="RegistrySeller_status" 
 		required="true" value="#{controller.to.status}">
 		<f:selectItems value="#{registryCollections.registrySellerStatuses}" />
+	</aon:selectOneMenu>
+	
+	<aon:outputLabel for="RegistrySeller_type" value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="RegistrySeller_type" 
+		required="true" value="#{controller.to.type}">
+		<f:selectItems value="#{registryCollections.registrySellerTypes}" />
 	</aon:selectOneMenu>								
 		
 </ui:composition>

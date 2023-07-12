@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,9 +27,21 @@ public class AgreementExtra extends AgreementExtraDB  {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Pattern AGREEMENT_DATE_PATTERN = 
-		Pattern.compile("(\\d+)/(\\d+)\\s*\\+?([-]?\\d+)?");
+		Pattern.compile("((?<day>\\d+)/)?(?<month>\\d+)\\s*\\+?(?<year>[-]?\\d+)?");
+	
+	public static Date parseAgreementEndDate ( String string, int year ) {
+	    return parseAgreementDate(string, year, month -> month.getActualMaximum(Calendar.DAY_OF_MONTH));
+	}
 
-	public static Date parseAgreementDate ( String string, int year ) {
+	public static Date parseAgreementStartDate ( String string, int year ) {
+	    return parseAgreementDate(string, year, month -> 1);
+	}
+
+	public static Date parseAgreementIssueDate ( String string, int year ) {
+	    return parseAgreementDate(string, year, month -> 1);
+	}
+
+	private static Date parseAgreementDate ( String string, int year, Function<Calendar, Integer> defaultDay) {
 		
 		Matcher matcher = AGREEMENT_DATE_PATTERN.matcher(string);
 		
@@ -36,29 +49,31 @@ public class AgreementExtra extends AgreementExtraDB  {
 			throw new  DateFormatException(string);
 		}
 
-		String days = matcher.group(1);
-		String month = matcher.group(2);
-		String yearOffset = matcher.group(3);
+		String day = matcher.group("day");
+		String month = matcher.group("month");
+		String yearOffset = matcher.group("year");
 		
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(days));
 		calendar.set(Calendar.MONTH, Integer.parseInt(month)-1);
 		if ( yearOffset != null ) {
 			year += Integer.parseInt(yearOffset);
 		}
 		calendar.set(Calendar.YEAR,  year );
 
+		int dayOfMonth = day != null ? Integer.parseInt(day) : defaultDay.apply(calendar) ;
+		calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
 		return DateUtils.truncate(calendar, Calendar.DAY_OF_MONTH).getTime();
 	}
 
 	public Date getStartDate(int year ) {
-		return parseAgreementDate(getStartDate(), year);
+		return parseAgreementStartDate(getStartDate(), year);
 	}
 	public Date getEndDate(int year ) {
-		return parseAgreementDate(getEndDate(), year);
+		return parseAgreementEndDate(getEndDate(), year);
 	}
 	public Date getIssueDate(int year ) {
-		return parseAgreementDate(getIssueDate(), year);
+		return parseAgreementIssueDate(getIssueDate(), year);
 	}
 	
 	@Transient

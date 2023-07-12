@@ -4223,6 +4223,120 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testExtrasIII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+					new Extra() {
+						{
+							this.concept = conceptPagaExtra.getId();
+							this.expression = "SALARIO_BASE + PLUS_SALARIAL";
+							this.month = Month.JULY;
+							this.start = "07 -1";
+							this.end = "06";
+							this.issue = "01/07";
+						}
+					}, 
+					new Extra() {
+						{
+							this.concept = conceptPagaExtra.getId();
+							this.expression = "(SALARIO_BASE + PLUS_SALARIAL)";
+							this.month = Month.DECEMBER;
+							this.start = "01";
+							this.end = "12";
+							this.issue = "15/12";
+						}
+					}, 
+				},
+				new Payment[] {
+						new Payment() {
+							{
+								this.concept = conceptSalarioBase.getId();
+								this.expression = "SALARIO_MENSUAL * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptPlusSalarial.getId();
+								this.expression = "PLUS_MENSUAL * DIAS_LABORALES";
+							}
+						}
+				});
+		
+		addData(aonContext, category, getFirstDayOfYear(getToday()), null, new HashMap<String,String>(){
+			{
+				put("PLUS_MENSUAL", "10.00");
+				put("SALARIO_MENSUAL", "1000.00");
+			}
+		});
+		
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.AUGUST);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date contractStartDate = new Date(calendar.getTimeInMillis()); // 01/08
+
+		ContractRecord contract = newContract(
+				aonContext
+				,contractStartDate
+				, new HashMap<String,String>(){
+					{
+						put("DIAS_MES", "30.00");
+					}
+				}				
+				,category);
+		
+		
+		for ( Date startDate = contractStartDate ; 
+				startDate.before(getLastDayOfYear(contractStartDate)) ; 
+				startDate = add(startDate, Calendar.MONTH,1) ) 
+		{
+			Date endDate = getLastDayOfMonth(startDate);
+			addData(aonContext, contract, startDate, endDate, "DIAS_LABORALES", "15.00");
+		}
+		
+		double extraPayProration = 0.00;
+		for ( Date startDate = contractStartDate ; 
+				startDate.before(getLastDayOfYear(contractStartDate)) ; 
+				startDate = add(startDate, Calendar.MONTH,1) ) 
+		{
+			Date endDate = getLastDayOfMonth(startDate);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+			Salary salary = calculator.calculate(ctx);
+			extraPayProration += salary.getExtraPayProration();
+		}
+
+		//@formatter:off
+		
+		
+		calendar.set(MONTH, Calendar.DECEMBER);
+		calendar.set(DAY_OF_MONTH, 15);
+		Date issueDate = new Date(calendar.getTimeInMillis());
+		int year = calendar.get(Calendar.YEAR);
+
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, issueDate);
+		SmartContractSalaryCalculator<Salary> contractSalaryCalculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		contractSalaryCalculator.setListener(new Listener() {
+		});
+		Salary extra = contractSalaryCalculator.calculate(extraCtx);
+
+		Assert.assertEquals(ContextVariable.EXTRA_PAY.getName(), ( 1000.00 + 10.00 * 15.00) /12.00 * 5 , extraPayProration / 2.00 , 0.005 );
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), ( 1000.00 + 10.00 * 15.00) /12.00 * 5 , extra.getTotalPayment(), 0.005 );
+	}
+
+	@Test
 	@Ignore("Not yet...")
 	public void testExtrasAtSalaryX() throws ExpressionException,
 			SQLException, SalaryException {
