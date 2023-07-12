@@ -242,7 +242,7 @@ public class Templates extends Composite implements EntryPoint {
 		popup.center();
 	}
 	
-	private void newImportation(ImportType type){
+	private void newImportation(ImportType importType){
 		verror = new LinkedList<>();
 		werror = new LinkedList<>();
 		Upload upload = new Upload() {
@@ -250,9 +250,8 @@ public class Templates extends Composite implements EntryPoint {
 			@Override
 			protected void onUpload(String data, String type) {
 				startAonProgressBar();
-				if(ImportType.FEE.equals(type)) {
+				if(ImportType.FEE.equals(importType)) {
 					importFee(data);
-					
 				}
 			}
 		};
