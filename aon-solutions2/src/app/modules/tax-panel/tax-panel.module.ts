@@ -13,12 +13,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { TabsTaxModelComponent } from './components/tabs-tax-model/tabs-tax-model.component';
 import { MatTab, MatTabsModule } from '@angular/material/tabs';
+import { TableTaxModelComponent } from './components/table-tax-model/table-tax-model.component';
+import { InputTaxModelComponent } from './components/input-tax-model/input-tax-model.component';
 
 
 @NgModule({
   declarations: [
     TaxPanelComponent,
-    TabsTaxModelComponent
+    TabsTaxModelComponent,
+    TableTaxModelComponent,
+    InputTaxModelComponent
   ],
 
   imports: [

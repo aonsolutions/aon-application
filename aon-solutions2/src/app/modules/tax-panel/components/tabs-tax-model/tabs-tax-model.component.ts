@@ -1,13 +1,9 @@
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
-
 
 
 
 export interface Tabs {
   name: string; // Nombre de la tab
-  icon?: string; // Icono opcional de la tab
-  color?: string; // Color del texto y del icono de la tab
 }
 
 @Component({
@@ -17,14 +13,20 @@ export interface Tabs {
 })
 export class TabsTaxModelComponent implements OnInit {
 
+  asd:any;
+getValue($event: any) {
+
+}
+
 
   tabIndex:number = 0
 
   tabs: Tabs[] = [
-    { name: 'tab1', icon: 'create', color: 'black' },
-    { name: 'tab2', icon: 'delete', color: 'black' },
-    { name: 'tab3', color: 'black' },
-    { name: 'todos', color: 'black' },
+    { name: '1 Trimestre'},
+    { name: '2 Trimestre' },
+    { name: '3 Trimestre'},
+    { name: '4 Trimestre'},
+    { name: 'Todos'},
   ];
 
   @Input() paddingLeftHeader: string = '';
@@ -33,10 +35,6 @@ export class TabsTaxModelComponent implements OnInit {
   @Output() changeTabIndex = new EventEmitter<number>();
 
 
-  tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    this.tabIndex = tabChangeEvent.index;
-    this.changeTabIndex.emit(tabChangeEvent.index);
-  }
 
 
   constructor() { }

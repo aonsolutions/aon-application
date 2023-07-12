@@ -28,9 +28,13 @@ const ELEMENT_DATA: PeriodicElement[] = [
 export class TableComponent implements OnInit {
 
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource = ELEMENT_DATA;
+  dataSource: PeriodicElement[] = ELEMENT_DATA;
 
   constructor() { }
+
+  setDataSource(dataSource: PeriodicElement[]) {
+    this.dataSource = dataSource;
+  }
 
   ngOnInit(): void {
   }
