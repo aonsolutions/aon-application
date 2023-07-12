@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IRegistry;
 import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.AonCompany;
@@ -35,13 +36,14 @@ import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
-import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -66,6 +68,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainLinkedDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.QuestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
@@ -292,7 +295,7 @@ public class RegistryImpl implements IRegistry{
 
 
 	@Override
-	public Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry) {
+	public Stream<com.esferalia.aon.occam.api.model.registry.Question> getRegistryQuestionStream(AONContext ctx, Integer registry) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getRegistryQuestionStream(ctx, registry));
 	}
@@ -767,6 +770,37 @@ public class RegistryImpl implements IRegistry{
 	public DomainLinked saveDomainLinked(AONContext ctx, DomainLinked domainLinked) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> DomainLinkedDAO.save(ctx, domainLinked));
+	}
+	
+	// QUESTION
+
+	@Override
+	public List<Question> getQuestionList(CloseableAONContext ctx, QuestionParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> QuestionDAO.getList(ctx, params));
+	}
+
+	@Override
+	public void deleteQuestion(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> QuestionDAO.delete(ctx, id));
+	}
+
+	@Override
+	public Question saveQuestion(CloseableAONContext ctx, Question question) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> QuestionDAO.save(ctx, question));
+	}
+
+	@Override
+	public Question getQuestion(CloseableAONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> QuestionDAO.get(ctx, id));
+	}
+
+	@Override
+	public Boolean checkQuestionAlias(CloseableAONContext ctx, String alias) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> QuestionDAO.checkAlias(ctx, alias));
 	}
 
 }

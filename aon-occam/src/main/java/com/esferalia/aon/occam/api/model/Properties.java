@@ -1818,5 +1818,15 @@ public interface Properties {
 		Property<Date> getEndDateProperty();
 		Property<Double> getVatPercentProperty();
 		Property<Double> getRetentionPercentProperty();
-	}	
+	}
+	
+	public interface QuestionProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Byte> getActiveProperty();
+		Property<String> getQuestionTextProperty();
+		Property<Byte> getTypeProperty();
+		Property<String> getArgumentProperty();
+		Property<String> getAliasProperty();
+	}
 }

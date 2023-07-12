@@ -147,9 +147,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<!-- Preguntas -->
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="question-commercial"
-											action="question_list-commercial"
-											actionListener="#{question.onSearch}"
+										<aon:commandLink id="questionModule" action="gwt_questionModule"
 											value="#{bundle.registry_question_module}" />
 									</aon:div>
 									
@@ -174,11 +172,49 @@
 					</aon:panelGroup>					
 
 				</h:panelGrid>
-
-			</aon:div>
 				
-		</aon:form>
+				<aon:if test="#{!domainSwitcher.domainManagementAvailable and !userUtils.newAONTheme}">
 
+					<aon:div style="padding: 10px; border: solid red 1px;">
+						<aon:div style="text-align: center; margin-bottom: 10px;">
+							<aon:outputText style="color: red; font-weight:bold;"
+								value="ANTIGUAS OPCIONES (OBSOLETAS)" />
+						</aon:div>
+						
+						<h:panelGrid styleClass="aon-width-all" columns="3"
+							cellspacing="15" style="background-color: lightgray;"
+							columnClasses="aon-vertical-align-top aon-width-200,
+							aon-vertical-align-top aon-width-200,aon-vertical-align-top aon-width-200">
+
+							<aon:panelGroup>
+							
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:panelGrid id="group_manual_entries"
+										styleClass="aon-width-all" columnClasses="aon-padding"
+										headerClass="aon-icon-account-entry aon-direct-access-panel">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.marketing_survey_module}" />
+										</f:facet>
+										<aon:div styleClass="aon-direct-access-list">
+											<!-- Preguntas -->
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="question-commercial"
+													action="question_list-commercial"
+													actionListener="#{question.onSearch}"
+													value="#{bundle.registry_question_module} [Antiguo]" />
+											</aon:div>
+										</aon:div>
+									</aon:panelGrid>									
+								</aon:if>
+								
+							</aon:panelGroup>
+							
+						</h:panelGrid>
+					</aon:div>
+				</aon:if>
+				
+			</aon:div>
+		</aon:form>
 	</ui:define>
 
 </ui:composition>

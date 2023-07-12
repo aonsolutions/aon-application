@@ -2,10 +2,13 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<ui:param name="showNewMessageWindow" value="#{false}" />
 
 	<ui:decorate
 		template="/com/esferalia/aon/gwt/marketing/facelet/gwt.xhtml">
-		<ui:param name="entryPoint" value="MainCustomerFee" />
+		<ui:param name="module" value="aon_gwt_marketing" />
+		<ui:param name="entryPoint" value="QuestionModule" />
 	</ui:decorate>
 
 </ui:composition>
