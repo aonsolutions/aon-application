@@ -38,8 +38,6 @@ import { InputComponent } from './components/input/input.component';
 import { ListElementComponent } from './layouts/list-element/list-element.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ModalControllerComponent } from './components/modal-controller/modal-controller.component';
-import { PaginationContainerComponent } from './components/pagination-container/pagination-container.component';
-import { PaginationControllerComponent } from './components/pagination-controller/pagination-controller.component';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
 import { SideNavComponent } from './layouts/side-nav/side-nav.component';
 import { SidenavHoverDirective } from './directives/sidenav-hover.directive';
@@ -50,6 +48,9 @@ import { TopBarComponent } from './layouts/top-bar/top-bar.component';
 import { FileViewerComponent } from './components/file-viewer/file-viewer.component';
 import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
 import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack-bar.component';
+import { TableComponent } from './components/table/table.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
@@ -74,8 +75,6 @@ import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack
     InputComponent,
     ListElementComponent,
     ModalControllerComponent,
-    PaginationContainerComponent,
-    PaginationControllerComponent,
     SideNavComponent,
     SidenavHoverDirective,
     SidenavLayoutComponent,
@@ -84,6 +83,7 @@ import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack
     TopBarComponent,
     FileViewerComponent,
     ErrorSnackBarComponent,
+    TableComponent,
   ],
   imports: [
     ChartsModule,
@@ -106,7 +106,9 @@ import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack
     ReactiveFormsModule,
     RouterModule,
     SetMaterialModule,
-    PdfJsViewerModule
+    PdfJsViewerModule,
+    MatTableModule,
+    MatSortModule
   ],
   exports:[
     AccordionComponent,
@@ -127,8 +129,6 @@ import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack
     InputComponent,
     ListElementComponent,
     ModalControllerComponent,
-    PaginationContainerComponent,
-    PaginationControllerComponent,
     SideNavComponent,
     SidenavHoverDirective,
     SidenavLayoutComponent,

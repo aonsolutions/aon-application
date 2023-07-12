@@ -20,7 +20,7 @@ $XLarge : 1920px;
   
 // Font-size
   // default is 20px
-  $font-size-4k       : 40px;
+  $font-size-4k       : 30px;
   $font-size-2k       : 23px;
   $font-size-fullHD   : 20px;
   $font-size-default  : 20px;
@@ -54,14 +54,17 @@ $color-icon       : #b4b4bb;
   /* Orange */
     $color-orange : #fb982e;
 
+// Shadow  
+$box-shadow: 0 0.1rem 0.2rem 0 #d2d2d6, 0 0.1rem 0.2rem 0 #b4b4bb;
+    
 // Colors Border
-$color-border-primary: #d2d2d6;
-$color-border-secondary: #787885;
+$color-border-primary   : #d2d2d6;
+$color-border-secondary : #787885;
 
 // Border
 $border-size-primary: 0.05rem;
-$border: solid $border-size-primary $color-border-primary;
-$border-radius: 0.2rem;
+$border             : solid $border-size-primary $color-border-primary;
+$border-radius      : 0.2rem;
 
 // margin
   // 20px
@@ -210,11 +213,11 @@ $bottom-button-icon: 0.5rem;
 }
  
 html {
-  @media screen and (min-width: 4001px) {
+  @media screen and (min-width: 3800px) {
     font-size: $font-size-4k !important;
     /*background: yellow;*/
   }
-  @media screen and (min-width: 2501px) and (max-width: 4000px) {
+  @media screen and (min-width: 2501px) and (max-width: 3800px) {
     font-size: $font-size-2k !important;
     /*background: green;*/
   }
