@@ -652,8 +652,9 @@ public class SecurityDAO {
 			.join(PROFILE_ROLE).on(PROFILE_ROLE.PROFILE.equal(PROFILE.ID))
 			.join(APPLICATION_ROLE).on(APPLICATION_ROLE.ID.equal(PROFILE_ROLE.APPLICATION_ROLE))
 			.join(ROLE).on(APPLICATION_ROLE.ROLE.equal(ROLE.ID))
-			.join(DOMAIN).on(DOMAIN.ID.equal(USER.DOMAIN).or(DOMAIN.PARENT.equal(USER.DOMAIN)))
-			.and(USER.ID.equal(userId))
+			// I hope , I can safely remove this
+			//.join(DOMAIN).on(DOMAIN.ID.equal(USER.DOMAIN).or(DOMAIN.PARENT.equal(USER.DOMAIN)))
+			.where(USER.ID.equal(userId))
 			.fetch()
 			.stream()
 			.forEach(rec -> {
