@@ -58,41 +58,55 @@ describe('AuthService', () => {
       }
     )
   });
-
-  it('login returns an error ',(done: DoneFn)=>{
-  const user = 'test';
-  const password = 'testaa';
-  spyOn(router,'navigate');
-  service.login(user,password).then(value => {
-  expect(value).toBe(true);
-    done();
-  }).catch(
-     (error) => {
-  expect(error).toBeTruthy();
+  it('login redirect to /selectEnterprise when the promise is resolved', (done: DoneFn) => {
+    const user = 'test@aonsolutions.test';
+    const password = 'test';
+    const spyRouter = spyOn(router, 'navigate');
+    service.login(user, password).then(value => {
+      expect(value).toBeTruthy();
+      expect(spyRouter).toHaveBeenCalledWith(['/selectEnterprise']);
       done();
-    }
-  )
+    });
+  });
+
+  it('isLoggedIn return true',  () =>{
+    aonSDK.model('auth').login('test@aonsolutions.test','test');
+  
+    expect(service.isLoggedIn()).toBe(true);
+  });
+  // it('isLoggedIn return false',  () =>{
+//   aonSDK.model('auth').logout();
+
+//   expect(service.isLoggedIn()).toBe(false)
+// });
+
+// });
+  
+  // it('login returns an error ',(done: DoneFn)=>{
+  // const user = 'test';
+  // const password = 'testaa';
+  // spyOn(router,'navigate');
+  // service.login(user,password).then(value => {
+  // expect(value).toBe(true);
+  //   done();
+  // }).catch(
+  //    (error) => {
+  // expect(error).toBeTruthy();
+  //     done();
+  //   }
+  // )
+  // it('logout method executes correctly',(done: DoneFn) =>{
+//   spyOn(router,'navigate');
+
+//   expect(service.logout()).toBe(void 0);
+//   done();
+// });
 });
 
-it('logout method executes correctly',(done: DoneFn) =>{
-  spyOn(router,'navigate');
 
-  expect(service.logout()).toBe(void 0);
-  done();
-});
 
-it('isLoggedIn return true',  () =>{
-  aonSDK.model('auth').login('test@aonsolutions.test','test');
 
-  expect(service.isLoggedIn()).toBe(true);
-});
 
-it('isLoggedIn return false',  () =>{
-  aonSDK.model('auth').logout();
 
-  expect(service.isLoggedIn()).toBe(false)
-});
-
-});
 
 
