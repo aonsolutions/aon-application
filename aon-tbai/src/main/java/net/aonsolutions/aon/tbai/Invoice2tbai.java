@@ -283,7 +283,9 @@ public class Invoice2tbai {
 
 		if(invoice.isRectifier()) {
 			FacturaRectificativaType rectificativa = new FacturaRectificativaType(); 
-			rectificativa.setCodigo(ClaveTipoFacturaType.R_1);
+			rectificativa.setCodigo(invoice.isSimplified()
+					? ClaveTipoFacturaType.R_5
+					: ClaveTipoFacturaType.R_1);
 			rectificativa.setTipo(ClaveTipoRectificativaType.I); // por diferencia o por sustitucion
 			cabecera.setFacturaRectificativa(rectificativa);
 			
