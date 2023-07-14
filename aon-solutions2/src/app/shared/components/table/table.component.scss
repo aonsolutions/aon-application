@@ -4,4 +4,22 @@
   table {
     width: 100%;
   }
+};
+
+.table-taxType{
+color: $color-secondary
+};
+
+.table-model{
+  color: $color-orange
+};
+
+.table-status {
+  padding: .25rem;
+  display: inline-flex; 
+  border-radius: .2rem;
+  align-items: center;
+  background-color: #FDDCB9;
+  margin-left: .85rem;
 }
+

@@ -1,42 +1,69 @@
-import { Component, OnInit } from '@angular/core';
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-];
+import { Component, Input } from '@angular/core';
+import { TaxModel } from 'src/app/core/models/class/tax-model';
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss']
 })
-export class TableComponent implements OnInit {
-
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource: PeriodicElement[] = ELEMENT_DATA;
-
-  constructor() { }
-
-  setDataSource(dataSource: PeriodicElement[]) {
-    this.dataSource = dataSource;
-  }
-
-  ngOnInit(): void {
-  }
-
+export class TableComponent {
+  @Input() dataSource: TaxModel[] = [];
+  displayedColumns: string[] = ['name', 'result', 'status', 'paymentMethod', 'acciones'];
 }
+
+
+
+
+
+
+
+// import { Component, OnInit } from '@angular/core';
+// import { TaxModel } from 'src/app/core/models/class/tax-model';
+// import { TaxModelService } from 'src/app/core/services/tax-model.service';
+
+// export interface Models {
+//   name: string;
+//   taxType: number;
+//   result: number;
+//   status: string;
+//   paymentMethod?: string;
+//   trimester?: number;
+//   year?: number;
+//   acciones?: any;
+// }
+
+// // const ELEMENT_DATA: Models[] = [
+// //   {taxType: 1, name: 'Modelo 000', result: 1.0079, status: 'En proceso'},
+// //   {taxType: 2, name: 'Modelo 000', result: 4.0026, status: 'Pendiente'},
+// //   {taxType: 3, name: 'Modelo 000', result: 6.941, status: 'Rectificado'},
+// //   {taxType: 4, name: 'Modelo 000', result: 9.0122, status: 'Confirmado', paymentMethod: 'aplazamiento'},
+// //   {taxType: 5, name: 'Modelo 000', result: 10.811, status: 'Presentado', paymentMethod: 'nrc'},
+// //   {taxType: 9, name: 'Modelo 000', result: 12.0107, status: 'Presentado', paymentMethod: 'domiciliacion bancaria'},
+
+// // ];
+
+// @Component({
+//   selector: 'app-table',
+//   templateUrl: './table.component.html',
+//   styleUrls: ['./table.component.scss']
+// })
+// export class TableComponent implements OnInit {
+
+//   dataSource: TaxModel[] = [];
+//   displayedColumns: string[] = [ 'name', 'result', 'status', 'paymentMethod', 'acciones'];
+
+
+//   constructor( public taxModelService :TaxModelService ) {
+//     taxModelService.getTaxModelList().then((response) => {
+//      this.dataSource = response;
+//      console.log(response)
+//    });
+//   }
+
+
+//   ngOnInit(): void {
+//   }
+
+// }
+
+
