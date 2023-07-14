@@ -6,10 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./input-tax-model.component.scss']
 })
 export class InputTaxModelComponent implements OnInit {
-[x: string]: any;
-getValue($event: any) {
-throw new Error('Method not implemented.');
-}
+
 
   constructor() { }
 

@@ -4,45 +4,25 @@
   [tabColor]="'#fcaf5c'"
   [paddingLeftHeader]="'1rem'"
 >
-  <div tool>
+  <div tool >
 
+    <app-input
+    [type]="'select'"
+    [label]="'Modelo'"
+    [placeholder]="'Usuario'"
 
-      <!-- <span> -->
-        <!-- <app-input
-        (inputValue)="getValue=$event"
-        [appearance]="'outline'"
-        appearanceDetail= "mat-form-field-appearance-bold-outline"
-        [type]="'select'"
-        [label]="'Año'"
-        [placeholder]="'2023'"
-        [width]="'100%'"
-        style="margin-bottom: 1.6rem;"
+    [(ngModel)]={{ model.name }}
+    ></app-input>
+
+    <!-- <app-input
+    [type]="'select'"
+    [label]="'Año'"
+    [placeholder]="'Usuario'"
     ></app-input> -->
 
-        <!-- </span> -->
-
-    <span>Example</span>&nbsp;&nbsp;<app-icon
-      shape="create"
-      color="black"
-      size="1.2rem"
-    ></app-icon>
   </div>
   <div content *ngIf="this.tabIndex == 0">
-     <!-- <app-input
-      [appearance]="'outline'"
-      appearanceDetail= "mat-form-field-appearance-bold-outline"
-      [type]="'select'"
-      [label]="'Modelo'"
-      [value]="asd"
-      [placeholder]="'Todos los modelos'"
-      [width]="'100%'"
-      style="margin-bottom: 1.6rem;"
-  ></app-input> -->
-    <app-table-tax-model>
-
-
-
-    </app-table-tax-model>
+    <app-table-tax-model></app-table-tax-model>
   </div>
   <div content *ngIf="this.tabIndex == 1">
     <!-- <app-table-tax-model></app-table-tax-model> -->

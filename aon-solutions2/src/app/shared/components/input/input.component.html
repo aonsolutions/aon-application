@@ -20,8 +20,8 @@
         (ngModelChange)="returnValue($event)"
         [class]="appearanceDetail"
     />
-    
-    <div 
+
+    <div
       class='search-componet'
       *ngIf="type == 'search'"
     >
@@ -41,18 +41,19 @@
         />
       </div>
     </div>
-        
-         
+
+
     <!-- INPUTS TIPO SELECT -->
     <mat-select
-        *ngIf="type=='select'"
-        [(ngModel)]="value"
-        [placeholder]="placeholder"
-        [value]="options[0].text"
-        [disabled]="disabled"
-        (ngModelChange)="returnValue($event)"
+      *ngIf="type=='select'"
+      [(ngModel)]="value"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [class]="appearanceDetail"
     >
-        <mat-option *ngFor="let option of options" [value]="option.value">{{option.text}}</mat-option>
+<!--
+    [value]="options[0].text" -->
+      <mat-option *ngFor="let option of options" [value]="option.value">{{option.text}}</mat-option>
     </mat-select>
 
     <!-- INPUT TIPO TEXTAREA -->

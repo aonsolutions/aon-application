@@ -1,10 +1,25 @@
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
+import { TaxModel } from 'src/app/core/models/class/tax-model';
+import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 
 
 export interface Tabs {
   name: string; // Nombre de la tab
 }
+
+export interface Models {
+
+  name: string;
+  taxType: number;
+  result: number;
+  status: string;
+  paymentMethod?: string;
+  trimester: number;
+  year: number;
+  acciones?: any;
+}
+
 
 @Component({
   selector: 'app-tabs-tax-model',
@@ -13,10 +28,7 @@ export interface Tabs {
 })
 export class TabsTaxModelComponent implements OnInit {
 
-  asd:any;
-getValue($event: any) {
-
-}
+  models: TaxModel[] = [];
 
 
   tabIndex:number = 0
@@ -37,7 +49,12 @@ getValue($event: any) {
 
 
 
-  constructor() { }
+  constructor( public taxModelService :TaxModelService ) {
+    taxModelService.getTaxModelList().then((response) => {
+     this.models = response;
+     console.log(response)
+   });
+  }
 
   ngOnInit(): void {
   }
