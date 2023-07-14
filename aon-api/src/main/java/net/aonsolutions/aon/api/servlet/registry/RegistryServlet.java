@@ -5,10 +5,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,13 +13,13 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.DomainLinkedJSON;
-import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RecordDataJSON;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.json.RegistryPaymethodJSON;
+import com.esferalia.aon.occam.api.json.RegistryProfileJSON;
 import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
 import com.esferalia.aon.occam.api.json.RegistrySegmentJSON;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -39,10 +35,12 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -99,7 +97,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 	
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
+		LOGGER.info("EXAMPLE SERVLET - PUT METHOD");
 		try {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
@@ -278,6 +276,14 @@ public class RegistryServlet extends AonApiHttpServlet {
 				AON.saveRegistrySegment(rsegment.getDomain(), api.getUser(), rsegment);
 			});
 		}
+		
+		if(json.opt(RegistryAdditionalInfo.RPROFILE.name().toLowerCase()) != null) {
+			JSONArray arr = json.optJSONArray(RegistryAdditionalInfo.RPROFILE.name().toLowerCase());
+			RegistryProfileJSON.fromJSON(arr)
+			.stream().forEach(rprofile -> {
+				AON.saveRegistryProfile(api.getDomain(), api.getUser().getLogin(), registryId, rprofile.getQuestionAlias(), rprofile.getValue());
+			});
+		}
 	}
 	
 	private JSONObject getRegistryAddress(AonApiData api) {
@@ -301,4 +307,5 @@ public class RegistryServlet extends AonApiHttpServlet {
 	    return RegistryPaymethodJSON.toJSON(rpm);
 
 	}
+	
 }

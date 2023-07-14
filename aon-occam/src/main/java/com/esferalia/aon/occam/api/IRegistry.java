@@ -243,5 +243,8 @@ public interface IRegistry {
 	public Question saveQuestion(CloseableAONContext ctx, Question question);
 	public Question getQuestion(CloseableAONContext ctx, Integer id);
 	public Boolean checkQuestionAlias(CloseableAONContext ctx, String alias);
+	
+	// REGISTRY PROFILE
+	public void saveRegistryProfile(CloseableAONContext ctx, Integer registryId, String questionAlias, String value);
 
 }

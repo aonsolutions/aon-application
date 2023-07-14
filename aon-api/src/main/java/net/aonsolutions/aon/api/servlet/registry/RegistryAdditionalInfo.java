@@ -11,7 +11,8 @@ public enum RegistryAdditionalInfo {
 	RSEGMENT,
 	RRELATIONSHIP,
 	BILLABLE,
-	DOMAIN_LINKED
+	DOMAIN_LINKED,
+	RPROFILE
 	;
 
 	private RegistryAdditionalInfo() {
