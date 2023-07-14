@@ -807,8 +807,8 @@ public class RegistryImpl implements IRegistry{
 	// REGISTRY PROFILE
 	
 	@Override
-	public void saveRegistryProfile(CloseableAONContext ctx, String questionAlias, String value) {
-		ctx.getDslContext().transaction(configuration -> RegistryProfileDAO.save(ctx, questionAlias, value));
+	public void saveRegistryProfile(CloseableAONContext ctx, Integer registryId, String questionAlias, String value) {
+		ctx.getDslContext().transaction(configuration -> RegistryProfileDAO.save(ctx,registryId, questionAlias, value));
 	}
 
 }
