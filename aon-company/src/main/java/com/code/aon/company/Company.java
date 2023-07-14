@@ -10,6 +10,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.domain.DomainFilter;
 import com.code.aon.common.domain.IDomain;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.ITaxInfo;
@@ -34,14 +35,24 @@ public class Company extends Registry implements ITaxInfo, IDomain {
     private boolean withholding;
     private boolean vatAccrualPayment;
     private boolean eInvoice;
-    
-	@Column(name="domain", nullable=false)
+    	
+    	@DomainFilter
+	@Column(name="domain", nullable=false , insertable=false, updatable =false)
 	public int getCompanyDomain() {
 		return this.domain;
 	}
 
 	public void setCompanyDomain(int domain) {
-		this.domain = domain;
+	    this.domain = domain;
+	}
+	
+	@Column(name="domain", nullable=false )
+	public int getDomain() {
+		return this.domain;
+	}
+
+	public void setDomain(int domain) {
+	    this.domain = domain;
 	}
 	
 	@Column(nullable=true)
