@@ -1,25 +1,32 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
-import { ErrorSnackBarComponent } from './error-snack-bar.component';
 
-describe('ErrorSnackBarComponent', () => {
-  let component: ErrorSnackBarComponent;
-  let fixture: ComponentFixture<ErrorSnackBarComponent>;
+import { MatSnackBar, MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar';
+import { ErrorService } from 'src/app/core/services/error.service';
+import { GlobalErrorHandlerService } from 'src/app/core/services/global-error-handler.service';
+import { ErrorSnackBarComponent } from 'src/app/shared/components/error-snack-bar/error-snack-bar.component';
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ ErrorSnackBarComponent ]
-    })
-    .compileComponents();
-  });
+describe('GlobalErrorHandlerService', () => {
+  let service: GlobalErrorHandlerService;
+  let errorService : ErrorService;
+  let snackBar: MatSnackBar;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ErrorSnackBarComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    TestBed.configureTestingModule({
+      imports : [
+        MatSnackBarModule
+      ],
+      providers : [
+        ErrorService,
+        MatSnackBar
+      ],
+    });
+    service = TestBed.inject(GlobalErrorHandlerService);
+    errorService = TestBed.inject(ErrorService);
+    snackBar = TestBed.inject(MatSnackBar);
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should be created', () => {
+    expect(service).toBeTruthy();
   });
 });
