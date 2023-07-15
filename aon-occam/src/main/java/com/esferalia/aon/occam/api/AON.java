@@ -7900,4 +7900,12 @@ public class AON {
 		}
 	}
 	
+	// ---------------- RegistryProfile
+	
+	public static void saveRegistryProfile(Domain domain, String user, Integer registryId, String questionAlias, String value) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getDescription(), domain.getId(), user)) {
+			getRegistry().saveRegistryProfile(ctx, registryId, questionAlias, value);
+		}
+	}
+	
 }

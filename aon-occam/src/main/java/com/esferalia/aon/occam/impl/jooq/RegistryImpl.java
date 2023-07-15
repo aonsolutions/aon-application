@@ -77,6 +77,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryNoteDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryPayMethodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryProfileDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySegmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
@@ -801,6 +802,13 @@ public class RegistryImpl implements IRegistry{
 	public Boolean checkQuestionAlias(CloseableAONContext ctx, String alias) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> QuestionDAO.checkAlias(ctx, alias));
+	}
+
+	// REGISTRY PROFILE
+	
+	@Override
+	public void saveRegistryProfile(CloseableAONContext ctx, Integer registryId, String questionAlias, String value) {
+		ctx.getDslContext().transaction(configuration -> RegistryProfileDAO.save(ctx,registryId, questionAlias, value));
 	}
 
 }

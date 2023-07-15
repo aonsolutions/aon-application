@@ -300,6 +300,7 @@ public final class IJsonNames {
     public static final String LAST_ACCESS = "lastAccess";
 	public static final String LAST_ACCESS_DATE = "lastAccessDate";
 	public static final String LAST_ACCESS_USER = "lastAccessUser";
+	public static final String LAST_UPDATE = "lastUpdate";
 	public static final String LEDGER_ACCOUNT = "ledgerAccount";
 	public static final String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
 	public static final String LEDGER_UNPAID_BALANCE = "ledgerUnpaidBalance";
@@ -440,6 +441,8 @@ public final class IJsonNames {
 
 	// ---------------------------------------------------------------------------------------------	[Q] 
 	public static final String QUANTITY = "quantity";
+	public static final String QUESTION = "question";
+	public static final String QUESTION_ALIAS = "questionAlias";
 	public static final String QUOTA = "quota";
 	// ---------------------------------------------------------------------------------------------	[R] 
 	public static final String RATE = "rate";
@@ -582,6 +585,9 @@ public final class IJsonNames {
 	public static final String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
 	public static final String VALUE = "value";
+	public static final String VALUE_TEXT = "valueText";
+	public static final String VALUE_DATE = "valueDate";
+	public static final String VALUE_NUMBER = "valueNumber";
 	public static final String VARIABLES = "variables";
 	public static final String VAT = "vat";
 	public static final String VAT_ACCRUAL_PAYMENT = "vatAccrualPayment";
