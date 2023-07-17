@@ -38,3 +38,66 @@
 .grid-list-folders {
   width: 100%;
 }
+
+.nav-documentation {
+  align-items: center;
+}
+
+.item-folder {
+  margin-top: 1.5rem;
+  width: 80%;
+}
+
+.iconRight {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
+}
+
+.card-file {
+  width: 8rem;
+  margin-right: 1.15rem;
+  border: .05rem solid $color-border-primary;
+  border-radius: .4rem;
+  cursor: pointer;
+}
+
+.card-file:hover {
+  border: .05rem solid $color-pink;
+}
+
+.card-file:last-child {
+  margin-right: 0rem;
+}
+
+.models-header{
+  width: 100%;
+  display: flex;
+  height: 100%;
+}
+
+.card-file-header {
+  width: 100%;
+  display: flex;
+  height: 100%;
+}
+
+.card-file-body {
+  display: flex;
+  flex-direction: column; /* Para que los elementos se coloquen uno debajo del otro */
+  justify-content: center;
+  align-items: center;
+}
+
+.file-card-name {
+  text-transform: uppercase;
+}
+
+.file-card-date {
+  color: $color-secondary;
+}
+
+.icon-card-file {
+  margin-bottom: 0.5rem;
+}

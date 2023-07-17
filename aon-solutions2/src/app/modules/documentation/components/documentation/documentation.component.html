@@ -1,50 +1,171 @@
-<app-content>
-  <!-- Subir documentación -->
-  <mat-grid-list class="mt mb" [cols]="24" [rowHeight]="'2.8rem'">
-    <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
-    <mat-grid-tile  [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
-      <app-file-upload-button> Subir documentación
-        <app-icon shape="cloud_upload" class="ml" set-color color="black" size="24"></app-icon>
-      </app-file-upload-button>
-    </mat-grid-tile>
-  </mat-grid-list>
+<app-grid-layout-alt
+  [navCols]="5"
+  [contentCols]="9"
+  [detailCols]="10"
+  [showDetail]="showDetail"
+  [showMenu]="showMenu"
+  >
 
-  <!-- Búsqueda -->
-  <mat-grid-list class="" [cols]="24" [rowHeight]="''">
-    <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
-    <mat-grid-tile class="" [gridCols]="{xs:8,sm:8,md:8,lg:8,xl:8}">
-      <app-input
-      [appearance]="'outline'"
-      [appearanceDetail]="''"
-      [class]="'search allSize'"
-      [type]="'search'"
-      ></app-input>
+  <!-- Bloquue común -->
+  <ng-template #noFolders>No hay elementos que mostrar</ng-template>
 
-    </mat-grid-tile>
-  </mat-grid-list>
+<!-- Bloque submenu izquierda -->
 
-  <!-- linea divisoria -->
-  <mat-grid-list [cols]="24" [rowHeight]="'1px'">
-    <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
-    <mat-grid-tile class="line-div" [gridCols]="{ xs: 24, sm: 24, md: 24, lg: 24, xl: 24 }">
-    </mat-grid-tile>
-  </mat-grid-list>
+  <div
+    nav
+    id="documentation-menu"
+    class="allSize"
+    nav style="overflow: auto;"
+    *ngIf="documentationListFolders.length > 0 && showMenu"
+    (click)="showMenu ? showMenu = false : showMenu = true"
+  >
+    <mat-grid-list showMenu
+      class="nav-documentation"
+      [cols]="24"
+      [rowHeight]="'4.2rem'"
+    >
 
-  <!-- Listado carpetas -->
-  <mat-grid-list class="" cols="24" [rowHeight]="'1:3'" >
-    <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
-    <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" class="">
-
-      <mat-grid-list cols="24" class="grid-list-folders left-content" [rowHeight]="'4.2rem'" [gutterSize]="'1rem'">
-        <mat-grid-tile [gridCols]="{xs:24,sm:12,md:10,lg:6,xl:4}" *ngFor="let folder of documentationListFolders">
-          <app-button class="icon-background-pink bold left" routerLink="{{ folder.Path.split('/')[1] }}">
+      <div>
+        <mat-grid-tile [gridCols]="{xs:24,sm:24,md:24,lg:24,xl:24}" *ngFor="let folder of documentationListFolders" >
+          <app-button class="icon-background-pink bold item-folder left" [width]="'100%'" >
             <app-icon [shape]="'folder_open'"></app-icon>
             {{ folder.Name }}
-            <app-icon [shape]="'arrow_forward_ios'" class="icon-right"></app-icon>
+            <app-icon [shape]="'arrow_forward_ios'" class="iconRight"></app-icon>
           </app-button>
         </mat-grid-tile>
-      </mat-grid-list>
-    </mat-grid-tile>
-  </mat-grid-list>
+      </div>
 
-</app-content>
+
+    </mat-grid-list>
+  </div>
+
+  <!-- Bloque contenido -->
+  <div id="documentation-content"
+    content
+    class="allSize"
+    content style="overflow: auto;"
+  >
+
+    <!-- Subir documentación -->
+    <mat-grid-list class="mt mb" [cols]="24" [rowHeight]="'2.8rem'">
+      <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
+      <mat-grid-tile  [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
+        <app-file-upload-button> Subir documentación
+          <app-icon shape="cloud_upload" class="ml" set-color color="black" size="24"></app-icon>
+        </app-file-upload-button>
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <!-- Búsqueda -->
+    <mat-grid-list class="mt mb" [cols]="24" [rowHeight]="''">
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile class="" [gridCols]="{xs:8,sm:8,md:8,lg:8,xl:8}">
+        <app-input
+          [appearance]="'outline'"
+          [appearanceDetail]="''"
+          [class]="'search allSize'"
+          [type]="'search'"
+        ></app-input>
+
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <!-- linea divisoria -->
+    <mat-grid-list [cols]="24" [rowHeight]="'1px'">
+      <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
+      <mat-grid-tile class="line-div" [gridCols]="{ xs: 24, sm: 24, md: 24, lg: 24, xl: 24 }">
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <!-- Listado carpetas / ficheros -->
+    <mat-grid-list class="" cols="24" [rowHeight]="'1:3'" >
+      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+      <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" class="">
+
+
+        <mat-grid-list cols="24" class="grid-list-folders left-content" [rowHeight]="'4.2rem'" [gutterSize]="'1rem'">
+          <!-- Mostrar ficheros -->
+          <ng-container *ngIf="showFiles; else showFolders">
+
+          <mat-grid-list class="list-folders mt" [cols]="24" [rowHeight]="'8rem'">
+            <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+              <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:20,xl:22}"
+                *ngFor="let cardFile of documentsList"
+                (click)="showDetail = !showDetail; loadFile(cardFile)"
+              >
+              <div class="card-file" >
+                <app-card
+                [headerHeight]="'35px'"
+                [padding]="'0.2rem 0.5rem'"
+                >
+                <div header class="card-file-header">
+                  <input type="checkbox">
+                  <!-- <div class="iconRight" [matMenuTriggerFor]="menu">
+                    <set-icon shape="more_vert" set-color [ngStyle]="{ color: 'black' }" size="21"></set-icon>
+                  </div> -->
+                  <mat-menu #menu="matMenu" xPosition="before">
+                  </mat-menu>
+                </div>
+                <div body class="card-file-body">
+                  <app-icon
+                  [shape]="'picture_as_pdf'"
+                  [size]="'1.2rem'"
+                  [backgroundColor]="'#fdedf2'"
+                  [borderRadius]="'.4rem'"
+                  [padding]="'0.5rem'"
+                  class="pink icon-card-file"
+                  ></app-icon>
+                  <span class="bold file-card-name">{{ getNameWithExtension(cardFile.FileName, cardFile.FileType) }}</span>
+                  <!-- <span class="file-card-date">{{ getFormattedDate() }}</span> -->
+                </div>
+              </app-card>
+              </div>
+            </mat-grid-tile>
+          </mat-grid-list>
+
+
+          </ng-container>
+
+          <!-- Mostrar carpetas -->
+          <ng-template #showFolders>
+
+            <mat-grid-tile [gridCols]="{xs:24,sm:12,md:10,lg:6,xl:4}"
+              *ngFor="let folder of  (!isListFiltered ? documentationListFolders : documentationFilteredFolders)"
+              (click)="
+                (!isListFiltered ? getFolders(folder.Path) : getFiles(folder));
+                (!isListFiltered) ? showMenu = !showMenu : showMenu = true"
+              >
+              <app-button class="icon-background-pink bold left">
+                <app-icon [shape]="'folder_open'"></app-icon>
+                {{ folder.Name }}
+                <app-icon [shape]="'arrow_forward_ios'" class="icon-right"></app-icon>
+              </app-button>
+            </mat-grid-tile>
+
+          </ng-template>
+        </mat-grid-list>
+
+      </mat-grid-tile>
+    </mat-grid-list>
+
+  </div>
+
+  <!-- Bloque detalles -->
+  <div
+    detail
+    id="documentation-detail"
+    class="allSize"
+    style="overflow: auto;"
+  >
+  <ng-container *ngIf="fileToShow.FileType.split('/')[0] === 'pdf'; else showImage">
+    <app-file-viewer
+      [locale]="'es-ES'"
+      [zoom]="'auto'"
+      [pdfSrc]="'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf'"
+  ></app-file-viewer>
+  </ng-container>
+  <ng-template #showImage>
+    <img [src]="'data:image/png;base64,' + fileToShow.File" alt="Image">
+  </ng-template>
+  </div>
+</app-grid-layout-alt>

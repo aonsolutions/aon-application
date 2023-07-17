@@ -8,13 +8,17 @@
   <div id="documentation-menu" detail class="allSize" nav style="overflow: auto;">
     <mat-grid-list class="nav-documentation" [cols]="24" [rowHeight]="'4.2rem'">
 
-      <mat-grid-tile [gridCols]="{xs:24,sm:24,md:24,lg:24,xl:24}" *ngFor="let folder of documentationListFolders">
-        <app-button class="icon-background-pink bold item-folder left" [width]="'100%'">
-          <app-icon [shape]="'folder_open'"></app-icon>
-          {{ folder.Name }}
-          <app-icon [shape]="'arrow_forward_ios'" class="iconRight"></app-icon>
-        </app-button>
-      </mat-grid-tile>
+      <div *ngIf="documentationFolders.length > 0; else noFolders">
+        <mat-grid-tile [gridCols]="{xs:24,sm:24,md:24,lg:24,xl:24}" *ngFor="let folder of documentationFolders" (click)="getFiles(folder)" >
+          <app-button class="icon-background-pink bold item-folder left" [width]="'100%'" >
+            <app-icon [shape]="'folder_open'"></app-icon>
+            {{ folder.Name }}
+            <app-icon [shape]="'arrow_forward_ios'" class="iconRight"></app-icon>
+          </app-button>
+        </mat-grid-tile>
+      </div>
+
+      <ng-template #noFolders>No hay elementos que mostrar</ng-template>
 
     </mat-grid-list>
   </div>
@@ -53,25 +57,38 @@
       </mat-grid-tile>
     </mat-grid-list>
 
-    <!-- Listado carpetas -->
-    <!-- <mat-grid-list class="list-folders mt" [cols]="24" [rowHeight]="'4.6rem'">
+    <!-- Listado carpetas / ficheros -->
+    <mat-grid-list class="" cols="24" [rowHeight]="'1:3'" >
       <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
-      <mat-grid-tile class="container-folder left-content" [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}">
-        <app-button
-          class="icon-background-pink bold folder-item"
-          [width]="'width'"
-          *ngFor="let folder of documentationListFolders"
-          (click)="detail ? detail = false : detail = true"
-        >
-          <app-icon [shape]="'folder_open'"></app-icon>
-          {{ folder.Name }}
-          <app-icon [shape]="'arrow_forward_ios'"></app-icon>
-        </app-button>
+      <mat-grid-tile [gridCols]="{xs:22,sm:22,md:22,lg:22,xl:22}" class="">
+
+
+        <mat-grid-list cols="24" class="grid-list-folders left-content" [rowHeight]="'4.2rem'" [gutterSize]="'1rem'">
+          <!-- Mostrar ficheros -->
+          <ng-container *ngIf="showFiles; else showFolders">
+            <p>El valor de showFiles es verdadero</p>
+          </ng-container>
+
+          <!-- Mostrar carpetas -->
+          <ng-template #showFolders>
+
+            <mat-grid-tile [gridCols]="{xs:24,sm:12,md:10,lg:6,xl:4}" *ngFor="let folder of documentationFilteredFolders" (click)="detail ? detail = false : detail = true">
+              <app-button class="icon-background-pink bold left">
+                <app-icon [shape]="'folder_open'"></app-icon>
+                {{ folder.Name }}
+                <app-icon [shape]="'arrow_forward_ios'" class="icon-right"></app-icon>
+              </app-button>
+            </mat-grid-tile>
+
+          </ng-template>
+        </mat-grid-list>
+
       </mat-grid-tile>
-    </mat-grid-list> -->
+    </mat-grid-list>
+
 
     <!-- Listado ficheros -->
-    <mat-grid-list class="list-folders mt" [cols]="24" [rowHeight]="'8rem'">
+    <!-- <mat-grid-list class="list-folders mt" [cols]="24" [rowHeight]="'8rem'">
       <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
       <mat-grid-tile class="" [gridCols]="{xs:22,sm:22,md:22,lg:20,xl:22}">
         <div class="card-file" *ngFor="let cardFile of documentsList" >
@@ -107,7 +124,7 @@
         </app-card>
         </div>
       </mat-grid-tile>
-    </mat-grid-list>
+    </mat-grid-list> -->
 
   </div>
 
