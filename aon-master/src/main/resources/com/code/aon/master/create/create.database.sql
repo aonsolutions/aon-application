@@ -4481,7 +4481,7 @@ CREATE TABLE `invest_asset` (
   `end_date` date DEFAULT NULL COMMENT 'Fecha de baja',
   `vat_percent` decimal(15,4) DEFAULT '0' COMMENT 'Porcentaje de afectacion de IVA',
   `retention_percent` decimal(15,4) DEFAULT '0' COMMENT 'Porcentaje de afectacion de imposicion directa',
-  `properties` text DEFAULT NULL COMMENT 'Propiedades de los Bienes Afecto o de Inversion',
+  `properties` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Propiedades de los Bienes Afecto o de Inversion' CHECK (json_valid(`properties`)),
   PRIMARY KEY (`id`),
   KEY `IDX_INVEST_ASSET_DOMAIN` (`domain`),
   KEY `IDX_INVEST_ASSET_ACTIVITY` (`activity`),
