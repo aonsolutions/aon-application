@@ -52,6 +52,7 @@ import { TableComponent } from './components/table/table.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { GridLayoutAltComponent } from './layouts/grid-layout-alt/grid-layout-alt.component';
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     FileViewerComponent,
     ErrorSnackBarComponent,
     TableComponent,
+    GridLayoutAltComponent,
   ],
   imports: [
     ChartsModule,
@@ -127,6 +129,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     FileUploadButtonComponent,
     GridColsDirective,
     GridLayoutComponent,
+    GridLayoutAltComponent,
     IconComponent,
     InputComponent,
     ListElementComponent,
