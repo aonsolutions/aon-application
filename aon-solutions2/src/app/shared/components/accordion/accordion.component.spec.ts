@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AccordionComponent } from './accordion.component';
+import { EventEmitter } from '@angular/core';
 
 describe('AccordionComponent', () => {
   let component: AccordionComponent;
@@ -21,5 +22,14 @@ describe('AccordionComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  // sendValue(){
+  //   this.getState.emit(this.panelOpenState);
+  // }
+  it('must call send value', () => {
+    const panelOpenState = false
+    let event = new EventEmitter();
+    component.getState.emit(panelOpenState);
+    component.sendValue();
   });
 });
