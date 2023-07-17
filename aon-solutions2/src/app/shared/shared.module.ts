@@ -51,6 +51,7 @@ import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack
 import { TableComponent } from './components/table/table.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
+import { GridLayoutAltComponent } from './layouts/grid-layout-alt/grid-layout-alt.component';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { MatSortModule } from '@angular/material/sort';
     FileViewerComponent,
     ErrorSnackBarComponent,
     TableComponent,
+    GridLayoutAltComponent,
   ],
   imports: [
     ChartsModule,
@@ -125,6 +127,7 @@ import { MatSortModule } from '@angular/material/sort';
     FileUploadButtonComponent,
     GridColsDirective,
     GridLayoutComponent,
+    GridLayoutAltComponent,
     IconComponent,
     InputComponent,
     ListElementComponent,
