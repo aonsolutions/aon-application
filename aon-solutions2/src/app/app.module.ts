@@ -56,6 +56,8 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { RouterModule } from '@angular/router';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { GlobalErrorHandlerService } from './core/services/global-error-handler.service';
+import { ModalControllerComponent } from './shared/components/modal-controller/modal-controller.component';
+import { ModalEditTaxModelComponent } from './modules/tax-panel/components/modal-edit-tax-model/modal-edit-tax-model.component';
 
 
 @NgModule({
@@ -121,6 +123,7 @@ import { GlobalErrorHandlerService } from './core/services/global-error-handler.
     LayoutModule,
     FormsModule,
     RouterModule,
+   
   ],
   providers: [
     {

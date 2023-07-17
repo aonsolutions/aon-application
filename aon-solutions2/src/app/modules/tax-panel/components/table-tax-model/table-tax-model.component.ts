@@ -11,6 +11,8 @@ import { TaxModelService } from 'src/app/core/services/tax-model.service';
  })
  export class TableTaxModelComponent implements OnInit {
   @Input() dataSource: TaxModel[] = [];
+  @Input()
+   trimester!: number;
 
   // dataSource: TaxModel[] = [];
   displayedColumns: string[] = [ 'name', 'result', 'status', 'paymentMethod', 'acciones'];

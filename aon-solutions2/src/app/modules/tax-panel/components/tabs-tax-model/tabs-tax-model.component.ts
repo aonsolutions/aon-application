@@ -1,11 +1,12 @@
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
+import { MatFormFieldAppearance } from '@angular/material/form-field';
 import { TaxModel } from 'src/app/core/models/class/tax-model';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 
 
 export interface Tabs {
-  name: string; // Nombre de la tab
+  name: string;
 }
 
 export interface Models {
@@ -30,7 +31,6 @@ export class TabsTaxModelComponent implements OnInit {
 
   models: TaxModel[] = [];
 
-
   tabIndex:number = 0
 
   tabs: Tabs[] = [
@@ -40,6 +40,26 @@ export class TabsTaxModelComponent implements OnInit {
     { name: '4 Trimestre'},
     { name: 'Todos'},
   ];
+
+  @Input() type : string = '';
+  @Input() appearance : MatFormFieldAppearance = 'outline';
+  @Input() width : string = '100%';
+  @Input() label : string = '';
+  @Input() hint : string = '';
+  @Input() placeholder : string = '';
+  @Input() suffixBehavior : any;
+  @Input() value : any = '';
+  @Output() inputValue = new EventEmitter<any>();
+  @Input() options : any ;
+  @Input() disabled : string = 'false';
+  @Input() classes : string = '';
+  @Input() maxRow : string = '3';
+  @Input() minRow : string = '10';
+  @Input() appearanceDetail: string = 'mat-form-field-appearance-bold-outline';
+
+  @Input()
+  trimester!: number;
+
 
   @Input() paddingLeftHeader: string = '';
   @Input() tabColor: string = ''

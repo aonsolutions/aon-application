@@ -9,38 +9,49 @@
     <app-input
     [type]="'select'"
     [label]="'Modelo'"
-    [placeholder]="'Usuario'"
-
-
+    [label]="'Modelo'"
+    [placeholder]="'Modelo'"
     ></app-input>
-    <!-- [(ngModel)]={{ model.name }} -->
 
 
+  </div>
+  <div content *ngIf="this.tabIndex == 0">
+    <app-table-tax-model [trimester]="1"></app-table-tax-model>
+  </div>
+  <div content *ngIf="this.tabIndex == 1">
+    <app-table-tax-model [trimester]="2"></app-table-tax-model>
+  </div>
+
+  <div content *ngIf="this.tabIndex == 2">
+    <app-table-tax-model [trimester]="3"></app-table-tax-model>
+  </div>
+
+  <div content *ngIf="this.tabIndex == 3">
+    <app-table-tax-model [trimester]="4"></app-table-tax-model>
+  </div>
+
+  <div content *ngIf="this.tabIndex == 4">
+    <app-table-tax-model></app-table-tax-model>
+  </div>
+
+</app-tabs>
+
+
+<!--
+    <mat-select
+    *ngIf="type=='select'"
+    [(ngModel)]="value"
+
+    [disabled]="disabled"
+    [class]="appearanceDetail"
+  > -->
+<!--
+  [value]="options[0].text" -->
+    <!-- <mat-option *ngFor="let option of options" [value]="option.value">{{option.text}}</mat-option>
+  </mat-select> -->
 
     <!-- <app-input
     [type]="'select'"
     [label]="'Año'"
     [placeholder]="'Usuario'"
     ></app-input> -->
-
-  </div>
-  <div content *ngIf="this.tabIndex == 0">
-    <app-table-tax-model></app-table-tax-model>
-  </div>
-  <div content *ngIf="this.tabIndex == 1">
-    <!-- <app-table-tax-model></app-table-tax-model> -->
-  </div>
-
-  <div content *ngIf="this.tabIndex == 2">
-    <!-- <app-table-tax-model></app-table-tax-model> -->
-  </div>
-
-  <div content *ngIf="this.tabIndex == 3">
-    <!-- <app-table-tax-model></app-table-tax-model> -->
-  </div>
-
-  <div content *ngIf="this.tabIndex == 4">
-    <!-- <app-table-tax-model></app-table-tax-model> -->
-  </div>
-
-</app-tabs>

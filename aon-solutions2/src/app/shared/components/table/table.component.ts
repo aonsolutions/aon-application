@@ -9,6 +9,12 @@ import { TaxModel } from 'src/app/core/models/class/tax-model';
 export class TableComponent {
   @Input() dataSource: TaxModel[] = [];
   displayedColumns: string[] = ['name', 'result', 'status', 'paymentMethod', 'acciones'];
+type: any;
+
+
+  @Input()
+  trimester!: number;
+
 }
 
 
