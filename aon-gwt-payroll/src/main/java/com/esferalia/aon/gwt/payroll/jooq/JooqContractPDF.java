@@ -384,7 +384,11 @@ public class JooqContractPDF {
 		extensionInfo.put("Renglon11", fullDateFormat.format(startDate));
 		extensionInfo.put("Renglon12", Period.between(localStartDate, localExtensionDate).getMonths() + "");
 		extensionInfo.put("Renglon13", raddressRecord.get(RADDRESS.CITY));
-		extensionInfo.put("Renglon14", fullDateFormat.format(getComunicationExtensionDate(dslContext, contractData.getContractId())));
+		try {
+			extensionInfo.put("Renglon14", fullDateFormat.format(getComunicationExtensionDate(dslContext, contractData.getContractId())));
+		} catch (Exception e) {
+			extensionInfo.put("Renglon14", "");
+		}
 		extensionInfo.put("Renglon15", getSepeExtensionIde(dslContext, contractData.getContractId()));
 		
 		extensionInfo.put("Renglon18", raddressRecord.get(RADDRESS.CITY));
@@ -458,7 +462,7 @@ public class JooqContractPDF {
 		
 		try {
 			return comunicationDateRecords.isEmpty() ? null : dateFormat.parse(comunicationDateRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
-		} catch (IllegalArgumentException | ParseException e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
