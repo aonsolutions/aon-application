@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date.payroll;
 
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
@@ -13,6 +14,8 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+
+import com.esferalia.aon.jooq.tables.ContractPayment;
 
 import net.aonsolutions.db.up2date.Update;
 
@@ -104,6 +107,14 @@ public class CRA0050ExcesoRefactor implements Update {
 			.where(AGREEMENT_PAYMENT.TYPE.eq((byte)50))
 			.and(AGREEMENT_PAYMENT.IRPF_EXPRESSION.likeRegex(EXCESO_0_19_KMS_REGEXP))
 			.and(AGREEMENT_PAYMENT.QUOTE_EXPRESSION.likeRegex(EXCESO_0_19_KMS_REGEXP))
+			.execute()
+			;
+
+			dslContext
+			.update(CONTRACT_PAYMENT)
+			.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, "EXCESO(EXENTO_KM * KMS)")
+			.where(CONTRACT_PAYMENT.TYPE.eq((byte)50))
+			.and(CONTRACT_PAYMENT.QUOTE_EXPRESSION.likeRegex(EXCESO_0_19_KMS_REGEXP))
 			.execute()
 			;
 
