@@ -44,7 +44,6 @@ import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.payroll.contract.ContractFill;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqContractPDF {
@@ -175,6 +174,39 @@ public class JooqContractPDF {
 		} 
 	}
 	
+	public static void saveDraftContractRelocation(String domainName, Integer domainId, Integer contractId, byte[] pdfBytes) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			
+			// Id borrador contrato
+			List<Integer> attachIds = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
+					.where(CONTRACT_ATTACH.DOMAIN.eq(domainId))
+					.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+					.and(CONTRACT_ATTACH.TYPE.eq((byte)111))
+					.orderBy(CONTRACT_ATTACH.ID.desc()).fetch(CONTRACT_ATTACH.ID);
+			
+			if(attachIds.isEmpty())
+				dslContext.insertInto(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.DOMAIN, domainId)
+					.set(CONTRACT_ATTACH.CONTRACT, contractId)
+					.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+					.set(CONTRACT_ATTACH.DESCRIPTION, "BORRADOR PROPUESTA RECOLOCACION")
+					.set(CONTRACT_ATTACH.DATA, pdfBytes)
+					.set(CONTRACT_ATTACH.TYPE, (byte)111)
+					.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+					.execute();
+			else
+				dslContext.update(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.DATA, pdfBytes)
+					.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+					.where(CONTRACT_ATTACH.ID.eq(attachIds.get(0)))
+					.execute();
+			
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+	
 	// ---------------------------------------------------- Contract PDF (fill)
 	
 	public static byte[] contractFill(Connection connection, Integer domainId, Integer parentDomainId, Integer contractId, Integer contractType, String formativeLevelCode, boolean isTransform) throws IllegalArgumentException {
@@ -211,7 +243,7 @@ public class JooqContractPDF {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
-
+	
 	private static Map<String, String> getContractExtensionFillInfoDB(DSLContext dslContext, EmployeeInfo employeeData, ContractInfo contractData, Map<String, String> contractOtherInfo) {
 		Map<String, String> extensionInfo = new HashMap<>();
 		Municipalities municipalities = new Municipalities();
@@ -476,6 +508,21 @@ public class JooqContractPDF {
 		}catch (SQLException  | IllegalArgumentException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} 
+	}
+	
+	public static byte[] contractRelocationFill(Connection connection, Integer contractId, Map<String, String> contractRelocationFillInfo) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Record raddressRecord = dslContext.select().from(RADDRESS).where(RADDRESS.ID.in(
+				dslContext.select(WORKPLACE.ADDRESS).from(WORKPLACE).where(WORKPLACE.ID.in(
+							dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT).where(CONTRACT.ID.eq(contractId))
+								.fetchOne(CONTRACT.WORKPLACE)
+						)).fetchOne(WORKPLACE.ADDRESS)
+			)).fetchOne();
+		
+		if(null != raddressRecord) contractRelocationFillInfo.put("Text26", raddressRecord.get(RADDRESS.CITY));
+		
+		return ContractFill.fillContractRelocation(contractRelocationFillInfo);
 	}
 	
 	// ---------------------------------------------------- Contract PDF (fill - clauses)

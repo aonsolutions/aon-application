@@ -273,6 +273,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	void fillContractExtension(String currentDomainName, EmployeeInfo employeeData, ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
+	void fillContractRelocation(String currentDomainName, Integer contractId, Map<String, String> contractRelocationInfo, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
 	// ------------------------------------------------- SEPE Files

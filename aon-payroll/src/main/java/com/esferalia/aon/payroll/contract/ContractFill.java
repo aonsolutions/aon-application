@@ -13,7 +13,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -65,6 +64,10 @@ public class ContractFill {
 	
 	public static byte[] fillContractExtension(Map<String, String> contractExtensionFillInfo) throws IllegalArgumentException {
 		return fillExtensionContract(contractExtensionFillInfo);
+	}
+	
+	public static byte[] fillContractRelocation(Map<String, String> contractRelocationFillInfo) throws IllegalArgumentException {
+		return fillRelocationContract(contractRelocationFillInfo);
 	}
 	
 	private static void initializeFieldNames() {
@@ -141,6 +144,46 @@ public class ContractFill {
 					
 					String fieldName = field.getPartialName();
 					String newValue = contractExtensionFillInfo.getOrDefault(fieldName, "");
+					newValue = AonStringUtils.isBlank(newValue) ? "" : newValue.toUpperCase();
+					setField(field, newValue);	
+				}
+			}
+			
+	        pdfDocument.setAllSecurityToBeRemoved(true);
+	        
+			pdfDocument.save(out);
+			pdfDocument.close();
+			
+			return out.toByteArray();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private static byte[] fillRelocationContract(Map<String, String> contractRelocationFillInfo) {
+		InputStream is = ContractFill.class.getResourceAsStream("propuestaRecolocacion.pdf");
+		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+			pdfDocument.setAllSecurityToBeRemoved(true);
+			
+			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
+			PDAcroForm acroForm = doc.getAcroForm();
+			
+			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				
+				acroForm.setDefaultResources(resources);
+				
+				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
+					String fieldName = field.getPartialName();
+					String newValue = contractRelocationFillInfo.getOrDefault(fieldName, "");
 					newValue = AonStringUtils.isBlank(newValue) ? "" : newValue.toUpperCase();
 					setField(field, newValue);	
 				}
@@ -630,7 +673,15 @@ public class ContractFill {
 	    if (field instanceof PDTextField) {
 	    	try{
 		        field.setValue(value);
+		        ((PDTextField) field).setValue(value);
 		        ((PDTextField) field).setDefaultValue(value);
+	    	} catch (Exception e) {
+				System.out.println("ERR : " + field.getValueAsString());
+			}
+	    } else if (field instanceof PDCheckBox) {
+	    	try{
+		        if(AonStringUtils.isBlank(value) || AonStringUtils.equals(value, "N")) ((PDCheckBox) field).unCheck();
+		        else ((PDCheckBox) field).check();
 	    	} catch (Exception e) {
 				System.out.println("ERR : " + field.getValueAsString());
 			}

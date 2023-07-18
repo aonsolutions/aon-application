@@ -533,6 +533,10 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.fillContractExtension(getCurrentDomainName(), employeeData, contractData, callback);
 	}
 	
+	public void fillContractRelocation(Integer contractId, Map<String, String> contractRelocationInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.fillContractRelocation(getCurrentDomainName(), contractId, contractRelocationInfo, callback);
+	}
+	
 	void setData(Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback) {
 		employeesServiceAsync.setData(getCurrentDomainName(), getCurrentUser(), contractId, data, callback);
 	}
