@@ -1,4 +1,4 @@
-package net.aonsolutions.invofox.aon;
+package net.aonsolutions.aon.tedi.invofox;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -26,13 +27,13 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tedi.TediErrorMessages;
-import net.aonsolutions.invofox.OCRResult;
-import net.aonsolutions.invofox.aon.OCRInvoiceBuilderRegistry.IRegistryFiller;
+import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilderRegistry.IRegistryFiller;
 import net.aonsolutions.invofox.model.OCRDocument;
 import net.aonsolutions.invofox.model.OCRInvoice;
 import net.aonsolutions.invofox.model.OCRInvoiceBreakdown;
@@ -82,24 +83,15 @@ public class OCRInvoiceBuilder {
 	
 
 	static class OCRContextDetail extends  OCRContext {
-		private final OCRInvoiceLine ocrLine;
 		private final InvoiceDetail detail;
 		private InvoiceTax vat;
 		private InvoiceTax retention;
 		
-		public OCRContextDetail(OCRContext ocr, OCRInvoiceLine line, InvoiceDetail id) {
-			this(ocr.getCtx(), ocr.getConfig(), ocr.getResult(), line , id);
-		}
-
-		public OCRContextDetail(AONContext ctx, AonConfiguration config, OCRResult result, OCRInvoiceLine ocrLine, InvoiceDetail detail) {
-			super(ctx, config, result);
-			this.ocrLine = ocrLine;
+		public OCRContextDetail(OCRContext ocr, InvoiceDetail detail) {
+			super(ocr.getCtx(), ocr.getConfig(), ocr.getResult());
 			this.detail = detail;
 		}
-		
-		public OCRInvoiceLine getOcrLine() {
-			return ocrLine;
-		}
+
 		public InvoiceDetail getDetail() {
 			return detail;
 		}
@@ -109,7 +101,10 @@ public class OCRInvoiceBuilder {
 		}
 		public InvoiceTax ensureVat() {
 			if ( vat == null) {
-				setVat(new InvoiceTax().setTaxType(TaxType.VAT).setVatDeductionType(VatDeductionType.WITH_RIGHT));
+				setVat(new InvoiceTax()
+					.setDomain(getDetail().getDomain())
+					.setTaxType(TaxType.VAT)
+					.setVatDeductionType(VatDeductionType.WITH_RIGHT));
 			}
 			return vat;
 		}
@@ -123,7 +118,10 @@ public class OCRInvoiceBuilder {
 		}
 		public InvoiceTax ensureRetention() {
 			if ( retention == null) {
-				setRetention(new InvoiceTax().setTaxType(TaxType.RETENTION).setWithholdingType(WithholdingType.PROFESSIONAL));
+				setRetention(new InvoiceTax()
+					.setDomain(getDetail().getDomain())
+					.setTaxType(TaxType.RETENTION)
+					.setWithholdingType(WithholdingType.PROFESSIONAL));
 			}
 			return retention;
 		}
@@ -134,6 +132,33 @@ public class OCRInvoiceBuilder {
 		
 	}
 	
+	static class OCRContextDetailFromLine extends  OCRContextDetail {
+		
+		private final OCRInvoiceLine ocrLine;
+		
+		public OCRContextDetailFromLine(OCRContext ocr, OCRInvoiceLine ocrLine, InvoiceDetail detail) {
+			super(ocr, detail);
+			this.ocrLine = ocrLine;
+		}
+		
+		public OCRInvoiceLine getOcrLine() {
+			return ocrLine;
+		}
+	}
+
+	static class OCRContextDetailFromBreakdown extends  OCRContextDetail {
+		private final OCRInvoiceBreakdown ocrBreakdown;
+		
+		public OCRContextDetailFromBreakdown(OCRContext ocr, OCRInvoiceBreakdown ocrBreakdown, InvoiceDetail detail) {
+			super(ocr, detail);
+			this.ocrBreakdown = ocrBreakdown;
+		}
+
+		public OCRInvoiceBreakdown getOCRBreakdown() {
+			return ocrBreakdown;
+		}
+	}
+
 	static class OCRContextBreakdown extends  OCRContext {
 		private final OCRInvoiceBreakdown ocrBreakdown;
 		private final InvoiceBreakdown breakdown;
@@ -268,29 +293,82 @@ public class OCRInvoiceBuilder {
 		ocr.getInvoice().setTotal( AonNumberUtils.zeroIfNull(optTotal.orElse( null )) );
 	};
 	
-	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_DESCRIPTION = ocr -> 
+	private static final Consumer<OCRContext> INVOICE_TAXABLE_BASE = ocr -> {
+		Optional<BigDecimal> optTaxableBase = ocr.getOCRInvoice().getTotalTaxBaseAmount().flatMap( o -> o.getValue() );
+		ocr.getInvoice().setTaxableBase( AonNumberUtils.zeroIfNull(optTaxableBase.orElse( null )) );
+	};
+	
+	private static final Consumer<OCRContext> INVOICE_VAT_QUOTA = ocr -> 
+		ocr.getInvoice().setVatQuota( AonMathUtils.round( 
+			ocr.getInvoice().getBreakdown()
+				.stream()
+				.filter( br -> br.getTaxType() == TaxType.VAT )
+				.mapToDouble( br -> br.getQuota() )
+				.sum()));
+		
+	private static final Consumer<OCRContext> INVOICE_RETENTION_QUOTA = ocr -> {
+		Optional<BigDecimal> optRetentionQuota = ocr.getOCRInvoice().getWithholdingTaxAmount().flatMap( o -> o.getValue() );
+		ocr.getInvoice().setRetentionQuota( AonNumberUtils.zeroIfNull(optRetentionQuota.orElse( null )) );
+	};
+	
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_DOMAIN = ocr -> 
+		ocr.getDetail().setDomain(ocr.getConfig().getDomain().getId());
+	
+	private static final Consumer<OCRContextDetailFromLine> INVOICE_DETAIL_DESCRIPTION = ocr -> 
 		ocr.getDetail().setDescription( ocr.getOcrLine().getDescription().flatMap( d -> d.getValue() ).orElse(null) );
 		
+	private static final Consumer<OCRContextDetailFromBreakdown> INVOICE_DETAIL_FROM_BREAKDOWN_DESCRIPTION = ocr -> 
+		ocr.getDetail().setDescription( extractDescription( ocr.getOCRBreakdown() ) );
+
 	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_SOURCE = ocr -> 
 		ocr.getDetail().setSource( InvoiceSource.DIRECT_INVOICE );
 	
-	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_QUANTITY = ocr -> {
+	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_WORKPLACE = ocr -> 
+		ocr.getDetail().setWorkPlace( Optional.ofNullable(ocr.getConfig().getWorkplaces())
+				.flatMap( l -> l.stream().map(w -> w.getId())
+				.findFirst()).orElse(null));
+
+	private static final Consumer<OCRContextDetailFromLine> INVOICE_DETAIL_QUANTITY = ocr -> {
 		BigDecimal quantity = ocr.getOcrLine().getQuantity().flatMap( d -> d.getValue() ).orElse(null);
 		ocr.getDetail().setQuantity( AonNumberUtils.zeroIfNull(quantity));
 	};
-	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_PRICE = ocr -> {
+	
+	private static final Consumer<OCRContextDetailFromLine> INVOICE_DETAIL_PRICE = ocr -> {
 		BigDecimal price = ocr.getOcrLine().getGrossUnitPrice().flatMap( d -> d.getValue() ).orElse(null);
 		ocr.getDetail().setPrice( AonNumberUtils.zeroIfNull(price));
 	};
-	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_AMOUNT = ocr -> {
+	
+	private static final Consumer<OCRContextDetailFromBreakdown> INVOICE_DETAIL_AMOUNTS_FROM_BREAKDOWN = ocr -> {
+		BigDecimal taxableBase = ocr.getOCRBreakdown().getTaxBaseAmount().flatMap( d -> d.getValue() ).orElse(null);
+		ocr.getDetail().setQuantity( 1 );
+		ocr.getDetail().setPrice( AonNumberUtils.zeroIfNull(taxableBase));
+		ocr.getDetail().setTaxableBase( AonNumberUtils.zeroIfNull(taxableBase));
+	};
+	
+	private static final Consumer<OCRContextDetailFromLine> INVOICE_DETAIL_AMOUNT = ocr -> {
 		BigDecimal price = ocr.getOcrLine().getTotalAmount().flatMap( d -> d.getValue() ).orElse(null);
 		ocr.getDetail().setTaxableBase( AonNumberUtils.zeroIfNull(price));
 	};
 	
-	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_TAX_VAT = ocr -> {
+
+	private static final Consumer<OCRContextDetailFromLine> INVOICE_DETAIL_TAX_VAT = ocr -> {
 		BigDecimal taxableBase = ocr.getOcrLine().getTaxBaseAmount().flatMap( d -> d.getValue() ).orElse(null);
-		BigDecimal percentage = ocr.getOcrLine().getTaxRate().flatMap( d -> d.getValue() ).orElse(null);
+		Optional<BigDecimal> uniqueVatPercent = checkIfOnlyOneVat(ocr);
+		BigDecimal percentage = uniqueVatPercent.orElse( ocr.getOcrLine().getTaxRate().flatMap( d -> d.getValue() ).orElse(null) );
 		BigDecimal quota = ocr.getOcrLine().getTaxAmount().flatMap( d -> d.getValue() ).orElse(null);
+		if ( AonMathUtils.isNotZero(taxableBase) && AonMathUtils.isNotZero(percentage) && AonMathUtils.isNotZero(quota)) {
+			ocr.ensureVat().setBase( AonNumberUtils.zeroIfNull(taxableBase));
+			ocr.ensureVat().setPercentage( AonNumberUtils.zeroIfNull(percentage));
+			ocr.ensureVat().setQuota( AonNumberUtils.zeroIfNull(quota));
+			ocr.ensureVat().setDeductibleQuota( AonNumberUtils.zeroIfNull(quota));
+		}
+	};
+
+	private static final Consumer<OCRContextDetailFromBreakdown> INVOICE_DETAIL_TAX_VAT_FROM_BREAKDOWN = ocr -> {
+		BigDecimal taxableBase = ocr.getOCRBreakdown().getTaxBaseAmount().flatMap( d -> d.getValue() ).orElse(null);
+		Optional<BigDecimal> uniqueVatPercent = checkIfOnlyOneVat(ocr);
+		BigDecimal percentage = uniqueVatPercent.orElse( ocr.getOCRBreakdown().getTaxRate().flatMap( d -> d.getValue() ).orElse(null) );
+		BigDecimal quota = ocr.getOCRBreakdown().getTaxAmount().flatMap( d -> d.getValue() ).orElse(null);
 		if ( AonMathUtils.isNotZero(taxableBase) && AonMathUtils.isNotZero(percentage) && AonMathUtils.isNotZero(quota)) {
 			ocr.ensureVat().setBase( AonNumberUtils.zeroIfNull(taxableBase));
 			ocr.ensureVat().setPercentage( AonNumberUtils.zeroIfNull(percentage));
@@ -324,25 +402,47 @@ public class OCRInvoiceBuilder {
 	
 	private static final Consumer<OCRContextDetail> INVOICE_DETAIL_GUESS_ITEMS = OCRInvoiceBuilder::guessItems;		
 
-	private static final Consumer<OCRContext> INVOICE_DETAILS = ocr -> 
-		Stream.of( ocr.getOCRInvoice().getLines() )
+	private static final Consumer<OCRContext> INVOICE_DETAILS = ocr -> {
+		if ( mustImportFromBreakdown(ocr) ) {
+			Stream.of( ocr.getOCRInvoice().getBreakdowns() )
 			.filter( Optional::isPresent )
 			.map( Optional::get )
 			.flatMap( Collection::stream )
-			.map( line -> new OCRContextDetail(ocr, line, new InvoiceDetail())) 
-			.forEach( ocrDetail -> 
-				INVOICE_DETAIL_DESCRIPTION
-					.andThen(INVOICE_DETAIL_SOURCE)
-					.andThen(INVOICE_DETAIL_QUANTITY)
-					.andThen(INVOICE_DETAIL_PRICE)
-					.andThen(INVOICE_DETAIL_AMOUNT)
-					.andThen(INVOICE_DETAIL_TAX_VAT)
-					.andThen(INVOICE_DETAIL_AUTOCOMPLETE)
-					.andThen(INVOICE_DETAIL_ADD_VAT)
-					.andThen(INVOICE_DETAIL_ADD_RETENTION)
-					.andThen(INVOICE_DETAIL_GUESS_ITEMS)
-					.andThen(ADD_INVOICE_DETAIL)
+			.map( line -> new OCRContextDetailFromBreakdown(ocr, line, new InvoiceDetail())) 
+			.forEach( ocrDetail -> INVOICE_DETAIL_FROM_BREAKDOWN_DESCRIPTION 
+				.andThen(INVOICE_DETAIL_DOMAIN)
+				.andThen(INVOICE_DETAIL_SOURCE)
+				.andThen(INVOICE_DETAIL_WORKPLACE)
+				.andThen(INVOICE_DETAIL_AMOUNTS_FROM_BREAKDOWN)
+				.andThen(INVOICE_DETAIL_TAX_VAT_FROM_BREAKDOWN)
+				.andThen(INVOICE_DETAIL_AUTOCOMPLETE)
+				.andThen(INVOICE_DETAIL_ADD_VAT)
+				.andThen(INVOICE_DETAIL_ADD_RETENTION)
+				.andThen(INVOICE_DETAIL_GUESS_ITEMS)
+				.andThen(ADD_INVOICE_DETAIL)
 				.accept(ocrDetail));
+		} else {
+			Stream.of( ocr.getOCRInvoice().getLines() )
+			.filter( Optional::isPresent )
+			.map( Optional::get )
+			.flatMap( Collection::stream )
+			.map( line -> new OCRContextDetailFromLine(ocr, line, new InvoiceDetail())) 
+			.forEach( ocrDetail -> INVOICE_DETAIL_DESCRIPTION 
+				.andThen(INVOICE_DETAIL_DOMAIN)
+				.andThen(INVOICE_DETAIL_SOURCE)
+				.andThen(INVOICE_DETAIL_WORKPLACE)
+				.andThen(INVOICE_DETAIL_QUANTITY)
+				.andThen(INVOICE_DETAIL_PRICE)
+				.andThen(INVOICE_DETAIL_AMOUNT)
+				.andThen(INVOICE_DETAIL_TAX_VAT)
+				.andThen(INVOICE_DETAIL_AUTOCOMPLETE)
+				.andThen(INVOICE_DETAIL_ADD_VAT)
+				.andThen(INVOICE_DETAIL_ADD_RETENTION)
+				.andThen(INVOICE_DETAIL_GUESS_ITEMS)
+				.andThen(ADD_INVOICE_DETAIL)
+				.accept(ocrDetail));
+		}
+	};
 
 	private static final Consumer<OCRContextBreakdown> INVOICE_BREAKDOWN_BASE = ocr -> {
 		BigDecimal base = ocr.getOcrBreakdown().getTaxBaseAmount().flatMap( d -> d.getValue() ).orElse(null); 
@@ -423,6 +523,9 @@ public class OCRInvoiceBuilder {
 				.andThen(INVOICE_WITHOLDING)
 				.andThen(INVOICE_DETAILS)
 				.andThen(INVOICE_TOTAL)
+				.andThen(INVOICE_TAXABLE_BASE)
+				.andThen(INVOICE_VAT_QUOTA)
+				.andThen(INVOICE_RETENTION_QUOTA)
 			.accept(new OCRContext(ctx, aonCtx, result));
 			return result;
 		}
@@ -435,13 +538,51 @@ public class OCRInvoiceBuilder {
 		return result; 
 	}
 
+	private static boolean mustImportFromBreakdown(OCRContext ocr) {
+		double breakdownTax = Stream.of( ocr.getOCRInvoice().getBreakdowns() )
+			.filter( Optional::isPresent )
+			.map( Optional::get )
+			.flatMap( Collection::stream )
+			.mapToDouble( br -> br.getTaxAmount()
+					.flatMap( n -> n.getValue())
+					.orElse(BigDecimal.valueOf(0))
+					.doubleValue() )
+			.sum()
+		;
+		double linesTax = Stream.of( ocr.getOCRInvoice().getLines() )
+			.filter( Optional::isPresent )
+			.map( Optional::get )
+			.flatMap( Collection::stream )
+			.mapToDouble( line -> line.getTaxAmount().flatMap( n -> n.getValue()).orElse(BigDecimal.valueOf(0)).doubleValue() )
+			.sum()
+		;
+		return AonMathUtils.notEquals(breakdownTax,linesTax);
+	}
+
+	private static String extractDescription(OCRInvoiceBreakdown ocrBreakdown) {
+		String percent = AonNumberUtils.toString(ocrBreakdown.getTaxRate().flatMap( s -> s.getValue() ).orElse(null));
+		if (AonStringUtils.isNotEmpty(percent)) {
+			return "Base imponible al " + percent + "%";
+		} else {
+			return "Base imponible sin tipo de IVA";
+		}
+	}
+
+	private static Optional<BigDecimal> checkIfOnlyOneVat(OCRContextDetail ocr) {
+		if (AonCollectionUtils.size( ocr.getInvoice().getBreakdown()) == 1 ) {
+			InvoiceBreakdown ib = ocr.getInvoice().getBreakdown().get(0);
+			return Optional.of(BigDecimal.valueOf(ib.getPercentage())); 
+		}
+		return Optional.empty();
+	}
+
 	// ****************************************************************************
 	// *************************************************************** TO DO ******
 	// ****************************************************************************
 
 	// Buscar artículos para resolver el artículo
-	private static void guessItems(OCRContext ocr) {
-		// 
+	private static void guessItems(OCRContextDetail ocr) {
+		ocr.getDetail().setItem( new Item().setId(1) );
 	}
 	// Buscar en facturas anteriores para suponer el tipo de retención con mas seguridad.
 	private static WithholdingType guessWitholdingType(Invoice invoice) {

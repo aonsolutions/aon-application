@@ -1850,7 +1850,12 @@ public class AON {
 		}
 	}
 
-	public static Invoice getInvoice(String domainName, Integer domainId, String login, InvoiceFilter filter){
+	public static Invoice getInvoice(Occam occam, InvoiceFilter filter){
+		return getInvoiceStream(occam, filter)
+			.findFirst().orElse(new Invoice());
+	}
+
+	 public static Invoice getInvoice(String domainName, Integer domainId, String login, InvoiceFilter filter){
 		return getInvoiceStream(domainName, domainId, login, filter)
 			.findFirst().orElse(new Invoice());
 	}
@@ -7274,6 +7279,10 @@ public class AON {
 			}
 		} 
 		return new RawdocUserData();
+	}
+
+	public static Rawdoc rawdocSave(Occam occam, Rawdoc rawdoc) {
+		return rawdocSave(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdoc);
 	}
 
 	public static Rawdoc rawdocSave(String domainName, int domain, String user, Rawdoc rawdoc) {

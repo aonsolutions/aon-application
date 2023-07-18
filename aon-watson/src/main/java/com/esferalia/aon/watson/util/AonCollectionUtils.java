@@ -1,6 +1,7 @@
 package com.esferalia.aon.watson.util;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 public class AonCollectionUtils {
@@ -21,7 +22,11 @@ public class AonCollectionUtils {
 		return collection == null || collection.isEmpty();
 	}
 	
-    /**
+	public static int size(final Collection<?> coll){
+		return  isEmpty(coll) ? 0 : coll.size();
+	}
+
+	/**
      * Null-safe check if the specified collection is not empty.
      * <p>
      * Null returns false.
@@ -39,5 +44,6 @@ public class AonCollectionUtils {
 	public static boolean isNotEmpty(Map<?,?> map){
 		return !isEmpty(map);
 	}
+	
 
 }

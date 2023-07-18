@@ -1,4 +1,4 @@
-package net.aonsolutions.invofox;
+package net.aonsolutions.aon.tedi.invofox;
 
 import java.io.Serializable;
 import java.util.LinkedList;
