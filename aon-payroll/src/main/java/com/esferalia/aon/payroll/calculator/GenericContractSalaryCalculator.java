@@ -927,7 +927,16 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			salaryBuilder.setProExtBase(quoteCalculator.getProExtBase());
 			expressionContext.setVariable(PAY_PRORRATED, AonNumberUtils.equals(quoteCalculator.getProExtBase(), Double.valueOf(0.00)), start, end);
-
+			
+			if ( cgcBase != null && cgcBase > 0.00 ) {
+        			expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE, cgcBase, start, end);
+        			expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE_ENTERPRISE, cgcBase, start, end);
+			}
+			if ( cgpBase != null && cgpBase > 0.00 ) {
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE, cgpBase, start, end);
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE_ENTERPRISE, cgpBase, start, end);
+			}
+			
 			return taxCalculator.getTotalPayment();
 		} catch (SalaryExpressionException e) {
 			throw e.getSalaryException();

@@ -269,7 +269,7 @@ public abstract class BaseIntegralTestCase {
 		int year = calendar.get(Calendar.YEAR);
 		int month = calendar.get(Calendar.MONTH)+1;
 		int end = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-	
+		System.out.println(getText("periodLabel"));
 		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/%2$d/%1$d - [0-9]+/%2$d/%1$d", year, month, end));
 	}
 
@@ -348,7 +348,7 @@ public abstract class BaseIntegralTestCase {
 			htmlPage.setFocusedElement(firstSpan);
 			lastSpan.type(KeyboardEvent.DOM_VK_PAGE_DOWN);
 			lastSpan = (HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("div/div[last()]/span");
-			lastDate = dateFormat.parse(firstSpan.getTextContent());
+			lastDate = dateFormat.parse(lastSpan.getTextContent());
 			LOGGER.warning("Last visible date is : " + dateFormat.format(lastDate) );
 		}
 		
