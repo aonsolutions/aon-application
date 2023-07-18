@@ -441,6 +441,7 @@
 	display: flex;	
 	justify-content: flex-end;
 	align-items: center;
+	gap: .5rem;
 }
 
 .aon_display_table {
