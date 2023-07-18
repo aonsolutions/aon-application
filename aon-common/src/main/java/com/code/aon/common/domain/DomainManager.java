@@ -127,9 +127,8 @@ public class DomainManager {
 	 * @return
 	 */
 	private synchronized static String getDomainProperty(Class<?> entityClass) {
-	    return Arrays.stream(entityClass.getMethods())
-	    .filter( m -> m.getAnnotation(Column.class) != null)
-	    .filter( m -> Objects.equals("domain",m.getAnnotation(Column.class).name()))
+	    return  Arrays.stream(entityClass.getMethods())
+	    .filter( m -> m.getAnnotation(DomainFilter.class) != null)
 	    .map( m -> "."+ decapitalize(m.getName().substring(3)))
 	    .findAny().orElse(DOMAIN_PROPERTY);
 	}

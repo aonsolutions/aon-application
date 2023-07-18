@@ -1,4 +1,4 @@
-package net.aonsolutions.invofox.aon;
+package net.aonsolutions.aon.tedi.invofox;
 
 import java.util.LinkedList;
 import java.util.function.Predicate;
@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistr
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 
 import net.aonsolutions.aon.tedi.TediErrorMessages;
-import net.aonsolutions.invofox.aon.OCRInvoiceBuilder.OCRContext;
+import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilder.OCRContext;
 
 class OCRInvoiceBuilderRegistry {
 	
