@@ -138,6 +138,11 @@ public enum ContextVariable implements IResourceable {
 
 	REGULATORY_BASE("BASE_REGULADORA", VariableType.DOUBLE, false),
 
+	TOTAL_CGC_BASE("TOTAL_BASE_CGC", VariableType.DOUBLE, false), 
+	TOTAL_CGP_BASE("TOTAL_BASE_CGP", VariableType.DOUBLE, false),
+	TOTAL_CGC_BASE_ENTERPRISE("TOTAL_BASE_CGC_E", VariableType.DOUBLE, false), 
+	TOTAL_CGP_BASE_ENTERPRISE("TOTAL_BASE_CGP_E", VariableType.DOUBLE, false),
+
 	// Cuotas
 	CGC_EMPLOYEE("CGC", VariableType.DOUBLE), CGC_ENTERPRISE("CGC_E", VariableType.DOUBLE),
 	MEI_EMPLOYEE("MEI", VariableType.DOUBLE), MEI_ENTERPRISE("MEI_E", VariableType.DOUBLE),

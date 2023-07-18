@@ -235,7 +235,13 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 
 		draft("FINIQUITO FORMACIÓN, APRENDIZAJE");
 		
-
+		draft("FINIQUITO FORMACION, ALTERNANCIA");
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2023, Calendar.JULY, 15, 0, 0, 0);
+		settle(calendar.getTime());
+		double irpf = getText("irpf");
+		assertText("totalDeductionLabel", irpf);
+		assertText("totalEnterpriseLabel", 0.00);
 	
 	}
 
