@@ -130,6 +130,7 @@ public class LROE implements Serializable {
 						String errorMessage = d.getElementsByTagName("DescripcionErrorRegistroES").item(0).getTextContent();
 
 						responseJSON.put("errorMessage", errorCode + " - " + errorMessage);
+						responseJSON.put("errorCode", errorCode);
 					}
 				}
 			} catch (ParserConfigurationException | SAXException e) {

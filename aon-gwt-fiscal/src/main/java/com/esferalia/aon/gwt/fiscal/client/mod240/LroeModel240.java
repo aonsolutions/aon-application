@@ -634,7 +634,8 @@ public class LroeModel240 extends DockLayoutPanel {
 											String message = "La factura " + reference + " se ha enviado correctamente.";
 											vp.add(getOkMessage(message));
 										} else {
-											if(result.getErrorCode().equals("AON_001")) {
+											if(result.getErrorCode().equals("AON_001")
+												|| result.getErrorCode().equals("B4_2000013")) {
 												vp.add(getActionErrorMessage(result, invoice));
 											} else vp.add(getErrorMessage("Factura " + reference + ": " + result.getErrorMessage()));
 										} 
@@ -723,7 +724,8 @@ public class LroeModel240 extends DockLayoutPanel {
 	public HorizontalPanel getActionErrorMessage(ICResponse resp, Invoice invoice){
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.add(getMessage("Factura "+ invoice.getReferenceCode() + ": " + resp.getErrorMessage(), "red"));
-		if("AON_001".equals(resp.getErrorCode())) {
+		if("AON_001".equals(resp.getErrorCode())
+				|| "B4_2000013".equals(resp.getErrorCode())) {
 			Label l = new Label("Pulse aqui para a\u00f1adir el Documento");
 			l.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
 			l.getElement().getStyle().setColor("#0069c2");
