@@ -1290,8 +1290,7 @@ public class SQLContractDelayCalculatorContext extends
 
 			Set<String> fields = values.keySet();
 
-			Map<String, Double> paidValues = getPaidSalary(fields);
-			
+			Map<String, Double> paidValues = getPaidSalary(fields, SalaryType.SALARY, SalaryType.DELAY);
 
 			Map<String, Double> diffValues = new HashMap<String, Double>();
 			
@@ -1336,15 +1335,22 @@ public class SQLContractDelayCalculatorContext extends
 			return values.put(key, values.getOrDefault(key, 0.00) + value );
 		}
 
-		
-		private Map<String, Double> getPaidSalary(Set<String> fields)
+		private Map<String, Double> getPaidSalary(Set<String> fields, SalaryType ...types) throws SQLException{
+		    Map<String, Double> totalPaidSalary = new HashMap<>();
+		    for (SalaryType salaryType : types) {
+			Map<String, Double> paidSalary = getPaidSalary(fields, salaryType);
+			paidSalary.forEach((field, value) -> totalPaidSalary.merge(field, value, Double::sum) );
+		    } 
+		    return totalPaidSalary;
+		}
+		private Map<String, Double> getPaidSalary(Set<String> fields, SalaryType salaryType)
 				throws SQLException {
 			ResultSet rs = null;
 			try {
 
-				rs = initResultSet(stmt, contract, type, startDate, endDate);
+				rs = initResultSet(stmt, contract, salaryType, startDate, endDate);
 
-				Map<String, Double> values = new HashMap<String, Double>();
+				Map<String, Double> values = new HashMap<>();
 
 				for (String field : fields) {
 					values.put(field, 0.00);
