@@ -38,6 +38,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
 import net.aonsolutions.aon.tbai.TbaiUri;
+import net.aonsolutions.aon.tbai.exceptions.TbaiException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.tbai.utils.XMLUtils;
 
@@ -289,6 +290,15 @@ public class LROE implements Serializable {
 		JSONObject responseJSON = new JSONObject();
 		responseJSON.put("error", true);
 		responseJSON.put("errorMessage", e.getMessage());
+		return new LROEResponse(responseJSON);
+	}
+	
+	protected LROEResponse error(TbaiException e) {
+		e.printStackTrace();
+		JSONObject responseJSON = new JSONObject();
+		responseJSON.put("error", true);
+		responseJSON.put("errorMessage", e.getTbaiError().getMessage());
+		responseJSON.put("errorCode", e.getTbaiError().getCode());
 		return new LROEResponse(responseJSON);
 	}
 	

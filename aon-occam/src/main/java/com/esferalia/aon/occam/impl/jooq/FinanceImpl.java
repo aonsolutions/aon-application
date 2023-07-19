@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -701,6 +702,24 @@ public class FinanceImpl implements IFinance {
 	public void deleteInvoiceInfo(AONContext ctx, Integer invoiceId) {
 		ctx.getDslContext().transaction(
 				configuration -> InvoiceInfoDAO.delete(ctx, f -> f.getInvoiceProperty().eq(invoiceId)));
+	}
+
+	@Override
+	public Stream<InvoiceTracking> getInvoiceTrackingStream(AONContext ctx, InvoiceTrackingFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceTrackingDAO.getStream(ctx, filter));				
+	}
+
+	@Override
+	public List<InvoiceTracking> getInvoiceTrackingList(AONContext ctx, InvoiceTrackingFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceTrackingDAO.getList(ctx, filter));		
+	}
+
+	@Override
+	public InvoiceTracking getInvoiceTracking(AONContext ctx, InvoiceTrackingFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceTrackingDAO.get(ctx, filter));		
 	}
 	
 }
