@@ -5,18 +5,29 @@
   [paddingLeftHeader]="'1rem'"
 >
   <div tool >
-
+<div class="input-tax-model">
     <app-input
     [type]="'select'"
-    [label]="'Modelo'"
     [label]="'Modelo'"
     [placeholder]="'Modelo'"
     ></app-input>
 
 
+    <app-input
+    [type]="'select'"
+    [label]="'Año'"
+    [placeholder]="'2023'"
+    ></app-input>
+
+</div>
+
+
+
   </div>
-  <div content *ngIf="this.tabIndex == 0">
-    <app-table-tax-model [trimester]="1"></app-table-tax-model>
+  <div content *ngIf="this.tabIndex == 0" >
+    <app-table-tax-model [trimester]="1" (click)="showModal">
+
+    </app-table-tax-model>
   </div>
   <div content *ngIf="this.tabIndex == 1">
     <app-table-tax-model [trimester]="2"></app-table-tax-model>
@@ -50,8 +61,4 @@
     <!-- <mat-option *ngFor="let option of options" [value]="option.value">{{option.text}}</mat-option>
   </mat-select> -->
 
-    <!-- <app-input
-    [type]="'select'"
-    [label]="'Año'"
-    [placeholder]="'Usuario'"
-    ></app-input> -->
+

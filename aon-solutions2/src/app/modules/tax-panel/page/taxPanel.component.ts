@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ModalEditTaxModelComponent } from '../components/modal-edit-tax-model/modal-edit-tax-model.component';
 
 
 export interface Tabs {
@@ -29,7 +30,20 @@ export class TaxPanelComponent implements OnInit {
   ];
 
 
+
   constructor() { }
+
+  @ViewChild('modal') modalComponent: any = '';
+
+  functionHome: any = (result:any) => this.afterModalClosed(result);
+
+  afterModalClosed(result?: any){
+      console.log(result);
+  }
+
+  showModal(){
+      this.modalComponent.openDialog(ModalEditTaxModelComponent,this.functionHome, 'Data from home');
+  }
 
   ngOnInit() {
   }

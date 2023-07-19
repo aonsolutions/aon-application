@@ -65,6 +65,7 @@ export class TabsTaxModelComponent implements OnInit {
   @Input() tabColor: string = ''
   @HostBinding('style.--styleTabColor') styleTabColor = '';
   @Output() changeTabIndex = new EventEmitter<number>();
+showModal: any;
 
 
 
