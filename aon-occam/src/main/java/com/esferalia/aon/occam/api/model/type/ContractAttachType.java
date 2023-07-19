@@ -16,6 +16,7 @@ public enum ContractAttachType implements Serializable {
 	,MODIFCONTRACT(107)
 	,TRANSFORMDRAFT(109)
 	,EXTENSIONDRAFT(110)
+	,RELOCATIONDRAFT(111)
 	;
 
 	private Integer value;

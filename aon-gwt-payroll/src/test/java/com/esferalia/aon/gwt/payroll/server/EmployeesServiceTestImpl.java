@@ -1135,4 +1135,11 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void fillContractRelocation(String currentDomainName, Integer contractId,
+			Map<String, String> contractRelocationInfo) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
 }

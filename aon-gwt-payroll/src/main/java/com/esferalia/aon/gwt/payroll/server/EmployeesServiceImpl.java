@@ -30,7 +30,6 @@ import static java.util.stream.Collectors.summingDouble;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -65,7 +64,6 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
-import jakarta.servlet.annotation.WebServlet;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -200,6 +198,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Settle;
@@ -209,7 +208,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractAttachType;
 import com.esferalia.aon.occam.api.model.type.ContractType;
@@ -310,6 +308,7 @@ import aon.sepe.objects.Contract.OfferType;
 import aon.sepe.objects.Contract.Over52Years;
 import aon.sepe.objects.Contract.SexType;
 import aon.sepe.objects.CopyBasic;
+import jakarta.servlet.annotation.WebServlet;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import solutions.aon.seg.social.ServicioRED;
@@ -6096,6 +6095,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			byte[] pdfBytes = JooqContractPDF.contractExtensionFill(connection, domainId, parentDomainId, employeeData, contractData);
 
 			JooqContractPDF.saveDraftContractExtension(domainName, domainId, contractData.getContractId(), pdfBytes);
+			
+		} catch (SQLException | IllegalArgumentException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public void fillContractRelocation(String domainName, Integer contractId, Map<String, String> contractRelocationInfo) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+
+			byte[] pdfBytes = JooqContractPDF.contractRelocationFill(connection, contractId, contractRelocationInfo);
+
+			JooqContractPDF.saveDraftContractRelocation(domainName, domainId, contractId, pdfBytes);
 			
 		} catch (SQLException | IllegalArgumentException e) {
 			throw new IllegalArgumentException(e.getMessage());
