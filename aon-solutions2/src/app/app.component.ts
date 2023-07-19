@@ -12,7 +12,7 @@ export class AppComponent {
 
   constructor(private translateService: TranslateService) {
     this.translateService.setDefaultLang(this.selectedLanguage);
-    this.translateService.use(this.selectedLanguage);
+    this.selectLanguage(this.selectedLanguage);
   }
 
   selectLanguage(language: string) {
