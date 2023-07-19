@@ -8,12 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class AppComponent {
   title = 'aon-solutions2';
-  selectedLanguage = 'es';
 
-  constructor(private translateService: TranslateService) {
-    this.translateService.setDefaultLang(this.selectedLanguage);
-    this.selectLanguage(this.selectedLanguage);
-  }
+  constructor(private translateService: TranslateService) { }
 
   selectLanguage(language: string) {
     this.translateService.use(language);

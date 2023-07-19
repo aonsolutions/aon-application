@@ -125,12 +125,13 @@ import { SetMaterialModule } from 'libraries/setproduct-angular-material';
     SetMaterialModule,
     SetMaterialModule,
     TranslateModule.forRoot({
+      defaultLanguage: 'es',
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader,
         deps: [HttpClient]
       }
-    }),
+    })
   ],
   providers: [
     {
