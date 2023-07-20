@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -23,11 +25,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -799,7 +805,9 @@ public class BankStatementController extends BasicController implements IFinance
 
 	private boolean hasFinanceLink(StatementConcept concept) {
 		return (concept == StatementConcept.UNKNOWN || concept == StatementConcept.WITHDRAWAL || concept == StatementConcept.PAYMENT ||
-				 concept == StatementConcept.DEPOSIT || concept == StatementConcept.COLLECTION);
+				 concept == StatementConcept.DEPOSIT || concept == StatementConcept.COLLECTION || 
+				 concept == StatementConcept.INTEREST_COMMISSION  // Se añade tambien el concepto 17 en la busqueda de efectos de facturas				 
+				);
 	}
 
 	private boolean hasFinanceReturnLink(StatementConcept concept) {
