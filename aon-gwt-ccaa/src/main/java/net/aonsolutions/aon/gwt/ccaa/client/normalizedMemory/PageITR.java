@@ -186,7 +186,7 @@ public class PageITR extends PageAbs {
 		table.getColumnFormatter().setWidth(6, "70px");
 	
 		int row = 0;
-		table.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table.setWidget(row, 0, new Label("Apellidos y Nombre"));
 		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
 		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
@@ -256,7 +256,7 @@ public class PageITR extends PageAbs {
 		table4.getColumnFormatter().setWidth(7, "70px");
 		table4.getColumnFormatter().setWidth(8, "70px");
 		int row = 0;
-		table4.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table4.setWidget(row, 0, new Label("Apellidos y Nombre"));
 		table4.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		table4.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
 		table4.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
@@ -341,7 +341,7 @@ public class PageITR extends PageAbs {
 		table5.getColumnFormatter().setWidth(8, "70px");
 	
 		int row = 0;
-		table5.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table5.setWidget(row, 0, new Label("Apellidos y Nombre"));
 		table5.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		table5.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
 		table5.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
@@ -423,7 +423,7 @@ public class PageITR extends PageAbs {
 		table2.getColumnFormatter().setWidth(4, "70px");
 	
 		int row = 0;
-		table2.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table2.setWidget(row, 0, new Label("Apellidos y Nombre"));
 		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
 		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
@@ -479,7 +479,7 @@ public class PageITR extends PageAbs {
 		table6.getColumnFormatter().setWidth(6, "70px");
 	
 		int row = 0;
-		table6.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table6.setWidget(row, 0, new Label("Apellidos y Nombre"));
 		table6.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		table6.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
 		table6.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
