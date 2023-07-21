@@ -19,9 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.config.InsertIAE575576;
 import net.aonsolutions.db.up2date.fiscal.AlterInvestAsset;
 import net.aonsolutions.db.up2date.management.AlterRitem;
 import net.aonsolutions.db.up2date.management.AlterRsellerAddType;
+import net.aonsolutions.db.up2date.payroll.CRA0050ExcesoRefactor;
 import net.aonsolutions.db.up2date.payroll.ContractSepeIdUpdate;
 import net.aonsolutions.db.up2date.tgss.TrainingQuote2023Fix;
 import net.aonsolutions.db.up2date.tgss.TrainningBaseCgcMinUndo;
@@ -364,7 +366,9 @@ public class Up2Date {
 	    // Trainning421ExcessQuote.TRAINNING421EXCESSQUOTE,
 	    // HomeBases2023UpdateIII.HOMEBASES2023UPDATEIII,
 	    // TrainningBaseCgcMinUndo.TRAINNINGBASECGCMINUNDO,
-	    TrainingQuote2023Fix.TRAINNINGPERCENTAGES2023UPDATE,
+	    // TrainingQuote2023Fix.TRAINNINGPERCENTAGES2023UPDATE,
+	     CRA0050ExcesoRefactor.CRA0050EXCESOREFACTOR,
+
 		
 	    // DomainAonStatus.DOMAIN_AON_STATUS,
 	    // DomainAonCustomer.DOMAIN_AON_CUSTOMER,
@@ -382,6 +386,7 @@ public class Up2Date {
 	    // UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
 	    // UdpateAonSmb.UPDATE_AON_SMB,
 	    // UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
+	    InsertIAE575576.INSERT_IAE_755756
 	};
 
     // ------------------------------------------------------------------------

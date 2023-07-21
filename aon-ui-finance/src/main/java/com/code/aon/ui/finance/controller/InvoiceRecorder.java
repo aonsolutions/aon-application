@@ -4,6 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_INACCURACY_MSG;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_NO_AMORTIZATION_MSG;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Connection;
 import java.util.LinkedList;
@@ -44,6 +45,7 @@ import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -256,7 +258,9 @@ public class InvoiceRecorder implements ITransferObject {
 								ctx.select(ACCOUNT_ENTRY_DETAIL.ACCOUNT,ACCOUNT.CODE,ACCOUNT.DESCRIPTION,countFunc)
 									.from(ACCOUNT_ENTRY_DETAIL)
 									.innerJoin(ACCOUNT).on(ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+									.innerJoin(DOMAIN).on(DOMAIN.ID.eq(ACCOUNT_ENTRY_DETAIL.DOMAIN))
 									.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(DomainManager.getCurrentDomain()))
+									.and(ACCOUNT.DOMAIN.in(DOMAIN.ID, DOMAIN.PARENT))
 									.and(ACCOUNT.CODE.like(getAccount().getCode()))
 									.groupBy(ACCOUNT_ENTRY_DETAIL.ACCOUNT)
 									.orderBy(countFunc.desc())

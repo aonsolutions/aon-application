@@ -2535,6 +2535,29 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestGastosLocomocionyEstancia() throws Exception {
+		
+		if (!isDisplayed("gastos_locomocion_sin_justific,_importe"))
+			open("gastos_de_locomocion_y_estancia");
+
+
+		wait4Id("gastos_locomocion_sin_justific,_importe");
+
+		draft("GASTOS LOCOMOCION SIN JUSTIFIC, IMPORTE");
+		calculate(Calendar.JULY,2023);
+		assertValue("quote-label-1", 9.00 + 2.00 );
+		double totalPaymentLabel = getValue("totalPaymentLabel");
+		assertText("irpfBaseLabel", totalPaymentLabel - 45.00 );
+		calculate(Calendar.AUGUST,2023);
+		assertValue("quote-label-1", 4.00 );
+		totalPaymentLabel = getValue("totalPaymentLabel");
+		assertText("irpfBaseLabel", totalPaymentLabel - 52.00 );
+		
+		
+		
+	}
+
+	@Test
 	public void TestJubilacionActiva() throws Exception {
 		
 		if (!isDisplayed("jubilacion,_activa"))
