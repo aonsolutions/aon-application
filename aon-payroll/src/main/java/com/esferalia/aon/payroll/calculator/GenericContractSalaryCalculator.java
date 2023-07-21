@@ -1020,7 +1020,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						    MONEY_IRPF_BASE } ) {
 
 						     irpfExpressionContext.getVariables(irpfVar.getName()).stream()
-						     .filter( v -> v.getPeriod().intersects(irpfPeriod))
+						    .filter( v -> v.getPeriod().getEnd().compareTo(irpfPeriod.getStart()) <= 0)
         					    .sorted( (v1, v2) -> v2.getPeriod().compareTo(v1.getPeriod()))
         					    .map( v -> new ITimedVariable<Object>() {
         						public Period getPeriod() {
