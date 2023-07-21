@@ -475,16 +475,6 @@ public class InvoiceAutoComplete {
 
 			detail.setDomain(inv.getDomain());
 			
-			if(detail.getItem() != null && detail.getItem().isEmpty()) {
-				String code = detail.getItem().getProduct().getCode();
-				if(!AonStringUtils.isBlank(code)) {
-					Item i = ItemDAO.get(ctx.getContext(), f -> 
-						f.getDomainProperty().eq(inv.getDomain())
-						.and(f.getProductCodeProperty().eq(code)));
-					detail.setItem(i);
-				}
-			}
-			
 			InvoiceTax it = new InvoiceTax();
 			for(Integer i = 0;  i< detail.getInvoiceTaxes().size() ; i++ ) {
 				detail.getInvoiceTaxes().get(i).setDomain(inv.getDomain());
@@ -510,6 +500,23 @@ public class InvoiceAutoComplete {
 					detail.setAccountDescription(acc.getDescription());
 				}
 			}
+			
+			if(detail.getItem() != null && detail.getItem().isEmpty()) {
+				String code = detail.getItem().getProduct().getCode();
+				if(!AonStringUtils.isBlank(code)) {
+					Item i = ItemDAO.get(ctx.getContext(), f -> 
+						f.getDomainProperty().eq(inv.getDomain())
+						.and(f.getProductCodeProperty().eq(code)));
+					if(i.getId() == null) {
+						if(detail.getDescription() == null) detail.setDescription(code);
+						String name = detail.getDescription().length() > 63
+								? detail.getDescription().substring(0, 63) 
+								: detail.getDescription();
+						i = createProductItem(ctx.getContext(), code, name, detail, it);
+					}
+					detail.setItem(i);
+				}
+			}
 						
 			if(!InvoiceSource.ACCOUNT.equals(detail.getSource()) 
 					&& (detail.getItem() == null || detail.getItem().getId() == null)
@@ -523,33 +530,38 @@ public class InvoiceAutoComplete {
 					String name = detail.getDescription().length() > 63
 							? detail.getDescription().substring(0, 63) 
 							: detail.getDescription();
-					Product p = new Product();
-					p.setDomain(new Domain().setId(detail.getDomain()));
-					p.setCode(detail.getAccountCode());
-					p.setName(name);
-					p.setVat(new Tax()
-						.setName("IVA " + it.getPercentage())
-						.setDomain(detail.getDomain())
-						.setPercentage(it.getPercentage())
-						.setStartDate(new Date())
-						.setType(TaxType.VAT)
-						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-						.setSalesAccount(new Account())
-						.setPurchaseAccount(new Account()));
-					
-					i = new Item()
-							.setDomain(new Domain().setId(detail.getDomain()))
-							.setProduct(p)
-							.setDescription(detail.getDescription())
-							.setPrice(detail.getPrice());
-					
-					i = ItemDAO.save(ctx.getContext(), i);
-
+					i = createProductItem(ctx.getContext(), detail.getAccountCode(), name, detail, it);
 				}
 				detail.setItem(new Item().setId(i.getId()));
 			}
 		});
 	};
+	
+	private static Item createProductItem(AONContext ctx, String code,
+			String name, InvoiceDetail id, InvoiceTax it) {
+		Product p = new Product();
+		p.setDomain(new Domain().setId(id.getDomain()));
+		p.setCode(code);
+		p.setName(AonStringUtils.isBlank(name) ? code : name);
+		p.setVat(new Tax()
+			.setName("IVA " + it.getPercentage())
+			.setDomain(id.getDomain())
+			.setPercentage(it.getPercentage())
+			.setStartDate(new Date())
+			.setType(TaxType.VAT)
+			.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+			.setSalesAccount(new Account())
+			.setPurchaseAccount(new Account()));
+		
+		Item i = new Item()
+				.setDomain(new Domain().setId(id.getDomain()))
+				.setProduct(p)
+				.setDescription(id.getDescription())
+				.setPrice(id.getPrice());
+		
+		i = ItemDAO.save(ctx, i);
+		return i;
+	}
 	
 	/**
 	 * Aseguramos el nombre del titular de la factura.
