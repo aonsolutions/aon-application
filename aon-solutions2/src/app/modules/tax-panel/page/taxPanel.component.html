@@ -6,8 +6,13 @@
       ></mat-grid-tile>
       <mat-grid-tile [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
      <app-tabs-tax-model></app-tabs-tax-model>
-     <app-icon shape="edit" (click)="showModal()"></app-icon>
-     <app-modal-controller #modal ></app-modal-controller>
+     
+     <app-icon shape="edit" (click)="showModalEdit()"></app-icon>
+     <app-modal-controller #modalEdit ></app-modal-controller>
+     <app-icon shape="done_all" (click)="showModalPayment()" >
+      <app-modal-controller #modalPayment ></app-modal-controller>
+     </app-icon>
+
       </mat-grid-tile>
     </mat-grid-list>
     <!-- <app-modal-controller #modal ></app-modal-controller> -->

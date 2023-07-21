@@ -21,6 +21,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import {  MatFormFieldModule } from '@angular/material/form-field';
 import { ModalEditTaxModelComponent } from './components/modal-edit-tax-model/modal-edit-tax-model.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ModalPaymentComponent } from './components/modal-payment/modal-payment.component';
+import { MatRadioModule } from '@angular/material/radio';
 
 
 @NgModule({
@@ -30,6 +32,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     TableTaxModelComponent,
     InputTaxModelComponent,
     ModalEditTaxModelComponent,
+    ModalPaymentComponent,
 
   ],
 
@@ -50,7 +53,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatSortModule,
     MatPaginatorModule,
     MatFormFieldModule,
-    MatDialogModule
+    MatDialogModule,
+    MatRadioModule
 
   ]
 })

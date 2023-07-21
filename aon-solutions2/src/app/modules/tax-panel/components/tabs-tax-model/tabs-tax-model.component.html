@@ -6,17 +6,20 @@
 >
   <div tool >
 <div class="input-tax-model">
-    <app-input
-    [type]="'select'"
-    [label]="'Modelo'"
-    [placeholder]="'Modelo'"
-    ></app-input>
+  <app-input
+  [type]="'select'"
+  [label]="'Modelo'"
+  [placeholder]="'lorem'"
+  [options]="modelsList"
+  ></app-input>
+
 
 
     <app-input
     [type]="'select'"
     [label]="'Año'"
     [placeholder]="'2023'"
+    [options]="modelsYears"
     ></app-input>
 
 </div>

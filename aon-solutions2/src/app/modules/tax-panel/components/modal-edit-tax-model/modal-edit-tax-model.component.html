@@ -1,6 +1,15 @@
-hola prueba
+<div class="modal-container">
+  <app-icon class="close-button" shape="close" (click)="closeModal()"></app-icon>
 
-<button [mat-dialog-close]="'Data from modal'">Ok</button>
+  <p class="title-modal-edit-tax-model">¿Quieres rectificar?</p>
+  <p class="text-modal-edit-tax-model">
+    Una vez hayas rectificado el modelo, se archivará como una consulta en tu Bandeja.
+  </p>
 
+  <app-input [type]="'text'"></app-input>
 
-
+  <app-button [mat-dialog-close]="true" [class]="'orange left'">
+    <app-icon shape="send"></app-icon>
+    Enviar
+  </app-button>
+</div>

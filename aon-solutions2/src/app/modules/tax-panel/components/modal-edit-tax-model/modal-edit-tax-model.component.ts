@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-modal-edit-tax-model',
@@ -8,8 +8,14 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class ModalEditTaxModelComponent implements OnInit {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<ModalEditTaxModelComponent>
+  ) {}
 
+  closeModal(): void {
+    this.dialogRef.close();
+  }
 
   ngOnInit(): void {
   }
