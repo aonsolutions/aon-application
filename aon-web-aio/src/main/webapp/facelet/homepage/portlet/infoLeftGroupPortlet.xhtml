@@ -102,16 +102,15 @@
 			<ui:include src="/facelet/new/portlet/summaryControlPortlet.xhtml" /> 
 			<ui:include src="/facelet/new/portlet/filterControlPortlet.xhtml" />
 			</aon:if>
-			<aon:if test="#{dur.aula or domainSwitcher.snapshot}">
+			<aon:if test="#{dur.aula}">
 				<ui:include src="/facelet/new/portlet/helpControlPortlet.xhtml" />
 			</aon:if>
 			<aon:if test="#{timeControl.active}">
 				<ui:include src="/facelet/new/portlet/timeControlPortlet.xhtml" />
 			</aon:if>
-
 		</aon:div>
 		
-		<aon:if test="#{!domainSwitcher.childDomain or timeControl.active}">
+		<aon:if test="#{!domainSwitcher.childDomain or timeControl.active or dur.aula}">
 			<script type='text/javascript' >
 				showInfoGroup();
 			</script>
