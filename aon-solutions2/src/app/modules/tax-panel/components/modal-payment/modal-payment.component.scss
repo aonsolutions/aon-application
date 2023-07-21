@@ -1,7 +1,33 @@
 @import "src/styles.scss";
 
+::ng-deep .mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
+  background-color: black !important;
+}
+
+::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle {
+  background-color: black !important;   /*inner circle color change*/
+}
+
+::ng-deep.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+ border-color:black !important; /*outer ring color change*/
+}
+
 .title-modal-payment
 {
   font-weight: bold;
   font-size:   $font-size-24;
 }
+
+.text-modal-payment
+{
+  text-transform: uppercase;
+  display: flex;
+   flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+}
+
+
+// .example-radio-button {
+//   margin: 5px;
+// }

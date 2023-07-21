@@ -14,7 +14,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { TabsTaxModelComponent } from './components/tabs-tax-model/tabs-tax-model.component';
 import { MatTab, MatTabsModule } from '@angular/material/tabs';
 import { TableTaxModelComponent } from './components/table-tax-model/table-tax-model.component';
-import { InputTaxModelComponent } from './components/input-tax-model/input-tax-model.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -30,10 +29,8 @@ import { MatRadioModule } from '@angular/material/radio';
     TaxPanelComponent,
     TabsTaxModelComponent,
     TableTaxModelComponent,
-    InputTaxModelComponent,
     ModalEditTaxModelComponent,
-    ModalPaymentComponent,
-
+    ModalPaymentComponent
   ],
 
   imports: [

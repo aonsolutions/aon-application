@@ -1,19 +1,21 @@
 <div class="modal-container">
-
-
   <p class="title-modal-payment">Método de pago</p>
 
-  <mat-radio-group name="prueba" [(ngModel)]="prueba" aria-label="Select an option">
-    <mat-radio-button [value]='1' [checked]="true">Domiciliación Bancaria</mat-radio-button>
-    <mat-radio-button [value]='2'>nrc (banca online u oficina bancaria)</mat-radio-button>
-    <mat-radio-button [value]='3'>aplazamiento/fraccionamiento</mat-radio-button>
+  <mat-radio-group
+    class="text-modal-payment"
+    aria-label="Select an option"
+  >
+    <mat-radio-button
+      *ngFor="let option of radioButtonOptions"
+      [value]="option.value"
+      [checked]="option.checked"
+    >
+      {{ option.name }}
+    </mat-radio-button>
   </mat-radio-group>
-
-
 
   <app-button [mat-dialog-close]="true" [class]="'orange left'">
     <app-icon shape="send"></app-icon>
     Enviar
   </app-button>
 </div>
-

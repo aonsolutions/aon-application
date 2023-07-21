@@ -2,8 +2,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 
-
-
+export interface OptionModalPayment {
+  name: string;
+  value: number;
+  checked:  boolean;
+}
 
 @Component({
   selector: 'app-modal-payment',
@@ -12,11 +15,15 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 })
 
-
-
 export class ModalPaymentComponent implements OnInit {
 
-  prueba: number = 1; // O cualquier otro valor predeterminado que desees
+radioButtonOptions: OptionModalPayment[] = [
+  {  name: 'Domiciliación Bancaria', value: 1, checked: true },
+  { name: 'nrc (banca online u oficina bancaria)', value: 2, checked: false},
+  {  name: 'aplazamiento/fraccionamiento', value: 3, checked: false},
+
+
+];
 
 
   constructor(
