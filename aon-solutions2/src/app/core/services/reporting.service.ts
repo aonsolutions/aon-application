@@ -1,33 +1,20 @@
 import { Injectable } from '@angular/core';
-import { AonSDK } from 'libraries/AonSDK/AonSDK';
+import { ReportingFactory } from 'libraries/AonSDK/aon';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReportingService {
-  private aonSDK: AonSDK = new AonSDK();
+
+  private reportingDataAccesss = new ReportingFactory().createReportingDataAccess();
 
   constructor() {}
 
-  getVentasGastos(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('reporting')
-        .getVentasGastos()
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
+  async getVentasGastos(): Promise<any> {
+    return (await this.reportingDataAccesss.ventasGastos()).result;
   }
 
-  getCobrosPagos(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('reporting')
-        .getCobrosPagos()
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
+  async getCobrosPagos(): Promise<any> {
+    return (await this.reportingDataAccesss.cobrosPagos()).result;
   }
 }

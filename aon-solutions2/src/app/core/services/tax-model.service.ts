@@ -1,23 +1,17 @@
 import { Injectable } from '@angular/core';
-import { AonSDK, Filter } from 'libraries/AonSDK/AonSDK';
-import { TaxModel } from '../models/class/tax-model';
+import { ICollection, IFilter, ITaxModel, TaxModelFactory } from 'libraries/AonSDK/aon';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaxModelService {
-  private aonSDK = new AonSDK();
+
+  private multipleObjectCrud = new TaxModelFactory().createMultipleObjectCrud();
 
   constructor() {}
 
-  getTaxModelList(filter?: Filter): Promise<TaxModel[]> {
-    return new Promise((resolve) => {
-      this.aonSDK
-        .model('taxmodel')
-        .getElementList('taxmodel', filter)
-        .then((response: any) => {
-          resolve(new TaxModel().deserializeArray(response.result));
-        });
-    });
+  async getTaxModelList(filter?: IFilter): Promise<ICollection<ITaxModel>> {
+    return (await this.multipleObjectCrud.getCollection(filter)).result;
   }
+
 }

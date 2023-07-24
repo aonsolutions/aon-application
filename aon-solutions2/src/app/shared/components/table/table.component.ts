@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { TaxModel } from 'src/app/core/models/class/tax-model';
+import { CollectionFactory, ICollection, ITaxModel } from 'libraries/AonSDK/aon';
 
 @Component({
   selector: 'app-table',
@@ -7,9 +7,9 @@ import { TaxModel } from 'src/app/core/models/class/tax-model';
   styleUrls: ['./table.component.scss']
 })
 export class TableComponent {
-  @Input() dataSource: TaxModel[] = [];
+  @Input() dataSource: ICollection<ITaxModel> = new CollectionFactory().createTaxModelCollection();
   displayedColumns: string[] = ['name', 'result', 'status', 'paymentMethod', 'acciones'];
-type: any;
+  type: any;
 
 
   @Input()

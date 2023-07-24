@@ -1,24 +1,17 @@
 import { Injectable } from '@angular/core';
-import { AonSDK, Filter } from 'libraries/AonSDK/AonSDK';
-import { Bank } from '../models/class/bank';
+import { BankFactory, IBank, ICollection, IFilter } from 'libraries/AonSDK/aon';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BankService {
-  private aonSDK = new AonSDK();
+
+  bankCollectionCrud = new BankFactory().createMultipleObjectCrud();
 
   constructor() {}
 
-  getBankList(filter?: Filter): Promise<Bank[]> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('bank')
-        .getElementList('bank')
-        .then((response: any) => {
-          resolve(new Bank().deserializeArray(response.result));
-        });
-    });
+  async getBankList(filter?: IFilter): Promise<ICollection<IBank>> {
+    return (await this.bankCollectionCrud.getCollection(filter)).result;
   }
   
 }

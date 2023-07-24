@@ -1,11 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-
-import { Document } from 'src/app/core/models/class/document';
 import { DocumentService } from 'src/app/core/services/document.service';
-import { Folder } from 'src/app/core/models/class/folder';
 import { FolderService } from 'src/app/core/services/folder.service';
 import { MenuButton } from 'src/app/core/models/interface/menu-button';
 import { ActivatedRoute } from '@angular/router';
+import { CollectionFactory, Factory, FilterBuilder, ICollection, IDocument, IFolder } from 'libraries/AonSDK/aon';
 
 @Component({
   selector: 'app-files',
@@ -16,10 +14,11 @@ export class FilesComponent implements OnInit {
 
   detail: boolean = false;
   showFiles: boolean = false;
-
-  documentationFolders: Folder[] = [];
-  documentationFilteredFolders: Folder[] = [];
-  documentsList: Document[] = [];
+  collectionFactory = new CollectionFactory();
+  factory = new Factory();
+  documentationFolders: ICollection<IFolder> = this.collectionFactory.createFolderCollection();
+  documentationFilteredFolders: ICollection<IFolder> = this.collectionFactory.createFolderCollection();
+  documentsList: ICollection<IDocument> = this.collectionFactory.createDocumentCollection();
 
   fileOptions: MenuButton[] = [
     {routerlink: '#', shape: 'eye', text: 'Vista previa', class: '', selected: false},
@@ -35,9 +34,10 @@ export class FilesComponent implements OnInit {
 
     this.folderService.getFolderList().then(listFolders => {
       // TODO: Mejorar para que esta lista venga desde documentation
-      this.documentationFolders = listFolders.filter(folder => folder.Parent === '/')
+      this.documentationFolders = listFolders//.filter(folder => folder.Parent === '/')
       // Filtrar listFolders por tipo
-      this.documentationFilteredFolders = listFolders.filter(folder => folder.Parent.startsWith(`/${tipo}`));
+      console.log(`/${tipo}`);
+      this.documentationFilteredFolders = listFolders//.filter(folder => folder.Parent.startsWith(`/${tipo}`));
     });
   }
 
@@ -56,21 +56,19 @@ export class FilesComponent implements OnInit {
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const year = String(currentDate.getFullYear()).slice(-2);
     const formattedDate = `${day}/${month}/${year}`;
-
     return formattedDate;
   }
 
-  getFiles(folder: Folder) {
+  getFiles(folder: IFolder) {
     this.showFiles = true;
-
-    this.documentService.getDocumentList().then(documentsList => {
-      debugger;
-      console.log(documentsList);
-      this.documentsList = documentsList.filter(document => document.Folder === folder.Path);
+    let filter = new FilterBuilder();
+    filter.addField('folder', folder.Path);
+    this.documentService.getDocumentList(filter.getFilter()).then(documentsList => {
+      // debugger;
+      // console.log(documentsList);
+      this.documentsList = documentsList;
     })
-
-
-    console.log('Actualizamos lista ficheros');
+    // console.log('Actualizamos lista ficheros');
   }
 
 }

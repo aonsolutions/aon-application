@@ -1,9 +1,8 @@
 import { AuthService } from 'src/app/core/services/auth.service';
-import { Component, Input, OnInit, Output } from '@angular/core';
-import { ApiService } from 'src/app/core/services/api.service';
+import { Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
-import { Enterprise } from 'src/app/core/models/class/enterprise';
 import { EnterpriseService } from 'src/app/core/services/enterprise.service';
+import { CollectionFactory, ICollection, IEnterprise } from 'libraries/AonSDK/aon';
 
 @Component({
   selector: 'app-select-enterprise',
@@ -12,7 +11,7 @@ import { EnterpriseService } from 'src/app/core/services/enterprise.service';
 })
 export class SelectEnterpriseComponent implements OnInit {
 
-  enterprises: Enterprise[] = [];
+  enterprises: ICollection<IEnterprise> = new CollectionFactory().createEnterpriseCollection();
 
   constructor(private authService: AuthService, private enterpriseService: EnterpriseService, private router: Router) {
     // this.empresas = this.auth.auxEmpresas();
@@ -25,10 +24,10 @@ export class SelectEnterpriseComponent implements OnInit {
     });
   }
 
-  selectEnterprise(enterprise: Enterprise) {
+  selectEnterprise(enterprise: IEnterprise) {
     // TODO: Llamar servicio JWT(generico) para que establezca empresa seleccionada en session
     // TODO: Establecer si guardamos toda la empresa, o por el contrario usar id/document
-    this.enterpriseService.setEnterprise(enterprise.Document)
+    this.authService.setEnterprise(enterprise.Document)
     this.router.navigate(['']);
   }
 

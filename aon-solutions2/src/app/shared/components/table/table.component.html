@@ -1,6 +1,6 @@
 <!-- set-color -->
 
-<table mat-table mat-flat-table [dataSource]="this.dataSource" color="primary">
+<table mat-table mat-flat-table [dataSource]="this.dataSource.toArray()" color="primary">
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef> Modelo </th>
     <td mat-cell *matCellDef="let model">

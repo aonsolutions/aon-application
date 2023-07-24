@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TaxModel } from 'src/app/core/models/class/tax-model';
 import { Observable } from 'rxjs';
+import { CollectionFactory, ICollection, ITaxModel } from 'libraries/AonSDK/aon';
 
 @Component({
   selector: 'app-models-dashboard',
@@ -21,8 +22,8 @@ export class ModelsDashboardComponent implements OnInit {
     '4 trimestre',
   ];
 
-  models: TaxModel[] = [];
-  @Input() public taxModelList: Observable<TaxModel[]> | undefined;
+  models: ICollection<ITaxModel> = new CollectionFactory().createTaxModelCollection();
+  @Input() public taxModelList: Observable<ICollection<ITaxModel>> | undefined;
 
   constructor() {}
 

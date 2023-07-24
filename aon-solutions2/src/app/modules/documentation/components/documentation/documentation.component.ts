@@ -1,9 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
-
-import { Document } from 'src/app/core/models/class/document';
+import { Component, OnInit } from '@angular/core';
 import { DocumentService } from 'src/app/core/services/document.service';
-import { Folder } from './../../../../core/models/class/folder';
 import { FolderService } from 'src/app/core/services/folder.service';
+import { CollectionFactory, Factory, FilterBuilder, ICollection, IDocument, IFolder } from 'libraries/AonSDK/aon';
 
 @Component({
   selector: 'app-documentation',
@@ -12,10 +10,12 @@ import { FolderService } from 'src/app/core/services/folder.service';
 })
 export class DocumentationComponent implements OnInit {
 
-  documentationFilteredFolders: Folder[] = [];
-  documentationListFolders: Folder[] = [];
-  documentsList: Document[] = [];
-  fileToShow: Document = new Document();
+  collectionFactory = new CollectionFactory();
+  factory = new Factory();
+  documentationFilteredFolders: ICollection<IFolder> = this.collectionFactory.createFolderCollection();
+  documentationListFolders: ICollection<IFolder> = this.collectionFactory.createFolderCollection();
+  documentsList: ICollection<IDocument> = this.collectionFactory.createDocumentCollection();
+  fileToShow: IDocument = this.factory.createDocument();
   showDetail: boolean = false;
   showFiles: boolean = false;
   showMenu: boolean = false;
@@ -25,7 +25,7 @@ export class DocumentationComponent implements OnInit {
   constructor(private documentService: DocumentService, private folderService: FolderService) {
     /*
       Inicialmente solo devolvemos carpetas correspondientes a la raíz
-      es por ello que no pasamos parámetro, para que por defecto sea '/'
+      es por ello que no pasamos parámetro, para que por defecto sea ''
     */
     this.getFolders();
   }
@@ -33,27 +33,32 @@ export class DocumentationComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  getFolders(parentFolder: string = '/') {
-    this.folderService.getFolderList().then(listFolders => {
-      if (parentFolder === '/') {
-        this.documentationListFolders = listFolders.filter(folder => folder.Parent === parentFolder);
+  getFolders(parentFolder: string = '') {
+    console.log('getfolders')
+    let filter = new FilterBuilder();
+    filter.addField('parent', parentFolder);
+    this.folderService.getFolderList(filter.getFilter()).then(listFolders => {
+      if (parentFolder === '') {
+        this.documentationListFolders = listFolders;
       } else {
-        this.documentationFilteredFolders = listFolders.filter(folder => folder.Parent === parentFolder);
+        this.documentationFilteredFolders = listFolders;
         this.isListFiltered = true;
       }
     })
   }
 
-  getFiles(folder: Folder) {
+  getFiles(folder: IFolder) {
+    console.log('getfiles')
     this.showFiles = true;
-
-    this.documentService.getDocumentList().then(documentsList => {
-      console.log(documentsList);
-      this.documentsList = documentsList.filter(document => document.Folder === folder.Path);
+    let filter = new FilterBuilder();
+    filter.addField('Path', folder.Path);
+    console.log(folder.Path)
+    this.documentService.getDocumentList(filter.getFilter()).then(documentsList => {
+      this.documentsList = documentsList;
     })
   }
 
-  loadFile(file: Document) {
+  loadFile(file: IDocument) {
     // let ext = file.FileType.split('/')[0];
     console.log(file);
     this.fileToShow = file;
