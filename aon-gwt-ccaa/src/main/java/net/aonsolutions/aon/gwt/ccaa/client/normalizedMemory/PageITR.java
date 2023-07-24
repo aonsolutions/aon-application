@@ -39,7 +39,7 @@ public class PageITR extends PageAbs {
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 	
 	private static final String ITR8080829TXT = "La entidad est\u00e1 sujeta a la obligaci\u00f3n de identificar al titular real proque no cotiza en mercados regulados";
-	private static final String ITRLabelTXT = "La sociedad presenta por primera vez o actualiza los datos de indentificaci\\u00f3n del titular real: ";
+	private static final String ITRLabelTXT = "La sociedad presenta por primera vez o actualiza los datos de indentificaci\u00f3n del titular real: ";
 	private static final String ITR8234001TXT = "Indique el tipo de actualizaci\u00f3n de los datos de indentificaci\u00f3n del titular real";
 	private static final String ITR8234002TXT = "Fecha en la que debe reputarse que se ha producido el cambio de datos.";
 
