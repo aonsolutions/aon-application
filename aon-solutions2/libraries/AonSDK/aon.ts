@@ -54,82 +54,82 @@ interface IReportingDataAccessFactory {
 
 export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMultipleObjectCrudFactory<IDocument> {
     createSingleObjectCrud(): ISingleObjectCrud<IDocument> {
-        return new GenericSingleObjectCrud<IDocument>(new GenericSingleObjectCrudRepository<IDocument>(new StorableDocument(), Document), Document);
+        return new GenericSingleObjectCrud<Document>(new GenericSingleObjectCrudRepository<Document>(new StorableDocument(), Document), Document);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocument> {
-        return new GenericMultipleObjectCrud<IDocument>(new GenericMultipleObjectCrudRepository<IDocument>(new StorableDocument(), Document), Document);
+        return new GenericMultipleObjectCrud<Document>(new GenericMultipleObjectCrudRepository<Document>(new StorableDocument(), Document), Document);
     }
 }
 
 export class FolderFactory implements ISingleObjectCrudFactory<IFolder>, IMultipleObjectCrudFactory<IFolder> {
-    createSingleObjectCrud(): ISingleObjectReader<IFolder> {
-        return new GenericSingleObjectCrud<IFolder>(new GenericSingleObjectCrudRepository<IFolder>(new StorableFolder(), Folder), Folder);
+    createSingleObjectCrud(): ISingleObjectCrud<IFolder> {
+        return new GenericSingleObjectCrud<Folder>(new GenericSingleObjectCrudRepository<Folder>(new StorableFolder(), Folder), Folder);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IFolder> {
-        return new GenericMultipleObjectCrud<IFolder>(new GenericMultipleObjectCrudRepository<IFolder>(new StorableFolder(), Folder), Folder);
+        return new GenericMultipleObjectCrud<Folder>(new GenericMultipleObjectCrudRepository<Folder>(new StorableFolder(), Folder), Folder);
     }
 }
 
 export class DocumenNoteFactory implements ISingleObjectCrudFactory<IDocumentNote>, IMultipleObjectCrudFactory<IDocumentNote> {
     createSingleObjectCrud(): ISingleObjectCrud<IDocumentNote> {
-        return new GenericSingleObjectCrud<IDocumentNote>(new GenericSingleObjectCrudRepository<IDocumentNote>(new StorableDocumentNote(), DocumentNote), DocumentNote);
+        return new GenericSingleObjectCrud<DocumentNote>(new GenericSingleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote), DocumentNote);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocumentNote> {
-        return new GenericMultipleObjectCrud<IDocumentNote>(new GenericMultipleObjectCrudRepository<IDocumentNote>(new StorableDocumentNote(), DocumentNote), DocumentNote);
+        return new GenericMultipleObjectCrud<DocumentNote>(new GenericMultipleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote), DocumentNote);
     }
 }
 
 export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMultipleObjectCrudFactory<IMessage> {
     createSingleObjectCrud(): ISingleObjectCrud<IMessage> {
-        return new GenericSingleObjectCrud<IMessage>(new GenericSingleObjectCrudRepository<IMessage>(new StorableMessage(), Message), Message);
+        return new GenericSingleObjectCrud<Message>(new GenericSingleObjectCrudRepository<Message>(new StorableMessage(), Message), Message);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessage> {
-        return new GenericMultipleObjectCrud<IMessage>(new GenericMultipleObjectCrudRepository<IMessage>(new StorableMessage(), Message), Message);
+        return new GenericMultipleObjectCrud<Message>(new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message), Message);
     }
 }
 
 export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat>, IMultipleObjectCrudFactory<IMessageChat> {
     createSingleObjectCrud(): ISingleObjectCrud<IMessageChat> {
-        return new GenericSingleObjectCrud<IMessageChat>(new GenericSingleObjectCrudRepository<IMessageChat>(new StorableMessageChat(), MessageChat), MessageChat);
+        return new GenericSingleObjectCrud<MessageChat>(new GenericSingleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat), MessageChat);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessageChat> {
-        return new GenericMultipleObjectCrud<IMessageChat>(new GenericMultipleObjectCrudRepository<IMessageChat>(new StorableMessageChat(), MessageChat), MessageChat);
+        return new GenericMultipleObjectCrud<MessageChat>(new GenericMultipleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat), MessageChat);
     }
 }
 
 export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>, IMultipleObjectCrudFactory<IEnterprise> {
     createSingleObjectCrud(): ISingleObjectReader<IEnterprise> {
-        return new GenericSingleObjectCrud<IEnterprise>(new GenericSingleObjectCrudRepository<IEnterprise>(new StorableEnterprise(), Enterprise), Enterprise);
+        return new GenericSingleObjectCrud<Enterprise>(new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
     }
     createMultipleObjectCrud(): IMultipleObjectReader<IEnterprise> {
-        return new GenericMultipleObjectCrud<IEnterprise>(new GenericMultipleObjectCrudRepository<IEnterprise>(new StorableEnterprise(), Enterprise), Enterprise);
+        return new GenericMultipleObjectCrud<Enterprise>(new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
     }
 }
 
 export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleObjectCrudFactory<IBank> {
     createSingleObjectCrud(): ISingleObjectCrud<IBank> {
-        return new GenericSingleObjectCrud<IBank>(new GenericSingleObjectCrudRepository<IBank>(new StorableBank(), Bank), Bank);
+        return new GenericSingleObjectCrud<Bank>(new GenericSingleObjectCrudRepository<Bank>(new StorableBank(), Bank), Bank);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IBank> {
-        return new GenericMultipleObjectCrud<IBank>(new GenericMultipleObjectCrudRepository<IBank>(new StorableBank(), Bank), Bank);
+        return new GenericMultipleObjectCrud<Bank>(new GenericMultipleObjectCrudRepository<Bank>(new StorableBank(), Bank), Bank);
     }
 }
 
 export class TaxModelFactory implements ISingleObjectCrudFactory<ITaxModel>, IMultipleObjectCrudFactory<ITaxModel> {
     createSingleObjectCrud(): ISingleObjectCrud<ITaxModel> {
-        return new GenericSingleObjectCrud<ITaxModel>(new GenericSingleObjectCrudRepository<ITaxModel>(new StorableTaxModel(), TaxModel), TaxModel);
+        return new GenericSingleObjectCrud<TaxModel>(new GenericSingleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel), TaxModel);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<ITaxModel> {
-        return new GenericMultipleObjectCrud<ITaxModel>(new GenericMultipleObjectCrudRepository<ITaxModel>(new StorableTaxModel(), TaxModel), TaxModel);
+        return new GenericMultipleObjectCrud<TaxModel>(new GenericMultipleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel), TaxModel);
     }
 }
 
 export class EmployeeFactory implements ISingleObjectCrudFactory<IEmployee>, IMultipleObjectCrudFactory<IEmployee> {
     createSingleObjectCrud(): ISingleObjectCrud<IEmployee> {
-        return new GenericSingleObjectCrud<IEmployee>(new GenericSingleObjectCrudRepository<IEmployee>(new StorableEmployee(), Employee), Employee);
+        return new GenericSingleObjectCrud<Employee>(new GenericSingleObjectCrudRepository<Employee>(new StorableEmployee(), Employee), Employee);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IEmployee> {
-        return new GenericMultipleObjectCrud<IEmployee>(new GenericMultipleObjectCrudRepository<IEmployee>(new StorableEmployee(), Employee), Employee);
+        return new GenericMultipleObjectCrud<Employee>(new GenericMultipleObjectCrudRepository<Employee>(new StorableEmployee(), Employee), Employee);
     }
 }
 
@@ -208,7 +208,7 @@ interface IReportingDataAccess {
  */
 
 
-class GenericSingleObjectCrud<T extends ICollectable> implements ISingleObjectCrud<T> {
+class GenericSingleObjectCrud<T extends IModel> implements ISingleObjectCrud<T> {
     private repository: ISingleObjectCrudRepository<T>;
     private type: { new (): T };
 
@@ -221,7 +221,7 @@ class GenericSingleObjectCrud<T extends ICollectable> implements ISingleObjectCr
         try {
             return new Response<T>(await this.repository.create(element));
         } catch (error) {
-            throw error instanceof Response ?  error : new Response<string>('0201');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0201');
         }
     }
 
@@ -229,7 +229,7 @@ class GenericSingleObjectCrud<T extends ICollectable> implements ISingleObjectCr
         try {
             return new Response<T>(await this.repository.update(element));
         } catch (error) {
-            throw error instanceof Response ?  error : new Response<string>('0202');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0202');
         }
     }
 
@@ -238,7 +238,7 @@ class GenericSingleObjectCrud<T extends ICollectable> implements ISingleObjectCr
             this.repository.delete(key);
             return new Response<boolean>(true);
         } catch (error) {
-            throw error instanceof Response ?  error : new Response<string>('0203');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0203');
         }
     }
 
@@ -246,12 +246,12 @@ class GenericSingleObjectCrud<T extends ICollectable> implements ISingleObjectCr
         try {
             return new Response<T>(await this.repository.get(key));
         } catch (error) {
-            throw error instanceof Response ?  error : new Response<string>('0206');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0206');
         }
     }
 }
 
-class GenericMultipleObjectCrud<T extends ICollectable> implements IMultipleObjectCrud<T> {
+class GenericMultipleObjectCrud<T extends IModel> implements IMultipleObjectCrud<T> {
     private repository: IMultipleObjectCrudRepository<T>;
     private type: { new (): T };
 
@@ -264,7 +264,7 @@ class GenericMultipleObjectCrud<T extends ICollectable> implements IMultipleObje
         try {
             return new Response<ICollection<T>>(await this.repository.get(filter));
         } catch (error) {
-            throw error instanceof Response ?  error : new Response<string>('0206');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0206');
         }
     }
 
@@ -272,7 +272,7 @@ class GenericMultipleObjectCrud<T extends ICollectable> implements IMultipleObje
         try {
             return new Response<ICollection<T>>(await this.repository.create(collection));
         } catch (error) {
-            throw error instanceof Response ?  error : new Response<string>('0201');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0201');
         }
     }
 
@@ -280,7 +280,7 @@ class GenericMultipleObjectCrud<T extends ICollectable> implements IMultipleObje
         try {
             return new Response<ICollection<T>>(await this.repository.update(collection));
         } catch (error) {
-            throw error instanceof Response ?  error : new Response<string>('0202');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0202');
         }
     }
 
@@ -289,7 +289,7 @@ class GenericMultipleObjectCrud<T extends ICollectable> implements IMultipleObje
             this.repository.delete(keys);
             return new Response<boolean>(true);
         } catch (error) {
-            throw error instanceof Response ?  error : new Response<string>('0203');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0203');
         }
     }
 }
@@ -307,7 +307,7 @@ class AuthenticationManager implements IAuthenticationManager {
             await this.authenticationRepository.login(email,password)
             return new Response<boolean>(true);
         } catch (error) {
-            throw error instanceof Response ?  error : new Response<string>('0101');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0101');
         }
     }
 
@@ -316,7 +316,7 @@ class AuthenticationManager implements IAuthenticationManager {
             await this.authenticationRepository.logout()
             return new Response<boolean>(true);
         } catch (error) {
-            throw error instanceof Response ?  error : new Response<string>('0111');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0111');
         }
     }
 
@@ -325,7 +325,7 @@ class AuthenticationManager implements IAuthenticationManager {
             await this.authenticationRepository.tokenLogin(token)
             return new Response<boolean>(true);
         } catch (error) {
-            throw error instanceof Response ?  error : new Response<string>('0101');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0101');
         }
     }
 
@@ -339,7 +339,7 @@ class AuthenticationManager implements IAuthenticationManager {
 
     async setEnterprise(enterprise: IEnterprise): Promise<IResponse<boolean>> {
         if(enterprise && enterprise.getKey()) localStorage.setItem('enterprise', enterprise.getKey());
-        else throw new Response('0113');
+        else throw new ErrorResponse('0113');
         return new Response<boolean>(true);
     }
 }
@@ -421,7 +421,7 @@ interface IAuthenticationRepository {
  * 
  */
 
-class GenericMultipleObjectCrudRepository<T extends ICollectable> implements IMultipleObjectCrudRepository<T> {
+class GenericMultipleObjectCrudRepository<T extends IModel> implements IMultipleObjectCrudRepository<T> {
     private instance: IStorable<T>;
     private localStorageManager: LocalStorage<T>;
     private type: { new (): T };
@@ -443,7 +443,7 @@ class GenericMultipleObjectCrudRepository<T extends ICollectable> implements IMu
     async create(collection: ICollection<T>): Promise<ICollection<T>> {
         collection.toArray().forEach(element => {
             if(this.instance.getCollection().exists(element.getKey())){
-                throw new Response<string>('0201');
+                throw new ErrorResponse('0201');
             }
         })
         collection.toArray().forEach(element => {
@@ -458,7 +458,7 @@ class GenericMultipleObjectCrudRepository<T extends ICollectable> implements IMu
         collection.toArray().forEach(element => {
             if(!(element.getKey() != element.Key && !this.instance.getCollection().exists(element.getKey()) && this.instance.getCollection().exists(element.Key)
             || element.getKey() == element.Key && this.instance.getCollection().exists(element.Key)))
-                throw new Response<string>('0205');
+                throw new ErrorResponse('0205');
         })
         collection.toArray().forEach(element => {
             this.instance.getCollection().remove(element.Key);
@@ -472,7 +472,7 @@ class GenericMultipleObjectCrudRepository<T extends ICollectable> implements IMu
     async delete(keys: string []): Promise<void> {
         keys.forEach(key => {
             if(!this.instance.getCollection().exists(key))
-                throw new Response<string>('0204');
+                throw new ErrorResponse('0204');
         })
         keys.forEach(key => {
             this.instance.getCollection().remove(key);
@@ -481,7 +481,7 @@ class GenericMultipleObjectCrudRepository<T extends ICollectable> implements IMu
     }
 }
 
-class GenericSingleObjectCrudRepository<T extends ICollectable> implements ISingleObjectCrudRepository<T> {
+class GenericSingleObjectCrudRepository<T extends IModel> implements ISingleObjectCrudRepository<T> {
     private instance: IStorable<T>;
     private localStorageManager: LocalStorage<T>;
     private type: { new (): T };
@@ -497,7 +497,7 @@ class GenericSingleObjectCrudRepository<T extends ICollectable> implements ISing
         if(this.instance.getCollection().exists(key))
             return this.instance.getCollection().get(key);
         else
-            throw new Response<string>('0206');
+            throw new ErrorResponse('0206');
     }
 
     async create(element: T): Promise<T> {
@@ -507,7 +507,7 @@ class GenericSingleObjectCrudRepository<T extends ICollectable> implements ISing
             this.localStorageManager.write(this.instance.getLocalStorage(), this.instance.getCollection())
             return element;
         }else{
-            throw new Response<string>('0201');
+            throw new ErrorResponse('0201');
         }
     }
 
@@ -520,7 +520,7 @@ class GenericSingleObjectCrudRepository<T extends ICollectable> implements ISing
             this.localStorageManager.write(this.instance.getLocalStorage(), this.instance.getCollection())
             return element;    
         }else{
-            throw new Response<string>('0202');
+            throw new ErrorResponse('0202');
         }
     }
 
@@ -528,7 +528,7 @@ class GenericSingleObjectCrudRepository<T extends ICollectable> implements ISing
         if(this.instance.getCollection().exists(key)){
             this.instance.getCollection().remove(key);
             this.localStorageManager.write(this.instance.getLocalStorage(), this.instance.getCollection())
-        }else throw new Response<string>('0203');
+        }else throw new ErrorResponse('0203');
     }
 }
 
@@ -543,17 +543,17 @@ class AuthenticationRepository implements IAuthenticationRepository {
     async login(email: string, password: string): Promise<void> {
         let collection = this.storableAuth.getCollection()
         if(collection.exists(email) && collection.get(email).Password == password) localStorage.setItem('token', 'testToken')
-        else throw new Response<string>('0101');
+        else throw new ErrorResponse('0101');
     }
 
     async logout(): Promise<void> {
         if(localStorage.getItem('token')) { localStorage.removeItem('token'); localStorage.removeItem('enterprise'); }
-        else throw new Response<string>('0111');
+        else throw new ErrorResponse('0111');
     }
 
     async tokenLogin(token: string): Promise<void> {
         if(!localStorage.getItem('token')) localStorage.setItem('token', 'testToken');
-        else throw new Response<string>('0101');
+        else throw new ErrorResponse('0101');
     }
 }
 
@@ -566,7 +566,7 @@ class AuthenticationRepository implements IAuthenticationRepository {
 interface IResponse<T> {
     code: string;
     description: string;
-    result: T | string;
+    result: T;
 }
 
 interface ILocalStorage<T extends ICollectable> {
@@ -621,17 +621,26 @@ class KeyGenerator {
 class Response<T> implements IResponse<T> {
     code: string;
     description: string;
-    result: T | string;
+    result: T;
     constructor(data: any) {
-        if(typeof data == 'string' && ERRORS[data as keyof typeof ERRORS]){
-            this.code = data as string;
-            this.description = ERRORS[data as keyof typeof ERRORS].description;
-            this.result = ERRORS[data as keyof typeof ERRORS].result;
-        }else{
+        // if(typeof data == 'string' && ERRORS[data as keyof typeof ERRORS]){
+            
+        // }else{
             this.code = '0000';
             this.description = ERRORS['0000' as keyof typeof ERRORS].description;
             this.result = data;
-        }
+        // }
+    }
+}
+
+class ErrorResponse implements IResponse<string> {
+    code: string;
+    description: string;
+    result: string;
+    constructor(data: any) {
+        this.code = data as string;
+        this.description = ERRORS[data as keyof typeof ERRORS].description;
+        this.result = ERRORS[data as keyof typeof ERRORS].result;
     }
 }
 
@@ -754,7 +763,7 @@ export class Collection<T extends ICollectable> implements ICollection<T> {
     }
 
     add(element: T): void {
-        this.data.set(element.Key, element);
+        this.data.set(element.getKey(), element);
     }
 
     remove(key: string): void {
@@ -851,11 +860,26 @@ interface IFactory {
     createEmployee(): IEmployee;
 }
 
+interface ICollectionFactory {
+    createDocumentCollection(): ICollection<IDocument>;
+    createFolderCollection(): ICollection<IFolder>;
+    createEnterpriseCollection(): ICollection<IEnterprise>;
+    createDocumentNoteCollection(): ICollection<IDocumentNote>;
+    createBankCollection(): ICollection<IBank>;
+    createTaxModelCollection(): ICollection<ITaxModel>;
+    createMessageCollection(): ICollection<IMessage>;
+    createMessageChatCollection(): ICollection<IMessageChat>;
+    createEmployeeCollection(): ICollection<IEmployee>;
+}
+
 interface ICollectable {
-    Key: string;
     getKey(): string;
     getFilterableFields(): Map<string,any>;
     getSortableFields(): Map<string,any>;
+}
+
+interface IModel extends ICollectable {
+    Key: string;
 }
 
 interface IStorable<T extends ICollectable> {
@@ -917,7 +941,7 @@ export interface IMessage extends ICollectable {
 
 export interface IMessageChat extends ICollectable {
     Id: string;
-    IdMessage: number;
+    IdMessage: string;
     Name: string;
     Description: string;
     Date: Date;
@@ -967,7 +991,7 @@ export class Factory implements IFactory {
     createMessage(name?: string, title?: string, description?: string, date?: Date, type?: string, status?: string, endDate?: Date): IMessage {
         return new Message(name, title, description, date, type, status, endDate);
     }
-    createMessageChat(idMessage?: number, name?: string, description?: string, date?: Date, type?: string): IMessageChat {
+    createMessageChat(idMessage?: string, name?: string, description?: string, date?: Date, type?: string): IMessageChat {
         return new MessageChat(idMessage, name, description, date, type);
     }
     createEmployee(name?: string, lastname?: string, document?: string, email?: string, phone?: string, naf?: string, active?: boolean): IEmployee {
@@ -975,7 +999,37 @@ export class Factory implements IFactory {
     }
 }
 
-class Document implements IDocument {
+export class CollectionFactory implements ICollectionFactory {
+    createDocumentCollection(): ICollection<IDocument> {
+        return new Collection<Document>();
+    }
+    createFolderCollection(): ICollection<IFolder> {
+        return new Collection<Folder>();
+    }
+    createEnterpriseCollection(): ICollection<IEnterprise> {
+        return new Collection<Enterprise>();
+    }
+    createDocumentNoteCollection(): ICollection<IDocumentNote> {
+        return new Collection<DocumentNote>();
+    }
+    createBankCollection(): ICollection<IBank> {
+        return new Collection<Bank>();
+    }
+    createTaxModelCollection(): ICollection<ITaxModel> {
+        return new Collection<TaxModel>();
+    }
+    createMessageCollection(): ICollection<IMessage> {
+        return new Collection<Message>();
+    }
+    createMessageChatCollection(): ICollection<IMessageChat> {
+        return new Collection<MessageChat>();
+    }
+    createEmployeeCollection(): ICollection<IEmployee> {
+        return new Collection<Employee>();
+    }
+}
+
+class Document implements IDocument, ICollectable {
     private file: string;
     private fileName: string;
     private fileSize: number;
@@ -1071,8 +1125,8 @@ class Document implements IDocument {
     }
 }
 
-class StorableDocument extends Document implements IStorable<IDocument> {
-    getCollection(): ICollection<IDocument> {
+class StorableDocument extends Document implements IStorable<Document> {
+    getCollection(): ICollection<Document> {
         return documents;
     }
     getLocalStorage(): string {
@@ -1080,15 +1134,15 @@ class StorableDocument extends Document implements IStorable<IDocument> {
     }
 }
 
-class Folder implements IFolder {
+class Folder implements IFolder, ICollectable  {
     private name: string;
     private path: string;
     private parent: string;
     private key: string;
 
-    constructor(name?: string, parent?: string, path?: string) {
+    constructor(name?: string, parent?: string) {
         this.name = name || '';
-        this.path = parent?.toLowerCase().split(' ').join('_') + '/' + name?.split(' ').join('_') || '';
+        this.path = parent?.toLocaleLowerCase().split(' ').join('_') + '/' + name?.toLocaleLowerCase().split(' ').join('_') || '';
         this.parent = parent || '';
         this.key = this.path || '';
     }
@@ -1144,8 +1198,8 @@ class Folder implements IFolder {
     }
 }
 
-class StorableFolder extends Folder implements IStorable<IFolder> {
-    getCollection(): ICollection<IFolder> {
+class StorableFolder extends Folder implements IStorable<Folder> {
+    getCollection(): ICollection<Folder> {
         return folders;
     }
     getLocalStorage(): string {
@@ -1153,7 +1207,7 @@ class StorableFolder extends Folder implements IStorable<IFolder> {
     }
 }
 
-class Enterprise implements IEnterprise {
+class Enterprise implements IEnterprise, ICollectable {
     private name: string;
     private document: string;
     private key: string;
@@ -1178,7 +1232,7 @@ class Enterprise implements IEnterprise {
         return this.key;
     }
 
-    constructor(name?: string, document?: string, key?: string) {
+    constructor(name?: string, document?: string) {
         this.name = name || '';
         this.document = document || '';
         this.key = document || '';
@@ -1204,8 +1258,8 @@ class Enterprise implements IEnterprise {
     
 }
 
-class StorableEnterprise extends Enterprise implements IStorable<IEnterprise> {
-    getCollection(): ICollection<IEnterprise> {
+class StorableEnterprise extends Enterprise implements IStorable<Enterprise> {
+    getCollection(): ICollection<Enterprise> {
         return enterprises;
     }
     getLocalStorage(): string {
@@ -1213,7 +1267,7 @@ class StorableEnterprise extends Enterprise implements IStorable<IEnterprise> {
     }
 }
 
-class DocumentNote implements IDocumentNote {
+class DocumentNote implements IDocumentNote, ICollectable  {
     private text: string;
     private path: string;
     private key: string;
@@ -1265,8 +1319,8 @@ class DocumentNote implements IDocumentNote {
     }
 }
 
-class StorableDocumentNote extends DocumentNote implements IStorable<IDocumentNote> {
-    getCollection(): ICollection<IDocumentNote> {
+class StorableDocumentNote extends DocumentNote implements IStorable<DocumentNote> {
+    getCollection(): ICollection<DocumentNote> {
         return documentNotes;
     }
     getLocalStorage(): string {
@@ -1274,7 +1328,7 @@ class StorableDocumentNote extends DocumentNote implements IStorable<IDocumentNo
     }
 }
 
-class Bank implements IBank {
+class Bank implements IBank, ICollectable  {
     private name: string;
     private key: string;
     private total: number;
@@ -1338,8 +1392,8 @@ class Bank implements IBank {
     }
 }
 
-class StorableBank extends Bank implements IStorable<IBank> {
-    getCollection(): ICollection<IBank> {
+class StorableBank extends Bank implements IStorable<Bank> {
+    getCollection(): ICollection<Bank> {
         return banks;
     }
     getLocalStorage(): string {
@@ -1347,7 +1401,7 @@ class StorableBank extends Bank implements IStorable<IBank> {
     }
 }
 
-class TaxModel implements ITaxModel {
+class TaxModel implements ITaxModel, ICollectable  {
     private name: string;
     private taxType: string;
     private status: string;
@@ -1365,7 +1419,7 @@ class TaxModel implements ITaxModel {
         this.result = result || '';
         this.trimester = trimester || 0;
         this.year = year || 0;
-        if(name && trimester && year) this.key = name + trimester.toString() + year.toString();
+        if(name && trimester && year) this.key = name + ';' + trimester.toString() + ';' + year.toString();
         else this.key = ''
     }
 
@@ -1463,8 +1517,8 @@ class TaxModel implements ITaxModel {
     }
 }
 
-class StorableTaxModel extends TaxModel implements IStorable<ITaxModel> {
-    getCollection(): ICollection<ITaxModel> {
+class StorableTaxModel extends TaxModel implements IStorable<TaxModel> {
+    getCollection(): ICollection<TaxModel> {
         return taxModels;
     }
     getLocalStorage(): string {
@@ -1472,7 +1526,7 @@ class StorableTaxModel extends TaxModel implements IStorable<ITaxModel> {
     }
 }
 
-class Message implements IMessage {
+class Message implements IMessage, ICollectable  {
     private id: string;
     private name: string;
     private title: string;
@@ -1596,8 +1650,8 @@ class Message implements IMessage {
     }
 }
 
-class StorableMessage extends Message implements IStorable<IMessage> {
-    getCollection(): ICollection<IMessage> {
+class StorableMessage extends Message implements IStorable<Message> {
+    getCollection(): ICollection<Message> {
         return messages;
     }
     getLocalStorage(): string {
@@ -1605,18 +1659,18 @@ class StorableMessage extends Message implements IStorable<IMessage> {
     }
 }
 
-class MessageChat implements IMessageChat {
+class MessageChat implements IMessageChat, ICollectable  {
     private id: string;
-    private idMessage: number;
+    private idMessage: string;
     private name: string;
     private description: string;
     private date: Date;
     private type: string;
     private key: string;
 
-    constructor(idMessage?: number, name?: string, description?: string, date?: Date, type?: string) {
+    constructor(idMessage?: string, name?: string, description?: string, date?: Date, type?: string) {
         this.id = new KeyGenerator().generate(15);
-        this.idMessage = idMessage || 0;
+        this.idMessage = idMessage || '';
         this.name = name || '';
         this.description = description || '';
         this.date = date || new Date();
@@ -1632,11 +1686,11 @@ class MessageChat implements IMessageChat {
         this.id = value;
     }
 
-    public get IdMessage(): number {
+    public get IdMessage(): string {
         return this.idMessage;
     }
 
-    public set IdMessage(value: number) {
+    public set IdMessage(value: string) {
         this.idMessage = value;
     }
 
@@ -1703,8 +1757,8 @@ class MessageChat implements IMessageChat {
     }
 }
 
-class StorableMessageChat extends MessageChat implements IStorable<IMessageChat> {
-    getCollection(): ICollection<IMessageChat> {
+class StorableMessageChat extends MessageChat implements IStorable<MessageChat> {
+    getCollection(): ICollection<MessageChat> {
         return messageChats;
     }
     getLocalStorage(): string {
@@ -1712,7 +1766,7 @@ class StorableMessageChat extends MessageChat implements IStorable<IMessageChat>
     }
 }
 
-class Employee implements IEmployee {
+class Employee implements IEmployee, ICollectable  {
     private name: string;
     private lastname: string;
     private document: string;
@@ -1826,8 +1880,8 @@ class Employee implements IEmployee {
     }
 }
 
-class StorableEmployee extends Employee implements IStorable<IEmployee> {
-    getCollection(): ICollection<IEmployee> {
+class StorableEmployee extends Employee implements IStorable<Employee> {
+    getCollection(): ICollection<Employee> {
         return employees;
     }
     getLocalStorage(): string {
@@ -1835,7 +1889,7 @@ class StorableEmployee extends Employee implements IStorable<IEmployee> {
     }
 }
 
-class Auth implements IAuth {
+class Auth implements IAuth, ICollectable  {
     private email: string;
     private password: string;
     private key: string;
@@ -1887,15 +1941,15 @@ class Auth implements IAuth {
     }
 }
 
-class StorableAuth extends Auth implements IStorable<IAuth> {
-    getCollection(): ICollection<IAuth> {
+class StorableAuth extends Auth implements IStorable<Auth> {
+    getCollection(): ICollection<Auth> {
         return auths;
     }
     getLocalStorage(): string {
         return 'auths';
     }
 }
-    
+
 
 /**
  * 
@@ -1903,72 +1957,153 @@ class StorableAuth extends Auth implements IStorable<IAuth> {
  * 
  */
 
-let documents: ICollection<IDocument> = new Collection<IDocument>();
+let documents: ICollection<Document> = new Collection<Document>();
 let storableDocuments = new StorableDocument();
-let localDocuments = new LocalStorage<IDocument>(Document);
+let localDocuments = new LocalStorage<Document>(Document);
 documents = localDocuments.read(storableDocuments.getLocalStorage())
-// documents.add(new Document('', 'file1', 1, 'pdf', new Date(), 'path1'));
-// documents.add(new Document('', 'file2', 2, 'pdf', new Date(), 'path2'));
-// documents.add(new Document('', 'file3', 3, 'jpg', new Date(), 'path3'));
-// documents.add(new Document('', 'file4', 4, 'pdf', new Date(), 'path4'));
-// documents.add(new Document('', 'file5', 5, 'pdf', new Date(), 'path5'));
-// documents.add(new Document('', 'file6', 6, 'jpg', new Date(), 'path6'));
+if(documents.size() == 0){
+    documents.add(new Document('', 'file1', 1, 'pdf', new Date(), '/a_contabilizar'));
+    documents.add(new Document('', 'file2', 2, 'pdf', new Date(), '/a_contabilizar'));
+    documents.add(new Document('', 'file3', 3, 'jpg', new Date(), '/contabilizado'));
+    documents.add(new Document('', 'file4', 4, 'pdf', new Date(), '/contabilizado'));
+    documents.add(new Document('', 'file5', 5, 'pdf', new Date(), '/papelera'));
+    documents.add(new Document('', 'file6', 6, 'jpg', new Date(), '/papelera'));
+    documents.add(new Document('', 'file7', 6, 'jpg', new Date(), '/fiscal'));
+    documents.add(new Document('', 'file8', 6, 'jpg', new Date(), '/fiscal'));
+    documents.add(new Document('', 'file9', 6, 'jpg', new Date(), '/laboral/48150243L'));
+    documents.add(new Document('', 'file10', 6, 'pdf', new Date(), '/laboral/48150243L'));
+    documents.add(new Document('', 'file11', 6, 'pdf', new Date(), '/laboral/11556837G'));
+    documents.add(new Document('', 'file12', 6, 'pdf', new Date(), '/laboral/11556837G'));
+    documents.add(new Document('', 'file13', 6, 'pdf', new Date(), '/laboral/86638678R'));
+    documents.add(new Document('', 'file14', 6, 'pdf', new Date(), '/laboral/86638678R'));
+    localDocuments.write(storableDocuments.getLocalStorage(), documents);
+}
 
-let folders: ICollection<IFolder> = new Collection<IFolder>();
+let folders: ICollection<Folder> = new Collection<Folder>();
 let storableFolders = new StorableFolder();
-let localFolders = new LocalStorage<IFolder>(Folder);
+let localFolders = new LocalStorage<Folder>(Folder);
 folders = localFolders.read(storableFolders.getLocalStorage())
-// folders.add(new Folder('A contabilizar', '', '/a_contabilizar',));
-// folders.add(new Folder('Contabilizado', '', '/contabilizado',));
-// folders.add(new Folder('Papelera', '', '/papelera',));
-// folders.add(new Folder('Fiscal', '', '/fiscal',));
-// folders.add(new Folder('Laboral', '', '/laboral',));
-// folders.add(new Folder('Maria Rico Gómez', '/laboral', '/laboral/48150243L',));
-// folders.add(new Folder('Juan Carlos Aragón Pérez', '/laboral', '/laboral/11556837G',));
-// folders.add(new Folder('Maria Rico Álvarez', '/laboral', '/laboral/86638678R',));
+if(folders.size() == 0){
+    folders.add(new Folder('A contabilizar', ''));
+    folders.add(new Folder('Contabilizado', ''));
+    folders.add(new Folder('Papelera', ''));
+    folders.add(new Folder('Fiscal', ''));
+    folders.add(new Folder('Laboral', ''));
+    folders.add(new Folder('Maria Rico Gómez', '/laboral'));
+    folders.add(new Folder('Juan Carlos Aragón Pérez', '/laboral'));
+    folders.add(new Folder('Maria Rico Álvarez', '/laboral'));
+    localFolders.write(storableFolders.getLocalStorage(), folders);
+}
 
-let enterprises: ICollection<IEnterprise> = new Collection<IEnterprise>();
+let enterprises: ICollection<Enterprise> = new Collection<Enterprise>();
 let storableEnterprises = new StorableEnterprise();
-let localEnterprises = new LocalStorage<IEnterprise>(Enterprise);
+let localEnterprises = new LocalStorage<Enterprise>(Enterprise);
 enterprises = localEnterprises.read(storableEnterprises.getLocalStorage())
-enterprises.add(new Enterprise('Pet Estudio', 'B16880148'));
+if(enterprises.size() == 0){
+    enterprises.add(new Enterprise('Pet Estudio', 'B16880148'));
+    enterprises.add(new Enterprise('MENG SA', 'U14241855'));
+    enterprises.add(new Enterprise('PORTABAGE SL', 'U53716270'));
+    localEnterprises.write(storableEnterprises.getLocalStorage(), enterprises);
+}
 
-let documentNotes: ICollection<IDocumentNote> = new Collection<IDocumentNote>();
+let documentNotes: ICollection<DocumentNote> = new Collection<DocumentNote>();
 let storableDocumentNotes = new StorableDocumentNote();
-let localDocumentNotes = new LocalStorage<IDocumentNote>(DocumentNote);
+let localDocumentNotes = new LocalStorage<DocumentNote>(DocumentNote);
 documentNotes = localDocumentNotes.read(storableDocumentNotes.getLocalStorage())
+if(documentNotes.size() == 0){
+    documentNotes.add(new DocumentNote('texto de la nota', '/a_contabilizar/file1'));
+    documentNotes.add(new DocumentNote('texto de la nota', '/contabilizado/file3'));
+    documentNotes.add(new DocumentNote('texto de la nota', '/papelera/file5'));
+    documentNotes.add(new DocumentNote('texto de la nota', '/fiscal/file7'));
+    documentNotes.add(new DocumentNote('texto de la nota', '/laboral/48150243L/file9'));
+    documentNotes.add(new DocumentNote('texto de la nota', '/laboral/11556837G/file11'));
+    documentNotes.add(new DocumentNote('texto de la nota', '/laboral/86638678R/file13'));
+    localDocumentNotes.write(storableDocumentNotes.getLocalStorage(), documentNotes);
+}
 
-let banks: ICollection<IBank> = new Collection<IBank>();
+
+let banks: ICollection<Bank> = new Collection<Bank>();
 let storableBanks = new StorableBank();
-let localBanks = new LocalStorage<IBank>(Bank);
-banks = localBanks.read(storableBanks.getLocalStorage())
+let localBanks = new LocalStorage<Bank>(Bank);
+banks = localBanks.read(storableBanks.getLocalStorage());
+if(banks.size() == 0){
+    banks.add(new Bank('Caixa Bank',1500,'whereIsMyPath?'));
+    banks.add(new Bank('Banco Nación',500,'whereIsMyPath?2'));
+    banks.add(new Bank('Bankinter',2500,'whereIsMyPath?3'));
+    localBanks.write(storableBanks.getLocalStorage(), banks);
+}
 
-let taxModels: ICollection<ITaxModel> = new Collection<ITaxModel>();
+let taxModels: ICollection<TaxModel> = new Collection<TaxModel>();
 let storableTaxModels = new StorableTaxModel();
-let localTaxModels = new LocalStorage<ITaxModel>(TaxModel);
+let localTaxModels = new LocalStorage<TaxModel>(TaxModel);
 taxModels = localTaxModels.read(storableTaxModels.getLocalStorage())
+if(taxModels.size() == 0){
+    taxModels.add(new TaxModel( '180','IVA','presentado','domicialición bancaria','356',1,2023));
+    taxModels.add(new TaxModel( '303','IVA','presentado','tranferencia','789',1,2023));
+    taxModels.add(new TaxModel( '180','IVA','presentado','domicialición bancaria','1245',2,2023));
+    taxModels.add(new TaxModel( '303','IVA','presentado','tranferencia','1024',2,2023));
+    taxModels.add(new TaxModel( '180','IVA','en proceso','domicialición bancaria','1538',3,2023));
+    taxModels.add(new TaxModel( '303','IVA','pendiente','tranferencia','987',3,2023));
+    taxModels.add(new TaxModel( '130','IVA','presentado','tranferencia','189',3,2023));
+    taxModels.add(new TaxModel( '347','IVA','rectificado','tranferencia','684',3,2023));
+    taxModels.add(new TaxModel( '180','IVA','en proceso','domicialición bancaria','1784',4,2023));
+    taxModels.add(new TaxModel( '303','IVA','pendiente','domicialición bancaria','1345',4,2023));
+    taxModels.add(new TaxModel( '130','IVA','presentado','tranferencia','541',4,2023));
+    taxModels.add(new TaxModel( '347','IVA','rectificado','domicialición bancaria','1354',4,2023));
+    localTaxModels.write(storableTaxModels.getLocalStorage(), taxModels);
+}
 
-let messages: ICollection<IMessage> = new Collection<IMessage>();
+let messages: ICollection<Message> = new Collection<Message>();
 let storableMessages = new StorableMessage();
-let localMessages = new LocalStorage<IMessage>(Message);
+let localMessages = new LocalStorage<Message>(Message);
 messages = localMessages.read(storableMessages.getLocalStorage())
+if(messages.size() == 0){
+    messages.add(new Message('Asesor1','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-12"),'consulta','abierta'));
+    messages.add(new Message('Asesor2','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-26"),'consulta','abierta'));
+    messages.add(new Message('Asesor3','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-07-16"),'consulta','cerrada'));
+    messages.add(new Message('Asesor1','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-05-16"),'notificacion','vista'));
+    messages.add(new Message('Asesor2','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-06-17"),'notificacion','nueva'));
+    messages.add(new Message('Asesor3','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-07-18"),'notificacion','nueva'));
+    messages.add(new Message('Asesor1','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-06-03"),'tarea','realizada',new Date("2023-08-24")));
+    messages.add(new Message('Asesor2','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-06-19"),'tarea','pendiente',new Date("2023-08-28")));
+    messages.add(new Message('Asesor3','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-07-22"),'tarea','pendiente',new Date("2023-09-05")));
+    localMessages.write(storableMessages.getLocalStorage(), messages);
+}
 
-let messageChats: ICollection<IMessageChat> = new Collection<IMessageChat>();
+let messageChats: ICollection<MessageChat> = new Collection<MessageChat>();
 let storableMessageChats = new StorableMessageChat();
-let localMessageChats = new LocalStorage<IMessageChat>(MessageChat);
+let localMessageChats = new LocalStorage<MessageChat>(MessageChat);
 messageChats = localMessageChats.read(storableMessageChats.getLocalStorage())
+let filter = new FilterBuilder();
+filter.addField('type','consulta');
+let filteredMessages = messages.filter(filter.getFilter());
+if(messageChats.size() == 0 && filteredMessages.size() != 0){
+    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12"), 'enviado'));
+    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12"), 'recibido'));
+    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12"), 'enviado'));
+    localMessageChats.write(storableMessageChats.getLocalStorage(), messageChats);
+}
 
-let employees: ICollection<IEmployee> = new Collection<IEmployee>();
+let employees: ICollection<Employee> = new Collection<Employee>();
 let storableEmployees = new StorableEmployee();
-let localEmployees = new LocalStorage<IEmployee>(Employee);
-employees = localEmployees.read(storableEmployees.getLocalStorage())
+let localEmployees = new LocalStorage<Employee>(Employee);
+employees = localEmployees.read(storableEmployees.getLocalStorage());
+if(employees.size() == 0){
+    employees.add(new Employee('Maria','Rico Gómez','48150243L','mariaricogomez@gmail.test','690619302','390423363729',true));
+    employees.add(new Employee('Maria','Pérez Álvarez','86638678R','mariaperezalvarez@gmail.test','656796396','650423363729',false));
+    employees.add(new Employee('Juan Carlos','Aragón Pérez','11556837G','juancarlosaragonperez@gmail.test','619068048','490423363729',true));
+    localEmployees.write(storableEmployees.getLocalStorage(), employees);
+}
 
-let auths: ICollection<IAuth> = new Collection<IAuth>();
+let auths: ICollection<Auth> = new Collection<Auth>();
 let storableAuths = new StorableAuth();
-let localAuths = new LocalStorage<IAuth>(Auth);
+let localAuths = new LocalStorage<Auth>(Auth);
 auths = localAuths.read(storableAuths.getLocalStorage())
-auths.add(new Auth('test@aonsolutions.test', 'test'));
-auths.add(new Auth('admin', 'admin'));
+if(auths.size() == 0){
+    auths.add(new Auth('test@aonsolutions.test', 'test'));
+    auths.add(new Auth('admin', 'admin'));
+    localAuths.write(storableAuths.getLocalStorage(), auths);
+}
 
 
 
