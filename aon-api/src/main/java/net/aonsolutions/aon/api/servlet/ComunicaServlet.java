@@ -602,6 +602,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		} catch (Exception e) {
 			System.out.println("FALLO COMUNICANDO");
 			e.printStackTrace();
+			throw new Exception(e.getMessage());
 		}
 
 		String base64 = new String(Base64.getEncoder().encode(pdf));
