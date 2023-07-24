@@ -9,8 +9,11 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.occam.api.model.type.SalaryType.M190;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C401;
@@ -4279,6 +4282,55 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 		//org.junit.Assert.assertEquals( chargeDate, ctx.getIrpfDate() );
 
+	}
+
+	@Test
+	public void testIrpfChargeDateII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		Date contractStartDate = getFirstDayOfMonth(getToday());
+		Date contractEndDate = add(contractStartDate, DAY_OF_MONTH, 10);
+		ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL,
+				CCCType.PRINCIPAL, 
+				contractStartDate,
+				contractEndDate,
+				new HashMap<String, String>() {
+					{
+					}
+				}, new String[] { 
+						"NETO(1000.00, 850.00)",
+				},
+						new String[] {
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00" 
+				}
+				, null
+				,null);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		
+		Date chargeDate = add(contractEndDate, Calendar.DAY_OF_MONTH, 1); 
+		
+		addData(aonContext, contract, contractStartDate, contractEndDate, TC2.getName(), C401.getValue());
+		addData(aonContext, contract, contractStartDate, contractEndDate, QUOTE_GROUP.getName(), "'07'");
+		addData(aonContext, contract, contractStartDate, contractEndDate, MONTH_DAYS.getName(), "30.00");
+
+		addData(aonContext, contract, contractStartDate, null, IRPF_PERCENT, "10.00");
+
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, startDate, getLastDayOfMonth(startDate), getLastDayOfMonth(startDate), chargeDate, contract);
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		
+		
+		org.junit.Assert.assertEquals( salary.getTotalPayment(), 1000.00 , 0.00);
+		org.junit.Assert.assertEquals( salary.getIrpfBase() * 10 / 100.00, salary.getTotalIrpf() , 0.00);
+ 
 	}
 
 	@Test
