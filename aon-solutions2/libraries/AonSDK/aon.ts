@@ -563,7 +563,7 @@ class AuthenticationRepository implements IAuthenticationRepository {
  * 
  */
 
-interface IResponse<T> {
+export interface IResponse<T> {
     code: string;
     description: string;
     result: T;
@@ -618,7 +618,7 @@ class KeyGenerator {
     }
 }
 
-class Response<T> implements IResponse<T> {
+export class Response<T> implements IResponse<T> {
     code: string;
     description: string;
     result: T;
@@ -681,7 +681,7 @@ export class FilterBuilder {
     constructor(){
     }
 
-    setSelectedFields(fields: string[]): void {
+    private setSelectedFields(fields: string[]): void {
         this.filter.selectedFields = fields;
     }
 
@@ -720,11 +720,11 @@ export class FilterBuilder {
         delete this.filter.fields;
     }
 
-    clearInterval(): void {
+    clearIntervals(): void {
         delete this.filter.intervalFields;
     }
 
-    clearSelectedFields(): void {
+    private clearSelectedFields(): void {
         delete this.filter.selectedFields;
     }
 
