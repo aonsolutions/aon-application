@@ -1,0 +1,12 @@
+{
+  "COMMON": {
+    "WELCOME": "Welcome!",
+    "BUTTON_TEXT": "Click here"
+  },
+  "HOME": {
+      "UPLOAD_DOCUMENTATION": "Upload documentation",
+      "VIEW_ALL_MESSAGES": "See all messages",
+      "SEND_MESSAGE": "Send message",
+      "TITLE": "Service developed by {{ desarrollador }}"
+  }
+}
