@@ -97,7 +97,7 @@
 
 		/* INNER CLASS */
 		
-		.errorBorder { border: 1px solid red; }
+		.errorBorder { border: 1px solid red !important; }
 
 		.journeyDurationWarning{
 			font-weight: bold;
@@ -105,7 +105,7 @@
 			cursor: pointer;
 		}
 		
-		.warningTB { border: 1px solid red; }
+		.warningTB { border: 1px solid red !important; }
 		
 		
 		.iconButton {
