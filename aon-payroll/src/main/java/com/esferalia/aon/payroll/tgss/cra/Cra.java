@@ -236,7 +236,7 @@ public class Cra {
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("ddHHmmss");
 	
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMainCRAByCRA(Integer domainId, Integer userId, List<String> cccList, long findingDate, String fileName, Connection connection)  {
+	public static JSONObject getMainCRAByCRA(Integer domainId, Integer userId, List<String> cccList, long findingDate, String fileName, Connection connection) throws IllegalArgumentException {
 		
 		// Get dslContext for given connection
 		@SuppressWarnings("resource")
@@ -348,9 +348,11 @@ public class Cra {
 					JSONObject trb = new JSONObject();
 					
 					String ssSalary = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
-					if(AonStringUtils.isNotBlank(ssSalary) && !AonStringUtils.containsIgnoreCase(ssSalary, "0000000000"))
+					if(AonStringUtils.isNotBlank(ssSalary) && !AonStringUtils.containsIgnoreCase(ssSalary, "0000000000")) {
+						if(!checkSS(ssSalary)) throw new IllegalArgumentException("El trabajador " + salary.get(SALARY.EMPLOYEE_NAME) + " de la empresa " + salary.get(SALARY.ENTERPRISE_NAME) + " tiene un numero de la Seguridad Social err\u00f3neo");
+						
 						trb.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
-					else {
+					} else {
 						String ss = dslContext.select(PERSON.SOCIAL_SECURITY_NUM).from(PERSON)
 								.where(PERSON.REGISTRY.eq(
 										dslContext.select(CONTRACT.PERSON).from(CONTRACT)
@@ -359,6 +361,9 @@ public class Cra {
 								)).fetchOne(PERSON.SOCIAL_SECURITY_NUM);
 						if(null == ss || StringUtils.isBlank(ss))
 							continue;
+						
+						if(!checkSS(ss)) throw new IllegalArgumentException("El trabajador " + salary.get(SALARY.EMPLOYEE_NAME) + " de la empresa " + salary.get(SALARY.ENTERPRISE_NAME) + " tiene un numero de la Seguridad Social err\u00f3neo");
+						
 						trb.put("numAfilicion", ss);
 					}
 					
@@ -488,9 +493,11 @@ public class Cra {
 						String numAfilicionAtraso;
 						
 						String ssSalary = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
-						if(AonStringUtils.isNotBlank(ssSalary) && !AonStringUtils.containsIgnoreCase(ssSalary, "0000000000"))
+						if(AonStringUtils.isNotBlank(ssSalary) && !AonStringUtils.containsIgnoreCase(ssSalary, "0000000000")) {
+							if(!checkSS(ssSalary)) throw new IllegalArgumentException("El trabajador " + salary.get(SALARY.EMPLOYEE_NAME) + " de la empresa " + salary.get(SALARY.ENTERPRISE_NAME) + " tiene un numero de la Seguridad Social err\u00f3neo");
+							
 							numAfilicionAtraso = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
-						else {
+						}else {
 							String ss = dslContext.select(PERSON.SOCIAL_SECURITY_NUM).from(PERSON)
 									.where(PERSON.REGISTRY.eq(
 											dslContext.select(CONTRACT.PERSON).from(CONTRACT)
@@ -499,6 +506,9 @@ public class Cra {
 									)).fetchOne(PERSON.SOCIAL_SECURITY_NUM);
 							if(null == ss || StringUtils.isBlank(ss))
 								continue;
+							
+							if(!checkSS(ss)) throw new IllegalArgumentException("El trabajador " + salary.get(SALARY.EMPLOYEE_NAME) + " de la empresa " + salary.get(SALARY.ENTERPRISE_NAME) + " tiene un numero de la Seguridad Social err\u00f3neo");
+							
 							numAfilicionAtraso = ss;
 						}
 						
@@ -592,9 +602,11 @@ public class Cra {
 					String numAfilicionFiniquito;
 					
 					String ssSalary = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
-					if(AonStringUtils.isNotBlank(ssSalary) && !AonStringUtils.containsIgnoreCase(ssSalary, "0000000000"))
+					if(AonStringUtils.isNotBlank(ssSalary) && !AonStringUtils.containsIgnoreCase(ssSalary, "0000000000")) {
+						if(!checkSS(ssSalary)) throw new IllegalArgumentException("El trabajador " + salary.get(SALARY.EMPLOYEE_NAME) + " de la empresa " + salary.get(SALARY.ENTERPRISE_NAME) + " tiene un numero de la Seguridad Social err\u00f3neo");
+						
 						numAfilicionFiniquito = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
-					else {
+					} else {
 						String ss = dslContext.select(PERSON.SOCIAL_SECURITY_NUM).from(PERSON)
 								.where(PERSON.REGISTRY.eq(
 										dslContext.select(CONTRACT.PERSON).from(CONTRACT)
@@ -603,6 +615,9 @@ public class Cra {
 								)).fetchOne(PERSON.SOCIAL_SECURITY_NUM);
 						if(null == ss || StringUtils.isBlank(ss))
 							continue;
+						
+						if(!checkSS(ss)) throw new IllegalArgumentException("El trabajador " + salary.get(SALARY.EMPLOYEE_NAME) + " de la empresa " + salary.get(SALARY.ENTERPRISE_NAME) + " tiene un numero de la Seguridad Social err\u00f3neo");
+						
 						numAfilicionFiniquito = ss;
 					}
 					
@@ -705,6 +720,26 @@ public class Cra {
 		
 	}
 	
+	private static boolean checkSS(String socialSecurity){
+		if(AonStringUtils.isBlank(socialSecurity)) return false;
+		
+		String controlCode = socialSecurity.substring(10, 12);;
+		String ssNumberWithoutCode = socialSecurity.substring(0, 10);
+		try {
+			long ssNumber = Long.parseLong(ssNumberWithoutCode);
+			
+			long calculateControlCode = ssNumber % 97;
+			String calculateControlCodeStr = String.valueOf(calculateControlCode);
+			
+			if(calculateControlCodeStr.length() == 1)
+				calculateControlCodeStr =  AonStringUtils.leftPad(calculateControlCodeStr, 2, '0');
+			
+			return AonStringUtils.equalsIgnoreCase(controlCode, calculateControlCodeStr);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	private static void filterRETARecords(Result<Record> salaryRecords, DSLContext dslContext) {
 		ArrayList<Integer> deletePos = new ArrayList<>();
 		
