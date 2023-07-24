@@ -1,32 +1,41 @@
-::ng-deep .mat-flat-tab-group:not(.mat-tab-group-inverted-header) .mat-tab-body-wrapper  {
-    margin: 0px !important;
-}
+@import 'src/styles.scss';
 
-::ng-deep .mat-tab-group:not(.mat-tab-group-inverted-header) .mat-tab-body-wrapper {
-    margin: 0px !important;
-}
+::ng-deep{
+  .mat-flat-tab-group:not(.mat-tab-group-inverted-header) .mat-tab-body-wrapper  {
+      margin: 0px !important;
+  }
 
-.content {
-    width: calc(100%);
-    height: calc(100% - 2.4rem - .05rem);
-}
+  .mat-tab-group:not(.mat-tab-group-inverted-header) .mat-tab-body-wrapper {
+      margin: 0px !important;
+  }
 
-::ng-deep .mat-flat-tab-group.mat-primary:not(.mat-tab-group-inverted-header) .mat-tab-labels .mat-tab-label::after {
-    background:  var(--styleTabColor) !important;
-}
+  .content {
+      width: 100%;
+      height: calc(100% - 2.4rem - .05rem);
+  }
 
-.tool {
-    width: 50%;
-    height: 100%;
-    align-items: center;
-    justify-content: flex-end;
-    display: flex;
-    box-sizing: border-box;
-    padding: 0 1rem;
-}
+  .mat-flat-tab-group.mat-primary:not(.mat-tab-group-inverted-header) .mat-tab-labels .mat-tab-label::after {
+      background:  var(--styleTabColor) !important;
+  }
 
-.tabHeader {
+  .tool {
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: flex-end;
+      display: flex;
+      box-sizing: border-box;
+      padding: 0 1rem;
+  }
+
+  .tabHeader {
+      width: 100%;
+      height: 5rem;
+      display: flex;
+  }
+
+
+  app-tabs{
     width: 100%;
-    height: 2.4rem;
-    display: flex;
+  }
 }

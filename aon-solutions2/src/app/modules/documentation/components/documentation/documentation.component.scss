@@ -12,34 +12,6 @@
   margin-top: 1.85rem;
 }
 
-.dashed {
-  height: 100%;
-  border-radius: 4px;
-  border-style: dashed;
-  border-color: gray;
-  border-width: 2px;
-  background-color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.container-folder {
-  display: flex;
-}
-
-.folder-item {
-  // flex: 1;
-  // border: 1px solid #d2d2d6;
-  display: flex;
-  margin-right: 2rem;
-  height: 100%;
-}
-
-.folder-item:last-child {
-  margin-right: 0rem;
-}
-
 .txt-btn {
   width: 100%;
   text-align: left;
@@ -61,4 +33,71 @@
 .line-div {
   border: none;
   border-top: 1px solid #d2d2d6;
+}
+
+.grid-list-folders {
+  width: 100%;
+}
+
+.nav-documentation {
+  align-items: center;
+}
+
+.item-folder {
+  margin-top: 1.5rem;
+  width: 80%;
+}
+
+.iconRight {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
+}
+
+.card-file {
+  width: 8rem;
+  margin-right: 1.15rem;
+  border: .05rem solid $color-border-primary;
+  border-radius: .4rem;
+  cursor: pointer;
+}
+
+.card-file:hover {
+  border: .05rem solid $color-pink;
+}
+
+.card-file:last-child {
+  margin-right: 0rem;
+}
+
+.models-header{
+  width: 100%;
+  display: flex;
+  height: 100%;
+}
+
+.card-file-header {
+  width: 100%;
+  display: flex;
+  height: 100%;
+}
+
+.card-file-body {
+  display: flex;
+  flex-direction: column; /* Para que los elementos se coloquen uno debajo del otro */
+  justify-content: center;
+  align-items: center;
+}
+
+.file-card-name {
+  text-transform: uppercase;
+}
+
+.file-card-date {
+  color: $color-secondary;
+}
+
+.icon-card-file {
+  margin-bottom: 0.5rem;
 }

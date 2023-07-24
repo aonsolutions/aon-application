@@ -1,10 +1,52 @@
-<table  mat-table
-        mat-flat-table
-        set-color
-        color="primary">
-          ...Your table content...
+<!-- set-color -->
+
+<table mat-table mat-flat-table [dataSource]="this.dataSource" color="primary">
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Modelo </th>
+    <td mat-cell *matCellDef="let model">
+      <div class="table-model">Modelo {{model.name}}</div>
+      <div class="table-taxType"> {{model.taxType}} </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="result">
+    <th mat-header-cell *matHeaderCellDef> Resultado </th>
+    <td mat-cell *matCellDef="let model"> {{model.result}} € </td>
+  </ng-container>
+
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef> Estado </th>
+    <td mat-cell *matCellDef="let model">
+      <app-icon class="orange" shape="watch_later" *ngIf="model.status === 'pendiente'"></app-icon>
+      <div class="table-status">{{model.status}} </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="paymentMethod">
+    <th mat-header-cell *matHeaderCellDef> Método de pago </th>
+    <td mat-cell class="table-payment" *matCellDef="let model"> {{model.paymentMethod}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="acciones">
+    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+    <td mat-cell *matCellDef="let model"> {{model.acciones}}
+      <app-icon shape="eye"></app-icon>
+      <app-icon shape="picture_as_pdf"></app-icon>
+      <app-icon shape="done_all"></app-icon>
+      <app-icon shape="edit">
+
+      </app-icon>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight-row': row.status === 'pendiente'}"></tr>
 </table>
-<mat-paginator  mat-flat-paginator
-                set-color
-                color="primary">
-</mat-paginator>
+
+<!-- <mat-paginator [length]="100"
+              [pageSize]="10"
+              [pageSizeOptions]="[5, 10, 25, 100]"
+              aria-label="Select page">
+</mat-paginator> -->
+
+

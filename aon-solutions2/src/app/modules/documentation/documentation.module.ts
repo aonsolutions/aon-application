@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatMenuModule } from '@angular/material/menu';
 import { NgModule } from '@angular/core';
 
 import { DocumentationComponent } from './components/documentation/documentation.component';
@@ -22,6 +23,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     DocumentationRoutingModule,
     MatFormFieldModule,
     MatGridListModule,
+    MatMenuModule,
     SetMaterialModule,
     SharedModule
   ]

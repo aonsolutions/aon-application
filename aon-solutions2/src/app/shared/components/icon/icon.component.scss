@@ -8,14 +8,14 @@
     width   : $font-size-42 !important;
     height  : $font-size-42 !important;
   }
-  
+
 /*
   Color
 */
   .griss set-icon path{
     color   : $color-secondary;
   }
-  
+
   .red set-icon path{
     color: $color-red;
   }
@@ -34,5 +34,10 @@
   .purple set-icon path{
     color: $color-purple;
   }
-  
+
+  .icon-right {
+    justify-content: end !important;
+    width: 100% !important;
+  }
+
 }

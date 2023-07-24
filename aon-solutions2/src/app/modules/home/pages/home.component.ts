@@ -116,14 +116,17 @@ export class HomeComponent implements OnInit {
     //reportingService-VentasGastos
     this.reportingService.getVentasGastos().then((response) => {
       this.chartItems[0].chartType = 'line';
-      this.chartItems[0].chartData = [response.ventas, response.gastos];
+      this.chartItems[0].chartData = response.datasets.map((dataset: any) => dataset.data);
       this.chartItems[0].chartLabels = response.label;
       this.chartItemsSubject.next(this.chartItems);
-    })
+      console.log(response);
+    });
+
+
     //reportingService-CobrosPagos
     this.reportingService.getCobrosPagos().then((response) => {
       this.chartItems[1].chartType = 'bar';
-      this.chartItems[1].chartData = [response.cobros, response.pagos];
+      this.chartItems[1].chartData = response.datasets.map((dataset: any) => dataset.data);
       this.chartItems[1].chartLabels = response.label;
       this.chartItemsSubject.next(this.chartItems);
     })

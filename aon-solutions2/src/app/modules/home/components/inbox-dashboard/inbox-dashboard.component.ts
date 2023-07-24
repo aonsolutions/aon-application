@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Message } from './../../../../core/models/class/message';
-import { MessageService } from './../../../../core/services/message.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -30,29 +29,5 @@ export class InboxDashboardComponent implements OnInit {
     }
   }
 
-  // private getStatusByType(type: string): string {
-  //   switch (type) {
-  //     case 'consulta':
-  //       return 'abierta';
-  //     case 'tarea':
-  //       return 'pendiente';
-  //     case 'notificacion':
-  //       return 'nueva';
-  //     default:
-  //       return '';
-  //   }
-  // }
 
-  // getTypeByMessage(message: Message): number {
-  //   switch (message.Type) {
-  //     case 'consulta':
-  //       return 1;
-  //     case 'tarea':
-  //       return 2;
-  //     case 'notificacion':
-  //       return 3;
-  //     default:
-  //       return 0;
-  //   }
-  // }
 }

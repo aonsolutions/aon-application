@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { MultiDataSet } from 'ng2-charts';
 import { ChartType } from 'chart.js';
 
-interface ChartItem {
+export interface ChartItem {
   shape: string;
   name: string;
   chartLabels: string[];
@@ -55,6 +55,8 @@ export class ChartDashboardComponent implements OnInit {
     if (this.chartItemList) {
       this.chartItemList.subscribe((chartItem) => {
         this.chartItems = chartItem;
+
+
       });
     }
   }
