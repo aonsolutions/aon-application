@@ -369,6 +369,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double salarioDia = getValue("editor-salario_dia");
 		assertValue("db-amount-label-2", salarioDia * 12 * 11 / 365.00  , DELTA);
 
+		String period = getElementById("periodLabel").getTextContent();
+		setValue("editor-dias_vacaciones_no_disfrutados", "10.00");
+		assertText("periodLabel", period);
+		assertValue("db-amount-label-5", salarioDia * 12 * 11 / 365.00, DELTA);
+		assertValue("cgcBaseLabel", salarioDia * 10.00, DELTA);
+		
+
 		draft("COTIZACIÓN, CERO");
 
 		calendar.set(2016, Calendar.JUNE, 25);

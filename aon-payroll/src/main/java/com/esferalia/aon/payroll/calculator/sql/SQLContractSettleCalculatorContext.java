@@ -258,6 +258,7 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	protected void loadContractData(ExpressionContext ctx, Date startDate, Date endDate) throws SQLException {
 		//Fix CONTRACT_EDN with real endDate
 		loadTotalDays(ctx);
+		loadSalaryEnd(ctx);
 		fixContractCompleteVariable(ctx);
 		
 		super.loadContractData(ctx, Period.min(getStart(), startDate)  , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
@@ -279,12 +280,20 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	
 	// ------------------------------------------------------------------------
 	private void loadTotalDays(ExpressionContext ctx)  {
-		Date start = getStart();
-		Date end = getEnd();
-		long totalDays = getAvailableDays(start, end);
-		ctx.setVariable(ContextVariable.TOTAL_DAYS.getName(), totalDays, start, end);
+		Date contractStart = getStart();
+		Date contractEnd = super.getEnd();
+		Date noHolidaysEnd = getEnd();
+		long totalDays = getAvailableDays(contractStart, contractEnd);
+		ctx.setVariable(ContextVariable.TOTAL_DAYS.getName(), totalDays, contractStart, noHolidaysEnd );
 	}
 	
+	private void loadSalaryEnd(ExpressionContext ctx)  {
+		Date contractStart = getStart();
+		Date contractEnd = super.getEnd();
+		Date noHolidaysEnd = getEnd();
+		ctx.setVariable(ContextVariable.SALARY_END, contractEnd, contractStart, noHolidaysEnd);
+	}
+
 	private void initNoHolidays(ExpressionContext ctx) throws UndefinedVariablesException, ExpressionException, SQLException {
 		ResultSet rs = null;
 		try {
