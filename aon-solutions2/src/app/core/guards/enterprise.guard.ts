@@ -19,7 +19,7 @@ export class EnterpriseGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       const isLoggedIn = this.authService.isLoggedIn();
-      const isEnterpriseSelected = this.enterpriseService.isEnterpriseSelected();
+      const isEnterpriseSelected = this.authService.isEnterpriseSelected();
       if(isEnterpriseSelected){
         this.router.navigate(['home'])
         return false;

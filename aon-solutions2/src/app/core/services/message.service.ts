@@ -1,101 +1,38 @@
 import { Injectable } from '@angular/core';
-import { AonSDK, Filter } from 'libraries/AonSDK/AonSDK';
-import { Message } from '../models/class/message';
-import { MessageChat } from '../models/class/message-chat';
+import { ICollection, IFilter, IMessage, MessageFactory } from 'libraries/AonSDK/aon';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MessageService {
-  private aonSDK = new AonSDK();
+
+  private singleObjectCrud = new MessageFactory().createSingleObjectCrud();
+  private multipleObjectCrud = new MessageFactory().createMultipleObjectCrud();
 
   constructor() {}
 
-  getMessageList(filter?: Filter): Promise<Message[]> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('message')
-        .getElementList('message', filter)
-        .then((response: any) => {
-          resolve(new Message().deserializeArray(response.result));
-        });
-    });
+  async getMessageList(filter?: IFilter): Promise<ICollection<IMessage>> {
+    return (await this.multipleObjectCrud.getCollection(filter)).result;
   }
 
-  getMessageCount(filter?: Filter): Promise<number> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('message')
-        .getElementCount('message', filter)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
+  async getMessageCount(filter?: IFilter): Promise<number> {
+    return (await this.multipleObjectCrud.getCollection(filter)).result.size();
   }
 
-  getMessage(pkey: any): Promise<Message> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('message')
-        .getElement('message', pkey)
-        .then((response: any) => {
-          resolve(new Message().deserialize(response.result));
-        });
-    });
+  async getMessage(pkey: any): Promise<IMessage> {
+    return (await this.singleObjectCrud.getElement(pkey)).result;
   }
 
-  updateMessage(messages: Message[]): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('message')
-        .updateElement('message', messages)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
+  async updateMessage(messages: IMessage): Promise<IMessage> {
+    return (await this.singleObjectCrud.updateElement(messages)).result;
   }
 
-  deleteMessage(pkey: any): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('message')
-        .deleteElement('message', pkey)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
+  async deleteMessage(pkey: any): Promise<boolean> {
+    return (await this.singleObjectCrud.deleteElement(pkey)).result;
   }
 
-  createMessage(messages: Message[]): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('message')
-        .createElement('message', messages)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
+  async createMessage(messages: IMessage): Promise<IMessage> {
+    return (await this.singleObjectCrud.createElement(messages)).result;
   }
 
-  getMessageChatList(filter: Filter): Promise<MessageChat[]> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('messagechat')
-        .getElementList('messagechat', filter)
-        .then((response: any) => {
-          resolve(new MessageChat().deserializeArray(response.result));
-        });
-    });
-  }
-
-  createMessageChat(messageChats: MessageChat[]): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('messagechat')
-        .createElement('messagechat', messageChats)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
-  }
 }

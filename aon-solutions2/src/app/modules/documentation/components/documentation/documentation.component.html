@@ -16,7 +16,7 @@
     id="documentation-menu"
     class="allSize"
     nav style="overflow: auto;"
-    *ngIf="documentationListFolders.length > 0 && showMenu"
+    *ngIf="documentationListFolders.size() > 0 && showMenu"
     (click)="showMenu ? showMenu = false : showMenu = true"
   >
     <mat-grid-list showMenu
@@ -128,7 +128,6 @@
 
           <!-- Mostrar carpetas -->
           <ng-template #showFolders>
-
             <mat-grid-tile [gridCols]="{xs:24,sm:12,md:10,lg:6,xl:4}"
               *ngFor="let folder of  (!isListFiltered ? documentationListFolders : documentationFilteredFolders)"
               (click)="

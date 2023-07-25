@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Message } from './../../../../core/models/class/message';
 import { Observable } from 'rxjs';
+import { CollectionFactory, ICollection, IMessage } from 'libraries/AonSDK/aon';
 
 @Component({
   selector: 'app-inbox',
@@ -12,9 +12,9 @@ import { Observable } from 'rxjs';
   },
 })
 export class InboxDashboardComponent implements OnInit {
-  @Input() public messageList: Observable<Message[]> | undefined;
+  @Input() public messageList: Observable<ICollection<IMessage>> | undefined;
 
-  messages: Message[] = [];
+  messages: ICollection<IMessage> = new CollectionFactory().createMessageCollection();
   totalMessages: number = 0;
 
   constructor() {}
@@ -24,7 +24,7 @@ export class InboxDashboardComponent implements OnInit {
       this.messageList.subscribe((messages) => {
         this.messages = messages;
 
-        this.totalMessages = this.messages.length;
+        this.totalMessages = this.messages.size();
       });
     }
   }

@@ -1,56 +1,29 @@
 import { Injectable } from '@angular/core';
-import { AonSDK, Filter } from 'libraries/AonSDK/AonSDK';
-import { Folder } from '../models/class/folder';
+import { FolderFactory, ICollection, IFilter, IFolder } from 'libraries/AonSDK/aon';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FolderService {
-  private aonSDK: AonSDK = new AonSDK();
+
+  private singleObjectCrud = new FolderFactory().createSingleObjectCrud();
+  private multipleObjectCrud = new FolderFactory().createMultipleObjectCrud();
 
   constructor() {}
 
-  getFolderList(filter?: Filter): Promise<Folder[]> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('folder')
-        .getElementList('folder', filter)
-        .then((response: any) => {
-          resolve(new Folder().deserializeArray(response.result));
-        });
-    });
+  async getFolderList(filter?: IFilter): Promise<ICollection<IFolder>> {
+    return (await this.multipleObjectCrud.getCollection(filter)).result;
   }
 
-  getFolder(pkey: any): Promise<Folder> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('folder')
-        .getElement('folder', pkey)
-        .then((response: any) => {
-          resolve(new Folder().deserialize(response.result));
-        });
-    });
+  async getFolder(pkey: any): Promise<IFolder> {
+    return (await this.singleObjectCrud.getElement(pkey)).result;
   }
 
-  createFolder(folder: Folder[]): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('folder')
-        .createElement('folder', folder)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
+  async createFolder(folder: IFolder): Promise<IFolder> {
+    return (await this.singleObjectCrud.createElement(folder)).result;
   }
 
-  deleteFolder(pkey: any): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('folder')
-        .deleteElement('folder', pkey)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
+  async deleteFolder(pkey: any): Promise<boolean> {
+    return (await this.singleObjectCrud.deleteElement(pkey)).result;
   }
 }

@@ -5,33 +5,24 @@
   [paddingLeftHeader]="'1rem'"
 >
   <div tool >
-<div class="input-tax-model">
-  <app-input
-  [type]="'select'"
-  [label]="'Modelo'"
-  [placeholder]="'Modelo'"
-  [options]="modelsList"
-  ></app-input>
-
-
-
     <app-input
     [type]="'select'"
     [label]="'Año'"
     [placeholder]="'2023'"
     [options]="modelsYears"
     ></app-input>
-
-</div>
-
-
-
   </div>
-  <div content *ngIf="this.tabIndex == 0" >
-    <app-table-tax-model [trimester]="1" (click)="showModal">
-
-    </app-table-tax-model>
+  <div content *ngIf="this.tabIndex == 0">
+    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
+      <mat-grid-tile class="position-top-col" [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
+        <app-table-tax-model [trimester]="1"></app-table-tax-model>
+      </mat-grid-tile>
+    </mat-grid-list>
   </div>
+
   <div content *ngIf="this.tabIndex == 1">
     <app-table-tax-model [trimester]="2"></app-table-tax-model>
   </div>

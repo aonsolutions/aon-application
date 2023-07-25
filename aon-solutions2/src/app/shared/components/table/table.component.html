@@ -1,52 +1,34 @@
-<!-- set-color -->
-
-<table mat-table mat-flat-table [dataSource]="this.dataSource" color="primary">
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef> Modelo </th>
-    <td mat-cell *matCellDef="let model">
-      <div class="table-model">Modelo {{model.name}}</div>
-      <div class="table-taxType"> {{model.taxType}} </div>
+<table
+  mat-table
+  mat-flat-table
+  [dataSource]="data"
+>
+  <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+    <th mat-header-cell *matHeaderCellDef> {{head[column]}} </th>
+    <td mat-cell *matCellDef="let element">
+      <!--Add text only-->
+      <span *ngIf="column !== 'actions'" [innerHTML]="element[column]"></span>
+      <!--Add buttons acctions-->
+      <span *ngIf="column === 'actions'">
+        <span *ngFor="let button of element[column]">
+          <app-icon
+            id='btn-models'
+            shape="{{button}}"
+            (click)="tableClick(element['key'], button)"
+            class='griss'
+          ></app-icon>
+        </span>
+      </span>
     </td>
   </ng-container>
-
-  <ng-container matColumnDef="result">
-    <th mat-header-cell *matHeaderCellDef> Resultado </th>
-    <td mat-cell *matCellDef="let model"> {{model.result}} € </td>
-  </ng-container>
-
-  <ng-container matColumnDef="status">
-    <th mat-header-cell *matHeaderCellDef> Estado </th>
-    <td mat-cell *matCellDef="let model">
-      <app-icon class="orange" shape="watch_later" *ngIf="model.status === 'pendiente'"></app-icon>
-      <div class="table-status">{{model.status}} </div>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="paymentMethod">
-    <th mat-header-cell *matHeaderCellDef> Método de pago </th>
-    <td mat-cell class="table-payment" *matCellDef="let model"> {{model.paymentMethod}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="acciones">
-    <th mat-header-cell *matHeaderCellDef> Acciones </th>
-    <td mat-cell *matCellDef="let model"> {{model.acciones}}
-      <app-icon shape="eye" *ngIf="model.status === 'pendiente' || model.status === 'confirmado'" ></app-icon>
-      <app-icon shape="picture_as_pdf" *ngIf="model.status === 'presentado'"></app-icon>
-      <app-icon shape="done_all" *ngIf="model.status === 'pendiente'"></app-icon>
-      <app-icon shape="edit" *ngIf="model.status === 'pendiente'">
-
-      </app-icon>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight-row': row.status === 'pendiente'}"></tr>
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
 </table>
 
-<!-- <mat-paginator [length]="100"
-              [pageSize]="10"
-              [pageSizeOptions]="[5, 10, 25, 100]"
-              aria-label="Select page">
-</mat-paginator> -->
-
-
+<mat-paginator
+  *ngIf="pagination"
+  [length]="100"
+  [pageSize]="10"
+  [pageSizeOptions]="[5, 10, 25, 100]"
+  aria-label="Select page">
+</mat-paginator>

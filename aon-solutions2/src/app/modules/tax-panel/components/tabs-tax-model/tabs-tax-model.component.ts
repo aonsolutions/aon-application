@@ -7,8 +7,6 @@ import {
   Output,
 } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
-import { TaxModel } from 'src/app/core/models/class/tax-model';
-import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 export interface Tabs {
   name: string;
@@ -31,9 +29,7 @@ export interface Models {
   styleUrls: ['./tabs-tax-model.component.scss'],
 })
 export class TabsTaxModelComponent implements OnInit {
-  models: TaxModel[] = [];
-
-  tabIndex: number = 0;
+  tabIndex:number = 0
 
   tabs: Tabs[] = [
     { name: '1 Trimestre' },
@@ -71,24 +67,8 @@ export class TabsTaxModelComponent implements OnInit {
   @Output() changeTabIndex = new EventEmitter<number>();
   showModal: any;
 
-  constructor(public taxModelService: TaxModelService) {
-    taxModelService.getTaxModelList().then((response) => {
-      this.models = response;
-      for (let index = 1; index < response.length; index++) {
-        const element = response[index];
-        //verificar si modelo existe en el array, si no existe lo introduzco
-        if (!this.modelsList.some(model => model.text === element.Name)) {
-          this.modelsList.push({ value: index, text: element.Name });
-        }
-        //verificar si el año está en el array, si no existe lo introduzco
-        if (!this.modelsYears.some(model => model.text === element.Year)) {
-          this.modelsYears.push({ value: index, text: element.Year });
-        }
-      }
 
-      console.log(response, this.modelsList);
-    });
+  ngOnInit(): void {
   }
 
-  ngOnInit(): void {}
 }

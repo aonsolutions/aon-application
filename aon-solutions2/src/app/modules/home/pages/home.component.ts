@@ -1,13 +1,8 @@
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ChartType } from 'chart.js';
+import { CollectionFactory, IBank, ICollection, IMessage, ITaxModel } from 'libraries/AonSDK/aon';
 import { MultiDataSet } from 'ng2-charts';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { Bank } from 'src/app/core/models/class/bank';
-import { Message } from 'src/app/core/models/class/message';
-import { TaxModel } from 'src/app/core/models/class/tax-model';
+import { BehaviorSubject } from 'rxjs';
 import { BankService } from 'src/app/core/services/bank.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { ReportingService } from 'src/app/core/services/reporting.service';
@@ -68,20 +63,21 @@ export class HomeComponent implements OnInit {
   ];
   private chartItemsSubject = new BehaviorSubject<any[]>([]);
   public chartItems$ = this.chartItemsSubject.asObservable();
+  public collectionFactory = new CollectionFactory();
 
   //banks area
-  banks: Bank[] = [];
-  private banksSubject = new BehaviorSubject<any[]>([]);
+  banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
+  private banksSubject = new BehaviorSubject<ICollection<IBank>>(this.collectionFactory.createBankCollection());
   public banks$ = this.banksSubject.asObservable();
 
   //modelTax area
-  models: TaxModel[] = [];
-  private modelsSubject = new BehaviorSubject<any[]>([]);
+  models: ICollection<ITaxModel> = this.collectionFactory.createTaxModelCollection();
+  private modelsSubject = new BehaviorSubject<ICollection<ITaxModel>>(this.collectionFactory.createTaxModelCollection());
   public models$ = this.modelsSubject.asObservable();
 
   //Inbox area
-  messages: Message[] = [];
-  private messagesSubject = new BehaviorSubject<any[]>([]);
+  messages: ICollection<IMessage> = this.collectionFactory.createMessageCollection();
+  private messagesSubject = new BehaviorSubject<ICollection<IMessage>>(this.collectionFactory.createMessageCollection());
   public messages$ = this.messagesSubject.asObservable();
 
 
@@ -119,7 +115,6 @@ export class HomeComponent implements OnInit {
       this.chartItems[0].chartData = response.datasets.map((dataset: any) => dataset.data);
       this.chartItems[0].chartLabels = response.label;
       this.chartItemsSubject.next(this.chartItems);
-      console.log(response);
     });
 
 
