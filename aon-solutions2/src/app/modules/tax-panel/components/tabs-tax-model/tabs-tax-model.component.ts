@@ -1,16 +1,11 @@
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
-import { TaxModel } from 'src/app/core/models/class/tax-model';
-import { TaxModelService } from 'src/app/core/services/tax-model.service';
-
-
 
 export interface Tabs {
   name: string;
 }
 
 export interface Models {
-
   name: string;
   taxType: number;
   result: number;
@@ -21,16 +16,12 @@ export interface Models {
   acciones?: any;
 }
 
-
 @Component({
   selector: 'app-tabs-tax-model',
   templateUrl: './tabs-tax-model.component.html',
   styleUrls: ['./tabs-tax-model.component.scss']
 })
 export class TabsTaxModelComponent implements OnInit {
-
-  models: TaxModel[] = [];
-
   tabIndex:number = 0
 
   tabs: Tabs[] = [
@@ -66,15 +57,6 @@ export class TabsTaxModelComponent implements OnInit {
   @HostBinding('style.--styleTabColor') styleTabColor = '';
   @Output() changeTabIndex = new EventEmitter<number>();
 
-
-
-
-  constructor( public taxModelService :TaxModelService ) {
-    taxModelService.getTaxModelList().then((response) => {
-     this.models = response;
-     console.log(response)
-   });
-  }
 
   ngOnInit(): void {
   }

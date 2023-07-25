@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { TaxModel } from 'src/app/core/models/class/tax-model';
+import { CollectionFactory, ICollection, ITaxModel } from 'libraries/AonSDK/aon';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 @Component({
@@ -10,55 +10,49 @@ import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 export class TableTaxModelComponent implements OnInit {
   @Input() trimester!: number;
-  dataSource         : any = [];
+  bodyTable          : any = [];
   headerTable        : any = {name: 'modelo', result: 'Resultado', status: 'estado', paymentMethod: 'Metodo de pago', actions: 'acciones'};
   displayedColumns   : string[] = ['name', 'result', 'status', 'paymentMethod', 'actions'];
   
   constructor( public taxModelService :TaxModelService ) {
-    var tableData: any = [];
+    let tableRow : any = [];
+    let column   : any = {};
     // Model date
     taxModelService.getTaxModelList().then((response) => {
       // Tax
       response.forEach(function (tax, taxKey) {
-        // Add object
-        tableData[taxKey] = {};
-        // Object Tax
-        (Object.keys(tax) as (keyof typeof tax)[]).forEach((type, index) => {           
-            // Predefinimos la key de la fila
-            tableData[taxKey].key = taxKey
-            // Cargamos datos en la tabla
-            if(tax[type] === tax['name']){
-              tableData[taxKey][type] = 
-                "<div class='orange'>MODELO" + tax[type] + "</div>"+
-                "<span class='griss'>"+ tax['taxType'] +"</span>";
-            } else if(tax[type] === tax['result']){
-              tableData[taxKey][type] = tax[type] + ' &euro;';
-            } else if(tax[type] === tax['status']){
-              tableData[taxKey][type] = "<span class='background-text-orange-light'>"+ tax[type] +"</span>";
-              // Add date Actions ( buttons )
-              // La referencia tendra que ser por ID, ya que el texto puede cambiar dependiendo del idioma
-              switch(tax[type]){
-                case 'pendiente':
-                  tableData[taxKey].actions = ['eye', 'done_all', 'edit'];
-                break;
-                case 'confirmado':
-                  tableData[taxKey].actions = ['eye'];
-                break;
-                case 'presentado':
-                  tableData[taxKey].actions = ['picture_as_pdf'];
-                break;
-                default:
-                  tableData[taxKey].actions = [];
-                break;
-              }
-            } else {
-              // Duplicate date
-              tableData[taxKey][type] = tax[type];
-            } 
-        });
-      }); 
-      // Tax date format
-      this.dataSource = tableData;
+        // clone object
+        column = Object.assign({}, tax);
+        // Object Tax        
+          // Predefinimos la key de la fila
+          column.key  = taxKey;
+          // Cargamos datos en la tabla
+          column.name = 
+              "<div class='orange'>MODELO" + tax.Name + "</div>"+
+              "<span class='griss'>"+ tax.TaxType +"</span>";
+          column.result = tax.Result + ' &euro;';
+          column.status = "<span class='background-text-orange-light'>"+ tax.Status +"</span>";
+          // Add date Actions ( buttons )
+          // La referencia tendra que ser por ID, ya que el texto puede cambiar dependiendo del idioma
+          switch(tax.Status){
+            case 'pendiente':
+              column.actions = ['eye', 'done_all', 'edit'];
+            break;
+            case 'confirmado':
+              column.actions = ['eye'];
+            break;
+            case 'presentado':
+              column.actions = ['picture_as_pdf'];
+            break;
+            default:
+              column.actions = [];
+            break;
+          }
+        // Add object date table 
+        tableRow.push(column);
+      });
+      // Tax date format for table
+      this.bodyTable = tableRow;
     });
   }
 
@@ -69,8 +63,12 @@ export class TableTaxModelComponent implements OnInit {
     // Fila de la tabla que se esta usando
     // Boton que ha sido clickeado
     console.log(object);
-    console.log(this.dataSource[object.key]);
-    console.log(this.dataSource[object.key].actions[object.keyButton]);
+    // reference icon click
+    console.log(object.keyButton);
+    // Model tax reference
+    this.taxModelService.getTax(object.key).then((response) => {
+      console.log(response);
+    });
   }
 
 }

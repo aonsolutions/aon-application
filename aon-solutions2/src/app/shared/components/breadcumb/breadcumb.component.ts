@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { DropdownMenuComponent } from '../dropdown-menu/dropdown-menu.component';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { EnterpriseService } from 'src/app/core/services/enterprise.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-breadcumb',
@@ -17,7 +18,7 @@ export class BreadcumbComponent implements OnInit {
   menuItem: MenuItem [] = []
   haveData: boolean = false
 
-  constructor(private router: Router, public enterpriseService: EnterpriseService) {
+  constructor(private router: Router, public enterpriseService: EnterpriseService, public authService: AuthService) {
     this.router.events.subscribe((event) => {       
       event instanceof NavigationEnd ? this.checkCurrentRoute() : null     
     })
@@ -26,12 +27,12 @@ export class BreadcumbComponent implements OnInit {
   ngOnInit(): void {
     this.enterpriseService.getEnterpriseList()
     .then(
-      (response:any) => {
-        let actualDocument = this.enterpriseService.getEnterpriseSelected();
-        for(let i = 0; i < response.length; i++){
-          this.menuItem.push({root:true, text:response[i].name, click: () => this.setEnterpriseSelected(response[i].name,response[i].document)})
-          if(response[i].document == actualDocument) this.selectedEnterprise = response[i].name;
-        }
+      (response) => {
+        let actualDocument = this.authService.getEnterpriseSelected();
+        response.forEach((element) => {
+          this.menuItem.push({root:true, text:element.Name, click: () => this.setEnterpriseSelected(element.Name,element.Document)})
+          if(element.Document == actualDocument) this.selectedEnterprise = element.Name;
+        })
         this.haveData = true;
       }
     )
@@ -48,7 +49,7 @@ export class BreadcumbComponent implements OnInit {
 
   setEnterpriseSelected(name : any, cif: any){
     this.selectedEnterprise = name;
-    this.enterpriseService.setEnterprise(cif)
+    this.authService.setEnterprise(cif)
   }
 
 }

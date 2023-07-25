@@ -10,11 +10,11 @@
       <span *ngIf="column !== 'actions'" [innerHTML]="element[column]"></span>
       <!--Add buttons acctions-->
       <span *ngIf="column === 'actions'">
-        <span *ngFor="let button of element[column]; let i = index">
+        <span *ngFor="let button of element[column]">
           <app-icon 
             id='btn-models'
             shape="{{button}}"
-            (click)="tableClick(element['key'], i)"
+            (click)="tableClick(element['key'], button)"
             class='griss'
           ></app-icon>
         </span>

@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { BankService } from '../../../../core/services/bank.service';
-import { Bank } from 'src/app/core/models/class/bank';
 import { Observable } from 'rxjs';
+import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/aon';
 
 @Component({
   selector: 'app-banks-dashboard',
@@ -13,9 +12,10 @@ import { Observable } from 'rxjs';
   },
 })
 export class BanksDashboardComponent implements OnInit {
-  banks: Bank[] = [];
+  public collectionFactory = new CollectionFactory();
+  banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
   totalAmount: number = 0;
-  @Input() public bankList: Observable<Bank[]> | undefined;
+  @Input() public bankList: Observable<ICollection<IBank>> | undefined;
 
   constructor() {}
 
@@ -30,11 +30,11 @@ export class BanksDashboardComponent implements OnInit {
     }
   }
   calculateTotalAmount(): void {
-    this.totalAmount = this.banks.reduce((sum, bank) => sum + bank.Total, 0);
+    this.totalAmount = this.banks.toArray().reduce((sum, bank) => sum + bank.Total, 0);
   }
 
   hasBanks(): boolean {
-    return this.banks.length > 0;
+    return this.banks.size() > 0;
   }
 
 }

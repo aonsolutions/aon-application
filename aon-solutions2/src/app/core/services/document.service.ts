@@ -1,120 +1,47 @@
 import { Injectable } from '@angular/core';
-import { AonSDK, Filter } from 'libraries/AonSDK/AonSDK';
-import { Document } from '../models/class/document';
-import { DocumentNote } from '../models/class/document-note';
 import { b64toBlob } from '../utilities/file';
+import { DocumentFactory, ICollection, IDocument, IFilter } from 'libraries/AonSDK/aon';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DocumentService {
-  aonSDK: AonSDK = new AonSDK();
+
+  private singleObjectCrud = new DocumentFactory().createSingleObjectCrud();
+  private multipleObjectCrud = new DocumentFactory().createMultipleObjectCrud();
 
   constructor() {}
 
-  getDocumentList(filter?: Filter): Promise<Document[]> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('document')
-        .getElementList('document', filter)
-        .then((response: any) => {
-          resolve(new Document().deserializeArray(response.result));
-        });
-    });
+  async getDocumentList(filter?: IFilter): Promise<ICollection<IDocument>> {
+    return (await this.multipleObjectCrud.getCollection(filter)).result;
   }
 
-  getDocument(pkey: any): Promise<Document> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('document')
-        .getElement('document', pkey)
-        .then((response: any) => {
-          resolve(new Document().deserialize(response.result));
-        });
-    });
+  async getDocument(pkey: any): Promise<IDocument> {
+    return (await this.singleObjectCrud.getElement(pkey)).result;
   }
 
-  updateDocument(documents: Document[]): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('document')
-        .updateElement('document', documents)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
+  async updateDocument(documents: IDocument | ICollection<IDocument>): Promise<IDocument | ICollection<IDocument>> {
+    console.log(typeof documents);
+    return (await this.singleObjectCrud.updateElement(documents as IDocument)).result;
   }
 
-  deleteDocument(pkey: any): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('document')
-        .deleteElement('document', pkey)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
+  async deleteDocument(pkey: any): Promise<boolean> {
+    return (await this.singleObjectCrud.deleteElement(pkey)).result;
   }
 
-  createDocument(documents: Document[]): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('document')
-        .createElement('document', documents)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
+  async createDocument(documents: IDocument): Promise<IDocument> {
+    return (await this.singleObjectCrud.createElement(documents)).result;
   }
 
-  getDocumentNote(pkey: any): Promise<DocumentNote> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('documentnote')
-        .getElement('documentnote', pkey)
-        .then((response: any) => {
-          resolve(new DocumentNote().deserialize(response.result));
-        });
-    });
-  }
-
-  deleteDocumentNote(pkey: any): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('documentnote')
-        .deleteElement('documentnote', pkey)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
-  }
-
-  createDocumentNote(documentnotes: DocumentNote[]): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.aonSDK
-        .model('documentnote')
-        .createElement('documentnote', documentnotes)
-        .then((response: any) => {
-          resolve(response.result);
-        });
-    });
-  }
-
-  downloadDocument(path: string): Promise<boolean> {
-    return new Promise((resolve,reject) => {
-      this.aonSDK
-        .model('document')
-        .getElement('document', path)
-        .then((response: any) => {
-          const blob = b64toBlob(response.result.file, response.result.fileType);
-          const blobUrl = URL.createObjectURL(blob);
-          const a = document.createElement('a')
-          a.href = blobUrl
-          a.download = response.result.fileName;
-          a.click();
-          URL.revokeObjectURL(blobUrl);
-        });
-    });
+  async downloadDocument(path: string): Promise<void> {
+    let response: IDocument = (await this.singleObjectCrud.getElement(path)).result
+    const blob = b64toBlob(response.File, response.FileType);
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a')
+    a.href = blobUrl
+    a.download = response.FileName;
+    a.click();
+    URL.revokeObjectURL(blobUrl);
   }
 
 }

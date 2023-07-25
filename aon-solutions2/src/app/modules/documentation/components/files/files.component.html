@@ -8,7 +8,7 @@
   <div id="documentation-menu" detail class="allSize" nav style="overflow: auto;">
     <mat-grid-list class="nav-documentation" [cols]="24" [rowHeight]="'4.2rem'">
 
-      <div *ngIf="documentationFolders.length > 0; else noFolders">
+      <div *ngIf="documentationFolders.size() > 0; else noFolders">
         <mat-grid-tile [gridCols]="{xs:24,sm:24,md:24,lg:24,xl:24}" *ngFor="let folder of documentationFolders" (click)="getFiles(folder)" >
           <app-button class="icon-background-pink bold item-folder left" [width]="'100%'" >
             <app-icon [shape]="'folder_open'"></app-icon>
