@@ -1338,7 +1338,7 @@ export class CollectionFactory implements ICollectionFactory {
     }
 }
 
-class Document implements IDocument, ICollectable {
+class Document implements IDocument, IModel {
     private file: string;
     private fileName: string;
     private fileSize: number;
@@ -1445,7 +1445,7 @@ class StorableDocument extends Document implements IStorable<Document> {
     }
 }
 
-class Folder implements IFolder, ICollectable  {
+class Folder implements IFolder, IModel  {
     private name: string;
     private path: string;
     private parent: string;
@@ -1518,7 +1518,7 @@ class StorableFolder extends Folder implements IStorable<Folder> {
     }
 }
 
-class Enterprise implements IEnterprise, ICollectable {
+class Enterprise implements IEnterprise, IModel {
     private name: string;
     private document: string;
     private key: string;
@@ -1578,7 +1578,7 @@ class StorableEnterprise extends Enterprise implements IStorable<Enterprise> {
     }
 }
 
-class DocumentNote implements IDocumentNote, ICollectable  {
+class DocumentNote implements IDocumentNote, IModel  {
     private text: string;
     private path: string;
     private key: string;
@@ -1639,7 +1639,7 @@ class StorableDocumentNote extends DocumentNote implements IStorable<DocumentNot
     }
 }
 
-class Bank implements IBank, ICollectable  {
+class Bank implements IBank, IModel  {
     private name: string;
     private key: string;
     private total: number;
@@ -1712,7 +1712,7 @@ class StorableBank extends Bank implements IStorable<Bank> {
     }
 }
 
-class TaxModel implements ITaxModel, ICollectable  {
+class TaxModel implements ITaxModel, IModel  {
     private name: string;
     private taxType: string;
     private status: string;
@@ -1837,7 +1837,7 @@ class StorableTaxModel extends TaxModel implements IStorable<TaxModel> {
     }
 }
 
-class Message implements IMessage, ICollectable  {
+class Message implements IMessage, IModel  {
     private id: string;
     private name: string;
     private title: string;
@@ -1970,7 +1970,7 @@ class StorableMessage extends Message implements IStorable<Message> {
     }
 }
 
-class MessageChat implements IMessageChat, ICollectable  {
+class MessageChat implements IMessageChat, IModel  {
     private id: string;
     private idMessage: string;
     private name: string;
@@ -2077,7 +2077,7 @@ class StorableMessageChat extends MessageChat implements IStorable<MessageChat> 
     }
 }
 
-class Employee implements IEmployee, ICollectable  {
+class Employee implements IEmployee, IModel  {
     private name: string;
     private lastname: string;
     private document: string;
@@ -2200,7 +2200,7 @@ class StorableEmployee extends Employee implements IStorable<Employee> {
     }
 }
 
-class Auth implements IAuth, ICollectable  {
+class Auth implements IAuth, IModel  {
     private email: string;
     private password: string;
     private key: string;
