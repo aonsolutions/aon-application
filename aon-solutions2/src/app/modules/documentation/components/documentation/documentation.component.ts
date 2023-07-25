@@ -34,7 +34,6 @@ export class DocumentationComponent implements OnInit {
   }
 
   getFolders(parentFolder: string = '') {
-    console.log('getfolders')
     let filter = new FilterBuilder();
     filter.addField('parent', parentFolder);
     this.folderService.getFolderList(filter.getFilter()).then(listFolders => {
@@ -48,11 +47,9 @@ export class DocumentationComponent implements OnInit {
   }
 
   getFiles(folder: IFolder) {
-    console.log('getfiles')
     this.showFiles = true;
     let filter = new FilterBuilder();
     filter.addField('Path', folder.Path);
-    console.log(folder.Path)
     this.documentService.getDocumentList(filter.getFilter()).then(documentsList => {
       this.documentsList = documentsList;
     })

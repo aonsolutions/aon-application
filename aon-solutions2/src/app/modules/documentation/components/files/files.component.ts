@@ -36,7 +36,6 @@ export class FilesComponent implements OnInit {
       // TODO: Mejorar para que esta lista venga desde documentation
       this.documentationFolders = listFolders//.filter(folder => folder.Parent === '/')
       // Filtrar listFolders por tipo
-      console.log(`/${tipo}`);
       this.documentationFilteredFolders = listFolders//.filter(folder => folder.Parent.startsWith(`/${tipo}`));
     });
   }
