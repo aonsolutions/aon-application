@@ -58,8 +58,10 @@
     /*
     * Icon separation
     */
-    table tbody tr td app-icon{
+    table tbody tr td app-icon.click{
       cursor        : pointer;
+    }
+    table tbody tr td app-icon{
       padding-right : $padding-right;
     }
 

@@ -7,7 +7,18 @@
     <th mat-header-cell *matHeaderCellDef> {{head[column]}} </th>
     <td mat-cell *matCellDef="let element">
       <!--Add text only-->
-      <span *ngIf="column !== 'actions'" [innerHTML]="element[column]"></span>
+      <span *ngIf="column !== 'actions' && !element[column].icon" [innerHTML]="element[column]"></span>
+      <span *ngIf="column !== 'actions' && element[column].icon">
+        <span *ngFor="let buttons of element[column].icon">
+          <app-icon 
+            *ngFor="let color of buttons | keyvalue"
+            id='btn-models'
+            shape="{{color.key}}"
+            class='{{color.value}}'
+          ></app-icon>
+        </span>
+        <span *ngIf="element[column].text" [innerHTML]="element[column].text"></span>
+      </span>
       <!--Add buttons acctions-->
       <span *ngIf="column === 'actions'">
         <span *ngFor="let button of element[column]">
@@ -15,7 +26,7 @@
             id='btn-models'
             shape="{{button}}"
             (click)="tableClick(element['key'], button)"
-            class='griss'
+            class='griss click'
           ></app-icon>
         </span>
       </span>

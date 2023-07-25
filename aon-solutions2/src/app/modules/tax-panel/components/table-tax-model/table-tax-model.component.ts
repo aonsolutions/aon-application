@@ -31,7 +31,10 @@ export class TableTaxModelComponent implements OnInit {
               "<div class='orange'>MODELO" + tax.Name + "</div>"+
               "<span class='griss'>"+ tax.TaxType +"</span>";
           column.result = tax.Result + ' &euro;';
-          column.status = "<span class='background-text-orange-light'>"+ tax.Status +"</span>";
+          column.status = tax.Status === 'pendiente' ? {
+            icon: [{watch_later: 'orange'}], 
+            text: "<span class='background-text-orange'>"+ tax.Status +"</span>"
+          } : "<span class='background-text-orange-light margin-left-2'>"+ tax.Status +"</span>";
           // Add date Actions ( buttons )
           // La referencia tendra que ser por ID, ya que el texto puede cambiar dependiendo del idioma
           switch(tax.Status){
