@@ -1,32 +1,66 @@
 @import 'src/styles.scss';
 
 ::ng-deep{
+  
   table {
-    width: 100%;
+    width           : 100%;
+    border-collapse : separate;
+    border-spacing  : 0 0.9rem !important;
   }
+
+  /*
+  * Head table
+  * First letter capitalized
+  */
+    table thead tr th{
+      font-size     : 0.7rem !important;
+      font-family   : Roboto-Medium;
+      text-transform: lowercase;
+      padding-left  : $padding-left !important;
+      padding-bottom: $padding-bottom !important;
+      border        : none !important;
+    }
+
+    table thead tr th:first-letter {
+      text-transform: uppercase;
+    }
+
+  /*
+  * Body table
+  */
+    table tbody tr{
+      position: relative;
+      top     : -0.9rem !important;
+    }
+    table tbody tr{
+      height        : 3rem !important;
+    }
+    
+    table tbody tr td,
+    table div,
+    table span,{
+      font-size     : 0.7rem  !important;
+      font-family   : Roboto-Medium;
+    }
+    table tbody tr td{
+      padding-left  : $padding-left !important;
+      border-top    : $border !important;
+      border-bottom : $border !important;
+    }
+    table tbody tr td:first-child{
+      border-left   : $border !important;
+      border-radius : $border-radius 0 0 $border-radius;
+    }
+    table tbody tr td:last-child{
+      border-right  : $border !important;
+      border-radius : 0 $border-radius $border-radius 0;
+    }
+    /*
+    * Icon separation
+    */
+    table tbody tr td app-icon{
+      cursor        : pointer;
+      padding-right : $padding-right;
+    }
+
 };
-
-.table-taxType{
-color: $color-secondary
-
-};
-
-
-.table-model{
-  text-transform: uppercase;
-  color: $color-orange
-
-};
-
-.table-status {
-  padding: .25rem;
-  display: inline-flex;
-  border-radius: .2rem;
-  align-items: center;
-  background-color: #FDDCB9;
-  margin-left: .85rem;
-}
-
-.table-payment{
-  text-transform: uppercase;
-}
