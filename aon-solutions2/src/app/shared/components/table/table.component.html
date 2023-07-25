@@ -30,10 +30,10 @@
   <ng-container matColumnDef="acciones">
     <th mat-header-cell *matHeaderCellDef> Acciones </th>
     <td mat-cell *matCellDef="let model"> {{model.acciones}}
-      <app-icon shape="eye"></app-icon>
-      <app-icon shape="picture_as_pdf"></app-icon>
-      <app-icon shape="done_all"></app-icon>
-      <app-icon shape="edit">
+      <app-icon shape="eye" *ngIf="model.status === 'pendiente' || model.status === 'confirmado'" ></app-icon>
+      <app-icon shape="picture_as_pdf" *ngIf="model.status === 'presentado'"></app-icon>
+      <app-icon shape="done_all" *ngIf="model.status === 'pendiente'"></app-icon>
+      <app-icon shape="edit" *ngIf="model.status === 'pendiente'">
 
       </app-icon>
     </td>

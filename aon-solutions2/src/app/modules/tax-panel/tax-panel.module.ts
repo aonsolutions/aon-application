@@ -22,6 +22,7 @@ import { ModalEditTaxModelComponent } from './components/modal-edit-tax-model/mo
 import { MatDialogModule } from '@angular/material/dialog';
 import { ModalPaymentComponent } from './components/modal-payment/modal-payment.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { ModalTaxesDetailsComponent } from './components/modal-taxes-details/modal-taxes-details.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { MatRadioModule } from '@angular/material/radio';
     TabsTaxModelComponent,
     TableTaxModelComponent,
     ModalEditTaxModelComponent,
-    ModalPaymentComponent
+    ModalPaymentComponent,
+    ModalTaxesDetailsComponent
   ],
 
   imports: [
