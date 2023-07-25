@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -7,12 +9,16 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { AccordionComponent } from './components/accordion/accordion.component';
 import { BasicLayoutComponent } from './layouts/basic-layout/basic-layout.component';
@@ -28,31 +34,26 @@ import { ContentMainComponent } from './layouts/content-main/content-main.compon
 import { ContentSideNavComponent } from './layouts/content-side-nav/content-side-nav.component';
 import { DragAndDropDirective } from './directives/drag-and-drop.directive';
 import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
+import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack-bar.component';
 import { FileUploadButtonComponent } from './components/file-upload-button/file-upload-button.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FileViewerComponent } from './components/file-viewer/file-viewer.component';
 import { GlobalHoverDirective } from './directives/global-hover.directive';
 import { GridColsDirective } from './directives/grid-cols.directive';
+import { GridLayoutAltComponent } from './layouts/grid-layout-alt/grid-layout-alt.component';
 import { GridLayoutComponent } from './layouts/grid-layout/grid-layout.component';
 import { IconComponent } from './components/icon/icon.component';
 import { InputComponent } from './components/input/input.component';
 import { ListElementComponent } from './layouts/list-element/list-element.component';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ModalControllerComponent } from './components/modal-controller/modal-controller.component';
+import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
 import { SideNavComponent } from './layouts/side-nav/side-nav.component';
 import { SidenavHoverDirective } from './directives/sidenav-hover.directive';
 import { SidenavLayoutComponent } from './layouts/sidenav-layout/sidenav-layout.component';
+import { TableComponent } from './components/table/table.component';
 import { TabsComponent } from './components/tabs/tabs.component';
 import { TagComponent } from './components/tag/tag.component';
 import { TopBarComponent } from './layouts/top-bar/top-bar.component';
-import { FileViewerComponent } from './components/file-viewer/file-viewer.component';
-import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
-import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack-bar.component';
-import { TableComponent } from './components/table/table.component';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { GridLayoutAltComponent } from './layouts/grid-layout-alt/grid-layout-alt.component';
 
 @NgModule({
   declarations: [
@@ -69,9 +70,12 @@ import { GridLayoutAltComponent } from './layouts/grid-layout-alt/grid-layout-al
     ContentSideNavComponent,
     DragAndDropDirective,
     DropdownMenuComponent,
+    ErrorSnackBarComponent,
     FileUploadButtonComponent,
+    FileViewerComponent,
     GlobalHoverDirective,
     GridColsDirective,
+    GridLayoutAltComponent,
     GridLayoutComponent,
     IconComponent,
     InputComponent,
@@ -80,13 +84,10 @@ import { GridLayoutAltComponent } from './layouts/grid-layout-alt/grid-layout-al
     SideNavComponent,
     SidenavHoverDirective,
     SidenavLayoutComponent,
+    TableComponent,
     TabsComponent,
     TagComponent,
-    TopBarComponent,
-    FileViewerComponent,
-    ErrorSnackBarComponent,
-    TableComponent,
-    GridLayoutAltComponent,
+    TopBarComponent
   ],
   imports: [
     ChartsModule,
@@ -101,18 +102,17 @@ import { GridLayoutAltComponent } from './layouts/grid-layout-alt/grid-layout-al
     MatIconModule,
     MatInputModule,
     MatMenuModule,
-    MatMenuModule,
+    MatPaginatorModule,
     MatSelectModule,
     MatSidenavModule,
+    MatSortModule,
+    MatTableModule,
     MatTabsModule,
     MatToolbarModule,
+    PdfJsViewerModule,
     ReactiveFormsModule,
     RouterModule,
-    SetMaterialModule,
-    PdfJsViewerModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule
+    SetMaterialModule
   ],
   exports:[
     AccordionComponent,
@@ -127,9 +127,10 @@ import { GridLayoutAltComponent } from './layouts/grid-layout-alt/grid-layout-al
     ContentSideNavComponent,
     DropdownMenuComponent,
     FileUploadButtonComponent,
+    FileViewerComponent,
     GridColsDirective,
-    GridLayoutComponent,
     GridLayoutAltComponent,
+    GridLayoutComponent,
     IconComponent,
     InputComponent,
     ListElementComponent,
@@ -137,11 +138,11 @@ import { GridLayoutAltComponent } from './layouts/grid-layout-alt/grid-layout-al
     SideNavComponent,
     SidenavHoverDirective,
     SidenavLayoutComponent,
+    TableComponent,
     TabsComponent,
     TagComponent,
     TopBarComponent,
-    FileViewerComponent,
-    TableComponent
+    TranslateModule
   ]
 })
 export class SharedModule { }
