@@ -1,7 +1,7 @@
 /**
- * 
+ *
  * ERROR DATA
- * 
+ *
  */
 
 const ERRORS = {
@@ -25,9 +25,9 @@ const ERRORS = {
 }
 
 /*
- * 
+ *
  * FACTORYS INTERFACES
- * 
+ *
  */
 
 interface ISingleObjectCrudFactory<T extends ICollectable> {
@@ -59,9 +59,9 @@ interface IReportingDataAccessFactory {
 }
 
 /*
- * 
+ *
  * CONCRETE FACTORYS IMPLEMENTATIONS
- * 
+ *
  */
 
 export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMultipleObjectCrudFactory<IDocument> {
@@ -157,10 +157,19 @@ export class ReportingFactory implements IReportingDataAccessFactory {
     }
 }
 
+export class UserFactory implements ISingleObjectCrudFactory<IUser>, IMultipleObjectCrudFactory<IUser> {
+    createSingleObjectCrud(): ISingleObjectCrud<IUser> {
+        return new GenericSingleObjectCrud<User>(new GenericSingleObjectCrudRepository<User>(new StorableUser(), User), User);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IUser> {
+        return new GenericMultipleObjectCrud<User>(new GenericMultipleObjectCrudRepository<User>(new StorableUser(), User), User);
+    }
+}
+
 /*
- * 
+ *
  * INTERFACES TO DEFINE METHODS FOR CLIENT
- * 
+ *
  */
 
 interface ISingleObjectReader<T extends ICollectable> {
@@ -282,7 +291,7 @@ interface IAuthenticationManager {
 }
 
 /**
- * Interface for methods of reporting data 
+ * Interface for methods of reporting data
  */
 interface IReportingDataAccess {
     cobrosPagos(): Promise<IResponse<Object>>;
@@ -290,9 +299,9 @@ interface IReportingDataAccess {
 }
 
 /*
- * 
- * IMPLEMENTATION OF INTERFACES FOR THE CLIENTS - 
- * 
+ *
+ * IMPLEMENTATION OF INTERFACES FOR THE CLIENTS -
+ *
  */
 
 
@@ -455,9 +464,9 @@ class ReportingDataAccess implements IReportingDataAccess {
 }
 
 /*
- * 
+ *
  * REPOSITORY INTERFACES
- * 
+ *
  */
 
 interface IRepositorySingleObjectReader<T> {
@@ -555,9 +564,9 @@ interface IReportingRepository {
 }
 
 /*
- * 
+ *
  * CONCRETE REPOSITORY IMPLEMENTATION
- * 
+ *
  */
 
 class GenericMultipleObjectCrudRepository<T extends IModel> implements IMultipleObjectCrudRepository<T> {
@@ -657,7 +666,7 @@ class GenericSingleObjectCrudRepository<T extends IModel> implements ISingleObje
             element.Key = element.getKey();
             this.instance.getCollection().add(element)
             this.localStorageManager.write(this.instance.getLocalStorage(), this.instance.getCollection())
-            return element;    
+            return element;
         }else{
             throw new ErrorResponse('0202');
         }
@@ -723,9 +732,9 @@ class ReportingRepository implements IReportingRepository {
 }
 
 /*
- * 
+ *
  * UTILITIES INTERFACE, FOR EXAMPLE COLLECTION TO MANAGE A LIST OF OBJECTS
- * 
+ *
  */
 
 export interface IResponse<T> {
@@ -788,7 +797,7 @@ export interface ICollection<T extends ICollectable> extends Iterable<T> {
     sort(filter: IFilter): void;
     /**
      * forEach method to loop over the collection
-     * 
+     *
      * @Example collection.foreach((element,index) => {
      *    console.log(element, index);
      * })
@@ -834,9 +843,9 @@ export interface IFilter {
 }
 
 /*
- * 
+ *
  * CONCRETE IMPLEMENTATION OF UTILITIES INTERFACES
- * 
+ *
  */
 
 class KeyGenerator {
@@ -924,7 +933,7 @@ export class FilterBuilder {
         this.filter.pageItems = pageItems;
     }
     /**
-     * Add new field to filter 
+     * Add new field to filter
      * @param field The field to filter as string
      * @param value The value of the field
      */
@@ -1000,7 +1009,7 @@ export class Collection<T extends ICollectable> implements ICollection<T> {
     constructor() {
         this.data = new Map<string, T>();
     }
-    
+
     // Iterator for collection to work on loops of type => for(const element of collection)
     [Symbol.iterator](): Iterator<T, any, undefined> {
         return this.data.values();
@@ -1085,14 +1094,14 @@ export class Collection<T extends ICollectable> implements ICollection<T> {
         // Apply the filter usings fields of filter and == operator
         if(filter.fields?.size != 0)
             filter.fields?.forEach((value, key) => {
-                filteredArray = filteredArray.filter(element => 
+                filteredArray = filteredArray.filter(element =>
                     typeof value != 'string' ? element.getFilterableFields().get(key.toLowerCase()) == value : element.getFilterableFields().get(key.toLowerCase()) == value//element.getFilterableFields().get(key.toLowerCase()).includes(value)
                 )
             })
         // Apply the filter usings interval fields and >= and <= operator
         if(filter.intervalFields?.size != 0)
             filter.intervalFields?.forEach((value, key) => {
-                filteredArray = filteredArray.filter(element => 
+                filteredArray = filteredArray.filter(element =>
                     value.end >= element.getFilterableFields().get(key.toLowerCase()) <= value.start
                 )
             })
@@ -1131,9 +1140,9 @@ export class Collection<T extends ICollectable> implements ICollection<T> {
 }
 
 /*
- * 
+ *
  * INTERFACES FOR CONCRETE CLASSES
- * 
+ *
  */
 
 interface IFactory {
@@ -1146,6 +1155,7 @@ interface IFactory {
     createMessage(): IMessage;
     createMessageChat(): IMessageChat;
     createEmployee(): IEmployee;
+    createUser(): IUser;
 }
 
 interface ICollectionFactory {
@@ -1158,6 +1168,7 @@ interface ICollectionFactory {
     createMessageCollection(): ICollection<IMessage>;
     createMessageChatCollection(): ICollection<IMessageChat>;
     createEmployeeCollection(): ICollection<IEmployee>;
+    createUserCollection(): ICollection<IUser>;
 }
 
 interface ICollectable {
@@ -1272,10 +1283,19 @@ interface IAuth extends ICollectable{
     Password: string;
 }
 
+interface IUser extends ICollectable {
+  Name: string,
+  Lastname: string,
+  Document: string,
+  Email: string,
+  Phone: string,
+  Active: boolean
+}
+
 /*
- * 
+ *
  * IMPLEMENTATION OF INTERFACES FOR CONCRETE CLASSES
- * 
+ *
  */
 
 export class Factory implements IFactory {
@@ -1306,6 +1326,10 @@ export class Factory implements IFactory {
     createEmployee(name?: string, lastname?: string, document?: string, email?: string, phone?: string, naf?: string, active?: boolean): IEmployee {
         return new Employee(name, lastname, document, email, phone, naf, active);
     }
+
+    createUser(name?: string, lastname?: string, document?: string, email?: string, phone?: string, active?: boolean): IUser {
+        return new User(name, lastname, document, email, phone, active);
+    }
 }
 
 export class CollectionFactory implements ICollectionFactory {
@@ -1335,6 +1359,10 @@ export class CollectionFactory implements ICollectionFactory {
     }
     createEmployeeCollection(): ICollection<IEmployee> {
         return new Collection<Employee>();
+    }
+
+    createUserCollection(): ICollection<IUser> {
+        return new Collection<User>();
     }
 }
 
@@ -1411,7 +1439,7 @@ class Document implements IDocument, IModel {
 
     public set Key(key: string) {
         this.key = key;
-    } 
+    }
 
     getKey(): string {
         return this.path + '/' + this.fileName;
@@ -1566,7 +1594,7 @@ class Enterprise implements IEnterprise, IModel {
         map.set('document', this.Document);
         return map;
     }
-    
+
 }
 
 class StorableEnterprise extends Enterprise implements IStorable<Enterprise> {
@@ -2261,11 +2289,126 @@ class StorableAuth extends Auth implements IStorable<Auth> {
     }
 }
 
+class User implements IUser, IModel  {
+  private name: string;
+  private lastname: string;
+  private document: string;
+  private email: string;
+  private phone: string;
+  private active: boolean;
+  private key: string;
+
+  constructor(name?: string, lastname?: string, document?: string, email?: string, phone?: string, active?: boolean) {
+    this.name = name || '';
+    this.lastname = lastname || '';
+    this.document = document || '';
+    this.email = email || '';
+    this.phone = phone || '';
+    this.active = active || true;
+    this.key = document || '';
+  }
+
+  public get Name(): string {
+    return this.name;
+  }
+
+  public set Name(value: string) {
+    this.name = value;
+  }
+
+  public get Lastname(): string {
+    return this.lastname;
+  }
+
+  public set Lastname(value: string) {
+    this.lastname = value;
+  }
+
+  public get Document(): string {
+    return this.document;
+  }
+
+  public set Document(value: string) {
+    this.document = value;
+  }
+
+  public get Email(): string {
+    return this.email;
+  }
+
+  public set Email(value: string) {
+    this.email = value;
+  }
+
+  public get Phone(): string {
+    return this.phone;
+  }
+
+  public set Phone(value: string) {
+    this.phone = value;
+  }
+
+  public get Active(): boolean {
+    return this.active;
+  }
+
+  public set Active(value: boolean) {
+    this.active = value;
+  }
+
+  public get Key() {
+    return this.key;
+  }
+
+  public set Key(value: string){
+    this.key = value;
+  }
+
+  getKey(): string {
+    return this.key;
+  }
+
+  getFilterableFields(): Map<string, any> {
+    let map = new Map<string, any>();
+
+    map.set('name', this.name);
+    map.set('lastname', this.lastname);
+    map.set('document', this.document);
+    map.set('email', this.email);
+    map.set('phone', this.phone);
+    map.set('active', this.active);
+
+    return map;
+  }
+
+  getSortableFields(): Map<string, any> {
+    let map = new Map<string, any>();
+
+    map.set('name', this.name);
+    map.set('lastname', this.lastname);
+    map.set('document', this.document);
+    map.set('email', this.email);
+    map.set('phone', this.phone);
+    map.set('active', this.active);
+
+    return map;
+  }
+}
+
+class StorableUser extends User implements IStorable<User> {
+    getCollection(): ICollection<User> {
+        return users;
+    }
+    getLocalStorage(): string {
+        return 'users';
+    }
+}
+
 
 /**
- * 
+ *
  * READ FROM LOCAL STORAGE ON PROYECT START FOR DEVELOPMENT
- * 
+ *
  */
 
 let documents: ICollection<Document> = new Collection<Document>();
@@ -2420,6 +2563,41 @@ if(employees.size() == 0){
     localEmployees.write(storableEmployees.getLocalStorage(), employees);
 }
 
+let users: ICollection<User> = new Collection<User>();
+let storableUsers = new StorableUser();
+let localUsers = new LocalStorage<User>(User);
+users = localUsers.read(storableUsers.getLocalStorage())
+if(users.size() == 0){
+  users.add(new User(
+    'Kathryn',
+    'Ledner',
+    '35532252N',
+    'kathrynledner@gmail.test',
+    '690619302',
+    true
+    ));
+
+  users.add(new User(
+    'Eusebio',
+    'González',
+    '94385657M',
+    'eusebiogonzalez@gmail.test',
+    '656796396',
+    true
+  ));
+
+  users.add(new User(
+    'Juan',
+    'Macejkovic',
+    '11556837G',
+    'juanmacejkovic@gmail.test',
+    '619068048',
+    true
+  ));
+
+  localUsers.write(storableUsers.getLocalStorage(), users);
+}
+
 let auths: ICollection<Auth> = new Collection<Auth>();
 let storableAuths = new StorableAuth();
 let localAuths = new LocalStorage<Auth>(Auth);
@@ -2451,7 +2629,7 @@ if(auths.size() == 0){
 //         if(reader){
 //             reader.read().then(function processText({ done, value }:any):any {
 //                 if(done){
-//                     resolve(result);                    
+//                     resolve(result);
 //                     return;
 //                 }
 //                 if(value)
