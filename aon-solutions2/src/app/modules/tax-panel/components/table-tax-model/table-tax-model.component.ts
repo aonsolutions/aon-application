@@ -28,7 +28,7 @@ export class TableTaxModelComponent implements OnInit {
           column.key  = taxKey;
           // Cargamos datos en la tabla
           column.name = 
-              "<div class='orange'>MODELO" + tax.Name + "</div>"+
+              "<div class='orange'>MODELO " + tax.Name + "</div>"+
               "<span class='griss'>"+ tax.TaxType +"</span>";
           column.result = tax.Result + ' &euro;';
           column.status = tax.Status === 'pendiente' ? {
