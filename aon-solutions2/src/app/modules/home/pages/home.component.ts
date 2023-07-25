@@ -3,8 +3,6 @@ import { ChartType } from 'chart.js';
 import { CollectionFactory, IBank, ICollection, IMessage, ITaxModel } from 'libraries/AonSDK/aon';
 import { MultiDataSet } from 'ng2-charts';
 import { BehaviorSubject } from 'rxjs';
-import { Message } from 'src/app/core/models/class/message';
-import { TaxModel } from 'src/app/core/models/class/tax-model';
 import { BankService } from 'src/app/core/services/bank.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { ReportingService } from 'src/app/core/services/reporting.service';

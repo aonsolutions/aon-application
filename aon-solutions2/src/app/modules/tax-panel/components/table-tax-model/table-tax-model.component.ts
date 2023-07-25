@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { TaxModel } from 'src/app/core/models/class/tax-model';
+import { CollectionFactory, ICollection, ITaxModel } from 'libraries/AonSDK/aon';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 
@@ -10,9 +10,9 @@ import { TaxModelService } from 'src/app/core/services/tax-model.service';
    styleUrls: ['./table-tax-model.component.scss']
  })
  export class TableTaxModelComponent implements OnInit {
-  @Input() dataSource: TaxModel[] = [];
-  @Input()
-   trimester!: number;
+  
+  @Input() dataSource: ICollection<ITaxModel> = new CollectionFactory().createTaxModelCollection();
+  @Input() trimester!: number;
 
   // dataSource: TaxModel[] = [];
   displayedColumns: string[] = [ 'name', 'result', 'status', 'paymentMethod', 'acciones'];

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
-import { TaxModel } from 'src/app/core/models/class/tax-model';
+import { CollectionFactory, ICollection, ITaxModel } from 'libraries/AonSDK/aon';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 
@@ -29,7 +29,7 @@ export interface Models {
 })
 export class TabsTaxModelComponent implements OnInit {
 
-  models: TaxModel[] = [];
+  models: ICollection<ITaxModel> = new CollectionFactory().createTaxModelCollection();
 
   tabIndex:number = 0
 

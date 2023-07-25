@@ -1,6 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { BankService } from '../../../../core/services/bank.service';
-import { Bank } from 'src/app/core/models/class/bank';
 import { Observable } from 'rxjs';
 import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/aon';
 

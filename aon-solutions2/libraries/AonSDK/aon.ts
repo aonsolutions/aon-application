@@ -31,18 +31,30 @@ const ERRORS = {
  */
 
 interface ISingleObjectCrudFactory<T extends ICollectable> {
+    /**
+     * Create a class for available single object crud methods, that will be used to create, update, delete or get a single object.
+     */
     createSingleObjectCrud(): ISingleObjectCreator<T> | ISingleObjectUpdater<T> | ISingleObjectRemover<T> | ISingleObjectReader<T>;
 }
 
 interface IMultipleObjectCrudFactory<T extends ICollectable> {
+    /**
+     * Create a class for available multiple object crud methods, that will be used to create, update, delete or get a collection of objects.
+     */
     createMultipleObjectCrud(): IMultipleObjectCreator<T> | IMultipleObjectUpdater<T> | IMultipleObjectRemover<T> | IMultipleObjectReader<T>;
 }
 
 interface IAuthenticationManagerFactory {
+    /**
+     * Create the authentication manager instance that contains the methods to manage authentication
+     */
     createAuthenticationManager(): IAuthenticationManager;
 }
 
 interface IReportingDataAccessFactory {
+    /**
+     * Create the reporting data access instance that contains the methods to manage reporting
+     */
     createReportingDataAccess(): IReportingDataAccess;
 }
 
@@ -141,7 +153,7 @@ export class AuthenticationFactory implements IAuthenticationManagerFactory {
 
 export class ReportingFactory implements IReportingDataAccessFactory {
     createReportingDataAccess(): IReportingDataAccess {
-        return new ReportingDataAccess();
+        return new ReportingDataAccess(new ReportingRepository());
     }
 }
 
@@ -152,51 +164,126 @@ export class ReportingFactory implements IReportingDataAccessFactory {
  */
 
 interface ISingleObjectReader<T extends ICollectable> {
+    /**
+     * Get a single object by its key
+     * @param key The key of the object
+     * @returns Return a single object
+     */
     getElement(key: string): Promise<IResponse<T>>;
 }
 
 interface ISingleObjectCreator<T extends ICollectable> {
+    /**
+     * Create a single object
+     * @param element The element to create
+     * @returns Return the created object
+     */
     createElement(element: T): Promise<IResponse<T>>;
 }
 
 interface ISingleObjectUpdater<T extends ICollectable> {
+    /**
+     * Updated a single object
+     * @param element The element to update
+     * @returns Return the updated object
+     */
     updateElement(element: T): Promise<IResponse<T>>;
 }
 
 interface ISingleObjectRemover<T extends ICollectable> {
+    /**
+     * Delete a single object
+     * @param key The key of the object
+     * @returns Return true if the object was removed or false otherwise
+     */
     deleteElement(key: string): Promise<IResponse<boolean>>;
 }
 
 interface ISingleObjectCrud<T extends ICollectable> extends ISingleObjectReader<T>, ISingleObjectCreator<T>, ISingleObjectUpdater<T>, ISingleObjectRemover<T> {}
 
 interface IMultipleObjectReader<T extends ICollectable> {
+    /**
+     * Get a collection of objects
+     * @param filter The filter to apply
+     * @returns Return the collection of objects
+     */
     getCollection(filter?: IFilter): Promise<IResponse<ICollection<T>>>;
 }
 
 interface IMultipleObjectCreator<T extends ICollectable> {
+    /**
+     * Create a collection of objects
+     * @param collection The collection to create
+     * @returns Return a collection with created objects
+     */
     createCollection(collection: ICollection<T>): Promise<IResponse<ICollection<T>>>;
 }
 
 interface IMultipleObjectUpdater<T extends ICollectable> {
+    /**
+     * Update a collection of objects
+     * @param collection The collection to update
+     * @returns Return a collection with updated objects
+     */
     updateCollection(collection: ICollection<T>): Promise<IResponse<ICollection<T>>>;
 }
 
 interface IMultipleObjectRemover<T extends ICollectable> {
+    /**
+     * Delete a collection of objects
+     * @param keys The keys of the collection
+     * @returns Return true if the collection was removed or false otherwise
+     */
     deleteCollection(keys: string []): Promise<IResponse<boolean>>;
 }
 
 interface IMultipleObjectCrud<T extends ICollectable> extends IMultipleObjectReader<T>, IMultipleObjectCreator<T>, IMultipleObjectUpdater<T>, IMultipleObjectRemover<T> {}
 
 interface IAuthenticationManager {
+    /**
+     * Method to login the aplication, set the token on localstorage if the authentication was successful
+     * @param email The email of the user
+     * @param password The password of the user
+     * @returns Returns true if the login was successful or false otherwise
+     */
     login(email: string, password: string): Promise<IResponse<boolean>>;
+    /**
+     * Method to logout the aplication, remove the token and the enterprise from localstorage
+     * @returns Returns true if the logout was successful or false otherwise
+     */
     logout(): Promise<IResponse<boolean>>;
+    /**
+     * Method to login the aplication, set the token on localstorage if the authentication was successful
+     * @param token The token of the user
+     * @returns Returns true if the login was successful or false otherwise
+     */
     tokenLogin(token: string): Promise<IResponse<boolean>>;
+    /**
+     * Checks if user is authenticated
+     * @returns Returns true if the user is authenticated or false otherwise
+     */
     isAuthenticated(): IResponse<boolean>;
+    /**
+     * Checks if enterprise is selected
+     * @returns Returns true if the enterprise is selected or false otherwise
+     */
     isEnterpriseSelected(): IResponse<boolean>;
+    /**
+     * Get the current enterprise selected by the user
+     * @returns Returns the enterprise
+     */
     getEnterpriseSelected(): IResponse<string>;
+    /**
+     * Set the enterprise selected by the user
+     * @param enterprise The enterprise selected
+     * @returns Returns true if the enterprise was set or false otherwise
+     */
     setEnterprise(enterprise: string): IResponse<boolean>;
 }
 
+/**
+ * Interface for methods of reporting data 
+ */
 interface IReportingDataAccess {
     cobrosPagos(): Promise<IResponse<Object>>;
     ventasGastos(): Promise<IResponse<Object>>;
@@ -204,7 +291,7 @@ interface IReportingDataAccess {
 
 /*
  * 
- * IMPLEMENTATION OF INTERFACES FOR THE CLIENTS
+ * IMPLEMENTATION OF INTERFACES FOR THE CLIENTS - 
  * 
  */
 
@@ -351,26 +438,18 @@ class AuthenticationManager implements IAuthenticationManager {
 
 class ReportingDataAccess implements IReportingDataAccess {
 
+    private reportingRepository;
+
+    constructor(reportingRepository: IReportingRepository) {
+        this.reportingRepository = reportingRepository;
+    }
+
     async cobrosPagos(): Promise<IResponse<Object>> {
-        let datasets: any[] = [], ventas: any[] = [], gastos: any[] = [], label: any[] = [];
-        for(let i = 0; i < 12; i++){
-            ventas.push(Math.floor(Math.random()*2000))
-            gastos.push(Math.floor(Math.random()*2000))
-        }
-        datasets.push({data:ventas, label:'ventas'})
-        datasets.push({data:gastos, label:'gastos'})
-        return new Response<Object>({ datasets: datasets, label: [1,2,3,4,5,6,7,8,9,10,11,12] });
+        return new Response<Object>(this.reportingRepository.cobrosPagos());
     }
 
     async ventasGastos(): Promise<IResponse<Object>> {
-        let datasets: any[] = [], cobros: any[] = [], pagos: any[] = [], label: any[] = [];
-        for(let i = 0; i < 12; i++){
-            cobros.push(Math.floor(Math.random()*2000))
-            pagos.push(Math.floor(Math.random()*2000))
-        }
-        datasets.push({data:cobros, label:'cobros'})
-        datasets.push({data:pagos, label:'pagos'})
-        return new Response<Object>({ datasets: datasets, label: [1,2,3,4,5,6,7,8,9,10,11,12] });
+        return new Response<Object>(this.reportingRepository.ventasGastos());
     }
 
 }
@@ -382,34 +461,69 @@ class ReportingDataAccess implements IReportingDataAccess {
  */
 
 interface IRepositorySingleObjectReader<T> {
+    /**
+     * Get a single object by its key
+     * @param key The key
+     */
     get(key: string): Promise<T>;
 }
 
 interface IRepositorySingleObjectCreator<T> {
+    /**
+     * Create a single object
+     * @param element The element
+     */
     create(element: T): Promise<T>;
 }
 
 interface IRepositorySingleObjectUpdater<T> {
+    /**
+     * Update a single object
+     * @param element The element
+     */
     update(element: T): Promise<T>;
 }
 
 interface IRepositorySingleObjectRemover<T> {
+    /**
+     * Delete a single object
+     * @param key The key
+     */
     delete(key: string): Promise<void>;
 }
 
 interface IRepositoryMultipleObjectReader<T extends ICollectable> {
+    /**
+     * Get a collection
+     * @param filter The filter
+     * @returns The collection
+     */
     get(filter?: IFilter): Promise<ICollection<T>>;
 }
 
 interface IRepositoryMultipleObjectCreator<T extends ICollectable> {
+    /**
+     * Create all objects of given collection
+     * @param collection The collection to create
+     * @returns The collection of created objects
+     */
     create(collection: ICollection<T>): Promise<ICollection<T>>;
 }
 
 interface IRepositoryMultipleObjectUpdater<T extends ICollectable> {
+    /**
+     * Update all objects of given collection
+     * @param collection The collection to update
+     * @returns The collection of updated objects
+     */
     update(collection: ICollection<T>): Promise<ICollection<T>>;
 }
 
 interface IRepositoryMultipleObjectRemover<T extends ICollectable> {
+    /**
+     * Delete all objects of given array of Keys
+     * @param keys The keys
+     */
     delete(keys: string []): Promise<void>;
 }
 
@@ -418,9 +532,26 @@ interface ISingleObjectCrudRepository<T extends ICollectable> extends IRepositor
 interface IMultipleObjectCrudRepository<T extends ICollectable> extends IRepositoryMultipleObjectReader<T>, IRepositoryMultipleObjectCreator<T>, IRepositoryMultipleObjectUpdater<T>, IRepositoryMultipleObjectRemover<T> {}
 
 interface IAuthenticationRepository {
+    /**
+     * If email and password are succesful, write a new token on localstorage to authenticate the user, otherwise throw an error
+     * @param email The email of the user
+     * @param password The password of the user
+     */
     login(email: string, password: string): Promise<void>;
+    /**
+     * Remove the token from localstorage
+     */
     logout(): Promise<void>;
+    /**
+     * If token is succesful, write a new token on localstorage to authenticate the user, otherwise throw an error
+     * @param token The token
+     */
     tokenLogin(token: string): Promise<void>;
+}
+
+interface IReportingRepository {
+    cobrosPagos(): Promise<any>;
+    ventasGastos(): Promise<any>;
 }
 
 /*
@@ -565,6 +696,32 @@ class AuthenticationRepository implements IAuthenticationRepository {
     }
 }
 
+class ReportingRepository implements IReportingRepository {
+
+    async cobrosPagos(): Promise<any> {
+        let datasets: any[] = [], cobros: any[] = [], pagos: any[] = [], label: any[] = [];
+        for(let i = 0; i < 12; i++){
+            cobros.push(Math.floor(Math.random()*2000))
+            pagos.push(Math.floor(Math.random()*2000))
+        }
+        datasets.push({data:cobros, label:'cobros'})
+        datasets.push({data:pagos, label:'pagos'})
+        return { datasets: datasets, label: [1,2,3,4,5,6,7,8,9,10,11,12] };
+    }
+
+    async ventasGastos(): Promise<any> {
+        let datasets: any[] = [], ventas: any[] = [], gastos: any[] = [], label: any[] = [];
+        for(let i = 0; i < 12; i++){
+            ventas.push(Math.floor(Math.random()*2000))
+            gastos.push(Math.floor(Math.random()*2000))
+        }
+        datasets.push({data:ventas, label:'ventas'})
+        datasets.push({data:gastos, label:'gastos'})
+        return { datasets: datasets, label: [1,2,3,4,5,6,7,8,9,10,11,12] };
+    }
+
+}
+
 /*
  * 
  * UTILITIES INTERFACE, FOR EXAMPLE COLLECTION TO MANAGE A LIST OF OBJECTS
@@ -578,26 +735,95 @@ export interface IResponse<T> {
 }
 
 interface ILocalStorage<T extends ICollectable> {
-    read(model:string, instance: T): ICollection<T>;
+    /**
+     * Read a collection from localstorage
+     * @param model The name of the model in local storage
+     */
+    read(model:string): ICollection<T>;
+    /**
+     * Overwrite a collection in localstorage
+     * @param model The name of the model in local storage
+     * @param collection The collection to save on localstorage
+     */
     write(model:string, collection: ICollection<T>): void;
 }
 
 export interface ICollection<T extends ICollectable> extends Iterable<T> {
+    /**
+     * Gets the size of the collection
+     * @returns The size of the collection
+     */
     size(): number;
+    /**
+     * Checks if the collection is empty
+     * @returns True if the collection is empty, false otherwise
+     */
     isEmpty(): boolean;
+    /**
+     * Check if element exists in collection
+     * @param key The key of the element. You can use .getKey() to get it
+     * @returns True if the element exists, false otherwise
+     */
     exists(key: string): boolean;
+    /**
+     * Get element by key
+     * @param key The key of the element. You can use .getKey() to get it
+     * @return The element
+     */
     get(key: string): T;
+    /**
+     * Add new element to collection
+     * @param element Element to add
+     */
     add(element: T): void;
+    /**
+     * Remove the element from collection
+     * @param key The key of the element. You can use .getKey() to get it
+     */
     remove(key: string): void;
+    /**
+     * Sort the current collection. You need to add order to IFilter
+     * @param filter The filter to apply
+     */
     sort(filter: IFilter): void;
+    /**
+     * forEach method to loop over the collection
+     * 
+     * @Example collection.foreach((element,index) => {
+     *    console.log(element, index);
+     * })
+     */
     forEach(callbackfn: (value: T, index: string) => void): void;
+    /**
+     * Filter the current collection. You need to add field or interval fields to IFilter
+     * @param filter The filter to apply
+     */
     filter(filter: IFilter): ICollection<T>;
+    /**
+     * Get a section of the array
+     * @param start The beginning index of the specified portion of the array.
+     * @param end The end index of the specified portion of the array.
+     * @returns Copy of a section of the array
+     */
     slice(start: number, end: number): ICollection<T>;
+    /**
+     * Paginate the collection
+     * @param pageNum The page number
+     * @param totalPage The number of elements per page
+     * @returns A copy of the collection paginated
+     */
     paginate(pageNum: number, totalPage:number): ICollection<T>;
+    /**
+     * Convert the collection to an array
+     * @returns The collection as an array
+     */
     toArray(): T[];
+    /**
+     * Copy the array content on the collection
+     * @param Array Array of objects to copy to the collection
+     */
     copyArrayToCollection(array: T[]): void;
 }
-
 export interface IFilter {
     selectedFields?: string[];
     pageNum?: number;
@@ -631,13 +857,9 @@ export class Response<T> implements IResponse<T> {
     description: string;
     result: T;
     constructor(data: any) {
-        // if(typeof data == 'string' && ERRORS[data as keyof typeof ERRORS]){
-            
-        // }else{
             this.code = '0000';
             this.description = ERRORS['0000' as keyof typeof ERRORS].description;
             this.result = data;
-        // }
     }
 }
 
@@ -692,17 +914,30 @@ export class FilterBuilder {
     private setSelectedFields(fields: string[]): void {
         this.filter.selectedFields = fields;
     }
-
+    /**
+     * Set the page number and page items to paginate
+     * @param pageNum The page number
+     * @param pageItems The number of elements for page
+     */
     setPageNumAndItems(pageNum: number, pageItems: number): void {
         this.filter.pageNum = pageNum;
         this.filter.pageItems = pageItems;
     }
-
+    /**
+     * Add new field to filter 
+     * @param field The field to filter as string
+     * @param value The value of the field
+     */
     addField(field: string, value:any): void {
         if(!this.filter.fields) this.filter.fields = new Map<string,any>();
         this.filter.fields?.set(field, value);
     }
-
+    /**
+     * Add new interval field to filter
+     * @param field The field to filter as string
+     * @param startValue Initial value of interval
+     * @param endValue Last value of interval
+     */
     addInterval(field: string, startValue: any, endValue: any): void {
         if(!this.filter.intervalFields) this.filter.intervalFields = new Map<string,any>();
         this.filter.intervalFields?.set(field, {
@@ -710,24 +945,37 @@ export class FilterBuilder {
             end: endValue
         });
     }
-
+    /**
+     * Set the order to sort
+     * @param field The field to filter as string
+     * @param order The order to sort. Can be 'asc' or 'desc'
+     */
     addOrder(field:string, order: string): void {
         if(!this.filter.orderBy) this.filter.orderBy = new Map<string,string>();
         this.filter.orderBy?.set(field, order);
     }
-
+    /**
+     * Get the IFilter object builded
+     * @returns The filter as IFilter
+     */
     getFilter(): IFilter {
         return this.filter;
     }
-
+    /**
+     * Clear all the filter
+     */
     clearAll(): void {
         this.filter = {};
     }
-
+    /**
+     * Clear fields of filter
+     */
     clearFields(): void {
         delete this.filter.fields;
     }
-
+    /**
+     * Clear interval fields of filter
+     */
     clearIntervals(): void {
         delete this.filter.intervalFields;
     }
@@ -735,7 +983,9 @@ export class FilterBuilder {
     private clearSelectedFields(): void {
         delete this.filter.selectedFields;
     }
-
+    /**
+     * Clear page number and page items
+     */
     clearPageNumAndItems(): void {
         delete this.filter.pageNum;
         delete this.filter.pageItems;
@@ -743,106 +993,136 @@ export class FilterBuilder {
 }
 
 export class Collection<T extends ICollectable> implements ICollection<T> {
+
+    // The data of the collection is saved in a Map
     private data: Map<string,T>;
 
     constructor() {
         this.data = new Map<string, T>();
     }
     
+    // Iterator for collection to work on loops of type => for(const element of collection)
     [Symbol.iterator](): Iterator<T, any, undefined> {
         return this.data.values();
     }
 
+    // Returns the size of the collection
     size(): number {
         return this.data.size;
     }
 
+    // Check if collection is empty
     isEmpty(): boolean {
         return this.data.size == 0 ? true : false;
     }
 
+    // Check if one element exists on the collection
     exists(key: string): boolean {
         return this.data.has(key);
     }
 
+    // Get one element of collection by key
     get(key: string): T {
         const element = this.data.get(key);
         if(element) return element; else throw new Error("Element not found in collection");
     }
 
+    // Add new element to collection
     add(element: T): void {
         this.data.set(element.getKey(), element);
     }
 
+    // Remove element from collection
     remove(key: string): void {
         this.data.delete(key);
     }
 
+    // Sort collection using IFilter interface, can be ordered by many fields
     sort(filter: IFilter): void {
+        // Check if collection is empty and throw an error
         if(this.isEmpty()) throw new Error('SORT ERROR: No hay elementos para ordenar');
+        // Check if filter is defined
         if(filter.orderBy == undefined) throw new Error('SORT ERROR: No esta definido el filtro para ordenar');
+        // Check if filter is valid, the sort order must be asc or desc and the field must exist on getSortableFields() method of object
         filter.orderBy.forEach((key, value) => {
             if(this.toArray()[0].getSortableFields().get(value.toLowerCase()) == undefined) throw new Error('SORT ERROR: No campo a ordenar no existe o no se puede ordenar');
             if(key.toLowerCase() != 'asc' && key.toLowerCase() != 'desc') throw new Error('SORT ERROR: Orden invalido');
         });
-        let orders = Array.from(filter.orderBy?.entries())        
+        let orders = Array.from(filter.orderBy?.entries())
+        // Recursive function to sort the collection, return 1 or -1 if the value is less or greater than the other
+        // If not call sorFunction again for the next field
         let sortFuction = (left: T, right: T, n: number): number => {
             if(left.getSortableFields().get(orders[n][0]) < right.getSortableFields().get(orders[n][0])) return orders[n][1] == 'desc' ? 1 : -1;
             if(left.getSortableFields().get(orders[n][0]) > right.getSortableFields().get(orders[n][0])) return orders[n][1] == 'desc' ? -1 : 1;
             if(orders[n+1]) return sortFuction(left, right, n+1);
             else return 0;
         }
+        // The call to sortFuction from inside .sort of primitive array
         let array = this.toArray().sort((left, right) => {
             let n = 0;
             return sortFuction(left, right, n);
         })
+        // Remove the actual collection
         this.data.clear();
+        // Copy the sorted array to the collection
         this.copyArrayToCollection(array);
     }
 
+    // ForEach function to loop over the collection
     forEach(callbackfn: (value: T, index: string) => void): void {
         this.data.forEach((element, key) => {
             callbackfn(element, key);
         })
     }
 
+    // Function to filter the collection, return new collection dont modify the original
     filter(filter: IFilter): ICollection<T> {
+        // Check if collection is empty and throw an error
         if(this.isEmpty()) throw new Error('FILTER ERROR: No hay elementos para filtrar');
+        // Check if filter is defined
         if(filter.fields?.size == 0 && filter.intervalFields?.size == 0) throw new Error('FILTER ERROR: No esta definido el filtro para filtrar');
         let filteredArray = this.toArray();
+        // Apply the filter usings fields of filter and == operator
         if(filter.fields?.size != 0)
             filter.fields?.forEach((value, key) => {
                 filteredArray = filteredArray.filter(element => 
                     typeof value != 'string' ? element.getFilterableFields().get(key.toLowerCase()) == value : element.getFilterableFields().get(key.toLowerCase()) == value//element.getFilterableFields().get(key.toLowerCase()).includes(value)
                 )
             })
+        // Apply the filter usings interval fields and >= and <= operator
         if(filter.intervalFields?.size != 0)
             filter.intervalFields?.forEach((value, key) => {
                 filteredArray = filteredArray.filter(element => 
-                    value.end >= element.getFilterableFields().get(key.toLowerCase()) >= value.start
+                    value.end >= element.getFilterableFields().get(key.toLowerCase()) <= value.start
                 )
             })
         let collection = new Collection<T>();
+        // Copy the filtered array to new collection
         collection.copyArrayToCollection(filteredArray);
+        // Return the new collection
         return collection;
     }
 
+    // Slice the collection
     slice(start: number, end: number): ICollection<T> {
         let collection = new Collection<T>()
         collection.copyArrayToCollection(this.toArray().slice(start,end));
         return collection;
     }
 
+    // Paginate the collection
     paginate(pageNum: number, pageItems: number): ICollection<T> {
         let collection = new Collection<T>();
         collection.copyArrayToCollection(this.toArray().slice((pageNum - 1) * pageItems, pageNum * pageItems));
         return collection;
     }
 
+    // Get the collection as an array
     toArray(): T[] {
         return Array.from(this.data.values());
     }
 
+    // Copy an array of objects to the collection
     copyArrayToCollection(array: T[]): void {
         array.forEach((element:T) => {
             this.add(element);
@@ -881,17 +1161,38 @@ interface ICollectionFactory {
 }
 
 interface ICollectable {
+    /**
+     * Get the value of unique key of the object
+     * @returns The unique key
+     */
     getKey(): string;
+    /**
+     * Get the filterable fields of the object and their values
+     * @returns The filterable fields as Map
+     */
     getFilterableFields(): Map<string,any>;
+    /**
+     * Get the sortable fields of the object and their values
+     * @returns The sortable fields as Map
+     */
     getSortableFields(): Map<string,any>;
 }
 
 interface IModel extends ICollectable {
+    /**
+     * Internal key of object not visible outside SDK
+     */
     Key: string;
 }
 
 interface IStorable<T extends ICollectable> {
+    /**
+     * Get the collection on memory of an object
+     */
     getCollection(): ICollection<T>;
+    /**
+     * Get the value of string where the object is stored in local storage
+     */
     getLocalStorage(): string;
 }
 

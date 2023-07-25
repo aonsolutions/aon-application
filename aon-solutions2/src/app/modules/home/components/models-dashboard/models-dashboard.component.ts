@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { TaxModel } from 'src/app/core/models/class/tax-model';
 import { Observable } from 'rxjs';
 import { CollectionFactory, ICollection, ITaxModel } from 'libraries/AonSDK/aon';
 

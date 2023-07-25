@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Message } from './../../../../core/models/class/message';
 import { Observable } from 'rxjs';
 import { CollectionFactory, ICollection, IMessage } from 'libraries/AonSDK/aon';
 
