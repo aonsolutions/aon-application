@@ -500,8 +500,7 @@ public class FeeDAO {
 		// Condition
 		Condition condition = PRODUCT.DOMAIN.eq(domainId);
 		if(AonStringUtils.isNotBlank(query)) 
-			condition = condition.and(PRODUCT.CODE.isNotNull().and(PRODUCT.CODE.containsIgnoreCase(query)))
-					.or(PRODUCT.NAME.isNotNull().and(PRODUCT.NAME.containsIgnoreCase(query)));
+			condition = condition.and(PRODUCT.CODE.isNotNull().and(PRODUCT.CODE.containsIgnoreCase(query)).or(PRODUCT.NAME.isNotNull().and(PRODUCT.NAME.containsIgnoreCase(query))));
 
 		Result<Record> customerRecords = ctx.getDslContext().select()
 			.from(PRODUCT)
