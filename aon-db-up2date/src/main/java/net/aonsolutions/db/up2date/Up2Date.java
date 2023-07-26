@@ -19,9 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.CRA0050ExcesoRefactor;
 import net.aonsolutions.db.up2date.payroll.ContractSepeIdUpdate;
-import net.aonsolutions.db.up2date.tgss.TrainningHolidaysDelete;
 
 public class Up2Date {
 
