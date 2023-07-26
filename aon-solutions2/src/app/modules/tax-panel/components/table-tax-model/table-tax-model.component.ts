@@ -1,6 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { CollectionFactory, ICollection, ITaxModel } from 'libraries/AonSDK/aon';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
+import { ModalEditTaxModelComponent } from '../modal-edit-tax-model/modal-edit-tax-model.component';
+import { ModalPaymentComponent } from '../modal-payment/modal-payment.component';
+import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-details.component';
 
 @Component({
   selector    : 'app-table-tax-model',
@@ -59,7 +61,13 @@ export class TableTaxModelComponent implements OnInit {
     });
   }
 
+  @ViewChild('modalEdit') modalComponentEdit: any = '';
+  @ViewChild('modalPayment') modalComponentPayment: any = '';
+  @ViewChild('modalTaxesDetails') modalComponentTaxesDetails : any = '';
 
+  functionHome: any = (result:any) => this.afterModalClosed(result);
+  afterModalClosed(result?: any){
+}
 
   ngOnInit(): void {
   }
@@ -70,6 +78,18 @@ export class TableTaxModelComponent implements OnInit {
     console.log(object);
     // reference icon click
     console.log(object.keyButton);
+
+    switch(object.keyButton){
+      case 'edit':
+        this.modalComponentEdit.openDialog(ModalEditTaxModelComponent,this.functionHome, 'Data from home');
+      break;
+      case 'done_all':
+        this.modalComponentPayment.openDialog(ModalPaymentComponent,this.functionHome, 'Data from home');
+      break;
+      case 'eye':
+        this.modalComponentTaxesDetails.openDialog(ModalTaxesDetailsComponent,this.functionHome, 'Data from home');
+      break;
+    }
     // Model tax reference
     this.taxModelService.getTax(object.key).then((response) => {
       console.log(response);
