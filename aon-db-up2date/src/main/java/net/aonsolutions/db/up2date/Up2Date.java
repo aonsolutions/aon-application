@@ -20,13 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.config.InsertIAE575576;
-import net.aonsolutions.db.up2date.fiscal.AlterInvestAsset;
-import net.aonsolutions.db.up2date.management.AlterRitem;
-import net.aonsolutions.db.up2date.management.AlterRsellerAddType;
-import net.aonsolutions.db.up2date.payroll.CRA0050ExcesoRefactor;
 import net.aonsolutions.db.up2date.payroll.ContractSepeIdUpdate;
-import net.aonsolutions.db.up2date.tgss.TrainingQuote2023Fix;
-import net.aonsolutions.db.up2date.tgss.TrainningBaseCgcMinUndo;
 
 public class Up2Date {
 
@@ -367,7 +361,8 @@ public class Up2Date {
 	    // HomeBases2023UpdateIII.HOMEBASES2023UPDATEIII,
 	    // TrainningBaseCgcMinUndo.TRAINNINGBASECGCMINUNDO,
 	    // TrainingQuote2023Fix.TRAINNINGPERCENTAGES2023UPDATE,
-	     CRA0050ExcesoRefactor.CRA0050EXCESOREFACTOR,
+	    // CRA0050ExcesoRefactor.CRA0050EXCESOREFACTOR,
+	    // TrainningHolidaysDelete.TRAINNINGHOLIDAYSDELETE,
 
 		
 	    // DomainAonStatus.DOMAIN_AON_STATUS,

@@ -600,11 +600,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	protected void fillSalaryData(IContractSalaryCalculatorContext ctx) {
+		salaryBuilder.setType(ctx.getSalaryType());
 		salaryBuilder.setIssueDate(ctx.getIssueDate());
 		salaryBuilder.setStartDate(ctx.getStartDate());
-		salaryBuilder.setEndDate(ctx.getEndDate());
 		salaryBuilder.setChargeDate(ctx.getChargeDate());
-		salaryBuilder.setType(ctx.getSalaryType());
+		salaryBuilder.setEndDate(getSalaryEnd(ctx));
 
 	}
 
@@ -2233,7 +2233,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		} catch (Exception e) {
 		}
 		salaryBuilder
-		.setTimeUnits((int) (AonDateUtils.getDaysBetweenDates(ctx.getStartDate(), ctx.getEndDate()) + 1));
+		.setTimeUnits((int) (AonDateUtils.getDaysBetweenDates(getSalaryStart(ctx), getSalaryEnd(ctx)) + 1));
 	}
 
 	protected void onInvalidData(String... variableNames) {
@@ -2519,5 +2519,26 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	private static boolean notITCompesation(IContractCost cost) {
 		return !isITCompesation(cost);
 	}
+	
+	private static Date getSalaryEnd(IContractSalaryCalculatorContext ctx) {
+		  
+	    try {
+		return ctx.getExpressionContext().eval(ContextVariable.SALARY_END.getName(), ctx.getStartDate(), ctx.getEndDate(), Date.class).stream()
+		.map(result -> result.getValue(result.getPeriod()) ).findAny().orElseThrow();
+	    } catch (ExpressionException e) {
+		return ctx.getEndDate();
+	    }
+	}
+
+	private static Date getSalaryStart(IContractSalaryCalculatorContext ctx) {
+		  
+	    try {
+		return ctx.getExpressionContext().eval(ContextVariable.SALARY_START.getName(), ctx.getStartDate(), ctx.getEndDate(), Date.class).stream()
+		.map(result -> result.getValue(result.getPeriod()) ).findAny().orElseThrow();
+	    } catch (ExpressionException e) {
+		return ctx.getStartDate();
+	    }
+	}
+	
 }
 

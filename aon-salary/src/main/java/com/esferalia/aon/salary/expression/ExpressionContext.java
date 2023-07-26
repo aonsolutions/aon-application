@@ -289,25 +289,25 @@ public class ExpressionContext {
 
 		@Override
 		public <T> void eval(ExpressionContext context, Class<T> toType) throws ExpressionException {
-			
-			
-			
-			List<ITimedResult<Object>> results = context.eval(expression, start, end, Object.class);
-			
-			for (ITimedResult<Object> result : results) {
+			try {
+			    List<ITimedResult<Object>> results = context.eval(expression, start, end, Object.class);
+			    for (ITimedResult<Object> result : results) {
 				context.putVariable(expression.getName(), new ExpressionResult<>(result, expression));
-			}
+			    }
 
-			Period deferredPeriod = new Period(start, end);
-			List<Period> calculatedPeriods =results.stream().map(r -> r.getPeriod()).collect(Collectors.toList());
-			
-			Period.sub(deferredPeriod, calculatedPeriods)
-			.forEach(p -> {
-				context.getVariables(expression.getName(), p.getStart(), p.getEnd()).forEach( v -> {
-					context.subVariable(expression.getName(), v.getPeriod().getStart(), v.getPeriod().getEnd());
+			    Period deferredPeriod = new Period(start, end);
+			    List<Period> calculatedPeriods = results.stream().map(r -> r.getPeriod())
+				    .collect(Collectors.toList());
+
+			    Period.sub(deferredPeriod, calculatedPeriods).forEach(p -> {
+				context.getVariables(expression.getName(), p.getStart(), p.getEnd()).forEach(v -> {
+				    context.subVariable(expression.getName(), v.getPeriod().getStart(),
+					    v.getPeriod().getEnd());
 				});
-			});
-			
+			    });
+			} catch ( UndefinedVariablesException e) {
+			    context.subVariable(expression.getName(), start, end );
+			}
 		}
 		
 	}
