@@ -306,7 +306,7 @@ public class ExpressionContext {
 				});
 			    });
 			} catch ( UndefinedVariablesException e) {
-			    context.removeVariable(expression.getName(), start, end );
+			    context.subVariable(expression.getName(), start, end );
 			}
 		}
 		

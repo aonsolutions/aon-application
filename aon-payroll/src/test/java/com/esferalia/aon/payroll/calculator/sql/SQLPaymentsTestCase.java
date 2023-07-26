@@ -152,7 +152,7 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 
 
-		addSystemData(aonContext, startDate, endDate , Collections.singletonMap("KMS", "UNDEFINED('KMS')"));
+		addSystemData(aonContext, getFirstDayOfYear(startDate), null , Collections.singletonMap("KMS", "UNDEFINED('KMS')"));
 		
 		addData(aonContext, contract, startDate, add(startDate, DAY_OF_MONTH, 14), "KMS", "60.00");
 		
