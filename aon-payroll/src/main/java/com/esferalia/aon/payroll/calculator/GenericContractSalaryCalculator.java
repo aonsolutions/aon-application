@@ -1020,14 +1020,35 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						    MONEY_IRPF_BASE } ) {
 
 						     irpfExpressionContext.getVariables(irpfVar.getName()).stream()
+						    .filter( v -> v.getPeriod().getEnd().compareTo(irpfPeriod.getStart()) <= 0)
         					    .sorted( (v1, v2) -> v2.getPeriod().compareTo(v1.getPeriod()))
-        					    .map( v -> new ITimedVariable<Object>() {
-        						public Period getPeriod() {
-        						    return irpfPeriod;
-        						}
-        						public Object getValue(Period period) {
-        						    return v.getValue(v.getPeriod());
-        						}
+        					    .map( v -> 
+        					    	( v instanceof IExpressionVariable ) ?
+        					    	new IExpressionVariable<Object>() {
+                						public Period getPeriod() {
+                						    return irpfPeriod;
+                						}
+                						public Object getValue(Period period) {
+                						    return v.getValue(v.getPeriod());
+                						}
+								@Override
+								public IExpression getExpression() {
+								    return ((IExpressionVariable<Object>)v).getExpression();
+								}
+								@Override
+								public Map<String, ITimedVariable<?>> getContext() {
+								    return ((IExpressionVariable<Object>)v).getContext();
+								}
+                						
+        					    	}
+        					    	:
+            					    	new ITimedVariable<Object>() {
+                						public Period getPeriod() {
+                						    return irpfPeriod;
+                						}
+                						public Object getValue(Period period) {
+                						    return v.getValue(v.getPeriod());
+                						}
         					    }).findFirst().ifPresent( v -> irpfExpressionContext.putVariable(irpfVar.getName(), v) );
     					    }
 

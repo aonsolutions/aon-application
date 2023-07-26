@@ -415,10 +415,12 @@ public class Invoice2tbai {
 			detalleIVA.setCuotaImpuesto(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getQuota())));
 			detalleIVA.setCuotaRecargoEquivalencia(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
 			detalleIVA.setTipoImpositivo(invoice.isIsp() ? "0.0" : Double.toString(r.getPercentage()));
-			detalleIVA.setTipoRecargoEquivalencia(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getSurcharge())));
+			detalleIVA.setTipoRecargoEquivalencia(invoice.isIsp() || "0.0".equals(detalleIVA.getTipoImpositivo())
+					? "0.0" : Double.toString(AonMathUtils.round(r.getSurcharge())));
 			
 			detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(SiNoType.N);//invoice.isSurcharge() ? SiNoType.S : SiNoType.N);
-			desgloseIVA.getDetalleIVA().add(detalleIVA);
+			if(r.getBase() != 0.0)
+				desgloseIVA.getDetalleIVA().add(detalleIVA);
 		});
 		
 		if(!desgloseIVA.getDetalleIVA().isEmpty()) {

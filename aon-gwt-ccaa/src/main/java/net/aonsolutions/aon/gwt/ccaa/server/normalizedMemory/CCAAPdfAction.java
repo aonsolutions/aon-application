@@ -193,13 +193,31 @@ public abstract class CCAAPdfAction {
 		document.add(new Paragraph(" "));
 		document.add(activity);
 		
+		if(d2Deposit.getYear() >= 2022) {
+			PdfPTable administrationOrgan = new PdfPTable(8);
+			administrationOrgan.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+			administrationOrgan.setWidthPercentage(100);
+        
+			administrationOrgan.addCell(tableHeader("\u00d3rgano de Administraci\u00f3n", 8, 10));
+		
+			administrationOrgan.addCell(tableCell(" ", 4));
+			administrationOrgan.addCell(tableCell("Ejercicio " + d2Deposit.getYear(),2));
+			administrationOrgan.addCell(tableCell("Ejercicio " + (d2Deposit.getYear() - 1),2));
+	
+			administrationOrgan.addCell(tableCell("Porcentaje de mujeres en el \u00f3rgano de administraci\u00f3n", 4));
+			administrationOrgan.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA04211.getCode()),2));
+			administrationOrgan.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA042119.getCode()),2));
+
+			document.add(new Paragraph(" "));
+			document.add(administrationOrgan);
+		}
 		PdfPTable salariedPersonal = new PdfPTable(8);
 		salariedPersonal.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		salariedPersonal.setWidthPercentage(100);
         
 		salariedPersonal.addCell(tableHeader("Personal asalariado", 8, 10));
 
-		salariedPersonal.addCell(tableCell("a) N\\u00famero medio de personas empleadas en el curso del ejercicio, por tipo de contrato y empleo con discapacidad", 8));
+		salariedPersonal.addCell(tableCell("a) N\u00famero medio de personas empleadas en el curso del ejercicio, por tipo de contrato y empleo con discapacidad", 8));
 		
 		salariedPersonal.addCell(tableCell(" ", 2));
 		salariedPersonal.addCell(tableCell("Ejercicio " + d2Deposit.getYear(), 2));
@@ -470,7 +488,20 @@ public abstract class CCAAPdfAction {
 		itr1.addCell(tableHeader("Identificador del Titular Real", 8, 10));
 		String ITR8080829 = d2Deposit.getMap().get(D2DepositHeaderKey.ITR8080829.getCode());
 		itr1.addCell(tableCell("La entidad está sujeta a la obligación de identificar al titular real proque no cotiza en mercados regulados: " + getBoolText(ITR8080829), 8));
-
+		
+		if(d2Deposit.getYear() >= 2022) {
+			itr1.addCell(tableCell("La sociedad presenta por primera vez o actualiza los datos de indentificaci\u00f3n del titular real: " + getBoolText(ITR8080829), 8));
+		
+			String ITR8234001 = d2Deposit.getMap().get(D2DepositHeaderKey.ITR8234001.getCode());
+			String ITR8234001TXT = "";
+			if("1".equals(ITR8234001)) ITR8234001TXT = "Primera";
+			else if("2".equals(ITR8234001)) ITR8234001TXT = "Actualizaci\u00f3n";
+			else if("3".equals(ITR8234001)) ITR8234001TXT = "Rectificaci\u00f3n";
+			itr1.addCell(tableCell("Indique el tipo de actualizaci\u00f3n de los datos de indentificaci\u00f3n del titular real: " + ITR8234001TXT, 8));
+		
+			String ITR8234002 = d2Deposit.getMap().get(D2DepositHeaderKey.ITR8234002.getCode());
+			itr1.addCell(tableCell("Fecha en la que debe reputarse que se ha producido el cambio de datos: " + ITR8234002, 8));
+		}
 		document.add(new Paragraph(" "));
 		document.add(itr1);
 		
@@ -1092,10 +1123,11 @@ public abstract class CCAAPdfAction {
 		if (d2Deposit.getType().equalsIgnoreCase("PYMES")){
 			keys = D2PDepositConstants.MRN_PYMES_KEYS_1;
 			keys2 = D2PDepositConstants.MRN_PYMES_KEYS_2;
-		}
-		else{
+		} else{
 			keys = D2DepositConstants.MRN_ABREVIATE_KEYS_1;
-			keys2 = D2DepositConstants.MRN_ABREVIATE_KEYS_2;		
+			keys2 = d2Deposit.getYear() >=2022
+				? D2DepositConstants.MRN_ABREVIATE_KEYS_2_2022
+				: D2DepositConstants.MRN_ABREVIATE_KEYS_2;		
 		}
 		two("BASES DE REPARTO", keys, 10);
 		two("APLICACI\u00d3N A", keys2, 10);
