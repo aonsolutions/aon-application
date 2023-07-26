@@ -1,12 +1,37 @@
 {
   "COMMON": {
-    "WELCOME": "Bienvenido!",
-    "BUTTON_TEXT": "Haz click aquí"
+    "COIN": "&euro;"
+  },
+  "HEADER": {
+  },
+  "MENU": {
+    "MENU": "menu"
+  },
+  "LOGIN": {
+    
+  },
+  "ENTERPRISES": {
+    
   },
   "HOME": {
-      "UPLOAD_DOCUMENTATION": "Subir documentación",
-      "VIEW_ALL_MESSAGES": "Ver todos los mensajes",
-      "SEND_MESSAGE": "Enviar mensaje",
-      "TITLE": "Servicio desarrollado por {{ desarrollador }}"
+    
+  },
+  "INBOX": {
+    
+  },
+  "DOCUMENTATION": {
+    
+  },
+  "BILLING": {
+   
+  },
+  "CONSULTING": {
+   
+  },
+  "EMPLOYEE-PANEL": {
+   
+  },
+  "TAX-PANEL": {
+    
   }
 }
