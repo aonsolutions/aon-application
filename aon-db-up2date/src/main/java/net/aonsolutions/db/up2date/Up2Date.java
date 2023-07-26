@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.config.InsertIAE575576;
 import net.aonsolutions.db.up2date.payroll.ContractSepeIdUpdate;
 
 public class Up2Date {
