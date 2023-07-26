@@ -431,7 +431,7 @@ public abstract class Employee extends ResizeComposite {
 			String documentTypeStr = checkDocumentType(documentStr);
 			this.documentType.setText(documentTypeStr);
 
-			if (checkDocumentValidation(documentTypeStr, documentStr))
+			if (checkDocumentValidation(documentStr))
 				removeErrorBorder(this.document);
 			else
 				addErrorBorder(this.document);
