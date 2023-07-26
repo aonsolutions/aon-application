@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -32,13 +33,14 @@ import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
-import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -92,7 +94,7 @@ public interface IRegistry {
 
 	public Stream<Seller> getRSellerStream(AONContext ctx, RegistrySellerFilter registryId);
 
-	public Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry);
+	public Stream<com.esferalia.aon.occam.api.model.registry.Question> getRegistryQuestionStream(AONContext ctx, Integer registry);
 	public Stream<RegistryProfile> getRegistryProfileStream(AONContext ctx, Integer registry, Integer question);
 
 	
@@ -233,6 +235,16 @@ public interface IRegistry {
 
 	// ------------------- DOMAIN LINKED
 	public List<DomainLinked> getDomainLinkedList(AONContext ctx, Integer registry);
-	public DomainLinked saveDomainLinked(AONContext ctx, DomainLinked domainLinked);	
+	public DomainLinked saveDomainLinked(AONContext ctx, DomainLinked domainLinked);
+	
+	// QUESTION
+	public List<Question> getQuestionList(CloseableAONContext ctx, QuestionParams params);
+	public void deleteQuestion(CloseableAONContext ctx, Integer id);
+	public Question saveQuestion(CloseableAONContext ctx, Question question);
+	public Question getQuestion(CloseableAONContext ctx, Integer id);
+	public Boolean checkQuestionAlias(CloseableAONContext ctx, String alias);
+	
+	// REGISTRY PROFILE
+	public void saveRegistryProfile(CloseableAONContext ctx, Integer registryId, String questionAlias, String value);
 
 }

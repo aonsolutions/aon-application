@@ -199,14 +199,22 @@ public class Certificado {
 			{// DATA ENTERPRISE
 				HtmlForm formEnterprise = (HtmlForm) HtmlUnitToolkit
 						.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-				formEnterprise.getInputByName("orDatosEmpresa.srCCCRegimenCot")
-						.setValue(certificates.getRegimen());
-				formEnterprise.getInputByName("orDatosEmpresa.srCCCProvincia")
-						.setValue(ctaCti.substring(0, 2));
-				formEnterprise.getInputByName("orDatosEmpresa.srCCCSecuencial")
-						.setValue(ctaCti.substring(2, 9));
+				
+				formEnterprise.getInputByName("orDatosEmpresa.srCCCRegimenCot").setValue(certificates.getRegimen());
+				formEnterprise.getInputByName("orDatosEmpresa.srCCCRegimenCot").setValueAttribute(certificates.getRegimen());
+				
+				formEnterprise.getInputByName("orDatosEmpresa.srCCCProvincia").setValue(ctaCti.substring(0, 2));
+				formEnterprise.getInputByName("orDatosEmpresa.srCCCProvincia").setValueAttribute(ctaCti.substring(0, 2));
+				
+				formEnterprise.getInputByName("orDatosEmpresa.srCCCSecuencial").setValue(ctaCti.substring(2, 9));
+				formEnterprise.getInputByName("orDatosEmpresa.srCCCSecuencial").setValueAttribute(ctaCti.substring(2, 9));
+				
 				formEnterprise.getInputByName("orDatosEmpresa.srCCCDC").setValue(ctaCti.substring(9));
+				formEnterprise.getInputByName("orDatosEmpresa.srCCCDC").setValueAttribute(ctaCti.substring(9));
+				
 				formEnterprise.getInputByName("stDniNie").setValue(certificates.getIpf());
+				formEnterprise.getInputByName("stDniNie").setValueAttribute(certificates.getIpf());
+				
 				htmlPage = formEnterprise.getInputByName("btBuscar").click();
 				handleSepeExceptions(htmlPage);
 			}
@@ -214,13 +222,14 @@ public class Certificado {
 			htmlPage = ((HtmlSubmitInput) htmlPage
 					.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 			handleSepeExceptions(htmlPage);
-
+			
 			{// DATA REPRESENTATIVE
 				HtmlForm formRepresentative = (HtmlForm) HtmlUnitToolkit
 						.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 				
 				formRepresentative.getInputByName("orDatosRepresentante.srNombreRepresentante").setValue(certificates.getNameManager());
 				formRepresentative.getInputByName("orDatosRepresentante.srNombreRepresentante").setValueAttribute(certificates.getNameManager());
+				
 				formRepresentative.getInputByName("orDatosRepresentante.srPrimerApellidoRepresentante").setValue(certificates.getSurnameManager());
 				formRepresentative.getInputByName("orDatosRepresentante.srPrimerApellidoRepresentante").setValueAttribute(certificates.getSurnameManager());
 
@@ -250,6 +259,40 @@ public class Certificado {
 				HtmlForm formEmployee = (HtmlForm) HtmlUnitToolkit
 						.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 
+				try {
+					HtmlInput nameInput = formEmployee.getInputByName("orDatosTrabajador.srNombreTrabajador");
+					if (nameInput != null && nameInput.getValue().isBlank()) {
+						nameInput.setValue(certificates.getEmployeeName().get());
+						nameInput.setValueAttribute(certificates.getEmployeeName().get());
+					}
+					
+					HtmlInput surnameInput = formEmployee.getInputByName("orDatosTrabajador.srPrimerApellidoTrabajador");
+					if (surnameInput != null && surnameInput.getValue().isBlank()) {
+						surnameInput.setValue(certificates.getEmployeeSurname().get());
+						surnameInput.setValueAttribute(certificates.getEmployeeSurname().get());
+					}
+					
+					HtmlInput secondSurnameInput = formEmployee.getInputByName("orDatosTrabajador.srSegundoApellidoTrabajador");
+					if (secondSurnameInput != null && secondSurnameInput.getValue().isBlank()) {
+						secondSurnameInput.setValue(certificates.getEmployeeSecondSurname().get());
+						secondSurnameInput.setValueAttribute(certificates.getEmployeeSecondSurname().get());
+					}
+				} catch (Exception e) {
+					// Ya esta rellenado por defecto
+				}
+				
+				HtmlInput ipfInput = formEmployee.getInputByName("orDatosTrabajador.srNifTrabajador");
+				if (ipfInput != null && ipfInput.getValue().isBlank()) {
+					ipfInput.setValue(certificates.getIpf());
+					ipfInput.setValueAttribute(certificates.getNaf().get());
+				}
+				
+				HtmlInput ssnInput = formEmployee.getInputByName("orDatosTrabajador.srNumSSTrabajador");
+				if (ssnInput != null && ssnInput.getValue().isBlank()) {
+					ssnInput.setValue(certificates.getNaf().get());
+					ssnInput.setValueAttribute(certificates.getNaf().get());
+				}
+				
 				DomNode gc = formEmployee.querySelector("select[name=\"orDatosTrabajador.csGrupoCotizacion.valor\"]");
 				if (gc != null && certificates.getGz() != null) {
 					((HtmlSelect) gc).setSelectedAttribute(certificates.getGz(), true);
@@ -296,6 +339,7 @@ public class Certificado {
 				
 				htmlPage = ((HtmlSubmitInput) htmlPage
 						.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
+				
 				handleSepeExceptions(htmlPage);
 				
 			}

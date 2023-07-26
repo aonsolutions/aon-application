@@ -2082,9 +2082,7 @@ color:#000;
 .aon-menuBar-content{
 	padding:0;
 }
-.aon-menuBar-content:hover{
-  	background-color:#fff;
-}		
+
 /* cada uno de los links de la barra de menus que lanzan el desplegable*/
 .aon-dropDownMenu{
 	font-family:arial,verdana, "sans-serif";

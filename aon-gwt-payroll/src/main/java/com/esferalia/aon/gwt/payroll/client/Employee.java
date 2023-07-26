@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.type.QuoteGroup;
 import com.esferalia.aon.occam.api.model.type.RLCE;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Document;
@@ -260,14 +261,14 @@ public abstract class Employee extends ResizeComposite {
 	@UiField
 	HTMLPanel journeyDuration;
 
-	@UiField
-	FormPanel formPanel;
-
-	@UiField
-	FileUpload fileUpload;
-
-	@UiField
-	Button uploadButton;
+//	@UiField
+//	FormPanel formPanel;
+//
+//	@UiField
+//	FileUpload fileUpload;
+//
+//	@UiField
+//	Button uploadButton;
 	
 
 	// ------------------------------------------------- Class variables
@@ -300,7 +301,7 @@ public abstract class Employee extends ResizeComposite {
 		initializeView();
 		addReformatAccount();
 		
-		checkDomain();
+//		checkDomain();
 		
 		
 		impl.getCountries(new AsyncCallback<List<com.esferalia.aon.gwt.payroll.shared.Country>>() {
@@ -382,33 +383,43 @@ public abstract class Employee extends ResizeComposite {
 		this.nationality.setAutoSelectEnabled(true);
 	}
 	
-	public void checkDomain() {
-	    String currentDomain = Window.Location.getHostName();
-	    boolean isAllowedDomain = false;
-
-	    for (String allowedDomain : ALLOWED_DOMAINS) {
-	        if (currentDomain.endsWith(allowedDomain)) {
-	            isAllowedDomain = true;
-	            break;
-	        }
-	    }
-
-	    uploadButton.setVisible(isAllowedDomain);
-	}
-	
-	public void fillFormDniData(){
-		
-		formPanel.addSubmitCompleteHandler(event -> {
-			EmployeeDataResult eps = JsonUtils.safeEval(event.getResults());
-				document.setValue(eps.getDni());
-				nationality.setValue(eps.getNationality());
-				name.setValue(eps.getName());
-				firstSurname.setValue(eps.getFirstSurname());
-				secondSurname.setValue(eps.getSecondSurname());
-			});
-		
-		formPanel.submit();
-	}
+//	public void checkDomain() {
+//	    String currentDomain = Window.Location.getHostName();
+//	    boolean isAllowedDomain = false;
+//
+//	    for (String allowedDomain : ALLOWED_DOMAINS) {
+//	        if (currentDomain.endsWith(allowedDomain)) {
+//	            isAllowedDomain = true;
+//	            break;
+//	        }
+//	    }
+//
+//	    uploadButton.setVisible(isAllowedDomain);
+//	}
+//	
+//	public void fillFormDniData(){
+//		AsyncCallback<EmployeeDataResult> callback = new AsyncCallback<EmployeeDataResult>() {
+//			
+//			@Override
+//			public void onSuccess(EmployeeDataResult e) {
+//				document.setValue(e.getDni(),true);
+//				nationality.setValue(e.getNationality(),true);
+//				name.setValue(e.getName(),true);
+//				firstSurname.setValue(e.getFirstSurname(),true);
+//				secondSurname.setValue(e.getSecondSurname(),true);
+//			}
+//			@Override
+//			public void onFailure(Throwable f) {
+//				
+//			}
+//		};
+//		formPanel.addSubmitCompleteHandler(event -> {
+//				EmployeeDataResult eps = JsonUtils.safeEval(event.getResults());
+//				callback.onSuccess(eps);
+//			});
+//		
+//		formPanel.submit();
+//	}
 
 	// ------------------------------------------------- UiHandlers
 
@@ -444,22 +455,22 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 
-	@UiHandler("uploadButton")
-	void onUploadButtonClick(ClickEvent event) {
-		fileUpload.click();
-	}
-
-	@UiHandler("fileUpload")
-	void onFileUpload(ChangeEvent event) {
-		fileUpload.setName("archivo");
-		if (fileUpload.getFilename().contains(".jpg") || fileUpload.getFilename().contains(".pdf")) {
-			addUploadedBorder(this.uploadButton);
-			fillFormDniData();
-		}else {
-			addUploadedFail(this.uploadButton);
-			Window.alert("El archivo no es valido");
-		}
-	}
+//	@UiHandler("uploadButton")
+//	void onUploadButtonClick(ClickEvent event) {
+//		fileUpload.click();
+//	}
+//
+//	@UiHandler("fileUpload")
+//	void onFileUpload(ChangeEvent event) {
+//		fileUpload.setName("archivo");
+//		if (fileUpload.getFilename().contains(".jpg") || fileUpload.getFilename().contains(".pdf")) {
+//			addUploadedBorder(this.uploadButton);
+//			fillFormDniData();
+//		}else {
+//			addUploadedFail(this.uploadButton);
+//			Window.alert("El archivo no es valido");
+//		}
+//	}
 
 	@UiHandler("nationality")
 	void onNationalitySelectionValue(SelectionEvent<Suggestion> event) {

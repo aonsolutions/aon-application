@@ -5,7 +5,6 @@ import java.io.Serializable;
 import com.esferalia.aon.occam.api.model.Properties.*;
 import com.esferalia.aon.occam.api.model.finance.Properties.IRPFProperties;
 import com.esferalia.aon.occam.api.model.finance.Properties.Mod145Properties;
-import com.esferalia.aon.occam.api.model.finance.Properties.VATProperties;
 
 public interface Filter extends Serializable{
 	
@@ -725,6 +724,11 @@ public interface Filter extends Serializable{
 	@FunctionalInterface
 	public interface Mod145Filter{
 		Filter filter(Mod145Properties properties);
+	}
+	
+	@FunctionalInterface
+	public interface QuestionFilter{
+		Filter filter(QuestionProperties properties);
 	}
 	
 }

@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveCodigoFacturaRectificativaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveTipoFacturaGastosEnum;
@@ -65,6 +66,8 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_factura
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_consultapeticion_v1_0_0.LROEPJ240FacturasRecibidasConsultaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_consultarespuesta_v1_0_0.LROEPJ240FacturasRecibidasConsultaRespuesta;
 import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.exceptions.TBAIError;
+import net.aonsolutions.aon.tbai.exceptions.TbaiException;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
@@ -165,6 +168,8 @@ public class LROE240_2 extends LROE240 {
 			receptionDate = invoice.getIssueDate();
 		cabecera.setFechaRecepcion(AonDateUtils.format(receptionDate, DATE_FORMAT));
 		if(invoice.isRectifier()) {
+			cabecera.setSerieFactura("R");
+
 			FacturaRectificativaImporteType rectificativa = new FacturaRectificativaImporteType(); 
 			rectificativa.setCodigo(ClaveCodigoFacturaRectificativaEnum.R_1); 
 			rectificativa.setTipo(ClaveTipoRectificativaEnum.I); // por diferencia o por sustitucion
@@ -267,6 +272,9 @@ public class LROE240_2 extends LROE240 {
 	}
 	
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
+		if(AonStringUtils.isBlank(invoice.getRegistryDocument())) {
+			return error(new TbaiException(TBAIError.AON_001));
+		} 
 		LinkedList<Invoice> invoices = new LinkedList<>();
 		invoices.add(invoice);
 		boolean mod = invoice.getInvoiceInfo().getStatus().isAccepted() || invoice.getInvoiceInfo().getStatus().isAcceptedWithErrors();

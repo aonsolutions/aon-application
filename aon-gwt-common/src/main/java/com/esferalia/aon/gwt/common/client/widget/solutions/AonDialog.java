@@ -30,9 +30,6 @@ public class AonDialog extends AonCustomDialog {
 	public static interface AonAcceptDialogCallback {
 		void onAccept();
 		void onCancel();
-		default void onClose() {
-			this.onCancel();
-		}
 	}
 	
 	public AonDialog(String caption, Widget widget) {
@@ -114,10 +111,6 @@ public class AonDialog extends AonCustomDialog {
 			}
     	});
     	
-    	addCloseHandler(e -> {
-    		callback.onClose();
-    	});
-    	
     	buttonsPanel.add(cancelButton);
     	
     	okButton = new Button();
@@ -128,7 +121,7 @@ public class AonDialog extends AonCustomDialog {
     	okButton.addKeyUpHandler(e -> {
     		if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
 				hide();
-				callback.onCancel();	
+				callback.onAccept();	
 			}
     	});
     	

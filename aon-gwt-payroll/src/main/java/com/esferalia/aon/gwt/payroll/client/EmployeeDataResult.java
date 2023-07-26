@@ -31,5 +31,7 @@ public class EmployeeDataResult extends JavaScriptObject {
         return this.apellido2;
     }-*/;
     
+    
+    
 
 }

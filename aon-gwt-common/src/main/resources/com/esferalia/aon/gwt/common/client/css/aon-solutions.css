@@ -441,6 +441,7 @@
 	display: flex;	
 	justify-content: flex-end;
 	align-items: center;
+	gap: .5rem;
 }
 
 .aon_display_table {
@@ -505,6 +506,12 @@
 
 .aon_line_height_double {
 	line-height: 200%;
+}
+
+.aon_line {
+	  width: 100%;
+	  border-bottom: 2px solid #eee;
+	  margin: .5rem 0;
 }
 
 .aon_ellipsis {
@@ -939,6 +946,13 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+    gap: .5rem;
+}
+
+.aon_flex_column_between {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
     gap: .5rem;
 }
 

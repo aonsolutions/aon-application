@@ -29,6 +29,14 @@
 						<tr> 
 							<td>
 								<g:HorizontalPanel>
+									<g:Label ui:field="ITRlbl" />
+								</g:HorizontalPanel>										
+							</td>
+						</tr>
+						
+						<tr> 
+							<td>
+								<g:HorizontalPanel>
 									<g:Label ui:field="ITR8234001lbl" />
 									<g:ListBox ui:field="ITR8234001"></g:ListBox>
 								</g:HorizontalPanel>										

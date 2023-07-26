@@ -327,7 +327,7 @@ public class Deposit2 extends DockLayoutPanel {
 			index++;
 		}
 		
-		if(year >= 2020){
+		if(year >= 2020 && year <= 2022){
 			flex_table.setWidget(index, 0, new Label(CVA));
 			CheckBox cbCVA = new CheckBox();cbCVA.setValue(true);
 			flex_table.setWidget(index, 1, cbCVA);
