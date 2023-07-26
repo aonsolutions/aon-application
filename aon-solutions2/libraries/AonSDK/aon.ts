@@ -1288,6 +1288,7 @@ interface IUser extends ICollectable {
   Lastname: string,
   Document: string,
   Email: string,
+  Password: string,
   Phone: string,
   Active: boolean
 }
@@ -1327,8 +1328,8 @@ export class Factory implements IFactory {
         return new Employee(name, lastname, document, email, phone, naf, active);
     }
 
-    createUser(name?: string, lastname?: string, document?: string, email?: string, phone?: string, active?: boolean): IUser {
-        return new User(name, lastname, document, email, phone, active);
+    createUser(name?: string, lastname?: string, document?: string, email?: string, password?: string, phone?: string, active?: boolean): IUser {
+        return new User(name, lastname, document, email, password, phone, active);
     }
 }
 
@@ -2294,15 +2295,17 @@ class User implements IUser, IModel  {
   private lastname: string;
   private document: string;
   private email: string;
+  private password: string;
   private phone: string;
   private active: boolean;
   private key: string;
 
-  constructor(name?: string, lastname?: string, document?: string, email?: string, phone?: string, active?: boolean) {
+  constructor(name?: string, lastname?: string, document?: string, email?: string, password?: string, phone?: string, active?: boolean) {
     this.name = name || '';
     this.lastname = lastname || '';
     this.document = document || '';
     this.email = email || '';
+    this.password = password || '';
     this.phone = phone || '';
     this.active = active || true;
     this.key = document || '';
@@ -2340,6 +2343,14 @@ class User implements IUser, IModel  {
     this.email = value;
   }
 
+  public get Password(): string {
+    return this.password;
+  }
+
+  public set Password(value: string) {
+    this.password = value;
+  }
+
   public get Phone(): string {
     return this.phone;
   }
@@ -2375,6 +2386,7 @@ class User implements IUser, IModel  {
     map.set('lastname', this.lastname);
     map.set('document', this.document);
     map.set('email', this.email);
+    map.set('password', this.password);
     map.set('phone', this.phone);
     map.set('active', this.active);
 
@@ -2388,6 +2400,7 @@ class User implements IUser, IModel  {
     map.set('lastname', this.lastname);
     map.set('document', this.document);
     map.set('email', this.email);
+    map.set('password', this.password);
     map.set('phone', this.phone);
     map.set('active', this.active);
 
@@ -2573,6 +2586,7 @@ if(users.size() == 0){
     'Ledner',
     '35532252N',
     'kathrynledner@gmail.test',
+    'test',
     '690619302',
     true
     ));
@@ -2582,6 +2596,7 @@ if(users.size() == 0){
     'González',
     '94385657M',
     'eusebiogonzalez@gmail.test',
+    'test',
     '656796396',
     true
   ));
@@ -2591,6 +2606,7 @@ if(users.size() == 0){
     'Macejkovic',
     '11556837G',
     'juanmacejkovic@gmail.test',
+    'test',
     '619068048',
     true
   ));
