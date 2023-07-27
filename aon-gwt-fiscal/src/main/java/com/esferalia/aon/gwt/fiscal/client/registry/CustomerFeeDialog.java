@@ -104,6 +104,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	private boolean isSameProduct = false;
 	private boolean isNewFee = false;
 	private OldItem item;
+	private Customer customer;
 
 	// ------------------------------------------------- Constructor
 
@@ -138,6 +139,21 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		setCaption("Creador Cuota");
 		
 		this.isNewFee = true;
+		this.options = options;
+		
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		
+		initView();
+		showDialog();
+	}
+	
+	protected CustomerFeeDialog(RegistryModuleOptions options, OldItem item, Customer customer) {
+		setCaption("Creador Cuota");
+		
+		this.isNewFee = true;
+		this.item = item;
+		this.customer = customer;
 		this.options = options;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
@@ -233,6 +249,11 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			} else if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 3) 
 				getCustomersSuggestion(customerQuery);
 		});
+		
+		if(null != this.customer) {
+			customerSuggestBox.setEnabled(false);
+			customerSuggestBox.setValue(this.customer.getName() + " ( " + this.customer.getDocument() + " )" + (AonStringUtils.isBlank(this.customer.getAlias()) ? "" : " - " + this.customer.getAlias()) );
+		}
 		
 		customerPanel.add(customerLabel);
 		customerPanel.add(customerSuggestBox);
@@ -352,9 +373,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		});
 		
 		if(null != fee) productSuggestBox.setValue(fee.getItem().getProduct().getName() + " ( " + fee.getItem().getProduct().getCode() + " )");
-		else if(this.isSameProduct) productSuggestBox.setValue(this.item.getProduct().getName() + " ( " + this.item.getProduct().getCode() + " )");
+		else if(this.isSameProduct || null != this.item) productSuggestBox.setValue(this.item.getProduct().getName() + " ( " + this.item.getProduct().getCode() + " )");
 		
-		if(null != fee || this.isSameProduct) {
+		if(null != fee || this.isSameProduct || null != this.item) {
 			productSuggestBox.setEnabled(false);
 			productTextBox.setValue(null != fee ? fee.getItem().getProduct().getName() : this.item.getProduct().getName());
 			productTextBox.setVisible(true);
@@ -917,7 +938,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		Fee newFee = new Fee();
 		
 		if(AonStringUtils.isNotBlank(projectSuggestBox.getValue())) newFee.setProject(projectSuggestions.get(projectSuggestBox.getValue()));
-		if(AonStringUtils.isNotBlank(customerSuggestBox.getValue())) newFee.setCustomer(customerSuggestions.get(customerSuggestBox.getValue()));
+		
+		if(null != this.customer) newFee.setCustomer(this.customer);
+		else if(AonStringUtils.isNotBlank(customerSuggestBox.getValue())) newFee.setCustomer(customerSuggestions.get(customerSuggestBox.getValue()));
 		
 		if(AonStringUtils.isBlank(customerSuggestBox.getValue())) {
 			AonMessagePanel.showError(messagePanel, "El campo cliente es obligatorio");
@@ -941,8 +964,8 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		newFee.setEndDate(endDateBox.getValue());
 		newFee.setBillingDate(createBillingDate());
 		
-		if(newFee.getStartDate() == null || newFee.getEndDate() == null || newFee.getBillingDate() == null) {
-			AonMessagePanel.showError(messagePanel, "Las fechas desde, hasta y facturaci\u00f3n son obligatorias");
+		if(newFee.getStartDate() == null || newFee.getBillingDate() == null) {
+			AonMessagePanel.showError(messagePanel, "Las fechas desde y facturaci\u00f3n son obligatorias");
 			return;
 		}
 		
