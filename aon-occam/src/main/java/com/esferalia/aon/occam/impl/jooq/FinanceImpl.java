@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IFinance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
@@ -54,6 +55,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.BookingCheckDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
@@ -720,6 +722,32 @@ public class FinanceImpl implements IFinance {
 	public InvoiceTracking getInvoiceTracking(AONContext ctx, InvoiceTrackingFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceTrackingDAO.get(ctx, filter));		
+	}
+	
+	// ---------- BOOKING CHECK
+
+	@Override
+	public LinkedList<BookingCheck> getBookingWithoutFeeList(CloseableAONContext ctx, CustomerFeeParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> BookingCheckDAO.getBookingWithoutFeeList(ctx, params));	
+	}
+	
+	@Override
+	public LinkedList<BookingCheck> getFeeWithoutBookingList(CloseableAONContext ctx, CustomerFeeParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> BookingCheckDAO.getFeeWithoutBookingList(ctx, params));	
+	}
+	
+	@Override
+	public LinkedList<BookingCheck> getBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> BookingCheckDAO.getBookingCheckList(ctx, params));	
+	}
+
+	@Override
+	public void saveBookingCheck(CloseableAONContext ctx, BookingCheck bookingCheck) {
+		ctx.getDslContext().transaction(
+				configuration -> BookingCheckDAO.save(ctx, bookingCheck));
 	}
 	
 }

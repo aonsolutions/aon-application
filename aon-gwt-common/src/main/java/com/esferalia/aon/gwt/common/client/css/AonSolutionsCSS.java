@@ -586,6 +586,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_display_none")
 	String aonDisplayNone();
 	
+	@ClassName("aon_cmd_item")
+	String aonCmdItem();
+	
 	@ClassName("aon_display_flex")
 	String aonDisplayFlex();
 	

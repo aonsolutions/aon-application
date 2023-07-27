@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.BonusFilter;
+import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Cno;
@@ -7933,6 +7934,32 @@ public class AON {
 	public static void saveRegistryProfile(Domain domain, String user, Integer registryId, String questionAlias, String value) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getDescription(), domain.getId(), user)) {
 			getRegistry().saveRegistryProfile(ctx, registryId, questionAlias, value);
+		}
+	}
+	
+	// ---------------- BookingCheck
+
+	public static LinkedList<BookingCheck> getBookingWithoutFeeList(String domainName, int domain, String user, CustomerFeeParams params) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getBookingWithoutFeeList(ctx, params);
+		}
+	}
+	
+	public static LinkedList<BookingCheck> getFeeWithoutBookingList(String domainName, int domain, String user, CustomerFeeParams params) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getFeeWithoutBookingList(ctx, params);
+		}
+	}
+	
+	public static LinkedList<BookingCheck> getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getBookingCheckList(ctx, params);
+		}
+	}
+
+	public static void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			getFinance().saveBookingCheck(ctx, bookingCheck);
 		}
 	}
 	

@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
@@ -230,6 +231,15 @@ public interface IFinance {
 	public InvoiceTracking getInvoiceTracking(AONContext ctx, InvoiceTrackingFilter filter);
 	public InvoiceTracking saveInvoiceTracking(AONContext ctx, InvoiceTracking invoiceTracking);
 	public void deleteInvoiceTracking(AONContext ctx, Integer invoiceId);
+	
+	// 	***********************************************
+	// 	***************** BOOKING CHECK ***************
+	// 	***********************************************
+
+	LinkedList<BookingCheck> getBookingWithoutFeeList(CloseableAONContext ctx, CustomerFeeParams params);
+	LinkedList<BookingCheck> getFeeWithoutBookingList(CloseableAONContext ctx, CustomerFeeParams params);
+	LinkedList<BookingCheck> getBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
+	void saveBookingCheck(CloseableAONContext ctx, BookingCheck bookingCheck);
 
 }
 	
