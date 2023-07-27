@@ -3,10 +3,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
 
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -109,104 +105,6 @@ public class FilterDAO implements Filter {
 		}
 		
 	}
-	public static class CompositeOrPropertyDAO<T> extends CompositePropertyDAO<T> {
-
-	    public CompositeOrPropertyDAO(Property<T> ...properties) {
-		super(Filter::or, properties);
-	    }
-	    
-	    public CompositeOrPropertyDAO(Property<T> property1, Property<T> property2) {
-		super(Filter::or, property1 , property2);
-	    }
-	}
-
-	public static class CompositePropertyDAO<T> implements Property<T> {
-		
-		private Property<T> [] properties;
-		private BinaryOperator<Filter> accumulator;
-		
-		public CompositePropertyDAO(BinaryOperator<Filter> accumulator, Property<T> ...properties) {
-		    this.properties = properties;
-		    this.accumulator = accumulator;
-		}
-
-		@Override
-		public Filter eq(T t) {
-		    return filter(t, Property::eq);
-		}
-
-		@Override
-		public Filter ne(T t) {
-		    return filter(t, Property::ne);
-		}
-
-		@Override
-		public Filter le(T t) {
-		    return filter(t, Property::le);
-		}
-
-		@Override
-		public Filter lt(T t) {
-		    return filter(t, Property::lt);
-		}
-
-		@Override
-		public Filter gt(T t) {
-		    return filter(t, Property::gt);
-		}
-
-		@Override
-		public Filter ge(T t) {
-		    return filter(t, Property::ge);
-		}
-		
-		@Override
-		public Filter isNull() {
-		    return filter(Property::isNull);
-		}
-
-		@Override
-		public Filter isNotNull() {
-		    return filter(Property::isNotNull);
-		}
-
-		@Override
-		public Filter like(T t) {
-		    return filter(t, Property::like);
-		}
-		
-		@Override
-		public Filter match(T t) {
-		    return filter(t, Property::match);
-		}
-
-		@Override
-		public Filter in(T[] t) {
-		    return Arrays.stream(properties).map(p -> p.in(t) ).reduce( accumulator ).orElse(new FilterDAO(DSL.trueCondition()));
-		}
-
-		@Override
-		public Filter notIn(T[] t) {
-		    return Arrays.stream(properties).map(p -> p.notIn(t) ).reduce( accumulator ).orElse(new FilterDAO(DSL.trueCondition()));
-		}
-		
-		@Override
-		public Filter between(T min, T max) {
-		    return Arrays.stream(properties).map(p -> p.between(min,max)).reduce( accumulator ).orElse(new FilterDAO(DSL.trueCondition()));
-		}
-
-		
-		private Filter filter(Function<Property<T>,Filter> op) {
-		    return Arrays.stream(properties).map(op::apply).reduce( accumulator ).orElse(new FilterDAO(DSL.trueCondition()));
-		}
-		
-		private Filter filter(T t, BiFunction<Property<T>, T,Filter> op) {
-		    return Arrays.stream(properties).map(p -> op.apply(p, t) ).reduce( accumulator ).orElse(new FilterDAO(DSL.trueCondition()));
-		}
-
-		
-	}
-
 	public static class DateBetweenPropertyDAO implements Property<Date> {
 
 		@Override

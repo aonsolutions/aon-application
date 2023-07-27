@@ -58,7 +58,6 @@ import com.esferalia.aon.jooq.tables.records.SalaryPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
-import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
@@ -662,17 +661,7 @@ public class SalaryDAO {
 	public static Stream<Salary> getSalaryData(AONContext ctx,
 			SalaryFilter filter, Supplier<Salary> supplier) {
 
-		//Condition [] conditions = SALARY_PROPERTIES.getConditions(filter);
-		
-		Condition[] conditions =
-		new SalaryPropertiesDAO() {
-		  @Override
-		  public Property<Date> getEndDateProperty() {
-		      return new FilterDAO.CompositeOrPropertyDAO<>(
-			      new FilterDAO.DatePropertyDAO(SALARY.END_DATE), 
-			      new FilterDAO.DatePropertyDAO(SALARY_DATA.END_DATE)) ;
-		  }
-		}.getConditions( filter );
+		Condition conditions[] = SALARY_PROPERTIES.getConditions(filter);
 
 		if (ctx == null) {
 			List<Salary> emptyList = Collections.emptyList();
@@ -686,7 +675,6 @@ public class SalaryDAO {
 		.from(SALARY)
 		.innerJoin(CONTRACT).onKey()
 		.leftJoin(ENTERPRISE_CCC).onKey()
-		.leftJoin(SALARY_DATA).onKey(FK_SALARY_DATA_SALARY)
 		.where(conditions)
 		.groupBy(EMPLOYEE_DOCUMENT)
 		.orderBy(EMPLOYEE_DOCUMENT)
@@ -711,7 +699,6 @@ public class SalaryDAO {
 		ctx.getDslContext()
 		.select()
 		.from(SALARY)
-		.leftJoin(SALARY_DATA).onKey(FK_SALARY_DATA_SALARY)
 		.leftJoin(CONTRACT_DATA)
 		.on(
 			SALARY.CONTRACT.eq(CONTRACT_DATA.CONTRACT)
@@ -724,7 +711,6 @@ public class SalaryDAO {
 		.and(CONTRACT_DATA.END_DATE.isNull()
 			.or(CONTRACT_DATA.END_DATE.ge(CONTRACT_DATA.START_DATE))
 		)
-		.groupBy(SALARY.ID, CONTRACT_DATA.ID)
 		.orderBy(EMPLOYEE_DOCUMENT)
 		.fetchLazy();
 		//@formatter:on
@@ -736,9 +722,7 @@ public class SalaryDAO {
 		.from(SALARY)
 		.innerJoin(CONTRACT).onKey()
 		.leftJoin(ENTERPRISE_CCC).onKey()
-		.leftJoin(SALARY_DATA).onKey(FK_SALARY_DATA_SALARY)
 		.where(conditions)
-		.groupBy(SALARY.ID, CONTRACT.ID, ENTERPRISE_CCC.ID)
 		.orderBy(EMPLOYEE_DOCUMENT)
 		.fetchLazy();
 		//@formatter:on
@@ -750,6 +734,7 @@ public class SalaryDAO {
 		//@formatter:off
 		return Seq.seq(rootCursor)
 				.map(rootRecord-> {
+					
 					
 					String employeeDocument = getEmployeeDocument(rootRecord);	
 
@@ -772,9 +757,6 @@ public class SalaryDAO {
 					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) ),
 					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) )
 					.filter(salaryDataRecord -> salaryDataRecord.get(SALARY_DATA.ID) != null )
-					.peek(salaryDataRecord -> 
-						salary.setEndDate(max(salary.getEndDate(), salaryDataRecord.get(SALARY_DATA.END_DATE)))
-					)
 					.forEachOrdered(salaryDataRecord->
 						salary.setContextData(
 						salaryDataRecord.get(SALARY_DATA.NAME), 
@@ -823,12 +805,12 @@ public class SalaryDAO {
 					}
 					);
 					salaryImlicitDataIter.back();
-					
+
 					//TODO: Delete this fix for old/incomplete salaries. 
-					 fixSalaryData("BASE_CGC", salary, SALARY.CGC_BASE, rootRecord);
-					 fixSalaryData("BASE_CGP", salary, SALARY.CGP_BASE, rootRecord);
-					 fixSalaryData("BASE_ESTR", salary, SALARY.HEXTRA_BASE, rootRecord);
-					 fixSalaryData("BASE_NESTR", salary, SALARY.NON_HEXTRA_BASE, rootRecord);
+					fixSalaryData("BASE_CGC", salary, SALARY.CGC_BASE, rootRecord);
+					fixSalaryData("BASE_CGP", salary, SALARY.CGP_BASE, rootRecord);
+					fixSalaryData("BASE_ESTR", salary, SALARY.HEXTRA_BASE, rootRecord);
+					fixSalaryData("BASE_NESTR", salary, SALARY.NON_HEXTRA_BASE, rootRecord);
 					
 					return salary;
 				}
@@ -1101,8 +1083,8 @@ public class SalaryDAO {
 		if ( record.get(field) == null ) 
 			return;
 		
-		Date salaryStart = salary.getStartDate(); // record.get(SALARY.START_DATE);
-		Date salaryEnd = salary.getEndDate(); //record.get(SALARY.END_DATE);
+		Date salaryStart = record.get(SALARY.START_DATE);
+		Date salaryEnd = record.get(SALARY.END_DATE);
 		
 		List<ContextData> datas = salary.getContextData().get(name);
 		if ( datas != null && !datas.isEmpty() )
@@ -1131,7 +1113,7 @@ public class SalaryDAO {
 
 	private static class SalaryPropertiesDAO implements SalaryProperties {
 
-		public Condition[] getConditions(SalaryFilter filter) {
+		private Condition[] getConditions(SalaryFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null)
 				return new Condition[0];

@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,8 +22,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -108,66 +107,6 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 		Salary salary = calculator.calculate(ctx);
 		
 		//Assert.assertEquals((1000.00 * 10 / 30.00 + 50.00 + 100.00 * 9/12) * ( 1 + 1/12 ) , salary.getTotalPayment());
-
-		//Assert.assertEquals(4, salary.getSalaryPayments().size());
-
-	}
-
-	@Test
-	public void testUndefinedKMS() throws ExpressionException, SQLException,
-			SalaryException {
-		Connection connection = getConnection();
-		AONContext aonContext = new AONContext(connection);
-
-		cleanSystemData(aonContext);
-		
-		//@formatter:off
-		ContractRecord contract = newContract(aonContext, 
-				new String[] {}, 
-				new String[] {}, 
-				null);
-		//@formatter:on		
-		
-		setData(aonContext, contract, "DIAS_MES", "30.00");
-		setData(aonContext, contract, "EXENTO_KM", "0.20");
-		setData(aonContext, contract, "IMPORTE_KM", "0.30");
-
-
-		addPayment(aonContext, contract, 
-			contract.getStartDate(), 
-			contract.getEndDate(), 
-			"GASTOS LOC. SIN JUST. ( @{IMPORTE_KM} X @{KMS} KMS )", 
-			"IMPORTE_KM * KMS", 
-			"EXCESO(EXENTO_KM * KMS)", 
-			"EXCESO(EXENTO_KM * KMS)", 
-			PaymentType.CRA_0050, 
-			SalaryType.SALARY);
-		
-		
-		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
-				null, null);
-
-		Date startDate = getFirstDayOfMonth(getToday());
-		Date endDate = getLastDayOfMonth(startDate);
-
-
-		addSystemData(aonContext, getFirstDayOfYear(startDate), null , Collections.singletonMap("KMS", "UNDEFINED('KMS')"));
-		
-		addData(aonContext, contract, startDate, add(startDate, DAY_OF_MONTH, 14), "KMS", "60.00");
-		
-		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, contract);
-		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
-
-		calculator.setSalaryBuilder(new SalaryBuilder());
-		Salary salary = calculator.calculate(ctx);
-		for (SalaryPayment salaryPayment : salary.getSalaryPayments()) {
-			System.out.println(salaryPayment.getDescription()+ ": " + salaryPayment.getAmount() );
-		    
-		} 
-		
-		Assert.assertEquals( 60.00 * 0.30 , salary.getTotalPayment());
 
 		//Assert.assertEquals(4, salary.getSalaryPayments().size());
 
