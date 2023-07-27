@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -328,6 +330,13 @@ public class Model2002022 extends DockLayoutPanel {
 					}
 				};
 				upload.upload();
+			}
+
+			@Override
+			public boolean validateBalance() {
+				// Devuelve false si el balance está descuadrado por un importe menor o igual de 10 euros
+				double diferencia = AonMathUtils.absRounded(mod200Object.getDoubleValue(Mod2002022Key.BA180) - mod200Object.getDoubleValue(Mod2002022Key.BP252));				
+				return (diferencia == 0.0 || diferencia > 10.0);
 			}
 
 		};		

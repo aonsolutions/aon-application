@@ -19,5 +19,6 @@ public interface IModel200PageCallback {
 	public void sendSuccessfully();
 	public String getCheckAction();
 	public String getCheckDataResponseDataAction();
+	public boolean validateBalance();
 
 }
