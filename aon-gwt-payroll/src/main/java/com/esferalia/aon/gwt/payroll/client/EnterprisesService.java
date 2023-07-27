@@ -166,7 +166,7 @@ public interface EnterprisesService extends RemoteService {
 	List<CRA> getCRAs(String domain, String string, long liquidDateTime);
 
 	String createNewCRA(String domainName, String user, long findingDate, List<String> ccc,
-			ArrayList<Integer> cccIdList, Integer cccId, String type);
+			ArrayList<Integer> cccIdList, Integer cccId, String type) throws IllegalArgumentException;
 
 	void deleteCRA(String currentDomainName, Integer code);
 

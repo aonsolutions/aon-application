@@ -1142,6 +1142,7 @@ public class MainCRA extends MainEntryPoint {
 			} else
 				showError("Error CRA", v);
 		}, f -> {
+			showError("Error CRA", f.getMessage());
 		});
 	}
 

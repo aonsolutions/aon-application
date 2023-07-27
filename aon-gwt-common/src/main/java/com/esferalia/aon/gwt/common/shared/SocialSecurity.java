@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.common.shared;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 @SuppressWarnings("serial")
 public class SocialSecurity implements Serializable{
 	
@@ -16,8 +18,7 @@ public class SocialSecurity implements Serializable{
 	}
 	
 	public boolean checkSS(){
-		if(null == this.socialSecurity || "" == this.socialSecurity)
-			return false;
+		if(AonStringUtils.isBlank(socialSecurity)) return false;
 		
 		String controlCode = this.socialSecurity.substring(10, 12);;
 		String ssNumberWithoutCode = this.socialSecurity.substring(0, 10);
@@ -28,9 +29,9 @@ public class SocialSecurity implements Serializable{
 			String calculateControlCodeStr = String.valueOf(calculateControlCode);
 			
 			if(calculateControlCodeStr.length() == 1)
-				calculateControlCodeStr = "0"+calculateControlCodeStr;
+				calculateControlCodeStr =  AonStringUtils.leftPad(calculateControlCodeStr, 2, '0');
 			
-			return (controlCode == calculateControlCodeStr) ? true : false;
+			return AonStringUtils.equalsIgnoreCase(controlCode, calculateControlCodeStr);
 		} catch (Exception e) {
 			return false;
 		}
