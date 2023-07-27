@@ -427,6 +427,12 @@
 .aon_inline_block {
 	display: inline-block;
 }
+.aon_cmd_item{
+	background-position: center left;
+	background-repeat: no-repeat;
+	padding-left: 25px !important;
+	background-size: contain;
+}
 .aon_display_flex {
 	display: flex;	
 }
