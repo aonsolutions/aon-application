@@ -4,9 +4,21 @@
     "BUTTON_TEXT": "Click here"
   },
   "HOME": {
-      "UPLOAD_DOCUMENTATION": "Upload documentation",
-      "VIEW_ALL_MESSAGES": "See all messages",
-      "SEND_MESSAGE": "Send message",
-      "TITLE": "Service developed by {{ desarrollador }}"
+    "UPLOAD_DOCUMENTATION": "Subir documentación",
+    "VIEW_ALL_MESSAGES": "Ver todos los mensajes",
+    "SEND_MESSAGE": "Enviar mensaje",
+    "TITLE": "Servicio desarrollado por {{ desarrollador }}"
+  },
+  "MENU": {
+    "INBOX": "Inbox",
+    "ACCESS_MANAGEMENT": "Management Access",
+    "TAX_PANEL": "Tax Panel",
+    "EMPLOYEES": "Employees",
+    "DOCUMENTS": "Documents"
+  },
+  "HEADER": {
+    "EDIT_PROFILE": "Edit profile",
+    "HELP": "Help",
+    "LOGOUT": "Logout"
   }
 }

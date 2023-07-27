@@ -18,7 +18,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 
 import { AccordionComponent } from './components/accordion/accordion.component';
 import { BasicLayoutComponent } from './layouts/basic-layout/basic-layout.component';
@@ -112,7 +112,8 @@ import { TopBarComponent } from './layouts/top-bar/top-bar.component';
     PdfJsViewerModule,
     ReactiveFormsModule,
     RouterModule,
-    SetMaterialModule
+    SetMaterialModule,
+    TranslateModule
   ],
   exports:[
     AccordionComponent,

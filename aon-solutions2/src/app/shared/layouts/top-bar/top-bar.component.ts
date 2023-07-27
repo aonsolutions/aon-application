@@ -3,6 +3,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
+import { TranslateService } from '@ngx-translate/core';
 
 export class Enterprise {
   name: string;
@@ -28,14 +29,26 @@ export class TopBarComponent implements OnInit, OnChanges {
     {root:true, text:'Ayuda'          , icon:'help'       , colorIcon:'black'},
     {root:true, text:'Cerrar sesión' , icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
   ]
-  
+
   displayHomeIcon : boolean = false;
   usserLoggged    : boolean = this.auth.isLoggedIn();
   currentRoute    : string  = this.router.url.replace('/','');
 
-  constructor(private router: Router, public auth: AuthService) {
+  constructor(
+    private router: Router, public auth: AuthService,
+    private translateServive: TranslateService
+    ){
     this.router.events.subscribe((event) => {
       event instanceof NavigationEnd ? this.checkCurrentRoute() : null
+    })
+    translateServive.get('HEADER.EDIT_PROFILE').subscribe((res: string)=> {
+      console.log(res);
+    })
+    translateServive.get('HEADER.HELP').subscribe((res: string)=> {
+      console.log(res);
+    })
+    translateServive.get('HEADER.LOGOUT').subscribe((res: string)=> {
+      console.log(res);
     })
   }
 

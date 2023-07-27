@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ChartType } from 'chart.js';
 import { CollectionFactory, IBank, ICollection, IMessage, ITaxModel } from 'libraries/AonSDK/aon';
 import { MultiDataSet } from 'ng2-charts';
@@ -93,8 +94,25 @@ export class HomeComponent implements OnInit {
     public bankService: BankService,
     public taxModelService: TaxModelService,
     public reportingService: ReportingService,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private translateService: TranslateService
+  ) {
+    translateService.get('MENU.ACCESS_MANAGEMENT').subscribe((res: string) => {
+        console.log(res);
+    })
+    translateService.get('MENU.TAX_PANEL').subscribe((res: string) => {
+      console.log(res);
+    })
+    translateService.get('MENU.EMPLOYEES').subscribe((res: string) => {
+    console.log(res);
+    })
+    translateService.get('MENU.DOCUMENTS').subscribe((res: string) => {
+    console.log(res);
+    })
+    translateService.get('MENU.INBOX').subscribe((res: string) => {
+      console.log(res);
+    })
+  }
 
   ngOnInit(): void {
     //bankService
