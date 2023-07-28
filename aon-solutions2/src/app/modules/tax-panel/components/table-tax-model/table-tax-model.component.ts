@@ -13,8 +13,10 @@ export class TableTaxModelComponent implements OnInit {
   bodyTable          : any = [];
   headerTable        : any = {name: 'modelo', result: 'Resultado', status: 'estado', paymentMethod: 'Metodo de pago', actions: 'acciones'};
   displayedColumns   : string[] = ['name', 'result', 'status', 'paymentMethod', 'actions'];
-  
-  constructor( public taxModelService :TaxModelService ) {
+
+  constructor(
+    public taxModelService: TaxModelService,
+    ) {
     let tableRow : any = [];
     let column   : any = {};
     // Model date
@@ -23,16 +25,16 @@ export class TableTaxModelComponent implements OnInit {
       response.forEach(function (tax, taxKey) {
         // clone object
         column = Object.assign({}, tax);
-        // Object Tax        
+        // Object Tax
           // Predefinimos la key de la fila
           column.key  = taxKey;
           // Cargamos datos en la tabla
-          column.name = 
+          column.name =
               "<div class='orange'>MODELO " + tax.Name + "</div>"+
               "<span class='griss'>"+ tax.TaxType +"</span>";
           column.result = tax.Result + ' &euro;';
           column.status = tax.Status === 'pendiente' ? {
-            icon: [{watch_later: 'orange'}], 
+            icon: [{watch_later: 'orange'}],
             text: "<span class='background-text-orange'>"+ tax.Status +"</span>"
           } : "<span class='background-text-orange-light margin-left-2'>"+ tax.Status +"</span>";
           // Add date Actions ( buttons )
@@ -51,7 +53,7 @@ export class TableTaxModelComponent implements OnInit {
               column.actions = [];
             break;
           }
-        // Add object date table 
+        // Add object date table
         tableRow.push(column);
       });
       // Tax date format for table
@@ -73,5 +75,4 @@ export class TableTaxModelComponent implements OnInit {
       console.log(response);
     });
   }
-
 }

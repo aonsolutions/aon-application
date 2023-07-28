@@ -1,25 +1,55 @@
 {
   "COMMON": {
-    "WELCOME": "Bienvenido!",
-    "BUTTON_TEXT": "Haz click aquí",
     "COIN": "&euro;"
-  },
-  "HOME": {
-      "UPLOAD_DOCUMENTATION": "Subir documentación",
-      "VIEW_ALL_MESSAGES": "Ver todos los mensajes",
-      "SEND_MESSAGE": "Enviar mensaje",
-      "TITLE": "Servicio desarrollado por {{ desarrollador }}"
-  },
-  "MENU": {
-    "INBOX": "Bandeja de email",
-    "ACCESS_MANAGEMENT": "Acceso a gestión",
-    "TAX_PANEL": "Panel de impuestos",
-    "EMPLOYEES": "Empleados",
-    "DOCUMENTS": "Documentos"
   },
   "HEADER": {
     "EDIT_PROFILE": "Editar perfil",
     "HELP": "Ayuda",
     "LOGOUT": "Cerrar sesión"
+  },
+  "MENU": {
+    "MENU": "menu",
+    "INBOX": "BANDEJA",
+    "BILLING": "GESTIÓN",
+    "TAX-PANEL": "PANEL DE IMPUESTOS",
+    "EMPLOYEE-PANEL": "PANEL DE EMPLEADOS",
+    "DOCUMENTATION": "DOCUMENTACIÓN"
+
+  },
+  "LOGIN": {
+
+  },
+  "ENTERPRISES": {}
+  ,
+  "HOME": {
+
+  },
+  "INBOX": {
+
+  },
+  "DOCUMENTATION": {
+
+  },
+  "BILLING": {
+
+  },
+  "CONSULTING": {
+
+  },
+  "EMPLOYEE-PANEL": {
+
+  },
+  "TAX-PANEL": {
+    "1 TRIMESTER":   "1 Trimestre",
+    "2 TRIMESTER":   "2 Trimestre",
+    "3 TRIMESTER":   "3 Trimestre",
+    "4 TRIMESTER":   "4 Trimestre",
+    "ALL":           "Todos",
+    "NAME":          "Modelo",
+    "RESULT":        "Resultado",
+    "STATUS":        "estado",
+    "PAYMENTMETHOD": "Metodo de pago",
+    "ACTIONS":       "acciones",
+    "MODEL":         "Modelo"
   }
 }

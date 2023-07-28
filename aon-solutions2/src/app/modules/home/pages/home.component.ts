@@ -95,23 +95,7 @@ export class HomeComponent implements OnInit {
     public taxModelService: TaxModelService,
     public reportingService: ReportingService,
     private messageService: MessageService,
-    private translateService: TranslateService
   ) {
-    translateService.get('MENU.ACCESS_MANAGEMENT').subscribe((res: string) => {
-        console.log(res);
-    })
-    translateService.get('MENU.TAX_PANEL').subscribe((res: string) => {
-      console.log(res);
-    })
-    translateService.get('MENU.EMPLOYEES').subscribe((res: string) => {
-    console.log(res);
-    })
-    translateService.get('MENU.DOCUMENTS').subscribe((res: string) => {
-    console.log(res);
-    })
-    translateService.get('MENU.INBOX').subscribe((res: string) => {
-      console.log(res);
-    })
   }
 
   ngOnInit(): void {

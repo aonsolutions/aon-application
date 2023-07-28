@@ -36,23 +36,15 @@ export class TopBarComponent implements OnInit, OnChanges {
 
   constructor(
     private router: Router, public auth: AuthService,
-    private translateServive: TranslateService
+    private translateService: TranslateService
     ){
     this.router.events.subscribe((event) => {
       event instanceof NavigationEnd ? this.checkCurrentRoute() : null
     })
-    translateServive.get('HEADER.EDIT_PROFILE').subscribe((res: string)=> {
-      console.log(res);
-    })
-    translateServive.get('HEADER.HELP').subscribe((res: string)=> {
-      console.log(res);
-    })
-    translateServive.get('HEADER.LOGOUT').subscribe((res: string)=> {
-      console.log(res);
-    })
   }
 
   ngOnInit(): void {
+    this.translateMenuItems();
   }
 
   checkCurrentRoute() {
@@ -67,4 +59,24 @@ export class TopBarComponent implements OnInit, OnChanges {
     this.auth.logout();
   }
 
+  // Función para traducir desde el archivo .json
+  translateMenuItems(): void {
+    this.translateService.get('HEADER').subscribe((translation) => {
+      this.menuItem.forEach((item) => {
+        switch (item.text) {
+          case 'Editar perfil':
+            item.text = translation['EDIT_PROFILE'];
+            break;
+          case 'Ayuda':
+            item.text = translation['HELP'];
+            break;
+          case 'Cerrar sesión':
+            item.text = translation['LOGOUT'];
+            break;
+          default:
+            break;
+        }
+      });
+    });
+  }
 }

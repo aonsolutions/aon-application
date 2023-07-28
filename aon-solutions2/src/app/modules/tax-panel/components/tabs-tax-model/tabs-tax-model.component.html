@@ -7,9 +7,8 @@
   <div tool >
     <app-input
     [type]="'select'"
-    [label]="'Modelo'"
-    [label]="'Modelo'"
-    [placeholder]="'Modelo'"
+    [label]="'MODELO'"
+    [placeholder]="'MODELO'"
     ></app-input>
   </div>
   <div content *ngIf="this.tabIndex == 0">
@@ -22,7 +21,7 @@
       </mat-grid-tile>
     </mat-grid-list>
   </div>
-    
+
   <div content *ngIf="this.tabIndex == 1">
     <app-table-tax-model [trimester]="2"></app-table-tax-model>
   </div>

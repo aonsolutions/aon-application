@@ -1,24 +1,37 @@
 {
   "COMMON": {
-    "WELCOME": "Welcome!",
-    "BUTTON_TEXT": "Click here"
-  },
-  "HOME": {
-    "UPLOAD_DOCUMENTATION": "Subir documentación",
-    "VIEW_ALL_MESSAGES": "Ver todos los mensajes",
-    "SEND_MESSAGE": "Enviar mensaje",
-    "TITLE": "Servicio desarrollado por {{ desarrollador }}"
-  },
-  "MENU": {
-    "INBOX": "Inbox",
-    "ACCESS_MANAGEMENT": "Management Access",
-    "TAX_PANEL": "Tax Panel",
-    "EMPLOYEES": "Employees",
-    "DOCUMENTS": "Documents"
+    "COIN": "&#36;"
   },
   "HEADER": {
-    "EDIT_PROFILE": "Edit profile",
-    "HELP": "Help",
-    "LOGOUT": "Logout"
+  },
+  "MENU": {
+    "MENU": "menu"
+  },
+  "LOGIN": {
+
+  },
+  "ENTERPRISES": {
+
+  },
+  "HOME": {
+
+  },
+  "INBOX": {
+
+  },
+  "DOCUMENTATION": {
+
+  },
+  "BILLING": {
+
+  },
+  "CONSULTING": {
+
+  },
+  "EMPLOYEE-PANEL": {
+
+  },
+  "TAX-PANEL": {
+
   }
 }

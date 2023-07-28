@@ -24,6 +24,8 @@ export interface Models {
 export class TabsTaxModelComponent implements OnInit {
   tabIndex:number = 0
 
+  constructor(){}
+
   tabs: Tabs[] = [
     { name: '1 Trimestre'},
     { name: '2 Trimestre' },
@@ -60,5 +62,4 @@ export class TabsTaxModelComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
 }
