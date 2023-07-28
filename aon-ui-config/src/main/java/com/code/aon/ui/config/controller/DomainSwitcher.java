@@ -571,7 +571,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 	
 	public boolean isSig() {
-		return getDomainName().equalsIgnoreCase("sig.aonsolutions.org");
+		return getDomainNameURL().equalsIgnoreCase("sig.aonsolutions.org");
 	}
 	
 	public boolean isPaturpat() {
