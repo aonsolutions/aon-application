@@ -18,13 +18,19 @@ public class SocialSecurity implements Serializable{
 	}
 	
 	public boolean checkSS(){
-		if(AonStringUtils.isBlank(socialSecurity)) return false;
+		if(AonStringUtils.isBlank(socialSecurity) || socialSecurity.length() != 12) return false;
 		
+		String provinceCode = this.socialSecurity.substring(0, 2);;
+		String ssNumberWithoutCode = this.socialSecurity.substring(2, 10);
 		String controlCode = this.socialSecurity.substring(10, 12);;
-		String ssNumberWithoutCode = this.socialSecurity.substring(0, 10);
+		
 		try {
 			long ssNumber = Long.parseLong(ssNumberWithoutCode);
+			long province = Long.parseLong(provinceCode);
 			
+			if (ssNumber < 10000000) ssNumber = ssNumber + province * 10000000;
+			else ssNumber = Long.parseLong(provinceCode + ssNumberWithoutCode);
+				
 			long calculateControlCode = ssNumber % 97;
 			String calculateControlCodeStr = String.valueOf(calculateControlCode);
 			
