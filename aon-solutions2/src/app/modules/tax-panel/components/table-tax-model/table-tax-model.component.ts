@@ -16,7 +16,9 @@ export class TableTaxModelComponent implements OnInit {
   headerTable        : any = {name: 'modelo', result: 'Resultado', status: 'estado', paymentMethod: 'Metodo de pago', actions: 'acciones'};
   displayedColumns   : string[] = ['name', 'result', 'status', 'paymentMethod', 'actions'];
 
-  constructor( public taxModelService :TaxModelService ) {
+  constructor(
+    public taxModelService: TaxModelService,
+    ) {
     let tableRow : any = [];
     let column   : any = {};
     // Model date
@@ -95,5 +97,4 @@ export class TableTaxModelComponent implements OnInit {
       console.log(response);
     });
   }
-
 }

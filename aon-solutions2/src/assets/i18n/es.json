@@ -3,35 +3,53 @@
     "COIN": "&euro;"
   },
   "HEADER": {
+    "EDIT_PROFILE": "Editar perfil",
+    "HELP": "Ayuda",
+    "LOGOUT": "Cerrar sesión"
   },
   "MENU": {
-    "MENU": "menu"
+    "MENU": "menu",
+    "INBOX": "BANDEJA",
+    "BILLING": "GESTIÓN",
+    "TAX-PANEL": "PANEL DE IMPUESTOS",
+    "EMPLOYEE-PANEL": "PANEL DE EMPLEADOS",
+    "DOCUMENTATION": "DOCUMENTACIÓN"
+
   },
   "LOGIN": {
-    
+
   },
-  "ENTERPRISES": {
-    
-  },
+  "ENTERPRISES": {}
+  ,
   "HOME": {
-    
+
   },
   "INBOX": {
-    
+
   },
   "DOCUMENTATION": {
-    
+
   },
   "BILLING": {
-   
+
   },
   "CONSULTING": {
-   
+
   },
   "EMPLOYEE-PANEL": {
-   
+
   },
   "TAX-PANEL": {
-    
+    "1 TRIMESTER":   "1 Trimestre",
+    "2 TRIMESTER":   "2 Trimestre",
+    "3 TRIMESTER":   "3 Trimestre",
+    "4 TRIMESTER":   "4 Trimestre",
+    "ALL":           "Todos",
+    "NAME":          "Modelo",
+    "RESULT":        "Resultado",
+    "STATUS":        "estado",
+    "PAYMENTMETHOD": "Metodo de pago",
+    "ACTIONS":       "acciones",
+    "MODEL":         "Modelo"
   }
 }
