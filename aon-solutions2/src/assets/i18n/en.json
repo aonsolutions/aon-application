@@ -1,6 +1,11 @@
 {
   "COMMON": {
-    "COIN": "&#36;"
+    "COIN": "&#36;",
+    "INPUT": {
+      "REQUIRE"         : "is <strong>required</strong>",
+      "SELECT"          : "Select an option",
+      "SELECT-MULTIPLE" : "Select the options"
+    }
   },
   "HEADER": {
   },

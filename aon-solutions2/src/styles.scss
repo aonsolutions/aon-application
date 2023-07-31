@@ -41,6 +41,7 @@ $color-secondary  : #787885;
 $color-third      : #5a5b6a;
 $color-quarter    : #fff;
 $color-icon       : #b4b4bb;
+$color-placeholder: #9696a0;
   /* Red */
     $color-red          : #f6655a;
   /* Blue */
@@ -64,6 +65,7 @@ $color-border-secondary : #787885;
 
 // Border
 $border-size-primary: 0.05rem;
+$border-size-error  : 0.1rem;
 $border             : solid $border-size-primary $color-border-primary;
 $border-radius      : 0.2rem;
 

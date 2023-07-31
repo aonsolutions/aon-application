@@ -112,7 +112,8 @@ import { TopBarComponent } from './layouts/top-bar/top-bar.component';
     PdfJsViewerModule,
     ReactiveFormsModule,
     RouterModule,
-    SetMaterialModule
+    SetMaterialModule,
+    TranslateModule
   ],
   exports:[
     AccordionComponent,

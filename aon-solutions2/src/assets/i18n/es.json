@@ -1,8 +1,11 @@
 {
   "COMMON": {
-    "COIN": "&euro;"
-  },
-  "HEADER": {
+    "COIN": "&euro;",
+    "INPUT": {
+      "REQUIRE"         : "es <strong>obligatorio</strong>",
+      "SELECT"          : "Selecciona una opción",
+      "SELECT-MULTIPLE" : "Selecciona las opciones"
+    }
   },
   "MENU": {
     "MENU": "menu"
