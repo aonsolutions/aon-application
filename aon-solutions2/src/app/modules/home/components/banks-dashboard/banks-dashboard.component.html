@@ -10,7 +10,8 @@
   <div header class="banks-header">
     <div class="banks-header-name">
       <div class="banks-header-line"></div>
-      <div class="banks-header-text">Tus Bancos</div>
+      <div class="banks-header-text">
+        {{ 'HOME.YOUR_BANKS'|translate }}</div>
     </div>
     <div class="banks-header-icon">
       <app-icon [shape]="'add'" class="blue" [size]="'1.2rem'"></app-icon>
@@ -33,8 +34,8 @@
       {{ totalAmount }} €
     </div>
   </div>
-  <div class="bank-link-create" *ngIf="!hasBanks()">Crea tu primer banco</div>
+  <div class="bank-link-create" *ngIf="!hasBanks()">{{ 'HOME.CREATE_YOUR_FIRST_BANK'|translate }}</div>
   <div class="banks-create-text" *ngIf="!hasBanks()">
-    Conecta AON con tus bancos para tener un control de tus movimientos
+    {{ 'HOME.CONNECT_AON'|translate }}
   </div>
 </app-card>

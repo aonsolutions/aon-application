@@ -1,11 +1,7 @@
 {
   "COMMON": {
     "COIN": "&euro;",
-    "INPUT": {
-      "REQUIRE"         : "es <strong>obligatorio</strong>",
-      "SELECT"          : "Selecciona una opción",
-      "SELECT-MULTIPLE" : "Selecciona las opciones"
-    }
+    "FILE_UPLOAD_BUTTON": "Subir documentación"
   },
   "HEADER": {
     "EDIT_PROFILE": "Editar perfil",
@@ -24,9 +20,32 @@
   "LOGIN": {
 
   },
+
   "ENTERPRISES": {}
   ,
   "HOME": {
+    "ASSESSMENT": "Gestión",
+    "TAX_PANEL": "Panel de Impuestos",
+    "EMPLOYEE_PANEL": "Panel de empleados",
+    "DOCUMENTATION": "Documentación",
+    "CREATE_INVOICE": "CREAR FACTURA",
+    "REGISTER_EMPLOYEE": "DAR DE ALTA EMPLEADO",
+    "CREATE_QUERY": "CREAR CONSULTA",
+    "TIMING": "MARCAJE",
+    "SALES_EXPENSES": "Ventas/Gastos",
+    "COLLECTIONS_PAYMENTS": "Cobros/Pagos",
+    "YOUR_BANKS": "Tus Bancos",
+    "CREATE_YOUR_FIRST_BANK": "Crea tu primer banco",
+    "CONNECT_AON":"Conecta AON con tus bancos para tener un control de tus movimientos",
+    "INBOX": "Bandeja",
+    "ALL_MESSAGES": "Ver todos los mensajes",
+    "LAST_12_MONTHS":"Últimos 12 meses",
+    "LAST_6_MONTHS":"Últimos 6 meses",
+    "QUARTERLY":"Trimestral",
+    "1_TRIMESTER":"1 trimestre",
+    "2_TRIMESTER":"2 trimestre",
+    "3_TRIMESTER":"3 trimestre",
+    "4_TRIMESTER":"4 trimestre"
 
   },
   "INBOX": {
