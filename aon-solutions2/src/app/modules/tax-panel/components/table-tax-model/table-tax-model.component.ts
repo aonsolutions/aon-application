@@ -5,54 +5,90 @@ import { ModalPaymentComponent } from '../modal-payment/modal-payment.component'
 import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-details.component';
 
 @Component({
-  selector    : 'app-table-tax-model',
-  templateUrl : './table-tax-model.component.html',
-  styleUrls   : ['./table-tax-model.component.scss']
+  selector: 'app-table-tax-model',
+  templateUrl: './table-tax-model.component.html',
+  styleUrls: ['./table-tax-model.component.scss'],
 })
-
 export class TableTaxModelComponent implements OnInit {
-  @Input() trimester!: number;
-  bodyTable          : any = [];
-  headerTable        : any = {name: 'modelo', result: 'Resultado', status: 'estado', paymentMethod: 'Metodo de pago', actions: 'acciones'};
-  displayedColumns   : string[] = ['name', 'result', 'status', 'paymentMethod', 'actions'];
+  @Input() trimester: number = 0;
+  bodyTable: any = [];
+  headerTable: any = {
+    name: 'modelo',
+    result: 'Resultado',
+    status: 'estado',
+    paymentMethod: 'Metodo de pago',
+    actions: 'acciones',
+  };
+  displayedColumns: string[] = [
+    'name',
+    'result',
+    'status',
+    'paymentMethod',
+    'actions',
+  ];
 
-  constructor( public taxModelService :TaxModelService ) {
-    let tableRow : any = [];
-    let column   : any = {};
+  constructor(public taxModelService: TaxModelService) {
+    let tableRow: any = [];
+    let column: any = {};
     // Model date
-    taxModelService.getTaxModelList().then((response) => {
+
+    // selectedFields?: string[];
+    // pageNum?: number;
+    // pageItems?: number;
+    // fields?: Map<string,any>;
+    // intervalFields?: Map<string,any>;
+    // orderBy?: Map<string,string>;
+
+    taxModelService.getTaxModelList(
+      {
+        selectedFields:['trimester']
+      }
+    ).then((response) => {
+      console.log(response)
       // Tax
       response.forEach(function (tax, taxKey) {
         // clone object
         column = Object.assign({}, tax);
         // Object Tax
-          // Predefinimos la key de la fila
-          column.key  = taxKey;
-          // Cargamos datos en la tabla
-          column.name =
-              "<div class='orange'>MODELO " + tax.Name + "</div>"+
-              "<span class='griss'>"+ tax.TaxType +"</span>";
-          column.result = tax.Result + ' &euro;';
-          column.status = tax.Status === 'pendiente' ? {
-            icon: [{watch_later: 'orange'}],
-            text: "<span class='background-text-orange'>"+ tax.Status +"</span>"
-          } : "<span class='background-text-orange-light margin-left-2'>"+ tax.Status +"</span>";
-          // Add date Actions ( buttons )
-          // La referencia tendra que ser por ID, ya que el texto puede cambiar dependiendo del idioma
-          switch(tax.Status){
-            case 'pendiente':
-              column.actions = ['eye', 'done_all', 'edit'];
+        // Predefinimos la key de la fila
+        column.key = taxKey;
+        // Cargamos datos en la tabla
+        column.name =
+          "<div class='orange'>MODELO " +
+          tax.Name +
+          '</div>' +
+          "<span class='griss'>" +
+          tax.TaxType +
+          '</span>';
+        column.result = tax.Result + ' &euro;';
+        column.status =
+          tax.Status === 'pendiente'
+            ? {
+                icon: [{ watch_later: 'orange' }],
+                text:
+                  "<span class='background-text-orange'>" +
+                  tax.Status +
+                  '</span>',
+              }
+            : "<span class='background-text-orange-light margin-left-2'>" +
+              tax.Status +
+              '</span>';
+        // Add date Actions ( buttons )
+        // La referencia tendra que ser por ID, ya que el texto puede cambiar dependiendo del idioma
+        switch (tax.Status) {
+          case 'pendiente':
+            column.actions = ['eye', 'done_all', 'edit'];
             break;
-            case 'confirmado':
-              column.actions = ['eye'];
+          case 'confirmado':
+            column.actions = ['eye'];
             break;
-            case 'presentado':
-              column.actions = ['picture_as_pdf'];
+          case 'presentado':
+            column.actions = ['picture_as_pdf'];
             break;
-            default:
-              column.actions = [];
+          default:
+            column.actions = [];
             break;
-          }
+        }
         // Add object date table
         tableRow.push(column);
       });
@@ -63,13 +99,13 @@ export class TableTaxModelComponent implements OnInit {
 
   @ViewChild('modalEdit') modalComponentEdit: any = '';
   @ViewChild('modalPayment') modalComponentPayment: any = '';
-  @ViewChild('modalTaxesDetails') modalComponentTaxesDetails : any = '';
+  @ViewChild('modalTaxesDetails') modalComponentTaxesDetails: any = '';
 
-  functionHome: any = (result:any) => this.afterModalClosed(result);
-  afterModalClosed(result?: any){
-}
+  functionHome: any = (result: any) => this.afterModalClosed(result);
+  afterModalClosed(result?: any) {}
 
   ngOnInit(): void {
+ console.log(this.trimester)
   }
 
   modalClick(object: any) {
@@ -79,21 +115,32 @@ export class TableTaxModelComponent implements OnInit {
     // reference icon click
     console.log(object.keyButton);
 
-    switch(object.keyButton){
+    switch (object.keyButton) {
       case 'edit':
-        this.modalComponentEdit.openDialog(ModalEditTaxModelComponent,this.functionHome, 'Data from home');
-      break;
+        this.modalComponentEdit.openDialog(
+          ModalEditTaxModelComponent,
+          this.functionHome,
+          'Data from home'
+        );
+        break;
       case 'done_all':
-        this.modalComponentPayment.openDialog(ModalPaymentComponent,this.functionHome, 'Data from home');
-      break;
+        this.modalComponentPayment.openDialog(
+          ModalPaymentComponent,
+          this.functionHome,
+          'Data from home'
+        );
+        break;
       case 'eye':
-        this.modalComponentTaxesDetails.openDialog(ModalTaxesDetailsComponent,this.functionHome, 'Data from home');
-      break;
+        this.modalComponentTaxesDetails.openDialog(
+          ModalTaxesDetailsComponent,
+          this.functionHome,
+          'Data from home'
+        );
+        break;
     }
     // Model tax reference
     this.taxModelService.getTax(object.key).then((response) => {
-      console.log(response);
+
     });
   }
-
 }

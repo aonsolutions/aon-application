@@ -58,25 +58,24 @@
   color: #787885;
 }
 
+
+
 .status-message {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: left;
+  justify-content: center;
   font-size: .7rem;
   font-weight: 500;
   line-height: 1.1rem;
   letter-spacing: .005rem;
-}
-
-.status {
-  padding: .25rem;
+  background-color: #fddcda;
   display: flex;
   border-radius: .2rem;
   align-items: center;
-  background-color: #fddcda;
-  margin-left: .85rem;
+  margin: .85rem;
 }
+
 
 .title-message{
   width: calc(100%);

@@ -18,8 +18,6 @@ export interface Tabs {
 })
 
 
-
-
 export class TaxPanelComponent implements OnInit {
 
   tabIndex:number = 0
