@@ -4,6 +4,7 @@ package com.esferalia.aon.gwt.payroll.util;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionPDFType;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionTypeDescription;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
@@ -29,7 +32,6 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRES
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
-import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryCost;
@@ -102,8 +104,8 @@ public class DraftPayrollBuilder {
 			
 			//PAYROLL RELATED DATA
 			dpb.setLiquidPeriodStart(salary.getStartDate());
-			dpb.setLiquidPeriodEnd(salary.getEndDate());
 			dpb.setTotalDays(salary.getTimeUnits());
+			dpb.setLiquidPeriodEnd(getSalaryEnd(salary) );
 			dpb.setImpressionType(IMPRESION.DRAFT);
 			if (salary.getType().ordinal() == SalaryType.SALARY.ordinal())
 				dpb.setPayrollType(PayrollTypes.Type.SALARY);
@@ -497,7 +499,7 @@ public class DraftPayrollBuilder {
 			PayrollTemplate dpt = new PayrollTemplate(dpb.build(), optLogo, Optional.ofNullable(new Locale("es")));
 			dpt.print(outputStream);
 	}
-	
+
 	@FunctionalInterface
 	private interface SetPercentCallback {
 		void setPercent(Optional<Double> percent);
@@ -531,6 +533,14 @@ public class DraftPayrollBuilder {
 ////		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
 //	}
 	
+	
+	private static Date getSalaryEnd(Salary salary) {
+	    return salary.getSalaryDatas().stream()
+		    .filter( d -> d.getName().equals(WORKED_DAYS.getName()))
+		    .map( SalaryData::getEndDate )
+		    .collect(Collectors.maxBy(Date::compareTo))
+		    .orElse(salary.getEndDate());
+	}
 	
 
 

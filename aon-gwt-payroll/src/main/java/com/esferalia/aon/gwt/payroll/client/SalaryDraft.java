@@ -5651,6 +5651,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private void print() {
+	    	syncEndDate();
 		salaryDraftObject.download("application/pdf", new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -5668,6 +5669,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private void printLetter() {
+	    	syncEndDate();
 		salaryDraftObject.downloadLetter("application/pdf", new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -5685,7 +5687,6 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private void printSettle() {
-		
 		SettleType type = SettleType.valueOf(settlePreviewListBox.getSelectedValue());
 		switch (type) {
 		case LETTER:
