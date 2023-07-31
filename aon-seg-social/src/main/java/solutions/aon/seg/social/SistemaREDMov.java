@@ -515,9 +515,9 @@ class SistemaREDMov {
 			((HtmlSelect)printType).setSelectedAttribute("OnLine", true);
 		}
         
-		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
-		if (htmlPage.isHtmlPage()) {
-//			htmlPage = (HtmlPage) page;
+		Page page = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 	
 			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
@@ -536,15 +536,15 @@ class SistemaREDMov {
 			}
 		}
 					
-		if (htmlPage.isHtmlPage()) {
-//			htmlPage = (HtmlPage) page;
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
 			DomNode message = htmlPage.querySelector("#DIL"); 
 			if(message!=null) {
 				throw new SegSocialException(message.getTextContent().trim());
 			}
 		} else {
 			try {
-				return htmlPage.getWebResponse().getContentAsStream().readAllBytes();
+				return page.getWebResponse().getContentAsStream().readAllBytes();
 			} catch (Exception e) {
 				throw new InvalidDataException();
 			}
