@@ -25,7 +25,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INKIND_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IN_KIND;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TMP_IN_KIND;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_CTA_ESP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
@@ -43,13 +42,19 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_PRORRATE
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_C737;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H03;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H04;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H06;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TMP_IN_KIND;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_EMBARGO;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
@@ -116,7 +121,6 @@ import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.expression.IWrapTimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
@@ -196,14 +200,15 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		SATURDAY_HOURS.getName(),
 		SUNDAY_HOURS.getName(),
 		
-		ContextVariable.SLD_C737.getName(),
-		ContextVariable.SLD_H06.getName(),
-		ContextVariable.SLD_H03.getName(),
-		ContextVariable.SLD_H04.getName(),
+		SLD_C737.getName(),
+		SLD_H06.getName(),
+		SLD_H03.getName(),
+		SLD_H04.getName(),
 	
 		PREST_IT,
 		GUARENTEED,
 		
+		SALARY_END.getName(),
 		COMPENSATION_CAUSE.getName(),
 		
 	};
@@ -2195,7 +2200,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	protected void fillData(IContractSalaryCalculatorContext ctx, String  names []) throws SalaryException {
 		ExpressionContext expressionContext = ctx.getExpressionContext();
 		for (String name : names) {
-			
 			try {
 				for (ITimedVariable<?> data :expressionContext.eval(name, ctx.getStartDate(), ctx.getEndDate())){
 					try {
@@ -2204,7 +2208,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					}
 					
 					try {
-						salaryBuilder.addData(name, data);
+					    salaryBuilder.addData(name, data);
 					} catch (Throwable t) {
 					}
 				}

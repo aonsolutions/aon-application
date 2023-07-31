@@ -1237,7 +1237,7 @@ public class SalaryDraft extends ResizeComposite
 							if (variable.getName().equals(newName))
 								return;
 							salaryDraftObject.renameVariable(variable, newName);
-							salaryDraftObject.calculate(SalaryDraft.this);
+							SalaryDraft.this.calculate();
 
 						}
 					};
@@ -1279,7 +1279,7 @@ public class SalaryDraft extends ResizeComposite
 			var.setExpression(StringUtils.isEmpty(value) ? "REMOVE_VARIABLE()" : value);
 
 			salaryDraftObject.addDraftVariable(var);
-			// salaryDraftObject.calculate(SalaryDraft.this);
+			// SalaryDraft.this.calculate();
 			SalaryDraft.this.calculate(getNextVariableFocusCallback());
 		}
 
@@ -1565,7 +1565,7 @@ public class SalaryDraft extends ResizeComposite
 			item.setQuoteExpression(dialog.getQuoteExpression());
 			item.setSalaryType(salaryDraftObject.getType());
 			salaryDraftObject.addDraftPayment(item);
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 
 		}
 
@@ -1648,7 +1648,7 @@ public class SalaryDraft extends ResizeComposite
 			payment.setMonth(month);
 			payment.setSalaryType(Type.SALARY);
 			salaryDraftObject.addDraftPayment(payment);
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 		}
 
 		@Override
@@ -1857,7 +1857,7 @@ public class SalaryDraft extends ResizeComposite
 			else
 				salaryDraftObject.addDraftDeduction(item);
 
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 
 		}
 
@@ -1907,7 +1907,7 @@ public class SalaryDraft extends ResizeComposite
 			else
 				salaryDraftObject.addDraftDeduction(item);
 
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 		}
 
 		@Override
@@ -1921,7 +1921,7 @@ public class SalaryDraft extends ResizeComposite
 			else
 				salaryDraftObject.addDraftDeduction(item);
 
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 		}
 		
 		@Override
@@ -1961,7 +1961,7 @@ public class SalaryDraft extends ResizeComposite
 			item.setDescriptionTemplate(dialog.getDescription());
 
 			salaryDraftObject.addDraftBonus(item);
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 
 		}
 
@@ -2006,7 +2006,7 @@ public class SalaryDraft extends ResizeComposite
 			item.setDescriptionTemplate(description);
 
 			salaryDraftObject.addDraftBonus(item);
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 		}
 
 		@Override
@@ -2015,7 +2015,7 @@ public class SalaryDraft extends ResizeComposite
 			item.setExpression(expression);
 
 			salaryDraftObject.addDraftBonus(item);
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 		}
 		
 		@Override
@@ -2149,7 +2149,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		protected void calculate(T item) {
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 		}
 
 		protected abstract void onEdit();
@@ -2493,7 +2493,7 @@ public class SalaryDraft extends ResizeComposite
 			var.setExpression(getExpression(var));
 			salaryDraftObject.addDraftVariable(var);
 
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 		}
 
 		abstract String getExpression(Variable var);
@@ -2520,7 +2520,7 @@ public class SalaryDraft extends ResizeComposite
 			
 			salaryDraftObject.addDraftVariable(var);
 
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 		}
 
 	}
@@ -2536,7 +2536,7 @@ public class SalaryDraft extends ResizeComposite
 		@Override
 		public void onClick(ClickEvent event) {
 			addDrafItem(item);
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 
 		}
 
@@ -2590,7 +2590,7 @@ public class SalaryDraft extends ResizeComposite
 		public void onClick(ClickEvent event) {
 			// TODO Auto-generated method stub
 			salaryDraftObject.addDraftDeduction(deduction);
-			salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate();
 
 		}
 	}
@@ -3002,12 +3002,14 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	public void calculate() {
-		salaryDraftObject.calculate(this);
+	    syncEndDate();
+	    salaryDraftObject.calculate(this);
 	}
 
+
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
-		//info("setSalaryDraftObject");
 		showDraft();
+		syncEndDate(salaryDraftObject);
 		this.salaryDraftObject = salaryDraftObject;
 		onChangedSalaryDraftObject(salaryDraftObject);
 	}
@@ -3156,7 +3158,7 @@ public class SalaryDraft extends ResizeComposite
 
 		salaryDraftObject.addDraftPayment(draftPayment);
 
-		salaryDraftObject.calculate(this);
+		calculate();
 
 		totalsPayment = draftPayment;
 
@@ -3199,7 +3201,7 @@ public class SalaryDraft extends ResizeComposite
 
 		salaryDraftObject.addDraftDeduction(cgcBaseDeduction);
 
-		salaryDraftObject.calculate(this);
+		calculate();
 
 	}
 
@@ -3238,7 +3240,7 @@ public class SalaryDraft extends ResizeComposite
 
 		salaryDraftObject.addDraftDeduction(cgpBaseDeduction);
 
-		salaryDraftObject.calculate(this);
+		this.calculate();
 
 	}
 
@@ -3285,7 +3287,7 @@ public class SalaryDraft extends ResizeComposite
 
 		salaryDraftObject.addDraftPayment(draftPayment);
 
-		salaryDraftObject.calculate(this);
+		this.calculate();
 
 		totalsPayment = draftPayment;
 
@@ -3574,7 +3576,7 @@ public class SalaryDraft extends ResizeComposite
 		employeeAgreementCategoryLabel.setText(salaryDraftObject.getEmployeeAgreementCategory());
 
 		salaryStartDate = salaryDraftObject.getStartDate();
-		salaryEndDate = salaryDraftObject.getEndDate();
+		salaryEndDate = getSalaryEnd();
 		periodLabel.setText(format(salaryStartDate) + " - " + format(salaryEndDate));
 		daysLabel.setText(Integer.toString(salaryDraftObject.getTimeUnits()));
 
@@ -3882,6 +3884,16 @@ public class SalaryDraft extends ResizeComposite
 		;
 	}
 
+	public Date getSalaryEnd() {
+		return salaryDraftObject.getContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase("FIN_NOMINA", v.getName()))
+		.map(Variable::getValue)
+		.filter(Objects::nonNull)
+		.map(String::valueOf )
+		.map(StringVariable::parse)
+		.findAny().orElseGet(salaryDraftObject::getEndDate)
+		;
+	}	
 	private void onHideShowNotDefinedVars() {
 		contextTable.clear();
 		contextTable.removeAllRows();
@@ -4208,19 +4220,19 @@ public class SalaryDraft extends ResizeComposite
 	@UiHandler("undoButton")
 	void onUndoButtonClick(ClickEvent event) {
 		salaryDraftObject.undo();
-		salaryDraftObject.calculate(SalaryDraft.this);
+		SalaryDraft.this.calculate();
 	}
 
 	@UiHandler("undoAllButton")
 	void onUndoAllButtonClick(ClickEvent event) {
 		salaryDraftObject.clearDrafts();
-		salaryDraftObject.calculate(SalaryDraft.this);
+		SalaryDraft.this.calculate();
 	}
 
 	@UiHandler("redoButton")
 	void onRedoButtonClick(ClickEvent event) {
 		salaryDraftObject.redo();
-		salaryDraftObject.calculate(SalaryDraft.this);
+		SalaryDraft.this.calculate();
 	}
 
 	@UiHandler("costsCheck")
@@ -4244,6 +4256,21 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	// -------------------------------------------------------------------------
+	private void syncEndDate() {
+	    try {
+		Date endDate = salarySelect.getEndDate();
+		if (endDate != null) {
+		    salaryDraftObject.getSalaryDraft().setEndDate(endDate);
+		}
+	    } catch (Exception e) {
+	    }
+	}
+
+	private void syncEndDate(SalaryDraftObject salaryDraftObject) {
+	    if ( this.salaryDraftObject == salaryDraftObject ) {
+		syncEndDate();
+	    }
+	}
 
 	private void initPrintPreview() {
 		printPreviewButton.addClickHandler(new ClickHandler() {
@@ -6360,7 +6387,7 @@ public class SalaryDraft extends ResizeComposite
 				var.setExpression(AonStringUtils.isEmpty(value) ? "REMOVE_VARIABLE()" : value);
 
 				salaryDraftObject.addDraftVariable(var);
-				salaryDraftObject.calculate(SalaryDraft.this);
+				SalaryDraft.this.calculate();
 			}
 
 			// ----------------------------------------------------------------
@@ -6452,7 +6479,7 @@ public class SalaryDraft extends ResizeComposite
 				var.setExpression(StringUtils.isEmpty(value) ? "REMOVE_VARIABLE()" : value);
 
 				salaryDraftObject.addDraftVariable(var);
-				salaryDraftObject.calculate(SalaryDraft.this);
+				SalaryDraft.this.calculate();
 			}
 
 			// ----------------------------------------------------------------
@@ -6494,26 +6521,27 @@ public class SalaryDraft extends ResizeComposite
 
 
 	private void calculate(final CalculateCallback callback) {
-		salaryDraftObject.calculate(new CalculateCallback() {
+	    syncEndDate();
+	    salaryDraftObject.calculate(new CalculateCallback() {
 
-			@Override
-			public Calculate getCalculate() {
-				return SalaryDraft.this.getCalculate();
-			}
+		@Override
+		public Calculate getCalculate() {
+		    return SalaryDraft.this.getCalculate();
+		}
 
-			@Override
-			public void onCalculateFailure(Throwable throwable) {
-				SalaryDraft.this.onCalculateFailure(throwable);
-				callback.onCalculateFailure(throwable);
-			}
+		@Override
+		public void onCalculateFailure(Throwable throwable) {
+		    SalaryDraft.this.onCalculateFailure(throwable);
+		    callback.onCalculateFailure(throwable);
+		}
 
-			@Override
-			public void onCalculateSucces(SalaryDraftObject object) {
-				SalaryDraft.this.onCalculateSucces(object);
-				callback.onCalculateSucces(object);
-			}
+		@Override
+		public void onCalculateSucces(SalaryDraftObject object) {
+		    SalaryDraft.this.onCalculateSucces(object);
+		    callback.onCalculateSucces(object);
+		}
 
-		});
+	    });
 	}
 
 	private VariableChangeHandler<?> getVariableChangeHandlerFor(String name) {
@@ -6959,7 +6987,7 @@ public class SalaryDraft extends ResizeComposite
 		else 
 			salaryDraftObject.addDraftSection(section);
 		
-		salaryDraftObject.calculate(this);
+		calculate();
 		
 	}
 	
@@ -7841,17 +7869,17 @@ public class SalaryDraft extends ResizeComposite
 	
 	public void onUndoAll() {
 		salaryDraftObject.clearDrafts();
-		salaryDraftObject.calculate(SalaryDraft.this);
+		SalaryDraft.this.calculate();
 	}
 	
 	public void onUndo() {
 		salaryDraftObject.undo();
-		salaryDraftObject.calculate(SalaryDraft.this);
+		SalaryDraft.this.calculate();
 	}
 	
 	public void onRedo() {
 		salaryDraftObject.redo();
-		salaryDraftObject.calculate(SalaryDraft.this);
+		SalaryDraft.this.calculate();
 	}
 	
 	public void onAccept() {

@@ -18,7 +18,7 @@ public enum ContextVariable implements IResourceable {
 
 	START("INICIO", VariableType.DATE), END("FIN", VariableType.DATE), 
 	SALARY_START("INICIO_NOMINA", VariableType.DATE),
-	SALARY_END("FIN_NOMINA", VariableType.DATE), 
+	SALARY_END("FIN_NOMINA", VariableType.DATE, false), 
 	CONTRACT_START("INICIO_CONTRATO", VariableType.DATE),
 	CONTRACT_END("FIN_CONTRATO", VariableType.DATE), 
 	SENIORITY_START("INICIO_ANTIGUEDAD", VariableType.DATE, false),

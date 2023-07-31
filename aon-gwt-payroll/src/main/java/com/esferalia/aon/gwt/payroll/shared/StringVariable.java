@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class StringVariable extends Variable {
 
@@ -94,8 +95,11 @@ public class StringVariable extends Variable {
 		return super.equals(obj);
 	}
 	
+	public static Date parse(String text) {
+	    return DateTimeFormat.getFormat("dd/MM/yyyy").parse(text);
+	}
+	
 	public static String format(Date date) {
 		return date.getDate() + "/" +  (date.getMonth()+1) + "/" +  ( date.getYear() + 1900);		
 	}
-	
 }
