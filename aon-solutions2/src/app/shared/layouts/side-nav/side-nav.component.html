@@ -1,12 +1,12 @@
 <mat-sidenav-container id="menu-container" #content>
   <mat-sidenav *ngIf="!hide" #sidenav mode="side" disableClose="true" opened="true"
-    id="menu-left" 
+    id="menu-left"
     [ngClass]="opened ? {'menu-left-open' : true} : {'menu-left-open' : false}"
   >
     <div>
       <div>
         <div id="menu-left-title">
-          menu
+          {{ 'MENU.MENU'| translate }}
         </div>
         <div class="float-button-close griss" (click)="opened = !opened; resize = resize + 1; onSelectedProduct(opened);" *ngIf="!opened" >
           <app-icon shape="keyboard_arrow_right"></app-icon>
@@ -17,28 +17,28 @@
       </div>
       <div #iconHover appSidenavHover class="menu-left-option"
         [ngClass]="item.selected ? {'menu-select' : true} : {'menu-select' : false}"
-        *ngFor="let item of items;" 
+        *ngFor="let item of items;"
         (click)="deselectAll();select(item);"
         routerLink={{item.routerlink}}
       >
         <app-icon class="{{item.class}}" [shape]="item.shape"></app-icon>
         <span *ngIf="opened">
-          {{item.text}}
+          {{item.text | translate}}
         </span>
       </div>
     </div>
-    
+
     <div *ngIf="!opened" class="menu-left-option-footer">
       <ng-container>
-        <div 
+        <div
           [ngClass]="!subMenuOpened ? {'menu-left-option-footer-icon-reduced' : false} : {'menu-left-option-footer-icon-reduced' : true}"
-          *ngFor="let shortcut of shortcuts;" 
+          *ngFor="let shortcut of shortcuts;"
           routerLink={{shortcut.routerlink}}
         >
           <app-icon class="griss" [shape]="shortcut.shape" *ngIf="subMenuOpened"></app-icon>
         </div>
         <div class="griss" (click)="subMenuOpened = !subMenuOpened"
-          [ngClass]="!subMenuOpened ? {'menu-left-option-footer-icon-reduced-remove' : false} : {'menu-left-option-footer-icon-reduced-remove' : true}"     
+          [ngClass]="!subMenuOpened ? {'menu-left-option-footer-icon-reduced-remove' : false} : {'menu-left-option-footer-icon-reduced-remove' : true}"
         >
           <app-icon *ngIf="!subMenuOpened" shape="add"></app-icon>
           <app-icon *ngIf="subMenuOpened"  shape="remove"></app-icon>

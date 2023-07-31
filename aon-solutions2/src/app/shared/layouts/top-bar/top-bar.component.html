@@ -7,14 +7,14 @@
       <app-breadcumb></app-breadcumb>
     </mat-grid-tile>
     <mat-grid-tile colspan="1" *ngIf="usserLoggged" id="tool-bar-icons">
-      <app-button 
+      <app-button
         *ngIf     = "displayHomeIcon"
         class     = "icon-only"
         routerLink= "home"
       >
         <app-icon [shape]="'home'"></app-icon>
       </app-button>
-      <app-button 
+      <app-button
         class="icon-only"
         (click)="this.dropdownMenuComponent.openDropdownMenu();"
       >

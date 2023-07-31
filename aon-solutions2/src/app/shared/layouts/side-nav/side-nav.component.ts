@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter, Output, ViewChild, Input } from '@angu
 import { Shortcut } from 'src/app/core/models/interface/shortcut';
 import { MenuButton } from 'src/app/core/models/interface/menu-button';
 import { NavigationEnd, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-side-nav',
@@ -19,8 +20,11 @@ export class SideNavComponent implements OnInit {
   @Input() hide : boolean;
   @Output() onSelected = new EventEmitter<any>();
   @ViewChild('iconHover') iconHover : any;
- 
-  constructor(private router: Router) {
+
+  constructor(
+    private router: Router,
+    private translateService: TranslateService
+    ) {
     this.hide   = false;
     this.opened = true;
     this.resize = 1;
@@ -32,6 +36,7 @@ export class SideNavComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.translateMenuButtons();
     this.items.forEach(element => {
       if(element.routerlink == this.currentRoute){
         element.selected = true;
@@ -45,6 +50,33 @@ export class SideNavComponent implements OnInit {
 
   setResize(state:number){
     this.resize = state
+  }
+
+  // Función para traducir desde el archivo .json
+  translateMenuButtons(): void {
+    this.translateService.get('MENU').subscribe((translation) => {
+      this.items.forEach((item) => {
+        switch (item.text) {
+          case 'BANDEJA':
+            item.text = translation['INBOX'];
+            break;
+          case 'GESTIÓN':
+            item.text = translation['BILLING'];
+            break;
+          case 'PANEL DE IMPUESTOS':
+            item.text = translation['TAX-PANEL'];
+            break;
+              case 'PANEL DE EMPLEADOS':
+            item.text = translation['EMPLOYEE-PANEL'];
+            break;
+              case 'DOCUMENTACIÓN':
+            item.text = translation['DOCUMENTATION'];
+            break;
+          default:
+            break;
+        }
+      });
+    });
   }
 
   onSelectedProduct(selected:any) {
@@ -70,7 +102,7 @@ export class SideNavComponent implements OnInit {
     {routerlink: 'documentation',   shape: 'description', text: 'DOCUMENTACIÓN',      class: 'pink',    selected: false},
 //    {routerlink: 'consulting',      shape: 'work',        text: 'ASESORÍA',           class: 'purple',  selected: false}
   ];
-  
+
   shortcuts: Shortcut[] = [
     {routerlink: 'home', shape: 'receipt'},
     {routerlink: 'home', shape: 'add_box'},

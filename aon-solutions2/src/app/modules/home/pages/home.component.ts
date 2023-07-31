@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ChartType } from 'chart.js';
 import { CollectionFactory, IBank, ICollection, IMessage, ITaxModel } from 'libraries/AonSDK/aon';
 import { MultiDataSet } from 'ng2-charts';
@@ -93,8 +94,9 @@ export class HomeComponent implements OnInit {
     public bankService: BankService,
     public taxModelService: TaxModelService,
     public reportingService: ReportingService,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+  ) {
+  }
 
   ngOnInit(): void {
     //bankService

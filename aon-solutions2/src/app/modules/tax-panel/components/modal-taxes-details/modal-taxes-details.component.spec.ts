@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { InputTaxModelComponent } from './input-tax-model.component';
+import { ModalTaxesDetailsComponent } from './modal-taxes-details.component';
 
-describe('InputTaxModelComponent', () => {
-  let component: InputTaxModelComponent;
-  let fixture: ComponentFixture<InputTaxModelComponent>;
+describe('ModalTaxesDetailsComponent', () => {
+  let component: ModalTaxesDetailsComponent;
+  let fixture: ComponentFixture<ModalTaxesDetailsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InputTaxModelComponent ]
+      declarations: [ ModalTaxesDetailsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InputTaxModelComponent);
+    fixture = TestBed.createComponent(ModalTaxesDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

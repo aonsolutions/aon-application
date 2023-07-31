@@ -1,6 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { CollectionFactory, ICollection, ITaxModel } from 'libraries/AonSDK/aon';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
+import { ModalEditTaxModelComponent } from '../modal-edit-tax-model/modal-edit-tax-model.component';
+import { ModalPaymentComponent } from '../modal-payment/modal-payment.component';
+import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-details.component';
 
 @Component({
   selector    : 'app-table-tax-model',
@@ -13,8 +15,10 @@ export class TableTaxModelComponent implements OnInit {
   bodyTable          : any = [];
   headerTable        : any = {name: 'modelo', result: 'Resultado', status: 'estado', paymentMethod: 'Metodo de pago', actions: 'acciones'};
   displayedColumns   : string[] = ['name', 'result', 'status', 'paymentMethod', 'actions'];
-  
-  constructor( public taxModelService :TaxModelService ) {
+
+  constructor(
+    public taxModelService: TaxModelService,
+    ) {
     let tableRow : any = [];
     let column   : any = {};
     // Model date
@@ -23,16 +27,16 @@ export class TableTaxModelComponent implements OnInit {
       response.forEach(function (tax, taxKey) {
         // clone object
         column = Object.assign({}, tax);
-        // Object Tax        
+        // Object Tax
           // Predefinimos la key de la fila
           column.key  = taxKey;
           // Cargamos datos en la tabla
-          column.name = 
+          column.name =
               "<div class='orange'>MODELO " + tax.Name + "</div>"+
               "<span class='griss'>"+ tax.TaxType +"</span>";
           column.result = tax.Result + ' &euro;';
           column.status = tax.Status === 'pendiente' ? {
-            icon: [{watch_later: 'orange'}], 
+            icon: [{watch_later: 'orange'}],
             text: "<span class='background-text-orange'>"+ tax.Status +"</span>"
           } : "<span class='background-text-orange-light margin-left-2'>"+ tax.Status +"</span>";
           // Add date Actions ( buttons )
@@ -51,13 +55,21 @@ export class TableTaxModelComponent implements OnInit {
               column.actions = [];
             break;
           }
-        // Add object date table 
+        // Add object date table
         tableRow.push(column);
       });
       // Tax date format for table
       this.bodyTable = tableRow;
     });
   }
+
+  @ViewChild('modalEdit') modalComponentEdit: any = '';
+  @ViewChild('modalPayment') modalComponentPayment: any = '';
+  @ViewChild('modalTaxesDetails') modalComponentTaxesDetails : any = '';
+
+  functionHome: any = (result:any) => this.afterModalClosed(result);
+  afterModalClosed(result?: any){
+}
 
   ngOnInit(): void {
   }
@@ -68,10 +80,21 @@ export class TableTaxModelComponent implements OnInit {
     console.log(object);
     // reference icon click
     console.log(object.keyButton);
+
+    switch(object.keyButton){
+      case 'edit':
+        this.modalComponentEdit.openDialog(ModalEditTaxModelComponent,this.functionHome, 'Data from home');
+      break;
+      case 'done_all':
+        this.modalComponentPayment.openDialog(ModalPaymentComponent,this.functionHome, 'Data from home');
+      break;
+      case 'eye':
+        this.modalComponentTaxesDetails.openDialog(ModalTaxesDetailsComponent,this.functionHome, 'Data from home');
+      break;
+    }
     // Model tax reference
     this.taxModelService.getTax(object.key).then((response) => {
       console.log(response);
     });
   }
-
 }

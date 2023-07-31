@@ -1,6 +1,6 @@
-<table 
-  mat-table 
-  mat-flat-table 
+<table
+  mat-table
+  mat-flat-table
   [dataSource]="data"
 >
   <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
@@ -22,7 +22,7 @@
       <!--Add buttons acctions-->
       <span *ngIf="column === 'actions'">
         <span *ngFor="let button of element[column]">
-          <app-icon 
+          <app-icon
             id='btn-models'
             shape="{{button}}"
             (click)="tableClick(element['key'], button)"
@@ -36,10 +36,10 @@
   <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
 </table>
 
-<mat-paginator 
+<mat-paginator
   *ngIf="pagination"
   [length]="100"
   [pageSize]="10"
   [pageSizeOptions]="[5, 10, 25, 100]"
   aria-label="Select page">
-</mat-paginator> 
+</mat-paginator>

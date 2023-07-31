@@ -25,7 +25,7 @@ export class TableComponent implements OnInit {
   ];
   @Output() listenParentHandler : EventEmitter<any> = new EventEmitter();
   @Input()  pagination          : boolean           = false;
-  
+
   ngOnInit(): void {
     this.columnsToDisplay = this.displayedColumns.slice();
   }

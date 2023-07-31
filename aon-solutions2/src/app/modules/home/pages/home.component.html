@@ -86,7 +86,8 @@
         class="line"
         [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
       >
-        <app-inbox [messageList]="messages$" ></app-inbox>
+        <app-inbox [messageList]="messages$" >
+        </app-inbox>
       </mat-grid-tile>
     </mat-grid-list>
   </mat-grid-list>
@@ -100,7 +101,7 @@
       <div class="button-dashboard-style" *ngFor="let menuItem of menuItems">
         <app-menu-button-dashboard
           [shape]="menuItem.shape"
-          [name]="menuItem.name"
+          [name]="menuItem.name | translate"
           [color]="menuItem.color"
         ></app-menu-button-dashboard>
       </div>

@@ -2,16 +2,22 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { InboxRoutingModule } from './inbox-routing.module';
-import { InboxComponent } from './components/inbox/inbox.component';
+import { InboxviewComponent } from './pages/inboxview/inboxview.component';
+import { SharedModule } from "../../shared/shared.module";
+import { TableComponentComponent } from './components/inbox/table-component/table-component.component';
+import { ModalCreateComponent } from './components/inbox/modal-create/modal-create.component';
 
 
 @NgModule({
-  declarations: [
-    InboxComponent,
-  ],
-  imports: [
-    CommonModule,
-    InboxRoutingModule,
-  ]
+    declarations: [
+        InboxviewComponent,
+        TableComponentComponent,
+        ModalCreateComponent,
+    ],
+    imports: [
+        CommonModule,
+        InboxRoutingModule,
+        SharedModule,
+    ]
 })
 export class InboxModule { }
