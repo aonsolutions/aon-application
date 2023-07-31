@@ -1245,7 +1245,7 @@ public class JooqPayrollBuilder {
 	}
 	
 	private static Date getSalaryEnd(Salary salary) {
-	    return salary.getContextData().get(WORKED_DAYS.getName()).stream()
+	    return salary.getContextData().getOrDefault(WORKED_DAYS.getName(), Collections.emptyList()).stream()
 		    .map(ContextData::getEndDate).collect(Collectors.maxBy(Date::compareTo))
 		    .orElse(salary.getEndDate());
 	}
