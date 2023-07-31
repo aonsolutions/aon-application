@@ -159,6 +159,14 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 			if(year != null && year != -1  && !schema.getCabecera().getEjercicio().equals(BigInteger.valueOf(year))) {
 				saveDeposit(aonData, map, year);
 			}
+			
+			if(schema.getCabecera().getTipoCuestionario().equalsIgnoreCase("pymes")) {
+				String a = map.get(D2DepositFooterKey.PR8080852.getCode());
+				updateSchemaMemory(aonData, "1".equals(a), D2DepositFooterKey.PR8080852.getCode(), year);
+			} else {
+				String a = map.get(D2DepositFooterKey.PR8080805.getCode());
+				updateSchemaMemory(aonData, "1".equals(a), D2DepositFooterKey.PR8080805.getCode(), year);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -766,7 +774,6 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 				.and(f.getTypeProperty().eq((byte) 17))
 				.and(f.getAttachDateProperty().eq(DBConsults.newAttachDate(year)))
 			, AttachType.REGISTRY);
-	
 		return Utils.readXml(attach.getData());
 	}	
 	
