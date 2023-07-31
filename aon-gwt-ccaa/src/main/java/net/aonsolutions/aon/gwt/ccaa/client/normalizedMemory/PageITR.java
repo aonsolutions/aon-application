@@ -816,7 +816,7 @@ public class PageITR extends PageAbs {
 		});
 		if(getMap().containsKey(key.getCode())){
 			String d = getMap().get(key.getCode());
-			Integer index = Integer.parseInt(d) - 1;
+			Integer index = Integer.parseInt(d);
 			text.setSelectedIndex(index);
 		} else text.setSelectedIndex(0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
