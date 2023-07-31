@@ -29,9 +29,7 @@ export class ListDashboardComponent implements OnInit {
       case 'abierta':
         this.icon = "message";
         break;
-      default:
-        this.icon = "";
-        break;
+     
     }
   }
 }

@@ -1,5 +1,6 @@
 @import 'src/styles.scss';
 
+
 .defaultMargin {
   margin: .75rem;
 }
@@ -17,6 +18,8 @@
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
+
+
 }
 
 .content-message .nameAndIcon {
