@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
@@ -51,9 +52,14 @@ import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
+import com.esferalia.aon.salary.expression.DeferredExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
@@ -245,13 +251,10 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		return super.getStart();
 	}
 	
-	
-	
 	@Override
 	protected void initContractExpressionCtx(NextHook hook) throws SQLException, ExpressionException {
 		initNoHolidays(getExpressionContext());
 		super.initContractExpressionCtx(hook);
-		
 	}
 	
 	@Override
@@ -261,10 +264,39 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		fixSalaryEnd(ctx);
 		fixContractCompleteVariable(ctx);
 		
+		loadQuoteVariables(ctx, addDays2Date(super.getEnd(), 1) , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
 		super.loadContractData(ctx, Period.min(getStart(), startDate)  , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
 	}
 	
+	private void loadQuoteVariables(ExpressionContext ctx, Date noHolidaysStartDate, Date noHolidaysEndDate) {
+	    if ( noHolidaysStartDate.after(noHolidaysEndDate) ) {
+		return;
+	    }
+    	    
+	    Date settleEndDate = addDays2Date(noHolidaysStartDate, -1); 
+    	    double partialfactor = getPartialFactor(ctx, settleEndDate, settleEndDate);
+    	    ctx.setVariable(ContextVariable.HOURLY_BASE, false, noHolidaysStartDate, noHolidaysEndDate);
+    	    ctx.setVariable(ContextVariable.MONTHLY_SALARY, false, noHolidaysStartDate, noHolidaysEndDate);
+    	    ctx.setVariable(ContextVariable.PARTIAL_FACTOR, partialfactor, noHolidaysStartDate, noHolidaysEndDate);
+    	    IExpression noHolidaysExpression = new ExpressionImpl()
+    		    .setScope(ExpressionScope.SYSTEM)
+    		    .setName(ContextVariable.SALARY_DAYS.getName())
+    		    .setExpression(ContextVariable.NO_HOLIDAYS.getName());
+    	    
+    	    ctx.putVariable(ContextVariable.SALARY_DAYS, 
+    		    new DeferredExpressionVariable(ctx, noHolidaysExpression, noHolidaysStartDate, noHolidaysEndDate));
+	}
 	
+	private Double getPartialFactor(ExpressionContext ctx, Date startDate, Date endDate) {
+	    try {
+		return 
+		ctx.eval(ContextVariable.PARTIAL_FACTOR.getName(), startDate, endDate).stream()
+		.sorted((v1,v2) -> v2.getPeriod().compareTo(v1.getPeriod())).map(ITimedResult::getValue)
+		.filter(Objects::nonNull).map( v -> ((Number) v).doubleValue() ).findFirst().orElse(1.00);
+	    } catch (ExpressionException e) {
+		return 1.00;
+	    }
+	}
 	
 	private void fixContractCompleteVariable(ExpressionContext ctx) {
 		for(ITimedVariable<Object> var : ctx.getVariables("FIN")){

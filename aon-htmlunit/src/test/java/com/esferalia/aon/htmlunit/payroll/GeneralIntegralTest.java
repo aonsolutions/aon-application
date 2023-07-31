@@ -395,16 +395,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentLabel", 0.00);
 		assertValue("totalLiquidLabel", 0.00);
 
-
-//		draft("COTIZACIÓN, MIN");
-//		calendar.set(2023, Calendar.JULY, 31);
-//		settle(calendar.getTime());
-//		setValue("editor-dias_vacaciones_no_disfrutados", "10");
-//		// 2016  
-//		double minCgcBase = 42.00 * 10.00;
-//		assertValue("cgcBaseLabel", minCgcBase);
-//		assertValue("cgpBaseLabel", minCgcBase);
-
 		draft("COTIZACIÓN, MÁX");
 		settle(calendar.getTime());
 		// 2016  
@@ -422,6 +412,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentLabel", 300.00);
 		assertValue("totalLiquidLabel", 300.00 - (200.00 * (4.70 + 1.55 + 0.10 + 18.49) / 100.00) - ( 100.00 * 18.49 / 100.00 ));
 		
+		draft("COTIZACIÓN, MIN");
+		calendar.set(2023, Calendar.JULY, 31);
+		settle(calendar.getTime());
+		setValue("editor-dias_vacaciones_no_disfrutados", "10");
+		double minCgcBase = 42.00 * 10.00;
+		assertValue("cgcBaseLabel", minCgcBase);
+		assertValue("cgpBaseLabel", minCgcBase);
 
 	}
 
