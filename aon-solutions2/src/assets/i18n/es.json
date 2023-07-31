@@ -18,10 +18,19 @@
 
   },
   "LOGIN": {
-
+    "LOGIN": "Iniciar Sesión",
+    "LOG_IN": "Inicia Sesión",
+    "ACCESS_YOUR_AON_ACCOUNT": "Accede a tu cuenta de AON",
+    "OR_ACCESS": "o ACCEDE",
+    "WITHOUT_PASSWORD": "SIN CONTRASEÑA",
+    "USER": "Usuario",
+    "PASSWORD": "Contraseña"
   },
 
-  "ENTERPRISES": {}
+  "ENTERPRISES": {
+    "SELECT_A _COMPANY": "Selecciona una empresa",
+    "ENTER_THE_COMPANY": "Entra en la empresa que desees operar"
+  }
   ,
   "HOME": {
     "ASSESSMENT": "Gestión",
