@@ -6,7 +6,7 @@
     ></mat-grid-tile>
     <mat-grid-tile [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
       <app-file-upload-button>
-       {{ 'COMMON.FILE_UPLOAD_BUTTON'|translate }}
+       {{ 'COMMON.FILE-UPLOAD-BUTTON'|translate }}
         <app-icon
           shape="cloud_upload"
           style="margin-left: 15px"
@@ -50,7 +50,7 @@
           [labels]="chartItem.chartLabels"
           [chartType]="chartItem.chartType"
           [data]="chartItem.chartData"
-          [name]="chartItem.name"
+          [name]="chartItem.name | translate"
           [shape]="chartItem.shape"
         >
         </app-chart-dashboard>

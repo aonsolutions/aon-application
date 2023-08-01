@@ -1,7 +1,7 @@
 {
   "COMMON": {
     "COIN": "&#36;",
-    "FILE_UPLOAD_BUTTON": "Upload file",
+    "FILE-UPLOAD-BUTTON": "Upload file",
     "INPUT": {
       "REQUIRE"         : "is <strong>required</strong>",
       "SELECT"          : "Select an option",
@@ -9,7 +9,7 @@
     }
   },
   "HEADER": {
-    "EDIT_PROFILE": "Editar perfil",
+    "EDIT-PROFILE": "Editar perfil",
     "HELP": "Ayuda",
     "LOGOUT": "Cerrar sesión"
   },
@@ -23,43 +23,43 @@
   },
   "LOGIN": {
     "LOGIN": "Log in",
-    "LOG_IN": "Log in",
-    "ACCESS_YOUR_AON_ACCOUNT": "Access your AON account",
-    "OR_ACCESS": "or LOG IN",
-    "WITHOUT_PASSWORD": "WITHOUT PASSWORD",
+    "LOG-IN": "Log in",
+    "ACCESS-YOUR-AON-ACCOUNT": "Access your AON account",
+    "OR-ACCESS": "or LOG IN",
+    "WITHOUT-PASSWORD": "WITHOUT PASSWORD",
     "USER": "User",
     "PASSWORD": "Password"
   },
   "ENTERPRISES": {
-    "SELECT_A _COMPANY": "Select a company",
-    "ENTER_THE_COMPANY": "Enter the company you want to operate"
+    "SELECT-A-COMPANY": "Select a company",
+    "ENTER-THE-COMPANY": "Enter the company you want to operate"
   }
   ,
   "HOME": {
     "ASSESSMENT": "Assessment",
-    "TAX_PANEL": "Tax Panel",
-    "EMPLOYEE_PANEL": "Employee Panel",
+    "TAX-PANEL": "Tax Panel",
+    "EMPLOYEE-PANEL": "Employee Panel",
     "DOCUMENTATION": "Documentación",
-    "CREATE_INVOICE": "CREATE INVOICE",
-    "REGISTER_EMPLOYEE": "REGISTER EMPLOYEE",
-    "CREATE_QUERY": "CREATE QUERY",
+    "CREATE-INVOICE": "CREATE INVOICE",
+    "REGISTER-EMPLOYEE": "REGISTER EMPLOYEE",
+    "CREATE-QUERY": "CREATE QUERY",
     "TIMING": "TIMING",
-    "SALES_EXPENSES": "<strong>Sales/Expenses</strong>",
-    "COLLECTIONS_PAYMENTS": "Collections/Payments",
-    "YOUR_BANKS": "Your Banks",
+    "SALES-EXPENSES": "<strong>Sales/Expenses</strong>",
+    "COLLECTIONS-PAYMENTS": "Collections/Payments",
+    "YOUR-BANKS": "Your Banks",
     "TAXES": "Taxes",
     "MODEL": "Model",
-    "CREATE_YOUR_FIRST_BANK": "Create your first bank",
-    "CONNECT_AON":"Connect AON with your banks to have control of your movements",
+    "CREATE-YOUR-FIRST-BANK": "Create your first bank",
+    "CONNECT-AON":"Connect AON with your banks to have control of your movements",
     "INBOX": "Inbox",
-    "ALL_MESSAGES": "All messages",
-    "LAST_12_MONTHS":"Last 12 months",
-    "LAST_6_MONTHS":"Last 6 months",
+    "ALL-MESSAGES": "All messages",
+    "LAST-12-MONTHS":"Last 12 months",
+    "LAST-6-MONTHS":"Last 6 months",
     "QUARTERLY":"Quarterly",
-    "1_TRIMESTER":"1 trimester",
-    "2_TRIMESTER":"2 trimester",
-    "3_TRIMESTER":"3 trimester",
-    "4_TRIMESTER":"4 trimester"
+    "1-TRIMESTER":"1 trimester",
+    "2-TRIMESTER":"2 trimester",
+    "3-TRIMESTER":"3 trimester",
+    "4-TRIMESTER":"4 trimester"
   },
   "INBOX": {
 

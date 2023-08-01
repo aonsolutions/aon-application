@@ -44,17 +44,17 @@ export interface MenuItems {
 export class HomeComponent implements OnInit {
   //botones area
   shortcuts: ShortcutDashboard[] = [
-    { shape: 'add_box', name: 'CREAR FACTURA' },
-    { shape: 'person_add', name: 'DAR DE ALTA EMPLEADO' },
-    { shape: 'add_comment', name: 'CREAR CONSULTA' },
-    { shape: 'alarm', name: 'MARCAJE' },
+    { shape: 'add_box', name: this.translateService.instant('HOME.CREATE-INVOICE') },
+    { shape: 'person_add', name: this.translateService.instant('HOME.REGISTER-EMPLOYEE') },
+    { shape: 'add_comment', name: this.translateService.instant('HOME.CREATE-QUERY') },
+    { shape: 'alarm', name: this.translateService.instant('HOME.TIMING') },
   ];
 
   //chart area
   chartItems: ChartItem[] = [
     {
       shape: 'show_chart',
-      name: 'Ventas/Gastos',
+      name: this.translateService.instant('HOME.SALES-EXPENSES'),
       chartLabels: [],
       chartData: [],
       chartType: 'line',
@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit {
     },
     {
       shape: 'bar_chart',
-      name: 'Cobros/Pagos',
+      name: this.translateService.instant('HOME.COLLECTIONS-PAYMENTS'),
       chartLabels: [],
       chartData: [],
       chartType: 'bar',
@@ -98,10 +98,10 @@ export class HomeComponent implements OnInit {
 
   //botones Menu
   menuItems: MenuItems[] = [
-    { shape: 'assessment', name: 'Gestión', color: '#4f91ff' },
-    { shape: 'euro_symbol', name: 'Panel de Impuestos', color: '#fb982e' },
-    { shape: 'people', name: 'Panel de empleados', color: '#33a9a9' },
-    { shape: 'description', name: 'Documentación', color: '#ef6292' },
+    { shape: 'assessment',  name: this.translateService.instant('HOME.ASSESSMENT'), color: '#4f91ff' },
+    { shape: 'euro_symbol', name: this.translateService.instant('HOME.TAX-PANEL'), color: '#fb982e' },
+    { shape: 'people', name: this.translateService.instant('HOME.EMPLOYEE-PANEL'), color: '#33a9a9' },
+    { shape: 'description', name: this.translateService.instant('HOME.DOCUMENTATION'), color: '#ef6292' },
   ];
 
   constructor(
@@ -153,41 +153,7 @@ export class HomeComponent implements OnInit {
       console.log(this.messages);
     });
 
-    //translate
-    this.translateMenuItems();
-    this.translateShortCuts();
-    this.translateChartItems();
-  }
-  translateMenuItems(): void {
-    this.translateService.get('HOME').subscribe((translation) => {
-      this.menuItems.forEach((item, index) => {
-        const translatedName = translation[item.name];
-        if (translatedName) {
-          this.menuItems[index].name = translatedName;
-        }
-      });
-    });
-  }
 
-  translateShortCuts(): void {
-    this.translateService.get('HOME').subscribe((translation) => {
-      this.menuItems.forEach((item, index) => {
-        const translatedShortCuts = translation[item.name];
-        if (translatedShortCuts) {
-          this.menuItems[index].name = translatedShortCuts;
-        }
-      });
-    });
-  }
-  translateChartItems(): void {
-    this.translateService.get('HOME').subscribe((translation) => {
-      this.menuItems.forEach((item, index) => {
-        const translatedChartItems = translation[item.name];
-        if (translatedChartItems) {
-          this.menuItems[index].name = translatedChartItems;
-        }
-      });
-    });
   }
 
 }
