@@ -3,6 +3,7 @@ import { TaxModelService } from 'src/app/core/services/tax-model.service';
 import { ModalEditTaxModelComponent } from '../modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../modal-payment/modal-payment.component';
 import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-details.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector    : 'app-table-tax-model',
@@ -13,11 +14,21 @@ import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-d
 export class TableTaxModelComponent implements OnInit {
   @Input() trimester!: number;
   bodyTable          : any = [];
-  headerTable        : any = {name: 'modelo', result: 'Resultado', status: 'estado', paymentMethod: 'Metodo de pago', actions: 'acciones'};
+  // headerTable        : any = {name: 'modelo', result: 'Resultado', status: 'estado', paymentMethod: 'Metodo de pago', actions: 'acciones'};
+  get headerTable(): any {
+    return {
+      name: this.translateService.instant('TAX-PANEL.NAME'),
+      result: this.translateService.instant('TAX-PANEL.RESULT'),
+      status: this.translateService.instant('TAX-PANEL.STATUS'),
+      paymentMethod: this.translateService.instant('TAX-PANEL.PAYMENTMETHOD'),
+      actions: this.translateService.instant('TAX-PANEL.ACTIONS')
+    };
+  }
   displayedColumns   : string[] = ['name', 'result', 'status', 'paymentMethod', 'actions'];
 
   constructor(
     public taxModelService: TaxModelService,
+    public translateService: TranslateService
     ) {
     let tableRow : any = [];
     let column   : any = {};
@@ -72,6 +83,7 @@ export class TableTaxModelComponent implements OnInit {
 }
 
   ngOnInit(): void {
+
   }
 
   modalClick(object: any) {

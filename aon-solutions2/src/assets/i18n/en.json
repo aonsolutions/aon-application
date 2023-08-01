@@ -5,7 +5,12 @@
   "HEADER": {
   },
   "MENU": {
-    "MENU": "menu"
+    "MENU": "menu",
+    "INBOX": "BANDEJA",
+    "BILLING": "GESTIÓN",
+    "TAX-PANEL": "PANEL DE IMPUESTOS",
+    "EMPLOYEE-PANEL": "PANEL DE EMPLEADOS",
+    "DOCUMENTATION": "DOCUMENTACIÓN"
   },
   "LOGIN": {
 
@@ -32,6 +37,17 @@
 
   },
   "TAX-PANEL": {
-
+    "1_TRIMESTER":   "1 Trimestre",
+    "2_TRIMESTER":   "2 Trimestre",
+    "3_TRIMESTER":   "3 Trimestre",
+    "4_TRIMESTER":   "4 Trimestre",
+    "ALL":           "Todos",
+    "NAME":          "Modelo",
+    "RESULT":        "Resultado",
+    "STATUS":        "estado",
+    "PAYMENTMETHOD": "Metodo de pago",
+    "ACTIONS":       "acciones",
+    "MODEL":         "Modelo",
+    "YEAR":          "Año"
   }
 }

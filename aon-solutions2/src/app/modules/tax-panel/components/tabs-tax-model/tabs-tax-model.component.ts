@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface Tabs {
   name: string;
@@ -29,16 +30,24 @@ export interface Models {
   styleUrls: ['./tabs-tax-model.component.scss'],
 })
 export class TabsTaxModelComponent implements OnInit {
-  tabIndex:number = 0
+  tabIndex: number = 0;
 
-  constructor(){}
+  constructor(public translateService: TranslateService) {}
+
+  // tabs: Tabs[] = [
+  //   { name: '1_TRIMESTER' },
+  //   { name: '2_TRIMESTER' },
+  //   { name: '3_TRIMESTER' },
+  //  { name: '4_TRIMESTER' },
+  //   { name: 'ALL' },
+  //  ];
 
   tabs: Tabs[] = [
-    { name: '1 Trimestre' },
-    { name: '2 Trimestre' },
-    { name: '3 Trimestre' },
-    { name: '4 Trimestre' },
-    { name: 'Todos' },
+    { name: 'TAX-PANEL.1_TRIMESTER' },
+    { name: 'TAX-PANEL.2_TRIMESTER' },
+    { name: 'TAX-PANEL.3_TRIMESTER' },
+    { name: 'TAX-PANEL.4_TRIMESTER' },
+    { name: 'TAX-PANEL.ALL' },
   ];
 
   public modelsList: any[] = [];
@@ -69,7 +78,19 @@ export class TabsTaxModelComponent implements OnInit {
   @Output() changeTabIndex = new EventEmitter<number>();
   showModal: any;
 
-
   ngOnInit(): void {
+    //  this.translateTabs();
   }
+
+  // Función para traducir desde el archivo .json
+//    translateTabs(): void{
+//      this.translateService.get('TAX-PANEL').subscribe((translation) => {
+//       this.tabs.forEach((item, index) => {
+//         const translateTab = translation[item.name];
+//        if(translateTab){
+//           this.tabs[index].name = translateTab;
+//        }
+//      })
+//     });
+//  }
 }
