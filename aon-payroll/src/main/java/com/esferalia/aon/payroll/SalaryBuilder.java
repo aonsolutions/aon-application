@@ -2,23 +2,22 @@ package com.esferalia.aon.payroll;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.IBonus;
-import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
-import com.esferalia.aon.salary.payment.Payments;
 
 public class SalaryBuilder implements ISalaryBuilder<Salary> {
 
@@ -294,6 +293,15 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		salaryData.setStartDate(data.getPeriod().getStart());
 		salaryData.setEndDate(data.getPeriod().getEnd());
 		salaryData.setExpression(String.valueOf(value));
+
+		//By now remove only variable that exact matches start & end dates
+		Collection<SalaryData> olds = 
+		this.salary.getSalaryDatas().stream()
+		.filter( d -> name.equals(d.getName()))
+		.filter( d -> data.getPeriod().contains(new Period(d.getStartDate(),d.getEndDate())))
+		.toList();
+		this.salary.getSalaryDatas().removeAll(olds);
+
 		this.salary.getSalaryDatas().add(salaryData);
 	}
 	
@@ -302,6 +310,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 			addData(entry.getKey(), entry.getValue());
 		}
 	}
+
 
 	@Override
 	public void addBonus(Double amount, String description, Date startDate,
@@ -467,5 +476,5 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		contractEmbargo.setContract(salary.getContract());
 		return contractEmbargo;
 	}
-
+	
 }
