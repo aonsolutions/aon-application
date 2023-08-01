@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MultiDataSet } from 'ng2-charts';
 import { ChartType } from 'chart.js';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface ChartItem {
   shape: string;
@@ -33,9 +34,9 @@ export class ChartDashboardComponent implements OnInit {
 
   @Input() public chartItemList: Observable<ChartItem[]> | undefined;
 
-  selected: string = 'Últimos 12 meses';
+  selected: string = '';
 
-  items: string[] = ['Últimos 12 meses', 'Últimos 6 meses', 'Trimestral'];
+  items: string[] = ['LAST_12_MONTHS', 'LAST_6_MONTHS', 'QUARTERLY'];
 
   toggleChartType() {
     if (this.chartType === 'line') {
@@ -49,15 +50,24 @@ export class ChartDashboardComponent implements OnInit {
     return this.chartType === 'line' ? 'bar_chart' : 'show_chart';
   }
 
-  constructor() {}
+  constructor(private translateService: TranslateService) {}
 
   ngOnInit(): void {
     if (this.chartItemList) {
       this.chartItemList.subscribe((chartItem) => {
         this.chartItems = chartItem;
-
-
       });
     }
+
+    this.translateItems();
+  }
+
+  translateItems(): void {
+    this.translateService.get('HOME').subscribe((translation) => {
+      this.selected = translation['LAST_12_MONTHS'];
+      this.items.forEach((item, index) => {
+        this.items[index] = translation[item];
+      });
+    });
   }
 }
