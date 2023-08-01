@@ -20,7 +20,6 @@
     "TAX-PANEL": "PANEL DE IMPUESTOS",
     "EMPLOYEE-PANEL": "PANEL DE EMPLEADOS",
     "DOCUMENTATION": "DOCUMENTACIÓN"
-
   },
   "LOGIN": {
     "LOGIN": "Iniciar Sesión",
@@ -31,7 +30,6 @@
     "USER": "Usuario",
     "PASSWORD": "Contraseña"
   },
-
   "ENTERPRISES": {
     "SELECT_A _COMPANY": "Selecciona una empresa",
     "ENTER_THE_COMPANY": "Entra en la empresa que desees operar"
@@ -48,6 +46,8 @@
     "TIMING": "MARCAJE",
     "SALES_EXPENSES": "Ventas/Gastos",
     "COLLECTIONS_PAYMENTS": "Cobros/Pagos",
+    "TAXES": "Impuestos",
+    "MODEL": "Modelo",
     "YOUR_BANKS": "Tus Bancos",
     "CREATE_YOUR_FIRST_BANK": "Crea tu primer banco",
     "CONNECT_AON":"Conecta AON con tus bancos para tener un control de tus movimientos",
@@ -60,7 +60,6 @@
     "2_TRIMESTER":"2 trimestre",
     "3_TRIMESTER":"3 trimestre",
     "4_TRIMESTER":"4 trimestre"
-
   },
   "INBOX": {
 

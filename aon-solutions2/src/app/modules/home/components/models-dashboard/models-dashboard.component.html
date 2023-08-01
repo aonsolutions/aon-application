@@ -9,7 +9,7 @@
   <div header class="models-header">
     <div class="models-header-name">
       <div class="models-header-line"></div>
-      <div class="models-header-text"> Impuestos </div>
+      <div class="models-header-text">{{ 'HOME.TAXES'|translate }}</div>
     </div>
     <div class="models-header-filters">
       <div class="models-header-filter-text"> {{ selected }} </div>
@@ -25,7 +25,7 @@
   </div>
     <div body class="models-content">
     <div *ngFor="let model of models" class="models-content-element">
-        <div class="models-content-element-name">Modelo {{ model.Name }} </div>
+        <div class="models-content-element-name">{{ 'HOME.MODEL'|translate }} {{ model.Name }} </div>
         <div class="models-content-element-tax"> {{ model.TaxType }}</div>
         <div class="models-content-element-amount">
             <div class="models-content-element-amount-text">
