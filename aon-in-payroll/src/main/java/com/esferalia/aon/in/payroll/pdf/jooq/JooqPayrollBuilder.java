@@ -189,7 +189,7 @@ public class JooqPayrollBuilder {
 			{
 				payrollBuilder.setTotalDays(salary.getSalaryDays());
 				payrollBuilder.setLiquidPeriodStart(salary.getStartDate());
-				payrollBuilder.setLiquidPeriodEnd(getSalaryEnd(salary));
+				payrollBuilder.setLiquidPeriodEnd(getSalaryEndDate(salary));
 				
 				/**
 				 * Comparing salary type
@@ -1244,9 +1244,13 @@ public class JooqPayrollBuilder {
 		}
 	}
 	
-	private static Date getSalaryEnd(Salary salary) {
-	    return salary.getContextData().getOrDefault(WORKED_DAYS.getName(), Collections.emptyList()).stream()
-		    .map(ContextData::getEndDate).collect(Collectors.maxBy(Date::compareTo))
+	private static Date getSalaryEndDate(Salary salary) {
+	    Date startDate = salary.getStartDate();
+	    return salary.getContextData().getOrDefault(ContextVariable.NO_HOLIDAYS.getName(), Collections.emptyList()).stream()
+		    .map(ContextData::getStartDate)
+		    .filter( d -> d.after(startDate) )
+		    .collect(Collectors.minBy(Date::compareTo))
+		    .map(d -> AonDateUtils.addDays(d,-1))
 		    .orElse(salary.getEndDate());
 	}
 	

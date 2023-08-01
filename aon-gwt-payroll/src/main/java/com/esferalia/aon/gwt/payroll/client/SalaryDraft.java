@@ -3576,7 +3576,7 @@ public class SalaryDraft extends ResizeComposite
 		employeeAgreementCategoryLabel.setText(salaryDraftObject.getEmployeeAgreementCategory());
 
 		salaryStartDate = salaryDraftObject.getStartDate();
-		salaryEndDate = getSalaryEnd();
+		salaryEndDate = getSalaryEndDate();
 		periodLabel.setText(format(salaryStartDate) + " - " + format(salaryEndDate));
 		daysLabel.setText(Integer.toString(salaryDraftObject.getTimeUnits()));
 
@@ -3884,14 +3884,17 @@ public class SalaryDraft extends ResizeComposite
 		;
 	}
 
-	public Date getSalaryEnd() {
+	public Date getSalaryEndDate() {
+	    	Date startDate = salaryDraftObject.getStartDate(); 
 		return salaryDraftObject.getContext().stream()
-		.filter(v-> AonStringUtils.equalsIgnoreCase("FIN_NOMINA", v.getName()))
-		.map(Variable::getValue)
-		.filter(Objects::nonNull)
-		.map(String::valueOf )
-		.map(StringVariable::parse)
-		.findAny().orElseGet(salaryDraftObject::getEndDate)
+		.filter(v-> AonStringUtils.equalsIgnoreCase("DIAS_VACACIONES_NO_DISFRUTADOS", v.getName()))
+		.filter( v -> ! ( v instanceof UndefinedVariable ) )
+		.map(Variable::getStartDate)
+		.map(DateUtils::copyDateOnly)
+		.filter( d -> d.after(startDate))
+		.collect(Collectors.minBy(Date::compareTo))
+		.map(d -> DateUtils.deleteDays2Date(d, 1) )
+		.orElseGet(salaryDraftObject::getEndDate)
 		;
 	}	
 	private void onHideShowNotDefinedVars() {

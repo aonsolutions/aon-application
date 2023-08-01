@@ -389,7 +389,8 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		sPayment.setExpression(payment.getExpression());
 
 		this.salary.getSalaryPayments().add(sPayment);
-
+		
+		addDatas(context);
 	}
 
 	@Override

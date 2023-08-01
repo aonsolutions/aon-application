@@ -4,6 +4,7 @@ package com.esferalia.aon.gwt.payroll.util;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionPDFType;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionTypeDescription;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NO_HOLIDAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 
 import java.io.IOException;
@@ -38,10 +39,12 @@ import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 /**
@@ -535,10 +538,13 @@ public class DraftPayrollBuilder {
 	
 	
 	private static Date getSalaryEnd(Salary salary) {
+	    Date startDate = salary.getStartDate();
 	    return salary.getSalaryDatas().stream()
-		    .filter( d -> d.getName().equals(WORKED_DAYS.getName()))
-		    .map( SalaryData::getEndDate )
-		    .collect(Collectors.maxBy(Date::compareTo))
+		    .filter( d -> d.getName().equals(NO_HOLIDAYS.getName()))
+		    .map( SalaryData::getStartDate )
+		    .filter( d -> d.after(startDate) )
+		    .collect(Collectors.minBy(Date::compareTo))
+		    .map( d -> AonDateUtils.addDays(d,-1))
 		    .orElse(salary.getEndDate());
 	}
 	
