@@ -198,6 +198,26 @@ class Employee implements Collection {
     }
 }
 
+class User implements Collection  {
+  name: string;
+  lastname: string;
+  document: string;
+  email: string;
+  password: string;
+  phone: string;
+  active: boolean;
+
+  constructor(name: string, lastname: string, document: string, email: string, password: string, phone: string, active: boolean) {
+    this.name = name;
+    this.lastname = lastname;
+    this.document = document;
+    this.email = email;
+    this.password = password;
+    this.phone = phone;
+    this.active = active;
+  }
+}
+
 interface IFactory {
     buildModel(objType: string) : any;
     buildService(obj:string): any;
@@ -227,6 +247,8 @@ class Factory implements IFactory {
                 return new DocumentNote('','');
             case 'employee':
                 return new Employee('','','','','','',false);
+              case 'user':
+                return new User('','','','','','',false);
             default:
                 throw new Response('0201');
         }
@@ -683,7 +705,7 @@ class ServiceTaxModel implements ICollection {
                 }
                 reject(new Response('0205'))
             } catch (error) {
-            
+
                 reject(new Response('0206'))
             }
         });
@@ -1147,7 +1169,7 @@ export class AonSDK {
 }
 
 let users = [
-    {username: 'test@aonsolutions.test', password: 'test'}
+    {username: 'test@aonsolutions.test', password: 'testing'}
 ]
 
 let enterprises = [
