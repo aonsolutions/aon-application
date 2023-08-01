@@ -1224,6 +1224,14 @@ export interface IFolder extends ICollectable {
 
 export interface IEnterprise extends ICollectable {
     Name: string;
+    ProfilePhoto: string;
+    Address: string;
+    Country: string;
+    Province: string;
+    SocialReason: string;
+    Email: string;
+    Phone: string;
+    Website: string;
     Document: string;
 }
 
@@ -1549,15 +1557,87 @@ class StorableFolder extends Folder implements IStorable<Folder> {
 
 class Enterprise implements IEnterprise, IModel {
     private name: string;
+    private profilePhoto: string;
+    private address: string;
+    private country: string;
+    private province: string;
+    private socialReason: string;
+    private email: string;
+    private phone: string;
+    private website: string;
     private document: string;
     private key: string;
 
     public get Name(): string {
-        return this.name;
+      return this.name;
     }
 
     public set Name(value: string) {
-        this.name = value;
+      this.name = value;
+    }
+
+    public get Address(): string {
+      return this.address;
+    }
+
+    public set Address(value: string) {
+      this.address = value;
+    }
+
+    public get Country(): string {
+      return this.country;
+    }
+
+    public set Country(value: string) {
+      this.country = value;
+    }
+
+    public get Province(): string {
+      return this.province;
+    }
+
+    public set Province(value: string) {
+      this.province = value;
+    }
+
+    public get SocialReason(): string {
+      return this.socialReason;
+    }
+
+    public set SocialReason(value: string) {
+      this.socialReason = value;
+    }
+
+    public get Email(): string {
+      return this.email;
+    }
+
+    public set Email(value: string) {
+      this.email = value;
+    }
+
+    public get Phone(): string {
+      return this.phone;
+    }
+
+    public set Phone(value: string) {
+      this.phone = value;
+    }
+
+    public get Website(): string {
+      return this.website;
+    }
+
+    public set Website(value: string) {
+      this.website = value;
+    }
+
+    public get ProfilePhoto(): string {
+        return this.profilePhoto;
+    }
+
+    public set ProfilePhoto(value: string) {
+        this.profilePhoto = value;
     }
 
     public get Document(): string {
@@ -1572,9 +1652,17 @@ class Enterprise implements IEnterprise, IModel {
         return this.key;
     }
 
-    constructor(name?: string, document?: string) {
+    constructor(name?: string, profilePhoto?: string, address?: string, country?: string, province?: string, socialReason?: string, email?: string, phone?: string, website?: string, document?: string, key?: string) {
         this.name = name || '';
-        this.document = document || '';
+        this.profilePhoto = profilePhoto || '';
+        this.address = address || '';
+        this.country = country || '';
+        this.province = province || '';
+        this.socialReason = socialReason || '';
+        this.email = email || '';
+        this.phone = phone || '';
+        this.website = website || '';
+        this.document = document || document || '';
         this.key = document || '';
     }
 
