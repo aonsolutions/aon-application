@@ -22,29 +22,27 @@ export class Enterprise {
   },
 })
 export class TopBarComponent implements OnInit, OnChanges {
-
   @ViewChild('first') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
   menuItem: MenuItem [] = [
-    {root:true, text:'Editar perfil'  , icon:'person_pin' , colorIcon:'black'},
-    {root:true, text:'Ayuda'          , icon:'help'       , colorIcon:'black'},
-    {root:true, text:'Cerrar sesión' , icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
+    {root:true, text: this.translateService.instant('HEADER.EDIT_PROFILE'), icon:'person_pin' , colorIcon:'black'},
+    {root:true, text: this.translateService.instant('HEADER.HELP')        , icon:'help'       , colorIcon:'black'},
+    {root:true, text: this.translateService.instant('HEADER.LOGOUT')      , icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
   ]
-
   displayHomeIcon : boolean = false;
   usserLoggged    : boolean = this.auth.isLoggedIn();
   currentRoute    : string  = this.router.url.replace('/','');
 
   constructor(
-    private router: Router, public auth: AuthService,
-    private translateService: TranslateService
-    ){
+    private router          : Router, 
+    private auth            : AuthService,
+    public  translateService: TranslateService
+  ){
     this.router.events.subscribe((event) => {
       event instanceof NavigationEnd ? this.checkCurrentRoute() : null
     })
   }
 
   ngOnInit(): void {
-    this.translateMenuItems();
   }
 
   checkCurrentRoute() {
@@ -59,24 +57,4 @@ export class TopBarComponent implements OnInit, OnChanges {
     this.auth.logout();
   }
 
-  // Función para traducir desde el archivo .json
-  translateMenuItems(): void {
-    this.translateService.get('HEADER').subscribe((translation) => {
-      this.menuItem.forEach((item) => {
-        switch (item.text) {
-          case 'Editar perfil':
-            item.text = translation['EDIT_PROFILE'];
-            break;
-          case 'Ayuda':
-            item.text = translation['HELP'];
-            break;
-          case 'Cerrar sesión':
-            item.text = translation['LOGOUT'];
-            break;
-          default:
-            break;
-        }
-      });
-    });
-  }
 }
