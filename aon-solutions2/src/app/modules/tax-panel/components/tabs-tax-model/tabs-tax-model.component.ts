@@ -31,28 +31,18 @@ export interface Models {
 })
 export class TabsTaxModelComponent implements OnInit {
   tabIndex: number = 0;
-
-  constructor(public translateService: TranslateService) {}
-
-  // tabs: Tabs[] = [
-  //   { name: '1_TRIMESTER' },
-  //   { name: '2_TRIMESTER' },
-  //   { name: '3_TRIMESTER' },
-  //  { name: '4_TRIMESTER' },
-  //   { name: 'ALL' },
-  //  ];
-
-  tabs: Tabs[] = [
-    { name: 'TAX-PANEL.1_TRIMESTER' },
-    { name: 'TAX-PANEL.2_TRIMESTER' },
-    { name: 'TAX-PANEL.3_TRIMESTER' },
-    { name: 'TAX-PANEL.4_TRIMESTER' },
+    tabs: Tabs[] = [
+    { name: 'TAX-PANEL.1-TRIMESTER' },
+    { name: 'TAX-PANEL.2-TRIMESTER' },
+    { name: 'TAX-PANEL.3-TRIMESTER' },
+    { name: 'TAX-PANEL.4-TRIMESTER' },
     { name: 'TAX-PANEL.ALL' },
   ];
 
   public modelsList: any[] = [];
 
   public modelsYears: any[] = [];
+  constructor(public translateService: TranslateService) {}
 
   @Input() type: string = '';
   @Input() appearance: MatFormFieldAppearance = 'outline';

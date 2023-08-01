@@ -1,8 +1,16 @@
 {
   "COMMON": {
-    "COIN": "&#36;"
+    "COIN": "&#36;",
+    "INPUT": {
+      "REQUIRE"         : "is <strong>required</strong>",
+      "SELECT"          : "Select an option",
+      "SELECT-MULTIPLE" : "Select the options"
+    }
   },
   "HEADER": {
+    "EDIT-PROFILE": "Editar perfil",
+    "HELP": "Ayuda",
+    "LOGOUT": "Cerrar sesión"
   },
   "MENU": {
     "MENU": "menu",
@@ -15,9 +23,8 @@
   "LOGIN": {
 
   },
-  "ENTERPRISES": {
-
-  },
+  "ENTERPRISES": {}
+  ,
   "HOME": {
 
   },
@@ -37,10 +44,10 @@
 
   },
   "TAX-PANEL": {
-    "1_TRIMESTER":   "1 Trimestre",
-    "2_TRIMESTER":   "2 Trimestre",
-    "3_TRIMESTER":   "3 Trimestre",
-    "4_TRIMESTER":   "4 Trimestre",
+    "1-TRIMESTER":   "1 Trimestre",
+    "2-TRIMESTER":   "2 Trimestre",
+    "3-TRIMESTER":   "3 Trimestre",
+    "4-TRIMESTER":   "4 Trimestre",
     "ALL":           "Todos",
     "NAME":          "Modelo",
     "RESULT":        "Resultado",

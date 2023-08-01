@@ -4,71 +4,93 @@
     'width': width
   }"
   [class]="appearanceDetail"
+  floatLabel="always"
 >
-    <mat-label *ngIf="label != ''">{{label}}</mat-label>
-    <span matPrefix><ng-content select="[prefix]"></ng-content></span>
+  <mat-label *ngIf="label != ''">{{label}}</mat-label>
+  <span matPrefix><ng-content select="[prefix]"></ng-content></span>
 
-    <!-- INPUTS TIPO TEXT,PASSWORD,DATETIME -->
-    <input
-        *ngIf="type != 'select' && type != 'textarea' && type != 'search'"
+  <input
+      *ngIf="intputType.includes(type)"
+      matInput
+      [(ngModel)]="value"
+      [ngClass]="['ng-pending']"
+      [disabled]="disabled"
+      [required]="required"
+      [type]="type"
+      [placeholder]="placeholder"
+      (ngModelChange)="returnValue($event)"
+      [class]="appearanceDetail"
+  />
+
+  <div
+    class='search-componet'
+    *ngIf="type == 'search'"
+  >
+    <div>
+      <app-icon [shape]="'search'"></app-icon>
+    </div>
+    <div class="search-componet-input">
+      <input
         matInput
         [(ngModel)]="value"
         [ngClass]="['ng-pending']"
         [disabled]="disabled"
+        [required]="required"
         [type]="type"
         [placeholder]="placeholder"
         (ngModelChange)="returnValue($event)"
         [class]="appearanceDetail"
-    />
-
-    <div
-      class='search-componet'
-      *ngIf="type == 'search'"
-    >
-      <div>
-        <app-icon [shape]="'search'"></app-icon>
-      </div>
-      <div class="search-componet-input">
-        <input
-          matInput
-          [(ngModel)]="value"
-          [ngClass]="['ng-pending']"
-          [disabled]="disabled"
-          [type]="type"
-          [placeholder]="placeholder"
-          (ngModelChange)="returnValue($event)"
-          [class]="appearanceDetail"
-        />
-      </div>
+      />
     </div>
+  </div>
 
-
-    <!-- INPUTS TIPO SELECT -->
-    <mat-select
+  <!-- INPUTS TIPO SELECT -->
+    <mat-select 
       *ngIf="type=='select'"
       [(ngModel)]="value"
-      [placeholder]="placeholder"
       [disabled]="disabled"
+      [required]="required"
       [class]="appearanceDetail"
+      placeholder="{{ 'COMMON.INPUT.SELECT' | translate }}"
     >
-<!--
-    [value]="options[0].text" -->
-      <mat-option *ngFor="let option of options" [value]="option.value">{{option.text}}</mat-option>
+      <mat-option *ngFor="let option of options" value="{{option.value}}">
+        {{option.text}}
+      </mat-option>
+    </mat-select>
+  
+    <mat-select 
+      *ngIf="type=='selectMultiple'"
+      [(ngModel)]="value"
+      [disabled]="disabled"
+      [required]="required"
+      [class]="appearanceDetail"
+      multiple
+      placeholder="{{ 'COMMON.INPUT.SELECT-MULTIPLE' | translate }}"
+    >
+      <mat-option *ngFor="let option of options" [value]="option.value">
+        {{option.text}}
+      </mat-option>
     </mat-select>
 
-    <!-- INPUT TIPO TEXTAREA -->
-    <textarea
-        *ngIf="type=='textarea'"
-        matInput
-        cdkTextareaAutosize
-        cdkAutosizeMinRows="3"
-        [cdkAutosizeMaxRows]="maxRow"
-        [placeholder]="placeholder"
-        [(ngModel)]="value"
-        (ngModelChange)="returnValue($event)"
-    >
-    </textarea>
+  <!-- INPUT TIPO TEXTAREA -->
+  <textarea
+    *ngIf="type=='textarea'"
+    matInput
+    cdkTextareaAutosize
+    cdkAutosizeMinRows="3"
+    [cdkAutosizeMaxRows]="maxRow"
+    [placeholder]="placeholder"
+    [(ngModel)]="value"
+    (ngModelChange)="returnValue($event)"
+    [disabled]="disabled"
+    [required]="required"
+  >
+  </textarea>
 
-    <span matSuffix *ngIf="value!=''" [ngClass]="classSuffix" (click)="this.selectFunction()"><ng-content select="[suffix]"></ng-content></span>
-    <mat-hint *ngIf="hint != ''">{{hint}}</mat-hint>
+  <mat-error *ngIf="required == 'required'">
+    {{label}} <span [innerHTML]="'COMMON.INPUT.REQUIRE' | translate"></span>
+  </mat-error>
+  
+  <span matSuffix *ngIf="value!=''" [ngClass]="classSuffix" (click)="this.selectFunction()"><ng-content select="[suffix]"></ng-content></span>
+  <mat-hint *ngIf="hint != ''">{{hint}}</mat-hint>
 </mat-form-field>
