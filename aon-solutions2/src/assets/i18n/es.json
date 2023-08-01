@@ -1,7 +1,12 @@
 {
   "COMMON": {
     "COIN": "&euro;",
-    "FILE_UPLOAD_BUTTON": "Subir documentación"
+    "FILE_UPLOAD_BUTTON": "Subir documentación",
+    "INPUT": {
+      "REQUIRE"         : "es <strong>obligatorio</strong>",
+      "SELECT"          : "Selecciona una opción",
+      "SELECT-MULTIPLE" : "Selecciona las opciones"
+    }
   },
   "HEADER": {
     "EDIT_PROFILE": "Editar perfil",
