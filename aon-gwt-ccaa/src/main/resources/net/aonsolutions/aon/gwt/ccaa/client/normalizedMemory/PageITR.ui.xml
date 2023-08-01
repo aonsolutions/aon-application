@@ -47,7 +47,7 @@
 							<td>
 								<g:HorizontalPanel>
 									<g:Label ui:field="ITR8234002lbl" />
-									<d:DateBox ui:field="ITR8234002"></d:DateBox>
+									<aon:DateBoxEx ui:field="ITR8234002"></aon:DateBoxEx>
 								</g:HorizontalPanel>										
 							</td>
 						</tr>

@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
@@ -53,7 +54,7 @@ public class PageITR extends PageAbs {
 	@UiField ListBox ITR8234001;
 	
 	@UiField Label ITR8234002lbl;
-	@UiField DateBox ITR8234002;
+	@UiField DateBoxEx ITR8234002;
 
 	
 	@UiField HTMLPanel table1Panel;
