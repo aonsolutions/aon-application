@@ -49,9 +49,8 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
 import { RouterModule } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
-
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -59,7 +58,6 @@ import { CoreModule } from './core/core.module';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { GlobalErrorHandlerService } from './core/services/global-error-handler.service';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
-
 
 @NgModule({
   declarations: [
@@ -125,7 +123,6 @@ import { SetMaterialModule } from 'libraries/setproduct-angular-material';
     SetMaterialModule,
     SetMaterialModule,
     TranslateModule.forRoot({
-      defaultLanguage: 'es',
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader,
