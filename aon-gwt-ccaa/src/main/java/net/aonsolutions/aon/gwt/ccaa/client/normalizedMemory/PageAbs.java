@@ -581,6 +581,41 @@ public abstract class PageAbs extends ResizeComposite {
 	
 	}
 
+	protected void onEdit(String[] key, String[] value, Boolean calculate){
+		Map<String, String> m = new HashMap<String, String>();
+		for (String k : getMap().keySet()) {
+			m.put(k, getMap().get(k));
+		}
+		getDeposit().getUndoStack().push(m);
+		getDeposit().getRedoStack().clear();
+		
+		for (Integer i = 0; i < key.length; i++) {
+			getMap().put(key[i], value[i]);			
+		}
+
+		if(calculate) {
+			getDeposit().getInma().calculate(getAonData(), getMap(), getYear(), new AsyncCallback<Map<String,String>>() {
+				@Override
+				public void onSuccess(Map<String, String> result) {
+					setMap(result);
+					getDeposit().refreshPage();
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		} else {
+			getDeposit().getInma().saveDeposit(getAonData(), getMap(), getYear(), new AsyncCallback<Void>() {
+			
+				@Override
+				public void onSuccess(Void result) {
+					
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		}
+	}
 	
 	protected void onEdit(String key, String value, Boolean calculate){
 		Map<String, String> m = new HashMap<String, String>();
