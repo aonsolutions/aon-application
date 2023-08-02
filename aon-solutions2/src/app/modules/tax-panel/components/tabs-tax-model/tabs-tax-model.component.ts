@@ -32,11 +32,11 @@ export interface Models {
 export class TabsTaxModelComponent implements OnInit {
   tabIndex: number = 0;
     tabs: Tabs[] = [
-    { name: 'TAX-PANEL.1-TRIMESTER' },
-    { name: 'TAX-PANEL.2-TRIMESTER' },
-    { name: 'TAX-PANEL.3-TRIMESTER' },
-    { name: 'TAX-PANEL.4-TRIMESTER' },
-    { name: 'TAX-PANEL.ALL' },
+    { name: this.translateService.instant('TAX-PANEL.1-TRIMESTER')},
+    { name: this.translateService.instant('TAX-PANEL.2-TRIMESTER')},
+    { name: this.translateService.instant('TAX-PANEL.3-TRIMESTER')},
+    { name: this.translateService.instant('TAX-PANEL.4-TRIMESTER')},
+    { name: this.translateService.instant('TAX-PANEL.ALL')},
   ];
 
   public modelsList: any[] = [];
@@ -69,18 +69,5 @@ export class TabsTaxModelComponent implements OnInit {
   showModal: any;
 
   ngOnInit(): void {
-    //  this.translateTabs();
   }
-
-  // Función para traducir desde el archivo .json
-//    translateTabs(): void{
-//      this.translateService.get('TAX-PANEL').subscribe((translation) => {
-//       this.tabs.forEach((item, index) => {
-//         const translateTab = translation[item.name];
-//        if(translateTab){
-//           this.tabs[index].name = translateTab;
-//        }
-//      })
-//     });
-//  }
 }

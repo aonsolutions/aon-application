@@ -8,17 +8,17 @@
     }
   },
   "HEADER": {
-    "EDIT-PROFILE": "Editar perfil",
-    "HELP": "Ayuda",
-    "LOGOUT": "Cerrar sesión"
+    "EDIT-PROFILE": "Edit profile",
+    "HELP": "Help",
+    "LOGOUT": "Logout"
   },
   "MENU": {
     "MENU": "menu",
-    "INBOX": "BANDEJA",
-    "BILLING": "GESTIÓN",
-    "TAX-PANEL": "PANEL DE IMPUESTOS",
-    "EMPLOYEE-PANEL": "PANEL DE EMPLEADOS",
-    "DOCUMENTATION": "DOCUMENTACIÓN"
+    "INBOX": "INBOX",
+    "BILLING": "BILLING",
+    "TAX-PANEL": "TAX PANEL",
+    "EMPLOYEE-PANEL": "EMPLOYEE PANEL",
+    "DOCUMENTATION": "DOCUMENTATION"
   },
   "LOGIN": {
 
@@ -44,17 +44,17 @@
 
   },
   "TAX-PANEL": {
-    "1-TRIMESTER":   "1 Trimestre",
-    "2-TRIMESTER":   "2 Trimestre",
-    "3-TRIMESTER":   "3 Trimestre",
-    "4-TRIMESTER":   "4 Trimestre",
-    "ALL":           "Todos",
-    "NAME":          "Modelo",
-    "RESULT":        "Resultado",
-    "STATUS":        "estado",
-    "PAYMENTMETHOD": "Metodo de pago",
-    "ACTIONS":       "acciones",
-    "MODEL":         "Modelo",
-    "YEAR":          "Año"
+    "1-TRIMESTER":   "1 Trimester",
+    "2-TRIMESTER":   "2 Trimester",
+    "3-TRIMESTER":   "3 Trimester",
+    "4-TRIMESTER":   "4 Trimester",
+    "ALL":           "All",
+    "NAME":          "Model",
+    "RESULT":        "Result",
+    "STATUS":        "Status",
+    "PAYMENTMETHOD": "Paymentmethod",
+    "ACTIONS":       "Actions",
+    "MODEL":         "Model",
+    "YEAR":          "Year"
   }
 }
