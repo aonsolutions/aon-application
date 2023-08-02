@@ -3,6 +3,7 @@ import { TaxModelService } from 'src/app/core/services/tax-model.service';
 import { ModalEditTaxModelComponent } from '../modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../modal-payment/modal-payment.component';
 import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-details.component';
+import { FilterBuilder } from 'libraries/AonSDK/aon';
 
 @Component({
   selector: 'app-table-tax-model',
@@ -10,6 +11,7 @@ import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-d
   styleUrls: ['./table-tax-model.component.scss'],
 })
 export class TableTaxModelComponent implements OnInit {
+
   @Input() trimester: number = 0;
   bodyTable: any = [];
   headerTable: any = {
@@ -30,21 +32,13 @@ export class TableTaxModelComponent implements OnInit {
   constructor(public taxModelService: TaxModelService) {
     let tableRow: any = [];
     let column: any = {};
-    // Model date
 
-    // selectedFields?: string[];
-    // pageNum?: number;
-    // pageItems?: number;
-    // fields?: Map<string,any>;
-    // intervalFields?: Map<string,any>;
-    // orderBy?: Map<string,string>;
+    let filterBuilder = new FilterBuilder();
+    filterBuilder.addField('trimester', 1);
+    taxModelService.getTaxModelList(filterBuilder.getFilter()).then((response) => {
+        console.log(response)
 
-    taxModelService.getTaxModelList(
-      {
-        selectedFields:['trimester']
-      }
-    ).then((response) => {
-      console.log(response)
+
       // Tax
       response.forEach(function (tax, taxKey) {
         // clone object

@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
+import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 export interface Tabs {
   name: string;
@@ -30,8 +31,21 @@ export interface Models {
 })
 export class TabsTaxModelComponent implements OnInit {
   tabIndex:number = 0
+  models: any;
 
-  constructor(){}
+  constructor(public taxModelService: TaxModelService) {
+    taxModelService.getTaxModelList().then((response) => {
+      this.models = response;
+      response.forEach(element => {
+        if (!this.modelsList.some(model => model.text === element.Name)) {
+          this.modelsList.push({ value: element.Name, text: element.Name });
+        }
+        if (!this.modelsYears.some(model => model.text === element.Year)) {
+          this.modelsYears.push({ value: element.Year, text: element.Year });
+        }
+      });
+     });
+  }
 
   tabs: Tabs[] = [
     { name: '1 Trimestre' },

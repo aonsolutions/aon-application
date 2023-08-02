@@ -105,9 +105,9 @@ export class HomeComponent implements OnInit {
   ];
 
   constructor(
-    public bankService: BankService,
-    public taxModelService: TaxModelService,
-    public reportingService: ReportingService,
+    private bankService: BankService,
+    private taxModelService: TaxModelService,
+    private reportingService: ReportingService,
     private messageService: MessageService,
     private translateService: TranslateService
   ) {
