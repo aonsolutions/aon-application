@@ -408,10 +408,9 @@ public class FacturasEmitidas extends SIIBuilt {
 						diva3.getDetalleIVA().add(diet);
 					});
 					noExenta3.setDesgloseIVA(diva3);
-					noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
-					if(vat.isOtherISP()){
-						noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_2);
-					}	
+					noExenta3.setTipoNoExenta(vat.isOtherISP() 
+							? TipoOperacionSujetaNoExentaType.S_2
+							: TipoOperacionSujetaNoExentaType.S_1);
 					st3.setNoExenta(noExenta3);
 				}
 				if(st3.getExenta() != null || st3.getNoExenta() != null)
@@ -458,7 +457,9 @@ public class FacturasEmitidas extends SIIBuilt {
 
 					https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta noExenta2 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta();
 					noExenta2.setDesgloseIVA(diva2);
-					noExenta2.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
+					noExenta2.setTipoNoExenta(vat.isOtherISP()
+							? TipoOperacionSujetaNoExentaType.S_2
+							: TipoOperacionSujetaNoExentaType.S_1);
 					st2.setNoExenta(noExenta2); // TODO
 				}
 				if(st2.getExenta() != null || st2.getNoExenta() != null)
@@ -518,9 +519,11 @@ public class FacturasEmitidas extends SIIBuilt {
 				});
 
 				noExenta1.setDesgloseIVA(diva);
-				TipoOperacionSujetaNoExentaType noExType = TipoOperacionSujetaNoExentaType.S_1;
-				// TODO inversion sujeto pasivo 
-				noExenta1.setTipoNoExenta(noExType); // TODO 
+
+				noExenta1.setTipoNoExenta(vat.isOtherISP()
+						? TipoOperacionSujetaNoExentaType.S_2
+						: TipoOperacionSujetaNoExentaType.S_1);
+				
 				st.setNoExenta(noExenta1);
 			}
 			if(st.getExenta() != null || st.getNoExenta() != null)
@@ -830,7 +833,9 @@ public class FacturasEmitidas extends SIIBuilt {
 
 						https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta noExenta2 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta();
 						noExenta2.setDesgloseIVA(diva2);
-						noExenta2.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
+						noExenta2.setTipoNoExenta(vat.isOtherISP()
+								? TipoOperacionSujetaNoExentaType.S_2
+								: TipoOperacionSujetaNoExentaType.S_1);
 						st2.setNoExenta(noExenta2); // TODO
 					}
 					if(st2.getExenta() != null || st2.getNoExenta() != null)
