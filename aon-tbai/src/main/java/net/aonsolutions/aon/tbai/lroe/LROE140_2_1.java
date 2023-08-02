@@ -198,6 +198,8 @@ public class LROE140_2_1 extends LROE140 {
 			if(invoice.isExtracommunity()) {
 				tax.setPercentage(0.0);
 				tax.setQuota(0.0);
+				tax.setDeductiblePercent(0.0);
+				tax.setDeductibleQuota(0.0);
 			}
 			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));

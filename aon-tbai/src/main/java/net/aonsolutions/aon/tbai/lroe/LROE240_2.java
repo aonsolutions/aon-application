@@ -208,7 +208,7 @@ public class LROE240_2 extends LROE240 {
 		IDClaveFacturaRecibidaType clave = new IDClaveFacturaRecibidaType();
 		
 		String key = "01";
-		if(invoice.isWithholdingFarmer()) key = "02";
+		if(invoice.isWithholdingFarmer() && !invoice.isIsp()) key = "02";
 		if(invoice.isVatAccrualPayment()) key = "07";
 		if(invoice.isIntracommunity()) key = "09";
 		if(invoice.isExtracommunity()) key = "13";
@@ -231,6 +231,8 @@ public class LROE240_2 extends LROE240 {
 				if(invoice.isExtracommunity()) {
 					tax.setPercentage(0.0);
 					tax.setQuota(0.0);
+					tax.setDeductiblePercent(0.0);
+					tax.setDeductibleQuota(0.0);
 				}
 				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 					tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
