@@ -35,7 +35,7 @@ export class TopBarComponent implements OnInit, OnChanges {
   constructor(
     private router          : Router, 
     private auth            : AuthService,
-    public  translateService: TranslateService
+    private translateService: TranslateService
   ){
     this.router.events.subscribe((event) => {
       event instanceof NavigationEnd ? this.checkCurrentRoute() : null

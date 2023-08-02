@@ -41,7 +41,6 @@ export class InputComponent implements OnInit {
                               "radio",
                               "range",
                               "reset",
-                              "search",
                               "submit",
                               "tel",
                               "text",
