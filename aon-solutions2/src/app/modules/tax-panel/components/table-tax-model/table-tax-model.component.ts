@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 import { ModalEditTaxModelComponent } from '../modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../modal-payment/modal-payment.component';
@@ -29,18 +29,24 @@ export class TableTaxModelComponent implements OnInit {
     'actions',
   ];
 
-  constructor(public taxModelService: TaxModelService) {
-    let tableRow: any = [];
-    let column: any = {};
+  constructor(public taxModelService: TaxModelService) {}
 
+  ngOnInit(): void {
+    this.updateTableData();
+    console.log(this.trimester);
+  }
+
+  private updateTableData() {
     let filterBuilder = new FilterBuilder();
-    filterBuilder.addField('trimester', 1);
-    taxModelService.getTaxModelList(filterBuilder.getFilter()).then((response) => {
-        console.log(response)
-
+    filterBuilder.addField('trimester', this.trimester);
+    this.taxModelService.getTaxModelList(filterBuilder.getFilter()).then((response) => {
+      console.log(response);
 
       // Tax
+      let tableRow: any = [];
       response.forEach(function (tax, taxKey) {
+        let column: any = {};
+
         // clone object
         column = Object.assign({}, tax);
         // Object Tax
@@ -98,10 +104,6 @@ export class TableTaxModelComponent implements OnInit {
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
-  ngOnInit(): void {
- console.log(this.trimester)
-  }
-
   modalClick(object: any) {
     // Fila de la tabla que se esta usando
     // Boton que ha sido clickeado
@@ -134,7 +136,7 @@ export class TableTaxModelComponent implements OnInit {
     }
     // Model tax reference
     this.taxModelService.getTax(object.key).then((response) => {
-
+      // ...
     });
   }
 }
