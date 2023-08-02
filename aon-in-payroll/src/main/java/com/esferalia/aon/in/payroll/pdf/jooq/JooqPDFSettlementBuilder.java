@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -193,7 +194,7 @@ public class JooqPDFSettlementBuilder {
 			.setEnterpriseName(trimToEmpty(settlementRecord.get(SALARY.ENTERPRISE_NAME)).toUpperCase(LOCALE_ES))
 			.setEnterpriseAddress(!AonStringUtils.isEmpty(raddress.getFullAddress()) ? raddress.getFullAddress() : settlementRecord.get(SALARY.ENTERPRISE_ADDRESS))
 			.setEnterpriseNIF(settlementRecord.get(SALARY.ENTERPRISE_DOCUMENT))
-			.setEndDate(settlementRecord.get(SALARY.END_DATE))
+			.setEndDate(AonDateUtils.addDays(settlementRecord.get(SALARY.START_DATE), settlementRecord.get(SALARY.TIME_UNITS) -1 ))
 			.setDeductionTotal(settlementRecord.get(SALARY.TOTAL_DEDUCTION))
 			.setAccrualTotal(settlementRecord.get(SALARY.TOTAL_PAYMENT))
 			.setTotal(settlementRecord.get(SALARY.TOTAL_LIQUID))

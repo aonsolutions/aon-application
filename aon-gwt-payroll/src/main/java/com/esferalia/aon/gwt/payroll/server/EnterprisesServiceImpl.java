@@ -2002,16 +2002,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			
-			Boolean existAnySalary = Cra.existAnySalary(cccList, findingDate, connection);
-			
-			if(Boolean.FALSE.equals(existAnySalary)) {
+			if(Boolean.FALSE.equals(Cra.existAnySalary(cccList, findingDate, connection)))
 				return "No existe n\u00F3minas con valores para notificar en el CRA";
-			}
 			
 			java.util.Date fileNameDate = new java.util.Date();
 			String fileName = new SimpleDateFormat("ddHHmmss").format(fileNameDate);
 			
-			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, userId, cccList, findingDate, fileName, connection);
+			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, parentDomainId, userId, cccList, findingDate, fileName, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
 			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);

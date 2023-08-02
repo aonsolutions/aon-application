@@ -451,4 +451,9 @@ public class Mod2002022 extends Mod200 {
 		return isChecked(Mod2002022Key.C0017) || isChecked(Mod2002022Key.C0018) || isChecked(Mod2002022Key.C0019);
 	}
 	
+	@Override
+	public boolean isStrictToDeposit() {
+		return (canBeSent() || isSent()) && ("I".equals(getPayType()));
+	}
+	
 }

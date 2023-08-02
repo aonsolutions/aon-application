@@ -208,7 +208,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		PREST_IT,
 		GUARENTEED,
 		
-		SALARY_END.getName(),
 		COMPENSATION_CAUSE.getName(),
 		
 	};

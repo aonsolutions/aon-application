@@ -1655,11 +1655,11 @@ public abstract class Employee extends ResizeComposite {
 		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
 		RegExp niePattern = RegExp.compile("[A-Z]{1}\\d{7}[A-Z]{1}");
 		
-		if (dniPattern.test(document.toUpperCase()))
+		if (dniPattern.test(document.toUpperCase()) && document.length() == 9) {
 			return Dni.checkDNI(document);
-		else if (niePattern.test(document.toUpperCase()))
+		} else if (niePattern.test(document.toUpperCase()) && document.length() == 9) {
 			return Dni.checkNIE(document);
-		else
+		}	else
 			return AonStringUtils.isBlank(document);
 	}
 
