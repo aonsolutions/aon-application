@@ -36,8 +36,8 @@ export class ChartDashboardComponent implements OnInit {
 
   selected: string = '';
   items: string[] = [
-    this.translateService.instant('HOME.LAST-12-MONTHS'),
-    this.translateService.instant('HOME.LAST-6-MONTHS'),
+    this.translateService.instant('HOME.LAST_12_MONTHS'),
+    this.translateService.instant('HOME.LAST_6_MONTHS'),
     this.translateService.instant('HOME.QUARTERLY'),
   ];
 

@@ -44,9 +44,9 @@ export interface MenuItems {
 export class HomeComponent implements OnInit {
   //botones area
   shortcuts: ShortcutDashboard[] = [
-    { shape: 'add_box', name: this.translateService.instant('HOME.CREATE-INVOICE') },
-    { shape: 'person_add', name: this.translateService.instant('HOME.REGISTER-EMPLOYEE') },
-    { shape: 'add_comment', name: this.translateService.instant('HOME.CREATE-QUERY') },
+    { shape: 'add_box', name: this.translateService.instant('HOME.CREATE_INVOICE') },
+    { shape: 'person_add', name: this.translateService.instant('HOME.REGISTER_EMPLOYEE') },
+    { shape: 'add_comment', name: this.translateService.instant('HOME.CREATE_QUERY') },
     { shape: 'alarm', name: this.translateService.instant('HOME.TIMING') },
   ];
 
@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit {
   chartItems: ChartItem[] = [
     {
       shape: 'show_chart',
-      name: this.translateService.instant('HOME.SALES-EXPENSES'),
+      name: this.translateService.instant('HOME.SALES_EXPENSES'),
       chartLabels: [],
       chartData: [],
       chartType: 'line',
@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit {
     },
     {
       shape: 'bar_chart',
-      name: this.translateService.instant('HOME.COLLECTIONS-PAYMENTS'),
+      name: this.translateService.instant('HOME.COLLECTIONS_PAYMENTS'),
       chartLabels: [],
       chartData: [],
       chartType: 'bar',
@@ -99,8 +99,8 @@ export class HomeComponent implements OnInit {
   //botones Menu
   menuItems: MenuItems[] = [
     { shape: 'assessment',  name: this.translateService.instant('HOME.ASSESSMENT'), color: '#4f91ff' },
-    { shape: 'euro_symbol', name: this.translateService.instant('HOME.TAX-PANEL'), color: '#fb982e' },
-    { shape: 'people', name: this.translateService.instant('HOME.EMPLOYEE-PANEL'), color: '#33a9a9' },
+    { shape: 'euro_symbol', name: this.translateService.instant('HOME.TAX_PANEL'), color: '#fb982e' },
+    { shape: 'people', name: this.translateService.instant('HOME.EMPLOYEE_PANEL'), color: '#33a9a9' },
     { shape: 'description', name: this.translateService.instant('HOME.DOCUMENTATION'), color: '#ef6292' },
   ];
 

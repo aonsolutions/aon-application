@@ -20,10 +20,10 @@ export class ModelsDashboardComponent implements OnInit {
   selected: string = '';
 
   items: string[] = [
-    this.translateService.instant('HOME.1-TRIMESTER'),
-    this.translateService.instant('HOME.2-TRIMESTER'),
-    this.translateService.instant('HOME.3-TRIMESTER'),
-    this.translateService.instant('HOME.4-TRIMESTER'),
+    this.translateService.instant('HOME.1_TRIMESTER'),
+    this.translateService.instant('HOME.2_TRIMESTER'),
+    this.translateService.instant('HOME.3_TRIMESTER'),
+    this.translateService.instant('HOME.4_TRIMESTER'),
   ];
 
   models: ICollection<ITaxModel> =
