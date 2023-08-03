@@ -1652,7 +1652,7 @@ class Enterprise implements IEnterprise, IModel {
         return this.key;
     }
 
-    constructor(name?: string, profilePhoto?: string, address?: string, country?: string, province?: string, socialReason?: string, email?: string, phone?: string, website?: string, document?: string, key?: string) {
+    constructor(name?: string, document?: string, profilePhoto?: string, address?: string, country?: string, province?: string, socialReason?: string, email?: string, phone?: string, website?: string, key?: string) {
         this.name = name || '';
         this.profilePhoto = profilePhoto || '';
         this.address = address || '';

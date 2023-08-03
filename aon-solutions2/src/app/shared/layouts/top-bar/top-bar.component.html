@@ -19,7 +19,7 @@
         (click)="this.dropdownMenuComponent.openDropdownMenu();"
       >
         <app-icon [shape]="'person'"></app-icon>
-        <app-dropdown-menu #first [menuItem]="this.menuItem"></app-dropdown-menu>
+        <app-dropdown-menu *ngIf="this.menuItem.length > 0" #first [menuItem]="this.menuItem"></app-dropdown-menu>
       </app-button>
     </mat-grid-tile>
   </mat-grid-list>
