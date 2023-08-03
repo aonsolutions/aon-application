@@ -1,10 +1,11 @@
 {
   "COMMON": {
     "COIN": "&#36;",
+    "FILE_UPLOAD_BUTTON": "Upload documentation",
     "INPUT": {
       "REQUIRE"         : "is <strong>required</strong>",
       "SELECT"          : "Select an option",
-      "SELECT-MULTIPLE" : "Select the options"
+      "SELECT_MULTIPLE" : "Select the options"
     }
   },
   "HEADER": {

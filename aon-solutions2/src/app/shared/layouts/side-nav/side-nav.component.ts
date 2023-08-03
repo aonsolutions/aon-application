@@ -23,7 +23,7 @@ export class SideNavComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private translateService: TranslateService
+    public translateService: TranslateService
     ) {
     this.hide   = false;
     this.opened = true;
@@ -36,7 +36,6 @@ export class SideNavComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.translateMenuButtons();
     this.items.forEach(element => {
       if(element.routerlink == this.currentRoute){
         element.selected = true;
@@ -50,33 +49,6 @@ export class SideNavComponent implements OnInit {
 
   setResize(state:number){
     this.resize = state
-  }
-
-  // Función para traducir desde el archivo .json
-  translateMenuButtons(): void {
-    this.translateService.get('MENU').subscribe((translation) => {
-      this.items.forEach((item) => {
-        switch (item.text) {
-          case 'BANDEJA':
-            item.text = translation['INBOX'];
-            break;
-          case 'GESTIÓN':
-            item.text = translation['BILLING'];
-            break;
-          case 'PANEL DE IMPUESTOS':
-            item.text = translation['TAX-PANEL'];
-            break;
-              case 'PANEL DE EMPLEADOS':
-            item.text = translation['EMPLOYEE-PANEL'];
-            break;
-              case 'DOCUMENTACIÓN':
-            item.text = translation['DOCUMENTATION'];
-            break;
-          default:
-            break;
-        }
-      });
-    });
   }
 
   onSelectedProduct(selected:any) {
@@ -95,11 +67,11 @@ export class SideNavComponent implements OnInit {
   }
 
   items: MenuButton[] = [
-    {routerlink: 'inbox',           shape: 'inbox',       text: 'BANDEJA',            class: 'red',     selected: false},
-    {routerlink: 'billing',         shape: 'assessment',  text: 'GESTIÓN',            class: 'blue',    selected: false},
-    {routerlink: 'tax-panel',       shape: 'euro_symbol', text: 'PANEL DE IMPUESTOS', class: 'orange',  selected: false},
-    {routerlink: 'employee-panel',  shape: 'people',      text: 'PANEL DE EMPLEADOS', class: 'green',   selected: false},
-    {routerlink: 'documentation',   shape: 'description', text: 'DOCUMENTACIÓN',      class: 'pink',    selected: false},
+    {routerlink: 'inbox',           shape: 'inbox',       text: this.translateService.instant('MENU.INBOX'),            class: 'red',     selected: false},
+    {routerlink: 'billing',         shape: 'assessment',  text: this.translateService.instant('MENU.BILLING'),          class: 'blue',    selected: false},
+    {routerlink: 'tax-panel',       shape: 'euro_symbol', text: this.translateService.instant('MENU.TAX-PANEL'),        class: 'orange',  selected: false},
+    {routerlink: 'employee-panel',  shape: 'people',      text: this.translateService.instant('MENU.EMPLOYEE-PANEL'),   class: 'green',   selected: false},
+    {routerlink: 'documentation',   shape: 'description', text: this.translateService.instant('MENU.DOCUMENTATION'),    class: 'pink',    selected: false},
 //    {routerlink: 'consulting',      shape: 'work',        text: 'ASESORÍA',           class: 'purple',  selected: false}
   ];
 
