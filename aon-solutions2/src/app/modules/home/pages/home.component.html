@@ -44,13 +44,14 @@
     <mat-grid-tile
       [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
     ></mat-grid-tile>
-    <mat-grid-tile [gridCols]="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }">
+    <mat-grid-tile *ngIf="this.chartItems.length > 0"[gridCols]="{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }">
       <div class="summary-view-chart" *ngFor="let chartItem of chartItems">
-        <app-chart-dashboard [chartItemList]="chartItems$"
+        <app-chart-dashboard
+          [chartItemList]="chartItems$"
           [labels]="chartItem.chartLabels"
           [chartType]="chartItem.chartType"
           [data]="chartItem.chartData"
-          [name]="chartItem.name | translate"
+          [name]="chartItem.name"
           [shape]="chartItem.shape"
         >
         </app-chart-dashboard>

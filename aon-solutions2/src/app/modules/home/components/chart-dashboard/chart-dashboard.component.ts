@@ -23,7 +23,6 @@ export interface ChartItem {
   },
 })
 export class ChartDashboardComponent implements OnInit {
-  chartItems: ChartItem[] = [];
   @Input() name: string = '';
   @Input() shape: string = '';
   @Input() labels: any = [];
@@ -34,14 +33,22 @@ export class ChartDashboardComponent implements OnInit {
 
   @Input() public chartItemList: Observable<ChartItem[]> | undefined;
 
-  selected: string = '';
-  items: string[] = [
-    this.translateService.instant('HOME.LAST_12_MONTHS'),
-    this.translateService.instant('HOME.LAST_6_MONTHS'),
-    this.translateService.instant('HOME.QUARTERLY'),
-  ];
+  items: string[] = [];
+  chartItems: ChartItem[] = []; 
 
-  constructor(private translateService: TranslateService) {}
+  selected: string = '';
+
+  constructor(private translateService: TranslateService) {
+    this.translateService
+      .get(['HOME.LAST_12_MONTHS', 'HOME.LAST_6_MONTHS', 'HOME.QUARTERLY'])
+      .subscribe((result) => {
+        this.items = [
+          result['HOME.LAST_12_MONTHS'],
+          result['HOME.LAST_6_MONTHS'],
+          result['HOME.QUARTERLY'],
+        ];
+      });
+  }
 
   toggleChartType() {
     if (this.chartType === 'line') {

@@ -15,7 +15,6 @@ import { MessageService } from 'src/app/core/services/message.service';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
-
 export interface ShortcutDashboard {
   shape: string;
   name: string;
@@ -42,33 +41,10 @@ export interface MenuItems {
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  //botones area
-  shortcuts: ShortcutDashboard[] = [
-    { shape: 'add_box', name: this.translateService.instant('HOME.CREATE_INVOICE') },
-    { shape: 'person_add', name: this.translateService.instant('HOME.REGISTER_EMPLOYEE') },
-    { shape: 'add_comment', name: this.translateService.instant('HOME.CREATE_QUERY') },
-    { shape: 'alarm', name: this.translateService.instant('HOME.TIMING') },
-  ];
+  shortcuts: ShortcutDashboard[] = [];
+  chartItems: ChartItem[] = [];
+  menuItems: MenuItems[] = [];
 
-  //chart area
-  chartItems: ChartItem[] = [
-    {
-      shape: 'show_chart',
-      name: this.translateService.instant('HOME.SALES_EXPENSES'),
-      chartLabels: [],
-      chartData: [],
-      chartType: 'line',
-      colors: [],
-    },
-    {
-      shape: 'bar_chart',
-      name: this.translateService.instant('HOME.COLLECTIONS_PAYMENTS'),
-      chartLabels: [],
-      chartData: [],
-      chartType: 'bar',
-      colors: [],
-    },
-  ];
   private chartItemsSubject = new BehaviorSubject<any[]>([]);
   public chartItems$ = this.chartItemsSubject.asObservable();
   public collectionFactory = new CollectionFactory();
@@ -96,14 +72,6 @@ export class HomeComponent implements OnInit {
   );
   public messages$ = this.messagesSubject.asObservable();
 
-  //botones Menu
-  menuItems: MenuItems[] = [
-    { shape: 'assessment',  name: this.translateService.instant('HOME.ASSESSMENT'), color: '#4f91ff' },
-    { shape: 'euro_symbol', name: this.translateService.instant('HOME.TAX_PANEL'), color: '#fb982e' },
-    { shape: 'people', name: this.translateService.instant('HOME.EMPLOYEE_PANEL'), color: '#33a9a9' },
-    { shape: 'description', name: this.translateService.instant('HOME.DOCUMENTATION'), color: '#ef6292' },
-  ];
-
   constructor(
     private bankService: BankService,
     private taxModelService: TaxModelService,
@@ -111,48 +79,105 @@ export class HomeComponent implements OnInit {
     private messageService: MessageService,
     private translateService: TranslateService
   ) {
+    this.translateService
+      .get([
+        'HOME.SALES_EXPENSES',
+        'HOME.COLLECTIONS_PAYMENTS',
+        'HOME.CREATE_INVOICE',
+        'HOME.REGISTER_EMPLOYEE',
+        'HOME.CREATE_QUERY',
+        'HOME.TIMING',
+        'HOME.ASSESSMENT',
+        'HOME.TAX_PANEL',
+        'HOME.EMPLOYEE_PANEL',
+        'HOME.DOCUMENTATION',
+      ])
+      .subscribe((result) => {
+        this.shortcuts = [
+          { shape: 'add_box', name: result['HOME.CREATE_INVOICE'] },
+          { shape: 'person_add', name: result['HOME.REGISTER_EMPLOYEE'] },
+          { shape: 'add_comment', name: result['HOME.CREATE_QUERY'] },
+          { shape: 'alarm', name: result['HOME.TIMING'] },
+        ];
+        this.chartItems = [
+          {
+            shape: 'show_chart',
+            name: result['HOME.SALES_EXPENSES'],
+            chartLabels: [],
+            chartData: [],
+            chartType: 'line',
+            colors: [],
+          },
+          {
+            shape: 'bar_chart',
+            name: result['HOME.COLLECTIONS_PAYMENTS'],
+            chartLabels: [],
+            chartData: [],
+            chartType: 'bar',
+            colors: [],
+          },
+        ];
+        this.menuItems = [
+          {
+            shape: 'assessment',
+            name: result['HOME.ASSESSMENT'],
+            color: '#4f91ff',
+          },
+          {
+            shape: 'euro_symbol',
+            name: result['HOME.TAX_PANEL'],
+            color: '#fb982e',
+          },
+          {
+            shape: 'people',
+            name: result['HOME.EMPLOYEE_PANEL'],
+            color: '#33a9a9',
+          },
+          {
+            shape: 'description',
+            name: result['HOME.DOCUMENTATION'],
+            color: '#ef6292',
+          },
+        ];
+        //bankService
+        this.bankService.getBankList().then((response) => {
+          this.banks = response;
+          this.banksSubject.next(this.banks);
+        });
+
+        //taxmodelService
+        this.taxModelService.getTaxModelList().then((response) => {
+          this.models = response;
+          this.modelsSubject.next(this.models);
+        });
+
+        //reportingService-VentasGastos
+        this.reportingService.getVentasGastos().then((response) => {
+          this.chartItems[0].chartType = 'line';
+          this.chartItems[0].chartData = response.datasets.map(
+            (dataset: any) => dataset.data
+          );
+          this.chartItems[0].chartLabels = response.label;
+          this.chartItemsSubject.next(this.chartItems);
+        });
+
+        //reportingService-CobrosPagos
+        this.reportingService.getCobrosPagos().then((response) => {
+          this.chartItems[1].chartType = 'bar';
+          this.chartItems[1].chartData = response.datasets.map(
+            (dataset: any) => dataset.data
+          );
+          this.chartItems[1].chartLabels = response.label;
+          this.chartItemsSubject.next(this.chartItems);
+        });
+
+        //MessageService
+        this.messageService.getMessageList().then((response) => {
+          this.messages = response;
+          this.messagesSubject.next(this.messages);
+        });
+      });
   }
 
-  ngOnInit(): void {
-    //bankService
-    this.bankService.getBankList().then((response) => {
-      this.banks = response;
-      this.banksSubject.next(this.banks);
-    });
-
-    //taxmodelService
-    this.taxModelService.getTaxModelList().then((response) => {
-      this.models = response;
-      this.modelsSubject.next(this.models);
-    });
-
-    //reportingService-VentasGastos
-    this.reportingService.getVentasGastos().then((response) => {
-      this.chartItems[0].chartType = 'line';
-      this.chartItems[0].chartData = response.datasets.map(
-        (dataset: any) => dataset.data
-      );
-      this.chartItems[0].chartLabels = response.label;
-      this.chartItemsSubject.next(this.chartItems);
-    });
-
-    //reportingService-CobrosPagos
-    this.reportingService.getCobrosPagos().then((response) => {
-      this.chartItems[1].chartType = 'bar';
-      this.chartItems[1].chartData = response.datasets.map(
-        (dataset: any) => dataset.data
-      );
-      this.chartItems[1].chartLabels = response.label;
-      this.chartItemsSubject.next(this.chartItems);
-    });
-
-    //MessageService
-    this.messageService.getMessageList().then((response) => {
-      this.messages = response;
-      this.messagesSubject.next(this.messages);
-    });
-
-
-  }
-
+  ngOnInit(): void {}
 }
