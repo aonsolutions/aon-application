@@ -74,6 +74,15 @@ export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMu
     }
 }
 
+export class CertificateFactory implements ISingleObjectCrudFactory<ICertificate>, IMultipleObjectCrudFactory<ICertificate> {
+    createSingleObjectCrud(): ISingleObjectCrud<ICertificate> {
+        return new GenericSingleObjectCrud<Certificate>(new GenericSingleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate), Certificate);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<ICertificate> {
+        return new GenericMultipleObjectCrud<Certificate>(new GenericMultipleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate), Certificate);
+    }
+}
+
 export class FolderFactory implements ISingleObjectCrudFactory<IFolder>, IMultipleObjectCrudFactory<IFolder> {
     createSingleObjectCrud(): ISingleObjectCrud<IFolder> {
         return new GenericSingleObjectCrud<Folder>(new GenericSingleObjectCrudRepository<Folder>(new StorableFolder(), Folder), Folder);
