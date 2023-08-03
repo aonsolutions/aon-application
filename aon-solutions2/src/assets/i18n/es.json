@@ -5,7 +5,7 @@
     "INPUT": {
       "REQUIRE"         : "es <strong>obligatorio</strong>",
       "SELECT"          : "Selecciona una opción",
-      "SELECT-MULTIPLE" : "Selecciona las opciones"
+      "SELECT_MULTIPLE" : "Selecciona las opciones"
     }
   },
   "HEADER": {

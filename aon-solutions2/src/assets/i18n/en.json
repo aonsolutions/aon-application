@@ -1,17 +1,17 @@
 {
   "COMMON": {
     "COIN": "&#36;",
-    "FILE-UPLOAD-BUTTON": "Upload file",
+    "FILE_UPLOAD_BUTTON": "Upload file",
     "INPUT": {
       "REQUIRE"         : "is <strong>required</strong>",
       "SELECT"          : "Select an option",
-      "SELECT-MULTIPLE" : "Select the options"
+      "SELECT_MULTIPLE" : "Select the options"
     }
   },
   "HEADER": {
-    "EDIT-PROFILE": "Editar perfil",
-    "HELP": "Ayuda",
-    "LOGOUT": "Cerrar sesión"
+    "EDIT_PROFILE": "Edit profile",
+    "HELP": "Help",
+    "LOGOUT": "Logout"
   },
   "MENU": {
     "MENU": "menu",
