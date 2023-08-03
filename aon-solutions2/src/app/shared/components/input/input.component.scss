@@ -1,20 +1,41 @@
 @import 'src/styles.scss';
 
 ::ng-deep{
+  ::placeholder{
+    color   : $color-placeholder !important;
+  }
+  :-ms-input-placeholder{
+    color   : $color-placeholder !important;
+  }
+  ::-webkit-input-placeholder{
+    color   : $color-placeholder !important;
+  }
+  .mat-form-field-flex:hover ::placeholder{
+    color   : $color-placeholder !important;
+  }
+  .mat-form-field-flex:hover :-ms-input-placeholder{
+    color   : $color-placeholder !important;
+  }
+  .mat-form-field-flex:hover ::-webkit-input-placeholder{
+    color   : $color-placeholder !important;
+  }
+
   /*
     Border
   */
+  
+  
     mat-form-field .mat-form-field-outline-start,
     mat-form-field .mat-form-field-outline-end {
       border-width: $border-size-primary !important;
       border-color: $color-border-primary !important;
     }
-
+    
     mat-form-field .mat-form-field-outline-gap {
       border-width       : $border-size-primary !important;
       border-bottom-color: $color-border-primary !important;
     }
-
+    
   /*
     Border FOCUS
   */
@@ -76,4 +97,74 @@
     .search app-icon path{
       color: $color-icon;
     }
+    
+  /*
+    Select
+  */
+    .mat-select-panel {
+      /*padding         : $padding / 2;*/
+      border-radius   : 0.55rem;
+      box-shadow      : $box-shadow;
+      background-color: $color-quarter;
+    }
+
+    .mat-select-panel mat-option{
+      margin         : $margin / 2;
+    }
+    .mat-select-panel mat-option.disabled:hover,
+    .mat-select-panel mat-option.disabled.mat-active  {
+      background    : none!important;
+    }
+    .mat-select-panel mat-option:hover,
+    .mat-select-panel mat-option.mat-active,
+    .mat-select-panel .mat-option.mat-selected{
+      background    : $background-button-hover !important;
+      border-radius : $border-radius;
+      color         : $color-primary;
+    }
+    .mat-select-panel mat-option.disabled .mat-pseudo-checkbox-disabled{      
+      border    : 0;
+      background: none;
+    }
+    .mat-select-panel mat-option.disabled .mat-pseudo-checkbox::after{
+      color: transparent;
+    }
+    .mat-select-panel .mat-pseudo-checkbox::after{
+      color: $color-primary;
+    }
+    .mat-select-panel .mat-pseudo-checkbox.mat-pseudo-checkbox-checked{
+      border-color: #6e6e6f;
+    }
+    
+  /*
+    Error required
+  */
+    /*
+      Border required
+    */
+      mat-form-field.mat-form-field-invalid .mat-form-field-label mat-label,
+      mat-form-field.mat-form-field-invalid .mat-form-field-label span{
+        color: $color-red !important;
+      }
+      mat-form-field.mat-form-field-invalid .mat-form-field-outline-start,
+      mat-form-field.mat-form-field-invalid .mat-form-field-outline-end {
+        border-width: $border-size-error !important;
+        border-color: $color-red !important;
+      }
+      mat-form-field.mat-form-field-invalid .mat-form-field-outline-gap {
+        border-width        : $border-size-error !important;
+        border-bottom-color : $color-red !important;
+      }
+    /*
+      Text error required
+    */
+      mat-form-field .mat-error,
+      mat-form-field .mat-error span,
+      mat-form-field .mat-error span strong{
+        color       : $color-red;
+        font-size   : $font-size-input-label !important;
+      }
+      mat-form-field .mat-error span strong{
+        font-family : "Roboto-Bold"!important;
+      }
 }

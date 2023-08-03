@@ -1,6 +1,12 @@
 {
   "COMMON": {
-    "COIN": "&#36;"
+    "COIN": "&#36;",
+    "FILE_UPLOAD_BUTTON": "Upload documentation",
+    "INPUT": {
+      "REQUIRE"         : "is <strong>required</strong>",
+      "SELECT"          : "Select an option",
+      "SELECT_MULTIPLE" : "Select the options"
+    }
   },
   "HEADER": {
     "EDIT_PROFILE": "Edit profile",
@@ -18,9 +24,8 @@
   "LOGIN": {
 
   },
-  "ENTERPRISES": {
-
-  },
+  "ENTERPRISES": {}
+  ,
   "HOME": {
 
   },

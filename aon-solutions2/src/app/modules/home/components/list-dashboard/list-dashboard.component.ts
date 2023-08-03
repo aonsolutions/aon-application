@@ -11,6 +11,7 @@ export class ListDashboardComponent implements OnInit {
   @Input() description: string = "";
   @Input() title: string = "";
   @Input() date: any = "";
+  @Input() status: string = "";
   public icon: string = "";
 
   ngOnInit(): void {
@@ -18,19 +19,17 @@ export class ListDashboardComponent implements OnInit {
   }
 
   private setIcon(): void {
-    switch (this.type) {
-      case 1:
+    switch (this.status) {
+      case 'pendiente':
         this.icon = "playlist_add_check";
         break;
-      case 2:
-        this.icon = "message";
-        break;
-      case 3:
+      case 'nueva':
         this.icon = "notifications";
         break;
-      default:
-        this.icon = "";
+      case 'abierta':
+        this.icon = "message";
         break;
+     
     }
   }
 }

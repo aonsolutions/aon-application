@@ -4,6 +4,7 @@ import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
 import { TranslateService } from '@ngx-translate/core';
+import { AppComponent } from '../../../app.component';
 
 export class Enterprise {
   name: string;
@@ -21,30 +22,40 @@ export class Enterprise {
     '[style.height]': "'100%'",
   },
 })
+
 export class TopBarComponent implements OnInit, OnChanges {
-
-  @ViewChild('first') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
-  menuItem: MenuItem [] = [
-    {root:true, text:'Editar perfil'  , icon:'person_pin' , colorIcon:'black'},
-    {root:true, text:'Ayuda'          , icon:'help'       , colorIcon:'black'},
-    {root:true, text:'Cerrar sesión' , icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
-  ]
-
-  displayHomeIcon : boolean = false;
-  usserLoggged    : boolean = this.auth.isLoggedIn();
-  currentRoute    : string  = this.router.url.replace('/','');
+  @ViewChild('first') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;  
+  menuItem        : MenuItem [] = []
+  displayHomeIcon : boolean     = false;
+  usserLoggged    : boolean     = this.auth.isLoggedIn();
+  currentRoute    : string      = this.router.url.replace('/','');
 
   constructor(
-    private router: Router, public auth: AuthService,
-    private translateService: TranslateService
-    ){
+    private router          : Router, 
+    private auth            : AuthService,
+    private translateService: TranslateService,
+    private appComponent    : AppComponent
+  ){
     this.router.events.subscribe((event) => {
       event instanceof NavigationEnd ? this.checkCurrentRoute() : null
     })
+    
+    this.translateService.get(
+      ['HEADER.EDIT_PROFILE','HEADER.HELP','HEADER.LOGOUT']
+    ).subscribe( result => {
+      this.menuItem = [
+        {root:true, text: result['HEADER.EDIT_PROFILE'] , icon:'person_pin' , colorIcon:'black'},
+        {root:true, text: result['HEADER.HELP']         , icon:'help'       , colorIcon:'black'},
+        {root:true, text: result['HEADER.LOGOUT']       , icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
+
+        {root:true, text: '    '    , icon:'remove' , colorIcon:'black'},
+        {root:true, text: 'English' , icon:'flag'   , colorIcon:'black' , click:() => this.selectLanguage('en')},
+        {root:true, text: 'Spanish' , icon:'flag'   , colorIcon:'black' , click:() => this.selectLanguage('es')},
+      ]
+    });
   }
 
   ngOnInit(): void {
-    this.translateMenuItems();
   }
 
   checkCurrentRoute() {
@@ -59,24 +70,8 @@ export class TopBarComponent implements OnInit, OnChanges {
     this.auth.logout();
   }
 
-  // Función para traducir desde el archivo .json
-  translateMenuItems(): void {
-    this.translateService.get('HEADER').subscribe((translation) => {
-      this.menuItem.forEach((item) => {
-        switch (item.text) {
-          case 'Editar perfil':
-            item.text = translation['EDIT_PROFILE'];
-            break;
-          case 'Ayuda':
-            item.text = translation['HELP'];
-            break;
-          case 'Cerrar sesión':
-            item.text = translation['LOGOUT'];
-            break;
-          default:
-            break;
-        }
-      });
-    });
+  selectLanguage(language: string) {
+    this.appComponent.selectLanguage(language)
   }
+  
 }

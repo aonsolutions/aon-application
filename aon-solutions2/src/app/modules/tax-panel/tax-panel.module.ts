@@ -14,10 +14,15 @@ import { MatDividerModule } from '@angular/material/divider';
 import { TabsTaxModelComponent } from './components/tabs-tax-model/tabs-tax-model.component';
 import { MatTab, MatTabsModule } from '@angular/material/tabs';
 import { TableTaxModelComponent } from './components/table-tax-model/table-tax-model.component';
-import { InputTaxModelComponent } from './components/input-tax-model/input-tax-model.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import {  MatFormFieldModule } from '@angular/material/form-field';
+import { ModalEditTaxModelComponent } from './components/modal-edit-tax-model/modal-edit-tax-model.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ModalPaymentComponent } from './components/modal-payment/modal-payment.component';
+import { MatRadioModule } from '@angular/material/radio';
+import { ModalTaxesDetailsComponent } from './components/modal-taxes-details/modal-taxes-details.component';
 
 
 @NgModule({
@@ -25,7 +30,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     TaxPanelComponent,
     TabsTaxModelComponent,
     TableTaxModelComponent,
-    InputTaxModelComponent
+    ModalEditTaxModelComponent,
+    ModalPaymentComponent,
+    ModalTaxesDetailsComponent
   ],
 
   imports: [
@@ -43,7 +50,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatTabsModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatDialogModule,
+    MatRadioModule
 
   ]
 })

@@ -4,42 +4,92 @@
   [tabColor]="'#fcaf5c'"
   [paddingLeftHeader]="'1rem'"
 >
-  <div tool >
-    <app-input
-    [type]="'select'"
-    [label]="'MODELO'"
-    [placeholder]="'MODELO'"
-    ></app-input>
+  <div tool>
+    <div class="input-tax-model">
+      <app-input
+        [type]="'select'"
+        [label]="'TAX-PANEL.MODEL' | translate"
+        [placeholder]="'TAX-PANEL.MODEL' | translate"
+        [options]="modelsList"
+      ></app-input>
+      <app-input
+        [type]="'select'"
+        [label]="'TAX-PANEL.YEAR' | translate"
+        [placeholder]="'2023'"
+        [options]="modelsYears"
+      ></app-input>
+    </div>
   </div>
   <div content *ngIf="this.tabIndex == 0">
     <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
       <mat-grid-tile
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
       ></mat-grid-tile>
-      <mat-grid-tile class="position-top-col" [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
+      <mat-grid-tile
+        class="position-top-col"
+        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
+      >
         <app-table-tax-model [trimester]="1"></app-table-tax-model>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
 
   <div content *ngIf="this.tabIndex == 1">
-    <app-table-tax-model [trimester]="2"></app-table-tax-model>
+    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
+      <mat-grid-tile
+        class="position-top-col"
+        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
+      >
+        <app-table-tax-model [trimester]="2"></app-table-tax-model>
+      </mat-grid-tile>
+    </mat-grid-list>
   </div>
 
   <div content *ngIf="this.tabIndex == 2">
-    <app-table-tax-model [trimester]="3"></app-table-tax-model>
+    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
+      <mat-grid-tile
+        class="position-top-col"
+        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
+      >
+        <app-table-tax-model [trimester]="3"></app-table-tax-model>
+      </mat-grid-tile>
+    </mat-grid-list>
   </div>
 
   <div content *ngIf="this.tabIndex == 3">
-    <app-table-tax-model [trimester]="4"></app-table-tax-model>
+    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
+      <mat-grid-tile
+        class="position-top-col"
+        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
+      >
+        <app-table-tax-model [trimester]="4"></app-table-tax-model>
+      </mat-grid-tile>
+    </mat-grid-list>
   </div>
 
   <div content *ngIf="this.tabIndex == 4">
-    <app-table-tax-model></app-table-tax-model>
+    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
+      <mat-grid-tile
+        class="position-top-col"
+        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
+      >
+        <app-table-tax-model></app-table-tax-model>
+      </mat-grid-tile>
+    </mat-grid-list>
   </div>
-
 </app-tabs>
-
 
 <!--
     <mat-select
@@ -51,11 +101,5 @@
   > -->
 <!--
   [value]="options[0].text" -->
-    <!-- <mat-option *ngFor="let option of options" [value]="option.value">{{option.text}}</mat-option>
+<!-- <mat-option *ngFor="let option of options" [value]="option.value">{{option.text}}</mat-option>
   </mat-select> -->
-
-    <!-- <app-input
-    [type]="'select'"
-    [label]="'Año'"
-    [placeholder]="'Usuario'"
-    ></app-input> -->

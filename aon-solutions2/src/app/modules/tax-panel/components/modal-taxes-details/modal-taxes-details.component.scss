@@ -1,0 +1,73 @@
+@import "src/styles.scss";
+
+.title-modal-taxes-details {
+  font-weight: bold;
+  font-size: $font-size-24;
+  display: flex;
+  justify-content: center;
+}
+
+.head-text{
+  margin-right: 3.5rem;
+  margin-left: 3.5rem;
+}
+
+.text-modal-taxes-details {
+  display: inline-block;
+  font-weight: 400;
+  font-size: .7rem;
+}
+
+.number-modal-taxes-details-devengada  {
+  display: inline-block;
+  border-right: .05rem solid #d2d2d6;
+  margin: .5rem;
+  padding: .5rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.number-modal-taxes-details-deducible {
+  display: inline-block;
+  margin: .5rem;
+  padding: .5rem;
+  font-size:  $font-size-default;
+  font-weight: 500;
+}
+
+.text-inside-taxes-details{
+  display: inline-block;
+  font-weight: 400;
+  font-size: .9rem;
+  color: $color-secondary ;
+  margin-left: .5rem;
+
+}
+
+.total-number-inside-taxes-details{
+display: flex;
+justify-content: flex-end;
+
+}
+
+
+ .number-inside-taxes-details{
+  display: inline-block;
+margin-left: 4rem;
+  font-weight: 400;
+  font-size: .9rem;
+  color: $color-secondary;
+ }
+
+ .result-modal-taxes-details{
+  font-size:  $font-size-default;
+  font-weight: 400;
+  margin-left: 1rem;
+ }
+
+
+ .prueba{
+  display: flex;
+  justify-content: space-between;
+ }
+

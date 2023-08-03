@@ -2,29 +2,52 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } fro
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
 @Component({
-  selector: 'app-input',
-  templateUrl: './input.component.html',
-  styleUrls: ['./input.component.scss'],
+  selector    : 'app-input',
+  templateUrl : './input.component.html',
+  styleUrls   : ['./input.component.scss'],
 })
 export class InputComponent implements OnInit {
-
-  @Input() type : string = '';
-  @Input() appearance : MatFormFieldAppearance = 'outline';
-  @Input() width : string = '100%'; 
-  @Input() label : string = '';
-  @Input() hint : string = '';
-  @Input() placeholder : string = '';
-  @Input() suffixBehavior : any;
-  @Input() value : any = '';
+  @Input() type             : string = '';
+  @Input() appearance       : MatFormFieldAppearance = 'outline';
+  @Input() width            : string = '100%'; 
+  @Input() label            : string = '';
+  @Input() hint             : string = '';
+  @Input() placeholder      : string = '';
+  @Input() suffixBehavior   : any;
+  @Input() value            : any = '';
   @Output() inputValue = new EventEmitter<any>();
-  @Input() options : any ;
-  @Input() disabled : string = 'false';
-  @Input() classes : string = '';
-  @Input() maxRow : string = '3';
-  @Input() minRow : string = '10';
-  @Input() appearanceDetail: string = 'mat-form-field-appearance-bold-outline';
+  @Input() options          : any;
+  @Input() disabled         : string = 'false';
+  @Input() required         : string = 'false';
+  @Input() classes          : string = '';
+  @Input() maxRow           : string = '3';
+  @Input() minRow           : string = '10';
+  @Input() appearanceDetail : string = 'mat-form-field-appearance-bold-outline';
   classSuffix :string = '';
-  
+  // Type of input
+  intputType                : string[] = [
+                              "button",
+                              "checkbox",
+                              "color",
+                              "date",
+                              "datetime-local",
+                              "email",
+                              "file",
+                              "hidden",
+                              "image",
+                              "month",
+                              "number",
+                              "password",
+                              "radio",
+                              "range",
+                              "reset",
+                              "submit",
+                              "tel",
+                              "text",
+                              "time",
+                              "url",
+                              "week"
+                            ];
   constructor() { }
 
   ngOnInit(): void {
@@ -33,18 +56,15 @@ export class InputComponent implements OnInit {
 
   selectFunction() {
     switch(this.suffixBehavior){
-      case 'clear':{
+      case 'clear':
         this.clear();
         this.returnValue(this.value);
-        break;
-      }
-      case 'showPass':{
+      break;
+      case 'showPass':
         this.showPass();
-        break;
-      }
-      default:{
-        break;
-      }
+      break;
+      default:
+      break;
     }
   }
 
@@ -53,11 +73,7 @@ export class InputComponent implements OnInit {
   }
 
   showPass() {
-    if(this.type == 'text'){
-      this.type = 'password';
-    }else{
-      this.type = 'text';
-    }
+    this.type = this.type == 'text' ? 'password' : 'text';
   }
 
   returnValue(value: any) {
