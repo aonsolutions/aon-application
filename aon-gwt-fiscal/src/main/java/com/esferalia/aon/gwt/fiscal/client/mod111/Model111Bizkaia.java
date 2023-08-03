@@ -5,6 +5,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.Model111Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model111Bizkaia extends Model111Base {
@@ -62,8 +63,8 @@ public class Model111Bizkaia extends Model111Base {
 				}
 
 				@Override
-				public String getCheckDataResponseDataAction() {
-					return null;
+				public String getCheckDataResponseDataAction() {					
+					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod111CheckDataResponseData";
 				}
 
 				@Override
