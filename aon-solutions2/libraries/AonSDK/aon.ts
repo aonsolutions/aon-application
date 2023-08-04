@@ -1285,13 +1285,7 @@ export interface IEmployee extends ICollectable {
     Naf: string;
     Active: boolean;
 }
-
-interface IAuth extends ICollectable{
-    Email: string;
-    Password: string;
-}
-
-interface IUser extends ICollectable {
+export interface IUser extends ICollectable {
   Name: string,
   Lastname: string,
   Document: string,
@@ -1300,6 +1294,12 @@ interface IUser extends ICollectable {
   Phone: string,
   Active: boolean
 }
+
+interface IAuth extends ICollectable{
+    Email: string;
+    Password: string;
+}
+
 
 /*
  *
