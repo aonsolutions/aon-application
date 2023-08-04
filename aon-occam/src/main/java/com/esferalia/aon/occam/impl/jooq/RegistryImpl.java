@@ -309,6 +309,13 @@ public class RegistryImpl implements IRegistry{
 	
 	// -------------------- CUSTOMER
 	
+
+	@Override
+	public List<Customer> getCustomerWithoutFee(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getCustomerWithoutFee(ctx));
+	}
+	
 	@Override
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter) {
 		return ctx.getDslContext().transactionResult(

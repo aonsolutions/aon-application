@@ -168,7 +168,8 @@ public class LROE240_2 extends LROE240 {
 			receptionDate = invoice.getIssueDate();
 		cabecera.setFechaRecepcion(AonDateUtils.format(receptionDate, DATE_FORMAT));
 		if(invoice.isRectifier()) {
-			cabecera.setSerieFactura("R");
+			cabecera.setSerieFactura(reference.substring(0, 1));
+			cabecera.setNumFactura(reference.substring(1));
 
 			FacturaRectificativaImporteType rectificativa = new FacturaRectificativaImporteType(); 
 			rectificativa.setCodigo(ClaveCodigoFacturaRectificativaEnum.R_1); 
@@ -208,7 +209,7 @@ public class LROE240_2 extends LROE240 {
 		IDClaveFacturaRecibidaType clave = new IDClaveFacturaRecibidaType();
 		
 		String key = "01";
-		if(invoice.isWithholdingFarmer()) key = "02";
+		if(invoice.isWithholdingFarmer() && !invoice.isIsp()) key = "02";
 		if(invoice.isVatAccrualPayment()) key = "07";
 		if(invoice.isIntracommunity()) key = "09";
 		if(invoice.isExtracommunity()) key = "13";
@@ -231,6 +232,8 @@ public class LROE240_2 extends LROE240 {
 				if(invoice.isExtracommunity()) {
 					tax.setPercentage(0.0);
 					tax.setQuota(0.0);
+					tax.setDeductiblePercent(0.0);
+					tax.setDeductibleQuota(0.0);
 				}
 				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 					tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
@@ -322,7 +325,10 @@ public class LROE240_2 extends LROE240 {
 		factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
 //		factura.setSerieFactura(invoice.getSeries());
 		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
-		factura.setNumFactura(reference);
+		if(invoice.isRectifier()) {
+			factura.setSerieFactura(reference.substring(0, 1));
+			factura.setNumFactura(reference.substring(1));
+		} else factura.setNumFactura(reference);
 		anulacion.setIDRecibida(factura);
 		
 		anulaciones.getFacturaRecibida().add(anulacion);
@@ -373,7 +379,10 @@ public class LROE240_2 extends LROE240 {
 		fecha.setHasta(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaExpedicionFactura(fecha);
 		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
-		cabecera.setNumFactura(reference);
+		if(invoice.isRectifier()) {
+			cabecera.setSerieFactura(reference.substring(0, 1));
+			cabecera.setNumFactura(reference.substring(1));
+		} else cabecera.setNumFactura(reference);
 		return cabecera;
 	}
 	

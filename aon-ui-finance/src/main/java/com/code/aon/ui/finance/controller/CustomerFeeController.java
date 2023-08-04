@@ -2,9 +2,6 @@ package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.NO_FEE_CUSTOMER_REPORT;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,23 +11,22 @@ import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
@@ -39,7 +35,8 @@ import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
 
 public class CustomerFeeController extends LinesController implements IFinanceConstants {
 
@@ -180,17 +177,23 @@ public class CustomerFeeController extends LinesController implements IFinanceCo
 
 	@SuppressWarnings("unchecked")
 	public void onNoFeeCustomers(ActionEvent event) {
-		String select = "select distinct(customer) "
-			+ " from Customer as customer "
-			+ " where " + DomainManager.getSQLWhereClause("customer.domain") 
-			+ " and customer.status= 0 AND ( "
-			+ " customer.id NOT IN (select customerFee.customer.id from CustomerFee as customerFee) "
-			+ " AND "
-			+ "customer.id NOT IN (select customerFee.customer.id from CustomerFee as customerFee where finalDate < '"
-			+ AonDateUtils.format(new Date(), "yyyy-MM-dd") + "')))";
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		noFeeCustomersList = query.list();
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		List<Customer> customers = AON.getCustomerWithoutFee(new Domain().setName(domainName).setId(domainId), login)
+				.stream().map(c -> {
+					Customer customer = new Customer();
+					customer.setId(c.getId());
+					customer.setStatus(CustomerStatus.ACTIVE);
+					Registry registry = new Registry();
+					registry.setDocument(c.getDocument());
+					registry.setName(c.getName());
+					registry.setAlias(c.getAlias());
+					customer.setRegistry(registry);
+					return customer;
+				}).toList();
+
+		noFeeCustomersList = customers; 
 	}
 
 	public void onLoadPrepayment(ActionEvent event) throws ManagerBeanException {
