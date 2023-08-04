@@ -25,6 +25,7 @@ import net.aonsolutions.db.up2date.management.AlterRitem;
 import net.aonsolutions.db.up2date.management.AlterRsellerAddType;
 import net.aonsolutions.db.up2date.payroll.CRA0050ExcesoRefactor;
 import net.aonsolutions.db.up2date.payroll.ContractSepeIdUpdate;
+import net.aonsolutions.db.up2date.product.ProductPerishableUpdate;
 import net.aonsolutions.db.up2date.tgss.TrainingQuote2023Fix;
 import net.aonsolutions.db.up2date.tgss.TrainningBaseCgcMinUndo;
 
@@ -386,7 +387,8 @@ public class Up2Date {
 	    // UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
 	    // UdpateAonSmb.UPDATE_AON_SMB,
 	    // UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
-	    InsertIAE575576.INSERT_IAE_755756
+	    InsertIAE575576.INSERT_IAE_755756,
+	    ProductPerishableUpdate.PRODUCT_PEISHABLE_UPDATE
 	};
 
     // ------------------------------------------------------------------------
