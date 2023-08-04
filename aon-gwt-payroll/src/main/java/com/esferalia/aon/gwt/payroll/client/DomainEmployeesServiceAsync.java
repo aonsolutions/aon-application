@@ -746,7 +746,7 @@ public class DomainEmployeesServiceAsync {
 	
 	public AgreementServiceAsync asAgreementServiceAsync() {
 		return employeesServiceAsync;
-	}
+	} 
 	
 	// ----------------------------------------------------------------- static
 	

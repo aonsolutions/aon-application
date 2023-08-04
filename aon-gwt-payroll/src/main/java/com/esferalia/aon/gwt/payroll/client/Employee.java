@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Map.Entry;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.Dni;
@@ -35,8 +38,10 @@ import com.esferalia.aon.occam.api.model.type.QuoteGroup;
 import com.esferalia.aon.occam.api.model.type.RLCE;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.api.client.http.MultipartContent.Part;
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NodeList;
@@ -55,8 +60,13 @@ import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -74,6 +84,8 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -113,7 +125,7 @@ public abstract class Employee extends ResizeComposite {
 	Label documentType;
 
 	@UiField
-	SuggestBox document;
+	 SuggestBox document;
 
 	@UiField
 	HTMLPanel nationalityPanel;
@@ -261,15 +273,20 @@ public abstract class Employee extends ResizeComposite {
 	@UiField
 	HTMLPanel journeyDuration;
 
-//	@UiField
-//	FormPanel formPanel;
-//
+	@UiField
+	FormPanel formPanel;
+
 //	@UiField
 //	FileUpload fileUpload;
-//
-//	@UiField
-//	Button uploadButton;
+
+	@UiField
+	Button uploadButton;
 	
+	@UiField
+	MultiFileUpload multiFileUpload;
+	
+
+		
 
 	// ------------------------------------------------- Class variables
 
@@ -301,8 +318,7 @@ public abstract class Employee extends ResizeComposite {
 		initializeView();
 		addReformatAccount();
 		
-//		checkDomain();
-		
+		checkDomain();
 		
 		impl.getCountries(new AsyncCallback<List<com.esferalia.aon.gwt.payroll.shared.Country>>() {
 
@@ -317,6 +333,7 @@ public abstract class Employee extends ResizeComposite {
 					public void onSuccess(Map<String, CNO> cnoMapIn) {
 						cnoMap = cnoMapIn;
 						initializeCNOSuggest();
+
 					}
 
 					@Override
@@ -383,43 +400,50 @@ public abstract class Employee extends ResizeComposite {
 		this.nationality.setAutoSelectEnabled(true);
 	}
 	
-//	public void checkDomain() {
-//	    String currentDomain = Window.Location.getHostName();
-//	    boolean isAllowedDomain = false;
-//
-//	    for (String allowedDomain : ALLOWED_DOMAINS) {
-//	        if (currentDomain.endsWith(allowedDomain)) {
-//	            isAllowedDomain = true;
-//	            break;
-//	        }
-//	    }
-//
-//	    uploadButton.setVisible(isAllowedDomain);
-//	}
-//	
-//	public void fillFormDniData(){
-//		AsyncCallback<EmployeeDataResult> callback = new AsyncCallback<EmployeeDataResult>() {
-//			
-//			@Override
-//			public void onSuccess(EmployeeDataResult e) {
-//				document.setValue(e.getDni(),true);
-//				nationality.setValue(e.getNationality(),true);
-//				name.setValue(e.getName(),true);
-//				firstSurname.setValue(e.getFirstSurname(),true);
-//				secondSurname.setValue(e.getSecondSurname(),true);
-//			}
-//			@Override
-//			public void onFailure(Throwable f) {
-//				
-//			}
-//		};
-//		formPanel.addSubmitCompleteHandler(event -> {
-//				EmployeeDataResult eps = JsonUtils.safeEval(event.getResults());
-//				callback.onSuccess(eps);
-//			});
-//		
-//		formPanel.submit();
-//	}
+	public void checkDomain() {
+	    String currentDomain = Window.Location.getHostName();
+	    boolean isAllowedDomain = false;
+
+	    for (String allowedDomain : ALLOWED_DOMAINS) {
+	        if (currentDomain.endsWith(allowedDomain)) {
+	            isAllowedDomain = true;
+	            break;
+	        }
+	    }
+
+	    uploadButton.setVisible(isAllowedDomain);
+	}
+	
+	public void fillFormDniData(){
+		document.setValue("");
+		nationality.setValue("");
+		name.setValue("");
+		firstSurname.setValue("");
+		secondSurname.setValue("");
+
+		AsyncCallback<EmployeeDataResult> callback = new AsyncCallback<EmployeeDataResult>() {
+			
+			@Override
+			public void onSuccess(EmployeeDataResult eps) {
+				document.setValue(eps.getDni(),true);
+				nationality.setValue(eps.getNationality(),true);
+				name.setValue(eps.getName(),true);
+				firstSurname.setValue(eps.getFirstSurname(),true);
+				secondSurname.setValue(eps.getSecondSurname(),true);
+			}
+			@Override
+			public void onFailure(Throwable f) {
+				Window.alert("fallo");
+
+			}
+		};
+				formPanel.addSubmitCompleteHandler(event -> {
+				EmployeeDataResult eps = JsonUtils.safeEval(event.getResults());
+				callback.onSuccess(eps);
+			});
+		
+		formPanel.submit();
+	}
 
 	// ------------------------------------------------- UiHandlers
 
@@ -455,23 +479,82 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 
-//	@UiHandler("uploadButton")
-//	void onUploadButtonClick(ClickEvent event) {
+	@UiHandler("uploadButton")
+	void onUploadButtonClick(ClickEvent event) {
 //		fileUpload.click();
-//	}
-//
+		multiFileUpload.click();
+	}
+
 //	@UiHandler("fileUpload")
 //	void onFileUpload(ChangeEvent event) {
 //		fileUpload.setName("archivo");
 //		if (fileUpload.getFilename().contains(".jpg") || fileUpload.getFilename().contains(".pdf")) {
 //			addUploadedBorder(this.uploadButton);
+//			Window.alert("entra en file.click");
 //			fillFormDniData();
 //		}else {
 //			addUploadedFail(this.uploadButton);
 //			Window.alert("El archivo no es valido");
 //		}
 //	}
+	
+	@UiHandler("multiFileUpload")
+	void onMultiFileUpload(ChangeEvent event) {
+		multiFileUpload.setName("archivo");
+	
+		if (multiFileUpload.getFilename().contains(".jpg") || multiFileUpload.getFilename().contains(".pdf")) {
+			addUploadedBorder(this.uploadButton);
+			fillFormDniData();
+		}else {
+			addUploadedFail(this.uploadButton);
+			Window.alert("El archivo no es valido");
+		}
+	}
+	
+//	@UiHandler("multiFileUpload")
+//	void onMultiFileUpload(ChangeEvent event) {
+//	    multiFileUpload.setName("archivo");
+//
+//	    String filenames = multiFileUpload.getFilenames();
+//	    if (filenames.isEmpty()) {
+//	        // No se seleccionaron archivos, puedes mostrar un mensaje o tomar la acción adecuada.
+//	        return;
+//	    }
+//
+//	    String[] filenamesArray = filenames.split(";");
+//	    String firstFileName = filenamesArray[0].trim();
+//	    String firstFileExtension = getExtension(firstFileName);
+//
+//	    if (allFilesHaveSameExtension(filenamesArray, firstFileExtension)) {
+//	        addUploadedBorder(this.uploadButton);
+//	        fillFormDniData();
+//	    } else {
+//	        addUploadedFail(this.uploadButton);
+//	        Window.alert("Los archivos deben tener la misma extensión.");
+//	        multiFileUpload.getElement().setPropertyString("value", "");
+//	    }
+//	}
+	private String getExtension(String fileName) {
+	    int dotIndex = fileName.lastIndexOf('.');
+	    return (dotIndex == -1) ? "" : fileName.substring(dotIndex + 1).toLowerCase();
+	}
 
+	private boolean allFilesHaveSameExtension(String[] filenames, String extension) {
+	    if (extension.isEmpty()) {
+	        return false;
+	    }
+
+	    for (String fileName : filenames) {
+	        String fileExtension = getExtension(fileName.trim());
+	        if (!fileExtension.equalsIgnoreCase(extension)) {
+	            return false;
+	        }
+	    }
+
+	    return true;
+	}
+
+	
 	@UiHandler("nationality")
 	void onNationalitySelectionValue(SelectionEvent<Suggestion> event) {
 		String countryIso2 = getIso2(this.nationality.getValue());
@@ -1966,4 +2049,7 @@ public abstract class Employee extends ResizeComposite {
 		return null;
 	}
 
+	public SuggestBox getDocumentValue() {
+		return this.document;
+	}
 }

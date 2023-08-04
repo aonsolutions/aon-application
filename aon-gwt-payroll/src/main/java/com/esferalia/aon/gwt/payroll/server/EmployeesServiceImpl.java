@@ -6808,6 +6808,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public void cambioCno(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo, String cno, Date fecha) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
+			
 			// Domain, parentDomain and User id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
@@ -6822,6 +6823,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					+ employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4) + "\n"
 					+ employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,employeeContractInfo.getContractInfo().getCompleteCCC().length())
 					+ "\n" + cno + "\n" + fecha);
+			
 
 			// Get employee nafxipf
 			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(

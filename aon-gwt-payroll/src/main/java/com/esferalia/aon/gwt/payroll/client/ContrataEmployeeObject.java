@@ -652,6 +652,8 @@ public class ContrataEmployeeObject {
 	public void cambioCno(String cno, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.cambioCno(employeeContractData, cno, date, new AsyncCallback<Void>() {
 			
+			
+			
 			@Override
 			public void onSuccess(Void result) {
 				success.accept(result);
