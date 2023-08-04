@@ -205,6 +205,7 @@
 		<module>aon-gwt-seres</module>
 		<module>aon-gwt-commercial</module>
 		<module>aon-gwt-communication</module>
+		<module>aon-gwt-marketing</module>
 
 
 		<!-- API -->

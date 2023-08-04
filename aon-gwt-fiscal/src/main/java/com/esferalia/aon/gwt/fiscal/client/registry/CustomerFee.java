@@ -75,9 +75,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 public class CustomerFee extends MainEntryPoint {
 
@@ -1088,7 +1088,7 @@ public class CustomerFee extends MainEntryPoint {
 		periocityListBox.setSelectedIndex(0);
 		customerSuggestBox.setValue("");
 		customerStatusListBox.setSelectedIndex(0);
-		segmentListBox.setSelectedIndex(0);
+		if (null != segmentListBox) segmentListBox.setSelectedIndex(0);
 		startCompareLB.setSelectedIndex(0);
 		startDateBox.setValue(null);
 		endCompareLB.setSelectedIndex(0);

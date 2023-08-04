@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.ImportError;
@@ -72,5 +73,13 @@ public interface RegistryServiceAsync {
 	
 	void parseFeeFile(Domain domain, User user, String data, AsyncCallback<List<Fee>> asyncCallback);
 	void importFee(Domain domain, User user, Fee fee, Integer index, AsyncCallback<ImportError> callback);
+	
+	// **************************************************
+	// ********************************** [BOOKING CHECK]
+	// **************************************************
+	void getBookingWithoutFeeList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> asyncCallback);
+	void getFeeWithoutBookingList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> asyncCallback);
+	void getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> asyncCallback);
+	void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck, AsyncCallback<Void> asyncCallback);
 	
 }

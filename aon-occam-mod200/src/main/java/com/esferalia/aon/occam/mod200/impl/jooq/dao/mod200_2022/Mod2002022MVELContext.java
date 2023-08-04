@@ -754,8 +754,8 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 			}
 			if (isChecked(C0057)) {
 				return round( ((lq552 - lq521) * lq558 / 100) + (lq521 *0));
-			}
-			return round( (lq553 * lq558 / 100) );			
+			}						
+			return round( (lq552 * lq558 / 100) );
 		}
 		return 0.0;
 	}

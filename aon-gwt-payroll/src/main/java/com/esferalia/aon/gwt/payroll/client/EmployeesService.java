@@ -256,6 +256,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	void fillContractExtension(String currentDomainName, EmployeeInfo employeeData, ContractInfo contractData) throws IllegalArgumentException;
 	
+	void fillContractRelocation(String currentDomainName, Integer contractId, Map<String, String> contractRelocationInfo) throws IllegalArgumentException;
+	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data);
 
 	// ------------------------------------------------- SEPE Files

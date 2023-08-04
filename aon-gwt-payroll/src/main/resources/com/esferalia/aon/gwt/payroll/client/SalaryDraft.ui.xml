@@ -535,7 +535,7 @@
 													<g:customCell styleName="{style.span-cell-cell-last}">
 														<g:HTMLPanel>
 															<g:Label styleName="{style.cell-label}">DÍAS</g:Label>
-															<g:Label ui:field="daysLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+															<g:Label ui:field="daysLabel" debugId="daysLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 														</g:HTMLPanel>
 													</g:customCell>
 												</g:row>

@@ -77,6 +77,15 @@ public class GeoZoneDAO {
 				.and(GEOZONE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)));
 	}
 	
+	private static SelectConditionStep<Record> selectChild(AONContext ctx, Integer parent, GeoZoneFilter filter) {
+		return ctx.getDslContext()
+				.select()
+				.from(GEOTREE).join(GEOZONE).on(GEOTREE.CHILD.eq(GEOZONE.ID))
+				.where(GEOZONE_PROPERTIES.getConditions(filter))
+				.and(GEOTREE.PARENT.eq(parent))
+				.and(GEOZONE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)));
+	}
+	
 	public static Stream<GeoZone> getStream(AONContext ctx, GeoZoneFilter filter) {
 		return select(ctx,filter)
 			.orderBy(GEOZONE.CODE)
@@ -94,6 +103,13 @@ public class GeoZoneDAO {
 
 	public static GeoZone getParent(AONContext ctx, Integer id) {
 		return selectParent(ctx, id)
+			.fetch()
+			.stream()
+			.map(new GeoZoneFiller()).findFirst().orElse(new GeoZone());
+	}
+	
+	public static GeoZone getChild(AONContext ctx, Integer parent, GeoZoneFilter filter) {
+		return selectChild(ctx, parent, filter)
 			.fetch()
 			.stream()
 			.map(new GeoZoneFiller()).findFirst().orElse(new GeoZone());

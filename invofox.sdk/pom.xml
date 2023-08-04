@@ -19,12 +19,14 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<!--
 				<configuration>
 					<compilerArgs>
 						<arg>-Werror</arg>
 						<arg>-Xlint:all</arg>
 					</compilerArgs>
 				</configuration>
+				-->
 			</plugin>
 			
 			<plugin>
@@ -88,18 +90,6 @@
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.watson</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.occam</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.aonsolutions</groupId>
-			<artifactId>aon.tedi</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

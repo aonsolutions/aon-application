@@ -5,8 +5,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.sql.SQLException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -20,7 +20,7 @@ public class AbstractTediTest {
 	protected static Integer DOMAIN_ID = 1;
 	protected static String USER = "admin";
 	
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 		shutUp();
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
@@ -28,7 +28,7 @@ public class AbstractTediTest {
 		System.setErr(System.err);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void afterClass() {
 		if (ctx != null) ctx.close();
 	}

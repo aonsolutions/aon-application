@@ -1995,29 +1995,26 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) {
+	public String createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			
-			Boolean existAnySalary = Cra.existAnySalary(cccList, findingDate, connection);
-			
-			if(Boolean.FALSE.equals(existAnySalary)) {
+			if(Boolean.FALSE.equals(Cra.existAnySalary(cccList, findingDate, connection)))
 				return "No existe n\u00F3minas con valores para notificar en el CRA";
-			}
 			
 			java.util.Date fileNameDate = new java.util.Date();
 			String fileName = new SimpleDateFormat("ddHHmmss").format(fileNameDate);
 			
-			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, userId, cccList, findingDate, fileName, connection);
+			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, parentDomainId, userId, cccList, findingDate, fileName, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
 			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
 			
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 

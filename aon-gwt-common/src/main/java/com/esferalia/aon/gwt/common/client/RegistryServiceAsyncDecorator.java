@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.ImportError;
@@ -212,6 +213,34 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	public void importFee(Domain domain, User user, Fee fee, Integer index, AsyncCallback<ImportError> callback) {
 		AON.start();
 		serviceAsync.importFee(domain, user, fee, index, new AsyncCallbackWrapper<ImportError>(callback));
+	}
+
+	// **************************************************
+	// ********************************** [BOOKING CHECK]
+	// **************************************************
+
+	@Override
+	public void getBookingWithoutFeeList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> callback) {
+		AON.start();
+		serviceAsync.getBookingWithoutFeeList(domainName, domain, user, params, new AsyncCallbackWrapper<LinkedList<BookingCheck>>(callback));
+	}
+	
+	@Override
+	public void getFeeWithoutBookingList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> callback) {
+		AON.start();
+		serviceAsync.getFeeWithoutBookingList(domainName, domain, user, params, new AsyncCallbackWrapper<LinkedList<BookingCheck>>(callback));
+	}
+	
+	@Override
+	public void getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> callback) {
+		AON.start();
+		serviceAsync.getBookingCheckList(domainName, domain, user, params, new AsyncCallbackWrapper<LinkedList<BookingCheck>>(callback));
+	}
+
+	@Override
+	public void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.saveBookingCheck(domainName, domain, user, bookingCheck, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 }

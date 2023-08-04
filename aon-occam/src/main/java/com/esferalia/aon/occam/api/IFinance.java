@@ -9,9 +9,11 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -224,8 +226,20 @@ public interface IFinance {
 	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo);
 	public void deleteInvoiceInfo(AONContext ctx, Integer invoiceId);
 	
+	public Stream<InvoiceTracking> getInvoiceTrackingStream(AONContext ctx, InvoiceTrackingFilter filter);
+	public List<InvoiceTracking> getInvoiceTrackingList(AONContext ctx, InvoiceTrackingFilter filter);
+	public InvoiceTracking getInvoiceTracking(AONContext ctx, InvoiceTrackingFilter filter);
 	public InvoiceTracking saveInvoiceTracking(AONContext ctx, InvoiceTracking invoiceTracking);
 	public void deleteInvoiceTracking(AONContext ctx, Integer invoiceId);
+	
+	// 	***********************************************
+	// 	***************** BOOKING CHECK ***************
+	// 	***********************************************
+
+	LinkedList<BookingCheck> getBookingWithoutFeeList(CloseableAONContext ctx, CustomerFeeParams params);
+	LinkedList<BookingCheck> getFeeWithoutBookingList(CloseableAONContext ctx, CustomerFeeParams params);
+	LinkedList<BookingCheck> getBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
+	void saveBookingCheck(CloseableAONContext ctx, BookingCheck bookingCheck);
 
 }
 	

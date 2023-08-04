@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model110Gipuzkoa2023Script;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model110GipuzkoaScript;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -68,8 +69,8 @@ public class Model111Gipuzkoa extends Model110Gipuzkoa {
 				}
 
 				@Override
-				public String getCheckDataResponseDataAction() {
-					return null;
+				public String getCheckDataResponseDataAction() {					
+					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod111CheckDataResponseData";
 				}
 
 				@Override

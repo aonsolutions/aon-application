@@ -2,9 +2,11 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDError;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -243,6 +245,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			exportExtensionContract(consumer, failure);
 		}
 		
+		@Override
+		protected void onExportRelocationPDF(Map<String, String> contractRelocationInfo, Consumer<String> consumer, Consumer<Throwable> failure) {
+			exportRelocationContract(contractRelocationInfo, consumer, failure);
+		}
+		
 		private void exportExtensionContract(Consumer<String> consumer, Consumer<Throwable> failure) {
 			showLoading("Generando borrador de contrato");
 			contrataEmployeeObject.getContractOtherInfo(s -> {
@@ -253,6 +260,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							e -> failure.accept(e));
 				}, f -> failure.accept(f));
 			}, f -> failure.accept(f));
+		}
+		
+		private void exportRelocationContract(Map<String, String> contractRelocationInfo, Consumer<String> consumer, Consumer<Throwable> failure) {
+			showLoading("Generando borrador propuesta recolocaci\u00f3n");
+			contrataEmployeeObject.saveContractRelocationExport(contractRelocationInfo,
+					a -> consumer.accept("El borrador de la propuesta recolocaci\u00f3n del contrato se ha generado correctamente"),
+					e -> failure.accept(e));
 		}
 
 		private void exportContract(Consumer<String> consumer, Consumer<Throwable> failure, boolean isTransform) {
@@ -995,6 +1009,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	class ExportRelocationContractCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractAttachUI.exportRelocationContract();
+		}
+	}
+	
 	class ExportTransformContractCommand implements ScheduledCommand {
 
 		@Override
@@ -1016,12 +1038,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem exportContract;
 		private MenuItem exportTransformContract;
 		private MenuItem exportExtensionContract;
+		private MenuItem exportRelocationContract;
 		private MenuItem modificationPDF;
 		
 		public AttachContextMenu() {
 			exportContract = addMenuItem("Borrador Contrato", new ExportContractCommand(), AON.CSS.aonIconPdf(), "exportContract");
 			exportTransformContract = addMenuItem("Borrador Contrato (Transformac\u00f3n)", new ExportTransformContractCommand(), AON.CSS.aonIconPdf(), "exportTransformContract");
 			exportExtensionContract = addMenuItem("Borrador Contrato (Pr\u00f3rroga)", new ExportExtensionContractCommand(), AON.CSS.aonIconPdf(), "exportExtensionContract");
+			exportRelocationContract = addMenuItem("Borrador Propuesta Recolocaci\u00f3n", new ExportRelocationContractCommand(), AON.CSS.aonIconPdf(), "exportRelocationContract");
 			modificationPDF = addMenuItem("Notificaci\u00f3n Laboral", new ModificationPDFCommand(), AON.CSS.aonIconPdf(), "modificationPDF");	
 		}
 		
@@ -1037,6 +1061,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public void showHideExportExtensionMI(boolean visible) {
 			exportExtensionContract.setVisible(visible);
+		}
+		
+		public void showHideExportRelocationMI(boolean visible) {
+			exportRelocationContract.setVisible(visible);
 		}
 
 	}
@@ -1390,6 +1418,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				// Nothing to do here
 			}
 			attachContextMenu.showHideExportExtensionMI(null != contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getExtensionDate());
+			attachContextMenu.showHideExportRelocationMI(isRelocationContractType(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType()));
 			finish.accept(null);
 			break;
 		case 5:
@@ -1416,6 +1445,24 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			finish.accept(null);
 			break;
 		}
+	}
+
+	private boolean isRelocationContractType(String contractType) {
+		List<Integer> constructionContractTypes = new ArrayList<>();
+		constructionContractTypes.add(100);
+		constructionContractTypes.add(109);
+		constructionContractTypes.add(130);
+		constructionContractTypes.add(139);
+		constructionContractTypes.add(150);
+		constructionContractTypes.add(189);
+		constructionContractTypes.add(200);
+		constructionContractTypes.add(209);
+		constructionContractTypes.add(230);
+		constructionContractTypes.add(239);
+		constructionContractTypes.add(250);
+		constructionContractTypes.add(289);
+		
+		return AonStringUtils.isNotBlank(contractType) && constructionContractTypes.contains(Integer.parseInt(contractType));
 	}
 
 	private void loadToolbar() {

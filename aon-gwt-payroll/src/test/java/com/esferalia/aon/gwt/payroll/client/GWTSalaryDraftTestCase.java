@@ -781,6 +781,16 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				// TODO Auto-generated method stub
 				
 			}
+
+
+
+			@Override
+			public void fillContractRelocation(String currentDomainName, Integer contractId,
+					Map<String, String> contractRelocationInfo, AsyncCallback<Void> callback)
+					throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
 			
 		};
 		

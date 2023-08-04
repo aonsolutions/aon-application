@@ -175,11 +175,34 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 			if (getCallback().getModel().isSent()) {
 				getCallback().showError("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");	
 			} else {
-				validateAEAT(new AEATParams()
-						.setDomainName(getCallback().getOptions().getDomainName())
-						.setDomainId(getCallback().getOptions().getDomain())
-						.setUser(getCallback().getOptions().getUser())
-						.setMod(getCallback().getModel().getId()));
+				cleanViewers();
+				if (getCallback().validateBalance()) {
+					validateAEAT(new AEATParams()
+							.setDomainName(getCallback().getOptions().getDomainName())
+							.setDomainId(getCallback().getOptions().getDomain())
+							.setUser(getCallback().getOptions().getUser())
+							.setMod(getCallback().getModel().getId()));
+				} else {					
+					// Si el balance está descuadrado, se muestra cuadro de dialogo para informarlo y ver si se quiere continuar con la validación
+					AonConfirmDialog.showConfirm("Validar Modelo 200 via AEAT", "El balance est\u00E1 descuadrado. \u00BFDesea continuar?",			
+						new AonConfirmDialogCallback() {
+						
+							@Override
+							public void onCancel() {
+								validating = false;										
+							}
+							
+							@Override
+							public void onAccept() {
+								validateAEAT(new AEATParams()
+										.setDomainName(getCallback().getOptions().getDomainName())
+										.setDomainId(getCallback().getOptions().getDomain())
+										.setUser(getCallback().getOptions().getUser())
+										.setMod(getCallback().getModel().getId()));
+							}
+						}
+					);
+				}
 			}
 		}
 	}
@@ -191,7 +214,6 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		
-		cleanViewers();
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open(FormPanel.METHOD_POST, getCallback().getValidatePrintAction());
 		xhr.setRequestHeader(AonHttpUtils.CONTENT_TYPE,AonHttpUtils.APPLICATION_FORM_URLENCODED);
@@ -244,7 +266,7 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 			getCallback().showError(AON.MSG.mustFinishModel());
 		}
 	}
-
+	
 	private void sendToAdministration() {
 		if (!sending) {
 			sending = true;
@@ -253,45 +275,67 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 			} else if (!getCallback().getModel().canBeSent()) {
 				getCallback().showError(AON.MSG.mustFinishModel());	
 			} else {
-				cleanViewers();
-				AonCertificationPopupParams params = new AonCertificationPopupParams()
-					.setDocument(getCallback().getOptions().getConfiguration().fiscal().getCertificateDocument())
-					.setName(getCallback().getOptions().getConfiguration().fiscal().getCertificateName())
-					.setTestEnvironment(getCallback().getOptions().getConfiguration().fiscal().isTestEnvironment())
-					.setShowNRC(getCallback().getModel().isStrictToDeposit())
-					.setInfoMessage("Presentaci\u00F3n del Modelo 200");
-				AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
-					
-					@Override
-					protected void onCancel() {
-						sending = false;
-					}
-					
-					@Override
-					protected void onAccept( AEATParams params) {
-						AonConfirmDialog cd = new AonConfirmDialog();
-						cd.confirm(AON.MSG.confirmDeclarationsendAction(), new AonConfirmDialogCallback() {
-
-							@Override
-							public void onAccept() {
-								params
-								.setDomainName(getCallback().getOptions().getDomainName())
-								.setDomainId(getCallback().getOptions().getDomain())
-								.setUser(getCallback().getOptions().getUser())
-								.setMod(getCallback().getModel().getId());
-								sendAEAT(params);
-							}
-
+				cleanViewers();				
+				if (getCallback().validateBalance()) {
+					sendAEAT();
+				} else {
+					// Si el balance está descuadrado, se muestra cuadro de dialogo para informarlo y ver si se quiere continuar con la presentación
+					AonConfirmDialog.showConfirm("Presentar Modelo 200", "El balance est\u00E1 descuadrado. \u00BFDesea continuar?",			
+						new AonConfirmDialogCallback() {
+						
 							@Override
 							public void onCancel() {
-								sending = false;
+								sending = false;										
 							}
-						});
-					}
-				};
-				certPopup.center();
+							
+							@Override
+							public void onAccept() {
+								sendAEAT();
+							}
+						}
+					);
+				}
 			}
-		}
+		}		
+	}
+
+	private void sendAEAT() {				
+		AonCertificationPopupParams params = new AonCertificationPopupParams()
+			.setDocument(getCallback().getOptions().getConfiguration().fiscal().getCertificateDocument())
+			.setName(getCallback().getOptions().getConfiguration().fiscal().getCertificateName())
+			.setTestEnvironment(getCallback().getOptions().getConfiguration().fiscal().isTestEnvironment())
+			.setShowNRC(getCallback().getModel().isStrictToDeposit())
+			.setInfoMessage("Presentaci\u00F3n del Modelo 200");
+		AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
+			
+			@Override
+			protected void onCancel() {
+				sending = false;
+			}
+			
+			@Override
+			protected void onAccept( AEATParams params) {
+				AonConfirmDialog cd = new AonConfirmDialog();
+				cd.confirm(AON.MSG.confirmDeclarationsendAction(), new AonConfirmDialogCallback() {
+
+					@Override
+					public void onAccept() {
+						params
+						.setDomainName(getCallback().getOptions().getDomainName())
+						.setDomainId(getCallback().getOptions().getDomain())
+						.setUser(getCallback().getOptions().getUser())
+						.setMod(getCallback().getModel().getId());
+						sendAEAT(params);
+					}
+
+					@Override
+					public void onCancel() {
+						sending = false;
+					}
+				});
+			}
+		};
+		certPopup.center();
 	}
 	
 	private void sendAEAT(AEATParams params) {

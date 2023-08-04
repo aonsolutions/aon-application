@@ -199,7 +199,34 @@ public class SalarySelect extends Composite {
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
+	
+	public Date getEndDate() {
+	    return
+	    getSelectedType().accept(new TypeVisitor<Date>() {
 
+		@Override
+		public Date visitSalary(Type type) {
+		    Date month = monthListBox.getSelectedMonth();
+		    return DateUtils.getLastDayOfMonth(month);
+		}
+
+		@Override
+		public Date visitExtra(Type type) {
+		    return null;
+		}
+
+		@Override
+		public Date visitSettle(Type type) {
+		    return dateListBox.getSelected();
+		}
+
+		@Override
+		public Date visitDelay(Type type) {
+		    Date month = monthListBox.getSelectedMonth();
+		    return DateUtils.getLastDayOfMonth(month);
+		}
+	    });
+	}
 	
 
 	// -------------------------------------------------------------------------
@@ -454,7 +481,7 @@ public class SalarySelect extends Composite {
 			return;
 
 		    Date payDate = getPayDate();
-		    Date defautlPayDate = payDate != null ? payDate : DateUtils.after(new Date(), endDate);
+		    Date defautlPayDate = payDate != null ? payDate : getDefaultPayDate();
 
 		    int index = DateUtils.getDaysBetween(payStartDate, defautlPayDate);
 		    int length = payDateListBox.getPageSize();
@@ -839,6 +866,31 @@ public class SalarySelect extends Composite {
 	    } catch ( Exception e ) {
 		return null;
 	    }
+	}
+	
+	private Date getDefaultPayDate() {
+	    return 
+	    salaryPreview.getType().accept(new TypeVisitor<Date>() {
+		@Override
+		public Date visitDelay(Type type) {
+		    return DateUtils.after(new Date(), SalarySelect.this.salaryPreview.getEndDate());
+		}
+		
+		@Override
+		public Date visitExtra(Type type) {
+		    return SalarySelect.this.salaryPreview.getIssueDate();
+		}
+		
+		@Override
+		public Date visitSalary(Type type) {
+		    return SalarySelect.this.salaryPreview.getEndDate();
+		}
+		
+		@Override
+		public Date visitSettle(Type type) {
+		    return SalarySelect.this.salaryPreview.getEndDate();
+		}
+	    });
 	}
 
 	// -------------------------------------------------------------------------

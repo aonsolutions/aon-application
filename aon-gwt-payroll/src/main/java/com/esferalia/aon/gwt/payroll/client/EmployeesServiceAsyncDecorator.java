@@ -803,6 +803,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	@Override
+	public void fillContractRelocation(String currentDomainName, Integer contractId, Map<String, String> contractRelocationInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.fillContractRelocation(currentDomainName, contractId, contractRelocationInfo, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
 	public void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data,
 			AsyncCallback<Void> callback) {
 		AON.start();

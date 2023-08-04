@@ -148,22 +148,7 @@ public class RegistryAddressDAO {
 					geozone = GeoZoneDAO.get(ctx, f -> f.getCodeProperty().eq(address.getZip().substring(0, 2)));
 				}
 				
-				if((geozone == null || geozone.isEmpty()) && address.getProvince() != null) {
-					geozone = GeoZoneDAO.get(ctx, f -> f.getNameProperty().eq(address.getProvince()));
-				}
-				
 				if((geozone == null || geozone.isEmpty()) && address.getCountry() != null) {
-					if(address.getProvince() == null) address.setProvince(address.getCity());
-					geozone = GeoZoneDAO.get(ctx, f -> f.getNameProperty().eq(address.getProvince()));
-					if(geozone == null ||  geozone.isEmpty()) {
-						geozone = new GeoZone()
-	 							.setDomain(address.getDomain())
-								.setName(address.getProvince() )
-								.setCode("00")
-								.setSystem(true);		
-						geozone = GeoZoneDAO.insert(ctx, geozone);
-					}
-					
 					GeoZone geozoneCountry  = GeoZoneDAO.get(ctx, f -> f.getCodeProperty().eq(address.getCountry().getIso2()));					
 					if(geozoneCountry == null || geozoneCountry.isEmpty()) {
 						geozoneCountry = new GeoZone()
@@ -173,8 +158,22 @@ public class RegistryAddressDAO {
 								.setSystem(true);
 						geozoneCountry = GeoZoneDAO.insert(ctx, geozoneCountry);
 					}
-					
+
+					if(AonStringUtils.isBlank(address.getProvince())) address.setProvince(address.getCity());
+					geozone = GeoZoneDAO.getChild(ctx, geozoneCountry.getId(), f -> f.getNameProperty().eq(address.getProvince()));
+					if(geozone == null ||  geozone.isEmpty()) {
+						geozone = new GeoZone()
+	 							.setDomain(address.getDomain())
+								.setName(address.getProvince() )
+								.setCode("00")
+								.setSystem(true);		
+						geozone = GeoZoneDAO.insert(ctx, geozone);
+					}
 					GeoZoneDAO.bind(ctx, address.getDomain(), geozoneCountry.getId(), geozone.getId());
+				}
+				
+				if((geozone == null || geozone.isEmpty()) && !AonStringUtils.isBlank(address.getProvince())) {
+					geozone = GeoZoneDAO.get(ctx, f -> f.getNameProperty().eq(address.getProvince()));
 				}
 				
 				if(geozone != null && !geozone.isEmpty()) {

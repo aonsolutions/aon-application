@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -161,8 +162,11 @@ public class SerfruitDAO {
             product.setSerializable(Boolean.FALSE);
             product.setPackaged(Boolean.FALSE);
             product.setInventoriable(Boolean.TRUE);
+            product.setCategory(new ProductCategory().setId(3297));
             product.setCode(dp.getProduct().getCode());
-            product.setName("ENVASE AUTOGENERADO ("+ dp.getProduct().getCode() +")");
+            product.setName(AonStringUtils.isBlank(dp.getProduct().getName())
+            		? "ENVASE AUTOGENERADO ("+ dp.getProduct().getCode() +")"
+            		: dp.getProduct().getName());
             product.setType(ProductType.AUXILIARY);
             product.setKind(ProductKind.SALE_PURCHASE);
             product.setVat(new Tax().setId(obtainDefaultVat(ctx)));
@@ -189,6 +193,7 @@ public class SerfruitDAO {
                 .setProduct(product)
                 .setBarcode(null)
                 .setDescription(dp.getProduct().getName())
+                .setStatus(ProductStatus.ACTIVE)
                 .setPackFormatTag(baseItem.getPackFormatTag())
                 .setPackMeasurement(baseItem.getPackMeasurement())
                 .setPackMeasurementTag(baseItem.getPackMeasurementTag())
@@ -198,7 +203,6 @@ public class SerfruitDAO {
         if(AonStringUtils.isBlank(dp.getSscc())) 
         	item.setSerialNumber(dp.getSscc());
         
-        item.setStatus(ProductStatus.DISCONTINUED);
         return ItemDAO.save(ctx, item);
     }
     

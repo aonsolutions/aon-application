@@ -586,6 +586,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_display_none")
 	String aonDisplayNone();
 	
+	@ClassName("aon_cmd_item")
+	String aonCmdItem();
+	
 	@ClassName("aon_display_flex")
 	String aonDisplayFlex();
 	
@@ -777,6 +780,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_flex_between")
 	String aonFlexBetween();
+	
+	@ClassName("aon_flex_column_between")
+	String aonFlexColumnBetween();
 	
 	@ClassName("aon_item_flex")
 	String aonItemFlex();
@@ -1272,6 +1278,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_line_height_double")
 	String aonLineHeightDouble();
+	
+	@ClassName("aon_line")
+	String aonLine();
 
 }
 

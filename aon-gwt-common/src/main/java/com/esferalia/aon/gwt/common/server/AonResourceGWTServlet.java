@@ -29,7 +29,8 @@ import org.slf4j.LoggerFactory;
 				"/aon_gwt_document/*",
 				"/aon_gwt_template/*",
 				"/aon_gwt_issues/*",
-				"/aon_gwt_commercial/*"
+				"/aon_gwt_commercial/*",
+				"/aon_gwt_marketing/*"
 		})
 public class AonResourceGWTServlet extends HttpServlet {
 

@@ -28,7 +28,6 @@ import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
-
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.type.ContractType.ModelRecord;
@@ -43,6 +42,7 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.OptionElement;
@@ -51,12 +51,6 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.event.dom.client.DragEndEvent;
-import com.google.gwt.event.dom.client.DragEndHandler;
-import com.google.gwt.event.dom.client.DragStartEvent;
-import com.google.gwt.event.dom.client.DragStartHandler;
-import com.google.gwt.event.dom.client.DropEvent;
-import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -65,6 +59,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.regexp.shared.RegExp;
@@ -75,7 +70,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -319,6 +313,7 @@ public abstract class Employee extends ResizeComposite {
 		addReformatAccount();
 		
 		checkDomain();
+
 		
 		impl.getCountries(new AsyncCallback<List<com.esferalia.aon.gwt.payroll.shared.Country>>() {
 
@@ -348,6 +343,9 @@ public abstract class Employee extends ResizeComposite {
 				// TODO: show error
 			}
 		});
+		
+		((TextBox) securitySocialNum.getTextBox()).setMaxLength(12);
+		((TextBox) document.getTextBox()).setMaxLength(9);
 
 	}
 
@@ -466,7 +464,7 @@ public abstract class Employee extends ResizeComposite {
 			String documentTypeStr = checkDocumentType(documentStr);
 			this.documentType.setText(documentTypeStr);
 
-			if (checkDocumentValidation(documentTypeStr, documentStr))
+			if (checkDocumentValidation(documentStr))
 				removeErrorBorder(this.document);
 			else
 				addErrorBorder(this.document);
@@ -1665,8 +1663,7 @@ public abstract class Employee extends ResizeComposite {
 	public void blockVariablesExistingContract() {
 		String documentStr = this.document.getValue().trim();
 		if (AonStringUtils.isNotBlank(documentStr)) {
-			String documentTypeValue = checkDocumentType(documentStr);
-			document.setEnabled(!checkDocumentValidation(documentTypeValue, documentStr));
+			document.setEnabled(!checkDocumentValidation(documentStr));
 		} else
 			document.setEnabled(true);
 
@@ -1746,10 +1743,15 @@ public abstract class Employee extends ResizeComposite {
 			return "( Pasaporte )";
 	}
 
-	public boolean checkDocumentValidation(String documentTypeStr, String document) {
-		if ("DNI".equals(documentTypeStr))
+	public boolean checkDocumentValidation(String document) {
+		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
+		RegExp niePattern = RegExp.compile("[A-Z]{1}\\d{7}[A-Z]{1}");
+		
+		if (dniPattern.test(document.toUpperCase()) && document.length() == 9) {
 			return Dni.checkDNI(document);
-		else
+		} else if (niePattern.test(document.toUpperCase()) && document.length() == 9) {
+			return Dni.checkDNI(document);
+		}	else
 			return AonStringUtils.isBlank(document);
 	}
 
@@ -1763,10 +1765,8 @@ public abstract class Employee extends ResizeComposite {
 	}
 
 	public boolean checkSSNumValidation(String ssNumStr) {
-		if (null == ssNumStr)
-			return false;
-
 		SocialSecurity ss = new SocialSecurity(ssNumStr);
+		
 		return ss.checkSS();
 	}
 

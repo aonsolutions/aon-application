@@ -25,7 +25,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INKIND_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IN_KIND;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TMP_IN_KIND;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_CTA_ESP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
@@ -43,13 +42,19 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_PRORRATE
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_C737;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H03;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H04;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H06;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TMP_IN_KIND;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_EMBARGO;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
@@ -116,7 +121,6 @@ import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.expression.IWrapTimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
@@ -196,10 +200,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		SATURDAY_HOURS.getName(),
 		SUNDAY_HOURS.getName(),
 		
-		ContextVariable.SLD_C737.getName(),
-		ContextVariable.SLD_H06.getName(),
-		ContextVariable.SLD_H03.getName(),
-		ContextVariable.SLD_H04.getName(),
+		SLD_C737.getName(),
+		SLD_H06.getName(),
+		SLD_H03.getName(),
+		SLD_H04.getName(),
 	
 		PREST_IT,
 		GUARENTEED,
@@ -927,7 +931,16 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			salaryBuilder.setProExtBase(quoteCalculator.getProExtBase());
 			expressionContext.setVariable(PAY_PRORRATED, AonNumberUtils.equals(quoteCalculator.getProExtBase(), Double.valueOf(0.00)), start, end);
-
+			
+			if ( cgcBase != null && cgcBase > 0.00 ) {
+        			expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE, cgcBase, start, end);
+        			expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE_ENTERPRISE, cgcBase, start, end);
+			}
+			if ( cgpBase != null && cgpBase > 0.00 ) {
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE, cgpBase, start, end);
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE_ENTERPRISE, cgpBase, start, end);
+			}
+			
 			return taxCalculator.getTotalPayment();
 		} catch (SalaryExpressionException e) {
 			throw e.getSalaryException();
@@ -1011,14 +1024,35 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						    MONEY_IRPF_BASE } ) {
 
 						     irpfExpressionContext.getVariables(irpfVar.getName()).stream()
+						    .filter( v -> v.getPeriod().getEnd().compareTo(irpfPeriod.getStart()) <= 0)
         					    .sorted( (v1, v2) -> v2.getPeriod().compareTo(v1.getPeriod()))
-        					    .map( v -> new ITimedVariable<Object>() {
-        						public Period getPeriod() {
-        						    return irpfPeriod;
-        						}
-        						public Object getValue(Period period) {
-        						    return v.getValue(v.getPeriod());
-        						}
+        					    .map( v -> 
+        					    	( v instanceof IExpressionVariable ) ?
+        					    	new IExpressionVariable<Object>() {
+                						public Period getPeriod() {
+                						    return irpfPeriod;
+                						}
+                						public Object getValue(Period period) {
+                						    return v.getValue(v.getPeriod());
+                						}
+								@Override
+								public IExpression getExpression() {
+								    return ((IExpressionVariable<Object>)v).getExpression();
+								}
+								@Override
+								public Map<String, ITimedVariable<?>> getContext() {
+								    return ((IExpressionVariable<Object>)v).getContext();
+								}
+                						
+        					    	}
+        					    	:
+            					    	new ITimedVariable<Object>() {
+                						public Period getPeriod() {
+                						    return irpfPeriod;
+                						}
+                						public Object getValue(Period period) {
+                						    return v.getValue(v.getPeriod());
+                						}
         					    }).findFirst().ifPresent( v -> irpfExpressionContext.putVariable(irpfVar.getName(), v) );
     					    }
 
@@ -2165,7 +2199,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	protected void fillData(IContractSalaryCalculatorContext ctx, String  names []) throws SalaryException {
 		ExpressionContext expressionContext = ctx.getExpressionContext();
 		for (String name : names) {
-			
 			try {
 				for (ITimedVariable<?> data :expressionContext.eval(name, ctx.getStartDate(), ctx.getEndDate())){
 					try {
@@ -2174,7 +2207,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					}
 					
 					try {
-						salaryBuilder.addData(name, data);
+					    salaryBuilder.addData(name, data);
 					} catch (Throwable t) {
 					}
 				}

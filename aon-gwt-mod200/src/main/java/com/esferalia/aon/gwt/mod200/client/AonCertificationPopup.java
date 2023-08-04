@@ -265,6 +265,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		Label l2 = new Label("Contrase\u00f1a");
 		l2.addStyleName(AON.CSS.aonTableLabel());
 		password.setStyleName(AON.CSS.aonInputText());
+		password.getElement().setAttribute("autocomplete", "new-password");		
 		password.addKeyUpHandler(event -> password.removeStyleName(AON.CSS.aonInputTextError()));
 
 		certificates.addChangeHandler(new ChangeHandler() {
@@ -273,6 +274,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 			public void onChange(ChangeEvent event) {
 				l2.setVisible(!showPasswordMap.get(Integer.parseInt(certificates.getSelectedValue())));
 				password.setVisible(!showPasswordMap.get(Integer.parseInt(certificates.getSelectedValue())));
+				password.setValue(""); // Dejamos la contraseña en blanco para que se coja del certificado cuando se realice el envío o para que la introduzca de nuevo el usuario, si el certificado no tiene contraseña
 			}
 		});
 

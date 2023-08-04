@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -539,8 +540,25 @@ public class MainCRA extends MainEntryPoint {
 			mainCRAObjectNew.setDefaultLiquidDate(findingDateCRA);
 			mainCRAObjectNew.deteleCRA(cra.getCode(), 
 					s -> {
-							mainCRAObjectNew.removeCCCCRADate(cra);
-							initCRATable();
+						AonDialog dialog = new AonDialog("Eliminaci\u00f3n CRA",
+								new HTML("Se va a proceder a eliminar el CRA para periodo de liquidaci\u00f3n <b>" + formatDate(cra.getCreationDate()) + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+						
+						dialog.confirm(new AonAcceptDialogCallback() {
+
+							@Override
+							public void onCancel() {
+								// Nothing to do here
+							}
+
+							@Override
+							public void onAccept() {
+								AonMessagePanel.showLoading(messagePanel, "Elimando CRA. Periodo de liquidaci\u00f3n " + formatDate(cra.getCreationDate()) + "...");
+								mainCRAObjectNew.removeCCCCRADate(cra);
+								initCRATable();
+								AonMessagePanel.showSuccess(messagePanel, "Se ha eliminado el CRA correctamente");
+							}
+						});
+							
 					},
 					f -> {});
 		}); 
@@ -1142,6 +1160,7 @@ public class MainCRA extends MainEntryPoint {
 			} else
 				showError("Error CRA", v);
 		}, f -> {
+			showError("Error CRA", f.getMessage());
 		});
 	}
 

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -377,6 +378,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 				return "Borrador trasnformaci\u00f3n contrato";
 			case (byte)110:
 				return "Borrador pr\u00f3rroga contrato";
+			case (byte)111:
+				return "Borrador propuesta recolocaci\u00f3n";
 			default:
 				return "";
 		}
@@ -601,6 +604,26 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		
 	}
 	
+	public void exportRelocationContract() {
+		if(existContractRelocation()) {
+			AonDialog confirm = new AonDialog("Borrador propuesta recolocaci\u00f3n", new HTMLPanel("Ya existe un borrador de la propuesta de recolocaci\u00f3n del contrato generado. \u00bfRealmente desea sobreescribirlo\u003f"));
+			confirm.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do
+				}
+				
+				@Override
+				public void onAccept() {
+					exportContractRelocationPDF();
+				}
+			});
+		} else
+			exportContractRelocationPDF();
+		
+	}
+	
 	private void exportContractPDF() {
 		onExportPDF(e -> {
 			showSuccessMessage("Contrato", "El contrato se ha generado correctamente");
@@ -620,6 +643,20 @@ public abstract class ContractAttachUI extends ResizeComposite {
 			showSuccessMessage("Contrato Pr\u00f3rroga", "El PDF pr\u00f3rroga contrato se ha generado correctamente");
 			refreshPage();
 		}, f -> showErrorMessage("Contrato Pr\u00f3rroga", f.getMessage()));
+	}
+	
+	private void exportContractRelocationPDF() {
+		new ContractRelocationDialog(employeeContractInfo.getContractInfo().getContractType()) {
+			
+			@Override
+			protected void onAccept(Map<String, String> contractRelocationInfo) {
+				onExportRelocationPDF(contractRelocationInfo, e -> {
+					showSuccessMessage("Propuesta Recolocaci\u00f3n", "El PDF Propuesta Recolocaci\u00f3n se ha generado correctamente");
+					refreshPage();
+				}, f -> showErrorMessage("Propuesta Cecolocaci\u00f3n", f.getMessage()));
+			}
+			
+		};
 	}
 	
 	public void setAttachData(Integer attachId, String base64) {
@@ -681,6 +718,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	
 	protected abstract void onExportExtensionPDF(Consumer<String> consumer, Consumer<Throwable> failure);
 	
+	protected abstract void onExportRelocationPDF(Map<String, String> contractRelocationInfo, Consumer<String> consumer, Consumer<Throwable> failure);
+	
 	protected abstract void showAttachPDf(Integer attachId, String dataURI);
 
 	protected abstract void showErrorMessage(String title, String message);
@@ -739,6 +778,13 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	public boolean existContractExtension() {
 		for (Attach attach : employeeContractInfo.getContractAttachments())
 			if(attach.getType().equals((byte)110))
+				return true;
+		return false;
+	}
+	
+	public boolean existContractRelocation() {
+		for (Attach attach : employeeContractInfo.getContractAttachments())
+			if(attach.getType().equals((byte)111))
 				return true;
 		return false;
 	}
