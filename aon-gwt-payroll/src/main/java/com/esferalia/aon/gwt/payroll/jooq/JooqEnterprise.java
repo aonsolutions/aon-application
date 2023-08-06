@@ -254,6 +254,9 @@ public class JooqEnterprise {
 		
 		Date findEndPeriod = getFindEndDate(findPeriodTime);
 		
+		// Domain Childs
+		List<Integer> domainChilds = getDomainChilds(dslContext, domainId, userId);
+		
 		List<Record> enterpriseCCCActivities = 
 			dslContext.select().from(ENTERPRISE_CCC)
 			.leftJoin(ENTERPRISE_ACTIVITY)
@@ -270,15 +273,7 @@ public class JooqEnterprise {
 					dslContext.select(ENTERPRISE_ACTIVITY.ID).from(ENTERPRISE_ACTIVITY)
 					.where(ENTERPRISE_ACTIVITY.ENTERPRISE.in(
 							dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
-								.where(ENTERPRISE.DOMAIN.in(
-										dslContext.select(DOMAIN.ID).from(DOMAIN)
-											.where(DOMAIN.ID.eq(domainId).or(DOMAIN.PARENT.eq(domainId)))
-											.and(DOMAIN.SCOPE.in(
-													dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
-														.where(USER_SCOPE.USER_ID.eq(userId))
-														.fetch(USER_SCOPE.SCOPE))
-											.or(DOMAIN.SCOPE.isNull()))
-										.fetch(DOMAIN.ID)))
+								.where(ENTERPRISE.DOMAIN.in(domainChilds))
 							.fetch(ENTERPRISE.REGISTRY)))
 				.fetch(ENTERPRISE_ACTIVITY.ID)))
 			.and(ENTERPRISE_CCC.TYPE.ne((byte)6))
@@ -291,7 +286,6 @@ public class JooqEnterprise {
 			.fetch();
 		
 		System.err.println("enterpriseCCCActivities START");
-		System.err.println("enterpriseCCCActivities size : " + enterpriseCCCActivities.size());
 		
 		List<String> visitedCCCs = new ArrayList<>();
 		
@@ -332,6 +326,7 @@ public class JooqEnterprise {
 			// ENTERPRISE REGISTRY
 			
 			String geozoneCode = enterprise.get(GEOZONE.CODE);
+			String geozone = enterprise.get(GEOZONE.NAME);
 			Integer enterpriseId = enterprise.get(REGISTRY.ID);
 			String enterpriseName =  enterprise.get(REGISTRY.NAME);
 			
@@ -341,7 +336,8 @@ public class JooqEnterprise {
 			cccInfo.setCccAccount(cccCode);
 			cccInfo.setCccRegimeCode(regime);
 			cccInfo.setTypeStr(regime);
-			cccInfo.setGeozone(geozoneCode);
+			cccInfo.setGeozoneCode(geozoneCode);
+			cccInfo.setGeozone(geozone);
 			cccInfo.setType(type);
 			cccInfo.setActivityId(enterpriseActivityId);
 			cccInfo.setActivityDescription(enterpriseActivityDescription);
@@ -357,132 +353,16 @@ public class JooqEnterprise {
 		
 		return enterprisesCCCInfo;
 	}
-	
-	private static List<CCCInfo> getEnterprisesCCCInfoDB2(DSLContext dslContext, Integer userId, Integer domainId, long findPeriodTime) {
-		
-		List<CCCInfo> enterprisesCCCInfo = new ArrayList<>();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(findPeriodTime);
-		
-		Date findPeriod = new Date(calendar.getTimeInMillis());
-		
-		List<Record> enterpriseCCCActivities = 
-				dslContext.select().from(ENTERPRISE_CCC)
-					.leftJoin(ENTERPRISE_ACTIVITY)
-					.on(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
-					.where(ENTERPRISE_ACTIVITY.ID.in(
-							dslContext.select(ENTERPRISE_ACTIVITY.ID).from(ENTERPRISE_ACTIVITY)
-							.where(ENTERPRISE_ACTIVITY.ENTERPRISE.in(
-									dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
-										.where(ENTERPRISE.DOMAIN.in(
-												dslContext.select(DOMAIN.ID).from(DOMAIN)
-													.where(DOMAIN.ID.eq(domainId).or(DOMAIN.PARENT.eq(domainId)))
-													.and(DOMAIN.SCOPE.in(
-															dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
-																.where(USER_SCOPE.USER_ID.eq(userId))
-																.fetch(USER_SCOPE.SCOPE))
-													.or(DOMAIN.SCOPE.isNull()))
-												.fetch(DOMAIN.ID)))
-									.fetch(ENTERPRISE.REGISTRY)))
-						.fetch(ENTERPRISE_ACTIVITY.ID)))
-					.fetch();
-		
-		System.err.println("enterpriseCCCActivities START");
-		System.err.println("enterpriseCCCActivities size : " + enterpriseCCCActivities.size());
-		
-		for(Record enterprise : enterpriseCCCActivities) {
-			Byte type = enterprise.get(ENTERPRISE_CCC.TYPE);
-			if(type == 6)
-				continue;
-			
-			Integer enterpriseActivityId = enterprise.get(ENTERPRISE_ACTIVITY.ID);
-			String enterpriseActivityDescription = enterprise.get(ENTERPRISE_ACTIVITY.DESCRIPTION);
 
-			Integer cccId = enterprise.get(ENTERPRISE_CCC.ID);
-			String cccCode = enterprise.get(ENTERPRISE_CCC.CCC);
-			String regime = getSSRegime(enterprise.get(ENTERPRISE_CCC.TYPE)).getCode();
-			
-			String completeCCCAccount = regime + cccCode;
-			
-			// ----------------------------------------------
-			
-			List<Integer> activeContracts = dslContext.select(CONTRACT.ID).from(CONTRACT)
-					.where(CONTRACT.ENTERPRISE_CCC.eq(cccId))
-					.and(CONTRACT.END_DATE.ge(findPeriod).or(CONTRACT.END_DATE.isNull()))
-					.and(CONTRACT.SS_REGIME.ne((byte) 3))
-					.fetch(CONTRACT.ID);
-			
-			if(activeContracts.isEmpty())
-				continue;
-			
-			Date findEndPeriod = getFindEndDate(findPeriodTime);
-			
-			Result<Record> currentSalariesPeriod = dslContext.select().from(SALARY)
-				.where(SALARY.CCC.eq(cccCode)
-					   .or(SALARY.CCC.eq(completeCCCAccount)))
-				.and(
-					(SALARY.START_DATE.ge(findPeriod).and(SALARY.END_DATE.le(findEndPeriod)).and(SALARY.CONTRACT.in(activeContracts)))
-					.or(SALARY.END_DATE.between(findPeriod, findEndPeriod)))
-				.and(SALARY.TOTAL_PAYMENT.gt(0.00))
-				.fetch();
-			
-			if(currentSalariesPeriod.isEmpty())
-				continue;
-			
-			// ---------------------------------- Has CRA emited
-			
-			List<Timestamp> craDates = dslContext.select(CRA_BATCH.OUTCOME_FILE_DATE) .from(CRA_BATCH)
-				.where(CRA_BATCH.ID.in(
-						dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
-							.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(cccId))
-							.fetch(CRA_BATCH_DETAIL.CRA_BATCH)
-				)).fetch(CRA_BATCH.OUTCOME_FILE_DATE);
-			
-			List<java.util.Date> craDatesList = new ArrayList<>();
-			
-			craDates.forEach(craDate -> {
-				if(null != craDate) {
-					java.util.Date date = new java.util.Date(craDate.getTime());
-					DateUtils.resetTime(date);
-					craDatesList.add(date);
-				}
-			});
-						
-			
-			// ENTERPRISE REGISTRY
-			
-			String geozoneCode = dslContext.select(GEOZONE.CODE).from(GEOZONE)
-					.where(GEOZONE.ID.eq(enterprise.get(ENTERPRISE_CCC.GEOZONE)))
-					.fetchOne(GEOZONE.CODE);
-			
-			Record enterpriseRegistry = dslContext.select().from(REGISTRY)
-					.where(REGISTRY.ID.eq(enterprise.get(ENTERPRISE_ACTIVITY.ENTERPRISE)))
-					.fetchOne();
-			
-			Integer enterpriseId = enterpriseRegistry.get(REGISTRY.ID);
-			String enterpriseName =  enterpriseRegistry.get(REGISTRY.NAME);
-			
-			CCCInfo cccInfo = new CCCInfo();
-			cccInfo.setCccId(cccId);
-			cccInfo.setCcc(cccCode);
-			cccInfo.setCccAccount(cccCode);
-			cccInfo.setCccRegimeCode(regime);
-			cccInfo.setTypeStr(regime);
-			cccInfo.setGeozone(geozoneCode);
-			cccInfo.setType(type);
-			cccInfo.setActivityId(enterpriseActivityId);
-			cccInfo.setActivityDescription(enterpriseActivityDescription);
-			cccInfo.setUseByContracts(true);
-			cccInfo.setEnterpriseDesciption(enterpriseName);
-			cccInfo.setEnterpriseId(enterpriseId);
-			cccInfo.setCRADates(craDatesList);
-			
-			enterprisesCCCInfo.add(cccInfo);
-		}
-		
-		System.err.println("enterpriseCCCActivities size : " + enterprisesCCCInfo.size());
-		
-		return enterprisesCCCInfo;
+	private static List<Integer> getDomainChilds(DSLContext dslContext, Integer domainId, Integer userId) {
+		return dslContext.select(DOMAIN.ID).from(DOMAIN)
+				.where(DOMAIN.ID.eq(domainId).or(DOMAIN.PARENT.eq(domainId)))
+				.and(DOMAIN.SCOPE.in(
+						dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.eq(userId))
+							.fetch(USER_SCOPE.SCOPE))
+				.or(DOMAIN.SCOPE.isNull()))
+				.fetch(DOMAIN.ID);
 	}
 
 	private static Date getFindEndDate(long findPeriodTime) {
