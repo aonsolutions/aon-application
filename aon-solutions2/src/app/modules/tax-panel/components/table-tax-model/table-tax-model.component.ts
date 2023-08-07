@@ -3,7 +3,7 @@ import { TaxModelService } from 'src/app/core/services/tax-model.service';
 import { ModalEditTaxModelComponent } from '../modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../modal-payment/modal-payment.component';
 import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-details.component';
- import { TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-table-tax-model',
@@ -12,14 +12,8 @@ import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-d
 })
 export class TableTaxModelComponent implements OnInit {
   @Input() trimester: number = 0;
+  headerTable: any = {};
   bodyTable: any = [];
-  headerTable: any = {
-     name: this.translateService.instant('TAX-PANEL.NAME'),
-     result: this.translateService.instant('TAX-PANEL.RESULT'),
-     status: this.translateService.instant('TAX-PANEL.STATUS'),
-     paymentMethod: this.translateService.instant('TAX-PANEL.PAYMENTMETHOD'),
-     actions: this.translateService.instant('TAX-PANEL.ACTIONS')
-  };
   displayedColumns: string[] = [
     'name',
     'result',
@@ -28,10 +22,30 @@ export class TableTaxModelComponent implements OnInit {
     'actions',
   ];
 
-  constructor(public taxModelService: TaxModelService, private translateService: TranslateService) {
+  constructor(
+    public taxModelService: TaxModelService,
+    private translateService: TranslateService
+  ) {
     let tableRow: any = [];
     let column: any = {};
 
+    this.translateService
+      .get([
+        'TAX-PANEL.NAME',
+        'TAX-PANEL.RESULT',
+        'TAX-PANEL.STATUS',
+        'TAX-PANEL.PAYMENTMETHOD',
+        'TAX-PANEL.ACTIONS',
+      ])
+      .subscribe((result) => {
+        this.headerTable = {
+          name: result['TAX-PANEL.NAME'] ,
+          result: result['TAX-PANEL.RESULT'] ,
+          status: result['TAX-PANEL.STATUS'] ,
+          paymentMethod: result['TAX-PANEL.PAYMENTMETHOD'] ,
+          actions: result['TAX-PANEL.ACTIONS'],
+        };
+      });
     // Model date
 
     // selectedFields?: string[];
@@ -41,62 +55,62 @@ export class TableTaxModelComponent implements OnInit {
     // intervalFields?: Map<string,any>;
     // orderBy?: Map<string,string>;
 
-    taxModelService.getTaxModelList(
-      {
-        selectedFields:['trimester']
-      }
-    ).then((response) => {
-      console.log(response)
-      // Tax
-      response.forEach(function (tax, taxKey) {
-        // clone object
-        column = Object.assign({}, tax);
-        // Object Tax
-        // Predefinimos la key de la fila
-        column.key = taxKey;
-        // Cargamos datos en la tabla
-        column.name =
-          "<div class='orange'>MODELO " +
-          tax.Name +
-          '</div>' +
-          "<span class='griss'>" +
-          tax.TaxType +
-          '</span>';
-        column.result = tax.Result + ' &euro;';
-        column.status =
-          tax.Status === 'pendiente'
-            ? {
-                icon: [{ watch_later: 'orange' }],
-                text:
-                  "<span class='background-text-orange'>" +
-                  tax.Status +
-                  '</span>',
-              }
-            : "<span class='background-text-orange-light margin-left-2'>" +
-              tax.Status +
-              '</span>';
-        // Add date Actions ( buttons )
-        // La referencia tendra que ser por ID, ya que el texto puede cambiar dependiendo del idioma
-        switch (tax.Status) {
-          case 'pendiente':
-            column.actions = ['eye', 'done_all', 'edit'];
-            break;
-          case 'confirmado':
-            column.actions = ['eye'];
-            break;
-          case 'presentado':
-            column.actions = ['picture_as_pdf'];
-            break;
-          default:
-            column.actions = [];
-            break;
-        }
-        // Add object date table
-        tableRow.push(column);
+    taxModelService
+      .getTaxModelList({
+        selectedFields: ['trimester'],
+      })
+      .then((response) => {
+        console.log(response);
+        // Tax
+        response.forEach(function (tax, taxKey) {
+          // clone object
+          column = Object.assign({}, tax);
+          // Object Tax
+          // Predefinimos la key de la fila
+          column.key = taxKey;
+          // Cargamos datos en la tabla
+          column.name =
+            "<div class='orange'>MODELO " +
+            tax.Name +
+            '</div>' +
+            "<span class='griss'>" +
+            tax.TaxType +
+            '</span>';
+          column.result = tax.Result + ' &euro;';
+          column.status =
+            tax.Status === 'pendiente'
+              ? {
+                  icon: [{ watch_later: 'orange' }],
+                  text:
+                    "<span class='background-text-orange'>" +
+                    tax.Status +
+                    '</span>',
+                }
+              : "<span class='background-text-orange-light margin-left-2'>" +
+                tax.Status +
+                '</span>';
+          // Add date Actions ( buttons )
+          // La referencia tendra que ser por ID, ya que el texto puede cambiar dependiendo del idioma
+          switch (tax.Status) {
+            case 'pendiente':
+              column.actions = ['eye', 'done_all', 'edit'];
+              break;
+            case 'confirmado':
+              column.actions = ['eye'];
+              break;
+            case 'presentado':
+              column.actions = ['picture_as_pdf'];
+              break;
+            default:
+              column.actions = [];
+              break;
+          }
+          // Add object date table
+          tableRow.push(column);
+        });
+        // Tax date format for table
+        this.bodyTable = tableRow;
       });
-      // Tax date format for table
-      this.bodyTable = tableRow;
-    });
   }
 
   @ViewChild('modalEdit') modalComponentEdit: any = '';
@@ -106,9 +120,7 @@ export class TableTaxModelComponent implements OnInit {
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   modalClick(object: any) {
     // Fila de la tabla que se esta usando
@@ -141,8 +153,6 @@ export class TableTaxModelComponent implements OnInit {
         break;
     }
     // Model tax reference
-    this.taxModelService.getTax(object.key).then((response) => {
-
-    });
+    this.taxModelService.getTax(object.key).then((response) => {});
   }
 }

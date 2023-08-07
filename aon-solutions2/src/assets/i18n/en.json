@@ -9,7 +9,7 @@
     }
   },
   "HEADER": {
-    "EDIT-PROFILE": "Edit profile",
+    "EDIT_PROFILE": "Edit profile",
     "HELP": "Help",
     "LOGOUT": "Logout"
   },
@@ -17,9 +17,10 @@
     "MENU": "menu",
     "INBOX": "INBOX",
     "BILLING": "BILLING",
-    "TAX-PANEL": "TAX PANEL",
-    "EMPLOYEE-PANEL": "EMPLOYEE PANEL",
-    "DOCUMENTATION": "DOCUMENTATION"
+    "TAX_PANEL": "TAX PANEL",
+    "EMPLOYEE_PANEL": "EMPLOYEE PANEL",
+    "DOCUMENTATION": "DOCUMENTATION",
+    "SHORTCUTS": "SHORTCUTS"
   },
   "LOGIN": {
 
@@ -30,7 +31,19 @@
 
   },
   "INBOX": {
-
+    "ALL": "All",
+    "OPENED": "Opened",
+    "CLOSED": "Closed",
+    "PENDING": "Pending",
+    "REALIZED": "Realized",
+    "NEWS": "News",
+    "VIEWS": "Views",
+    "INBOX": "Inbox",
+    "QUERIES": "Queries",
+    "TASKS": "Tasks",
+    "NOTIFICATIONS": "Notifications",
+    "THIS_WEEK": "This week",
+    "CREATE": "Create"
   },
   "DOCUMENTATION": {
 
@@ -45,10 +58,10 @@
 
   },
   "TAX-PANEL": {
-    "1-TRIMESTER":   "1 Trimester",
-    "2-TRIMESTER":   "2 Trimester",
-    "3-TRIMESTER":   "3 Trimester",
-    "4-TRIMESTER":   "4 Trimester",
+    "1_TRIMESTER":   "1 Trimester",
+    "2_TRIMESTER":   "2 Trimester",
+    "3_TRIMESTER":   "3 Trimester",
+    "4_TRIMESTER":   "4 Trimester",
     "ALL":           "All",
     "NAME":          "Model",
     "RESULT":        "Result",

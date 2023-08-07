@@ -30,19 +30,25 @@ export interface Models {
   styleUrls: ['./tabs-tax-model.component.scss'],
 })
 export class TabsTaxModelComponent implements OnInit {
+  tabs: Tabs [] = [];
   tabIndex: number = 0;
-    tabs: Tabs[] = [
-    { name: this.translateService.instant('TAX-PANEL.1-TRIMESTER')},
-    { name: this.translateService.instant('TAX-PANEL.2-TRIMESTER')},
-    { name: this.translateService.instant('TAX-PANEL.3-TRIMESTER')},
-    { name: this.translateService.instant('TAX-PANEL.4-TRIMESTER')},
-    { name: this.translateService.instant('TAX-PANEL.ALL')},
-  ];
 
   public modelsList: any[] = [];
 
   public modelsYears: any[] = [];
-  constructor(public translateService: TranslateService) {}
+  constructor(private translateService: TranslateService) {
+    this.translateService.get(
+      ['TAX-PANEL.1_TRIMESTER', 'TAX-PANEL.2_TRIMESTER', 'TAX-PANEL.3_TRIMESTER','TAX-PANEL.4_TRIMESTER', 'TAX-PANEL.ALL']
+    ).subscribe( result => {
+      this.tabs = [
+        { name: result['TAX-PANEL.1_TRIMESTER']},
+        { name: result['TAX-PANEL.2_TRIMESTER']},
+        { name: result['TAX-PANEL.3_TRIMESTER']},
+        { name: result['TAX-PANEL.4_TRIMESTER']},
+        { name: result['TAX-PANEL.ALL']},
+      ]
+    })
+  }
 
   @Input() type: string = '';
   @Input() appearance: MatFormFieldAppearance = 'outline';

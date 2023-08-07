@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./side-nav.component.scss']
 })
 export class SideNavComponent implements OnInit {
-
+  items: MenuButton[] =[];
   selectedProduct: any;
   opened : boolean;
   resize : number;
@@ -23,7 +23,7 @@ export class SideNavComponent implements OnInit {
 
   constructor(
     private router: Router,
-    public translateService: TranslateService
+    private translateService: TranslateService
     ) {
     this.hide   = false;
     this.opened = true;
@@ -33,7 +33,21 @@ export class SideNavComponent implements OnInit {
     })
     this.subMenuOpened = false;
     this.opened = false;
+
+    this.translateService.get(
+      ['MENU.INBOX', 'MENU.BILLING', 'MENU.TAX_PANEL', 'MENU.EMPLOYEE_PANEL', 'MENU.DOCUMENTATION']
+    ).subscribe(result => {
+      this.items = [
+        {routerlink: 'inbox',           shape: 'inbox',       text: result['MENU.INBOX'],            class: 'red',     selected: false},
+        {routerlink: 'billing',         shape: 'assessment',  text: result['MENU.BILLING'],          class: 'blue',    selected: false},
+        {routerlink: 'tax-panel',       shape: 'euro_symbol', text: result['MENU.TAX_PANEL'],        class: 'orange',  selected: false},
+        {routerlink: 'employee-panel',  shape: 'people',      text: result['MENU.EMPLOYEE_PANEL'],   class: 'green',   selected: false},
+        {routerlink: 'documentation',   shape: 'description', text: result['MENU.DOCUMENTATION'],    class: 'pink',    selected: false},
+    //    {routerlink: 'consulting',      shape: 'work',        text: 'ASESORÍA',           class: 'purple',  selected: false}
+      ];
+    })
   }
+
 
   ngOnInit(): void {
     this.items.forEach(element => {
@@ -65,15 +79,6 @@ export class SideNavComponent implements OnInit {
         }
       }, 1);
   }
-
-  items: MenuButton[] = [
-    {routerlink: 'inbox',           shape: 'inbox',       text: this.translateService.instant('MENU.INBOX'),            class: 'red',     selected: false},
-    {routerlink: 'billing',         shape: 'assessment',  text: this.translateService.instant('MENU.BILLING'),          class: 'blue',    selected: false},
-    {routerlink: 'tax-panel',       shape: 'euro_symbol', text: this.translateService.instant('MENU.TAX-PANEL'),        class: 'orange',  selected: false},
-    {routerlink: 'employee-panel',  shape: 'people',      text: this.translateService.instant('MENU.EMPLOYEE-PANEL'),   class: 'green',   selected: false},
-    {routerlink: 'documentation',   shape: 'description', text: this.translateService.instant('MENU.DOCUMENTATION'),    class: 'pink',    selected: false},
-//    {routerlink: 'consulting',      shape: 'work',        text: 'ASESORÍA',           class: 'purple',  selected: false}
-  ];
 
   shortcuts: Shortcut[] = [
     {routerlink: 'home', shape: 'receipt'},
