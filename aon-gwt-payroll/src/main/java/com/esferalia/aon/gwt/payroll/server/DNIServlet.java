@@ -8,8 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-
+import com.amazonaws.util.IOUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeData;
 import com.esferalia.aon.in.payroll.img.DNIParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
