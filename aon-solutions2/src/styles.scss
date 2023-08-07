@@ -235,8 +235,8 @@ html {
 }
 
 .allSize {
-  width: calc(100%);
-  height: calc(100%);
+  width : 100%;
+  height: 100%;
 }
 
 /*
@@ -247,16 +247,9 @@ html {
     text-decoration: none;
   }
 
+  a:visited,
   a:visited {
-    color: black;
-  }
-
-  .left-content figure{
-      justify-content: left !important;
-}
-
-  a:visited {
-    color: black;
+    color: $color-primary;
   }
 
 /*
@@ -276,6 +269,10 @@ html {
 
   .griss set-icon path{
     color: $color-secondary;
+  }
+  
+  .left-content figure{
+    justify-content: left !important;
   }
   
 /*
