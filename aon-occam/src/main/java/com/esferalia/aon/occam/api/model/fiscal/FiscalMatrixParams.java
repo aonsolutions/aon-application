@@ -12,6 +12,7 @@ public class FiscalMatrixParams implements Serializable{
 	private FiscalModelType model;
 	private Administration administration;
 	private Integer scope;
+	private String declared;
 	
 	private boolean configuredVisible;
 	private boolean madeModelsVisible;
@@ -44,6 +45,14 @@ public class FiscalMatrixParams implements Serializable{
 	}
 	public FiscalMatrixParams setScope(Integer scope) {
 		this.scope = scope;
+		return this;
+	}
+	
+	public String getDeclared() {
+		return declared;
+	}
+	public FiscalMatrixParams setDeclared(String declared) {
+		this.declared = declared;
 		return this;
 	}
 	
