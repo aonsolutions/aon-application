@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.Pos;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
@@ -108,7 +109,8 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
-	private static final int LIMIT = 100;
+	private static final int CCCS_LIMIT = 100;
+    	
 
 	private static final Logger LOGGER = Logger.getLogger("");
 
@@ -121,7 +123,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return null;
 		
 	}	
-
 	
 	public static <T extends JsFile> T[] get(File file, T[] ts) {
 		Map<String, T> map = get(file.name());
@@ -136,16 +137,37 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return getOlder(file.name(), t);
 	}
 	
-	public interface ProgressCallback {
+	interface ProgressCallback {
 		public void onProgress( JsProgress progress);
 	}
 	
-	private class MyEnterprises extends Enterprises {
+	private static class MyEnterprises extends Enterprises {
+
+	    	private static final int INIT_LIMIT = 250;
+	    	private static final int RELOAD_LIMIT = 100;
 		
-		@Override
+	    	private boolean tooManyEnterprises = true; 
+	    	
+	    	
+	    	@Override
 		protected void onEnterprises(List<Enterprise> enterprises) {
 			super.onEnterprises(enterprises);
 			toolbar.setVisibleViewButton(false);
+		}
+		
+		@Override
+		protected void initEnterprises() {
+		    getEnterprises(0, INIT_LIMIT, new AsyncCallback<List<Enterprise>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			    Window.alert(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(List<Enterprise> enterprises) {
+			    initTooManyEnterprises(enterprises);
+			    MyEnterprises.this.onEnterprises(enterprises);
+			}
+		    });
 		}
 		
 		@Override
@@ -153,14 +175,50 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 		
 		@Override
+		protected void onSearchTextBoxChange(String pattern) {
+		    if ( tooManyEnterprises ) {
+			reloadEnterprises(pattern);
+		    } else {
+			super.onSearchTextBoxChange(pattern);
+		    }
+		}
+		
+		@Override
 		protected void onEnterprise(Enterprise enterprise, TreeItem rootItem) {
 			filter(enterprise).ifPresent(e -> super.onEnterprise(e, rootItem));
 		}
 		
+		@Override
+		public void getEnterprises(int offset, int limit, AsyncCallback<List<Enterprise>> callback) {
+		    String condition = getFilterCondition(); 
+		    getEnterprisesByCondition(offset, limit, condition, callback);
+		}
+
+		private void reloadEnterprises(String pattern ) {
+		    String filterCondition = getFilterCondition();
+		    String patternCondition = getPatternCondition(pattern);
+		    String condition = "("+filterCondition+") AND ("+patternCondition+")";
+		    getEnterprisesByCondition(0, RELOAD_LIMIT, condition, new AsyncCallback<List<Enterprise>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			    Window.alert(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(List<Enterprise> enterprises) {
+			    MyEnterprises.this.onEnterprises(enterprises);
+			}
+			
+		    });
+		}
+		
+	    	private void initTooManyEnterprises(List<Enterprise> enterprises) {
+	    	    tooManyEnterprises = enterprises.size() == INIT_LIMIT;
+	    	}
+	    	
 		private Optional<Enterprise> filter(Enterprise enterprise) {
 			
-			Date endDate = DateUtils.addDays2Date(DateUtils.getFirstDayOfMonth(), -1);
-			Date startDate = DateUtils.addDays2Date(new Date(), -45);
+			Date endDate = getEndDate();
+			Date startDate = getStartDate();
 			
 			Optional<Enterprise> filtered =
 			enterprise.getActivities().stream()
@@ -175,18 +233,46 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			
 			return filtered;
 		}
+
+		private String getFilterCondition() {
+		    Date endDate = getEndDate();
+		    Date startDate = getStartDate();
+		    String startDateStr = AonDateUtils.format("yyyy-MM-dd", startDate);
+		    String endDateStr = AonDateUtils.format("yyyy-MM-dd", endDate);
+		    return "salary.start_date <= '" + endDateStr + "' AND salary.end_date >= '" + startDateStr + "'";
+		}
+		
+		private Date getStartDate() {
+		    return DateUtils.addDays2Date(new Date(), -45);
+		}
+
+		private Date getEndDate() {
+		    return DateUtils.addDays2Date(DateUtils.getFirstDayOfMonth(), -1);
+		}
 		
 	}
-
+	
+	private static class MainCretaSyncTask extends Task {
+	    
+	    private boolean stopped = false;
+	    
+	    public boolean isStopped() {
+		return stopped;
+	    }
+	    
+	    public void setStopped(boolean stopped) {
+		this.stopped = stopped;
+	    }
+	}
 	
 	private class MainCretaSyncCallback implements SyncCallback {
 
-		private Task syncTask ;
+		private MainCretaSyncTask syncTask ;
 		private List<JsBases> jsBasess;
 		private List<JsRespuesta> jsRespuestas;
 		private List<JsTrabajadoresYTramos> jsTrabajadoresYTramoss ;
 		
-		public MainCretaSyncCallback(Task syncTask) {
+		public MainCretaSyncCallback(MainCretaSyncTask syncTask) {
 			this.syncTask = syncTask;
 			this.jsBasess = new ArrayList<JsBases>(5);
 			this.jsRespuestas = new ArrayList<JsRespuesta>(5);
@@ -291,6 +377,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			
 			jsTrabajadoresYTramoss.clear();
 		}
+		
+		// ------------------------------------------------------------
+		
+		protected boolean isStopped() {
+		    return syncTask.isStopped();
+		}
+		
+		
 	}
 
 	static interface Binder extends UiBinder<Widget, MainCreta> {
@@ -314,8 +408,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private static final String AGREEMENT = "c-agreement";
 
-	private ResultsPanel resultsPanel;
-	private ProgressPanel progressPanel;
 
 	@UiField
 	MinimizePanel footPanel;
@@ -327,6 +419,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	DetailPanel detailPanel;
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
+	
+	private MainCretaSyncTask syncTask;
+
+	private ResultsPanel resultsPanel;
+	private ProgressPanel progressPanel;
 
 	private CCCCretaDetail cccCretaDetail;
 	private ActivityCretaDetail activityCretaDetail;
@@ -343,6 +440,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	public void onModuleLoad() {
 		
 		enterprises = new MyEnterprises();
+
+		syncTask = new MainCretaSyncTask();
 		
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
@@ -504,41 +603,58 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	@Override
 	public void onEnterprises(List<Enterprise> enterprises) {
-
-		HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
-		handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
-			// Synchronize cret@ messages. 
-			Task syncTask = new Task();
-			syncTask.setDescription("Sincronizando mensajes");
+		// Synchronize cret@ messages.
+	    	syncTask.setStopped(true);
+	   	syncTask = sync(enterprises);
+		if ( progressPanel.isAttached() ) {
 			progressPanel.showTask(syncTask);
-			//sync( new MainCretaSyncCallback(syncTask), enterprises.size() > 1 ? Collections.emptyList() : getCCCs(enterprises) );
-			
-			List<CCC> cccs = getCCCs(enterprises,0,LIMIT*2);
-			
-			sync( new MainCretaSyncCallback(syncTask) {
-				private int offset = 0;
-				private List<CCC> cccss = cccs;
-				
-				@Override
-				public void onEnd() {
-					super.onEnd();
-					log("onEnd(" + cccss.size() +")");
-					if ( cccss.size() >= LIMIT )
-						syncNexts();
-					
-				}
-				
-				private void syncNexts() {
-					offset += cccss.size();
-					cccss = getCCCs(enterprises, offset, LIMIT);
-					log("syncNexts(" + offset + ")");
-					sync(this, cccss);
-				}
-			}, cccs );
-			handlerRegistration[0].removeHandler();
-			
-		});
-		showProgressPanel();
+		} else {
+		    
+		    Collection<HandlerRegistration> handlerRegistration = new LinkedList<>();
+		    handlerRegistration.add(progressPanel.addAttachHandler(e -> {
+        			progressPanel.showTask(syncTask);
+        			handlerRegistration.forEach( HandlerRegistration::removeHandler );
+		    }));
+		    showProgressPanel();
+		}
+	}
+
+	/**
+	 * @param enterprises
+	 * @param syncTask
+	 */
+	private MainCretaSyncTask sync(List<Enterprise> enterprises) {
+	    MainCretaSyncTask syncTask = new MainCretaSyncTask();
+	    syncTask.setDescription("Sincronizando mensajes");
+	    List<CCC> cccs = getCCCs(enterprises,0,CCCS_LIMIT*2);
+	    
+	    MainCretaSyncCallback mainCretaSyncCallback = new MainCretaSyncCallback(syncTask) {
+	    	private int offset = 0;
+	    	private List<CCC> cccss = cccs;
+	    	
+	    	@Override
+	    	public void onEnd() {
+	    		super.onEnd();
+	    		log("onEnd(" + cccss.size() +")");
+	    		if ( isStopped() )
+	    		    return;
+	    		if ( cccss.size() >= CCCS_LIMIT )
+	    			syncNexts();
+
+	    	}
+	    	
+	    	private void syncNexts() {
+	    		offset += cccss.size();
+	    		cccss = getCCCs(enterprises, offset, CCCS_LIMIT);
+	    		log("syncNexts(" + offset + ")");
+	    		sync(this, cccss);
+	    	}
+	    	
+	    };
+	    
+	    sync(mainCretaSyncCallback , cccs);
+	    
+	    return syncTask;
 	}
 
 	// ------------------------------------------------------- UiHandler methods

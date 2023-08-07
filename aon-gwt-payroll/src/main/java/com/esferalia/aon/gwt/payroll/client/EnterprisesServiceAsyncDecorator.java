@@ -166,10 +166,10 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getEnterprises(String domain, String user, int offset, int limit,
+	public void getEnterprises(String domain, String user, String condition, int offset, int limit,
 			AsyncCallback<List<Enterprise>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getEnterprises(domain, user, offset, limit,
+		enterprisesServiceAsync.getEnterprises(domain, user, condition, offset, limit,
 				new AsyncCallbackWrapper<List<Enterprise>>(callback));
 	}
 	

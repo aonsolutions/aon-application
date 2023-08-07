@@ -162,7 +162,11 @@ public class DomainEnterprisesServiceAsync {
 	}
 
 	public void getEnterprises(int offset, int limit, AsyncCallback<List<Enterprise>> callback) {
-		enterprisesServiceAsync.getEnterprises(getCurrentDomainName(), getCurrentUser(), offset, limit, callback);
+		enterprisesServiceAsync.getEnterprises(getCurrentDomainName(), getCurrentUser(), " 1 = 1", offset, limit, callback);
+	}
+
+	public void getEnterprises(int offset, int limit, String condition, AsyncCallback<List<Enterprise>> callback) {
+		enterprisesServiceAsync.getEnterprises(getCurrentDomainName(), getCurrentUser(), condition, offset, limit, callback);
 	}
 
 	public void getEnterprisesCosts(List<Integer> enterpriseIds, AsyncCallback<List<Cost>> callback) {

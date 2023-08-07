@@ -117,7 +117,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<Agreement> getTrashAgreements(String currentDomainName, int offset, int limit);
 
-	List<Enterprise> getEnterprises(String domain, String user, int offset, int limit) ;
+	List<Enterprise> getEnterprises(String domain, String user, String condition, int offset, int limit) ;
 
 	List<Bonus> getBonusConcepts(String domain, int offset, int limit) ;
 
