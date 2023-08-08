@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
@@ -53,7 +54,7 @@ public class PageITR extends PageAbs {
 	@UiField ListBox ITR8234001;
 	
 	@UiField Label ITR8234002lbl;
-	@UiField DateBox ITR8234002;
+	@UiField DateBoxEx ITR8234002;
 
 	
 	@UiField HTMLPanel table1Panel;
@@ -90,6 +91,10 @@ public class PageITR extends PageAbs {
 		ITR8080829lbl.setText(ITR8080829TXT);
 		if(getMap().containsKey(D2DepositHeaderKey.ITR8080829.getCode())){
 			ITR8080829.setValue(getMap().get(D2DepositHeaderKey.ITR8080829.getCode()).equals("1")); 
+			
+			if(!getMap().containsKey(D2DepositHeaderKey.ITR8080828.getCode())){
+				onEdit(D2DepositHeaderKey.ITR8080828.getCode(), getMap().get(D2DepositHeaderKey.ITR8080829.getCode()), false);
+			}
 		}
 
 		ITR8080829.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -97,7 +102,10 @@ public class PageITR extends PageAbs {
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				ITRlbl.setText(ITRLabelTXT + (ITR8080829.getValue() ? "Si" : "No"));
-				onEdit(D2DepositHeaderKey.ITR8080829.getCode(), ITR8080829.getValue() ? "1" : "2", false);
+				String[] keys = {D2DepositHeaderKey.ITR8080829.getCode(), D2DepositHeaderKey.ITR8080828.getCode()};
+				String value = ITR8080829.getValue() ? "1" : "2";
+				String[] values = {value, value};
+				onEdit(keys, values, false);
 			}
 		});
 		if(getYear() >= 2022) {

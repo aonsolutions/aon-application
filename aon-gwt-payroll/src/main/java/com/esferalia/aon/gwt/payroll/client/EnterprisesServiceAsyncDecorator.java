@@ -422,15 +422,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIds, Integer cccId, String type, AsyncCallback<String> callback) throws IllegalArgumentException {
+	public void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIds, Integer cccId, String type, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.createNewCRA(domainName, user, findingDate, ccc, cccIds, cccId, type, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.createNewCRA(domainName, user, findingDate, ccc, cccIds, cccId, type, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override
-	public void checkCreateNewCRA(String domainName, long findingDate, ArrayList<Integer> cccList, AsyncCallback<String> callback) {
+	public void checkCreateNewCRA(String domainName, long findingDate, ArrayList<Integer> cccList, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.checkCreateNewCRA(domainName, findingDate, cccList, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.checkCreateNewCRA(domainName, findingDate, cccList, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override

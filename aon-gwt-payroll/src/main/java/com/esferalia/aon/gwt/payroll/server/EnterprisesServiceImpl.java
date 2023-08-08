@@ -2004,7 +2004,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) throws IllegalArgumentException {
+	public void createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -2012,7 +2012,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			
 			if(Boolean.FALSE.equals(Cra.existAnySalary(cccList, findingDate, connection)))
-				return "No existe n\u00F3minas con valores para notificar en el CRA";
+				throw new IllegalArgumentException("No existe n\u00F3minas con valores para notificar en el CRA");
 			
 			java.util.Date fileNameDate = new java.util.Date();
 			String fileName = new SimpleDateFormat("ddHHmmss").format(fileNameDate);
@@ -2020,7 +2020,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, parentDomainId, userId, cccList, findingDate, fileName, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
-			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
+			JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
 			
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -2290,11 +2290,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	// ----------------------------------------------
 
 	@Override
-	public String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) {
+	public void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) {
 		try(Connection connection = AonServletUtils.getConnection(currentDomainName)){
-			return JooqCRA.checkCreateNewCRA(connection, findingDate, cccList);
-		}catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+			JooqCRA.checkCreateNewCRA(connection, findingDate, cccList);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
 
@@ -3356,13 +3356,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public boolean checkIfRectificative(String domainName, java.util.Date findingDate,
-			ArrayList<Integer> selectedCCCList) {
+	public boolean checkIfRectificative(String domainName, java.util.Date findingDate, ArrayList<Integer> selectedCCCList) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			AONContext ctx = new AONContext(connection);
-			DSLContext dslContext = ctx.getDslContext();
-			
-			return JooqCRA.checkIfRectificative(dslContext, findingDate, selectedCCCList);
+			return JooqCRA.checkIfRectificative(connection, findingDate, selectedCCCList);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

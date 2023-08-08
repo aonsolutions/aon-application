@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -143,7 +144,7 @@ public class Model115Araba2016 extends Model115Base {
 
 				@Override
 				public String getCheckDataResponseDataAction() {
-					return null;
+					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod115CheckDataResponseData";
 				}
 
 				@Override

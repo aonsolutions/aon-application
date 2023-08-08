@@ -213,6 +213,8 @@ public interface IRegistry {
 	public Domain getDomainLinked(AONContext ctx, Integer customerId);
 	public List<Domain> getDomainOfficeLinked(AONContext ctx, String document);
 	
+	public List<Customer> getCustomerWithoutFee(AONContext ctx);
+	
 	// **************************************************
 	// *************************************** [CREDITOR]
 	// **************************************************

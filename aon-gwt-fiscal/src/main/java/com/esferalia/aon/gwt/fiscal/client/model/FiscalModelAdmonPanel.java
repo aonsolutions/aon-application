@@ -536,22 +536,21 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		modelInfoLinklink.setVisible(true);
 		downloadLink.setVisible( getCallback().getModel().canBeSent() );
 		boeDownloadLink.setVisible( getCallback().isBoeFormatEnabled() && getCallback().getModel().canBeSent() );
-		if (getCallback().getModel().isAEAT() &&
-		   ((getCallback().getModel().getYear() > 2021)  
-		   || (getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester())
-		   || (getCallback().getModel().getModel() == FiscalModelType.M202 && getCallback().getModel().getPeriod() == Period.T2))) {
-			validateLink.setVisible( getCallback().getModel().canBeValidated() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
-			sendLink.setVisible( getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getSendAction() ));
-			checkLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckAction() ));
-			viewDocumentLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckDataResponseDataAction() ));
-			// La opción para cargar el PDF presentado del modelo, se pone visible igual que la de consulta del documento presentado
-			uploadPDFLink.setVisible( viewDocumentLink.isVisible() );
+		if ((getCallback().getModel().getYear() > 2021) || 
+			(getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester()) || 
+			(getCallback().getModel().getYear() == 2021 && getCallback().getModel().getModel() == FiscalModelType.M202 && getCallback().getModel().getPeriod() == Period.T2)) {
+			validateLink.setVisible(getCallback().getModel().isAEAT() && getCallback().getModel().canBeValidated() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
+			sendLink.setVisible(getCallback().getModel().isAEAT() && getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getSendAction()));
+			checkLink.setVisible(getCallback().getModel().isAEAT() && getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckAction()));
+			viewDocumentLink.setVisible(getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckDataResponseDataAction()));
+			uploadPDFLink.setVisible(viewDocumentLink.isVisible());
 		} else {
-			validateLink.setVisible( false );
-			sendLink.setVisible( false );
-			checkLink.setVisible( false  ); 
-			viewDocumentLink.setVisible( false  );
-			uploadPDFLink.setVisible( false );
+			validateLink.setVisible(false);
+			sendLink.setVisible(false);
+			checkLink.setVisible(false);
+			viewDocumentLink.setVisible(false);
+			uploadPDFLink.setVisible(false);
 		}
 	}
+	
 }

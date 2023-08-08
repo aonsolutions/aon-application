@@ -165,6 +165,7 @@ public class Templates extends Composite implements EntryPoint {
 						exportFullExpedient(me);
 						exportResumeExpedient(me);
 						exportCustomerIban(me);
+						exportCustomerWithoutFee(me);
 					}
 					@Override
 					public void onFailure(Throwable caught) {print(caught);}
@@ -438,7 +439,17 @@ public class Templates extends Composite implements EntryPoint {
 	
 		Window.open( fileDownloadURL, "_blank",null);
 	}
+	
+	public static native void exportCustomerWithoutFee(Templates thiz) /*-{
+		$wnd.customerWithoutFee = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::downloadCustomerWithoutFee()();
+		}
+	}-*/;
 
+	private void downloadCustomerWithoutFee() {
+		API.getFinance().downloadExcelCustomerWithoutFee();			
+	}
+	
 	private void importDelivery(){
 		Dialog d = new Dialog("Importar Albaranes de Venta","Importar",true,"Cancelar",true, IMPORT_ONLY);
 		d.setUrl(GWT.getModuleBaseURL());

@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022ARABAResultSc
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022ARABAScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023ARABARScript1;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -256,7 +257,7 @@ class Model303ARABA2023 extends Model303Base {
 
 					@Override
 					public String getCheckDataResponseDataAction() {
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod303CheckDataResponseData";
 					}
 
 					@Override
