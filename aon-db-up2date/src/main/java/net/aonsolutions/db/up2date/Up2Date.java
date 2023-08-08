@@ -25,6 +25,7 @@ import net.aonsolutions.db.up2date.management.AlterRitem;
 import net.aonsolutions.db.up2date.management.AlterRsellerAddType;
 import net.aonsolutions.db.up2date.payroll.CRA0050ExcesoRefactor;
 import net.aonsolutions.db.up2date.payroll.ContractSepeIdUpdate;
+import net.aonsolutions.db.up2date.payroll.FixBofFormTDistan;
 import net.aonsolutions.db.up2date.product.ProductPerishableUpdate;
 import net.aonsolutions.db.up2date.tgss.TrainingQuote2023Fix;
 import net.aonsolutions.db.up2date.tgss.TrainningBaseCgcMinUndo;
@@ -368,16 +369,17 @@ public class Up2Date {
 	    // HomeBases2023UpdateIII.HOMEBASES2023UPDATEIII,
 	    // TrainningBaseCgcMinUndo.TRAINNINGBASECGCMINUNDO,
 	    // TrainingQuote2023Fix.TRAINNINGPERCENTAGES2023UPDATE,
-	     CRA0050ExcesoRefactor.CRA0050EXCESOREFACTOR,
-
-		
+	    // CRA0050ExcesoRefactor.CRA0050EXCESOREFACTOR,
 	    // DomainAonStatus.DOMAIN_AON_STATUS,
 	    // DomainAonCustomer.DOMAIN_AON_CUSTOMER,
+	    FixBofFormTDistan.FIXBOFFORMTDISTAN,
 
+		
+	    // ----------------------------------------------------------------
 	    // Important, not remove
+	    //
 	    // AlterRitem.ALTER_RITEM,
 	    // AlterRsellerAddType.ALTER_RSELLER_ADD_TYPE,
-	    ContractSepeIdUpdate.CONTRACTSEPEIDUPDATE,
 	    // AlterInvestAsset.ALTER_INVEST_ASSET
 	    // AgreementPurge.AGREEMENTPURGE,
 	    // SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,

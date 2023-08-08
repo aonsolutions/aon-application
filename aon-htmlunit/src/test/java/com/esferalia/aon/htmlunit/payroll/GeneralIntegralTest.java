@@ -1153,6 +1153,18 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestBonificaciones() throws Exception {
+
+		open("bonificaciones");
+
+		wait4Id("bonif_form_t,_distan");
+
+		draft("BONIF FORM T, DISTAN");
+		calculate(Calendar.JUNE, 2023);
+		assertText("totalEnterpriseLabel", 0.00);
+	}
+
+	@Test
 	public void TestIRPFAraba() throws Exception {
 
 		open("i.r.p.f_-_alava/araba");
