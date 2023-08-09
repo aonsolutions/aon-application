@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Type } from '@angular/core';
 /**
  *
@@ -164,6 +165,15 @@ export class AuthenticationFactory implements IAuthenticationManagerFactory {
 export class ReportingFactory implements IReportingDataAccessFactory {
     createReportingDataAccess(): IReportingDataAccess {
         return new ReportingDataAccess(new ReportingRepository());
+    }
+}
+
+export class MarkFactory implements ISingleObjectCrudFactory<IMark>, IMultipleObjectCrudFactory<IMark> {
+    createSingleObjectCrud(): ISingleObjectCrud<IMark> {
+        return new GenericSingleObjectCrud<Mark>(new GenericSingleObjectCrudRepository<Mark>(new StorableMark(), Mark), Mark);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IMark> {
+        return new GenericMultipleObjectCrud<Mark>(new GenericMultipleObjectCrudRepository<Mark>(new StorableMark(), Mark), Mark);
     }
 }
 
@@ -1179,6 +1189,7 @@ interface ICollectionFactory {
     createMessageCollection(): ICollection<IMessage>;
     createMessageChatCollection(): ICollection<IMessageChat>;
     createEmployeeCollection(): ICollection<IEmployee>;
+    createMarkCollection(): ICollection<IMark>;
     createUserCollection(): ICollection<IUser>;
 }
 
@@ -1307,6 +1318,26 @@ export interface IEmployee extends ICollectable {
     Naf: string;
     Active: boolean;
 }
+
+export interface IMark extends ICollectable {
+  Id: string;
+  Name: string,
+  Lastname: string,
+  IdEmployee: string, // Ver si este es necesario, o id del usuario
+  Date: Date,
+  EntryDate: Date,
+  ExitDate: Date,
+  Pause: IPause,
+  Location: string,
+  Ccc: string, // código cuenta de cotización
+  Workplace: string,
+  Status: string
+}
+
+export interface IPause {
+  StartPause: Date,
+  EndPause: Date
+}
 export interface IUser extends ICollectable {
   Name: string,
   Lastname: string,
@@ -1414,6 +1445,10 @@ export class CollectionFactory implements ICollectionFactory {
 
     createEmployeeCollection(): ICollection<IEmployee> {
         return new Collection<Employee>();
+    }
+
+    createMarkCollection(): ICollection<IMark> {
+        return new Collection<Mark>();
     }
 
     createUserCollection(): ICollection<IUser> {
@@ -2560,6 +2595,190 @@ class StorableAuth extends Auth implements IStorable<Auth> {
     }
 }
 
+class Mark implements IMark, IModel  {
+  private id: string;
+  private name: string;
+  private lastName: string;
+  private idEmployee: string;
+  private date: Date;
+  private entryDate: Date;
+  private exitDate: Date;
+  private pause: IPause;
+  private location: string ;
+  private ccc: string;
+  private workplace: string ;
+  private status: string ;
+  private key: string;
+
+
+  constructor(name?: string, lastName?: string, idEmployee?: string, date?: Date, entryDate?: Date, exitDate?: Date, pause?: IPause, location?: string, ccc?: string, workplace?: string, status?: string) {
+    this.id = new KeyGenerator().generate(15);
+    this.name = name || '';
+    this.lastName = lastName || '';
+    this.idEmployee = idEmployee || '';
+    this.date = date || new Date();
+    this.entryDate = entryDate || new Date();
+    this.exitDate = exitDate || new Date();
+    this.pause = pause || { StartPause: new Date(), EndPause: new Date() };
+    this.location = location || '';
+    this.ccc = ccc || '';
+    this.workplace = workplace || '';
+    this.status = status || '';
+    this.key = this.id || '';
+  }
+
+
+  public get Id(): string {
+    return this.id;
+  }
+
+  public set Id(value: string) {
+    this.id = value;
+  }
+
+  public get Name(): string {
+    return this.name;
+  }
+
+  public set Name(value: string) {
+    this.name = value;
+  }
+
+  public get Lastname(): string {
+    return this.lastName;
+  }
+
+  public set Lastname(value: string) {
+    this.lastName = value;
+  }
+
+  public get IdEmployee(): string {
+    return this.idEmployee;
+  }
+
+  public set IdEmployee(value: string) {
+    this.idEmployee = value;
+  }
+
+  public get Date(): Date {
+    return this.date;
+  }
+
+  public set Date(value: Date) {
+    this.date = value;
+  }
+
+  public get EntryDate(): Date {
+    return this.entryDate;
+  }
+
+  public set EntryDate(value: Date) {
+    this.entryDate = value;
+  }
+
+  public get ExitDate(): Date {
+    return this.exitDate;
+  }
+
+  public set ExitDate(value: Date) {
+    this.exitDate = value;
+  }
+
+  public get Pause(): IPause {
+    return this.pause;
+  }
+
+  public set Pause(value: IPause) {
+    this.pause = value;
+  }
+
+  public get Location(): string {
+    return this.location;
+  }
+
+  public set Location(value: string) {
+    this.location = value;
+  }
+
+  public get Ccc(): string {
+    return this.ccc;
+  }
+
+  public set Ccc(value: string) {
+    this.ccc = value;
+  }
+
+  public get Workplace(): string {
+    return this.workplace;
+  }
+
+  public set Workplace(value: string) {
+    this.workplace = value;
+  }
+
+  public get Status(): string {
+    return this.status;
+  }
+
+  public set Status(value: string) {
+    this.status = value;
+  }
+
+  public get Key() {
+    return this.key;
+  }
+
+  public set Key(value: string) {
+    this.key = value;
+  }
+
+  getKey(): string {
+    return this.idEmployee;
+  }
+
+  getFilterableFields(): Map<string, any> {
+    let map = new Map<string, any>();
+    map.set('name', this.name);
+    map.set('lastname', this.lastName);
+    map.set('idEmployee', this.idEmployee);
+    map.set('date', this.date);
+    map.set('entryDate', this.entryDate);
+    map.set('exitDate', this.exitDate);
+    map.set('pause', this.pause);
+    map.set('location', this.location);
+    map.set('ccc', this.ccc);
+    map.set('workplace', this.workplace);
+    map.set('status', this.status);
+    return map;
+  }
+
+  getSortableFields(): Map<string, any> {
+    let map = new Map<string, any>();
+    map.set('name', this.name);
+    map.set('lastname', this.lastName);
+    map.set('idEmployee', this.idEmployee);
+    map.set('date', this.date);
+    map.set('entryDate', this.entryDate);
+    map.set('exitDate', this.exitDate);
+    map.set('pause', this.pause);
+    map.set('location', this.location);
+    map.set('ccc', this.ccc);
+    map.set('workplace', this.workplace);
+    map.set('status', this.status);
+    return map;
+  }
+
+}
+
+class StorableMark extends Mark implements IStorable<Mark> {
+    getCollection(): ICollection<Mark> {
+        return marks;
+    }
+    getLocalStorage(): string {
+        return 'marks';
+    }
+}
+
 class User implements IUser, IModel  {
   private name: string;
   private lastname: string;
@@ -2858,6 +3077,7 @@ if(employees.size() == 0){
 }
 
 let users: ICollection<User> = new Collection<User>();
+let marks: ICollection<Mark> = new Collection<Mark>();
 let storableUsers = new StorableUser();
 let localUsers = new LocalStorage<User>(User);
 users = localUsers.read(storableUsers.getLocalStorage())
