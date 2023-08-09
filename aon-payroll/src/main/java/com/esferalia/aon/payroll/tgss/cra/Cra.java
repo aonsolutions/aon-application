@@ -133,7 +133,7 @@ public class Cra {
 					.and(SALARY.END_DATE.le(endDateSQL))
 					.and(SALARY.CCC.eq(ccc))
 					.and(SALARY.TYPE.eq((byte)0))
-					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 					.and(SALARY.DOMAIN.in(domainChilds))
 					.fetch();
@@ -194,7 +194,7 @@ public class Cra {
 					.where(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL))
 					.and(SALARY.CCC.eq(ccc))
 					.and(SALARY.TYPE.eq((byte)3))
-					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.DOMAIN.in(domainChilds))
 					.fetch();
 			
@@ -297,7 +297,7 @@ public class Cra {
 					.where(SALARY.CCC.eq(ccc))
 					.and(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL))
 					.and(SALARY.TYPE.eq((byte)2))
-					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 					.and(SALARY.DOMAIN.in(domainChilds))
 					.fetch();
