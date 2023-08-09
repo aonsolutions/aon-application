@@ -60,6 +60,7 @@ public class ModelMatrix extends MainEntryPoint {
 				if (AonStringUtils.isBlank(elementTarget)) {
 					RootLayoutPanel rootLayoutPanel = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 					options.setParentWidget(rootLayoutPanel);
+					options.setCompactMode(false);
 				} else {
 					RootPanel rootPanel = RootPanel.get(elementTarget);
 					options.setParentWidget(rootPanel);

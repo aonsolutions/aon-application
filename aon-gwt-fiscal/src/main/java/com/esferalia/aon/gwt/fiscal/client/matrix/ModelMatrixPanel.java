@@ -58,11 +58,13 @@ public class ModelMatrixPanel extends FlowPanel {
 	private static final String[] QUARS = new String[]{"1\u00BA TRIM","2\u00BA TRIM","3\u00BA TRIM","4\u00BA TRIM"};
 	
 	public ModelMatrixPanel(MatrixModuleOptions options, FiscalMatrixParams params) {
-		final PopupPanel popup = new PopupPanel(false, true);
-		popup.add(new AonSplash());
-		popup.setGlassEnabled(true);
-		popup.setAnimationEnabled(true);
-		popup.center();
+		final PopupPanel pop = new PopupPanel(false, true);
+		if (!options.isCompactMode()) {
+			pop.add(new AonSplash());
+			pop.setGlassEnabled(true);
+			pop.setAnimationEnabled(true);
+			pop.center();
+		}
 		
 		API api = new API(GWT.getHostPageBaseURL(), 
 				options.getConfiguration().getMd5(),
@@ -114,12 +116,16 @@ public class ModelMatrixPanel extends FlowPanel {
 					MatrixData matrixData = sortInfo(aonJsArray);
 					ModelMatrixPanel.this.paint( options, matrixData, params);
 				}
-				popup.hide();
+				if (!options.isCompactMode()) {
+					pop.hide();
+				}
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				popup.hide();
+				if (!options.isCompactMode()) {
+					pop.hide();
+				}
 			}
 		});
 	}
@@ -137,7 +143,7 @@ public class ModelMatrixPanel extends FlowPanel {
 		
 		AonDisplayTable table = new AonDisplayTable();
 		table.addStyleName(AON.CSS.aonBlockCenter());
-		// table.addStyleName(AON.CSS.aonWidthAlmostAll());
+		table.addStyleName(AON.CSS.aonWidthAlmostAll());
 		
 		AonDisplayTableRow row = table.addRow( );
 		if (!options.isCompactMode()) {
@@ -327,10 +333,16 @@ public class ModelMatrixPanel extends FlowPanel {
 	private AonDisplayTable paintFiscalModelRow(MatrixModuleOptions options, FiscalModel fm, Administration admKey, MatrixPeriodType perKey, String docKey, AonDisplayTable table, FiscalMatrixParams params, String domainName) {
 		Label admonLabel = getAdmonLabel( admKey );
 		AonDisplayTableRow periodRow = table.addRow();
-		if (!options.isCompactMode()
-		 && !params.isFiscalModelTypePresent() 
-		 && !AonStringUtils.equals(domainName,fm.getName())) {
+		if (!options.isCompactMode()) {
+			if (!params.isFiscalModelTypePresent()) {
+				if (!AonStringUtils.equals(domainName,fm.getName())) {
+					periodRow.addCell( new Label( docKey + " " + fm.getName() ), AON.CSS.aonBorderBottom());
+				} else {
+					periodRow.addCell( getEmptyLabel());
+				}
+			} else {
 				periodRow.addCell( new Label( docKey + " " + fm.getName() ), AON.CSS.aonBorderBottom());
+			}
 		}
 		periodRow
 			.addCell( new Label( FiscalModelUtils.getModelName( fm) ), AON.CSS.aonBold(), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter() )
@@ -486,13 +498,13 @@ public class ModelMatrixPanel extends FlowPanel {
 
 	private FiscalModel cloneModel( IFiscalModel fm) {
 		return new FiscalModel()
-				.setYear(fm.getYear())
-				.setAdministration(fm.getAdministration())
-				.setModel( fm.getModel() )
-				.setPeriod( fm.getPeriod() )
-				.setStatus( fm.getStatus() )
-				.setDomain(fm.getDomain())
-				.setDomainName(fm.getDomainName());
+			.setYear(fm.getYear())
+			.setAdministration(fm.getAdministration())
+			.setModel( fm.getModel() )
+			.setPeriod( fm.getPeriod() )
+			.setStatus( fm.getStatus() )
+			.setDomain(fm.getDomain())
+			.setDomainName(fm.getDomainName());
 	}
 
 }
