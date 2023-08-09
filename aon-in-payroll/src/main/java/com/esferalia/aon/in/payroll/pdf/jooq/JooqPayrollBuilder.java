@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDayOfWeek;
 import static com.esferalia.aon.watson.util.AonDateUtils.compare;
 import static com.esferalia.aon.watson.util.AonDateUtils.max;
@@ -71,6 +72,8 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -184,9 +187,9 @@ public class JooqPayrollBuilder {
 			DefaultPayrollBuilder payrollBuilder = new DefaultPayrollBuilder();
 			// PAYROLL RELATED DATA
 			{
-				payrollBuilder.setLiquidPeriodStart(salary.getStartDate());
-				payrollBuilder.setLiquidPeriodEnd(salary.getEndDate());
 				payrollBuilder.setTotalDays(salary.getSalaryDays());
+				payrollBuilder.setLiquidPeriodStart(salary.getStartDate());
+				payrollBuilder.setLiquidPeriodEnd(getSalaryEndDate(salary));
 				
 				/**
 				 * Comparing salary type
@@ -1240,4 +1243,15 @@ public class JooqPayrollBuilder {
 				return null;
 		}
 	}
+	
+	private static Date getSalaryEndDate(Salary salary) {
+	    Date startDate = salary.getStartDate();
+	    return salary.getContextData().getOrDefault(ContextVariable.NO_HOLIDAYS.getName(), Collections.emptyList()).stream()
+		    .map(ContextData::getStartDate)
+		    .filter( d -> d.after(startDate) )
+		    .collect(Collectors.minBy(Date::compareTo))
+		    .map(d -> AonDateUtils.addDays(d,-1))
+		    .orElse(salary.getEndDate());
+	}
+	
 }

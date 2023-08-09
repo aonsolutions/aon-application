@@ -84,7 +84,7 @@ abstract class Model347Base extends DockLayoutPanel {
 
 	private IModel347Declared declaredManager;
 	private IModel347Asset assetManager;
-	private Integer tabPanelIndex;
+	private Integer tabPanelIndex = 0;
 
 	Model347Base(Model347Callback cbk, Mod347 mod347) {
 		super(Unit.PX);

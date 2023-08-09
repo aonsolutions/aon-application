@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022GIPUZKOARes
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022GIPUZKOASpecificOperationsScript;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -454,7 +455,7 @@ public class Model390HF2022GIPUZKOA extends Model390HFBase {
 
 					@Override
 					public String getCheckDataResponseDataAction() {
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod390HFCheckDataResponseData";
 					}
 
 					@Override

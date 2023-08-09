@@ -59,6 +59,8 @@ public class MainEntryPoint implements EntryPoint {
 	
 	
 	private static final String ENTRY_POINT_PARAM = "entryPoint";
+	private static final String ELEMENT_TARGET = "elementTarget";
+		
 	//
 	//    ================================================================== CONSOLE
 	//
@@ -245,6 +247,7 @@ public class MainEntryPoint implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);	
+		String elementTarget = getParameter(GWT.getModuleName(), ELEMENT_TARGET);
 		if(getToken() != null) {
 			Occam occam = new Occam()
 				.setDomainName(getCurrentDomainName())
@@ -254,7 +257,7 @@ public class MainEntryPoint implements EntryPoint {
 			COMMON_SERVICE.getAonConfiguration(occam, params, new AsyncCallback<AonConfiguration>() {
 				
 				@Override public void onSuccess(AonConfiguration config) {
-					selection(entryPoint,aonConfiguration);
+					selection(entryPoint,elementTarget,aonConfiguration);
 				}
 				
 				@Override public void onFailure(Throwable arg0) {
@@ -262,13 +265,13 @@ public class MainEntryPoint implements EntryPoint {
 				}
 			});
 		} else {
-			selection(entryPoint,null);
+			selection(entryPoint,elementTarget,null);
 		}
 
 		
 	}
 	
-	private void selection(String entryPoint,AonConfiguration aonConfiguration) {
+	private void selection(String entryPoint,String elementTarget,AonConfiguration aonConfiguration) {
 		try {
 			ConsoleEntryPoint consoleEntryPoint = ConsoleEntryPoint.valueOf(entryPoint);
 			consoleEntryPoint.run();
@@ -328,7 +331,7 @@ public class MainEntryPoint implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					ModelMatrix modelMatrix = new ModelMatrix();
-					modelMatrix.onModuleLoad();
+					modelMatrix.onModuleLoad(elementTarget);
 				}
 			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_CONFIG_POINT)) {

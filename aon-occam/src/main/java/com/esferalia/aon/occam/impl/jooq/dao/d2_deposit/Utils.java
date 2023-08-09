@@ -9,7 +9,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +45,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -265,14 +268,14 @@ public class Utils {
 		for (D2DepositHeaderKey key : ctx.keySet()) {
 			Clave clave = new Clave();
 			clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key.getCode())));
-			clave.setValor(ctx.get(key).toString());
+			clave.setValor(double2String(ctx.get(key)));
 			schema.getClaves().getClave().add(clave);
 		}
 		
 		for (D2DepositKey key : ctxMem.keySet()) {
 			Clave clave = new Clave();
 			clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key.getCode())));
-			clave.setValor(ctxMem.get(key).toString());
+			clave.setValor(double2String(ctxMem.get(key)));
 			schema.getClaves().getClave().add(clave);
 		}
 		
@@ -624,7 +627,7 @@ public class Utils {
 						Clave clave = new Clave();
 						Integer code = Integer.parseInt(k.getCode());
 						clave.setCodigo(BigInteger.valueOf(code));
-						clave.setValor(acc.get(value).toString());	
+						clave.setValor(object2String(acc.get(value)));	
 						keys.getClave().add(clave);
 						computeMap.put(k.getCode(),acc.get(value).toString());
 					} 
@@ -640,7 +643,7 @@ public class Utils {
 						Clave clave = new Clave();
 						Integer code = Integer.parseInt(k.getCode());
 						clave.setCodigo(BigInteger.valueOf(code));
-						clave.setValor(acc2.get(value).toString());	
+						clave.setValor(object2String(acc2.get(value)));	
 						keys.getClave().add(clave);
 						computeMap.put(k.getCode(),acc2.get(value).toString());
 					}
@@ -766,9 +769,23 @@ public class Utils {
 				Double calculated = (Double) ret;
 				ctx.put("Q"+key, calculated);
 				if(map.containsKey(key)) map.remove(key);
-				m.put(key, calculated.toString());
+				m.put(key, double2String(calculated));
 			}
 		}
 		return m;
+	}
+	
+	private static String double2String(Double d) {
+		BigDecimal bd = new BigDecimal(d);
+		return bd.setScale(2, RoundingMode.HALF_EVEN).toPlainString();
+	}
+	
+	private static String object2String(Object o) {
+		try {
+			Double d = Double.parseDouble(o.toString());
+			return double2String(d);
+		} catch (Exception e) {
+			return o.toString();
+		}
 	}
 }

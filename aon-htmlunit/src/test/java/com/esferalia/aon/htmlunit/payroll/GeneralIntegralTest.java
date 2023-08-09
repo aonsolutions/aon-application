@@ -368,6 +368,22 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		settle(calendar.getTime());
 		double salarioDia = getValue("editor-salario_dia");
 		assertValue("db-amount-label-2", salarioDia * 12 * 11 / 365.00  , DELTA);
+		assertText("daysLabel", 11);
+		assertValue("cgcBaseLabel", 0.00 );
+		assertText("periodLabel", "13/2/2017 - 23/2/2017");
+		
+		setValue("editor-dias_vacaciones_no_disfrutados", "4");
+		assertValue("cgcBaseLabel", salarioDia * 4 );
+		assertText("daysLabel", 11);
+		assertText("periodLabel", "13/2/2017 - 23/2/2017");
+
+		setValue("editor-dias_vacaciones_no_disfrutados", "3");
+		assertValue("cgcBaseLabel", salarioDia * 3 );
+		assertText("daysLabel", 11);
+		assertText("periodLabel", "13/2/2017 - 23/2/2017");
+
+		draft("FIN, CONTRATO TEMPORAL");
+		assertText("periodLabel", "13/2/2017 - 23/2/2017");
 
 		draft("COTIZACIÓN, CERO");
 
@@ -378,7 +394,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 0.00);
 		assertValue("totalPaymentLabel", 0.00);
 		assertValue("totalLiquidLabel", 0.00);
-
 
 		draft("COTIZACIÓN, MÁX");
 		settle(calendar.getTime());
@@ -397,6 +412,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentLabel", 300.00);
 		assertValue("totalLiquidLabel", 300.00 - (200.00 * (4.70 + 1.55 + 0.10 + 18.49) / 100.00) - ( 100.00 * 18.49 / 100.00 ));
 		
+		draft("COTIZACIÓN, MIN");
+		calendar.set(2023, Calendar.JULY, 31);
+		settle(calendar.getTime());
+		setValue("editor-dias_vacaciones_no_disfrutados", "10");
+		double minCgcBase = 42.00 * 10.00;
+		assertValue("cgcBaseLabel", minCgcBase);
+		assertValue("cgpBaseLabel", minCgcBase);
 
 	}
 
@@ -1128,6 +1150,18 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalLiquidLabel", 1900.00);
 		calculate(Calendar.NOVEMBER, 2022);
 		assertValue("totalLiquidLabel", 3000.00);
+	}
+
+	@Test
+	public void TestBonificaciones() throws Exception {
+
+		open("bonificaciones");
+
+		wait4Id("bonif_form_t,_distan");
+
+		draft("BONIF FORM T, DISTAN");
+		calculate(Calendar.JUNE, 2023);
+		assertText("totalEnterpriseLabel", 0.00);
 	}
 
 	@Test

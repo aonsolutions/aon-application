@@ -77,6 +77,16 @@ public enum FiscalMatrixParamsJSON {
 			return json.put(IJsonNames.MADE_MODELS_VISIBLE, params.isMadeModelsVisible());
 		}
 	},
+	NAME{
+		@Override
+		public FiscalMatrixParams from(FiscalMatrixParams params, JSONObject json) {
+			return params.setDeclared(json.optString(IJsonNames.NAME));
+		}
+		@Override
+		public JSONObject to(FiscalMatrixParams params, JSONObject json) {
+			return json.put(IJsonNames.NAME, params.getDeclared());
+		}
+	},
 	;
 
 	public abstract FiscalMatrixParams from(FiscalMatrixParams params, JSONObject json);

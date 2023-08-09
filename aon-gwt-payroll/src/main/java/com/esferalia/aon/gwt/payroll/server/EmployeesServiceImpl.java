@@ -4767,14 +4767,23 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					.findFirst().orElse("");
 		}
 		
-		settle.setEmployeeName(salary.getEmployeeName()).setEmployeeCategory(salary.getCategory())
-				.setEmployeeDocument(salary.getEmployeeDocument()).setEmployeeQuoteGroup(salary.getQuoteGroup())
-				.setEmployeeSeniorityDate(salary.getSeniorityDate()).setEnterpriseAddress(salary.getEnterpriseAddress())
-				.setEnterpriseCCC(salary.getCcc()).setEnterpriseDocument(salary.getEnterpriseDocument())
-				.setEnterpriseName(salary.getEnterpriseName()).setEndDate(salary.getEndDate())
-				.setIssueDate(salary.getIssueDate()).setTotalDeduction(salary.getTotalDeduction())
-				.setTotalPayment(salary.getTotalPayment()).setTotalEnterprise(salary.getTotalEnterprise())
-				.setTotalIrpf(salary.getTotalIrpf()).setTotalLiquid(salary.getTotalLiquid())
+		settle.setEmployeeName(salary.getEmployeeName())
+				.setEmployeeCategory(salary.getCategory())
+				.setEmployeeDocument(salary.getEmployeeDocument())
+				.setEmployeeQuoteGroup(salary.getQuoteGroup())
+				.setEmployeeSeniorityDate(salary.getSeniorityDate())
+				.setEnterpriseAddress(salary.getEnterpriseAddress())
+				.setEnterpriseCCC(salary.getCcc())
+				.setEnterpriseDocument(salary.getEnterpriseDocument())
+				.setEnterpriseName(salary.getEnterpriseName())
+				.setEndDate(salary.getEndDate())
+				.setIssueDate(salary.getIssueDate())
+				.setTotalDeduction(salary.getTotalDeduction())
+				.setTotalPayment(salary.getTotalPayment())
+				.setTotalEnterprise(salary.getTotalEnterprise())
+				.setTotalIrpf(salary.getTotalIrpf())
+				.setTotalLiquid(salary.getTotalLiquid())
+				.setSalaryDays(salary.getTimeUnits())
 				.setStartDate(salary.getStartDate());
 
 		settle.setCause(compCause != null ? compCause : "");
