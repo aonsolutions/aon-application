@@ -36,6 +36,8 @@ public interface IConstants {
 	String CIUDAD = "CIUDAD";
 	String CODIGO_POSTAL = "CODIGO POSTAL";
 	String CODIGO_POSTAL2 = "CÓDIGO POSTAL";
+	String CODIGO_PRODUCTO = "CODIGO PRODUCTO";
+	String CODIGO_PRODUCTO2 = "CÓDIGO PRODUCTO";
 	String COMENTARIOS = "COMENTARIOS";
 	String CONCEPTO = "CONCEPTO";
 	String CONTRAPARTIDA = "CONTRAPARTIDA";
@@ -56,6 +58,7 @@ public interface IConstants {
 	String EMAIL = "EMAIL";
 	String FACTURA = "FACTURA";
 	String FECHA = "FECHA";
+	String FECHA_IVA = "FECHA IVA";
 	String FICHERO = "FICHERO";
 	String FORMA_DE_PAGO = "FORMA DE PAGO";
 	String FORMA_PAGO = "FORMA PAGO";
@@ -87,6 +90,7 @@ public interface IConstants {
 	String REFERENCIA = "REFERENCIA";
 	String SEGURIDAD = "SEGURIDAD";
 	String SUBCUENTA = "SUBCUENTA";
+	String SUPLIDO = "SUPLIDO";
 	String TELEFONO = "TELEFONO";
 	String TELEFONO2 = "TELÉFONO";
 	String TIPO = "TIPO";

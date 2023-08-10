@@ -70,10 +70,10 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class InvoiceImport extends ImportUtils{
+public class ServalInvoiceImport extends ImportUtils{
 
-	public static InvoiceImport getInstance() {
-		return new InvoiceImport();
+	public static ServalInvoiceImport getInstance() {
+		return new ServalInvoiceImport();
 	}
 
 	InvoiceImportClass inv; 
@@ -166,49 +166,46 @@ public class InvoiceImport extends ImportUtils{
 	}
 	
 	private boolean isTipoOperacion(String value) {
-		return compare(IConstants.TIPO_DE_OPERACION, value)
-			|| compare(IConstants.TIPO_OPERACION, value);
+		return compare(value, IConstants.TIPO_DE_OPERACION, IConstants.TIPO_OPERACION);
 	}
 	
 	private boolean isTipoFactura(String value) {
-		return compare(IConstants.TIPO_FACTURA, value);
+		return compare(value, IConstants.TIPO_FACTURA);
 	}
 	
 	private boolean isFecha(String value) {
-		return compare(IConstants.FECHA, value);
+		return compare(value, IConstants.FECHA);
 	}
 	
 	private boolean isFechaIva(String value) {
-		return compare(IConstants.FECHA_IVA, value);
+		return compare(value, IConstants.FECHA_IVA);
 	}
 	
 	private boolean isSerie(String value) {
-		return compare(IConstants.SERIE, value)
-			|| compare(IConstants.SERIES, value);
+		return compare(value, IConstants.SERIE, IConstants.SERIES);
 	}
 	
 	private boolean isNumero(String value) {
-		return compare(IConstants.NUMERO, value);
+		return compare(value, IConstants.NUMERO);
 	}
 	
 	private boolean isReference(String value) {
-		return compare(IConstants.REFERENCIA, value)
-			|| compare(IConstants.NUMERO_DE_FACTURA, value)
-			|| compare(IConstants.NUMERO_FACTURA, value)
-			|| compare(IConstants.CODIGO_REFERENCIA, value)
-			|| compare(IConstants.CODIGO_DE_REFERENCIA, value);
+		return compare(value, IConstants.REFERENCIA, IConstants.NUMERO_DE_FACTURA, 
+			IConstants.NUMERO_FACTURA, IConstants.CODIGO_REFERENCIA,
+			IConstants.CODIGO_DE_REFERENCIA);
 	}
 
 	private boolean isNif(String value) {
-		return compare(IConstants.NIF, value);
+		return compare(value, IConstants.NIF, IConstants.DOCUMENTO);
 	}
 	
 	private boolean isNombre(String value) {
-		return compare(IConstants.NOMBRE, value);
+		return compare(value, IConstants.NOMBRE, IConstants.RAZON_SOCIAL,
+			IConstants.RAZON_SOCIAL2);
 	}
 	
 	private boolean isCuentaContraparte(String value) {
-		return compare(IConstants.CUENTA_CONTRAPARTE, value);
+		return compare(value, IConstants.CUENTA_CONTRAPARTE);
 	}
 	
 	private boolean isTercero(String value) {
@@ -216,8 +213,7 @@ public class InvoiceImport extends ImportUtils{
 	}
 	
 	private boolean isObservaciones(String value) {
-		return compare(IConstants.OBSERVACIONES, value)
-			|| compare(IConstants.CONCEPTO, value);
+		return compare(value, IConstants.OBSERVACIONES, IConstants.CONCEPTO);
 	}
 	
 	private boolean isDireccion(String value) {
@@ -225,92 +221,91 @@ public class InvoiceImport extends ImportUtils{
 	}
 	
 	private boolean isCiudad(String value) {
-		return compare(IConstants.CIUDAD, value);
+		return compare(value, IConstants.CIUDAD);
 	}
 	
 	private boolean isProvincia(String value) {
-		return compare(IConstants.PROVINCIA, value);
+		return compare(value, IConstants.PROVINCIA);
 	}
 	
 	private boolean isCodigoPostal(String value) {
-		return compare(IConstants.CODIGO_POSTAL, value);
+		return compare(value, IConstants.CODIGO_POSTAL);
 	}
 	
 	private boolean isPais(String value) {
-		return compare(IConstants.PAIS, value);
+		return compare(value, IConstants.PAIS);
 	}
 	
 	private boolean isCuentaExplotacion(String value) {
-		return compare(IConstants.CUENTA_BASE, value)
-			|| compare(IConstants.CUENTA_CONTABLE, value)
-			|| compare(IConstants.CUENTA_EXPLOTACION, value)
-			|| compare(IConstants.CUENTA_DE_EXPLOTACION, value);
+		return compare(value, IConstants.CUENTA_BASE, IConstants.CUENTA_CONTABLE, 
+			IConstants.CUENTA_EXPLOTACION, IConstants.CUENTA_DE_EXPLOTACION);
 	}
 	
 	private boolean isPorcentajeImpuesto(String value) {
 		value = value.replace(" ", "");
-		return compare("%" + IConstants.IMPUESTO, value)
-			|| compare("%" + IConstants.IVA, value);
+		return compare(value, "%" + IConstants.IMPUESTO, "%" + IConstants.IVA);
 	}
 	
 	private boolean isCuotaImpuesto(String value) {
-		return compare(IConstants.CUOTA_IMPUESTO, value)
-			|| compare(IConstants.CUOTA_IVA, value);
+		return compare(value, IConstants.CUOTA_IMPUESTO, IConstants.CUOTA_IVA);
 	}
 	
 	private boolean isPorcentajeRe(String value) {
 		value = value.replace(" ", "");
-		return compare("%" + IConstants.RE, value);
+		return compare(value, "%" + IConstants.RE);
 	}
 	
 	private boolean isCuotaRe(String value) {
-		return compare(IConstants.CUOTA_RE, value);
+		return compare(value, IConstants.CUOTA_RE);
 	}
 	
 	private boolean isPorcentajeRetencion(String value) {
 		value = value.replace(" ", "");
-		return compare("%" + IConstants.RETENCION, value)
-			|| compare("%" + IConstants.IRPF, value);
+		return compare(value, "%" + IConstants.RETENCION, "%" + IConstants.IRPF);
 	}
 	
 	private boolean isCuotaRetencion(String value) {
-		return compare(IConstants.CUOTA_RETENCION, value)
-			|| compare(IConstants.CUOTA_IRPF, value);
+		return compare(value, IConstants.CUOTA_RETENCION, IConstants.CUOTA_IRPF);
 	}
 	
 	private boolean isDescripcionCuenta(String value) {
-		return compare(IConstants.DESCRIPCION_CUENTA, value);
+		return compare(value, IConstants.DESCRIPCION_CUENTA);
+	}
+	
+	private boolean isCodigoProducto(String value) {
+		return compare(value, IConstants.CODIGO_PRODUCTO, IConstants.CODIGO_PRODUCTO2);
+	}
+	
+	private boolean isSuplido(String value) {
+		return compare(value, IConstants.SUPLIDO);
 	}
 	
 	private boolean isConceptoDetalle(String value) {
-		return compare(IConstants.CONCEPTO_DETALLE, value);
+		return compare(value, IConstants.CONCEPTO_DETALLE);
 	}
 	
 	private boolean isBase(String value) {
-		return compare(IConstants.BASE, value)
-			|| compare(IConstants.BASE_IMPONIBLE, value);
+		return compare(value, IConstants.BASE, IConstants.BASE_IMPONIBLE);
 	}
 	
 	private boolean isTotal(String value) {
-		return compare(IConstants.TOTAL, value)
-			|| compare(IConstants.TOTAL_FACTURA, value);
+		return compare(value, IConstants.TOTAL, IConstants.TOTAL_FACTURA);
 	}
 	
 	private boolean isClaveRetencion(String value) {
-		return compare(IConstants.CLAVE_RETENCION, value);
+		return compare(value, IConstants.CLAVE_RETENCION);
 	}
 	
 	private boolean isSubclaveRetencion(String value) {
-		return compare(IConstants.SUBCLAVE_RETENCION, value);
+		return compare(value, IConstants.SUBCLAVE_RETENCION);
 	}
 	
 	private boolean isCuentaTesoreria(String value) {
-		return compare(IConstants.CUENTA_TESORERIA, value)
-			|| compare(IConstants.PAGO_POR_CAJA, value);
+		return compare(value, IConstants.CUENTA_TESORERIA, IConstants.PAGO_POR_CAJA);
 	}
 	
 	private boolean isActivity(String value) {
-		return compare(IConstants.ACTIVIDAD, value);
+		return compare(value, IConstants.ACTIVIDAD );
 	}
 	
  	private void check(String title, Cell cell) {
@@ -449,10 +444,20 @@ public class InvoiceImport extends ImportUtils{
 			inv.setAccountDescription(o.toString());
 			return;
 		}
+		
+		if(isCodigoProducto(title)) {
+			//TODO CODIGO PRODUCTO
+		}
+		
 		if(isConceptoDetalle(title)) {
 			// TODO CONCEPTO DETALLE
 			return;
 		}
+		
+		if(isSuplido(title)) {
+			//TODO SUPLIDO
+		}
+		
 		if(isBase(title)) {
 			inv.setBase(Utils.parseDouble(o));
 			return;
