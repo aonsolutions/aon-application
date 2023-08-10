@@ -1268,10 +1268,12 @@ export interface IBank extends ICollectable {
     Logo: string;
 }
 
+export type statusTaxModel = 'en proceso' | 'pendiente' | 'rectificado' | 'confirmado' | 'presentado';
+
 export interface ITaxModel extends ICollectable {
     Name: string;
     TaxType: string;
-    Status: string;
+    Status: statusTaxModel;
     PaymentMethod: string;
     Result: string;
     Trimester: number;
@@ -1354,7 +1356,7 @@ export class Factory implements IFactory {
         return new Bank(name, total, logo);
     }
 
-    createTaxModel(name?: string, taxType?: string, status?: string, paymentMethod?: string, result?: string, trimester?: number, year?: number): ITaxModel {
+    createTaxModel(name?: string, taxType?: string, status?: statusTaxModel, paymentMethod?: string, result?: string, trimester?: number, year?: number): ITaxModel {
         return new TaxModel(name, taxType, status, paymentMethod, result, trimester, year);
     }
 
@@ -2014,17 +2016,17 @@ class StorableBank extends Bank implements IStorable<Bank> {
 class TaxModel implements ITaxModel, IModel  {
     private name: string;
     private taxType: string;
-    private status: string;
+    private status: statusTaxModel;
     private paymentMethod: string;
     private result: string;
     private trimester: number;
     private year: number;
     private key: string;
 
-    constructor(name?: string, taxType?: string, status?: string, paymentMethod?: string, result?: string, trimester?: number, year?: number) {
+    constructor(name?: string, taxType?: string, status?: statusTaxModel, paymentMethod?: string, result?: string, trimester?: number, year?: number) {
         this.name = name || '';
         this.taxType = taxType || '';
-        this.status = status || '';
+        this.status = status || 'pendiente';
         this.paymentMethod = paymentMethod || '';
         this.result = result || '';
         this.trimester = trimester || 0;
@@ -2049,11 +2051,11 @@ class TaxModel implements ITaxModel, IModel  {
         this.taxType = value;
     }
 
-    public get Status(): string {
+    public get Status(): statusTaxModel {
         return this.status;
     }
 
-    public set Status(value: string) {
+    public set Status(value: statusTaxModel) {
         this.status = value;
     }
 
