@@ -1137,11 +1137,9 @@ public class JooqEmployee {
 		// ---------------------------------------------- Sepe Comunications
 		
 		Result<Record> sepeIdRecords = dslContext.select().from(CONTRACT_INFO)
-				.where(
-					CONTRACT_INFO.NAME.eq("SEPE_ID")
-					.or(CONTRACT_INFO.NAME.eq("SEPE_TRANSFORM_ID"))
-					.or(CONTRACT_INFO.NAME.eq("SEPE_EXTENSION_ID"))
-				)
+				.where(CONTRACT_INFO.NAME.eq("SEPE_ID"))
+				.or(CONTRACT_INFO.NAME.eq("SEPE_TRANSFORM_ID"))
+				.or(CONTRACT_INFO.NAME.like("SEPE_EXTENSION_ID_%"))
 				.and(CONTRACT_INFO.CONTRACT.eq(contract))
 				.orderBy(CONTRACT_INFO.START_DATE.desc())
 				.fetch();
@@ -1151,7 +1149,7 @@ public class JooqEmployee {
 				contractData.setSepeId(sepeIdRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
 			else if(AonStringUtils.equalsIgnoreCase(sepeIdRecord.get(CONTRACT_INFO.NAME), "SEPE_TRANSFORM_ID"))
 				contractData.setSepeTransformId(sepeIdRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
-			else if(AonStringUtils.equalsIgnoreCase(sepeIdRecord.get(CONTRACT_INFO.NAME), "SEPE_EXTENSION_ID"))
+			else if(AonStringUtils.containsIgnoreCase(sepeIdRecord.get(CONTRACT_INFO.NAME), "SEPE_EXTENSION_ID_"))
 				contractData.setSepeExtensionId(sepeIdRecords.get(0).get(CONTRACT_INFO.EXPRESSION));
 		}
 		
