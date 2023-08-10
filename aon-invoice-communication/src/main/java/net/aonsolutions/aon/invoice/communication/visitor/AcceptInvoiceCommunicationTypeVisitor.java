@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 import net.aonsolutions.aon.tbai.InvoiceCommunication;
 import net.aonsolutions.aon.tbai.LroeMain;
+import net.aonsolutions.aon.tbai.TBAI;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
 public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements IInvoiceCommunicationTypeVisitor {
@@ -33,13 +34,20 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	@Override
 	public void visitTBAI() {
 		if(InvoiceType.SALES.equals(getInvoice().getType())) {
+			try {
+				TBAI.getInstance().accept(getTbaiConfiguration(), getCompany(), getInvoice(), 
+						getBlockchain(getCertificateId()));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			TbaiMain tbai = new TbaiMain();
 			try {
 				tbai.createEmisionTBAI(getCompany(), getInvoice(), getTbaiConfiguration());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else visitSII();
+		}
 	}
 
 	@Override

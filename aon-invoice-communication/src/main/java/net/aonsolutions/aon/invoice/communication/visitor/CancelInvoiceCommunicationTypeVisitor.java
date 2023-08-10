@@ -1,12 +1,11 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
 
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
 
 import net.aonsolutions.aon.tbai.TBAI;
-import net.aonsolutions.aon.tbai.TbaiMain;
 
 public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements IInvoiceCommunicationTypeVisitor {
 
@@ -29,7 +28,7 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 		try {
 			TBAI.getInstance().cancel(getTbaiConfiguration(), getCompany(), getInvoice());
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 	}
 
@@ -38,7 +37,7 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 		try {
 			TBAI.getInstance().cancel(getTbaiConfiguration(), getCompany(), getInvoice());
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}		
 	}
 

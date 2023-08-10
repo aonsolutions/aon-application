@@ -1,16 +1,30 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
 
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.DataRequest;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.DataRequestType;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+
+import net.aonsolutions.aon.tbai.TbaiBlockchain;
 
 public class BasicCommunicationInvoiceTypeVisitor {
 
@@ -108,6 +122,23 @@ public class BasicCommunicationInvoiceTypeVisitor {
 		return this;
 	}
 	
+	protected TbaiBlockchain getBlockchain(Integer actualInvoice) {
+		DataResponseSource source = getTbaiConfiguration().isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
+		DataResponse dr = AON.getLastDataResponse(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+			f.getDomainProperty().eq(getDomain().getId())
+			.and(f.getSourceProperty().eq(source.value()))
+			.and(f.getSourceIdProperty().ne(actualInvoice))
+			.and(f.getCodeProperty().ne("baja"))
+			);
+		
+		DataResponseDetail drd = dr.getId() != null ? AON.getDataResponseDetail(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+			f.getDomainProperty().eq(getDomain().getId())
+			.and(f.getDataResponseProperty().eq(dr.getId()))
+			.and(f.getDataVariableProperty().eq("blockchain"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
+		
+		return TbaiBlockchain.fromJSON(drd.getDataValue());
+	}
+	
 	protected Certificate getCertificate() {
 		Certificate cert = null;
 		if(getCertificateId() != null) {
@@ -127,4 +158,5 @@ public class BasicCommunicationInvoiceTypeVisitor {
 			|| AonDocumentUtil.isOwnerCommunity(document) || AonDocumentUtil.isCivilSociety(document);
 	}
 	
+
 }
