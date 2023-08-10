@@ -1294,17 +1294,9 @@ public class AON {
 		getProduct().insert(ctx, p);
 	}
 
-	public static void insertWithId(AONContext ctx, OldProduct p) {
-		getProduct().insertWithId(ctx, p);
-	}
-
 	public static LinkedList<OldProduct> insert(AONContext ctx, 
 			Stream<OldProduct> ps) {
 		return getProduct().insert(ctx, ps);
-	}
-
-	public static void insertWithId(AONContext ctx, Stream<OldProduct> ps) {
-		getProduct().insertWithId(ctx, ps);
 	}
 
 	public static void update(AONContext ctx, OldProduct p) {

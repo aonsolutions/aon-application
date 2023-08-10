@@ -406,6 +406,7 @@ public class ItemDAO {
 				.setDescription(getValue(r, ITEM.DESCRIPTION))
 				.setSerialNumber(getValue(r, ITEM.SERIAL_NUMBER))
 				.setSerialDate(getValue(r, ITEM.SERIAL_DATE))
+				.setExpireDate(getValue(r, ITEM.EXPIRE_DATE))
 				.setPrice(getDouble(r, ITEM.PRICE))
 				.setStatus(ProductStatus.safeValueOf(getValue(r, ITEM.STATUS)))
 				.setExpensesPercent(getDouble(r, ITEM.EXPENSES_PERCENT))

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Item implements Serializable {
@@ -21,6 +22,7 @@ public class Item implements Serializable {
 	private String description;
 	private String serialNumber;
 	private Date serialDate;
+	private Date expireDate;
 	private String barcode;
 	
 	private ProductStatus status;
@@ -118,6 +120,19 @@ public class Item implements Serializable {
 	
 	public Item setSerialDate(Date serialDate) {
 		this.serialDate = serialDate;
+		return this;
+	}
+
+	public Date getExpireDate() {
+		if(expireDate == null && getProduct().isPerishable() && getSerialDate() != null) {
+			expireDate = AonDateUtils.addDays(getSerialDate(), 
+				getProduct().getDaysToExpire() != null ? getProduct().getDaysToExpire(): 0);
+		}
+		return expireDate;
+	}
+	
+	public Item setExpireDate(Date expireDate) {
+		this.expireDate = expireDate;
 		return this;
 	}
 

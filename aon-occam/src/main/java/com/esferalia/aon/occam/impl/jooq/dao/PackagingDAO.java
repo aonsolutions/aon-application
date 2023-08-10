@@ -53,6 +53,11 @@ public class PackagingDAO {
 				.setSerialNumber(serialNumber)
 				.setSerialDate(serialDate)
 				.setDescription(item.getProduct().getName() + " #" + serialNumber);
+			if(item.getProduct().isPerishable()) {
+				Date expireDate = AonDateUtils.addDays(serialDate, 
+					item.getProduct().getDaysToExpire() != null ? item.getProduct().getDaysToExpire() : 0);
+				item2.setExpireDate(expireDate);
+			}
 		}
 		Integer[] items = ItemCompositionDAO.getStream(ctx, f -> 
 			f.getCompositionItemProperty().eq(item.getId()))
@@ -148,7 +153,11 @@ public class PackagingDAO {
 		Item container = packaging.getContainer();
 		container.setId(null).setBarcode(null).setSerialNumber(sscc).setSerialDate(new Date());
 		container = ItemDAO.save(ctx, container);
-		
+		if(container.getProduct().isPerishable()) {
+			Date expireDate = AonDateUtils.addDays(container.getSerialDate(), 
+					container.getProduct().getDaysToExpire() != null ? container.getProduct().getDaysToExpire() : 0);
+			container.setExpireDate(expireDate);
+		}
 		ElaborationDetail packing = new ElaborationDetail()
 				.setDomain(ctx.getDomainId())
 				.setElaboration(elaboration)
