@@ -52,9 +52,6 @@ public class QuestionModulePanel extends DockLayoutPanel {
 		searchPanel = new FlowPanel();
 		searchPanel.setStyleName(AON.CSS.aonSearchPanel());
 		searchPanel.addStyleName(AON.CSS.aonMarginLeft());
-		searchPanel.addStyleName(AON.CSS.aonMarginRight());
-		searchPanel.addStyleName(AON.CSS.aonBlockCenter());
-		searchPanel.addStyleName(AON.CSS.aonWidthAlmostAll());
 		searchPanel.addStyleName(AON.CSS.aonFlexBetween());
 		
 		filterPanel = new FlowPanel();

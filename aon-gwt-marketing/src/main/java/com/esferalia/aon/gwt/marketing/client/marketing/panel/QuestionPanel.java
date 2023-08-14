@@ -346,6 +346,11 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 			}
 		});
 		
+		if(question.hasSurvey()) {
+			deleteButton.setEnabled(false);
+			deleteButton.setTitle("Esta pregunta esta asociada a una encuesta. No se puede eliminar");
+		}
+		
 		buttonContainer.add(deleteButton);
 		tab.setWidget(r, col, buttonContainer);
 		col++;

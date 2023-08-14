@@ -18,6 +18,8 @@ public class Question implements Serializable {
 	private String argument;
 	private String alias;
 	
+	private boolean survey;
+	
 	private List<QuestionValue> values;
 
 	public Integer getId() {
@@ -80,6 +82,15 @@ public class Question implements Serializable {
 
 	public Question setAlias(String alias) {
 		this.alias = alias;
+		return this;
+	}
+	
+	public boolean hasSurvey() {
+		return survey;
+	}
+
+	public Question setHasSurvey(boolean survey) {
+		this.survey = survey;
 		return this;
 	}
 

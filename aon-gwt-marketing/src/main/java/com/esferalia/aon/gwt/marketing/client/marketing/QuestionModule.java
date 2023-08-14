@@ -38,7 +38,7 @@ public class QuestionModule extends MainEntryPoint {
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		QuestionModulePanel questionPanel = new QuestionModulePanel(options);
 		
-		AonToolbar toolbar = new AonToolbar( "PREGUNTAS" );
+		AonToolbar toolbar = new AonToolbar( "PREGUNTAS SERGIO" );
 
 		final AonToolbarButton newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd());
 		newButton.addClickHandler(e -> showQuestiontDialog(questionPanel, options));
