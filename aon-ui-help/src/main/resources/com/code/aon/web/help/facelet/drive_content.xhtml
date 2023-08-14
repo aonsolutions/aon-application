@@ -199,7 +199,7 @@
 									value="#{file.name}" />
 							</a>
 						</aon:if>
-	
+						
 						<!-- VIDEO -->
 						<aon:if test="${file.isVideo()}">
 							<aon:div>
@@ -214,12 +214,13 @@
 									<!-- <iframe src="./html/video.html##{help.getFileServletUrl(file)}" style="min-width:680px;" width="50%" height="480"></iframe> -->
 								</aon:div>
 							</aon:div>
-						</aon:if>
-	
-	
+						</aon:if>		
 				</c:forEach>
-			</aon:div>
+				
+				<!--  VIMEO -->
+				<ui:include src="./vimeo_content.xhtml" />
 
+			</aon:div>
 			</aon:div>
 			</aon:form>
 	

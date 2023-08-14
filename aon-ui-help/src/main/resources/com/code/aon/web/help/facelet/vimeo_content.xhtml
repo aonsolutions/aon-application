@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div styleClass="box-column list">
+		<ui:repeat value="#{vimeo.videos.orElse(null)}" var="video">
+			<button type="button" onclick="window.open('#{video.getLink()}', '_blank');">
+				#{vimeo.getVideoName(video)}
+			</button>
+			<aon:div styleClass="ifrmContainer" style="display:none; justify-content:center; width: 100%; margin-bottom: 10px;">
+				<iframe src="#{video.getLink()}" style="min-width:680px;" width="50%" height="480" frameBorder="0" allow="autoplay" allowfullscreen="allowfullscreen"></iframe>
+			</aon:div>
+		</ui:repeat>
+	</aon:div>
+
+	<script>
+		function showVideoPlayer(title, videoHtml) {
+			var modal = document.createElement('div');
+			modal.innerHTML = '<h2>' + title + '</h2>' + videoHtml;
+			document.body.appendChild(modal);
+		}
+	</script>
+
+</ui:composition>
