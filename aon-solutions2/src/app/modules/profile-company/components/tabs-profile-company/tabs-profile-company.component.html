@@ -1,0 +1,21 @@
+<app-tabs
+  [tabs]="tabs"
+  (changeTabIndex)="this.tabIndex = $event"
+  [tabColor]="'orange'"
+  [paddingLeftHeader]="'1rem'"
+
+>
+<div tool>
+  <div style="display: flex; justify-content: center; gap: 1.25rem">
+    <app-button
+      style="display: inline-block"
+
+      [class]="'border-orange left'"
+    >
+   
+   GUARDAR
+    </app-button>
+
+
+  </div>
+</div>
