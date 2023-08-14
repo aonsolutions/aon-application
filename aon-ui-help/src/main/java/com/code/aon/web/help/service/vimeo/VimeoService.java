@@ -17,8 +17,8 @@ public class VimeoService {
 	public String hola = "hola que tal";
 	
 	public VimeoService() {
-		String clientSecret = "cLTggCPyStdkgr4coTTxDgLG7yy5A3rkbL2noL6pOZbWScURjEoTXekmHcHT6hbYKyYZ9kNwr469pl1jnTKK4DmKxWfLZe37mgJwQI6skdATU0ddoGKsbv/POxSXYId+";
-        String accessToken = "e04d9400ead6905f0053efac004bc451";
+		String clientSecret = "";
+        String accessToken = "";
         
 		vimeoResult = new VimeoResult(clientSecret, accessToken);
 		

@@ -33,9 +33,6 @@ public class VimeoResult {
                 User user = response.getData();
                 String userId = user.getIdentifier();
 				clientId = userId;
-                System.out.println("User's identifier: " + userId);
-				System.out.println(user.getLocation());
-				System.out.println(user.getName());
             }
 
             @Override
