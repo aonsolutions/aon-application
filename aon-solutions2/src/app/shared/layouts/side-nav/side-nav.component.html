@@ -22,8 +22,8 @@
         routerLink={{item.routerlink}}
       >
         <app-icon class="{{item.class}}" [shape]="item.shape"></app-icon>
-        <span *ngIf="opened">
-          {{item.text | translate}}
+        <span *ngIf="opened && this.items.length > 0" >
+          {{item.text}}
         </span>
       </div>
     </div>
@@ -47,7 +47,7 @@
     </div>
     <div *ngIf="opened" class="menu-left-option-footer-opend">
       <div class="menu-left-title-footer">
-        ACCESOS DIRECTOS
+        {{'MENU.SHORTCUTS' | translate}}
       </div>
       <mat-grid-list cols="3" class="menu-left-option-footer-icon-expanded">
         <mat-grid-tile colspan="1" *ngFor="let shortcut of shortcuts;">

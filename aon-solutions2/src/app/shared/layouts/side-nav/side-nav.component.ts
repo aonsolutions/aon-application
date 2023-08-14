@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./side-nav.component.scss']
 })
 export class SideNavComponent implements OnInit {
-
+  items: MenuButton[] =[];
   selectedProduct: any;
   opened : boolean;
   resize : number;
@@ -33,10 +33,23 @@ export class SideNavComponent implements OnInit {
     })
     this.subMenuOpened = false;
     this.opened = false;
+
+    this.translateService.get(
+      ['MENU.INBOX', 'MENU.BILLING', 'MENU.TAX_PANEL', 'MENU.EMPLOYEE_PANEL', 'MENU.DOCUMENTATION']
+    ).subscribe(result => {
+      this.items = [
+        {routerlink: 'inbox',           shape: 'inbox',       text: result['MENU.INBOX'],            class: 'red',     selected: false},
+        {routerlink: 'billing',         shape: 'assessment',  text: result['MENU.BILLING'],          class: 'blue',    selected: false},
+        {routerlink: 'tax-panel',       shape: 'euro_symbol', text: result['MENU.TAX_PANEL'],        class: 'orange',  selected: false},
+        {routerlink: 'employee-panel',  shape: 'people',      text: result['MENU.EMPLOYEE_PANEL'],   class: 'green',   selected: false},
+        {routerlink: 'documentation',   shape: 'description', text: result['MENU.DOCUMENTATION'],    class: 'pink',    selected: false},
+    //    {routerlink: 'consulting',      shape: 'work',        text: 'ASESORÍA',           class: 'purple',  selected: false}
+      ];
+    })
   }
 
+
   ngOnInit(): void {
-    this.translateMenuButtons();
     this.items.forEach(element => {
       if(element.routerlink == this.currentRoute){
         element.selected = true;
@@ -50,33 +63,6 @@ export class SideNavComponent implements OnInit {
 
   setResize(state:number){
     this.resize = state
-  }
-
-  // Función para traducir desde el archivo .json
-  translateMenuButtons(): void {
-    this.translateService.get('MENU').subscribe((translation) => {
-      this.items.forEach((item) => {
-        switch (item.text) {
-          case 'BANDEJA':
-            item.text = translation['INBOX'];
-            break;
-          case 'GESTIÓN':
-            item.text = translation['BILLING'];
-            break;
-          case 'PANEL DE IMPUESTOS':
-            item.text = translation['TAX-PANEL'];
-            break;
-              case 'PANEL DE EMPLEADOS':
-            item.text = translation['EMPLOYEE-PANEL'];
-            break;
-              case 'DOCUMENTACIÓN':
-            item.text = translation['DOCUMENTATION'];
-            break;
-          default:
-            break;
-        }
-      });
-    });
   }
 
   onSelectedProduct(selected:any) {
@@ -93,15 +79,6 @@ export class SideNavComponent implements OnInit {
         }
       }, 1);
   }
-
-  items: MenuButton[] = [
-    {routerlink: 'inbox',           shape: 'inbox',       text: 'BANDEJA',            class: 'red',     selected: false},
-    {routerlink: 'billing',         shape: 'assessment',  text: 'GESTIÓN',            class: 'blue',    selected: false},
-    {routerlink: 'tax-panel',       shape: 'euro_symbol', text: 'PANEL DE IMPUESTOS', class: 'orange',  selected: false},
-    {routerlink: 'employee-panel',  shape: 'people',      text: 'PANEL DE EMPLEADOS', class: 'green',   selected: false},
-    {routerlink: 'documentation',   shape: 'description', text: 'DOCUMENTACIÓN',      class: 'pink',    selected: false},
-//    {routerlink: 'consulting',      shape: 'work',        text: 'ASESORÍA',           class: 'purple',  selected: false}
-  ];
 
   shortcuts: Shortcut[] = [
     {routerlink: 'home', shape: 'receipt'},
