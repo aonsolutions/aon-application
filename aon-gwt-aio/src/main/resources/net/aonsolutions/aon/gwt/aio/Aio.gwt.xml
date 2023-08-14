@@ -22,6 +22,7 @@
 	<inherits name='net.aonsolutions.aon.gwt.commercial.CommercialAio' />
 	<inherits name='net.aonsolutions.aon.gwt.ccaa.DepositAio' />
 	<inherits name="net.aonsolutions.polymer.Elements"/>
+	<inherits name='com.esferalia.aon.gwt.marketing.MarketingAio' />
 	<inherits name='com.esferalia.aon.gwt.payroll.PayrollAio' />
 	<inherits name="net.aonsolutions.aon.gwt.vaadin.VaadinAio"/>
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
