@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.registry.QuestionType;
@@ -17,6 +18,9 @@ public class Question implements Serializable {
 	private QuestionType type;
 	private String argument;
 	private String alias;
+	
+	private boolean survey;
+	private List<String> surveyDescriptions;
 	
 	private List<QuestionValue> values;
 
@@ -81,6 +85,23 @@ public class Question implements Serializable {
 	public Question setAlias(String alias) {
 		this.alias = alias;
 		return this;
+	}
+	
+	public boolean hasSurvey() {
+		return survey;
+	}
+
+	public Question setHasSurvey(boolean survey) {
+		this.survey = survey;
+		return this;
+	}
+
+	public List<String> getSurveyDescriptions() {
+		return null == surveyDescriptions ? Collections.emptyList() : surveyDescriptions;
+	}
+
+	public void setSurveyDescriptions(List<String> surveyDescriptions) {
+		this.surveyDescriptions = surveyDescriptions;
 	}
 
 	public List<QuestionValue> getValues() {
