@@ -160,6 +160,19 @@
                 </dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.marketing</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.marketing</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>

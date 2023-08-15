@@ -18,4 +18,5 @@ public interface Modules {
 	public static final String DEPOSIT = "deposit";
 	public static final String SCOPE = "scope";
 	public static final String EMPLOYEES = "employees";
+	public static final String QUESTION_MODULE = "QuestionModule";
 }
