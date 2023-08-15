@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Question.QUESTION;
 import static com.esferalia.aon.jooq.tables.QuestionValue.QUESTION_VALUE;
+import static com.esferalia.aon.jooq.tables.Survey.SURVEY;
 import static com.esferalia.aon.jooq.tables.SurveyQuestion.SURVEY_QUESTION;
 
 import java.sql.Timestamp;
@@ -12,7 +13,6 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Record;
 
-import com.esferalia.aon.jooq.tables.records.SurveyQuestionRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -86,8 +86,14 @@ public class QuestionDAO {
 	}	
 	
 	private static void hasSurvey(CloseableAONContext ctx, Question question) {
-		SurveyQuestionRecord surveyQuestionRecord = ctx.getDslContext().selectFrom(SURVEY_QUESTION).where(SURVEY_QUESTION.QUESTION.eq(question.getId())).fetchAny();
-		question.setHasSurvey(null != surveyQuestionRecord);
+		List<String> surveyRecords = ctx.getDslContext().selectDistinct(SURVEY.DESCRIPTION).from(SURVEY)
+			.join(SURVEY_QUESTION)
+			.on(SURVEY_QUESTION.SURVEY.eq(SURVEY.ID))
+			.where(SURVEY_QUESTION.QUESTION.eq(question.getId()))
+			.fetch(SURVEY.DESCRIPTION);
+		
+		question.setHasSurvey(!surveyRecords.isEmpty());
+		question.setSurveyDescriptions(surveyRecords);
 	}
 
 	private static void getQuestionValues(CloseableAONContext ctx, Question question) {

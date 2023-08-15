@@ -322,36 +322,45 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 		
-		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
-		deleteButton.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				deleteButton.setEnabled(false);
-				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Pregunta",
-						new HTML("Se va a proceder a eliminar la pregunta <b>" + question.getAlias() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
-				
-				dialog.confirm(new AonAcceptDialogCallback() {
-
-					@Override
-					public void onCancel() {
-						deleteButton.setEnabled(true);
-					}
-
-					@Override
-					public void onAccept() {
-						delete(question);
-					}
-				});
-			}
-		});
+		AonTableButton button;
 		
 		if(question.hasSurvey()) {
-			deleteButton.setEnabled(false);
-			deleteButton.setTitle("Esta pregunta esta asociada a una encuesta. No se puede eliminar");
+			button = new AonTableButton("", AON.CSS.aonIconInfo());
+			button.addClickHandler(e -> {
+				String message = "Esta pregunta pertenece a una o mas encuestas y no se puede borrar por que esta vinculada.<br> Estas son las encuestas donde aparece esta pregunta:<br>";
+				for(String surveyDesc : question.getSurveyDescriptions()) message += "<b>" + surveyDesc + "</b><br>";
+				
+				AonDialog dialog = new AonDialog("Informaci\u00f3n Pregunta", new HTML(message));
+				dialog.info();
+			});
+			
+		} else {
+			button = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+			button.addClickHandler( new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					button.setEnabled(false);
+					AonDialog dialog = new AonDialog("Eliminaci\u00f3n Pregunta",
+							new HTML("Se va a proceder a eliminar la pregunta <b>" + question.getAlias() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+					
+					dialog.confirm(new AonAcceptDialogCallback() {
+
+						@Override
+						public void onCancel() {
+							button.setEnabled(true);
+						}
+
+						@Override
+						public void onAccept() {
+							delete(question);
+						}
+					});
+				}
+			});
 		}
 		
-		buttonContainer.add(deleteButton);
+		buttonContainer.add(button);
 		tab.setWidget(r, col, buttonContainer);
 		col++;
 	}
