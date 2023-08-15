@@ -51,7 +51,6 @@ public class QuestionModulePanel extends DockLayoutPanel {
 		
 		searchPanel = new FlowPanel();
 		searchPanel.setStyleName(AON.CSS.aonSearchPanel());
-		searchPanel.addStyleName(AON.CSS.aonMarginLeft());
 		searchPanel.addStyleName(AON.CSS.aonFlexBetween());
 		
 		filterPanel = new FlowPanel();
@@ -87,7 +86,7 @@ public class QuestionModulePanel extends DockLayoutPanel {
 		searchPanel.add(buttonsPanel);
 		
 		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
+		scrollPanel.addStyleName(AON.CSS.aonScrollArea());
 		scrollPanel.setWidget(searchPanel);
 		northPanel.setWidget(scrollPanel);
 
