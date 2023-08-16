@@ -1,0 +1,38 @@
+.new-query{
+  width: 256px;
+  height: 64px;
+  flex-grow: 0;
+  font-family: Roboto;
+  font-size: 24px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+
+.issue{
+  width: 1462px;
+  height: 64px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1132px;
+  margin: 22.7px 42px 18px 40px;
+  padding: 0;
+}
+
+.button{
+  width: 226px;
+  height: 48px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin: 46px 42px 915px 1150px;
+  padding: 10px 48px 10px 20px;
+  border-radius: 4px;
+  background-color: var(--red-50);
+}

@@ -16,7 +16,6 @@ import { TableTasksComponent } from './components/inbox/table-tasks/table-tasks.
 import { TableNotificationsComponent } from './components/inbox/table-notifications/table-notifications.component';
 import { CreateQueryComponent } from './components/inbox/create-query/create-query.component';
 
-
 @NgModule({
     declarations: [
         InboxviewComponent,

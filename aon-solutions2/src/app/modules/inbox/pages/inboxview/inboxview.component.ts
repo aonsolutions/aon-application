@@ -17,11 +17,12 @@ export interface Tabs {
   styleUrls: ['./inboxview.component.scss']
 })
 export class InboxviewComponent implements OnInit {
-  tabsConsultas: Tabs[] = [];
-  tabsTareas: Tabs[] = [];
-  tabsNotificaciones: Tabs[] = [];
-  selectedTab: number = 0;
-  tabIndex: number = 0;
+  tabsConsultas     : Tabs[]  = [];
+  tabsTareas        : Tabs[]  = [];
+  tabsNotificaciones: Tabs[]  = [];
+  selectedTab       : number  = 0;
+  tabIndex          : number  = 0;
+  showDetail        : boolean = false;
 
   constructor(
     private translateService: TranslateService,
