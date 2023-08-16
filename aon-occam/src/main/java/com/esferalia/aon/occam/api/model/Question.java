@@ -22,6 +22,9 @@ public class Question implements Serializable {
 	private boolean survey;
 	private List<String> surveyDescriptions;
 	
+	private boolean rprofile;
+	private List<String> rprofileNames;
+	
 	private List<QuestionValue> values;
 
 	public Integer getId() {
@@ -102,6 +105,23 @@ public class Question implements Serializable {
 
 	public void setSurveyDescriptions(List<String> surveyDescriptions) {
 		this.surveyDescriptions = surveyDescriptions;
+	}
+
+	public boolean hasRprofile() {
+		return rprofile;
+	}
+
+	public Question setRprofile(boolean rprofile) {
+		this.rprofile = rprofile;
+		return this;
+	}
+
+	public List<String> getRprofileNames() {
+		return null == rprofileNames ? Collections.emptyList() : rprofileNames;
+	}
+
+	public void setRprofileNames(List<String> rprofileNames) {
+		this.rprofileNames = rprofileNames;
 	}
 
 	public List<QuestionValue> getValues() {
