@@ -1,0 +1,17 @@
+@import "src/styles.scss";
+
+:host {
+  height: 100%;
+  width: 100%;
+}
+
+.input-profile-company {
+  display: flex;
+  margin-bottom: -0.45rem;
+  gap: 1rem;
+}
+
+.upload {
+  margin-top: 3rem;
+
+}

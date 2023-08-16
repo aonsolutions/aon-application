@@ -15,7 +15,7 @@ export class TabsProfileCompanyComponent implements OnInit {
 
   tabs: Tabs[] = [
     { name: 'Datos personales' },
-    { name: 'Datos de la empresa' },
+    { name: 'Datos empresa' },
     { name: 'Datos registrales' },
     { name: 'Certificados' }
   ];

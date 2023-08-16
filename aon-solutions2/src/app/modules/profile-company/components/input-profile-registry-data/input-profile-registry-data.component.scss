@@ -1,0 +1,23 @@
+@import "src/styles.scss";
+
+.input-profile-registry-data {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.input-profile-registry {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.input-profile-registry-date {
+  display: flex;
+  margin-top: 1rem;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
