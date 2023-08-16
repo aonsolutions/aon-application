@@ -8,19 +8,11 @@
 	<aon:div styleClass="box-column list">
 		<ui:repeat value="#{vimeo.videos.orElse(null)}" var="video">
 			<aon:div styleClass="list-item"
-			onclick="window.open('#{video.getLink()}', '_blank');">
+				onclick="window.open('#{video.getLink()}', '_blank');">
 				<aon:outputText value="smart_display"
 					styleClass="icon file material-icons" />
 				<aon:outputText value="#{vimeo.getVideoName(video)}" />
 			</aon:div>
-			<aon:div styleClass="ifrmContainer"
-				style="display:none; justify-content:center; width: 100%; margin-bottom: 10px;">
-				<iframe
-					src="https://drive.google.com/file/d/#{file.getId()}/preview"
-					style="min-width: 680px;" width="50%" height="480" frameBorder="0"
-					allow="autoplay" allowfullscreen="allowfullscreen">
-				</iframe>
-				</aon:div>
 		</ui:repeat>
 	</aon:div>
 
