@@ -1,11 +1,70 @@
-.card{
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-}
+@import 'src/styles.scss';
 
-:host {
-    display: flex;
-    width: var(--widthHost);
-    height: var(--widthHeight);
+::ng-deep{
+  .card{
+    display       : flex;
+    flex-direction: column;
+    box-sizing    : border-box;
+    border        : $border;
+    border-radius : $border-radius;
+  }
+
+/*
+  Card File - DOCUMENTATION
+*/
+  .card.file{
+    min-width     : 7.7rem;
+    max-width     : 7.7rem;
+    min-height    : 7.7rem;
+    max-height    : 7.7rem;
+    padding       : .4rem;
+    cursor        : pointer;
+    gap           : .25rem;
+  }
+  .card.file.select{
+    border: solid $border-size-primary $color-pink;
+  }
+  .card.file.select-view{
+    border          : solid $border-size-primary $color-pink;
+    background-color: $background-button-pink-hover2;
+  }
+  
+  .card.file .card-header{
+    
+  }
+  .card.file .card-header input[type="checkbox"]:checked {
+    box-shadow    : 0 0 0 .1rem $color-pink;
+  }
+  
+  .card.file .card-header .card-menu{
+    float: right;
+  }
+  
+  .card.file .card-body{
+    text-align  : center;
+    padding-top : .4rem;
+  }
+  .card.file .card-body span{
+    width           : 1.2rem;
+    height          : 1.2rem;
+    padding         : .55rem .5rem .7rem .5rem;
+    background-color: $background-button-pink-hover2;
+    border-radius   : $border-radius;
+  }
+  
+  .card.file .card-footer{
+    font-family : Roboto-Medium;
+    text-align  : center;
+    padding-top : .6rem;
+  }
+  .card.file .card-footer .bold{
+    overflow      : hidden;
+    text-overflow : ellipsis;
+  }
+  .card.file .card-footer .griss{
+    font-size: .7rem;
+  }
+/*
+  FIN Card File - DOCUMENTATION
+*/
 }

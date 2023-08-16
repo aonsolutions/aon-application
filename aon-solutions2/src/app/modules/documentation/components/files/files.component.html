@@ -1,9 +1,9 @@
 <app-grid-layout
+>
   [navCols]="5"
   [contentCols]="9"
   [detailCols]="10"
   [showDetail]="detail"
->
 <!-- Bloque submenu izquierda -->
   <div id="documentation-menu" detail class="allSize" nav style="overflow: auto;">
     <mat-grid-list class="nav-documentation" [cols]="24" [rowHeight]="'4.2rem'">
@@ -27,7 +27,7 @@
   <div id="documentation-content" class="allSize" content style="overflow: auto;">
 
     <!-- Subir documentación -->
-    <mat-grid-list class="mt mb" [cols]="24" [rowHeight]="'2.8rem'">
+    <mat-grid-list class="margin-top margin-bottom" [cols]="24" [rowHeight]="'2.8rem'">
       <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
       <mat-grid-tile  [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
         <app-file-upload-button> Subir documentación
@@ -37,7 +37,7 @@
     </mat-grid-list>
 
     <!-- Búsqueda -->
-    <mat-grid-list class="mt mb" [cols]="24" [rowHeight]="''">
+    <mat-grid-list class="margin-top margin-bottom" [cols]="24" [rowHeight]="''">
       <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
       <mat-grid-tile class="" [gridCols]="{xs:8,sm:8,md:8,lg:8,xl:8}">
         <app-input
