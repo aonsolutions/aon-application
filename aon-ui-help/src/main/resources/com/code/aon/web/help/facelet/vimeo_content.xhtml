@@ -5,13 +5,26 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
+	<script>
+		function displayVideo(link) {
+			var container = link.parentElement.querySelector(".ifrmContainer");
+			if (container) {
+				container.style.display = container.style.display === "none" ? "block"
+						: "none";
+			}
+		}
+	</script>
+
 	<aon:div styleClass="box-column list">
 		<ui:repeat value="#{vimeo.videos.orElse(null)}" var="video">
 			<aon:div styleClass="list-item"
-				onclick="window.open('#{video.getLink()}', '_blank');">
+				onclick="displayVideo(this);return;">
 				<aon:outputText value="smart_display"
 					styleClass="icon file material-icons" />
 				<aon:outputText value="#{vimeo.getVideoName(video)}" />
+				<div class="ifrmContainer" style="display: none; justify-content:center; width: 100%; margin-bottom: 10px;">
+					<iframe src="#{vimeo.getVideoLink(video)}" style="min-width:680px;" width="50%" height="480" frameBorder="0" allow="autoplay" allowfullscreen="allowfullscreen"></iframe>
+				</div>
 			</aon:div>
 		</ui:repeat>
 	</aon:div>

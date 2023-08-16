@@ -10,7 +10,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- VIMEO -->
+	<!-- **** VIMEO **** -->
 	<managed-bean>
 		<managed-bean-name>vimeo</managed-bean-name>
 		<managed-bean-class>com.code.aon.web.help.service.vimeo.VimeoService</managed-bean-class>
