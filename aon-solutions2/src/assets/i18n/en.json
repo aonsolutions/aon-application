@@ -6,7 +6,8 @@
       "REQUIRE"         : "is <strong>required</strong>",
       "SELECT"          : "Select an option",
       "SELECT_MULTIPLE" : "Select the options"
-    }
+    },
+    "SEND": "Send"
   },
   "HEADER": {
     "EDIT_PROFILE": "Edit profile",
@@ -43,7 +44,11 @@
     "TASKS": "Tasks",
     "NOTIFICATIONS": "Notifications",
     "THIS_WEEK": "This week",
-    "CREATE": "Create"
+    "CREATE": "Create",
+    "NEW_QUERY": "New query",
+    "SUBJECT": "Subject",
+    "TEXT": "Text",
+    "NO_PENDING_TASKS": "No pending tasks"
   },
   "DOCUMENTATION": {
 

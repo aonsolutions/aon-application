@@ -17,12 +17,12 @@ export class TabsComponent implements OnInit {
 
   constructor() {
   }
-  
+
   ngOnInit(): void {
-    
+
 //    this.styleTabColor = this.tabColor
   }
-  
+
   tabChanged(tabChangeEvent: MatTabChangeEvent): void {
     this.tabIndex = tabChangeEvent.index;
     this.changeTabIndex.emit(tabChangeEvent.index);

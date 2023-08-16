@@ -1,6 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { ModalCreateComponent } from '../../components/inbox/modal-create/modal-create.component';
+import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { ICollection, IMessage } from 'libraries/AonSDK/aon';
+import { CollectionFactory } from '../../../../../../libraries/AonSDK/aon';
+import { BehaviorSubject } from 'rxjs';
+import { ReportingService } from 'src/app/core/services/reporting.service';
+import { MessageService } from 'src/app/core/services/message.service';
 
 export interface Tabs {
   name: string;
@@ -18,11 +22,13 @@ export class InboxviewComponent implements OnInit {
   tabsNotificaciones: Tabs[] = [];
   selectedTab: number = 0;
   tabIndex: number = 0;
-  @ViewChild('modal') modalComponent: any = '';
 
-  functionHome: any = (result:any) => this.afterModalClosed(result);
+  constructor(
+    private translateService: TranslateService,
+    public reportingService: ReportingService,
+    private messageService: MessageService,
+    ) {
 
-  constructor(private translateService: TranslateService) {
     this.translateService.get(
       ['INBOX.ALL', 'INBOX.OPENED', 'INBOX.CLOSED']
     ).subscribe( result => {
@@ -54,14 +60,33 @@ export class InboxviewComponent implements OnInit {
     })
   }
 
+  public collectionFactory = new CollectionFactory();
+
+    //Inbox area
+    messages: ICollection<IMessage> =
+    this.collectionFactory.createMessageCollection();
+  private messagesSubject = new BehaviorSubject<ICollection<IMessage>>(
+    this.collectionFactory.createMessageCollection()
+  );
+  public messages$ = this.messagesSubject.asObservable();
+
   ngOnInit(): void {
+
+    //MessageService
+    this.messageService.getMessageList().then((response) => {
+      this.messages = response;
+      this.messagesSubject.next(this.messages);
+    });
+
   }
 
-  afterModalClosed(result?: any){
-    console.log(result);
+   noTasksMessage: boolean = false;
+
+  showNoTasksMessage(hasNoTasks: boolean) {
+    this.noTasksMessage = hasNoTasks;
   }
 
-  showModal(){
-    this.modalComponent.openDialog(ModalCreateComponent,this.functionHome, 'Data from home');
+  openCreateQueryComponent() {
+    this.selectedTab = 4;
   }
 }

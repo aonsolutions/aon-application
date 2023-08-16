@@ -1,97 +1,223 @@
 <!--SIDENAV-->
+<<<<<<< Updated upstream
 <app-grid-layout>
-<!--<app-grid-layout [navCols]="4" [contentCols]="10" [detailCols]="10" [showDetail]="false">-->
-        <div class="allSize" nav style="overflow: auto;">
-            <app-list-element >
-                <!--CREATE BUTTON-->
-                <div class="contentButton">
-                    <app-button [class]="'red left'" [padding]="'0rem 1rem'"  (click) = "showModal()">
-                        <app-icon shape="add_comment" size="14"></app-icon>
-                        {{ 'INBOX.CREATE' | translate}}
-                        </app-button>
-                        <app-modal-controller #modal></app-modal-controller>
-                    </div>
-                </app-list-element>
-    <app-card
-        [height]="'15rem'">
-        <div body class="allSize " >
-            <app-list-element >
-                <app-button  [width]="'15.5rem'" [height]="'2.8rem'" [color]="'black'" [backgroundColor]="'white'" [hoverBackgroundColor]="'#feedec'"
-                [border]="' #f6655a'"
-                [align]="'left'"
-                [fontSize]="'18px'"
-                (click)="selectedTab = 0">
-                    <app-icon shape="all_inbox" [size]="'1.2rem'" [color]="'#f6655a'"></app-icon>
-                        &nbsp;&nbsp; {{ 'INBOX.INBOX' | translate}}
-                    </app-button>
+  <div nav>
+=======
+<app-grid-layout
+  [navCols]="4"
+  [contentCols]="10"
+  [detailCols]="10"
+  [showDetail]="false"
+>
+  <div class="allSize" nav style="overflow: auto">
+>>>>>>> Stashed changes
+    <app-list-element>
+      <!--CREATE BUTTON-->
+      <div class="contentButton">
+        <app-button
+        *ngIf="selectedTab !== 2 && selectedTab !== 3"
+          [class]="'red left'"
+          [padding]="'0rem 1rem'"
+           (click)="openCreateQueryComponent()"
+        >
+          <app-icon shape="add_comment" size="14"></app-icon>
+          {{ "INBOX.CREATE" | translate }}
+        </app-button>
+      </div>
+    </app-list-element>
+     <div body class="allSize">
+        <app-list-element>
+          <app-button
+            [width]="'15.5rem'"
+            [height]="'2.8rem'"
+            [color]="'black'"
+            [backgroundColor]="'white'"
+            [hoverBackgroundColor]="'#feedec'"
+            [border]="' #f6655a'"
+            [align]="'left'"
+            [fontSize]="'18px'"
+            (click)="selectedTab = 0"
+          >
+            <app-icon
+              shape="all_inbox"
+              [size]="'1.2rem'"
+              [color]="'#f6655a'"
+            ></app-icon>
+            &nbsp;&nbsp; {{ "INBOX.INBOX" | translate }}
+          </app-button>
 
-                <app-button [width]="'15.5rem'" [height]="'2.8rem'" [color]="'black'" [backgroundColor]="'white'" [hoverBackgroundColor]="'#feedec'"
-                    [border]="' #f6655a'"
-                    [align]="'left'"
-                    [fontSize]="'18px'"
-                    (click)="selectedTab = 1">
-                    <app-icon shape="chat" [size]="'1.2rem'" [color]="'#f6655a'"></app-icon>
-                            &nbsp;&nbsp; {{ 'INBOX.QUERIES' | translate}}
-                        </app-button>
+          <app-button
+            [width]="'15.5rem'"
+            [height]="'2.8rem'"
+            [color]="'black'"
+            [backgroundColor]="'white'"
+            [hoverBackgroundColor]="'#feedec'"
+            [border]="' #f6655a'"
+            [align]="'left'"
+            [fontSize]="'18px'"
+            (click)="selectedTab = 1"
+          >
+            <app-icon
+              shape="chat"
+              [size]="'1.2rem'"
+              [color]="'#f6655a'"
+            ></app-icon>
+            &nbsp;&nbsp; {{ "INBOX.QUERIES" | translate }}
+          </app-button>
 
-                    <app-button class = 'create' [width]="'15.5rem'" [height]="'2.8rem'" [color]="'black'" [backgroundColor]="'white'" [hoverBackgroundColor]="'#feedec'"
-                    [border]="' #f6655a'"
-                    [align]="'left'"
-                    [fontSize]="'18px'"
-                    (click)="selectedTab = 2">
-                    <app-icon shape="playlist_add_check" [size]="'1.2rem'" [color]="'#f6655a'"></app-icon>
-                            &nbsp;&nbsp; {{ 'INBOX.TASKS' | translate}}
-                        </app-button>
-                    <app-button [width]="'15.5rem'" [height]="'2.8rem'" [color]="'black'" [backgroundColor]="'white'" [hoverBackgroundColor]="'#feedec'"
-                    [border]="' #f6655a'"
-                    [align]="'left'"
-                    [fontSize]="'18px'"
-                    (click)="selectedTab = 3">
-                    <app-icon shape="notifications_none" [size]="'1.2rem'" [color]="'#f6655a'"></app-icon>
-                            &nbsp;&nbsp; {{ 'INBOX.NOTIFICATIONS' | translate}}
-                        </app-button>
-                </app-list-element>
-            </div>
-        </app-card>
+          <app-button
+            class="create"
+            [width]="'15.5rem'"
+            [height]="'2.8rem'"
+            [color]="'black'"
+            [backgroundColor]="'white'"
+            [hoverBackgroundColor]="'#feedec'"
+            [border]="' #f6655a'"
+            [align]="'left'"
+            [fontSize]="'18px'"
+            (click)="selectedTab = 2"
+          >
+            <app-icon
+              shape="playlist_add_check"
+              [size]="'1.2rem'"
+              [color]="'#f6655a'"
+            ></app-icon>
+            &nbsp;&nbsp; {{ "INBOX.TASKS" | translate }}
+          </app-button>
+          <app-button
+            [width]="'15.5rem'"
+            [height]="'2.8rem'"
+            [color]="'black'"
+            [backgroundColor]="'white'"
+            [hoverBackgroundColor]="'#feedec'"
+            [border]="' #f6655a'"
+            [align]="'left'"
+            [fontSize]="'18px'"
+            (click)="selectedTab = 3"
+          >
+            <app-icon
+              shape="notifications_none"
+              [size]="'1.2rem'"
+              [color]="'#f6655a'"
+            ></app-icon>
+            &nbsp;&nbsp; {{ "INBOX.NOTIFICATIONS" | translate }}
+          </app-button>
+        </app-list-element>
+      </div>
+
+  </div>
+  <!--CONTENIDO INBOX-->
+<<<<<<< Updated upstream
+  <div class="allSize" content>
+=======
+  <div class="allSize" content style="overflow: auto; padding: 1rem">
+>>>>>>> Stashed changes
+    <div style="width: 50%; margin: 1rem" *ngIf="selectedTab !== 4">
+      <app-input
+        [appearance]="'outline'"
+        [appearanceDetail]="''"
+        [class]="'search'"
+        [type]="'search'"
+      ></app-input>
     </div>
-        <!--CONTENIDO INBOX-->
-        <div class="allSize" content style="overflow: auto; padding: 1rem">
-            <div style="width: 50%;margin: 1rem;">
-                <app-input [label]="'search'"></app-input>
-            </div>
-            <ng-container *ngIf="selectedTab == 0">
-                <app-table-component></app-table-component>
-
-            </ng-container>
-            <ng-container *ngIf="selectedTab == 1">
-
-                <app-tabs [tabs]="tabsConsultas" (changeTabIndex)="this.tabIndex = $event" [tabColor]="'#f6655a'" [paddingLeftHeader]="'1rem'">
-                    <div tool><span>{{ 'INBOX.THIS_WEEK' | translate }}</span>&nbsp;&nbsp;<app-icon shape="more_vert" color="black" size="1.2rem"></app-icon></div>
-                    <div content *ngIf="this.tabIndex == 0">Consultas</div>
-                    <div content *ngIf="this.tabIndex == 1">content 2</div>
-                    <div content *ngIf="this.tabIndex == 2">content 3</div>
-
-                </app-tabs>
-            </ng-container>
-
-            <ng-container *ngIf="selectedTab == 2">
-                <app-tabs [tabs]="tabsTareas" (changeTabIndex)="this.tabIndex = $event" [tabColor]="'#f6655a'" [paddingLeftHeader]="'1rem'">
-                    <div tool><span>{{ 'INBOX.THIS_WEEK' | translate }}</span>&nbsp;&nbsp;<app-icon shape="more_vert" color="black" size="1.2rem"></app-icon></div>
-                    <div content *ngIf="this.tabIndex == 0">content 1</div>
-                    <div content *ngIf="this.tabIndex == 1">content 2</div>
-                    <div content *ngIf="this.tabIndex == 2">content 3</div>
-                </app-tabs>
-            </ng-container>
-            <ng-container *ngIf="selectedTab == 3">
-                <div class="tabContent">
-                    <app-tabs [tabs]="tabsNotificaciones" (changeTabIndex)="this.tabIndex = $event" [tabColor]="'#f6655a'" [paddingLeftHeader]="'1rem'">
-                        <div tool><span>{{ 'INBOX.THIS_WEEK' | translate }}</span>&nbsp;&nbsp;<app-icon shape="more_vert" color="black" size="1.2rem"></app-icon></div>
-                        <div content *ngIf="this.tabIndex == 0">content 1</div>
-                        <div content *ngIf="this.tabIndex == 1">content 2</div>
-                        <div content *ngIf="this.tabIndex == 2">content 3</div>
-                    </app-tabs>
-                </div>
-
-            </ng-container>
+    <ng-container *ngIf="selectedTab == 0">
+      <app-table-component></app-table-component>
+    </ng-container>
+    <ng-container *ngIf="selectedTab == 1">
+      <app-tabs
+        [tabs]="tabsConsultas"
+        (changeTabIndex)="this.tabIndex = $event"
+        [tabColor]="'#f6655a'"
+        [paddingLeftHeader]="'1rem'"
+      >
+        <div tool>
+          <span>{{ "INBOX.THIS_WEEK" | translate }}</span
+          >&nbsp;&nbsp;<app-icon
+            shape="more_vert"
+            color="black"
+            size="1.2rem"
+          ></app-icon>
         </div>
+        <div content *ngIf="this.tabIndex == 0">
+          <app-table-queries
+            [filterStatus]="['abierta', 'cerrada']"
+          ></app-table-queries>
+        </div>
+        <div content *ngIf="this.tabIndex == 1">
+          <app-table-queries [filterStatus]="['abierta']"></app-table-queries>
+        </div>
+        <div content *ngIf="this.tabIndex == 2">
+          <app-table-queries [filterStatus]="['cerrada']"></app-table-queries>
+        </div>
+      </app-tabs>
+    </ng-container>
+
+    <ng-container *ngIf="selectedTab == 2">
+      <app-tabs
+        [tabs]="tabsTareas"
+        (changeTabIndex)="this.tabIndex = $event"
+        [tabColor]="'#f6655a'"
+        [paddingLeftHeader]="'1rem'"
+      >
+        <div tool>
+          <span>{{ "INBOX.THIS_WEEK" | translate }}</span
+          >&nbsp;&nbsp;<app-icon
+            shape="more_vert"
+            color="black"
+            size="1.2rem"
+          ></app-icon>
+        </div>
+        <div content *ngIf="this.tabIndex == 0">
+          <app-table-tasks
+            [filterStatus]="['realizada', 'pendiente']"
+            (noPendingTasks)="showNoTasksMessage($event)"
+          ></app-table-tasks>
+          <ng-template #noTasks *ngIf="noTasksMessage"
+            >{{ "INBOX.NO_PENDING_TASKS" | translate }}</ng-template
+          >
+        </div>
+        <div content *ngIf="this.tabIndex == 1">
+          <app-table-tasks [filterStatus]="['pendiente']"></app-table-tasks>
+        </div>
+        <div content *ngIf="this.tabIndex == 2">
+          <app-table-tasks [filterStatus]="['realizada']"></app-table-tasks>
+        </div>
+      </app-tabs>
+    </ng-container>
+    <ng-container *ngIf="selectedTab == 3">
+      <div class="tabContent">
+        <app-tabs
+          [tabs]="tabsNotificaciones"
+          (changeTabIndex)="this.tabIndex = $event"
+          [tabColor]="'#f6655a'"
+          [paddingLeftHeader]="'1rem'"
+        >
+          <div tool>
+            <span>{{ "INBOX.THIS_WEEK" | translate }}</span
+            >&nbsp;&nbsp;<app-icon
+              shape="more_vert"
+              color="black"
+              size="1.2rem"
+            ></app-icon>
+          </div>
+          <div content *ngIf="this.tabIndex == 0">
+            <app-table-notifications
+              [filterStatus]="['nueva', 'vista']"
+            ></app-table-notifications>
+          </div>
+          <div content *ngIf="this.tabIndex == 1">
+            <app-table-notifications
+              [filterStatus]="['nueva']"
+            ></app-table-notifications>
+          </div>
+          <div content *ngIf="this.tabIndex == 2">
+            <app-table-notifications
+              [filterStatus]="['vista']"
+            ></app-table-notifications>
+          </div>
+        </app-tabs>
+      </div>
+    </ng-container>
+    <app-create-query *ngIf="selectedTab === 4"></app-create-query>
+  </div>
 </app-grid-layout>
