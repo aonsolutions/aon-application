@@ -34,8 +34,8 @@
     overflow    : hidden;
     visibility  : hidden;
   }
-  #tabs-header .mat-tab-list .mat-tab-label .mat-tab-label-active .tab-name{
-    font-family : Roboto-Medium;
+  #tabs-header .mat-tab-list .mat-tab-label.mat-tab-label-active .tab-name{
+    font-family : Roboto-Medium !important;
   }
 
   #tabs-header #tabs-tool{

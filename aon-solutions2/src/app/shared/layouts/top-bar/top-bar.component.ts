@@ -24,7 +24,7 @@ export class Enterprise {
 })
 
 export class TopBarComponent implements OnInit, OnChanges {
-  @ViewChild('first') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;  
+  @ViewChild('first') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
   menuItem        : MenuItem [] = []
   displayHomeIcon : boolean     = false;
   usserLoggged    : boolean     = this.auth.isLoggedIn();

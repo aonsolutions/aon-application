@@ -267,7 +267,7 @@
         }
 
   //
-  // buton icon with background
+  // buton icon width background
   //
     .appButton.icon-background,
     .appButton.icon-background-red,
@@ -306,7 +306,7 @@
       width           : 1.2;
       height          : 1.2;
       align-items     : right;
-      background-color: $background-button-primary;
+      background-color: transparent;
       margin          : 0
     }
 
@@ -423,10 +423,22 @@
     .appButton.icon-only set-icon{
       margin-right    : 0;
     }
-
+    
+  //
+  // Buton only icon border
+  //
+    .appButton.icon-border{
+      justify-content : center;
+      width           : 2rem!important;
+      height          : 2rem!important;
+    }
+    .appButton.icon-border set-icon{
+      margin-right    : 0;
+    }
+    
   :host {
-    display: flex;
-    width: var(--widthHost);
-    height: var(--heightHost);
+    display : flex;
+    width   : var(--widthHost);
+    height  : var(--heightHost);
   }
 }
