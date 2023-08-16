@@ -65,7 +65,8 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 	private static enum COLS {
 		  NUM(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
 		, SEL(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
-		, DES(AON.MSG.alias()						,"auto"  ,null)
+		, ALI("Alias"								,"auto"  ,null)
+		, DES(AON.MSG.description()					,"auto"  ,null)
 		, TYP(AON.MSG.type()						,"180px" ,null)
 		, BUT(AonStringUtils.EMPTY					,"20px"  ,null)
 		;
@@ -248,6 +249,9 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		tab.setWidget(r, col, new Label(question.getAlias()));
 		col++;
 		
+		tab.setWidget(r, col, new Label(question.getText()));
+		col++;
+		
 		tab.setWidget(r, col, new Label(question.getType().description()));
 		col++;
 
@@ -259,6 +263,7 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		sel.setStyleName(AON.CSS.aonTabIcon());
 		sel.addStyleName(AON.CSS.aonIconRight());
 		TextBox aliasBox = new TextBox();
+		TextBox textBox = new TextBox();
 		Label typeBox = new Label();
 		
 		ValueChangeHandler<String> valueChangeHandlerString = new ValueChangeHandler<String>() {
@@ -266,6 +271,7 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				question.setAlias(aliasBox.getValue());
+				question.setText(textBox.getValue());
 				
 				save(question, msg);
 			}
@@ -298,6 +304,7 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		});
 		
 		aliasBox.addValueChangeHandler(valueChangeHandlerString);
+		textBox.addValueChangeHandler(valueChangeHandlerString);
 		
 		msg.setStyleName(AON.CSS.aonTabIcon());
 		tab.setWidget(r, col, msg);
@@ -311,6 +318,12 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		aliasBox.setMaxLength(128);
 		aliasBox.setValue(question.getAlias());
 		tab.setWidget(r, col, aliasBox);
+		col++;
+		
+		textBox.setStyleName(AON.CSS.aonBorderNone());
+		textBox.addStyleName(AON.CSS.aonWidthAll());
+		textBox.setValue(question.getText());
+		tab.setWidget(r, col, textBox);
 		col++;
 
 		typeBox.setStyleName(AON.CSS.aonBorderNone());
@@ -327,11 +340,36 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		if(question.hasSurvey()) {
 			button = new AonTableButton("", AON.CSS.aonIconInfo());
 			button.addClickHandler(e -> {
-				String message = "Esta pregunta pertenece a una o mas encuestas y no se puede borrar por que esta vinculada.<br> Estas son las encuestas donde aparece esta pregunta:<br>";
+				String message = "Esta pregunta pertenece a una o mas encuestas y no se puede borrar por que esta vinculada.<br> Estas son las encuestas donde aparece esta pregunta:<br><br>";
 				for(String surveyDesc : question.getSurveyDescriptions()) message += "<b>" + surveyDesc + "</b><br>";
 				
 				AonDialog dialog = new AonDialog("Informaci\u00f3n Pregunta", new HTML(message));
 				dialog.info();
+			});
+			
+		} else if(question.hasRprofile()) {
+			button = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDeleteForever());
+			button.addClickHandler( new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					button.setEnabled(false);
+					AonDialog dialog = new AonDialog("Eliminaci\u00f3n Pregunta",
+							new HTML("Se va a proceder a eliminar la pregunta <b>" + question.getAlias() + "</b> Esta pregunta esta relacionada con el perfil de " + question.getRprofileNames().size() + " cliente(s).<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f <i>(se eliminara la relacion con el cliente)</i>. Este proceso ser\u00e1 irreversible"));
+					
+					dialog.confirm(new AonAcceptDialogCallback() {
+
+						@Override
+						public void onCancel() {
+							button.setEnabled(true);
+						}
+
+						@Override
+						public void onAccept() {
+							delete(question);
+						}
+					});
+				}
 			});
 			
 		} else {
