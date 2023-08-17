@@ -34,6 +34,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -67,6 +68,7 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		, SEL(AonStringUtils.EMPTY					,"20px"  ,AON.CSS.aonTextCenter())
 		, ALI("Alias"								,"auto"  ,null)
 		, DES(AON.MSG.description()					,"auto"  ,null)
+		, ACT("Activa"								,"180px" ,null)
 		, TYP(AON.MSG.type()						,"180px" ,null)
 		, BUT(AonStringUtils.EMPTY					,"20px"  ,null)
 		;
@@ -251,6 +253,12 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		
 		tab.setWidget(r, col, new Label(question.getText()));
 		col++;
+	
+		Button activeBtn = new Button();
+		getEnableDisableButton(activeBtn, question.isActive());
+		activeBtn.setEnabled(false);
+		tab.setWidget(r, col, activeBtn);
+		col++;
 		
 		tab.setWidget(r, col, new Label(question.getType().description()));
 		col++;
@@ -264,6 +272,7 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		sel.addStyleName(AON.CSS.aonIconRight());
 		TextBox aliasBox = new TextBox();
 		TextBox textBox = new TextBox();
+		Button activeBtn = new Button();
 		Label typeBox = new Label();
 		
 		ValueChangeHandler<String> valueChangeHandlerString = new ValueChangeHandler<String>() {
@@ -272,6 +281,9 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 			public void onValueChange(ValueChangeEvent<String> event) {
 				question.setAlias(aliasBox.getValue());
 				question.setText(textBox.getValue());
+				
+				boolean currentActive = isActiveToggleButton(activeBtn);
+				question.setActive(currentActive);
 				
 				save(question, msg);
 			}
@@ -306,6 +318,17 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		aliasBox.addValueChangeHandler(valueChangeHandlerString);
 		textBox.addValueChangeHandler(valueChangeHandlerString);
 		
+		activeBtn.addClickHandler(e -> {
+			boolean currentActive = isActiveToggleButton(activeBtn);
+			getEnableDisableButton(activeBtn, !currentActive);
+			
+			question.setAlias(aliasBox.getValue());
+			question.setText(textBox.getValue());
+			question.setActive(!currentActive);
+			
+			save(question, msg);
+		});
+		
 		msg.setStyleName(AON.CSS.aonTabIcon());
 		tab.setWidget(r, col, msg);
 		col++;
@@ -324,6 +347,10 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		textBox.addStyleName(AON.CSS.aonWidthAll());
 		textBox.setValue(question.getText());
 		tab.setWidget(r, col, textBox);
+		col++;
+		
+		getEnableDisableButton(activeBtn, question.isActive());
+		tab.setWidget(r, col, activeBtn);
 		col++;
 
 		typeBox.setStyleName(AON.CSS.aonBorderNone());
@@ -348,14 +375,16 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 			});
 			
 		} else if(question.hasRprofile()) {
-			button = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDeleteForever());
+			button = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDeleteList());
 			button.addClickHandler( new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
 					button.setEnabled(false);
+					String message = "Se va a proceder a eliminar la pregunta <b>" + question.getAlias() + "</b> Esta pregunta esta relacionada con el perfil de " + question.getRprofileNames().size() + " cliente(s).<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f <i>(se eliminara la relacion con el cliente)</i>. Este proceso ser\u00e1 irreversible.<br><br>";
+					for(String registryName : question.getRprofileNames()) message += "<b>" + registryName + "</b><br>";
 					AonDialog dialog = new AonDialog("Eliminaci\u00f3n Pregunta",
-							new HTML("Se va a proceder a eliminar la pregunta <b>" + question.getAlias() + "</b> Esta pregunta esta relacionada con el perfil de " + question.getRprofileNames().size() + " cliente(s).<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f <i>(se eliminara la relacion con el cliente)</i>. Este proceso ser\u00e1 irreversible"));
+							new HTML(message));
 					
 					dialog.confirm(new AonAcceptDialogCallback() {
 
@@ -401,6 +430,20 @@ public class QuestionPanel extends ScrollPanel implements HasSelectionHandlers<Q
 		buttonContainer.add(button);
 		tab.setWidget(r, col, buttonContainer);
 		col++;
+	}
+	
+	private void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+	}
+	
+	private boolean isActiveToggleButton(Button button) {
+		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
 	}
 	
 	private void getList(Consumer<List<Question>> success) {
