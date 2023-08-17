@@ -4,7 +4,6 @@
   [tabColor]="'orange'"
   [paddingLeftHeader]="'1rem'"
 >
-
   <div tool>
     <div class="input-profile-company">
       <app-button [class]="'dark'" [width]="'100%'"> Guardar </app-button>
@@ -12,81 +11,77 @@
     </div>
   </div>
 
+  <div content *ngIf="this.tabIndex == 0">
+    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
+      <mat-grid-tile
+        class="position-top-col"
+        [gridCols]="{ xs: 8, sm: 8, md: 8, lg: 8, xl: 8 }"
+      >
+        <app-input-profile-personal-data></app-input-profile-personal-data>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
 
-<div content *ngIf="this.tabIndex == 0">
-  <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
-    <mat-grid-tile
-      [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-    ></mat-grid-tile>
-    <mat-grid-tile
-      class="position-top-col"
-      [gridCols]="{ xs: 8, sm: 8, md: 8, lg: 8, xl: 8 }"
-    >
- <app-input-profile-personal-data></app-input-profile-personal-data>
-    </mat-grid-tile>
-  </mat-grid-list>
-</div>
+  <div content *ngIf="this.tabIndex == 1">
+    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
+      <mat-grid-tile
+        class="position-top-col"
+        [gridCols]="{ xs: 11, sm: 11, md: 11, lg: 11, xl: 11 }"
+      >
 
-
-<div content *ngIf="this.tabIndex == 1">
-  <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
-    <mat-grid-tile
-      [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-    ></mat-grid-tile>
-    <mat-grid-tile
-      class="position-top-col"
-      [gridCols]="{ xs: 11, sm: 11, md: 11, lg: 11, xl: 11 }"
-    >
-    <div class="input-profile-company">
-    <app-input-profile-company-data></app-input-profile-company-data>
-    </div>
-  </mat-grid-tile>
-
-    <mat-grid-tile
-    class="position-top-col"
-    [gridCols]="{ xs: 11, sm: 11, md: 11, lg: 11, xl: 11 }"
-  >
-  <app-input-profile-company-data></app-input-profile-company-data>
-  </mat-grid-tile>
-  </mat-grid-list>
-</div>
-
-
-<div content *ngIf="this.tabIndex == 2">
-  <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
-    <mat-grid-tile
-      [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-    ></mat-grid-tile>
-    <mat-grid-tile
-      class="position-top-col"
-      [gridCols]="{ xs: 10, sm: 10, md: 10, lg: 10, xl: 10 }"
-    >
-    <app-input-profile-registry-data></app-input-profile-registry-data>
+      <app-input-profile-company-information></app-input-profile-company-information>
 
     </mat-grid-tile>
-  </mat-grid-list>
-</div>
 
-<div content *ngIf="this.tabIndex == 3">
-  <mat-grid-list class="upload" [cols]="24"  [rowHeight]="'2.8rem'">
-    <mat-grid-tile
-      [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-    ></mat-grid-tile>
-    <mat-grid-tile
-      class="position-top-col"
-      [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
-    >
-    <app-file-upload-button>
-      Sube tu certificado digital
-       <app-icon
-         shape="cloud_upload"
-         style="margin-left: 15px"
-         set-color
-         color="black"
-         size="24"
-       ></app-icon>
-     </app-file-upload-button>
-    </mat-grid-tile>
-  </mat-grid-list>
-</div>
+      <mat-grid-tile
+        class="position-top-col"
+        [gridCols]="{ xs: 11, sm: 11, md: 11, lg: 11, xl: 11 }"
+      >
+        <app-input-profile-company-data></app-input-profile-company-data>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+
+  <div content *ngIf="this.tabIndex == 2">
+    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
+      <mat-grid-tile
+        class="position-top-col"
+        [gridCols]="{ xs: 10, sm: 10, md: 10, lg: 10, xl: 10 }"
+      >
+        <app-input-profile-registry-data></app-input-profile-registry-data>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+
+  <div content *ngIf="this.tabIndex == 3">
+    <mat-grid-list class="upload" [cols]="24" [rowHeight]="'2.8rem'">
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
+      <mat-grid-tile
+        class="position-top-col"
+        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
+      >
+        <app-file-upload-button>
+          Sube tu certificado digital
+          <app-icon
+            shape="cloud_upload"
+            style="margin-left: 15px"
+            set-color
+            color="black"
+            size="24"
+          ></app-icon>
+        </app-file-upload-button>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
 </app-tabs>

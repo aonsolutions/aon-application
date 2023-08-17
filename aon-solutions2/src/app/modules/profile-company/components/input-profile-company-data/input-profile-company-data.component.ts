@@ -6,10 +6,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./input-profile-company-data.component.scss']
 })
 export class InputProfileCompanyDataComponent implements OnInit {
+  emailFields: string[] = [];
 
+  addEmailField() {
+    this.emailFields.push(''); // Agrega un nuevo campo vacío a la lista
+  }
   constructor() { }
 
   ngOnInit() {
+    this.emailFields = ['', ''];
   }
 
 }

@@ -1,0 +1,51 @@
+<p class="input-profile-company-title">Información general</p>
+<mat-divider class="divider"></mat-divider>
+
+<div class="prueba">
+  <app-file-upload-button>
+    <app-icon
+      shape="cloud_upload"
+      style="margin-left: 15px"
+      set-color
+      color="black"
+      size="24"
+    ></app-icon>
+    Haz click para subir o arrastra y suelta
+  </app-file-upload-button>
+</div>
+
+<div class="input-company-information">
+  <app-input
+    [type]="'text'"
+    [label]="'Nombre comercial / alias'"
+    [placeholder]="'Placeholder'"
+  >
+  </app-input>
+  <app-input
+    [type]="'text'"
+    [label]="'Dirección'"
+    [placeholder]="'Placeholder'"
+  >
+  </app-input>
+</div>
+<div class="input-company-information">
+  <app-input [type]="'text'" [label]="'País'" [placeholder]="'Placeholder'">
+  </app-input>
+  <app-input
+    [type]="'text'"
+    [label]="'Provincia'"
+    [placeholder]="'Placeholder'"
+  >
+  </app-input>
+</div>
+
+<div class="input-company-information">
+  <app-input
+    [type]="'text'"
+    [label]="'Razón Social'"
+    [placeholder]="'Placeholder'"
+  >
+  </app-input>
+  <app-input [type]="'text'" [label]="'NIF'" [placeholder]="'Placeholder'">
+  </app-input>
+</div>

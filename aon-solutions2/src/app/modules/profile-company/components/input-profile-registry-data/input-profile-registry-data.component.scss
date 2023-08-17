@@ -10,14 +10,25 @@
 .input-profile-registry {
   display: flex;
   justify-content: center;
-  margin-top: 1rem;
+  margin-top:  $margin-top;
   gap: 1rem;
 }
 
 .input-profile-registry-date {
   display: flex;
-  margin-top: 1rem;
+  margin-top:  $margin-top;
   font-size: 0.7rem;
   white-space: nowrap;
+
+
 }
 
+.input-profile-registry-date-title {
+  margin-right:   $margin-right;
+}
+
+.input-profile-registry-form{
+  display: flex;
+  margin-right:  $margin-right;
+  padding-left:  $padding-left;
+}

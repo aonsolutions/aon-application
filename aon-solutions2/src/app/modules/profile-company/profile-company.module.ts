@@ -14,6 +14,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { InputProfilePersonalDataComponent } from './components/input-profile-personal-data/input-profile-personal-data.component';
 import { InputProfileRegistryDataComponent } from './components/input-profile-registry-data/input-profile-registry-data.component';
 import { InputProfileCompanyDataComponent } from './components/input-profile-company-data/input-profile-company-data.component';
+import { InputProfileCompanyInformationComponent } from './components/input-profile-company-information/input-profile-company-information.component';
 
 
 
@@ -23,7 +24,8 @@ import { InputProfileCompanyDataComponent } from './components/input-profile-com
     TabsProfileCompanyComponent,
     InputProfilePersonalDataComponent,
     InputProfileRegistryDataComponent,
-    InputProfileCompanyDataComponent
+    InputProfileCompanyDataComponent,
+    InputProfileCompanyInformationComponent
   ],
   imports: [
     CommonModule,

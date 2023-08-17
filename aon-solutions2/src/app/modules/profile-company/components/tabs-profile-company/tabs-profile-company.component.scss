@@ -1,5 +1,6 @@
 @import "src/styles.scss";
 
+
 :host {
   height: 100%;
   width: 100%;
@@ -14,4 +15,9 @@
 .upload {
   margin-top: 3rem;
 
+}
+
+.prueba{
+display: flex;
+flex-direction: column;
 }

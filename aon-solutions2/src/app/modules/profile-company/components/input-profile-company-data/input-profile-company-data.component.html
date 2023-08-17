@@ -1,16 +1,17 @@
-Datos contacto
+<p class="input-profile-company-title">Datos contacto</p>
+<mat-divider class="divider"></mat-divider>
 
-<div class="input-profile-contact-data">
+<div class="input-profile-contact">
   <app-input
+    *ngFor="let email of emailFields; let i = index"
     [type]="'text'"
-    [label]="'Email 1'"
+    [label]="'Email ' + (i + 1)"
     [placeholder]="'Placeholder'"
+    [value]="emailFields[i]"
   ></app-input>
-  <app-input
-    [type]="'text'"
-    [label]="'Email 2'"
-    [placeholder]="'Placeholder'"
-  ></app-input>
+  <div class="input-profile-contact-data-add">
+    <app-icon [shape]="'add_box'" (click)="addEmailField()"></app-icon>
+  </div>
 </div>
 
 <div class="input-profile-contact-data">

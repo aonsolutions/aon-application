@@ -1,11 +1,10 @@
 @import "src/styles.scss";
 
-.input-profile-contact-data {
+.input-profile-contact {
   display: flex;
   justify-content: center;
-  margin-top: 3rem;
+  margin-top: $margin-top;
   gap: 1rem;
-
 }
 
 .input-profile-company {
@@ -18,3 +17,34 @@
   justify-content: center;
   align-items: center;
 }
+
+.row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px; /* Espacio entre las filas */
+}
+
+.input-profile-company-title {
+  font-family: "Roboto-Medium";
+  margin-top: 3rem;
+}
+
+.divider {
+  width: 100%;
+}
+
+.input-profile-contact-data-add {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.input-profile-contact-data {
+  display: flex;
+  justify-content: center;
+  margin-top: $margin-top;
+  gap: 1rem;
+  margin-right: 2rem;
+}
+
+// margin-top:   $margin-top ;
