@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionValue;
 import com.esferalia.aon.occam.api.model.registry.QuestionType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -23,7 +24,6 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -57,7 +57,7 @@ public abstract class AonQuestionPanel extends SimplePanel {
 	private TextBox questionText = new TextBox();
 	private TextArea argumentText = new TextArea();
 	private ListBox type = new ListBox();
-	private CheckBox active = new CheckBox();
+	private Button active = new Button();
 	
 	private FlowPanel valuesPanel = new FlowPanel();
 	private ScrollPanel valuesTableScroll = new ScrollPanel();
@@ -88,11 +88,10 @@ public abstract class AonQuestionPanel extends SimplePanel {
 	
 	public void show(final String domainName,final int domain, final String user,final Question question, final AonQuestionPanelCallback callback) {
 		setWidth("650px");
-		setHeight("480px");
+		getElement().getStyle().setProperty("padding", "1rem 0");
 		
 		FlowPanel rootPanel = new FlowPanel();
 		rootPanel.setStyleName(AON.CSS.aonFlexColumnBetween());
-		rootPanel.setHeight("95%");
 		
 		final AonErrorPanel errorPanel = new AonErrorPanel();
 		errorPanel.addStyleName(AON.CSS.aonMarginTop());
@@ -167,7 +166,8 @@ public abstract class AonQuestionPanel extends SimplePanel {
 		table.setWidget(4,0,new InlineLabel("Activo"));
 		table.getCellFormatter().setStyleName(4, 0, AON.CSS.aonTableLabel());
 		table.getCellFormatter().getElement(4, 0).setPropertyString("min-width", "135px");
-		active.setValue(question.isActive());
+		getEnableDisableButton(active, question.isActive());
+		active.addClickHandler(e -> getEnableDisableButton(active, !isActiveToggleButton(active)));
 		table.setWidget(4,1,active);
 		
 		tablePanel.add( table );
@@ -194,7 +194,7 @@ public abstract class AonQuestionPanel extends SimplePanel {
 			public void onClick(ClickEvent event) {
 				okButton.setEnabled(false);
 				
-				question.setActive(active.getValue());
+				question.setActive(isActiveToggleButton(active));
 				question.setText(questionText.getValue());
 				question.setType(QuestionType.safeValueOf(Integer.parseInt(type.getSelectedValue())));
 				question.setArgument(argumentText.getValue());
@@ -202,7 +202,7 @@ public abstract class AonQuestionPanel extends SimplePanel {
 				
 				if (question.getId() == null) {
 					question.setDomain(domain);
-					question.setActive(active.getValue());
+					question.setActive(isActiveToggleButton(active));
 					question.setType(QuestionType.safeValueOf(Integer.parseInt(type.getSelectedValue())));
 					question.setText(questionText.getValue());
 				}
@@ -258,13 +258,16 @@ public abstract class AonQuestionPanel extends SimplePanel {
 		valuesPanel.add(valuesLabel);
 		
 		valuesTableScroll.clear();
-		valuesTableScroll.setHeight("180px");
+		valuesTableScroll.getElement().getStyle().setProperty("max-height", "180px");
 		
 		valuesTable = new FlexTable();
 		valuesTable.setStyleName(AON.CSS.aonTable());
 		valuesTable.addStyleName(AON.CSS.aonWidthAll());
 		
-		if(!QuestionType.safeValueOf(Integer.parseInt(type.getSelectedValue())).equals(QuestionType.INFO)) {
+		if(QuestionType.safeValueOf(Integer.parseInt(type.getSelectedValue())).equals(QuestionType.BOOLEAN)) {
+			question.addValue(new QuestionValue().setDomain(domain).setQuestion(question).setValueNumber((double)0));
+			question.addValue(new QuestionValue().setDomain(domain).setQuestion(question).setValueNumber((double)1));
+		} else if(!QuestionType.safeValueOf(Integer.parseInt(type.getSelectedValue())).equals(QuestionType.INFO)) {
 			
 			InlineLabel line = new InlineLabel("");
 			line.setStyleName(AON.CSS.aonLine());
@@ -305,13 +308,13 @@ public abstract class AonQuestionPanel extends SimplePanel {
 					valuesTable.setWidget(row, 0, valueDate);
 					valuesTable.setWidget(row, 1, createDeleteButton(domain, question, questionValue));
 					break;
-				case BOOLEAN:
-					CheckBox valueBoolean = new CheckBox();
-					valueBoolean.setValue(null != questionValue.getValueNumber() && questionValue.getValueNumber() == 1);
-					valueBoolean.addValueChangeHandler(e -> questionValue.setValueNumber(e.getValue() ? (double) 1 : 0));
-					valuesTable.setWidget(row, 0, valueBoolean);
-					valuesTable.setWidget(row, 1, createDeleteButton(domain, question, questionValue));
-					break;
+//				case BOOLEAN:
+//					CheckBox valueBoolean = new CheckBox();
+//					valueBoolean.setValue(null != questionValue.getValueNumber() && questionValue.getValueNumber() == 1);
+//					valueBoolean.addValueChangeHandler(e -> questionValue.setValueNumber(e.getValue() ? (double) 1 : 0));
+//					valuesTable.setWidget(row, 0, valueBoolean);
+//					valuesTable.setWidget(row, 1, createDeleteButton(domain, question, questionValue));
+//					break;
 				default:
 					break;
 				}
@@ -328,6 +331,20 @@ public abstract class AonQuestionPanel extends SimplePanel {
 		valuesPanel.add(valuesTableScroll);
 		
 		return valuesPanel;
+	}
+	
+	private void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+	}
+	
+	private boolean isActiveToggleButton(Button button) {
+		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
 	}
 	
 	private AonTableButton createDeleteButton(int domain, Question question, QuestionValue questionValue) {
