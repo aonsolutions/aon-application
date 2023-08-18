@@ -114,10 +114,4 @@ export class TableComponentComponent implements OnInit {
     }
   }
 
-  modalClick(object: any) {
-    console.log(object);
-    console.log(object.keyButton);
-
-    this.messageService.getMessage(object.key).then((response) => {});
-  }
 }

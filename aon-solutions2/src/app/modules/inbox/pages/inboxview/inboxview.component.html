@@ -75,26 +75,23 @@
       <app-tabs
         [tabs]="tabsConsultas"
         (changeTabIndex)="this.tabIndex = $event"
-        [tabColor]="'#f6655a'"
         [paddingLeftHeader]="'1rem'"
       >
         <div tool>
-          <span>{{ "INBOX.THIS_WEEK" | translate }}</span
-          >&nbsp;&nbsp;<app-icon
+          <span>{{ "INBOX.THIS_WEEK" | translate }}</span>
+          <app-icon
             shape="more_vert"
-            color="black"
-            size="1.2rem"
           ></app-icon>
         </div>
-        <div content *ngIf="this.tabIndex == 0">
+        <div content class="padding" *ngIf="this.tabIndex == 0">
           <app-table-queries
             [filterStatus]="['abierta', 'cerrada']"
           ></app-table-queries>
         </div>
-        <div content *ngIf="this.tabIndex == 1">
+        <div content class="padding" *ngIf="this.tabIndex == 1">
           <app-table-queries [filterStatus]="['abierta']"></app-table-queries>
         </div>
-        <div content *ngIf="this.tabIndex == 2">
+        <div content class="padding" *ngIf="this.tabIndex == 2">
           <app-table-queries [filterStatus]="['cerrada']"></app-table-queries>
         </div>
       </app-tabs>
@@ -104,18 +101,15 @@
       <app-tabs
         [tabs]="tabsTareas"
         (changeTabIndex)="this.tabIndex = $event"
-        [tabColor]="'#f6655a'"
         [paddingLeftHeader]="'1rem'"
       >
         <div tool>
-          <span>{{ "INBOX.THIS_WEEK" | translate }}</span
-          >&nbsp;&nbsp;<app-icon
+          <span>{{ "INBOX.THIS_WEEK" | translate }}</span>
+         <app-icon
             shape="more_vert"
-            color="black"
-            size="1.2rem"
           ></app-icon>
         </div>
-        <div content *ngIf="this.tabIndex == 0">
+        <div content class="padding" *ngIf="this.tabIndex == 0">
           <app-table-tasks
             [filterStatus]="['realizada', 'pendiente']"
             (noPendingTasks)="showNoTasksMessage($event)"
@@ -124,50 +118,50 @@
             >{{ "INBOX.NO_PENDING_TASKS" | translate }}</ng-template
           >
         </div>
-        <div content *ngIf="this.tabIndex == 1">
+        <div content class="padding" *ngIf="this.tabIndex == 1">
           <app-table-tasks [filterStatus]="['pendiente']"></app-table-tasks>
         </div>
-        <div content *ngIf="this.tabIndex == 2">
+        <div content class="padding" *ngIf="this.tabIndex == 2">
           <app-table-tasks [filterStatus]="['realizada']"></app-table-tasks>
         </div>
       </app-tabs>
     </ng-container>
     <ng-container *ngIf="selectedTab == 3">
-      <div class="tabContent">
-        <app-tabs
-          [tabs]="tabsNotificaciones"
-          (changeTabIndex)="this.tabIndex = $event"
-        >
-          <div tool>
-            <span>{{ "INBOX.THIS_WEEK" | translate }}</span
-            >&nbsp;&nbsp;<app-icon
-              shape="more_vert"
-            ></app-icon>
-          </div>
-          <div content *ngIf="this.tabIndex == 0">
-            <app-table-notifications
-              [filterStatus]="['nueva', 'vista']"
-            ></app-table-notifications>
-          </div>
-          <div content *ngIf="this.tabIndex == 1">
-            <app-table-notifications
-              [filterStatus]="['nueva']"
-            ></app-table-notifications>
-          </div>
-          <div content *ngIf="this.tabIndex == 2">
-            <app-table-notifications
-              [filterStatus]="['vista']"
-            ></app-table-notifications>
-          </div>
-        </app-tabs>
-      </div>
+      <app-tabs
+        [tabs]="tabsNotificaciones"
+        (changeTabIndex)="this.tabIndex = $event"
+        [paddingLeftHeader]="'1rem'"
+      >
+        <div tool>
+          <span class="margin-right">{{ "INBOX.THIS_WEEK" | translate }}</span>
+          <app-icon
+            shape="more_vert"
+          ></app-icon>
+        </div>
+        <div content class="padding" *ngIf="this.tabIndex == 0">
+          <app-table-notifications
+            [filterStatus]="['nueva', 'vista']"
+          ></app-table-notifications>
+        </div>
+        <div content class="padding" *ngIf="this.tabIndex == 1">
+           <app-table-notifications
+            [filterStatus]="['nueva']"
+          ></app-table-notifications>
+        </div>
+        <div content class="padding" *ngIf="this.tabIndex == 2">
+          <app-table-notifications
+            [filterStatus]="['vista']"
+          ></app-table-notifications>
+        </div>
+      </app-tabs>
     </ng-container>
     <app-create-query *ngIf="selectedTab === 4"></app-create-query>
   </div>
+
 <!--FIN CONTENIDO-->
 <!--Detail-->
-  <div detail *ngIf="showDetail">
+<div detail *ngIf="showDetail">
 
-  </div>
+</div>
 <!--FIN Detail-->
 </app-grid-layout>

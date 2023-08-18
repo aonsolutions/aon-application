@@ -15,6 +15,7 @@ import { TableQueriesComponent } from './components/inbox/table-queries/table-qu
 import { TableTasksComponent } from './components/inbox/table-tasks/table-tasks.component';
 import { TableNotificationsComponent } from './components/inbox/table-notifications/table-notifications.component';
 import { CreateQueryComponent } from './components/inbox/create-query/create-query.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
     declarations: [

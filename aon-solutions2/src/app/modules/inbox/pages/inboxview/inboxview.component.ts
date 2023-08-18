@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ICollection, IMessage } from 'libraries/AonSDK/aon';
 import { CollectionFactory } from '../../../../../../libraries/AonSDK/aon';
@@ -23,6 +23,7 @@ export class InboxviewComponent implements OnInit {
   selectedTab       : number  = 0;
   tabIndex          : number  = 0;
   showDetail        : boolean = false;
+  noTasksMessage    : boolean = false;
 
   constructor(
     private translateService: TranslateService,
@@ -81,8 +82,6 @@ export class InboxviewComponent implements OnInit {
 
   }
 
-   noTasksMessage: boolean = false;
-
   showNoTasksMessage(hasNoTasks: boolean) {
     this.noTasksMessage = hasNoTasks;
   }
@@ -90,4 +89,11 @@ export class InboxviewComponent implements OnInit {
   openCreateQueryComponent() {
     this.selectedTab = 4;
   }
+
+  //  const clickTr = document.querySelector("tr");
+
+  //  clickTr.addEventListener("click", (event) => {
+  //    showDetail = true,
+  //  });
+
 }

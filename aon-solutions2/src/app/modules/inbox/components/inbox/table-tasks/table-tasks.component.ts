@@ -77,15 +77,12 @@ export class TableTasksComponent implements OnInit {
           }
         }
       });
-
       this.bodyTable = tableRow;
 
       this.noPendingTasks.emit(!pendingTasksFound);
     });
   }
 
-  functionHome: any = (result: any) => this.afterModalClosed(result);
-  afterModalClosed(result?: any) {}
 
   ngOnInit(): void {
     if (this.messageList) {
@@ -94,9 +91,5 @@ export class TableTasksComponent implements OnInit {
         this.totalMessages = this.messages.size();
       });
     }
-  }
-
-  modalClick(object: any) {
-    this.messageService.getMessage(object.key).then((response) => {});
   }
 }

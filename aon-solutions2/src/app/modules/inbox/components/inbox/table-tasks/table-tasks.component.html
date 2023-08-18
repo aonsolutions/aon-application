@@ -3,15 +3,6 @@
   mat-flat-table
   [displayedColumns]="displayedColumns"
   [data]="bodyTable"
-  (listenParentHandler)="modalClick($event)"
 >
 
 </app-table>
-
-<div *ngIf="selectedMessage">
-  <h3>Detalles del Mensaje</h3>
-  <p><strong>Nombre:</strong> {{ selectedMessage.Name }}</p>
-  <p><strong>Estado:</strong> {{ selectedMessage.Status }}</p>
-  <p><strong>Descripción:</strong> {{ selectedMessage.Description }}</p>
-  <p><strong>Fecha:</strong> {{ selectedMessage.Date | date:'dd/MM/yyyy HH:mm:ss' }}</p>
-</div>
