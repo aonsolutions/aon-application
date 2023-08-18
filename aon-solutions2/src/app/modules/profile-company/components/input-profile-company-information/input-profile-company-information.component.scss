@@ -1,5 +1,15 @@
 @import "src/styles.scss";
 
+.structure-title {
+  margin-right: 6rem;
+}
+.input-profile-company-structure {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+}
+
 .input-profile-company-title {
   font-family: "Roboto-Medium";
   margin-top: 3rem;
@@ -9,9 +19,79 @@
   width: 100%;
 }
 
-.input-company-information {
+.photo{
+  margin-top: 1rem;
+
+}
+
+.structure-container {
+  display: flex;
+  flex-direction: row;
+gap: 2rem;
+  margin-right: 6rem;
+}
+
+.structure-photo{
+display: flex;
+flex-direction: row;
+margin-top: 1rem;
+gap: 1rem;
+}
+
+.upload-circle {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  font-size: 24px;
+}
+
+.clear-icon {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  transform: translate(50%, -50%);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.input-profile-information {
+  display: flex;
+  justify-content: center;
+  margin-top: $margin-top;
+}
+
+.input-profile-personal {
+  display: flex;
+  justify-content: center;
+  margin-top: $margin-top;
+  gap: 1rem;
+}
+
+.input-profile-company-upload {
   display: flex;
   justify-content: center;
   margin-top: 1rem;
 
+}
+
+.input-company-information {
+  display: flex;
+  justify-content: center;
+  margin-top: $margin-top;
+  gap: 1rem;
+}
+
+.file-upload{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

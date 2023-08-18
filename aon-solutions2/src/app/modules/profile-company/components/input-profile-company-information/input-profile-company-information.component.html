@@ -1,51 +1,87 @@
-<p class="input-profile-company-title">Información general</p>
-<mat-divider class="divider"></mat-divider>
-
-<div class="prueba">
-  <app-file-upload-button>
-    <app-icon
-      shape="cloud_upload"
-      style="margin-left: 15px"
-      set-color
-      color="black"
-      size="24"
-    ></app-icon>
-    Haz click para subir o arrastra y suelta
-  </app-file-upload-button>
+<div class="structure-title">
+  <p class="input-profile-company-title">Información general</p>
+  <mat-divider class="divider"></mat-divider>
 </div>
 
-<div class="input-company-information">
-  <app-input
-    [type]="'text'"
-    [label]="'Nombre comercial / alias'"
-    [placeholder]="'Placeholder'"
-  >
-  </app-input>
-  <app-input
-    [type]="'text'"
-    [label]="'Dirección'"
-    [placeholder]="'Placeholder'"
-  >
-  </app-input>
-</div>
-<div class="input-company-information">
-  <app-input [type]="'text'" [label]="'País'" [placeholder]="'Placeholder'">
-  </app-input>
-  <app-input
-    [type]="'text'"
-    [label]="'Provincia'"
-    [placeholder]="'Placeholder'"
-  >
-  </app-input>
-</div>
+<div class="structure-container">
+  <div class="structure-photo">
+    <p class="photo">Foto</p>
+    <div class="upload-circle">
+      <app-icon
+        class="clear-icon"
+        shape="clear"
+        set-color
+        color="black"
+        size="24"
+      ></app-icon>
+      T
+    </div>
+  </div>
+  <div class="input-profile-company-structure">
+    <div class="input-profile-company-upload">
+      <app-file-upload-button>
+        <div class="file-upload">
+          <app-icon
+            shape="cloud_upload"
+            set-color
+            color="black"
+            size="24"
+          ></app-icon>
+          <p>Haz click para subir o arrastra y suelta</p>
+        </div>
+      </app-file-upload-button>
+    </div>
 
-<div class="input-company-information">
-  <app-input
-    [type]="'text'"
-    [label]="'Razón Social'"
-    [placeholder]="'Placeholder'"
-  >
-  </app-input>
-  <app-input [type]="'text'" [label]="'NIF'" [placeholder]="'Placeholder'">
-  </app-input>
+    <div class="input-profile-information">
+      <app-input
+        [type]="'text'"
+        [label]="'Nombre comercial / alias'"
+        [placeholder]="'Placeholder'"
+      >
+      </app-input>
+    </div>
+    <div class="input-profile-information">
+      <app-input
+        [type]="'text'"
+        [label]="'Dirección'"
+        [placeholder]="'Placeholder'"
+      >
+      </app-input>
+    </div>
+
+    <div class="input-profile-personal">
+      <app-input
+        [type]="'select'"
+        [label]="'País'"
+        [placeholder]="'Placeholder'"
+        [options]="optionsCountry"
+        (selectionChange)="onCountrySelection($event)"
+      >
+      </app-input>
+      <app-input
+        [type]="'select'"
+        [label]="'Provincia'"
+        [placeholder]="'Placeholder'"
+        [options]="showProvinceField() ? optionsProvince : []"
+      >
+      </app-input>
+    </div>
+
+    <div class="input-company-information">
+      <app-input
+        [type]="'text'"
+        [label]="'Razón Social'"
+        [placeholder]="'Placeholder'"
+        [disabled]="'disabled'"
+      >
+      </app-input>
+      <app-input
+        [type]="'text'"
+        [label]="'NIF'"
+        [placeholder]="'Placeholder'"
+        [disabled]="'disabled'"
+      >
+      </app-input>
+    </div>
+  </div>
 </div>

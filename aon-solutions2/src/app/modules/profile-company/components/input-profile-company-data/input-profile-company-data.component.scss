@@ -1,5 +1,11 @@
 @import "src/styles.scss";
 
+.input-profile-company-structure{
+  display: flex;
+  flex-direction: column;
+ 
+}
+
 .input-profile-contact {
   display: flex;
   justify-content: center;
