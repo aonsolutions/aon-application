@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Item implements Serializable {
@@ -124,10 +123,6 @@ public class Item implements Serializable {
 	}
 
 	public Date getExpireDate() {
-		if(expireDate == null && getProduct().isPerishable() && getSerialDate() != null) {
-			expireDate = AonDateUtils.addDays(getSerialDate(), 
-				getProduct().getDaysToExpire() != null ? getProduct().getDaysToExpire(): 0);
-		}
 		return expireDate;
 	}
 	
