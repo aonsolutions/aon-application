@@ -37,6 +37,7 @@ public class InvoiceImportClass implements IsSerializable {
 	String productSerialNumber;
 	String productBarcode;
 	boolean suplido;
+	Double quantity;
 	Double base;
 	Double percentage;
 	Double quota;
@@ -51,7 +52,7 @@ public class InvoiceImportClass implements IsSerializable {
 	Date financeDate;
 	String financeAccount;
 	Boolean investment;
-	
+	String conceptDetail;
 	LinkedList<InvoiceImportClass> lines;
 	LinkedList<Finance> finances;
 	
@@ -431,6 +432,24 @@ public class InvoiceImportClass implements IsSerializable {
 
 	public InvoiceImportClass setSuplido(boolean suplido) {
 		this.suplido = suplido;
+		return this;
+	}
+	
+	public Double getQuantity() {
+		return quantity;
+	}
+	
+	public InvoiceImportClass setQuantity(Double quantity) {
+		this.quantity = quantity;
+		return this;
+	}
+	
+	public String getConceptDetail() {
+		return conceptDetail;
+	}
+	
+	public InvoiceImportClass setConceptDetail(String conceptDetail) {
+		this.conceptDetail = conceptDetail;
 		return this;
 	}
 
