@@ -510,6 +510,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconDeleteForever();
 	
+	@Source("icons/aon-icon-delete-forever-red.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconDeleteForeverRed();
+	
 	@Source("icons/aon-icon-add-task.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAddTask();
