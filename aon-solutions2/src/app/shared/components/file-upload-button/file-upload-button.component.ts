@@ -6,19 +6,18 @@ import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@an
   styleUrls: ['./file-upload-button.component.scss']
 })
 export class FileUploadButtonComponent implements OnInit {
-
-  @Input() width : string = '100%';
-  @Input() height : string = '100%';
+  width  : string = '100%';
+  height : string = '100%';
   @HostBinding('style.--widthHost') widthHost = '';
   @HostBinding('style.--heightHost') heightHost = '';
-
   @Output()  getUploadedFiles : EventEmitter<FileList> = new EventEmitter();
 
-  constructor() { }
+  constructor() {
+    this.widthHost  = this.width;
+    this.heightHost = this.height;
+  }
 
   ngOnInit(): void {
-    this.widthHost = this.width;
-    this.heightHost = this.height;
   }
 
   onFileSelected(event: Event) {
