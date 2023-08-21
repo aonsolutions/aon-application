@@ -377,6 +377,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("AYUDA_DE_COMIDA_DIARIO", "AYUDA_COMIDA_D");
 		variablesMap.put("AYUDA_DE_COMIDA_JORNADA_COMPLETA_DIARIO", "AYUDA_COMIDA_JC_D");
 		variablesMap.put("AYUDA_DE_COMIDA_JORNADA_PARTIDA_DIARIO", "AYUDA_COMIDA_JP_D");
+		variablesMap.put("AYUDA_CONYUGE_CON_MINUSVALIA_65_ANUAL", "CONYUGE_MINUSVALIA_65_A");
 		variablesMap.put("AYUDA_DISCAPACITADOS_ANUAL", "AYUDA_DISC_ANUAL");
 		variablesMap.put("AYUDA_DISCAPACITADOS_MENSUAL", "AYUDA_DISC_MENSUAL");
 		variablesMap.put("AYUDA_DISCAPACITADO_A_CARGO_ANUAL", "AYUDA_DISC_CARGO");
@@ -405,6 +406,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("AYUDA_HIJOS_ANUAL", "AYUDA_HIJOS_A");
 		variablesMap.put("AYUDA_HIJOS_MENSUAL", "AYUDA_HIJOS_M");
 		variablesMap.put("AYUDA_HIJOS_CON_MINUSVALIA_33_ANUAL", "HIJOS_MINUSV_33_A");
+		variablesMap.put("AYUDA_HIJOS_CON_MINUSVALIA_65_ANUAL", "HIJOS_MINUSV_65_A");
 		variablesMap.put("AYUDA_MATRICULA_ANUAL", "A_MATRICULA_ANUAL");
 		variablesMap.put("AYUDA_MATRICULA_MENSUAL", "A_MATRICULA_MENSUAL");
 		variablesMap.put("AYUDA_MINUSVALIDOS_MENSUAL", "AYUDA_MINUSVALIDOS");
@@ -1248,7 +1250,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DE_MUDANZAS_DIARIO", "PLUS_MUDANZAS");
 		variablesMap.put("PLUS_DE_LAVADO_HORAS", "PLUS_LAVADO_H");
 		variablesMap.put("PLUS_DE_PODA_HORAS", "PLUS_PODA");
-		variablesMap.put("PLUS_DIA_NAVIDAD_Y_AÑO_NUEVO_DIARIO", "PLUS_NAVIDAD_AÑO_NUEVO");
+		variablesMap.put("PLUS_DIA_NAVIDAD_Y_AÑO_NUEVO_DIARIO", "NAVIDAD_AÑO_NUEVO_D");
+		variablesMap.put("PLUS_DIA_NAVIDAD_Y_AÑO_NUEVO_HORAS", "NAVIDAD_AÑO_NUEVO_H");
 		variablesMap.put("PLUS_DISCAPACIDAD_DIARIO", "PLUS_DISCAPACIDAD");
 		variablesMap.put("PLUS_DISCAPACIDAD_MENSUAL", "PLUS_DISCAPACIDAD");
 		variablesMap.put("PLUS_DISPONIBILIDAD_ANUAL", "PLUS_DISPONIBILIDAD");
