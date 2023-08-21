@@ -88,5 +88,11 @@
     "PAYMENTMETHOD": "Metodo de pago",
     "ACTIONS":       "acciones",
     "MODEL":         "Modelo"
+  },
+  "PROFILE": {
+    "CONTACT_DETAILS":   "Datos contacto",
+    "EMAIL":   "Email",
+    "PLACEHOLDER":   "Placeholder",
+    "PHONE":   "Móvil"
   }
 }

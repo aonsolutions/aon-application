@@ -1,4 +1,4 @@
-<div class="input-profile-personal-data">
+<div class="form">
   <app-input
     [type]="'text'"
     [label]="'Nombre'"
@@ -12,8 +12,7 @@
     [required]="'required'"
   ></app-input>
 </div>
-
-<div class="input-profile-personal">
+<div class="form">
   <app-input
     [type]="'text'"
     [label]="'Email'"
@@ -27,18 +26,27 @@
     [required]="'required'"
   ></app-input>
 </div>
-
-<div class="input-profile-password">
+<div class="form">
   <app-input
-
     [type]="'password'"
     [label]="'Contraseña'"
     [placeholder]="'Placeholder'"
     [required]="'required'"
     [suffixBehavior]="'edit'"
-
-
-    >
+  >
     <app-icon [shape]="'edit'" suffix></app-icon>
   </app-input>
+  <!-- <app-input
+            [appearance]="'outline'"
+            [type]="'tel'"
+            [label]="'Usuario'"
+            [placeholder]="'usuario'"
+            [suffixBehavior]="'clear'"
+            [classes]="'ng-pending'"
+            [width]="'20%'"
+            [disabled]="'false'"
+        >
+ <span prefix>Prefijo</span>
+        <app-icon [shape]="'delete'" suffix></app-icon>
+</app-input> -->
 </div>

@@ -13,18 +13,19 @@ $XLarge : 1920px;
 
   // Header
   $header-height  : 3.265rem;
-  
+
   // menu
   $menu-width-close : 3.5rem;
   $menu-width-open  : 12.6rem;
-  
+
 // Font-size
   // default is 20px
   $font-size-4k       : 30px;
   $font-size-2k       : 23px;
   $font-size-fullHD   : 20px;
   $font-size-default  : 20px;
-  
+  $font-size-800      : 14px;
+
   $font-size-primary    : 0.8rem;
   $font-size-head       : 1.7rem;
   $font-size-head-span  : 1rem;
@@ -56,9 +57,9 @@ $color-placeholder: #9696a0;
     $color-orange       : #fb982e;
     $color-orange-light : #fddcb9;
 
-// Shadow  
+// Shadow
 $box-shadow: 0 0.1rem 0.2rem 0 #d2d2d6, 0 0.1rem 0.2rem 0 #b4b4bb !important;
-    
+
 // Colors Border
 $color-border-primary   : #d2d2d6;
 $color-border-secondary : #787885;
@@ -214,7 +215,7 @@ $bottom-button-icon: 0.5rem;
   font-size   : $font-size-primary;
   caret-color : $color-primary !important;
 }
- 
+
 html {
   @media screen and (min-width: 3800px) {
     font-size: $font-size-4k !important;
@@ -228,9 +229,16 @@ html {
     font-size: $font-size-fullHD !important;
     /*background: blue;*/
   }
-  @media screen and (max-width: 1599px) {
+  @media screen and (min-width: 800px) and (max-width: 1599px) {
     font-size: $font-size-default !important;
     /*background: purple;*/
+  }
+  @media screen and (max-width: 799px) {
+    font-size: $font-size-800 !important;
+    /*background: orange;*/
+    .form{
+      grid-auto-flow: unset;
+    }
   }
 }
 
@@ -258,7 +266,7 @@ html {
   .bold{
     font-family : 'Roboto-bold';
   }
-  
+
 /*
   Grid aling in top
 */
@@ -270,11 +278,11 @@ html {
   .griss set-icon path{
     color: $color-secondary;
   }
-  
+
   .left-content figure{
     justify-content: left !important;
   }
-  
+
 /*
   Color text
 */
@@ -370,4 +378,16 @@ html {
   }
   .margin-bottom-2{
     margin-bottom: $margin-bottom * 2;
+  }
+/*
+  Form
+*/
+  .form{
+    display       : grid;
+    grid-auto-flow: column;
+    gap           : 1rem;
+    padding       : 0 $padding*2 $padding $padding*2;
+  }
+  .form:first-of-type{
+    padding-top: $padding*2;
   }

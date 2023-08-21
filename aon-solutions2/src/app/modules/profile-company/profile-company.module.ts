@@ -16,8 +16,6 @@ import { InputProfileRegistryDataComponent } from './components/input-profile-re
 import { InputProfileCompanyDataComponent } from './components/input-profile-company-data/input-profile-company-data.component';
 import { InputProfileCompanyInformationComponent } from './components/input-profile-company-information/input-profile-company-information.component';
 
-
-
 @NgModule({
   declarations: [
     ProfileCompanyComponent,

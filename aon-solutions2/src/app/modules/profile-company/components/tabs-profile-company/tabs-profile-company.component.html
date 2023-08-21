@@ -11,19 +11,9 @@
     </div>
   </div>
 
-  <div content *ngIf="this.tabIndex == 0">
-    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
-      <mat-grid-tile
-        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-      ></mat-grid-tile>
-      <mat-grid-tile
-        class="position-top-col"
-        [gridCols]="{ xs: 8, sm: 8, md: 8, lg: 8, xl: 8 }"
-      >
-    <!-- pestaña datos personales -->
-        <app-input-profile-personal-data></app-input-profile-personal-data>
-      </mat-grid-tile>
-    </mat-grid-list>
+  <div content *ngIf="this.tabIndex == 0" >
+    <app-input-profile-personal-data></app-input-profile-personal-data>
+
   </div>
 
   <div content *ngIf="this.tabIndex == 1">
