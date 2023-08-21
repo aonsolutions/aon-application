@@ -1,69 +1,35 @@
 @import "src/styles.scss";
 
-.upload {
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-}
+::ng-deep{
+  
+  #upload,
+  #list-Dashboard,
+  #charts,
+  #inbox,
+  #buttons-dashboard,
+  {
+    padding-left    : $padding-left;
+    padding-right   : $padding-right;
+    padding-bottom  : $padding-bottom;
+  }  
+  #charts{
+    padding-bottom  : 0;
+  }
+  
+  #list-Dashboard,
+  #charts,
+  #buttons-dashboard{
+    display         : flex;
+    flex-wrap       : wrap;
+    gap             : 1rem;
+  }
+  
+  #list-Dashboard app-button .appButton{
+    margin: 0;
+  }
 
-#list-Dashboard app-button {
-  margin-right: $margin-right;
-  float: left;
-}
-.card-container {
-  width: 100%;
-}
+  #charts .chart .card{
+    
+  }
 
-.summary {
-  margin-bottom: 1.55rem;
 }
-
-.summary-view-chart {
-  flex-grow: 1;
-  display: flex;
-  justify-content: space-between;
-  margin-right: 1rem;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  align-items: center;
-}
-
-.summary-view {
-  flex-grow: 1;
-  display: flex;
-  justify-content: space-between;
-  margin-right: 1rem;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  align-items: center;
-}
-
-.summary-view:last-child {
-  margin-right: 0;
-}
-
-.line-div {
-  border: none;
-  border-top: .05rem solid #d2d2d6;
-}
-
-.inbox {
-  margin-top: 1.6rem;
-  margin-bottom: 1.6rem;
-}
-
-.button-dashboard {
-  margin-bottom: 1.6rem;
-}
-
-.button-dashboard-style {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 1rem;
-  height: 100%;
-  word-wrap: break-word;
-}
-
