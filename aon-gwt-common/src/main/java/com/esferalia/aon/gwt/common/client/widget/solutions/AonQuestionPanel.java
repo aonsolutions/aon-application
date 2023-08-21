@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.registry.QuestionType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -35,7 +36,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.datepicker.client.DateBox;
 
 public abstract class AonQuestionPanel extends SimplePanel {
 	
@@ -286,37 +286,45 @@ public abstract class AonQuestionPanel extends SimplePanel {
 			
 			for(QuestionValue questionValue : aviableQuestionValues) {
 				switch (QuestionType.safeValueOf(Integer.parseInt(type.getSelectedValue()))) {
-				case TEXT:
-					TextBox valueText = new TextBox();
-					valueText.addStyleName(AON.CSS.aonWidthAlmostAll());
-					valueText.setValue(questionValue.getValueText());
-					valueText.addValueChangeHandler(e -> questionValue.setValueText(e.getValue()));
-					valuesTable.setWidget(row, 0, valueText);
-					valuesTable.setWidget(row, 1, createDeleteButton(domain, question, questionValue));
-					break;
-				case NUMBER:
-					DoubleBox valueNumber = new DoubleBox();
-					valueNumber.setValue(questionValue.getValueNumber());
-					valueNumber.addValueChangeHandler(e -> questionValue.setValueNumber(e.getValue()));
-					valuesTable.setWidget(row, 0, valueNumber);
-					valuesTable.setWidget(row, 1, createDeleteButton(domain, question, questionValue));
-					break;
-				case DATE:
-					DateBox valueDate = new DateBox();
-					valueDate.setValue(questionValue.getValueDate());
-					valueDate.addValueChangeHandler(e -> questionValue.setValueDate(e.getValue()));
-					valuesTable.setWidget(row, 0, valueDate);
-					valuesTable.setWidget(row, 1, createDeleteButton(domain, question, questionValue));
-					break;
-//				case BOOLEAN:
-//					CheckBox valueBoolean = new CheckBox();
-//					valueBoolean.setValue(null != questionValue.getValueNumber() && questionValue.getValueNumber() == 1);
-//					valueBoolean.addValueChangeHandler(e -> questionValue.setValueNumber(e.getValue() ? (double) 1 : 0));
-//					valuesTable.setWidget(row, 0, valueBoolean);
-//					valuesTable.setWidget(row, 1, createDeleteButton(domain, question, questionValue));
-//					break;
-				default:
-					break;
+					case TEXT:
+						TextBox valueText = new TextBox();
+						valueText.addStyleName(AON.CSS.aonWidthAlmostAll());
+						valueText.setValue(questionValue.getValueText());
+						valueText.addValueChangeHandler(e -> questionValue.setValueText(e.getValue()));
+						valuesTable.setWidget(row, 0, valueText);
+						valuesTable.setWidget(row, 1, createDeleteButton(domain, question, questionValue));
+						if(null == questionValue.getValueText()) {
+							Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+								@Override public void execute() { valueText.setFocus(true); }
+							});
+						}
+						break;
+					case NUMBER:
+						DoubleBox valueNumber = new DoubleBox();
+						valueNumber.setValue(questionValue.getValueNumber());
+						valueNumber.addValueChangeHandler(e -> questionValue.setValueNumber(e.getValue()));
+						valuesTable.setWidget(row, 0, valueNumber);
+						valuesTable.setWidget(row, 1, createDeleteButton(domain, question, questionValue));
+						if(null == questionValue.getValueNumber()) {
+							Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+								@Override public void execute() { valueNumber.setFocus(true); }
+							});
+						}
+						break;
+					case DATE:
+						AonDateBox valueDate = new AonDateBox();
+						valueDate.setValue(questionValue.getValueDate());
+						valueDate.addValueChangeHandler(e -> questionValue.setValueDate(e.getValue()));
+						valuesTable.setWidget(row, 0, valueDate);
+						valuesTable.setWidget(row, 1, createDeleteButton(domain, question, questionValue));
+						if(null == questionValue.getValueDate()) {
+							Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+								@Override public void execute() { valueDate.setFocus(true); }
+							});
+						}
+						break;
+					default:
+						break;
 				}
 				
 				row++;
@@ -373,7 +381,8 @@ public abstract class AonQuestionPanel extends SimplePanel {
 	}
 	
 	private void changeQuestionType(int domain, Question question) {
-		if(!question.getValues().isEmpty()) {
+		List<QuestionValue> aviableQuestionValues = question.getValues().stream().filter(qtv -> !qtv.isDeleted()).collect(Collectors.toList());
+		if(!aviableQuestionValues.isEmpty()) {
 			AonDialog dialog = new AonDialog("Cambio Tipo",
 					new HTML("Se va a proceder a eliminar los valores que existen para el tipo actual.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 			
