@@ -31,9 +31,9 @@ interface ChartItem {
 }
 
 export interface MenuItems {
-  shape: string;
-  name: string;
-  color: string;
+  shape : string;
+  name  : string;
+  class : string;
 }
 
 @Component({
@@ -98,10 +98,10 @@ export class HomeComponent implements OnInit {
 
   //botones Menu
   menuItems: MenuItems[] = [
-    { shape: 'assessment', name: 'Gestión', color: '#4f91ff' },
-    { shape: 'euro_symbol', name: 'Panel de Impuestos', color: '#fb982e' },
-    { shape: 'people', name: 'Panel de empleados', color: '#33a9a9' },
-    { shape: 'description', name: 'Documentación', color: '#ef6292' },
+    { shape: 'assessment' , name: 'Gestión'          , class: 'button-dashboard blue' },
+    { shape: 'euro_symbol', name: 'Panel de Impuestos', class: 'button-dashboard orange' },
+    { shape: 'people'     , name: 'Panel de empleados', class: 'button-dashboard green' },
+    { shape: 'description', name: 'Documentación'    , class: 'button-dashboard pink' },
   ];
 
   constructor(

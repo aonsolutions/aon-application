@@ -7,7 +7,7 @@
       <mat-grid-tile [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
         <app-file-upload-button> 
           Subir documentación
-          <app-icon shape="cloud_upload" class="margin-left" set-color color="black" size="24"></app-icon>
+          <app-icon shape="cloud_upload" class="margin-left"></app-icon>
         </app-file-upload-button>
       </mat-grid-tile>
     </mat-grid-list>
@@ -94,7 +94,7 @@
   <!--Mostrar ficheros--> 
     <ng-container *ngIf="showFiles">
       <app-card
-        [class]="'file'"
+        [class]="'file pink'"
         *ngFor="let cardFile of documentsList; let i = index"
         [id]="'file-'+i"
         (click)="loadFile(cardFile, 'file-'+i)"
@@ -111,10 +111,9 @@
           </span>
         </div>
         <div body>
-          <span>
+          <span class="icon-background">
             <app-icon
               [shape]="'picture_as_pdf'"
-              class="pink icon-card-file"
             ></app-icon>
           </span>
         </div>
