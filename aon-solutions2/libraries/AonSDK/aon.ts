@@ -1969,129 +1969,144 @@ class StorableFolder extends Folder implements IStorable<Folder> {
 }
 
 class Certificate implements ICertificate, IModel {
-  private name: string;
-  private representationType: string;
-  private expirationDate: Date;
-  private alias: string;
-  private type: string;
-  private tgss: boolean;
-  private sepe: boolean;
-  private aeat: boolean;
-  private key: string;
+    private name: string;
+    private representationType: string;
+    private expirationDate: Date;
+    private alias: string;
+    private type: string;
+    private tgss: boolean;
+    private sepe: boolean;
+    private aeat: boolean;
+    private key: string;
 
-  constructor(name?: string, representationType?: string, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean) {
-    this.name = name || '';
-    this.representationType = representationType || '';
-    this.expirationDate = expirationDate || new Date();
-    this.alias = alias || '';
-    this.type = type || '';
-    this.tgss = tgss || false;
-    this.sepe = sepe || false;
-    this.aeat = aeat || false;
-    this.key = name || '';
-  }
+    constructor(name?: string, representationType?: string, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean) {
+        this.name = name || '';
+        this.representationType = representationType || '';
+        this.expirationDate = expirationDate || new Date();
+        this.alias = alias || '';
+        this.type = type || '';
+        this.tgss = tgss || false;
+        this.sepe = sepe || false;
+        this.aeat = aeat || false;
+        this.key = name || '';
+    }
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
 
-  public get Name(): string {
-    return this.name;
-  }
+    public get Name(): string {
+        return this.name;
+    }
 
-  public set Name(value: string) {
-    this.name = value;
-  }
+    public set Name(value: string) {
+        this.name = value;
+    }
 
-  public get RepresentationType(): string {
-    return this.representationType;
-  }
+    public get RepresentationType(): string {
+        return this.representationType;
+    }
 
-  public set RepresentationType(value: string) {
-    this.representationType = value;
-  }
+    public set RepresentationType(value: string) {
+        this.representationType = value;
+    }
 
-  public get ExpirationDate(): Date {
-    return this.expirationDate;
-  }
+    public get ExpirationDate(): Date {
+        return this.expirationDate;
+    }
 
-  public set ExpirationDate(value: Date) {
-    this.expirationDate = value;
-  }
+    public set ExpirationDate(value: Date) {
+        this.expirationDate = value;
+    }
 
-  public get Alias(): string {
-    return this.alias;
-  }
+    public get Alias(): string {
+        return this.alias;
+    }
 
-  public set Alias(value: string) {
-    this.alias = value;
-  }
+    public set Alias(value: string) {
+        this.alias = value;
+    }
 
-  public get Type(): string {
-    return this.type;
-  }
+    public get Type(): string {
+        return this.type;
+    }
 
-  public set Type(value: string) {
-    this.type = value;
-  }
+    public set Type(value: string) {
+        this.type = value;
+    }
 
-  public get Tgss(): boolean {
-    return this.tgss;
-  }
+    public get Tgss(): boolean {
+        return this.tgss;
+    }
 
-  public set Tgss(value: boolean) {
-    this.tgss = value;
-  }
+    public set Tgss(value: boolean) {
+        this.tgss = value;
+    }
 
-  public get Sepe(): boolean {
-    return this.sepe;
-  }
+    public get Sepe(): boolean {
+        return this.sepe;
+    }
 
-  public set Sepe(value: boolean) {
-    this.sepe = value;
-  }
+    public set Sepe(value: boolean) {
+        this.sepe = value;
+    }
 
-  public get Aeat(): boolean {
-    return this.aeat;
-  }
+    public get Aeat(): boolean {
+        return this.aeat;
+    }
 
-  public set Aeat(value: boolean) {
-    this.aeat = value;
-  }
+    public set Aeat(value: boolean) {
+        this.aeat = value;
+    }
 
-  public get Key(): string {
-    return this.key;
-  }
+    public get Key(): string {
+        return this.key;
+    }
 
-  public set Key(value: string) {
-    this.key = value;
-  }
+    public set Key(value: string) {
+        this.key = value;
+    }
 
-  getKey(): string {
-    return this.name;
-  }
+    getKey(): string {
+        return this.name;
+    }
 
-  getFilterableFields(): Map<string,any> {
-    let map = new Map<string, any>();
-    map.set('name', this.Name);
-    map.set('representationType', this.RepresentationType);
-    map.set('expirationDate', this.ExpirationDate);
-    map.set('alias', this.Alias);
-    map.set('type', this.Type);
-    map.set('tgss', this.Tgss);
-    map.set('sepe', this.Sepe);
-    map.set('aeat', this.Aeat);
-    return map;
-  }
+    getFilterableFields(): Map<string,any> {
+        let map = new Map<string, any>();
+        map.set('name', this.Name);
+        map.set('representationType', this.RepresentationType);
+        map.set('expirationDate', this.ExpirationDate);
+        map.set('alias', this.Alias);
+        map.set('type', this.Type);
+        map.set('tgss', this.Tgss);
+        map.set('sepe', this.Sepe);
+        map.set('aeat', this.Aeat);
+        return map;
+    }
 
-  getSortableFields(): Map<string,any> {
-    let map = new Map<string, any>();
-    map.set('name', this.Name);
-    map.set('representationType', this.RepresentationType);
-    map.set('expirationDate', this.ExpirationDate);
-    map.set('alias', this.Alias);
-    map.set('type', this.Type);
-    map.set('tgss', this.Tgss);
-    map.set('sepe', this.Sepe);
-    map.set('aeat', this.Aeat);
-    return map;
-  }
+    getSortableFields(): Map<string,any> {
+        let map = new Map<string, any>();
+        map.set('name', this.Name);
+        map.set('representationType', this.RepresentationType);
+        map.set('expirationDate', this.ExpirationDate);
+        map.set('alias', this.Alias);
+        map.set('type', this.Type);
+        map.set('tgss', this.Tgss);
+        map.set('sepe', this.Sepe);
+        map.set('aeat', this.Aeat);
+        return map;
+    }
 
 }
 
@@ -3204,177 +3219,192 @@ class StorableAuth extends Auth implements IStorable<Auth> {
 }
 
 class Mark implements IMark, IModel  {
-  private id: string;
-  private name: string;
-  private lastName: string;
-  private idEmployee: string;
-  private date: Date;
-  private entryDate: Date;
-  private exitDate: Date;
-  private pause: IPause;
-  private location: string ;
-  private ccc: string;
-  private workplace: string ;
-  private status: string ;
-  private key: string;
+    private id: string;
+    private name: string;
+    private lastName: string;
+    private idEmployee: string;
+    private date: Date;
+    private entryDate: Date;
+    private exitDate: Date;
+    private pause: IPause;
+    private location: string ;
+    private ccc: string;
+    private workplace: string ;
+    private status: string ;
+    private key: string;
 
 
-  constructor(name?: string, lastName?: string, idEmployee?: string, date?: Date, entryDate?: Date, exitDate?: Date, pause?: IPause, location?: string, ccc?: string, workplace?: string, status?: string) {
-    this.id = new KeyGenerator().generate(15);
-    this.name = name || '';
-    this.lastName = lastName || '';
-    this.idEmployee = idEmployee || '';
-    this.date = date || new Date();
-    this.entryDate = entryDate || new Date();
-    this.exitDate = exitDate || new Date();
-    this.pause = pause || { StartPause: new Date(), EndPause: new Date() };
-    this.location = location || '';
-    this.ccc = ccc || '';
-    this.workplace = workplace || '';
-    this.status = status || '';
-    this.key = this.id || '';
-  }
+    constructor(name?: string, lastName?: string, idEmployee?: string, date?: Date, entryDate?: Date, exitDate?: Date, pause?: IPause, location?: string, ccc?: string, workplace?: string, status?: string) {
+        this.id = new KeyGenerator().generate(15);
+        this.name = name || '';
+        this.lastName = lastName || '';
+        this.idEmployee = idEmployee || '';
+        this.date = date || new Date();
+        this.entryDate = entryDate || new Date();
+        this.exitDate = exitDate || new Date();
+        this.pause = pause || { StartPause: new Date(), EndPause: new Date() };
+        this.location = location || '';
+        this.ccc = ccc || '';
+        this.workplace = workplace || '';
+        this.status = status || '';
+        this.key = this.id || '';
+    }
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
 
 
-  public get Id(): string {
-    return this.id;
-  }
+    public get Id(): string {
+        return this.id;
+    }
 
-  public set Id(value: string) {
-    this.id = value;
-  }
+    public set Id(value: string) {
+        this.id = value;
+    }
 
-  public get Name(): string {
-    return this.name;
-  }
+    public get Name(): string {
+        return this.name;
+    }
 
-  public set Name(value: string) {
-    this.name = value;
-  }
+    public set Name(value: string) {
+        this.name = value;
+    }
 
-  public get Lastname(): string {
-    return this.lastName;
-  }
+    public get Lastname(): string {
+        return this.lastName;
+    }
 
-  public set Lastname(value: string) {
-    this.lastName = value;
-  }
+    public set Lastname(value: string) {
+        this.lastName = value;
+    }
 
-  public get IdEmployee(): string {
-    return this.idEmployee;
-  }
+    public get IdEmployee(): string {
+        return this.idEmployee;
+    }
 
-  public set IdEmployee(value: string) {
-    this.idEmployee = value;
-  }
+    public set IdEmployee(value: string) {
+        this.idEmployee = value;
+    }
 
-  public get Date(): Date {
-    return this.date;
-  }
+    public get Date(): Date {
+        return this.date;
+    }
 
-  public set Date(value: Date) {
-    this.date = value;
-  }
+    public set Date(value: Date) {
+        this.date = value;
+    }
 
-  public get EntryDate(): Date {
-    return this.entryDate;
-  }
+    public get EntryDate(): Date {
+        return this.entryDate;
+    }
 
-  public set EntryDate(value: Date) {
-    this.entryDate = value;
-  }
+    public set EntryDate(value: Date) {
+        this.entryDate = value;
+    }
 
-  public get ExitDate(): Date {
-    return this.exitDate;
-  }
+    public get ExitDate(): Date {
+        return this.exitDate;
+    }
 
-  public set ExitDate(value: Date) {
-    this.exitDate = value;
-  }
+    public set ExitDate(value: Date) {
+        this.exitDate = value;
+    }
 
-  public get Pause(): IPause {
-    return this.pause;
-  }
+    public get Pause(): IPause {
+        return this.pause;
+    }
 
-  public set Pause(value: IPause) {
-    this.pause = value;
-  }
+    public set Pause(value: IPause) {
+        this.pause = value;
+    }
 
-  public get Location(): string {
-    return this.location;
-  }
+    public get Location(): string {
+        return this.location;
+    }
 
-  public set Location(value: string) {
-    this.location = value;
-  }
+    public set Location(value: string) {
+        this.location = value;
+    }
 
-  public get Ccc(): string {
-    return this.ccc;
-  }
+    public get Ccc(): string {
+        return this.ccc;
+    }
 
-  public set Ccc(value: string) {
-    this.ccc = value;
-  }
+    public set Ccc(value: string) {
+        this.ccc = value;
+    }
 
-  public get Workplace(): string {
-    return this.workplace;
-  }
+    public get Workplace(): string {
+        return this.workplace;
+    }
 
-  public set Workplace(value: string) {
-    this.workplace = value;
-  }
+    public set Workplace(value: string) {
+        this.workplace = value;
+    }
 
-  public get Status(): string {
-    return this.status;
-  }
+    public get Status(): string {
+        return this.status;
+    }
 
-  public set Status(value: string) {
-    this.status = value;
-  }
+    public set Status(value: string) {
+        this.status = value;
+    }
 
-  public get Key() {
-    return this.key;
-  }
+    public get Key() {
+        return this.key;
+    }
 
-  public set Key(value: string) {
-    this.key = value;
-  }
+    public set Key(value: string) {
+        this.key = value;
+    }
 
-  getKey(): string {
-    return this.idEmployee;
-  }
+    getKey(): string {
+        return this.idEmployee;
+    }
 
-  getFilterableFields(): Map<string, any> {
-    let map = new Map<string, any>();
-    map.set('name', this.name);
-    map.set('lastname', this.lastName);
-    map.set('idEmployee', this.idEmployee);
-    map.set('date', this.date);
-    map.set('entryDate', this.entryDate);
-    map.set('exitDate', this.exitDate);
-    map.set('pause', this.pause);
-    map.set('location', this.location);
-    map.set('ccc', this.ccc);
-    map.set('workplace', this.workplace);
-    map.set('status', this.status);
-    return map;
-  }
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('lastname', this.lastName);
+        map.set('idEmployee', this.idEmployee);
+        map.set('date', this.date);
+        map.set('entryDate', this.entryDate);
+        map.set('exitDate', this.exitDate);
+        map.set('pause', this.pause);
+        map.set('location', this.location);
+        map.set('ccc', this.ccc);
+        map.set('workplace', this.workplace);
+        map.set('status', this.status);
+        return map;
+    }
 
-  getSortableFields(): Map<string, any> {
-    let map = new Map<string, any>();
-    map.set('name', this.name);
-    map.set('lastname', this.lastName);
-    map.set('idEmployee', this.idEmployee);
-    map.set('date', this.date);
-    map.set('entryDate', this.entryDate);
-    map.set('exitDate', this.exitDate);
-    map.set('pause', this.pause);
-    map.set('location', this.location);
-    map.set('ccc', this.ccc);
-    map.set('workplace', this.workplace);
-    map.set('status', this.status);
-    return map;
-  }
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('lastname', this.lastName);
+        map.set('idEmployee', this.idEmployee);
+        map.set('date', this.date);
+        map.set('entryDate', this.entryDate);
+        map.set('exitDate', this.exitDate);
+        map.set('pause', this.pause);
+        map.set('location', this.location);
+        map.set('ccc', this.ccc);
+        map.set('workplace', this.workplace);
+        map.set('status', this.status);
+        return map;
+    }
 
 }
 
