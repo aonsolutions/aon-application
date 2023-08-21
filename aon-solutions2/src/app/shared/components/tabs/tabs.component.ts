@@ -8,24 +8,23 @@ import { Tabs } from 'src/app/core/models/interface/tabs';
   styleUrls: ['./tabs.component.scss'],
 })
 export class TabsComponent implements OnInit {
-
-  @Input() paddingLeftHeader: string = '';
-  @Input() tabColor: string = ''
-  @HostBinding('style.--styleTabColor') styleTabColor = '';
-  tabIndex: number = 0;
+  tabIndex                  : number  = 0;
+  @Input() paddingLeftHeader: string  = '';
+  @Input() tabColor         : string  = ''
+  @Input() tabs             : Tabs [] = [];
   @Output() changeTabIndex = new EventEmitter<number>();
-  @Input() tabs: Tabs [] = [];
+//  @HostBinding('style.--styleTabColor') styleTabColor = '';
 
+  constructor() {
+  }
+  
+  ngOnInit(): void {
+    
+//    this.styleTabColor = this.tabColor
+  }
+  
   tabChanged(tabChangeEvent: MatTabChangeEvent): void {
     this.tabIndex = tabChangeEvent.index;
     this.changeTabIndex.emit(tabChangeEvent.index);
   }
-
-  constructor() {
-  }
-
-  ngOnInit(): void {
-    this.styleTabColor = this.tabColor
-  }
-
 }

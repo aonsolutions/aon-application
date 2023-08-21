@@ -1,7 +1,7 @@
 <app-tabs
   [tabs]="tabs"
   (changeTabIndex)="this.tabIndex = $event"
-  [tabColor]="'#fcaf5c'"
+  [tabColor]="'orange'"
   [paddingLeftHeader]="'1rem'"
 >
   <div tool>
@@ -90,16 +90,3 @@
     </mat-grid-list>
   </div>
 </app-tabs>
-
-<!--
-    <mat-select
-    *ngIf="type=='select'"
-    [(ngModel)]="value"
-
-    [disabled]="disabled"
-    [class]="appearanceDetail"
-  > -->
-<!--
-  [value]="options[0].text" -->
-<!-- <mat-option *ngFor="let option of options" [value]="option.value">{{option.text}}</mat-option>
-  </mat-select> -->

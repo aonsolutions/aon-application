@@ -28,7 +28,6 @@ export class FilesComponent implements OnInit {
     {routerlink: '#', shape: 'delete', text: 'Eliminar', class: '', selected: false}
   ];
 
-
   constructor(private folderService: FolderService, private documentService: DocumentService, private route: ActivatedRoute) {
     const tipo = this.route.snapshot.data.tipo;
 

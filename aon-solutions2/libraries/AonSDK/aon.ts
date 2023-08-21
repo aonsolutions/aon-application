@@ -86,6 +86,15 @@ export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMu
     }
 }
 
+export class CertificateFactory implements ISingleObjectCrudFactory<ICertificate>, IMultipleObjectCrudFactory<ICertificate> {
+    createSingleObjectCrud(): ISingleObjectCrud<ICertificate> {
+        return new GenericSingleObjectCrud<Certificate>(new GenericSingleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate), Certificate);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<ICertificate> {
+        return new GenericMultipleObjectCrud<Certificate>(new GenericMultipleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate), Certificate);
+    }
+}
+
 export class FolderFactory implements ISingleObjectCrudFactory<IFolder>, IMultipleObjectCrudFactory<IFolder> {
     createSingleObjectCrud(): ISingleObjectCrud<IFolder> {
         return new GenericSingleObjectCrud<Folder>(new GenericSingleObjectCrudRepository<Folder>(new StorableFolder(), Folder), Folder);
@@ -174,6 +183,15 @@ export class AuthenticationFactory implements IAuthenticationManagerFactory {
 export class ReportingFactory implements IReportingDataAccessFactory {
     createReportingDataAccess(): IReportingDataAccess {
         return new ReportingDataAccess(new ReportingRepository());
+    }
+}
+
+export class MarkFactory implements ISingleObjectCrudFactory<IMark>, IMultipleObjectCrudFactory<IMark> {
+    createSingleObjectCrud(): ISingleObjectCrud<IMark> {
+        return new GenericSingleObjectCrud<Mark>(new GenericSingleObjectCrudRepository<Mark>(new StorableMark(), Mark), Mark);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IMark> {
+        return new GenericMultipleObjectCrud<Mark>(new GenericMultipleObjectCrudRepository<Mark>(new StorableMark(), Mark), Mark);
     }
 }
 
@@ -1345,6 +1363,7 @@ export class Collection<T extends ICollectable> implements ICollection<T> {
 export interface IFactory {
     createDocument(): IDocument;
     createFolder(): IFolder;
+    createCertificate(): ICertificate;
     createEnterprise(): IEnterprise;
     createDocumentNote(): IDocumentNote;
     createBank(): IBank;
@@ -1365,6 +1384,7 @@ export interface ICollectionFactory {
     createMessageCollection(): ICollection<IMessage>;
     createMessageChatCollection(): ICollection<IMessageChat>;
     createEmployeeCollection(): ICollection<IEmployee>;
+    createMarkCollection(): ICollection<IMark>;
     createUserCollection(): ICollection<IUser>;
 }
 
@@ -1447,6 +1467,17 @@ export interface IFolder extends ICollectable {
     Parent: string;
 }
 
+export interface ICertificate extends ICollectable {
+  Name: string;
+  RepresentationType: string;
+  ExpirationDate: Date;
+  Alias: string;
+  Type: string;
+  Tgss: boolean;
+  Sepe: boolean;
+  Aeat: boolean;
+}
+
 export interface IEnterprise extends ICollectable {
     Name: string;
     ProfilePhoto: string;
@@ -1474,10 +1505,12 @@ export interface IBank extends ICollectable {
     Logo: string;
 }
 
+export type statusTaxModel = 'en proceso' | 'pendiente' | 'rectificado' | 'confirmado' | 'presentado';
+
 export interface ITaxModel extends ICollectable {
     Name: string;
     TaxType: string;
-    Status: string;
+    Status: statusTaxModel;
     PaymentMethod: string;
     Result: string;
     Trimester: number;
@@ -1514,12 +1547,26 @@ export interface IEmployee extends ICollectable {
     Active: boolean;
 }
 
-interface IAuth extends ICollectable{
-    Email: string;
-    Password: string;
+export interface IMark extends ICollectable {
+  Id: string;
+  Name: string,
+  Lastname: string,
+  IdEmployee: string, // Ver si este es necesario, o id del usuario
+  Date: Date,
+  EntryDate: Date,
+  ExitDate: Date,
+  Pause: IPause,
+  Location: string,
+  Ccc: string, // código cuenta de cotización
+  Workplace: string,
+  Status: string
 }
 
-interface IUser extends ICollectable {
+export interface IPause {
+  StartPause: Date,
+  EndPause: Date
+}
+export interface IUser extends ICollectable {
   Name: string,
   Lastname: string,
   Document: string,
@@ -1528,6 +1575,12 @@ interface IUser extends ICollectable {
   Phone: string,
   Active: boolean
 }
+
+interface IAuth extends ICollectable{
+    Email: string;
+    Password: string;
+}
+
 
 /*
  *
@@ -1539,27 +1592,39 @@ export class Factory implements IFactory {
     createDocument(file?: string, fileName?: string, fileSize?: number, fileType?: string, date?: Date, path?: string): IDocument {
         return new Document(file, fileName, fileSize, fileType, date, path);
     }
+
     createFolder(name?: string, parent?: string): IFolder {
         return new Folder(name, parent);
     }
+
+    createCertificate(name?: string, representationType?: string, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean): ICertificate {
+        return new Certificate(name, representationType, expirationDate, alias, type, tgss, sepe, aeat);
+    }
+
     createEnterprise(name?: string, document?: string): IEnterprise {
         return new Enterprise(name,document);
     }
+
     createDocumentNote(text?: string, path?: string): IDocumentNote {
         return new DocumentNote(text, path);
     }
+
     createBank(name?: string, total?: number, logo?: string): IBank {
         return new Bank(name, total, logo);
     }
-    createTaxModel(name?: string, taxType?: string, status?: string, paymentMethod?: string, result?: string, trimester?: number, year?: number): ITaxModel {
+
+    createTaxModel(name?: string, taxType?: string, status?: statusTaxModel, paymentMethod?: string, result?: string, trimester?: number, year?: number): ITaxModel {
         return new TaxModel(name, taxType, status, paymentMethod, result, trimester, year);
     }
+
     createMessage(name?: string, title?: string, description?: string, date?: Date, type?: string, status?: string, endDate?: Date): IMessage {
         return new Message(name, title, description, date, type, status, endDate);
     }
+
     createMessageChat(idMessage?: string, name?: string, description?: string, date?: Date, type?: string): IMessageChat {
         return new MessageChat(idMessage, name, description, date, type);
     }
+
     createEmployee(name?: string, lastname?: string, document?: string, email?: string, phone?: string, naf?: string, active?: boolean): IEmployee {
         return new Employee(name, lastname, document, email, phone, naf, active);
     }
@@ -1571,31 +1636,47 @@ export class Factory implements IFactory {
 
 export class CollectionFactory implements ICollectionFactory {
     createDocumentCollection(): ICollection<IDocument> {
-        return new Collection<Document>();
+      return new Collection<Document>();
     }
+
     createFolderCollection(): ICollection<IFolder> {
-        return new Collection<Folder>();
+      return new Collection<Folder>();
     }
+
+    createCertificateCollection(): ICollection<ICertificate> {
+      return new Collection<Certificate>();
+    }
+
     createEnterpriseCollection(): ICollection<IEnterprise> {
-        return new Collection<Enterprise>();
+      return new Collection<Enterprise>();
     }
+
     createDocumentNoteCollection(): ICollection<IDocumentNote> {
-        return new Collection<DocumentNote>();
+      return new Collection<DocumentNote>();
     }
+
     createBankCollection(): ICollection<IBank> {
-        return new Collection<Bank>();
+      return new Collection<Bank>();
     }
+
     createTaxModelCollection(): ICollection<ITaxModel> {
-        return new Collection<TaxModel>();
+      return new Collection<TaxModel>();
     }
+
     createMessageCollection(): ICollection<IMessage> {
-        return new Collection<Message>();
+      return new Collection<Message>();
     }
+
     createMessageChatCollection(): ICollection<IMessageChat> {
-        return new Collection<MessageChat>();
+      return new Collection<MessageChat>();
     }
+
     createEmployeeCollection(): ICollection<IEmployee> {
         return new Collection<Employee>();
+    }
+
+    createMarkCollection(): ICollection<IMark> {
+        return new Collection<Mark>();
     }
 
     createUserCollection(): ICollection<IUser> {
@@ -1884,6 +1965,142 @@ class StorableFolder extends Folder implements IStorable<Folder> {
     }
     getLocalStorage(): string {
         return 'folders';
+    }
+}
+
+class Certificate implements ICertificate, IModel {
+  private name: string;
+  private representationType: string;
+  private expirationDate: Date;
+  private alias: string;
+  private type: string;
+  private tgss: boolean;
+  private sepe: boolean;
+  private aeat: boolean;
+  private key: string;
+
+  constructor(name?: string, representationType?: string, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean) {
+    this.name = name || '';
+    this.representationType = representationType || '';
+    this.expirationDate = expirationDate || new Date();
+    this.alias = alias || '';
+    this.type = type || '';
+    this.tgss = tgss || false;
+    this.sepe = sepe || false;
+    this.aeat = aeat || false;
+    this.key = name || '';
+  }
+
+  public get Name(): string {
+    return this.name;
+  }
+
+  public set Name(value: string) {
+    this.name = value;
+  }
+
+  public get RepresentationType(): string {
+    return this.representationType;
+  }
+
+  public set RepresentationType(value: string) {
+    this.representationType = value;
+  }
+
+  public get ExpirationDate(): Date {
+    return this.expirationDate;
+  }
+
+  public set ExpirationDate(value: Date) {
+    this.expirationDate = value;
+  }
+
+  public get Alias(): string {
+    return this.alias;
+  }
+
+  public set Alias(value: string) {
+    this.alias = value;
+  }
+
+  public get Type(): string {
+    return this.type;
+  }
+
+  public set Type(value: string) {
+    this.type = value;
+  }
+
+  public get Tgss(): boolean {
+    return this.tgss;
+  }
+
+  public set Tgss(value: boolean) {
+    this.tgss = value;
+  }
+
+  public get Sepe(): boolean {
+    return this.sepe;
+  }
+
+  public set Sepe(value: boolean) {
+    this.sepe = value;
+  }
+
+  public get Aeat(): boolean {
+    return this.aeat;
+  }
+
+  public set Aeat(value: boolean) {
+    this.aeat = value;
+  }
+
+  public get Key(): string {
+    return this.key;
+  }
+
+  public set Key(value: string) {
+    this.key = value;
+  }
+
+  getKey(): string {
+    return this.name;
+  }
+
+  getFilterableFields(): Map<string,any> {
+    let map = new Map<string, any>();
+    map.set('name', this.Name);
+    map.set('representationType', this.RepresentationType);
+    map.set('expirationDate', this.ExpirationDate);
+    map.set('alias', this.Alias);
+    map.set('type', this.Type);
+    map.set('tgss', this.Tgss);
+    map.set('sepe', this.Sepe);
+    map.set('aeat', this.Aeat);
+    return map;
+  }
+
+  getSortableFields(): Map<string,any> {
+    let map = new Map<string, any>();
+    map.set('name', this.Name);
+    map.set('representationType', this.RepresentationType);
+    map.set('expirationDate', this.ExpirationDate);
+    map.set('alias', this.Alias);
+    map.set('type', this.Type);
+    map.set('tgss', this.Tgss);
+    map.set('sepe', this.Sepe);
+    map.set('aeat', this.Aeat);
+    return map;
+  }
+
+}
+
+class StorableCertificate extends Certificate implements IStorable<Certificate> {
+    getCollection(): ICollection<Certificate> {
+        return certificates;
+    }
+    getLocalStorage(): string {
+        return 'certificates';
     }
 }
 
@@ -2297,17 +2514,17 @@ class StorableBank extends Bank implements IStorable<Bank> {
 class TaxModel implements ITaxModel, IModel  {
     private name: string;
     private taxType: string;
-    private status: string;
+    private status: statusTaxModel;
     private paymentMethod: string;
     private result: string;
     private trimester: number;
     private year: number;
     private key: string;
 
-    constructor(name?: string, taxType?: string, status?: string, paymentMethod?: string, result?: string, trimester?: number, year?: number) {
+    constructor(name?: string, taxType?: string, status?: statusTaxModel, paymentMethod?: string, result?: string, trimester?: number, year?: number) {
         this.name = name || '';
         this.taxType = taxType || '';
-        this.status = status || '';
+        this.status = status || 'pendiente';
         this.paymentMethod = paymentMethod || '';
         this.result = result || '';
         this.trimester = trimester || 0;
@@ -2365,11 +2582,11 @@ class TaxModel implements ITaxModel, IModel  {
         this.taxType = value;
     }
 
-    public get Status(): string {
+    public get Status(): statusTaxModel {
         return this.status;
     }
 
-    public set Status(value: string) {
+    public set Status(value: statusTaxModel) {
         this.status = value;
     }
 
@@ -2986,6 +3203,190 @@ class StorableAuth extends Auth implements IStorable<Auth> {
     }
 }
 
+class Mark implements IMark, IModel  {
+  private id: string;
+  private name: string;
+  private lastName: string;
+  private idEmployee: string;
+  private date: Date;
+  private entryDate: Date;
+  private exitDate: Date;
+  private pause: IPause;
+  private location: string ;
+  private ccc: string;
+  private workplace: string ;
+  private status: string ;
+  private key: string;
+
+
+  constructor(name?: string, lastName?: string, idEmployee?: string, date?: Date, entryDate?: Date, exitDate?: Date, pause?: IPause, location?: string, ccc?: string, workplace?: string, status?: string) {
+    this.id = new KeyGenerator().generate(15);
+    this.name = name || '';
+    this.lastName = lastName || '';
+    this.idEmployee = idEmployee || '';
+    this.date = date || new Date();
+    this.entryDate = entryDate || new Date();
+    this.exitDate = exitDate || new Date();
+    this.pause = pause || { StartPause: new Date(), EndPause: new Date() };
+    this.location = location || '';
+    this.ccc = ccc || '';
+    this.workplace = workplace || '';
+    this.status = status || '';
+    this.key = this.id || '';
+  }
+
+
+  public get Id(): string {
+    return this.id;
+  }
+
+  public set Id(value: string) {
+    this.id = value;
+  }
+
+  public get Name(): string {
+    return this.name;
+  }
+
+  public set Name(value: string) {
+    this.name = value;
+  }
+
+  public get Lastname(): string {
+    return this.lastName;
+  }
+
+  public set Lastname(value: string) {
+    this.lastName = value;
+  }
+
+  public get IdEmployee(): string {
+    return this.idEmployee;
+  }
+
+  public set IdEmployee(value: string) {
+    this.idEmployee = value;
+  }
+
+  public get Date(): Date {
+    return this.date;
+  }
+
+  public set Date(value: Date) {
+    this.date = value;
+  }
+
+  public get EntryDate(): Date {
+    return this.entryDate;
+  }
+
+  public set EntryDate(value: Date) {
+    this.entryDate = value;
+  }
+
+  public get ExitDate(): Date {
+    return this.exitDate;
+  }
+
+  public set ExitDate(value: Date) {
+    this.exitDate = value;
+  }
+
+  public get Pause(): IPause {
+    return this.pause;
+  }
+
+  public set Pause(value: IPause) {
+    this.pause = value;
+  }
+
+  public get Location(): string {
+    return this.location;
+  }
+
+  public set Location(value: string) {
+    this.location = value;
+  }
+
+  public get Ccc(): string {
+    return this.ccc;
+  }
+
+  public set Ccc(value: string) {
+    this.ccc = value;
+  }
+
+  public get Workplace(): string {
+    return this.workplace;
+  }
+
+  public set Workplace(value: string) {
+    this.workplace = value;
+  }
+
+  public get Status(): string {
+    return this.status;
+  }
+
+  public set Status(value: string) {
+    this.status = value;
+  }
+
+  public get Key() {
+    return this.key;
+  }
+
+  public set Key(value: string) {
+    this.key = value;
+  }
+
+  getKey(): string {
+    return this.idEmployee;
+  }
+
+  getFilterableFields(): Map<string, any> {
+    let map = new Map<string, any>();
+    map.set('name', this.name);
+    map.set('lastname', this.lastName);
+    map.set('idEmployee', this.idEmployee);
+    map.set('date', this.date);
+    map.set('entryDate', this.entryDate);
+    map.set('exitDate', this.exitDate);
+    map.set('pause', this.pause);
+    map.set('location', this.location);
+    map.set('ccc', this.ccc);
+    map.set('workplace', this.workplace);
+    map.set('status', this.status);
+    return map;
+  }
+
+  getSortableFields(): Map<string, any> {
+    let map = new Map<string, any>();
+    map.set('name', this.name);
+    map.set('lastname', this.lastName);
+    map.set('idEmployee', this.idEmployee);
+    map.set('date', this.date);
+    map.set('entryDate', this.entryDate);
+    map.set('exitDate', this.exitDate);
+    map.set('pause', this.pause);
+    map.set('location', this.location);
+    map.set('ccc', this.ccc);
+    map.set('workplace', this.workplace);
+    map.set('status', this.status);
+    return map;
+  }
+
+}
+
+class StorableMark extends Mark implements IStorable<Mark> {
+    getCollection(): ICollection<Mark> {
+        return marks;
+    }
+    getLocalStorage(): string {
+        return 'marks';
+    }
+}
+
 class User implements IUser, IModel  {
     private name: string;
     private lastname: string;
@@ -3091,12 +3492,12 @@ class User implements IUser, IModel  {
         this.key = value;
     }
 
-    getKey(): string {
-        return this.key;
-    }
+  getKey(): string {
+    return this.key;
+  }
 
-    getFilterableFields(): Map<string, any> {
-        let map = new Map<string, any>();
+  getFilterableFields(): Map<string, any> {
+    let map = new Map<string, any>();
 
         map.set('name', this.name);
         map.set('lastname', this.lastname);
@@ -3109,8 +3510,8 @@ class User implements IUser, IModel  {
         return map;
     }
 
-    getSortableFields(): Map<string, any> {
-        let map = new Map<string, any>();
+  getSortableFields(): Map<string, any> {
+    let map = new Map<string, any>();
 
         map.set('name', this.name);
         map.set('lastname', this.lastname);
@@ -3193,6 +3594,17 @@ if(folders.size() == 0){
     localFolders.write(storableFolders.getLocalStorage(), folders);
 }
 let apiFolders = folders.slice(0,5);
+let certificates: ICollection<Certificate> = new Collection<Certificate>();
+let storableCertificates = new StorableCertificate();
+let localCertificates = new LocalStorage<Certificate>(Certificate);
+certificates = localCertificates.read(storableCertificates.getLocalStorage())
+if(certificates.size() == 0){
+  certificates.add(new Certificate('Certificado 1'));
+  certificates.add(new Certificate('Certificado 2'));
+  certificates.add(new Certificate('Certificado 3'));
+  localCertificates.write(storableCertificates.getLocalStorage(), certificates);
+}
+
 
 let enterprises: ICollection<Enterprise> = new Collection<Enterprise>();
 let storableEnterprises = new StorableEnterprise();
@@ -3295,6 +3707,7 @@ if(employees.size() == 0){
 }
 
 let users: ICollection<User> = new Collection<User>();
+let marks: ICollection<Mark> = new Collection<Mark>();
 let storableUsers = new StorableUser();
 let localUsers = new LocalStorage<User>(User);
 users = localUsers.read(storableUsers.getLocalStorage())

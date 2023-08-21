@@ -18,7 +18,6 @@ import { ModelsDashboardComponent } from './components/models-dashboard/models-d
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-
 @NgModule({
   declarations: [
     BanksDashboardComponent,
@@ -45,4 +44,4 @@ import { SharedModule } from 'src/app/shared/shared.module';
 export class HomeModule {
 
 
- }
+}

@@ -10,18 +10,15 @@ import { CollectionFactory, ICollection, IEnterprise } from 'libraries/AonSDK/ao
   styleUrls: ['./select-enterprise.component.scss']
 })
 export class SelectEnterpriseComponent implements OnInit {
-
   enterprises: ICollection<IEnterprise> = new CollectionFactory().createEnterpriseCollection();
 
   constructor(private authService: AuthService, private enterpriseService: EnterpriseService, private router: Router) {
-    // this.empresas = this.auth.auxEmpresas();
-
-  }
-
-  ngOnInit() {
     this.enterpriseService.getEnterpriseList().then((enterprises) => {
       this.enterprises = enterprises;
     });
+  }
+
+  ngOnInit() {
   }
 
   selectEnterprise(enterprise: IEnterprise) {

@@ -150,7 +150,6 @@ export class HomeComponent implements OnInit {
     this.messageService.getMessageList().then((response) => {
       this.messages = response;
       this.messagesSubject.next(this.messages);
-      console.log(this.messages);
     });
 
     //translate

@@ -1,23 +1,24 @@
-<div class="allSize">
-    <div class="tabHeader">
-        <mat-tab-group
-            (selectedTabChange)="tabChanged($event)"
-            animationDuration="0ms"
-            mat-flat-tab-group>
-            <mat-tab *ngFor="let tab of tabs; index as i">
-                <ng-template mat-tab-label>
-                    <app-icon *ngIf="tab.icon != undefined" [shape]="tab.icon || ''" [color]="tab.color || ''" [size]="'1.2rem'"></app-icon>
-                    <ng-container *ngIf="tab.icon != ''">&nbsp;&nbsp;</ng-container>
-                    <span [ngStyle]="{'color': tab.color}">{{ tab.name }}</span>
-                </ng-template>
-            </mat-tab>
-        </mat-tab-group>
-        <div class="tool">
-            <ng-content select="[tool]"></ng-content>
-        </div>
+<div>
+  <div id="tabs-header" class='{{tabColor}}'>
+    <div id="tabs-tool">
+      <ng-content select="[tool]"></ng-content>
     </div>
-    <mat-divider></mat-divider>
-    <div class="content">
-        <ng-content select="[content]"></ng-content>
-    </div>
+    <mat-tab-group
+      (selectedTabChange)="tabChanged($event)"
+      animationDuration="0ms"
+      mat-flat-tab-group
+    >
+      <mat-tab *ngFor="let tab of tabs; index as i">
+        <ng-template mat-tab-label>
+          <app-icon *ngIf="tab.icon != undefined" [shape]="tab.icon || ''" [color]="tab.color || ''" [size]="'1.2rem'"></app-icon>
+          <span class="tab-name" title="{{ tab.name }}">
+            {{ tab.name }}
+          </span>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  <div id="tabs-content">
+    <ng-content select="[content]"></ng-content>
+  </div>
 </div>
