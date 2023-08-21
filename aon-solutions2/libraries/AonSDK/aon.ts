@@ -1,4 +1,13 @@
 /**
+ *  Configuration parameters
+ */
+
+// true para activar que los datos lleguen desde la api, false para usar datos ficticion locales
+let APIEnvironment = true;
+// true activa unos tests simples para ver que los métodos funcionan correctamente, false para desactivarlos
+let test: boolean = true;
+
+/**
  * 
  * CONSTS
  * 
@@ -6,9 +15,21 @@
 
 // URL for test environment
 const BASE_URL = 'https://aonsolutions.org';
-const GET_MULTIPLE = 'multipleObjectGet';
+
 const GET_SINGLE = 'singleObjectGet'
+const CREATE_SINGLE = 'singleObjectCreate';
+const UPDATE_SINGLE = 'singleObjectUpdate';
+const DELETE_SINGLE = 'singleObjectDelete';
+const GET_MULTIPLE = 'multipleObjectGet';
+const CREATE_MULTIPLE = 'multipleObjectCreate';
+const UPDATE_MULTIPLE = 'multipleObjectUpdate';
+const DELETE_MULTIPLE = 'multipleObjectDelete';
+
 const GET_METHOD = 'GET';
+const POST_METHOD = 'POST';
+const PUT_METHOD = 'PUT';
+const DELETE_METHOD = 'DELETE';
+
 
 /**
  * 
@@ -78,129 +99,242 @@ interface IReportingDataAccessFactory {
 
 export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMultipleObjectCrudFactory<IDocument> {
     createSingleObjectCrud(): ISingleObjectCrud<IDocument> {
-        return new GenericSingleObjectCrud<Document>(new GenericSingleObjectCrudRepository<Document>(new StorableDocument(), Document), Document);
+        return new GenericSingleObjectCrud<Document>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Document>(Document) : 
+            new GenericSingleObjectCrudRepository<Document>(new StorableDocument(), Document)
+            ), 
+            Document);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocument> {
-        return new GenericMultipleObjectCrud<Document>(new APIGenericMultipleObjectCrudRepository<Document>(Document),Document);
-        // return new GenericMultipleObjectCrud<Document>(new GenericMultipleObjectCrudRepository<Document>(new StorableDocument(), Document), Document);
+        return new GenericMultipleObjectCrud<Document>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Document>(Document) : 
+            new GenericMultipleObjectCrudRepository<Document>(new StorableDocument(), Document)
+            ), 
+            Document);
     }
 }
 
 export class CertificateFactory implements ISingleObjectCrudFactory<ICertificate>, IMultipleObjectCrudFactory<ICertificate> {
     createSingleObjectCrud(): ISingleObjectCrud<ICertificate> {
-        return new GenericSingleObjectCrud<Certificate>(new GenericSingleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate), Certificate);
+        return new GenericSingleObjectCrud<Certificate>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Certificate>(Certificate) : 
+            new GenericSingleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate)
+            ), 
+            Certificate);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<ICertificate> {
-        return new GenericMultipleObjectCrud<Certificate>(new GenericMultipleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate), Certificate);
+        return new GenericMultipleObjectCrud<Certificate>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Certificate>(Certificate) : 
+            new GenericMultipleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate)
+            ), 
+            Certificate);
     }
 }
 
 export class FolderFactory implements ISingleObjectCrudFactory<IFolder>, IMultipleObjectCrudFactory<IFolder> {
     createSingleObjectCrud(): ISingleObjectCrud<IFolder> {
-        return new GenericSingleObjectCrud<Folder>(new GenericSingleObjectCrudRepository<Folder>(new StorableFolder(), Folder), Folder);
+        return new GenericSingleObjectCrud<Folder>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Folder>(Folder) : 
+            new GenericSingleObjectCrudRepository<Folder>(new StorableFolder(), Folder)
+            ), 
+            Folder);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IFolder> {
-        return new GenericMultipleObjectCrud<Folder>(new APIFolderMultipleObjectCrudRepository(), Folder);
-        // return new GenericMultipleObjectCrud<Folder>(new GenericMultipleObjectCrudRepository<Folder>(new StorableFolder(), Folder), Folder);
+        return new GenericMultipleObjectCrud<Folder>( 
+            (APIEnvironment ? 
+            new APIFolderMultipleObjectCrudRepository() : 
+            new GenericMultipleObjectCrudRepository<Folder>(new StorableFolder(), Folder)
+            ), 
+            Folder);
     }
 }
 
 export class DocumenNoteFactory implements ISingleObjectCrudFactory<IDocumentNote>, IMultipleObjectCrudFactory<IDocumentNote> {
     createSingleObjectCrud(): ISingleObjectCrud<IDocumentNote> {
-        return new GenericSingleObjectCrud<DocumentNote>(new GenericSingleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote), DocumentNote);
+        return new GenericSingleObjectCrud<DocumentNote>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<DocumentNote>(DocumentNote) : 
+            new GenericSingleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote)
+            ), 
+            DocumentNote);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocumentNote> {
-        return new GenericMultipleObjectCrud<DocumentNote>(new GenericMultipleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote), DocumentNote);
+        return new GenericMultipleObjectCrud<DocumentNote>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<DocumentNote>(DocumentNote) : 
+            new GenericMultipleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote)
+            ), 
+            DocumentNote);
     }
 }
 
 export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMultipleObjectCrudFactory<IMessage> {
     createSingleObjectCrud(): ISingleObjectCrud<IMessage> {
-        return new GenericSingleObjectCrud<Message>(new GenericSingleObjectCrudRepository<Message>(new StorableMessage(), Message), Message);
+        return new GenericSingleObjectCrud<Message>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Message>(Message) : 
+            new GenericSingleObjectCrudRepository<Message>(new StorableMessage(), Message)
+            ), 
+            Message);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessage> {
-        return new GenericMultipleObjectCrud<Message>(new APIGenericMultipleObjectCrudRepository<Message>(Message),Message);
-        // return new GenericMultipleObjectCrud<Message>(new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message), Message);
+        return new GenericMultipleObjectCrud<Message>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Message>(Message) : 
+            new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message)
+            ), 
+            Message);
     }
 }
 
 export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat>, IMultipleObjectCrudFactory<IMessageChat> {
     createSingleObjectCrud(): ISingleObjectCrud<IMessageChat> {
-        return new GenericSingleObjectCrud<MessageChat>(new GenericSingleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat), MessageChat);
+        return new GenericSingleObjectCrud<MessageChat>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<MessageChat>(MessageChat) : 
+            new GenericSingleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat)
+            ), 
+            MessageChat);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessageChat> {
-        return new GenericMultipleObjectCrud<MessageChat>(new APIGenericMultipleObjectCrudRepository<MessageChat>(MessageChat),MessageChat);
-        // return new GenericMultipleObjectCrud<MessageChat>(new GenericMultipleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat), MessageChat);
+        return new GenericMultipleObjectCrud<MessageChat>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<MessageChat>(MessageChat) : 
+            new GenericMultipleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat)
+            ), 
+            MessageChat);
     }
 }
 
 export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>, IMultipleObjectCrudFactory<IEnterprise> {
     createSingleObjectCrud(): ISingleObjectReader<IEnterprise> {
-        return new GenericSingleObjectCrud<Enterprise>(new APIGenericSingleObjectCrudRepository<Enterprise>(Enterprise),Enterprise);
-        //return new GenericSingleObjectCrud<Enterprise>(new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
+        return new GenericSingleObjectCrud<Enterprise>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Enterprise>(Enterprise) : 
+            new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise)
+            ), 
+            Enterprise);
     }
     createMultipleObjectCrud(): IMultipleObjectReader<IEnterprise> {
-        return new GenericMultipleObjectCrud<Enterprise>(new APIGenericMultipleObjectCrudRepository<Enterprise>(Enterprise),Enterprise);
-        // return new GenericMultipleObjectCrud<Enterprise>(new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
+        return new GenericMultipleObjectCrud<Enterprise>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Enterprise>(Enterprise) : 
+            new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise)
+            ), 
+            Enterprise);
     }
 }
 
 export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleObjectCrudFactory<IBank> {
     createSingleObjectCrud(): ISingleObjectCrud<IBank> {
-        return new GenericSingleObjectCrud<Bank>(new GenericSingleObjectCrudRepository<Bank>(new StorableBank(), Bank), Bank);
+        return new GenericSingleObjectCrud<Bank>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Bank>(Bank) : 
+            new GenericSingleObjectCrudRepository<Bank>(new StorableBank(), Bank)
+            ), 
+            Bank);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IBank> {
-        return new GenericMultipleObjectCrud<Bank>(new APIGenericMultipleObjectCrudRepository<Bank>(Bank),Bank);
-        // return new GenericMultipleObjectCrud<Bank>(new GenericMultipleObjectCrudRepository<Bank>(new StorableBank(), Bank), Bank);
+        return new GenericMultipleObjectCrud<Bank>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Bank>(Bank) : 
+            new GenericMultipleObjectCrudRepository<Bank>(new StorableBank(), Bank)
+            ), 
+            Bank);
     }
 }
 
 export class TaxModelFactory implements ISingleObjectCrudFactory<ITaxModel>, IMultipleObjectCrudFactory<ITaxModel> {
     createSingleObjectCrud(): ISingleObjectCrud<ITaxModel> {
-        return new GenericSingleObjectCrud<TaxModel>(new GenericSingleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel), TaxModel);
+        return new GenericSingleObjectCrud<TaxModel>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<TaxModel>(TaxModel) : 
+            new GenericSingleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel)
+            ), 
+            TaxModel);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<ITaxModel> {
-        return new GenericMultipleObjectCrud<TaxModel>(new APIGenericMultipleObjectCrudRepository<TaxModel>(TaxModel),TaxModel);
-        // return new GenericMultipleObjectCrud<TaxModel>(new GenericMultipleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel), TaxModel);
+        return new GenericMultipleObjectCrud<TaxModel>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<TaxModel>(TaxModel) : 
+            new GenericMultipleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel)
+            ), 
+            TaxModel);
     }
 }
 
 export class EmployeeFactory implements ISingleObjectCrudFactory<IEmployee>, IMultipleObjectCrudFactory<IEmployee> {
     createSingleObjectCrud(): ISingleObjectCrud<IEmployee> {
-        return new GenericSingleObjectCrud<Employee>(new GenericSingleObjectCrudRepository<Employee>(new StorableEmployee(), Employee), Employee);
+        return new GenericSingleObjectCrud<Employee>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Employee>(Employee) : 
+            new GenericSingleObjectCrudRepository<Employee>(new StorableEmployee(), Employee)
+            ), 
+            Employee);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IEmployee> {
-        return new GenericMultipleObjectCrud<Employee>(new GenericMultipleObjectCrudRepository<Employee>(new StorableEmployee(), Employee), Employee);
+        return new GenericMultipleObjectCrud<Employee>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Employee>(Employee) : 
+            new GenericMultipleObjectCrudRepository<Employee>(new StorableEmployee(), Employee)
+            ), 
+            Employee);
     }
 }
 
 export class AuthenticationFactory implements IAuthenticationManagerFactory {
     createAuthenticationManager(): IAuthenticationManager {
-        return new AuthenticationManager(new APIAuthenticationRepository());
+        return new AuthenticationManager(APIEnvironment ? new APIAuthenticationRepository() : new AuthenticationRepository(new StorableAuth()));
     }
 }
 
 export class ReportingFactory implements IReportingDataAccessFactory {
     createReportingDataAccess(): IReportingDataAccess {
+        // TO DO - create reporting repository for api
         return new ReportingDataAccess(new ReportingRepository());
     }
 }
 
 export class MarkFactory implements ISingleObjectCrudFactory<IMark>, IMultipleObjectCrudFactory<IMark> {
     createSingleObjectCrud(): ISingleObjectCrud<IMark> {
-        return new GenericSingleObjectCrud<Mark>(new GenericSingleObjectCrudRepository<Mark>(new StorableMark(), Mark), Mark);
+        return new GenericSingleObjectCrud<Mark>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Mark>(Mark) : 
+            new GenericSingleObjectCrudRepository<Mark>(new StorableMark(), Mark)
+            ), 
+            Mark);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMark> {
-        return new GenericMultipleObjectCrud<Mark>(new GenericMultipleObjectCrudRepository<Mark>(new StorableMark(), Mark), Mark);
+        return new GenericMultipleObjectCrud<Mark>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Mark>(Mark) : 
+            new GenericMultipleObjectCrudRepository<Mark>(new StorableMark(), Mark)
+            ), 
+            Mark);
     }
 }
 
 export class UserFactory implements ISingleObjectCrudFactory<IUser>, IMultipleObjectCrudFactory<IUser> {
     createSingleObjectCrud(): ISingleObjectCrud<IUser> {
-        return new GenericSingleObjectCrud<User>(new GenericSingleObjectCrudRepository<User>(new StorableUser(), User), User);
+        return new GenericSingleObjectCrud<User>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<User>(User) : 
+            new GenericSingleObjectCrudRepository<User>(new StorableUser(), User)
+            ), 
+            User);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IUser> {
-        return new GenericMultipleObjectCrud<User>(new GenericMultipleObjectCrudRepository<User>(new StorableUser(), User), User);
+        return new GenericMultipleObjectCrud<User>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<User>(User) : 
+            new GenericMultipleObjectCrudRepository<User>(new StorableUser(), User)
+            ), 
+            User);
     }
 }
 
@@ -1872,7 +2006,7 @@ class Folder implements IFolder, IModel  {
     getUrl(currentMethod: string, filter: IFilter): string[] {
         let urls: string [] = [];
         if(currentMethod == GET_MULTIPLE){
-            if(filter.fields && filter.fields?.has('workplace')){
+            if(filter && filter.fields && filter.fields?.has('workplace')){
                 filter.fields?.get('workplace').split(';').forEach((element: any) => {
                     if(element) urls.push('/ms/api/contract/employee/workplace?workplace=' + element)
                 })
@@ -2299,6 +2433,7 @@ class Enterprise implements IEnterprise, IModel {
             enterprise.registry = data.registry ? data.registry : '';
             return enterprise;
         }else if (currentMethod == GET_SINGLE){
+            // TO DO - mapear los atributos que nos llegan en la llamada de una empresa a la empresa del sdk
             let enterprise = new Enterprise();
             enterprise.Address
             enterprise.Country
@@ -3789,9 +3924,7 @@ if(auths.size() == 0){
     TESTING API FUNCTIONS
 */
 
-var testAPI: boolean = false;
-
-if(testAPI){
+if(test){
 
     /*
         TEST FOR DOCUMENTS
@@ -3846,7 +3979,7 @@ if(testAPI){
         console.log('ERROR TEST GET ENTERPRISES', error)
     })
     enterpriseFactory.createSingleObjectCrud().getElement('702378').then((element) => {
-        console.log('TEST GET ENTERPRISE BY ID', element);
+        console.log('TEST GET ENTERPRISE BY ID', element.result);
     }).catch((error) => {
         console.log('ERROR TEST GET ENTERPRISE BY ID', error)
     })
