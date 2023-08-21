@@ -9,17 +9,17 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_RAW;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FREE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.UNPAID;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,11 +113,15 @@ public abstract class QuoteCalculator {
 
 	public abstract Double getEreBase() throws AonException;
 
+	public abstract Double getUnpaidBase() throws AonException;
+
+	public abstract Double getDirectPayBase() throws AonException;
+
 	public abstract Double getMaternityBase() throws AonException;
 
 	public abstract Double getRawMaternityBase() throws AonException;
 
-	public abstract Double getDirectPayBase() throws AonException;
+	public abstract Double getRawUnpaidBase() throws AonException;
 
 	public abstract Double getRawDirectPayBase() throws AonException;
 
@@ -277,6 +281,16 @@ public abstract class QuoteCalculator {
 		public static QuoteCalculator getInstance() {
 			return SINGLETON;
 		}
+
+		@Override
+		public Double getUnpaidBase() throws AonException {
+		    return null;
+		}
+
+		@Override
+		public Double getRawUnpaidBase() throws AonException {
+		    return null;
+		}
 	}
 
 	public static class GeneralQuote extends QuoteCalculator {
@@ -362,6 +376,19 @@ public abstract class QuoteCalculator {
 		@Override
 		public Double getRawDirectPayBase() throws AonException {
 		    String rawName = getRawName(DIRECT_PAY);
+		    return bases.containsKey(rawName) 
+			    ? bases.get(rawName) : 0.00;
+		}
+
+		@Override
+		public Double getUnpaidBase() throws AonException {
+			return bases.containsKey(UNPAID.getName())
+					? bases.get(UNPAID.getName()) : 0.00;
+		}
+		
+		@Override
+		public Double getRawUnpaidBase() throws AonException {
+		    String rawName = getRawName(UNPAID);
 		    return bases.containsKey(rawName) 
 			    ? bases.get(rawName) : 0.00;
 		}
@@ -471,9 +498,8 @@ public abstract class QuoteCalculator {
 				Double old = bases.put(name, quote + bases.getOrDefault(name, 0.00));
 				bases.put(getRawName(name), quote + bases.getOrDefault(getRawName(name), 0.00));
 				
-				if (AonStringUtils.equals(MATERNITY.getName(), name)
-						|| matchAny(ContextVariable.ERES, payment.getName()) 
-						|| AonStringUtils.equals(DIRECT_PAY.getName(), name)) {
+				if (matchAny(ContextVariable.FREES, payment.getName())
+					|| matchAny(ContextVariable.ERES, payment.getName())) {
 
 
 					double cgcBaseMin  = 0;
@@ -516,8 +542,7 @@ public abstract class QuoteCalculator {
 								start, 
 								end, 
 								ERE_BASES,
-								MATERNITY_BASE,
-								DIRECT_BASE
+								FREE_BASES
 								));
 						//@formatter:on
 					if (context.containsVariable(CGP_BASE.getName(), start,
@@ -529,8 +554,7 @@ public abstract class QuoteCalculator {
 								CGP_BASE_MAX,
 								context, start, end, 
 								ERE_BASES, 
-								MATERNITY_BASE,
-								DIRECT_BASE));
+								FREE_BASES));
 
 					return quotesImpl;
 				}
@@ -603,9 +627,8 @@ public abstract class QuoteCalculator {
 							CGC_BASE_MIN, 
 							CGC_BASE_MAX,
 							context, start, end, 
-							ERE_BASES, 
-							MATERNITY_BASE,
-							DIRECT_BASE));
+							ERE_BASES,
+							FREE_BASES));
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
@@ -632,9 +655,8 @@ public abstract class QuoteCalculator {
 							CGC_BASE_MIN, 
 							CGC_BASE_MAX,
 							context, start, end, 
-							ERE_BASES, 
-							MATERNITY_BASE,
-							DIRECT_BASE));
+							ERE_BASES,
+							FREE_BASES));
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
@@ -649,9 +671,8 @@ public abstract class QuoteCalculator {
 					context,
 					start, 
 					end, 
-					ERE_BASES, 
-					MATERNITY_BASE, 
-					DIRECT_BASE));
+					ERE_BASES,
+					FREE_BASES));
 
 			SalaryType salaryType = payment.getSalaryType();
 			salaryType.accept(new SalaryTypeVisitor<Object>() {
@@ -853,13 +874,29 @@ public abstract class QuoteCalculator {
 		}
 		
 		@Override
+		public Double getUnpaidBase() throws AonException {
+			double unpaidBase = 0.00;
+			for (GeneralQuote calculator : calculators)
+				unpaidBase += calculator.getUnpaidBase();
+			return unpaidBase;
+		}
+		
+		@Override
 		public Double getDirectPayBase() throws AonException {
 			double directPayBase = 0.00;
 			for (GeneralQuote calculator : calculators)
 				directPayBase += calculator.getDirectPayBase();
 			return directPayBase;
 		}
-		
+
+		@Override
+		public Double getRawUnpaidBase() throws AonException {
+			double rawUnpaidBase = 0.00;
+			for (GeneralQuote calculator : calculators)
+				rawUnpaidBase += calculator.getRawUnpaidBase();
+			return rawUnpaidBase;
+		}
+
 		@Override
 		public Double getRawDirectPayBase() throws AonException {
 			double rawDirectPayBase = 0.00;

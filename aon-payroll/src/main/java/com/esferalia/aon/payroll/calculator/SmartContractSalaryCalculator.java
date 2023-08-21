@@ -446,6 +446,16 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 		
 		@Override
+		public Double getUnpaidBase() throws AonException {
+		    return delegate.getUnpaidBase();
+		}
+		
+		@Override
+		public Double getRawUnpaidBase() throws AonException {
+		    return delegate.getRawUnpaidBase();
+		}
+		
+		@Override
 		public Double getAdditionalBase() throws AonException {
 			return delegate.getAdditionalBase();
 		}
