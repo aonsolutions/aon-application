@@ -2569,6 +2569,28 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestInactividad() throws Exception {
+		
+		if (!isDisplayed("permiso,_no_retribuido-content"))
+			open("inactividad");
+
+
+		wait4Id("permiso,_no_retribuido-content");
+
+		draft("PERMISO, NO RETRIBUIDO");
+		calculate(Calendar.AUGUST,2023);
+		assertValue("cgpBaseLabel", 1260.00);
+//		assertText("common_contingency", 0.00);
+//		assertText("unemployment", 0.00);
+//		assertText("job_training", 0.00);
+//		assertText("mei", 0.00);
+		assertValue("totalLiquidLabel", 0.00);
+		double totalEnterpriseLabel = getText("totalEnterpriseLabel");
+		assertTrue(totalEnterpriseLabel > 0.00);
+		
+	}
+
+	@Test
 	public void TestGastosLocomocionyEstancia() throws Exception {
 		
 		if (!isDisplayed("gastos_locomocion_sin_justific,_importe"))
