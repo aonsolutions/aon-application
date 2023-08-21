@@ -1,12 +1,6 @@
-import {
-  Component,
-  EventEmitter,
-  HostBinding,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
+import { TaxModelService } from 'src/app/core/services/tax-model.service';
 import { TranslateService } from '@ngx-translate/core';
 
 export interface Tabs {
@@ -30,12 +24,12 @@ export interface Models {
   styleUrls: ['./tabs-tax-model.component.scss'],
 })
 export class TabsTaxModelComponent implements OnInit {
-  tabs: Tabs [] = [];
-  tabIndex: number = 0;
-
-  public modelsList: any[] = [];
-
+  tabs    : Tabs [] = [];
+  tabIndex: number  = 0
+  models  : any;
+  public modelsList : any[] = [];
   public modelsYears: any[] = [];
+
   constructor(private translateService: TranslateService) {
     this.translateService.get(
       ['TAX-PANEL.1_TRIMESTER', 'TAX-PANEL.2_TRIMESTER', 'TAX-PANEL.3_TRIMESTER','TAX-PANEL.4_TRIMESTER', 'TAX-PANEL.ALL']
@@ -49,7 +43,6 @@ export class TabsTaxModelComponent implements OnInit {
       ]
     })
   }
-
   @Input() type: string = '';
   @Input() appearance: MatFormFieldAppearance = 'outline';
   @Input() width: string = '100%';
@@ -67,9 +60,7 @@ export class TabsTaxModelComponent implements OnInit {
   @Input() trimester!: number;
   @Input() paddingLeftHeader: string = '';
   @Input() tabColor: string = '';
-
   @HostBinding('style.--styleTabColor') styleTabColor = '';
-
   @Output() inputValue = new EventEmitter<any>();
   @Output() changeTabIndex = new EventEmitter<number>();
   showModal: any;
