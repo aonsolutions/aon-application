@@ -1,5 +1,17 @@
 /**
- *
+ * 
+ * CONSTS
+ * 
+ */
+
+// URL for test environment
+const BASE_URL = 'https://aonsolutions.org';
+const GET_MULTIPLE = 'multipleObjectGet';
+const GET_SINGLE = 'singleObjectGet'
+const GET_METHOD = 'GET';
+
+/**
+ * 
  * ERROR DATA
  *
  */
@@ -69,7 +81,8 @@ export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMu
         return new GenericSingleObjectCrud<Document>(new GenericSingleObjectCrudRepository<Document>(new StorableDocument(), Document), Document);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocument> {
-        return new GenericMultipleObjectCrud<Document>(new GenericMultipleObjectCrudRepository<Document>(new StorableDocument(), Document), Document);
+        return new GenericMultipleObjectCrud<Document>(new APIGenericMultipleObjectCrudRepository<Document>(Document),Document);
+        // return new GenericMultipleObjectCrud<Document>(new GenericMultipleObjectCrudRepository<Document>(new StorableDocument(), Document), Document);
     }
 }
 
@@ -78,7 +91,8 @@ export class FolderFactory implements ISingleObjectCrudFactory<IFolder>, IMultip
         return new GenericSingleObjectCrud<Folder>(new GenericSingleObjectCrudRepository<Folder>(new StorableFolder(), Folder), Folder);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IFolder> {
-        return new GenericMultipleObjectCrud<Folder>(new GenericMultipleObjectCrudRepository<Folder>(new StorableFolder(), Folder), Folder);
+        return new GenericMultipleObjectCrud<Folder>(new APIFolderMultipleObjectCrudRepository(), Folder);
+        // return new GenericMultipleObjectCrud<Folder>(new GenericMultipleObjectCrudRepository<Folder>(new StorableFolder(), Folder), Folder);
     }
 }
 
@@ -96,7 +110,8 @@ export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMult
         return new GenericSingleObjectCrud<Message>(new GenericSingleObjectCrudRepository<Message>(new StorableMessage(), Message), Message);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessage> {
-        return new GenericMultipleObjectCrud<Message>(new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message), Message);
+        return new GenericMultipleObjectCrud<Message>(new APIGenericMultipleObjectCrudRepository<Message>(Message),Message);
+        // return new GenericMultipleObjectCrud<Message>(new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message), Message);
     }
 }
 
@@ -105,16 +120,19 @@ export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat
         return new GenericSingleObjectCrud<MessageChat>(new GenericSingleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat), MessageChat);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessageChat> {
-        return new GenericMultipleObjectCrud<MessageChat>(new GenericMultipleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat), MessageChat);
+        return new GenericMultipleObjectCrud<MessageChat>(new APIGenericMultipleObjectCrudRepository<MessageChat>(MessageChat),MessageChat);
+        // return new GenericMultipleObjectCrud<MessageChat>(new GenericMultipleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat), MessageChat);
     }
 }
 
 export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>, IMultipleObjectCrudFactory<IEnterprise> {
     createSingleObjectCrud(): ISingleObjectReader<IEnterprise> {
-        return new GenericSingleObjectCrud<Enterprise>(new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
+        return new GenericSingleObjectCrud<Enterprise>(new APIGenericSingleObjectCrudRepository<Enterprise>(Enterprise),Enterprise);
+        //return new GenericSingleObjectCrud<Enterprise>(new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
     }
     createMultipleObjectCrud(): IMultipleObjectReader<IEnterprise> {
-        return new GenericMultipleObjectCrud<Enterprise>(new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
+        return new GenericMultipleObjectCrud<Enterprise>(new APIGenericMultipleObjectCrudRepository<Enterprise>(Enterprise),Enterprise);
+        // return new GenericMultipleObjectCrud<Enterprise>(new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
     }
 }
 
@@ -123,7 +141,8 @@ export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleOb
         return new GenericSingleObjectCrud<Bank>(new GenericSingleObjectCrudRepository<Bank>(new StorableBank(), Bank), Bank);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IBank> {
-        return new GenericMultipleObjectCrud<Bank>(new GenericMultipleObjectCrudRepository<Bank>(new StorableBank(), Bank), Bank);
+        return new GenericMultipleObjectCrud<Bank>(new APIGenericMultipleObjectCrudRepository<Bank>(Bank),Bank);
+        // return new GenericMultipleObjectCrud<Bank>(new GenericMultipleObjectCrudRepository<Bank>(new StorableBank(), Bank), Bank);
     }
 }
 
@@ -132,7 +151,8 @@ export class TaxModelFactory implements ISingleObjectCrudFactory<ITaxModel>, IMu
         return new GenericSingleObjectCrud<TaxModel>(new GenericSingleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel), TaxModel);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<ITaxModel> {
-        return new GenericMultipleObjectCrud<TaxModel>(new GenericMultipleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel), TaxModel);
+        return new GenericMultipleObjectCrud<TaxModel>(new APIGenericMultipleObjectCrudRepository<TaxModel>(TaxModel),TaxModel);
+        // return new GenericMultipleObjectCrud<TaxModel>(new GenericMultipleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel), TaxModel);
     }
 }
 
@@ -147,7 +167,7 @@ export class EmployeeFactory implements ISingleObjectCrudFactory<IEmployee>, IMu
 
 export class AuthenticationFactory implements IAuthenticationManagerFactory {
     createAuthenticationManager(): IAuthenticationManager {
-        return new AuthenticationManager(new AuthenticationRepository(new StorableAuth()));
+        return new AuthenticationManager(new APIAuthenticationRepository());
     }
 }
 
@@ -287,7 +307,7 @@ interface IAuthenticationManager {
      * @param enterprise The enterprise selected
      * @returns Returns true if the enterprise was set or false otherwise
      */
-    setEnterprise(enterprise: string): IResponse<boolean>;
+    setEnterprise(enterprise: IEnterprise): IResponse<boolean>;
 }
 
 /**
@@ -361,6 +381,7 @@ class GenericMultipleObjectCrud<T extends IModel> implements IMultipleObjectCrud
         try {
             return new Response<ICollection<T>>(await this.repository.get(filter));
         } catch (error) {
+            throw error;
             throw error instanceof ErrorResponse ?  error : new ErrorResponse('0206');
         }
     }
@@ -434,8 +455,13 @@ class AuthenticationManager implements IAuthenticationManager {
         return new Response<boolean>(localStorage.getItem('enterprise') ? true : false);
     }
 
-    setEnterprise(enterprise: string): IResponse<boolean> {
-        if(enterprise) localStorage.setItem('enterprise', enterprise);
+    setEnterprise(enterprise: IEnterprise): IResponse<boolean> {
+        if(enterprise){
+            localStorage.setItem('enterprise', enterprise.Document);
+            localStorage.setItem('domainId', enterprise.DomainId);
+            localStorage.setItem('domainName', enterprise.DomainName);
+            localStorage.setItem('registry', enterprise.Registry);
+        } 
         else throw new ErrorResponse('0113');
         return new Response<boolean>(true);
     }
@@ -695,13 +721,160 @@ class AuthenticationRepository implements IAuthenticationRepository {
     }
 
     async logout(): Promise<void> {
-        if(localStorage.getItem('token')) { localStorage.removeItem('token'); localStorage.removeItem('enterprise'); }
+        if(localStorage.getItem('token')) { 
+            localStorage.removeItem('token'); 
+            localStorage.removeItem('enterprise');
+            localStorage.removeItem('domainId'); 
+            localStorage.removeItem('domainName'); 
+        }
         else throw new ErrorResponse('0111');
     }
 
     async tokenLogin(token: string): Promise<void> {
         if(!localStorage.getItem('token')) localStorage.setItem('token', 'testToken');
         else throw new ErrorResponse('0101');
+    }
+}
+
+
+// REPOSITORIO PARA LAS LLAMADAS GLOBALES A LA API PARA OPERACIONES CRUD SOBRE UN SOLO OBJETO, 
+// SI SE NECESITA UN COMPORTAMIENTO ESPECIFICO HEREDAR Y SOBREESCRIBIR DICHO MÉTODO
+class APIGenericSingleObjectCrudRepository<T extends IModel> implements ISingleObjectCrudRepository<T> {
+    private httpRequest: IApiHttpRequest = new ApiHttpRequest();
+    private type: { new (): T };
+    private model: IModel;
+
+    constructor(type: { new (): T }){
+        this.type = type;
+        this.model = new this.type();
+    }
+
+    async get(key: string): Promise<T> {
+        let filter = new FilterBuilder();
+        filter.addField('id',key);
+        let url = this.model.getUrl(GET_SINGLE, filter.getFilter());
+        let method = this.model.getMethod(GET_SINGLE, filter.getFilter());
+        let response = await this.httpRequest.httpRequest(BASE_URL + url, method, {}, {})
+        return this.model.parseDataToReceive(response, GET_SINGLE);
+    }
+
+    create(element: T): Promise<T> {
+        throw new ErrorResponse('0199')
+    }
+
+    update(element: T): Promise<T> {
+        throw new ErrorResponse('0199')
+    }
+
+    delete(key: string): Promise<void> {
+        throw new ErrorResponse('0199')
+    }
+
+}
+
+// REPOSITORIO PARA LAS LLAMADAS GLOBALES A LA API PARA OPERACIONES CRUD SOBRE UN CONJUNTO DE OBJETOS, 
+// SI SE NECESITA UN COMPORTAMIENTO ESPECIFICO HEREDAR Y SOBREESCRIBIR DICHO MÉTODO
+class APIGenericMultipleObjectCrudRepository<T extends IModel> implements IMultipleObjectCrudRepository<T> {
+
+    protected httpRequest: IApiHttpRequest = new ApiHttpRequest();
+    protected type: { new (): T };
+    protected model: IModel;
+
+    constructor(type: { new (): T }){
+        this.type = type;
+        this.model = new this.type();
+    }
+
+    async get(filter?: IFilter): Promise<ICollection<T>> {
+        let urls = this.model.getUrl(GET_MULTIPLE,filter);
+        let method = this.model.getMethod(GET_MULTIPLE,filter);
+        let collection: ICollection<T> = new Collection<T>();
+        for(let url of urls){
+            let response = await this.httpRequest.httpRequest(BASE_URL + url, method, {}, {})
+            response.forEach((element: any) => {
+                collection.add(this.model.parseDataToReceive(element, GET_MULTIPLE, filter))
+            })
+        }
+        if(this.model.localFilter() && collection.size() > 0){
+            if(filter?.intervalFields || filter?.fields) collection = collection.filter(filter);
+            if(filter?.orderBy) collection.sort(filter);
+            if(filter?.pageItems && filter.pageNum) collection = collection.paginate(filter.pageNum,filter.pageItems);
+        }
+        return collection;
+    }
+
+    async create(collection: ICollection<T>): Promise<ICollection<T>> {
+        throw new ErrorResponse('0199')
+    }
+
+    async update(collection: ICollection<T>): Promise<ICollection<T>> {
+        throw new ErrorResponse('0199')
+    }
+
+    async delete(keys: string[]): Promise<void> {
+        throw new ErrorResponse('0199')
+    }
+
+}
+
+class APIFolderMultipleObjectCrudRepository extends APIGenericMultipleObjectCrudRepository<Folder> {
+
+    constructor(){
+        super(Folder);
+    }
+
+    async get(filter?: IFilter | undefined): Promise<ICollection<Folder>> {
+        let collection: ICollection<Folder> = new Collection<Folder>();
+        for(let folder of apiFolders)
+            collection.add(folder)
+        let response = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/workplace',GET_METHOD,{},{})
+        let workplaces = ''
+        response.forEach((element: any) => {
+            workplaces+=element.id + ';'
+        })
+        let filterFolder = new FilterBuilder();
+        if(!filter) {
+            filterFolder.addField('workplace', workplaces)
+        }else{
+            filter.fields?.set('workplace', workplaces)
+        }
+        collection.copyArrayToCollection((await super.get(filter ? filter : filterFolder.getFilter())).toArray())
+        return collection;
+    }
+
+}
+
+class APIAuthenticationRepository implements IAuthenticationRepository {
+
+    httpRequest = new ApiHttpRequest();
+
+    constructor() {
+    }
+
+    async login(email: string, password: string): Promise<void> {
+        let data = {
+            username: email,
+            password: password
+        }
+        let url = BASE_URL + '/ms/api/login'
+        let method = 'POST';
+        let customHeaders = {}
+        let result = await this.httpRequest.httpRequest(url,method,customHeaders,data)
+        if(result.type == "error") throw new ErrorResponse('0101');
+        else localStorage.setItem('token', result.session_id);
+    }
+
+    async logout(): Promise<void> {
+        if(localStorage.getItem('token')) { 
+            localStorage.removeItem('token'); 
+            localStorage.removeItem('enterprise');
+            localStorage.removeItem('domainId'); 
+            localStorage.removeItem('domainName'); 
+        }
+        else throw new ErrorResponse('0111');
+    }
+
+    async tokenLogin(token: string): Promise<void> {
     }
 }
 
@@ -736,6 +909,10 @@ class ReportingRepository implements IReportingRepository {
  * UTILITIES INTERFACE, FOR EXAMPLE COLLECTION TO MANAGE A LIST OF OBJECTS
  *
  */
+
+interface IApiHttpRequest {
+    httpRequest(url: string, method: string, customHeaders: any, data: any): Promise<any>;
+}
 
 export interface IResponse<T> {
     code: string;
@@ -847,6 +1024,26 @@ export interface IFilter {
  * CONCRETE IMPLEMENTATION OF UTILITIES INTERFACES
  *
  */
+
+class ApiHttpRequest implements IApiHttpRequest {
+    async httpRequest(url: string, method: string, customHeaders: any = {}, data: any): Promise<any> {
+        let headersAuth = {
+            session_id: localStorage.getItem('token'),
+            domain_name: localStorage.getItem('domainName'),
+            domain_id: localStorage.getItem('domainId')
+        }
+        let headers = new Object();
+        Object.assign(headers,customHeaders);
+        Object.assign(headers,headersAuth);
+        let options = new Object();
+        Object.defineProperty(options,'method',{value: method});
+        Object.defineProperty(options,'headers',{value: headers});
+        if(method == 'POST') Object.defineProperty(options,'body',{value: JSON.stringify(data)});
+        let result = await fetch(url,options);
+        let dataJson = await result.json();
+        return dataJson;
+    }
+}
 
 class KeyGenerator {
     characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -1095,7 +1292,7 @@ export class Collection<T extends ICollectable> implements ICollection<T> {
         if(filter.fields?.size != 0)
             filter.fields?.forEach((value, key) => {
                 filteredArray = filteredArray.filter(element =>
-                    typeof value != 'string' ? element.getFilterableFields().get(key.toLowerCase()) == value : element.getFilterableFields().get(key.toLowerCase()) == value//element.getFilterableFields().get(key.toLowerCase()).includes(value)
+                    element.getFilterableFields().has(key.toLowerCase()) ? element.getFilterableFields().get(key.toLowerCase()) == value : true//element.getFilterableFields().get(key.toLowerCase()).includes(value)
                 )
             })
         // Apply the filter usings interval fields and >= and <= operator
@@ -1145,7 +1342,7 @@ export class Collection<T extends ICollectable> implements ICollection<T> {
  *
  */
 
-interface IFactory {
+export interface IFactory {
     createDocument(): IDocument;
     createFolder(): IFolder;
     createEnterprise(): IEnterprise;
@@ -1158,7 +1355,7 @@ interface IFactory {
     createUser(): IUser;
 }
 
-interface ICollectionFactory {
+export interface ICollectionFactory {
     createDocumentCollection(): ICollection<IDocument>;
     createFolderCollection(): ICollection<IFolder>;
     createEnterpriseCollection(): ICollection<IEnterprise>;
@@ -1194,6 +1391,34 @@ interface IModel extends ICollectable {
      * Internal key of object not visible outside SDK
      */
     Key: string;
+    /**
+     * Get the url needed for the api http request.
+     * @param currentMethod The method is calling the api
+     * @return And array with the method of http needed and the url
+     */
+    getUrl(currentMethod: string, filter?: IFilter): string[];
+    /**
+     * Get method and the url of http needed for the api http request. POST, GET...
+     * @param currentMethod The method is calling the api
+     * @return And array with the method of http needed and the url
+     */
+    getMethod(currentMethod:string, filter?: IFilter): string;
+    /**
+     * Parse de data to send to format api
+     * @param data to send
+     * @returns data parsed for api
+     */
+    parseDataToSend(data: any, currentMethod:string, filter?: IFilter): any;
+    /**
+     * Parse de data received to sdk object
+     * @param data received
+     * @returns data parsed for sdk object
+     */
+    parseDataToReceive(data: any, currentMethod:string, filter?: IFilter): any;
+    /**
+     * @returns true if filters are applied in local, false otherwhise
+     */
+    localFilter(currentMethod?: string, filter?: IFilter): boolean;
 }
 
 interface IStorable<T extends ICollectable> {
@@ -1233,6 +1458,9 @@ export interface IEnterprise extends ICollectable {
     Phone: string;
     Website: string;
     Document: string;
+    DomainName: string;
+    DomainId: string;
+    Registry: string;
 }
 
 export interface IDocumentNote extends ICollectable {
@@ -1383,8 +1611,9 @@ class Document implements IDocument, IModel {
     private path: string;
     private date: Date;
     private key: string;
+    private id: string;
 
-    constructor(file?: string, fileName?: string, fileSize?: number, fileType?: string, date?: Date, path?: string) {
+    constructor(file?: string, fileName?: string, fileSize?: number, fileType?: string, date?: Date, path?: string, id?: string) {
         this.file = file || '';
         this.fileName = fileName || '';
         this.fileSize = fileSize || 0;
@@ -1392,6 +1621,62 @@ class Document implements IDocument, IModel {
         this.path =  path || '';
         this.date = date || new Date();
         this.key = path && fileName ? path + '/' + fileName : '';
+        this.id = id || '';
+    }
+
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        // a contabilizar, contabilizado, papelera - inbox, rejected, draft
+        if(currentMethod == GET_MULTIPLE){
+            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/a_contabilizar')
+                return ['/ms/api/invoice?status=inbox'];
+            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/contabilizado')
+                return ['/ms/api/invoice?status=rejected'];
+            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/fiscal')
+                return ['/ms/api/fiscal/models'];
+            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/papelera')
+                return ['/ms/api/invoice?status=draft'];
+            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase().includes('/laboral'))
+                return ['/ms/api/contract/enterprise/salaries?document=' + filter.fields.get('path').split('/')[2]]
+        }
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return true;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any, currentMethod:string, filter: IFilter) {
+        let document = new Document()
+        if(filter && filter.fields && filter.fields?.has('path') && filter.fields?.get('path').includes('/laboral')){
+            document.File = ''
+            document.FileName = 'Nómina' + (data.startDate ? data.startDate : '') + ' - ' + (data.endDate ? data.endDate : '');
+            document.FileSize = 0
+            document.FileType = ''
+            document.Date = new Date()
+            document.Path = filter.fields?.get('path')
+            document.Key = data.id ? data.id : ''
+            document.Id = data.id ? data.id : ''
+        }else{
+            document.File = data.file && data.file.path ? data.file.path : '';
+            document.FileName = data.name ? data.name : '';
+            document.FileSize = 0;
+            document.FileType = data.file && data.file.content_type ? data.file.content_type : '';
+            document.Date = data.date ? data.date : new Date();
+            document.Path = data.file && data.file.path ? data.file.path : '';
+            document.Key = data.file && data.file.path ? data.file.path : '';
+            document.Id = data.id ? data.id : '';
+        }
+        return document;
     }
 
     public get FileName(): string {
@@ -1450,6 +1735,14 @@ class Document implements IDocument, IModel {
         this.key = key;
     }
 
+    public get Id(): string {
+        return this.id;
+    }
+
+    public set Id(id: string) {
+        this.id = id;
+    } 
+
     getKey(): string {
         return this.path + '/' + this.fileName;
     }
@@ -1493,6 +1786,45 @@ class Folder implements IFolder, IModel  {
         this.path = parent?.toLocaleLowerCase().split(' ').join('_') + '/' + name?.toLocaleLowerCase().split(' ').join('_') || '';
         this.parent = parent || '';
         this.key = this.path || '';
+    }
+
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        let urls: string [] = [];
+        if(currentMethod == GET_MULTIPLE){
+            if(filter.fields && filter.fields?.has('workplace')){
+                filter.fields?.get('workplace').split(';').forEach((element: any) => {
+                    if(element) urls.push('/ms/api/contract/employee/workplace?workplace=' + element)
+                })
+                return urls;
+            }
+            else
+                return ['/ms/api/contract/employee/workplace'];
+        }
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return true;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let folder = new Folder();
+        folder.Key = data.document ? data.document : '';
+        folder.Name = data.name && data.surname ? data.name + data.surname : '';
+        folder.Parent = '/laboral';
+        folder.Path = '/laboral/' + folder.Key;
+        return folder;
+        throw new ErrorResponse('0199')
     }
 
     public get Name(): string {
@@ -1556,6 +1888,8 @@ class StorableFolder extends Folder implements IStorable<Folder> {
 }
 
 class Enterprise implements IEnterprise, IModel {
+    private domainName: string;
+    private domainId: string;
     private name: string;
     private profilePhoto: string;
     private address: string;
@@ -1566,7 +1900,32 @@ class Enterprise implements IEnterprise, IModel {
     private phone: string;
     private website: string;
     private document: string;
+    private registry: string;
     private key: string;
+
+    public get Registry(): string {
+        return this.registry;
+    }
+
+    public set Registry(value: string) {
+        this.registry = value;
+    }
+
+    public get DomainName(): string{
+        return this.domainName;
+    }
+
+    public set DomainName(value: string){
+        this.domainName = value;
+    }
+
+    public get DomainId(): string {
+        return this.domainId;
+    }
+
+    public set DomainId(value: string) {
+        this.domainId = value;
+    }
 
     public get Name(): string {
       return this.name;
@@ -1652,7 +2011,11 @@ class Enterprise implements IEnterprise, IModel {
         return this.key;
     }
 
-    constructor(name?: string, document?: string, profilePhoto?: string, address?: string, country?: string, province?: string, socialReason?: string, email?: string, phone?: string, website?: string, key?: string) {
+    public set Key(key: string) {
+        this.key = key;
+    }
+
+    constructor(name?: string, document?: string, profilePhoto?: string, address?: string, country?: string, province?: string, socialReason?: string, email?: string, phone?: string, website?: string, registry?: string, key?: string) {
         this.name = name || '';
         this.profilePhoto = profilePhoto || '';
         this.address = address || '';
@@ -1664,6 +2027,64 @@ class Enterprise implements IEnterprise, IModel {
         this.website = website || '';
         this.document = document || document || '';
         this.key = document || '';
+        this.domainId = '';
+        this.domainName = '';
+        this.registry = '';
+    }
+
+    getUrl(currentMethod: string, filter: IFilter): string [] {
+        if(currentMethod == GET_MULTIPLE)
+            return ['/ms/api/company'];
+        if(currentMethod == GET_SINGLE)
+            return ['/ms/api/company/one?id=' + filter.fields?.get('id')];
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+        if(currentMethod == GET_SINGLE)
+            return GET_METHOD;
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any): any {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any, currentMethod: string): any {
+        if(currentMethod == GET_MULTIPLE){
+            let enterprise = new Enterprise();
+            enterprise.Document = data.document ? data.document : '';
+            enterprise.Name = data.name ? data.name : ''
+            enterprise.Key = data.document ? data.document : '';
+            enterprise.DomainName = data.domain ? data.domain : '';
+            enterprise.domainId = data.id ? data.id : '';
+            enterprise.registry = data.registry ? data.registry : '';
+            return enterprise;
+        }else if (currentMethod == GET_SINGLE){
+            let enterprise = new Enterprise();
+            enterprise.Address
+            enterprise.Country
+            enterprise.Document
+            enterprise.DomainId
+            enterprise.DomainName
+            enterprise.Email
+            enterprise.Key
+            enterprise.Name
+            enterprise.Phone
+            enterprise.ProfilePhoto
+            enterprise.Province
+            enterprise.Registry
+            enterprise.SocialReason
+            enterprise.Website
+            return enterprise;
+        }
+        throw new ErrorResponse('0199')
     }
 
     getKey(): string {
@@ -1704,6 +2125,21 @@ class DocumentNote implements IDocumentNote, IModel  {
         this.text = text || '';
         this.path = path || '';
         this.key = path || '';
+    }
+    getUrl(currentMethod: string): string[] {
+        throw new ErrorResponse('0199')
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new ErrorResponse('0199')
+    }
+    localFilter(): boolean {
+        return false;
+    }
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+    parseDataToReceive(data: any) {
+        throw new ErrorResponse('0199')
     }
 
     public get Text(): string {
@@ -1769,6 +2205,35 @@ class Bank implements IBank, IModel  {
         this.key = name || '';
     }
 
+    getUrl(currentMethod: string): string[] {
+        if(currentMethod == GET_MULTIPLE)
+            return ['/ms/api/company/banks'];
+            throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+            throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let bank = new Bank();
+        bank.Key = data.id
+        bank.Logo = ''
+        bank.Name = data.alias ? data.alias : ''
+        bank.Total = 0
+        return bank;
+    }
+
     public get Name(): string {
         return this.name;
     }
@@ -1802,7 +2267,7 @@ class Bank implements IBank, IModel  {
     }
 
     getKey(): string {
-        return this.name;
+        return this.key;
     }
 
     getFilterableFields(): Map<string,any> {
@@ -1849,6 +2314,39 @@ class TaxModel implements ITaxModel, IModel  {
         this.year = year || 0;
         if(name && trimester && year) this.key = name + ';' + trimester.toString() + ';' + year.toString();
         else this.key = ''
+    }
+
+    getUrl(currentMethod: string): string[] {
+        if(currentMethod == GET_MULTIPLE)
+            return ['/ms/api/fiscal/models']
+            throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+            throw new ErrorResponse('0199')
+    }
+
+    localFilter(currentMethod: string, filter?: IFilter): boolean {
+        return true;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let tax = new TaxModel();
+        tax.key = data.id;
+        tax.name = data.model ? data.model : '';
+        tax.PaymentMethod = '';
+        tax.Result = data.result ? data.result : '';
+        tax.status = data.status ? data.status : '';
+        tax.TaxType = '';
+        tax.Trimester = data.period ? data.period : '';
+        tax.Year = data.year ? data.year : '';
+        return tax;
     }
 
     public get Name(): string {
@@ -1916,8 +2414,7 @@ class TaxModel implements ITaxModel, IModel  {
     }
 
     getKey(): string {
-        if(this.name && this.trimester && this.year) return this.name + this.trimester.toString() + this.year.toString();
-        else return '';
+        return this.key;
     }
 
     getFilterableFields(): Map<string, any> {
@@ -1975,6 +2472,63 @@ class Message implements IMessage, IModel  {
         this.status = status || '';
         this.endDate = endDate || new Date();
         this.key = this.id || '';
+    }
+
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        if(currentMethod == GET_MULTIPLE){
+            if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'notificacion')
+                return ['/ms/api/notification?page=1&perPage=100']
+            else if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'consulta')
+                return ['/ms/api/task?source=query&page=1&perPage=100&task_holder=' + localStorage.getItem('registry')]
+            else if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'tarea')
+                return ['/ms/api/task?source=task&page=1&perPage=100&task_holder=' + localStorage.getItem('registry')]
+            else
+                return ['/ms/api/notification?page=1&perPage=100','/ms/api/task?source=query&page=1&perPage=100','/ms/api/task?source=task&page=1&perPage=100']
+        }
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+            throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return true;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let message = new Message();
+        if(data.source && (data.source == 'task' || data.source == 'query')){
+            let description = JSON.parse(data.description);
+            message.id = data.id;
+            message.name = data.sender.name ? data.sender.name : '';
+            message.title = data.title ? data.title : '';
+            message.description = description.observation ? description.observation : '';
+            message.date = new Date(data.start_date);
+            message.type = data.source == 'query' ? 'consulta' : 'tarea';
+            message.status = data.status ? data.status : '';
+            message.endDate = new Date();
+            message.key = data.id;
+            return message;
+        }else {
+            message.id = data.id;
+            message.name = data.source ? data.source : '';
+            message.title = data.title ? data.title : '';
+            message.description = data.body ? data.body : '';
+            message.date = new Date(data.date);
+            message.type = 'notificacion';
+            message.status = data.status ? data.status : 0;
+            message.endDate = new Date();
+            message.key = data.id;
+            return message;
+        }
+        throw new ErrorResponse('0199')
     }
 
     public get Id(): string {
@@ -2106,6 +2660,40 @@ class MessageChat implements IMessageChat, IModel  {
         this.key = this.id || '';
     }
 
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        if(currentMethod == GET_MULTIPLE && filter && filter.fields && filter.fields.has('idMessage'))
+            return ['/ms/api/task/workflow?task='+filter.fields.get('idMessage')+'&domainId='+localStorage.getItem('domainId')+'&domainName='+localStorage.getItem('domainName')]
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+            console.log('qwe')
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let messageChat = new MessageChat();
+        messageChat.Id = data.id
+        messageChat.IdMessage = data.task
+        messageChat.Key = data.id
+        messageChat.Name = data.task_holder.name
+        messageChat.Type = data.task_holder.id == localStorage.getItem('registry') ? 'send' : 'received';
+        messageChat.description = data.comment
+        messageChat.Date = data.modification_date;
+        return messageChat;
+        throw new ErrorResponse('0199')
+    }
+
     public get Id(): string {
         return this.id;
     }
@@ -2215,6 +2803,26 @@ class Employee implements IEmployee, IModel  {
         this.active = active || false;
     }
 
+    getUrl(currentMethod: string): string[] {
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
     public get Name(): string {
         return this.name;
     }
@@ -2317,7 +2925,7 @@ class StorableEmployee extends Employee implements IStorable<Employee> {
     }
 }
 
-class Auth implements IAuth, IModel  {
+class Auth implements IAuth  {
     private email: string;
     private password: string;
     private key: string;
@@ -2379,121 +2987,141 @@ class StorableAuth extends Auth implements IStorable<Auth> {
 }
 
 class User implements IUser, IModel  {
-  private name: string;
-  private lastname: string;
-  private document: string;
-  private email: string;
-  private password: string;
-  private phone: string;
-  private active: boolean;
-  private key: string;
+    private name: string;
+    private lastname: string;
+    private document: string;
+    private email: string;
+    private password: string;
+    private phone: string;
+    private active: boolean;
+    private key: string;
 
-  constructor(name?: string, lastname?: string, document?: string, email?: string, password?: string, phone?: string, active?: boolean) {
-    this.name = name || '';
-    this.lastname = lastname || '';
-    this.document = document || '';
-    this.email = email || '';
-    this.password = password || '';
-    this.phone = phone || '';
-    this.active = active || true;
-    this.key = document || '';
-  }
+    constructor(name?: string, lastname?: string, document?: string, email?: string, password?: string, phone?: string, active?: boolean) {
+        this.name = name || '';
+        this.lastname = lastname || '';
+        this.document = document || '';
+        this.email = email || '';
+        this.password = password || '';
+        this.phone = phone || '';
+        this.active = active || true;
+        this.key = document || '';
+    }
 
-  public get Name(): string {
-    return this.name;
-  }
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new ErrorResponse('0199')
+    }
 
-  public set Name(value: string) {
-    this.name = value;
-  }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new ErrorResponse('0199')
+    }
 
-  public get Lastname(): string {
-    return this.lastname;
-  }
+    localFilter(): boolean {
+        return false;
+    }
 
-  public set Lastname(value: string) {
-    this.lastname = value;
-  }
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
 
-  public get Document(): string {
-    return this.document;
-  }
+    parseDataToReceive(data: any) {
+        throw new ErrorResponse('0199')
+    }
 
-  public set Document(value: string) {
-    this.document = value;
-  }
+    public get Name(): string {
+        return this.name;
+    }
 
-  public get Email(): string {
-    return this.email;
-  }
+    public set Name(value: string) {
+        this.name = value;
+    }
 
-  public set Email(value: string) {
-    this.email = value;
-  }
+    public get Lastname(): string {
+        return this.lastname;
+    }
 
-  public get Password(): string {
-    return this.password;
-  }
+    public set Lastname(value: string) {
+        this.lastname = value;
+    }
 
-  public set Password(value: string) {
-    this.password = value;
-  }
+    public get Document(): string {
+        return this.document;
+    }
 
-  public get Phone(): string {
-    return this.phone;
-  }
+    public set Document(value: string) {
+        this.document = value;
+    }
 
-  public set Phone(value: string) {
-    this.phone = value;
-  }
+    public get Email(): string {
+        return this.email;
+    }
 
-  public get Active(): boolean {
-    return this.active;
-  }
+    public set Email(value: string) {
+        this.email = value;
+    }
 
-  public set Active(value: boolean) {
-    this.active = value;
-  }
+    public get Password(): string {
+        return this.password;
+    }
 
-  public get Key() {
-    return this.key;
-  }
+    public set Password(value: string) {
+        this.password = value;
+    }
 
-  public set Key(value: string){
-    this.key = value;
-  }
+    public get Phone(): string {
+        return this.phone;
+    }
 
-  getKey(): string {
-    return this.key;
-  }
+    public set Phone(value: string) {
+        this.phone = value;
+    }
 
-  getFilterableFields(): Map<string, any> {
-    let map = new Map<string, any>();
+    public get Active(): boolean {
+        return this.active;
+    }
 
-    map.set('name', this.name);
-    map.set('lastname', this.lastname);
-    map.set('document', this.document);
-    map.set('email', this.email);
-    map.set('password', this.password);
-    map.set('phone', this.phone);
-    map.set('active', this.active);
+    public set Active(value: boolean) {
+        this.active = value;
+    }
 
-    return map;
-  }
+    public get Key() {
+        return this.key;
+    }
 
-  getSortableFields(): Map<string, any> {
-    let map = new Map<string, any>();
+    public set Key(value: string){
+        this.key = value;
+    }
 
-    map.set('name', this.name);
-    map.set('lastname', this.lastname);
-    map.set('document', this.document);
-    map.set('email', this.email);
-    map.set('password', this.password);
-    map.set('phone', this.phone);
-    map.set('active', this.active);
+    getKey(): string {
+        return this.key;
+    }
 
-    return map;
-  }
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+
+        map.set('name', this.name);
+        map.set('lastname', this.lastname);
+        map.set('document', this.document);
+        map.set('email', this.email);
+        map.set('password', this.password);
+        map.set('phone', this.phone);
+        map.set('active', this.active);
+
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+
+        map.set('name', this.name);
+        map.set('lastname', this.lastname);
+        map.set('document', this.document);
+        map.set('email', this.email);
+        map.set('password', this.password);
+        map.set('phone', this.phone);
+        map.set('active', this.active);
+
+        return map;
+    }
 }
 
 class StorableUser extends User implements IStorable<User> {
@@ -2549,6 +3177,7 @@ if(documents.size() == 0){
 }
 
 let folders: ICollection<Folder> = new Collection<Folder>();
+let api: ICollection<Folder> = new Collection<Folder>();
 let storableFolders = new StorableFolder();
 let localFolders = new LocalStorage<Folder>(Folder);
 folders = localFolders.read(storableFolders.getLocalStorage())
@@ -2563,6 +3192,7 @@ if(folders.size() == 0){
     folders.add(new Folder('Maria Rico Álvarez', '/laboral'));
     localFolders.write(storableFolders.getLocalStorage(), folders);
 }
+let apiFolders = folders.slice(0,5);
 
 let enterprises: ICollection<Enterprise> = new Collection<Enterprise>();
 let storableEnterprises = new StorableEnterprise();
@@ -2712,7 +3342,169 @@ if(auths.size() == 0){
     localAuths.write(storableAuths.getLocalStorage(), auths);
 }
 
+/*
+    TESTING API FUNCTIONS
+*/
 
+var testAPI: boolean = false;
+
+if(testAPI){
+
+    /*
+        TEST FOR DOCUMENTS
+    */
+    
+    let documentFactory = new DocumentFactory();
+    let filterBuider =  new FilterBuilder();
+    filterBuider.addField('path','/a_contabilizar');
+    documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
+        console.log('TEST GET DOCUMENTS A_CONTABILIZAR', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET A_CONTABILIZAR', error)
+    })
+    filterBuider.clearAll();
+    filterBuider.addField('path','/contabilizado');
+    documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
+        console.log('TEST GET DOCUMENTS CONTABILIZADO(*)', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET DOCUMENTS CONTABILIZADO(*)', error)
+    })
+    filterBuider.clearAll();
+    filterBuider.addField('path','/papelera');
+    documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
+        console.log('TEST GET DOCUMENTS PAPELERA', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET DOCUMENTS PAPELERA', error)
+    })
+    filterBuider.clearAll();
+    filterBuider.addField('path','/fiscal');
+    documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
+        console.log('TEST GET DOCUMENTS FISCAL',response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET DOCUMENTS FISCAL', error)
+    })
+    filterBuider.clearAll();
+    filterBuider.addField('path','/laboral/51198000T');
+    documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
+        console.log('TEST GET DOCUMENTS LABORAL', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET DOCUMENTS LABORAL', error)
+    })
+    
+    
+    /*
+        TEST FOR ENTERPRISE
+    */
+    
+    let enterpriseFactory = new EnterpriseFactory();
+    enterpriseFactory.createMultipleObjectCrud().getCollection().then((response) => {
+        console.log('TEST GET ENTERPRISES', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET ENTERPRISES', error)
+    })
+    enterpriseFactory.createSingleObjectCrud().getElement('702378').then((element) => {
+        console.log('TEST GET ENTERPRISE BY ID', element);
+    }).catch((error) => {
+        console.log('ERROR TEST GET ENTERPRISE BY ID', error)
+    })
+    
+    
+    /*
+        TEST FOR MESSAGES
+    */
+    
+    let filterMessage = new FilterBuilder();
+    let messageFactory = new MessageFactory();
+    filterMessage.addField('type','consulta');
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        console.log('TEST GET MESSAGES CONSULTA', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET MESSAGES CONSULTA', error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','tarea');
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        console.log('TEST GET MESSAGES TAREA', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET MESSAGES TAREA', error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','notificacion');
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        console.log('TEST GET MESSAGES NOTIFICACION', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET MESSAGES NOTIFICATION', error)
+    })
+    filterMessage.clearAll();
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        console.log('TEST GET MESSAGES ALL', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET MESSAGES ALL', error)
+    })
+    
+    /*
+        TEST FOR MESSAGE CHAT
+    */
+    
+    let filterMessageChat = new FilterBuilder();
+    let filterMessage2 = new FilterBuilder();
+    let messageChatFactory = new MessageChatFactory();
+    let messageFactory2 = new MessageFactory();
+    filterMessage2.addField('type','consulta');
+    messageFactory2.createMultipleObjectCrud().getCollection(filterMessage2.getFilter()).then((response) => {
+        //response.result.toArray()[0].Id
+        filterMessageChat.addField('idMessage', '29459');
+        messageChatFactory.createMultipleObjectCrud().getCollection(filterMessageChat.getFilter()).then((response) => {
+            console.log('TEST GET CHAT MESSAGES', response.result.toArray());
+        }).catch((error) => {
+            console.log('ERROR TEST GET CHAT MESSAGES', error)
+        })
+    })
+    
+    
+    
+    /*
+        TEST FOR TAXMODELS
+    */
+    
+    let taxFactory = new TaxModelFactory();
+    let filterTax = new FilterBuilder();
+    filterTax.addField('trimester','T3')
+    taxFactory.createMultipleObjectCrud().getCollection(filterTax.getFilter()).then((response) => {
+        console.log('TEST GET TAX MODELS', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET TAX MODELS', error)
+    })
+    
+    /*
+        TEST FOR BANKS
+    */
+    
+    let bankFactory = new BankFactory();
+    bankFactory.createMultipleObjectCrud().getCollection().then((response) => {
+        console.log('TEST GET BANKS', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET BANKS', error)
+    })
+    
+    
+    /*
+        TEST FOR FOLDERS
+    */
+    
+    let folderFactory = new FolderFactory();
+    folderFactory.createMultipleObjectCrud().getCollection().then((response) =>  {
+        console.log('TEST GET FOLDERS', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET FOLDERS', error)
+    })
+}
+
+
+
+/*
+    LAMBDA FUNCTION AMAZON
+*/
 
 // function getLambda() : Promise<any>{
 //     return new Promise((resolve,reject) => {
@@ -2757,3 +3549,4 @@ if(auths.size() == 0){
 //         });
 //     });
 // }
+
