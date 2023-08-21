@@ -172,6 +172,8 @@
 .aon_icon_view_document { background-image: iconViewDocument;}
 @url iconDeleteForever aonIconDeleteForever;
 .aon_icon_delete_forever { background-image: iconDeleteForever;}
+@url iconDeleteForeverRed aonIconDeleteForeverRed;
+.aon_icon_delete_forever_red { background-image: iconDeleteForeverRed;}
 @url iconTgss aonIconTgss;
 .aon_icon_tgss { background-image: iconTgss;}
 @url iconTgssCra aonIconTgssCra;

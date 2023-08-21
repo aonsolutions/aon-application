@@ -377,6 +377,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("AYUDA_DE_COMIDA_DIARIO", "AYUDA_COMIDA_D");
 		variablesMap.put("AYUDA_DE_COMIDA_JORNADA_COMPLETA_DIARIO", "AYUDA_COMIDA_JC_D");
 		variablesMap.put("AYUDA_DE_COMIDA_JORNADA_PARTIDA_DIARIO", "AYUDA_COMIDA_JP_D");
+		variablesMap.put("AYUDA_CONYUGE_CON_MINUSVALIA_65_ANUAL", "CONYUGE_MINUSVALIA_65_A");
 		variablesMap.put("AYUDA_DISCAPACITADOS_ANUAL", "AYUDA_DISC_ANUAL");
 		variablesMap.put("AYUDA_DISCAPACITADOS_MENSUAL", "AYUDA_DISC_MENSUAL");
 		variablesMap.put("AYUDA_DISCAPACITADO_A_CARGO_ANUAL", "AYUDA_DISC_CARGO");
@@ -405,6 +406,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("AYUDA_HIJOS_ANUAL", "AYUDA_HIJOS_A");
 		variablesMap.put("AYUDA_HIJOS_MENSUAL", "AYUDA_HIJOS_M");
 		variablesMap.put("AYUDA_HIJOS_CON_MINUSVALIA_33_ANUAL", "HIJOS_MINUSV_33_A");
+		variablesMap.put("AYUDA_HIJOS_CON_MINUSVALIA_65_ANUAL", "HIJOS_MINUSV_65_A");
 		variablesMap.put("AYUDA_MATRICULA_ANUAL", "A_MATRICULA_ANUAL");
 		variablesMap.put("AYUDA_MATRICULA_MENSUAL", "A_MATRICULA_MENSUAL");
 		variablesMap.put("AYUDA_MINUSVALIDOS_MENSUAL", "AYUDA_MINUSVALIDOS");
@@ -735,6 +737,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("DIETA_KILOMETRAJE_TRAMO_1_HORAS", "KM_TRAMO_1_H");
 		variablesMap.put("DIETA_KILOMETRAJE_TRAMO_2_HORAS", "KM_TRAMO_2_H");
 		variablesMap.put("DIETA_KILOMETRAJE_ACOMPAÑODO_HORAS", "DIETA_KM_ACOMPAÑODO");
+		variablesMap.put("DIETA_KILOMETRAJE_ACOMPAÑADO_HORAS", "DIETA_KM_ACOMPAÑADO");
 		variablesMap.put("DIETA_KILOMETRAJE_VEHICULO_COMPLETO_HORAS", "DIETA_KM_VEHICULO_COMP");
 		variablesMap.put("DIETA_KILOMETRAJE_VEHICULO_PROPIO_HORAS", "DIETA_KM_VEHICULO_PROPIO");
 		variablesMap.put("DIETA_MATERIALES_PELIGROSOS_MENSUAL", "D_MAT_PELIGROSOS");
@@ -1156,6 +1159,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_AGUA_MENSUAL", "AGUA_M");
 		variablesMap.put("PLUS_AEROPUERTO_MENSUAL", "AEROPUERTO_M");
 		variablesMap.put("PLUS_AEROPUERTO_HORAS", "AEROPUERTO_H");
+		variablesMap.put("PLUS_ALMACEN_DIARIO", "ALMACEN_D");
 		variablesMap.put("PLUS_ALTURA_MENSUAL", "PLUS_ALTURA");
 		variablesMap.put("PLUS_ALTURA_DIARIO", "PLUS_ALTURA");
 		variablesMap.put("PLUS_ANTIGUEDAD_3_AÑOS_ANUAL", "ANTIGUEDAD_3");
@@ -1246,7 +1250,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DE_MUDANZAS_DIARIO", "PLUS_MUDANZAS");
 		variablesMap.put("PLUS_DE_LAVADO_HORAS", "PLUS_LAVADO_H");
 		variablesMap.put("PLUS_DE_PODA_HORAS", "PLUS_PODA");
-		variablesMap.put("PLUS_DIA_NAVIDAD_Y_AÑO_NUEVO_DIARIO", "PLUS_NAVIDAD_AÑO_NUEVO");
+		variablesMap.put("PLUS_DIA_NAVIDAD_Y_AÑO_NUEVO_DIARIO", "NAVIDAD_AÑO_NUEVO_D");
+		variablesMap.put("PLUS_DIA_NAVIDAD_Y_AÑO_NUEVO_HORAS", "NAVIDAD_AÑO_NUEVO_H");
 		variablesMap.put("PLUS_DISCAPACIDAD_DIARIO", "PLUS_DISCAPACIDAD");
 		variablesMap.put("PLUS_DISCAPACIDAD_MENSUAL", "PLUS_DISCAPACIDAD");
 		variablesMap.put("PLUS_DISPONIBILIDAD_ANUAL", "PLUS_DISPONIBILIDAD");
@@ -1464,6 +1469,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_PENOSIDAD_ANUAL", "PLUS_PENOSIDAD");
 		variablesMap.put("PLUS_PENOSIDAD_DIARIO", "PLUS_PENOSIDAD");
 		variablesMap.put("PLUS_PENOSIDAD_HORAS", "PLUS_PENOSIDAD");
+		variablesMap.put("PLUS_PENOSIDAD_CLIMATOLOGIA_DIARIO", "PENOSIDAD_CLIMA_D");
 		variablesMap.put("PLUS_PENOSIDAD_MAS_DE_1_HORA_ANUAL", "PLUS_PENOSIDAD_1H_A");
 		variablesMap.put("PLUS_PENOSIDAD_MAS_DE_1_HORA_MENSUAL", "PLUS_PENOSIDAD_1H_M");
 		variablesMap.put("PLUS_PENOSIDAD_MAS_DE_1_HORA_DIARIO", "PLUS_PENOSIDAD_1H_D");
@@ -1783,6 +1789,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("SALARIO_CONVENIO_HORAS", "SALARIO_HORAS");
 		variablesMap.put("SALARIO_CONVENIO_MENSUAL", "SALARIO_MENSUAL");
 		variablesMap.put("SALARIO_DIA_DIARIO", "SALARIO_DIARIO");
+		variablesMap.put("SALARIO_DIA_TRABAJADO_DIARIO", "SALARIO_DIA_TRAB_D");
+		variablesMap.put("SALARIO_DIA_TRABAJADO__ASISTENCIA_DIARIO", "SAL_DIA_TRAB_ASIST_D");
 		variablesMap.put("SALARIO_DOS_PRIMERAS_HORAS_HORAS", "SALARIO_2H_H");
 		variablesMap.put("SALARIO_TERCERA_Y_SUCESIVAS_HORAS_HORAS", "SALARIO_3H_H");
 		variablesMap.put("SALARIO_FIJO_MENSUAL", "SALARIO_FIJO");

@@ -1,2 +1,0 @@
-# Module aon_gwt_marketing
-# RPC service class, partial path of RPC policy file
