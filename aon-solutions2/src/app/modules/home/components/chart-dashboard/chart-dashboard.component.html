@@ -1,39 +1,27 @@
-<app-card
->
-  <div header class="chart-header">
-    <div class="chart-header-name">
-      <div class="chart-header-line"></div>
-      <div class="chart-header-text"> {{ name }} </div>
-    </div>
-    <div class="chart-header-filters">
-      <div class="chart-header-filter-text"> {{ selected }} </div>
-      <div class="chart-header-filter-icon" [matMenuTriggerFor]="menu">
-        <app-icon shape="more_vert" class="black" size="21"></app-icon>
-      </div>
-      <mat-menu #menu="matMenu" xPosition="before">
-        <button *ngFor="let item of items" mat-menu-item (click)="selected = item" class="menu-text">
+<app-card class="dashboard blue">
+  <div header>
+    <div class="line"></div>
+    <div class="text">{{ name }}</div>
+    <div class="options-text">{{ selected }}</div>
+    <div class="options">
+      <app-icon shape="more_vert" [matMenuTriggerFor]="menu"></app-icon>
+      <mat-menu #menu="matMenu">
+        <button *ngFor="let item of items" mat-menu-item (click)="selected = item">
           {{ item }}
         </button>
       </mat-menu>
     </div>
   </div>
-
-  <div body class="chart-content">
-    <div class="chart-content-wrapper">
-       <app-chart
+  <div body>
+    <app-chart
       [chartLabels]="labels"
       [chartType]="chartType"
       [chartData]="data"
       [colors]="colors"
-      >
+    >
     </app-chart>
-    </div>
   </div>
-
-  <div footer class="chart-footer">
-    <div class="chart-footer-button" (click)="toggleChartType()">
-      <app-icon [shape]="getToggleIcon()" class="black" size="21"></app-icon>
-    </div>
+  <div footer>
+    <app-icon (click)="toggleChartType()" [shape]="getToggleIcon()"></app-icon>
   </div>
-
 </app-card>
