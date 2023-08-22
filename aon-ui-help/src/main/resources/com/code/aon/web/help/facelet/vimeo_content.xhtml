@@ -6,6 +6,13 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<script>
+		function toggleVideos(containerId) {
+			var videoContainer = document.getElementById(containerId);
+			if (videoContainer) {
+				videoContainer.style.display = videoContainer.style.display === "none" ? "block" : "none";
+			}
+		}
+		
 		function displayVideo(link) {
 			var container = link.parentElement.querySelector(".ifrmContainer");
 			if (container) {
@@ -16,17 +23,45 @@
 	</script>
 
 	<aon:div styleClass="box-column list">
-		<ui:repeat value="#{vimeo.videos.orElse(null)}" var="video">
-			<aon:div styleClass="list-item"
-				onclick="displayVideo(this);return;">
+		<ui:repeat value="#{vimeo.folders.orElse(null)}" var="folder">
+			<aon:div styleClass="list-item" onclick="toggleVideos('videoContainer_#{folder.getIdentifier()}');return;">
 				<aon:outputText value="smart_display"
 					styleClass="icon file material-icons" />
-				<aon:outputText value="#{vimeo.getVideoName(video)}" />
-				<div class="ifrmContainer" style="display: none; justify-content:center; width: 100%; margin-bottom: 10px;">
-					<iframe src="#{vimeo.getVideoLink(video)}" style="min-width:680px;" width="50%" height="480" frameBorder="0" allow="autoplay" allowfullscreen="allowfullscreen"></iframe>
-				</div>
+				<aon:outputText value="#{vimeo.getFolderName(folder)}" />
 			</aon:div>
+
+			<div id="videoContainer_#{folder.getIdentifier()}" style="display: none;">
+				<ui:repeat value="#{vimeo.getItemsFromFolder(folder).orElse(null)}"
+					var="vimeoItem">
+					
+					<!-- video -->
+					<aon:if test="${vimeoItem.getRawType() == ProjectItemType.VIDEO.getValue()}">
+					
+						<aon:div styleClass="list-item" onclick="displayVideo(this);return;">
+							<aon:outputText value="smart_display"
+								styleClass="icon file material-icons" />
+							<aon:outputText value="#{vimeo.getVideoName(vimeo.getVideoFromItem(vimeoItem))}" />
+							<div class="ifrmContainer"
+								style="display: none; justify-content: center; width: 100%; margin-bottom: 10px;">
+								<iframe src="#{vimeo.getVideoLink(vimeo.getVideoFromItem(vimeoItem))}"
+									style="min-width: 680px;" width="50%" height="480"
+									frameBorder="0" allow="autoplay"
+									allowfullscreen="allowfullscreen"></iframe>
+							</div>
+						</aon:div>
+						
+					</aon:if>
+					
+					<!-- folder, change to rerender -->
+					<aon:if test="${vimeoItem.getRawType() == ProjectItemType.FOLDER.getValue() and vimeoItem != null}">
+							<aon:outputText value="#{vimeo.getFolderName(vimeo.getFolderFromItem(vimeoItem))}" />
+					</aon:if>			
+					
+				</ui:repeat>
+			</div>
+
 		</ui:repeat>
 	</aon:div>
 
 </ui:composition>
+

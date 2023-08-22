@@ -2,51 +2,57 @@ package com.code.aon.web.help.service.vimeo;
 
 import com.vimeo.networking2.*;
 import com.vimeo.networking2.config.VimeoApiConfiguration;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class VimeoResult {
 
-	private String clientId;
     private static VimeoApiClient vimeoApiClient;
 
-    public VimeoResult(String clientSecret, String accessToken) {
+    public VimeoResult(String accessToken) {
 		
 		VimeoApiConfiguration configuration = new VimeoApiConfiguration.Builder(accessToken)
 			.build();
 
 		final Authenticator authenticator = Authenticator.create(configuration);
-		this.vimeoApiClient = VimeoApiClient.create(configuration, authenticator);
-
-		getUserId();
+		VimeoResult.vimeoApiClient = VimeoApiClient.create(configuration, authenticator);
     }
 
-	private void getUserId() {
-        vimeoApiClient.fetchUser("https://api.vimeo.com/me", null, null, new VimeoCallback<User>() {
+
+	/**
+	 * Returns all the folders that the user has in the main directory
+	 * @return a list of folders
+	 */
+	public Optional<List<Folder>> getFoldersFromUser() {
+        CompletableFuture<List<Folder>> future = new CompletableFuture<>();
+
+        vimeoApiClient.fetchFolderList("https://api.vimeo.com/me/projects/", null, null, null, new VimeoCallback<FolderList>()  {
             @Override
-            public void onSuccess(VimeoResponse.Success<User> response) {
-                User user = response.getData();
-                String userId = user.getIdentifier();
-				clientId = userId;
+            public void onSuccess(VimeoResponse.Success<FolderList> successResponse) {
+                List<Folder> folders = successResponse.getData().getData();
+                future.complete(folders);
             }
 
             @Override
             public void onError(VimeoResponse.Error errorResponse) {
-                System.out.println("Can't get the user id: " + errorResponse.getMessage());
+                System.out.println("Can't get the folders of the user: " + errorResponse.getHttpStatusCode() + " " + errorResponse.getMessage());
+                future.completeExceptionally(new RuntimeException());
             }
         });
+
+        try {
+            return Optional.ofNullable(future.get());
+        } catch (InterruptedException | ExecutionException e) {
+            return Optional.empty();
+        }
     }
-    
-    
-    /**
-     * Returns a list of the videos from the user
-     * @return the list of videos
-     */
+
+	/**
+	 * Returns a list of the videos that belongs to the user
+	 * @return a list of videos
+	 */
 	public Optional<List<Video>> getVideosFromUser() {
         CompletableFuture<List<Video>> future = new CompletableFuture<>();
 
@@ -59,130 +65,87 @@ public class VimeoResult {
 
             @Override
             public void onError(VimeoResponse.Error errorResponse) {
-                System.out.println("Can't get the videos of the user: " + errorResponse.getMessage());
-                future.completeExceptionally(new RuntimeException("Error fetching videos from user"));
+                System.out.println("Can't get the folder's videos: " + errorResponse.getHttpStatusCode() + " " + errorResponse.getMessage());
+                future.completeExceptionally(new RuntimeException());
             }
         });
 
         try {
             return Optional.ofNullable(future.get());
         } catch (InterruptedException | ExecutionException e) {
-            System.out.println("Error fetching videos from user: " + e.getMessage());
             return Optional.empty();
         }
     }
-
-    
-    /**
-     * Returns the categories from all the videos from the user
-     * @param videos the list of videos from the user
-     * @return the list of categories
-     */
-    public Optional<List<Category>> getAllCategoriesFromUser(Optional<List<Video>> videos) {
-		if (videos.isEmpty()) {
-			return Optional.empty();
-		}
-
-    	List<Category> categories = new ArrayList<>();
-		List<Video> videoList = videos.get();
-
-    	
-    	for (Video video : videoList) {
-    		for (Category category : video.getCategories()) {
-    			if (!categories.contains(category)) {
-    				categories.add(category);
-    			}
-    		}
-    	}
-    	
-    	return Optional.of(categories);
-    }
-	
-    
-    /**
-     * Returns the categories of the given video
-     * @param video the video
-     * @return the categories of the video
-     */
-	public List<Category> getCategories(Video video) {
-		return video.getCategories();
-	}
-	
 	
 	/**
-	 * Get the subcategories of a category
-	 * @param category the category that we want the subcategories from
-	 * @return the subcategories as a list of categories
+	 * Returns the item of a folder
+	 * @param folder the folder
+	 * @return a list of items
 	 */
-	public List<Category> getSubcategories(Category category) {
-		return category.getSubcategories();
+	public Optional<List<ProjectItem>> getItemsFromFolder(Folder folder) {
+		CompletableFuture<List<ProjectItem>> future = new CompletableFuture<>();
+
+        vimeoApiClient.fetchProjectItemList("https://api.vimeo.com" + folder.getUri() + "/items/", null, null, null, new VimeoCallback<ProjectItemList>()  {
+            @Override
+            public void onSuccess(VimeoResponse.Success<ProjectItemList> successResponse) {
+                List<ProjectItem> items = successResponse.getData().getData();
+                
+                for (ProjectItem i : items) {
+                	System.out.println("    video: " + i.getVideo().getName());
+                }
+                
+                future.complete(items);
+            }
+
+            @Override
+            public void onError(VimeoResponse.Error errorResponse) {
+                System.out.println("Can't get the items of the folder " + folder.getName() + ": " + errorResponse.getHttpStatusCode() + " " + errorResponse.getMessage());
+                future.completeExceptionally(new RuntimeException());
+            }
+        });
+
+        try {
+            return Optional.ofNullable(future.get());
+        } catch (InterruptedException | ExecutionException e) {
+            return Optional.empty();
+        }
 	}
-	
+
 	
 	/**
-	 * Returns the user's videos from that category or subcategory (both are the same type of object, Category)
-	 * @param category the category that we want the videos from
-	 * @param videoIds the list of the user's videos
-	 * @return the list of the user's videos from that category
+	 * Returns the name of the video
+	 * @param video the video
+	 * @return the name of the video
 	 */
-	public List<Video> getVideoListFromCategory(Category category, List<Video> videos) {
-		List<Video> videosInCategories = new ArrayList<>();
-		
-		if (!videos.isEmpty()) {
-			for (Video video : videos) {
-				if (video.getCategories().contains(category)) {
-					videosInCategories.add(video);
-				}
-			}
-		}
-		
-		return videosInCategories;
-	}
-	
-    /**
-     * Returns a map with each category or subcategory (both are the same type of object, Category) and all its videos
-     * @param videos the videos from the user
-     * @param allCategories all the categories that are in all the videos from the user
-     * @return a map with each category or subcategory and all its videos
-     */
-    public Map<Category, List<Video>> getAllVideosInAllCategories(List<Video> videos, List<Category> allCategories) {
-    	Map<Category, List<Video>> videosInCategories = new HashMap<>();
-    	
-    	for (Category category : allCategories) {
-    		videosInCategories.put(category, getVideoListFromCategory(category, videos));
-    	}
-    	
-    	return videosInCategories;
-    }
-	
-	
-	/**
-	 * Returns the html to reproduce that video
-	 * @param video the video that we want to reproduce
-	 * @return the html to reproduce that video
-	 */
-	public String playVideo(Video video) {
-		String url = "https://player.vimeo.com/video/" + video.getUri();
-		String html = "<iframe src=\"" + url + "\" width=\"640\" height=\"360\" frameborder=\"0\" allowfullscreen></iframe>";
-		return html;
-	}
-	
 	public String getVideoName(Video video) {
 		return video.getName();
 	}
 	
 	/**
-	 * Returns the upload url for the thumbnail of the video
-	 * @param video
-	 * @return the link with the upload url
+	 * Returns the link to reproduce the video
+	 * @param video the video
+	 * @return the link of the video
 	 */
-    public Optional<String> getVideoThumbnail(Video video) {
-    	if (video != null && video.getPictures() != null) {
-    		PictureCollection thumbnail = video.getPictures();
-            return Optional.of(thumbnail.getLink());
-        } else {
-        	System.out.println("The video does not have a thumbnail.");
-			return Optional.empty();
-        }
-    }
+	public String getVideoLink(Video video) {
+		return video.getLink();
+	}
+	
+    
+    /**
+     * Returns the parent folder of the given video
+     * @param video the video
+     * @return the parent folder of the video
+     */
+	public Folder getParentFolder(Video video) {
+		return video.getParentFolder();
+	}
+	
+	/**
+	 * Returns the name of the folder
+	 * @param folder the folder
+	 * @return the name of the folder
+	 */
+	public String getFolderName(Folder folder) {
+		return folder.getName();
+	}
 }
