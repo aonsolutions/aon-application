@@ -78,7 +78,12 @@
     "CREATE": "Crear"
   },
   "DOCUMENTATION": {
-
+    "FILE_SELECT_PREVIEW"   : "Vista previa",
+    "FILE_SELECT_MOVE_TO"   : "Mover a",
+    "FILE_SELECT_EDIT_NAME" : "Cambiar nombre",
+    "FILE_SELECT_LABEL_AS"  : "Etiquetar como",
+    "FILE_SELECT_DOWLOAD"   : "Descargar",
+    "FILE_SELECT_DELETE"    : "Eliminar"
   },
   "BILLING": {
 
