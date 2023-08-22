@@ -1,27 +1,31 @@
 <app-card
-
+  [class]="'padding'"
 >
   <div header class="head-card">
     <div class="line-head"></div>
     <div class="text">
-      {{ 'HOME.INBOX'|translate }}</div>
+      {{ 'HOME.INBOX'|translate }}
+    </div>
   </div>
   <div body class="content-center">
     <app-list-dashboard
-    *ngFor="let item of messages"
-    [type]="item.Type === 'consulta' ? 1 : (item.Type === 'tarea' ? 2 : (item.Type === 'notificación' ? 3 : 0))"
-    [name]="item.Name"
-    [title]="item.Title"
-    [status]="item.Status"
-    [date]="item.Date | date:'EEE, HH:mm'"
-    [description]="item.Description"
-  ></app-list-dashboard>
-
+      *ngFor="let item of messages"
+      [type]="item.Type === 'consulta' ? 1 : (item.Type === 'tarea' ? 2 : (item.Type === 'notificación' ? 3 : 0))"
+      [name]="item.Name"
+      [title]="item.Title"
+      [status]="item.Status"
+      [date]="item.Date | date:'EEE, HH:mm'"
+      [description]="item.Description"
+    ></app-list-dashboard>
   </div>
+
   <div footer class="messages-footer">
     <div class="see-all">
-      {{ 'HOME.ALL_MESSAGES'|translate }}</div>
-    <div class="circle"><span class="number-circle"> {{ totalMessages }} </span></div>
+      {{ 'HOME.ALL_MESSAGES'|translate }}
+    </div>
+    <div class="circle">
+      <span class="number-circle"> {{ totalMessages }} </span>
+    </div>
   </div>
 </app-card>
 

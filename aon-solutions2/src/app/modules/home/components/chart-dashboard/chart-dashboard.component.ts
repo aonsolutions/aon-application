@@ -23,7 +23,6 @@ export interface ChartItem {
   },
 })
 export class ChartDashboardComponent implements OnInit {
-  chartItems: ChartItem[] = [];
   @Input() name: string = '';
   @Input() shape: string = '';
   @Input() labels: any = [];
@@ -34,9 +33,22 @@ export class ChartDashboardComponent implements OnInit {
 
   @Input() public chartItemList: Observable<ChartItem[]> | undefined;
 
+  items: string[] = [];
+  chartItems: ChartItem[] = []; 
+
   selected: string = '';
 
-  items: string[] = ['LAST_12_MONTHS', 'LAST_6_MONTHS', 'QUARTERLY'];
+  constructor(private translateService: TranslateService) {
+    this.translateService
+      .get(['HOME.LAST_12_MONTHS', 'HOME.LAST_6_MONTHS', 'HOME.QUARTERLY'])
+      .subscribe((result) => {
+        this.items = [
+          result['HOME.LAST_12_MONTHS'],
+          result['HOME.LAST_6_MONTHS'],
+          result['HOME.QUARTERLY'],
+        ];
+      });
+  }
 
   toggleChartType() {
     if (this.chartType === 'line') {
@@ -50,24 +62,11 @@ export class ChartDashboardComponent implements OnInit {
     return this.chartType === 'line' ? 'bar_chart' : 'show_chart';
   }
 
-  constructor(private translateService: TranslateService) {}
-
   ngOnInit(): void {
     if (this.chartItemList) {
       this.chartItemList.subscribe((chartItem) => {
         this.chartItems = chartItem;
       });
     }
-
-    this.translateItems();
-  }
-
-  translateItems(): void {
-    this.translateService.get('HOME').subscribe((translation) => {
-      this.selected = translation['LAST_12_MONTHS'];
-      this.items.forEach((item, index) => {
-        this.items[index] = translation[item];
-      });
-    });
   }
 }

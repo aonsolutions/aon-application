@@ -52,15 +52,19 @@ export class DocumentationComponent implements OnInit {
       })
       // Menu con los datos traducidos
       this.translateService.get(
-        ['HEADER.EDIT_PROFILE','HEADER.HELP','HEADER.LOGOUT']
+        [
+          "DOCUMENTATION.FILE_SELECT_PREVIEW", "DOCUMENTATION.FILE_SELECT_MOVE_TO", 
+          "DOCUMENTATION.FILE_SELECT_EDIT_NAME", "DOCUMENTATION.FILE_SELECT_LABEL_AS", 
+          "DOCUMENTATION.FILE_SELECT_DOWLOAD", "DOCUMENTATION.FILE_SELECT_DELETE",
+        ]
       ).subscribe( result => {
         this.menuItem! = [
-          {root: true, text: 'Vista previa'   , icon:'eye'            , colorIcon:'black'},
-          {root: true, text: 'Mover a'        , icon:'folder_special' , colorIcon:'black', children: this.subMenuItemFolder},
-          {root: true, text: 'Cambiar nombre' , icon:'edit'           , colorIcon:'black'},
-          {root: true, text: 'Etiquetar como' , icon:'label'          , colorIcon:'black'},
-          {root: true, text: 'Descargar'      , icon:'cloud_download' , colorIcon:'black'},
-          {root: true, text: 'Eliminar'       , icon:'delete' , colorIcon:'black'},
+          {root: true, text: result["DOCUMENTATION.FILE_SELECT_PREVIEW"]  , icon:'eye'            , colorIcon:'black'},
+          {root: true, text: result["DOCUMENTATION.FILE_SELECT_MOVE_TO"]  , icon:'folder_special' , colorIcon:'black', children: this.subMenuItemFolder},
+          {root: true, text: result["DOCUMENTATION.FILE_SELECT_EDIT_NAME"], icon:'edit'           , colorIcon:'black'},
+          {root: true, text: result["DOCUMENTATION.FILE_SELECT_LABEL_AS"] , icon:'label'          , colorIcon:'black'},
+          {root: true, text: result["DOCUMENTATION.FILE_SELECT_DOWLOAD"]  , icon:'cloud_download' , colorIcon:'black'},
+          {root: true, text: result["DOCUMENTATION.FILE_SELECT_DELETE"]   , icon:'delete' , colorIcon:'black'},
         //  {root:true, text: result['HEADER.LOGOUT']       , icon:'exit_to_app', colorIcon:'black', click:() => this.delete()},
         ];
       });

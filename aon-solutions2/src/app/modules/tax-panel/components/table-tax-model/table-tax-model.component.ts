@@ -1,20 +1,21 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 import { ModalEditTaxModelComponent } from '../modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../modal-payment/modal-payment.component';
 import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-details.component';
+import { FilterBuilder } from 'libraries/AonSDK/aon';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-table-tax-model',
-  templateUrl: './table-tax-model.component.html',
-  styleUrls: ['./table-tax-model.component.scss'],
+  selector    : 'app-table-tax-model',
+  templateUrl : './table-tax-model.component.html',
+  styleUrls   : ['./table-tax-model.component.scss'],
 })
 export class TableTaxModelComponent implements OnInit {
-  @Input() trimester: number = 0;
-  headerTable: any = {};
-  bodyTable: any = [];
-  displayedColumns: string[] = [
+  @Input() trimester: number    = 0;
+  headerTable       : any       = {};
+  bodyTable         : any       = [];
+  displayedColumns  : string[]  = [
     'name',
     'result',
     'status',
@@ -23,12 +24,9 @@ export class TableTaxModelComponent implements OnInit {
   ];
 
   constructor(
-    public taxModelService: TaxModelService,
+    public  taxModelService: TaxModelService,
     private translateService: TranslateService
   ) {
-    let tableRow: any = [];
-    let column: any = {};
-
     this.translateService
       .get([
         'TAX-PANEL.NAME',
@@ -46,23 +44,24 @@ export class TableTaxModelComponent implements OnInit {
           actions: result['TAX-PANEL.ACTIONS'],
         };
       });
-    // Model date
+  }
 
-    // selectedFields?: string[];
-    // pageNum?: number;
-    // pageItems?: number;
-    // fields?: Map<string,any>;
-    // intervalFields?: Map<string,any>;
-    // orderBy?: Map<string,string>;
+  ngOnInit(): void {
+    this.updateTableData();
+  }
 
-    taxModelService
-      .getTaxModelList({
-        selectedFields: ['trimester'],
-      })
+  private updateTableData() {
+    let filterBuilder = new FilterBuilder();
+    if (this.trimester !== 0) {
+      filterBuilder.addField('trimester', this.trimester);
+    }
+    this.taxModelService
+      .getTaxModelList(filterBuilder.getFilter())
       .then((response) => {
-        console.log(response);
         // Tax
+        let tableRow: any = [];
         response.forEach(function (tax, taxKey) {
+          let column: any = {};
           // clone object
           column = Object.assign({}, tax);
           // Object Tax
@@ -119,8 +118,6 @@ export class TableTaxModelComponent implements OnInit {
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
-
-  ngOnInit(): void {}
 
   modalClick(object: any) {
     // Fila de la tabla que se esta usando

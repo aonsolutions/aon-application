@@ -24,6 +24,7 @@ export class TableComponent implements OnInit {
     {position: 10, name: 'Neon',      weight: 20.1797,  symbol: 'Ne'},
   ];
   @Output() listenParentHandler : EventEmitter<any> = new EventEmitter();
+  @Output() listenParentRow     : EventEmitter<any> = new EventEmitter();
   @Input()  pagination          : boolean           = false;
 
   ngOnInit(): void {
@@ -32,6 +33,10 @@ export class TableComponent implements OnInit {
 
   tableClick(key: any, keyButton: any){
     this.listenParentHandler.emit({key: key, keyButton: keyButton});
+  }
+
+  onRowClick(key: any){
+    this.listenParentRow.emit({key: key});
   }
 
 }
