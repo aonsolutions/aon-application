@@ -186,6 +186,16 @@ export class UserFactory implements ISingleObjectCrudFactory<IUser>, IMultipleOb
     }
 }
 
+export class ContractFactory implements ISingleObjectCrudFactory<IContract>, IMultipleObjectCrudFactory<IContract> {
+    createSingleObjectCrud(): ISingleObjectCrud<IContract> {
+        return new GenericSingleObjectCrud<Contract>(new GenericSingleObjectCrudRepository<Contract>(new StorableContract(), Contract), Contract);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IContract> {
+        return new GenericMultipleObjectCrud<Contract>(new GenericMultipleObjectCrudRepository<Contract>(new StorableContract(), Contract), Contract);
+    }
+
+}
+
 /*
  *
  * INTERFACES TO DEFINE METHODS FOR CLIENT
@@ -1191,6 +1201,7 @@ interface ICollectionFactory {
     createEmployeeCollection(): ICollection<IEmployee>;
     createMarkCollection(): ICollection<IMark>;
     createUserCollection(): ICollection<IUser>;
+    createContractCollection(): ICollection<IContract>;
 }
 
 interface ICollectable {
@@ -1319,6 +1330,17 @@ export interface IEmployee extends ICollectable {
     Phone: string;
     Naf: string;
     Active: boolean;
+}
+
+export interface IContract extends ICollectable {
+  Name: string;
+  LastName: string;
+  Type: string;
+  GrossCost: number;
+  StartDate: Date;
+  EndDate?: Date;
+  WorkCenter: string;
+  Active: boolean;
 }
 
 export interface IMark extends ICollectable {
@@ -1455,6 +1477,10 @@ export class CollectionFactory implements ICollectionFactory {
 
     createUserCollection(): ICollection<IUser> {
         return new Collection<User>();
+    }
+
+    createContractCollection(): ICollection<IContract> {
+      return new Collection<Contract>();
     }
 }
 
@@ -2536,6 +2562,142 @@ class StorableEmployee extends Employee implements IStorable<Employee> {
     }
 }
 
+class Contract implements IContract, IModel  {
+    private name: string;
+    private lastName: string;
+    private type: string;
+    private grossCost: number;
+    private startDate: Date;
+    private endDate?: Date;
+    private workCenter: string;
+    private active: boolean;
+    private key: string;
+
+    constructor(name?: string, lastName?: string, type?: string, grossCost?: number, startDate?: Date, endDate?: Date, workCenter?: string, active?: boolean) {
+        this.key = name || '';
+        this.name = name || '';
+        this.lastName = lastName || '';
+        this.type = type || '';
+        this.grossCost = grossCost || 0;
+        this.startDate = startDate || new Date();
+        this.endDate = endDate || new Date();
+        this.workCenter = workCenter || '';
+        this.active = active || false;
+    }
+
+    public get Name(): string {
+      return this.name;
+    }
+
+    public set Name(value: string) {
+      this.name = value;
+    }
+
+    public get LastName(): string {
+      return this.lastName;
+    }
+
+    public set LastName(value: string) {
+      this.lastName = value;
+    }
+
+    public get Type(): string {
+        return this.type;
+    }
+
+    public set Type(value: string) {
+        this.type = value;
+    }
+
+    public get GrossCost(): number {
+        return this.grossCost;
+    }
+
+    public set GrossCost(value: number) {
+        this.grossCost = value;
+    }
+
+    public get StartDate(): Date {
+        return this.startDate;
+    }
+
+    public set StartDate(value: Date) {
+        this.startDate = value;
+    }
+
+    public get EndDate(): Date | undefined {
+        return this.endDate;
+    }
+
+    public set EndDate(value: Date) {
+        this.endDate = value;
+    }
+
+    public get WorkCenter(): string {
+        return this.workCenter;
+    }
+
+    public set WorkCenter(value: string) {
+        this.workCenter = value;
+    }
+
+    public get Active(): boolean {
+        return this.active;
+    }
+
+    public set Active(value: boolean) {
+        this.active = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string){
+        this.key = value;
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('lastName', this.lastName);
+        map.set('type', this.type);
+        map.set('grossCost', this.grossCost);
+        map.set('startDate', this.startDate);
+        map.set('endDate', this.endDate);
+        map.set('workCenter', this.workCenter);
+        map.set('active', this.active);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('lastName', this.lastName);
+        map.set('type', this.type);
+        map.set('grossCost', this.grossCost);
+        map.set('startDate', this.startDate);
+        map.set('endDate', this.endDate);
+        map.set('workCenter', this.workCenter);
+        map.set('active', this.active);
+        return map;
+    }
+
+}
+
+class StorableContract extends Contract implements IStorable<Contract> {
+    getCollection(): ICollection<Contract> {
+        return contracts;
+    }
+    getLocalStorage(): string {
+        return 'contracts';
+    }
+}
+
 class Auth implements IAuth, IModel  {
     private email: string;
     private password: string;
@@ -3077,6 +3239,10 @@ if(employees.size() == 0){
     employees.add(new Employee('Juan Carlos','Aragón Pérez','11556837G','juancarlosaragonperez@gmail.test','619068048','490423363729',true));
     localEmployees.write(storableEmployees.getLocalStorage(), employees);
 }
+
+let contracts: ICollection<Contract> = new Collection<Contract>();
+let storableContracts = new StorableContract();
+let localContracts = new LocalStorage<Contract>(Contract);
 
 let users: ICollection<User> = new Collection<User>();
 let marks: ICollection<Mark> = new Collection<Mark>();
