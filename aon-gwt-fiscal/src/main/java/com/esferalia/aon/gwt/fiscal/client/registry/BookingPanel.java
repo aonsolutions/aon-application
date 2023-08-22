@@ -671,6 +671,7 @@ public class BookingPanel extends MainEntryPoint {
 			params.setMonth(null);
 			params.setYear(null);
 			params.setCustomer(null);
+			params.setCustomerStatus(null);
 			params.setSegment(null);
 			params.setProduct(null);
 			params.setStartCompare((byte)0);
@@ -891,7 +892,7 @@ public class BookingPanel extends MainEntryPoint {
 	}
 	
 	private void setColumnWidth() {
-		bookingCheckTable.getColumnFormatter().getElement(0).getStyle().setWidth(100, Unit.PX);
+		bookingCheckTable.getColumnFormatter().getElement(0).getStyle().setWidth(80, Unit.PX);
 		bookingCheckTable.getColumnFormatter().getElement(2).getStyle().setWidth(80, Unit.PX);
 		bookingCheckTable.getColumnFormatter().getElement(3).getStyle().setWidth(30, Unit.PCT);
 		bookingCheckTable.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
@@ -930,6 +931,8 @@ public class BookingPanel extends MainEntryPoint {
 		int row = bookingCheckTable.insertRow(bookingCheckTable.getRowCount());
 
 		Label typeLabel = new Label(getType());
+		typeLabel.setTitle(getTypeTitle());
+		
 		Label customerLabel = new Label(bookingCheck.getCustomer().getName());
 		Label customerStatusLabel = new Label(bookingCheck.getCustomer().getStatus().getDescription());
 		Label productLabel = new Label(getProductDescription(bookingCheck));
@@ -1052,6 +1055,9 @@ public class BookingPanel extends MainEntryPoint {
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		Window.alert("checkCustomerDomains RequestBuilder GET : " + urlBuilder.buildString());
+		Window.alert("checkCustomerDomains RequestBuilder Header (session_id) : " + requestBuilder.getHeader("session_id"));
 
 		try {
 		    // Send the request
@@ -1091,7 +1097,7 @@ public class BookingPanel extends MainEntryPoint {
 		else return "";
 	}
 
-	private String getType() {
+	private String getTypeTitle() {
 		switch (Integer.parseInt(bookingCheckType.getSelectedValue())) {
 			case 0:
 				return "Contrataci\u00f3n";
@@ -1099,7 +1105,18 @@ public class BookingPanel extends MainEntryPoint {
 				return "Cuota";
 			default:
 				return "Contrataci\u00f3n";
+		}
 	}
+	
+	private String getType() {
+		switch (Integer.parseInt(bookingCheckType.getSelectedValue())) {
+			case 0:
+				return "Contr.";
+			case 1:
+				return "Cuota";
+			default:
+				return "Contr.";
+		}
 	}
 
 	private String getBookingStatus(RegistryItemStatus status) {
@@ -1190,7 +1207,10 @@ public class BookingPanel extends MainEntryPoint {
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-
+		
+		Window.alert("syncDomain RequestBuilder GET : " + urlBuilder.buildString());
+		Window.alert("syncDomain RequestBuilder Header (session_id) : " + requestBuilder.getHeader("session_id"));
+		
 		try {
 		    // Send the request
 		    requestBuilder.sendRequest(null, new RequestCallback() {
