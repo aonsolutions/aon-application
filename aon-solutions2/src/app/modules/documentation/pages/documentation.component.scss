@@ -1,10 +1,10 @@
 @import "src/styles.scss";
 
 ::ng-deep{
-
   #document-options .mat-figure{
     justify-content : end;
     gap             : 1rem;
+    align-items     : end;
   }
   
   #document-content{

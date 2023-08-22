@@ -17,20 +17,25 @@ import { TranslateService } from '@ngx-translate/core';
   },
 })
 export class ModelsDashboardComponent implements OnInit {
+  items: string[] = []
   selected: string = '';
-
-  items: string[] = [
-    '1_TRIMESTER',
-    '2_TRIMESTER',
-    '3_TRIMESTER',
-    '4_TRIMESTER',
-  ];
 
   models: ICollection<ITaxModel> =
     new CollectionFactory().createTaxModelCollection();
   @Input() public taxModelList: Observable<ICollection<ITaxModel>> | undefined;
 
-  constructor(private translateService: TranslateService) {}
+  constructor(private translateService: TranslateService) {
+    this.translateService
+    .get(['HOME.1_TRIMESTER', 'HOME.2_TRIMESTER', 'HOME.3_TRIMESTER', 'HOME.4_TRIMESTER'])
+    .subscribe((result) => {
+      this.items = [
+        result['HOME.1_TRIMESTER'],
+        result['HOME.2_TRIMESTER'],
+        result['HOME.3_TRIMESTER'],
+        result['HOME.4_TRIMESTER']
+      ];
+    });
+  }
 
   ngOnInit(): void {
     if (this.taxModelList) {
@@ -38,14 +43,5 @@ export class ModelsDashboardComponent implements OnInit {
         this.models = taxModel;
       });
     }
-    this.translateItems();
-  }
-  translateItems(): void {
-    this.translateService.get('HOME').subscribe((translation) => {
-      this.selected = translation['1_TRIMESTER'];
-      this.items.forEach((item, index) => {
-        this.items[index] = translation[item];
-      });
-    });
   }
 }

@@ -42,6 +42,8 @@ $color-third      : #5a5b6a;
 $color-quarter    : #fff;
 $color-icon       : #b4b4bb;
 $color-placeholder: #9696a0;
+  /* Dark */
+    $color-dark         : #292a31;
   /* Red */
     $color-red          : #f6655a;
   /* Blue */
@@ -278,6 +280,9 @@ html {
 /*
   Color text
 */
+  .dark{
+    color: $color-dark;
+  }
   .griss{
     color: $color-secondary;
   }
@@ -403,4 +408,12 @@ html {
   }
   .padding-bottom-2{
     padding-bottom: $padding-bottom * 2;
+  }
+/*
+  Hr
+*/
+  hr{
+    border    : $border;
+    border-top: none;
+    margin    : $margin;
   }

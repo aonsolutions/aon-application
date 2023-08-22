@@ -8,6 +8,297 @@
     border        : $border;
     border-radius : $border-radius;
   }
+  
+  .card.dark .line {
+    border: 0.15rem solid $color-dark;
+  }
+  .card.red .line {
+    border: 0.15rem solid $color-red;
+  }
+  .card.blue .line {
+    border: 0.15rem solid $color-blue;
+  }
+  .card.pink .line {
+    border: 0.15rem solid $color-pink;
+  }
+  .card.purple .line {
+    border: 0.15rem solid $color-purple;
+  }
+  .card.green .line {
+    border: 0.15rem solid $color-green;
+  }
+  .card.orange .line {
+    border: 0.15rem solid $color-orange;
+  }
+  
+  .card .icon-background set-icon{
+    padding      : .5rem;
+    border-radius: $border-radius;
+  }
+  .card.red .icon-background set-icon {
+    background-color: $background-button-red-hover2;
+  }
+  .card.blue .icon-background set-icon {
+    background-color: $background-button-blue-hover2;
+  }
+  .card.pink .icon-background set-icon {
+    background-color: $background-button-pink-hover2;
+  }
+  .card.purple .icon-background set-icon {
+    background-color: $background-button-purple-hover2;
+  }
+  .card.green .icon-background set-icon {
+    background-color: $background-button-green-hover2;
+  }
+  .card.orange .icon-background set-icon {
+    background-color: $background-button-orange-hover2;
+  }
+  
+/*
+  Card button-dashboard - HOME
+*/
+  .card.dashboard {
+    width     : 23rem !important;
+    height    : 16.6rem !important;
+    padding   : 1rem;
+  }
+  .card.dashboard.min {
+    width     : 17.8rem !important;
+  }
+  .card.dashboard .card-header [header]{
+    display : flex;
+    gap     : 0.5rem;
+    width   : 100%;
+  }
+  .card.dashboard .card-header .line {
+    max-width     : 0rem;
+    height        : 1.35rem;
+    border-radius : 20rem;
+  }
+  .card.dashboard .card-header .text {
+    width       : 100%;
+    display     : flex;
+    align-items : center;
+    font-family : Roboto-Bold;
+    font-size   : 1.2rem;
+  }
+  .card.dashboard .card-header .options-text {
+    width           : 100%;
+    display         : flex;
+    align-items     : center;
+    justify-content : flex-end;
+    font-family     : Roboto-Medium;
+    font-size       : 0.7rem;
+    color           : $color-border-primary;
+  }
+  .card.dashboard .card-header .options{
+    display     : flex;
+    align-items : center;
+    cursor      : pointer;
+  } 
+  .card.dashboard .card-header .options set-icon path{
+    color: $color-secondary;
+  }
+  
+  .card.dashboard .card-body [body]{
+  
+  } 
+  .card.dashboard .card-footer [footer]{
+    display         : flex;
+    justify-content : flex-end;
+    height          : 100%;
+  }
+  .card.dashboard .card-footer set-icon{
+    padding       : .5rem;
+    border        : $border;
+    border-radius : $border-radius;
+    cursor        : pointer;
+  }
+  .card.dashboard .card-footer set-icon path{
+    color: $color-secondary;
+  }
+  
+  /*
+    List
+  */
+    .card.dashboard .card-body .list{
+      width       : 100%;
+      height      : 12.1rem;
+      overflow-y  : auto;
+      margin-top  : $margin-top/2;
+    }
+    .card.dashboard .card-body .list .list-row{
+      display       : flex;
+      gap           : 1rem;
+      border-bottom : $border;
+      padding       : $padding/2 0;
+      margin-right  : $margin-right/2;
+    }
+    .card.dashboard .card-body .list .list-row:last-child{
+      border-bottom : none;
+    }
+    .card.dashboard .card-body .list .list-name{
+      min-width   : 4.5rem;
+      font-family : Roboto-Medium;
+      color       : $color-orange;
+    }
+    .card.dashboard .card-body .list .list-date{
+      width       : 100%;
+      color       : $color-secondary;
+    }
+    .card.dashboard .card-body .list .list-money{
+      width           : 100%;
+      display         : flex;
+      justify-content : space-around;
+      align-items     : center;
+      font-family     : Roboto-Medium;
+    }
+    .card.dashboard .card-body .list .list-money .list-money-icon{
+      width           : 0.35rem;
+      height          : 0.35rem;
+      border-radius   : 10rem;
+      display         : flex;
+      background-color: $background-button-orange;
+    }
+  /*
+    FIN List
+  */
+  
+  /*
+    List BANK
+  */
+    .card.dashboard .card-body .list-bank{
+      width       : 100%;
+      height      : 10.1rem;
+      overflow-y  : auto;
+      margin-top  : $margin-top/2;
+    }
+    .card.dashboard .card-body .list-bank .list-bank-row{
+      display       : flex;
+      gap           : 1rem;
+      padding       : $padding/2 0;
+      margin-right  : $margin-right/2;
+    }
+    .card.dashboard .card-body .list-bank .list-bank-name{
+      min-width   : 50%;
+    }
+    .card.dashboard .card-body .list-bank .list-bank-money{
+      width           : 50%;
+      display         : flex;
+      justify-content : flex-end;
+      align-items     : center;
+      font-family     : Roboto-Medium;
+    }
+    .card.dashboard .card-footer .list-bank-footer{
+      font-size   : 1.2rem;
+      font-family : Roboto-bold;
+      border-top  : $border;
+      padding-top : $padding-top;
+    }
+  /*
+    FIN List BANK
+  */
+ 
+  /*
+    Animation hover
+  */
+    .card.dashboard:hover .card-body [body] app-chart div{
+      transform: scale(0.95);
+      transition-duration: 400ms;
+    }
+    .card.dashboard:hover{
+      border-color: $color-dark;
+    }
+  /*
+    FIN Animation hover
+  */
+/*
+  FIN Card button-dashboard - HOME
+*/
+
+/*
+  Card button-dashboard - HOME
+*/
+    .card.button-dashboard {
+      width   : 16.15rem !important;
+      height  : 6.9rem !important;
+      padding : 1rem;
+      cursor  : pointer;
+    }
+
+    .card.button-dashboard .line {
+      max-width     : 0rem;
+      height        : 4.5rem;
+      border-radius : 20rem;
+    }
+    
+    .card.button-dashboard .card-body{
+      width   : 100%;
+      height  : 100%;
+    }
+    .card.button-dashboard .card-body [body]{
+      display : flex;
+      gap     : 0.5rem;
+      width   : 100%;
+      height  : 100%;
+    }
+
+    .card.button-dashboard .button-content{
+      width         : 100%;
+      padding-bottom: 0.5rem;
+    }
+    .card.button-dashboard .button-content .button-content-icon{
+      height: 50%;
+    }
+    .card.button-dashboard .button-content .button-content-text{
+      height      : 50%;
+      display     : flex;
+      align-items : flex-end;
+      font-family : Roboto-Bold;
+      font-size   : 1.2rem;
+    }
+
+    .card.button-dashboard .button-arrow{
+      width           : 1.2rem;
+      padding-bottom  : 0.5rem;
+      display         : flex;
+      justify-content : flex-end;
+      align-items     : flex-end;
+    }
+    .card.button-dashboard .button-arrow .arrow set-icon path{
+      color: $color-border-primary;
+    }
+
+  /*
+    Animation hover
+  */
+    .card.button-dashboard:hover .card-body {
+      transform           : translateX(1rem);
+      transition-duration : 400ms;
+    }
+    .card.button-dashboard:hover .card-body .button-arrow .arrow {
+      visibility          : hidden;
+      opacity             : 0;
+      transform           : visibility 0s, opacity 0.5s linear;
+      transition-duration : 400ms;
+    }
+    .card.button-dashboard:hover .icon-background set-icon{
+      background-color  : transparent;
+      -webkit-transition: background-color 400ms linear;
+      -ms-transition    : background-color 400ms linear;
+      transition        : background-color 400ms linear;
+    }
+    
+    .card.button-dashboard:hover{
+      cursor      : pointer;
+      border-color: $color-dark;
+    }
+  /*
+    FIN Animation hover
+  */
+/*
+  FIN Card button-dashboard - HOME
+*/  
 
 /*
   Card File - DOCUMENTATION
@@ -39,23 +330,17 @@
   .card.file .card-header .card-menu{
     float: right;
   }
-  
+  .card.file .card-header .card-menu set-icon path{
+    color: $color-secondary;
+  }
   .card.file .card-body{
     text-align  : center;
-    padding-top : .4rem;
   }
-  .card.file .card-body span{
-    width           : 1.2rem;
-    height          : 1.2rem;
-    padding         : .55rem .5rem .7rem .5rem;
-    background-color: $background-button-pink-hover2;
-    border-radius   : $border-radius;
-  }
-  
+ 
   .card.file .card-footer{
     font-family : Roboto-Medium;
     text-align  : center;
-    padding-top : .6rem;
+    padding-top : .1rem;
   }
   .card.file .card-footer .bold{
     overflow      : hidden;

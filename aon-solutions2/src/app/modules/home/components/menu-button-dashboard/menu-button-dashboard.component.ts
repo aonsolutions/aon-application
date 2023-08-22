@@ -11,9 +11,9 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class MenuButtonDashboardComponent implements OnInit {
 
-  @Input() shape = '';
-  @Input() name = '';
-  @Input() color = '';
+  @Input() shape  = '';
+  @Input() name   = '';
+  @Input() class  = '';
 
   constructor() {}
 

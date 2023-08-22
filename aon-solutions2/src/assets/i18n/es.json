@@ -17,10 +17,10 @@
     "MENU": "menu",
     "INBOX": "BANDEJA",
     "BILLING": "GESTIÓN",
-    "TAX-PANEL": "PANEL DE IMPUESTOS",
-    "EMPLOYEE-PANEL": "PANEL DE EMPLEADOS",
-    "DOCUMENTATION": "DOCUMENTACIÓN"
-
+    "TAX_PANEL": "PANEL DE IMPUESTOS",
+    "EMPLOYEE_PANEL": "PANEL DE EMPLEADOS",
+    "DOCUMENTATION": "DOCUMENTACIÓN",
+    "SHORTCUTS": "ACCESOS DIRECTOS"
   },
   "LOGIN": {
     "LOGIN": "Iniciar Sesión",
@@ -31,9 +31,8 @@
     "USER": "Usuario",
     "PASSWORD": "Contraseña"
   },
-
   "ENTERPRISES": {
-    "SELECT_A _COMPANY": "Selecciona una empresa",
+    "SELECT_A_COMPANY": "Selecciona una empresa",
     "ENTER_THE_COMPANY": "Entra en la empresa que desees operar"
   }
   ,
@@ -48,6 +47,8 @@
     "TIMING": "MARCAJE",
     "SALES_EXPENSES": "Ventas/Gastos",
     "COLLECTIONS_PAYMENTS": "Cobros/Pagos",
+    "TAXES": "Impuestos",
+    "MODEL": "Modelo",
     "YOUR_BANKS": "Tus Bancos",
     "CREATE_YOUR_FIRST_BANK": "Crea tu primer banco",
     "CONNECT_AON":"Conecta AON con tus bancos para tener un control de tus movimientos",
@@ -60,13 +61,29 @@
     "2_TRIMESTER":"2 trimestre",
     "3_TRIMESTER":"3 trimestre",
     "4_TRIMESTER":"4 trimestre"
-
   },
   "INBOX": {
-
+    "ALL": "Todas",
+    "OPENED": "Abiertas",
+    "CLOSED": "Cerradas",
+    "PENDING": "Pendientes",
+    "REALIZED": "Realizadas",
+    "NEWS": "Nuevas",
+    "VIEWS": "Vistas",
+    "INBOX": "Bandeja",
+    "QUERIES": "Consultas",
+    "TASKS": "Tareas",
+    "NOTIFICATIONS": "Notificaciones",
+    "THIS_WEEK": "Esta semana",
+    "CREATE": "Crear"
   },
   "DOCUMENTATION": {
-
+    "FILE_SELECT_PREVIEW"   : "Vista previa",
+    "FILE_SELECT_MOVE_TO"   : "Mover a",
+    "FILE_SELECT_EDIT_NAME" : "Cambiar nombre",
+    "FILE_SELECT_LABEL_AS"  : "Etiquetar como",
+    "FILE_SELECT_DOWLOAD"   : "Descargar",
+    "FILE_SELECT_DELETE"    : "Eliminar"
   },
   "BILLING": {
 
@@ -78,16 +95,17 @@
 
   },
   "TAX-PANEL": {
-    "1 TRIMESTER":   "1 Trimestre",
-    "2 TRIMESTER":   "2 Trimestre",
-    "3 TRIMESTER":   "3 Trimestre",
-    "4 TRIMESTER":   "4 Trimestre",
+    "1_TRIMESTER":   "1 Trimestre",
+    "2_TRIMESTER":   "2 Trimestre",
+    "3_TRIMESTER":   "3 Trimestre",
+    "4_TRIMESTER":   "4 Trimestre",
     "ALL":           "Todos",
     "NAME":          "Modelo",
     "RESULT":        "Resultado",
     "STATUS":        "estado",
     "PAYMENTMETHOD": "Metodo de pago",
     "ACTIONS":       "acciones",
-    "MODEL":         "Modelo"
+    "MODEL":         "Modelo",
+    "YEAR":          "Año"
   }
 }
