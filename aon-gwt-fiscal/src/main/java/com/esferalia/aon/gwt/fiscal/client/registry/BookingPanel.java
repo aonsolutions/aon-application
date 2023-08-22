@@ -671,6 +671,7 @@ public class BookingPanel extends MainEntryPoint {
 			params.setMonth(null);
 			params.setYear(null);
 			params.setCustomer(null);
+			params.setCustomerStatus(null);
 			params.setSegment(null);
 			params.setProduct(null);
 			params.setStartCompare((byte)0);
@@ -1054,6 +1055,9 @@ public class BookingPanel extends MainEntryPoint {
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		Window.alert("checkCustomerDomains RequestBuilder GET : " + urlBuilder.buildString());
+		Window.alert("checkCustomerDomains RequestBuilder Header (session_id) : " + requestBuilder.getHeader("session_id"));
 
 		try {
 		    // Send the request
@@ -1203,7 +1207,10 @@ public class BookingPanel extends MainEntryPoint {
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-
+		
+		Window.alert("syncDomain RequestBuilder GET : " + urlBuilder.buildString());
+		Window.alert("syncDomain RequestBuilder Header (session_id) : " + requestBuilder.getHeader("session_id"));
+		
 		try {
 		    // Send the request
 		    requestBuilder.sendRequest(null, new RequestCallback() {
