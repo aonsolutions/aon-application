@@ -43,7 +43,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(DomainCompanyServlet.class.getName());
 	
 	public static final String DOMAINS = "/";
-//	public static final String CUSTOMER_DOMAINS = "/:customer"; //buscar entre todos los schemas los que tengan ese aonCustomer
+	public static final String CUSTOMER_DOMAINS = "/:customer"; //buscar entre todos los schemas los que tengan ese aonCustomer
 	public static final String DOMAIN_LINKED = "/link/";
 	public static final String BOOKING = "/booking/";
 	
@@ -73,7 +73,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			Object object = new AonRouting(api)
 					.addRoute(DOMAINS, DomainCompanyServlet::getDomains)
-//				.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::getCustomerDomains)
+					.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::getCustomerDomains)
 					.apply();
 			
 			response(req, resp, object);
