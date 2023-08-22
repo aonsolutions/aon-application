@@ -1,12 +1,6 @@
-import {
-  Component,
-  EventEmitter,
-  HostBinding,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface Tabs {
   name: string;
@@ -34,25 +28,30 @@ export class TabsTaxModelComponent implements OnInit {
   modelsList: any[] = [];
   modelsYears: any[] = [];
   models: any;
-
-  tabs: Tabs[] = [
-    { name: '1 Trimestre' },
-    { name: '2 Trimestre' },
-    { name: '3 Trimestre' },
-    { name: '4 Trimestre' },
-    { name: 'Todos' },
-  ];
-
+  tabs    : Tabs [] = [];
   @Input() trimester!: number;
   @Input() tabColor: string = '';
-
   @HostBinding('style.--styleTabColor') styleTabColor = '';
-
   @Output() inputValue = new EventEmitter<any>();
   @Output() changeTabIndex = new EventEmitter<number>();
   showModal: any;
 
-  constructor(public taxModelService: TaxModelService) {
+  constructor(
+    public taxModelService: TaxModelService,
+    private translateService: TranslateService
+  ) {
+    this.translateService.get(
+      ['TAX-PANEL.1_TRIMESTER', 'TAX-PANEL.2_TRIMESTER', 'TAX-PANEL.3_TRIMESTER','TAX-PANEL.4_TRIMESTER', 'TAX-PANEL.ALL']
+    ).subscribe( result => {
+      this.tabs = [
+        { name: result['TAX-PANEL.1_TRIMESTER']},
+        { name: result['TAX-PANEL.2_TRIMESTER']},
+        { name: result['TAX-PANEL.3_TRIMESTER']},
+        { name: result['TAX-PANEL.4_TRIMESTER']},
+        { name: result['TAX-PANEL.ALL']},
+      ]
+    })
+
     taxModelService.getTaxModelList().then((response) => {
       this.models = response;
       response.forEach((element) => {
@@ -70,8 +69,8 @@ export class TabsTaxModelComponent implements OnInit {
     // this.deleteSelectTab();
     // this.selectTab('mat-tab-label-0-' + this.tabIndexSelect);
 
-
   }
+
   setInitialTabIndex() {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -104,8 +103,8 @@ export class TabsTaxModelComponent implements OnInit {
     // Cogemos el Tab
     let element = document.getElementById(id);
     // Si no existe la agregamos, si existe la removemos
-console.log(element);
-      element!.classList.add('mat-tab-label-active');
+    console.log(element);
+    element!.classList.add('mat-tab-label-active');
 
   }
 

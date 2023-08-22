@@ -42,6 +42,8 @@ $color-third      : #5a5b6a;
 $color-quarter    : #fff;
 $color-icon       : #b4b4bb;
 $color-placeholder: #9696a0;
+  /* Dark */
+    $color-dark         : #292a31;
   /* Red */
     $color-red          : #f6655a;
   /* Blue */
@@ -278,6 +280,9 @@ html {
 /*
   Color text
 */
+  .dark{
+    color: $color-dark;
+  }
   .griss{
     color: $color-secondary;
   }
@@ -370,4 +375,45 @@ html {
   }
   .margin-bottom-2{
     margin-bottom: $margin-bottom * 2;
+  }
+/*
+  Padding
+*/
+  .padding{
+    padding: $padding;
+  }
+  .padding-top{
+    padding-top: $padding-top;
+  }
+  .padding-left{
+    padding-left: $padding-left;
+  }
+  .padding-right{
+    padding-right: $padding-right;
+  }
+  .padding-bottom{
+    padding-bottom: $padding-bottom;
+  }
+  .padding{
+    padding: $padding;
+  }
+  .padding-top-2{
+    padding-top: $padding-top * 2;
+  }
+  .padding-left-2{
+    padding-left: $padding-left * 2;
+  }
+  .padding-right-2{
+    padding-right: $padding-right * 2;
+  }
+  .padding-bottom-2{
+    padding-bottom: $padding-bottom * 2;
+  }
+/*
+  Hr
+*/
+  hr{
+    border    : $border;
+    border-top: none;
+    margin    : $margin;
   }

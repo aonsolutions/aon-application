@@ -1,0 +1,35 @@
+@import "src/styles.scss";
+
+::ng-deep{
+  #document-options .mat-figure{
+    justify-content : end;
+    gap             : 1rem;
+    align-items     : end;
+  }
+  
+  #document-content{
+    display   : flex;
+    flex-wrap : wrap;
+    gap       : 1rem;
+  }
+ 
+  #file-detail{
+    display         : flex;
+    justify-content : space-between;
+    gap             : 1rem;
+    padding         : $padding;
+  }
+  #file-detail .name{
+    max-width     : 10rem;
+    overflow      : hidden;
+    text-overflow : ellipsis;
+  }
+  #file-detail .close{
+    cursor: pointer;
+  }
+  
+  .folder.select-folder .appButton.icon-background-pink{
+    border          : solid $border-size-primary $color-pink;
+    background-color: $background-button-pink-hover2;
+  }
+}

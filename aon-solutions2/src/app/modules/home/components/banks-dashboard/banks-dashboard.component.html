@@ -1,41 +1,25 @@
-<app-card
-  [headerHeight]="'10%'"
-  [footerHeight]="'15%'"
-  [padding]="'.75rem'"
-  [width]="'100%'"
-  [height]="'16.6rem'"
-  [border]="'0.05rem solid #D2D2D6 '"
-  [borderRadius]="'.2rem'"
->
-  <div header class="banks-header">
-    <div class="banks-header-name">
-      <div class="banks-header-line"></div>
-      <div class="banks-header-text">
-        {{ 'HOME.YOUR_BANKS'|translate }}</div>
-    </div>
-    <div class="banks-header-icon">
-      <app-icon [shape]="'add'" class="blue" [size]="'1.2rem'"></app-icon>
+<app-card class="dashboard min blue">
+  <div header>
+    <div class="line"></div>
+    <div class="text">{{ 'HOME.YOUR_BANKS'| translate }}</div>
+    <div class="options">
+      <app-icon [shape]="'add'"></app-icon>
     </div>
   </div>
-
-  <div body class="banks-content">
-    <div *ngFor="let bank of banks" class="banks-content-element">
-      <div class="banks-content-element-name">
+  <div body class="list-bank">
+    <div *ngFor="let bank of banks" class="list-bank-row">
+      <div class="list-bank-name">
         {{ bank.Name }}
         <!-- {{ bank.Logo }} -->
       </div>
-      <div class="banks-content-element-amount">{{ bank.Total }} €</div>
+      <div class="list-bank-money">{{ bank.Total }} €</div>
     </div>
-    <mat-divider class="divider"></mat-divider>
+      <div class="bank-link-create" *ngIf="!hasBanks()">{{ 'HOME.CREATE_YOUR_FIRST_BANK'|translate }}</div>
+      <div class="banks-create-text" *ngIf="!hasBanks()">
+        {{ 'HOME.CONNECT_AON'|translate }}
+      </div>
   </div>
-
-  <div footer class="banks-footer">
-    <div class="banks-total-amount">
-      {{ totalAmount }} €
-    </div>
-  </div>
-  <div class="bank-link-create" *ngIf="!hasBanks()">{{ 'HOME.CREATE_YOUR_FIRST_BANK'|translate }}</div>
-  <div class="banks-create-text" *ngIf="!hasBanks()">
-    {{ 'HOME.CONNECT_AON'|translate }}
+  <div footer class="list-bank-footer">
+    {{ totalAmount }} €
   </div>
 </app-card>

@@ -12,10 +12,12 @@
 /*
   Color
 */
+  .dark set-icon path{
+    color: $color-dark;
+  }
   .griss set-icon path{
     color: $color-secondary;
   }
-
   .red set-icon path{
     color: $color-red;
   }
@@ -36,8 +38,8 @@
   }
 
   .icon-right {
-    justify-content: end !important;
-    width: 100% !important;
+    justify-content : end !important;
+    width           : 100% !important;
   }
 
 }

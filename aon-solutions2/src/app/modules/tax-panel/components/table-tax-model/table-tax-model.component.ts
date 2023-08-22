@@ -1,32 +1,21 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 import { ModalEditTaxModelComponent } from '../modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../modal-payment/modal-payment.component';
 import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-details.component';
 import { FilterBuilder } from 'libraries/AonSDK/aon';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-table-tax-model',
-  templateUrl: './table-tax-model.component.html',
-  styleUrls: ['./table-tax-model.component.scss'],
+  selector    : 'app-table-tax-model',
+  templateUrl : './table-tax-model.component.html',
+  styleUrls   : ['./table-tax-model.component.scss'],
 })
 export class TableTaxModelComponent implements OnInit {
-  @Input() trimester: number = 0;
-  bodyTable: any = [];
-  headerTable: any = {
-    name: 'modelo',
-    result: 'Resultado',
-    status: 'estado',
-    paymentMethod: 'Metodo de pago',
-    actions: 'acciones',
-  };
-  displayedColumns: string[] = [
+  @Input() trimester: number    = 0;
+  headerTable       : any       = {};
+  bodyTable         : any       = [];
+  displayedColumns  : string[]  = [
     'name',
     'result',
     'status',
@@ -34,11 +23,31 @@ export class TableTaxModelComponent implements OnInit {
     'actions',
   ];
 
-  constructor(public taxModelService: TaxModelService) {}
+  constructor(
+    public  taxModelService: TaxModelService,
+    private translateService: TranslateService
+  ) {
+    this.translateService
+      .get([
+        'TAX-PANEL.NAME',
+        'TAX-PANEL.RESULT',
+        'TAX-PANEL.STATUS',
+        'TAX-PANEL.PAYMENTMETHOD',
+        'TAX-PANEL.ACTIONS',
+      ])
+      .subscribe((result) => {
+        this.headerTable = {
+          name: result['TAX-PANEL.NAME'] ,
+          result: result['TAX-PANEL.RESULT'] ,
+          status: result['TAX-PANEL.STATUS'] ,
+          paymentMethod: result['TAX-PANEL.PAYMENTMETHOD'] ,
+          actions: result['TAX-PANEL.ACTIONS'],
+        };
+      });
+  }
 
   ngOnInit(): void {
     this.updateTableData();
-    console.log(this.trimester);
   }
 
   private updateTableData() {
@@ -53,7 +62,6 @@ export class TableTaxModelComponent implements OnInit {
         let tableRow: any = [];
         response.forEach(function (tax, taxKey) {
           let column: any = {};
-
           // clone object
           column = Object.assign({}, tax);
           // Object Tax
@@ -142,8 +150,6 @@ export class TableTaxModelComponent implements OnInit {
         break;
     }
     // Model tax reference
-    this.taxModelService.getTax(object.key).then((response) => {
-      // ...
-    });
+    this.taxModelService.getTax(object.key).then((response) => {});
   }
 }

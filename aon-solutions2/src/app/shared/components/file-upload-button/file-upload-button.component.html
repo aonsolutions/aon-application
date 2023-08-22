@@ -1,9 +1,12 @@
-<label appDragAndDrop (filesChangeEmiter)="onDrop($event)" class="allSize custom-file-upload">
+<label 
+  appDragAndDrop 
+  (filesChangeEmiter)="onDrop($event)" 
+  id="file-upload"
+>
   <input
-    class="allSize"
+    multiple
     type="file"
     (change)="onFileSelected($event)"
-    multiple
   />
   <ng-content></ng-content>
 </label>

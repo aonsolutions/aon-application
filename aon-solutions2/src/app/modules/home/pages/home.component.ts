@@ -30,9 +30,9 @@ interface ChartItem {
 }
 
 export interface MenuItems {
-  shape: string;
-  name: string;
-  color: string;
+  shape : string;
+  name  : string;
+  class : string;
 }
 
 @Component({
@@ -119,24 +119,24 @@ export class HomeComponent implements OnInit {
         ];
         this.menuItems = [
           {
-            shape: 'assessment',
-            name: result['HOME.ASSESSMENT'],
-            color: '#4f91ff',
+            shape : 'assessment',
+            name  : result['HOME.ASSESSMENT'],
+            class : 'button-dashboard blue'
           },
           {
-            shape: 'euro_symbol',
-            name: result['HOME.TAX_PANEL'],
-            color: '#fb982e',
+            shape : 'euro_symbol',
+            name  : result['HOME.TAX_PANEL'],
+            class : 'button-dashboard orange'
           },
           {
-            shape: 'people',
-            name: result['HOME.EMPLOYEE_PANEL'],
-            color: '#33a9a9',
+            shape : 'people',
+            name  : result['HOME.EMPLOYEE_PANEL'],
+            class : 'button-dashboard green'
           },
           {
-            shape: 'description',
-            name: result['HOME.DOCUMENTATION'],
-            color: '#ef6292',
+            shape : 'description',
+            name  : result['HOME.DOCUMENTATION'],
+            class : 'button-dashboard pink'
           },
         ];
         //bankService
