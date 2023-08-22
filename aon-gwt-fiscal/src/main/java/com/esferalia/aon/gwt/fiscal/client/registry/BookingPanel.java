@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.registry;
 
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -26,11 +25,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.occam.api.json.DomainCompanyJSON;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -1066,8 +1063,8 @@ public class BookingPanel extends MainEntryPoint {
 		            if (response.getStatusCode() == 200) {
 		                String responseBody = response.getText();
 		                Window.alert("Customer Domain \n" + responseBody);
-		                List<DomainCompany> domains = DomainCompanyJSON.fromJSONArray(responseBody);
-		                Window.alert("Customer Domain count : " + domains.size());
+//		                List<DomainCompany> domains = DomainCompanyJSON.fromJSONArray(responseBody);
+//		                Window.alert("Customer Domain count : " + domains.size());
 		            } else {
 		                // Handle error responses
 		            }
@@ -1218,8 +1215,8 @@ public class BookingPanel extends MainEntryPoint {
 		            if (response.getStatusCode() == 200) {
 		                String responseBody = response.getText();
 		                Window.alert("Domain Update \n" + responseBody);
-		                List<DomainCompany> domains = DomainCompanyJSON.fromJSONArray(responseBody);
-		                Window.alert("Domain Update count : " + domains.size());
+//		                List<DomainCompany> domains = DomainCompanyJSON.fromJSONArray(responseBody);
+//		                Window.alert("Domain Update count : " + domains.size());
 		            } else {
 		                // Handle error responses
 		            }
