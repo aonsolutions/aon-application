@@ -1,22 +1,21 @@
-import { CommonModule } from '@angular/common';
+import { NgModule }           from '@angular/core';
+import { CommonModule }       from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatMenuModule } from '@angular/material/menu';
-import { NgModule } from '@angular/core';
+import { MatGridListModule }  from '@angular/material/grid-list';
+import { MatMenuModule }      from '@angular/material/menu';
 
-import { DocumentationComponent } from './components/documentation/documentation.component';
 import { DocumentationRoutingModule } from './documentation-routing.module';
-import { DocumentRouterComponent } from './components/document-router/document-router.component';
-import { FilesComponent } from './components/files/files.component';
+import { DocumentationComponent }     from './pages/documentation.component';
+//import { DocumentRouterComponent } from './components/document-router/document-router.component';
+//import { FilesComponent } from './components/files/files.component';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
 import { SharedModule } from 'src/app/shared/shared.module';
-
 
 @NgModule({
   declarations: [
     DocumentationComponent,
-    DocumentRouterComponent,
-    FilesComponent,
+//    DocumentRouterComponent,
+//    FilesComponent,
   ],
   imports: [
     CommonModule,

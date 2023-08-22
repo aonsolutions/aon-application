@@ -1,0 +1,40 @@
+@import 'src/styles.scss';
+::ng-deep{
+
+  #layaut-componet-views{
+    width         : 100%;
+    display       : flex;
+    min-height    : 95vh; 
+  }
+ 
+  #layaut-componet-nav:not(:empty){
+    min-width     : 15.4rem;
+    padding       : $padding;
+    border-right  : $border;
+  }
+  
+  #layaut-componet-nav [nav]{
+    margin-bottom: 10rem;
+  }
+  
+  #layaut-componet-body{
+    width: 100%;
+  }
+    
+  #layaut-componet-header:not(:empty){
+    border-bottom : $border;
+  }
+  #layaut-componet-content:not(:empty){
+    
+  }
+  #layaut-componet-content [content]{
+    margin-bottom: 10rem;
+  }
+  
+  #layaut-componet-detail:not(:empty){
+    border-left : $border;
+  }
+  #layaut-componet-detail [detail]{
+    margin-bottom: 10rem;
+  }
+}
