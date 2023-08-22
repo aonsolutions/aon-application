@@ -3917,6 +3917,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Prov. ded. y gastos de dif. jus.")
 	String expenses184();
 
+	@DefaultMessage("Declarado")
+	String declared();
+	
 	@DefaultMessage("Clave del declarado")
 	String declaredKey();
 	

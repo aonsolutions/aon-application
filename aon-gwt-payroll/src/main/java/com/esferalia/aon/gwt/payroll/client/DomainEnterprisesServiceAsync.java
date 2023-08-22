@@ -162,7 +162,11 @@ public class DomainEnterprisesServiceAsync {
 	}
 
 	public void getEnterprises(int offset, int limit, AsyncCallback<List<Enterprise>> callback) {
-		enterprisesServiceAsync.getEnterprises(getCurrentDomainName(), getCurrentUser(), offset, limit, callback);
+		enterprisesServiceAsync.getEnterprises(getCurrentDomainName(), getCurrentUser(), " 1 = 1", offset, limit, callback);
+	}
+
+	public void getEnterprises(int offset, int limit, String condition, AsyncCallback<List<Enterprise>> callback) {
+		enterprisesServiceAsync.getEnterprises(getCurrentDomainName(), getCurrentUser(), condition, offset, limit, callback);
 	}
 
 	public void getEnterprisesCosts(List<Integer> enterpriseIds, AsyncCallback<List<Cost>> callback) {
@@ -262,11 +266,11 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getCRAs(getCurrentDomainName(), getCurrentUser(), liquidDateTime, asyncCallback);
 	}
 	
-	public void createNewCRA(long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+	public void createNewCRA(long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.createNewCRA(getCurrentDomainName(), getCurrentUser(), findingDate, cccList, cccIdList, cccId, type, asyncCallback);
 	}
 	
-	public void checkCreateNewCRA(long findingDate, ArrayList<Integer> cccList, AsyncCallback<String> asyncCallback) {
+	public void checkCreateNewCRA(long findingDate, ArrayList<Integer> cccList, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.checkCreateNewCRA(getCurrentDomainName(), findingDate, cccList, asyncCallback);
 	}
 	

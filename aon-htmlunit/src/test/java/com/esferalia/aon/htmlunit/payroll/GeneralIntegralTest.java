@@ -1153,6 +1153,18 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestBonificaciones() throws Exception {
+
+		open("bonificaciones");
+
+		wait4Id("bonif_form_t,_distan");
+
+		draft("BONIF FORM T, DISTAN");
+		calculate(Calendar.JUNE, 2023);
+		assertText("totalEnterpriseLabel", 0.00);
+	}
+
+	@Test
 	public void TestIRPFAraba() throws Exception {
 
 		open("i.r.p.f_-_alava/araba");
@@ -2553,6 +2565,28 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		click("costsCheck-input");
 		assertText("unemployment_cost", cgpBase*6.70/100.00);
 		click("costsCheck-input");
+		
+	}
+
+	@Test
+	public void TestInactividad() throws Exception {
+		
+		if (!isDisplayed("permiso,_no_retribuido-content"))
+			open("inactividad");
+
+
+		wait4Id("permiso,_no_retribuido-content");
+
+		draft("PERMISO, NO RETRIBUIDO");
+		calculate(Calendar.AUGUST,2023);
+		assertValue("cgpBaseLabel", 1260.00);
+//		assertText("common_contingency", 0.00);
+//		assertText("unemployment", 0.00);
+//		assertText("job_training", 0.00);
+//		assertText("mei", 0.00);
+		assertValue("totalLiquidLabel", 0.00);
+		double totalEnterpriseLabel = getText("totalEnterpriseLabel");
+		assertTrue(totalEnterpriseLabel > 0.00);
 		
 	}
 

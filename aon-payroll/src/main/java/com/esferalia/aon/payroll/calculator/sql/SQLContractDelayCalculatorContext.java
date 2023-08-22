@@ -1,10 +1,8 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
@@ -83,6 +81,7 @@ public class SQLContractDelayCalculatorContext extends
 	private static final String MONTH_LEAVE_DAYS = "DIAS_IT_MES";
 	private static final String ERE_DAYS = Arrays.stream(ContextVariable.ERE_DAYSS).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	private static final String ERE_BASES = Arrays.stream(ContextVariable.ERE_BASES).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
+	private static final String FREE_BASES = Arrays.stream(ContextVariable.FREE_BASES).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	
 	public static class DelaySQLContractSalaryCalculatorContext extends SQLContractSalaryCalculatorContext{
 
@@ -829,7 +828,7 @@ public class SQLContractDelayCalculatorContext extends
 				+" AND " + SALARY + "." + SalaryColumns.START_DATE + " >= ? " 
 				+" AND " + SALARY + "." + SalaryColumns.END_DATE + " <= ? "
 				+" AND " + SALARY_DATA + "." + SalaryDataColumns.NAME 
-				+ " IN( '" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() + "', " + ERE_BASES + " )"
+				+ " IN( '" + CGC_BASE.getName() + "', " + FREE_BASES + ", " + ERE_BASES + " )"
 				+" GROUP BY 1, 2"
 				); 
 			stmt.setInt(1, contract);
@@ -1190,7 +1189,7 @@ public class SQLContractDelayCalculatorContext extends
 					+ " AND " + SALARY + "." + SalaryColumns.TYPE + "  = ? " 
 					+ " AND " + SALARY_DATA + "." + SalaryDataColumns.START_DATE + "  = ? " 
 					+ " AND " + SALARY_DATA + "." + SalaryDataColumns.END_DATE + " = ? "
-					+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() + "', " + ERE_BASES + ")" 
+					+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', " + FREE_BASES+  ", " + ERE_BASES + ")" 
 					+ " GROUP BY 1"
 	//				+ " ORDER BY 1"
 				+") AS " + SALARY_PAYMENT

@@ -12,6 +12,7 @@ public class QuestionParams implements Serializable{
 	
 	private String alias;
 	private Byte type;
+	private Byte active;
 	
 	private int limit;
 	private int offset;
@@ -50,6 +51,13 @@ public class QuestionParams implements Serializable{
 	}
 	public QuestionParams setType(Byte type) {
 		this.type = type;
+		return this;
+	}
+	public Byte getActive() {
+		return active;
+	}
+	public QuestionParams setActive(Byte active) {
+		this.active = active;
 		return this;
 	}
 	public int getLimit() {

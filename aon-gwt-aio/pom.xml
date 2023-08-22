@@ -38,6 +38,7 @@
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.communication</compileSourcesArtifact>
   					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.commercial</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.ccaa</compileSourcesArtifact>
+					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.marketing</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 					<extraJvmArgs>-Xmx2048M</extraJvmArgs>
 				</configuration>
@@ -141,6 +142,31 @@
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.common</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		<dependency>
+                        <groupId>com.esferalia.aon</groupId>
+                        <artifactId>aon.gwt.marketing</artifactId>
+                        <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>com.esferalia.aon</groupId>
+                        <artifactId>aon.gwt.marketing</artifactId>
+                        <version>${project.version}</version>
+                        <scope>compile</scope>
+                        <classifier>sources</classifier>
+                </dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.marketing</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.marketing</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 			<classifier>sources</classifier>

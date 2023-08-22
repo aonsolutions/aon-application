@@ -495,7 +495,8 @@ public class Contrata {
 			}
 
 			{// ---------------------------DATA EMPLOYEE-------------------------
-				String tipodoc = Toolkit.getIdentityType(cto.getIpf()).equals("6") ? "E" : "D"; //NIE OR DNI
+				String idetType = Toolkit.getIdentityType(cto.getIpf());
+				String tipodoc = idetType.length() == 0 ? "U" : (idetType.equals("6") ? "E" : "D"); //NIE OR DNI
 
 				String nss = cto.getNss();
 				((HtmlSelect) form.querySelector("select[name=tipodoc]")).setSelectedAttribute(tipodoc, true);
