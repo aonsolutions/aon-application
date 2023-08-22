@@ -31,6 +31,8 @@ If local folder for databases is not created:
 sudo mkdir /var/lib/mysql
 ```
 
+Its posible that you have an older mysql installation, if you have it, you need to create another mysql folder and link that to the docker below in the parameters.
+
 Run mysql:8  Docker 
 ``` bash
 docker run -p 3306:3306 --name mysql -v /var/lib/mysql:/var/lib/mysql  -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_USER=dbuser -e MYSQL_PASSWORD=serubd2000 -d mysql:8 --sql-mode="0" --default-authentication-plugin=mysql_native_password
@@ -106,6 +108,19 @@ And.... wait for a long long time ...  for example 35 min
 ```
 Build Docker image 
 
+
+To try to resolve future errors, if doesnt exist, create the folder and file **/etc/aon-aio/connection** . This file contains the metada connection to the BD. The file must contain the following text : 
+
+``` bash
+driverClass=com.mysql.cj.jdbc.Driver
+jdbcUrl=jdbc:mysql://172.17.0.2:3306
+user=dbuser
+password=serubd2000
+timezone=Europe/Madrid
+useSSL=false
+```
+Build the docker image
+
 ``` bash
 docker build --network=host --no-cache -t aonsolutions/aon-solutions:test -f ./aon-solutions/Dockerfile .
 
@@ -127,13 +142,15 @@ This will make it unzip correctly.
 
 Try Docker image 
 ``` bash
-docker run --rm --name aonsolutions -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')  aonsolutions/aon-solutions:test
+docker run --rm --name aonsolutions -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -v /etc/aon-aio:/etc/aon-aio -e DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')  aonsolutions/aon-solutions:test
 ```
 Open a browser and navigate to http://localhost:8080
 
 ![localhost](https://user-images.githubusercontent.com/9419112/214926662-f0264237-2fbe-4a72-a573-029ee1d1e4b7.png)
 
-- #### Setup Tomcat on Eclipse IDE .
+- #### Setup Tomcat on Eclipse IDE 
+
+- ##### Get Tomcat Config
 Export running container ''aonsolutions'' to a custom direcotry
 ``` bash 
 docker export aonsolutions > /tmp/aonsolutions.tar
@@ -154,8 +171,10 @@ Stop running container '''aonsolutions'''
 ``` bash
 docker stop aonsolutions
 ```
+- ##### Setup Tomcat 10.1 Server
 
-Open Eclipse IDE closes all Projects and install Server ''Apache Tomact 9''
+Open Eclipse. Wait for Eclipse to finish building and updating. Then **close all projects in the package explorer**.
+Next, find the server configuration and create a new server. In the configuration choose the options Apache> Tomcat 10.1 Server.
 
 ![tomcat9](https://user-images.githubusercontent.com/9419112/214929338-3fff6012-480e-413d-b4c4-7b0dc96286f2.png)
 
@@ -167,13 +186,11 @@ Setup Server Locations
 
 ![conftomcat](https://user-images.githubusercontent.com/9419112/214930595-d6485304-a30e-4c5b-bec9-60e0278e9d72.png)
 
-- #### Deploy aon-solutions on Tomcat v9.9 Server.
-
-Opoen '''aon-solutions''' project. Suspend all validators. 
+Open '''aon-solutions''' project and '''aon-aio''' . Suspend all validators like you can see in the image below. 
 
 ![suspen_validate](https://user-images.githubusercontent.com/9419112/216049741-1c1d8848-9f1d-47f4-992d-e3f0f92a4c22.png)
 
-Add '''aon-solutions''' to Tomcatv9.9 Server al localhost
+Add '''aon-solutions''' and '''aon-aio'''  to Tomcat 10.1 Server al localhost
 
 ![add](https://user-images.githubusercontent.com/9419112/216050246-e7e758b4-5b55-4698-a697-1f55fae422b3.png)
 
@@ -181,11 +198,53 @@ Change Path of '''aon-solutions''' to '''/''' ( ROOT )
 
 ![root](https://user-images.githubusercontent.com/9419112/216052207-dc3ef457-5246-41aa-a188-e91868c0355b.png)
 
-Start the server , wait until started open a browser a navigate to '''http://localhost:8080'''
+Finally, we need to change the tomcat server argument configuration. You can do that with double click over the server an then **Overview > Open Launch configuration > Arguments**
 
-![localhost](https://user-images.githubusercontent.com/9419112/216053284-998f9456-ceac-46c7-97d7-9cb74a104537.png)
+There will be some arguments already, you are argument neet to similar to this ->
 
-- #### Congratulations... :-) 
+``` bash
+-Dcatalina.base="/home/ubuntu/aon-solutions/usr/local/tomcat" -Dcatalina.home="/home/ubuntu/aon-solutions/usr/local/tomcat" -Dwtp.deploy="/home/ubuntu/aon-solutions/usr/local/tomcat/webapps" --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED --add-opens=java.base/sun.net.www.protocol.jar=ALL-UNNAMED -Duser.country=ES  -Dcom.sun.security.enableAIAcaIssuers=true -Djava.security.auth.login.config=/home/ubuntu/aon-solutions/usr/local/tomcat/conf/login.config -Djavax.xml.validation.SchemaFactory:http://www.w3.org/2001
+```
+You need to change the '''ubuntu''' user for yours.
 
+- #### Use Aon All in One
 
+To work correctly we need a domain to connect to Aon All in One. To do that you need a new database structure with some domain information inside. The dockerfile doesnt build that information, so you need the SQL file.
+
+To import it you have to download the mysql client:
+
+``` bash
+sudo apt install mysql-client
+```
+
+Then you have to conect to the mysql docker server. 
+``` bash
+mysql -u dbuser -pserubd2000 -h 172.17.0.2
+```
+When you has been connected succesfully then create the test database ->
+``` mysql
+create database test-aonsolutions-org;
+```
+And import the sql ->
+```mysql
+use test-aonsolutions-org
+
+source /home/ubuntu/test.sql
+```
+Now you need to now the domain information inside the table name ->
+
+``` mysql
+select name from domain
+```
+And copy a domain name.
+
+Finally go to the file ''' /etc/host ''' and add a dns rule (reemplace my domain name with yours) ->
+
+``` bash
+127.0.0.1 admin-test.aonsolutions.org
+```
+
+Now start the server.
+
+Now if you go to '''admin-test.aonsolutions.org:8080''' you will see Aon and if you go to '''admin-test.aonsolutions.org:8080/aon-aio''' you will see the All in one project.
 
