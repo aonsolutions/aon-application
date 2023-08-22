@@ -11,9 +11,9 @@
     </div>
   </div>
 
-  <div content *ngIf="this.tabIndex == 0" >
+  <div content *ngIf="this.tabIndex == 0">
+    <!-- datos personales -->
     <app-input-profile-personal-data></app-input-profile-personal-data>
-
   </div>
 
   <div content *ngIf="this.tabIndex == 1">
@@ -25,7 +25,7 @@
         class="position-top-col"
         [gridCols]="{ xs: 11, sm: 11, md: 11, lg: 11, xl: 11 }"
       >
-      <!-- pestaña datos empresa, apartado información general -->
+        <!-- pestaña datos empresa, apartado información general -->
         <app-input-profile-company-information></app-input-profile-company-information>
       </mat-grid-tile>
 
@@ -33,25 +33,15 @@
         class="position-top-col"
         [gridCols]="{ xs: 11, sm: 11, md: 11, lg: 11, xl: 11 }"
       >
-      <!-- pestaña datos empresa, apartado datos contacto -->
+        <!-- pestaña datos empresa, apartado datos contacto -->
         <app-input-profile-company-data></app-input-profile-company-data>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
 
   <div content *ngIf="this.tabIndex == 2">
-    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
-      <mat-grid-tile
-        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-      ></mat-grid-tile>
-      <mat-grid-tile
-        class="position-top-col"
-        [gridCols]="{ xs: 10, sm: 10, md: 10, lg: 10, xl: 10 }"
-      >
-      <!-- pestaña datos registrales -->
-        <app-input-profile-registry-data></app-input-profile-registry-data>
-      </mat-grid-tile>
-    </mat-grid-list>
+    <!-- pestaña datos registrales -->
+    <app-input-profile-registry-data></app-input-profile-registry-data>
   </div>
 
   <div content *ngIf="this.tabIndex == 3">
@@ -63,7 +53,7 @@
         class="position-top-col"
         [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
       >
-      <!-- pestaña certificados -->
+        <!-- pestaña certificados -->
         <app-file-upload-button>
           Sube tu certificado digital
           <app-icon
