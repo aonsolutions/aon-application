@@ -239,7 +239,8 @@ html {
     font-size: $font-size-800 !important;
     /*background: orange;*/
     .form{
-      grid-auto-flow: unset;
+      display: grid!important;
+      gap: 1rem;
     }
   }
 }
@@ -421,8 +422,7 @@ html {
   Form
 */
   .form{
-    display       : grid;
-    grid-auto-flow: column;
+    display       : flex;
     gap           : 1rem;
     padding       : 0 $padding*2 $padding $padding*2;
   }

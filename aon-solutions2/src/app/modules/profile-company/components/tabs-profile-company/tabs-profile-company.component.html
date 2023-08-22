@@ -1,70 +1,52 @@
 <app-tabs
   [tabs]="tabs"
   (changeTabIndex)="this.tabIndex = $event"
-  [tabColor]="'orange'"
+  [tabColor]="'dark'"
   [paddingLeftHeader]="'1rem'"
 >
   <div tool>
-    <div class="input-profile-company">
-      <app-button [class]="'dark'" [width]="'100%'"> Guardar </app-button>
-      <app-button [class]="'white'" [width]="'100%'"> Cancelar </app-button>
-    </div>
+    <app-button [class]="'dark'" [width]="'100%'"> Guardar </app-button>
+    <app-button [class]="'white'" [width]="'100%'"> Cancelar </app-button>
   </div>
 
   <div content *ngIf="this.tabIndex == 0">
     <!-- datos personales -->
-    <app-input-profile-personal-data></app-input-profile-personal-data>
+    <app-grid-layout>
+      <div content>
+        <app-input-profile-personal-data></app-input-profile-personal-data>
+      </div>
+    </app-grid-layout>
   </div>
 
   <div content *ngIf="this.tabIndex == 1">
-    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
-      <mat-grid-tile
-        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-      ></mat-grid-tile>
-      <mat-grid-tile
-        class="position-top-col"
-        [gridCols]="{ xs: 11, sm: 11, md: 11, lg: 11, xl: 11 }"
-      >
+    <app-grid-layout>
+      <div content id="company" class="margin">
         <!-- pestaña datos empresa, apartado información general -->
         <app-input-profile-company-information></app-input-profile-company-information>
-      </mat-grid-tile>
-
-      <mat-grid-tile
-        class="position-top-col"
-        [gridCols]="{ xs: 11, sm: 11, md: 11, lg: 11, xl: 11 }"
-      >
         <!-- pestaña datos empresa, apartado datos contacto -->
         <app-input-profile-company-data></app-input-profile-company-data>
-      </mat-grid-tile>
-    </mat-grid-list>
+      </div>
+    </app-grid-layout>
   </div>
 
   <div content *ngIf="this.tabIndex == 2">
     <!-- pestaña datos registrales -->
-    <app-input-profile-registry-data></app-input-profile-registry-data>
+    <app-grid-layout>
+      <div content>
+        <app-input-profile-registry-data></app-input-profile-registry-data>
+      </div>
+    </app-grid-layout>
   </div>
 
   <div content *ngIf="this.tabIndex == 3">
-    <mat-grid-list class="upload" [cols]="24" [rowHeight]="'2.8rem'">
-      <mat-grid-tile
-        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-      ></mat-grid-tile>
-      <mat-grid-tile
-        class="position-top-col"
-        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
-      >
-        <!-- pestaña certificados -->
+    <!-- pestaña certificados -->
+    <app-grid-layout>
+      <div content id="upload">
         <app-file-upload-button>
-          Sube tu certificado digital
-          <app-icon
-            shape="cloud_upload"
-            style="margin-left: 15px"
-            set-color
-            color="black"
-            size="24"
-          ></app-icon>
+          {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
+          <app-icon shape="cloud_upload" class="margin-left"></app-icon>
         </app-file-upload-button>
-      </mat-grid-tile>
-    </mat-grid-list>
+      </div>
+    </app-grid-layout>
   </div>
 </app-tabs>

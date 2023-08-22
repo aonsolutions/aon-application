@@ -1,38 +1,27 @@
 <div class="structure-title">
-  <p class="input-profile-company-title">Información general</p>
-  <mat-divider class="divider"></mat-divider>
+  Información general
 </div>
+
+<hr>
 
 <div class="structure-container">
   <div class="structure-photo">
     <p class="photo">Foto</p>
     <div class="upload-circle">
-      <app-icon
-        class="clear-icon"
-        shape="clear"
-        set-color
-        color="black"
-        size="24"
-      ></app-icon>
-      T
+      <app-button class="icon-border">
+        <app-icon [shape]="'clear'"></app-icon>
+      </app-button>
     </div>
   </div>
-  <div class="input-profile-company-structure">
-    <div class="input-profile-company-upload">
+  <div class="structure-form">
+    <div class="form upload">
       <app-file-upload-button>
-        <div class="file-upload">
-          <app-icon
-            shape="cloud_upload"
-            set-color
-            color="black"
-            size="24"
-          ></app-icon>
-          <p>Haz click para subir o arrastra y suelta</p>
-        </div>
+        Haz click para subir o arrastra y suelta
+        <app-icon shape="cloud_upload" class="margin-left"></app-icon>
       </app-file-upload-button>
     </div>
 
-    <div class="input-profile-information">
+    <div class="form">
       <app-input
         [type]="'text'"
         [label]="'Nombre comercial / alias'"
@@ -40,7 +29,7 @@
       >
       </app-input>
     </div>
-    <div class="input-profile-information">
+    <div class="form">
       <app-input
         [type]="'text'"
         [label]="'Dirección'"
@@ -49,7 +38,7 @@
       </app-input>
     </div>
 
-    <div class="input-profile-personal">
+    <div class="form">
       <app-input
         [type]="'select'"
         [label]="'País'"
@@ -67,7 +56,7 @@
       </app-input>
     </div>
 
-    <div class="input-company-information">
+    <div class="form">
       <app-input
         [type]="'text'"
         [label]="'Razón Social'"

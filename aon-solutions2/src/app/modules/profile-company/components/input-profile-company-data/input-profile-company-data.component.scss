@@ -1,56 +1,21 @@
 @import "src/styles.scss";
+::ng-deep {
+  .structure-title {
+    font-family: "Roboto-Medium";
+  }
 
-.input-profile-company-structure{
-  display: flex;
-  flex-direction: column;
- 
+  #company .form{
+    padding-left: 0!important;
+    padding-right: 0!important;
+  }
+
+  .input-profile-contact-data-add {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 2.4125rem;
+  }
+  .input-profile-contact-data-add app-button button{
+    margin: 0;
+  }
 }
-
-.input-profile-contact {
-  display: flex;
-  justify-content: center;
-  margin-top: $margin-top;
-  gap: 1rem;
-}
-
-.input-profile-company {
-  flex-grow: 1;
-  display: flex;
-  justify-content: space-between;
-  margin-right: 0.5rem;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  align-items: center;
-}
-
-.row {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px; /* Espacio entre las filas */
-}
-
-.input-profile-company-title {
-  font-family: "Roboto-Medium";
-  margin-top: 3rem;
-}
-
-.divider {
-  width: 100%;
-}
-
-.input-profile-contact-data-add {
-  display: flex;
-  justify-content: center;
-  margin-top: 0.5rem;
-}
-
-.input-profile-contact-data {
-  display: flex;
-  justify-content: center;
-  margin-top: $margin-top;
-  gap: 1rem;
-  margin-right: 2rem;
-}
-
-// margin-top:   $margin-top ;
