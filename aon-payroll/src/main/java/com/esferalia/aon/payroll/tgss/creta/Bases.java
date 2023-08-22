@@ -9,6 +9,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FREE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
@@ -1933,7 +1934,7 @@ public class Bases {
 	}
 
 	
-	private static Map<String, CretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, CretaData>() {
+	private static final Map<String, CretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, CretaData>() {
 		{
 			put("500", new NonNegativeCCretaData(CGC_BASE.getName()));
 			put("535", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
@@ -2022,25 +2023,22 @@ public class Bases {
 
 			
 			put("509", new NonNegativeCompositeCCretaData()
-					.add(MATERNITY_BASE) 		
+					.add(FREE_BASES) 		
 					.add(ERE_BASES)
-					.add(DIRECT_BASE)
 					.add(CGC_BASE)
 					.add(CGC_BASE_ENTERPRISE)
 					);
 			
 			put("603", new FirstGreaterThanZeroCompositeCCretaData()
-					.add(MATERNITY_BASE)
-					.add(DIRECT_BASE)		//   
+					.add(FREE_BASES) 		
 					.add(CGP_BASE)
 					.add(ERE_BASES )
 					.add(CGC_BASE_ENTERPRISE)	  
 					);
 			put("613", new NonNegativeCompositeCCretaData()
-					.add(MATERNITY_BASE)
+					.add(FREE_BASES) 		
 					.add(ERE_BASES)
 					.add(CGP_BASE)
-					.add(DIRECT_BASE)			//   
 					.add(CGC_BASE_ENTERPRISE)	  
 					);
 			
