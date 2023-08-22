@@ -1,38 +1,27 @@
-<app-card
-
->
-  <div header class="models-header">
-    <div class="models-header-name">
-      <div class="models-header-line"></div>
-      <div class="models-header-text">{{ 'HOME.TAXES'|translate }}</div>
-    </div>
-    <div class="models-header-filters">
-      <div class="models-header-filter-text"> {{ selected }} </div>
-      <div class="models-header-filter-icon" [matMenuTriggerFor]="menu">
-        <set-icon shape="more_vert" set-color [ngStyle]="{ color: 'black' }" size="21"></set-icon>
-      </div>
-      <mat-menu #menu="matMenu" xPosition="before">
-        <button *ngFor="let item of items" mat-menu-item (click)="selected = item" class="menuText">
+<app-card class="dashboard min orange">
+  <div header>
+    <div class="line"></div>
+    <div class="text">{{ 'HOME.TAXES'|translate }}</div>
+    <div class="options-text">{{ selected }}</div>
+    <div class="options">
+      <app-icon shape="more_vert" [matMenuTriggerFor]="menu"></app-icon>
+      <mat-menu #menu="matMenu">
+        <button *ngFor="let item of items" mat-menu-item (click)="selected = item">
           {{ item }}
         </button>
       </mat-menu>
     </div>
   </div>
-    <div body class="models-content">
-    <div *ngFor="let model of models" class="models-content-element">
-        <div class="models-content-element-name">{{ 'HOME.MODEL'|translate }} {{ model.Name }} </div>
-        <div class="models-content-element-tax"> {{ model.TaxType }}</div>
-        <div class="models-content-element-amount">
-            <div class="models-content-element-amount-text">
-                <div stlye="width=10px;">
-                    <div class="models-content-element-amount-text-point"></div>
-                </div>
-                {{model.Result}} €
-            </div>
-        </div>
+  <div body class="list">
+    <div *ngFor="let model of models" class="list-row">
+      <div class="list-name">{{ 'HOME.MODEL'|translate }} {{ model.Name }}</div>
+      <div class="list-date"> {{ model.TaxType }}</div>
+      <div class="list-money">
+        <span class="list-money-icon"></span>
+        {{model.Result}} €
+      </div>
     </div>
-</div>
-
+  </div>
 </app-card>
 
 

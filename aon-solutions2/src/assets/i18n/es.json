@@ -18,8 +18,9 @@
     "INBOX": "BANDEJA",
     "BILLING": "GESTIÓN",
     "TAX_PANEL": "PANEL DE IMPUESTOS",
-    "EMPLOYEE-PANEL": "PANEL DE EMPLEADOS",
-    "DOCUMENTATION": "DOCUMENTACIÓN"
+    "EMPLOYEE_PANEL": "PANEL DE EMPLEADOS",
+    "DOCUMENTATION": "DOCUMENTACIÓN",
+    "SHORTCUTS": "ACCESOS DIRECTOS"
   },
   "LOGIN": {
     "LOGIN": "Iniciar Sesión",
@@ -62,10 +63,27 @@
     "4_TRIMESTER":"4 trimestre"
   },
   "INBOX": {
-
+    "ALL": "Todas",
+    "OPENED": "Abiertas",
+    "CLOSED": "Cerradas",
+    "PENDING": "Pendientes",
+    "REALIZED": "Realizadas",
+    "NEWS": "Nuevas",
+    "VIEWS": "Vistas",
+    "INBOX": "Bandeja",
+    "QUERIES": "Consultas",
+    "TASKS": "Tareas",
+    "NOTIFICATIONS": "Notificaciones",
+    "THIS_WEEK": "Esta semana",
+    "CREATE": "Crear"
   },
   "DOCUMENTATION": {
-
+    "FILE_SELECT_PREVIEW"   : "Vista previa",
+    "FILE_SELECT_MOVE_TO"   : "Mover a",
+    "FILE_SELECT_EDIT_NAME" : "Cambiar nombre",
+    "FILE_SELECT_LABEL_AS"  : "Etiquetar como",
+    "FILE_SELECT_DOWLOAD"   : "Descargar",
+    "FILE_SELECT_DELETE"    : "Eliminar"
   },
   "BILLING": {
 
@@ -87,7 +105,8 @@
     "STATUS":        "estado",
     "PAYMENTMETHOD": "Metodo de pago",
     "ACTIONS":       "acciones",
-    "MODEL":         "Modelo"
+    "MODEL":         "Modelo",
+    "YEAR":          "Año"
   },
   "PROFILE": {
     "CONTACT_DETAILS":   "Datos contacto",

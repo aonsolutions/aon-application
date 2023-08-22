@@ -3,19 +3,18 @@
   (changeTabIndex)="this.tabIndex = $event"
   [tabColor]="'orange'"
   [paddingLeftHeader]="'1rem'"
-
 >
   <div tool>
     <div class="input-tax-model">
       <app-input
         [type]="'select'"
-        [label]="'Modelo'"
-        [placeholder]="'Modelo'"
+        [label]="'TAX-PANEL.MODEL' | translate"
+        [placeholder]="'TAX-PANEL.MODEL' | translate"
         [options]="modelsList"
       ></app-input>
       <app-input
         [type]="'select'"
-        [label]="'Año'"
+        [label]="'TAX-PANEL.YEAR' | translate"
         [placeholder]="'2023'"
         [options]="modelsYears"
       ></app-input>
@@ -91,5 +90,3 @@
     </mat-grid-list>
   </div>
 </app-tabs>
-
-

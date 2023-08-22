@@ -15,11 +15,12 @@
   },
   "MENU": {
     "MENU": "menu",
-    "INBOX": "BANDEJA",
-    "BILLING": "GESTIÓN",
-    "TAX_PANEL": "PANEL DE IMPUESTOS",
-    "EMPLOYEE-PANEL": "PANEL DE EMPLEADOS",
-    "DOCUMENTATION": "DOCUMENTACIÓN"
+    "INBOX": "INBOX",
+    "BILLING": "BILLING",
+    "TAX_PANEL": "TAX PANEL",
+    "EMPLOYEE_PANEL": "EMPLOYEE PANEL",
+    "DOCUMENTATION": "DOCUMENTATION",
+    "SHORTCUTS": "SHORTCUTS"
   },
   "LOGIN": {
     "LOGIN": "Log in",
@@ -62,10 +63,27 @@
     "4_TRIMESTER":"4 trimester"
   },
   "INBOX": {
-
+    "ALL": "All",
+    "OPENED": "Opened",
+    "CLOSED": "Closed",
+    "PENDING": "Pending",
+    "REALIZED": "Realized",
+    "NEWS": "News",
+    "VIEWS": "Views",
+    "INBOX": "Inbox",
+    "QUERIES": "Queries",
+    "TASKS": "Tasks",
+    "NOTIFICATIONS": "Notifications",
+    "THIS_WEEK": "This week",
+    "CREATE": "Create"
   },
   "DOCUMENTATION": {
-
+    "FILE_SELECT_PREVIEW"   : "Preview",
+    "FILE_SELECT_MOVE_TO"   : "Move to",
+    "FILE_SELECT_EDIT_NAME" : "Edit name",
+    "FILE_SELECT_LABEL_AS"  : "Label as",
+    "FILE_SELECT_DOWLOAD"   : "Dowload",
+    "FILE_SELECT_DELETE"    : "Delete"
   },
   "BILLING": {
 
@@ -77,16 +95,17 @@
 
   },
   "TAX-PANEL": {
-    "1_TRIMESTER":   "1 Trimestre",
-    "2_TRIMESTER":   "2 Trimestre",
-    "3_TRIMESTER":   "3 Trimestre",
-    "4_TRIMESTER":   "4 Trimestre",
-    "ALL":           "Todos",
-    "NAME":          "Modelo",
-    "RESULT":        "Resultado",
-    "STATUS":        "estado",
-    "PAYMENTMETHOD": "Metodo de pago",
-    "ACTIONS":       "acciones",
-    "MODEL":         "Modelo"
+    "1_TRIMESTER":   "1 Trimester",
+    "2_TRIMESTER":   "2 Trimester",
+    "3_TRIMESTER":   "3 Trimester",
+    "4_TRIMESTER":   "4 Trimester",
+    "ALL":           "All",
+    "NAME":          "Model",
+    "RESULT":        "Result",
+    "STATUS":        "Status",
+    "PAYMENTMETHOD": "Paymentmethod",
+    "ACTIONS":       "Actions",
+    "MODEL":         "Model",
+    "YEAR":          "Year"
   }
 }

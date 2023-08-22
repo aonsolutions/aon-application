@@ -12,10 +12,12 @@
 /*
   Color
 */
+  .dark set-icon path{
+    color: $color-dark;
+  }
   .griss set-icon path{
     color: $color-secondary;
   }
-
   .red set-icon path{
     color: $color-red;
   }

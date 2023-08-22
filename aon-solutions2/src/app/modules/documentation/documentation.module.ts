@@ -6,16 +6,12 @@ import { MatMenuModule }      from '@angular/material/menu';
 
 import { DocumentationRoutingModule } from './documentation-routing.module';
 import { DocumentationComponent }     from './pages/documentation.component';
-//import { DocumentRouterComponent } from './components/document-router/document-router.component';
-//import { FilesComponent } from './components/files/files.component';
-import { SetMaterialModule } from 'libraries/setproduct-angular-material';
+  import { SetMaterialModule } from 'libraries/setproduct-angular-material';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   declarations: [
     DocumentationComponent,
-//    DocumentRouterComponent,
-//    FilesComponent,
   ],
   imports: [
     CommonModule,
