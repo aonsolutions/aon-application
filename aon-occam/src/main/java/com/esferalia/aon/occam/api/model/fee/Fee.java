@@ -1,7 +1,10 @@
 package com.esferalia.aon.occam.api.model.fee;
 
+import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DiscountExpression;
@@ -10,8 +13,10 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.RegistrySellerType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -34,8 +39,10 @@ public class Fee implements Serializable{
 	private Date billingDate;
 	private BillingPeriod period;
 	private SecurityLevel securityLevel;
+	public byte sellerType;
 	private InvoicingGroup invoicingGroup;
 	private Seller seller;
+	private RegistrySeller rSeller;
 	private Workplace workplace;
 	private boolean modify = false;
 	
@@ -115,6 +122,22 @@ public class Fee implements Serializable{
 		this.seller = seller;
 		return this;
 	}
+	
+	////////////////////////////
+	
+	public RegistrySeller getSupport() {
+		if(rSeller == null) {
+			this.rSeller = new RegistrySeller();
+		}
+		return rSeller;
+	}
+	
+	public Fee setSupport(RegistrySeller rSeller) {
+		this.rSeller = rSeller;
+		return this;
+	}
+	
+	///////////////////////////
 
 	public Workplace getWorkplace() {
 		if(workplace == null) {
@@ -236,6 +259,16 @@ public class Fee implements Serializable{
 		return securityLevel;
 	}
 	
+	public Fee setSellerType(byte sellerType) {
+        this.sellerType = sellerType;
+        return this;
+    }
+
+    public  byte getSellerType() {
+        return sellerType;
+    }
+    
+	
 	public Fee setSecurityLevel(SecurityLevel securityLevel){
 		this.securityLevel = securityLevel;
 		return this;
@@ -261,5 +294,7 @@ public class Fee implements Serializable{
 		this.modify = modify;
 		return this;
 	}
+	
+	
 	
 }
