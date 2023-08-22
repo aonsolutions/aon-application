@@ -56,7 +56,7 @@ export class TableNotificationsComponent implements OnInit {
           column.title = message.Title;
           column.description = message.Description;
           const datepipe: DatePipe = new DatePipe('en-US');
-          column.date = datepipe.transform(message.Date, 'dd HH:mm:ss');
+          column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
 
           tableRow.push(column);
         }

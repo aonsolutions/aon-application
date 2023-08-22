@@ -1,71 +1,52 @@
 <app-grid-layout>
-<!--SIDENAV-->
+  <!--SIDENAV-->
   <div nav>
     <!--CREATE BUTTON-->
+    <div id="space" *ngIf="selectedTab !== 0 && selectedTab !== 1"></div>
     <div id="button-create">
       <app-button
         *ngIf="selectedTab !== 2 && selectedTab !== 3"
         [class]="'red left'"
-        (click)="openCreateQueryComponent()"
+        (click)="showModal()"
       >
         <app-icon shape="add_comment"></app-icon>
         {{ "INBOX.CREATE" | translate }}
       </app-button>
+      <app-modal-controller #modal>
+        <app-create-query *ngIf="isModalVisible"></app-create-query>
+      </app-modal-controller>
     </div>
     <!--FIN CREATE BUTTON-->
     <!--List -->
-    <app-button
-      [width]="'100%'"
-      [class]="'left'"
-      (click)="selectedTab = 0"
-    >
-      <app-icon
-        shape="all_inbox"
-      ></app-icon>
+    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 0">
+      <app-icon shape="all_inbox"></app-icon>
       &nbsp;&nbsp; {{ "INBOX.INBOX" | translate }}
     </app-button>
 
-    <app-button
-      [width]="'100%'"
-      [class]="'left'"
-      (click)="selectedTab = 1"
-    >
-      <app-icon
-        shape="chat"
-      ></app-icon>
+    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 1">
+      <app-icon shape="chat"></app-icon>
       &nbsp;&nbsp; {{ "INBOX.QUERIES" | translate }}
     </app-button>
 
-    <app-button
-      [width]="'100%'"
-      [class]="'left'"
-      (click)="selectedTab = 2"
-    >
-      <app-icon
-        shape="playlist_add_check"
-      ></app-icon>
+    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 2">
+      <app-icon shape="playlist_add_check"></app-icon>
       &nbsp;&nbsp; {{ "INBOX.TASKS" | translate }}
     </app-button>
-    <app-button
-      [width]="'100%'"
-      [class]="'left'"
-      (click)="selectedTab = 3"
-    >
-      <app-icon
-        shape="notifications_none"
-      ></app-icon>
+    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 3">
+      <app-icon shape="notifications_none"></app-icon>
       &nbsp;&nbsp; {{ "INBOX.NOTIFICATIONS" | translate }}
     </app-button>
     <!--FIN List -->
   </div>
-<!--FIN SIDENAV-->
-<!--CONTENIDO-->
-  <div  content>
+  <!--FIN SIDENAV-->
+  <!--CONTENIDO-->
+  <div content>
     <div class="margin width-40" *ngIf="selectedTab !== 4">
       <app-input
         [appearance]="'outline'"
         [class]="'search'"
         [type]="'search'"
+        [placeholder]="'INBOX.TEXT' | translate"
       ></app-input>
     </div>
     <ng-container *ngIf="selectedTab == 0">
@@ -76,12 +57,11 @@
         [tabs]="tabsConsultas"
         (changeTabIndex)="this.tabIndex = $event"
         [paddingLeftHeader]="'1rem'"
+        [tabColor]="'red'"
       >
         <div tool>
           <span>{{ "INBOX.THIS_WEEK" | translate }}</span>
-          <app-icon
-            shape="more_vert"
-          ></app-icon>
+          <app-icon shape="more_vert"></app-icon>
         </div>
         <div content class="padding" *ngIf="this.tabIndex == 0">
           <app-table-queries
@@ -102,21 +82,20 @@
         [tabs]="tabsTareas"
         (changeTabIndex)="this.tabIndex = $event"
         [paddingLeftHeader]="'1rem'"
+        [tabColor]="'red'"
       >
         <div tool>
           <span>{{ "INBOX.THIS_WEEK" | translate }}</span>
-         <app-icon
-            shape="more_vert"
-          ></app-icon>
+          <app-icon shape="more_vert"></app-icon>
         </div>
         <div content class="padding" *ngIf="this.tabIndex == 0">
           <app-table-tasks
             [filterStatus]="['realizada', 'pendiente']"
             (noPendingTasks)="showNoTasksMessage($event)"
           ></app-table-tasks>
-          <ng-template #noTasks *ngIf="noTasksMessage"
-            >{{ "INBOX.NO_PENDING_TASKS" | translate }}</ng-template
-          >
+          <ng-template #noTasks *ngIf="noTasksMessage">{{
+            "INBOX.NO_PENDING_TASKS" | translate
+          }}</ng-template>
         </div>
         <div content class="padding" *ngIf="this.tabIndex == 1">
           <app-table-tasks [filterStatus]="['pendiente']"></app-table-tasks>
@@ -131,12 +110,11 @@
         [tabs]="tabsNotificaciones"
         (changeTabIndex)="this.tabIndex = $event"
         [paddingLeftHeader]="'1rem'"
+        [tabColor]="'red'"
       >
         <div tool>
           <span class="margin-right">{{ "INBOX.THIS_WEEK" | translate }}</span>
-          <app-icon
-            shape="more_vert"
-          ></app-icon>
+          <app-icon shape="more_vert"></app-icon>
         </div>
         <div content class="padding" *ngIf="this.tabIndex == 0">
           <app-table-notifications
@@ -144,7 +122,7 @@
           ></app-table-notifications>
         </div>
         <div content class="padding" *ngIf="this.tabIndex == 1">
-           <app-table-notifications
+          <app-table-notifications
             [filterStatus]="['nueva']"
           ></app-table-notifications>
         </div>
@@ -155,13 +133,10 @@
         </div>
       </app-tabs>
     </ng-container>
-    <app-create-query *ngIf="selectedTab === 4"></app-create-query>
   </div>
 
-<!--FIN CONTENIDO-->
-<!--Detail-->
-<div detail *ngIf="showDetail">
-
-</div>
-<!--FIN Detail-->
+  <!--FIN CONTENIDO-->
+  <!--Detail-->
+  <div detail *ngIf="showDetail"></div>
+  <!--FIN Detail-->
 </app-grid-layout>

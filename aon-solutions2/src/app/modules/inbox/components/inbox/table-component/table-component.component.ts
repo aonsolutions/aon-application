@@ -67,7 +67,7 @@ export class TableComponentComponent implements OnInit {
           column.description = message.Description;
 
           const datepipe: DatePipe = new DatePipe('en-US');
-          column.date = datepipe.transform(message.Date, 'dd HH:mm:ss');
+          column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
           column.action = {
             icon: lowerCaseStatus.includes('abierta')
             ? [{ archive: 'grey' }]

@@ -6,23 +6,20 @@
       </span>
     </div>
     <div class="buttons">
-      <app-icon shape="fullscreen_exit"></app-icon>
-      <app-icon shape="close"></app-icon>
+      <app-icon shape="fullscreen"></app-icon>
+      <app-icon shape="close" (click)="closeModal()"></app-icon>
     </div>
   </div>
-
-  <div class="content">
-    <div class="line-6"></div>
+  <div class="content-input">
     <app-input
-      [type]="'text'"
-      [placeholder]="'INBOX.SUBJECT' | translate"
-      class="inputSubject"
-    ></app-input>
-    <div class="line-7"></div>
+    [type]="'select'"
+    [label]="'INBOX.ASSIGN_TO' | translate"
+    >
+    </app-input>
     <app-input
-      [type]="'text'"
+      [type]="'textarea'"
       [placeholder]="'INBOX.TEXT' | translate"
-      class="inputText"
+      [label]="'INBOX.SUBJECT' | translate"
     ></app-input>
   </div>
   <div class="button">

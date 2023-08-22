@@ -5,6 +5,7 @@ import { CollectionFactory } from '../../../../../../libraries/AonSDK/aon';
 import { BehaviorSubject } from 'rxjs';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
+import { ModalCreateComponent } from '../../components/inbox/modal-create/modal-create.component';
 
 export interface Tabs {
   name: string;
@@ -17,13 +18,17 @@ export interface Tabs {
   styleUrls: ['./inboxview.component.scss']
 })
 export class InboxviewComponent implements OnInit {
+  @ViewChild('modal') modalComponent: any = '';
+
+  functionHome: any = (result:any) => this.afterModalClosed(result);
   tabsConsultas     : Tabs[]  = [];
   tabsTareas        : Tabs[]  = [];
   tabsNotificaciones: Tabs[]  = [];
   selectedTab       : number  = 0;
   tabIndex          : number  = 0;
-  showDetail        : boolean = false;
+  showDetail        : boolean = true;
   noTasksMessage    : boolean = false;
+  isModalVisible    : boolean = false;
 
   constructor(
     private translateService: TranslateService,
@@ -46,8 +51,8 @@ export class InboxviewComponent implements OnInit {
     ).subscribe( result => {
       this.tabsTareas = [
         { name: result['INBOX.ALL'], color: 'black'},
-        { name: result['INBOX.PENDING'], color: 'black',icon : 'replay'},
-        { name: result['INBOX.REALIZED'], color: 'black',icon : 'archive' }
+        { name: result['INBOX.PENDING'], color: 'black',icon : 'remove_circle'},
+        { name: result['INBOX.REALIZED'], color: 'black',icon : 'check_circle' }
       ]
     })
 
@@ -56,8 +61,8 @@ export class InboxviewComponent implements OnInit {
     ).subscribe( result => {
       this.tabsNotificaciones = [
         { name: result['INBOX.ALL'], color: 'black'},
-        { name: result['INBOX.NEWS'], color: 'black',icon : 'replay'},
-        { name: result['INBOX.VIEWS'], color: 'black',icon : 'archive' }
+        { name: result['INBOX.NEWS'], color: 'black',icon : 'notifications_active'},
+        { name: result['INBOX.VIEWS'], color: 'black',icon : 'remove_red_eye' }
       ]
     })
   }
@@ -86,8 +91,13 @@ export class InboxviewComponent implements OnInit {
     this.noTasksMessage = hasNoTasks;
   }
 
-  openCreateQueryComponent() {
-    this.selectedTab = 4;
+  afterModalClosed(result?:any){
+    console.log(result);
+  }
+
+  showModal(){
+    this.isModalVisible = true;
+    this.modalComponent.openDialog(ModalCreateComponent, this.functionHome, 'Data from home');
   }
 
   //  const clickTr = document.querySelector("tr");

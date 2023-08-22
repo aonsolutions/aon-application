@@ -48,7 +48,8 @@
     "NEW_QUERY": "New query",
     "SUBJECT": "Subject",
     "TEXT": "Text",
-    "NO_PENDING_TASKS": "No pending tasks"
+    "NO_PENDING_TASKS": "No pending tasks",
+    "ASSIGN_TO":"assign to"
   },
   "DOCUMENTATION": {
 
