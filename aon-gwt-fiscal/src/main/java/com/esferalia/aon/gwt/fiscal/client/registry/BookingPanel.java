@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.registry;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -16,10 +17,12 @@ import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.json.JsonGWTUtils;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainSelectionDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -27,12 +30,25 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButto
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.Segment;
+import com.esferalia.aon.occam.api.model.security.Booking;
+import com.esferalia.aon.occam.api.model.security.BookingResume;
+import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
+import com.esferalia.aon.occam.api.model.type.AonStatus;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -49,6 +65,11 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -188,6 +209,7 @@ public class BookingPanel extends MainEntryPoint {
 	private int lastScrollPos = 0;
 	
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	
 	@Override
 	public void onModuleLoad() {
@@ -1038,6 +1060,8 @@ public class BookingPanel extends MainEntryPoint {
 	}
 
 	private void checkCustomerDomains(BookingCheck bookingCheck) {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios del cliente ...");
+		
 		// Create the base URL
 		String baseUrl = "/ms/api/domain/";
 
@@ -1061,22 +1085,162 @@ public class BookingPanel extends MainEntryPoint {
 		    requestBuilder.sendRequest(null, new RequestCallback() {
 		        public void onResponseReceived(Request request, Response response) {
 		            if (response.getStatusCode() == 200) {
+		            	
 		                String responseBody = response.getText();
 		                Window.alert("Customer Domain \n" + responseBody);
-//		                List<DomainCompany> domains = DomainCompanyJSON.fromJSONArray(responseBody);
-//		                Window.alert("Customer Domain count : " + domains.size());
+		                List<DomainCompany> companies = parseDomainCompanyJSON(responseBody);
+		                AonMessagePanel.hideMessage(messagePanel);
+		                showDomainsDialog(companies);
+		                
 		            } else {
-		                // Handle error responses
+		            	AonMessagePanel.showError(messagePanel, response.getText());
 		            }
 		        }
 
-		        public void onError(Request request, Throwable exception) {
-		            // Handle request errors
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
 		        }
 		    });
 		} catch (RequestException e) {
-		    // Handle request exceptions
+			AonMessagePanel.showError(messagePanel, e.getMessage());
 		}
+	}
+	
+	private void showDomainsDialog(List<DomainCompany> companies) {
+		HTMLPanel widget = new HTMLPanel("");
+		widget.addStyleName(AON.CSS.aonFlexColumn());
+		
+		for(DomainCompany domainCompany : companies) {
+			HTMLPanel widgetDomain = new HTMLPanel("");
+			widgetDomain.addStyleName(AON.CSS.aonItemFlex());
+			
+			Label domain = new Label(domainCompany.getDomain().getDescription());
+			Label status = new Label("Estado : " + (domainCompany.getDomain().isActive() ? "Activo" : "Inactivo"));
+			
+			widgetDomain.add(domain);
+			widgetDomain.add(status);
+			
+			widget.add(widgetDomain);
+		}
+		
+		AonDialog dialog = new AonDialog("Dominios", widget);
+		dialog.info();
+	}
+	
+	private List<DomainCompany> parseDomainCompanyJSON(String responseBody) {
+		JSONArray arr = JSONParser.parseStrict(responseBody).isArray();
+		LinkedList<DomainCompany> list = new LinkedList<>();
+		
+		for(Integer i = 0; i < arr.size(); i++) {
+			list.add(fromJSONToDomainCompany(arr.get(i)));
+		}
+ 		
+		return list;
+	}
+	
+	private Booking parseBookingJSON(String responseBody) {
+		Booking booking = fromJSONToBooking(JSONParser.parseStrict(responseBody).isObject());
+		return booking;
+	}
+	
+	private Booking fromJSONToBooking(JSONObject jsonObj) {
+		List<AonApp> apps = new LinkedList<>();
+		List<AonApp> parentApps = new LinkedList<>();
+		
+		JSONArray appsArr = JsonGWTUtils.getJSONArray(jsonObj, IJsonNames.APPS);
+		for(int i=0; i<appsArr.size(); i++)
+			apps.add(AonApp.safeValueOf(appsArr.get(i).toString()));
+		
+		JSONArray parentAppsArr = JsonGWTUtils.getJSONArray(jsonObj, IJsonNames.PARENT_APPS);
+		for(int i=0; i<parentAppsArr.size(); i++)
+			parentApps.add(AonApp.safeValueOf(parentAppsArr.get(i).toString()));
+		
+		return new Booking()
+			.setDomain(parseDomain(jsonObj.get(IJsonNames.DOMAIN)))
+			.setCompany(parseCompany(jsonObj.get(IJsonNames.COMPANY)))
+			.setType(DomainType.safeValueOf(JsonGWTUtils.getString(jsonObj, IJsonNames.TYPE)))
+			.setApps(apps)
+			.setParentApps(parentApps)
+			.setNumberOfUsers(JsonGWTUtils.getInt(jsonObj, IJsonNames.NUMBER_OF_USERS))
+			.setPayer(JsonGWTUtils.getString(jsonObj, IJsonNames.PAYER));
+	}
+
+	private DomainCompany fromJSONToDomainCompany(JSONValue json) {
+		if(json == null) return new DomainCompany();
+		return new DomainCompany()
+				.setSchema(json.isObject().get(IJsonNames.SCHEMA).toString())
+				.setDomain(parseDomain(json.isObject().get(IJsonNames.DOMAIN)))
+				.setCompany(parseCompany(json.isObject().get(IJsonNames.COMPANY)))
+		;
+	}
+
+	private Domain parseDomain(JSONValue json) {
+		if(json == null) return new Domain();
+		
+		JSONObject jsonObj = json.isObject();
+		
+		return new Domain()
+			.setId(JsonGWTUtils.getInteger(jsonObj,IJsonNames.ID))
+			.setName(JsonGWTUtils.getString(jsonObj, IJsonNames.NAME))
+			.setDescription(JsonGWTUtils.getString(jsonObj, IJsonNames.DESCRIPTION))
+			.setOwner(JsonGWTUtils.getString(jsonObj, IJsonNames.OWNER))
+			.setParentId(JsonGWTUtils.optInteger(jsonObj, IJsonNames.PARENT_ID))
+			.setDomainType( DomainType.safeValueOf( JsonGWTUtils.getString(jsonObj,IJsonNames.DOMAIN_TYPE) ))
+			.setEnableHeredity(JsonGWTUtils.getboolean(jsonObj, IJsonNames.ENABLE_HEREDITY))
+			.setDomainManagement(JsonGWTUtils.getboolean(jsonObj, IJsonNames.DOMAIN_MANAGEMENT))
+			.setDisableDomainManagement(JsonGWTUtils.getboolean(jsonObj, IJsonNames.DISABLE_DOMAIN_MANAGEMENT))
+			.setActive(JsonGWTUtils.getboolean(jsonObj, IJsonNames.ACTIVE))
+			.setScope(JsonGWTUtils.getInteger(jsonObj,IJsonNames.SCOPE))
+			.setMaxDefinedUsers( JsonGWTUtils.getInteger(jsonObj,IJsonNames.MAX_DEFINED_USERS))
+			.setDefinedUsers( JsonGWTUtils.getInteger(jsonObj,IJsonNames.DEFINED_USERS))
+			.setMaxDocumentSize( JsonGWTUtils.getInteger(jsonObj,IJsonNames.MAX_DOCUMENT_SIZE))
+			.setMaxTotalDocumentSize( JsonGWTUtils.getInteger(jsonObj,IJsonNames.MAX_TOTAL_DOCUMENT_SIZE))
+			.setLastAccessUser(JsonGWTUtils.getString(jsonObj, IJsonNames.LAST_ACCESS_USER))
+			.setLastAccessDate(JsonGWTUtils.getDate(jsonObj, IJsonNames.LAST_ACCESS_DATE))
+			.setExpirationDate(JsonGWTUtils.getDate(jsonObj, IJsonNames.EXPIRATION_DATE))
+			.setCreationUser(JsonGWTUtils.getString(jsonObj, IJsonNames.CREATION_USER))
+			.setCreationDate(JsonGWTUtils.getDate(jsonObj, IJsonNames.CREATION_DATE))
+			.setModificationUser(JsonGWTUtils.getString(jsonObj, IJsonNames.MODIFICATION_USER))
+			.setModificationDate(JsonGWTUtils.getDate(jsonObj, IJsonNames.MODIFICATION_DATE))
+			.setAonCustomer(JsonGWTUtils.getInteger(jsonObj, IJsonNames.AON_CUSTOMER))
+			.setAonStatus(AonStatus.safeValueOf(JsonGWTUtils.getString(jsonObj,IJsonNames.AON_STATUS)))
+		;
+	}
+
+	private Company parseCompany(JSONValue json) {
+		if(json == null) return new Company();
+		
+		JSONObject jsonObj = json.isObject();
+		
+		return new Company()
+				.copy(parseRegistry(json))
+				.setActive(JsonGWTUtils.getboolean(jsonObj, IJsonNames.ACTIVE))
+				.setSurcharge(JsonGWTUtils.getboolean(jsonObj, IJsonNames.SURCHARGE))
+				.setWithholding(JsonGWTUtils.getboolean(jsonObj, IJsonNames.WITHHOLDING))
+				.setVatAccrualPayment(JsonGWTUtils.getboolean(jsonObj, IJsonNames.VAT_ACCRUAL_PAYMENT))
+				.seteInvoice(JsonGWTUtils.getboolean(jsonObj, IJsonNames.E_INVOICE));
+	}
+	
+	public Registry parseRegistry(JSONValue json) {
+		if(json == null) {
+			return new Registry();
+		}
+		
+		JSONObject jsonObj = json.isObject();
+		
+		return new Registry() 
+			.setId(JsonGWTUtils.getInteger(jsonObj, IJsonNames.ID))
+			.setDomain(parseDomain(json))
+			.setDocument(JsonGWTUtils.getString(jsonObj,IJsonNames.DOCUMENT))
+			.setDocumentCountry(Country.safeValueOf(JsonGWTUtils.getString(jsonObj,IJsonNames.DOCUMENT_COUNTRY)))
+			.setDocumentType(DocumentType.safeValueOf(JsonGWTUtils.getString(jsonObj,IJsonNames.DOCUMENT_TYPE)))
+			.setName(JsonGWTUtils.getString(jsonObj,IJsonNames.NAME))
+			.setAlias(JsonGWTUtils.getString(jsonObj,IJsonNames.ALIAS))
+			.setLegalPerson(JsonGWTUtils.getboolean(jsonObj, IJsonNames.LEGAL_PERSON))
+			.setNationality(Country.safeValueOf(JsonGWTUtils.getString(jsonObj,IJsonNames.NATIONALITY)))
+			.setConfidential(JsonGWTUtils.getboolean(jsonObj, IJsonNames.CONFIDENTIAL))
+			.setGlobal(JsonGWTUtils.getboolean(jsonObj, IJsonNames.GLOBAL))
+			.setDirty(JsonGWTUtils.getboolean(jsonObj, IJsonNames.DIRTY));
 	}
 
 	private String getFeeStatus(BookingCheck bookingCheck) {
@@ -1190,6 +1354,8 @@ public class BookingPanel extends MainEntryPoint {
 	}
 
 	private void syncDomain() {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios ...");
+		
 		// Create the base URL
 		String baseUrl = "/ms/api/domain/";
 
@@ -1199,7 +1365,7 @@ public class BookingPanel extends MainEntryPoint {
 		urlBuilder.setHost("aon.solutions"); 
 		urlBuilder.setPath(baseUrl);
 		
-		urlBuilder.setParameter("linked", "false");
+//		urlBuilder.setParameter("linked", "false");
 		
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
@@ -1213,22 +1379,313 @@ public class BookingPanel extends MainEntryPoint {
 		    requestBuilder.sendRequest(null, new RequestCallback() {
 		        public void onResponseReceived(Request request, Response response) {
 		            if (response.getStatusCode() == 200) {
+
 		                String responseBody = response.getText();
-		                Window.alert("Domain Update \n" + responseBody);
-//		                List<DomainCompany> domains = DomainCompanyJSON.fromJSONArray(responseBody);
-//		                Window.alert("Domain Update count : " + domains.size());
+		                Window.alert("Domains \n" + responseBody);
+		                List<DomainCompany> companies = parseDomainCompanyJSON(responseBody);
+		                AonMessagePanel.hideMessage(messagePanel);
+		                showSelectDomainsDialog(companies);
+		                
 		            } else {
-		                // Handle error responses
+		            	AonMessagePanel.showError(messagePanel, response.getText());
 		            }
 		        }
 
-		        public void onError(Request request, Throwable exception) {
-		            // Handle request errors
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
 		        }
 		    });
 		} catch (RequestException e) {
-		    // Handle request exceptions
+			AonMessagePanel.showError(messagePanel, e.getMessage());
 		}
+	}
+	
+	private void showSelectDomainsDialog(List<DomainCompany> companies) {
+		new AonDomainSelectionDialog("Dominios", companies) {
+			
+			@Override
+			protected void onAccept(DomainCompany domainCompany) {
+				AonMessagePanel.showLoading(messagePanel, "Obteniendo contrataci\u00f3n para el dominio seleccionado ...");
+				
+				// Create the base URL
+				String baseUrl = "/ms/api/booking/";
+
+				// Create a URL builder and add query parameters
+				UrlBuilder urlBuilder = new UrlBuilder();
+				urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+				urlBuilder.setHost("aon.solutions"); 
+				urlBuilder.setPath(baseUrl);
+				
+				urlBuilder.setParameter("domainName", domainCompany.getDomain().getName());
+				urlBuilder.setParameter("domainId", domainCompany.getDomain().getId().toString());
+				
+				// Create the request builder with the complete URL
+				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+				
+				Window.alert("booking RequestBuilder GET : " + urlBuilder.buildString());
+				Window.alert("booking RequestBuilder Header (session_id) : " + requestBuilder.getHeader("session_id"));
+				
+				try {
+				    // Send the request
+				    requestBuilder.sendRequest(null, new RequestCallback() {
+				        public void onResponseReceived(Request request, Response response) {
+				            if (response.getStatusCode() == 200) {
+
+				                String responseBody = response.getText();
+				                Window.alert("Booking \n" + responseBody);
+				                Booking booking = parseBookingJSON(responseBody);
+				                AonMessagePanel.hideMessage(messagePanel);
+				                updateBookingRitems(domainCompany, booking);
+				                
+				            } else {
+				            	AonMessagePanel.showError(messagePanel, response.getText());
+				            }
+				        }
+
+						public void onError(Request request, Throwable exception) {
+							AonMessagePanel.showError(messagePanel, exception.getMessage());
+				        }
+				    });
+				} catch (RequestException e) {
+					AonMessagePanel.showError(messagePanel, e.getMessage());
+				}
+			}
+		
+		};
+	}
+
+	private void updateBookingRitems(DomainCompany domainCompany, Booking booking) {
+		AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el dominio seleccionado ...");
+		
+		// Create the base URL
+		String baseUrl = "/ms/api/domain/booking/";
+
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost("aon.solutions"); 
+		urlBuilder.setPath(baseUrl);
+		
+		urlBuilder.setParameter("domain", toJson(domainCompany).toString());
+		urlBuilder.setParameter("booking", toJson(booking).toString());
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		Window.alert("booking sync RequestBuilder GET : " + urlBuilder.buildString());
+		Window.alert("booking sync RequestBuilder Header (session_id) : " + requestBuilder.getHeader("session_id"));
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(null, new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+
+		                String responseBody = response.getText();
+		                Window.alert("Booking Sync \n" + responseBody);
+		                AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n se ha realizado correctamente");
+		                
+		                
+		            } else {
+		            	AonMessagePanel.showError(messagePanel, response.getText());
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        }
+		    });
+		} catch (RequestException e) {
+			AonMessagePanel.showError(messagePanel, e.getMessage());
+		}
+	}
+	
+	private JSONObject toJson(Booking booking) {
+		JSONArray apps = new JSONArray();
+		JSONArray parentApps = new JSONArray();
+		
+		for(int i=0; i<booking.getApps().size(); i++)
+			apps.set(i, new JSONString(booking.getApps().get(i).name()));
+		
+		for(int i=0; i<booking.getParentApps().size(); i++)
+			parentApps.set(i, new JSONString(booking.getParentApps().get(i).name()));
+
+		return new JSONObject()
+			.put(IJsonNames.DOMAIN, toJSON(booking.getDomain()))
+			.isObject()
+			.put(IJsonNames.COMPANY, toJSON(booking.getCompany()))
+			.isObject()
+			.put(IJsonNames.TYPE, new JSONString(booking.getType() != null ? booking.getType().name() : null))
+			.isObject()
+			.put(IJsonNames.APPS, apps) 
+			.isObject()
+			.put(IJsonNames.PARENT_APPS, parentApps) 
+			.isObject()
+			.put(IJsonNames.NUMBER_OF_USERS, new JSONString(booking.getNumberOfUsers() + ""))
+			.isObject()
+			.put(IJsonNames.PAYER, new JSONString(booking.getPayer()))
+			.isObject()
+			.put(IJsonNames.RESUME, booking.getResume() != null ? bookingResume(booking.getResume()): null)
+			.isObject();
+	}
+	
+	private static JSONObject bookingResume(BookingResume resume) {
+		JSONObject o = new JSONObject();
+		if(resume != null) { 
+			JSONObject domain = new JSONObject();
+			resume.getDomainTypes().keySet().forEach(r ->{
+				DomainTypeInfo dti = resume.getDomainTypes().get(r);
+				JSONObject oa = new JSONObject();
+				oa.put("number", new JSONString(dti.getNumber() + ""));
+				
+				JSONObject apps = new JSONObject();
+				dti.getChildApps().keySet().forEach(r2 -> apps.put(r2.name(), new JSONString(dti.getChildApps().get(r2) + "")));
+				oa.put(IJsonNames.APPS, apps);
+
+				oa.put("childs", childJson(dti.getChilds()));
+
+				domain.put(r.name(), oa);	
+			});
+			o.put(IJsonNames.DOMAIN, domain);
+
+			JSONObject user = new JSONObject();
+			resume.getUserTypes().keySet().forEach(r -> user.put(r.name(), new JSONString(resume.getUserTypes().get(r) + "")));
+			user.put("childDefinedUsers", new JSONString(resume.getChildDefinedUsers() + ""));
+			user.put("childBillingUsers", new JSONString(resume.getChildBillingUsers() + ""));
+			
+			o.put(IJsonNames.USER, user);
+		}
+		return o;
+	}
+	
+	private static JSONArray childJson(List<Domain> childs) {
+		JSONArray array = new JSONArray();
+		
+		for(int i=0; i<childs.size(); i++) {
+			JSONArray apps = new JSONArray();
+			Domain d = childs.get(i);
+			
+			for(int j=0; j<d.getApps().size(); j++)
+				apps.set(j, new JSONString(d.getApps().get(j).getApp().name()));
+			
+			JSONObject json = new JSONObject();
+			json.put(IJsonNames.ID, new JSONString(d.getId().toString()));
+			json.put(IJsonNames.NAME, new JSONString(d.getName()));
+			json.put(IJsonNames.DESCRIPTION, new JSONString(d.getDescription()));
+			json.put(IJsonNames.APPS, apps);
+			json.put(IJsonNames.MAX_DEFINED_USERS, new JSONString(d.getMaxDefinedUsers() + ""));
+			
+			array.set(i, json);
+		}
+		
+		return array;
+	}
+
+	private JSONObject toJson(DomainCompany domainCompany) {
+		if(domainCompany == null) return new JSONObject();
+		return new JSONObject()
+				.put(IJsonNames.SCHEMA, new JSONString(domainCompany.getSchema()))
+				.isObject()
+				.put(IJsonNames.DOMAIN, toJSON(domainCompany.getDomain()))
+				.isObject()
+				.put(IJsonNames.COMPANY,toJSON(domainCompany.getCompany()))
+				.isObject()
+			;	
+	}
+
+	private JSONObject toJSON(Domain domain) {
+		if(domain == null) return new JSONObject();
+		return new JSONObject()
+			.put(IJsonNames.ID, new JSONString(domain.getId().toString()))
+			.isObject()
+			.put(IJsonNames.NAME,new JSONString( domain.getName()))
+			.isObject()
+			.put(IJsonNames.DESCRIPTION, new JSONString(domain.getDescription()))
+			.isObject()
+			.put(IJsonNames.OWNER, new JSONString(domain.getOwner()))
+			.isObject()
+			.put(IJsonNames.PARENT_ID, new JSONString(domain.getParentId().toString()))
+			.isObject()
+			.put(IJsonNames.DOMAIN_TYPE, new JSONString(domain.getDomainType() == null?null:domain.getDomainType().toString()))
+			.isObject()
+			.put(IJsonNames.ENABLE_HEREDITY, new JSONString(domain.isEnableHeredity() + ""))
+			.isObject()
+			.put(IJsonNames.DOMAIN_MANAGEMENT, new JSONString(domain.isDomainManagement() + ""))
+			.isObject()
+			.put(IJsonNames.DISABLE_DOMAIN_MANAGEMENT, new JSONString(domain.isDisableDomainManagement() + ""))
+			.isObject()
+			.put(IJsonNames.ACTIVE, new JSONString(domain.isActive() + ""))
+			.isObject()
+			.put(IJsonNames.SCOPE, new JSONString(domain.getScope()+ ""))
+			.isObject()
+			.put(IJsonNames.MAX_DEFINED_USERS, new JSONString(domain.getMaxDefinedUsers() + ""))
+			.isObject()
+			.put(IJsonNames.DEFINED_USERS, new JSONString(domain.getDefinedUsers()+ ""))
+			.isObject()
+			.put(IJsonNames.MAX_DOCUMENT_SIZE, new JSONString(domain.getMaxDocumentSize() + ""))
+			.isObject()
+			.put(IJsonNames.MAX_TOTAL_DOCUMENT_SIZE,new JSONString( domain.getMaxTotalDocumentSize() + ""))
+			.isObject()
+			.put(IJsonNames.LAST_ACCESS_USER, new JSONString(domain.getLastAccessUser()))
+			.isObject()
+			.put(IJsonNames.LAST_ACCESS_DATE, new JSONString(formatFullDate.format(domain.getLastAccessDate())))
+			.isObject()
+			.put(IJsonNames.EXPIRATION_DATE, new JSONString(formatFullDate.format(domain.getExpirationDate())))
+			.isObject()
+			.put(IJsonNames.CREATION_USER, new JSONString(domain.getCreationUser()))
+			.isObject()
+			.put(IJsonNames.CREATION_DATE, new JSONString(formatFullDate.format(domain.getCreationDate())))
+			.isObject()
+			.put(IJsonNames.MODIFICATION_USER, new JSONString(domain.getModificationUser()))
+			.isObject()
+			.put(IJsonNames.MODIFICATION_DATE, new JSONString(formatFullDate.format(domain.getModificationDate())))
+			.isObject()
+			.put(IJsonNames.AON_CUSTOMER, new JSONString(domain.getAonCustomer() + ""))
+			.isObject()
+			.put(IJsonNames.AON_STATUS,new JSONString(domain.getAonStatus() == null?null:domain.getAonStatus().toString()))
+			.isObject()
+			;
+	}
+
+	private JSONObject toJSON(Company company) {
+		return toJSONRegistry(company)
+				.put(IJsonNames.ACTIVE, new JSONString(company.isActive() + ""))
+				.isObject()
+				.put(IJsonNames.SURCHARGE, new JSONString(company.isSurcharge() + ""))
+				.isObject()
+				.put(IJsonNames.WITHHOLDING, new JSONString(company.isWithholding() + ""))
+				.isObject()
+				.put(IJsonNames.VAT_ACCRUAL_PAYMENT, new JSONString(company.isVatAccrualPayment() + ""))
+				.isObject()
+				.put(IJsonNames.E_INVOICE,new JSONString( company.iseInvoice() + ""))
+				.isObject();
+	}
+
+	private JSONObject toJSONRegistry(Company registry) {
+		if(registry == null || registry.isEmpty()) return new JSONObject();
+		return new JSONObject()
+			.put(IJsonNames.ID, new JSONString(registry.getId().toString()))
+			.isObject()
+			.put(IJsonNames.DOMAIN, toJSON(registry.getDomain()))
+			.isObject()
+			.put(IJsonNames.DOCUMENT, new JSONString(registry.getDocument()))
+			.isObject()
+			.put(IJsonNames.DOCUMENT_COUNTRY, new JSONString(registry.getDocumentCountry() != null ? registry.getDocumentCountry().getIso2(): null))
+			.isObject()
+			.put(IJsonNames.DOCUMENT_TYPE, new JSONString(registry.getDocumentType() != null ? registry.getDocumentType().name(): null))
+			.isObject()
+			.put(IJsonNames.NAME, new JSONString(registry.getName()))
+			.isObject()
+			.put(IJsonNames.ALIAS, new JSONString(registry.getAlias()))
+			.isObject()
+			.put(IJsonNames.LEGAL_PERSON, new JSONString(registry.isLegalPerson() + ""))
+			.isObject()
+			.put(IJsonNames.NATIONALITY, new JSONString(registry.getNationality() != null ? registry.getNationality().getIso2() : null))
+			.isObject()
+			.put(IJsonNames.CONFIDENTIAL, new JSONString(registry.isConfidential() + ""))
+			.isObject();
 	}
 
 	private void checkPeriodVisibility() {
