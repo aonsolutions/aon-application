@@ -5,8 +5,8 @@
   [paddingLeftHeader]="'1rem'"
 >
   <div tool>
-    <app-button [class]="'dark'" [width]="'100%'"> Guardar </app-button>
-    <app-button [class]="'white'" [width]="'100%'"> Cancelar </app-button>
+    <app-button [class]="'dark'" [width]="'100%'"> {{ 'PROFILE.SAVE'| translate }} </app-button>
+    <app-button [class]="'white'" [width]="'100%'"> {{ 'PROFILE.CANCEL'| translate }}</app-button>
   </div>
 
   <div content *ngIf="this.tabIndex == 0">

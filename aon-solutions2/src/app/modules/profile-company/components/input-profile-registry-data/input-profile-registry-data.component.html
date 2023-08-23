@@ -1,35 +1,38 @@
 <div class="form">
   <app-input
     [type]="'text'"
-    [label]="'Descripción'"
-    [placeholder]="'Placeholder'"
+    [label]="'PROFILE.DESCRIPTION' | translate"
+    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
   ></app-input>
 </div>
 
 <div class="form">
   <app-input
-    [label]="'Fecha de creación'"
+    [label]="'PROFILE.DATE_OF_CREATION' | translate"
     [type]="'date'"
     ></app-input>
   <app-input
-    [label]="'Fecha de registro'"
+    [label]="'PROFILE.REGISTRATION_DATE' | translate"
     [type]="'date'"></app-input>
 </div>
 
 <div class="form">
-  <app-input [type]="'text'" [label]="'Notario'" [placeholder]="'Placeholder'">
-  </app-input>
+  <app-input
+  [type]="'text'"
+  [label]="'PROFILE.NOTARY' | translate"
+  [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+  ></app-input>
 </div>
 
 <div class="form">
   <app-input
     [type]="'text'"
-    [label]="'Protocolo'"
-    [placeholder]="'Placeholder'"
+    [label]="'PROFILE.PROTOCOL' | translate"
+    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
   ></app-input>
   <app-input
     [type]="'text'"
-    [label]="'Inscripción'"
-    [placeholder]="'Placeholder'"
+    [label]="'PROFILE.REGISTRATION' | translate"
+    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
   ></app-input>
 </div>
