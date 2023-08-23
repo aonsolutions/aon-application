@@ -66,6 +66,7 @@
         <div content class="padding" *ngIf="this.tabIndex == 0">
           <app-table-queries
             [filterStatus]="['abierta', 'cerrada']"
+            (rowClicked)="rowClickHandler($event)"
           ></app-table-queries>
         </div>
         <div content class="padding" *ngIf="this.tabIndex == 1">
@@ -137,6 +138,13 @@
 
   <!--FIN CONTENIDO-->
   <!--Detail-->
-  <div detail *ngIf="showDetail"></div>
+  <div detail *ngIf="showDetail">
+    mesajeeeeeeeeeeeeeeeees:
+    <div *ngIf="selectedMessage">
+      <p>{{ selectedMessage.Id }}</p>
+      <p>{{ selectedMessage.Description }}</p>
+      <p>{{ selectedMessage.Date}}</p>
+    </div>
+  </div>
   <!--FIN Detail-->
 </app-grid-layout>

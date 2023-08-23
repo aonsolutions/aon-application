@@ -2387,6 +2387,7 @@ class MessageChat implements IMessageChat, IModel  {
 
     getFilterableFields(): Map<string, any> {
         let map = new Map<string, any>();
+        map.set('idMessage', this.idMessage);
         map.set('name', this.name);
         map.set('description', this.description);
         map.set('date', this.date);
@@ -2396,6 +2397,7 @@ class MessageChat implements IMessageChat, IModel  {
 
     getSortableFields(): Map<string, any> {
         let map = new Map<string, any>();
+        map.set('idMessage', this.idMessage);
         map.set('name', this.name);
         map.set('description', this.description);
         map.set('date', this.date);

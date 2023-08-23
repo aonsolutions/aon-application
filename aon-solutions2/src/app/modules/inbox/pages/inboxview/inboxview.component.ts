@@ -1,11 +1,11 @@
-import { Component, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ICollection, IMessage } from 'libraries/AonSDK/aon';
-import { CollectionFactory } from '../../../../../../libraries/AonSDK/aon';
-import { BehaviorSubject } from 'rxjs';
+import { FilterBuilder, IMessageChat, CollectionFactory  } from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
+import { MessageChatService } from 'src/app/core/services/message-chat.service';
 import { ModalCreateComponent } from '../../components/inbox/modal-create/modal-create.component';
+import { TableQueriesComponent } from '../../components/inbox/table-queries/table-queries.component';
 
 export interface Tabs {
   name: string;
@@ -15,95 +15,120 @@ export interface Tabs {
 @Component({
   selector: 'app-inboxview',
   templateUrl: './inboxview.component.html',
-  styleUrls: ['./inboxview.component.scss']
+  styleUrls: ['./inboxview.component.scss'],
 })
 export class InboxviewComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
 
-  functionHome: any = (result:any) => this.afterModalClosed(result);
-  tabsConsultas     : Tabs[]  = [];
-  tabsTareas        : Tabs[]  = [];
-  tabsNotificaciones: Tabs[]  = [];
-  selectedTab       : number  = 0;
-  tabIndex          : number  = 0;
-  showDetail        : boolean = true;
-  noTasksMessage    : boolean = false;
-  isModalVisible    : boolean = false;
+  functionHome: any = (result: any) => this.afterModalClosed(result);
+  tabsConsultas: Tabs[] = [];
+  tabsTareas: Tabs[] = [];
+  tabsNotificaciones: Tabs[] = [];
+  selectedTab: number = 0;
+  tabIndex: number = 0;
+  showDetail: boolean = false;
+  noTasksMessage: boolean = false;
+  isModalVisible: boolean = false;
+  selectedMessage: IMessageChat | null = null;
+  id: number = 0;
+  @ViewChild(TableQueriesComponent, { static: false })
+  tableQueriesComponent!: TableQueriesComponent;
 
   constructor(
     private translateService: TranslateService,
     public reportingService: ReportingService,
     private messageService: MessageService,
-    ) {
-
-    this.translateService.get(
-      ['INBOX.ALL', 'INBOX.OPENED', 'INBOX.CLOSED']
-    ).subscribe( result => {
-      this.tabsConsultas = [
-        { name: result['INBOX.ALL'], color: 'black'},
-        { name: result['INBOX.OPENED'], color: 'black',icon : 'replay'},
-        { name: result['INBOX.CLOSED'], color: 'black',icon : 'archive' }
-      ]
-    })
-
-    this.translateService.get(
-      ['INBOX.ALL', 'INBOX.PENDING', 'INBOX.REALIZED']
-    ).subscribe( result => {
-      this.tabsTareas = [
-        { name: result['INBOX.ALL'], color: 'black'},
-        { name: result['INBOX.PENDING'], color: 'black',icon : 'remove_circle'},
-        { name: result['INBOX.REALIZED'], color: 'black',icon : 'check_circle' }
-      ]
-    })
-
-    this.translateService.get(
-      ['INBOX.ALL', 'INBOX.NEWS', 'INBOX.VIEWS']
-    ).subscribe( result => {
-      this.tabsNotificaciones = [
-        { name: result['INBOX.ALL'], color: 'black'},
-        { name: result['INBOX.NEWS'], color: 'black',icon : 'notifications_active'},
-        { name: result['INBOX.VIEWS'], color: 'black',icon : 'remove_red_eye' }
-      ]
-    })
+    private messageChatService: MessageChatService
+  ) {
+    this.translateService
+      .get([
+        'INBOX.ALL',
+        'INBOX.PENDING',
+        'INBOX.REALIZED',
+        'INBOX.ALL',
+        'INBOX.OPENED',
+        'INBOX.CLOSED',
+        'INBOX.ALL',
+        'INBOX.NEWS',
+        'INBOX.VIEWS',
+      ])
+      .subscribe((result) => {
+        (this.tabsTareas = [
+          { name: result['INBOX.ALL'], color: 'black' },
+          { name: result['INBOX.PENDING'], color: 'black', icon: 'remove_circle'},
+          { name: result['INBOX.REALIZED'], color: 'black', icon: 'check_circle'},
+        ]),
+          (this.tabsConsultas = [
+            { name: result['INBOX.ALL'], color: 'black' },
+            { name: result['INBOX.OPENED'], color: 'black', icon: 'replay' },
+            { name: result['INBOX.CLOSED'], color: 'black', icon: 'archive' },
+          ]),
+          (this.tabsNotificaciones = [
+            { name: result['INBOX.ALL'], color: 'black' },
+            { name: result['INBOX.NEWS'], color: 'black', icon: 'notifications_active'},
+            { name: result['INBOX.VIEWS'], color: 'black', icon: 'remove_red_eye'},
+          ]);
+      });
   }
 
   public collectionFactory = new CollectionFactory();
 
-    //Inbox area
-    messages: ICollection<IMessage> =
-    this.collectionFactory.createMessageCollection();
-  private messagesSubject = new BehaviorSubject<ICollection<IMessage>>(
-    this.collectionFactory.createMessageCollection()
-  );
-  public messages$ = this.messagesSubject.asObservable();
+  //Inbox area
+  // messages: ICollection<IMessage> =
+  //   this.collectionFactory.createMessageCollection();
+  //   private messagesSubject = new BehaviorSubject<ICollection<IMessage>>(
+  //   this.collectionFactory.createMessageCollection()
+  // );
+  // public messages$ = this.messagesSubject.asObservable();
 
-  ngOnInit(): void {
-
-    //MessageService
-    this.messageService.getMessageList().then((response) => {
-      this.messages = response;
-      this.messagesSubject.next(this.messages);
-    });
-
-  }
+  ngOnInit(): void {}
 
   showNoTasksMessage(hasNoTasks: boolean) {
     this.noTasksMessage = hasNoTasks;
   }
 
-  afterModalClosed(result?:any){
+  afterModalClosed(result?: any) {
     console.log(result);
   }
 
-  showModal(){
+  showModal() {
     this.isModalVisible = true;
     this.modalComponent.openDialog(ModalCreateComponent, this.functionHome, 'Data from home');
   }
 
-  //  const clickTr = document.querySelector("tr");
+  // rowClick(id: IMessage) {
+  //   //MessageService
+  //   let filterMessage = new FilterBuilder();
+  //   if (this.id !== 0) {
+  //     filterMessage.addField('id', this.id);
+  //   }
+  //   this.messageService
+  //     .getMessageList(filterMessage.getFilter())
+  //     .then((response) => {
+  //       this.messages = response;
+  //       this.messagesSubject.next(this.messages);
+  //       console.log('mis datos', response.toArray());
 
-  //  clickTr.addEventListener("click", (event) => {
-  //    showDetail = true,
-  //  });
+  //     });
+
+  //   this.selectedMessage = id;
+  //   this.showDetail = true;
+  //   console.log('aaaaa', this.selectedMessage);
+  // }
+
+  rowClickHandler(message: any) {
+
+    console.log('uuuuuuuuuuu',message.key)
+
+    let filterBuilder = new FilterBuilder();
+    filterBuilder.addField('idMessage', message.key);
+    this.messageChatService
+      .getMessageChatList(filterBuilder.getFilter())
+      .then((response) => {
+        // this.selectedMessage = response;
+        console.log('-------', response)
+    })
+    this.showDetail = true;
+  }
 
 }
