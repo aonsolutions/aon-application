@@ -88,12 +88,7 @@ public class VimeoResult {
         vimeoApiClient.fetchProjectItemList("https://api.vimeo.com" + folder.getUri() + "/items/", null, null, null, new VimeoCallback<ProjectItemList>()  {
             @Override
             public void onSuccess(VimeoResponse.Success<ProjectItemList> successResponse) {
-                List<ProjectItem> items = successResponse.getData().getData();
-                
-                for (ProjectItem i : items) {
-                	System.out.println("    video: " + i.getVideo().getName());
-                }
-                
+                List<ProjectItem> items = successResponse.getData().getData();               
                 future.complete(items);
             }
 

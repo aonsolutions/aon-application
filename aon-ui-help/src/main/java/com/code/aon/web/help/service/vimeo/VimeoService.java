@@ -1,21 +1,34 @@
 package com.code.aon.web.help.service.vimeo;
 
 import com.vimeo.networking2.*;
-import com.vimeo.networking2.enums.ProjectItemType;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 public class VimeoService {
 	private VimeoResult vimeoResult;
 	public Optional<List<Folder>> folders;
+	public Optional<List<Video>> videosWithoutParentFolder;
 	
+
 	public VimeoService() {
         String accessToken = "";
         
 		vimeoResult = new VimeoResult(accessToken);
 
 		folders = vimeoResult.getFoldersFromUser();
+		videosWithoutParentFolder = Optional.of(new LinkedList<Video>());
+		
+		Optional<List<Video>> videos = vimeoResult.getVideosFromUser();
+		
+		if (videos.isPresent() && videos != null) {
+			for (Video video : videos.get()) {
+				if (video.getParentFolder() == null) {
+					videosWithoutParentFolder.get().add(video);
+				}
+			}
+		}
 	}
 
 	public Optional<List<Folder>> getFolders() {
@@ -24,6 +37,14 @@ public class VimeoService {
 
 	public void setFolders(Optional<List<Folder>> folders) {
 		this.folders = folders;
+	}
+	
+	public Optional<List<Video>> getVideosWithoutParentFolder() {
+		return videosWithoutParentFolder;
+	}
+
+	public void setVideosWithoutParentFolder(Optional<List<Video>> videosWithoutParentFolder) {
+		this.videosWithoutParentFolder = videosWithoutParentFolder;
 	}
 	
 	/**
