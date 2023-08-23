@@ -355,7 +355,7 @@ public class BookingCheckDAO {
 						: new OldItem().setId(r.getValue(RITEM.ITEM)))	
 					.setType(RegistryMode.values()[r.getValue(RITEM.TYPE)])
 					.setStatus(RegistryItemStatus.values()[r.getValue(RITEM.STATUS)])
-					.setQuantity(r.getValue(RITEM.QUANTITY) + "")
+					.setQuantity(r.getValue(RITEM.QUANTITY))
 					.setPrice(r.getValue(RITEM.PRICE))
 					.setDiscountExpr(r.getValue(RITEM.DISCOUNT_EXPR))
 					.setStartDate(r.getValue(RITEM.START_DATE))
