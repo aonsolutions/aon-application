@@ -39,6 +39,7 @@ public class ItemJSON {
 				.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
 				.setSerialNumber(JsonUtils.getString(json, IJsonNames.SERIAL_NUMBER))
 				.setSerialDate(JsonUtils.getDate(json, IJsonNames.SERIAL_DATE))
+				.setExpireDate(JsonUtils.getDate(json, IJsonNames.EXPIRE_DATE))
 				.setBarcode(AonStringUtils.isBlank(JsonUtils.getString(json, IJsonNames.BARCODE))
 						? null : JsonUtils.getString(json, IJsonNames.BARCODE))
 	
@@ -93,6 +94,7 @@ public class ItemJSON {
 				.put(IJsonNames.DESCRIPTION, item.getDescription())
 				.put(IJsonNames.SERIAL_NUMBER, item.getSerialNumber())
 				.put(IJsonNames.SERIAL_DATE, AonDateUtils.format(item.getSerialDate(), AonDateUtils.DATE_TIME_FORMAT_AUX))
+				.put(IJsonNames.EXPIRE_DATE, AonDateUtils.format(item.getExpireDate(), AonDateUtils.DATE_TIME_FORMAT_AUX))
 				.put(IJsonNames.BARCODE, item.getBarcode())
 				.put(IJsonNames.STATUS, item.getStatus() != null ? item.getStatus().name() : "")
 				.put(IJsonNames.PRODUCT, ProductJSON.toJSON(item.getProduct()))

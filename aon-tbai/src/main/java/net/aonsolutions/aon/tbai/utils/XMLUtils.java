@@ -21,6 +21,7 @@ import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,6 +31,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.model.Certificate;
+
+import ticketbai.emision.TicketBai;
 
 public class XMLUtils {
 
@@ -67,6 +70,13 @@ public class XMLUtils {
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		jaxbMarshaller.marshal(object, bos);
 		return bos.toByteArray();
+	}
+	
+	public static Object unmarshal(byte[] data, Class<?> clazz) throws JAXBException {
+		final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+		final Unmarshaller jaxbMarshaller = jaxbContext.createUnmarshaller();
+		InputStream is = new ByteArrayInputStream(data);
+		return jaxbMarshaller.unmarshal(is);
 	}
 	
 	public static byte[] send(Certificate certificate, String uri, byte[] xml) throws Exception{

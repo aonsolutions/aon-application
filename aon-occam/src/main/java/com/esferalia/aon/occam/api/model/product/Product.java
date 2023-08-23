@@ -30,6 +30,8 @@ public class Product implements Serializable{
 	Boolean composition;
 	Boolean compositionPrice;
 	Boolean packaged;
+	boolean perishable;
+	Integer daysToExpire;
 	Account salesAccount;
 	Account purchaseAccount;
 
@@ -268,6 +270,24 @@ public class Product implements Serializable{
 		return this;
 	}
 
+	public boolean isPerishable() {
+		return perishable;
+	}
+	
+	public Product setPerishable(boolean perishable) {
+		this.perishable = perishable;
+		return this;
+	}
+	
+	public Integer getDaysToExpire() {
+		return daysToExpire;
+	}
+	
+	public Product setDaysToExpire(Integer daysToExpire) {
+		this.daysToExpire = daysToExpire;
+		return this;
+	}
+	
 	public Account getSalesAccount() {
 		if(salesAccount == null)
 			salesAccount = new Account();

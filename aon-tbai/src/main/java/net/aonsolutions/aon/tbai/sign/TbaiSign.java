@@ -21,7 +21,7 @@ import ticketbai.emision.TicketBai;
 
 public class TbaiSign {
 
-    public String buildTbaiId(TicketBai tbai, String sign) throws UnsupportedEncodingException {
+    public static String buildTbaiId(TicketBai tbai, String sign) throws UnsupportedEncodingException {
     	String dateStr = tbai.getFactura().getCabeceraFactura().getFechaExpedicionFactura();
     	Date date = AonDateUtils.parse(dateStr, "dd-MM-yyyy");
     	String tbaiId = "TBAI-" + tbai.getSujetos().getEmisor().getNIF() 
@@ -42,12 +42,12 @@ public class TbaiSign {
     	return tbaiId + crc;
     }
     
-    public String getSign(byte[] data) throws ParserConfigurationException, SAXException, IOException {
+    public static String getSign(byte[] data) throws ParserConfigurationException, SAXException, IOException {
 		Document doc = getDocument(data);
 		return doc.getElementsByTagName("ds:SignatureValue").item(0).getTextContent();
     }
     
-    public Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
+    public static Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
 		InputStream is = new ByteArrayInputStream(data);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
