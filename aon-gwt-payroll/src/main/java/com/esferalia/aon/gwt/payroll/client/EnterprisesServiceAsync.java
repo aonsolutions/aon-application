@@ -86,7 +86,7 @@ public interface EnterprisesServiceAsync {
 	void getAgreements(String domain, int offset , int limit, AsyncCallback<List<Agreement>> callback);
 	void getAgreements(String domain, boolean allAgreements, AsyncCallback<List<Agreement>> callback);
 	void getTrashAgreements(String currentDomainName, int offset, int limit, AsyncCallback<List<Agreement>> callback);
-	void getEnterprises(String domain, String user,int offset , int limit, AsyncCallback<List<Enterprise>> callback);
+	void getEnterprises(String domain, String user, String condition, int offset, int limit, AsyncCallback<List<Enterprise>> callback);
 	void getEnterprisesCosts(String domain, List<Integer> enterpriseIds, AsyncCallback<List<Cost>> callback);
 	void getBonusConcepts(String domain, int offset , int limit, AsyncCallback<List<Bonus>> callback);
 	void getCCCEmployees(String domain, Date month, List<Integer> cccIds, AsyncCallback<List<Employee>> callback ); 
@@ -112,7 +112,7 @@ public interface EnterprisesServiceAsync {
 	void getEnterpiseScopes(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
 	void getAgrarianJourney(long findingDate, List<String> cccList, String domain, AsyncCallback<Map<Integer, List<AgrarianJourney>>> asyncCallback);
 	void getCRAs(String domain, String string, long liquidDateTime, AsyncCallback<List<CRA>> asyncCallback);
-	void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void deleteCRA(String currentDomainName, Integer code, AsyncCallback<Void> asyncCallback);
 	void getEmployeePeculiarities(String currentDomainName, Integer contractId, AsyncCallback<Peculiarities> asyncCallback);
 	void setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities,
@@ -134,8 +134,7 @@ public interface EnterprisesServiceAsync {
 	void checkEnterprisesEmails(String currentDomainName, HashSet<Integer> enterpriseIds, AsyncCallback<String> asyncCallback);
 	void getSettlePDF(String currentDomainName, String user, Integer settleId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	void getSalariesPDF(String currentDomainName, String currentUser, Integer enterpriseId, List<Integer> salaryIds, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
-	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList,
-			AsyncCallback<String> asyncCallback);
+	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback);
 	void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 	void getFJEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);

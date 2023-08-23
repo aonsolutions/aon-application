@@ -2,6 +2,10 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Question.QUESTION;
 import static com.esferalia.aon.jooq.tables.QuestionValue.QUESTION_VALUE;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rprofile.RPROFILE;
+import static com.esferalia.aon.jooq.tables.Survey.SURVEY;
+import static com.esferalia.aon.jooq.tables.SurveyQuestion.SURVEY_QUESTION;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -60,6 +64,8 @@ public class QuestionDAO {
 		
 		Question question = new QuestionFiller().apply(questionRecord);
 		getQuestionValues(ctx, question);
+		hasSurvey(ctx, question);
+		hasRProfile(ctx, question);
 		
 		return question;
 	}
@@ -74,11 +80,37 @@ public class QuestionDAO {
 			.map(new QuestionFiller())
 			.collect(Collectors.toList());
 		
-		questions.forEach(question -> getQuestionValues(ctx, question));
+		questions.forEach(question -> {
+			getQuestionValues(ctx, question);
+			hasSurvey(ctx, question);
+			hasRProfile(ctx, question);
+		});
 		
 		return questions;
 	}	
 	
+	private static void hasSurvey(CloseableAONContext ctx, Question question) {
+		List<String> surveyRecords = ctx.getDslContext().selectDistinct(SURVEY.DESCRIPTION).from(SURVEY)
+			.join(SURVEY_QUESTION)
+			.on(SURVEY_QUESTION.SURVEY.eq(SURVEY.ID))
+			.where(SURVEY_QUESTION.QUESTION.eq(question.getId()))
+			.fetch(SURVEY.DESCRIPTION);
+		
+		question.setHasSurvey(!surveyRecords.isEmpty());
+		question.setSurveyDescriptions(surveyRecords);
+	}
+	
+	private static void hasRProfile(CloseableAONContext ctx, Question question) {
+		List<String> rprofileRecords = ctx.getDslContext().selectDistinct(REGISTRY.NAME).from(REGISTRY)
+			.join(RPROFILE)
+			.on(RPROFILE.REGISTRY.eq(REGISTRY.ID))
+			.where(RPROFILE.QUESTION.eq(question.getId()))
+			.fetch(REGISTRY.NAME);
+		
+		question.setRprofile(!rprofileRecords.isEmpty());
+		question.setRprofileNames(rprofileRecords);
+	}
+
 	private static void getQuestionValues(CloseableAONContext ctx, Question question) {
 		List<QuestionValue> questionValues = ctx.getDslContext().select().from(QUESTION_VALUE)
 		.where(QUESTION_VALUE.QUESTION.eq(question.getId()))
@@ -98,6 +130,9 @@ public class QuestionDAO {
 		
 		if(null != params.getType())
 			condition = condition.and(QUESTION.TYPE.eq(params.getType()));
+		
+		if(null != params.getActive())
+			condition = condition.and(QUESTION.ACTIVE.eq(params.getActive()));
 		
 		return condition;
 	}
@@ -192,9 +227,18 @@ public class QuestionDAO {
 
 	private static void delete(AONContext ctx, QuestionValue qtv) {
 		ctx.getDslContext().delete(QUESTION_VALUE)
-		.where(QUESTION_VALUE.ID.eq(qtv.getId()))
-		.and(QUESTION_VALUE.DOMAIN.eq(qtv.getDomain()))
+			.where(QUESTION_VALUE.ID.eq(qtv.getId()))
+			.and(QUESTION_VALUE.DOMAIN.eq(qtv.getDomain()))
+			.execute();
+		
+		ctx.getDslContext().delete(RPROFILE)
+		.where(RPROFILE.QUESTION.eq(qtv.getId()))
+		.and(RPROFILE.DOMAIN.eq(qtv.getDomain()))
 		.execute();
+		
+		ctx.getDslContext().delete(QUESTION)
+			.where(QUESTION.ID.eq(qtv.getId()))
+			.execute();
 		
 		ctx.log().debug("DELETE QUESTION VALUE id: " + qtv.getId());
 	}
@@ -202,6 +246,12 @@ public class QuestionDAO {
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.getDslContext().delete(QUESTION_VALUE)
 		.where(QUESTION_VALUE.QUESTION.eq(id))
+		.and(QUESTION_VALUE.DOMAIN.eq(ctx.getDomainId()))
+		.execute();
+		
+		ctx.getDslContext().delete(RPROFILE)
+		.where(RPROFILE.QUESTION.eq(id))
+		.and(RPROFILE.DOMAIN.eq(ctx.getDomainId()))
 		.execute();
 		
 		ctx.getDslContext().delete(QUESTION)
@@ -226,7 +276,9 @@ public class QuestionDAO {
 				.setText(r.getValue(QUESTION.QUESTION_TEXT))
 				.setType(QuestionType.safeValueOf(r.getValue(QUESTION.TYPE)))
 				.setArgument(r.getValue(QUESTION.ARGUMENT))
-				.setAlias(r.getValue(QUESTION.ALIAS));
+				.setAlias(r.getValue(QUESTION.ALIAS))
+				.setHasSurvey(false)
+				.setRprofile(false);
 		}
 	}
 	

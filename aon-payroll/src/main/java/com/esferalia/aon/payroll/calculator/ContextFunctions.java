@@ -258,6 +258,7 @@ public class ContextFunctions {
 				ContextVariable.PREST_IT,
 				ContextVariable.CGC_BASE.getName(),
 				ContextVariable.CGP_BASE.getName(),
+				ContextVariable.UNPAID.getName(),
 				ContextVariable.MATERNITY_BASE.getName(),
 				ContextVariable.ERE_BASE.getName(),
 				ContextVariable.ERE_BASE_FORCE.getName(),

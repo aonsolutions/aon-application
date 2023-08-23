@@ -112,15 +112,14 @@ public class Cra {
 		
 		// Domain Childs
 		List<Integer> domainChilds = getDomainChilds(dslContext, domainId, userId); 
-		domainChilds.add(domainId);
-		
-		// Prepare ERRORS
-		JSONArray errors = new JSONArray();
-		
-		// Prepare CCCi
-		JSONObject ccci = new JSONObject();
 		
 		cccList.forEach(ccc -> {
+		
+			// Prepare ERRORS
+			JSONArray errors = new JSONArray();
+			
+			// Prepare CCCi
+			JSONObject ccci = new JSONObject();
 			
 			// ----------- NOMINAS
 			Result<Record> salaryRecords = dslContext.select().from(SALARY)
@@ -134,7 +133,7 @@ public class Cra {
 					.and(SALARY.END_DATE.le(endDateSQL))
 					.and(SALARY.CCC.eq(ccc))
 					.and(SALARY.TYPE.eq((byte)0))
-					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 					.and(SALARY.DOMAIN.in(domainChilds))
 					.fetch();
@@ -195,7 +194,7 @@ public class Cra {
 					.where(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL))
 					.and(SALARY.CCC.eq(ccc))
 					.and(SALARY.TYPE.eq((byte)3))
-					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.DOMAIN.in(domainChilds))
 					.fetch();
 			
@@ -298,7 +297,7 @@ public class Cra {
 					.where(SALARY.CCC.eq(ccc))
 					.and(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL))
 					.and(SALARY.TYPE.eq((byte)2))
-					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.and(SALARY.SS_REGIME.notEqual((byte)3).and(CONTRACT.SS_REGIME.notEqual((byte)3)))
 					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 					.and(SALARY.DOMAIN.in(domainChilds))
 					.fetch();
@@ -405,12 +404,12 @@ public class Cra {
 					ccci.put("FINIQ", finiq);
 				}
 			}
+			
+			// Adding ERRORS to MainCRAJSON  
+			ccci.put("ERRS", errors);
+			
+			jsonCCCs.add(ccci);
 		});
-		
-		// Adding ERRORS to MainCRAJSON  
-		ccci.put("ERRS", errors);
-		
-		jsonCCCs.add(ccci);
 		
 		mainCRAJSON.put("CCCs", jsonCCCs);
 		
@@ -498,11 +497,13 @@ public class Cra {
 
 	private static List<Integer> getDomainChilds(DSLContext dslContext, Integer domainId, Integer userId) {
 		return dslContext.select(DOMAIN.ID).from(DOMAIN)
-			.join(USER_SCOPE)
-			.on(USER_SCOPE.SCOPE.eq(DOMAIN.SCOPE))
-			.where(DOMAIN.PARENT.eq(domainId))
-			.and(USER_SCOPE.USER_ID.eq(userId))
-			.fetch(DOMAIN.ID);
+				.where(DOMAIN.ID.eq(domainId).or(DOMAIN.PARENT.eq(domainId)))
+				.and(DOMAIN.SCOPE.in(
+						dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.eq(userId))
+							.fetch(USER_SCOPE.SCOPE))
+				.or(DOMAIN.SCOPE.isNull()))
+				.fetch(DOMAIN.ID);
 	}
 
 	private static boolean checkSS(String socialSecurity){

@@ -27,6 +27,7 @@ public class QuestionModulePanel extends DockLayoutPanel {
 	
 	private TextBox alias;
 	private ListBox type;
+	private ListBox active;
 	
 	private AonSearchPanelButton cleanButton;
 	private AonSearchPanelButton refreshButton;
@@ -49,12 +50,16 @@ public class QuestionModulePanel extends DockLayoutPanel {
 		type.setStyleName(AON.CSS.aonInputText());
 		type.addChangeHandler(event -> onSearch( options ));
 		
+		active = new ListBox();
+		active.addItem( "Todas", "");
+		active.addItem( "Inactivas", "0");
+		active.addItem( "Activas", "1");
+		active.setSelectedIndex(2);
+		active.setStyleName(AON.CSS.aonInputText());
+		active.addChangeHandler(event -> onSearch( options ));
+		
 		searchPanel = new FlowPanel();
 		searchPanel.setStyleName(AON.CSS.aonSearchPanel());
-		searchPanel.addStyleName(AON.CSS.aonMarginLeft());
-		searchPanel.addStyleName(AON.CSS.aonMarginRight());
-		searchPanel.addStyleName(AON.CSS.aonBlockCenter());
-		searchPanel.addStyleName(AON.CSS.aonWidthAlmostAll());
 		searchPanel.addStyleName(AON.CSS.aonFlexBetween());
 		
 		filterPanel = new FlowPanel();
@@ -69,6 +74,8 @@ public class QuestionModulePanel extends DockLayoutPanel {
 		typeLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 		filterPanel.add(typeLabel);
 		filterPanel.add(type);
+
+		filterPanel.add(active);
 
 		searchPanel.add(filterPanel);
 		
@@ -90,7 +97,7 @@ public class QuestionModulePanel extends DockLayoutPanel {
 		searchPanel.add(buttonsPanel);
 		
 		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
+		scrollPanel.addStyleName(AON.CSS.aonScrollArea());
 		scrollPanel.setWidget(searchPanel);
 		northPanel.setWidget(scrollPanel);
 
@@ -113,6 +120,7 @@ public class QuestionModulePanel extends DockLayoutPanel {
 			.setUser(options.getUser())
 			.setAlias(alias.getValue())
 			.setType(type.getSelectedIndex() == 0 ? null : Byte.parseByte(type.getSelectedValue()))
+			.setActive(active.getSelectedIndex() == 0 ? null : Byte.parseByte(active.getSelectedValue()))
 			;
 	}
 	

@@ -240,6 +240,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_delete_forever")
 	String aonIconDeleteForever();
 	
+	@ClassName("aon_icon_delete_forever_red")
+	String aonIconDeleteForeverRed();
+	
 	@ClassName("aon_icon_tgss")
 	String aonIconTgss();
 	

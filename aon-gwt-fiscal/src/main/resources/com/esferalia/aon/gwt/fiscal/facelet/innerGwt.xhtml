@@ -11,34 +11,22 @@
 	<meta name="gwt:property" content="locale=es_ES" />
 	
 	<aon:valueParam name="entryPoint" default="" />
-	<aon:valueParam name="subEntryPoint" default="" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
 	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
 	
-	<style>
-		body {
-			margin: 0;
-		}
-	</style>
-
-	<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
-	<ui:include src="/facelet/homepage/menu.xhtml" />
-	
-	<div id="rootPanel"
-		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;">
+	<div id="innerRootPanel" style="width: 100%; min-height: 100%;">
 	</div>
 
 	<script type="text/javascript">
 	//<![CDATA[
-		
 		/* LOADS 'CLEAN.CSS' IF IT HAS BEEN REMOVED */
         if ([...document.styleSheets].filter(sts => /^.*clean\/clean\.css$/.test(sts.href)).length < 1) {
             let head  = document.getElementsByTagName('head')[0];
             let link  = document.createElement('link');
             link.rel  = 'stylesheet';
             link.type = 'text/css';
-            link.href = '/aon_gwt_marketing/gwt/clean/clean.css';
+            link.href = '/aon_gwt_fiscal/gwt/clean/clean.css';
             link.media = 'all';
             head.appendChild(link);
         }
@@ -55,10 +43,6 @@
 	       	return "#{gwtUser}"
 	  	}
 		
-		function getSubEntryPoint() {
-        	return "#{subEntryPoint}";
-        }
-
 		var search = "/#{module}.nocache.js";
 		var scripts = window.document.getElementsByTagName("script");
 		for (var i = 0; i < scripts.length; ++i) {
@@ -82,14 +66,15 @@
 
 	    	 
 		function startModule() {
-			localStorage.removeItem('rootPanel');
+			localStorage.removeItem('innerRootPanel');
 		    localStorage.removeItem('aon_solutions');
-		    localStorage.removeItem('aon_session_id');
+		    //localStorage.removeItem('aon_session_id');
+			localStorage.setItem('aon_session_id', "#{dur.token}");
 			if (window.document.createElement && window.document.getElementsByTagName) {
 				var script = window.document.createElement("script");
 				script.type = "text/javascript";
 				script.defer = "true";
-				script.src = "#{module}/#{module}.nocache.js?entryPoint=#{entryPoint}";
+				script.src = "#{module}/#{module}.nocache.js?entryPoint=#{entryPoint}&elementTarget=innerRootPanel";
 				var heads = window.document.getElementsByTagName("head");
 				if (heads && heads[0]) {
 					heads[0].appendChild(script);
@@ -110,7 +95,6 @@
 	        	// window.setTimeout("triggerModuleStart()", 100 );
 	        } 
 	    }
-	    
 		startModule();
 	//]]>
 	</script>

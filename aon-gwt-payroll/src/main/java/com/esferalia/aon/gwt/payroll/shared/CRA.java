@@ -117,7 +117,7 @@ public class CRA implements Serializable{
 		if(getIncludeCCCs().size() > 1)
 			return "-";
 		
-		return ProvinceContract.getName(getIncludeCCCs().get(0).getGeozone());
+		return ProvinceContract.getName(getIncludeCCCs().get(0).getGeozoneCode());
 	}
 
 	public Byte getCccType() {

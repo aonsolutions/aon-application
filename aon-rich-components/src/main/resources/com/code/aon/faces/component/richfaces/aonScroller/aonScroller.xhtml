@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	>
-
+		
 	<aon:div styleClass="aon-note-new" rendered="#{rowCount == 0 and showNote}">
 		<aon:div styleClass="aon-note-internal-new">
 			<aon:panelGroup>
@@ -61,16 +61,31 @@
 				</aon:dataPaginator>
 			</aon:panelGroup>
 			<aon:panelGroup rendered="#{!hidePageSizeSelector}" styleClass="text-right">
-				<aon:outputText styleClass=""  value="Mostrar "/>
-				<aon:selectOneMenu value="#{aonConfiguration.pageLimit}" 
-				>
-					<f:selectItems value="#{commonCollections.pageLimits}"/>
-					<a4j:support event="onchange" ajaxSingle="true" 
-						reRender="#{dataTable},#{dataTable}MessageDataScroller">
-						<f:setPropertyActionListener target="#{page}" value="#{1}" />
-						<aon:actionListener method="#{aonConfiguration.savePageLimit}" />
-					</a4j:support>				
-				</aon:selectOneMenu>
+				<aon:outputText styleClass=""  value="Mostrar"/>
+				<aon:if test="#{!forLines}" >
+					<aon:selectOneMenu value="#{aonConfiguration.pageLimit}" 
+					>
+						<f:selectItems value="#{commonCollections.pageLimits}"/>
+						<a4j:support event="onchange" ajaxSingle="true" 
+							reRender="#{dataTable},#{dataTable}MessageDataScroller">
+							<f:setPropertyActionListener target="#{page}" value="#{1}" />
+							<aon:actionListener method="#{aonConfiguration.savePageLimit}" />
+						</a4j:support>				
+					</aon:selectOneMenu>
+				</aon:if>
+
+				<aon:if test="#{forLines}" >
+					<aon:selectOneMenu value="#{aonConfiguration.linesPageLimit}" 
+					>
+						<f:selectItems value="#{commonCollections.pageLimits}"/>
+						<a4j:support event="onchange" ajaxSingle="true" 
+							reRender="#{dataTable},#{dataTable}MessageDataScroller">
+							<f:setPropertyActionListener target="#{page}" value="#{1}" />
+							<aon:actionListener method="#{aonConfiguration.savePageLimit}" />
+						</a4j:support>				
+					</aon:selectOneMenu>
+				</aon:if>
+
 			</aon:panelGroup>		    	
 		</aon:panelGrid>			
 	</aon:div>

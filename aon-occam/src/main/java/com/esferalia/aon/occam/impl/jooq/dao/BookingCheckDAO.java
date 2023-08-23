@@ -215,6 +215,9 @@ public class BookingCheckDAO {
 		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomer())) 
 			condition = condition.and(CUSTOMER_ALIAS.NAME.eq(customerFeeParams.getCustomer()));
 		
+		if(null != customerFeeParams.getCustomerStatus())
+			condition = condition.and(CUSTOMER.STATUS.eq(customerFeeParams.getCustomerStatus()));
+		
 		if(null != customerFeeParams.getProduct())
 			condition = condition.and(CUSTOMER_FEE.ITEM.eq(customerFeeParams.getProduct()));
 		
@@ -260,6 +263,9 @@ public class BookingCheckDAO {
 			
 		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomer())) 
 			condition = condition.and(CUSTOMER_ALIAS.NAME.eq(customerFeeParams.getCustomer()));
+		
+		if(null != customerFeeParams.getCustomerStatus())
+			condition = condition.and(CUSTOMER.STATUS.eq(customerFeeParams.getCustomerStatus()));
 		
 		if(null != customerFeeParams.getProduct())
 			condition = condition.and(RITEM.ITEM.eq(customerFeeParams.getProduct()));

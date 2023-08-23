@@ -4932,6 +4932,12 @@ public class AON {
 	}
 	
 	// ------------------- CUSTOMER
+
+	public static List<Customer> getCustomerWithoutFee(Domain domain, String login){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)) {
+			return getRegistry().getCustomerWithoutFee(ctx);
+		}
+	}
 	
 	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {

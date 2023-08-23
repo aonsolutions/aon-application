@@ -15,7 +15,6 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -49,7 +48,6 @@ public class JooqCRA {
 	// --------------------------------------------- Variables
 	
 	private static Settings settings = null;
-	private static SimpleDateFormat formatDate = new SimpleDateFormat("ddHHmmss");
 	
 	protected static Settings getDefaultSettings() {
 		if (settings == null) {
@@ -61,15 +59,15 @@ public class JooqCRA {
 	
 	// --------------------------------------------- Check Create CRA
 	
-	public static String checkCreateNewCRA(Connection conn, long findingDate, ArrayList<Integer> cccList) {
-		return checkCreateNewCRA(findingDate, cccList, DSL.using(conn, getDefaultSettings()));
-	}
-
-	private static String checkCreateNewCRA(long findingDate, ArrayList<Integer> cccList, DSLContext dslContext) {
+	public static void checkCreateNewCRA(Connection conn, long findingDate, ArrayList<Integer> cccList) throws IllegalArgumentException {
 		Date startDate = new Date(findingDate);
 		Date endDate = DateUtils.getLastDayOfMonth(startDate);
 		
+		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+		
 		Result<Record> contractsActiveRecords = dslContext.select().from(CONTRACT)
+			.join(PERSON)
+			.on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
 			.where(
 					CONTRACT.END_DATE.isNull()
 					.or(CONTRACT.END_DATE.ge(parseDateToSQL(startDate))))
@@ -81,23 +79,19 @@ public class JooqCRA {
 		for(Record contractRecord : contractsActiveRecords) {
 			Integer contractId = contractRecord.get(CONTRACT.ID);
 			
-			Result<Record> salariesRecords = dslContext.select().from(SALARY)
+			Record salariesRecord = dslContext.select().from(SALARY)
 				.where(SALARY.CONTRACT.eq(contractId))
 				.and(SALARY.START_DATE.ge(parseDateToSQL(startDate)))
 				.and(SALARY.END_DATE.le(parseDateToSQL(endDate)))
-				.fetch();
+				.limit(1)
+				.fetchOne();
 			
-			if(salariesRecords.isEmpty()) {
-				Integer personId = contractRecord.get(CONTRACT.PERSON);
-				Record personRecord = dslContext.select().from(PERSON).where(PERSON.REGISTRY.eq(personId)).fetchOne();
-				
-				return personRecord.get(PERSON.NAME) + " " + personRecord.get(PERSON.FIRST_SURNAME) 
-				+ " no tiene n\u00F3mina emitida para este perido. \u00BFDesea continuar?";
+			if(null == salariesRecord) {
+				throw new IllegalArgumentException(contractRecord.get(PERSON.NAME) + " " + contractRecord.get(PERSON.FIRST_SURNAME) 
+				+ " no tiene n\u00F3mina emitida para este perido.");
 			}
 				 
 		}
-		
-		return "";
 	}
 
 	// --------------------------------------------- Get CRAs
@@ -111,23 +105,30 @@ public class JooqCRA {
 		Date endDate = getEndDate(liquidDateTime);
 		
 		// Domain Childs
-		List<Integer> domainChilds = dslContext.select(DOMAIN.ID).from(DOMAIN)
-				.where(DOMAIN.PARENT.eq(domainId))
-				.and(DOMAIN.SCOPE.in(
-					dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
-						.where(USER_SCOPE.USER_ID.eq(userId))
-						.fetch(USER_SCOPE.SCOPE)
-				).or(DOMAIN.SCOPE.isNull())).fetch(DOMAIN.ID);
-		
+		List<Integer> domainChilds = getDomainChilds(dslContext, domainId, userId); 
 		
 		// Get CRAs
 		Result<Record6<Integer, Integer, Byte, Timestamp, Timestamp, String>> craBatchRecords = 
 				dslContext.select(CRA_BATCH.ID, CRA_BATCH.DOMAIN, CRA_BATCH.STATUS, CRA_BATCH.DATE, CRA_BATCH.OUTCOME_FILE_DATE, CRA_BATCH.COMMUNICATION_ID).from(CRA_BATCH)
-					.where(CRA_BATCH.DOMAIN.eq(domainId)
-						   .or(CRA_BATCH.DOMAIN.in(domainChilds)))
+					.where(
+							CRA_BATCH.DOMAIN.eq(domainId)
+						   .or(CRA_BATCH.DOMAIN.in(domainChilds))
+					)
 					.and(CRA_BATCH.OUTCOME_FILE_DATE.ge(new Timestamp(liquidDateTime)))
 					.and(CRA_BATCH.OUTCOME_FILE_DATE.le(new Timestamp(endDate.getTime())))
+					.orderBy(CRA_BATCH.DATE.desc(), CRA_BATCH.ID.desc())
 					.fetch();
+		
+		System.out.println(
+				dslContext.select(CRA_BATCH.ID, CRA_BATCH.DOMAIN, CRA_BATCH.STATUS, CRA_BATCH.DATE, CRA_BATCH.OUTCOME_FILE_DATE, CRA_BATCH.COMMUNICATION_ID).from(CRA_BATCH)
+				.where(
+						CRA_BATCH.DOMAIN.eq(domainId)
+					   .or(CRA_BATCH.DOMAIN.in(domainChilds))
+				)
+				.and(CRA_BATCH.OUTCOME_FILE_DATE.ge(new Timestamp(liquidDateTime)))
+				.and(CRA_BATCH.OUTCOME_FILE_DATE.le(new Timestamp(endDate.getTime())))
+				.orderBy(CRA_BATCH.DATE.desc(), CRA_BATCH.ID.desc()).getSQL()
+		);
 		
 		Integer countCras = 0;
 		
@@ -145,6 +146,14 @@ public class JooqCRA {
 			cra.setType(craBatchRecord.get(CRA_BATCH.COMMUNICATION_ID));
 			
 			Result<Record> craBatchDetailRecords = dslContext.select().from(CRA_BATCH_DETAIL)
+					.join(ENTERPRISE_CCC)
+					.on(ENTERPRISE_CCC.ID.eq(CRA_BATCH_DETAIL.ENTERPRISE_CCC))
+					.join(GEOZONE)
+					.on(GEOZONE.ID.eq(ENTERPRISE_CCC.GEOZONE))
+					.join(ENTERPRISE_ACTIVITY)
+					.on(ENTERPRISE_ACTIVITY.ID.eq(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY))
+					.join(REGISTRY)
+					.on(REGISTRY.ID.eq(ENTERPRISE_ACTIVITY.ENTERPRISE))
 					.where(CRA_BATCH_DETAIL.CRA_BATCH.eq(craBatchId))
 					.fetch();
 			
@@ -165,49 +174,20 @@ public class JooqCRA {
 				if(null == enterpriseCCCId)
 					continue;
 				
-				Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
-						.where(ENTERPRISE_CCC.ID.eq(enterpriseCCCId))
-						.fetchOne();
-				
-				Integer cccId = enterpriseCCCRecord.get(ENTERPRISE_CCC.ID);
-				String cccCode = enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
-				String regime = getSSRegime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)).getCode();
-				Byte type = enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE);
-				
-				String geozoneCode = dslContext.select(GEOZONE.CODE).from(GEOZONE)
-						.where(GEOZONE.ID.eq(enterpriseCCCRecord.get(ENTERPRISE_CCC.GEOZONE)))
-						.fetchOne(GEOZONE.CODE);
-				
-				// ENTERPRISE ACTIVITY
-				Record enterpriseActivityRecord = dslContext.select().from(ENTERPRISE_ACTIVITY)
-						.where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseCCCRecord.get(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY)))
-						.fetchOne();
-				
-				Integer enterpriseActivityId = enterpriseActivityRecord.get(ENTERPRISE_ACTIVITY.ID);
-				String enterpriseActivityDescription = enterpriseActivityRecord.get(ENTERPRISE_ACTIVITY.DESCRIPTION);
-				
-				// ENTERPRISE REGISTRY
-				
-				Record enterpriseRegistry = dslContext.select().from(REGISTRY)
-						.where(REGISTRY.ID.eq(enterpriseActivityRecord.get(ENTERPRISE_ACTIVITY.ENTERPRISE)))
-						.fetchOne();
-				
-				Integer enterpriseId = enterpriseRegistry.get(REGISTRY.ID);
-				String enterpriseName =  enterpriseRegistry.get(REGISTRY.NAME);
-				
 				CCCInfo cccInfo = new CCCInfo();
-				cccInfo.setCccId(cccId);
-				cccInfo.setCcc(cccCode);
-				cccInfo.setCccAccount(cccCode);
-				cccInfo.setCccRegimeCode(regime);
-				cccInfo.setTypeStr(regime);
-				cccInfo.setGeozone(geozoneCode);
-				cccInfo.setType(type);
-				cccInfo.setActivityId(enterpriseActivityId);
-				cccInfo.setActivityDescription(enterpriseActivityDescription);
+				cccInfo.setCccId(craBatchDetailRecord.get(ENTERPRISE_CCC.ID));
+				cccInfo.setCcc(craBatchDetailRecord.get(ENTERPRISE_CCC.CCC));
+				cccInfo.setCccAccount(craBatchDetailRecord.get(ENTERPRISE_CCC.CCC));
+				cccInfo.setCccRegimeCode(getSSRegime(craBatchDetailRecord.get(ENTERPRISE_CCC.TYPE)).getCode());
+				cccInfo.setTypeStr(getSSRegime(craBatchDetailRecord.get(ENTERPRISE_CCC.TYPE)).getCode());
+				cccInfo.setGeozoneCode(craBatchDetailRecord.get(GEOZONE.CODE));
+				cccInfo.setGeozone(craBatchDetailRecord.get(GEOZONE.NAME));
+				cccInfo.setType(craBatchDetailRecord.get(ENTERPRISE_CCC.TYPE));
+				cccInfo.setActivityId(craBatchDetailRecord.get(ENTERPRISE_ACTIVITY.ID));
+				cccInfo.setActivityDescription(craBatchDetailRecord.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
 				cccInfo.setUseByContracts(true);
-				cccInfo.setEnterpriseDesciption(enterpriseName);
-				cccInfo.setEnterpriseId(enterpriseId);
+				cccInfo.setEnterpriseDesciption(craBatchDetailRecord.get(REGISTRY.NAME));
+				cccInfo.setEnterpriseId(craBatchDetailRecord.get(REGISTRY.ID));
 				
 				includeCCCs.add(cccInfo);
 			}
@@ -218,10 +198,19 @@ public class JooqCRA {
 			cras.add(cra);
 		}
 		
-		System.err.println("Count CRAS : " + countCras);
-		
 		return cras;
 		
+	}
+
+	private static List<Integer> getDomainChilds(DSLContext dslContext, Integer domainId, Integer userId) {
+		return dslContext.select(DOMAIN.ID).from(DOMAIN)
+				.where(DOMAIN.ID.eq(domainId).or(DOMAIN.PARENT.eq(domainId)))
+				.and(DOMAIN.SCOPE.in(
+						dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.eq(userId))
+							.fetch(USER_SCOPE.SCOPE))
+				.or(DOMAIN.SCOPE.isNull()))
+				.fetch(DOMAIN.ID);
 	}
 
 	private static Date getEndDate(long liquidDateTime) {
@@ -265,13 +254,14 @@ public class JooqCRA {
 	
 	// --------------------------------------------- Set CRA
 
-	public static String setMainCra(Integer domainId, List<String> cccList, ArrayList<Integer> cccIdList, String agrarianAFI, long startDateTime, String craDocumentType, Date fileNameDate, String fileName, Connection connection) {
+	public static void setMainCra(Integer domainId, List<String> cccList, ArrayList<Integer> cccIdList, String craFile, long startDateTime, String craDocumentType, Date fileNameDate, String fileName, Connection connection) {
 		
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		java.util.Date startDate = new java.util.Date(startDateTime);
 		
 		// RECTIFICATIVO
 		if (craDocumentType.equals("R")) {
+			
 			Result<Record> craBatchRecords = dslContext.select().from(CRA_BATCH)
 					.where(CRA_BATCH.ID.in(
 							dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
@@ -280,135 +270,110 @@ public class JooqCRA {
 					.and(CRA_BATCH.OUTCOME_FILE_DATE.eq(new Timestamp(startDate.getTime())))
 					.fetch();
 			
-			String resultStr = "";
+			String resultStr = deleteLinesCRA(craBatchRecords, cccList);
+			String newETI = craFile.substring(0, 72);
+			String newCRA = newETI + resultStr + craFile.substring(72, craFile.length());
 			
-			for(Record craBatchRecord : craBatchRecords) {
-				byte[] data = craBatchRecord.get(CRA_BATCH.OUTCOME_FILE);
-				String dataStr = new String(data);
+			insertCRADB(dslContext, domainId, fileNameDate, "R", newCRA, startDate, cccIdList);
+		
+		// NORMAL
+		} else
+			insertCRADB(dslContext, domainId, fileNameDate, "N", craFile, startDate, cccIdList);
+	}
+	
+	private static void insertCRADB(DSLContext dslContext, Integer domainId, Date fileNameDate, String craType, String file, Date startDate, ArrayList<Integer> cccIdList) {
+		CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
+				.set(CRA_BATCH.DOMAIN, domainId)
+				.set(CRA_BATCH.DATE, new Timestamp(fileNameDate.getTime()))
+				.set(CRA_BATCH.STATUS, (byte)1)
+				.set(CRA_BATCH.COMMUNICATION_ID, craType)
+				.set(CRA_BATCH.INCOME_FILE, (byte[])null)
+				.set(CRA_BATCH.OUTCOME_FILE, file.getBytes())
+				.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))
+				.returning(CRA_BATCH.ID)
+				.fetchOne();
+			
+		Integer craBatchId = craBatchRecord.getId();
+		
+		cccIdList.forEach(cccId -> 
+			dslContext.insertInto(CRA_BATCH_DETAIL)
+				.set(CRA_BATCH_DETAIL.DOMAIN, domainId)
+				.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
+				.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, cccId)
+				.execute()
+		);
+	}
+	
+	private static String deleteLinesCRA(Result<Record> craBatchRecords, List<String> cccList) {
+		String resultStr = "";
+		
+		for(Record craBatchRecord : craBatchRecords) {
+			byte[] data = craBatchRecord.get(CRA_BATCH.OUTCOME_FILE);
+			String dataStr = new String(data);
+			
+			String subStringAnalize = "";
+			
+			for(int i=0; i<dataStr.length(); i+=72) {
 				
-				String subStringAnalize = "";
+				subStringAnalize = dataStr.substring(i, i + 72);
 				
-				for(int i=0; i<dataStr.length(); i+=72) {
+				if(subStringAnalize.contains("DDE")) {
 					
-					subStringAnalize = dataStr.substring(i, i + 72);
+					String analizeCCC = subStringAnalize.substring(7, 18);
 					
-					if(subStringAnalize.contains("DDE")) {
+					if(cccList.contains(analizeCCC)) {
+						resultStr += subStringAnalize;
 						
-						String analizeCCC = subStringAnalize.substring(7, 18);
-						
-						if(cccList.contains(analizeCCC)) {
-							resultStr += subStringAnalize;
+						for(int j=i+72; i<dataStr.length(); j+=72) {
 							
-							for(int j=i+72; i<dataStr.length(); j+=72) {
+							if(j == dataStr.length()) {
+								i = j;
+								break;
+							}
+							
+							subStringAnalize = dataStr.substring(j, j + 72);
+							
+							if(subStringAnalize.contains("DDE"))
+								break;
+							
+							if(subStringAnalize.contains("TRB"))
+								resultStr += subStringAnalize;
+							
+							if(subStringAnalize.contains("CRE")) {
+								String subStringAnalize1 = subStringAnalize.substring(0, 17);
+								String deleteString = "B";
+								String subStringAnalize2 = subStringAnalize.substring(18, 72);
 								
-								if(j == dataStr.length()) {
-									i = j;
-									break;
-								}
-								
-								subStringAnalize = dataStr.substring(j, j + 72);
-								
-								if(subStringAnalize.contains("DDE"))
-									break;
-								
-								if(subStringAnalize.contains("TRB"))
-									resultStr += subStringAnalize;
-								
-								if(subStringAnalize.contains("CRE")) {
-									String subStringAnalize1 = subStringAnalize.substring(0, 17);
-									String deleteString = "B";
-									String subStringAnalize2 = subStringAnalize.substring(18, 72);
-									
-									subStringAnalize = subStringAnalize1 + deleteString + subStringAnalize2;
-									resultStr += subStringAnalize;
-								}
+								subStringAnalize = subStringAnalize1 + deleteString + subStringAnalize2;
+								resultStr += subStringAnalize;
 							}
 						}
 					}
 				}
 			}
-			
-			String newETI = agrarianAFI.substring(0, 72);
-			String newCRA = newETI + resultStr + agrarianAFI.substring(72, agrarianAFI.length());
-			System.out.println("RESULTADO FINAL");
-			System.out.println(newCRA);
-			
-			try {
-			
-				CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
-						.set(CRA_BATCH.DOMAIN, domainId)
-						.set(CRA_BATCH.DATE, new Timestamp(fileNameDate.getTime()))
-						.set(CRA_BATCH.STATUS, (byte)1)
-						.set(CRA_BATCH.COMMUNICATION_ID, "R")
-						.set(CRA_BATCH.INCOME_FILE, (byte[])null)
-						.set(CRA_BATCH.OUTCOME_FILE, newCRA.getBytes())
-						.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))
-						.returning(CRA_BATCH.ID)
-						.fetchOne();
-					
-				Integer craBatchId = craBatchRecord.getId();
-				
-				for(Integer cccId : cccIdList) {
-					dslContext.insertInto(CRA_BATCH_DETAIL)
-					.set(CRA_BATCH_DETAIL.DOMAIN, domainId)
-					.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
-					.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, cccId)
-					.execute();
-				}
-				
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-		} else {
-			
-			try { 
-				CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
-					.set(CRA_BATCH.DOMAIN, domainId)
-					.set(CRA_BATCH.DATE, new Timestamp(fileNameDate.getTime()))
-					.set(CRA_BATCH.STATUS, (byte)1)
-					.set(CRA_BATCH.COMMUNICATION_ID, "N")
-					.set(CRA_BATCH.INCOME_FILE, (byte[])null)
-					.set(CRA_BATCH.OUTCOME_FILE, agrarianAFI.getBytes())
-					.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))
-					.returning(CRA_BATCH.ID)
-					.fetchOne();
-				
-				Integer craBatchId = craBatchRecord.getId();
-				
-				for(Integer cccId : cccIdList) {
-					dslContext.insertInto(CRA_BATCH_DETAIL)
-					.set(CRA_BATCH_DETAIL.DOMAIN, domainId)
-					.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
-					.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, cccId)
-					.execute();
-				}
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
 		}
 		
-		return "";
-		
+		return resultStr;
 	}
 	
 	// --------------------------------------------- Check Rectificative CRA
 	
-	public static boolean checkIfRectificative(DSLContext dslContext, Date findingDate, ArrayList<Integer> selectedCCCList) {
+	public static boolean checkIfRectificative(Connection connection, Date findingDate, ArrayList<Integer> selectedCCCList) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
 		Result<Record> craRecords = dslContext.select().from(CRA_BATCH)
+			.join(CRA_BATCH_DETAIL)
+			.on(CRA_BATCH_DETAIL.CRA_BATCH.eq(CRA_BATCH.ID))
 			.where(CRA_BATCH.OUTCOME_FILE_DATE.eq(new Timestamp(findingDate.getTime())))
-			.and(CRA_BATCH.ID.in(
-					dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
-						.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.in(selectedCCCList))
-						.fetch(CRA_BATCH_DETAIL.CRA_BATCH)
-			)).fetch();
+			.and(CRA_BATCH_DETAIL.ENTERPRISE_CCC.in(selectedCCCList))
+			.fetch();
 		
 		return craRecords.isNotEmpty();
 	}
 	
 	// --------------------------------------------- Auxiliar Methods
 	
-	public static SSRegimeType getSSRegime( int cccType ) {
+	private static SSRegimeType getSSRegime( int cccType ) {
 		Map<CCCType, SSRegimeType> regimes = new HashMap<>();
 		regimes.put(CCCType.AGRICULTURAL, SSRegimeType.AGRICULTURAL);
 		
@@ -425,16 +390,6 @@ public class JooqCRA {
 		
 		DateUtils.resetTime(dateJava);
 		return new java.sql.Date(dateJava.getTime());
-	}
-
-	private static java.util.Date parseDateToJava(Date dateSQL) {
-		if(null == dateSQL)
-			return null;
-		
-		java.util.Date dateJava = new java.util.Date(dateSQL.getTime());
-		DateUtils.resetTime(dateJava);
-		
-		return dateJava;
 	}
 	
 }
