@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainSelectionDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
@@ -115,8 +116,8 @@ public class BookingPanel extends MainEntryPoint {
 		private MenuItem createBooking;
 
 		public FeeWithoutbookintMenu() {
-			removeCustomerFee = addMenuItem("Eliminar Cuota", new RemoveCustomerFeeCommand(), AON.CSS.aonIconFix(), "removeCustomerFee");
-			createBooking = addMenuItem("Crear Contrataci\u00f3n", new CreateBookingCommand(), AON.CSS.aonIconFix(), "createBooking");
+			removeCustomerFee = addMenuItem("Eliminar Cuota", new RemoveCustomerFeeCommand(), AON.CSS.aonIconDelete(), "removeCustomerFee");
+			createBooking = addMenuItem("Crear Contrataci\u00f3n", new CreateBookingCommand(), AON.CSS.aonIconAdd(), "createBooking");
 		}
 		
 		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
@@ -956,11 +957,15 @@ public class BookingPanel extends MainEntryPoint {
 		Label customerStatusLabel = new Label(bookingCheck.getCustomer().getStatus().getDescription());
 		Label productLabel = new Label(getProductDescription(bookingCheck));
 		Label productStatusLabel = new Label(Integer.parseInt(bookingCheckType.getSelectedValue()) == 1 ? getFeeStatus(bookingCheck) : getProductStatus(bookingCheck));
-		Label quantityLabel = new Label(null == bookingCheck.getQuantity() ? "" : bookingCheck.getQuantity());
+		Label quantityLabel = new Label(AonStringUtils.isBlank(bookingCheck.getQuantity()) ? "1.0" : bookingCheck.getQuantity());
 		Label startDateLabel = new Label(formatDate(bookingCheck.getStartDate()));
 		Label endDateLabel = new Label(formatDate(bookingCheck.getEndDate()));
 		
-		AonToolbarSmallButton actionBtn = new AonToolbarSmallButton(getActionTitle(), AON.CSS.aonIconFix());
+		AonToolbarSmallButton actionBtn = new AonToolbarSmallButton(getActionTitle(), AON.CSS.aonIconMoreVertical());
+		if(Integer.parseInt(bookingCheckType.getSelectedValue()) == 0) {
+			actionBtn.removeStyleName(AON.CSS.aonIconMoreVertical());
+			actionBtn.addStyleName(AON.CSS.aonIconAdd());
+		}
 		actionBtn.addClickHandler(e -> {
 			switch (Integer.parseInt(bookingCheckType.getSelectedValue())) {
 				case 0:
@@ -1115,10 +1120,15 @@ public class BookingPanel extends MainEntryPoint {
 			widgetDomain.addStyleName(AON.CSS.aonItemFlex());
 			
 			Label domain = new Label(domainCompany.getDomain().getDescription());
+			AonTableButton btn = new AonTableButton("Ir a", AON.CSS.aonIconSend());
+			btn.addClickHandler(e -> {
+				Window.open(domainCompany.getDomain().getName(),"_blank","");
+			});
 			Label status = new Label("Estado : " + (domainCompany.getDomain().isActive() ? "Activo" : "Inactivo"));
 			
 			widgetDomain.add(domain);
 			widgetDomain.add(status);
+			widgetDomain.add(btn);
 			
 			widget.add(widgetDomain);
 		}
