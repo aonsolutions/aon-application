@@ -6,7 +6,8 @@
       "REQUIRE"         : "es <strong>obligatorio</strong>",
       "SELECT"          : "Selecciona una opción",
       "SELECT_MULTIPLE" : "Selecciona las opciones"
-    }
+    },
+    "SEND": "Enviar"
   },
   "HEADER": {
     "EDIT_PROFILE": "Editar perfil",
@@ -75,7 +76,12 @@
     "TASKS": "Tareas",
     "NOTIFICATIONS": "Notificaciones",
     "THIS_WEEK": "Esta semana",
-    "CREATE": "Crear"
+    "CREATE": "Crear",
+    "NEW_QUERY": "Nueva consulta",
+    "SUBJECT": "Asunto",
+    "TEXT": "Texto",
+    "NO_PENDING_TASKS": "No hay tareas pendientes",
+    "ASSIGN_TO": "Asignar a"
   },
   "DOCUMENTATION": {
     "FILE_SELECT_PREVIEW"   : "Vista previa",

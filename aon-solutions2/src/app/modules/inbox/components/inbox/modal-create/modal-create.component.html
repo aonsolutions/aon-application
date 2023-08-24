@@ -1,3 +1,31 @@
-    <div class="content">
-
-        </div>
+<div class="modal-container">
+  <div class="issue">
+    <div>
+      <span class="new-query Roboto-24-sp-H5">
+        {{ "INBOX.NEW_QUERY" | translate }}
+      </span>
+    </div>
+    <div class="buttons">
+      <app-icon shape="fullscreen"></app-icon>
+      <app-icon shape="close" (click)="closeModal()"></app-icon>
+    </div>
+  </div>
+  <div class="content-input">
+    <app-input
+    [type]="'select'"
+    [label]="'INBOX.ASSIGN_TO' | translate"
+    >
+    </app-input>
+    <app-input
+      [type]="'textarea'"
+      [placeholder]="'INBOX.TEXT' | translate"
+      [label]="'INBOX.SUBJECT' | translate"
+    ></app-input>
+  </div>
+  <div class="button">
+    <app-button [class]="'*color *position left red'" [width]="'226px'">
+      <app-icon shape="send"></app-icon>
+      {{ "COMMON.SEND" | translate }}
+    </app-button>
+  </div>
+</div>

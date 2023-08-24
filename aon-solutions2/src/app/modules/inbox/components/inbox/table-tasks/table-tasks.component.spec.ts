@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateQueryComponent } from './modal-create.component';
+import { TableTasksComponent } from './table-tasks.component';
 
-describe('CreateQueryComponent', () => {
-  let component: CreateQueryComponent;
-  let fixture: ComponentFixture<CreateQueryComponent>;
+describe('TableTasksComponent', () => {
+  let component: TableTasksComponent;
+  let fixture: ComponentFixture<TableTasksComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CreateQueryComponent ]
+      declarations: [ TableTasksComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateQueryComponent);
+    fixture = TestBed.createComponent(TableTasksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

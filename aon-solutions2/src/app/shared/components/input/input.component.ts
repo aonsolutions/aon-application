@@ -9,7 +9,7 @@ import { MatFormFieldAppearance } from '@angular/material/form-field';
 export class InputComponent implements OnInit {
   @Input() type             : string = '';
   @Input() appearance       : MatFormFieldAppearance = 'outline';
-  @Input() width            : string = '100%'; 
+  @Input() width            : string = '100%';
   @Input() label            : string = '';
   @Input() hint             : string = '';
   @Input() placeholder      : string = '';

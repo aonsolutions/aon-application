@@ -45,7 +45,7 @@
   </div>
 
   <!-- INPUTS TIPO SELECT -->
-    <mat-select 
+    <mat-select
       *ngIf="type=='select'"
       [(ngModel)]="value"
       [disabled]="disabled"
@@ -57,8 +57,8 @@
         {{option.text}}
       </mat-option>
     </mat-select>
-  
-    <mat-select 
+
+    <mat-select
       *ngIf="type=='selectMultiple'"
       [(ngModel)]="value"
       [disabled]="disabled"
@@ -90,7 +90,7 @@
   <mat-error *ngIf="required == 'required'">
     {{label}} <span [innerHTML]="'COMMON.INPUT.REQUIRE' | translate"></span>
   </mat-error>
-  
+
   <span matSuffix *ngIf="value!=''" [ngClass]="classSuffix" (click)="this.selectFunction()"><ng-content select="[suffix]"></ng-content></span>
   <mat-hint *ngIf="hint != ''">{{hint}}</mat-hint>
 </mat-form-field>
