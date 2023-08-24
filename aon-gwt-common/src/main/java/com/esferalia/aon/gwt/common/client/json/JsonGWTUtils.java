@@ -20,21 +20,9 @@ public class JsonGWTUtils implements Serializable {
 	public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	public static final String DATE_TIME_FORMAT_AUX = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-	private JsonGWTUtils() {
+	private JsonGWTUtils() {}
 	
-	}
-	
-	public static String getString(JSONObject json, String key ) {
-		return json != null ? (json.get(key) != null ? json.get(key).isString().stringValue() : null) : null;
-	}
-	
-	public static String getString(JSONObject json, String key, String defaultValue ) {
-		return json != null ? (json.get(key) != null ? json.get(key).isString().stringValue() : defaultValue) : defaultValue;
-	}
-	
-	public static String optString(JSONObject json, String key ) {
-		return json != null ? (json.get(key) != null ? json.get(key).isString().stringValue() : "") : "";
-	}
+	// ------------- JSONObject
 	
 	public static JSONObject getJSONObject(JSONObject json, String key) {
 		return json != null && json.get(key) != null 
@@ -42,59 +30,55 @@ public class JsonGWTUtils implements Serializable {
 				: new JSONObject();
 	}
 	
+	// ------------- JSONArray
+	
 	public static JSONArray getJSONArray(JSONObject json, String key) {
-		return json.get(key) != null ? json.get(key).isArray() : new JSONArray();
+		return json != null && json.get(key) != null 
+				? json.get(key).isArray() 
+				: new JSONArray();
 	}
+	
+	// ------------- String
+	
+	public static String getString(JSONObject json, String key ) {
+		return json != null && json.get(key) != null ? json.get(key).isString().stringValue() : null;
+	}
+	
+	public static String getString(JSONObject json, String key, String defaultValue ) {
+		return json != null && json.get(key) != null ? json.get(key).isString().stringValue() : defaultValue;
+	}
+	
+	public static String optString(JSONObject json, String key ) {
+		return json != null && json.get(key) != null ? json.get(key).isString().stringValue() : "";
+	}
+	
+	// ------------- Boolean
 	
 	public static Boolean getBoolean(JSONObject json, String key ) {
-		String value = json != null && json.get(key) != null ? json.get(key).isString().stringValue() : null;
-		if (AonStringUtils.isNotBlank(value)) {
-			return Boolean.valueOf(json.get(key).toString()); 
-		}
-		return null;
+		String value = json != null && json.get(key) != null ? json.get(key).toString() : null;
+		return AonStringUtils.isNotBlank(value) ? Boolean.valueOf(value) : null;
 	}
 	
-	public static boolean getboolean(JSONObject json, String key ) {
-		String value = json != null && json.get(key) != null ? json.get(key).isString().stringValue() : null;
-		if (AonStringUtils.isNotBlank(value)) {
-			Boolean ret = Boolean.valueOf(json.get(key).toString());
-			return ret != null ? ret : false; 
-		}
-		return false;
-	}
+	// ------------- Double
 
 	public static Double getDouble(JSONObject json, String key ) {
-		return AonNumberUtils.toDouble(json.get(key) != null ? json.get(key).isNumber().doubleValue() : null); 
+		return AonNumberUtils.toDouble(json != null && json.get(key) != null ? json.get(key).isNumber().doubleValue() : null); 
 	}
 	
-	public static Double getdouble(JSONObject json, String key ) {
-		Number n = AonNumberUtils.toDouble(json.get(key) != null ? json.get(key).isNumber().doubleValue() : null);
-		return n==null?0:n.doubleValue();
-	}
-	
-	public static Short getShort(JSONObject json, String key) {
-		Number n = AonNumberUtils.toDouble(json.get(key) != null ? json.get(key).isNumber().doubleValue() : null);
-		return n==null?0:n.shortValue();
-	}
+	// ------------- Integer
 	
 	public static Integer getInteger(JSONObject json, String key ) {
-		if(json == null) return null;
-		return json.get(key) != null ? AonNumberUtils.toInteger(json.get(key).isNumber().toString()) : null; 
+		return AonNumberUtils.toInteger(json != null && json.get(key) != null ? json.get(key).isNumber().doubleValue() : null); 
 	}
 	
-	public static Integer optInteger(JSONObject json, String key ) {
-		return json != null ? AonNumberUtils.toInteger(json.get(key) != null ? json.get(key).isNumber().toString() : null) : null; 
-	}
-	
-	public static Integer getInt(JSONObject json, String key ) {
-		Number n = AonNumberUtils.toInteger(json.get(key) != null ? json.get(key).isNumber().toString() : null); 
-		return n==null?0:n.intValue();
-	}
+	// ------------- Byte
 	
 	public static Byte getByte(JSONObject json, String key ) {
-		Number n = AonNumberUtils.toInteger(json.get(key) != null ? json.get(key).isNumber().toString() : null); 
-		return n == null ? 0 : n.byteValue();
+		Integer byteInteger = getInteger(json, key);
+		return byteInteger == null ? 0 : byteInteger.byteValue();	
 	}
+	
+	// ------------- Date
 	
 	public static Date getDate(JSONObject json, String key ) {
 		Date d = null;
