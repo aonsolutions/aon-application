@@ -138,12 +138,15 @@
 
   <!--FIN CONTENIDO-->
   <!--Detail-->
-  <div detail *ngIf="showDetail">
-    mesajeeeeeeeeeeeeeeeees:
-    <div *ngIf="selectedMessage">
-      <p>{{ selectedMessage.Id }}</p>
-      <p>{{ selectedMessage.Description }}</p>
-      <p>{{ selectedMessage.Date}}</p>
+  <div detail *ngIf="showDetail" class="padding">
+    mensajeeeeeeeeeeeeeeeees:
+    <div *ngIf="messagesChat">
+      <div *ngFor="let messageChat of messagesChat; let i = index">
+        <p>{{ messageChat.Id }}</p>
+        <p>{{ messageChat.Description }}</p>
+        <p>{{ messageChat.Date}}</p>
+        <hr>
+      </div>
     </div>
   </div>
   <!--FIN Detail-->

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { FilterBuilder, IMessageChat, CollectionFactory  } from 'libraries/AonSDK/aon';
+import { CollectionFactory, ICollection, FilterBuilder, IMessageChat } from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
@@ -19,7 +19,7 @@ export interface Tabs {
 })
 export class InboxviewComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
-
+  collectionFactory = new CollectionFactory();
   functionHome: any = (result: any) => this.afterModalClosed(result);
   tabsConsultas: Tabs[] = [];
   tabsTareas: Tabs[] = [];
@@ -29,7 +29,7 @@ export class InboxviewComponent implements OnInit {
   showDetail: boolean = false;
   noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
-  selectedMessage: IMessageChat | null = null;
+  messagesChat    : ICollection<IMessageChat> = this.collectionFactory.createMessageChatCollection();
   id: number = 0;
   @ViewChild(TableQueriesComponent, { static: false })
   tableQueriesComponent!: TableQueriesComponent;
@@ -71,8 +71,6 @@ export class InboxviewComponent implements OnInit {
       });
   }
 
-  public collectionFactory = new CollectionFactory();
-
   //Inbox area
   // messages: ICollection<IMessage> =
   //   this.collectionFactory.createMessageCollection();
@@ -96,37 +94,14 @@ export class InboxviewComponent implements OnInit {
     this.modalComponent.openDialog(ModalCreateComponent, this.functionHome, 'Data from home');
   }
 
-  // rowClick(id: IMessage) {
-  //   //MessageService
-  //   let filterMessage = new FilterBuilder();
-  //   if (this.id !== 0) {
-  //     filterMessage.addField('id', this.id);
-  //   }
-  //   this.messageService
-  //     .getMessageList(filterMessage.getFilter())
-  //     .then((response) => {
-  //       this.messages = response;
-  //       this.messagesSubject.next(this.messages);
-  //       console.log('mis datos', response.toArray());
-
-  //     });
-
-  //   this.selectedMessage = id;
-  //   this.showDetail = true;
-  //   console.log('aaaaa', this.selectedMessage);
-  // }
-
   rowClickHandler(message: any) {
-
-    console.log('uuuuuuuuuuu',message.key)
-
     let filterBuilder = new FilterBuilder();
     filterBuilder.addField('idMessage', message.key);
+    
     this.messageChatService
       .getMessageChatList(filterBuilder.getFilter())
       .then((response) => {
-        // this.selectedMessage = response;
-        console.log('-------', response)
+        this.messagesChat = response;
     })
     this.showDetail = true;
   }
