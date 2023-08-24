@@ -132,11 +132,17 @@ public enum ContextVariable implements IResourceable {
 	DIRECT_BASE("BASE_PAGO_DIRECTO", VariableType.DOUBLE),
 	ADDITIONAL_BASE("BASE_HORAS_COMPL", VariableType.DOUBLE),
 	EXCESS_BASE("BASE_EXCESO", VariableType.DOUBLE, false), 
+	UNPAID_BASE("BASE_UNPAID", VariableType.DOUBLE),
 
 	CGC_BASE_RAW("BASE_CGC_BRUTA", VariableType.DOUBLE), CGP_BASE_RAW("BASE_CGP_BRUTA", VariableType.DOUBLE),
 	CGC_BASE_ENTERPRISE("BASE_CGC_E", VariableType.DOUBLE, false), CGP_BASE_ENTERPRISE("BASE_CGP_E", VariableType.DOUBLE, false),
 
 	REGULATORY_BASE("BASE_REGULADORA", VariableType.DOUBLE, false),
+
+	TOTAL_CGC_BASE("TOTAL_BASE_CGC", VariableType.DOUBLE, false), 
+	TOTAL_CGP_BASE("TOTAL_BASE_CGP", VariableType.DOUBLE, false),
+	TOTAL_CGC_BASE_ENTERPRISE("TOTAL_BASE_CGC_E", VariableType.DOUBLE, false), 
+	TOTAL_CGP_BASE_ENTERPRISE("TOTAL_BASE_CGP_E", VariableType.DOUBLE, false),
 
 	// Cuotas
 	CGC_EMPLOYEE("CGC", VariableType.DOUBLE), CGC_ENTERPRISE("CGC_E", VariableType.DOUBLE),
@@ -191,6 +197,7 @@ public enum ContextVariable implements IResourceable {
 	ERE_FORCE_OFF("ERE_FZA_EXONERADO", VariableType.BOOLEAN), 
 	MATERNITY("MTNAD", VariableType.BOOLEAN),
 	QUOTE_IT("COTIZACION_IT", VariableType.QUOTE_IT_DROP),
+	UNPAID("UNPAID", VariableType.BOOLEAN),
 
 	// Quote Regime
 	MORE_THAN_65("MAYOR_65", VariableType.BOOLEAN, false),
@@ -475,7 +482,7 @@ public enum ContextVariable implements IResourceable {
 	Arrays.stream(ContextVariable.values())
 	.filter(v->v.getName().startsWith(ERE_BASE.getName()))
 	.toArray(ContextVariable[]::new);
-	
+
 	public static ContextVariable [] ERE_DAYSS  =
 	Arrays.stream(ContextVariable.values())
 	.filter(v->v.getName().startsWith(ERE_DAYS.getName()))
@@ -491,6 +498,13 @@ public enum ContextVariable implements IResourceable {
 	.map( v -> v.getName())
 	.filter(s -> s.startsWith(ERE_FACTOR.getName()))
 	.toArray(String[]::new);
+
+	
+	public static ContextVariable [] FREES  =
+	new ContextVariable [] { UNPAID, DIRECT_PAY, MATERNITY} ;
+
+	public static ContextVariable [] FREE_BASES  =
+	new ContextVariable [] { UNPAID_BASE, DIRECT_BASE, MATERNITY_BASE} ;
 
 	private final String name;
 	private VariableType type;

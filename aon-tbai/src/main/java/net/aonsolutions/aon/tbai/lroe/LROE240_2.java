@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveCodigoFacturaRectificativaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveTipoFacturaGastosEnum;
@@ -65,6 +66,8 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_factura
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_consultapeticion_v1_0_0.LROEPJ240FacturasRecibidasConsultaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_consultarespuesta_v1_0_0.LROEPJ240FacturasRecibidasConsultaRespuesta;
 import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.exceptions.TBAIError;
+import net.aonsolutions.aon.tbai.exceptions.TbaiException;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
@@ -165,6 +168,9 @@ public class LROE240_2 extends LROE240 {
 			receptionDate = invoice.getIssueDate();
 		cabecera.setFechaRecepcion(AonDateUtils.format(receptionDate, DATE_FORMAT));
 		if(invoice.isRectifier()) {
+			cabecera.setSerieFactura(reference.substring(0, 1));
+			cabecera.setNumFactura(reference.substring(1));
+
 			FacturaRectificativaImporteType rectificativa = new FacturaRectificativaImporteType(); 
 			rectificativa.setCodigo(ClaveCodigoFacturaRectificativaEnum.R_1); 
 			rectificativa.setTipo(ClaveTipoRectificativaEnum.I); // por diferencia o por sustitucion
@@ -203,7 +209,7 @@ public class LROE240_2 extends LROE240 {
 		IDClaveFacturaRecibidaType clave = new IDClaveFacturaRecibidaType();
 		
 		String key = "01";
-		if(invoice.isWithholdingFarmer()) key = "02";
+		if(invoice.isWithholdingFarmer() && !invoice.isIsp()) key = "02";
 		if(invoice.isVatAccrualPayment()) key = "07";
 		if(invoice.isIntracommunity()) key = "09";
 		if(invoice.isExtracommunity()) key = "13";
@@ -226,6 +232,8 @@ public class LROE240_2 extends LROE240 {
 				if(invoice.isExtracommunity()) {
 					tax.setPercentage(0.0);
 					tax.setQuota(0.0);
+					tax.setDeductiblePercent(0.0);
+					tax.setDeductibleQuota(0.0);
 				}
 				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 					tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
@@ -267,6 +275,9 @@ public class LROE240_2 extends LROE240 {
 	}
 	
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
+		if(AonStringUtils.isBlank(invoice.getRegistryDocument())) {
+			return error(new TbaiException(TBAIError.AON_001));
+		} 
 		LinkedList<Invoice> invoices = new LinkedList<>();
 		invoices.add(invoice);
 		boolean mod = invoice.getInvoiceInfo().getStatus().isAccepted() || invoice.getInvoiceInfo().getStatus().isAcceptedWithErrors();
@@ -314,7 +325,10 @@ public class LROE240_2 extends LROE240 {
 		factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
 //		factura.setSerieFactura(invoice.getSeries());
 		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
-		factura.setNumFactura(reference);
+		if(invoice.isRectifier()) {
+			factura.setSerieFactura(reference.substring(0, 1));
+			factura.setNumFactura(reference.substring(1));
+		} else factura.setNumFactura(reference);
 		anulacion.setIDRecibida(factura);
 		
 		anulaciones.getFacturaRecibida().add(anulacion);
@@ -365,7 +379,10 @@ public class LROE240_2 extends LROE240 {
 		fecha.setHasta(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaExpedicionFactura(fecha);
 		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
-		cabecera.setNumFactura(reference);
+		if(invoice.isRectifier()) {
+			cabecera.setSerieFactura(reference.substring(0, 1));
+			cabecera.setNumFactura(reference.substring(1));
+		} else cabecera.setNumFactura(reference);
 		return cabecera;
 	}
 	

@@ -207,23 +207,23 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 			
 				int year = AonDateUtils.get(settleEndDate, Calendar.YEAR );
 				
-				Date extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), year);
+				Date extraStartDate  = AgreementExtra.parseAgreementStartDate(extra.getStartDate(), year);
 				
 	//			if ( extraStartDate.after(settleEndDate))  
 	//				continue;  // Nothing to calculate
 				while ( !extraStartDate.after(settleEndDate )) {
 				
-					Date extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
-					Date extraEndDate  = AgreementExtra.parseAgreementDate(extra.getEndDate(), year);
+					Date extraIssueDate  = AgreementExtra.parseAgreementIssueDate(extra.getIssueDate(), year);
+					Date extraEndDate  = AgreementExtra.parseAgreementEndDate(extra.getEndDate(), year);
 		
 					if ( extraIssueDate.before(settleEndDate)
 						 && extraIssueDate.after(contractStartDate) ) {
-						extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
-						extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
+						extraStartDate  = AgreementExtra.parseAgreementStartDate(extra.getStartDate(), ++year);
+						extraIssueDate  = AgreementExtra.parseAgreementIssueDate(extra.getIssueDate(), year);
 						if ( extraStartDate.after(settleEndDate))  
 							break;  // Nothing to calculate
 					} else if (extraEndDate.before(settleEndDate)  ) {
-						extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
+						extraStartDate  = AgreementExtra.parseAgreementStartDate(extra.getStartDate(), ++year);
 						if ( extraStartDate.after(settleEndDate))  
 							break;  // Nothing to calculate
 					}
@@ -358,7 +358,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 						calculatedExtras.add(record.getId());
 					}
 					
-					extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
+					extraStartDate  = AgreementExtra.parseAgreementStartDate(extra.getStartDate(), ++year);
 				}
 			} catch (DateFormatException e) {
 				AgreementPaymentRecord extraPayment = extras.get(i).into(AGREEMENT_PAYMENT);
@@ -605,7 +605,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 
 	private static Date getStartDate(ContractPaymentRecord extra, int year) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
@@ -619,7 +619,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	
 	private static Date getEndDate(ContractPaymentRecord extra, int year) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);

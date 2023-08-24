@@ -199,7 +199,34 @@ public class SalarySelect extends Composite {
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
+	
+	public Date getEndDate() {
+	    return
+	    getSelectedType().accept(new TypeVisitor<Date>() {
 
+		@Override
+		public Date visitSalary(Type type) {
+		    Date month = monthListBox.getSelectedMonth();
+		    return DateUtils.getLastDayOfMonth(month);
+		}
+
+		@Override
+		public Date visitExtra(Type type) {
+		    return null;
+		}
+
+		@Override
+		public Date visitSettle(Type type) {
+		    return dateListBox.getSelected();
+		}
+
+		@Override
+		public Date visitDelay(Type type) {
+		    Date month = monthListBox.getSelectedMonth();
+		    return DateUtils.getLastDayOfMonth(month);
+		}
+	    });
+	}
 	
 
 	// -------------------------------------------------------------------------
@@ -374,7 +401,7 @@ public class SalarySelect extends Composite {
 						if (endDate.compareTo(contractStartDate) < 0)
 							continue;
 
-						issueDate = parseExtraDate(extra.getIssueDate(),
+						issueDate = parseExtraIssueDate(extra.getIssueDate(),
 								DateUtils.copyDateOnly(salaryDate));
 						break;
 					}
@@ -454,7 +481,7 @@ public class SalarySelect extends Composite {
 			return;
 
 		    Date payDate = getPayDate();
-		    Date defautlPayDate = payDate != null ? payDate : DateUtils.after(new Date(), endDate);
+		    Date defautlPayDate = payDate != null ? payDate : getDefaultPayDate();
 
 		    int index = DateUtils.getDaysBetween(payStartDate, defautlPayDate);
 		    int length = payDateListBox.getPageSize();
@@ -746,7 +773,7 @@ public class SalarySelect extends Composite {
 			int yearsOffset = (offset / extras.size());
 			Date extraIssueDate = DateUtils.copyDateOnly(contractStartDate);
 			DateUtils.addYears2Date(extraIssueDate, years + yearsOffset);
-			Date extraIssuedate = parseExtraDate(extra.getIssueDate(),
+			Date extraIssuedate = parseExtraIssueDate(extra.getIssueDate(),
 					extraIssueDate);
 			extraIssueDates.add(extraIssuedate);
 
@@ -775,7 +802,7 @@ public class SalarySelect extends Composite {
 			Extra extra = extras.get(index % extras.size());
 			issueDate = DateUtils.copyDateOnly(contractStartDate);
 			DateUtils.addYears2Date(issueDate, (index / extras.size()));
-			parseExtraDate(extra.getIssueDate(), issueDate);
+			parseExtraIssueDate(extra.getIssueDate(), issueDate);
 		} while (issueDate.compareTo(date) != 0
 				&& DateUtils.getYears(issueDate, date) <= 1);
 
@@ -790,7 +817,7 @@ public class SalarySelect extends Composite {
 
 	private Extra getExtraByIssueDate(Date date) {
 		for (Extra extra : extras) {
-			Date extraDate = parseExtraDate(extra.getIssueDate(), CalendarUtil.copyDate(date));
+			Date extraDate = parseExtraIssueDate(extra.getIssueDate(), CalendarUtil.copyDate(date));
 			if (extraDate.getDate() == date.getDate() && extraDate.getMonth() == date.getMonth() )
 				return extra;
 		}
@@ -840,15 +867,40 @@ public class SalarySelect extends Composite {
 		return null;
 	    }
 	}
+	
+	private Date getDefaultPayDate() {
+	    return 
+	    salaryPreview.getType().accept(new TypeVisitor<Date>() {
+		@Override
+		public Date visitDelay(Type type) {
+		    return DateUtils.after(new Date(), SalarySelect.this.salaryPreview.getEndDate());
+		}
+		
+		@Override
+		public Date visitExtra(Type type) {
+		    return SalarySelect.this.salaryPreview.getIssueDate();
+		}
+		
+		@Override
+		public Date visitSalary(Type type) {
+		    return SalarySelect.this.salaryPreview.getEndDate();
+		}
+		
+		@Override
+		public Date visitSettle(Type type) {
+		    return SalarySelect.this.salaryPreview.getEndDate();
+		}
+	    });
+	}
 
 	// -------------------------------------------------------------------------
 
 	private static Date getEndDate(Extra extra, Date date) {
-		return parseExtraDate(extra.getEndDate(), DateUtils.copyDateOnly(date));
+		return parseExtraEndDate(extra.getEndDate(), DateUtils.copyDateOnly(date));
 	}
 
 	private static Date getStartDate(Extra extra, Date date) {
-		return parseExtraDate(extra.getStartDate(),
+		return parseExtraStartDate(extra.getStartDate(),
 				DateUtils.copyDateOnly(date));
 	}
 
@@ -871,8 +923,16 @@ public class SalarySelect extends Composite {
 		Collections.sort(extras, comparator);
 	}
 
-	private static Date parseExtraDate(String text, Date date) {
-		return AgreementDraft.parseExtraDate(text, date);
+	private static Date parseExtraStartDate(String text, Date date) {
+		return AgreementDraft.parseExtraStartDate(text, date);
+	}
+
+	private static Date parseExtraEndDate(String text, Date date) {
+		return AgreementDraft.parseExtraEndDate(text, date);
+	}
+
+	private static Date parseExtraIssueDate(String text, Date date) {
+		return AgreementDraft.parseExtraIssueDate(text, date);
 	}
 
 	private static Date max(Date a, Date b) {

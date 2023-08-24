@@ -129,8 +129,8 @@
 		<ui:insert name="additionalDataTableContent"/>
 
 		<aon:if test="#{showDataScroller}">
-			<aon:dataScroller for="#{dataTableId}" showNote="#{showNote}"
-				rowCount="#{dataModel.rowCount}" page="#{controller.page}" pageSize="#{rows}" />
+			<aon:aonScroller for="#{dataTableId}" showNote="#{showNote}"
+				rowCount="#{dataModel.rowCount}" page="#{controller.page}" pageSize="#{rows}" forLines="#{true}"/>
 		</aon:if>	
 
 	</aon:div>

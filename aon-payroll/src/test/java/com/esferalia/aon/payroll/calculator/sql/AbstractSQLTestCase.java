@@ -199,7 +199,7 @@ public abstract class AbstractSQLTestCase {
 		Date issueDate, Date chargeDate, Criteria criteria, IContractSalaryCalculatorContext.IListener listener) throws ExpressionException,
 		SQLException {
 	    ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(connection, startDate,
-		    endDate, chargeDate, issueDate, criteria);
+		    endDate, issueDate, chargeDate, criteria);
 	    if (listener != null)
 		ctx.setListener(listener);
 	    ctx.next();

@@ -45,4 +45,16 @@ public enum InvoiceCommunicationType implements Serializable{
 		}
 		return null;
 	}
+	
+	public boolean isTbai() {
+		return TBAI.equals(this);
+	}
+	
+	public boolean isSii() {
+		return SII.equals(this);
+	}
+	
+	public boolean isLroe() {
+		return LROE.equals(this);
+	}
 }

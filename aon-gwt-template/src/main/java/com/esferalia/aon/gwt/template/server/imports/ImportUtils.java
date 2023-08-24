@@ -3,8 +3,6 @@ package com.esferalia.aon.gwt.template.server.imports;
 import java.text.Collator;
 import java.util.Locale;
 
-import com.esferalia.aon.watson.util.AonStringUtils;
-
 public class ImportUtils {
 	
 	public boolean compare(String value1, String value2) {

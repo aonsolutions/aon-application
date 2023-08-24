@@ -863,8 +863,8 @@ public class AgreementParser {
 					} else if(AonStringUtils.containsIgnoreCase(agreementPayment.getConceptCode(), "LOCOMOCI") ||
 							AonStringUtils.containsIgnoreCase(agreementPayment.getConceptCode(), "IMPORTE_KM") ||
 							AonStringUtils.containsIgnoreCase(agreementPayment.getConceptCode(), "KM")) {
-						irpfExpression = "EXCESO(0.19 * KMS)";
-						quoteExpression = "EXCESO(0.19 * KMS)";
+						irpfExpression = "EXCESO(0.26 * KMS)";
+						quoteExpression = "EXCESO(0.26 * KMS)";
 					}
 					
 					Result<PaymentConceptRecord> paymentConcepts = dslContext.selectFrom(PAYMENT_CONCEPT)

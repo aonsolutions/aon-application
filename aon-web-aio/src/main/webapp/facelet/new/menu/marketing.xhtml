@@ -161,10 +161,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<!-- Preguntas -->
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="question-commercial"
-											rendered="#{actionDenied.renderedOption('question_list-commercial')}"
-											action="question_list-commercial"
-											actionListener="#{question.onSearch}"
+										<aon:commandLink id="questionModule" action="gwt_questionModule"
 											value="#{bundle.registry_question_module}" />
 									</aon:div>
 									

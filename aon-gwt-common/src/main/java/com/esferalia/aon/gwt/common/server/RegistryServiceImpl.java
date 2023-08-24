@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.ImportError;
@@ -189,6 +190,29 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public ImportError importFee(Domain domain, User user, Fee fee, Integer index) {
 		return FeeImport.insertFee(domain, user, index, fee);
+	}
+	
+	// **************************************************
+	// ********************************** [BOOKING CHECK]
+	// **************************************************
+
+	@Override
+	public LinkedList<BookingCheck> getBookingWithoutFeeList(String domainName, int domain, String user, CustomerFeeParams params) {
+		return AON.getBookingWithoutFeeList(domainName, domain, user, params);
+	}
+	
+	@Override
+	public LinkedList<BookingCheck> getFeeWithoutBookingList(String domainName, int domain, String user, CustomerFeeParams params) {
+		return AON.getFeeWithoutBookingList(domainName, domain, user, params);
+	}
+	
+	@Override
+	public LinkedList<BookingCheck> getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		return AON.getBookingCheckList(domainName, domain, user, params);
+	}
+	@Override
+	public void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
+		AON.saveBookingCheck(domainName, domain, user, bookingCheck);
 	}
 	
 }

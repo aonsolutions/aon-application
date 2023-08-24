@@ -1,8 +1,12 @@
 package com.esferalia.aon.gwt.finance.server;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationService;
@@ -10,17 +14,24 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.IC_ERROR;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
@@ -219,6 +230,7 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 				ICResponse icResponse = new ICResponse();
 				icResponse.setError(resp.isError());
 				icResponse.setErrorMessage(resp.getErrorMessage());
+				icResponse.setErrorCode(resp.getErrorCode());
 				return icResponse;
 			}
 		} catch (Exception e) {
@@ -309,5 +321,50 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 		Integer investAssetId = Integer.parseInt(investAsset);
 		
 		AON.assignInvestAsset2Invoice(domainName, domainId, user, investAssetId, invoice);
+	}
+	
+	@Override
+	public List<InvoiceTracking> getInvoiceTrackingList(String domainName, int domainId, String login, Integer invoice) {
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		User user = new User().setLogin(login);
+		return AON.getInvoiceTrackingList(domain, user, f -> f.getInvoiceProperty().eq(invoice));
+	}
+	
+	public String getRequestUrl(String domainName, int domainId, String login, Integer dataResponse) {
+		DataResponse dr = AON.getDataResponse(domainName, domainId, login, f -> f.getIdProperty().eq(dataResponse));
+
+		Attach requestAttach = AON.getAttach(domainName, domainId, login, f -> 
+				f.getSourceTypeProperty().eq(DataAttachSource.LROE.value())
+				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
+				.and(f.getSourceBatchProperty().eq(dr.getDataRequest())), AttachType.DATA, false);
+
+		JSONObject requestData = new JSONObject();
+		requestData.put("domain_name", domainName);
+		requestData.put("domain_id", domainId);
+		requestData.put("id", requestAttach.getId());
+		requestData.put("attach_type", AttachType.DATA.getName());
+		String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
+		return "ms/api/file/" +  result;		
+		
+	}
+	
+	public String getResponseUrl(String domainName, int domainId, String login, Integer dataResponse) {
+		Attach responseAttach = AON.getAttach(domainName, domainId, login, f -> f.getSourceTypeProperty().eq(DataAttachSource.LROE.value())
+				.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value())
+					.or(f.getTypeProperty().eq(DataAttachType.RESPONSE_ERROR.value())))
+				.and(f.getSourceBatchProperty().eq(dataResponse)), AttachType.DATA, false);
+		
+		JSONObject responseData = new JSONObject();
+		responseData.put("domain_name", domainName);
+		responseData.put("domain_id", domainId);
+		responseData.put("id", responseAttach.getId());
+		responseData.put("attach_type", AttachType.DATA.getName());
+		String responseResult = Base64.getEncoder().encodeToString(responseData.toString().getBytes(StandardCharsets.UTF_8));
+		return "ms/api/file/" +  responseResult;
+	}
+
+	@Override
+	public void addDocumentInvoice(String domainName, int domainId, String user, Invoice invoice) {
+		IC_ERROR.addDocumentInvoice(domainName, domainId, user, invoice);		
 	}
 }

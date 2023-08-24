@@ -126,4 +126,8 @@ public class LROEResponse implements Serializable {
 		}
 		return message;
 	}
+	
+	public String getErrorCode() {
+		return JsonUtils.getString(getJson(), "errorCode");
+	}
 }

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOAAddit
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOAResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023GIPUZKOARScript1;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -174,7 +175,7 @@ class Model303GIPUZKOA2023 extends Model303Base {
 
 					@Override
 					public String getCheckDataResponseDataAction() {
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod303CheckDataResponseData";
 					}
 
 					@Override

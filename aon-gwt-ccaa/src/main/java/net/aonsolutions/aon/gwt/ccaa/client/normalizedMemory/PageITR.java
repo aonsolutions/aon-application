@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
@@ -39,6 +40,7 @@ public class PageITR extends PageAbs {
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 	
 	private static final String ITR8080829TXT = "La entidad est\u00e1 sujeta a la obligaci\u00f3n de identificar al titular real proque no cotiza en mercados regulados";
+	private static final String ITRLabelTXT = "La sociedad presenta por primera vez o actualiza los datos de indentificaci\u00f3n del titular real: ";
 	private static final String ITR8234001TXT = "Indique el tipo de actualizaci\u00f3n de los datos de indentificaci\u00f3n del titular real";
 	private static final String ITR8234002TXT = "Fecha en la que debe reputarse que se ha producido el cambio de datos.";
 
@@ -46,11 +48,13 @@ public class PageITR extends PageAbs {
 	@UiField Label ITR8080829lbl;
 	@UiField CheckBox ITR8080829;
 	
+	@UiField Label ITRlbl;
+	
 	@UiField Label ITR8234001lbl;
 	@UiField ListBox ITR8234001;
 	
 	@UiField Label ITR8234002lbl;
-	@UiField DateBox ITR8234002;
+	@UiField DateBoxEx ITR8234002;
 
 	
 	@UiField HTMLPanel table1Panel;
@@ -87,18 +91,28 @@ public class PageITR extends PageAbs {
 		ITR8080829lbl.setText(ITR8080829TXT);
 		if(getMap().containsKey(D2DepositHeaderKey.ITR8080829.getCode())){
 			ITR8080829.setValue(getMap().get(D2DepositHeaderKey.ITR8080829.getCode()).equals("1")); 
+			
+			if(!getMap().containsKey(D2DepositHeaderKey.ITR8080828.getCode())){
+				onEdit(D2DepositHeaderKey.ITR8080828.getCode(), getMap().get(D2DepositHeaderKey.ITR8080829.getCode()), false);
+			}
 		}
 
 		ITR8080829.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				onEdit(D2DepositHeaderKey.ITR8080829.getCode(), ITR8080829.getValue() ? "1" : "2", false);
+				ITRlbl.setText(ITRLabelTXT + (ITR8080829.getValue() ? "Si" : "No"));
+				String[] keys = {D2DepositHeaderKey.ITR8080829.getCode(), D2DepositHeaderKey.ITR8080828.getCode()};
+				String value = ITR8080829.getValue() ? "1" : "2";
+				String[] values = {value, value};
+				onEdit(keys, values, false);
 			}
 		});
 		if(getYear() >= 2022) {
+			ITRlbl.setText(ITRLabelTXT + (ITR8080829.getValue() ? "Si" : "No"));
+			
 			ITR8234001lbl.setText(ITR8234001TXT);
-			ITR8234001 = new ListBox();
+
 			ITR8234001.addItem("Primera", "1");
 			ITR8234001.addItem("Actualizaci\u00f3n", "2");
 			ITR8234001.addItem("Rectificaci\u00f3n", "3");
@@ -120,7 +134,6 @@ public class PageITR extends PageAbs {
 		
 			ITR8234002lbl.setText(ITR8234002TXT);
 			
-			ITR8234002 = new DateBox();
 			if(getMap().containsKey(D2DepositHeaderKey.ITR8234002.getCode())) {
 				String datestr = getMap().get(D2DepositHeaderKey.ITR8234002.getCode());
 				getDeposit().getInma().getDate(datestr, new AsyncCallback<Date>() {
@@ -186,7 +199,7 @@ public class PageITR extends PageAbs {
 		table.getColumnFormatter().setWidth(6, "70px");
 	
 		int row = 0;
-		table.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table.setWidget(row, 0, new Label("Apellidos y Nombre"));
 		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
 		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
@@ -256,7 +269,7 @@ public class PageITR extends PageAbs {
 		table4.getColumnFormatter().setWidth(7, "70px");
 		table4.getColumnFormatter().setWidth(8, "70px");
 		int row = 0;
-		table4.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table4.setWidget(row, 0, new Label("Apellidos y Nombre"));
 		table4.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		table4.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
 		table4.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
@@ -341,7 +354,7 @@ public class PageITR extends PageAbs {
 		table5.getColumnFormatter().setWidth(8, "70px");
 	
 		int row = 0;
-		table5.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table5.setWidget(row, 0, new Label("Apellidos y Nombre"));
 		table5.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		table5.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
 		table5.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
@@ -423,7 +436,7 @@ public class PageITR extends PageAbs {
 		table2.getColumnFormatter().setWidth(4, "70px");
 	
 		int row = 0;
-		table2.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table2.setWidget(row, 0, new Label("Apellidos y Nombre"));
 		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
 		table2.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
@@ -479,7 +492,7 @@ public class PageITR extends PageAbs {
 		table6.getColumnFormatter().setWidth(6, "70px");
 	
 		int row = 0;
-		table6.setWidget(row, 0, new Label("Nombre y Apellidos"));
+		table6.setWidget(row, 0, new Label("Apellidos y Nombre"));
 		table6.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
 		table6.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
 		table6.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
@@ -801,18 +814,17 @@ public class PageITR extends PageAbs {
 			String code = codeAux;
 			@Override
 			public void onChange(ChangeEvent event) {
-		
-					if (AonStringUtils.isEmpty(text.getSelectedItemText())) {
-						text.setSelectedIndex(0);
-					}
-					Integer d = text.getSelectedIndex() + 1;
-					
-					onEdit(code, d.toString());		
+				if (AonStringUtils.isEmpty(text.getSelectedItemText())) {
+					text.setSelectedIndex(0);
+				}
+				
+				Integer d = text.getSelectedIndex();
+				onEdit(code, d.toString());		
 			}
 		});
 		if(getMap().containsKey(key.getCode())){
 			String d = getMap().get(key.getCode());
-			Integer index = Integer.parseInt(d) - 1;
+			Integer index = Integer.parseInt(d);
 			text.setSelectedIndex(index);
 		} else text.setSelectedIndex(0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
@@ -826,6 +838,7 @@ public class PageITR extends PageAbs {
 	}
 	
 	private void documentTypeListBox(ListBox lb){
+		lb.addItem("", "0");
 		lb.addItem("DNI", "1");
 		lb.addItem("NIF", "2");
 		lb.addItem("NIE", "3");

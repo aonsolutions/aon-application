@@ -4,7 +4,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CCC_TYPE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NO_HOLIDAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
@@ -33,7 +32,6 @@ import java.util.Properties;
 import java.util.TimeZone;
 import java.util.stream.Stream;
 
-import javax.lang.model.type.TypeVisitor;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -49,7 +47,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
-import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.calculator.ExcelFunctions;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -351,17 +348,15 @@ public class TrabajadoresTramos {
 					//Collections.sort(cgcBasePeriods); // sort & sort & sort again .
 					
 					
-					for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(MATERNITY_BASE.getName(), Collections.emptyList())) )
-						cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
-					
 
 					for ( ContextVariable var : ContextVariable.ERE_BASES )
 						for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(var.getName(), Collections.emptyList())))
 							cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 					
-					for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(ContextVariable.DIRECT_BASE.getName(), Collections.emptyList())) )
-						cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
-					
+					for ( ContextVariable var : ContextVariable.FREE_BASES )
+						for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(var.getName(), Collections.emptyList())))
+							cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+
 					List<Period> periods = merge(salary, cgcBasePeriods);//cgcBasePeriods;
 					
 					for ( Period p: periods ) {

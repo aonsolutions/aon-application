@@ -117,7 +117,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<Agreement> getTrashAgreements(String currentDomainName, int offset, int limit);
 
-	List<Enterprise> getEnterprises(String domain, String user, int offset, int limit) ;
+	List<Enterprise> getEnterprises(String domain, String user, String condition, int offset, int limit) ;
 
 	List<Bonus> getBonusConcepts(String domain, int offset, int limit) ;
 
@@ -165,8 +165,7 @@ public interface EnterprisesService extends RemoteService {
 
 	List<CRA> getCRAs(String domain, String string, long liquidDateTime);
 
-	String createNewCRA(String domainName, String user, long findingDate, List<String> ccc,
-			ArrayList<Integer> cccIdList, Integer cccId, String type);
+	void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList, Integer cccId, String type) throws IllegalArgumentException;
 
 	void deleteCRA(String currentDomainName, Integer code);
 
@@ -203,7 +202,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	String getSalariesPDF(String currentDomainName, String currentUser, Integer enterpriseId, List<Integer> salaryIds) throws IllegalArgumentException;
 
-	String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList);
+	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) throws IllegalArgumentException;
 
 	List<CCCInfo> getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime);
 

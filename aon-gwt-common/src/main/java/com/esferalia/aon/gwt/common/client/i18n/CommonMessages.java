@@ -3464,6 +3464,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Bien Afectos o de Inversi\u00f3n")
  	String investAssetPanel();
  	
+ 	@DefaultMessage("Pregunta")
+ 	String questionPanel();
+ 	
  	@DefaultMessage("Nivel")
  	String level();
  	
@@ -3914,6 +3917,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Prov. ded. y gastos de dif. jus.")
 	String expenses184();
 
+	@DefaultMessage("Declarado")
+	String declared();
+	
 	@DefaultMessage("Clave del declarado")
 	String declaredKey();
 	

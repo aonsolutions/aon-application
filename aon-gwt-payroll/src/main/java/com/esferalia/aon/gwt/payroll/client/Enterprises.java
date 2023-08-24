@@ -22,7 +22,6 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -41,6 +40,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -80,6 +80,7 @@ public class Enterprises extends ResizeComposite implements
 		void onEnterprises(List<Enterprise> enterprises);
 	}
 
+
 	interface Binder extends UiBinder<Widget, Enterprises> {
 	}
 
@@ -96,13 +97,31 @@ public class Enterprises extends ResizeComposite implements
 	
 	private static final Template TEMPLATE = GWT.create(Template.class);
 
-	@UiField
+    	private final class SearchTextBoxTimer extends Timer {
+    	    private int delayMillis ;
+    	    public SearchTextBoxTimer(int delayMillis) {
+    		this.delayMillis = delayMillis;
+	    }
+    	    
+    	    public void reSchedule() {
+    	        super.schedule(delayMillis);
+    	    }
+
+    	    @Override
+    	    public void run() {
+    		onSearchTextBoxChange( Enterprises.this.toolbar.getSearchTextBox().getValue());
+    	    }
+    	    
+    	}
+
+    	@UiField
 	Tree tree;
 	@UiField
 	ScrollPanel scrollPanel;
 
 	@UiField
 	OptionsToolbar toolbar;
+	
 	
 	private PopupPanel viewPopupPanel;
 	private MenuItem viewErrorCCCsMenuItem; 
@@ -112,6 +131,7 @@ public class Enterprises extends ResizeComposite implements
 
 	private Images images;
 	private List<Listener> listeners;
+	private SearchTextBoxTimer searchTextBoxTimer;
 	private DomainEnterprisesServiceAsync enterprisesService;
 
 	private boolean inactive = false;
@@ -126,26 +146,11 @@ public class Enterprises extends ResizeComposite implements
 		initWidget(binder.createAndBindUi(this));
 		
 		initToolbar();
-		
 
 		tree.addSelectionHandler(this);
 		tree.addDomHandler(this, ContextMenuEvent.getType());
-
-		enterprisesService.getEnterprises(0, Integer.MAX_VALUE, new AsyncCallback<List<Enterprise>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getLocalizedMessage());
-			}
-
-			@Override
-			public void onSuccess(List<Enterprise> enterprises) {
-					Enterprises.this.onEnterprises(enterprises);
-			}
-
-		});
 		
-
+		initEnterprises();
 	}
 
 	private void initToolbar() {
@@ -234,6 +239,10 @@ public class Enterprises extends ResizeComposite implements
 	}
 	// -
 	
+	protected void initEnterprises() {
+		getEnterprises(0, Integer.MAX_VALUE);
+	}
+	
 	protected void onEnterprise(Enterprise enterprise, TreeItem rootItem) {
 		
 		clearEnterprise(enterprise);
@@ -255,9 +264,14 @@ public class Enterprises extends ResizeComposite implements
 
 		scrollPanel.scrollToLeft();
 	}
+	
+	protected int getSearchTextBoxDelay() {
+	    return 1000;
+	}
 
 	protected void onEnterprises(List<Enterprise> enterprises) {
-		
+	    	
+	    	tree.removeItems();
 
 		TreeItem enterprisesItem = new TreeItem(imageItemHTML(images.enterprises(), "EMPRESAS"));
 		enterprisesItem.setUserObject(enterprises);
@@ -274,12 +288,45 @@ public class Enterprises extends ResizeComposite implements
 		filterEnterprises();	
 		toolbar.setVisibleViewButton(true);
 		toolbar.setVisibleSearchTextBox(true);
+		this.searchTextBoxTimer = new SearchTextBoxTimer(getSearchTextBoxDelay());
 
 	}
+
+	protected final void getEnterprises(int offset, int limit) {
+		enterprisesService.getEnterprises(offset, limit, new AsyncCallback<List<Enterprise>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getLocalizedMessage());
+			}
+
+			@Override
+			public void onSuccess(List<Enterprise> enterprises) {
+				Enterprises.this.onEnterprises(enterprises);
+			}
+
+		});
+	}
 	
+	public void getEnterprises(int offset, int limit, AsyncCallback<List<Enterprise>> callback) {
+		enterprisesService.getEnterprises(offset, limit, callback );
+	}
+
+	public void getEnterprises(int offset, int limit, String pattern, AsyncCallback<List<Enterprise>> callback) {
+	    	String condition = getPatternCondition(pattern);
+		getEnterprisesByCondition(offset, limit, condition, callback);
+	}
+
+	public void getEnterprisesByCondition(int offset, int limit, String condition, AsyncCallback<List<Enterprise>> callback) {
+	    enterprisesService.getEnterprises(offset, limit, condition, callback );
+	}
+
+
 	protected void filterEnterprises() {
 		filter(toolbar.getSearchTextBox().getValue());
 	}
+	
+	
 
 	public void clearEnterprise(Enterprise enterprise) {
 		for (int i = 0; i < tree.getItemCount(); i++) {
@@ -406,7 +453,7 @@ public class Enterprises extends ResizeComposite implements
 			
 	@Override
 	public void onKeyUpSearchTextBox(KeyUpEvent event){
-		filter();
+	    searchTextBoxTimer.reSchedule();
 	}
 
 	@Override
@@ -422,7 +469,17 @@ public class Enterprises extends ResizeComposite implements
 			enterprises.addAll(getEnterprises(tree.getItem(i)));
 		return enterprises;
 	}
+	
+	protected void onSearchTextBoxChange(String pattern) {
+	    filter(pattern);
+	}
 
+	protected String getPatternCondition(String pattern) {
+	    pattern = AonStringUtils.defaultIfBlank(pattern, "");
+	    return "domain.description LIKE '%"+pattern+"%' OR enterprise_ccc.ccc LIKE '%"+pattern+"%' OR scope.description = '" + pattern +"'";
+	}
+
+	
 	// ------------------------------------------------------------------------
 
 
@@ -549,7 +606,6 @@ public class Enterprises extends ResizeComposite implements
 			filterEnterprises(pattern, tree.getItem(0));
 		
 	}
-
 
 	private void filterEnterprises(String pattern, TreeItem enterprisesItem) {
 		

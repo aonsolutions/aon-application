@@ -31,6 +31,7 @@ import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.BookingPanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
@@ -58,6 +59,8 @@ public class MainEntryPoint implements EntryPoint {
 	
 	
 	private static final String ENTRY_POINT_PARAM = "entryPoint";
+	private static final String ELEMENT_TARGET = "elementTarget";
+		
 	//
 	//    ================================================================== CONSOLE
 	//
@@ -199,6 +202,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String RG_CUSTOMER_FEE_ENTRY_POINT = "CustomerFee";
 	private static final String RG_SUPPLIER_ENTRY_POINT = "Supplier";
 	private static final String RG_CREDITOR_ENTRY_POINT = "Creditor";
+	private static final String RG_BOOKING_ENTRY_POINT = "BookingPanel";
 	//	
 	//    ================================================================== FINANCE
 	//
@@ -243,6 +247,7 @@ public class MainEntryPoint implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);	
+		String elementTarget = getParameter(GWT.getModuleName(), ELEMENT_TARGET);
 		if(getToken() != null) {
 			Occam occam = new Occam()
 				.setDomainName(getCurrentDomainName())
@@ -252,7 +257,7 @@ public class MainEntryPoint implements EntryPoint {
 			COMMON_SERVICE.getAonConfiguration(occam, params, new AsyncCallback<AonConfiguration>() {
 				
 				@Override public void onSuccess(AonConfiguration config) {
-					selection(entryPoint,aonConfiguration);
+					selection(entryPoint,elementTarget,aonConfiguration);
 				}
 				
 				@Override public void onFailure(Throwable arg0) {
@@ -260,13 +265,13 @@ public class MainEntryPoint implements EntryPoint {
 				}
 			});
 		} else {
-			selection(entryPoint,null);
+			selection(entryPoint,elementTarget,null);
 		}
 
 		
 	}
 	
-	private void selection(String entryPoint,AonConfiguration aonConfiguration) {
+	private void selection(String entryPoint,String elementTarget,AonConfiguration aonConfiguration) {
 		try {
 			ConsoleEntryPoint consoleEntryPoint = ConsoleEntryPoint.valueOf(entryPoint);
 			consoleEntryPoint.run();
@@ -326,7 +331,7 @@ public class MainEntryPoint implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					ModelMatrix modelMatrix = new ModelMatrix();
-					modelMatrix.onModuleLoad();
+					modelMatrix.onModuleLoad(elementTarget);
 				}
 			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_CONFIG_POINT)) {
@@ -370,6 +375,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					CustomerFee customerFee = new CustomerFee();
 					customerFee.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(RG_BOOKING_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					BookingPanel bookingPanel = new BookingPanel();
+					bookingPanel.onModuleLoad();
 				}
 				
 			});

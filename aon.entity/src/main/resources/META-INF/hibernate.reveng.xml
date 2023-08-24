@@ -2231,6 +2231,7 @@
 			<key-column name="id" type="java.lang.Integer"/>
 		</primary-key>
 		<column name="status" type="com.code.aon.registry.enumeration.RegistrySellerStatus"/>
+		<column name="type" type="com.code.aon.registry.enumeration.RegistrySellerType"/>
 	</table>
 	
 	<table name="rsupplier" class="com.esferalia.aon.entity.master.RegistrySupplier">

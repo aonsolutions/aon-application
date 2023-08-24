@@ -136,6 +136,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[D] 
 	public static final String DATE = "date";
 	public static final String DAYS_BETWEEN_PYMNTS = "daysBetweenPymnts";
+	public static final String DAYS_TO_EXPIRE = "daysToExpire";
 	public static final String DAYS_TO_FIRST_PYMNT = "daysToFirstPymnt";
 	public static final String DEADLINE = "deadline";
 	public static final String DEBIT = "debit";
@@ -207,6 +208,7 @@ public final class IJsonNames {
 	public static final String EXPENSES_RATIO = "expensesRatio";
 	public static final String EXPIRATION_DATE = "expirationDate";
 	public static final String EXPIRE = "expire";
+	public static final String EXPIRE_DATE = "expireDate";
 	public static final String EXPIRED_DATE = "expiredDate";
 	public static final String EXPRESSION = "expression";
 	// ---------------------------------------------------------------------------------------------	[F] 
@@ -300,6 +302,7 @@ public final class IJsonNames {
     public static final String LAST_ACCESS = "lastAccess";
 	public static final String LAST_ACCESS_DATE = "lastAccessDate";
 	public static final String LAST_ACCESS_USER = "lastAccessUser";
+	public static final String LAST_UPDATE = "lastUpdate";
 	public static final String LEDGER_ACCOUNT = "ledgerAccount";
 	public static final String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
 	public static final String LEDGER_UNPAID_BALANCE = "ledgerUnpaidBalance";
@@ -401,6 +404,7 @@ public final class IJsonNames {
 	public static final String PERCENT = "percent";
 	public static final String PERCENTS_ENABLED = "percentsEnabled";
 	public static final String PERIOD = "period";
+	public static final String PERISHABLE = "perishable";
 	public static final String PERSON = "person";
 	public static final String PHONE = "phone";
 	public static final String PK_CODE = "pkCode";
@@ -440,6 +444,8 @@ public final class IJsonNames {
 
 	// ---------------------------------------------------------------------------------------------	[Q] 
 	public static final String QUANTITY = "quantity";
+	public static final String QUESTION = "question";
+	public static final String QUESTION_ALIAS = "questionAlias";
 	public static final String QUOTA = "quota";
 	// ---------------------------------------------------------------------------------------------	[R] 
 	public static final String RATE = "rate";
@@ -582,6 +588,9 @@ public final class IJsonNames {
 	public static final String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
 	public static final String VALUE = "value";
+	public static final String VALUE_TEXT = "valueText";
+	public static final String VALUE_DATE = "valueDate";
+	public static final String VALUE_NUMBER = "valueNumber";
 	public static final String VARIABLES = "variables";
 	public static final String VAT = "vat";
 	public static final String VAT_ACCRUAL_PAYMENT = "vatAccrualPayment";

@@ -218,6 +218,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RbankColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ScopeColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
@@ -496,14 +497,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Enterprise> getEnterprises(String domain, String user, int offset, int limit) {
+	public List<Enterprise> getEnterprises(String domain, String user, String condition, int offset, int limit) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
-			return getEnterprises(connection, userId, domainId, offset, limit);
+			return getEnterprises(connection, userId, domainId, condition, offset, limit);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -1181,7 +1182,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 
 	private static List<Enterprise> getEnterprises(Connection connection, int userId,
-			int domainId, int offset, int limit) throws SQLException {
+			int domainId, String condition, int offset, int limit) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
@@ -1192,6 +1193,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ ", " + SQLConstants.REGISTRY
 					+ " LEFT JOIN " + SQLConstants.RBANK + " ON (" + SQLConstants.REGISTRY + "."+ RegistryColumns.ID + " = " + SQLConstants.RBANK +"." + RbankColumns.REGISTRY + ")"
 					+ ", " + SQLConstants.DOMAIN 
+					+ " LEFT JOIN " + SQLConstants.SCOPE + " ON (" + SQLConstants.DOMAIN + "." + DomainColumns.SCOPE + " = " + SQLConstants.SCOPE  + "." + ScopeColumns.ID + ")" 
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY 
 					+ ", " + SQLConstants.ENTERPRISE_CCC
 					+ " LEFT JOIN " + SQLConstants.SALARY + " ON (" 
@@ -1220,13 +1222,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 						+ " )"     
 					
 					+ " AND " + SQLConstants.DOMAIN + "." + DomainColumns.ACTIVE + " = 1 " 
-
+					+ " AND (" + condition +")"
 					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID
 					+ ", " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.ID
 					+ ", " + SQLConstants.SALARY + "." + SalaryColumns.SOCIAL_SECURITY_NUMBER
 					+ ", " + SQLConstants.SALARY + "." + SalaryColumns.START_DATE
-					+ " LIMIT ?, ?"
+					//+ " LIMIT ?, ?"
 					);
 			// @formatter:on
 			int i = 1;
@@ -1240,28 +1242,35 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			calendar.add(Calendar.DAY_OF_MONTH,-1);
 //			stmt.setDate(i++, new java.sql.Date(calendar.getTimeInMillis()));
 
-			stmt.setInt(i++, offset);
-			stmt.setInt(i++, limit);
+//			stmt.setInt(i++, offset);
+//			stmt.setInt(i++, limit);
 			
 			CCC ccc = null;
 			Employee employee = null;
 			Activity activity = null;
 			Enterprise enterprise = null;
 
-			
 			rs = stmt.executeQuery();
-			
+			int enterprisesOffset = 0;
 			List<Enterprise> enterprises = new LinkedList<Enterprise>();
 			while (rs.next()) {
 				Integer registry = rs.getInt(SQLConstants.ENTERPRISE +"." + EnterpriseColumns.REGISTRY);
 				
 				if ( enterprise == null || !enterprise.getId().equals(registry) ) {
+
+				    	// Enterprises real LIMIT 
+				    	if ( enterprises.size() == limit )
+				    	    break;
+				    	
 					enterprise = new Enterprise();
 					enterprise.setId(registry); // Not
 //					enterprise.setName(rs.getString(SQLConstants.REGISTRY +"." + RegistryColumns.NAME));
 					enterprise.setName(rs.getString(SQLConstants.DOMAIN +"." + DomainColumns.DESCRIPTION));
 					enterprise.setDomain(rs.getInt(SQLConstants.ENTERPRISE +"." + EnterpriseColumns.DOMAIN));
-					enterprises.add(enterprise);
+					
+					// Enterprise real  OFFSET 
+					if ( enterprisesOffset++ >= offset  )
+					    enterprises.add(enterprise);
 				}
 				
 				Integer rbankId = (Integer) rs.getObject(SQLConstants.RBANK +"."+RbankColumns.ID);
@@ -1995,29 +2004,26 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) {
+	public void createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			
-			Boolean existAnySalary = Cra.existAnySalary(cccList, findingDate, connection);
-			
-			if(Boolean.FALSE.equals(existAnySalary)) {
-				return "No existe n\u00F3minas con valores para notificar en el CRA";
-			}
+			if(Boolean.FALSE.equals(Cra.existAnySalary(cccList, findingDate, connection)))
+				throw new IllegalArgumentException("No existe n\u00F3minas con valores para notificar en el CRA");
 			
 			java.util.Date fileNameDate = new java.util.Date();
 			String fileName = new SimpleDateFormat("ddHHmmss").format(fileNameDate);
 			
-			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, userId, cccList, findingDate, fileName, connection);
+			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, parentDomainId, userId, cccList, findingDate, fileName, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
-			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
+			JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
 			
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -2284,11 +2290,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	// ----------------------------------------------
 
 	@Override
-	public String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) {
+	public void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) {
 		try(Connection connection = AonServletUtils.getConnection(currentDomainName)){
-			return JooqCRA.checkCreateNewCRA(connection, findingDate, cccList);
-		}catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+			JooqCRA.checkCreateNewCRA(connection, findingDate, cccList);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
 
@@ -3350,13 +3356,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public boolean checkIfRectificative(String domainName, java.util.Date findingDate,
-			ArrayList<Integer> selectedCCCList) {
+	public boolean checkIfRectificative(String domainName, java.util.Date findingDate, ArrayList<Integer> selectedCCCList) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			AONContext ctx = new AONContext(connection);
-			DSLContext dslContext = ctx.getDslContext();
-			
-			return JooqCRA.checkIfRectificative(dslContext, findingDate, selectedCCCList);
+			return JooqCRA.checkIfRectificative(connection, findingDate, selectedCCCList);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

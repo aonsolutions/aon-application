@@ -8,6 +8,8 @@
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.Employee.MyStyle">
+	
+	
 		
 		.agreementTitle {
 			height: 40px;
@@ -95,7 +97,7 @@
 
 		/* INNER CLASS */
 		
-		.errorBorder { border: 1px solid red; }
+		.errorBorder { border: 1px solid red !important; }
 
 		.journeyDurationWarning{
 			font-weight: bold;
@@ -103,9 +105,51 @@
 			cursor: pointer;
 		}
 		
-		.warningTB { border: 1px solid red; }
+		.warningTB { border: 1px solid red !important; }
+		
+		
+		.iconButton {
+			display:flex;
+  			background-color: transparent;
+  			border: none;
+  				padding: 0;
+  				margin: 0;
+  				width: 24px;
+ 				height: 24px;
+  				cursor: pointer;
+  				left: 25px;
+		}
+		
+		.drag-over {
+ 			 border: 2px dashed #2152A5;
+				}
+	
+		.gwt-fileUpload{
+			display:flex;
+				width: 250px;
+ 				height: 25px;
+		}
+		
+		.uploaded{
+			border: 2px solid green;
+			padding-right: 25px;
+			padding-bottom: 25px;
+		}
+		
+		.uploadedFail{
+			border: 2px solid red;
+			padding-right: 20px;
+			padding-bottom: 20px;
+		}
+		
+		.uploadButtonHidde{
+			
+		}
+		
 		
 	</ui:style>
+	
+	<ui:import field="com.google.gwt.user.client.ui.FormPanel.*" />
 
    	<g:HTMLPanel styleName="{style.container}">
    	
@@ -117,8 +161,22 @@
 		    		<!-- LINEA 0 -->
 		    		<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}' text="Documento" />
-		    			<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+		    			<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.widthAll} {style.heightTB}'/>
 		    			<g:Label styleName='{style.mw}' ui:field="documentType" debugId="document_type" />
+		    			
+		    			<!--  FILEUPLOAD-->
+<!-- 						<g:HTMLPanel > 											 -->
+<!-- 						  <g:FormPanel ui:field="formPanel" visible="true" method="POST" action="DNIServlet" encoding="multipart/form-data"> -->
+<!-- 						    <g:HTMLPanel styleName="{style.flex}"> -->
+<!-- 						       <g:Button ui:field="uploadButton" styleName="{style.iconButton}" > -->
+<!-- 						        <i class="material-icons">publish</i> -->
+<!-- 						      </g:Button> -->
+<!-- 						      <g:FileUpload ui:field="fileUpload" visible= "false" styleName="{style.gwt-fileUpload}"/> -->
+<!-- 						    </g:HTMLPanel> -->
+<!-- 						  </g:FormPanel> -->
+<!-- 						</g:HTMLPanel> -->
+					    <!-- FILEUPLOAD-->
+			
 		    			<g:HTMLPanel styleName="{style.flexItem} {style.widthAll}" ui:field="nationalityPanel">
 		    				<g:Label ui:field="nationalityLabel" debugId="nationalityLabel" styleName='{style.mw}' text="Nacionalidad" />
 		    				<g:SuggestBox ui:field="nationality" debugId="nationality" styleName='aon-inputText {style.widthAll} {style.heightTB}' />

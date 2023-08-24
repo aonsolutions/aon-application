@@ -5,7 +5,8 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:rich="http://richfaces.org/rich">
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 	
 	
 	<style>
@@ -92,7 +93,13 @@
 	.aon-top-menu-item-select {
     	background-color: #f6f8fc !important;
 		font-weight: bold;
-		border-bottom: 2px solid #2152a5;
+		<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border-bottom: 2px solid #002469;
+    	</c:if>
+	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border-bottom: 2px solid #2152a5;
+	 	</c:if>
+
 	}
 	
 	.aon-top-menu-item-select-inner {}
@@ -1232,7 +1239,7 @@
 	.aon-support,
 	div[id$='messageList'],
 	div[id$='GraphContainer'],
-	div[id$='__fiscal_status_div']
+	div[id$='fiscal_status_div']
 	 {
     	border-radius: 14px;
     	box-shadow: 0px 6px 6px #f3f3f3;
@@ -1245,8 +1252,13 @@
 		opacity:0.94;
 		border-radius: 16px;	 
 	 	color: #FFF !important;
-	 	box-shadow: 0px 6px 6px #2152A5;
-    	background-color: #2152A5 !important;
+	 	<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+    		background: linear-gradient(to top, #b10d4c, #002469) !important;
+    	</c:if>
+	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+		 	background-color: #2152A5 !important;
+		 	box-shadow: 3px 6px 12px #2152A5;
+	 	</c:if>
     }
     
 
@@ -1257,6 +1269,7 @@
     	white-space: nowrap;
     	
 	}   
+
     .aon-menu-popup .aon-icon-new-text,
     .aon-menu-popup .aon-icon-beta-text{
     	background: none;
@@ -1268,7 +1281,12 @@
     	color: #FFF;
     	height: 24px;
     	border-bottom: 1px solid #FFF;
-    	background-color: #2152A5 !important;
+	 	<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+    	background-color: transparent !important;
+    	</c:if>
+	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+	 	background-color: #2152A5 !important;
+	 	</c:if>
     	padding-left: 12px;
     	background-image: none;
 	}   
@@ -1279,14 +1297,24 @@
     .aon-menu-popup .aon-menu-icon-gipuzkoa,
     .aon-menu-popup .aon-menu-icon-navarra
      {
-    	border-color: #2152A5;
+		<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border: none;
+    	</c:if>
+	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border-color: #2152A5;
+	 	</c:if>
     }
     
     .aon-menu-popup .aon-menu-fiscal-label {
     	background-image: none;
     }
 	.aon-menu-popup .aon-menu-fiscal{
-		border-bottom: 1px solid #2152A5;
+		<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border: none;
+    	</c:if>
+	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+			border-bottom: 1px solid #2152A5;
+	 	</c:if>
 	}
     
     .aon-menu-popup .aon-direct-access-list-element {
@@ -1299,7 +1327,12 @@
 
     .aon-menu-popup .aon-direct-access-list-element:hover {
     	color: #FFF;
-    	background-color: #2152A5 !important;
+	 	<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+    	background-color: transparent !important;
+    	</c:if>
+	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+	 	background-color: #2152A5 !important;
+	 	</c:if> 
 	}
 
     .aon-menu-popup .aon-direct-access-list-element *:hover {
@@ -1315,7 +1348,12 @@
     	color: #FFF !important;
     	border-top-left-radius: 6px;
     	border-top-right-radius: 6px;
-    	background-color: #2152A5 !important;
+	 	<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+    	background: #002469 !important;
+    	</c:if>
+	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
+	 	background-color: #2152A5 !important;
+	 	</c:if> 
 	}
 
 	div[id$='aonContentPopup']{
@@ -1665,6 +1703,11 @@
 		opacity: 1;
 	}	
 	
+    .search-results-popup .aon-note-new {
+	  padding: 0px ;
+	  margin: 6px auto ;
+    }
+
 	.search-results-popup tr .clipboard-icon {
 		font-size: 1.2rem; 
 		color: transparent;
@@ -2173,7 +2216,7 @@
 
 				<aon:div style="margin-bottom:2px;">
 					<aon:commandLink id="index" action="start" title="#{bundle.aon_home}" >
-					<aon:graphicImage style="height: 24px; vertical-align: middle;"
+					<aon:graphicImage style="height: 24px; vertical-align: middle; padding-left: 6px;"
 						value="#{customize.headerLogo}" />
 					</aon:commandLink>
 					<aon:if test="#{customize.separator != null}">					

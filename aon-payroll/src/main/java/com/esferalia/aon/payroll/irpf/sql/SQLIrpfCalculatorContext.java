@@ -3,7 +3,8 @@ package com.esferalia.aon.payroll.irpf.sql;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementDate;
+import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementEndDate;
+import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementStartDate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1419,11 +1420,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		//@formatter:on
 		
 		for (AgreementExtraRecord agreementExtraRecord : result) {
-			Date startDate = parseAgreementDate(
+			Date startDate = parseAgreementStartDate(
 					agreementExtraRecord.getStartDate(), year);
-			Date endDate = parseAgreementDate(
+			Date endDate = parseAgreementEndDate(
 					agreementExtraRecord.getEndDate(), year);
-			Date issueDate = parseAgreementDate(
+			Date issueDate = parseAgreementStartDate(
 					agreementExtraRecord.getIssueDate(), year);
 			
 			

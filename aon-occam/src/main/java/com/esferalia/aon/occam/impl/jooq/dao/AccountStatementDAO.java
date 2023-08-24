@@ -851,6 +851,7 @@ public class AccountStatementDAO {
 
 	private static Condition getBalanceCondition(AONContext ctx , AccountingReportParams params, boolean applyDateFilterIfNeeded ) {
 		Condition condition = getBasicCondition(ctx, params, applyDateFilterIfNeeded);
+		condition = condition.and(ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(ctx.getDomainId()) );
 		if (params.getAccount() != null && params.getAccount().getId() != null) {
 			condition = condition.and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(params.getAccount().getId()));	
 		}

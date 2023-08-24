@@ -600,18 +600,14 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			}
 		}
 		
-		try {
-			this.cgcBase = add(this.cgcBase, round(ContextVariable.DIRECT_BASE));			
-		} catch ( Exception e ) {
-			// wrong DIRECT_BASE
-		}
-
-		try {
-			this.cgcBase = add(this.cgcBase, round(ContextVariable.MATERNITY_BASE));			
-		} catch ( Exception e ) {
-			// wrong MATERNITY_BASE
+		for ( ContextVariable v : ContextVariable.FREE_BASES ) { 
+			try {
+				this.cgcBase = add(this.cgcBase, round(v));			
+			} catch ( Exception e ) {
+			}
 		}
 		
+
 		try {
 			round(ContextVariable.CGC_BASE_ENTERPRISE);			
 		} catch ( Exception e ) {
@@ -641,19 +637,15 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 				// wrong ERE_BASE
 			}
 		}
-
-		try {
-			this.cgpBase = add(this.cgpBase, round(ContextVariable.DIRECT_BASE));			
-		} catch ( Exception e ) {
-			// wrong DIRECT_BASE
-		}
-
-		try {
-			this.cgpBase = add(this.cgpBase, round(ContextVariable.MATERNITY_BASE));			
-		} catch ( Exception e ) {
-			// wrong MATERNITY_BASE
-		}
 		
+		for ( ContextVariable v : ContextVariable.FREE_BASES ) { 
+			try {
+				this.cgpBase = add(this.cgpBase,round(v));			
+			} catch ( Exception e ) {
+				// wrong MATERNITY, DIRECT or UNPAID 
+			}
+		}
+
 		try {
 			round(ContextVariable.CGP_BASE_ENTERPRISE);			
 		} catch ( Exception e ) {

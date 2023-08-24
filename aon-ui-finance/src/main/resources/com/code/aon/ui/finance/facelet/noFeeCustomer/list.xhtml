@@ -7,6 +7,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+		<ui:include src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
 		<aon:form id="customerList">
 			
 				<ui:decorate
@@ -14,7 +15,12 @@
 				<ui:param name="toolbarTitle" value="#{bundle.finance_fee_no_fee_customer_module}" />
 				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="skipResetButton" value="true" />
-				<ui:define name="additionalToolbarContent">					
+				<ui:define name="additionalToolbarContent">				
+					<aon:commandLink id="customerWithoutFee-import" value="Listado"
+							onclick="customerWithoutFee()"
+							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+					</aon:commandLink>
+					<!-- 
 					<aon:htmlCommandLink id="noFeeCustomersReport-excel-report"
 						value="#{bundle.aon_listing}"
 						target="_new" action="#{report.onExecute}"
@@ -22,7 +28,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-excel">
 						<f:param name="reportKey" value="noFeeCustomersReport" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</aon:htmlCommandLink>					
+					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="noFeeCustomersReport-report"
 						value="#{bundle.aon_listing}"
 						target="_new" action="#{report.onExecute}"
@@ -30,7 +36,8 @@
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="noFeeCustomersReport" />
 						<f:param name="outputFormat" value="PDF" />
-					</aon:htmlCommandLink>					
+					</aon:htmlCommandLink> 
+					-->					
 				</ui:define>
 			</ui:decorate> 
 			<aon:div styleClass="aon-scroll-area">

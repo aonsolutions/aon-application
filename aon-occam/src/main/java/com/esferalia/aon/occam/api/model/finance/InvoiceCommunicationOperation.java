@@ -6,15 +6,21 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceCommunicationOperation implements Serializable{
 
-	REGISTER,
-	MODIFICATION,
-	ANNULMENT,
-	CONSULTATION
+	REGISTER("Alta"),
+	MODIFICATION("Modificación"),
+	ANNULMENT("Anulación"),
+	CONSULTATION("Consulta")
 	;
 	
 	
-	private InvoiceCommunicationOperation() {
-
+	String description;
+	
+	private InvoiceCommunicationOperation(String description) {
+		this.description = description;
+	}
+	
+	public String getDescription() {
+		return description;
 	}
 	
 	public Byte value(){
