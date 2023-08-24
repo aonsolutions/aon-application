@@ -68,6 +68,12 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 			getCompanyDomain(domainSuggestBox.getValue());
 		});
 		
+		domainSuggestBox.addKeyUpHandler(e -> {
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				domainSuggestBox.showSuggestionList();
+			}
+		});
+		
 		scroll.add(domainSuggestBox);
 	    content.add(scroll);
 	    
