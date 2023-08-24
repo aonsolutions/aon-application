@@ -1061,6 +1061,8 @@ public class BookingPanel extends MainEntryPoint {
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 		
+		Window.alert("checkCustomerDomains : " + urlBuilder.buildString());
+		
 		try {
 		    // Send the request
 		    requestBuilder.sendRequest(null, new RequestCallback() {
@@ -1068,6 +1070,7 @@ public class BookingPanel extends MainEntryPoint {
 		            if (response.getStatusCode() == 200) {
 		            	
 		                String responseBody = response.getText();
+		                Window.alert("checkCustomerDomains response : " + responseBody);
 		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
 		                AonMessagePanel.hideMessage(messagePanel);
 		                showDomainsDialog(companies);
@@ -1248,6 +1251,8 @@ public class BookingPanel extends MainEntryPoint {
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 		
+		Window.alert("getDomains : " + urlBuilder.buildString());
+		
 		try {
 		    // Send the request
 		    requestBuilder.sendRequest(null, new RequestCallback() {
@@ -1255,6 +1260,7 @@ public class BookingPanel extends MainEntryPoint {
 		            if (response.getStatusCode() == 200) {
 
 		                String responseBody = response.getText();
+		                Window.alert("getDomains response : " + responseBody);
 		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
 		                AonMessagePanel.hideMessage(messagePanel);
 		                showSelectDomainsDialog(companies);
@@ -1296,6 +1302,8 @@ public class BookingPanel extends MainEntryPoint {
 				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 				
+				Window.alert("booking : " + urlBuilder.buildString());
+				
 				try {
 				    // Send the request
 				    requestBuilder.sendRequest(null, new RequestCallback() {
@@ -1303,6 +1311,7 @@ public class BookingPanel extends MainEntryPoint {
 				            if (response.getStatusCode() == 200) {
 
 				                String responseBody = response.getText();
+				                Window.alert("booking response : " + responseBody);
 				                Booking booking = DomainCompanyJSON.parseBookingJSON(responseBody);
 				                AonMessagePanel.hideMessage(messagePanel);
 				                updateBookingRitems(domainCompany, booking);
@@ -1339,15 +1348,21 @@ public class BookingPanel extends MainEntryPoint {
 		urlBuilder.setParameter("domain", DomainCompanyJSON.domainCompanyToJSON(domainCompany).toString());
 		urlBuilder.setParameter("booking", DomainCompanyJSON.bookingToJson(booking).toString());
 		
+		Window.alert("domain : " + DomainCompanyJSON.domainCompanyToJSON(domainCompany).toString());
+		Window.alert("booking : " + DomainCompanyJSON.bookingToJson(booking).toString());
+		
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		Window.alert("updateBookingRItem : " + urlBuilder.buildString());
 		
 		try {
 		    // Send the request
 		    requestBuilder.sendRequest(null, new RequestCallback() {
 		        public void onResponseReceived(Request request, Response response) {
 		            if (response.getStatusCode() == 200) {
+		            	Window.alert("updateBookingRItem response");
 
 		                AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n se ha realizado correctamente");
 		                

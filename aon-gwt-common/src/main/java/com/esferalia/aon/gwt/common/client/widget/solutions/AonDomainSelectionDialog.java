@@ -96,7 +96,9 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 	}
 	
 	private void getCompanyDomain(String domainDescription) {
+		Window.alert("getCompanyDomain : " + domainDescription);
 		domainCompany = companies.stream().filter(company -> AonStringUtils.equalsIgnoreCase(company.getDomain().getDescription(), domainDescription)).findFirst().get();
+		Window.alert("getCompanyDomain description : " + domainCompany.getDomain().getDescription());
 	}
 
 	private void showDialog() {
