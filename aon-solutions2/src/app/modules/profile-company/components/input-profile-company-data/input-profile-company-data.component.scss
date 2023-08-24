@@ -1,0 +1,21 @@
+@import "src/styles.scss";
+::ng-deep {
+  .structure-title {
+    font-family: "Roboto-Medium";
+  }
+
+  #company .form{
+    padding-left: 0!important;
+    padding-right: 0!important;
+  }
+
+  .input-profile-contact-data-add {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 2.4125rem;
+  }
+  .input-profile-contact-data-add app-button button{
+    margin: 0;
+  }
+}

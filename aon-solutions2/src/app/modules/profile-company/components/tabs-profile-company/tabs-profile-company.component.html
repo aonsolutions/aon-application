@@ -1,0 +1,52 @@
+<app-tabs
+  [tabs]="tabs"
+  (changeTabIndex)="this.tabIndex = $event"
+  [tabColor]="'dark'"
+  [paddingLeftHeader]="'1rem'"
+>
+  <div tool>
+    <app-button [class]="'dark'" [width]="'100%'"> {{ 'PROFILE.SAVE'| translate }} </app-button>
+    <app-button [class]="'white'" [width]="'100%'"> {{ 'PROFILE.CANCEL'| translate }}</app-button>
+  </div>
+
+  <div content *ngIf="this.tabIndex == 0">
+    <!-- datos personales -->
+    <app-grid-layout>
+      <div content>
+        <app-input-profile-personal-data></app-input-profile-personal-data>
+      </div>
+    </app-grid-layout>
+  </div>
+
+  <div content *ngIf="this.tabIndex == 1">
+    <app-grid-layout>
+      <div content id="company" class="margin">
+        <!-- pestaña datos empresa, apartado información general -->
+        <app-input-profile-company-information></app-input-profile-company-information>
+        <!-- pestaña datos empresa, apartado datos contacto -->
+        <app-input-profile-company-data></app-input-profile-company-data>
+      </div>
+    </app-grid-layout>
+  </div>
+
+  <div content *ngIf="this.tabIndex == 2">
+    <!-- pestaña datos registrales -->
+    <app-grid-layout>
+      <div content>
+        <app-input-profile-registry-data></app-input-profile-registry-data>
+      </div>
+    </app-grid-layout>
+  </div>
+
+  <div content *ngIf="this.tabIndex == 3">
+    <!-- pestaña certificados -->
+    <app-grid-layout>
+      <div content id="upload">
+        <app-file-upload-button>
+          {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
+          <app-icon shape="cloud_upload" class="margin-left"></app-icon>
+        </app-file-upload-button>
+      </div>
+    </app-grid-layout>
+  </div>
+</app-tabs>

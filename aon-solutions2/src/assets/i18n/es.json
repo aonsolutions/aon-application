@@ -107,5 +107,37 @@
     "ACTIONS":       "acciones",
     "MODEL":         "Modelo",
     "YEAR":          "Año"
+  },
+  "PROFILE": {
+    "CONTACT_DETAILS":   "Datos contacto",
+    "EMAIL":   "Email",
+    "PLACEHOLDER":   "Placeholder",
+    "PHONE":   "Móvil",
+    "WEB": "Web",
+    "SAVE":   "Guardar",
+    "CANCEL":   "Cancelar",
+    "PERSONAL_INFORMATION":   "Datos personales",
+    "COMPANY_INFORMATION":   "Datos empresa",
+    "REGISTRATION_INFORMATION":   "Datos registrales",
+    "CERTIFICATES": "Certificados",
+    "GENERAL_INFORMATION": "Información general",
+    "PHOTO": "Foto",
+    "CLICK_DRAG_DROP": "Haz click para subir o arrastra y suelta",
+    "TRADE_NAME": "Nombre comercial / alias",
+    "ADRESS": "Dirección",
+    "COUNTRY": "Pais",
+    "CITY": "Provincia",
+    "LEGAL_NAME": "Razón Social",
+    "TIN": "NIF",
+    "NAME": "Nombre",
+    "LAST_NAME": "Apellidos",
+    "PASSWORD": "Contraseña",
+    "DESCRIPTION": "Descripción",
+    "DATE_OF_CREATION": "Fecha de creación",
+    "REGISTRATION_DATE": "Fecha de registro",
+    "NOTARY": "Notario",
+    "PROTOCOL": "Protocolo",
+    "REGISTRATION":"Inscripción"
   }
 }
+

@@ -31,7 +31,7 @@ export class TopBarComponent implements OnInit, OnChanges {
   currentRoute    : string      = this.router.url.replace('/','');
 
   constructor(
-    private router          : Router, 
+    private router          : Router,
     private auth            : AuthService,
     private translateService: TranslateService,
     private appComponent    : AppComponent
@@ -39,12 +39,12 @@ export class TopBarComponent implements OnInit, OnChanges {
     this.router.events.subscribe((event) => {
       event instanceof NavigationEnd ? this.checkCurrentRoute() : null
     })
-    
+
     this.translateService.get(
       ['HEADER.EDIT_PROFILE','HEADER.HELP','HEADER.LOGOUT']
     ).subscribe( result => {
       this.menuItem = [
-        {root:true, text: result['HEADER.EDIT_PROFILE'] , icon:'person_pin' , colorIcon:'black'},
+        {routerlink: 'edit-profile',root:true, text: result['HEADER.EDIT_PROFILE'] , icon:'person_pin' , colorIcon:'black'},
         {root:true, text: result['HEADER.HELP']         , icon:'help'       , colorIcon:'black'},
         {root:true, text: result['HEADER.LOGOUT']       , icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
 
@@ -73,5 +73,5 @@ export class TopBarComponent implements OnInit, OnChanges {
   selectLanguage(language: string) {
     this.appComponent.selectLanguage(language)
   }
-  
+
 }
