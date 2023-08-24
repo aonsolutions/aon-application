@@ -9,6 +9,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -31,6 +32,8 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 		
 		this.add(createContent());
 		
+		Window.alert("AonDomainSelectionDialog");
+		
 		showDialog();
 	}
 
@@ -49,7 +52,8 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 		
 		SuggestBox domainSuggestBox = new SuggestBox();
 		domainSuggestBox.setHeight("2em");
-		domainSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		domainSuggestBox.getElement().getStyle().setProperty("padding", "0");
+		domainSuggestBox.getElement().getStyle().setProperty("width", "99%");
 		domainSuggestBox.setAutoSelectEnabled(false);
 		domainSuggestBox.getElement().setPropertyString("placeholder", "Dominio: busque por descripci\u00f3n");
 		
@@ -63,7 +67,7 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 		
 		domainSuggestBox.addSelectionHandler(e -> {
 			domainSuggestBox.hideSuggestionList();
-			getCompanyDomain(e.getSelectedItem().toString());
+			getCompanyDomain(domainSuggestBox.getValue());
 		});
 		
 		scroll.add(domainSuggestBox);
@@ -88,7 +92,9 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 	}
 	
 	private void getCompanyDomain(String domainDescription) {
+		Window.alert("domainDescription : " + domainDescription);
 		domainCompany = companies.stream().filter(company -> AonStringUtils.equalsIgnoreCase(company.getDomain().getDescription(), domainDescription)).findFirst().get();
+		Window.alert("Id : " + domainCompany.getDomain().getId());
 	}
 
 	private void showDialog() {

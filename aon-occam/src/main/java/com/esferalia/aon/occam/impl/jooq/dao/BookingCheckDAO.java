@@ -79,6 +79,7 @@ public class BookingCheckDAO {
 		Result<Record> feeWithoutBookingRecords = feeWithoutBookingSelect
 				.where(condition)
 				.and(RITEM.ID.isNull())
+				.and(ITEM.BARCODE.isNull().or(ITEM.BARCODE.notLikeIgnoreCase("info%")))
 				.orderBy(CUSTOMER_FEE.CUSTOMER)
 				.offset(customerFeeParams.getOffset())
 				.limit(customerFeeParams.getLimit())
