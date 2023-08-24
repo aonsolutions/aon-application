@@ -2,21 +2,21 @@ import { AuthGuard } from './guards/auth.guard';
 import { BasicLayoutComponent } from '../shared/layouts/basic-layout/basic-layout.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SidenavLayoutComponent } from '../shared/layouts/sidenav-layout/sidenav-layout.component';
 import { PermissionGuard } from './guards/permission.guard';
 import { RolGuard } from './guards/rol.guard';
+import { SidenavLayoutComponent } from '../shared/layouts/sidenav-layout/sidenav-layout.component';
 
 const routes: Routes = [
   {
     path: '',
     component: BasicLayoutComponent,
-    children:[
+    children: [
       {
         path: '',
         loadChildren: () =>
           import('src/app/modules/auth/auth.module').then((m) => m.AuthModule),
-      }
-    ]
+      },
+    ],
   },
   {
     path: '',
@@ -30,7 +30,9 @@ const routes: Routes = [
       {
         path: 'inbox',
         loadChildren: () =>
-          import('src/app/modules/inbox/inbox.module').then((m) => m.InboxModule),
+          import('src/app/modules/inbox/inbox.module').then(
+            (m) => m.InboxModule
+          ),
       },
       {
         path: 'documentation',
@@ -60,13 +62,27 @@ const routes: Routes = [
       {
         path: 'tax-panel',
         loadChildren: () =>
-          import('src/app/modules/tax-panel/tax-panel.module').then((m) => m.TaxPanelModule),
+          import('src/app/modules/tax-panel/tax-panel.module').then(
+            (m) => m.TaxPanelModule
+          ),
       },
       {
-        path: '', redirectTo: 'home', pathMatch: 'full'
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full',
       },
-     ], canActivate: [AuthGuard],
+
+      {
+        path: 'edit-profile',
+        loadChildren: () =>
+          import('src/app/modules/profile-company/profile-company.module').then(
+            (m) => m.ProfileCompanyModule
+          ),
+      },
+    ],
+    canActivate: [AuthGuard],
   },
+
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
 

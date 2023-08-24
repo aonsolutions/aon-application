@@ -24,6 +24,7 @@ $XLarge : 1920px;
   $font-size-2k       : 23px;
   $font-size-fullHD   : 20px;
   $font-size-default  : 20px;
+  $font-size-800      : 14px;
 
   $font-size-primary    : 0.8rem;
   $font-size-head       : 1.7rem;
@@ -230,9 +231,17 @@ html {
     font-size: $font-size-fullHD !important;
     /*background: blue;*/
   }
-  @media screen and (max-width: 1599px) {
+  @media screen and (min-width: 800px) and (max-width: 1599px) {
     font-size: $font-size-default !important;
     /*background: purple;*/
+  }
+  @media screen and (max-width: 799px) {
+    font-size: $font-size-800 !important;
+    /*background: orange;*/
+    .form{
+      display: grid!important;
+      gap: 1rem;
+    }
   }
 }
 
@@ -450,6 +459,17 @@ html {
   }
   .padding-bottom-2{
     padding-bottom: $padding-bottom * 2;
+  }
+/*
+  Form
+*/
+  .form{
+    display       : flex;
+    gap           : 1rem;
+    padding       : 0 $padding*2 $padding $padding*2;
+  }
+  .form:first-of-type{
+    padding-top: $padding*2;
   }
 /*
   Hr

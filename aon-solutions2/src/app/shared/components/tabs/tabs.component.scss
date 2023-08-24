@@ -57,7 +57,7 @@
     padding-bottom: 10rem;
   }
   /* Dark */
-  #tabs-header.red .mat-flat-tab-group.mat-primary:not(.mat-tab-group-inverted-header) .mat-tab-labels .mat-tab-label::after{
+  #tabs-header.dark .mat-flat-tab-group.mat-primary:not(.mat-tab-group-inverted-header) .mat-tab-labels .mat-tab-label::after{
     background: $color-dark;
     box-shadow: 0 1px 2px var($color-dark),0 2px 4px var($color-dark);
   }

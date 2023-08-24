@@ -1,0 +1,26 @@
+@import "src/styles.scss";
+
+::ng-deep {
+  [tool] {
+    display       : flex;
+    margin-bottom : -0.45rem;
+    gap           : 1rem;
+  }
+
+  [content]#company {
+    display       : grid;
+    gap           : 2rem;
+    grid-auto-flow: column;
+    padding       : $padding;
+  }
+
+  #upload {
+    margin-top  : $margin-top;
+    padding     : $padding $padding*2;
+  }
+  @media screen and (max-width: 1599px) {
+    [content]#company {
+      grid-auto-flow: unset;
+    }
+  }
+}
