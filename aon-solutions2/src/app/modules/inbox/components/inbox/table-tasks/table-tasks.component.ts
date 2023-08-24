@@ -92,4 +92,9 @@ export class TableTasksComponent implements OnInit {
       });
     }
   }
+
+
+  rowClick(message: any) {
+
+  }
 }

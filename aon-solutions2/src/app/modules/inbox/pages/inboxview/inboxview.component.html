@@ -139,13 +139,25 @@
   <!--FIN CONTENIDO-->
   <!--Detail-->
   <div detail *ngIf="showDetail" class="padding">
-    mensajeeeeeeeeeeeeeeeees:
     <div *ngIf="messagesChat">
       <div *ngFor="let messageChat of messagesChat; let i = index">
-        <p>{{ messageChat.Id }}</p>
-        <p>{{ messageChat.Description }}</p>
-        <p>{{ messageChat.Date}}</p>
-        <hr>
+        <div class="headerMessage">
+          <div class="state">
+            <p>estado</p>
+          </div>
+          <div class="icons">
+            <app-icon shape="reply"></app-icon>
+          <app-icon shape="archive"></app-icon>
+          </div>
+          <hr>
+        </div>
+        <div class="chat">
+          <p>{{ messageChat.Name }}</p>
+          <p>{{ messageChat.Description }}</p>
+          <p>{{ messageChat.Date}}</p>
+          <hr>
+        </div>
+
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CollectionFactory, ICollection, FilterBuilder, IMessageChat } from 'libraries/AonSDK/aon';
+import { CollectionFactory, ICollection, FilterBuilder, IMessageChat, IMessage } from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
@@ -71,14 +71,6 @@ export class InboxviewComponent implements OnInit {
       });
   }
 
-  //Inbox area
-  // messages: ICollection<IMessage> =
-  //   this.collectionFactory.createMessageCollection();
-  //   private messagesSubject = new BehaviorSubject<ICollection<IMessage>>(
-  //   this.collectionFactory.createMessageCollection()
-  // );
-  // public messages$ = this.messagesSubject.asObservable();
-
   ngOnInit(): void {}
 
   showNoTasksMessage(hasNoTasks: boolean) {
@@ -97,7 +89,7 @@ export class InboxviewComponent implements OnInit {
   rowClickHandler(message: any) {
     let filterBuilder = new FilterBuilder();
     filterBuilder.addField('idMessage', message.key);
-    
+
     this.messageChatService
       .getMessageChatList(filterBuilder.getFilter())
       .then((response) => {
@@ -105,5 +97,4 @@ export class InboxviewComponent implements OnInit {
     })
     this.showDetail = true;
   }
-
 }
