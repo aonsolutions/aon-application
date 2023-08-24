@@ -2625,11 +2625,11 @@ class Contract implements IContract, IModel  {
         this.startDate = value;
     }
 
-    public get EndDate(): Date | undefined {
+    public get EndDate(): any {
         return this.endDate;
     }
 
-    public set EndDate(value: Date) {
+    public set EndDate(value: any) {
         this.endDate = value;
     }
 
