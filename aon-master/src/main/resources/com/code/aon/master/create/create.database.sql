@@ -2700,6 +2700,29 @@ CREATE TABLE `delivery_detail` (
   CONSTRAINT `FK_DELIVERY_DETAIL_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Albaran de Venta';
 
+
+#
+# Structure for the `delivery_packaging` table :
+#
+
+CREATE TABLE `delivery_packaging` (
+	`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
+	`domain` int(4) NOT NULL COMMENT 'Dominio',
+	`delivery` int(4) NOT NULL COMMENT 'Identificador del albarán',
+	`item` int(4) NOT NULL COMMENT 'Articulo del Envasado',
+    `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+    `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+    `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+    `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+	PRIMARY KEY (`id`),
+	KEY `IDX_DELIVERY_PACKAGING_DOMAIN` (`domain`),
+	KEY `IDX_DELIVERY_PACKAGING_DELIVERY` (`delivery`),
+	KEY `IDX_DELIVERY_PACKAGING_ITEM` (`item`),
+	CONSTRAINT `FK_DELIVERY_PACKAGING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+	CONSTRAINT `FK_DELIVERY_PACKAGING_DELIVERY` FOREIGN KEY (`delivery`) REFERENCES `delivery` (`id`),
+	CONSTRAINT `FK_DELIVERY_PACKAGING_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Envasado del albaran';
+
 #
 # Table structure for table `department`
 #
