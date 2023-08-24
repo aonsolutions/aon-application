@@ -5,7 +5,7 @@
 // true para activar que los datos lleguen desde la api, false para usar datos ficticion locales
 let APIEnvironment = true;
 // true activa unos tests simples para ver que los métodos funcionan correctamente, false para desactivarlos
-let test: boolean = true;
+let test: boolean = false;
 
 /**
  * 
@@ -101,7 +101,7 @@ export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMu
     createSingleObjectCrud(): ISingleObjectCrud<IDocument> {
         return new GenericSingleObjectCrud<Document>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Document>(Document) : 
+            new APIGenericSingleObjectCrudRepository<Document>(new ApiDocument(), Document) : 
             new GenericSingleObjectCrudRepository<Document>(new StorableDocument(), Document)
             ), 
             Document);
@@ -109,7 +109,7 @@ export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMu
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocument> {
         return new GenericMultipleObjectCrud<Document>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Document>(Document) : 
+            new APIGenericMultipleObjectCrudRepository<Document>(new ApiDocument(), Document) : 
             new GenericMultipleObjectCrudRepository<Document>(new StorableDocument(), Document)
             ), 
             Document);
@@ -120,7 +120,7 @@ export class CertificateFactory implements ISingleObjectCrudFactory<ICertificate
     createSingleObjectCrud(): ISingleObjectCrud<ICertificate> {
         return new GenericSingleObjectCrud<Certificate>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Certificate>(Certificate) : 
+            new APIGenericSingleObjectCrudRepository<Certificate>(new ApiCertificate(), Certificate) : 
             new GenericSingleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate)
             ), 
             Certificate);
@@ -128,7 +128,7 @@ export class CertificateFactory implements ISingleObjectCrudFactory<ICertificate
     createMultipleObjectCrud(): IMultipleObjectCrud<ICertificate> {
         return new GenericMultipleObjectCrud<Certificate>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Certificate>(Certificate) : 
+            new APIGenericMultipleObjectCrudRepository<Certificate>(new ApiCertificate(), Certificate) : 
             new GenericMultipleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate)
             ), 
             Certificate);
@@ -139,7 +139,7 @@ export class FolderFactory implements ISingleObjectCrudFactory<IFolder>, IMultip
     createSingleObjectCrud(): ISingleObjectCrud<IFolder> {
         return new GenericSingleObjectCrud<Folder>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Folder>(Folder) : 
+            new APIGenericSingleObjectCrudRepository<Folder>(new ApiFolder(), Folder) : 
             new GenericSingleObjectCrudRepository<Folder>(new StorableFolder(), Folder)
             ), 
             Folder);
@@ -158,7 +158,7 @@ export class DocumenNoteFactory implements ISingleObjectCrudFactory<IDocumentNot
     createSingleObjectCrud(): ISingleObjectCrud<IDocumentNote> {
         return new GenericSingleObjectCrud<DocumentNote>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<DocumentNote>(DocumentNote) : 
+            new APIGenericSingleObjectCrudRepository<DocumentNote>(new ApiDocumentNote(), DocumentNote) : 
             new GenericSingleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote)
             ), 
             DocumentNote);
@@ -166,7 +166,7 @@ export class DocumenNoteFactory implements ISingleObjectCrudFactory<IDocumentNot
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocumentNote> {
         return new GenericMultipleObjectCrud<DocumentNote>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<DocumentNote>(DocumentNote) : 
+            new APIGenericMultipleObjectCrudRepository<DocumentNote>(new ApiDocumentNote(), DocumentNote) : 
             new GenericMultipleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote)
             ), 
             DocumentNote);
@@ -177,7 +177,7 @@ export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMult
     createSingleObjectCrud(): ISingleObjectCrud<IMessage> {
         return new GenericSingleObjectCrud<Message>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Message>(Message) : 
+            new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message) : 
             new GenericSingleObjectCrudRepository<Message>(new StorableMessage(), Message)
             ), 
             Message);
@@ -185,7 +185,7 @@ export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMult
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessage> {
         return new GenericMultipleObjectCrud<Message>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Message>(Message) : 
+            new APIGenericMultipleObjectCrudRepository<Message>(new ApiMessage(), Message) : 
             new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message)
             ), 
             Message);
@@ -196,7 +196,7 @@ export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat
     createSingleObjectCrud(): ISingleObjectCrud<IMessageChat> {
         return new GenericSingleObjectCrud<MessageChat>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<MessageChat>(MessageChat) : 
+            new APIGenericSingleObjectCrudRepository<MessageChat>(new ApiMessageChat(), MessageChat) : 
             new GenericSingleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat)
             ), 
             MessageChat);
@@ -204,7 +204,7 @@ export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessageChat> {
         return new GenericMultipleObjectCrud<MessageChat>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<MessageChat>(MessageChat) : 
+            new APIGenericMultipleObjectCrudRepository<MessageChat>(new ApiMessageChat(), MessageChat) : 
             new GenericMultipleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat)
             ), 
             MessageChat);
@@ -215,7 +215,7 @@ export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>,
     createSingleObjectCrud(): ISingleObjectReader<IEnterprise> {
         return new GenericSingleObjectCrud<Enterprise>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Enterprise>(Enterprise) : 
+            new APIGenericSingleObjectCrudRepository<Enterprise>(new ApiEnterprise(), Enterprise) : 
             new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise)
             ), 
             Enterprise);
@@ -223,7 +223,7 @@ export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>,
     createMultipleObjectCrud(): IMultipleObjectReader<IEnterprise> {
         return new GenericMultipleObjectCrud<Enterprise>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Enterprise>(Enterprise) : 
+            new APIGenericMultipleObjectCrudRepository<Enterprise>(new ApiEnterprise(), Enterprise) : 
             new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise)
             ), 
             Enterprise);
@@ -234,7 +234,7 @@ export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleOb
     createSingleObjectCrud(): ISingleObjectCrud<IBank> {
         return new GenericSingleObjectCrud<Bank>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Bank>(Bank) : 
+            new APIGenericSingleObjectCrudRepository<Bank>(new ApiBank(), Bank) : 
             new GenericSingleObjectCrudRepository<Bank>(new StorableBank(), Bank)
             ), 
             Bank);
@@ -242,7 +242,7 @@ export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleOb
     createMultipleObjectCrud(): IMultipleObjectCrud<IBank> {
         return new GenericMultipleObjectCrud<Bank>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Bank>(Bank) : 
+            new APIGenericMultipleObjectCrudRepository<Bank>(new ApiBank(), Bank) : 
             new GenericMultipleObjectCrudRepository<Bank>(new StorableBank(), Bank)
             ), 
             Bank);
@@ -253,7 +253,7 @@ export class TaxModelFactory implements ISingleObjectCrudFactory<ITaxModel>, IMu
     createSingleObjectCrud(): ISingleObjectCrud<ITaxModel> {
         return new GenericSingleObjectCrud<TaxModel>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<TaxModel>(TaxModel) : 
+            new APIGenericSingleObjectCrudRepository<TaxModel>(new ApiTaxModel(), TaxModel) : 
             new GenericSingleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel)
             ), 
             TaxModel);
@@ -261,7 +261,7 @@ export class TaxModelFactory implements ISingleObjectCrudFactory<ITaxModel>, IMu
     createMultipleObjectCrud(): IMultipleObjectCrud<ITaxModel> {
         return new GenericMultipleObjectCrud<TaxModel>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<TaxModel>(TaxModel) : 
+            new APIGenericMultipleObjectCrudRepository<TaxModel>(new ApiTaxModel(), TaxModel) : 
             new GenericMultipleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel)
             ), 
             TaxModel);
@@ -272,7 +272,7 @@ export class EmployeeFactory implements ISingleObjectCrudFactory<IEmployee>, IMu
     createSingleObjectCrud(): ISingleObjectCrud<IEmployee> {
         return new GenericSingleObjectCrud<Employee>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Employee>(Employee) : 
+            new APIGenericSingleObjectCrudRepository<Employee>(new ApiEmployee(), Employee) : 
             new GenericSingleObjectCrudRepository<Employee>(new StorableEmployee(), Employee)
             ), 
             Employee);
@@ -280,7 +280,7 @@ export class EmployeeFactory implements ISingleObjectCrudFactory<IEmployee>, IMu
     createMultipleObjectCrud(): IMultipleObjectCrud<IEmployee> {
         return new GenericMultipleObjectCrud<Employee>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Employee>(Employee) : 
+            new APIGenericMultipleObjectCrudRepository<Employee>(new ApiEmployee(), Employee) : 
             new GenericMultipleObjectCrudRepository<Employee>(new StorableEmployee(), Employee)
             ), 
             Employee);
@@ -304,7 +304,7 @@ export class MarkFactory implements ISingleObjectCrudFactory<IMark>, IMultipleOb
     createSingleObjectCrud(): ISingleObjectCrud<IMark> {
         return new GenericSingleObjectCrud<Mark>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Mark>(Mark) : 
+            new APIGenericSingleObjectCrudRepository<Mark>(new ApiMark(), Mark) : 
             new GenericSingleObjectCrudRepository<Mark>(new StorableMark(), Mark)
             ), 
             Mark);
@@ -312,7 +312,7 @@ export class MarkFactory implements ISingleObjectCrudFactory<IMark>, IMultipleOb
     createMultipleObjectCrud(): IMultipleObjectCrud<IMark> {
         return new GenericMultipleObjectCrud<Mark>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Mark>(Mark) : 
+            new APIGenericMultipleObjectCrudRepository<Mark>(new ApiMark(), Mark) : 
             new GenericMultipleObjectCrudRepository<Mark>(new StorableMark(), Mark)
             ), 
             Mark);
@@ -323,7 +323,7 @@ export class UserFactory implements ISingleObjectCrudFactory<IUser>, IMultipleOb
     createSingleObjectCrud(): ISingleObjectCrud<IUser> {
         return new GenericSingleObjectCrud<User>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<User>(User) : 
+            new APIGenericSingleObjectCrudRepository<User>(new ApiUser(), User) : 
             new GenericSingleObjectCrudRepository<User>(new StorableUser(), User)
             ), 
             User);
@@ -331,7 +331,7 @@ export class UserFactory implements ISingleObjectCrudFactory<IUser>, IMultipleOb
     createMultipleObjectCrud(): IMultipleObjectCrud<IUser> {
         return new GenericMultipleObjectCrud<User>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<User>(User) : 
+            new APIGenericMultipleObjectCrudRepository<User>(new ApiUser(), User) : 
             new GenericMultipleObjectCrudRepository<User>(new StorableUser(), User)
             ), 
             User);
@@ -895,19 +895,22 @@ class APIGenericSingleObjectCrudRepository<T extends IModel> implements ISingleO
     private httpRequest: IApiHttpRequest = new ApiHttpRequest();
     private type: { new (): T };
     private model: IModel;
+    private apiModel: IApiModel;
 
-    constructor(type: { new (): T }){
+    constructor(apiModel: IApiModel, type: { new (): T }){
         this.type = type;
         this.model = new this.type();
+        this.apiModel = apiModel;
     }
 
-    async get(key: string): Promise<T> {
+    async get(key: string, type?: string): Promise<T> {
         let filter = new FilterBuilder();
         filter.addField('id',key);
-        let url = this.model.getUrl(GET_SINGLE, filter.getFilter());
-        let method = this.model.getMethod(GET_SINGLE, filter.getFilter());
+        if(type) filter.addField('type',type)
+        let url = this.apiModel.getUrl(GET_SINGLE, filter.getFilter());
+        let method = this.apiModel.getMethod(GET_SINGLE, filter.getFilter());
         let response = await this.httpRequest.httpRequest(BASE_URL + url, method, {}, {})
-        return this.model.parseDataToReceive(response, GET_SINGLE);
+        return this.apiModel.parseDataToReceive(response, GET_SINGLE);
     }
 
     create(element: T): Promise<T> {
@@ -931,23 +934,25 @@ class APIGenericMultipleObjectCrudRepository<T extends IModel> implements IMulti
     protected httpRequest: IApiHttpRequest = new ApiHttpRequest();
     protected type: { new (): T };
     protected model: IModel;
+    protected apiModel: IApiModel;
 
-    constructor(type: { new (): T }){
+    constructor(apiModel: IApiModel, type: { new (): T }){
         this.type = type;
         this.model = new this.type();
+        this.apiModel = apiModel;
     }
 
     async get(filter?: IFilter): Promise<ICollection<T>> {
-        let urls = this.model.getUrl(GET_MULTIPLE,filter);
-        let method = this.model.getMethod(GET_MULTIPLE,filter);
+        let urls = this.apiModel.getUrl(GET_MULTIPLE,filter);
+        let method = this.apiModel.getMethod(GET_MULTIPLE,filter);
         let collection: ICollection<T> = new Collection<T>();
         for(let url of urls){
             let response = await this.httpRequest.httpRequest(BASE_URL + url, method, {}, {})
             response.forEach((element: any) => {
-                collection.add(this.model.parseDataToReceive(element, GET_MULTIPLE, filter))
+                collection.add(this.apiModel.parseDataToReceive(element, GET_MULTIPLE, filter))
             })
         }
-        if(this.model.localFilter() && collection.size() > 0){
+        if(this.apiModel.localFilter() && collection.size() > 0){
             if(filter?.intervalFields || filter?.fields) collection = collection.filter(filter);
             if(filter?.orderBy) collection.sort(filter);
             if(filter?.pageItems && filter.pageNum) collection = collection.paginate(filter.pageNum,filter.pageItems);
@@ -972,7 +977,7 @@ class APIGenericMultipleObjectCrudRepository<T extends IModel> implements IMulti
 class APIFolderMultipleObjectCrudRepository extends APIGenericMultipleObjectCrudRepository<Folder> {
 
     constructor(){
-        super(Folder);
+        super(new ApiFolder(), Folder);
     }
 
     async get(filter?: IFilter | undefined): Promise<ICollection<Folder>> {
@@ -1546,6 +1551,14 @@ interface IModel extends ICollectable {
      */
     Key: string;
     /**
+     * API json object
+     */
+    // ApiObject: any;
+    
+}
+
+interface IApiModel {
+    /**
      * Get the url needed for the api http request.
      * @param currentMethod The method is calling the api
      * @return And array with the method of http needed and the url
@@ -1827,6 +1840,11 @@ class Document implements IDocument, IModel {
     private date: Date;
     private key: string;
     private id: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
 
     constructor(file?: string, fileName?: string, fileSize?: number, fileType?: string, date?: Date, path?: string, id?: string) {
         this.file = file || '';
@@ -1837,61 +1855,7 @@ class Document implements IDocument, IModel {
         this.date = date || new Date();
         this.key = path && fileName ? path + '/' + fileName : '';
         this.id = id || '';
-    }
-
-    getUrl(currentMethod: string, filter: IFilter): string[] {
-        // a contabilizar, contabilizado, papelera - inbox, rejected, draft
-        if(currentMethod == GET_MULTIPLE){
-            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/a_contabilizar')
-                return ['/ms/api/invoice?status=inbox'];
-            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/contabilizado')
-                return ['/ms/api/invoice?status=rejected'];
-            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/fiscal')
-                return ['/ms/api/fiscal/models'];
-            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/papelera')
-                return ['/ms/api/invoice?status=draft'];
-            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase().includes('/laboral'))
-                return ['/ms/api/contract/enterprise/salaries?document=' + filter.fields.get('path').split('/')[2]]
-        }
-        throw new ErrorResponse('0199')
-    }
-
-    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        if(currentMethod == GET_MULTIPLE)
-            return GET_METHOD;
-        throw new ErrorResponse('0199')
-    }
-
-    localFilter(): boolean {
-        return true;
-    }
-
-    parseDataToSend(data: any) {
-        throw new ErrorResponse('0199')
-    }
-
-    parseDataToReceive(data: any, currentMethod:string, filter: IFilter) {
-        let document = new Document()
-        if(filter && filter.fields && filter.fields?.has('path') && filter.fields?.get('path').includes('/laboral')){
-            document.File = ''
-            document.FileName = 'Nómina' + (data.startDate ? data.startDate : '') + ' - ' + (data.endDate ? data.endDate : '');
-            document.FileSize = 0
-            document.FileType = ''
-            document.Date = new Date()
-            document.Path = filter.fields?.get('path')
-            document.Key = data.id ? data.id : ''
-            document.Id = data.id ? data.id : ''
-        }else{
-            document.File = data.file && data.file.path ? data.file.path : '';
-            document.FileName = data.name ? data.name : '';
-            document.FileSize = 0;
-            document.FileType = data.file && data.file.content_type ? data.file.content_type : '';
-            document.Date = data.date ? data.date : new Date();
-            document.Path = data.file && data.file.path ? data.file.path : '';
-            document.Key = data.file && data.file.path ? data.file.path : '';
-            document.Id = data.id ? data.id : '';
-        }
-        return document;
+        this.apiObject = '';
     }
 
     public get FileName(): string {
@@ -1959,7 +1923,7 @@ class Document implements IDocument, IModel {
     } 
 
     getKey(): string {
-        return this.path + '/' + this.fileName;
+        return this.path + '/' + this.id;
     }
 
     getFilterableFields(): Map<string,any> {
@@ -1979,6 +1943,67 @@ class Document implements IDocument, IModel {
         map.set('path', this.Path);
         return map;
     }
+}
+
+class ApiDocument extends Document implements IApiModel {
+
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        // a contabilizar, contabilizado, papelera - inbox, rejected, draft
+        if(currentMethod == GET_MULTIPLE){
+            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/a_contabilizar')
+                return ['/ms/api/invoice?status=inbox'];
+            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/contabilizado')
+                throw new ErrorResponse('0199')
+                // return ['/ms/api/invoice?status=rejected'];
+            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/fiscal')
+                return ['/ms/api/fiscal/models'];
+            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase() == '/papelera')
+                throw new ErrorResponse('0199')
+                // return ['/ms/api/invoice?status=draft'];
+            if(filter.fields?.has('path') && filter.fields.get('path').toLowerCase().includes('/laboral'))
+                return ['/ms/api/contract/enterprise/salaries?document=' + filter.fields.get('path').split('/')[2]]
+        }
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any, currentMethod:string, filter: IFilter) {
+        let document = new Document()
+        if(filter && filter.fields && filter.fields?.has('path') && filter.fields?.get('path').includes('/laboral')){
+            document.File = ''
+            document.FileName = 'Nómina' + (data.startDate ? data.startDate : '') + ' - ' + (data.endDate ? data.endDate : '');
+            document.FileSize = 0
+            document.FileType = ''
+            document.Date = new Date()
+            document.Path = filter.fields?.get('path')
+            document.Key = data.id ? data.id : ''
+            document.Id = data.id ? data.id : ''
+        }else {
+            document.File = data.file && data.file.path ? data.file.path : '';
+            document.FileName = data.name ? data.name : '';
+            document.FileSize = 0;
+            document.FileType = data.file && data.file.content_type ? data.file.content_type : '';
+            document.Date = data.date ? data.date : new Date();
+            document.Path = filter.fields?.get('path')
+            document.Key = data.id ? data.id : '';
+            document.Id = data.id ? data.id : '';
+        }
+        return document;
+    }
+
 }
 
 class StorableDocument extends Document implements IStorable<Document> {
@@ -2001,45 +2026,6 @@ class Folder implements IFolder, IModel  {
         this.path = parent?.toLocaleLowerCase().split(' ').join('_') + '/' + name?.toLocaleLowerCase().split(' ').join('_') || '';
         this.parent = parent || '';
         this.key = this.path || '';
-    }
-
-    getUrl(currentMethod: string, filter: IFilter): string[] {
-        let urls: string [] = [];
-        if(currentMethod == GET_MULTIPLE){
-            if(filter && filter.fields && filter.fields?.has('workplace')){
-                filter.fields?.get('workplace').split(';').forEach((element: any) => {
-                    if(element) urls.push('/ms/api/contract/employee/workplace?workplace=' + element)
-                })
-                return urls;
-            }
-            else
-                return ['/ms/api/contract/employee/workplace'];
-        }
-        throw new ErrorResponse('0199')
-    }
-
-    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        if(currentMethod == GET_MULTIPLE)
-            return GET_METHOD;
-        throw new ErrorResponse('0199')
-    }
-
-    localFilter(): boolean {
-        return true;
-    }
-
-    parseDataToSend(data: any) {
-        throw new ErrorResponse('0199')
-    }
-
-    parseDataToReceive(data: any) {
-        let folder = new Folder();
-        folder.Key = data.document ? data.document : '';
-        folder.Name = data.name && data.surname ? data.name + data.surname : '';
-        folder.Parent = '/laboral';
-        folder.Path = '/laboral/' + folder.Key;
-        return folder;
-        throw new ErrorResponse('0199')
     }
 
     public get Name(): string {
@@ -2093,6 +2079,47 @@ class Folder implements IFolder, IModel  {
     }
 }
 
+class ApiFolder extends Folder implements IApiModel {
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        let urls: string [] = [];
+        if(currentMethod == GET_MULTIPLE){
+            if(filter && filter.fields && filter.fields?.has('workplace')){
+                filter.fields?.get('workplace').split(';').forEach((element: any) => {
+                    if(element) urls.push('/ms/api/contract/employee/workplace?workplace=' + element)
+                })
+                return urls;
+            }
+            else
+                return ['/ms/api/contract/employee/workplace'];
+        }
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return true;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let folder = new Folder();
+        folder.Key = data.document ? data.document : '';
+        folder.Name = data.name && data.surname ? data.name + data.surname : '';
+        folder.Parent = '/laboral';
+        folder.Path = '/laboral/' + folder.Key;
+        return folder;
+        throw new ErrorResponse('0199')
+    }
+}
+
 class StorableFolder extends Folder implements IStorable<Folder> {
     getCollection(): ICollection<Folder> {
         return folders;
@@ -2123,21 +2150,6 @@ class Certificate implements ICertificate, IModel {
         this.sepe = sepe || false;
         this.aeat = aeat || false;
         this.key = name || '';
-    }
-    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
-        throw new Error("Method not implemented.");
-    }
-    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        throw new Error("Method not implemented.");
-    }
-    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
-        throw new Error("Method not implemented.");
-    }
-    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
-        throw new Error("Method not implemented.");
-    }
-    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
-        throw new Error("Method not implemented.");
     }
 
     public get Name(): string {
@@ -2242,6 +2254,24 @@ class Certificate implements ICertificate, IModel {
         return map;
     }
 
+}
+
+class ApiCertificate extends Certificate implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
 }
 
 class StorableCertificate extends Certificate implements IStorable<Certificate> {
@@ -2398,6 +2428,27 @@ class Enterprise implements IEnterprise, IModel {
         this.registry = '';
     }
 
+    getKey(): string {
+        return this.document;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.Name);
+        map.set('document', this.Document);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.Name);
+        map.set('document', this.Document);
+        return map;
+    }
+
+}
+
+class ApiEnterprise extends Enterprise implements IApiModel {
     getUrl(currentMethod: string, filter: IFilter): string [] {
         if(currentMethod == GET_MULTIPLE)
             return ['/ms/api/company'];
@@ -2429,49 +2480,29 @@ class Enterprise implements IEnterprise, IModel {
             enterprise.Name = data.name ? data.name : ''
             enterprise.Key = data.document ? data.document : '';
             enterprise.DomainName = data.domain ? data.domain : '';
-            enterprise.domainId = data.id ? data.id : '';
-            enterprise.registry = data.registry ? data.registry : '';
+            enterprise.DomainId = data.id ? data.id : '';
+            enterprise.Registry = data.registry ? data.registry : '';
             return enterprise;
         }else if (currentMethod == GET_SINGLE){
-            // TO DO - mapear los atributos que nos llegan en la llamada de una empresa a la empresa del sdk
             let enterprise = new Enterprise();
-            enterprise.Address
-            enterprise.Country
-            enterprise.Document
-            enterprise.DomainId
-            enterprise.DomainName
-            enterprise.Email
-            enterprise.Key
-            enterprise.Name
-            enterprise.Phone
-            enterprise.ProfilePhoto
-            enterprise.Province
-            enterprise.Registry
-            enterprise.SocialReason
-            enterprise.Website
+            enterprise.Address = data.address.address
+            enterprise.Country = data.address.country
+            enterprise.Document = data.document
+            enterprise.DomainId = data.domain.id
+            enterprise.DomainName = data.domain.name
+            enterprise.Email = '' // TO DO
+            enterprise.Key = data.document
+            enterprise.Name = data.name
+            enterprise.Phone = '' // TO DO
+            enterprise.ProfilePhoto = 
+            enterprise.Province = data.address.province
+            enterprise.Registry = data.id
+            enterprise.SocialReason = '' // TO DO
+            enterprise.Website = '' // TO DO
             return enterprise;
         }
         throw new ErrorResponse('0199')
     }
-
-    getKey(): string {
-        return this.document;
-    }
-
-    getFilterableFields(): Map<string, any> {
-        let map = new Map<string, any>();
-        map.set('name', this.Name);
-        map.set('document', this.Document);
-        return map;
-    }
-
-    getSortableFields(): Map<string, any> {
-        let map = new Map<string, any>();
-        map.set('name', this.Name);
-        map.set('document', this.Document);
-        return map;
-    }
-
 }
 
 class StorableEnterprise extends Enterprise implements IStorable<Enterprise> {
@@ -2492,21 +2523,6 @@ class DocumentNote implements IDocumentNote, IModel  {
         this.text = text || '';
         this.path = path || '';
         this.key = path || '';
-    }
-    getUrl(currentMethod: string): string[] {
-        throw new ErrorResponse('0199')
-    }
-    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        throw new ErrorResponse('0199')
-    }
-    localFilter(): boolean {
-        return false;
-    }
-    parseDataToSend(data: any) {
-        throw new ErrorResponse('0199')
-    }
-    parseDataToReceive(data: any) {
-        throw new ErrorResponse('0199')
     }
 
     public get Text(): string {
@@ -2550,6 +2566,24 @@ class DocumentNote implements IDocumentNote, IModel  {
     }
 }
 
+class ApiDocumentNote extends DocumentNote implements IApiModel {
+    getUrl(currentMethod: string): string[] {
+        throw new ErrorResponse('0199')
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new ErrorResponse('0199')
+    }
+    localFilter(): boolean {
+        return false;
+    }
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+    parseDataToReceive(data: any) {
+        throw new ErrorResponse('0199')
+    }
+}
+
 class StorableDocumentNote extends DocumentNote implements IStorable<DocumentNote> {
     getCollection(): ICollection<DocumentNote> {
         return documentNotes;
@@ -2570,35 +2604,6 @@ class Bank implements IBank, IModel  {
         this.total = total || 0;
         this.logo = logo || '';
         this.key = name || '';
-    }
-
-    getUrl(currentMethod: string): string[] {
-        if(currentMethod == GET_MULTIPLE)
-            return ['/ms/api/company/banks'];
-            throw new ErrorResponse('0199')
-    }
-
-    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        if(currentMethod == GET_MULTIPLE)
-            return GET_METHOD;
-            throw new ErrorResponse('0199')
-    }
-
-    localFilter(): boolean {
-        return false;
-    }
-
-    parseDataToSend(data: any) {
-        throw new ErrorResponse('0199')
-    }
-
-    parseDataToReceive(data: any) {
-        let bank = new Bank();
-        bank.Key = data.id
-        bank.Logo = ''
-        bank.Name = data.alias ? data.alias : ''
-        bank.Total = 0
-        return bank;
     }
 
     public get Name(): string {
@@ -2652,6 +2657,37 @@ class Bank implements IBank, IModel  {
     }
 }
 
+class ApiBank extends Bank implements IApiModel {
+    getUrl(currentMethod: string): string[] {
+        if(currentMethod == GET_MULTIPLE)
+            return ['/ms/api/company/banks'];
+            throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+            throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let bank = new Bank();
+        bank.Key = data.id
+        bank.Logo = ''
+        bank.Name = data.alias ? data.alias : ''
+        bank.Total = 0
+        return bank;
+    }
+}
+
 class StorableBank extends Bank implements IStorable<Bank> {
     getCollection(): ICollection<Bank> {
         return banks;
@@ -2681,39 +2717,6 @@ class TaxModel implements ITaxModel, IModel  {
         this.year = year || 0;
         if(name && trimester && year) this.key = name + ';' + trimester.toString() + ';' + year.toString();
         else this.key = ''
-    }
-
-    getUrl(currentMethod: string): string[] {
-        if(currentMethod == GET_MULTIPLE)
-            return ['/ms/api/fiscal/models']
-            throw new ErrorResponse('0199')
-    }
-
-    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        if(currentMethod == GET_MULTIPLE)
-            return GET_METHOD;
-            throw new ErrorResponse('0199')
-    }
-
-    localFilter(currentMethod: string, filter?: IFilter): boolean {
-        return true;
-    }
-
-    parseDataToSend(data: any) {
-        throw new ErrorResponse('0199')
-    }
-
-    parseDataToReceive(data: any) {
-        let tax = new TaxModel();
-        tax.key = data.id;
-        tax.name = data.model ? data.model : '';
-        tax.PaymentMethod = '';
-        tax.Result = data.result ? data.result : '';
-        tax.status = data.status ? data.status : '';
-        tax.TaxType = '';
-        tax.Trimester = data.period ? data.period : '';
-        tax.Year = data.year ? data.year : '';
-        return tax;
     }
 
     public get Name(): string {
@@ -2809,6 +2812,41 @@ class TaxModel implements ITaxModel, IModel  {
     }
 }
 
+class ApiTaxModel extends TaxModel implements IApiModel {
+    getUrl(currentMethod: string): string[] {
+        if(currentMethod == GET_MULTIPLE)
+            return ['/ms/api/fiscal/models']
+            throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+            throw new ErrorResponse('0199')
+    }
+
+    localFilter(currentMethod: string, filter?: IFilter): boolean {
+        return true;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let tax = new TaxModel();
+        tax.Key = data.id;
+        tax.Name = data.model ? data.model : '';
+        tax.PaymentMethod = '';
+        tax.Result = data.result ? data.result : '';
+        tax.Status = data.status ? data.status : '';
+        tax.TaxType = '';
+        tax.Trimester = data.period ? data.period : '';
+        tax.Year = data.year ? data.year : '';
+        return tax;
+    }
+}
+
 class StorableTaxModel extends TaxModel implements IStorable<TaxModel> {
     getCollection(): ICollection<TaxModel> {
         return taxModels;
@@ -2839,63 +2877,6 @@ class Message implements IMessage, IModel  {
         this.status = status || '';
         this.endDate = endDate || new Date();
         this.key = this.id || '';
-    }
-
-    getUrl(currentMethod: string, filter: IFilter): string[] {
-        if(currentMethod == GET_MULTIPLE){
-            if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'notificacion')
-                return ['/ms/api/notification?page=1&perPage=100']
-            else if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'consulta')
-                return ['/ms/api/task?source=query&page=1&perPage=100&task_holder=' + localStorage.getItem('registry')]
-            else if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'tarea')
-                return ['/ms/api/task?source=task&page=1&perPage=100&task_holder=' + localStorage.getItem('registry')]
-            else
-                return ['/ms/api/notification?page=1&perPage=100','/ms/api/task?source=query&page=1&perPage=100','/ms/api/task?source=task&page=1&perPage=100']
-        }
-        throw new ErrorResponse('0199')
-    }
-
-    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        if(currentMethod == GET_MULTIPLE)
-            return GET_METHOD;
-            throw new ErrorResponse('0199')
-    }
-
-    localFilter(): boolean {
-        return true;
-    }
-
-    parseDataToSend(data: any) {
-        throw new ErrorResponse('0199')
-    }
-
-    parseDataToReceive(data: any) {
-        let message = new Message();
-        if(data.source && (data.source == 'task' || data.source == 'query')){
-            let description = JSON.parse(data.description);
-            message.id = data.id;
-            message.name = data.sender.name ? data.sender.name : '';
-            message.title = data.title ? data.title : '';
-            message.description = description.observation ? description.observation : '';
-            message.date = new Date(data.start_date);
-            message.type = data.source == 'query' ? 'consulta' : 'tarea';
-            message.status = data.status ? data.status : '';
-            message.endDate = new Date();
-            message.key = data.id;
-            return message;
-        }else {
-            message.id = data.id;
-            message.name = data.source ? data.source : '';
-            message.title = data.title ? data.title : '';
-            message.description = data.body ? data.body : '';
-            message.date = new Date(data.date);
-            message.type = 'notificacion';
-            message.status = data.status ? data.status : 0;
-            message.endDate = new Date();
-            message.key = data.id;
-            return message;
-        }
-        throw new ErrorResponse('0199')
     }
 
     public get Id(): string {
@@ -2999,6 +2980,71 @@ class Message implements IMessage, IModel  {
     }
 }
 
+class ApiMessage extends Message implements IApiModel {
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        if(currentMethod == GET_MULTIPLE){
+            if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'notificacion')
+                return ['/ms/api/notification?page=1&perPage=100']
+            else if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'consulta')
+                return ['/ms/api/task?source=query&page=1&perPage=100&task_holder=' + localStorage.getItem('registry')]
+            else if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'tarea')
+                return ['/ms/api/task?source=task&page=1&perPage=100&task_holder=' + localStorage.getItem('registry')]
+            else
+                return ['/ms/api/notification?page=1&perPage=100','/ms/api/task?source=query&page=1&perPage=100','/ms/api/task?source=task&page=1&perPage=100']
+        }else if (currentMethod == GET_SINGLE){
+            if(filter && filter.fields?.has('id') &&  
+            (filter.fields.get('id').toLowerCase().split(';')[1] == 'consulta' || filter.fields.get('id').toLowerCase().split(';')[1] == 'tarea'))
+                return ['/ms/api/task/one?id=' + filter.fields.get('id').split(';')[0]];
+        }
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+        if(currentMethod == GET_SINGLE)
+            return GET_METHOD;
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return true;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let message = new Message();
+        if(data.source && (data.source == 'task' || data.source == 'query')){
+            let description = JSON.parse(data.description);
+            message.Id = data.id + (data.source == 'query' ? ';consulta' : ';tarea');
+            message.Name = data.sender.name ? data.sender.name : '';
+            message.Title = data.title ? data.title : '';
+            message.Description = description.observation ? description.observation : '';
+            message.Date = new Date(data.start_date);
+            message.Type = data.source == 'query' ? 'consulta' : 'tarea';
+            message.Status = data.status ? data.status : '';
+            message.EndDate = new Date();
+            message.Key = data.id + (data.source == 'query' ? ';consulta' : ';tarea');
+            return message;
+        }else {
+            message.Id = data.id + ';notificacion';
+            message.Name = data.source ? data.source : '';
+            message.Title = data.title ? data.title : '';
+            message.Description = data.body ? data.body : '';
+            message.Date = new Date(data.date);
+            message.Type = 'notificacion';
+            message.Status = data.status ? data.status : 0;
+            message.EndDate = new Date();
+            message.Key = data.id + ';notificacion';
+            return message;
+        }
+        throw new ErrorResponse('0199')
+    }
+}
+
 class StorableMessage extends Message implements IStorable<Message> {
     getCollection(): ICollection<Message> {
         return messages;
@@ -3025,40 +3071,6 @@ class MessageChat implements IMessageChat, IModel  {
         this.date = date || new Date();
         this.type = type || '';
         this.key = this.id || '';
-    }
-
-    getUrl(currentMethod: string, filter: IFilter): string[] {
-        if(currentMethod == GET_MULTIPLE && filter && filter.fields && filter.fields.has('idMessage'))
-            return ['/ms/api/task/workflow?task='+filter.fields.get('idMessage')+'&domainId='+localStorage.getItem('domainId')+'&domainName='+localStorage.getItem('domainName')]
-        throw new ErrorResponse('0199')
-    }
-
-    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        if(currentMethod == GET_MULTIPLE)
-            return GET_METHOD;
-            console.log('qwe')
-        throw new ErrorResponse('0199')
-    }
-
-    localFilter(): boolean {
-        return false;
-    }
-
-    parseDataToSend(data: any) {
-        throw new ErrorResponse('0199')
-    }
-
-    parseDataToReceive(data: any) {
-        let messageChat = new MessageChat();
-        messageChat.Id = data.id
-        messageChat.IdMessage = data.task
-        messageChat.Key = data.id
-        messageChat.Name = data.task_holder.name
-        messageChat.Type = data.task_holder.id == localStorage.getItem('registry') ? 'send' : 'received';
-        messageChat.description = data.comment
-        messageChat.Date = data.modification_date;
-        return messageChat;
-        throw new ErrorResponse('0199')
     }
 
     public get Id(): string {
@@ -3123,6 +3135,7 @@ class MessageChat implements IMessageChat, IModel  {
 
     getFilterableFields(): Map<string, any> {
         let map = new Map<string, any>();
+        map.set('idMessage', this.idMessage)
         map.set('name', this.name);
         map.set('description', this.description);
         map.set('date', this.date);
@@ -3132,11 +3145,48 @@ class MessageChat implements IMessageChat, IModel  {
 
     getSortableFields(): Map<string, any> {
         let map = new Map<string, any>();
+        map.set('idMessage', this.idMessage)
         map.set('name', this.name);
         map.set('description', this.description);
         map.set('date', this.date);
         map.set('type', this.type);
         return map;
+    }
+}
+
+class ApiMessageChat extends MessageChat implements IApiModel {
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        if(currentMethod == GET_MULTIPLE && filter && filter.fields && filter.fields.has('idMessage'))
+            return ['/ms/api/task/workflow?task='+filter.fields.get('idMessage')+'&domainId='+localStorage.getItem('domainId')+'&domainName='+localStorage.getItem('domainName')]
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+            console.log('qwe')
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let messageChat = new MessageChat();
+        messageChat.Id = data.id
+        messageChat.IdMessage = data.task
+        messageChat.Key = data.id
+        messageChat.Name = data.task_holder.name
+        messageChat.Type = data.task_holder.id == localStorage.getItem('registry') ? 'send' : 'received';
+        messageChat.Description = data.comment
+        messageChat.Date = data.modification_date;
+        return messageChat;
+        throw new ErrorResponse('0199')
     }
 }
 
@@ -3168,26 +3218,6 @@ class Employee implements IEmployee, IModel  {
         this.phone = phone || '';
         this.naf = naf || '';
         this.active = active || false;
-    }
-
-    getUrl(currentMethod: string): string[] {
-        throw new ErrorResponse('0199')
-    }
-
-    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        throw new ErrorResponse('0199')
-    }
-
-    localFilter(): boolean {
-        return false;
-    }
-
-    parseDataToSend(data: any) {
-        throw new ErrorResponse('0199')
-    }
-
-    parseDataToReceive(data: any) {
-        throw new ErrorResponse('0199')
     }
 
     public get Name(): string {
@@ -3280,6 +3310,28 @@ class Employee implements IEmployee, IModel  {
         map.set('naf', this.naf);
         map.set('active', this.active);
         return map;
+    }
+}
+
+class ApiEmployee extends Employee implements IApiModel {
+    getUrl(currentMethod: string): string[] {
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        throw new ErrorResponse('0199')
     }
 }
 
@@ -3384,22 +3436,6 @@ class Mark implements IMark, IModel  {
         this.status = status || '';
         this.key = this.id || '';
     }
-    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
-        throw new Error("Method not implemented.");
-    }
-    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        throw new Error("Method not implemented.");
-    }
-    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
-        throw new Error("Method not implemented.");
-    }
-    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
-        throw new Error("Method not implemented.");
-    }
-    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
-        throw new Error("Method not implemented.");
-    }
-
 
     public get Id(): string {
         return this.id;
@@ -3543,6 +3579,24 @@ class Mark implements IMark, IModel  {
 
 }
 
+class ApiMark extends Mark implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
+}
+
 class StorableMark extends Mark implements IStorable<Mark> {
     getCollection(): ICollection<Mark> {
         return marks;
@@ -3571,26 +3625,6 @@ class User implements IUser, IModel  {
         this.phone = phone || '';
         this.active = active || true;
         this.key = document || '';
-    }
-
-    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
-        throw new ErrorResponse('0199')
-    }
-
-    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        throw new ErrorResponse('0199')
-    }
-
-    localFilter(): boolean {
-        return false;
-    }
-
-    parseDataToSend(data: any) {
-        throw new ErrorResponse('0199')
-    }
-
-    parseDataToReceive(data: any) {
-        throw new ErrorResponse('0199')
     }
 
     public get Name(): string {
@@ -3687,6 +3721,28 @@ class User implements IUser, IModel  {
         map.set('active', this.active);
 
         return map;
+    }
+}
+
+class ApiUser extends User implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        throw new ErrorResponse('0199')
     }
 }
 
@@ -3920,6 +3976,7 @@ if(auths.size() == 0){
     localAuths.write(storableAuths.getLocalStorage(), auths);
 }
 
+
 /*
     TESTING API FUNCTIONS
 */
@@ -4016,6 +4073,17 @@ if(test){
         console.log('TEST GET MESSAGES ALL', response.result.toArray());
     }).catch((error) => {
         console.log('ERROR TEST GET MESSAGES ALL', error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','tarea');
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        messageFactory.createSingleObjectCrud().getElement(response.result.toArray()[0].Id).then((element) => {
+            console.log('TEST GET ONE MESSAGE', element.result);
+        }).catch((error) => {
+            console.log('ERROR TEST GET ONE MESSAGE', error)    
+        })
+    }).catch((error) => {
+        console.log('ERROR TEST GET ONE MESSAGE', error)
     })
     
     /*
@@ -4125,4 +4193,3 @@ if(test){
 //         });
 //     });
 // }
-
