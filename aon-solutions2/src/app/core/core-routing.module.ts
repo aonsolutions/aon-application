@@ -3,6 +3,8 @@ import { BasicLayoutComponent } from '../shared/layouts/basic-layout/basic-layou
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SidenavLayoutComponent } from '../shared/layouts/sidenav-layout/sidenav-layout.component';
+import { PermissionGuard } from './guards/permission.guard';
+import { RolGuard } from './guards/rol.guard';
 
 const routes: Routes = [
   {
@@ -34,6 +36,11 @@ const routes: Routes = [
         path: 'documentation',
         loadChildren: () =>
           import('src/app/modules/documentation/documentation.module').then((m) => m.DocumentationModule),
+        // canActivate: [AuthGuard, PermissionGuard, RolGuard],
+        // data: {
+        //   requiredPermissions: ['permiso1'],
+        //   requiredRoles: ['rol10']
+        // }
       },
       // {
       //   path: 'billing',
