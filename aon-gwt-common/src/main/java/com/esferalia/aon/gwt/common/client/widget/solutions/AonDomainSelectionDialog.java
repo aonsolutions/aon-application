@@ -32,8 +32,6 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 		
 		this.add(createContent());
 		
-		Window.alert("AonDomainSelectionDialog");
-		
 		showDialog();
 	}
 
@@ -92,9 +90,7 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 	}
 	
 	private void getCompanyDomain(String domainDescription) {
-		Window.alert("domainDescription : " + domainDescription);
 		domainCompany = companies.stream().filter(company -> AonStringUtils.equalsIgnoreCase(company.getDomain().getDescription(), domainDescription)).findFirst().get();
-		Window.alert("Id : " + domainCompany.getDomain().getId());
 	}
 
 	private void showDialog() {
