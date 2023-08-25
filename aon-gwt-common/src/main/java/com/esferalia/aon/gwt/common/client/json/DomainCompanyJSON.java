@@ -22,7 +22,6 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.user.client.Window;
 
 public class DomainCompanyJSON {
 	
@@ -40,7 +39,6 @@ public class DomainCompanyJSON {
 	}
 	
 	private static DomainCompany parseDomainCompanyJSON(JSONObject json) {
-		Window.alert("parseDomainCompanyJSON:\n" + json);
 		if(json == null) return new DomainCompany();
 		return new DomainCompany()
 				.setSchema(JsonGWTUtils.getString(json, IJsonNames.SCHEMA))

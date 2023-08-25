@@ -2,7 +2,9 @@ package com.code.aon.webservice.registry;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,13 +17,15 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
+import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
-import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,7 +34,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "DownloadCustomerWithoutFee", urlPatterns = {"/aon_gwt_aio/ms/download_customer_without_fee/*",
-																"/download_customer_without_fee/*"})
+																"/download_customer_without_fee/*",
+																"/aon_gwt_fiscal/download_customer_without_fee/*"})
 public class DownloadCustomerWithoutFee extends HttpServlet{
 	
 	/**
@@ -43,21 +48,23 @@ public class DownloadCustomerWithoutFee extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Fee projection download - GET METHOD");
 		
-		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(req.getPathInfo().substring(1));
-
-		String domainName = parameters.get(MSG.DOMAIN);
-		String userName = parameters.get("login");
-		String type = parameters.get(MSG.TYPE);
+		String domainName = req.getParameter("domain");
+		String userName = req.getParameter("login");
+		String type = req.getParameter("type");
+		Integer domainId = AonStringUtils.isBlank(req.getParameter("domainId")) ? 1 : Integer.parseInt(req.getParameter("domainId"));
 		
-		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
+		JSONObject filterJSON = new JSONObject(decode(req.getParameter("filter")));
+		CustomerParams customerParams = createCustomerParams(domainId, filterJSON);
+		
+		Domain domain = AON.getDomain(domainName, domainId, userName, f->f.getNameProperty().eq(domainName));
 		
 		if(type.equalsIgnoreCase(MSG.EXCEL)){
-			excel(req, resp, domain, userName);
+			excel(req, resp, domain, userName, customerParams);
 		}
 	}
-	
-	private void excel(HttpServletRequest req, HttpServletResponse resp, Domain domain, String userName) throws ServletException, IOException {
-		HSSFWorkbook workbook = proba(domain, userName, false);
+
+	private void excel(HttpServletRequest req, HttpServletResponse resp, Domain domain, String userName, CustomerParams customerParams) throws ServletException, IOException {
+		HSSFWorkbook workbook = proba(domain, userName, false, customerParams);
 
 		ByteArrayOutputStream archivo = new ByteArrayOutputStream();
 		workbook.write(archivo);  
@@ -69,7 +76,7 @@ public class DownloadCustomerWithoutFee extends HttpServlet{
 	}
 	
 	Integer rowIndex;
-	private HSSFWorkbook proba(Domain domain, String login, Boolean isPdf) {		
+	private HSSFWorkbook proba(Domain domain, String login, Boolean isPdf, CustomerParams customerParams) {		
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Clientes Sin Cuotas");
 		sheet.getPrintSetup().setLandscape(true);
@@ -77,7 +84,7 @@ public class DownloadCustomerWithoutFee extends HttpServlet{
 	
 		rowIndex = printTitle(workbook, sheet, isPdf);
 
-		List<Customer> customers = AON.getCustomerWithoutFee(domain, login);
+		List<Customer> customers = AON.getCustomerWithoutFee(domain, login, customerParams);
         CellStyle valueStyle = getValueStyle(workbook, isPdf);		
 		customers.stream().forEach(c -> {
 			Row row = sheet.createRow(rowIndex);
@@ -141,6 +148,49 @@ public class DownloadCustomerWithoutFee extends HttpServlet{
 		style3.setAlignment(HorizontalAlignment.LEFT);
 		style3.setBorderBottom(BorderStyle.THIN);
 		return style3;
+	}
+	
+
+	
+	private CustomerParams createCustomerParams(Integer domainId, JSONObject filterJSON) {
+		CustomerParams customerParams = new CustomerParams();
+		
+		customerParams.setDomain(domainId);
+		
+		if(filterJSON.opt("customer") != null) {
+			String customer = filterJSON.optString("customer");
+			customerParams.setCustomer(customer);
+		}
+		
+		if(filterJSON.opt("status") != null) {
+			Integer status = filterJSON.optInt("status");
+			customerParams.setCustomerStatus(status.byteValue());
+		}
+		
+		if(filterJSON.opt("customerIds") != null) {
+			 JSONObject customerIds = filterJSON.optJSONObject("customerIds");
+			 List<Integer> ids = new ArrayList<>();
+			 for(int i=0; i<customerIds.length(); i++) {
+				 ids.add(customerIds.optInt("customerId"+i));
+			 }
+			
+			 customerParams.setCustomerIds(ids);
+		}
+		
+		customerParams.setOffset(null);
+		customerParams.setLimit(null);
+		
+		return customerParams;
+	}
+	
+	public String decode(String value){
+		String decode = "";
+		try{
+			decode = new String(Base64.getDecoder().decode(value.getBytes()), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return decode;
 	}
 	
 }

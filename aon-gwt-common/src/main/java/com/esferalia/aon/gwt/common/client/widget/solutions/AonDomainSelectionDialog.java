@@ -9,7 +9,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -96,9 +95,7 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 	}
 	
 	private void getCompanyDomain(String domainDescription) {
-		Window.alert("getCompanyDomain : " + domainDescription);
 		domainCompany = companies.stream().filter(company -> AonStringUtils.equalsIgnoreCase(company.getDomain().getDescription(), domainDescription)).findFirst().get();
-		Window.alert("getCompanyDomain id : " + domainCompany.getDomain().getId());
 	}
 
 	private void showDialog() {

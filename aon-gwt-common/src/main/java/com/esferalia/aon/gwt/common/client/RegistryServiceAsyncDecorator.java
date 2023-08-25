@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -213,6 +214,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	public void importFee(Domain domain, User user, Fee fee, Integer index, AsyncCallback<ImportError> callback) {
 		AON.start();
 		serviceAsync.importFee(domain, user, fee, index, new AsyncCallbackWrapper<ImportError>(callback));
+	}
+	
+	@Override
+	public void getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams, AsyncCallback<List<Customer>> callback) {
+		AON.start();
+		serviceAsync.getCustomerWithoutFee(domainName, domain, user, customerParams, new AsyncCallbackWrapper<List<Customer>>(callback));
 	}
 
 	// **************************************************
