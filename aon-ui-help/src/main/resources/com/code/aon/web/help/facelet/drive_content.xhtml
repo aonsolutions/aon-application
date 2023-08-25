@@ -3,6 +3,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
 	
 	<style>
@@ -159,7 +160,6 @@
 				}
 			}
 		}
-		
 	</script>
 			
 			<aon:form id="driveContentForm" >
@@ -167,14 +167,19 @@
 			<ui:include src="./breadcrumb.xhtml" />
 
 			<aon:div id="driveContent" >
+			
+			<ui:fragment rendered="#{vimeo.showDrive}">
+			
 
 			<aon:div styleClass="box-column list">
-				<c:forEach items="#{help.content}" var="file">
+				<c:forEach items="#{help.content}" var="file">				
 	
 						<!-- FOLDER -->
 						<aon:if test="${file.isFolder() and !file.isFaqFolder()}">
 							<aon:commandLink styleClass="list-item" reRender="driveContent">
-								<f:setPropertyActionListener target="#{help.file}" value="#{file}" />
+							    <f:setPropertyActionListener target="#{vimeo.showVimeo}" value="#{false}" />	
+								<f:setPropertyActionListener target="#{help.file}" value="#{file}" />					
+    														 
 								<aon:outputText rendered="${!help.isHome()}"  value="drive_file_move" styleClass="icon material-icons" />
 								
 								<!-- AON ICONS -->
@@ -187,7 +192,7 @@
 								<aon:outputText rendered="${help.isFiscal(file)}" value="" styleClass="icon aon-module aon-button-fiscal" />
 								
 								<aon:outputText value="#{file.name}" />
-	
+
 							</aon:commandLink>
 						</aon:if>
 	
@@ -218,10 +223,16 @@
 				</c:forEach>
 
 			</aon:div>
-			</aon:div>
-			</aon:form>
+			
+			</ui:fragment>
 			
 			<!--  VIMEO -->
-			<ui:include src="./vimeo_content.xhtml" />
+			<div id="vimeoContainer" rendered="#{vimeo.showVimeo}">
+				<ui:include src="./vimeo_content.xhtml" />
+			</div>
+			
+			
+			</aon:div>
+			</aon:form>
 	
 </ui:composition>

@@ -3,7 +3,8 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:f="http://java.sun.com/jsf/core">
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 	<script>
 		function toggleVideos(containerId) {
@@ -23,75 +24,51 @@
 		}
 	</script>
 
-	<aon:div styleClass="box-column list">
-		<ui:repeat value="#{vimeo.folders.orElse(null)}" var="folder">
-			<aon:div styleClass="list-item"
-				onclick="toggleVideos('videoContainer_#{folder.getIdentifier()}');return;">
-				<aon:outputText value="smart_display"
-					styleClass="icon file material-icons" />
-				<aon:outputText value="#{vimeo.getFolderName(folder)}" />
+	<aon:form id="vimeoContentForm">
+
+		<aon:div id="vimeoContent">
+
+			<aon:div styleClass="box-column list">
+					
+				<ui:fragment rendered="#{vimeo.showVimeo}">
+				
+					<ui:repeat value="#{vimeo.mainItems}" var="vimeoItem">
+				
+						<!-- folder -->
+						<ui:fragment rendered="#{vimeoItem.getRawType() == 'folder'}">
+							<aon:commandLink styleClass="list-item" reRender="vimeoContent">
+								<f:setPropertyActionListener target="#{vimeo.selectedFolder}"
+									value="#{vimeoItem.getFolder()}" />
+	
+								<aon:outputText value="smart_display"
+									styleClass="icon file material-icons" />
+								<aon:outputText value="#{vimeoItem.getFolder().getName()}" />
+							</aon:commandLink>
+						</ui:fragment>
+	
+	
+						<!-- video -->
+						<ui:fragment rendered="#{vimeoItem.getRawType() == 'video'}">
+								<aon:div styleClass="list-item"
+									onclick="displayVideo(this);return;">
+									<aon:outputText value="smart_display"
+										styleClass="icon file material-icons" />
+									<aon:outputText value="#{vimeoItem.getVideo().getName()}" />
+									<div class="ifrmContainer"
+										style="display: none; justify-content: center; width: 100%; margin-bottom: 10px;">
+										<iframe src="#{vimeoItem.getVideo().getLink()}"
+											style="min-width: 680px;" width="50%" height="480"
+											frameBorder="0" allow="autoplay"
+											allowfullscreen="allowfullscreen"></iframe>
+									</div>
+								</aon:div>
+						</ui:fragment>
+						
+					</ui:repeat>
+					
+					</ui:fragment>
+				
 			</aon:div>
-
-			<div id="videoContainer_#{folder.getIdentifier()}"
-				style="display: none;">
-				<ui:repeat value="#{vimeo.getItemsFromFolder(folder).orElse(null)}"
-					var="vimeoItem">
-
-					<!-- video -->
-					<aon:if
-						test="${vimeoItem.getRawType() == ProjectItemType.VIDEO.getValue()}">
-
-						<aon:div styleClass="list-item"
-							onclick="displayVideo(this);return;">
-							<aon:outputText value="smart_display"
-								styleClass="icon file material-icons" />
-							<aon:outputText
-								value="#{vimeo.getVideoName(vimeo.getVideoFromItem(vimeoItem))}" />
-							<div class="ifrmContainer"
-								style="display: none; justify-content: center; width: 100%; margin-bottom: 10px;">
-								<iframe
-									src="#{vimeo.getVideoLink(vimeo.getVideoFromItem(vimeoItem))}"
-									style="min-width: 680px;" width="50%" height="480"
-									frameBorder="0" allow="autoplay"
-									allowfullscreen="allowfullscreen"></iframe>
-							</div>
-						</aon:div>
-
-					</aon:if>
-
-					<!-- folder, change to rerender -->
-					<aon:if
-						test="${vimeoItem.getRawType() == ProjectItemType.FOLDER.getValue() and vimeoItem != null}">
-						<aon:outputText
-							value="#{vimeo.getFolderName(vimeo.getFolderFromItem(vimeoItem))}" />
-					</aon:if>
-
-				</ui:repeat>
-			</div>
-
-		</ui:repeat>
-	</aon:div>
-
-	<!-- videos without parent folder -->
-	<aon:div styleClass="box-column list">
-		<ui:repeat value="#{vimeo.videosWithoutParentFolder.orElse(null)}" var="vimeoVideo">
-			<aon:div styleClass="list-item"
-				onclick="displayVideo(this);return;">
-				<aon:outputText value="smart_display"
-					styleClass="icon file material-icons" />
-				<aon:outputText value="#{vimeoVideo.getName()}" />
-				<div class="ifrmContainer"
-								style="display: none; justify-content: center; width: 100%; margin-bottom: 10px;">
-								<iframe
-									src="#{vimeoVideo.getLink()}"
-									style="min-width: 680px;" width="50%" height="480"
-									frameBorder="0" allow="autoplay"
-									allowfullscreen="allowfullscreen"></iframe>
-							</div>
-			</aon:div>
-		</ui:repeat>
-	</aon:div>
-
-
+		</aon:div>
+	</aon:form>
 </ui:composition>
-

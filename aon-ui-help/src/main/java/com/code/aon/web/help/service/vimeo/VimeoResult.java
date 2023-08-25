@@ -105,42 +105,5 @@ public class VimeoResult {
             return Optional.empty();
         }
 	}
-
 	
-	/**
-	 * Returns the name of the video
-	 * @param video the video
-	 * @return the name of the video
-	 */
-	public String getVideoName(Video video) {
-		return video.getName();
-	}
-	
-	/**
-	 * Returns the link to reproduce the video
-	 * @param video the video
-	 * @return the link of the video
-	 */
-	public String getVideoLink(Video video) {
-		return video.getLink();
-	}
-	
-    
-    /**
-     * Returns the parent folder of the given video
-     * @param video the video
-     * @return the parent folder of the video
-     */
-	public Folder getParentFolder(Video video) {
-		return video.getParentFolder();
-	}
-	
-	/**
-	 * Returns the name of the folder
-	 * @param folder the folder
-	 * @return the name of the folder
-	 */
-	public String getFolderName(Folder folder) {
-		return folder.getName();
-	}
 }

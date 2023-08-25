@@ -1,6 +1,7 @@
 package com.code.aon.web.help.service.vimeo;
 
 import com.vimeo.networking2.*;
+import com.vimeo.networking2.enums.ProjectItemType;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -8,18 +9,17 @@ import java.util.Optional;
 
 public class VimeoService {
 	private VimeoResult vimeoResult;
-	public Optional<List<Folder>> folders;
-	public Optional<List<Video>> videosWithoutParentFolder;
+	public boolean showVimeo = true;
+	public boolean showDrive = true;
+	public List<ProjectItem> mainItems;
+	public Folder selectedFolder;
 	
-
 	public VimeoService() {
         String accessToken = "";
         
 		vimeoResult = new VimeoResult(accessToken);
 
-		folders = vimeoResult.getFoldersFromUser();
-		videosWithoutParentFolder = Optional.of(new LinkedList<Video>());
-		
+		Optional<List<Video>> videosWithoutParentFolder = Optional.of(new LinkedList<Video>());
 		Optional<List<Video>> videos = vimeoResult.getVideosFromUser();
 		
 		if (videos.isPresent() && videos != null) {
@@ -29,60 +29,60 @@ public class VimeoService {
 				}
 			}
 		}
+
+		Optional<List<Folder>> folders = vimeoResult.getFoldersFromUser();
+		mainItems =new LinkedList<ProjectItem>();
+		
+		for (Folder folder : folders.get()) {
+			ProjectItem projectItem = new ProjectItem(ProjectItemType.FOLDER.getValue(), folder, null);
+			mainItems.add(projectItem);
+		}
+		
+		for (Video video : videosWithoutParentFolder.get()) {
+			ProjectItem projectItem = new ProjectItem(ProjectItemType.VIDEO.getValue(), null, video);
+			mainItems.add(projectItem);
+		}
 	}
 
-	public Optional<List<Folder>> getFolders() {
-		return folders;
+	public boolean isShowVimeo() {
+		return showVimeo;
 	}
 
-	public void setFolders(Optional<List<Folder>> folders) {
-		this.folders = folders;
+	public void setShowVimeo(boolean showVimeo) {
+		this.showVimeo = showVimeo;
 	}
 	
-	public Optional<List<Video>> getVideosWithoutParentFolder() {
-		return videosWithoutParentFolder;
+	public void hideVimeo() {
+        showVimeo = false;
+    }
+	
+	public boolean isShowDrive() {
+		return showDrive;
 	}
 
-	public void setVideosWithoutParentFolder(Optional<List<Video>> videosWithoutParentFolder) {
-		this.videosWithoutParentFolder = videosWithoutParentFolder;
+	public void setShowDrive(boolean showDrive) {
+		this.showDrive = showDrive;
+	}
+
+	public List<ProjectItem> getMainItems() {
+		return mainItems;
+	}
+
+	public void setMainItems(List<ProjectItem> mainItems) {
+		this.mainItems = mainItems;
 	}
 	
-	/**
-	 * Returns the name of the video
-	 * @param video the video
-	 * @return the name of the video
-	 */
-	public String getVideoName(Video video) {
-		return vimeoResult.getVideoName(video);
-	}
-	
-	/**
-	 * Returns the link of the video to reproduce it
-	 * @param video the video
-	 * @return the link of the video
-	 */
-	public String getVideoLink(Video video) {
-		return vimeoResult.getVideoLink(video);
-	}
-	
-	/**
-	 * Returns the name of the folder
-	 * @param folder the folder
-	 * @return the name of the folder
-	 */
-	public String getFolderName(Folder folder) {
-		return vimeoResult.getFolderName(folder);
-	}
+	public Folder getSelectedFolder() {
+        return selectedFolder;
+    }
+
+    public void setSelectedFolder(Folder selectedFolder) {
+        this.selectedFolder = selectedFolder;
+    }
 
 	public Optional<List<ProjectItem>> getItemsFromFolder(Folder folder) {
     	return vimeoResult.getItemsFromFolder(folder);
     }
-    
-    public Video getVideoFromItem(ProjectItem projectItem) {
-    	return projectItem.getVideo();
-    }
-    
-    public Folder getFolderFromItem(ProjectItem projectItem) {
-    	return projectItem.getFolder();
-    }
+	
+	
 }
