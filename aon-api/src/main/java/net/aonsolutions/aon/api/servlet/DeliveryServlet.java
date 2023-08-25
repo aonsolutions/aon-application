@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SERFRUIT;
 import com.esferalia.aon.occam.api.json.CarrierPackingJSON;
 import com.esferalia.aon.occam.api.json.DeliveryJSON;
-import com.esferalia.aon.occam.api.json.DeliveryPackagingJSON;
+import com.esferalia.aon.occam.api.json.SerfruitDeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -18,7 +18,7 @@ import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
+import com.esferalia.aon.occam.api.model.warehouse.SerfruitDeliveryPackaging;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -119,7 +119,7 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		delivery = AON.saveDelivery(api.getDomain(), api.getUser(), delivery);
 			
 		if(JsonUtils.has(api.getData(), IJsonNames.PACKAGING)) {
-			List<DeliveryPackaging> list =  DeliveryPackagingJSON.fromJSON(JsonUtils.getJSONArray(api.getData(), IJsonNames.PACKAGING));
+			List<SerfruitDeliveryPackaging> list =  SerfruitDeliveryPackagingJSON.fromJSON(JsonUtils.getJSONArray(api.getData(), IJsonNames.PACKAGING));
 			SERFRUIT.saveDeliveryPackaging(api.getDomain(), api.getUser()
 					, delivery, list);
 		}

@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 
 public class CarrierPackingJSON {
 

@@ -120,9 +120,12 @@ public class TbaiMain {
 		jaxbMarshaller.marshal(tbai, bos);
 		
 		byte[] xml = bos.toByteArray();
-		
+	
 		String uri = TbaiUri.getUrlZuzendu(tbaiConfiguration);
 		TbaiResponse response = sendXML(uri, tbaiConfiguration, xml, false);	
+		
+		tbaiData.saveResponseZuzendu(company.getDomain(), new User().setLogin(""), invoice, xml, response);
+
 	}
 	
 	public void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)

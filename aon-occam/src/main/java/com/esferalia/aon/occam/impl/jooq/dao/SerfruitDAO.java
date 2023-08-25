@@ -35,7 +35,7 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
+import com.esferalia.aon.occam.api.model.warehouse.SerfruitDeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO.SalesPropertiesDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -59,14 +59,14 @@ public class SerfruitDAO {
 				.and(f.getSalesDetailIdProperty().in(salesDetailIds)), options);
 	}
 	
-	public static void saveDeliveryPackaging(AONContext ctx, Delivery delivery, List<DeliveryPackaging> packaging) {
+	public static void saveDeliveryPackaging(AONContext ctx, Delivery delivery, List<SerfruitDeliveryPackaging> packaging) {
 		Warehouse w = getWarehouse(ctx, delivery);
 		StringBuilder builder = new StringBuilder();
 		processPackaging(ctx, delivery, packaging, w, null, builder);
 		insertAttachPackaging(ctx, delivery, builder);
 	}
 
-	private static void processPackaging(AONContext ctx, Delivery delivery, List<DeliveryPackaging> packaging, Warehouse w, Integer parentLine, StringBuilder builder) {
+	private static void processPackaging(AONContext ctx, Delivery delivery, List<SerfruitDeliveryPackaging> packaging, Warehouse w, Integer parentLine, StringBuilder builder) {
 	
 		packaging.stream().forEach(dp -> {
 			if(dp.getDeliveryLine() == null) {
@@ -99,7 +99,7 @@ public class SerfruitDAO {
 		AttachmentDAO.insertDataAttach(ctx, attach);
 	}
 	
-	private static DeliveryDetail insertDetail(AONContext ctx, Delivery delivery, DeliveryPackaging dp, Integer line, Warehouse w) {
+	private static DeliveryDetail insertDetail(AONContext ctx, Delivery delivery, SerfruitDeliveryPackaging dp, Integer line, Warehouse w) {
 		Item p = getPackage(ctx, dp);
 		if(p != null) {
 			DeliveryDetail detail = new DeliveryDetail();
@@ -121,7 +121,7 @@ public class SerfruitDAO {
 
 	}
 	
-	private static Integer getLine(DeliveryPackaging dp ) {
+	private static Integer getLine(SerfruitDeliveryPackaging dp ) {
 		if(dp.getDeliveryLine() != null) return dp.getDeliveryLine();
 		
 		Integer line = null;
@@ -149,7 +149,7 @@ public class SerfruitDAO {
 		return warehouse;
 	}
 	
-    public static Item getPackage(AONContext ctx, DeliveryPackaging dp) {
+    public static Item getPackage(AONContext ctx, SerfruitDeliveryPackaging dp) {
         Product product = ProductDAO.get(ctx, f -> f.getDomainProperty()
                                 .eq(ctx.getDomainId())
                                 .and(f.getCodeProperty().eq(dp.getProduct().getCode())));
@@ -178,7 +178,7 @@ public class SerfruitDAO {
         return getItem(ctx, product, dp);
     }
     
-    public static Item getItem(AONContext ctx, Product product, DeliveryPackaging dp)  {
+    public static Item getItem(AONContext ctx, Product product, SerfruitDeliveryPackaging dp)  {
         Item baseItem = ItemDAO.get(ctx,
                         f -> f.getDomainProperty()
                                 .eq(ctx.getDomainId())

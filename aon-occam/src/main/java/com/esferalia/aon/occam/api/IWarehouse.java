@@ -146,6 +146,8 @@ public interface IWarehouse {
 	// 	************************** CARRIER PACKING ****
 	// 	***********************************************
 	
+	List<CarrierPacking> getCarrierPackingList(AONContext ctx, CarrierPackingFilter filter, Options... options);
+	
 	Stream<String> getCarrierPackingSeries(AONContext ctx);
 	Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter);
 	Integer insertCarrierPacking(AONContext ctx, CarrierPacking carrierPacking);
