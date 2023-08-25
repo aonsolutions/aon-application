@@ -38,7 +38,6 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.Segment;
-import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -71,6 +70,8 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class BookingPanel extends MainEntryPoint {
+	
+	// ------- FeeWithOutBooking
 	
 	class RemoveCustomerFeeCommand implements ScheduledCommand {
 
@@ -135,6 +136,81 @@ public class BookingPanel extends MainEntryPoint {
 		}
 
 	}
+	
+	// ------- BookingWithOutFee
+	
+	class CreateCustomerFeeCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			createCustomerFee(bookingWithOutFeeMenu.getItem(), bookingWithOutFeeMenu.getCustomer());
+		}
+
+	}
+	
+	class UpdateBookingCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			updateBooking();
+		}
+
+	}
+	
+	class BookingWithOutFeeMenu extends AonContextMenu {
+		
+		private Integer id;
+		private OldItem item;
+		private Customer customer;
+		private BookingCheck bookingCheck;
+		
+		private MenuItem createCustomerFee;
+		private MenuItem updateBooking;
+
+		public BookingWithOutFeeMenu() {
+			createCustomerFee = addMenuItem("Crear Cuota", new CreateCustomerFeeCommand(), AON.CSS.aonIconAdd(), "createCustomerFee");
+			updateBooking = addMenuItem("Actualizar Contrataci\u00f3n", new UpdateBookingCommand(), AON.CSS.aonIconEdit(), "updateBooking");
+		}
+		
+		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
+			MenuItem item = addItem(title, command, iconStyle, AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+			item.ensureDebugId(debugId);
+			return item;
+		}
+		
+		public void setId(Integer id) {
+			this.id = id;
+		}
+		
+		public Integer getId() {
+			return this.id;
+		}
+
+		public OldItem getItem() {
+			return item;
+		}
+
+		public void setItem(OldItem item) {
+			this.item = item;
+		}
+
+		public Customer getCustomer() {
+			return customer;
+		}
+
+		public void setCustomer(Customer customer) {
+			this.customer = customer;
+		}
+		
+		public BookingCheck getBookingCheck() {
+			return bookingCheck;
+		}
+
+		public void setBookingCheck(BookingCheck bookingCheck) {
+			this.bookingCheck = bookingCheck;
+		}
+
+	}
 
 	// Services
 	private static RegistryServiceAsync SERVICE;
@@ -145,6 +221,7 @@ public class BookingPanel extends MainEntryPoint {
 	
 	// Context Menu
 	private FeeWithoutbookintMenu feeWithoutbookintMenu;
+	private BookingWithOutFeeMenu bookingWithOutFeeMenu;
 
 	// Content
 	private DockLayoutPanel dockLayoutPanel;
@@ -217,6 +294,7 @@ public class BookingPanel extends MainEntryPoint {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		feeWithoutbookintMenu = new FeeWithoutbookintMenu();
+		bookingWithOutFeeMenu = new BookingWithOutFeeMenu();
 
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		opt.getParentWidget().add(dockLayoutPanel);
@@ -839,7 +917,7 @@ public class BookingPanel extends MainEntryPoint {
 	}
 
 	private void createFeeHeader() {
-		bookingCheckTable = new Grid(0, 10);
+		bookingCheckTable = new Grid(0, isBookingWithOutFee() ? 8 : 10);
 		bookingCheckTable.clear();
 		bookingCheckTable.setWidth("100%");
 
@@ -873,22 +951,32 @@ public class BookingPanel extends MainEntryPoint {
 		bookingCheckTable.setWidget(row, 3, concept);
 		bookingCheckTable.setWidget(row, 4, conceptStatus);
 		bookingCheckTable.setWidget(row, 5, quantity);
-		bookingCheckTable.setWidget(row, 6, startDate);
-		bookingCheckTable.setWidget(row, 7, endDate);
-		bookingCheckTable.setWidget(row, 8, url);
-		bookingCheckTable.setWidget(row, 9, action);
-
+		if(isBookingWithOutFee()) {
+			bookingCheckTable.setWidget(row, 6, url);
+			bookingCheckTable.setWidget(row, 7, action);
+		} else {
+			bookingCheckTable.setWidget(row, 6, startDate);
+			bookingCheckTable.setWidget(row, 7, endDate);
+			bookingCheckTable.setWidget(row, 8, url);
+			bookingCheckTable.setWidget(row, 9, action);
+		}
+		
 		bookingCheckTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
 		bookingCheckTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
 		bookingCheckTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonHeaderSticky());
 		bookingCheckTable.getCellFormatter().addStyleName(row, 3, AON.CSS.aonHeaderSticky());
 		bookingCheckTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
 		bookingCheckTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
-		bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
-		bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
-		bookingCheckTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
-		bookingCheckTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
-
+		if(isBookingWithOutFee()) {
+			bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
+		} else {
+			bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
+		}
+		
 		scrollPanel.add(bookingCheckTable);
 	}
 	
@@ -897,11 +985,21 @@ public class BookingPanel extends MainEntryPoint {
 		bookingCheckTable.getColumnFormatter().getElement(2).getStyle().setWidth(80, Unit.PX);
 		bookingCheckTable.getColumnFormatter().getElement(3).getStyle().setWidth(30, Unit.PCT);
 		bookingCheckTable.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
-		bookingCheckTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
-		bookingCheckTable.getColumnFormatter().getElement(6).getStyle().setWidth(80, Unit.PX);
-		bookingCheckTable.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
-		bookingCheckTable.getColumnFormatter().getElement(8).getStyle().setWidth(25, Unit.PX);
-		bookingCheckTable.getColumnFormatter().getElement(9).getStyle().setWidth(25, Unit.PX);
+		if(isBookingWithOutFee()) {
+			bookingCheckTable.getColumnFormatter().getElement(5).getStyle().setWidth(160, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(6).getStyle().setWidth(25, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(7).getStyle().setWidth(25, Unit.PX);
+		} else {
+			bookingCheckTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(6).getStyle().setWidth(80, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(8).getStyle().setWidth(25, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(9).getStyle().setWidth(25, Unit.PX);
+		}
+	}
+	
+	private boolean isBookingWithOutFee() {
+		return Integer.parseInt(bookingCheckType.getSelectedValue()) == 0;
 	}
 	
 	private void disableMoreData() {
@@ -943,17 +1041,18 @@ public class BookingPanel extends MainEntryPoint {
 		Label endDateLabel = new Label(formatDate(bookingCheck.getEndDate()));
 		
 		AonToolbarSmallButton actionBtn = new AonToolbarSmallButton(getActionTitle(), AON.CSS.aonIconMoreVertical());
-		if(Integer.parseInt(bookingCheckType.getSelectedValue()) == 0) {
-			actionBtn.removeStyleName(AON.CSS.aonIconMoreVertical());
-			actionBtn.addStyleName(AON.CSS.aonIconAdd());
-		}
 		actionBtn.addClickHandler(e -> {
+			NativeEvent nativeEvent = e.getNativeEvent();
 			switch (Integer.parseInt(bookingCheckType.getSelectedValue())) {
 				case 0:
-					createCustomerFee(bookingCheck.getItem(), bookingCheck.getCustomer());
+					bookingWithOutFeeMenu.setPopupPosition(nativeEvent.getClientX() - 150, nativeEvent.getClientY());
+					bookingWithOutFeeMenu.show();
+					bookingWithOutFeeMenu.setId(bookingCheck.getId());
+					bookingWithOutFeeMenu.setItem(bookingCheck.getItem());
+					bookingWithOutFeeMenu.setCustomer(bookingCheck.getCustomer());
+					bookingWithOutFeeMenu.setBookingCheck(bookingCheck);
 					break;
 				case 1:
-					NativeEvent nativeEvent = e.getNativeEvent();
 					feeWithoutbookintMenu.setPopupPosition(nativeEvent.getClientX() - 150, nativeEvent.getClientY());
 					feeWithoutbookintMenu.show();
 					feeWithoutbookintMenu.setId(bookingCheck.getId());
@@ -988,10 +1087,15 @@ public class BookingPanel extends MainEntryPoint {
 		bookingCheckTable.setWidget(row, 3, productLabel);
 		bookingCheckTable.setWidget(row, 4, productStatusLabel);
 		bookingCheckTable.setWidget(row, 5, quantityLabel);
-		bookingCheckTable.setWidget(row, 6, startDateLabel);
-		bookingCheckTable.setWidget(row, 7, endDateLabel);
-		bookingCheckTable.setWidget(row, 8, urlBtn);
-		bookingCheckTable.setWidget(row, 9, actionBtn);
+		if(isBookingWithOutFee()) {
+			bookingCheckTable.setWidget(row, 6, urlBtn);
+			bookingCheckTable.setWidget(row, 7, actionBtn);
+		} else {
+			bookingCheckTable.setWidget(row, 6, startDateLabel);
+			bookingCheckTable.setWidget(row, 7, endDateLabel);
+			bookingCheckTable.setWidget(row, 8, urlBtn);
+			bookingCheckTable.setWidget(row, 9, actionBtn);
+		}
 		
 		if(Integer.parseInt(bookingCheckType.getSelectedValue()) == 0) {
 			productLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -1027,20 +1131,30 @@ public class BookingPanel extends MainEntryPoint {
 			bookingCheckTable.getCellFormatter().addStyleName(row, 3, AON.CSS.aonOddTableRow());
 			bookingCheckTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonOddTableRow());
 			bookingCheckTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonOddTableRow());
-			bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonOddTableRow());
-			bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonOddTableRow());
-			bookingCheckTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonOddTableRow());
-			bookingCheckTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonOddTableRow());
+			if(isBookingWithOutFee()) {
+				bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonOddTableRow());
+			} else {
+				bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonOddTableRow());
+			}
 		}
 		
 		bookingCheckTable.getCellFormatter().getElement(row, 0).getStyle().setTextAlign(TextAlign.CENTER);
 		bookingCheckTable.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
 		bookingCheckTable.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
 		bookingCheckTable.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
-		bookingCheckTable.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
-		bookingCheckTable.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
-		bookingCheckTable.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.CENTER);
-		bookingCheckTable.getCellFormatter().getElement(row, 9).getStyle().setTextAlign(TextAlign.CENTER);
+		if(isBookingWithOutFee()) {
+			bookingCheckTable.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingCheckTable.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
+		} else {
+			bookingCheckTable.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingCheckTable.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingCheckTable.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingCheckTable.getCellFormatter().getElement(row, 9).getStyle().setTextAlign(TextAlign.CENTER);	
+		}
 
 		bookingCheckTable.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 	}
@@ -1130,8 +1244,8 @@ public class BookingPanel extends MainEntryPoint {
 	}
 
 	private String getProductStatus(BookingCheck bookingCheck) {
-		if(bookingCheck.getStatus().equals(RegistryItemStatus.ACTIVE)) return "Factrable";
-		else if(bookingCheck.getStatus().equals(RegistryItemStatus.INTERESTED)) return "No Factrable";
+		if(bookingCheck.getStatus().equals(RegistryItemStatus.ACTIVE)) return "Facturable";
+		else if(bookingCheck.getStatus().equals(RegistryItemStatus.INTERESTED)) return "No Facturable";
 		else if(bookingCheck.getStatus().equals(RegistryItemStatus.REFUSED)) return " No Contratado";
 		else if(bookingCheck.getStatus().equals(RegistryItemStatus.INACTIVE)) return "Inactivo";
 		else return "";
@@ -1244,7 +1358,6 @@ public class BookingPanel extends MainEntryPoint {
 		urlBuilder.setHost("aon.solutions"); 
 		urlBuilder.setPath(baseUrl);
 		
-		// Needed?
 		 urlBuilder.setParameter("linked", "true");
 		
 		// Create the request builder with the complete URL
@@ -1310,11 +1423,11 @@ public class BookingPanel extends MainEntryPoint {
 				        public void onResponseReceived(Request request, Response response) {
 				            if (response.getStatusCode() == 200) {
 
-				                String responseBody = response.getText();
-				                Window.alert("booking response : " + responseBody);
-				                Booking booking = DomainCompanyJSON.parseBookingJSON(responseBody);
+				                String bookingJSON = response.getText();
+				                Window.alert("booking response : " + bookingJSON);
+//				                Booking booking = DomainCompanyJSON.parseBookingJSON(responseBody);
 				                AonMessagePanel.hideMessage(messagePanel);
-				                updateBookingRitems(domainCompany, booking);
+				                getDomain(domainCompany, bookingJSON);
 				                
 				            } else {
 				            	AonMessagePanel.showError(messagePanel, response.getText());
@@ -1332,8 +1445,54 @@ public class BookingPanel extends MainEntryPoint {
 		
 		};
 	}
+	
+	private void getDomain(DomainCompany domainCompany, String bookingJSON) {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo informaci\u00f3n del dominio seleccionado ...");
+		
+		// Create the base URL
+		String baseUrl = "/ms/api/domain/";
 
-	private void updateBookingRitems(DomainCompany domainCompany, Booking booking) {
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost("aon.solutions"); 
+		urlBuilder.setPath(baseUrl);
+		
+		urlBuilder.setParameter("domainId", domainCompany.getDomain().getId().toString());
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		Window.alert("getDomain : " + urlBuilder.buildString());
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(null, new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+
+		                String domainJSON = response.getText();
+		                Window.alert("getDomainJSON response : " + domainJSON);
+//		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(domainJSON);
+		                AonMessagePanel.hideMessage(messagePanel);
+		                updateBookingRitems(domainJSON, bookingJSON);
+		                
+		            } else {
+		            	AonMessagePanel.showError(messagePanel, response.getText());
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        }
+		    });
+		} catch (RequestException e) {
+			AonMessagePanel.showError(messagePanel, e.getMessage());
+		}
+	}
+
+	private void updateBookingRitems(String domainJSON, String bookingJSON) {
 		AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el dominio seleccionado ...");
 		
 		// Create the base URL
@@ -1345,11 +1504,11 @@ public class BookingPanel extends MainEntryPoint {
 		urlBuilder.setHost(Window.Location.getHost()); 
 		urlBuilder.setPath(baseUrl);
 		
-		urlBuilder.setParameter("domain", DomainCompanyJSON.domainCompanyToJSON(domainCompany).toString());
-		urlBuilder.setParameter("booking", DomainCompanyJSON.bookingToJson(booking).toString());
+		urlBuilder.setParameter("domain", domainJSON);
+		urlBuilder.setParameter("booking", bookingJSON);
 		
-		Window.alert("domain : " + DomainCompanyJSON.domainCompanyToJSON(domainCompany).toString());
-		Window.alert("booking : " + DomainCompanyJSON.bookingToJson(booking).toString());
+		Window.alert("domain : " + domainJSON);
+		Window.alert("booking : " + bookingJSON);
 		
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
@@ -1362,11 +1521,8 @@ public class BookingPanel extends MainEntryPoint {
 		    requestBuilder.sendRequest(null, new RequestCallback() {
 		        public void onResponseReceived(Request request, Response response) {
 		            if (response.getStatusCode() == 200) {
-		            	Window.alert("updateBookingRItem response");
-
+		            	Window.alert("updateBookingRItem DONE");
 		                AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n se ha realizado correctamente");
-		                
-		                
 		            } else {
 		            	AonMessagePanel.showError(messagePanel, response.getText());
 		            }
@@ -1460,6 +1616,9 @@ public class BookingPanel extends MainEntryPoint {
 					}
 				});
 			}
+			
+			@Override
+			protected void onUpdate(BookingCheck bookingCheck) {}
 		};
 	}
 	
@@ -1496,8 +1655,45 @@ public class BookingPanel extends MainEntryPoint {
 		};
 	}
 	
-//	private String getResponseFake() {
-//		return "[{\"schema\":\"zar-aonsolutions-net\",\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"carlos\",\"modification_user\":\"admin\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno LyZ\",\"active\":true,\"creation_date\":\"2015-02-19T18:53:04Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-09T12:24:48Z\",\"modification_date\":\"2015-02-20T02:48:29Z\",\"name\":\"entorno-lyz.aonsolutions.net\",\"id\":359,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":4,\"aonCustomer\":4290},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"B01390830\",\"active\":false,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"carlos\",\"modification_user\":\"admin\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno LyZ\",\"active\":true,\"creation_date\":\"2015-02-19T18:53:04Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-09T12:24:48Z\",\"modification_date\":\"2015-02-20T02:48:29Z\",\"name\":\"entorno-lyz.aonsolutions.net\",\"id\":359,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":4,\"aonCustomer\":4290},\"legalPerson\":false,\"name\":\"Zarate & Larreina Asesores\",\"alias\":\"\",\"id\":7578,\"confidential\":false}},{\"schema\":\"zar-aonsolutions-net\",\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"inigo\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno Zarate\",\"active\":true,\"creation_date\":\"2015-02-20T12:08:02Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-24T09:06:17Z\",\"modification_date\":\"2022-05-29T21:44:05Z\",\"name\":\"entorno-zarate.aonsolutions.net\",\"id\":497,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":8,\"aonCustomer\":4289},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"B01192707\",\"active\":false,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"inigo\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno Zarate\",\"active\":true,\"creation_date\":\"2015-02-20T12:08:02Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-24T09:06:17Z\",\"modification_date\":\"2022-05-29T21:44:05Z\",\"name\":\"entorno-zarate.aonsolutions.net\",\"id\":497,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":8,\"aonCustomer\":4289},\"legalPerson\":false,\"name\":\"ZARATE ASESORES S.L.\",\"alias\":\"ENTORNO-ZARATE\",\"id\":20720,\"confidential\":false}},{\"schema\":\"zar-aonsolutions-net\",\"domain\":{\"owner\":\"jcomas@aonsolutions.es\",\"lastAccessUser\":\"admin\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"enableHeredity\":false,\"description\":\"HABILITAS EDUCACIÓN NORTE, S.L.\",\"active\":true,\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-22T09:42:50Z\",\"modification_date\":\"2021-12-02T08:40:01Z\",\"name\":\"serinpack-zar.aonsolutions.net\",\"id\":639,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":1,\"aonCustomer\":665928},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"B01524487\",\"active\":false,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"jcomas@aonsolutions.es\",\"lastAccessUser\":\"admin\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"enableHeredity\":false,\"description\":\"HABILITAS EDUCACIÓN NORTE, S.L.\",\"active\":true,\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-22T09:42:50Z\",\"modification_date\":\"2021-12-02T08:40:01Z\",\"name\":\"serinpack-zar.aonsolutions.net\",\"id\":639,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":1,\"aonCustomer\":665928},\"legalPerson\":true,\"name\":\"HABILITAS EDUCACION NORTE, S.L.U.\",\"alias\":\"Habilitas Creative Play\",\"id\":29033,\"confidential\":false}},{\"schema\":\"zar-aonsolutions-net\",\"domain\":{\"owner\":\"jcomas@aonsolutions.es\",\"lastAccessUser\":\"arantza\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"creation_user\":\"inma\",\"enableHeredity\":true,\"description\":\"HABILITAS EDUCACION SL.\",\"active\":false,\"creation_date\":\"2016-07-20T12:21:21Z\",\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2020-03-11T11:04:48Z\",\"scope\":421,\"modification_date\":\"2019-12-30T13:53:27Z\",\"name\":\"habilitas-zar.aonsolutions.net\",\"id\":718,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":0,\"aonCustomer\":665928},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"B01524487\",\"active\":true,\"eInvoice\":true,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"jcomas@aonsolutions.es\",\"lastAccessUser\":\"arantza\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"creation_user\":\"inma\",\"enableHeredity\":true,\"description\":\"HABILITAS EDUCACION SL.\",\"active\":false,\"creation_date\":\"2016-07-20T12:21:21Z\",\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2020-03-11T11:04:48Z\",\"scope\":421,\"modification_date\":\"2019-12-30T13:53:27Z\",\"name\":\"habilitas-zar.aonsolutions.net\",\"id\":718,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":0,\"aonCustomer\":665928},\"legalPerson\":false,\"name\":\"HABILITAS EDUCACIÓN NORTE,S.L.U.\",\"alias\":\"HABILITAS\",\"id\":37231,\"confidential\":false}},{\"schema\":\"zar-aonsolutions-net\",\"domain\":{\"owner\":\"jcomas@aonSolutions.es\",\"lastAccessUser\":\"admin\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"creation_user\":\"inma\",\"enableHeredity\":true,\"description\":\"ESTIBALIZ VERA ORTIZ DE ZARATE\",\"active\":true,\"creation_date\":\"2021-02-25T11:57:17Z\",\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-08T21:46:44Z\",\"scope\":421,\"modification_date\":\"2021-02-25T16:21:04Z\",\"name\":\"tallerdearte-zar.aonsolutions.net\",\"id\":858,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":1,\"aonCustomer\":681545},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"NIF\",\"document\":\"72753274L\",\"active\":true,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"jcomas@aonSolutions.es\",\"lastAccessUser\":\"admin\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"creation_user\":\"inma\",\"enableHeredity\":true,\"description\":\"ESTIBALIZ VERA ORTIZ DE ZARATE\",\"active\":true,\"creation_date\":\"2021-02-25T11:57:17Z\",\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-08T21:46:44Z\",\"scope\":421,\"modification_date\":\"2021-02-25T16:21:04Z\",\"name\":\"tallerdearte-zar.aonsolutions.net\",\"id\":858,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":1,\"aonCustomer\":681545},\"legalPerson\":false,\"name\":\"ESTIBALIZ VERA ORTIZ DE ZARATE\",\"alias\":\"TALLER DE ARTE\",\"id\":235017,\"confidential\":false}},{\"schema\":\"etl-aonsolutions-net\",\"domain\":{\"owner\":\"jgarcia@aonsolutions.es\",\"aonStatus\":\"NOT_BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"creation_user\":\"jgarcia\",\"enableHeredity\":false,\"description\":\"Grupo ETL (España)\",\"active\":true,\"creation_date\":\"2021-10-02T11:07:33Z\",\"maxTotalDocumentSize\":100,\"name\":\"etl.aonsolutions.net\",\"id\":1,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":0},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"active\":true,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"jgarcia@aonsolutions.es\",\"aonStatus\":\"NOT_BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"creation_user\":\"jgarcia\",\"enableHeredity\":false,\"description\":\"Grupo ETL (España)\",\"active\":true,\"creation_date\":\"2021-10-02T11:07:33Z\",\"maxTotalDocumentSize\":100,\"name\":\"etl.aonsolutions.net\",\"id\":1,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":0},\"legalPerson\":false,\"name\":\"Grupo ETL (España)\",\"alias\":\"ETL\",\"id\":216082,\"confidential\":false}},{\"schema\":\"etl-aonsolutions-net\",\"domain\":{\"owner\":\"jgarcia@aonsolutions.es\",\"lastAccessUser\":\"joan\",\"modification_user\":\"admin\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"jgarcia\",\"enableHeredity\":false,\"description\":\"Villagra-Noriega\",\"active\":true,\"creation_date\":\"2021-10-02T11:08:34Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-08T12:09:38Z\",\"modification_date\":\"2022-02-07T10:39:39Z\",\"name\":\"cvnoriega.aonsolutions.net\",\"id\":2,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":7,\"aonCustomer\":693843},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"\",\"active\":true,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"jgarcia@aonsolutions.es\",\"lastAccessUser\":\"joan\",\"modification_user\":\"admin\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"jgarcia\",\"enableHeredity\":false,\"description\":\"Villagra-Noriega\",\"active\":true,\"creation_date\":\"2021-10-02T11:08:34Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-08T12:09:38Z\",\"modification_date\":\"2022-02-07T10:39:39Z\",\"name\":\"cvnoriega.aonsolutions.net\",\"id\":2,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":7,\"aonCustomer\":693843},\"legalPerson\":false,\"name\":\"Villagra-Noriega\",\"alias\":\"CVN\",\"id\":216083,\"confidential\":false}}]";
+	private void updateBooking() {
+		new BookingCheckDialog(options, bookingWithOutFeeMenu.getBookingCheck()) {
+			
+			@Override
+			protected void onCreate(BookingCheck bookingCheck) {}
+			
+			@Override
+			protected void onUpdate(BookingCheck bookingCheck) {
+				SERVICE.saveBookingCheck(options.getDomainName(), options.getDomain(), options.getUser(), bookingCheck, new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						AonMessagePanel.showSuccess(messagePanel, "Se ha actualizado la contrataci\u00f3n correctamente");
+						resetFeeTable();
+						enableMoreData();
+						offset.setValue(0);
+						showInitialMessage();
+						onSearchFees();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Error actualizando contrataci\u00f3n: " + caught.getMessage());
+					}
+				});
+			}
+		};
+	}
+	
+//	private String getResponseCustomerDomainsFake() {
+//		return "[{\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"inigo\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno Zarate\",\"active\":true,\"creation_date\":\"2015-02-20T12:08:02Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-25T12:51:30Z\",\"modification_date\":\"2022-05-29T21:44:05Z\",\"name\":\"entorno-zarate.aonsolutions.net\",\"id\":497,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":8,\"aonCustomer\":4289},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"B01192707\",\"active\":false,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"inigo\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno Zarate\",\"active\":true,\"creation_date\":\"2015-02-20T12:08:02Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-25T12:51:30Z\",\"modification_date\":\"2022-05-29T21:44:05Z\",\"name\":\"entorno-zarate.aonsolutions.net\",\"id\":497,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":8,\"aonCustomer\":4289},\"legalPerson\":false,\"name\":\"ZARATE ASESORES S.L.\",\"alias\":\"ENTORNO-ZARATE\",\"id\":20720,\"confidential\":false}},{\"domain\":{\"owner\":\"administracion@aonSolutions.es\",\"lastAccessUser\":\"cparra\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"OFFICE\",\"enableHeredity\":false,\"description\":\"ZARATE ASESORES,S.L.\",\"active\":true,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-25T08:13:06Z\",\"modification_date\":\"2019-02-02T11:46:18Z\",\"name\":\"zarateasesores.aonsolutions.net\",\"id\":611,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":5,\"aonCustomer\":4289},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"B01192707\",\"active\":false,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"administracion@aonSolutions.es\",\"lastAccessUser\":\"cparra\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"OFFICE\",\"enableHeredity\":false,\"description\":\"ZARATE ASESORES,S.L.\",\"active\":true,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-25T08:13:06Z\",\"modification_date\":\"2019-02-02T11:46:18Z\",\"name\":\"zarateasesores.aonsolutions.net\",\"id\":611,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":5,\"aonCustomer\":4289},\"legalPerson\":true,\"name\":\"ZARATE ASESORES,S.L.\",\"alias\":\"\",\"id\":72952,\"confidential\":false}}]";
+//	}
+//	
+//	private String getResponseDomainsFake() {
+//		return "[{\"schema\":\"zar-aonsolutions-net\",\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"carlos\",\"modification_user\":\"admin\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno LyZ\",\"active\":true,\"creation_date\":\"2015-02-19T18:53:04Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-09T12:24:48Z\",\"modification_date\":\"2015-02-20T02:48:29Z\",\"name\":\"entorno-lyz.aonsolutions.net\",\"id\":359,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":4,\"aonCustomer\":4290},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"B01390830\",\"active\":false,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"carlos\",\"modification_user\":\"admin\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno LyZ\",\"active\":true,\"creation_date\":\"2015-02-19T18:53:04Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-09T12:24:48Z\",\"modification_date\":\"2015-02-20T02:48:29Z\",\"name\":\"entorno-lyz.aonsolutions.net\",\"id\":359,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":4,\"aonCustomer\":4290},\"legalPerson\":false,\"name\":\"Zarate & Larreina Asesores\",\"alias\":\"\",\"id\":7578,\"confidential\":false}},{\"schema\":\"zar-aonsolutions-net\",\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"inigo\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno Zarate\",\"active\":true,\"creation_date\":\"2015-02-20T12:08:02Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-25T12:51:30Z\",\"modification_date\":\"2022-05-29T21:44:05Z\",\"name\":\"entorno-zarate.aonsolutions.net\",\"id\":497,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":8,\"aonCustomer\":4289},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"B01192707\",\"active\":false,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"inigo\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno Zarate\",\"active\":true,\"creation_date\":\"2015-02-20T12:08:02Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-25T12:51:30Z\",\"modification_date\":\"2022-05-29T21:44:05Z\",\"name\":\"entorno-zarate.aonsolutions.net\",\"id\":497,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":8,\"aonCustomer\":4289},\"legalPerson\":false,\"name\":\"ZARATE ASESORES S.L.\",\"alias\":\"ENTORNO-ZARATE\",\"id\":20720,\"confidential\":false}},{\"schema\":\"zar-aonsolutions-net\",\"domain\":{\"owner\":\"jcomas@aonsolutions.es\",\"lastAccessUser\":\"admin\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"enableHeredity\":false,\"description\":\"HABILITAS EDUCACIÓN NORTE, S.L.\",\"active\":true,\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-24T13:13:44Z\",\"modification_date\":\"2021-12-02T08:40:01Z\",\"name\":\"serinpack-zar.aonsolutions.net\",\"id\":639,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":1,\"aonCustomer\":665928},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"B01524487\",\"active\":false,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"jcomas@aonsolutions.es\",\"lastAccessUser\":\"admin\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"enableHeredity\":false,\"description\":\"HABILITAS EDUCACIÓN NORTE, S.L.\",\"active\":true,\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-24T13:13:44Z\",\"modification_date\":\"2021-12-02T08:40:01Z\",\"name\":\"serinpack-zar.aonsolutions.net\",\"id\":639,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":1,\"aonCustomer\":665928},\"legalPerson\":true,\"name\":\"HABILITAS EDUCACION NORTE, S.L.U.\",\"alias\":\"Habilitas Creative Play\",\"id\":29033,\"confidential\":false}},{\"schema\":\"zar-aonsolutions-net\",\"domain\":{\"owner\":\"jcomas@aonsolutions.es\",\"lastAccessUser\":\"arantza\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"creation_user\":\"inma\",\"enableHeredity\":true,\"description\":\"HABILITAS EDUCACION SL.\",\"active\":false,\"creation_date\":\"2016-07-20T12:21:21Z\",\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2020-03-11T11:04:48Z\",\"scope\":421,\"modification_date\":\"2019-12-30T13:53:27Z\",\"name\":\"habilitas-zar.aonsolutions.net\",\"id\":718,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":0,\"aonCustomer\":665928},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"B01524487\",\"active\":true,\"eInvoice\":true,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"jcomas@aonsolutions.es\",\"lastAccessUser\":\"arantza\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"creation_user\":\"inma\",\"enableHeredity\":true,\"description\":\"HABILITAS EDUCACION SL.\",\"active\":false,\"creation_date\":\"2016-07-20T12:21:21Z\",\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2020-03-11T11:04:48Z\",\"scope\":421,\"modification_date\":\"2019-12-30T13:53:27Z\",\"name\":\"habilitas-zar.aonsolutions.net\",\"id\":718,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":0,\"aonCustomer\":665928},\"legalPerson\":false,\"name\":\"HABILITAS EDUCACIÓN NORTE,S.L.U.\",\"alias\":\"HABILITAS\",\"id\":37231,\"confidential\":false}},{\"schema\":\"zar-aonsolutions-net\",\"domain\":{\"owner\":\"jcomas@aonSolutions.es\",\"lastAccessUser\":\"admin\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"creation_user\":\"inma\",\"enableHeredity\":true,\"description\":\"ESTIBALIZ VERA ORTIZ DE ZARATE\",\"active\":true,\"creation_date\":\"2021-02-25T11:57:17Z\",\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-08T21:46:44Z\",\"scope\":421,\"modification_date\":\"2021-02-25T16:21:04Z\",\"name\":\"tallerdearte-zar.aonsolutions.net\",\"id\":858,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":1,\"aonCustomer\":681545},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"NIF\",\"document\":\"72753274L\",\"active\":true,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"jcomas@aonSolutions.es\",\"lastAccessUser\":\"admin\",\"modification_user\":\"jgarcia\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"ENTERPRISE\",\"creation_user\":\"inma\",\"enableHeredity\":true,\"description\":\"ESTIBALIZ VERA ORTIZ DE ZARATE\",\"active\":true,\"creation_date\":\"2021-02-25T11:57:17Z\",\"parentId\":497,\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-08T21:46:44Z\",\"scope\":421,\"modification_date\":\"2021-02-25T16:21:04Z\",\"name\":\"tallerdearte-zar.aonsolutions.net\",\"id\":858,\"domainManagement\":false,\"maxDocumentSize\":1,\"maxDefinedUsers\":1,\"aonCustomer\":681545},\"legalPerson\":false,\"name\":\"ESTIBALIZ VERA ORTIZ DE ZARATE\",\"alias\":\"TALLER DE ARTE\",\"id\":235017,\"confidential\":false}},{\"schema\":\"etl-aonsolutions-net\",\"domain\":{\"owner\":\"jgarcia@aonsolutions.es\",\"lastAccessUser\":\"joan\",\"modification_user\":\"admin\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"jgarcia\",\"enableHeredity\":false,\"description\":\"Villagra-Noriega\",\"active\":true,\"creation_date\":\"2021-10-02T11:08:34Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-08T12:09:38Z\",\"modification_date\":\"2022-02-07T10:39:39Z\",\"name\":\"cvnoriega.aonsolutions.net\",\"id\":2,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":7,\"aonCustomer\":693843},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"\",\"active\":true,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"jgarcia@aonsolutions.es\",\"lastAccessUser\":\"joan\",\"modification_user\":\"admin\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"jgarcia\",\"enableHeredity\":false,\"description\":\"Villagra-Noriega\",\"active\":true,\"creation_date\":\"2021-10-02T11:08:34Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-08T12:09:38Z\",\"modification_date\":\"2022-02-07T10:39:39Z\",\"name\":\"cvnoriega.aonsolutions.net\",\"id\":2,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":7,\"aonCustomer\":693843},\"legalPerson\":false,\"name\":\"Villagra-Noriega\",\"alias\":\"CVN\",\"id\":216083,\"confidential\":false}}]";
+//	}
+//	
+//	private String getResponseBookingFake() {
+//		return "{\"resume\":{\"domain\":{\"ENTERPRISE\":{\"number\":2,\"childs\":[{\"name\":\"c01122-lyz.aonsolutions.net\",\"description\":\"LIMPIEZAS HAUS NET, S.L.\",\"id\":740,\"maxDefinedUsers\":1,\"apps\":[\"COMMERCIAL\",\"TREASURY\",\"STANDAR_MANAGEMENT\",\"INVOICE\"]},{\"name\":\"c01114-lyz.aonsolutions.net\",\"description\":\"AIURRI MONTESSORI, S.L.\",\"id\":713,\"maxDefinedUsers\":1,\"apps\":[\"STANDAR_MANAGEMENT\",\"INVOICE\",\"COMMERCIAL\",\"TREASURY\"]}],\"apps\":{}}},\"user\":{\"SHARED\":1,\"childDefinedUsers\":2,\"childBillingUsers\":0}},\"numberOfUsers\":4,\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"carlos\",\"modification_user\":\"admin\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno LyZ\",\"active\":true,\"creation_date\":\"2015-02-19T18:53:04Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-09T12:24:48Z\",\"modification_date\":\"2015-02-20T02:48:29Z\",\"name\":\"entorno-lyz.aonsolutions.net\",\"id\":359,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":4,\"aonCustomer\":4290},\"company\":{\"surcharge\":false,\"withholding\":false,\"documentType\":\"CIF\",\"document\":\"B01390830\",\"active\":false,\"eInvoice\":false,\"documentCountry\":\"ES\",\"nationality\":\"ES\",\"vatAccrualPayment\":false,\"domain\":{\"owner\":\"info@aonsolutions.es\",\"lastAccessUser\":\"carlos\",\"modification_user\":\"admin\",\"aonStatus\":\"BILLABLE\",\"disableDomainManagement\":false,\"domainType\":\"CONSULTANCY\",\"creation_user\":\"admin\",\"enableHeredity\":false,\"description\":\"Entorno LyZ\",\"active\":true,\"creation_date\":\"2015-02-19T18:53:04Z\",\"maxTotalDocumentSize\":100,\"lastAccessDate\":\"2023-08-09T12:24:48Z\",\"modification_date\":\"2015-02-20T02:48:29Z\",\"name\":\"entorno-lyz.aonsolutions.net\",\"id\":359,\"domainManagement\":true,\"maxDocumentSize\":1,\"maxDefinedUsers\":4,\"aonCustomer\":4290},\"legalPerson\":false,\"name\":\"Zarate & Larreina Asesores\",\"alias\":\"\",\"id\":7578,\"confidential\":false},\"parentApps\":[],\"payer\":\"\",\"apps\":[\"STANDAR_MANAGEMENT\",\"INVOICE\",\"COMMERCIAL\",\"TREASURY\"]}";
 //	}
 
 }
