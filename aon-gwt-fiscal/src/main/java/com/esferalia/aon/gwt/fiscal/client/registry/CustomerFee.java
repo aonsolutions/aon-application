@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -99,6 +100,11 @@ public class CustomerFee extends MainEntryPoint {
 	private AonToolbarButton deleteFeeButton;
 	private AonToolbarButton exportButton;
 	private AonToolbarButton importButton;
+	private AonToolbarButton customerButton;
+	private AonToolbarButton backButton;
+	private AonToolbarButton exportCustomerButton;
+	
+	private DeckPanel mainDeckPanel;
 	
 	// Filter
 	private boolean expandFilter = false;
@@ -123,13 +129,16 @@ public class CustomerFee extends MainEntryPoint {
 	private TextBox quantityTextBox;
 	private TextBox priceTextBox;
 	private TextBox discountTextBox;
-	
-	
+
 	private HTMLPanel filterExpandPanel2;
 	private SuggestBox sellerSuggestBox;
 	private SuggestBox workplaceSuggestBox;
 	private SuggestBox invoicingGroupSuggestBox;
 	private SuggestBox projectSuggestBox;
+	
+	// Filter Customer
+	private SuggestBox customerSuggestBoxCustomer;
+	private ListBox customerStatusListBoxCustomer;
 	
 	// Fee Table
 	private HTMLPanel container;
@@ -138,13 +147,25 @@ public class CustomerFee extends MainEntryPoint {
 	private ScrollPanel scrollPanel;
 	private Grid feeTable;
 	
+	// Customer Table
+	private HTMLPanel containerCustomer;
+	private HTMLPanel messagePanelCustomer;
+	private DeckPanel deckPanelCustomer;
+	private ScrollPanel scrollPanelCustomer;
+	private Grid customerTable;
+	
 	// Variables
 	private Map<CheckBox, Fee> selectionModel = new HashMap<>();
 	private LinkedList<Fee> feeList = new LinkedList<>();
 	private boolean hasChange = false;
+	
+	// Variables Customer
+	private Map<CheckBox, Customer> selectionModelCustomer = new HashMap<>();
+	private LinkedList<Customer> customerList = new LinkedList<>();
 
 	// Search Variables
 	private CustomerFeeParams params;
+	private CustomerParams customerParams;
 	private Date billingDate;
 	
 	private Map<String, Customer> customerSuggestions = new TreeMap<>();
@@ -163,6 +184,12 @@ public class CustomerFee extends MainEntryPoint {
 	private MutableInt moreData = new MutableInt(0);
 	private MutableInt searchEnabled = new MutableInt(0); 
 	private int lastScrollPos = 0;
+	
+	private int limitCustomer = 100;
+	private MutableInt offsetCustomer = new MutableInt(0);
+	private MutableInt moreDataCustomer = new MutableInt(0);
+	private MutableInt searchEnabledCustomer = new MutableInt(0); 
+	private int lastScrollPosCusotmer = 0;
 	
 	// Import fees
 	private AonProgressBarDialog pbd;
@@ -216,11 +243,75 @@ public class CustomerFee extends MainEntryPoint {
 	private void loadModule(final RegistryModuleOptions opt) {
 		createToolbar();
 		dockLayoutPanel.addNorth(toolbar, 50);
+		
+		initializeMainDeckPanel(opt);
+		dockLayoutPanel.add(mainDeckPanel);
+		mainDeckPanel.showWidget(0);
+	}
 
+	private void initializeMainDeckPanel(final RegistryModuleOptions opt) {
+		mainDeckPanel = new DeckPanel();
+		initializeCustomerFeePanel(opt);
+		initializeCustomerPanel(opt);
+	}
+
+	private void initializeCustomerPanel(final RegistryModuleOptions opt) {
+		containerCustomer = new HTMLPanel("");
+		containerCustomer.clear();
+		containerCustomer.addStyleName(AON.CSS.aonFlexColumn());
+		mainDeckPanel.add(containerCustomer);
+
+		messagePanelCustomer = new HTMLPanel("");
+		containerCustomer.add(messagePanelCustomer);
+		
+		createCustomerFilterPanel(opt, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				containerCustomer.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				deckPanelCustomer = new DeckPanel();
+				deckPanelCustomer.getElement().getStyle().setProperty("margin", "0 1rem");
+				containerCustomer.add(deckPanelCustomer);
+				
+				scrollPanelCustomer = new ScrollPanel();
+				scrollPanelCustomer.setHeight((Window.getClientHeight() - 230) + "px");
+				scrollPanelCustomer.addScrollHandler(e -> {
+					// ------------------------------------ Ignore scroll up.
+					int oldScrollPos = lastScrollPosCusotmer;
+					lastScrollPosCusotmer = scrollPanelCustomer.getVerticalScrollPosition();
+					if (oldScrollPos >= lastScrollPosCusotmer) {
+						return;
+					}
+					// -----------------------------------------------------
+					if (isSearchEnabledCustomer()) {
+						int maxScrollTop = scrollPanelCustomer.getWidget().getOffsetHeight() - scrollPanelCustomer.getOffsetHeight();
+						if (lastScrollPosCusotmer >= maxScrollTop) {
+							disableSearchCustomer();
+							searchCustomer();
+						}
+					}
+				});
+				
+				initializeDeckPanelCustomer();
+
+				AonMessagePanel.showLoading(messagePanelCustomer, "Cargando clientes sin cuotas ...");
+				resetFilterCustomer();
+//				onSearchCustomer();
+				AonMessagePanel.hideMessage(messagePanelCustomer);
+			}
+			
+		});
+	}
+
+	private void initializeCustomerFeePanel(final RegistryModuleOptions opt) {
 		container = new HTMLPanel("");
 		container.clear();
 		container.addStyleName(AON.CSS.aonFlexColumn());
-		dockLayoutPanel.add(container);
+		mainDeckPanel.add(container);
 
 		messagePanel = new HTMLPanel("");
 		container.add(messagePanel);
@@ -229,7 +320,7 @@ public class CustomerFee extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
+				container.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
 			}
 
 			@Override
@@ -267,7 +358,6 @@ public class CustomerFee extends MainEntryPoint {
 			}
 			
 		});
-		
 	}
 
 	private void createFilterPanel(final RegistryModuleOptions opt, AsyncCallback<Void> endCallback) {
@@ -600,6 +690,63 @@ public class CustomerFee extends MainEntryPoint {
 		container.add(filterContentPanel);
 	}
 	
+	private void createCustomerFilterPanel(final RegistryModuleOptions opt, AsyncCallback<Void> endCallback) {
+		HTMLPanel filterContentPanel = new HTMLPanel("");
+		filterContentPanel.addStyleName(AON.CSS.aonFlexBetween());
+		filterContentPanel.addStyleName(AON.CSS.aonFilterPanel());
+		filterContentPanel.getElement().getStyle().setProperty("margin", "0 1rem");
+		
+		HTMLPanel filterLeftPanel = new HTMLPanel("");
+		filterLeftPanel.addStyleName(AON.CSS.aonFlexColumn());
+		
+		HTMLPanel filterDefaultPanel = new HTMLPanel("");
+		filterDefaultPanel.addStyleName(AON.CSS.aonFlexWrap());
+		
+		// Customer
+		HTMLPanel customerItemPanel = new HTMLPanel("");
+		customerItemPanel.addStyleName(AON.CSS.aonItemFlex());
+
+		Label customerLabel = new Label("Cliente");
+		customerLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		createCustomerSuggestBoxCustomer();
+		createCustomerStatusListBoxCustomer();
+
+		customerItemPanel.add(customerLabel);
+		customerItemPanel.add(customerSuggestBoxCustomer);
+		customerItemPanel.add(customerStatusListBoxCustomer);
+
+		filterDefaultPanel.add(customerItemPanel);
+		
+		// Right buttons
+		HTMLPanel filterRightPanel = new HTMLPanel("");
+		filterRightPanel.addStyleName(AON.CSS.aonFlexWrap());
+		filterRightPanel.getElement().getStyle().setProperty("height", "100%");
+		filterRightPanel.getElement().getStyle().setProperty("align-items", "flex-start");
+		filterRightPanel.getElement().getStyle().setProperty("flex-wrap", "nowrap");
+		
+		AonToolbarSmallButton resetBtn = new AonToolbarSmallButton("Borrar filtros", AON.CSS.aonIconClear());
+		resetBtn.addClickHandler(e -> {
+			resetFilterCustomer();
+			customerList.clear();
+			resetCustomerTable();
+			enableMoreDataCustomer();
+			offsetCustomer.setValue(0);
+			showInitialMessageCustomer();
+			onSearchCustomer();
+		});
+		
+		filterLeftPanel.add(filterDefaultPanel);
+		
+		filterRightPanel.add(resetBtn);
+		
+		filterContentPanel.add(filterLeftPanel);
+		filterContentPanel.add(filterRightPanel);
+
+		containerCustomer.add(filterContentPanel);
+		
+		endCallback.onSuccess(null);
+	}
+	
 	private ListBox createMonthListBox() {
 		ListBox lb = new ListBox();
 		lb.setHeight("2em");
@@ -673,6 +820,7 @@ public class CustomerFee extends MainEntryPoint {
 		lb.addItem("Cuatrimestral", "4");
 		lb.addItem("Semestral", "5");
 		lb.addItem("Anual", "6");
+		lb.addItem("Sin Cuotas", "7");
 		lb.addChangeHandler(e -> onSearchFees());
 		return lb;
 	}
@@ -738,6 +886,65 @@ public class CustomerFee extends MainEntryPoint {
 				orclSb.addAll(customerSuggestions.keySet());
 				orclSb.setDefaultSuggestionsFromText(customerSuggestions.keySet());
 				customerSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+	
+	// ------- CUSTOMER (CUSTOMER) ---------
+	
+	private void createCustomerStatusListBoxCustomer() {
+		customerStatusListBoxCustomer = new ListBox();
+		customerStatusListBoxCustomer.setHeight("2em");
+		customerStatusListBoxCustomer.getElement().getStyle().setProperty("padding", "0 5px");
+		customerStatusListBoxCustomer.addItem("-", "");
+		customerStatusListBoxCustomer.addItem("Activo", "0");
+		customerStatusListBoxCustomer.addItem("Inactivo", "1");
+		customerStatusListBoxCustomer.addItem("Bloqueado", "2");
+		customerStatusListBoxCustomer.addChangeHandler(e -> onSearchCustomer());
+	}
+	
+	private void createCustomerSuggestBoxCustomer() {
+		customerSuggestBoxCustomer = new SuggestBox();
+		customerSuggestBoxCustomer.setWidth("225px");
+		customerSuggestBoxCustomer.setHeight("2em");
+		customerSuggestBoxCustomer.getElement().getStyle().setProperty("padding", "0 5px");
+		customerSuggestBoxCustomer.setAutoSelectEnabled(false);
+		customerSuggestBoxCustomer.getElement().setPropertyString("placeholder", "Clientes: busque por nombre, nif o alias");
+		
+		customerSuggestBoxCustomer.addSelectionHandler(e -> {
+			customerSuggestBoxCustomer.hideSuggestionList();
+			onSearchCustomer();
+		});
+		
+		customerSuggestBoxCustomer.addKeyUpHandler(e -> {
+			String customerQuery = customerSuggestBoxCustomer.getValue();
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				customerSuggestBoxCustomer.setValue("");
+				customerQuery = null;
+				getCustomersSuggestionCustomer(customerQuery);
+			} else if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 3)
+				getCustomersSuggestionCustomer(customerQuery);
+		});
+	}
+	
+	private void getCustomersSuggestionCustomer(String customerQuery) {
+		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, Customer>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Customer> customerSuggestionsDB) {
+				customerSuggestions = customerSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerSuggestBoxCustomer.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(customerSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(customerSuggestions.keySet());
+				customerSuggestBoxCustomer.showSuggestionList();
 			}
 			
 			@Override
@@ -1132,6 +1339,18 @@ public class CustomerFee extends MainEntryPoint {
 		}
 	}
 	
+	// ------- RESET FILTER CUSTOMER ---------
+
+	private void resetFilterCustomer() {
+		customerSuggestBoxCustomer.setValue("");
+		customerStatusListBoxCustomer.setSelectedIndex(0);
+		
+		if(null != customerParams) {
+			customerParams.setCustomer(null);
+			customerParams.setCustomerStatus(null);
+		}
+	}
+	
 	// ------- SEARCH ---------
 	
 	private void onSearchFees() {
@@ -1207,6 +1426,62 @@ public class CustomerFee extends MainEntryPoint {
 		
 		params.setLimit(limit);
 		params.setOffset(offset.getValue());
+	}
+	
+	// ------- SEARCH ---------
+	
+	private void onSearchCustomer() {
+		enableMoreDataCustomer();
+		offsetCustomer.setValue(0);
+		searchCustomer();
+		customerList.clear();
+		resetCustomerTable();
+	}
+
+	private void searchCustomer() {
+		if (!isMoreDataCustomer()) return;
+		
+		createCustomerParams();
+		
+		SERVICE.getCustomerWithoutFee(options.getDomainName(), options.getDomain(), options.getUser(), customerParams,
+			new AsyncCallback<List<Customer>>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Error cargando panel de facturaci\u00f3n: " + caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(List<Customer> customerListDB) {
+					if(customerParams.getOffset() == 0 && (customerListDB == null || customerListDB.isEmpty()))
+						showEmptyCustomerMessage();
+					else if(customerListDB == null || customerListDB.isEmpty()) {
+						disableMoreDataCustomer();
+						if(customerList.isEmpty()) showEmptyCustomerMessage();
+					} else {
+						if(offsetCustomer.getValue() == 0) selectionModelCustomer.clear();
+						showCustomerTable();
+						customerListDB.forEach( customer -> paintRow(customer));
+						customerList.addAll(customerListDB);
+						enableMoreDataCustomer();
+						offsetCustomer.setValue(offsetCustomer.getValue() + customerListDB.size());
+					}
+					
+					enableSearchCustomer();
+				}
+			});
+		
+	}
+
+	private void createCustomerParams() {
+		if(null == customerParams) customerParams = new CustomerParams();
+		customerParams.setDomain(options.getDomain());
+		
+		customerParams.setCustomer(null != customerSuggestions.get(customerSuggestBoxCustomer.getValue()) ? customerSuggestions.get(customerSuggestBoxCustomer.getValue()).getName() : null);
+		customerParams.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBoxCustomer.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBoxCustomer.getSelectedValue()));
+		
+		customerParams.setLimit(limitCustomer);
+		customerParams.setOffset(offsetCustomer.getValue());
 	}
 	
 	// ------- MAIN PAGE ---------
@@ -1711,6 +1986,175 @@ public class CustomerFee extends MainEntryPoint {
 		widget.setHeight("2em");
 		widget.getElement().getStyle().setProperty("padding", "0 5px");
 	}
+	
+	// -------------------------------- CUSTOMER TABLE
+	
+	// ------- MAIN PAGE ---------
+
+	private void initializeDeckPanelCustomer() {
+		deckPanelCustomer.clear();
+		createInitialMessageCustomer();
+		createEmptyFeeMessageCustomer();
+		createCustomerTable();
+		showInitialMessageCustomer();
+	}
+	
+	private void showInitialMessageCustomer() {
+		deckPanelCustomer.showWidget(0);
+	}
+	
+	private void showEmptyCustomerMessage() {
+		deckPanelCustomer.showWidget(1);
+	}
+	
+	private void showCustomerTable() {
+		deckPanelCustomer.showWidget(2);
+	}	
+	
+	private void createInitialMessageCustomer() {
+		HTMLPanel emptyPanel = new HTMLPanel("");
+		emptyPanel.addStyleName(AON.CSS.aonDisplayFlexCenter());
+		Label emptyMessage = new Label("RELLENE LA BUSQUEDA PARA CARGAR LISTA DE CLIENTES SIN CUOTAS");
+		emptyMessage.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		emptyMessage.getElement().getStyle().setMarginTop(1, Unit.EM);
+		emptyPanel.add(emptyMessage);
+		deckPanelCustomer.add(emptyPanel);
+	}
+
+	private void createEmptyFeeMessageCustomer() {
+		HTMLPanel emptyFeePanel = new HTMLPanel("");
+		emptyFeePanel.addStyleName(AON.CSS.aonDisplayFlexCenter());
+		Label emptyMessage = new Label("NO EXISTEN CUOTAS DE CLIENTES PARA ESTE FILTRO");
+		emptyMessage.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		emptyMessage.getElement().getStyle().setMarginTop(1, Unit.EM);
+		emptyFeePanel.add(emptyMessage);
+		deckPanelCustomer.add(emptyFeePanel);
+	}
+	
+	private void createCustomerTable() {
+		resetCustomerTable();
+		deckPanelCustomer.add(scrollPanelCustomer);
+	}
+	
+	private void resetCustomerTable() {
+		scrollPanelCustomer.clear();
+		createCustomerHeader();
+		setColumnWidthCustomer();
+	}
+
+	private void createCustomerHeader() {
+		customerTable = new Grid(0, 6);
+		customerTable.clear();
+		customerTable.setWidth("100%");
+
+		int row = customerTable.insertRow(customerTable.getRowCount());
+
+		CheckBox select = new CheckBox();
+		select.addValueChangeHandler(e -> {
+			selectionModelCustomer.forEach((checkBox, customer) -> checkBox.setValue(e.getValue()));
+		});
+
+		Label document = new Label("DOCUMENTO");
+		Label name = new Label("NOMBRE");
+		Label alias = new Label("ALIAS");
+		Label scope = new Label("AMBITO");
+		Label status = new Label("ESTADO");
+		
+		select.addStyleName(AON.CSS.aonHeaderTable());
+		select.getElement().getStyle().setPaddingLeft(0, Unit.PX);
+		document.addStyleName(AON.CSS.aonHeaderTable());
+		name.addStyleName(AON.CSS.aonHeaderTable());
+		alias.addStyleName(AON.CSS.aonHeaderTable());
+		scope.addStyleName(AON.CSS.aonHeaderTable());
+		status.addStyleName(AON.CSS.aonHeaderTable());
+
+		customerTable.setWidget(row, 0, select);
+		customerTable.setWidget(row, 1, document);
+		customerTable.setWidget(row, 2, name);
+		customerTable.setWidget(row, 3, alias);
+		customerTable.setWidget(row, 4, scope);
+		customerTable.setWidget(row, 5, status);
+
+		customerTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
+		customerTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
+		customerTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonHeaderSticky());
+		customerTable.getCellFormatter().addStyleName(row, 3, AON.CSS.aonHeaderSticky());
+		customerTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
+		customerTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
+
+		scrollPanelCustomer.add(customerTable);
+	}
+	
+	private void setColumnWidthCustomer() {
+		customerTable.getColumnFormatter().getElement(0).getStyle().setWidth(2, Unit.PCT);
+		customerTable.getColumnFormatter().getElement(1).getStyle().setWidth(200, Unit.PX);
+		customerTable.getColumnFormatter().getElement(3).getStyle().setWidth(20, Unit.PCT);
+		customerTable.getColumnFormatter().getElement(4).getStyle().setWidth(150, Unit.PX);
+		customerTable.getColumnFormatter().getElement(5).getStyle().setWidth(200, Unit.PX);
+	}
+	
+	private void disableMoreDataCustomer() {
+		moreDataCustomer.setValue(-1);
+	}
+	
+	private void enableMoreDataCustomer() {
+		moreDataCustomer.setValue(0);
+	}
+	
+	private boolean isMoreDataCustomer() {
+		return (moreDataCustomer.getValue() == 0 );
+	}
+	
+	private void enableSearchCustomer() {
+		searchEnabledCustomer.setValue(0);
+	}
+	
+	private boolean isSearchEnabledCustomer() {
+		return (searchEnabledCustomer.getValue() == 0 );
+	}
+	
+	private void disableSearchCustomer() {
+		searchEnabledCustomer.setValue(-1);
+	}
+
+	private void paintRow(Customer customer) {
+		int row = customerTable.insertRow(customerTable.getRowCount());
+
+		CheckBox select = new CheckBox();
+		select.addValueChangeHandler(e -> {
+			Optional<CheckBox> checked = selectionModelCustomer.keySet().stream().filter(cb -> cb.getValue()).findAny();
+		});
+		
+		Label documentLabel = new Label(customer.getDocument());
+		Label nameLabel = new Label(customer.getName());
+		Label aliasLabel = new Label(customer.getAlias());
+		Label scopeLabel = new Label(null != customer.getScope() ? customer.getScope().getDescription() : "");
+		Label statusLabel = new Label(null != customer.getStatus() ? customer.getStatus().getDescription() : "");
+
+		customerTable.setWidget(row, 0, select);
+		customerTable.setWidget(row, 1, documentLabel);
+		customerTable.setWidget(row, 2, nameLabel);
+		customerTable.setWidget(row, 3, aliasLabel);
+		customerTable.setWidget(row, 4, scopeLabel);
+		customerTable.setWidget(row, 5, statusLabel);
+		
+		customerTable.getCellFormatter().getElement(row, 1).getStyle().setTextAlign(TextAlign.CENTER);
+		customerTable.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
+		customerTable.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
+
+		if (row % 2 == 0) {
+			customerTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonOddTableRow());
+			customerTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonOddTableRow());
+			customerTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonOddTableRow());
+			customerTable.getCellFormatter().addStyleName(row, 3, AON.CSS.aonOddTableRow());
+			customerTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonOddTableRow());
+			customerTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonOddTableRow());
+		}
+
+		customerTable.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
+
+		selectionModelCustomer.put(select, customer);
+	}
 
 	// -------------------------------- TOOLBAR
 	
@@ -2145,7 +2589,32 @@ public class CustomerFee extends MainEntryPoint {
 			};
 			upload.upload();
 		});
-
+		
+		customerButton = new AonToolbarButton("Clientes sin cuotas", AON.CSS.aonIconGroupOff());
+		customerButton.addClickHandler(e -> {
+			showCustomers();
+		});
+		
+		backButton = new AonToolbarButton("Cuotas", AON.CSS.aonIconBack());
+		backButton.setVisible(false);
+		backButton.addClickHandler(e -> {
+			showCustomerFee();
+		});
+		
+		exportCustomerButton = new AonToolbarButton("Exportar Clientes",AON.CSS.aonIconExcel());
+		exportCustomerButton.setVisible(false);
+		exportCustomerButton.addClickHandler(e -> {
+			LinkedList<Customer> selectedCustomer = selectionModelCustomer.entrySet().stream().filter(a -> a.getKey().getValue()).map(c -> c.getValue()).collect(Collectors.toCollection(LinkedList::new));
+			if(selectedCustomer.size() == customerList.size()) {
+				// Exportacion masiva (todo seleccionado)
+				exportCustomer(null);
+			} else {
+				List<Integer> customerIds = new ArrayList<>();
+				customerIds = selectedCustomer.stream().map(fee -> fee.getId()).collect(Collectors.toList());
+				exportCustomer(customerIds);
+			}
+		});
+		
 		toolbar.add(saveButton);
 		toolbar.add(undoAllButton);
 		toolbar.add(createButton);
@@ -2153,8 +2622,51 @@ public class CustomerFee extends MainEntryPoint {
 		toolbar.add(deleteFeeButton);
 		toolbar.add(exportButton);
 		toolbar.add(importButton);
+		toolbar.add(customerButton);
+		toolbar.add(backButton);
+		toolbar.add(exportCustomerButton);
 	}
 	
+	private void showCustomerFee() {
+		saveButton.setVisible(true);
+		undoAllButton.setVisible(true);
+		createButton.setVisible(true);
+		addValueButton.setVisible(true);
+		deleteFeeButton.setVisible(true);
+		exportButton.setVisible(true);
+		importButton.setVisible(true);
+		customerButton.setVisible(true);
+		backButton.setVisible(false);
+		exportCustomerButton.setVisible(false);
+		mainDeckPanel.showWidget(0);
+		
+	}
+
+	private void showCustomers() {
+		saveButton.setVisible(false);
+		undoAllButton.setVisible(false);
+		createButton.setVisible(false);
+		addValueButton.setVisible(false);
+		deleteFeeButton.setVisible(false);
+		exportButton.setVisible(false);
+		importButton.setVisible(false);
+		customerButton.setVisible(false);
+		backButton.setVisible(true);
+		exportCustomerButton.setVisible(true);
+		
+		if(null == customerList || customerList.isEmpty()) {
+			selectionModelCustomer.clear();
+			customerList.clear();
+			resetCustomerTable();
+			enableMoreDataCustomer();
+			offsetCustomer.setValue(0);
+			searchCustomer();
+		}
+		
+		mainDeckPanel.showWidget(1);
+		
+	}
+
 	private void insertFee(List<Fee> fee, Integer index) {
 		Integer lines = fee.size();
 		AsyncCallback<ImportError> callback = new AsyncCallback<ImportError>() {
@@ -2235,6 +2747,30 @@ public class CustomerFee extends MainEntryPoint {
             	+ "&domain_name=" + options.getDomainName()
             	+ "&domain_id=" + options.getDomain()
 				+ "&username="+ options.getUser();
+		
+		Window.open( fileDownloadURL, "_blank",null);
+	}
+	
+	private void exportCustomer(List<Integer> customerIds) {
+		JSONObject json = new JSONObject();
+		
+		if(null == customerIds) {
+			if(null != customerSuggestions.get(customerSuggestBoxCustomer.getValue())) json.put("customer", new JSONNumber(customerSuggestions.get(customerSuggestBoxCustomer.getValue()).getId()));
+			if(AonStringUtils.isNotBlank(customerStatusListBoxCustomer.getSelectedValue())) json.put("status", new JSONNumber(Integer.parseInt(customerStatusListBoxCustomer.getSelectedValue())));
+		} else {
+			JSONObject feeJson = new JSONObject();
+			for(int i=0; i<customerIds.size(); i++) 
+				feeJson.put("customerId"+i, new JSONString(customerIds.get(i).toString()));
+			
+			json.put("customerIds", feeJson);
+		}
+		
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "download_customer_without_fee/"
+            	+ "?filter=" + btoa(json.toString())
+            	+ "&domain=" + options.getDomainName()
+            	+ "&domainId=" + options.getDomain()
+				+ "&login="+ options.getUser()
+				+ "&type=excel";
 		
 		Window.open( fileDownloadURL, "_blank",null);
 	}

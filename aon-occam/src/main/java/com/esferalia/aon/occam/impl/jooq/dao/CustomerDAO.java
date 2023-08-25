@@ -32,8 +32,10 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -177,7 +179,60 @@ public class CustomerDAO {
 		.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
 		.and(CUSTOMER_FEE.ID.isNull())
 		.fetch().stream().map(new CustomerFiller())
-		.toList();
+		.collect(Collectors.toList());
+	}
+	
+	public static List<Customer> getCustomerWithoutFee(AONContext ctx, CustomerParams customerParams) {
+		if(null != customerParams.getLimit()) {
+			return ctx.getDslContext().select()
+			.from(CUSTOMER)
+			.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+			.leftOuterJoin(CUSTOMER_FEE).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER)
+				.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(AonDateUtils.toSql(new Date()))))
+			)
+			.where(createCustomerCondition(ctx, customerParams))
+	//		.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
+	//		.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
+			.and(CUSTOMER_FEE.ID.isNull())
+			.offset(customerParams.getOffset())
+			.limit(customerParams.getLimit())
+			.fetch().stream().map(new CustomerFiller())
+			.collect(Collectors.toList());
+		} else 
+			return ctx.getDslContext().select()
+			.from(CUSTOMER)
+			.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+			.leftOuterJoin(CUSTOMER_FEE).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER)
+				.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(AonDateUtils.toSql(new Date()))))
+			)
+			.where(createCustomerCondition(ctx, customerParams))
+	//		.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
+	//		.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
+			.and(CUSTOMER_FEE.ID.isNull())
+			.fetch().stream().map(new CustomerFiller())
+			.collect(Collectors.toList());
+	}
+	
+	private static Condition createCustomerCondition(AONContext ctx, CustomerParams customerParams) {
+		Integer domain = null != customerParams.getDomain() ? customerParams.getDomain() : ctx.getDomainId();
+		Condition condition = CUSTOMER.DOMAIN.eq(domain);
+		
+		User user = SecurityDAO.getUser(ctx);
+		if(user.getDomain() == ctx.getDomainId()) {
+			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
+			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
+		}
+		
+		if(AonStringUtils.isNotBlank(customerParams.getCustomer())) 
+			condition = condition.and(REGISTRY.NAME.eq(customerParams.getCustomer()));
+		
+		if(null != customerParams.getCustomerStatus())
+			condition = condition.and(CUSTOMER.STATUS.eq(customerParams.getCustomerStatus()));
+		
+		if(null != customerParams.getCustomerIds() && !customerParams.getCustomerIds().isEmpty())
+			condition = condition.and(CUSTOMER.REGISTRY.in(customerParams.getCustomerIds()));
+		
+		return condition;
 	}
 	
 	public static Customer save(AONContext ctx, Customer customer) {

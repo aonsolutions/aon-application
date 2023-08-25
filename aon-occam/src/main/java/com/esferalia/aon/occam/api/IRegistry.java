@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -214,6 +215,7 @@ public interface IRegistry {
 	public List<Domain> getDomainOfficeLinked(AONContext ctx, String document);
 	
 	public List<Customer> getCustomerWithoutFee(AONContext ctx);
+	public List<Customer> getCustomerWithoutFee(AONContext ctx, CustomerParams customerParams);
 	
 	// **************************************************
 	// *************************************** [CREDITOR]

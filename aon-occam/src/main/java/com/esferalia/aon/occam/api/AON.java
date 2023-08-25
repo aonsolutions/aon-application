@@ -228,6 +228,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -4930,6 +4931,12 @@ public class AON {
 	public static List<Customer> getCustomerWithoutFee(Domain domain, String login){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)) {
 			return getRegistry().getCustomerWithoutFee(ctx);
+		}
+	}
+	
+	public static List<Customer> getCustomerWithoutFee(Domain domain, String login, CustomerParams customerParams){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)) {
+			return getRegistry().getCustomerWithoutFee(ctx, customerParams);
 		}
 	}
 	
