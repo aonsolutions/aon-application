@@ -22,6 +22,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.Window;
 
 public class DomainCompanyJSON {
 	
@@ -32,31 +33,37 @@ public class DomainCompanyJSON {
 		LinkedList<DomainCompany> list = new LinkedList<>();
 		
 		for(Integer i = 0; i < arr.size(); i++) {
-			list.add(parseDomainCompanyJSON(arr.get(i)));
+			list.add(parseDomainCompanyJSON(arr.get(i).isObject()));
 		}
  		
 		return list;
 	}
 	
-	private static DomainCompany parseDomainCompanyJSON(JSONValue json) {
+	private static DomainCompany parseDomainCompanyJSON(JSONObject json) {
+		Window.alert("parseDomainCompanyJSON:\n" + json);
 		if(json == null) return new DomainCompany();
 		return new DomainCompany()
-				.setSchema(json.isObject().get(IJsonNames.SCHEMA).toString())
-				.setDomain(parseDomainJSON(json.isObject().get(IJsonNames.DOMAIN)))
-				.setCompany(parseCompanyJSON(json.isObject().get(IJsonNames.COMPANY)))
+				.setSchema(JsonGWTUtils.getString(json, IJsonNames.SCHEMA))
+				.setDomain(parseDomainJSON(json.get(IJsonNames.DOMAIN)))
+				.setCompany(parseCompanyJSON(json.get(IJsonNames.COMPANY)))
 		;
 	}
 	
 	public static JSONObject domainCompanyToJSON(DomainCompany domainCompany) {
 		if(domainCompany == null) return new JSONObject();
-		return new JSONObject()
-				.put(IJsonNames.SCHEMA, new JSONString(domainCompany.getSchema()))
-				.isObject()
-				.put(IJsonNames.DOMAIN, domainToJSON(domainCompany.getDomain()))
-				.isObject()
-				.put(IJsonNames.COMPANY, companyToJSON(domainCompany.getCompany()))
-				.isObject()
+		JSONObject jsonObject = new JSONObject();
+		
+		if(null != domainCompany.getSchema())
+			jsonObject.put(IJsonNames.SCHEMA, new JSONString(domainCompany.getSchema()));
+			
+		jsonObject
+			.put(IJsonNames.DOMAIN, domainToJSON(domainCompany.getDomain()))
+			.isObject()
+			.put(IJsonNames.COMPANY, companyToJSON(domainCompany.getCompany()))
+			.isObject()
 			;	
+		
+		return jsonObject;
 	}
 
 	private static Domain parseDomainJSON(JSONValue json) {
@@ -97,7 +104,7 @@ public class DomainCompanyJSON {
 		return new JSONObject()
 			.put(IJsonNames.ID, new JSONString(domain.getId().toString()))
 			.isObject()
-			.put(IJsonNames.NAME,new JSONString( domain.getName()))
+			.put(IJsonNames.NAME,new JSONString(domain.getName()))
 			.isObject()
 			.put(IJsonNames.DESCRIPTION, new JSONString(domain.getDescription()))
 			.isObject()
