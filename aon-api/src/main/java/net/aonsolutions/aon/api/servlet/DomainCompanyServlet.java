@@ -132,6 +132,9 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		if (api.getData().opt(IJsonNames.AON_CUSTOMER) != null) {
 			filter = filter.and(f.getAonCustomerProperty().eq(api.getData().optInt(IJsonNames.AON_CUSTOMER)));
 		}
+		if (api.getData().opt(IJsonNames.DOMAIN_ID) != null) {
+			filter = filter.and(f.getIdProperty().eq(api.getData().optInt(IJsonNames.DOMAIN_ID)));
+		}
 		return filter;
 	}
 	
