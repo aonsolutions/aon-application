@@ -30,6 +30,7 @@ import net.aonsolutions.db.up2date.product.ProductPerishableUpdate;
 import net.aonsolutions.db.up2date.tgss.PermissionUnPaidDaysFix;
 import net.aonsolutions.db.up2date.tgss.TrainingQuote2023Fix;
 import net.aonsolutions.db.up2date.tgss.TrainningBaseCgcMinUndo;
+import net.aonsolutions.db.up2date.warehouse.DeliveryPackagingCreation;
 
 public class Up2Date {
 
@@ -393,6 +394,7 @@ public class Up2Date {
 	    // UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
 	    InsertIAE575576.INSERT_IAE_755756,
 	    // ProductPerishableUpdate.PRODUCT_PEISHABLE_UPDATE,
+	    DeliveryPackagingCreation.DELIVERY_PACKAGING_CREATION
 	};
 
     // ------------------------------------------------------------------------
