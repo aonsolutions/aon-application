@@ -121,12 +121,13 @@ export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat
 }
 
 export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>, IMultipleObjectCrudFactory<IEnterprise> {
-    createSingleObjectCrud(): ISingleObjectReader<IEnterprise> {
-        return new GenericSingleObjectCrud<Enterprise>(new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
-    }
-    createMultipleObjectCrud(): IMultipleObjectReader<IEnterprise> {
-        return new GenericMultipleObjectCrud<Enterprise>(new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
-    }
+  createSingleObjectCrud(): ISingleObjectCrud<IEnterprise> {
+    return new GenericSingleObjectCrud<Enterprise>(new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
+  }
+
+  createMultipleObjectCrud(): IMultipleObjectCrud<IEnterprise> {
+    return new GenericMultipleObjectCrud<Enterprise>(new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
+  }
 }
 
 export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleObjectCrudFactory<IBank> {
