@@ -249,6 +249,14 @@ public class BookingCheckDAO {
 				break;
 			}
 		}
+
+		if(null != customerFeeParams.getDomainType()){
+			condition = condition.and(DOMAIN.AONSTATUS.eq(customerFeeParams.getDomainType()));
+		}
+		
+		if(null != customerFeeParams.getDomainStatus()){
+			condition = condition.and(DOMAIN.ACTIVE.eq(customerFeeParams.getDomainStatus()));
+		}
 		
 		return condition;
 	}
@@ -270,6 +278,9 @@ public class BookingCheckDAO {
 		
 		if(null != customerFeeParams.getProduct())
 			condition = condition.and(RITEM.ITEM.eq(customerFeeParams.getProduct()));
+		
+		if(null != customerFeeParams.getProductStatus())
+			condition = condition.and(RITEM.STATUS.eq(customerFeeParams.getProductStatus()));
 		
 		if(null != customerFeeParams.getStartDate()){
 			switch (customerFeeParams.getStartCompare()) {
@@ -297,6 +308,14 @@ public class BookingCheckDAO {
 				condition = condition.and(RITEM.END_DATE.eq(new Date(customerFeeParams.getEndDate().getTime())));
 				break;
 			}
+		}
+		
+		if(null != customerFeeParams.getDomainType()){
+			condition = condition.and(DOMAIN.AONSTATUS.eq(customerFeeParams.getDomainType()));
+		}
+		
+		if(null != customerFeeParams.getDomainStatus()){
+			condition = condition.and(DOMAIN.ACTIVE.eq(customerFeeParams.getDomainStatus()));
 		}
 		
 		return condition;
