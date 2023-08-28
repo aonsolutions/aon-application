@@ -190,6 +190,9 @@ export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMult
             ), 
             Message);
     }
+    createMessageSpecificMethods(): IMessageSpecificMethods {
+        return new MessageSpecificMethods();
+    }
 }
 
 export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat>, IMultipleObjectCrudFactory<IMessageChat> {
@@ -470,6 +473,22 @@ interface IReportingDataAccess {
     ventasGastos(): Promise<IResponse<Object>>;
 }
 
+/**
+ * Interface for specific methods of message 
+ */
+interface IMessageSpecificMethods {
+    /**
+     * Archive an open message
+     * @param element The message
+     */
+    archiveMessage(element: IMessage): Promise<IResponse<IMessage>>;
+    /**
+     * Reopen an archived message
+     * @param element The message
+     */
+    reopenMessage(element: IMessage): Promise<IResponse<IMessage>>;
+}
+
 /*
  *
  * IMPLEMENTATION OF INTERFACES FOR THE CLIENTS -
@@ -641,6 +660,20 @@ class ReportingDataAccess implements IReportingDataAccess {
 
 }
 
+class MessageSpecificMethods implements IMessageSpecificMethods {
+
+    repository = new APIMessageSpecificMethodsRepository();
+
+    async archiveMessage(element: Message): Promise<IResponse<IMessage>> {
+        return new Response<IMessage>(await this.repository.archiveMessage(element));
+    }
+
+    async reopenMessage(element: Message): Promise<IResponse<IMessage>> {
+        return new Response<IMessage>(await this.repository.reopenMessage(element));
+    }
+
+}
+
 /*
  *
  * REPOSITORY INTERFACES
@@ -739,6 +772,19 @@ interface IAuthenticationRepository {
 interface IReportingRepository {
     cobrosPagos(): Promise<any>;
     ventasGastos(): Promise<any>;
+}
+
+interface IMessageSpecificMethodsRepository {
+    /**
+     * Archive an open message
+     * @param element The message
+     */
+    archiveMessage(element: IMessage): Promise<IMessage>;
+    /**
+     * Reopen an archived message
+     * @param element The message
+     */
+    reopenMessage(element: IMessage): Promise<IMessage>;
 }
 
 /*
@@ -904,6 +950,7 @@ class APIGenericSingleObjectCrudRepository<T extends IModel> implements ISingleO
     }
 
     async get(key: string, type?: string): Promise<T> {
+        // TO DO revisar filter, type y id
         let filter = new FilterBuilder();
         filter.addField('id',key);
         if(type) filter.addField('type',type)
@@ -913,15 +960,20 @@ class APIGenericSingleObjectCrudRepository<T extends IModel> implements ISingleO
         return this.apiModel.parseDataToReceive(response, GET_SINGLE);
     }
 
-    create(element: T): Promise<T> {
+    async create(element: T): Promise<T> {
         throw new ErrorResponse('0199')
     }
 
-    update(element: T): Promise<T> {
+    async update(element: T): Promise<T> {
+        let data = this.apiModel.parseDataToSend(element, UPDATE_SINGLE);
+        let url = this.apiModel.getUrl(UPDATE_SINGLE);
+        let method = this.apiModel.getMethod(UPDATE_SINGLE);
+        let response = await this.httpRequest.httpRequest(BASE_URL + url, method, element, data)
+        if(response) return element;
         throw new ErrorResponse('0199')
     }
 
-    delete(key: string): Promise<void> {
+    async delete(key: string): Promise<void> {
         throw new ErrorResponse('0199')
     }
 
@@ -999,6 +1051,26 @@ class APIFolderMultipleObjectCrudRepository extends APIGenericMultipleObjectCrud
         return collection;
     }
 
+}
+
+class APIMessageSpecificMethodsRepository implements IMessageSpecificMethodsRepository {
+
+    repository = new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message);
+
+    async archiveMessage(element: Message): Promise<IMessage> {
+        element.Status = 'deleted';
+        let updatedMessage: IMessage = await this.repository.update(element);
+        return updatedMessage;
+        throw new Error("Method not implemented.");
+    }
+
+    async reopenMessage(element: Message): Promise<IMessage> {
+        element.Status = 'pending'
+        let updatedMessage: IMessage = await this.repository.update(element);
+        return updatedMessage;
+        throw new Error("Method not implemented.");
+    }
+    
 }
 
 class APIAuthenticationRepository implements IAuthenticationRepository {
@@ -1553,7 +1625,7 @@ interface IModel extends ICollectable {
     /**
      * API json object
      */
-    // ApiObject: any;
+    ApiObject: any;
     
 }
 
@@ -1846,6 +1918,10 @@ class Document implements IDocument, IModel {
         return this.apiObject;
     }
 
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
     constructor(file?: string, fileName?: string, fileSize?: number, fileType?: string, date?: Date, path?: string, id?: string) {
         this.file = file || '';
         this.fileName = fileName || '';
@@ -1983,6 +2059,7 @@ class ApiDocument extends Document implements IApiModel {
     parseDataToReceive(data: any, currentMethod:string, filter: IFilter) {
         let document = new Document()
         if(filter && filter.fields && filter.fields?.has('path') && filter.fields?.get('path').includes('/laboral')){
+            document.ApiObject = data;
             document.File = ''
             document.FileName = 'Nómina' + (data.startDate ? data.startDate : '') + ' - ' + (data.endDate ? data.endDate : '');
             document.FileSize = 0
@@ -1992,6 +2069,7 @@ class ApiDocument extends Document implements IApiModel {
             document.Key = data.id ? data.id : ''
             document.Id = data.id ? data.id : ''
         }else {
+            document.ApiObject = data;
             document.File = data.file && data.file.path ? data.file.path : '';
             document.FileName = data.name ? data.name : '';
             document.FileSize = 0;
@@ -2020,6 +2098,15 @@ class Folder implements IFolder, IModel  {
     private path: string;
     private parent: string;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(name?: string, parent?: string) {
         this.name = name || '';
@@ -2111,6 +2198,7 @@ class ApiFolder extends Folder implements IApiModel {
 
     parseDataToReceive(data: any) {
         let folder = new Folder();
+        folder.ApiObject = data;
         folder.Key = data.document ? data.document : '';
         folder.Name = data.name && data.surname ? data.name + data.surname : '';
         folder.Parent = '/laboral';
@@ -2139,6 +2227,15 @@ class Certificate implements ICertificate, IModel {
     private sepe: boolean;
     private aeat: boolean;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(name?: string, representationType?: string, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean) {
         this.name = name || '';
@@ -2298,6 +2395,15 @@ class Enterprise implements IEnterprise, IModel {
     private document: string;
     private registry: string;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     public get Registry(): string {
         return this.registry;
@@ -2476,6 +2582,7 @@ class ApiEnterprise extends Enterprise implements IApiModel {
     parseDataToReceive(data: any, currentMethod: string): any {
         if(currentMethod == GET_MULTIPLE){
             let enterprise = new Enterprise();
+            enterprise.ApiObject = data;
             enterprise.Document = data.document ? data.document : '';
             enterprise.Name = data.name ? data.name : ''
             enterprise.Key = data.document ? data.document : '';
@@ -2485,6 +2592,7 @@ class ApiEnterprise extends Enterprise implements IApiModel {
             return enterprise;
         }else if (currentMethod == GET_SINGLE){
             let enterprise = new Enterprise();
+            enterprise.ApiObject = data;
             enterprise.Address = data.address.address
             enterprise.Country = data.address.country
             enterprise.Document = data.document
@@ -2518,6 +2626,15 @@ class DocumentNote implements IDocumentNote, IModel  {
     private text: string;
     private path: string;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(text?: string, path?: string) {
         this.text = text || '';
@@ -2598,6 +2715,15 @@ class Bank implements IBank, IModel  {
     private key: string;
     private total: number;
     private logo: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(name?: string, total?: number, logo?: string) {
         this.name = name || '';
@@ -2680,6 +2806,7 @@ class ApiBank extends Bank implements IApiModel {
 
     parseDataToReceive(data: any) {
         let bank = new Bank();
+        bank.ApiObject = data;
         bank.Key = data.id
         bank.Logo = ''
         bank.Name = data.alias ? data.alias : ''
@@ -2706,6 +2833,15 @@ class TaxModel implements ITaxModel, IModel  {
     private trimester: number;
     private year: number;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(name?: string, taxType?: string, status?: statusTaxModel, paymentMethod?: string, result?: string, trimester?: number, year?: number) {
         this.name = name || '';
@@ -2835,6 +2971,7 @@ class ApiTaxModel extends TaxModel implements IApiModel {
 
     parseDataToReceive(data: any) {
         let tax = new TaxModel();
+        tax.ApiObject = data;
         tax.Key = data.id;
         tax.Name = data.model ? data.model : '';
         tax.PaymentMethod = '';
@@ -2866,6 +3003,15 @@ class Message implements IMessage, IModel  {
     private status: string;
     private endDate: Date;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(name?: string, title?: string, description?: string, date?: Date, type?: string, status?: string, endDate?: Date) {
         this.id = new KeyGenerator().generate(15);
@@ -2995,6 +3141,8 @@ class ApiMessage extends Message implements IApiModel {
             if(filter && filter.fields?.has('id') &&  
             (filter.fields.get('id').toLowerCase().split(';')[1] == 'consulta' || filter.fields.get('id').toLowerCase().split(';')[1] == 'tarea'))
                 return ['/ms/api/task/one?id=' + filter.fields.get('id').split(';')[0]];
+        }else if(currentMethod == UPDATE_SINGLE){
+            return ['/ms/api/task']
         }
         throw new ErrorResponse('0199')
     }
@@ -3004,6 +3152,8 @@ class ApiMessage extends Message implements IApiModel {
             return GET_METHOD;
         if(currentMethod == GET_SINGLE)
             return GET_METHOD;
+        if(currentMethod == UPDATE_SINGLE)
+            return POST_METHOD;
         throw new ErrorResponse('0199')
     }
 
@@ -3011,7 +3161,12 @@ class ApiMessage extends Message implements IApiModel {
         return true;
     }
 
-    parseDataToSend(data: any) {
+    parseDataToSend(data: Message, currentMethod:string) {
+        if(currentMethod == UPDATE_SINGLE){
+            let object = data.ApiObject;
+            object.status = data.Status;
+            return object;
+        }
         throw new ErrorResponse('0199')
     }
 
@@ -3019,6 +3174,7 @@ class ApiMessage extends Message implements IApiModel {
         let message = new Message();
         if(data.source && (data.source == 'task' || data.source == 'query')){
             let description = JSON.parse(data.description);
+            message.ApiObject = data;
             message.Id = data.id + (data.source == 'query' ? ';consulta' : ';tarea');
             message.Name = data.sender.name ? data.sender.name : '';
             message.Title = data.title ? data.title : '';
@@ -3030,6 +3186,7 @@ class ApiMessage extends Message implements IApiModel {
             message.Key = data.id + (data.source == 'query' ? ';consulta' : ';tarea');
             return message;
         }else {
+            message.ApiObject = data;
             message.Id = data.id + ';notificacion';
             message.Name = data.source ? data.source : '';
             message.Title = data.title ? data.title : '';
@@ -3062,6 +3219,15 @@ class MessageChat implements IMessageChat, IModel  {
     private date: Date;
     private type: string;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(idMessage?: string, name?: string, description?: string, date?: Date, type?: string) {
         this.id = new KeyGenerator().generate(15);
@@ -3178,6 +3344,7 @@ class ApiMessageChat extends MessageChat implements IApiModel {
 
     parseDataToReceive(data: any) {
         let messageChat = new MessageChat();
+        messageChat.ApiObject = data;
         messageChat.Id = data.id
         messageChat.IdMessage = data.task
         messageChat.Key = data.id
@@ -3208,6 +3375,15 @@ class Employee implements IEmployee, IModel  {
     private naf: string;
     private active: boolean;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(name?: string, lastname?: string, document?: string, email?: string, phone?: string, naf?: string, active?: boolean) {
         this.key = document || '';
@@ -3419,6 +3595,15 @@ class Mark implements IMark, IModel  {
     private workplace: string ;
     private status: string ;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
 
     constructor(name?: string, lastName?: string, idEmployee?: string, date?: Date, entryDate?: Date, exitDate?: Date, pause?: IPause, location?: string, ccc?: string, workplace?: string, status?: string) {
@@ -3615,6 +3800,15 @@ class User implements IUser, IModel  {
     private phone: string;
     private active: boolean;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(name?: string, lastname?: string, document?: string, email?: string, password?: string, phone?: string, active?: boolean) {
         this.name = name || '';
@@ -4084,6 +4278,20 @@ if(test){
         })
     }).catch((error) => {
         console.log('ERROR TEST GET ONE MESSAGE', error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','consulta');
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        messageFactory.createMessageSpecificMethods().archiveMessage(response.result.toArray()[0]).then((response) => {
+            console.log('TEST MESSAGE ARCHIVE',response);
+        }).catch((error) => {
+            console.log('ERROR TEST MESSAGE ARCHIVE',error);
+        })
+        messageFactory.createMessageSpecificMethods().reopenMessage(response.result.toArray()[0]).then((response) => {
+            console.log('TEST MESSAGE REOPEN',response);
+        }).catch((error) => {
+            console.log('ERROR TEST MESSAGE REOPEN',error);
+        })
     })
     
     /*
