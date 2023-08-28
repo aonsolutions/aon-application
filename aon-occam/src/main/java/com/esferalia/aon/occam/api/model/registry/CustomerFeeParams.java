@@ -8,6 +8,8 @@ public class CustomerFeeParams implements Serializable {
 	private static final long serialVersionUID = -7078789958353911216L;
 	
 	private Integer domain;
+	private Byte domainType;
+	private Byte domainStatus;
 	
 	private Integer month;
 	private Integer year;
@@ -20,6 +22,7 @@ public class CustomerFeeParams implements Serializable {
 	private Integer product;
 	private Integer productCategory;
 	private Integer productTag;
+	private Byte productStatus;
 	
 	private String price;
 	private String discount;
@@ -51,6 +54,18 @@ public class CustomerFeeParams implements Serializable {
 	public CustomerFeeParams setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
+	}
+	public Byte getDomainType() {
+		return domainType;
+	}
+	public void setDomainType(Byte domainType) {
+		this.domainType = domainType;
+	}
+	public Byte getDomainStatus() {
+		return domainStatus;
+	}
+	public void setDomainStatus(Byte domainStatus) {
+		this.domainStatus = domainStatus;
 	}
 	public Integer getMonth() {
 		return month;
@@ -107,6 +122,12 @@ public class CustomerFeeParams implements Serializable {
 	public CustomerFeeParams setProductTag(Integer productTag) {
 		this.productTag = productTag;
 		return this;
+	}
+	public Byte getProductStatus() {
+		return productStatus;
+	}
+	public void setProductStatus(Byte productStatus) {
+		this.productStatus = productStatus;
 	}
 	public String getPrice() {
 		return price;
