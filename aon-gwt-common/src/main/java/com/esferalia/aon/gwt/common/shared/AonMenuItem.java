@@ -13,6 +13,7 @@ public class AonMenuItem implements Serializable{
 	private String title;
 	private List<AonMenuItem> items;
 	private boolean disabled;
+	private boolean opened;
 	private ClickHandler handler;
 	
 	public String getTitle() {
@@ -60,6 +61,15 @@ public class AonMenuItem implements Serializable{
 
 	public AonMenuItem setDisabled(boolean disabled) {
 		this.disabled = disabled;
+		return this;
+	}
+	
+	public boolean isOpened() {
+		return opened;
+	}
+	
+	public AonMenuItem setOpened(boolean opened) {
+		this.opened = opened;
 		return this;
 	}
 	
