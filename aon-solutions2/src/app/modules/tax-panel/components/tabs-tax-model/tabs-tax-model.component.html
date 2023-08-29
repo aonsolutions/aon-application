@@ -1,9 +1,9 @@
 <app-tabs
-  [tabs]="tabs"
-  (changeTabIndex)="this.tabIndex = $event"
-  [tabColor]="'orange'"
-  [paddingLeftHeader]="'1rem'"
->
+  [tabs]          = "tabs"
+  [tabIndex]      = "tabIndex"
+  (changeTabIndex)= "this.tabIndex = $event"
+  [tabColor]      = "'orange'"
+> 
   <div tool>
     <div class="input-tax-model">
       <app-input
@@ -19,7 +19,7 @@
     </div>
   </div>
   <div content *ngIf="this.tabIndex == 0">
-    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+    <mat-grid-list [cols]="24">
       <mat-grid-tile
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
       ></mat-grid-tile>
@@ -33,7 +33,7 @@
   </div>
 
   <div content *ngIf="this.tabIndex == 1">
-    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+    <mat-grid-list [cols]="24">
       <mat-grid-tile
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
       ></mat-grid-tile>
@@ -47,7 +47,7 @@
   </div>
 
   <div content *ngIf="this.tabIndex == 2">
-    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+    <mat-grid-list [cols]="24">
       <mat-grid-tile
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
       ></mat-grid-tile>
@@ -61,7 +61,7 @@
   </div>
 
   <div content *ngIf="this.tabIndex == 3">
-    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+    <mat-grid-list [cols]="24">
       <mat-grid-tile
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
       ></mat-grid-tile>
@@ -75,7 +75,7 @@
   </div>
 
   <div content *ngIf="this.tabIndex == 4">
-    <mat-grid-list [cols]="24" [rowHeight]="'30rem'">
+    <mat-grid-list [cols]="24">
       <mat-grid-tile
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
       ></mat-grid-tile>

@@ -11,18 +11,18 @@ export class DropdownMenuComponent implements OnInit {
   @Input() menuItem : MenuItem [] = [{root:false,text:''}];
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger | undefined;
 
+  constructor() {
+  }
+
+  ngOnInit(): void {
+  }
+
   openDropdownMenu() {
     this.trigger?.openMenu();
   }
 
   closeDropdownMenu(){
     this.trigger?.closeMenu();
-  }
-
-  constructor() {
-  }
-
-  ngOnInit(): void {
   }
 
 }

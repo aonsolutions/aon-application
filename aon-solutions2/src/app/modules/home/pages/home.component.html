@@ -50,7 +50,11 @@
   <!-- FIN Bandeja de email -->
   <!-- Acceso a gestion, panel de impuestos, empleados y doc -->
     <div id="buttons-dashboard">
-      <div class="button-dashboard" *ngFor="let menuItem of menuItems">
+      <div 
+        class="button-dashboard" 
+        *ngFor="let menuItem of menuItems" 
+        [routerLink]="menuItem.routerlink"
+      >
         <app-menu-button-dashboard
           [shape]="menuItem.shape"
           [name]="menuItem.name | translate"

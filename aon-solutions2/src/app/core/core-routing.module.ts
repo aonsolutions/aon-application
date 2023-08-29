@@ -1,10 +1,10 @@
 import { AuthGuard } from './guards/auth.guard';
-import { BasicLayoutComponent } from '../shared/layouts/basic-layout/basic-layout.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PermissionGuard } from './guards/permission.guard';
 import { RolGuard } from './guards/rol.guard';
 import { SidenavLayoutComponent } from '../shared/layouts/sidenav-layout/sidenav-layout.component';
+import { BasicLayoutComponent } from '../shared/layouts/basic-layout/basic-layout.component';
 
 const routes: Routes = [
   {
@@ -20,7 +20,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    component: SidenavLayoutComponent,
+    component: SidenavLayoutComponent, 
     children: [
       {
         path: 'home',
@@ -34,6 +34,23 @@ const routes: Routes = [
             (m) => m.InboxModule
           ),
       },
+//       {
+//         path: 'billing',
+//         loadChildren: () =>
+//           import('src/app/modules/billing/billing.module').then((m) => m.BillingModule),
+//       },
+      {
+        path: 'tax-panel',
+        loadChildren: () =>
+          import('src/app/modules/tax-panel/tax-panel.module').then(
+            (m) => m.TaxPanelModule
+          ),
+      },
+      // {
+      //   path: 'employee-panel',
+      //   loadChildren: () =>
+      //     import('src/app/modules/employee-panel/employee-panel.module').then((m) => m.EmployeePanelModule),
+      // },
       {
         path: 'documentation',
         loadChildren: () =>
@@ -45,44 +62,23 @@ const routes: Routes = [
         // }
       },
       // {
-      //   path: 'billing',
-      //   loadChildren: () =>
-      //     import('src/app/modules/billing/billing.module').then((m) => m.BillingModule),
-      // },
-      // {
       //   path: 'consulting',
       //   loadChildren: () =>
       //     import('src/app/modules/consulting/consulting.module').then((m) => m.ConsultingModule),
       // },
-      // {
-      //   path: 'employee-panel',
-      //   loadChildren: () =>
-      //     import('src/app/modules/employee-panel/employee-panel.module').then((m) => m.EmployeePanelModule),
-      // },
       {
-        path: 'tax-panel',
+        path: 'edit-profile',
         loadChildren: () =>
-          import('src/app/modules/tax-panel/tax-panel.module').then(
-            (m) => m.TaxPanelModule
-          ),
+          import('src/app/modules/profile-company/profile-company.module').then((m) => m.ProfileCompanyModule),
       },
       {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',
       },
-
-      {
-        path: 'edit-profile',
-        loadChildren: () =>
-          import('src/app/modules/profile-company/profile-company.module').then(
-            (m) => m.ProfileCompanyModule
-          ),
-      },
     ],
     canActivate: [AuthGuard],
   },
-
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
 
