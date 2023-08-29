@@ -41,12 +41,7 @@
   <div content *ngIf="this.tabIndex == 3">
     <!-- pestaña certificados -->
     <app-grid-layout>
-      <div content id="upload">
-        <app-file-upload-button>
-          {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
-          <app-icon shape="cloud_upload" class="margin-left"></app-icon>
-        </app-file-upload-button>
-      </div>
+     <app-table-profile-certificate></app-table-profile-certificate>
     </app-grid-layout>
   </div>
 </app-tabs>

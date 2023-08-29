@@ -143,7 +143,16 @@
     "REGISTRATION_DATE": "Fecha de registro",
     "NOTARY": "Notario",
     "PROTOCOL": "Protocolo",
-    "REGISTRATION":"Inscripción"
+    "REGISTRATION":"Inscripción",
+    "HOLDER": "Titular",
+    "REPRESENTATION": "Representante",
+    "EXPIRATION_DATE": "Fecha de vencimiento",
+    "ALIAS": "Alias",
+    "TYPE": "Tipo",
+    "TGSS": "TGSS",
+    "SEPE": "SEPE",
+    "AEAT": "AEAT",
+    "ACTIONS": "Acciones"
   }
 }
 

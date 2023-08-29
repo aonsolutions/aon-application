@@ -143,6 +143,15 @@
     "REGISTRATION_DATE": "Registration Date",
     "NOTARY": "Notary",
     "PROTOCOL": "Protocol",
-    "REGISTRATION":"Registration"
+    "REGISTRATION":"Registration",
+    "HOLDER": "Holder",
+    "REPRESENTATION": "Representation",
+    "EXPIRATION_DATE": "Expiration Date",
+    "ALIAS": "Alias",
+    "TYPE": "Type",
+    "TGSS": "TGSS",
+    "SEPE": "SEPE",
+    "AEAT": "AEAT",
+    "ACTIONS": "Actions"
   }
 }

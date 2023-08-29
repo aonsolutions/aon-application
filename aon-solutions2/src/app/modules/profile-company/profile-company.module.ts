@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
 import { ProfileCompanyComponent } from './page/profile-company.component';
 import { ProfileCompanyRoutingModule } from './profile-company-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+
 import { TabsProfileCompanyComponent } from './components/tabs-profile-company/tabs-profile-company.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -15,6 +17,12 @@ import { InputProfilePersonalDataComponent } from './components/input-profile-pe
 import { InputProfileRegistryDataComponent } from './components/input-profile-registry-data/input-profile-registry-data.component';
 import { InputProfileCompanyDataComponent } from './components/input-profile-company-data/input-profile-company-data.component';
 import { InputProfileCompanyInformationComponent } from './components/input-profile-company-information/input-profile-company-information.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ModalDeleteCertificateComponent } from './components/modal-delete-certificate/modal-delete-certificate.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { TableProfileCertificateComponent } from './components/table-profile-certificate/table-profile-certificate.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +31,9 @@ import { InputProfileCompanyInformationComponent } from './components/input-prof
     InputProfilePersonalDataComponent,
     InputProfileRegistryDataComponent,
     InputProfileCompanyDataComponent,
-    InputProfileCompanyInformationComponent
+    InputProfileCompanyInformationComponent,
+    ModalDeleteCertificateComponent,
+    TableProfileCertificateComponent
   ],
   imports: [
     CommonModule,
@@ -36,7 +46,11 @@ import { InputProfileCompanyInformationComponent } from './components/input-prof
     SetMaterialModule,
     MatIconModule,
     MatDividerModule,
-    MatTabsModule
+    MatTabsModule,
+    MatDialogModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatFormFieldModule
 
   ]
 })
