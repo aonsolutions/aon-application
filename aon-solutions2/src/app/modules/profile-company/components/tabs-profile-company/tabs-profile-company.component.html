@@ -5,8 +5,12 @@
   [paddingLeftHeader]="'1rem'"
 >
   <div tool>
-    <app-button [class]="'dark'" [width]="'100%'"> {{ 'PROFILE.SAVE'| translate }} </app-button>
-    <app-button [class]="'white'" [width]="'100%'"> {{ 'PROFILE.CANCEL'| translate }}</app-button>
+    <app-button [class]="'dark'" [width]="'100%'">
+      {{ "PROFILE.SAVE" | translate }}
+    </app-button>
+    <app-button [class]="'white'" [width]="'100%'">
+      {{ "PROFILE.CANCEL" | translate }}</app-button
+    >
   </div>
 
   <div content *ngIf="this.tabIndex == 0">
@@ -41,7 +45,9 @@
   <div content *ngIf="this.tabIndex == 3">
     <!-- pestaña certificados -->
     <app-grid-layout>
-     <app-table-profile-certificate></app-table-profile-certificate>
+      <div content id="upload">
+        <app-table-profile-certificate></app-table-profile-certificate>
+      </div>
     </app-grid-layout>
   </div>
 </app-tabs>
