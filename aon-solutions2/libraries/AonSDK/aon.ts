@@ -1269,6 +1269,7 @@ export interface IFolder extends ICollectable {
 export interface ICertificate extends ICollectable {
   Name: string;
   RepresentationType: string;
+  ExpeditionDate: Date;
   ExpirationDate: Date;
   Alias: string;
   Type: string;
@@ -1414,8 +1415,8 @@ export class Factory implements IFactory {
         return new Folder(name, parent);
     }
 
-    createCertificate(name?: string, representationType?: string, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean): ICertificate {
-        return new Certificate(name, representationType, expirationDate, alias, type, tgss, sepe, aeat);
+    createCertificate(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean): ICertificate {
+        return new Certificate(name, representationType, expeditionDate, expirationDate, alias, type, tgss, sepe, aeat);
     }
 
     createEnterprise(name?: string, document?: string): IEnterprise {
@@ -1696,6 +1697,7 @@ class StorableFolder extends Folder implements IStorable<Folder> {
 class Certificate implements ICertificate, IModel {
   private name: string;
   private representationType: string;
+  private expeditionDate: Date;
   private expirationDate: Date;
   private alias: string;
   private type: string;
@@ -1704,9 +1706,10 @@ class Certificate implements ICertificate, IModel {
   private aeat: boolean;
   private key: string;
 
-  constructor(name?: string, representationType?: string, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean) {
+  constructor(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean) {
     this.name = name || '';
     this.representationType = representationType || '';
+    this.expeditionDate = expeditionDate || new Date();
     this.expirationDate = expirationDate || new Date();
     this.alias = alias || '';
     this.type = type || '';
@@ -1730,6 +1733,14 @@ class Certificate implements ICertificate, IModel {
 
   public set RepresentationType(value: string) {
     this.representationType = value;
+  }
+
+  public get ExpeditionDate(): Date {
+    return this.expeditionDate;
+  }
+
+  public set ExpeditionDate(value: Date) {
+    this.expeditionDate = value;
   }
 
   public get ExpirationDate(): Date {
@@ -1796,6 +1807,7 @@ class Certificate implements ICertificate, IModel {
     let map = new Map<string, any>();
     map.set('name', this.Name);
     map.set('representationType', this.RepresentationType);
+    map.set('expeditionDate', this.ExpeditionDate);
     map.set('expirationDate', this.ExpirationDate);
     map.set('alias', this.Alias);
     map.set('type', this.Type);
@@ -1809,6 +1821,7 @@ class Certificate implements ICertificate, IModel {
     let map = new Map<string, any>();
     map.set('name', this.Name);
     map.set('representationType', this.RepresentationType);
+    map.set('expeditionDate', this.ExpeditionDate);
     map.set('expirationDate', this.ExpirationDate);
     map.set('alias', this.Alias);
     map.set('type', this.Type);
