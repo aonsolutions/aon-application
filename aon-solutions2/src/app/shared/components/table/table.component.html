@@ -10,7 +10,7 @@
       <span *ngIf="column !== 'actions' && !element[column].icon" [innerHTML]="element[column]"></span>
       <span *ngIf="column !== 'actions' && element[column].icon">
         <span *ngFor="let buttons of element[column].icon">
-          <app-icon 
+          <app-icon
             *ngFor="let color of buttons | keyvalue"
             id='btn-models'
             shape="{{color.key}}"

@@ -1,0 +1,76 @@
+<div class="structure-title">
+  {{ 'PROFILE.GENERAL_INFORMATION'| translate }}
+</div>
+
+<hr>
+
+<div class="structure-container">
+  <div class="structure-photo">
+    <p class="photo"> {{ 'PROFILE.PHOTO'| translate }}</p>
+    <div class="upload-circle">
+      <app-button class="icon-border">
+        <app-icon [shape]="'clear'"></app-icon>
+      </app-button>
+    </div>
+  </div>
+  <div class="structure-form">
+    <div class="form upload">
+      <app-file-upload-button>
+        {{ 'PROFILE.CLICK_DRAG_DROP'| translate }}
+        <app-icon shape="cloud_upload" class="margin-left"></app-icon>
+      </app-file-upload-button>
+    </div>
+
+    <div class="form">
+      <app-input
+        [type]="'text'"
+        [label]="'PROFILE.TRADE_NAME' | translate"
+        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+      >
+      </app-input>
+    </div>
+    <div class="form">
+      <app-input
+        [type]="'text'"
+        [label]="'PROFILE.ADRESS' | translate"
+        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+      >
+      </app-input>
+    </div>
+
+    <div class="form">
+      <app-input
+        [type]="'select'"
+        [label]="'PROFILE.COUNTRY' | translate"
+        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+        [options]="optionsCountry"
+        (selectionChange)="onCountrySelection($event)"
+      >
+      </app-input>
+      <app-input
+        [type]="'select'"
+        [label]="'PROFILE.CITY' | translate"
+        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+        [options]="showProvinceField() ? optionsProvince : []"
+      >
+      </app-input>
+    </div>
+
+    <div class="form">
+      <app-input
+        [type]="'text'"
+        [label]="'PROFILE.LEGAL_NAME' | translate"
+        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+        [disabled]="'disabled'"
+      >
+      </app-input>
+      <app-input
+        [type]="'text'"
+        [label]="'PROFILE.TIN' | translate"
+        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+        [disabled]="'disabled'"
+      >
+      </app-input>
+    </div>
+  </div>
+</div>

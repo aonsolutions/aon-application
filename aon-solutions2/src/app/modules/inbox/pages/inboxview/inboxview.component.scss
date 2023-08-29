@@ -1,6 +1,65 @@
 @import "src/styles.scss";
+::ng-deep{
+ tr{
+  cursor: pointer;
+ }
 
-.contentButton{
-    padding: 1.25rem;
-    display: flex;
+ #button-create{
+  margin: 20px 20px 20px 20px;
+  padding: 10px 48px 10px 20px;
+  border-radius: 4px;
+ }
+
+ #space {
+  margin: 48px 20px 20px 20px;
+  padding: 10px 48px 10px 20px;
+ }
+
+ #chat{
+  width: 602px;
+  height: 48px;
+  flex-grow: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 32px;
+  padding: 0;
+ }
+
+ .headerMessage{
+  width: 617px;
+  height: 32px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 200px;
+  margin: 38.7px 40px 20px 36px;
+  padding: 0;
+ }
+
+ .state{
+  width: 67px;
+  height: 32px;
+  flex-grow: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  background-color: #fddcda;
+ }
+
+ .icons{
+  width: 73px;
+  height: 24px;
+  flex-grow: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+  padding: 0;
+ }
 }

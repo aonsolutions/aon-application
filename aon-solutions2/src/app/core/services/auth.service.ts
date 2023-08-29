@@ -7,8 +7,8 @@ import { TaxModelService } from './tax-model.service';
   providedIn: 'root',
 })
 export class AuthService {
-  
-  private authManager = new AuthenticationFactory().createAuthenticationManager()
+
+  authManager = new AuthenticationFactory().createAuthenticationManager()
 
   constructor(private router: Router) {}
 
@@ -42,5 +42,16 @@ export class AuthService {
   getEnterpriseSelected(): string {
     return this.authManager.getEnterpriseSelected().result;
   }
+
+  getUserPermissions(): string[] {
+    // TODO: Definir los permisos del usuario
+    return ['permiso1', 'permiso2', 'permiso3'];
+  }
+
+  getUserRoles(): string[] {
+    // TODO: Definir los roles del usuario
+    return ['rol1', 'rol2', 'rol3'];
+  }
+
 
 }

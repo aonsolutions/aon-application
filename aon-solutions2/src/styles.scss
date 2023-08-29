@@ -13,18 +13,19 @@ $XLarge : 1920px;
 
   // Header
   $header-height  : 3.265rem;
-  
+
   // menu
   $menu-width-close : 3.5rem;
   $menu-width-open  : 12.6rem;
-  
+
 // Font-size
   // default is 20px
   $font-size-4k       : 30px;
   $font-size-2k       : 23px;
   $font-size-fullHD   : 20px;
   $font-size-default  : 20px;
-  
+  $font-size-800      : 14px;
+
   $font-size-primary    : 0.8rem;
   $font-size-head       : 1.7rem;
   $font-size-head-span  : 1rem;
@@ -58,9 +59,9 @@ $color-placeholder: #9696a0;
     $color-orange       : #fb982e;
     $color-orange-light : #fddcb9;
 
-// Shadow  
+// Shadow
 $box-shadow: 0 0.1rem 0.2rem 0 #d2d2d6, 0 0.1rem 0.2rem 0 #b4b4bb !important;
-    
+
 // Colors Border
 $color-border-primary   : #d2d2d6;
 $color-border-secondary : #787885;
@@ -216,7 +217,7 @@ $bottom-button-icon: 0.5rem;
   font-size   : $font-size-primary;
   caret-color : $color-primary !important;
 }
- 
+
 html {
   @media screen and (min-width: 3800px) {
     font-size: $font-size-4k !important;
@@ -230,9 +231,17 @@ html {
     font-size: $font-size-fullHD !important;
     /*background: blue;*/
   }
-  @media screen and (max-width: 1599px) {
+  @media screen and (min-width: 800px) and (max-width: 1599px) {
     font-size: $font-size-default !important;
     /*background: purple;*/
+  }
+  @media screen and (max-width: 799px) {
+    font-size: $font-size-800 !important;
+    /*background: orange;*/
+    .form{
+      display: grid!important;
+      gap: 1rem;
+    }
   }
 }
 
@@ -240,6 +249,40 @@ html {
   width : 100%;
   height: 100%;
 }
+
+/*
+  width percentage
+*/
+  .width-10{
+    width: 10%;
+  }
+  .width-20{
+    width: 20%;
+  }
+  .width-30{
+    width: 30%;
+  }
+  .width-40{
+    width: 40%;
+  }
+  .width-50{
+    width: 50%;
+  }
+  .width-60{
+    width: 60%;
+  }
+  .width-70{
+    width: 70%;
+  }
+  .width-80{
+    width: 80%;
+  }
+  .width-90{
+    width: 90%;
+  }
+  .width-100{
+    width: 100%;
+  }
 
 /*
   Link
@@ -260,7 +303,7 @@ html {
   .bold{
     font-family : 'Roboto-bold';
   }
-  
+
 /*
   Grid aling in top
 */
@@ -272,11 +315,11 @@ html {
   .griss set-icon path{
     color: $color-secondary;
   }
-  
+
   .left-content figure{
     justify-content: left !important;
   }
-  
+
 /*
   Color text
 */
@@ -309,7 +352,9 @@ html {
   Text background
 */
   .background-text-griss,
+  .background-text-griss-light,
   .background-text-red,
+  .background-text-red-light,
   .background-text-blue,
   .background-text-orange,
   .background-text-orange-light,
@@ -322,8 +367,14 @@ html {
   .background-text-griss{
     background: $color-secondary;
   }
+  .background-text-griss-light{
+    background: #f0f0f1;
+  }
   .background-text-red{
     background: $color-red;
+  }
+  .background-text-red-light{
+    background: #fddcda;
   }
   .background-text-blue{
     background: $color-blue;
@@ -408,6 +459,17 @@ html {
   }
   .padding-bottom-2{
     padding-bottom: $padding-bottom * 2;
+  }
+/*
+  Form
+*/
+  .form{
+    display       : flex;
+    gap           : 1rem;
+    padding       : 0 $padding*2 $padding $padding*2;
+  }
+  .form:first-of-type{
+    padding-top: $padding*2;
   }
 /*
   Hr

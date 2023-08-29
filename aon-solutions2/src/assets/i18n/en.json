@@ -6,7 +6,8 @@
       "REQUIRE"         : "is <strong>required</strong>",
       "SELECT"          : "Select an option",
       "SELECT_MULTIPLE" : "Select the options"
-    }
+    },
+    "SEND": "Send"
   },
   "HEADER": {
     "EDIT_PROFILE": "Edit profile",
@@ -75,7 +76,12 @@
     "TASKS": "Tasks",
     "NOTIFICATIONS": "Notifications",
     "THIS_WEEK": "This week",
-    "CREATE": "Create"
+    "CREATE": "Create",
+    "NEW_QUERY": "New query",
+    "SUBJECT": "Subject",
+    "TEXT": "Text",
+    "NO_PENDING_TASKS": "No pending tasks",
+    "ASSIGN_TO":"assign to"
   },
   "DOCUMENTATION": {
     "FILE_SELECT_PREVIEW"   : "Preview",
@@ -107,5 +113,36 @@
     "ACTIONS":       "Actions",
     "MODEL":         "Model",
     "YEAR":          "Year"
+  },
+    "PROFILE": {
+    "CONTACT_DETAILS":   "Contact details",
+    "EMAIL":   "Email",
+    "PLACEHOLDER":   "Placeholder",
+    "PHONE":   "Phone",
+    "WEB": "Web",
+    "SAVE":   "Save",
+    "CANCEL":   "Cancel",
+    "PERSONAL_INFORMATION":   "Personal Information",
+    "COMPANY_INFORMATION":   "Company Information",
+    "REGISTRATION_INFORMATION":   "Registration Information",
+    "CERTIFICATES": "Certificates",
+    "GENERAL_INFORMATION": "General Information",
+    "PHOTO": "Photo",
+    "CLICK_DRAG_DROP": "Click to upload or drag and drop",
+    "TRADE_NAME": "Trade Name",
+    "ADRESS": "Adress",
+    "COUNTRY": "Country",
+    "CITY": "City",
+    "LEGAL_NAME": "Legal Name",
+    "TIN": "TIN",
+    "NAME": "Name",
+    "LAST_NAME": "Last Name",
+    "PASSWORD": "Password",
+    "DESCRIPTION": "Description",
+    "DATE_OF_CREATION": "Date of creation",
+    "REGISTRATION_DATE": "Registration Date",
+    "NOTARY": "Notary",
+    "PROTOCOL": "Protocol",
+    "REGISTRATION":"Registration"
   }
 }

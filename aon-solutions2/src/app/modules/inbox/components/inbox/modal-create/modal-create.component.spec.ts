@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ModalCreateComponent } from './modal-create.component';
+import { CreateQueryComponent } from './modal-create.component';
 
-describe('ModalCreateComponent', () => {
-  let component: ModalCreateComponent;
-  let fixture: ComponentFixture<ModalCreateComponent>;
+describe('CreateQueryComponent', () => {
+  let component: CreateQueryComponent;
+  let fixture: ComponentFixture<CreateQueryComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ModalCreateComponent ]
+      declarations: [ CreateQueryComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ModalCreateComponent);
+    fixture = TestBed.createComponent(CreateQueryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

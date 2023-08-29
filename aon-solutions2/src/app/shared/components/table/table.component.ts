@@ -10,7 +10,7 @@ import { MatFormFieldAppearance } from '@angular/material/form-field';
 export class TableComponent implements OnInit {
   @Input() displayedColumns : string[]  = ['name', 'weight', 'symbol', 'position'];
   columnsToDisplay          : string[]  = this.displayedColumns.slice();
-  @Input() head             : any       = {name: 'Nombre', weight: 'valor 2', symbol: 'valor 3', position: 'valor 4'};
+  @Input() head             : any       = {name: '', weight: 'valor 2', symbol: 'valor 3', position: 'valor 4'};
   @Input() data             : any       = [
     {position: 1,  name: 'Hydrogen',  weight: 1.0079,   symbol: 'H'},
     {position: 2,  name: 'Helium',    weight: 4.0026,   symbol: 'He'},
