@@ -820,7 +820,6 @@ public class CustomerFee extends MainEntryPoint {
 		lb.addItem("Cuatrimestral", "4");
 		lb.addItem("Semestral", "5");
 		lb.addItem("Anual", "6");
-		lb.addItem("Sin Cuotas", "7");
 		lb.addChangeHandler(e -> onSearchFees());
 		return lb;
 	}
@@ -2628,6 +2627,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void showCustomerFee() {
+		toolbar.setTitle("Panel Facturaci\u00f3n de Cuotas");
 		saveButton.setVisible(true);
 		undoAllButton.setVisible(true);
 		createButton.setVisible(true);
@@ -2643,6 +2643,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 
 	private void showCustomers() {
+		toolbar.setTitle("Clientes sin Cuotas");
 		saveButton.setVisible(false);
 		undoAllButton.setVisible(false);
 		createButton.setVisible(false);
