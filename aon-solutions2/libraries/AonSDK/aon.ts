@@ -177,7 +177,8 @@ export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMult
     createSingleObjectCrud(): ISingleObjectCrud<IMessage> {
         return new GenericSingleObjectCrud<Message>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message) : 
+            // new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message) : 
+            new APIMessageSingleObjectCrudRepository(new ApiMessage(), Message) : 
             new GenericSingleObjectCrudRepository<Message>(new StorableMessage(), Message)
             ), 
             Message);
@@ -185,7 +186,7 @@ export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMult
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessage> {
         return new GenericMultipleObjectCrud<Message>( 
             (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Message>(new ApiMessage(), Message) : 
+            new APIMessageMultipleObjectCrudRepository(new ApiMessage(), Message) : 
             new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message)
             ), 
             Message);
@@ -487,7 +488,13 @@ interface IMessageSpecificMethods {
      * @param element The message
      */
     reopenMessage(element: IMessage): Promise<IResponse<IMessage>>;
+    /**
+     * Returns the number of messages
+     * @param filter The filter
+     */
+    getMessageCount(filter?: IFilter): Promise<IResponse<number>>;
 }
+
 
 /*
  *
@@ -672,6 +679,10 @@ class MessageSpecificMethods implements IMessageSpecificMethods {
         return new Response<IMessage>(await this.repository.reopenMessage(element));
     }
 
+    async getMessageCount(filter?: IFilter): Promise<IResponse<number>> {
+        return new Response<number>(await this.repository.getMessageCount(filter));
+    }
+
 }
 
 /*
@@ -785,6 +796,11 @@ interface IMessageSpecificMethodsRepository {
      * @param element The message
      */
     reopenMessage(element: IMessage): Promise<IMessage>;
+    /**
+     * Returns the number of messages
+     * @param filter The filter
+     */
+    getMessageCount(filter?: IFilter): Promise<number>;
 }
 
 /*
@@ -1053,24 +1069,54 @@ class APIFolderMultipleObjectCrudRepository extends APIGenericMultipleObjectCrud
 
 }
 
+class APIMessageSingleObjectCrudRepository extends APIGenericSingleObjectCrudRepository<Message> {
+    constructor(apiModel: ApiMessage, type: { new (): Message }){
+        super(apiModel, type);
+    }
+}
+
+class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleObjectCrudRepository<Message> {
+    constructor(apiModel: ApiMessage, type: { new (): Message }){
+        super(apiModel, type);
+    }
+}
+
 class APIMessageSpecificMethodsRepository implements IMessageSpecificMethodsRepository {
 
+    protected httpRequest: IApiHttpRequest = new ApiHttpRequest();
     repository = new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message);
 
     async archiveMessage(element: Message): Promise<IMessage> {
-        element.Status = 'deleted';
-        let updatedMessage: IMessage = await this.repository.update(element);
-        return updatedMessage;
-        throw new Error("Method not implemented.");
+        if(element.Type != 'notificacion'){
+            element.Status = 'deleted';
+            let updatedMessage: IMessage = await this.repository.update(element);
+            return updatedMessage;
+        }
+        throw new ErrorResponse('0199');
     }
 
     async reopenMessage(element: Message): Promise<IMessage> {
-        element.Status = 'pending'
-        let updatedMessage: IMessage = await this.repository.update(element);
-        return updatedMessage;
-        throw new Error("Method not implemented.");
+        if(element.Type != 'notificacion'){
+            element.Status = 'pending'
+            let updatedMessage: IMessage = await this.repository.update(element);
+            return updatedMessage;
+        }
+        throw new ErrorResponse('0199');
     }
-    
+
+    async getMessageCount(filter?: IFilter): Promise<number> {
+        if(filter && filter.fields && filter.fields.get('type') == 'notificacion'){
+            let result = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/notification/total-notification', GET_METHOD, {}, {})
+            return result.notification
+        } else if(filter && filter.fields && (filter.fields.get('type') == 'tarea' || filter.fields.get('type') == 'consulta')){
+            let result = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/status/count?task_holder=' + localStorage.getItem('registry'), GET_METHOD, {}, {});
+            return result.status.pending;
+        } else {
+            let result1 = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/notification/total-notification', GET_METHOD, {}, {})
+            let result2 = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/status/count?task_holder=' + localStorage.getItem('registry'), GET_METHOD, {}, {});
+            return result1.notification + result2.status.pending;
+        }
+    }
 }
 
 class APIAuthenticationRepository implements IAuthenticationRepository {
@@ -4244,37 +4290,37 @@ if(test){
     let messageFactory = new MessageFactory();
     filterMessage.addField('type','consulta');
     messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
-        console.log('TEST GET MESSAGES CONSULTA', response.result.toArray());
+        console.log('TEST MESSAGES GET CONSULTA', response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET MESSAGES CONSULTA', error)
+        console.log('ERROR TEST MESSAGES GET CONSULTA', error)
     })
     filterMessage.clearAll();
     filterMessage.addField('type','tarea');
     messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
-        console.log('TEST GET MESSAGES TAREA', response.result.toArray());
+        console.log('TEST MESSAGES GET TAREA', response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET MESSAGES TAREA', error)
+        console.log('ERROR TEST MESSAGES GET TAREA', error)
     })
     filterMessage.clearAll();
     filterMessage.addField('type','notificacion');
     messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
-        console.log('TEST GET MESSAGES NOTIFICACION', response.result.toArray());
+        console.log('TEST MESSAGES GET NOTIFICACION', response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET MESSAGES NOTIFICATION', error)
+        console.log('ERROR TEST MESSAGES GET NOTIFICATION', error)
     })
     filterMessage.clearAll();
     messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
-        console.log('TEST GET MESSAGES ALL', response.result.toArray());
+        console.log('TEST MESSAGES GET ALL', response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET MESSAGES ALL', error)
+        console.log('ERROR TEST MESSAGES GET ALL', error)
     })
     filterMessage.clearAll();
     filterMessage.addField('type','tarea');
     messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
         messageFactory.createSingleObjectCrud().getElement(response.result.toArray()[0].Id).then((element) => {
-            console.log('TEST GET ONE MESSAGE', element.result);
+            console.log('TEST MESSAGE GET ONE ', element.result);
         }).catch((error) => {
-            console.log('ERROR TEST GET ONE MESSAGE', error)    
+            console.log('ERROR TEST MESSAGE GET ONE ', error)    
         })
     }).catch((error) => {
         console.log('ERROR TEST GET ONE MESSAGE', error)
@@ -4293,7 +4339,34 @@ if(test){
             console.log('ERROR TEST MESSAGE REOPEN',error);
         })
     })
-    
+    filterMessage.clearAll();
+    filterMessage.addField('type','tarea');
+    messageFactory.createMessageSpecificMethods().getMessageCount(filterMessage.getFilter()).then((response) => {
+        console.log('TEST MESSAGE COUNT TASK',response.result)
+    }).catch((error) => {
+        console.log(error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','consulta');
+    messageFactory.createMessageSpecificMethods().getMessageCount(filterMessage.getFilter()).then((response) => {
+        console.log('TEST MESSAGE COUNT QUERY',response.result)
+    }).catch((error) => {
+        console.log(error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','notificacion');
+    messageFactory.createMessageSpecificMethods().getMessageCount(filterMessage.getFilter()).then((response) => {
+        console.log('TEST MESSAGE COUNT NOTIFICATION',response.result)
+    }).catch((error) => {
+        console.log(error)
+    })
+    filterMessage.clearAll();
+    messageFactory.createMessageSpecificMethods().getMessageCount().then((response) => {
+        console.log('TEST MESSAGE COUNT ALL',response.result)
+    }).catch((error) => {
+        console.log(error)
+    })
+
     /*
         TEST FOR MESSAGE CHAT
     */
