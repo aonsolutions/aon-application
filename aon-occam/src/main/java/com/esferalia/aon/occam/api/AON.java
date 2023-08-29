@@ -1295,17 +1295,9 @@ public class AON {
 		getProduct().insert(ctx, p);
 	}
 
-	public static void insertWithId(AONContext ctx, OldProduct p) {
-		getProduct().insertWithId(ctx, p);
-	}
-
 	public static LinkedList<OldProduct> insert(AONContext ctx, 
 			Stream<OldProduct> ps) {
 		return getProduct().insert(ctx, ps);
-	}
-
-	public static void insertWithId(AONContext ctx, Stream<OldProduct> ps) {
-		getProduct().insertWithId(ctx, ps);
 	}
 
 	public static void update(AONContext ctx, OldProduct p) {
@@ -4422,6 +4414,24 @@ public class AON {
 	}
 	
 	// ------------------ CARRIER PACKING
+	
+	public static List<CarrierPacking> getCarrierPackingList(Occam occam, CarrierPackingFilter filter, Options... options) {
+		return getCarrierPackingList(occam.getDomainName(), occam.getDomain(), occam.getUser(), filter, options);
+	}
+	
+	public static List<CarrierPacking> getCarrierPackingList(Domain domain, User user, CarrierPackingFilter filter, Options... options) {
+		return getCarrierPackingList(domain.getName(), domain.getId(), user.getLogin(), filter, options);
+	}
+
+	public static List<CarrierPacking> getCarrierPackingList(Domain domain, String login, CarrierPackingFilter filter, Options... options) {
+		return getCarrierPackingList(domain.getName(), domain.getId(), login, filter, options);
+	}
+		
+	public static List<CarrierPacking> getCarrierPackingList(String domainName, Integer domainId, String login, CarrierPackingFilter filter, Options... options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().getCarrierPackingList(ctx, filter, options);
+		}
+	}
 	
 	public static Stream<String> getCarrierPackingSeries(String domainName, Integer domainId, String login) {
 		CloseableAONContext ctx = null;

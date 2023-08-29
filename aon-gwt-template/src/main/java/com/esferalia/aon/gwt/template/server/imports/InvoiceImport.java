@@ -178,6 +178,10 @@ public class InvoiceImport extends ImportUtils{
 		return compare(IConstants.FECHA, value);
 	}
 	
+	private boolean isFechaIva(String value) {
+		return compare(IConstants.FECHA_IVA, value);
+	}
+	
 	private boolean isSerie(String value) {
 		return compare(IConstants.SERIE, value)
 			|| compare(IConstants.SERIES, value);
@@ -337,6 +341,17 @@ public class InvoiceImport extends ImportUtils{
 				date = AonDateUtils.simpleParse(o.toString());
 			}
 			inv.setDate(date);
+			return;
+		}
+		
+		if(isFechaIva(title)) {
+			Date taxDate = new Date();
+			try{
+				taxDate = cell.getDateCellValue();
+			} catch (Exception e) {
+				taxDate = AonDateUtils.simpleParse(o.toString());
+			}
+			inv.setTaxDate(taxDate);
 			return;
 		}
 		
@@ -794,7 +809,7 @@ public class InvoiceImport extends ImportUtils{
 		invoice.setInvestment(iic.isInvestment() != null && iic.isInvestment());
 		invoice.setDomain(domain.getId());
 		invoice.setIssueDate(iic.getDate());
-		invoice.setTaxDate(iic.getDate());
+		invoice.setTaxDate(iic.getTaxDate() != null ? iic.getTaxDate() : iic.getDate());
 		invoice.setType(iic.getInvoiceType() != null
 			? iic.getInvoiceType()
 			: getInvoiceType(iic.getAccount()));
@@ -915,7 +930,7 @@ public class InvoiceImport extends ImportUtils{
 			invoice.setInvestment(iic.isInvestment() != null && iic.isInvestment());
 			invoice.setDomain(domain.getId());
 			invoice.setIssueDate(iic.getDate());
-			invoice.setTaxDate(iic.getDate());
+			invoice.setTaxDate(iic.getTaxDate() != null ? iic.getTaxDate() : iic.getDate());
 			invoice.setType(iic.getInvoiceType() != null
 				? iic.getInvoiceType()
 				: getInvoiceType(iic.getAccount()));

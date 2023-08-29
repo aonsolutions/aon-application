@@ -7,25 +7,25 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
+import com.esferalia.aon.occam.api.model.warehouse.SerfruitDeliveryPackaging;
 
-public class DeliveryPackagingJSON {
+public class SerfruitDeliveryPackagingJSON {
 
-	private DeliveryPackagingJSON() {
+	private SerfruitDeliveryPackagingJSON() {
 	
 	}
 
-	public static List<DeliveryPackaging> fromJSON(JSONArray array) {
+	public static List<SerfruitDeliveryPackaging> fromJSON(JSONArray array) {
 		if(array == null) return null;
-		LinkedList<DeliveryPackaging> list = new LinkedList<>();
+		LinkedList<SerfruitDeliveryPackaging> list = new LinkedList<>();
 		for(Integer i = 0; i < array.length(); i++) {
 			list.add(fromJSON(array.getJSONObject(i)));
 		}
  		return list;
 	}
 	
-	public static DeliveryPackaging fromJSON(JSONObject json) {
-		return new DeliveryPackaging()
+	public static SerfruitDeliveryPackaging fromJSON(JSONObject json) {
+		return new SerfruitDeliveryPackaging()
 			.setProduct(ProductJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PRODUCT)))
 			.setContent(fromJSON(JsonUtils.getJSONArray(json, IJsonNames.CONTENT)))
 			.setDeliveryLine(JsonUtils.getInteger(json, IJsonNames.DELIVERY_LINE))
@@ -33,13 +33,13 @@ public class DeliveryPackagingJSON {
 			.setQuantity(JsonUtils.getdouble(json, IJsonNames.QUANTITY));
 	}
 
-	public static JSONArray toJSON(List<DeliveryPackaging> list) {
+	public static JSONArray toJSON(List<SerfruitDeliveryPackaging> list) {
 		JSONArray json = new JSONArray();
 		list.forEach(r -> json.put(toJSON(r)));
 		return json;
 	}
 	
-	public static JSONObject toJSON(DeliveryPackaging object) {
+	public static JSONObject toJSON(SerfruitDeliveryPackaging object) {
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.PRODUCT, ProductJSON.toJSON(object.getProduct()));
 		json.put(IJsonNames.CONTENT, toJSON(object.getContent()));

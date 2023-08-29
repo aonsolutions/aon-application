@@ -5,11 +5,11 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.product.Product;
 
-public class DeliveryPackaging {
+public class SerfruitDeliveryPackaging {
 	
 	Product product;
 	String sscc;
-	List<DeliveryPackaging> content;
+	List<SerfruitDeliveryPackaging> content;
 	Integer deliveryLine;
 	double quantity;
 	
@@ -17,7 +17,7 @@ public class DeliveryPackaging {
 		return product;
 	}
 	
-	public DeliveryPackaging setProduct(Product product) {
+	public SerfruitDeliveryPackaging setProduct(Product product) {
 		this.product = product;
 		return this;
 	}
@@ -26,22 +26,22 @@ public class DeliveryPackaging {
 		return sscc;
 	}
 	
-	public DeliveryPackaging setSscc(String sscc) {
+	public SerfruitDeliveryPackaging setSscc(String sscc) {
 		this.sscc = sscc;
 		return this;
 	}
 	
-	public List<DeliveryPackaging> getContent() {
+	public List<SerfruitDeliveryPackaging> getContent() {
 		if(content == null) content = new LinkedList<>();
 		return content;
 	}
 	
-	public DeliveryPackaging setContent(List<DeliveryPackaging> content) {
+	public SerfruitDeliveryPackaging setContent(List<SerfruitDeliveryPackaging> content) {
 		this.content = content;
 		return this;
 	}
 	
-	public DeliveryPackaging addContent(DeliveryPackaging deliveryPackaging) {
+	public SerfruitDeliveryPackaging addContent(SerfruitDeliveryPackaging deliveryPackaging) {
 		getContent().add(deliveryPackaging);
 		return this;
 	}
@@ -50,7 +50,7 @@ public class DeliveryPackaging {
 		return deliveryLine;
 	}
 	
-	public DeliveryPackaging setDeliveryLine(Integer deliveryLine) {
+	public SerfruitDeliveryPackaging setDeliveryLine(Integer deliveryLine) {
 		this.deliveryLine = deliveryLine;
 		return this;
 	}
@@ -59,7 +59,7 @@ public class DeliveryPackaging {
 		return quantity;
 	}
 	
-	public DeliveryPackaging setQuantity(double quantity) {
+	public SerfruitDeliveryPackaging setQuantity(double quantity) {
 		this.quantity = quantity;
 		return this;
 	}
