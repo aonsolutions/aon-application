@@ -1,19 +1,20 @@
 import { Component, OnInit, EventEmitter, Output, ViewChild, Input } from '@angular/core';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { Shortcut } from 'src/app/core/models/interface/shortcut';
 import { MenuButton } from 'src/app/core/models/interface/menu-button';
-import { NavigationEnd, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-side-nav',
-  templateUrl: './side-nav.component.html',
-  styleUrls: ['./side-nav.component.scss']
+  selector    : 'app-side-nav',
+  templateUrl : './side-nav.component.html',
+  styleUrls   : ['./side-nav.component.scss']
 })
 export class SideNavComponent implements OnInit {
-  items: MenuButton[] =[];
-  selectedProduct: any;
-  opened : boolean;
-  resize : number;
+  items           : MenuButton[]  = [];
+  shortcuts       : Shortcut[]    = [];
+  selectedProduct : any;
+  opened          : boolean;
+  resize          : number;
 
   currentRoute: string = this.router.url.replace('/','');
   subMenuOpened: boolean;
@@ -24,15 +25,12 @@ export class SideNavComponent implements OnInit {
   constructor(
     private router: Router,
     private translateService: TranslateService
-    ) {
-    this.hide   = false;
-    this.opened = true;
-    this.resize = 1;
-    this.router.events.subscribe((event) => {
-      event instanceof NavigationEnd ? this.currentRoute = this.router.url.replace('/','') : null
-    })
-    this.subMenuOpened = false;
-    this.opened = false;
+  ) {
+    this.hide           = false;
+    this.opened         = true;
+    this.resize         = 1;
+    this.subMenuOpened  = false;
+    this.opened         = false;
 
     this.translateService.get(
       ['MENU.INBOX', 'MENU.BILLING', 'MENU.TAX_PANEL', 'MENU.EMPLOYEE_PANEL', 'MENU.DOCUMENTATION']
@@ -46,8 +44,16 @@ export class SideNavComponent implements OnInit {
     //    {routerlink: 'consulting',      shape: 'work',        text: 'ASESORÍA',           class: 'purple',  selected: false}
       ];
     })
-  }
 
+    this.shortcuts = [
+      {routerlink: 'home', shape: 'receipt'},
+      {routerlink: 'home', shape: 'add_box'},
+      {routerlink: 'home', shape: 'person_add'},
+      {routerlink: 'home', shape: 'add_comment'},
+      {routerlink: 'home', shape: 'add_shopping_cart'},
+      {routerlink: 'home', shape: 'alarm'}
+    ];
+  }
 
   ngOnInit(): void {
     this.items.forEach(element => {
@@ -79,15 +85,6 @@ export class SideNavComponent implements OnInit {
         }
       }, 1);
   }
-
-  shortcuts: Shortcut[] = [
-    {routerlink: 'home', shape: 'receipt'},
-    {routerlink: 'home', shape: 'add_box'},
-    {routerlink: 'home', shape: 'person_add'},
-    {routerlink: 'home', shape: 'add_comment'},
-    {routerlink: 'home', shape: 'add_shopping_cart'},
-    {routerlink: 'home', shape: 'alarm'}
-  ];
 
   select(item: MenuButton){
     this.items.forEach(element => {

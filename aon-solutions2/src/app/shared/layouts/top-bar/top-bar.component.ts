@@ -1,9 +1,9 @@
 import { Component, OnChanges, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { MenuItem } from 'src/app/core/models/interface/menu-item';
-import { AuthService } from 'src/app/core/services/auth.service';
-import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
 import { TranslateService } from '@ngx-translate/core';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
 import { AppComponent } from '../../../app.component';
 
 export class Enterprise {
@@ -14,10 +14,10 @@ export class Enterprise {
 }
 
 @Component({
-  selector: 'app-topbar',
-  templateUrl: './top-bar.component.html',
-  styleUrls: ['./top-bar.component.scss'],
-  host: {
+  selector    : 'app-topbar',
+  templateUrl : './top-bar.component.html',
+  styleUrls   : ['./top-bar.component.scss'],
+  host        : {
     '[style.width]' : "'100%'",
     '[style.height]': "'100%'",
   },
@@ -28,7 +28,6 @@ export class TopBarComponent implements OnInit, OnChanges {
   menuItem        : MenuItem [] = []
   displayHomeIcon : boolean     = false;
   usserLoggged    : boolean     = this.auth.isLoggedIn();
-  currentRoute    : string      = this.router.url.replace('/','');
 
   constructor(
     private router          : Router,
@@ -44,7 +43,7 @@ export class TopBarComponent implements OnInit, OnChanges {
       ['HEADER.EDIT_PROFILE','HEADER.HELP','HEADER.LOGOUT']
     ).subscribe( result => {
       this.menuItem = [
-        {routerlink: 'edit-profile',root:true, text: result['HEADER.EDIT_PROFILE'] , icon:'person_pin' , colorIcon:'black'},
+        {root:true, text: result['HEADER.EDIT_PROFILE'] , icon:'person_pin' , colorIcon:'black', routerlink: 'edit-profile'},
         {root:true, text: result['HEADER.HELP']         , icon:'help'       , colorIcon:'black'},
         {root:true, text: result['HEADER.LOGOUT']       , icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
 
@@ -60,7 +59,6 @@ export class TopBarComponent implements OnInit, OnChanges {
 
   checkCurrentRoute() {
     this.displayHomeIcon = this.router.url != '/home'? true : false;
-    this.currentRoute    = this.router.url.replace('/','');
   }
 
   ngOnChanges(): void {
