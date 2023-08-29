@@ -354,6 +354,9 @@ public class BookingCustomer extends HTMLPanel {
 		scrollPanel = new ScrollPanel();
 		scrollPanel.setHeight((Window.getClientHeight() - 170) + "px");
 		
+		HTMLPanel mainContainer = new HTMLPanel("");
+		mainContainer.addStyleName(AON.CSS.aonFlexColumn());
+		
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
 		container.getElement().getStyle().setProperty("margin", "0 1rem");
@@ -375,7 +378,6 @@ public class BookingCustomer extends HTMLPanel {
 		feeCorrectPanel = new HTMLPanel("");
 		feeCorrectPanel.addStyleName(AON.CSS.aonFlexColumn());
 		
-		container.add(messagePanel);
 		container.add(customerPanel);
 		container.add(domainsPanel);
 		
@@ -383,7 +385,10 @@ public class BookingCustomer extends HTMLPanel {
 		container.add(feeWithoutBookingPanel);
 		container.add(feeCorrectPanel);
 		
-		scrollPanel.add(container);
+		mainContainer.add(messagePanel);
+		mainContainer.add(container);
+		
+		scrollPanel.add(mainContainer);
 		
 		this.add(scrollPanel);
 	}
