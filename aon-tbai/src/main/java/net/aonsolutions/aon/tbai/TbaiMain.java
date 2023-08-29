@@ -124,7 +124,14 @@ public class TbaiMain {
 		String uri = TbaiUri.getUrlZuzendu(tbaiConfiguration);
 		TbaiResponse response = sendXML(uri, tbaiConfiguration, xml, false);	
 		
-		tbaiData.saveResponseZuzendu(company.getDomain(), new User().setLogin(""), invoice, xml, response);
+		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + response.getTbaiId() + "&s="
+				+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
+				+ tbai.getFactura().getDatosFactura().getImporteTotalFactura();
+			
+			String crc = CRC8.calculate(qrUrl);
+			qrUrl = qrUrl + "&cr=" + crc;
+		
+		tbaiData.saveResponseZuzendu(company.getDomain(), new User().setLogin(""), invoice, xml, response, qrUrl);
 
 	}
 	

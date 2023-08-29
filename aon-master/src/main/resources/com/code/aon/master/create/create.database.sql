@@ -7877,6 +7877,23 @@ CREATE TABLE `sales_detail` (
   CONSTRAINT `FK_SALES_DETAIL_SALES` FOREIGN KEY (`sales`) REFERENCES `sales` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Pedido de Venta';
 
+
+#
+# Table structure for table `sales_info`
+#
+CREATE TABLE `sales_info` (
+	`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+	`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+	`sales` int(4) NOT NULL COMMENT 'Identificador del Pedido',
+	`type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Comunicacion',
+	`status` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Estado de la Comunicacion',
+	PRIMARY KEY (`id`),
+	KEY `IDX_SALES_INFO_DOMAIN` (`domain`),
+	KEY `IDX_SALES_INFO_SALES` (`sales`),
+	CONSTRAINT `FK_SALES_INFO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+	CONSTRAINT `FK_SALES_INFO_SALES` FOREIGN KEY (`sales`) REFERENCES `sales` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Estado Comunicaciones de Pedidos';
+
 #
 # Table structure for table `scope`
 #

@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.invoice.TbaiConfigurationJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 
@@ -44,12 +45,19 @@ public class TbaiServlet extends AonApiHttpServlet{
 			case "/history":
 				response(req, resp, getTbaiHistory(api));
 				break;
+			case "/configuration":
+				response(req, resp, getTbaiConfiguration(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
+	}
+	
+	private JSONObject getTbaiConfiguration(AonApiData api) {
+		return TbaiConfigurationJSON.toJSON(AON.getTbaiConfiguration(api.getDomain(), api.getUser()));
 	}
 	
 	private JSONArray getTbaiHistory(AonApiData api) {
