@@ -7,12 +7,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author mariawoodruff
+ *
+ */
 public class VimeoService {
 	private VimeoResult vimeoResult;
 	public boolean showVimeo = true;
 	public boolean showDrive = true;
 	public List<ProjectItem> mainItems;
-	public Folder selectedFolder;
+	public List<Video> videos;
+	public ProjectItem selectedItem;
 	
 	public VimeoService() {
         String accessToken = "";
@@ -20,18 +25,16 @@ public class VimeoService {
 		vimeoResult = new VimeoResult(accessToken);
 
 		Optional<List<Video>> videosWithoutParentFolder = Optional.of(new LinkedList<Video>());
-		Optional<List<Video>> videos = vimeoResult.getVideosFromUser();
+		videos = vimeoResult.getVideosFromUser().get();
 		
-		if (videos.isPresent() && videos != null) {
-			for (Video video : videos.get()) {
-				if (video.getParentFolder() == null) {
-					videosWithoutParentFolder.get().add(video);
-				}
+		for (Video video : videos) {
+			if (video.getParentFolder() == null) {
+				videosWithoutParentFolder.get().add(video);
 			}
 		}
 
 		Optional<List<Folder>> folders = vimeoResult.getFoldersFromUser();
-		mainItems =new LinkedList<ProjectItem>();
+		mainItems = new LinkedList<ProjectItem>();
 		
 		for (Folder folder : folders.get()) {
 			ProjectItem projectItem = new ProjectItem(ProjectItemType.FOLDER.getValue(), folder, null);
@@ -44,45 +47,76 @@ public class VimeoService {
 		}
 	}
 
+	/**
+	 * Getter of showVimeo
+	 * @return showVimeo
+	 */
 	public boolean isShowVimeo() {
 		return showVimeo;
 	}
 
+	/**
+	 * Setter of showVimeo
+	 * @param showVimeo
+	 */
 	public void setShowVimeo(boolean showVimeo) {
 		this.showVimeo = showVimeo;
 	}
 	
-	public void hideVimeo() {
-        showVimeo = false;
-    }
-	
+	/**
+	 * Getter of showDrive
+	 * @return showDrive
+	 */
 	public boolean isShowDrive() {
 		return showDrive;
 	}
 
+	/**
+	 * Setter of showDrive
+	 * @param showDrive
+	 */
 	public void setShowDrive(boolean showDrive) {
 		this.showDrive = showDrive;
 	}
 
+	/**
+	 * Getter of mainItems
+	 * @return mainItems
+	 */
 	public List<ProjectItem> getMainItems() {
 		return mainItems;
 	}
 
+	/**
+	 * Setter of mainItems
+	 * @param mainItems
+	 */
 	public void setMainItems(List<ProjectItem> mainItems) {
 		this.mainItems = mainItems;
 	}
-	
-	public Folder getSelectedFolder() {
-        return selectedFolder;
-    }
 
-    public void setSelectedFolder(Folder selectedFolder) {
-        this.selectedFolder = selectedFolder;
-    }
+	/**
+	 * Getter of selectedItem
+	 * @return selectedItem
+	 */
+	public ProjectItem getSelectedItem() {
+		return selectedItem;
+	}
 
-	public Optional<List<ProjectItem>> getItemsFromFolder(Folder folder) {
-    	return vimeoResult.getItemsFromFolder(folder);
+	/**
+	 * Setter of selectedItem
+	 * @param selectedItem
+	 */
+	public void setSelectedItem(ProjectItem selectedItem) {
+		this.selectedItem = selectedItem;
+	}
+	
+	/**
+	 * Get the items of a folder
+	 * @param folder the folder
+	 * @return a list of items
+	 */
+	public List<ProjectItem> getItemsFromFolder(Folder folder) {
+    	return vimeoResult.getItemsFromFolder(folder).get();
     }
-	
-	
 }

@@ -2,11 +2,17 @@ package com.code.aon.web.help.service.vimeo;
 
 import com.vimeo.networking2.*;
 import com.vimeo.networking2.config.VimeoApiConfiguration;
+
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * @author mariawoodruff
+ *
+ */
 public class VimeoResult {
 
     private static VimeoApiClient vimeoApiClient;
@@ -88,7 +94,15 @@ public class VimeoResult {
         vimeoApiClient.fetchProjectItemList("https://api.vimeo.com" + folder.getUri() + "/items/", null, null, null, new VimeoCallback<ProjectItemList>()  {
             @Override
             public void onSuccess(VimeoResponse.Success<ProjectItemList> successResponse) {
-                List<ProjectItem> items = successResponse.getData().getData();               
+                List<ProjectItem> items = successResponse.getData().getData();
+                List<ProjectItem> result = new LinkedList<>();
+                
+                for (ProjectItem projectItem : items) {
+                	if (projectItem.getRawType().equals("folder")) {
+                		result.add(projectItem);
+                	}
+                }
+                
                 future.complete(items);
             }
 
