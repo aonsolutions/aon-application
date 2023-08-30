@@ -1276,6 +1276,7 @@ export interface ICertificate extends ICollectable {
   Tgss: boolean;
   Sepe: boolean;
   Aeat: boolean;
+  DocumentUser: string;
 }
 
 export interface IEnterprise extends ICollectable {
@@ -1415,7 +1416,7 @@ export class Factory implements IFactory {
         return new Folder(name, parent);
     }
 
-    createCertificate(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean): ICertificate {
+    createCertificate(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean, documentUser?: string): ICertificate {
         return new Certificate(name, representationType, expeditionDate, expirationDate, alias, type, tgss, sepe, aeat);
     }
 
@@ -1704,9 +1705,10 @@ class Certificate implements ICertificate, IModel {
   private tgss: boolean;
   private sepe: boolean;
   private aeat: boolean;
+  private documentUser: string;
   private key: string;
 
-  constructor(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean) {
+  constructor(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean, documentUser?: string) {
     this.name = name || '';
     this.representationType = representationType || '';
     this.expeditionDate = expeditionDate || new Date();
@@ -1716,7 +1718,8 @@ class Certificate implements ICertificate, IModel {
     this.tgss = tgss || false;
     this.sepe = sepe || false;
     this.aeat = aeat || false;
-    this.key = name || '';
+    this.documentUser = documentUser || '';
+    this.key = documentUser || '';
   }
 
   public get Name(): string {
@@ -1791,6 +1794,14 @@ class Certificate implements ICertificate, IModel {
     this.aeat = value;
   }
 
+  public get DocumentUser(): string {
+    return this.documentUser;
+  }
+
+  public set DocumentUser(value: string) {
+    this.documentUser = value;
+  }
+
   public get Key(): string {
     return this.key;
   }
@@ -1800,7 +1811,7 @@ class Certificate implements ICertificate, IModel {
   }
 
   getKey(): string {
-    return this.name;
+    return this.documentUser;
   }
 
   getFilterableFields(): Map<string,any> {
@@ -1814,6 +1825,7 @@ class Certificate implements ICertificate, IModel {
     map.set('tgss', this.Tgss);
     map.set('sepe', this.Sepe);
     map.set('aeat', this.Aeat);
+    map.set('documentUser', this.DocumentUser);
     return map;
   }
 
@@ -1828,6 +1840,7 @@ class Certificate implements ICertificate, IModel {
     map.set('tgss', this.Tgss);
     map.set('sepe', this.Sepe);
     map.set('aeat', this.Aeat);
+    map.set('documentUser', this.DocumentUser);
     return map;
   }
 
@@ -3314,9 +3327,9 @@ let storableCertificates = new StorableCertificate();
 let localCertificates = new LocalStorage<Certificate>(Certificate);
 certificates = localCertificates.read(storableCertificates.getLocalStorage())
 if(certificates.size() == 0){
-  certificates.add(new Certificate('Certificado 1'));
-  certificates.add(new Certificate('Certificado 2'));
-  certificates.add(new Certificate('Certificado 3'));
+  certificates.add(new Certificate('Andrés Nava Carranza', 'Persona Física', new Date('Fri Jul 28 2023 13:38:29 GMT+0100'), new Date('Thu Aug 31 2025 03:52:27 GMT+0100'), 'And323', 'Público', false, true, false, '35532252N'));
+  certificates.add(new Certificate('Andrea Casarez Saldaña', 'Persona Física', new Date('Tue Feb 28 2023 20:37:13 GMT+0100'), new Date('Thu May 23 2025 22:33:06 GMT+0100'), 'Andrea', 'Público', false, true, false, '94385657M'));
+  certificates.add(new Certificate('María Elena Tirado Chacón', 'Persona Física', new Date('Wed Mar 22 2023 15:48:30 GMT+0100 '), new Date('Fri Aug 02 2025 12:43:24 GMT+0100'), 'Andrea', 'Público', false, true, false, '11556837G'));
   localCertificates.write(storableCertificates.getLocalStorage(), certificates);
 }
 
