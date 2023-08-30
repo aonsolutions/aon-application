@@ -331,7 +331,7 @@ background-size
 									</aon:if>
 									
 									<!-- video -->
-									<ui:fragment rendered="#{vimeoItem.getRawType() != 'folder'}">
+									<ui:fragment rendered="#{vimeoItem.getRawType() == 'video'}">
 										<aon:div>
 											<aon:div styleClass="list-item"
 												onclick="displayVideoVimeo(this);return;">
