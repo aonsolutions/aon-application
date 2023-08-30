@@ -31,9 +31,6 @@ export class CertificateService {
     return (await this.singleObjectCrud.updateElement(certificate)).result;
   }
 
-  async removeCertificate(pkey: any): Promise<boolean> {
-    return (await this.singleObjectCrud.deleteElement(pkey)).result;
-  }
 }
 
 
