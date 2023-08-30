@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.Segment;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -876,6 +877,26 @@ public class BookingPanel extends MainEntryPoint {
 		}
 	}
 	
+	private void resetFilterChangeType() {
+		monthListBox.setSelectedIndex(0);
+		if (null != yearListBox) yearListBox.setSelectedIndex(0);
+		
+		startCompareLB.setSelectedIndex(0);
+		startDateBox.setValue(null);
+		endCompareLB.setSelectedIndex(0);
+		endDateBox.setValue(null);
+		
+		if(null != params) {
+			params.setMonth(null);
+			params.setYear(null);
+			
+			params.setStartCompare((byte)0);
+			params.setStartDate(null);
+			params.setEndCompare((byte)0);
+			params.setEndDate(null);
+		}
+	}
+	
 	// ------- SEARCH ---------
 	
 	private void onSearchFees() {
@@ -1152,7 +1173,7 @@ public class BookingPanel extends MainEntryPoint {
 		Label customerLabel = new Label(bookingCheck.getCustomer().getName());
 		Label customerStatusLabel = new Label(bookingCheck.getCustomer().getStatus().getDescription());
 		Label productLabel = new Label(getProductDescription(bookingCheck));
-		Label productStatusLabel = new Label(Integer.parseInt(bookingCheckType.getSelectedValue()) == 1 ? getFeeStatus(bookingCheck) : getProductStatus(bookingCheck));
+		Label productStatusLabel = new Label(Integer.parseInt(bookingCheckType.getSelectedValue()) == 0 ? getProductStatus(bookingCheck) : getFeeStatus(bookingCheck));
 		Label quantityLabel = new Label(AonStringUtils.isBlank(bookingCheck.getQuantity()) ? "1.0" : bookingCheck.getQuantity());
 		Label startDateLabel = new Label(formatDate(bookingCheck.getStartDate()));
 		Label endDateLabel = new Label(formatDate(bookingCheck.getEndDate()));
@@ -1214,10 +1235,34 @@ public class BookingPanel extends MainEntryPoint {
 			bookingCheckTable.setWidget(row, 9, actionBtn);
 		}
 		
+		// Check Status
+		if (bookingCheck.getCustomer().getStatus() == RegistryStatus.INACTIVE) {
+			customerStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			customerStatusLabel.getElement().getStyle().setColor("red");
+		} else if (bookingCheck.getCustomer().getStatus() == RegistryStatus.BLOCKED) {
+			customerStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			customerStatusLabel.getElement().getStyle().setColor("orange");
+		}
+		
 		if(Integer.parseInt(bookingCheckType.getSelectedValue()) == 0) {
-			productLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-			productLabel.getElement().getStyle().setColor("red");
-			productLabel.setTitle("Existe contrataci\u00f3n, pero no cuota");
+			
+			String productStatus = getProductStatus(bookingCheck);
+			
+			if(AonStringUtils.equalsIgnoreCase(productStatus, "Facturable")) {
+				productLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				productLabel.getElement().getStyle().setColor("red");
+				productLabel.setTitle("Existe contrataci\u00f3n, pero no cuota");
+			} else if(AonStringUtils.equalsIgnoreCase(productStatus, "No Facturable")) {
+				productStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				productStatusLabel.getElement().getStyle().setColor("green");
+			} else if(AonStringUtils.equalsIgnoreCase(productStatus, "No Contratado")) {
+				productStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				productStatusLabel.getElement().getStyle().setColor("red");
+			} else if(AonStringUtils.equalsIgnoreCase(productStatus, "Inactivo")) {
+				productStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				productStatusLabel.getElement().getStyle().setColor("orange");
+			}			
+			
 		} else if(Integer.parseInt(bookingCheckType.getSelectedValue()) == 1) {
 			productLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 			productLabel.getElement().getStyle().setColor("orange");
@@ -1280,11 +1325,11 @@ public class BookingPanel extends MainEntryPoint {
 		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios del cliente ...");
 		
 //		String responseBody = getResponseCustomerDomainsFake();
-//      List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
-//      AonMessagePanel.hideMessage(messagePanel);
-//        
-//      showBookingCustomer(bookingCheck.getCustomer().getName());
-//      bookingCustomer.setBookingCustomer(bookingCheck.getCustomer(), companies);
+//	    List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
+//	    AonMessagePanel.hideMessage(messagePanel);
+//	        
+//	    showBookingCustomer(bookingCheck.getCustomer().getName());
+//	    bookingCustomer.setBookingCustomer(bookingCheck.getCustomer(), companies);
 		
 		// Create the base URL
 		String baseUrl = "/ms/api/domain/" + bookingCheck.getCustomer().getId().toString();
@@ -1418,7 +1463,7 @@ public class BookingPanel extends MainEntryPoint {
 		
 		bookingCheckType.addChangeHandler(e -> {
 			checkPeriodVisibility();
-			resetFilter();
+			resetFilterChangeType();
 			bookingCheckList.clear();
 			resetFeeTable();
 			enableMoreData();
