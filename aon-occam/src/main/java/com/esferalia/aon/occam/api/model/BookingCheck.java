@@ -29,6 +29,8 @@ public class BookingCheck implements Serializable{
 	
 	private Workplace workplace;
 	
+	private boolean hasFee;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -143,6 +145,15 @@ public class BookingCheck implements Serializable{
 
 	public BookingCheck setWorkplace(Workplace workplace) {
 		this.workplace = workplace;
+		return this;
+	}
+
+	public boolean hasFee() {
+		return hasFee;
+	}
+
+	public BookingCheck setHasFee(boolean hasFee) {
+		this.hasFee = hasFee;
 		return this;
 	}
 

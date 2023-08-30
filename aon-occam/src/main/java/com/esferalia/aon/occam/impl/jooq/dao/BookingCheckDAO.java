@@ -116,6 +116,31 @@ public class BookingCheckDAO {
 		return bookingCheckRecords.stream().map(new FeeWithOutBookingFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static LinkedList<BookingCheck> getCustomerBookingCheckList(AONContext ctx, CustomerFeeParams customerFeeParams){
+		Condition condition = createRitemCondition(ctx, customerFeeParams);
+		
+		SelectOnConditionStep<Record> bookingWithoutFeeSelect = ctx.getDslContext().select().from(RITEM)
+				.join(DOMAIN).on(DOMAIN.ID.eq(RITEM.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(RITEM.REGISTRY))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(RITEM.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.leftJoin(CUSTOMER_FEE).on(CUSTOMER_FEE.CUSTOMER.eq(RITEM.REGISTRY).and(CUSTOMER_FEE.ITEM.eq(RITEM.ITEM)));
+		
+		Result<Record> bookingWithoutFeeRecords = bookingWithoutFeeSelect
+				.where(condition)
+//				.and(CUSTOMER_FEE.ID.isNull())
+				.and(RITEM.TYPE.eq((byte)4))
+				.orderBy(RITEM.REGISTRY)
+				.offset(customerFeeParams.getOffset())
+				.limit(customerFeeParams.getLimit())
+			.fetch();
+		
+		System.out.println("Customer Booking size : " + bookingWithoutFeeRecords.size());
+		
+		return bookingWithoutFeeRecords.stream().map(new CustomerBookingFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	public static BookingCheck save(AONContext ctx, BookingCheck bookingCheck) {
 		ctx.checkWrite();
 		
@@ -383,6 +408,40 @@ public class BookingCheckDAO {
 					.setWorkplace(checkField(r, WORKPLACE.ID)
 							? WorkplaceFiller.build(r)
 							: new Workplace().setId(r.getValue(RITEM.WORKPLACE)))
+					;
+		}
+	}
+	
+	protected static class CustomerBookingFiller extends Filler implements Function<Record, BookingCheck> {
+
+		@Override
+		public BookingCheck apply(Record r) {
+			return buildFee(r);
+		}
+		
+		public static BookingCheck buildFee(Record r) {			
+			return new BookingCheck()
+					.setId(r.getValue(RITEM.ID))
+					.setDomain(checkField(r, RITEM.ID) 
+						? DomainFiller.build(r) 
+						: new Domain().setId(r.getValue(RITEM.DOMAIN)))
+					.setCustomer(checkField(r, CUSTOMER.REGISTRY)
+						? CustomerFiller.buildCustomer(r, CUSTOMER_ALIAS)
+						: new Customer().copy(new Registry().setId(r.getValue(RITEM.REGISTRY))))
+					.setItem(checkField(r, ITEM.ID)
+						? ItemFiller.buildItem(r)
+						: new OldItem().setId(r.getValue(RITEM.ITEM)))	
+					.setType(RegistryMode.values()[r.getValue(RITEM.TYPE)])
+					.setStatus(RegistryItemStatus.values()[r.getValue(RITEM.STATUS)])
+					.setQuantity(r.getValue(RITEM.QUANTITY))
+					.setPrice(r.getValue(RITEM.PRICE))
+					.setDiscountExpr(r.getValue(RITEM.DISCOUNT_EXPR))
+					.setStartDate(r.getValue(RITEM.START_DATE))
+					.setEndDate(r.getValue(RITEM.END_DATE))
+					.setWorkplace(checkField(r, WORKPLACE.ID)
+							? WorkplaceFiller.build(r)
+							: new Workplace().setId(r.getValue(RITEM.WORKPLACE)))
+					.setHasFee(r.get(CUSTOMER_FEE.ID) != null)
 					;
 		}
 	}

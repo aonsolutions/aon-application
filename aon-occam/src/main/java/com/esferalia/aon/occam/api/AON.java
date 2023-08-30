@@ -7979,6 +7979,12 @@ public class AON {
 			return getFinance().getBookingCheckList(ctx, params);
 		}
 	}
+	
+	public static LinkedList<BookingCheck> getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getCustomerBookingCheckList(ctx, params);
+		}
+	}
 
 	public static void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){

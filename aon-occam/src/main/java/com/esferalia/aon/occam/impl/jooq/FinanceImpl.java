@@ -743,6 +743,12 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(
 				configuration -> BookingCheckDAO.getBookingCheckList(ctx, params));	
 	}
+	
+	@Override
+	public LinkedList<BookingCheck> getCustomerBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> BookingCheckDAO.getCustomerBookingCheckList(ctx, params));	
+	}
 
 	@Override
 	public void saveBookingCheck(CloseableAONContext ctx, BookingCheck bookingCheck) {
