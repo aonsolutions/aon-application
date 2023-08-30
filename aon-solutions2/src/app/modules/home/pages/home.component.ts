@@ -1,29 +1,20 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CollectionFactory, IBank, ICollection, IMessage, ITaxModel } from 'libraries/AonSDK/aon';
+import { Component, OnInit } from '@angular/core';
+import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/aon';
 import { TranslateService } from '@ngx-translate/core';
-import { ChartType } from 'chart.js';
-import { MultiDataSet } from 'ng2-charts';
 import { BehaviorSubject } from 'rxjs';
 import { BankService } from 'src/app/core/services/bank.service';
-import { MessageService } from 'src/app/core/services/message.service';
-import { ReportingService } from 'src/app/core/services/reporting.service';
-import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
-export interface ShortcutDashboard {
+ interface ShortcutDashboard {
   shape : string;
   name  : string;
 }
 
 interface ChartItem {
-  shape       : string;
   name        : string;
-  chartLabels : string[];
-  chartData   : MultiDataSet;
-  chartType   : ChartType;
-  colors      : string[];
+  typeDate    : number;
 }
 
-export interface MenuItems {
+ interface MenuItems {
   routerlink: string;
   shape     : string;
   name      : string;
@@ -40,8 +31,7 @@ export class HomeComponent implements OnInit {
   shortcuts   : ShortcutDashboard[] = [];
   chartItems  : ChartItem[]         = [];
   menuItems   : MenuItems[]         = [];
-  private chartItemsSubject = new BehaviorSubject<any[]>([]);
-  public chartItems$        = this.chartItemsSubject.asObservable();
+
   public collectionFactory  = new CollectionFactory();
 
   //banks area
@@ -51,25 +41,8 @@ export class HomeComponent implements OnInit {
   );
   public banks$ = this.banksSubject.asObservable();
 
-  //modelTax area
-  models: ICollection<ITaxModel> = this.collectionFactory.createTaxModelCollection();
-  private modelsSubject = new BehaviorSubject<ICollection<ITaxModel>>(
-    this.collectionFactory.createTaxModelCollection()
-  );
-  public models$ = this.modelsSubject.asObservable();
-
-  //Inbox area
-  messages: ICollection<IMessage> = this.collectionFactory.createMessageCollection();
-  private messagesSubject = new BehaviorSubject<ICollection<IMessage>>(
-    this.collectionFactory.createMessageCollection()
-  );
-  public messages$ = this.messagesSubject.asObservable();
-
   constructor(
     private bankService     : BankService,
-    private taxModelService : TaxModelService,
-    private reportingService: ReportingService,
-    private messageService  : MessageService,
     private translateService: TranslateService
   ) {
     this.translateService.get([
@@ -85,20 +58,12 @@ export class HomeComponent implements OnInit {
       ];
       this.chartItems = [
         {
-          shape: 'show_chart',
-          name: result['HOME.SALES_EXPENSES'],
-          chartLabels: [],
-          chartData: [],
-          chartType: 'line',
-          colors: [],
+          name      : result['HOME.SALES_EXPENSES'],
+          typeDate  : 1, // Ventas/Gastos
         },
         {
-          shape: 'bar_chart',
-          name: result['HOME.COLLECTIONS_PAYMENTS'],
-          chartLabels: [],
-          chartData: [],
-          chartType: 'bar',
-          colors: [],
+          name      : result['HOME.COLLECTIONS_PAYMENTS'],
+          typeDate  : 2, // Cobros/Pagos
         },
       ];
       this.menuItems = [
@@ -133,37 +98,6 @@ export class HomeComponent implements OnInit {
         this.banksSubject.next(this.banks);
       });
 
-      //taxmodelService
-      this.taxModelService.getTaxModelList().then((response) => {
-        this.models = response;
-        this.modelsSubject.next(this.models);
-      });
-
-      //reportingService-VentasGastos
-      this.reportingService.getVentasGastos().then((response) => {
-        this.chartItems[0].chartType = 'line';
-        this.chartItems[0].chartData = response.datasets.map(
-          (dataset: any) => dataset.data
-        );
-        this.chartItems[0].chartLabels = response.label;
-        this.chartItemsSubject.next(this.chartItems);
-      });
-
-      //reportingService-CobrosPagos
-      this.reportingService.getCobrosPagos().then((response) => {
-        this.chartItems[1].chartType = 'bar';
-        this.chartItems[1].chartData = response.datasets.map(
-          (dataset: any) => dataset.data
-        );
-        this.chartItems[1].chartLabels = response.label;
-        this.chartItemsSubject.next(this.chartItems);
-      });
-
-      //MessageService
-      this.messageService.getMessageList().then((response) => {
-        this.messages = response;
-        this.messagesSubject.next(this.messages);
-      });
     });
   }
 

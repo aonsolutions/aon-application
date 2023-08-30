@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { GridLayoutComponent } from './grid-layout.component';
 
 describe('GridLayoutComponent', () => {
