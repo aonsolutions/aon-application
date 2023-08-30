@@ -121,12 +121,22 @@ export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat
 }
 
 export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>, IMultipleObjectCrudFactory<IEnterprise> {
-    createSingleObjectCrud(): ISingleObjectReader<IEnterprise> {
-        return new GenericSingleObjectCrud<Enterprise>(new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
-    }
-    createMultipleObjectCrud(): IMultipleObjectReader<IEnterprise> {
-        return new GenericMultipleObjectCrud<Enterprise>(new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
-    }
+  createSingleObjectCrud(): ISingleObjectCrud<IEnterprise> {
+    return new GenericSingleObjectCrud<Enterprise>(new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
+  }
+
+  createMultipleObjectCrud(): IMultipleObjectCrud<IEnterprise> {
+    return new GenericMultipleObjectCrud<Enterprise>(new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
+  }
+}
+
+export class RegistryEnterpriseFactory implements ISingleObjectCrudFactory<IRegistryEnterprise>, IMultipleObjectCrudFactory<IRegistryEnterprise> {
+  createSingleObjectCrud(): ISingleObjectCrud<IRegistryEnterprise> {
+      return new GenericSingleObjectCrud<RegistryEnterprise>(new GenericSingleObjectCrudRepository<RegistryEnterprise>(new StorableRegistryEnterprise(), RegistryEnterprise), RegistryEnterprise);
+  }
+  createMultipleObjectCrud(): IMultipleObjectCrud<IRegistryEnterprise> {
+      return new GenericMultipleObjectCrud<RegistryEnterprise>(new GenericMultipleObjectCrudRepository<RegistryEnterprise>(new StorableRegistryEnterprise(), RegistryEnterprise), RegistryEnterprise);
+  }
 }
 
 export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleObjectCrudFactory<IBank> {
@@ -1180,6 +1190,7 @@ interface IFactory {
     createFolder(): IFolder;
     createCertificate(): ICertificate;
     createEnterprise(): IEnterprise;
+    createRegistryEnterprise(): IRegistryEnterprise;
     createDocumentNote(): IDocumentNote;
     createBank(): IBank;
     createTaxModel(): ITaxModel;
@@ -1258,12 +1269,14 @@ export interface IFolder extends ICollectable {
 export interface ICertificate extends ICollectable {
   Name: string;
   RepresentationType: string;
+  ExpeditionDate: Date;
   ExpirationDate: Date;
   Alias: string;
   Type: string;
   Tgss: boolean;
   Sepe: boolean;
   Aeat: boolean;
+  DocumentUser: string;
 }
 
 export interface IEnterprise extends ICollectable {
@@ -1277,6 +1290,16 @@ export interface IEnterprise extends ICollectable {
     Phone: string;
     Website: string;
     Document: string;
+}
+
+export interface IRegistryEnterprise extends ICollectable {
+  IdEnterprise: string,
+  Description: string,
+  DateCreation: Date,
+  DateRegistration: Date,
+  Notary: string,
+  Protocol: string,
+  Inscription: string
 }
 
 export interface IDocumentNote extends ICollectable {
@@ -1393,12 +1416,16 @@ export class Factory implements IFactory {
         return new Folder(name, parent);
     }
 
-    createCertificate(name?: string, representationType?: string, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean): ICertificate {
-        return new Certificate(name, representationType, expirationDate, alias, type, tgss, sepe, aeat);
+    createCertificate(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean, documentUser?: string): ICertificate {
+        return new Certificate(name, representationType, expeditionDate, expirationDate, alias, type, tgss, sepe, aeat);
     }
 
     createEnterprise(name?: string, document?: string): IEnterprise {
         return new Enterprise(name,document);
+    }
+
+    createRegistryEnterprise(name?: string, description?: string, dateCreation?: Date, dateRegistration?: Date, notary?: string, protocol?: string, inscription?: string): IRegistryEnterprise {
+      return new RegistryEnterprise(name, description, dateCreation, dateRegistration, notary, protocol, inscription);
     }
 
     createDocumentNote(text?: string, path?: string): IDocumentNote {
@@ -1445,6 +1472,10 @@ export class CollectionFactory implements ICollectionFactory {
 
     createEnterpriseCollection(): ICollection<IEnterprise> {
       return new Collection<Enterprise>();
+    }
+
+    createRegistryEnterpriseCollection(): ICollection<IRegistryEnterprise> {
+      return new Collection<RegistryEnterprise>();
     }
 
     createDocumentNoteCollection(): ICollection<IDocumentNote> {
@@ -1667,24 +1698,28 @@ class StorableFolder extends Folder implements IStorable<Folder> {
 class Certificate implements ICertificate, IModel {
   private name: string;
   private representationType: string;
+  private expeditionDate: Date;
   private expirationDate: Date;
   private alias: string;
   private type: string;
   private tgss: boolean;
   private sepe: boolean;
   private aeat: boolean;
+  private documentUser: string;
   private key: string;
 
-  constructor(name?: string, representationType?: string, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean) {
+  constructor(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean, documentUser?: string) {
     this.name = name || '';
     this.representationType = representationType || '';
+    this.expeditionDate = expeditionDate || new Date();
     this.expirationDate = expirationDate || new Date();
     this.alias = alias || '';
     this.type = type || '';
     this.tgss = tgss || false;
     this.sepe = sepe || false;
     this.aeat = aeat || false;
-    this.key = name || '';
+    this.documentUser = documentUser || '';
+    this.key = documentUser || '';
   }
 
   public get Name(): string {
@@ -1701,6 +1736,14 @@ class Certificate implements ICertificate, IModel {
 
   public set RepresentationType(value: string) {
     this.representationType = value;
+  }
+
+  public get ExpeditionDate(): Date {
+    return this.expeditionDate;
+  }
+
+  public set ExpeditionDate(value: Date) {
+    this.expeditionDate = value;
   }
 
   public get ExpirationDate(): Date {
@@ -1751,6 +1794,14 @@ class Certificate implements ICertificate, IModel {
     this.aeat = value;
   }
 
+  public get DocumentUser(): string {
+    return this.documentUser;
+  }
+
+  public set DocumentUser(value: string) {
+    this.documentUser = value;
+  }
+
   public get Key(): string {
     return this.key;
   }
@@ -1760,19 +1811,21 @@ class Certificate implements ICertificate, IModel {
   }
 
   getKey(): string {
-    return this.name;
+    return this.documentUser;
   }
 
   getFilterableFields(): Map<string,any> {
     let map = new Map<string, any>();
     map.set('name', this.Name);
     map.set('representationType', this.RepresentationType);
+    map.set('expeditionDate', this.ExpeditionDate);
     map.set('expirationDate', this.ExpirationDate);
     map.set('alias', this.Alias);
     map.set('type', this.Type);
     map.set('tgss', this.Tgss);
     map.set('sepe', this.Sepe);
     map.set('aeat', this.Aeat);
+    map.set('documentUser', this.DocumentUser);
     return map;
   }
 
@@ -1780,12 +1833,14 @@ class Certificate implements ICertificate, IModel {
     let map = new Map<string, any>();
     map.set('name', this.Name);
     map.set('representationType', this.RepresentationType);
+    map.set('expeditionDate', this.ExpeditionDate);
     map.set('expirationDate', this.ExpirationDate);
     map.set('alias', this.Alias);
     map.set('type', this.Type);
     map.set('tgss', this.Tgss);
     map.set('sepe', this.Sepe);
     map.set('aeat', this.Aeat);
+    map.set('documentUser', this.DocumentUser);
     return map;
   }
 
@@ -1939,6 +1994,142 @@ class StorableEnterprise extends Enterprise implements IStorable<Enterprise> {
         return 'enterprises';
     }
 }
+
+class RegistryEnterprise implements IRegistryEnterprise, IModel {
+  private id: string;
+  private idEnterprise: string;
+  private description: string;
+  private dateCreation: Date;
+  private dateRegistration: Date;
+  private notary: string;
+  private protocol: string;
+  private inscription: string;
+  private key: string;
+
+  constructor(idEnterprise?: string, description?: string, dateCreation?: Date, dateRegistration?: Date, notary?: string, protocol?: string, inscription?: string, key?: string) {
+    this.id = new KeyGenerator().generate(15);
+    this.idEnterprise = idEnterprise || '';
+    this.description = description || '';
+    this.dateCreation = dateCreation || new Date();
+    this.dateRegistration = dateRegistration || new Date();
+    this.notary = notary || '';
+    this.protocol = protocol || '';
+    this.inscription = inscription || '';
+    this.key = this.id;
+  }
+  public get Id(): string {
+    return this.id;
+  }
+
+  public set Id(value: string) {
+    this.id = value;
+  }
+
+  public get IdEnterprise(): string {
+    return this.idEnterprise;
+  }
+
+  public set IdEnterprise(value: string) {
+    this.idEnterprise = value;
+  }
+
+  public get Description(): string {
+    return this.description;
+  }
+
+  public set Description(value: string) {
+    this.description = value;
+  }
+
+  public get DateCreation(): Date {
+    return this.dateCreation;
+  }
+
+  public set DateCreation(value: Date) {
+    this.dateCreation = value;
+  }
+
+  public get DateRegistration(): Date {
+    return this.dateRegistration;
+  }
+
+  public set DateRegistration(value: Date) {
+    this.dateRegistration = value;
+  }
+
+  public get Notary(): string {
+    return this.notary;
+  }
+
+  public set Notary(value: string) {
+    this.notary = value;
+  }
+
+  public get Protocol(): string {
+    return this.protocol;
+  }
+
+  public set Protocol(value: string) {
+    this.protocol = value;
+  }
+
+  public get Inscription(): string {
+    return this.inscription;
+  }
+
+  public set Inscription(value: string) {
+    this.inscription = value;
+  }
+
+  public get Key(): string {
+    return this.key;
+  }
+
+  public set Key(value: string) {
+    this.key = value;
+  }
+
+  getKey(): string {
+    return this.id;
+  }
+
+  getFilterableFields(): Map<string, any> {
+    let map = new Map<string, any>();
+    map.set('id', this.Id);
+    map.set('idEnterprise', this.IdEnterprise);
+    map.set('description', this.Description);
+    map.set('dateCreation', this.DateCreation);
+    map.set('dateRegistration', this.DateRegistration);
+    map.set('notary', this.Notary);
+    map.set('protocol', this.Protocol);
+    map.set('inscription', this.Inscription);
+    return map;
+  }
+
+  getSortableFields(): Map<string, any> {
+    let map = new Map<string, any>();
+    map.set('id', this.Id);
+    map.set('idEnterprise', this.IdEnterprise);
+    map.set('description', this.Description);
+    map.set('dateCreation', this.DateCreation);
+    map.set('dateRegistration', this.DateRegistration);
+    map.set('notary', this.Notary);
+    map.set('protocol', this.Protocol);
+    map.set('inscription', this.Inscription);
+    return map;
+  }
+
+}
+
+class StorableRegistryEnterprise extends RegistryEnterprise implements IStorable<RegistryEnterprise> {
+  getCollection(): ICollection<RegistryEnterprise> {
+    return registryEnterprises;
+  }
+  getLocalStorage(): string {
+      return 'registryEnterprises';
+  }
+}
+
 
 class DocumentNote implements IDocumentNote, IModel  {
     private text: string;
@@ -3136,20 +3327,25 @@ let storableCertificates = new StorableCertificate();
 let localCertificates = new LocalStorage<Certificate>(Certificate);
 certificates = localCertificates.read(storableCertificates.getLocalStorage())
 if(certificates.size() == 0){
-  certificates.add(new Certificate('Certificado 1'));
-  certificates.add(new Certificate('Certificado 2'));
-  certificates.add(new Certificate('Certificado 3'));
+  certificates.add(new Certificate('Andrés Nava Carranza', 'Persona Física', new Date('Fri Jul 28 2023 13:38:29 GMT+0100'), new Date('Thu Aug 31 2025 03:52:27 GMT+0100'), 'And323', 'Público', false, true, false, '35532252N'));
+  certificates.add(new Certificate('Andrea Casarez Saldaña', 'Persona Física', new Date('Tue Feb 28 2023 20:37:13 GMT+0100'), new Date('Thu May 23 2025 22:33:06 GMT+0100'), 'Andrea', 'Público', false, true, false, '94385657M'));
+  certificates.add(new Certificate('María Elena Tirado Chacón', 'Persona Física', new Date('Wed Mar 22 2023 15:48:30 GMT+0100 '), new Date('Fri Aug 02 2025 12:43:24 GMT+0100'), 'Andrea', 'Público', false, true, false, '11556837G'));
   localCertificates.write(storableCertificates.getLocalStorage(), certificates);
 }
 
 let enterprises: ICollection<Enterprise> = new Collection<Enterprise>();
 let storableEnterprises = new StorableEnterprise();
+let registryEnterprises : ICollection<RegistryEnterprise> = new Collection<RegistryEnterprise>();
+let storableRegistryEnterprises = new StorableRegistryEnterprise();
 let localEnterprises = new LocalStorage<Enterprise>(Enterprise);
 enterprises = localEnterprises.read(storableEnterprises.getLocalStorage())
 if(enterprises.size() == 0){
     enterprises.add(new Enterprise('Pet Estudio', 'B16880148'));
+    registryEnterprises.add(new RegistryEnterprise('B16880148', 'lorem ipsum ...', new Date(), new Date(), 'Esperanza', 'Protocolo 1', 'Inscripción 1'));
     enterprises.add(new Enterprise('MENG SA', 'U14241855'));
+    registryEnterprises.add(new RegistryEnterprise('U14241855', 'lorem ipsum ...', new Date(), new Date(), 'Jorge Luis', 'Protocolo 2', 'Inscripción 2'));
     enterprises.add(new Enterprise('PORTABAGE SL', 'U53716270'));
+    registryEnterprises.add(new RegistryEnterprise('U53716270', 'lorem ipsum ...', new Date(), new Date(), 'Manuela', 'Protocolo 3', 'Inscripción 3'));
     localEnterprises.write(storableEnterprises.getLocalStorage(), enterprises);
 }
 
