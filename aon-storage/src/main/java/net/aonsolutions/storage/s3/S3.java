@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -12,9 +11,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.BucketTaggingConfiguration;
@@ -31,7 +27,8 @@ public class S3 {
 		List<String> bucketsNames = getBucketsNames(s3, "contract_doc");
 		for (String bucketName : bucketsNames) {
 			try {
-				return s3.generatePresignedUrl(bucketName, s3Key, getExpiration()/*, HttpMethod.GET*/);
+				AmazonS3 bucketS3 = getAmazonS3(s3, bucketName);
+				return bucketS3.generatePresignedUrl(bucketName, s3Key, getExpiration()/*, HttpMethod.GET*/);
 			} catch (Exception e) {
 				
 			}
@@ -53,8 +50,8 @@ public class S3 {
 				.withExpiration(getExpiration())
 				.withResponseHeaders(headerOverrides)
 				;
-				
-				return s3.generatePresignedUrl(request/*, HttpMethod.GET*/);
+				AmazonS3 bucketS3 = getAmazonS3(s3, bucketName);
+				return bucketS3.generatePresignedUrl(request/*, HttpMethod.GET*/);
 			} catch (Exception e) {
 				
 			}
@@ -104,7 +101,8 @@ public class S3 {
 	}
 
 	private static String getBucketTag( AmazonS3 s3, String bucketName, String tag) {
-		BucketTaggingConfiguration bucketTaggingConfiguration = s3.getBucketTaggingConfiguration(bucketName);
+	    	AmazonS3 bucketS3 = getAmazonS3(s3, bucketName);
+		BucketTaggingConfiguration bucketTaggingConfiguration = bucketS3.getBucketTaggingConfiguration(bucketName);
 		if ( bucketTaggingConfiguration == null ) 
 			return null;
 		TagSet tagSet = bucketTaggingConfiguration.getTagSet();
@@ -123,9 +121,16 @@ public class S3 {
 //		.build();		
 	}
 	
+	private static AmazonS3 getAmazonS3(String region) {
+		return AmazonS3ClientBuilder.standard().withRegion(region).build();	
+	}
+
+	private static AmazonS3 getAmazonS3(AmazonS3 s3, String bucketName) {
+	    	return getAmazonS3(s3.getBucketLocation(bucketName));
+	}
+
 	public static void main(String[] args) {
 		AmazonS3 s3 = getAmazonS3();
-		
 		getBucketsTagMap(s3, "AON_TABLE").forEach((k,v) -> System.out.println( k + " = " + v ));
 	}
 	
