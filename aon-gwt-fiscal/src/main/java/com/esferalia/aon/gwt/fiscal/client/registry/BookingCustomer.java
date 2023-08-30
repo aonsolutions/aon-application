@@ -321,11 +321,11 @@ public class BookingCustomer extends HTMLPanel {
 	private HTMLPanel customerPanel;
 	private HTMLPanel domainsPanel;
 	
-	private HTMLPanel bookingWithoutFeePanel;
-	private AonToolbarSmallButton toolbarBookingWithoutFeeDiscBtn;
-	private DeckPanel bookingWithoutFeeDeckPanel;
-	private Grid bookingWithoutFeeGrid;
-	private HTMLPanel bookingWithoutFeeMessagePanel;
+	private HTMLPanel bookingPanel;
+	private AonToolbarSmallButton toolbarBookingDiscBtn;
+	private DeckPanel bookingDeckPanel;
+	private Grid bookingGrid;
+	private HTMLPanel bookingMessagePanel;
 	
 	private HTMLPanel feeWithoutBookingPanel;
 	private AonToolbarSmallButton toolbarFeeWithoutBookingDiscBtn;
@@ -333,18 +333,11 @@ public class BookingCustomer extends HTMLPanel {
 	private Grid feeWithoutBookingGrid;
 	private HTMLPanel feeWithoutBookingMessagePanel;
 	
-	private HTMLPanel feeCorrectPanel;
-	private AonToolbarSmallButton toolbarFeeCorrectDiscBtn;
-	private DeckPanel feeCorrectDeckPanel;
-	private Grid feeCorrectGrid;
-	private HTMLPanel feeCorrectMessagePanel;
-	
 	private Customer customer;
 	private List<DomainCompany> customerDomains;
 	
-	private boolean isBookingWithoutFeeOpen = true;
+	private boolean isBookingOpen = true;
 	private boolean isFeeWithoutBookingOpen = true;
-	private boolean isFeeCorrectOpen = true;
 	
 	private RegistryServiceAsync SERVICE; 
 	private RegistryModuleOptions options;
@@ -386,21 +379,17 @@ public class BookingCustomer extends HTMLPanel {
 		domainsPanel = new HTMLPanel("");
 		domainsPanel.addStyleName(AON.CSS.aonFlexColumn());
 		
-		bookingWithoutFeePanel = new HTMLPanel("");
-		bookingWithoutFeePanel.addStyleName(AON.CSS.aonFlexColumn());
+		bookingPanel = new HTMLPanel("");
+		bookingPanel.addStyleName(AON.CSS.aonFlexColumn());
 		
 		feeWithoutBookingPanel = new HTMLPanel("");
 		feeWithoutBookingPanel.addStyleName(AON.CSS.aonFlexColumn());
 		
-		feeCorrectPanel = new HTMLPanel("");
-		feeCorrectPanel.addStyleName(AON.CSS.aonFlexColumn());
-		
 		container.add(customerPanel);
 		container.add(domainsPanel);
 		
-		container.add(bookingWithoutFeePanel);
+		container.add(bookingPanel);
 		container.add(feeWithoutBookingPanel);
-		container.add(feeCorrectPanel);
 		
 		mainContainer.add(messagePanel);
 		mainContainer.add(container);
@@ -422,13 +411,11 @@ public class BookingCustomer extends HTMLPanel {
 		initializeCustomer();
 		initializeDomains();
 		
-		this.bookingWithoutFeePanel.clear();
+		this.bookingPanel.clear();
 		this.feeWithoutBookingPanel.clear();
-		this.feeCorrectPanel.clear();
 		
-		initializeBookingWithoutFee();
+		initializeBooking();
 		initializeFeeWithoutBooking();
-		initializeFeeCorrect();
 	}
 	
 	// ---------- Cliente
@@ -489,7 +476,7 @@ public class BookingCustomer extends HTMLPanel {
 		customerTable.getCellFormatter().addStyleName(row, 10, AON.CSS.aonHeaderSticky());
 		
 		customerTable.getColumnFormatter().getElement(0).getStyle().setWidth(65, Unit.PX);
-		customerTable.getColumnFormatter().getElement(1).getStyle().setWidth(50, Unit.PX);
+		customerTable.getColumnFormatter().getElement(1).getStyle().setWidth(60, Unit.PX);
 		customerTable.getColumnFormatter().getElement(2).getStyle().setWidth(190, Unit.PX);
 
 		customerTable.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
@@ -879,7 +866,7 @@ public class BookingCustomer extends HTMLPanel {
 		domainTable.getCellFormatter().addStyleName(row, 10, AON.CSS.aonHeaderSticky());
 		
 		domainTable.getColumnFormatter().getElement(0).getStyle().setWidth(65, Unit.PX);
-		domainTable.getColumnFormatter().getElement(1).getStyle().setWidth(50, Unit.PX);
+		domainTable.getColumnFormatter().getElement(1).getStyle().setWidth(60, Unit.PX);
 		domainTable.getColumnFormatter().getElement(2).getStyle().setWidth(190, Unit.PX);
 
 		domainTable.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
@@ -1107,90 +1094,82 @@ public class BookingCustomer extends HTMLPanel {
 	
 	// -------- Booking Without Fee
 	
-	private void initializeBookingWithoutFee() {
-		bookingWithoutFeeDeckPanel = new DeckPanel();
-		createBookingWithOutFeeGrid();
+	private void initializeBooking() {
+		bookingDeckPanel = new DeckPanel();
+		createBookingGrid();
 		createBookingWithOutFeeMessage();
 		
-		bookingWithoutFeeDeckPanel.add(bookingWithoutFeeGrid);
-		bookingWithoutFeeDeckPanel.add(bookingWithoutFeeMessagePanel);
+		bookingDeckPanel.add(bookingGrid);
+		bookingDeckPanel.add(bookingMessagePanel);
 		
-		bookingWithoutFeePanel.add(createBookingWithoutFeeToolbar());
-		bookingWithoutFeePanel.add(bookingWithoutFeeDeckPanel);
+		bookingPanel.add(createBookingWithoutFeeToolbar());
+		bookingPanel.add(bookingDeckPanel);
 	}
 	
-	private void showBookingWithOutFeeGrid() {
-		bookingWithoutFeeDeckPanel.showWidget(0);
+	private void showBookingGrid() {
+		bookingDeckPanel.showWidget(0);
 	}
 	
-	private void showBookingWithOutFeeMessage() {
-		bookingWithoutFeeDeckPanel.showWidget(1);
+	private void showBookingMessage() {
+		bookingDeckPanel.showWidget(1);
 	}
 	
-	private void createBookingWithOutFeeGrid() {
-		bookingWithoutFeeGrid = new Grid(0, 7);
-		bookingWithoutFeeGrid.clear();
-		bookingWithoutFeeGrid.setWidth("100%");
+	private void createBookingGrid() {
+		bookingGrid = new Grid(0, 6);
+		bookingGrid.clear();
+		bookingGrid.setWidth("100%");
 
-		int row = bookingWithoutFeeGrid.insertRow(bookingWithoutFeeGrid.getRowCount());
+		int row = bookingGrid.insertRow(bookingGrid.getRowCount());
 
-		Label type = new Label("TIPO");
-		Label customer = new Label("CLIENTE");
-		Label customerStatus = new Label("ESTADO");
 		Label concept = new Label("PRODUCTO");
+		Label code = new Label("CODIGO");
+		Label fee = new Label("CUOTA");
 		Label conceptStatus = new Label("ESTADO");
 		Label quantity = new Label("CANTIDAD");
-		Label startDate = new Label("F. DESDE");
-		Label endDate = new Label("F. HASTA");
 		Label action = new Label("");
 		
-		type.addStyleName(AON.CSS.aonHeaderTable());
-		customer.addStyleName(AON.CSS.aonHeaderTable());
-		customerStatus.addStyleName(AON.CSS.aonHeaderTable());
 		concept.addStyleName(AON.CSS.aonHeaderTable());
+		code.addStyleName(AON.CSS.aonHeaderTable());
+		fee.addStyleName(AON.CSS.aonHeaderTable());
+		conceptStatus.addStyleName(AON.CSS.aonHeaderTable());
 		conceptStatus.addStyleName(AON.CSS.aonHeaderTable());
 		quantity.addStyleName(AON.CSS.aonHeaderTable());
-		startDate.addStyleName(AON.CSS.aonHeaderTable());
-		endDate.addStyleName(AON.CSS.aonHeaderTable());
 		action.addStyleName(AON.CSS.aonHeaderTable());
 
-		bookingWithoutFeeGrid.setWidget(row, 0, type);
-		bookingWithoutFeeGrid.setWidget(row, 1, customer);
-		bookingWithoutFeeGrid.setWidget(row, 2, customerStatus);
-		bookingWithoutFeeGrid.setWidget(row, 3, concept);
-		bookingWithoutFeeGrid.setWidget(row, 4, conceptStatus);
-		bookingWithoutFeeGrid.setWidget(row, 5, quantity);
-		bookingWithoutFeeGrid.setWidget(row, 6, action);
+		bookingGrid.setWidget(row, 0, concept);
+		bookingGrid.setWidget(row, 1, code);
+		bookingGrid.setWidget(row, 2, fee);
+		bookingGrid.setWidget(row, 3, conceptStatus);
+		bookingGrid.setWidget(row, 4, quantity);
+		bookingGrid.setWidget(row, 5, action);
 		
-		bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
-		bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
-		bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 2, AON.CSS.aonHeaderSticky());
-		bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 3, AON.CSS.aonHeaderSticky());
-		bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
-		bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
-		bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
+		bookingGrid.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
+		bookingGrid.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
+		bookingGrid.getCellFormatter().addStyleName(row, 2, AON.CSS.aonHeaderSticky());
+		bookingGrid.getCellFormatter().addStyleName(row, 3, AON.CSS.aonHeaderSticky());
+		bookingGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
+		bookingGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
 		
-		setColumnWidthBookingWithOutFee();
-		fillBookingWithOutFee();
+		setColumnWidthBooking();
+		fillBooking();
 	}
 
-	private void setColumnWidthBookingWithOutFee() {
-		bookingWithoutFeeGrid.getColumnFormatter().getElement(0).getStyle().setWidth(80, Unit.PX);
-		bookingWithoutFeeGrid.getColumnFormatter().getElement(2).getStyle().setWidth(80, Unit.PX);
-		bookingWithoutFeeGrid.getColumnFormatter().getElement(3).getStyle().setWidth(30, Unit.PCT);
-		bookingWithoutFeeGrid.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
-		bookingWithoutFeeGrid.getColumnFormatter().getElement(5).getStyle().setWidth(160, Unit.PX);
-		bookingWithoutFeeGrid.getColumnFormatter().getElement(6).getStyle().setWidth(25, Unit.PX);
+	private void setColumnWidthBooking() {
+		bookingGrid.getColumnFormatter().getElement(1).getStyle().setWidth(160, Unit.PX);
+		bookingGrid.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
+		bookingGrid.getColumnFormatter().getElement(3).getStyle().setWidth(85, Unit.PX);
+		bookingGrid.getColumnFormatter().getElement(4).getStyle().setWidth(160, Unit.PX);
+		bookingGrid.getColumnFormatter().getElement(5).getStyle().setWidth(25, Unit.PX);
 	}
 
-	private void fillBookingWithOutFee() {
+	private void fillBooking() {
 		CustomerFeeParams params = new CustomerFeeParams()
 				.setDomain(options.getDomain())
 				.setCustomer(this.customer.getName())
 				.setOffset(0)
 				.setLimit(100);
 		
-		SERVICE.getBookingWithoutFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
+		SERVICE.getCustomerBookingCheckList(options.getDomainName(), options.getDomain(), options.getUser(), params,
 				new AsyncCallback<LinkedList<BookingCheck>>() {
 
 					@Override
@@ -1200,33 +1179,29 @@ public class BookingCustomer extends HTMLPanel {
 
 					@Override
 					public void onSuccess(LinkedList<BookingCheck> bookingCheckListDB) {
-						if(bookingCheckListDB.isEmpty()) showBookingWithOutFeeMessage();
-						else fillBookingWithOutFeeGrid(bookingCheckListDB);
+						if(bookingCheckListDB.isEmpty()) showBookingMessage();
+						else fillBookingGrid(bookingCheckListDB);
 					}
 				});
 	}
 
-	private void fillBookingWithOutFeeGrid(LinkedList<BookingCheck> bookingCheckListDB) {
-		showBookingWithOutFeeGrid();
+	private void fillBookingGrid(LinkedList<BookingCheck> bookingCheckListDB) {
+		showBookingGrid();
 		
 		for(BookingCheck bookingCheck : bookingCheckListDB) {
-			int row = bookingWithoutFeeGrid.insertRow(bookingWithoutFeeGrid.getRowCount());
-
-			Label typeLabel = new Label("Contr.");
-			typeLabel.setTitle("Contrataci\u00f3n");
+			int row = bookingGrid.insertRow(bookingGrid.getRowCount());
 			
-			Label customerLabel = new Label(bookingCheck.getCustomer().getName());
-			Label customerStatusLabel = new Label(bookingCheck.getCustomer().getStatus().getDescription());
+			Label productLabel = new Label(bookingCheck.getItem().getProduct().getName());
 			
-			Label productLabel = new Label(getProductDescription(bookingCheck));
-			productLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-			productLabel.getElement().getStyle().setColor("red");
-			productLabel.setTitle("Existe contrataci\u00f3n, pero no cuota");
+			Label codeLabel = new Label(bookingCheck.getItem().getProduct().getCode());
+			Label feeLabel = new Label(bookingCheck.hasFee() ? "SI" : "NO");
+			if(!bookingCheck.hasFee()) {
+				feeLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				feeLabel.getElement().getStyle().setColor("red");
+			}
 			
 			Label productStatusLabel = new Label(getProductStatus(bookingCheck));
 			Label quantityLabel = new Label(AonStringUtils.isBlank(bookingCheck.getQuantity()) ? "1.0" : bookingCheck.getQuantity());
-			Label startDateLabel = new Label(formatDate(bookingCheck.getStartDate()));
-			Label endDateLabel = new Label(formatDate(bookingCheck.getEndDate()));
 			
 			AonToolbarSmallButton actionBtn = new AonToolbarSmallButton("Acciones", AON.CSS.aonIconMoreVertical());
 			actionBtn.addClickHandler(e -> {
@@ -1239,63 +1214,56 @@ public class BookingCustomer extends HTMLPanel {
 				bookingWithOutFeeMenu.setBookingCheck(bookingCheck);
 			});
 			
-			bookingWithoutFeeGrid.setWidget(row, 0, typeLabel);
-			bookingWithoutFeeGrid.setWidget(row, 1, customerLabel);
-			bookingWithoutFeeGrid.setWidget(row, 2, customerStatusLabel);
-			bookingWithoutFeeGrid.setWidget(row, 3, productLabel);
-			bookingWithoutFeeGrid.setWidget(row, 4, productStatusLabel);
-			bookingWithoutFeeGrid.setWidget(row, 5, quantityLabel);
-			bookingWithoutFeeGrid.setWidget(row, 6, actionBtn);
+			bookingGrid.setWidget(row, 0, productLabel);
+			bookingGrid.setWidget(row, 1, codeLabel);
+			bookingGrid.setWidget(row, 2, feeLabel);
+			bookingGrid.setWidget(row, 3, productStatusLabel);
+			bookingGrid.setWidget(row, 4, quantityLabel);
+			bookingGrid.setWidget(row, 5, actionBtn);
 			
 			if (row % 2 == 0) {
-				typeLabel.addStyleName(AON.CSS.aonOddTableRow());
-				customerLabel.addStyleName(AON.CSS.aonOddTableRow());
-				customerStatusLabel.addStyleName(AON.CSS.aonOddTableRow());
 				productLabel.addStyleName(AON.CSS.aonOddTableRow());
+				codeLabel.addStyleName(AON.CSS.aonOddTableRow());
+				feeLabel.addStyleName(AON.CSS.aonOddTableRow());
 				productStatusLabel.addStyleName(AON.CSS.aonOddTableRow());
 				quantityLabel.addStyleName(AON.CSS.aonOddTableRow());
-				startDateLabel.addStyleName(AON.CSS.aonOddTableRow());
-				endDateLabel.addStyleName(AON.CSS.aonOddTableRow());
 				actionBtn.addStyleName(AON.CSS.aonOddTableRow());
 				
-				bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 0, AON.CSS.aonOddTableRow());
-				bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 1, AON.CSS.aonOddTableRow());
-				bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 2, AON.CSS.aonOddTableRow());
-				bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 3, AON.CSS.aonOddTableRow());
-				bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonOddTableRow());
-				bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonOddTableRow());
-				bookingWithoutFeeGrid.getCellFormatter().addStyleName(row, 6, AON.CSS.aonOddTableRow());
+				bookingGrid.getCellFormatter().addStyleName(row, 0, AON.CSS.aonOddTableRow());
+				bookingGrid.getCellFormatter().addStyleName(row, 1, AON.CSS.aonOddTableRow());
+				bookingGrid.getCellFormatter().addStyleName(row, 2, AON.CSS.aonOddTableRow());
+				bookingGrid.getCellFormatter().addStyleName(row, 3, AON.CSS.aonOddTableRow());
+				bookingGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonOddTableRow());
+				bookingGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonOddTableRow());
 			}
 			
-			bookingWithoutFeeGrid.getCellFormatter().getElement(row, 0).getStyle().setTextAlign(TextAlign.CENTER);
-			bookingWithoutFeeGrid.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
-			bookingWithoutFeeGrid.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
-			bookingWithoutFeeGrid.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
-			bookingWithoutFeeGrid.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingGrid.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingGrid.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingGrid.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
 				
-			bookingWithoutFeeGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
+			bookingGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 		}
 
 	}
 	
 	private void createBookingWithOutFeeMessage() {
-		bookingWithoutFeeMessagePanel = new HTMLPanel("");
-		bookingWithoutFeeMessagePanel.addStyleName(AON.CSS.aonDisplayFlexCenter());
-		bookingWithoutFeeMessagePanel.add(new Label("No existen contrataciones sin cuotas para este cliente"));
+		bookingMessagePanel = new HTMLPanel("");
+		bookingMessagePanel.addStyleName(AON.CSS.aonDisplayFlexCenter());
+		bookingMessagePanel.add(new Label("No existen contrataciones sin cuotas para este cliente"));
 	}
 
 	private AonToolbarSmall createBookingWithoutFeeToolbar() {
-		AonToolbarSmall toolbar = new AonToolbarSmall("Contrataciones sin Cuotas");
+		AonToolbarSmall toolbar = new AonToolbarSmall("Contrataciones");
 		
-		toolbarBookingWithoutFeeDiscBtn = new AonToolbarSmallButton("Desplegar Contrataci\u00f3n sin Cuotas", AON.CSS.aonIconDown());
-		toolbarBookingWithoutFeeDiscBtn.addClickHandler(e -> {
-			isBookingWithoutFeeOpen = !isBookingWithoutFeeOpen;
-			handleIcon(toolbarBookingWithoutFeeDiscBtn, isBookingWithoutFeeOpen);
-			if(isBookingWithoutFeeOpen) bookingWithoutFeeDeckPanel.getElement().getStyle().clearDisplay();
-			else bookingWithoutFeeDeckPanel.getElement().getStyle().setDisplay(Display.NONE);
+		toolbarBookingDiscBtn = new AonToolbarSmallButton("Desplegar Contrataciones", AON.CSS.aonIconDown());
+		toolbarBookingDiscBtn.addClickHandler(e -> {
+			isBookingOpen = !isBookingOpen;
+			handleIcon(toolbarBookingDiscBtn, isBookingOpen);
+			if(isBookingOpen) bookingDeckPanel.getElement().getStyle().clearDisplay();
+			else bookingDeckPanel.getElement().getStyle().setDisplay(Display.NONE);
 		});
 		
-		toolbar.add(toolbarBookingWithoutFeeDiscBtn);
+		toolbar.add(toolbarBookingDiscBtn);
 		
 		return toolbar;
 		
@@ -1324,41 +1292,36 @@ public class BookingCustomer extends HTMLPanel {
 	}
 	
 	private void createFeeWithoutBookingGrid() {
-		feeWithoutBookingGrid = new Grid(0, 9);
+		feeWithoutBookingGrid = new Grid(0, 7);
 		feeWithoutBookingGrid.clear();
 		feeWithoutBookingGrid.setWidth("100%");
 
 		int row = feeWithoutBookingGrid.insertRow(feeWithoutBookingGrid.getRowCount());
 
-		Label type = new Label("TIPO");
-		Label customer = new Label("CLIENTE");
-		Label customerStatus = new Label("ESTADO");
 		Label concept = new Label("PRODUCTO");
+		Label code = new Label("CODIGO");
 		Label conceptStatus = new Label("ESTADO");
 		Label quantity = new Label("CANTIDAD");
 		Label startDate = new Label("F. DESDE");
 		Label endDate = new Label("F. HASTA");
 		Label action = new Label("");
 		
-		type.addStyleName(AON.CSS.aonHeaderTable());
-		customer.addStyleName(AON.CSS.aonHeaderTable());
-		customerStatus.addStyleName(AON.CSS.aonHeaderTable());
 		concept.addStyleName(AON.CSS.aonHeaderTable());
+		code.addStyleName(AON.CSS.aonHeaderTable());
 		conceptStatus.addStyleName(AON.CSS.aonHeaderTable());
 		quantity.addStyleName(AON.CSS.aonHeaderTable());
 		startDate.addStyleName(AON.CSS.aonHeaderTable());
 		endDate.addStyleName(AON.CSS.aonHeaderTable());
 		action.addStyleName(AON.CSS.aonHeaderTable());
 
-		feeWithoutBookingGrid.setWidget(row, 0, type);
-		feeWithoutBookingGrid.setWidget(row, 1, customer);
-		feeWithoutBookingGrid.setWidget(row, 2, customerStatus);
-		feeWithoutBookingGrid.setWidget(row, 3, concept);
-		feeWithoutBookingGrid.setWidget(row, 4, conceptStatus);
-		feeWithoutBookingGrid.setWidget(row, 5, quantity);
-		feeWithoutBookingGrid.setWidget(row, 6, startDate);
-		feeWithoutBookingGrid.setWidget(row, 7, endDate);
-		feeWithoutBookingGrid.setWidget(row, 8, action);
+		
+		feeWithoutBookingGrid.setWidget(row, 0, concept);
+		feeWithoutBookingGrid.setWidget(row, 1, code);
+		feeWithoutBookingGrid.setWidget(row, 2, conceptStatus);
+		feeWithoutBookingGrid.setWidget(row, 3, quantity);
+		feeWithoutBookingGrid.setWidget(row, 4, startDate);
+		feeWithoutBookingGrid.setWidget(row, 5, endDate);
+		feeWithoutBookingGrid.setWidget(row, 6, action);
 		
 		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
 		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
@@ -1367,22 +1330,18 @@ public class BookingCustomer extends HTMLPanel {
 		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
 		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
 		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
-		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
-		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
 		
 		setColumnWidthFeeWithoutBooking();
 		fillFeeWithoutBooking();
 	}
 
 	private void setColumnWidthFeeWithoutBooking() {
-		feeWithoutBookingGrid.getColumnFormatter().getElement(0).getStyle().setWidth(80, Unit.PX);
-		feeWithoutBookingGrid.getColumnFormatter().getElement(2).getStyle().setWidth(80, Unit.PX);
-		feeWithoutBookingGrid.getColumnFormatter().getElement(3).getStyle().setWidth(30, Unit.PCT);
+		feeWithoutBookingGrid.getColumnFormatter().getElement(1).getStyle().setWidth(160, Unit.PX);
+		feeWithoutBookingGrid.getColumnFormatter().getElement(2).getStyle().setWidth(85, Unit.PX);
+		feeWithoutBookingGrid.getColumnFormatter().getElement(3).getStyle().setWidth(160, Unit.PX);
 		feeWithoutBookingGrid.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
-		feeWithoutBookingGrid.getColumnFormatter().getElement(5).getStyle().setWidth(160, Unit.PX);
-		feeWithoutBookingGrid.getColumnFormatter().getElement(6).getStyle().setWidth(80, Unit.PX);
-		feeWithoutBookingGrid.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
-		feeWithoutBookingGrid.getColumnFormatter().getElement(8).getStyle().setWidth(25, Unit.PX);
+		feeWithoutBookingGrid.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
+		feeWithoutBookingGrid.getColumnFormatter().getElement(6).getStyle().setWidth(25, Unit.PX);
 	}
 
 	private void fillFeeWithoutBooking() {
@@ -1414,17 +1373,8 @@ public class BookingCustomer extends HTMLPanel {
 		for(BookingCheck bookingCheck : bookingCheckListDB) {
 			int row = feeWithoutBookingGrid.insertRow(feeWithoutBookingGrid.getRowCount());
 
-			Label typeLabel = new Label("Cuota");
-			typeLabel.setTitle("Cuota");
-			
-			Label customerLabel = new Label(bookingCheck.getCustomer().getName());
-			Label customerStatusLabel = new Label(bookingCheck.getCustomer().getStatus().getDescription());
-			
-			Label productLabel = new Label(getProductDescription(bookingCheck));
-			productLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-			productLabel.getElement().getStyle().setColor("orange");
-			productLabel.setTitle("Existe una cuota sin contrataci\u00f3n");
-			
+			Label productLabel = new Label(bookingCheck.getItem().getProduct().getName());
+			Label codeLabel = new Label(bookingCheck.getItem().getProduct().getCode());
 			Label productStatusLabel = new Label(getFeeStatus(bookingCheck));
 			Label quantityLabel = new Label(AonStringUtils.isBlank(bookingCheck.getQuantity()) ? "1.0" : bookingCheck.getQuantity());
 			Label startDateLabel = new Label(formatDate(bookingCheck.getStartDate()));
@@ -1440,21 +1390,17 @@ public class BookingCustomer extends HTMLPanel {
 				feeWithoutbookintMenu.setCustomer(bookingCheck.getCustomer());
 			});
 			
-			feeWithoutBookingGrid.setWidget(row, 0, typeLabel);
-			feeWithoutBookingGrid.setWidget(row, 1, customerLabel);
-			feeWithoutBookingGrid.setWidget(row, 2, customerStatusLabel);
-			feeWithoutBookingGrid.setWidget(row, 3, productLabel);
-			feeWithoutBookingGrid.setWidget(row, 4, productStatusLabel);
-			feeWithoutBookingGrid.setWidget(row, 5, quantityLabel);
-			feeWithoutBookingGrid.setWidget(row, 6, startDateLabel);
-			feeWithoutBookingGrid.setWidget(row, 7, endDateLabel);
-			feeWithoutBookingGrid.setWidget(row, 8, actionBtn);
+			feeWithoutBookingGrid.setWidget(row, 0, productLabel);
+			feeWithoutBookingGrid.setWidget(row, 1, codeLabel);
+			feeWithoutBookingGrid.setWidget(row, 2, productStatusLabel);
+			feeWithoutBookingGrid.setWidget(row, 3, quantityLabel);
+			feeWithoutBookingGrid.setWidget(row, 4, startDateLabel);
+			feeWithoutBookingGrid.setWidget(row, 5, endDateLabel);
+			feeWithoutBookingGrid.setWidget(row, 6, actionBtn);
 			
 			if (row % 2 == 0) {
-				typeLabel.addStyleName(AON.CSS.aonOddTableRow());
-				customerLabel.addStyleName(AON.CSS.aonOddTableRow());
-				customerStatusLabel.addStyleName(AON.CSS.aonOddTableRow());
 				productLabel.addStyleName(AON.CSS.aonOddTableRow());
+				codeLabel.addStyleName(AON.CSS.aonOddTableRow());
 				productStatusLabel.addStyleName(AON.CSS.aonOddTableRow());
 				quantityLabel.addStyleName(AON.CSS.aonOddTableRow());
 				startDateLabel.addStyleName(AON.CSS.aonOddTableRow());
@@ -1468,17 +1414,12 @@ public class BookingCustomer extends HTMLPanel {
 				feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonOddTableRow());
 				feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonOddTableRow());
 				feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 6, AON.CSS.aonOddTableRow());
-				feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 7, AON.CSS.aonOddTableRow());
-				feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 8, AON.CSS.aonOddTableRow());
 			}
 			
-			feeWithoutBookingGrid.getCellFormatter().getElement(row, 0).getStyle().setTextAlign(TextAlign.CENTER);
 			feeWithoutBookingGrid.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
 			feeWithoutBookingGrid.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
 			feeWithoutBookingGrid.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
 			feeWithoutBookingGrid.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
-			feeWithoutBookingGrid.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
-			feeWithoutBookingGrid.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.CENTER);
 				
 			feeWithoutBookingGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 		}
@@ -1508,218 +1449,7 @@ public class BookingCustomer extends HTMLPanel {
 		
 	}
 	
-	// -------- Fee Correct
-	
-	private void initializeFeeCorrect() {
-		feeCorrectDeckPanel = new DeckPanel();
-		createFeeCorrectGrid();
-		createFeeCorrectMessage();
-		
-		feeCorrectDeckPanel.add(feeCorrectGrid);
-		feeCorrectDeckPanel.add(feeCorrectMessagePanel);
-		
-		feeCorrectPanel.add(createFeeCorrectToolbar());
-		feeCorrectPanel.add(feeCorrectDeckPanel);
-	}
-	
-	private void showFeeCorrectGrid() {
-		feeCorrectDeckPanel.showWidget(0);
-	}
-	
-	private void showFeeCorrectMessage() {
-		feeCorrectDeckPanel.showWidget(1);
-	}
-	
-	private void createFeeCorrectGrid() {
-		feeCorrectGrid = new Grid(0, 9);
-		feeCorrectGrid.clear();
-		feeCorrectGrid.setWidth("100%");
-
-		int row = feeCorrectGrid.insertRow(feeCorrectGrid.getRowCount());
-
-		Label type = new Label("TIPO");
-		Label customer = new Label("CLIENTE");
-		Label customerStatus = new Label("ESTADO");
-		Label concept = new Label("PRODUCTO");
-		Label conceptStatus = new Label("ESTADO");
-		Label quantity = new Label("CANTIDAD");
-		Label startDate = new Label("F. DESDE");
-		Label endDate = new Label("F. HASTA");
-		Label action = new Label("");
-		
-		type.addStyleName(AON.CSS.aonHeaderTable());
-		customer.addStyleName(AON.CSS.aonHeaderTable());
-		customerStatus.addStyleName(AON.CSS.aonHeaderTable());
-		concept.addStyleName(AON.CSS.aonHeaderTable());
-		conceptStatus.addStyleName(AON.CSS.aonHeaderTable());
-		quantity.addStyleName(AON.CSS.aonHeaderTable());
-		startDate.addStyleName(AON.CSS.aonHeaderTable());
-		endDate.addStyleName(AON.CSS.aonHeaderTable());
-		action.addStyleName(AON.CSS.aonHeaderTable());
-
-		feeCorrectGrid.setWidget(row, 0, type);
-		feeCorrectGrid.setWidget(row, 1, customer);
-		feeCorrectGrid.setWidget(row, 2, customerStatus);
-		feeCorrectGrid.setWidget(row, 3, concept);
-		feeCorrectGrid.setWidget(row, 4, conceptStatus);
-		feeCorrectGrid.setWidget(row, 5, quantity);
-		feeCorrectGrid.setWidget(row, 6, startDate);
-		feeCorrectGrid.setWidget(row, 7, endDate);
-		feeCorrectGrid.setWidget(row, 8, action);
-		
-		feeCorrectGrid.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
-		feeCorrectGrid.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
-		feeCorrectGrid.getCellFormatter().addStyleName(row, 2, AON.CSS.aonHeaderSticky());
-		feeCorrectGrid.getCellFormatter().addStyleName(row, 3, AON.CSS.aonHeaderSticky());
-		feeCorrectGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
-		feeCorrectGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
-		feeCorrectGrid.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
-		feeCorrectGrid.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
-		feeCorrectGrid.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
-		
-		setColumnWidthFeeCorrect();
-		fillFeeCorrect();
-	}
-
-	private void setColumnWidthFeeCorrect() {
-		feeCorrectGrid.getColumnFormatter().getElement(0).getStyle().setWidth(80, Unit.PX);
-		feeCorrectGrid.getColumnFormatter().getElement(2).getStyle().setWidth(80, Unit.PX);
-		feeCorrectGrid.getColumnFormatter().getElement(3).getStyle().setWidth(30, Unit.PCT);
-		feeCorrectGrid.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
-		feeCorrectGrid.getColumnFormatter().getElement(5).getStyle().setWidth(160, Unit.PX);
-		feeCorrectGrid.getColumnFormatter().getElement(6).getStyle().setWidth(80, Unit.PX);
-		feeCorrectGrid.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
-		feeCorrectGrid.getColumnFormatter().getElement(8).getStyle().setWidth(25, Unit.PX);
-	}
-
-	private void fillFeeCorrect() {
-		CustomerFeeParams params = new CustomerFeeParams()
-				.setDomain(options.getDomain())
-				.setCustomer(this.customer.getName())
-				.setOffset(0)
-				.setLimit(100);
-		
-		SERVICE.getBookingCheckList(options.getDomainName(), options.getDomain(), options.getUser(), params,
-				new AsyncCallback<LinkedList<BookingCheck>>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						AonMessagePanel.showError(messagePanel, "Error cargando panel de facturaci\u00f3n: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(LinkedList<BookingCheck> bookingCheckListDB) {
-						if(bookingCheckListDB.isEmpty()) showFeeCorrectMessage();
-						else fillFeeCorrectGrid(bookingCheckListDB);
-					}
-				});
-	}
-
-	private void fillFeeCorrectGrid(LinkedList<BookingCheck> bookingCheckListDB) {
-		showFeeCorrectGrid();
-		
-		for(BookingCheck bookingCheck : bookingCheckListDB) {
-			int row = feeCorrectGrid.insertRow(feeCorrectGrid.getRowCount());
-
-			Label typeLabel = new Label("Cuota");
-			typeLabel.setTitle("Cuota");
-			
-			Label customerLabel = new Label(bookingCheck.getCustomer().getName());
-			Label customerStatusLabel = new Label(bookingCheck.getCustomer().getStatus().getDescription());
-			
-			Label productLabel = new Label(getProductDescription(bookingCheck));
-			if(!bookingCheck.getStatus().equals(RegistryItemStatus.ACTIVE)) {
-				productLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-				productLabel.getElement().getStyle().setColor("orange");
-				productLabel.setTitle("Existe contrataci\u00f3n asociada, pero no es tipo 'Facturable'");
-			}
-			
-			Label productStatusLabel = new Label(getFeeStatus(bookingCheck));
-			Label quantityLabel = new Label(AonStringUtils.isBlank(bookingCheck.getQuantity()) ? "1.0" : bookingCheck.getQuantity());
-			Label startDateLabel = new Label(formatDate(bookingCheck.getStartDate()));
-			Label endDateLabel = new Label(formatDate(bookingCheck.getEndDate()));
-			
-			AonToolbarSmallButton actionBtn = new AonToolbarSmallButton(getBookingStatus(bookingCheck.getStatus()), AON.CSS.aonIconInfo());
-			if(bookingCheck.getStatus().equals(RegistryItemStatus.ACTIVE)) actionBtn.setVisible(false);
-			
-			feeCorrectGrid.setWidget(row, 0, typeLabel);
-			feeCorrectGrid.setWidget(row, 1, customerLabel);
-			feeCorrectGrid.setWidget(row, 2, customerStatusLabel);
-			feeCorrectGrid.setWidget(row, 3, productLabel);
-			feeCorrectGrid.setWidget(row, 4, productStatusLabel);
-			feeCorrectGrid.setWidget(row, 5, quantityLabel);
-			feeCorrectGrid.setWidget(row, 6, startDateLabel);
-			feeCorrectGrid.setWidget(row, 7, endDateLabel);
-			feeCorrectGrid.setWidget(row, 8, actionBtn);
-			
-			if (row % 2 == 0) {
-				typeLabel.addStyleName(AON.CSS.aonOddTableRow());
-				customerLabel.addStyleName(AON.CSS.aonOddTableRow());
-				customerStatusLabel.addStyleName(AON.CSS.aonOddTableRow());
-				productLabel.addStyleName(AON.CSS.aonOddTableRow());
-				productStatusLabel.addStyleName(AON.CSS.aonOddTableRow());
-				quantityLabel.addStyleName(AON.CSS.aonOddTableRow());
-				startDateLabel.addStyleName(AON.CSS.aonOddTableRow());
-				endDateLabel.addStyleName(AON.CSS.aonOddTableRow());
-				actionBtn.addStyleName(AON.CSS.aonOddTableRow());
-				
-				feeCorrectGrid.getCellFormatter().addStyleName(row, 0, AON.CSS.aonOddTableRow());
-				feeCorrectGrid.getCellFormatter().addStyleName(row, 1, AON.CSS.aonOddTableRow());
-				feeCorrectGrid.getCellFormatter().addStyleName(row, 2, AON.CSS.aonOddTableRow());
-				feeCorrectGrid.getCellFormatter().addStyleName(row, 3, AON.CSS.aonOddTableRow());
-				feeCorrectGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonOddTableRow());
-				feeCorrectGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonOddTableRow());
-				feeCorrectGrid.getCellFormatter().addStyleName(row, 6, AON.CSS.aonOddTableRow());
-				feeCorrectGrid.getCellFormatter().addStyleName(row, 7, AON.CSS.aonOddTableRow());
-				feeCorrectGrid.getCellFormatter().addStyleName(row, 8, AON.CSS.aonOddTableRow());
-			}
-			
-			feeCorrectGrid.getCellFormatter().getElement(row, 0).getStyle().setTextAlign(TextAlign.CENTER);
-			feeCorrectGrid.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
-			feeCorrectGrid.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
-			feeCorrectGrid.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
-			feeCorrectGrid.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
-			feeCorrectGrid.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
-			feeCorrectGrid.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.CENTER);
-				
-			feeCorrectGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
-		}
-
-	}
-	
-	private void createFeeCorrectMessage() {
-		feeCorrectMessagePanel = new HTMLPanel("");
-		feeCorrectMessagePanel.addStyleName(AON.CSS.aonDisplayFlexCenter());
-		feeCorrectMessagePanel.add(new Label("No existen cuotas correctas para este cliente"));
-	}
-
-	private AonToolbarSmall createFeeCorrectToolbar() {
-		AonToolbarSmall toolbar = new AonToolbarSmall("Cuotas Correctas");
-		
-		toolbarFeeCorrectDiscBtn = new AonToolbarSmallButton("Desplegar Cuotas Correctas", AON.CSS.aonIconDown());
-		toolbarFeeCorrectDiscBtn.addClickHandler(e -> {
-			isFeeCorrectOpen = !isFeeCorrectOpen;
-			handleIcon(toolbarFeeCorrectDiscBtn, isFeeCorrectOpen);
-			if(isFeeCorrectOpen) feeCorrectDeckPanel.getElement().getStyle().clearDisplay();
-			else feeCorrectDeckPanel.getElement().getStyle().setDisplay(Display.NONE);
-		});
-		
-		toolbar.add(toolbarFeeCorrectDiscBtn);
-		
-		return toolbar;
-		
-	}
-	
 	// -------- Auxiliar Methods
-	
-	private String getProductDescription(BookingCheck bookingCheck) {
-		if(null == bookingCheck.getItem()) return null;
-		
-		String productDescription = bookingCheck.getItem().getProduct().getName();
-		String productCode = bookingCheck.getItem().getProduct().getCode();
-		
-		return AonStringUtils.isBlank(productDescription) ? productCode : productDescription + " - (" + productCode + ")";
-	}
 	
 	private String getProductStatus(BookingCheck bookingCheck) {
 		if(bookingCheck.getStatus().equals(RegistryItemStatus.ACTIVE)) return "Facturable";
@@ -1736,40 +1466,23 @@ public class BookingCustomer extends HTMLPanel {
 				? "Facturable" : "Expirado";
 	}
 	
-	private String getBookingStatus(RegistryItemStatus status) {
-		switch (status) {
-			case INTERESTED:
-				return "La contrataci\u00f3n asociada es No Facturable";
-			case REFUSED:
-				return "La contrataci\u00f3n asociada es No Contratado";
-			case INACTIVE:
-				return "La contrataci\u00f3n asociada es Inactiva";
-			default:
-				return "";
-		}
-	}
-	
 	private void handleIcon(AonToolbarSmallButton button, boolean open) {
 		if (open) {
 			button.removeStyleName(AON.CSS.aonIconLeft());
 			button.addStyleName(AON.CSS.aonIconDown());
 
-			if (button.equals(toolbarBookingWithoutFeeDiscBtn))
-				button.setTitle("Colapsar Contrataci\u00f3n sin Cuotas");
+			if (button.equals(toolbarBookingDiscBtn))
+				button.setTitle("Colapsar Contrataciones");
 			if (button.equals(toolbarFeeWithoutBookingDiscBtn))
 				button.setTitle("Colapsar Cuotas sin Contrataci\u00f3n");
-			if (button.equals(toolbarFeeCorrectDiscBtn))
-				button.setTitle("Colapsar Cuotas Correctas");
 		} else {
 			button.removeStyleName(AON.CSS.aonIconDown());
 			button.addStyleName(AON.CSS.aonIconLeft());
 
-			if (button.equals(toolbarBookingWithoutFeeDiscBtn))
-				button.setTitle("Desplegar Contrataci\u00f3n sin Cuotas");
+			if (button.equals(toolbarBookingDiscBtn))
+				button.setTitle("Desplegar Contrataciones");
 			if (button.equals(toolbarFeeWithoutBookingDiscBtn))
 				button.setTitle("Desplegar Cuotas sin Contrataci\u00f3n");
-			if (button.equals(toolbarFeeCorrectDiscBtn))
-				button.setTitle("Desplegar Cuotas Correctas");
 		}
 	}
 	

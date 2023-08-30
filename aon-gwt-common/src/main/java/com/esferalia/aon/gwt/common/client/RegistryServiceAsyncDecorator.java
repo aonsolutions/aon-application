@@ -243,6 +243,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		AON.start();
 		serviceAsync.getBookingCheckList(domainName, domain, user, params, new AsyncCallbackWrapper<LinkedList<BookingCheck>>(callback));
 	}
+	
+	@Override
+	public void getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> callback) {
+		AON.start();
+		serviceAsync.getCustomerBookingCheckList(domainName, domain, user, params, new AsyncCallbackWrapper<LinkedList<BookingCheck>>(callback));
+	}
 
 	@Override
 	public void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck, AsyncCallback<Void> callback) {

@@ -220,6 +220,11 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 	
 	@Override
+	public LinkedList<BookingCheck> getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		return AON.getCustomerBookingCheckList(domainName, domain, user, params);
+	}
+	
+	@Override
 	public void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
 		AON.saveBookingCheck(domainName, domain, user, bookingCheck);
 	}
