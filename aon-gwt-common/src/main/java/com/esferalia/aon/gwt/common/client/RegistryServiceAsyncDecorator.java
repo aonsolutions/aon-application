@@ -250,4 +250,10 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		serviceAsync.saveBookingCheck(domainName, domain, user, bookingCheck, new AsyncCallbackWrapper<Void>(callback));
 	}
 
+	@Override
+	public void getUsers(String domainName, int domain, String user, int findDomin, AsyncCallback<List<User>> callback) {
+		AON.start();
+		serviceAsync.getUsers(domainName, domain, user, findDomin, new AsyncCallbackWrapper<List<User>>(callback));
+	}
+
 }
