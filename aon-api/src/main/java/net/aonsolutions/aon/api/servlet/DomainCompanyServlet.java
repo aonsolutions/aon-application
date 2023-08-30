@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.DomainLinked;
+import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
@@ -46,6 +47,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	public static final String CUSTOMER_DOMAINS = "/:customer"; //buscar entre todos los schemas los que tengan ese aonCustomer
 	public static final String DOMAIN_LINKED = "/link/";
 	public static final String BOOKING = "/booking/";
+	public static final String REMOTE = "/remote/";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -92,6 +94,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				.addRoute(DOMAINS, DomainCompanyServlet::updateCustomerDomains)
 				.addRoute(DOMAIN_LINKED, DomainCompanyServlet::saveDomainLinked)
 				.addRoute(BOOKING, DomainCompanyServlet::updateBookingRitems)
+				.addRoute(BOOKING, DomainCompanyServlet::remoteDomain)
 				.apply();
 			
 			response(req, resp, object);
@@ -172,6 +175,15 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
+	private static JSONObject remoteDomain(AonApiData api) {
+		JSONObject domainJson = api.getData().optJSONObject(IJsonNames.DOMAIN);
+		if(null != domainJson) {
+			DomainCompany domainCompany = DomainCompanyJSON.fromJSON(domainJson);
+			CONSOLE.remoteAccess(new DomainParams().setSchema(domainCompany.getSchema()), domainCompany.getDomain().getId());
+		}
+		return new JSONObject();
+	}
+	
 	private static JSONObject deleteDomainLinked(AonApiData api) {
 		Domain apiDomain = api.getDomain();
 		User apiUser = api.getUser();
@@ -213,7 +225,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				Integer aonCustomer = domain.getAonCustomer();
 				for (AonApp app : apps) {
 					String barCode = getBarCode(domainType, app);
-					Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getBarcodeProperty().eq(barCode));
+					Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getBarcodeProperty().like("%" + barCode + "%"));
 //					if (item == null || item.getId() == null) {
 //						item = createItem(api, domain, app);
 //					}
