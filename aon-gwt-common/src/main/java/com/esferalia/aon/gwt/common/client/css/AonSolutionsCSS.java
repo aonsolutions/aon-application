@@ -303,6 +303,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_group_off")
 	String aonIconGroupOff();
 	
+	@ClassName("aon_icon_group")
+	String aonIconGroup();
+	
 	@ClassName("aon_icon_tune")
 	String aonIconTune();
 	
