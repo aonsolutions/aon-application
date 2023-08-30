@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.common.server;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.annotation.WebServlet;
 
@@ -217,9 +218,15 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public LinkedList<BookingCheck> getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
 		return AON.getBookingCheckList(domainName, domain, user, params);
 	}
+	
 	@Override
 	public void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
 		AON.saveBookingCheck(domainName, domain, user, bookingCheck);
+	}
+	
+	@Override
+	public List<User> getUsers(String domainName, int domain, String user, int findDomain) {
+		return AON.getUserStream(domainName, domain, user, f -> f.getDomainProperty().eq(findDomain)).collect(Collectors.toList());
 	}
 	
 }

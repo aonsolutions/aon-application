@@ -8,6 +8,7 @@ import java.util.Optional;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonContextMenu;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerTooltip;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
@@ -21,9 +22,13 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AonStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -38,6 +43,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -302,9 +308,12 @@ public class BookingCustomer extends HTMLPanel {
 
 	}
 	
+	// ------- Variables
+	
 	private BookingWithOutFeeMenu bookingWithOutFeeMenu;
 	private FeeWithoutbookintMenu feeWithoutbookintMenu;
 	
+	private FocusPanel focusPanel;
 	private ScrollPanel scrollPanel;
 	private HTMLPanel container;
 	
@@ -342,14 +351,22 @@ public class BookingCustomer extends HTMLPanel {
 	
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
+	private AonCustomerTooltip aonCustomerTooltip;
+	
+	// ------- Constructor
+	
 	public BookingCustomer(RegistryServiceAsync service, RegistryModuleOptions opt) {
 		super("");
 		
 		this.SERVICE = service;
 		this.options = opt;
 		
+		aonCustomerTooltip = new AonCustomerTooltip();
+		
 		bookingWithOutFeeMenu = new BookingWithOutFeeMenu();
 		feeWithoutbookintMenu = new FeeWithoutbookintMenu();
+		
+		focusPanel = new FocusPanel();
 		
 		scrollPanel = new ScrollPanel();
 		scrollPanel.setHeight((Window.getClientHeight() - 170) + "px");
@@ -390,7 +407,9 @@ public class BookingCustomer extends HTMLPanel {
 		
 		scrollPanel.add(mainContainer);
 		
-		this.add(scrollPanel);
+		focusPanel.add(scrollPanel);
+		
+		this.add(focusPanel);
 	}
 	
 	public void setBookingCustomer(Customer customer, List<DomainCompany> customerDomains) {
@@ -427,7 +446,7 @@ public class BookingCustomer extends HTMLPanel {
 		Label name = new Label("NOMBRE");
 		Label document = new Label("DOCUMENTO");
 		Label status = new Label("ESTADO");
-		Label billable = new Label("FACTURABLE");
+		Label billable = new Label("FACT.");
 		Label creation = new Label("CREACION");
 		Label lastModif = new Label("ULT. MODIF.");
 		Label alias = new Label("ALIAS");
@@ -469,16 +488,16 @@ public class BookingCustomer extends HTMLPanel {
 		customerTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
 		customerTable.getCellFormatter().addStyleName(row, 10, AON.CSS.aonHeaderSticky());
 		
-		customerTable.getColumnFormatter().getElement(0).getStyle().setWidth(80, Unit.PX);
+		customerTable.getColumnFormatter().getElement(0).getStyle().setWidth(65, Unit.PX);
 		customerTable.getColumnFormatter().getElement(1).getStyle().setWidth(50, Unit.PX);
-		customerTable.getColumnFormatter().getElement(2).getStyle().setWidth(250, Unit.PX);
+		customerTable.getColumnFormatter().getElement(2).getStyle().setWidth(190, Unit.PX);
 
 		customerTable.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
-		customerTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
-		customerTable.getColumnFormatter().getElement(6).getStyle().setWidth(80, Unit.PX);
+		customerTable.getColumnFormatter().getElement(5).getStyle().setWidth(60, Unit.PX);
+		customerTable.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
 		customerTable.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
 		customerTable.getColumnFormatter().getElement(8).getStyle().setWidth(80, Unit.PX);
-		customerTable.getColumnFormatter().getElement(9).getStyle().setWidth(250, Unit.PX);
+		customerTable.getColumnFormatter().getElement(9).getStyle().setWidth(215, Unit.PX);
 		customerTable.getColumnFormatter().getElement(10).getStyle().setWidth(25, Unit.PX);
 		
 		int newRow = customerTable.insertRow(customerTable.getRowCount());
@@ -489,10 +508,112 @@ public class BookingCustomer extends HTMLPanel {
 		Label descriptionLabel = new Label(this.customer.getName());
 		Label documentLabel = new Label(this.customer.getDocument());
 		Label statusLabel = new Label(this.customer.getStatus().getDescription());
-		Label billableLabel = new Label(this.customer.isBillable() ? "Facturable" : "No Facturable");
-		Label expirationLabel = new Label(formatDate(this.customer.getDomain().getCreationDate()));
-		Label lastAccessLabel = new Label(formatDate(this.customer.getDomain().getModificationDate()));
+		Label billableLabel = new Label(this.customer.isBillable() ? "SI" : "NO");
+		Label expirationLabel = new Label(formatDate(this.customer.getCreationDate()));
+		Label lastAccessLabel = new Label(formatDate(this.customer.getModificationDate()));
+		
 		Label nameLabel = new Label(this.customer.getAlias());
+		nameLabel.getElement().getStyle().setCursor(Cursor.POINTER);
+		nameLabel.addClickHandler(e ->{
+			AonDialog dialog = new AonDialog("Acceso remoto",
+					new HTML("Se va a acceder al dominio <b>" + this.customer.getAlias() + "</b>.<br>\u00bfQuiere activar el acceso remoto para este dominio\u003f"));
+			
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {
+					Window.open("https://" + customer.getAlias(), "_blank", "");
+				}
+
+				@Override
+				public void onAccept() {
+					// Create the base URL
+					String baseUrl = "/ms/api/domain/";
+
+					// Create a URL builder and add query parameters
+					UrlBuilder urlBuilder = new UrlBuilder();
+					urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+					urlBuilder.setHost("aon.solutions"); 
+					urlBuilder.setPath(baseUrl);
+					
+					urlBuilder.setParameter("domainId", customer.getDomain().getId().toString());
+					
+					// Create the request builder with the complete URL
+					RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+					requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+					
+					try {
+					    // Send the request
+					    requestBuilder.sendRequest(null, new RequestCallback() {
+					        public void onResponseReceived(Request request, Response response) {
+					            if (response.getStatusCode() == 200) {
+					            	
+					            	 String domainJSON = response.getText();
+
+					            	// Create the base URL
+									String baseUrl = "/ms/api/domain/remote/";
+
+									// Create a URL builder and add query parameters
+									UrlBuilder urlBuilder = new UrlBuilder();
+									urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+									urlBuilder.setHost(Window.Location.getHost()); 
+									urlBuilder.setPath(baseUrl);
+									
+									urlBuilder.setParameter("domain", domainJSON);
+									
+									// Create the request builder with the complete URL
+									RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+									requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+									
+									try {
+									    // Send the request
+									    requestBuilder.sendRequest(null, new RequestCallback() {
+									        public void onResponseReceived(Request request, Response response) {
+									            if (response.getStatusCode() == 200) {
+									            	Window.open("https://" + customer.getAlias(), "_blank", "");
+									            } else {
+									            	AonMessagePanel.showError(messagePanel, response.getText());
+									            }
+									        }
+
+											public void onError(Request request, Throwable exception) {
+												AonMessagePanel.showError(messagePanel, exception.getMessage());
+									        }
+									    });
+									} catch (RequestException e) {
+										AonMessagePanel.showError(messagePanel, e.getMessage());
+									}
+					                
+					            } else {
+					            	AonMessagePanel.showError(messagePanel, response.getText());
+					            }
+					        }
+
+							public void onError(Request request, Throwable exception) {
+								AonMessagePanel.showError(messagePanel, exception.getMessage());
+					        }
+					    });
+					} catch (RequestException e) {
+						AonMessagePanel.showError(messagePanel, e.getMessage());
+					}
+					
+				}
+			});
+		});
+		
+		// Status
+		if (this.customer.getStatus().equals(RegistryStatus.INACTIVE)) {
+			statusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			statusLabel.getElement().getStyle().setColor("red");
+		} else if (this.customer.getStatus().equals(RegistryStatus.BLOCKED)) {
+			statusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			statusLabel.getElement().getStyle().setColor("orange");
+		}
+		
+		if(!this.customer.isBillable()) {
+			billableLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			billableLabel.getElement().getStyle().setColor("orange");
+		}
 		
 		customerTable.setWidget(newRow, 0, domainTypeLabel);
 		customerTable.setWidget(newRow, 1, idLabel);
@@ -715,7 +836,7 @@ public class BookingCustomer extends HTMLPanel {
 		Label name = new Label("NOMBRE");
 		Label document = new Label("DOCUMENTO");
 		Label status = new Label("ESTADO");
-		Label billable = new Label("FACTURABLE");
+		Label billable = new Label("FACT.");
 		Label expire = new Label("EXPIRA");
 		Label lastAccess = new Label("ULT. ACCESO");
 		Label description = new Label("URL");
@@ -757,16 +878,16 @@ public class BookingCustomer extends HTMLPanel {
 		domainTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
 		domainTable.getCellFormatter().addStyleName(row, 10, AON.CSS.aonHeaderSticky());
 		
-		domainTable.getColumnFormatter().getElement(0).getStyle().setWidth(80, Unit.PX);
+		domainTable.getColumnFormatter().getElement(0).getStyle().setWidth(65, Unit.PX);
 		domainTable.getColumnFormatter().getElement(1).getStyle().setWidth(50, Unit.PX);
-		domainTable.getColumnFormatter().getElement(2).getStyle().setWidth(250, Unit.PX);
+		domainTable.getColumnFormatter().getElement(2).getStyle().setWidth(190, Unit.PX);
 
 		domainTable.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
-		domainTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
-		domainTable.getColumnFormatter().getElement(6).getStyle().setWidth(80, Unit.PX);
+		domainTable.getColumnFormatter().getElement(5).getStyle().setWidth(60, Unit.PX);
+		domainTable.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
 		domainTable.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
 		domainTable.getColumnFormatter().getElement(8).getStyle().setWidth(80, Unit.PX);
-		domainTable.getColumnFormatter().getElement(9).getStyle().setWidth(250, Unit.PX);
+		domainTable.getColumnFormatter().getElement(9).getStyle().setWidth(215, Unit.PX);
 		domainTable.getColumnFormatter().getElement(10).getStyle().setWidth(25, Unit.PX);
 		
 		scrollPanel.add(domainTable);
@@ -780,10 +901,119 @@ public class BookingCustomer extends HTMLPanel {
 			Label descriptionLabel = new Label(domainCompany.getDomain().getDescription());
 			Label documentLabel = new Label(domainCompany.getCompany().getDocument());
 			Label statusLabel = new Label(domainCompany.getDomain().isActive() ? "Activo" : "Inactivo");
-			Label billableLabel = new Label(domainCompany.getDomain().getAonStatus().getName());
+			Label billableLabel = new Label(domainCompany.getDomain().getAonStatus().equals(AonStatus.BILLABLE) ? "SI" : "NO");
 			Label expirationLabel = new Label(formatDate(domainCompany.getDomain().getExpirationDate()));
 			Label lastAccessLabel = new Label(formatDate(domainCompany.getDomain().getLastAccessDate()));
 			Label nameLabel = new Label(domainCompany.getDomain().getName());
+			nameLabel.getElement().getStyle().setCursor(Cursor.POINTER);
+			nameLabel.addClickHandler(e ->{
+				AonDialog dialog = new AonDialog("Acceso remoto",
+						new HTML("Se va a acceder al dominio <b>" + this.customer.getAlias() + "</b>.<br>\u00bfQuiere activar el acceso remoto para este dominio\u003f"));
+				
+				dialog.confirm(new AonAcceptDialogCallback() {
+
+					@Override
+					public void onCancel() {
+						Window.open("https://" + domainCompany.getDomain().getName(), "_blank", "");
+					}
+
+					@Override
+					public void onAccept() {
+						// Create the base URL
+						String baseUrl = "/ms/api/domain/";
+
+						// Create a URL builder and add query parameters
+						UrlBuilder urlBuilder = new UrlBuilder();
+						urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+						urlBuilder.setHost("aon.solutions"); 
+						urlBuilder.setPath(baseUrl);
+						
+						urlBuilder.setParameter("domainId", customer.getDomain().getId().toString());
+						
+						// Create the request builder with the complete URL
+						RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+						requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+						
+						try {
+						    // Send the request
+						    requestBuilder.sendRequest(null, new RequestCallback() {
+						        public void onResponseReceived(Request request, Response response) {
+						            if (response.getStatusCode() == 200) {
+						            	
+						            	 String domainJSON = response.getText();
+
+						            	// Create the base URL
+										String baseUrl = "/ms/api/domain/remote/";
+
+										// Create a URL builder and add query parameters
+										UrlBuilder urlBuilder = new UrlBuilder();
+										urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+										urlBuilder.setHost(Window.Location.getHost()); 
+										urlBuilder.setPath(baseUrl);
+										
+										urlBuilder.setParameter("domain", domainJSON);
+										
+										// Create the request builder with the complete URL
+										RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+										requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+										
+										try {
+										    // Send the request
+										    requestBuilder.sendRequest(null, new RequestCallback() {
+										        public void onResponseReceived(Request request, Response response) {
+										            if (response.getStatusCode() == 200) {
+										            	Window.open("https://" + domainCompany.getDomain().getName(), "_blank", "");
+										            } else {
+										            	AonMessagePanel.showError(messagePanel, response.getText());
+										            }
+										        }
+
+												public void onError(Request request, Throwable exception) {
+													AonMessagePanel.showError(messagePanel, exception.getMessage());
+										        }
+										    });
+										} catch (RequestException e) {
+											AonMessagePanel.showError(messagePanel, e.getMessage());
+										}
+						                
+						            } else {
+						            	AonMessagePanel.showError(messagePanel, response.getText());
+						            }
+						        }
+
+								public void onError(Request request, Throwable exception) {
+									AonMessagePanel.showError(messagePanel, exception.getMessage());
+						        }
+						    });
+						} catch (RequestException e) {
+							AonMessagePanel.showError(messagePanel, e.getMessage());
+						}
+						
+					}
+				});
+			});
+			
+			// Status
+			if (!domainCompany.getDomain().isActive()) {
+				statusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				statusLabel.getElement().getStyle().setColor("red");
+			}
+			
+			if (domainCompany.getDomain().getAonStatus().equals(AonStatus.NOT_BILLABLE)) {
+				billableLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				billableLabel.getElement().getStyle().setColor("orange");
+			}
+			
+			if(null != domainCompany.getDomain().getExpirationDate()) {
+				Date today = new Date();
+				if(domainCompany.getDomain().getExpirationDate().after(today)) {
+					expirationLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+					expirationLabel.getElement().getStyle().setColor("orange");
+				} else if(domainCompany.getDomain().getExpirationDate().before(today)) {
+					expirationLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+					expirationLabel.getElement().getStyle().setColor("red");
+				}
+			}
 			
 			domainTable.setWidget(newRow, 0, domainTypeLabel);
 			domainTable.setWidget(newRow, 1, idLabel);
@@ -796,9 +1026,12 @@ public class BookingCustomer extends HTMLPanel {
 			domainTable.setWidget(newRow, 8, lastAccessLabel);
 			domainTable.setWidget(newRow, 9, nameLabel);
 			
-			AonTableButton urlBtn = new AonTableButton("Ir a", AON.CSS.aonIconSend());
-			urlBtn.addClickHandler(e -> {
-				Window.open("https://" + domainCompany.getDomain().getName(), "_blank", "");
+			AonTableButton urlBtn = new AonTableButton("Ir a", AON.CSS.aonIconGroup());
+			urlBtn.addMouseOverHandler(e -> {
+				openUserTooltip(domainCompany.getDomain().getId(), e.getClientX(), e.getClientY());
+			});
+			focusPanel.addMouseOverHandler(e -> {
+				aonCustomerTooltip.hide();
 			});
 			
 			domainTable.setWidget(newRow, 10, urlBtn);
@@ -845,6 +1078,28 @@ public class BookingCustomer extends HTMLPanel {
 		
 	}
 	
+//	private void openUserTooltip(List<User> users, int clientX, int clientY) {
+//		Window.alert("users size: " + users + "\nclientX: " + clientX + "\nclientY: " +clientY);
+//		aonCustomerTooltip.setUsers(users);
+//		aonCustomerTooltip.showTooltip(clientX, clientY);
+//	}
+	
+	private void openUserTooltip(Integer domainId, int clientX, int clientY) {
+		SERVICE.getUsers(options.getDomainName(), options.getDomain(), options.getUser(), domainId, new AsyncCallback<List<User>>() {
+
+			@Override
+			public void onFailure(Throwable arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(List<User> users) {
+				aonCustomerTooltip.setUsers(users);
+				aonCustomerTooltip.showTooltip(clientX, clientY);
+			}});
+	}
+
 	private String formatDate(Date date) {
 		if(null == date) return "";
 		return formatDate.format(date);
