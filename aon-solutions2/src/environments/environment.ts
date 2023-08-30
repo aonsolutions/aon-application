@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  urlRestCounties: "https://restcountries.com/v3.1",
   urlApiAon: "https://aonsolutions.org/ms/api/",
   headerApi: {
     domainName: "a54212356-cau.aonsolutions.org",

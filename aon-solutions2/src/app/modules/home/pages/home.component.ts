@@ -8,6 +8,7 @@ import { BankService } from 'src/app/core/services/bank.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
+import { CountryService } from 'src/app/core/services/country.service';
 
 export interface ShortcutDashboard {
   shape : string;
@@ -70,7 +71,8 @@ export class HomeComponent implements OnInit {
     private taxModelService : TaxModelService,
     private reportingService: ReportingService,
     private messageService  : MessageService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private countryServie: CountryService
   ) {
     this.translateService.get([
       'HOME.SALES_EXPENSES', 'HOME.COLLECTIONS_PAYMENTS', 'HOME.CREATE_INVOICE',
@@ -168,6 +170,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  
+    let countries = this.countryServie.getAllCountries();
+
+    console.log(countries);
   }
 }
