@@ -97,10 +97,10 @@
   "CONSULTING": {
 
   },
-  "EMPLOYEE-PANEL": {
+  "EMPLOYEE_PANEL": {
 
   },
-  "TAX-PANEL": {
+  "TAX_PANEL": {
     "1_TRIMESTER":   "1 Trimester",
     "2_TRIMESTER":   "2 Trimester",
     "3_TRIMESTER":   "3 Trimester",
@@ -109,10 +109,17 @@
     "NAME":          "Model",
     "RESULT":        "Result",
     "STATUS":        "Status",
-    "PAYMENTMETHOD": "Paymentmethod",
+    "PAYMENTMETHOD": "Payment method",
     "ACTIONS":       "Actions",
     "MODEL":         "Model",
-    "YEAR":          "Year"
+    "YEAR":          "Year",
+    "TOTAL_ACCRUED_FEE": "Total accrued fee",
+    "TOTAL_DEDUCTIBLE_FEE": "Total deductible fee ",
+    "TO_DEDUCT_SUPPLEMENTARY_ASSESSMENT":"To deduct - supplementary self-assessment",
+    "FEES_TO_BE_OFFSET": "Fees to be offset from previous periods",
+    "LIQUIDATION_RESULT": "Liquidation result",
+    "DOWNLOAD_EXCEL": "DOWNLOAD EXCEL",
+    "DOWNLOAD_PDF": "DOWNLOAD PDF"
   },
     "PROFILE": {
     "CONTACT_DETAILS":   "Contact details",
@@ -152,6 +159,8 @@
     "TGSS": "TGSS",
     "SEPE": "SEPE",
     "AEAT": "AEAT",
-    "ACTIONS": "Actions"
+    "ACTIONS": "Actions",
+    "DELETE_ITEM": "Would you like to delete this item?",
+    "CERTIFICATE_VALIDATED": "Certificate successfully validated"
   }
 }

@@ -29,19 +29,19 @@ export class TableTaxModelComponent implements OnInit {
   ) {
     this.translateService
       .get([
-        'TAX-PANEL.NAME',
-        'TAX-PANEL.RESULT',
-        'TAX-PANEL.STATUS',
-        'TAX-PANEL.PAYMENTMETHOD',
-        'TAX-PANEL.ACTIONS',
+        'TAX_PANEL.NAME',
+        'TAX_PANEL.RESULT',
+        'TAX_PANEL.STATUS',
+        'TAX_PANEL.PAYMENTMETHOD',
+        'TAX_PANEL.ACTIONS',
       ])
       .subscribe((result) => {
         this.headerTable = {
-          name: result['TAX-PANEL.NAME'] ,
-          result: result['TAX-PANEL.RESULT'] ,
-          status: result['TAX-PANEL.STATUS'] ,
-          paymentMethod: result['TAX-PANEL.PAYMENTMETHOD'] ,
-          actions: result['TAX-PANEL.ACTIONS'],
+          name: result['TAX_PANEL.NAME'] ,
+          result: result['TAX_PANEL.RESULT'] ,
+          status: result['TAX_PANEL.STATUS'] ,
+          paymentMethod: result['TAX_PANEL.PAYMENTMETHOD'] ,
+          actions: result['TAX_PANEL.ACTIONS'],
         };
       });
   }

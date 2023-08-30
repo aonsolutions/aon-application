@@ -40,17 +40,17 @@ export class TabsTaxModelComponent implements OnInit {
     private translateService: TranslateService
   ) {
     this.translateService.get(
-      ['TAX-PANEL.1_TRIMESTER', 'TAX-PANEL.2_TRIMESTER', 'TAX-PANEL.3_TRIMESTER','TAX-PANEL.4_TRIMESTER', 'TAX-PANEL.ALL']
+      ['TAX_PANEL.1_TRIMESTER', 'TAX_PANEL.2_TRIMESTER', 'TAX_PANEL.3_TRIMESTER','TAX_PANEL.4_TRIMESTER', 'TAX_PANEL.ALL']
     ).subscribe( result => {
       // Marcar el trimestre en el que estamos
       this.trimesterThis();
       // Cabecera de los tags
       this.tabs = [
-        { name: result['TAX-PANEL.1_TRIMESTER']},
-        { name: result['TAX-PANEL.2_TRIMESTER']},
-        { name: result['TAX-PANEL.3_TRIMESTER']},
-        { name: result['TAX-PANEL.4_TRIMESTER']},
-        { name: result['TAX-PANEL.ALL']},
+        { name: result['TAX_PANEL.1_TRIMESTER']},
+        { name: result['TAX_PANEL.2_TRIMESTER']},
+        { name: result['TAX_PANEL.3_TRIMESTER']},
+        { name: result['TAX_PANEL.4_TRIMESTER']},
+        { name: result['TAX_PANEL.ALL']},
       ]
     })
     // Datos del modelo
@@ -70,7 +70,7 @@ export class TabsTaxModelComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  
+
   // En el trimestre que estamos
   trimesterThis() {
     const currentDate   = new Date();

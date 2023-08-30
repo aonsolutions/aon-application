@@ -8,6 +8,8 @@ import {
 
 import { TranslateService } from '@ngx-translate/core';
 import { CertificateService } from '../../../../core/services/certificate.service';
+import { ModalDeleteCertificateComponent } from '../modal-delete-certificate/modal-delete-certificate.component';
+import { ModalValidatedCertificateComponent } from '../modal-validated-certificate/modal-validated-certificate.component';
 
 @Component({
   selector: 'app-table-profile-certificate',
@@ -29,22 +31,28 @@ export class TableProfileCertificateComponent implements OnInit {
   headerTable: any = {};
   bodyTable: any = [];
 
-//type: class Certificate { constructor(name, representationType, expirationDate, alias, type, tgss, sepe, aeat) }
 
-  constructor(public certificateService: CertificateService,
+  constructor(
+    public certificateService: CertificateService,
     private translateService: TranslateService
-    ) {
-      this.translateService
+  ) {
+    this.translateService
       .get([
-        'PROFILE.HOLDER', 'PROFILE.REPRESENTATION', 'PROFILE.EXPIRATION_DATE',
-        'PROFILE.ALIAS', 'PROFILE.TYPE', 'PROFILE.TGSS', 'PROFILE.SEPE',
-        'PROFILE.AEAT', 'PROFILE.ACTIONS'
+        'PROFILE.HOLDER',
+        'PROFILE.REPRESENTATION',
+        'PROFILE.EXPIRATION_DATE',
+        'PROFILE.ALIAS',
+        'PROFILE.TYPE',
+        'PROFILE.TGSS',
+        'PROFILE.SEPE',
+        'PROFILE.AEAT',
+        'PROFILE.ACTIONS',
       ])
       .subscribe((result) => {
         this.headerTable = {
-          name: result['PROFILE.HOLDER'] ,
-          representationType: result['PROFILE.REPRESENTATION'] ,
-          expirationDate: result['PROFILE.EXPIRATION_DATE'] ,
+          name: result['PROFILE.HOLDER'],
+          representationType: result['PROFILE.REPRESENTATION'],
+          expirationDate: result['PROFILE.EXPIRATION_DATE'],
           alias: result['PROFILE.ALIAS'],
           type: result['PROFILE.TYPE'],
           tgss: result['PROFILE.TGSS'],
@@ -61,7 +69,7 @@ export class TableProfileCertificateComponent implements OnInit {
             column = Object.assign({}, certificate);
             column.key = certificateKey;
             column.name = certificate.Name;
-            column.representationType = certificate.RepresentationType ;
+            column.representationType = certificate.RepresentationType;
             column.expirationDate = certificate.ExpirationDate;
             column.alias = certificate.Alias;
             column.type = certificate.Type;
@@ -71,7 +79,7 @@ export class TableProfileCertificateComponent implements OnInit {
             column.actions = ['verified_user', 'delete'];
 
             tableRow.push(column);
-            console.log(column)
+            console.log(column);
           });
 
           this.bodyTable = tableRow;
@@ -81,9 +89,34 @@ export class TableProfileCertificateComponent implements OnInit {
 
   ngOnInit(): void {}
 
+
+  @ViewChild('modalDelete') ModalDeleteCertificateComponent: any = '';
+  @ViewChild('modalValidated') ModalValidatedCertificateComponent: any = '';
+
+  functionHome: any = (result: any) => this.afterModalClosed(result);
+  afterModalClosed(result?: any) {}
   modalClick(object: any) {
-    this.certificateService.getCertificate(object.key).then((response) => {
-      console.log(response);
-    });
+
+    switch (object.keyButton) {
+      case 'delete':
+        this.ModalDeleteCertificateComponent.openDialog(
+          ModalDeleteCertificateComponent,
+          this.functionHome,
+          'Data from home'
+        );
+        break;
+      case 'verified_user':
+        this.ModalValidatedCertificateComponent.openDialog(
+          ModalValidatedCertificateComponent,
+          this.functionHome,
+          'Data from home'
+        );
+        break;
+
   }
+
+  this.certificateService.getCertificate(object.key).then((response) => {
+    console.log(response);
+  });
+}
 }

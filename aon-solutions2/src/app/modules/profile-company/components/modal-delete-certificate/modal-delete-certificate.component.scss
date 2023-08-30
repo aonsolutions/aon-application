@@ -1,19 +1,14 @@
 @import "src/styles.scss";
 
-.title-modal-edit-tax-model{
-  font-weight: bold;
-  font-size:   $font-size-24;
+.text-modal-delete{
+  display: flex;
+  justify-content: center;
+  padding-bottom:     $padding-bottom;
+  font-size:   $font-size-default;
  }
 
- .text-modal-edit-tax-model{
-color: $color-secondary;
- }
 
 
-.close-button {
-display: flex;
-justify-content: right;
-cursor: pointer;
-}
+
 
 

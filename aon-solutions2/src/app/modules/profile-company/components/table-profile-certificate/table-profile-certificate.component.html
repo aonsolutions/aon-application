@@ -1,20 +1,18 @@
-
-
-    <app-file-upload-button>
-      {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
-      <app-icon shape="cloud_upload" class="margin-left"></app-icon>
-    </app-file-upload-button>
-
+<app-file-upload-button>
+  {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
+  <app-icon shape="cloud_upload" class="margin-left"></app-icon>
+</app-file-upload-button>
 
 <app-table
-mat-table
-mat-flat-table
-[displayedColumns]="displayedColumns"
-[head]="headerTable"
-[data]="bodyTable"
-(listenParentHandler)="modalClick($event)"
-
+  mat-table
+  mat-flat-table
+  [displayedColumns]="displayedColumns"
+  [head]="headerTable"
+  [data]="bodyTable"
+  (listenParentHandler)="modalClick($event)"
 >
-<!-- Modales de acciones -->
+</app-table>
 
-<!-- <app-modal-controller #modalDelete ></app-modal-controller> -->
+<!-- Modales de acciones -->
+<app-modal-controller #modalDelete ></app-modal-controller>
+<app-modal-controller #modalValidated ></app-modal-controller>
