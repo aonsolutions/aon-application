@@ -12,6 +12,9 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls   : ['./table-tax-model.component.scss'],
 })
 export class TableTaxModelComponent implements OnInit {
+  @ViewChild('modalEdit') modalComponentEdit: any = '';
+  @ViewChild('modalPayment') modalComponentPayment: any = '';
+  @ViewChild('modalTaxesDetails') modalComponentTaxesDetails: any = '';
   @Input() trimester: number    = 0;
   headerTable       : any       = {};
   bodyTable         : any       = [];
@@ -22,6 +25,8 @@ export class TableTaxModelComponent implements OnInit {
     'paymentMethod',
     'actions',
   ];
+  functionHome: any = (result: any) => this.afterModalClosed(result);
+  afterModalClosed(result?: any) {}
 
   constructor(
     public  taxModelService: TaxModelService,
@@ -111,13 +116,6 @@ export class TableTaxModelComponent implements OnInit {
         this.bodyTable = tableRow;
       });
   }
-
-  @ViewChild('modalEdit') modalComponentEdit: any = '';
-  @ViewChild('modalPayment') modalComponentPayment: any = '';
-  @ViewChild('modalTaxesDetails') modalComponentTaxesDetails: any = '';
-
-  functionHome: any = (result: any) => this.afterModalClosed(result);
-  afterModalClosed(result?: any) {}
 
   modalClick(object: any) {
     // Fila de la tabla que se esta usando

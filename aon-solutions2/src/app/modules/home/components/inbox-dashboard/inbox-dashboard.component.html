@@ -1,4 +1,4 @@
-<app-card
+<!--<app-card
   [class]="'padding'"
 >
   <div header class="head-card">
@@ -27,7 +27,13 @@
       <span class="number-circle"> {{ totalMessages }} </span>
     </div>
   </div>
-</app-card>
+</app-card>-->
 
-
-
+<app-table
+  mat-table
+  mat-flat-table
+  [displayedColumns]="displayedColumns"
+  [data]="bodyTable"
+  (listenParentRow)="rowClick($event)"
+>
+</app-table>
