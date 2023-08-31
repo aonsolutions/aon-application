@@ -2,6 +2,7 @@
  *  Configuration parameters
  */
 
+
 // true para activar que los datos lleguen desde la api, false para usar datos ficticion locales
 let APIEnvironment = true;
 // true activa unos tests simples para ver que los métodos funcionan correctamente, false para desactivarlos
@@ -196,11 +197,30 @@ export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMult
     }
 }
 
+export class TaskHolderFactory implements ISingleObjectCrudFactory<ITaskHolder>, IMultipleObjectCrudFactory<ITaskHolder> {
+    createSingleObjectCrud(): ISingleObjectCrud<ITaskHolder> {
+        return new GenericSingleObjectCrud<TaskHolder>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<TaskHolder>(new ApiTaskHolder(), TaskHolder) : 
+            new GenericSingleObjectCrudRepository<TaskHolder>(new StorableTaskHolder(), TaskHolder)
+            ), 
+            TaskHolder);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<ITaskHolder> {
+        return new GenericMultipleObjectCrud<TaskHolder>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<TaskHolder>(new ApiTaskHolder(), TaskHolder) : 
+            new GenericMultipleObjectCrudRepository<TaskHolder>(new StorableTaskHolder(), TaskHolder)
+            ), 
+            TaskHolder);
+    }
+}
+
 export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat>, IMultipleObjectCrudFactory<IMessageChat> {
     createSingleObjectCrud(): ISingleObjectCrud<IMessageChat> {
         return new GenericSingleObjectCrud<MessageChat>( 
             (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<MessageChat>(new ApiMessageChat(), MessageChat) : 
+            new APIMessageChatSingleObjectCrudRepository(new ApiMessageChat(), MessageChat) : 
             new GenericSingleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat)
             ), 
             MessageChat);
@@ -964,10 +984,10 @@ class AuthenticationRepository implements IAuthenticationRepository {
 // REPOSITORIO PARA LAS LLAMADAS GLOBALES A LA API PARA OPERACIONES CRUD SOBRE UN SOLO OBJETO, 
 // SI SE NECESITA UN COMPORTAMIENTO ESPECIFICO HEREDAR Y SOBREESCRIBIR DICHO MÉTODO
 class APIGenericSingleObjectCrudRepository<T extends IModel> implements ISingleObjectCrudRepository<T> {
-    private httpRequest: IApiHttpRequest = new ApiHttpRequest();
-    private type: { new (): T };
-    private model: IModel;
-    private apiModel: IApiModel;
+    protected httpRequest: IApiHttpRequest = new ApiHttpRequest();
+    protected type: { new (): T };
+    protected model: IModel;
+    protected apiModel: IApiModel;
 
     constructor(apiModel: IApiModel, type: { new (): T }){
         this.type = type;
@@ -1083,11 +1103,83 @@ class APIMessageSingleObjectCrudRepository extends APIGenericSingleObjectCrudRep
     constructor(apiModel: ApiMessage, type: { new (): Message }){
         super(apiModel, type);
     }
+
+    async create(message: Message): Promise<Message> {
+        let cauInfo = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/cau', GET_METHOD, {}, {})
+        let sender = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/taskholder?id=' + localStorage.getItem('registry'), GET_METHOD, {}, {})
+        let taskHolder = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/taskholder?id=' + message.TaskHolder.Id, GET_METHOD, {}, {})
+        let domain = {
+            id: localStorage.getItem('domainId'),
+            name: localStorage.getItem('domainName')
+        }
+        let workflow = {
+            comment: "",
+            domain: localStorage.getItem('domainId'),
+            task_holder: sender,
+            type: "opened",
+            email: cauInfo.auth.email || ''
+        }
+        let description = JSON.stringify({
+            observation: message.Description,
+            cauinfo: cauInfo,
+        })
+        let json = {
+            domain: domain,
+            sender: sender,
+            task_holder: taskHolder,
+            workgroup: {},
+            title: message.Title,
+            registry: {},
+            workflow: [workflow],
+            description: description,
+            status: 'pending',
+            source: 'query',
+            source_id: null,
+            files: [],
+            project: {},
+            tags: [],
+            childs: [],
+            domaintmp: domain,
+            workflowtmp: workflow,
+            mytaskholder: sender,
+            auth: cauInfo.auth,
+            domaincompany: cauInfo.company.domain
+        }
+        let newMessage: Message = this.apiModel.parseDataToReceive(await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task', POST_METHOD, {}, json), GET_SINGLE);
+        return newMessage;
+    }
 }
 
 class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleObjectCrudRepository<Message> {
     constructor(apiModel: ApiMessage, type: { new (): Message }){
         super(apiModel, type);
+    }
+}
+
+class APIMessageChatSingleObjectCrudRepository extends APIGenericSingleObjectCrudRepository<MessageChat> {
+    constructor(apiModel: ApiMessageChat, type: { new (): MessageChat }){
+        super(apiModel, type);
+    }
+
+    async create(messageChat: MessageChat): Promise<MessageChat> {
+        //comment
+        //domain
+        //email
+        //task
+        //task_holder
+        //type
+        let sender = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/taskholder?id=' + localStorage.getItem('registry'), GET_METHOD, {}, {})
+        let json = {
+            comment: messageChat.Description,
+            domain: localStorage.getItem('domainId'),
+            email: '',
+            task: messageChat.IdMessage,
+            task_holder: sender,
+            type: 'comment'
+        }
+        let newMessage: MessageChat = this.apiModel.parseDataToReceive(await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/workflow', POST_METHOD, {}, json), GET_MULTIPLE);
+        return newMessage;
+        throw new ErrorResponse('0199')
     }
 }
 
@@ -1802,6 +1894,11 @@ export interface IMessage extends ICollectable {
     Type: string;
     Status: string;
     EndDate: Date;
+}
+
+export interface ITaskHolder extends ICollectable {
+    Id: string;
+    Name: string;
 }
 
 export interface IMessageChat extends ICollectable {
@@ -3075,6 +3172,7 @@ class Message implements IMessage, IModel  {
     private status: string;
     private endDate: Date;
     private key: string;
+    private taskHolder : TaskHolder;
     protected apiObject: any;
 
     public get ApiObject(): any {
@@ -3095,6 +3193,7 @@ class Message implements IMessage, IModel  {
         this.status = status || '';
         this.endDate = endDate || new Date();
         this.key = this.id || '';
+        this.taskHolder = new TaskHolder();
     }
 
     public get Id(): string {
@@ -3103,6 +3202,14 @@ class Message implements IMessage, IModel  {
 
     public set Id(value: string) {
         this.id = value;
+    }
+
+    public get TaskHolder(): TaskHolder {
+        return this.taskHolder;
+    }
+
+    public set TaskHolder(value: TaskHolder) {
+        this.taskHolder = value;
     }
 
     public get Name(): string {
@@ -3204,9 +3311,9 @@ class ApiMessage extends Message implements IApiModel {
             if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'notificacion')
                 return ['/ms/api/notification?page=1&perPage=100']
             else if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'consulta')
-                return ['/ms/api/task?source=query&page=1&perPage=100&task_holder=' + localStorage.getItem('registry')]
+                return ['/ms/api/task?source=query&page=1&perPage=100&task_holder=' + localStorage.getItem('registry') + '&sender=' + localStorage.getItem('registry')]
             else if(filter && filter.fields?.has('type') && filter.fields.get('type').toLowerCase() == 'tarea')
-                return ['/ms/api/task?source=task&page=1&perPage=100&task_holder=' + localStorage.getItem('registry')]
+                return ['/ms/api/task?source=task&page=1&perPage=100&task_holder=' + localStorage.getItem('registry') + '&sender=' + localStorage.getItem('registry')]
             else
                 return ['/ms/api/notification?page=1&perPage=100','/ms/api/task?source=query&page=1&perPage=100','/ms/api/task?source=task&page=1&perPage=100']
         }else if (currentMethod == GET_SINGLE){
@@ -3248,7 +3355,7 @@ class ApiMessage extends Message implements IApiModel {
             let description = JSON.parse(data.description);
             message.ApiObject = data;
             message.Id = data.id + (data.source == 'query' ? ';consulta' : ';tarea');
-            message.Name = data.sender.name ? data.sender.name : '';
+            message.Name = data.sender.name  ? data.sender.name : '';
             message.Title = data.title ? data.title : '';
             message.Description = description.observation ? description.observation : '';
             message.Date = new Date(data.start_date);
@@ -3280,6 +3387,103 @@ class StorableMessage extends Message implements IStorable<Message> {
     }
     getLocalStorage(): string {
         return 'messages';
+    }
+}
+
+class TaskHolder implements ITaskHolder, IModel {
+    protected id: string;
+    protected name: string;
+    protected key: string;
+    protected apiObject: any;
+
+    constructor(name?: string) {
+        this.name = name || '';
+        this.id = new KeyGenerator().generate(15);
+        this.key = this.id;
+    }
+
+    public get Id(): string {
+        return this.id;
+    }
+
+    public set Id(value: string) {
+        this.id = value;
+    }
+
+    public get Name(): string {
+        return this.name;
+    }
+
+    public set Name(value: string) {
+        this.name = value;
+    }
+
+    public get Key(): string {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    getKey(): string {
+        return this.id;
+    }
+    getFilterableFields(): Map<string, any> {
+        throw new Error("Method not implemented.");
+    }
+    getSortableFields(): Map<string, any> {
+        throw new Error("Method not implemented.");
+    }
+    
+}
+
+class ApiTaskHolder extends TaskHolder implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        if(currentMethod == GET_MULTIPLE)
+            return ['/ms/api/taskholder/list'];
+        if(currentMethod == GET_SINGLE)
+            return ['/ms/api/taskholder?id=' + filter?.fields?.get('id')];
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE || currentMethod == GET_SINGLE)
+            return GET_METHOD;
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        let taskHolder = new TaskHolder(); 
+        taskHolder.ApiObject = data;
+        taskHolder.Id = data.id;
+        taskHolder.Key = data.id;
+        taskHolder.Name = data.name;
+        return taskHolder;
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        return true;
+    }
+    
+}
+
+class StorableTaskHolder extends TaskHolder implements IStorable<TaskHolder> {
+    getCollection(): ICollection<TaskHolder> {
+        throw new Error("Method not implemented.");
+        // return taskHolders;
+    }
+    getLocalStorage(): string {
+        throw new Error("Method not implemented.");
+        return 'taskHolders';
     }
 }
 
@@ -4393,6 +4597,7 @@ if(auths.size() == 0){
 }
 
 
+
 /*
     TESTING API FUNCTIONS
 */
@@ -4407,37 +4612,37 @@ if(test){
     let filterBuider =  new FilterBuilder();
     filterBuider.addField('path','/a_contabilizar');
     documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
-        console.log('TEST GET DOCUMENTS A_CONTABILIZAR', response.result.toArray());
+        console.log('TEST DOCUMENTS GET LIST A_CONTABILIZAR', response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET A_CONTABILIZAR', error)
+        console.log('ERROR TEST DOCUMENTS GET LIST A_CONTABILIZAR', error)
     })
     filterBuider.clearAll();
     filterBuider.addField('path','/contabilizado');
     documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
-        console.log('TEST GET DOCUMENTS CONTABILIZADO(*)', response.result.toArray());
+        console.log('TEST DOCUMENTS GET LIST CONTABILIZADO(*)', response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET DOCUMENTS CONTABILIZADO(*)', error)
+        console.log('ERROR TEST DOCUMENTS GET LIST CONTABILIZADO(*)', error)
     })
     filterBuider.clearAll();
     filterBuider.addField('path','/papelera');
     documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
-        console.log('TEST GET DOCUMENTS PAPELERA', response.result.toArray());
+        console.log('TEST DOCUMENTS GET LIST PAPELERA', response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET DOCUMENTS PAPELERA', error)
+        console.log('ERROR TEST DOCUMENTS GET LIST PAPELERA', error)
     })
     filterBuider.clearAll();
     filterBuider.addField('path','/fiscal');
     documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
-        console.log('TEST GET DOCUMENTS FISCAL',response.result.toArray());
+        console.log('TEST DOCUMENTS GET LIST FISCAL',response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET DOCUMENTS FISCAL', error)
+        console.log('ERROR TEST DOCUMENTS GET LIST FISCAL', error)
     })
     filterBuider.clearAll();
     filterBuider.addField('path','/laboral/51198000T');
     documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
-        console.log('TEST GET DOCUMENTS LABORAL', response.result.toArray());
+        console.log('TEST DOCUMENTS GET LIST LABORAL', response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET DOCUMENTS LABORAL', error)
+        console.log('ERROR DOCUMENTS TEST GET LIST LABORAL', error)
     })
     
     
@@ -4491,7 +4696,7 @@ if(test){
         console.log('ERROR TEST MESSAGES GET ALL', error)
     })
     filterMessage.clearAll();
-    filterMessage.addField('type','tarea');
+    filterMessage.addField('type','consulta');
     messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
         messageFactory.createSingleObjectCrud().getElement(response.result.toArray()[0].Id).then((element) => {
             console.log('TEST MESSAGE GET ONE ', element.result);
@@ -4542,6 +4747,25 @@ if(test){
     }).catch((error) => {
         console.log(error)
     })
+    let taskHolderTest = new TaskHolder();
+    taskHolderTest.Name = 'Name'
+    taskHolderTest.Id = '713845'
+    let testMessage = new Message();
+    testMessage.Date = new Date();
+    testMessage.Description = 'sunt in culpa qui officia deserunt'
+    testMessage.EndDate = new Date();
+    testMessage.Name = taskHolderTest.Name
+    testMessage.Status = 'pendiente'
+    testMessage.Title = 'titulo de ejemplo'
+    testMessage.Type = 'tarea'
+    testMessage.TaskHolder = taskHolderTest;
+
+    let testMessageCreate = new MessageFactory();
+    testMessageCreate.createSingleObjectCrud().createElement(testMessage).then((response) => {
+        console.log('TEST MESSAGE CREATE', response.result);
+    }).catch((error) => {
+        console.log('ERROR TEST MESSAGE CREATE', error)
+    })
 
     /*
         TEST FOR MESSAGE CHAT
@@ -4554,12 +4778,37 @@ if(test){
     filterMessage2.addField('type','consulta');
     messageFactory2.createMultipleObjectCrud().getCollection(filterMessage2.getFilter()).then((response) => {
         //response.result.toArray()[0].Id
-        filterMessageChat.addField('idMessage', '29459');
+        filterMessageChat.addField('idMessage', '29475');
         messageChatFactory.createMultipleObjectCrud().getCollection(filterMessageChat.getFilter()).then((response) => {
-            console.log('TEST GET CHAT MESSAGES', response.result.toArray());
+            console.log('TEST MESSAGECHAT GET LIST', response.result.toArray());
         }).catch((error) => {
-            console.log('ERROR TEST GET CHAT MESSAGES', error)
+            console.log('ERROR TEST MESSAGECHAT GET LIST', error)
         })
+    })
+
+    let messageChatCreate = new MessageChat();
+    messageChatCreate.IdMessage = '29490';
+    messageChatCreate.Description = 'sunt in culpa qui officia deserunt';
+    messageChatFactory.createSingleObjectCrud().createElement(messageChatCreate).then((response) => {
+        console.log('TEST MESSAGECHAT CREATE', response.result);
+    }).catch((error) => {
+        console.log('ERROR TEST MESSAGECHAT CREATE', error)
+    })
+
+    /*
+        TEST FOR TASKHOLDERS
+    */
+
+    let taskHolderFactory = new TaskHolderFactory();
+    taskHolderFactory.createMultipleObjectCrud().getCollection().then((response) => {
+        console.log('TEST TASKHOLDERS GET LIST', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST TASKHOLDERS GET LIST', error)
+    })
+    taskHolderFactory.createSingleObjectCrud().getElement('702381').then((response) => {
+        console.log('TEST TASKHOLDERS GET ONE', response.result);
+    }).catch((error) => {
+        console.log('ERROR TEST TASKHOLDERS GET ONE', error)
     })
     
     
@@ -4572,9 +4821,9 @@ if(test){
     let filterTax = new FilterBuilder();
     filterTax.addField('trimester','T3')
     taxFactory.createMultipleObjectCrud().getCollection(filterTax.getFilter()).then((response) => {
-        console.log('TEST GET TAX MODELS', response.result.toArray());
+        console.log('TEST TAXMODELS GET LIST', response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET TAX MODELS', error)
+        console.log('ERROR TEST TAXMODELS GET LIST', error)
     })
     
     /*
@@ -4583,9 +4832,9 @@ if(test){
     
     let bankFactory = new BankFactory();
     bankFactory.createMultipleObjectCrud().getCollection().then((response) => {
-        console.log('TEST GET BANKS', response.result.toArray());
+        console.log('TEST BANKS GET LIST', response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET BANKS', error)
+        console.log('ERROR TEST BANKS GET LIST', error)
     })
     
     
@@ -4595,9 +4844,9 @@ if(test){
     
     let folderFactory = new FolderFactory();
     folderFactory.createMultipleObjectCrud().getCollection().then((response) =>  {
-        console.log('TEST GET FOLDERS', response.result.toArray());
+        console.log('TEST FOLDERS GET LIST', response.result.toArray());
     }).catch((error) => {
-        console.log('ERROR TEST GET FOLDERS', error)
+        console.log('ERROR TEST FOLDERS GET LIST', error)
     })
 }
 
