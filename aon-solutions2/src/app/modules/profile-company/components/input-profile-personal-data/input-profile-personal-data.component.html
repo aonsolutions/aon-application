@@ -1,12 +1,10 @@
-<div *ngFor="let user of users"class="form">
+<div *ngFor="let user of users" class="form">
   <app-input
     [type]="'text'"
     [label]="'PROFILE.NAME' | translate"
     [placeholder]="'PROFILE.PLACEHOLDER' | translate"
     [required]="'required'"
     [value]="user.Name"
-
-
   ></app-input>
   <app-input
     [type]="'text'"
@@ -14,8 +12,6 @@
     [placeholder]="'PROFILE.PLACEHOLDER' | translate"
     [required]="'required'"
     [value]="user.Lastname"
-
-
   ></app-input>
 </div>
 <div *ngFor="let user of users" class="form">
@@ -25,7 +21,6 @@
     [placeholder]="'PROFILE.PLACEHOLDER' | translate"
     [required]="'required'"
     [value]="user.Email"
-
   ></app-input>
   <app-input
     [type]="'text'"
@@ -43,7 +38,34 @@
     [suffixBehavior]="'edit'"
     [value]="user.Password"
     [disabled]="'disabled'"
-      >
-    <app-icon [shape]="'edit'" suffix></app-icon>
+  >
+    <app-icon
+      [shape]="'edit'"
+      suffix
+      (click)="togglePasswordFields()"
+    ></app-icon>
   </app-input>
+</div>
+<div *ngIf="showPasswordFields" class="password_profile">
+  <div class="form">
+    <app-input
+      [type]="'password'"
+      [label]="'PROFILE.NEW_PASSWORD' | translate"
+      [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+      [suffixBehavior]="'showPass'"
+    >
+      <app-icon [shape]="'eye'" suffix></app-icon>
+    </app-input>
+  </div>
+
+  <div class="form">
+    <app-input
+      [type]="'password'"
+      [label]="'PROFILE.REPEAT_PASSWORD' | translate"
+      [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+      [suffixBehavior]="'showPass'"
+    >
+      <app-icon [shape]="'eye'" suffix></app-icon>
+    </app-input>
+  </div>
 </div>

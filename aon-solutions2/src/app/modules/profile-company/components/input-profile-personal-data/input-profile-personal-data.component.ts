@@ -8,6 +8,7 @@ import { UserService } from '../../../../core/services/user.service';
 })
 export class InputProfilePersonalDataComponent implements OnInit {
   users: any[] = [];
+  showPasswordFields: boolean = false;
 
   constructor(private userService: UserService) {}
 
@@ -16,8 +17,11 @@ export class InputProfilePersonalDataComponent implements OnInit {
       this.users.push(user);
       this.logUserNames();
     });
-  }
 
+  }
+  togglePasswordFields() {
+    this.showPasswordFields = !this.showPasswordFields;
+  }
   logUserNames(): void {
     for (const user of this.users) {
       console.log(user.Name);

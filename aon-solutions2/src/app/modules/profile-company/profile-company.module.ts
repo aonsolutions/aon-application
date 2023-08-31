@@ -24,6 +24,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { TableProfileCertificateComponent } from './components/table-profile-certificate/table-profile-certificate.component';
 import { ModalValidatedCertificateComponent } from './components/modal-validated-certificate/modal-validated-certificate.component';
+import { ModalInfoCertificateComponent } from './components/modal-info-certificate/modal-info-certificate.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { ModalValidatedCertificateComponent } from './components/modal-validated
     InputProfileCompanyInformationComponent,
     ModalDeleteCertificateComponent,
     TableProfileCertificateComponent,
-    ModalValidatedCertificateComponent
+    ModalValidatedCertificateComponent,
+    ModalInfoCertificateComponent
   ],
   imports: [
     CommonModule,

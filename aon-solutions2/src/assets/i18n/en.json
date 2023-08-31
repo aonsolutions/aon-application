@@ -145,6 +145,8 @@
     "NAME": "Name",
     "LAST_NAME": "Last Name",
     "PASSWORD": "Password",
+    "NEW_PASSWORD": "New password",
+    "REPEAT_PASSWORD": "Repeat password",
     "DESCRIPTION": "Description",
     "DATE_OF_CREATION": "Date of creation",
     "REGISTRATION_DATE": "Registration Date",

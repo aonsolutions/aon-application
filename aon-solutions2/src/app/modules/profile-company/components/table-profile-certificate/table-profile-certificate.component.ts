@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { CertificateService } from '../../../../core/services/certificate.service';
 import { ModalDeleteCertificateComponent } from '../modal-delete-certificate/modal-delete-certificate.component';
 import { ModalValidatedCertificateComponent } from '../modal-validated-certificate/modal-validated-certificate.component';
+// import { ModalInfoCertificateComponent } from '../modal-validated-certificate/modal-validated-certificate.component';
 
 @Component({
   selector: 'app-table-profile-certificate',
@@ -92,6 +93,8 @@ export class TableProfileCertificateComponent implements OnInit {
 
   @ViewChild('modalDelete') ModalDeleteCertificateComponent: any = '';
   @ViewChild('modalValidated') ModalValidatedCertificateComponent: any = '';
+  @ViewChild('modalInfoCertificate') ModalInfoCertificateComponent: any = '';
+
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
