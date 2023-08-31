@@ -8,9 +8,10 @@ import {
 
 import { TranslateService } from '@ngx-translate/core';
 import { CertificateService } from '../../../../core/services/certificate.service';
-import { ModalDeleteCertificateComponent } from '../modal-delete-certificate/modal-delete-certificate.component';
+// import { ModalDeleteCertificateComponent } from '../modal-delete-certificate/modal-delete-certificate.component';
 import { ModalValidatedCertificateComponent } from '../modal-validated-certificate/modal-validated-certificate.component';
-// import { ModalInfoCertificateComponent } from '../modal-validated-certificate/modal-validated-certificate.component';
+import { ModalInfoCertificateComponent } from '../modal-info-certificate/modal-info-certificate.component';
+
 
 @Component({
   selector: 'app-table-profile-certificate',
@@ -103,7 +104,7 @@ export class TableProfileCertificateComponent implements OnInit {
     switch (object.keyButton) {
       case 'delete':
         this.ModalDeleteCertificateComponent.openDialog(
-          ModalDeleteCertificateComponent,
+          ModalInfoCertificateComponent,
           this.functionHome,
           'Data from home'
         );
