@@ -36,14 +36,17 @@ export class TabsTaxModelComponent implements OnInit {
   showModal: any;
 
   constructor(
-    public taxModelService: TaxModelService,
+    private taxModelService : TaxModelService,
     private translateService: TranslateService
   ) {
     this.translateService.get(
       ['TAX-PANEL.1_TRIMESTER', 'TAX-PANEL.2_TRIMESTER', 'TAX-PANEL.3_TRIMESTER','TAX-PANEL.4_TRIMESTER', 'TAX-PANEL.ALL']
     ).subscribe( result => {
       // Marcar el trimestre en el que estamos
-      this.trimesterThis();
+      taxModelService.thisTrimester().then((response) => {
+        // Le restamos 1 para que coincida con el valor del Tabs
+        this.tabIndex = response - 1;
+      });
       // Cabecera de los tags
       this.tabs = [
         { name: result['TAX-PANEL.1_TRIMESTER']},
@@ -70,25 +73,5 @@ export class TabsTaxModelComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  
-  // En el trimestre que estamos
-  trimesterThis() {
-    const currentDate   = new Date();
-    const currentMonth  = currentDate.getMonth() + 1;
-    const currentYear   = currentDate.getFullYear();
 
-    if (currentMonth >= 2 && currentMonth <= 4) {
-      //tabIndex = 0 corresponde a trimestre 1
-      this.tabIndex = 0;
-    } else if (currentMonth >= 5 && currentMonth <= 7) {
-      //trimestre 2
-      this.tabIndex = 1;
-    } else if (currentMonth >= 8 && currentMonth <= 10) {
-      //trimestre  3
-      this.tabIndex = 2;
-    } else if (currentMonth > 10 || currentMonth < 2) {
-      //trimestre 4
-      this.tabIndex = 3;
-    }
-  }
 }

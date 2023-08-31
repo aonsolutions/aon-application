@@ -6,7 +6,7 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { ErrorHandler, NgModule } from '@angular/core';
+import { LOCALE_ID, ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { LayoutModule } from '@angular/cdk/layout';
@@ -58,6 +58,11 @@ import { CoreModule } from './core/core.module';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { GlobalErrorHandlerService } from './core/services/global-error-handler.service';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
+
+// Import spanish DatePipe (format date)
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+registerLocaleData(localeEs, 'es');
 
 @NgModule({
   declarations: [
@@ -137,7 +142,8 @@ import { SetMaterialModule } from 'libraries/setproduct-angular-material';
       multi: true
     },
     {provide: ErrorHandler, useClass: GlobalErrorHandlerService},
-    TranslateService
+    TranslateService,
+    {provide: LOCALE_ID, useValue: 'es'},
   ],
   bootstrap: [AppComponent]
 })

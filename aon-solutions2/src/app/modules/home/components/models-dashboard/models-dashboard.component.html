@@ -4,12 +4,8 @@
     <div class="text">{{ 'HOME.TAXES'|translate }}</div>
     <div class="options-text">{{ selected }}</div>
     <div class="options">
-      <app-icon shape="more_vert" [matMenuTriggerFor]="menu"></app-icon>
-      <mat-menu #menu="matMenu">
-        <button *ngFor="let item of items" mat-menu-item (click)="selected = item">
-          {{ item }}
-        </button>
-      </mat-menu>
+      <app-icon shape="more_vert" (click)="dropdownMenuComponent.openDropdownMenu();"></app-icon>
+      <app-dropdown-menu #model *ngIf="menuItem.length > 0" [menuItem]="menuItem"></app-dropdown-menu>
     </div>
   </div>
   <div body class="list">
