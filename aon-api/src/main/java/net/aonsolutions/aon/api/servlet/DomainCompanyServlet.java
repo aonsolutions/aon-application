@@ -94,7 +94,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				.addRoute(DOMAINS, DomainCompanyServlet::updateCustomerDomains)
 				.addRoute(DOMAIN_LINKED, DomainCompanyServlet::saveDomainLinked)
 				.addRoute(BOOKING, DomainCompanyServlet::updateBookingRitems)
-				.addRoute(BOOKING, DomainCompanyServlet::remoteDomain)
+				.addRoute(REMOTE, DomainCompanyServlet::remoteDomain)
 				.apply();
 			
 			response(req, resp, object);

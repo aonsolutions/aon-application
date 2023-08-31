@@ -3,9 +3,6 @@ package com.esferalia.aon.gwt.common.server;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.occam.api.AON;
@@ -30,6 +27,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
 
+import jakarta.servlet.annotation.WebServlet;
 import net.aonsolutions.aon.templates.FeeImport;
 
 @WebServlet(name = "Aon Registry Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Registry", "/aon_gwt_aio/ms/Registry"})
@@ -227,11 +225,6 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
 		AON.saveBookingCheck(domainName, domain, user, bookingCheck);
-	}
-	
-	@Override
-	public List<User> getUsers(String domainName, int domain, String user, int findDomain) {
-		return AON.getUserStream(domainName, domain, user, f -> f.getDomainProperty().eq(findDomain)).collect(Collectors.toList());
 	}
 	
 }

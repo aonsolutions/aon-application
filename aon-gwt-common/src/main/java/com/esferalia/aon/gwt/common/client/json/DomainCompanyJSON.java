@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.BookingResume;
 import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -327,5 +328,25 @@ public class DomainCompanyJSON {
 		}
 		
 		return array;
+	}
+
+	public static List<User> parseUsersJSONArr(String json) {
+		JSONArray arr = JSONParser.parseStrict(json).isArray();
+		List<User> list = new LinkedList<>();
+		
+		for(Integer i = 0; i < arr.size(); i++) {
+			list.add(parseUserJSON(arr.get(i).isObject()));
+		}
+ 		
+		return list;
+	}
+	
+	private static User parseUserJSON(JSONObject json) {
+		if(json == null) return new User();
+		return new User()
+				.setId(JsonGWTUtils.getInteger(json, IJsonNames.ID))
+				.setName(JsonGWTUtils.getString(json, IJsonNames.NAME))
+				.setLogin(JsonGWTUtils.getString(json, IJsonNames.LOGIN))
+		;
 	}
 }
