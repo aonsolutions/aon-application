@@ -88,6 +88,4 @@ public interface RegistryService extends RemoteService {
 	LinkedList<BookingCheck> getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params);
 	LinkedList<BookingCheck> getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params);
 	void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck);
-
-	List<User> getUsers(String domainName, int domain, String user, int findDomin);
 }
