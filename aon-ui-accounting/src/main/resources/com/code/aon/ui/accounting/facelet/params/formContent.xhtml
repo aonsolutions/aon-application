@@ -295,6 +295,17 @@
 					<f:selectItem itemValue="#{null}" itemLabel=" " />					
 					<f:selectItems value="#{accountCollections.assetProfitAccountsIds}" />
 				</aon:selectOneMenu>
+				
+				<aon:outputLabel for="ACC_default_ocr_item"
+					value="Art\u00EDculo por defecto para OCR" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+					<ui:param name="lookupId" value="ACC_default_ocr_item" />
+					<ui:param name="lookupBean" value="#{allItemLookup}" />
+					<ui:param name="lookupTo" value="#{accAppParams.ocrDefaultItem}" />
+					<ui:param name="idRequired" value="#{false}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+				
 			</aon:panelGrid>
 		</aon:div>
 		

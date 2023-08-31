@@ -119,7 +119,7 @@ class InvofoxToAonTestCase {
 					}
 					System.out.println( "\t\t************ INVOICE SAVED ************** " );
 					
-					Invoice saved = AON.insertInvoice( getOccam() , invoice );
+					Invoice saved = AON.acceptInvoice( getOccam() , invoice );
 					
 					double headerTax = ctx.getDslContext().select( INVOICE.VAT_QUOTA )
 						.from(INVOICE)
@@ -169,7 +169,7 @@ class InvofoxToAonTestCase {
 	private static Occam getOccam() {
 		return new Occam()
 			.setDomainName("occamtest.aonsolutions.test")
-			.setDomain(47)
+			.setDomain(1)
 			.setUser("admin");
 	}
 		
