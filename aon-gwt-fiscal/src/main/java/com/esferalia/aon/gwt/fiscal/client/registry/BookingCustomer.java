@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
+import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerTooltip;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
@@ -178,6 +179,10 @@ public class BookingCustomer extends HTMLPanel {
 
 		public void setBookingCheck(BookingCheck bookingCheck) {
 			this.bookingCheck = bookingCheck;
+		}
+		
+		public void setHasFee(boolean hasFee) {
+			this.createCustomerFee.setVisible(!hasFee);
 		}
 
 	}
@@ -502,90 +507,7 @@ public class BookingCustomer extends HTMLPanel {
 		Label nameLabel = new Label(this.customer.getAlias());
 		nameLabel.getElement().getStyle().setCursor(Cursor.POINTER);
 		nameLabel.addClickHandler(e ->{
-			AonDialog dialog = new AonDialog("Acceso remoto",
-					new HTML("Se va a acceder al dominio <b>" + this.customer.getAlias() + "</b>.<br>\u00bfQuiere activar el acceso remoto para este dominio\u003f"));
-			
-			dialog.confirm(new AonAcceptDialogCallback() {
-
-				@Override
-				public void onCancel() {
-					Window.open("https://" + customer.getAlias(), "_blank", "");
-				}
-
-				@Override
-				public void onAccept() {
-					// Create the base URL
-					String baseUrl = "/ms/api/domain/";
-
-					// Create a URL builder and add query parameters
-					UrlBuilder urlBuilder = new UrlBuilder();
-					urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-					urlBuilder.setHost("aon.solutions"); 
-					urlBuilder.setPath(baseUrl);
-					
-					urlBuilder.setParameter("domainId", customer.getDomain().getId().toString());
-					
-					// Create the request builder with the complete URL
-					RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-					requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-					
-					try {
-					    // Send the request
-					    requestBuilder.sendRequest(null, new RequestCallback() {
-					        public void onResponseReceived(Request request, Response response) {
-					            if (response.getStatusCode() == 200) {
-					            	
-					            	 String domainJSON = response.getText();
-
-					            	// Create the base URL
-									String baseUrl = "/ms/api/domain/remote/";
-
-									// Create a URL builder and add query parameters
-									UrlBuilder urlBuilder = new UrlBuilder();
-									urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-									urlBuilder.setHost(Window.Location.getHost()); 
-									urlBuilder.setPath(baseUrl);
-									
-									urlBuilder.setParameter("domain", domainJSON);
-									
-									// Create the request builder with the complete URL
-									RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-									requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-									
-									try {
-									    // Send the request
-									    requestBuilder.sendRequest(null, new RequestCallback() {
-									        public void onResponseReceived(Request request, Response response) {
-									            if (response.getStatusCode() == 200) {
-									            	Window.open("https://" + customer.getAlias(), "_blank", "");
-									            } else {
-									            	AonMessagePanel.showError(messagePanel, response.getText());
-									            }
-									        }
-
-											public void onError(Request request, Throwable exception) {
-												AonMessagePanel.showError(messagePanel, exception.getMessage());
-									        }
-									    });
-									} catch (RequestException e) {
-										AonMessagePanel.showError(messagePanel, e.getMessage());
-									}
-					                
-					            } else {
-					            	AonMessagePanel.showError(messagePanel, response.getText());
-					            }
-					        }
-
-							public void onError(Request request, Throwable exception) {
-								AonMessagePanel.showError(messagePanel, exception.getMessage());
-					        }
-					    });
-					} catch (RequestException e) {
-						AonMessagePanel.showError(messagePanel, e.getMessage());
-					}
-					
-				}
-			});
+			enableRemoteDomain(customer.getDomain().getId(), customer.getAlias());
 		});
 		
 		// Status
@@ -660,7 +582,7 @@ public class BookingCustomer extends HTMLPanel {
 		customerPanel.add(customerTable);
 		
 	}
-	
+
 	private void syncCustomerDomains() {
 		AonDialog dialog = new AonDialog("Sincronizaci\u00f3n Dominios Cliente",
 				new HTML("Se va a proceder a sincronizar los dominios del cliente <b>" + this.customer.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la sincronizaci\u00f3n\u003f"));
@@ -677,132 +599,6 @@ public class BookingCustomer extends HTMLPanel {
 				syncDomains();
 			}
 		});
-	}
-
-	private void syncDomains() {
-		for(DomainCompany domainCompany : this.customerDomains) {
-			AonMessagePanel.showLoading(messagePanel, "Obteniendo contrataci\u00f3n para el dominio " + domainCompany.getDomain().getDescription() + " ...");
-			
-			// Create the base URL
-			String baseUrl = "/ms/api/booking/";
-
-			// Create a URL builder and add query parameters
-			UrlBuilder urlBuilder = new UrlBuilder();
-			urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-			urlBuilder.setHost("aon.solutions"); 
-			urlBuilder.setPath(baseUrl);
-			
-			urlBuilder.setParameter("domainName", domainCompany.getDomain().getName());
-			urlBuilder.setParameter("domainId", domainCompany.getDomain().getId().toString());
-			
-			// Create the request builder with the complete URL
-			RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-			requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-			
-			try {
-			    // Send the request
-			    requestBuilder.sendRequest(null, new RequestCallback() {
-			        public void onResponseReceived(Request request, Response response) {
-			            if (response.getStatusCode() == 200) {
-
-			                String bookingJSON = response.getText();
-			                AonMessagePanel.hideMessage(messagePanel);
-			                getDomain(domainCompany, bookingJSON);
-			                
-			            } else {
-			            	AonMessagePanel.showError(messagePanel, response.getText());
-			            }
-			        }
-
-					public void onError(Request request, Throwable exception) {
-						AonMessagePanel.showError(messagePanel, exception.getMessage());
-			        }
-			    });
-			} catch (RequestException e) {
-				AonMessagePanel.showError(messagePanel, e.getMessage());
-			}
-		}
-	}
-	
-	private void getDomain(DomainCompany domainCompany, String bookingJSON) {
-		AonMessagePanel.showLoading(messagePanel, "Obteniendo informaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " ...");
-		
-		// Create the base URL
-		String baseUrl = "/ms/api/domain/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost("aon.solutions"); 
-		urlBuilder.setPath(baseUrl);
-		
-		urlBuilder.setParameter("domainId", domainCompany.getDomain().getId().toString());
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-
-		                String domainJSON = response.getText();
-		                AonMessagePanel.hideMessage(messagePanel);
-		                updateBookingRitems(domainCompany, domainJSON, bookingJSON);
-		                
-		            } else {
-		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
-	}
-	
-	private void updateBookingRitems(DomainCompany domainCompany, String domainJSON, String bookingJSON) {
-		AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el dominio " + domainCompany.getDomain().getDescription() + " ...");
-		
-		// Create the base URL
-		String baseUrl = "/ms/api/domain/booking/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost(Window.Location.getHost()); 
-		urlBuilder.setPath(baseUrl);
-		
-		urlBuilder.setParameter("domain", domainJSON);
-		urlBuilder.setParameter("booking", bookingJSON);
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " se ha realizado correctamente");
-		            } else {
-		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
 	}
 	
 	// ---------- Dominios
@@ -889,95 +685,12 @@ public class BookingCustomer extends HTMLPanel {
 			Label documentLabel = new Label(domainCompany.getCompany().getDocument());
 			Label statusLabel = new Label(domainCompany.getDomain().isActive() ? "Activo" : "Inactivo");
 			Label billableLabel = new Label(domainCompany.getDomain().getAonStatus().equals(AonStatus.BILLABLE) ? "SI" : "NO");
-			Label expirationLabel = new Label(formatDate(domainCompany.getDomain().getExpirationDate()));
-			Label lastAccessLabel = new Label(formatDate(domainCompany.getDomain().getLastAccessDate()));
+			Label expirationLabel = new Label(formatDate(domainCompany.getDomain().getCreationDate()));
+			Label lastAccessLabel = new Label(formatDate(domainCompany.getDomain().getModificationDate()));
 			Label nameLabel = new Label(domainCompany.getDomain().getName());
 			nameLabel.getElement().getStyle().setCursor(Cursor.POINTER);
 			nameLabel.addClickHandler(e ->{
-				AonDialog dialog = new AonDialog("Acceso remoto",
-						new HTML("Se va a acceder al dominio <b>" + this.customer.getAlias() + "</b>.<br>\u00bfQuiere activar el acceso remoto para este dominio\u003f"));
-				
-				dialog.confirm(new AonAcceptDialogCallback() {
-
-					@Override
-					public void onCancel() {
-						Window.open("https://" + domainCompany.getDomain().getName(), "_blank", "");
-					}
-
-					@Override
-					public void onAccept() {
-						// Create the base URL
-						String baseUrl = "/ms/api/domain/";
-
-						// Create a URL builder and add query parameters
-						UrlBuilder urlBuilder = new UrlBuilder();
-						urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-						urlBuilder.setHost("aon.solutions"); 
-						urlBuilder.setPath(baseUrl);
-						
-						urlBuilder.setParameter("domainId", customer.getDomain().getId().toString());
-						
-						// Create the request builder with the complete URL
-						RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-						requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-						
-						try {
-						    // Send the request
-						    requestBuilder.sendRequest(null, new RequestCallback() {
-						        public void onResponseReceived(Request request, Response response) {
-						            if (response.getStatusCode() == 200) {
-						            	
-						            	 String domainJSON = response.getText();
-
-						            	// Create the base URL
-										String baseUrl = "/ms/api/domain/remote/";
-
-										// Create a URL builder and add query parameters
-										UrlBuilder urlBuilder = new UrlBuilder();
-										urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-										urlBuilder.setHost(Window.Location.getHost()); 
-										urlBuilder.setPath(baseUrl);
-										
-										urlBuilder.setParameter("domain", domainJSON);
-										
-										// Create the request builder with the complete URL
-										RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-										requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-										
-										try {
-										    // Send the request
-										    requestBuilder.sendRequest(null, new RequestCallback() {
-										        public void onResponseReceived(Request request, Response response) {
-										            if (response.getStatusCode() == 200) {
-										            	Window.open("https://" + domainCompany.getDomain().getName(), "_blank", "");
-										            } else {
-										            	AonMessagePanel.showError(messagePanel, response.getText());
-										            }
-										        }
-
-												public void onError(Request request, Throwable exception) {
-													AonMessagePanel.showError(messagePanel, exception.getMessage());
-										        }
-										    });
-										} catch (RequestException e) {
-											AonMessagePanel.showError(messagePanel, e.getMessage());
-										}
-						                
-						            } else {
-						            	AonMessagePanel.showError(messagePanel, response.getText());
-						            }
-						        }
-
-								public void onError(Request request, Throwable exception) {
-									AonMessagePanel.showError(messagePanel, exception.getMessage());
-						        }
-						    });
-						} catch (RequestException e) {
-							AonMessagePanel.showError(messagePanel, e.getMessage());
-						}
-						
-					}
-				});
+				enableRemoteDomain(domainCompany.getDomain().getId(), domainCompany.getDomain().getName());
 			});
 			
 			// Status
@@ -1064,35 +777,13 @@ public class BookingCustomer extends HTMLPanel {
 		domainsPanel.add(scrollPanel);
 		
 	}
-	
-//	private void openUserTooltip(List<User> users, int clientX, int clientY) {
-//		Window.alert("users size: " + users + "\nclientX: " + clientX + "\nclientY: " +clientY);
-//		aonCustomerTooltip.setUsers(users);
-//		aonCustomerTooltip.showTooltip(clientX, clientY);
-//	}
-	
-	private void openUserTooltip(Integer domainId, int clientX, int clientY) {
-		SERVICE.getUsers(options.getDomainName(), options.getDomain(), options.getUser(), domainId, new AsyncCallback<List<User>>() {
-
-			@Override
-			public void onFailure(Throwable arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onSuccess(List<User> users) {
-				aonCustomerTooltip.setUsers(users);
-				aonCustomerTooltip.showTooltip(clientX, clientY);
-			}});
-	}
 
 	private String formatDate(Date date) {
 		if(null == date) return "";
 		return formatDate.format(date);
 	}
 	
-	// -------- Booking Without Fee
+	// -------- Booking
 	
 	private void initializeBooking() {
 		bookingDeckPanel = new DeckPanel();
@@ -1195,7 +886,7 @@ public class BookingCustomer extends HTMLPanel {
 			
 			Label codeLabel = new Label(bookingCheck.getItem().getProduct().getCode());
 			Label feeLabel = new Label(bookingCheck.hasFee() ? "SI" : "NO");
-			if(!bookingCheck.hasFee()) {
+			if(!bookingCheck.hasFee() && !bookingCheck.getStatus().equals(RegistryItemStatus.INTERESTED)) {
 				feeLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 				feeLabel.getElement().getStyle().setColor("red");
 			}
@@ -1212,6 +903,7 @@ public class BookingCustomer extends HTMLPanel {
 				bookingWithOutFeeMenu.setItem(bookingCheck.getItem());
 				bookingWithOutFeeMenu.setCustomer(bookingCheck.getCustomer());
 				bookingWithOutFeeMenu.setBookingCheck(bookingCheck);
+				bookingWithOutFeeMenu.setHasFee(bookingCheck.hasFee());
 			});
 			
 			bookingGrid.setWidget(row, 0, productLabel);
@@ -1483,6 +1175,258 @@ public class BookingCustomer extends HTMLPanel {
 				button.setTitle("Desplegar Contrataciones");
 			if (button.equals(toolbarFeeWithoutBookingDiscBtn))
 				button.setTitle("Desplegar Cuotas sin Contrataci\u00f3n");
+		}
+	}
+	
+	// -------- Servlets Methods
+	
+	private void enableRemoteDomain(Integer domainId, String url) {
+		AonDialog dialog = new AonDialog("Acceso remoto",
+				new HTML("Se va a acceder al dominio <b>" + url + "</b>.<br>\u00bfQuiere activar el acceso remoto para este dominio\u003f"));
+		
+		dialog.confirm(new AonAcceptDialogCallback() {
+
+			@Override
+			public void onCancel() {
+				Window.open("https://" + customer.getAlias(), "_blank", "");
+			}
+
+			@Override
+			public void onAccept() {
+				// Create the base URL
+				String baseUrl = "/ms/api/domain/";
+
+				// Create a URL builder and add query parameters
+				UrlBuilder urlBuilder = new UrlBuilder();
+				urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+				urlBuilder.setHost("aon.solutions"); 
+				urlBuilder.setPath(baseUrl);
+				
+				urlBuilder.setParameter("domainId", domainId.toString());
+				
+				// Create the request builder with the complete URL
+				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+				
+				try {
+				    // Send the request
+				    requestBuilder.sendRequest(null, new RequestCallback() {
+				        public void onResponseReceived(Request request, Response response) {
+				            if (response.getStatusCode() == 200) {
+				            	
+				            	 String domainJSON = response.getText();
+
+				            	// Create the base URL
+								String baseUrl = "/ms/api/domain/remote/";
+
+								// Create a URL builder and add query parameters
+								UrlBuilder urlBuilder = new UrlBuilder();
+								urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+								urlBuilder.setHost("aon.solutions"); 
+								urlBuilder.setPath(baseUrl);
+								
+								urlBuilder.setParameter("domain", domainJSON);
+								
+								// Create the request builder with the complete URL
+								RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+								requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+								
+								try {
+								    // Send the request
+								    requestBuilder.sendRequest(null, new RequestCallback() {
+								        public void onResponseReceived(Request request, Response response) {
+								            if (response.getStatusCode() == 200) {
+								            	Window.open("https://" + url, "_blank", "");
+								            } else {
+								            	AonMessagePanel.showError(messagePanel, response.getText());
+								            }
+								        }
+
+										public void onError(Request request, Throwable exception) {
+											AonMessagePanel.showError(messagePanel, exception.getMessage());
+								        }
+								    });
+								} catch (RequestException e) {
+									AonMessagePanel.showError(messagePanel, e.getMessage());
+								}
+				                
+				            } else {
+				            	AonMessagePanel.showError(messagePanel, response.getText());
+				            }
+				        }
+
+						public void onError(Request request, Throwable exception) {
+							AonMessagePanel.showError(messagePanel, exception.getMessage());
+				        }
+				    });
+				} catch (RequestException e) {
+					AonMessagePanel.showError(messagePanel, e.getMessage());
+				}
+				
+			}
+		});
+	}
+	
+	private void openUserTooltip(Integer domainId, int clientX, int clientY) {
+		// Create the base URL
+		String baseUrl = "/ms/api/user/";
+
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost("aon.solutions"); 
+		urlBuilder.setPath(baseUrl);
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(null, new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+		            	String responseBody = response.getText();
+		            	List<User> users = DomainCompanyJSON.parseUsersJSONArr(responseBody);
+		            	aonCustomerTooltip.setUsers(users);
+						aonCustomerTooltip.showTooltip(clientX, clientY);
+		            } else {
+		            	AonMessagePanel.showError(messagePanel, response.getText());
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        }
+		    });
+		} catch (RequestException e) {
+			AonMessagePanel.showError(messagePanel, e.getMessage());
+		}
+	}
+	
+	private void syncDomains() {
+		for(DomainCompany domainCompany : this.customerDomains) {
+			AonMessagePanel.showLoading(messagePanel, "Obteniendo contrataci\u00f3n para el dominio " + domainCompany.getDomain().getDescription() + " ...");
+			
+			// Create the base URL
+			String baseUrl = "/ms/api/booking/";
+
+			// Create a URL builder and add query parameters
+			UrlBuilder urlBuilder = new UrlBuilder();
+			urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+			urlBuilder.setHost("aon.solutions"); 
+			urlBuilder.setPath(baseUrl);
+			
+			urlBuilder.setParameter("domainName", domainCompany.getDomain().getName());
+			urlBuilder.setParameter("domainId", domainCompany.getDomain().getId().toString());
+			
+			// Create the request builder with the complete URL
+			RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+			requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+			
+			try {
+			    // Send the request
+			    requestBuilder.sendRequest(null, new RequestCallback() {
+			        public void onResponseReceived(Request request, Response response) {
+			            if (response.getStatusCode() == 200) {
+
+			                String bookingJSON = response.getText();
+			                AonMessagePanel.hideMessage(messagePanel);
+			                getDomain(domainCompany, bookingJSON);
+			                
+			            } else {
+			            	AonMessagePanel.showError(messagePanel, response.getText());
+			            }
+			        }
+
+					public void onError(Request request, Throwable exception) {
+						AonMessagePanel.showError(messagePanel, exception.getMessage());
+			        }
+			    });
+			} catch (RequestException e) {
+				AonMessagePanel.showError(messagePanel, e.getMessage());
+			}
+		}
+	}
+	
+	private void getDomain(DomainCompany domainCompany, String bookingJSON) {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo informaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " ...");
+		
+		// Create the base URL
+		String baseUrl = "/ms/api/domain/";
+
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost("aon.solutions"); 
+		urlBuilder.setPath(baseUrl);
+		
+		urlBuilder.setParameter("domainId", domainCompany.getDomain().getId().toString());
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(null, new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+
+		                String domainJSON = response.getText();
+		                AonMessagePanel.hideMessage(messagePanel);
+		                updateBookingRitems(domainCompany, domainJSON, bookingJSON);
+		                
+		            } else {
+		            	AonMessagePanel.showError(messagePanel, response.getText());
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        }
+		    });
+		} catch (RequestException e) {
+			AonMessagePanel.showError(messagePanel, e.getMessage());
+		}
+	}
+	
+	private void updateBookingRitems(DomainCompany domainCompany, String domainJSON, String bookingJSON) {
+		AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el dominio " + domainCompany.getDomain().getDescription() + " ...");
+		
+		// Create the base URL
+		String baseUrl = "/ms/api/domain/booking/";
+
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost(Window.Location.getHost()); 
+		urlBuilder.setPath(baseUrl);
+		
+		urlBuilder.setParameter("domain", domainJSON);
+		urlBuilder.setParameter("booking", bookingJSON);
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(null, new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+		            	AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " se ha realizado correctamente");
+		            } else {
+		            	AonMessagePanel.showError(messagePanel, response.getText());
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        }
+		    });
+		} catch (RequestException e) {
+			AonMessagePanel.showError(messagePanel, e.getMessage());
 		}
 	}
 	
