@@ -117,21 +117,11 @@ export class AonMobileSale extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		dialog.setContent(div);
 
-		let envase = new AonSelect();
-		envase.id = this.id + 'DialogEnvase';
-		envase.title = 'Nuevo Envase';
-		div.appendChild(envase);
+		let table = new AonBasicTable();
+		table.id = this.id + 'Envasesss';
+		div.appendChild(table);
 
-		let span = this.createElement(TAG.SPAN);
-		span.id = this.id + 'DialogSpan';
-		span.innerHTML = 'ó';
-		span.style.display = 'block';
-		span.style.marginBottom = '10px';
-		div.appendChild(span);
-
-		let product = this.createInput(this.PACKAGING_PRODUCT, "Envase");
-		div.appendChild(product);
-		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
+		this.buildProductPackaging(table);
 
 		let next = new AonButton();
 		next.title = 'Siguiente';
@@ -170,7 +160,7 @@ export class AonMobileSale extends AonElement {
 				let span3 = this.createElement(TAG.SPAN);
 				span3.innerHTML = 'Producto 1';
 				table.addCell(span3);
-		
+		 
 				let span2 = this.createElement(TAG.SPAN);
 				span2.innerHTML = 'X Cajas';
 				table.addCell(span2);
@@ -187,6 +177,47 @@ export class AonMobileSale extends AonElement {
 		
 		dialog.addAcceptAction(() => {});
 		dialog.open();
+	}
+
+	buildProductPackaging(table) {
+		table.removeRows();
+		let product = this.createInput(this.PACKAGING_PRODUCT, "Envase");
+		div.appendChild(product);
+		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
+		
+		let td = table.addCell(product);
+		td.style.width = '100%';
+
+		let addButton = new AonIconButton();
+		addButton.id = this.BANK_ADD + i;
+		addButton.title = MSG.ADD;
+		addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+		addButton.visible = this.registry.banks.length === i+1;
+		addButton.addEventListener(EVENT.CLICK, () => {
+			this.buildNewPackaging(table);
+		});
+		table.addCell(addButton);
+	}
+
+	buildNewPackaging(table) {
+		table.removeRows();
+
+		let envase = new AonSelect();
+		envase.id = this.id + 'DialogEnvase';
+		envase.title = 'Nuevo Envase';
+		
+		let td = table.addCell(envase);
+		td.style.width = '100%';
+
+		let pButton = new AonIconButton();
+		pButton.id = this.BANK_ADD + i;
+		pButton.title = MSG.ADD;
+		pButton.icon = MATERIAL_ICONS.QR_CODE_SCANNER;
+		pButton.visible = this.registry.banks.length === i+1;
+		pButton.addEventListener(EVENT.CLICK, () => {
+			this.buildProductPackaging(table);
+		});
+		table.addCell(pButton);
 	}
 
 	// Create Components
