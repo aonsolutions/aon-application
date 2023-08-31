@@ -1777,6 +1777,20 @@ public class AON {
 		}
 	}
 	
+	public static Invoice acceptInvoice(Occam occam, Invoice invoice){
+		return acceptInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice, null);
+	}
+
+	public static Invoice acceptInvoice(Occam occam, Invoice invoice, Integer rawdocId){
+		return acceptInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice, rawdocId);
+	}
+
+	public static Invoice acceptInvoice(String domainName, Integer domainId, String login, Invoice invoice, Integer rawdocId){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().acceptInvoice(ctx, invoice, rawdocId);
+		}
+	}
+
 	public static Invoice insertInvoice(Occam occam, Invoice invoice){
 		return insertInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);
 	}

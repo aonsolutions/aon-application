@@ -51,7 +51,7 @@ public class BartenderServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONObject sendEmail(AonApiData api) {
-		String email = "aibanez@aonsolutions.es";// "bartender.paturpat@gmail.com"; // JsonUtils.getString(api.getData(), IJsonNames.EMAIL);
+		String email = "bartender.paturpat@gmail.com"; // JsonUtils.getString(api.getData(), IJsonNames.EMAIL);
 		File file = BartenderFile.generate(api.getData());
 
 		SESMessage ses = new SESMessage()

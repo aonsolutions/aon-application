@@ -285,6 +285,7 @@ public class CommunicationServlet extends HttpServlet {
 		return array;
 	}
 	
+	// TODO getLastDataResponseDetailStream cambiar..
 	private JSONArray getIngenetSalesAll(Domain domain, String login, HttpServletRequest req) {
 		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
@@ -418,6 +419,8 @@ public class CommunicationServlet extends HttpServlet {
 		return array;
 	}
 
+	
+	// TODO getLastDataResponseDetailStream cambiar..
 	private JSONArray getIngenetSales(Domain domain, String login, HttpServletRequest req) {
 		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
@@ -474,7 +477,7 @@ public class CommunicationServlet extends HttpServlet {
 		return ids;
 	}
 	
-	
+	// TODO getLastDataResponseDetailStream cambiar..
 	private Object reopenIngenetSales(Domain domain, String userName, String[] idList) {
 		List<Integer> _idList = Arrays.asList(idList).stream().map(o -> Integer.parseInt(o))
 				.collect(Collectors.toCollection(LinkedList::new));

@@ -84,7 +84,6 @@ public class TbaiData {
 		final Unmarshaller jaxbMarshaller = jaxbContext.createUnmarshaller();
 		InputStream is = new ByteArrayInputStream(requestAttach.getData());
 		return (TicketBai) jaxbMarshaller.unmarshal(is);
-
 	}
 	
 	public TBAIInformation get(Domain domain, User user, Integer invoice) {
@@ -327,7 +326,7 @@ public class TbaiData {
 		return dr;
 	}
 	
-	public DataResponse saveResponseZuzendu(Domain domain, User user, Invoice invoice, byte[] request, TbaiResponse response) {
+	public DataResponse saveResponseZuzendu(Domain domain, User user, Invoice invoice, byte[] request, TbaiResponse response, String tbaiUrl) {
 		
 		JSONObject json = new JSONObject();
 		json.put("tbai", "emision");
@@ -372,6 +371,8 @@ public class TbaiData {
 		
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd1);
 		
+		
+		
 		DataResponseDetail drd = new DataResponseDetail()
 				.setDomain(domain.getId())
 				.setDataResponse(dr.getId())
@@ -379,6 +380,14 @@ public class TbaiData {
 				.setDataValue(response.toJSON().toString());
 		
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd);
+		
+		DataResponseDetail drd3 = new DataResponseDetail()
+				.setDomain(domain.getId())
+				.setDataResponse(dr.getId())
+				.setDataVariable("tbaiUrl")
+				.setDataValue(tbaiUrl);
+		
+		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd3);
 		
 		if(response.getData() != null) {
 			Attach responseAttach = new Attach()
