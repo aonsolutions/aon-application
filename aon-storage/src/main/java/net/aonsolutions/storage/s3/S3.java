@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,42 +25,21 @@ public class S3 {
 	
 	public static URL getContractDocDownloadURL(String s3Key) {
 		AmazonS3 s3 = getAmazonS3();
-		List<String> bucketsNames = getBucketsNames(s3, "contract_doc");
-		for (String bucketName : bucketsNames) {
-			try {
-				AmazonS3 bucketS3 = getAmazonS3(s3, bucketName);
-				return bucketS3.generatePresignedUrl(bucketName, s3Key, getExpiration()/*, HttpMethod.GET*/);
-			} catch (Exception e) {
-				
-			}
-		}
-		
-		throw new NoSuchElementException();
+		String bucketName = getBucketName(s3, "contract_doc", s3Key).orElseThrow();
+		return generatePresignedUrl(s3, bucketName, s3Key);
 	}
-	
+
 	public static URL getContractDocDownloadURL(String s3Key, String contentDisposition ) {
 		AmazonS3 s3 = getAmazonS3();
-		List<String> bucketsNames = getBucketsNames(s3, "contract_doc");
-		for (String bucketName : bucketsNames) {
-			try {
-				ResponseHeaderOverrides headerOverrides = new ResponseHeaderOverrides();
-				headerOverrides.setContentDisposition(contentDisposition);
-				
-				GeneratePresignedUrlRequest request = 
-				new GeneratePresignedUrlRequest(bucketName, s3Key)
-				.withExpiration(getExpiration())
-				.withResponseHeaders(headerOverrides)
-				;
-				AmazonS3 bucketS3 = getAmazonS3(s3, bucketName);
-				return bucketS3.generatePresignedUrl(request/*, HttpMethod.GET*/);
-			} catch (Exception e) {
-				
-			}
-		}
+		String bucketName = getBucketName(s3, "contract_doc", s3Key).orElseThrow();
 		
-		throw new NoSuchElementException();
+		ResponseHeaderOverrides headerOverrides = new ResponseHeaderOverrides();
+		headerOverrides.setContentDisposition(contentDisposition);
+		GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, s3Key)
+			.withExpiration(getExpiration()).withResponseHeaders(headerOverrides);
+		return generatePresignedUrl(s3, bucketName, request);
 	}
-	
+
 	private static Date getExpiration() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.SECOND, 120);
@@ -67,14 +47,32 @@ public class S3 {
 	}
 	
 	
+	private static Optional<String> getBucketName(AmazonS3 s3, String aonTable, String s3Key ) {
+	    return getBucketsNames(s3, aonTable).stream().filter( bucketName -> doesObjectExist(s3, bucketName, s3Key) ).findFirst();
+	}
+
+	private static boolean doesObjectExist(AmazonS3 s3, String bucketName, String s3Key) {
+	    return getAmazonS3(s3, bucketName).doesObjectExist(bucketName, s3Key);
+	}
+	
+	private static URL generatePresignedUrl(AmazonS3 s3, String bucketName, String s3Key) {
+	    AmazonS3 bucketS3 = getAmazonS3(s3, bucketName);
+	    return bucketS3.generatePresignedUrl(bucketName, s3Key, getExpiration()/* , HttpMethod.GET */);
+	}
+	
+	private static URL generatePresignedUrl(AmazonS3 s3, String bucketName, GeneratePresignedUrlRequest request) {
+	    AmazonS3 bucketS3 = getAmazonS3(s3, bucketName);
+	    return bucketS3.generatePresignedUrl(request/* , HttpMethod.GET */);
+	}
+	
 	private static List<String> getBucketsNames(AmazonS3 s3, String aonTable ) {
 		
 		if ( AON_TABLE_BUCKETS_MAP == null )
 			AON_TABLE_BUCKETS_MAP = getBucketsTagMap(s3, "AON_TABLE");
 		
-		return AON_TABLE_BUCKETS_MAP.get(aonTable);
+		return AON_TABLE_BUCKETS_MAP.getOrDefault(aonTable,Collections.emptyList());
 	}
-	
+
 	private static Predicate<String> filterBucket( AmazonS3 s3, String aonTable) {
 		return bucketName -> {
 			BucketTaggingConfiguration bucketTaggingConfiguration = s3.getBucketTaggingConfiguration(bucketName);
