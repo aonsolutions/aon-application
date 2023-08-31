@@ -316,6 +316,7 @@
 								<ui:decorate
 									template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 									<ui:param name="controller" value="#{bankStatement}" />
+									<ui:param name="forLines" value="#{false}" />
 									<ui:param name="skipLineEdition" value="#{true}" />
 									<ui:param name="skipRemoveButton" value="#{controller.to.recorded}" />
 									<ui:param name="resetButtonReRender" value="aonContent" />
