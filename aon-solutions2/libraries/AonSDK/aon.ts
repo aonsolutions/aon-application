@@ -3335,18 +3335,25 @@ if(certificates.size() == 0){
 
 let enterprises: ICollection<Enterprise> = new Collection<Enterprise>();
 let storableEnterprises = new StorableEnterprise();
-let registryEnterprises : ICollection<RegistryEnterprise> = new Collection<RegistryEnterprise>();
 let storableRegistryEnterprises = new StorableRegistryEnterprise();
+let registryEnterprises : ICollection<RegistryEnterprise> = new Collection<RegistryEnterprise>();
+let localRegistryEnterprises = new LocalStorage<RegistryEnterprise>(RegistryEnterprise);
 let localEnterprises = new LocalStorage<Enterprise>(Enterprise);
 enterprises = localEnterprises.read(storableEnterprises.getLocalStorage())
+registryEnterprises = localRegistryEnterprises.read(storableRegistryEnterprises.getLocalStorage());
+
 if(enterprises.size() == 0){
     enterprises.add(new Enterprise('Pet Estudio', 'B16880148'));
-    registryEnterprises.add(new RegistryEnterprise('B16880148', 'lorem ipsum ...', new Date(), new Date(), 'Esperanza', 'Protocolo 1', 'Inscripción 1'));
     enterprises.add(new Enterprise('MENG SA', 'U14241855'));
-    registryEnterprises.add(new RegistryEnterprise('U14241855', 'lorem ipsum ...', new Date(), new Date(), 'Jorge Luis', 'Protocolo 2', 'Inscripción 2'));
     enterprises.add(new Enterprise('PORTABAGE SL', 'U53716270'));
-    registryEnterprises.add(new RegistryEnterprise('U53716270', 'lorem ipsum ...', new Date(), new Date(), 'Manuela', 'Protocolo 3', 'Inscripción 3'));
     localEnterprises.write(storableEnterprises.getLocalStorage(), enterprises);
+}
+
+if (registryEnterprises.size() == 0){
+    registryEnterprises.add(new RegistryEnterprise('B16880148', 'lorem ipsum ...', new Date(), new Date(), 'Esperanza', 'Protocolo 1', 'Inscripción 1'));
+    registryEnterprises.add(new RegistryEnterprise('U14241855', 'lorem ipsum ...', new Date(), new Date(), 'Jorge Luis', 'Protocolo 2', 'Inscripción 2'));
+    registryEnterprises.add(new RegistryEnterprise('U53716270', 'lorem ipsum ...', new Date(), new Date(), 'Manuela', 'Protocolo 3', 'Inscripción 3'));
+    localRegistryEnterprises.write(storableRegistryEnterprises.getLocalStorage(), registryEnterprises);
 }
 
 let documentNotes: ICollection<DocumentNote> = new Collection<DocumentNote>();
