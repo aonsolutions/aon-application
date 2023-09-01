@@ -181,18 +181,16 @@ export class AonMobileSale extends AonElement {
 
 	buildProductPackaging(table) {
 		table.removeRows();
+		table.addRow();
 		let product = this.createInput(this.PACKAGING_PRODUCT, "Envase");
-		div.appendChild(product);
-		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
-		
 		let td = table.addCell(product);
 		td.style.width = '100%';
-
+		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());	
+		
 		let addButton = new AonIconButton();
-		addButton.id = this.BANK_ADD + i;
+		addButton.id = this.id + 'AddButton';
 		addButton.title = MSG.ADD;
 		addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
-		addButton.visible = this.registry.banks.length === i+1;
 		addButton.addEventListener(EVENT.CLICK, () => {
 			this.buildNewPackaging(table);
 		});
@@ -201,7 +199,7 @@ export class AonMobileSale extends AonElement {
 
 	buildNewPackaging(table) {
 		table.removeRows();
-
+		table.addRow();
 		let envase = new AonSelect();
 		envase.id = this.id + 'DialogEnvase';
 		envase.title = 'Nuevo Envase';
@@ -210,10 +208,9 @@ export class AonMobileSale extends AonElement {
 		td.style.width = '100%';
 
 		let pButton = new AonIconButton();
-		pButton.id = this.BANK_ADD + i;
+		pButton.id = this.id + 'ProductButton';
 		pButton.title = MSG.ADD;
 		pButton.icon = MATERIAL_ICONS.QR_CODE_SCANNER;
-		pButton.visible = this.registry.banks.length === i+1;
 		pButton.addEventListener(EVENT.CLICK, () => {
 			this.buildProductPackaging(table);
 		});
