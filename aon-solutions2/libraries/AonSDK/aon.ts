@@ -523,6 +523,11 @@ interface IMessageSpecificMethods {
      * @param filter The filter
      */
     getMessageCount(filter?: IFilter): Promise<IResponse<number>>;
+    /**
+     * Returns true if the operation was succes
+     * @param message The message of type notification to mark as read
+     */
+    markAsReadNotification(message: Message): Promise<IResponse<boolean>>;
 }
 
 
@@ -713,6 +718,10 @@ class MessageSpecificMethods implements IMessageSpecificMethods {
         return new Response<number>(await this.repository.getMessageCount(filter));
     }
 
+    async markAsReadNotification(message: Message): Promise<IResponse<boolean>> {
+        return new Response<boolean>(await this.repository.markAsReadNotification(message));
+    }
+
 }
 
 /*
@@ -831,6 +840,11 @@ interface IMessageSpecificMethodsRepository {
      * @param filter The filter
      */
     getMessageCount(filter?: IFilter): Promise<number>;
+    /**
+     * Returns true if the operation was succes
+     * @param message The message of type notification to mark as read
+     */
+    markAsReadNotification(message: IMessage): Promise<boolean>;
 }
 
 /*
@@ -1218,6 +1232,18 @@ class APIMessageSpecificMethodsRepository implements IMessageSpecificMethodsRepo
             let result2 = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/status/count?task_holder=' + localStorage.getItem('registry'), GET_METHOD, {}, {});
             return result1.notification + result2.status.pending;
         }
+    }
+
+    async markAsReadNotification(element: Message): Promise<boolean> {
+        if(element.Type == 'notificacion'){
+            let result = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/notification/mark-read-notification', POST_METHOD, {}, {source_id: element.Id});
+            if(result.success && result.success == true)
+                return true;
+            else 
+                return false;
+        }
+        else
+            throw new ErrorResponse('0199');
     }
 }
 
@@ -4766,6 +4792,15 @@ if(test){
     }).catch((error) => {
         console.log('ERROR TEST MESSAGE CREATE', error)
     })
+    let notification = new Message();
+    notification.Type = 'notificacion';
+    notification.Id = '29500';
+    messageFactory.createMessageSpecificMethods().markAsReadNotification(notification).then((response) => {
+        console.log('TEST MESSAGE MARK AS READ NOTIFICATION', response.result);
+    }).catch((error) => {
+        console.log('ERROR TEST MESSAGE MARK AS READ NOTIFICATION', error)
+    })
+
 
     /*
         TEST FOR MESSAGE CHAT
