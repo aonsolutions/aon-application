@@ -1400,6 +1400,11 @@ interface IAuth extends ICollectable{
     Password: string;
 }
 
+export interface ICommunity {
+  label: string;
+  _about: string;
+}
+
 export interface ICountry {
   name:         Name;
   tld?:         string[];
