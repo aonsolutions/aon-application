@@ -88,6 +88,7 @@ export const CONFIGURATION = 'Konfigurazioa';
 export const CONTACT = 'Kontaktua';
 export const CONTACT_DATA = 'Kontaktuaren Datuak';
 export const CONTACTS = 'Kontaktuak';
+export const CONTAINER = 'Ontzia';
 export const CONTRACT = 'Kontratatu';
 export const CONTRACT_PAYROLL = 'Kontratua';
 export const CONTRACTS = 'Kontratuak';

@@ -88,6 +88,7 @@ export const CONFIGURATION = 'Einstellung';
 export const CONTACT = 'Contact';
 export const CONTACT_DATA = 'Contact Data';
 export const CONTACTS = 'Contacts';
+export const CONTAINER = 'Container';
 export const CONTRACT = 'Contract';
 export const CONTRACTED_PRODUCTS = "Vertragsprodukte";
 export const CONTRACTED_USERS = "Vertragsnutzer";

@@ -87,6 +87,7 @@ export const CONFIGURATION = 'Configuració';
 export const CONTACT = 'Contacte';
 export const CONTACT_DATA = 'Dades de Contacte';
 export const CONTACTS = 'Contactes';
+export const CONTAINER = 'Envàs';
 export const CONTRACT = 'Contractar';
 export const CONTRACTED_PRODUCTS = "Productes contractats";
 export const CONTRACTED_USERS = "Usuaris contractats";

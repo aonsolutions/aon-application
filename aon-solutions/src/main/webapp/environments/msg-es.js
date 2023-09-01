@@ -90,6 +90,7 @@ export const CONFIGURATION = 'Configuración';
 export const CONTACT = 'Contacto';
 export const CONTACT_DATA = 'Datos Contacto';
 export const CONTACTS = 'Contactos';
+export const CONTAINER = 'Envase';
 export const CONTRACT = 'Contratar';
 export const CONTRACTED_PRODUCTS = "Productos contratados";
 export const CONTRACTED_USERS = "Usuarios contratados";

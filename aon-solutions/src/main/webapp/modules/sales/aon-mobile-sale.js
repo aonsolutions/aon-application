@@ -146,7 +146,7 @@ export class AonMobileSale extends AonElement {
 				this.clearElement(div);
 				dialog.setTitle('Resumen Envase');
 
-				let card = this.createCard('Envase', 'Contenido Envase');
+				let card = this.createCard(MSG.CONTAINER, 'Contenido Envase');
 				
 				div.appendChild(card);
 				
@@ -182,7 +182,7 @@ export class AonMobileSale extends AonElement {
 	buildProductPackaging(table) {
 		table.removeRows();
 		table.addRow();
-		let product = this.createInput(this.PACKAGING_PRODUCT, "Envase");
+		let product = this.createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER);
 		let td = table.addCell(product);
 		td.style.width = '100%';
 		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());	
