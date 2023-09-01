@@ -2015,7 +2015,7 @@ class RegistryEnterprise implements IRegistryEnterprise, IModel {
     this.notary = notary || '';
     this.protocol = protocol || '';
     this.inscription = inscription || '';
-    this.key = this.id;
+    this.key = this.idEnterprise;
   }
   public get Id(): string {
     return this.id;
@@ -2090,7 +2090,7 @@ class RegistryEnterprise implements IRegistryEnterprise, IModel {
   }
 
   getKey(): string {
-    return this.id;
+    return this.idEnterprise;
   }
 
   getFilterableFields(): Map<string, any> {
