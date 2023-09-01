@@ -5,31 +5,46 @@
   <hr/>
 
   <div class="form">
-    <app-input
-      *ngFor="let email of emailFields; let i = index"
+    <app-input *ngFor="let enterprise of enterprises"
       [type]="'text'"
       [label]="'PROFILE.EMAIL' | translate"
       [placeholder]="'PROFILE.PLACEHOLDER' | translate"
-      [value]="emailFields[i]"
+      [value]="enterprise.Email"
     ></app-input>
     <div class="input-profile-contact-data-add">
-      <app-button class="icon-border" (click)="addEmailField()">
+      <app-button class="icon-border" >
         <app-icon [shape]="'add'"></app-icon>
       </app-button>
     </div>
   </div>
 
-  <div class="form">
+  <div *ngFor="let enterprise of enterprises" class="form">
     <app-input
       [type]="'text'"
       [label]="'PROFILE.PHONE' | translate"
       [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+      [value]="enterprise.Phone"
     ></app-input>
     <app-input
       [type]="'text'"
       [label]="'PROFILE.WEB' | translate"
       [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+      [value]="enterprise.Website"
     ></app-input>
   </div>
 
 <!-- [label]="'LOGIN.USER' + (i + 1)| translate" -->
+
+
+<!-- export interface IEnterprise extends ICollectable {
+  Name: string;
+  ProfilePhoto: string;
+  Address: string;
+  Country: string;
+  Province: string;
+  SocialReason: string;
+  Email: string;
+  Phone: string;
+  Website: string;
+  Document: string;
+} -->

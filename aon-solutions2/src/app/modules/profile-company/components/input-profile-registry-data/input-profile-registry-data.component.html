@@ -10,14 +10,14 @@
 <div *ngFor="let registryEnterprise of registryEnterprises" class="form">
   <app-input
     [label]="'PROFILE.DATE_OF_CREATION' | translate"
-    [type]="'date'"
-    [value]="registryEnterprise.DateCreation"
+    [type]="'text'"
+    [value]="registryEnterprise.DateCreation | date:'dd-MM-yyyy'"
   ></app-input>
   <app-input
     [label]="'PROFILE.REGISTRATION_DATE' | translate"
-    [type]="'date'">
-    [value]="registryEnterprise.DateRegistration"
-  </app-input>
+    [type]="'text'"
+    [value]="registryEnterprise.DateRegistration | date:'dd-MM-yyyy'"
+  ></app-input>
 </div>
 
 <div *ngFor="let registryEnterprise of registryEnterprises" class="form">
@@ -43,5 +43,3 @@
     [value]="registryEnterprise.Inscription"
   ></app-input>
 </div>
-
-

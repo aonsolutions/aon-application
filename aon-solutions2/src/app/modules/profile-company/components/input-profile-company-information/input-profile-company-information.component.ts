@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { EnterpriseService } from 'src/app/core/services/enterprise.service';
 
 export interface OptionsCountry {
   value: number;
@@ -10,17 +11,15 @@ export interface OptionsProvince {
   text: string;
 }
 
-
 @Component({
   selector: 'app-input-profile-company-information',
   templateUrl: './input-profile-company-information.component.html',
   styleUrls: ['./input-profile-company-information.component.scss'],
 })
 export class InputProfileCompanyInformationComponent implements OnInit {
+  enterprises: any[] = [];
 
   selectedCountry: OptionsCountry | null = null;
-
-
 
   optionsCountry: OptionsCountry[] = [
     { value: 1, text: 'Alemania' },
@@ -49,7 +48,7 @@ export class InputProfileCompanyInformationComponent implements OnInit {
     { value: 24, text: 'Portugal' },
     { value: 25, text: 'República Checa' },
     { value: 26, text: 'Rumania' },
-    { value: 27, text: 'Suecia' }
+    { value: 27, text: 'Suecia' },
   ];
 
   optionsProvince: OptionsProvince[] = [
@@ -104,21 +103,28 @@ export class InputProfileCompanyInformationComponent implements OnInit {
     { value: 49, text: 'Valladolid' },
     { value: 50, text: 'Vizcaya' },
     { value: 51, text: 'Zamora' },
-    { value: 52, text: 'Zaragoza' }
+    { value: 52, text: 'Zaragoza' },
   ];
 
+  constructor(private enterpriseService: EnterpriseService) {}
 
-
-  constructor() {}
-
-  ngOnInit() {}
+     ngOnInit(): void {
+      this.enterpriseService.getEnterprise('B16880148').then(enterprise => {
+        this.enterprises.push(enterprise);
+      });
+      console.log("texto2" + this.enterprises);
+    }
 
   onCountrySelection(event: any) {
     const countryValue = event.value;
-    this.selectedCountry = this.optionsCountry.find(country => country.value === countryValue) || null;
+    this.selectedCountry =
+      this.optionsCountry.find((country) => country.value === countryValue) ||
+      null;
   }
 
   showProvinceField(): boolean {
-    return this.selectedCountry !== null && this.selectedCountry.text === 'España';
+    return (
+      this.selectedCountry !== null && this.selectedCountry.text === 'España'
+    );
   }
 }
