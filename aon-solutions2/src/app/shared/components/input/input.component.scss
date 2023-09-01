@@ -23,8 +23,6 @@
   /*
     Border
   */
-  
-  
     mat-form-field .mat-form-field-outline-start,
     mat-form-field .mat-form-field-outline-end {
       border-width: $border-size-primary !important;
@@ -136,6 +134,29 @@
       border-color: #6e6e6f;
     }
     
+  /*
+    DatePicker
+  */
+    .datepicker{
+      display: flex;
+      align-items: center;
+    }
+    .datepicker button.mat-icon-button .mat-button-wrapper, a.mat-icon-button .mat-button-wrapper{
+      margin  : unset;
+      top     : -0.2rem;
+      position: relative;
+    }
+    .datepicker .mat-icon-button {
+      width: unset;
+      height: unset;
+    }
+    .datepicker .mat-button-ripple.mat-ripple, .datepicker .mat-button-focus-overlay {
+      top   : -0.45rem;
+      left  : -0.25rem;
+      width : 1.7rem;
+      height: 1.7rem;
+    }
+  
   /*
     Error required
   */

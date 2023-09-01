@@ -44,6 +44,26 @@
     </div>
   </div>
 
+  <!-- INPUTS TIPO DATEPICKER -->
+  <div
+    *ngIf="type=='date' || type=='datetime-local'"
+    class='datepicker'
+  >
+    <input
+      matInput
+      [matDatepicker]="picker"
+      [(ngModel)]="value"
+      [ngClass]="['ng-pending']"
+      [disabled]="disabled"
+      [required]="required"
+      [placeholder]="placeholder"
+      (ngModelChange)="returnValue($event)"
+      [class]="appearanceDetail" 
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </div>
+  
   <!-- INPUTS TIPO SELECT -->
     <mat-select
       *ngIf="type=='select'"

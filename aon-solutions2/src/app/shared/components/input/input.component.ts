@@ -1,4 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { DateAdapter } from '@angular/material/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
 @Component({
@@ -6,6 +8,7 @@ import { MatFormFieldAppearance } from '@angular/material/form-field';
   templateUrl : './input.component.html',
   styleUrls   : ['./input.component.scss'],
 })
+
 export class InputComponent implements OnInit {
   @Input() type             : string = '';
   @Input() appearance       : MatFormFieldAppearance = 'outline';
@@ -25,30 +28,34 @@ export class InputComponent implements OnInit {
   @Input() appearanceDetail : string = 'mat-form-field-appearance-bold-outline';
   classSuffix :string = '';
   // Type of input
-  intputType                : string[] = [
-                              "button",
-                              "checkbox",
-                              "color",
-                              "date",
-                              "datetime-local",
-                              "email",
-                              "file",
-                              "hidden",
-                              "image",
-                              "month",
-                              "number",
-                              "password",
-                              "radio",
-                              "range",
-                              "reset",
-                              "submit",
-                              "tel",
-                              "text",
-                              "time",
-                              "url",
-                              "week"
-                            ];
-  constructor() { }
+  intputType: string[] = [
+    "button",
+    "checkbox",
+    "color",
+    "email",
+    "file",
+    "hidden",
+    "image",
+    "month",
+    "number",
+    "password",
+    "radio",
+    "range",
+    "reset",
+    "submit",
+    "tel",
+    "text",
+    "time",
+    "url",
+    "week"
+  ];
+  constructor(
+    private translateService: TranslateService,
+    private dateAdapter: DateAdapter<any>
+  ) {
+    // Idioma para los DATEPICKER
+    this.dateAdapter.setLocale(this.translateService.getDefaultLang());
+  }
 
   ngOnInit(): void {
     this.suffixBehavior != '' ? this.classSuffix = '' : this.classSuffix = 'cursor';

@@ -1400,6 +1400,315 @@ interface IAuth extends ICollectable{
     Password: string;
 }
 
+export interface ICommunity {
+  label: string;
+  _about: string;
+}
+
+export interface ICountry {
+  name:         Name;
+  tld?:         string[];
+  cca2:         string;
+  ccn3?:        string;
+  cca3:         string;
+  cioc?:        string;
+  independent?: boolean;
+  status:       Status;
+  unMember:     boolean;
+  currencies?:  Currencies;
+  idd:          Idd;
+  capital?:     string[];
+  altSpellings: string[];
+  region:       Region;
+  subregion?:   string;
+  languages?:   { [key: string]: string };
+  translations: { [key: string]: Translation };
+  latlng:       number[];
+  landlocked:   boolean;
+  borders?:     string[];
+  area:         number;
+  demonyms?:    Demonyms;
+  flag:         string;
+  maps:         Maps;
+  population:   number;
+  gini?:        { [key: string]: number };
+  fifa?:        string;
+  car:          Car;
+  timezones:    string[];
+  continents:   Continent[];
+  flags:        Flags;
+  coatOfArms:   CoatOfArms;
+  startOfWeek:  StartOfWeek;
+  capitalInfo:  CapitalInfo;
+  postalCode?:  PostalCode;
+}
+
+export interface CapitalInfo {
+  latlng?: number[];
+}
+
+export interface Car {
+  signs?: string[];
+  side:   Side;
+}
+
+export enum Side {
+  Left = "left",
+  Right = "right",
+}
+
+export interface CoatOfArms {
+  png?: string;
+  svg?: string;
+}
+
+export enum Continent {
+  Africa = "Africa",
+  Antarctica = "Antarctica",
+  Asia = "Asia",
+  Europe = "Europe",
+  NorthAmerica = "North America",
+  Oceania = "Oceania",
+  SouthAmerica = "South America",
+}
+
+export interface Currencies {
+  ZAR?: Aed;
+  NOK?: Aed;
+  WST?: Aed;
+  GMD?: Aed;
+  XCD?: Aed;
+  EUR?: Aed;
+  AWG?: Aed;
+  XOF?: Aed;
+  KPW?: Aed;
+  PYG?: Aed;
+  BMD?: Aed;
+  XAF?: Aed;
+  USD?: Aed;
+  GBP?: Aed;
+  MZN?: Aed;
+  SOS?: Aed;
+  SGD?: Aed;
+  NIO?: Aed;
+  AUD?: Aed;
+  PEN?: Aed;
+  MXN?: Aed;
+  BAM?: BAM;
+  BHD?: Aed;
+  MOP?: Aed;
+  BBD?: Aed;
+  UZS?: Aed;
+  CNY?: Aed;
+  MWK?: Aed;
+  ZWL?: Aed;
+  KES?: Aed;
+  PKR?: Aed;
+  FJD?: Aed;
+  SZL?: Aed;
+  JEP?: Aed;
+  TWD?: Aed;
+  LKR?: Aed;
+  BYN?: Aed;
+  AED?: Aed;
+  ANG?: Aed;
+  CRC?: Aed;
+  AOA?: Aed;
+  UYU?: Aed;
+  CDF?: Aed;
+  KWD?: Aed;
+  TRY?: Aed;
+  MRU?: Aed;
+  TVD?: Aed;
+  PAB?: Aed;
+  EGP?: Aed;
+  AZN?: Aed;
+  RWF?: Aed;
+  INR?: Aed;
+  ISK?: Aed;
+  SRD?: Aed;
+  BGN?: Aed;
+  SLL?: Aed;
+  TND?: Aed;
+  CUC?: Aed;
+  CUP?: Aed;
+  TTD?: Aed;
+  KMF?: Aed;
+  SHP?: Aed;
+  RON?: Aed;
+  NPR?: Aed;
+  SAR?: Aed;
+  DOP?: Aed;
+  DKK?: Aed;
+  FOK?: Aed;
+  KID?: Aed;
+  VUV?: Aed;
+  HUF?: Aed;
+  YER?: Aed;
+  SCR?: Aed;
+  LYD?: Aed;
+  ILS?: Aed;
+  VND?: Aed;
+  IRR?: Aed;
+  NAD?: Aed;
+  LBP?: Aed;
+  MYR?: Aed;
+  MNT?: Aed;
+  GEL?: Aed;
+  TJS?: Aed;
+  ALL?: Aed;
+  TMT?: Aed;
+  COP?: Aed;
+  VES?: Aed;
+  GNF?: Aed;
+  SSP?: Aed;
+  UAH?: Aed;
+  FKP?: Aed;
+  HNL?: Aed;
+  BRL?: Aed;
+  MUR?: Aed;
+  THB?: Aed;
+  BOB?: Aed;
+  SEK?: Aed;
+  GGP?: Aed;
+  ZMW?: Aed;
+  ERN?: Aed;
+  KZT?: Aed;
+  MAD?: Aed;
+  JOD?: Aed;
+  MMK?: Aed;
+  CZK?: Aed;
+  JMD?: Aed;
+  KGS?: Aed;
+  SDG?: BAM;
+  STN?: Aed;
+  GIP?: Aed;
+  LSL?: Aed;
+  PLN?: Aed;
+  JPY?: Aed;
+  LRD?: Aed;
+  CVE?: Aed;
+  IMP?: Aed;
+  BIF?: Aed;
+  PGK?: Aed;
+  UGX?: Aed;
+  AFN?: Aed;
+  XPF?: Aed;
+  BWP?: Aed;
+  LAK?: Aed;
+  GTQ?: Aed;
+  CHF?: Aed;
+  SBD?: Aed;
+  SYP?: Aed;
+  BDT?: Aed;
+  DJF?: Aed;
+  GHS?: Aed;
+  OMR?: Aed;
+  BSD?: Aed;
+  DZD?: Aed;
+  HTG?: Aed;
+  PHP?: Aed;
+  CKD?: Aed;
+  NZD?: Aed;
+  TOP?: Aed;
+  MGA?: Aed;
+  CAD?: Aed;
+  AMD?: Aed;
+  NGN?: Aed;
+  BZD?: Aed;
+  RUB?: Aed;
+  KYD?: Aed;
+  MDL?: Aed;
+  RSD?: Aed;
+  CLP?: Aed;
+  IDR?: Aed;
+  MVR?: Aed;
+  BND?: Aed;
+  GYD?: Aed;
+  TZS?: Aed;
+  KHR?: Aed;
+  QAR?: Aed;
+  ARS?: Aed;
+  IQD?: Aed;
+  BTN?: Aed;
+  KRW?: Aed;
+  HKD?: Aed;
+  MKD?: Aed;
+  ETB?: Aed;
+}
+
+export interface Aed {
+  name:   string;
+  symbol: string;
+}
+
+export interface BAM {
+  name: string;
+}
+
+export interface Demonyms {
+  eng:  Eng;
+  fra?: Eng;
+}
+
+export interface Eng {
+  f: string;
+  m: string;
+}
+
+export interface Flags {
+  png:  string;
+  svg:  string;
+  alt?: string;
+}
+
+export interface Idd {
+  root?:     string;
+  suffixes?: string[];
+}
+
+export interface Maps {
+  googleMaps:     string;
+  openStreetMaps: string;
+}
+
+export interface Name {
+  common:      string;
+  official:    string;
+  nativeName?: { [key: string]: Translation };
+}
+
+export interface Translation {
+  official: string;
+  common:   string;
+}
+
+export interface PostalCode {
+  format: string;
+  regex?: string;
+}
+
+export enum Region {
+  Africa = "Africa",
+  Americas = "Americas",
+  Antarctic = "Antarctic",
+  Asia = "Asia",
+  Europe = "Europe",
+  Oceania = "Oceania",
+}
+
+export enum StartOfWeek {
+  Monday = "monday",
+  Saturday = "saturday",
+  Sunday = "sunday",
+}
+
+export enum Status {
+  OfficiallyAssigned = "officially-assigned",
+  UserAssigned = "user-assigned",
+}
+
+
 
 /*
  *
