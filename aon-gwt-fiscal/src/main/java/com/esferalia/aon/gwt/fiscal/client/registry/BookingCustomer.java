@@ -1207,8 +1207,8 @@ public class BookingCustomer extends HTMLPanel {
 				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
 				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 				
-				requestBuilder.setHeader(IJsonNames.DOMAIN_NAME, url);
-				requestBuilder.setHeader(IJsonNames.DOMAIN_ID, domainId.toString());
+				requestBuilder.setHeader("domain_name", url);
+				requestBuilder.setHeader("domain_id", domainId.toString());
 				
 				try {
 				    // Send the request
@@ -1246,8 +1246,8 @@ public class BookingCustomer extends HTMLPanel {
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 		
-		requestBuilder.setHeader(IJsonNames.DOMAIN_NAME, domainName);
-		requestBuilder.setHeader(IJsonNames.DOMAIN_ID, domainId.toString());
+		requestBuilder.setHeader("domain_name", domainName);
+		requestBuilder.setHeader("domain_id", domainId.toString());
 		
 		try {
 		    // Send the request
