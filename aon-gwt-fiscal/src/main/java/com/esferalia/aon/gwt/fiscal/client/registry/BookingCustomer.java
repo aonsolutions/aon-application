@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButto
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -728,7 +729,7 @@ public class BookingCustomer extends HTMLPanel {
 			
 			AonTableButton urlBtn = new AonTableButton("Ir a", AON.CSS.aonIconGroup());
 			urlBtn.addMouseOverHandler(e -> {
-				openUserTooltip(domainCompany.getDomain().getId(), e.getClientX(), e.getClientY());
+				openUserTooltip(domainCompany.getDomain().getName(), domainCompany.getDomain().getId(), e.getClientX(), e.getClientY());
 			});
 			focusPanel.addMouseOverHandler(e -> {
 				aonCustomerTooltip.hide();
@@ -1188,13 +1189,13 @@ public class BookingCustomer extends HTMLPanel {
 
 			@Override
 			public void onCancel() {
-				Window.open("https://" + customer.getAlias(), "_blank", "");
+				Window.open("https://" + url, "_blank", "");
 			}
 
 			@Override
 			public void onAccept() {
 				// Create the base URL
-				String baseUrl = "/ms/api/domain/";
+				String baseUrl = "/ms/api/domain/remote/";
 
 				// Create a URL builder and add query parameters
 				UrlBuilder urlBuilder = new UrlBuilder();
@@ -1202,54 +1203,19 @@ public class BookingCustomer extends HTMLPanel {
 				urlBuilder.setHost("aon.solutions"); 
 				urlBuilder.setPath(baseUrl);
 				
-				urlBuilder.setParameter("domainId", domainId.toString());
-				
 				// Create the request builder with the complete URL
-				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
 				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+				
+				requestBuilder.setHeader(IJsonNames.DOMAIN_NAME, url);
+				requestBuilder.setHeader(IJsonNames.DOMAIN_ID, domainId.toString());
 				
 				try {
 				    // Send the request
 				    requestBuilder.sendRequest(null, new RequestCallback() {
 				        public void onResponseReceived(Request request, Response response) {
 				            if (response.getStatusCode() == 200) {
-				            	
-				            	 String domainJSON = response.getText();
-
-				            	// Create the base URL
-								String baseUrl = "/ms/api/domain/remote/";
-
-								// Create a URL builder and add query parameters
-								UrlBuilder urlBuilder = new UrlBuilder();
-								urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-								urlBuilder.setHost("aon.solutions"); 
-								urlBuilder.setPath(baseUrl);
-								
-								urlBuilder.setParameter("domain", domainJSON);
-								
-								// Create the request builder with the complete URL
-								RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-								requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-								
-								try {
-								    // Send the request
-								    requestBuilder.sendRequest(null, new RequestCallback() {
-								        public void onResponseReceived(Request request, Response response) {
-								            if (response.getStatusCode() == 200) {
-								            	Window.open("https://" + url, "_blank", "");
-								            } else {
-								            	AonMessagePanel.showError(messagePanel, response.getText());
-								            }
-								        }
-
-										public void onError(Request request, Throwable exception) {
-											AonMessagePanel.showError(messagePanel, exception.getMessage());
-								        }
-								    });
-								} catch (RequestException e) {
-									AonMessagePanel.showError(messagePanel, e.getMessage());
-								}
-				                
+				            	Window.open("https://" + url, "_blank", "");
 				            } else {
 				            	AonMessagePanel.showError(messagePanel, response.getText());
 				            }
@@ -1261,13 +1227,12 @@ public class BookingCustomer extends HTMLPanel {
 				    });
 				} catch (RequestException e) {
 					AonMessagePanel.showError(messagePanel, e.getMessage());
-				}
-				
+				}	
 			}
 		});
 	}
 	
-	private void openUserTooltip(Integer domainId, int clientX, int clientY) {
+	private void openUserTooltip(String domainName, Integer domainId, int clientX, int clientY) {
 		// Create the base URL
 		String baseUrl = "/ms/api/user/";
 
@@ -1280,6 +1245,9 @@ public class BookingCustomer extends HTMLPanel {
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		requestBuilder.setHeader(IJsonNames.DOMAIN_NAME, domainName);
+		requestBuilder.setHeader(IJsonNames.DOMAIN_ID, domainId.toString());
 		
 		try {
 		    // Send the request

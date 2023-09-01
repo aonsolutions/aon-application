@@ -173,6 +173,12 @@ public class CONSOLE {
 			return getConsole().remoteAccess(ctx,domainId);
 		}
 	}
+	
+	public static String remoteAccess(Domain domain, User user, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getConsole().remoteAccess(ctx,domainId);
+		}
+	}
 
 	public static ConsoleTableRow getTableRow(ConsoleTableRow row) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {

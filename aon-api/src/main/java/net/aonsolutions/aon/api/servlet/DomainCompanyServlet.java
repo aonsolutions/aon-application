@@ -176,11 +176,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONObject remoteDomain(AonApiData api) {
-		JSONObject domainJson = api.getData().optJSONObject(IJsonNames.DOMAIN);
-		if(null != domainJson) {
-			DomainCompany domainCompany = DomainCompanyJSON.fromJSON(domainJson);
-			CONSOLE.remoteAccess(new DomainParams().setSchema(domainCompany.getSchema()), domainCompany.getDomain().getId());
-		}
+		CONSOLE.remoteAccess(api.getDomain(), api.getUser(), api.getDomain().getId());
 		return new JSONObject();
 	}
 	
