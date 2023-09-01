@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.DomainLinked;
-import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
@@ -176,7 +175,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONObject remoteDomain(AonApiData api) {
-		CONSOLE.remoteAccess(api.getDomain(), api.getUser(), api.getDomain().getId());
+		CONSOLE.remoteAccess(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		return new JSONObject();
 	}
 	

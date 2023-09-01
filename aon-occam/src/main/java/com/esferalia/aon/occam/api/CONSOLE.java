@@ -174,8 +174,8 @@ public class CONSOLE {
 		}
 	}
 	
-	public static String remoteAccess(Domain domain, User user, Integer domainId) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+	public static String remoteAccess(String domainName, Integer domainId, String userName) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, userName)){
 			return getConsole().remoteAccess(ctx,domainId);
 		}
 	}
