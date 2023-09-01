@@ -5,17 +5,17 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class AonCustomerTooltip extends DecoratedPopupPanel {
 
 	private HTMLPanel mainContainer;
-	private HTMLPanel messagePanel;
+	private ScrollPanel scrollPanel;
 	private HTMLPanel container;
 	
 	private List<User> users = new ArrayList<>();
@@ -24,14 +24,16 @@ public class AonCustomerTooltip extends DecoratedPopupPanel {
 		mainContainer = new HTMLPanel("");
 		mainContainer.addStyleName(AON.CSS.aonFlexColumn());
 		
-		messagePanel = new HTMLPanel("");
+		scrollPanel = new ScrollPanel();
+		scrollPanel.getElement().getStyle().setProperty("max-height", "300px");
 		
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
 		container.getElement().getStyle().setProperty("margin", "0 1rem");
 		
-		mainContainer.add(messagePanel);
-		mainContainer.add(container);
+		scrollPanel.add(container);
+		
+		mainContainer.add(scrollPanel);
 		
 		this.add(mainContainer);
 	}
@@ -61,7 +63,7 @@ public class AonCustomerTooltip extends DecoratedPopupPanel {
 			HTMLPanel row = new HTMLPanel("");
 			row.addStyleName(AON.CSS.aonItemFlex());
 			
-			Label name = new Label(user.getName());
+			Label name = new Label("(" + user.getLogin() + ") " + user.getName());
 			
 			AonTableButton copy = new AonTableButton("Copiar login", AON.CSS.aonIconCopy());
 			copy.addClickHandler(e -> {
@@ -69,8 +71,8 @@ public class AonCustomerTooltip extends DecoratedPopupPanel {
 				hide();
 			});
 			
-			row.add(name);
 			row.add(copy);
+			row.add(name);
 			
 			container.add(row);
 		});
