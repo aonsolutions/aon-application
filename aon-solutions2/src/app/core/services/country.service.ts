@@ -31,7 +31,7 @@ export class CountryService {
           const code = country.cca2;
 
           return { name, code };
-        });
+        }).sort((a, b) => a.name.localeCompare(b.name)); // Ordenar alfabéticamente por el campo 'name'
       });
   }
 
