@@ -50,6 +50,7 @@ export const BILLING = 'Fakturazioa';
 export const BILLABLE_USERS = "Erabiltzaile fakturagarriak";
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Kontratazioa';
+export const BOOKING_PANEL = 'Kontratazioa-taula';
 export const BOX_CRITERION = 'Kutxa-Irizpidea';
 export const BUDGET = 'Aurrekontua';
 export const BUDGETS = 'Aurrekontuak';

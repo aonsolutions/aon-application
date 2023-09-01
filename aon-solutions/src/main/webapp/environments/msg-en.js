@@ -50,6 +50,7 @@ export const BILLING = 'Billing';
 export const BILLABLE_USERS = "Billable users";
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Booking';
+export const BOOKING_PANEL = 'Booking panel';
 export const BOX_CRITERION = 'Box Criterion';
 export const BUDGET = 'Budget';
 export const BUDGETS = 'Budgets';

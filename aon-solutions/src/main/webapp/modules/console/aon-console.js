@@ -58,13 +58,6 @@ export class AonConsole extends AonElement {
 	}
 
 	aonLinkDomains() {
-		// let d = this.getApplication().getDialog();
-		// d.clear();
-		// if(!this.isMobile())d.width = '400px';
-		// d.setTitle(MSG.LINK_DOMAINS);
-		// d.setContentHTML(MSG.IN_DEVELOPMENT);
-		// d.addAcceptAction(() => {});
-		// d.open();
 		this.getApplication().setContent(new AonLinkDomains());
 	}
 

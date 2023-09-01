@@ -50,6 +50,7 @@ export const BILLING = 'Facturació';
 export const BILLABLE_USERS = "Usuaris facturables";
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Contractació';
+export const BOOKING_PANEL = 'Panell de Contractació';
 export const BOX_CRITERION = 'Criteri de Caixa';
 export const BUDGET = 'Pressupost';
 export const BUDGETS = 'Pressupostos';

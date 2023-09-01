@@ -94,6 +94,7 @@ export const BILLABLE_USERS = MSG.BILLABLE_USERS;
 export const BLOCKED_POPUP = "Ventana bloqueada!";// TODO
 export const BLOCKED = "Bloqueado";// TODO
 export const BOOKING = MSG.BOOKING;
+export const BOOKING_PANEL = MSG.BOOKING_PANEL;
 export const BORDER = 'Borde';
 export const BOX_CRITERION = MSG.BOX_CRITERION;
 export const BUDGET = MSG.BUDGET;
