@@ -12,20 +12,18 @@ export class InputProfilePersonalDataComponent implements OnInit {
   documentEnterprise!: string;
 
   constructor(private userService: UserService) {
-
-  }
-
-  ngOnInit(): void {
+    console.log('empresa - ', localStorage.getItem('enterprise'));
 
     this.userService.getUser('94385657M').then((user) => {
       this.users.push(user);
     });
   }
+
+  ngOnInit(): void {}
   togglePasswordFields() {
     this.showPasswordFields = !this.showPasswordFields;
   }
 }
-
 
 // constructor(private userService: UserService) {
 //   if (localStorage.getItem('enterprise')) {
