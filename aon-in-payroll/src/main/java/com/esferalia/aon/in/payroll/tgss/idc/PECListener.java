@@ -85,6 +85,13 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, Collection<DeductionProvider>> DEDUCTION_QUOTA_PROVIDER_MAP = new HashMap<String, Collection<DeductionProvider>>() {
 		{
 			put("08", REMOVE_ALL_DEDUCTIONS);
+			put("10", collection(
+				newCgcITDeduction(ContextVariable.CGC_EMPLOYEE),
+				newRemoveDeduction(ContextVariable.CGC_EMPLOYEE),
+				newRemoveDeduction(ContextVariable.MEI_EMPLOYEE),
+				newRemoveDeduction(ContextVariable.FP_EMPLOYEE),
+				newRemoveDeduction(ContextVariable.UNEMPLOY_EMPLOYEE)
+				) );
 			put("12", collection(
 					newRemoveDeduction(ContextVariable.UNEMPLOY_EMPLOYEE)));
 			put("53", collection(
@@ -107,6 +114,14 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, Collection<CostProvider>> COST_QUOTA_PROVIDERS_MAP = new HashMap<String, Collection<CostProvider>>() {
 		{
 			put("01", REMOVE_ALL_COSTS );
+			put("10", collection(
+				newCgcITCost(ContextVariable.CGC_ENTERPRISE),
+				newRemoveCost(ContextVariable.CGC_ENTERPRISE),
+				newRemoveCost(ContextVariable.MEI_ENTERPRISE),
+				newRemoveCost(ContextVariable.FP_ENTERPRISE),
+				newRemoveCost(ContextVariable.FOGASA_ENTERPRISE),
+				newRemoveCost(ContextVariable.UNEMPLOY_ENTERPRISE)
+				) );
 			put("12", collection(
 					newRemoveCost(ContextVariable.UNEMPLOY_ENTERPRISE),
 					newRemoveCost(ContextVariable.FOGASA_ENTERPRISE)));
@@ -155,6 +170,7 @@ class PECListener  implements IdcParserListener {
 		{
 			put("01", "BONIFICACIÓN INEM");
 			put("03", "RED.CUOTA SS-PORCENT");
+			put("07", "EXONERACIÓN");
 			put("09", "EXCLUSIONES");
 			put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
 		}
@@ -164,6 +180,7 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, String> PEC_COST_MAP = new HashMap<String, String>() {
 		{
 			put("03", "RED.CUOTA SS-PORCENT");
+			put("07", "EXONERACIÓN");
 			put("09", "EXCLUSIONES");
 			put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
 		}
@@ -351,6 +368,14 @@ class PECListener  implements IdcParserListener {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newRemoveDeduction(nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
+	private static CostProvider newCgcITCost( ContextVariable var ) {
+		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newCgcITCost(nss, ccc, pec, quota, portTipo, description, start, end, var);
+	}
+
+	private static DeductionProvider newCgcITDeduction( ContextVariable var ) {
+		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newCgcITDeduction(nss, ccc, pec, quota, portTipo, description, start, end, var);
+	}
+
 	private static CostProvider newRemoveCost( ContextVariable var ) {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newRemoveCost(nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
@@ -395,6 +420,60 @@ class PECListener  implements IdcParserListener {
 			ContextVariable var){
 		PEC.Deduction deduction =  new PEC.Deduction();	
 		return newRemovePEC(deduction, nss, ccc, pec, quota, portTipo, description, start, end, var);
+	}
+
+	private static PEC.Cost newCgcITCost(
+		String nss, 
+		String ccc, 
+		String pec, 
+		String quota, 
+		String portTipo,
+		String description, 
+		Date start, 
+		Date end ,
+		ContextVariable var){
+        	PEC.Cost cost =  new PEC.Cost();	
+		cost.setCcc(ccc);
+		cost.setNss(nss);
+		cost.setStartDate(start);
+		cost.setEndDate(end);
+		cost.setFormula(String.format(Locale.ROOT,
+				"/*epoch:%d,pec:%s,quota:%s*//*read-only*/BASE_CGC_E * (PORCENTAJE_CGC_E=1.30) / 100.00 /**/", 
+				Calendar.getInstance().getTimeInMillis(),
+				pec, 
+				quota
+				));
+		cost.setDescription(String.format(new Locale("es", "ES"),"%s %s (%s)", description, getDescription(var), portTipo));
+		cost.setName(var.getName());
+		
+		return cost;
+	}
+
+	private static PEC.Deduction newCgcITDeduction(
+		String nss, 
+		String ccc, 
+		String pec, 
+		String quota, 
+		String portTipo,
+		String description, 
+		Date start, 
+		Date end ,
+		ContextVariable var){
+        	PEC.Deduction deduction =  new PEC.Deduction();	
+		deduction.setCcc(ccc);
+		deduction.setNss(nss);
+		deduction.setStartDate(start);
+		deduction.setEndDate(end);
+		deduction.setFormula(String.format(Locale.ROOT,
+				"/*epoch:%d,pec:%s,quota:%s*//*read-only*/BASE_CGC * (PORCENTAJE_CGC=0.25) / 100.00 /**/", 
+				Calendar.getInstance().getTimeInMillis(),
+				pec, 
+				quota
+				));
+		deduction.setDescription(String.format(new Locale("es", "ES"),"%s %s (%s)", description, getDescription(var), portTipo));
+		deduction.setName(var.getName());
+		
+		return deduction;
 	}
 
 	private static PEC.Cost newRemoveCost(
