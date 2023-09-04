@@ -108,8 +108,10 @@ public interface ITemplateAsync {
 	void importRegistryEmptyFix(Domain domain, User user, AsyncCallback<Void> callback);
 
 	void insertInvoice(Domain domain, User user, InvoiceImportClass invoices, Integer index, AsyncCallback<Error> callback);
+	void insertServalInvoice(Domain domain, User user, InvoiceImportClass invoices, Integer index, AsyncCallback<Error> callback);
 
 	void executeInvoice(Domain domain, User user, String data, AsyncCallback<List<InvoiceImportClass>> callback);
+	void executeServalInvoice(Domain domain, User user, String data, AsyncCallback<List<InvoiceImportClass>> callback);
 
 	void executeRegistry(Domain domain, User user, String data,
 			AsyncCallback<List<RegistryImportClass>> callback);

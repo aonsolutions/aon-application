@@ -78,7 +78,10 @@ public class ImportContent extends Composite {
 	}
 	
 	private void init() {
-		typeList.addItem("Facturas", ImportType.INVOICE.name());
+		if(getAonData().getDomain().getName().contains("serval")) {
+			typeList.addItem("Facturas Contabilidad", ImportType.INVOICE.name());
+			typeList.addItem("Facturas Gesti\u00f3n", ImportType.SERVAL_INVOICE.name());
+		} else typeList.addItem("Facturas", ImportType.INVOICE.name());
 		typeList.addItem("Clientes, Proveedores y Acreedores", ImportType.REGISTRY.name());
 		typeList.addItem("Plan General Contable",ImportType.PGC.name());
 		typeList.addItem("Libro Diario", ImportType.DIARY.name());
@@ -110,6 +113,17 @@ public class ImportContent extends Composite {
 						public void onSuccess(List<InvoiceImportClass> result) {
 							loadingAonProgressBar(ImportType.INVOICE);
 							insertInvoices(result, 0);
+						}
+							
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+				} else if(ImportType.SERVAL_INVOICE.equals(importType)) {
+					item.executeServalInvoice(getDomain(), getUser(), data, new AsyncCallback<List<InvoiceImportClass>>() {
+						@Override
+						public void onSuccess(List<InvoiceImportClass> result) {
+							loadingAonProgressBar(ImportType.SERVAL_INVOICE);
+							insertServalInvoices(result, 0);
 						}
 							
 						@Override
@@ -201,6 +215,33 @@ public class ImportContent extends Composite {
 			}
 		};
 		item.insertInvoice(getDomain(), getUser(), invoices.get(index), index, callback);
+	}
+	
+	private void insertServalInvoices(List<InvoiceImportClass> invoices, Integer index) {
+		Integer lines = invoices.size();
+		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
+			@Override
+			public void onSuccess(Error result) {
+				Double progress = (result.getLine().doubleValue() / lines.doubleValue()) * 100.0;
+				if(!result.getError()) {
+					verror.add(result.getTextError().getFirst());
+				}
+				if(result.getTextWarning() != null && result.getTextWarning().size() > 0) {
+					werror.addAll(result.getTextWarning());
+				}
+				pbd.updateProgress(progress.intValue());
+				if(result.getLine() < lines - 1) {
+					insertInvoices(invoices, result.getLine() + 1);
+				} else error(ImportType.INVOICE);
+			}
+				
+			@Override public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+				pbd.completed();
+				pbd.hide();
+			}
+		};
+		item.insertServalInvoice(getDomain(), getUser(), invoices.get(index), index, callback);
 	}
 	
 	private void insertRegistries(List<RegistryImportClass> registries, Integer index) {

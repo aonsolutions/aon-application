@@ -27,6 +27,7 @@ import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.ExportInfo;
 import com.esferalia.aon.gwt.template.shared.ImportType;
+import com.esferalia.aon.gwt.template.shared.InvoiceImportClass;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -253,6 +254,8 @@ public class Templates extends Composite implements EntryPoint {
 				startAonProgressBar();
 				if(ImportType.FEE.equals(importType)) {
 					importFee(data);
+				} else if(ImportType.INVOICE.equals((importType))) {
+					importInvoice(data);
 				}
 			}
 		};
@@ -353,6 +356,85 @@ public class Templates extends Composite implements EntryPoint {
 		} else if(ImportType.REGISTRY.equals(type)) {
 			item.insertRegistries(getDomain(), getUser(), index, callback);
 		}
+	}
+
+	// IMPORT INVOICE (SERVAL)
+	
+	public void invoice() {
+		newImportation(ImportType.INVOICE);
+	}
+
+	public static native void exportInvoice(Templates thiz) /*-{
+		$wnd.fee = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::invoice(*)();
+		}
+	}-*/;
+	
+	private void importInvoice(String data) {
+		item.executeServalInvoice(getDomain(), getUser(), data, new AsyncCallback<List<InvoiceImportClass>>() {
+			@Override
+			public void onSuccess(List<InvoiceImportClass> result) {
+				loadingAonProgressBar(ImportType.INVOICE);
+				insertInvoices(result, 0);
+			}
+				
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	private void insertInvoices(List<InvoiceImportClass> invoices, Integer index) {
+		Integer lines = invoices.size();
+		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
+			@Override
+			public void onSuccess(Error result) {
+				Double progress = (result.getLine().doubleValue() / lines.doubleValue()) * 100.0;
+				if(!result.getError()) {
+					verror.add(result.getTextError().getFirst());
+				}
+				if(result.getTextWarning() != null && result.getTextWarning().size() > 0) {
+					werror.addAll(result.getTextWarning());
+				}
+				pbd.updateProgress(progress.intValue());
+				if(result.getLine() < lines - 1) {
+					insertInvoices(invoices, result.getLine() + 1);
+				} else error(ImportType.INVOICE);
+			}
+				
+			@Override public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+				pbd.completed();
+				pbd.hide();
+			}
+		};
+		item.insertServalInvoice(getDomain(), getUser(), invoices.get(index), index, callback);
+	}
+	
+	private void error(ImportType type) {
+		pbd.completed();
+		pbd.hide();
+		
+		ImportError error = new ImportError();
+		error.setError(verror.isEmpty());
+		error.setTextError(verror);
+		error.setTextWarning(werror);
+		
+		VerticalPanel vPanel = new VerticalPanel();
+		error.getTextError().forEach(errorIt -> {
+			Label label = new Label(errorIt);
+			label.getElement().getStyle().setColor("red");
+			vPanel.add(label);
+		});
+		error.getTextWarning().forEach(warnIt -> {
+			Label label = new Label(warnIt);
+			label.getElement().getStyle().setColor("orange");
+			vPanel.add(label);
+		});
+		if(verror.isEmpty() && werror.isEmpty()) {
+			vPanel.add(new Label("La importaci\u00f3n se ha realizado correctamente."));
+		}
+		AonDialog dialog = new AonDialog("Importar " + type.getName(), vPanel);
+		dialog.info();
 	}
 	
 	// IMPORT FEE

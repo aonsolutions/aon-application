@@ -12,12 +12,13 @@ public enum ImportType {
 	INVOICE,
 	REGISTRY,
 	DIARY,
-	PGC;
+	PGC,
+	SERVAL_INVOICE;
 	
 	
 	public String getName() {
 		switch (this) {
-		case INVOICE:
+		case INVOICE: case SERVAL_INVOICE:
 			return "Facturas";
 		case DIARY:
 			return "Diario";
