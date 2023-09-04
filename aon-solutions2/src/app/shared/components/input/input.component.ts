@@ -16,8 +16,7 @@ export class InputComponent implements OnInit {
   @Input() label            : string = '';
   @Input() hint             : string = '';
   @Input() placeholder      : string = '';
-  @Input() suffixBehavior   : any;
-  @Input() value            : any = '';
+  @Input() value            : any    = '';
   @Output() inputValue = new EventEmitter<any>();
   @Input() options          : any;
   @Input() disabled         : string = 'false';
@@ -26,7 +25,9 @@ export class InputComponent implements OnInit {
   @Input() maxRow           : string = '3';
   @Input() minRow           : string = '10';
   @Input() appearanceDetail : string = 'mat-form-field-appearance-bold-outline';
-  classSuffix :string = '';
+  @Input() suffixBehavior   : string = '';
+  suffixIcon       : string = '';
+  classSuffix      : string = '';
   // Type of input
   intputType: string[] = [
     "button",
@@ -54,11 +55,15 @@ export class InputComponent implements OnInit {
     private dateAdapter: DateAdapter<any>
   ) {
     // Idioma para los DATEPICKER
-    this.dateAdapter.setLocale(this.translateService.getDefaultLang());
+    this.dateAdapter.setLocale(this.translateService.getDefaultLang());    
   }
 
   ngOnInit(): void {
-    this.suffixBehavior != '' ? this.classSuffix = '' : this.classSuffix = 'cursor';
+    // Type es password - Mostrar y ocultar pass
+    if(this.type == 'password' && this.suffixBehavior === 'showPass'){
+      this.suffixIcon     = 'eye';
+      this.suffixBehavior = 'showPass'; 
+    }
   }
 
   selectFunction() {
@@ -80,7 +85,8 @@ export class InputComponent implements OnInit {
   }
 
   showPass() {
-    this.type = this.type == 'text' ? 'password' : 'text';
+    this.suffixIcon = this.suffixIcon === 'visibility_off' ? 'eye' : 'visibility_off';
+    this.type       = this.type == 'text' ? 'password' : 'text';
   }
 
   returnValue(value: any) {

@@ -106,10 +106,12 @@ $bottom-button-icon: 0.5rem;
   $margin-button-icon-right       : 0.5rem;
   $margin-button-icon-bottom      : 0.5rem;
   /* Primary */
-    $background-button-primary      : #fff;
-    $background-button-hover        : #f0f0f1;
-    $border-button                  : solid $border-size-primary $color-border-primary ;
-    $border-button-radius           : 0.2rem;
+    $background-button-primary        : #fff;
+    $background-button-hover          : #f0f0f1;
+    $background-button-hover-rgba     : rgba(240, 240, 241, 0);
+    $background-button-hover-view-rgba: rgba(240, 240, 241, 1);
+    $border-button                    : solid $border-size-primary $color-border-primary ;
+    $border-button-radius             : 0.2rem;
   /* Dark */
     $background-button-dark         : #19191d;
     $background-button-dark-hover   : #292a31;
