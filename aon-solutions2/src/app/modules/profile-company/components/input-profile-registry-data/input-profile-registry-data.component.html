@@ -1,45 +1,47 @@
-<div *ngFor="let registryEnterprise of registryEnterprises" class="form">
+<div *ngFor="let registryEnterprise of registryEnterprises">
+<div  class="form">
   <app-input
     [type]="'text'"
     [label]="'PROFILE.DESCRIPTION' | translate"
-    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+    [placeholder]="'PROFILE.DESCRIPTION' | translate"
     [value]="registryEnterprise.Description"
   ></app-input>
 </div>
 
-<div *ngFor="let registryEnterprise of registryEnterprises" class="form">
+<div class="form">
   <app-input
     [label]="'PROFILE.DATE_OF_CREATION' | translate"
-    [type]="'text'"
-    [value]="registryEnterprise.DateCreation | date:'dd-MM-yyyy'"
+    [type]="'date'"
+    [value]="registryEnterprise.DateCreation"
   ></app-input>
   <app-input
     [label]="'PROFILE.REGISTRATION_DATE' | translate"
-    [type]="'text'"
-    [value]="registryEnterprise.DateRegistration | date:'dd-MM-yyyy'"
+    [type]="'date'"
+    [value]="registryEnterprise.DateRegistration"
   ></app-input>
 </div>
 
-<div *ngFor="let registryEnterprise of registryEnterprises" class="form">
+<div class="form">
   <app-input
     [type]="'text'"
     [label]="'PROFILE.NOTARY' | translate"
-    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+    [placeholder]="'PROFILE.NOTARY' | translate"
     [value]="registryEnterprise.Notary"
   ></app-input>
 </div>
 
-<div *ngFor="let registryEnterprise of registryEnterprises" class="form">
+<div  class="form">
   <app-input
     [type]="'text'"
     [label]="'PROFILE.PROTOCOL' | translate"
-    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+    [placeholder]="'PROFILE.PROTOCOL' | translate"
     [value]="registryEnterprise.Protocol"
   ></app-input>
   <app-input
     [type]="'text'"
     [label]="'PROFILE.REGISTRATION' | translate"
-    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+    [placeholder]="'PROFILE.REGISTRATION' | translate"
     [value]="registryEnterprise.Inscription"
   ></app-input>
+</div>
 </div>

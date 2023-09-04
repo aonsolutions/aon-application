@@ -4,11 +4,12 @@
 
   <hr/>
 
+  <div *ngFor="let enterprise of enterprises">
   <div class="form">
-    <app-input *ngFor="let enterprise of enterprises"
+    <app-input
       [type]="'text'"
       [label]="'PROFILE.EMAIL' | translate"
-      [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+      [placeholder]="'PROFILE.EMAIL' | translate"
       [value]="enterprise.Email"
     ></app-input>
     <div class="input-profile-contact-data-add">
@@ -18,20 +19,21 @@
     </div>
   </div>
 
-  <div *ngFor="let enterprise of enterprises" class="form">
+  <div class="form">
     <app-input
       [type]="'text'"
       [label]="'PROFILE.PHONE' | translate"
-      [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+      [placeholder]="'PROFILE.PHONE' | translate"
       [value]="enterprise.Phone"
     ></app-input>
     <app-input
       [type]="'text'"
       [label]="'PROFILE.WEB' | translate"
-      [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+      [placeholder]="'PROFILE.WEB' | translate"
       [value]="enterprise.Website"
     ></app-input>
   </div>
+</div>
 
 <!-- [label]="'LOGIN.USER' + (i + 1)| translate" -->
 

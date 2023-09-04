@@ -1,5 +1,6 @@
 @import "src/styles.scss";
 
+
 .title-modal-info-certicate {
   font-size: $font-size-24;
   font-weight: 700;
@@ -8,7 +9,7 @@
 }
 
 .box {
-  margin: 2rem;
+  margin: 1rem;
 
   .info-line {
     display: flex;
@@ -33,18 +34,25 @@
   font-size: $font-size-default;
   font-weight: 400;
   padding-left: 2rem;
+
 }
 
 .box-2 {
-  border: 1px solid black;
+  border: .05rem solid $color-border-primary ;
   margin: 2rem;
+  padding: 0.5rem;
 
-  .info-box {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-    font-size: $font-size-primary;
-    font-weight: 400;
-    color: blue; 
-  }
+
 }
+
+.info-box {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: $font-size-primary;
+  font-weight: 400;
+  color: $color-secondary !important;
+
+}
+
+

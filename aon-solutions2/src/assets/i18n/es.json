@@ -163,7 +163,14 @@
     "AEAT": "AEAT",
     "ACTIONS": "Acciones",
     "DELETE_ITEM": "¿Desea eliminar este elemento?",
-    "CERTIFICATE_VALIDATED": "Certificado validado correctamente"
+    "CERTIFICATE_VALIDATED": "Certificado validado correctamente",
+    "DOCUMENT": "Documento",
+    "VALIDITY":"Validez desde",
+    "VALIDITY_TO":"Validez hasta",
+    "SECUNDARY_USERS":"Usuarios secundarios",
+    "STATUS": "Estado",
+    "STATUS_DATE": "Fecha estado",
+    "NAF": "NAF"
   }
 }
 

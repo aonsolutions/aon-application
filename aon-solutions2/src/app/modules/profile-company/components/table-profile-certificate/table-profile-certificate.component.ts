@@ -8,10 +8,9 @@ import {
 
 import { TranslateService } from '@ngx-translate/core';
 import { CertificateService } from '../../../../core/services/certificate.service';
-// import { ModalDeleteCertificateComponent } from '../modal-delete-certificate/modal-delete-certificate.component';
 import { ModalValidatedCertificateComponent } from '../modal-validated-certificate/modal-validated-certificate.component';
 import { ModalInfoCertificateComponent } from '../modal-info-certificate/modal-info-certificate.component';
-
+import { ModalDeleteCertificateComponent } from '../modal-delete-certificate/modal-delete-certificate.component';
 
 @Component({
   selector: 'app-table-profile-certificate',
@@ -32,7 +31,6 @@ export class TableProfileCertificateComponent implements OnInit {
   ];
   headerTable: any = {};
   bodyTable: any = [];
-
 
   constructor(
     public certificateService: CertificateService,
@@ -91,20 +89,17 @@ export class TableProfileCertificateComponent implements OnInit {
 
   ngOnInit(): void {}
 
-
   @ViewChild('modalDelete') ModalDeleteCertificateComponent: any = '';
   @ViewChild('modalValidated') ModalValidatedCertificateComponent: any = '';
   @ViewChild('modalInfoCertificate') ModalInfoCertificateComponent: any = '';
 
-
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
   modalClick(object: any) {
-
     switch (object.keyButton) {
       case 'delete':
         this.ModalDeleteCertificateComponent.openDialog(
-          ModalInfoCertificateComponent,
+          ModalDeleteCertificateComponent,
           this.functionHome,
           'Data from home'
         );
@@ -117,10 +112,9 @@ export class TableProfileCertificateComponent implements OnInit {
         );
         break;
 
+    }
+
+    this.certificateService.getCertificate(object.key).then((response) => {});
   }
 
-  this.certificateService.getCertificate(object.key).then((response) => {
-    console.log(response);
-  });
-}
 }
