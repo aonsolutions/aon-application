@@ -21,9 +21,11 @@ import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.Upload;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonProgressBarDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -49,10 +51,13 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -71,6 +76,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -81,6 +87,27 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CustomerFee extends MainEntryPoint {
+	
+	class ExcelExtendCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			exportCustomer(true);
+		}
+	}
+	
+	class ExcelExportMenu extends AonContextMenu {
+
+		public ExcelExportMenu() {
+			addMenuItem("Excel detallado", new ExcelExtendCommand(), AON.CSS.aonIconExcel(), "excelExtend");
+		}
+		
+		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
+			MenuItem item = addItem(title, command, iconStyle, AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+			item.ensureDebugId(debugId);
+			return item;
+		}
+	}
 
 	// Services
 	private static RegistryServiceAsync SERVICE;
@@ -102,7 +129,7 @@ public class CustomerFee extends MainEntryPoint {
 	private AonToolbarButton importButton;
 	private AonToolbarButton customerButton;
 	private AonToolbarButton backButton;
-	private AonToolbarButton exportCustomerButton;
+	private AonExpandButton exportCustomerButton;
 	
 	private DeckPanel mainDeckPanel;
 	
@@ -195,6 +222,9 @@ public class CustomerFee extends MainEntryPoint {
 	private AonProgressBarDialog pbd;
 	private LinkedList<String> verror = new LinkedList<>();
 	private LinkedList<String> werror = new LinkedList<>();
+	
+	// ContextMenu
+	private ExcelExportMenu excelExportMenu;
 
 	@Override
 	public void onModuleLoad() {
@@ -210,6 +240,8 @@ public class CustomerFee extends MainEntryPoint {
 	public void onModuleLoad(final RegistryModuleOptions opt) {
 		AON.ensureInjected();
 
+		excelExportMenu = new ExcelExportMenu();
+		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
 
@@ -2600,19 +2632,21 @@ public class CustomerFee extends MainEntryPoint {
 			showCustomerFee();
 		});
 		
-		exportCustomerButton = new AonToolbarButton("Exportar Clientes",AON.CSS.aonIconExcel());
-		exportCustomerButton.setVisible(false);
-		exportCustomerButton.addClickHandler(e -> {
-			LinkedList<Customer> selectedCustomer = selectionModelCustomer.entrySet().stream().filter(a -> a.getKey().getValue()).map(c -> c.getValue()).collect(Collectors.toCollection(LinkedList::new));
-			if(selectedCustomer.size() == customerList.size()) {
-				// Exportacion masiva (todo seleccionado)
-				exportCustomer(null);
-			} else {
-				List<Integer> customerIds = new ArrayList<>();
-				customerIds = selectedCustomer.stream().map(fee -> fee.getId()).collect(Collectors.toList());
-				exportCustomer(customerIds);
+		exportCustomerButton = new AonExpandButton("Exportar Clientes",AON.CSS.aonIconExcel()) {
+
+			@Override
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				excelExportMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				excelExportMenu.show();
 			}
-		});
+
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				exportCustomer(false);
+			}
+		};
+		exportCustomerButton.setVisible(false);
 		
 		toolbar.add(saveButton);
 		toolbar.add(undoAllButton);
@@ -2752,7 +2786,19 @@ public class CustomerFee extends MainEntryPoint {
 		Window.open( fileDownloadURL, "_blank",null);
 	}
 	
-	private void exportCustomer(List<Integer> customerIds) {
+	private void exportCustomer(boolean extend) {
+		LinkedList<Customer> selectedCustomer = selectionModelCustomer.entrySet().stream().filter(a -> a.getKey().getValue()).map(c -> c.getValue()).collect(Collectors.toCollection(LinkedList::new));
+		if(selectedCustomer.size() == customerList.size()) {
+			// Exportacion masiva (todo seleccionado)
+			exportCustomer(null, extend);
+		} else {
+			List<Integer> customerIds = new ArrayList<>();
+			customerIds = selectedCustomer.stream().map(fee -> fee.getId()).collect(Collectors.toList());
+			exportCustomer(customerIds, extend);
+		}
+	}
+	
+	private void exportCustomer(List<Integer> customerIds, boolean extend) {
 		JSONObject json = new JSONObject();
 		
 		if(null == customerIds) {
@@ -2772,6 +2818,8 @@ public class CustomerFee extends MainEntryPoint {
             	+ "&domainId=" + options.getDomain()
 				+ "&login="+ options.getUser()
 				+ "&type=excel";
+		
+		if(extend) fileDownloadURL += "&extend=true";
 		
 		Window.open( fileDownloadURL, "_blank",null);
 	}
