@@ -12,12 +12,22 @@ export class InputProfileRegistryDataComponent implements OnInit {
   constructor(private registryEnterpriseService: RegistryEnterpriseService) { }
 
   ngOnInit(): void {
-    this.registryEnterpriseService.getRegistryEnterprise('JyjNqGg3H1pfPak').then(registryEnterprise => {
+    const documentEnt = localStorage.getItem('enterprise');
+    this.registryEnterpriseService.getRegistryEnterprise(documentEnt).then(registryEnterprise => {
       this.registryEnterprises.push(registryEnterprise);
     });
   }
 
 }
+
+// ngOnInit(): void {
+//   const documentEnt = localStorage.getItem('enterprise');
+//   console.log('documentEnt', documentEnt);
+//   const registryEnt = this.registryEnterpriseService.getRegistryEnterprise(documentEnt);
+
+//   console.log('registryEnt', registryEnt);
+// }
+// }
 
 //   ngOnInit() : void {
 //     this.registryEnterpriseService.getRegistryEnterpriseList().then(registryEnterpriseCollection => {
