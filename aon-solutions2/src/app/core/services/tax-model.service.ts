@@ -38,5 +38,32 @@ export class TaxModelService {
     return this.updateTaxModel(taxModel);
   }
 
+  // En el trimestre que estamos
+  // Restorna:
+  //  Trimestre 1
+  //  Trimestre 2
+  //  Trimestre 3
+  //  Trimestre 4
+  async thisTrimester() {
+    let trimester : number = -1;
+    const currentDate   = new Date();
+    const currentMonth  = currentDate.getMonth() + 1;
+    const currentYear   = currentDate.getFullYear();
 
+    if (currentMonth >= 2 && currentMonth <= 4) {
+      // Trimestre 1
+      trimester = 1;
+    } else if (currentMonth >= 5 && currentMonth <= 7) {
+      // Trimestre 2
+      trimester = 2;
+    } else if (currentMonth >= 8 && currentMonth <= 10) {
+      // Trimestre  3
+      trimester = 3;
+    } else if (currentMonth > 10 || currentMonth < 2) {
+      // Trimestre 4
+      trimester = 4;
+    }
+    return trimester;
+  }
+  
 }

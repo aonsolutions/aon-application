@@ -24,19 +24,15 @@
     <div id="charts">
       <div class="chart" *ngFor="let chartItem of chartItems">
         <app-chart-dashboard 
-          [chartItemList]="chartItems$"
-          [labels]="chartItem.chartLabels"
-          [chartType]="chartItem.chartType"
-          [data]="chartItem.chartData"
-          [name]="chartItem.name"
-          [shape]="chartItem.shape"
+          [name]      ="chartItem.name"
+          [typeDate]  ="chartItem.typeDate"
         ></app-chart-dashboard>
       </div>
       <div class="chart">
-        <app-models-dashboard [taxModelList]="models$" class="summary-view"></app-models-dashboard>
+        <app-models-dashboard></app-models-dashboard>
       </div>
       <div class="chart">
-        <app-banks-dashboard [bankList]="banks$" class="summary-view"></app-banks-dashboard>
+        <app-banks-dashboard [bankList]="banks$"></app-banks-dashboard>
       </div>
     </div>
   <!-- FIN Ventas, Cobros, Impuestos, tus bancos -->
@@ -45,7 +41,7 @@
   <!-- FIN linea divisoria -->
   <!-- Bandeja de email -->
     <div id="inbox">
-      <app-inbox [messageList]="messages$" ></app-inbox>
+      <app-inbox></app-inbox>
     </div>
   <!-- FIN Bandeja de email -->
   <!-- Acceso a gestion, panel de impuestos, empleados y doc -->

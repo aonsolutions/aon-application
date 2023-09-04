@@ -8,11 +8,10 @@ import { MultiDataSet, Label, Color } from 'ng2-charts';
   styleUrls: ['./chart.component.scss']
 })
 export class ChartComponent implements OnInit {
-
-  @Input() chartLabels: Label[] = [];
-  @Input() chartData: MultiDataSet = [];
-  @Input() chartType: ChartType = "doughnut";
-  @Input() colors: Color[] = [];
+  @Input() chartLabels  : Label[] = [];
+  @Input() chartData    : MultiDataSet = [];
+  @Input() chartType    : ChartType = "doughnut";
+  @Input() colors       : Color[] = [];
 
   constructor() { }
 
