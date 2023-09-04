@@ -58,6 +58,26 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		String name();
 	}
 	
+	private static class Datas {
+	    private static class Data {
+		private String name;
+		private ITimedVariable<?> variable;
+	    }
+	    
+	    private ArrayList<Data> datas = new ArrayList<>();
+	    
+	    private void addData(String name, ITimedVariable<?> variable) {
+		Data data = new Data();
+		data.name = name;
+		data.variable = variable;
+		datas.add(data);
+	    }
+	    
+	    private void fireAdd(ISalaryBuilder<?> salaryBuilder) {
+		datas.forEach( data -> salaryBuilder.addData(data.name, data.variable));
+	    }
+	}
+
 	private static class Deductions {
 		
 		private static class Deduction{
@@ -539,8 +559,11 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	private Payments payments;
 	private Embargos embargos;
 	private Deductions deductions;
-	
+
 	private ExpressionContext expressionContext;
+	
+	private Datas datas;
+	
 	
 	@Override
 	public void createNewSalary() {
@@ -568,6 +591,8 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		this.payments = new Payments();
 		this.deductions = new Deductions();
 		
+		this.datas = new Datas();
+
 		salaryBuilder.createNewSalary();
 	}
 
@@ -794,8 +819,9 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void addData(String name, ITimedVariable<?> datas) {
-		salaryBuilder.addData(name, datas);
+	public void addData(String name, ITimedVariable<?> var) {
+	    this.datas.addData(name, var);
+	    //salaryBuilder.addData(name, datas);
 	}
 
 	@Override
@@ -965,6 +991,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	    }
 	}
 
+	private void fireAddDatas(ISalaryBuilder<?> salaryBuilder) {
+	    datas.fireAdd(salaryBuilder);
+	}
+
 	private void fireAddPayments(ISalaryBuilder<?> salaryBuilder) {
 	    payments.fireAdd(salaryBuilder);
 	}
@@ -1040,6 +1070,8 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 		totalEnterprise = f.apply(totalEnterprise);
 		salaryBuilder.setTotalEnterprise(doubleValue(totalEnterprise));
+		
+		fireAddDatas(salaryBuilder);
 		
 		addIrpfQuotas();
 		fireRoundData();
