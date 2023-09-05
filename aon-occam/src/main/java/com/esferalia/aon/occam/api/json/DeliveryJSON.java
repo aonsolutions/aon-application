@@ -135,6 +135,8 @@ public class DeliveryJSON {
 										? object.getShippingPeriod().name() : null)
 			.put(IJsonNames.SHIPPING_STATUS, object.getShippingStatus() != null
 										? object.getShippingStatus().name() : null)
-			.put(IJsonNames.STATUS_MODIFICATION_DATE, AonDateUtils.format(object.getStatusModificationDate(), AonDateUtils.DATE_TIME_FORMAT));
+			.put(IJsonNames.STATUS_MODIFICATION_DATE, AonDateUtils.format(object.getStatusModificationDate(), AonDateUtils.DATE_TIME_FORMAT))
+			.put(IJsonNames.DETAILS, DeliveryDetailJSON.toJSON(object.getDetails()))
+			;
 	}
 }

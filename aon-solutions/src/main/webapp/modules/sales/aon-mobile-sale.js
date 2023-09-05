@@ -15,6 +15,7 @@ import { AonNumber } from '../../components/aon-number.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonDialog } from '../../components/aon-dialog.js';
+import { getDeliveries } from '../../services/warehouseService.js';
 
 export class AonMobileSale extends AonElement {
 
@@ -121,7 +122,8 @@ export class AonMobileSale extends AonElement {
 		table.id = this.id + 'Envasesss';
 		div.appendChild(table);
 
-		this.buildProductPackaging(table);
+		this.buildDelivery(table);
+		// this.buildProductPackaging(table);
 
 		let next = new AonButton();
 		next.title = 'Siguiente';
@@ -179,9 +181,46 @@ export class AonMobileSale extends AonElement {
 		dialog.open();
 	}
 
+	buildDelivery(table) {
+		table.addRow();
+		let deliverySelect = new AonSelect();
+		deliverySelect.id = this.id + 'DialogDelivery';
+		deliverySelect.title = MSG.DELIVERY;
+		deliverySelect.addEventListener(EVENT.SELECT, () => {
+			
+		});
+		
+		let td = table.addCell(deliverySelect);
+		td.style.width = '100%';
+		
+		let addButton = new AonIconButton();
+		addButton.id = this.id + 'DeliveryAddButton';
+		addButton.title = MSG.ADD;
+		addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+		addButton.addEventListener(EVENT.CLICK, () => {
+		
+		});
+		table.addCell(addButton);
+
+		let deliveryFilter = {
+			status: 'PENDING',
+			customer: this.sale.customer.id,
+			full:true
+		};
+		getDeliveries(deliveryFilter).then( deliveries => {
+			deliverySelect.setOptions(deliveries.map(d => {
+				return {
+					value: d.id,
+					name: d.series + '/' + d.number
+				  }
+			}))
+		});
+	}
+
 	buildProductPackaging(table) {
 		table.removeRows();
 		table.addRow();
+		
 		let product = this.createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER);
 		let td = table.addCell(product);
 		td.style.width = '100%';
@@ -203,6 +242,9 @@ export class AonMobileSale extends AonElement {
 		let envase = new AonSelect();
 		envase.id = this.id + 'DialogEnvase';
 		envase.title = 'Nuevo Envase';
+		envase.addEventListener(EVENT.SELECT, () => {
+			
+		});
 		
 		let td = table.addCell(envase);
 		td.style.width = '100%';
@@ -215,6 +257,23 @@ export class AonMobileSale extends AonElement {
 			this.buildProductPackaging(table);
 		});
 		table.addCell(pButton);
+	}
+
+	buildPackagingContent(table) {
+		table.addRow();
+
+		let product2 = this.createInput(this.PACKAGING_PRODUCT, "Contenedor Producto / Lote");
+		product2.id = 'product2';
+		let td = table.addCell(product2);
+		td.style.width = '100%';
+		product2.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
+		
+		table.addRow();
+
+		let quantity = this.createInput(this.PACKAGING_PRODUCT, "Cantidad");
+		quantity.id = 'quantity';
+		let td2 = table.addCell(quantity);
+		td2.style.width = '100%';
 	}
 
 	// Create Components
