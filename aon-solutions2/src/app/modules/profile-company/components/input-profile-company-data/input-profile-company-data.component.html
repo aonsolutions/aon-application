@@ -1,14 +1,9 @@
 <div class="structure-title">
   {{ "PROFILE.CONTACT_DETAILS" | translate }}
 </div>
-
 <hr />
-
 <div *ngFor="let enterprise of enterprises">
-
-
   <div class="form">
-
       <app-input
         *ngFor="let email of emailList; let i = index"
         [type]="'text'"
@@ -40,17 +35,3 @@
   </div>
 </div>
 
-<!-- [label]="'LOGIN.USER' + (i + 1)| translate" -->
-
-<!-- export interface IEnterprise extends ICollectable {
-  Name: string;
-  ProfilePhoto: string;
-  Address: string;
-  Country: string;
-  Province: string;
-  SocialReason: string;
-  Email: string;
-  Phone: string;
-  Website: string;
-  Document: string;
-} -->

@@ -37,6 +37,10 @@ export class TabsTaxModelComponent implements OnInit {
   modelsYears: any[] = [];
   models: any;
   tabs: Tabs[] = [];
+  selectedModel: number = 0;
+  currentDate = new Date();
+  selectedYear: string = this.currentDate.getFullYear().toString();
+
   @Input() trimester!: number;
   @Input() tabColor: string = '';
   @HostBinding('style.--styleTabColor') styleTabColor = '';
@@ -72,8 +76,11 @@ export class TabsTaxModelComponent implements OnInit {
         ];
       });
     // Datos del modelo
+
     taxModelService.getTaxModelList().then((response) => {
       this.models = response;
+      this.modelsList.push({ value: 0, text: 'Todos' });
+      // this.modelsYears.push({ value: 0, text: 'Todos' });
       response.forEach((element) => {
         if (!this.modelsList.some((model) => model.text === element.Name)) {
           this.modelsList.push({ value: element.Name, text: element.Name });
@@ -86,36 +93,17 @@ export class TabsTaxModelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     console.log(this.modelsListValue);
-
   }
 
-  loadModels(model: any, year: any) {
-    console.log('Model:', model);
-    console.log('Year:', year);
+  filterModel(value: number, type: number) {
+    this.selectedModel = type === 1 ? value : this.selectedModel;
+    this.selectedYear = type === 2 ? value.toString() : this.selectedYear;
 
-    let filterBuilder = new FilterBuilder();
-
-
-    if (model) {
-      filterBuilder.addField('name', model);
-    }
-    if (year) {
-      filterBuilder.addField('year', year);
-    }
-
-    this.taxModelService
-      .getTaxModelList(filterBuilder.getFilter())
-      .then((models) => {
-        this.models = models;
-      });
-      console.log('Filter:', filterBuilder.getFilter());
-
+    // this.inputValue.emit({ year: this.selectedYear, name: this.selectedModel });
+    console.log('Pestaña actual:', this.tabIndex);
+    console.log('Valor:', value);
+    console.log('Type:', type);
   }
-filterModel(value: string){
-  console.log('Filter:', this.tabIndex);
-  console.log('Filter:', value);
 
-}
 }

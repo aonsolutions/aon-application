@@ -5,20 +5,22 @@
   [tabColor]="'orange'"
 >
   <div tool>
- <div class="input-tax-model">
-  <app-input
-  (inputValue)="modelsListValue = $event"
-    [type]="'select'"
-    [label]="'TAX_PANEL.MODEL' | translate"
-    [options]="modelsList"
-  ></app-input>
-  <app-input
-    (inputValue)="loadModels(null, $event)"
-    [type]="'select'"
-    [label]="'TAX_PANEL.YEAR' | translate"
-    [options]="modelsYears"
-  ></app-input>
-</div>
+    <div class="input-tax-model">
+      <app-input
+        (inputValue)="filterModel($event, 1)"
+        [type]="'select'"
+        [label]="'TAX_PANEL.MODEL' | translate"
+        [options]="modelsList"
+        [value]="this.selectedModel"
+      ></app-input>
+      <app-input
+        (inputValue)="filterModel($event, 2)"
+        [type]="'select'"
+        [label]="'TAX_PANEL.YEAR' | translate"
+        [options]="modelsYears"
+        [value]="this.selectedYear"
+      ></app-input>
+    </div>
   </div>
   <div content *ngIf="this.tabIndex == 0">
     <mat-grid-list [cols]="24">
@@ -29,7 +31,11 @@
         class="position-top-col"
         [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
       >
-        <app-table-tax-model [trimester]="1"></app-table-tax-model>
+        <app-table-tax-model
+          [trimester]="1"
+          [inputModel]="this.selectedModel"
+          [inputYear]="this.selectedYear"
+        ></app-table-tax-model>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
@@ -43,7 +49,11 @@
         class="position-top-col"
         [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
       >
-        <app-table-tax-model [trimester]="2"></app-table-tax-model>
+        <app-table-tax-model
+          [trimester]="2"
+          [inputModel]="this.selectedModel"
+          [inputYear]="this.selectedYear"
+        ></app-table-tax-model>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
@@ -57,7 +67,11 @@
         class="position-top-col"
         [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
       >
-        <app-table-tax-model [trimester]="3"></app-table-tax-model>
+        <app-table-tax-model
+          [trimester]="3"
+          [inputModel]="this.selectedModel"
+          [inputYear]="this.selectedYear"
+        ></app-table-tax-model>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
@@ -71,7 +85,11 @@
         class="position-top-col"
         [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
       >
-        <app-table-tax-model [trimester]="4"></app-table-tax-model>
+        <app-table-tax-model
+          [trimester]="4"
+          [inputModel]="this.selectedModel"
+          [inputYear]="this.selectedYear"
+        ></app-table-tax-model>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
@@ -85,7 +103,10 @@
         class="position-top-col"
         [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
       >
-        <app-table-tax-model></app-table-tax-model>
+        <app-table-tax-model
+          [inputModel]="this.selectedModel"
+          [inputYear]="this.selectedYear"
+        ></app-table-tax-model>
       </mat-grid-tile>
     </mat-grid-list>
   </div>

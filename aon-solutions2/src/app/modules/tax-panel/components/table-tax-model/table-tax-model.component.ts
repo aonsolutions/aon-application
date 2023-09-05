@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 import { ModalEditTaxModelComponent } from '../modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../modal-payment/modal-payment.component';
@@ -7,18 +13,20 @@ import { FilterBuilder } from 'libraries/AonSDK/aon';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector    : 'app-table-tax-model',
-  templateUrl : './table-tax-model.component.html',
-  styleUrls   : ['./table-tax-model.component.scss'],
+  selector: 'app-table-tax-model',
+  templateUrl: './table-tax-model.component.html',
+  styleUrls: ['./table-tax-model.component.scss'],
 })
-export class TableTaxModelComponent implements OnInit {
+export class TableTaxModelComponent implements OnChanges {
   @ViewChild('modalEdit') modalComponentEdit: any = '';
   @ViewChild('modalPayment') modalComponentPayment: any = '';
   @ViewChild('modalTaxesDetails') modalComponentTaxesDetails: any = '';
-  @Input() trimester: number    = 0;
-  headerTable       : any       = {};
-  bodyTable         : any       = [];
-  displayedColumns  : string[]  = [
+  @Input() trimester: number = 0;
+  @Input() inputModel: number = 0;
+  @Input() inputYear: string = '';
+  headerTable: any = {};
+  bodyTable: any = [];
+  displayedColumns: string[] = [
     'name',
     'result',
     'status',
@@ -29,7 +37,7 @@ export class TableTaxModelComponent implements OnInit {
   afterModalClosed(result?: any) {}
 
   constructor(
-    public  taxModelService: TaxModelService,
+    public taxModelService: TaxModelService,
     private translateService: TranslateService
   ) {
     this.translateService
@@ -42,24 +50,39 @@ export class TableTaxModelComponent implements OnInit {
       ])
       .subscribe((result) => {
         this.headerTable = {
-          name: result['TAX_PANEL.NAME'] ,
-          result: result['TAX_PANEL.RESULT'] ,
-          status: result['TAX_PANEL.STATUS'] ,
-          paymentMethod: result['TAX_PANEL.PAYMENTMETHOD'] ,
+          name: result['TAX_PANEL.NAME'],
+          result: result['TAX_PANEL.RESULT'],
+          status: result['TAX_PANEL.STATUS'],
+          paymentMethod: result['TAX_PANEL.PAYMENTMETHOD'],
           actions: result['TAX_PANEL.ACTIONS'],
         };
       });
   }
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
+    //Add '${implements OnChanges}' to the class.
+    console.log(this.inputModel)
     this.updateTableData();
   }
 
   private updateTableData() {
     let filterBuilder = new FilterBuilder();
-    if (this.trimester !== 0) {
+    if (this.trimester >  0) {
       filterBuilder.addField('trimester', this.trimester);
     }
+
+    if (this.inputModel > 0 ) {
+      filterBuilder.addField('name', this.inputModel);
+    }
+
+    if (this.inputYear !== '') {
+      filterBuilder.addField('year', this.inputYear);
+    }
+
+    // filterBuilder.addField('name', this.inputModel);
+    // filterBuilder.addField('year', this.inputYear);
+
     this.taxModelService
       .getTaxModelList(filterBuilder.getFilter())
       .then((response) => {
