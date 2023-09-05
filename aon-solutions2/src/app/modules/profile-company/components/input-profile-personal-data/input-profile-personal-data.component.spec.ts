@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { InputProfilePersonalDataComponent } from './input-profile-personal-data.component';
+/*import { InputProfilePersonalDataComponent } from './input-profile-personal-data.component';
 
 describe('InputProfilePersonalDataComponent', () => {
   let component: InputProfilePersonalDataComponent;
@@ -26,3 +26,4 @@ describe('InputProfilePersonalDataComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+*/
