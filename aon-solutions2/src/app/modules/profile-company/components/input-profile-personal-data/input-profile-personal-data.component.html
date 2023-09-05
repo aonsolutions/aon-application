@@ -32,9 +32,8 @@
     [label]="'PROFILE.PASSWORD' | translate"
     [placeholder]="'PROFILE.PLACEHOLDER' | translate"
     [required]="'required'" 
+    [suffixShowIcon]="true"
   >
-    <app-button class="icon-only" suffix>
-      <app-icon [shape]="'edit'" ></app-icon>
-    </app-button>
+    <app-icon [shape]="'edit'" suffix></app-icon>
   </app-input>
 </div>

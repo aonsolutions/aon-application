@@ -113,18 +113,23 @@
     {{label}} <span [innerHTML]="'COMMON.INPUT.REQUIRE' | translate"></span>
   </mat-error>
 
-  <span matSuffix 
-    *ngIf="this.suffixIcon !== ''" 
-    class="class-suffix"
+  <!--*ngIf="this.suffixIcon !== ''"--> 
+  <span 
+    matSuffix 
+    *ngIf="suffixShowIcon"
     [ngClass]="classSuffix" 
     (click)="this.selectFunction()"
   >
     <app-button 
       class="icon-only"
     >
-      <app-icon [shape]="this.suffixIcon" suffix></app-icon>
+      <app-icon 
+        *ngIf="suffixBehavior === 'showPass'"
+        [shape]="this.suffixIcon" 
+        suffix
+      ></app-icon>
+      <ng-content *ngIf="suffixBehavior !== 'showPass'" select="[suffix]"></ng-content>
     </app-button>
-    <ng-content select="[suffix]"></ng-content>
   </span>
   
   <mat-hint *ngIf="hint != ''">{{hint}}</mat-hint>

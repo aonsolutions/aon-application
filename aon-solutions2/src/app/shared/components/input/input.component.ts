@@ -10,22 +10,23 @@ import { MatFormFieldAppearance } from '@angular/material/form-field';
 })
 
 export class InputComponent implements OnInit {
-  @Input() type             : string = '';
+  @Input() type             : string  = '';
   @Input() appearance       : MatFormFieldAppearance = 'outline';
-  @Input() width            : string = '100%';
-  @Input() label            : string = '';
-  @Input() hint             : string = '';
-  @Input() placeholder      : string = '';
-  @Input() value            : any    = '';
+  @Input() width            : string  = '100%';
+  @Input() label            : string  = '';
+  @Input() hint             : string  = '';
+  @Input() placeholder      : string  = '';
+  @Input() value            : any     = '';
   @Output() inputValue = new EventEmitter<any>();
   @Input() options          : any;
-  @Input() disabled         : string = 'false';
-  @Input() required         : string = 'false';
-  @Input() classes          : string = '';
-  @Input() maxRow           : string = '3';
-  @Input() minRow           : string = '10';
-  @Input() appearanceDetail : string = 'mat-form-field-appearance-bold-outline';
-  @Input() suffixBehavior   : string = '';
+  @Input() disabled         : string  = 'false';
+  @Input() required         : string  = 'false';
+  @Input() classes          : string  = '';
+  @Input() maxRow           : string  = '3';
+  @Input() minRow           : string  = '10';
+  @Input() appearanceDetail : string  = 'mat-form-field-appearance-bold-outline';
+  @Input() suffixBehavior   : string  = '';
+  @Input() suffixShowIcon   : boolean = false;
   suffixIcon       : string = '';
   classSuffix      : string = '';
   // Type of input
@@ -61,6 +62,7 @@ export class InputComponent implements OnInit {
   ngOnInit(): void {
     // Type es password - Mostrar y ocultar pass
     if(this.type == 'password' && this.suffixBehavior === 'showPass'){
+      this.suffixShowIcon = true;
       this.suffixIcon     = 'eye';
       this.suffixBehavior = 'showPass'; 
     }
