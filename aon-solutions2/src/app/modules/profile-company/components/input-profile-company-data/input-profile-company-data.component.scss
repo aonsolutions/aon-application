@@ -4,9 +4,11 @@
     font-family: "Roboto-Medium";
   }
 
-  #company .form{
-    padding-left: 0!important;
-    padding-right: 0!important;
+  #company .form {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .input-profile-contact-data-add {
@@ -15,7 +17,14 @@
     align-items: center;
     height: 2.4125rem;
   }
-  .input-profile-contact-data-add app-button button{
-    margin: 0;
-  }
+
+  // .email-container {
+  //   display: flex;
+  //   flex-wrap: wrap;
+  // }
+
+
+  // .input-profile-contact-data-add app-button button {
+  //   margin: 0;
+  // }
 }

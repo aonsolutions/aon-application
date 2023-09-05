@@ -14,13 +14,13 @@ export class InputProfilePersonalDataComponent implements OnInit {
   constructor(private userService: UserService) {
     console.log('empresa - ', localStorage.getItem('enterprise'));
 
-    // this.userService.getUser('94385657M').then((user) => {
-    //   this.users.push(user);
-    // });
-
-    this.userService.getUser(localStorage.getItem('enterprise')!).then((user) => {
+    this.userService.getUser('94385657M').then((user) => {
       this.users.push(user);
     });
+
+    // this.userService.getUser(localStorage.getItem('enterprise')!).then((user) => {
+    //   this.users.push(user);
+    // });
 
 
 

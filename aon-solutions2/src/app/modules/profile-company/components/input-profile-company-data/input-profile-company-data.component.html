@@ -1,19 +1,24 @@
-  <div class="structure-title">
-    {{ "PROFILE.CONTACT_DETAILS" | translate }}
-  </div>
+<div class="structure-title">
+  {{ "PROFILE.CONTACT_DETAILS" | translate }}
+</div>
 
-  <hr/>
+<hr />
 
-  <div *ngFor="let enterprise of enterprises">
+<div *ngFor="let enterprise of enterprises">
+
+
   <div class="form">
-    <app-input
-      [type]="'text'"
-      [label]="'PROFILE.EMAIL' | translate"
-      [placeholder]="'PROFILE.EMAIL' | translate"
-      [value]="enterprise.Email"
-    ></app-input>
+
+      <app-input
+        *ngFor="let email of emailList; let i = index"
+        [type]="'text'"
+        [label]="'PROFILE.EMAIL' | translate"
+        [placeholder]="'PROFILE.EMAIL' | translate"
+        [value]="email"
+      ></app-input>
+
     <div class="input-profile-contact-data-add">
-      <app-button class="icon-border" >
+      <app-button class="icon-border" (click)="addEmail()">
         <app-icon [shape]="'add'"></app-icon>
       </app-button>
     </div>
@@ -36,7 +41,6 @@
 </div>
 
 <!-- [label]="'LOGIN.USER' + (i + 1)| translate" -->
-
 
 <!-- export interface IEnterprise extends ICollectable {
   Name: string;

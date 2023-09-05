@@ -1,22 +1,24 @@
 <app-tabs
-  [tabs]          = "tabs"
-  [tabIndex]      = "tabIndex"
-  (changeTabIndex)= "this.tabIndex = $event"
-  [tabColor]      = "'orange'"
+  [tabs]="tabs"
+  [tabIndex]="tabIndex"
+  (changeTabIndex)="this.tabIndex = $event"
+  [tabColor]="'orange'"
 >
   <div tool>
-    <div class="input-tax-model">
-      <app-input
-        [type]="'select'"
-        [label]="'TAX_PANEL.MODEL' | translate"
-        [options]="modelsList"
-      ></app-input>
-      <app-input
-        [type]="'select'"
-        [label]="'TAX_PANEL.YEAR' | translate"
-        [options]="modelsYears"
-      ></app-input>
-    </div>
+ <div class="input-tax-model">
+  <app-input
+  (inputValue)="modelsListValue = $event"
+    [type]="'select'"
+    [label]="'TAX_PANEL.MODEL' | translate"
+    [options]="modelsList"
+  ></app-input>
+  <app-input
+    (inputValue)="loadModels(null, $event)"
+    [type]="'select'"
+    [label]="'TAX_PANEL.YEAR' | translate"
+    [options]="modelsYears"
+  ></app-input>
+</div>
   </div>
   <div content *ngIf="this.tabIndex == 0">
     <mat-grid-list [cols]="24">
