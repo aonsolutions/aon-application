@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.api.servlet;
+package net.aonsolutions.aon.api.servlet.warehouse;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -7,11 +7,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.SERFRUIT;
 import com.esferalia.aon.occam.api.json.CarrierPackingJSON;
 import com.esferalia.aon.occam.api.json.DeliveryJSON;
-import com.esferalia.aon.occam.api.json.SerfruitDeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.SerfruitDeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
@@ -28,12 +29,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.api.servlet.AonRouting;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "AonApiDeliveryServlet", urlPatterns = {"/ms/api/delivery/*"})
-public class DeliveryServlet extends AonApiHttpServlet {
+@WebServlet(name = "AonApiDeliveriesServlet", urlPatterns = {"/ms/api/deliveries/*"})
+public class DeliveriesServlet extends AonApiHttpServlet {
 		
-	private static final Logger LOGGER  = Logger.getLogger(DeliveryServlet.class.getName());
+	private static final Logger LOGGER  = Logger.getLogger(DeliveriesServlet.class.getName());
+
+	public static final String DELIVERIES = "/";
+	public static final String DELIVERY = "/:id";
 	
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -55,21 +61,24 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		delete(req, resp);
 	}
 	
-	private void get(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
-		try {
-			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, getDeliveries(api));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
-	}
+    private void get(HttpServletRequest req, HttpServletResponse resp) {
+        LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+        try {
+            AonApiData api = initialize(req);
+
+            Object object = new AonRouting(api)
+                    .addRoute(DELIVERIES, DeliveriesServlet::getDeliveries)
+                    .addRoute(DELIVERY, DeliveriesServlet::getDelivery)
+
+                    .apply();
+
+            response(req, resp, object);
+        } catch (Exception e) {
+            error(req, resp, e);
+        }
+    }
+	
+
 	
 	private void put(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
@@ -104,9 +113,14 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private JSONArray getDeliveries(AonApiData api) {
+	private static JSONArray getDeliveries(AonApiData api) {
 		return DeliveryJSON.toJSON(
-			AON.getDeliveryStream(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f)));
+			AON.getDeliveryStream(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f), deliveryOptions(api)));
+	}
+	
+	private static JSONObject getDelivery(AonApiData api) {
+		return DeliveryJSON.toJSON(
+			AON.getDelivery(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f), deliveryOptions(api)));
 	}
 	
 	private JSONObject saveDelivery(AonApiData api) {
@@ -138,7 +152,7 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
-	private Filter deliveryFilter(AonApiData api, DeliveryProperties f) {
+	private static Filter deliveryFilter(AonApiData api, DeliveryProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		
 		String series = JsonUtils.getString(api.getData(), IJsonNames.SERIES);
@@ -172,5 +186,13 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		}
 
 		return filter;
+	}
+	
+	private static Options deliveryOptions(AonApiData api) {
+		Options options = new Options();
+		options.setPage(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
+		options.setPerPage(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
+		options.setFull(JsonUtils.getboolean(api.getData(), IJsonNames.FULL));
+		return options;
 	}
 }

@@ -727,9 +727,9 @@ public class ServalInvoiceImport extends ImportUtils{
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
 	
 		PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
-		Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
-		Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
-		Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
+//		Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
+//		Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
+//		Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
 		
 		try {
 			validate(iic, record);
@@ -743,19 +743,19 @@ public class ServalInvoiceImport extends ImportUtils{
 			Double retQuota = 0.0;
 			Double retPercentage = 0.0;
 	
-			Account retentionAccount = (invoice.isSales() )
-					? aonCtx.accounting().getDefaultPaidRetAccount()
-					: aonCtx.accounting().getDefaultChargedRetAccount();
+//			Account retentionAccount = (invoice.isSales() )
+//					? aonCtx.accounting().getDefaultPaidRetAccount()
+//					: aonCtx.accounting().getDefaultChargedRetAccount();
 			
 			for(InvoiceImportClass aux : iic.getLines()) {
-				if(aux.getRetentionQuota() != null) {
+				if(aux.getRetentionQuota() != null && aux.getRetentionQuota() != 0) {
 					retBase = retBase + aux.getBase();
 					retPercentage = aux.getRetentionPercentage();
 					retQuota = retQuota + aux.getRetentionQuota();
 					invoice.setWithholding(true);
 				}
 				
-				Account expAccount = getAccount(domain, user, aux.getAccount(), aux.getAccountDescription());
+//				Account expAccount = getAccount(domain, user, aux.getAccount(), aux.getAccountDescription());
 
 				Item item = null;
 				if(aux.getProductCode() != null) {
@@ -777,15 +777,15 @@ public class ServalInvoiceImport extends ImportUtils{
 								? aux.getConceptDetail()
 								: item.getDescription()) 
 						.setItem(item)
-						.setAccount(expAccount.getId())
-						.setAccountCode(expAccount.getCode())
-						.setAccountDescription(expAccount.getDescription())
+//						.setAccount(expAccount.getId())
+//						.setAccountCode(expAccount.getCode())
+//						.setAccountDescription(expAccount.getDescription())
 	
 						.setQuantity(quantity)
 						.setPrice(AonMathUtils.round((taxableBase / quantity) , 4))
 						.setDiscountExpression("0.0")
 						.setTaxableBase(taxableBase)
-						.setPrepayment("5600".equals(aux.getAccount().substring(0, 4)) || "5660".equals(aux.getAccount().substring(0, 4)))
+//						.setPrepayment("5600".equals(aux.getAccount().substring(0, 4)) || "5660".equals(aux.getAccount().substring(0, 4)))
 						.setSource(InvoiceSource.DIRECT_INVOICE);
 				
 				InvoiceTax vat = new InvoiceTax()
@@ -819,8 +819,8 @@ public class ServalInvoiceImport extends ImportUtils{
 						.setBase(retBase)
 						.setPercentage(retPercentage)
 						.setQuota(retQuota)
-						.setAccount(retentionAccount.getId());
-
+//						.setAccount(retentionAccount.getId())
+						;
 					detail.addInvoiceTax(wh);
 				}
 				
@@ -945,8 +945,9 @@ public class ServalInvoiceImport extends ImportUtils{
 			|| InvoiceClaveRetencion.G.equals(icr)) {
 			return WithholdingType.PROFESSIONAL;
 		} else if(InvoiceClaveRetencion.AR.equals(icr)
-				|| account.substring(0, 3).equals("621")
-				|| account.substring(0, 3).equals("752")) {
+//				|| account.substring(0, 3).equals("621")
+//				|| account.substring(0, 3).equals("752")
+				) {
 			return WithholdingType.RENTING;
 		} else if(InvoiceClaveRetencion.CM.equals(icr)
 			|| InvoiceClaveRetencion.C.equals(icr)) {
@@ -955,7 +956,8 @@ public class ServalInvoiceImport extends ImportUtils{
 			|| InvoiceClaveRetencion.H.equals(icr)) {
 			return WithholdingType.FARMER;
 		} else if(InvoiceClaveRetencion.TA.equals(icr)
-				|| account.substring(0, 3).equals("624")) {
+//				|| account.substring(0, 3).equals("624")
+				) {
 			return WithholdingType.TRANSPORT_OPERATOR;
 		}
 		return WithholdingType.PROFESSIONAL;

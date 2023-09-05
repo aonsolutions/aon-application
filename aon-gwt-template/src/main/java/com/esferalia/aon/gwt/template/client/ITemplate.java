@@ -61,6 +61,7 @@ public interface ITemplate extends RemoteService{
 	
 	public Error insertInvoices(Domain domain, User user, Integer index);
 	public Error insertInvoice(Domain domain, User user, InvoiceImportClass invoices, Integer index);
+	public Error insertServalInvoice(Domain domain, User user, InvoiceImportClass invoices, Integer index);
 
 	public Error insertRegistries(Domain domain, User user, Integer index);
 	public Error insertRegistry(Domain domain, User user, RegistryImportClass registry, Integer index);
@@ -74,6 +75,7 @@ public interface ITemplate extends RemoteService{
 	public Error insertCustomerIban(Domain domain, User user);
 	
 	public List<InvoiceImportClass> executeInvoice(Domain domain , User user, String data);
+	public List<InvoiceImportClass> executeServalInvoice(Domain domain , User user, String data);
 	
 	public List<RegistryImportClass> executeRegistry(Domain domain , User user, String data);
 	
