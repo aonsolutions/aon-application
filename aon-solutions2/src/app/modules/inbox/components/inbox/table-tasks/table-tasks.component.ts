@@ -58,9 +58,8 @@ export class TableTasksComponent implements OnInit {
     private updateTableData() {
       const datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
       let filterBuilder = new FilterBuilder();
-      if (this.id !== 0) {
-        filterBuilder.addField('id', this.id);
-      }
+      filterBuilder.addField('type', 'tarea');
+
       let tableRow: any[] = [];
 
      this.messageService

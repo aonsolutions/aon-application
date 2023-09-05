@@ -116,8 +116,6 @@ export class TableComponentComponent implements OnInit {
 
 
   rowClick(object: any) {
-    // Fila de la tabla que se esta usando
-    // Boton que ha sido clickeado
     console.log(object);
   }
 }

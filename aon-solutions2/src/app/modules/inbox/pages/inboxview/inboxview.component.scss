@@ -18,13 +18,14 @@
  .chat{
   width: 602px;
   height: 48px;
-  flex-grow: 0;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-evenly;
   align-items: center;
   gap: 32px;
   padding: 0;
+  margin-top: 40px;
+
  }
 
  .headerMessage{
@@ -113,5 +114,58 @@
   font-style: normal;
   line-height: 1.5;
   letter-spacing: normal;
+ }
+
+ .btn-inbox-01{
+  width: 229px;
+  height: 48px;
+  flex-grow: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+ }
+
+ .content-btn-inbox{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin: 35.5px 40px 881px 52px;
+  gap: 20px;
+ }
+
+ .content-tasks{
+  width: 617px;
+  height: 172px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 40px 38px 38px 39px;
+  padding: 0;
+ }
+
+ .name-tasks{
+  width: 539px;
+  height: 14px;
+  flex-grow: 0;
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.75px;
+  text-align: left;
+  color: #292a31;
+ }
+
+ .descrption-tasks{
+  width: 616px;
+  height: 144px;
+  flex-grow: 0;
+  font-family: Roboto;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.44px;
+  text-align: justify;
+  color: #787885;
  }
 }

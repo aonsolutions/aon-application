@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CollectionFactory, ICollection, FilterBuilder, IMessageChat, IMessage } from 'libraries/AonSDK/aon';
+import { Factory, CollectionFactory, ICollection, FilterBuilder, IMessageChat, IMessage } from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
@@ -20,7 +20,15 @@ export interface Tabs {
 })
 export class InboxviewComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
+  @ViewChild(TableQueriesComponent, { static: false })
+
   collectionFactory = new CollectionFactory();
+  entityFactory = new Factory();
+  datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
+
+  messagesData: IMessage = this.entityFactory.createMessage();
+  messagesChat: ICollection<IMessageChat> = this.collectionFactory.createMessageChatCollection();
+
   functionHome: any = (result: any) => this.afterModalClosed(result);
   tabsConsultas: Tabs[] = [];
   tabsTareas: Tabs[] = [];
@@ -30,15 +38,7 @@ export class InboxviewComponent implements OnInit {
   showDetail: boolean = false;
   noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
-  messageStatus: string = '';
-  messageTitle: string = '';
-  messageDate: IMessage | null = null;
-  datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
 
-  messagesData: ICollection<IMessage> = this.collectionFactory.createMessageCollection();
-  messagesChat    : ICollection<IMessageChat> = this.collectionFactory.createMessageChatCollection();
-  id: number = 0;
-  @ViewChild(TableQueriesComponent, { static: false })
   tableQueriesComponent!: TableQueriesComponent;
 
   constructor(
@@ -99,17 +99,16 @@ export class InboxviewComponent implements OnInit {
   }
 
   async rowClickHandler(message: any) {
-    let filterBuilder = new FilterBuilder();
-    filterBuilder.addField('idMessage', message.key);
-console.log(message)
+    console.log(message)
     try {
       this.showDetail = true;
-      // const messageInfo = await this.messageService.getMessage(message.key);
-      // this.messageStatus = messageInfo.Status;
-      // this.messageTitle = messageInfo.Title;
 
-      this.messagesChat = await this.messageChatService.getMessageChatList(filterBuilder.getFilter());
-      // this.messagesData = await this.messageService.getMessage(filterBuilder.getFilter());
+      this.messagesData = await this.messageService.getMessage(message.key);
+      if(message.type == 'consulta') {
+        let filterBuilder = new FilterBuilder();
+        filterBuilder.addField('idMessage', message.key);
+        this.messagesChat = await this.messageChatService.getMessageChatList(filterBuilder.getFilter());
+      }
     } catch (error) {
       console.error('Error al cargar el chat del mensaje:', error);
     }

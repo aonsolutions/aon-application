@@ -67,9 +67,8 @@ export class TableQueriesComponent implements OnInit {
   private updateTableData() {
     const datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
     let filterBuilder = new FilterBuilder();
-    if (this.id !== 0) {
-      filterBuilder.addField('id', this.id);
-    }
+    filterBuilder.addField('type', 'consulta');
+
     let tableRow: any[] = [];
 
     this.messageService
