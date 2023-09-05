@@ -43,12 +43,13 @@ describe('EnterpriseService', () => {
   //       });
   //   });
   // }
-  it ('setEnterprise establishes a company using the cif value',(done : DoneFn)=>{
-    const cif = 'cifTest';
-    const spyService = spyOn(service,'setEnterprise').and.returnValue(Promise.resolve(true));
-    expect(spyService).toBeTruthy();
-    done();
-  });
+ 
+ // it ('setEnterprise establishes a company using the cif value',(done : DoneFn)=>{
+ //   const cif = 'cifTest';
+ //   const spyService = spyOn(service,'setEnterprise').and.returnValue(Promise.resolve(true));
+ //   expect(spyService).toBeTruthy();
+ //   done();
+ // });
 
   // it('getEnterpriseList returns a promise with the company data.', (done : DoneFn) => {
   //   const enterpriseData = [

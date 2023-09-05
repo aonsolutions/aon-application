@@ -23,6 +23,7 @@
             <app-input
               (inputValue)="password = $event"
               [type]="'password'"
+              [suffixBehavior]="'showPass'"
               [label]="'LOGIN.PASSWORD' | translate"
               [placeholder]="'LOGIN.PASSWORD' | translate"
               [required]="'required'"

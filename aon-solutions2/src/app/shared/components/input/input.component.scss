@@ -188,4 +188,16 @@
       mat-form-field .mat-error span strong{
         font-family : "Roboto-Bold"!important;
       }
+      
+  /*
+    classSuffix
+  */
+    /*mat-form-field .mat-form-field-suffix:hover{*/
+    mat-form-field .appButton{
+      margin: 0;
+      background-color: $background-button-hover-rgba !important;
+    }
+    mat-form-field .appButton:hover{
+      background-color: $background-button-hover-view-rgba !important;
+    }
 }
