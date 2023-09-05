@@ -1,6 +1,6 @@
 @import "src/styles.scss";
 ::ng-deep{
- tr{
+ #cursor{
   cursor: pointer;
  }
 
@@ -15,7 +15,7 @@
   padding: 10px 48px 10px 20px;
  }
 
- #chat{
+ .chat{
   width: 602px;
   height: 48px;
   flex-grow: 0;
@@ -39,14 +39,20 @@
   padding: 0;
  }
 
+ .content-state{
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   gap: 10px;
+   padding: 30px 20px 0px 20px;
+ }
  .state{
   width: 67px;
   height: 32px;
-  flex-grow: 0;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   padding: 5px;
   border-radius: 4px;
@@ -61,5 +67,51 @@
   flex-direction: row;
   gap: 25px;
   padding: 0;
+  color: black;
+ }
+
+ .content-head-message{
+  width: 617px;
+  height: 33px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 359px;
+  margin: 27px 40px 15px 36px;
+  padding: 0;
+ }
+
+
+ .arrow-title{
+  width: 191px;
+  height: 33px;
+  flex-grow: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+  padding: 0;
+ }
+
+ .icon-back{
+  width: 24px;
+  height: 24px;
+  flex-grow: 0;
+  object-fit: contain;
+}
+
+.title{
+  width: 155px;
+  height: 33px;
+  flex-grow: 0;
+  font-family: Roboto;
+  font-size: 24px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: normal;
  }
 }

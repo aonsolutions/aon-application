@@ -8,6 +8,7 @@ import {
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { DatePipe } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-table-queries',
@@ -27,7 +28,7 @@ export class TableQueriesComponent implements OnInit {
   totalMessages: number = 0;
   selectedMessage: IMessage | null = null;
   messages: ICollection<IMessage> =
-    new CollectionFactory().createMessageCollection();
+  new CollectionFactory().createMessageCollection();
 
   public collectionFactory = new CollectionFactory();
   //Inbox area
@@ -47,7 +48,11 @@ export class TableQueriesComponent implements OnInit {
     'action',
   ];
 
-  constructor(public messageService: MessageService) {}
+  constructor(
+    public messageService: MessageService,
+    private translateService: TranslateService,
+    ) {
+}
   headerTable: any = {
     name: 'Name',
     status: 'Status',
@@ -57,17 +62,10 @@ export class TableQueriesComponent implements OnInit {
     action: 'Action',
   };
 
-  ngOnInit(): void {
-    this.updateTableData();
-    if (this.messageList) {
-      this.messageList.subscribe((messages) => {
-        this.messages = messages;
-        this.totalMessages = this.messages.size();
-      });
-    }
-  }
+
 
   private updateTableData() {
+    const datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
     let filterBuilder = new FilterBuilder();
     if (this.id !== 0) {
       filterBuilder.addField('id', this.id);
@@ -101,15 +99,13 @@ export class TableQueriesComponent implements OnInit {
             };
             column.title = message.Title;
             column.description = message.Description;
-
-            const datepipe: DatePipe = new DatePipe('en-US');
             column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
             column.action = {
               icon: lowerCaseStatus.includes('abierta')
                 ? [{ archive: 'grey' }]
                 : [{ replay: 'grey' }],
             };
-
+            column.class = (message.Status == 'abierta') ? 'border-red' : '';
             tableRow.push(column);
 
             if (this.selectedMessage === null) {
@@ -124,6 +120,16 @@ export class TableQueriesComponent implements OnInit {
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
+
+  ngOnInit(): void {
+    this.updateTableData();
+    if (this.messageList) {
+      this.messageList.subscribe((messages) => {
+        this.messages = messages;
+        this.totalMessages = this.messages.size();
+      });
+    }
+  }
 
   rowClick(message: any) {
     this.rowClicked.emit(message);

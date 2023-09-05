@@ -3,6 +3,7 @@ import { CollectionFactory, ICollection, IMessage } from 'libraries/AonSDK/aon';
 import { Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { DatePipe } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-table-component',
@@ -28,9 +29,13 @@ export class TableComponentComponent implements OnInit {
     'action',
   ];
 
-  constructor(private messageService: MessageService) {
+  constructor(
+    private messageService: MessageService,
+    private translateService: TranslateService,
+    ) {
     let tableRow: any[] = [];
     let column: any = {};
+    const datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
 
     this.headerTable = {
       name: 'Name',
@@ -49,11 +54,7 @@ export class TableComponentComponent implements OnInit {
         column.name = message.Name;
 
         const lowerCaseStatus = message.Status.toLowerCase();
-        if (
-          lowerCaseStatus.includes('abierta') ||
-          lowerCaseStatus.includes('nueva') ||
-          lowerCaseStatus.includes('pendiente')
-        ) {
+
           column.status = {
             icon: lowerCaseStatus.includes('abierta')
               ? [{ reply_all: 'green' }]
@@ -65,8 +66,6 @@ export class TableComponentComponent implements OnInit {
           };
           column.title = message.Title;
           column.description = message.Description;
-
-          const datepipe: DatePipe = new DatePipe('en-US');
           column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
           column.action = {
             icon: lowerCaseStatus.includes('abierta')
@@ -96,8 +95,9 @@ export class TableComponentComponent implements OnInit {
               };
               break;
           }
+          column.class = 'border-red';
           tableRow.push(column);
-        }
+
       });
       this.bodyTable = tableRow;
     });

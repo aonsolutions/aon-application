@@ -18,21 +18,21 @@
     </div>
     <!--FIN CREATE BUTTON-->
     <!--List -->
-    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 0">
+    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 0; onTabChange()">
       <app-icon shape="all_inbox"></app-icon>
       &nbsp;&nbsp; {{ "INBOX.INBOX" | translate }}
     </app-button>
 
-    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 1">
+    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 1; onTabChange()">
       <app-icon shape="chat"></app-icon>
       &nbsp;&nbsp; {{ "INBOX.QUERIES" | translate }}
     </app-button>
 
-    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 2">
+    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 2; onTabChange()">
       <app-icon shape="playlist_add_check"></app-icon>
       &nbsp;&nbsp; {{ "INBOX.TASKS" | translate }}
     </app-button>
-    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 3">
+    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 3; onTabChange()">
       <app-icon shape="notifications_none"></app-icon>
       &nbsp;&nbsp; {{ "INBOX.NOTIFICATIONS" | translate }}
     </app-button>
@@ -40,7 +40,7 @@
   </div>
   <!--FIN SIDENAV-->
   <!--CONTENIDO-->
-  <div content>
+  <div content class="padding" id="cursor">
     <div class="margin width-40" *ngIf="selectedTab !== 4">
       <app-input
         [appearance]="'outline'"
@@ -50,7 +50,9 @@
       ></app-input>
     </div>
     <ng-container *ngIf="selectedTab == 0">
-      <app-table-component></app-table-component>
+      <div *ngIf="this.tabIndex == 0">
+        <app-table-component></app-table-component>
+      </div>
     </ng-container>
     <ng-container *ngIf="selectedTab == 1">
       <app-tabs
@@ -63,16 +65,16 @@
           <span>{{ "INBOX.THIS_WEEK" | translate }}</span>
           <app-icon shape="more_vert"></app-icon>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 0">
+        <div content *ngIf="this.tabIndex == 0">
           <app-table-queries
             [filterStatus]="['abierta', 'cerrada']"
             (rowClicked)="rowClickHandler($event)"
           ></app-table-queries>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 1">
+        <div content *ngIf="this.tabIndex == 1">
           <app-table-queries [filterStatus]="['abierta']"></app-table-queries>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 2">
+        <div content *ngIf="this.tabIndex == 2">
           <app-table-queries [filterStatus]="['cerrada']"></app-table-queries>
         </div>
       </app-tabs>
@@ -89,19 +91,20 @@
           <span>{{ "INBOX.THIS_WEEK" | translate }}</span>
           <app-icon shape="more_vert"></app-icon>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 0">
+        <div content *ngIf="this.tabIndex == 0">
           <app-table-tasks
             [filterStatus]="['realizada', 'pendiente']"
             (noPendingTasks)="showNoTasksMessage($event)"
+            (rowClicked)="rowClickHandler($event)"
           ></app-table-tasks>
           <ng-template #noTasks *ngIf="noTasksMessage">{{
             "INBOX.NO_PENDING_TASKS" | translate
           }}</ng-template>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 1">
+        <div content *ngIf="this.tabIndex == 1">
           <app-table-tasks [filterStatus]="['pendiente']"></app-table-tasks>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 2">
+        <div content *ngIf="this.tabIndex == 2">
           <app-table-tasks [filterStatus]="['realizada']"></app-table-tasks>
         </div>
       </app-tabs>
@@ -117,17 +120,17 @@
           <span class="margin-right">{{ "INBOX.THIS_WEEK" | translate }}</span>
           <app-icon shape="more_vert"></app-icon>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 0">
+        <div content *ngIf="this.tabIndex == 0">
           <app-table-notifications
             [filterStatus]="['nueva', 'vista']"
           ></app-table-notifications>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 1">
+        <div content *ngIf="this.tabIndex == 1">
           <app-table-notifications
             [filterStatus]="['nueva']"
           ></app-table-notifications>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 2">
+        <div content *ngIf="this.tabIndex == 2">
           <app-table-notifications
             [filterStatus]="['vista']"
           ></app-table-notifications>
@@ -138,26 +141,31 @@
 
   <!--FIN CONTENIDO-->
   <!--Detail-->
-  <div detail *ngIf="showDetail" class="padding">
+  <div detail *ngIf="showDetail">
     <div *ngIf="messagesChat">
-      <div *ngFor="let messageChat of messagesChat; let i = index">
-        <div class="headerMessage">
-          <div class="state">
-            <p>estado</p>
-          </div>
-          <div class="icons">
-            <app-icon shape="reply"></app-icon>
-          <app-icon shape="archive"></app-icon>
-          </div>
-          <hr>
+      <div class="content-state">
+        <div class="state">
+          <p>{{ messageStatus }}</p>
         </div>
+        <div class="icons">
+          <app-icon shape="reply"></app-icon>
+          <app-icon shape="archive"></app-icon>
+        </div>
+      </div>
+      <hr />
+      <div class="content-head-message">
+        <div class="arrow-title">
+          <app-icon class="icon-back" shape="arrow_back"></app-icon>
+          <p class="title">{{ messageTitle }}</p>
+        </div>
+      </div>
+      <div *ngFor="let messageChat of messagesChat; let i = index">
+        <div class="headerMessage"></div>
         <div class="chat">
           <p>{{ messageChat.Name }}</p>
           <p>{{ messageChat.Description }}</p>
-          <p>{{ messageChat.Date}}</p>
-          <hr>
+          <p>{{ datepipe.transform(messageDate?.Date, "EEEE, HH:mm") }}</p>
         </div>
-
       </div>
     </div>
   </div>

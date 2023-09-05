@@ -6,6 +6,7 @@ import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
 import { ModalCreateComponent } from '../../components/inbox/modal-create/modal-create.component';
 import { TableQueriesComponent } from '../../components/inbox/table-queries/table-queries.component';
+import { DatePipe } from '@angular/common';
 
 export interface Tabs {
   name: string;
@@ -29,6 +30,12 @@ export class InboxviewComponent implements OnInit {
   showDetail: boolean = false;
   noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
+  messageStatus: string = '';
+  messageTitle: string = '';
+  messageDate: IMessage | null = null;
+  datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
+
+  messagesData: ICollection<IMessage> = this.collectionFactory.createMessageCollection();
   messagesChat    : ICollection<IMessageChat> = this.collectionFactory.createMessageChatCollection();
   id: number = 0;
   @ViewChild(TableQueriesComponent, { static: false })
@@ -36,7 +43,7 @@ export class InboxviewComponent implements OnInit {
 
   constructor(
     private translateService: TranslateService,
-    public reportingService: ReportingService,
+    public  reportingService: ReportingService,
     private messageService: MessageService,
     private messageChatService: MessageChatService
   ) {
@@ -69,6 +76,7 @@ export class InboxviewComponent implements OnInit {
             { name: result['INBOX.VIEWS'], color: 'black', icon: 'remove_red_eye'},
           ]);
       });
+
   }
 
   ngOnInit(): void {}
@@ -86,15 +94,26 @@ export class InboxviewComponent implements OnInit {
     this.modalComponent.openDialog(ModalCreateComponent, this.functionHome, 'Data from home');
   }
 
-  rowClickHandler(message: any) {
+  onTabChange() {
+    this.showDetail = false;
+  }
+
+  async rowClickHandler(message: any) {
     let filterBuilder = new FilterBuilder();
     filterBuilder.addField('idMessage', message.key);
+console.log(message)
+    try {
+      this.showDetail = true;
+      // const messageInfo = await this.messageService.getMessage(message.key);
+      // this.messageStatus = messageInfo.Status;
+      // this.messageTitle = messageInfo.Title;
 
-    this.messageChatService
-      .getMessageChatList(filterBuilder.getFilter())
-      .then((response) => {
-        this.messagesChat = response;
-    })
-    this.showDetail = true;
+      this.messagesChat = await this.messageChatService.getMessageChatList(filterBuilder.getFilter());
+      // this.messagesData = await this.messageService.getMessage(filterBuilder.getFilter());
+    } catch (error) {
+      console.error('Error al cargar el chat del mensaje:', error);
+    }
   }
+
+
 }

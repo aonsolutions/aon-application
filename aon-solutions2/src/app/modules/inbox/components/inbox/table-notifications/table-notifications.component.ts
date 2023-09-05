@@ -3,6 +3,7 @@ import { CollectionFactory, ICollection, IMessage } from 'libraries/AonSDK/aon';
 import { Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { DatePipe } from '@angular/common'
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-table-notifications',
@@ -24,9 +25,11 @@ export class TableNotificationsComponent implements OnInit {
 
   constructor(
     private messageService: MessageService,
+    private translateService: TranslateService,
   ) {
     let tableRow: any[] = [];
     let column: any = {};
+    const datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
 
     this.headerTable = {
       name: 'Name',
@@ -55,9 +58,8 @@ export class TableNotificationsComponent implements OnInit {
           };
           column.title = message.Title;
           column.description = message.Description;
-          const datepipe: DatePipe = new DatePipe('en-US');
           column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
-
+          column.class = (message.Status == 'nueva') ? 'border-red' : '';
           tableRow.push(column);
         }
       });
