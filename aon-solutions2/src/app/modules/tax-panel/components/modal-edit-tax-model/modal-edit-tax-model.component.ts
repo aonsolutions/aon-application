@@ -4,10 +4,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 @Component({
   selector: 'app-modal-edit-tax-model',
   templateUrl: './modal-edit-tax-model.component.html',
-  styleUrls: ['./modal-edit-tax-model.component.scss']
+  styleUrls: ['./modal-edit-tax-model.component.scss'],
 })
 export class ModalEditTaxModelComponent implements OnInit {
-
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ModalEditTaxModelComponent>
@@ -17,7 +16,5 @@ export class ModalEditTaxModelComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

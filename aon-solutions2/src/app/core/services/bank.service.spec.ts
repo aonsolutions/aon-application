@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { BankService } from './bank.service';
 import { AonSDK } from 'libraries/AonSDK/AonSDK';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Bank } from '../models/class/bank';
+//import { Bank } from '../models/class/bank';
 
 
 describe('BankService', () => {
