@@ -4,10 +4,10 @@
       <ng-content select="[tool]"></ng-content>
     </div>
     <mat-tab-group
-      (selectedTabChange)="tabChanged($event)"
-      animationDuration="0ms"
+      (selectedTabChange) = "tabChanged($event)"
+      [selectedIndex]     = 'tabIndex'
       mat-flat-tab-group
-    >
+    > 
       <mat-tab *ngFor="let tab of tabs; index as i">
         <ng-template mat-tab-label>
           <app-icon *ngIf="tab.icon != undefined" [shape]="tab.icon || ''" [color]="tab.color || ''" [size]="'1.2rem'"></app-icon>

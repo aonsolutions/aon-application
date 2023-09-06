@@ -273,6 +273,15 @@ export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>,
     }
 }
 
+export class RegistryEnterpriseFactory implements ISingleObjectCrudFactory<IRegistryEnterprise>, IMultipleObjectCrudFactory<IRegistryEnterprise> {
+  createSingleObjectCrud(): ISingleObjectCrud<IRegistryEnterprise> {
+      return new GenericSingleObjectCrud<RegistryEnterprise>(new GenericSingleObjectCrudRepository<RegistryEnterprise>(new StorableRegistryEnterprise(), RegistryEnterprise), RegistryEnterprise);
+  }
+  createMultipleObjectCrud(): IMultipleObjectCrud<IRegistryEnterprise> {
+      return new GenericMultipleObjectCrud<RegistryEnterprise>(new GenericMultipleObjectCrudRepository<RegistryEnterprise>(new StorableRegistryEnterprise(), RegistryEnterprise), RegistryEnterprise);
+  }
+}
+
 export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleObjectCrudFactory<IBank> {
     createSingleObjectCrud(): ISingleObjectCrud<IBank> {
         return new GenericSingleObjectCrud<Bank>( 
@@ -1862,6 +1871,7 @@ export interface IFactory {
     createFolder(): IFolder;
     createCertificate(): ICertificate;
     createEnterprise(): IEnterprise;
+    createRegistryEnterprise(): IRegistryEnterprise;
     createDocumentNote(): IDocumentNote;
     createBank(): IBank;
     createTaxModel(): ITaxModel;
@@ -1980,12 +1990,14 @@ export interface IFolder extends ICollectable {
 export interface ICertificate extends ICollectable {
   Name: string;
   RepresentationType: string;
+  ExpeditionDate: Date;
   ExpirationDate: Date;
   Alias: string;
   Type: string;
   Tgss: boolean;
   Sepe: boolean;
   Aeat: boolean;
+  DocumentUser: string;
 }
 
 export interface IEnterprise extends ICollectable {
@@ -2002,6 +2014,16 @@ export interface IEnterprise extends ICollectable {
     DomainName: string;
     DomainId: string;
     Registry: string;
+}
+
+export interface IRegistryEnterprise extends ICollectable {
+  IdEnterprise: string,
+  Description: string,
+  DateCreation: Date,
+  DateRegistration: Date,
+  Notary: string,
+  Protocol: string,
+  Inscription: string
 }
 
 export interface IDocumentNote extends ICollectable {
@@ -2130,6 +2152,315 @@ interface IAuth extends ICollectable{
     Password: string;
 }
 
+export interface ICommunity {
+  label: string;
+  _about: string;
+}
+
+export interface ICountry {
+  name:         Name;
+  tld?:         string[];
+  cca2:         string;
+  ccn3?:        string;
+  cca3:         string;
+  cioc?:        string;
+  independent?: boolean;
+  status:       Status;
+  unMember:     boolean;
+  currencies?:  Currencies;
+  idd:          Idd;
+  capital?:     string[];
+  altSpellings: string[];
+  region:       Region;
+  subregion?:   string;
+  languages?:   { [key: string]: string };
+  translations: { [key: string]: Translation };
+  latlng:       number[];
+  landlocked:   boolean;
+  borders?:     string[];
+  area:         number;
+  demonyms?:    Demonyms;
+  flag:         string;
+  maps:         Maps;
+  population:   number;
+  gini?:        { [key: string]: number };
+  fifa?:        string;
+  car:          Car;
+  timezones:    string[];
+  continents:   Continent[];
+  flags:        Flags;
+  coatOfArms:   CoatOfArms;
+  startOfWeek:  StartOfWeek;
+  capitalInfo:  CapitalInfo;
+  postalCode?:  PostalCode;
+}
+
+export interface CapitalInfo {
+  latlng?: number[];
+}
+
+export interface Car {
+  signs?: string[];
+  side:   Side;
+}
+
+export enum Side {
+  Left = "left",
+  Right = "right",
+}
+
+export interface CoatOfArms {
+  png?: string;
+  svg?: string;
+}
+
+export enum Continent {
+  Africa = "Africa",
+  Antarctica = "Antarctica",
+  Asia = "Asia",
+  Europe = "Europe",
+  NorthAmerica = "North America",
+  Oceania = "Oceania",
+  SouthAmerica = "South America",
+}
+
+export interface Currencies {
+  ZAR?: Aed;
+  NOK?: Aed;
+  WST?: Aed;
+  GMD?: Aed;
+  XCD?: Aed;
+  EUR?: Aed;
+  AWG?: Aed;
+  XOF?: Aed;
+  KPW?: Aed;
+  PYG?: Aed;
+  BMD?: Aed;
+  XAF?: Aed;
+  USD?: Aed;
+  GBP?: Aed;
+  MZN?: Aed;
+  SOS?: Aed;
+  SGD?: Aed;
+  NIO?: Aed;
+  AUD?: Aed;
+  PEN?: Aed;
+  MXN?: Aed;
+  BAM?: BAM;
+  BHD?: Aed;
+  MOP?: Aed;
+  BBD?: Aed;
+  UZS?: Aed;
+  CNY?: Aed;
+  MWK?: Aed;
+  ZWL?: Aed;
+  KES?: Aed;
+  PKR?: Aed;
+  FJD?: Aed;
+  SZL?: Aed;
+  JEP?: Aed;
+  TWD?: Aed;
+  LKR?: Aed;
+  BYN?: Aed;
+  AED?: Aed;
+  ANG?: Aed;
+  CRC?: Aed;
+  AOA?: Aed;
+  UYU?: Aed;
+  CDF?: Aed;
+  KWD?: Aed;
+  TRY?: Aed;
+  MRU?: Aed;
+  TVD?: Aed;
+  PAB?: Aed;
+  EGP?: Aed;
+  AZN?: Aed;
+  RWF?: Aed;
+  INR?: Aed;
+  ISK?: Aed;
+  SRD?: Aed;
+  BGN?: Aed;
+  SLL?: Aed;
+  TND?: Aed;
+  CUC?: Aed;
+  CUP?: Aed;
+  TTD?: Aed;
+  KMF?: Aed;
+  SHP?: Aed;
+  RON?: Aed;
+  NPR?: Aed;
+  SAR?: Aed;
+  DOP?: Aed;
+  DKK?: Aed;
+  FOK?: Aed;
+  KID?: Aed;
+  VUV?: Aed;
+  HUF?: Aed;
+  YER?: Aed;
+  SCR?: Aed;
+  LYD?: Aed;
+  ILS?: Aed;
+  VND?: Aed;
+  IRR?: Aed;
+  NAD?: Aed;
+  LBP?: Aed;
+  MYR?: Aed;
+  MNT?: Aed;
+  GEL?: Aed;
+  TJS?: Aed;
+  ALL?: Aed;
+  TMT?: Aed;
+  COP?: Aed;
+  VES?: Aed;
+  GNF?: Aed;
+  SSP?: Aed;
+  UAH?: Aed;
+  FKP?: Aed;
+  HNL?: Aed;
+  BRL?: Aed;
+  MUR?: Aed;
+  THB?: Aed;
+  BOB?: Aed;
+  SEK?: Aed;
+  GGP?: Aed;
+  ZMW?: Aed;
+  ERN?: Aed;
+  KZT?: Aed;
+  MAD?: Aed;
+  JOD?: Aed;
+  MMK?: Aed;
+  CZK?: Aed;
+  JMD?: Aed;
+  KGS?: Aed;
+  SDG?: BAM;
+  STN?: Aed;
+  GIP?: Aed;
+  LSL?: Aed;
+  PLN?: Aed;
+  JPY?: Aed;
+  LRD?: Aed;
+  CVE?: Aed;
+  IMP?: Aed;
+  BIF?: Aed;
+  PGK?: Aed;
+  UGX?: Aed;
+  AFN?: Aed;
+  XPF?: Aed;
+  BWP?: Aed;
+  LAK?: Aed;
+  GTQ?: Aed;
+  CHF?: Aed;
+  SBD?: Aed;
+  SYP?: Aed;
+  BDT?: Aed;
+  DJF?: Aed;
+  GHS?: Aed;
+  OMR?: Aed;
+  BSD?: Aed;
+  DZD?: Aed;
+  HTG?: Aed;
+  PHP?: Aed;
+  CKD?: Aed;
+  NZD?: Aed;
+  TOP?: Aed;
+  MGA?: Aed;
+  CAD?: Aed;
+  AMD?: Aed;
+  NGN?: Aed;
+  BZD?: Aed;
+  RUB?: Aed;
+  KYD?: Aed;
+  MDL?: Aed;
+  RSD?: Aed;
+  CLP?: Aed;
+  IDR?: Aed;
+  MVR?: Aed;
+  BND?: Aed;
+  GYD?: Aed;
+  TZS?: Aed;
+  KHR?: Aed;
+  QAR?: Aed;
+  ARS?: Aed;
+  IQD?: Aed;
+  BTN?: Aed;
+  KRW?: Aed;
+  HKD?: Aed;
+  MKD?: Aed;
+  ETB?: Aed;
+}
+
+export interface Aed {
+  name:   string;
+  symbol: string;
+}
+
+export interface BAM {
+  name: string;
+}
+
+export interface Demonyms {
+  eng:  Eng;
+  fra?: Eng;
+}
+
+export interface Eng {
+  f: string;
+  m: string;
+}
+
+export interface Flags {
+  png:  string;
+  svg:  string;
+  alt?: string;
+}
+
+export interface Idd {
+  root?:     string;
+  suffixes?: string[];
+}
+
+export interface Maps {
+  googleMaps:     string;
+  openStreetMaps: string;
+}
+
+export interface Name {
+  common:      string;
+  official:    string;
+  nativeName?: { [key: string]: Translation };
+}
+
+export interface Translation {
+  official: string;
+  common:   string;
+}
+
+export interface PostalCode {
+  format: string;
+  regex?: string;
+}
+
+export enum Region {
+  Africa = "Africa",
+  Americas = "Americas",
+  Antarctic = "Antarctic",
+  Asia = "Asia",
+  Europe = "Europe",
+  Oceania = "Oceania",
+}
+
+export enum StartOfWeek {
+  Monday = "monday",
+  Saturday = "saturday",
+  Sunday = "sunday",
+}
+
+export enum Status {
+  OfficiallyAssigned = "officially-assigned",
+  UserAssigned = "user-assigned",
+}
+
+
 
 /*
  *
@@ -2146,12 +2477,16 @@ export class Factory implements IFactory {
         return new Folder(name, parent);
     }
 
-    createCertificate(name?: string, representationType?: string, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean): ICertificate {
-        return new Certificate(name, representationType, expirationDate, alias, type, tgss, sepe, aeat);
+    createCertificate(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean, documentUser?: string): ICertificate {
+        return new Certificate(name, representationType, expeditionDate, expirationDate, alias, type, tgss, sepe, aeat);
     }
 
     createEnterprise(name?: string, document?: string): IEnterprise {
         return new Enterprise(name,document);
+    }
+
+    createRegistryEnterprise(name?: string, description?: string, dateCreation?: Date, dateRegistration?: Date, notary?: string, protocol?: string, inscription?: string): IRegistryEnterprise {
+      return new RegistryEnterprise(name, description, dateCreation, dateRegistration, notary, protocol, inscription);
     }
 
     createDocumentNote(text?: string, path?: string): IDocumentNote {
@@ -2198,6 +2533,10 @@ export class CollectionFactory implements ICollectionFactory {
 
     createEnterpriseCollection(): ICollection<IEnterprise> {
       return new Collection<Enterprise>();
+    }
+
+    createRegistryEnterpriseCollection(): ICollection<IRegistryEnterprise> {
+      return new Collection<RegistryEnterprise>();
     }
 
     createDocumentNoteCollection(): ICollection<IDocumentNote> {
@@ -2554,33 +2893,37 @@ class StorableFolder extends Folder implements IStorable<Folder> {
 class Certificate implements ICertificate, IModel {
     private name: string;
     private representationType: string;
+    private expeditionDate: Date;
     private expirationDate: Date;
     private alias: string;
     private type: string;
     private tgss: boolean;
     private sepe: boolean;
     private aeat: boolean;
+    private documentUser: string;
     private key: string;
     protected apiObject: any;
 
-    public get ApiObject(): any {
-        return this.apiObject;
-    }
-    
-    public set ApiObject(value: any) {
-        this.apiObject = value;
-    }
-
-    constructor(name?: string, representationType?: string, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean) {
+    constructor(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean, documentUser?: string) {
         this.name = name || '';
         this.representationType = representationType || '';
+        this.expeditionDate = expeditionDate || new Date();
         this.expirationDate = expirationDate || new Date();
         this.alias = alias || '';
         this.type = type || '';
         this.tgss = tgss || false;
         this.sepe = sepe || false;
         this.aeat = aeat || false;
-        this.key = name || '';
+        this.documentUser = documentUser || '';
+        this.key = documentUser || '';
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
     }
 
     public get Name(): string {
@@ -2595,8 +2938,12 @@ class Certificate implements ICertificate, IModel {
         return this.representationType;
     }
 
-    public set RepresentationType(value: string) {
-        this.representationType = value;
+    public get ExpeditionDate(): Date {
+        return this.expeditionDate;
+    }
+
+    public set ExpeditionDate(value: Date) {
+        this.expeditionDate = value;
     }
 
     public get ExpirationDate(): Date {
@@ -2647,28 +2994,34 @@ class Certificate implements ICertificate, IModel {
         this.aeat = value;
     }
 
+    public get DocumentUser(): string {
+        return this.documentUser;
+    }
+
+    public set DocumentUser(value: string) {
+        this.documentUser = value;
+    }
+
     public get Key(): string {
         return this.key;
     }
 
-    public set Key(value: string) {
-        this.key = value;
-    }
-
     getKey(): string {
-        return this.name;
+        return this.documentUser;
     }
 
     getFilterableFields(): Map<string,any> {
         let map = new Map<string, any>();
         map.set('name', this.Name);
         map.set('representationType', this.RepresentationType);
+        map.set('expeditionDate', this.ExpeditionDate);
         map.set('expirationDate', this.ExpirationDate);
         map.set('alias', this.Alias);
         map.set('type', this.Type);
         map.set('tgss', this.Tgss);
         map.set('sepe', this.Sepe);
         map.set('aeat', this.Aeat);
+        map.set('documentUser', this.DocumentUser);
         return map;
     }
 
@@ -2676,12 +3029,14 @@ class Certificate implements ICertificate, IModel {
         let map = new Map<string, any>();
         map.set('name', this.Name);
         map.set('representationType', this.RepresentationType);
+        map.set('expeditionDate', this.ExpeditionDate);
         map.set('expirationDate', this.ExpirationDate);
         map.set('alias', this.Alias);
         map.set('type', this.Type);
         map.set('tgss', this.Tgss);
         map.set('sepe', this.Sepe);
         map.set('aeat', this.Aeat);
+        map.set('documentUser', this.DocumentUser);
         return map;
     }
 
@@ -2955,6 +3310,152 @@ class StorableEnterprise extends Enterprise implements IStorable<Enterprise> {
         return 'enterprises';
     }
 }
+
+class RegistryEnterprise implements IRegistryEnterprise, IModel {
+  private id: string;
+  private idEnterprise: string;
+  private description: string;
+  private dateCreation: Date;
+  private dateRegistration: Date;
+  private notary: string;
+  private protocol: string;
+  private inscription: string;
+  private key: string;
+  protected apiObject: any;
+
+  constructor(idEnterprise?: string, description?: string, dateCreation?: Date, dateRegistration?: Date, notary?: string, protocol?: string, inscription?: string, key?: string) {
+    this.id = new KeyGenerator().generate(15);
+    this.idEnterprise = idEnterprise || '';
+    this.description = description || '';
+    this.dateCreation = dateCreation || new Date();
+    this.dateRegistration = dateRegistration || new Date();
+    this.notary = notary || '';
+    this.protocol = protocol || '';
+    this.inscription = inscription || '';
+    this.key = this.idEnterprise;
+  }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+  public get Id(): string {
+    return this.id;
+  }
+
+  public set Id(value: string) {
+    this.id = value;
+  }
+
+  public get IdEnterprise(): string {
+    return this.idEnterprise;
+  }
+
+  public set IdEnterprise(value: string) {
+    this.idEnterprise = value;
+  }
+
+  public get Description(): string {
+    return this.description;
+  }
+
+  public set Description(value: string) {
+    this.description = value;
+  }
+
+  public get DateCreation(): Date {
+    return this.dateCreation;
+  }
+
+  public set DateCreation(value: Date) {
+    this.dateCreation = value;
+  }
+
+  public get DateRegistration(): Date {
+    return this.dateRegistration;
+  }
+
+  public set DateRegistration(value: Date) {
+    this.dateRegistration = value;
+  }
+
+  public get Notary(): string {
+    return this.notary;
+  }
+
+  public set Notary(value: string) {
+    this.notary = value;
+  }
+
+  public get Protocol(): string {
+    return this.protocol;
+  }
+
+  public set Protocol(value: string) {
+    this.protocol = value;
+  }
+
+  public get Inscription(): string {
+    return this.inscription;
+  }
+
+  public set Inscription(value: string) {
+    this.inscription = value;
+  }
+
+  public get Key(): string {
+    return this.key;
+  }
+
+  public set Key(value: string) {
+    this.key = value;
+  }
+
+  getKey(): string {
+    return this.idEnterprise;
+  }
+
+  getFilterableFields(): Map<string, any> {
+    let map = new Map<string, any>();
+    map.set('id', this.Id);
+    map.set('idEnterprise', this.IdEnterprise);
+    map.set('description', this.Description);
+    map.set('dateCreation', this.DateCreation);
+    map.set('dateRegistration', this.DateRegistration);
+    map.set('notary', this.Notary);
+    map.set('protocol', this.Protocol);
+    map.set('inscription', this.Inscription);
+    return map;
+  }
+
+  getSortableFields(): Map<string, any> {
+    let map = new Map<string, any>();
+    map.set('id', this.Id);
+    map.set('idEnterprise', this.IdEnterprise);
+    map.set('description', this.Description);
+    map.set('dateCreation', this.DateCreation);
+    map.set('dateRegistration', this.DateRegistration);
+    map.set('notary', this.Notary);
+    map.set('protocol', this.Protocol);
+    map.set('inscription', this.Inscription);
+    return map;
+  }
+
+}
+
+class StorableRegistryEnterprise extends RegistryEnterprise implements IStorable<RegistryEnterprise> {
+  getCollection(): ICollection<RegistryEnterprise> {
+    return registryEnterprises;
+  }
+  getLocalStorage(): string {
+      return 'registryEnterprises';
+  }
+}
+
 
 class DocumentNote implements IDocumentNote, IModel  {
     private text: string;
@@ -4866,22 +5367,34 @@ let storableCertificates = new StorableCertificate();
 let localCertificates = new LocalStorage<Certificate>(Certificate);
 certificates = localCertificates.read(storableCertificates.getLocalStorage())
 if(certificates.size() == 0){
-  certificates.add(new Certificate('Certificado 1'));
-  certificates.add(new Certificate('Certificado 2'));
-  certificates.add(new Certificate('Certificado 3'));
+  certificates.add(new Certificate('Andrés Nava Carranza', 'Persona Física', new Date('Fri Jul 28 2023 13:38:29 GMT+0100'), new Date('Thu Aug 31 2025 03:52:27 GMT+0100'), 'And323', 'Público', false, true, false, '35532252N'));
+  certificates.add(new Certificate('Andrea Casarez Saldaña', 'Persona Física', new Date('Tue Feb 28 2023 20:37:13 GMT+0100'), new Date('Thu May 23 2025 22:33:06 GMT+0100'), 'Andrea', 'Público', false, true, false, '94385657M'));
+  certificates.add(new Certificate('María Elena Tirado Chacón', 'Persona Física', new Date('Wed Mar 22 2023 15:48:30 GMT+0100 '), new Date('Fri Aug 02 2025 12:43:24 GMT+0100'), 'Andrea', 'Público', false, true, false, '11556837G'));
   localCertificates.write(storableCertificates.getLocalStorage(), certificates);
 }
 
 
 let enterprises: ICollection<Enterprise> = new Collection<Enterprise>();
 let storableEnterprises = new StorableEnterprise();
+let storableRegistryEnterprises = new StorableRegistryEnterprise();
+let registryEnterprises : ICollection<RegistryEnterprise> = new Collection<RegistryEnterprise>();
+let localRegistryEnterprises = new LocalStorage<RegistryEnterprise>(RegistryEnterprise);
 let localEnterprises = new LocalStorage<Enterprise>(Enterprise);
 enterprises = localEnterprises.read(storableEnterprises.getLocalStorage())
+registryEnterprises = localRegistryEnterprises.read(storableRegistryEnterprises.getLocalStorage());
+
 if(enterprises.size() == 0){
     enterprises.add(new Enterprise('Pet Estudio', 'B16880148'));
     enterprises.add(new Enterprise('MENG SA', 'U14241855'));
     enterprises.add(new Enterprise('PORTABAGE SL', 'U53716270'));
     localEnterprises.write(storableEnterprises.getLocalStorage(), enterprises);
+}
+
+if (registryEnterprises.size() == 0){
+    registryEnterprises.add(new RegistryEnterprise('B16880148', 'lorem ipsum ...', new Date(), new Date(), 'Esperanza', 'Protocolo 1', 'Inscripción 1'));
+    registryEnterprises.add(new RegistryEnterprise('U14241855', 'lorem ipsum ...', new Date(), new Date(), 'Jorge Luis', 'Protocolo 2', 'Inscripción 2'));
+    registryEnterprises.add(new RegistryEnterprise('U53716270', 'lorem ipsum ...', new Date(), new Date(), 'Manuela', 'Protocolo 3', 'Inscripción 3'));
+    localRegistryEnterprises.write(storableRegistryEnterprises.getLocalStorage(), registryEnterprises);
 }
 
 let documentNotes: ICollection<DocumentNote> = new Collection<DocumentNote>();
@@ -4936,15 +5449,15 @@ let storableMessages = new StorableMessage();
 let localMessages = new LocalStorage<Message>(Message);
 messages = localMessages.read(storableMessages.getLocalStorage())
 if(messages.size() == 0){
-    messages.add(new Message('Asesor1','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-12"),'consulta','abierta'));
-    messages.add(new Message('Asesor2','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-26"),'consulta','abierta'));
-    messages.add(new Message('Asesor3','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-07-16"),'consulta','cerrada'));
-    messages.add(new Message('Asesor1','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-05-16"),'notificacion','vista'));
-    messages.add(new Message('Asesor2','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-06-17"),'notificacion','nueva'));
-    messages.add(new Message('Asesor3','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-07-18"),'notificacion','nueva'));
-    messages.add(new Message('Asesor1','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-06-03"),'tarea','realizada',new Date("2023-08-24")));
-    messages.add(new Message('Asesor2','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-06-19"),'tarea','pendiente',new Date("2023-08-28")));
-    messages.add(new Message('Asesor3','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-07-22"),'tarea','pendiente',new Date("2023-09-05")));
+    messages.add(new Message('Asesor1','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-12 12:00"),'consulta','abierta'));
+    messages.add(new Message('Asesor2','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-26 14:00"),'consulta','abierta'));
+    messages.add(new Message('Asesor3','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-07-16 15:00"),'consulta','cerrada'));
+    messages.add(new Message('Asesor1','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-05-16 12:30"),'notificacion','vista'));
+    messages.add(new Message('Asesor2','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-06-17 18:02"),'notificacion','nueva'));
+    messages.add(new Message('Asesor3','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-07-18 08:05"),'notificacion','nueva'));
+    messages.add(new Message('Asesor1','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-06-03 10:01"),'tarea','realizada',new Date("2023-08-24 23:30")));
+    messages.add(new Message('Asesor2','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-06-19 12:25"),'tarea','pendiente',new Date("2023-08-28 22:30")));
+    messages.add(new Message('Asesor3','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-07-22 15:30"),'tarea','pendiente',new Date("2023-09-05 21:30")));
     localMessages.write(storableMessages.getLocalStorage(), messages);
 }
 
@@ -4956,9 +5469,9 @@ let filter = new FilterBuilder();
 filter.addField('type','consulta');
 let filteredMessages = messages.filter(filter.getFilter());
 if(messageChats.size() == 0 && filteredMessages.size() != 0){
-    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12"), 'enviado'));
-    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12"), 'recibido'));
-    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12"), 'enviado'));
+    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:30"), 'enviado'));
+    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:31"), 'recibido'));
+    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:32"), 'enviado'));
     localMessageChats.write(storableMessageChats.getLocalStorage(), messageChats);
 }
 

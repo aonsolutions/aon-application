@@ -23,26 +23,31 @@ export interface Models {
   styleUrls: ['./tabs-tax-model.component.scss'],
 })
 export class TabsTaxModelComponent implements OnInit {
-  tabIndex: number = 0;
-  tabIndexSelect: any;
-  modelsList: any[] = [];
-  modelsYears: any[] = [];
-  models: any;
-  tabs    : Tabs [] = [];
-  @Input() trimester!: number;
-  @Input() tabColor: string = '';
+  tabIndex            : number  = 0;
+  modelsList          : any[]   = [];
+  modelsYears         : any[]   = [];
+  models              : any;
+  tabs                : Tabs [] = [];
+  @Input() trimester! : number;
+  @Input() tabColor   : string  = '';
   @HostBinding('style.--styleTabColor') styleTabColor = '';
   @Output() inputValue = new EventEmitter<any>();
   @Output() changeTabIndex = new EventEmitter<number>();
   showModal: any;
 
   constructor(
-    public taxModelService: TaxModelService,
+    private taxModelService : TaxModelService,
     private translateService: TranslateService
   ) {
     this.translateService.get(
       ['TAX-PANEL.1_TRIMESTER', 'TAX-PANEL.2_TRIMESTER', 'TAX-PANEL.3_TRIMESTER','TAX-PANEL.4_TRIMESTER', 'TAX-PANEL.ALL']
     ).subscribe( result => {
+      // Marcar el trimestre en el que estamos
+      taxModelService.thisTrimester().then((response) => {
+        // Le restamos 1 para que coincida con el valor del Tabs
+        this.tabIndex = response - 1;
+      });
+      // Cabecera de los tags
       this.tabs = [
         { name: result['TAX-PANEL.1_TRIMESTER']},
         { name: result['TAX-PANEL.2_TRIMESTER']},
@@ -51,7 +56,7 @@ export class TabsTaxModelComponent implements OnInit {
         { name: result['TAX-PANEL.ALL']},
       ]
     })
-
+    // Datos del modelo
     taxModelService.getTaxModelList().then((response) => {
       this.models = response;
       response.forEach((element) => {
@@ -64,59 +69,9 @@ export class TabsTaxModelComponent implements OnInit {
       });
     });
 
-    this.setInitialTabIndex();
-    this.tabIndex! = this.tabIndexSelect!;
-    // this.deleteSelectTab();
-    // this.selectTab('mat-tab-label-0-' + this.tabIndexSelect);
-
-  }
-
-  setInitialTabIndex() {
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth() + 1;
-
-    if (currentMonth >= 2 && currentMonth <= 4) {
-      //tabIndex = 0 corresponde a trimestre 1
-      this.tabIndexSelect = 0;
-    } else if (currentMonth >= 5 && currentMonth <= 7) {
-      //trimestre 2
-      this.tabIndexSelect = 1;
-    } else if (currentMonth >= 8 && currentMonth <= 10) {
-      //trimestre  3
-      this.tabIndexSelect = 2;
-    } else if (currentMonth > 10 || currentMonth < 2) {
-      //trimestre 4
-      this.tabIndexSelect = 3;
-    }
-
-    // console.log (currentYear);
-    // console.log (currentMonth);
-    // console.log (this.tabIndex);
-    // console.log (currentDate);
-  }
-
-  //id="mat-tab-label-0-0"
-
-  selectTab(id: string){
-    console.log(id)
-    // Cogemos el Tab
-    let element = document.getElementById(id);
-    // Si no existe la agregamos, si existe la removemos
-    console.log(element);
-    element!.classList.add('mat-tab-label-active');
-
-  }
-
-  deleteSelectTab(){
-    // Eliminamos clase si existe un elemento ya marcado
-    const elements = document.getElementsByClassName('mat-tab-label-active');
-    while(elements.length > 0){
-      elements[0].classList.remove('mat-tab-label-active');
-    }
   }
 
   ngOnInit(): void {
-
   }
+
 }

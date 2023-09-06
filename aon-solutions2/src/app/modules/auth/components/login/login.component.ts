@@ -1,9 +1,7 @@
 import { Component, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { Filter } from 'libraries/AonSDK/AonSDK';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
-
 
 @Component({
   selector: 'app-login',
