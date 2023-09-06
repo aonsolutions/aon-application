@@ -18,8 +18,10 @@ public enum ImportType {
 	
 	public String getName() {
 		switch (this) {
-		case INVOICE: case SERVAL_INVOICE:
+		case INVOICE:
 			return "Facturas";
+		case SERVAL_INVOICE:
+			return "Facturas Gesti\u00f3n";
 		case DIARY:
 			return "Diario";
 		case PGC:
