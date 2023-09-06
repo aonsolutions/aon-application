@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.security.Booking;
+import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.Priority;
@@ -251,6 +252,13 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 						errors.put(createError(barCode, domainType, app, "Item no encontrado"));
 					}
 				}
+				
+				// Create RItem for users - xx.USER - Quantity = numUsers
+				updateUserBookingRItem(domainCompany, booking, aonCustomer, errors, api);
+				
+				// Create RItem for @Conectas | xx.yy.zz | xx=01 Asesoria | yy=Empresa/Despacho | zz=24 Basica, 25 Estandar, 26 Profesional 
+				updateConectaBookingRItem(domainCompany, booking, aonCustomer, errors, api);
+				
 			}
 		} else if (bookingJson == null || bookingJson.isEmpty()) {
 			errors.put(createError(null, null, null, "Contratación no encontrada"));
@@ -261,7 +269,99 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			return new JSONObject();
 		}
 	}
+
+	private static void updateUserBookingRItem(DomainCompany domainCompany, Booking booking, Integer aonCustomer, JSONArray errors, AonApiData api) {
+		String userBarCode = getUserBarCode(domainCompany.getDomain().getDomainType());
+		updateRItem(domainCompany, booking, aonCustomer, errors, api, userBarCode, booking.getNumberOfUsers().toString());
+	}
+
+	private static String getUserBarCode(DomainType domainType) {
+		StringBuilder sb = new StringBuilder();
+		if (domainType != null) {
+			int domainTypeOrdinal = domainType.ordinal();
+			sb.append(AonStringUtils.leftPad(AonNumberUtils.toString(domainTypeOrdinal), 2, '0'));
+			sb.append(".USR");
+		}
+		return sb.toString();
+	}
 	
+	private static void updateConectaBookingRItem(DomainCompany domainCompany, Booking booking, Integer aonCustomer, JSONArray errors, AonApiData api) {
+		DomainType domainType = domainCompany.getDomain().getDomainType();
+		if(domainType.equals(DomainType.CONSULTANCY) && null != booking.getResume()) {
+			// Empresas
+			DomainTypeInfo enterpriseChildBooking = booking.getResume().getDomainTypes().get(DomainType.ENTERPRISE);
+			
+			if(null != enterpriseChildBooking) {
+				
+				// Empresas - Conecta Basico
+				Long quantityConnectaBasic = enterpriseChildBooking.getChildApps().get(AonApp.BASIC_MANAGEMENT);
+				if(null != quantityConnectaBasic) {
+					String connectaBasicBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.BASIC_MANAGEMENT); 
+					updateRItem(domainCompany, booking, aonCustomer, errors, api, connectaBasicBarCode, quantityConnectaBasic.toString());
+				}
+				
+				// Empresas - Conecta Standard
+				Long quantityConenctaStandard = enterpriseChildBooking.getChildApps().get(AonApp.STANDAR_MANAGEMENT);
+				if(null != quantityConenctaStandard) {
+					String connectaStandardBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.STANDAR_MANAGEMENT); 
+					updateRItem(domainCompany, booking, aonCustomer, errors, api, connectaStandardBarCode, quantityConenctaStandard.toString());
+				}
+				
+				// Empresas - Conecta Professional
+				Long quantityConnectaProfessional = enterpriseChildBooking.getChildApps().get(AonApp.PROFESSIONAL_MANAGEMENT);
+				if(null != quantityConnectaProfessional) {
+					String conenctaProfessionalBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.PROFESSIONAL_MANAGEMENT); 
+					updateRItem(domainCompany, booking, aonCustomer, errors, api, conenctaProfessionalBarCode, quantityConnectaProfessional.toString());
+				}
+			}
+			
+			// Despacho
+			DomainTypeInfo officeChildBooking = booking.getResume().getDomainTypes().get(DomainType.OFFICE);
+			
+			if(null != officeChildBooking) {
+				// Despacho - Conecta Basico
+				Long quantityConnectaBasic = officeChildBooking.getChildApps().get(AonApp.BASIC_MANAGEMENT);
+				if(null != quantityConnectaBasic) {
+					String connectaBasicBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.BASIC_MANAGEMENT); 
+					updateRItem(domainCompany, booking, aonCustomer, errors, api, connectaBasicBarCode, quantityConnectaBasic.toString());
+				}
+				
+				// Despacho - Conecta Standard
+				Long quantityConenctaStandard = officeChildBooking.getChildApps().get(AonApp.STANDAR_MANAGEMENT);
+				if(null != quantityConenctaStandard) {
+					String connectaStandardBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.STANDAR_MANAGEMENT); 
+					updateRItem(domainCompany, booking, aonCustomer, errors, api, connectaStandardBarCode, quantityConenctaStandard.toString());
+				}
+				
+				// Despacho - Conecta Professional
+				Long quantityConnectaProfessional = officeChildBooking.getChildApps().get(AonApp.PROFESSIONAL_MANAGEMENT);
+				if(null != quantityConnectaProfessional) {
+					String conenctaProfessionalBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.PROFESSIONAL_MANAGEMENT); 
+					updateRItem(domainCompany, booking, aonCustomer, errors, api, conenctaProfessionalBarCode, quantityConnectaProfessional.toString());
+				}
+			}
+			
+		}
+		
+	}
+	
+	private static String getConnectarBarCode(DomainType domainType, DomainType childDomainType, AonApp aonApp) {
+		StringBuilder sb = new StringBuilder();
+		if (domainType != null) {
+			int domainTypeOrdinal = domainType.ordinal();
+			int childDomainTypeOrdinal = childDomainType.ordinal();
+			int aonAppOrdinal = aonApp.ordinal();
+			sb.append(AonStringUtils.leftPad(AonNumberUtils.toString(domainTypeOrdinal), 2, '0'));
+			sb.append(".");
+			sb.append(AonStringUtils.leftPad(AonNumberUtils.toString(childDomainTypeOrdinal), 2, '0'));
+			sb.append(".");
+			sb.append(AonStringUtils.leftPad(AonNumberUtils.toString(aonAppOrdinal), 2, '0'));
+		}
+		return sb.toString();
+	}
+	
+	
+
 	private static JSONObject deleteBookingRitems(AonApiData api) {
 		int customer = api.getData().optInt(IJsonNames.CUSTOMER);
 		boolean removeAll = api.getData().optBoolean("all");
@@ -271,6 +371,38 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			AON.deleteRItem(api.getDomain(), api.getUser(), f -> f.getTypeProperty().eq(RegistryMode.BOOKING.value()));
 		}
 		return new JSONObject();
+	}
+	
+	private static void updateRItem(DomainCompany domainCompany, Booking booking, Integer aonCustomer, JSONArray errors, AonApiData api, String barCode, String quantity) {
+		Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getBarcodeProperty().like("%" + barCode + "%"));
+		
+		Integer itemId = item != null ? item.getId() : null;
+		if (item != null && itemId != null) {
+			RegistryItem ritem = AON.getRItem(
+					api.getDomain().getName(),
+					api.getDomain().getId(),
+					api.getUser().getLogin(),
+					f -> f.getRegistryProperty().eq(aonCustomer).and(f.getItemProperty().eq(itemId))
+			);
+			if (ritem == null || ritem.getId() == null) {
+				RegistryItem newRitem = new RegistryItem()
+						.setDomain(api.getDomain().getId())
+						.setRegistry(aonCustomer)
+						.setItem(item)
+						.setType(RegistryMode.BOOKING)
+						.setStatus(RegistryItemStatus.ACTIVE)
+						.setPriority(Priority.NONE)
+						.setCode("CONSOLE")
+						.setQuantity(quantity);
+				try {
+					AON.saveRItem(api.getDomain(), api.getUser(), newRitem);								
+				} catch (Exception e) {
+					errors.put(createError(barCode, domainCompany.getDomain().getDomainType(), null, "No se pudo guardar [" + e.getMessage() + "]"));
+				}
+			}
+		} else {
+			errors.put(createError(barCode, domainCompany.getDomain().getDomainType(), null, "Item no encontrado"));
+		}
 	}
 	
 	
