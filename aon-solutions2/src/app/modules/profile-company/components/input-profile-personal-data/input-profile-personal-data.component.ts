@@ -39,7 +39,3 @@ export class InputProfilePersonalDataComponent implements OnInit {
 //     this.users.push(user);
 //   });
 // }
-// togglePasswordFields() {
-//   this.showPasswordFields = !this.showPasswordFields;
-// }
-// }

@@ -4,20 +4,21 @@ import { RegistryEnterpriseService } from 'src/app/core/services/registry-enterp
 @Component({
   selector: 'app-input-profile-registry-data',
   templateUrl: './input-profile-registry-data.component.html',
-  styleUrls: ['./input-profile-registry-data.component.scss']
+  styleUrls: ['./input-profile-registry-data.component.scss'],
 })
 export class InputProfileRegistryDataComponent implements OnInit {
   registryEnterprises: any[] = [];
 
-  constructor(private registryEnterpriseService: RegistryEnterpriseService) { }
+  constructor(private registryEnterpriseService: RegistryEnterpriseService) {}
 
   ngOnInit(): void {
     const documentEnt = localStorage.getItem('enterprise');
-    this.registryEnterpriseService.getRegistryEnterprise(documentEnt).then(registryEnterprise => {
-      this.registryEnterprises.push(registryEnterprise);
-    });
+    this.registryEnterpriseService
+      .getRegistryEnterprise(documentEnt)
+      .then((registryEnterprise) => {
+        this.registryEnterprises.push(registryEnterprise);
+      });
   }
-
 }
 
 // ngOnInit(): void {
@@ -35,6 +36,5 @@ export class InputProfileRegistryDataComponent implements OnInit {
 
 //           });
 //         }
-
 
 // }

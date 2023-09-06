@@ -119,7 +119,10 @@
     "FEES_TO_BE_OFFSET": "Cuotas a compensar de periodos anteriores",
     "LIQUIDATION_RESULT": "Resultado de la liquidación",
     "DOWNLOAD_EXCEL": "DESCARGAR EXCEL",
-    "DOWNLOAD_PDF": "DESCARGAR PDF"
+    "DOWNLOAD_PDF": "DESCARGAR PDF",
+    "TO_RECTIFY":"¿Quieres rectificar?",
+    "RECTIFIED_MODEL":"  Una vez hayas rectificado el modelo, se archivará como una consulta en tu Bandeja.",
+    "SEND":"Enviar"
    },
   "PROFILE": {
     "CONTACT_DETAILS":   "Datos contacto",

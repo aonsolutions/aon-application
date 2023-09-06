@@ -3,24 +3,18 @@ import { ModalEditTaxModelComponent } from '../components/modal-edit-tax-model/m
 import { ModalPaymentComponent } from '../components/modal-payment/modal-payment.component';
 import { ModalTaxesDetailsComponent } from '../components/modal-taxes-details/modal-taxes-details.component';
 
-
 export interface Tabs {
   name: string; // Nombre de la tab
   icon?: string; // Icono opcional de la tab
   color?: string; // Color del texto y del icono de la tab
 }
-
-
 @Component({
   selector: 'app-taxPanel',
   templateUrl: './taxPanel.component.html',
-  styleUrls: ['./taxPanel.component.scss']
+  styleUrls: ['./taxPanel.component.scss'],
 })
-
-
 export class TaxPanelComponent implements OnInit {
-
-  tabIndex:number = 0
+  tabIndex: number = 0;
 
   tabs: Tabs[] = [
     { name: 'tab1', icon: 'create', color: 'black' },
@@ -29,36 +23,39 @@ export class TaxPanelComponent implements OnInit {
     { name: 'todos', color: 'black' },
   ];
 
-
-
-  constructor() { }
+  constructor() {}
 
   @ViewChild('modalEdit') modalComponentEdit: any = '';
-
   @ViewChild('modalPayment') modalComponentPayment: any = '';
+  @ViewChild('modalTaxesDetails') modalComponentTaxesDetails: any = '';
 
-  @ViewChild('modalTaxesDetails') modalComponentTaxesDetails : any = '';
+  functionHome: any = (result: any) => this.afterModalClosed(result);
 
-  functionHome: any = (result:any) => this.afterModalClosed(result);
-
-  afterModalClosed(result?: any){
-      console.log(result);
+  afterModalClosed(result?: any) {
+    console.log(result);
   }
 
-  showModalEdit(){
-      this.modalComponentEdit.openDialog(ModalEditTaxModelComponent,this.functionHome, 'Data from home');
+  showModalEdit() {
+    this.modalComponentEdit.openDialog(
+      ModalEditTaxModelComponent,
+      this.functionHome,
+      'Data from home'
+    );
+  }
+  showModalPayment() {
+    this.modalComponentPayment.openDialog(
+      ModalPaymentComponent,
+      this.functionHome,
+      'Data from home'
+    );
+  }
+  showModalTaxesDetails() {
+    this.modalComponentTaxesDetails.openDialog(
+      ModalTaxesDetailsComponent,
+      this.functionHome,
+      'Data from home'
+    );
   }
 
-  showModalPayment(){
-    this.modalComponentPayment.openDialog(ModalPaymentComponent,this.functionHome, 'Data from home');
-}
-
-showModalTaxesDetails(){
-  this.modalComponentTaxesDetails.openDialog(ModalTaxesDetailsComponent,this.functionHome, 'Data from home');
-}
-
-
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

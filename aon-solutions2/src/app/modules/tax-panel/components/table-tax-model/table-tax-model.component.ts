@@ -62,26 +62,22 @@ export class TableTaxModelComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
     //Add '${implements OnChanges}' to the class.
-    console.log(this.inputModel)
     this.updateTableData();
   }
 
   private updateTableData() {
     let filterBuilder = new FilterBuilder();
-    if (this.trimester >  0) {
+    if (this.trimester > 0) {
       filterBuilder.addField('trimester', this.trimester);
     }
 
-    if (this.inputModel > 0 ) {
+    if (this.inputModel > 0) {
       filterBuilder.addField('name', this.inputModel);
     }
 
     if (this.inputYear !== '') {
       filterBuilder.addField('year', this.inputYear);
     }
-
-    // filterBuilder.addField('name', this.inputModel);
-    // filterBuilder.addField('year', this.inputYear);
 
     this.taxModelService
       .getTaxModelList(filterBuilder.getFilter())

@@ -123,12 +123,10 @@ export class InputProfileCompanyInformationComponent implements OnInit {
   }
 
   async ngOnInit() {
-
   }
 
   onCountrySelection(event: any) {
     const countryValue = event.value;
-
   }
 
   showProvinceField(): boolean {

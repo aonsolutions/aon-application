@@ -119,7 +119,10 @@
     "FEES_TO_BE_OFFSET": "Fees to be offset from previous periods",
     "LIQUIDATION_RESULT": "Liquidation result",
     "DOWNLOAD_EXCEL": "DOWNLOAD EXCEL",
-    "DOWNLOAD_PDF": "DOWNLOAD PDF"
+    "DOWNLOAD_PDF": "DOWNLOAD PDF",
+    "TO_RECTIFY": "Do you want to rectify?",
+    "RECTIFIED_MODEL": "Once you have rectified the model, it will be archived as a query in your Inbox.",
+    "SEND":"Send"
   },
     "PROFILE": {
     "CONTACT_DETAILS":   "Contact details",

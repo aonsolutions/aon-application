@@ -8,12 +8,10 @@ import {
 } from '@angular/core';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 import { TranslateService } from '@ngx-translate/core';
-import { FilterBuilder } from 'libraries/AonSDK/aon';
 
 export interface Tabs {
   name: string;
 }
-
 export interface Models {
   name: string;
   taxType: number;
@@ -24,7 +22,6 @@ export interface Models {
   year: number;
   acciones?: any;
 }
-
 @Component({
   selector: 'app-tabs-tax-model',
   templateUrl: './tabs-tax-model.component.html',
@@ -33,7 +30,6 @@ export interface Models {
 export class TabsTaxModelComponent implements OnInit {
   tabIndex: number = 0;
   modelsList: any[] = [];
-  modelsListValue: string = '';
   modelsYears: any[] = [];
   models: any;
   tabs: Tabs[] = [];
@@ -75,12 +71,12 @@ export class TabsTaxModelComponent implements OnInit {
           { name: result['TAX_PANEL.ALL'] },
         ];
       });
-    // Datos del modelo
 
+    // Datos del modelo
     taxModelService.getTaxModelList().then((response) => {
       this.models = response;
       this.modelsList.push({ value: 0, text: 'Todos' });
-      // this.modelsYears.push({ value: 0, text: 'Todos' });
+
       response.forEach((element) => {
         if (!this.modelsList.some((model) => model.text === element.Name)) {
           this.modelsList.push({ value: element.Name, text: element.Name });
@@ -92,18 +88,9 @@ export class TabsTaxModelComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    console.log(this.modelsListValue);
-  }
-
+  ngOnInit(): void {}
   filterModel(value: number, type: number) {
     this.selectedModel = type === 1 ? value : this.selectedModel;
     this.selectedYear = type === 2 ? value.toString() : this.selectedYear;
-
-    // this.inputValue.emit({ year: this.selectedYear, name: this.selectedModel });
-    console.log('Pestaña actual:', this.tabIndex);
-    console.log('Valor:', value);
-    console.log('Type:', type);
   }
-
 }

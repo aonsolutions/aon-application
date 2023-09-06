@@ -1,10 +1,7 @@
 <div>
-  <p class="title-modal-payment">{{ 'TAX_PANEL.PAYMENTMETHOD'|translate }}</p>
+  <p class="title-modal-payment">{{ "TAX_PANEL.PAYMENTMETHOD" | translate }}</p>
 
-  <mat-radio-group
-    class="text-modal-payment"
-    aria-label="Select an option"
-  >
+  <mat-radio-group class="text-modal-payment" aria-label="Select an option">
     <mat-radio-button
       *ngFor="let option of radioButtonOptions"
       [value]="option.value"
@@ -16,6 +13,6 @@
 
   <app-button [mat-dialog-close]="true" [class]="'orange left'">
     <app-icon shape="send"></app-icon>
-    Enviar
+    {{ "TAX_PANEL.SEND" | translate }}
   </app-button>
 </div>
