@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import org.jooq.tools.json.JSONValue;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
@@ -28,6 +30,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Cursor;
@@ -42,6 +45,9 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -1371,12 +1377,18 @@ public class BookingCustomer extends HTMLPanel {
 		urlBuilder.setHost(Window.Location.getHost()); 
 		urlBuilder.setPath(baseUrl);
 		
-		urlBuilder.setParameter("domain", domainJSON);
-		urlBuilder.setParameter("booking", bookingJSON);
+//		urlBuilder.setParameter("domain", domainJSON);
+//		urlBuilder.setParameter("booking", bookingJSON);
 		
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		JSONObject body = new JSONObject();
+		body.put("domain", JSONParser.parseStrict(domainJSON));
+		body.put("booking", JSONParser.parseStrict(bookingJSON));
+		
+		requestBuilder.setRequestData(body.toString());
 		
 		try {
 		    // Send the request
