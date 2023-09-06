@@ -17,3 +17,5 @@ export class ModalInfoCertificateComponent implements OnInit {
   }
   ngOnInit() {}
 }
+
+

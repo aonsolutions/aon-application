@@ -49,6 +49,7 @@ export class TaxPanelComponent implements OnInit {
       'Data from home'
     );
   }
+
   showModalTaxesDetails() {
     this.modalComponentTaxesDetails.openDialog(
       ModalTaxesDetailsComponent,

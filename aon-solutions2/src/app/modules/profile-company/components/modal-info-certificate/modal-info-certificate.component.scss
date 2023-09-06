@@ -1,16 +1,15 @@
 @import "src/styles.scss";
 
+.modal-info-certificate {
+  padding: 1rem;
+}
 
 .title-modal-info-certicate {
   font-size: $font-size-24;
   font-weight: 700;
-  padding-left: 2rem;
-  padding-right: 2rem;
 }
 
-.box {
-  margin: 1rem;
-
+.info-certificated {
   .info-line {
     display: flex;
     justify-content: space-between;
@@ -33,16 +32,22 @@
 .subtitle-modal-info-certicate {
   font-size: $font-size-default;
   font-weight: 400;
-  padding-left: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.secundary-users {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
 }
 
-.box-2 {
-  border: .05rem solid $color-border-primary ;
-  margin: 2rem;
+.box-user {
+  border: 0.05rem solid $color-border-primary;
   padding: 0.5rem;
-
-
+  width: 100%;
 }
 
 .info-box {
@@ -54,5 +59,3 @@
   color: $color-secondary !important;
 
 }
-
-
