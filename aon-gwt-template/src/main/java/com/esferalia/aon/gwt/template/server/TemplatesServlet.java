@@ -242,7 +242,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	
 	public List<InvoiceImportClass> executeServalInvoice(Domain domain , User user, String data) {
 		byte[] fileData = java.util.Base64.getDecoder().decode(data);
-		saveImportation(domain, user, ImportType.INVOICE, fileData);
+		saveImportation(domain, user, ImportType.SERVAL_INVOICE, fileData);
 		return ServalInvoiceImport.getInstance().importation(fileData);
 	}
 	

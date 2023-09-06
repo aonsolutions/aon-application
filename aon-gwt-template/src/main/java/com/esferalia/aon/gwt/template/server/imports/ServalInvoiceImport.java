@@ -28,7 +28,6 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -769,6 +768,9 @@ public class ServalInvoiceImport extends ImportUtils{
 					}
 				}
 				
+				if(item == null) {
+					throw new Exception("El código de producto está vacío.");
+				}
 				double quantity = aux.getQuantity() != null ? aux.getQuantity() : 1.0;
 				double taxableBase = aux.getBase() != null ? aux.getBase() : 0.0;
 				InvoiceDetail detail =  new InvoiceDetail()
@@ -934,10 +936,10 @@ public class ServalInvoiceImport extends ImportUtils{
 			}
 		}
 
-		AccountPeriod period = ACCOUNTING.getAccountPeriod(domain.getName(), domain.getId(), "", iic.getDate());
-		if(period.isClosed()) {
-			throw new Exception("El Ejercicio " + period.getName() + " de la factura está cerrado.");
-		}
+//		AccountPeriod period = ACCOUNTING.getAccountPeriod(domain.getName(), domain.getId(), "", iic.getDate());
+//		if(period.isClosed()) {
+//			throw new Exception("El Ejercicio " + period.getName() + " de la factura está cerrado.");
+//		}
 	}
 	
 	private static WithholdingType getWithholdingType(InvoiceClaveRetencion icr, String account) {

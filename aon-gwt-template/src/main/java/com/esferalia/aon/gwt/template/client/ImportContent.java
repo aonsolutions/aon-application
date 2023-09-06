@@ -78,7 +78,9 @@ public class ImportContent extends Composite {
 	}
 	
 	private void init() {
-		if(getAonData().getDomain().getName().contains("serval")) {
+		if(getAonData().getDomain().getName().contains("serval")
+				|| getAonData().getDomain().getName().contains("ayudat")
+				|| getAonData().getDomain().getName().contains("aonsolutions.org")) {
 			typeList.addItem("Facturas Contabilidad", ImportType.INVOICE.name());
 			typeList.addItem("Facturas Gesti\u00f3n", ImportType.SERVAL_INVOICE.name());
 		} else typeList.addItem("Facturas", ImportType.INVOICE.name());
@@ -231,7 +233,7 @@ public class ImportContent extends Composite {
 				}
 				pbd.updateProgress(progress.intValue());
 				if(result.getLine() < lines - 1) {
-					insertInvoices(invoices, result.getLine() + 1);
+					insertServalInvoices(invoices, result.getLine() + 1);
 				} else error(ImportType.INVOICE);
 			}
 				
