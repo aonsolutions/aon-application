@@ -255,7 +255,7 @@ export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat
 }
 
 export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>, IMultipleObjectCrudFactory<IEnterprise> {
-    createSingleObjectCrud(): ISingleObjectReader<IEnterprise> {
+    createSingleObjectCrud(): ISingleObjectCrud<IEnterprise> {
         return new GenericSingleObjectCrud<Enterprise>( 
             (APIEnvironment ? 
             new APIGenericSingleObjectCrudRepository<Enterprise>(new ApiEnterprise(), Enterprise) : 
@@ -263,7 +263,7 @@ export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>,
             ), 
             Enterprise);
     }
-    createMultipleObjectCrud(): IMultipleObjectReader<IEnterprise> {
+    createMultipleObjectCrud(): IMultipleObjectCrud<IEnterprise> {
         return new GenericMultipleObjectCrud<Enterprise>( 
             (APIEnvironment ? 
             new APIGenericMultipleObjectCrudRepository<Enterprise>(new ApiEnterprise(), Enterprise) : 
