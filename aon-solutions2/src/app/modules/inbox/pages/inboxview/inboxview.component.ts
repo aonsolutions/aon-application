@@ -1,6 +1,13 @@
 import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Factory, CollectionFactory, ICollection, FilterBuilder, IMessageChat, IMessage } from 'libraries/AonSDK/aon';
+import {
+  Factory,
+  CollectionFactory,
+  ICollection,
+  FilterBuilder,
+  IMessageChat,
+  IMessage,
+} from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
@@ -21,13 +28,13 @@ export interface Tabs {
 export class InboxviewComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
   @ViewChild(TableQueriesComponent, { static: false })
-
   collectionFactory = new CollectionFactory();
   entityFactory = new Factory();
   datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
 
   messagesData: IMessage = this.entityFactory.createMessage();
-  messagesChat: ICollection<IMessageChat> = this.collectionFactory.createMessageChatCollection();
+  messagesChat: ICollection<IMessageChat> =
+    this.collectionFactory.createMessageChatCollection();
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
   tabsConsultas: Tabs[] = [];
@@ -39,13 +46,17 @@ export class InboxviewComponent implements OnInit {
   noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
   showSendButton: boolean = false;
-  selectedFilter: string = "INBOX.THIS_WEEK";
+  selectedFilter: string = 'INBOX.THIS_WEEK';
 
+  consultaMessageCount: number = 0;
+  tareasMessageCount: number = 0;
+  notificacionesMessageCount: number = 0;
+  totalMessageCount: number = 0;
   tableQueriesComponent!: TableQueriesComponent;
 
   constructor(
     private translateService: TranslateService,
-    public  reportingService: ReportingService,
+    public reportingService: ReportingService,
     private messageService: MessageService,
     private messageChatService: MessageChatService
   ) {
@@ -54,18 +65,24 @@ export class InboxviewComponent implements OnInit {
         'INBOX.ALL',
         'INBOX.PENDING',
         'INBOX.REALIZED',
-        'INBOX.ALL',
         'INBOX.OPENED',
         'INBOX.CLOSED',
-        'INBOX.ALL',
         'INBOX.NEWS',
         'INBOX.VIEWS',
       ])
       .subscribe((result) => {
         (this.tabsTareas = [
           { name: result['INBOX.ALL'], color: 'black' },
-          { name: result['INBOX.PENDING'], color: 'black', icon: 'remove_circle'},
-          { name: result['INBOX.REALIZED'], color: 'black', icon: 'check_circle'},
+          {
+            name: result['INBOX.PENDING'],
+            color: 'black',
+            icon: 'remove_circle',
+          },
+          {
+            name: result['INBOX.REALIZED'],
+            color: 'black',
+            icon: 'check_circle',
+          },
         ]),
           (this.tabsConsultas = [
             { name: result['INBOX.ALL'], color: 'black' },
@@ -74,14 +91,23 @@ export class InboxviewComponent implements OnInit {
           ]),
           (this.tabsNotificaciones = [
             { name: result['INBOX.ALL'], color: 'black' },
-            { name: result['INBOX.NEWS'], color: 'black', icon: 'notifications_active'},
-            { name: result['INBOX.VIEWS'], color: 'black', icon: 'remove_red_eye'},
+            {
+              name: result['INBOX.NEWS'],
+              color: 'black',
+              icon: 'notifications_active',
+            },
+            {
+              name: result['INBOX.VIEWS'],
+              color: 'black',
+              icon: 'remove_red_eye',
+            },
           ]);
       });
-
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.calculateMessageCounts();
+  }
 
   showNoTasksMessage(hasNoTasks: boolean) {
     this.noTasksMessage = hasNoTasks;
@@ -93,24 +119,31 @@ export class InboxviewComponent implements OnInit {
 
   showModal() {
     this.isModalVisible = true;
-    this.modalComponent.openDialog(ModalCreateComponent, this.functionHome, 'Data from home');
+    this.modalComponent.openDialog(
+      ModalCreateComponent,
+      this.functionHome,
+      'Data from home'
+    );
   }
 
   onTabChange() {
     this.showDetail = false;
     this.showSendButton = false;
+    this.tabIndex = 0;
   }
 
   async rowClickHandler(message: any) {
-    console.log(message)
+    console.log(message);
     try {
       this.showDetail = true;
 
       this.messagesData = await this.messageService.getMessage(message.key);
-      if(message.type == 'consulta') {
+      if (message.type == 'consulta') {
         let filterBuilder = new FilterBuilder();
         filterBuilder.addField('idMessage', message.key);
-        this.messagesChat = await this.messageChatService.getMessageChatList(filterBuilder.getFilter());
+        this.messagesChat = await this.messageChatService.getMessageChatList(
+          filterBuilder.getFilter()
+        );
       }
     } catch (error) {
       console.error('Error al cargar el chat del mensaje:', error);
@@ -121,13 +154,45 @@ export class InboxviewComponent implements OnInit {
     this.showSendButton = !this.showSendButton;
   }
 
-filterTable(option: string) {
-  if (option === 'estaSemana') {
-    this.selectedFilter = "INBOX.THIS_WEEK";
-  } else if (option === 'esteMes') {
-    this.selectedFilter = "INBOX.THIS_MONTH";
-  } else if (option === 'todo') {
-    this.selectedFilter = "INBOX.ALLS";
+  filterTable(name: string) {
+    if (name === 'estaSemana') {
+      this.selectedFilter = 'INBOX.THIS_WEEK';
+    } else if (name === 'esteMes') {
+      this.selectedFilter = 'INBOX.THIS_MONTH';
+    } else if (name === 'todo') {
+      this.selectedFilter = 'INBOX.ALLS';
+    }
   }
-}
+
+  async calculateMessageCounts() {
+    try {
+      // Calcula el recuento para "consulta"
+      let filterBuilder = new FilterBuilder();
+      filterBuilder.addField('type', 'consulta');
+      this.consultaMessageCount = await this.messageService.getMessageCount(
+        filterBuilder.getFilter()
+      );
+
+      // Calcula el recuento para "tareas"
+      filterBuilder = new FilterBuilder();
+      filterBuilder.addField('type', 'tarea');
+      this.tareasMessageCount = await this.messageService.getMessageCount(
+        filterBuilder.getFilter()
+      );
+
+      // Calcula el recuento para "notificaciones"
+      filterBuilder = new FilterBuilder();
+      filterBuilder.addField('type', 'notificacion');
+      this.notificacionesMessageCount =
+        await this.messageService.getMessageCount(filterBuilder.getFilter());
+
+      // Calcula el recuento total
+      this.totalMessageCount =
+        this.consultaMessageCount +
+        this.tareasMessageCount +
+        this.notificacionesMessageCount;
+    } catch (error) {
+      console.error('Error al calcular el recuento de mensajes:', error);
+    }
+  }
 }

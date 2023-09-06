@@ -15,6 +15,41 @@
   padding: 10px 48px 10px 20px;
  }
 
+ .textnumber{
+  flex-grow: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+ }
+
+ .message{
+  width: 14px;
+  height: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 16px;
+  background-color: #feedec;
+ }
+
+ .message-inbox{
+  margin-left: 78px;
+ }
+
+  .message-queries{
+  margin-left: 60px;
+ }
+
+  .message-tasks{
+  margin-left: 90px;
+ }
+
+  .message-notifications{
+  margin-left: 20px;
+
+ }
+
  .chat{
   width: 602px;
   height: 48px;
@@ -83,6 +118,15 @@
   padding: 0;
  }
 
+ .content-title-date{
+  width: 617px;
+  height: 33px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 27px 84px 15px 0px;
+ }
 
  .arrow-title{
   width: 191px;

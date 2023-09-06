@@ -20,37 +20,81 @@
     <!--List -->
     <app-button
       [width]="'100%'"
-      [class]="'left'"
+      [height]="'100%'"
+      [backgroundColor]="'white'"
+      [hoverBackgroundColor]="'#feedec'"
+      [border]="'none'"
+      [align]="'left'"
+      [padding]="'0rem 1rem'"
       (click)="selectedTab = 0; onTabChange()"
     >
-      <app-icon shape="all_inbox"></app-icon>
-      &nbsp;&nbsp; {{ "INBOX.INBOX" | translate }}
+      <div>
+        <app-icon shape="all_inbox"></app-icon>
+      </div>
+      <div class="textnumber">
+        &nbsp;&nbsp;
+        <p>{{ "INBOX.INBOX" | translate }}</p>
+        <p class="message message-inbox">{{ totalMessageCount }}</p>
+      </div>
     </app-button>
 
     <app-button
       [width]="'100%'"
-      [class]="'left'"
+      [height]="'100%'"
+      [backgroundColor]="'white'"
+      [hoverBackgroundColor]="'#feedec'"
+      [border]="'none'"
+      [align]="'left'"
+      [padding]="'0rem 1rem'"
       (click)="selectedTab = 1; onTabChange()"
     >
-      <app-icon shape="chat"></app-icon>
-      &nbsp;&nbsp; {{ "INBOX.QUERIES" | translate }}
+      <div>
+        <app-icon shape="chat"></app-icon>
+      </div>
+      <div class="textnumber">
+        &nbsp;&nbsp;
+        <p>{{ "INBOX.QUERIES" | translate }}</p>
+        <p class="message message-queries">{{ consultaMessageCount }}</p>
+      </div>
     </app-button>
 
     <app-button
       [width]="'100%'"
-      [class]="'left'"
+      [height]="'100%'"
+      [backgroundColor]="'white'"
+      [hoverBackgroundColor]="'#feedec'"
+      [border]="'none'"
+      [align]="'left'"
+      [padding]="'0rem 1rem'"
       (click)="selectedTab = 2; onTabChange()"
     >
-      <app-icon shape="playlist_add_check"></app-icon>
-      &nbsp;&nbsp; {{ "INBOX.TASKS" | translate }}
+      <div>
+        <app-icon shape="playlist_add_check"></app-icon>
+      </div>
+      <div class="textnumber">
+        &nbsp;&nbsp;
+        <p>{{ "INBOX.TASKS" | translate }}</p>
+        <p class="message message-tasks">{{ consultaMessageCount }}</p>
+      </div>
     </app-button>
     <app-button
       [width]="'100%'"
-      [class]="'left'"
+      [height]="'100%'"
+      [backgroundColor]="'white'"
+      [hoverBackgroundColor]="'#feedec'"
+      [border]="'none'"
+      [align]="'left'"
+      [padding]="'0rem 1rem'"
       (click)="selectedTab = 3; onTabChange()"
     >
-      <app-icon shape="notifications_none"></app-icon>
-      &nbsp;&nbsp; {{ "INBOX.NOTIFICATIONS" | translate }}
+      <div>
+        <app-icon shape="notifications_none"></app-icon>
+      </div>
+      <div class="textnumber">
+        &nbsp;&nbsp;
+        <p>{{ "INBOX.NOTIFICATIONS" | translate }}</p>
+        <p class="message message-notifications">{{ consultaMessageCount }}</p>
+      </div>
     </app-button>
     <!--FIN List -->
   </div>
@@ -78,7 +122,9 @@
         [tabColor]="'red'"
       >
         <div tool>
-          <span>{{ selectedFilter | translate }}</span>
+          <span [matMenuTriggerFor]="menu">{{
+            selectedFilter | translate
+          }}</span>
           <app-icon
             mat-icon-button
             [matMenuTriggerFor]="menu"
@@ -102,10 +148,18 @@
           ></app-table-queries>
         </div>
         <div content *ngIf="this.tabIndex == 1">
-          <app-table-queries [filterStatus]="['abierta']"></app-table-queries>
+          <app-table-queries
+            [filterStatus]="['abierta']"
+            (rowClicked)="rowClickHandler($event)"
+          >
+          </app-table-queries>
         </div>
         <div content *ngIf="this.tabIndex == 2">
-          <app-table-queries [filterStatus]="['cerrada']"></app-table-queries>
+          <app-table-queries
+            [filterStatus]="['cerrada']"
+            (rowClicked)="rowClickHandler($event)"
+          >
+          </app-table-queries>
         </div>
       </app-tabs>
     </ng-container>
@@ -118,22 +172,25 @@
         [tabColor]="'red'"
       >
         <div tool>
-          <span>{{ selectedFilter | translate }}</span>
+          <span [matMenuTriggerFor]="menu">{{
+            selectedFilter | translate
+          }}</span>
           <app-icon
-          mat-icon-button
-          [matMenuTriggerFor]="menu"
-          shape="more_vert"
-        ></app-icon>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="filterTable('estaSemana')">
-            {{ "INBOX.THIS_WEEK" | translate }}
-          </button>
-          <button mat-menu-item (click)="filterTable('esteMes')">
-            {{ "INBOX.THIS_MONTH" | translate }}
-          </button>
-          <button mat-menu-item (click)="filterTable('todo')">
-            {{ "INBOX.ALLS" | translate }}</button>
-        </mat-menu>
+            mat-icon-button
+            [matMenuTriggerFor]="menu"
+            shape="more_vert"
+          ></app-icon>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="filterTable('estaSemana')">
+              {{ "INBOX.THIS_WEEK" | translate }}
+            </button>
+            <button mat-menu-item (click)="filterTable('esteMes')">
+              {{ "INBOX.THIS_MONTH" | translate }}
+            </button>
+            <button mat-menu-item (click)="filterTable('todo')">
+              {{ "INBOX.ALLS" | translate }}
+            </button>
+          </mat-menu>
         </div>
         <div content *ngIf="this.tabIndex == 0">
           <app-table-tasks
@@ -145,10 +202,18 @@
           }}</ng-template>
         </div>
         <div content *ngIf="this.tabIndex == 1">
-          <app-table-tasks [filterStatus]="['pendiente']"></app-table-tasks>
+          <app-table-tasks
+            (rowClicked)="rowClickHandler($event)"
+            [filterStatus]="['pendiente']"
+          >
+          </app-table-tasks>
         </div>
         <div content *ngIf="this.tabIndex == 2">
-          <app-table-tasks [filterStatus]="['realizada']"></app-table-tasks>
+          <app-table-tasks
+            [filterStatus]="['realizada']"
+            (rowClicked)="rowClickHandler($event)"
+          >
+          </app-table-tasks>
         </div>
       </app-tabs>
     </ng-container>
@@ -160,23 +225,25 @@
         [tabColor]="'red'"
       >
         <div tool>
-          <span>{{ selectedFilter | translate }}</span>
+          <span [matMenuTriggerFor]="menu">{{
+            selectedFilter | translate
+          }}</span>
           <app-icon
-          mat-icon-button
-          [matMenuTriggerFor]="menu"
-          shape="more_vert"
-        ></app-icon>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="filterTable('estaSemana')">
-            {{ "INBOX.THIS_WEEK" | translate }}
-          </button>
-          <button mat-menu-item (click)="filterTable('esteMes')">
-            {{ "INBOX.THIS_MONTH" | translate }}
-          </button>
-          <button mat-menu-item (click)="filterTable('todo')">
-            {{ "INBOX.ALLS" | translate }}
-          </button>
-        </mat-menu>
+            mat-icon-button
+            [matMenuTriggerFor]="menu"
+            shape="more_vert"
+          ></app-icon>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="filterTable('estaSemana')">
+              {{ "INBOX.THIS_WEEK" | translate }}
+            </button>
+            <button mat-menu-item (click)="filterTable('esteMes')">
+              {{ "INBOX.THIS_MONTH" | translate }}
+            </button>
+            <button mat-menu-item (click)="filterTable('todo')">
+              {{ "INBOX.ALLS" | translate }}
+            </button>
+          </mat-menu>
         </div>
         <div content *ngIf="this.tabIndex == 0">
           <app-table-notifications
@@ -186,11 +253,13 @@
         <div content *ngIf="this.tabIndex == 1">
           <app-table-notifications
             [filterStatus]="['nueva']"
+            (rowClicked)="rowClickHandler($event)"
           ></app-table-notifications>
         </div>
         <div content *ngIf="this.tabIndex == 2">
           <app-table-notifications
             [filterStatus]="['vista']"
+            (rowClicked)="rowClickHandler($event)"
           ></app-table-notifications>
         </div>
       </app-tabs>
@@ -212,9 +281,14 @@
       </div>
       <hr />
       <div class="content-head-message">
-        <div class="arrow-title">
-          <app-icon class="icon-back" shape="arrow_back"></app-icon>
-          <p class="title">{{ messagesData.Title }}</p>
+        <div class="content-title-date">
+          <div class="arrow-title">
+            <app-icon class="icon-back" shape="arrow_back"></app-icon>
+            <p class="title">{{ messagesData.Title }}</p>
+          </div>
+          <div>
+            <p>{{ datepipe.transform(messagesData.Date, "EEEE, HH:mm") }}</p>
+          </div>
         </div>
       </div>
       <div *ngIf="selectedTab === 1">
