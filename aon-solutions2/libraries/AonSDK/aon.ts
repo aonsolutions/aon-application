@@ -117,6 +117,25 @@ export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMu
     }
 }
 
+export class DocumentTagFactory implements ISingleObjectCrudFactory<IDocumentTag>, IMultipleObjectCrudFactory<IDocumentTag> {
+    createSingleObjectCrud(): ISingleObjectCrud<IDocumentTag> {
+        return new GenericSingleObjectCrud<DocumentTag>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<DocumentTag>(new ApiDocumentTag(), DocumentTag) : 
+            new GenericSingleObjectCrudRepository<DocumentTag>(new StorableDocumentTag(), DocumentTag)
+            ), 
+            DocumentTag);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IDocumentTag> {
+        return new GenericMultipleObjectCrud<DocumentTag>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<DocumentTag>(new ApiDocumentTag(), DocumentTag) : 
+            new GenericMultipleObjectCrudRepository<DocumentTag>(new StorableDocumentTag(), DocumentTag)
+            ), 
+            DocumentTag);
+    }
+}
+
 export class CertificateFactory implements ISingleObjectCrudFactory<ICertificate>, IMultipleObjectCrudFactory<ICertificate> {
     createSingleObjectCrud(): ISingleObjectCrud<ICertificate> {
         return new GenericSingleObjectCrud<Certificate>( 
@@ -341,6 +360,9 @@ export class MarkFactory implements ISingleObjectCrudFactory<IMark>, IMultipleOb
             ), 
             Mark);
     }
+    createSpecificMethods(): IMarkSpecificMethods {
+        return new MarkSpecificMethods();
+    }
 }
 
 export class UserFactory implements ISingleObjectCrudFactory<IUser>, IMultipleObjectCrudFactory<IUser> {
@@ -530,6 +552,18 @@ interface IMessageSpecificMethods {
     markAsReadNotification(message: Message): Promise<IResponse<boolean>>;
 }
 
+interface IMarkSpecificMethods {
+    markEntry(): Promise<IResponse<boolean>>;
+    /**
+     * Marks a pause
+     */
+    markPause(): Promise<IResponse<boolean>>;
+    /**
+     * Marks an exit
+     */
+    markExit(): Promise<IResponse<boolean>>;
+}
+
 
 /*
  *
@@ -674,7 +708,8 @@ class AuthenticationManager implements IAuthenticationManager {
             localStorage.setItem('domainId', enterprise.DomainId);
             localStorage.setItem('domainName', enterprise.DomainName);
             localStorage.setItem('registry', enterprise.Registry);
-        } 
+            this.authenticationRepository.userInfo();
+        }
         else throw new ErrorResponse('0113');
         return new Response<boolean>(true);
     }
@@ -723,6 +758,37 @@ class MessageSpecificMethods implements IMessageSpecificMethods {
     }
 
 }
+
+class MarkSpecificMethods implements IMarkSpecificMethods {
+
+    repository = new APIMarkSpecificMethodsRepository();
+
+    async markEntry(): Promise<IResponse<boolean>> {
+        try{
+            return new Response<boolean>(await this.repository.markEntry());
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async markPause(): Promise<IResponse<boolean>> {
+        try{
+            return new Response<boolean>(await this.repository.markPause());
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async markExit(): Promise<IResponse<boolean>> {
+        try{
+            return new Response<boolean>(await this.repository.markExit());
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }    
+}
+
+
 
 /*
  *
@@ -817,6 +883,10 @@ interface IAuthenticationRepository {
      * @param token The token
      */
     tokenLogin(token: string): Promise<void>;
+    /**
+     * Set login on localStorage
+     */
+    userInfo(): Promise<void>;
 }
 
 interface IReportingRepository {
@@ -845,6 +915,12 @@ interface IMessageSpecificMethodsRepository {
      * @param message The message of type notification to mark as read
      */
     markAsReadNotification(message: IMessage): Promise<boolean>;
+}
+
+interface IMarkSpecificMethodsRepository {
+    markEntry(): Promise<boolean>;
+    markPause(): Promise<boolean>;
+    markExit(): Promise<boolean>;
 }
 
 /*
@@ -972,6 +1048,9 @@ class AuthenticationRepository implements IAuthenticationRepository {
         this.storableAuth = storableAuth;
     }
 
+    async userInfo(): Promise<void> {
+    }
+
     async login(email: string, password: string): Promise<void> {
         let collection = this.storableAuth.getCollection()
         if(collection.exists(email) && collection.get(email).Password == password) localStorage.setItem('token', 'testToken')
@@ -1021,7 +1100,9 @@ class APIGenericSingleObjectCrudRepository<T extends IModel> implements ISingleO
     }
 
     async create(element: T): Promise<T> {
-        throw new ErrorResponse('0199')
+        let data = this.apiModel.parseDataToSend(element, CREATE_SINGLE);
+        let response = await this.httpRequest.httpRequest(BASE_URL + this.apiModel.getUrl(CREATE_SINGLE), this.apiModel.getMethod(CREATE_SINGLE), {}, data);
+        return this.apiModel.parseDataToReceive(response, GET_SINGLE);
     }
 
     async update(element: T): Promise<T> {
@@ -1247,6 +1328,24 @@ class APIMessageSpecificMethodsRepository implements IMessageSpecificMethodsRepo
     }
 }
 
+class APIMarkSpecificMethodsRepository implements IMarkSpecificMethodsRepository {
+
+    private http: ApiHttpRequest = new ApiHttpRequest();
+    private model: ApiMark = new ApiMark();
+
+    async markEntry(): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+
+    async markPause(): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+
+    async markExit(): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+}
+
 class APIAuthenticationRepository implements IAuthenticationRepository {
 
     httpRequest = new ApiHttpRequest();
@@ -1278,6 +1377,12 @@ class APIAuthenticationRepository implements IAuthenticationRepository {
     }
 
     async tokenLogin(token: string): Promise<void> {
+    }
+
+    async userInfo(): Promise<void> {
+        let userInfo = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/user/info', GET_METHOD, {}, {})
+        if(userInfo.type == "error") throw new ErrorResponse('0101');
+        localStorage.setItem('login', userInfo.login);
     }
 }
 
@@ -1315,6 +1420,7 @@ class ReportingRepository implements IReportingRepository {
 
 interface IApiHttpRequest {
     httpRequest(url: string, method: string, customHeaders: any, data: any): Promise<any>;
+    makeURL(url: string, params: any): string;
 }
 
 export interface IResponse<T> {
@@ -1433,7 +1539,8 @@ class ApiHttpRequest implements IApiHttpRequest {
         let headersAuth = {
             session_id: localStorage.getItem('token'),
             domain_name: localStorage.getItem('domainName'),
-            domain_id: localStorage.getItem('domainId')
+            domain_id: localStorage.getItem('domainId'),
+            domain_login: localStorage.getItem('login'),
         }
         let headers = new Object();
         Object.assign(headers,customHeaders);
@@ -1445,6 +1552,11 @@ class ApiHttpRequest implements IApiHttpRequest {
         let result = await fetch(url,options);
         let dataJson = await result.json();
         return dataJson;
+    }
+    
+    makeURL(url: string, params: any): string {
+        const esc = encodeURIComponent;
+        return url + '?' + Object.keys(params).map(k => `${esc(k)}=${esc(params[k as keyof typeof params])}`).join('&')
     }
 }
 
@@ -1490,7 +1602,7 @@ class LocalStorage<T extends ICollectable> implements ILocalStorage<T> {
     constructor(type: { new (): T }) {
         this.type = type;
     }
-
+    
     read(model:string): ICollection<T> {
         let collection: ICollection<T> = new Collection<T>();
         if(localStorage.getItem(model)){
@@ -1822,13 +1934,13 @@ interface IApiModel {
      * @param data to send
      * @returns data parsed for api
      */
-    parseDataToSend(data: any, currentMethod:string, filter?: IFilter): any;
+    parseDataToSend(data: any, currentMethod?:string, filter?: IFilter): any;
     /**
      * Parse de data received to sdk object
      * @param data received
      * @returns data parsed for sdk object
      */
-    parseDataToReceive(data: any, currentMethod:string, filter?: IFilter): any;
+    parseDataToReceive(data: any, currentMethod?:string, filter?: IFilter): any;
     /**
      * @returns true if filters are applied in local, false otherwhise
      */
@@ -1853,6 +1965,10 @@ export interface IDocument extends ICollectable {
     FileType: string;
     Path: string;
     Date: Date;
+}
+
+export interface IDocumentTag extends ICollectable {
+    Name: string;
 }
 
 export interface IFolder extends ICollectable {
@@ -1947,43 +2063,66 @@ export interface IEmployee extends ICollectable {
 }
 
 export interface IContract extends ICollectable {
-  Name: string;
-  LastName: string;
-  Type: string;
-  GrossCost: number;
-  StartDate: Date;
-  EndDate?: Date;
-  WorkCenter: string;
-  Active: boolean;
+    Name: string;
+    LastName: string;
+    Type: string;
+    GrossCost: number;
+    StartDate: Date;
+    EndDate?: Date;
+    WorkCenter: string;
+    Active: boolean;
 }
+
+// export interface IMark extends ICollectable {
+//     Id: string;
+//     Name: string,
+//     Lastname: string,
+//     IdEmployee: string, // Ver si este es necesario, o id del usuario
+//     Date: Date,
+//     EntryDate: Date,
+//     ExitDate: Date,
+//     Pause: IPause,
+//     Location: string,
+//     Ccc: string, // código cuenta de cotización
+//     Workplace: string,
+//     Status: string
+// }
 
 export interface IMark extends ICollectable {
-  Id: string;
-  Name: string,
-  Lastname: string,
-  IdEmployee: string, // Ver si este es necesario, o id del usuario
-  Date: Date,
-  EntryDate: Date,
-  ExitDate: Date,
-  Pause: IPause,
-  Location: string,
-  Ccc: string, // código cuenta de cotización
-  Workplace: string,
-  Status: string
+    // Id: string, // ????
+    Name: string, // nombre del usuario que marca
+    // Lastname: string, 
+    IdUser: string, // id del usuario que marca
+    Date: Date, // fecha del marcage
+    EntryDate: Date, // hora de entrada del marcaje
+    ExitDate: Date, // hora de salida del marcaje
+    Time: Date; // duracion del marcaje total
+    // Pause: IPause,
+    Location: any, // localizacion al marcar
+    // Ccc: string, // código cuenta de cotización
+    // Workplace: string,
+    Status: string // entrada, salida, pausa
 }
 
+export interface IMarkDetail extends ICollectable {
+    Id: string,
+    lastDate: Date,
+    lastModification: Date,
+    status: string,
+    location: any
+}
 export interface IPause {
-  StartPause: Date,
-  EndPause: Date
+    StartPause: Date,
+    EndPause: Date
 }
 export interface IUser extends ICollectable {
-  Name: string,
-  Lastname: string,
-  Document: string,
-  Email: string,
-  Password: string,
-  Phone: string,
-  Active: boolean
+    Name: string,
+    Lastname: string,
+    Document: string,
+    Email: string,
+    Password: string,
+    Phone: string,
+    Active: boolean
 }
 
 interface IAuth extends ICollectable{
@@ -4030,52 +4169,31 @@ class StorableAuth extends Auth implements IStorable<Auth> {
 }
 
 class Mark implements IMark, IModel  {
-    private id: string;
+    private key: string;
+    private apiObject: any;
     private name: string;
-    private lastName: string;
-    private idEmployee: string;
+    private idUser: string;
     private date: Date;
     private entryDate: Date;
     private exitDate: Date;
-    private pause: IPause;
-    private location: string ;
-    private ccc: string;
-    private workplace: string ;
-    private status: string ;
-    private key: string;
-    protected apiObject: any;
+    private time: Date;
+    private location: any;
+    private status: string;
+
+    public get Key(): string {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
 
     public get ApiObject(): any {
         return this.apiObject;
     }
-    
+
     public set ApiObject(value: any) {
         this.apiObject = value;
-    }
-
-
-    constructor(name?: string, lastName?: string, idEmployee?: string, date?: Date, entryDate?: Date, exitDate?: Date, pause?: IPause, location?: string, ccc?: string, workplace?: string, status?: string) {
-        this.id = new KeyGenerator().generate(15);
-        this.name = name || '';
-        this.lastName = lastName || '';
-        this.idEmployee = idEmployee || '';
-        this.date = date || new Date();
-        this.entryDate = entryDate || new Date();
-        this.exitDate = exitDate || new Date();
-        this.pause = pause || { StartPause: new Date(), EndPause: new Date() };
-        this.location = location || '';
-        this.ccc = ccc || '';
-        this.workplace = workplace || '';
-        this.status = status || '';
-        this.key = this.id || '';
-    }
-
-    public get Id(): string {
-        return this.id;
-    }
-
-    public set Id(value: string) {
-        this.id = value;
     }
 
     public get Name(): string {
@@ -4086,20 +4204,12 @@ class Mark implements IMark, IModel  {
         this.name = value;
     }
 
-    public get Lastname(): string {
-        return this.lastName;
+    public get IdUser(): string {
+        return this.idUser;
     }
 
-    public set Lastname(value: string) {
-        this.lastName = value;
-    }
-
-    public get IdEmployee(): string {
-        return this.idEmployee;
-    }
-
-    public set IdEmployee(value: string) {
-        this.idEmployee = value;
+    public set IdUser(value: string) {
+        this.idUser = value;
     }
 
     public get Date(): Date {
@@ -4126,36 +4236,20 @@ class Mark implements IMark, IModel  {
         this.exitDate = value;
     }
 
-    public get Pause(): IPause {
-        return this.pause;
+    public get Time(): Date {
+        return this.time;
     }
 
-    public set Pause(value: IPause) {
-        this.pause = value;
+    public set Time(value: Date) {
+        this.time = value;
     }
 
-    public get Location(): string {
+    public get Location(): any {
         return this.location;
     }
 
-    public set Location(value: string) {
+    public set Location(value: any) {
         this.location = value;
-    }
-
-    public get Ccc(): string {
-        return this.ccc;
-    }
-
-    public set Ccc(value: string) {
-        this.ccc = value;
-    }
-
-    public get Workplace(): string {
-        return this.workplace;
-    }
-
-    public set Workplace(value: string) {
-        this.workplace = value;
     }
 
     public get Status(): string {
@@ -4166,30 +4260,31 @@ class Mark implements IMark, IModel  {
         this.status = value;
     }
 
-    public get Key() {
-        return this.key;
-    }
-
-    public set Key(value: string) {
-        this.key = value;
+    constructor(name?: string, idUser?: string, date?: Date, entryDate?: Date, exitDate?: Date, time?: Date, location?: any, status?: string) {
+        this.key = new KeyGenerator().generate(15);
+        this.name = name || '';
+        this.idUser = idUser || '';
+        this.date = date || new Date();
+        this.entryDate = entryDate || new Date();
+        this.exitDate = exitDate || new Date();
+        this.time = time || new Date();
+        this.location = location || '';
+        this.status = status || '';
     }
 
     getKey(): string {
-        return this.idEmployee;
+        return this.Key;
     }
 
     getFilterableFields(): Map<string, any> {
         let map = new Map<string, any>();
         map.set('name', this.name);
-        map.set('lastname', this.lastName);
-        map.set('idEmployee', this.idEmployee);
+        map.set('idUser', this.idUser);
         map.set('date', this.date);
         map.set('entryDate', this.entryDate);
         map.set('exitDate', this.exitDate);
-        map.set('pause', this.pause);
+        map.set('time', this.time);
         map.set('location', this.location);
-        map.set('ccc', this.ccc);
-        map.set('workplace', this.workplace);
         map.set('status', this.status);
         return map;
     }
@@ -4197,37 +4292,232 @@ class Mark implements IMark, IModel  {
     getSortableFields(): Map<string, any> {
         let map = new Map<string, any>();
         map.set('name', this.name);
-        map.set('lastname', this.lastName);
-        map.set('idEmployee', this.idEmployee);
+        map.set('idUser', this.idUser);
         map.set('date', this.date);
         map.set('entryDate', this.entryDate);
         map.set('exitDate', this.exitDate);
-        map.set('pause', this.pause);
+        map.set('time', this.time);
         map.set('location', this.location);
-        map.set('ccc', this.ccc);
-        map.set('workplace', this.workplace);
         map.set('status', this.status);
         return map;
     }
-
 }
 
-class ApiMark extends Mark implements IApiModel {
+// class Mark implements IMark, IModel  {
+//     private id: string;
+//     private name: string;
+//     private lastName: string;
+//     private idEmployee: string;
+//     private date: Date;
+//     private entryDate: Date;
+//     private exitDate: Date;
+//     private pause: IPause;
+//     private location: string ;
+//     private ccc: string;
+//     private workplace: string ;
+//     private status: string ;
+//     private key: string;
+//     protected apiObject: any;
+
+//     public get ApiObject(): any {
+//         return this.apiObject;
+//     }
+    
+//     public set ApiObject(value: any) {
+//         this.apiObject = value;
+//     }
+
+
+//     constructor(name?: string, lastName?: string, idEmployee?: string, date?: Date, entryDate?: Date, exitDate?: Date, pause?: IPause, location?: string, ccc?: string, workplace?: string, status?: string) {
+//         this.id = new KeyGenerator().generate(15);
+//         this.name = name || '';
+//         this.lastName = lastName || '';
+//         this.idEmployee = idEmployee || '';
+//         this.date = date || new Date();
+//         this.entryDate = entryDate || new Date();
+//         this.exitDate = exitDate || new Date();
+//         this.pause = pause || { StartPause: new Date(), EndPause: new Date() };
+//         this.location = location || '';
+//         this.ccc = ccc || '';
+//         this.workplace = workplace || '';
+//         this.status = status || '';
+//         this.key = this.id || '';
+//     }
+
+//     public get Id(): string {
+//         return this.id;
+//     }
+
+//     public set Id(value: string) {
+//         this.id = value;
+//     }
+
+//     public get Name(): string {
+//         return this.name;
+//     }
+
+//     public set Name(value: string) {
+//         this.name = value;
+//     }
+
+//     public get Lastname(): string {
+//         return this.lastName;
+//     }
+
+//     public set Lastname(value: string) {
+//         this.lastName = value;
+//     }
+
+//     public get IdEmployee(): string {
+//         return this.idEmployee;
+//     }
+
+//     public set IdEmployee(value: string) {
+//         this.idEmployee = value;
+//     }
+
+//     public get Date(): Date {
+//         return this.date;
+//     }
+
+//     public set Date(value: Date) {
+//         this.date = value;
+//     }
+
+//     public get EntryDate(): Date {
+//         return this.entryDate;
+//     }
+
+//     public set EntryDate(value: Date) {
+//         this.entryDate = value;
+//     }
+
+//     public get ExitDate(): Date {
+//         return this.exitDate;
+//     }
+
+//     public set ExitDate(value: Date) {
+//         this.exitDate = value;
+//     }
+
+//     public get Pause(): IPause {
+//         return this.pause;
+//     }
+
+//     public set Pause(value: IPause) {
+//         this.pause = value;
+//     }
+
+//     public get Location(): string {
+//         return this.location;
+//     }
+
+//     public set Location(value: string) {
+//         this.location = value;
+//     }
+
+//     public get Ccc(): string {
+//         return this.ccc;
+//     }
+
+//     public set Ccc(value: string) {
+//         this.ccc = value;
+//     }
+
+//     public get Workplace(): string {
+//         return this.workplace;
+//     }
+
+//     public set Workplace(value: string) {
+//         this.workplace = value;
+//     }
+
+//     public get Status(): string {
+//         return this.status;
+//     }
+
+//     public set Status(value: string) {
+//         this.status = value;
+//     }
+
+//     public get Key() {
+//         return this.key;
+//     }
+
+//     public set Key(value: string) {
+//         this.key = value;
+//     }
+
+//     getKey(): string {
+//         return this.idEmployee;
+//     }
+
+//     getFilterableFields(): Map<string, any> {
+//         let map = new Map<string, any>();
+//         map.set('name', this.name);
+//         map.set('lastname', this.lastName);
+//         map.set('idEmployee', this.idEmployee);
+//         map.set('date', this.date);
+//         map.set('entryDate', this.entryDate);
+//         map.set('exitDate', this.exitDate);
+//         map.set('pause', this.pause);
+//         map.set('location', this.location);
+//         map.set('ccc', this.ccc);
+//         map.set('workplace', this.workplace);
+//         map.set('status', this.status);
+//         return map;
+//     }
+
+//     getSortableFields(): Map<string, any> {
+//         let map = new Map<string, any>();
+//         map.set('name', this.name);
+//         map.set('lastname', this.lastName);
+//         map.set('idEmployee', this.idEmployee);
+//         map.set('date', this.date);
+//         map.set('entryDate', this.entryDate);
+//         map.set('exitDate', this.exitDate);
+//         map.set('pause', this.pause);
+//         map.set('location', this.location);
+//         map.set('ccc', this.ccc);
+//         map.set('workplace', this.workplace);
+//         map.set('status', this.status);
+//         return map;
+//     }
+
+// }
+
+class ApiMark implements IApiModel {
+
     getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
         throw new Error("Method not implemented.");
     }
+
     getMethod(currentMethod: string, filter?: IFilter | undefined): string {
         throw new Error("Method not implemented.");
     }
-    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
+
+    parseDataToSend(data: any, currentMethod?: string, filter?: IFilter | undefined) {
         throw new Error("Method not implemented.");
     }
-    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
+
+    parseDataToReceive(data: any, currentMethod?: string, filter?: IFilter | undefined) {
+        let mark = new Mark();
+        mark.ApiObject = data;
+        mark.IdUser = data.task_holder.id ? data.task_holder.id : '';
+        mark.Name = data.task_holder.name ? data.task_holder.name : '';
+        mark.Location = data.coordinates ? data.coordinates : {};
+        mark.Status = data.status ? data.status : '';
+        mark.Date = data.date ? new Date(data.date) : new Date();
+        mark.EntryDate
+        mark.ExitDate
+        return mark;
         throw new Error("Method not implemented.");
     }
+
     localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
-        throw new Error("Method not implemented.");
+        return false;
     }
+
 }
 
 class StorableMark extends Mark implements IStorable<Mark> {
@@ -4333,13 +4623,12 @@ class User implements IUser, IModel  {
         this.key = value;
     }
 
-  getKey(): string {
-    return this.key;
-  }
+    getKey(): string {
+        return this.key;
+    }
 
-  getFilterableFields(): Map<string, any> {
-    let map = new Map<string, any>();
-
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
         map.set('name', this.name);
         map.set('lastname', this.lastname);
         map.set('document', this.document);
@@ -4347,13 +4636,11 @@ class User implements IUser, IModel  {
         map.set('password', this.password);
         map.set('phone', this.phone);
         map.set('active', this.active);
-
         return map;
     }
 
-  getSortableFields(): Map<string, any> {
-    let map = new Map<string, any>();
-
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
         map.set('name', this.name);
         map.set('lastname', this.lastname);
         map.set('document', this.document);
@@ -4361,7 +4648,6 @@ class User implements IUser, IModel  {
         map.set('password', this.password);
         map.set('phone', this.phone);
         map.set('active', this.active);
-
         return map;
     }
 }
@@ -4397,6 +4683,113 @@ class StorableUser extends User implements IStorable<User> {
     }
 }
 
+class DocumentTag implements IDocumentTag, IModel {
+    private key: string;
+    private name: string;
+    private apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Name(): string {
+        return this.name;
+    }
+
+    public set Name(value: string) {
+        this.name = value;
+    }
+
+    constructor(name?: string) {
+        this.name = name || '';
+        this.key = new KeyGenerator().generate(15);
+        this.apiObject = {};
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        return map;
+    }
+}
+
+class StorableDocumentTag extends DocumentTag implements IStorable<DocumentTag> {
+    getCollection(): ICollection<DocumentTag> {
+        return documentTags;
+    }
+    getLocalStorage(): string {
+        return 'documentTags';
+    }
+}
+
+class ApiDocumentTag extends DocumentTag implements IApiModel {
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE) return GET_METHOD;
+        if(currentMethod == CREATE_SINGLE) return POST_METHOD;
+        if(currentMethod == UPDATE_SINGLE) return POST_METHOD;
+        throw new Error("Method not implemented.");
+    }
+
+    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        if(currentMethod == CREATE_SINGLE)
+            return {'name': data.Name};
+        if(currentMethod == UPDATE_SINGLE){
+            data.ApiObject.name = data.name;
+            return data.ApiObject;
+        }
+        throw new Error("Method not implemented.");
+    }
+
+    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        let tag = new DocumentTag();
+        tag.Name = data.name;
+        tag.ApiObject = data;
+        tag.Key = data.id;
+        return tag;
+        throw new Error("Method not implemented.");
+    }
+
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        return true;
+    }
+
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        if(currentMethod == GET_MULTIPLE){
+            return ['/ms/api/attachment/' + localStorage.getItem('domainName') + '/' + localStorage.getItem('login') + '/tag?domain=' + localStorage.getItem('domainId')];
+        }
+        if(currentMethod == CREATE_SINGLE){
+            return ['/ms/api/attachment/' + localStorage.getItem('domainName') + '/' + localStorage.getItem('login') + '/tag/create'];
+        }
+        if(currentMethod == UPDATE_SINGLE){
+            return ['/ms/api/attachment/' + localStorage.getItem('domainName') + '/' + localStorage.getItem('login') + '/tag/edit/' + filter?.fields?.get('id')];
+        }
+        throw new ErrorResponse('0199')
+    }
+
+}
 
 /**
  *
@@ -4440,6 +4833,16 @@ if(documents.size() == 0){
     localDocuments.write(storableDocuments.getLocalStorage(), documents);
 }
 
+let documentTags: ICollection<DocumentTag> = new Collection<DocumentTag>();
+let storableDocumentTags = new StorableDocumentTag();
+let localDocumentTags = new LocalStorage<DocumentTag>(DocumentTag);
+documentTags = localDocumentTags.read(storableDocumentTags.getLocalStorage())
+if(documentTags.size() == 0){
+    documentTags.add(new DocumentTag('Tag 1'));
+    documentTags.add(new DocumentTag('Tag 2'));
+    localDocumentTags.write(storableDocumentTags.getLocalStorage(), documentTags);
+}
+
 let folders: ICollection<Folder> = new Collection<Folder>();
 let api: ICollection<Folder> = new Collection<Folder>();
 let storableFolders = new StorableFolder();
@@ -4457,6 +4860,7 @@ if(folders.size() == 0){
     localFolders.write(storableFolders.getLocalStorage(), folders);
 }
 let apiFolders = folders.slice(0,5);
+
 let certificates: ICollection<Certificate> = new Collection<Certificate>();
 let storableCertificates = new StorableCertificate();
 let localCertificates = new LocalStorage<Certificate>(Certificate);
@@ -4670,7 +5074,34 @@ if(test){
     }).catch((error) => {
         console.log('ERROR DOCUMENTS TEST GET LIST LABORAL', error)
     })
+
+    /**
+        TEST FOR DOCUMENT_TAGS
+     */
     
+    let tagFactory = new DocumentTagFactory();
+    tagFactory.createMultipleObjectCrud().getCollection().then((response) => {
+        console.log('TEST DOCUMENT_TAG GET LIST', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST DOCUMENT_TAG GET LIST', error)
+    })
+    let tag = new DocumentTag();
+    tag.Name = 'Tag 1';
+    tagFactory.createSingleObjectCrud().createElement(tag).then((response) => {
+        console.log('TEST DOCUMENT_TAG CREATE', response.result);
+    }).catch((error) => {
+        console.log('ERROR TEST DOCUMENT_TAG CREATE', error)
+    })
+
+    tagFactory.createMultipleObjectCrud().getCollection().then((response) => {
+        tagFactory.createSingleObjectCrud().updateElement(response.result.toArray()[0]).then((response) => {
+        console.log('TEST DOCUMENT_TAG UPDATE', response.result);
+    }).catch((error) => {
+        console.log('ERROR TEST DOCUMENT_TAG UPDATE', error)
+    })
+    }).catch((error) => {
+        console.log('ERROR TEST DOCUMENT_TAG UPDATE', error)
+    })
     
     /*
         TEST FOR ENTERPRISE
