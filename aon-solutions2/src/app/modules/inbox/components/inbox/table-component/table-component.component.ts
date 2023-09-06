@@ -17,8 +17,7 @@ export class TableComponentComponent implements OnInit {
   headerTable: any = {};
   bodyTable: any[] = [];
 
-  messages: ICollection<IMessage> =
-    new CollectionFactory().createMessageCollection();
+  messages: ICollection<IMessage> =new CollectionFactory().createMessageCollection();
 
   displayedColumns: string[] = [
     'name',

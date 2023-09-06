@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Factory, CollectionFactory, ICollection, FilterBuilder, IMessageChat, IMessage } from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
@@ -38,6 +38,7 @@ export class InboxviewComponent implements OnInit {
   showDetail: boolean = false;
   noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
+  showSendButton: boolean = false;
 
   tableQueriesComponent!: TableQueriesComponent;
 
@@ -96,6 +97,7 @@ export class InboxviewComponent implements OnInit {
 
   onTabChange() {
     this.showDetail = false;
+    this.showSendButton = false;
   }
 
   async rowClickHandler(message: any) {
@@ -114,5 +116,7 @@ export class InboxviewComponent implements OnInit {
     }
   }
 
-
+  consultarClicked() {
+    this.showSendButton = !this.showSendButton;
+  }
 }

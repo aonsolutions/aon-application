@@ -75,7 +75,6 @@
         [tabs]="tabsConsultas"
         (changeTabIndex)="this.tabIndex = $event"
         [paddingLeftHeader]="'1rem'"
-        [tabColor]="'red'"
       >
         <div tool>
           <span>{{ "INBOX.THIS_WEEK" | translate }}</span>
@@ -191,22 +190,41 @@
           <p class="descrption-tasks">{{ messagesData.Description }}</p>
         </div>
         <div class="content-btn-inbox">
-          <app-button
-            class="btn-inbox-01"
-            [class]="'red left'"
-            [width]="'100%'"
-          >
-            <app-icon shape="playlist_add_check"></app-icon>
-            Tramitar
-          </app-button>
-          <app-button
-            class="btn-inbox-01"
-            [class]="'red left'"
-            [width]="'100%'"
-          >
-            <app-icon shape="chat"></app-icon>
-            Consultar
-          </app-button>
+          <div class="btns">
+            <app-button
+              class="btn-inbox-01"
+              [class]="'red left'"
+              [width]="'100%'"
+            >
+              <app-icon shape="playlist_add_check"></app-icon>
+              Tramitar
+            </app-button>
+            <app-button
+              class="btn-inbox-01"
+              [class]="'red left'"
+              [width]="'100%'"
+              (click)="consultarClicked()"
+            >
+              <app-icon shape="chat"></app-icon>
+              Consultar
+            </app-button>
+          </div>
+
+          <div class="clickConsultar" *ngIf="showSendButton">
+            <app-input
+              [type]="'text'"
+              [placeholder]="'Escribe...'"
+              class="inputSend"
+            ></app-input>
+            <app-button
+              class="btn-inbox-01"
+              [class]="'red left'"
+              [width]="'100%'"
+            >
+              <app-icon shape="send"></app-icon>
+              Enviar
+            </app-button>
+          </div>
         </div>
       </div>
       <div *ngIf="selectedTab === 3">

@@ -127,10 +127,17 @@
 
  .content-btn-inbox{
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: end;
   margin: 35.5px 40px 881px 52px;
   gap: 20px;
+ }
+
+ .btns {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: end;
  }
 
  .content-tasks{
@@ -167,5 +174,15 @@
   letter-spacing: 0.44px;
   text-align: justify;
   color: #787885;
+ }
+
+ .clickConsultar{
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+ }
+
+ .inputSend{
+  margin-bottom: 30px;
  }
 }
