@@ -138,6 +138,7 @@
   flex-direction: row;
   gap: 20px;
   justify-content: end;
+  align-items: center;
  }
 
  .content-tasks{
@@ -184,5 +185,9 @@
 
  .inputSend{
   margin-bottom: 30px;
+ }
+
+ .mat-focus-indicator{
+  background-color: white;
  }
 }

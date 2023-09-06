@@ -39,6 +39,7 @@ export class InboxviewComponent implements OnInit {
   noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
   showSendButton: boolean = false;
+  selectedFilter: string = "INBOX.THIS_WEEK";
 
   tableQueriesComponent!: TableQueriesComponent;
 
@@ -119,4 +120,14 @@ export class InboxviewComponent implements OnInit {
   consultarClicked() {
     this.showSendButton = !this.showSendButton;
   }
+
+filterTable(option: string) {
+  if (option === 'estaSemana') {
+    this.selectedFilter = "INBOX.THIS_WEEK";
+  } else if (option === 'esteMes') {
+    this.selectedFilter = "INBOX.THIS_MONTH";
+  } else if (option === 'todo') {
+    this.selectedFilter = "INBOX.ALLS";
+  }
+}
 }

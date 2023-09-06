@@ -75,10 +75,26 @@
         [tabs]="tabsConsultas"
         (changeTabIndex)="this.tabIndex = $event"
         [paddingLeftHeader]="'1rem'"
+        [tabColor]="'red'"
       >
         <div tool>
-          <span>{{ "INBOX.THIS_WEEK" | translate }}</span>
-          <app-icon shape="more_vert"></app-icon>
+          <span>{{ selectedFilter | translate }}</span>
+          <app-icon
+            mat-icon-button
+            [matMenuTriggerFor]="menu"
+            shape="more_vert"
+          ></app-icon>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="filterTable('estaSemana')">
+              {{ "INBOX.THIS_WEEK" | translate }}
+            </button>
+            <button mat-menu-item (click)="filterTable('esteMes')">
+              {{ "INBOX.THIS_MONTH" | translate }}
+            </button>
+            <button mat-menu-item (click)="filterTable('todo')">
+              {{ "INBOX.ALLS" | translate }}
+            </button>
+          </mat-menu>
         </div>
         <div content *ngIf="this.tabIndex == 0">
           <app-table-queries
@@ -102,8 +118,22 @@
         [tabColor]="'red'"
       >
         <div tool>
-          <span>{{ "INBOX.THIS_WEEK" | translate }}</span>
-          <app-icon shape="more_vert"></app-icon>
+          <span>{{ selectedFilter | translate }}</span>
+          <app-icon
+          mat-icon-button
+          [matMenuTriggerFor]="menu"
+          shape="more_vert"
+        ></app-icon>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="filterTable('estaSemana')">
+            {{ "INBOX.THIS_WEEK" | translate }}
+          </button>
+          <button mat-menu-item (click)="filterTable('esteMes')">
+            {{ "INBOX.THIS_MONTH" | translate }}
+          </button>
+          <button mat-menu-item (click)="filterTable('todo')">
+            {{ "INBOX.ALLS" | translate }}</button>
+        </mat-menu>
         </div>
         <div content *ngIf="this.tabIndex == 0">
           <app-table-tasks
@@ -130,8 +160,23 @@
         [tabColor]="'red'"
       >
         <div tool>
-          <span class="margin-right">{{ "INBOX.THIS_WEEK" | translate }}</span>
-          <app-icon shape="more_vert"></app-icon>
+          <span>{{ selectedFilter | translate }}</span>
+          <app-icon
+          mat-icon-button
+          [matMenuTriggerFor]="menu"
+          shape="more_vert"
+        ></app-icon>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="filterTable('estaSemana')">
+            {{ "INBOX.THIS_WEEK" | translate }}
+          </button>
+          <button mat-menu-item (click)="filterTable('esteMes')">
+            {{ "INBOX.THIS_MONTH" | translate }}
+          </button>
+          <button mat-menu-item (click)="filterTable('todo')">
+            {{ "INBOX.ALLS" | translate }}
+          </button>
+        </mat-menu>
         </div>
         <div content *ngIf="this.tabIndex == 0">
           <app-table-notifications
