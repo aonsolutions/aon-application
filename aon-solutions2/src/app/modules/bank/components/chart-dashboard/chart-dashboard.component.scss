@@ -1,0 +1,46 @@
+@import "src/styles.scss";
+
+::ng-deep {
+
+  .text {
+    font-family: 'Roboto-Bold';
+  }
+
+  .subtitle {
+    color: $color-secondary;
+  }
+
+  .dashboard-billing [body] {
+    display: flex;
+    gap: 1rem;
+    height: 11.8rem;
+  }
+
+  .dashboard-billing [body] .import {
+    width: 15rem !important;
+  }
+
+  .dashboard-billing [body] .chart {
+    height: 11.8rem;
+  }
+
+  [footer] {
+    display: flex;
+    gap: 1rem;
+  }
+
+  [footer]:hover {
+    cursor: pointer;
+  }
+
+  .no-selected {
+    color: $color-secondary;
+    z-index: 2;
+  }
+
+  .selected {
+    color: $color-primary;
+    border-bottom: $border-button-dark;
+    z-index: 2;
+  }
+}

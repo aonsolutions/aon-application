@@ -1,0 +1,26 @@
+<app-card class="dashboard min orange">
+  <div header>
+    <div class="line"></div>
+    <div class="text">{{ 'HOME.TAXES'|translate }}</div>
+    <div class="options-text">{{ selected }}</div>
+    <div class="options">
+      <app-icon shape="more_vert" (click)="dropdownMenuComponent.openDropdownMenu();"></app-icon>
+      <app-dropdown-menu #model *ngIf="menuItem.length > 0" [menuItem]="menuItem"></app-dropdown-menu>
+    </div>
+  </div>
+  <div body class="list">
+    <div *ngFor="let model of models" class="list-row">
+      <div class="list-name">{{ 'HOME.MODEL'|translate }} {{ model.Name }}</div>
+      <div class="list-date"> {{ model.TaxType }}</div>
+      <div class="list-money">
+        <span class="list-money-icon"></span>
+        {{model.Result}} €
+      </div>
+    </div>
+  </div>
+</app-card>
+
+
+
+
+

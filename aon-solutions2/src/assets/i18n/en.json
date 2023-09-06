@@ -92,6 +92,32 @@
     "FILE_SELECT_DELETE"    : "Delete"
   },
   "BILLING": {
+    "SUBTITLE": "Total amount",
+    "BANKS": "Banks",
+    "BILLING": "Billing",
+    "SALES": "Sales",
+    "BILLS": "Bills",
+    "SALES_CHECK": "Sales check",
+    "REPORTS": "Reports",
+    "TREASURY": "Treasury",
+    "CREATE_SALES_INVOICE": "Create sales invoice",
+    "ADD_BANK":"Add bank",
+    "DESCRIPTION": "Description",
+    "BALANCE": "Balance",
+    "LAST_UPDATE": "Last update",
+    "IBAN_PLACEHOLDER": "Write a IBAN",
+    "DESCRIPTION_PLACEHOLDER": "Write a description",
+    "SWIFT_PLACEHOLDER": "Write a SWIFT",
+    "DATE": "Date",
+    "NUMBER": "Number",
+    "CONTACT": "Contact",
+    "BASE_IMP": "Tax base",
+    "IMP": "Tax",
+    "REC_EQ": "Surcharge EQ",
+    "RETEN": "Withholding",
+    "ACCOUNTED": "Accounted",
+    "STATUS": "Status",
+    "AMOUNT": "Amount"
 
   },
   "CONSULTING": {
