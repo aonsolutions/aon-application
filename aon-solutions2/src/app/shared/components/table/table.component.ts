@@ -36,8 +36,8 @@ export class TableComponent implements OnInit {
     this.listenParentHandler.emit({key: key, keyButton: keyButton});
   }
 
-  onRowClick(key: any){
-    this.listenParentRow.emit({key: key});
+  onRowClick(key: any, type: any = ''){
+    this.listenParentRow.emit({key: key, type: type});
   }
 
 }
