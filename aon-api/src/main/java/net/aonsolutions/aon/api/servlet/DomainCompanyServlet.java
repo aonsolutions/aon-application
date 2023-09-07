@@ -1,4 +1,5 @@
 package net.aonsolutions.aon.api.servlet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -287,60 +288,34 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	
 	private static void updateConectaBookingRItem(DomainCompany domainCompany, Booking booking, Integer aonCustomer, JSONArray errors, AonApiData api) {
 		DomainType domainType = domainCompany.getDomain().getDomainType();
+		
+		List<AonApp> checkAonApps = new ArrayList<>();
+		checkAonApps.add(AonApp.BASIC_MANAGEMENT);
+		checkAonApps.add(AonApp.STANDAR_MANAGEMENT);
+		checkAonApps.add(AonApp.PROFESSIONAL_MANAGEMENT);
+		
 		if(domainType.equals(DomainType.CONSULTANCY) && null != booking.getResume()) {
-			// Empresas
-			DomainTypeInfo enterpriseChildBooking = booking.getResume().getDomainTypes().get(DomainType.ENTERPRISE);
 			
-			if(null != enterpriseChildBooking) {
+			booking.getResume().getDomainTypes().entrySet().forEach(entry -> {
 				
-				// Empresas - Conecta Basico
-				Long quantityConnectaBasic = enterpriseChildBooking.getChildApps().get(AonApp.BASIC_MANAGEMENT);
-				if(null != quantityConnectaBasic) {
-					String connectaBasicBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.BASIC_MANAGEMENT); 
-					updateRItem(domainCompany, booking, aonCustomer, errors, api, connectaBasicBarCode, quantityConnectaBasic.toString());
-				}
+				DomainType domainChildType = entry.getKey();
+				DomainTypeInfo domainChildInfo = entry.getValue();
 				
-				// Empresas - Conecta Standard
-				Long quantityConenctaStandard = enterpriseChildBooking.getChildApps().get(AonApp.STANDAR_MANAGEMENT);
-				if(null != quantityConenctaStandard) {
-					String connectaStandardBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.STANDAR_MANAGEMENT); 
-					updateRItem(domainCompany, booking, aonCustomer, errors, api, connectaStandardBarCode, quantityConenctaStandard.toString());
+				if(null != domainChildInfo) {
+					
+					checkAonApps.forEach(checkAonApp -> {
+						
+						Long checkAonAppCount = domainChildInfo.getChildApps().get(checkAonApp);
+						
+						if(null != checkAonAppCount && checkAonAppCount > 0) {
+							String barCode = getConnectarBarCode(domainType, domainChildType, checkAonApp); 
+							updateRItem(domainCompany, booking, aonCustomer, errors, api, barCode, checkAonAppCount.toString());
+						}
+						
+					});
+					
 				}
-				
-				// Empresas - Conecta Professional
-				Long quantityConnectaProfessional = enterpriseChildBooking.getChildApps().get(AonApp.PROFESSIONAL_MANAGEMENT);
-				if(null != quantityConnectaProfessional) {
-					String conenctaProfessionalBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.PROFESSIONAL_MANAGEMENT); 
-					updateRItem(domainCompany, booking, aonCustomer, errors, api, conenctaProfessionalBarCode, quantityConnectaProfessional.toString());
-				}
-			}
-			
-			// Despacho
-			DomainTypeInfo officeChildBooking = booking.getResume().getDomainTypes().get(DomainType.OFFICE);
-			
-			if(null != officeChildBooking) {
-				// Despacho - Conecta Basico
-				Long quantityConnectaBasic = officeChildBooking.getChildApps().get(AonApp.BASIC_MANAGEMENT);
-				if(null != quantityConnectaBasic) {
-					String connectaBasicBarCode = getConnectarBarCode(domainType, DomainType.OFFICE, AonApp.BASIC_MANAGEMENT); 
-					updateRItem(domainCompany, booking, aonCustomer, errors, api, connectaBasicBarCode, quantityConnectaBasic.toString());
-				}
-				
-				// Despacho - Conecta Standard
-				Long quantityConenctaStandard = officeChildBooking.getChildApps().get(AonApp.STANDAR_MANAGEMENT);
-				if(null != quantityConenctaStandard) {
-					String connectaStandardBarCode = getConnectarBarCode(domainType, DomainType.OFFICE, AonApp.STANDAR_MANAGEMENT); 
-					updateRItem(domainCompany, booking, aonCustomer, errors, api, connectaStandardBarCode, quantityConenctaStandard.toString());
-				}
-				
-				// Despacho - Conecta Professional
-				Long quantityConnectaProfessional = officeChildBooking.getChildApps().get(AonApp.PROFESSIONAL_MANAGEMENT);
-				if(null != quantityConnectaProfessional) {
-					String conenctaProfessionalBarCode = getConnectarBarCode(domainType, DomainType.OFFICE, AonApp.PROFESSIONAL_MANAGEMENT); 
-					updateRItem(domainCompany, booking, aonCustomer, errors, api, conenctaProfessionalBarCode, quantityConnectaProfessional.toString());
-				}
-			}
-			
+			});
 		}
 		
 	}
@@ -359,8 +334,6 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		}
 		return sb.toString();
 	}
-	
-	
 
 	private static JSONObject deleteBookingRitems(AonApiData api) {
 		int customer = api.getData().optInt(IJsonNames.CUSTOMER);
