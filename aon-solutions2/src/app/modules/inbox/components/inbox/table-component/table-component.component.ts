@@ -17,8 +17,7 @@ export class TableComponentComponent implements OnInit {
   headerTable: any = {};
   bodyTable: any[] = [];
 
-  messages: ICollection<IMessage> =
-    new CollectionFactory().createMessageCollection();
+  messages: ICollection<IMessage> =new CollectionFactory().createMessageCollection();
 
   displayedColumns: string[] = [
     'name',
@@ -116,8 +115,6 @@ export class TableComponentComponent implements OnInit {
 
 
   rowClick(object: any) {
-    // Fila de la tabla que se esta usando
-    // Boton que ha sido clickeado
     console.log(object);
   }
 }

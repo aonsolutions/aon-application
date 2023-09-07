@@ -76,6 +76,8 @@
     "TASKS": "Tasks",
     "NOTIFICATIONS": "Notifications",
     "THIS_WEEK": "This week",
+    "THIS_MONTH": "This month",
+    "ALLS": "All",
     "CREATE": "Create",
     "NEW_QUERY": "New query",
     "SUBJECT": "Subject",
