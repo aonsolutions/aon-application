@@ -896,7 +896,8 @@ public class BookingCustomer extends HTMLPanel {
 			}
 			
 			Label productStatusLabel = new Label(getProductStatus(bookingCheck));
-			Label quantityLabel = new Label(AonStringUtils.isBlank(bookingCheck.getQuantity()) ? "1.0" : bookingCheck.getQuantity());
+			
+			Label quantityLabel = createQuantityLabel(bookingCheck);
 			
 			AonToolbarSmallButton actionBtn = new AonToolbarSmallButton("Acciones", AON.CSS.aonIconMoreVertical());
 			actionBtn.addClickHandler(e -> {
@@ -942,6 +943,22 @@ public class BookingCustomer extends HTMLPanel {
 
 	}
 	
+	private Label createQuantityLabel(BookingCheck bookingCheck) {
+		Label quantityLabel = new Label();
+		Integer quantityFee = AonStringUtils.isNotBlank(bookingCheck.getQuantityFee()) ? Integer.parseInt(bookingCheck.getQuantityFee()) : 0;
+		Integer quantityRItem = AonStringUtils.isNotBlank(bookingCheck.getQuantityRItem()) ? Integer.parseInt(bookingCheck.getQuantityRItem()) : 0;
+		
+		
+		if(quantityFee != quantityRItem) {
+			quantityLabel.setText(quantityFee.toString() + "  /  " +  quantityRItem.toString());
+			quantityLabel.setTitle("No coincide el num. de cuotas con el de contrataciones");
+			quantityLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			quantityLabel.getElement().getStyle().setColor("red");
+		} else quantityLabel.setText(quantityRItem.toString());
+		
+		return quantityLabel;
+	}
+
 	private void createBookingWithOutFeeMessage() {
 		bookingMessagePanel = new HTMLPanel("");
 		bookingMessagePanel.addStyleName(AON.CSS.aonDisplayFlexCenter());

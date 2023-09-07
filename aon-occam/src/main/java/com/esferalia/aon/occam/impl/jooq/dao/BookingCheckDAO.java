@@ -442,6 +442,8 @@ public class BookingCheckDAO {
 							? WorkplaceFiller.build(r)
 							: new Workplace().setId(r.getValue(RITEM.WORKPLACE)))
 					.setHasFee(r.get(CUSTOMER_FEE.ID) != null)
+					.setQuantityFee(null != r.get(CUSTOMER_FEE.QUANTITY) ? r.get(CUSTOMER_FEE.QUANTITY).intValue() + "" : "0")
+					.setQuantityRItem(r.get(RITEM.QUANTITY))
 					;
 		}
 	}
