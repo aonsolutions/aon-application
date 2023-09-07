@@ -1,13 +1,16 @@
 package com.esferalia.aon.gwt.fiscal.client.mod130;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -15,24 +18,39 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.accounting.js.JsAccountingBreakdown;
+import com.esferalia.aon.gwt.fiscal.client.accounting.js.JsAccountingBreakdownGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFBreakdown;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFBreakdownInvoiceGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfo;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfoGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeKeyInfo;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeKeyInfoGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod130.Model130.Model130Callback;
+import com.esferalia.aon.gwt.fiscal.client.model.AonFinishDeclarationPopup;
+import com.esferalia.aon.gwt.fiscal.client.model.AonFinishDeclarationPopup.IFinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
-import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
-import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup.IFinishDeclarationPopupCallback;
-import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
-import com.esferalia.aon.gwt.fiscal.shared.mod130.Model130ScriptProvider;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
+import com.esferalia.aon.occam.api.model.fiscal.mod130.Model130ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -60,7 +78,7 @@ public abstract class Model130Base extends DockLayoutPanel {
 	protected static final String MODEL130_FILE = "/aon_gwt_fiscal/ms/Model130File";
 
 	private Model130Callback callback;
-	private Mod130 model;
+	private Mod130 mod130;
 	private EnumMap<Mod130Key,AonDoubleBox> fieldsMap;
 	private boolean dirty;
 	
@@ -69,7 +87,6 @@ public abstract class Model130Base extends DockLayoutPanel {
 	private final AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave());
 	private final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(),AON.CSS.aonIconBack());
 	private final AonToolbarButton deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
-	private final AonToolbarButton resetButton = new AonToolbarButton(AON.MSG.resetAction(),AON.CSS.aonIconRefresh());
 	private final AonToolbarButton printButton = new AonToolbarButton(AON.MSG.draft(),AON.CSS.aonIconExcel());
 	private final AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
 	private final AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
@@ -81,7 +98,7 @@ public abstract class Model130Base extends DockLayoutPanel {
 	
 	private final AonToolbar decToolbar = new AonToolbar();
 	private final InlineLabel dirtyLabel = new InlineLabel();
-	private final InlineLabel diffLabel = new InlineLabel();
+	private final InlineLabel alcatrazUnboundLabel = new InlineLabel();
 	private final InlineLabel adjLabel = new InlineLabel();
 	private final InlineLabel replacedLabel = new InlineLabel();
 	private final Label statusLabel = new Label();
@@ -123,10 +140,10 @@ public abstract class Model130Base extends DockLayoutPanel {
 		return callback;
 	}
 	public Mod130 getModel() {
-		return model;
+		return mod130;
 	}
 	public void setModel(Mod130 model) {
-		this.model = model;
+		this.mod130 = model;
 	}
 	
 	private void select( Mod130 mod130) {
@@ -169,9 +186,6 @@ public abstract class Model130Base extends DockLayoutPanel {
 		
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
-		
-		resetButton.addClickHandler( event -> onReset());
-		toolbarPanel.add(resetButton);		
 		
 		printButton.addClickHandler( event ->  print());
 		toolbarPanel.add(printButton);
@@ -240,11 +254,11 @@ public abstract class Model130Base extends DockLayoutPanel {
 		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
 		marksPanels.add(dirtyLabel);
 		
-		diffLabel.setStyleName(AON.CSS.aonMarginLeft());
-		diffLabel.addStyleName(AON.CSS.aonLabelWithIcon());
-		diffLabel.addStyleName(AON.CSS.aonIconDiff());
-		diffLabel.setTitle("C\u00E1lculo por diferencia habilitado");
-		marksPanels.add(diffLabel);
+		alcatrazUnboundLabel.setStyleName(AON.CSS.aonMarginLeft());
+		alcatrazUnboundLabel.addStyleName(AON.CSS.aonLabelWithIcon());
+		alcatrazUnboundLabel.addStyleName(AON.CSS.aonIconWarning());
+		alcatrazUnboundLabel.setTitle("Modelo sin facturas/n\u00F3minas vinculadas");
+		marksPanels.add(alcatrazUnboundLabel);
 
 		adjLabel.setStyleName(AON.CSS.aonMarginLeft());
 		adjLabel.addStyleName(AON.CSS.aonIconLabel());
@@ -289,8 +303,7 @@ public abstract class Model130Base extends DockLayoutPanel {
 
 	private void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
-		diffLabel.setVisible(!this.getModel().isDiffCalculationDisabled()); 		
-		
+		alcatrazUnboundLabel.setVisible(!getModel().isAlcatrazBound()); 		
 		boolean adjusted = false;
 		for (FiscalModelDetail det : this.getModel().getMap().values()) {
 			if (AonMathUtils.isNotZero( det.getAdjustAmount())) {
@@ -302,26 +315,25 @@ public abstract class Model130Base extends DockLayoutPanel {
 	}
 
 	private void refreshToolbarState() {
-		toolbarPanel.setTitle(AonStringUtils.join(model.getDocument(),AonStringUtils.SPACE,model.getFullName()));
-		resetButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
-		auditButton.setVisible(!model.isNew());
-		newButton.setVisible(!model.isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
+		toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
+		auditButton.setVisible(!getModel().isNew());
+		newButton.setVisible(!getModel().isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
-		saveButton.setVisible(!model.isFinished() && !model.isSent());
-		deleteButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
-		printButton.setVisible(!model.isNew());
-		markAsPendingButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.FINISHED 
-				|| model.getStatus() == FiscalStatus.BATCHED
-				|| model.getStatus() == FiscalStatus.SENT
-				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| model.getStatus() == FiscalStatus.BLOCKED));
-		markAsFinishedButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.PENDING
-				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| model.getStatus() == FiscalStatus.MISSING));
-		markAsSentButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.FINISHED));
+		saveButton.setVisible(!getModel().isFinished() && !getModel().isSent());
+		deleteButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
+		printButton.setVisible(!getModel().isNew());
+		markAsPendingButton.setVisible(!getModel().isNew() &&
+				(getModel().getStatus() == FiscalStatus.FINISHED 
+				|| getModel().getStatus() == FiscalStatus.BATCHED
+				|| getModel().getStatus() == FiscalStatus.SENT
+				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
+				|| getModel().getStatus() == FiscalStatus.BLOCKED));
+		markAsFinishedButton.setVisible(!getModel().isNew() &&
+				(getModel().getStatus() == FiscalStatus.PENDING
+				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
+				|| getModel().getStatus() == FiscalStatus.MISSING));
+		markAsSentButton.setVisible(!getModel().isNew() &&
+				(getModel().getStatus() == FiscalStatus.FINISHED));
 	}
 	
 	private void styleStatusLabel(Mod130 mod130) {
@@ -527,7 +539,7 @@ public abstract class Model130Base extends DockLayoutPanel {
 					@Override
 					public void onSuccess(Mod130 m130) {
 						selectAndPopulate(m130);
-						showFinalizePopup(model);
+						showFinalizePopup(getModel());
 						markAsFinishedButton.setEnabled(true);
 					}
 
@@ -540,7 +552,7 @@ public abstract class Model130Base extends DockLayoutPanel {
 	}
 	
 	private void showFinalizePopup(Mod130 model) {
-		FinishDeclarationPopup<Mod130,Model130ModuleOptions> finalizeDialog = new FinishDeclarationPopup<>(
+		AonFinishDeclarationPopup<Mod130,Model130ModuleOptions> finalizeDialog = new AonFinishDeclarationPopup<>(
 			model,
 			getCallback(), 
 			new IFinishDeclarationPopupCallback<Mod130>() {
@@ -626,10 +638,10 @@ public abstract class Model130Base extends DockLayoutPanel {
 		if (mod.isFinished() || mod.isSent()) {
 			StringBuilder buff = new StringBuilder(AON.MSG.result());
 			buff.append(AonStringUtils.SPACE);
-			buff.append(AON.FMT.format(mod.getResult()));
-			if (mod.getDeclarationType() != null) {
+			buff.append(AON.FMT.format(mod.getDeclarationResult()));
+			if (mod.getDeclarationResultType() != null) {
 				buff.append(AonStringUtils.SPACE);
-				buff.append(mod.getDeclarationType().getDescription());
+				buff.append(mod.getDeclarationResultType().getDescription());
 			}
 			if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null && AonStringUtils.isNotBlank(mod.getFinance().getBankAccount().getIban())) {
 				buff.append(AonStringUtils.SPACE);
@@ -782,36 +794,223 @@ public abstract class Model130Base extends DockLayoutPanel {
 		FlowPanel buttonContainer = new FlowPanel();
 		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
 			buttonContainer.setStyleName(AON.CSS.aonNowrap());
-			if 	(infoKey != FiscalModelKeyInfo.NONE) {
-				final AonTableButton button = new AonTableButton("");
-				button.setTitle(infoKey.getLabel());
-				if 	(infoKey == FiscalModelKeyInfo.INVOICE) button.addStyleName(AON.CSS.aonIconList());
-				else if	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE) button.addStyleName(AON.CSS.aonIconDiff());
-				else if	(infoKey == FiscalModelKeyInfo.SALARY) button.addStyleName(AON.CSS.aonIconEuro());
-				else if	(infoKey == FiscalModelKeyInfo.SALARY_IN_KIND) button.addStyleName(AON.CSS.aonIconData());
-				else if	(infoKey == FiscalModelKeyInfo.DIFF_SALARY) button.addStyleName(AON.CSS.aonIconDiff());
-				else if	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.CSS.aonIconCalc());
-				else if	(infoKey == FiscalModelKeyInfo.COMPUTE_KEY) button.addStyleName(AON.CSS.aonIconCalc());
-				else if	(infoKey == FiscalModelKeyInfo.ACT_ACCOUNT) button.addStyleName(AON.CSS.aonIconBullet());
+			infoKey.visit(new IFiscalModelKeyInfoVisitor<Void>() {
+
+//				private void showComputeKeyInfo(AonTableButton button) {
+//					button.setEnabled(false);
+//					Model130.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+//						@Override
+//						public void onFailure(Throwable caught) {
+//							button.setEnabled(true);
+//							callback.showError(AON.MSG.errorMessage());
+//						}
+//	
+//						@Override
+//						public void onSuccess(String result) {
+//							FlowPanel gridContainer = new FlowPanel();
+//							Mod130Key key = script.getKeys()[0];
+//							JsIRPFComputeKeyInfoGridPanel grid = new JsIRPFComputeKeyInfoGridPanel();
+//							grid.setTitle(AON.MSG.calcDetail());
+//							grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
+//							try {
+//								JsIRPFComputeKeyInfo info = JsonUtils.safeEval(result);
+//								grid.addContent(info);
+//							} catch (Exception e) {
+//								grid.addContent(result);
+//							}
+//							gridContainer.add(grid);
+//							callback.showInfoPanelWidget(gridContainer);
+//							button.setEnabled(true);
+//						}
+//					});
+//				}
 				
-				button.addClickHandler(event -> Model130.SERVICE.getInfo(
-					callback.getOptions().getOccam(),
-					getModel(), script, infoKey,new AsyncCallback<String>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								callback.showError(AON.MSG.errorMessage());
-							}
-
-							@Override
-							public void onSuccess(String result) {
-								callback.showInfoPanel(result);
-							}
+				private void showComputeKeyInfo(AonTableButton button) {
+					button.setEnabled(false);
+					final PopupPanel popup = new PopupPanel(false, true);
+					popup.add(new AonSplash());
+					popup.setGlassEnabled(true);
+					popup.setAnimationEnabled(true);
+					popup.center();
 					
+					Model130.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							popup.hide();
+							button.setEnabled(true);
+							callback.showError(AON.MSG.errorMessage());
 						}
-					));
-				buttonContainer.add(button);
-			}
+	
+						@Override
+						public void onSuccess(String result) {
+							popup.hide();
+							FlowPanel gridContainer = new FlowPanel();
+							JsVatComputeKeyInfoGridPanel grid = new JsVatComputeKeyInfoGridPanel();
+							grid.setTitle(AON.MSG.calcDetail());
+							grid.setSubTitle(AonStringUtils.join(
+								Arrays.stream(script.getKeys())
+									.filter( Objects::nonNull )
+									.map( Mod130Key::getBoxFormatted )
+									.reduce("", String::concat)
+								, " " 
+								, script.getLabel()));
+							
+							try {
+								JsVatComputeKeyInfo info = JsonUtils.safeEval(result);
+								grid.addContent(info);
+							} catch (Exception e) {
+								grid.addContent(result);
+							}
+							gridContainer.add(grid);
+							callback.showInfoPanelWidget(gridContainer);
+							button.setEnabled(true);
+						}
+					});
+				}
+
+				private void showInvoiceIrpfBreakdownInfo(AonTableButton button) {
+					button.setEnabled(false);
+					Model130.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							JsIRPFBreakdownInvoiceGridPanel grid = new JsIRPFBreakdownInvoiceGridPanel( true );
+							grid.addSelectionHandler(event -> showInvoice(event.getSelectedItem()));
+							grid.setTitle(AON.MSG.modelRelatedInvoices(getModel().getModelFullName()));
+							grid.setSubTitle(script.getLabel());
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsIRPFBreakdown> array = arrayObject.cast();
+							for (int i = 0; i < array.length(); i++) {
+								grid.addRow(array.get(i));
+							}
+							grid.addFooterRow();
+							callback.showInfoPanelWidget(grid);
+							button.setEnabled(true);
+						}
+					});
+				}
+				
+				private void showComputeInfo(AonTableButton button) {
+					button.setEnabled(false);
+					Model130.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							FlowPanel gridContainer = new FlowPanel();
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsIRPFComputeInfo> array = arrayObject.cast();
+							
+							for (int i = 0; i < array.length(); i++) {
+								Mod130Key key = script.getKeys()[i];
+								JsIRPFComputeInfoGridPanel grid = new JsIRPFComputeInfoGridPanel() {
+
+									@Override
+									protected String resolveKey(String keyString) {
+										Mod130Key key = Mod130Key.valueOf(keyString);
+										return key.getBoxAsString();
+									}
+									
+								};
+								grid.setTitle(AON.MSG.calcDetail());
+								grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
+								grid.addContent(array.get(i));
+								gridContainer.add(grid);
+							}
+							callback.showInfoPanelWidget(gridContainer);
+							button.setEnabled(true);
+						}
+					});
+				}
+				
+				private void showActAccountInfo(AonTableButton button) {
+					button.setEnabled(false);
+					Model130.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							JsAccountingBreakdownGridPanel grid = new JsAccountingBreakdownGridPanel( true );
+							grid.setTitle(AON.MSG.modelRelatedInvoices(getModel().getModelFullName()));
+							grid.setSubTitle(script.getLabel());
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsAccountingBreakdown> array = arrayObject.cast();
+							for (int i = 0; i < array.length(); i++) {
+								grid.addRow(array.get(i));
+							}
+							grid.addFooterRow();
+							callback.showInfoPanelWidget(grid);
+							button.setEnabled(true);
+						}
+					});
+				}
+				
+				
+				private AonTableButton addButton() {
+					final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconHelp());
+					buttonContainer.add(button);
+					return button;
+				}
+				
+				@Override 
+				public Void visitModelInvoiceIrpfBreakdown() {
+					if (getModel().isAlcatrazBound()) {
+						final AonTableButton button = addButton();
+						button.addClickHandler(event -> showInvoiceIrpfBreakdownInfo(button));
+					}
+					return null;
+				}
+				
+				@Override public Void visitCompute() { 
+					final AonTableButton button = addButton();
+					button.addClickHandler(event -> showComputeInfo(button));
+					return null; 
+				}
+				@Override 
+				public Void visitComputeKey() {
+					final AonTableButton button = addButton();
+					button.addClickHandler(event -> showComputeKeyInfo(button));
+					return null; 
+				}
+				@Override 
+				public Void visitActAccount() {
+					final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconList());
+					button.addClickHandler(event -> showActAccountInfo(button));
+					buttonContainer.add(button);
+					return null; 
+				}
+				
+				@Override public Void visitInvoice() {return null; }
+				@Override public Void visitSalary() {return null; }
+				@Override public Void visitModelSalaryIrpfBreakdown() {return null;}
+				@Override public Void visitModelInVatAccrualInvoice() {return null;}
+				@Override public Void visitModelOutVatAccrualInvoice() {return null;}
+				@Override public Void visitProrratedModelInvoiceVatBreakdown() {return null;}
+				@Override public Void visitModelInvoiceVatBreakdown() {return null;}
+				@Override public Void visitDiffInvoice() {return null;}
+				@Override public Void visitDiffSalary() { return null;}
+				@Override public Void visitNone() { return null; }
+				@Override public Void visitInAccrualInvoice() { return null; }
+				@Override public Void visitOutAccrualInvoice() { return null; }
+				@Override public Void visitDiffInAccrualInvoice() { return null; }
+				@Override public Void visitDiffOutAccrualInvoice() { return null; }
+				@Override public Void visitTitle() { return null; }
+				@Override public Void visitIrpfActivity() { return null; }
+				@Override public Void visitCorporate() { return null; }
+			});
 			table.setWidget(row, col, buttonContainer);
 		}
 	}
@@ -827,39 +1026,10 @@ public abstract class Model130Base extends DockLayoutPanel {
 
 				@Override
 				public void onSuccess(Mod130 result) {
-					populate(result);
+					selectAndPopulate(result);
 				}
 			}
 		);	
-	}
-	
-	private void onReset() {
-		resetButton.setEnabled(false);
-		AonConfirmDialog cd = new AonConfirmDialog();
-		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
-
-			@Override
-			public void onAccept() {
-				Model130.SERVICE.reset(getCallback().getOptions().getOccam(),getModel(),
-						new AsyncCallback<Mod130>() {
-							@Override
-							public void onSuccess(Mod130 m130) {
-								setDirty( true );
-								selectAndPopulate(m130);
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
-								
-							}
-						});
-			}
-			@Override
-			public void onCancel() {
-				resetButton.setEnabled(true);
-			}
-		});
 	}
 	
 	protected void submitForm(String action) {
@@ -898,4 +1068,27 @@ public abstract class Model130Base extends DockLayoutPanel {
 	void paintAdministrationTab(TabLayoutPanel tabPanel) {}
 	void decorateDeclarationTab() {}
 	
+	private void showInvoice(JsIRPFBreakdown br) {
+		int invoiceId = br.getInvoice();
+		Model130.SERVICE.getInvoice(getCallback().getOptions().getOccam(), invoiceId,new AsyncCallback<Invoice>() {
+			@Override
+			public void onSuccess(Invoice inv) {
+				AonCustomPopup dialog = new AonCustomPopup();
+				dialog.setWidth((Window.getClientWidth() - 100) + "px");
+				dialog.setHeight((Window.getClientHeight() - 100) + "px");
+				dialog.setAnimationEnabled(true);
+				dialog.setGlassEnabled(true);
+				dialog.setModal(true);
+				dialog.setCaption(AON.MSG.invoice());
+				dialog.add(new AonInvoiceViewer(inv));
+				dialog.center();
+				dialog.show();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getCallback().showError(caught.getMessage());
+			}
+		});
+	}
 }

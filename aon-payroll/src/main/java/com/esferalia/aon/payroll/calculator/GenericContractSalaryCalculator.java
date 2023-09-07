@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.BASE_CTA_ESP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
@@ -20,13 +21,18 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUO
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FREE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.INKIND_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IN_KIND;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_CTA_ESP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONEY_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -39,17 +45,25 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_C737;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H03;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H04;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H06;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TMP_IN_KIND;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_EMBARGO;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.UNPAID_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.salary.expression.ExpressionScope.APPLICATION;
+import static com.esferalia.aon.watson.util.AonStringUtils.defaultIfBlank;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -170,8 +184,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		WORKED_DAYS.getName(), 
 		CGC_BASE_ENTERPRISE.getName(), 
 		CGP_BASE_ENTERPRISE.getName(),
-		DIRECT_BASE.getName(), 
-		MATERNITY_BASE.getName(), 
 		ADDITIONAL_BASE.getName(), 
 		STRUCTURAL_OVERTIME_BASE.getName(),
 		NON_STRUCTURAL_OVERTIME_BASE.getName(), 
@@ -187,10 +199,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		SATURDAY_HOURS.getName(),
 		SUNDAY_HOURS.getName(),
 		
-		ContextVariable.SLD_C737.getName(),
-		ContextVariable.SLD_H06.getName(),
-		ContextVariable.SLD_H03.getName(),
-		ContextVariable.SLD_H04.getName(),
+		SLD_C737.getName(),
+		SLD_H06.getName(),
+		SLD_H03.getName(),
+		SLD_H04.getName(),
 	
 		PREST_IT,
 		GUARENTEED,
@@ -779,7 +791,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			Date irpfDate = ctx.getIrpfDate();
 			expressionContext.setVariable(IRPF_BASE, taxCalculator.getIrpfBase(), irpfDate, irpfDate);
-			
+
 			undefTotalPayments.sort((p1,p2)-> AonNumberUtils.compare(p1.getId(),p2.getId() ) );
 			for (UndefPayment undefTotalPayment : undefTotalPayments) {
 				try {
@@ -804,6 +816,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			salaryBuilder.setMoneyIrpfBase(taxCalculator.getMoneyIrpfBase());
 			salaryBuilder.setInkindIrpfBase(taxCalculator.getInKindIrpfBase());
 			expressionContext.setVariable(IRPF_BASE, taxCalculator.getIrpfBase(), irpfDate, irpfDate);
+			expressionContext.setVariable(MONEY_IRPF_BASE, taxCalculator.getMoneyIrpfBase(), irpfDate, irpfDate);
+			expressionContext.setVariable(INKIND_IRPF_BASE, taxCalculator.getInKindIrpfBase(), irpfDate, irpfDate);
+			
+			double irpfCtaEsp = getValue(expressionContext, IRPF_CTA_ESP);
+    			expressionContext.removeVariable(IRPF_CTA_ESP);
+    			if ( irpfCtaEsp > 0.00 )
+    			    expressionContext.setVariable(IRPF_CTA_ESP, irpfCtaEsp, irpfDate, irpfDate);
+			
 
 			Double rawCgcbase = quoteCalculator.getRawCgcBase();
 			salaryBuilder.setRawCgcBase(rawCgcbase);
@@ -815,6 +835,17 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				onInvalidData(e.getVariableNames());
 			}
 
+			Double ereBase = quoteCalculator.getEreBase();
+			Double maternityBase = quoteCalculator.getMaternityBase();
+			Double rawMaternityBase = quoteCalculator.getRawMaternityBase();
+			Double additionalBase = quoteCalculator.getAdditionalBase();
+
+			Double directPayBase = quoteCalculator.getDirectPayBase();
+			Double rawDirectPayBase = quoteCalculator.getRawDirectPayBase();
+
+			Double unpaidBase = quoteCalculator.getUnpaidBase();
+			Double rawUnpaidBase = quoteCalculator.getRawUnpaidBase();
+
 			if (AonNumberUtils.compare(rawCgcbase, cgcBase, 3) > 0) 
 				onCheckError(String.format(BASE_CGC_MAX_MSG, CGC_BASE.getDescription(), rawCgcbase, cgcBase));
 			else if (AonNumberUtils.compare(rawCgcbase, cgcBase, 3) < 0) {
@@ -823,16 +854,30 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				rawCgcbase = quoteCalculator.getRawCgcBase();
 				salaryBuilder.setRawCgcBase(rawCgcbase);
 				cgcBase = quoteCalculator.getCgcBase();
+			} 
+			
+			if (AonNumberUtils.compare(rawDirectPayBase, directPayBase, 3) < 0) {
+				fixBaseMin(ctx.getSalaryType(), expressionContext, start, end, quoteCalculator, taxCalculator, issueDate, leavePeriods,
+					offPeriods, rawDirectPayBase, directPayBase, DIRECT_BASE);
+			}
+			if (AonNumberUtils.compare(rawMaternityBase, maternityBase, 3) < 0) {
+				fixBaseMin(ctx.getSalaryType(), expressionContext, start, end, quoteCalculator, taxCalculator, issueDate, leavePeriods,
+					offPeriods, rawUnpaidBase, unpaidBase, UNPAID_BASE);
+			}
+			if (AonNumberUtils.compare(rawMaternityBase, maternityBase, 3) < 0) {
+				fixBaseMin(ctx.getSalaryType(), expressionContext, start, end, quoteCalculator, taxCalculator, issueDate, leavePeriods,
+					offPeriods, rawMaternityBase, maternityBase, MATERNITY_BASE);
 			}
 
 
-			Double ereBase = quoteCalculator.getEreBase();
 			if (ereBase != null)
 				cgcBase += ereBase;
-			Double maternityBase = quoteCalculator.getMaternityBase();
+			if (unpaidBase != null)
+				cgcBase += unpaidBase;
+			if (directPayBase != null)
+				cgcBase += directPayBase;
 			if (maternityBase != null)
 				cgcBase += maternityBase;
-			Double additionalBase = quoteCalculator.getAdditionalBase();
 			if (additionalBase != null)
 				cgcBase += additionalBase;
 			
@@ -841,7 +886,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			addVars(expressionContext, CGC_BASE,  ADDITIONAL_BASE);
 
 			addVars(expressionContext, CGC_BASE_ENTERPRISE,  ERE_BASES);
-			addVars(expressionContext, CGC_BASE_ENTERPRISE,  MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  FREE_BASES);
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  CGC_BASE);
 //			if (cgcBase != null)
 //				expressionContext.setVariable(CGC_BASE_ENTERPRISE, cgcBase, start, end);
 
@@ -855,13 +901,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			} catch (UndefinedVariablesException e) {
 				onInvalidData(e.getVariableNames());
 			}
-			if (AonNumberUtils.compare(rawCgpbase, cgpBase, 3) > 0) // rawCgcbase
-																	// > cgpBase
+			if (AonNumberUtils.compare(rawCgpbase, cgpBase, 3) > 0) {
 				onCheckError(String.format(BASE_CGP_MAX_MSG, CGP_BASE.getDescription(), rawCgcbase, cgpBase));
-			else if (AonNumberUtils.compare(rawCgpbase, cgpBase, 3) < 0) // rawCgcbase
-																			// <
-																			// cgpBase
+			} else if (AonNumberUtils.compare(rawCgpbase, cgpBase, 3) < 0) {
 				onCheckError(String.format(BASE_CGP_MIN_MSG, CGP_BASE.getDescription(), rawCgcbase, cgpBase));
+			}
 
 			if (ereBase != null)
 				cgpBase += ereBase;
@@ -869,11 +913,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgpBase += maternityBase;
 			if (additionalBase != null)
 				cgpBase += additionalBase;
+			if (directPayBase != null)
+				cgpBase += directPayBase;
 			
 			addVars(expressionContext, CGP_BASE,  ADDITIONAL_BASE);
 
 			addVars(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASES);
-			addVars(expressionContext, CGP_BASE_ENTERPRISE, MATERNITY_BASE, DIRECT_BASE, CGP_BASE);
+			addVars(expressionContext, CGP_BASE_ENTERPRISE, FREE_BASES);
+			addVars(expressionContext, CGP_BASE_ENTERPRISE, CGP_BASE);
 			//copyResults(expressionContext, CGP_BASE, CGP_BASE_ENTERPRISE);
 //			if (cgpBase != null)
 //				expressionContext.setVariable(CGP_BASE_ENTERPRISE, cgpBase, start, end);
@@ -894,7 +941,16 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			salaryBuilder.setProExtBase(quoteCalculator.getProExtBase());
 			expressionContext.setVariable(PAY_PRORRATED, AonNumberUtils.equals(quoteCalculator.getProExtBase(), Double.valueOf(0.00)), start, end);
-
+			
+			if ( cgcBase != null && cgcBase > 0.00 ) {
+        			expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE, cgcBase, start, end);
+        			expressionContext.setVariable(ContextVariable.TOTAL_CGC_BASE_ENTERPRISE, cgcBase, start, end);
+			}
+			if ( cgpBase != null && cgpBase > 0.00 ) {
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE, cgpBase, start, end);
+			    expressionContext.setVariable(ContextVariable.TOTAL_CGP_BASE_ENTERPRISE, cgpBase, start, end);
+			}
+			
 			return taxCalculator.getTotalPayment();
 		} catch (SalaryExpressionException e) {
 			throw e.getSalaryException();
@@ -958,10 +1014,61 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				Date deductionStart = null;
 				Date deductionEnd = null;
 
-				if (type.isTaxDeduction()) {
+				if (type.isTaxDeduction() || AonStringUtils.equals(contractDeduction.getName(), IN_KIND.getName())) {
 					deductionStart = ctx.getIrpfDate();
 					deductionEnd = ctx.getIrpfDate();
+					
+					if ( deductionEnd.after(end) || deductionStart.before(start) ) {
+					    Period irpfPeriod = new Period(deductionStart, deductionEnd);
+					    
+					    ExpressionContext irpfExpressionContext = new ExpressionContext(expressionContext) ;
+					    ContextFunctions.loadFunctions(irpfExpressionContext, deductionStart, deductionEnd);
+					    
+					    for ( ContextVariable irpfVar : new ContextVariable  [] {
+						    TMP_IN_KIND,
+						    IRPF_PERCENT, 
+						    IRPF_CTA_ESP, 
+						    IRPF_BASE, 
+						    BASE_CTA_ESP,
+						    INKIND_IRPF_BASE, 
+						    MONEY_IRPF_BASE } ) {
 
+						     irpfExpressionContext.getVariables(irpfVar.getName()).stream()
+						    .filter( v -> v.getPeriod().getEnd().compareTo(irpfPeriod.getStart()) <= 0)
+        					    .sorted( (v1, v2) -> v2.getPeriod().compareTo(v1.getPeriod()))
+        					    .map( v -> 
+        					    	( v instanceof IExpressionVariable ) ?
+        					    	new IExpressionVariable<Object>() {
+                						public Period getPeriod() {
+                						    return irpfPeriod;
+                						}
+                						public Object getValue(Period period) {
+                						    return v.getValue(v.getPeriod());
+                						}
+								@Override
+								public IExpression getExpression() {
+								    return ((IExpressionVariable<Object>)v).getExpression();
+								}
+								@Override
+								public Map<String, ITimedVariable<?>> getContext() {
+								    return ((IExpressionVariable<Object>)v).getContext();
+								}
+                						
+        					    	}
+        					    	:
+            					    	new ITimedVariable<Object>() {
+                						public Period getPeriod() {
+                						    return irpfPeriod;
+                						}
+                						public Object getValue(Period period) {
+                						    return v.getValue(v.getPeriod());
+                						}
+        					    }).findFirst().ifPresent( v -> irpfExpressionContext.putVariable(irpfVar.getName(), v) );
+    					    }
+
+					    expressionContext = irpfExpressionContext;
+					}
+					
 				} else {
 					deductionStart = Period.max(contractDeduction.getStartDate(), start);
 					deductionEnd = Period.min(contractDeduction.getEndDate(), end);
@@ -1060,19 +1167,25 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			Date start = ctx.getStartDate();
 			Date end = ctx.getEndDate();
-
+			
 			ExpressionContext expressionContext = ctx.getExpressionContext();
+
+			expressionContext.setVariable(TOTAL_EMBARGO, 0.00, start, end);
 
 			for (IContractEmbargo contractEmbargo : contractEmbargos) {
 
-				Date embargoStart = Period.max(contractEmbargo.getStartDate(), start);
-				Date embargoEnd = Period.min(contractEmbargo.getEndDate(), end);
-
-				double left = contractEmbargo.getAmount();
-				expressionContext.setVariable(EMBARGO_PAID, left, embargoStart, embargoEnd);
 				try {
+					Date embargoStart = Period.max(contractEmbargo.getStartDate(), start);
+					Date embargoEnd = Period.min(contractEmbargo.getEndDate(), end);
+					
+					double left = contractEmbargo.getAmount();
+					expressionContext.setVariable(EMBARGO_PAID, left, embargoStart, embargoEnd);
+
 					double embargo = resolveEmbargo(expressionContext, contractEmbargo, embargoStart, embargoEnd);
 					total += embargo;
+					
+					expressionContext.setVariable(TOTAL_EMBARGO, total, start, end);
+					
 				} catch (RemoveException e) {
 					// TODO: Something ??? It's really necessary...
 				} catch (InvalidVariables e) {
@@ -1085,6 +1198,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					onUndefinedData(contractEmbargo, e.getMessage(), e.getVariableNames());
 				} catch (CompileException e) {
 					onCompileError(contractEmbargo, getSyntaxExpressionErrorMessage(contractEmbargo));
+				} catch ( Exception e) {
+				    	onCheckError(e.getMessage());
 				}
 
 			}
@@ -1137,7 +1252,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 							Period period = amount.getPeriod();
 							try {
 								
-								description = expressionContext.evalTemplate(contractCost.getDescription(),
+								description = expressionContext.evalTemplate(defaultIfBlank(contractCost.getDescription(), ""),
 										period.getStart(), period.getEnd());
 							} catch (CompileException e) {
 								onCompileError(contractCost, DESCRIPTION_SYNTAX_ERROR);
@@ -1155,11 +1270,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					total += cost;
 					
 				} catch (RemoveException | RemoveVariableError e) {
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 					// TODO: Something ??? It's really necessary...
 				} catch (IllegalArgumentException e) {
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 					// costStart > costEnd, ignore .
 				} catch (UndefinedVariablesException e) {
-
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 				} catch (ExpressionException e) {
 					throw new SalaryException(e.getMessage(), e);
 				}
@@ -1447,6 +1564,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		})
 		.collect(Collectors.toList());
 		
+	}
+
+	protected void fixBaseMin(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
+		QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
+		List<Period> offPeriods, Double rawBase, Double base, ContextVariable baseVar ) throws AonException {
+	    onCheckError(String.format(BASE_CGC_MIN_MSG, baseVar.getDescription(), rawBase, base));
 	}
 
 	protected void fixBaseCgcMin(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
@@ -1740,7 +1863,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			@Override
 			public void visitSalaryInKind(PaymentType paymentType) {
-				addResult(expressionContext, IN_KIND.getName(), resultStart, resultEnd, resultValue);
+				addResult(expressionContext, TMP_IN_KIND.getName(), resultStart, resultEnd, resultValue);
 			}
 			
 			@Override
@@ -1882,7 +2005,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			long prevDays = getDays(prevStart, prevEnd);
 			
 			try {
-				Number prevValue = prev.getValue(prev.getPeriod());
+				Number prevValue  ;
+				try {
+				    prevValue = prev.getValue(prev.getPeriod());
+				} catch ( Exception e ) {
+				    prevValue = 0.00;
+				}
 				if (valueStart.compareTo(prevStart) < 0) {
 					Date valueEnd = prev(prevStart);
 					long valueDays = getDays(valueStart, valueEnd);
@@ -1931,6 +2059,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 		return ret;
 
+	}
+
+	private static Double getValue(ExpressionContext expressionContext, ContextVariable var) {
+	    return expressionContext.getVariables(var).stream().collect(Collectors.summingDouble(v -> ((Number)v.getValue(v.getPeriod())).doubleValue()));
 	}
 
 	private static long getDays(Date valueStart, Date valueEnd) {
@@ -1997,11 +2129,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		for (ITimedResult<Double> result : results) {
 			Double value = result.getValue();
 
-			if (value == null || value == 0) {
-				salaryBuilder.addZeroEmbargo(embargo.getId(), embargo, result.getContext());
-				continue;
-			}
-
 			String description = null;
 			try {
 				Period period = result.getPeriod();
@@ -2013,8 +2140,15 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			} catch (Exception e) {
 				onCheckError(embargo, DESCRIPTION_UNKNOWN_ERROR);
 			}
+
+                        //if (value == null || value == 0) {
+                        //	salaryBuilder.addZeroEmbargo(embargo.getId(), embargo, result.getContext());
+                        //	continue;
+                        //}
+
 			salaryBuilder.addEmbargo(embargo.getId(), value, description, embargo, result.getContext());
 			total += value;
+			
 		}
 
 		results = null;
@@ -2025,6 +2159,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	
 	protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {
 		fillData(ctx, FILL_DATA);
+		fillData(ctx, FREE_BASES);
 		fillData(ctx, ERE_BASES);
 		
 		ctx.getSalaryType().accept(new SalaryTypeVisitor<Void>() {
@@ -2075,7 +2210,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	protected void fillData(IContractSalaryCalculatorContext ctx, String  names []) throws SalaryException {
 		ExpressionContext expressionContext = ctx.getExpressionContext();
 		for (String name : names) {
-			
 			try {
 				for (ITimedVariable<?> data :expressionContext.eval(name, ctx.getStartDate(), ctx.getEndDate())){
 					try {
@@ -2084,7 +2218,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					}
 					
 					try {
-						salaryBuilder.addData(name, data);
+					    salaryBuilder.addData(name, data);
 					} catch (Throwable t) {
 					}
 				}
@@ -2263,6 +2397,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			@Override
 			public void visitJobTraining(DeductionType deductionType) {
 				add();
+			}
+			
+			@Override
+			public void visitMei(DeductionType deductionType) {
+			    add();
 			}
 			
 			@Override

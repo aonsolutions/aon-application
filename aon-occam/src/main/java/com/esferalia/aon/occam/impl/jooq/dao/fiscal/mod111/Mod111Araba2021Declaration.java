@@ -7,11 +7,12 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod111Araba2021Declaration extends Mod111Declaration {
 	
 	public static boolean accept(Mod111 mod) {
-		return mod.isAraba(); 
+		return mod.isAraba() && mod.getYear() < 2023; 
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
@@ -40,39 +41,39 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 		,AR_C63(Mod111Key.AR_C63,true ,null,null,null,null,null)
 		,AR_C73(Mod111Key.AR_C73,true ,null,null,null,null,null)
 		,AR_C54(Mod111Key.AR_C54,false
-			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
+			, (mod,br) -> br.isNotObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C54,mod,docs,pdocs,br)
 			,null,null,null)
 		,AR_C64(Mod111Key.AR_C64,true
-			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
+			, (mod,br) -> br.isNotObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C64,mod,br)
 			,null,null,null)
 		,AR_C74(Mod111Key.AR_C74,true
-			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
+			, (mod,br) -> br.isNotObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C74,mod,br)
 			,null,null,null)
 		,AR_C58(Mod111Key.AR_C58,false
-			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
+			, (mod,br) -> br.isObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C58,mod,docs,pdocs,br)
 			,null,null,null)
 		,AR_C68(Mod111Key.AR_C68,true
-			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
+			, (mod,br) -> br.isObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C68,mod,br)
 			,null,null,null)
 		,AR_C78(Mod111Key.AR_C78,true
-			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
+			, (mod,br) -> br.isObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C78,mod,br)
 			,null,null,null)
 		,AR_C55(Mod111Key.AR_C55,false
-			, (mod,br) -> br.isFarmer()
+			, (mod,br) -> isFarmer(br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C55,mod,docs,pdocs,br)
 			,null,null,null)
 		,AR_C65(Mod111Key.AR_C65,true
-			, (mod,br) -> br.isFarmer()
+			, (mod,br) -> isFarmer(br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C65,mod,br)
 			,null,null,null)
 		,AR_C75(Mod111Key.AR_C75,true
-			, (mod,br) -> br.isFarmer()
+			, (mod,br) -> isFarmer(br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C75,mod,br)
 			,null,null,null)
 		,AR_C56(Mod111Key.AR_C56,false,null,null,null,null,null)
@@ -102,13 +103,7 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 				?Mod111DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod111::getDeclarationResult).sum()
 				:0.0)
 			,null
-			,"{messages : ["
-					+ "\"Declaraciones en el mismo periodo/ejercicio:\","
-					+ "@foreach{fm : periodModels}"
-					+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
-					+ "@end{}"
-					+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(AR_C83)}\""
-				+"]}"
+			,null
 			)
 		,AR_C84(Mod111Key.AR_C84,false,null,null,null,null,null)
 		,AR_C85(Mod111Key.AR_C85,false,null,null,null,null,null)
@@ -203,6 +198,21 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 		mod111.setReplacementDeclarationAvailable(true);
 		return super.initializeModel(ctx, mod111);
 	}
-	
+
+	@Override
+	public Mod111Key[] getSamePeriodExplainKeys() {
+		return new Mod111Key[] {Mod111Key.AR_C83};
+	}
+
+	private static boolean isProfessional(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.PROFESSIONAL;
+	}
+	private static boolean isFarmer(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.FARMER;
+	}
+	private static boolean isTransportOperator(IrpfBreakdown br) {
+		return br.isFromInvoice() &&  br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR;
+	}
+
 
 }

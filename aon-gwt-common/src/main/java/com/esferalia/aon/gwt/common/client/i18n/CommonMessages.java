@@ -17,8 +17,7 @@ public interface CommonMessages extends Messages {
 	// Ú --> \u00DA ú --> \u00FA
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// ª --> \u00AA º --> \u00BA
-	// ¿ --> \u00BF 
-	// ¡ --> \u00A1
+	// ¿ --> \u00BF
 	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
@@ -672,6 +671,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha IVA")
 	String taxDate();
 
+	@DefaultMessage("Fecha de Expedici\u00F3n")
+	String expeditionDate();
+
 	@DefaultMessage("Acci\u00F3n")
 	String action();
 
@@ -1066,6 +1068,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Declarantes")
 	String deponents();
+
+	@DefaultMessage("Declarantes definidos")
+	String definedDeponents();
 
 	@DefaultMessage("Datos de la declaraci\u00F3n")
 	String declarationData();
@@ -1492,6 +1497,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Vol\u00FAmen de operaciones")
 	String operationsVolume();
 
+	@DefaultMessage("Vol. Operac.")
+	String operationsVolumeAbbr();
+
 	@DefaultMessage("Vol\u00FAmen ingresos")
 	String incomeVolume();
 
@@ -1532,7 +1540,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Operaciones realizadas por sujetos pasivos acogidos al r\u00E9gimen especial del recargo de equivalencia")
 	String box102Msg();
 
-	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antigÃƒÂ¼edades y objetos de colecci\u00F3n")
+	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antigÃƒÂƒÃ‚Â¼edades y objetos de colecci\u00F3n")
 	String box227Msg();
 
 	@DefaultMessage("Operaciones en r\u00E9gimen especial de Agencias de Viajes")
@@ -2703,6 +2711,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("M\u00F3dulos.")
 	String modules();
 
+	@DefaultMessage("Datos adicionales de m\u00F3dulos")
+	String modulesAdditionalData();
+
 	@DefaultMessage("IRPF. M\u00F3dulos. Estimaci\u00F3n objetiva.")
 	String irpfModules();
 
@@ -3186,6 +3197,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Personal asalariado")
  	String header1Table3();
  	
+ 	@DefaultMessage("Personal no asalariado")
+ 	String noSalariedStaff();
+
  	@DefaultMessage("Presentaci\u00f3n de Cuentas")
  	String header1Table4();
  	
@@ -3441,8 +3455,17 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Ver asiento")
 	String viewAccountEntry();
 
+ 	@DefaultMessage("Ver factura")
+	String viewInvoice();
+
  	@DefaultMessage("Cuenta contable")
  	String account();
+ 	
+ 	@DefaultMessage("Bien Afectos o de Inversi\u00f3n")
+ 	String investAssetPanel();
+ 	
+ 	@DefaultMessage("Pregunta")
+ 	String questionPanel();
  	
  	@DefaultMessage("Nivel")
  	String level();
@@ -3753,6 +3776,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Motivo para el rechazo")
 	String rejectReason();
 
+	@DefaultMessage("Generar vencimiento autom\u00E1ticamente")
+	String financeGenerate();
+
 	@DefaultMessage("Vencimiento agrupado")
 	String financeGrouped();
 
@@ -3891,6 +3917,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Prov. ded. y gastos de dif. jus.")
 	String expenses184();
 
+	@DefaultMessage("Declarado")
+	String declared();
+	
 	@DefaultMessage("Clave del declarado")
 	String declaredKey();
 	
@@ -4189,6 +4218,37 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Se procede a enviar el modelo al Servicio de Validaci\u00F3n y Prueba de Impresi\u00F3n de la Agencia Tributaria. Si la validaci\u00F3n es correcta, se obtendr\u00E1 un borrador PDF de la declaraci\u00F3n. \u00BFDesea continuar?")
 	String confirmAeatPrintMod200();
+	
+	@DefaultMessage("Mayores de 19 a\u00F1os")
+	String may19Hours();
+	
+	@DefaultMessage("Menores de 19 a\u00F1os y trabajadores con contratos de aprendizaje o formaci\u00F3n, que no sean discapacitados")
+	String men19Hours();
+	
+	@DefaultMessage("Discapacitados con grado de minusval\u00EDa igual o superior al 33 por 100")
+	String disHours();
+	
+	@DefaultMessage("Horas anuales fijadas en el convenio colectivo vigente")
+	String yearHours();
+	
+	@DefaultMessage("Horas anuales del titular")
+	String ownerHours();
+	
+	@DefaultMessage("Indique si el titular es discapacitado en grado igual o superior al 33%")
+	String ownerDis();
+	
+	@DefaultMessage("Horas anuales del c\u00F3nyuge (*)")
+	String spouseHours();
+	
+	@DefaultMessage("Horas anuales de los hijos menores de 18 a\u00F1os (*)")
+	String childMen18Hours();
+	
+	@DefaultMessage("Como m\u00E1ximo 1800 horas por persona")
+	String actMsg1();
 
+	@DefaultMessage("(*) Por el c\u00F3nyuge y los hijos menores de 18 a\u00F1os que tengan un grado de minusval\u00EDa igual o superior al 33 por 100 se reflejar\u00E1 el 75 por 100 de las horas trabajadas por ellos")
+	String actMsg2();
+
+	
 }
 

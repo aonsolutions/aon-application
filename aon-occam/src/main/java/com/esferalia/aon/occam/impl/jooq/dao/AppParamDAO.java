@@ -4,7 +4,11 @@ import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.jooq.Condition;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -63,6 +67,16 @@ public class AppParamDAO {
 						.setValue(r.getValue(APP_PARAM.VALUE)));
 	}
 	
+	public static List<ApplicationParameter> getApplicationParameters(AONContext ctx, Condition condition) {
+		return ctx.getDslContext().selectFrom(APP_PARAM)
+				.where(condition)
+				.fetch().stream().map(r -> new ApplicationParameter()
+						.setDomain(r.getValue(APP_PARAM.DOMAIN))
+						.setId(r.getValue(APP_PARAM.ID))
+						.setName(r.getValue(APP_PARAM.NAME))
+						.setValue(r.getValue(APP_PARAM.VALUE))).collect(Collectors.toList());
+	}
+	
 	public static void deleteApplicationParameter(AONContext ctx, ApplicationParameterFilter filter) {
 		ctx.getDslContext()
 			.delete(APP_PARAM)
@@ -83,6 +97,26 @@ public class AppParamDAO {
 			.from(APP_PARAM)
 			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())
 				.and(APP_PARAM.NAME.eq(param)))
+			.fetch()
+			.stream()
+			.findFirst()
+			.ifPresent( record  -> ap
+					.setId(record.getValue(APP_PARAM.ID))
+					.setDomain(record.getValue(APP_PARAM.DOMAIN))
+					.setName(record.getValue(APP_PARAM.NAME))
+					.setValue(record.getValue(APP_PARAM.VALUE)) );
+			;
+		return ap.getId() != null ? ap : null;
+	}
+	
+	public static ApplicationParameter fetchOne(AONContext ctx, Integer id) {
+		ctx.checkRead();
+		final ApplicationParameter ap = new ApplicationParameter();
+		ctx.getDslContext()
+			.select(APP_PARAM.ID,APP_PARAM.DOMAIN,APP_PARAM.NAME,APP_PARAM.VALUE)
+			.from(APP_PARAM)
+			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())
+			.and(APP_PARAM.ID.eq(id)))
 			.fetch()
 			.stream()
 			.findFirst()

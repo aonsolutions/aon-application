@@ -6,7 +6,9 @@ import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Question.QUESTION;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
@@ -36,6 +38,8 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
+import com.esferalia.aon.jooq.tables.Item;
+import com.esferalia.aon.jooq.tables.Product;
 import com.esferalia.aon.jooq.tables.records.CategoryRecord;
 import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -537,7 +541,25 @@ public class RegistryOldDAO {
 
 	public static Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter){
 		ctx.checkRead();
-		return ctx.getDslContext().select().from(RITEM).where(RITEM_PROPERTIES.getConditions(filter))
+		return ctx.getDslContext()
+				.select()
+				.from(RITEM)
+				.innerJoin(ITEM).on(ITEM.ID.eq(RITEM.ITEM))
+				.innerJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+				.where(RITEM_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new RItemFiller( ));
+	}
+	
+	public static Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter, int limit, int offset){
+		ctx.checkRead();
+		return ctx.getDslContext()
+				.select()
+				.from(RITEM)
+				.innerJoin(ITEM).on(ITEM.ID.eq(RITEM.ITEM))
+				.innerJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+				.where(RITEM_PROPERTIES.getConditions(filter))
+				.limit(limit)
+				.offset(offset)
 				.fetch().stream().map(new RItemFiller( ));
 	}
 	
@@ -1038,6 +1060,10 @@ public class RegistryOldDAO {
 	public static void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId){
 		int i = ctx.getDslContext().delete(RADDINFO).where(RADDINFO.ID.eq(raddinfoId)).execute();
 		ctx.log().info("DELETE RBANK ("+i+") id: " + raddinfoId);
+	}
+
+	public static void deleteRegistryAddInfo(AONContext ctx, RegistryAddInfoFilter filter){
+		ctx.getDslContext().delete(RADDINFO).where(RADDINFO_PROPERTIES.getConditions(filter)).execute();
 	}
 	
 	// ------------------- RDIRSTAFF

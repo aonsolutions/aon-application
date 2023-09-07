@@ -40,6 +40,9 @@ public interface IdcParserListener {
 	default void onNoEmployeeQuotePEC(String ssNum, String ccc, Date start, Date end) {
 	};
 
+	default void onEmployeeQuoteTRL(String ssNum, String ccc, String description, Date start, Date end) {
+	};
+	
 	default void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo,
 			String quota, String colective, Date start, Date end) {
 		onEmployeeQuotePEC(ssNum, ccc, code, description, portTipo, quota, start, end);
@@ -49,10 +52,16 @@ public interface IdcParserListener {
 			String quota, Date start, Date end) {
 	};
 
+	default void onEmployeeBenefitsLoss(String ssNum, String ccc, String cause, Date start, Date end) {
+	};
+
 	
 	// --------------------------------------------------------------- Contract
 	
 	default void onContractType(String contractType) {
+	};
+	
+	default void onRlce(String rlce) {
 	};
 
 	default void onContractStart(Date start) {

@@ -1,28 +1,48 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
 
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonListBox;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.google.gwt.user.client.ui.ListBox;
+import com.esferalia.aon.occam.api.model.type.WithholdingTypeGroup;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class WithholdingTypeListBox extends ListBox {
+public class WithholdingTypeListBox extends AonListBox {
 	
 	public WithholdingTypeListBox() {
 		this("------");
 	}
+	
 	public WithholdingTypeListBox(String firstItemLabel) {
-		setWidth("100px");
+		setWidth("150px");
 		addItem(firstItemLabel,"");
-		for (WithholdingType d : WithholdingType.values()) {
-			addItem(d.getDescription());	
+		WithholdingTypeGroup wtg = null;
+		for (WithholdingType d : WithholdingType.ORDERED_VALUES) {
+			if (wtg != d.getGroup()) {
+				wtg = d.getGroup();
+				addGroup(" " + AonStringUtils.BULLET + " " +  wtg.getDescription());	
+			}
+			addItem("   " + AonStringUtils.HYPHEN + " " + d.getAbbreviatedDescription() + ". " + d.getDescription(), d.toString());
 		}
 	}
 
 	public void setValue(WithholdingType type) {
-		setSelectedIndex(type==null?0:type.ordinal()+1);
+		if (type != null ) {
+			boolean found = false;
+			for (int i = 0; i < getItemCount(); i++) {
+				if ( !found && AonStringUtils.equals( getValue(i), type.toString())) {
+					found = true;
+					setSelectedIndex(i);
+				}
+			}
+		} else {
+			setSelectedIndex(0);
+		}
 	}
 
 	public WithholdingType getValue() {
-		return getSelectedIndex()==0?null:WithholdingType.values()[getSelectedIndex()-1];
+		return AonStringUtils.isBlank(getSelectedValue())
+			? null
+			: WithholdingType.valueOf( getSelectedValue() );
 	}
 	
 }

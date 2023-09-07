@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
@@ -270,6 +271,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, boolean isTransform, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
+	void fillContractExtension(String currentDomainName, EmployeeInfo employeeData, ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	void fillContractRelocation(String currentDomainName, Integer contractId, Map<String, String> contractRelocationInfo, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
 	// ------------------------------------------------- SEPE Files
@@ -311,12 +316,17 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			String ocup, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	void cambioCno(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String cno, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			String cat, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	// ------------------------------------------------- SEPE Comunications
 	
+	void sendLlamamientoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException;
+
 	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException;
@@ -386,5 +396,11 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate, Date endDate,
 			AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException;
+
+	// ------------------------------------------------- Agreement ContextProvider
+	
+	void getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate, AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException;
+	
+	void evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel, AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException;
 
 }

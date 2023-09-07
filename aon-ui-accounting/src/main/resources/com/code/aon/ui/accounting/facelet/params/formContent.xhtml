@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+		<ui:param name="toolbarTitle"
+			value="#{bundle.accounting_default_params_module}" />
+		<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+
+		<ui:define name="toolbarContent">
+
+			<aon:commandButton id="save" value="#{bundle.aon_save}"
+				accesskey="#{bundle.aon_key_save}"
+				actionListener="#{accAppParams.onAccept}"
+				styleClass="aon-finding-toolbar-item aon-icon-accept"
+				onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;">
+			</aon:commandButton>
+		</ui:define>
+	</ui:decorate>
+
+	<aon:div styleClass="aon-scroll-area">
+		<aon:div styleClass="aon-margin-top aon-width-all"> 
+			<aon:div styleClass="aon-bold aon-italic">
+				<aon:outputText value="Valores por defecto" />
+			</aon:div>
+			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-300
+							  ,aon-panelGrid-even aon-width-auto">
+	
+				<aon:outputLabel for="ACC_default_period"
+					value="#{bundle.accounting_def_period}" />
+				<aon:selectOneMenu id="ACC_default_period"
+					value="#{accAppParams.parameters['ACC_DEFAULT_PERIOD'].value}">
+					<f:selectItem itemValue="" itemLabel=" " />
+					<f:selectItems value="#{accountingCollections.enabledAccountPeriodKeys}" />
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel for="ACC_default_sales_account"
+					value="#{bundle.aon_sales_account}" />
+				<aon:selectOneMenu id="ACC_default_sales_account"
+					value="#{accAppParams.parameters['ACC_DEFAULT_SALES_ACC'].value}">
+					<f:selectItem itemValue="{null}" itemLabel=" " />					
+					<f:selectItems value="#{accountCollections.salesAccountsIds}" />
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel for="ACC_default_purchase_account"
+					value="#{bundle.aon_purchase_account}" />
+				<aon:selectOneMenu id="ACC_default_purchase_account"
+					value="#{accAppParams.parameters['ACC_DEFAULT_PURCHASE_ACC'].value}">
+					<f:selectItems value="#{accountCollections.purchaseAccountsIds}" />
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel for="ACC_default_cash_account"
+					value="#{bundle.accounting_def_cash_acc}" />
+				<aon:selectOneMenu id="ACC_default_cash_account"
+					value="#{accAppParams.parameters['ACC_DEFAULT_CASH_ACC'].value}">
+					<f:selectItems value="#{accountCollections.cashAccountsIds}" />
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel for="ACC_default_charged_vat_account"
+					value="#{bundle.accounting_def_charged_vat_acc}" />
+				<aon:selectOneMenu id="ACC_default_charged_vat_account"
+					value="#{accAppParams.parameters['ACC_DEFAULT_CHARGED_VAT_ACC'].value}">
+					<f:selectItem itemValue="{null}" itemLabel=" " />
+					<f:selectItems value="#{accountCollections.chargedVatAccountsIds}" />
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel for="ACC_default_paid_vat_account"
+					value="#{bundle.accounting_def_paid_vat_acc}" />
+				<aon:selectOneMenu id="ACC_default_paid_vat_account"
+					value="#{accAppParams.parameters['ACC_DEFAULT_PAID_VAT_ACC'].value}">
+					<f:selectItem itemValue="{null}" itemLabel=" " />
+					<f:selectItems value="#{accountCollections.paidVatAccountsIds}" />
+				</aon:selectOneMenu>
+	
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_vat_negative_adjust}"/>
+					<ui:param name="lookupSuffix" value="ACC_VAT_NEGATIVE_ADJUST_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accVatNegativeAdjustAccount}" />
+				</ui:include>
+
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_dua_vat}"/>
+					<ui:param name="lookupSuffix" value="ACC_DEF_DUA_VAT_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDefDuaVatAccount}" />
+				</ui:include>
+				
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_dua_duty}"/>
+					<ui:param name="lookupSuffix" value="ACC_DEF_DUA_DUTY_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDefDuaDutyAccount}" />
+				</ui:include>
+
+				<aon:outputLabel for="ACC_default_paid_retention_account"
+					value="#{bundle.accounting_def_paid_ret_acc}" />
+				<aon:selectOneMenu id="ACC_default_paid_retention_account"
+					value="#{accAppParams.parameters['ACC_DEFAULT_PAID_RET_ACC'].value}">
+					<f:selectItems value="#{accountCollections.paidRetentionAccountsIds}" />
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel for="ACC_default_charged_retention_account"
+					value="#{bundle.accounting_def_charged_ret_acc}" />
+				<aon:selectOneMenu id="ACC_default_charged_retention_account"
+					value="#{accAppParams.parameters['ACC_DEFAULT_CHARGED_RET_ACC'].value}">
+					<f:selectItems
+						value="#{accountCollections.chargedRetentionAccountsIds}" />
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel
+					for="ACC_accounting_def_vat_percent"
+					value="#{bundle.accounting_def_vat_percent}" />
+				<aon:selectOneMenu
+					id="ACC_accounting_def_vat_percent"
+					value="#{accAppParams.parameters['ACC_DEFAULT_VAT_PERCENT'].value}">
+					<f:selectItem itemValue="" itemLabel=" " />
+					<f:selectItems value="#{configCollections.vatTaxesIds}" />						
+				</aon:selectOneMenu>
+				
+				<aon:outputLabel
+					for="ACC_accounting_def_retention_percent"
+					value="#{bundle.accounting_def_retention_percent}" />
+				<aon:selectOneMenu
+					id="ACC_accounting_def_retention_percent"
+					value="#{accAppParams.parameters['ACC_DEFAULT_RETENTION_PERCENT'].value}">
+					<f:selectItem itemValue="" itemLabel=" " />
+					<f:selectItems value="#{configCollections.retentionTaxesIds}" />						
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel
+					for="ACC_accounting_def_invoice_series"
+					value="#{bundle.accounting_def_invoice_series}" />
+				<aon:selectOneMenu
+					id="ACC_accounting_def_invoice_series"
+					value="#{accAppParams.parameters['ACC_DEFAULT_INVOICE_SERIES'].value}">
+					<f:selectItem itemValue="" itemLabel=" " />
+					<f:selectItems value="#{configCollections.invoiceSeriesIds}" />						
+				</aon:selectOneMenu>
+				
+				<aon:outputLabel for="ACC_default_prepayment"
+					value="#{bundle.accounting_def_prepayment_acc}" />
+				<aon:selectOneMenu id="ACC_default_prepayment"
+					value="#{accAppParams.parameters['ACC_DEFAULT_PREPAYMENT_ACC'].value}">
+					<f:selectItems value="#{accountCollections.prepaymentAccountsIds}" />
+				</aon:selectOneMenu>
+	
+				<aon:outputLabel for="ACC_operations_deadline"
+					value="#{bundle.accounting_operations_deadline} (#{bundle.aon_date_pattern})" />
+				<aon:div styleClass="aon-nowrap">
+					<aon:selectInputDate id="ACC_operations_deadline"
+						value="#{accAppParams.accOperationsDeadline}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+					<aon:selectBooleanCheckbox id="ACC_deadline_include_rectifications"
+						styleClass="aon-margin-left"
+						value="#{accAppParams.parameters['ACC_DEADLINE_INCL_RECTIFICATIONS'].value}" />
+					<aon:outputLabel for="ACC_deadline_include_rectifications" 
+						styleClass="aon-italic"
+						value="#{bundle.accounting_operations_deadline_include_rectifications}" />
+				</aon:div>
+			</aon:panelGrid>
+		</aon:div>
+							
+		<aon:div styleClass="aon-margin-top aon-width-all"> 
+			<aon:div styleClass="aon-bold aon-italic">
+				<aon:outputText value="Cuentas por defecto laboral" />
+			</aon:div>
+			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-300
+							  ,aon-panelGrid-even aon-width-auto">
+							  
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_acc}"/>
+					<ui:param name="lookupSuffix" value="ACC_DEFAULT_SALARY_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDefaultSalaryAccount}" />
+				</ui:include>
+ 									
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_in_kind_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_DEFAULT_SALARY_IK_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDefaultSalaryIKAccount}" />
+				</ui:include>
+
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_allowance_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_DEFAULT_ALLOWANCE_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDefaultAllowanceAccount}" />
+				</ui:include>
+	
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_compensation_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_DEFAULT_COMPENSATION_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDefaultCompensationAccount}" />
+				</ui:include>
+
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_sal_charged_ret_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_SALARY_CHARGED_RET_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accSalaryChargedRetAccount}" />
+				</ui:include>
+
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_sal_charged_ret_in_kind_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_SALARY_CHARGED_RET_IK_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accSalaryChargedRetIKAccount}" />
+				</ui:include>
+
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_pending_salary_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_DEFAULT_PENDING_SALARY_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDefaultPendingSalaryAccount}" />
+				</ui:include>
+	
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_social_insurance_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_DEFAULT_SOCIAL_INSURANCE_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDefaultSocialInsuranceAccount}" />
+				</ui:include>
+	
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_enterprise_social_insurance_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_DEFAULT_COMPANY_SOC_INS_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDefaultCompanySocInsAccount}" />
+				</ui:include>
+				
+				
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_ded_advance_payment_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_SALARY_DED_ADV_PAYMENT_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accSalaryDedAdvPaymentAccount}" />
+				</ui:include>
+
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_ded_seize_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_SALARY_DED_SEIZE_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accSalaryDedSeizeAccount}" />
+				</ui:include>
+
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_ded_in_kind_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_SALARY_DED_IN_KIND_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accSalaryDedInKindAccount}" />
+				</ui:include>
+
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_ded_other_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_SALARY_DED_OTHER_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accSalaryDedOtherAccount}" />
+				</ui:include>
+				
+			</aon:panelGrid>
+		</aon:div>
+		
+		<aon:div styleClass="aon-margin-top aon-width-all"> 
+			<aon:div styleClass="aon-bold aon-italic">
+				<aon:outputText value="Cuentas por defecto amortizaciones" />
+			</aon:div>
+			<aon:panelGrid columns="2" styleClass="aon-margin-top aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-300
+							  ,aon-panelGrid-even aon-width-auto">
+				<aon:outputLabel for="ACC_default_asset_lost"
+					value="#{bundle.accounting_def_asset_lost_acc}" />
+				<aon:selectOneMenu id="ACC_default_asset_lost"
+					value="#{accAppParams.parameters['ACC_DEFAULT_ASSET_LOST_ACC'].value}">
+					<f:selectItem itemValue="#{null}" itemLabel=" " />					
+					<f:selectItems value="#{accountCollections.assetLostAccountsIds}" />
+				</aon:selectOneMenu>
+				
+				<aon:outputLabel for="ACC_default_asset_profit"
+					value="#{bundle.accounting_def_asset_profit_acc}" />
+				<aon:selectOneMenu id="ACC_default_asset_profit"
+					value="#{accAppParams.parameters['ACC_DEFAULT_ASSET_PROFIT_ACC'].value}">
+					<f:selectItem itemValue="#{null}" itemLabel=" " />					
+					<f:selectItems value="#{accountCollections.assetProfitAccountsIds}" />
+				</aon:selectOneMenu>
+				
+				<aon:outputLabel for="ACC_default_ocr_item"
+					value="Art\u00EDculo por defecto para OCR" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+					<ui:param name="lookupId" value="ACC_default_ocr_item" />
+					<ui:param name="lookupBean" value="#{allItemLookup}" />
+					<ui:param name="lookupTo" value="#{accAppParams.ocrDefaultItem}" />
+					<ui:param name="idRequired" value="#{false}" />
+					<ui:param name="skipLabel" value="#{true}" />
+				</ui:include>
+				
+			</aon:panelGrid>
+		</aon:div>
+		
+	</aon:div>
+
+</ui:composition>

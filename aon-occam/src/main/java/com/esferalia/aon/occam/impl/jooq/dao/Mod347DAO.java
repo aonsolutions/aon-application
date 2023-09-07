@@ -972,8 +972,8 @@ public class Mod347DAO {
 	
 	private static Stream<VatContext> getInvoiceBreakdown(AONContext ctx, Date fromDate, Date toDate,Mod347 mod347) {
 		return Stream.concat(
-				 VATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
-				,VATDAO.getPeriodPendingAccrualVatBreakdown(ctx, fromDate, toDate, null)
+				 OLDVATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
+				,OLDVATDAO.getPeriodPendingAccrualVatBreakdown(ctx, fromDate, toDate, null)
 			)
 			.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )				
 			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )
@@ -1121,5 +1121,27 @@ public class Mod347DAO {
 			throw new AonCoreException(e);
 		}
 	}
+	
+    // Grabar resultado y pdf en response y marcar el modelo como enviado
+	public static Mod347 aeatPresentation(AONContext ctx, Mod347 mod, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {			
+			
+			// Antes de nada se borra la presentación anterior
+			DataResponseDAO.deleteAEATResponse(ctx, mod);			
+			
+			// Grabar los datos en data_response y sus tablas asociadas
+			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
+			
+			// Marcar el modelo como enviado					
+			if (mod != null && mod.getId() != null) {
+				ctx.getDslContext().update(FS_MOD347)					
+					.set(FS_MOD347.STATUS, FiscalStatus.SENT.value())
+					.where(FS_MOD347.ID.equal(mod.getId()))
+					.execute();
+				return getById(ctx, mod.getId());
+			}
+		}
+		return mod;
+	}	
 	
 }

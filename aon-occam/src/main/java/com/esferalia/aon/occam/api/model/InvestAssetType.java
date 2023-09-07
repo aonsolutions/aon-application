@@ -6,23 +6,29 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvestAssetType implements Serializable{
 
-	PREMISES,
-	OTHER_BUILDING,
-	MEANS_OF_TRANSPORT,
-	FIXED_PHONE,
-	CELLULAR_PHONE,
-	FAX,
-	FURNITURE,
-	MACHINERY,
-	COMPUTER_EQUIPMENT,
-	INSTALLATION,
-	ACCOUNT_GROUP_20_ASSET,
-	ACCOUNT_GROUP_21_ASSET,
-	ACCOUNT_GROUP_23_ASSET,
-	BUILDING_PLOT;
+	PREMISES("Local"),
+	OTHER_BUILDING("Otros Inmuebles"),
+	MEANS_OF_TRANSPORT("Medios de Transporte"),
+	FIXED_PHONE("Telefono Fijo"),
+	CELLULAR_PHONE("Telefono Movil"),
+	FAX("Fax"),
+	FURNITURE("Mobiliario"),
+	MACHINERY("Maquinaria"),
+	COMPUTER_EQUIPMENT("Equipos Informaticos"),
+	INSTALLATION("Instalacion"),
+	ACCOUNT_GROUP_20_ASSET("Bienes Grupo 20 PGC"),
+	ACCOUNT_GROUP_21_ASSET("Bienes Grupo 21 PGC"),
+	ACCOUNT_GROUP_23_ASSET("Bienes Grupo 23 PGC"),
+	BUILDING_PLOT("Solar");
 
-	private InvestAssetType() {
+	private String description;
 	
+	private InvestAssetType(String description) {
+		this.description = description;
+	}
+	
+	public String description(){
+		return description;
 	}
 	
 	public Byte value(){

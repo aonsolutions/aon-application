@@ -44,6 +44,12 @@ public class JsIRPFBreakdown extends JavaScriptObject {
 	public final Date getTaxDate() {
 		return getTaxDateString() == null ? null : new Date( Long.valueOf(getTaxDateString()));
 	}
+	public final native String getChargeDateString() /*-{
+		return this.chargeDate;
+	}-*/;
+	public final Date getChargeDate() {
+		return getChargeDateString() == null ? null : new Date( Long.valueOf(getChargeDateString()));
+	}
 	public final native boolean isFromSalary() /*-{
 		return this.fromSalary;
 	}-*/;
@@ -88,6 +94,12 @@ public class JsIRPFBreakdown extends JavaScriptObject {
 	}-*/;
 	public final native double getDeductibleQuota() /*-{
 		return this.deductibleQuota;
+	}-*/;
+	public final native double getParticipationPercent() /*-{
+		return this.participationPercent;
+	}-*/;
+	public final native double getParticipationQuota() /*-{
+		return this.participationQuota;
 	}-*/;
 	public final native int getGroupByNif() /*-{
 		return this.groupByNif;

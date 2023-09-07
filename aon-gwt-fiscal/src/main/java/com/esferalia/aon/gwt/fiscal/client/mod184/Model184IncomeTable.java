@@ -106,7 +106,6 @@ public class Model184IncomeTable extends SimpleLayoutPanel implements HasSelecti
 		tablePanel.clear();
 		tablePanel.setWidget(tab);
 		int i = 0;
-		boolean resetSelection = false;
 		for (Mod184Income income : this.model.getIncomes()) {
 			AonDisplayGridRow row = tab.addRow();
 			row.addStyleName(AON.CSS.aonClickable()); 

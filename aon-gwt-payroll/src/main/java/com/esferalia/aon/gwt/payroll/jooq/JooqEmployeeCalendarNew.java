@@ -935,7 +935,7 @@ public class JooqEmployeeCalendarNew {
 		
 		for(CalendarDayType calendarDayType : dayTypeFixList) {
 			if(calendarDayType.getDayType() == DayType.INACTIVITY) {
-				Integer dayBetween = DateUtils.getDaysBetween(calendarDayType.getStartDate(), calendarDayType.getEndDate()) + 1;
+				Integer dayBetween = null == calendarDayType.getEndDate() ? Integer.MAX_VALUE :  DateUtils.getDaysBetween(calendarDayType.getStartDate(), calendarDayType.getEndDate()) + 1;
 				
 				dslContext.insertInto(CONTRACT_DATA)
 					.set(CONTRACT_DATA.DOMAIN, domainId)

@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.el.ELException;
-import javax.el.VariableMapper;
+import jakarta.el.ELException;
+import jakarta.el.VariableMapper;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 

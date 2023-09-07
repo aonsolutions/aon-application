@@ -2,9 +2,9 @@ package com.esferalia.aon.payroll;
 
 import java.util.Locale;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.audit.IAuditable;
@@ -143,6 +143,7 @@ public class ContractInfo extends ContractInfoDB implements IExpression, IAudita
 	public enum ContractSsStatus implements IStringEnum, IResourceable {
 		PENDING("PENDING"),
 		BATCHED("BATCHED"),
+		ACCEPTED("ACCEPTED"),
 		RECORDED("RECORDED"),
 		DENIED("DENIED"),
 		BLOCKED("BLOCKED"),
@@ -165,6 +166,8 @@ public class ContractInfo extends ContractInfoDB implements IExpression, IAudita
 				return "Pendiente";
 			} else if(this==BATCHED){
 				return "Remesado";
+			} else if(this==ACCEPTED){
+				return "Aceptado";
 			} else if(this==RECORDED){
 				return "Grabado en AFI";
 			} else if(this==DENIED){

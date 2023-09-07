@@ -36,4 +36,3 @@ public enum Mod2002022LQ579Key implements Serializable, IMod200KeysProvider  {
 	}
 
 }
-

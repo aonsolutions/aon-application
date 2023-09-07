@@ -371,7 +371,7 @@ public class Offer implements Serializable {
 	
 	public String getReferenceCode() {
     	String referenceCode = AonStringUtils.leftPad(Integer.toString(getNumber()), 6, '0');
-    	referenceCode += '/' + getVersion();
+    	referenceCode = referenceCode + "/" + getVersion();
 		if (!AonStringUtils .isEmpty(getSeries())) {
 			referenceCode = getSeries() + "/" + referenceCode;
 		}

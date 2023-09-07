@@ -85,6 +85,22 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Main Massive Contracts  ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_main_massive_contracts</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/massive_contracts.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Main Massive Fie  ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_main_massive_fie</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/massive_fie.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 	<!-- ===================== Main Trash  ============================ -->
 	<navigation-rule>
 		<navigation-case>

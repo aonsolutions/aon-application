@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022ARABAResult
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022ARABAScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022ARABAAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -219,7 +220,7 @@ public class Model390HF2022ARABA extends Model390HFBase {
 
 					@Override
 					public String getCheckDataResponseDataAction() {
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod390HFCheckDataResponseData";
 					}
 
 					@Override

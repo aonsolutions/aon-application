@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.security.Principal;
 import java.net.IDN;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.Session;
 import org.apache.catalina.connector.Request;

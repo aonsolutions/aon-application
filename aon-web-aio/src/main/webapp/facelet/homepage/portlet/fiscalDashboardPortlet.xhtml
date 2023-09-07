@@ -9,118 +9,26 @@
 
 	<aon:if test="#{!domainSwitcher.udapa}">
 		<aon:div styleClass="aon-portlet">
-			<!--script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script-->
 			<aon:div styleClass="aon-portlet-title">								
 				<aon:div styleClass="aon-portlet-title-buttons">
 				</aon:div>
 				<aon:outputText value="#{bundle.daily_tracking_graphic}" styleClass="aon-portlet-title-text aon-icon aon-icon-stat"/>
 			</aon:div>
 			<aon:div styleClass="aon-portlet-body">
-				<aon:panelGrid columns="2" styleClass="aon-width-all"
-					columnClasses="aon-width-half aon-vertical-align-top,aon-width-half">
-					<aon:div id="fiscal_status_div" >
-						<aon:div styleClass="aon-bold">
-							<aon:outputText value="Tabla fiscal del ejercicio "/>
-							<aon:selectOneMenu id="fiscalYearSelect"
-								style="border: none;"
-								value="#{dashboard.fiscalYear}">
-								<a4j:support event="onchange"
-									actionListener="#{dashboard.onFiscalPeriodChanged}" 
-									reRender="fiscal_status_div_inner"
-									ajaxSingle="true" />
-								<f:selectItem itemLabel="-" itemValue="" />
-								<f:selectItems value="#{dashboard.fiscalYears}" />
-							</aon:selectOneMenu>
-						</aon:div>
-						
-						<!--
-						Fiscal Table ( reRender )
-						-->
-						<aon:div id="fiscal_status_div_inner">
-							<aon:if test="#{empty dashboard.fiscalInfo}">
-									<aon:div style="padding-top: 10px;">
-										<aon:outputText value="No se encontraron resultados"/>
-									</aon:div>
-							</aon:if>
-							<table style="margin: 10px;margin-left: auto; margin-right: auto; ">
-							<aon:if test="#{not empty dashboard.fiscalInfo}">
-								<tr>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="E"/></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="F"/></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="M"/></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="A"/></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="M"/></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="J"/></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="X"/></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="A"/></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="S"/></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="O"/></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="N"/></td>
-									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="D"/></td>
-								</tr>
-							</aon:if>
-							<ui:repeat var="modelConfig" value="#{dashboard.fiscalInfo}">
-								<tr>
-									<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;">
-										<aon:outputText value=""
-											style="padding-left: 16px;"
-											rendered="#{modelConfig.administration != null}"
-											styleClass="#{modelConfig.administrationStyle} aon-nowrap"
-											/>
-										<aon:outputText value="?"
-											rendered="#{modelConfig.administration == null}"/>
-									</td>
-									<td style="width: 55px; border: solid #BBB 1px; font-weight: bold; white-space: nowrap;">
-										<aon:outputText value="#{modelConfig.model.name}"/>
-									</td>
-									<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;">
-										<aon:div style="display:inline;cursor:pointer;"
-											rendered="#{modelConfig.document != null}">
-											<aon:outputText value="&#160;" 
-												style="padding-left:15px;" styleClass="aon-icon-comment"/>
-											<rich:toolTip value="#{modelConfig.document} - #{modelConfig.name}" 
-												showEvent="onmouseover"
-												style="width: 400px;">
-												<f:facet name="defaultContent">
-													<aon:outputText value="#{bundle.aon_in_progress}" />
-												</f:facet>
-											</rich:toolTip>
-										</aon:div>
-									</td>
-									<ui:repeat var="status" value="#{modelConfig.statusList}">
-										<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"
-											title="Modelo #{modelConfig.model.name}/#{status.period} - #{status.message}"
-											colspan="#{12 / modelConfig.numberOfStatuses}">
-											
-											<aon:commandLink action="#{dashboard.navigateModel}">
-												<aon:outputText value=""
-													rendered="#{!status.missing}"
-													style="padding-left: 16px;"
-													styleClass="#{status.styleClass} aon-nowrap"
-													/>
-												<aon:outputText value="+"
-													rendered="#{status.missing}"
-													/>
-												<f:param name="model" value="#{modelConfig.model}"/>
-												<f:param name="period" value="#{status.period}"/>
-												<f:param name="adm" value="#{modelConfig.administration}"/>
-												<f:param name="status" value="#{status.missing}"/>
-											</aon:commandLink>
-										</td>
-									</ui:repeat>
-								</tr>
-							</ui:repeat>
-							</table>
-						</aon:div>
-						
-					</aon:div>
+				<aon:panelGrid columns="1" styleClass="aon-width-all"
+					columnClasses="aon-vertical-align-top">
+					<aon:panelGrid id="accountMessagesDiv" columns="2" styleClass="aon-width-all" 
+						columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
 					
-					<aon:panelGrid id="accountMessagesDiv" columns="1" styleClass="aon-width-all" columnClasses="aon-width-all">
+						<aon:div id="fiscal_status_div" style="height: 400px; width: 100%;">
+							<ui:decorate template="/com/esferalia/aon/gwt/fiscal/facelet/innerGwt.xhtml">
+								<ui:param name="module" value="aon_gwt_fiscal" />
+								<ui:param name="entryPoint" value="ModelMatrix" />
+							</ui:decorate>
+						</aon:div>
+						
 						<aon:div id="accountingGraphContainer" 
-							style="width: 98%; min-height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
+							style="width: 98%; height: 400px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
 							<aon:div styleClass="aon-bold">
 								<aon:outputText value="Apuntes por Meses del Ejercicio"/>
 								<!--
@@ -176,56 +84,51 @@
 								google.charts.setOnLoadCallback(drawAccountColumnChart);							
 								
 						   	</script>
-						</aon:div>
-						
-						<aon:div id="messageList"  style="width: 99%; margin-left: 5px; border:solid #BBB 1px; text-align: center; margin-top: 10px;padding-bottom: 10px;padding-top: 5px;">
-							<aon:div styleClass="aon-bold">
-								<aon:outputText value="Datos relativos al ejercicio Contable #{dashboard.accountingPeriod.name}"/>
+
+							<aon:div id="messageList"  style="width: 99%; margin-left: 5px; border:solid #BBB 1px; text-align: center; margin-top: 30px;padding-bottom: 10px;padding-top: 5px;">
+								<aon:div styleClass="aon-bold">
+									<aon:outputText value="Datos relativos al ejercicio Contable #{dashboard.accountingPeriod.name}"/>
+								</aon:div>
+								<!--
+								Account messages list ( reRender )
+								-->
+								<ul class="aon-width-all aon-text-left" 
+									style="margin-left: 10px; margin-top: 10px; list-style-type:none">
+									<c:forEach var="msg" items="#{dashboard.messages}">
+										<li style="margin-left: 5px;">
+											<aon:outputText value="#{msg.category}" 
+												style="padding-left: 20px;"
+												styleClass="aon-bold aon-icon-point-#{msg.level}"/>
+											<aon:outputText value="#{msg.message}" styleClass="aon-padding-left" />
+										</li>
+									</c:forEach>
+								</ul>
 							</aon:div>
-							<!--
-							Account messages list ( reRender )
-							-->
-							<ul class="aon-width-all aon-text-left" 
-								style="margin-left: 10px; margin-top: 10px; list-style-type:none">
-								<c:forEach var="msg" items="#{dashboard.messages}">
-									<li style="margin-left: 5px;">
-										<aon:outputText value="#{msg.category}" 
-											style="padding-left: 20px;"
-											styleClass="aon-bold aon-icon-point-#{msg.level}"/>
-										<aon:outputText value="#{msg.message}" styleClass="aon-padding-left" />
-									</li>
-								</c:forEach>
-							</ul>
+
+
 						</aon:div>
-						
 					</aon:panelGrid>
 				</aon:panelGrid>	
 			
 			</aon:div>
 			
-			<!--
-			-->			
 			<script type="text/javascript" > 
 				//<![CDATA[
-				function selectFiscalYear() {
+				function selectYear() {
 					// current year
 					fiscalYear = new Date().getFullYear() ; 
-					
-					for ( id of  ['fiscalYearSelect', 'accountPeriodSelect'] ) {
-						let select = document.getElementById('aonContent:mainForm:'+id);
-							
-						for ( option of select.options ) {
-							if ( option.text == fiscalYear ) {
-								if ( select.value != option.value ){
-									select.value = option.value;
-									select.onchange();
-								}
-								break;
+					let select = document.getElementById('aonContent:mainForm:accountPeriodSelect');
+					for ( option of select.options ) {
+						if ( option.text == fiscalYear ) {
+							if ( select.value != option.value ){
+								select.value = option.value;
+								select.onchange();
 							}
+							break;
 						}
 					}
 				}
-				document.addEventListener('DOMContentLoaded', selectFiscalYear, false );
+				document.addEventListener('DOMContentLoaded', selectYear, false );
 				//]]>
 			</script>
 

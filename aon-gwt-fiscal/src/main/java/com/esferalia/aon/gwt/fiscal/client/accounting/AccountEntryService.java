@@ -2,7 +2,9 @@ package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
@@ -10,6 +12,8 @@ import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
@@ -42,7 +46,14 @@ public interface AccountEntryService extends RemoteService {
 	FinanceEntry save(String domainName, int domain, String user, FinanceEntry financeEntry) throws AonCoreException;
 	IAccountEntryWrapper  updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) throws AonCoreException;
 	LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(String domainName, int domain, String user, IAccountEntryWrapper wrapper) throws AonCoreException;
+
+	// AMORTIZATION TYPE
+	List<Account> getFixedAssetAccounts(String domainName, int domain, String user) throws AonCoreException;
+	List<Account> getAccumulatedAccounts(String domainName, int domain, String user) throws AonCoreException;
+	List<Account> getAllocationAccounts(String domainName, int domain, String user) throws AonCoreException;
+
+	List<AmortizationType> getAmortizationTypeList(String domainName, int domain, String user, AmortizationTypeParams params) throws AonCoreException;
+	void deleteAmortizationTypes(String domainName, int domain, String user, List<Integer> deleteIds) throws AonCoreException;
+	void saveAmortizationType(String domainName, int domain, String user, AmortizationType amortizationType) throws AonCoreException;
 	
-
-
 }

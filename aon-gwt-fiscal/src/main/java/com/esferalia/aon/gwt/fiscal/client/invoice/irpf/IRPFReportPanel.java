@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.invoice.irpf;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
@@ -75,10 +76,10 @@ public class IRPFReportPanel extends ScrollPanel{
 			}
 		});
 		StringBuilder requestData = new StringBuilder();
-		requestData.append("&domainName=" + options.getDomainName()  );
-		requestData.append("&domainId=" + options.getDomain() );
-		requestData.append("&user=" + options.getUser() );
-		requestData.append("&irpfParams=" + JsonParams.convert( params ));
+		requestData.append("&"+IRequestParamsNames.DOMAIN_NAME+"=" + options.getDomainName()  );
+		requestData.append("&"+IRequestParamsNames.DOMAIN_ID+"=" + options.getDomain() );
+		requestData.append("&"+IRequestParamsNames.USER+"=" + options.getUser() );
+		requestData.append("&"+IRequestParamsNames.IRPF_PARAMS+"=" + JsonParams.convert( params ));
 		xhr.send(requestData.toString());
 
 	}

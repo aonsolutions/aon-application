@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Cno;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.DataRequest;
@@ -195,5 +197,13 @@ public interface ICommon {
 	public CertificateInfo getCertificateInfo(byte[] data, String password) throws IllegalArgumentException;
 	public void deleteCertificate(AONContext ctx, Integer attachId, AttachFilter attachFilter, RegistryAddInfoFilter raddinfoFilter);
 	public void saveCertificate(AONContext ctx, Integer domainId, Integer userId, Certificate certificate);
+	
+	//WORKGROUP
+	public List<Cno> getCno(CloseableAONContext ctx);
+	
+	// COST CENTER
+	public List<ApplicationParameter> getCostCenters(CloseableAONContext ctx);
+	public void saveCostCenter(CloseableAONContext ctx, ApplicationParameter costCenter);
+	public void deleteCostCenter(CloseableAONContext ctx, Integer id);
 
 }

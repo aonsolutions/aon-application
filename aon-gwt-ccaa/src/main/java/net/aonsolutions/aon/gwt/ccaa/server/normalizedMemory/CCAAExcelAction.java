@@ -849,6 +849,23 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA02001.getCode()) +"-"+
 				getD2Deposit().getMap().get(D2DepositHeaderKey.IDA02009.getCode()), 1, 7);
 		
+		if(d2Deposit.getYear() >= 2022) {
+			row = sheet.createRow(rowCount++);
+			ssHeader("\u00d3rgano de Administraci\u00f3n", pageMaxNumber);
+		
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			idacell("", 0, 3);
+			idacell("Ejercicio "+ getD2Deposit().getYear(),4,5);
+			idacell("Ejercicio "+ (getD2Deposit().getYear()-1),6,7);
+		
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			idacell("Porcentaje de mujeres en el \u00f3rgano de administraci\u00f3n", 0, 3);
+			idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA04211.getCode()),4,5);
+			idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA042119.getCode()),6,7);
+		}
+		
 		row = sheet.createRow(rowCount++);
 		ssHeader("Personal asalariado", pageMaxNumber);
 		
@@ -985,6 +1002,64 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		cell.setCellValue(value);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
 		
+		if(d2Deposit.getYear() >= 2022) {
+			row = sheet.createRow(rowCount++);
+			String text2 = "La sociedad presenta por primera vez o actualiza los datos de indentificaci\u00f3n del titular real";		
+
+			row.setRowStyle(rowStyle);
+			cellCount = 0;
+			Cell cell2 = row.createCell(cellCount++);
+			cell2.setCellStyle(style);
+			cell2.setCellValue(text2);
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			cell = row.createCell(cellCount++);
+			cell.setCellStyle(style);
+			cell.setCellValue(value);
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+			
+			row = sheet.createRow(rowCount++);
+			String text3 = "Indique el tipo de actualizaci\u00f3n de los datos de indentificaci\u00f3n del titular real";		
+
+			row.setRowStyle(rowStyle);
+			cellCount = 0;
+			cell = row.createCell(cellCount++);
+			cell.setCellStyle(style);
+			cell.setCellValue(text3);
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+			String ITR8234001 = d2Deposit.getMap().get(D2DepositHeaderKey.ITR8234001.getCode());
+			String ITR8234001TXT = "";
+			if("1".equals(ITR8234001)) ITR8234001TXT = "Primera";
+			else if("2".equals(ITR8234001)) ITR8234001TXT = "Actualizaci\u00f3n";
+			else if("3".equals(ITR8234001)) ITR8234001TXT = "Rectificaci\u00f3n";
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			cell = row.createCell(cellCount++);
+			cell.setCellStyle(style);
+			cell.setCellValue(ITR8234001TXT);
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+			row = sheet.createRow(rowCount++);
+			String text4 = "Fecha en la que debe reputarse que se ha producido el cambio de datos";		
+
+			row.setRowStyle(rowStyle);
+			cellCount = 0;
+			cell = row.createCell(cellCount++);
+			cell.setCellStyle(style);
+			cell.setCellValue(text4);
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+			String ITR8234002 = d2Deposit.getMap().get(D2DepositHeaderKey.ITR8234002.getCode());
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			cell = row.createCell(cellCount++);
+			cell.setCellStyle(style);
+			cell.setCellValue(ITR8234002);
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		}
 		row = sheet.createRow(rowCount++);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
 		CellUtil.createCell(row, 0, "Titular real persona física con porcentaje de participación superior al 25%", headerCellStyle);
@@ -1574,7 +1649,9 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		}
 		else{
 			keys = D2DepositConstants.MRN_ABREVIATE_KEYS_1;
-			keys2 = D2DepositConstants.MRN_ABREVIATE_KEYS_2;		
+			keys2 = d2Deposit.getYear() >= 2022
+					? D2DepositConstants.MRN_ABREVIATE_KEYS_2_2022
+					: D2DepositConstants.MRN_ABREVIATE_KEYS_2;		
 		}
 		// 1
 		general(pageMaxNumber, 2, new String[]{"BASES DE REPARTO", "Ejercicio " + getD2Deposit().getYear(), 
@@ -1597,7 +1674,9 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		}
 		else{
 			keys = D2DepositConstants.MRN_ABREVIATE_KEYS_1;
-			keys2 = D2DepositConstants.MRN_ABREVIATE_KEYS_2;		
+			keys2 = d2Deposit.getYear() >= 2022
+					? D2DepositConstants.MRN_ABREVIATE_KEYS_2_2022
+					: D2DepositConstants.MRN_ABREVIATE_KEYS_2;			
 		}
 		D2DepositKey[][] keys3 = D2DepositConstants.MRN_ABREVIATE_KEYS_3;
 	

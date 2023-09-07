@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.TimeZone;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.google.apis.jooq.DBTask;

@@ -5,10 +5,12 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -21,51 +23,60 @@ public class FinanceUtilitiesServiceAsyncDecorator implements FinanceUtilitiesSe
 	}
 
 	@Override
-	public void getDomain(String domainName, String user, int domain, AsyncCallback<Domain> callback) throws AonCoreException{
+	public void getDomain(Occam occam, AsyncCallback<Domain> callback) throws AonCoreException{
 		AON.start();
-		fsa.getDomain(domainName, user, domain, new AsyncCallbackWrapper<Domain>(callback));
+		fsa.getDomain(occam, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void getChildDomains(String domainName, String user, int domain,AsyncCallback<LinkedList<Domain>> callback) throws AonCoreException{
+	public void getChildDomains(Occam occam,AsyncCallback<LinkedList<Domain>> callback) throws AonCoreException{
 		AON.start();
-		fsa.getChildDomains(domainName, user, domain, new AsyncCallbackWrapper<LinkedList<Domain>>(callback));
+		fsa.getChildDomains(occam , new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> callback) {
+		AON.start();
+		fsa.getInvoice(occam ,invoiceId, new AsyncCallbackWrapper<>(callback));
+	}
 
 	// Chequeo de facturas sin vencimientos
 	@Override
-	public void missingFinanceInvoices(String domainName, String user, Domain domain,
-			FinanceUtilitiesParams params, 
-			AsyncCallback<FinanceUtilitiesResult> callback) throws AonCoreException {
+	public void missingFinanceInvoices(Occam occam, Domain domain, FinanceUtilitiesParams params, AsyncCallback<FinanceUtilitiesResult> callback) throws AonCoreException {
 		AON.start();
-		fsa.missingFinanceInvoices(domainName, user, domain, params, new AsyncCallbackWrapper<FinanceUtilitiesResult>(callback));
+		fsa.missingFinanceInvoices(occam, domain, params, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void missingFinanceInvoicesFix(String domainName, String user, Integer domain,Integer invoice, 
-			AsyncCallback<Invoice> callback) throws AonCoreException {
+	public void missingFinanceInvoicesFix(Occam occam, Integer invoice, AsyncCallback<Invoice> callback) throws AonCoreException {
 		AON.start();
-		fsa.missingFinanceInvoicesFix(domainName, user, domain, invoice, new AsyncCallbackWrapper<Invoice>(callback));
+		fsa.missingFinanceInvoicesFix(occam, invoice, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// Chequeo de integridad de vencimientos en facturas 
 	@Override
-	public void financeInvoiceIntegrity(String domainName, String user, Domain domain,
-			AsyncCallback<FinanceUtilitiesResult> callback) throws AonCoreException {
+	public void financeInvoiceIntegrity(Occam occam, Domain domain, AsyncCallback<FinanceUtilitiesResult> callback) throws AonCoreException {
 		AON.start();
-		fsa.financeInvoiceIntegrity(domainName, user, domain, new AsyncCallbackWrapper<FinanceUtilitiesResult>(callback));
+		fsa.financeInvoiceIntegrity(occam, domain, new AsyncCallbackWrapper<>(callback));
 	}
 	@Override
-	public void financeInvoiceIntegrityFix(String domainName, String user, Integer domain, Finance finance,AsyncCallback<Finance> callback) throws AonCoreException {
+	public void financeInvoiceIntegrityFix(Occam occam, Finance finance,AsyncCallback<Finance> callback) throws AonCoreException {
 		AON.start();
-		fsa.financeInvoiceIntegrityFix(domainName, user, domain, finance, new AsyncCallbackWrapper<Finance>(callback));
+		fsa.financeInvoiceIntegrityFix(occam, finance, new AsyncCallbackWrapper<>(callback));
+	}
+
+	// Chequeo de tipos de retenci\u00F3n en facturas.
+	@Override
+	public void updateWithholdingType(Occam occam, Integer invoiceId, WithholdingType newType, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.updateWithholdingType(occam, invoiceId, newType, new AsyncCallbackWrapper<>(callback));
 	}
 	
+	// Modificación de actividades en facturas.
 	@Override
-	public void ayudatFix(String domainName, String user, Domain domain, AsyncCallback<FinanceUtilitiesResult> callback) {
+	public void updateActivity(Occam occam, Integer invoiceId, Integer activity, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
-		fsa.ayudatFix(domainName, user, domain, new AsyncCallbackWrapper<FinanceUtilitiesResult>(callback));
+		fsa.updateActivity(occam, invoiceId, activity, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

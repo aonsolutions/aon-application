@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 
 import java.sql.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -77,6 +78,14 @@ public class ContractDataDAO {
 		return select(ctx, filter).limit(1)
 			.stream().map(new ContractDataFiller())
 			.findFirst().orElse(new ContractData());
+	}
+	
+	public static void save(AONContext ctx, List<ContractData> contractData) {
+		ctx.checkWrite();
+		for(ContractData ctData: contractData) {
+			if(ctData.getId() == null) insert(ctx, ctData);
+			else if(ctData.getModify()) update(ctx, ctData);
+		}
 	}
 	
 	public static LinkedList<ContractData> insert(AONContext ctx, ContractData ...contractData) {
@@ -154,7 +163,8 @@ public class ContractDataDAO {
 				.setContract(r.getValue(CONTRACT_DATA.CONTRACT))
 				.setExpression(r.getValue(CONTRACT_DATA.EXPRESSION))
 				.setStartDate(r.getValue(CONTRACT_DATA.START_DATE))
-				.setEndDate(r.getValue(CONTRACT_DATA.END_DATE));
+				.setEndDate(r.getValue(CONTRACT_DATA.END_DATE))
+				.setModify(false);
 		}
 	}
 	

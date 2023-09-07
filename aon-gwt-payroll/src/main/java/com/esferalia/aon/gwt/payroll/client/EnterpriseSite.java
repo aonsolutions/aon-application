@@ -121,10 +121,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		};
 		salary.hideDeleteButton();
 		documents = new Documents();
-		employees.getOptionsToolbar().setVisibleCopyButton(false);
-		employees.getOptionsToolbar().setVisibleDraftButton(false);
-		employees.getOptionsToolbar().setVisibleNewButton(false);
-		employees.getOptionsToolbar().setVisiblePasteButton(false);		
 		employees.addListener(this);
 		
 	}
@@ -390,6 +386,18 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 	@Override
 	public void onEmployeeSSBonusSelected(ContractBonusObject contractBonusObject) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCollapseEmployees() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onShowEmployees(boolean isCollapsed) {
 		// TODO Auto-generated method stub
 		
 	}

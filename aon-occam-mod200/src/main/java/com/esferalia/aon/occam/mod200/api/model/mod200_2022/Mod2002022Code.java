@@ -63,6 +63,8 @@ public class Mod2002022Code {
 		CODE_MAP.put(Mod2002022Key.BN2398R, "");
 		CODE_MAP.put(Mod2002022Key.BN1093R, "");
 		CODE_MAP.put(Mod2002022Key.BN1097R, "");
+		CODE_MAP.put(Mod2002022Key.BN1388R, "");
+		CODE_MAP.put(Mod2002022Key.BN1392R, "");
 		CODE_MAP.put(Mod2002022Key.CNEST, "");
 		CODE_MAP.put(Mod2002022Key.UTC01, "");
 		CODE_MAP.put(Mod2002022Key.UTC02, "");

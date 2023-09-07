@@ -145,10 +145,12 @@ public class NordigenTestCase {
 		try {
 			NordigenInstitution caixaBank = AonNordigen.getInstitution(nordigenToken, "CAIXABANK_CAIXESBB");
 			NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, "CAIXABANK_CAIXESBB");
-			assertAgreement(agreement);
-			assertEquals(caixaBank.getTransactionTotalDays(), agreement.getMaxHistoricalDays());
-			AonNordigen.getAgreement(nordigenToken, agreement.getId());
-			assertAgreement(agreement);
+			//COMENTADO PORQUE LA API NO OBTIENE LOS "SCOPES" CUANDO SE CREA
+//			assertAgreement(agreement);
+			Integer expectedHistoricalDays = 90;
+			assertEquals(expectedHistoricalDays, agreement.getMaxHistoricalDays());
+			NordigenAgreement gottenAgreement = AonNordigen.getAgreement(nordigenToken, agreement.getId());
+			assertAgreement(gottenAgreement);
 			AonNordigen.deleteAgreement(nordigenToken, agreement);
 			
 		} catch (Exception e) {

@@ -105,10 +105,11 @@ public class ContractType {
 		this.contractTypes.put(350, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, INICIAL", "Indefinido/Fijo-Disc. Fomento Contr. Empl.Estable inicial", "A", null, false));
 		this.contractTypes.put(389, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido/Fijo-Discontinuo Transf. CT", "A", null, true));
 		this.contractTypes.put(401, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, OBRA O SERVICIO DETERMINADO", "Temporal, TC/Obra o Servicio determinado", "C", expirationDate401, false));
-		this.contractTypes.put(402, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, EVENTUAL POR CIRCUNSTANCIAS DE LA PORDUCCION",  "Temporal, TC/Circunstancia de Produccion", "C", null, false));
+		this.contractTypes.put(402, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, EVENTUAL POR CIRCUNSTANCIAS DE LA PRODUCCION",  "Temporal, TC/Circunstancia de Produccion", "C", null, false));
 		this.contractTypes.put(403, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, INSERCION", "Temporal, TC/Insercion", "C", null, false));
 		this.contractTypes.put(404, new ContractTypeRecord("CONTRATO PREDOCTORAL", "Predoctoral", "C", null, false));
 		this.contractTypes.put(406, new ContractTypeRecord("ADMINISTRACIONES PUBLICAS. PLAN RECUPERACION, TRANSFORMACION Y RESILIENCIA, Y FONDOS UNION EUROPEA. TIEMPO COMPLETO", "Admin. Publica, Plan Recuperacion/Trasnformacion/Resiliencia, Fondos UE", "C", null, false));
+		this.contractTypes.put(407, new ContractTypeRecord("DURACION DETERMINADA. ARTISTAS, TECNICOS Y AUXILIARES. TIEMPO COMPLETO", "Duracion determinada. Artistas. TC", "C", null, false));
 		this.contractTypes.put(408, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, CARACTER ADMINISTRATIVO", "Temporal, TC/Caracter Admin.", "C", null, false));
 		this.contractTypes.put(410, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, INTERINIDAD", "Temporal, TC/Interinidad", "C", null, false));
 		this.contractTypes.put(418, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, INTERINIDAD, CARACTER ADMINISTRATIVO", "Temporal, TC/Interinidad C.Admin.", "C", null, false));
@@ -123,6 +124,7 @@ public class ContractType {
 		this.contractTypes.put(502, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, EVENTUAL POR CIRCUNSTANCIAS", "Temporal, TP/Circunstancia de Produccion", "P", null, false));
 		this.contractTypes.put(503, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, INSERCION", "Temporal, TP/Insercion", "P", null, false));
 		this.contractTypes.put(506, new ContractTypeRecord("ADMINISTRACIONES PUBLICAS. PLAN RECUPERACION, TRANSFORMACION Y RESILIENCIA, Y FONDOS UNION EUROPEA. TIEMPO PARCIAL", "Admin. Publica, Plan Recuperacion/Trasnformacion/Resiliencia, Fondos UE (TP)", "P", null, false));
+		this.contractTypes.put(507, new ContractTypeRecord("DURACION DETERMINADA. ARTISTAS, TECNICOS Y AUXILIARES. TIEMPO PARCIAL", "Duracion determinada. Artistas. TP", "P", null, false));
 		this.contractTypes.put(508, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, CARACTER ADMINISTRATIVO", "Temporal, TP/Caracter Admin.", "P", null, false));
 		this.contractTypes.put(510, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, INTERINIDAD", "Temporal, TP/Interinidad", "P", null, false));
 		this.contractTypes.put(518, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, INTERINIDAD, CARACTER ADMINISTRATIVO", "Temporal, TP/Interinidad C.Admin.", "P", null, false));

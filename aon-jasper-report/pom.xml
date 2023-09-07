@@ -48,7 +48,7 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.servlet</groupId>
+					<groupId>org.apache.tomcat</groupId>
 					<artifactId>servlet-api</artifactId>
 				</exclusion>
 				<exclusion>

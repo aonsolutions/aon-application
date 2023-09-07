@@ -54,6 +54,9 @@ public interface INormalizedMemoryAsync {
 	void deleteSchemaTextMode(AonData aonData, Integer id, AsyncCallback<Void> callback);
 
 	void reset(AonData aonData, Company company, Integer year, AsyncCallback<Map<String, String>> callback);
-
+	
+	void upload(AonData aonData, String data, String type, Integer year, AsyncCallback<Void> callback);
+	
+	void uploadDocument(AonData aonData, MemoryFiles mf, String data, String type, AsyncCallback<Void> callback);
 	
 }

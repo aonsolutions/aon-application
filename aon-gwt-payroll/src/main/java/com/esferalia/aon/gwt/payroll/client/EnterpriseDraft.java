@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -37,12 +37,15 @@ public abstract class EnterpriseDraft extends Composite {
 		public void onEnterpriseNameChange() {
 			String value = this.enterpriseName.getValue();
 			enterpriseDraftObject.setName(value);
+			setToolbaTitle(value);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterpriseAliasChange() {
 			String value = this.enterpriseAlias.getValue();
 			enterpriseDraftObject.setAlias(value);
+			setHasChange(true);
 		}
 
 		@Override
@@ -50,11 +53,13 @@ public abstract class EnterpriseDraft extends Composite {
 			String value = this.document.getValue();
 			enterprise.checkDocument(true);
 			enterpriseDraftObject.setDocument(value);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterpriseNationalityChange() {
 			enterpriseDraftObject.setNationality(Country.getCountryByName(this.nationality.getValue()));
+			setHasChange(true);
 		}
 
 		@Override
@@ -62,32 +67,37 @@ public abstract class EnterpriseDraft extends Composite {
 			String streetType = String.valueOf(this.streetType.getSelectedValue());
 			StreetType streetTypeObj = StreetType.valueOf(streetType);
 			enterpriseDraftObject.setAddressStreetType(streetTypeObj);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterpriseAddressChange() {
 			String value = this.address.getValue();
 			enterpriseDraftObject.setAddress(value);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterpriseAddressNumChange() {
 			String value = this.addressNum.getValue();
 			enterpriseDraftObject.setAddressNum(value);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterpriseAddressZipChange() {
 			String value = this.addressZip.getValue();
 			enterpriseDraftObject.setAddressZip(value);
-			updateMunicipalities();
 			updateProvince();
+			updateMunicipalities();
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterpriseAddressCityChange() {
 			enterpriseDraftObject.setAddressCity(this.addressCity.getSelectedItemText());
 			enterpriseDraftObject.setAddressMunicipalityCode(municipalities.getZipByMunicipalityName(this.addressCity.getSelectedItemText()));
+			setHasChange(true);
 		}
 
 		@Override
@@ -95,36 +105,42 @@ public abstract class EnterpriseDraft extends Composite {
 			String addressProvinceCode = String.valueOf(this.addressProvince.getSelectedValue());
 			enterpriseDraftObject.setAddressProvince(addressProvinceCode);
 			updateMunicipalities();
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterpriseMobileChange() {
 			String value = this.mobile.getValue();
 			enterpriseDraftObject.setMobile(value);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterprisePhoneChange() {
 			String value = this.phone.getValue();
 			enterpriseDraftObject.setPhone(value);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterpriseEmailChange() {
 			String value = this.email.getValue();
 			enterpriseDraftObject.setEmail(value);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterpriseWebChange() {
 			String value = this.enterpriseWeb.getValue();
 			enterpriseDraftObject.setWeb(value);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterprisePaysheetModelChange() {
 			String paysheetModel = String.valueOf(this.enterprisePaysheetModel.getSelectedValue());
 			enterpriseDraftObject.setPaySheetModel(paysheetModel);
+			setHasChange(true);
 		}
 
 		@Override
@@ -132,32 +148,36 @@ public abstract class EnterpriseDraft extends Composite {
 			String paysheetSendType = String.valueOf(this.enterprisePaysheetSendType.getSelectedValue());
 			enterpriseDraftObject.setPaySheetSendType(paysheetSendType);
 			this.checkPaysheetSendType(enterpriseDraftObject.getPaysheetSendEmail());
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterprisePaysheetSendEmailChange() {
 			String value = this.enterprisePaysheetSendEmail.getValue();
 			enterpriseDraftObject.setPaySheetSendEmail(value);
+			setHasChange(true);
 		}
 		
 		@Override
 		public void onEnterpriseAgreementChange(Integer agreementId) {
 			enterpriseDraftObject.setAgreement(null == agreementId ? null : agreementId.toString());
+			setHasChange(true);
 		}
 
 		@Override
 		public void onEnterpriseScopeChange(Integer scopeId) {
 			enterpriseDraftObject.setScope(scopeId);
+			setHasChange(true);
 		}
 
 		@Override
-		public void fireErrorMessage(Map<String, String> errorMap) {
-			AonMessagePanel.showError(messageContainer, errorMap);
+		public void fireErrorMessage(Map<String, String> messages) {
+			showErrorMessage(messages);
 		}
 		
 		@Override
-		public void fireInfoMessage(Map<String, String> errorMap) {
-			AonMessagePanel.showInfo(messageContainer, errorMap);
+		public void fireWarningMessage(Map<String, String> messages) {
+			showWarningMessage(messages);
 		}
 		
 	}
@@ -217,9 +237,6 @@ public abstract class EnterpriseDraft extends Composite {
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
-	HTMLPanel messageContainer;
-	
-	@UiField
 	HTMLPanel centerContainer;
 
 	// -------------------------------------------------- Variables
@@ -235,9 +252,10 @@ public abstract class EnterpriseDraft extends Composite {
 	private Enterprise enterprise;
 	
 	private AonToolbar toolbar;
+	private AonToolbarButton acceptButton;
 	private AonToolbarButton undoAllButton;
-	private AonToolbarButton undoButton;
-	private AonToolbarButton redoButton;
+	
+	private boolean hasChange;
 
 	// -------------------------------------------------- Constructor
 
@@ -263,27 +281,17 @@ public abstract class EnterpriseDraft extends Composite {
 		this.enterpriseDraftObject = enterpriseDraftObject;
 		this.enterpriseDraftObject.initializeEnterprise(
 				s -> {
-					initializeUndoRedo();
 					initilizeView();
 					onCheckStatus(getEnterpriseDraftObject());
+					setHasChange(false);
 				},
 				f -> {}
 		);
 	}
 	
-	private void initializeUndoRedo() {
-		undoButton.setEnabled(enterpriseDraftObject.canUndo());
-		undoAllButton.setEnabled(enterpriseDraftObject.canUndo());
-		redoButton.setEnabled(enterpriseDraftObject.canRedo());
-
-		enterpriseDraftObject.addUndoManagerListener( undoManager -> {
-			undoButton.setEnabled(undoManager.canUndo());
-			undoAllButton.setEnabled(undoManager.canUndo());
-			redoButton.setEnabled(undoManager.canRedo());
-		});
-	}
-	
 	private void initilizeView() {
+		setToolbaTitle(enterpriseDraftObject.getName());
+		
 		enterprise.initializeView();
 		enterprise.initializeScopeCell(enterpriseDraftObject.getEnterprisecopes());
 		enterprise.initializeAgreementCell(enterpriseDraftObject.getEnterpriseAgreements());
@@ -303,9 +311,9 @@ public abstract class EnterpriseDraft extends Composite {
 		enterprise.addressZip.setValue(enterpriseDraftObject.getAddressZip());
 		
 		updateProvince();
-		setSelectedValueLB(enterprise.addressProvince, enterpriseDraftObject.getAddressProvince());
+		setSelectedValueLB(enterprise.addressProvince, enterpriseDraftObject.getGeozoneCode());
 		
-		if(null != enterpriseDraftObject.getAddressProvince()) {
+		if(null != enterpriseDraftObject.getGeozoneCode()) {
 			updateMunicipalities();
 			setSelectedValueLB(enterprise.addressCity, enterpriseDraftObject.getMunicipalityCode());
 		}
@@ -346,18 +354,18 @@ public abstract class EnterpriseDraft extends Composite {
 	}
 	
 	public void updateMunicipalities() {
-		String zip = enterprise.addressZip.getValue();
+		String provinceCode = enterprise.addressProvince.getSelectedValue();
 		enterprise.addressCity.clear();
 		enterprise.addressCity.addItem("-", "-1");
-		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(zip);
+		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
 		municipalitiesOfProvince.entrySet().forEach(e -> enterprise.addressCity.addItem(e.getValue(), e.getKey()));
 	}
 	
 	public void updateProvince() {
 		String zip = enterprise.addressZip.getValue();
 		if(AonStringUtils.isNotBlank(zip)) {
-			Integer zipCode = Integer.parseInt(zip.substring(0, 2));
-			setSelectedValueLB(enterprise.addressProvince, Province.values()[zipCode] + "");
+			String zipCode = zip.substring(0, 2);
+			setSelectedValueLB(enterprise.addressProvince, AonStringUtils.leftPad(zipCode, 2, '0'));
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), enterprise.addressProvince);
 		}
 		
@@ -368,68 +376,66 @@ public abstract class EnterpriseDraft extends Composite {
 	private void getToolbarPanel() {
 		toolbar = new AonToolbar("Empresa");
 		
-		AonToolbarButton acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		acceptButton.addClickHandler(e -> onAccept());
 		toolbar.add(acceptButton);
+		
+		undoAllButton = new AonToolbarButton( AON.MSG.undo() + " todo", AON.CSS.aonIconUndoAll() );
+		undoAllButton.ensureDebugId("undoAllButton");
+		undoAllButton.addClickHandler(e -> {
+			AonDialog confirmDialog =  new AonDialog("Restaurar empresa", new HTMLPanel("\u00bfDesea realmente deshacer los cambios realizados en la empresa <b>" + enterpriseDraftObject.getName() + "</b> \u003f <br>Este proceso es irreversible."));
+			confirmDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do
+				}
+				
+				@Override
+				public void onAccept() {
+					enterpriseDraftObject.initializeEnterprise(
+							s -> {
+								initilizeView();
+								setHasChange(false);
+							},
+							f -> {}
+					);
+				}
+			});
+		});
+		toolbar.add(undoAllButton);
 		
 		AonToolbarButton newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		newButton.addClickHandler(this::onNew);
 		toolbar.add(newButton);
-		
-		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll() );
-		undoAllButton.addClickHandler(e -> onUndoAll());
-		toolbar.add(undoAllButton);
-		
-		undoButton = new AonToolbarButton( AON.MSG.undo(), AON.CSS.aonIconUndo() );
-		undoButton.addClickHandler(e -> onUndo());
-		toolbar.add(undoButton);
-		
-		redoButton = new AonToolbarButton( "Rehacer", AON.CSS.aonIconRedo() );
-		redoButton.addClickHandler(e -> onRedo());
-		toolbar.add(redoButton);
+	}
+	
+	private void setToolbaTitle(String title) {
+		toolbar.setTitle(title);
 	}
 	
 	private void onAccept() {
+		showLoadingMessage("Guardando " + enterpriseDraftObject.getName() + " ...");
 		enterpriseDraftObject.saveEnterprise(
 				r -> {
-					Map<String, String> messageMap = new HashMap<>();
-					messageMap.put("Guardado", "La empresa " + enterpriseDraftObject.getEnterpriseInfo().getName() + " ha sido actualizada correctamente");
-					AonMessagePanel.showSuccess(messageContainer, messageMap);
+					showSuccessMessage(new HashMap<String, String>(){{ put("Guardado", "La empresa " + enterpriseDraftObject.getEnterpriseInfo().getName() + " ha sido actualizada correctamente"); }});
 					onSaved.accept(enterpriseDraftObject.getEnterpriseInfo());
+					setHasChange(false);
 				}, 
-				t -> {}
+				t -> showSuccessMessage(new HashMap<String, String>(){{ put("Error", t.getMessage()); }})
 		);
-	}
-	
-	private void onUndoAll() {
-		while ( enterpriseDraftObject.canUndo() )
-			enterpriseDraftObject.undo();
-		initilizeView();
-		Map<String, String> messageMap = new HashMap<>();
-		messageMap.put("Deshacer", "Se han deshecho todos lo cambios realizados");
-		AonMessagePanel.showInfo(messageContainer, messageMap);
-	}
-	
-	private void onUndo() {
-		enterpriseDraftObject.undo();
-		initilizeView();
-		Map<String, String> messageMap = new HashMap<>();
-		messageMap.put("Deshacer", "Se han deshecho el \u00FAltimo cambio realizado");
-		AonMessagePanel.showInfo(messageContainer, messageMap);
-	}
-
-	private void onRedo() {
-		enterpriseDraftObject.redo();
-		initilizeView();
-		Map<String, String> messageMap = new HashMap<>();
-		messageMap.put("Rehacer", "Se han rehecho el \u00FAltimo cambio deshecho");
-		AonMessagePanel.showInfo(messageContainer, messageMap);
 	}
 	
 	private void onNew(ClickEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
 		contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		contextMenu.show();
+	}
+	
+	private void setHasChange(boolean hasChange) {
+		this.hasChange = hasChange;
+		acceptButton.setEnabled(this.hasChange);
+		undoAllButton.setEnabled(this.hasChange);
 	}
 	
 	// -------------------------------------------------- Saved Methods
@@ -444,5 +450,9 @@ public abstract class EnterpriseDraft extends Composite {
 	// -------------------------------------------------- Abstract Methods
 	
 	protected abstract void onCheckStatus(EnterpriseDraftObject enterpriseDraftObject);
+	protected abstract void showErrorMessage(Map<String, String> messages);
+	protected abstract void showWarningMessage(Map<String, String> messages);
+	protected abstract void showSuccessMessage(Map<String, String> messages);
+	protected abstract void showLoadingMessage(String message);
 
 }

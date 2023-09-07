@@ -1,4 +1,4 @@
-	package com.esferalia.aon.gwt.fiscal.client.mod130;
+package com.esferalia.aon.gwt.fiscal.client.mod130;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;

@@ -7,9 +7,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -109,7 +109,7 @@ public class SendMailServlet extends AonApiHttpServlet{
 		im.setTotal(inv.opt("total") != null ? Double.toString(inv.getDouble("total")) : "");
 		im.setDate(AonDateUtils.format(date, "dd/MM/yyyy"));
 		im.setUrl(inv.opt("file") != null 
-				? ("https://" + api.getDomain().getName() + "/" + inv.optJSONObject("file").optString("url")) 
+				? inv.optJSONObject("file").optString("url") 
 				: getInvoiceUrl(api.getDomain(), api.getUser().getLogin(), inv));
 
 		StringBuilder medias = new StringBuilder();
@@ -159,7 +159,7 @@ public class SendMailServlet extends AonApiHttpServlet{
 			im.setReference(inv.opt("reference") != null ? inv.getString("reference"): "");
 			im.setTotal(inv.opt("total") != null ? Double.toString(inv.getDouble("total")) : "");
 			im.setUrl(inv.opt("file") != null 
-					? ("https://" + api.getDomain().getName() + "/" + inv.optJSONObject("file").optString("url")) 
+					? inv.optJSONObject("file").optString("url") 
 					: getInvoiceUrl(api.getDomain(), api.getUser().getLogin(), inv));
 			list.add(im);
 		}

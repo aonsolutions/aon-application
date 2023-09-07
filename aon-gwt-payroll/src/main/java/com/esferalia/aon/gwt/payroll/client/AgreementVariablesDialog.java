@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AgreementVariablesDialog extends AonCustomDialog {
@@ -54,7 +55,7 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 	private Set<String> variables;
 	private Set<String> shownVariables;
 	private ListBox variablesTypeLB;
-	private HTMLPanel variablesCBPanel = new HTMLPanel("");
+	private ScrollPanel variablesScroll = new ScrollPanel();
 	private Map<String, CheckBox> variablesMap = new HashMap<String, CheckBox>();
 	
 	// --------------------------------------------------- Variables.Footer
@@ -92,7 +93,10 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 	
 	private void initVariablesCheckBoxes() {
 		variablesMap.clear();
-		variablesCBPanel.clear();
+		
+		variablesScroll.setHeight(variables.size() > 7 ? "200px" : (variables.size() * 28.5) + "px");
+		
+		HTMLPanel variablesCBPanel = new HTMLPanel("");
 		variablesCBPanel.addStyleName(style.flexColumn());
 		variablesCBPanel.getElement().getStyle().setMarginTop(10, Unit.PX);
 		
@@ -107,7 +111,9 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 			variablesMap.put(var, varCB);
 			variablesCBPanel.add(flexPanel);
 		}
-		container.add(variablesCBPanel);
+		
+		variablesScroll.add(variablesCBPanel);
+		container.add(variablesScroll);
 	}
 
 	private void initVariablesTypeLB() {
@@ -117,19 +123,20 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 		variablesTypeLB.addItem("TODAS LAS DEFINIDAS", "ALL");
 		variablesTypeLB.addItem("SELECCI\u00D3N PERSONALIZADA", "MANUAL");
 		variablesTypeLB.addChangeHandler(e -> {
-			if(variablesTypeLB.getSelectedIndex() == 3)
+			if(variablesTypeLB.getSelectedIndex() == 3) {
 				showVariablesCBPanel();
-			else
+				showDialog();
+			} else
 				hideVariablesCBPanel();
 		});
 	}
 	
 	private void showVariablesCBPanel() {
-		variablesCBPanel.getElement().getStyle().clearDisplay();
+		variablesScroll.getElement().getStyle().clearDisplay();
 	}
 	
 	private void hideVariablesCBPanel() {
-		variablesCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		variablesScroll.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	// --------------------------------------------------- Footer

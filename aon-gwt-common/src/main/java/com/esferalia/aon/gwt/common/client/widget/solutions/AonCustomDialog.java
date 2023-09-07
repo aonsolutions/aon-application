@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -442,5 +443,13 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 		public void onDoubleClick(DoubleClickEvent event) {
 			handleMaximize();
 		}
+	}
+
+	public void showLoaded() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
 	}
 }

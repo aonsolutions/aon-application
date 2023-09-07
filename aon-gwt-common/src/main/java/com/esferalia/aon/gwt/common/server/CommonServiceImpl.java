@@ -2,27 +2,45 @@ package com.esferalia.aon.gwt.common.server;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Common", "/aon_gwt_mod200/ms/Common", "/aon_gwt_aio/ms/Common"})
+import jakarta.servlet.annotation.WebServlet;
+
+@WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Common", "/aon_gwt_mod200/ms/Common", "/aon_gwt_aio/ms/Common", "/aon_gwt_marketing/ms/Common"})
 public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implements CommonService {
 
 	private static final long serialVersionUID = -6555645829679341214L;
@@ -161,6 +179,127 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					,p -> p.getNameProperty().like(q)
 						.or(p.getCodeProperty().like(q))
 				).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	// **************************************************
+	// *************************************** [REGISTRY]
+	// **************************************************
+	
+	@Override
+	public List<Customer> getCustomers(String domainName, int domain, String user, Integer account) throws AonCoreException {
+		return AON.getCustomerList(domainName, account, user, f -> f.getAccountProperty().eq(account));
+	}
+	
+	@Override
+	public CustomerFull getCustomer(String domainName, int domain, String user, Integer registry) throws AonCoreException {
+		return AON.getCustomerFull(domainName, domain, user, registry);
+	}
+	
+	@Override
+	public List<Supplier> getSuppliers(String domainName, int domain, String user, Integer account) throws AonCoreException {
+		return AON.getSupplierList(domainName, account, user, f -> f.getAccountProperty().eq(account));
+	}
+	
+	@Override
+	public SupplierFull getSupplier(String domainName, int domain, String user, Integer registry) throws AonCoreException {
+		return AON.getSupplierFull(domainName, domain, user, registry);
+	}
+	
+	@Override
+	public List<Creditor> getCreditors(String domainName, int domain, String user, Integer account) throws AonCoreException {
+		return AON.getCreditorList(domainName, account, user, f -> f.getAccountProperty().eq(account));
+	}
+	
+	@Override
+	public CreditorFull getCreditor(String domainName, int domain, String user, Integer registry) throws AonCoreException {
+		return AON.getCreditorFull(domainName, domain, user, registry);
+	}
+	
+	// **************************************************
+	// ************************************ [COST CENTER]
+	// **************************************************
+	
+	@Override
+	public List<ApplicationParameter> getCostCenters(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getCostCenters(domainName, domain, user);
+	}
+	
+	@Override
+	public void saveCostCenter(String domainName, int domain, String user, ApplicationParameter costCenter) throws AonCoreException {
+		AON.saveCostCenter(domainName, domain, user, costCenter);
+	}
+	
+	@Override
+	public void deleteCostCenter(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteCostCenter(domainName, domain, user, id);
+	}
+	
+	// **************************************************
+	// *********************************** [INVEST ASSET]
+	// **************************************************
+	
+	@Override
+	public List<InvestAsset> getInvestAssets(InvestAssetParams params) throws AonCoreException {
+		return AON.getInvestAssetList(params);
+	}
+	
+	@Override
+	public void deleteInvestAsset(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteInvestAsset(domainName, domain, user, id);
+	}
+	
+	@Override
+	public InvestAsset saveInvestAsset(String domainName, int domain, String user, InvestAsset investAsset) throws AonCoreException {
+		return AON.saveInvestAsset(domainName, domain, user, investAsset);
+	}
+	
+	@Override
+	public List<Activity> getActivities(String domainName, int domain, String user) throws AonCoreException {
+		return PAYROLL.getActivities(domainName, domain, user, f -> f.getDomainProperty().eq(domain));
+	}
+	@Override
+	public InvestAsset getInvestAsset(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		return AON.getInvestAsset(domainName, domain, user, id);
+	}
+
+	// **************************************************
+	// ********************************* [LOAD PDF MODEL]
+	// **************************************************
+	
+	@Override
+	public void savePDFModel(Occam occam, IFiscalModel model, String data) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			DataResponseDAO.insertPDFModel(ctx, model, data);
+		} 
+	}
+	
+	// **************************************************
+	// *************************************** [QUESTION]
+	// **************************************************
+
+	
+	@Override
+	public List<Question> getQuestions(QuestionParams params) throws AonCoreException {
+		return AON.getQuestionList(params);
+	}
+	
+	@Override
+	public void deleteQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteQuestion(domainName, domain, user, id);
+	}
+	
+	@Override
+	public Question saveQuestion(String domainName, int domain, String user, Question question) throws AonCoreException {
+		return AON.saveQuestion(domainName, domain, user, question);
+	}
+	
+	@Override
+	public Question getQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		return AON.getQuestion(domainName, domain, user, id);
+	}
+	@Override
+	public Boolean checkQuestionAlias(String domainName, Integer domain, String user, String alias) throws AonCoreException {
+		return AON.checkQuestionAlias(domainName, domain, user, alias);
 	}
 	
 }

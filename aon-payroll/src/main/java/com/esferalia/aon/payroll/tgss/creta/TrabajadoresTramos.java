@@ -4,7 +4,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CCC_TYPE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NO_HOLIDAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
@@ -33,7 +32,6 @@ import java.util.Properties;
 import java.util.TimeZone;
 import java.util.stream.Stream;
 
-import javax.lang.model.type.TypeVisitor;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -49,7 +47,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
-import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.calculator.ExcelFunctions;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -351,17 +348,15 @@ public class TrabajadoresTramos {
 					//Collections.sort(cgcBasePeriods); // sort & sort & sort again .
 					
 					
-					for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(MATERNITY_BASE.getName(), Collections.emptyList())) )
-						cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
-					
 
 					for ( ContextVariable var : ContextVariable.ERE_BASES )
 						for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(var.getName(), Collections.emptyList())))
 							cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 					
-					for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(ContextVariable.DIRECT_BASE.getName(), Collections.emptyList())) )
-						cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
-					
+					for ( ContextVariable var : ContextVariable.FREE_BASES )
+						for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(var.getName(), Collections.emptyList())))
+							cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+
 					List<Period> periods = merge(salary, cgcBasePeriods);//cgcBasePeriods;
 					
 					for ( Period p: periods ) {
@@ -425,6 +420,9 @@ public class TrabajadoresTramos {
 							public void visitRegimenArtistasNormal() {
 							}
 							
+							@Override
+							public void visitFormacionEnAlternanciaNormal() {
+							}
 
 							@Override
 							public void visitGrupoCotizacionDiario() {
@@ -483,6 +481,14 @@ public class TrabajadoresTramos {
 
 							@Override
 							public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
+							}
+							
+							@Override
+							public void visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia() {
+							}
+
+							@Override
+							public void visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia() {
 							}
 						};
 						
@@ -613,6 +619,53 @@ public class TrabajadoresTramos {
 								dataSolicitadoBuilder.setCodigo("537");
 								dataSolicitadoBuilder.setObligatorio(false);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							
+							@Override
+							public void visitFormacionEnAlternanciaNormal() {
+							    	// 3.1 Contratos formativos en alternancia (TRL 087 )
+							    	// 3.1.1 Tramo en situación de activo "normal" (PEC 0978 o 0979)
+                        					// Base de contingencias comunes
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("500");
+                        					dataSolicitadoBuilder.setObligatorio(true);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+                        					// Base de Aportación plan pensiones
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("301");
+                        					dataSolicitadoBuilder.setObligatorio(false);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+                        					// Base de Accidentes de Trabajo
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("601");
+                        					dataSolicitadoBuilder.setObligatorio(true);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+                        					// Base de Horas Extras Fuerza Mayor
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("501");
+                        					dataSolicitadoBuilder.setObligatorio(false);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas formación teórica presencial 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("03");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas formación teórica a distancia 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("04");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas tutoría 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("06");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Bonificación tutoría
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("737");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							    
 							}
 							
 							@Override
@@ -870,7 +923,99 @@ public class TrabajadoresTramos {
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());								
 							}
 							
-							
+							@Override
+							public void visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia() {
+								// 3.1.3 Tramo en situación de Maternidad/Paternidad a Tiempo Parcial 
+                        					// Base de contingencias comunes
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("500");
+                        					dataSolicitadoBuilder.setObligatorio(true);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+                        					// Base de Aportación plan pensiones
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("301");
+                        					dataSolicitadoBuilder.setObligatorio(false);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+                        					// Base de Accidentes de Trabajo
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("601");
+                        					dataSolicitadoBuilder.setObligatorio(true);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							    	// N horas formación teórica presencial 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("03");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas formación teórica a distancia 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("04");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas tutoría 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("06");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Bonificación tutoría
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("737");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								
+								
+							}
+
+							@Override
+							public void visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia() {
+								// 3.1.4 Tramo en situación de Maternidad/Paternidad a Tiempo Parcial 
+
+                        					// Base de contingencias comunes
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("500");
+                        					dataSolicitadoBuilder.setObligatorio(true);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+                        					// Base de Aportación plan pensiones
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("301");
+                        					dataSolicitadoBuilder.setObligatorio(false);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+                        					// Base de Accidentes de Trabajo
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("601");
+                        					dataSolicitadoBuilder.setObligatorio(true);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							    	// N horas formación teórica presencial 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("03");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas formación teórica a distancia 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("04");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas tutoría 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("06");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Bonificación tutoría
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("737");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+
+								// Base de contingencias comunes Maternidad Tiempo Parcial 
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("535");
+                        					dataSolicitadoBuilder.setObligatorio(true);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de AT Maternidad Tiempo Parcial 
+                        					dataSolicitadoBuilder.setTipo("C");
+                        					dataSolicitadoBuilder.setCodigo("635");
+                        					dataSolicitadoBuilder.setObligatorio(true);
+                        					tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
 							
 						}
 						
@@ -1005,7 +1150,12 @@ public class TrabajadoresTramos {
 				public void visitRegimenArtistasNormal() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 				}
-
+				
+				@Override
+				public void visitFormacionEnAlternanciaNormal() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+				
 				@Override
 				public void visitGrupoCotizacionDiario() {
 					//cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
@@ -1074,6 +1224,16 @@ public class TrabajadoresTramos {
 				public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia() {
+				    	cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia() {
+				    	cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
 			};
 
 			SalaryVisitor it15PrimerosDias = new SalaryVisitor(){
@@ -1104,10 +1264,15 @@ public class TrabajadoresTramos {
 				}
 
 				@Override
+				public void visitFormacionEnAlternanciaNormal() {
+					visitOthers();
+				}
+
+				@Override
 				public void visitGrupoCotizacionDiario() {
 					// noop
 				}
-
+				
 				@Override
 				public void visitGrupoCotizacionMensual() {
 				}
@@ -1172,6 +1337,15 @@ public class TrabajadoresTramos {
 				public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
 					visitOthers();					
 				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia() {
+					visitOthers();					
+				}
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia() {
+					visitOthers();					
+				}
 			};
 			
 			SalaryVisitor _fullMaternity = new SalaryVisitor(){
@@ -1200,7 +1374,12 @@ public class TrabajadoresTramos {
 				public void visitRegimenArtistasNormal() {
 					visitOthers();
 				}
-
+				
+				@Override
+				public void visitFormacionEnAlternanciaNormal() {
+					visitOthers();
+				}
+				
 				@Override
 				public void visitGrupoCotizacionDiario() {
 					// noop
@@ -1272,6 +1451,16 @@ public class TrabajadoresTramos {
 				public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
 					visitOthers();
 				}
+				
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia() {
+					visitOthers();					
+				}
+				
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia() {
+					visitOthers();					
+				}
 			};
 
 			private Period period ;
@@ -1300,6 +1489,11 @@ public class TrabajadoresTramos {
 			@Override
 			public void visitRegimenArtistasNormal() {
 				state.visitRegimenArtistasNormal();
+			}
+			
+			@Override
+			public void visitFormacionEnAlternanciaNormal() {
+				state.visitFormacionEnAlternanciaNormal();
 			}
 
 			@Override
@@ -1371,6 +1565,16 @@ public class TrabajadoresTramos {
 			public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
 				state.visitIncapacidadTemporalATEPPagoDelegadoFormacion();
 			}
+			
+			@Override
+			public void visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia() {
+			    	state.visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia();
+			}
+			
+			@Override
+			public void visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia() {
+			    	state.visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia();
+			}
 
 		};
 		
@@ -1441,6 +1645,7 @@ public class TrabajadoresTramos {
 		void visitTiempoParcialNormal();
 		void visitTiempoCompletoNormal();
 		void visitRegimenArtistasNormal();
+		void visitFormacionEnAlternanciaNormal();
 		void visitGrupoCotizacionDiario();
 		void visitGrupoCotizacionMensual();
 		void visitIncapacidadTemporal15PrimerosDias();
@@ -1455,6 +1660,8 @@ public class TrabajadoresTramos {
 		void visitExpedienteRegulacionEmpleoParcialFormacion();
 		void visitMaternidadPaternidadTiempoParcialFormacion();
 		void visitIncapacidadTemporalATEPPagoDelegadoFormacion();
+		void visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia();
+		void visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia();
 		
 	}
 	
@@ -1502,6 +1709,14 @@ public class TrabajadoresTramos {
 		getContextData(ContextVariable.PATERNITY_FACTOR.getName(), salary, startDate, endDate, 1.00)
 		 < 1.00;
 		
+		boolean iTMaternity = 	
+			getSumContextData(ContextVariable.MATERNITY_DAYS.getName(), salary, startDate, endDate) 
+		> 0.00;
+
+		boolean iTPaternity = 	
+			getSumContextData(ContextVariable.PATERNITY_DAYS.getName(), salary, startDate, endDate) 
+		> 0.00;
+
 		boolean iTPagoDirecto = (
 		getSumContextData(ContextVariable.COMMON_DISEASE_LACK_DAYS.getName(), salary, startDate, endDate)
 		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_366.getName(), salary, startDate, endDate)
@@ -1523,7 +1738,9 @@ public class TrabajadoresTramos {
 				;
 		
 		
-		boolean formacion = "421".equals(tc2) ;
+		boolean formacion = false; //"420".equals(tc2) ;
+		
+		boolean formacionEnAlternancia = AonStringUtils.contains("421,521",tc2) ;
 		
 		boolean becarios = CCCType.FELLOWS.ordinal() == cccType;;
 		
@@ -1540,13 +1757,13 @@ public class TrabajadoresTramos {
 				;
 			else if ( iTPagoDelegado )
 				visitor.visitIncapacidadTemporalPagoDelegadoFormacion();
-			else if ( fullMaternity  )
+			else if ( iTMaternity && fullMaternity  )
 				;
-			else if ( fullPaternity  )
+			else if ( iTPaternity && fullPaternity  )
 				;
-			else if ( partialMaternity )
+			else if ( iTMaternity && partialMaternity )
 				visitor.visitMaternidadPaternidadTiempoParcialFormacion();
-			else if ( partialPaternity )
+			else if ( iTPaternity && partialPaternity )
 				visitor.visitMaternidadPaternidadTiempoParcialFormacion();
 			else if ( atEPPagoDelegado )
 				visitor.visitIncapacidadTemporalATEPPagoDelegadoFormacion();
@@ -1558,17 +1775,40 @@ public class TrabajadoresTramos {
 				visitor.visitExpedienteRegulacionEmpleoParcialFormacion();
 			else
 				visitor.visitFormacionNormal();
+		else if ( formacionEnAlternancia )
+			if ( iT15primerosDias )
+				visitor.visitIncapacidadTemporal15PrimerosDias();
+			else if ( iTPagoDelegado )
+				visitor.visitIncapacidadTemporalPagoDelegado();
+			else if ( iTMaternity && fullMaternity  )
+			    	visitor.visitMaternidadPaternidadTiempoCompleto();
+			else if ( iTPaternity && fullPaternity  )
+			    	visitor.visitMaternidadPaternidadTiempoCompleto();
+			else if ( iTMaternity && partialMaternity )
+			    	visitor.visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia();
+			else if ( iTPaternity && partialPaternity )
+			    	visitor.visitMaternidadPaternidadTiempoParcialFormacionEnAlternancia();
+			else if ( atEPPagoDelegado )
+				visitor.visitIncapacidadTemporalATEPPagoDelegado();
+			else if ( iTPagoDirecto )
+				visitor.visitIncapacidadTemporalPagoDirecto();
+			else if ( ereTotal )
+				visitor.visitExpedienteRegulacionEmpleoTotal();
+			else if ( ereParcial )
+			    	visitor.visitExpedienteRegulacionEmpleoParcialFormacionEnAlternancia();
+			else
+				visitor.visitFormacionEnAlternanciaNormal();
 		else if ( iT15primerosDias )
 			visitor.visitIncapacidadTemporal15PrimerosDias();
 		else if ( iTPagoDelegado )
 			visitor.visitIncapacidadTemporalPagoDelegado();
-		else if ( fullMaternity  )
+		else if ( iTMaternity &&  fullMaternity  )
 			visitor.visitMaternidadPaternidadTiempoCompleto();
-		else if ( fullPaternity  )
+		else if ( iTPaternity && fullPaternity  )
 			visitor.visitMaternidadPaternidadTiempoCompleto();
-		else if ( partialMaternity )
+		else if ( iTMaternity && partialMaternity )
 			visitor.visitMaternidadPaternidadTiempoParcial();
-		else if ( partialPaternity )
+		else if ( iTPaternity && partialPaternity )
 			visitor.visitMaternidadPaternidadTiempoParcial();
 		else if ( atEPPagoDelegado )
 			visitor.visitIncapacidadTemporalATEPPagoDelegado();
@@ -1585,12 +1825,14 @@ public class TrabajadoresTramos {
 		else 
 			visitor.visitTiempoParcialNormal();
 		
-		if (ereParcial && !formacion )
+		if (ereParcial && !formacion  )
 			visitor.visitExpedienteRegulacionEmpleoParcial();
 
 		Visit grupoCotizacion ;
 		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
-		if ( Integer.parseInt(quoteGroup ) >= 8 )
+		if ( formacionEnAlternancia )
+		    	grupoCotizacion = visitor::visitGrupoCotizacionMensual;
+		else if ( Integer.parseInt(quoteGroup ) >= 8 )
 			grupoCotizacion = visitor::visitGrupoCotizacionDiario;
 		else
 			grupoCotizacion = visitor::visitGrupoCotizacionMensual;

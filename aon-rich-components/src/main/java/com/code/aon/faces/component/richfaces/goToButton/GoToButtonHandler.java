@@ -2,9 +2,9 @@ package com.code.aon.faces.component.richfaces.goToButton;
 
 import java.io.Serializable;
 
-import javax.el.ELContext;
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
+import jakarta.el.ELContext;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 

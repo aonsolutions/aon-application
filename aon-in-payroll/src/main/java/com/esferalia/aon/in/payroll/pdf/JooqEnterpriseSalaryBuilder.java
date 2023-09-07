@@ -90,7 +90,7 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = WORKPLACE.ID.eq(workplaceId);
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
+		condition = condition.and(SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime())
 				, new java.sql.Date(endDate.getTime())));
 		
 		Collection<Integer> typeInts = Arrays.stream(types).map(com.esferalia.aon.occam.api.model.type.SalaryType::ordinal).collect(Collectors.toList());
@@ -106,7 +106,7 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = WORKPLACE.ID.eq(workplaceId);
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
+		condition = condition.and(SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime())
 				, new java.sql.Date(endDate.getTime())));
 		
 		
@@ -205,7 +205,7 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = WORKPLACE.ID.eq(workplaceId);
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
+		condition = condition.and(SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime())
 				, new java.sql.Date(endDate.getTime())));
 		
 		
@@ -608,7 +608,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
 		.and(SALARY.TYPE.lt((byte)7))
-		.orderBy(SALARY.EMPLOYEE_NAME)
+		.orderBy(SALARY.EMPLOYEE_NAME, SALARY.TYPE)
 		.fetchStream()
 		.forEach(r -> {
 			SalaryType salaryType = typeOf(r.get(SALARY.TYPE), SalaryType.class);
@@ -772,7 +772,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
-		.orderBy(SALARY.EMPLOYEE_NAME)
+		.orderBy(SALARY.EMPLOYEE_NAME, SALARY.TYPE)
 		.fetchStream()
 		.forEach(r -> {
 			SalaryType salaryType = typeOf(r.get(SALARY.TYPE), SalaryType.class);
@@ -929,7 +929,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
-		.orderBy(SALARY.EMPLOYEE_NAME)
+		.orderBy(SALARY.EMPLOYEE_NAME, SALARY.TYPE)
 		.fetchStream()
 		.forEach(r -> {
 			SalaryType salaryType = typeOf(r.get(SALARY.TYPE), SalaryType.class);

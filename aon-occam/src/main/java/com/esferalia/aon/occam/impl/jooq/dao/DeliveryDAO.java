@@ -292,12 +292,12 @@ public class DeliveryDAO {
 		
 		DeliveryValidation.autocomplete(ctx, delivery);
 		DeliveryValidation.validate(ctx, delivery);
-
+		
 		delivery = delivery.hasId() 
 			? update(ctx, delivery)
 			: insertDelivery(ctx, delivery);
-
-		delivery.setDetails(DeliveryDetailDAO.save(ctx, delivery.getDetails()));
+		
+		delivery.setDetails(DeliveryDetailDAO.save(ctx, delivery, delivery.getDetails()));
 		return delivery;
 	}
 	
@@ -306,7 +306,7 @@ public class DeliveryDAO {
 	 */
 	public static Delivery insertDelivery(AONContext ctx, Delivery delivery) {
 		ctx.checkWrite();
-		return ctx.getDslContext()
+		Integer id = ctx.getDslContext()
 				.insertInto(DELIVERY, DELIVERY.DOMAIN, DELIVERY.PROJECT,
 						DELIVERY.SERIES, DELIVERY.NUMBER, DELIVERY.CUSTOMER,
 						DELIVERY.ADDRESS, DELIVERY.ISSUE_TIME,
@@ -355,7 +355,8 @@ public class DeliveryDAO {
 						delivery.getShippingStatusValue(), delivery.getStatusModificationDate(),
 						ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
 						ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
-				.returning().fetch().stream().map(new DeliveryFiller()).findFirst().orElse(new Delivery());
+				.returning().fetch().stream().map(new DeliveryFiller()).findFirst().orElse(new Delivery()).getId();
+		return delivery.setId(id);
 	}
 	
 	public static Delivery update(AONContext ctx, Delivery delivery) {

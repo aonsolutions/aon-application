@@ -71,6 +71,7 @@ public class CraTypes {
 			case 59: return words.getString("59");
 			case 60: return words.getString("60");
 			case 61: return words.getString("61");
+			case 100: return words.getString("100");
 			default: throw new UnknownCraException(type + " is not a valid CRA type.");
 		}
 	}

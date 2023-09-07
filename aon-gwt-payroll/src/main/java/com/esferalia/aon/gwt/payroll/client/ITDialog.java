@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
@@ -37,6 +38,9 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.OptionElement;
+import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -76,6 +80,10 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public abstract class ITDialog extends AonCustomDialog {
+    
+    	private static final String COVID_IT = "8";
+
+	private static Date COVID_END_DATE = AonDateUtils.parse("dd/MM/yyyy", "25/07/2023");
 	
 	private static final Logger LOGGER = Logger.getLogger(ITDialog.class.getName());
 
@@ -456,9 +464,14 @@ public abstract class ITDialog extends AonCustomDialog {
 		causeLowPart.addItem("Paternidad", "3");
 		causeLowPart.addItem("Riesgo para el embarazo", "4");
 		causeLowPart.addItem("Riesgo durante la lactancia", "5");
+		causeLowPart.addItem("Menstruaci\u00F3n Incapacitante Secundaria","10");
+		causeLowPart.addItem("Interrupci\u00F3n del Embarazo", "11" );
+		causeLowPart.addItem("Semana Trig\u00E9sima Novena de Gestaci\u00F3n", "12");
 		causeLowPart.addItem("Accidente no laboral", "6");
 		causeLowPart.addItem("Enfermedad com\u00Fan periodo de carencia", "7");
-		causeLowPart.addItem("Enfermedad com\u00Fan, prestaci\u00F3n profesional (COVID-19)", "8");
+		causeLowPart.addItem("Enfermedad com\u00Fan, prestaci\u00F3n profesional (COVID-19)", COVID_IT);		
+		setOptionDisabled(causeLowPart, COVID_IT, true);
+		
 		
 		// Uncomment this line when this cause is developed on SalaryDraft
 		// causeLowPart.addItem("Periodo de Observaci\u00f3n por Enfermedad Profesional", "9");
@@ -473,7 +486,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		causeHighPart.addItem("Mejor\u00eda que permite realizar el trabajo habitual", "5");
 		causeHighPart.addItem("Incomparecencia", "6");
 		causeHighPart.addItem("Control INSS duraci\u00F3n 12 meses", "7");
-		causeHighPart.addItem("Recuperaci\u00F3n capacidad profesional", "8");
+		causeHighPart.addItem("Recuperaci\u00F3n capacidad profesional", COVID_IT);
 		causeHighPart.addItem("Incomparecencia contratos de formaci\u00F3n", "9");
 		
 		applicantTypeList.addItem("Madre biologica", "0");
@@ -481,6 +494,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		applicantTypeList.addItem("Primer adoptante", "2");
 		applicantTypeList.addItem("Segundo adoptante", "3");
 	}
+
 	
 	// --------------------------------------------------- setITDialogObject
 	
@@ -615,6 +629,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		normalizeITToPaint(it);
 		itStartDate.setValue(it.getStartDate());
 		setSelectedValueLB(causeLowPart, it.getTypeLowPart().toString());
+		setOptionDisabled(causeLowPart, COVID_IT, it.getStartDate().after(COVID_END_DATE) );
 		
 		itEndDate.setValue(it.getEndDate());
 		setSelectedValueLB(causeHighPart, null == it.getTypeHighPart() ? "-1" : it.getTypeHighPart().toString());
@@ -842,14 +857,16 @@ public abstract class ITDialog extends AonCustomDialog {
 	@UiHandler("itStartDate")
 	public void onItStartDateChange(ValueChangeEvent<Date> event) {
 		checkAndCreateIT();
+		Date startDate = event.getValue();
 		
-		this.it.setStartDate(event.getValue());
-		
-		setDateLowPart(event.getValue());
+		this.it.setStartDate(startDate);
+		setDateLowPart(startDate);
 		
 		createRealStartDate();
 		setDirectPayDate();
 		showConfirmationParts();
+		
+		setOptionDisabled(causeLowPart, COVID_IT, startDate.after(COVID_END_DATE));
 	}
 	
 	@UiHandler("causeLowPart")
@@ -1352,10 +1369,11 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
 		
 		if(this.userComunica) {
-		    
-			buildBtnPart(itPart).ifPresent(btn->
-			     confirmationPartDataTable.setWidget(row, 5, btn)
-			);
+			Date checkDate = new Date(2023 - 1900, 3, 1);
+			if(new Date().before(checkDate))
+				buildBtnPart(itPart).ifPresent(btn->
+				     confirmationPartDataTable.setWidget(row, 5, btn)
+				);
 			
 			buildBtnPartPdf(itPart).ifPresent(btn->
 			    confirmationPartDataTable.setWidget(row, 6, btn)
@@ -1626,6 +1644,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		this.observationTB.setText("");
 		
 		this.confirmationPartDataTable.clear();
+
+		setOptionDisabled(causeLowPart, COVID_IT, true);
 	}
 	
 	//--------------COMMUNICATE IT PART
@@ -1649,8 +1669,10 @@ public abstract class ITDialog extends AonCustomDialog {
 				
 				if(!isPaternity()) {
 					Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
-					altaOptional.ifPresent(part->{
-					    buildBtnPart(part).ifPresent(btn-> itAlta.add(btn) );
+					altaOptional.ifPresent(part-> {
+						Date checkDate = new Date(2023 - 1900, 3, 1);
+						if(new Date().before(checkDate))
+							buildBtnPart(part).ifPresent(btn-> itAlta.add(btn) );
 					    buildBtnPartPdf(part).ifPresent(btn->itAlta.add(btn) );
 					});
 				}
@@ -1935,10 +1957,12 @@ public abstract class ITDialog extends AonCustomDialog {
 				toolbarDetail.setTitle("Baja");
 			break;
 			case (byte)1:
+				checkComunicationNeeded();
 				cause = "Confirmaci\u00F3n";
 				toolbarDetail.setTitle(cause);
 			break;
 			case (byte)2:
+				checkComunicationNeeded();
 				cause = getSelectedTextByValue(causeHighPart, it.getTypeHighPart());
 				toolbarDetail.setTitle("Alta");
 			break;
@@ -2006,6 +2030,16 @@ public abstract class ITDialog extends AonCustomDialog {
 
 	}
 	
+	private void checkComunicationNeeded() {
+		Date checkDate = new Date(2023 - 1900, 3, 1);
+		Date currentDate = new Date();
+		
+		if(currentDate.before(checkDate)) {
+			AonDialog warning = new AonDialog("Comunicaciones IT", new HTML("Seg\u00fan el Real Decreto 1060/2022, con vigencia desde el pr\u00f3ximo 1 de abril de 2023, ya no ser\u00e1 necesario comunicar los partes de <b>confirmaci\u00f3n</b> ni lo partes de <b>Alta</b>."));
+			warning.warning();
+		}
+	}
+
 	private void addInfoAditionalBaja(HTMLPanel flexColumn) {
 		HTMLPanel panel = new HTMLPanel("");
 		panel.setStyleName(style.flex());
@@ -2020,7 +2054,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		baseCC.setStyleName("aon-inputText");
 		panel.add(baseCC);
 		baseCC.addChangeHandler(event->{
-			it.setRegulationBase(baseCC.getValue());
+			it.setDailyCGCBase(baseCC.getValue());
+//			it.setRegulationBase(baseCC.getValue());
 		});
 		
 		//BASE CP
@@ -2063,6 +2098,7 @@ public abstract class ITDialog extends AonCustomDialog {
         for (ITPart itPart: this.it.getITParts()) {
             if(itPart.getId().equals(itPartTmp.getId())) {
                 itPart.setStatus(status.value());
+                itPart.setModify(true);
                 break;
             }
         }
@@ -2240,4 +2276,17 @@ public abstract class ITDialog extends AonCustomDialog {
 	protected abstract void onRemoveITPartTGSS(ItNotExist ItNotExist);
 	
 	protected abstract void onAccept();
+
+	private static void setOptionDisabled(ListBox listBox, String value, boolean disabled) {
+	    SelectElement select = listBox.getElement().cast();
+	    NodeList<OptionElement> options = select.getOptions();
+	    for (int i = 0; i < options.getLength(); i++) {
+		OptionElement option = options.getItem(i);
+		if (value.equals(option.getValue())) {
+		    option.setDisabled(disabled);
+		    break;
+		}
+	    }
+	}
+
 }

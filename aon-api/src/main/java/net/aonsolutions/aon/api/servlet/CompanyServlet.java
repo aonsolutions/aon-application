@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -344,10 +344,12 @@ public class CompanyServlet extends AonApiHttpServlet{
 				f.getDomainProperty().eq(api.getDomain().getId()));
 		JSONObject json = CompanyJSON.toJSON(company);
 		
-		LinkedList<RegistryAdditionalInfo> list = new LinkedList<>();
-		list.add(RegistryAdditionalInfo.ADDRESS);
-		list.add(RegistryAdditionalInfo.MEDIA);
-
+		LinkedList<RegistryAdditionalInfo> list = null;
+		if(api.getData().opt("additional_info") == null) {
+			list= new LinkedList<>();
+			list.add(RegistryAdditionalInfo.ADDRESS);
+			list.add(RegistryAdditionalInfo.MEDIA);
+		}
 		return RegistryServlet.getRegistryAdditionalInfo(json, api, api.getData(), company.getId(), list);
 	}
 	
@@ -462,12 +464,14 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private JSONObject saveBooking(AonApiData api){
 		Booking oldBooking = AON.getBooking(api.getDomain(), api.getUser());
+		boolean domainPayer = JsonUtils.getboolean(api.getData(), "domainPayer");
 		Booking newBooking = new Booking()
 			.setDomain(api.getDomain())
 			.setCompany(oldBooking.getCompany())
+			.setType(DomainType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE)))
 			.setApps(safeValueOf(JsonUtils.getJSONArray(api.getData(), IJsonNames.APPS)))
 			.setNumberOfUsers(JsonUtils.getInteger(api.getData(), IJsonNames.USERS))
-			.setPayer("");
+			.setPayer(domainPayer ? api.getDomain().getId().toString() : "");
 		
 		AON.saveBooking(api.getDomain(), api.getUser(), newBooking);
 		BookingUtils.getInstance().sendMail(api.getDomain(), api.getUser(), oldBooking, newBooking);

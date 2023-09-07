@@ -147,6 +147,16 @@ public class AccountingUtilities extends MainEntryPoint{
 			}
 		});
 		
+		OutOfDateEntryFinder outOfDate = new OutOfDateEntryFinder(getDomainName(),getUser(),domain);
+		checksGrid.addRow().addCell(outOfDate.getSidebarWidget());
+		outOfDate.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
+			@Override
+			public void onSelection(SelectionEvent<IOption> event) {
+				content.setWidget( outOfDate );
+				outOfDate.run();
+			}
+		});
+		
 		WrongRecordedInvoices  wrongInvoices = new WrongRecordedInvoices(getDomainName(),getUser(),domain);
 		checksGrid.addRow().addCell(wrongInvoices.getSidebarWidget());
 		wrongInvoices.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {

@@ -2,13 +2,7 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.stream.Stream;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 import org.json.JSONException;
 
@@ -18,6 +12,12 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Account Stream Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/AccountStreamServlet" })
 public class AccountStreamServlet extends HttpServlet {
@@ -35,8 +35,8 @@ public class AccountStreamServlet extends HttpServlet {
 			PrintWriter out = resp.getWriter();
 			out.write('[');
 			final MutableBoolean first = new MutableBoolean(true);
-			Stream<Account> stream =  ACCOUNTING.getAccounts(params);
-			stream.map( account -> JsonWriter.writeToJSON(account))
+			List<Account> list =  ACCOUNTING.getAccountsList(params);
+			list.stream().map( account -> JsonWriter.writeToJSON(account))
 				.forEach(json -> {
 					try {
 						if (first.getValue()) {
@@ -53,7 +53,7 @@ public class AccountStreamServlet extends HttpServlet {
 			;
 			out.write(']');
 			resp.flushBuffer();
-			stream.close();
+			list.stream().close();
 		} catch (Throwable e) {
 			throw new ServletException(e);
 		}

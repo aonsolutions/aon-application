@@ -42,6 +42,7 @@ public class AonAgreementsToolbar extends Composite {
 	interface MyStyle extends CssResource {
 		String title();
 		String cmdBtn();
+		String redColor();
 	}
 	
 	@UiField
@@ -56,7 +57,7 @@ public class AonAgreementsToolbar extends Composite {
 	
 	private AonButton importButton;
 	private AonButton settingsButton;
-	private AonButton trashListButton;
+	private AonButtonBadge trashListButton;
 	
 	private boolean agreementTreeShowed = true;
 	
@@ -78,18 +79,27 @@ public class AonAgreementsToolbar extends Composite {
 		listeners.remove(listener);
 	}
 	
+	public void setTrashAgreementWarn(Boolean hasTrashAgreements) {
+		if(hasTrashAgreements) trashListButton.addBagde();
+		else trashListButton.removeBadge();
+	}
+	
 	private void createToolbar() {
 		
-		showMenuButton = new AonToolbarButton("Ocultar", AON.CSS.aonIconMenu() );
+		showMenuButton = new AonToolbarButton("Ocultar", AON.CSS.aonIconMenuCollapse() );
 		showMenuButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				if(agreementTreeShowed) {
 					showMenuButton.setTitle("Mostrar");
+					showMenuButton.removeStyleName(AON.CSS.aonIconMenuCollapse());
+					showMenuButton.addStyleName(AON.CSS.aonIconMenu());
 					for(Listener listener : listeners)
 						listener.onCollapseMenuButtonClick(event);
 				} else {
 					showMenuButton.setTitle("Ocultar");
+					showMenuButton.removeStyleName(AON.CSS.aonIconMenu());
+					showMenuButton.addStyleName(AON.CSS.aonIconMenuCollapse());
 					for(Listener listener : listeners)
 						listener.onShowMenuButtonClick(event);
 				}
@@ -105,7 +115,7 @@ public class AonAgreementsToolbar extends Composite {
 		title.addStyleName(style.title());
 		headerSection.add(title);
 		
-		importButton = new AonToolbarButton("Importar Convenio", AON.CSS.aonIconImport() );
+		importButton = new AonToolbarButton("Importar Convenio", AON.CSS.aonIconCloudImport() );
 		importButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -126,7 +136,7 @@ public class AonAgreementsToolbar extends Composite {
 		});
 		toolsSection.add(settingsButton);
 		
-		trashListButton = new AonToolbarButton("Papelera Convenios", AON.CSS.aonIconTrashList() );
+		trashListButton = new AonButtonBadge("Papelera Convenios", AON.CSS.aonIconTrashList(), false);
 		trashListButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

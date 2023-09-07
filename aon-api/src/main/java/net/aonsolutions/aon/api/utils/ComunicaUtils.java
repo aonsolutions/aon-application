@@ -14,8 +14,8 @@ import java.util.function.Predicate;
 import org.json.JSONObject;
 
 import com.esferalia.aon.in.payroll.tgss.report.CCCLaboralLife;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import solutions.aon.seg.social.ServicioREDEmployee;

@@ -34,8 +34,6 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.seres.ftp.FtpException;
-import com.esferalia.aon.seres.ftp.FtpLoginException;
 import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
 
 
@@ -140,11 +138,9 @@ public class FtpStoreProcess implements ILongProcess, Serializable {
 		try {
 			return SeresFtpConnectionProvider.storeFile(ftpRemotePath, fileName,
 					inputStream, ftpServer, ftpPort, ftpUser, ftpPassword);
-		} catch (FtpLoginException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-		} catch (FtpException e) {
-			LOGGER.error(e.getMessage());
-		}
+		} 
 		return false;
 	}
 	

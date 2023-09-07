@@ -285,5 +285,6 @@ class WrongRecordedInvoices extends OptionBase {
 		@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
 		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {}
 		@Override public void visitAccountChange(AccUtilitiesItemType type) {}
+		@Override public void visitOutOfDateEntry(AccUtilitiesItemType type) {}
 	}
 }

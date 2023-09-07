@@ -756,6 +756,7 @@ public class SalaryDAO {
 					Seq.skipUntil(Seq.seq(salaryDataIter), 
 					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) ),
 					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) )
+					.filter(salaryDataRecord -> salaryDataRecord.get(SALARY_DATA.ID) != null )
 					.forEachOrdered(salaryDataRecord->
 						salary.setContextData(
 						salaryDataRecord.get(SALARY_DATA.NAME), 
@@ -769,6 +770,7 @@ public class SalaryDAO {
 					Seq.skipUntil(Seq.seq(contractDataIter), 
 					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) ),
 					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) )
+					.filter(contractDataRecord -> contractDataRecord.get(CONTRACT_DATA.ID) != null )
 					.forEachOrdered(contractDataRecord->
 						salary.addContextData(
 						contractDataRecord.get(CONTRACT_DATA.NAME), 

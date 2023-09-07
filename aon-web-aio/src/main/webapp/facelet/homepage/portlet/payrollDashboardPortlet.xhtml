@@ -8,7 +8,6 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<aon:div styleClass="aon-portlet">
-		<!--script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script-->
 		<aon:div styleClass="aon-portlet-title">
 			<aon:div styleClass="aon-portlet-title-buttons">
 			</aon:div>
@@ -82,8 +81,10 @@
 								var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:salaryChartDiv'));
 								chart.draw(data, options);
 							}
+							
 							google.charts.load('current', {packages: [ 'corechart']});
-							google.charts.setOnLoadCallback(drawSalaryColumnChart);							
+							google.charts.setOnLoadCallback(drawSalaryColumnChart);
+											
 					   </script>
 				</aon:div>
 
@@ -146,8 +147,10 @@
 								var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:contractChartDiv'));
 								chart.draw(data, options);
 							}
-							//google.charts.load('current', {packages: ['bar']});
-							google.charts.setOnLoadCallback(drawContractColumnChart);							
+							
+							google.charts.load('current', {packages: ['bar']});
+							google.charts.setOnLoadCallback(drawContractColumnChart);
+												
 					   </script>
 				</aon:div>
 			</aon:panelGrid>

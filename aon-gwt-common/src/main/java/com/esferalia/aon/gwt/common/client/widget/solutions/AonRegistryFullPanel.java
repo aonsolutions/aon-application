@@ -64,6 +64,8 @@ public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel
 	private final FlowPanel rootPanel = new FlowPanel();
 	private final AonTextBox nameText = new AonTextBox();
 	
+	private AonAccountBox accountBox;
+	
 	public AonRegistryFullPanel(AonModuleOptions<?> options, R registryFull,AonRegistryFullPanelCallback<R> callback) {
 		setStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonBoxSizingBorderBox());
@@ -647,7 +649,7 @@ public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel
 
 	protected void addAccountRow(AonDisplayTable displayTab,AonModuleOptions<?> options, IAccount<?> account) {
 		Account acc = account.getAccount();
-		final AonAccountBox accountBox = new AonAccountBox(options.getDomainName(),options.getDomain(),options.getUser());
+		accountBox = new AonAccountBox(options.getDomainName(),options.getDomain(),options.getUser());
 		accountBox.setAccount(acc);
 		accountBox.addSelectionHandler(new SelectionHandler<Account>() {
 			
@@ -658,6 +660,10 @@ public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel
 			}
 		});
 		addBasicRow(displayTab, new InlineLabel(AON.MSG.account()), accountBox);				
+	}
+	
+	protected void setAccountEnable(boolean enabled) {
+		accountBox.setEnabled(false);			
 	}
 
 	protected void addExtended(AonModuleOptions<?> options, R registryFull, AonRegistryFullPanelCallback<R> callback) {

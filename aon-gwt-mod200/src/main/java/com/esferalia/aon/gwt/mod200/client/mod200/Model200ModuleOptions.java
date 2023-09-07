@@ -17,6 +17,4 @@ public class Model200ModuleOptions extends FiscalModelModuleOptions<Mod200> {
 		return this;
 	}
 	
-	
-	
 }

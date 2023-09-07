@@ -6,13 +6,19 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvestAssetRegime implements Serializable{
 
-	PROPERTY,
-	RENTING,
-	FINANCIAL_LEASING,
-	OTHER;
+	PROPERTY("Propiedad"),
+	RENTING("Alquiler"),
+	FINANCIAL_LEASING("Arrendamiento Financiero"),
+	OTHER("Otro");
 
-	private InvestAssetRegime() {
-
+	private String description;
+	
+	private InvestAssetRegime(String description) {
+		this.description = description;
+	}
+	
+	public String description() {
+		return description;
 	}
 	
 	public Byte value(){

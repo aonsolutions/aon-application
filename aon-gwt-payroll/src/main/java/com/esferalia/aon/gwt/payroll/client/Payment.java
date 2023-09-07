@@ -792,7 +792,7 @@ public class Payment extends ResizeComposite {
 			return "PRORRATEAR()";
 		}
 		if (IRPF_CTA_ESP.equals(listValue)) {
-			return "BASE_CTA_ESP=_P";
+			return "BASE_CTA_ESP=( isdef BASE_CTA_ESP ? BASE_CTA_ESP : 0.00 ) + _P; _P";
 		}
 		// It must be CUSTOM
 		return src;

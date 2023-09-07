@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -153,8 +155,13 @@ public class JooqMail {
 		html += "<ul>";
 		
 		for(Entry<String, String> entry : params.entrySet()) {
-			if(AonStringUtils.containsIgnoreCase(entry.getKey(), "id"))
+			
+			Pattern salaryIdPattern = Pattern.compile("^id\\d*$", Pattern.CASE_INSENSITIVE);
+			Matcher matcher = salaryIdPattern.matcher(AonStringUtils.trimToEmpty(entry.getKey()));
+			
+			if(matcher.matches()) {				
 				html +=	getSalaryItem(dslContext, Integer.parseInt(entry.getValue()));
+			}
 		}
 
 		html += "</ul>";
@@ -511,7 +518,10 @@ public class JooqMail {
 			if(AonStringUtils.equalsIgnoreCase(entry.getKey(), "url"))
 				continue;
 			
-			if(AonStringUtils.containsIgnoreCase(entry.getKey(), "id"))
+			Pattern salaryIdPattern = Pattern.compile("^id\\d*$", Pattern.CASE_INSENSITIVE);
+			Matcher matcher = salaryIdPattern.matcher(AonStringUtils.trimToEmpty(entry.getKey()));
+			
+			if(matcher.matches())
 				html += "<input type=\"hidden\" name=\"id\" value=\"" + entry.getValue() + "\">";
 			else 
 				html += "<input type=\"hidden\" name=\"" + entry.getKey() + "\" value=\"" + entry.getValue() + "\">";

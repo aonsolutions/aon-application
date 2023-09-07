@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 
-import javax.el.ELException;
+import jakarta.el.ELException;
 import javax.faces.FacesException;
 
 import com.sun.facelets.Facelet;

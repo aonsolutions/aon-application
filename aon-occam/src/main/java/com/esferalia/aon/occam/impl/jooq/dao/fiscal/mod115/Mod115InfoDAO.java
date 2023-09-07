@@ -77,7 +77,7 @@ public class Mod115InfoDAO {
 					
 					@Override 
 					public String visitComputeKey() {
-						return new JSONObject( getComputeKey(ctx, mod115, script, keyDAO) ).toString();
+						return getComputeKey(ctx, mod115, script, keyDAO);
 					}
 					
 					@Override 
@@ -95,6 +95,11 @@ public class Mod115InfoDAO {
 			.orElse(null);
 	}
 	
+	public static Stream<IrpfBreakdown> getModelInvoicesInfo(AONContext ctx, final Mod115 mod115, Mod115Key key) {
+		Mod115Declaration dec = Mod115Declaration.getInstance(mod115);
+		return getModelInvoicesInfo(ctx, mod115, dec.getKey(key)); 
+	}
+
 	private static Stream<IrpfBreakdown> getModelInvoicesInfo(AONContext ctx, final Mod115 mod115, IMod115KeyDAO keyDAO) {
 		return IRPFDAO.getModelInputInvoicesIrpfBreakdown(ctx, mod115)
 			.filter( br ->  keyDAO.acceptValue(mod115, br));
@@ -194,18 +199,24 @@ public class Mod115InfoDAO {
 	}
 	
 	private static String getComputeKey(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script,IMod115KeyDAO keyDAO) {
-		Mod115MVELContext mvelCtx = new Mod115MVELContext(mod115); 
-		mvelCtx.put("mod", mod115);
-		mvelCtx.put("periodModels", FiscalModelDAO.getSamePeriodModels(ctx, mod115, Mod115::new).collect(Collectors.toCollection(LinkedList::new)));
-		mvelCtx.put("lastPeriodModels", FiscalModelDAO.getLastPeriodModels(ctx, mod115, Mod115::new).collect(Collectors.toCollection(LinkedList::new)));
-		mvelCtx.put("models", Mod115DAO.getMod115s(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
+		Mod115Declaration dec = Mod115Declaration.getInstance(mod115);
 		StringBuilder buf = new StringBuilder();
 		for (Mod115Key key : script.getKeys() ) {
 			if (key != null) {
-				String template = keyDAO.getTemplate();
-				if (AonStringUtils.isNotBlank( template )) {
-					Object result = TemplateRuntime.eval(template, mvelCtx);
-					buf.append(result != null ? result.toString() : null);
+				if (Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
+					buf.append(  dec.getSamePeriodExplain( ctx, mod115, key));
+					return buf.toString();
+				} else {
+					Mod115MVELContext mvelCtx = new Mod115MVELContext(mod115); 
+					mvelCtx.put("mod", mod115);
+					mvelCtx.put("periodModels", FiscalModelDAO.getSamePeriodModels(ctx, mod115, Mod115::new).collect(Collectors.toCollection(LinkedList::new)));
+					mvelCtx.put("lastPeriodModels", FiscalModelDAO.getLastPeriodModels(ctx, mod115, Mod115::new).collect(Collectors.toCollection(LinkedList::new)));
+					mvelCtx.put("models", Mod115DAO.getMod115s(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
+					String template = keyDAO.getTemplate();
+					if (AonStringUtils.isNotBlank( template )) {
+						Object result = TemplateRuntime.eval(template, mvelCtx);
+						buf.append(result != null ? result.toString() : null);
+					}
 				}
 			}
 		}

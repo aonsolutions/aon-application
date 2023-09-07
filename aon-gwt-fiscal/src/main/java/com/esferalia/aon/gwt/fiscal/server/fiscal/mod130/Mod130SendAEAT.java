@@ -2,11 +2,11 @@ package com.esferalia.aon.gwt.fiscal.server.fiscal.mod130;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
@@ -28,7 +28,7 @@ public class Mod130SendAEAT extends HttpServlet {
 					.setDomainName(aeatParams.getDomainName())
 					.setDomain(aeatParams.getDomainId())
 					.setUser(aeatParams.getUser());
-			Mod130 mod130 = MODEL130.getMod130(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			Mod130 mod130 = MODEL130.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
 			if (mod130 == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}

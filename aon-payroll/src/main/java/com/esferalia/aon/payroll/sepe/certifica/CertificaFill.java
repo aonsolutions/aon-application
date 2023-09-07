@@ -26,11 +26,16 @@ public class CertificaFill {
 	}
 	
 	public static byte[] exportCertEnterprisePDF(Map<String, String> fieldsMap) {
-		return fillCertEnterprisePDF(fieldsMap);
+		InputStream is = CertificaFill.class.getResourceAsStream("certificados.pdf");
+		return fillCertEnterprisePDF(is, fieldsMap);
 	}
 	
-	private static byte[] fillCertEnterprisePDF(Map<String, String> fieldsMap) {
-		InputStream is = CertificaFill.class.getResourceAsStream("certificados.pdf");
+	public static byte[] exportCertEnterpriseAgrarianPDF(Map<String, String> fieldsMap) {
+		InputStream is = CertificaFill.class.getResourceAsStream("certificadosAgrarios.pdf");
+		return fillCertEnterprisePDF(is, fieldsMap);
+	}
+	
+	private static byte[] fillCertEnterprisePDF(InputStream is, Map<String, String> fieldsMap) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
 		try (PDDocument pdfDocument = Loader.loadPDF(is)){

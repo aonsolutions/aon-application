@@ -15,10 +15,12 @@ import static solutions.aon.seg.social.toolkit.Toolkit.splitStringMultiple;
 import static solutions.aon.seg.social.toolkit.Toolkit.verifyData;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -26,22 +28,26 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlLabel;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+import javax.swing.text.Document;
+
+import org.apache.commons.io.FileUtils;
+import org.htmlunit.ElementNotFoundException;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.Page;
+import org.htmlunit.UnexpectedPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlLabel;
+import org.htmlunit.html.HtmlOption;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSubmitInput;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.html.HtmlTableCell;
+import org.htmlunit.html.HtmlTableRow;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -55,26 +61,30 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDEmployee {
-	
-	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
-	
+
+	// Toolkit.buildFile(htmlPage.asXml().getBytes(),
+	// System.getProperty("user.home")+"/test.html");
+
 	private static final String FORMAT_DATE_ES = "dd/MM/yyyy";
-	
-	// DATOS PERSONALES 
-	// NUSS: 13 1011852553 IPF: 6 0X7028854P F.Nacimiento: 23 10 1987 Sexo: V DELGADO MARULANDA ANDRES FELIPE Movil para SMS: 674498291 
-	private static final Pattern EMPlOYEE_DATA = Pattern.compile("nuss:\\s+(?<nss>\\d+\\s*\\d+)?.*ipf:\\s+(?<identity>\\d+)\\s+(?<ipf>\\w+).*f.nacimiento:\\s+(?<birthDate>\\d{2}\\s\\d{2}\\s\\d{4})?.*sexo:\\s+(?<sex>\\w+)?\\s+(?<name>.+)\\s+movil.+sms:\\s+(?<tlf>\\d{9})?.*$"
-	, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-	
-	
-	//  DATOS EMPRESA
-	// Cta. Cotiz.: 28 249788734 Régimen: 0111 Ident.Empr.: 9 0B01991256 Nombre ...: RIKAMBA SL
-	private static final Pattern ENTERPRISE_DATA = Pattern.compile("cta.*cotiz.*:\\s+(?<ccc>\\d{2}\\s\\d{9}).*r.gimen:\\s+(?<regime>\\d{4}).*ident.*:\\s+(?<identityCif>\\d{1})?\\s+(?<cif>\\w+)\\s+nombre\\s+...:\\s+(?<enterpriseName>\\w+)\\s+"
-	, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-	
-	private static final Pattern CONTRACT_DATA = Pattern.compile("situaci.n:\\s+(?<situation>.+)\\s+g\\.c\\.:\\s+(?<gc>\\d{1,2})?.*f\\.r\\.a\\.:\\s+(?<fra>\\d{2}\\/\\d{2}\\/\\d{4}).*f\\.e\\.a\\.:\\s+(?<fea>\\d{2}\\/\\d{2}\\/\\d{4}).*f\\.r\\.b\\.:\\s+(?<frb>\\d{2}\\/\\d{2}\\/\\d{4})?.*f\\.e\\.b\\.:\\s+(?<feb>\\d{2}\\/\\d{2}\\/\\d{4})?.*contrato:\\s+(?<contract>\\d{3}).*coef\\.:\\s+(?<coef>\\d{1,3}\\,\\d{1,3})?.*colec\\.:\\s+(?<colec>\\d)?.*ocup:\\s+(?<ocup>\\w{1}\\s+)?.*"
-			, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-	
-	
+
+	// DATOS PERSONALES
+	// NUSS: 13 1011852553 IPF: 6 0X7028854P F.Nacimiento: 23 10 1987 Sexo: V
+	// DELGADO MARULANDA ANDRES FELIPE Movil para SMS: 674498291
+	private static final Pattern EMPlOYEE_DATA = Pattern.compile(
+			"nuss:\\s+(?<nss>\\d+\\s*\\d+)?.*ipf:\\s+(?<identity>\\d+)\\s+(?<ipf>\\w+).*f.nacimiento:\\s+(?<birthDate>\\d{2}\\s\\d{2}\\s\\d{4})?.*sexo:\\s+(?<sex>\\w+)?\\s+(?<name>.+)\\s+movil.+sms:\\s+(?<tlf>\\d{9})?.*$",
+			Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+
+	// DATOS EMPRESA
+	// Cta. Cotiz.: 28 249788734 Régimen: 0111 Ident.Empr.: 9 0B01991256 Nombre ...:
+	// RIKAMBA SL
+	private static final Pattern ENTERPRISE_DATA = Pattern.compile(
+			"cta.*cotiz.*:\\s+(?<ccc>\\d{2}\\s\\d{9}).*r.gimen:\\s+(?<regime>\\d{4}).*ident.*:\\s+(?<identityCif>\\d{1})?\\s+(?<cif>\\w+)\\s+nombre\\s+...:\\s+(?<enterpriseName>\\w+)\\s+",
+			Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+
+	private static final Pattern CONTRACT_DATA = Pattern.compile(
+			"situaci.n:\\s+(?<situation>.+)\\s+g\\.c\\.:\\s+(?<gc>\\d{1,2})?.*f\\.r\\.a\\.:\\s+(?<fra>\\d{2}\\/\\d{2}\\/\\d{4}).*f\\.e\\.a\\.:\\s+(?<fea>\\d{2}\\/\\d{2}\\/\\d{4}).*f\\.r\\.b\\.:\\s+(?<frb>\\d{2}\\/\\d{2}\\/\\d{4})?.*f\\.e\\.b\\.:\\s+(?<feb>\\d{2}\\/\\d{2}\\/\\d{4})?.*contrato:\\s+(?<contract>\\d{3}).*coef\\.:\\s+(?<coef>\\d{1,3}\\,\\d{1,3})?.*colec\\.:\\s+(?<colec>\\d)?.*ocup:\\s+(?<ocup>\\w{1}\\s+)?.*",
+			Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+
 	// GETS BOTH REAL AND PREVIUS EMPLOYEES
 	public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regimen, String ccc)
@@ -87,7 +97,8 @@ class SistemaREDEmployee {
 			try {
 				employees.addAll(getEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType,
 						regimen, ccc));
-			} catch (Exception e) {}
+			} catch (Exception e) {
+			}
 			try {
 				employees.addAll(getPrevEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType,
 						regimen, ccc));
@@ -97,8 +108,7 @@ class SistemaREDEmployee {
 			return employees;
 		} catch (IOException e) {
 			throw new InvalidCertificateException();
-		}
-		catch (FailingHttpStatusCodeException e) {
+		} catch (FailingHttpStatusCodeException e) {
 			HandleStatusCodeException(e);
 		}
 		return null;
@@ -108,72 +118,72 @@ class SistemaREDEmployee {
 	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIEeS
 	private static Employee employeeFullInfo(String ccc, String nss, WebClient webClient)
 			throws IOException, InterruptedException, SegSocialException {
-		HtmlPage page = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR61&E=I&AP=AFIR");
-		
+		HtmlPage page = webClient
+				.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR61&E=I&AP=AFIR");
+
 		HtmlForm formParts = wait4(page, p -> p.getFormByName("jacadaform")).orElseThrow();
 		manageStatusCode(page);
 
-		formParts.getInputByName("txt_SDFTESORNAF").setValueAttribute(nss.substring(0, 2));
-		formParts.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(2));
+		formParts.getInputByName("txt_SDFTESORNAF").setValue(nss.substring(0, 2));
+		formParts.getInputByName("txt_SDFNUMNAF").setValue(nss.substring(2));
 		formParts.getInputByName("btn_Sub2207601004").focus();
 		page = formParts.getInputByName("btn_Sub2207601004").click();
 
 		HtmlTable table = (HtmlTable) page.querySelector("#Sub1000110078");
-		if(table!=null) {
+		if (table != null) {
 			for (final HtmlTableRow row : table.getRows()) {
 				HtmlTableCell cell = row.getCell(1);
-				if(cell.getVisibleText().replaceAll("\\s","").indexOf(ccc)>= 0) {
+				if (cell.getVisibleText().replaceAll("\\s", "").indexOf(ccc) >= 0) {
 					HtmlLabel label = cell.querySelector("label");
 					page = label.dblClick();
 					break;
 				}
 			}
 		}
-		
+
 		manageStatusCode(page);
 
-		List<Employee>employees = getEmployeeFullListRegex(page, nss);
-		if(!employees.isEmpty()) {
+		List<Employee> employees = getEmployeeFullListRegex(page, nss);
+		if (!employees.isEmpty()) {
 			return employees.get(0);
 		}
-		
-		throw new DataDoesNotExist();	
+
+		throw new DataDoesNotExist();
 	}
-	
+
 	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIEeS
-	private static List<Employee> getEmployeeFullListRegex(HtmlPage page, String nss)
-				throws IOException {
-			
-			List<Employee> list = new ArrayList<>();
-			
-		    while (page.getElementById("Sub0400101079_77")!=null) {
-		    	
-		    	String text = page.asText();
-		    	
+	private static List<Employee> getEmployeeFullListRegex(HtmlPage page, String nss) throws IOException {
+
+		List<Employee> list = new ArrayList<>();
+
+		while (page.getElementById("Sub0400101079_77") != null) {
+
+			String text = page.asNormalizedText();
+
 //		    	String[] lines = text.split("\\r?\\n");
 //		    	for (String line : lines) {
 //		    	    System.out.println("line>>>"+line);
 //		    	}
-		    	String ipf = "";
-				String birthDateStr = "";
-				String sex = "";
-				String name = "";
-				String tlf = "";
-				String ctaCot = "";
-				String regime ="";
-				String companyId = "";
-				String companyName = "";
-				String situation = "";
-				String gc = "";
-				String contract = "";
-				String coef = "";
-				String colec = "";
-				String ocup = "";
-				String fraStr = "";
-				String feaStr = "";
-				String frbStr = "";
-				String febStr = "";
-				
+			String ipf = "";
+			String birthDateStr = "";
+			String sex = "";
+			String name = "";
+			String tlf = "";
+			String ctaCot = "";
+			String regime = "";
+			String companyId = "";
+			String companyName = "";
+			String situation = "";
+			String gc = "";
+			String contract = "";
+			String coef = "";
+			String colec = "";
+			String ocup = "";
+			String fraStr = "";
+			String feaStr = "";
+			String frbStr = "";
+			String febStr = "";
+
 //				String vinFam = "";
 //				String profesCat = "";
 //				String reducingCoef = "";
@@ -181,103 +191,105 @@ class SistemaREDEmployee {
 //				Boolean agricultPromo = "";
 //				Boolean workTimeReduct = "";
 //				String epig = "";
-		
 
-				Matcher employeeMatcher = EMPlOYEE_DATA.matcher(text);
-					
-				if (employeeMatcher.find()) {
-					  System.out.println("---------------EMPLOYEE DATA-----------------");
-				      System.out.println("nss->"+employeeMatcher.group("nss"));
-			          System.out.println("identity->"+employeeMatcher.group("identity"));
-			          System.out.println("ipf->"+employeeMatcher.group("ipf"));
-			          System.out.println("birthDate->"+employeeMatcher.group("birthDate"));
-			          System.out.println("sex->"+employeeMatcher.group("sex"));
-			          System.out.println("name->"+employeeMatcher.group("name"));
-			          System.out.println("tlf->"+employeeMatcher.group("tlf"));
-			          System.out.println("--------------------------------");
-			      
-			          ipf = employeeMatcher.group("ipf")!=null ? removeExtraZeros(employeeMatcher.group("ipf").replaceAll("^0+", "")) : "";
-			          
-			      	  birthDateStr = employeeMatcher.group("birthDate")!=null ? employeeMatcher.group("birthDate") : "";
-			      	  
-			      	  sex = employeeMatcher.group("sex")!=null ? employeeMatcher.group("sex") : "";
+			Matcher employeeMatcher = EMPlOYEE_DATA.matcher(text);
 
-			      	  name = employeeMatcher.group("name")!=null ? employeeMatcher.group("name") : "";
-			      	
-			      	  tlf = employeeMatcher.group("tlf")!=null ? employeeMatcher.group("tlf") : "";
-				  }
-				 
-				 Matcher enterpriseMatcher = ENTERPRISE_DATA.matcher(text);
-					
-				 if (enterpriseMatcher.find()) {
-					  System.out.println("---------------ENTERPRISE DATA-----------------");
-				      System.out.println("ccc->"+enterpriseMatcher.group("ccc"));
-			          System.out.println("regime->"+enterpriseMatcher.group("regime"));
-			          System.out.println("identityCif->"+enterpriseMatcher.group("identityCif"));
-			          System.out.println("cif->"+enterpriseMatcher.group("cif"));
-			          System.out.println("enterpriseName->"+enterpriseMatcher.group("enterpriseName"));
-			          System.out.println("--------------------------------");
-			          
-			          regime = enterpriseMatcher.group("regime")!=null ? enterpriseMatcher.group("regime") : "";
-			          
-			          ctaCot = enterpriseMatcher.group("ccc")!=null ? noSpaces(enterpriseMatcher.group("ccc")) : "";
-			          
-			          companyId = enterpriseMatcher.group("cif")!=null ? removeExtraZeros(enterpriseMatcher.group("cif")) : "";
-			          
-			          companyName = enterpriseMatcher.group("enterpriseName")!=null ? enterpriseMatcher.group("enterpriseName") : "";
-				  }
-				 
-				 Matcher contractMatcher = CONTRACT_DATA.matcher(text);
-					
-				 if (contractMatcher.find()) {
-					  System.out.println("---------------CONTRACT DATA-----------------");
-				      System.out.println("situation->"+contractMatcher.group("situation"));
-			          System.out.println("gc->"+contractMatcher.group("gc"));
-			          System.out.println("fra->"+contractMatcher.group("fra"));
-			          System.out.println("fea->"+contractMatcher.group("fea"));
-			          System.out.println("frb->"+contractMatcher.group("frb"));
-			          System.out.println("feb->"+contractMatcher.group("feb"));
-			          System.out.println("contract->"+contractMatcher.group("contract"));
-			          System.out.println("coef->"+contractMatcher.group("coef"));
-			          System.out.println("colec->"+contractMatcher.group("colec"));
-			          System.out.println("ocup->"+contractMatcher.group("ocup"));
-			          System.out.println("--------------------------------");
-			          
-			          situation = contractMatcher.group("situation")!=null ? contractMatcher.group("situation") : "";
-			          
-			          gc = contractMatcher.group("gc")!=null ? contractMatcher.group("gc") : "";
-			          
-			          fraStr = contractMatcher.group("fra")!=null ? contractMatcher.group("fra") : "";
-			          
-			          feaStr = contractMatcher.group("fea")!=null ? contractMatcher.group("fea") : "";
-			          
-			          frbStr = contractMatcher.group("frb")!=null ? contractMatcher.group("frb") : "";
-			          
-			          febStr = contractMatcher.group("feb")!=null ? contractMatcher.group("feb") : "";
-			          
-			          contract = contractMatcher.group("contract")!=null ? contractMatcher.group("contract") : "";
-			          
-			          coef = contractMatcher.group("coef")!=null ? contractMatcher.group("coef") : "";
-			          
-			          colec = contractMatcher.group("colec")!=null ? contractMatcher.group("colec") : "";
-			          
-			          ocup = contractMatcher.group("ocup")!=null ? contractMatcher.group("ocup") : "";
-				  }
-			    	
-				
-				Date birthDate = parseDate(birthDateStr, "dd mm yyyy");
-				Date fra = parseDate(fraStr, FORMAT_DATE_ES);
-				Date fea = parseDate(feaStr, FORMAT_DATE_ES);
-				Date frb = parseDate(frbStr, FORMAT_DATE_ES);
-				Date feb = parseDate(febStr, FORMAT_DATE_ES);
+			if (employeeMatcher.find()) {
+				System.out.println("---------------EMPLOYEE DATA-----------------");
+				System.out.println("nss->" + employeeMatcher.group("nss"));
+				System.out.println("identity->" + employeeMatcher.group("identity"));
+				System.out.println("ipf->" + employeeMatcher.group("ipf"));
+				System.out.println("birthDate->" + employeeMatcher.group("birthDate"));
+				System.out.println("sex->" + employeeMatcher.group("sex"));
+				System.out.println("name->" + employeeMatcher.group("name"));
+				System.out.println("tlf->" + employeeMatcher.group("tlf"));
+				System.out.println("--------------------------------");
 
-			
+				ipf = employeeMatcher.group("ipf") != null
+						? removeExtraZeros(employeeMatcher.group("ipf").replaceAll("^0+", ""))
+						: "";
+
+				birthDateStr = employeeMatcher.group("birthDate") != null ? employeeMatcher.group("birthDate") : "";
+
+				sex = employeeMatcher.group("sex") != null ? employeeMatcher.group("sex") : "";
+
+				name = employeeMatcher.group("name") != null ? employeeMatcher.group("name") : "";
+
+				tlf = employeeMatcher.group("tlf") != null ? employeeMatcher.group("tlf") : "";
+			}
+
+			Matcher enterpriseMatcher = ENTERPRISE_DATA.matcher(text);
+
+			if (enterpriseMatcher.find()) {
+				System.out.println("---------------ENTERPRISE DATA-----------------");
+				System.out.println("ccc->" + enterpriseMatcher.group("ccc"));
+				System.out.println("regime->" + enterpriseMatcher.group("regime"));
+				System.out.println("identityCif->" + enterpriseMatcher.group("identityCif"));
+				System.out.println("cif->" + enterpriseMatcher.group("cif"));
+				System.out.println("enterpriseName->" + enterpriseMatcher.group("enterpriseName"));
+				System.out.println("--------------------------------");
+
+				regime = enterpriseMatcher.group("regime") != null ? enterpriseMatcher.group("regime") : "";
+
+				ctaCot = enterpriseMatcher.group("ccc") != null ? noSpaces(enterpriseMatcher.group("ccc")) : "";
+
+				companyId = enterpriseMatcher.group("cif") != null ? removeExtraZeros(enterpriseMatcher.group("cif"))
+						: "";
+
+				companyName = enterpriseMatcher.group("enterpriseName") != null
+						? enterpriseMatcher.group("enterpriseName")
+						: "";
+			}
+
+			Matcher contractMatcher = CONTRACT_DATA.matcher(text);
+
+			if (contractMatcher.find()) {
+				System.out.println("---------------CONTRACT DATA-----------------");
+				System.out.println("situation->" + contractMatcher.group("situation"));
+				System.out.println("gc->" + contractMatcher.group("gc"));
+				System.out.println("fra->" + contractMatcher.group("fra"));
+				System.out.println("fea->" + contractMatcher.group("fea"));
+				System.out.println("frb->" + contractMatcher.group("frb"));
+				System.out.println("feb->" + contractMatcher.group("feb"));
+				System.out.println("contract->" + contractMatcher.group("contract"));
+				System.out.println("coef->" + contractMatcher.group("coef"));
+				System.out.println("colec->" + contractMatcher.group("colec"));
+				System.out.println("ocup->" + contractMatcher.group("ocup"));
+				System.out.println("--------------------------------");
+
+				situation = contractMatcher.group("situation") != null ? contractMatcher.group("situation") : "";
+
+				gc = contractMatcher.group("gc") != null ? contractMatcher.group("gc") : "";
+
+				fraStr = contractMatcher.group("fra") != null ? contractMatcher.group("fra") : "";
+
+				feaStr = contractMatcher.group("fea") != null ? contractMatcher.group("fea") : "";
+
+				frbStr = contractMatcher.group("frb") != null ? contractMatcher.group("frb") : "";
+
+				febStr = contractMatcher.group("feb") != null ? contractMatcher.group("feb") : "";
+
+				contract = contractMatcher.group("contract") != null ? contractMatcher.group("contract") : "";
+
+				coef = contractMatcher.group("coef") != null ? contractMatcher.group("coef") : "";
+
+				colec = contractMatcher.group("colec") != null ? contractMatcher.group("colec") : "";
+
+				ocup = contractMatcher.group("ocup") != null ? contractMatcher.group("ocup") : "";
+			}
+
+			Date birthDate = parseDate(birthDateStr, "dd mm yyyy");
+			Date fra = parseDate(fraStr, FORMAT_DATE_ES);
+			Date fea = parseDate(feaStr, FORMAT_DATE_ES);
+			Date frb = parseDate(frbStr, FORMAT_DATE_ES);
+			Date feb = parseDate(febStr, FORMAT_DATE_ES);
+
 //				if(frb==null && fra!=null) {
 //					DomNode next = page.querySelector("[value=\"Continuar\"]");
 //					if(next!=null) {
 //						 page = ((HtmlSubmitInput) next).click();
 //						 
-//						 Matcher contractTwoMatcher = CONTRACT_DATA.matcher(page.asText());
+//						 Matcher contractTwoMatcher = CONTRACT_DATA.matcher(page.asNormalizedText());
 //							
 //						 if (contractTwoMatcher.find()) {
 //							  System.out.println("---------------CONTRACT DATA-----------------");
@@ -307,29 +319,12 @@ class SistemaREDEmployee {
 //					}
 //				}
 
-				// BUILD
-				Employee employeeData = new EmployeeBuilder()
-				.setIpf(ipf)
-				.setNss(nss)
-				.setName(name)
-				.setSituation(situation)
-				.setBirthDate(birthDate)
-				.setSex(sex)
-				.setTlf(tlf)
-				.setCtaCti(ctaCot)
-				.setRegime(regime)
-				.setCompanyId(companyId)
-				.setCompanyName(companyName)
-				.setSituation(situation)
-				.setGc(gc)
-				.setFra(fra)
-				.setFea(fea)
-				.setFrb(frb)
-				.setFeb(feb)
-				.setContract(contract)
-				.setCoef(coef)
-				.setColec(colec)
-				.setOcup(ocup)
+			// BUILD
+			Employee employeeData = new EmployeeBuilder().setIpf(ipf).setNss(nss).setName(name).setSituation(situation)
+					.setBirthDate(birthDate).setSex(sex).setTlf(tlf).setCtaCti(ctaCot).setRegime(regime)
+					.setCompanyId(companyId).setCompanyName(companyName).setSituation(situation).setGc(gc).setFra(fra)
+					.setFea(fea).setFrb(frb).setFeb(feb).setContract(contract).setCoef(coef).setColec(colec)
+					.setOcup(ocup)
 //				.setEpig(epig)
 //				.setVinFam(vinFam)
 //				.setProfesCat(profesCat)
@@ -337,35 +332,33 @@ class SistemaREDEmployee {
 //				.setGcDesc(gcDesc)
 //				.setAgricultPromo(agricultPromo)
 //				.setWorkTimeReduct(workTimeReduct)
-				.build();
-				
-				list.add(employeeData);
-				
+					.build();
+
+			list.add(employeeData);
+
 //				DomNode next = page.querySelector("[value=\"Continuar\"]");
 //				if(next!=null) {
 //					 page = ((HtmlSubmitInput) next).click();
 //				} else {
-					break;
+			break;
 //				}
-		    }
+		}
 
-			return list;
+		return list;
 	}
-	
-	
+
 	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIEeS
-	private static List<Employee> getEmployeeFullListOld(HtmlPage page, String nss)
-			throws IOException {
-		
+	private static List<Employee> getEmployeeFullListOld(HtmlPage page, String nss) throws IOException {
+
 		List<Employee> list = new ArrayList<>();
-	    while (page.getElementById("SDFNUMIPF")!=null) {
-	    	
+		while (page.getElementById("SDFNUMIPF") != null) {
+
 			String ipf = page.getElementById("SDFNUMIPF").getTextContent().trim().replaceAll("^0+", "");
 			String birthDateStr = page.getElementById("SDFDIANAC").getTextContent() + "/"
 					+ page.getElementById("SDFMESNAC").getTextContent() + "/"
 					+ page.getElementById("SDFAONAC").getTextContent();
-			
-			if (birthDateStr.equals(" / / ")) {			
+
+			if (birthDateStr.equals(" / / ")) {
 				birthDateStr = "";
 			}
 
@@ -391,88 +384,64 @@ class SistemaREDEmployee {
 			String vinFam = domElementExists(page.getElementById("SDFVINCULO"));
 			String profesCat = domElementExists(page.getElementById("SDFCATEGORIA"));
 			String reducingCoef = domElementExists(page.getElementById("SDFCOEFRED"));
-			
+
 			String frbStr = domElementExists(page.getElementById("SDFFRBAFI"));
 			String febStr = domElementExists(page.getElementById("SDFFEBAFI"));
 			String fraStr = domElementExists(page.getElementById("SDFFRAAFI"));
 			String feaStr = domElementExists(page.getElementById("SDFFEAAFI"));
-			
-			if(fraStr.isEmpty()) {
+
+			if (fraStr.isEmpty()) {
 				fraStr = domElementExists(page.getElementById("SDFFRASAN1"));
 				feaStr = domElementExists(page.getElementById("SDFFEASAN1"));
-			} 
+			}
 
 			Date birthDate = parseDate(birthDateStr, FORMAT_DATE_ES);
 			Date fra = parseDate(fraStr, FORMAT_DATE_ES);
 			Date fea = parseDate(feaStr, FORMAT_DATE_ES);
 			Date frb = parseDate(frbStr, FORMAT_DATE_ES);
 			Date feb = parseDate(febStr, FORMAT_DATE_ES);
-			
+
 			ipf = removeExtraZeros(ipf).replace(" ", "");
 			companyId = removeExtraZeros(companyId);
-		
-			if(frb==null && fra!=null) {
+
+			if (frb == null && fra != null) {
 				DomNode next = page.querySelector("[value=\"Continuar\"]");
-				if(next!=null) {
-					 page = ((HtmlSubmitInput) next).click();
-					 frbStr = domElementExists(page.getElementById("SDFFRBSAN1"));
-					 febStr = domElementExists(page.getElementById("SDFFEBSAN1"));
-					 if(!frbStr.isEmpty() && !febStr.isEmpty()) {
+				if (next != null) {
+					page = ((HtmlSubmitInput) next).click();
+					frbStr = domElementExists(page.getElementById("SDFFRBSAN1"));
+					febStr = domElementExists(page.getElementById("SDFFEBSAN1"));
+					if (!frbStr.isEmpty() && !febStr.isEmpty()) {
 						Date endDate = parseDate(frbStr, FORMAT_DATE_ES);
-						if(fra.before(endDate)) {
+						if (fra.before(endDate)) {
 							situation = page.getElementById("SDFTSITUACAFI").getTextContent();
 							frb = endDate;
 							feb = parseDate(febStr, FORMAT_DATE_ES);
-						} 
-					 }
+						}
+					}
 				}
 			}
 
 			// BUILD
-			Employee employeeData = new EmployeeBuilder()
-			.setIpf(ipf)
-			.setNss(nss)
-			.setName(name)
-			.setSituation(situation)
-			.setBirthDate(birthDate)
-			.setSex(sex)
-			.setTlf(tlf)
-			.setCtaCti(ctaCot)
-			.setRegime(regime)
-			.setCompanyId(companyId)
-			.setCompanyName(companyName)
-			.setSituation(situation)
-			.setGc(gc)
-			.setGcDesc(gcDesc)
-			.setAgricultPromo(agricultPromo)
-			.setWorkTimeReduct(workTimeReduct)
-			.setFra(fra)
-			.setFea(fea)
-			.setFrb(frb)
-			.setFeb(feb)
-			.setContract(contract)
-			.setCoef(coef)
-			.setColec(colec)
-			.setEpig(epig)
-			.setOcup(ocup)
-			.setVinFam(vinFam)
-			.setProfesCat(profesCat)
-			.setReducingCoefic(reducingCoef)
-			.build();
-			
+			Employee employeeData = new EmployeeBuilder().setIpf(ipf).setNss(nss).setName(name).setSituation(situation)
+					.setBirthDate(birthDate).setSex(sex).setTlf(tlf).setCtaCti(ctaCot).setRegime(regime)
+					.setCompanyId(companyId).setCompanyName(companyName).setSituation(situation).setGc(gc)
+					.setGcDesc(gcDesc).setAgricultPromo(agricultPromo).setWorkTimeReduct(workTimeReduct).setFra(fra)
+					.setFea(fea).setFrb(frb).setFeb(feb).setContract(contract).setCoef(coef).setColec(colec)
+					.setEpig(epig).setOcup(ocup).setVinFam(vinFam).setProfesCat(profesCat)
+					.setReducingCoefic(reducingCoef).build();
+
 			list.add(employeeData);
-			
+
 			DomNode next = page.querySelector("[value=\"Continuar\"]");
-			if(next!=null) {
-				 page = ((HtmlSubmitInput) next).click();
+			if (next != null) {
+				page = ((HtmlSubmitInput) next).click();
 			} else {
 				break;
 			}
-	    }
+		}
 
 		return list;
 	}
-
 
 	// HANDLE THE EXCEPTIONS OF GETEMPLOYEE METHOD
 	public static Collection<Employee> getEmployees(final InputStream certificateInputStream,
@@ -481,7 +450,7 @@ class SistemaREDEmployee {
 
 		verifyData(new Object[] { regimen, ccc });
 		checkCertificate(certificateInputStream);
-		
+
 		try {
 			return getEmployeesImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
 		} catch (FailingHttpStatusCodeException e) {
@@ -496,8 +465,8 @@ class SistemaREDEmployee {
 
 	// RETURN ALL THE EMPLOYEES
 	/**
-	 * Use  solutions.aon.seg.social.ServicioREDEmployee.getTotalEmployees
-	 * in order to use in client and server side.
+	 * Use solutions.aon.seg.social.ServicioREDEmployee.getTotalEmployees in order
+	 * to use in client and server side.
 	 */
 	@Deprecated
 	private static Collection<Employee> getEmployeesImpl(final InputStream certificateInputStream,
@@ -511,15 +480,15 @@ class SistemaREDEmployee {
 
 			HtmlPage htmlPage = webClient.getPage(
 					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
-			
+
 			Toolkit.checkCertificateRevoked(htmlPage.asXml());
-			
+
 			manageStatusCode(htmlPage);
 
 			HtmlForm formParts = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			formParts.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regimen);
-			formParts.getInputByName("txt_SDFTESO62").setValueAttribute(ccc.substring(0, 2));
-			formParts.getInputByName("txt_SDFNUM62").setValueAttribute(ccc.substring(2));
+			formParts.getInputByName("txt_SDFREG62_ayuda").setValue(regimen);
+			formParts.getInputByName("txt_SDFTESO62").setValue(ccc.substring(0, 2));
+			formParts.getInputByName("txt_SDFNUM62").setValue(ccc.substring(2));
 			formParts.getInputByName("chk_chkgrupo1_1").setChecked(true);
 			htmlPage = formParts.getInputByName("btn_Sub2207601004").click();
 			manageStatusCode(htmlPage);
@@ -555,6 +524,7 @@ class SistemaREDEmployee {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
+			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(false);
 			ArrayList<Employee> employees = new ArrayList<>();
 
@@ -563,9 +533,9 @@ class SistemaREDEmployee {
 			manageStatusCode(htmlPage);
 
 			HtmlForm formParts = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			formParts.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regimen);
-			formParts.getInputByName("txt_SDFTESO62").setValueAttribute(ccc.substring(0, 2));
-			formParts.getInputByName("txt_SDFNUM62").setValueAttribute(ccc.substring(2));
+			formParts.getInputByName("txt_SDFREG62_ayuda").setValue(regimen);
+			formParts.getInputByName("txt_SDFTESO62").setValue(ccc.substring(0, 2));
+			formParts.getInputByName("txt_SDFNUM62").setValue(ccc.substring(2));
 			formParts.getInputByName("chk_chkgrupo1_2").setChecked(true);
 			htmlPage = formParts.getInputByName("btn_Sub2207601004").click();
 			manageStatusCode(htmlPage);
@@ -619,12 +589,12 @@ class SistemaREDEmployee {
 				if (ipf != null)
 					ipf = Toolkit.removeExtraZeros(ipf.replace(" ", ""));
 
-				 builder.setNss(nss).setName(name).setFra(fra).setSituation(situation).setIpf(ipf)
-						.setCtaCti(ccc).setRegime(regime);
-				 
-				if(!situation.contains("AL")) 
+				builder.setNss(nss).setName(name).setFra(fra).setSituation(situation).setIpf(ipf).setCtaCti(ccc)
+						.setRegime(regime);
+
+				if (!situation.contains("AL"))
 					builder.setFrb(fra);
-				
+
 				employees.add(builder.build());
 			}
 			HtmlInput btn = htmlPage.querySelector("input[name=btn_Sub2207801001]");
@@ -656,7 +626,8 @@ class SistemaREDEmployee {
 
 	// RETURNS AN EMPLOYEE
 	private static Employee getEmployeeImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String ccc, String nss) throws IOException, InterruptedException, SegSocialException {
+			String certificateType, String ccc, String nss)
+			throws IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setUseInsecureSSL(true);
@@ -722,13 +693,33 @@ class SistemaREDEmployee {
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
-			
+
+			Integer[] fromArray = getDateArray(from);
+			Integer[] toArray = getDateArray(to);
+			ArrayList<String> cccArray = splitStringMultiple(ccc, 2);
+
 			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setCssEnabled(true);
+			webClient.getOptions().setDownloadImages(true);
+			webClient.setJavaScriptTimeout(10000);
 			HtmlPage document = webClient.getPage(
 					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ACR71&E=I&AP=AFIR");
-			HtmlInput regimeInput = document.querySelector("#SDFREGCCO");
-			HtmlInput cccInput1 = document.querySelector("#SDFTESCCO");
-			HtmlInput cccInput2 = document.querySelector("#SDFNYCCCO");
+			DomElement formSubmit = null;
+			for (int i = 0; i < 20; i++) {
+				formSubmit = document.getElementById("Sub2207001009");
+				if (formSubmit != null)
+					break;
+				synchronized (document) {
+					document.wait(500);
+				}
+			}
+
+			HtmlForm form = HtmlUnitToolkit.wait4(document, p -> p.getFormByName("jacadaform")).orElseThrow();
+
+			form.getInputByName("txt_SDFREGCCO").setValue(regime);
+			form.getInputByName("txt_SDFTESCCO").setValue(cccArray.get(0));
+			form.getInputByName("txt_SDFNYCCCO").setValue(cccArray.get(1));
+
 			HtmlInput fromDayInput = document.querySelector("#SDFDIADESDEM");
 			HtmlInput fromMonthInput = document.querySelector("#SDFMESDESDEM");
 			HtmlInput fromYearInput = document.querySelector("#SDFAODESDEM");
@@ -736,15 +727,6 @@ class SistemaREDEmployee {
 			HtmlInput toMonthInput = document.querySelector("#SDFMESHASTAM");
 			HtmlInput toYearIn = document.querySelector("#SDFAOHASTAM");
 			HtmlOption onlineOption = document.querySelector("#ListaTipoImpresion option:nth-child(3)");
-			HtmlSubmitInput continueButton = document.querySelector("#Sub2207001009");
-
-			Integer[] fromArray = getDateArray(from);
-			Integer[] toArray = getDateArray(to);
-			ArrayList<String> cccArray = splitStringMultiple(ccc, 2);
-
-			regimeInput.setAttribute("value", regime);
-			cccInput1.setAttribute("value", cccArray.get(0));
-			cccInput2.setAttribute("value", cccArray.get(1));
 
 			fromDayInput.setAttribute("value", String.valueOf(fromArray[0]));
 			fromMonthInput.setAttribute("value", String.valueOf(fromArray[1]));
@@ -755,9 +737,11 @@ class SistemaREDEmployee {
 			toYearIn.setAttribute("value", String.valueOf(toArray[2]));
 
 			onlineOption.click();
-			
-			return getPDFDocument(continueButton);
-	
+
+			formSubmit.click();
+
+			return getPDFDocument((HtmlElement) formSubmit);
+
 		} catch (FailingHttpStatusCodeException e) {
 			HandleStatusCodeException(e);
 		} catch (Exception e) {
@@ -765,44 +749,49 @@ class SistemaREDEmployee {
 		}
 		return null;
 	}
-	
+
 	// GET PDF INFO
 	public static byte[] getLaboralLife(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String nss)
 			throws FailingHttpStatusCodeException, IOException, SegSocialException {
 
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
-			HtmlPage document = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR63&E=I&AP=AFIR");
-			
+			HtmlPage document = webClient.getPage(
+					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR63&E=I&AP=AFIR");
+
 			HtmlInput nssInput = document.querySelector("#SDFTESORNAF");
 			HtmlInput nssInput1 = document.querySelector("#SDFNUMNAF");
-			
-			nssInput.setValueAttribute(nss.substring(0, 2));
-			nssInput1.setValueAttribute(nss.substring(2));
-			
+
+			nssInput.setValue(nss.substring(0, 2));
+			nssInput1.setValue(nss.substring(2));
+
 			HtmlOption onlineOption = document.querySelector("#ListaTipoImpresion option:nth-child(3)");
 			onlineOption.click();
-			
+
 			HtmlSubmitInput continueButton = document.querySelector("#Sub2207001009");
-			
+
 			// Check if we have more than one CCC for this person
 			try {
 				document = continueButton.click();
 				Integer ssCode = HtmlUnitToolkit.getSSCode(document);
 				// Select the current CCC
-				if(ssCode == 3710) {
+				if (ssCode == 3710) {
 					ArrayList<String> cccArray = splitStringMultiple(ccc, 2);
-					String cccStr = regime + " " + cccArray.get(0) + " " + cccArray.get(1) ;
-					Optional<DomNode> domNode = document.querySelectorAll("label").stream().filter(label -> label.getTextContent().equals(cccStr)).findFirst();
-					domNode.map(node -> {return getPDFDocument((HtmlLabel)node);});
+					String cccStr = regime + " " + cccArray.get(0) + " " + cccArray.get(1);
+					Optional<DomNode> domNode = document.querySelectorAll("label").stream()
+							.filter(label -> label.getTextContent().equals(cccStr)).findFirst();
+					domNode.map(node -> {
+						return getPDFDocument((HtmlLabel) node);
+					});
 				}
 			} catch (Exception e) {
 //				e.printStackTrace();
 			}
-			
+
 			return getPDFDocument(continueButton);
-			
+			// DESCOMENTAR LINEAS
 		} catch (FailingHttpStatusCodeException e) {
 			HandleStatusCodeException(e);
 		} catch (Exception e) {
@@ -810,7 +799,7 @@ class SistemaREDEmployee {
 		}
 		return null;
 	}
-	
+
 	private static byte[] getPDFDocument(HtmlElement linkElement) throws IllegalArgumentException {
 		try {
 			UnexpectedPage docPage = linkElement.dblClick();
@@ -820,10 +809,9 @@ class SistemaREDEmployee {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
-	
+
 	private static String domElementExists(DomElement domEl) {
-		return domEl!=null ? domEl.getTextContent() : "";
+		return domEl != null ? domEl.getTextContent() : "";
 	}
-	
-	
+
 }

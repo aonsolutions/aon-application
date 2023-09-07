@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -523,5 +524,28 @@ public class Mod193DAO {
 		}
 		return getById(ctx, mod193 .getId());
 	}
+	
+    // Grabar resultado y pdf en response y marcar el modelo como enviado
+	public static Mod193 aeatPresentation(AONContext ctx, Mod193 mod, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {			
+			
+			// Antes de nada se borra la presentación anterior
+			DataResponseDAO.deleteAEATResponse(ctx, mod);			
+			
+			// Grabar los datos en data_response y sus tablas asociadas
+			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
+			
+			// Marcar el modelo como enviado					
+			if (mod != null && mod.getId() != null) {
+				ctx.getDslContext().update(FS_MODEL193)					
+					.set(FS_MODEL193.STATUS, FiscalStatus.SENT.value())
+					.where(FS_MODEL193.ID.equal(mod.getId()))
+					.execute();
+				return getById(ctx, mod.getId());
+			}
+		}
+		return mod;
+	}
+	
 	
 }

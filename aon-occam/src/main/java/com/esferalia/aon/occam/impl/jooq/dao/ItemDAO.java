@@ -36,9 +36,13 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
+import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
+import com.esferalia.aon.occam.api.model.registry.RegistryMode;
+import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ItemAutoComplete;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class ItemDAO {
@@ -94,6 +98,8 @@ public class ItemDAO {
 		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.NAME);}
 		
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RITEM.REGISTRY);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(RITEM.TYPE);}
+
 
 	}
 
@@ -284,6 +290,16 @@ public class ItemDAO {
 			.execute();	
 	}
 
+	public static void updateRItemStatus(AONContext ctx, RegistryItemStatus status, RegistryItemFilter filter) {
+		if (status != null) {			
+			ctx.getDslContext()
+			.update(RITEM)
+			.set(RITEM.STATUS, status.value())
+			.where(RITEM_PROPERTIES.getConditions(filter))
+			.execute();
+		}
+	}
+
 	private static RegistryItem[] setRItem(AONContext ctx, RegistryItem ...ritems) {
 		ctx.checkWrite();
 
@@ -294,7 +310,8 @@ public class ItemDAO {
 			Optional<RitemRecord> opt = getRItemRecordStream(ctx, 
 					f-> f.getDomainProperty().eq(ritem.getDomain())
 					.and(f.getRegistryProperty().eq(ritem.getRegistry()))
-					.and(f.getItemProperty().eq(ritem.getItem()))
+					.and(f.getItemProperty().eq(ritem.getItem() != null ? ritem.getItem().getId() : null)
+					.and(f.getTypeProperty().eq(ritem.getType() != null ? ritem.getType().value() : null)))
 			).findFirst();
 			
 			if(opt.isPresent()) { 		//------------------UPDATE ----------
@@ -312,10 +329,17 @@ public class ItemDAO {
 				InsertSetMoreStep<RitemRecord> recordSets = insert
 				.set(RITEM.DOMAIN, ritem.getDomain())
 				.set(RITEM.REGISTRY, ritem.getRegistry())
-				.set(RITEM.ITEM, ritem.getItem())
+				.set(RITEM.ITEM, ritem.getItem().getId())
 				.set(RITEM.TYPE, ritem.getType().value())
 				.set(RITEM.STATUS, ritem.getStatus().value())
 				.set(RITEM.PRIORITY, ritem.getPriority().value())
+				.set(RITEM.QUANTITY, ritem.getQuantity())
+				.set(RITEM.START_DATE, AonDateUtils.toSql(ritem.getStartDate()))
+				.set(RITEM.END_DATE, AonDateUtils.toSql(ritem.getEndDate()))
+				.set(RITEM.CREATION_DATE, AonDateUtils.toTimestamp(ritem.getCreationDate()))
+				.set(RITEM.CREATION_USER, ritem.getCreationUser())
+				.set(RITEM.MODIFICATION_DATE, AonDateUtils.toTimestamp(ritem.getModificationDate()))
+				.set(RITEM.MODIFICATION_USER, ritem.getModificationUser())
 				;
 				
 				if(ritem.getPrice()!=null) {
@@ -334,7 +358,29 @@ public class ItemDAO {
 			}
 		}
 		
-		if(null!=insertRItem) insertRItem.execute();
+		if(null!=insertRItem) {
+			return insertRItem.returning().fetchStreamInto(RITEM).map(r -> new RegistryItem()
+					.setId(r.getId())
+					.setDomain(r.getDomain())
+					.setItem(ItemFiller.build(r))
+					.setType(r.getType() != null ? RegistryMode.values()[r.getType()] : null)
+					.setStatus(r.getStatus() != null ? RegistryItemStatus.values()[r.getStatus()] : null)
+					.setPriority(r.getPriority() != null ? Priority.values()[r.getPriority()] : null)
+					.setPrice(r.getPrice())
+					.setCode(r.getCode())
+					.setWorkplace(r.getWorkplace())
+					.setRegistry(r.getRegistry())
+					.setDiscountExpr(r.getDiscountExpr())
+					.setQuantity(r.getQuantity())
+					.setStartDate(r.getStartDate())
+					.setEndDate(r.getEndDate())
+					.setCreationDate(r.getCreationDate())
+					.setCreationUser(r.getCreationUser())
+					.setModificationDate(r.getModificationDate())
+					.setModificationUser(r.getModificationUser())
+			).toArray(RegistryItem[]::new);
+			
+		}
 		
 		return ritems;
 	}
@@ -360,6 +406,7 @@ public class ItemDAO {
 				.setDescription(getValue(r, ITEM.DESCRIPTION))
 				.setSerialNumber(getValue(r, ITEM.SERIAL_NUMBER))
 				.setSerialDate(getValue(r, ITEM.SERIAL_DATE))
+				.setExpireDate(getValue(r, ITEM.EXPIRE_DATE))
 				.setPrice(getDouble(r, ITEM.PRICE))
 				.setStatus(ProductStatus.safeValueOf(getValue(r, ITEM.STATUS)))
 				.setExpensesPercent(getDouble(r, ITEM.EXPENSES_PERCENT))

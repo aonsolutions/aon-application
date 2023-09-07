@@ -216,22 +216,33 @@ public class InvoiceAutoComplete {
 		if(inv.getRegistry() == null && inv.getRegistryData() != null) {
 			if(inv.getRegistryData().getId() == null && !AonStringUtils.isBlank(inv.getRegistryData().getDocument())) {
 				inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()));
+				
 				if(InvoiceType.SALES.equals(inv.getType())) {
 					Customer c = CustomerDAO.getStream(ctx.getContext(), f -> 
 							f.getDomainProperty().eq(inv.getDomain())
 							.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument()))).findFirst().orElse(new Customer());
 					if(c.getId() != null) {
 						inv.setRegistry(c.getId());
+						inv.setRegistryData(c);
 					} else {
+						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
+								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
+						
 						c = CustomerDAO.save(ctx.getContext(), new Customer()
-							.copy(inv.getRegistryData()).setScope(inv.getScope()));
+							.copy(inv.getRegistryData()
+								.setId(registry.getId()))
+								.setScope(inv.getScope()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
-							if(!inv.getAddress().isEmpty())
-								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
+							inv.setRegistryData(c);
+							if(!inv.getAddress().isEmpty()) {
+								RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 									.setId(null)
 									.setDomain(c.getDomain().getId())
 									.setRegistry(c.getId()));
+								inv.setRegistryAddress(raddress.getId());
+								inv.setAddress(raddress);
+							}
 						}
 					}
 				} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
@@ -240,16 +251,25 @@ public class InvoiceAutoComplete {
 					.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument()))).findFirst().orElse(new Supplier());
 					if(s.getId() != null) {
 						inv.setRegistry(s.getId());
+						inv.setRegistryData(s);
 					} else {
+						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
+								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
+						
 						s = SupplierDAO.save(ctx.getContext(), new Supplier()
-							.copy(inv.getRegistryData()).setScope(inv.getScope()));
+							.copy(inv.getRegistryData())
+								.setId(registry.getId())
+								.setScope(inv.getScope()));
 						if(s.getId() != null) {
 							inv.setRegistry(s.getId());
+							inv.setRegistryData(s);
 							if ( !inv.getAddress().isEmpty() ) {
-								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
+								RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 										.setId(null)
 										.setDomain(s.getDomain().getId())
 										.setRegistry(s.getId()));
+								inv.setRegistryAddress(raddress.getId());
+								inv.setAddress(raddress);
 							}
 						}
 					}
@@ -260,16 +280,26 @@ public class InvoiceAutoComplete {
 						.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument()))).findFirst().orElse(new Creditor());
 					if(c.getId() != null) {
 						inv.setRegistry(c.getId());
+						inv.setRegistryData(c);
 					} else {
+						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
+								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
+						
 						c = CreditorDAO.save(ctx.getContext(), new Creditor()
-							.copy(inv.getRegistryData()).setScope(inv.getScope()));
+							.copy(inv.getRegistryData())
+								.setId(registry.getId())
+								.setScope(inv.getScope()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
-							if(!inv.getAddress().isEmpty())
-								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
+							inv.setRegistryData(c);
+							if(!inv.getAddress().isEmpty()) {
+								RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 									.setId(null)
 									.setDomain(c.getDomain().getId())
 									.setRegistry(c.getId()));
+								inv.setRegistryAddress(raddress.getId());
+								inv.setAddress(raddress);
+							}
 						}
 					}
 				}
@@ -293,21 +323,23 @@ public class InvoiceAutoComplete {
 			}	
 		}
 	
+		Integer registryId = inv.getRegistryData().getId() != null
+				? inv.getRegistryData().getId() : inv.getRegistry();
 		if(InvoiceType.SALES.equals(inv.getType())) {
-			Customer customer = CustomerDAO.get(ctx.getContext(), inv.getRegistryData().getId());
+			Customer customer = CustomerDAO.get(ctx.getContext(), registryId);
 			if(customer.isEmpty()) {
 				CustomerDAO.save(ctx.getContext(), new Customer()
 					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
 			}
 		} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
-			Supplier supplier = SupplierDAO.get(ctx.getContext(), inv.getRegistryData().getId());
+			Supplier supplier = SupplierDAO.get(ctx.getContext(), registryId);
 			if(supplier.isEmpty()) {
 				SupplierDAO.save(ctx.getContext(), new Supplier()
 					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
 			}
 		} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
 				|| InvoiceType.UNDEDUCTIBLE.equals(inv.getType())) {
-			Creditor creditor = CreditorDAO.get(ctx.getContext(), inv.getRegistryData().getId());
+			Creditor creditor = CreditorDAO.get(ctx.getContext(), registryId);
 			if(creditor.isEmpty()) {
 				CreditorDAO.save(ctx.getContext(), new Creditor()
 					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
@@ -348,7 +380,7 @@ public class InvoiceAutoComplete {
 			}
 		}
 		
-		if(inv.getAddress() != null && inv.getAddress().getId() == null) {
+		if(inv.getAddress() != null && inv.getAddress().getId() == null && !inv.getAddress().isEmpty()) {
 			inv.getAddress().setRegistry(inv.getRegistry());
 			RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getAddress());
 			inv.setRegistryAddress(raddress.getId());
@@ -468,6 +500,23 @@ public class InvoiceAutoComplete {
 					detail.setAccountDescription(acc.getDescription());
 				}
 			}
+			
+			if(detail.getItem() != null && detail.getItem().isEmpty()) {
+				String code = detail.getItem().getProduct().getCode();
+				if(!AonStringUtils.isBlank(code)) {
+					Item i = ItemDAO.get(ctx.getContext(), f -> 
+						f.getDomainProperty().eq(inv.getDomain())
+						.and(f.getProductCodeProperty().eq(code)));
+					if(i.getId() == null) {
+						if(detail.getDescription() == null) detail.setDescription(code);
+						String name = detail.getDescription().length() > 63
+								? detail.getDescription().substring(0, 63) 
+								: detail.getDescription();
+						i = createProductItem(ctx.getContext(), code, name, detail, it);
+					}
+					detail.setItem(i);
+				}
+			}
 						
 			if(!InvoiceSource.ACCOUNT.equals(detail.getSource()) 
 					&& (detail.getItem() == null || detail.getItem().getId() == null)
@@ -481,33 +530,38 @@ public class InvoiceAutoComplete {
 					String name = detail.getDescription().length() > 63
 							? detail.getDescription().substring(0, 63) 
 							: detail.getDescription();
-					Product p = new Product();
-					p.setDomain(new Domain().setId(detail.getDomain()));
-					p.setCode(detail.getAccountCode());
-					p.setName(name);
-					p.setVat(new Tax()
-						.setName("IVA " + it.getPercentage())
-						.setDomain(detail.getDomain())
-						.setPercentage(it.getPercentage())
-						.setStartDate(new Date())
-						.setType(TaxType.VAT)
-						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-						.setSalesAccount(new Account())
-						.setPurchaseAccount(new Account()));
-					
-					i = new Item()
-							.setDomain(new Domain().setId(detail.getDomain()))
-							.setProduct(p)
-							.setDescription(detail.getDescription())
-							.setPrice(detail.getPrice());
-					
-					i = ItemDAO.save(ctx.getContext(), i);
-
+					i = createProductItem(ctx.getContext(), detail.getAccountCode(), name, detail, it);
 				}
 				detail.setItem(new Item().setId(i.getId()));
 			}
 		});
 	};
+	
+	private static Item createProductItem(AONContext ctx, String code,
+			String name, InvoiceDetail id, InvoiceTax it) {
+		Product p = new Product();
+		p.setDomain(new Domain().setId(id.getDomain()));
+		p.setCode(code);
+		p.setName(AonStringUtils.isBlank(name) ? code : name);
+		p.setVat(new Tax()
+			.setName("IVA " + it.getPercentage())
+			.setDomain(id.getDomain())
+			.setPercentage(it.getPercentage())
+			.setStartDate(new Date())
+			.setType(TaxType.VAT)
+			.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+			.setSalesAccount(new Account())
+			.setPurchaseAccount(new Account()));
+		
+		Item i = new Item()
+				.setDomain(new Domain().setId(id.getDomain()))
+				.setProduct(p)
+				.setDescription(id.getDescription())
+				.setPrice(id.getPrice());
+		
+		i = ItemDAO.save(ctx, i);
+		return i;
+	}
 	
 	/**
 	 * Aseguramos el nombre del titular de la factura.

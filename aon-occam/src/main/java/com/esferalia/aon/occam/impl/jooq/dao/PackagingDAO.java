@@ -53,6 +53,11 @@ public class PackagingDAO {
 				.setSerialNumber(serialNumber)
 				.setSerialDate(serialDate)
 				.setDescription(item.getProduct().getName() + " #" + serialNumber);
+			if(item.getProduct().isPerishable()) {
+				Date expireDate = AonDateUtils.addDays(serialDate, 
+					item.getProduct().getDaysToExpire() != null ? item.getProduct().getDaysToExpire() : 0);
+				item2.setExpireDate(expireDate);
+			}
 		}
 		Integer[] items = ItemCompositionDAO.getStream(ctx, f -> 
 			f.getCompositionItemProperty().eq(item.getId()))
@@ -148,7 +153,11 @@ public class PackagingDAO {
 		Item container = packaging.getContainer();
 		container.setId(null).setBarcode(null).setSerialNumber(sscc).setSerialDate(new Date());
 		container = ItemDAO.save(ctx, container);
-		
+		if(container.getProduct().isPerishable()) {
+			Date expireDate = AonDateUtils.addDays(container.getSerialDate(), 
+					container.getProduct().getDaysToExpire() != null ? container.getProduct().getDaysToExpire() : 0);
+			container.setExpireDate(expireDate);
+		}
 		ElaborationDetail packing = new ElaborationDetail()
 				.setDomain(ctx.getDomainId())
 				.setElaboration(elaboration)
@@ -220,7 +229,9 @@ public class PackagingDAO {
 	private static String calculateSerialNumber(String barcode) {
 		if(barcode.length() > 14) {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
-			return "22" + b.parseGS1128().get(GS1128Codes.CODE_10);
+			Integer year = AonDateUtils.getYear(new Date());
+			String init = year.toString().substring(2,4);
+			return init + b.parseGS1128().get(GS1128Codes.CODE_10);
 		}
 		return ""; //"22" + Integer.toString(AonDateUtils.getDayOfYear(new Date()));
 	}

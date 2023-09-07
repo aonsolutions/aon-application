@@ -5,8 +5,8 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.Serializable;
 
-import javax.el.ExpressionFactory;
-import javax.el.MethodExpression;
+import jakarta.el.ExpressionFactory;
+import jakarta.el.MethodExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
