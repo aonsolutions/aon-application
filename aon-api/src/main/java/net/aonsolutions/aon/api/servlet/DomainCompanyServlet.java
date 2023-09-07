@@ -322,21 +322,21 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				// Despacho - Conecta Basico
 				Long quantityConnectaBasic = officeChildBooking.getChildApps().get(AonApp.BASIC_MANAGEMENT);
 				if(null != quantityConnectaBasic) {
-					String connectaBasicBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.BASIC_MANAGEMENT); 
+					String connectaBasicBarCode = getConnectarBarCode(domainType, DomainType.OFFICE, AonApp.BASIC_MANAGEMENT); 
 					updateRItem(domainCompany, booking, aonCustomer, errors, api, connectaBasicBarCode, quantityConnectaBasic.toString());
 				}
 				
 				// Despacho - Conecta Standard
 				Long quantityConenctaStandard = officeChildBooking.getChildApps().get(AonApp.STANDAR_MANAGEMENT);
 				if(null != quantityConenctaStandard) {
-					String connectaStandardBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.STANDAR_MANAGEMENT); 
+					String connectaStandardBarCode = getConnectarBarCode(domainType, DomainType.OFFICE, AonApp.STANDAR_MANAGEMENT); 
 					updateRItem(domainCompany, booking, aonCustomer, errors, api, connectaStandardBarCode, quantityConenctaStandard.toString());
 				}
 				
 				// Despacho - Conecta Professional
 				Long quantityConnectaProfessional = officeChildBooking.getChildApps().get(AonApp.PROFESSIONAL_MANAGEMENT);
 				if(null != quantityConnectaProfessional) {
-					String conenctaProfessionalBarCode = getConnectarBarCode(domainType, DomainType.ENTERPRISE, AonApp.PROFESSIONAL_MANAGEMENT); 
+					String conenctaProfessionalBarCode = getConnectarBarCode(domainType, DomainType.OFFICE, AonApp.PROFESSIONAL_MANAGEMENT); 
 					updateRItem(domainCompany, booking, aonCustomer, errors, api, conenctaProfessionalBarCode, quantityConnectaProfessional.toString());
 				}
 			}
