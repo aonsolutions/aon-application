@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -201,5 +202,5 @@ public interface IWarehouse {
 	
 	Packaging getPackaging(AONContext ctx, String barcode);
 	Packaging savePackaging(AONContext ctx, Packaging packaging);
-	
+	DeliveryPackaging getDeliveryPackaging(AONContext ctx, String sscc, Integer delivery);
 }

@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Barcode;
 import com.esferalia.aon.occam.api.model.warehouse.BarcodeType;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.GS1128Codes;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
@@ -32,6 +33,25 @@ public class PackagingDAO {
 	private PackagingDAO() {
 	
 	}
+	
+
+	public static DeliveryPackaging getDeliveryPackaging(AONContext ctx, String sscc, Integer delivery){
+		Item container = ItemDAO.getFull(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getSerialNumberProperty().eq(sscc)));
+		if(!container.isEmpty()) {
+			DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getItemProperty().eq(container.getId()));
+			if(!dp.isEmpty() && !dp.getDelivery().getId().equals(delivery)) {
+				throw new AonCoreException("El Envase pertenece al albarán " + dp.getDelivery().getReferenceCode()); 
+			} else if(!dp.isEmpty() && dp.getDelivery().getId().equals(delivery)) {
+				return dp;
+			}
+		} else throw new AonCoreException("No existe ningún envase con el SSCC indicado"); 
+
+		return new DeliveryPackaging()
+				.setItem(container);
+	}
+
 
 	public static Packaging get(AONContext ctx, String barcode){
 		String serialNumber = calculateSerialNumber(barcode);
