@@ -212,6 +212,8 @@ public class MainContrataContract extends MainEntryPoint {
 	// ------------------------------------------ Variables
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private DateTimeFormat formatYear = DateTimeFormat.getFormat("yyyy");
+	private DateTimeFormat formatMonth = DateTimeFormat.getFormat("MMMM");
 	
 	private MainContrataContractObject mainContrataContractObject;
 	private EnterpriseSalaryObject enterpriseSalaryObject;
@@ -1471,15 +1473,17 @@ public class MainContrataContract extends MainEntryPoint {
 	
 	private void checkPDFToolbar(boolean isLaboralLife) {
 		if(isLaboralLife && pdfViewerToolbar.getButtonContainer().getWidgetCount() == 1) {
-			MonthListBox monthListBox = new MonthListBox();
-			Date lastMonth = DateUtils.getFirstDayOfMonth(); 
-			Date firstMonth = DateUtils.addYears2Date(DateUtils.getFirstDayOfMonth(), -4);
-			monthListBox.setFirstMonth(firstMonth);
-			monthListBox.setLastMonth(lastMonth);
-			monthListBox.setPageSize(52);
-			monthListBox.setVisibleRange(0, 52);
-			monthListBox.addChangeHandler(e -> onLaboralLifeCahngeDate(monthListBox.getSelected()));
-			monthListBox.setSelected(DateUtils.getFirstDayOfMonth(), true);
+			Date currentDate = DateUtils.getFirstDayOfMonth(); 
+			
+			ListBox monthListBox = new ListBox();
+			monthListBox.addItem(formatMonth.format(currentDate) + " de " + formatYear.format(currentDate), currentDate.getTime() + "");
+			
+			for(int i = 1; i < 4; i++) {
+				Date auxDate = DateUtils.addMonths2Date(DateUtils.copyDateOnly(currentDate), -i);
+				monthListBox.addItem(formatMonth.format(auxDate) + " de " + formatYear.format(auxDate), auxDate.getTime() + "");
+			}
+				
+			monthListBox.addChangeHandler(e -> onLaboralLifeCahngeDate(new Date(Long.parseLong(monthListBox.getSelectedValue()))));
 			monthListBox.setWidth("200px");
 			pdfViewerToolbar.add(monthListBox);
 		} else if(!isLaboralLife && pdfViewerToolbar.getButtonContainer().getWidgetCount() > 1)
