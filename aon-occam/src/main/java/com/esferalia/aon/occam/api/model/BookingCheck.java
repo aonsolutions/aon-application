@@ -31,6 +31,9 @@ public class BookingCheck implements Serializable{
 	
 	private boolean hasFee;
 	
+	private String quantityFee;
+	private String quantityRItem;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -154,6 +157,24 @@ public class BookingCheck implements Serializable{
 
 	public BookingCheck setHasFee(boolean hasFee) {
 		this.hasFee = hasFee;
+		return this;
+	}
+
+	public String getQuantityFee() {
+		return quantityFee;
+	}
+
+	public BookingCheck setQuantityFee(String quantityFee) {
+		this.quantityFee = quantityFee;
+		return this;
+	}
+
+	public String getQuantityRItem() {
+		return quantityRItem;
+	}
+
+	public BookingCheck setQuantityRItem(String quantityRItem) {
+		this.quantityRItem = quantityRItem;
 		return this;
 	}
 
