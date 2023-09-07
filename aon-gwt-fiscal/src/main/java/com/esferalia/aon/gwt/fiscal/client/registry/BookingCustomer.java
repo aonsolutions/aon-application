@@ -1380,9 +1380,11 @@ public class BookingCustomer extends HTMLPanel {
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 		
 		JSONObject body = new JSONObject();
+		Window.alert(domainJSON);
+		Window.alert(bookingJSON);
 		body.put("domain", JSONParser.parseStrict(domainJSON));
 		body.put("booking", JSONParser.parseStrict(bookingJSON));
-		
+		Window.alert(body.toString());
 		requestBuilder.setRequestData(body.toString());
 		
 		try {
