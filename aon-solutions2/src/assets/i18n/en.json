@@ -99,10 +99,10 @@
   "CONSULTING": {
 
   },
-  "EMPLOYEE-PANEL": {
+  "EMPLOYEE_PANEL": {
 
   },
-  "TAX-PANEL": {
+  "TAX_PANEL": {
     "1_TRIMESTER":   "1 Trimester",
     "2_TRIMESTER":   "2 Trimester",
     "3_TRIMESTER":   "3 Trimester",
@@ -111,10 +111,20 @@
     "NAME":          "Model",
     "RESULT":        "Result",
     "STATUS":        "Status",
-    "PAYMENTMETHOD": "Paymentmethod",
+    "PAYMENTMETHOD": "Payment method",
     "ACTIONS":       "Actions",
     "MODEL":         "Model",
-    "YEAR":          "Year"
+    "YEAR":          "Year",
+    "TOTAL_ACCRUED_FEE": "Total accrued fee",
+    "TOTAL_DEDUCTIBLE_FEE": "Total deductible fee ",
+    "TO_DEDUCT_SUPPLEMENTARY_ASSESSMENT":"To deduct - supplementary self-assessment",
+    "FEES_TO_BE_OFFSET": "Fees to be offset from previous periods",
+    "LIQUIDATION_RESULT": "Liquidation result",
+    "DOWNLOAD_EXCEL": "DOWNLOAD EXCEL",
+    "DOWNLOAD_PDF": "DOWNLOAD PDF",
+    "TO_RECTIFY": "Do you want to rectify?",
+    "RECTIFIED_MODEL": "Once you have rectified the model, it will be archived as a query in your Inbox.",
+    "SEND":"Send"
   },
     "PROFILE": {
     "CONTACT_DETAILS":   "Contact details",
@@ -140,11 +150,31 @@
     "NAME": "Name",
     "LAST_NAME": "Last Name",
     "PASSWORD": "Password",
+    "NEW_PASSWORD": "New password",
+    "REPEAT_PASSWORD": "Repeat password",
     "DESCRIPTION": "Description",
     "DATE_OF_CREATION": "Date of creation",
     "REGISTRATION_DATE": "Registration Date",
     "NOTARY": "Notary",
     "PROTOCOL": "Protocol",
-    "REGISTRATION":"Registration"
+    "REGISTRATION":"Registration",
+    "HOLDER": "Holder",
+    "REPRESENTATION": "Representation",
+    "EXPIRATION_DATE": "Expiration Date",
+    "ALIAS": "Alias",
+    "TYPE": "Type",
+    "TGSS": "TGSS",
+    "SEPE": "SEPE",
+    "AEAT": "AEAT",
+    "ACTIONS": "Actions",
+    "DELETE_ITEM": "Would you like to delete this item?",
+    "CERTIFICATE_VALIDATED": "Certificate successfully validated",
+    "DOCUMENT": "Document",
+    "VALIDITY":"Validity",
+    "VALIDITY_TO":"Validity to",
+    "SECUNDARY_USERS":"Secondary users",
+    "STATUS": "Status",
+    "STATUS_DATE": "Status Date",
+    "NAF": "NAF"
   }
 }

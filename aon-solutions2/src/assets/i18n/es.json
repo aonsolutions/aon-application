@@ -99,10 +99,10 @@
   "CONSULTING": {
 
   },
-  "EMPLOYEE-PANEL": {
+  "EMPLOYEE_PANEL": {
 
   },
-  "TAX-PANEL": {
+  "TAX_PANEL": {
     "1_TRIMESTER":   "1 Trimestre",
     "2_TRIMESTER":   "2 Trimestre",
     "3_TRIMESTER":   "3 Trimestre",
@@ -111,11 +111,21 @@
     "NAME":          "Modelo",
     "RESULT":        "Resultado",
     "STATUS":        "estado",
-    "PAYMENTMETHOD": "Metodo de pago",
+    "PAYMENTMETHOD": "Método de pago",
     "ACTIONS":       "acciones",
     "MODEL":         "Modelo",
-    "YEAR":          "Año"
-  },
+    "YEAR":          "Año",
+    "TOTAL_ACCRUED_FEE": "Total cuota devengada",
+    "TOTAL_DEDUCTIBLE_FEE": "Total cuota deducible",
+    "TO_DEDUCT_SUPPLEMENTARY_ASSESSMENT":"A deducir - autoliquidación complementaria",
+    "FEES_TO_BE_OFFSET": "Cuotas a compensar de periodos anteriores",
+    "LIQUIDATION_RESULT": "Resultado de la liquidación",
+    "DOWNLOAD_EXCEL": "DESCARGAR EXCEL",
+    "DOWNLOAD_PDF": "DESCARGAR PDF",
+    "TO_RECTIFY":"¿Quieres rectificar?",
+    "RECTIFIED_MODEL":"  Una vez hayas rectificado el modelo, se archivará como una consulta en tu Bandeja.",
+    "SEND":"Enviar"
+   },
   "PROFILE": {
     "CONTACT_DETAILS":   "Datos contacto",
     "EMAIL":   "Email",
@@ -140,12 +150,32 @@
     "NAME": "Nombre",
     "LAST_NAME": "Apellidos",
     "PASSWORD": "Contraseña",
+    "NEW_PASSWORD": "Nueva contraseña",
+    "REPEAT_PASSWORD": "Repetir contraseña",
     "DESCRIPTION": "Descripción",
     "DATE_OF_CREATION": "Fecha de creación",
     "REGISTRATION_DATE": "Fecha de registro",
     "NOTARY": "Notario",
     "PROTOCOL": "Protocolo",
-    "REGISTRATION":"Inscripción"
+    "REGISTRATION":"Inscripción",
+    "HOLDER": "Titular",
+    "REPRESENTATION": "Representante",
+    "EXPIRATION_DATE": "Fecha de vencimiento",
+    "ALIAS": "Alias",
+    "TYPE": "Tipo",
+    "TGSS": "TGSS",
+    "SEPE": "SEPE",
+    "AEAT": "AEAT",
+    "ACTIONS": "Acciones",
+    "DELETE_ITEM": "¿Desea eliminar este elemento?",
+    "CERTIFICATE_VALIDATED": "Certificado validado correctamente",
+    "DOCUMENT": "Documento",
+    "VALIDITY":"Validez desde",
+    "VALIDITY_TO":"Validez hasta",
+    "SECUNDARY_USERS":"Usuarios secundarios",
+    "STATUS": "Estado",
+    "STATUS_DATE": "Fecha estado",
+    "NAF": "NAF"
   }
 }
 

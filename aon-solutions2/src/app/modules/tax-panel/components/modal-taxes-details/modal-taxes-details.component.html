@@ -3,52 +3,62 @@
 
   <div class="head-text">
     <div style="display: inline-block">
-      <p class="text-modal-taxes-details">Total cuota devengada</p>
+      <p class="text-modal-taxes-details">
+        {{ "TAX_PANEL.TOTAL_ACCRUED_FEE" | translate }}
+      </p>
       <p class="number-modal-taxes-details-devengada">21,00 €</p>
     </div>
 
     <div style="display: inline-block">
-      <p class="text-modal-taxes-details">Total cuota deducible</p>
+      <p class="text-modal-taxes-details">
+        {{ "TAX_PANEL.TOTAL_DEDUCTIBLE_FEE" | translate }}
+      </p>
       <p class="number-modal-taxes-details-deducible">0,00 €</p>
     </div>
   </div>
 
-  <div style="background-color: #F9F9FA; margin: 2.5rem;">
+  <div style="background-color: #f9f9fa; margin: 2.5rem">
     <div class="text-inside-taxes-details">
       <div class="text-inside-taxes-in">
-      <p class="text-inside-taxes-details">Cuotas a compensar de periodos anteriores</p>
-      <p class="number-inside-taxes-details">0,00 €</p>
-    </div>
+        <p class="text-inside-taxes-details">
+          {{ "TAX_PANEL.FEES_TO_BE_OFFSET" | translate }}
+        </p>
+        <p class="number-inside-taxes-details">0,00 €</p>
+      </div>
       <p class="total-number-inside-taxes-details">21,00 €</p>
 
-      <hr style="color: #D2D2D6; margin-left: .5rem;"/>
+      <hr style="color: #d2d2d6; margin-left: 0.5rem" />
 
-      <p class="text-inside-taxes-details">A deducir - autoliquidación complementaria</p>
+      <p class="text-inside-taxes-details">
+        {{ "TAX_PANEL.TO_DEDUCT_SUPPLEMENTARY_ASSESSMENT" | translate }}
+      </p>
       <p class="number-inside-taxes-details">0,00 €</p>
 
-      <hr style="color: #D2D2D6; margin-left: .5rem;"/>
+      <hr style="color: #d2d2d6; margin-left: 0.5rem" />
     </div>
 
-    <p class="result-modal-taxes-details">Resultado de la liquidación</p>
+    <p class="result-modal-taxes-details">
+      {{ "TAX_PANEL.LIQUIDATION_RESULT" | translate }}
+    </p>
   </div>
 
   <div style="display: flex; justify-content: center; gap: 1.25rem">
-  <app-button
-    style="display: inline-block"
-    [mat-dialog-close]="true"
-    [class]="'border-orange left'"
-  >
-    <app-icon shape="table_chart"></app-icon>
-    DESCARGAR EXCEL
-  </app-button>
+    <app-button
+      style="display: inline-block"
+      [mat-dialog-close]="true"
+      [class]="'border-orange left'"
+    >
+      <app-icon shape="table_chart"></app-icon>
+      {{ "TAX_PANEL.DOWNLOAD_EXCEL" | translate }}
+    </app-button>
 
-  <app-button
-    style="display: inline-block"
-    [mat-dialog-close]="true"
-    [class]="'border-orange left'"
-  >
-    <app-icon shape="picture_as_pdf"></app-icon>
-    DESCARGAR PDF
-  </app-button>
-</div>
+    <app-button
+      style="display: inline-block"
+      [mat-dialog-close]="true"
+      [class]="'border-orange left'"
+    >
+      <app-icon shape="picture_as_pdf"></app-icon>
+      {{ "TAX_PANEL.DOWNLOAD_PDF" | translate }}
+    </app-button>
+  </div>
 </div>
