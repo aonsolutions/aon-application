@@ -82,10 +82,13 @@ export class AonBasicTable extends AonElement {
   removeRow(row){
     let tr = this.getElement(this.TABLE_ROW + row);
     tr.parentNode.removeChild(tr);
+    this.rows = this.rows - 1;
+
   }
 
   removeRows() {
     this.clear();
+    this.initialize();
     this.build();
   }
 }

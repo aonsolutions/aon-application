@@ -607,8 +607,10 @@ export class AonMenu extends AonElement {
 			return this.getDur().isInvoice();
 		else if(MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
-		else if(MenuApps.TOOLS.app === app.app ||MenuApps.NOTES.app === app.app)
+		else if(MenuApps.NOTES.app === app.app)
 			return true;
+		else if(MenuApps.TOOLS.app === app.app)
+			return this.isBeta();
 		else if(MenuApps.OFFICE.app === app.app){
 			return this.isBeta() && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
 		} else if(MenuApps.CONSOLE.app === app.app){

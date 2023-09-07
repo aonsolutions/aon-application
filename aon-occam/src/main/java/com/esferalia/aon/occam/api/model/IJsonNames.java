@@ -93,6 +93,7 @@ public final class IJsonNames {
 	public static final String CITY = "city";
 	public static final String CHARGE_DATE = "chargeDate";
 	public static final String CHILD_COUNT = "childCount";
+	public static final String CHILDS = "childs";
 	public static final String CLASS_NAME = "class_name";
 	public static final String CLOSING_ENTRIES_EXCLUDED = "closingEntriesExcluded";
 	public static final String CNAE = "cnae";

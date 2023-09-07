@@ -11,6 +11,8 @@
 #: ${S3_BUCKET:=aon-contract-doc}
 : ${S3_ENDPOINT:=s3.eu-south-2.amazonaws.com}
 
+[ -n "${DB_DOMAIN}" ] && DB_WHERE="domain.name='${DB_DOMAIN}'" || DB_WHERE="1=1" ;
+
 echo
 echo $(date)
 echo
@@ -20,6 +22,7 @@ echo -e "Using DB_USER:\t$DB_USER"
 echo -e "Using DB_PASSWD:\t$DB_PASSWD"
 echo -e "Using DB_NAME:\t$DB_NAME"
 echo -e "Using DB_TABLE:\t$DB_TABLE"
+echo -e "Using DB_DOMAIN:\t$DB_WHERE"
 echo -e "Using S3_BUCKET:\t$S3_BUCKET"
 echo -e "Using S3_ENDPOINT:\t$S3_ENDPOINT"
 echo -e "Using AWS_REGION:\t$AWS_REGION"
@@ -38,7 +41,9 @@ exec java -jar aon-storage.jar \
 --endpoint=${S3_ENDPOINT} \
 --region=${AWS_REGION} \
 --accesskey=${AWS_ACCESSKEY} \
---secretkey=${AWS_SECRETKEY}
+--secretkey=${AWS_SECRETKEY} \
+--where="${DB_WHERE}"
+
 
 
 

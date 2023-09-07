@@ -5370,6 +5370,50 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcXXXBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXX.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
+			//Assert.assertEquals(1, ssPecs.size());
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 9);
+			calendar.set(Calendar.MONTH, Calendar.MARCH);
+			Date march092023 = calendar.getTime();
+
+			//assertPECS(ssPecs, march092023, null, 1, pec -> pec.getStartDate().equals(march092023) );
+			
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.APRIL);
+			Date april2023 = calendar.getTime();
+			Salary salary = calculate(ssPecs, Collections.emptyList(), april2023, new  SalaryBuilder(), new GenericContractSalaryCalculator.Listener());
+			double cgcBase = salary.getCommonBase();
+			//double cgpBase = salary.getProfessionalBase();
+			assertEquals(cgcBase *  ( 0.25 ) / 100.00  , salary.getSocialSecurityContributions(), 0.00);
+			assertEquals(cgcBase *  ( 1.30 + 1.40 + 2.20 ) / 100.00  , salary.getTotalEnterprise() , DELTA);
+			
+			double cgcEmployeePercent = salary.getSalaryData(ContextVariable.CGC_EMPLOYEE_PERCENT.getName(), Double.class);
+			assertEquals(0.25 , cgcEmployeePercent, 0.00);
+			
+			double cgcEnterprisePercent = salary.getSalaryData(ContextVariable.CGC_ENTERPRISE_PERCENT.getName(), Double.class);
+			assertEquals(1.30 , cgcEnterprisePercent, 0.00);
+			
+
+		}
+	}
+
+	@Test
 	public void testIdc986Bonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
 			ExpressionException, SalaryException, SQLException {
 

@@ -119,6 +119,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			ITimedVariable<Object> timedObject = new TimedObject<Object>(value,
 					this.period);
 			Variables.this.put((String) key, timedObject);
+			read(key, timedObject, value);
 			return null;
 		}
 
