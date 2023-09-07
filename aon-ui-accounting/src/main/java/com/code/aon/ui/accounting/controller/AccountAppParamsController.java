@@ -25,9 +25,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.product.Item;
+import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+
 
 public class AccountAppParamsController implements Serializable {
 	
@@ -76,6 +79,7 @@ public class AccountAppParamsController implements Serializable {
 		DEFAULT_PARAMETERS.put(AppParam.ACC_DEF_DUA_DUTY_ACC.getValue(), null );
 		
 		DEFAULT_PARAMETERS.put(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC.getValue(), null );
+		DEFAULT_PARAMETERS.put(AppParam.OCR_DEFAULT_ITEM.getValue(), null );
 
 	}
 	
@@ -100,6 +104,8 @@ public class AccountAppParamsController implements Serializable {
 	
 	private Account accDefDuaVatAccount;
 	private Account accDefDuaDutyAccount;
+	
+	private Item ocrDefaultItem;
 
 	public Map<String, ApplicationParameter> getParameters() {
 		return parameters;
@@ -183,6 +189,18 @@ public class AccountAppParamsController implements Serializable {
 		initializeAccVatNegativeAdjustAccount();
 		initializeAccDefDuaVatAccount();
 		initializeAccDefDuaDutyAccount();
+		
+		try {
+			Item defaultOcrItem = initializeItem(AppParam.OCR_DEFAULT_ITEM);
+			if (defaultOcrItem == null || defaultOcrItem.getId() == null) {
+				defaultOcrItem = new Item();
+				defaultOcrItem.setProduct( new Product() );
+			}
+			setOcrDefaultItem( defaultOcrItem );
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Artículo OCR por defecto no válido.");
+			setAccDefDuaDutyAccount( new Account() );	
+		}
 	}
 	
 	public ApplicationParameter getParameter(AppParam param) throws ManagerBeanException {
@@ -216,6 +234,31 @@ public class AccountAppParamsController implements Serializable {
 		}
 		appParam.setValue(accOperationsDeadline==null?null:FORMATTER.format(accOperationsDeadline));
 		parameters.put(AppParam.ACC_OPERATIONS_DEADLINE.getValue(), appParam);
+	}
+
+	private Item initializeItem(AppParam param) throws ManagerBeanException {
+		Item item = new Item();
+		IManagerBean bean = BeanManager.getManagerBean(Item.class);		
+		String value = parameters.get(param.getValue()).getValue();
+		if (StringUtils.isNotEmpty(value)) {
+			try {
+				item = (Item) bean.get(Integer.parseInt(value));
+			} catch (NumberFormatException e) {
+				// nothing. Appears empty.
+			}
+		}
+		return item;	
+	}
+	private void putItem(AppParam param,Item item) {
+		ApplicationParameter appParam = parameters.get(param.getValue());
+		if (appParam == null) {
+			appParam = new ApplicationParameter();
+			appParam.setName(param.getValue());
+		}
+		appParam.setValue(item == null || item.getId() == null
+				?null
+				:item.getId().toString());
+		parameters.put(param.getValue(), appParam);
 	}
 
 	private Account initializeAccount(AppParam param) throws ManagerBeanException {
@@ -506,4 +549,15 @@ public class AccountAppParamsController implements Serializable {
 		this.accDefDuaDutyAccount = accDefDuaDutyAccount;
 		putAccount(AppParam.ACC_DEF_DUA_DUTY_ACC,accDefDuaDutyAccount);
 	}
+
+	public Item getOcrDefaultItem() {
+		return ocrDefaultItem;
+	}
+
+	public void setOcrDefaultItem(Item ocrDefaultItem) {
+		this.ocrDefaultItem = ocrDefaultItem;
+		putItem(AppParam.OCR_DEFAULT_ITEM,ocrDefaultItem);
+	}
+	
+	
 }

@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 @Deprecated
 public class IngenetDeliveryManager {
@@ -234,6 +235,11 @@ public class IngenetDeliveryManager {
 			newItem.setSerialNumber(serialNumber);
 			newItem.setSerialDate(serialDate != null ? new java.sql.Date(
 					serialDate.getTime()) : null);
+			if(newItem.getProduct().isPerishable()) {
+            	Date expireDate = AonDateUtils.addDays(newItem.getSerialDate(),
+            			newItem.getProduct().getDaysToExpire() != null ? newItem.getProduct().getDaysToExpire() : 0);
+            	newItem.setExpireDate(expireDate);
+            }
 			newItem.setStatus(ProductStatus.DISCONTINUED);
 			return ItemDAO.save(ctx, newItem);
 		}

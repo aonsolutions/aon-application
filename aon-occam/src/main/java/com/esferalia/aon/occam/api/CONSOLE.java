@@ -89,7 +89,10 @@ public class CONSOLE {
 		for(String schema: schemas) {
 			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
 				List<DomainCompany> domains = getConsole().getCustomerDomains(ctx, customer).collect(Collectors.toList());
-				list.addAll(domains);
+				domains.forEach(domain -> {
+					domain.setSchema(schema);
+					list.add(domain);						
+				});
 			} catch (DataAccessException e) {
 				e.printStackTrace();
 			}
@@ -167,6 +170,12 @@ public class CONSOLE {
 
 	public static String remoteAccess(DomainParams params, Integer domainId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+			return getConsole().remoteAccess(ctx,domainId);
+		}
+	}
+	
+	public static String remoteAccess(String domainName, Integer domainId, String userName) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, userName)){
 			return getConsole().remoteAccess(ctx,domainId);
 		}
 	}

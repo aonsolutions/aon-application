@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -45,6 +46,7 @@ import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.CarrierPackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
@@ -228,6 +230,12 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	// ------------------ CARRIER PACKING
+	
+	@Override
+	public List<CarrierPacking> getCarrierPackingList(AONContext ctx, CarrierPackingFilter filter, Options...options){
+		return ctx.getDslContext().transactionResult(configuration ->
+			CarrierPackingDAO.getList(ctx, filter, options));
+	}
 
 	@Override
 	public Stream<String> getCarrierPackingSeries(AONContext ctx){
@@ -494,4 +502,9 @@ public class WarehouseImpl implements IWarehouse {
 			PackagingDAO.save(ctx, packaging));
 	}
 	
+	@Override
+	public DeliveryPackaging getDeliveryPackaging(AONContext ctx, String sscc, Integer delivery) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			PackagingDAO.getDeliveryPackaging(ctx, sscc, delivery));
+	}
 }

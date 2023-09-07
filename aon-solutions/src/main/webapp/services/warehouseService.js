@@ -2,6 +2,8 @@ import { get, post, remove } from "./request.js";
 import { API } from "../environments/environments.js";
 
 
+export const getDeliveries = (data) => get(API.DELIVERIES, data);
+
 export const getWarehouses = (data) => get(API.WAREHOUSES, data);
 
 export const getElaborations = (data) => post(API.ELABORATION, data);

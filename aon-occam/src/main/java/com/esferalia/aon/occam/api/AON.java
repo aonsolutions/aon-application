@@ -228,6 +228,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -269,6 +270,7 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -1294,17 +1296,9 @@ public class AON {
 		getProduct().insert(ctx, p);
 	}
 
-	public static void insertWithId(AONContext ctx, OldProduct p) {
-		getProduct().insertWithId(ctx, p);
-	}
-
 	public static LinkedList<OldProduct> insert(AONContext ctx, 
 			Stream<OldProduct> ps) {
 		return getProduct().insert(ctx, ps);
-	}
-
-	public static void insertWithId(AONContext ctx, Stream<OldProduct> ps) {
-		getProduct().insertWithId(ctx, ps);
 	}
 
 	public static void update(AONContext ctx, OldProduct p) {
@@ -1415,9 +1409,9 @@ public class AON {
 	
 	// ------------------------------------ NEW ITEM
 	
-	public static Item getItem(Domain domain, String login, ItemFilter filter) {
+	public static Item getItem(Domain domain, String login, ItemFilter filter, Options...options) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
-			return getNewProduct().getItem(ctx, filter);
+			return getNewProduct().getItem(ctx, filter, options);
 		}
 	}
 	
@@ -1784,6 +1778,20 @@ public class AON {
 		}
 	}
 	
+	public static Invoice acceptInvoice(Occam occam, Invoice invoice){
+		return acceptInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice, null);
+	}
+
+	public static Invoice acceptInvoice(Occam occam, Invoice invoice, Integer rawdocId){
+		return acceptInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice, rawdocId);
+	}
+
+	public static Invoice acceptInvoice(String domainName, Integer domainId, String login, Invoice invoice, Integer rawdocId){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().acceptInvoice(ctx, invoice, rawdocId);
+		}
+	}
+
 	public static Invoice insertInvoice(Occam occam, Invoice invoice){
 		return insertInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);
 	}
@@ -4422,6 +4430,24 @@ public class AON {
 	
 	// ------------------ CARRIER PACKING
 	
+	public static List<CarrierPacking> getCarrierPackingList(Occam occam, CarrierPackingFilter filter, Options... options) {
+		return getCarrierPackingList(occam.getDomainName(), occam.getDomain(), occam.getUser(), filter, options);
+	}
+	
+	public static List<CarrierPacking> getCarrierPackingList(Domain domain, User user, CarrierPackingFilter filter, Options... options) {
+		return getCarrierPackingList(domain.getName(), domain.getId(), user.getLogin(), filter, options);
+	}
+
+	public static List<CarrierPacking> getCarrierPackingList(Domain domain, String login, CarrierPackingFilter filter, Options... options) {
+		return getCarrierPackingList(domain.getName(), domain.getId(), login, filter, options);
+	}
+		
+	public static List<CarrierPacking> getCarrierPackingList(String domainName, Integer domainId, String login, CarrierPackingFilter filter, Options... options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().getCarrierPackingList(ctx, filter, options);
+		}
+	}
+	
 	public static Stream<String> getCarrierPackingSeries(String domainName, Integer domainId, String login) {
 		CloseableAONContext ctx = null;
 		try {
@@ -4930,6 +4956,12 @@ public class AON {
 	public static List<Customer> getCustomerWithoutFee(Domain domain, String login){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)) {
 			return getRegistry().getCustomerWithoutFee(ctx);
+		}
+	}
+	
+	public static List<Customer> getCustomerWithoutFee(Domain domain, String login, CustomerParams customerParams){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)) {
+			return getRegistry().getCustomerWithoutFee(ctx, customerParams);
 		}
 	}
 	
@@ -7808,6 +7840,12 @@ public class AON {
 		}
 	}
 	
+	public static DeliveryPackaging getDeliveryPackaging(Domain domain, User user, String sscc, Integer delivery) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getWarehouse().getDeliveryPackaging(ctx, sscc, delivery);
+		}
+	}
+	
 	// ---------- DOMAIN LINKED
 
 	public static List<DomainLinked> getDomainLinkedList(String domainName, Integer domainId, String login, Integer registry) {
@@ -7960,6 +7998,12 @@ public class AON {
 	public static LinkedList<BookingCheck> getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
 			return getFinance().getBookingCheckList(ctx, params);
+		}
+	}
+	
+	public static LinkedList<BookingCheck> getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getCustomerBookingCheckList(ctx, params);
 		}
 	}
 

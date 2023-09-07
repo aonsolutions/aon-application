@@ -46,8 +46,9 @@ public class BookingUtils {
 				.setTo(domain.getOwner())
 				.addBcc("admin@aonsolutions.es")
 				.addBcc("administracion@aonsolutions.es")
+				.addBcc("asignacion@aonsolutions.es")
 				.setFrom("booking@aon.solutions")
-				.setReplyTo("administracion@aonsolutions.es")
+				.setReplyTo("asignacion@aonsolutions.es")
 				.setSubject(subject)
 				.setBody(body)
 				.setFiles(getFiles(oldBooking, newBooking));

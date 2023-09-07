@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.jooq.tables.records.RitemRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -33,12 +36,14 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemCompositionDAO.ItemCompositionFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ItemAutoComplete;
@@ -104,12 +109,50 @@ public class ItemDAO {
 	}
 
 	
+	// ----- SELECT
+
+	private static SelectConditionStep<Record> select(AONContext ctx, ItemFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(ITEM)
+			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+			.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
+			.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
+			.where(ITEM_PROPERTIES.getConditions(filter));
+	}
+	
+	private static SelectConditionStep<Record> selectFull(AONContext ctx, ItemFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(ITEM)
+			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+			.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
+			.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
+			.leftOuterJoin(ITEM_COMPOSITION).on(ITEM.ID.equal(ITEM_COMPOSITION.ITEM))
+			.where(ITEM_PROPERTIES.getConditions(filter));
+	}
+	
 	public static Item get(AONContext ctx, Integer id){
         return get(ctx, f -> f.getIdProperty().eq(id));
     }
 	
-	public static Item get(AONContext ctx, ItemFilter filter){
-		return getStream(ctx, filter).findFirst().orElse(new Item());
+	public static Item get(AONContext ctx, ItemFilter filter, Options... options){
+		if(options.length > 0 && options[0].isFull())
+			return getFull(ctx, filter);
+		return select(ctx, filter).limit(1).fetch().stream().map(new ItemFiller())
+				.findFirst().orElse(new Item());
+	}
+	
+	public static Item getFull(AONContext ctx, ItemFilter filter){
+		return getFullStream(ctx, filter).findFirst().orElse(new Item());
+	}
+	
+	public static Stream<Item> getFullStream(AONContext ctx, ItemFilter filter){
+		Map<Item, List<ItemComposition>> map =  selectFull(ctx, filter)
+				.groupBy(ITEM.ID, ITEM_COMPOSITION.ID)
+				.fetchGroups(new ItemFiller()::apply, new ItemCompositionFiller()::apply);
+		map.forEach((object, composition) -> composition.forEach(c-> {
+			object.addItemComposition(c);
+		}));
+		return map.keySet().stream(); 
 	}
 	
 	public static Stream<Item> getStream(AONContext ctx, ItemFilter filter){
@@ -406,6 +449,7 @@ public class ItemDAO {
 				.setDescription(getValue(r, ITEM.DESCRIPTION))
 				.setSerialNumber(getValue(r, ITEM.SERIAL_NUMBER))
 				.setSerialDate(getValue(r, ITEM.SERIAL_DATE))
+				.setExpireDate(getValue(r, ITEM.EXPIRE_DATE))
 				.setPrice(getDouble(r, ITEM.PRICE))
 				.setStatus(ProductStatus.safeValueOf(getValue(r, ITEM.STATUS)))
 				.setExpensesPercent(getDouble(r, ITEM.EXPENSES_PERCENT))

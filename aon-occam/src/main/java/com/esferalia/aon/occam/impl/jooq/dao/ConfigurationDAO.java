@@ -20,12 +20,14 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.AutoConcept;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ApplicationParameterFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -106,6 +108,7 @@ public class ConfigurationDAO {
 			.setChildDomains(DomainDAO.getActiveChildDomains(ctx))
 			.setDefaultCreditor(getDefaultCreditor(ctx))
 			.setOCRActive(SecurityDAO.isOCRActive(ctx, ctx.getDomainId()))
+			.setOcrDefaultItem( getOcrDefaultItem(ctx) )
 			.setBetaEnabled(AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.AON_BETA_ENABLED)))
 			.setAlphaEnabled(AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.AON_ALPHA_ENABLED)))
 		;
@@ -135,6 +138,14 @@ public class ConfigurationDAO {
 		return conf;
 	}
 	
+	private static Item getOcrDefaultItem(AONContext ctx) {
+		int itemId = AppParamDAO.fetchIntValue(ctx, AppParam.OCR_DEFAULT_ITEM);
+		if (AonMathUtils.isNotZero(itemId)) {
+			return ItemDAO.get(ctx, itemId);
+		}
+		return null;
+	}
+
 	private static AonConfiguration getBasicConfiguration(AONContext ctx, ConfigParams params) {
 		AonConfiguration conf = new AonConfiguration()
 				.setDomain( DomainDAO.getDomain(ctx, ctx.getDomainId()) )

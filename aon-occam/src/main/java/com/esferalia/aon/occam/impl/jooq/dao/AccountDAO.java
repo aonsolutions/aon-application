@@ -112,16 +112,17 @@ public class AccountDAO {
 	public static List<Account> getAccountsList(AONContext ctx, AccountParams params) {
 		ctx.checkRead();
 		Condition condition = getFilter( params );
+		Integer[] domains = SecurityDAO.getInheritanceDomainIds(ctx);
 		List<Account> accounts = ctx.getDslContext() 
 			.select().from(ACCOUNT)
 			.leftJoin(CUSTOMER)
-			.on(ACCOUNT.ID.eq(CUSTOMER.ACCOUNT))
+			.on(ACCOUNT.ID.eq(CUSTOMER.ACCOUNT).and(CUSTOMER.DOMAIN.in(domains)))
 			.leftJoin(SUPPLIER)
-			.on(ACCOUNT.ID.eq(SUPPLIER.ACCOUNT))
+			.on(ACCOUNT.ID.eq(SUPPLIER.ACCOUNT).and(SUPPLIER.DOMAIN.in(domains)))
 			.leftJoin(CREDITOR)
-			.on(ACCOUNT.ID.eq(CREDITOR.ACCOUNT))
+			.on(ACCOUNT.ID.eq(CREDITOR.ACCOUNT).and(CREDITOR.DOMAIN.in(domains)))
 			.where(condition)
-			.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			.and(ACCOUNT.DOMAIN.in(domains))
 			.orderBy(ACCOUNT.CODE)
 			.offset(params.getOffset())
 			.limit(params.getLimit())
