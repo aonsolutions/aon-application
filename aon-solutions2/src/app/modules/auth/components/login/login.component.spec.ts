@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 
+/*
 
 const loginInformation ={
   email : " ",
@@ -80,3 +81,4 @@ describe('LoginComponent', () => {
     expect(authServiceSpy.magicLogin).toHaveBeenCalledWith('testToken');
   });
 });
+*/

@@ -8,6 +8,7 @@ import { MatFormFieldAppearance } from '@angular/material/form-field';
 })
 
 export class TableComponent implements OnInit {
+  countCol : number = 0;
   @Input() displayedColumns : string[]  = ['name', 'weight', 'symbol', 'position'];
   columnsToDisplay          : string[]  = this.displayedColumns.slice();
   @Input() head             : any       = {name: '', weight: 'valor 2', symbol: 'valor 3', position: 'valor 4'};
@@ -35,8 +36,8 @@ export class TableComponent implements OnInit {
     this.listenParentHandler.emit({key: key, keyButton: keyButton});
   }
 
-  onRowClick(key: any){
-    this.listenParentRow.emit({key: key});
+  onRowClick(key: any, type: any = ''){
+    this.listenParentRow.emit({key: key, type: type});
   }
 
 }

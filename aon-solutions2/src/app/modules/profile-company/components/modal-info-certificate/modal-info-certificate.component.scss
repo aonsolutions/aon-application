@@ -1,0 +1,61 @@
+@import "src/styles.scss";
+
+.modal-info-certificate {
+  padding: 1rem;
+}
+
+.title-modal-info-certicate {
+  font-size: $font-size-24;
+  font-weight: 700;
+}
+
+.info-certificated {
+  .info-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: $font-size-primary;
+
+    .info-title {
+      font-weight: 400;
+      color: $color-secondary;
+    }
+
+    .info-data {
+      font-weight: 500;
+      color: $color-dark;
+      margin-left: 0.5rem;
+    }
+  }
+}
+
+.subtitle-modal-info-certicate {
+  font-size: $font-size-default;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.secundary-users {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+}
+
+.box-user {
+  border: 0.05rem solid $color-border-primary;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.info-box {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: $font-size-primary;
+  font-weight: 400;
+  color: $color-secondary !important;
+
+}

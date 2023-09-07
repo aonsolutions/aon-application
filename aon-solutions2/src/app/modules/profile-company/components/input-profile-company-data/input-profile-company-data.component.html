@@ -1,19 +1,19 @@
-  <div class="structure-title">
-    {{ "PROFILE.CONTACT_DETAILS" | translate }}
-  </div>
-
-  <hr/>
-
+<div class="structure-title">
+  {{ "PROFILE.CONTACT_DETAILS" | translate }}
+</div>
+<hr />
+<div *ngFor="let enterprise of enterprises">
   <div class="form">
     <app-input
-      *ngFor="let email of emailFields; let i = index"
+      *ngFor="let email of emailList; let i = index"
       [type]="'text'"
       [label]="'PROFILE.EMAIL' | translate"
-      [placeholder]="'PROFILE.PLACEHOLDER' | translate"
-      [value]="emailFields[i]"
+      [placeholder]="'PROFILE.EMAIL' | translate"
+      [value]="email"
     ></app-input>
+
     <div class="input-profile-contact-data-add">
-      <app-button class="icon-border" (click)="addEmailField()">
+      <app-button class="icon-border" (click)="addEmail()">
         <app-icon [shape]="'add'"></app-icon>
       </app-button>
     </div>
@@ -23,13 +23,14 @@
     <app-input
       [type]="'text'"
       [label]="'PROFILE.PHONE' | translate"
-      [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+      [placeholder]="'PROFILE.PHONE' | translate"
+      [value]="enterprise.Phone"
     ></app-input>
     <app-input
       [type]="'text'"
       [label]="'PROFILE.WEB' | translate"
-      [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+      [placeholder]="'PROFILE.WEB' | translate"
+      [value]="enterprise.Website"
     ></app-input>
   </div>
-
-<!-- [label]="'LOGIN.USER' + (i + 1)| translate" -->
+</div>

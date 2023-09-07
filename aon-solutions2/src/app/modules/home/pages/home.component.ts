@@ -3,6 +3,10 @@ import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/aon';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { BankService } from 'src/app/core/services/bank.service';
+import { MessageService } from 'src/app/core/services/message.service';
+import { ReportingService } from 'src/app/core/services/reporting.service';
+import { TaxModelService } from 'src/app/core/services/tax-model.service';
+import { CountryService } from 'src/app/core/services/country.service';
 
  interface ShortcutDashboard {
   shape : string;
@@ -43,7 +47,10 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private bankService     : BankService,
-    private translateService: TranslateService
+    private taxModelService : TaxModelService,
+    private reportingService: ReportingService,
+    private messageService  : MessageService,
+    private translateService: TranslateService,
   ) {
     this.translateService.get([
       'HOME.SALES_EXPENSES', 'HOME.COLLECTIONS_PAYMENTS', 'HOME.CREATE_INVOICE',
@@ -101,7 +108,5 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-  
-  }
+  ngOnInit(): void { }
 }

@@ -1,0 +1,20 @@
+<p class="text-modal-delete">
+  {{ "PROFILE.DELETE_ITEM" | translate }}
+</p>
+
+<div style="display: flex; justify-content: center; gap: 1.25rem">
+  <app-button
+    style="display: inline-block"
+    [mat-dialog-close]="true"
+    [class]="'dark'"
+  >
+    {{ "PROFILE.SAVE" | translate }}
+  </app-button>
+  <app-button
+    style="display: inline-block"
+    [mat-dialog-close]="true"
+    [class]="'dark'"
+  >
+    {{ "PROFILE.CANCEL" | translate }}
+  </app-button>
+</div>
