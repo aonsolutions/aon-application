@@ -69,7 +69,7 @@ class SistemaREDEmployee {
 			Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
 	// DATOS EMPRESA
-	// Cta. Cotiz.: 28 249788734 Régimen: 0111 Ident.Empr.: 9 0B01991256 Nombre ...:
+	// Cta. Cotiz.: 28 249788734 R?imen: 0111 Ident.Empr.: 9 0B01991256 Nombre ...:
 	// RIKAMBA SL
 	private static final Pattern ENTERPRISE_DATA = Pattern.compile(
 			"cta.*cotiz.*:\\s+(?<ccc>\\d{2}\\s\\d{9}).*r.gimen:\\s+(?<regime>\\d{4}).*ident.*:\\s+(?<identityCif>\\d{1})?\\s+(?<cif>\\w+)\\s+nombre\\s+...:\\s+(?<enterpriseName>\\w+)\\s+",
@@ -747,7 +747,7 @@ class SistemaREDEmployee {
 
 			onlineOption.click();
 			
-			Toolkit.buildFile(document.asXml().getBytes(), "/Users/svaldepenas/Desktop/cccLaboralLife.html");
+			//Toolkit.buildFile(document.asXml().getBytes(), "/Users/svaldepenas/Desktop/cccLaboralLife.html");
 
 			formSubmit.click();
 
