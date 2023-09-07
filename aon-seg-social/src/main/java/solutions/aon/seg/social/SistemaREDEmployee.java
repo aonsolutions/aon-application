@@ -15,12 +15,10 @@ import static solutions.aon.seg.social.toolkit.Toolkit.splitStringMultiple;
 import static solutions.aon.seg.social.toolkit.Toolkit.verifyData;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -28,12 +26,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.text.Document;
-
-import org.apache.commons.io.FileUtils;
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
-import org.htmlunit.Page;
 import org.htmlunit.UnexpectedPage;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomElement;
@@ -717,8 +711,13 @@ class SistemaREDEmployee {
 			HtmlForm form = HtmlUnitToolkit.wait4(document, p -> p.getFormByName("jacadaform")).orElseThrow();
 
 			form.getInputByName("txt_SDFREGCCO").setValue(regime);
+			form.getInputByName("txt_SDFREGCCO").setValueAttribute(regime);
+			
 			form.getInputByName("txt_SDFTESCCO").setValue(cccArray.get(0));
+			form.getInputByName("txt_SDFTESCCO").setValueAttribute(cccArray.get(0));
+			
 			form.getInputByName("txt_SDFNYCCCO").setValue(cccArray.get(1));
+			form.getInputByName("txt_SDFNYCCCO").setValueAttribute(cccArray.get(1));
 
 			HtmlInput fromDayInput = document.querySelector("#SDFDIADESDEM");
 			HtmlInput fromMonthInput = document.querySelector("#SDFMESDESDEM");
@@ -728,15 +727,27 @@ class SistemaREDEmployee {
 			HtmlInput toYearIn = document.querySelector("#SDFAOHASTAM");
 			HtmlOption onlineOption = document.querySelector("#ListaTipoImpresion option:nth-child(3)");
 
-			fromDayInput.setAttribute("value", String.valueOf(fromArray[0]));
-			fromMonthInput.setAttribute("value", String.valueOf(fromArray[1]));
-			fromYearInput.setAttribute("value", String.valueOf(fromArray[2]));
+			fromDayInput.setValue(String.valueOf(fromArray[0]));
+			fromDayInput.setValueAttribute(String.valueOf(fromArray[0]));
+			
+			fromMonthInput.setValue(String.valueOf(fromArray[1]));
+			fromMonthInput.setValueAttribute(String.valueOf(fromArray[1]));
+			
+			fromYearInput.setValue(String.valueOf(fromArray[2]));
+			fromYearInput.setValueAttribute(String.valueOf(fromArray[2]));
 
-			toDayInput.setAttribute("value", String.valueOf(toArray[0]));
-			toMonthInput.setAttribute("value", String.valueOf(toArray[1]));
-			toYearIn.setAttribute("value", String.valueOf(toArray[2]));
+			toDayInput.setValue(String.valueOf(toArray[0]));
+			toDayInput.setValueAttribute(String.valueOf(toArray[0]));
+			
+			toMonthInput.setValue(String.valueOf(toArray[1]));
+			toMonthInput.setValueAttribute(String.valueOf(toArray[1]));
+			
+			toYearIn.setValue(String.valueOf(toArray[2]));
+			toYearIn.setValueAttribute(String.valueOf(toArray[2]));
 
 			onlineOption.click();
+			
+			Toolkit.buildFile(document.asXml().getBytes(), "/Users/svaldepenas/Desktop/cccLaboralLife.html");
 
 			formSubmit.click();
 
