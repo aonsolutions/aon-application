@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod130;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -20,14 +21,19 @@ public interface Mod130Service extends RemoteService {
 	Mod130 save(Occam occam, Mod130 mod130) throws AonCoreException;
 	Mod130 saveComments(Occam occam, Mod130 mod130) throws AonCoreException;
 	Mod130 initializeForFinish(Occam occam, Mod130 mod130) throws AonCoreException;
+	void delete(Occam occam, Mod130 mod130) throws AonCoreException;
+	Mod130 initialize(Occam occam, Mod130 mod130) throws AonCoreException;
+	Mod130 create(Occam occam, Mod130 mod130) throws AonCoreException;
+	
+	String getInfo(Occam occam, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
+
 	Mod130 markAsFinished(Occam occam, Mod130 mod130) throws AonCoreException;
 	Mod130 markAsSent(Occam occam, Mod130 mod130) throws AonCoreException;
 	Mod130 markAsPending(Occam occam, Mod130 mod130) throws AonCoreException;
 	Mod130 markAsCustomerCheck(Occam occam, Mod130 mod130) throws AonCoreException;
-	void delete(Occam occam, Mod130 mod130) throws AonCoreException;
-	Mod130 initialize(Occam occam, Mod130 mod130);
-	Mod130 create(Occam occam, Mod130 mod130) throws AonCoreException;
-	Mod130 reset(Occam occam, Mod130 model) throws AonCoreException;
-	String getInfo(Occam occam, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
+	Mod130 markAsCustomerAccepted(Occam occam, Mod130 mod130) throws AonCoreException;
+	Mod130 markAsCustomerRejected(Occam occam, Mod130 mod130, String reason) throws AonCoreException;
+	
+	Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException;
 
 }

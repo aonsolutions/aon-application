@@ -8,6 +8,7 @@ public class ICResponse implements Serializable{
 	
 	boolean error;
 	String errorMessage;
+	String errorCode;
 	
 	public ICResponse() {
 		// TODO Auto-generated constructor stub
@@ -28,6 +29,15 @@ public class ICResponse implements Serializable{
 	
 	public ICResponse setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+		return this;
+	}
+	
+	public String getErrorCode() {
+		return errorCode;
+	}
+	
+	public ICResponse setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
 		return this;
 	}
 }

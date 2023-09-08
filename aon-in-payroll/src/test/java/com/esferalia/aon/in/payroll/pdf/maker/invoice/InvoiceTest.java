@@ -216,7 +216,7 @@ public class InvoiceTest {
 		LinkedList<Finance> finances = new LinkedList<>();
 		log(GENERATE, "Creating finances.");
 		
-		BankAccount accountOne = new BankAccount("ES9121000418450200051332");
+		BankAccount accountOne = new BankAccount("QA912100041845029121000418450");
 		BankAccount accountTwo = new BankAccount("ES9121421818450296751237");
 		BankAccount accountThree = new BankAccount("ES9999921999950296759997");
 		
@@ -225,7 +225,7 @@ public class InvoiceTest {
 		financeOne.setAdvance(true);
 		financeOne.setAmount(1039687.23);
 		financeOne.setBankAccount(accountOne);
-		financeOne.setPayMethodType(PayMethodType.OTHER);
+		financeOne.setPayMethodType(PayMethodType.NEGOTIABLE_DOCUMENT);
 		financeOne.setPayMethodName("TRANSFERENCIA A 6000 DÍAS");
 		financeOne.setDueDate(new Date());
 		

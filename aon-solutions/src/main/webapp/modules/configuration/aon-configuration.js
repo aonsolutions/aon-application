@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { getAuth, getCompany, getDomainUserRoles, getRegistry, saveServiceAccount } from "../../services/service.js";
+import { getAuth, getCompany, getDomainUserRoles, getRegistry, saveServiceAccount, getCompanyOne } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
@@ -241,11 +241,10 @@ export class AonConfiguration extends AonElement {
 
   buildGeneral() {
     let data = {
-			id: LS.getCompany().registry,
 			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RECORD_DATA']
 		};
     
-    getRegistry(data).then(cp => {
+    getCompanyOne(data).then(cp => {
       let aonRegistry = new AonReg();
 			aonRegistry.id = this.getApplication().id + 'Registry';
       aonRegistry.setShowLogo(true);

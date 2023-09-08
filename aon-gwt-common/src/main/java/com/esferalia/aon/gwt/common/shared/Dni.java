@@ -26,4 +26,23 @@ public final class Dni implements Serializable{
 		return letter == letters[letterNum] || letter == lettersMin[letterNum];
 	}
 	
+	public static boolean checkNIE(String document){
+		if(AonStringUtils.isBlank(document)) return false;
+		
+		char letter = document.toCharArray()[8];
+		String nieFirstLetter = document.substring(0, 1);
+		
+		if(AonStringUtils.equalsIgnoreCase(nieFirstLetter, "X")) nieFirstLetter = "0";
+		else if(AonStringUtils.equalsIgnoreCase(nieFirstLetter, "Y")) nieFirstLetter = "1";
+		else if(AonStringUtils.equalsIgnoreCase(nieFirstLetter, "Z")) nieFirstLetter = "2";
+		
+		String nieNumberWithoutLetter = document.substring(1, 8);
+		
+		Integer nieNumber = Integer.parseInt(nieFirstLetter + nieNumberWithoutLetter);
+		
+		Integer letterNum = nieNumber % 23;
+		
+		return letter == letters[letterNum] || letter == lettersMin[letterNum];
+	}
+	
 }

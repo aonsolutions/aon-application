@@ -1,6 +1,6 @@
 package com.code.aon.faces.component.richfaces.lookup.suggestionBox;
 
-import javax.el.MethodExpression;
+import jakarta.el.MethodExpression;
 
 import org.richfaces.component.html.HtmlSuggestionBox;
 import org.richfaces.taglib.SuggestionBoxTagHandler;

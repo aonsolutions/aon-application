@@ -74,6 +74,13 @@ public interface IFiscalModel extends Serializable {
 	public default boolean canBeSent() {
 		return isFinished() || isCustomerAccepted(); 
 	}
+	
+	// El modelo puede ser enviado al "Servicio de validación y prueba de impresión de la AEAT"
+	// si "Puede ser Enviado" o "es Informativa y no está Presentado"
+	public default boolean canBeValidated() {
+		return canBeSent() || (getModel().isInformative() && !isSent()) ; 
+	}
+	
 	public default boolean isNotEditable() {
 		return !isEditable(); 
 	}

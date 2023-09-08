@@ -91,6 +91,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -229,11 +230,11 @@ public class InvoiceTemplate {
 	
 	private void manageSupplies(Invoice invoice) {
 		if (invoice != null && invoice.getDetails() != null) {
-			
 			invoice.getDetails().stream()
-			.filter(detail -> detail.getItem() != null &&
-			detail.getItem().getProduct() != null &&
-			ProductType.PREPAYMENT.equals(detail.getItem().getProduct().getType()))
+			.filter(detail -> detail.getItem() != null 
+				&& detail.getItem().getProduct() != null 
+				&& ProductType.PREPAYMENT.equals(detail.getItem().getProduct().getType()) 
+				&& !detail.getPrice().equals(0.0) &&  detail.getQuantity() != 0.0)
 			.forEach(detail -> this.specialTaxes.add(detail));
 		}
 	}
@@ -1958,7 +1959,7 @@ public class InvoiceTemplate {
 			
 				if(finance.getBankAccount() != null && finance.getBankAccount().getIban() != null) {
 					String bicCode = !AonStringUtils.isEmpty(finance.getBic()) ? finance.getBic() : "";
-					drawText(contents, finance.getBankAccount().getIbanLength() <= 24 ? finance.getBankAccount().getSeparatedIban() : finance.getBankAccount().getIban(), x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
+					drawText(contents, formatIban(finance), x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
 					drawTextRight(contents, new PDRectangle(x + 92, y, 69, 15), bicCode, theme.getTextColor(), regularFont, 5.5f, 5, -12, i + FINANCE_AMOUNT);
 				} else
 					drawText(contents, "", x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
@@ -1985,6 +1986,27 @@ public class InvoiceTemplate {
 		}
 	}
 	
+	private static String formatIban(Finance finance) {
+		if (finance != null && finance.getBankAccount() != null) {
+			if (PayMethodType.NEGOTIABLE_DOCUMENT.equals(finance.getPayMethodType())) {
+				String hiddenWithDots = finance.getBankAccount().getMaskedIban();
+				
+				if (finance.getBankAccount().getIbanLength() <= 24) {
+					return AonStringUtils.replace(hiddenWithDots, ".", " ");
+				} else {
+					return AonStringUtils.replace(hiddenWithDots, ".", "");				
+				}
+			} else {			
+				if (finance.getBankAccount().getIbanLength() <= 24) {
+					return finance.getBankAccount().getSeparatedIban();
+				} else {
+					return finance.getBankAccount().getIban();
+				}
+			}
+		}
+		return "";
+	}
+
 	private void drawLegal(PrintInvoiceThemeConfiguration theme) throws IOException {
 		x = 50;
 		y-= 10;

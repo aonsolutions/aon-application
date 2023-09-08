@@ -7,6 +7,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod303ActivityFarmer implements Serializable {
 
 	private static final long serialVersionUID = -7300170585931202609L;
+	private int index;
 	
 	private String code;		// Código
 	private String description;	// Descripción
@@ -19,6 +20,13 @@ public class Mod303ActivityFarmer implements Serializable {
 	private double sop;			// Cuota soportada operaciones corrientes
 	private double cad;			// Cuota anual derivada	del Régimen simplificado
 	
+	public int getIndex() {
+		return index;
+	}
+	public Mod303ActivityFarmer setIndex(int index) {
+		this.index = index;
+		return this;
+	}
 	public String getFullDescription() {
 		return AonStringUtils.trimToEmpty(code)
 			+ (AonStringUtils.isBlank(description)?AonStringUtils.EMPTY:AonStringUtils.HYPHEN) 

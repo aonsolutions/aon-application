@@ -42,8 +42,7 @@ class Mod303AEAT2020Declaration extends Mod303AEAT {
 	
 	public static boolean accept(Mod303 mod) {
 		return  mod.isAEAT() 
-			&& ((mod.getYear() == 2020 && mod.isLastPeriod())
-			|| mod.getYear() > 2020);
+			&& ((mod.getYear() == 2020 && mod.isLastPeriod()));
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{

@@ -8,20 +8,24 @@
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.Activity.MyStyle">
 		
-		.container{
-			width: 100%;
-			min-width: 600px;
-			max-width: 700px;
-			padding: 10px;
-			margin: auto;
+		.checkBox { transform: scale(1.4); }
+		
+		.container {
+			margin: 0 1rem;
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
 		}
 		
-		.widthAll{
-			width: 100%;
+		.dateBoxStyle{
+			width: 200px !important;
+			text-align: center !important;
 		}
 		
-		.heightAll{
-			height: 100%;
+		.firstColumn{
+			min-width: 200px;
+			padding: 5px;
+			background-color: #f6f6f6; 
 		}
 		
 		.flex{
@@ -36,7 +40,7 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			margin-bottom: 20px;
+			margin: 1rem 0;
 		}
 		
 		.flexColumn{
@@ -46,11 +50,24 @@
 			flex-direction: column;
 		}
 		
+		.heightAll { height: 100%; }
+		
+		.inputTextHeight { 
+			height: 1.2rem !important; 
+			text-transform: uppercase;
+			padding-left: .5rem !important;
+		}
+		
+		.requiredColor{
+			color: #2152A5;
+			font-weight: bold !important;
+		}
+		
 		.styleBorder{
 			width: 100%;
-			max-width: 900px;
 			border: 1px solid black;
-			padding: 5px;
+			border-radius: 5px;
+			padding: 0 1rem .5rem;
 		}
 		
 		.tittle{
@@ -65,63 +82,45 @@
 			text-align: center;
 		}
 		
-		.firstColumn{
-			min-width: 200px;
-			padding: 5px;
-			background-color: #f6f6f6; 
-		}
+		.warningTB { border: 1.5px solid #ad0000; }
 		
-		.requiredColor{
-			color: #2152A5;
-			font-weight: bold !important;
-		}
+		.widthAll { width: 100%; }
 		
-		.dateBoxStyle{
-			width: 200px !important;
-			text-align: center !important;
-		}
-		
-		.flexGrow{
-			flex-grow: 1;
-		}
-		
-		.warningTB{
-			border: 1px solid red;
-		}
+		@external warningTB;
 		
 	</ui:style>
 
-	<g:VerticalPanel styleName="{style.container}">
+	<g:HTMLPanel styleName="{style.container}">
 		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter}" debugId="activityHTMLPanel">
-	   		<g:VerticalPanel styleName="{style.styleBorder}">
+	   		<g:HTMLPanel styleName="{style.styleBorder}">
 	    		<g:Label styleName='{style.tittle}'>Datos de actividad</g:Label>
 		    	<g:HTMLPanel ui:field="activityDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
 		    		<g:HTMLPanel ui:field="activityDescriptionPanel" styleName="{style.flex}">
 		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Descripción</g:Label>
-		    			<g:TextBox ui:field="activityDescription" styleName='aon-inputText {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="activityDescription" debugId="activityNameTB" styleName='aon-inputText {style.inputTextHeight} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="activityCNAE2009Panel" styleName="{style.flex}">
-		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>CNAE2009</g:Label>
-		    			<g:SuggestBox ui:field="activityCNAE2009" styleName='aon-inputText {style.widthAll}'></g:SuggestBox>
+		    			<g:Label  styleName='{style.firstColumn}'>CNAE2009</g:Label>
+		    			<g:SuggestBox ui:field="activityCNAE2009" debugId="activityCnaeTB" styleName='aon-inputText {style.inputTextHeight} {style.widthAll}'></g:SuggestBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Fecha inicio</g:Label>
-		    			<a:DateBoxEx ui:field="startDate" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+		    			<a:DateBoxEx ui:field="startDate" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.inputTextHeight} {style.dateBoxStyle}'></a:DateBoxEx>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Fecha fin</g:Label>
-		    			<a:DateBoxEx ui:field="endDate" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+		    			<a:DateBoxEx ui:field="endDate" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.inputTextHeight} {style.dateBoxStyle}'></a:DateBoxEx>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Actividad principal</g:Label>
-		    			<g:CheckBox ui:field="activityActive"></g:CheckBox>
+		    			<g:CheckBox ui:field="activityActive" styleName="{style.checkBox}"></g:CheckBox>
 					</g:HTMLPanel>	
 		    	</g:HTMLPanel>
-		    </g:VerticalPanel>
+		    </g:HTMLPanel>
 	   	</g:HTMLPanel>
 		
 	    <aon:CCC ui:field="cccWidget"></aon:CCC>    
-	</g:VerticalPanel>
+	</g:HTMLPanel>
 			
 </ui:UiBinder> 
 

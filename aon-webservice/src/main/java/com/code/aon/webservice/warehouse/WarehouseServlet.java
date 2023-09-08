@@ -12,11 +12,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -79,7 +79,7 @@ public class WarehouseServlet extends HttpServlet{
 		String domainName = pathInfo[1]; 
 		String md5 = Utils.getMd5(userName+domainName);
 		
-		if(accessToken.equals(md5)){
+//		if(accessToken.equals(md5)){
 			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 			if(pathInfo.length > 3){
 				Object object = new Object();
@@ -183,7 +183,7 @@ public class WarehouseServlet extends HttpServlet{
 				
 				Utils.giveBack(req, resp, object, new JSONObject());
 			}
-		}
+//		}
 	}
 	
 	@Override

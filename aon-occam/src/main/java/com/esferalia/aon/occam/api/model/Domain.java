@@ -2,7 +2,11 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
 public class Domain implements Serializable {
@@ -31,7 +35,29 @@ public class Domain implements Serializable {
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
+	private Integer aonCustomer;
+	private AonStatus aonStatus;
 	
+	private List<User> users;
+	private List<DomainApp> apps;
+	
+	public List<User> getUsers() {
+		return users;
+	}
+	
+	public Domain setUsers(List<User> users) {
+		this.users = users;
+		return this;
+	}
+	
+	public List<DomainApp> getApps() {
+		return apps;
+	}
+	
+	public Domain setApps(List<DomainApp> apps) {
+		this.apps = apps;
+		return this;
+	}
 	
 	public Integer getId() {
 		return id;
@@ -65,6 +91,10 @@ public class Domain implements Serializable {
 	}
 	public boolean isStandalone() {
 		return parentId == null && !isDomainManagement();
+	}
+	
+	public boolean isConsultancy() {
+		return DomainType.CONSULTANCY.equals(getDomainType());
 	}
 
 	public boolean isActive() {
@@ -230,6 +260,22 @@ public class Domain implements Serializable {
 	}
 	public Domain setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
+	}
+	
+	public Integer getAonCustomer() {
+		return aonCustomer;
+	}
+	public Domain setAonCustomer(Integer aonCustomer) {
+		this.aonCustomer = aonCustomer;
+		return this;
+	}
+	
+	public AonStatus getAonStatus() {
+		return aonStatus;
+	}
+	public Domain setAonStatus(AonStatus aonStatus) {
+		this.aonStatus = aonStatus;
 		return this;
 	}
 	

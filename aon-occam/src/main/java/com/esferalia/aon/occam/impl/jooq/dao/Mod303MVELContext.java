@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
@@ -104,6 +106,15 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		return 0;
 	}
 	
+	public double calculatePorcentajeIngresoCuenta2023(int actIdx,double covid) {
+		if (isLastPeriod()) return 0.0;
+		String epi = this.mod303.getActivityList().get(actIdx).getEpigraph();
+		Epigraph epig = Modules2018.Epigraph.getEpigraph(epi);		
+		double por = 0.0;
+		if (epig != null) por = epig.getVatPorc();
+		return por;
+	}
+
 	public double calculatePorcentajeIngresoCuenta2021(int actIdx,double covid) {
 		if (isLastPeriod())
 			return 0.0;
@@ -240,6 +251,15 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 			c78 = 0;	
 		return c78;
 		
+	}
+	public double calculateResult(int activity,double value,double factor) {
+		if (hasActivity(activity)) {
+			BigDecimal i = new BigDecimal(Double.toString(value)).setScale(2, RoundingMode.HALF_UP);			
+			BigDecimal f = new BigDecimal(Double.toString(factor)).setScale(2, RoundingMode.HALF_UP);
+			return AonMathUtils.round(i.multiply(f).doubleValue());
+		} else {
+			return 0.0;
+		}
 	}
 	
 }

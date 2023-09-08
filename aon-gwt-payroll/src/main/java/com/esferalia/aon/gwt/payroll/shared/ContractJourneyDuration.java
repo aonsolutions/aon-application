@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -43,10 +44,6 @@ public class ContractJourneyDuration implements Serializable {
 			return false;
 		}else {
 			for(Date entryDate : this.contractJourneyDuration.descendingKeySet()) {
-//				Window.alert("Entry Date : " + entryDate + ", Start Date : " + startDate);
-//				Date newDate = new Date(entryDate.getTime());
-//				Window.alert("Entry Date : " + newDate + ", Start Date : " + startDate);
-//				DateUtils.resetTime(newDate);
 				if(startDate.before(entryDate) || startDate.equals(entryDate))
 					return true;
 			}
@@ -92,45 +89,35 @@ public class ContractJourneyDuration implements Serializable {
 	public String getJourneyText() {
 		String result = "";
 		Double hours = 0.0;
-		Date fromDate = null;
+		Optional<Date> fromDate = contractJourneyDuration.descendingMap().keySet().stream().findFirst();
 		ArrayList<String> visitedDays = new ArrayList<>();
+		ArrayList<JourneyDuration> journies = new ArrayList<>();
 		for(Entry<Date, ArrayList<JourneyDuration>> jouneryEntry : contractJourneyDuration.descendingMap().entrySet()) {
-			if(visitedDays.size() != 7) {
-				fromDate = DateUtils.copyDateOnly(jouneryEntry.getKey());
+			if(visitedDays.size() != 7 || journies.size() != 7) {
 				for(JourneyDuration journey : jouneryEntry.getValue()) {
 					if(!visitedDays.contains(journey.getName()) && journey.getExpression() != "0") {
 						visitedDays.add(journey.getName());
-						String expression = journey.getExpression();
-						if(AonStringUtils.isNotBlank(expression))
-							expression = expression.replace(",", ".");
-						hours += Double.parseDouble(((null == expression || "" == expression || "NL" == expression) ? "0" : expression));
-						if("HORAS_LUNES" == journey.getName()) result += " L : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
-						if("HORAS_MARTES" == journey.getName()) result += ", M : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
-						if("HORAS_MIERCOLES" == journey.getName()) result += ", X : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
-						if("HORAS_JUEVES" == journey.getName()) result += ", J : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
-						if("HORAS_VIERNES" == journey.getName()) result += ", V : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
-						if("HORAS_SABADO" == journey.getName()) result += ", S : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
-						if("HORAS_DOMINGO" == journey.getName()) result += ", D : " + ((null == expression || "" == expression) ? "NL" : expression);
-						
+						journies.add(journey);
 					}
 				}
 			}
 		}
 		
+		for(JourneyDuration journey : journies) {
+			String expression = journey.getExpression();
+			if(AonStringUtils.isNotBlank(expression))
+				expression = expression.replace(",", ".");
+			hours += Double.parseDouble(((null == expression || "" == expression || "NL" == expression) ? "0" : expression));
+			if("HORAS_LUNES" == journey.getName()) result += " L : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+			if("HORAS_MARTES" == journey.getName()) result += ", M : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+			if("HORAS_MIERCOLES" == journey.getName()) result += ", X : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+			if("HORAS_JUEVES" == journey.getName()) result += ", J : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+			if("HORAS_VIERNES" == journey.getName()) result += ", V : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+			if("HORAS_SABADO" == journey.getName()) result += ", S : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+			if("HORAS_DOMINGO" == journey.getName()) result += ", D : " + ((null == expression || "" == expression) ? "NL" : expression);
+		}
 		
-//		for(JourneyDuration journeyDuration : contractJourneyDuration.descendingMap().entrySet().iterator().next().getValue()) {
-//			hours += Double.parseDouble(((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()));
-//			if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-//			if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-//			if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-//			if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-//			if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-//			if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-//			if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression());
-//			if(hours > 0.0) result += " ( " + hours + " horas semanales )";
-//		}
-		
-		String resultText = "Desde " + formatDate(fromDate) + " " + result + ((hours > 0.0) ? " ("+ (Math.round(hours * 100.0) / 100.0) +" horas semanales)" : "");
+		String resultText = "Desde " + formatDate(fromDate.get()) + " " + result + ((hours > 0.0) ? " ("+ (Math.round(hours * 100.0) / 100.0) +" horas semanales)" : "");
 		
 		return resultText;
 	}

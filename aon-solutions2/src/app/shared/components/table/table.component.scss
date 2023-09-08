@@ -2,7 +2,7 @@
 
 ::ng-deep{
 
-  table {
+  .component-table {
     width           : 100%;
     border-collapse : separate;
     border-spacing  : 0 0.9rem !important;
@@ -12,7 +12,7 @@
   * Head table
   * First letter capitalized
   */
-    table thead tr th{
+    .component-table thead tr th{
       font-size     : 0.7rem !important;
       font-family   : Roboto-Medium;
       text-transform: lowercase;
@@ -21,47 +21,47 @@
       border        : none !important;
     }
 
-    table thead tr th:first-letter {
+    .component-table thead tr th:first-letter {
       text-transform: uppercase;
     }
 
   /*
   * Body table
   */
-    table tbody tr{
+    .component-table tbody tr{
       position: relative;
       top     : -0.9rem !important;
     }
-    table tbody tr{
+    .component-table tbody tr{
       height        : 3rem !important;
     }
 
-    table tbody tr td,
-    table div,
-    table span{
+    .component-table tbody tr td,
+    .component-table div,
+    .component-table span{
       font-size     : 0.7rem  !important;
       font-family   : Roboto-Medium;
     }
-    table tbody tr td{
+    .component-table tbody tr td{
       padding-left  : $padding-left !important;
       border-top    : $border;
       border-bottom : $border;
     }
-    table tbody tr td:first-child{
+    .component-table tbody tr td:first-child{
       border-left   : $border;
       border-radius : $border-radius 0 0 $border-radius;
     }
-    table tbody tr td:last-child{
+    .component-table tbody tr td:last-child{
       border-right  : $border;
       border-radius : 0 $border-radius $border-radius 0;
     }
     /*
     * Icon separation
     */
-    table tbody tr td app-icon.click{
+    .component-table tbody tr td app-icon.click{
       cursor        : pointer;
     }
-    table tbody tr td app-icon{
+    .component-table tbody tr td app-icon{
       padding-right : $padding-right;
     }
 
@@ -69,99 +69,99 @@
   * Se le pasa un un COLOR para la row
   */
     /* Dark */
-      table tbody tr td.border-dark{
+      .component-table tbody tr td.border-dark{
         border-top    : solid $border-size-primary $color-dark;
         border-bottom : solid $border-size-primary $color-dark;
       }
-      table tbody tr td.border-dark:first-child{
+      .component-table tbody tr td.border-dark:first-child{
         border-left   : solid $border-size-primary $color-dark;
         border-radius : $border-radius 0 0 $border-radius;
       }
-      table tbody tr td.border-dark:last-child{
+      .component-table tbody tr td.border-dark:last-child{
         border-right: solid $border-size-primary $color-dark;
       }
     /* Grey */
-      table tbody tr td.border-grey{
+      .component-table tbody tr td.border-grey{
         border-top    : $border;
         border-bottom : $border;
       }
-      table tbody tr td.border-grey:first-child{
+      .component-table tbody tr td.border-grey:first-child{
         border-left   : $border;
         border-radius : $border-radius 0 0 $border-radius;
       }
-      table tbody tr td.border-grey:last-child{
+      .component-table tbody tr td.border-grey:last-child{
         border-right: $border;
       }
     /* Red */
-      table tbody tr td.border-red{
+      .component-table tbody tr td.border-red{
         border-top    : solid $border-size-primary $color-red;
         border-bottom : solid $border-size-primary $color-red;
       }
-      table tbody tr td.border-red:first-child{
+      .component-table tbody tr td.border-red:first-child{
         border-left   : solid $border-size-primary $color-red;
         border-radius : $border-radius 0 0 $border-radius;
       }
-      table tbody tr td.border-red:last-child{
+      .component-table tbody tr td.border-red:last-child{
         border-right: solid $border-size-primary $color-red;
       }
     /* Blue */
-      table tbody tr td.border-blue{
+      .component-table tbody tr td.border-blue{
         border-top    : solid $border-size-primary $color-blue;
         border-bottom : solid $border-size-primary $color-blue;
       }
-      table tbody tr td.border-blue:first-child{
+      .component-table tbody tr td.border-blue:first-child{
         border-left   : solid $border-size-primary $color-blue;
         border-radius : $border-radius 0 0 $border-radius;
       }
-      table tbody tr td.border-blue:last-child{
+      .component-table tbody tr td.border-blue:last-child{
         border-right: solid $border-size-primary $color-blue;
       }
     /* Pink */
-      table tbody tr td.border-pink{
+      .component-table tbody tr td.border-pink{
         border-top    : solid $border-size-primary $color-pink;
         border-bottom : solid $border-size-primary $color-pink;
       }
-      table tbody tr td.border-pink:first-child{
+      .component-table tbody tr td.border-pink:first-child{
         border-left   : solid $border-size-primary $color-pink;
         border-radius : $border-radius 0 0 $border-radius;
       }
-      table tbody tr td.border-pink:last-child{
+      .component-table tbody tr td.border-pink:last-child{
         border-right: solid $border-size-primary $color-pink;
       }
     /* Purple */
-      table tbody tr td.border-purple{
+      .component-table tbody tr td.border-purple{
         border-top    : solid $border-size-primary $color-purple;
         border-bottom : solid $border-size-primary $color-purple;
       }
-      table tbody tr td.border-purple:first-child{
+      .component-table tbody tr td.border-purple:first-child{
         border-left   : solid $border-size-primary $color-purple;
         border-radius : $border-radius 0 0 $border-radius;
       }
-      table tbody tr td.border-purple:last-child{
+      .component-table tbody tr td.border-purple:last-child{
         border-right: solid $border-size-primary $color-purple;
       }
     /* Green */
-      table tbody tr td.border-green{
+      .component-table tbody tr td.border-green{
         border-top    : solid $border-size-primary $color-green;
         border-bottom : solid $border-size-primary $color-green;
       }
-      table tbody tr td.border-green:first-child{
+      .component-table tbody tr td.border-green:first-child{
         border-left   : solid $border-size-primary $color-green;
         border-radius : $border-radius 0 0 $border-radius;
       }
-      table tbody tr td.border-green:last-child{
+      .component-table tbody tr td.border-green:last-child{
         border-right: solid $border-size-primary $color-green;
       }
     /* Orange */
-      table tbody tr td.border-orange{
+      .component-table tbody tr td.border-orange{
         border-top    : solid $border-size-primary $color-orange;
         border-bottom : solid $border-size-primary $color-orange;
       }
-      table tbody tr td.border-orange:first-child{
+      .component-table tbody tr td.border-orange:first-child{
         border-left   : solid $border-size-primary $color-orange;
         border-radius : $border-radius 0 0 $border-radius;
       }
-      table tbody tr td.border-orange:last-child{
+      .component-table tbody tr td.border-orange:last-child{
         border-right: solid $border-size-primary $color-orange;
       }
 };

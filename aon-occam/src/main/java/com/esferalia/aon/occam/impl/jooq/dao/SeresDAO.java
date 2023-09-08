@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.seres.IEdiSupport;
+import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -38,7 +39,36 @@ public class SeresDAO {
 	private SeresDAO() {
 
 	}
+	
+	public static SeresInfo getSeresInfo(AONContext ctx) {
+		ctx.checkRead();
+		SeresInfo seresInfo = new SeresInfo();
 
+		AppParamDAO.getApplicationParameterStream(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getNameProperty().like("SERES_%")))
+		.forEach(r -> {
+			if(r.getName().equalsIgnoreCase(AppParam.SERES_FTP_SERVER_NAME.toString())) {
+				seresInfo.setServer(r.getValue());
+			}
+			
+			if(r.getName().equalsIgnoreCase(AppParam.SERES_FTP_USER.toString())) {
+				seresInfo.setUser(r.getValue());
+			}
+			
+			if(r.getName().equalsIgnoreCase(AppParam.SERES_FTP_PASSWORD.toString())) {
+				seresInfo.setPassword(r.getValue());
+			}
+			
+			if(r.getName().equalsIgnoreCase(AppParam.SERES_FTP_PASSWORD.toString())) {
+				seresInfo.setPort(Integer.parseInt(r.getValue()));
+			}
+			
+		});
+
+		return seresInfo;
+	}
+	
 	public static EdiCodes getEdiCodes(AONContext ctx, Invoice invoice) {
 	    Integer customerId = invoice.getRegistry();
         Integer addressId = invoice.getAddress().getId();

@@ -83,7 +83,7 @@ public class EnterpriseIT extends Composite {
 			enterpriseITObject.removeIT(itEmployee, it,
 				s -> {
 					if(Boolean.TRUE.equals(it.isComunicate()) && enterpriseITObject.isUserComunica()) {
-						enterpriseITObject.deleteComunicateIT(itEmployee, it, success::accept, d -> {});
+						enterpriseITObject.deleteComunicateIT(itEmployee, it, success::accept, failure::accept);
 				    } else {					    
 					    success.accept(s);
 					}
@@ -97,7 +97,7 @@ public class EnterpriseIT extends Composite {
 			enterpriseITObject.deleteIT(it,
 				s -> {
 					if(Boolean.TRUE.equals(it.isComunicate()) && enterpriseITObject.isUserComunica()) {
-					    enterpriseITObject.deleteComunicateIT(itEmployee, it, success::accept, d -> {});
+						enterpriseITObject.deleteComunicateIT(itEmployee, it, success::accept, failure::accept);
 					} else {
 					    success.accept(s);					    
 					}
@@ -181,7 +181,7 @@ public class EnterpriseIT extends Composite {
 	}
 	
 	// ------ setFooter
-	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tab, AonMinimizePanel footPanel) {		
-		itWidget.setFooter(splitLayoutPanel, tab, footPanel);
+	public void setFooter(SplitLayoutPanel dockLayoutPanel, TabLayoutPanel tab, AonMinimizePanel footPanel) {		
+		itWidget.setFooter(dockLayoutPanel, tab, footPanel);
 	}
 }

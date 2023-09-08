@@ -116,7 +116,19 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1c.setFuncionDelMensaje(SEH1C.SEH1C_4.ORIGINAL___EL_ENVIO_DE_UN_AVISO_DE_EXPEDICION_ORIGINAL_9
 				.getValue());
 		seh1c.setFecha_horaDelDocumento_137__102_203_(SeresUtils.dateTimeFormat().format(delivery.getDate()));
-		seh1c.setFecha_horaEstimadaDeEntrega_17__102_203_(SeresUtils.dateTimeFormat().format(delivery.getDate()));
+
+		Integer salesDetail = !delivery.getDetails().isEmpty()
+					? delivery.getDetails().get(0).getSalesDetail() : null;
+		Date salesDeliveryDate = null;
+		if(salesDetail != null) {
+			SalesDetail detail = AON.getSalesDetailStream(domainName, domainId, login, f -> f.getIdProperty().eq(salesDetail))
+				.findFirst().orElse(new SalesDetail());
+			salesDeliveryDate = detail.getSales() != null
+				? detail.getSales().getDeliveryDate() : null;
+		}
+		seh1c.setFecha_horaEstimadaDeEntrega_17__102_203_(SeresUtils.dateTimeFormat().format(
+				salesDeliveryDate != null ? salesDeliveryDate : delivery.getDate()));
+	
 		seh1c.setCalificadorFecha_Hora1_2_11_64_(null);
 		seh1c.setFecha_hora1(null);
 		seh1c.setCalificadorFecha_Hora2_2_11_63_(null);
@@ -510,7 +522,10 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			seh1l.setUnidadDeMedidaCantidadEnviada(null);
 			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		}
-		seh1l.setFechaDeCaducidad_36__102_203_(SeresUtils.dateFormat().format(detail.getItem().getSerialDate()));
+		seh1l.setFechaDeCaducidad_36__102_203_(SeresUtils.dateFormat().format(
+			detail.getItem().getExpireDate() != null
+				? detail.getItem().getExpireDate()
+				: detail.getItem().getSerialDate()));
 		seh1l.setCalificadorReferencia1(null);
 		seh1l.setNumeroReferencia1(null);
 		seh1l.setFecha_horaReferencia1_102_203_(null);
@@ -535,7 +550,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setCodigoDiscrepancia(null);
 		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * detail.getItem().getPackMeasurement());
 		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
-		if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null){
+		if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null) {
 			seh1l.setUnidadDeMedidaPeso(
 					StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
 		}
@@ -578,11 +593,15 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	 * Información de lotes
 	 */
 	private SEH1B createSEH1BRecord(DeliveryDetail deliveryDetail) {
+		String expireDate = SeresUtils.dateTimeFormat().format(
+			deliveryDetail.getItem().getExpireDate() != null
+				? deliveryDetail.getItem().getExpireDate()
+				: deliveryDetail.getItem().getSerialDate());
 		String date = SeresUtils.dateTimeFormat().format(deliveryDetail.getItem().getSerialDate());
 		SEH1B seh1b = new SEH1B();
 		seh1b.setCodigoInstrucciones("36E");
 		seh1b.setMarcasDeEnvio(null);
-		seh1b.setFechaDeCaducidad_36__102_203_(date);
+		seh1b.setFechaDeCaducidad_36__102_203_(expireDate);
 		seh1b.setFecha_horaRecepcionDeLaMercancia_50__102_203_(null);
 		seh1b.setConsumirAntesDeFecha_361__102_203_(null);
 		seh1b.setCalificadorDeCantidad_11_12_(null);

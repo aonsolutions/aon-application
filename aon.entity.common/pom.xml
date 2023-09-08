@@ -20,7 +20,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-tools</artifactId>
+			<artifactId>hibernate-tools-jakarta</artifactId>
 			<version>3.2.4.GA</version>
 			<scope>compile</scope>
 		</dependency>

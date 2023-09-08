@@ -22,5 +22,6 @@ public interface IMODEL347 {
 	public String getInfo(AONContext ctx, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey);
 	public Mod347 duplicate(AONContext ctx, Mod347 mod347);
 	public void writeMailMergeReport(AONContext ctx, Mod347 mod347, Writer writer);
+	public Mod347 aeatPresentation(AONContext ctx, Mod347 mod, String aeatResponse);
 	
 }

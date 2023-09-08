@@ -166,7 +166,40 @@
 										</div>
 
 									</div>
+									
+									<g:HTMLPanel ui:field="administrationOrganPanel">
+										<div class="{aonResources.css.aonGroup}">
+											<div class="{aonResources.css.aonGroupTitle}">
+												<g:InlineLabel text="Organo de Administración" />
+											</div>
+											<div class="{aonResources.css.aonGroupBody}">
+												<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+													<tr>
+														<td>
+														</td>
+														<td colspan="2">
+															<g:Label ui:field="current4" styleName="{aonResources.css.aonInnerLabel}" />
+														</td>
+														<td colspan="2">
+															<g:Label ui:field="ant4" styleName="{aonResources.css.aonInnerLabel}" />
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<g:Label text="Porcentaje de mujeres en el organo de administración" styleName="{aonResources.css.aonInnerLabel}" />
+														</td>
+														<td colspan="2">
+															<aon:DoubleBox ui:field="IDA04211"  />
+														</td>
+														<td colspan="2">
+															<aon:DoubleBox ui:field="IDA042119"  />
+														</td>
+													</tr>
+												</table>
+											</div>
 
+										</div>
+									</g:HTMLPanel>
 									<div class="{aonResources.css.aonGroup}">
 										<div class="{aonResources.css.aonGroupTitle}">
 											<g:InlineLabel text="Personal asalariado" />

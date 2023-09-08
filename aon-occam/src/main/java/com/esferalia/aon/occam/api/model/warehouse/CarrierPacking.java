@@ -15,6 +15,7 @@ public class CarrierPacking implements Serializable{
 	private Date issueDate;
 	private Integer carrier;
 	private String carrierName;
+	private String carrierDocument;
 	private Date deliveryDate;
 	private String carrierReference;
 	private String numberPlate;
@@ -100,6 +101,15 @@ public class CarrierPacking implements Serializable{
 		this.carrierName = carrierName;
 		return this;
 	}
+	
+	public String getCarrierDocument() {
+		return carrierDocument;
+	}
+	public CarrierPacking setCarrierDocument(String carrierDocument) {
+		this.carrierDocument = carrierDocument;
+		return this;
+	}
+	
 	public Date getDeliveryDate() {
 		return deliveryDate;
 	}

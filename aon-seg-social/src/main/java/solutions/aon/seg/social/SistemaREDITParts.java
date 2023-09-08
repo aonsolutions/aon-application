@@ -23,21 +23,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.Page;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.DomNodeList;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlOption;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlSubmitInput;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.html.HtmlTableCell;
+import org.htmlunit.html.HtmlTableRow;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.ForbiddenException;
@@ -302,32 +302,32 @@ class SistemaREDITParts {
 			}
 
 			String[] startDateArray = Toolkit.dateString(startdate);
-			form.getInputByName("fechaBaja_dd").setValueAttribute(startDateArray[0]);
-			form.getInputByName("fechaBaja_mm").setValueAttribute(startDateArray[1]);
-			form.getInputByName("fechaBaja_aa").setValueAttribute(startDateArray[2]);
+			form.getInputByName("fechaBaja_dd").setValue(startDateArray[0]);
+			form.getInputByName("fechaBaja_mm").setValue(startDateArray[1]);
+			form.getInputByName("fechaBaja_aa").setValue(startDateArray[2]);
 			
 			String[] baseCotArray = Toolkit.splitDecimal(baseCot, 2);
-			cotBaseInput1.setValueAttribute(baseCotArray[0]);
-			cotBaseInput2.setValueAttribute(baseCotArray[1]);
-			cotDaysInput.setValueAttribute(cotDays + "");
+			cotBaseInput1.setValue(baseCotArray[0]);
+			cotBaseInput2.setValue(baseCotArray[1]);
+			cotDaysInput.setValue(cotDays + "");
 
 			if (occupation.isPresent()) 
 				 ((HtmlSelect) form.querySelector("#ocupacion")).setSelectedAttribute(occupation.get(), true);
 
 			if (licenseNumber.isPresent()) {
 				ArrayList<String> colegiateNumberList = Toolkit.splitStringMultiple(licenseNumber.get(), new int[] { 2, 4 });
-				form.getInputByName("ncol_0").setValueAttribute(colegiateNumberList.get(0));
-				form.getInputByName("ncol_1").setValueAttribute(colegiateNumberList.get(1));
-				form.getInputByName("ncol_2").setValueAttribute(colegiateNumberList.get(2));
+				form.getInputByName("ncol_0").setValue(colegiateNumberList.get(0));
+				form.getInputByName("ncol_1").setValue(colegiateNumberList.get(1));
+				form.getInputByName("ncol_2").setValue(colegiateNumberList.get(2));
 			}
 
-			cias.ifPresent(c-> form.getInputByName("cias").setValueAttribute(c));
+			cias.ifPresent(c-> form.getInputByName("cias").setValue(c));
 
 			if (fATEP.isPresent()) {
 				String[] fATEPString = Toolkit.dateString(fATEP.get());
-				form.getInputByName("fechaATEP_dd").setValueAttribute(fATEPString[0]);
-				form.getInputByName("fechaATEP_mm").setValueAttribute(fATEPString[1]);
-				form.getInputByName("fechaATEP_aa").setValueAttribute(fATEPString[2]);
+				form.getInputByName("fechaATEP_dd").setValue(fATEPString[0]);
+				form.getInputByName("fechaATEP_mm").setValue(fATEPString[1]);
+				form.getInputByName("fechaATEP_aa").setValue(fATEPString[2]);
 			}
 
 			if (accidentType.isPresent()) {
@@ -356,9 +356,9 @@ class SistemaREDITParts {
 			
 			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
 			if(null!=elem) {
-				System.out.println(elem.asText());
-				if (elem.asText().contains("no se ha dado")) {					
-					throw new InvalidDataException(elem.asText());
+				System.out.println(elem.asNormalizedText());
+				if (elem.asNormalizedText().contains("no se ha dado")) {					
+					throw new InvalidDataException(elem.asNormalizedText());
 				}
 			}
 		}
@@ -381,15 +381,15 @@ class SistemaREDITParts {
 			String[] fbajaString = Toolkit.dateString(fbaja);
 			String[] fconfirmationString = Toolkit.dateString(fconfirmation);
 
-			form.getInputByName("fechaBaja_dd").setValueAttribute(fbajaString[0]);
-			form.getInputByName("fechaBaja_mm").setValueAttribute(fbajaString[1]);
-			form.getInputByName("fechaBaja_aa").setValueAttribute(fbajaString[2]);
+			form.getInputByName("fechaBaja_dd").setValue(fbajaString[0]);
+			form.getInputByName("fechaBaja_mm").setValue(fbajaString[1]);
+			form.getInputByName("fechaBaja_aa").setValue(fbajaString[2]);
 
-			form.getInputByName("fechaParte_dd").setValueAttribute(fconfirmationString[0]);
-			form.getInputByName("fechaParte_mm").setValueAttribute(fconfirmationString[1]);
-			form.getInputByName("fechaParte_aa").setValueAttribute(fconfirmationString[2]);
+			form.getInputByName("fechaParte_dd").setValue(fconfirmationString[0]);
+			form.getInputByName("fechaParte_mm").setValue(fconfirmationString[1]);
+			form.getInputByName("fechaParte_aa").setValue(fconfirmationString[2]);
 			
-			npartConfimation.ifPresent(c-> form.getInputByName("numParte").setValueAttribute(c));
+			npartConfimation.ifPresent(c-> form.getInputByName("numParte").setValue(c));
 
 			HtmlSubmitInput validate = form.querySelector("input[value=Validar]");
 			htmlPage = validate.click();
@@ -401,9 +401,9 @@ class SistemaREDITParts {
 
 			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
 			if(null!=elem) {
-				System.out.println(elem.asText());
-				if (elem.asText().contains("no se ha dado")) {					
-					throw new InvalidDataException(elem.asText());
+				System.out.println(elem.asNormalizedText());
+				if (elem.asNormalizedText().contains("no se ha dado")) {					
+					throw new InvalidDataException(elem.asNormalizedText());
 				}
 			}
 		}
@@ -427,20 +427,20 @@ class SistemaREDITParts {
 
 			String[] fbajaString = Toolkit.dateString(fbaja);
 
-			form.getInputByName("fechaBaja_dd").setValueAttribute(fbajaString[0]);
-			form.getInputByName("fechaBaja_mm").setValueAttribute(fbajaString[1]);
-			form.getInputByName("fechaBaja_aa").setValueAttribute(fbajaString[2]);
+			form.getInputByName("fechaBaja_dd").setValue(fbajaString[0]);
+			form.getInputByName("fechaBaja_mm").setValue(fbajaString[1]);
+			form.getInputByName("fechaBaja_aa").setValue(fbajaString[2]);
 			
 			String[] faltaString = Toolkit.dateString(falta);
-			form.getInputByName("fechaAlta_dd").setValueAttribute(faltaString[0]);
-			form.getInputByName("fechaAlta_mm").setValueAttribute(faltaString[1]);
-			form.getInputByName("fechaAlta_aa").setValueAttribute(faltaString[2]);
+			form.getInputByName("fechaAlta_dd").setValue(faltaString[0]);
+			form.getInputByName("fechaAlta_mm").setValue(faltaString[1]);
+			form.getInputByName("fechaAlta_aa").setValue(faltaString[2]);
 
 			if (fATEP.isPresent()) {
 				String[] fATEPString = Toolkit.dateString(fATEP.get());
-				form.getInputByName("fechaAtEp_dd").setValueAttribute(fATEPString[0]);
-				form.getInputByName("fechaAtEp_mm").setValueAttribute(fATEPString[1]);
-				form.getInputByName("fechaAtEp_aa").setValueAttribute(fATEPString[2]);
+				form.getInputByName("fechaAtEp_dd").setValue(fATEPString[0]);
+				form.getInputByName("fechaAtEp_mm").setValue(fATEPString[1]);
+				form.getInputByName("fechaAtEp_aa").setValue(fATEPString[2]);
 			}
 
 			if (accidentType.isPresent()) {
@@ -472,9 +472,9 @@ class SistemaREDITParts {
 			
 			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
 			if(null!=elem) {
-				System.out.println(elem.asText());
-				if (elem.asText().contains("no se ha dado")) {					
-					throw new InvalidDataException(elem.asText());
+				System.out.println(elem.asNormalizedText());
+				if (elem.asNormalizedText().contains("no se ha dado")) {					
+					throw new InvalidDataException(elem.asNormalizedText());
 				}
 			}
 		}
@@ -538,12 +538,12 @@ class SistemaREDITParts {
 		String[] cccArray = Toolkit.SplitString(ccc, 2);
 		String[] nafArray = Toolkit.SplitString(naf, 2);
 
-		regimeIn.setValueAttribute(regime);
-		cccInput.setValueAttribute(cccArray[0]);
-		cccInput2.setValueAttribute(cccArray[1]);
+		regimeIn.setValue(regime);
+		cccInput.setValue(cccArray[0]);
+		cccInput2.setValue(cccArray[1]);
 
-		nafInput.setValueAttribute(nafArray[0]);
-		nafInput2.setValueAttribute(nafArray[1]);
+		nafInput.setValue(nafArray[0]);
+		nafInput2.setValue(nafArray[1]);
 
 		HtmlSubmitInput accept = (HtmlSubmitInput) htmlPage.querySelector("#datos input[type=submit]");
 		htmlPage = accept.click();
@@ -572,14 +572,14 @@ class SistemaREDITParts {
 			String[] dateProcessArray = Toolkit.dateString(dateProcess);
 
 			HtmlForm form = wait4(htmlPage, p -> p.getFormByName("BuscaPartesForm")).orElseThrow();
-			form.getInputByName("regimen").setValueAttribute(regime);
-			form.getInputByName("ccc1").setValueAttribute(cccArray[0]);
-			form.getInputByName("ccc2").setValueAttribute(cccArray[1]);
-			form.getInputByName("naf1").setValueAttribute(nafArray[0]);
-			form.getInputByName("naf2").setValueAttribute(nafArray[1]);
-			form.getInputByName("fechaBaja_dd").setValueAttribute(medicalDateArray[0]);
-			form.getInputByName("fechaBaja_mm").setValueAttribute(medicalDateArray[1]);
-			form.getInputByName("fechaBaja_aa").setValueAttribute(medicalDateArray[2]);
+			form.getInputByName("regimen").setValue(regime);
+			form.getInputByName("ccc1").setValue(cccArray[0]);
+			form.getInputByName("ccc2").setValue(cccArray[1]);
+			form.getInputByName("naf1").setValue(nafArray[0]);
+			form.getInputByName("naf2").setValue(nafArray[1]);
+			form.getInputByName("fechaBaja_dd").setValue(medicalDateArray[0]);
+			form.getInputByName("fechaBaja_mm").setValue(medicalDateArray[1]);
+			form.getInputByName("fechaBaja_aa").setValue(medicalDateArray[2]);
 
 			HtmlSubmitInput continueInput = form.querySelector("#botonesANULAR input[value=Continuar]");
 			htmlPage = continueInput.click();
@@ -603,9 +603,9 @@ class SistemaREDITParts {
 			
 			DomNode elem = htmlPage.querySelector("#miForm > div.importante > div.indent > span.TextoMensaje");
 			if(null!=elem) {
-				System.out.println(elem.asText());
-				if (elem.asText().contains("no se ha dado")) {					
-					throw new InvalidDataException(elem.asText());
+				System.out.println(elem.asNormalizedText());
+				if (elem.asNormalizedText().contains("no se ha dado")) {					
+					throw new InvalidDataException(elem.asNormalizedText());
 				}
 			}
 
@@ -648,14 +648,14 @@ class SistemaREDITParts {
 			String[] dateProcessArray = Toolkit.dateString(dateProcess);
 
 			HtmlForm form = wait4(htmlPage, p -> p.getFormByName("BuscaPartesForm")).orElseThrow();
-			form.getInputByName("regimen").setValueAttribute(regime);
-			form.getInputByName("ccc1").setValueAttribute(cccArray[0]);
-			form.getInputByName("ccc2").setValueAttribute(cccArray[1]);
-			form.getInputByName("naf1").setValueAttribute(nafArray[0]);
-			form.getInputByName("naf2").setValueAttribute(nafArray[1]);
-			form.getInputByName("fechaBaja_dd").setValueAttribute(dateBjArray[0]);
-			form.getInputByName("fechaBaja_mm").setValueAttribute(dateBjArray[1]);
-			form.getInputByName("fechaBaja_aa").setValueAttribute(dateBjArray[2]);
+			form.getInputByName("regimen").setValue(regime);
+			form.getInputByName("ccc1").setValue(cccArray[0]);
+			form.getInputByName("ccc2").setValue(cccArray[1]);
+			form.getInputByName("naf1").setValue(nafArray[0]);
+			form.getInputByName("naf2").setValue(nafArray[1]);
+			form.getInputByName("fechaBaja_dd").setValue(dateBjArray[0]);
+			form.getInputByName("fechaBaja_mm").setValue(dateBjArray[1]);
+			form.getInputByName("fechaBaja_aa").setValue(dateBjArray[2]);
 
 			HtmlSubmitInput continueInput = form.querySelector("#botonesANULAR input[value=Continuar]");
 			htmlPage = continueInput.click();
@@ -718,26 +718,26 @@ class SistemaREDITParts {
 			handleItPartErrors(htmlPage);
 			
 			HtmlForm formularioPartes = htmlPage.getFormByName("BuscaPartesForm");
-			formularioPartes.getInputByName("regimen").setValueAttribute(regime);
+			formularioPartes.getInputByName("regimen").setValue(regime);
 			htmlPage.getElementById("ccc1").setAttribute("value", ccc.substring(0, 2));
-			formularioPartes.getInputByName("ccc2").setValueAttribute(ccc.substring(2));
+			formularioPartes.getInputByName("ccc2").setValue(ccc.substring(2));
 
 			Integer[] fromArray = Toolkit.getDateArray(from);
 			Integer[] toArray = Toolkit.getDateArray(to);
 			
 			if(nss.isPresent()) {
 				String naf = nss.get();
-				formularioPartes.getInputByName("naf1").setValueAttribute(naf.substring(0, 2));
-				formularioPartes.getInputByName("naf2").setValueAttribute(naf.substring(2));
+				formularioPartes.getInputByName("naf1").setValue(naf.substring(0, 2));
+				formularioPartes.getInputByName("naf2").setValue(naf.substring(2));
 			}
 
-			formularioPartes.getInputByName("fechaDesde_dd").setValueAttribute(fromArray[0].toString());
-			formularioPartes.getInputByName("fechaDesde_mm").setValueAttribute(fromArray[1].toString());
-			formularioPartes.getInputByName("fechaDesde_aa").setValueAttribute(fromArray[2].toString());
+			formularioPartes.getInputByName("fechaDesde_dd").setValue(fromArray[0].toString());
+			formularioPartes.getInputByName("fechaDesde_mm").setValue(fromArray[1].toString());
+			formularioPartes.getInputByName("fechaDesde_aa").setValue(fromArray[2].toString());
 
-			formularioPartes.getInputByName("fechaHasta_dd").setValueAttribute(toArray[0].toString());
-			formularioPartes.getInputByName("fechaHasta_mm").setValueAttribute(toArray[1].toString());
-			formularioPartes.getInputByName("fechaHasta_aa").setValueAttribute(toArray[2].toString());
+			formularioPartes.getInputByName("fechaHasta_dd").setValue(toArray[0].toString());
+			formularioPartes.getInputByName("fechaHasta_mm").setValue(toArray[1].toString());
+			formularioPartes.getInputByName("fechaHasta_aa").setValue(toArray[2].toString());
 
 			webClient.getOptions().setJavaScriptEnabled(true);
 			HtmlInput show = (HtmlInput) formularioPartes.querySelectorAll("input[type=submit]").get(0);
@@ -847,14 +847,14 @@ class SistemaREDITParts {
 			String[] dateProcessArray = Toolkit.dateString(dateProcess);
 
 			HtmlForm form = wait4(htmlPage, p -> p.getFormByName("BuscaPartesForm")).orElseThrow();
-			form.getInputByName("regimen").setValueAttribute(regime);
-			form.getInputByName("ccc1").setValueAttribute(cccArray[0]);
-			form.getInputByName("ccc2").setValueAttribute(cccArray[1]);
-			form.getInputByName("naf1").setValueAttribute(nafArray[0]);
-			form.getInputByName("naf2").setValueAttribute(nafArray[1]);
-			form.getInputByName("fechaBaja_dd").setValueAttribute(dateBjArray[0]);
-			form.getInputByName("fechaBaja_mm").setValueAttribute(dateBjArray[1]);
-			form.getInputByName("fechaBaja_aa").setValueAttribute(dateBjArray[2]);
+			form.getInputByName("regimen").setValue(regime);
+			form.getInputByName("ccc1").setValue(cccArray[0]);
+			form.getInputByName("ccc2").setValue(cccArray[1]);
+			form.getInputByName("naf1").setValue(nafArray[0]);
+			form.getInputByName("naf2").setValue(nafArray[1]);
+			form.getInputByName("fechaBaja_dd").setValue(dateBjArray[0]);
+			form.getInputByName("fechaBaja_mm").setValue(dateBjArray[1]);
+			form.getInputByName("fechaBaja_aa").setValue(dateBjArray[2]);
 
 			HtmlSubmitInput continueInput = form.querySelector("#botonesANULAR input[value=Continuar]");
 			htmlPage = continueInput.click();

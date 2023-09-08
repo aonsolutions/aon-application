@@ -318,7 +318,7 @@ export class AonDocument extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.SEND_FILE);
-		d.setContentHTML('Esta opción está en desarrollo...');
+		d.setContentHTML(MSG.IN_DEVELOPMENT);
 		d.addAcceptAction(() => {});
 		d.open();
   }

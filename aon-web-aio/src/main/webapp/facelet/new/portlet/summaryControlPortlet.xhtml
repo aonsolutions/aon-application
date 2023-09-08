@@ -18,14 +18,14 @@
 		<aon:div 
 		style="cursor:pointer;" 
 		styleClass="aon-portlet-title" 
-		onclick="javascript:collapseMenuPortlet(this)">
+		onclick="javascript:expandMenuPortlet(this)">
 			<aon:outputText 
-			value="expand_less"
+			value="expand_more"
 			styleClass="material-icons aon-vertical-middle" />
 			<aon:outputText value="RESUMEN DE ACTIVIDADES" />
 		</aon:div>
 		
-		<aon:div styleClass="aon-portlet-body aon-box-outstanding2" >
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2" style="display:none">
 			<aon:div 
 				id="summaryMenuPortlet" >
 				<aon:div styleClass="aon-direct-access-list">

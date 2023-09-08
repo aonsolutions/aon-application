@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -517,7 +518,7 @@ public class MainCertificates extends MainEntryPoint{
 		});
 		
 		Hidden rattachIdHidden = new Hidden("rattachId", certificate.getId().toString());
-		Hidden raddinfoIdHidden = new Hidden("raddinfoId", null == certificate.getPasswordId() ? "" : certificate.getPasswordId().toString());
+		Hidden raddinfoIdHidden = new Hidden("raddinfoId", "");
 		Hidden extensionHidden = new Hidden("extension", "");
 		Hidden fileNameHidden = new Hidden("filename", certificate.getDescription());
 		Hidden passwordHidden = new Hidden("password", certificate.getPassword());
@@ -636,9 +637,11 @@ public class MainCertificates extends MainEntryPoint{
 		verifyButton.addClickHandler(e ->  {
 			showLoading("Validando certificado SEPE...");
 			hideSecondaryUsers();
+			ArrayList<CertificateType> tags = new ArrayList<CertificateType>();
+			tags.add(CertificateType.SEPE);
 			mainDigitalCertificatesObject.verifyCertificate(
 				certificate.getId(), 
-				certificate.getTags(), 
+				tags, 
 				s -> showSuccess("Certificado", "Certificado validado correctamente"), 
 				f -> showWarning("Error verificaci\u00F3n", f.getMessage())
 			);
@@ -646,18 +649,22 @@ public class MainCertificates extends MainEntryPoint{
 		verifyButton.setVisible(false);
 		
 		AonTableButton secondaryUsersButton = new AonTableButton("Usuarios Secundarios", AON.CSS.aonIconList());
-		secondaryUsersButton.addClickHandler(e -> onSecondaryUser(certificate.getId(), certificate.getTags()));
+		secondaryUsersButton.addClickHandler(e -> onSecondaryUser(certificate.getId()));
 		
 		secondaryUsersButton.setVisible(false);
 		
 		AonTableButton deleteButton = new AonTableButton("Borrar", AON.CSS.aonIconDelete());
 		deleteButton.addClickHandler(e -> deleteCertificate(certificate));
 		
+		// Para descargar un certificado descomentar lineas 660, 661, 705. Y cambiar el path del metodo downloadCertificate(...)
+//		AonTableButton downloadButton = new AonTableButton("Borrar", AON.CSS.aonIconDownload());
+//		downloadButton.addClickHandler(e -> downloadCertificate(certificate));
+		
 		AonTableButton checkCertificateButton = new AonTableButton("Informaci\u00F3n", AON.CSS.aonIconInfo());
 		checkCertificateButton.addClickHandler(e -> getCertificateInfo(certificate));
 		
 		// Buttons visibility
-		if(Boolean.FALSE.equals(certificate.getHasCertificate())) {
+		if(Boolean.FALSE.equals(certificate.hasCertificate())) {
 			verifyButton.setVisible(false);
 			secondaryUsersButton.setVisible(false);
 			checkCertificateButton.setVisible(false);
@@ -695,6 +702,7 @@ public class MainCertificates extends MainEntryPoint{
 		buttonsPanel.add(secondaryUsersButton);
 		buttonsPanel.add(checkCertificateButton);
 		buttonsPanel.add(deleteButton);
+//		buttonsPanel.add(downloadButton);
 		
 		table.setWidget(row, 0, certificateForL);
 		table.setWidget(row, 1, representationL);
@@ -725,7 +733,7 @@ public class MainCertificates extends MainEntryPoint{
 		}
 		
 		// Para poder visualizar certificados publicos del padre pero con edicion restringida
-		if(Boolean.TRUE.equals(isEnterprise) && (certificate.getDomain() != null && certificate.getDomain() != domainId)) {
+		if(Boolean.TRUE.equals(isEnterprise) && (certificate.getDomain() != null && !certificate.getDomain().equals(domainId))) {
 			alias.setEnabled(false);
 			alias.setTitle("Certificado p\u00fablico del dominio padre");
 			security.setEnabled(false);
@@ -760,7 +768,7 @@ public class MainCertificates extends MainEntryPoint{
 				f -> showWarning("Error verificaci\u00F3n", f.getMessage()));
 	}
 
-	private void onSecondaryUser(Integer rattachId, List<CertificateType> tags) {
+	private void onSecondaryUser(Integer rattachId) {
 		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
 		
 		if(CertificateOwner.USER.equals(owner)) {
@@ -770,6 +778,9 @@ public class MainCertificates extends MainEntryPoint{
 			initEnterpriseSecondaryTable();
 			enterpriseSecondayUsersPanel.setVisible(true);
 		}
+		
+		ArrayList<CertificateType> tags = new ArrayList<CertificateType>();
+		tags.add(CertificateType.TGSS);
 		
 		mainDigitalCertificatesObject.verifyCertificate(
 			rattachId, 
@@ -898,6 +909,18 @@ public class MainCertificates extends MainEntryPoint{
 						f -> {});
 			}
 		});
+	}
+	
+	// ------------------------------------------------------ Donwload Certificate Method
+	
+	private void downloadCertificate(Certificate certificate) {
+		String filePath = "/Users/svaldepenas/Desktop/certificate.p12";
+		mainDigitalCertificatesObject.downloadCertificate(
+				certificate.getId(), 
+				filePath,
+				s -> showSuccess("Descarga", "Certificado descargado en la ruta " + filePath), 
+				f -> {});
+		
 	}
 
 	// ------------------------------------------------------ Insert Secondary Users

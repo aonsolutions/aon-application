@@ -75,8 +75,7 @@ public class VatReport extends MainEntryPoint {
 		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		dockLayoutPanel.addNorth(getToolbarPanel( options ), AonToolbar.HEIGTH);
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(dockLayoutPanel);
+		options.getParentWidget().add(dockLayoutPanel);
 		
 		SERVICE.getAonConfiguration(options.getOccam(), new AsyncCallback<AonConfiguration>() {
 				@Override

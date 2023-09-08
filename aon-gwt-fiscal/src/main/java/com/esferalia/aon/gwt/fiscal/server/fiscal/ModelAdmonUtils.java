@@ -25,8 +25,11 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 
 import javax.net.ssl.KeyManager;
@@ -34,8 +37,8 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -53,8 +56,14 @@ import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.fiscal.MODEL131;
+import com.esferalia.aon.occam.api.fiscal.MODEL180;
+import com.esferalia.aon.occam.api.fiscal.MODEL184;
+import com.esferalia.aon.occam.api.fiscal.MODEL190;
+import com.esferalia.aon.occam.api.fiscal.MODEL193;
 import com.esferalia.aon.occam.api.fiscal.MODEL202;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.fiscal.MODEL347;
+import com.esferalia.aon.occam.api.fiscal.MODEL349;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902022;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -72,9 +81,14 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod347;
+import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902021;
@@ -85,11 +99,16 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod347Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod349Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod111.Mod111Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod180.Mod180Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod184.Mod184Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod190.Mod190Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod193.Mod193Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod303.Mod303Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902021Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902022Writer;
@@ -341,13 +360,14 @@ public class ModelAdmonUtils {
 		buff.append(" font: 12px/1.333 \"arial\", \"lucida Grande\", \"Trebuchet MS\", sans-serif;");
 		buff.append(" margin-left: auto;");
 		buff.append(" margin-right: auto;");
+		buff.append(" margin-bottom: 10px;");
 		buff.append(" border-collapse: collapse;");
 		buff.append(" width: 80%;");
 		buff.append("}");
 		buff.append("#response td {");
 		buff.append(" padding: 1px 0.5em 1px 0.5em;");
 		buff.append(" vertical-align: middle;");
-		buff.append(" border: #c4c4c4 1px solid;");
+		buff.append(" border: #c4c4c4 1px solid;");		
 		buff.append("}");
 		buff.append("#label {");
 		buff.append(" font-weight: bold;");
@@ -358,12 +378,14 @@ public class ModelAdmonUtils {
 		buff.append("</style>");
 		buff.append("<body>");
 		buff.append("<div id=\"aeat\">La Agencia Tributaria devolvió el siguiente mensaje:</div>");
-		buff.append("<table id=\"response\">");
+		//buff.append("<table id=\"response\">");
+		
 		String labelTD = "<tr><td id=\"label\">{0}</td>"; 
 		String valueTD = "<td>{0}</td></tr>";
 		String valueTD2 = "<td>{0, date, dd/MM/YYYY HH:mm:ss}</td></tr>";
 		
 		for (RespuestaCorrecta rc : scd.getRespuestaCorrecta()) {
+			buff.append("<table id=\"response\">");
 			buff.append(MessageFormat.format(labelTD,"Ejercicio"));
 			buff.append(MessageFormat.format(valueTD, rc.getEjercicio()));
 			buff.append(MessageFormat.format(labelTD,"Modelo"));
@@ -386,8 +408,9 @@ public class ModelAdmonUtils {
 				buff.append(MessageFormat.format(labelTD,"Fecha y hora de presentación"));
 				buff.append(MessageFormat.format(valueTD2, rc.getFechaYHoraPresentacion().toGregorianCalendar().getTime()));
 			}
+			buff.append("</table>");
 		}
-		buff.append("</table>");
+		//buff.append("</table>");
 		buff.append("</body></html>");
 		return buff;
 	}
@@ -415,6 +438,21 @@ public class ModelAdmonUtils {
 	}
 	private static Mod303 getMod303(IFiscalModel fm) {
 		return (fm instanceof Mod303)?(Mod303)fm:null;
+	}
+	private static Mod180 getMod180(IFiscalModel fm) {
+		return (fm instanceof Mod180)?(Mod180)fm:null;
+	}
+	private static Mod193 getMod193(IFiscalModel fm) {
+		return (fm instanceof Mod193)?(Mod193)fm:null;
+	}
+	private static Mod184 getMod184(IFiscalModel fm) {
+		return (fm instanceof Mod184)?(Mod184)fm:null;
+	}
+	private static Mod347 getMod347(IFiscalModel fm) {
+		return (fm instanceof Mod347)?(Mod347)fm:null;
+	}
+	private static Mod349 getMod349(IFiscalModel fm) {
+		return (fm instanceof Mod349)?(Mod349)fm:null;
 	}
 	
 	private static byte[] getModelFile(IFiscalModel fm) throws AonCoreException {
@@ -502,12 +540,51 @@ public class ModelAdmonUtils {
 				}
 			}
 			@Override public void visitM390HF() { /* Auto-generated method stub */}
-			@Override public void visitM349() { /* Auto-generated method stub */}
-			@Override public void visitM347() { /* Auto-generated method stub */}
+			@Override 
+			public void visitM349() { 
+				try {
+					Mod349Writer.fillWriter( getMod349(fm), writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			
+			@Override 
+			public void visitM347() { 
+				try {
+					Mod347Writer.fillWriter( getMod347(fm), writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			
 			@Override public void visitM200() { /* Auto-generated method stub */}
-			@Override public void visitM193() { /* Auto-generated method stub */}
-			@Override public void visitM184() { /* Auto-generated method stub */}
-			@Override public void visitM180() { /* Auto-generated method stub */}
+			@Override 
+			public void visitM193() { 
+				try {
+					Mod193Writer.fillWriter( getMod193(fm), writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			
+			@Override 
+			public void visitM184() { 
+				try {
+					Mod184Writer.fillWriter( getMod184(fm), writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			
+			@Override 
+			public void visitM180() {				
+				try {
+					Mod180Writer.fillWriter( getMod180(fm), writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
 		});
 		return output.toByteArray();
 	}
@@ -567,13 +644,39 @@ public class ModelAdmonUtils {
 				}
 			}
 			@Override public void visitM390HF() { /* Auto-generated method stub */}
-			@Override public void visitM349() { /* Auto-generated method stub */}
-			@Override public void visitM347() { /* Auto-generated method stub */}
+			
+			@Override 
+			public void visitM349() {
+				MODEL349.aeatPresentation(occam, getMod349(fm) , aeatResponse);
+			}
+			
+			@Override 
+			public void visitM347() { 
+				MODEL347.aeatPresentation(occam, getMod347(fm) , aeatResponse);
+			}
+			
 			@Override public void visitM200() { /* Auto-generated method stub */}
-			@Override public void visitM193() { /* Auto-generated method stub */}
-			@Override public void visitM190() { /* Auto-generated method stub */}
-			@Override public void visitM184() { /* Auto-generated method stub */}
-			@Override public void visitM180() { /* Auto-generated method stub */}
+			
+			@Override 
+			public void visitM193() { 
+				MODEL193.aeatPresentation(occam, getMod193(fm) , aeatResponse);				
+			}
+			
+			@Override 
+			public void visitM190() { 
+				MODEL190.aeatPresentation(occam, getMod190(fm) , aeatResponse);
+			}
+			
+			@Override 
+			public void visitM184() { 
+				MODEL184.aeatPresentation(occam, getMod184(fm) , aeatResponse);
+			}
+			
+			@Override 
+			public void visitM180() {
+				MODEL180.aeatPresentation(occam, getMod180(fm) , aeatResponse);
+			}
+			
 		});
 		giveDataResponseDataBack(resp, aeatParams, fm);
 	}
@@ -647,27 +750,42 @@ public class ModelAdmonUtils {
 	public static void checkAEAT(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
 		try {
 			String year = AonNumberUtils.toString(model.getYear());
+			String period = model.getPeriod() == Period.YEAR ? "0A" : model.getPeriod().getName();
+			
+//			String urlParameters = MessageFormat.format(
+//				"NIF={0}"
+//				+"&ANR={1}"
+//				+"&MOD={2}"
+//				+"&EJF={3}"
+//				+"&PER={4}"
+//				+"&FED={5}"
+//				+"&FEH={6}"
+//				+"&HOD={7}"
+//				+"&HOH={8}"
+//					,model.getDocument()
+//					,model.getFullName()
+//					,FiscalModelUtils.getModelName(model)
+//					,year
+//					,model.getPeriod().getName()
+//					,year+"0101"
+//					,year+"1231"
+//					,"0000"
+//					,"2359"
+//					);
 			
 			String urlParameters = MessageFormat.format(
-				"NIF={0}"
-				+"&ANR={1}"
-				+"&MOD={2}"
-				+"&EJF={3}"
-				+"&PER={4}"
-				+"&FED={5}"
-				+"&FEH={6}"
-				+"&HOD={7}"
-				+"&HOH={8}"
-					,model.getDocument()
-					,model.getFullName()
-					,FiscalModelUtils.getModelName(model)
-					,year
-					,model.getPeriod().getName()
-					,year+"0101"
-					,year+"1231"
-					,"0000"
-					,"2359"
-					);
+					"NIF={0}"
+					+"&ANR={1}"
+					+"&MOD={2}"
+					+"&EJF={3}"
+					+"&PER={4}"
+						,model.getDocument()
+						,model.getFullName()
+						,FiscalModelUtils.getModelName(model)
+						,year
+						,period
+						);
+			
 			SSLContext sslContext = SSLContext.getInstance("TLS");
 			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
 					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
@@ -678,7 +796,10 @@ public class ModelAdmonUtils {
 		            .sslContext(sslContext)
 		            .build();
 			
-			String url = "https://www1.agenciatributaria.gob.es/wlpl/SCEJ-MANT/ConsultaExt";
+			String url = aeatParams.isTest() ? 
+					"https://prewww1.aeat.es/wlpl/SCEJ-MANT/ConsultaExt" : 
+					"https://www1.agenciatributaria.gob.es/wlpl/SCEJ-MANT/ConsultaExt";
+			
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( url ))
 				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
@@ -707,4 +828,476 @@ public class ModelAdmonUtils {
 			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
 	}
+	
+	// Envío a la AEAT utilizando el mecanismo TGVI Online (se utiliza para el envío de las informativas)
+	// Las instrucciones se encuentran en el documento "Especificaciones_TGVI_Online", publicado por la Agencia Tributaria
+	public static void sendOnlineTGVI(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
+		
+		try {
+			
+			// Obtenemos el contenido del fichero para la presentación del modelo
+			String fileContent = new String(getModelFile(model), StandardCharsets.UTF_8);			
+			
+			// Quitamos los retornos de carro y lo separamos en lineas, para su mejor tratamiento, pues
+			// tendremos que enviar el registro de tipo 1 por un lado y los de tipo 2 en bloques de 40000 registros
+			String[] fileLines = fileContent.split("\r\n");			
+			
+			// Calculo del total de bloques que tenemos que enviar (cada bloque tiene 40000 registros como maximo
+			int totalBlocks = (fileLines.length-1) / 40000;
+			if ((fileLines.length-1) % 40000 > 0)
+				totalBlocks++;
+			
+			// Inicializacion (Validación y Envío del Registro Tipo 1). Se obtiene el idEnvio que se utilizará para el resto de los envíos
+			String reg1 = fileLines[0]; // Registro Tipo 1
+			String idShipment = sendOnlineTGVI_1(resp, aeatParams, model, reg1, totalBlocks);
+			
+			if (idShipment != null) {				
+				// Envío de Datos (Validación y Envío de los Registros Tipo 2)								
+				if (sendOnlineTGVI_2(resp, aeatParams, model, idShipment, fileLines, totalBlocks)) {					
+					// Presentación (Si todo ha ido bien, presentación del modelo)
+					sendOnlineTGVI_3(resp, aeatParams, model, idShipment);					
+				} 
+			}
+		
+		} catch (AonCoreException e) {
+			ModelAdmonUtils.giveExceptionBack(resp, e.getMessage());
+		}
+	}
+	
+	// TGVI Online - Inicialización (Devuelve idEnvio todo ha ido bien, en caso contrario devuelve null)
+	private static String sendOnlineTGVI_1(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, String body, int totalBlocks) {
+		
+		try {
+			String url = aeatParams.isTest() 
+				? "https://prewww1.aeat.es/wlpl/OVPT-NTGV/InicializarEnvio"
+				: "https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/InicializarEnvio";
+
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")				
+				.setHeader( "modelo", FiscalModelUtils.getModelName(model) )          // Modelo a presentar
+				.setHeader( "ejercicio", AonNumberUtils.toString( model.getYear()))   // Ejercicio de presentación
+				.setHeader( "periodo", model.getPeriod() == Period.YEAR ? "0A" : model.getPeriod().getName())  // Periodo del modelo
+				.setHeader( "ndc", model.getDocument() )                              // NIF que identifica al declarante
+				.setHeader( "idioma", "ES")                                           // Idioma
+				.setHeader( "numbloques", AonNumberUtils.toString(totalBlocks))       // Longitud del fichero a presentar medido en bloques de 40.000 registros de T2  
+				.setHeader( "codificacion", "UTF-8")                                  // Indica el juego de caracteres usado para remitir el Registro Tipo 1 en el cuerpo de la petición 
+				.POST(HttpRequest.BodyPublishers.ofString(body))                      // El body lleva el registro Tipo 1
+				.build();
+
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+								
+			// Devuelve, entre otras cosas: idenvio, codigo y mensaje			
+			
+			if (response.statusCode() == 302) {
+				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				return null;
+			} else {								 
+				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();
+				String idenvio = response.headers().firstValue("idenvio").isEmpty() ? "" : response.headers().firstValue("idenvio").get();
+				String mensaje = response.headers().firstValue("mensaje").isEmpty() ? "" : response.headers().firstValue("mensaje").get();
+				// codigo = 0 indica que la operación se ha llevado a cabo con exito, 
+				// en tal caso devuelve un idEnvio que se deberá pasar al resto de procesos de envío (registros tipo 2 y presentación)
+				// codigo = 8888 indica que no hay ningun error en el registro tipo 1, pero que la declaracion no podrá ser presentada, 
+				// probablemente porque ya exista una declaración anterior del mismo declarante, ejercicio y periodo que no está dada de 
+				// baja, en este caso en entorno de pruebas voy a dejar continuar porque a la hora de presentar puedo indicar manualmente 
+				// que realice la baja del expediente de la declaración anterior
+				if ("0".equals(codigo) || ("8888".equals(codigo) && aeatParams.isTest())) {
+					return idenvio;
+				} else {
+					// codigo <> 0 indica que la operación ha generado algun error					
+					ModelAdmonUtils.giveExceptionBack(resp, mensaje);
+					return null;
+				}							
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+			return null;
+		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			return null;
+		}
+	}
+	
+	// TGVI Online - Envío de Datos
+	private static boolean sendOnlineTGVI_2(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, String idShipment, String[] fileLines, int totalBlocks) {
+		
+		// Si solo está el registro tipo 1 (declaraciones negativas), se devuelve true para continuar con la presentación 
+		if (fileLines.length == 1) {			
+			return true;
+		}
+		
+		// Separar los datos en bloques de 40000 registros para enviar cada bloque
+		int globalResult = 0;
+		for (int blockNum = 1; blockNum <= totalBlocks; blockNum++) {
+			int fromIndex = (40000 * (blockNum - 1)) + blockNum;
+			int toIndex = (40000 * blockNum) + 1;
+			if (toIndex > fileLines.length)
+				toIndex = fileLines.length;
+			String[] block = Arrays.copyOfRange(fileLines, fromIndex, toIndex);
+			
+			String body = "";			
+			for (String line : block)
+				body = body + line;
+			int result = sendOnlineTGVI_2_1(resp, aeatParams, body, idShipment, blockNum);
+			if (result < 0) {
+				// Si devuelve un numero negativo, es que se ha producido un error que no permite continuar
+				globalResult = -1;
+				break;
+			} else {
+				// En caso contrario se acumula el resultado, para mostrar los posibles errores al finalizar el envío de todos los bloques
+				globalResult = globalResult + result;
+			}				
+		}
+		
+		// Si ha habido errores (resultado global mayor de cero indica que al menos alguno de los bloques contenia registros con error) se obtienen los errores para mostrarlos
+		if (globalResult > 0) {
+			sendOnlineTGVI_2_2(resp, aeatParams, model, idShipment);
+		}
+		
+		return (globalResult == 0);		
+	}
+	
+	// Envio de cada bloque de datos
+	// Devuelve lo siguiente:
+	// -1 : Se ha producido un error que no permitirá continuar con el proceso
+	//  0 : Se ha enviado de forma correcta y ningún registro tiene errores
+	//  1 : Se ha enviado de forma correcta pero uno o varios registros tienen errores
+	private static int sendOnlineTGVI_2_1(HttpServletResponse resp, AEATParams aeatParams, String body, String idShipment, int blockNumber) {
+		
+		try {
+			String url = aeatParams.isTest() 
+				? "https://prewww1.aeat.es/wlpl/OVPT-NTGV/EnviarDatos"
+				: "https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/EnviarDatos";			
+
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")				
+				.setHeader( "idenvio", idShipment )                             // Identificador único de un envío, generado en la operación de Inicialización. 
+				.setHeader( "numbloque", AonNumberUtils.toString(blockNumber))  // Indica el bloque de datos que se envía.
+				.setHeader( "codificacion", "UTF-8") 							// Indica el juego de caracteres usado para remitir el bloque con los registros Tipo 2 en el cuerpo de la petición.				
+				.POST(HttpRequest.BodyPublishers.ofString(body))                // El body lleva todos los registros que se envían en este bloque
+				.build();
+
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+								
+			// Devuelve, entre otras cosas: codigo, mensaje			
+			
+			if (response.statusCode() == 302) {
+				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				return -1; 
+			} else {			
+				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();				
+				String mensaje = response.headers().firstValue("mensaje").isEmpty() ? "" : response.headers().firstValue("mensaje").get();
+				// codigo = 0 indica que la operacion se ha llevado a cabo con exito
+				if ("0".equals(codigo)) {
+					// Aunque se devuelva codigo = 0, hay que comprobar si algún registro lleva errores, 
+					// en cuyo caso no se presentará el modelo (o se presenta todos los registros sin errores, o no se presenta)					
+					String bloquet2ko = response.headers().firstValue("bloquet2ko").isEmpty() ? "0" : response.headers().firstValue("bloquet2ko").get();
+					if ("0".equals(bloquet2ko)) {
+						return 0; // Indica que ningún registro tiene errores 
+					} else {						
+						return 1; // Indica que uno o varios registros presentan errores
+					}
+				} else {
+					// codigo <> 0 indica que la operación ha generado algun error					
+					ModelAdmonUtils.giveExceptionBack(resp, mensaje);
+					return -1; // Indica cualquier otro error que impedirá seguir con la presentación del modelo
+				}							
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+			return -1; // Indica cualquier otro error que impedirá seguir con la presentación del modelo
+		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			return -1; // Indica cualquier otro error que impedirá seguir con la presentación del modelo
+		}
+	}
+	
+	// TGVI Online - Recuperar errores en los registros tipo 2
+	private static void sendOnlineTGVI_2_2(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, String idShipment) {
+		
+		try {
+			String url = aeatParams.isTest() 
+				? "https://prewww1.aeat.es/wlpl/OVPT-NTGV/RecuperarErrores"
+				: "https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/RecuperarErrores";			
+
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")				
+				.setHeader( "idenvio", idShipment )	  // Identificador único de un envío en estado FINALIZADO O	PRESENTADO			
+				.setHeader( "codificacion", "UTF-8")  // Indica el juego de caracteres usado para recuperar la información		
+				.POST(HttpRequest.BodyPublishers.ofString(""))
+				.build();
+
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+								
+			// Devuelve, entre otras cosas: codigo, mensaje, en el BODY están los mensajes de error			
+			
+			if (response.statusCode() == 302) {
+				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);				
+			} else {			
+				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();				
+				String mensaje = response.headers().firstValue("mensaje").isEmpty() ? "" : response.headers().firstValue("mensaje").get();				
+				String errors = new String(response.body()); // Listado de errores, se incluye una línea por cada registro erróneo
+				
+				// codigo = 0 indica que la operacion se ha llevado a cabo con exito, en tal caso mostramos los errores que ha generado la validacion
+				if ("0".equals(codigo)) {					
+					
+					// En los mensajes de error viene una linea por cada registro erroneo, con el registro completo, punto y coma, linea del 
+					// fichero donde esta el error (entre parentesis), codigo del error y mensaje de error															
+					String[] lines = errors.split("\r\n");
+					
+					// Vamos a crear un JSON con el mismo formato que el JSON que devuelve la presentación de los modelos de liquidaciones (IVA, IRPF), 
+					// para así luego poder llamar a manageJSONObject, que es lo mismo que se llama en los modelos de liquidaciones
+					JSONObject jsonErrors = new JSONObject();
+					jsonErrors.put("respuesta", new JSONObject());
+					jsonErrors.getJSONObject("respuesta");
+					
+					for (String line : lines) {
+						// La idea es mostrar cada mensaje de error como: NIF_DECLARADO - NOMBRE_DECLARADO Y LO_QUE_VENGA_DESPUES_DEL_PUNTO_Y_COMA						
+						// Excepto para el Modelo 349, para el resto de informativas el nif y el nombre están en las mismas posiciones
+						String document = line.substring(17, 26);
+						String name = line.substring(35, 75);
+						if (model.getModel() == FiscalModelType.M349) {
+							document = line.substring(75, 92);
+							name = line.substring(92, 132);							
+						}
+						String error = line.split(";")[1];						
+						String errorDescription = document + " " + name + " - " + error;
+						jsonErrors.getJSONObject("respuesta").append( "errores", errorDescription);
+					}				
+					
+					ModelAdmonUtils.manageJSONContent( resp, aeatParams, model , jsonErrors.toString().getBytes() );
+										
+				} else {
+					// codigo <> 0 indica que la operación ha generado algun error
+					ModelAdmonUtils.giveExceptionBack(resp, mensaje);					
+				}							
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();			
+		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());			
+		}
+	}
+	
+	// TGVI Online - Presentación (los procesos 1 y 2 simplemente validan el contenido del fichero y, si todo ha ido bien, este proceso es el que realiza la presentación)
+	private static void sendOnlineTGVI_3(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, String idShipment) {
+		
+		try {
+			
+			// BAJA DECLARACION ANTERIOR
+			// POR AHORA ESTO SOLO SE UTILIZA EN ENTORNO DE PRUEBAS EN FASE DE DESARROLLO, PARA PROBAR 
+			// LAS SUSTITUTIVAS. EN ENTORNO DE PRODUCCION SE OBLIGARÁ A QUE EL USUARIO REALICE LA BAJA 
+			// DE LA LIQUIDACION DESDE LA OFICINA VIRTUAL DE LA AGENCIA TRIBUTARIA
+			// Si la validación ha sido correcta y solo queda la presentación, y es una sustitutiva,
+			// antes de nada se intenta dar de baja la anterior liquidación, porque si la liquidación
+			// ya existe, nos dará un error de duplicidad			
+			if (aeatParams.isTest() && model.isReplacement()) {
+				if (!sendOnlineTGVI_Delete(resp, aeatParams, model))
+					return;
+			}
+			// -------------------------
+			
+			String url = aeatParams.isTest() 
+				? "https://prewww1.aeat.es/wlpl/OVPT-NTGV/PresentarEnvio"
+				: "https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/PresentarEnvio";			
+
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")				
+				.setHeader( "idenvio", idShipment )              // Identificador único de un envío en estado FINALIZADO
+				.setHeader( "firnif", aeatParams.getDocument())  // Forma parte de la Firma no criptográfica. NIF del titular del certificado que realiza la presentación
+				.setHeader( "firnombre", aeatParams.getName())   // Forma parte de la Firma no criptográfica. NOMBRE/RAZÓN SOCIAL del titular del certificado que realiza la presentación
+				.setHeader( "fir", "FirmaBasica")                // Forma parte de la Firma no criptográfica. Valor constante
+				.POST(HttpRequest.BodyPublishers.ofString(""))
+				.build();
+
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+								
+			// Devuelve, entre otras cosas: codigo, mensaje, csv			
+			
+			if (response.statusCode() == 302) {
+				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);				
+			} else {
+				
+				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();
+				
+				// codigo = 0 indica que la operacion se ha llevado a cabo con exito
+				if ("0".equals(codigo)) {
+					String csv = response.headers().firstValue("csv").isEmpty() ? "" : response.headers().firstValue("csv").get();
+					String expediente = response.headers().firstValue("expediente").isEmpty() ? "" : response.headers().firstValue("expediente").get();
+					String urlPdf = aeatParams.isTest()   // URL para poder obtener el PDF, si la presentación ha sido correcta 
+							? "https://prewww2.aeat.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.VisualizaSc?COMPLETA=SI&ORIGEN=C&CSV=" + csv
+							: "https://www2.agenciatributaria.gob.es/wlpl/inwinvoc/es.aeat.dit.adu.eeca.catalogo.VisualizaSc?COMPLETA=SI&ORIGEN=C&CSV=" + csv;		
+					
+					SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+					SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
+					
+					// Se crea un JSON con el mismo formato que devuelve la presentación de las liquidaciones (IVA, IRPF), 
+					// para así poder llamar al mismo metodo manageJSONContent, que es el que se encargará de grabar los datos
+					// en data_response y marcar el modelo como enviado 
+					JSONObject result = new JSONObject();
+					result.put("respuesta", new JSONObject());
+					result.getJSONObject("respuesta").put("correcta",new JSONObject());
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("CodigoSeguroVerificacion ", csv);
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("Fecha", DATE_FORMAT.format(new Date())); 
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("Hora", TIME_FORMAT.format(new Date()));
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("Expediente", expediente);
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("NIFPresentador", aeatParams.getDocument());
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("ApellidosNombrePresentador", aeatParams.getName());
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("NIFDeclarante", model.getDocument());
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("ApellidosNombreDeclarante", model.getName());
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("Modelo", FiscalModelUtils.getModelName(model));
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("Ejercicio", AonNumberUtils.toString( model.getYear()));
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("Periodo", model.getPeriod() == Period.YEAR ? "0A" : model.getPeriod().getName());
+//					result.getJSONObject("respuesta").getJSONObject("correcta").put("Justificante", ""); // No devuelve numero de justificante 
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("Idioma","ES");
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("urlPdf", urlPdf);
+					
+					ModelAdmonUtils.manageJSONContent( resp, aeatParams, model , result.toString().getBytes() );
+					
+				} else {
+					// codigo <> 0 indica que la operación ha generado algun error
+					String mensaje = response.headers().firstValue("mensaje").isEmpty() ? "" : response.headers().firstValue("mensaje").get();
+					ModelAdmonUtils.giveExceptionBack(resp, mensaje);					
+				}							
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();			
+		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());			
+		}
+	}	
+	
+	// TGVI Online - Baja de una presentación anterior (SOLO SE UTILIZA EN ENTORNO DE PRUEBAS EN FASE DE DESARROLLO PARA PROBAR LAS SUSTITUTIVAS)
+	private static boolean sendOnlineTGVI_Delete(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
+		
+		try {
+			
+			// ESTE NUMERO DE EXPEDIENTE SE INDICA DE FORMA MANUAL AQUI Y SOLO SE UTILIZA EN FASE 
+			// DE DESARROLLO PARA PROBAR LAS SUSTITUTIVAS DE LAS INFORMATIVAS EN EL ENTORNO DE PRUEBAS
+			String expediente = ""; 			 
+								
+			// Se comprueba si el numero de expediente está vacio
+			if (AonStringUtils.isEmpty(expediente))
+				return true;  // Devolvemos true para que continue con la presentación del modelo
+ 
+			// Se comprueba si el numero de expediente comienza por el ejercicio y el modelo que estamos presentando
+			// si no es así, no se hace nada y se devuelve true para que continue con la presentación
+			if (!AonStringUtils.substring(expediente,0, 4).equals(AonNumberUtils.toString(model.getYear())) || 
+				!AonStringUtils.substring(expediente, 4, 7).equals(model.getModel().getValue()))
+				return true;  // Devolvemos true para que continue con la presentación del modelo
+			
+			// Intentar dar de baja el expediente que se le indica (ENTORNO DE PRUEBAS)
+			String url = "https://prewww1.aeat.es/wlpl/OVPT-NTGV/BajaDeclaracion";						
+
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.setHeader( "firnif", aeatParams.getDocument())
+				.setHeader( "firnombre", aeatParams.getName())
+				.setHeader( "fir", "FirmaBasica")
+				.setHeader( "modelo", FiscalModelUtils.getModelName(model) )
+				.setHeader( "ejercicio", AonNumberUtils.toString( model.getYear()))
+				.setHeader( "periodo", model.getPeriod() == Period.YEAR ? "0A" : model.getPeriod().getName())
+				.setHeader( "ndc", model.getDocument() )				
+				.setHeader( "expediente", expediente )  				
+				.POST(HttpRequest.BodyPublishers.ofString(""))
+				.build();
+
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+								
+			// Devuelve, entre otras cosas: codigo, mensaje			
+			
+			if (response.statusCode() == 302) {
+				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);
+				return false;
+			} else {
+				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();
+				String mensaje = response.headers().firstValue("mensaje").isEmpty() ? "" : response.headers().firstValue("mensaje").get();
+				
+				// Simplemente mostramos en la consola el codigo y el mensaje. 
+				// Si genera codigo <> 0 probablemente sea porque el modelo no existe en la Agencia Tributaria
+				// Si codigo y mensaje están en blanco, probablemente sea un error interno en el sistema
+				System.out.println("TGVI Online BAJA >> Expediente: " + expediente + " Código: " + codigo + " Mensaje: " + mensaje);
+				
+				return true;											
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+			return false;
+		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			return false;
+		}
+	}	
+	
+
 }

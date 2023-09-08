@@ -1,0 +1,157 @@
+package com.esferalia.aon.occam.api.json;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.security.Booking;
+import com.esferalia.aon.occam.api.model.security.BookingResume;
+import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
+import com.esferalia.aon.occam.api.model.type.DomainType;
+
+public class BookingJSON {
+	
+	public static LinkedList<Booking> fromJSON(JSONArray json) {
+		LinkedList<Booking> list = new LinkedList<>();
+		for(Integer i = 0; i < json.length(); i++) {
+			list.add(fromJSON(json.getJSONObject(i)));
+		}
+ 		return list;
+	}
+	
+	public static Booking fromJSON(JSONObject json) {
+		List<AonApp> apps = new LinkedList<>();
+		List<AonApp> parentApps = new LinkedList<>();
+		
+		JsonUtils.getJSONArray(json, IJsonNames.APPS).forEach(r -> apps.add(AonApp.safeValueOf(r.toString())));
+		JsonUtils.getJSONArray(json, IJsonNames.PARENT_APPS).forEach(r -> parentApps.add(AonApp.safeValueOf(r.toString())));
+		
+		return new Booking()
+			.setDomain(DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN)))
+			.setCompany(CompanyJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.COMPANY)))
+			.setType(DomainType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
+			.setApps(apps)
+			.setParentApps(parentApps)
+			.setNumberOfUsers(JsonUtils.getInt(json, IJsonNames.NUMBER_OF_USERS))
+			.setPayer(JsonUtils.getString(json, IJsonNames.PAYER))
+			.setResume(bookingResume(JsonUtils.getJSONObject(json, IJsonNames.RESUME)));
+	}
+	
+	public static JSONArray toJSON(List<Booking> list) {
+		return toJSON(list.stream());
+	}
+	
+	public static JSONArray toJSON(Stream<Booking> stream) {
+		JSONArray array = new JSONArray();
+		stream.forEach(object -> array.put(toJSON(object)));
+		return array;
+	}
+	
+	public static JSONObject toJSON(Booking object) {
+		JSONArray apps = new JSONArray();
+		JSONArray parentApps = new JSONArray();
+		object.getApps().forEach(r -> apps.put(r.name()));
+		object.getParentApps().forEach(r -> parentApps.put(r.name()));
+
+		return new JSONObject()
+			.put(IJsonNames.DOMAIN, DomainJSON.toJSON(object.getDomain()))
+			.put(IJsonNames.COMPANY, CompanyJSON.toJSON(object.getCompany()))
+			.put(IJsonNames.TYPE, object.getType() != null ? object.getType().name() : null)
+			.put(IJsonNames.APPS, apps) 
+			.put(IJsonNames.PARENT_APPS, parentApps) 
+			.put(IJsonNames.NUMBER_OF_USERS, object.getNumberOfUsers())
+			.put(IJsonNames.PAYER, object.getPayer())
+			.put(IJsonNames.RESUME, object.getResume() != null ? bookingResume(object.getResume()): null);
+	}
+	
+	private static JSONObject bookingResume(BookingResume resume) {
+		JSONObject o = new JSONObject();
+		if(resume != null) { 
+			JSONObject domain = new JSONObject();
+			resume.getDomainTypes().keySet().forEach(r ->{
+				DomainTypeInfo dti = resume.getDomainTypes().get(r);
+				JSONObject oa = new JSONObject();
+				oa.put("number", dti.getNumber());
+				
+				JSONObject apps = new JSONObject();
+				dti.getChildApps().keySet().forEach(r2 -> apps.put(r2.name(), dti.getChildApps().get(r2)));
+				oa.put(IJsonNames.APPS, apps);
+
+				oa.put("childs", childJson(dti.getChilds()));
+
+				domain.put(r.name(), oa);	
+			});
+			o.put(IJsonNames.DOMAIN, domain);
+
+			JSONObject user = new JSONObject();
+			resume.getUserTypes().keySet().forEach(r -> user.put(r.name(), resume.getUserTypes().get(r)));
+			user.put("childDefinedUsers", resume.getChildDefinedUsers());
+			user.put("childBillingUsers", resume.getChildBillingUsers());
+			
+			o.put(IJsonNames.USER, user);
+		}
+		return o;
+	}
+	
+	private static BookingResume bookingResume(JSONObject json) {
+		BookingResume br = new BookingResume();
+		if(!json.isEmpty()) {
+			// DOMAIN TYPES
+			DomainType[] types = DomainType.values();
+			br.setDomainTypes(new HashMap<DomainType, DomainTypeInfo>());
+			for (Integer i = 0; i < types.length; i++) {
+				DomainType type = types[i];
+				JSONObject o = JsonUtils.getJSONObject(json, type.name());
+				if(!o.isEmpty()) {
+					DomainTypeInfo info = new DomainTypeInfo()
+							.setNumber(JsonUtils.getInteger(o, IJsonNames.NUMBER))
+							.setChilds(DomainJSON.fromJSON(JsonUtils.getJSONArray(o, IJsonNames.CHILDS)));
+
+					HashMap<AonApp, Long> childApps = new  HashMap<AonApp, Long>();
+					JSONObject apps = JsonUtils.getJSONObject(o, IJsonNames.APPS);
+					AonApp[] aonApps = AonApp.values();
+					for (Integer j = 0; j < aonApps.length; j++) {
+						AonApp aonApp = aonApps[j];
+						Integer aonAppLong = JsonUtils.getInteger(apps, aonApp.name());
+						childApps.put(aonApp, aonAppLong.longValue());
+					}
+					info.setChildApps(childApps);
+					br.getDomainTypes().put(type, info);
+				}
+			}
+			
+			JSONObject userJSON = JsonUtils.getJSONObject(json, IJsonNames.USER);
+			
+			// USER TYPES
+			br.setChildDefinedUsers(JsonUtils.getInteger(userJSON, "childDefinedUsers"));
+			br.setChildBillingUsers(JsonUtils.getInteger(userJSON, "childBillingUsers"));
+
+			// TODO br.setUserTypes();
+		}
+		return br;
+	}
+	
+	private static JSONArray childJson(List<Domain> childs) {
+		JSONArray array = new JSONArray();
+		childs.stream().forEach(d -> {
+			JSONArray apps = new JSONArray();
+			d.getApps().stream().forEach(app -> apps.put(app.getApp().name()));
+			JSONObject json = new JSONObject();
+			json.put(IJsonNames.ID, d.getId());
+			json.put(IJsonNames.NAME, d.getName());
+			json.put(IJsonNames.DESCRIPTION, d.getDescription());
+			json.put(IJsonNames.APPS, apps);
+			json.put(IJsonNames.MAX_DEFINED_USERS, d.getMaxDefinedUsers());
+			array.put(json);
+		});
+		return array;
+	}
+
+}

@@ -24,13 +24,13 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
 import org.jooq.Record;
 
@@ -51,7 +51,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -147,14 +147,13 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				for ( CCC ccc: JooqEnterprise.getCCCs(connection, domainId) ) {
 					
 					try {
-	//					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
 						Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
 						
 						SistemaRED2AON.addCalcs(aonContext, 
 								userLogin, 
 								domainName, 
 								domainId, 
-								certificate.getCertificate(), 
+								certificate.getData(), 
 								certificate.getPassword(), 
 								certificate.getType(), 
 								ccc.getRegime(), 
@@ -163,9 +162,6 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 								endDate);
 						writer.write(ccc.getCode());
 						writer.flush();
-	//					resp.setStatus(HttpServletResponse.SC_OK);
-	//					String base64 = Base64.getEncoder().encodeToString(data);
-	//					encodeURIComponent("application/pdf", base64, writer);
 					} catch ( Exception e ) {
 					}
 					
@@ -188,11 +184,9 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
-			for ( CCC ccc: JooqEnterprise.getCCCs(connection, domainId) ) {
-
-//				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+			for ( CCC ccc: JooqEnterprise.getCCCs(connection, domainId) ) {		
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
-				byte data [] = SistemaRED.getUp2DateSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
+				byte data [] = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
 				
 				
 				resp.setStatus(HttpServletResponse.SC_OK);
@@ -224,10 +218,9 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			Date date = getDateParameter(req);
 			String regime = req.getParameter(Parameter.REGIME.name());
 			String ccc = req.getParameter(Parameter.CCC.name());
-			
-//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+				
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
-			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, date);
+			byte data [] = SistemaRED.getIDCCCC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, date);
 			
 			
 			resp.setStatus(HttpServletResponse.SC_OK);
@@ -253,11 +246,9 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			
 			String regime = req.getParameter(Parameter.REGIME.name());
 			String ccc = req.getParameter(Parameter.CCC.name());
-
-			
-//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+	
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
-			byte data [] = SistemaRED.getUp2DateSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc);
+			byte data [] = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
 			
 			
 			resp.setStatus(HttpServletResponse.SC_OK);
@@ -283,7 +274,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			Certificate certificate =
 			new Certificate()
 			.setPassword(password)
-			.setCertificate(readAllBytes(is))
+			.setData(readAllBytes(is))
 			.setType(MimeType.PKCS12.getName());
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -329,7 +320,6 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			
 			resp.setStatus(HttpServletResponse.SC_OK);
 			byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d }", employee.getEmployeeId(), employee.getWorkplaceId()).getBytes();
-//			resp.setContentType("application/json");
 			resp.setContentType("text/html");
 			resp.setContentLength(content.length);
 			os.write(content);		
@@ -359,7 +349,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
             byte[] idc = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
                     naf, regime, ccc, startDate);
             
-            Employee aonEmployee = EmployeeParse.IdcToEmployeeOccam(idc);
+           Employee aonEmployee = EmployeeParse.IdcToEmployeeOccam(idc);
 
             Integer registration = aonEmployee.hashCode();
             aonEmployee.setRegistration(registration);
@@ -430,7 +420,6 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			
 			Map<Pair<String,String>, List<String>> cccNafs = new HashMap<Pair<String,String>, List<String>>();
 			
-//			resp.setContentType("application/json");
 			resp.setContentType("text/html");
 
 			int contentLength = 2;			
@@ -529,11 +518,10 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(date);
 			Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(date);
 
-//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			for ( String naf : nafs ) {
-				byte data [] = SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+				byte data [] = SistemaRED.getIDCNSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 				Collection<com.esferalia.aon.in.payroll.tgss.idc.PEC> ssBonus = Idcplnss.getSSBonuses(data);
 				Bonus bonuses [] =
 				ssBonus.stream()

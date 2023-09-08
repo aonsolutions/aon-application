@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.jooq.tools.json.JSONObject;
 
@@ -37,6 +37,7 @@ public class EmployeeAFIServlet extends HttpServlet {
 		Boolean isQuoteContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isQuoteContract"), "1");
 		Boolean isOcupationContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isOcupationContract"), "1");
 		Boolean isPartialityCoefContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isPartialityCoefContract"), "1");
+		Boolean isCnoContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isCnoContract"), "1");
 		String settleReason = request.getParameter("settleReason");
 		
 		//Este JSON lo deberia obtener del Request cuando me llaman al Servlet
@@ -63,6 +64,7 @@ public class EmployeeAFIServlet extends HttpServlet {
 					isQuoteContract, 
 					isOcupationContract, 
 					isPartialityCoefContract,
+					isCnoContract,
 					settleReason);
 			
 			

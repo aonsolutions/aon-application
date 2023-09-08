@@ -7,8 +7,8 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 
 public class CertificateJSON {
 	
@@ -28,7 +28,7 @@ public class CertificateJSON {
 		return new Certificate()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
-			.setName(JsonUtils.getString(json, IJsonNames.NAME))
+			.setDescription(JsonUtils.getString(json, IJsonNames.NAME))
 			.setPassword(JsonUtils.getString(json, IJsonNames.PASSWORD));
 	}
 	
@@ -46,7 +46,7 @@ public class CertificateJSON {
 		return new JSONObject()
 			.put(IJsonNames.ID, object.getId())
 			.put(IJsonNames.DOMAIN, object.getDomain())
-			.put(IJsonNames.NAME, object.getName())
+			.put(IJsonNames.NAME, object.getDescription())
 			.put(IJsonNames.PASSWORD, object.hasPassword());
 
 	}

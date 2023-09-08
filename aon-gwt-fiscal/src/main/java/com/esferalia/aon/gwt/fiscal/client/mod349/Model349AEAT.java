@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalMo
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
@@ -63,22 +64,37 @@ public class Model349AEAT extends Model349Base {
 
 					@Override
 					public String getSendAction() {
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod349SendAEAT";
 					}
 
 					@Override
 					public void sendSuccessfully() {
-						// Nothing
+						Model349.SERVICE.get( getOptions().getOccam(), getModel().getId() , new AsyncCallback<Mod349>() {
+							@Override
+							public void onSuccess(Mod349 selected) {
+								if (selected == null) {
+									getCallback().showError(AON.MSG.unableToFindDeclaration());
+								} else {
+									select(selected);									
+									admonPanel.manageLinks();
+								}
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								getCallback().showError(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+							}
+						});						
 					}
 
 					@Override
 					public String getCheckAction() {
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod349CheckAEAT";
 					}
 
 					@Override
 					public String getCheckDataResponseDataAction() {
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod349CheckDataResponseData";
 					}
 
 					@Override

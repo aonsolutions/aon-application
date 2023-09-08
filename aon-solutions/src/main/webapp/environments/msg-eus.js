@@ -1,6 +1,8 @@
 // ----- A
 
+export const ABOUT = 'Guri buruz';
 export const ACCEPT = 'Onartu';
+export const ACCESS = "Sarbidea";
 export const ACCOUNT = 'Kuenta';
 export const ACCOUNTED = 'Kontabilizatuta';
 export const ACCOUNTEDS = 'Kontabilizatutak';
@@ -20,8 +22,11 @@ export const ADD_REMARKS = 'Oharrak Gehitu';
 export const ADD_TAG = 'Etiketa Gehitu';
 export const ADD_TAX = 'Zerga Gehitu';
 export const ADD_TYPE = 'Mota Gehitu';
+export const ADDITIONAL_HIRING = "Gehigarrizko kontratazioa";
 export const ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
 export const ADDRESS = 'Helbidea';
+export const ALL = 'Guztia';
+export const ALL1 = 'Guztiak';
 export const ALL_FILES = 'Fitxategi Guztiak';
 export const AMOUNT = 'Zenbatekoa';
 export const API_DOCUMENTATION = 'APIren Dokumentazioa';
@@ -42,8 +47,10 @@ export const BARCODE = 'Barra-kodea';
 export const BASE = 'Oinarria';
 export const BASQUE = 'Euskara';
 export const BILLING = 'Fakturazioa';
+export const BILLABLE_USERS = "Erabiltzaile fakturagarriak";
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Kontratazioa';
+export const BOOKING_PANEL = 'Kontratazioa-taula';
 export const BOX_CRITERION = 'Kutxa-Irizpidea';
 export const BUDGET = 'Aurrekontua';
 export const BUDGETS = 'Aurrekontuak';
@@ -59,6 +66,7 @@ export const CERTIFICATE = 'Ziurtagiria';
 export const CERTIFICATES = 'Ziurtagiriak';
 export const CHANGE_TYPE = 'Mota Aldatu';
 export const CHARGES_AND_PAYMENTS = 'Kobrantza eta Ordainketa';
+export const CHOOSE_A_DOMAIN = 'Aukeratu domeinuren bat, mesedez';
 export const CITY = 'Hiria';
 export const CLASSIC_APPLICATIONS = 'Aplikazio Klasikoak';
 export const CLASSIC_VIEW = 'Ikuspegi Klasikoa';
@@ -80,15 +88,23 @@ export const CONFIGURATION = 'Konfigurazioa';
 export const CONTACT = 'Kontaktua';
 export const CONTACT_DATA = 'Kontaktuaren Datuak';
 export const CONTACTS = 'Kontaktuak';
+export const CONTAINER = 'Ontzia';
 export const CONTRACT = 'Kontratatu';
 export const CONTRACT_PAYROLL = 'Kontratua';
 export const CONTRACTS = 'Kontratuak';
+export const CONTRACTED_PRODUCTS = "Kontratatutako produktuak";
+export const CONTRACTED_USERS = "Kontratatutako erabiltzaileak";
+export const COPIED_TO_CLIPBOARD = "Arbelean kopiatua";
+export const COPY = "Kopiatu";
 export const COUNTRY = 'Herrialde';
 export const CREATE = 'Sortu';
 export const CREDITOR = 'Hartzekodun';
 export const CREDITORS = 'Hartzekodunak';
 export const CUSTOM_VIEW = 'Ikuspegi Pertsonalizatua';
 export const CUSTOMER = 'Bezero';
+export const CUSTOMER_SEARCH = 'Bezero bilaketa';
+export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND = "Domeinu honekin erlazionaturiko bezerorik ez da aurkitu"
+export const CUSTOMER_SEARCH_NOT_FOUND = "Bilaketa honekin erlazionaturiko bezerorik ez da aurkitu"
 export const CUSTOMERS = 'Bezeroak';
 
 // ----- D
@@ -114,6 +130,7 @@ export const DEUTSCH = 'Alemana';
 export const DOCUMENT = 'Dokumentua';
 export const DOCUMENTS = 'Dokumentuak';
 export const DOCUMENTARY = 'Dokumentala';
+export const DOMAIN_SEARCH = 'Domeinu bilaketa';
 export const DOWNLOAD = 'Deskargatu';
 export const DOWNLOAD_FILE = 'Fitxategia Deskargatu';
 export const DOWNLOAD_FILES = 'Fitxategiak Deskargatu';
@@ -142,6 +159,7 @@ export const EXIT = 'Irteera';
 export const EXPENSE = 'Gastu';
 export const EXPENSES = 'Gastuak';
 export const EXPIRATIONS = 'Epemugak';
+export const EXPIRED = 'Iraungita';
 
 // ----- F
 
@@ -150,6 +168,7 @@ export const FILE = 'Fitxategia';
 export const FILE_DATA = 'Fitxategiaren Datuak';
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
+export const FIND_LINKED_DOMAINS = "Estekatutako domeinuak bilatu";
 export const FOOTER = 'Oina';
 
 // ----- G
@@ -168,6 +187,7 @@ export const GROUPS = 'Taldeak';
 export const HEADER = 'Goiburu';
 export const HELP = 'Laguntza';
 export const HIRING = 'Kontratazioa';
+export const HIRING_DATA = "Kontratazio data";
 export const HOLDER = 'Titularra';
 export const HOLDERS = 'Titularrak';
 export const HOURS = "Orduak";
@@ -207,6 +227,14 @@ export const LANGUAGE = 'Hizkuntza';
 export const LAST = 'Azken';
 export const LAST_LOCATION = 'Azken kokapena';
 export const LAST_STATUS = 'Azken egoera';
+export const LINK = 'Estekatu';
+export const LINK_CLIENT = "Bezeroa estekatu";
+export const LINKED = 'Estekatuta';
+export const LINKED1 = 'Estekatuak';
+export const LINKING = "Estekamendua";
+export const LINK_DOMAINS = 'Dominioak Bezeroekin Estekatu';
+export const LINK_DOMAIN_QUESTION = "Domeinuarekin bezero hau estekatu nahi duzu?";
+export const LOADING = 'Kargatzen';
 export const LOCATION = 'Kokapena';
 
 // ----- M
@@ -234,15 +262,19 @@ export const NEW_REQUEST = 'Eskaera Berria';
 export const NEW_WAREHOUSE = 'Biltegi Berria';
 export const NEXT = 'Hurrengoa';
 export const NIF = 'IFZ';
+export const NOT_LINKED = 'Estekatu gabea';
+export const NOT_LINKED1 = 'Estekatu gabeak';
 export const NOTIFICATION = 'Jakinarazpena';
 export const NOTIFICATIONS = 'Jakinarazpenak';
 export const NOTES = 'Oharrak';
 export const NOTE = 'Oharra';
 export const NUMBER = 'Zenbakia';
+export const NUMBER_OF_USERS = 'Erabiltzaile kopurua';
 
 // ----- O
 export const OBSERVATION = 'Oharra';
 export const OFFICE = 'Bulegoa';
+export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Estekatutako domeinurik gabeko domeinuak bakarrik";
 export const ONLY_PORTAL = 'Portala Soilik';
 export const OPEN = 'Ireki';
 export const OPEN_MENU = 'Ireki Menua';
@@ -253,6 +285,7 @@ export const OTHER_SERVICES = 'Beste Zerbitzuak';
 
 // ----- P
 
+export const PARENT_APPS = "Aitaren aplikazioak";
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Pasahitza';
 export const PAYMETHOD = 'Ordainketa Era';
@@ -273,6 +306,8 @@ export const PRINT = 'Inprimatu';
 export const PRINT_INVOICE = 'Faktura Inprimatu';
 export const PROCESSED_MOVEMENT = "Alta zuzen prozesatu da";
 export const PRODUCT = 'Produktua';
+export const PRODUCT_NOT_EMPTY = "Produktua ezin da hutsik geratu";
+export const PRODUCT_MUST_BE_SELECTED = "Produktu bat aukeratzea derrigorrezkoa da";
 export const PRODUCTS = 'Produktuak';
 export const PROVINCE = 'Probintzia';
 
@@ -340,7 +375,8 @@ export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Neurria';
 export const SPANISH = 'Gaztelania';
 export const STATISTICS = 'Estatistikak';
-export const STATUS = "Estado";
+export const STATUS = "Egoera";
+export const STATUS_NOT_EMPTY = "Egoera ezin da hutsik geratu";
 export const SUPPLIED = 'Ordezkatuak';
 export const SUPPLIER = 'Hornitzaile';
 export const SUPPLIERS = 'Hornitzaileak';
@@ -376,6 +412,10 @@ export const TYPES = 'Motak';
 
 // ----- U
 
+export const UNLINK = "Deslotu";
+export const UNLINK_DOMAIN_QUESTION = "Domeinutik bezero hau deslotu nahi duzu?";
+export const UNLINK_CLIENT = "Bezeroa deslotu";
+export const UNLINKED = "Deslotuta";
 export const UPDATED_CONTRACT = "Kontratua zuzen aldatu da";
 export const UPLOAD = 'Igo';
 export const UPLOAD_FILE = 'Fitxategia Igo';
@@ -383,6 +423,7 @@ export const USER = 'Erabiltzailea';
 export const USER_DATA = 'Erabiltzailearen Datuak';
 export const USER_MANAGEMENT = 'Erabiltzaileen Kudeaketa';
 export const USERS = 'Erabiltzaileak';
+export const UTILITIES = 'Utilitateak';
 
 // ----- V
 

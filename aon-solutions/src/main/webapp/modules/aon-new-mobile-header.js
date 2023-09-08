@@ -159,16 +159,12 @@ export class AonNewMobileHeader extends AonElement {
 	buildLogo() {
 		let aonLogo = this.getElement(this.LOGO);
 		const href = window.location.href;       
-		if(href.includes('ayudat')){
-			aonLogo.src = 'assets/ayudat-logo2.png';
-		} else if(href.includes('translogia') || href.includes('tedi')){
-			aonLogo.src = 'assets/ayudat-logo3.png';
-		} else {
-			aonLogo.src = 'assets/aon-logo3.svg';
-			aonLogo.style.top = "21px";
-			aonLogo.style.width = "123px";
-			aonLogo.style.marginLeft = "21px";
-		}
+
+		aonLogo.src = 'assets/aon-logo.svg';
+		aonLogo.style.top = "21px";
+		aonLogo.style.width = "123px";
+		aonLogo.style.marginLeft = "21px";
+
 		aonLogo.addEventListener('click', () => {
 			this.home();
 		});

@@ -2,11 +2,11 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
@@ -25,7 +25,6 @@ public class AccountTrialBalanceReportPDFPrint extends HttpServlet {
 
 		try {
 			String accountReportParams = req.getParameter( IRequestParamsNames.ACCOUNT_REPORT_PARAMS );
-			System.out.println("JSON PARAMS: " + accountReportParams);
 			AccountingReportParams params = JsonParser.parseAccountingParams(accountReportParams);
 			params.setDomain(Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID)));
 			params.setUser(req.getParameter(IRequestParamsNames.USER));

@@ -38,4 +38,8 @@ public class JsAccount extends JavaScriptObject {
 	public final native String getCostCenter() /*-{
 		return this.costCenter;
 	}-*/;
+	
+	public final native boolean hasRegistry() /*-{
+	return this.hasRegistry;
+}-*/;
 }

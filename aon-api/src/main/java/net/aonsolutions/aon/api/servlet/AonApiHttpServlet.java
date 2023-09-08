@@ -13,11 +13,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -31,7 +31,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -155,9 +155,16 @@ public class AonApiHttpServlet extends HttpServlet{
 		} else if(api.getDomain().getId() != null && api.getDomain().getId() != 0){
 			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), domainLogin);
 		}
-		if(user.getAuth().isEmpty() && !AonStringUtils.isBlank(api.getToken()) && !api.isPredefinedToken()) {
+		
+		if(user.isEmpty()) {
+			user = AON.getUser(api.getDomain().getName(), 0, domainLogin);
+		}
+		
+		if((user.getAuth().isEmpty() || AonStringUtils.isBlank(user.getAuth().getEmail()))
+				&& !AonStringUtils.isBlank(api.getToken()) && !api.isPredefinedToken()) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
-			user.setAuth(AON_SOLUTIONS.getAuth(aonToken.getAuth()));
+			user.setAuth(AON_SOLUTIONS.getAuth(user.getAuth().getAuth() != null 
+					? user.getAuth().getAuth() : aonToken.getAuth()));
 		}
 		if(user.getLogin() == null) user.setLogin("");
 		return user;
@@ -211,6 +218,11 @@ public class AonApiHttpServlet extends HttpServlet{
 	public void responseFile(HttpServletResponse resp, Attach attach) throws IOException {
 		ByteArrayInputStream is =  new ByteArrayInputStream(attach.getData());
 		responseFile(resp, attach.getDescription(), is, attach.getMimeType());
+	}
+	
+	public void responseFile(HttpServletResponse resp, File file, MimeType mimetype, String contentDisposition) throws IOException {
+		FileInputStream is =  new FileInputStream(file);
+		responseFile(resp, file.getName(), is, mimetype, contentDisposition);
 	}
 	
 	public void responseFile(HttpServletResponse resp, File file, MimeType mimetype ) throws IOException {
@@ -341,7 +353,6 @@ public class AonApiHttpServlet extends HttpServlet{
 			} else {
 				cert =  AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name());				
 			}
-
 		} catch (Exception e) {
 			throw new AonApiException("Error al obtener el certificado.");
 		}
@@ -355,8 +366,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		if(cert.isEmpty()) {
 			throw new AonApiException("El certificado no existe.");
 		}
-		return cert;
-		
+		return cert;	
 	}
 	
 	public static boolean checkCert(byte[] cert, String password) {

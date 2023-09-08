@@ -41,6 +41,10 @@ public interface AccountingUtilitiesService extends RemoteService {
 	// Apuntes descuadrados
 	AccUtilitiesResult unbalancedEntries(String domainName, String user, Domain domain) throws AonCoreException;
 	
+	// Apuntes fuera de fecha
+	AccUtilitiesResult outOfDateEntries(String domainName, String user, Domain domain) throws AonCoreException;
+	AccUtilitiesResult moveOutOfDateEntries(String domainName, String user, Domain domain, AccUtilitiesResult findResult) throws AonCoreException;
+	
 	// Facturas contabilizadas sin apuntes
 	AccUtilitiesResult wrongRecordedInvoices(String domainName, String user, Domain domain) throws AonCoreException;
 	AccUtilitiesResult removeWrongRecordedInvoice(String domainName,int domain, String user, Integer accountEntryId) throws AonCoreException;

@@ -24,7 +24,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -130,9 +131,17 @@ public class JooqCertifica2 {
 			certifica2Info.setSuspensionCode(suspensionReasonCode);
 			certifica2Info.setSuspension(suspensionReason);
 			
-			Map<String, String> fieldsMap = createCertifica2PDFFieldsMap(certifica2Info);
+			Map<String, String> fieldsMap;
 			
-			return CertificaFill.exportCertEnterprisePDF(fieldsMap);
+			if (AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163"))
+				fieldsMap = createCertifica2AgrarianPDFFieldsMap(certifica2Info);
+			else
+				fieldsMap = createCertifica2PDFFieldsMap(certifica2Info);
+			
+			if (AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163"))
+				return CertificaFill.exportCertEnterpriseAgrarianPDF(fieldsMap);
+			else
+				return CertificaFill.exportCertEnterprisePDF(fieldsMap);
 		} catch (Exception e) {
 			return new byte[0];
 		}
@@ -216,6 +225,89 @@ public class JooqCertifica2 {
 		
 		return fieldMap;
 	}
+	
+	private static Map<String, String> createCertifica2AgrarianPDFFieldsMap(Certifica2Info certifica2Info) {
+		Map<String, String> fieldMap = new HashMap<>();
+		
+		fieldMap.put("03", certifica2Info.getRepresentativeName() + " " + certifica2Info.getRepresentativeSurname() + " con DNI o NIE " + certifica2Info.getRepresentativeDocument());
+		fieldMap.put("04", certifica2Info.getRepresentativeWork());
+		fieldMap.put("05", certifica2Info.getEnterpriseName());
+		fieldMap.put("06", certifica2Info.getCompleteCCC());
+		fieldMap.put("07", certifica2Info.getAddress());
+		fieldMap.put("08", certifica2Info.getCity());
+		fieldMap.put("09", certifica2Info.getZip());
+		fieldMap.put("010", certifica2Info.getGeozone());
+		fieldMap.put("011", certifica2Info.getCnaeCode());
+		fieldMap.put("012", certifica2Info.getCnae());
+		fieldMap.put("015", certifica2Info.getName() + " " + certifica2Info.getSurname());
+		fieldMap.put("016", certifica2Info.getDocument());
+		fieldMap.put("017", certifica2Info.getSSNumber());
+		fieldMap.put("018", certifica2Info.getContractType());
+		fieldMap.put("019", certifica2Info.getContractDuration() + " dias");
+		fieldMap.put("020", certifica2Info.getCnoCode());
+		fieldMap.put("021", certifica2Info.getCno());
+		fieldMap.put("025", dateFormat.format(certifica2Info.getStartDate()));
+		fieldMap.put("026", certifica2Info.getSuspensionCode());
+		fieldMap.put("028", certifica2Info.getSuspension());
+		fieldMap.put("029", dateFormat.format(certifica2Info.getEndDate()));
+		
+		Double totalDays = 0.00;
+		Double totalCgp = 0.00;
+		
+		Integer idx = 37;
+		for(Map<String, String> quoteData : certifica2Info.getQuoteDataList()) {
+			fieldMap.put(checkIdx(idx), quoteData.get("anioCtz"));
+			idx++;
+			fieldMap.put(checkIdx(idx), quoteData.get("monthCtz"));
+			idx++;
+			fieldMap.put(checkIdx(idx), certifica2Info.getQuoteGroup());
+			idx++;
+			
+			Double days = Double.parseDouble(quoteData.get("daysCtz"));
+			totalDays += days;
+			
+			if(AonStringUtils.isNotBlank(certifica2Info.getMdCtz()) && AonStringUtils.equalsIgnoreCase(certifica2Info.getMdCtz(), "2")) {
+				idx++;
+				fieldMap.put(checkIdx(idx), quoteData.get("daysCtz"));
+				idx++;
+			} else {
+				fieldMap.put(checkIdx(idx), quoteData.get("daysCtz"));
+				idx++;
+				idx++;
+			}
+			
+			Double bcd = Double.parseDouble(quoteData.get("bcd"));
+			totalCgp += bcd;
+			fieldMap.put(checkIdx(idx), quoteData.get("bcd"));
+			idx++;
+			idx++;
+			
+		}
+		
+		fieldMap.put("095", certifica2Info.getQuoteGroup());
+		if(AonStringUtils.isNotBlank(certifica2Info.getMdCtz()) && AonStringUtils.equalsIgnoreCase(certifica2Info.getMdCtz(), "2"))
+			fieldMap.put("094", certifica2Info.getSettleQuoteDays().toString());
+		else fieldMap.put("093", certifica2Info.getSettleQuoteDays().toString());
+		fieldMap.put("097", certifica2Info.getBaseUnemployment().toString());
+		
+		totalDays += certifica2Info.getSettleQuoteDays();
+		totalCgp += certifica2Info.getBaseUnemployment();
+		
+		if(AonStringUtils.isNotBlank(certifica2Info.getMdCtz()) && AonStringUtils.equalsIgnoreCase(certifica2Info.getMdCtz(), "2"))
+			fieldMap.put("099", totalDays.toString());
+		else fieldMap.put("098", totalDays.toString());
+		
+		fieldMap.put("0102", totalCgp.toString());
+		
+		fieldMap.put("101", certifica2Info.getGeozone());
+		
+		java.util.Date date = new java.util.Date();
+		fieldMap.put("102", dayDateFormat.format(date));
+		fieldMap.put("103", monthStrDateFormat.format(date));
+		fieldMap.put("104", yearDateFormat.format(date).substring(2, 4));
+		
+		return fieldMap;
+	}
 
 	private static String checkIdx(Integer idx) {
 		String idxStr = idx.toString();
@@ -283,7 +375,7 @@ public class JooqCertifica2 {
 		if (null == endDate)
 			throw new IllegalArgumentException("No existe fecha fin para este contrato");
 
-		Long contractDuration = getDaysBetween(startDate, endDate);
+		int contractDuration = getDaysBetween(startDate, endDate);
 
 		Record personRecord = dslContext.select().from(PERSON).where(PERSON.REGISTRY.eq(personId)).fetchOne();
 
@@ -340,7 +432,7 @@ public class JooqCertifica2 {
 		certifica2Info.setSecondSurname(secondSurName);
 		certifica2Info.setContractType(tc2);
 		certifica2Info.setQuoteGroup(quoteGroup);
-		certifica2Info.setContractDuration(contractDuration.intValue());
+		certifica2Info.setContractDuration(contractDuration);
 		certifica2Info.setProfesionalCategory(cnoCode);
 		certifica2Info.setCnoCode(cnoCode);
 		certifica2Info.setCno(cno);
@@ -391,6 +483,7 @@ public class JooqCertifica2 {
 		if(null != cnaeCodeInt) {
 			cnaeCode = cnaeCodeInt.toString();
 			cnae = dslContext.select(CNAE2009.TITLE).from(CNAE2009).where(CNAE2009.CODE.eq(cnaeCode)).fetchOne(CNAE2009.TITLE);
+			if(AonStringUtils.isBlank(cnae)) cnae = dslContext.select(CNAE2009.TITLE).from(CNAE2009).where(CNAE2009.ID.eq(cnaeCodeInt)).fetchOne(CNAE2009.TITLE);
 		}
 			
 		
@@ -526,14 +619,14 @@ public class JooqCertifica2 {
 			Date salaryStartDate = salary.get(SALARY.START_DATE);
 			Date salaryEndDate = salary.get(SALARY.END_DATE);
 
-			Long salaryDaysBetween = null;
+			int salaryDaysBetween = 0;
 			if (AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163")) {
 				if(AonStringUtils.isNotBlank(certifica2Info.getMdCtz()) && AonStringUtils.equalsIgnoreCase(certifica2Info.getMdCtz(), "2")) {
 					salaryDaysBetween = getAgrarianDays(dslContext, salaryId);
-					contractDuration += salaryDaysBetween.intValue();
+					contractDuration += salaryDaysBetween;
 				} else {
 					salaryDaysBetween = getDaysBetween(salaryStartDate, salaryEndDate);
-					contractDuration += salaryDaysBetween.intValue();
+					contractDuration += salaryDaysBetween;
 				}
 			} else
 				salaryDaysBetween = getDaysBetween(salaryStartDate, salaryEndDate);
@@ -546,20 +639,20 @@ public class JooqCertifica2 {
 
 			// Ya has cumplido los 180 dias de registro
 			if (maxDays + salaryDaysBetween > 180) {
-				Long restDays = salaryDaysBetween - (maxDays + salaryDaysBetween - 180);
+				int restDays = salaryDaysBetween - (maxDays + salaryDaysBetween - 180);
 				if(0 == restDays) continue;
 
 				certifica2Period = new Certifica2Period(yearDateFormat.format(salaryStartDate),
-						monthDateFormat.format(salaryStartDate), restDays.intValue(),
-						baseCGC / 30 * restDays.intValue(), baseCGP / 30 * restDays.intValue());
+						monthDateFormat.format(salaryStartDate), restDays,
+						baseCGC / 30 * restDays, baseCGP / 30 * restDays);
 
-				maxDays += salaryDaysBetween.intValue();
+				maxDays += salaryDaysBetween;
 
 			} else {
 				certifica2Period = new Certifica2Period(yearDateFormat.format(salaryStartDate),
-						monthDateFormat.format(salaryStartDate), salaryDaysBetween.intValue(), baseCGC, baseCGP);
+						monthDateFormat.format(salaryStartDate), salaryDaysBetween, baseCGC, baseCGP);
 
-				maxDays += salaryDaysBetween.intValue();
+				maxDays += salaryDaysBetween;
 			}
 
 			certifica2List.add(certifica2Period);
@@ -643,8 +736,15 @@ public class JooqCertifica2 {
 			if (null != holidaysRecord) {
 				baseCGC = settlementRecords.get(0).get(SALARY.CGC_BASE);
 				baseCGP = settlementRecords.get(0).get(SALARY.CGP_BASE);
-//				baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
-//				baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
+			}
+			
+			if(holidayDays == 0) {
+				Date settleEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
+				Date contractEndDate = dslContext.select(CONTRACT.END_DATE).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne(CONTRACT.END_DATE);
+				
+				if(null != contractEndDate)
+					holidayDays = DateUtils.getDaysBetween(contractEndDate, settleEndDate);
+				
 			}
 
 			settlementCertifica2Info = new Certifica2Period(null, null, holidayDays, baseCGC, baseCGP);
@@ -977,26 +1077,27 @@ public class JooqCertifica2 {
 	// ----------------------------------------------------- Get days between
 	// methods
 
-	private static Long getAgrarianDays(DSLContext dslContext, Integer salaryId) {
+	private static int getAgrarianDays(DSLContext dslContext, Integer salaryId) {
 		Result<Record> agrarianRecords = dslContext.select().from(SALARY_DATA).where(SALARY_DATA.SALARY.eq(salaryId))
 				.and(SALARY_DATA.NAME.eq("JORNADAS_REALES")).fetch();
 
-		Long agrarian = (long) 0;
+		int agrarian = 0;
 
 		if (agrarianRecords.isEmpty())
 			return agrarian;
 
 		for (Record agrarianRecord : agrarianRecords) {
-			Long itValue = Long.parseLong(agrarianRecord.get(SALARY_DATA.EXPRESSION));
+			int itValue = Integer.parseInt(agrarianRecord.get(SALARY_DATA.EXPRESSION));
 			agrarian += itValue;
 		}
 		return agrarian;
 	}
 
-	private static Long getDaysBetween(Date startDate, Date endDate) {
-		java.util.Date salaryStartDateJava = new java.util.Date(startDate.getTime());
-		java.util.Date salaryEndDateJava = new java.util.Date(endDate.getTime());
-		return Duration.between(salaryStartDateJava.toInstant(), salaryEndDateJava.toInstant()).toDays() + 1;
+	private static int getDaysBetween(Date startDate, Date endDate) {
+		LocalDate startDateLocale = LocalDate.of(startDate.getYear() + 1900, startDate.getMonth() + 1, startDate.getDate());
+        LocalDate endDateLocale = LocalDate.of(endDate.getYear() + 1900, endDate.getMonth() + 1, endDate.getDate());
+        Long daysBetween = ChronoUnit.DAYS.between(startDateLocale, endDateLocale) + 1;
+        return daysBetween.intValue();
 	}
 
 	// ----------------------------------------------------- Auxiliar methods

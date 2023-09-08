@@ -113,8 +113,7 @@ public class MODEL303 {
 		}
 	}
 
-	public static String getInfo(Occam occam, Mod303 mod303
-			,IModelScript<Mod303Key> script,FiscalModelKeyInfo infoKey) {
+	public static String getInfo(Occam occam, Mod303 mod303,IModelScript<Mod303Key> script,FiscalModelKeyInfo infoKey) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getInfo(ctx, mod303, script, infoKey);
 		}

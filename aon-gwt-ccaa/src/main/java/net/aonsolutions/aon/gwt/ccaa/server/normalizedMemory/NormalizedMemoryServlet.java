@@ -12,13 +12,11 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import javax.servlet.annotation.WebServlet;
 import javax.xml.bind.JAXBException;
 
-import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.mod200.api.FISCAL;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Enterprise;
@@ -32,12 +30,6 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositPreviousToCurrentConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.DepositType;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
@@ -46,23 +38,31 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
+import com.esferalia.aon.occam.mod200.api.FISCAL;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.d2_deposit.Mod2002015toD2;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.d2_deposit.Mod2002016toD2;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.d2_deposit.Mod2002017toD2;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.d2_deposit.Mod2002018toD2;
-import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
 import net.aonsolutions.aon.gwt.ccaa.client.INormalizedMemory;
 import net.aonsolutions.aon.gwt.ccaa.shared.MemoryFiles;
 import net.aonsolutions.aon.gwt.ccaa.shared.MemoryTemplate;
 
 @WebServlet(name = "D2Deposit", urlPatterns = { "/aon_gwt_aio/ms/gwt_deposit" })
-public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements INormalizedMemory {
+public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet implements INormalizedMemory {
 
 	/**
 	 * 
@@ -158,6 +158,14 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 			
 			if(year != null && year != -1  && !schema.getCabecera().getEjercicio().equals(BigInteger.valueOf(year))) {
 				saveDeposit(aonData, map, year);
+			}
+			
+			if(schema.getCabecera().getTipoCuestionario().equalsIgnoreCase("pymes")) {
+				String a = map.get(D2DepositFooterKey.PR8080852.getCode());
+				updateSchemaMemory(aonData, "1".equals(a), D2DepositFooterKey.PR8080852.getCode(), year);
+			} else {
+				String a = map.get(D2DepositFooterKey.PR8080805.getCode());
+				updateSchemaMemory(aonData, "1".equals(a), D2DepositFooterKey.PR8080805.getCode(), year);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -766,7 +774,6 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 				.and(f.getTypeProperty().eq((byte) 17))
 				.and(f.getAttachDateProperty().eq(DBConsults.newAttachDate(year)))
 			, AttachType.REGISTRY);
-	
 		return Utils.readXml(attach.getData());
 	}	
 	
@@ -925,4 +932,33 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		}
 		return map;
 	}
+
+	@Override
+	public void upload(AonData aonData, String data, String type, Integer year) {
+		String domainName = aonData.getDomain().getName();
+		Integer domainId = aonData.getDomain().getId();
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+		String login = aonData.getUser().getLogin();
+		Esquema schema = Utils.readXml(fileData);	
+    	try {
+			byte[] b = Utils.writeXml(schema);
+			DBConsults.insertDeposit(domainName, b, domainId, year, login);
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void uploadDocument(AonData aonData, MemoryFiles mf, String data, String type) {
+		MimeType m = MimeType.safeValueFromContenType(type);
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+		if(mf.getId() != null && mf.getId() > 0){			
+			DBConsults.updateMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(),
+					m.value(), fileData, mf.getId());
+		} else {
+			DBConsults.insertMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(),
+					m.value(), fileData, mf.getName(), aonData.getUser().getLogin());
+		}       
+	}
+	
 }

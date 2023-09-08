@@ -4,17 +4,6 @@
 
 	<ui:style type="com.esferalia.aon.gwt.common.client.widget.solutions.AonTrashAgreementsToolbar.MyStyle">
 	
-		.toolbar{
-			width: 100%;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			height: 40px;
-			border-top: 0px none;
-			border-bottom: 1px solid rgb(221, 221, 221);
-			font-size: 16px;
-		}
-		
 		.headerSection{
 			display: flex;
 			align-items: center;
@@ -34,7 +23,7 @@
 		
 	</ui:style>
 
-	<g:HTMLPanel debugId='buttonBarBeta' styleName="{style.toolbar}" ui:field='toolbar'>
+	<g:HTMLPanel debugId='buttonBarBeta' ui:field='toolbar'>
 		<g:HTMLPanel styleName="{style.headerSection}" ui:field="headerSection"></g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.toolsSection}" ui:field="toolsSection"></g:HTMLPanel>
 	</g:HTMLPanel>

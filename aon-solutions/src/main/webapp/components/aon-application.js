@@ -1,5 +1,5 @@
 import { AonElement } from "./AonElement.js";
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../environments/environments.js";3
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../environments/environments.js";
 import { AonIconButton } from "./aon-icon-button.js";
 import { AonIcon } from "./aon-icon.js";
 import "./aon-toolbar.js";
@@ -10,6 +10,7 @@ import "./aon-dialog-menu.js";
 import "./aon-toast.js";
 
 export class AonApplication extends AonElement {
+  
   SIDENAV;
   TOOLBAR;
   LOADER;
@@ -131,7 +132,7 @@ export class AonApplication extends AonElement {
 
       <div class="${this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex'}">
         <!-- AON APPLICATION MENU (SIDENAV) -->
-         <div id="${this.SIDENAV}" class="${this.isMobile() ? 'aonMobileSidenav' :'aonSidenav'}"></div>
+         <div id="${this.SIDENAV}" class="${this.isMobile() ? 'aonMobileSidenav' : 'aonSidenavBeta'}"></div>
 
 			   <!-- AON APPLICATION CONTENT -->
 			   <div id="${this.CONTENT}"></div>
@@ -160,7 +161,7 @@ export class AonApplication extends AonElement {
     content.className =
       this.isMobile() || this.isSidenavBlock()
         ? "aonMobileContent"
-        : "aonContent";
+        : CSS.AON_CONTENT_BETA;
     if(this.isMobile() && this.isSab()){
       content.style.bottom = '69px';
     }
@@ -281,7 +282,7 @@ export class AonApplication extends AonElement {
     div.style.height = '59px';
     div.style.padding = '10px';
     div.style.paddingLeft = '20px';
-    div.style.borderBottom = '1px solid #ebebeb';
+    if(!this.isBeta()) div.style.borderBottom = '1px solid #ebebeb';
 
     let sidenav = this.isMobile()
       ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
@@ -302,7 +303,6 @@ export class AonApplication extends AonElement {
 
     let div = this.createElement(TAG.DIV);
     div.style.paddingBottom = "25px";
-    div.style.borderBottom = "1px solid #ebebeb";
     sidenav.appendChild(div);
 
     let sidenavTitle = this.createElement(TAG.DIV);
@@ -322,7 +322,6 @@ export class AonApplication extends AonElement {
     if(sidenav){
       let div = this.createElement(TAG.DIV);
       div.style.paddingBottom = "25px";
-      div.style.borderBottom = "1px solid #ebebeb";
       sidenav.appendChild(div);
 
       let sidenavTitle = this.createElement(TAG.DIV);
@@ -345,8 +344,6 @@ export class AonApplication extends AonElement {
     let div = this.createElement(TAG.DIV);
     div.id = sidenav.id + data.id;
     div.style.paddingBottom = "10px";
-    div.style.borderBottom = "1px solid #ebebeb";
-    div.style.backgroundColor = "#fff";
     sidenav.appendChild(div);
 
     if (newButton && !this.isMobile()) {
@@ -559,17 +556,14 @@ export class AonApplication extends AonElement {
 
       if(!option.options || option.clickable){
         li.addEventListener(EVENT.CLICK, () => {
-          let backgroundEl = li.style.backgroundColor;
           // ul
           this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
             if (el.id !== sidenavId)
-              el.style.backgroundColor = "transparent";
-            else {
-              // console.log(el.style.backgroundColor);
-            }
+              el.style.removeProperty("background-color");
+              el.style.removeProperty("font-weight");
           });
-        
-          li.style.backgroundColor = (!backgroundEl || backgroundEl.indexOf("transparent")>=0) ? "#ddd" : "transparent";
+          li.style.fontWeight= "bold"
+          li.style.backgroundColor = "#d3e3fd";
 
           this.selected = id;
           let toolbar = this.getElement(this.TOOLBAR);
@@ -643,7 +637,7 @@ export class AonApplication extends AonElement {
   removeBackgroundSidenavAll(){
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((li) => {
-      li.style.backgroundColor = 'transparent';
+      li.style.backgroundColor = null;
     });
   }
 
@@ -651,7 +645,7 @@ export class AonApplication extends AonElement {
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     const li =  this.getElement(sidenavId + id);
     if(li){
-      li.style.backgroundColor = "#ddd";
+      li.style.backgroundColor = "#d3e3fd";
     }
   }
 
@@ -708,7 +702,7 @@ export class AonApplication extends AonElement {
       toolbar.setAttribute("option", title);
       //----------ADD COLOR SIDENAV SELECTED---------
       let li = this.getElement(this.SIDENAV+title);
-      if(li) li.style.backgroundColor = "#ddd";  
+      if(li) li.style.backgroundColor = "#d3e3fd";  
     } 
   }
 

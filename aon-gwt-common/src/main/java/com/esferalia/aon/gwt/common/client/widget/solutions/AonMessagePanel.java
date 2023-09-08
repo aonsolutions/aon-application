@@ -19,6 +19,7 @@ public class AonMessagePanel extends FlowPanel {
 	
 	private HTMLPanel closePanel;
 	private HTMLPanel messagePanel;
+	private static Panel panel;
 	
 	// ------------------------------------------------ Constructor
 	
@@ -40,7 +41,9 @@ public class AonMessagePanel extends FlowPanel {
 		closePanel.addStyleName(AON.CSS.aonMessageClosePanel());
 		
 		AonButton closeButton = new AonButton("Cerrar", AON.CSS.aonIconCloseWhite());
-		closeButton.addClickHandler(e -> fadeOut(this)/*setVisible(false)*/);
+		closeButton.addClickHandler(e -> {
+			fadeOut(panel, this);
+		});
 		closeButton.addStyleName(AON.CSS.aonMessageClose());
 		closePanel.add(closeButton);
 		add(closePanel);
@@ -54,28 +57,32 @@ public class AonMessagePanel extends FlowPanel {
 	
 	// ------------------------------------------------ Show Error
 	
-	public static void showError(Panel panel, String ...messages) {
+	public static void showError(Panel panelIn, String ...messages) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonErrorMessagePanel();
 		fillMessages(aonMessagePanel, messages);
 		showAndAddMainPanel(panel, aonMessagePanel);
 	}
 	
-	public static void showError(Panel panel, Map<String, String> messages) {
+	public static void showError(Panel panelIn, Map<String, String> messages) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonErrorMessagePanel();
 		fillMessages(aonMessagePanel, messages);
 		showAndAddMainPanel(panel, aonMessagePanel);
 	}
 	
-	public static void showError(Panel panel, Widget errorWidget) {
+	public static void showError(Panel panelIn, Widget errorWidget) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonErrorMessagePanel();
 		addMessageWidget(aonMessagePanel, errorWidget);
 		showAndAddMainPanel(panel, aonMessagePanel);
 	}
 	
-	public static void showError(Panel panel, String html) {
+	public static void showError(Panel panelIn, String html) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonErrorMessagePanel();
 		addMessageWidget(aonMessagePanel, new HTMLPanel(html));
@@ -92,32 +99,36 @@ public class AonMessagePanel extends FlowPanel {
 	// ------------------------------------------------ Show Info
 	
 	
-	public static void showInfo(Panel panel, String ...messages) {
+	public static void showInfo(Panel panelIn, String ...messages) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonInfoMessagePanel();
 		fillMessages(aonMessagePanel, messages);
-		showAndAddMainPanelTimer(panel, aonMessagePanel);
+		showAndAddMainPanelTimerLong(panel, aonMessagePanel);
 	}
 	
-	public static void showInfo(Panel panel, Map<String, String> messages) {
+	public static void showInfo(Panel panelIn, Map<String, String> messages) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonInfoMessagePanel();
 		fillMessages(aonMessagePanel, messages);
-		showAndAddMainPanelTimer(panel, aonMessagePanel);
+		showAndAddMainPanelTimerLong(panel, aonMessagePanel);
 	}
 	
-	public static void showInfo(Panel panel, Widget errorWidget) {
+	public static void showInfo(Panel panelIn, Widget errorWidget) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonInfoMessagePanel();
 		addMessageWidget(aonMessagePanel, errorWidget);
-		showAndAddMainPanelTimer(panel, aonMessagePanel);
+		showAndAddMainPanelTimerLong(panel, aonMessagePanel);
 	}
 	
-	public static void showInfo(Panel panel, String html) {
+	public static void showInfo(Panel panelIn, String html) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonInfoMessagePanel();
 		addMessageWidget(aonMessagePanel, new HTMLPanel(html));
-		showAndAddMainPanelTimer(panel, aonMessagePanel);
+		showAndAddMainPanelTimerLong(panel, aonMessagePanel);
 	}
 	
 	private static AonMessagePanel getAonInfoMessagePanel() {
@@ -129,28 +140,32 @@ public class AonMessagePanel extends FlowPanel {
 	
 	// ------------------------------------------------ Show Warning
 	
-	public static void showWarning(Panel panel, String ...messages) {
+	public static void showWarning(Panel panelIn, String ...messages) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonWarninMessagePanel();
 		fillMessages(aonMessagePanel, messages);
 		showAndAddMainPanel(panel, aonMessagePanel);
 	}
 	
-	public static void showWarning(Panel panel, Map<String, String> messages) {
+	public static void showWarning(Panel panelIn, Map<String, String> messages) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonWarninMessagePanel();
 		fillMessages(aonMessagePanel, messages);
 		showAndAddMainPanel(panel, aonMessagePanel);
 	}
 	
-	public static void showWarning(Panel panel, Widget errorWidget) {
+	public static void showWarning(Panel panelIn, Widget errorWidget) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonWarninMessagePanel();
 		addMessageWidget(aonMessagePanel, errorWidget);
 		showAndAddMainPanel(panel, aonMessagePanel);
 	}
 	
-	public static void showWarning(Panel panel, String html) {
+	public static void showWarning(Panel panelIn, String html) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonWarninMessagePanel();
 		addMessageWidget(aonMessagePanel, new HTMLPanel(html));
@@ -166,28 +181,32 @@ public class AonMessagePanel extends FlowPanel {
 	
 	// ------------------------------------------------ Show Success
 	
-	public static void showSuccess(Panel panel, String ...messages) {
+	public static void showSuccess(Panel panelIn, String ...messages) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonSuccessMessagePanel();
 		fillMessages(aonMessagePanel, messages);
 		showAndAddMainPanelTimer(panel, aonMessagePanel);
 	}
 
-	public static void showSuccess(Panel panel, Map<String, String> messages) {
+	public static void showSuccess(Panel panelIn, Map<String, String> messages) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonSuccessMessagePanel();
 		fillMessages(aonMessagePanel, messages);
 		showAndAddMainPanelTimer(panel, aonMessagePanel);
 	}
 	
-	public static void showSuccess(Panel panel, Widget errorWidget) {
+	public static void showSuccess(Panel panelIn, Widget errorWidget) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonSuccessMessagePanel();
 		addMessageWidget(aonMessagePanel, errorWidget);
 		showAndAddMainPanelTimer(panel, aonMessagePanel);
 	}
 	
-	public static void showSuccess(Panel panel, String html) {
+	public static void showSuccess(Panel panelIn, String html) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonSuccessMessagePanel();
 		addMessageWidget(aonMessagePanel, new HTMLPanel(html));
@@ -203,7 +222,8 @@ public class AonMessagePanel extends FlowPanel {
 	
 	// ------------------------------------------------ Show Loading
 	
-	public static void showLoading(Panel panel, String message) {
+	public static void showLoading(Panel panelIn, String message) {
+		panel = panelIn;
 		clearEntryPanel(panel);
 		AonMessagePanel aonMessagePanel = getAonInfoMessagePanel();
 		fillLoadingMessages(aonMessagePanel, message);
@@ -214,6 +234,7 @@ public class AonMessagePanel extends FlowPanel {
 	
 	public static void hideMessage(Panel panel) {
 		clearEntryPanel(panel);
+		panel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------ Auxiliar Methods
@@ -228,6 +249,7 @@ public class AonMessagePanel extends FlowPanel {
 	
 	private static void showAndAddMainPanel(Panel panel, AonMessagePanel aonMessagePanel) {
 		panel.add(aonMessagePanel);
+		panel.getElement().getStyle().clearDisplay();
 		fadeIn(aonMessagePanel);
 	}
 	
@@ -237,17 +259,31 @@ public class AonMessagePanel extends FlowPanel {
 	
 	private static void showAndAddMainPanelTimer(Panel panel, AonMessagePanel aonMessagePanel) {
 		panel.add(aonMessagePanel);
+		panel.getElement().getStyle().clearDisplay();
 		fadeIn(aonMessagePanel);
 		Timer timer = new Timer() {
 		     @Override
 		     public void run() {
-		    	 fadeOut(aonMessagePanel);
+		    	 fadeOut(panel, aonMessagePanel);
 		     }
 		};
 		timer.schedule(2500);
 	}
 	
-	private static void fadeOut(AonMessagePanel aonMessagePanel) {
+	private static void showAndAddMainPanelTimerLong(Panel panel, AonMessagePanel aonMessagePanel) {
+		panel.add(aonMessagePanel);
+		panel.getElement().getStyle().clearDisplay();
+		fadeIn(aonMessagePanel);
+		Timer timer = new Timer() {
+		     @Override
+		     public void run() {
+		    	 fadeOut(panel, aonMessagePanel);
+		     }
+		};
+		timer.schedule(3500);
+	}
+	
+	private static void fadeOut(Panel panel, AonMessagePanel aonMessagePanel) {
 		new Animation() {
 
 	        @Override
@@ -259,6 +295,7 @@ public class AonMessagePanel extends FlowPanel {
 	        protected void onComplete() {
 	        	aonMessagePanel.getElement().getStyle().setDisplay(Display.NONE);
 	        	aonMessagePanel.removeFromParent();
+	        	panel.getElement().getStyle().setDisplay(Display.NONE);
 	        }
 	    }.run( 400 );
 	}
@@ -293,15 +330,18 @@ public class AonMessagePanel extends FlowPanel {
 	}
 	
 	private static void fillMessages(AonMessagePanel aonMessagePanel, Map<String, String> messages) {
+		int index = 0;
 		for(Entry<String, String> entry : messages.entrySet()) {
 			HTMLPanel messageRowPanel = new HTMLPanel("");
 			messageRowPanel.addStyleName(AON.CSS.aonMessageRow());
 			Label titleText = new Label(entry.getKey());
 			titleText.addStyleName(AON.CSS.aonMessageTitle());
 			Label messageText = new Label(entry.getValue());
+			messageText.ensureDebugId("message_" + index);
 			messageRowPanel.add(titleText);
 			messageRowPanel.add(messageText);
 			aonMessagePanel.messagePanel.add(messageRowPanel);
+			index++;
 		}
 	}
 	

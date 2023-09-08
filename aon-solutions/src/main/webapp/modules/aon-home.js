@@ -3,7 +3,7 @@ import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonHeader } from './aon-header.js';
 import { AonMenu } from './aon-menu.js';
 import { AonNewMobileHeader } from './aon-new-mobile-header.js';
-import { AonNewMobileMenu } from './aon-new-mobile-menu.js';
+import { AonMobileMenu } from './aon-mobile-menu.js';
 
 import { CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js'; 
 
@@ -58,6 +58,7 @@ export class AonHome extends AonElement {
 		aonShowMenuButton.icon = MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
 		aonShowMenuButton.noHover = true;
 		aonShowMenuButton.title = "Mostrar Menu";
+		aonShowMenuButton.style.display = 'none';
 		aonShowMenu.appendChild(aonShowMenuButton);
 		this.appendChild(aonShowMenu);
 
@@ -84,7 +85,7 @@ export class AonHome extends AonElement {
 		rootPanel.className = CSS.AON_MOBILE_ROOT_PANEL;
 		this.appendChild(rootPanel);
 
-		let aonMobileMenu = new AonNewMobileMenu();
+		let aonMobileMenu = new AonMobileMenu();
 		aonMobileMenu.id = this.AON_MOBILE_MENU;
 		this.appendChild(aonMobileMenu);
 	}

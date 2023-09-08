@@ -78,7 +78,7 @@ public enum FiscalModelKeyInfo implements Serializable {
 	, MODEL_SALARY_IRPF_BREAKDOWN {
 		@Override
 		public String getLabel() {
-			return "Ver desglose de retenciones en facturas";
+			return "Ver desglose de retenciones en n\u00F3minas";
 		}
 		@Override
 		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {

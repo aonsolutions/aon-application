@@ -1,17 +1,16 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -28,13 +27,13 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
-public class ActivityDraft extends Composite{
+public abstract class ActivityDraft extends Composite{
 	
 	// ---------------------------------------------- Activity
 
@@ -43,28 +42,32 @@ public class ActivityDraft extends Composite{
 		@Override
 		public void onActivityDescriptionChange() {
 			activityDraftObject.setActivityDescription(activityDescription.getValue());
+			toolbar.setTitle(activityDescription.getValue());
+			setHasChange(true);
 		}
 
 		@Override
-		public void onActivityCNAE2009Change() {
-			String cnae2009Value = activityCNAE2009.getValue();
-			Optional<Entry<Integer, String>> cnae2009Opt = activityDraftObject.getAllCNAE2009().entrySet().stream().filter(entry -> AonStringUtils.equalsIgnoreCase(entry.getValue(), cnae2009Value)).findAny();
-			if(cnae2009Opt.isPresent()) activityDraftObject.setActivityCNAE2009(cnae2009Opt.get());
+		public void onActivityCNAE2009Change(Integer cnaeId, String cnaeCode, String cnaeTitle) {
+			 activityDraftObject.setActivityCNAE2009(cnaeId, cnaeCode, cnaeTitle);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onActivityStartDateChange() {
 			activityDraftObject.setActivityStartDate(startDate.getValue());
+			setHasChange(true);
 		}
 
 		@Override
 		public void onActivityEndDateChange() {
 			activityDraftObject.setActivityEndDate(endDate.getValue());
+			setHasChange(true);
 		}
 
 		@Override
 		public void onActivityActiveChange() {
 			activityDraftObject.setActivityIsPrincipal(activityActive.getValue());
+			setHasChange(true);
 		}
 		
 		@Override
@@ -74,42 +77,69 @@ public class ActivityDraft extends Composite{
 		
 		@Override
 		public void onInsertRows() {
-			activityDraftObject.getCCCs().forEach(ccc -> this.cccWidget.insertRow(ccc));
+			if(activityDraftObject.getCCCs().isEmpty())
+				activity.showCCCMessage();
+			else {
+				activity.showCCCTable();
+				activityDraftObject.getCCCs().forEach(ccc -> this.cccWidget.insertRow(ccc));
+			}
+			
 			activity.hideActivityColumn();
 		}
 
 		@Override
 		public void onDeleteCCC(Integer cccId) {
 			activityDraftObject.deleteCCC(cccId);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onInsertCCC(EnterpriseCCC ccc) {
 			activityDraftObject.insertCCC(ccc);
+			setHasChange(true);
 		}
 
 		@Override
 		public Set<Entry<Integer, String>> getActivities() {
 			return activityDraftObject.getActivities();
 		}
+		
+		@Override
+		public List<EnterpriseCCC> getEnterpriseCCCs() {
+			return activityDraftObject.getActiveCCCs();
+		}
+		
+		@Override
+		public void fireErrorMessage(Map<String, String> messages) {
+			showErrorMessage(messages);
+		}
 
 		@Override
-		public void fireWarningMessage(Map<String, String> warningMap) {
-			AonMessagePanel.showWarning(messagePanel, warningMap);
+		public void fireWarningMessage(Map<String, String> messages) {
+			showWarningMessage(messages);
+			
+			// Need to create specific method, but this fire when file fail loading
+			setPDFLoadedEnsureDebugId("pdfNotLoaded");
+		}
+		
+		@Override
+		public void fireInfoMessage(Map<String, String> messages) {
+			showInfoMessage(messages);
 		}
 
 		@Override
 		protected void fireLoadingMessage(String message) {
-			AonMessagePanel.showLoading(messagePanel, message);
+			showLoadingMessage(message);
 		}
 
 		@Override
-		protected void hideMessage() {
-			AonMessagePanel.hideMessage(messagePanel);
+		protected void fireHideMessage() {
+			hideMessage();
 		}
 
 		@Override
 		public void showPDF(String dataURI, boolean isLaboralLife) {
+			setPDFLoadedEnsureDebugId("pdfLoaded");
 			showPdf(isLaboralLife);
 			pdfViewer.open(dataURI);
 		}
@@ -142,9 +172,6 @@ public class ActivityDraft extends Composite{
 	AonToolbar toolbarPDFViewer;
 	
 	@UiField
-	HTMLPanel messagePanel;
-	
-	@UiField
 	DeckPanel mainDeckPanel;
 	
 	@UiField
@@ -162,6 +189,13 @@ public class ActivityDraft extends Composite{
 	private ActivityDraftObject activityDraftObject;
 	
 	private Activity activity;
+	
+	private AonToolbarButton acceptButton;
+	private AonToolbarButton undoAllButton;
+	
+	private boolean hasChange;
+	
+	private Label pdfLoaded;
 	
 	// ---------------------------------------------- Constructor
 
@@ -181,7 +215,7 @@ public class ActivityDraft extends Composite{
 		
 		dockLayoutPanel.addStyleName(style.container());
 
-		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 170.00, Unit.PX);
+		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 185.00, Unit.PX);
 		
 		activity.setActivityDraftCCCHeight();
 		
@@ -198,23 +232,15 @@ public class ActivityDraft extends Composite{
 	private void initializeActivity() {
 		activityDraftObject.initializeActivity(
 				r -> {
-					initSuggestBox();
+					activity.initializeView();
 					fillActivityInfo();
 					activity.cccWidget.setDomain(activityDraftObject.getDomain());
-					activity.cccWidget.resetPreview();
 					activity.onInsertRows();
+					setHasChange(false);
+					toolbar.setTitle(activityDraftObject.getActivityDescription());
+					hideMessage();
 				}, t -> {}
 			);
-	}
-	
-	private void initSuggestBox() {
-		List<String> cnae2009Suggest = new ArrayList<>();
-		for(Entry<Integer, String> entry : activityDraftObject.getAllCNAE2009().entrySet())
-			cnae2009Suggest.add(entry.getValue());
-	
-		MultiWordSuggestOracle orclCNAE2009 = (MultiWordSuggestOracle) activity.activityCNAE2009.getSuggestOracle();
-		orclCNAE2009.addAll(cnae2009Suggest);
-		activity.activityCNAE2009.setAutoSelectEnabled(true);
 	}
 	
 	private void fillActivityInfo() {
@@ -229,13 +255,40 @@ public class ActivityDraft extends Composite{
 	
 	private void getToolbarPanel() {
 		
-		AonToolbarButton accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		accept.addClickHandler(e -> onAccept());
-		toolbar.add(accept);
+		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		acceptButton.addClickHandler(e -> onAccept());
+		acceptButton.ensureDebugId("activityAcceptBtn");
+		toolbar.add(acceptButton);
+		
+		undoAllButton = new AonToolbarButton( AON.MSG.undo() + " todo", AON.CSS.aonIconUndoAll() );
+		undoAllButton.addClickHandler(e -> {
+			AonDialog confirmDialog =  new AonDialog("Restaurar CCCs", new HTMLPanel("\u00bfDesea realmente deshacer los cambios realizados sobre la actividad <b>" + activityDraftObject.getActivityDescription() + "</b>\u003f <br>Este proceso es irreversible."));
+			confirmDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do
+				}
+				
+				@Override
+				public void onAccept() {
+					showLoadingMessage("Deshaciendo los cambios realizados ...");
+					initializeActivity();
+				}
+			});
+		});
+		undoAllButton.ensureDebugId("undoAllBtn");
+		toolbar.add(undoAllButton);
 		
 		AonToolbarButton checkUpdateCert = new AonToolbarButton("Cert. de estar al corriente con TGSS", AON.CSS.aonIconTgss() );
+		checkUpdateCert.ensureDebugId("checkUpdateCert");
 		checkUpdateCert.addClickHandler(e -> onCheckUpdateCert());
 		toolbar.add(checkUpdateCert);
+		
+		AonToolbarButton createCCCBtn = new AonToolbarButton(AON.MSG.newAction() + " CCC", AON.CSS.aonIconAdd() );
+		createCCCBtn.addClickHandler(e -> activity.onAddNewCCC());
+		createCCCBtn.ensureDebugId("createCCCBtn");
+		toolbar.add(createCCCBtn);
 	}
 	
 	// ------------------------------------------------- Toolbar PDFViewer panel
@@ -243,53 +296,69 @@ public class ActivityDraft extends Composite{
 	private AonToolbar getToolbarPDFViewerPanel() {
 
 		AonToolbarButton closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconBack());
-		closePDF.addClickHandler(e -> onClosePDF());
+		closePDF.ensureDebugId("closePDFViewerBtn");
+		closePDF.addClickHandler(e -> {
+			setPDFLoadedEnsureDebugId("pdfNotLoaded");
+			onClosePDF();
+		});
 		toolbarPDFViewer.add(closePDF);
 		
+		pdfLoaded = new Label("");
+		setPDFLoadedEnsureDebugId("pdfNotLoaded");
+		toolbarPDFViewer.add(pdfLoaded);
+		
 		return toolbarPDFViewer;
+	}
+	
+	public void setPDFLoadedEnsureDebugId(String debugId) {
+		this.pdfLoaded.ensureDebugId(debugId);
 	}
 	
 	// ---------------------------------------------- Toolbar.Methods
 
 	private void onAccept() {
+		showLoadingMessage("Guardando los cambios realizados en la actividad " + activityDraftObject.getActivityDescription() + " ...");
 		if(checkIfSaveIsPossible()) updateActivity();
 	}
 
 	private void updateActivity() {
 		activityDraftObject.updateActivity(
-			s -> reloadActivity(),
+			s -> {
+				activityDraftObject.initializeActivity(
+						r -> {
+							fillActivityInfo();
+							activity.cccWidget.setDomain(activityDraftObject.getDomain());
+							activity.cccWidget.resetPreview();
+							activity.onInsertRows();
+							setHasChange(false);
+							toolbar.setTitle(activityDraftObject.getActivityDescription());
+							
+							showSuccessMessage(createMapMessage("Actividad actualizada", "Los cambios realizados se han guardado correctamente"));
+						}, t -> {}
+					);
+			},
 			f -> {}
 		);
 	}
-	
-	private void reloadActivity() {
-		initializeActivity();
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put("Actividad actualizada", "Los cambios realizados se han guardado correctamente");
-		AonMessagePanel.showSuccess(messagePanel, successMap);
-	}
 
 	private boolean checkIfSaveIsPossible() {
-		return !AonStringUtils.isBlank(activity.activityDescription.getValue()) && 
-			!AonStringUtils.isBlank(activity.activityCNAE2009.getValue()) && 
-			!AonStringUtils.equalsIgnoreCase(activity.activityCNAE2009.getValue(), "-");
+		return !AonStringUtils.isBlank(activity.activityDescription.getValue());
 	}
 	
 	// ---------------------------------------------- Toolbar.Methods TGSS
 	
 	public void onCheckUpdateCert() {
-		AonMessagePanel.showLoading(messagePanel, "Obteniendo Cert. de estar al corriente con TGSS ...");
+		showLoadingMessage("Obteniendo Cert. de estar al corriente con TGSS ...");
 		Pair<String, String> completeCCC = activityDraftObject.getPrincipalAccount();
 		
 		activityDraftObject.getUpdateCert(completeCCC.getKey(), completeCCC.getValue(),
 				dataURI -> {
 					showPdf(false);
+					setPDFLoadedEnsureDebugId("pdfLoaded");
 					pdfViewer.open(dataURI);
-					AonMessagePanel.hideMessage(messagePanel);
+					hideMessage();
 				}, f -> {
-					Map<String, String> warningMap = new HashMap<>();
-					warningMap.put("Error obtenci\u00f3n TGSS", f.getMessage());
-					AonMessagePanel.showWarning(messagePanel, warningMap);
+					showWarningMessage(createMapMessage("Error obtenci\u00f3n TGSS", f.getMessage()));
 				});
 	}
 	
@@ -320,7 +389,7 @@ public class ActivityDraft extends Composite{
 			monthListBox.setSelected(DateUtils.getFirstDayOfMonth(), true);
 			monthListBox.setWidth("200px");
 			toolbarPDFViewer.add(monthListBox);
-		} else if(!isLaboralLife && toolbarPDFViewer.getButtonContainer().getWidgetCount() > 1)
+		} else if(!isLaboralLife && toolbarPDFViewer.getButtonContainer().getWidgetCount() > 2)
 			toolbarPDFViewer.getButtonContainer().remove(toolbarPDFViewer.getButtonContainer().getWidgetCount()-1);
 		
 	}
@@ -328,5 +397,23 @@ public class ActivityDraft extends Composite{
 	private void onClosePDF() {
 		showActivity();
 	}
+	
+	private void setHasChange(boolean hasChange) {
+		this.hasChange = hasChange;
+		acceptButton.setEnabled(this.hasChange);
+		undoAllButton.setEnabled(this.hasChange);
+	}
+	
+	@SuppressWarnings("serial")
+	private Map<String, String> createMapMessage(String title, String message) {
+		return new HashMap<String, String>() {{ put(title, message); }};
+	}
+	
+	protected abstract void showSuccessMessage(Map<String, String> messages);
+	protected abstract void showErrorMessage(Map<String, String> messages);
+	protected abstract void showWarningMessage(Map<String, String> messages);
+	protected abstract void showInfoMessage(Map<String, String> messages);
+	protected abstract void showLoadingMessage(String message);
+	protected abstract void hideMessage();
 	
 }

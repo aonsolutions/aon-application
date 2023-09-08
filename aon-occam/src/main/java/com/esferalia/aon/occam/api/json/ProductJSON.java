@@ -34,6 +34,24 @@ public class ProductJSON {
 	
 	public static Product fromJSON(JSONObject json) {
 		Domain domain = DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN));
+		if(domain == null) domain = new Domain(); 
+		Tax vat = new Tax()
+			.setName(JsonUtils.getdouble(json, IJsonNames.VAT) + " %")
+			.setType(TaxType.VAT)
+			.setStartDate(new Date())
+			.setSurcharge(0)
+			.setPercentage(JsonUtils.getdouble(json, IJsonNames.VAT));
+		Tax retention = new Tax()
+			.setName(JsonUtils.getdouble(json, IJsonNames.RETENTION) + " %")
+			.setType(TaxType.RETENTION)
+			.setSurcharge(0)
+			.setStartDate(new Date())
+			.setPercentage(JsonUtils.getdouble(json, IJsonNames.RETENTION));
+		
+		if(domain.getId() != null) {
+			vat.setDomain(domain.getId());
+			retention.setDomain(domain.getId());
+		}
 		return new Product()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(domain)
@@ -44,20 +62,8 @@ public class ProductJSON {
 				.setType(ProductType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
 				.setKind(ProductKind.safeValueOf(JsonUtils.getString(json, IJsonNames.KIND)))
 				.setStatus(ProductStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.STATUS)))
-				.setVat(new Tax()
-					.setDomain(domain.getId())
-					.setName(JsonUtils.getdouble(json, IJsonNames.VAT) + " %")
-					.setType(TaxType.VAT)
-					.setStartDate(new Date())
-					.setSurcharge(0)
-					.setPercentage(JsonUtils.getdouble(json, IJsonNames.VAT)))
-				.setRetention(new Tax()
-					.setDomain(domain.getId())
-					.setName(JsonUtils.getdouble(json, IJsonNames.RETENTION) + " %")
-					.setType(TaxType.RETENTION)
-					.setSurcharge(0)
-					.setStartDate(new Date())
-					.setPercentage(JsonUtils.getdouble(json, IJsonNames.RETENTION)))
+				.setVat(vat)
+				.setRetention(retention)
 				.setInventoriable(JsonUtils.getboolean(json, IJsonNames.INVENTORIABLE))
 				.setSerializable(JsonUtils.getboolean(json, IJsonNames.SERIALIZABLE))
 				.setLotable(JsonUtils.getboolean(json, IJsonNames.LOTABLE))
@@ -67,6 +73,8 @@ public class ProductJSON {
 				.setPackaged(JsonUtils.getboolean(json, IJsonNames.PACKAGED))
 				.setSalesAccount(new Account().setId(JsonUtils.getInteger(json, IJsonNames.SALES_ACCOUNT)))
 				.setPurchaseAccount(new Account().setId(JsonUtils.getInteger(json, IJsonNames.PURCHASE_ACCOUNT)))
+				.setPerishable(JsonUtils.getboolean(json, IJsonNames.PERISHABLE))
+				.setDaysToExpire(JsonUtils.getInteger(json, IJsonNames.DAYS_TO_EXPIRE))
 				.setCreationUser(JsonUtils.getString(json, IJsonNames.CREATION_USER))
 				.setCreationDate(JsonUtils.getDate(json, IJsonNames.CREATION_DATE))
 				.setModificationUser(JsonUtils.getString(json, IJsonNames.MODIFICATION_USER))
@@ -106,6 +114,8 @@ public class ProductJSON {
 				.put(IJsonNames.PACKAGED, product.isPackaged())
 				.put(IJsonNames.SALES_ACCOUNT, AccountJSON.toJSON(product.getSalesAccount()))
 				.put(IJsonNames.PURCHASE_ACCOUNT, AccountJSON.toJSON(product.getPurchaseAccount()))
+				.put(IJsonNames.PERISHABLE, product.isPerishable())
+				.put(IJsonNames.DAYS_TO_EXPIRE, product.getDaysToExpire())
 				.put(IJsonNames.CREATION_USER, product.getCreationUser())
 				.put(IJsonNames.CREATION_DATE, product.getCreationDate())
 				.put(IJsonNames.MODIFICATION_USER, product.getModificationUser())

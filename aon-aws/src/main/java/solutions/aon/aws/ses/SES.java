@@ -8,15 +8,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
@@ -33,35 +35,34 @@ import solutions.aon.aws.AWS;
 public class SES {
 	
 	private static final Logger LOGGER  = Logger.getLogger(SES.class.getName());
-	private static final String CONFIGURATION_SET = "ConfigSet";
 	private static final String EMAIL_SENT = "Email Sent!";
 	private static final String EMAIL_NOT_SENT = "The email was not sent.";
 	
 	public static String sendEmail(SESMessage msg) {	
-		if(msg.hasAttach()) {
-			return sendEmailWithAttachment(msg);
-		}
-        Destination destination = new Destination()
-        		.withToAddresses(msg.getTo())
-        		.withBccAddresses(msg.getBcc())
-        		.withCcAddresses(msg.getCc());
-        
-        Content subject = new Content().withData(msg.getSubject());
-        Content textBody = new Content().withData(msg.getBody());
-        Body body = new Body().withHtml(textBody);
-
-        Message message = new Message().withSubject(subject).withBody(body);
-        
-        SendEmailRequest request = new SendEmailRequest()
-        		.withSource(msg.getAliasFrom())
-        		.withDestination(destination)
-        		.withMessage(message);
-        
-        if(msg.isReplyTo()) {
-        	request.withReplyToAddresses(msg.getReplyTo());
-        }
-        
-        return sendEmail(request);
+		return sendEmailWithAttachment(msg);
+//		if(msg.hasAttach()) {
+//			return sendEmailWithAttachment(msg);
+//		}
+//        Destination destination = new Destination()
+//        		.withToAddresses(msg.getTo())
+//        		.withBccAddresses(msg.getBcc())
+//        		.withCcAddresses(msg.getCc());
+//        
+//        Content subject = new Content().withData(msg.getSubject());
+//        Content textBody = new Content().withData(msg.getBody());
+//        Body body = new Body().withHtml(textBody);
+//
+//        Message message = new Message().withSubject(subject).withBody(body);
+//        
+//        SendEmailRequest request = new SendEmailRequest()
+//        		.withSource(msg.getFrom())
+//        		.withDestination(destination)
+//        		.withMessage(message);
+//        if(msg.isReplyTo()) {
+//        	request.withReplyToAddresses(msg.getReplyTo());
+//        }
+//        
+//        return sendEmail(request);
 	}
 	
     public static String sendEmailWithAttachment(SESMessage msg) {	
@@ -76,13 +77,13 @@ public class SES {
         	message.setFrom(new InternetAddress(msg.getAliasFrom()));
         
         	String to =  String.join(",", msg.getTo().toArray(String[]::new));
-        	message.setRecipients(javax.mail.Message.RecipientType.TO, InternetAddress.parse(to));
+        	message.setRecipients(jakarta.mail.Message.RecipientType.TO, InternetAddress.parse(to));
         	
         	String bcc =  String.join(",", msg.getBcc().toArray(String[]::new));
-        	message.setRecipients(javax.mail.Message.RecipientType.BCC, InternetAddress.parse(bcc));
+        	message.setRecipients(jakarta.mail.Message.RecipientType.BCC, InternetAddress.parse(bcc));
 
         	String cc =  String.join(",", msg.getCc().toArray(String[]::new));
-        	message.setRecipients(javax.mail.Message.RecipientType.CC, InternetAddress.parse(cc));
+        	message.setRecipients(jakarta.mail.Message.RecipientType.CC, InternetAddress.parse(cc));
         	
         	if(msg.isReplyTo()) {
             	message.setReplyTo(InternetAddress.parse(msg.getReplyTo()));
@@ -123,7 +124,6 @@ public class SES {
         		multipart.addBodyPart(att);
         	}
 
-        	// Try to send the email.
         	LOGGER.info("Attempting to send an email through Amazon SES "
                     + "using the AWS SDK for Java...");
 
@@ -157,7 +157,7 @@ public class SES {
             // call with the supplied AWS credentials.
             AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
                     .withCredentials(AWS.getProvider())
-                    .withRegion("eu-west-1")
+                    .withRegion(Regions.EU_WEST_1)
                     .build();
 
             // Send the email.
@@ -203,10 +203,10 @@ public class SES {
     public static String sendEmail(SendEmailRequest request) {
     	try {
             AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
-                .withCredentials(AWS.getProvider())
-                .withRegion("eu-west-1")
-                .build();
-
+                    .withCredentials(AWS.getProvider())
+                    .withRegion(Regions.EU_WEST_1)
+                    .build();
+            
             client.sendEmail(request);
             LOGGER.info(EMAIL_SENT);
             return "ok";

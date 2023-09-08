@@ -1,0 +1,90 @@
+.domainOption:not(.selectedDomain):hover,
+.domainOption:not(.selectedDomain):hover *,
+.customerOption:not(.selectedCustomer):not(.linkedCustomer):hover,
+.customerOption:not(.selectedCustomer):not(.linkedCustomer):hover * {
+    /* background-color: var(--aonLightBlue) !important; */
+    color: var(--aonBlue) !important;
+}
+
+.inactiveDomainName {
+    color: firebrick;
+}
+
+.expireDomainName {
+    color: orange;
+}
+
+.selectedCustomer, .selectedDomain {
+    background-color: var(--aonBlue) !important;
+    color: white;
+}
+.selectedDomain .domainLinkA {
+    color: white !important;
+}
+
+
+.selectedCustomer i {
+    color: white;
+}
+/* .domainCustomerScroll::-webkit-scrollbar {
+    width: 6px;
+    background: transparent;
+}
+.domainCustomerScroll::-webkit-scrollbar-thumb {
+    height: 35px;
+    background: lightgray;
+    -webkit-border-radius: 1ex;
+}
+.domainCustomerScroll:hover {
+    overflow-y: scroll;
+} */
+.searchBar, .searchBar > input {
+    color: var(--aonBlue);
+}
+
+.aonDomainConfirmButton:enabled {
+    cursor: pointer;
+    background-color: var(--aonBlue);
+    color: white;
+}
+.aonDomainConfirmButton {
+    background-color: var(--aonLightBlue);
+    color: darkgray;
+    border: none;
+}
+.domainCustomerScroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.domainCustomerScroll::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 8px;
+}
+
+.domainCustomerScroll::-webkit-scrollbar-track {
+    background-color: transparent/*#f5f5f5; */;
+    border-radius: 8px;
+}
+.domainCustomerScroll {
+    overflow-y: scroll;
+    align-self: end;
+}
+.domainLinkAonSelect, .domainLinkAonSelect * {
+    cursor: pointer;
+}
+.linkLoadSpinner {
+    animation: rotate 1.5s linear infinite; 
+}
+.domainLinkA {
+    color: black;
+    text-decoration: none;
+}
+
+.domainLinkA:hover {
+    text-decoration: underline;
+}
+
+@keyframes rotate{
+    to{ transform: rotate(360deg); }
+  }

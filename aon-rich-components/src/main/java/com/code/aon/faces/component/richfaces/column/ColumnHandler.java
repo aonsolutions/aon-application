@@ -2,7 +2,7 @@ package com.code.aon.faces.component.richfaces.column;
 
 import static com.code.aon.faces.component.richfaces.lookup.ILookupConstants.ALIAS;
 
-import javax.el.ValueExpression;
+import jakarta.el.ValueExpression;
 import javax.faces.component.UIComponent;
 
 import org.richfaces.component.html.HtmlColumn;

@@ -126,7 +126,7 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 		PaymentConceptRecord maternity = addConcept(aonContext, ContextVariable.MATERNITY.getName());
 		addPayment(aonContext, contract, maternity, "DIAS_PATERNIDAD * 0" , "DIAS_PATERNIDAD * BASE_REGULADORA");
 		
-		int dayOfIt = (int ) (Math.floor(Math.random() * (29 - 2)) + 2);
+		int dayOfIt = (int ) (Math.floor(Math.random() * (25 - 2)) + 2);
 		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH, dayOfIt);
 		addIT(aonContext, contract, LeaveType.PATERNITY, startITDate,
 				null, 100.00);

@@ -1,27 +1,14 @@
 package com.esferalia.aon.gwt.template.jooq;
 
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
-import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
-import static com.esferalia.aon.jooq.tables.Item.ITEM;
-import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.sql.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.jooq.Condition;
-import org.jooq.InsertValuesStep17;
-import org.jooq.Record1;
 import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Result;
-import org.jooq.impl.DSL;
 
-import com.esferalia.aon.gwt.template.shared.Error;
-import com.esferalia.aon.gwt.template.shared.FeeInfo;
-import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -41,109 +28,7 @@ public class DBFee {
 	public static DBFee getInstance() {
 		return new DBFee();
 	}
-				
-	public Error insertFee(Domain domain, String login, LinkedList<FeeInfo> fees ){
-		Error error = new Error();
-		error.setError(true);
-		LinkedList<String> verror = new LinkedList<String>();
-		verror.add("");
-		error.setTextError(verror);
-		CloseableAONContext ctx = null;
-		
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			
-			LinkedList<String> v = new LinkedList<String>();
-			InsertValuesStep17<CustomerFeeRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, java.sql.Date, java.sql.Date, java.sql.Date, Short, Byte, Integer, Integer, Integer> customerFeeInsertQuery = ctx.getDslContext().insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
-			
-			AONContext sctx = ctx;
-			HashMap<Integer, Short> lineMap = new HashMap<>();
-			fees.stream().forEach(s ->{	
-				if(s.getProduct() != null){
-					Result<Record1< Integer>> data = sctx.getDslContext().select(ITEM.ID)
-						.from(ITEM)
-						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domain.getId())).fetch();
-					if(data.isEmpty()){
-
-						data = sctx.getDslContext().select(ITEM.ID)
-								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-								.where(PRODUCT.CODE.eq(s.getProduct()))
-										.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
-					}
-					if(data.size()>1){
-						Condition detail = ITEM.DETAIL.eq(s.getDetail());
-						if(s.getDetail() == "") 
-							detail = ITEM.DETAIL.eq("").or(ITEM.DETAIL.isNull());
-						
-						Condition detail2 = ITEM.DETAIL2.eq(s.getDetail2());
-						if(s.getDetail2() == "") 
-							detail2 = ITEM.DETAIL2.eq("").or(ITEM.DETAIL2.isNull());
-						
-						Condition detail3 = ITEM.DETAIL3.eq(s.getDetail3());
-						if(s.getDetail3() == "") 
-							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
-						
-						data = sctx.getDslContext().select(ITEM.ID)
-								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-								.where(PRODUCT.CODE.eq(s.getProduct()))
-									.and(detail)
-									.and(detail2)
-									.and(detail3)
-									.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
-					}
-					if(!data.isEmpty()){
-						Integer confidential = s.getConfidential() ? 1 : 0;	
-						Integer itemId = data.get(0).value1();	
-						if(s.getEndDate() != null ) new java.sql.Date(s.getEndDate().getTime());
-						
-						Short line = 0;
-						if(s.getLine() == null){
-							if(lineMap.containsKey(s.getClientId())) {
-								line = (short) (lineMap.get(s.getClientId()) + 1);
-							}else {
-								Result<Record1<Short>> n = sctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
-										.from(CUSTOMER_FEE)
-										.where(CUSTOMER_FEE.DOMAIN.eq(domain.getId()).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))).fetch();
-								line = (n.isEmpty() || n.get(0).value1()==null) ? (short) 1 :  (short) (n.get(0).value1() + 1);
-							}
-							lineMap.put(s.getClientId(), line);
-						} else{
-							line = s.getLine().shortValue();
-							sctx.getDslContext().update(CUSTOMER_FEE).set(CUSTOMER_FEE.LINE, CUSTOMER_FEE.LINE.add(1))
-									.where(CUSTOMER_FEE.DOMAIN.eq(domain.getId())).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))
-									.and(CUSTOMER_FEE.LINE.greaterThan(line));
-							
-						}
-						Integer w = sctx.getDslContext().select(WORKPLACE.ID)
-								.from(WORKPLACE)
-								.where(WORKPLACE.DOMAIN.eq(domain.getId())).limit(1).fetchOne().value1();
-						if(s.getWorkplaceId() == null) s.setWorkplaceId(w);
-						Short period = s.getPeriod().shortValue();
-						
-						Date endDate = null;
-						if(s.getEndDate() != null) endDate =  new java.sql.Date(s.getEndDate().getTime());
-						
-						customerFeeInsertQuery.values(domain.getId(), s.getProjectId(), s.getClientId(),line, itemId, s.getDescription(), s.getQuantity(), s.getPrice(), s.getDiscount().toString(), new java.sql.Date(s.getStartDate().getTime()), endDate, new java.sql.Date(s.getBillingDate().getTime()),period, confidential.byteValue(), s.getBillingGroup(), s.getSellerId(),s.getWorkplaceId());
-					}
-					else{
-						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
-						error.setError(false);
-						error.setTextError(v);
-					}
-				}
-			});
-			
-			if(error.getError()){
-				ctx.deactivateForeignKeys();
-				customerFeeInsertQuery.execute();
-				ctx.activateForeignKeys();
-			}
-			return error;
-			
-		} finally {
-				if (ctx != null) ctx.close();
-		}
-	}
+	
 	
 	public Customer getCustomer(Domain domain, String login, String client, Boolean ignoreInactiveClient){
 		CloseableAONContext ctx = null;

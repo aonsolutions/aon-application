@@ -15,9 +15,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSearchBox;
 import com.esferalia.aon.gwt.common.shared.AonMenuItem;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.SiiService;
-import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationService;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
@@ -64,10 +64,10 @@ public class SiiMain extends DockLayoutPanel {
 			.addItem(new AonMenuItem().setTitle("Cobros"))
 			.addItem(new AonMenuItem().setTitle("Pagos"));
 	
-	private static final SiiServiceAsync SII_SERVICE;
+	private static final InvoiceCommunicationServiceAsync SII_SERVICE;
 	static {
-		SiiServiceAsync siiServiceRaw = GWT.create(SiiService.class);
-		SII_SERVICE = new SiiServiceAsyncDecorator(siiServiceRaw); 
+		InvoiceCommunicationServiceAsync siiServiceRaw = GWT.create(InvoiceCommunicationService.class);
+		SII_SERVICE = new InvoiceCommunicationServiceAsyncDecorator(siiServiceRaw); 
 	}
 	
 	private API api;

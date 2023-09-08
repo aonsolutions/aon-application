@@ -1,14 +1,15 @@
 package net.aonsolutions.aon.tedi.test.pdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -90,57 +91,57 @@ public class PDF2AONTestCase extends AbstractTediTest {
 			TediResult result = TEDI.parse(tctx, is, MimeType.PDF);
 			String file = "["+ template.getFile() +"]. ";
 			
-			assertNotNull(file + "Null result!", result);
-			assertNotNull(file + "Null Invoice!", result.getInvoice());
+			assertNotNull(result,file + "Null result!");
+			assertNotNull(result.getInvoice(),file + "Null Invoice!");
 			Invoice inv = result.getInvoice();
 			
 			// Domain
-			assertEquals(file + " Invoice domain does not match: ", DOMAIN_ID , inv.getDomain());
+			assertEquals(DOMAIN_ID , inv.getDomain(),file + " Invoice domain does not match: ");
 			
 			
 			// Activity
-			assertNull(file + "Not Null Activity!", inv.getActivity().getId());
+			assertNull(inv.getActivity().getId(),file + "Not Null Activity!");
 			// Epigraph
-			assertNull(file + "Not Null Epigraph!", inv.getEpigraph());
+			assertNull(inv.getEpigraph(),file + "Not Null Epigraph!");
 			// InvestAsset
-			assertNull(file + "Not Null InvestAsset!", inv.getInvestAsset());
+			assertNull(inv.getInvestAsset(),file + "Not Null InvestAsset!");
 			// Project
-			assertNull(file + "Not Null Project!", inv.getProject());
+			assertNull(inv.getProject(),file + "Not Null Project!");
 			
 			// Invoice type
-			assertNotNull(file + "Null Invoice Type!", inv.getType());
-			assertEquals(file + " Invoice type does not match: ",template.getInvoiceType() , inv.getType());
+			assertNotNull(inv.getType(),file + "Null Invoice Type!");
+			assertEquals(template.getInvoiceType() , inv.getType(),file + " Invoice type does not match: ");
 			
 			// Dates
-			assertNotNull(file + "Null issue date!", inv.getIssueDate());
-			assertEquals(file + " Invoice issue date does not match: ",template.getDate() , inv.getIssueDate());
-			assertNotNull(file + "Null tax date!", inv.getTaxDate());
-			assertEquals(file + " Invoice tax date does not match: ",template.getDate() , inv.getTaxDate());
+			assertNotNull(inv.getIssueDate(),file + "Null issue date!");
+			assertEquals(template.getDate() , inv.getIssueDate(),file + " Invoice issue date does not match: ");
+			assertNotNull(inv.getTaxDate(),file + "Null tax date!");
+			assertEquals(template.getDate() , inv.getTaxDate(),file + " Invoice tax date does not match: ");
 
 			// Serie/numero/referenceCode
-			assertEquals(file + " Invoice Series does not match: ",template.getSeries() , inv.getSeries());
-			assertEquals(file + " Invoice Number does not match: ",template.getNumber() , Integer.valueOf( inv.getNumber()));
+			assertEquals(template.getSeries() , inv.getSeries(),file + " Invoice Series does not match: ");
+			assertEquals(template.getNumber() , Integer.valueOf( inv.getNumber()),file + " Invoice Number does not match: ");
 			//assertEquals(file + " Invoice Reference Code does not match: ",template.getReference() , inv.getReferenceCode());
 			
 			// Registry
-			assertNotNull(file + "Null REGISTRY!", inv.getRegistry());
+			assertNotNull(inv.getRegistry(),file + "Null REGISTRY!");
 			if (inv.isSales()) {
-				assertEquals(file + " Invoice Registry Document does not match: ",template.getReceiverDocument() , inv.getRegistryDocument());
+				assertEquals(template.getReceiverDocument() , inv.getRegistryDocument(),file + " Invoice Registry Document does not match: ");
 			} else {
-				assertEquals(file + " Invoice Registry Document does not match: ",template.getSenderDocument() , inv.getRegistryDocument());
+				assertEquals(template.getSenderDocument() , inv.getRegistryDocument(),file + " Invoice Registry Document does not match: ");
 			}
-			assertEquals(file + " Invoice Registry Document Country does not match: ",Country.ES  , inv.getRegistryDocumentCountry());
+			assertEquals(Country.ES  , inv.getRegistryDocumentCountry(),file + " Invoice Registry Document Country does not match: ");
 			
 			Registry registry = RegistryDAO.get(ctx, inv.getRegistry());
-			assertNotNull(file + "Null REGISTRY Row!", registry);
-			assertEquals(file + " Invoice Registry Document does not match: ",registry.getDocument()  , inv.getRegistryDocument());
-			assertEquals(file + " Invoice Registry Document Country does not match: ",registry.getDocumentCountry()  , inv.getRegistryDocumentCountry());
-			assertEquals(file + " Invoice Registry Document Type does not match: ",registry.getDocumentType()  , inv.getRegistryDocumentType());
-			assertEquals(file + " Invoice Registry Name does not match: ",registry.getName()  , inv.getRegistryName());
+			assertNotNull(registry,file + "Null REGISTRY Row!");
+			assertEquals(registry.getDocument()  , inv.getRegistryDocument(),file + " Invoice Registry Document does not match: ");
+			assertEquals(registry.getDocumentCountry()  , inv.getRegistryDocumentCountry(),file + " Invoice Registry Document Country does not match: ");
+			assertEquals(registry.getDocumentType()  , inv.getRegistryDocumentType(),file + " Invoice Registry Document Type does not match: ");
+			assertEquals(registry.getName()  , inv.getRegistryName(),file + " Invoice Registry Name does not match: ");
 			
 			
 			// Transaction
-			assertEquals(file + " Invoice Transaction does not match: ", InvoiceTransactionType.NATIONAL , inv.getTransaction());
+			assertEquals(InvoiceTransactionType.NATIONAL , inv.getTransaction(),file + " Invoice Transaction does not match: ");
 			
 			
 			

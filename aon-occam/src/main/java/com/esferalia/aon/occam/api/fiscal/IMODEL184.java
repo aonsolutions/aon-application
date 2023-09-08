@@ -16,5 +16,6 @@ public interface IMODEL184 {
 	public Mod184 saveComments(AONContext ctx, Mod184 mod184);
 	public Mod184 changeStatus(AONContext ctx, Mod184 mod184, FiscalStatus newStatus);
 	public Mod184 duplicate(AONContext ctx, Mod184 mod184);
+	public Mod184 aeatPresentation(AONContext ctx, Mod184 mod, String aeatResponse);
 	
 }

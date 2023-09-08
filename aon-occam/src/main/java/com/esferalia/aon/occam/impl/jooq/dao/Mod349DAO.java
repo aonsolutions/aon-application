@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.FsMod349.FS_MOD349;
 import static com.esferalia.aon.jooq.tables.FsMod349Detail.FS_MOD349_DETAIL;
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
@@ -14,8 +16,10 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -31,6 +35,7 @@ import com.esferalia.aon.jooq.tables.records.FsMod349Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
@@ -47,6 +52,8 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod349Formatter.Mod349DetailInfo;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -160,7 +167,10 @@ public class Mod349DAO {
 	}
 
 	private static Mod349 insert(AONContext ctx, Mod349 mod349, boolean generateDetails) {
-		validate(ctx,mod349);
+		validate(ctx, mod349);
+		mod349.setCreationUser(ctx.getUser());
+		mod349.setCreationDate(new Timestamp(System.currentTimeMillis()));
+		mod349.setFsModel(saveFsModel(ctx, mod349)); 
 		FsMod349Record record = ctx.getDslContext().insertInto(FS_MOD349)
 			.set(FS_MOD349.DOMAIN,mod349.getDomain())
 			.set(FS_MOD349.YEAR,mod349.getYear())
@@ -181,19 +191,22 @@ public class Mod349DAO {
 			.set(FS_MOD349.CONTACT_MAIL,mod349.getContactMail())			
 			.set(FS_MOD349.PERIODICITY_CHANGE,AonEnumUtils.getByte(mod349.isPeriodicityChange()))
 			.set(FS_MOD349.DIFF_ENABLED, AonEnumUtils.getByte(mod349.isDiffEnabled()) )			
-			.set(FS_MOD349.CREATION_USER,ctx.getUser())
-			.set(FS_MOD349.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )						
+			.set(FS_MOD349.CREATION_USER, mod349.getCreationUser())
+			.set(FS_MOD349.CREATION_DATE, AonDateUtils.toTimestamp(mod349.getCreationDate()))
+			.set(FS_MOD349.FS_MODEL, mod349.getFsModel())			
 		.returning(FS_MOD349.ID)
 		.fetchOne();
 		mod349.setId(record.getId());
-		if (generateDetails) {
-			// Se rellena el modelo leyendo de las facturas intracomunitarias
-			insertDetailsFromInvoice(ctx, mod349);
+		if (generateDetails && !mod349.isManualDeclaration()) {			
+			insertDetailsFromInvoice(ctx, mod349); // Se rellena el modelo leyendo de las facturas intracomunitarias
 		}
 		return mod349;
 	}
 
 	private static Mod349 update(AONContext ctx, Mod349 mod349) {
+		mod349.setModificationUser(ctx.getUser());
+		mod349.setModificationDate(new Timestamp(System.currentTimeMillis()));
+		mod349.setFsModel(saveFsModel(ctx, mod349));
 		ctx.getDslContext().update(FS_MOD349)			
 			.set(FS_MOD349.YEAR,mod349.getYear())
 			.set(FS_MOD349.PERIOD,mod349.getPeriod().value())			
@@ -213,8 +226,9 @@ public class Mod349DAO {
 			.set(FS_MOD349.PERIODICITY_CHANGE,AonEnumUtils.getByte(mod349.isPeriodicityChange()))
 			.set(FS_MOD349.DIFF_ENABLED, AonEnumUtils.getByte(mod349.isDiffEnabled()) )
 			.set(FS_MOD349.REPRESENTATIVE_DOCUMENT,mod349.getRepresentativeDocument())
-			.set(FS_MOD349.MODIFICATION_USER,ctx.getUser())
-			.set(FS_MOD349.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )			
+			.set(FS_MOD349.MODIFICATION_USER, mod349.getModificationUser())
+			.set(FS_MOD349.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod349.getModificationDate()))
+			.set(FS_MOD349.FS_MODEL, mod349.getFsModel())
 			.where(FS_MOD349.ID.equal(mod349.getId()))
 		.execute();
 		return mod349;
@@ -222,10 +236,20 @@ public class Mod349DAO {
 
 	public static void delete(AONContext ctx, Mod349 mod349) {
 		ctx.checkWrite();
+		
+		// Borrar filas en fs_mod349_detail
 		deleteDetails(ctx, mod349);
+		
+		// Borrar filas vinculadas al modelo en alcatraz
+		AlcatrazDAO.deleteFiscalModel(ctx, getFiscalModel(mod349)); // NO SE PUEDE HACER ASI PORQUE EL ID QUE HAY QUE BORRAR ES EL DE FS_MODEL, NO EL DE FS_MOD349
+		  	
+		// Borrar fila en fs_mod349
 		ctx.getDslContext().delete(FS_MOD349)
 			.where(FS_MOD349.ID.equal(mod349.getId()))
 			.execute();
+		
+		// Borrar fila en fs_model
+		deleteFsModel(ctx, mod349.getFsModel());  
 	}
 	
 	private static void validate(AONContext ctx, Mod349 mod349) {
@@ -327,7 +351,7 @@ public class Mod349DAO {
 			}
 		} else {
 			if (detail.isDeleted()) {
-				deleteDetail(ctx, detail);
+				deleteDetail(ctx, detail, mod349);
 			} else {
 				updateDetail(ctx, detail);
 			}
@@ -373,10 +397,26 @@ public class Mod349DAO {
 			.execute();
 	}
 	
-	private static void deleteDetail(AONContext ctx, Mod349Detail detail) {
+	private static void deleteDetail(AONContext ctx, Mod349Detail detail, Mod349 mod349) {
+		
+		// Se comprueba si el modelo tiene facturas vinculadas en Alcatraz, para borrar 
+		// las facturas que se supone que están vinculadas a la linea
+		// Si acumulado y declarado son cero, se asume que es una linea manual, en cuyo caso no tendrá vinculadas facturas en alcatraz
+		if ((detail.getAccumulated() != 0 || detail.getDeclared() != 0) && hasAlcatrazInvoices(ctx, mod349.getFsModel())) {			
+			getVatBreakdownInfo(ctx, mod349, detail, true)  
+			 .filter( p -> isInvoiceDeclared(ctx, p.getInvoice(), mod349.getFsModel())) 
+			 .forEach( p -> ctx.getDslContext()
+								.delete(ALCATRAZ)
+								.where(ALCATRAZ.FS_MODEL.equal(mod349.getFsModel())).and(ALCATRAZ.INVOICE.equal(p.getInvoice()))
+								.execute()
+					 );			
+		}
+				
+		// Borrar la fila en fs_mod349_detail
 		ctx.getDslContext().delete(FS_MOD349_DETAIL)
 			.where(FS_MOD349_DETAIL.ID.equal(detail.getId()))
-			.execute();		
+			.execute();
+		
 	}
 
 	private static void deleteDetails(AONContext ctx, Mod349 mod349) {
@@ -480,6 +520,7 @@ public class Mod349DAO {
 				.setCreationDate(record.getValue(FS_MOD349.CREATION_DATE))
 				.setModificationUser(record.getValue(FS_MOD349.MODIFICATION_USER))
 				.setModificationDate(record.getValue(FS_MOD349.MODIFICATION_DATE))
+				.setFsModel(record.getValue(FS_MOD349.FS_MODEL))
 				;
 		}
 	}
@@ -575,6 +616,9 @@ public class Mod349DAO {
 		// Mapa que guarda los nombres de cada NIF
 		Map<String, String> mapNames = new TreeMap<String, String>();
 		
+		// Facturas vinculadas que se guardarán en alcatraz
+		Set<Alcatraz> invoices = new HashSet<>();
+		
 		// Obtenemos el desglose de facturas intracomunitarias del periodo o acumulado anual
 		getVatBreakdown(ctx, mod349)
 		
@@ -585,6 +629,14 @@ public class Mod349DAO {
 		
 		.peek(vat -> {
 			mapNames.put(vat.getRegistryDocumentCountry() + vat.getRegistryDocument(), vat.getRegistryName());			
+			
+			// De igual forma guardamos las facturas que se incluyen en el modelo para luego grabarlas en alcatraz
+			// Se empieza a usar Alcatraz a partir del 2023, en marzo aproximadamente, por lo tanto cuando se genere 
+			// el primer modelo 349 por diferencias del 2023, con alcatraz, se vincularán todas las facturas desde el 
+			// inicio del ejercicio
+			// Solo se graba la factura en alcatraz, si no está ya vinculada a otro periodo del modelo 349			
+			if (mod349.getYear() >= 2023 && !isInvoiceDeclared(ctx, vat.getInvoice()))			
+				invoices.add( new Alcatraz().setInvoice(vat.getInvoice()) );				
 		})
 		
 		// Agrupamos por tipo factura + esServicio + pais + documento + año_rectificado + periodo_rectificado (acumulando la base)		
@@ -594,7 +646,6 @@ public class Mod349DAO {
 					   Collectors.groupingBy(VatContext::getRegistryDocument,
 					     Collectors.groupingBy(VatContext::getRectificateYear,
 						   Collectors.groupingBy(VatContext::getRectificatePeriod, Collectors.summingDouble(VatContext::getBase) )))))))
-//						     Collectors.groupingBy( p -> AonStringUtils.isBlank(p.getRegistryName())?"":p.getRegistryName(), Collectors.summingDouble(VatContext::getBase) ))))))))
 		
 		// Grabamos los datos en la tabla de lineas del modelo 349
 		.forEach( (invoiceType,b) -> {
@@ -604,12 +655,10 @@ public class Mod349DAO {
 			  for (String document : b.get(isService).get(country).keySet())
 			   for (int year : b.get(isService).get(country).get(document).keySet())
    			    for (Period period : b.get(isService).get(country).get(document).get(year).keySet()) {
-//			     for (String name : b.get(isService).get(country).get(document).get(year).get(period).keySet()) {
 				   
 				   Mod349Key keyOperation = getMod349Key(invoiceType, isService);				   
 				  
 				   // Acumulado
-//				   double accumulated = b.get(isService).get(country).get(document).get(year).get(period).get(name).doubleValue();
 				   double accumulated = b.get(isService).get(country).get(document).get(year).get(period).doubleValue();
 				   
 				   String name = mapNames.get(country+document);
@@ -645,7 +694,6 @@ public class Mod349DAO {
 						  det.setRectifiedYear(year);
 						  det.setRectifiedPeriod(period);
 						  det.setRectifiedAmount(declaredAmount);
-//						  det.setAccumulated(0.0);
 						  det.setAmount(declaredAmount+amount);						  
 					  }
 					   
@@ -654,7 +702,67 @@ public class Mod349DAO {
 				   }	
 			   }
 		});
+		
+		// Grabar en alcatraz las facturas vinculadas al modelo que se está generando
+		AlcatrazDAO.deleteFiscalModel(ctx, getFiscalModel(mod349));
+		AlcatrazDAO.saveModelInvoices(ctx, getFiscalModel(mod349), invoices); 
 			
+	}
+	
+	// Devuelve cierto si la factura está vinculada en Alcatraz en algún modelo 349
+	private static boolean isInvoiceDeclared(AONContext ctx, Integer invoiceId) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.leftOuterJoin(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))			
+			.where(ALCATRAZ.INVOICE.eq(invoiceId)).and(FS_MODEL.MODEL.eq("349"))			
+			.limit(1)
+			.fetch()
+			.stream()
+			.findAny()
+			.isPresent();		
+	}
+	
+	// Devuelve cierto si el modelo tiene facturas vinculadas en Alcatraz
+	private static boolean hasAlcatrazInvoices(AONContext ctx, Integer fsModel) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.leftOuterJoin(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))			
+			.where(ALCATRAZ.FS_MODEL.eq(fsModel)).and(FS_MODEL.MODEL.eq("349"))			
+			.limit(1)
+			.fetch()
+			.stream()
+			.findAny()
+			.isPresent();		
+	}
+	
+	// Devuelve cierto si la factura está vinculada en alcatraz al modelo 349 que se le pasa
+	private static boolean isInvoiceDeclared(AONContext ctx, Integer invoiceId, Integer fsModel) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.leftOuterJoin(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))			
+			.where(ALCATRAZ.INVOICE.eq(invoiceId)).and(ALCATRAZ.FS_MODEL.eq(fsModel)).and(FS_MODEL.MODEL.eq("349"))			
+			.limit(1)
+			.fetch()
+			.stream()
+			.findAny()
+			.isPresent();		
+	}
+	
+	// Devuelve cierto si la factura está vinculada en alcatraz a algún modelo 349 de periodo menor o igual al que se le pasa 
+	public static boolean isInvoiceDeclared(AONContext ctx, Integer invoiceId, byte period) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.leftOuterJoin(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+			.where(ALCATRAZ.INVOICE.eq(invoiceId)).and(FS_MODEL.PERIOD.lessOrEqual(period)).and(FS_MODEL.MODEL.eq("349"))
+			.limit(1)
+			.fetch()
+			.stream()
+			.findAny()
+			.isPresent();		
 	}
 	
 	private static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349) {
@@ -662,7 +770,7 @@ public class Mod349DAO {
 	}
 
 	// Obtiene el desglose de las facturas intracomunitarias, para el periodo del modelo, segun sea por diferencias o no
-	private static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final boolean isDiffEnabled) {	
+	private static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final boolean isDiffEnabled) {
 		
 		Date fromDate = isDiffEnabled ? AonDateUtils.getYearFirstDay(mod349.getYear()) : FiscalUtils.getPeriodStart(mod349);
 		Date toDate = FiscalUtils.getPeriodEnd(mod349);
@@ -681,8 +789,12 @@ public class Mod349DAO {
 					vat.setRectificateYear(0);
 					vat.setRectificatePeriod(Period.M01);	
 					
+					// Comprobar si el nombre está cumplimentado y no supera los 64 caracteres
 					if (AonStringUtils.isBlank(vat.getRegistryName()))
 						vat.setRegistryName("");
+					
+					if (vat.getRegistryName().length() > 64) 
+						vat.setRegistryName(AonStringUtils.left(vat.getRegistryName(), 64));
 					
 					// Si es una factura rectificativa, hay que obtener el periodo de la factura rectificada
 					// para poder guardarlo posteriormente como rectificacion en el modelo 349
@@ -930,9 +1042,17 @@ public class Mod349DAO {
 				+ " DEL " + mod349.getPeriod().getDescription()
 				+ " DE " + mod349.getYear();
 		
+		// Se comprueba si el modelo tiene facturas vinculadas en Alcatraz, para mostrar la información en base a esas facturas vinculadas
+		// si no tiene facturas vinculadas en Alcatraz, se asume que es un modelo anterior a la puesta en marcha de Alcatraz en este modelo
+		// y por lo tanto la información saldrá como salía antes
+		boolean hasAlcatraz = hasAlcatrazInvoices(ctx, mod349.getFsModel());
+		
 		return VATFormatter.formatInvoices(title
 				,getSubtitle(detail)
-				,getVatBreakdown(ctx, mod349, detail, false).collect(Collectors.toCollection(LinkedList::new)));
+				//,getVatBreakdownInfo(ctx, mod349, detail, false)
+				,getVatBreakdownInfo(ctx, mod349, detail, hasAlcatraz )  // Si el modelo tiene facturas vinculadas en Alcatraz, entonces se lee todo el año  
+				 .filter( p -> hasAlcatraz ? isInvoiceDeclared(ctx, p.getInvoice(), mod349.getFsModel()) : true) 
+				 .collect(Collectors.toCollection(LinkedList::new)));
 		
 	}
 	
@@ -943,11 +1063,18 @@ public class Mod349DAO {
 				+ " DEL " + mod349.getPeriod().getDescription()
 				+ " DE " + mod349.getYear();
 		
+		// Se comprueba si el modelo tiene facturas vinculadas en Alcatraz, para mostrar la información en base a esas facturas vinculadas
+		boolean hasAlcatraz = hasAlcatrazInvoices(ctx, mod349.getFsModel());
+		
 		return Mod349Formatter.formatDiffInvoicesMod349(title
 				,getSubtitle(detail)
 				,mod349.getPeriod()			
 				,getDeclaredModels(ctx, mod349, detail.getType(), detail.getCountry(), detail.getDocument()).collect(Collectors.toCollection(LinkedList::new))			 	
-				,getVatBreakdown(ctx, mod349, detail, true).collect(Collectors.toCollection(LinkedList::new)));
+				,getVatBreakdownInfo(ctx, mod349, detail, true)
+				 .filter( p -> hasAlcatraz ? (!p.isInsidePeriod() && isInvoiceDeclared(ctx, p.getInvoice(), mod349.getPeriod().value()) ) || // Si la factura no es del periodo debe estar vinculada en algun modelo 349 del mismo periodo o anterior
+					                         (p.isInsidePeriod() && isInvoiceDeclared(ctx, p.getInvoice(), mod349.getFsModel())) // Si la factura es del periodo, debe estar vinculada al modelo del que se saca la info
+					                       : true)
+				 .collect(Collectors.toCollection(LinkedList::new)));
 		
 	}
 	
@@ -957,9 +1084,9 @@ public class Mod349DAO {
 				" - " + detail.getName();
 	}
 	
-	private static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final Mod349Detail detail, final boolean isDiffEnabled) {
+	private static Stream<VatContext> getVatBreakdownInfo(final AONContext ctx, final Mod349 mod349, final Mod349Detail detail, final boolean isDiffEnabled) {
 		
-		// Facturas a localizar segÃºn la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
+		// Facturas a localizar segun la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
 		final InvoiceType invoiceType1;
 		final InvoiceType invoiceType2;
 		final InvoiceType invoiceType3;
@@ -1001,6 +1128,154 @@ public class Mod349DAO {
 		return getVatBreakdown(ctx, mod349, isDiffEnabled)  
 			   .filter( p -> (!p.isInsidePeriod() || p.isRectification() == isRectification || (!isRectification && p.getRectificateYear() == 0)) && (p.getInvoiceType() == invoiceType1 || p.getInvoiceType() == invoiceType2 || p.getInvoiceType() == invoiceType3) && p.isService() == isService && p.getRegistryDocumentCountry() == detail.getCountry() && AonStringUtils.equals(p.getRegistryDocument(), detail.getDocument()));
 		
+	}
+	
+    // Grabar resultado y pdf en response y marcar el modelo como enviado
+	public static Mod349 aeatPresentation(AONContext ctx, Mod349 mod, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {			
+			
+			// Antes de nada se borra la presentación anterior
+			DataResponseDAO.deleteAEATResponse(ctx, mod);			
+			
+			// Grabar los datos en data_response y sus tablas asociadas
+			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
+			
+			// Marcar el modelo como enviado
+			if (mod != null && mod.getId() != null) {
+				ctx.getDslContext().update(FS_MOD349)					
+					.set(FS_MOD349.STATUS, FiscalStatus.SENT.value())
+					.where(FS_MOD349.ID.equal(mod.getId()))
+					.execute();
+				return getById(ctx, mod.getId());
+			}
+		}
+		return mod;
+	}
+	
+	// Mantenimiento de la fila en fs_model 
+	
+	private static Integer saveFsModel(AONContext ctx, Mod349 mod349) {
+
+		// Comprobar si es necesario añadir o actualizar el registro en fs_model
+		if (mod349.getFsModel() == null)
+			return insertFsModel(ctx, mod349);
+		else 
+			return updateFsModel(ctx, mod349);
+		
+	}
+	
+	private static void deleteFsModel(AONContext ctx, Integer idFsModel) {
+		
+		if (idFsModel != null) {
+			ctx.getDslContext()
+				.delete(FS_MODEL)
+				.where(FS_MODEL.ID.equal(idFsModel))
+				.execute();
+		}
+
+	}
+	
+	private static Integer insertFsModel(AONContext ctx, Mod349 mod349) {
+		
+		Integer id = ctx.getDslContext()
+			.insertInto(FS_MODEL)
+				.set(FS_MODEL.DOMAIN, mod349.getDomain())
+				.set(FS_MODEL.YEAR, mod349.getYear())
+				.set(FS_MODEL.PERIOD, mod349.getPeriod().value())
+				.set(FS_MODEL.ADMINISTRATION, mod349.getAdministration().value())
+				.set(FS_MODEL.STATUS, AonEnumUtils.getByte(mod349.getStatus()))
+				.set(FS_MODEL.SECURITY_LEVEL,AonEnumUtils.getByte( mod349.isConfidential() ))
+				.set(FS_MODEL.COMPLEMENTARY, AonEnumUtils.getByte( mod349.isComplementary() ))
+				.set(FS_MODEL.REPLACEMENT, AonEnumUtils.getByte( mod349.isReplacement() )) 
+//				.set(FS_MODEL.WITHOUTACTIVITY,AonEnumUtils.getByte( mod349.isWithoutActivity()  ))
+				.set(FS_MODEL.MODEL, mod349.getModel().getValue() )
+				.set(FS_MODEL.NUMBER, mod349.getNumber())
+				.set(FS_MODEL.REPLACED_NUMBER, mod349.getReplacedNumber())
+				.set(FS_MODEL.COMMENTS, mod349.getComments())
+				.set(FS_MODEL.FINANCE, mod349.getFinance() == null?null:mod349.getFinance().getId())
+				.set(FS_MODEL.DOCUMENT, mod349.getDocument() )
+				.set(FS_MODEL.SURNAME, mod349.getSurname())
+				.set(FS_MODEL.NAME, mod349.getName())
+//				.set(FS_MODEL.STREET_INITIAL,mod349.getStreetInitial())
+//				.set(FS_MODEL.STREET_NAME,mod349.getStreetName())
+//				.set(FS_MODEL.STREET_NUMBER,mod349.getStreetNumber())
+//				.set(FS_MODEL.STREET_STAIR,mod349.getStreetStair())
+//				.set(FS_MODEL.STREET_FLOOR,mod349.getStreetFloor())
+//				.set(FS_MODEL.STREET_DOOR,mod349.getStreetDoor())
+//				.set(FS_MODEL.PHONE,mod349.getPhone())
+//				.set(FS_MODEL.TOWN,mod349.getTown())
+//				.set(FS_MODEL.PROVINCE,mod349.getProvince())
+//				.set(FS_MODEL.ZIP,mod349.getZip())
+//				.set(FS_MODEL.ADMON_AEAT,mod349.getAdmonAeat())
+				.set(FS_MODEL.CONTACT_PERSON,mod349.getContactPerson())
+				.set(FS_MODEL.CONTACT_PHONE,mod349.getContactPhone())
+//				.set(FS_MODEL.CONTACT_CELLULAR,mod349.getContactCellular())
+				.set(FS_MODEL.CONTACT_EMAIL,mod349.getContactMail())
+				.set(FS_MODEL.RESULT, mod349.getDeclarationResult())
+				.set(FS_MODEL.DECLARATION_TYPE, AonEnumUtils.getByte( mod349.getDeclarationResultType() ) )
+//				.set(FS_MODEL.ACCOUNT_ENTRY, mod349.getAccountEntry())
+				.set(FS_MODEL.CREATION_USER, mod349.getCreationUser())
+				.set(FS_MODEL.CREATION_DATE, AonDateUtils.toTimestamp(mod349.getCreationDate()))
+				.set(FS_MODEL.MODIFICATION_USER, mod349.getModificationUser())
+				.set(FS_MODEL.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod349.getModificationDate()))				
+			.returning(FS_MODEL.ID)
+			.fetchOne()
+			.getValue(FS_MODEL.ID);
+		return id;
+		
 	}	
+	
+	private static Integer updateFsModel(AONContext ctx, Mod349 mod349) {
+		
+		ctx.getDslContext().update(FS_MODEL)
+			.set(FS_MODEL.DOMAIN, mod349.getDomain())
+			.set(FS_MODEL.YEAR, mod349.getYear())
+			.set(FS_MODEL.ADMINISTRATION, mod349.getAdministration().value())
+			.set(FS_MODEL.STATUS, AonEnumUtils.getByte(mod349.getStatus()))
+			.set(FS_MODEL.SECURITY_LEVEL,AonEnumUtils.getByte( mod349.isConfidential() ))
+			.set(FS_MODEL.COMPLEMENTARY, AonEnumUtils.getByte( mod349.isComplementary()))
+			.set(FS_MODEL.REPLACEMENT,AonEnumUtils.getByte( mod349.isReplacement() ))  // Modelo 349 solo hay complementaria
+//			.set(FS_MODEL.WITHOUTACTIVITY,AonEnumUtils.getByte( mod349.isWithoutActivity()  ))
+			.set(FS_MODEL.MODEL, mod349.getModel().getValue())
+			.set(FS_MODEL.NUMBER, mod349.getNumber())
+			.set(FS_MODEL.REPLACED_NUMBER, mod349.getReplacedNumber())
+			.set(FS_MODEL.COMMENTS, mod349.getComments())
+			.set(FS_MODEL.FINANCE, mod349.getFinance() == null?null:mod349.getFinance().getId())
+			.set(FS_MODEL.DOCUMENT, mod349.getDocument())
+			.set(FS_MODEL.SURNAME, mod349.getSurname())
+			.set(FS_MODEL.NAME, mod349.getName())
+//			.set(FS_MODEL.STREET_INITIAL,mod349.getStreetInitial())
+//			.set(FS_MODEL.STREET_NAME,mod349.getStreetName())
+//			.set(FS_MODEL.STREET_NUMBER,mod349.getStreetNumber())
+//			.set(FS_MODEL.STREET_STAIR,mod349.getStreetStair())
+//			.set(FS_MODEL.STREET_FLOOR,mod349.getStreetFloor())
+//			.set(FS_MODEL.STREET_DOOR,mod349.getStreetDoor())
+//			.set(FS_MODEL.PHONE,mod349.getPhone())
+//			.set(FS_MODEL.TOWN,mod349.getTown())
+//			.set(FS_MODEL.PROVINCE,mod349.getProvince())
+//			.set(FS_MODEL.ZIP,mod349.getZip())
+//			.set(FS_MODEL.ADMON_AEAT,mod349.getAdmonAeat())
+			.set(FS_MODEL.CONTACT_PERSON,mod349.getContactPerson())
+			.set(FS_MODEL.CONTACT_PHONE,mod349.getContactPhone())
+//			.set(FS_MODEL.CONTACT_CELLULAR,mod349.getContactCellular())
+			.set(FS_MODEL.CONTACT_EMAIL,mod349.getContactMail())
+			.set(FS_MODEL.RESULT, mod349.getDeclarationResult())
+			.set(FS_MODEL.DECLARATION_TYPE,AonEnumUtils.getByte( mod349.getDeclarationResultType() ) )
+//			.set(FS_MODEL.ACCOUNT_ENTRY,mod349.getAccountEntry())
+			.set(FS_MODEL.MODIFICATION_USER, mod349.getModificationUser())
+			.set(FS_MODEL.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod349.getModificationDate()))
+		.where(FS_MODEL.ID.equal(mod349.getFsModel()))
+		.execute();
+		return mod349.getFsModel();
+		
+	}
+	
+	private static FiscalModel getFiscalModel(Mod349 mod349) {
+		return new FiscalModel()
+		         	.setId(mod349.getFsModel())
+		         	.setDomain(mod349.getDomain())
+		         	.setModel(mod349.getModel());
+		
+	}
 	
 }

@@ -18,12 +18,12 @@
     </dependency>
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
-      <artifactId>${jasperReportsArtifact}</artifactId>
+      <artifactId>${jasperReportsArtifact}-jakarta</artifactId>
       <version>${jasperReportsVersion}</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <groupId>javax.servlet</groupId>
+          <groupId>jakarta.servlet</groupId>
           <artifactId>servlet-api</artifactId>
         </exclusion>
         <exclusion>

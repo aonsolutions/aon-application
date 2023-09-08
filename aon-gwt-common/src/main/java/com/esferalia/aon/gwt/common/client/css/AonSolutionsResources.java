@@ -159,6 +159,57 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconPaste();
 	
+	@Source("icons/aon-icon-group-off.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconGroupOff();
+	
+	@Source("icons/aon-icon-group.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconGroup();
+	
+	@Source("icons/aon-icon-tune.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconTune();
+	
+	@Source("icons/aon-icon-pin.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconPin();
+	
+	@Source("icons/aon-icon-person.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconPerson();
+	
+	@Source("icons/aon-icon-person-off.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconPersonOff();
+	
+	@Source("icons/aon-icon-enterprise.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconEnterprise();
+	
+	@Source("icons/aon-icon-activity.png")
+	DataResource aonIconActivity();
+	
+	@Source("icons/aon-icon-format-indent-increase.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconFormatIndentIncrease();
+	
+	@Source("icons/aon-icon-format-indent-decrease.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconFormatIndentDecrease();
+	
+	@Source("icons/aon-icon-table-view.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconTableView();
+	
+	@Source("icons/aon-icon-cloud-sync.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCloudSync();
+	
+	@Source("icons/aon-icon-account-tree.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAccountTree();
+	
 	@Source("icons/aon-icon-move-down.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconMoveDown();
@@ -214,6 +265,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-unlock.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconUnLock();
+	
+	@Source("icons/aon-icon-lock-reset.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLockReset();
 	
 	@Source("icons/aon-icon-renew.svg")
 	@MimeType("image/svg+xml")
@@ -463,6 +518,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconDeleteForever();
 	
+	@Source("icons/aon-icon-delete-forever-red.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconDeleteForeverRed();
+	
 	@Source("icons/aon-icon-add-task.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAddTask();
@@ -550,6 +609,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-upload.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconUpload();
+	
+	@Source("icons/aon-icon-upload-file.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconUploadFile();
 
 	@Source("icons/aon-icon-wizard.svg")
 	@MimeType("image/svg+xml")

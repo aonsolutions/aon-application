@@ -540,7 +540,7 @@
 		    				<g:HTMLPanel styleName="{style.checks}">
 		    					<g:CheckBox ui:field="bonusCB"  styleName='{style.firstColumnTextStyle}'/>
 		    				</g:HTMLPanel>
-		    				<g:Label styleName="{style.checksLabel}">Bonificiación</g:Label>
+		    				<g:Label styleName="{style.checksLabel}">Bonificación</g:Label>
 		    			</g:HTMLPanel>
 		    		</g:HTMLPanel>
 				</g:HTMLPanel>
@@ -995,7 +995,7 @@
 						    </tr>
 							<tr>
 								<td style="background-color: #eaeaea; width: 400px;">
-									<g:Label styleName='{style.firstColumnTextStyle}'>Colectivo de bonificiación</g:Label>
+									<g:Label styleName='{style.firstColumnTextStyle}'>Colectivo de bonificación</g:Label>
 								</td>
 								<td>
 								    <g:ListBox ui:field="bonusLB" styleName='{style.maxWidthLB}'></g:ListBox>

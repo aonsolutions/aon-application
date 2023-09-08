@@ -7,13 +7,34 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
+	<script type="text/javascript">
+  		//<![CDATA[
+		hideNewsPopup = function () {
+			#{rich:element('newsPopup')}.style.display = 'none';
+			#{rich:element('newsButton')}.style.display = 'block';
+		}
+		
+		showNewsPopup = function () {
+			#{rich:element('newsPopup')}.style.display = 'block';
+			#{rich:element('newsButton')}.style.display = 'none';
+		}
+      	//]]>
+	</script>
+    	
+
 	<ui:include	src="/facelet/shared/array.prototype.js.xhtml" />
-
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
+	
+	<style>
+	.menu-panel-categoryNews{
+		display: block !important;
+		overflow-y: auto; 
+		max-height: calc(100vh - 303px);
+	}
+	</style>	
+	
 	<aon:form id="mainForm">
 
-		<aon:div styleClass="aon-scroll-area" style="padding: 1.5em 1.5em 0 0 !important;">
+		<aon:div styleClass="aon-scroll-area" style="padding: .7em 1.5em 0 0 !important;">
 
 			<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting"
 				columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
@@ -26,6 +47,40 @@
 				</aon:if>
 				
 				<aon:div styleClass="aon-width-all">
+					<aon:if test="#{help.notificationsEnabled}">
+						<aon:div  >
+							<aon:div styleClass="aon-margin-left aon-margin-top aon-margin-right" >
+								<span class="material-icons aon-vertical-middle" >rss_feed</span><span class="aon-outputText aon-bold">NOTIFICACIONES</span>
+								<aon:commandLink id="closeInfoNotifications"
+									styleClass="aon-width-all aon-black "
+								>
+									<span class="material-icons aon-vertical-middle" style="float:right; " >close</span>
+									<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
+								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="1aon-height-all" >
+								<ui:include src="/com/code/aon/web/help/facelet/notifications.xhtml" />
+							</aon:div>
+						</aon:div>
+					</aon:if>
+					<aon:if test="#{!help.notificationsEnabled and help.contentEnabled }" >
+						<aon:div  >
+							<aon:div styleClass="aon-margin-left aon-margin-top aon-margin-right" >
+								<span class="material-icons aon-vertical-middle" >help</span><span class="aon-outputText aon-bold"> ÍNDICE CONTENIDOS</span>
+								<aon:commandLink id="closeHelpIndex"
+									styleClass="aon-width-all aon-black "
+								>
+									<span class="material-icons aon-vertical-middle" style="float:right; " >close</span>
+									<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="1aon-height-all" style="overflow-y: scroll; height: calc(100vh - 303px);">
+								<ui:include src="/com/code/aon/web/help/facelet/drive_content.xhtml" />
+							</aon:div>
+						</aon:div>
+					</aon:if>
+
+					<aon:if test="#{!help.notificationsEnabled and !help.contentEnabled  }" >
 					<aon:if test="#{domainSwitcher.childDomain}">
 	  					<aon:if test="#{!userUtils.newAONTheme}">				
 							<ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" />
@@ -45,7 +100,6 @@
 							
 							<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal or desktop.state.accountingInfoVisibleForPortal or desktop.state.payrollInfoVisibleForPortal}">
 								<aon:div styleClass="aon-portlet">
-									<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 									
 									<aon:div styleClass="aon-portlet-title">								
 										<aon:div styleClass="aon-portlet-title-buttons">
@@ -127,15 +181,23 @@
 							</aon:if>
 						</aon:if>
 					</aon:if>
+					</aon:if>
 				</aon:div>
 
-				<aon:if test="#{!userUtils.newAONTheme}">				
-					<ui:include src="/facelet/homepage/portlet/infoRightGroupPortlet.xhtml" />
-				</aon:if>
+				<ui:include src="/facelet/homepage/portlet/infoRightGroupPortlet.xhtml" />
 			</aon:panelGrid>
+	
 
 		</aon:div>
 	</aon:form>
 	
+	<script type="text/javascript">
+		const allElements = document.querySelectorAll('*');
+	
+		allElements.forEach((element) => {
+		  element.classList.remove('aon-top-menu-item-select');
+		});
+	</script>
+	 
 </ui:composition>
 

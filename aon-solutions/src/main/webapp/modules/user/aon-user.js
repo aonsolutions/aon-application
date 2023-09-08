@@ -307,7 +307,7 @@ export class AonUser extends AonElement {
 			if(this.isAutosave()){
 				this.save();
 			} else {
-				getAuth({email: this.user.email}).then((auth) => {
+				getAuth({email: this.user.email, reload: true}).then((auth) => {
 					if(auth.uuid){
 						this.user.name = auth.name || '';
 						this.user.surname = auth.surname || '';

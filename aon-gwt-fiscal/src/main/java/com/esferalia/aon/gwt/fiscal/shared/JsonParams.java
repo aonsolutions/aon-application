@@ -72,13 +72,15 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.TO_DATE  	 	 ,params.getToDate()   			== null? JSON_NULL : new JSONString( FORMATTER.format(params.getToDate())));
 		json.put(IRequestParamsNames.PERCENT  		 ,params.getPercent()  			== null? JSON_NULL : new JSONNumber( params.getPercent()));
 		json.put(IRequestParamsNames.WITHHOLDING_TYPE,params.getWithholdingType()	== null? JSON_NULL : new JSONNumber( params.getWithholdingType().ordinal()));
+		json.put(IRequestParamsNames.WITHHOLDING_TYPE_GROUP
+								 ,params.getWithholdingTypeGroup()== null? JSON_NULL : new JSONNumber( params.getWithholdingTypeGroup().ordinal()));
 		json.put(IRequestParamsNames.OUTPUT   		 ,params.getOutput() 			== null? JSON_NULL : new JSONNumber( params.getOutput()?1:0));
 		json.put(IRequestParamsNames.ACCRUAL_REGIME	 ,params.getAccrualRegime() 		== null? JSON_NULL : new JSONNumber( params.getAccrualRegime()?1:0));
 		json.put(IRequestParamsNames.INVESTMENT		 ,params.getInvestment() 		== null? JSON_NULL : new JSONNumber( params.getInvestment()?1:0));
 		json.put(IRequestParamsNames.SERVICE		 ,params.getService() 			== null? JSON_NULL : new JSONNumber( params.getService()?1:0));
 		json.put(IRequestParamsNames.RECTIFICATION	 ,params.getRectificationType()	== null? JSON_NULL : new JSONNumber( params.getRectificationType().ordinal()));
-		json.put(IRequestParamsNames.ORDER_BY		 ,params.getOrderBy()			== null? JSON_NULL : new JSONNumber( params.getOrderBy()));
-		json.put(IRequestParamsNames.GROUPED_BY	 	 ,params.getGroupedBy()			== null? JSON_NULL : new JSONNumber( params.getGroupedBy()));
+		json.put(IRequestParamsNames.ORDER_BY		 ,params.getOrderBy()			== null? JSON_NULL : new JSONNumber( params.getOrderBy().ordinal()));
+		json.put(IRequestParamsNames.GROUPED_BY	 	 ,params.getGroupedBy()			== null? JSON_NULL : new JSONNumber( params.getGroupedBy().ordinal()));
 		return json.toString();
 	}
 	

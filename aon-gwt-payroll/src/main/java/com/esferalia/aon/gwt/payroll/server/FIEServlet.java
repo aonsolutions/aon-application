@@ -10,12 +10,15 @@ import static com.esferalia.aon.jooq.tables.LeaveBatchDetail.LEAVE_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -23,20 +26,22 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
+import org.htmlunit.FailingHttpStatusCodeException;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqIT;
 import com.esferalia.aon.gwt.payroll.shared.FIEService;
@@ -47,13 +52,21 @@ import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.LeaveBatchRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.EmployeeNotFoundexception;
 import com.esferalia.aon.occam.api.model.payroll.TooManyEmployeesException;
 import com.esferalia.aon.occam.api.model.payroll.TooManyITsException;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.google.gson.GsonBuilder;
+
+import solutions.aon.seg.social.SistemaREDINSS;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
 
 
 @MultipartConfig
@@ -65,12 +78,52 @@ import com.google.gson.GsonBuilder;
 				"/aon_gwt_payroll/fie/*" 
 		}
 )
+
 public class FIEServlet extends HttpServlet implements FIEService {
 	private static Logger LOGGER = Logger
 			.getLogger(FIEServlet.class.getName());
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		doPost(req, resp);
+		String userLogin = req.getParameter(Parameter.USER.name());
+		String domainName = req.getParameter(Parameter.DOMAIN.name());
+		
+		Date endDate = new Date();
+		Date startDate = AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, -14); 
+		
+		try (OutputStream os = resp.getOutputStream();
+			Connection connection = AonServletUtils.getConnection(domainName);
+			CloseableAONContext ctx = AONContext.getAONContext(domainName, userLogin)) {
+		    
+		    Integer domainId = AonServletUtils.getDomainID(domainName);
+		    Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+		    Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+		    
+		    Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+		    List<CCCInfo> cccs = PAYROLL.getCCCStream(domainName, domainId, userLogin).toList();
+		    
+		    List<Integer> itIds = new ArrayList<Integer>();
+
+		    for (CCCInfo ccc : cccs) {
+			try {
+			    byte[] fie = SistemaREDINSS.getFIE(certificate.getData(), certificate.getPassword(),certificate.getType(), ccc.getCccRegimeCode(), ccc.getCcc() , startDate, endDate);
+			    itIds.addAll(  doFie(fie, ctx.getDslContext(), domainId) );
+			} catch (FailingHttpStatusCodeException | IOException e) {
+			    //
+			}
+		    }
+		    
+		    Collection<ITEmployee> itEmployees = JooqIT.getEmployeesITInfo(ctx, itIds);
+
+		    resp.setStatus(HttpServletResponse.SC_OK);
+		    byte[] content = new GsonBuilder().setDateFormat("YYYY-MM-dd").create().toJson(itEmployees)
+			    .getBytes();
+		    resp.setContentType("text/html");
+		    resp.setContentLength(content.length);
+		    os.write(content);
+		    
+		} catch (InvalidCertificateException | SQLException e) {
+		    throw new ServletException(e);
+		}
 	}
 	
 	@Override
@@ -87,7 +140,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			
 			ctx.transaction( configuration -> {
 				for ( Part part : req.getParts() ) {
-					try ( InputStream is = part.getInputStream() ) {					
+					try ( InputStream is = part.getInputStream() ) {
 						itIds.addAll(doFie(is, ctx.getDslContext(), ctx.getDomainId() ));
 					} catch ( IOException e ) {
 						LOGGER.log(Level.WARNING, part.getName()  + ", not a .FIE message.");
@@ -109,7 +162,11 @@ public class FIEServlet extends HttpServlet implements FIEService {
 	}
 	
 	
-
+	private static Collection<Integer> doFie(byte[] buf, DSLContext ctx, Integer domainId ) throws IOException, SQLException {
+	    try ( ByteArrayInputStream is = new ByteArrayInputStream(buf)){
+		return doFie(is, ctx, domainId);
+	    }
+	}
 
 	private static Collection<Integer> doFie(InputStream is, DSLContext ctx, Integer domainId ) throws IOException, SQLException {
 			List<Integer> ids = new ArrayList<Integer>();
@@ -159,7 +216,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				
 		private Date fromITDate;
 		private Date prevItDate;
-		private int accumulatedDays;
+		private Integer accumulatedDays;
 		
 
 		private Date directPayStartDate;
@@ -238,7 +295,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			return Optional.ofNullable(accumulatedDays);
 		}
 
-		public void setAccumulatedDays(int accumulatedDays) {
+		public void setAccumulatedDays(Integer accumulatedDays) {
 			this.accumulatedDays = accumulatedDays;
 		}
 

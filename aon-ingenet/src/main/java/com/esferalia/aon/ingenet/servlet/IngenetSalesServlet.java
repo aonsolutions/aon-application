@@ -12,10 +12,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -275,7 +275,6 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		log(IngenetLogLevel.ERROR, subject, content, "pedidos", xml, RECIPIENTS_TO_FAILURES);
 		
 		httpResponse.setContentType("application/xml");
-		httpResponse.setContentLength(xml.length());
 		
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
@@ -288,7 +287,6 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		String xml = IngenetXmlValidator.convertToXml(pedidos, RESPUESTAPEDIDOS.class);
 		
 		httpResponse.setContentType("application/xml");
-		httpResponse.setContentLength(xml.length());
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
 		out.flush();

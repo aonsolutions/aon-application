@@ -137,7 +137,12 @@
 		<artifactId>javafaker</artifactId>
 		<version>0.15</version>
 		<scope>test</scope>
-     </dependency>               
+     </dependency>
+     <dependency>
+     	<groupId>aon.solutions</groupId>
+     	<artifactId>aon.in.invoice</artifactId>
+     	<version>9.23-SNAPSHOT</version>
+     </dependency>
 	</dependencies>
 
   <profiles>
@@ -220,10 +225,16 @@
 	      <version>1.11.795</version>
 		</dependency>
 		<dependency>
-		  <groupId>javax.mail</groupId>
+		  <groupId>jakarta.mail</groupId>
 		  <artifactId>mail</artifactId>
 		  <version>1.4</version>
 		</dependency>
+				<dependency>
+                        <groupId>com.amazonaws</groupId>
+                        <artifactId>aws-java-sdk-textract</artifactId>
+                        <version>1.11.935</version>
+                        <scope>compile</scope>
+                </dependency>
 
 		<!-- Exclude from jar -->
 		<dependency>
@@ -294,6 +305,8 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+				
 
 	  </dependencies>
     </profile>

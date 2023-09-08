@@ -12,6 +12,7 @@ public interface CalculateService {
 	static String END_DATE = "endDate";
 	static String START_DATE = "startDate";
 	static String ISSUE_DATE = "issueDate";
+	static String CHARGE_DATE = "chargeDate";
 	
 	static String SALARY_TYPE = "salaryType";
 

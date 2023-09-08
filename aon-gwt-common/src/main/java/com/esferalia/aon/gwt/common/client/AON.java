@@ -199,6 +199,7 @@ public class AON {
 	public static final String AON_ICON_ISSUE_CLOSED = "aon-icon-issue-closed";
 	public static final String AON_ICON_ISSUE_OPENED = "aon-icon-issue-opened";
 	public static final String AON_ICON_CALENDAR = "aon-icon-calendar";
+	public static final String AON_ICON_ENABLE_GRAY = "aon-icon-enable-gray";
 	public static final String AON_ICON_ENABLE = "aon-icon-enable";
 	public static final String AON_ICON_DISABLE = "aon-icon-disable";
 	public static final String AON_ICON_COST = "aon-icon-cost";

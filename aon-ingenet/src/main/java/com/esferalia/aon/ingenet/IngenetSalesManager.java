@@ -21,19 +21,24 @@ import com.esferalia.aon.ingenet.util.IngenetContext;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.ProductKind;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.SalesType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
@@ -253,24 +258,26 @@ public class IngenetSalesManager {
 	}
 
 	private void createProduct(AONContext ctx, int domainId, Product product) {
-		com.esferalia.aon.occam.api.model.product.OldProduct newProduct = new com.esferalia.aon.occam.api.model.product.OldProduct();
+		com.esferalia.aon.occam.api.model.product.Product newProduct = new com.esferalia.aon.occam.api.model.product.Product();
 		newProduct.setId(product.getId());
-		newProduct.setDomain(domainId);
+		newProduct.setDomain(new Domain().setId(domainId));
 		newProduct.setName(product.getName());
 		newProduct.setCode(product.getCode());
 		newProduct.setInventoriable(product.isInventoriable());
 		newProduct.setSerializable(product.isSerializable());
 		newProduct.setLotable(product.isLotable());
-		newProduct.setStatus((byte) product.getStatus().ordinal());
-		newProduct.setType((byte) product.getType().ordinal());
-		newProduct.setManufactured((byte)(product.isManufactured()?1:0));
+		newProduct.setStatus(ProductStatus.safeValueOf(product.getStatus().ordinal()));
+		newProduct.setType(ProductType.safeValueOf(product.getType().ordinal()));
+		newProduct.setManufactured(product.isManufactured());
 		newProduct.setComposition(product.isComposition());
 		newProduct.setCompositionPrice(product.isCompositionPrice());
 		newProduct.setPackaged(product.isPackaged());
-		newProduct.setKind((byte) product.getKind().ordinal());
+		newProduct.setKind(ProductKind.safeValueOf(product.getKind().ordinal()));
+		newProduct.setPerishable(product.isPerishable());
+		newProduct.setDaysToExpire(product.getDaysToExpire());
 		newProduct.setCreationUser(ctx.getUser());
 		newProduct.setCreationDate(new Date());
-		ProductOldDAO.insertWithId(ctx, newProduct);
+		ProductDAO.save(ctx, newProduct);
 	}
 
 	private void updateProduct(AONContext ctx, int domainId, Product product) {

@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
-import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
 import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
 import static com.esferalia.aon.jooq.tables.CommissionItem.COMMISSION_ITEM;
@@ -80,6 +79,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.CCCType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -95,15 +95,13 @@ import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO.OfferDetailFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -152,6 +150,8 @@ public class FillerDAO {
 				.setLastAccessUser(getValue(r, domainTable.LASTACCESS_USER))
 				.setLastAccessDate(getValue(r, domainTable.LASTACCESS_DATE))
 				.setExpirationDate(getValue(r, domainTable.EXPIRATIONDATE))
+				.setAonCustomer(r.getValue(domainTable.AONCUSTOMER))
+				.setAonStatus(AonStatus.safeValueOf(r.getValue(domainTable.AONSTATUS)))
 				;	
 		}
 	}
@@ -168,41 +168,7 @@ public class FillerDAO {
 	}
 	
 	
-	public static class CarrierPackingFiller implements Function<Record, CarrierPacking> {
-		@Override
-		public CarrierPacking apply(Record r) {
-			return new CarrierPacking()
-					.setCarrier(r.getValue(CARRIER_PACKING.CARRIER))
-					.setCarrierReference(r.getValue(CARRIER_PACKING.CARRIER_REFERENCE))
-					.setCreationDate(r.getValue(CARRIER_PACKING.CREATION_DATE))
-					.setCreationUser(r.getValue(CARRIER_PACKING.CREATION_USER))
-					.setDeliveryDate(r.getValue(CARRIER_PACKING.DELIVERY_DATE))
-					.setDomain(r.getValue(CARRIER_PACKING.DOMAIN))
-					.setDriverDocument(r.getValue(CARRIER_PACKING.DRIVER_DOCUMENT))
-					.setDriverName(r.getValue(CARRIER_PACKING.DRIVER_NAME))
-					.setId(r.getValue(CARRIER_PACKING.ID))
-					.setIssueDate(r.getValue(CARRIER_PACKING.ISSUE_DATE))
-					.setModificationDate(r.getValue(CARRIER_PACKING.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(CARRIER_PACKING.MODIFICATION_USER))
-					.setNumber(r.getValue(CARRIER_PACKING.NUMBER))
-					.setNumberPlate(r.getValue(CARRIER_PACKING.NUMBER_PLATE))
-					.setSeries(r.getValue(CARRIER_PACKING.SERIES))
-					.setStatus(CarrierPackingStatus.safeValueOf(r.getValue(CARRIER_PACKING.STATUS)))
-					.setType(CarrierPackingType.safeValueOf(r.getValue(CARRIER_PACKING.TYPE)))
-					
-					.setCarrierName(r.getValue(REGISTRY.NAME))
-					.setComments(r.getValue(CARRIER_PACKING.COMMENTS))
-					
-					.setGross(r.getValue(CARRIER_PACKING.GROSS))
-					.setTare(r.getValue(CARRIER_PACKING.TARE))
-					.setAdditionalTare(r.getValue(CARRIER_PACKING.ADDITIONAL_TARE))
-					.setNet(r.getValue(CARRIER_PACKING.NET))						
-					.setReceptionStartDate(r.getValue(CARRIER_PACKING.RECEPTION_START_DATE))
-					.setReceptionEndDate(r.getValue(CARRIER_PACKING.RECEPTION_END_DATE))
-					;
-		}
-	}
-	
+
 	public static class RegistryFiller implements Function<Record, Registry> {
 		@Override
 		public Registry apply(Record r) {
@@ -254,14 +220,21 @@ public class FillerDAO {
 					.setId(r.getValue(RITEM.ID))
 					.setDomain(r.getValue(RITEM.DOMAIN))
 					.setRegistry(r.getValue(RITEM.REGISTRY))
-					.setItem(r.getValue(RITEM.ITEM))
+					.setItem(ItemFiller.build(r))
 					.setType(RegistryMode.safeValueOf(r.getValue(RITEM.TYPE)))
 					.setCode(r.getValue(RITEM.CODE))
 					.setPrice(r.getValue(RITEM.PRICE))
 					.setDiscountExpr(r.getValue(RITEM.DISCOUNT_EXPR))
 					.setWorkplace(r.getValue(RITEM.WORKPLACE))
 					.setPriority(Priority.safeValueOf(r.getValue(RITEM.PRIORITY)))
-					.setStatus(RegistryItemStatus.safeValueOf(r.getValue(RITEM.STATUS)));
+					.setStatus(RegistryItemStatus.safeValueOf(r.getValue(RITEM.STATUS)))
+					.setQuantity(r.getValue(RITEM.QUANTITY))
+					.setStartDate(r.getValue(RITEM.START_DATE))
+					.setEndDate(r.getValue(RITEM.END_DATE))
+					.setCreationDate(r.getValue(RITEM.CREATION_DATE))
+					.setCreationUser(r.getValue(RITEM.CREATION_USER))
+					.setModificationDate(r.getValue(RITEM.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(RITEM.MODIFICATION_USER));
 		}
 	}
 	

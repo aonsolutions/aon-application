@@ -24,6 +24,7 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectField;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -296,18 +297,14 @@ public class InvoiceChartTypeVisitor implements IInvoiceChartTypeVisitor {
 	@Override
 	public void visitAbcInvoiceProduct() {
 		final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
-		getSelect(ctx,PRODUCT.ID,PRODUCT.NAME, INVOICE.TYPE, sum)
+		getSelect(ctx,PRODUCT.ID,PRODUCT.CODE,PRODUCT.NAME, INVOICE.TYPE, sum)
 			.where( getInvoiceCondition(ctx, params))
 			.groupBy(PRODUCT.ID, INVOICE.TYPE)
 			.orderBy(sum.desc())
 			.fetch().stream().forEach(rec -> {
-				double d = rec.getValue(sum).doubleValue();
-				if (d >= 0) {
-					InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-					table.put(AonStringUtils.defaultIfBlank(rec.getValue(PRODUCT.NAME), UNKNOWN)
-							, type.getDescription()
-							, d);
-				}
+				InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+				String key = AonStringUtils.defaultIfBlank(rec.getValue(PRODUCT.NAME), UNKNOWN) + " (" + rec.getValue(PRODUCT.CODE) + ")";
+				table.put(key , type.getDescription(), rec.getValue(sum).doubleValue());
 			});
 	}
 	

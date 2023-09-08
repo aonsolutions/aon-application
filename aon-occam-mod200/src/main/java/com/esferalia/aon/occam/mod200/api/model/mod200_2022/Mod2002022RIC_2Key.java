@@ -7,11 +7,12 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 // Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994) - Inversiones anticipadas
 public enum Mod2002022RIC_2Key implements Serializable, IMod200KeysProvider {
 
-	 C01(new Mod2002022Key[]{Mod2002022Key.RC2442,null				  ,null				   ,Mod2002022Key.RC2443},"Inversiones anticipadas 2017")
-	,C02(new Mod2002022Key[]{Mod2002022Key.RC2444,null				  ,null				   ,Mod2002022Key.RC2445},"Inversiones anticipadas 2018")
+	 C01(new Mod2002022Key[]{Mod2002022Key.RC2442,null				  ,null				   ,null                },"Inversiones anticipadas 2017")
+	,C02(new Mod2002022Key[]{Mod2002022Key.RC2444,null				  ,null				   ,null                },"Inversiones anticipadas 2018")
 	,C03(new Mod2002022Key[]{Mod2002022Key.RC2446,null				  ,null				   ,Mod2002022Key.RC2447},"Inversiones anticipadas 2019")
 	,C04(new Mod2002022Key[]{Mod2002022Key.RC1176,null				  ,null			 	   ,Mod2002022Key.RC2451},"Inversiones anticipadas 2020")
-	,C05(new Mod2002022Key[]{null				 ,Mod2002022Key.RC1177,Mod2002022Key.RC1180,Mod2002022Key.RC1184},"Inversiones anticipadas 2021")
+	,C05(new Mod2002022Key[]{Mod2002022Key.RC1823,null				  ,null			 	   ,Mod2002022Key.RC1184},"Inversiones anticipadas 2021")	
+	,C06(new Mod2002022Key[]{null				 ,Mod2002022Key.RC1523,Mod2002022Key.RC130 ,Mod2002022Key.RC1600},"Inversiones anticipadas 2022")
 	;
 	 
     private String description;
@@ -28,7 +29,5 @@ public enum Mod2002022RIC_2Key implements Serializable, IMod200KeysProvider {
 	public String getDescription() {
 		return description;
 	}
-
 	
 }
-

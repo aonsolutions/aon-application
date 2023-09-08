@@ -497,17 +497,20 @@ CREATE TABLE `alcatraz` (
   `invoice` int DEFAULT NULL COMMENT 'Id Factura',
   `salary` int DEFAULT NULL COMMENT 'Id Nomina',
   `finance` int DEFAULT NULL COMMENT 'Id Vto',
+  `finance_tracking` int DEFAULT NULL COMMENT 'Id seguimiento Vto',
   PRIMARY KEY (`id`),
   KEY `IDX_ALCATRAZ_DOMAIN` (`domain`),
   KEY `IDX_ALCATRAZ_FS_MODEL` (`fs_model`),
   KEY `IDX_ALCATRAZ_INVOICE` (`invoice`),
   KEY `IDX_ALCATRAZ_SALARY` (`salary`),
   KEY `IDX_ALCATRAZ_FINANCE` (`finance`),
+  KEY `IDX_ALCATRAZ_FINANCE_TRACKING` (`finance_tracking`),
   CONSTRAINT `FK_ALCATRAZ_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
   CONSTRAINT `FK_ALCATRAZ_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`),
-  CONSTRAINT `FK_ALCATRAZ_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
+  CONSTRAINT `FK_ALCATRAZ_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_FINANCE_TRACKING` FOREIGN KEY (`finance_tracking`) REFERENCES `finance_tracking` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bloqueo de entidades';
 
 #
@@ -1893,7 +1896,7 @@ CREATE TABLE `contract_cost` (
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
   `contract` int NOT NULL COMMENT 'Contrato',
   `type` tinyint DEFAULT NULL COMMENT 'Tipo de Coste',
-  `code` varchar(10) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo',
+  `code` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo',
   `expression` varchar(256) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Formula',
   `description` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
@@ -2697,6 +2700,29 @@ CREATE TABLE `delivery_detail` (
   CONSTRAINT `FK_DELIVERY_DETAIL_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Albaran de Venta';
 
+
+#
+# Structure for the `delivery_packaging` table :
+#
+
+CREATE TABLE `delivery_packaging` (
+	`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
+	`domain` int(4) NOT NULL COMMENT 'Dominio',
+	`delivery` int(4) NOT NULL COMMENT 'Identificador del albar�n',
+	`item` int(4) NOT NULL COMMENT 'Articulo del Envasado',
+    `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+    `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+    `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+    `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+	PRIMARY KEY (`id`),
+	KEY `IDX_DELIVERY_PACKAGING_DOMAIN` (`domain`),
+	KEY `IDX_DELIVERY_PACKAGING_DELIVERY` (`delivery`),
+	KEY `IDX_DELIVERY_PACKAGING_ITEM` (`item`),
+	CONSTRAINT `FK_DELIVERY_PACKAGING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+	CONSTRAINT `FK_DELIVERY_PACKAGING_DELIVERY` FOREIGN KEY (`delivery`) REFERENCES `delivery` (`id`),
+	CONSTRAINT `FK_DELIVERY_PACKAGING_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Envasado del albaran';
+
 #
 # Table structure for table `department`
 #
@@ -2737,6 +2763,8 @@ CREATE TABLE `domain` (
   `expirationDate` date DEFAULT NULL COMMENT 'Fecha de Expiracion del Dominio',
   `lastAccess_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de ultimo acceso',
   `lastAccess_date` datetime DEFAULT NULL COMMENT 'Fecha de ultimo acceso',
+  `aonStatus` tinyint NOT NULL DEFAULT '0' COMMENT 'Estado del customer en Aon',
+  `aonCustomer` int DEFAULT NULL COMMENT 'Referencia al customer en Aon',
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_UNQ_DOMAIN_NAME` (`name`),
   KEY `IDX_DOMAIN_PARENT` (`parent`),
@@ -3427,9 +3455,12 @@ CREATE TABLE `fs_mod349` (
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  `fs_model` int DEFAULT NULL COMMENT 'Identificador de fs_model',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MOD349_DOMAIN` (`domain`),
-  CONSTRAINT `FK_FS_MOD349_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  KEY `IDX_FS_MOD349_FS_MODEL` (`fs_model`),
+  CONSTRAINT `FK_FS_MOD349_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FS_MOD349_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaracion de Modelo 349';
 
 #
@@ -4473,6 +4504,7 @@ CREATE TABLE `invest_asset` (
   `end_date` date DEFAULT NULL COMMENT 'Fecha de baja',
   `vat_percent` decimal(15,4) DEFAULT '0' COMMENT 'Porcentaje de afectacion de IVA',
   `retention_percent` decimal(15,4) DEFAULT '0' COMMENT 'Porcentaje de afectacion de imposicion directa',
+  `properties` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Propiedades de los Bienes Afecto o de Inversion' CHECK (json_valid(`properties`)),
   PRIMARY KEY (`id`),
   KEY `IDX_INVEST_ASSET_DOMAIN` (`domain`),
   KEY `IDX_INVEST_ASSET_ACTIVITY` (`activity`),
@@ -5044,6 +5076,7 @@ CREATE TABLE `item` (
   `description` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Descripcion del Articulo',
   `serial_number` varchar(32) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de serie',
   `serial_date` date DEFAULT NULL COMMENT 'Fecha de serializacion',
+  `expire_date` date DEFAULT NULL Comment 'Fecha de caducidad del articulo',
   `price` decimal(15,4) DEFAULT '0' COMMENT 'Precio del Articulo',
   `status` tinyint DEFAULT '0' COMMENT 'Estado del Articulo',
   `expenses_percent` decimal(15,4) DEFAULT '0' COMMENT 'Gastos porcentuales del Articulo',
@@ -6191,6 +6224,8 @@ CREATE TABLE `product` (
   `packaged` tinyint(1) DEFAULT '0' COMMENT 'Indica si el Producto es envasado',
   `sales_account` int DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
   `purchase_account` int DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable de Compras',
+  `perishable` tinyint(1) DEFAULT '0' COMMENT 'Indica si el producto es perecedero',
+  `days_to_expire` int DEFAULT '0' Comment 'Numero de dias en los que expira el producto',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -7306,6 +7341,13 @@ CREATE TABLE `ritem` (
   `priority` tinyint DEFAULT '0' COMMENT 'Prioridad del Producto',
   `workplace` int DEFAULT NULL COMMENT 'Identificador del Centro de Trabajo',
   `status` tinyint NOT NULL COMMENT 'Estado',
+  `quantity` varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Cantidad',
+  `start_date` date DEFAULT NULL COMMENT 'Fecha de inicio',
+  `end_date` date DEFAULT NULL COMMENT 'Fecha de fin',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Momento de creaci�n',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario creador',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Momento de modificaci�n',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario modificador',
   PRIMARY KEY (`id`),
   KEY `IDX_RITEM_DOMAIN` (`domain`),
   KEY `IDX_RITEM_ITEM` (`item`),
@@ -7492,6 +7534,7 @@ CREATE TABLE `rseller` (
   `start_date` date NOT NULL COMMENT 'Fecha de Inicio',
   `end_date` date DEFAULT NULL COMMENT 'Fecha de Fin',
   `status` tinyint NOT NULL COMMENT 'Estado',
+  `type` tinyint DEFAULT 0 NOT NULL COMMENT 'Tipo',
   PRIMARY KEY (`id`),
   KEY `IDX_RSELLER_DOMAIN` (`domain`),
   KEY `IDX_RSELLER_SELLER` (`seller`),
@@ -7635,7 +7678,7 @@ CREATE TABLE `salary_cost` (
   `amount` decimal(15,3) DEFAULT '0.000' COMMENT 'Importe',
   `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `type` tinyint DEFAULT NULL COMMENT 'Tipo de deduccion Salarial',
-  `cost_concept` varchar(10) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del concepto',
+  `cost_concept` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del concepto',
   PRIMARY KEY (`id`),
   KEY `IDX_SALARY_COST_SALARY` (`salary`),
   KEY `IDX_SALARY_COST_DOMAIN` (`domain`),
@@ -7833,6 +7876,23 @@ CREATE TABLE `sales_detail` (
   CONSTRAINT `FK_SALES_DETAIL_OFFER_DETAIL` FOREIGN KEY (`offer_detail`) REFERENCES `offer_detail` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_SALES` FOREIGN KEY (`sales`) REFERENCES `sales` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Pedido de Venta';
+
+
+#
+# Table structure for table `sales_info`
+#
+CREATE TABLE `sales_info` (
+	`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+	`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+	`sales` int(4) NOT NULL COMMENT 'Identificador del Pedido',
+	`type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Comunicacion',
+	`status` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Estado de la Comunicacion',
+	PRIMARY KEY (`id`),
+	KEY `IDX_SALES_INFO_DOMAIN` (`domain`),
+	KEY `IDX_SALES_INFO_SALES` (`sales`),
+	CONSTRAINT `FK_SALES_INFO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+	CONSTRAINT `FK_SALES_INFO_SALES` FOREIGN KEY (`sales`) REFERENCES `sales` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Estado Comunicaciones de Pedidos';
 
 #
 # Table structure for table `scope`
@@ -8201,7 +8261,7 @@ CREATE TABLE `system_cost` (
   `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `expression` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Expresion',
   `type` tinyint DEFAULT NULL COMMENT 'Tipo de Costo',
-  `code` varchar(10) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Código',
+  `code` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Código',
   PRIMARY KEY (`id`),
   KEY `IDX_SYSTEM_COST_DOMAIN` (`domain`),
   CONSTRAINT `FK_SYSTEM_COST_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)

@@ -14,11 +14,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONObject;
@@ -147,14 +147,6 @@ public class SeresFtpServlet extends HttpServlet {
 				new FtpDeliveryUploadOccamHandler(domain.getName(), domain.getId(), loggedUser)
 						.onEdiFtpTransfer(list.stream().map(o -> (Delivery) o).collect(Collectors.toList()));
 			}
-		} catch (FtpLoginException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new IllegalArgumentException(e);
-		} catch (FtpException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new IllegalArgumentException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
@@ -291,9 +283,7 @@ public class SeresFtpServlet extends HttpServlet {
 		private void checkValidLogin() {
 			try {
 				SeresFtpConnectionProvider.checkLogin(ftpServer, ftpPort, ftpUser, ftpPassword);
-			} catch (FtpLoginException e) {
-				throw new AonCoreException("SERES: Login rechazado, usuario y/o contraseña incorrecta.", e);
-			} catch (FtpException e) {
+			} catch (Exception e) {
 				throw new AonCoreException("SERES: Error de conexion ftp.", e);
 			}
 		}

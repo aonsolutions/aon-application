@@ -364,6 +364,22 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		});	
 	}
 	
+	public void cambioCno(String cno, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.cambioCno(employeeContractData, cno, date, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});	
+	}
+	
 	public void cambioCatProf(String contract, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.cambioCatProf(employeeContractData, contract, date, new AsyncCallback<Void>() {
 			
@@ -756,6 +772,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setRlce(rlce);		
 	}
 	
+	public void setContractCno(String cno) {
+		add(contractData::setCno, 
+				contractData.getCno(), 
+				cno );
+		
+		contractData.setCno(cno);		
+	}
+	
 	public void setContractEmployeesColective(String employeesColective) {
 		add(contractData::setEmployeesColective, 
 				contractData.getEmployeesColective(), 
@@ -851,12 +875,12 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeeData.setAddressZip(zipCode);
 	}
 
-	public void setEmployeeAddressProvince(String province) {
+	public void setEmployeeAddressProvince(Integer geozoneId) {
 		add(employeeData::setAddressProvinces, 
 				employeeData.getAddressProvinces(), 
-				province );
+				geozoneId );
 		
-		employeeData.setAddressProvinces(province);
+		employeeData.setAddressProvinces(geozoneId);
 	}
 
 	public void setEmployeeAddressCity(String city) {

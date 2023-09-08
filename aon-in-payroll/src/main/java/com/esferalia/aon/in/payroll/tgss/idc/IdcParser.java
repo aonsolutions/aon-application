@@ -120,6 +120,11 @@ public class IdcParser {
 			if ( hasData(matcher.group("contractType"))) {
 				listener.onContractType(matcher.group("contractType"));
 			}
+			
+			matcher = find(reader, RLCE_COTIZACION_ADIC);
+			
+			if( hasData(matcher.group("rlce")))
+				listener.onRlce(matcher.group("rlce"));
 
 			matcher = find(reader, CONTRACT_PARTIALCOEF_DATE_AGE);
 			if(hasData(matcher.group("partialCoef"))) {
@@ -130,10 +135,14 @@ public class IdcParser {
 			if ( hasData(matcher.group("quoteGroup"))) {
 				listener.onContractQuoteGroup(matcher.group("quoteGroup"));
 			}
-			String enterpriseCompleteCCC = (matcher.group("completeCCC"));
+			
+//			String enterpriseCompleteCCC = (matcher.group("completeCCC"));
+			
 			if(hasData(matcher.group("inactivity"))) {
 				listener.onContractInactivityType(matcher.group("inactivity"));
 			}
+			
+			String enterpriseCompleteCCC = createEnterpriseCompleteCCC(enterpriseRegime, enterpriseCCC);
 			
 			onEnterprise(listener, socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode,
 					enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
@@ -143,6 +152,11 @@ public class IdcParser {
 				listener.onContractOcupation(matcher.group("ocupation"));
 			}
 			
+			matcher = find(reader, CONTRACT_TRL);
+			if(hasData(matcher.group("trl"))) {
+				listener.onEmployeeQuoteTRL(nss, enterpriseCCC, matcher.group("trl"), periodStart, periodEnd);
+			}
+
 			matcher = find(reader, CONTRACT_QUOTEMODALITY);
 			if(hasData(matcher.group("quoteModality"))) {
 				listener.onContractAgrarianQuoteModality(matcher.group("quoteModality"));
@@ -156,6 +170,11 @@ public class IdcParser {
 				listener.onContractAgrarianRealJourneyProvided(matcher.group("realJourneyProvided"));
 			}
 			
+			matcher = find(reader, BENEFITS_LOSS_BY_EMPLOYEE);
+			if ( hasData(matcher.group("cause"))) {
+			    listener.onEmployeeBenefitsLoss(nss, enterpriseCCC, matcher.group("cause"), periodStart, periodEnd);   
+			}
+
 			matcher = find(reader, PECULIARITIES_HEADER);
 			
 			Date endDate = null;
@@ -201,6 +220,15 @@ public class IdcParser {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static String createEnterpriseCompleteCCC(String enterpriseRegime, String enterpriseCCC) {
+		 String regime = "0111";
+		 if(AonStringUtils.containsIgnoreCase(enterpriseRegime, "REGIMEN GENERAL")) regime = "0111";
+		 else if(AonStringUtils.containsIgnoreCase(enterpriseRegime, "HOGAR")) regime = "0138";
+		 else if(AonStringUtils.containsIgnoreCase(enterpriseRegime, "AGRARIO")) regime = "0163";
+		 else if(AonStringUtils.containsIgnoreCase(enterpriseRegime, "ARTISTA")) regime = "0112";
+		 return regime + enterpriseCCC;
 	}
 
 	private static void onEmployeeQuotePEC(IdcParserListener listener, String nss, String enterpriseCCC, String code,
@@ -306,24 +334,38 @@ public class IdcParser {
 	"^T(\\.|IPO)\\s*CONTRATO\\s*:\\s*(?<contractType>[0-9]*)(?<contractDescription>.*)ALTA\\s*:\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*BAJA\\s*:\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)*$"
 	, Pattern.CASE_INSENSITIVE);
 	
+	//R.L.C.E.: PRACT. NO LAB. EMP COTIZACIÓN ADICIONAL:
+	protected static final Pattern RLCE_COTIZACION_ADIC = 
+	Pattern.compile(
+	"^R\\.L\\.C\\.E\\.\\s*:\\s*(?<rlce>.*)COTIZACIÓN.*$"
+	, Pattern.CASE_INSENSITIVE);
+	
 	//COEF.TIEMPO PARCIAL: 500 REDUCCIÓN JORNADA/COEFIC:  FECHA: 01-11-2019 EDAD: 55
 	protected static final Pattern CONTRACT_PARTIALCOEF_DATE_AGE = 
 	Pattern.compile(
-	"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{3})?.*REDUCCIÓN\\s*JORNADA/COEFIC\\s*:\\s*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)\\s*EDAD\\s*:\\s*(?<age>[0-9]+)?$"
+	"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{3})?.*REDUCCIÓN\\s*JORNADA/COEFIC\\s*:.*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)\\s*EDAD\\s*:\\s*(?<age>[0-9]+)?$"
+//	"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{3})?.*REDUCCIÓN\\s*JORNADA/COEFIC\\s*:\\s*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)\\s*EDAD\\s*:\\s*(?<age>[0-9]+)?$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//GC/M*: 08 RELEVO:  TIPO DE INACTIVIDAD/COEFIC: T.ACT.PAR.PR.COVID19/300 C.C.C.: 0111 11 112501771
 	protected static final Pattern CONTRACT_QUOTEGROUP_MONTHLY_INACTIVITY_COMPLETECCC =
 	Pattern.compile(
-	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
+	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*\\S*\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
+//	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*TIPO\\s*DE\\s*INACTIVIDAD\\/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TRABAJADOR SUSTITUTO*:  OCUPACION*:   
 	protected static final Pattern CONTRACT_OCUPATION =
 	Pattern.compile(
-	"^TRABAJADOR\\s*SUSTITUTO\\*:\\s*(?<sustituteEmployee>.*)OCUPACION\\*\\s*:\\s*(?<ocupation>[a-z]?).*$"
+	"^TRABAJADOR\\s*SUSTITUTO\\*:\\s*(?<sustituteEmployee>.*)OCUPACION\\*\\s*:\\s*(?<ocupation>([a-z](?!\\.TRAB))?).*$"
 	, Pattern.CASE_INSENSITIVE);
 	
+	//COLECTIVO S/EXCLUSIÓN EN COTIZACIÓN:  PROGRAMAS DE FORMACION:   
+	protected static final Pattern CONTRACT_TRL =
+	Pattern.compile(
+	"^COLECTIVO\\s*S/EXCLUSIÓN\\s*EN\\s*COTIZACIÓN\\s*:\\s*(?<trl>.*?)\\s*FECHA.*$"
+	, Pattern.CASE_INSENSITIVE);
+
 	//MODALIDAD DE COTIZACIÓN:   DISCAPACIDAD -GRADO Y TIPO-
 	protected static final Pattern CONTRACT_QUOTEMODALITY =
 	Pattern.compile(
@@ -360,5 +402,11 @@ public class IdcParser {
 	Pattern.compile(
 	"^TIPOS\\s*DE\\s*COTIZACIÓN\\*\\s*CONTINGENCIAS\\s*PROFESIONALES:\\s*IT:\\s*(?<it>[0-9,]+)?\\s*I\\.M\\.S\\.:\\s*(?<ims>[0-9,]+)?.*DESEMPLEO:\\s*(?<unemployment>[0-9,]+)?(EXCLUIDO)?$"
 	, Pattern.CASE_INSENSITIVE);
+	
+	// POR TRABAJADOR:CAUSA:ALTA 3 MESES PREVIOS CONTRATO INDEFINIDO
+	protected static final Pattern BENEFITS_LOSS_BY_EMPLOYEE = 
+	Pattern.compile("^POR\\s*TRABAJADOR\\s*:\\s*CAUSA\\s*:\\s*(?<cause>.*)$" , Pattern.CASE_INSENSITIVE);
+	
+	
 			
 }

@@ -3,7 +3,7 @@ package com.code.aon.ui.audit.event;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 

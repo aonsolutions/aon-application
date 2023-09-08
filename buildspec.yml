@@ -23,9 +23,12 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      - echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID
+      - echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID $AWS_DEFAULT_REGION
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
+      - echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID eu-south-2
+      - $(aws ecr get-login --no-include-email --region eu-south-2)
+      - REPOSITORIO_URI=$AWS_ACCOUNT_ID.dkr.ecr.eu-south-2.amazonaws.com
       # - command
       # - command
   build:
@@ -63,7 +66,7 @@ phases:
         -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
-        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/  \
+        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
         -f aon-htmlunit/pom.xml integration-test
       - echo Building PRODUCTION version...
       - mvn -B --resume-from aon-js-payroll -DbuildNumber=666 -Drpm.release=false -DskipTests=true clean install
@@ -74,6 +77,9 @@ phases:
       - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
       - docker tag aonsolutions/aon-application:${TAG:=snapshot} $REPOSITORY_URI/aon-application:${TAG:=snapshot}
       - docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
+      - docker tag aonsolutions/aon-db-up2date:test $REPOSITORIO_URI/aon-db-up2date:${TAG:=snapshot}
+      - docker tag aonsolutions/aon-application:${TAG:=snapshot} $REPOSITORIO_URI/aon-application:${TAG:=snapshot}
+      - docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORIO_URI/aon-solutions:${TAG:=snapshot}
       - mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-oauth2 clean install
       - mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-in-payroll clean install
       # - command
@@ -85,6 +91,9 @@ phases:
       - docker push $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
       - docker push $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
       - docker push $REPOSITORY_URI/aon-application:${TAG:=snapshot}
+      - docker push $REPOSITORIO_URI/aon-db-up2date:${TAG:=snapshot}
+      - docker push $REPOSITORIO_URI/aon-solutions:${TAG:=snapshot}
+      - docker push $REPOSITORIO_URI/aon-application:${TAG:=snapshot}
       - |
         [ "${COMMIT_MESSAGE#HOTFIX}" != "${COMMIT_MESSAGE}" ] \
         && docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:hotfix \
@@ -104,6 +113,20 @@ phases:
       - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar
       # - command
       # - command
+reports:
+  occam-report-group: #payroll junit reports
+    files:
+      - '**/*'
+    base-directory: 'aon-occam/target/surefire-reports'
+  payroll-report-group: #payroll junit reports
+    files:
+      - 'aon-payroll/target/surefire-reports/**/*'
+      - 'aon-in-payroll/target/surefire-reports/**/*'
+      - 'aon-gwt-payroll/target/surefire-reports/**/*'
+  htmlunit-report-group: #htmlunit reports
+    files:
+      - '**/*'
+    base-directory: 'aon-htmlunit/target/surefire-reports'
 artifacts:
   files:
     - aon-oauth2.jar

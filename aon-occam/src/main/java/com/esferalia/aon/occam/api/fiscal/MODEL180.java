@@ -72,6 +72,12 @@ public class MODEL180 {
 			return getImpl().duplicate(ctx, mod180);
 		}
 	}
+	
+	public static Mod180 aeatPresentation(Occam occam, Mod180 mod, String aeatResponse) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().aeatPresentation(ctx, mod, aeatResponse);
+		}
+	}
 
 
 }

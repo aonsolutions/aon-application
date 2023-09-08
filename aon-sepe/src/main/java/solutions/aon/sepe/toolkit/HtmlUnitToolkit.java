@@ -9,22 +9,22 @@ import java.util.logging.Level;
 
 import org.apache.commons.logging.LogFactory;
 
-import com.gargoylesoftware.css.parser.CSSErrorHandler;
-import com.gargoylesoftware.css.parser.CSSException;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.IncorrectnessListener;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.ScriptException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebClientOptions;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlListItem;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.parser.HTMLParserListener;
-import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
+import org.htmlunit.cssparser.parser.CSSErrorHandler;
+import org.htmlunit.cssparser.parser.CSSException;
+import org.htmlunit.BrowserVersion;
+import org.htmlunit.ElementNotFoundException;
+import org.htmlunit.IncorrectnessListener;
+import org.htmlunit.NicelyResynchronizingAjaxController;
+import org.htmlunit.ScriptException;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebClientOptions;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.DomNodeList;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlListItem;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.parser.HTMLParserListener;
+import org.htmlunit.javascript.JavaScriptErrorListener;
 
 import aon.sepe.exceptions.invalidData.InvalidDataException;
 import solutions.aon.sepe.exceptions.SepeException;
@@ -203,7 +203,7 @@ public class HtmlUnitToolkit {
 		LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log",
 				"org.apache.commons.logging.impl.NoOpLog");
 
-		java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.OFF);
+		java.util.logging.Logger.getLogger("org.htmlunit").setLevel(Level.OFF);
 		java.util.logging.Logger.getLogger("org.apache.commons.httpclient").setLevel(Level.OFF);
 		WebClientOptions options = webClient.getOptions();
 		options.setCssEnabled(false);
@@ -219,19 +219,19 @@ public class HtmlUnitToolkit {
 		webClient.setCssErrorHandler(new CSSErrorHandler() {
 
 			@Override
-			public void warning(com.gargoylesoftware.css.parser.CSSParseException exception) throws CSSException {
+			public void warning(org.htmlunit.cssparser.parser.CSSParseException exception) throws CSSException {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void error(com.gargoylesoftware.css.parser.CSSParseException exception) throws CSSException {
+			public void error(org.htmlunit.cssparser.parser.CSSParseException exception) throws CSSException {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void fatalError(com.gargoylesoftware.css.parser.CSSParseException exception) throws CSSException {
+			public void fatalError(org.htmlunit.cssparser.parser.CSSParseException exception) throws CSSException {
 				// TODO Auto-generated method stub
 
 			}

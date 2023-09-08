@@ -31,6 +31,7 @@ public class ContractInfo implements Serializable{
 	private String seniorityDate;
 	private Integer activityId;
 	private String enterpriseCIF;
+	private String enterpriseName;
 	private Byte ssRegimen;
 	private Byte mdTBT;
 	private String agreementCategory;
@@ -70,6 +71,7 @@ public class ContractInfo implements Serializable{
 	private String colectiveAgreement;
 	private String colectiveEmployees;
 	
+	private Integer cnoId;
 	private String cno;
 	
 	private Integer mdCtzId;
@@ -101,6 +103,9 @@ public class ContractInfo implements Serializable{
 	
 	private boolean discontinuos;
 	
+	private boolean isSSComunicate;
+	private boolean isSepeComunicate;
+	
 	public ContractInfo() {
 		super();
 		this.contractId = null;
@@ -117,6 +122,7 @@ public class ContractInfo implements Serializable{
 		this.seniorityDate = null;
 		this.activityId = null;
 		this.enterpriseCIF = null;
+		this.enterpriseName = null;
 		this.ssRegimen = null;
 		this.mdTBT = null;
 		this.agreementCategory = null;
@@ -159,6 +165,9 @@ public class ContractInfo implements Serializable{
 		this.hasCbc = false;
 		
 		this.discontinuos = false;
+		
+		this.isSSComunicate = false;
+		this.isSepeComunicate = false;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -177,6 +186,14 @@ public class ContractInfo implements Serializable{
 
 	public void setEnterpriseCIF(String enterpriseCIF) {
 		this.enterpriseCIF = enterpriseCIF;
+	}
+	
+	public String getEnterpriseName() {
+		return enterpriseName;
+	}
+
+	public void setEnterpriseName(String enterpriseName) {
+		this.enterpriseName = enterpriseName;
 	}
 
 	public Integer getCccId() {
@@ -518,6 +535,14 @@ public class ContractInfo implements Serializable{
 			this.colectiveEmployees = colectiveEmployees;
 	}
 	
+	public Integer getCnoId() {
+		return cnoId;
+	}
+
+	public void setCnoId(Integer cnoId) {
+		this.cnoId = cnoId;
+	}
+	
 	public String getCno() {
 		return cno;
 	}
@@ -701,6 +726,22 @@ public class ContractInfo implements Serializable{
 		this.discontinuos = discontinuos;
 	}
 	
+	public boolean isSSComunicate() {
+		return isSSComunicate;
+	}
+
+	public void setSSComunicate(boolean isSSComunicate) {
+		this.isSSComunicate = isSSComunicate;
+	}
+
+	public boolean isSepeComunicate() {
+		return isSepeComunicate;
+	}
+
+	public void setSepeComunicate(boolean isSepeComunicate) {
+		this.isSepeComunicate = isSepeComunicate;
+	}
+
 	public boolean isPartial() {
 		if(contractType!=null) {
 			int type = Integer.parseInt(contractType);

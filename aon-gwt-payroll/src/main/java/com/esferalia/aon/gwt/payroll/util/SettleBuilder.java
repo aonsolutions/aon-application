@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,8 +39,11 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
@@ -82,14 +86,22 @@ public class SettleBuilder {
 	private static Settlement adaptDraftToPDFObject(Settle settle) {
 		SettlementBuilder builder = new SettlementBuilder();
 
-		builder.setEmployeeName(settle.getEmployeeName()).setEmployeeCategory(settle.getEmployeeCategory())
-				.setEmployeeAntiquity(settle.getStartDate()).setEmployeeNIF(settle.getEmployeeDocument())
-				.setEnterpriseAddress(settle.getEnterpriseAddress()).setEnterpriseName(settle.getEnterpriseName())
-				.setEnterpriseNIF(settle.getEnterpriseDocument()).setTotal(settle.getTotalLiquid())
-				.setAccrualTotal(settle.getTotalPayment()).setDeductionTotal(settle.getTotalDeduction())
-				.setDate(settle.getEndDate()).setLocation(settle.getLocation())
-				.setEmployeeAntiquity(settle.getStartDate()).setEndCause(settle.getCause())
-				.setEndDate(settle.getIssueDate()).setExistRepresentative(settle.getRepresentativeDocument() != null);
+		builder.setEmployeeName(settle.getEmployeeName())
+				.setEmployeeCategory(settle.getEmployeeCategory())
+				.setEmployeeAntiquity(settle.getStartDate())
+				.setEmployeeNIF(settle.getEmployeeDocument())
+				.setEnterpriseAddress(settle.getEnterpriseAddress())
+				.setEnterpriseName(settle.getEnterpriseName())
+				.setEnterpriseNIF(settle.getEnterpriseDocument())
+				.setTotal(settle.getTotalLiquid())
+				.setAccrualTotal(settle.getTotalPayment())
+				.setDeductionTotal(settle.getTotalDeduction())
+				.setDate(settle.getEndDate())
+				.setLocation(settle.getLocation())
+				.setEmployeeAntiquity(settle.getStartDate())
+				.setEndCause(settle.getCause())
+				.setEndDate(AonDateUtils.addDays(settle.getStartDate(), settle.getSalaryDays() -1 ))
+				.setExistRepresentative(settle.getRepresentativeDocument() != null);
 
 		// PAYMENTS
 		HashMap<Integer, ArrayList<PDFPayment>>	paymentMap = new HashMap<>();
@@ -211,15 +223,15 @@ public class SettleBuilder {
 			deductionsMap.put(2, new ArrayList<>());
 
 		if (!inserted.contains("CGC"))
-			deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias comunes", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias Comunes", 0d));
 		if (!inserted.contains("DESMPL"))
 			deductionsMap.get(1).add(new PDFDeduction(0d, "DESMPL", "Desempleo", 0d));
 		if (!inserted.contains("FP"))
-			deductionsMap.get(1).add(new PDFDeduction(0d, "FP",  "Formación profesional", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "FP",  "Formación Profesional", 0d));
 		if (!inserted.contains("IRPF"))
-			deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones dinerarias", 0d));
+			deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones Dinerarias", 0d));
 		if (!inserted.contains("MEI"))
-			deductionsMap.get(2).add(new PDFDeduction(0d, "MEI", "Mecanismo de equidad intergeneracional", 0d));
+			deductionsMap.get(2).add(new PDFDeduction(0d, "MEI", "Mecanismo de Equidad Intergeneracional (MEI)", 0d));
 
 		builder.setDeductions(deductionsMap);
 		return builder.build();
@@ -234,14 +246,22 @@ public class SettleBuilder {
 	private static Settlement adaptToPDFObject(Settle settle) {
 		SettlementBuilder builder = new SettlementBuilder();
 
-		builder.setEmployeeName(settle.getEmployeeName()).setEmployeeCategory(settle.getEmployeeCategory())
-				.setEmployeeAntiquity(settle.getStartDate()).setEmployeeNIF(settle.getEmployeeDocument())
-				.setEnterpriseAddress(settle.getEnterpriseAddress()).setEnterpriseName(settle.getEnterpriseName())
-				.setEnterpriseNIF(settle.getEnterpriseDocument()).setTotal(settle.getTotalLiquid())
-				.setAccrualTotal(settle.getTotalPayment()).setDeductionTotal(settle.getTotalDeduction())
-				.setDate(settle.getEndDate()).setLocation(settle.getLocation())
-				.setEmployeeAntiquity(settle.getStartDate()).setEndCause(settle.getCause())
-				.setEndDate(settle.getIssueDate()).setExistRepresentative(settle.getRepresentativeDocument() != null);
+		builder.setEmployeeName(settle.getEmployeeName())
+				.setEmployeeCategory(settle.getEmployeeCategory())
+				.setEmployeeAntiquity(settle.getStartDate())
+				.setEmployeeNIF(settle.getEmployeeDocument())
+				.setEnterpriseAddress(settle.getEnterpriseAddress())
+				.setEnterpriseName(settle.getEnterpriseName())
+				.setEnterpriseNIF(settle.getEnterpriseDocument())
+				.setTotal(settle.getTotalLiquid())
+				.setAccrualTotal(settle.getTotalPayment())
+				.setDeductionTotal(settle.getTotalDeduction())
+				.setDate(settle.getEndDate())
+				.setLocation(settle.getLocation())
+				.setEmployeeAntiquity(settle.getStartDate())
+				.setEndCause(settle.getCause())
+				.setEndDate(AonDateUtils.addDays(settle.getStartDate(), settle.getSalaryDays() -1 ))
+				.setExistRepresentative(settle.getRepresentativeDocument() != null);
 
 		// PAYMENTS
 		HashMap<Integer, ArrayList<PDFPayment>>	paymentMap = new HashMap<Integer, ArrayList<PDFPayment>>();
@@ -316,15 +336,15 @@ public class SettleBuilder {
 			deductionsMap.put(2, new ArrayList<PDFDeduction>());
 
 		if (!inserted.contains("CGC"))
-			deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias comunes", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias Comunes", 0d));
 		if (!inserted.contains("DESMPL"))
 			deductionsMap.get(1).add(new PDFDeduction(0d, "DESMPL", "Desempleo", 0d));
 		if (!inserted.contains("FP"))
-			deductionsMap.get(1).add(new PDFDeduction(0d, "FP", "Formación profesional", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "FP", "Formación Profesional", 0d));
 		if (!inserted.contains("IRPF"))
-			deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones dinerarias", 0d));
+			deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones Dinerarias", 0d));
 		if (!inserted.contains("MEI"))
-			deductionsMap.get(2).add(new PDFDeduction(0d, "MEI", "Mecanismo de equidad intergeneracional", 0d));
+			deductionsMap.get(2).add(new PDFDeduction(0d, "MEI", "Mecanismo de Equidad Intergeneracional (MEI)", 0d));
 
 		builder.setDeductions(deductionsMap);
 		return builder.build();
@@ -393,4 +413,11 @@ public class SettleBuilder {
 		}
 		return optLogo;
 	}
+	
+	private static Date getSalaryEnd(Salary salary) {
+	    return salary.getSalaryDatas().stream()
+		    .filter( d -> d.getName().equals(ContextVariable.WORK_DAYS.getName()))
+		    .map( SalaryData::getEndDate ).sorted((d1,d2)->d2.compareTo(d1)).findFirst().orElse(salary.getEndDate());
+	}
+	
 }

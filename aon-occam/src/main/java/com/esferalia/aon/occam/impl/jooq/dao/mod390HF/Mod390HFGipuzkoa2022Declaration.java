@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -107,12 +108,14 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		
 		// Recargo equivalencia al segundo tipo.
 		,GP_C012(Mod390Key.GP_C012
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && 
+				(hasSurchargePercent14(vat) || hasSurchargePercent175(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C012,mod,vat.getBase())
 			,null,null,null)
 		,GP_X012(Mod390Key.GP_X012,null,null,(ctx,mod) -> add(Mod390Key.GP_X012,mod,SURCHARGE_PERCENT_14),null,null)
 		,GP_C013(Mod390Key.GP_C013
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && 
+				(hasSurchargePercent14(vat) || hasSurchargePercent175(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C013,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
@@ -304,9 +307,9 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			,null,null,null)
 		,GP_C055	(Mod390Key.GP_C055
 			,(mod,vat) -> isCommonPurchase(vat, mod) && hasNoPercent(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.GP_C055,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod390Key.GP_C055,mod,vat.getDeductibleQuota())
 			,null,null,null)
-		,GP_C056	(Mod390Key.GP_C056,null,null,null,"GP_C047+GP_C049+GP_C051+GP_C053",null)
+		,GP_C056	(Mod390Key.GP_C056,null,null,null,"GP_C047+GP_C049+GP_C051+GP_C053+GP_C055",null)
 
 		// GASTOS
 		,GP_C057 (Mod390Key.GP_C057
@@ -372,12 +375,12 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			,null,null,null)
 		
 		,GP_C070	(Mod390Key.GP_C070
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput() && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C070,mod,vat.getBase())
 			,null,null,null)
 		,GP_X070	(Mod390Key.GP_X070,null,null,(ctx,mod) -> add(Mod390Key.GP_X070,mod,PERCENT_4),null,null)
 		,GP_C071	(Mod390Key.GP_C071
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput() && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C071,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -595,18 +598,9 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 	//	-----------------------------------------------------------------------	
 	//	--------------------------------------------------------------- FILTROS	
 	//	-----------------------------------------------------------------------
-	static boolean isCommonNationalSales(VatContext vat) {
+	private static boolean isCommonNationalSales(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isNational() && vat.isSales() && !vat.isRectification();
-	}
-	static boolean hasPercent21(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT_21;	
-	}
-	static boolean hasPercent10(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT_10; 	
-	}
-	static boolean hasPercent4(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT_4; 	
 	}
 	static boolean hasPercent10512(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_105 || vat.getPercentage() ==  PERCENT_12; 	
@@ -707,9 +701,9 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 	}
 
 	@Override
-	Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
-		final Set<Integer> invoices = new HashSet<>();
-		VATDAO.getAccrualInvoices(ctx,mod).forEach( vc -> {
+	Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
+		final Set<Alcatraz> invoices = new HashSet<>();
+		VATDAO.getCritCajaInvoices(ctx,mod).forEach( vc -> {
 			if (vc.isSales()) {
 				add(Mod390Key.GP_C101, mod, vc.getBase());
 				add(Mod390Key.GP_C102, mod, vc.getDeductibleQuota());
@@ -717,7 +711,10 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 				add(Mod390Key.GP_C103, mod, vc.getBase());
 				add(Mod390Key.GP_C104, mod, vc.getDeductibleQuota());
 			}
-			invoices.add(vc.getInvoice());
+			invoices.add( new Alcatraz()
+				.setInvoice(vc.getInvoice())
+				.setFinance(vc.getFinance())
+				.setFinanceTracking(vc.getFinanceTracking()));
 		});
 		return invoices;
 	}

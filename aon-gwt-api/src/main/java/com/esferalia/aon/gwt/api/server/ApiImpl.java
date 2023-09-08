@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.api.server;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.api.client.IApi;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;

@@ -110,6 +110,8 @@ class OperationReportIrpfPanel extends ScrollPanel{
 			.setExtraInfoTabVisible(false)
 			.setExternalCallback( new ModuleCallback() {
 				
+				private static final long serialVersionUID = 459085332301151216L;
+
 				@Override
 				public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();

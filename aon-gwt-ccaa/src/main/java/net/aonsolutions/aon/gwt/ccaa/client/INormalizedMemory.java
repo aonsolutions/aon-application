@@ -56,4 +56,8 @@ public interface INormalizedMemory extends RemoteService{
 	public Map<String, String> getSchemaTextMode(AonData aonData, Integer id);
 	
 	public void saveDepositTextMode(AonData aonData, Map<String, String> deposit, Integer id);
+
+	public void upload(AonData aonData, String data, String type, Integer year);
+	
+	public void uploadDocument(AonData aonData, MemoryFiles mf, String data, String type);
 }

@@ -156,6 +156,7 @@ public interface IRequestParamsNames {
 	String VAT_PARAMS = "vatParams";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
 	String WITHHOLDING_TYPE = "withholdingType";
+	String WITHHOLDING_TYPE_GROUP = "withholdingTypeGroup";
 	String WORKPLACE_IDS = "workplaceIds";
 	
 }
