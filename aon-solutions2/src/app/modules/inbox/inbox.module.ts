@@ -18,26 +18,26 @@ import { ModalCreateComponent } from './components/inbox/modal-create/modal-crea
 import { MatDialogModule } from '@angular/material/dialog';
 import { CardComponent } from 'src/app/shared/components/card/card.component';
 
-
 @NgModule({
-    declarations: [
-        InboxviewComponent,
-        TableComponentComponent,
-        TableQueriesComponent,
-        TableTasksComponent,
-        TableNotificationsComponent,
-        ModalCreateComponent,
-    ],
-    imports: [
-        CommonModule,
-        InboxRoutingModule,
-        SharedModule,
-        SetMaterialModule,
-        MatMenuModule,
-        MatIconModule,
-        MatGridListModule,
-        MatTableModule,
-        MatDialogModule
-    ],
+  declarations: [
+    InboxviewComponent,
+    TableComponentComponent,
+    TableQueriesComponent,
+    TableTasksComponent,
+    TableNotificationsComponent,
+    ModalCreateComponent,
+  ],
+  imports: [
+    CommonModule,
+    InboxRoutingModule,
+    SharedModule,
+    SetMaterialModule,
+    MatMenuModule,
+    MatIconModule,
+    MatGridListModule,
+    MatTableModule,
+    MatDialogModule
+  ],
 })
+
 export class InboxModule { }
