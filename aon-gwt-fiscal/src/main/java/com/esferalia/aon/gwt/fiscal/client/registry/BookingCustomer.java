@@ -1320,7 +1320,6 @@ public class BookingCustomer extends HTMLPanel {
 
 			                String bookingJSON = response.getText();
 			                AonMessagePanel.hideMessage(messagePanel);
-			                exportBooking(domainCompany);
 			                getDomain(domainCompany, bookingJSON);
 			                
 			            } else {
@@ -1407,7 +1406,7 @@ public class BookingCustomer extends HTMLPanel {
 		    requestBuilder.sendRequest(null, new RequestCallback() {
 		        public void onResponseReceived(Request request, Response response) {
 		            if (response.getStatusCode() == 200) {
-		            	if(response.getText().contains("errors")) {
+		            	if(AonStringUtils.isNotBlank(response.getText()) && AonStringUtils.containsIgnoreCase(response.getText(), "errors")) {
 		            		List<String> errors = parseErrors(response.getText());
 		            		String errorMessage = "";
 		            		for(String error : errors)
@@ -1440,44 +1439,6 @@ public class BookingCustomer extends HTMLPanel {
 		}
  		
 		return list;
-	}
-	
-	private void exportBooking(DomainCompany domainCompany) {
-		// Create the base URL
-		String baseUrl = "/ms/api/booking_export/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost("aon.solutions"); 
-		urlBuilder.setPath(baseUrl);
-		
-		urlBuilder.setParameter("domainName", domainCompany.getDomain().getName());
-		urlBuilder.setParameter("domainId", domainCompany.getDomain().getId().toString());
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		                
-		            } else {
-//		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
-		
 	}
 	
 }

@@ -242,7 +242,8 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 									.setType(RegistryMode.BOOKING)
 									.setStatus(RegistryItemStatus.ACTIVE)
 									.setPriority(Priority.NONE)
-									.setCode("CONSOLE");
+									.setCode("CONSOLE")
+									.setQuantity("1");
 							try {
 								AON.saveRItem(api.getDomain(), api.getUser(), newRitem);								
 							} catch (Exception e) {

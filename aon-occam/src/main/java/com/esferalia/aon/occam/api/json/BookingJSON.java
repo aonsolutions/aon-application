@@ -8,12 +8,12 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.BookingResume;
 import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
+import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
 public class BookingJSON {
@@ -72,86 +72,156 @@ public class BookingJSON {
 	}
 	
 	private static JSONObject bookingResume(BookingResume resume) {
-		JSONObject o = new JSONObject();
+		JSONObject resumeObj = new JSONObject();
+		
 		if(resume != null) { 
-			JSONObject domain = new JSONObject();
-			resume.getDomainTypes().keySet().forEach(r ->{
-				DomainTypeInfo dti = resume.getDomainTypes().get(r);
-				JSONObject oa = new JSONObject();
-				oa.put("number", dti.getNumber());
-				
-				JSONObject apps = new JSONObject();
-				dti.getChildApps().keySet().forEach(r2 -> apps.put(r2.name(), dti.getChildApps().get(r2)));
-				oa.put(IJsonNames.APPS, apps);
-
-				oa.put("childs", childJson(dti.getChilds()));
-
-				domain.put(r.name(), oa);	
-			});
-			o.put(IJsonNames.DOMAIN, domain);
-
-			JSONObject user = new JSONObject();
-			resume.getUserTypes().keySet().forEach(r -> user.put(r.name(), resume.getUserTypes().get(r)));
-			user.put("childDefinedUsers", resume.getChildDefinedUsers());
-			user.put("childBillingUsers", resume.getChildBillingUsers());
 			
-			o.put(IJsonNames.USER, user);
+			// Childs
+			JSONArray childsArr = new JSONArray();
+			resume.getChilds().forEach(childDomain -> childsArr.put(DomainJSON.toJSON(childDomain)));
+			resumeObj.put("childs", childsArr);
+			
+			// ChildApps
+			JSONObject childAppObj = new JSONObject();
+			resume.getChildApps().entrySet().forEach(entry -> childAppObj.put(entry.getKey().name(), entry.getValue()));
+			resumeObj.put("childApps", childAppObj);
+			
+			// UserTypes
+			JSONObject userTypesObj = new JSONObject();
+			resume.getUserTypes().entrySet().forEach(entry -> userTypesObj.put(entry.getKey().name(), entry.getValue()));
+			resumeObj.put("userTypes", userTypesObj);
+			
+			// ChildDefinedUsers
+			resumeObj.put("childDefinedUsers", resume.getChildDefinedUsers());
+			
+			// ChildBillingUsers
+			resumeObj.put("childBillingUsers", resume.getChildBillingUsers());
+			
+			// DomainTypes
+			JSONObject domainTypesObj = new JSONObject();
+			resume.getDomainTypes().entrySet().forEach(entry -> domainTypesObj.put(entry.getKey().name(), domainTypeInfoJson(entry.getValue())));
+			resumeObj.put("domainTypes", domainTypesObj);
 		}
-		return o;
+		
+		return resumeObj;
 	}
 	
 	private static BookingResume bookingResume(JSONObject json) {
-		BookingResume br = new BookingResume();
+		BookingResume bookingResume = new BookingResume();
+		
 		if(!json.isEmpty()) {
-			// DOMAIN TYPES
-			DomainType[] types = DomainType.values();
-			br.setDomainTypes(new HashMap<DomainType, DomainTypeInfo>());
-			for (Integer i = 0; i < types.length; i++) {
-				DomainType type = types[i];
-				JSONObject o = JsonUtils.getJSONObject(json, type.name());
-				if(!o.isEmpty()) {
-					DomainTypeInfo info = new DomainTypeInfo()
-							.setNumber(JsonUtils.getInteger(o, IJsonNames.NUMBER))
-							.setChilds(DomainJSON.fromJSON(JsonUtils.getJSONArray(o, IJsonNames.CHILDS)));
-
-					HashMap<AonApp, Long> childApps = new  HashMap<AonApp, Long>();
-					JSONObject apps = JsonUtils.getJSONObject(o, IJsonNames.APPS);
-					AonApp[] aonApps = AonApp.values();
-					for (Integer j = 0; j < aonApps.length; j++) {
-						AonApp aonApp = aonApps[j];
-						Integer aonAppLong = JsonUtils.getInteger(apps, aonApp.name());
-						childApps.put(aonApp, aonAppLong.longValue());
-					}
-					info.setChildApps(childApps);
-					br.getDomainTypes().put(type, info);
-				}
+			
+			// Childs
+			JSONArray childsArr = JsonUtils.getJSONArray(json, "childs");
+			bookingResume.setChilds(DomainJSON.fromJSON(childsArr));
+			
+			// ChildApps
+			HashMap<AonApp, Long> childApps = new  HashMap<AonApp, Long>();
+			JSONObject childAppsObj = JsonUtils.getJSONObject(json, "childApps");
+			AonApp[] aonApps = AonApp.values();
+			for (Integer j = 0; j < aonApps.length; j++) {
+				AonApp aonApp = aonApps[j];
+				Integer aonAppLong = JsonUtils.getInteger(childAppsObj, aonApp.name());
+				if(null != aonAppLong) childApps.put(aonApp, aonAppLong.longValue());
+			}
+			bookingResume.setChildApps(childApps);
+			
+			// UserTypes
+			HashMap<UserType, Long> userTypes = new  HashMap<UserType, Long>();
+			JSONObject userTypesObj = JsonUtils.getJSONObject(json, "userTypes");
+			UserType[] userTypesValues = UserType.values();
+			for (Integer j = 0; j < userTypesValues.length; j++) {
+				UserType userType = userTypesValues[j];
+				Integer userTypeLong = JsonUtils.getInteger(userTypesObj, userType.name());
+				if(null != userTypeLong) userTypes.put(userType, userTypeLong.longValue());
+			}
+			bookingResume.setUserTypes(userTypes);
+			
+			// ChildDefinedUsers
+			bookingResume.setChildDefinedUsers(JsonUtils.getInteger(json, "childDefinedUsers"));
+			
+			// ChildBillingUsers
+			bookingResume.setChildBillingUsers((JsonUtils.getInteger(json, "childBillingUsers")));
+			
+			// DomainTypes
+			HashMap<DomainType, DomainTypeInfo> domainTypes = new  HashMap<DomainType, DomainTypeInfo>();
+			JSONObject domainTypesObj = JsonUtils.getJSONObject(json, "domainTypes");
+			DomainType[] domainTypesValues = DomainType.values();
+			for (Integer j = 0; j < domainTypesValues.length; j++) {
+				DomainType domainType = domainTypesValues[j];
+				JSONObject domainTypeInfo = JsonUtils.getJSONObject(domainTypesObj, domainType.name());
+				if(null != domainTypeInfo) domainTypes.put(domainType, domainTypeInfoJson(domainTypeInfo));
 			}
 			
-			JSONObject userJSON = JsonUtils.getJSONObject(json, IJsonNames.USER);
-			
-			// USER TYPES
-			br.setChildDefinedUsers(JsonUtils.getInteger(userJSON, "childDefinedUsers"));
-			br.setChildBillingUsers(JsonUtils.getInteger(userJSON, "childBillingUsers"));
-
-			// TODO br.setUserTypes();
 		}
-		return br;
+		
+		return bookingResume;
+		
 	}
 	
-	private static JSONArray childJson(List<Domain> childs) {
-		JSONArray array = new JSONArray();
-		childs.stream().forEach(d -> {
-			JSONArray apps = new JSONArray();
-			d.getApps().stream().forEach(app -> apps.put(app.getApp().name()));
-			JSONObject json = new JSONObject();
-			json.put(IJsonNames.ID, d.getId());
-			json.put(IJsonNames.NAME, d.getName());
-			json.put(IJsonNames.DESCRIPTION, d.getDescription());
-			json.put(IJsonNames.APPS, apps);
-			json.put(IJsonNames.MAX_DEFINED_USERS, d.getMaxDefinedUsers());
-			array.put(json);
-		});
-		return array;
+	private static DomainTypeInfo domainTypeInfoJson(JSONObject domainTypeInfoJson) {
+		DomainTypeInfo domainTypeInfo = new DomainTypeInfo();
+		
+		if(null != domainTypeInfoJson) {
+			
+			// Number
+			domainTypeInfo.setNumber(JsonUtils.getInteger(domainTypeInfoJson, "number"));
+			
+			// ChildApps
+			HashMap<AonApp, Long> childApps = new  HashMap<AonApp, Long>();
+			JSONObject childAppsObj = JsonUtils.getJSONObject(domainTypeInfoJson, "childApps");
+			AonApp[] aonApps = AonApp.values();
+			for (Integer j = 0; j < aonApps.length; j++) {
+				AonApp aonApp = aonApps[j];
+				Integer aonAppLong = JsonUtils.getInteger(childAppsObj, aonApp.name());
+				if(null != aonAppLong) childApps.put(aonApp, aonAppLong.longValue());
+			}
+			domainTypeInfo.setChildApps(childApps);
+			
+			// Childs
+			JSONArray childsArr = JsonUtils.getJSONArray(domainTypeInfoJson, "childs");
+			domainTypeInfo.setChilds(DomainJSON.fromJSON(childsArr));
+		}
+		
+		return domainTypeInfo;
 	}
+
+	private static JSONObject domainTypeInfoJson(DomainTypeInfo domainTypeInfo) {
+		JSONObject domainTypeInfoObj = new JSONObject();
+		
+		if(null != domainTypeInfo) {
+			
+			// Number
+			domainTypeInfoObj.put("number", domainTypeInfo.getNumber());
+			
+			// ChildApps
+			JSONObject childAppObj = new JSONObject();
+			domainTypeInfo.getChildApps().entrySet().forEach(entry -> childAppObj.put(entry.getKey().name(), entry.getValue()));
+			domainTypeInfoObj.put("childApps", childAppObj);
+			
+			// Childs
+			JSONArray childsArr = new JSONArray();
+			domainTypeInfo.getChilds().forEach(childDomain -> childsArr.put(DomainJSON.toJSON(childDomain)));
+			domainTypeInfoObj.put("childs", childsArr);
+		}
+		
+		return domainTypeInfoObj;
+	}
+	
+//	private static JSONArray childJson(List<Domain> childs) {
+//		JSONArray array = new JSONArray();
+//		childs.stream().forEach(d -> {
+//			JSONArray apps = new JSONArray();
+//			d.getApps().stream().forEach(app -> apps.put(app.getApp().name()));
+//			JSONObject json = new JSONObject();
+//			json.put(IJsonNames.ID, d.getId());
+//			json.put(IJsonNames.NAME, d.getName());
+//			json.put(IJsonNames.DESCRIPTION, d.getDescription());
+//			json.put(IJsonNames.APPS, apps);
+//			json.put(IJsonNames.MAX_DEFINED_USERS, d.getMaxDefinedUsers());
+//			array.put(json);
+//		});
+//		return array;
+//	}
 
 }
