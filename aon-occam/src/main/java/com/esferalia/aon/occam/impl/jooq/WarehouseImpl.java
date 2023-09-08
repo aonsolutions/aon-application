@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -501,4 +502,9 @@ public class WarehouseImpl implements IWarehouse {
 			PackagingDAO.save(ctx, packaging));
 	}
 	
+	@Override
+	public DeliveryPackaging getDeliveryPackaging(AONContext ctx, String sscc, Integer delivery) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			PackagingDAO.getDeliveryPackaging(ctx, sscc, delivery));
+	}
 }

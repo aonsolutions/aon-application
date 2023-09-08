@@ -270,6 +270,7 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -1408,9 +1409,9 @@ public class AON {
 	
 	// ------------------------------------ NEW ITEM
 	
-	public static Item getItem(Domain domain, String login, ItemFilter filter) {
+	public static Item getItem(Domain domain, String login, ItemFilter filter, Options...options) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
-			return getNewProduct().getItem(ctx, filter);
+			return getNewProduct().getItem(ctx, filter, options);
 		}
 	}
 	
@@ -7836,6 +7837,12 @@ public class AON {
 	public static Packaging savePackaging(Domain domain, User user, Packaging packaging) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getWarehouse().savePackaging(ctx, packaging);
+		}
+	}
+	
+	public static DeliveryPackaging getDeliveryPackaging(Domain domain, User user, String sscc, Integer delivery) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getWarehouse().getDeliveryPackaging(ctx, sscc, delivery);
 		}
 	}
 	

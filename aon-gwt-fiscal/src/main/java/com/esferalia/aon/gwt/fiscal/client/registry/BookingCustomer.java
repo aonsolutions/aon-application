@@ -1399,11 +1399,9 @@ public class BookingCustomer extends HTMLPanel {
 		body.put("domain", JSONParser.parseStrict(domainJSON));
 		body.put("booking", JSONParser.parseStrict(bookingJSON));
 		
-		requestBuilder.setRequestData(body.toString());
-		
 		try {
 		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
+		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
 		        public void onResponseReceived(Request request, Response response) {
 		            if (response.getStatusCode() == 200) {
 		            	if(AonStringUtils.isNotBlank(response.getText()) && AonStringUtils.containsIgnoreCase(response.getText(), "errors")) {

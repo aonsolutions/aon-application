@@ -5414,6 +5414,42 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcXXXIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXI.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
+			//Assert.assertEquals(1, ssPecs.size());
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 11);
+			calendar.set(Calendar.MONTH, Calendar.JULY);
+			Date july112023 = calendar.getTime();
+
+			//assertPECS(ssPecs, july112023, null, 1, pec -> true);
+			
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.AUGUST);
+			Date august2023 = calendar.getTime();
+			Salary salary = calculate(ssPecs, Collections.emptyList(), august2023, new  SalaryBuilder(), new GenericContractSalaryCalculator.Listener());
+			double cgcBase = salary.getCommonBase();
+			assertEquals(cgcBase *  ( 0.10 ) / 100.00  , salary.getSocialSecurityContributions(), 0.00);
+			assertEquals(cgcBase *  ( 0.50 ) / 100.00  , salary.getTotalEnterprise() , DELTA);
+			
+		}
+	}
+
+	@Test
 	public void testIdc986Bonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
 			ExpressionException, SalaryException, SQLException {
 

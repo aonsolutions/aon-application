@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.SERFRUIT;
 import com.esferalia.aon.occam.api.json.CarrierPackingJSON;
 import com.esferalia.aon.occam.api.json.DeliveryJSON;
@@ -115,12 +114,12 @@ public class DeliveriesServlet extends AonApiHttpServlet {
 	
 	private static JSONArray getDeliveries(AonApiData api) {
 		return DeliveryJSON.toJSON(
-			AON.getDeliveryStream(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f), deliveryOptions(api)));
+			AON.getDeliveryStream(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f), options(api)));
 	}
 	
 	private static JSONObject getDelivery(AonApiData api) {
 		return DeliveryJSON.toJSON(
-			AON.getDelivery(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f), deliveryOptions(api)));
+			AON.getDelivery(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f), options(api)));
 	}
 	
 	private JSONObject saveDelivery(AonApiData api) {
@@ -186,13 +185,5 @@ public class DeliveriesServlet extends AonApiHttpServlet {
 		}
 
 		return filter;
-	}
-	
-	private static Options deliveryOptions(AonApiData api) {
-		Options options = new Options();
-		options.setPage(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
-		options.setPerPage(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
-		options.setFull(JsonUtils.getboolean(api.getData(), IJsonNames.FULL));
-		return options;
 	}
 }

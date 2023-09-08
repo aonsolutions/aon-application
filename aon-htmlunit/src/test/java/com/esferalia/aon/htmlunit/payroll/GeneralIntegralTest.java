@@ -2588,6 +2588,17 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double totalEnterpriseLabel = getText("totalEnterpriseLabel");
 		assertTrue(totalEnterpriseLabel > 0.00);
 		
+		draft("SUSPENSIÓN, DE EMPLEO Y SUELDO");
+		calculate(Calendar.SEPTEMBER,2023);
+		assertValue("cgpBaseLabel", 0.00 );
+		assertValue("cgcBaseLabel", 0.00 );
+		assertValue("totalLiquidLabel", 0.00 );
+		assertValue("totalPaymentLabel", 0.00 );
+		assertValue("description-box-3", "SUSPENSIÓN DE EMPLEO Y SUELDO");
+
+		calculate(Calendar.AUGUST,2023);
+		assertValue("description-box-10", "SUSPENSIÓN DE EMPLEO Y SUELDO 10/08 - 20/08");
+
 	}
 
 	@Test

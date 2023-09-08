@@ -165,7 +165,7 @@ public class ProductServlet extends AonApiHttpServlet {
 	
 	private JSONObject getItem(AonApiData api) {
 		Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> 
-			itemFilter(api, f));
+			itemFilter(api, f), options(api));
 		return ItemJSON.toJSON(item);
 	}
 	
@@ -406,7 +406,7 @@ public class ProductServlet extends AonApiHttpServlet {
 		
 		return filter;
 	}
-	
+
 	private Filter ritemFilter(AonApiData api, RegistryItemProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		

@@ -16,7 +16,7 @@ import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { getDeliveries } from '../../services/warehouseService.js';
-import { getProducts } from '../../services/productService.js';
+import { getDeliveryPackaging, getPackaging, getProducts } from '../../services/productService.js';
 
 export class AonMobileSale extends AonElement {
 
@@ -125,7 +125,7 @@ export class AonMobileSale extends AonElement {
 		table.id = this.id + 'Envasesss';
 		div.appendChild(table);
 
-		this.buildDelivery(table);
+		this.buildDelivery(table, detail);
 		// this.buildProductPackaging(table);
 
 		let next = new AonButton();
@@ -184,14 +184,14 @@ export class AonMobileSale extends AonElement {
 		dialog.open();
 	}
 
-	buildDelivery(table) {
+	buildDelivery(table, detail) {
 		table.addRow();
 		let deliverySelect = new AonSelect();
 		deliverySelect.id = this.id + 'DialogDelivery';
 		deliverySelect.title = MSG.DELIVERY;
 		deliverySelect.addEventListener(EVENT.SELECT, () => {
 			this.packaging.delivery = deliverySelect.value;
-			this.buildProductPackaging(table);
+			this.buildProductPackaging(table, detail);
 		});
 		
 		let td = table.addCell(deliverySelect);
@@ -204,8 +204,8 @@ export class AonMobileSale extends AonElement {
 		addButton.addEventListener(EVENT.CLICK, () => {
 			this.packaging = {};
 			table.removeRows();
-			this.buildNewDelivery(table);
-			this.buildProductPackaging(table);
+			this.buildNewDelivery(table, detail);
+			this.buildProductPackaging(table, detail);
 		});
 		table.addCell(addButton);
 
@@ -224,7 +224,7 @@ export class AonMobileSale extends AonElement {
 		});
 	}
 
-	buildNewDelivery(table) {
+	buildNewDelivery(table, detail) {
 		table.addRow();
 		let deliverySelect = new AonSelect();
 		deliverySelect.id = this.id + 'DialogDelivery';
@@ -241,15 +241,15 @@ export class AonMobileSale extends AonElement {
 		listButton.addEventListener(EVENT.CLICK, () => {
 			this.packaging = {};
 			table.removeRows();
-			this.buildDelivery(table);
+			this.buildDelivery(table, detail);
 		});
 		table.addCell(listButton);
 	}
 
-	buildProductPackaging(table) {
+	buildProductPackaging(table, detail) {
 		table.addRow();
 		
-		let product = this.createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER);
+		let product = this.createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC)');
 		let td = table.addCell(product);
 		td.style.width = '100%';
 		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());	
@@ -264,6 +264,20 @@ export class AonMobileSale extends AonElement {
 			//   	si no esta en ningun albaran añadir el palet con lo que tenga al albarán 
 			//			comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
 			//  	si está en otro albarán ERROR
+		
+			let data = { 
+				sscc: product.value,
+				delivery: this.packaging.delivery
+			};
+			getDeliveryPackaging(data).then(r => {
+				// si r.delivery no esta vacio. añadir nuevos productos al palet 
+				// si r.delivery está vacio. añadir el palet con lo que tenga al albarán.
+				//		comprobar que lo que tenga el albarán es lo que se quiere añadir si no ERROR
+				this.packaging.container = {
+					item: r.item.id
+				};
+				this.buildPackagingContent(table, detail);
+			}).catch(e => this.showError(e));
 		});
 		
 
@@ -275,12 +289,12 @@ export class AonMobileSale extends AonElement {
 			while(table.rows >= 2) {
 				table.removeRow(table.rows);
 			}
-			this.buildNewPackaging(table);
+			this.buildNewPackaging(table, detail);
 		});
 		table.addCell(addButton);
 	}
 
-	buildNewPackaging(table) {
+	buildNewPackaging(table, detail) {
 		table.addRow();
 		let envaseSelect = new AonSelect();
 		envaseSelect.id = this.id + 'DialogEnvase';
@@ -289,7 +303,7 @@ export class AonMobileSale extends AonElement {
 			this.packaging.container = {
 				product: envaseSelect.value
 			};
-			this.buildPackagingContent(table);
+			this.buildPackagingContent(table, detail);
 		});
 		
 		let td = table.addCell(envaseSelect);
@@ -303,7 +317,7 @@ export class AonMobileSale extends AonElement {
 			while(table.rows >= 2) {
 				table.removeRow(table.rows);
 			}
-			this.buildProductPackaging(table);
+			this.buildProductPackaging(table, detail);
 		});
 		table.addCell(pButton);
 
@@ -320,7 +334,7 @@ export class AonMobileSale extends AonElement {
 		});
 	}
 
-	buildPackagingContent(table) {
+	buildPackagingContent(table, detail) {
 		table.addRow();
 
 		let product2 = this.createInput(this.PACKAGING_PRODUCT, "Contenedor Producto / Lote");

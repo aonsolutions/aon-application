@@ -10,6 +10,8 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.UNPAID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDayOfWeek;
 import static com.esferalia.aon.watson.util.AonDateUtils.compare;
@@ -367,7 +369,13 @@ public class JooqPayrollBuilder {
 					
 					
 					int craKey = p.getPaymentType().ordinal();
-					if (com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0001.equals(p.getPaymentType())) {
+					if ( Objects.equals(ContextVariable.NOTE, p.getName())) {
+					    craKey  = IPayrollTemplate.NOTE;
+					} else if ( Objects.equals(ContextVariable.INFO, p.getName())) {
+					    craKey  = IPayrollTemplate.INFO;
+					} else if ( Objects.equals(ContextVariable.CAUTION, p.getName())) {
+					    craKey  = IPayrollTemplate.WARNING;
+					} else if (com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0001.equals(p.getPaymentType())) {
 						//TODO: COMPROBAR PREST_IT, ERE% Y MTNAD
 						if (PRESTATION_CONCEPTS.contains(p.getName()) || AonStringUtils.equals("ERE_", AonStringUtils.substring(p.getName(), 0, 4))) {
 							craKey = 100;
@@ -1019,10 +1027,12 @@ public class JooqPayrollBuilder {
 	 * @return true | false
 	 */
 	private static boolean filter(Payment payment) {
-		List<String> excludedConcepts = Arrays.asList("PREST_IT");
-		List<String> excludedDescriptionWords = Arrays.asList("vacaciones");
+		List<String> logConcepts = Arrays.asList(ContextVariable.LOGS);
+		List<String> excludedDescriptionWords = Arrays.asList("VACACIONES");
+		List<String> excludedConcepts = Arrays.asList(PREST_IT, UNPAID.getName());
 		
 		return !(payment.getAmount() == 0 && payment.getQuote() == 0)
+				|| logConcepts.contains(payment.getName())
 				|| excludedConcepts.contains(payment.getName())
 				|| excludedDescriptionWords.stream().anyMatch(word -> AonStringUtils.containsIgnoreCase(payment.getDescription(), word));
 	}
