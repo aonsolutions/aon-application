@@ -1,67 +1,96 @@
 package com.esferalia.aon.occam.api.model.warehouse;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.Serializable;
+import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.Item;
 
-public class DeliveryPackaging {
+public class DeliveryPackaging implements Serializable {
 	
-	Product product;
-	String sscc;
-	List<DeliveryPackaging> content;
-	Integer deliveryLine;
-	double quantity;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3053139577316342602L;
+	private Integer id;
+	private Integer domain;
+	private Delivery delivery;
+	private Item item;
 	
-	public Product getProduct() {
-		return product;
+	private Date creationDate;
+	private String creationUser;
+	private Date modificationDate;
+	private String modificationUser;
+	
+	public Integer getId() {
+		return id;
 	}
 	
-	public DeliveryPackaging setProduct(Product product) {
-		this.product = product;
+	public DeliveryPackaging setId(Integer id) {
+		this.id = id;
 		return this;
 	}
-	
-	public String getSscc() {
-		return sscc;
+	public Integer getDomain() {
+		return domain;
 	}
-	
-	public DeliveryPackaging setSscc(String sscc) {
-		this.sscc = sscc;
+	public DeliveryPackaging setDomain(Integer domain) {
+		this.domain = domain;
 		return this;
 	}
-	
-	public List<DeliveryPackaging> getContent() {
-		if(content == null) content = new LinkedList<>();
-		return content;
+	public Delivery getDelivery() {
+		if(delivery == null) 
+			delivery = new Delivery();
+		return delivery;
 	}
-	
-	public DeliveryPackaging setContent(List<DeliveryPackaging> content) {
-		this.content = content;
+	public DeliveryPackaging setDelivery(Delivery delivery) {
+		this.delivery = delivery;
 		return this;
 	}
-	
-	public DeliveryPackaging addContent(DeliveryPackaging deliveryPackaging) {
-		getContent().add(deliveryPackaging);
+
+	public Item getItem() {
+		if(item == null) 
+			item = new Item();
+		return item;
+	}
+	public DeliveryPackaging setItem(Item item) {
+		this.item = item;
 		return this;
 	}
-	
-	public Integer getDeliveryLine() {
-		return deliveryLine;
+
+	public Date getCreationDate() {
+		return creationDate;
 	}
-	
-	public DeliveryPackaging setDeliveryLine(Integer deliveryLine) {
-		this.deliveryLine = deliveryLine;
+	public DeliveryPackaging setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 		return this;
 	}
-	
-	public double getQuantity() {
-		return quantity;
+	public String getCreationUser() {
+		return creationUser;
 	}
-	
-	public DeliveryPackaging setQuantity(double quantity) {
-		this.quantity = quantity;
+	public DeliveryPackaging setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
 		return this;
 	}
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public DeliveryPackaging setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public DeliveryPackaging setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 	
+	public boolean isEmpty() {
+		return getItem().isEmpty()
+			&& getDelivery().getId() == null;
+	}
+
 }

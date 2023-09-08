@@ -1093,6 +1093,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						onCheckError(e.getMessage());
 				} catch (RemoveException e) {
 					// TODO: Something ??? It's really necessary...
+				    	addResult(expressionContext, contractDeduction.getName(), start, end, 0.00);
 				} catch (InvalidVariables e) {
 					onInvalidData(contractDeduction, e.getMessage(), e.getVariables());
 				} catch (InterruptedException e) {

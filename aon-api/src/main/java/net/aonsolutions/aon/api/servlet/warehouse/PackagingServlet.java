@@ -2,18 +2,19 @@ package net.aonsolutions.aon.api.servlet.warehouse;
 
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.DeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.PackagingJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -50,6 +51,9 @@ public class PackagingServlet extends AonApiHttpServlet {
 			case "/":
 				response(req, resp, getPackaging(api));
 				break;
+			case "/deliveryPackaging":
+				response(req, resp, getDeliveryPackaging(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -78,6 +82,13 @@ public class PackagingServlet extends AonApiHttpServlet {
 		String barcode = JsonUtils.getString(api.getData(), IJsonNames.BARCODE);
 		Packaging packaging = AON.getPackaging(api.getDomain(), api.getUser(), barcode);
 		return PackagingJSON.toJSON(packaging);
+	}
+	
+	private JSONObject getDeliveryPackaging(AonApiData api) {
+		String sscc = JsonUtils.getString(api.getData(), IJsonNames.SSCC);
+		Integer delivery = JsonUtils.getInteger(api.getData(), IJsonNames.DELIVERY);
+		DeliveryPackaging deliveryPackaging = AON.getDeliveryPackaging(api.getDomain(), api.getUser(), sscc, delivery);
+		return DeliveryPackagingJSON.toJSON(deliveryPackaging);
 	}
 	
 	private JSONObject savePackaging(AonApiData api) {

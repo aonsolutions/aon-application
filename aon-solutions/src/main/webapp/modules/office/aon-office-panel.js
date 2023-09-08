@@ -13,6 +13,11 @@ import { getTastHolders } from '../../services/taskHolderService.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { ProjectUtils } from '../project/ProjectUtils.js';
 import { saveRelationShip } from '../../services/registryService.js';
+import { BOOKING_PANEL, ConsoleSidenav, LINK_DOMAINS } from './ConsoleOptions.js';
+import { AonLinkDomains } from '../domains/aon-link-domains.js';
+
+import * as GWT from '../../gwt/gwt.js';
+import { BOOK } from '../../environments/materialIcons.js';
 
 export class AonOfficePanel extends AonElement {
     projectTypes;
@@ -99,6 +104,20 @@ export class AonOfficePanel extends AonElement {
         let taskHolder = OfficeOptions.AON_TASK_HOLDER;
         taskHolder.fn = () => this.showView(OfficeViews.AON_TASK_HOLDER_LIST);
         options.push(taskHolder);
+
+
+        if(this.isSig()){
+            let consoleOptions = [];
+            let linkDomain = LINK_DOMAINS;
+            linkDomain.fn = () => this.showView(LINK_DOMAINS.id);
+            consoleOptions.push(linkDomain);
+    
+            let bookingPanel = BOOKING_PANEL;
+            bookingPanel.fn = () => this.showView(BOOKING_PANEL.id);
+            consoleOptions.push(bookingPanel);
+    
+            application.addSidenavOptions(MSG.CONSOLE, consoleOptions);
+        }
 
         application.addSidenavOptions(MSG.OFFICE, options);
 
@@ -388,14 +407,20 @@ export class AonOfficePanel extends AonElement {
 			let aonView = undefined;
     
 			switch(view){
+                case BOOKING_PANEL.id:
+                    GWT.load(GWT.BOOKING_PANEL, this.getApplication().CONTENT);
+                    break;
+                case LINK_DOMAINS.id:
+                    aonView = new AonLinkDomains()
+                    break;
                 case officeViews.AON_OFFICE_PANEL:
 					aonView = new AonOfficePanel();
-				break;
+				    break;
                 case officeViews.AON_CUSTOMER:
 					aonView = new AonCustomer();
                     aonView.setCustomer();
                     aonView.back = () => this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {...this.getFilterCustomers(), page:1 }); // overwrite function
-				break;
+				    break;
                 case officeViews.AON_CUSTOMER_LIST:
 					aonView = new AonCustomerList();
 
@@ -410,13 +435,13 @@ export class AonOfficePanel extends AonElement {
                         .catch(err => this.showError(err))
                         .finally(() => application.stopLoader());
                     }
-				break;
+				    break;
                 case officeViews.AON_TASK_HOLDER:
 					aonView = new AonTaskHolder();
-				break;
+				    break;
                 case officeViews.AON_TASK_HOLDER_LIST:
 					aonView = new AonTaskHolderList();
-				break;
+				    break;
 			}
 			if(aonView){
 				aonView.id = view;

@@ -131,11 +131,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		@Override
 		protected void showAfiOption() {
 			tgssContextMenu.afi.setVisible(true);
+			tgssContextMenu.comunicateAFI.setVisible(true);
+			tgssContextMenu.altaConsolidadaDelete.setVisible(true);
 		}
 
 		@Override
 		protected void hideAfiOption() {
 			tgssContextMenu.afi.setVisible(false);
+			tgssContextMenu.comunicateAFI.setVisible(false);
+			tgssContextMenu.altaConsolidadaDelete.setVisible(false);
 		}
 
 	}
@@ -582,8 +586,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			taEnd.setVisible(endDate != null);
 		}
 		
-		public void setStartDate(Date startDate) {
-			altaConsolidadaDelete.setVisible(DateUtils.isAfterOrEquals(new Date(), startDate));
+		public void setStartDate(Date startDate, boolean isReta) {
+			altaConsolidadaDelete.setVisible(DateUtils.isAfterOrEquals(new Date(), startDate) && !isReta);
 		}
 		
 		public void setPrevAlta(boolean prevAlta) {
@@ -2920,7 +2924,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		Date endDate = contrataEmployeeObject.getContractData().getEndDate();
 		
 		tgssContextMenu.setIsComunica(this.isComunica);
-		tgssContextMenu.setStartDate(startDate);
+		tgssContextMenu.setStartDate(startDate, (null != contrataEmployeeObject.getContractData().getSsRegimen() && contrataEmployeeObject.getContractData().getSsRegimen() == 3));
 		tgssContextMenu.setEndDate(endDate);
 		tgssContextMenu.setPrevAlta(checkPrevAlta());
 	}

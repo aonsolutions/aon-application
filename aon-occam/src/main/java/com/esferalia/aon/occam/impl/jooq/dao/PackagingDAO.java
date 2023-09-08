@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Barcode;
 import com.esferalia.aon.occam.api.model.warehouse.BarcodeType;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.GS1128Codes;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
@@ -32,6 +33,25 @@ public class PackagingDAO {
 	private PackagingDAO() {
 	
 	}
+	
+
+	public static DeliveryPackaging getDeliveryPackaging(AONContext ctx, String sscc, Integer delivery){
+		Item container = ItemDAO.getFull(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getSerialNumberProperty().eq(sscc)));
+		if(!container.isEmpty()) {
+			DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getItemProperty().eq(container.getId()));
+			if(!dp.isEmpty() && !dp.getDelivery().getId().equals(delivery)) {
+				throw new AonCoreException("El Envase pertenece al albarán " + dp.getDelivery().getReferenceCode()); 
+			} else if(!dp.isEmpty() && dp.getDelivery().getId().equals(delivery)) {
+				return dp;
+			}
+		} else throw new AonCoreException("No existe ningún envase con el SSCC indicado"); 
+
+		return new DeliveryPackaging()
+				.setItem(container);
+	}
+
 
 	public static Packaging get(AONContext ctx, String barcode){
 		String serialNumber = calculateSerialNumber(barcode);
@@ -53,6 +73,11 @@ public class PackagingDAO {
 				.setSerialNumber(serialNumber)
 				.setSerialDate(serialDate)
 				.setDescription(item.getProduct().getName() + " #" + serialNumber);
+			if(item.getProduct().isPerishable()) {
+				Date expireDate = AonDateUtils.addDays(serialDate, 
+					item.getProduct().getDaysToExpire() != null ? item.getProduct().getDaysToExpire() : 0);
+				item2.setExpireDate(expireDate);
+			}
 		}
 		Integer[] items = ItemCompositionDAO.getStream(ctx, f -> 
 			f.getCompositionItemProperty().eq(item.getId()))
@@ -148,7 +173,11 @@ public class PackagingDAO {
 		Item container = packaging.getContainer();
 		container.setId(null).setBarcode(null).setSerialNumber(sscc).setSerialDate(new Date());
 		container = ItemDAO.save(ctx, container);
-		
+		if(container.getProduct().isPerishable()) {
+			Date expireDate = AonDateUtils.addDays(container.getSerialDate(), 
+					container.getProduct().getDaysToExpire() != null ? container.getProduct().getDaysToExpire() : 0);
+			container.setExpireDate(expireDate);
+		}
 		ElaborationDetail packing = new ElaborationDetail()
 				.setDomain(ctx.getDomainId())
 				.setElaboration(elaboration)

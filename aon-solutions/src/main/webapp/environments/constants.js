@@ -46,6 +46,7 @@ export const BANK_ACCOUNT = 'bankAccount';
 export const BASE = 'base';
 export const BIC = 'bic';
 export const BLANK = 'blank';
+export const BOOKING_PANEL = 'bookingPanel'
 export const BOOLEAN = 'boolean';
 export const BUTTON = 'button';
 

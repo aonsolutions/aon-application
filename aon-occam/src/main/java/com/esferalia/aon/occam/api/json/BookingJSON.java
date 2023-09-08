@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.json;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -39,7 +40,8 @@ public class BookingJSON {
 			.setApps(apps)
 			.setParentApps(parentApps)
 			.setNumberOfUsers(JsonUtils.getInt(json, IJsonNames.NUMBER_OF_USERS))
-			.setPayer(JsonUtils.getString(json, IJsonNames.PAYER));
+			.setPayer(JsonUtils.getString(json, IJsonNames.PAYER))
+			.setResume(bookingResume(JsonUtils.getJSONObject(json, IJsonNames.RESUME)));
 	}
 	
 	public static JSONArray toJSON(List<Booking> list) {
@@ -96,6 +98,44 @@ public class BookingJSON {
 			o.put(IJsonNames.USER, user);
 		}
 		return o;
+	}
+	
+	private static BookingResume bookingResume(JSONObject json) {
+		BookingResume br = new BookingResume();
+		if(!json.isEmpty()) {
+			// DOMAIN TYPES
+			DomainType[] types = DomainType.values();
+			br.setDomainTypes(new HashMap<DomainType, DomainTypeInfo>());
+			for (Integer i = 0; i < types.length; i++) {
+				DomainType type = types[i];
+				JSONObject o = JsonUtils.getJSONObject(json, type.name());
+				if(!o.isEmpty()) {
+					DomainTypeInfo info = new DomainTypeInfo()
+							.setNumber(JsonUtils.getInteger(o, IJsonNames.NUMBER))
+							.setChilds(DomainJSON.fromJSON(JsonUtils.getJSONArray(o, IJsonNames.CHILDS)));
+
+					HashMap<AonApp, Long> childApps = new  HashMap<AonApp, Long>();
+					JSONObject apps = JsonUtils.getJSONObject(o, IJsonNames.APPS);
+					AonApp[] aonApps = AonApp.values();
+					for (Integer j = 0; j < aonApps.length; j++) {
+						AonApp aonApp = aonApps[j];
+						Integer aonAppLong = JsonUtils.getInteger(apps, aonApp.name());
+						childApps.put(aonApp, aonAppLong.longValue());
+					}
+					info.setChildApps(childApps);
+					br.getDomainTypes().put(type, info);
+				}
+			}
+			
+			JSONObject userJSON = JsonUtils.getJSONObject(json, IJsonNames.USER);
+			
+			// USER TYPES
+			br.setChildDefinedUsers(JsonUtils.getInteger(userJSON, "childDefinedUsers"));
+			br.setChildBillingUsers(JsonUtils.getInteger(userJSON, "childBillingUsers"));
+
+			// TODO br.setUserTypes();
+		}
+		return br;
 	}
 	
 	private static JSONArray childJson(List<Domain> childs) {

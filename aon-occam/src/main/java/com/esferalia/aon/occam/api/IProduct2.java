@@ -30,7 +30,7 @@ public interface IProduct2 {
 
 	// ITEM
 	
-	public Item getItem(AONContext ctx, ItemFilter filter);
+	public Item getItem(AONContext ctx, ItemFilter filter, Options...options);
 	public Stream<Item> getItemStream(AONContext ctx, ItemFilter filter);
 	public Stream<Item> getItemStream(AONContext ctx, ItemFilter filter, Integer page, Integer perPage);
 	public Stream<Item> getRItemStream(AONContext ctx, ItemFilter filter);

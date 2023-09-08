@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -24,6 +25,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -32,7 +34,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 public abstract class BookingCheckDialog extends AonCustomDialog {
 
@@ -53,8 +54,11 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 	private HTMLPanel statusPanel;
 	private ListBox statusListBox;
 	
-	private HTMLPanel quantityPricePanel;
+	private HTMLPanel quantityPanel;
 	private TextBox quantityTextBox;
+	private AonTableButton quantityVars;
+	
+	private HTMLPanel pricePanel;
 	private TextBox priceTextBox;
 	private TextBox discountTextBox;
 	
@@ -78,17 +82,34 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 	
 	private OldItem item;
 	private Customer customer;
+	private BookingCheck bookingCheck;
 	
 	private boolean isNewBookingFee = false;
 
 	// ------------------------------------------------- Constructor
 
 	protected BookingCheckDialog(RegistryModuleOptions options, OldItem item, Customer customer) {
-		setCaption("Creador Cuota");
+		setCaption("Creador Contrataci\u00f3n");
 		
 		this.isNewBookingFee = true;
 		this.item = item;
 		this.customer = customer;
+		this.options = options;
+		
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		
+		initView();
+		showDialog();
+	}
+	
+	protected BookingCheckDialog(RegistryModuleOptions options, BookingCheck bookingCheck) {
+		setCaption("Actualizar Contrataci\u00f3n");
+		
+		this.isNewBookingFee = false;
+		this.item = bookingCheck.getItem();
+		this.customer = bookingCheck.getCustomer();
+		this.bookingCheck = bookingCheck;
 		this.options = options;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
@@ -112,22 +133,23 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 		container.addStyleName(AON.CSS.aonFlexColumn());
 		container.getElement().getStyle().setProperty("margin", "0 1rem 1rem");
 		
-		if(this.isNewBookingFee) {
+		if(this.isNewBookingFee || null != this.bookingCheck) {
 			createCustomerPanel();
 			container.add(customerPanel);
 		}
 		
-		if(this.isNewBookingFee) {
+		if(this.isNewBookingFee || null != this.bookingCheck) {
 			createProductPanel();
 			container.add(productPanel);
 		} 
 		
 		createStatusPanel();
 		
-		createQuantityPricePanel();
+		createQuantityPanel();
+		createPricePanel();
 		createDatesPanel();
 		
-		if(this.isNewBookingFee) {
+		if(this.isNewBookingFee || null != this.bookingCheck) {
 			createWorkplacePanel();
 			container.add(workplacePanel);
 		} 
@@ -139,7 +161,7 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 		
 		this.setWidget(mainPanel);
 	}
-	
+
 	private void createCustomerPanel() {
 		customerPanel = new HTMLPanel("");
 		customerPanel.addStyleName(AON.CSS.aonItemFlex());
@@ -258,7 +280,7 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 		
 		if(null != this.item) productSuggestBox.setValue(this.item.getProduct().getName() + " ( " + this.item.getProduct().getCode() + " )");
 		
-		if( null != this.item) {
+		if(null != this.item) {
 			productSuggestBox.setEnabled(false);
 			productTextBox.setValue(this.item.getProduct().getName());
 			productTextBox.setVisible(true);
@@ -308,31 +330,46 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 		statusListBox.addItem("No Contratado", "2");
 		statusListBox.addItem("Inactivo", "3");
 		
+		if(null != bookingCheck)
+			setSelectedValueLB(statusListBox, bookingCheck.getStatus().ordinal() + "");
+		
 		statusPanel.add(statusLabel);
 		statusPanel.add(statusListBox);
 		
 		container.add(statusPanel);
 	}
 
-	private void createQuantityPricePanel() {
-		quantityPricePanel = new HTMLPanel("");
-		quantityPricePanel.addStyleName(AON.CSS.aonItemFlex());
+	private void createQuantityPanel() {
+		quantityPanel = new HTMLPanel("");
+		quantityPanel.addStyleName(AON.CSS.aonItemFlex());
 		
 		Label quantityLabel = new Label();
-		if(this.isNewBookingFee) {
-			quantityLabel = new Label("Cantidad");
-			quantityLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
-			quantityLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-			
-			quantityTextBox = new TextBox();
-			quantityTextBox.setWidth("8.8em");
-			quantityTextBox.setHeight("2em");
-			quantityTextBox.getElement().getStyle().setProperty("padding", "0 5px");
-		}
+		quantityLabel = new Label("Cantidad");
+		quantityLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
+		quantityLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		quantityTextBox = new TextBox();
+		quantityTextBox.setWidth("100%");
+		quantityTextBox.setHeight("2em");
+		quantityTextBox.getElement().getStyle().setProperty("padding", "0 5px");
+		
+		if(null != this.bookingCheck) quantityTextBox.setValue(bookingCheck.getQuantity());
+		
+		quantityVars = new AonTableButton("Variables disponibles:\n\nNUMUSR\nNUMEMP", AON.CSS.aonIconInfo());
+		
+		quantityPanel.add(quantityLabel);
+		quantityPanel.add(quantityTextBox);
+		quantityPanel.add(quantityVars);
+		
+		container.add(quantityPanel);
+	}
+	
+	private void createPricePanel() {
+		pricePanel = new HTMLPanel("");
+		pricePanel.addStyleName(AON.CSS.aonItemFlex());
 		
 		Label priceLabel = new Label("Precio");
-		if(!this.isNewBookingFee) priceLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
-		else priceLabel.setWidth("3.5rem");
+		priceLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
 		priceLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		
 		priceTextBox = new TextBox();
@@ -349,18 +386,18 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 		discountTextBox.setWidth("8.8em");
 		discountTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 		
-		if(this.isNewBookingFee) {
-			quantityPricePanel.add(quantityLabel);
-			quantityPricePanel.add(quantityTextBox);
+		if(null != bookingCheck) {
+			priceTextBox.setValue(bookingCheck.getPrice() != null ? bookingCheck.getPrice().toString() : null);
+			discountTextBox.setValue(bookingCheck.getDiscountExpr());
 		}
 		
-		quantityPricePanel.add(priceLabel);
-		quantityPricePanel.add(priceTextBox);
+		pricePanel.add(priceLabel);
+		pricePanel.add(priceTextBox);
 		
-		quantityPricePanel.add(discountLabel);
-		quantityPricePanel.add(discountTextBox);
+		pricePanel.add(discountLabel);
+		pricePanel.add(discountTextBox);
 		
-		container.add(quantityPricePanel);
+		container.add(pricePanel);
 	}
 
 	private void createDatesPanel() {
@@ -377,6 +414,7 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 		startDateBox.getElement().getStyle().setProperty("padding", "0 5px");
 		startDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		startDateBox.addStyleName("gwt-TextBox");
+		if(null != bookingCheck) startDateBox.setValue(bookingCheck.getStartDate());
 		
 		Label endDateLabel = new Label("F. Fin");
 		endDateLabel.setWidth("3.5rem");
@@ -388,6 +426,7 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 		endDateBox.getElement().getStyle().setProperty("padding", "0 5px");
 		endDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		endDateBox.addStyleName("gwt-TextBox");
+		if(null != bookingCheck) endDateBox.setValue(bookingCheck.getEndDate());
 		
 		datesPanel.add(startDateLabel);
 		datesPanel.add(startDateBox);
@@ -397,18 +436,6 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 		container.add(datesPanel);
 	}
 	
-	private TextBox createYearTextBox() {
-		TextBox tb = new TextBox();
-		tb.setMaxLength(4);
-		tb.setHeight("2em");
-		tb.setWidth("4em");
-		tb.setAlignment(TextAlignment.CENTER);
-		tb.getElement().getStyle().setProperty("padding", "0 5px");
-		tb.getElement().getStyle().setProperty("placeholder", "aaaa");
-		
-		return tb;
-	}
-
 	private void createWorkplacePanel() {
 		workplacePanel = new HTMLPanel("");
 		workplacePanel.addStyleName(AON.CSS.aonItemFlex());
@@ -438,6 +465,8 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 			} else if(AonStringUtils.isNotBlank(workplaceQuery) && workplaceQuery.length() > 3) 
 				getWorkplacesSuggestion(workplaceQuery);
 		});
+		
+		if(null != bookingCheck) workplaceSuggestBox.setValue(null != bookingCheck.getWorkplace() ? bookingCheck.getWorkplace().getDescription() : null);
 		
 		workplacePanel.add(workplaceLabel);
 		workplacePanel.add(workplaceSuggestBox);
@@ -477,20 +506,6 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 		lBox.setSelectedIndex(indexToFind);
 	}
 
-	private void getEnableDisableButton(Button button, boolean disabled) {
-		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
-		button.removeStyleName(AON.AON_NO_MARGIN);
-		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
-		
-		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
-		button.setStyleName(AON.AON_NO_MARGIN, true);
-		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-	}
-	
-	private boolean isActiveToggleButton(Button button) {
-		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
-	}
-
 	private void showDialog() {
 		// Show center
 		Scheduler.get().scheduleDeferred(() -> {
@@ -515,7 +530,7 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 		
 		Button acceptBtnDialog = null;
 		
-		if(this.isNewBookingFee) {
+		if(this.isNewBookingFee || null != this.bookingCheck) {
 			acceptBtnDialog = new Button();
 			acceptBtnDialog.setStyleName(AON.CSS.aonDialogButton());
 			acceptBtnDialog.addStyleName(AON.CSS.aonIconSave());
@@ -529,10 +544,59 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 	}
 
 	private void createNewFee() {
-		BookingCheck bookingCheck = new BookingCheck();
-		
-		bookingCheck.setDomain(new Domain().setId(options.getDomain()));
-		
+		if(null != bookingCheck)
+			updateBookingCheck();
+		else {
+			BookingCheck bookingCheck = new BookingCheck();
+			
+			bookingCheck.setDomain(new Domain().setId(options.getDomain()));
+			
+			if(null != this.customer) bookingCheck.setCustomer(this.customer);
+			else if(AonStringUtils.isNotBlank(customerSuggestBox.getValue())) bookingCheck.setCustomer(customerSuggestions.get(customerSuggestBox.getValue()));
+			
+			if(AonStringUtils.isBlank(customerSuggestBox.getValue())) {
+				AonMessagePanel.showError(messagePanel, "El campo cliente es obligatorio");
+				return;
+			}
+			
+			bookingCheck.setItem(item);
+			
+			if(item == null) {
+				AonMessagePanel.showError(messagePanel, "El campo producto es obligatorio");
+				return;
+			}
+			
+			bookingCheck.setType(RegistryMode.BOOKING);
+			bookingCheck.setStatus(RegistryItemStatus.safeValueOf(Byte.parseByte(statusListBox.getSelectedValue())));
+			
+			bookingCheck.setQuantity(quantityTextBox.getValue());
+			
+			// EVAL QUANTITY
+			String quantity = bookingCheck.getQuantity();
+			quantity = quantity.replaceAll("NUMUSR", "1");
+			quantity = quantity.replaceAll("NUMEMP", "1");
+			try {
+				evalExpression(quantity);
+			} catch (Exception e) {
+				AonMessagePanel.showError(messagePanel, "Las expresi\u00f3n de la cantidad no es correcta");
+				return;
+			}
+			
+			
+			bookingCheck.setPrice(AonStringUtils.isBlank(priceTextBox.getValue()) ? null : Double.parseDouble(priceTextBox.getValue()));
+			bookingCheck.setDiscountExpr(discountTextBox.getValue());
+			
+			bookingCheck.setStartDate(startDateBox.getValue());
+			bookingCheck.setEndDate(endDateBox.getValue());
+			
+			if(AonStringUtils.isNotBlank(workplaceSuggestBox.getValue())) bookingCheck.setWorkplace(workplaceSuggestions.get(workplaceSuggestBox.getValue()));
+			
+			hide();
+			onCreate(bookingCheck);
+		}
+	}
+
+	private void updateBookingCheck() {
 		if(null != this.customer) bookingCheck.setCustomer(this.customer);
 		else if(AonStringUtils.isNotBlank(customerSuggestBox.getValue())) bookingCheck.setCustomer(customerSuggestions.get(customerSuggestBox.getValue()));
 		
@@ -552,25 +616,40 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 		bookingCheck.setStatus(RegistryItemStatus.safeValueOf(Byte.parseByte(statusListBox.getSelectedValue())));
 		
 		bookingCheck.setQuantity(quantityTextBox.getValue());
+		// EVAL QUANTITY
+		String quantity = bookingCheck.getQuantity();
+		quantity = quantity.replaceAll("NUMUSR", "1");
+		quantity = quantity.replaceAll("NUMEMP", "1");
+		try {
+			evalExpression(quantity);
+		} catch (Exception e) {
+			AonMessagePanel.showError(messagePanel, "Las expresi\u00f3n de la cantidad no es correcta");
+			return;
+		}
+		
 		bookingCheck.setPrice(AonStringUtils.isBlank(priceTextBox.getValue()) ? null : Double.parseDouble(priceTextBox.getValue()));
 		bookingCheck.setDiscountExpr(discountTextBox.getValue());
 		
 		bookingCheck.setStartDate(startDateBox.getValue());
 		bookingCheck.setEndDate(endDateBox.getValue());
 		
-		if(bookingCheck.getStartDate() == null) {
-			AonMessagePanel.showError(messagePanel, "Las fecha desde e obligatoria");
-			return;
-		}
-		
 		if(AonStringUtils.isNotBlank(workplaceSuggestBox.getValue())) bookingCheck.setWorkplace(workplaceSuggestions.get(workplaceSuggestBox.getValue()));
 		
 		hide();
-		onCreate(bookingCheck);
+		onUpdate(bookingCheck);
 	}
+	
+	public double evalExpression(String expression) {
+		return calculate(expression);
+	}
+
+	public final native double calculate(String expression) /*-{
+		return eval(expression);
+	}-*/;
 
 	// ------------------------------------------------- Abstract Methods
 
 	protected abstract void onCreate(BookingCheck bookingCheck);
+	protected abstract void onUpdate(BookingCheck bookingCheck);
 
 }

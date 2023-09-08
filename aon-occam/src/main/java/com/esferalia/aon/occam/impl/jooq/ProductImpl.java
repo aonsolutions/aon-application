@@ -49,24 +49,9 @@ public class ProductImpl implements IProduct{
 	}
 
 	@Override
-	public void insertWithId(AONContext ctx, OldProduct p) {
-		ctx.getDslContext().transaction(configuration -> {
-			ProductOldDAO.insertWithId(ctx, p);
-		} );
-		
-	}
-
-	@Override
 	public LinkedList<OldProduct> insert(AONContext ctx, Stream<OldProduct> ps) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			ProductOldDAO.insert(ctx, ps));		
-	}
-
-	@Override
-	public void insertWithId(AONContext ctx, Stream<OldProduct> ps) {
-		ctx.getDslContext().transaction(configuration -> {
-			ProductOldDAO.insertWithId(ctx, ps);
-		} );		
 	}
 	
 	@Override

@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.jooq.Record;
 
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Download-CRA", urlPatterns = { "/aon_gwt_payroll/download_cra/*" })
@@ -37,13 +38,18 @@ public class DownloadMainCRAServlet extends HttpServlet {
 			
 			Record craRecord = JooqCRA.getDownloadMainCRA(domainName, _craBatchId);
 			
-			Date fileNameDate = craRecord.get(CRA_BATCH.DATE);
-			String fileName = dateFormatter.format(fileNameDate);
-			
 			byte[] data = craRecord.get(CRA_BATCH.OUTCOME_FILE);
 			
+			String craStr = new String(data);
+			String craFileName = AonStringUtils.isBlank(craStr) || craStr.length() < 73 ? "" : craStr.substring(41, 49);
+			
+			if(AonStringUtils.isBlank(craFileName)) {
+				Date fileNameDate = craRecord.get(CRA_BATCH.DATE);
+				craFileName = dateFormatter.format(fileNameDate);
+			}
+			
 			response.setContentType("text/html;charset=utf-8");
-			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".CRA\"");
+			response.setHeader("Content-disposition", "attachment; filename=\"" + craFileName + ".CRA\"");
 			ServletOutputStream output = response.getOutputStream();
 			
 			output.write(data);

@@ -65,6 +65,8 @@
 	<table-filter match-name="fs_model_invoice" exclude="true" />
 
 	<table-filter match-name="contract_doc" exclude="true" />
+	<table-filter match-name="delivery_packaging" exclude="true" />
+	<table-filter match-name="sales_info" exclude="true" />
 
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->

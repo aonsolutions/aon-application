@@ -465,7 +465,10 @@ public class ConnectDeliveryWriter {
 			record.setCantidadEnviada_12_(quantity);
 			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		}
-		record.setFechaDeCaducidad_36__102_203_(SeresUtils.dateFormat().format(item.getSerialDate()));
+		record.setFechaDeCaducidad_36__102_203_(SeresUtils.dateFormat().format(
+			item.getExpireDate() != null
+				? item.getExpireDate()
+				: item.getSerialDate()));
 		record.setCalificadorReferencia1(null);
 		record.setNumeroReferencia1(null);
 		record.setFecha_horaReferencia1_102_203_(null);

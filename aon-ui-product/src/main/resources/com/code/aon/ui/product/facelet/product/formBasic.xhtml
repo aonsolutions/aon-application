@@ -206,7 +206,20 @@
 					value="#{bundle.product_packaged}"
 					rendered="#{!productTo.composition}" />
 			</aon:if>
+			
+			<aon:selectBooleanCheckbox id="#{controller.pojoShortName}_perishable"
+					value="#{productTo.perishable}"
+					ajaxSingle="true" reRender="daysToExpire"  />
+			<aon:outputLabel for="#{controller.pojoShortName}_perishable" styleClass="aon-margin-right aon-italic"
+				value="#{bundle.product_perishable}"
+			/>
 		</aon:div>
+	
+		<aon:outputLabel value="#{bundle.product_days_to_expire}" rendered="#{productTo.perishable}"/>
+		<aon:inputText id="#{controller.pojoShortName}_days_to_expire" 
+			value="#{productTo.daysToExpire}" size="10" maxlength="5"
+			rendered="#{productTo.perishable}"/>
+			
 	</aon:if>
 
 	<aon:outputLabel for="#{controller.pojoShortName}_status" value="#{bundle.aon_status}" />

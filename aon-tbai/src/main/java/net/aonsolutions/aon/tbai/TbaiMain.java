@@ -120,9 +120,19 @@ public class TbaiMain {
 		jaxbMarshaller.marshal(tbai, bos);
 		
 		byte[] xml = bos.toByteArray();
-		
+	
 		String uri = TbaiUri.getUrlZuzendu(tbaiConfiguration);
 		TbaiResponse response = sendXML(uri, tbaiConfiguration, xml, false);	
+		
+		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + response.getTbaiId() + "&s="
+				+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
+				+ tbai.getFactura().getDatosFactura().getImporteTotalFactura();
+			
+			String crc = CRC8.calculate(qrUrl);
+			qrUrl = qrUrl + "&cr=" + crc;
+		
+		tbaiData.saveResponseZuzendu(company.getDomain(), new User().setLogin(""), invoice, xml, response, qrUrl);
+
 	}
 	
 	public void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
@@ -144,11 +154,10 @@ public class TbaiMain {
 			jaxbMarshaller.marshal(tbai, bos);
 
 			byte[] data = bos.toByteArray();
-			TbaiSign tbaiSign = new TbaiSign();
 			byte[] xml = TbaiSigner.getInstance().sign(tbaiConfiguration, data);
-			String sign = tbaiSign.getSign(xml);
+			String sign = TbaiSign.getSign(xml);
 			TbaiResponse response = new TbaiResponse().setResponseStatus("pending").setSign(sign)
-				.setTbaiId(tbaiSign.buildTbaiId(tbai, sign));
+				.setTbaiId(TbaiSign.buildTbaiId(tbai, sign));
 
 			TbaiBlockchain bc = new TbaiBlockchain().setDate(AonDateUtils.format(new Date(), "dd-MM-yyyy"))
 				.setNumber(Integer.toString(invoice.getNumber())).setSerie(invoice.getSeries())

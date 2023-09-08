@@ -344,10 +344,12 @@ public class CompanyServlet extends AonApiHttpServlet{
 				f.getDomainProperty().eq(api.getDomain().getId()));
 		JSONObject json = CompanyJSON.toJSON(company);
 		
-		LinkedList<RegistryAdditionalInfo> list = new LinkedList<>();
-		list.add(RegistryAdditionalInfo.ADDRESS);
-		list.add(RegistryAdditionalInfo.MEDIA);
-
+		LinkedList<RegistryAdditionalInfo> list = null;
+		if(api.getData().opt("additional_info") == null) {
+			list= new LinkedList<>();
+			list.add(RegistryAdditionalInfo.ADDRESS);
+			list.add(RegistryAdditionalInfo.MEDIA);
+		}
 		return RegistryServlet.getRegistryAdditionalInfo(json, api, api.getData(), company.getId(), list);
 	}
 	

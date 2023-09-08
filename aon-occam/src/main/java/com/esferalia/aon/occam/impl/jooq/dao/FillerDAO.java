@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
-import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
 import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
 import static com.esferalia.aon.jooq.tables.CommissionItem.COMMISSION_ITEM;
@@ -96,9 +95,6 @@ import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
@@ -172,41 +168,7 @@ public class FillerDAO {
 	}
 	
 	
-	public static class CarrierPackingFiller implements Function<Record, CarrierPacking> {
-		@Override
-		public CarrierPacking apply(Record r) {
-			return new CarrierPacking()
-					.setCarrier(r.getValue(CARRIER_PACKING.CARRIER))
-					.setCarrierReference(r.getValue(CARRIER_PACKING.CARRIER_REFERENCE))
-					.setCreationDate(r.getValue(CARRIER_PACKING.CREATION_DATE))
-					.setCreationUser(r.getValue(CARRIER_PACKING.CREATION_USER))
-					.setDeliveryDate(r.getValue(CARRIER_PACKING.DELIVERY_DATE))
-					.setDomain(r.getValue(CARRIER_PACKING.DOMAIN))
-					.setDriverDocument(r.getValue(CARRIER_PACKING.DRIVER_DOCUMENT))
-					.setDriverName(r.getValue(CARRIER_PACKING.DRIVER_NAME))
-					.setId(r.getValue(CARRIER_PACKING.ID))
-					.setIssueDate(r.getValue(CARRIER_PACKING.ISSUE_DATE))
-					.setModificationDate(r.getValue(CARRIER_PACKING.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(CARRIER_PACKING.MODIFICATION_USER))
-					.setNumber(r.getValue(CARRIER_PACKING.NUMBER))
-					.setNumberPlate(r.getValue(CARRIER_PACKING.NUMBER_PLATE))
-					.setSeries(r.getValue(CARRIER_PACKING.SERIES))
-					.setStatus(CarrierPackingStatus.safeValueOf(r.getValue(CARRIER_PACKING.STATUS)))
-					.setType(CarrierPackingType.safeValueOf(r.getValue(CARRIER_PACKING.TYPE)))
-					
-					.setCarrierName(r.getValue(REGISTRY.NAME))
-					.setComments(r.getValue(CARRIER_PACKING.COMMENTS))
-					
-					.setGross(r.getValue(CARRIER_PACKING.GROSS))
-					.setTare(r.getValue(CARRIER_PACKING.TARE))
-					.setAdditionalTare(r.getValue(CARRIER_PACKING.ADDITIONAL_TARE))
-					.setNet(r.getValue(CARRIER_PACKING.NET))						
-					.setReceptionStartDate(r.getValue(CARRIER_PACKING.RECEPTION_START_DATE))
-					.setReceptionEndDate(r.getValue(CARRIER_PACKING.RECEPTION_END_DATE))
-					;
-		}
-	}
-	
+
 	public static class RegistryFiller implements Function<Record, Registry> {
 		@Override
 		public Registry apply(Record r) {

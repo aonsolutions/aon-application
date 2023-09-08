@@ -51,6 +51,7 @@ import com.esferalia.aon.gwt.template.server.imports.ImportFixer;
 import com.esferalia.aon.gwt.template.server.imports.InvoiceImport;
 import com.esferalia.aon.gwt.template.server.imports.PGCImport;
 import com.esferalia.aon.gwt.template.server.imports.RegistryImport;
+import com.esferalia.aon.gwt.template.server.imports.ServalInvoiceImport;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.server.projectCommercial.CustomerIban;
 import com.esferalia.aon.gwt.template.server.projectCommercial.CustomerIbanImport;
@@ -237,6 +238,12 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		byte[] fileData = java.util.Base64.getDecoder().decode(data);
 		saveImportation(domain, user, ImportType.INVOICE, fileData);
 		return InvoiceImport.getInstance().importation(fileData);
+	}
+	
+	public List<InvoiceImportClass> executeServalInvoice(Domain domain , User user, String data) {
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+		saveImportation(domain, user, ImportType.SERVAL_INVOICE, fileData);
+		return ServalInvoiceImport.getInstance().importation(fileData);
 	}
 	
 	public LinkedList<RegistryImportClass> executeRegistry(Domain domain , User user, String data) {
@@ -2389,6 +2396,11 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	@Override
 	public Error insertInvoice(Domain domain, User user, InvoiceImportClass invoice, Integer index) {
 		return InvoiceImport.insertInvoice(domain, user, index, invoice);
+	}
+	
+	@Override
+	public Error insertServalInvoice(Domain domain, User user, InvoiceImportClass invoice, Integer index) {
+		return ServalInvoiceImport.insertInvoice(domain, user, index, invoice, false);
 	}
 	
 	@Override

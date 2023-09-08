@@ -916,6 +916,14 @@ public interface Properties {
 		Property<Timestamp> getReceptionEndDateProperty();
 	}
 	
+	
+	public interface DeliveryPackagingProperties extends AuditProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getDeliveryProperty();
+		Property<Integer> getItemProperty();
+	}
+	
 	public interface RegistryProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

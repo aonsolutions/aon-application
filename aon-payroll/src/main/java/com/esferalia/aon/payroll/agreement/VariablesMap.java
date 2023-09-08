@@ -144,10 +144,14 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("ANTIGUEDAD_3_QUINQUENIOS_ANUAL","ANTIGUEDAD_3");
 		variablesMap.put("ANTIGUEDAD_4_QUINQUENIOS_ANUAL","ANTIGUEDAD_4");
 		
+		variablesMap.put("ANTIGUEDAD_5_AÑOS_ANUAL","ANTIGUEDAD_5");
 		variablesMap.put("ANTIGUEDAD_6_AÑOS_ANUAL","ANTIGUEDAD_6");
-		variablesMap.put("ANTIGUEDAD_7_AÑOS_ANUAL","ANTIGUEDAD_6");
-		variablesMap.put("ANTIGUEDAD_8_AÑOS_ANUAL","ANTIGUEDAD_6");
-		variablesMap.put("ANTIGUEDAD_9_AÑOS_ANUAL","ANTIGUEDAD_6");
+		variablesMap.put("ANTIGUEDAD_7_AÑOS_ANUAL","ANTIGUEDAD_7");
+		variablesMap.put("ANTIGUEDAD_8_AÑOS_ANUAL","ANTIGUEDAD_8");
+		variablesMap.put("ANTIGUEDAD_9_AÑOS_ANUAL","ANTIGUEDAD_9");
+		variablesMap.put("ANTIGUEDAD_10_AÑOS_ANUAL","ANTIGUEDAD_10");
+		variablesMap.put("ANTIGUEDAD_15_AÑOS_ANUAL","ANTIGUEDAD_15");
+		variablesMap.put("ANTIGUEDAD_20_AÑOS_ANUAL","ANTIGUEDAD_20");
 		
 		variablesMap.put("ANTIGUEDAD_1_AÑO_DIARIO","ANTIGUEDAD_1");
 		variablesMap.put("ANTIGUEDAD_1_AÑOS_DIARIO","ANTIGUEDAD_1");
@@ -590,7 +594,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("COMPLEMENTO_POR_PROYECTO_ANUAL", "COMPL_PROYECTO");
 		variablesMap.put("COMPLEMENTO_SALARIAL_DIARIO", "PLUS_DIARIO");
 		variablesMap.put("COMPLEMENTO_SALARIAL_MENSUAL", "PLUS_MENSUAL");
-		variablesMap.put("COMPLEMENTO_S_M_I__MENSUAL", "COMPLEMENTO_SMI");
+		variablesMap.put("COMPLEMENTO_S_M_I__MENSUAL", "COMPLEMENTO_SMI_M");
+		variablesMap.put("COMPLEMENTO_S_M_I__DIARIO", "COMPLEMENTO_SMI_D");
 		variablesMap.put("COMPLEMENTO_SIPDP_MENSUAL", "COMPL_SIPDP_M");
 		variablesMap.put("COMPLEMENTO_SIPDP_RVOG_MENSUAL", "COMP_SIPDP_RVOG_M");
 		variablesMap.put("COMPLEMENTO_SUBDIRECTOR_ANUAL", "COMPL_SUBDIRECTOR");
@@ -1247,7 +1252,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DE_FRIO_MENSUAL", "PLUS_FRIO_M");
 		variablesMap.put("PLUS_DE_FRIO_DIARIO", "PLUS_FRIO_D");
 		variablesMap.put("PLUS_DE_FRIO_HORAS", "PLUS_FRIO_H");
-		variablesMap.put("PLUS_DE_MUDANZAS_DIARIO", "PLUS_MUDANZAS");
+		variablesMap.put("PLUS_DE_MUDANZAS_DIARIO", "PLUS_MUDANZAS_D");
+		variablesMap.put("PLUS_DE_MUDANZAS_MENSUAL", "PLUS_MUDANZAS_M");
 		variablesMap.put("PLUS_DE_LAVADO_HORAS", "PLUS_LAVADO_H");
 		variablesMap.put("PLUS_DE_PODA_HORAS", "PLUS_PODA");
 		variablesMap.put("PLUS_DIA_NAVIDAD_Y_AÑO_NUEVO_DIARIO", "NAVIDAD_AÑO_NUEVO_D");
@@ -1563,6 +1569,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_TRANSPORTE_JORNADA_NOCTURNA_MENSUAL", "P_TRANSPORT_J_NOCTURNA");
 		variablesMap.put("PLUS_TRANSPORTE_JORNADA_PARTIDA_ANUAL", "TRANSPORT_J_PARTIDA_A");
 		variablesMap.put("PLUS_TRANSPORTE_JORNADA_PARTIDA_MENSUAL", "TRANSPORT_J_PARTIDA_M");
+		variablesMap.put("PLUS_TRANSPORTE_NACIONAL_DE_MAS_DE_6000_KMS_HORAS", "P_TRANSP_NAC_6000KM_H");
+		variablesMap.put("PLUS_TRANSPORTE_INTERNACIONAL_DE_MAS_DE_6000_KMS_HORAS", "P_TRANSP_INT_6000KM_H");
 		variablesMap.put("PLUS_TRANSPORTE_SIN_SERVICIO_DE_BUS_DIARIO", "P_TRANSPORT_SIN_BUS");
 		variablesMap.put("PLUS_TRANSPORTE_SEGUNDO_AÑO_DIARIO", "PLUS_TRANSPORTE_2A");
 		variablesMap.put("PLUS_TRANSPORTE_HASTA_3_KM_DIARIO", "P_TRANSPORTE_H_3KM");
@@ -1837,7 +1845,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("SERVICIO_EXTRA_COCINERO_DIARIO", "S_E_COCINERO");
 		variablesMap.put("SERVICIO_EXTRA_CAMARERO_MENSUAL", "S_E_CAMARERO");
 		variablesMap.put("SERVICIO_EXTRA_GRUPOS_DIARIO", "S_E_GRUPOS");
-		variablesMap.put("SERVICIO_EXTRA_HASTA_4_HORAS_DIARIO", "SERVICIO_EXTRA_H4H");
+		variablesMap.put("SERVICIO_EXTRA_HASTA_4_HORAS_DIARIO", "SERVICIO_EXTRA_H4H_D");
+		variablesMap.put("SERVICIO_EXTRA_HASTA_4_HORAS_HORAS", "SERVICIO_EXTRA_H4H_H");
 		variablesMap.put("SERVICIO_EXTRA_LAVAPLATOS_DIARIO", "S_E_LAVAPLATOS_D");
 		variablesMap.put("SERVICIO_EXTRA_LAVAPLATOS_FESTIVOS_DIARIO", "S_E_LAVAPLATOS_FEST_D");
 		variablesMap.put("SERVICIO_EXTRA_MAS_4_HORAS_HORAS", "SERVICIO_EXTRA_M4H");
@@ -1910,6 +1919,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("VACACIONES_ANUAL", "VACACIONES_A");
 		variablesMap.put("VACACIONES_DIARIO", "VACACIONES_D");
 		variablesMap.put("VACACIONES_MENSUAL", "VACACIONES_M");
+		variablesMap.put("VEHICULO_PORTA_COCHES_MENSUAL", "VEH_PORTA_COCHES_M");
 		variablesMap.put("VIVIENDA_VACACIONAL_MENSUAL", "VIVIENDA_VACAC_M");
 	}
 }

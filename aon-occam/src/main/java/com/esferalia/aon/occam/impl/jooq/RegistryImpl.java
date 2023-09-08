@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -314,6 +315,12 @@ public class RegistryImpl implements IRegistry{
 	public List<Customer> getCustomerWithoutFee(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> CustomerDAO.getCustomerWithoutFee(ctx));
+	}
+
+	@Override
+	public List<Customer> getCustomerWithoutFee(AONContext ctx, CustomerParams customerParams) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getCustomerWithoutFee(ctx, customerParams));
 	}
 	
 	@Override
@@ -817,5 +824,4 @@ public class RegistryImpl implements IRegistry{
 	public void saveRegistryProfile(CloseableAONContext ctx, Integer registryId, String questionAlias, String value) {
 		ctx.getDslContext().transaction(configuration -> RegistryProfileDAO.save(ctx,registryId, questionAlias, value));
 	}
-
 }

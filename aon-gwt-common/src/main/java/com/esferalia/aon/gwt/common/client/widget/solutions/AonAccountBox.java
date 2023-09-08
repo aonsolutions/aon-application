@@ -203,13 +203,6 @@ public class AonAccountBox extends ResizeComposite implements HasValue<String>
 		descriptionLabel.addStyleName(AON.CSS.aonFontSmall());
 		descriptionLabel.setVisible(showDescription);
 		
-		AonTableButton cleanAccount = new AonTableButton("Limpiar", AON.CSS.aonIconRefresh());
-		cleanAccount.addClickHandler(e -> {
-			setValue(null);
-			accountTextBox.addStyleName(AON.CSS.aonInputTextError() );
-			SelectionEvent.fire(AonAccountBox.this, null );
-		});
-		
 		account.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
@@ -242,7 +235,6 @@ public class AonAccountBox extends ResizeComposite implements HasValue<String>
 		rootPanel.addStyleName(AON.CSS.aonItemFlex() );
 		rootPanel.add(account);
 		rootPanel.add(descriptionLabel);
-		rootPanel.add(showDescription ? cleanAccount : new InlineLabel());
 		initWidget(rootPanel);
 	}
 	

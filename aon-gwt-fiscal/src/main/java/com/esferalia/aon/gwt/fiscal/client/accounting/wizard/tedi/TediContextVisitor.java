@@ -363,6 +363,11 @@ public class TediContextVisitor implements ITediContextVisitor {
 	}
 	
 	@Override
+	public void visitFinanceWrongDate(ICallback callback) {
+		noVisit();
+	}
+	
+	@Override
 	public void visitFinanceAccountBank(ICallback callback) {
 		LinkedHashSet<String> banks = new LinkedHashSet<String>();
 		for ( Finance finance : callback.getResult().getAccountingInvoice().getInvoice().getFinances()) {
