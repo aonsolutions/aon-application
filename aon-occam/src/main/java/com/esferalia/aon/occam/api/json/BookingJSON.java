@@ -78,17 +78,20 @@ public class BookingJSON {
 			
 			// Childs
 			JSONArray childsArr = new JSONArray();
-			resume.getChilds().forEach(childDomain -> childsArr.put(DomainJSON.toJSON(childDomain)));
+			if(null != resume.getChilds())
+				resume.getChilds().forEach(childDomain -> childsArr.put(DomainJSON.toJSON(childDomain)));
 			resumeObj.put("childs", childsArr);
 			
 			// ChildApps
 			JSONObject childAppObj = new JSONObject();
-			resume.getChildApps().entrySet().forEach(entry -> childAppObj.put(entry.getKey().name(), entry.getValue()));
+			if(null != resume.getChildApps())
+				resume.getChildApps().entrySet().forEach(entry -> childAppObj.put(entry.getKey().name(), entry.getValue()));
 			resumeObj.put("childApps", childAppObj);
 			
 			// UserTypes
 			JSONObject userTypesObj = new JSONObject();
-			resume.getUserTypes().entrySet().forEach(entry -> userTypesObj.put(entry.getKey().name(), entry.getValue()));
+			if(null != resume.getUserTypes())
+				resume.getUserTypes().entrySet().forEach(entry -> userTypesObj.put(entry.getKey().name(), entry.getValue()));
 			resumeObj.put("userTypes", userTypesObj);
 			
 			// ChildDefinedUsers
@@ -99,7 +102,8 @@ public class BookingJSON {
 			
 			// DomainTypes
 			JSONObject domainTypesObj = new JSONObject();
-			resume.getDomainTypes().entrySet().forEach(entry -> domainTypesObj.put(entry.getKey().name(), domainTypeInfoJson(entry.getValue())));
+			if(null != resume.getDomainTypes())
+				resume.getDomainTypes().entrySet().forEach(entry -> domainTypesObj.put(entry.getKey().name(), domainTypeInfoJson(entry.getValue())));
 			resumeObj.put("domainTypes", domainTypesObj);
 		}
 		
@@ -196,12 +200,14 @@ public class BookingJSON {
 			
 			// ChildApps
 			JSONObject childAppObj = new JSONObject();
-			domainTypeInfo.getChildApps().entrySet().forEach(entry -> childAppObj.put(entry.getKey().name(), entry.getValue()));
+			if(null != domainTypeInfo.getChildApps())
+				domainTypeInfo.getChildApps().entrySet().forEach(entry -> childAppObj.put(entry.getKey().name(), entry.getValue()));
 			domainTypeInfoObj.put("childApps", childAppObj);
 			
 			// Childs
 			JSONArray childsArr = new JSONArray();
-			domainTypeInfo.getChilds().forEach(childDomain -> childsArr.put(DomainJSON.toJSON(childDomain)));
+			if(null != domainTypeInfo.getChilds())
+				domainTypeInfo.getChilds().forEach(childDomain -> childsArr.put(DomainJSON.toJSON(childDomain)));
 			domainTypeInfoObj.put("childs", childsArr);
 		}
 		
