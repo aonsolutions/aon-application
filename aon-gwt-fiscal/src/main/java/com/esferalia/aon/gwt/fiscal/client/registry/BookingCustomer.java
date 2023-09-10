@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -732,10 +733,11 @@ public class BookingCustomer extends HTMLPanel {
 			
 			AonTableButton urlBtn = new AonTableButton("Ir a", AON.CSS.aonIconGroup());
 			urlBtn.addMouseOverHandler(e -> {
-				openUserTooltip(domainCompany.getDomain().getName(), domainCompany.getDomain().getId(), e.getClientX(), e.getClientY());
+				openUserTooltip(domainCompany.getDomain(), e.getClientX(), e.getClientY());
 			});
 			focusPanel.addMouseOverHandler(e -> {
 				aonCustomerTooltip.hide();
+				AonMessagePanel.hideMessage(messagePanel);
 			});
 			
 			domainTable.setWidget(newRow, 10, urlBtn);
@@ -1252,7 +1254,9 @@ public class BookingCustomer extends HTMLPanel {
 		});
 	}
 	
-	private void openUserTooltip(String domainName, Integer domainId, int clientX, int clientY) {
+	private void openUserTooltip(Domain domain, int clientX, int clientY) {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo usuarios para el dominio " + domain.getDescription() + " ...");
+		
 		// Create the base URL
 		String baseUrl = "/ms/api/user/";
 
@@ -1266,8 +1270,8 @@ public class BookingCustomer extends HTMLPanel {
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 		
-		requestBuilder.setHeader("domain_name", domainName);
-		requestBuilder.setHeader("domain_id", domainId.toString());
+		requestBuilder.setHeader("domain_name", domain.getName());
+		requestBuilder.setHeader("domain_id", domain.getId().toString());
 		
 		try {
 		    // Send the request
@@ -1278,6 +1282,7 @@ public class BookingCustomer extends HTMLPanel {
 		            	List<User> users = DomainCompanyJSON.parseUsersJSONArr(responseBody);
 		            	aonCustomerTooltip.setUsers(users);
 						aonCustomerTooltip.showTooltip(clientX, clientY);
+						AonMessagePanel.hideMessage(messagePanel);
 		            } else {
 		            	AonMessagePanel.showError(messagePanel, response.getText());
 		            }
