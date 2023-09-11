@@ -156,6 +156,7 @@ public class BookingJSON {
 				JSONObject domainTypeInfo = JsonUtils.getJSONObject(domainTypesObj, domainType.name());
 				if(null != domainTypeInfo) domainTypes.put(domainType, domainTypeInfoJson(domainTypeInfo));
 			}
+			bookingResume.setDomainTypes(domainTypes);
 			
 		}
 		

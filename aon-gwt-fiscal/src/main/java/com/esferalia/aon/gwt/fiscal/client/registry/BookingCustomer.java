@@ -737,7 +737,8 @@ public class BookingCustomer extends HTMLPanel {
 			});
 			focusPanel.addMouseOverHandler(e -> {
 				aonCustomerTooltip.hide();
-				AonMessagePanel.hideMessage(messagePanel);
+				if(aonCustomerTooltip.isShowing())
+					AonMessagePanel.hideMessage(messagePanel);
 			});
 			
 			domainTable.setWidget(newRow, 10, urlBtn);
