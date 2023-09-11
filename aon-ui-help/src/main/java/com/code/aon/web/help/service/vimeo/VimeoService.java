@@ -18,6 +18,7 @@ public class VimeoService {
 	public List<ProjectItem> mainItems;
 	public List<Video> videos;
 	public ProjectItem selectedItem;
+	public String driveFolderName;
 	
 	public VimeoService() {
         String accessToken = "";
@@ -25,23 +26,28 @@ public class VimeoService {
 		vimeoResult = new VimeoResult(accessToken);
 
 		Optional<List<Video>> videosWithoutParentFolder = Optional.of(new LinkedList<Video>());
-		videos = vimeoResult.getVideosFromUser().get();
+		
+		// .orElse()
+		videos = vimeoResult.getVideosFromUser().orElse(new LinkedList<Video>());
+		
 		
 		for (Video video : videos) {
 			if (video.getParentFolder() == null) {
-				videosWithoutParentFolder.get().add(video);
+				if (videosWithoutParentFolder.isPresent()) {
+					videosWithoutParentFolder.get().add(video);
+				}		
 			}
 		}
 
 		Optional<List<Folder>> folders = vimeoResult.getFoldersFromUser();
 		mainItems = new LinkedList<ProjectItem>();
 		
-		for (Folder folder : folders.get()) {
+		for (Folder folder : folders.orElse(new LinkedList<Folder>())) {
 			ProjectItem projectItem = new ProjectItem(ProjectItemType.FOLDER.getValue(), folder, null);
 			mainItems.add(projectItem);
 		}
 		
-		for (Video video : videosWithoutParentFolder.get()) {
+		for (Video video : videosWithoutParentFolder.orElse(new LinkedList<Video>())) {
 			ProjectItem projectItem = new ProjectItem(ProjectItemType.VIDEO.getValue(), null, video);
 			mainItems.add(projectItem);
 		}

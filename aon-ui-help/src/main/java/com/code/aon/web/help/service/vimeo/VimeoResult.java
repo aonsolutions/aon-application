@@ -77,7 +77,7 @@ public class VimeoResult {
         });
 
         try {
-            return Optional.ofNullable(future.get());
+            return Optional.of(future.get());
         } catch (InterruptedException | ExecutionException e) {
             return Optional.empty();
         }

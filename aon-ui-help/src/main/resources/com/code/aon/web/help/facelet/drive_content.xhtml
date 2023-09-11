@@ -4,193 +4,201 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core">
-
-	<style>
-.breadcrumb {
-	/* background: dodgerblue;*/
-	width: 100%;
-	height: 2rem;
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	padding: 0 1rem;
-	color: #ccc;
-	border-bottom: 1px solid #f1f1f1;
-}
-
-.breadcrumb .link {
-	font-size: .8rem;
-	font-weight: 900;
-	cursor: pointer;
-	color: #bbb;
-	transition: .15s;
-}
-
-.breadcrumb .link:hover {
-	color: #163776;
-}
-
-.breadcrumb form {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.breadcrumb separator {
-	font .size: 1.35rem;
-}
-
-#aonContent {
-	height: calc(100% - 90px);
-}
-
-#sidebar {
-	background: rgba(0, 0, 0, .015);
-	width: 20rem;
-	border-right: 1px solid #f1f1f1;
-}
-
-#help-viewer {
-	width: calc(100% - 20rem);
-	height: 100%;
-	position: relative;
-}
-
-#help-viewer .list {
-	overflow-y: auto;
-	height: calc(100% - 2rem);
-}
-
-.list {
-	padding: 0 .2rem;
-}
-
-.list form {
-	width: 100%;
-}
-
-.list-item {
-	border-bottom: revert !important;
-	border-top: 1px solid #f1f1f1;
-}
-
-.list .list-item {
-	height: 3rem;
-	border-bottom: 1px solid #f1f1f1;
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	padding: 1rem 2rem;
-	transition: background-color .25s;
-	border-radius: .25rem;
-	font-weight: normal;
-	color: #606060;
-	font-size: 1.05rem;
-	cursor: pointer;
-}
-
-.list .list-item:hover {
-	background-color: #f6f6f6;
-	color: #163776;
-}
-
-.list .list-item>.button {
-	height: 100%;
-	background-size: 3rem;
-	padding: 0;
-	padding-left: 4.5rem;
-	display: flex;
-	align-items: center;
-	font-size: 1.25rem;
-	background-position: left center;
-}
-
-.list .list-item>.button:hover {
-	transform: none;
-}
-
-.list .list-item .icon {
-	margin-right: .45rem;
-	background-size: unset !important;
-	min-width: 1.40rem;
-	min-height: 1.40rem;
-	border-radius: 100%;
-	padding: .2rem;
-	cursor: pointer;
-	color: ##606060;
-	transition: color .15s, transform .15s;
-	font-size: 1.60rem;
-}
-
-.list .list-item .aon-module {
-	margin-right: .7rem;
-}
-
-.list .list-item .icon.file {
-	color: #163776;
-	/*transform: scale(1.1);*/
-}
-
-* {
-	scroll-behavior: smooth;
-}
-
-.aon-button-conecta {
-	padding-top: 4px;
-	padding-bottom: 4px;
-	padding-right: 36px;
-	display: inline-block;
-	background: url(#{ aonResource.resolve [ '/images/apps/aon-portal.svg' ]
-}
-)
-
-
- 
-
-
-scroll
-
-
- 
-
-
-right
-
-
- 
-
-
-center
-
-
- 
-
-
-no-repeat
-
-
-
-
-;
-background-size
-
-
-
-
-:
-
-
-
-
-32px
-
-
-
-
-;
-}
-</style>
+	xmlns:f="http://java.sun.com/jsf/core"
+>
+	<style type="text/css">
+		* {
+			scroll-behavior: smooth;
+		}
+		
+		.breadcrumb {
+			/* background: dodgerblue;*/
+			width: 100%;
+			height: 2rem;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			padding: 0 1rem;
+			color: #ccc;
+			border-bottom: 1px solid #f1f1f1;
+		}
+		
+		.breadcrumb .link {
+			font-size: .8rem;
+			font-weight: 900;
+			cursor: pointer;
+			color: #bbb;
+			transition: .15s;
+		}
+		
+		.breadcrumb .link:hover {
+			color: #163776;
+		}
+		
+		.breadcrumb form {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		.breadcrumb separator {
+			font .size: 1.35rem;
+		}
+		
+		#aonContent {
+			height: calc(100% - 90px);
+		}
+		
+		#sidebar {
+			background: rgba(0, 0, 0, .015);
+			width: 20rem;
+			border-right: 1px solid #f1f1f1;
+		}
+		
+		#help-viewer {
+			width: calc(100% - 20rem);
+			height: 100%;
+			position: relative;
+		}
+		
+		#help-viewer .list {
+			overflow-y: auto;
+			height: calc(100% - 2rem);
+		}
+		
+		.drive-content{
+			padding		: 1rem;
+		}
+		.drive-content .aon-label-top {
+			font-family	: arial, verdana, "sans-serif";
+			color		: #002469;
+			font-size	: 1.41rem;
+			font-weight	: bold;
+			padding		: 1rem;
+		}
+		
+		.drive-content .aon-label-menu{
+			font-family	: arial, verdana, "sans-serif";
+			color		: #002469;
+			font-size	: 1.13rem;
+			font-weight	: bold;
+			padding		: 1rem;
+		}
+		
+		.list {
+			padding: 1rem;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 1rem;
+		}
+		
+		.list form {
+			width: 100%;
+		}
+		
+		.list .list-item {
+			display: flex;
+			align-content: center;
+			align-items: center;
+			width: 20.377rem;
+			height: 5.377rem;
+			padding: 1.934rem;
+			border: 1px solid #f1f1f1;
+			transition: background-color .25s;
+			border-radius: .25rem;
+			color: #000000;
+			font-size: 1.05rem;
+			cursor: pointer;
+		}
+		
+		.list .list-item-vimeo {
+			display: flex;
+			align-content: center;
+			align-items: center;
+			width: 64.008rem;
+			height: 4.009rem;
+			padding: 1.934rem;
+			border: 1px solid #f1f1f1;
+			transition: background-color .25s;
+			border-radius: .25rem;
+			color: #000000;
+			font-size: 1.05rem;
+			cursor: pointer;
+			margin: 25;
+		}
+		
+		.list .list-item-vimeo-dad{
+			display: grid;
+			align-content: center;
+			align-items: center;
+			width: 64.008rem;
+			min-height: 4.009rem;
+			padding: 1.934rem;
+			border: 1px solid #f1f1f1;
+			transition: background-color .25s;
+			border-radius: .25rem;
+			color: #000000;
+			font-size: 1.05rem;
+			cursor: pointer;
+			margin: 25;
+		}
+		
+		.list .list-item-vimeo-dad .list-item-vimeo-son{
+			position: relative;
+			width: calc(100% + 1.934rem + 1.934rem);
+			left: -1.934rem;
+			color:#2C5AA6;
+			border-top: 1px solid #f1f1f1;
+			margin-top: 1.934rem;
+			padding-top: 1.934rem;
+			padding-left: 1.934rem;
+			padding-right: 1.934rem;
+		}
+		
+		.list .list-item:hover {
+			background-color: #f6f6f6;
+			color: #163776;
+		}
+		
+		.list .list-item>.button {
+			height: 100%;
+			background-size: 3rem;
+			padding: 0;
+			padding-left: 4.5rem;
+			display: flex;
+			align-items: center;
+			font-size: 1.25rem;
+			background-position: left center;
+		}
+		
+		.list .list-item>.button:hover {
+			transform: none;
+		}
+		
+		.list .list-item .icon {
+			width: 100%;
+			height: 2rem;
+			background-size: 2rem;
+		}
+		
+		.list .list-item .aon-module {
+			margin-right: .7rem;
+		}
+		
+		.list .list-item .icon.file {
+			color: #163776;
+			/*transform: scale(1.1);*/
+		}
+		
+		.aon-button-conecta {
+			padding-top: 4px;
+			padding-bottom: 4px;
+			padding-right: 36px;
+			display: inline-block;
+			background: url(#{ aonResource.resolve [ '/images/apps/aon-portal.svg' ]
+		}
+		
+	</style>
 	<script>
 		function displayVideo(elem) {
 			if (elem) {
@@ -215,30 +223,42 @@ background-size
 						: "none";
 			}
 		}
+
+		function toggleVideos(containerId) {
+			var videoContainer = document.getElementById(containerId);
+			if (videoContainer) {
+				videoContainer.style.display = videoContainer.style.display === "none" ? "block"
+						: "none";
+			}
+		}
 	</script>
 
 	<aon:form id="driveContentForm">
 
 		<ui:include src="./breadcrumb.xhtml" />
 
-		<aon:div id="driveContent">
-
+		<aon:div id="driveContent" styleClass="drive-content">
 			<ui:fragment rendered="#{vimeo.showDrive}">
-
+				<aon:outputText 
+					styleClass="aon-label-top"
+					value="Formación virtual" 
+				/>
 				<aon:div styleClass="box-column list">
 					<c:forEach items="#{help.content}" var="file">
-
 						<!-- FOLDER -->
 						<aon:if test="${file.isFolder() and !file.isFaqFolder()}">
-							<aon:commandLink styleClass="list-item" reRender="driveContent">
+							<aon:commandLink 
+								styleClass="list-item" 
+								reRender="driveContent"
+							>
 								<f:setPropertyActionListener target="#{vimeo.showVimeo}"
 									value="#{false}" />
 								<f:setPropertyActionListener target="#{help.file}"
 									value="#{file}" />
-
+					 <!--  			<f:setPropertyActionListener target="#{vimeo.driveFolderName}" value -->
 								<aon:outputText rendered="${!help.isHome()}"
 									value="drive_file_move" styleClass="icon material-icons" />
-
+								<aon:outputText value="#{file.name}" />
 								<!-- AON ICONS -->
 								<aon:outputText
 									rendered="${help.isHome() and !help.isAonModule(file)}"
@@ -255,9 +275,6 @@ background-size
 									styleClass="icon aon-module aon-button-conecta" />
 								<aon:outputText rendered="${help.isFiscal(file)}" value=""
 									styleClass="icon aon-module aon-button-fiscal" />
-
-								<aon:outputText value="#{file.name}" />
-
 							</aon:commandLink>
 						</aon:if>
 
@@ -300,40 +317,46 @@ background-size
 			<div id="vimeoContainer" rendered="#{vimeo.showVimeo}">
 				<!-- <ui:include src="./vimeo_content.xhtml" /> -->
 				<aon:form id="vimeoContentForm">
-
 					<aon:div id="vimeoContent">
-
 						<ui:fragment rendered="#{vimeo.showVimeo}">
-
+							<aon:outputText
+								styleClass="aon-label-menu" value="Formación complementaria" 
+							/>
 							<aon:div styleClass="box-column list">
 								<c:forEach items="#{vimeo.mainItems}" var="vimeoItem">
-
 									<!-- folder -->
 									<aon:if test="#{vimeoItem.getRawType() == 'folder'}">
-									
-										<aon:commandLink styleClass="list-item" reRender="driveContent">
-	
-											<f:setPropertyActionListener target="#{vimeo.selectedItem}"
-												value="#{vimeoItem}" />
-												
-											<f:setPropertyActionListener target="#{vimeo.mainItems}"
-												value="#{vimeo.getItemsFromFolder(vimeoItem.getFolder())}" />
-												
-											<f:setPropertyActionListener target="#{vimeo.showDrive}"
-												value="#{false}" />
-																			
-											<aon:outputText value="smart_display"
-													styleClass="icon file material-icons" />
+										<aon:div styleClass="list-item-vimeo-dad"
+											onclick="toggleVideos('videoContainer_#{vimeoItem.getFolder().getIdentifier()}');return;">
 											<aon:outputText value="#{vimeoItem.getFolder().getName()}" />
-										
-										</aon:commandLink>
-										
+											<div id="videoContainer_#{vimeoItem.getFolder().getIdentifier()}"
+												style="display: none;">
+											
+												<ui:repeat
+													value="#{vimeo.getItemsFromFolder(vimeoItem.getFolder())}"
+													var="video">
+													<aon:div styleClass="list-item-vimeo-son"
+														onclick="displayVideo(this);return;">
+														<aon:outputText value="smart_display"
+															styleClass="icon file material-icons" />
+														<aon:outputText value="#{video.getVideo().getName()}" />
+														<div class="ifrmContainer"
+															style="display: none; justify-content: center; width: 100%; margin-bottom: 10px;">
+															<iframe src="#{video.getVideo().getLink()}"
+																style="min-width: 680px;" width="50%" height="480"
+																frameBorder="0" allow="autoplay"
+																allowfullscreen="allowfullscreen"></iframe>
+														</div>
+													</aon:div>
+												</ui:repeat>
+											</div>
+										</aon:div>
 									</aon:if>
-									
+
 									<!-- video -->
 									<ui:fragment rendered="#{vimeoItem.getRawType() == 'video'}">
 										<aon:div>
-											<aon:div styleClass="list-item"
+											<aon:div styleClass="list-item-vimeo"
 												onclick="displayVideoVimeo(this);return;">
 												<aon:outputText value="smart_display"
 													styleClass="icon file material-icons" />
@@ -348,17 +371,12 @@ background-size
 											</aon:div>
 										</aon:div>
 									</ui:fragment>
-
-
 								</c:forEach>
 							</aon:div>
-
 						</ui:fragment>
-
 					</aon:div>
 				</aon:form>
 			</div>
-
 
 		</aon:div>
 	</aon:form>
