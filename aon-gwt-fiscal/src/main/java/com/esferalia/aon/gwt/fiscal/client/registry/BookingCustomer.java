@@ -47,6 +47,7 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -739,7 +740,8 @@ public class BookingCustomer extends HTMLPanel {
 			});
 			focusPanel.addMouseOverHandler(e -> {
 				aonCustomerTooltip.hide();
-				AonMessagePanel.hideMessage(messagePanel);
+				if(aonCustomerTooltip.isShowing())
+					AonMessagePanel.hideMessage(messagePanel);
 			});
 			
 			domainTable.setWidget(newRow, 10, urlBtn);
@@ -1421,8 +1423,16 @@ public class BookingCustomer extends HTMLPanel {
 		            		for(String error : errors)
 		            			errorMessage += error + "\n";
 		            		AonMessagePanel.showError(messagePanel, errorMessage);
-		            	} else
+		            	} else {
 		            		AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " se ha realizado correctamente");
+		            		Timer timer = new Timer() {
+			           		     @Override
+			           		     public void run() {
+			           		    	setBookingCustomer(customer, customerDomains);
+			           		     }
+			           		};
+			           		timer.schedule(2500);
+		            	}
 		            } else {
 		            	AonMessagePanel.showError(messagePanel, response.getText());
 		            }

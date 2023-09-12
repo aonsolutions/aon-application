@@ -349,6 +349,10 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				// Create RItem for @Conectas | xx.yy.zz | xx=01 Asesoria | yy=Empresa/Despacho | zz=24 Basica, 25 Estandar, 26 Profesional 
 				updateConectaBookingRItem(domainCompany, booking, aonCustomer, errors, api);
 				
+			} else {
+				JSONObject itemErr = new JSONObject();
+				itemErr.put("error", "Error parseando los objetos contratacion y dominio");
+				errors.put(itemErr);
 			}
 		} else if (bookingJson == null || bookingJson.isEmpty()) {
 			errors.put(createError(null, null, null, "Contratación no encontrada"));
@@ -392,6 +396,12 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		
 		if(domainType.equals(DomainType.CONSULTANCY) && null != booking.getResume()) {
 			
+			if(null == booking.getResume().getDomainTypes() || booking.getResume().getDomainTypes().size() == 0) {
+				JSONObject itemErr = new JSONObject();
+				itemErr.put("error", "No existe resumen para esta contratacion");
+				errors.put(itemErr);
+			}
+			
 			booking.getResume().getDomainTypes().entrySet().forEach(entry -> {
 				
 				DomainType domainChildType = entry.getKey();
@@ -406,6 +416,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 						if(null != checkAonAppCount && checkAonAppCount > 0) {
 							String barCode = getConnectarBarCode(domainType, domainChildType, checkAonApp); 
 							updateRItem(domainCompany, booking, aonCustomer, errors, api, barCode, checkAonAppCount.toString());
+							errors.put(createError(barCode, domainType, checkAonApp, "Se procede a guardar " + barCode));
 						}
 						
 					});
