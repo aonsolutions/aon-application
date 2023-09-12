@@ -44,6 +44,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
@@ -601,7 +602,8 @@ public class BookingCustomer extends HTMLPanel {
 
 			@Override
 			public void onAccept() {
-				syncDomains();
+				syncDomains2();
+			//	syncDomains();
 			}
 		});
 	}
@@ -1296,7 +1298,11 @@ public class BookingCustomer extends HTMLPanel {
 			AonMessagePanel.showError(messagePanel, e.getMessage());
 		}
 	}
+
 	
+	private void syncDomains2() {
+		updateBookingRitems2();
+	}
 	private void syncDomains() {
 		for(DomainCompany domainCompany : this.customerDomains) {
 			AonMessagePanel.showLoading(messagePanel, "Obteniendo contrataci\u00f3n para el dominio " + domainCompany.getDomain().getDescription() + " ...");
@@ -1417,6 +1423,52 @@ public class BookingCustomer extends HTMLPanel {
 		            		AonMessagePanel.showError(messagePanel, errorMessage);
 		            	} else
 		            		AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " se ha realizado correctamente");
+		            } else {
+		            	AonMessagePanel.showError(messagePanel, response.getText());
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        }
+		    });
+		} catch (RequestException e) {
+			AonMessagePanel.showError(messagePanel, e.getMessage());
+		}
+	}
+	
+	private void updateBookingRitems2() {
+		AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el cliente " + customer.getName() + " ...");
+		
+		// Create the base URL
+		String baseUrl = "/ms/api/domain/booking2/";
+
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost(Window.Location.getHost()); 
+		urlBuilder.setPath(baseUrl);
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		JSONObject body = new JSONObject();
+		body.put("customer", new JSONNumber(customer.getId()));
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+		            	if(AonStringUtils.isNotBlank(response.getText()) && AonStringUtils.containsIgnoreCase(response.getText(), "errors")) {
+		            		List<String> errors = parseErrors(response.getText());
+		            		String errorMessage = "";
+		            		for(String error : errors)
+		            			errorMessage += error + "\n";
+		            		AonMessagePanel.showError(messagePanel, errorMessage);
+		            	} else
+		            		AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del cliente " + customer.getName() + " se ha realizado correctamente");
 		            } else {
 		            	AonMessagePanel.showError(messagePanel, response.getText());
 		            }
