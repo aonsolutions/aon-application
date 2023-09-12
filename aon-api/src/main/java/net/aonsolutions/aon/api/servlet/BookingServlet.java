@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +54,7 @@ public class BookingServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(BOOKING, BookingServlet::getBooking)
-				.addRoute(BOOKING_CUSTOMER, BookingServlet::getBookingCustomer)
+				.addRoute(BOOKING_CUSTOMER, BookingServlet::getBookingCustomerArr)
 				.apply();
 			
 			response(req, resp, object);
@@ -95,6 +96,20 @@ public class BookingServlet extends AonApiHttpServlet {
 			throw new AonApiException("No existe ningún dominio asociado al cliente " + customer);
 		}
 		return BookingJSON.toJSON(AON.getBooking(dc.getDomain(), api.getUser()));
+	}
+	
+	private static JSONArray getBookingCustomerArr(AonApiData api) {
+		JSONArray bookingArr = new JSONArray();
+		
+		Integer customer = JsonUtils.getInteger(api.getData(), IJsonNames.CUSTOMER);
+		
+		Stream<DomainCompany> domainCompanies = CONSOLE.getDomains(f -> f.getAonCustomerProperty().eq(customer));
+		
+		if(domainCompanies == null) throw new AonApiException("No existe ningún dominio asociado al cliente " + customer);
+		
+		domainCompanies.forEach(domainCompany -> bookingArr.put(BookingJSON.toJSON(AON.getBooking(domainCompany.getDomain(), api.getUser()))));
+		
+		return bookingArr;
 	}
 	
 	
