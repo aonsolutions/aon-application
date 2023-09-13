@@ -2,8 +2,8 @@ package com.code.aon.faces.component.richfaces.spin;
 
 import static com.code.aon.faces.component.util.HTML.STYLE_ATTR;
 
-import javax.el.ValueExpression;
-import javax.el.VariableMapper;
+import jakarta.el.ValueExpression;
+import jakarta.el.VariableMapper;
 import javax.faces.component.UIComponent;
 
 import com.code.aon.common.ManagerBeanException;

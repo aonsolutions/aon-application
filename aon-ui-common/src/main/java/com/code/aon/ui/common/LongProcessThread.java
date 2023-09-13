@@ -2,7 +2,7 @@ package com.code.aon.ui.common;
 
 import static com.code.aon.ui.common.domain.FacesDomainProvider.DOMAIN_SWITCHER_CONTROLLER;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomainProvider;

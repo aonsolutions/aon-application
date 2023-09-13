@@ -61,6 +61,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 /**
  * @author rtrepiana
@@ -320,7 +321,11 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		Date endDate = contract.getEndDate();
 		Date issueDate = endDate;
 		
-		int workedDays = Math.min(30,get(endDate, Calendar.DAY_OF_MONTH));
+		int endDateOfMonth = get(endDate, Calendar.DAY_OF_MONTH );
+		int lastdayOfMonth = AonDateUtils.getMax(getToday(), Calendar.DAY_OF_MONTH);
+		int workedDays = endDateOfMonth == lastdayOfMonth ? 30 : Math.min(30, endDateOfMonth );
+
+		//int workedDays = Math.min(30,get(endDate, Calendar.DAY_OF_MONTH));
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
@@ -900,8 +905,10 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 			for ( SalaryData data: salary.getSalaryDatas() ) {
 				System.out.println(data.getName() + " = " + data.getExpression() );
 			}
-			org.junit.Assert.assertEquals( 1750.00 / 2 / 30 *  get(endDate, DAY_OF_MONTH),  salary.getTotalPayment() , DELTA );
-			org.junit.Assert.assertEquals( 1750.00 / 2 /* *  get(endDate, DAY_OF_MONTH)*/,  salary.getCommonBase() , DELTA );
+			int monthDays = get(endDate, DAY_OF_MONTH);
+			int itDays = monthDays - 15;
+			org.junit.Assert.assertEquals( 1750.00 / 2 / 30 * 15 +  1750.00 / 2 / monthDays * itDays ,  salary.getTotalPayment() , DELTA );
+			org.junit.Assert.assertEquals( 1750.00 / 2 / 30 * 15 + 1750.00 / 2 / monthDays * itDays ,  salary.getCommonBase() , DELTA );
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
 		}

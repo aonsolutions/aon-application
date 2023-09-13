@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalMo
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022NAVARRARGScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -125,7 +126,7 @@ class Model303NAVARRA2022 extends Model303Base {
 
 					@Override
 					public String getCheckDataResponseDataAction() {
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod303CheckDataResponseData";
 					}
 
 					@Override

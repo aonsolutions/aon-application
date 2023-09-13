@@ -14,10 +14,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -174,7 +174,6 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		System.out.println(" | host "+httpRequest.getHeader("host"));
 
 		httpResponse.setContentType("application/xml");
-		httpResponse.setContentLength(xml.length());
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
 		out.flush();

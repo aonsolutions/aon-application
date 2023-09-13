@@ -4,7 +4,7 @@ package solutions.aon.seg.social.exception;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.FailingHttpStatusCodeException;
 
 public class SegSocialException extends Exception{
 

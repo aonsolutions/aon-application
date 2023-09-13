@@ -37,6 +37,7 @@ const load = () => {
     favicon();  
     loadScriptFirebase();
     document.body.appendChild(new AonModule());
+    if(!isMobile()) document.body.className = 'aonBodyBeta';
     loadScripts(); 
     window.loadScripts = () => loadScripts();
 }
@@ -101,6 +102,16 @@ const loadScriptFirebase = async() =>{
     setWindowApp()
 }
 
+
+const isBeta = () => {
+    const href = window.location.href;
+	return href.includes('aonsolutions.org') || isLocal();
+}
+
+const isLocal =  () => {
+    const href = window.location.href;
+    return href.includes('localhost') || href.includes('8080') ||  href.includes('ngrok.io');
+  }
 
 load();
 

@@ -18,6 +18,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.Company;
@@ -66,8 +67,9 @@ class DomainProviderForTests {
 					.setDomainName( domain.getName())
 					.setDomain(domain.getId())
 					.setUser(user);
-			AONContext context = AONContext.getAONContext(occam);
-			initializeDomain(context, occam);
+			try ( CloseableAONContext context = AONContext.getAONContext(occam)) {
+				initializeDomain(context, occam);
+			}
 		}
 		return domain;
 	}
@@ -244,19 +246,25 @@ class DomainProviderForTests {
   `prorata_type` tinyint(1) DEFAULT 0 COMMENT 'Indica el tipo de prorrata',
   */
 		
-		context.getDslContext().insertInto(APP_PARAM)
+		ApplicationParameter betaParam = AppParamDAO.fetchOne(context, AppParam.AON_BETA_ENABLED.toString());
+		if (betaParam == null || betaParam.getId() == null) {
+			context.getDslContext().insertInto(APP_PARAM)
 			.set(APP_PARAM.DOMAIN, context.getDomainId())
 			.set(APP_PARAM.NAME, AppParam.AON_BETA_ENABLED.toString())
 			.set(APP_PARAM.VALUE, Boolean.TRUE.toString())
 			.execute();
-		context.log().info("App Param AON_BETA_ENABLED set to TRUE");
+			context.log().info("App Param AON_BETA_ENABLED set to TRUE");
+		}
 	
-		context.getDslContext().insertInto(APP_PARAM)
+		ApplicationParameter alphaParam = AppParamDAO.fetchOne(context, AppParam.AON_ALPHA_ENABLED.toString());
+		if (alphaParam == null || alphaParam.getId() == null) {
+			context.getDslContext().insertInto(APP_PARAM)
 			.set(APP_PARAM.DOMAIN, context.getDomainId())
 			.set(APP_PARAM.NAME, AppParam.AON_ALPHA_ENABLED.toString())
 			.set(APP_PARAM.VALUE, Boolean.TRUE.toString())
 			.execute();
-		context.log().info("App Param AON_ALPHA_ENABLED set to TRUE");
+			context.log().info("App Param AON_ALPHA_ENABLED set to TRUE");
+		}
 		
 		Creditor defaultFiscalCreditor = AonFaker.getCreditor(context);
 		defaultFiscalCreditor.setDocumentCountry(Country.ES);

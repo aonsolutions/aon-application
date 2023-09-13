@@ -60,6 +60,7 @@ import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCU;
 import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCV;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.seres.SeresUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ConnectSaleInvoiceWriter {
 
@@ -236,11 +237,17 @@ public class ConnectSaleInvoiceWriter {
 			calificadorReferenciaAdicional = "API";
 			referenciaAdicional = rr.getComments();
 		}
+		
+		if(!AonStringUtils.isBlank(ediCodes.getDepartment())) {
+			calificadorReferenciaAdicional = "API";
+			referenciaAdicional = ediCodes.getDepartment();
+		}
+		
 		String ediBY = isDia(customer) ? ediCodes.getCustomerEdiHeader() : ediCodes.getCustomerEdiInvoice();
 		String ediIV = isDia(customer) ? ediCodes.getCustomerEdiInvoice() : ediCodes.getCustomerEdiHeader() ;
 		List<SINCP> list = new ArrayList<>();
 		list.add(createSINCPRecord(SINCP.SINCP_2.PROVEEDOR__SU,
-				ediCodes.getCompanyEdiCode(), company, companyAddress, recordData, "API", ediCodes.getDepartment()));
+				ediCodes.getCompanyEdiCode(), company, companyAddress, recordData));
 		list.add(createSINCPRecord(SINCP.SINCP_2.EMISOR_DE_UNA_FACTURA__QUIEN_FACTURA__II,
 		        ediCodes.getCompanyEdiCode(), company, companyAddress, recordData));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,

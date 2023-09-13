@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraDate;
+import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraEndDate;
+import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraIssueDate;
+import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.parseExtraStartDate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +12,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Supplier;
 
+import com.esferalia.aon.gwt.common.client.widget.DateListBox;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
@@ -81,10 +86,13 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 	ListBox typeListBox;
 
 	@UiField
-	ActualExtraListBox extraListBox;
+	MonthListBox monthListBox;
 
 	@UiField
-	MonthListBox monthListBox;
+	DateListBox payDateListBox;
+
+	@UiField
+	ActualExtraListBox extraListBox;
 
 	@UiField
 	CheckBox saveCheckBox;
@@ -107,6 +115,7 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 		initTypeListBox();
 		initMonthListBox();
 		initExtraListBox();
+		initPayDateListBox();
 
 		initSelectionChangeHandler();
 	}
@@ -132,6 +141,7 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 	void onMonthChanged(ChangeEvent event) {
 		// refresh range
 		selectDataGrid.setVisibleRangeAndClearData(new Range(0, PAGE_SIZE), true);
+		changePayDateListBoxRange(payDateListBox, getIssueDate());
 	}
 
 	@UiHandler("typeListBox")
@@ -236,6 +246,9 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 		});
 	}
 
+	public Date getChargeDate(){
+		return payDateListBox.getSelectedDate();
+	}
 
 	// -------------------------------------------------------------- Protected
 
@@ -260,6 +273,10 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 
 	private void initExtraListBox() {
 		disableExtra();
+	}
+	
+	private void initPayDateListBox() {
+	    initPayDateListBox(payDateListBox, this::getIssueDate);
 	}
 
 	private void onTypeChanged(Salary.Type type) {
@@ -359,8 +376,8 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 				Collections.sort(this.extras, new Comparator<Extra>(){
 					@Override
 					public int compare(Extra e1, Extra e2) {
-						Date d1 = parseExtraDate(e1.getIssueDate(), ExtrasDateProvider.this.startDate);
-						Date d2 = parseExtraDate(e2.getIssueDate(), ExtrasDateProvider.this.startDate);
+						Date d1 = parseExtraIssueDate(e1.getIssueDate(), ExtrasDateProvider.this.startDate);
+						Date d2 = parseExtraIssueDate(e2.getIssueDate(), ExtrasDateProvider.this.startDate);
 						return d1.compareTo(d2);
 					}
 				});
@@ -393,9 +410,9 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 							.setId(extra.getId())
 							.setPaymentDescription(extra.getPaymentDescription())
 							.setAgreementDescription(extra.getAgreementDescription())
-							.setEndDate(parseExtraDate(extra.getEndDate(), extraDate ))
-							.setStartDate(parseExtraDate(extra.getStartDate(), extraDate ))
-							.setIssueDate(parseExtraDate(extra.getIssueDate(), extraDate ))
+							.setEndDate(parseExtraEndDate(extra.getEndDate(), extraDate ))
+							.setStartDate(parseExtraStartDate(extra.getStartDate(), extraDate ))
+							.setIssueDate(parseExtraIssueDate(extra.getIssueDate(), extraDate ))
 							);
 
 				}
@@ -418,6 +435,58 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 		});
 	}
 	
+	protected static void initPayDateListBox(DateListBox payDateListBox, Supplier<Date> issueDateSupplier) {
+	    AbstractDataProvider<Date> payDateProvider =
+	    new AbstractDataProvider<Date>() {
+		@Override
+		protected void onRangeChanged(HasData<Date> display) {
+			Range range = display.getVisibleRange();
+			int start = range.getStart();
+			int length = range.getLength();
+			updateRowData(display, start, getPayDates(start, length));
+		}
+		
+		private List<Date> getPayDates(int start, int length) {
+
+			Date issueDate = issueDateSupplier.get();
+
+			List<Date> dates = new ArrayList<>(length);
+
+			Date date = DateUtils.copyDateOnly(issueDate);
+			date = DateUtils.addDays2Date(date,  -20);
+			
+			for (DateUtils.addDays2Date(date, start); dates.size() < length ; DateUtils
+					.addDays2Date(date, 1)) {
+				dates.add(DateUtils.copyDateOnly(date));
+			}
+
+			return dates;
+
+		}
+		
+	    };
+	    
+	    payDateProvider.addDataDisplay(payDateListBox);
+	    
+	    changePayDateListBoxRange(payDateListBox, issueDateSupplier.get());
+	}
+
+	protected static void changePayDateListBoxRange(DateListBox payDateListBox, Date issueDate) {
+	    
+	    Date payStartDate = DateUtils.copyDateOnly(issueDate);
+	    payStartDate = DateUtils.addDays2Date(payStartDate, -20);
+
+	    Date payDate = DateUtils.after(new Date(), issueDate);
+
+	    int index = DateUtils.getDaysBetween(payStartDate, payDate);
+	    int length = payDateListBox.getPageSize();
+	    int start = Math.max(0, index - length / 2);
+
+	    payDateListBox.setVisibleRangeAndClearData(new Range(start, length), true);
+	    Scheduler.get().scheduleFinally(() -> payDateListBox.setSelected(payDate, true));
+	}
+	
+
 	
 	
 }

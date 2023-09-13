@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>9.23-SNAPSHOT</version>
+	</parent>
+	<groupId>solutions.aon</groupId>
+	<artifactId>aon.saltra.api</artifactId>
+	<name>SALTRA API</name>
+	<description>SALTRA API</description>
+	<build>
+		<plugins>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20230227</version>
+		</dependency>
+
+		<!-- Test dependecies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13-beta-1</version>
+			<scope>test</scope>
+		</dependency>
+		<!--dependency>
+		  <groupId>org.apache.pdfbox</groupId>
+		  <artifactId>pdfbox</artifactId>
+		  <version>3.0.0-alpha2</version>
+		  <scope>test</scope>
+		</dependency-->
+	</dependencies>
+
+
+</project>

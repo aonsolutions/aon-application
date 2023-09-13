@@ -2,7 +2,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LM1212Key;
@@ -11,12 +11,12 @@ import com.google.gwt.user.client.ui.FlexTable;
 
 public class Page15 extends PageAbs {
 	
-	private static final String FOOTER_1212_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene gastos financieros pendientes por otro per\u00EDodo impositivo iniciado en 2021, pero inferior a 12 meses y previo al declarado.";
+	private static final String FOOTER_1212_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene gastos financieros pendientes por otro per\u00EDodo impositivo iniciado en 2022, pero inferior a 12 meses y previo al declarado.";
 	private static final String FOOTER_1212_2 = "(**) S\u00F3lo debe cumplimentarse si la entidad tiene gastos financieros pendientes, devengados en el propio per\u00EDodo impositivo, deducibles en los pr\u00F3ximos per\u00EDodos impositivos.";
-	private static final String FOOTER_538_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado por otro per\u00EDodo impositivo iniciado en 2021, pero inferior a 12 meses y previo al declarado.";
+	private static final String FOOTER_538_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado por otro per\u00EDodo impositivo iniciado en 2022, pero inferior a 12 meses y previo al declarado.";
 	private static final String FOOTER_538_2 = "(**) S\u00F3lo debe cumplimentarse si la entidad tiene pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado, generado en el propio per\u00EDodo impositivo, aplicable en los pr\u00F3ximos per\u00EDodos impositivos.";	
 
-	public Page15( Model200PageCallback callback ) {
+	public Page15( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 
@@ -66,36 +66,21 @@ public class Page15 extends PageAbs {
 		addHeaderCell(table1,row, 3,AON.MSG.liquiMsg4());
 		table1.getFlexCellFormatter().setColSpan(row, 3, 2);
 		++row;
-		paintKeysProvider(Mod2002022LM1212Key.values(), table1, row, false, new String[] {
-				AON.MSG.liquiMsg1(),
-				AON.MSG.liquiMsg21(),
-				AON.MSG.remainder() ,
-				AON.MSG.liquiMsg3() ,
-				AON.MSG.liquiMsg21(),
-				AON.MSG.remainder()
-			});
-		
+		paintKeysProvider(Mod2002022LM1212Key.values(), table1, row, false, AON.MSG.liquiMsg1(), AON.MSG.liquiMsg21(), AON.MSG.remainder(), AON.MSG.liquiMsg3(), AON.MSG.liquiMsg21(), AON.MSG.remainder());
 		paintFooterNote(basePanel, FOOTER_1212_1, FOOTER_1212_2);
 		
 		// Pendiente de adición por límite beneficio operativo no aplicado
 		
-		paintKeysProvider(Mod2002022LM538Key.values(), addTable(AON.MSG.pendingAddinngs(), 3), new String[] {
-				AON.MSG.liquiMsg1(),
-				"Importe generado. Pendiente de aplicaci\u00F3n a principio del periodo",
-				AON.MSG.liquiMsg3(),
-				AON.MSG.liquiMsg4()				
-			});
-		
+		paintKeysProvider(Mod2002022LM538Key.values(), addTable(AON.MSG.pendingAddinngs(), 3), AON.MSG.liquiMsg1(), "Importe generado. Pendiente de aplicaci\u00F3n a principio del periodo", AON.MSG.liquiMsg3(), AON.MSG.liquiMsg4());
 		paintFooterNote(basePanel, FOOTER_538_1, FOOTER_538_2);
 		
 	}
 	
 	@Override
 	protected boolean isAvailable() {
-		boolean av = super.isAvailable()
+		return super.isAvailable()
   		  && callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0009) 
-  		  &&  callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010);
-		return av;
+  		  && callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010);
 	}
 	
 }

@@ -6,6 +6,7 @@ import java.io.Writer;
 import com.esferalia.aon.occam.api.model.fiscal.ActivityType;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -427,11 +428,9 @@ public class Mod3902022Writer {
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getBox81(),17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getBox82(),17,2))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.signedZero(m390.getBox83(),17,2))
-		   
-//		   ,(wr,m390) -> wr.append(AonStringUtils.repeat(' ', 150)) ---- 6. Operaciones Reg. Simplificado - Actividad 1 - Epigrafe IAE - Indicador auxiliar de actividad en el caso de epígrafes 691.9 y 722
-//		   ,(wr,m390) -> wr.append(AonStringUtils.repeat(' ', 150)) ---- 6. Operaciones Reg. Simplificado - Actividad 2 - Epigrafe IAE - Indicador auxiliar de actividad en el caso de epígrafes 691.9 y 722 
-		   
-		   ,(wr,m390) -> wr.append(AonStringUtils.repeat(' ', 150))
+		   ,(wr,m390) -> wr.append(checkEpi(m390.getSimpRegime1())) 
+		   ,(wr,m390) -> wr.append(checkEpi(m390.getSimpRegime2())) 
+		   ,(wr,m390) -> wr.append(AonStringUtils.repeat(' ', 148))
 		   ,(wr,m390) -> wr.append("</T39005000>")
 		})
 		
@@ -622,12 +621,23 @@ public class Mod3902022Writer {
 			this.propertyFillers = pf;
 		}
 
+
 		private void fillPage(Mod3902022 m390, Writer wr) throws IOException {
 			for (IPropertyFiller propertyFiller : this.propertyFillers) {
 				propertyFiller.propertyFill(wr, m390);
 			}
 		}
 
+	}
+
+	private static String checkEpi(SimpliedRegimeActivity simpliedRegimeActivity) {
+		if (simpliedRegimeActivity != null) {
+			String epi = simpliedRegimeActivity.getEpigrafe();
+			if (AonStringUtils.equals(epi,"722") || AonStringUtils.equals(epi,"6919")) {
+				return "1";	
+			}
+		}
+		return " ";
 	}
 
 	public static void fillWriter(Mod3902022 m390, Writer wr) throws IOException {

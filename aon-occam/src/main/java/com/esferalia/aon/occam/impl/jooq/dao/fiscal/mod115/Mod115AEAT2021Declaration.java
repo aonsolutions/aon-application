@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod115AEAT2021Declaration extends Mod115Declaration {
 	
@@ -16,32 +17,22 @@ public class Mod115AEAT2021Declaration extends Mod115Declaration {
 	
 	private enum Mod115KeyDAO  implements IMod115KeyDAO{
 		 CT_C01(Mod115Key.CT_C01
-			, (mod,br) -> br.isRenting()
+			, (mod,br) -> isRenting(br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod115Key.CT_C01,mod,docs,pdocs,br)
 			,null,null,null)
 		,CT_C02(Mod115Key.CT_C02
-			, (mod,br) -> br.isRenting()
+			, (mod,br) -> isRenting(br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod115Key.CT_C02,mod,br)
 			,null,null,null)
 		,CT_C03(Mod115Key.CT_C03
-			, (mod,br) -> br.isRenting()
+			, (mod,br) -> isRenting(br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod115Key.CT_C03, mod, br)
 			,null,null,null)
-		,CT_C04(Mod115Key.CT_C04
-				, null
-				, null
-				, (ctx,mod) -> mod.putAmount(Mod115Key.CT_C04,mod.isComplementary()
-					?Mod115DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod115::getDeclarationResult).sum()
-					:0.0)
-				,null
-				,"{messages : ["
-					+ "\"Declaraciones en el mismo periodo/ejercicio:\","
-					+ "@foreach{fm : periodModels}"
-					+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
-					+ "@end{}"
-					+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(CT_C04)}\""
-				+"]}"
-				)
+		,CT_C04(Mod115Key.CT_C04, null, null
+			, (ctx,mod) -> mod.putAmount(Mod115Key.CT_C04,mod.isComplementary()
+				?Mod115DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod115::getDeclarationResult).sum()
+				:0.0)
+			,null,null)
 		,CT_C05(Mod115Key.CT_C05
 			, null,null,null, "CT_C03-CT_C04" ,null)
 		,CT_TIP(Mod115Key.CT_TIP, null,null,null,null,null)
@@ -123,4 +114,12 @@ public class Mod115AEAT2021Declaration extends Mod115Declaration {
 		return super.initializeModel(ctx, mod115);
 	}
 
+	private static boolean isRenting(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.RENTING;
+	}
+
+	@Override
+	public Mod115Key[] getSamePeriodExplainKeys() {
+		return new Mod115Key[] {Mod115Key.CT_C04};
+	}
 }

@@ -101,6 +101,7 @@ export const CREDIT_CARD = 'credit_card';
 // ----- D
 
 export const DATA_OBJECT = 'data_object';
+export const DATASET_LINKED = 'dataset_linked';
 export const DELETE = 'delete';
 export const DELETE_SWEEP = 'delete_sweep';
 export const DONE = 'done';
@@ -148,6 +149,7 @@ export const INBOX = 'inbox';
 export const INFO = 'info';
 export const INFO_OUTLINE = 'info_outline';
 export const INSERT_DRIVE_FILE = "insert_drive_file";
+export const INVENTORY = "inventory";
 export const INVENTORY_2 = "inventory_2";
 export const IOS_SHARE = 'ios_share';
 
@@ -216,14 +218,17 @@ export const SECURITY = 'security';
 export const SEND = 'send';
 export const SETTING = 'setting';
 export const SHOPPING_BAG = 'shopping_bag';
-export const STORE_MALL_DIRECTORY = 'store_mall_directory';
-export const SWAP_CALLS = 'swap_calls';
-export const SUPPORT_AGENT = "support_agent";
 export const STICKY_NOTE = 'sticky_note_2';
+export const STORE_MALL_DIRECTORY = 'store_mall_directory';
+export const SUPPORT_AGENT = "support_agent";
+export const SWAP_CALLS = 'swap_calls';
+export const SYNC = 'sync';
+export const SYNC_ALT = 'sync_alt';
 
 // ----- T
 
 export const TUNE = 'tune';
+export const THUNDERSTORM = 'thunderstorm';
 
 // ----- U
 

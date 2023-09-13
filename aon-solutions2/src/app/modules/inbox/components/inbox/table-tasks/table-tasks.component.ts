@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { CollectionFactory, ICollection, IMessage } from 'libraries/AonSDK/aon';
-import { Observable } from 'rxjs';
+import { CollectionFactory, FilterBuilder, ICollection, IMessage } from 'libraries/AonSDK/aon';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { DatePipe } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-table-tasks',
@@ -13,16 +14,25 @@ export class TableTasksComponent implements OnInit {
   @Input() filterStatus: string[] = [];
   @Input() filter: any = {};
   @Input() public messageList: Observable<ICollection<IMessage>> | undefined;
+  @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
+  @Input() id: number = 0;
 
-
-  selectedMessage: IMessage | undefined;
-  headerTable: any = {};
+  selectedMessage: IMessage | null = null;
   bodyTable: any[] = [];
+  showDetail: boolean = false;
   totalMessages: number = 0;
   @Output() noPendingTasks: EventEmitter<boolean> = new EventEmitter<boolean>();
-
   messages: ICollection<IMessage> =
-    new CollectionFactory().createMessageCollection();
+  new CollectionFactory().createMessageCollection();
+
+    public collectionFactory = new CollectionFactory();
+    //Inbox area
+    messagess: ICollection<IMessage> =
+      this.collectionFactory.createMessageCollection();
+    private messagesSubject = new BehaviorSubject<ICollection<IMessage>>(
+      this.collectionFactory.createMessageCollection()
+    );
+    public messages$ = this.messagesSubject.asObservable();
 
   displayedColumns: string[] = [
     'name',
@@ -32,10 +42,12 @@ export class TableTasksComponent implements OnInit {
     'date',
   ];
 
-  constructor(private messageService: MessageService) {
-    let tableRow: any[] = [];
+  constructor(
+    private messageService: MessageService,
+    private translateService: TranslateService,
+    ) {}
 
-    this.headerTable = {
+    headerTable: any = {
       name: 'Name',
       status: 'Status',
       title: 'Title',
@@ -43,9 +55,19 @@ export class TableTasksComponent implements OnInit {
       date: 'Date',
     };
 
-    messageService.getMessageList(this.filter).then((response) => {
-      let pendingTasksFound = false;
+    private updateTableData() {
+      const datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
+      let filterBuilder = new FilterBuilder();
+      filterBuilder.addField('type', 'tarea');
 
+      let tableRow: any[] = [];
+
+     this.messageService
+     .getMessageList(filterBuilder.getFilter())
+     .then((response) => {
+      this.messagess = response;
+      this.messagesSubject.next(this.messagess);
+      let pendingTasksFound = false;
       response.forEach((message, messageKey) => {
         const column: any = Object.assign({}, message);
         column.key = messageKey;
@@ -66,14 +88,17 @@ export class TableTasksComponent implements OnInit {
           };
           column.title = message.Title;
           column.description = message.Description;
-
-          const datepipe: DatePipe = new DatePipe('en-US');
           column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
-
+          column.class = (message.Status == 'pendiente') ? 'border-red' : '';
           tableRow.push(column);
+
 
           if (message.Status.toLowerCase().includes('pendiente')) {
             pendingTasksFound = true;
+          }
+
+          if (this.selectedMessage === null) {
+            this.selectedMessage = { ...message };
           }
         }
       });
@@ -83,8 +108,8 @@ export class TableTasksComponent implements OnInit {
     });
   }
 
-
   ngOnInit(): void {
+    this.updateTableData();
     if (this.messageList) {
       this.messageList.subscribe((messages) => {
         this.messages = messages;
@@ -95,6 +120,6 @@ export class TableTasksComponent implements OnInit {
 
 
   rowClick(message: any) {
-
+    this.rowClicked.emit(message);
   }
 }

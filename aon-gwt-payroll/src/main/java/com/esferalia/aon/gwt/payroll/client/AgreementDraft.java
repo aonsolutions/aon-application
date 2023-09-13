@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.ToIntFunction;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -2229,8 +2230,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				String issueMonthDate = issueDate.split("/")[1];
 				Integer monthIssue = Integer.parseInt(issueMonthDate);
 				if(AonNumberUtils.equals(monthIssue, 6) || AonNumberUtils.equals(monthIssue, 7) || AonNumberUtils.equals(monthIssue, 12)) {
-					Date startDate = parseExtraDate(extra.getStartDate());
-					Date endDate = parseExtraDate(extra.getEndDate());
+					Date startDate = parseExtraStartDate(extra.getStartDate());
+					Date endDate = parseExtraEndDate(extra.getEndDate());
 					int daysBetween = DateUtils.getDaysBetween(startDate, endDate);
 					if(daysBetween > 186) {
 						this.payPeriod.setSelectedIndex(0);
@@ -3113,7 +3114,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		ValueBox<Date> startDateBox = newDateBox();
 		try {
-			Date startDate = parseExtraDate(extra.getStartDate());
+			Date startDate = parseExtraStartDate(extra.getStartDate());
 			startDateBox.setValue(startDate);
 		} catch (EmptyStringException e) {
 			startDateBox.setTitle("Es necesario introducir una fecha inicial de devengo.");
@@ -3131,7 +3132,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		ValueBox<Date> endDateBox = newDateBox();
 		try {
-			Date endDate = parseExtraDate(extra.getEndDate());
+			Date endDate = parseExtraEndDate(extra.getEndDate());
 			endDateBox.setValue(endDate);
 		} catch (EmptyStringException e) {
 			endDateBox.setTitle("Es necesario introducir una fecha final de devengo.");
@@ -3148,7 +3149,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		ValueBox<Date> issueDateBox = newDateBox();
 		try {
-			Date issueDate = parseExtraDate(extra.getIssueDate());
+			Date issueDate = parseExtraIssueDate(extra.getIssueDate());
 			issueDateBox.setValue(issueDate);
 		} catch (EmptyStringException e) {
 			issueDateBox.setTitle("Es necesario introducir una fecha de cobro.");
@@ -3328,8 +3329,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				findExtra = true;
 				
 				//Check type payPeriod ListBox
-				Date startDate = parseExtraDate(extra.getStartDate());
-				Date endDate = parseExtraDate(extra.getEndDate());
+				Date startDate = parseExtraStartDate(extra.getStartDate());
+				Date endDate = parseExtraEndDate(extra.getEndDate());
 				int daysBetween = DateUtils.getDaysBetween(startDate, endDate);
 				if(daysBetween > 186) {
 					this.payPeriod.setSelectedIndex(0);
@@ -3917,8 +3918,16 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		return false;
 	}
 
-	private Date parseExtraDate(String text) {
-		return parseExtraDate(text, CalendarUtil.copyDate(TODAY));
+	private Date parseExtraEndDate(String text) {
+		return parseExtraEndDate(text, CalendarUtil.copyDate(TODAY));
+	}
+
+	private Date parseExtraStartDate(String text) {
+		return parseExtraStartDate(text, CalendarUtil.copyDate(TODAY));
+	}
+	
+	private Date parseExtraIssueDate(String text) {
+		return parseExtraIssueDate(text, CalendarUtil.copyDate(TODAY));
 	}
 
 	private String formatExtraDate(Date extraDate) {
@@ -3940,12 +3949,22 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			return text + " " + String.valueOf(years);
 	}
 
-	protected static Date parseExtraDate(String text, Date date) {
+	protected static Date parseExtraEndDate(String text, Date date ) {
+		return parseExtraDate(text, date, d -> DateUtils.getLastDayOfMonth(date).getDate());
+	}
+
+	protected static Date parseExtraStartDate(String text, Date date) {
+		return parseExtraDate(text, date, d -> 1);
+	}
+
+	protected static Date parseExtraIssueDate(String text, Date date) {
+		return parseExtraDate(text, date, d -> 1);
+	}
+
+	protected static Date parseExtraDate(String text, Date date, ToIntFunction<Date> dayCallback) {
 
 		if (text == null)
 			throw new EmptyStringException();
-
-		DateTimeFormat format = DateTimeFormat.getFormat("d/M");
 
 		int start = -1;
 		while (++start < text.length() && Character.isSpace(text.charAt(start)))
@@ -3954,9 +3973,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			throw new EmptyStringException();
 
 		try {
-			start += format.parse(text, start, date);
-		} catch (Throwable t) {
-			throw new DateTimeFormatException("'" + text + "/" + start + "' it's not a valid extra date");
+			int advanced = DateTimeFormat.getFormat("d/M").parse(text, start, date);
+			if ( advanced == 0 ) {
+			    advanced = DateTimeFormat.getFormat("M").parse(text, start, date);
+			    DateUtils.setDayOfMonth(date, dayCallback.applyAsInt(date));
+			}
+			start += advanced;
+			
+		} catch (Throwable t1) {
+		    throw new DateTimeFormatException("'" + text + "/" + start + "' it's not a valid extra date");
 		}
 
 		while (++start < text.length() && Character.isSpace(text.charAt(start)))
@@ -3996,7 +4021,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			return date;
 
 		try {
-			int years = Integer.valueOf(text.substring(start));
+			int years = Integer.parseInt(text.substring(start));
 			return DateUtils.addYears2Date(date, -1 * years);
 		} catch (Throwable t) {
 			throw new DateTimeFormatException("'" + text + "/" + start + "' it's not a valid extra date");

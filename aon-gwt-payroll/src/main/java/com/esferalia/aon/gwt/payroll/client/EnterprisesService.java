@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -52,13 +53,14 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -115,7 +117,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<Agreement> getTrashAgreements(String currentDomainName, int offset, int limit);
 
-	List<Enterprise> getEnterprises(String domain, String user, int offset, int limit) ;
+	List<Enterprise> getEnterprises(String domain, String user, String condition, int offset, int limit) ;
 
 	List<Bonus> getBonusConcepts(String domain, int offset, int limit) ;
 
@@ -163,8 +165,7 @@ public interface EnterprisesService extends RemoteService {
 
 	List<CRA> getCRAs(String domain, String string, long liquidDateTime);
 
-	String createNewCRA(String domainName, String user, long findingDate, List<String> ccc,
-			ArrayList<Integer> cccIdList, Integer cccId, String type);
+	void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList, Integer cccId, String type) throws IllegalArgumentException;
 
 	void deleteCRA(String currentDomainName, Integer code);
 
@@ -201,11 +202,13 @@ public interface EnterprisesService extends RemoteService {
 	
 	String getSalariesPDF(String currentDomainName, String currentUser, Integer enterpriseId, List<Integer> salaryIds) throws IllegalArgumentException;
 
-	String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList);
+	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) throws IllegalArgumentException;
 
 	List<CCCInfo> getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime);
 
 	List<EmployeeContractInfo> getEmployeesInfo(String currentDomainName, Boolean allEmployees);
+	
+	List<EmployeeContractInfo> getFJEmployeesInfo(String currentDomainName);
 
 	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Boolean allEmployees);
 
@@ -279,7 +282,7 @@ public interface EnterprisesService extends RemoteService {
 			Date dateFrom, Date dateTo, float baseCC, float baseCP, int days);
 
 	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
-			String contributionAccount, Date dateFrom, Date dateTo, Date startDate);
+			String contributionAccount, Date dateFrom, Date dateTo, Date startDate) throws IllegalArgumentException;
 
 	void syncITs(String currentDomainName, String currentUser) throws IllegalArgumentException;
 	
@@ -348,6 +351,8 @@ public interface EnterprisesService extends RemoteService {
 	List<Certificate> getCertificates(String domain, String login, boolean withParent);
 
 	void deleteCertificate(String domain, String login, Certificate certificate) throws IllegalArgumentException;
+	
+	void downloadCertificate(String domain, String login, Integer certificateId, String filePath) throws IllegalArgumentException;
 
 	CertificateInfo getCertificateInfo(String domain, String login, Integer certitificateId) throws IllegalArgumentException ;
 
@@ -382,6 +387,8 @@ public interface EnterprisesService extends RemoteService {
 	String getAgreementDraftReceipt(String currentDomainName, AgreementInfo agreement, List<Variable> context, int levelId, String mime) throws IllegalArgumentException;
 
 	void checkAndUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement) throws IllegalArgumentException;
+	
+	boolean canUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement) throws IllegalArgumentException;
 
 	void deletePayments(String currentDomainName, List<Integer> paymentIds) throws IllegalArgumentException;
 	
@@ -428,5 +435,19 @@ public interface EnterprisesService extends RemoteService {
 	String getEmployeesWorking(String currentDomainName, String currentUser, String regime, String ccc) throws IllegalArgumentException;
 
 	String getUpdateCert(String currentDomainName, String currentUser, String regime, String ccc) throws IllegalArgumentException;
+
+	// ------------------------------------------------ Country/Province
+	
+	List<Country> getCountries(String currentDomainName) throws IllegalArgumentException;
+	
+	// ------------------------------------------------ MainMassiveContracts
+
+	List<ContractData> getMassiveCNOs(String currentDomainName, String currentUser) throws IllegalArgumentException;
+
+	void updateMassiveCNOs(String currentDomainName, String currentUser, List<ContractData> contractDatas) throws IllegalArgumentException;
+	
+	void duplicateContract(String currentDomainName, String currentUser, EmployeeContractInfo employee, Date newStartDate) throws IllegalArgumentException;
+	
+	void duplicateContract(String currentDomainName, String currentUser, List<EmployeeContractInfo> employees, Date newStartDate) throws IllegalArgumentException;
 
 }

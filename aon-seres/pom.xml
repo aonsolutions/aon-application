@@ -33,7 +33,7 @@
 		<dependency>
     		<groupId>org.json</groupId>
     		<artifactId>json</artifactId>
-    		<version>20180813</version>
+    		<version>20230227</version>
 		</dependency>
 			
 		<dependency>
@@ -41,6 +41,14 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.5.6</version>
 			<scope>provided</scope>
+		</dependency>
+		
+		<!-- PARA REALIZAR LA CONEXIÓN SFTP -->
+		<dependency>
+    		<groupId>com.jcraft</groupId>
+   		 	<artifactId>jsch</artifactId>
+    		<version>0.1.55</version>
+			<scope>compile</scope>
 		</dependency>
 		
 	</dependencies>

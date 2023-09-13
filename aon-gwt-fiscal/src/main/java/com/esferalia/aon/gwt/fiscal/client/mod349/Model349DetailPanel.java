@@ -203,8 +203,8 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 
 		tab3.setWidget(1, 3, buttonContainer);
 		
-		// Vaciar y cerrar el panel de informacion de desglose 
-		callbackM349.cleanInfoPanel();
+		// Vaciar y cerrar el panel de informacion de desglose
+		callbackM349.cleanAndCloseInfoPanel();		
 
 		panel.add(tab3);
 		

@@ -25,7 +25,6 @@ public interface Mod115ServiceAsync {
 	void markAsCustomerCheck(Occam occam, Mod115 mod115, AsyncCallback<Mod115> callback);
 	void initialize(Occam occam, Mod115 mod115,AsyncCallback<Mod115> asyncCallback);
 	void create(Occam occam, Mod115 mod115, AsyncCallback<Mod115> callback);
-	void reset(Occam occam, Mod115 model, AsyncCallback<Mod115> asyncCallback);
 	void getInfo(Occam occam, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 	void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> callback);
 }

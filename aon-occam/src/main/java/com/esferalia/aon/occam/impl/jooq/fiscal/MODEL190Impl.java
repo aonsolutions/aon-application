@@ -63,5 +63,11 @@ public class MODEL190Impl implements IMODEL190 {
 		return ctx.getDslContext().transactionResult(
 			configuration -> Mod190DAO.validateSalaries(ctx, mod190));		
 	}
+	
+	@Override
+	public Mod190 aeatPresentation(AONContext ctx, Mod190 mod, String aeatResponse) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod190DAO.aeatPresentation(ctx, mod, aeatResponse));
+	}
 
 }

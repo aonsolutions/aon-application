@@ -3,14 +3,13 @@ package com.code.aon.ui.common.session;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.http.HttpSessionContext;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionBindingEvent;
+import jakarta.servlet.http.HttpSessionBindingListener;
 
 /**
- * Mock implementation of the {@link javax.servlet.http.HttpSession} interface.
+ * Mock implementation of the {@link jakarta.servlet.http.HttpSession} interface.
  * Supports the Servlet 2.4 API level.
  *
  * <p>Used for testing the web framework; also useful for testing
@@ -73,9 +72,6 @@ public class MockHttpSession implements HttpSession {
 		return this.maxInactiveInterval;
 	}
 
-	public HttpSessionContext getSessionContext() {
-		throw new UnsupportedOperationException("getSessionContext");
-	}
 
 	public Object getAttribute(String name) {
 		return this.attributes.get(name);

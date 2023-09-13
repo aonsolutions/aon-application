@@ -152,8 +152,8 @@ public class ProjectDAO {
 		return ctx.getDslContext().select()
 			.from(PROJECT)
 			.join(DOMAIN).on(PROJECT.DOMAIN.eq(DOMAIN.ID))
-			.join(PROJECT_TYPE).on(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE.ID))
 			.join(REGISTRY).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+			.leftOuterJoin(PROJECT_TYPE).on(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE.ID))			
 			.where(PROJECT_PROPERTIES.getConditions(filter));
 	}
 	

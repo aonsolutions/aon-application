@@ -26,8 +26,6 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -61,10 +59,16 @@ import com.google.gwt.visualization.client.visualizations.corechart.Series;
 
 public class StatControlPanel extends MainEntryPoint {
 
-	final static int INFORMATION_TAB = 0;
-	final static int INVOICES_TAB = 1;
+	private static final int INFORMATION_TAB = 0;
+	private static final int INVOICES_TAB = 1;
 
-	static StatServiceAsync statService;
+	private static final StatServiceAsync STAT_SERVICE;
+	static {
+		StatServiceAsync serviceRaw = GWT.create(StatService.class);
+		STAT_SERVICE = new StatServiceAsyncDecorator(serviceRaw);
+	}
+
+	
 
 	interface StatControlPanelBinder extends UiBinder<Widget, StatControlPanel> {
 	}
@@ -85,8 +89,6 @@ public class StatControlPanel extends MainEntryPoint {
 	Button excelTable;
 	@UiField
 	Button excel;
-//	@UiField
-//	Button pdf;
 	@UiField
 	Button invoices;
 	@UiField
@@ -146,8 +148,12 @@ public class StatControlPanel extends MainEntryPoint {
 		ERROR_PANEL.add(tab);
 	}
 
-	final private AsyncCallback<Widget> coreChartCallback = new AsyncCallback<Widget>() {
+	private final AsyncCallback<Widget> coreChartCallback = new AsyncCallback<Widget>() {
 		
+		private boolean isFootPanelClosed() {
+			return (splitLayoutPanel.getWidgetSize(footPanel) <= 50);
+		}
+
 		@Override
 		public void onSuccess(final Widget chart) {
 			content.setWidget(chart);
@@ -166,9 +172,6 @@ public class StatControlPanel extends MainEntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		StatServiceAsync serviceRaw = GWT.create(StatService.class);
-		statService = new StatServiceAsyncDecorator(serviceRaw);
-	
 		AON.ensureInjected();
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		Widget ui = INVOICE_STAT_BINDER.createAndBindUi(this);
@@ -216,14 +219,10 @@ public class StatControlPanel extends MainEntryPoint {
 		
 		tabLayout.setAnimationDuration(300);
 		tabLayout.selectTab(INFORMATION_TAB);
-		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
-			@Override
-			public void onSelection(SelectionEvent<Integer> event) {
-				openFootPanelIfNeeded();
-				if  (tabLayout.getSelectedIndex() == INVOICES_TAB) {
-					onInvoicesButtonClick(null);
-				}
-				
+		tabLayout.addSelectionHandler(event -> {
+			openFootPanelIfNeeded();
+			if  (tabLayout.getSelectedIndex() == INVOICES_TAB) {
+				onInvoicesButtonClick(null);
 			}
 		});
 		
@@ -292,12 +291,12 @@ public class StatControlPanel extends MainEntryPoint {
 		registryId.setValue(AonNumberUtils.toString( filter.getParams().getRegistry()));
 		productId.setValue(AonNumberUtils.toString( filter.getParams().getProduct()));
 		
-		DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
+		DateTimeFormat dateFormat = DateTimeFormat.getFormat("dd/MM/yyyy");
 		if ( filter.getParams().getFrom() != null) {
-			fromDate.setValue(DATE_FORMAT.format(filter.getParams().getFrom()));
+			fromDate.setValue(dateFormat.format(filter.getParams().getFrom()));
 		}
 		if ( filter.getParams().getTo() != null) {
-			toDate.setValue(DATE_FORMAT.format(filter.getParams().getTo()));
+			toDate.setValue(dateFormat.format(filter.getParams().getTo()));
 		}
 		
 		IStatFilterItemVisitor visitor = new IStatFilterItemVisitor() {
@@ -357,36 +356,13 @@ public class StatControlPanel extends MainEntryPoint {
 				}
 				segmentIds.setValue(segmentIds.getValue() + AonNumberUtils.toInteger(item.getId()));
 			}
-
-			
 		};
 		
+		filter.getParams().getFilterItems()
+			.stream()
+			.filter(item -> item.isSelected())
+			.forEach(item -> item.getType().visit(visitor, item));
 		
-		for (StatFilterItem item : filter.getParams().getFilterItems()) {
-			 if (item.isSelected()) {
-				 item.getType().visit(visitor, item);
-//				 Hidden f = null;
-//				 Integer id = null;
-//				 if (item.getType() == StatFilterType.INVOICE_TYPE) {
-//					 f = invoiceTypes;
-//					 InvoiceType type = InvoiceType.valueOf(item.getId());
-//					 id = type.ordinal();
-//				 } else if (item.getType() == StatFilterType.PRODUCT_CATEGORY) {
-//					 f = categoryIds;
-//					 id = AonNumberUtils.toInteger(item.getId());
-//				 } else if (item.getType() == StatFilterType.WORKPLACE) {
-//					 f = workplaceIds;
-//					 id = AonNumberUtils.toInteger(item.getId());
-//				 } else if (item.getType() == StatFilterType.SELLER) {
-//					 f = sellerIds;
-//					 id = AonNumberUtils.toInteger(item.getId());					 
-//				 }
-//				 if (AonStringUtils.isNotBlank(f.getValue())) {
-//					 f.setValue(f.getValue() + ",");
-//				 }
-//				 f.setValue(f.getValue() + id);
-			 }
-		}
 		user.setValue(getCurrentUser());
 		domainName.setValue(getCurrentDomainName());
 		domainId.setValue(String.valueOf(getCurrentDomain()));
@@ -402,7 +378,7 @@ public class StatControlPanel extends MainEntryPoint {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		
-		statService.getInvoicesReport(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams()
+		STAT_SERVICE.getInvoicesReport(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams()
 			, new AsyncCallback<String>() {
 
 			@Override
@@ -440,7 +416,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 	@UiHandler("footPanel")
 	void onFootMaximize(MaximizeEvent event) {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
 		splitLayoutPanel.animate(500);
 	}
 
@@ -450,16 +426,13 @@ public class StatControlPanel extends MainEntryPoint {
 	}
 
 	private void openFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
 		splitLayoutPanel.animate(500);
 	}
 	private void openFootPanelIfNeeded() {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
 			openFootPanel();
 		}
-	}
-	private boolean isFootPanelClosed() {
-		return (splitLayoutPanel.getWidgetSize(footPanel) <= 50);
 	}
 	
 	private void showInfoPanel(String htmlText) {
@@ -473,6 +446,8 @@ public class StatControlPanel extends MainEntryPoint {
 
 	private class StatChartTypeVisitor implements IInvoiceChartTypeVisitor {
 		
+		private static final String ANIMATION = "animation";
+
 		protected boolean hasNegativeValues(StatData<String, String, Double> result) {
 			for (String rowKey : result.getMap().keySet()) {
 				for (String col : result.getMap().get(rowKey).keySet()) {
@@ -486,9 +461,13 @@ public class StatControlPanel extends MainEntryPoint {
 		}
 
 		protected DataTable getDataTable(StatData<String, String, Double> result, String columnLabel) {
+			return getDataTable(result, columnLabel, false);	
+		}
+
+		protected DataTable getDataTable(StatData<String, String, Double> result, String columnLabel, boolean onlyPositiveValues) {
 			DataTable dataTable = DataTable.create();
 			dataTable.addColumn(ColumnType.STRING, columnLabel);
-			LinkedHashMap<String, Integer> colMap = new LinkedHashMap<String, Integer>();
+			LinkedHashMap<String, Integer> colMap = new LinkedHashMap<>();
 			int rowIndex = 0;
 			int colIndex = 0;
 			for (String rowKey : result.getMap().keySet()) {
@@ -496,14 +475,18 @@ public class StatControlPanel extends MainEntryPoint {
 				dataTable.setValue(rowIndex, 0, rowKey);
 				LinkedHashMap<String, Double> map = result.getMap().get(rowKey);
 				for (String col : map.keySet()) {
-					if (!colMap.containsKey(col)) {
-						colMap.put(col, colMap.size() + 1);
-						dataTable.addColumn(ColumnType.NUMBER, col);
-					}
-					colIndex = colMap.get(col);
 					double d = AonMathUtils.round(map.get(col));
-					dataTable.setValue(rowIndex, colIndex, d);
-					dataTable.setFormattedValue(rowIndex, colIndex, AON.FMT.format(d));
+					if (!onlyPositiveValues || !AonMathUtils.isNegative(d)) {
+						colMap.computeIfAbsent(col, k -> {
+							Integer i = colMap.size() + 1;
+							colMap.put(k, i);
+							dataTable.addColumn(ColumnType.NUMBER, k);
+							return i;
+						});
+						colIndex = colMap.get(col);
+						dataTable.setValue(rowIndex, colIndex, d);
+						dataTable.setFormattedValue(rowIndex, colIndex, AON.FMT.format(d));
+					}
 				}
 			}
 			return dataTable;
@@ -527,7 +510,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		private ResizableComboChart getGenericComboChart(StatData<String, String, Double> result, String label) {
 			final ComboChart.Options options = ComboChart.createComboOptions();
-			options.set("animation", StatUtils.ANIMATION);
+			options.set(ANIMATION, StatUtils.ANIMATION);
 			options.setWidth(content.getOffsetWidth());
 			options.setHeight(content.getOffsetHeight());
 			options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
@@ -550,13 +533,12 @@ public class StatControlPanel extends MainEntryPoint {
 			south.setWidget(table);
 			excel.setEnabled(true);
 			excelTable.setEnabled(true);
-			final ResizableComboChart chart = new ResizableComboChart(dataTable, options);
-			return chart;
+			return new ResizableComboChart(dataTable, options);
 		}
 
 		@Override
 		public void visitInvoiceTypeByYearComboChart() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -577,7 +559,7 @@ public class StatControlPanel extends MainEntryPoint {
 		
 		@Override
 		public void visitInvoiceTypeByMonthsComboChart() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -598,7 +580,7 @@ public class StatControlPanel extends MainEntryPoint {
 		
 		@Override
 		public void visitInvoiceTypeByWeeksComboChart() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -620,7 +602,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitInvoiceTypeByDaysComboChart() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -642,7 +624,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceTitular() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -650,7 +632,7 @@ public class StatControlPanel extends MainEntryPoint {
 					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
 					else {
 						final PieOptions options = PieChart.createPieOptions();
-						options.set("animation", StatUtils.ANIMATION);
+						options.set(ANIMATION, StatUtils.ANIMATION);
 						options.setWidth(content.getOffsetWidth());
 						options.setHeight(content.getOffsetHeight());
 						options.set3D(true);
@@ -681,7 +663,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceTitularAddress() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -689,7 +671,7 @@ public class StatControlPanel extends MainEntryPoint {
 					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
 					else {
 						final PieOptions options = PieChart.createPieOptions();
-						options.set("animation", StatUtils.ANIMATION);
+						options.set(ANIMATION, StatUtils.ANIMATION);
 						options.setWidth(content.getOffsetWidth());
 						options.setHeight(content.getOffsetHeight());
 						options.set3D(true);
@@ -720,7 +702,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceCategory() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -729,7 +711,7 @@ public class StatControlPanel extends MainEntryPoint {
 					else {
 						if (hasNegativeValues(result)) {
 							final ComboChart.Options options = ComboChart.createComboOptions();
-							options.set("animation", StatUtils.ANIMATION);
+							options.set(ANIMATION, StatUtils.ANIMATION);
 							options.setWidth(content.getOffsetWidth());
 							options.setHeight(content.getOffsetHeight());
 							options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
@@ -748,7 +730,7 @@ public class StatControlPanel extends MainEntryPoint {
 							coreChartCallback.onSuccess(chart);
 						} else {
 							final PieOptions options = PieChart.createPieOptions();
-							options.set("animation", StatUtils.ANIMATION);
+							options.set(ANIMATION, StatUtils.ANIMATION);
 							options.setWidth(content.getOffsetWidth());
 							options.setHeight(content.getOffsetHeight());
 							options.set3D(true);
@@ -779,7 +761,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcProductBrand() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -788,7 +770,7 @@ public class StatControlPanel extends MainEntryPoint {
 					else {
 						if (hasNegativeValues(result)) {
 							final ComboChart.Options options = ComboChart.createComboOptions();
-							options.set("animation", StatUtils.ANIMATION);
+							options.set(ANIMATION, StatUtils.ANIMATION);
 							options.setWidth(content.getOffsetWidth());
 							options.setHeight(content.getOffsetHeight());
 							options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
@@ -807,7 +789,7 @@ public class StatControlPanel extends MainEntryPoint {
 							coreChartCallback.onSuccess(chart);
 						} else {
 							final PieOptions options = PieChart.createPieOptions();
-							options.set("animation", StatUtils.ANIMATION);
+							options.set(ANIMATION, StatUtils.ANIMATION);
 							options.setWidth(content.getOffsetWidth());
 							options.setHeight(content.getOffsetHeight());
 							options.set3D(true);
@@ -838,7 +820,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceProduct() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -846,7 +828,7 @@ public class StatControlPanel extends MainEntryPoint {
 					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
 					else {
 						final PieOptions options = PieChart.createPieOptions();
-						options.set("animation", StatUtils.ANIMATION);
+						options.set(ANIMATION, StatUtils.ANIMATION);
 						options.setWidth(content.getOffsetWidth());
 						options.setHeight(content.getOffsetHeight());
 						options.set3D(true);
@@ -861,7 +843,8 @@ public class StatControlPanel extends MainEntryPoint {
 						south.setWidget(table);
 						excel.setEnabled(true);
 						excelTable.setEnabled(true);
-						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+						final DataTable positiveDataTable = getDataTable(result, "ABC", true);
+						final ResizablePieChart chart = new ResizablePieChart(positiveDataTable, options);
 						coreChartCallback.onSuccess(chart);
 					}
 				}
@@ -876,7 +859,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceWorkplace() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -884,7 +867,7 @@ public class StatControlPanel extends MainEntryPoint {
 					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
 					else {
 						final PieOptions options = PieChart.createPieOptions();
-						options.set("animation", StatUtils.ANIMATION);
+						options.set(ANIMATION, StatUtils.ANIMATION);
 						options.setWidth(content.getOffsetWidth());
 						options.setHeight(content.getOffsetHeight());
 						options.set3D(true);
@@ -913,7 +896,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceSeller() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -921,7 +904,7 @@ public class StatControlPanel extends MainEntryPoint {
 					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
 					else {
 						final PieOptions options = PieChart.createPieOptions();
-						options.set("animation", StatUtils.ANIMATION);
+						options.set(ANIMATION, StatUtils.ANIMATION);
 						options.setWidth(content.getOffsetWidth());
 						options.setHeight(content.getOffsetHeight());
 						options.set3D(true);
@@ -951,7 +934,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitGeoProvince() {
-			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
+			STAT_SERVICE.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -959,7 +942,7 @@ public class StatControlPanel extends MainEntryPoint {
 					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
 					else {
 						final  GeoChartWrapper.Options options = GeoChartWrapper.Options.create();
-						options.set("animation", StatUtils.ANIMATION);
+						options.set(ANIMATION, StatUtils.ANIMATION);
 						options.setWidth(content.getOffsetWidth());
 						options.setHeight(content.getOffsetHeight());
 						options.setRegion("ES");
@@ -983,22 +966,6 @@ public class StatControlPanel extends MainEntryPoint {
 		}
 
 	}
-	
-/*
-	@UiHandler("pdf")
-	void onPDFButtonClick(ClickEvent event) {
-		takeScreenShot();
-	}
-*/
-	
-//	public static native void takeScreenShot()
-//	/*-{
-//		$wnd.doTakeScreenshot(
-//			$doc.getElementById("content"),
-//			$doc.getElementById("pdfIframe")
-//		);		
-//	}-*/;
-	
 	
 }
 

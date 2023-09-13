@@ -1,9 +1,9 @@
 package com.code.aon.company;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 import com.code.aon.AonVersion;
 import com.code.aon.registry.IRegistry;

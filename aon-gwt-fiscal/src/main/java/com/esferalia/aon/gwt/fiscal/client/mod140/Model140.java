@@ -63,11 +63,15 @@ public class Model140 extends MainEntryPoint {
 	public void onModuleLoad(FiscalModelModuleOptions<FiscalModel> options) {
 		AON.ensureInjected();
 		aonLayout = new AonLayoutPanel();
+		aonLayout.addStyleName("aon-Model");
 		splitLayoutPanel = new SplitLayoutPanel( 2 );
 		aonLayout.add(splitLayoutPanel);
 		
 		declarationContainer = new SimpleLayoutPanel();
-		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
+		declarationContainer.addStyleName("aon-Model-Detail");
+		AonMinimizePanel minimizePanel = getMinimizePanel();
+		minimizePanel.addStyleName("aon-Model-Info");
+		splitLayoutPanel.addSouth(minimizePanel, 30);
 		splitLayoutPanel.add(declarationContainer);
 		declarationContainer.setWidget(new LroeModel140(this, options));
 		options.getParentWidget().add(aonLayout);		

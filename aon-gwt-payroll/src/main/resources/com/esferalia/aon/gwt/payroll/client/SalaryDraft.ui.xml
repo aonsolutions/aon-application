@@ -82,12 +82,17 @@
 			color: #000000 !important;			
 		}
 		
-		.edit-rows tr:hover,
-		.edit-cells td:hover{
+		.edit-rows tr:hover{
 			cursor: pointer;
 			background-color: #F6F6F6 !important;
 	
 		}
+
+		/*.edit-cells td:hover{
+			cursor: pointer;
+			background-color: #F6F6F6 !important;
+	
+		}*/
 
 		.span-cell {
 			padding: 0px !important;
@@ -100,7 +105,8 @@
 		}
 
 		@if !user.agent safari {
-			.cell-label {
+			.cell-label,
+			.aon-SalarySelect-Label {
 				color:black;
 				font-size: 9px;
 				font-weight: bold;
@@ -108,7 +114,8 @@
 			}
 		}
 		@else {
-			.cell-label {
+			.cell-label,
+			.aon-SalarySelect-Label {
 				color:black;
 				font-size: 11px;
 				font-weight: bold;
@@ -293,6 +300,7 @@
 		@external aon-icon-rowSelector;
 		@external aon-icon-rowSelector-C;
 		@external aon-icon-rowSelector-S;
+		@external aon-SalarySelect-Label;
 		@external aon-icon-rowSelector-Parent;
 		@external aon-icon-rowSelector-Changed;
 		
@@ -310,7 +318,22 @@
 		.stackHeader {
 			padding: .7em .5em .7em .6em;
 		}
-
+		
+		.flexBtwn {
+			display: flex;
+			justify-content: space-between;
+			padding: 0 .5rem 0 0;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			gap: .5rem;
+		}
+		
+		.wAuto {
+			width: auto;
+		}
 
 	</ui:style>
 	
@@ -369,35 +392,40 @@
 				
 				<g:FlowPanel styleName="aon-finding-title-toolbar aon-width-all">
 					<g:HorizontalPanel styleName="aon-width-all">
-			
-						<g:HorizontalPanel styleName="aon-finding-toolbar aon-width-all">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:CheckBox debugId='eventsCheck' ui:field='eventsCheck'
-									styleName='aon-finding-toolbar-item aon-icon-warn {style.toolBar-checkBox}'
-									text="AVISOS" checked="false" />
-								<g:CheckBox debugId='costsCheck' ui:field='costsCheck'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="COSTES" checked="false" />
-								<g:CheckBox debugId='notDefinedVarsCheck' ui:field='notDefinedVarsCheck'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="VARIABLES NO DEFINIDAS" checked="false" />
-								<g:CheckBox debugId='disabledPaymentsCheck' ui:field='disabledPaymentsCheck'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="CONCEPTOS NO ACTIVOS" checked="false" />
-								<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="DIFERENCIAS" checked="false" />
-								<g:CheckBox debugId='tgssCheck' ui:field='tgssCheck'
-									styleName='aon-finding-toolbar-item {style.aon-toolbar-button} {style.toolBar-checkBox} '
-									text="SILTRA" checked="false" />
-								
-								<g:ListBox debugId="settlePreviewListBox" ui:field="settlePreviewListBox" visible="false" >
-									<g:item value="{JASPER}">EST&Aacute;NDAR</g:item>
-									<g:item value="{LETTER}">CARTA (&Beta;)</g:item>
-								</g:ListBox>
-
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
+						<g:HTMLPanel styleName="{style.flexBtwn}">
+						
+							<g:HorizontalPanel styleName="aon-finding-toolbar {style.wAuto}">
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:CheckBox debugId='eventsCheck' ui:field='eventsCheck'
+										styleName='aon-finding-toolbar-item aon-icon-warn {style.toolBar-checkBox}'
+										text="AVISOS" checked="false" />
+									<g:CheckBox debugId='costsCheck' ui:field='costsCheck'
+										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+										text="COSTES" checked="false" />
+									<g:CheckBox debugId='notDefinedVarsCheck' ui:field='notDefinedVarsCheck'
+										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+										text="VARIABLES NO DEFINIDAS" checked="false" />
+									<g:CheckBox debugId='disabledPaymentsCheck' ui:field='disabledPaymentsCheck'
+										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+										text="CONCEPTOS NO ACTIVOS" checked="false" />
+									<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'
+										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+										text="DIFERENCIAS" checked="false" />
+									<g:CheckBox debugId='tgssCheck' ui:field='tgssCheck'
+										styleName='aon-finding-toolbar-item {style.aon-toolbar-button} {style.toolBar-checkBox} '
+										text="SILTRA" checked="false" />
+									
+									<g:ListBox debugId="settlePreviewListBox" ui:field="settlePreviewListBox" visible="false" >
+										<g:item value="{JASPER}">EST&Aacute;NDAR</g:item>
+										<g:item value="{LETTER}">CARTA (&Beta;)</g:item>
+									</g:ListBox>
+	
+								</g:HTMLPanel>
+							</g:HorizontalPanel>
+							
+							<g:HTMLPanel ui:field="collapContextPanel" styleName="{style.flex}" />
+						
+						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
 
@@ -493,8 +521,8 @@
 												<g:row>
 													<g:customCell styleName="{style.span-cell-cell}">
 														<g:HTMLPanel>
-															<g:Label styleName="{style.cell-label}">RECIBO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FECHA DE CÁLCULO</g:Label>
-															<e:SalarySelect ui:field="salarySelect" />
+															<g:Label ui:field="salarySelectLabel"  styleName="{style.cell-label}" visible="false">RECIBO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FECHA DE CÁLCULO</g:Label>
+															<e:SalarySelect ui:field="salarySelect"/>
 														</g:HTMLPanel>
 													</g:customCell>
 													<g:customCell styleName="{style.span-cell-cell}">
@@ -507,7 +535,7 @@
 													<g:customCell styleName="{style.span-cell-cell-last}">
 														<g:HTMLPanel>
 															<g:Label styleName="{style.cell-label}">DÍAS</g:Label>
-															<g:Label ui:field="daysLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+															<g:Label ui:field="daysLabel" debugId="daysLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 														</g:HTMLPanel>
 													</g:customCell>
 												</g:row>
@@ -618,7 +646,7 @@
 													<g:Label styleName="{style.cell-label}">BASE IRPF</g:Label>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueInlineHTML
-															changeDisplayStyleName="{style.value-changed}" ui:field="irpfBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
+															changeDisplayStyleName="{style.value-changed}" debugId="irpfBaseLabel" ui:field="irpfBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 														<g:InlineHTML ui:field="dbIrpfBaseLabel"
 															visible="false" />
 													</g:HTMLPanel>

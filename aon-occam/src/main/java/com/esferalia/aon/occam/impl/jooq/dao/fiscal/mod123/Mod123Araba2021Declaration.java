@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod123Araba2021Declaration extends Mod123Declaration {
 	
@@ -19,15 +20,15 @@ public class Mod123Araba2021Declaration extends Mod123Declaration {
 		,AR_908(Mod123Key.AR_908,null,null,null,null,null)
 		,AR_909(Mod123Key.AR_909,null,null,null,null,null)
 		,AR_C01(Mod123Key.AR_C01
-			, (mod,br) -> br.isMovableCapital()
+			, (mod,br) -> isMovableCapital(br)
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.AR_C01,mod,docs,br)
 			,null,null,null)
 		,AR_C02(Mod123Key.AR_C02
-			, (mod,br) -> br.isMovableCapital()
+			, (mod,br) -> isMovableCapital(br)
 			, (ctx,mod,docs,br) -> addBase(Mod123Key.AR_C02,mod,br)
 			,null,null,null)
 		,AR_C03(Mod123Key.AR_C03
-			, (mod,br) -> br.isMovableCapital()
+			, (mod,br) -> isMovableCapital(br)
 			, (ctx,mod,docs,br) -> addQuota(Mod123Key.AR_C03,mod,br)
 			,null,null,null)
 		,AR_C04(Mod123Key.AR_C04,null,null,null,null,null)
@@ -36,16 +37,9 @@ public class Mod123Araba2021Declaration extends Mod123Declaration {
 		,AR_C07(Mod123Key.AR_C07,null,null
 			, (ctx,mod) -> mod.putAmount(Mod123Key.AR_C07,
 					mod.isReplacement() 
-					?Mod123DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod123::getDeclarationResult).sum()
+					?Mod123DAO.getSamePeriodEffectiveModels(ctx, mod).mapToDouble(Mod123::getDeclarationResult).sum()
 					:0.0)
-				,null
-				,"{messages : ["
-						+ "\"Declaraciones en el mismo periodo/ejercicio:\","
-						+ "@foreach{fm : periodModels}"
-						+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
-						+ "@end{}"
-						+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(AR_C07)}\""
-					+"]}")
+				,null,null)
 		,AR_C08(Mod123Key.AR_C08,null,null,null,null,null)
 		,AR_C09(Mod123Key.AR_C09,null,null,null,null,null)
 		,AR_C10(Mod123Key.AR_C10,null,null,null,"AR_C06-AR_C07+AR_C08+AR_C09",null)
@@ -132,5 +126,17 @@ public class Mod123Araba2021Declaration extends Mod123Declaration {
 		return super.initializeModel(ctx, mod123);
 	}
 	
+	@Override
+	public Mod123Key[] getSamePeriodExplainKeys() {
+		return new Mod123Key[] {Mod123Key.AR_C07}; 
+	}
+
+	private static boolean isMovableCapital(IrpfBreakdown br) {
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
+			|| br.getWithholdingType() == WithholdingType.M193_C1
+			|| br.getWithholdingType() == WithholdingType.M193_C2
+			|| br.getWithholdingType() == WithholdingType.M193_C3);
+	}
 
 }

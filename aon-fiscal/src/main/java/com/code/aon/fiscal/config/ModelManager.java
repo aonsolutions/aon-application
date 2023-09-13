@@ -146,6 +146,9 @@ public class ModelManager {
 				.where(FS_MODEL.DOMAIN.equal(params.getMasterDomain()))
 					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
 				.and(FS_MODEL.YEAR.equal(params.getYear()))
+				
+				.and(FS_MODEL.MODEL.ne(Model.M349.getName()))
+				
 				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
 								ctx.select(USER_SCOPE.SCOPE)
 								.from(USER_SCOPE)

@@ -97,16 +97,6 @@ public class CommunicationPrincipal extends Composite{
 				Integer value  = arg0.getSelectedItem();
 				if(value == 1){
 					openFootPanel();
-					// TODO History
-//					getAPI().getSii().getSiiHistory(new AsyncCallback<JSON<JsDataResponse>>() {
-//						
-//						@Override
-//						public void onSuccess(JSON<JsDataResponse> result) {
-//							historyPanel.add(new HistoryPanel(me, result.getData()));
-//						}
-//						
-//						@Override public void onFailure(Throwable caught) {}
-//					});
 				}
 			}
 		});

@@ -41,6 +41,10 @@ public class Mod349 implements IFiscalModel, HasAudit {
 	private boolean diffEnabled;
 	private String contactMail;
 	
+	private Integer fsModel;
+	
+	private boolean manualDeclaration; // Se usa solo en la generación del modelo, no se graba en la tabla
+	
 	private LinkedList<Mod349Detail> details;
 	
 	@Override
@@ -315,6 +319,7 @@ public class Mod349 implements IFiscalModel, HasAudit {
 		this.contactMail = contactMail;
 		return this;
 	}
+	
 	@Override
 	public Double getDeclarationResult() {
 		return null;
@@ -322,6 +327,24 @@ public class Mod349 implements IFiscalModel, HasAudit {
 	@Override
 	public FiscalModelDeclarationType getDeclarationResultType() {
 		return null;
+	}
+
+	public Integer getFsModel() {
+		return fsModel;
+	}
+
+	public Mod349 setFsModel(Integer fsModel) {
+		this.fsModel = fsModel;
+		return this;
+	}
+
+	public boolean isManualDeclaration() {
+		return manualDeclaration;
+	}
+
+	public Mod349 setManualDeclaration(boolean manualDeclaration) {
+		this.manualDeclaration = manualDeclaration;
+		return this;
 	}
 	
 }

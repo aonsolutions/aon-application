@@ -11,6 +11,7 @@ import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountParams;
@@ -18,8 +19,11 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsOrderBy;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -27,6 +31,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.api.model.type.WithholdingTypeGroup;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -128,6 +133,11 @@ public class JsonParser {
 		Long level = (Long) jsonParams.get(IRequestParamsNames.LEVEL);
 		if (level!= null) {
 			params.setLevel(level.byteValue());	
+		}
+		// *******************  DESCRIPTION ******************* 
+		String costCenter = (String) jsonParams.get(IRequestParamsNames.COST_CENTER);
+		if (AonStringUtils.isNotBlank(costCenter)) {
+			params.setCostCenter(costCenter);			
 		}
 		// ******************* PAGE OFFSET ******************* 
 		Long pageOffset = (Long) jsonParams.get(IRequestParamsNames.OFFSET);
@@ -564,101 +574,32 @@ public class JsonParser {
 		return params;
 	}
 	
-	public static FinanceParams parseFinanceParams(String financeParams) throws ParseException, java.text.ParseException {
+	public static FinanceParams parseFinanceParams(String financeParams) {
 		FinanceParams params = new FinanceParams();
-		JSONParser parser = new JSONParser();
-		JSONObject jsonParams =  (JSONObject) parser.parse(financeParams);
+		org.json.JSONObject json = new org.json.JSONObject(financeParams);
 		
-		String domainName = (String) jsonParams.get(IRequestParamsNames.DOMAIN_NAME);
-		params.setDomainName(domainName);
+		params.setDomainName(JsonUtils.getString(json, IJsonNames.DOMAIN_NAME));
+		params.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN));
+		params.setFromInvoiceDate(JsonUtils.getDate(json, IJsonNames.FROM_DATE));
+		params.setToInvoiceDate(JsonUtils.getDate(json, IJsonNames.TO_DATE));
+		params.setFromDueDate(JsonUtils.getDate(json, IJsonNames.FROM_DUE_DATE));
+		params.setToInvoiceDate(JsonUtils.getDate(json, IJsonNames.TO_DUE_DATE));
+		params.setSecurityLevel(SecurityLevel.safeValueOf(JsonUtils.getInteger(json, IJsonNames.SECURITY_LEVEL)));
+		params.setHasConfidentialityRole(JsonUtils.getInt(json, IJsonNames.SECURITY_LEVEL) == 1);		
+		params.setPayment(JsonUtils.getInt(json, IJsonNames.PAYMENT) == 1);
+		params.setPending(JsonUtils.getInt(json, IJsonNames.PENDING) == 1);
+		params.setBatched(JsonUtils.getInt(json, IJsonNames.BATCHED) == 1);
+		params.setReturned(JsonUtils.getInt(json, IJsonNames.RETURNED) == 1);
+		params.setPaid(JsonUtils.getInt(json, IJsonNames.PAID) == 1);
+		params.setSettled(JsonUtils.getInt(json, IJsonNames.SETTLED) == 1);
+		params.setRegistry(JsonUtils.getInteger(json, IJsonNames.REGISTRY));
+		params.setAmount(JsonUtils.getDouble(json, IJsonNames.AMOUNT));
+		params.setNearbyNumbers(JsonUtils.getInt(json, IJsonNames.NEARBY_NUMBERS) ==1);	
+		params.setConcept(JsonUtils.getString(json, IJsonNames.CONCEPT));
+		params.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE));	
+		params.setPayMethod(JsonUtils.getInteger(json, IJsonNames.PAY_METHOD));
+		params.setOrder(JsonUtils.getInteger(json, IJsonNames.ORDER_BY));
 
-		Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
-		params.setDomain(domain.intValue());
-		
-		String fromInvoiceDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
-		if (AonStringUtils.isNotBlank(fromInvoiceDate)) {
-			params.setFromInvoiceDate( FORMATTER.parse(fromInvoiceDate));			
-		}
-		String toInvoiceDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
-		if (AonStringUtils.isNotBlank(toInvoiceDate)) {
-			params.setToInvoiceDate( FORMATTER.parse(toInvoiceDate));			
-		}
-
-		String fromDueDate = (String) jsonParams.get(IRequestParamsNames.FROM_DUE_DATE);
-		if (AonStringUtils.isNotBlank(fromDueDate)) {
-			params.setFromDueDate( FORMATTER.parse(fromDueDate));			
-		}
-		String toDueDate = (String) jsonParams.get(IRequestParamsNames.TO_DUE_DATE);
-		if (AonStringUtils.isNotBlank(toDueDate)) {
-			params.setToInvoiceDate( FORMATTER.parse(toDueDate));			
-		}
-
-		Long securityLevel = (Long) jsonParams.get(IRequestParamsNames.SECURITY_LEVEL);
-		if (securityLevel != null) {
-			params.setSecurityLevel( SecurityLevel.safeValueOf( securityLevel.intValue() ));
-		}
-		Long hasConfidentialityRole = (Long) jsonParams.get(IRequestParamsNames.HAS_CONFIDENTIALITY_ROLE);
-		if (hasConfidentialityRole!= null) {
-			params.setHasConfidentialityRole(hasConfidentialityRole==1);	
-		}
-
-		Long payment= (Long) jsonParams.get(IRequestParamsNames.PAYMENT);
-		if (payment!= null) {
-			params.setPayment(payment==1);	
-		}
-		
-		Long pending= (Long) jsonParams.get(IRequestParamsNames.PENDING);
-		if (pending!= null) {
-			params.setPending(pending==1);	
-		}
-
-		Long batched= (Long) jsonParams.get(IRequestParamsNames.BATCHED);
-		if (batched!= null) {
-			params.setBatched(batched==1);	
-		}
-
-		Long returned= (Long) jsonParams.get(IRequestParamsNames.RETURNED);
-		if (returned!= null) {
-			params.setReturned(returned==1);	
-		}
-
-		Long paid= (Long) jsonParams.get(IRequestParamsNames.PAID);
-		if (paid!= null) {
-			params.setPaid(paid==1);	
-		}
-
-		Long settled= (Long) jsonParams.get(IRequestParamsNames.SETTLED);
-		if (settled!= null) {
-			params.setSettled(settled==1);	
-		}
-		Long registry = (Long) jsonParams.get(IRequestParamsNames.REGISTRY);
-		if (registry != null) {
-			params.setRegistry(registry.intValue());	
-		}
-		Number amount = (Number) jsonParams.get(IRequestParamsNames.AMOUNT);
-		if (amount != null) {
-			params.setAmount(amount.doubleValue());	
-		}
-		Long nearbyNumbers= (Long) jsonParams.get(IRequestParamsNames.NEARBY_NUMBERS);
-		if (nearbyNumbers!= null) {
-			params.setNearbyNumbers(nearbyNumbers==1);	
-		}
-		String concept = (String) jsonParams.get(IRequestParamsNames.CONCEPT);
-		if (AonStringUtils.isNotBlank(concept)) {
-			params.setConcept(concept);			
-		}
-		String referenceCode = (String) jsonParams.get(IRequestParamsNames.REFERENCE_CODE);
-		if (AonStringUtils.isNotBlank(referenceCode)) {
-			params.setConcept(referenceCode);			
-		}
-		Number payMethod = (Number) jsonParams.get(IRequestParamsNames.PAY_METHOD);
-		if (payMethod != null) {
-			params.setPayMethod(payMethod.intValue());	
-		}
-		Number order = (Number) jsonParams.get(IRequestParamsNames.ORDER_BY);
-		if (order != null) {
-			params.setOrder(order.intValue());	
-		}
 		return params;
 	}
 	
@@ -763,6 +704,11 @@ public class JsonParser {
 			params.setOutput(outputEnabled==1);
 		}
 		// ******************* WithholdingType ******************* 
+		Long withholdingTypeGroup = (Long) jsonParams.get(IRequestParamsNames.WITHHOLDING_TYPE_GROUP);
+		if (withholdingTypeGroup != null) {
+			params.setWithholdingTypeGroup(WithholdingTypeGroup.safeValueOf( withholdingTypeGroup.intValue() ));
+		}
+		// ******************* WithholdingType ******************* 
 		Long withholdingType = (Long) jsonParams.get(IRequestParamsNames.WITHHOLDING_TYPE);
 		if (withholdingType != null) {
 			params.setWithholdingType(WithholdingType.safeValueOf( withholdingType.intValue() ));
@@ -796,12 +742,12 @@ public class JsonParser {
 		// ******************* ACTIVITY ******************* 
 		Long orderBy = (Long) jsonParams.get(IRequestParamsNames.ORDER_BY);
 		if (orderBy != null) {
-			params.setOrderBy(orderBy.intValue());	
+			params.setOrderBy( IRPFParamsOrderBy.safeValueOf(orderBy.intValue()));	
 		}
 		// ******************* ACTIVITY ******************* 
 		Long groupedBy = (Long) jsonParams.get(IRequestParamsNames.GROUPED_BY);
 		if (groupedBy != null) {
-			params.setGroupedBy(groupedBy.intValue());	
+			params.setGroupedBy( IRPFParamsGroupedBy.safeValueOf(groupedBy.intValue()) );	
 		}
 		return params;
 	}

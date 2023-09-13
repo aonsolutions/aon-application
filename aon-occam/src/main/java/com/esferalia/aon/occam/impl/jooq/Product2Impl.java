@@ -1,21 +1,27 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IProduct2;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TargetItemDAO;
 
 public class Product2Impl implements IProduct2{
 	// ------------------------------------- PRODUCT
@@ -112,6 +118,12 @@ public class Product2Impl implements IProduct2{
 		ctx.getDslContext().transaction( configuration -> 
 			ItemDAO.delete(ctx, id));
 	}
+	
+	@Override
+	public void updateAllTargetItem(AONContext ctx, InvoiceFilter filter, boolean disable) {
+		ctx.getDslContext().transaction( configuration -> 
+			TargetItemDAO.updateAllTargetItem(ctx, filter, disable));
+	}
 
 	// ------------------------------------- INVEST ASSET
 	
@@ -137,6 +149,25 @@ public class Product2Impl implements IProduct2{
 	public void deleteInvestAsset(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction( configuration -> 
 			InvestAssetDAO.delete(ctx, id));
+	}
+
+	@Override
+	public void assignInvestAsset2Invoice(AONContext ctx, Integer investAssetId, Invoice invoice) {
+		// TODO Auto-generated method stub
+		ctx.getDslContext().transaction( configuration -> 
+		InvestAssetDAO.assignInvestAsset2Invoice(ctx, investAssetId, invoice));
+	}
+
+	@Override
+	public List<InvestAsset> getInvestAssetList(CloseableAONContext ctx, InvestAssetParams params) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		InvestAssetDAO.getInvestAssetList(ctx, params));
+	}
+
+	@Override
+	public InvestAsset getInvestAsset(CloseableAONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		InvestAssetDAO.getInvestAsset(ctx, id));
 	}
 
 }

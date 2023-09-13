@@ -1400,6 +1400,315 @@ interface IAuth extends ICollectable{
     Password: string;
 }
 
+export interface ICommunity {
+  label: string;
+  _about: string;
+}
+
+export interface ICountry {
+  name:         Name;
+  tld?:         string[];
+  cca2:         string;
+  ccn3?:        string;
+  cca3:         string;
+  cioc?:        string;
+  independent?: boolean;
+  status:       Status;
+  unMember:     boolean;
+  currencies?:  Currencies;
+  idd:          Idd;
+  capital?:     string[];
+  altSpellings: string[];
+  region:       Region;
+  subregion?:   string;
+  languages?:   { [key: string]: string };
+  translations: { [key: string]: Translation };
+  latlng:       number[];
+  landlocked:   boolean;
+  borders?:     string[];
+  area:         number;
+  demonyms?:    Demonyms;
+  flag:         string;
+  maps:         Maps;
+  population:   number;
+  gini?:        { [key: string]: number };
+  fifa?:        string;
+  car:          Car;
+  timezones:    string[];
+  continents:   Continent[];
+  flags:        Flags;
+  coatOfArms:   CoatOfArms;
+  startOfWeek:  StartOfWeek;
+  capitalInfo:  CapitalInfo;
+  postalCode?:  PostalCode;
+}
+
+export interface CapitalInfo {
+  latlng?: number[];
+}
+
+export interface Car {
+  signs?: string[];
+  side:   Side;
+}
+
+export enum Side {
+  Left = "left",
+  Right = "right",
+}
+
+export interface CoatOfArms {
+  png?: string;
+  svg?: string;
+}
+
+export enum Continent {
+  Africa = "Africa",
+  Antarctica = "Antarctica",
+  Asia = "Asia",
+  Europe = "Europe",
+  NorthAmerica = "North America",
+  Oceania = "Oceania",
+  SouthAmerica = "South America",
+}
+
+export interface Currencies {
+  ZAR?: Aed;
+  NOK?: Aed;
+  WST?: Aed;
+  GMD?: Aed;
+  XCD?: Aed;
+  EUR?: Aed;
+  AWG?: Aed;
+  XOF?: Aed;
+  KPW?: Aed;
+  PYG?: Aed;
+  BMD?: Aed;
+  XAF?: Aed;
+  USD?: Aed;
+  GBP?: Aed;
+  MZN?: Aed;
+  SOS?: Aed;
+  SGD?: Aed;
+  NIO?: Aed;
+  AUD?: Aed;
+  PEN?: Aed;
+  MXN?: Aed;
+  BAM?: BAM;
+  BHD?: Aed;
+  MOP?: Aed;
+  BBD?: Aed;
+  UZS?: Aed;
+  CNY?: Aed;
+  MWK?: Aed;
+  ZWL?: Aed;
+  KES?: Aed;
+  PKR?: Aed;
+  FJD?: Aed;
+  SZL?: Aed;
+  JEP?: Aed;
+  TWD?: Aed;
+  LKR?: Aed;
+  BYN?: Aed;
+  AED?: Aed;
+  ANG?: Aed;
+  CRC?: Aed;
+  AOA?: Aed;
+  UYU?: Aed;
+  CDF?: Aed;
+  KWD?: Aed;
+  TRY?: Aed;
+  MRU?: Aed;
+  TVD?: Aed;
+  PAB?: Aed;
+  EGP?: Aed;
+  AZN?: Aed;
+  RWF?: Aed;
+  INR?: Aed;
+  ISK?: Aed;
+  SRD?: Aed;
+  BGN?: Aed;
+  SLL?: Aed;
+  TND?: Aed;
+  CUC?: Aed;
+  CUP?: Aed;
+  TTD?: Aed;
+  KMF?: Aed;
+  SHP?: Aed;
+  RON?: Aed;
+  NPR?: Aed;
+  SAR?: Aed;
+  DOP?: Aed;
+  DKK?: Aed;
+  FOK?: Aed;
+  KID?: Aed;
+  VUV?: Aed;
+  HUF?: Aed;
+  YER?: Aed;
+  SCR?: Aed;
+  LYD?: Aed;
+  ILS?: Aed;
+  VND?: Aed;
+  IRR?: Aed;
+  NAD?: Aed;
+  LBP?: Aed;
+  MYR?: Aed;
+  MNT?: Aed;
+  GEL?: Aed;
+  TJS?: Aed;
+  ALL?: Aed;
+  TMT?: Aed;
+  COP?: Aed;
+  VES?: Aed;
+  GNF?: Aed;
+  SSP?: Aed;
+  UAH?: Aed;
+  FKP?: Aed;
+  HNL?: Aed;
+  BRL?: Aed;
+  MUR?: Aed;
+  THB?: Aed;
+  BOB?: Aed;
+  SEK?: Aed;
+  GGP?: Aed;
+  ZMW?: Aed;
+  ERN?: Aed;
+  KZT?: Aed;
+  MAD?: Aed;
+  JOD?: Aed;
+  MMK?: Aed;
+  CZK?: Aed;
+  JMD?: Aed;
+  KGS?: Aed;
+  SDG?: BAM;
+  STN?: Aed;
+  GIP?: Aed;
+  LSL?: Aed;
+  PLN?: Aed;
+  JPY?: Aed;
+  LRD?: Aed;
+  CVE?: Aed;
+  IMP?: Aed;
+  BIF?: Aed;
+  PGK?: Aed;
+  UGX?: Aed;
+  AFN?: Aed;
+  XPF?: Aed;
+  BWP?: Aed;
+  LAK?: Aed;
+  GTQ?: Aed;
+  CHF?: Aed;
+  SBD?: Aed;
+  SYP?: Aed;
+  BDT?: Aed;
+  DJF?: Aed;
+  GHS?: Aed;
+  OMR?: Aed;
+  BSD?: Aed;
+  DZD?: Aed;
+  HTG?: Aed;
+  PHP?: Aed;
+  CKD?: Aed;
+  NZD?: Aed;
+  TOP?: Aed;
+  MGA?: Aed;
+  CAD?: Aed;
+  AMD?: Aed;
+  NGN?: Aed;
+  BZD?: Aed;
+  RUB?: Aed;
+  KYD?: Aed;
+  MDL?: Aed;
+  RSD?: Aed;
+  CLP?: Aed;
+  IDR?: Aed;
+  MVR?: Aed;
+  BND?: Aed;
+  GYD?: Aed;
+  TZS?: Aed;
+  KHR?: Aed;
+  QAR?: Aed;
+  ARS?: Aed;
+  IQD?: Aed;
+  BTN?: Aed;
+  KRW?: Aed;
+  HKD?: Aed;
+  MKD?: Aed;
+  ETB?: Aed;
+}
+
+export interface Aed {
+  name:   string;
+  symbol: string;
+}
+
+export interface BAM {
+  name: string;
+}
+
+export interface Demonyms {
+  eng:  Eng;
+  fra?: Eng;
+}
+
+export interface Eng {
+  f: string;
+  m: string;
+}
+
+export interface Flags {
+  png:  string;
+  svg:  string;
+  alt?: string;
+}
+
+export interface Idd {
+  root?:     string;
+  suffixes?: string[];
+}
+
+export interface Maps {
+  googleMaps:     string;
+  openStreetMaps: string;
+}
+
+export interface Name {
+  common:      string;
+  official:    string;
+  nativeName?: { [key: string]: Translation };
+}
+
+export interface Translation {
+  official: string;
+  common:   string;
+}
+
+export interface PostalCode {
+  format: string;
+  regex?: string;
+}
+
+export enum Region {
+  Africa = "Africa",
+  Americas = "Americas",
+  Antarctic = "Antarctic",
+  Asia = "Asia",
+  Europe = "Europe",
+  Oceania = "Oceania",
+}
+
+export enum StartOfWeek {
+  Monday = "monday",
+  Saturday = "saturday",
+  Sunday = "sunday",
+}
+
+export enum Status {
+  OfficiallyAssigned = "officially-assigned",
+  UserAssigned = "user-assigned",
+}
+
+
 
 /*
  *
@@ -2015,7 +2324,7 @@ class RegistryEnterprise implements IRegistryEnterprise, IModel {
     this.notary = notary || '';
     this.protocol = protocol || '';
     this.inscription = inscription || '';
-    this.key = this.id;
+    this.key = this.idEnterprise;
   }
   public get Id(): string {
     return this.id;
@@ -2090,7 +2399,7 @@ class RegistryEnterprise implements IRegistryEnterprise, IModel {
   }
 
   getKey(): string {
-    return this.id;
+    return this.idEnterprise;
   }
 
   getFilterableFields(): Map<string, any> {
@@ -3335,18 +3644,25 @@ if(certificates.size() == 0){
 
 let enterprises: ICollection<Enterprise> = new Collection<Enterprise>();
 let storableEnterprises = new StorableEnterprise();
-let registryEnterprises : ICollection<RegistryEnterprise> = new Collection<RegistryEnterprise>();
 let storableRegistryEnterprises = new StorableRegistryEnterprise();
+let registryEnterprises : ICollection<RegistryEnterprise> = new Collection<RegistryEnterprise>();
+let localRegistryEnterprises = new LocalStorage<RegistryEnterprise>(RegistryEnterprise);
 let localEnterprises = new LocalStorage<Enterprise>(Enterprise);
 enterprises = localEnterprises.read(storableEnterprises.getLocalStorage())
+registryEnterprises = localRegistryEnterprises.read(storableRegistryEnterprises.getLocalStorage());
+
 if(enterprises.size() == 0){
     enterprises.add(new Enterprise('Pet Estudio', 'B16880148'));
-    registryEnterprises.add(new RegistryEnterprise('B16880148', 'lorem ipsum ...', new Date(), new Date(), 'Esperanza', 'Protocolo 1', 'Inscripción 1'));
     enterprises.add(new Enterprise('MENG SA', 'U14241855'));
-    registryEnterprises.add(new RegistryEnterprise('U14241855', 'lorem ipsum ...', new Date(), new Date(), 'Jorge Luis', 'Protocolo 2', 'Inscripción 2'));
     enterprises.add(new Enterprise('PORTABAGE SL', 'U53716270'));
-    registryEnterprises.add(new RegistryEnterprise('U53716270', 'lorem ipsum ...', new Date(), new Date(), 'Manuela', 'Protocolo 3', 'Inscripción 3'));
     localEnterprises.write(storableEnterprises.getLocalStorage(), enterprises);
+}
+
+if (registryEnterprises.size() == 0){
+    registryEnterprises.add(new RegistryEnterprise('B16880148', 'lorem ipsum ...', new Date(), new Date(), 'Esperanza', 'Protocolo 1', 'Inscripción 1'));
+    registryEnterprises.add(new RegistryEnterprise('U14241855', 'lorem ipsum ...', new Date(), new Date(), 'Jorge Luis', 'Protocolo 2', 'Inscripción 2'));
+    registryEnterprises.add(new RegistryEnterprise('U53716270', 'lorem ipsum ...', new Date(), new Date(), 'Manuela', 'Protocolo 3', 'Inscripción 3'));
+    localRegistryEnterprises.write(storableRegistryEnterprises.getLocalStorage(), registryEnterprises);
 }
 
 let documentNotes: ICollection<DocumentNote> = new Collection<DocumentNote>();
@@ -3393,6 +3709,20 @@ if(taxModels.size() == 0){
     taxModels.add(new TaxModel( '303','IVA','pendiente','domicialición bancaria','1345',4,2023));
     taxModels.add(new TaxModel( '130','IVA','presentado','tranferencia','541',4,2023));
     taxModels.add(new TaxModel( '347','IVA','rectificado','domicialición bancaria','1354',4,2023));
+
+    taxModels.add(new TaxModel( '180','IVA','presentado','a','356',1,2022));
+    taxModels.add(new TaxModel( '303','IVA','presentado','b','789',1,2022));
+    taxModels.add(new TaxModel( '180','IVA','presentado','a','1245',2,2022));
+    taxModels.add(new TaxModel( '303','IVA','presentado','b','1024',2,2022));
+    taxModels.add(new TaxModel( '180','IVA','en proceso','a','1538',3,2022));
+    taxModels.add(new TaxModel( '303','IVA','pendiente','b','987',3,2022));
+    taxModels.add(new TaxModel( '130','IVA','presentado','b','189',3,2022));
+    taxModels.add(new TaxModel( '347','IVA','rectificado','b','684',3,2022));
+    taxModels.add(new TaxModel( '180','IVA','en proceso','a','1784',4,2022));
+    taxModels.add(new TaxModel( '303','IVA','pendiente','a','1345',4,2022));
+    taxModels.add(new TaxModel( '130','IVA','presentado','b','541',4,2022));
+    taxModels.add(new TaxModel( '347','IVA','rectificado','a','1354',4,2022));
+
     localTaxModels.write(storableTaxModels.getLocalStorage(), taxModels);
 }
 

@@ -103,7 +103,7 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 		FlowPanel address2 = new FlowPanel();
 		InlineLabel streetNumberLabel = new InlineLabel(AON.MSG.streetNumber());
 		streetNumberLabel.setStyleName(AON.CSS.aonInnerLabel());
-		address2.add(streetTypeLabel);
+		address2.add(streetNumberLabel);
 		streetNumber = new AonTextBox();
 		streetNumber.setVisibleLength(5);
 		streetNumber.setMaxLength(5);

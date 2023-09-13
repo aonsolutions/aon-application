@@ -7,7 +7,7 @@ public class InvoiceInfo implements Serializable {
 	private Integer id;
 	private Integer domain;
 	private Integer invoice;
-	private InvoiceCommunicationType type;
+	private OldInvoiceCommunicationType type;
 	private InvoiceCommunicationStatus status;
 
 	public Integer getId() {
@@ -37,11 +37,11 @@ public class InvoiceInfo implements Serializable {
 		return this;
 	}
 
-	public InvoiceCommunicationType getType() {
+	public OldInvoiceCommunicationType getType() {
 		return type;
 	}
 
-	public InvoiceInfo setType(InvoiceCommunicationType type) {
+	public InvoiceInfo setType(OldInvoiceCommunicationType type) {
 		this.type = type;
 		return this;
 	}
@@ -59,7 +59,7 @@ public class InvoiceInfo implements Serializable {
 	}
 	
 	public boolean isAnnuled() {
-		return InvoiceCommunicationStatus.ANNULLED.equals(getStatus());
+		return InvoiceCommunicationStatus.CANCELLED.equals(getStatus());
 	}
 
 	public InvoiceCommunicationStatus getStatus() {

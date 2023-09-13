@@ -151,7 +151,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 						JavaScriptObject unk = JsonUtils.safeEval(text);
 						JsArray<JsFlatAccountEntry> array = unk.cast();
 						for (; count < array.length(); count++ ) {
-							boolean last = (count == LIMIT - 1);
+//							boolean last = (count == array.length() - 1);
 							JsFlatAccountEntry flatEntry = array.get(count);
 							if (!AonNumberUtils.equals( flatEntry.getEntryId(), oldId)) {
 								if (entry != null) {
@@ -163,15 +163,14 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 								oldId = flatEntry.getEntryId();
 							}
 							
-							if (!last) {
+//							if (!last) {
 								if (entry == null) {
 									entry = newAccountEntry(flatEntry);
 								}
 								AccountEntryDetail detail = newAccountEntryDetail(flatEntry);
-								
 								entry.getDetails().add( detail );
 								something = true;
-							}
+//							}
 						}
 						
 						if (array.length() < LIMIT) {
@@ -182,7 +181,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 							}
 							disableMoreData();
 						} else {
-							offset.setValue(ofs + count - 1);
+							offset.setValue(ofs + count);
 							enableMoreData();
 						}
 						

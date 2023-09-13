@@ -1,39 +1,73 @@
-<div class="form">
-  <app-input
-    [type]="'text'"
-    [label]="'PROFILE.NAME' | translate"
-    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
-    [required]="'required'"
-  ></app-input>
-  <app-input
-    [type]="'text'"
-    [label]="'PROFILE.LAST_NAME' | translate"
-    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
-    [required]="'required'"
-  ></app-input>
-</div>
-<div class="form">
-  <app-input
-    [type]="'text'"
-    [label]="'PROFILE.EMAIL' | translate"
-    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
-    [required]="'required'"
-  ></app-input>
-  <app-input
-    [type]="'text'"
-    [label]="'PROFILE.PHONE' | translate"
-    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
-    [required]="'required'"
-  ></app-input>
-</div>
-<div class="form">
-  <app-input
-    [type]="'password'"
-    [label]="'PROFILE.PASSWORD' | translate"
-    [placeholder]="'PROFILE.PLACEHOLDER' | translate"
-    [required]="'required'"
-    [suffixBehavior]="'edit'"
-  >
-    <app-icon [shape]="'edit'" suffix></app-icon>
-  </app-input>
+<div *ngFor="let user of users">
+  <div class="form">
+    <app-input
+      [type]="'text'"
+      [label]="'PROFILE.NAME' | translate"
+      [placeholder]="'PROFILE.NAME' | translate"
+      [required]="'required'"
+      [value]="user.Name"
+    ></app-input>
+    <app-input
+      [type]="'text'"
+      [label]="'PROFILE.LAST_NAME' | translate"
+      [placeholder]="'PROFILE.LAST_NAME' | translate"
+      [required]="'required'"
+      [value]="user.Lastname"
+    ></app-input>
+  </div>
+  <div class="form">
+    <app-input
+      [type]="'text'"
+      [label]="'PROFILE.EMAIL' | translate"
+      [placeholder]="'PROFILE.EMAIL' | translate"
+      [required]="'required'"
+      [value]="user.Email"
+    ></app-input>
+    <app-input
+      [type]="'text'"
+      [label]="'PROFILE.PHONE' | translate"
+      [placeholder]="'PROFILE.PHONE' | translate"
+      [required]="'required'"
+      [value]="user.Phone"
+    ></app-input>
+  </div>
+
+  <div class="form">
+    <app-input
+      [type]="'password'"
+      [label]="'PROFILE.PASSWORD' | translate"
+      [placeholder]="'PROFILE.PASSWORD' | translate"
+      [suffixBehavior]="'edit'"
+      [value]="user.Password"
+      [disabled]="'disabled'"
+      [suffixShowIcon]="true"
+    >
+      <app-icon
+        [shape]="'edit'"
+        suffix
+        (click)="togglePasswordFields()"
+      ></app-icon>
+    </app-input>
+  </div>
+  <div *ngIf="showPasswordFields" class="password_profile">
+    <div class="form">
+      <app-input
+        [type]="'password'"
+        [label]="'PROFILE.NEW_PASSWORD' | translate"
+        [placeholder]="'PROFILE.NEW_PASSWORD' | translate"
+        [suffixBehavior]="'showPass'"
+      >
+      </app-input>
+    </div>
+
+    <div class="form">
+      <app-input
+        [type]="'password'"
+        [label]="'PROFILE.REPEAT_PASSWORD' | translate"
+        [placeholder]="'PROFILE.REPEAT_PASSWORD' | translate"
+        [suffixBehavior]="'showPass'"
+      >
+      </app-input>
+    </div>
+  </div>
 </div>

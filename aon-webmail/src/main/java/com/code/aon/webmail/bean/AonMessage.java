@@ -10,22 +10,22 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.mail.Address;
-import javax.mail.BodyPart;
-import javax.mail.Flags;
-import javax.mail.Flags.Flag;
-import javax.mail.IllegalWriteException;
-import javax.mail.Message;
-import javax.mail.Message.RecipientType;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeUtility;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.Address;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Flags;
+import jakarta.mail.Flags.Flag;
+import jakarta.mail.IllegalWriteException;
+import jakarta.mail.Message;
+import jakarta.mail.Message.RecipientType;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Part;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimeUtility;
+import jakarta.mail.search.SearchTerm;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -569,7 +569,7 @@ public class AonMessage implements IMimeType {
 	 * 
 	 * @param type
 	 *            recipient type, valid values are constants in
-	 *            javax.mail.Message.RecipientType
+	 *            jakarta.mail.Message.RecipientType
 	 * @return String representing the specified recipient. Empty string if no
 	 *         such reciepient is found.
 	 * @throws MessagingException 
@@ -654,7 +654,7 @@ public class AonMessage implements IMimeType {
 	 * 
 	 * @param type
 	 *            recipient type, valid values are constants in
-	 *            javax.mail.Message.RecipientType
+	 *            jakarta.mail.Message.RecipientType
 	 * @throws WebmailException 
 	 */
 	protected void setRecipients(Address[] address, final RecipientType type) throws WebmailException {

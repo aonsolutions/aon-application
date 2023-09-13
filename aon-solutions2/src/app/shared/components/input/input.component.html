@@ -44,6 +44,26 @@
     </div>
   </div>
 
+  <!-- INPUTS TIPO DATEPICKER -->
+  <div
+    *ngIf="type=='date' || type=='datetime-local'"
+    class='datepicker'
+  >
+    <input
+      matInput
+      [matDatepicker]="picker"
+      [(ngModel)]="value"
+      [ngClass]="['ng-pending']"
+      [disabled]="disabled"
+      [required]="required"
+      [placeholder]="placeholder"
+      (ngModelChange)="returnValue($event)"
+      [class]="appearanceDetail" 
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </div>
+  
   <!-- INPUTS TIPO SELECT -->
     <mat-select
       *ngIf="type=='select'"
@@ -51,6 +71,7 @@
       [disabled]="disabled"
       [required]="required"
       [class]="appearanceDetail"
+      (ngModelChange)="returnValue($event)"
       placeholder="{{ 'COMMON.INPUT.SELECT' | translate }}"
     >
       <mat-option *ngFor="let option of options" value="{{option.value}}">
@@ -64,6 +85,7 @@
       [disabled]="disabled"
       [required]="required"
       [class]="appearanceDetail"
+      (ngModelChange)="returnValue($event)"
       multiple
       placeholder="{{ 'COMMON.INPUT.SELECT_MULTIPLE' | translate }}"
     >
@@ -91,6 +113,24 @@
     {{label}} <span [innerHTML]="'COMMON.INPUT.REQUIRE' | translate"></span>
   </mat-error>
 
-  <span matSuffix *ngIf="value!=''" [ngClass]="classSuffix" (click)="this.selectFunction()"><ng-content select="[suffix]"></ng-content></span>
+  <!--*ngIf="this.suffixIcon !== ''"--> 
+  <span 
+    matSuffix 
+    *ngIf="suffixShowIcon"
+    [ngClass]="classSuffix" 
+    (click)="this.selectFunction()"
+  >
+    <app-button 
+      class="icon-only"
+    >
+      <app-icon 
+        *ngIf="suffixBehavior === 'showPass'"
+        [shape]="this.suffixIcon" 
+        suffix
+      ></app-icon>
+      <ng-content *ngIf="suffixBehavior !== 'showPass'" select="[suffix]"></ng-content>
+    </app-button>
+  </span>
+  
   <mat-hint *ngIf="hint != ''">{{hint}}</mat-hint>
 </mat-form-field>

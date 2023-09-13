@@ -10,10 +10,10 @@ import java.util.Base64;
 import java.util.Properties;
 
 import javax.faces.event.ActionEvent;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.domain.DomainManager;
@@ -100,7 +100,7 @@ public class EmailVerifyController implements Serializable {
 			e1.printStackTrace();
 		}
 
-    	email.addRecipient(javax.mail.Message.RecipientType.BCC, new InternetAddress(to));	
+    	email.addRecipient(jakarta.mail.Message.RecipientType.BCC, new InternetAddress(to));	
 
 	    email.setSubject(subject);
 	    email.setContent(bodyText, "text/html");

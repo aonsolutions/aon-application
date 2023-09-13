@@ -3,8 +3,10 @@ package com.esferalia.aon.gwt.fiscal.client.finance.utilities;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceStatusVisitor;
@@ -16,12 +18,8 @@ import com.esferalia.aon.occam.api.model.finance.utilities.IFinanceUtilitiesItem
 import com.esferalia.aon.occam.api.model.finance.utilities.IFinanceUtilitiesItem.FinanceUtilitiesItemType;
 import com.esferalia.aon.occam.api.model.finance.utilities.IFinanceUtilitiesItem.IFinanceUtilitiesItemTypeVisitor;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -33,22 +31,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 class FinanceInvoiceIntegrityCheck extends OptionBase {
 
-	private static FinanceUtilitiesServiceAsync SERVICE;
-	private String domainName;
-	private String user;
-	private Domain domain;
-	
 	private SimpleLayoutPanel content;
 	private ScrollPanel container;
 	
-	protected FinanceInvoiceIntegrityCheck(String domainName, String user, Domain domain) {
-		super(domainName, user, domain);
-		this.domainName = domainName;
-		this.user = user;
-		this.domain = domain;
-		
-		FinanceUtilitiesServiceAsync serviceRaw = GWT.create(FinanceUtilitiesService.class);
-		SERVICE = new FinanceUtilitiesServiceAsyncDecorator(serviceRaw);
+	protected FinanceInvoiceIntegrityCheck(FinanceUtilitiesModuleOptions options, Domain domain) {
+		super(options, domain);
 		
 		content = new SimpleLayoutPanel();
 		content.setStyleName(AON.AON_CSS.aonBorderTop());
@@ -63,46 +50,14 @@ class FinanceInvoiceIntegrityCheck extends OptionBase {
 	public String getOptionDescription() {
 		return AonStringUtils.BULLET + " Integridad de vencimientos en facturas.";
 	}
-
-	protected Widget getToolbarPanel() {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label(getOptionDescription()));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		
-		Button run = new Button();
-		run.setText("Buscar");
-		run.setText(AON.MSG.searchAction());
-		run.setTitle(AON.MSG.searchAction());
-		run.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		run.addStyleName(AON.AON_CSS.aonIconLoupe());
-		run.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				run();
-			}
-		});
-		buttonContainer.add(run);
-		
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
-		toolbarPanel.add(toolbar);
-		return toolbarPanel;
+	
+	@Override
+	protected AonToolbar getToolbarPanel() {
+		AonToolbar toolbar = new AonToolbar(getOptionDescription());
+		AonToolbarButton run = new AonToolbarButton( AON.MSG.searchAction(),AON.CSS.aonIconSearch());
+		run.addClickHandler(event -> run());
+		toolbar.add(run);
+		return toolbar;
 	}
 	
 	
@@ -114,7 +69,7 @@ class FinanceInvoiceIntegrityCheck extends OptionBase {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		SERVICE.financeInvoiceIntegrity(domainName, user, domain, new AsyncCallback<FinanceUtilitiesResult>(){
+		FinanceUtilitiesModule.SERVICE.financeInvoiceIntegrity(getOptions().getOccam(), getDomain(), new AsyncCallback<FinanceUtilitiesResult>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -135,7 +90,7 @@ class FinanceInvoiceIntegrityCheck extends OptionBase {
 	@Override
 	protected Widget paintResults(FinanceUtilitiesResult result) {
 		FlowPanel tabContainer = new FlowPanel();
-		if (result.getItems() != null && result.getItems().size() > 0) {
+		if (result.getItems() != null && !result.getItems().isEmpty()) {
 			FlexTable tab = new FlexTable();
 			tab.setStyleName(AON.AON_CSS.aonDataTable());
 			tab.addStyleName(AON.AON_CSS.aonBlockCenter());
@@ -215,7 +170,7 @@ class FinanceInvoiceIntegrityCheck extends OptionBase {
 				tab.setWidget(row, 6, new Label(invoice.isSales()?invoice.getDocumentNumber():invoice.getReferenceCode()));
 				tab.setWidget(row, 7, new Label(invoice.getRegistryName()));
 				FlowPanel fixPanel = new FlowPanel();
-				item.getType().visit( new FinanceInvoiceIntegrityItemVisitor(fixPanel,(FinanceInvoiceIntegrityItem) item) );
+				item.getType().visit( new FinanceInvoiceIntegrityItemVisitor(fixPanel,item) );
 				tab.setWidget(row, 8, fixPanel);
 				row++;
 			}
@@ -241,10 +196,22 @@ class FinanceInvoiceIntegrityCheck extends OptionBase {
 			this.item = item;
 		}
 		
-		@Override public void visitErrorMessage(FinanceUtilitiesItemType type) {}
-		@Override public void visitInfoMessage(FinanceUtilitiesItemType type) {}
-		@Override public void visitOther(FinanceUtilitiesItemType type) {}
-		@Override public void visitMissingFinanceInvoice(FinanceUtilitiesItemType type) {}
+		@Override 
+		public void visitErrorMessage(FinanceUtilitiesItemType type) {
+			// Nothing
+		}
+		@Override 
+		public void visitInfoMessage(FinanceUtilitiesItemType type) {
+			// Nothing
+		}
+		@Override 
+		public void visitOther(FinanceUtilitiesItemType type) {
+			// Nothing
+		}
+		@Override 
+		public void visitMissingFinanceInvoice(FinanceUtilitiesItemType type) {
+			// Nothing
+		}
 		@Override
 		public void  visitFinanceInvoiceIntegrityCheck(FinanceUtilitiesItemType type) {
 			InlineLabel fixLabel = new InlineLabel("Arreglar");
@@ -253,27 +220,24 @@ class FinanceInvoiceIntegrityCheck extends OptionBase {
 			fixLabel.addStyleName(AON.AON_CSS.aonIconSettings());
 			fixLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
 			fixLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
-			fixLabel.addClickHandler( new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					fixLabel.setVisible(false);
-					SERVICE.financeInvoiceIntegrityFix(domainName, user, item.getDomain(), item.getFinance(), new AsyncCallback<Finance>() {
+			fixLabel.addClickHandler( event -> {
+				fixLabel.setVisible(false);
+				FinanceUtilitiesModule.SERVICE.financeInvoiceIntegrityFix(getOptions().getOccam(), item.getFinance(), new AsyncCallback<Finance>() {
 
-						@Override
-						public void onFailure(Throwable caught) {
-							openFootPanelIfNeeded();
-							showErrorPanel(caught.getMessage());
-						}
+					@Override
+					public void onFailure(Throwable caught) {
+						openFootPanelIfNeeded();
+						showErrorPanel(caught.getMessage());
+					}
 
-						@Override
-						public void onSuccess(Finance fin) {
-							fixLabel.setVisible(true);
-							fixLabel.setText("");
-							fixLabel.removeStyleName(AON.AON_CSS.aonIconSettings());
-							fixLabel.addStyleName(AON.AON_CSS.aonIconCheckYes());
-						}
-					});
-				}
+					@Override
+					public void onSuccess(Finance fin) {
+						fixLabel.setVisible(true);
+						fixLabel.setText("");
+						fixLabel.removeStyleName(AON.AON_CSS.aonIconSettings());
+						fixLabel.addStyleName(AON.AON_CSS.aonIconCheckYes());
+					}
+				});
 			});
 			domainPanel.add(fixLabel);
 			
@@ -284,50 +248,51 @@ class FinanceInvoiceIntegrityCheck extends OptionBase {
 				entryLabel.addStyleName(AON.AON_CSS.aonIconInvoice());
 				entryLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
 				entryLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
-				entryLabel.addClickHandler( new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						showEntry( item.getDomain(), item.getTracking().getAccountEntry() );
-					}
-				});
+				entryLabel.addClickHandler( event -> showEntry( item.getDomain(), item.getTracking().getAccountEntry() ));
 				domainPanel.add(entryLabel);
 			}
-			
 		}
-	}
-
-	private void showEntry(int domain,Integer entryId) {
-		AonCustomPopup entryDialog = new AonCustomPopup();
-		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-		entryDialog.setAnimationEnabled(true);
-		entryDialog.setGlassEnabled(true);
-		entryDialog.setModal(true);
-		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModule module = new AccountEntryModule();
-		module.onModuleLoad( new AccountEntryModuleOptions()
-			.setParentWidget( entryDialog)
-			.setDomainName( domainName )
-			.setUser( user )
-			.setDomain( domain)
-			.setAccountEntryId( entryId )
-			.setExternalCallback( new ModuleCallback() {
-			
-				@Override public void onRemove(IAccountEntryWrapper removed) {
-					entryDialog.hide();
-					run();
-				}
-				@Override public void onFailure(Throwable caught) {}
-				@Override public void onExit() {
-					entryDialog.hide();
-				}
-				@Override public void onChange(IAccountEntryWrapper changed) {
-					entryDialog.hide();
-					run();
-				}
-			})
-		);
-		entryDialog.center();
-		entryDialog.show();
+		
+		private void showEntry(int domain,Integer entryId) {
+			AonCustomPopup entryDialog = new AonCustomPopup();
+			entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+			entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+			entryDialog.setAnimationEnabled(true);
+			entryDialog.setGlassEnabled(true);
+			entryDialog.setModal(true);
+			entryDialog.setCaption(AON.MSG.accountEntries());
+			AccountEntryModule module = new AccountEntryModule();
+			module.onModuleLoad( new AccountEntryModuleOptions()
+				.setParentWidget( entryDialog)
+				.setDomainName( getOptions().getDomainName() )
+				.setUser( getOptions().getUser() )
+				.setDomain( domain )
+				.setAccountEntryId( entryId )
+				.setExternalCallback( new ModuleCallback() {
+				
+					private static final long serialVersionUID = -2520838081109790306L;
+					
+					@Override 
+					public void onRemove(IAccountEntryWrapper removed) {
+						entryDialog.hide();
+						run();
+					}
+					@Override 
+					public void onFailure(Throwable caught) {
+						// Nothing
+					}
+					@Override 
+					public void onExit() {
+						entryDialog.hide();
+					}
+					@Override public void onChange(IAccountEntryWrapper changed) {
+						entryDialog.hide();
+						run();
+					}
+				})
+			);
+			entryDialog.center();
+			entryDialog.show();
+		}
 	}
 }

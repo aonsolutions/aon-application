@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.Pos;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
@@ -64,8 +65,8 @@ import com.esferalia.aon.gwt.payroll.shared.PEC;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.SaveService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.gargoylesoftware.htmlunit.javascript.host.Console;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -77,6 +78,7 @@ import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -94,6 +96,8 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -105,7 +109,8 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
-	private static final int LIMIT = 100;
+	private static final int CCCS_LIMIT = 100;
+    	
 
 	private static final Logger LOGGER = Logger.getLogger("");
 
@@ -118,7 +123,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return null;
 		
 	}	
-
 	
 	public static <T extends JsFile> T[] get(File file, T[] ts) {
 		Map<String, T> map = get(file.name());
@@ -133,16 +137,37 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return getOlder(file.name(), t);
 	}
 	
-	public interface ProgressCallback {
+	interface ProgressCallback {
 		public void onProgress( JsProgress progress);
 	}
 	
-	private class MyEnterprises extends Enterprises {
+	private static class MyEnterprises extends Enterprises {
+
+	    	private static final int INIT_LIMIT = 250;
+	    	private static final int RELOAD_LIMIT = 100;
 		
-		@Override
+	    	private boolean tooManyEnterprises = true; 
+	    	
+	    	
+	    	@Override
 		protected void onEnterprises(List<Enterprise> enterprises) {
 			super.onEnterprises(enterprises);
 			toolbar.setVisibleViewButton(false);
+		}
+		
+		@Override
+		protected void initEnterprises() {
+		    getEnterprises(0, INIT_LIMIT, new AsyncCallback<List<Enterprise>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			    Window.alert(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(List<Enterprise> enterprises) {
+			    initTooManyEnterprises(enterprises);
+			    MyEnterprises.this.onEnterprises(enterprises);
+			}
+		    });
 		}
 		
 		@Override
@@ -150,14 +175,50 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 		
 		@Override
+		protected void onSearchTextBoxChange(String pattern) {
+		    if ( tooManyEnterprises ) {
+			reloadEnterprises(pattern);
+		    } else {
+			super.onSearchTextBoxChange(pattern);
+		    }
+		}
+		
+		@Override
 		protected void onEnterprise(Enterprise enterprise, TreeItem rootItem) {
 			filter(enterprise).ifPresent(e -> super.onEnterprise(e, rootItem));
 		}
 		
+		@Override
+		public void getEnterprises(int offset, int limit, AsyncCallback<List<Enterprise>> callback) {
+		    String condition = getFilterCondition(); 
+		    getEnterprisesByCondition(offset, limit, condition, callback);
+		}
+
+		private void reloadEnterprises(String pattern ) {
+		    String filterCondition = getFilterCondition();
+		    String patternCondition = getPatternCondition(pattern);
+		    String condition = "("+filterCondition+") AND ("+patternCondition+")";
+		    getEnterprisesByCondition(0, RELOAD_LIMIT, condition, new AsyncCallback<List<Enterprise>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			    Window.alert(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(List<Enterprise> enterprises) {
+			    MyEnterprises.this.onEnterprises(enterprises);
+			}
+			
+		    });
+		}
+		
+	    	private void initTooManyEnterprises(List<Enterprise> enterprises) {
+	    	    tooManyEnterprises = enterprises.size() == INIT_LIMIT;
+	    	}
+	    	
 		private Optional<Enterprise> filter(Enterprise enterprise) {
 			
-			Date endDate = DateUtils.addDays2Date(DateUtils.getFirstDayOfMonth(), -1);
-			Date startDate = DateUtils.addDays2Date(new Date(), -45);
+			Date endDate = getEndDate();
+			Date startDate = getStartDate();
 			
 			Optional<Enterprise> filtered =
 			enterprise.getActivities().stream()
@@ -172,18 +233,46 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			
 			return filtered;
 		}
+
+		private String getFilterCondition() {
+		    Date endDate = getEndDate();
+		    Date startDate = getStartDate();
+		    String startDateStr = AonDateUtils.format("yyyy-MM-dd", startDate);
+		    String endDateStr = AonDateUtils.format("yyyy-MM-dd", endDate);
+		    return "salary.start_date <= '" + endDateStr + "' AND salary.end_date >= '" + startDateStr + "'";
+		}
+		
+		private Date getStartDate() {
+		    return DateUtils.addDays2Date(new Date(), -45);
+		}
+
+		private Date getEndDate() {
+		    return DateUtils.addDays2Date(DateUtils.getFirstDayOfMonth(), -1);
+		}
 		
 	}
-
+	
+	private static class MainCretaSyncTask extends Task {
+	    
+	    private boolean stopped = false;
+	    
+	    public boolean isStopped() {
+		return stopped;
+	    }
+	    
+	    public void setStopped(boolean stopped) {
+		this.stopped = stopped;
+	    }
+	}
 	
 	private class MainCretaSyncCallback implements SyncCallback {
 
-		private Task syncTask ;
+		private MainCretaSyncTask syncTask ;
 		private List<JsBases> jsBasess;
 		private List<JsRespuesta> jsRespuestas;
 		private List<JsTrabajadoresYTramos> jsTrabajadoresYTramoss ;
 		
-		public MainCretaSyncCallback(Task syncTask) {
+		public MainCretaSyncCallback(MainCretaSyncTask syncTask) {
 			this.syncTask = syncTask;
 			this.jsBasess = new ArrayList<JsBases>(5);
 			this.jsRespuestas = new ArrayList<JsRespuesta>(5);
@@ -288,6 +377,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			
 			jsTrabajadoresYTramoss.clear();
 		}
+		
+		// ------------------------------------------------------------
+		
+		protected boolean isStopped() {
+		    return syncTask.isStopped();
+		}
+		
+		
 	}
 
 	static interface Binder extends UiBinder<Widget, MainCreta> {
@@ -311,8 +408,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	private static final String AGREEMENT = "c-agreement";
 
-	private ResultsPanel resultsPanel;
-	private ProgressPanel progressPanel;
 
 	@UiField
 	MinimizePanel footPanel;
@@ -324,6 +419,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	DetailPanel detailPanel;
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
+	
+	private MainCretaSyncTask syncTask;
+
+	private ResultsPanel resultsPanel;
+	private ProgressPanel progressPanel;
 
 	private CCCCretaDetail cccCretaDetail;
 	private ActivityCretaDetail activityCretaDetail;
@@ -340,6 +440,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	public void onModuleLoad() {
 		
 		enterprises = new MyEnterprises();
+
+		syncTask = new MainCretaSyncTask();
 		
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
@@ -384,6 +486,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		for ( Map.Entry<CretaService.Parameter, String> entry: params.entrySet() )
 			results.setParameter(entry.getKey(), entry.getValue());
 		results.run();
+	}
+
+	public void i54(String i54) {
+		run(Collections.singletonMap(CretaService.Parameter.I54, i54));
 	}
 
 	public void reftification(Void v) {
@@ -497,41 +603,58 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	@Override
 	public void onEnterprises(List<Enterprise> enterprises) {
-
-		HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
-		handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
-			// Synchronize cret@ messages. 
-			Task syncTask = new Task();
-			syncTask.setDescription("Sincronizando mensajes");
+		// Synchronize cret@ messages.
+	    	syncTask.setStopped(true);
+	   	syncTask = sync(enterprises);
+		if ( progressPanel.isAttached() ) {
 			progressPanel.showTask(syncTask);
-			//sync( new MainCretaSyncCallback(syncTask), enterprises.size() > 1 ? Collections.emptyList() : getCCCs(enterprises) );
-			
-			List<CCC> cccs = getCCCs(enterprises,0,LIMIT*2);
-			
-			sync( new MainCretaSyncCallback(syncTask) {
-				private int offset = 0;
-				private List<CCC> cccss = cccs;
-				
-				@Override
-				public void onEnd() {
-					super.onEnd();
-					log("onEnd(" + cccss.size() +")");
-					if ( cccss.size() >= LIMIT )
-						syncNexts();
-					
-				}
-				
-				private void syncNexts() {
-					offset += cccss.size();
-					cccss = getCCCs(enterprises, offset, LIMIT);
-					log("syncNexts(" + offset + ")");
-					sync(this, cccss);
-				}
-			}, cccs );
-			handlerRegistration[0].removeHandler();
-			
-		});
-		showProgressPanel();
+		} else {
+		    
+		    Collection<HandlerRegistration> handlerRegistration = new LinkedList<>();
+		    handlerRegistration.add(progressPanel.addAttachHandler(e -> {
+        			progressPanel.showTask(syncTask);
+        			handlerRegistration.forEach( HandlerRegistration::removeHandler );
+		    }));
+		    showProgressPanel();
+		}
+	}
+
+	/**
+	 * @param enterprises
+	 * @param syncTask
+	 */
+	private MainCretaSyncTask sync(List<Enterprise> enterprises) {
+	    MainCretaSyncTask syncTask = new MainCretaSyncTask();
+	    syncTask.setDescription("Sincronizando mensajes");
+	    List<CCC> cccs = getCCCs(enterprises,0,CCCS_LIMIT*2);
+	    
+	    MainCretaSyncCallback mainCretaSyncCallback = new MainCretaSyncCallback(syncTask) {
+	    	private int offset = 0;
+	    	private List<CCC> cccss = cccs;
+	    	
+	    	@Override
+	    	public void onEnd() {
+	    		super.onEnd();
+	    		log("onEnd(" + cccss.size() +")");
+	    		if ( isStopped() )
+	    		    return;
+	    		if ( cccss.size() >= CCCS_LIMIT )
+	    			syncNexts();
+
+	    	}
+	    	
+	    	private void syncNexts() {
+	    		offset += cccss.size();
+	    		cccss = getCCCs(enterprises, offset, CCCS_LIMIT);
+	    		log("syncNexts(" + offset + ")");
+	    		sync(this, cccss);
+	    	}
+	    	
+	    };
+	    
+	    sync(mainCretaSyncCallback , cccs);
+	    
+	    return syncTask;
 	}
 
 	// ------------------------------------------------------- UiHandler methods
@@ -947,6 +1070,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		private Consumer<Void> onReftificativa;
 		private Consumer<Void> onSolicitudRecepcionRNT;
 		private Consumer<Void> onAceptarBasesAnteriores;
+		private Consumer<String> onI54;
 		
 		public AbstractBaseCretaDetail(
 				DetailPanel detailPanel, 
@@ -956,7 +1080,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				Consumer<Void> onSolicitudRecepcionRNT,
 				Consumer<Void> onAceptarBasesAnteriores,
 				Consumer<Void> showResults,
-				Consumer<Void> showProgress
+				Consumer<Void> showProgress,
+				Consumer<String> onI54
 				) {
 			this.detailPanel = detailPanel;
 			this.resultsPanel = resultsPanel;
@@ -966,6 +1091,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			this.onAceptarBasesAnteriores = onAceptarBasesAnteriores;
 			this.showResults = showResults;
 			this.showProgress = showProgress;
+			this.onI54 = onI54;
 		}
 		
 		@Override
@@ -984,13 +1110,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			mergeEditor.setLineNumbers(true);
 			mergeEditor.setOrig(result.getBasesFile());
 
-			String suffix = 
-					getSelected()
-					.stream()
-					.map( f -> f.getCCC() + " " + f.getFrom() )
-					.findFirst()
-					.orElse("")
-				;
+			String fileName = getFileName();
 
 			CretaResults cretaResults = new CretaResults() {
 				@Override
@@ -998,12 +1118,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					AbstractBaseCretaDetail.this.onBases(result);
 				}
 			};
-
+			
 			try {
 				
 				mergeEditor.setText(result.getSalaryBasesFile());
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix  + ".xml");
+				mergeEditor.setFilename(fileName  + ".xml");
 				detailPanel.setWidget(mergeEditor);
 				mergeEditor.autoRefresh();
 				
@@ -1013,7 +1133,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				try {
 					mergeEditor.setText(result.getChangedBasesFile());
 					mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
+					mergeEditor.setFilename(fileName + ".xml");
 					detailPanel.setWidget(mergeEditor);
 					mergeEditor.autoRefresh();
 	
@@ -1024,7 +1144,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						mergeEditor.setShowDifferences(false);
 						mergeEditor.setText(result.getDraftRequestFile());
 						mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-						mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
+						mergeEditor.setFilename(fileName + ".xml");
 						detailPanel.setWidget(mergeEditor);
 						mergeEditor.autoRefresh();
 						cretaResults.setSelectionHandler(e -> mergeEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
@@ -1035,7 +1155,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						basesEditor.setLineNumbers(true);
 						basesEditor.setText(result.getBasesFile());
 						basesEditor.setTitle(CretaService.File.BASES.getFilename());
-						basesEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
+						basesEditor.setFilename(fileName + ".xml");
 						detailPanel.setWidget(basesEditor);
 						basesEditor.autoRefresh();
 						cretaResults.setSelectionHandler(e -> basesEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
@@ -1057,6 +1177,22 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						aceptarBasesAnterioresRNT.setStyleName("aon-finding-toolbar-item");
 						aceptarBasesAnterioresRNT.addClickHandler(e-> onAceptarBasesAnteriores.accept(null));
 						basesEditor.add(aceptarBasesAnterioresRNT);
+						
+						if ( "L03".equalsIgnoreCase(result.getType()) ) {
+        						Label i54Label = new Label("Causa");
+        						i54Label.setStyleName("aon-finding-toolbar-item");
+        						basesEditor.add(i54Label );
+        						ListBox i54ListBox = new ListBox();
+        						i54ListBox.addItem("1- Atrasos de convenio", "1");
+        						i54ListBox.addItem("2- Normativa (disposici\u00f3n legal)", "2");
+        						i54ListBox.addItem("3- Acta de conciliaci\u00f3n", "3");
+        						i54ListBox.addItem("4- Sentencia judicial", "4");
+        						i54ListBox.addItem("5- Cualquier otro t\u00edtulo leg\u00edtimo", "5");
+        						i54ListBox.setSelectedIndex(Math.max(AonNumberUtils.toint(result.getI54())-1,0));
+        						i54ListBox.addChangeHandler( e -> onI54.accept(i54ListBox.getSelectedValue()));
+        						basesEditor.add(i54ListBox);
+						}
+						
 					}
 				}
 			}
@@ -1094,7 +1230,33 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			aceptarBasesAnteriores.addClickHandler(e-> onAceptarBasesAnteriores.accept(null));
 			mergeEditor.add(aceptarBasesAnteriores);
 			
+			if ( "L03".equalsIgnoreCase(result.getType()) ) {
+        			Label i54Label = new Label("Causa");
+        			i54Label.setStyleName("aon-finding-toolbar-item");
+        			mergeEditor.add(i54Label );
+        			ListBox i54ListBox = new ListBox();
+        			i54ListBox.addItem("1- Atrasos de convenio", "1");
+        			i54ListBox.addItem("2- Normativa (disposici\u00f3n legal)", "2");
+        			i54ListBox.addItem("3- Acta de conciliaci\u00f3n", "3");
+        			i54ListBox.addItem("4- Sentencia judicial", "4");
+        			i54ListBox.addItem("5- Cualquier otro t\u00edtulo leg\u00edtimo", "5");
+        			i54ListBox.setSelectedIndex(Math.max(AonNumberUtils.toint(result.getI54())-1,0));
+        			i54ListBox.addChangeHandler( e -> onI54.accept(i54ListBox.getSelectedValue()));
+        			mergeEditor.add(i54ListBox);
+			}
+		}
 
+		private String getFileName() {
+		    return getSelected()
+		    		.stream()
+		    		.map( this::getFileName )
+		    		.findFirst()
+		    		.orElse("");
+		}
+
+
+		private String getFileName(JsFile f) {
+		    return "SLD-Bases " + f.getType() + " " + AonStringUtils.substring(f.getCCC(),4) + " " + f.getFrom() + " " + DateTimeFormat.getFormat("MMddHHmm").format(new Date());
 		}
 		
 		@Override
@@ -1216,7 +1378,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				MainCreta.this::requestSendRNT,
 				MainCreta.this::acceptPrevBases,
 				MainCreta.this::showResultsPanel,
-				MainCreta.this::showProgressPanel);
+				MainCreta.this::showProgressPanel,
+				MainCreta.this::i54);
 		}
 
 		@Override

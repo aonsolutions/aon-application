@@ -18,7 +18,6 @@ import java.util.Iterator;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.google.sql.SQLConstants;
 import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.DelegateCollection;
 import com.esferalia.aon.payroll.DelegateContractPayment;
@@ -135,9 +134,9 @@ public class SQLExtraSalaryCalculatorContext implements
 		
 
 		Date extraStartDate = 
-			AgreementExtra.parseAgreementDate(this.rs.getString(AgreementExtraColumns.START_DATE), this.year);
-		Date extraEndDate  = AgreementExtra.parseAgreementDate(this.rs.getString(AgreementExtraColumns.END_DATE), this.year);
-		Date extraIssueDate  = AgreementExtra.parseAgreementDate(this.rs.getString(AgreementExtraColumns.ISSUE_DATE), this.year);
+			AgreementExtra.parseAgreementStartDate(this.rs.getString(AgreementExtraColumns.START_DATE), this.year);
+		Date extraEndDate  = AgreementExtra.parseAgreementEndDate(this.rs.getString(AgreementExtraColumns.END_DATE), this.year);
+		Date extraIssueDate  = AgreementExtra.parseAgreementIssueDate(this.rs.getString(AgreementExtraColumns.ISSUE_DATE), this.year);
 		
 		if ( extraStartDate.after(extraEndDate)) {
 			return nextContractSalaryCalculatorContext();

@@ -39,6 +39,10 @@
 			background-size: contain;
 		}
 		
+		.redColor {
+			filter: invert(17%) sepia(45%) saturate(7412%) hue-rotate(355deg) brightness(95%) contrast(120%);
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel debugId='buttonBarBeta' styleName="{style.toolbar}" ui:field='toolbar'>

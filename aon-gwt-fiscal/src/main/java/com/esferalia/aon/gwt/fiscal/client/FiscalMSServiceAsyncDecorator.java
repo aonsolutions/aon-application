@@ -6,9 +6,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 
 public class FiscalMSServiceAsyncDecorator implements FiscalMSServiceAsync {
 
@@ -33,4 +33,12 @@ public class FiscalMSServiceAsyncDecorator implements FiscalMSServiceAsync {
 		AON.start();
 		serviceAsync.getBasicCreditors(occam, query, new AsyncCallbackWrapper<LinkedList<Creditor>>(callback));
 	}
+	
+	// Para carga del PDF del modelo 
+	@Override
+	public void savePDFModel(Occam occam, IFiscalModel model, String data, AsyncCallback<Void> callback) {		
+		AON.start();		
+		serviceAsync.savePDFModel(occam, model, data, new AsyncCallbackWrapper<Void>(callback));		
+	}
+	
 }

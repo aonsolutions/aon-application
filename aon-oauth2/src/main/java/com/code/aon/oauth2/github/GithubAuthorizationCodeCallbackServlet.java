@@ -13,11 +13,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 import com.code.aon.jaas.auth.spi.db.Domain;

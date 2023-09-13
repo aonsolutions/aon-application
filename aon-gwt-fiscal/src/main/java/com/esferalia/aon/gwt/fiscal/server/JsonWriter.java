@@ -25,6 +25,7 @@ public class JsonWriter {
 				.put("level", account.getLevel())
 				.put("active", account.isActive())
 				.put("costCenter", account.getCostCenter())
+				.put("hasRegistry", account.hasRegistry())
 			;
 			return json;
 		} catch (JSONException e) {

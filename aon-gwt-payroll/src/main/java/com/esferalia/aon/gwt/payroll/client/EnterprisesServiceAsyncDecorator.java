@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -56,13 +57,14 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -164,10 +166,10 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getEnterprises(String domain, String user, int offset, int limit,
+	public void getEnterprises(String domain, String user, String condition, int offset, int limit,
 			AsyncCallback<List<Enterprise>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getEnterprises(domain, user, offset, limit,
+		enterprisesServiceAsync.getEnterprises(domain, user, condition, offset, limit,
 				new AsyncCallbackWrapper<List<Enterprise>>(callback));
 	}
 	
@@ -420,15 +422,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIds, Integer cccId, String type, AsyncCallback<String> callback) {
+	public void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIds, Integer cccId, String type, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.createNewCRA(domainName, user, findingDate, ccc, cccIds, cccId, type, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.createNewCRA(domainName, user, findingDate, ccc, cccIds, cccId, type, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override
-	public void checkCreateNewCRA(String domainName, long findingDate, ArrayList<Integer> cccList, AsyncCallback<String> callback) {
+	public void checkCreateNewCRA(String domainName, long findingDate, ArrayList<Integer> cccList, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.checkCreateNewCRA(domainName, findingDate, cccList, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.checkCreateNewCRA(domainName, findingDate, cccList, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -546,6 +548,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> callback) {
 		AON.start();
 		enterprisesServiceAsync.getEmployeesInfo(currentDomainName, allEmployees, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
+	}
+	
+	@Override
+	public void getFJEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getFJEmployeesInfo(currentDomainName, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
 	}
 	
 	@Override
@@ -768,7 +776,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	@Override
 	public void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber,
 			String regime, String contributionAccount, Date dateFrom, Date dateTo, Date startDate,
-			AsyncCallback<Void> callback) {
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.deleteComunicateIT(currentDomainName, currentUser, affiliationNumber,
 				regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallbackWrapper<Void>(callback));
@@ -924,6 +932,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.deleteCertificate(domain, login, certificate, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void downloadCertificate(String domain, String login, Integer certificateId, String filePath, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.downloadCertificate(domain, login, certificateId, filePath, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void getCertificateInfo(String domain, String login, Integer certitificateId, AsyncCallback<CertificateInfo> callback) throws IllegalArgumentException {
@@ -1032,6 +1046,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void checkAndUpdateServiAgreement(String domainName, String currentUser, AgreementInfo agreement, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.checkAndUpdateServiAgreement(domainName, currentUser, agreement, callback);
+	}
+	
+	@Override
+	public void canUpdateServiAgreement(String domainName, String currentUser, AgreementInfo agreement, AsyncCallback<Boolean> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.canUpdateServiAgreement(domainName, currentUser, agreement, callback);
 	}
 	
 	@Override
@@ -1168,6 +1188,40 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getUpdateCert(String domainName, String user, String regime, String ccc, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getUpdateCert(domainName, user, regime, ccc, callback);
+	}
+	
+	// --------------------------- Country/Province
+
+	@Override
+	public void getCountries(String domainName, AsyncCallback<List<Country>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getCountries(domainName, callback);
+	}
+	
+	// ------------------------------------------------ MainMassiveContracts
+
+	@Override
+	public void getMassiveCNOs(String domainName, String currentUser, AsyncCallback<List<ContractData>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getMassiveCNOs(domainName, currentUser, callback);
+	}
+
+	@Override
+	public void updateMassiveCNOs(String domainName, String currentUser, List<ContractData> contractDatas, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.updateMassiveCNOs(domainName, currentUser, contractDatas, callback);
+	}
+	
+	@Override
+	public void duplicateContract(String domainName, String currentUser, EmployeeContractInfo employee, Date newStartDate, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.duplicateContract(domainName, currentUser, employee, newStartDate, callback);
+	}
+	
+	@Override
+	public void duplicateContract(String domainName, String currentUser, List<EmployeeContractInfo> employees, Date newStartDate, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.duplicateContract(domainName, currentUser, employees, newStartDate, callback);
 	}
 
 }

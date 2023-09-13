@@ -1097,7 +1097,15 @@ public class Mod390toAEATIVA2022 {
 		if (mod390.getBox125()>0) {
 			vol.setBox125(ensureBigDecimal(mod390.getBox125()));
 		}
-		
+		if (mod390.getBox126()>0) {
+			vol.setBox126(ensureBigDecimal(mod390.getBox126()));
+		}
+		if (mod390.getBox127()>0) {
+			vol.setBox127(ensureBigDecimal(mod390.getBox127()));
+		}
+		if (mod390.getBox128()>0) {
+			vol.setBox128(ensureBigDecimal(mod390.getBox128()));
+		}
 		if (mod390.getBox100()>0) {
 			vol.setOpRegSimplificado(ensureBigDecimal(mod390.getBox100()));
 		}

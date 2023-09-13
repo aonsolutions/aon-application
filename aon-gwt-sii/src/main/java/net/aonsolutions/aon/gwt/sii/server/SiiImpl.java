@@ -1,6 +1,6 @@
 package net.aonsolutions.aon.gwt.sii.server;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.occam.api.AON;

@@ -24,9 +24,7 @@ public interface IProduct {
 	public Stream<OldProduct> getProductStream(AONContext ctx, ProductFilter filter);
 	public void insert(AONContext ctx,OldProduct p);
 	public OldProduct insertProduct(AONContext ctx,OldProduct p);
-	public void insertWithId(AONContext ctx,OldProduct p);
 	public LinkedList<OldProduct> insert(AONContext ctx,Stream<OldProduct> ps);
-	public void insertWithId(AONContext ctx,Stream<OldProduct> ps);
 	public void update(AONContext ctx,OldProduct p);
 	public void delete(AONContext ctx,OldProduct p);
 	public void delete(AONContext ctx,Stream<OldProduct> ps);

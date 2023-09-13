@@ -307,6 +307,14 @@ public interface CretaService {
 			return this.unknown;
 		}-*/;
 
+		public final native String getI54() /*-{
+			return this.i54;
+		}-*/;
+
+		public final native String getType() /*-{
+			return this.type;
+		}-*/;
+
 		public final native boolean isRectifying() /*-{
 			return this.rectifying;
 		}-*/;

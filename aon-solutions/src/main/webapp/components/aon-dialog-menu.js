@@ -302,6 +302,13 @@ export class AonDialogMenu extends AonElement {
 					li.addEventListener(EVENT.MOUSEOVER, () => {
 						const rect = li.getBoundingClientRect();
 						d.setMenuOptions(item.options, rect.top, rect.left - 12);
+						d.getContent().addEventListener(EVENT.MOUSELEAVE, () => {
+							d.close();
+						});
+						d.getDialog().addEventListener(EVENT.MOUSEOVER, (e) => {
+							let isClickInside = d.getContent().contains(e.target) || d.getContent() === e.target;
+					   	 	if (!isClickInside) d.close();
+						})
 						d.open();
 					});
 

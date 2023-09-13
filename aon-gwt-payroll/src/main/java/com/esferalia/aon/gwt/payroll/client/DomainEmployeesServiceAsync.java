@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
@@ -528,6 +529,14 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.fillContract(getCurrentDomainName(), contractId, contractType, formativeLvl, isTransform, callback);
 	}
 	
+	public void fillContractExtension(EmployeeInfo employeeData, ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.fillContractExtension(getCurrentDomainName(), employeeData, contractData, callback);
+	}
+	
+	public void fillContractRelocation(Integer contractId, Map<String, String> contractRelocationInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.fillContractRelocation(getCurrentDomainName(), contractId, contractRelocationInfo, callback);
+	}
+	
 	void setData(Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback) {
 		employeesServiceAsync.setData(getCurrentDomainName(), getCurrentUser(), contractId, data, callback);
 	}
@@ -592,11 +601,19 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.cambioOcupacion(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, ocup, fecha, callback);
 	}
 	
+	public void cambioCno(EmployeeContractInfo employeeContractInfo, String cno, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioCno(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, cno, fecha, callback);
+	}
+	
 	public void cambioCatProf(EmployeeContractInfo employeeContractInfo, String cat, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.cambioCatProf(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, cat, fecha, callback);
 	}
 	
 	// ------------------------------------------------- SEPE Comunications
+	
+	public void sendLlamamientoSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
+	}
 	
 	public void sendContractoSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
@@ -717,6 +734,16 @@ public class DomainEmployeesServiceAsync {
 
 	public void getSalariesOccam(ITEmployee itEmployee, Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getSalariesOccam(getCurrentDomainName(), getCurrentUser(), itEmployee, startDate, endDate, callback);
+	}
+	
+	// ------------------------------------------------- Agreement ContextProvider
+	
+	public void getAgreementContext(int fxLevel, Date startDate, Date endDate, AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getAgreementContext(getCurrentDomainName(), fxLevel, startDate, endDate, callback);
+	}
+
+	public void evalAgreement(String expression, Date startDate, int fxLevel, AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException {
+		employeesServiceAsync.evalAgreement(getCurrentDomainName(), expression, startDate, fxLevel, callback);
 	}
 
 	// ------------------------------------------------------------------------

@@ -21,7 +21,8 @@ public class Deduction extends Item<Deduction.Type> implements Reports.Deduction
 		OTHER, 
 		FOGASA, // TODO:
 		EMBARGO, // TODO: ???
-		BONUS
+		BONUS,
+		MEI
 		;
 		
 		public String getDescription() {
@@ -43,6 +44,7 @@ public class Deduction extends Item<Deduction.Type> implements Reports.Deduction
 				put(FOGASA, "FOGASA");
 				put(EMBARGO, "Embargo");
 				put(BONUS, "Bonif.y Subvenc.con cargo al INEM");
+				put(MEI, "Mecanismo Equidad Intergeneracional (MEI)");
 			}
 		};
 	}

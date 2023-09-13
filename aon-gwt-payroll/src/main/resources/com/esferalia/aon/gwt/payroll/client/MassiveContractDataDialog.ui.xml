@@ -1,0 +1,38 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+    <ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+    
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.MassiveContractDataDialog.MyStyle">
+	
+		.form {
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+			padding: 1rem;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+		}
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+		
+		<g:HTMLPanel ui:field="dataPanel" styleName="{style.flexColumn}" />
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>

@@ -177,11 +177,15 @@ public class Model115 extends MainEntryPoint {
 		AON.ensureInjected();
 
 		aonLayout = new AonLayoutPanel();
+		aonLayout.addStyleName("aon-Model");
 		splitLayoutPanel = new SplitLayoutPanel( 2 );
 		aonLayout.add(splitLayoutPanel);
 		
 		declarationContainer = new SimpleLayoutPanel();
-		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
+		declarationContainer.addStyleName("aon-Model-Detail");
+		AonMinimizePanel minimizePanel = getMinimizePanel();
+		minimizePanel.addStyleName("aon-Model-Info");
+		splitLayoutPanel.addSouth(minimizePanel, 30);
 
 		splitLayoutPanel.add(declarationContainer);
 		

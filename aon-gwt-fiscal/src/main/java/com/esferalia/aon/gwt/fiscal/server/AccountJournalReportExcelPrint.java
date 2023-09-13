@@ -2,15 +2,14 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -58,9 +57,6 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 			
 			AccountEntryParams params = JsonParser.parse(accountEntryParams);
 			
-			Date start = new Date();
-			System.out.println( "Journal Report Start " );
-			
 			AonConfiguration config = AON.getConfiguration(domainName, domainId, user);
 			Company company = config.getCompany();
 			String companyName = company == null ? "" : company.getName();
@@ -73,9 +69,7 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 			resp.setHeader("Content-disposition", "attachment; filename=\"DIARIO."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			action.finalize(resp.getOutputStream());
 			resp.flushBuffer();
-			Date end = new Date();
 			stream.close();
-			System.out.println( "Journal Report END " + (end.getTime() - start.getTime()) + " ms." );;
 		} catch (Throwable e) {
 			throw new ServletException(e);
 		}

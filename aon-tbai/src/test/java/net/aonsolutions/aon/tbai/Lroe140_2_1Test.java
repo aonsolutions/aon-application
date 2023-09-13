@@ -7,16 +7,15 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -126,9 +125,8 @@ public class Lroe140_2_1Test {
 		InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream(CERT_NAME);
 		return new Certificate()
 				.setData(AonIOUtils.toByteArray(is))
-				.setCompany(new Random().nextBoolean())
 				.setConfidential(new Random().nextBoolean())
-				.setName(CERT_NAME)
+				.setDescription(CERT_NAME)
 				.setPassword(CERT_PASSWORD)
 				.setType(CERT_TYPE);
 	}

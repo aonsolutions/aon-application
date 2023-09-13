@@ -52,6 +52,7 @@ import static java.util.Calendar.YEAR;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
@@ -64,6 +65,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.jooq.Configuration;
@@ -82,6 +84,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.esferalia.aon.jooq.tables.DeductionConcept;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
@@ -96,11 +99,13 @@ import com.esferalia.aon.jooq.tables.records.ContractEmbargoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.HolidayRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
@@ -189,6 +194,18 @@ public abstract class AbstractSQLTestCase {
 		return ctx;
 	}
 
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
+		Connection connection, Date startDate, Date endDate,
+		Date issueDate, Date chargeDate, Criteria criteria, IContractSalaryCalculatorContext.IListener listener) throws ExpressionException,
+		SQLException {
+	    ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(connection, startDate,
+		    endDate, issueDate, chargeDate, criteria);
+	    if (listener != null)
+		ctx.setListener(listener);
+	    ctx.next();
+	    return ctx;
+	}
+
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, null);
@@ -200,6 +217,21 @@ public abstract class AbstractSQLTestCase {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, listener);
+	}
+
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+		Date startDate, Date endDate, Date issueDate, Date chargeDate, ContractRecord contract ) throws ExpressionException, SQLException {
+        	Criteria criteria = new Criteria();
+        	criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+        	return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, chargeDate, criteria, null);
+	}
+
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+		Date startDate, Date endDate, Date issueDate, Date chargeDate, ContractRecord contract,
+		IContractSalaryCalculatorContext.IListener listener) throws ExpressionException, SQLException {
+        	Criteria criteria = new Criteria();
+        	criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+        	return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, chargeDate, criteria, listener);
 	}
 
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
@@ -392,6 +424,29 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
+	protected final void addSSRegimeDeduction(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
+		DeductionType deductionType, String name, String description, String expression) {
+        	aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+        
+        	DeductionConceptRecord deductionConcept =
+        	aonContext.getDslContext()
+                	.insertInto(DEDUCTION_CONCEPT)
+        		.set(DEDUCTION_CONCEPT.DOMAIN, (-1) * ssRegimetype.ordinal())
+        		.set(DEDUCTION_CONCEPT.CODE,name)
+        		.set(DEDUCTION_CONCEPT.TYPE,(byte) (deductionType != null ? deductionType.ordinal() : DeductionType.OTHER.ordinal()))
+        		.returning()
+        		.fetchOne();
+
+        	aonContext.getDslContext().insertInto(SYSTEM_DEDUCTION)
+			.set(SYSTEM_DEDUCTION.START_DATE, startDate)
+			.set(SYSTEM_DEDUCTION.EXPRESSION, expression)
+			.set(SYSTEM_DEDUCTION.DESCRIPTION, description)
+			.set(SYSTEM_DEDUCTION.DOMAIN, (-1) * ssRegimetype.ordinal())
+			.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, deductionConcept.getId())
+			.execute();
+        
+        	aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
 
 	public static String getDbPort() {
 		return System.getProperty("dbPort", "3306");
@@ -978,8 +1033,10 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
-
-
+	public static PersonRecord getPerson(AONContext aonContext, int personId) {
+	    return aonContext.getDslContext().select().from(PERSON).where(PERSON.REGISTRY.eq(personId)).fetchOneInto(PERSON);
+	}
+	
 	public static final RegistryRecord newPerson(AONContext aonContext, int domainId, String document) {
 		return newPerson(aonContext, domainId, document, "");
 	}
@@ -1548,6 +1605,10 @@ public abstract class AbstractSQLTestCase {
 
 		new SmartContractSalaryCalculator<ISalary>(roundSalaryBuilder).calculate(ctx);
 		return jooqSalaryBuilder.execute();
+	}
+	
+	public static UnaryOperator<BigDecimal> round(int scale) {
+		return d -> d.setScale(scale, RoundingMode.HALF_UP);
 	}
 	
 	

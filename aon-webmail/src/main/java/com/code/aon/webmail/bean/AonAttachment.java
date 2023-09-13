@@ -2,9 +2,9 @@ package com.code.aon.webmail.bean;
 
 import java.io.InputStream;
 
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeUtility;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeUtility;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

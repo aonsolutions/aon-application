@@ -18,6 +18,10 @@ public class AonMathUtils {
 		return new BigDecimal(Double.toString(value)).setScale(precision, RoundingMode.HALF_UP).doubleValue();
 	}
 
+	public static double roundDown(double value, int precision) {
+		return new BigDecimal(Double.toString(value)).setScale(precision, RoundingMode.HALF_DOWN).doubleValue();
+	}
+
 	/**
 	 * Redondea un valor decimal a 2 digitos en la parte decimal
 	 * 
@@ -262,4 +266,35 @@ public class AonMathUtils {
         }
         return a;
     }
+    
+    
+	/**
+	 * Devuelve cero si el valor es menor que zero
+	 * 
+	 * @param value primer num. 
+	 * 
+	 * @return Cero si negativo
+	 */
+    public static double zeroIfNegative(double value) {
+    	return isLessThanZero(value)?0.0:value;
+    }
+
+    
+	/**
+	 * Devuelve cero si el valor es mayor que zero
+	 * 
+	 * @param value primer num. 
+	 * 
+	 * @return Cero si positivo
+	 */
+    public static double zeroIfPositive(double value) {
+    	return isGreatherThanZero(value)?0.0:value;
+    }
+
+	public static boolean isZero(BigDecimal value) {
+		return value != null && BigDecimal.ZERO.equals(value);
+	}
+	public static boolean isNotZero(BigDecimal value) {
+		return !isZero(value);
+	}
 }

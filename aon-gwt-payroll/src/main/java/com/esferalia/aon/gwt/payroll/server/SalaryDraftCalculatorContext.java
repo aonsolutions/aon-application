@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.function.Supplier;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.iterators.FilterIterator;
@@ -404,9 +404,10 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			Date varEndDate = resetTime(variable.getEndDate());
 
 			Date startDate = Period.max(ctxStartDate, varStartDate);
-			Date endDate = 
-					name.equals(ContextVariable.NO_HOLIDAYS.getName()) ? 
+			Date endDate = name.equals(ContextVariable.NO_HOLIDAYS.getName()) ? 
 					varEndDate : Period.min(ctxEndDate, varEndDate);
+			endDate = name.equals(ContextVariable.IRPF_PERCENT.getName()) ? 
+				Period.max(ctx.getIrpfDate(), endDate) : endDate;
 			if ( Period.compare(startDate, endDate) > 0 )
 				continue;
 			

@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,7 +27,7 @@ public class AFIChanges implements Serializable {
 		public AFIChange(String name, String value) {
 			super();
 			this.name = name;
-			this.value = AonStringUtils.replace(value, "\"", "");
+			this.value = AonStringUtils.isBlank(value) ? value : AonStringUtils.replace(value, "\"", "");
 		}
 
 		public String getName() {
@@ -76,11 +77,13 @@ public class AFIChanges implements Serializable {
 		AFIChange quoteGroup = new AFIChange("GRUPO_COTIZACION", getValueOfEntry(lastEntry.getValue(), "GRUPO_COTIZACION"));
 		AFIChange ocupation = new AFIChange("OCUPACION", getValueOfEntry(lastEntry.getValue(), "OCUPACION"));
 		AFIChange partialityCoef = new AFIChange("COEFICIENTE_PARCIALIDAD", getValueOfEntry(lastEntry.getValue(), "COEFICIENTE_PARCIALIDAD"));
+		AFIChange cno = new AFIChange("CNO", getValueOfEntry(lastEntry.getValue(), "CNO"));
 		
 		afiChangesList.add(tc2);
 		afiChangesList.add(quoteGroup);
 		afiChangesList.add(ocupation);
 		afiChangesList.add(partialityCoef);
+		afiChangesList.add(cno);
 		
 		DateUtils.resetTime(date);
 		
@@ -123,6 +126,8 @@ public class AFIChanges implements Serializable {
 		datesList.addAll(afiChanges.keySet());
 		
 		if(!datesList.isEmpty() && datesList.size() > 1) {
+			datesList.sort((o1, o2) -> o1.compareTo(o2));
+			Collections.reverse(datesList);
 			Date date = datesList.get(datesList.size() - 1);
 			for(AFIChange afiChange : afiChanges.get(date)) {
 				if(afiChange.getName().equals(type) && (null != afiChange.getValue() && !value.equals(afiChange.getValue())))

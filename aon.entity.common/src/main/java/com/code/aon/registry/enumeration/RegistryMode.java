@@ -10,7 +10,8 @@ public enum RegistryMode implements IResourceable {
 	TARGET,
 	CUSTOMER,
 	SUPPLIER,
-	CREDITOR;
+	CREDITOR,
+	BOOKING;
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_registry_mode_";

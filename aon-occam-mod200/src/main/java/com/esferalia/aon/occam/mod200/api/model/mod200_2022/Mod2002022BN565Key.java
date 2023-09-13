@@ -16,8 +16,7 @@ public enum Mod2002022BN565Key implements Serializable, IMod200KeysProvider {
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
 	
-	// Total deducciones a entidades sin fines de lucro (Ley 49/2002) 
-	
+	// Total deducciones a entidades sin fines de lucro (Ley 49/2002) 	
     C01(new Mod2002022Key[]{Mod2002022Key.BN598 ,Mod2002022Key.BN565 ,Mod2002022Key.BN895 },"Total")
 	;	
 	 

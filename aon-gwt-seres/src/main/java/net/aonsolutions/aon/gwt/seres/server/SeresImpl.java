@@ -1,6 +1,6 @@
 package net.aonsolutions.aon.gwt.seres.server;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 

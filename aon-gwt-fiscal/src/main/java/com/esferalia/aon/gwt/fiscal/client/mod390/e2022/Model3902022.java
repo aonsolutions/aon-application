@@ -35,7 +35,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model3902022 extends DockLayoutPanel  {
 	
-	private static final Integer DEFAULT_YEAR = 2020;
+	private static final Integer DEFAULT_YEAR = 2022;
 	private static final String MOD390_2022_DRAFT = "/aon_gwt_fiscal/Model3902022Draft";
 			
 	protected static final Mod3902022ServiceAsync MOD3902022_SERVICE;

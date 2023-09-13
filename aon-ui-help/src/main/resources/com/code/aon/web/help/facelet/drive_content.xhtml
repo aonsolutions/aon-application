@@ -60,9 +60,89 @@
 			overflow-y: auto;
 			height: calc(100% - 2rem);
 		}
+		.list {
+			padding: 0 .2rem;
+		}
+		
+		.list form {
+			width: 100%;
+		}
+		
 		.list-item {
 			border-bottom: revert !important;
 			border-top:1px solid #f1f1f1;
+		}
+		
+		.list .list-item {
+			height: 3rem;
+			border-bottom: 1px solid #f1f1f1;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			padding: 1rem 2rem;
+			transition: background-color .25s;
+			border-radius: .25rem;
+			font-weight: normal;
+			color: #606060;
+			font-size: 1.05rem;
+			cursor: pointer;
+		
+		}
+		
+		.list .list-item:hover {
+			background-color: #f6f6f6;
+			color: #163776;
+		}
+		
+		.list .list-item>.button {
+			height: 100%;
+			background-size: 3rem;
+			padding: 0;
+			padding-left: 4.5rem;
+			display: flex;
+			align-items: center;
+			font-size: 1.25rem;
+			background-position: left center;
+		}
+		
+		.list .list-item>.button:hover {
+			transform: none;
+		}
+		
+		.list .list-item .icon {
+			margin-right: .45rem;
+			background-size: unset !important;
+			min-width: 1.40rem;
+			min-height: 1.40rem;
+			border-radius: 100%;
+			padding: .2rem;
+			cursor: pointer;
+			color: ##606060;
+			transition: color .15s, transform .15s;
+			font-size: 1.60rem;
+		}
+		
+		.list .list-item .aon-module {
+			margin-right: .7rem;
+		}
+		
+		
+		.list .list-item .icon.file {
+			color: #163776;
+			/*transform: scale(1.1);*/
+		}
+		
+		* {
+			scroll-behavior: smooth;
+		}
+
+		.aon-button-conecta {
+			padding-top:4px;
+			padding-bottom: 4px;
+			padding-right:36px;
+			display:inline-block;
+			background: url(#{aonResource.resolve['/images/apps/aon-portal.svg']}) scroll right center no-repeat;
+			background-size:32px;
 		}
 	</style>
 	<script>
@@ -81,17 +161,20 @@
 		}
 		
 	</script>
-	
-				<ui:include src="./breadcrumb.xhtml" />
+			
+			<aon:form id="driveContentForm" >
+
+			<ui:include src="./breadcrumb.xhtml" />
+
+			<aon:div id="driveContent" >
+
 			<aon:div styleClass="box-column list">
 				<c:forEach items="#{help.content}" var="file">
-					<aon:form>
 	
 						<!-- FOLDER -->
 						<aon:if test="${file.isFolder() and !file.isFaqFolder()}">
-							<aon:commandLink styleClass="list-item" reRender="aonContent">
-								<f:setPropertyActionListener target="#{help.file}"
-									value="#{file}" />
+							<aon:commandLink styleClass="list-item" reRender="driveContent">
+								<f:setPropertyActionListener target="#{help.file}" value="#{file}" />
 								<aon:outputText rendered="${!help.isHome()}"  value="drive_file_move" styleClass="icon material-icons" />
 								
 								<!-- AON ICONS -->
@@ -133,10 +216,11 @@
 							</aon:div>
 						</aon:if>
 	
-					</aon:form>
 	
 				</c:forEach>
-	
 			</aon:div>
+
+			</aon:div>
+			</aon:form>
 	
 </ui:composition>

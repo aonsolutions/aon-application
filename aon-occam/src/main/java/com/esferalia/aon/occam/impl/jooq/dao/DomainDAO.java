@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,8 +44,10 @@ import com.esferalia.aon.occam.api.model.Properties.DomainGserviceaccountPropert
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 import net.aonsolutions.core.dbutils.AonSQLException;
 import net.aonsolutions.core.dbutils.AonSQLFile;
@@ -55,7 +58,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 public class DomainDAO {
 	private static final DomainPropertiesDAO DOMAIN_PROPERTIES = new DomainPropertiesDAO();
 
-	protected static class DomainPropertiesDAO implements DomainProperties {
+	public static class DomainPropertiesDAO implements DomainProperties {
 		protected Condition[] getConditions(DomainFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -82,6 +85,8 @@ public class DomainDAO {
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.SCOPE);}
 		@Override public Property<String> getSubdomainsuffixProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.SUBDOMAINSUFFIX);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.TYPE);}
+		@Override public Property<Integer> getAonCustomerProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.AONCUSTOMER);}
+		@Override public Property<Byte> getAonStatusProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.AONSTATUS);}
 	}
 	public static Domain getDomain(AONContext ctx, Integer domainId){
 		return ctx.getDslContext().select()
@@ -345,6 +350,15 @@ public class DomainDAO {
 	public static Integer getParentDomain(AONContext ctx) {
 		return getParentDomain(ctx, ctx.getDomainId())
 				.getValue(DOMAIN.PARENT);
+	}
+	
+	public static void updateDomainCustomer(AONContext ctx, Integer domainId, String domainName, Integer aonCustomer, AonStatus aonStatus) {
+		ctx.getDslContext().update(DOMAIN)
+				.set(DOMAIN.AONCUSTOMER, aonCustomer)
+				.set(DOMAIN.AONSTATUS, aonStatus != null ? AonEnumUtils.getByte(aonStatus) : 0)
+				.where(DOMAIN.ID.eq(domainId))
+				.and(DOMAIN.NAME.eq(domainName))
+				.execute();
 	}
 	
 	//-------------------- DOMAIN G SERVICE ACCOUNT

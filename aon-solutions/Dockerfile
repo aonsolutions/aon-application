@@ -1,4 +1,4 @@
-FROM tomcat:9-jdk17
+FROM tomcat:10-jdk17
 
 ARG AON_VERSION=9.23-SNAPSHOT
 
@@ -29,6 +29,12 @@ ENV COMMONS_DBUTILS_URL=https://repo1.maven.org/maven2/commons-dbutils/commons-d
 ENV MCHANGE_COMMONS_URL=https://repo1.maven.org/maven2/com/mchange/mchange-commons-java/0.2.3.3/mchange-commons-java-0.2.3.3.jar
 ENV COMMONS_LOGGING_URL=https://repo1.maven.org/maven2/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar
 ENV COMMONS_COLLECTIONS_URL=https://repo1.maven.org/maven2/commons-collections/commons-collections/3.1/commons-collections-3.1.jar
+
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends unzip; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*;
 
 RUN set -x \
 	\

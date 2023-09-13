@@ -118,7 +118,6 @@ public class MODEL303Impl implements IMODEL303 {
 					callback.onFinish();
 				}
 			});
-		
 	}
 	
 	@Override

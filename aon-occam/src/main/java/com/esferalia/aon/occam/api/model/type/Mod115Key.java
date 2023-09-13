@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Mod115Key implements IFiscalModelKey {
@@ -83,6 +84,10 @@ public enum Mod115Key implements IFiscalModelKey {
 	public String getBoxAsString() {
 		return AonStringUtils.leftPad(Integer.toString(getBox()), 3, '0');
 	}
+	public String getBoxCode() {
+		return AonStringUtils.leftPad(AonNumberUtils.toString(box), 3, AonStringUtils.ZERO); 
+	}
+	
 	public static Mod115Key getKey(String value, Administration admon) {
 		for (Mod115Key key : Mod115Key.values()) {
 			if (admon == key.getAdministration() && AonStringUtils.equals(key.getValue(), value)) {

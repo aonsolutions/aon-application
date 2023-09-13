@@ -9,11 +9,11 @@ import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
 @RunWith(Suite.class)
 @SuiteClasses({
 	
-//	Mod303KeyTest.class,
-//	Mod303ExpressionsTest.class,
-//	Mod303ScriptTest.class,
-//
-//	VatContextJSONTest.class,
+	Mod303KeyTest.class,
+	Mod303ExpressionsTest.class,
+	Mod303ScriptTest.class,
+
+	VatContextJSONTest.class,
 	
 	Mod303ReopenTest.class,					// Pendiente
 	Mod303DeleteTest.class,

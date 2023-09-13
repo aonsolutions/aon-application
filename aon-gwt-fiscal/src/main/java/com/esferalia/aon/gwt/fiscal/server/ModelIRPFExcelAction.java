@@ -211,7 +211,8 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 	public void beforeFinalize() {
 		if (model.isFinished()) {
 			DecimalFormat format = new DecimalFormat("#,##0.00");
-			String paymentInfo = "Resultado: " + format.format(model.getDeclarationResult())
+			Double result = model.getDeclarationResult() == null?model.getResult():model.getDeclarationResult();
+			String paymentInfo = "Resultado: " + format.format(result)
 					+ AonStringUtils.SPACE + getDeclarationType()
 					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( model.getFinanceBankAlias())
 					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( model.getFinanceMaskedIban())

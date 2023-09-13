@@ -143,12 +143,7 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 		if (cccs == null) {
 			return Collections.emptyList();
 		}
-		SSLContext sslContext = null;
-		try {		
-			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
-		} catch (Exception e1) {
-			throw new InvalidCertificateException();
-		}
+		SSLContext sslContext = Toolkit.getTrustedSSLContext(certificateInputStream, certificatePassword, certificateType);
 		String link = "";
 		String sessionId = "";
 		

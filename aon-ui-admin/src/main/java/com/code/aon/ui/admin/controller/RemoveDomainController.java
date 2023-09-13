@@ -7,7 +7,7 @@ import java.sql.Connection;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.mail.Address;
+import jakarta.mail.Address;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;

@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.mod111;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
@@ -74,6 +76,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	private static final int COL_NUMBER = 8;
 	private static final String MODEL111_PRINT = "/aon_gwt_fiscal/ms/Model111Print";
 	protected static final String MODEL111_FILE = "/aon_gwt_fiscal/ms/Model111File";
+	private static final String MODEL111_BOX_INFO = "/aon_gwt_fiscal/ms/Model111BoxInfoPrint";
 
 	private Model111Callback callback;
 	private Mod111 model;
@@ -85,7 +88,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 	private final AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave());
 	private final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(),AON.CSS.aonIconBack());
 	private final AonToolbarButton deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
-	private final AonToolbarButton resetButton = new AonToolbarButton(AON.MSG.resetAction(),AON.CSS.aonIconRefresh());
 	private final AonToolbarButton printButton = new AonToolbarButton(AON.MSG.draft(),AON.CSS.aonIconExcel());
 	private final AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
 	private final AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
@@ -97,6 +99,8 @@ public abstract class Model111Base extends DockLayoutPanel {
 	
 	private final AonToolbar decToolbar = new AonToolbar();
 	private final InlineLabel dirtyLabel = new InlineLabel();
+	private final InlineLabel chargeDateLabel = new InlineLabel();
+	private final InlineLabel alcatrazUnboundLabel = new InlineLabel();
 	private final InlineLabel adjLabel = new InlineLabel();
 	private final InlineLabel replacedLabel = new InlineLabel();
 	private final Label statusLabel = new Label();
@@ -107,6 +111,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
+	protected Hidden mod111BoxHidden = new Hidden("mod111Box");
 	
 	protected Model111Base(Mod111 mod111, Model111Callback callback) {
 		super(Unit.PX);
@@ -191,9 +196,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
 		
-		resetButton.addClickHandler( event -> onReset());
-		toolbarPanel.add(resetButton);		
-		
 		printButton.addClickHandler( event ->  print());
 		toolbarPanel.add(printButton);
 		
@@ -260,6 +262,19 @@ public abstract class Model111Base extends DockLayoutPanel {
 		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
 		marksPanels.add(dirtyLabel);
 		
+		chargeDateLabel.setStyleName(AON.CSS.aonIconLabel());
+		chargeDateLabel.addStyleName(AON.CSS.aonIconDraft());
+		chargeDateLabel.setTitle("Selec. por fecha de pago");
+		chargeDateLabel.getElement().getStyle().setWidth(10, Unit.PX);
+		chargeDateLabel.getElement().getStyle().setHeight(10, Unit.PX);
+		marksPanels.add(chargeDateLabel);
+		
+		alcatrazUnboundLabel.setStyleName(AON.CSS.aonMarginLeft());
+		alcatrazUnboundLabel.addStyleName(AON.CSS.aonLabelWithIcon());
+		alcatrazUnboundLabel.addStyleName(AON.CSS.aonIconWarning());
+		alcatrazUnboundLabel.setTitle("Modelo sin facturas/n\u00F3minas vinculadas");
+		marksPanels.add(alcatrazUnboundLabel);
+
 		adjLabel.setStyleName(AON.CSS.aonMarginLeft());
 		adjLabel.addStyleName(AON.CSS.aonIconLabel());
 		adjLabel.addStyleName(AON.CSS.aonIconRedWrench());
@@ -289,36 +304,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 		return decToolbar;
 	}
 	
-	private void onReset() {
-		resetButton.setEnabled(false);
-		AonConfirmDialog cd = new AonConfirmDialog();
-		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
-
-			@Override
-			public void onAccept() {
-				Model111.SERVICE.reset(getCallback().getOptions().getOccam(),getModel(),
-						new AsyncCallback<Mod111>() {
-							@Override
-							public void onSuccess(Mod111 m111) {
-								setDirty( true );
-								selectAndPopulate(m111);
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
-								
-							}
-						});
-			}
-			@Override
-			public void onCancel() {
-				resetButton.setEnabled(true);
-			}
-		});
-	}
-
-	
 	protected void markAsDirty() {
 		setDirty(true);
 	}
@@ -332,6 +317,8 @@ public abstract class Model111Base extends DockLayoutPanel {
 
 	private void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
+		alcatrazUnboundLabel.setVisible(!getModel().isAlcatrazBound());
+		chargeDateLabel.setVisible(getModel().mustUseChargeDate());
 		boolean adjusted = false;
 		for (FiscalModelDetail det : this.getModel().getMap().values()) {
 			if (AonMathUtils.isNotZero( det.getAdjustAmount())) {
@@ -348,7 +335,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 		cancelButton.setVisible(true);
 		saveButton.setVisible(model.isEditable());
 		deleteButton.setVisible(!model.isNew() && model.isEditable());
-		resetButton.setVisible(!model.isNew() && model.isEditable());
 		auditButton.setVisible(!model.isNew());
 		printButton.setVisible(!model.isNew());
 		markAsPendingButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.PENDING));
@@ -870,11 +856,15 @@ public abstract class Model111Base extends DockLayoutPanel {
 						public void onSuccess(String result) {
 							FlowPanel gridContainer = new FlowPanel();
 							Mod111Key key = script.getKeys()[0];
-							JsIRPFComputeKeyInfo info = JsonUtils.safeEval(result);
 							JsIRPFComputeKeyInfoGridPanel grid = new JsIRPFComputeKeyInfoGridPanel();
 							grid.setTitle(AON.MSG.calcDetail());
 							grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
-							grid.addContent(info);
+							try {
+								JsIRPFComputeKeyInfo info = JsonUtils.safeEval(result);
+								grid.addContent(info);
+							} catch (Exception e) {
+								grid.addContent(result);
+							}
 							gridContainer.add(grid);
 							callback.showInfoPanelWidget(gridContainer);
 							button.setEnabled(true);
@@ -981,8 +971,11 @@ public abstract class Model111Base extends DockLayoutPanel {
 				
 				@Override
 				public Void visitInvoice() {
-					final AonTableButton button = addButton();
-					button.addClickHandler(event -> showInvoiceIrpfBreakdownInfo(button));
+					if (getModel().isAlcatrazBound()) {
+						final AonTableButton button = addButton();
+						button.addClickHandler(event -> showInvoiceIrpfBreakdownInfo(button));
+						addExcelButton().addClickHandler(event -> showExcelInfo(script));
+					}
 					return null;
 				}
 
@@ -993,7 +986,8 @@ public abstract class Model111Base extends DockLayoutPanel {
 				
 				@Override 
 				public Void visitSalary() { 
-					final AonTableButton button = addButton();
+					final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconInfo());
+					buttonContainer.add(button);
 					button.addClickHandler(event -> showSalaryIrpfBreakdownInfo(button));
 					return null; 
 				}
@@ -1012,6 +1006,13 @@ public abstract class Model111Base extends DockLayoutPanel {
 					final AonTableButton button = addButton();
 					button.addClickHandler(event -> showComputeKeyInfo(button));
 					return null; 
+				}
+				
+				private AonTableButton addExcelButton() {
+					final AonTableButton button = new AonTableButton(infoKey.getLabel() + " (Excel)" ,AON.CSS.aonIconExcel());
+					button.setTabIndex(-2);
+					buttonContainer.add(button);
+					return button;
 				}
 				
 				@Override public Void visitModelInVatAccrualInvoice() {return null;}
@@ -1153,6 +1154,31 @@ public abstract class Model111Base extends DockLayoutPanel {
 		});
 	}
 
+	private void showExcelInfo(IModelScript<Mod111Key> script) {
+		Mod111Key key = Arrays.stream(script.getKeys())
+				.filter( Objects::nonNull )
+				.findAny()
+				.orElse(null);
+		if (key != null) {
+			diskForm.setMethod(FormPanel.METHOD_POST);
+			diskForm.setAction(GWT.getHostPageBaseURL() + MODEL111_BOX_INFO);
+			diskForm.clear();
+			FlowPanel diskPanel = new FlowPanel();
+			diskPanel.add(mod111Hidden);
+			diskPanel.add(domainIdHidden);
+			diskPanel.add(domainNameHidden);
+			diskPanel.add(userHidden);
+			diskPanel.add(mod111BoxHidden);
+			diskForm.add(diskPanel);
+			mod111Hidden.setValue(String.valueOf(getModel().getId()));
+			domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
+			domainNameHidden.setValue(getCallback().getOptions().getDomainName());
+			userHidden.setValue(getCallback().getOptions().getUser());
+			mod111BoxHidden.setValue(key.toString());
+			diskForm.submit();
+		}
+	}
+	
 	protected void paintAdministrationTab(TabLayoutPanel tabPanel) {}
 
 	

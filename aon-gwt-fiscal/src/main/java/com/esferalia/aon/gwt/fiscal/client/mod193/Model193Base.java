@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.ui.TextArea;
 abstract class Model193Base extends DockLayoutPanel {
 
 	protected static final String MODEL193_FILE = "/aon_gwt_fiscal/ms/Model193File";
+	private static final String MODEL193_CERTIFICATE_PRINT = "/aon_gwt_fiscal/ms/Model193CertificatePrint";
 	
 	protected interface IModel193Detail extends IsWidget {
 		Integer getSelectedPerceptorIndex();
@@ -58,6 +60,7 @@ abstract class Model193Base extends DockLayoutPanel {
 	protected final AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
 	protected final AonToolbarButton duplicateButton = new AonToolbarButton(AON.MSG.duplicate(),AON.CSS.aonIconCopy());
 	protected final AonToolbarButton commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
+	protected final AonToolbarButton certificateButton = new AonToolbarButton(AON.MSG.printCertificate(),AON.CSS.aonIconPdf());
 	protected final AonToolbarButton auditButton = new AonToolbarButton(AON.MSG.audit(),AON.CSS.aonIconAudit());
 	
 	protected final AonToolbar decToolbar = new AonToolbar();
@@ -118,8 +121,8 @@ abstract class Model193Base extends DockLayoutPanel {
 	protected void select(Mod193 mod193) {
 		setModel(mod193);
 		refreshToolbarState( );
+		styleStatusLabel();	    
 	}
-
 
 	private AonToolbar getToolbarPanel() {
 		 
@@ -143,7 +146,10 @@ abstract class Model193Base extends DockLayoutPanel {
 		toolbarPanel.add(resetButton);		
 		
 		duplicateButton.addClickHandler( event -> getCallback().onDuplicate(getCallback().getOptions(),getModel().getId()));
-		toolbarPanel.add(duplicateButton);		
+		toolbarPanel.add(duplicateButton);	
+		
+		certificateButton.addClickHandler( event -> certificate());
+		toolbarPanel.add(certificateButton);
 
 		commentsButton.addClickHandler( event -> {
 			final AonToast toast = new AonToast();
@@ -365,6 +371,45 @@ abstract class Model193Base extends DockLayoutPanel {
 				callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 			}
 		});
+	}
+	
+	private void certificate() {
+		if (getModel().getDetails().size() > 0) {
+			if (isDirty()) {
+				new AonConfirmDialog().confirm(AON.MSG.printCertificate(),AON.MSG.printNote() 
+						, new AonConfirmDialogCallback() {
+						
+						@Override
+						public void onAccept() {
+							submitForm(MODEL193_CERTIFICATE_PRINT);
+						}
+		
+						@Override
+						public void onCancel() {
+							// Nothing
+						}
+					});
+			} else {
+				submitForm(MODEL193_CERTIFICATE_PRINT);
+			}
+		}
+	}
+	
+	protected void submitForm(String action) {
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		diskForm.clear();
+		FlowPanel diskPanel = new FlowPanel();
+		diskPanel.add(mod193Hidden);
+		diskPanel.add(domainIdHidden);
+		diskPanel.add(domainNameHidden);
+		diskPanel.add(userHidden);
+		diskForm.add(diskPanel);
+		mod193Hidden.setValue(String.valueOf(getModel().getId()));
+		domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
+		domainNameHidden.setValue(getCallback().getOptions().getDomainName());
+		userHidden.setValue(getCallback().getOptions().getUser());
+		diskForm.submit();
 	}
 	
 	private void audit() {

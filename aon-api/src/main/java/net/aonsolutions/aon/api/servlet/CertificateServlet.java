@@ -2,9 +2,9 @@ package net.aonsolutions.aon.api.servlet;
 
 import java.util.logging.Logger;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 
@@ -16,13 +16,15 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonCertificateServlet", urlPatterns = {"/ms/api/cert/*",
 														  "/aon_gwt_aio/ms/api/cert/*",
-														  "/aon_gwt_fiscal/ms/api/cert/*"})
+														  "/aon_gwt_fiscal/ms/api/cert/*",
+														  "/aon_gwt_mod200/ms/api/cert/*"})
 public class CertificateServlet extends AonApiHttpServlet {
 	
 	private static final Logger LOGGER  = Logger.getLogger(CertificateServlet.class.getName());
@@ -49,8 +51,15 @@ public class CertificateServlet extends AonApiHttpServlet {
 		
 		Filter filter;
 		if(api.getDomain().getParentId() != null) {
-			Integer[] domains = {api.getDomain().getId(), api.getDomain().getParentId()};
-			filter = f.getDomainProperty().in(domains);
+			if(!api.getUser().getDomain().equals(api.getDomain().getParentId())) {
+				filter = (f.getDomainProperty().eq(api.getDomain().getId()).or(
+						f.getDomainProperty().eq(api.getDomain().getParentId())
+						.and(f.getSecurityLevelProperty().eq(SecurityLevel.OFFICIAL.value())))
+					);
+			} else {
+				Integer[] domains = {api.getDomain().getId(), api.getDomain().getParentId()};
+				filter = f.getDomainProperty().in(domains);
+			}
 		} else filter = f.getDomainProperty().eq(api.getDomain().getId());
     	
 		if(api.getUser().getRegistry() != null && api.getDomain().getParentId() != null) {

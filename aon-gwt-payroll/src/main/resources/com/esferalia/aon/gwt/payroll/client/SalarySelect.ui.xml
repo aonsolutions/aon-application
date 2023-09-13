@@ -2,13 +2,44 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget' >
+	
+	<ui:style>
+		.collapse {
+			border-collapse: collapse;
+		}
+		.padding-right {
+			padding: 0px 1px 0px 0px !important;
+		}
+		
+		.aon-SalarySelect {
+		}
+		
+		.aon-SalarySelect-Label {
+		}
 
-	<g:HTMLPanel  tag="span">
-		<g:ListBox debugId="typeListBox" ui:field="typeListBox"/>
-		<aon:MonthListBox debugId="fromMonthListBox" ui:field="fromMonthListBox" visible="false" />
-		<aon:DateListBox debugId="fromDateListBox" ui:field="fromDateListBox" visible="false"/>
-		<aon:MonthListBox debugId="monthListBox" ui:field="monthListBox" />
-		<aon:DateListBox debugId="dateListBox" ui:field="dateListBox" visible="false"/>
-	</g:HTMLPanel>
+		
+		@external aon-SalarySelect;
+		@external aon-SalarySelect-Label;
+		
+	</ui:style>
+	
+	<g:Grid styleName="{style.collapse} aon-SalarySelect">
+		<g:row>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="typeLabel" >RECIBO</g:Label></g:customCell>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="fromMonthLabel" visible="false" >MES DE INICIO</g:Label></g:customCell>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="fromDateLabel" visible="false" >FECHA DE INICIO</g:Label></g:customCell>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="monthLabel" >MES DE C&Aacute;LCULO</g:Label></g:customCell>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="dateLabel" visible="false" >FECHA DE C&Aacute;LCULO</g:Label></g:customCell>
+			<g:customCell styleName="{style.padding-right} aon-SalarySelect-Label" ><g:Label ui:field="payDateLabel" >FECHA DE PAGO</g:Label></g:customCell>
+		</g:row>
+		<g:row>
+			<g:customCell styleName="{style.padding-right}" ><g:ListBox debugId="typeListBox" ui:field="typeListBox"/></g:customCell>
+			<g:customCell styleName="{style.padding-right}" ><aon:MonthListBox debugId="fromMonthListBox" ui:field="fromMonthListBox" visible="false" /></g:customCell>
+			<g:customCell styleName="{style.padding-right}" ><aon:DateListBox debugId="fromDateListBox" ui:field="fromDateListBox" visible="false"/></g:customCell>
+			<g:customCell styleName="{style.padding-right}" ><aon:MonthListBox debugId="monthListBox" ui:field="monthListBox" /></g:customCell>
+			<g:customCell styleName="{style.padding-right}" ><aon:DateListBox debugId="dateListBox" ui:field="dateListBox" visible="false"/></g:customCell>
+			<g:customCell styleName="{style.padding-right}" ><aon:DateListBox debugId="payDateListBox" ui:field="payDateListBox" /></g:customCell>
+		</g:row>
+	</g:Grid>
 
 </ui:UiBinder> 

@@ -93,6 +93,11 @@
 					</g:HTMLPanel>
 					
 					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.title}' text="Residencia habitual y efectiva en Ceuta, Melilla o La Palma" />
+						<g:Button ui:field="ceutaMelillaB" />
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label styleName='{style.title}' text="Exclusión a la obligación de tributar" />
 						<g:Button ui:field="fiscalExclusionB" />
 					</g:HTMLPanel>

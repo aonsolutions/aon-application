@@ -7,9 +7,7 @@ import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import java.sql.Date;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -118,7 +116,7 @@ public class ActivityDAO {
 				.collect(Collectors.toList());
 		
 		activities.forEach(activity -> {
-			List<EnterpriseCCC> cccs = EnterpriseCCCDAO.getStream(ctx, f -> f.getEnterpriseActivityProperty().eq(activity.getId())).collect(Collectors.toList());
+			List<EnterpriseCCC> cccs = EnterpriseCCCDAO.getList(ctx, f -> f.getEnterpriseActivityProperty().eq(activity.getId()));
 			activity.setCccs(cccs);
 		});
 		
@@ -140,8 +138,7 @@ public class ActivityDAO {
 				.findFirst()
 				.orElse(new Activity());
 		
-		Supplier<Stream<EnterpriseCCC>> cccStrem = () -> EnterpriseCCCDAO.getStream(ctx, f -> f.getEnterpriseActivityProperty().eq(activity.getId()));
-		List<EnterpriseCCC> cccs = cccStrem.get().collect(Collectors.toList());
+		List<EnterpriseCCC> cccs = EnterpriseCCCDAO.getList(ctx, f -> f.getEnterpriseActivityProperty().eq(activity.getId()));
 		activity.setCccs(cccs);
 		
 		printEnterpriseActivity(activity);
@@ -151,13 +148,13 @@ public class ActivityDAO {
 	
 	public static void saveList(AONContext ctx, List<Activity> activities) {
 		activities.forEach(activity -> {
-			if(activity.getId() != null) update(ctx, activity); 
+			if(activity.getId() != null && activity.getId() > 0) update(ctx, activity); 
 			else insert(ctx, activity);
 		});
 	}
 	
 	public static Activity save(AONContext ctx, Activity activity) {
-		return activity.getId() != null ? update(ctx, activity) : insert(ctx, activity);
+		return activity.getId() != null && activity.getId() > 0  ? update(ctx, activity) : insert(ctx, activity);
 	}
 	
 	private static Activity insert(AONContext ctx, Activity activity) {
@@ -167,13 +164,17 @@ public class ActivityDAO {
 		Cnae2009 cnae2009 = Cnae2009DAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()));
 		Cnae cnae = CnaeDAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()));
 		
+		Integer enterpriseId = activity.getEnterprise();
+		if(null == enterpriseId)
+			enterpriseId = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(activity.getDomain())).getId();
+		
 		Integer id = ctx.getDslContext().insertInto(ENTERPRISE_ACTIVITY)
 			.set(ENTERPRISE_ACTIVITY.DOMAIN, activity.getDomain())
-			.set(ENTERPRISE_ACTIVITY.ENTERPRISE, activity.getEnterprise())
+			.set(ENTERPRISE_ACTIVITY.ENTERPRISE, enterpriseId)
 			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, activity.getDescription())
 			.set(ENTERPRISE_ACTIVITY.TYPE, (byte)0)
-			.set(ENTERPRISE_ACTIVITY.CNAE, cnae.getId())
-			.set(ENTERPRISE_ACTIVITY.CNAE2009, cnae2009.getId())
+			.set(ENTERPRISE_ACTIVITY.CNAE, null == cnae ? null : cnae.getId())
+			.set(ENTERPRISE_ACTIVITY.CNAE2009, null == cnae2009 ? null : cnae2009.getId())
 			.set(ENTERPRISE_ACTIVITY.START_DATE, parseToSqlDate(activity.getStartDate()))
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)
@@ -196,8 +197,8 @@ public class ActivityDAO {
 		ctx.getDslContext()
 			.update(ENTERPRISE_ACTIVITY)
 			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, activity.getDescription())
-			.set(ENTERPRISE_ACTIVITY.CNAE, cnae.getId())
-			.set(ENTERPRISE_ACTIVITY.CNAE2009, cnae2009.getId())
+			.set(ENTERPRISE_ACTIVITY.CNAE, null == cnae ? null : cnae.getId())
+			.set(ENTERPRISE_ACTIVITY.CNAE2009, null == cnae2009 ? null : cnae2009.getId())
 			.set(ENTERPRISE_ACTIVITY.START_DATE, parseToSqlDate(activity.getStartDate()))
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)
@@ -217,9 +218,9 @@ public class ActivityDAO {
 	
 	private static void printEnterpriseActivity(Activity activity) {
 		System.out.println("------- Activity : " + activity.getDescription() + " -------");
-		System.out.println("Id: " + activity.getId() + "\nDescription: " + activity.getDescription());
-		System.out.println("\nCnae: " + activity.getCnae() + "\nCnae2009Code: " + activity.getCnaeCode() + "\nCnae2009Description: " + activity.getCnaeDescription());
-		System.out.println("\nStartDate: " + activity.getStartDate() + "\nEndDate: " + activity.getEndDate() + "\nisPricipal: " + activity.isPrincipal());	
+		System.out.println("Id: " + activity.getId() + "\nDomain: " + activity.getDomain() + "\nDescription: " + activity.getDescription());
+		System.out.println("Cnae: " + activity.getCnae() + "\nCnae2009Code: " + activity.getCnaeCode() + "\nCnae2009Description: " + activity.getCnaeDescription());
+		System.out.println("StartDate: " + activity.getStartDate() + "\nEndDate: " + activity.getEndDate() + "\nisPricipal: " + activity.isPrincipal());	
 		
 		if(!activity.getCccs().isEmpty()) {
 			System.out.println("------- CCCs -------");

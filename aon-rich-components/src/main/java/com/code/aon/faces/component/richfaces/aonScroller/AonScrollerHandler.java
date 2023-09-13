@@ -4,8 +4,8 @@ import static com.code.aon.faces.component.richfaces.IRichFacesTags.HIDE_PAGE_SI
 import static com.code.aon.faces.component.richfaces.IRichFacesTags.ON_COMPLETE;
 import static com.code.aon.faces.component.richfaces.IRichFacesTags.PAGE;
 
-import javax.el.ValueExpression;
-import javax.el.VariableMapper;
+import jakarta.el.ValueExpression;
+import jakarta.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;
 import javax.faces.component.UIViewRoot;
@@ -43,6 +43,8 @@ public class AonScrollerHandler extends TagHandler {
    	
    	private static final String ROW_COUNT = "rowCount";
    	
+	private static final String FOR_LINES = "forLines";
+
 	private TagAttribute forTag;
 
 	/**
@@ -99,6 +101,18 @@ public class AonScrollerHandler extends TagHandler {
 		return rowsCountVE;
 	}
 	
+	private ValueExpression getForLines( FaceletContext ctx, UIComponent parent ) {
+		ValueExpression forLinesVE = null;
+		TagAttribute forLinesTag = getAttribute(FOR_LINES);
+		if ( forLinesTag != null ) {
+			forLinesVE = forLinesTag.getValueExpression(ctx, Boolean.class);	
+		}
+		if ( forLinesVE == null ) {
+		    forLinesVE = FaceletUtil.getValueExpression(ctx, "false", Boolean.class);
+		}
+		return forLinesVE;
+	}	
+	
 	private void insertTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
 		newMapper.setVariable(DATA_TABLE, forTag.getValueExpression(ctx, String.class));		
@@ -141,6 +155,7 @@ public class AonScrollerHandler extends TagHandler {
 				newMapper.setVariable(HIDE_PAGE_SIZE_SELECTOR, hideTag.getValueExpression(ctx, Boolean.class));
 			}				
 		}
+		newMapper.setVariable(FOR_LINES, getForLines(ctx, component) );
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 	

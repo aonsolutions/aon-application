@@ -3,9 +3,9 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,12 +30,12 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMenuDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod130DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod130.Mod130DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -186,7 +186,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 
 					@Override
 					public void visitM130() {
-						Mod130 model = Mod130DAO.getMod130(ctx, id);	
+						Mod130 model = Mod130DAO.get(ctx, id);	
 						model.setDeclarationResultType(declarationType);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );

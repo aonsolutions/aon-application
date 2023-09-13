@@ -286,6 +286,13 @@ public class RegistryAddress implements Serializable {
     	return buf.toString();
     }
 	
+	public String getFullAddress2() {
+    	StringBuilder buf = new StringBuilder();
+    	buf.append(AonStringUtils.isBlank(getZip()) ? "" : " " + getZip());
+    	buf.append(AonStringUtils.isBlank(getProvince()) ? "" : ", " + getProvince());
+    	return getFullAddress() + buf.toString();
+    }
+	
 	public String getFullAddress(AonLanguage language) {
 		
 		String description = getStreetType() != null ? getStreetType().getDescription(language) : null;
