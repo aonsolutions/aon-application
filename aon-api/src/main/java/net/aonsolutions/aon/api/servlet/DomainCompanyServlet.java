@@ -270,7 +270,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				
 			}
 		} else if (bookingJson == null || bookingJson.isEmpty()) {
-			errors.put(createError(null, null, null, "Contratación no encontrada"));
+			errors.put(createError(null, null, null, "Contrataci\u00f3n no encontrada"));
 		}
 		if (!errors.isEmpty()) {			
 			return errJson;
@@ -423,80 +423,6 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		JSONObject log = new JSONObject();
 		log.put("log", message + " -- domainType: " + domainType.name() + ", app: " + app + ", barCode: " + barCode);
 		return log;
-	}
-  
-	private static JSONObject updateBookingRitems(AonApiData api) {
-		JSONObject errJson = new JSONObject();
-		JSONObject domainJson = api.getData().optJSONObject(IJsonNames.DOMAIN);
-		JSONObject bookingJson = api.getData().optJSONObject(IJsonNames.BOOKING);
-
-		JSONArray errors = new JSONArray();
-		errJson.put(IJsonNames.DOMAIN, domainJson);
-
-		errJson.put(IJsonNames.ERRORS, errors);		
-
-		if (domainJson != null && bookingJson != null) {
-			DomainCompany domainCompany = DomainCompanyJSON.fromJSON(domainJson);
-			Booking booking = BookingJSON.fromJSON(bookingJson);
-			Domain domain = domainCompany.getDomain();
-			if (domain != null) {
-				List<AonApp> apps = booking.getApps();
-				DomainType domainType = domain.getDomainType();
-				Integer aonCustomer = domain.getAonCustomer();
-				for (AonApp app : apps) {
-					String barCode = getBarCode(domainType, app);
-					Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getBarcodeProperty().like("%" + barCode + "%"));
-//					if (item == null || item.getId() == null) {
-//						item = createItem(api, domain, app);
-//					}
-					Integer itemId = item != null ? item.getId() : null;
-					if (item != null && itemId != null) {
-						RegistryItem ritem = AON.getRItem(
-								api.getDomain().getName(),
-								api.getDomain().getId(),
-								api.getUser().getLogin(),
-								f -> f.getRegistryProperty().eq(aonCustomer).and(f.getItemProperty().eq(itemId))
-						);
-						if (ritem == null || ritem.getId() == null) {
-							RegistryItem newRitem = new RegistryItem()
-									.setDomain(api.getDomain().getId())
-									.setRegistry(aonCustomer)
-									.setItem(item)
-									.setType(RegistryMode.BOOKING)
-									.setStatus(RegistryItemStatus.ACTIVE)
-									.setPriority(Priority.NONE)
-									.setCode("CONSOLE")
-									.setQuantity("1");
-							try {
-								AON.saveRItem(api.getDomain(), api.getUser(), newRitem);								
-							} catch (Exception e) {
-								errors.put(createError(barCode, domainType, app, "No se pudo guardar [" + e.getMessage() + "]"));
-							}
-						}
-					} else {
-						errors.put(createError(barCode, domainType, app, "Item no encontrado"));
-					}
-				}
-
-				// Create RItem for users - xx.USER - Quantity = numUsers
-				updateUserBookingRItem(domainCompany, booking, aonCustomer, errors, api);
-
-				// Create RItem for @Conectas | xx.yy.zz | xx=01 Asesoria | yy=Empresa/Despacho | zz=24 Basica, 25 Estandar, 26 Profesional 
-				updateConectaBookingRItem(domainCompany, booking, aonCustomer, errors, api);
-
-			} else {
-				JSONObject itemErr = new JSONObject();
-				itemErr.put("error", "Error parseando los objetos contratacion y dominio");
-				errors.put(itemErr);
-			}
-		} else if (bookingJson == null || bookingJson.isEmpty()) {
-			errors.put(createError(null, null, null, "Contratación no encontrada"));
-		}
-		if (!errors.isEmpty()) {			
-			return errJson;
-		} else {
-			return new JSONObject();
-		}
 	}
   
 	public static LinkedList<Booking> getBookings(Integer customerId) throws IOException, InterruptedException {
