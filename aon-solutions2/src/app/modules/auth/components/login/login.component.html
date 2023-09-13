@@ -12,32 +12,31 @@
         </div>
         <app-list-element class="inptCont" widthContainer="'100%'">
           <div class="cardBody">
-            <app-input
-              (inputValue)="username = $event"
-              [type]="'text'"
-              [label]="'LOGIN.USER' | translate"
-              [placeholder]="'LOGIN.USER' | translate"
-              [required]="'required'"
-              class="inputLogin"
-              (keydown.enter)="loginUser()"
-            ></app-input>
-            <app-input
-              (inputValue)="password = $event"
-              [type]="'password'"
-              [suffixBehavior]="'showPass'"
-              [label]="'LOGIN.PASSWORD' | translate"
-              [placeholder]="'LOGIN.PASSWORD' | translate"
-              [required]="'required'"
-              class="inputLogin"
-              (keydown.enter)="loginUser()"
-            ></app-input>
-            <app-button
-              [class]="'white'"
-              [width]="'100%'"
-              (click)="loginUser()"
-            >
-              {{ "LOGIN.LOGIN" | translate }}
-            </app-button>
+            <form (ngSubmit)="loginUser()" >
+              <app-input
+                (inputValue)="username = $event"
+                [type]="'text'"
+                [label]="'LOGIN.USER' | translate"
+                [placeholder]="'LOGIN.USER' | translate"
+                [required]="'required'"
+                class="inputLogin"
+              ></app-input>
+              <app-input
+                (inputValue)="password = $event"
+                [type]="'password'"
+                [suffixBehavior]="'showPass'"
+                [label]="'LOGIN.PASSWORD' | translate"
+                [placeholder]="'LOGIN.PASSWORD' | translate"
+                [required]="'required'"
+                class="inputLogin"
+              ></app-input>
+              <app-button
+                [class]="'white'"
+                [width]="'100%'"
+              >
+                {{ "LOGIN.LOGIN" | translate }}
+              </app-button>
+            </form>
             <div class="divider">
               {{ "LOGIN.OR_ACCESS" | translate }}
             </div>
