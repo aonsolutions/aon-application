@@ -19,6 +19,7 @@
               [placeholder]="'LOGIN.USER' | translate"
               [required]="'required'"
               class="inputLogin"
+              (keydown.enter)="loginUser()"
             ></app-input>
             <app-input
               (inputValue)="password = $event"
@@ -28,6 +29,7 @@
               [placeholder]="'LOGIN.PASSWORD' | translate"
               [required]="'required'"
               class="inputLogin"
+              (keydown.enter)="loginUser()"
             ></app-input>
             <app-button
               [class]="'white'"
