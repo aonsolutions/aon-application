@@ -156,6 +156,20 @@ public enum AonError implements Serializable{
 	, BRAND_EMPTY("El valor de la marca esta vacío.")
 	, BRAND_REPEAT("Ya existe una marca con el mismo nombre.")
 	
+	
+	// --------------------------------------------- AMORTIZATION TYPE
+	,AMORTIZATION_TYPE_NULL("El tipo de amortizacion es nulo.")
+	,AMORTIZATION_TYPE_EMPTY("El tipo de amortizacion esta vacío.")
+	,AMORTIZATION_TYPE_NULL_DESCRIPTION("La descripcion del tipo de amortizacion es nula")
+	,AMORTIZATION_TYPE_EMPTY_DESCRIPTION("La descripcion del tipo de amortizacion no puede estar vacia")
+	,AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT("El valor de la cuenta fija de activos es nulo")
+	,AMORTIZATION_TYPE_EMPTY_FIXED_ASSET_ACCOUNT("El valor de la cuenta fija de activos no puede estar vacio")
+	,AMORTIZATION_TYPE_NULL_ACCUMULATED_ACCOUNT("El valor de la cuenta acumulada es nulo")
+	,AMORTIZATION_TYPE_EMPTY_ACCUMULATED_ACCOUNT("El valor de la cuenta acumulada no puede estar vacío")
+	,AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT("El valor de la cuenta de asignacion es nulo")
+	,AMORTIZATION_TYPE_EMPTY_ALLOCATION_ACCOUNT("El valor de la cuenta de asignacion no puede estar vacio")
+	,AMORTIZATION_TYPE_INCORRECT_PERCENTAGE("El valor del porcentaje no es valido")
+	
 	// --------------------------------------------- INVOICE
 	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TAX_DATE("La fecha I.V.A. de la factura es un dato obligatorio, no puede estar vac\u00EDa")

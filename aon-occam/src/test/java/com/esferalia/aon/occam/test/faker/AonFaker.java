@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -452,6 +453,18 @@ public class AonFaker {
 		return new Brand()
 			.setDomain(ctx.getDomainId())
 			.setName(AonRandom.string(-1, 1, 14));
+	}
+	
+	public static AmortizationType getAmortizationType(AONContext ctx) {
+		return new AmortizationType()
+				.setDomain(new Domain()
+				.setId(ctx.getDomainId())
+				.setName(AonRandom.string(-1, 1, 14))) //creo q no hace falta, comprobar luego
+				.setFixedAssetAccount(AonRandom.string(-1, 1, 4))
+				.setAccumulatedAccount(AonRandom.string(-1, 1, 4))
+				.setAllocationAccount(AonRandom.string(-1, 1, 4))
+				.setPercentage(null)
+				.setDescription(faker.beer().name());
 	}
 	
 	

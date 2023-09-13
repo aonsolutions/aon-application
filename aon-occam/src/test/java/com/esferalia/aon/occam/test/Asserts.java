@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -496,6 +497,13 @@ public class Asserts {
 		assertEquals("Domain",expected.getDomain(), actual.getDomain());
 		assertEquals("Name",expected.getName(), actual.getName());
 	}
+	
+	public static void assertEqualsAmortizationType(AmortizationType expected, AmortizationType actual) {
+		assertEquals("Id",expected.getId(), actual.getId());
+		assertEquals("Domain",expected.getDomain(), actual.getDomain());	
+
+	}
+	
 	
 	public static void assertEqualsProductCategory(ProductCategory expected, ProductCategory actual) {
 		assertEqualsNulls( "ProductCategory", expected, actual);
