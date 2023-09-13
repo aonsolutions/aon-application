@@ -1357,8 +1357,8 @@ public class AccountEntryModule extends MainEntryPoint {
 
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		final CheckBox invert = new CheckBox( AON.MSG.invertData());
-		table.setWidget(row,0,invert);
-		table.setWidget(row,1,new Label());
+		table.setWidget(row,0,new Label());
+		table.setWidget(row,1,invert);
 		rootPanel.add( table );
 		
 		FlowPanel buttons = new FlowPanel();
