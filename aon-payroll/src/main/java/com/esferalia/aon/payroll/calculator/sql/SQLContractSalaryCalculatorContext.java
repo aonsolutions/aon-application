@@ -1737,7 +1737,20 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 //			HierarchyDeductions hierarchyDeductions = new HierarchyDeductions(this.sqlContractDeduction,
 //					getCCCDeductions().iterator(), getSSRegimeDeductions().iterator());
 			CompositeDeductions hierarchyDeductions = new CompositeDeductions(this.sqlContractDeduction,
-				getCCCDeductions(), getSSRegimeDeductions());
+				getCCCDeductions(), getSSRegimeDeductions()) {
+
+			    	@Override
+				protected int getLevel(IContractDeduction item) {
+			    	    
+			    	    if ( item instanceof ISystemDeduction ) {
+			    		return ((ISystemDeduction) item).getDomain();
+			    	    } else {
+			    		int level =  super.getLevel(item);
+			    		return level + ( Integer.MAX_VALUE - 100 ) ;
+			    	    }
+				}
+			    
+			};
 			return hierarchyDeductions;
 		} catch (SQLException e) {
 			throw new AonException(e);
