@@ -26,6 +26,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.Max
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
@@ -48,8 +49,8 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
-import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAccountEntryUpdateVisitor;
+import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -78,7 +79,6 @@ import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -95,7 +95,6 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AccountEntryModule extends MainEntryPoint {
@@ -1264,12 +1263,14 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 
 
-	public void onDuplicate(ClickEvent event) {
+	public void onDuplicate() {
 		final AccountEntry orig = wizardContent.getMainEntry();
 		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setWidth("500px");
 		dialog.setCaption(AON.MSG.duplicate());
 		FlowPanel rootPanel = new FlowPanel();
 		rootPanel.setStyleName(AON.CSS.aonScrollArea());
+		
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.CSS.aonTable());
 		table.addStyleName(AON.CSS.aonWidthAll());
@@ -1285,6 +1286,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.period()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+		table.getCellFormatter().addStyleName(row, 0, AON.CSS.aonWidth200());
 		AccountPeriodBox period = new AccountPeriodBox();
 		period.fill(getOptions().getConfiguration().accounting().getPeriods());
 		period.select(orig.getPeriod());
@@ -1298,29 +1300,65 @@ public class AccountEntryModule extends MainEntryPoint {
 		table.setWidget(row,1,issueDate);
 		row++;
 
+
 		table.setWidget(row,0,new InlineLabel(AON.MSG.concept()));
-		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-		final TextBox concept = new TextBox();
-		concept.setStyleName(AON.CSS.aonInputText());
+		final CheckBox mantainConcept = new CheckBox();
+		mantainConcept.setStyleName(AON.CSS.aonNowrap());
+		mantainConcept.setValue(true);
+		
+		final AonTextBox concept = new AonTextBox();
 		concept.setMaxLength(32);
-		concept.setValue(orig.getDetails().get(0).getConcept());
-		table.setWidget(row,1,concept);
+		concept.setEnabled(false);
+		concept.setValue("Mantener original");
+		
+		FlowPanel flowPanel0 = new FlowPanel();
+		flowPanel0.setStyleName(AON.CSS.aonNowrap() );
+		flowPanel0.add(mantainConcept);
+		flowPanel0.add(concept);
+		mantainConcept.addClickHandler( e -> {
+			if (mantainConcept.getValue().booleanValue()) {
+				concept.addStyleName(AON.CSS.aonColorGray());
+				concept.setEnabled(false);
+				concept.setValue("Mantener original");
+			} else {
+				concept.removeStyleName(AON.CSS.aonColorGray());
+				concept.setEnabled(true);
+				concept.setValue(null);
+			}
+		});
+		table.setWidget(row,1,flowPanel0);
 		row++;
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.document()));
-		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-		final TextBox document = new TextBox();
-		document.setStyleName(AON.CSS.aonInputText());
+		final CheckBox mantainDocument = new CheckBox();
+		mantainDocument.setStyleName(AON.CSS.aonNowrap());
+		mantainDocument.setValue(true);
+		final AonTextBox document = new AonTextBox();
 		document.setMaxLength(32);
-		document.setValue(orig.getDetails().get(0).getDocumentNumber());
-		table.setWidget(row,1,document);
+		document.setEnabled(false);
+		document.setValue("Mantener original");
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.setStyleName(AON.CSS.aonNowrap() );
+		flowPanel.add(mantainDocument);
+		flowPanel.add(document);
+		mantainDocument.addClickHandler( e -> {
+			if (mantainDocument.getValue().booleanValue()) {
+				document.addStyleName(AON.CSS.aonColorGray());
+				document.setEnabled(false);
+				document.setValue("Mantener original");
+			} else {
+				document.removeStyleName(AON.CSS.aonColorGray());
+				document.setEnabled(true);
+				document.setValue(null);
+			}
+		});
+		table.setWidget(row,1,flowPanel);
 		row++;
 
-		table.setWidget(row,1,new Label());
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		final CheckBox invert = new CheckBox( AON.MSG.invertData());
-		table.setWidget(row,1,invert);
-		row++;
+		table.setWidget(row,0,invert);
+		table.setWidget(row,1,new Label());
 		rootPanel.add( table );
 		
 		FlowPanel buttons = new FlowPanel();
@@ -1331,40 +1369,34 @@ public class AccountEntryModule extends MainEntryPoint {
     	final Button okButton = new Button();
     	okButton.setStyleName(AON.CSS.aonOkButton());
     	okButton.setText( AON.MSG.accept());
-    	okButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				okButton.setEnabled(false);
-				AccountEntry dupl = new AccountEntry() 
-					.setPeriod(period.getValue())
-					.setDomain(orig.getDomain())
-					.setEntryDate(issueDate.getValue())
-					.setEntryType(AccountEntryType.MANUAL)
-					.setActivity(orig.getActivity())
-					.setSecurityLevel(orig.getSecurityLevel());
-				for (AccountEntryDetail aed : orig.getDetails()){
-					dupl.addDetail(
-					new AccountEntryDetail()
-						.setDomain(aed.getDomain())
-						.setAccount(aed.getAccount())
-						.setAccountCode(aed.getAccountCode())
-						.setAccountDescription(aed.getAccountDescription())
-						.setLine(aed.getLine())
-						.setConcept(concept.getValue())
-						.setDebit(invert.getValue()?aed.getCredit():aed.getDebit())
-						.setCredit(invert.getValue()?aed.getDebit():aed.getCredit())
-						.setBalancingAccount(aed.getBalancingAccount())
-						.setBalancingAccountCode(aed.getBalancingAccountCode())
-						.setBalancingAccountDescription(aed.getBalancingAccountDescription())
-						.setDocumentNumber(document.getValue())
-							);
-				}
-				AccountEntryWrapper wrp = new AccountEntryWrapper(dupl);
-				selectEntry(null, wrp);
-					
-					dialog.hide();
-				}
+    	okButton.addClickHandler(event -> {
+			okButton.setEnabled(false);
+			AccountEntry dupl = new AccountEntry() 
+				.setPeriod(period.getValue())
+				.setDomain(orig.getDomain())
+				.setEntryDate(issueDate.getValue())
+				.setEntryType(AccountEntryType.MANUAL)
+				.setActivity(orig.getActivity())
+				.setSecurityLevel(orig.getSecurityLevel());
+			orig.getDetails()
+			.stream()
+			.map( aed -> new AccountEntryDetail()
+				.setDomain(aed.getDomain())
+				.setAccount(aed.getAccount())
+				.setAccountCode(aed.getAccountCode())
+				.setAccountDescription(aed.getAccountDescription())
+				.setLine(aed.getLine())
+				.setConcept(mantainConcept.getValue().booleanValue()?aed.getConcept(): concept.getValue())
+				.setDebit(invert.getValue().booleanValue()?aed.getCredit():aed.getDebit())
+				.setCredit(invert.getValue().booleanValue()?aed.getDebit():aed.getCredit())
+				.setBalancingAccount(aed.getBalancingAccount())
+				.setBalancingAccountCode(aed.getBalancingAccountCode())
+				.setBalancingAccountDescription(aed.getBalancingAccountDescription())
+				.setDocumentNumber(mantainDocument.getValue().booleanValue()?aed.getDocumentNumber(): document.getValue()))
+			.forEach( aed -> dupl.addDetail(aed));
+			AccountEntryWrapper wrp = new AccountEntryWrapper(dupl);
+			selectEntry(null, wrp);
+				dialog.hide();
 			});
     	
     	buttons.add(okButton);
@@ -1373,13 +1405,9 @@ public class AccountEntryModule extends MainEntryPoint {
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());
     	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
-    	cancelButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				cancelButton.setEnabled(false);
-				dialog.hide();
-			}
+    	cancelButton.addClickHandler(event -> {
+			cancelButton.setEnabled(false);
+			dialog.hide();
 		});
     	buttons.add(cancelButton);
     	rootPanel.add(buttons);
@@ -1387,11 +1415,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		dialog.center();
 		dialog.show();
 		
-		Scheduler.get().scheduleDeferred(new Command() {
-	        public void execute() {
-	        	issueDate.setFocus(true);
-	        }
-	    });		
+		Scheduler.get().scheduleDeferred(() -> period.setFocus(true));		
 		
 	}
 	
@@ -1486,105 +1510,52 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 	
 	private AonToolbar getToolbarPanel() {
-		AonToolbar toolbar = new AonToolbar(AON.MSG.accountEntries());
+		AonToolbar tb = new AonToolbar(AON.MSG.accountEntries());
 		if (getOptions().isBackButtonVisible()) {
 			back = new AonToolbarButton( AON.MSG.backAction(), AON.CSS.aonIconBack() );
-			back.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					onBack(event);
-				}
-			});
-			toolbar.add(back);
+			back.addClickHandler(event -> onBack(event));
+			tb.add(back);
 		}
 
 		if (getOptions().isJournalTabVisible()) {
 			search = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
-			search.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					onSearch(event);
-				}
-			});
-			toolbar.add(search);
+			search.addClickHandler(event -> onSearch(event));
+			tb.add(search);
 		}
 
 		reset = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() ,AonButton.AON_ACCESSKEY_RESET); 
-		reset.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onReset(event);
-			}
-		});
-		toolbar.add(reset);
+		reset.addClickHandler(event -> onReset(event));
+		tb.add(reset);
 
 		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() ,AonButton.AON_ACCESSKEY_SAVE);
-		accept.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAccept(event);
-			}
-		});
-		toolbar.add(accept);
+		accept.addClickHandler(event -> onAccept(event));
+		tb.add(accept);
 
 		remove = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete(),AonButton.AON_ACCESSKEY_DELETE);
-		remove.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onRemove(event);
-			}
-		});
-		toolbar.add(remove);
+		remove.addClickHandler(event -> onRemove(event));
+		tb.add(remove);
 		
 		specialUpdate  = new AonToolbarButton( AON.MSG.specialUpdate(), AON.CSS.aonIconDataSettings() );
-		specialUpdate.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onSpecialUpdate(event);
-			}
-
-		});
-		toolbar.add(specialUpdate);
+		specialUpdate.addClickHandler(event -> onSpecialUpdate(event));
+		tb.add(specialUpdate);
 
 		attachment  = new AonToolbarButton( AON.MSG.attachDocument(), AON.CSS.aonIconAttach());
-		attachment.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAttachment(event);
-			}
-
-		});
-		toolbar.add(attachment);
+		attachment.addClickHandler(event -> onAttachment(event));
+		tb.add(attachment);
 
 		removeAttachment  = new AonToolbarButton( AON.MSG.attachRemoveDocument(), AON.CSS.aonIconNoAttach());
-		removeAttachment.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onRemoveAttachment(event);
-			}
-
-		});
-		toolbar.add(removeAttachment);
+		removeAttachment.addClickHandler(event -> onRemoveAttachment(event));
+		tb.add(removeAttachment);
 
 		duplicate = new AonToolbarButton( AON.MSG.duplicate(), AON.CSS.aonIconCopy() );
-		duplicate.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onDuplicate(event);
-			}
-		});
-		toolbar.add(duplicate);
+		duplicate.addClickHandler(event -> onDuplicate());
+		tb.add(duplicate);
 
 		audit = new AonToolbarButton( AON.MSG.audit(), AON.CSS.aonIconAudit() );
-		audit.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAudit(event);
-			}
-		});
-		toolbar.add(audit);
+		audit.addClickHandler(event -> onAudit(event));
+		tb.add(audit);
 
-		return toolbar;
+		return tb;
 
 	}
 	
@@ -1601,12 +1572,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		period = new AccountPeriodBox();
 		period.setStyleName(AON.CSS.aonMarginRight());
 		period.setTabIndex(1);
-		period.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				onChangeAccountPeriod(event);
-			}
-		});
+		period.addChangeHandler( event -> onChangeAccountPeriod(event));
 		entryHeader.add( period );
 
 		InlineLabel dateLabel = new InlineLabel(AON.MSG.date());
@@ -1616,13 +1582,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		entryDate = new AonDateBox();
 		entryDate.addStyleName(AON.CSS.aonMarginRight());
 		entryDate.setTabIndex(2);
-		entryDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				onChangeEntryDate(event);
-			}
-		});
+		entryDate.addValueChangeHandler(this::onChangeEntryDate);
 		entryHeader.add( entryDate );
 
 		InlineLabel typeLabel = new InlineLabel(AON.MSG.type());
@@ -1959,6 +1919,4 @@ public class AccountEntryModule extends MainEntryPoint {
 		dialog.center();
 		dialog.show();
 	}
-	
-	
 }

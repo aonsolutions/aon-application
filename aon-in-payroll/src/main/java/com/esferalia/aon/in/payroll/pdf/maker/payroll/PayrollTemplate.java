@@ -45,13 +45,17 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
+import org.apache.pdfbox.pdmodel.font.encoding.Encoding;
 
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.ASCIIArtGenerator.ASCIIArtFont;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.IDefaultPayroll;
@@ -355,7 +359,24 @@ public class PayrollTemplate implements IPayrollTemplate {
                 			t2.drawCroppableLine();
         			} else {
                 			try {
-                    		    		drawText(contents, entryTxt, x + 64, y, BLACK, HELVETICA, fontSize);
+                			    	if ( AonStringUtils.startsWith(entryTxt, "art")) {
+                			    	    	String art =  AonStringUtils.removeStart(entryTxt, "art") ;
+                    		    			drawText(contents, art , x + 64, y, BLACK, PdfFonts.COURIER, fontSize);
+                			    	}  else if (AonStringUtils.startsWith(entryTxt, "ascii")) {
+                			    	    	String ascii = AonStringUtils.removeStart(entryTxt, "ascii");
+                			    	    	try {
+                        			    	    	String [] lines = ASCIIArtGenerator.generateAsciiArt(ascii, ASCIIArtGenerator.ART_SIZE_SMALL, ASCIIArtFont.ART_FONT_COURIER, "#");
+                        			    	    	for ( String line : lines ) {
+                        			    	    	    drawText(contents, line , x + 64, y, BLACK, PdfFonts.COURIER, fontSize/2);
+                        			    	    	    y -= 4.00f; //10.5f;
+                        			    	    	}
+                			    	    	} catch ( Exception e ) {
+                			    	    	    
+                			    	    	}
+                			    	}
+                			    	else {
+                		    			drawText(contents, entryTxt, x + 64, y, BLACK, PdfFonts.HELVETICA, fontSize);
+                			    	}
                 			} catch ( IOException e ) {
                 			    
                 			}
