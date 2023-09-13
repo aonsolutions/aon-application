@@ -101,6 +101,7 @@
     "REPORTS": "Reports",
     "TREASURY": "Treasury",
     "CREATE_SALES_INVOICE": "Create sales invoice",
+    "CREATE_BILLS_INVOICE": "Create bills invoice",
     "ADD_BANK":"Add bank",
     "DESCRIPTION": "Description",
     "BALANCE": "Balance",
@@ -117,8 +118,13 @@
     "RETEN": "Withholding",
     "ACCOUNTED": "Accounted",
     "STATUS": "Status",
-    "AMOUNT": "Amount"
-
+    "AMOUNT": "Amount",
+    "SEND_BILL": "Send bill",
+    "SEND": "Send",
+    "CANCEL": "Cancel",
+    "ACCEPT": "Accept",
+    "DUPLICATE_BILL": "You are going to double this bill, are you sure?",
+    "DELETE_BILL": "Do you want to delete this bill?"
   },
   "CONSULTING": {
 

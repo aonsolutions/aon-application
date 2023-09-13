@@ -2,6 +2,10 @@
 
 ::ng-deep {
 
+  .list-bank {
+    cursor: pointer;
+  }
+
   .list-bank-name {
     color: $color-secondary;
   }
