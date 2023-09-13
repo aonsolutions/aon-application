@@ -155,6 +155,8 @@ public class SerfruitDAO {
                                 .and(f.getCodeProperty().eq(dp.getProduct().getCode())));
     
         if (product == null || product.getId() == null) {
+			ProductCategory pc = ProductCategoryDAO.get(ctx, f -> f.getIdProperty().eq(3297));
+
             product = new Product();
             product.setDomain(new Domain().setId(ctx.getDomainId()));
             product.setStatus(ProductStatus.ACTIVE);
@@ -162,7 +164,7 @@ public class SerfruitDAO {
             product.setSerializable(Boolean.FALSE);
             product.setPackaged(Boolean.FALSE);
             product.setInventoriable(Boolean.TRUE);
-            product.setCategory(new ProductCategory().setId(3297));
+            product.setCategory(pc);
             product.setCode(dp.getProduct().getCode());
             product.setName(AonStringUtils.isBlank(dp.getProduct().getName())
             		? "ENVASE AUTOGENERADO ("+ dp.getProduct().getCode() +")"
