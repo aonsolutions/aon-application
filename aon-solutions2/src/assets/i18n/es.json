@@ -149,7 +149,8 @@
     "DOWNLOAD_PDF": "DESCARGAR PDF",
     "TO_RECTIFY":"¿Quieres rectificar?",
     "RECTIFIED_MODEL":"  Una vez hayas rectificado el modelo, se archivará como una consulta en tu Bandeja.",
-    "SEND":"Enviar"
+    "SEND":"Enviar",
+    "ALL_MODELS":"Todos los modelos"
    },
   "PROFILE": {
     "CONTACT_DETAILS":   "Datos contacto",

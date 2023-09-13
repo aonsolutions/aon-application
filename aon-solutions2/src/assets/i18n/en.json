@@ -120,7 +120,6 @@
     "ACCOUNTED": "Accounted",
     "STATUS": "Status",
     "AMOUNT": "Amount"
-
   },
   "CONSULTING": {
 
@@ -150,7 +149,8 @@
     "DOWNLOAD_PDF": "DOWNLOAD PDF",
     "TO_RECTIFY": "Do you want to rectify?",
     "RECTIFIED_MODEL": "Once you have rectified the model, it will be archived as a query in your Inbox.",
-    "SEND":"Send"
+    "SEND":"Send",
+    "ALL_MODELS":"All models"
   },
     "PROFILE": {
     "CONTACT_DETAILS":   "Contact details",
