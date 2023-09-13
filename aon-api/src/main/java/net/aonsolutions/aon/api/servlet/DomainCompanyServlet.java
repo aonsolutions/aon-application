@@ -246,11 +246,11 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 									try {
 										AON.saveRItem(api.getDomain(), api.getUser(), newRitem);								
 									} catch (Exception e) {
-										throw new AonApiException("No se pudo guardar [" + e.getMessage() + "]");
+//										throw new AonApiException("No se pudo guardar [" + e.getMessage() + "]");
 									}
 								}
 							} else {
-								throw new AonApiException("Item no encontrado");
+//								throw new AonApiException("Item no encontrado");
 							}
 						}
 						
@@ -261,10 +261,9 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 						updateConectaBookingRItem(api, booking, customerId);
 						
 					} else  {
-						throw new AonApiException("Contratación no encontrada");
+//						throw new AonApiException("Contratación no encontrada");
 					}
 				}
-			
 			}
 		} catch (Exception e) {
 			throw new  AonApiException(e.getMessage());
@@ -544,11 +543,11 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				try {
 					AON.saveRItem(api.getDomain(), api.getUser(), newRitem);								
 				} catch (Exception e) {
-					throw new AonApiException("No se pudo guardar [" + e.getMessage() + "]");
+//					throw new AonApiException("No se pudo guardar [" + e.getMessage() + "]");
 				}
 			}
 		} else {
-			throw new AonApiException("Item no encontrado");
+//			throw new AonApiException("Item no encontrado");
 		}
 	}
 	
