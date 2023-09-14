@@ -69,7 +69,7 @@ public class BookingJSON {
 			.put(IJsonNames.PARENT_APPS, parentApps) 
 			.put(IJsonNames.NUMBER_OF_USERS, object.getNumberOfUsers())
 			.put(IJsonNames.PAYER, object.getPayer())
-			.put(IJsonNames.RESUME, object.getResume() != null ? bookingResume(object.getResume()): null);
+			.put(IJsonNames.RESUME, object.getResume() != null ? bookingResumeConsole(object.getResume()): null);
 	}
 	
 	public static JSONObject toJSON(Booking object, Boolean bookingCheck) {
