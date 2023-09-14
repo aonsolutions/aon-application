@@ -57,6 +57,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	public static final String BOOKING = "/booking/";
 	public static final String BOOKING_CUSTOMER = "/booking-customer/";
 	public static final String REMOTE = "/remote/";
+	public static final String CHECK_ITEMS = "/check-items/";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -83,6 +84,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		try {
 			AonApiData api = initialize(req);
 			Object object = new AonRouting(api)
+					.addRoute(CHECK_ITEMS, DomainCompanyServlet::getCheckedItems)
 					.addRoute(DOMAINS, DomainCompanyServlet::getDomains)
 					.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::getCustomerDomains)
 					.apply();
@@ -128,6 +130,34 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
+	}
+	
+	private static JSONObject getCheckedItems(AonApiData api) {
+		JSONObject itemJson = new JSONObject();
+		JSONArray items = new JSONArray();
+		itemJson.put("items", items);
+		
+		for(DomainType domainType : DomainType.values()) {
+			for(AonApp app : AonApp.values()) {
+				String barCode = getBarCode(domainType, app);
+				Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getBarcodeProperty().like("%" + barCode + "%"));
+				if(item == null || item.getId() == null)
+					items.put(createItemLog(domainType, app.name(), barCode));
+			}
+			
+			String userBarCode = getUserBarCode(domainType);
+			Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getBarcodeProperty().like("%" + userBarCode + "%"));
+			if(item == null || item.getId() == null)
+				items.put(createItemLog(domainType, "USR", userBarCode));
+		}
+		
+		return itemJson;
+	}
+	
+	private static JSONObject createItemLog(DomainType domainType, String app, String barCode) {
+		JSONObject log = new JSONObject();
+		log.put("item", "DomainType: " + domainType.name() + ", App: " + app + ", BarCode: " + barCode);
+		return log;
 	}
 	
 	private static JSONArray getDomains(AonApiData api) {

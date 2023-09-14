@@ -107,7 +107,7 @@ public class BookingServlet extends AonApiHttpServlet {
 		
 		if(domainCompanies == null) throw new AonApiException("No existe ningún dominio asociado al cliente " + customer);
 		
-		domainCompanies.forEach(domainCompany -> bookingArr.put(BookingJSON.toJSON(AON.getBooking(domainCompany.getDomain(), api.getUser()))));
+		domainCompanies.forEach(domainCompany -> bookingArr.put(BookingJSON.toJSON(AON.getBooking(domainCompany.getDomain(), api.getUser()), true)));
 		
 		return bookingArr;
 	}
