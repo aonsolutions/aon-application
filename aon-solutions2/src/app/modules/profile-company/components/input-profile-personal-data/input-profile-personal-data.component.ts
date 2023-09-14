@@ -23,8 +23,8 @@ export class InputProfilePersonalDataComponent implements OnInit {
       lastname: [''],
       email: [''],
       phone: [''],
-      newPassword: [''],
-      repeatPassword: [''],
+      // newPassword: [''],
+      // repeatPassword: [''],
     });
   }
 

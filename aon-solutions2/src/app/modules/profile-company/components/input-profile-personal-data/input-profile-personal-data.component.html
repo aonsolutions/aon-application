@@ -1,5 +1,5 @@
+<form [formGroup]="profileForm">
 <div *ngFor="let user of users">
-  <form [formGroup]="profileForm" (ngSubmit)="onSave()"></form>
   <div class="form">
     <app-input
       [type]="'text'"
@@ -72,17 +72,18 @@
     </div>
   </div>
 
-  <!-- <form (ngSubmit)="onSave()">
+
+  <form>
 
     <div tool>
-      <app-button type="submit" [class]="'dark'" [width]="'100%'">
+      <app-button type="submit" [class]="'dark'" [width]="'100%'" (click)="onSave()">
         {{ "PROFILE.SAVE" | translate }}
       </app-button>
       <app-button type="button" [class]="'white'" [width]="'100%'" (click)="onCancel()">
         {{ "PROFILE.CANCEL" | translate }}
       </app-button>
     </div>
-  </form> -->
+  </form>
 
 </div>
-
+</form>
