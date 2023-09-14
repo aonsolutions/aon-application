@@ -27,10 +27,9 @@ export class SideNavComponent implements OnInit {
     private translateService: TranslateService
   ) {
     this.hide           = false;
-    this.opened         = true;
+    this.opened         = false;
     this.resize         = 1;
     this.subMenuOpened  = false;
-    this.opened         = false;
 
     this.translateService.get(
       ['MENU.INBOX', 'MENU.BILLING', 'MENU.TAX_PANEL', 'MENU.EMPLOYEE_PANEL', 'MENU.DOCUMENTATION']
@@ -89,6 +88,9 @@ export class SideNavComponent implements OnInit {
   select(item: MenuButton){
     this.items.forEach(element => {
       if(element.routerlink == item.routerlink){
+        // Si seleccionamos una vista, volvemos a reducir
+        if(this.opened === true) this.opened = false;
+        // La ruta seleccionada
         element.selected = true;
       }
     });

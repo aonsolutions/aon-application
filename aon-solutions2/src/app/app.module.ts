@@ -126,7 +126,6 @@ registerLocaleData(localeEs, 'es');
     RouterModule,
     ScrollingModule,
     SetMaterialModule,
-    SetMaterialModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
