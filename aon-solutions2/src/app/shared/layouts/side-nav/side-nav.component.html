@@ -58,7 +58,15 @@
       </mat-grid-list>
     </div>
   </mat-sidenav>
-  <mat-sidenav-content id="body-container">
+  <mat-sidenav-content 
+    id="body-container"
+    [ngClass]="opened ? 'menu-open-content' : ''"
+  >
+    <div 
+      *ngIf="opened"
+      id='menu-open' 
+     (click)="opened = !opened"
+    ></div>
     <ng-content></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>
