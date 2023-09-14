@@ -10,7 +10,7 @@
   letter-spacing: normal;
   }
 
-.issue{
+.issue-query{
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -31,5 +31,11 @@
 
 .content-input{
   margin: 22.7px 42px 18px 40px;
+}
+
+.button-close-query{
+  display: flex;
+  justify-content: end;
+  cursor: pointer;
 }
 }

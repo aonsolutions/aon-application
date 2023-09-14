@@ -166,13 +166,12 @@
   flex-grow: 0;
   display: flex;
   flex-direction: row;
-  align-items: start;
  }
 
  .content-btn-inbox{
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  justify-content: flex-end;
   margin: 35.5px 40px 881px 52px;
   gap: 20px;
  }
@@ -181,7 +180,7 @@
   display: flex;
   flex-direction: row;
   gap: 20px;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: center;
  }
 
@@ -229,9 +228,5 @@
 
  .inputSend{
   margin-bottom: 30px;
- }
-
- .mat-focus-indicator{
-  background-color: white;
  }
 }

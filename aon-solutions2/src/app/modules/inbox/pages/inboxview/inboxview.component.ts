@@ -7,6 +7,7 @@ import {
   FilterBuilder,
   IMessageChat,
   IMessage,
+  IFilter,
 } from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
@@ -14,6 +15,8 @@ import { MessageChatService } from 'src/app/core/services/message-chat.service';
 import { ModalCreateComponent } from '../../components/inbox/modal-create/modal-create.component';
 import { TableQueriesComponent } from '../../components/inbox/table-queries/table-queries.component';
 import { DatePipe } from '@angular/common';
+import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 
 export interface Tabs {
   name: string;
@@ -41,18 +44,25 @@ export class InboxviewComponent implements OnInit {
   tabsTareas: Tabs[] = [];
   tabsNotificaciones: Tabs[] = [];
   selectedTab: number = 0;
+  selectedFilterDate: number = 0;
   tabIndex: number = 0;
   showDetail: boolean = false;
   noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
   showSendButton: boolean = false;
-  selectedFilter: string = 'INBOX.THIS_WEEK';
+  filterDate: number = 1;
+  selectedFilterText: string = "Esta semana";
+  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
 
   consultaMessageCount: number = 0;
   tareasMessageCount: number = 0;
   notificacionesMessageCount: number = 0;
   totalMessageCount: number = 0;
   tableQueriesComponent!: TableQueriesComponent;
+  menuItem: MenuItem [] = []
+  selected: string    = '';
+  items: any [] = [];
+  data:  any [] = [];
 
   constructor(
     private translateService: TranslateService,
@@ -69,6 +79,9 @@ export class InboxviewComponent implements OnInit {
         'INBOX.CLOSED',
         'INBOX.NEWS',
         'INBOX.VIEWS',
+        'INBOX.THIS_WEEK',
+        'INBOX.THIS_MONTH',
+        'INBOX.ALLS',
       ])
       .subscribe((result) => {
         (this.tabsTareas = [
@@ -101,12 +114,18 @@ export class InboxviewComponent implements OnInit {
               color: 'black',
               icon: 'remove_red_eye',
             },
-          ]);
+          ]),
+          (this.menuItem! = [
+            { root: true, text: result["INBOX.THIS_WEEK"], click:() =>this.filterTable(1, result["INBOX.THIS_WEEK"]) },
+            {root: true, text: result["INBOX.THIS_MONTH"],click:() =>this.filterTable(2, result["INBOX.THIS_MONTHTHIS_MONTH"])},
+            {root: true, text: result["INBOX.ALLS"], click:() =>this.filterTable(0, result["INBOX.ALLS"])},
+          ])
+
+          this.calculateMessageCounts();
       });
   }
 
   ngOnInit(): void {
-    this.calculateMessageCounts();
   }
 
   showNoTasksMessage(hasNoTasks: boolean) {
@@ -135,9 +154,10 @@ export class InboxviewComponent implements OnInit {
   async rowClickHandler(message: any) {
     console.log(message);
     try {
-      this.showDetail = true;
-
+      const isSameRow   = this.messagesData && this.messagesData.Id === message.key;
+      this.showDetail   = !isSameRow ? true : !this.showDetail;
       this.messagesData = await this.messageService.getMessage(message.key);
+
       if (message.type == 'consulta') {
         let filterBuilder = new FilterBuilder();
         filterBuilder.addField('idMessage', message.key);
@@ -154,16 +174,24 @@ export class InboxviewComponent implements OnInit {
     this.showSendButton = !this.showSendButton;
   }
 
-  filterTable(name: string) {
-    if (name === 'estaSemana') {
-      this.selectedFilter = 'INBOX.THIS_WEEK';
-    } else if (name === 'esteMes') {
-      this.selectedFilter = 'INBOX.THIS_MONTH';
-    } else if (name === 'todo') {
-      this.selectedFilter = 'INBOX.ALLS';
+  filterTable(optionValue: number, name: string) {
+    this.filterDate = optionValue;
+    this.selected = name
+    switch (optionValue) {
+      case 1:
+        this.selectedFilterText = "Esta semana";
+        break;
+      case 2:
+        this.selectedFilterText = "Este mes";
+        break;
+      case 0:
+        this.selectedFilterText = "Todo";
+        break;
+      default:
+        this.selectedFilterText = "Esta semana";
+        break;
     }
   }
-
   async calculateMessageCounts() {
     try {
       // Calcula el recuento para "consulta"

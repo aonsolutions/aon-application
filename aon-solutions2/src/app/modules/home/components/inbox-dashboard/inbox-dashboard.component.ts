@@ -15,6 +15,7 @@ export class InboxDashboardComponent implements OnInit {
   bodyTable       : any[] = [];
   displayedColumns: string[] = [
     'name',
+    'statusIcon',
     'status',
     'title',
     'description',
@@ -22,7 +23,7 @@ export class InboxDashboardComponent implements OnInit {
     'action',
   ];
   messageTotal : string = '0';
-  
+
   constructor(
     private translateService: TranslateService,
     private messageService : MessageService
@@ -51,10 +52,14 @@ export class InboxDashboardComponent implements OnInit {
         column = Object.assign({}, message);
         column.key = messageKey;
         column.name = message.Name;
-        column.status = {
+        column.statusIcon = {
           icon: message.Status.toLowerCase().includes('abierta')
             ? [{ reply_all: 'green' }]
             : [],
+          text:"",
+        };
+        column.status = {
+          icon: [],
           text:
             "<span class='background-text-red-light'>" +
             message.Status +
@@ -94,7 +99,7 @@ export class InboxDashboardComponent implements OnInit {
       });
       this.bodyTable = tableRow;
     });
-    
+
     // Mensajes - total
     let filterBuilderTotal = new FilterBuilder();
 //    filterBuilderTotal.addField('status', 'abierta');

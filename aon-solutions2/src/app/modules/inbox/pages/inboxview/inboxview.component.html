@@ -29,7 +29,9 @@
       (click)="selectedTab = 0; onTabChange()"
     >
       <div>
-        <app-icon shape="all_inbox"></app-icon>
+        <app-icon
+        class="red"
+        shape="all_inbox"></app-icon>
       </div>
       <div class="textnumber">
         &nbsp;&nbsp;
@@ -49,7 +51,7 @@
       (click)="selectedTab = 1; onTabChange()"
     >
       <div>
-        <app-icon shape="chat"></app-icon>
+        <app-icon class="red" shape="chat"></app-icon>
       </div>
       <div class="textnumber">
         &nbsp;&nbsp;
@@ -69,7 +71,7 @@
       (click)="selectedTab = 2; onTabChange()"
     >
       <div>
-        <app-icon shape="playlist_add_check"></app-icon>
+        <app-icon class="red" shape="playlist_add_check"></app-icon>
       </div>
       <div class="textnumber">
         &nbsp;&nbsp;
@@ -88,7 +90,7 @@
       (click)="selectedTab = 3; onTabChange()"
     >
       <div>
-        <app-icon shape="notifications_none"></app-icon>
+        <app-icon class="red" shape="notifications_none"></app-icon>
       </div>
       <div class="textnumber">
         &nbsp;&nbsp;
@@ -111,7 +113,10 @@
     </div>
     <ng-container *ngIf="selectedTab == 0">
       <div *ngIf="this.tabIndex == 0">
-        <app-table-component></app-table-component>
+        <app-table-component
+        (rowClicked)="rowClickHandler($event)"
+        >
+      </app-table-component>
       </div>
     </ng-container>
     <ng-container *ngIf="selectedTab == 1">
@@ -121,45 +126,30 @@
         [paddingLeftHeader]="'1rem'"
         [tabColor]="'red'"
       >
-        <div tool>
-          <span [matMenuTriggerFor]="menu">{{
-            selectedFilter | translate
-          }}</span>
+        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+          <span>{{ selectedFilterText }}</span>
           <app-icon
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
+
             shape="more_vert"
           ></app-icon>
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="filterTable('estaSemana')">
+          <app-dropdown-menu #menu *ngIf="menuItem.length > 0" [menuItem]="menuItem" >
+            <button>
               {{ "INBOX.THIS_WEEK" | translate }}
             </button>
-            <button mat-menu-item (click)="filterTable('esteMes')">
+            <button>
               {{ "INBOX.THIS_MONTH" | translate }}
             </button>
-            <button mat-menu-item (click)="filterTable('todo')">
+            <button>
               {{ "INBOX.ALLS" | translate }}
             </button>
-          </mat-menu>
+          </app-dropdown-menu>
         </div>
-        <div content *ngIf="this.tabIndex == 0">
+        <div content>
           <app-table-queries
+            [filterTabSelec]="this.tabIndex"
+            [filterDate]="this.filterDate"
             (rowClicked)="rowClickHandler($event)"
           ></app-table-queries>
-        </div>
-        <div content *ngIf="this.tabIndex == 1">
-          <app-table-queries
-            [filterStatus]="['abierta']"
-            (rowClicked)="rowClickHandler($event)"
-          >
-          </app-table-queries>
-        </div>
-        <div content *ngIf="this.tabIndex == 2">
-          <app-table-queries
-            [filterStatus]="['cerrada']"
-            (rowClicked)="rowClickHandler($event)"
-          >
-          </app-table-queries>
         </div>
       </app-tabs>
     </ng-container>
@@ -171,49 +161,30 @@
         [paddingLeftHeader]="'1rem'"
         [tabColor]="'red'"
       >
-        <div tool>
-          <span [matMenuTriggerFor]="menu">{{
-            selectedFilter | translate
-          }}</span>
+        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+          <span>{{ selectedFilterText }}</span>
           <app-icon
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
             shape="more_vert"
           ></app-icon>
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="filterTable('estaSemana')">
+          <app-dropdown-menu #menu *ngIf="menuItem.length > 0" [menuItem]="menuItem" >
+            <button>
               {{ "INBOX.THIS_WEEK" | translate }}
             </button>
-            <button mat-menu-item (click)="filterTable('esteMes')">
+            <button>
               {{ "INBOX.THIS_MONTH" | translate }}
             </button>
-            <button mat-menu-item (click)="filterTable('todo')">
+            <button>
               {{ "INBOX.ALLS" | translate }}
             </button>
-          </mat-menu>
+          </app-dropdown-menu>
         </div>
-        <div content *ngIf="this.tabIndex == 0">
+        <div content>
           <app-table-tasks
             (noPendingTasks)="showNoTasksMessage($event)"
             (rowClicked)="rowClickHandler($event)"
+            [filterTabSelec]="this.tabIndex"
+            [filterDate]="this.filterDate"
           ></app-table-tasks>
-          <ng-template #noTasks *ngIf="noTasksMessage">{{
-            "INBOX.NO_PENDING_TASKS" | translate
-          }}</ng-template>
-        </div>
-        <div content *ngIf="this.tabIndex == 1">
-          <app-table-tasks
-            (rowClicked)="rowClickHandler($event)"
-            [filterStatus]="['pendiente']"
-          >
-          </app-table-tasks>
-        </div>
-        <div content *ngIf="this.tabIndex == 2">
-          <app-table-tasks
-            [filterStatus]="['realizada']"
-            (rowClicked)="rowClickHandler($event)"
-          >
-          </app-table-tasks>
         </div>
       </app-tabs>
     </ng-container>
@@ -224,42 +195,28 @@
         [paddingLeftHeader]="'1rem'"
         [tabColor]="'red'"
       >
-        <div tool>
-          <span [matMenuTriggerFor]="menu">{{
-            selectedFilter | translate
-          }}</span>
+        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+          <span>{{ selectedFilterText }}</span>
           <app-icon
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
             shape="more_vert"
           ></app-icon>
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="filterTable('estaSemana')">
+          <app-dropdown-menu #menu *ngIf="menuItem.length > 0" [menuItem]="menuItem" >
+            <button>
               {{ "INBOX.THIS_WEEK" | translate }}
             </button>
-            <button mat-menu-item (click)="filterTable('esteMes')">
+            <button>
               {{ "INBOX.THIS_MONTH" | translate }}
             </button>
-            <button mat-menu-item (click)="filterTable('todo')">
+            <button>
               {{ "INBOX.ALLS" | translate }}
             </button>
-          </mat-menu>
+          </app-dropdown-menu>
         </div>
-        <div content *ngIf="this.tabIndex == 0">
+        <div content>
           <app-table-notifications
             (rowClicked)="rowClickHandler($event)"
-          ></app-table-notifications>
-        </div>
-        <div content *ngIf="this.tabIndex == 1">
-          <app-table-notifications
-            [filterStatus]="['nueva']"
-            (rowClicked)="rowClickHandler($event)"
-          ></app-table-notifications>
-        </div>
-        <div content *ngIf="this.tabIndex == 2">
-          <app-table-notifications
-            [filterStatus]="['vista']"
-            (rowClicked)="rowClickHandler($event)"
+            [filterTabSelec]="this.tabIndex"
+            [filterDate]="this.filterDate"
           ></app-table-notifications>
         </div>
       </app-tabs>
@@ -274,7 +231,7 @@
         <div class="state">
           <p>{{ messagesData.Status }}</p>
         </div>
-        <div class="icons" *ngIf="selectedTab === 1 || selectedTab === 2">
+        <div class="icons" *ngIf="selectedTab === 1 || selectedTab === 2 || selectedTab === 0">
           <app-icon shape="reply"></app-icon>
           <app-icon shape="archive"></app-icon>
         </div>
@@ -291,7 +248,7 @@
           </div>
         </div>
       </div>
-      <div *ngIf="selectedTab === 1">
+      <div *ngIf="selectedTab === 1 || (selectedTab === 0 && messagesData.Type === 'consulta')">
         <div *ngFor="let messageChat of messagesChat; let i = index">
           <div class="chat">
             <p class="name">{{ messageChat.Name }}</p>
@@ -303,7 +260,7 @@
           <hr />
         </div>
       </div>
-      <div *ngIf="selectedTab === 2">
+      <div *ngIf="selectedTab === 2 || (selectedTab === 0 && messagesData.Type === 'tarea')">
         <div class="content-tasks">
           <p class="name-tasks">{{ messagesData.Name }}</p>
           <p class="descrption-tasks">{{ messagesData.Description }}</p>
@@ -335,18 +292,20 @@
               [placeholder]="'Escribe...'"
               class="inputSend"
             ></app-input>
-            <app-button
-              class="btn-inbox-01"
-              [class]="'red left'"
-              [width]="'100%'"
-            >
-              <app-icon shape="send"></app-icon>
-              Enviar
-            </app-button>
+            <div class="send-button">
+              <app-button
+                class="btn-inbox-01"
+                [class]="'red left'"
+                [width]="'100%'"
+              >
+                <app-icon shape="send"></app-icon>
+                Enviar
+              </app-button>
+            </div>
           </div>
         </div>
       </div>
-      <div *ngIf="selectedTab === 3">
+      <div *ngIf="selectedTab === 3 || (selectedTab === 0 && messagesData.Type === 'notificacion')">
         <div class="content-tasks">
           <p class="name-tasks">{{ messagesData.Name }}</p>
           <p class="descrption-tasks">{{ messagesData.Description }}</p>
