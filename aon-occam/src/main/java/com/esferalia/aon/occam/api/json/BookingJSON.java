@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.security.Booking;
@@ -69,6 +70,68 @@ public class BookingJSON {
 			.put(IJsonNames.NUMBER_OF_USERS, object.getNumberOfUsers())
 			.put(IJsonNames.PAYER, object.getPayer())
 			.put(IJsonNames.RESUME, object.getResume() != null ? bookingResume(object.getResume()): null);
+	}
+	
+	public static JSONObject toJSON(Booking object, Boolean bookingCheck) {
+		JSONArray apps = new JSONArray();
+		JSONArray parentApps = new JSONArray();
+		object.getApps().forEach(r -> apps.put(r.name()));
+		object.getParentApps().forEach(r -> parentApps.put(r.name()));
+
+		return new JSONObject()
+			.put(IJsonNames.DOMAIN, DomainJSON.toJSON(object.getDomain()))
+			.put(IJsonNames.COMPANY, CompanyJSON.toJSON(object.getCompany()))
+			.put(IJsonNames.TYPE, object.getType() != null ? object.getType().name() : null)
+			.put(IJsonNames.APPS, apps) 
+			.put(IJsonNames.PARENT_APPS, parentApps) 
+			.put(IJsonNames.NUMBER_OF_USERS, object.getNumberOfUsers())
+			.put(IJsonNames.PAYER, object.getPayer())
+			.put(IJsonNames.RESUME, object.getResume() != null ? (null != bookingCheck && bookingCheck ? bookingResume(object.getResume()) : bookingResumeConsole(object.getResume())): null);
+	}
+	
+	private static JSONObject bookingResumeConsole(BookingResume resume) {
+		JSONObject o = new JSONObject();
+		if(resume != null) { 
+			JSONObject domain = new JSONObject();
+			resume.getDomainTypes().keySet().forEach(r ->{
+				DomainTypeInfo dti = resume.getDomainTypes().get(r);
+				JSONObject oa = new JSONObject();
+				oa.put("number", dti.getNumber());
+				
+				JSONObject apps = new JSONObject();
+				dti.getChildApps().keySet().forEach(r2 -> apps.put(r2.name(), dti.getChildApps().get(r2)));
+				oa.put(IJsonNames.APPS, apps);
+
+				oa.put("childs", childJson(dti.getChilds()));
+
+				domain.put(r.name(), oa);	
+			});
+			o.put(IJsonNames.DOMAIN, domain);
+
+			JSONObject user = new JSONObject();
+			resume.getUserTypes().keySet().forEach(r -> user.put(r.name(), resume.getUserTypes().get(r)));
+			user.put("childDefinedUsers", resume.getChildDefinedUsers());
+			user.put("childBillingUsers", resume.getChildBillingUsers());
+			
+			o.put(IJsonNames.USER, user);
+		}
+		return o;
+	}
+	
+	private static JSONArray childJson(List<Domain> childs) {
+		JSONArray array = new JSONArray();
+		childs.stream().forEach(d -> {
+			JSONArray apps = new JSONArray();
+			d.getApps().stream().forEach(app -> apps.put(app.getApp().name()));
+			JSONObject json = new JSONObject();
+			json.put(IJsonNames.ID, d.getId());
+			json.put(IJsonNames.NAME, d.getName());
+			json.put(IJsonNames.DESCRIPTION, d.getDescription());
+			json.put(IJsonNames.APPS, apps);
+			json.put(IJsonNames.MAX_DEFINED_USERS, d.getMaxDefinedUsers());
+			array.put(json);
+		});
+		return array;
 	}
 	
 	private static JSONObject bookingResume(BookingResume resume) {
