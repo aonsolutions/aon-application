@@ -1,232 +1,217 @@
 @import "src/styles.scss";
 ::ng-deep{
- #cursor{
-  cursor: pointer;
- }
 
- #button-create{
-  margin: 20px 20px 20px 20px;
-  padding: 10px 48px 10px 20px;
-  border-radius: 4px;
- }
+  #button-create{
+    display         : flex;
+    justify-content : center;
+    height          : 3.4rem;
+  }
+  
+  .message{
+    width: 14px;
+    height: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 16px;
+    background-color: #feedec;
+  }
 
- #space {
-  margin: 48px 20px 20px 20px;
-  padding: 10px 48px 10px 20px;
- }
-
- .textnumber{
-  flex-grow: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
- }
-
- .message{
-  width: 14px;
-  height: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  border-radius: 16px;
-  background-color: #feedec;
- }
-
- .message-inbox{
-  margin-left: 78px;
- }
+  .message-inbox{
+    margin-left: 78px;
+  }
 
   .message-queries{
-  margin-left: 60px;
- }
+    margin-left: 60px;
+  }
 
   .message-tasks{
-  margin-left: 90px;
- }
+    margin-left: 90px;
+  }
 
   .message-notifications{
-  margin-left: 20px;
+    margin-left: 20px;
 
- }
+  }
 
- .chat{
-  width: 602px;
-  height: 48px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-  gap: 32px;
-  padding: 0;
-  margin-top: 40px;
+  .chat{
+    width: 602px;
+    height: 48px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 32px;
+    padding: 0;
+    margin-top: 40px;
 
- }
+  }
 
- .headerMessage{
-  width: 617px;
-  height: 32px;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 200px;
-  margin: 38.7px 40px 20px 36px;
-  padding: 0;
- }
+  .headerMessage{
+    width: 617px;
+    height: 32px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 200px;
+    margin: 38.7px 40px 20px 36px;
+    padding: 0;
+  }
 
- .content-state{
-   display: flex;
-   flex-direction: row;
-   justify-content: space-between;
-   gap: 10px;
-   padding: 30px 20px 0px 20px;
- }
- .state{
-  width: 67px;
-  height: 32px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 5px;
-  border-radius: 4px;
-  background-color: #fddcda;
- }
+  .content-state{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 30px 20px 0px 20px;
+  }
+  .state{
+    width: 67px;
+    height: 32px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #fddcda;
+  }
 
- .icons{
-  width: 73px;
-  height: 24px;
-  flex-grow: 0;
-  display: flex;
-  flex-direction: row;
-  gap: 25px;
-  padding: 0;
-  color: black;
- }
+  .icons{
+    width: 73px;
+    height: 24px;
+    flex-grow: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    padding: 0;
+    color: black;
+  }
 
- .content-head-message{
-  width: 617px;
-  height: 33px;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 359px;
-  margin: 27px 40px 15px 36px;
-  padding: 0;
- }
+  .content-head-message{
+    width: 617px;
+    height: 33px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 359px;
+    margin: 27px 40px 15px 36px;
+    padding: 0;
+  }
 
- .content-title-date{
-  width: 617px;
-  height: 33px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin: 27px 84px 15px 0px;
- }
+  .content-title-date{
+    width: 617px;
+    height: 33px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 27px 84px 15px 0px;
+  }
 
- .arrow-title{
-  width: 191px;
-  height: 33px;
-  flex-grow: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 15px;
-  padding: 0;
- }
+  .arrow-title{
+    width: 191px;
+    height: 33px;
+    flex-grow: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 15px;
+    padding: 0;
+  }
 
- .icon-back{
-  width: 24px;
-  height: 24px;
-  flex-grow: 0;
-  object-fit: contain;
-}
+  .icon-back{
+    width: 24px;
+    height: 24px;
+    flex-grow: 0;
+    object-fit: contain;
+  }
 
-.title{
-  width: 155px;
-  height: 33px;
-  flex-grow: 0;
-  font-family: Roboto;
-  font-size: 24px;
-  font-weight: bold;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: 1.5;
-  letter-spacing: normal;
- }
+  .title{
+    width: 155px;
+    height: 33px;
+    flex-grow: 0;
+    font-family: Roboto;
+    font-size: 24px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+  }
 
- .btn-inbox-01{
-  width: 229px;
-  height: 48px;
-  flex-grow: 0;
-  display: flex;
-  flex-direction: row;
- }
+  .btn-inbox-01{
+    width: 229px;
+    height: 48px;
+    flex-grow: 0;
+    display: flex;
+    flex-direction: row;
+  }
 
- .content-btn-inbox{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  margin: 35.5px 40px 881px 52px;
-  gap: 20px;
- }
+  .content-btn-inbox{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin: 35.5px 40px 881px 52px;
+    gap: 20px;
+  }
 
- .btns {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  justify-content: flex-end;
-  align-items: center;
- }
+  .btns {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: flex-end;
+    align-items: center;
+  }
 
- .content-tasks{
-  width: 617px;
-  height: 172px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 10px;
-  margin: 40px 38px 38px 39px;
-  padding: 0;
- }
+  .content-tasks{
+    width: 617px;
+    height: 172px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 40px 38px 38px 39px;
+    padding: 0;
+  }
 
- .name-tasks{
-  width: 539px;
-  height: 14px;
-  flex-grow: 0;
-  font-family: Roboto;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.75px;
-  text-align: left;
-  color: #292a31;
- }
+  .name-tasks{
+    width: 539px;
+    height: 14px;
+    flex-grow: 0;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.75px;
+    text-align: left;
+    color: #292a31;
+  }
 
- .descrption-tasks{
-  width: 616px;
-  height: 144px;
-  flex-grow: 0;
-  font-family: Roboto;
-  font-size: 16px;
-  line-height: 1.5;
-  letter-spacing: 0.44px;
-  text-align: justify;
-  color: #787885;
- }
+  .descrption-tasks{
+    width: 616px;
+    height: 144px;
+    flex-grow: 0;
+    font-family: Roboto;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: 0.44px;
+    text-align: justify;
+    color: #787885;
+  }
 
- .clickConsultar{
-  display: flex;
-  flex-direction: column;
-  margin-top: 50px;
- }
+  .clickConsultar{
+    display: flex;
+    flex-direction: column;
+    margin-top: 50px;
+  }
 
- .inputSend{
-  margin-bottom: 30px;
- }
+  .inputSend{
+    margin-bottom: 30px;
+  }
 }

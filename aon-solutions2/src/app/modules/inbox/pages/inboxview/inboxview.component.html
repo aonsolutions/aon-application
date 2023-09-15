@@ -1,109 +1,84 @@
 <app-grid-layout>
   <!--SIDENAV-->
   <div nav>
-    <!--CREATE BUTTON-->
-    <div id="space" *ngIf="selectedTab !== 0 && selectedTab !== 1"></div>
-    <div id="button-create">
-      <app-button
-        *ngIf="selectedTab !== 2 && selectedTab !== 3"
-        [class]="'red left'"
-        (click)="showModal()"
-      >
-        <app-icon shape="add_comment"></app-icon>
-        {{ "INBOX.CREATE" | translate }}
-      </app-button>
-      <app-modal-controller #modal>
-        <app-create-query *ngIf="isModalVisible"></app-create-query>
-      </app-modal-controller>
+    <!--CREATE BUTTON // siempre tiene que tener el mismo hueco -->
+    <div 
+      id="button-create"
+    >
+      <!-- Ocultar donde es necesario -->
+      <span *ngIf="selectedTab !== 2 && selectedTab !== 3">
+        <app-button
+          [class]="'red left'"
+          (click)="showModal()"
+        >
+          <app-icon shape="add_comment"></app-icon>
+          {{ "INBOX.CREATE" | translate }}
+        </app-button>
+        <app-modal-controller #modal>
+          <app-create-query *ngIf="isModalVisible"></app-create-query>
+        </app-modal-controller>
+      </span>
     </div>
     <!--FIN CREATE BUTTON-->
     <!--List -->
-    <app-button
-      [width]="'100%'"
-      [height]="'100%'"
-      [backgroundColor]="'white'"
-      [hoverBackgroundColor]="'#feedec'"
-      [border]="'none'"
-      [align]="'left'"
-      [padding]="'0rem 1rem'"
-      (click)="selectedTab = 0; onTabChange()"
-    >
-      <div>
-        <app-icon
-        class="red"
-        shape="all_inbox"></app-icon>
+    <app-list-element class="red">
+      <div menu>
+        <li
+          [ngClass]="{'select': selectedTab === 0}"
+          (click)="selectedTab = 0; onTabChange()"
+        >
+          <app-icon shape="all_inbox"></app-icon>
+          {{ "INBOX.INBOX" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ totalMessageCount }}
+            </span>
+          </span>
+        </li>
+        <li
+          [ngClass]="{'select': selectedTab === 1}"
+          (click)="selectedTab = 1; onTabChange()"
+        >
+          <app-icon shape="chat"></app-icon>
+          {{ "INBOX.QUERIES" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ consultaMessageCount }}
+            </span>
+          </span>
+        </li>
+        <li
+          [ngClass]="{'select': selectedTab === 2}"
+          (click)="selectedTab = 2; onTabChange()"
+        >
+          <app-icon shape="playlist_add_check"></app-icon>
+          {{ "INBOX.TASKS" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ consultaMessageCount }}
+            </span>
+          </span>
+        </li>
+        <li
+          [ngClass]="{'select': selectedTab === 3}"
+          (click)="selectedTab = 3; onTabChange()"
+        >
+          <app-icon shape="notifications_none"></app-icon>
+          {{ "INBOX.NOTIFICATIONS" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ consultaMessageCount }}
+            </span>
+          </span>
+        </li>
       </div>
-      <div class="textnumber">
-        &nbsp;&nbsp;
-        <p>{{ "INBOX.INBOX" | translate }}</p>
-        <p class="message message-inbox">{{ totalMessageCount }}</p>
-      </div>
-    </app-button>
-
-    <app-button
-      [width]="'100%'"
-      [height]="'100%'"
-      [backgroundColor]="'white'"
-      [hoverBackgroundColor]="'#feedec'"
-      [border]="'none'"
-      [align]="'left'"
-      [padding]="'0rem 1rem'"
-      (click)="selectedTab = 1; onTabChange()"
-    >
-      <div>
-        <app-icon class="red" shape="chat"></app-icon>
-      </div>
-      <div class="textnumber">
-        &nbsp;&nbsp;
-        <p>{{ "INBOX.QUERIES" | translate }}</p>
-        <p class="message message-queries">{{ consultaMessageCount }}</p>
-      </div>
-    </app-button>
-
-    <app-button
-      [width]="'100%'"
-      [height]="'100%'"
-      [backgroundColor]="'white'"
-      [hoverBackgroundColor]="'#feedec'"
-      [border]="'none'"
-      [align]="'left'"
-      [padding]="'0rem 1rem'"
-      (click)="selectedTab = 2; onTabChange()"
-    >
-      <div>
-        <app-icon class="red" shape="playlist_add_check"></app-icon>
-      </div>
-      <div class="textnumber">
-        &nbsp;&nbsp;
-        <p>{{ "INBOX.TASKS" | translate }}</p>
-        <p class="message message-tasks">{{ consultaMessageCount }}</p>
-      </div>
-    </app-button>
-    <app-button
-      [width]="'100%'"
-      [height]="'100%'"
-      [backgroundColor]="'white'"
-      [hoverBackgroundColor]="'#feedec'"
-      [border]="'none'"
-      [align]="'left'"
-      [padding]="'0rem 1rem'"
-      (click)="selectedTab = 3; onTabChange()"
-    >
-      <div>
-        <app-icon class="red" shape="notifications_none"></app-icon>
-      </div>
-      <div class="textnumber">
-        &nbsp;&nbsp;
-        <p>{{ "INBOX.NOTIFICATIONS" | translate }}</p>
-        <p class="message message-notifications">{{ consultaMessageCount }}</p>
-      </div>
-    </app-button>
+    </app-list-element>
     <!--FIN List -->
   </div>
   <!--FIN SIDENAV-->
   <!--CONTENIDO-->
-  <div content class="padding" id="cursor">
-    <div class="margin width-40" *ngIf="selectedTab !== 4">
+  <div content>
+    <div class="padding width-40">
       <app-input
         [appearance]="'outline'"
         [class]="'search'"
@@ -112,11 +87,11 @@
       ></app-input>
     </div>
     <ng-container *ngIf="selectedTab == 0">
-      <div *ngIf="this.tabIndex == 0">
+      <div class="padding">
         <app-table-component
-        (rowClicked)="rowClickHandler($event)"
+          (rowClicked)="rowClickHandler($event)"
         >
-      </app-table-component>
+        </app-table-component>
       </div>
     </ng-container>
     <ng-container *ngIf="selectedTab == 1">
@@ -129,7 +104,6 @@
         <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
           <span>{{ selectedFilterText }}</span>
           <app-icon
-
             shape="more_vert"
           ></app-icon>
           <app-dropdown-menu #menu *ngIf="menuItem.length > 0" [menuItem]="menuItem" >
