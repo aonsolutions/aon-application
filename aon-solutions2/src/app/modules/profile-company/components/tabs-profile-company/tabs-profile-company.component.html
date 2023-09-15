@@ -5,10 +5,10 @@
   [paddingLeftHeader]="'1rem'"
 >
   <div tool>
-    <app-button [class]="'dark'" [width]="'100%'">
+    <app-button [class]="'dark'" [width]="'100%'" (click)="onSave()">
       {{ "PROFILE.SAVE" | translate }}
     </app-button>
-    <app-button [class]="'white'" [width]="'100%'">
+    <app-button [class]="'white'" [width]="'100%'" (click)="onCancel()">
       {{ "PROFILE.CANCEL" | translate }}</app-button
     >
   </div>
@@ -37,7 +37,9 @@
     <!-- pestaña datos registrales -->
     <app-grid-layout>
       <div content>
-        <app-input-profile-registry-data></app-input-profile-registry-data>
+        <app-input-profile-registry-data
+        
+        ></app-input-profile-registry-data>
       </div>
     </app-grid-layout>
   </div>

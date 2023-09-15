@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { RegistryEnterpriseService } from 'src/app/core/services/registry-enterprise.service';
 
 @Component({
@@ -8,20 +8,31 @@ import { RegistryEnterpriseService } from 'src/app/core/services/registry-enterp
 })
 export class InputProfileRegistryDataComponent implements OnInit {
   registryEnterprises: any[] = [];
+  documentEnterprise: string = '';
+
 
   constructor(private registryEnterpriseService: RegistryEnterpriseService) {
-    const documentEnt = localStorage.getItem('enterprise');
+    if (localStorage.getItem('enterprise')) {
+       this.documentEnterprise = localStorage.getItem('enterprise')!;
+         }
     this.registryEnterpriseService
-      .getRegistryEnterprise(documentEnt)
+      .getRegistryEnterprise(this.documentEnterprise)
       .then((registryEnterprise) => {
         this.registryEnterprises.push(registryEnterprise);
       });
+
+      // const documentEnterprise = localStorage.getItem('enterprise');
+      // this.registryEnterpriseService
+      //   .getRegistryEnterprise(documentEnterprise)
+      //   .then((registryEnterprise) => {
+      //     this.registryEnterprises.push(registryEnterprise);
+      //   });
   }
   getValue(newValue: any, registryEnterprise: any, propertyName: string) {
     // Actualiza el valor correspondiente en el objeto registryEnterprise
     registryEnterprise[propertyName] = newValue;
-  }
 
+  }
   onSave() {
     // Llama a la función para actualizar los datos en el servidor
     this.registryEnterpriseService
@@ -39,6 +50,8 @@ export class InputProfileRegistryDataComponent implements OnInit {
     // Restaura los valores originales en el objeto registryEnterprise actual
     this.registryEnterprises[0] = { ...originalRegistryEnterprise };
   }
+
+
 
   ngOnInit(): void {}
 }
