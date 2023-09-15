@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -353,29 +354,31 @@ public class IRPFDAO {
 				,SALARY.IRPF_BASE
 				,SALARY.MONEY_IRPF_BASE
 				,SALARY.INKIND_IRPF_BASE
-				,SALARY.TOTAL_IRPF)
+				,SALARY.TOTAL_IRPF
+				,CONTRACT_DATA.EXPRESSION)
 			.from(SALARY)
 			.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
-			.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID));
+			.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
+			.leftJoin(CONTRACT_DATA).on(SALARY.CONTRACT.equal(CONTRACT_DATA.CONTRACT).and(CONTRACT_DATA.NAME.equal("IRPF_TYPE")));
 	}
 
 	private static Field<java.sql.Date> getSalaryDateField(final ISalaryFiscalModel fm) {
 		return (fm.mustUseChargeDate()?SALARY.CHARGE_DATE:SALARY.ISSUE_DATE);
 	}
 	
-	public static Stream<IrpfBreakdown> getSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm) {
-		return getSalaryIrpfBreakdownSelect(ctx) 
-			.where(SALARY.DOMAIN.equal(fm.getDomain()))
-				.and(getSalaryDateField(fm).between(getStartDate(fm),getEndDate(fm)))
-				.and(SALARY.IRPF_BASE.ne( 0.0 ))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
-				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
-			.fetch()
-			.stream()
-			.map(rec -> new IrpfSalaryBreakdownFiller().apply(rec) )
-			.flatMap(List::stream)
-			;
-	}
+//	public static Stream<IrpfBreakdown> getSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm) {
+//		return getSalaryIrpfBreakdownSelect(ctx) 
+//			.where(SALARY.DOMAIN.equal(fm.getDomain()))
+//				.and(getSalaryDateField(fm).between(getStartDate(fm),getEndDate(fm)))
+//				.and(SALARY.IRPF_BASE.ne( 0.0 ))
+//				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+//				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+//			.fetch()
+//			.stream()
+//			.map(rec -> new IrpfSalaryBreakdownFiller().apply(rec) )
+//			.flatMap(List::stream)
+//			;
+//	}
 	
 	public static Stream<IrpfBreakdown> getPreviousNotInModelSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm) {
 		Table<Record1<Integer>> modelSalary = ctx.getDslContext().select( ALCATRAZ_SALARY_ID )
@@ -395,6 +398,7 @@ public class IRPFDAO {
 					.and(SALARY.IRPF_BASE.ne( 0.0 ))
 					.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
 					.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+					.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
 				.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_DOCUMENT)
 				.fetch()
 				.stream()
@@ -419,6 +423,7 @@ public class IRPFDAO {
 				.and(SALARY.IRPF_BASE.ne( 0.0 ))
 				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
 				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+				.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
 			.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_DOCUMENT)
 			.fetch()
 			.stream()

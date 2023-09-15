@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -725,7 +726,7 @@ public class ServalInvoiceImport extends ImportUtils{
 
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
 	
-		PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
+
 //		Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
 //		Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
 //		Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
@@ -735,6 +736,8 @@ public class ServalInvoiceImport extends ImportUtils{
 			Invoice invoice = buildInvoice(aonCtx, domain, user, iic);
 			RegistryAddress address = buildAddress(aonCtx, domain, iic);
 			buildRegistry(domain, user, invoice, iic, address);			
+
+			PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
 			
 			Double total = 0.0;
 			Double base = 0.0;
@@ -847,7 +850,6 @@ public class ServalInvoiceImport extends ImportUtils{
 				
 			invoice.setFinances(new LinkedList<Finance>());
 			if(iic.getFinances().isEmpty()) {
-				
 				Finance f = new Finance()
 					.setAmount(invoice.getTotal())
 					.setDueDate(iic.getFinanceDate() != null ? iic.getFinanceDate() : invoice.getIssueDate())
@@ -863,7 +865,13 @@ public class ServalInvoiceImport extends ImportUtils{
 					.setSecurityLevel(invoice.getSecurityLevel())
 					.setConcept(invoice.getDocumentNumber())
 					.setFinanceStatus(FinanceStatus.PENDING);
-				
+				if(invoice.getRegistry() != null) {
+					RegistryPayMethod rpm = AON.getRegistryPayMethod(domain, user, d -> d.getRegistryProperty().eq(invoice.getRegistry()));
+					if(rpm.getId() != null)	{
+						f.setPayMethod(rpm.getPayMethod().getId());
+						f.setBankAccount(rpm.getRbank().getBankAccount());
+					}
+				}				
 				invoice.addFinance(f);
 			} else {
 				for (Finance fin : iic.getFinances()) {
