@@ -15,8 +15,8 @@
 	</description>
 
 	<properties>
-		<compileSource>1.8</compileSource>
-		<compileTarget>11</compileTarget>
+		<compileSource>17</compileSource>
+		<compileTarget>21</compileTarget>
 		<svnkitVersion>1.7.4-v1</svnkitVersion>
 		<aonCoreLibsVersion>8.112</aonCoreLibsVersion>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
@@ -458,6 +458,10 @@
 					<source>${compileSource}</source>
 					<target>${compileTarget}</target>
 					<encoding>ISO-8859-1</encoding>
+					<compilerArgs>
+						<arg>--add-exports</arg>
+						<arg>java.base/sun.net.www.protocol.jar=ALL-UNNAMED</arg>
+					</compilerArgs>
 				</configuration>
 			</plugin>
 
@@ -595,7 +599,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
-				<version>3.6.4</version>
+				<version>3.9.0</version>
 			</plugin>
 		</plugins>
 	</build>
