@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<style>
+	.aon-align-left {
+		text-align:left;
+	}
+	
+	.aon-vertical-middle  {
+		font-size: 1.3rem;
+		vertical-align: middle;
+	}
+	
+	a.aon-width-all {
+		display: inline-block;
+	}
+	
+	.aon-direct-access-list-element.selected {
+    	background-color: #eaeaea;
+    	border-top-right-radius: 50px 50px;
+    	border-bottom-right-radius: 50px 50px;
+	}
+	
+	</style>
+
+	<script type='text/javascript' >
+	
+	</script>
+	
+	
+	<aon:div id="helpControlPortlet" styleClass="aon-portlet">
+		<aon:div 
+		style="cursor:pointer;" 
+		styleClass="aon-portlet-title" 
+		onclick="javascript:collapseMenuPortlet(this)">
+			<aon:outputText 
+			value="expand_more"
+			styleClass="material-icons aon-vertical-middle" />
+			<aon:outputText value="AYUDA/INFORMACIÓN" />
+		</aon:div>
+		
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2" >
+			<aon:div 
+				id="helpMenuPortlet" >
+
+				<aon:div styleClass="aon-direct-access-list ">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{help.notificationsEnabled ? 'selected':''}">
+						<aon:commandLink id="infoNotifications"
+							styleClass="aon-width-all aon-black "
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="rss_feed" />
+							<aon:outputText value=" Notificaciones" />
+							<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+							<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{true}" />
+						</aon:commandLink> 	
+					</aon:div>
+						
+				</aon:div>
+
+				<aon:div styleClass="aon-direct-access-list">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{help.contentEnabled ? 'selected':''}">
+						
+						<aon:commandLink id="helpIndex"
+							styleClass="aon-width-all aon-black "
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="school" />
+							<aon:outputText value=" Índice Contenidos" />
+							<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{true}" />
+							<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
+						</aon:commandLink> 	
+						
+					</aon:div>
+
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+						<aon:commandLink id="infoAbout"
+							styleClass="aon-width-all aon-black "
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="info" />
+							<aon:outputText value=" Acerca de ..." />
+							<f:setPropertyActionListener target="#{aonConfiguration.properties.showAbout}" value="#{true}" />
+						</aon:commandLink> 	
+					</aon:div>
+
+				</aon:div>
+			</aon:div>		
+		</aon:div>
+
+	</aon:div>
+
+
+</ui:composition>

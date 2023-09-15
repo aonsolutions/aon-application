@@ -291,13 +291,19 @@ public class SettlementTest {
 			int	accrualTotal   = f.number().numberBetween(1000, 99999);
 			int	deductionTotal = f.number().numberBetween(1000, 9999);
 
+			Map<Integer, ArrayList<PDFPayment>> payments = new HashMap<>();
+			ArrayList<PDFPayment> pl = new ArrayList<>();
+			pl.add(new PDFPayment(2d, "Prestación IT"));
+			payments.put(100, pl);
+			
 			builder.setEmployeeName(employeeName.toUpperCase()).setEmployeeNIF(employeeNif)
 					.setEmployeeAntiquity(employeeAntiquity).setEmployeeCategory(employeeCategory.toUpperCase())
 					.setEnterpriseName(enterpriseName.toUpperCase()).setEnterpriseAddress(enterpriseAddress)
 					.setEnterpriseNIF(enterpriseNif).setExistRepresentative(true).setEndCause(endCause.toUpperCase())
 					.setEndDate(endDate).setPayments(new HashMap<>()).setDeductions(new HashMap<>())
 					.setAccrualTotal(accrualTotal).setDeductionTotal(deductionTotal).setDate(new Date())
-					.setLocation("Vitoria-gasteiz").setTotal(accrualTotal - deductionTotal);
+					.setLocation("Vitoria-gasteiz").setTotal(accrualTotal - deductionTotal)
+					.setPayments(payments);
 
 			Settlement settlement = builder.build();
 			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));

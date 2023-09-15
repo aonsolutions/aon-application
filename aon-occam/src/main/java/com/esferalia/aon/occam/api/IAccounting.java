@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -28,6 +29,8 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
@@ -56,6 +59,7 @@ public interface IAccounting {
 	public Account delete(AONContext ctx, Account account);
 	public String getAccountNextCode(AONContext ctx, String prefix);
 	public Stream<Account> getAccounts(AONContext ctx, AccountParams params);
+	public List<Account> getAccountsList(AONContext ctx, AccountParams params);
 	
 	// **************************************************
 	// ********************************* [ACCOUNT PERIOD]
@@ -131,6 +135,8 @@ public interface IAccounting {
 	public AccUtilitiesResult noLowLevelAccounts(AONContext ctx);
 	public AccUtilitiesResult emptyEntries(AONContext ctx);
 	public AccUtilitiesResult unbalancedEntries(AONContext ctx);
+	public AccUtilitiesResult outOfDateEntries(AONContext ctx);
+	public AccUtilitiesResult moveOutOfDateEntries(AONContext ctx, AccUtilitiesResult findResult);
 	public AccUtilitiesResult wrongRecordedInvoices(AONContext ctx);
 	public AccUtilitiesResult removeWrongRecordedInvoice(AONContext ctx, Integer accountEntryId);
 	public AccUtilitiesResult removeWrongCheckedInvoice(AONContext ctx, Integer invoice);
@@ -156,7 +162,9 @@ public interface IAccounting {
 	// REPORT
 	public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, OperationParams params);
 	
-	
-	
+	// AMORTIZATION TYPE
+	public List<AmortizationType> getAmortizationTypeList(CloseableAONContext ctx, AmortizationTypeParams params) throws AonCoreException;
+	public void deleteAmortizationTypes(CloseableAONContext ctx, List<Integer> deleteIds) throws AonCoreException;
+	public void saveAmortizationType(CloseableAONContext ctx, AmortizationType amortizationType) throws AonCoreException;
 	
 }

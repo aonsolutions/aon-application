@@ -228,8 +228,8 @@
 						<d:DataGrid ui:field="itDataGrid" styleName="{style.pointer}"></d:DataGrid>
 					</g:HTMLPanel>
 				</g:VerticalPanel>
-				<g:VerticalPanel ui:field="mainCommunicate" styleName="{style.paddingContainer}">
-				</g:VerticalPanel>
+				
+				<g:VerticalPanel ui:field="mainCommunicate" styleName="{style.paddingContainer}" />
 			</g:DeckPanel>
 		</g:VerticalPanel>
 

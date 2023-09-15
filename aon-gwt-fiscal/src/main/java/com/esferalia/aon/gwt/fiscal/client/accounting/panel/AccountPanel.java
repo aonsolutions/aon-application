@@ -1,6 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -9,11 +13,27 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCreditorFullPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerFullPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistrySelectionDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSupplierFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountParams;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -21,6 +41,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -34,6 +56,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -43,6 +66,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -69,6 +93,8 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 	private SimplePanel container;
 	private FlexTable tab;
 	private int lastScrollPos = 0;
+	
+	private List<ApplicationParameter> costCenters = new ArrayList<>();
 	
 	private static enum COLS {
 		  NUM(AonStringUtils.EMPTY		,"20px"  ,AON.CSS.aonTextCenter())
@@ -134,7 +160,14 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				}
 			}
 		});
-		onSearch(params);
+		
+		getCostCenters(params, costCenterStream -> {
+			costCenters.clear();
+			costCenters = costCenterStream;
+			
+			onSearch(params);
+		});
+		
 	}
 
 	public boolean isSearchEnabled() {
@@ -222,19 +255,23 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 							offset.setValue(ofs + count - 1);
 							enableMoreData();
 						}
+						
 					} catch (IndexOutOfBoundsException e) {
 						FlowPanel line = new FlowPanel();
 						InlineLabel label = new InlineLabel(e.getMessage());
 						line.add(label);
+						container.clear();
 						container.add(line);
 						enableSearch();
 					}
 				}
+				
 				if (state == XMLHttpRequest.DONE) {
 					if (!something) {
 						FlowPanel line = new FlowPanel();
 						InlineLabel label = new InlineLabel(AON.MSG.noData());
 						line.add(label);
+						container.clear();
 						container.add(line);
 						disableMoreData();
 					}
@@ -370,7 +407,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				TextBox codeBox = new TextBox();
 				TextBox descriptionBox = new TextBox();
 				TextBox aliasBox = new TextBox();
-				TextBox costCenterBox = new TextBox();
+				ListBox costCenterBox = new ListBox();
 				CheckBox activeCheck = new CheckBox();
 
 				ValueChangeHandler<String> valueChangeHandler = new ValueChangeHandler<String>() {
@@ -380,7 +417,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						account.setCode(codeBox.getValue());
 						account.setDescription(descriptionBox.getValue());
 						account.setAlias(aliasBox.getValue());
-						account.setCostCenter(costCenterBox.getValue());
+						account.setCostCenter(costCenterBox.getSelectedValue());
 						account.setActive(activeCheck.getValue());
 						saveAccount(params, account, msg);
 					}
@@ -389,7 +426,14 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				codeBox.addValueChangeHandler(valueChangeHandler);
 				descriptionBox.addValueChangeHandler(valueChangeHandler);
 				aliasBox.addValueChangeHandler(valueChangeHandler);
-				costCenterBox.addValueChangeHandler(valueChangeHandler);
+				costCenterBox.addChangeHandler(e -> {
+					account.setCode(codeBox.getValue());
+					account.setDescription(descriptionBox.getValue());
+					account.setAlias(aliasBox.getValue());
+					account.setCostCenter(costCenterBox.getSelectedValue());
+					account.setActive(activeCheck.getValue());
+					saveAccount(params, account, msg);
+				});
 				
 				
 				activeCheck.addClickHandler(new ClickHandler() {
@@ -399,7 +443,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						account.setCode(codeBox.getValue());
 						account.setDescription(descriptionBox.getValue());
 						account.setAlias(aliasBox.getValue());
-						account.setCostCenter(costCenterBox.getValue());
+						account.setCostCenter(costCenterBox.getSelectedValue());
 						account.setActive(activeCheck.getValue());
 						saveAccount(params, account, msg);
 					}
@@ -433,8 +477,10 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 
 				costCenterBox.setStyleName(AON.CSS.aonBorderNone());
 				costCenterBox.addStyleName(AON.CSS.aonWidthAll());
-				costCenterBox.setMaxLength(32);
-				costCenterBox.setValue(account.getCostCenter());
+				costCenterBox.clear();
+				costCenterBox.addItem("-", "");
+				costCenters.forEach(costCenter -> costCenterBox.addItem(costCenter.getValue(), costCenter.getValue()));
+				setSelectedValueLB(costCenterBox, account.getCostCenter());
 				tab.setWidget(r, col, costCenterBox);
 				col++;
 
@@ -445,6 +491,10 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				col++;
 				
 				FlowPanel buttonContainer = new FlowPanel();
+				buttonContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+				
+				AonTableButton clientButton = new AonTableButton(account.hasRegistry() ? "Vinculado" : "No Vinculado", account.hasRegistry() ? AON.CSS.aonIconPerson() : AON.CSS.aonIconPersonOff());
+				clientButton.addClickHandler(e -> registryDialog(account, clientButton, params, msg));
 				
 				AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
 				deleteButton.addClickHandler( new ClickHandler() {
@@ -479,6 +529,11 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						
 					}
 				});
+				
+				// Solo mostrar para Proveedores (40*), Acreedores (41*), Clientes (43*)
+				if(account.getCode().length() == 9 && (account.getCode().startsWith("40") || account.getCode().startsWith("41") || account.getCode().startsWith("43")))
+					buttonContainer.add(clientButton);
+				
 				buttonContainer.add(deleteButton);
 				tab.setWidget(r, col, buttonContainer);
 				col++;
@@ -494,6 +549,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						.setActive(account.isActive())
 						.setLevel((byte) account.getLevel())
 						.setCostCenter(account.getCostCenter())
+						.setHasRegistry(account.hasRegistry())
 				;
 			}
 			
@@ -503,6 +559,390 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 		params.setLimit(limit);
 		requestData.append("&"+IRequestParamsNames.ACCOUNT_PARAMS +"=" + JsonParams.convert( params ));
 		xhr.send(requestData.toString());
+	}
+
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
+	
+	private void registryDialog(Account account, AonTableButton clientButton, AccountParams params, Label msg) {
+		RegistryModuleOptions options = new RegistryModuleOptions();
+		options.setDomainName(params.getDomainName());
+		options.setDomain(params.getDomain());
+		options.setUser(params.getUser());
+		
+		COMMON_SERVICE.getAonConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<AonConfiguration>() {
+
+			@Override
+			public void onFailure(Throwable arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(AonConfiguration result) {
+				options.setConfiguration(result);
+				
+				if(!account.hasRegistry()) {
+					if(account.getCode().startsWith("40")) { // Proveedores
+						final AonSimpleDialog dialog = createDialog(AON.MSG.supplier());
+						
+						SupplierFull supplierFull = SupplierFull.initialize(options.getDomain());
+						supplierFull.setAccount(account);
+						supplierFull.getRegistry().setName(account.getDescription());
+						
+						AonSupplierFullPanel supplierPanel = new AonSupplierFullPanel(options, supplierFull, new AonRegistryFullPanelCallback<SupplierFull>() {
+							
+							@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+							
+							@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+							
+							@Override public void onCancel() { dialog.hide(); }
+							
+							@Override
+							public void onAccept(SupplierFull rf) {
+								dialog.hide();
+								updateAccountRegistry(params, account, msg, clientButton, true);
+							}
+
+							@Override public void onDocumenthanged(SupplierFull registryFull) { /* Nothing to do here */ }
+						
+						});
+						
+						supplierPanel.setAccountEnabled(false);
+						
+						showDialog(dialog, supplierPanel);
+						
+					} else if(account.getCode().startsWith("41")) { // Acreedores
+						final AonSimpleDialog dialog = createDialog(AON.MSG.creditor());
+
+						CreditorFull creditorFull = CreditorFull.initialize(options.getDomain());
+						creditorFull.setAccount(account);
+						creditorFull.getRegistry().setName(account.getDescription());
+						
+						AonCreditorFullPanel creditorPanel = new AonCreditorFullPanel(options, creditorFull, new AonRegistryFullPanelCallback<CreditorFull>() {
+							
+							@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+							
+							@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+							
+							@Override public void onCancel() { dialog.hide(); }
+							
+							@Override
+							public void onAccept(CreditorFull rf) {
+								dialog.hide();
+								updateAccountRegistry(params, account, msg, clientButton, true);
+							}
+
+							@Override public void onDocumenthanged(CreditorFull registryFull) { /* Nothing to do here */ }
+							
+						});
+						
+						creditorPanel.setAccountEnabled(false);
+						
+						showDialog(dialog, creditorPanel);
+
+					} else if(account.getCode().startsWith("43")) { // Clientes
+						final AonSimpleDialog dialog = createDialog(AON.MSG.customer());
+
+						CustomerFull customerFull = CustomerFull.initialize(options.getDomain());
+						customerFull.setAccount(account);
+						customerFull.getRegistry().setName(account.getDescription());
+						
+						AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(options, customerFull, new AonRegistryFullPanelCallback<CustomerFull>() {
+							
+							@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+							
+							@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+							
+							@Override public void onCancel() { dialog.hide(); }
+							
+							@Override
+							public void onAccept(CustomerFull rf) {
+								dialog.hide();
+								updateAccountRegistry(params, account, msg, clientButton, true);
+							}
+
+							@Override public void onDocumenthanged(CustomerFull registryFull) { /* Nothing to do here */ }
+							
+						});
+						
+						customerPanel.setAccountEnabled(false);
+						
+						showDialog(dialog, customerPanel);
+						
+					}
+				} else { // Editor 
+					if(account.getCode().startsWith("40")) { // Proveedores
+						
+						getSuppliers(account.getId(), options, suppliers -> {
+							if(suppliers.size() == 1) getSupplier(suppliers.get(0).getId(), options, suppliersFull -> showSupplierEditor(suppliersFull, options, params, account, msg, clientButton));
+							else {
+								new AonRegistrySelectionDialog(AON.MSG.supplier(), suppliers.stream().map(supplier -> supplier.get()).collect(Collectors.toList())) {
+									
+									@Override public void onAccept(Integer registry) {
+										getSupplier(registry, options, suppliersFull -> showSupplierEditor(suppliersFull, options, params, account, msg, clientButton));
+									}
+									
+								};
+							}
+						});
+						
+					} else if(account.getCode().startsWith("41")) { // Acreedores
+						
+						getCreditors(account.getId(), options, creditors -> {
+							if(creditors.size() == 1) getCreditor(creditors.get(0).getId(), options, creditorFull -> showCreditorEditor(creditorFull, options, params, account, msg, clientButton));
+							else {
+								new AonRegistrySelectionDialog(AON.MSG.creditor(), creditors.stream().map(creditor -> creditor.get()).collect(Collectors.toList())) {
+									
+									@Override public void onAccept(Integer registry) {
+										getCreditor(registry, options, creditorFull -> showCreditorEditor(creditorFull, options, params, account, msg, clientButton));
+									}
+									
+								};
+							}
+						});
+						
+					} else if(account.getCode().startsWith("43")) { // Clientes
+
+						getCustomers(account.getId(), options, customers -> {
+							if(customers.size() == 1) getCustomer(customers.get(0).getId(), options, customerFull -> showCustomerEditor(customerFull, options, params, account, msg, clientButton));
+							else {
+								new AonRegistrySelectionDialog(AON.MSG.customer(), customers.stream().map(customer -> customer.get()).collect(Collectors.toList())) {
+									
+									@Override public void onAccept(Integer registry) {
+										getCustomer(registry, options, customerFull -> showCustomerEditor(customerFull, options, params, account, msg, clientButton));
+									}
+									
+								};
+							}
+						});
+						
+					}
+				}
+			}
+			
+		});
+	}
+	
+	private void showSupplierEditor(SupplierFull supplierFull, RegistryModuleOptions options, AccountParams params, Account account, Label msg, AonTableButton clientButton) {
+		final AonSimpleDialog dialog = createDialog(AON.MSG.supplier());
+		
+		AonSupplierFullPanel supplierPanel = new AonSupplierFullPanel(options, supplierFull, new AonRegistryFullPanelCallback<SupplierFull>() {
+			
+			@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+			
+			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+			
+			@Override public void onCancel() { dialog.hide(); }
+			
+			@Override public void onAccept(SupplierFull rf) {
+				dialog.hide();
+				if(null == rf.getAccount()) updateAccountRegistry(params, account, msg, clientButton, false);
+			}
+
+			@Override public void onDocumenthanged(SupplierFull registryFull) { /* Nothing to do here */ }
+		
+		});
+		
+		supplierPanel.setAccountEnabled(false);
+		
+		showDialog(dialog, supplierPanel);
+	}
+	
+	private void showCreditorEditor(CreditorFull creditorFull, RegistryModuleOptions options, AccountParams params, Account account, Label msg, AonTableButton clientButton) {
+		final AonSimpleDialog dialog = createDialog(AON.MSG.creditor());
+
+		AonCreditorFullPanel creditorPanel = new AonCreditorFullPanel(options, creditorFull, new AonRegistryFullPanelCallback<CreditorFull>() {
+			
+			@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+			
+			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+			
+			@Override public void onCancel() { dialog.hide(); }
+			
+			@Override public void onAccept(CreditorFull rf) { 
+				dialog.hide(); 
+				if(null == rf.getAccount()) updateAccountRegistry(params, account, msg, clientButton, false);
+			}
+
+			@Override public void onDocumenthanged(CreditorFull registryFull) { /* Nothing to do here */ }
+			
+		});
+		
+		creditorPanel.setAccountEnabled(false);
+		
+		showDialog(dialog, creditorPanel);
+	}
+	
+	private void showCustomerEditor(CustomerFull customerFull, RegistryModuleOptions options, AccountParams params, Account account, Label msg, AonTableButton clientButton) {
+		final AonSimpleDialog dialog = createDialog(AON.MSG.customer());
+
+		AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(options, customerFull, new AonRegistryFullPanelCallback<CustomerFull>() {
+			
+			@Override public void setFocus(boolean b) { /* callback.setFocus(b); */ }
+			
+			@Override public void onError(Throwable caught) { /* Que habria que hacer aqui? */ };
+			
+			@Override public void onCancel() { dialog.hide(); }
+			
+			@Override public void onAccept(CustomerFull rf) { 
+				dialog.hide(); 
+				if(null == rf.getAccount()) updateAccountRegistry(params, account, msg, clientButton, false);
+			}
+
+			@Override public void onDocumenthanged(CustomerFull registryFull) { /* Nothing to do here */ }
+			
+		});
+		
+		customerPanel.setAccountEnabled(false);
+		
+		showDialog(dialog, customerPanel);
+	}
+	
+	private AonSimpleDialog createDialog(String caption) {
+		AonSimpleDialog dialog = new AonSimpleDialog();
+		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+		dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+		dialog.setCaption(caption);
+		return dialog;
+	}
+	
+	private void showDialog(AonSimpleDialog dialog, AonRegistryFullPanel<?> panel) {
+		dialog.add( panel );
+		dialog.center();
+		dialog.show();
+		
+		Scheduler.get().scheduleDeferred(new Command() {
+	        public void execute() {
+	        	panel.setFocus(true);
+	        }
+	    });		
+	}
+	
+	private void updateAccountRegistry(AccountParams params, Account account, Label msg, AonTableButton clientButton, boolean hasRegistry) {
+		account.setHasRegistry(hasRegistry);
+		setActivePersonButton(hasRegistry, clientButton);
+		saveAccount(params, account, msg);
+	}
+	
+	private void setActivePersonButton(boolean hasRegistry, AonTableButton button) {
+		button.setTitle(hasRegistry ? "Vinculado" : "No Vinculado");
+		button.removeStyleName(hasRegistry ? AON.CSS.aonIconPersonOff() : AON.CSS.aonIconPerson());
+		button.addStyleName(hasRegistry ? AON.CSS.aonIconPerson() : AON.CSS.aonIconPersonOff());
+	}
+	
+	private void getSuppliers(Integer account, RegistryModuleOptions options, Consumer<List<Supplier>> success) {
+		COMMON_SERVICE.getSuppliers(options.getDomainName(), options.getDomain(), options.getUser(), account, new AsyncCallback<List<Supplier>>() {
+			
+			@Override
+			public void onSuccess(List<Supplier> suppliers) {
+				success.accept(suppliers);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getCreditors(Integer account, RegistryModuleOptions options, Consumer<List<Creditor>> success) {
+		COMMON_SERVICE.getCreditors(options.getDomainName(), options.getDomain(), options.getUser(), account, new AsyncCallback<List<Creditor>>() {
+			
+			@Override
+			public void onSuccess(List<Creditor> creditors) {
+				success.accept(creditors);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getCustomers(Integer account, RegistryModuleOptions options, Consumer<List<Customer>> success) {
+		COMMON_SERVICE.getCustomers(options.getDomainName(), options.getDomain(), options.getUser(), account, new AsyncCallback<List<Customer>>() {
+			
+			@Override
+			public void onSuccess(List<Customer> customers) {
+				success.accept(customers);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getSupplier(Integer registry, RegistryModuleOptions options, Consumer<SupplierFull> success) {
+		COMMON_SERVICE.getSupplier(options.getDomainName(), options.getDomain(), options.getUser(), registry, new AsyncCallback<SupplierFull>() {
+			
+			@Override
+			public void onSuccess(SupplierFull supplier) {
+				success.accept(supplier);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getCreditor(Integer registry, RegistryModuleOptions options, Consumer<CreditorFull> success) {
+		COMMON_SERVICE.getCreditor(options.getDomainName(), options.getDomain(), options.getUser(), registry, new AsyncCallback<CreditorFull>() {
+			
+			@Override
+			public void onSuccess(CreditorFull creditor) {
+				success.accept(creditor);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getCustomer(Integer registry, RegistryModuleOptions options, Consumer<CustomerFull> success) {
+		COMMON_SERVICE.getCustomer(options.getDomainName(), options.getDomain(), options.getUser(), registry, new AsyncCallback<CustomerFull>() {
+			
+			@Override
+			public void onSuccess(CustomerFull customer) {
+				success.accept(customer);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
+	}
+	
+	private void getCostCenters(AccountParams params, Consumer<List<ApplicationParameter>> success) {
+		COMMON_SERVICE.getCostCenters(params.getDomainName(), params.getDomain(), params.getUser(), new AsyncCallback<List<ApplicationParameter>>() {
+			
+			@Override
+			public void onSuccess(List<ApplicationParameter> customer) {
+				success.accept(customer);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
 	}
 	
 	private void saveAccount(AccountParams params, Account account, Label msg) {

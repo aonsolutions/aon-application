@@ -1,11 +1,9 @@
 package net.aonsolutions.aon.api.servlet.registry;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,14 +11,19 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.Options;
+import com.esferalia.aon.occam.api.json.CustomerJSON;
+import com.esferalia.aon.occam.api.json.DomainLinkedJSON;
 import com.esferalia.aon.occam.api.json.RecordDataJSON;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.json.RegistryPaymethodJSON;
+import com.esferalia.aon.occam.api.json.RegistryProfileJSON;
 import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
 import com.esferalia.aon.occam.api.json.RegistrySegmentJSON;
+import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.Filter.RRelationshipFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
@@ -28,12 +31,16 @@ import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -90,7 +97,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 	
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
+		LOGGER.info("EXAMPLE SERVLET - PUT METHOD");
 		try {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
@@ -127,10 +134,25 @@ public class RegistryServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
+	public static JSONArray getRegistryAdditionalInfo(AonApiData api, Stream<Customer> stream) {
+		JSONArray arr = new JSONArray();
+		stream.forEach(c -> {
+			JSONObject json = CustomerJSON.toJSON(c);
+			getRegistryAdditionalInfo(json, api, api.getData(), c.getId(), null);
+			arr.put(json);
+		});
+		return arr;
+	}
+	
 	public static JSONObject getRegistryAdditionalInfo(JSONObject object, AonApiData api, JSONObject json, Integer registryId, LinkedList<RegistryAdditionalInfo> rais) {
 		if(rais == null) {
 			JSONArray addInfo = json.opt("additional_info") != null
 				? json.optJSONArray("additional_info") : new JSONArray();
+			if (addInfo == null) {
+				String stringArray = json.optString("additional_info");
+				String[] values = AonStringUtils.split(stringArray, ',');
+				addInfo = new JSONArray(values);
+			}
 			rais = new LinkedList<>();
 			for(Integer i = 0; i < addInfo.length(); i++) {
 				rais.add(RegistryAdditionalInfo.safeValueOf(addInfo.optString(i)));
@@ -185,6 +207,16 @@ public class RegistryServlet extends AonApiHttpServlet {
 					object.put(rai.name().toLowerCase(),
 						RegistryRelationshipJSON.toJSON(AON_SOLUTIONS.getRegistryRelationshipStream(api.getDomain(), api.getUser(), filter))
 					);
+				}
+				
+				if(RegistryAdditionalInfo.BILLABLE.equals(rai)) {
+					Optional<RegistryAddInfo> addinfo = AON.getRegistryAddInfo(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getAttributeProperty().eq("AON_BILLABLE").and(f.getRegistryProperty().eq(registryId)));
+					object.put(IJsonNames.BILLABLE, addinfo.isEmpty());
+				}
+				
+				if (RegistryAdditionalInfo.DOMAIN_LINKED.equals(rai)) {
+					List<DomainLinked> domainsLinked = AON.getDomainLinkedList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), registryId);
+					object.put(IJsonNames.DOMAIN_LINKED, DomainLinkedJSON.toJSON(domainsLinked));
 				}
 			});
 		}
@@ -244,6 +276,14 @@ public class RegistryServlet extends AonApiHttpServlet {
 				AON.saveRegistrySegment(rsegment.getDomain(), api.getUser(), rsegment);
 			});
 		}
+		
+		if(json.opt(RegistryAdditionalInfo.RPROFILE.name().toLowerCase()) != null) {
+			JSONArray arr = json.optJSONArray(RegistryAdditionalInfo.RPROFILE.name().toLowerCase());
+			RegistryProfileJSON.fromJSON(arr)
+			.stream().forEach(rprofile -> {
+				AON.saveRegistryProfile(api.getDomain(), api.getUser().getLogin(), registryId, rprofile.getQuestionAlias(), rprofile.getValue());
+			});
+		}
 	}
 	
 	private JSONObject getRegistryAddress(AonApiData api) {
@@ -267,4 +307,5 @@ public class RegistryServlet extends AonApiHttpServlet {
 	    return RegistryPaymethodJSON.toJSON(rpm);
 
 	}
+	
 }

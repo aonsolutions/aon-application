@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -9,6 +10,8 @@ import java.util.Set;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -42,27 +45,50 @@ public class MainCCC extends MainEntryPoint{
 		
 		@Override
 		protected void onInsertRows() {
-			mainCCCObject.getCCCs().forEach(ccc -> cccWidget.insertRow(ccc));
+			if(mainCCCObject.getCCCs().isEmpty())
+				showCCCMessage();
+			else {
+				showCCCTable();
+				mainCCCObject.getCCCs().forEach(ccc -> cccWidget.insertRow(ccc));
+			}
 		}
 
 		@Override
 		protected void onDeleteCCC(Integer cccId) {
 			mainCCCObject.deleteCCC(cccId);
+			setHasChange(true);
 		}
 
 		@Override
 		protected void onInsertCCC(EnterpriseCCC ccc) {
 			mainCCCObject.insertCCC(ccc);
+			setHasChange(true);
+		}
+
+		@Override
+		protected void onInsertActivity(com.esferalia.aon.occam.api.model.payroll.Activity activity) {
+			mainCCCObject.insertActivity(activity);
+			setHasChange(true);
 		}
 
 		@Override
 		protected Set<Entry<Integer, String>> getActivities() {
 			return mainCCCObject.getActivities();
 		}
+		
+		@Override
+		public List<EnterpriseCCC> getEnterpriseCCCs() {
+			return mainCCCObject.getActiveCCCs();
+		}
 
 		@Override
-		protected void fireWarningMessage(Map<String, String> warningMap) {
-			AonMessagePanel.showWarning(messagePanel, warningMap);
+		protected void fireWarningMessage(Map<String, String> messages) {
+			AonMessagePanel.showWarning(messagePanel, messages);
+		}
+		
+		@Override
+		protected void fireInfoMessage(Map<String, String> messages) {
+			AonMessagePanel.showInfo(messagePanel, messages);
 		}
 
 		@Override
@@ -132,6 +158,11 @@ public class MainCCC extends MainEntryPoint{
 	
 	private CCC cccWidget;
 	
+	private AonToolbarButton acceptButton;
+	private AonToolbarButton undoAllButton;
+	
+	private boolean hasChange;
+	
 	// ----------------------------------------------- Constructor
 
 	public MainCCC() {	
@@ -173,6 +204,7 @@ public class MainCCC extends MainEntryPoint{
 					cccWidget.setDomain(mainCCCObject.getDomain());
 					cccWidget.onInsertRows();
 					cccWidget.calculateScrollPanelHeightMainCCC();
+					setHasChange(false);
 				}, f -> {});
 	}
 	
@@ -180,13 +212,44 @@ public class MainCCC extends MainEntryPoint{
 
 	private void getToolbarPanel() {
 		
-		AonToolbarButton accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		accept.addClickHandler(e -> onAccept());
-		toolbar.add(accept);
+		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		acceptButton.addClickHandler(e -> onAccept());
+		toolbar.add(acceptButton);
+		
+		undoAllButton = new AonToolbarButton( AON.MSG.undo() + " todo", AON.CSS.aonIconUndoAll() );
+		undoAllButton.addClickHandler(e -> {
+			AonDialog confirmDialog =  new AonDialog("Restaurar CCCs", new HTMLPanel("\u00bfDesea realmente deshacer los cambios realizados sobre las cuentas de cotizaci\u00f3n\u003f <br>Este proceso es irreversible."));
+			confirmDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do
+				}
+				
+				@Override
+				public void onAccept() {
+					mainCCCObject.getMainCCCInfo(
+							s -> {
+								cccWidget.setDomain(mainCCCObject.getDomain());
+								cccWidget.resetPreview();
+								cccWidget.onInsertRows();
+								cccWidget.calculateScrollPanelHeightMainCCC();
+								setHasChange(false);
+							}, f -> {});
+				}
+			});
+		});
+		toolbar.add(undoAllButton);
 		
 		AonToolbarButton checkUpdateCert = new AonToolbarButton("Cert. de estar al corriente con TGSS", AON.CSS.aonIconTgss() );
 		checkUpdateCert.addClickHandler(e -> onCheckUpdateCert());
 		toolbar.add(checkUpdateCert);
+		
+		AonToolbarButton createCCCBtn = new AonToolbarButton(AON.MSG.newAction() + " CCC", AON.CSS.aonIconAdd() );
+		createCCCBtn.addClickHandler(e -> cccWidget.onAddNewCCC());
+		toolbar.add(createCCCBtn);
+		
+		
 	}
 	
 	// ------------------------------------------------- Toolbar PDFViewer panel
@@ -203,10 +266,25 @@ public class MainCCC extends MainEntryPoint{
 	// ----------------------------------------------- Toolbar.Methods TGSS
 	
 	private void onAccept() {
+		AonMessagePanel.showLoading(messagePanel, "Guardando CCCs ...");
 		this.mainCCCObject.setMainCCCInfo(s -> {
-			cccWidget.resetPreview();
-			cccWidget.onInsertRows();
-		}, f -> {});
+			Map<String, String> successMap = new HashMap<>();
+			successMap.put("Guardado", "CCCs guardados correctamente");
+			AonMessagePanel.showSuccess(messagePanel, successMap);
+			
+			mainCCCObject.getMainCCCInfo(
+					su -> {
+						cccWidget.setDomain(mainCCCObject.getDomain());
+						cccWidget.resetPreview();
+						cccWidget.onInsertRows();
+						cccWidget.calculateScrollPanelHeightMainCCC();
+						setHasChange(false);
+					}, f -> {});
+		}, f -> {
+			Map<String, String> errorMap = new HashMap<>();
+			errorMap.put("Error Guardado", f.getMessage());
+			AonMessagePanel.showError(messagePanel, errorMap);
+		});
 	}
 	
 	private void onCheckUpdateCert() {
@@ -259,6 +337,12 @@ public class MainCCC extends MainEntryPoint{
 
 	private void onClosePDF() {
 		showCCCs();
+	}
+	
+	private void setHasChange(boolean hasChange) {
+		this.hasChange = hasChange;
+		acceptButton.setEnabled(this.hasChange);
+		undoAllButton.setEnabled(this.hasChange);
 	}
 
 }

@@ -19,4 +19,10 @@ public interface  LeaveTypeVisitor<T> {
 	T visitCommonDiseaseAtLack(LeaveType leaveType);
 	
 	T visitCommonProfessionalDisease(LeaveType leaveType);
+
+	T visitMenstruation(LeaveType leaveType);
+
+	T visitPregnacyStop(LeaveType leaveType);
+
+	T visitPregnacy39Week(LeaveType leaveType);
 }

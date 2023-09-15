@@ -1,17 +1,15 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
-import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
-import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
-import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
@@ -407,25 +405,15 @@ public class JooqEvents {
 			String addressZip = null;
 			String addressCity = null;
 			Integer geozoneId = null;
-			String addressProvince = null;
 			
 			if(null != raddressRecords && !raddressRecords.isEmpty()) {
-				if(null != raddressRecords.get(0).get(RADDRESS.GEOZONE)) {
-					Record geozoneRecord = dslContext.select()
-							.from(GEOZONE)
-							.where(GEOZONE.ID.eq(raddressRecords.get(0).get(RADDRESS.GEOZONE)))
-							.fetchOne();
-					
-					geozoneId = geozoneRecord.get(GEOZONE.ID);
-					addressProvince = geozoneRecord.get(GEOZONE.NAME);
-				}
-				
 				raddressId = raddressRecords.get(0).get(RADDRESS.ID);
 				streetType = raddressRecords.get(0).get(RADDRESS.STREET_TYPE);
 				address = raddressRecords.get(0).get(RADDRESS.ADDRESS);
 				addressNum = raddressRecords.get(0).get(RADDRESS.NUMBER);
 				addressZip = raddressRecords.get(0).get(RADDRESS.ZIP);
 				addressCity = raddressRecords.get(0).get(RADDRESS.CITY);
+				geozoneId = raddressRecords.get(0).get(RADDRESS.GEOZONE);
 			}
 			
 			//RMEDIA TABLE
@@ -511,8 +499,7 @@ public class JooqEvents {
 			employee.setAddresNum(addressNum);
 			employee.setAddressZip(addressZip);
 			employee.setAddressCity(addressCity);
-			employee.setGeozoneId(geozoneId);
-			employee.setAddressProvinces(addressProvince);
+			employee.setAddressProvinces(geozoneId);
 			
 			employee.setMobileId(mobileId);
 			employee.setMobile(mobile);

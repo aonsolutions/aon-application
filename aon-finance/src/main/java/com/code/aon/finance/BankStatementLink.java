@@ -2,9 +2,9 @@ package com.code.aon.finance;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import com.code.aon.account.Account;
 import com.code.aon.AonVersion;

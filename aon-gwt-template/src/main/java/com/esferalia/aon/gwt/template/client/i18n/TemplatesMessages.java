@@ -138,7 +138,7 @@ public interface TemplatesMessages extends Messages {
  	@DefaultMessage("L\u00EDnea")
 	String line();
 
- 	@DefaultMessage("Expendiente")
+ 	@DefaultMessage("Expediente")
 	String record();
  	
  	@DefaultMessage("Inicial")

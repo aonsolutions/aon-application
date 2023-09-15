@@ -1,17 +1,14 @@
-// LIQUIDACION (I): RESULTADO PYG, CIFRA DE NEGOCIOS, CORRECCIONES AL RESULTADO CONTABLE
+// LIQUIDACION (I): RESULTADO PYG, CORRECCIONES AL RESULTADO CONTABLE
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import java.io.Serializable;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
-import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022CorrectionKey;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 
 public class Page08 extends PageAbs {
 	
@@ -27,7 +24,7 @@ public class Page08 extends PageAbs {
 		 	,"Disminuciones futuras"		 	
 	};
 	
-	private static enum CorrectionKey implements Serializable,IMod200KeysProvider {
+	private enum CorrectionKey implements Serializable,IMod200KeysProvider {
 		 DC01(false,Mod2002022Key.DC2305,Mod2002022Key.DC2306,"Saldo pendiente de correcciones temporarias a principio de ejercicio")
 		,DC02(false,Mod2002022Key.DC2301,Mod2002022Key.DC2302,"Correcciones del ejercicio: Correcciones permanentes (excluida correcci\u00F3n I. Sociedades)")
 		,DC03(false,Mod2002022Key.DC2303,Mod2002022Key.DC2304,"Correcciones del ejercicio: Correcciones temporarias con origen en el ejercicio")
@@ -56,9 +53,7 @@ public class Page08 extends PageAbs {
 		}
 	}
 	
-	private ListBox opeVol;
-
-	public Page08( Model200PageCallback callback ) {
+	public Page08( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 
@@ -109,33 +104,7 @@ public class Page08 extends PageAbs {
 			paintKeyField(tab1, Mod2002022Key.LQ1230, row, 1);
 			paintKeyField(tab1, Mod2002022Key.LQ1231, row, 2);
 			paintEmptyCell(tab1, row, 3);
-			++row;
 		}
-		
-		// Volumen de operaciones
-		basePanel.add(getTitle("Cifra de negocios"));
-		
-		FlexTable tableVol = addTable();
-
-		tableVol.setWidget(0, 0, new Label("Importe neto de la cifra de negocios durante los doce meses anteriores a la fecha de inicio del periodo impositivo"));
-		
-		opeVol = new ListBox();
-		opeVol.addItem("0 - No consta");
-		opeVol.addItem("1 - Inferior a 20 millones de euros");
-		opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
-		opeVol.addItem("3 - Al menos 60 millones de euros");
-		opeVol.addChangeHandler( event -> {
-			DoubleVariableEx bv = new DoubleVariableEx(Mod2002022Key.VOLOPE);
-			bv.setValue((double)opeVol.getSelectedIndex());
-			callback.getMod200Object().getMod200().addVariable(bv);
-			callback.markAsDirty();
-		});
-		otherInputs.add(opeVol);
-		
-		basePanel.add(opeVol);
-		tableVol.setWidget(1, 0, opeVol);
-		
-		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si proceden, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstas en los art\u00EDculos 31, 32, 100.11 y DT 23\u00AA LIS.");
 		
 		basePanel.add(getTitle(AON.MSG.liquidation1Label2()));
 		
@@ -196,17 +165,6 @@ public class Page08 extends PageAbs {
 			}
 			++row;
 		}
-	}
-	
-	@Override
-	public void dump() {
-		super.dump();
-		DoubleVariableEx dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002022Key.VOLOPE);
-		int index = 0;
-		if (dv != null) {
-			index = dv.getValue().intValue();
-		}
-		opeVol.setSelectedIndex(index);
 	}
 	
 }

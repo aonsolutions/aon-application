@@ -64,6 +64,11 @@ public class IdcCompositeParserListener implements IdcParserListener {
 	public void onNoEmployeeQuotePEC(String ssNum, String ccc, Date start, Date end) {
 		idcParserListeners.forEach(l -> l.onNoEmployeeQuotePEC(ssNum, ccc, start, end));
 	}
+	
+	@Override
+	public void onEmployeeQuoteTRL(String ssNum, String ccc, String description, Date start, Date end) {
+	    	idcParserListeners.forEach(l -> l.onEmployeeQuoteTRL(ssNum, ccc, description, start, end));
+	}
 
 	@Override
 	public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo,
@@ -80,6 +85,11 @@ public class IdcCompositeParserListener implements IdcParserListener {
 	@Override
 	public void onContractType(String contractType) {
 		idcParserListeners.forEach(l -> l.onContractType(contractType));
+	}
+	
+	@Override
+	public void onRlce(String rlce) {
+		idcParserListeners.forEach(l -> l.onRlce(rlce));
 	}
 
 	@Override
@@ -125,6 +135,11 @@ public class IdcCompositeParserListener implements IdcParserListener {
 	@Override
 	public void onContractAgrarianRealJourneyProvided(String realJourneyProvided) {
 		idcParserListeners.forEach(l -> l.onContractAgrarianRealJourneyProvided(realJourneyProvided));
+	}
+	
+	@Override
+	public void onEmployeeBenefitsLoss(String ssNum, String ccc, String cause, Date start, Date end) {
+		idcParserListeners.forEach(l -> l.onEmployeeBenefitsLoss(ssNum, ccc, cause, start, end));
 	}
 	
 	

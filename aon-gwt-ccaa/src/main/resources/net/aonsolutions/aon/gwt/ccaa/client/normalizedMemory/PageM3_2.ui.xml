@@ -8,51 +8,34 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
 
-	<g:TabPanel ui:field="tabPanel" height="100%" width="100%">
-		<g:Tab text="{msg.memory3_2Title}">
-		<g:HTMLPanel ui:field="basePanel"
-			styleName="{aonResources.css.aonFiscalContainer}">
-			<g:SimplePanel ui:field="headerPanel" />
-				<div class="{aonResources.css.aonGroup}">
-					<div class="{aonResources.css.aonGroupBody}">
-						<g:FlexTable ui:field="table" />
-					</div>
-				</div>
-				<div class="{aonResources.css.aonGroup}">
-					<div class="{aonResources.css.aonGroupBody}">
-						<g:FlexTable ui:field="table1" />
-					</div>
-				</div>
-				
-				<div class="{aonResources.css.aonGroup}">
-					<div class="{aonResources.css.aonGroupBody}">
-						<g:FlexTable ui:field="table2" />
-					</div>
-				</div>
-		</g:HTMLPanel>
-		</g:Tab>
-	</g:TabPanel>
-
-
-	<!--g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
-		<g:HTMLPanel ui:field="basePanel"
-			styleName="{aonResources.css.aonFiscalContainer}">
-			<g:SimplePanel ui:field="headerPanel" />
-			<div class="{aonResources.css.aonGroup}">
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel ui:field="basePanel" styleName="{aonResources.css.aonFiscalContainer}">
+		 	<div class="{aonResources.css.aonGroup}">
 				<div class="{aonResources.css.aonGroupTitle}">
-					<g:InlineLabel text="{msg.memory3_2Title}" />
+					<g:InlineLabel text="Aplicación de Resultados" />
 				</div>
-				<div class="{aonResources.css.aonGroup}">
-					<div class="{aonResources.css.aonGroupBody}">
-						<g:FlexTable ui:field="table" />
-					</div>
-				</div>
-				<div class="{aonResources.css.aonGroup}">
-					<div class="{aonResources.css.aonGroupBody}">
-						<g:FlexTable ui:field="table1" />
-					</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<g:HTMLPanel ui:field="basePanel2" styleName="{aonResources.css.aonFiscalContainer}">
+					<g:SimplePanel ui:field="headerPanel" />
+						<div class="{aonResources.css.aonGroup}">
+							<div class="{aonResources.css.aonGroupBody}">
+								<g:FlexTable ui:field="table" />
+							</div>
+						</div>
+						<div class="{aonResources.css.aonGroup}">
+							<div class="{aonResources.css.aonGroupBody}">
+								<g:FlexTable ui:field="table1" />
+							</div>
+						</div>
+				
+						<div class="{aonResources.css.aonGroup}">
+							<div class="{aonResources.css.aonGroupBody}">
+								<g:FlexTable ui:field="table2" />
+							</div>
+						</div>
+					</g:HTMLPanel>
 				</div>
 			</div>
 		</g:HTMLPanel>
-	</g:ScrollPanel-->
+	</g:ScrollPanel>
 </ui:UiBinder>

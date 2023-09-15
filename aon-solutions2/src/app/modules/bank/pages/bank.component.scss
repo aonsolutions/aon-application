@@ -1,0 +1,237 @@
+@import "src/styles.scss";
+
+::ng-deep {
+  .header-submenu {
+    display: flex;
+    align-items: center;
+    margin-top: $margin-top;
+    margin-left: $margin-left;
+    margin-bottom: $margin-bottom;
+    cursor: pointer;
+  }
+
+  .header-submenu .line {
+    margin-right: 20px;
+  }
+
+  .header-submenu .line {
+    max-width: 0rem;
+    height: 1.35rem;
+    border-radius: 20rem;
+    border: 0.15rem solid $color-blue;
+  }
+
+  .header-submenu .text {
+    font-family: "Roboto-Bold";
+  }
+
+  .menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .activated {
+    display: block;
+  }
+
+  .no-activated {
+    display: none;
+  }
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: $margin-right;
+    gap: 1rem;
+
+    .button {
+      border: 0.05rem solid $color-icon;
+    }
+  }
+
+  .datas {
+    display: flex;
+    justify-content: space-between;
+    margin-left: $margin-left;
+    margin-right: $margin-right;
+    align-items: flex-end;
+  }
+
+  .lineBottomP {
+    border-bottom: 0.2rem solid $color-blue;
+    margin-bottom: $margin-bottom;
+    margin-left: $margin-left;
+    width: 5rem;
+    position: absolute;
+  }
+
+  .lineBottom {
+    border-bottom: 0.05rem solid $color-icon;
+    margin-bottom: $margin-bottom;
+    margin-left: $margin-left;
+    width: 97.5%;
+  }
+
+  .banks {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .add-bank {
+    display: flex;
+    flex-direction: column;
+    border: $border-size-primary solid $color-icon;
+    border-radius: $border-radius;
+    height: 18rem;
+    width: 15rem;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+
+    .icono {
+      background-color: $background-button-blue-hover2;
+      padding: $padding / 2;
+      border-radius: $border-radius;
+    }
+
+    .title {
+      font-family: "Roboto-Bold";
+      color: $color-blue;
+    }
+  }
+
+  .add-bank-true {
+    display: flex;
+    flex-direction: column;
+    border: $border-size-primary solid $color-icon;
+    border-radius: $border-radius;
+    height: 18rem;
+    width: 15rem;
+
+    .button {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: $margin-top;
+      margin-right: $margin-right;
+      cursor: pointer;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .bank {
+    display: flex;
+    flex-direction: column;
+    border: $border-size-primary solid $color-icon;
+    border-radius: $border-radius;
+    height: 18rem;
+    align-items: center;
+    text-align: center;
+    width: 17rem;
+    cursor: pointer;
+  }
+
+  .bank {
+    .buttons {
+      width: 90%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: $margin;
+      cursor: pointer;
+    }
+
+    .name-bank {
+      font-family: "Roboto-Bold";
+    }
+
+    .money {
+      display: flex;
+      justify-content: space-between;
+      width: 90%;
+
+      .balance {
+        color: $color-icon;
+      }
+    }
+
+    .iban {
+      background-color: $color-border-primary;
+      border-radius: $border-radius;
+      width: 90%;
+      text-align: start;
+      padding-left: $padding-left;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      width: 90%;
+      height: 100%;
+      align-items: flex-end;
+
+      p {
+        color: $color-icon;
+      }
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      width: 90%;
+      margin-top: $margin-top;
+    }
+  }
+}
+
+.view-bank {
+  .header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    .left {
+      display: flex;
+      gap: 1rem;
+      height: 2.5rem;
+      align-items: center;
+
+      .button {
+        cursor: pointer;
+      }
+
+      .title {
+        font-family: "Roboto-Bold";
+      }
+    }
+
+    .right {
+      display: flex;
+      gap: 1rem;
+      height: 2.5rem;
+      width: 20rem;
+      align-items: center;
+      text-align: end;
+
+      .button {
+        margin-top: $margin-top;
+      }
+    }
+  }
+
+  .filter-container {
+    display: flex;
+    justify-content: space-between;
+
+    .searchbar {
+      width: 40%;
+    }
+  }
+}

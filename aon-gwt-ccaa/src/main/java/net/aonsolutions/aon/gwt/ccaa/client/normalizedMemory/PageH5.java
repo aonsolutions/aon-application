@@ -1,17 +1,20 @@
 package net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageH5 extends PageAbs {
@@ -21,6 +24,8 @@ public class PageH5 extends PageAbs {
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
+	@UiField HTMLPanel tablePanel;
+	
 	@UiField Label LMA8099000;
 	@UiField CheckBox IMA8099000;
 	@UiField Label LMA8099010;
@@ -96,8 +101,47 @@ public class PageH5 extends PageAbs {
 	@Override
 	protected void initializeTable() {
 		init();
+		if(getYear()>= 2022) {
+			table(table, "", D2PDepositConstants.IMA_KEYS);
+		} else tablePanel.setVisible(false);
 	}
 	
+	private void table(FlexTable tab, String title, D2DepositHeaderKey[][] keys) {
+		Integer row = 0;
+
+		tab.setWidth("100%");
+		tab.setCellSpacing(0);
+		tab.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonWidthAuto());
+		tab.getColumnFormatter().addStyleName(1, AON.AON_CSS.aonWidth140());
+		tab.getColumnFormatter().addStyleName(2, AON.AON_CSS.aonWidth140());
+	
+		tab.setWidget(row, 0, new Label(title));
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		
+		tab.setWidget(row, 1, new Label("Valor"));
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextRight());
+		
+		tab.setWidget(row, 2, new Label("Importe"));
+		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
+		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextRight());
+		++row;
+
+		for (D2DepositHeaderKey[] innerKeys : keys) {
+			row = paintKey(tab, innerKeys , row);
+		}
+	}
+	
+	protected int paintKey(FlexTable tab, D2DepositHeaderKey[] keys,  int row) {
+		paintKeyDescription(tab, keys[0], row, 0);
+		paintKeyField(tab,keys[0], row, 1, false);
+		paintKeyField(tab,keys[1],row,2,false);
+		return  ++row;
+	}
 	protected void onEdit(String key, String value) {
 		onEdit(key, value, false);
 	}

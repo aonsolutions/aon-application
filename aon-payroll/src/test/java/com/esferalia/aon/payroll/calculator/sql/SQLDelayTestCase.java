@@ -330,7 +330,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, endDate, contract);
 			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
-			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder, round(2));
+			calculator.setSalaryBuilder(roundSalaryBuilder);
 			calculator.calculate(ctx);
 			jooqSalaryBuilder.execute();
 			startDate = add(endDate, DAY_OF_MONTH, 1);
@@ -350,7 +351,12 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				contract.getStartDate(), 
 				add(startDate, DAY_OF_MONTH, -1), 
 				endDate, 
-				criteria);
+				criteria) {
+			@Override
+			protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(ISalaryBuilder<T> salaryBuilder) {
+				return new RoundSalaryBuilder<T>(salaryBuilder, round(2));
+			}
+		};
 		delayCtx.next();
 		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		delayCalculator.setSalaryBuilder(new SalaryBuilder());
@@ -481,6 +487,114 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(12 + 3, delay.getTotalPayment(), DELTA);
 		Assert.assertEquals(12 + 3, delay.getCommonBase(), DELTA );
 		Assert.assertEquals(12 + 3, delay.getIrpfBase(), DELTA);
+		
+
+	}
+
+	@Test
+	public void testDelaysExtrasZero() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptP = addConcept(aonContext, "P");
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "P";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "P";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, 
+				},
+				new Payment[] {
+					new Payment() {
+						{
+							this.concept = conceptP.getId();
+							this.expression = "SALARIO * DIAS_TRABAJADOS/DIAS_MES";
+						}
+					},
+					new Payment() {
+						{
+							this.concept = conceptP.getId();
+							this.expression = "TRACE('SALARIO:%f\r\n',(SALARIO * DIAS_TRABAJADOS/DIAS_MES)); 0.00";
+						}
+					}
+				},
+				new HashMap<String,String>(){
+					{
+						put("SALARIO", "1000.00");
+					}
+				});
+
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {}, 
+				new String[] {}, 
+				category);
+		//@formatter:on
+		
+		
+
+		Date startDate = getFirstDayOfMonth(contract.getStartDate());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder, round(2));
+			calculator.setSalaryBuilder(roundSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+				
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				contract.getStartDate(), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria) {
+		    @Override
+		    protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(
+		            ISalaryBuilder<T> salaryBuilder) {
+		        return new RoundSalaryBuilder<T>(salaryBuilder, round(2));
+		    }
+		};
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>(new SalaryBuilder(), round(2)));
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(0.00, delay.getCommonBase(), DELTA );
+		Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
 		
 
 	}
@@ -2516,7 +2630,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, endDate, contract);
 			SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 			JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
-			calculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> d.setScale(3, RoundingMode.HALF_UP)));
+			calculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> d.setScale(2, RoundingMode.HALF_UP)));
 			calculator.calculate(ctx);
 			jooqSalaryBuilder.execute();
 			startDate = add(endDate, DAY_OF_MONTH, 1);
@@ -2524,9 +2638,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		}
 		AON.getSalaries(aonContext, props -> props.getContractProperty().eq(contract.getId()).and(props.getIsSalaryProperty().eq(true)))
 		.forEach( salary  -> {
-			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getTotalPayment(), 0.001);
-			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getIrpfBase(), 0.001);
-			Assert.assertEquals(2318.09 + 2318.09 *0.04 + (2318.09 + 2318.09 *0.04)/6 , salary.getCommonContingenciesBase(), 0.001);
+			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getTotalPayment(), 0.01);
+			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getIrpfBase(), 0.01);
+			Assert.assertEquals(2318.09 + 2318.09 *0.04 + (2318.09 + 2318.09 *0.04)/6 , salary.getCommonContingenciesBase(), 0.01);
 		});
 		;
 		
@@ -2538,11 +2652,18 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				getFirstDayOfMonth(getToday()), 
 				add(startDate, DAY_OF_MONTH, -1), 
 				endDate, 
-				criteria);
+				criteria) {
+		    @Override
+		    protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(
+		            ISalaryBuilder<T> salaryBuilder) {
+		        return new RoundSalaryBuilder<T>(salaryBuilder, round(2));
+		    }
+		    
+		};
 		delayCtx.next();
 		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
-		delayCalculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> d.setScale(3, RoundingMode.HALF_UP)));
+		delayCalculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> d.setScale(2, RoundingMode.HALF_UP)));
 		delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
@@ -2876,7 +2997,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
 				.getSalaryPayments()) {
 			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
-					+ " (" + payment.getExpression() + ")");
+					+ " (" + payment.getExpression() + ")" + payment.getQuote() );
 		}
 		
 		Assert.assertEquals(100.00, delay.getTotalPayment());
@@ -5380,9 +5501,109 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + deduction.getExpression() + ")");
 		}
 
-		Assert.assertEquals(10.00 * 10.00 / 100.00, delay.getTotalDeduction());
+		Assert.assertEquals(10.00 * 10.00 / 100.00, delay.getTotalDeduction(), DELTA);
 	}
 
+
+	@Test
+	public void testDelaysWithDelays() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		
+		setData(aonContext, contract, "DIAS_MES", "30.00");
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder());
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			//System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+			//		+ " (" + payment.getExpression() + ")");
+		}
+
+		
+		org.junit.Assert.assertEquals(100.00, delay.getTotalPayment(), 0.00);
+		org.junit.Assert.assertEquals(100.00, delay.getCommonBase(), 0.00);
+		org.junit.Assert.assertEquals(100.00, delay.getRawCommonBase(), 0.00);
+		org.junit.Assert.assertEquals(100.00, delay.getProfessionalBase(), 0.00);
+		org.junit.Assert.assertEquals(100.00, delay.getIrpfBase(), 0.00);
+
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		delayCtx = new SQLContractDelayCalculatorContext(connection, 
+			getFirstDayOfMonth(getToday()), 
+			add(startDate, DAY_OF_MONTH, -1), 
+			endDate, 
+			criteria);
+		delayCtx.next();
+		calculator.calculate(delayCtx);
+		jooqSalaryBuilder.execute();
+
+		addPayment(aonContext, contract, "5.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		delayCtx = new SQLContractDelayCalculatorContext(connection, 
+			getFirstDayOfMonth(getToday()), 
+			add(startDate, DAY_OF_MONTH, -1), 
+			endDate, 
+			criteria);
+		delayCtx.next();
+		delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder() {
+		    @Override
+		    public void addPayment(Double amount, Double quote, Double tax, String description,
+		            java.util.Date startDate, java.util.Date endDate, IPayment payment,
+		            Map<String, ITimedVariable<?>> context) {
+			    System.out.println( "[" + startDate + "..." + endDate + "] :" + payment.getName() + " [ " + description + "] :"
+				    + amount+ " (" + payment.getExpression() + ")");
+		        super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+		    }
+		});
+		delay = delayCalculator.calculate(delayCtx);
+
+		org.junit.Assert.assertEquals(50.00, delay.getTotalPayment(), 0.00);
+		org.junit.Assert.assertEquals(50.00, delay.getCommonBase(), 0.00);
+		org.junit.Assert.assertEquals(50.00, delay.getRawCommonBase(), 0.00);
+		org.junit.Assert.assertEquals(50.00, delay.getProfessionalBase(), 0.00);
+		org.junit.Assert.assertEquals(50.00, delay.getIrpfBase(), 0.00);
+	}
 
 	// ------------------------------------------
 

@@ -16,7 +16,7 @@ package com.code.aon.faces.component.richfaces.jstl;
 
 import java.io.IOException;
 
-import javax.el.ELException;
+import jakarta.el.ELException;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 

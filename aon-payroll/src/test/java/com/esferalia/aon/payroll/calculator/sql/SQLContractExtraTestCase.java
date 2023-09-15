@@ -26,9 +26,9 @@ public class SQLContractExtraTestCase extends SQLExtraTestCase {
 		criteria.addEqualExpression(
 				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
 				contract.getId());
-		java.util.Date endDate = AgreementExtra.parseAgreementDate(extra.getEndDate(), year);
-		java.util.Date  startDate = AgreementExtra.parseAgreementDate(extra.getStartDate(), year);
-		java.util.Date  issueDate = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
+		java.util.Date endDate = AgreementExtra.parseAgreementEndDate(extra.getEndDate(), year);
+		java.util.Date  startDate = AgreementExtra.parseAgreementStartDate(extra.getStartDate(), year);
+		java.util.Date  issueDate = AgreementExtra.parseAgreementIssueDate(extra.getIssueDate(), year);
 		
 		SQLContractExtraCalculatorContext ctx = new SQLContractExtraCalculatorContext(connection, startDate, endDate,issueDate,  criteria);
 		ctx.next();

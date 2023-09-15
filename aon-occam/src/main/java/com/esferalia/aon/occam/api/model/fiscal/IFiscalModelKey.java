@@ -6,5 +6,6 @@ public interface IFiscalModelKey extends Serializable {
 	
 	String getValue();
 	int getBox();
+	String getBoxFormatted();
 	
 }

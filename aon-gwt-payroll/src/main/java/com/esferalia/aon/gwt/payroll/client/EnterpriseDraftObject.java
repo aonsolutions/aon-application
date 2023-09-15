@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
@@ -20,7 +19,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
-public class EnterpriseDraftObject extends AbstractDraftObject {
+public class EnterpriseDraftObject {
 
 	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	private Enterprise enterprise;
@@ -33,7 +32,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	public EnterpriseDraftObject(com.esferalia.aon.gwt.payroll.shared.Enterprise enterprise) {
 		this.enterprise = new Enterprise();
 		this.enterprise.setId(enterprise.getId());
-		this.undoManager = new UndoManager<Undoable>();
 	}
 	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
@@ -165,6 +163,10 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		return this.enterprise.getAddress().getProvince();
 	}
 	
+	public String getGeozoneCode() {
+		return this.enterprise.getAddress().getGeozoneCode();
+	}
+	
 	public String getMobile() {
 		Optional<RegistryMedia> mobile = this.enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.CELLULAR).findFirst();
 		return mobile.isPresent() ? mobile.get().getValue() : null;
@@ -225,112 +227,57 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	// ----------------------------------------------  SETTERS  -------------------------------------------------
 	
 	public void setName(String name) {
-		add(enterprise::setName, 
-			enterprise.getName(), 
-			name );
-		
 		enterprise.setName(name);
 	}
 	
 	public void setAlias(String alias) {
-		add(enterprise::setAlias, 
-				enterprise.getAlias(), 
-			alias );
-		
 		enterprise.setAlias(alias);
 	}
 	
 	public void setDocumentType(DocumentType documentType) {
-		add(enterprise::setDocumentType, 
-			enterprise.getDocumentType(), 
-			documentType );
-		
 		enterprise.setDocumentType(documentType);
 	}
 	
 	public void setDocument(String document) {
-		add(enterprise::setDocument, 
-				enterprise.getDocument(), 
-			document );
-		
 		enterprise.setDocument(document);
 	}
 	
 	public void setNationality(Country country) {
-		add(enterprise::setDocumentCountry, 
-				enterprise.getDocumentCountry(), 
-				country );
-		
 		enterprise.setDocumentCountry(country);
 	}
 	
 	public void setAddressStreetType(StreetType streetType){
 		enterprise.getAddress().setStreetType(streetType);
-		
-		add(enterprise::setAddress, 
-			enterprise.getAddress(), 
-			enterprise.getAddress() );
-		
 		enterprise.setAddress(enterprise.getAddress());
 	}
 	
 	public void setAddress(String address) {
 		enterprise.getAddress().setAddress(address);
-		
-		add(enterprise::setAddress, 
-			enterprise.getAddress(), 
-			enterprise.getAddress() );
-		
 		enterprise.setAddress(enterprise.getAddress());
 	}
 	
 	public void setAddressNum(String number) {
 		enterprise.getAddress().setNumber(number);
-		
-		add(enterprise::setAddress, 
-			enterprise.getAddress(), 
-			enterprise.getAddress() );
-		
 		enterprise.setAddress(enterprise.getAddress());
 	}
 	
 	public void setAddressZip(String zip) {
 		enterprise.getAddress().setZip(zip);
-		
-		add(enterprise::setAddress, 
-			enterprise.getAddress(), 
-			enterprise.getAddress() );
-		
 		enterprise.setAddress(enterprise.getAddress());
 	}
 	
 	public void setAddressCity(String city) {
 		enterprise.getAddress().setCity(city);
-		
-		add(enterprise::setAddress, 
-			enterprise.getAddress(), 
-			enterprise.getAddress() );
-		
 		enterprise.setAddress(enterprise.getAddress());
 	}
 	
 	public void setAddressMunicipalityCode(String municipalityCode) {
 		enterprise.getAddress().setMunicipalityCode(municipalityCode);
-		
-		add(enterprise::setAddress, 
-			enterprise.getAddress(), 
-			enterprise.getAddress() );
-		
 		enterprise.setAddress(enterprise.getAddress());
 	}
 	
 	public void setAddressProvince(String province) {
 		enterprise.getAddress().setProvince(province);
-		
-		add(enterprise::setAddress, 
-			enterprise.getAddress(), 
-			enterprise.getAddress() );
-		
 		enterprise.setAddress(enterprise.getAddress());
 	}
 	
@@ -391,10 +338,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	}
 	
 	public void setScope(Integer scope) {
-		add(enterprise::setScope, 
-			enterprise.getScope(), 
-			scope );
-		
 		enterprise.setScope(scope);
 	}
 	

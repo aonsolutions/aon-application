@@ -46,10 +46,18 @@ export class ModelsDashboardComponent implements OnInit {
   ModelsThisTrimester(trimester : number, name: string){
     // Nombre
     this.selected = name
+    // Year que estamos
+    const currentDate   = new Date();
+    const currentYear   = currentDate.getFullYear();
+    
     // modelos del trimestre escogido
     let filterBuilder = new FilterBuilder();
     filterBuilder.addField('trimester', trimester);
+    filterBuilder.addField('year', currentYear);
     this.taxModelService.getTaxModelList(filterBuilder.getFilter()).then((models) => {
+      
+      console.log(models)
+      
       this.models = models;
     });
   }

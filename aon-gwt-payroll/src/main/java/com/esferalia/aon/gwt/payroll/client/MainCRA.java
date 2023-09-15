@@ -12,9 +12,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -74,10 +73,10 @@ public class MainCRA extends MainEntryPoint {
 	interface MyStyle extends CssResource {
 		String suggestBox();
 	}
-	
+
 	@UiField(provided = true)
 	AonToolbar toolbar;
-	
+
 	@UiField
 	HTMLPanel messagePanel;
 
@@ -144,6 +143,17 @@ public class MainCRA extends MainEntryPoint {
 	@UiField(provided = true)
 	DataGrid<CRA> crasDataGrid;
 
+	// --------------------------------------------------------------------------------------------
+	// VARIABLES
+	// --------------------------------------------------------------------------------------------
+
+	private MainCRAObject mainCRAObjectNew;
+	private MultiSelectionModel<CCCInfo> selectionCCCInfoModel;
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("MM/yyyy");
+	private DateTimeFormat formatFullDateHour = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private Date findingDate = new Date();
+	private Date findingDateCRA = new Date();
+
 	private AonToolbarButton exportButton;
 	private AonToolbarButton listButton;
 	private AonToolbarButton newCRAButton;
@@ -156,7 +166,7 @@ public class MainCRA extends MainEntryPoint {
 		// Provide DataGrid
 		provideCCCDataGrid();
 		provideCRAsDataGrid();
-		
+
 		// Create toolbar
 		getToolbarPanel();
 
@@ -183,7 +193,7 @@ public class MainCRA extends MainEntryPoint {
 	private void setCRAHeightCollapsePanel() {
 		crasDataGrid.setHeight((Window.getClientHeight() - 300) + "px");
 	}
-	
+
 	private void setCRAHeightNotCollapsePanel() {
 		crasDataGrid.setHeight((Window.getClientHeight() - 380) + "px");
 	}
@@ -213,9 +223,13 @@ public class MainCRA extends MainEntryPoint {
 
 		year.addItem(yearInt + "", yearInt + "");
 		year.addItem((yearInt - 1) + "", (yearInt - 1) + "");
+		year.addItem((yearInt - 2) + "", (yearInt - 2) + "");
+		year.addItem((yearInt - 3) + "", (yearInt - 3) + "");
 
 		yearTillT.addItem(yearInt + "", yearInt + "");
 		yearTillT.addItem((yearInt - 1) + "", (yearInt - 1) + "");
+		yearTillT.addItem((yearInt - 2) + "", (yearInt - 2) + "");
+		yearTillT.addItem((yearInt - 3) + "", (yearInt - 3) + "");
 
 		// Type List
 		typeList.clear();
@@ -291,7 +305,8 @@ public class MainCRA extends MainEntryPoint {
 		Header<Boolean> selectAllHeader = new Header<Boolean>(selectAllHeaderCB) {
 			@Override
 			public Boolean getValue() {
-				return null != mainCRAObjectNew && null != mainCRAObjectNew.getEnterpriseCCCs() && selectionCCCInfoModel.getSelectedSet().size() == mainCRAObjectNew.getEnterpriseCCCs().size();
+				return null != mainCRAObjectNew && null != mainCRAObjectNew.getEnterpriseCCCs()
+						&& selectionCCCInfoModel.getSelectedSet().size() == mainCRAObjectNew.getEnterpriseCCCs().size();
 			}
 		};
 
@@ -333,12 +348,13 @@ public class MainCRA extends MainEntryPoint {
 		TextColumn<CCCInfo> geozoneColumn = new TextColumn<CCCInfo>() {
 			@Override
 			public String getValue(CCCInfo cccInfo) {
-				return ProvinceContract.getName(cccInfo.getGeozone());
+				return ProvinceContract.getName(cccInfo.getGeozoneCode());
 			}
 		};
 
 		geozoneColumn.setSortable(true);
 		cccDataGrid.setColumnWidth(geozoneColumn, 10, Unit.PCT);
+		geozoneColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
 		TextColumn<CCCInfo> typeColumn = new TextColumn<CCCInfo>() {
 			@Override
@@ -350,6 +366,7 @@ public class MainCRA extends MainEntryPoint {
 
 		typeColumn.setSortable(true);
 		cccDataGrid.setColumnWidth(typeColumn, 20, Unit.PCT);
+		typeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
 		TextColumn<CCCInfo> cccColumn = new TextColumn<CCCInfo>() {
 			@Override
@@ -360,6 +377,7 @@ public class MainCRA extends MainEntryPoint {
 
 		cccColumn.setSortable(true);
 		cccDataGrid.setColumnWidth(cccColumn, 15, Unit.PCT);
+		cccColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
 		// Add the columns.
 		cccDataGrid.addColumn(enterpriseNameColumn, "Empresa");
@@ -388,11 +406,6 @@ public class MainCRA extends MainEntryPoint {
 
 		// Set the message to display when the table is empty.
 		crasDataGrid.setEmptyTableWidget(new Label("No existen CRAs".toUpperCase()));
-
-		// Add a selection model so we can select cells.
-		this.selectionCraModel = new MultiSelectionModel<>(CRA.KEY_PROVIDER);
-		crasDataGrid.setSelectionModel(this.selectionCraModel,
-				DefaultSelectionEventManager.<CRA>createCheckboxManager());
 
 		// Initialize the columns.
 		addCraColumns();
@@ -447,6 +460,7 @@ public class MainCRA extends MainEntryPoint {
 		};
 
 		rectificativeColumn.setSortable(true);
+		rectificativeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		crasDataGrid.setColumnWidth(rectificativeColumn, 10, Unit.PCT);
 
 		TextColumn<CRA> geozoneColumn = new TextColumn<CRA>() {
@@ -457,6 +471,7 @@ public class MainCRA extends MainEntryPoint {
 		};
 
 		geozoneColumn.setSortable(true);
+		geozoneColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		crasDataGrid.setColumnWidth(geozoneColumn, 10, Unit.PCT);
 
 		TextColumn<CRA> typeColumn = new TextColumn<CRA>() {
@@ -468,6 +483,7 @@ public class MainCRA extends MainEntryPoint {
 		};
 
 		typeColumn.setSortable(true);
+		typeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		crasDataGrid.setColumnWidth(typeColumn, 15, Unit.PCT);
 
 		TextColumn<CRA> cccColumn = new TextColumn<CRA>() {
@@ -478,18 +494,19 @@ public class MainCRA extends MainEntryPoint {
 		};
 
 		cccColumn.setSortable(true);
+		cccColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		crasDataGrid.setColumnWidth(cccColumn, 10, Unit.PCT);
 
 		ActionCell<CRA> infoActionCell = new ActionCell<>("", cra -> {
 			if (Boolean.TRUE.equals(cra.getIsConsignment())) {
 				StringBuilder bld = new StringBuilder();
-				
+
 				for (CCCInfo cccInfo : cra.getIncludeCCCs())
 					bld.append(cccInfo.toString() + "<br>");
-				
+
 				createInfoDialog("CRA (" + cra.getIncludeCCCs().size() + " CCCs)", bld.toString());
 			}
-		}); 
+		});
 
 		Column<CRA, CRA> infoColumn = new Column<CRA, CRA>(infoActionCell) {
 
@@ -500,8 +517,9 @@ public class MainCRA extends MainEntryPoint {
 
 			@Override
 			public void render(Context context, CRA cra, SafeHtmlBuilder sb) {
-				if (null != cra &&  cra.getIncludeCCCs().size() > 1) {
-					sb.appendHtmlConstant("<button type=\"button\" title=\"Ver CCCs\" class=\"aon_button aon_icon_info aon_table_button\" style=\"border: none !important;\"></button>");
+				if (null != cra && cra.getIncludeCCCs().size() > 1) {
+					sb.appendHtmlConstant(
+							"<button type=\"button\" title=\"Ver CCCs\" class=\"aon_button aon_icon_info aon_table_button\" style=\"border: none !important;\"></button>");
 				}
 			}
 		};
@@ -512,7 +530,7 @@ public class MainCRA extends MainEntryPoint {
 		ActionCell<CRA> downloadActionCell = new ActionCell<>("", cra -> {
 			String fileDownloadURL = GWT.getModuleBaseURL() + "/download_cra/" + "?craBatchId=" + cra.getCode();
 			Window.open(fileDownloadURL, "_blank", null);
-		}); 
+		});
 
 		Column<CRA, CRA> downloadColumn = new Column<CRA, CRA>(downloadActionCell) {
 
@@ -524,7 +542,8 @@ public class MainCRA extends MainEntryPoint {
 			@Override
 			public void render(Context context, CRA cra, SafeHtmlBuilder sb) {
 				if (null != cra)
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_icon_download aon_table_button\" style=\"border: none !important; height: 20px;\"></button>");
+					sb.appendHtmlConstant(
+							"<button type=\"button\" class=\"aon_button aon_icon_download aon_table_button\" style=\"border: none !important; height: 20px;\"></button>");
 			}
 		};
 
@@ -532,14 +551,31 @@ public class MainCRA extends MainEntryPoint {
 		crasDataGrid.setColumnWidth(downloadColumn, 5, Unit.PCT);
 
 		ActionCell<CRA> deleteActionCell = new ActionCell<>("", cra -> {
-			mainCRAObjectNew.setDefaultLiquidDate(findingDateCRA);
-			mainCRAObjectNew.deteleCRA(cra.getCode(), 
-					s -> {
-							mainCRAObjectNew.removeCCCCRADate(cra);
-							initCRATable();
-					},
-					f -> {});
-		}); 
+			AonDialog dialog = new AonDialog("Eliminaci\u00f3n CRA",
+					new HTML("Se va a proceder a eliminar el CRA para periodo de liquidaci\u00f3n <b>"
+							+ formatDate(cra.getCreationDate())
+							+ "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+
+				@Override
+				public void onAccept() {
+					AonMessagePanel.showLoading(messagePanel,
+							"Elimando CRA. Periodo de liquidaci\u00f3n " + formatDate(cra.getCreationDate()) + "...");
+					mainCRAObjectNew.deteleCRA(cra.getCode(), s -> {
+						onListCras();
+						AonMessagePanel.showSuccess(messagePanel, "Se ha eliminado el CRA correctamente");
+					}, f -> {
+					});
+				}
+			});
+
+		});
 
 		Column<CRA, CRA> deleteColumn = new Column<CRA, CRA>(deleteActionCell) {
 
@@ -551,7 +587,8 @@ public class MainCRA extends MainEntryPoint {
 			@Override
 			public void render(Context context, CRA cra, SafeHtmlBuilder sb) {
 				if (null != cra)
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_icon_delete aon_table_button\" style=\"border: none !important; height: 20px;\"></button>");
+					sb.appendHtmlConstant(
+							"<button type=\"button\" class=\"aon_button aon_icon_delete aon_table_button\" style=\"border: none !important; height: 20px;\"></button>");
 			}
 		};
 
@@ -590,21 +627,9 @@ public class MainCRA extends MainEntryPoint {
 	}
 
 	// --------------------------------------------------------------------------------------------
-	// VARIABLES
-	// --------------------------------------------------------------------------------------------
-
-	private MainCRAObject mainCRAObjectNew;
-	private MultiSelectionModel<CCCInfo> selectionCCCInfoModel;
-	private MultiSelectionModel<CRA> selectionCraModel;
-	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("MM/yyyy");
-	private DateTimeFormat formatFullDateHour = DateTimeFormat.getFormat("dd/MM/yyyy");
-	private Date findingDate = new Date();
-	private Date findingDateCRA = new Date();
-
-	// --------------------------------------------------------------------------------------------
 	// ON MODULE LOAD
 	// --------------------------------------------------------------------------------------------
-	
+
 	@Override
 	public void onModuleLoad() {
 		onModuleLoad(new MainCRAObject());
@@ -616,7 +641,6 @@ public class MainCRA extends MainEntryPoint {
 		// Create findPeriod, first day of previus month
 		createInitialDate();
 		setInitialLBAndCBSelected();
-		peddingCCCsCB.setValue(true, false);
 		onListCras();
 
 		selectionCCCInfoModel.addSelectionChangeHandler(
@@ -642,34 +666,33 @@ public class MainCRA extends MainEntryPoint {
 		orclEnterprise.addAll(enterprisesSuggest);
 		enterpriseSB.setAutoSelectEnabled(false);
 
-		enterpriseSB.addKeyUpHandler(e -> {
+		enterpriseSB.getTextBox().addBlurHandler(e -> {
 			String value = enterpriseSB.getValue();
-			if (AonStringUtils.isBlank(value) || value.length() < 3) {
-				mainCRAObjectNew.resetEnterpriseCCCList();
-			} else {
-				List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
-				mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
+			if (AonStringUtils.isBlank(value)) {
+				filterCCCs();
+				initCCCsTable();
 			}
-			initCCCsTable();
 		});
-
+		
 		enterpriseSB.addSelectionHandler(e -> {
-			String value = enterpriseSB.getValue();
-			List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
-			mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
+			filterCCCs();
 			initCCCsTable();
 		});
 	}
 
 	private void setInitialLBAndCBSelected() {
-		setSelectedValueLB(this.year, DateUtils.getYear(findingDate) + "");
-		setSelectedValueLB(this.month, DateUtils.getMonth(findingDate) + "");
-		setSelectedValueLB(this.yearTillT, DateUtils.getYear(findingDateCRA) + "");
-		setSelectedValueLB(this.monthTillT, DateUtils.getMonth(findingDateCRA) + "");
+		setDateLBSelected();
 
 		this.allCCCsCB.setValue(false);
 		this.emitCCCsCB.setValue(false);
 		this.peddingCCCsCB.setValue(true);
+	}
+
+	private void setDateLBSelected() {
+		setSelectedValueLB(this.year, DateUtils.getYear(findingDate) + "");
+		setSelectedValueLB(this.month, DateUtils.getMonth(findingDate) + "");
+		setSelectedValueLB(this.yearTillT, DateUtils.getYear(findingDateCRA) + "");
+		setSelectedValueLB(this.monthTillT, DateUtils.getMonth(findingDateCRA) + "");
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -690,6 +713,7 @@ public class MainCRA extends MainEntryPoint {
 		// widget.
 		dataProvider.getList().clear();
 		List<CCCInfo> cccList = dataProvider.getList();
+		cccList.clear();
 
 		this.cccs = this.mainCRAObjectNew.getEnterpriseCCCs();
 
@@ -705,20 +729,20 @@ public class MainCRA extends MainEntryPoint {
 
 	private void addSortColums(List<CCCInfo> cccInfoList) {
 		ListHandler<CCCInfo> columnSortHandler = new ListHandler<>(cccInfoList);
-		
-		columnSortHandler.setComparator(cccDataGrid.getColumn(1), 
+
+		columnSortHandler.setComparator(cccDataGrid.getColumn(1),
 				(o1, o2) -> compareString(o1, o2, o1.getEnterpriseDesciption(), o2.getEnterpriseDesciption()));
-		
-		columnSortHandler.setComparator(cccDataGrid.getColumn(2), 
+
+		columnSortHandler.setComparator(cccDataGrid.getColumn(2),
 				(o1, o2) -> compareString(o1, o2, o1.getActivityDescription(), o2.getActivityDescription()));
-		
-		columnSortHandler.setComparator(cccDataGrid.getColumn(3), 
+
+		columnSortHandler.setComparator(cccDataGrid.getColumn(3),
 				(o1, o2) -> compareString(o1, o2, o1.getGeozone(), o2.getGeozone()));
-		
-		columnSortHandler.setComparator(cccDataGrid.getColumn(4), 
+
+		columnSortHandler.setComparator(cccDataGrid.getColumn(4),
 				(o1, o2) -> compareString(o1, o2, o1.getTypeStr(), o2.getTypeStr()));
-		
-		columnSortHandler.setComparator(cccDataGrid.getColumn(5), 
+
+		columnSortHandler.setComparator(cccDataGrid.getColumn(5),
 				(o1, o2) -> compareString(o1, o2, o1.getCcc(), o2.getCcc()));
 
 		cccDataGrid.addColumnSortHandler(columnSortHandler);
@@ -727,29 +751,38 @@ public class MainCRA extends MainEntryPoint {
 		cccDataGrid.getColumn(2).setDefaultSortAscending(false);
 		cccDataGrid.getColumnSortList().push(cccDataGrid.getColumn(2));
 	}
-	
+
 	private int compareString(Object o1, Object o2, String s1, String s2) {
-		if (o1 == o2) return 0;
-		else if (o1 == null) return -1;
-		else if (o2 == null) return 1;
+		if (o1 == o2)
+			return 0;
+		else if (o1 == null)
+			return -1;
+		else if (o2 == null)
+			return 1;
 		else
-        	return s1.compareTo(s2);
+			return s1.compareTo(s2);
 	}
-	
+
 	private int compareDates(Object o1, Object o2, Date d1, Date d2) {
-		if (o1 == o2) return 0;
-		else if (o1 == null) return -1;
-		else if (o2 == null) return 1;
+		if (o1 == o2)
+			return 0;
+		else if (o1 == null)
+			return -1;
+		else if (o2 == null)
+			return 1;
 		else
-        	return d1.compareTo(d2);
+			return d1.compareTo(d2);
 	}
-	
+
 	private int compareByte(Object o1, Object o2, Byte d1, Byte d2) {
-		if (o1 == o2) return 0;
-		else if (o1 == null) return -1;
-		else if (o2 == null) return 1;
+		if (o1 == o2)
+			return 0;
+		else if (o1 == null)
+			return -1;
+		else if (o2 == null)
+			return 1;
 		else
-        	return d1.compareTo(d2);
+			return d1.compareTo(d2);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -764,7 +797,7 @@ public class MainCRA extends MainEntryPoint {
 		List<CRA> crasList = dataProvider.getList();
 		crasList.clear();
 
-		this.cras = this.mainCRAObjectNew.getFilteredCRAs();
+		this.cras = this.mainCRAObjectNew.getCRAs();
 
 		for (CRA cra : this.cras)
 			crasList.add(cra);
@@ -807,87 +840,69 @@ public class MainCRA extends MainEntryPoint {
 
 	@UiHandler("allCCCsCB")
 	public void onAllCCCsCB(ValueChangeEvent<Boolean> event) {
-		if(Boolean.FALSE.equals(event.getValue()))
+		if (Boolean.FALSE.equals(event.getValue()))
 			return;
-		
+
 		this.emitCCCsCB.setValue(false);
 		this.peddingCCCsCB.setValue(false);
 
-		this.mainCRAObjectNew.resetEnterpriseCCCList();
-		enterpriseSB.setText("");
-
 		clearSelectionModel();
-		initCCCsTable();
+		filterCCCs();
 	}
 
 	@UiHandler("emitCCCsCB")
 	public void onEmitCCCsCB(ValueChangeEvent<Boolean> event) {
-		if(Boolean.FALSE.equals(event.getValue()))
+		if (Boolean.FALSE.equals(event.getValue()))
 			return;
-		
+
 		this.allCCCsCB.setValue(false);
 		this.peddingCCCsCB.setValue(false);
 
-		this.mainCRAObjectNew.filterEmitedCCC(findingDate);
-		enterpriseSB.setText("");
-
 		clearSelectionModel();
-		initCCCsTable();
+		filterCCCs();
 	}
 
 	@UiHandler("peddingCCCsCB")
 	public void onPenddingCCCsCB(ValueChangeEvent<Boolean> event) {
-		if(Boolean.FALSE.equals(event.getValue()))
+
+		if (Boolean.FALSE.equals(event.getValue()))
 			return;
-		
+
 		this.allCCCsCB.setValue(false);
 		this.emitCCCsCB.setValue(false);
 
-		this.mainCRAObjectNew.filterPenddingCCC(findingDate);
-		enterpriseSB.setText("");
-
 		clearSelectionModel();
-		initCCCsTable();
+		filterCCCs();
 	}
 
 	@UiHandler({ "month", "year" })
 	public void onMonthChange(ChangeEvent event) {
 		findingDate = DateUtils.getDate(Integer.parseInt(month.getSelectedValue()), Integer.parseInt(year.getSelectedValue()));
 		showLoading("Obteniendo CCCs para generar CRAs...");
-		this.mainCRAObjectNew.getEnterprisesCCCInfo(findingDate.getTime(), 
-				s -> {
-					setInitialLBAndCBSelected();
-					clearSelectionModel();
-					initCCCsTable();
-					hideMessage();
-				},
-				f -> {});
+		this.mainCRAObjectNew.getEnterprisesCCCInfo(findingDate.getTime(), s -> {
+			clearSelectionModel();
+			filterCCCs();
+			hideMessage();
+		}, f -> {
+		});
 	}
 
-	@UiHandler("typeList")
-	public void onTypeListChange(ChangeEvent event) {
-		if (0 == typeList.getSelectedIndex())
-			this.mainCRAObjectNew.resetCRAsList();
-		else {
-			Byte type = Byte.parseByte(typeList.getSelectedValue());
-			mainCRAObjectNew.filterCRAsListByType(type);
-		}
-		initCRATable();
-	}
-
-	@UiHandler("geozoneList")
-	public void onGeozoneListChange(ChangeEvent event) {
-		if (0 == geozoneList.getSelectedIndex())
-			this.mainCRAObjectNew.resetCRAsList();
-		else {
-			String geozoneCode = geozoneList.getSelectedItemText();
-			mainCRAObjectNew.filterCRAListByGeozone(geozoneCode);
-		}
-		initCRATable();
+	private void filterCCCs() {
+		int status = allCCCsCB.getValue() ? 0 : (emitCCCsCB.getValue() ? 1 : 2);
+		
+		String value = enterpriseSB.getValue();
+		List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
+		
+		this.mainCRAObjectNew.filterCCC(enterprisesIds, status, findingDate);
+		initCCCsTable();
 	}
 
 	@UiHandler({ "geozoneList", "typeList" })
 	public void onFilterChange(ChangeEvent event) {
+		filterCRAs();
+	}
+
+	private void filterCRAs() {
 		// GEOZONE
 		String geozoneName = geozoneList.getSelectedItemText();
 
@@ -904,13 +919,15 @@ public class MainCRA extends MainEntryPoint {
 
 	@UiHandler({ "monthTillT", "yearTillT" })
 	public void onFilterDatesChange(ChangeEvent event) {
-		findingDateCRA = DateUtils.getDate(Integer.parseInt(monthTillT.getSelectedValue()), Integer.parseInt(yearTillT.getSelectedValue()));
+		findingDateCRA = DateUtils.getDate(Integer.parseInt(monthTillT.getSelectedValue()),
+				Integer.parseInt(yearTillT.getSelectedValue()));
 		showLoading("Obteniendo CRAs generados...");
-		mainCRAObjectNew.getCRAs(findingDateCRA.getTime(), 
-				s -> {
-					initCRATable();
-					hideMessage();
-				}, f -> {});
+		mainCRAObjectNew.getCRAs(findingDateCRA.getTime(), s -> {
+			filterCRAs();
+			initCRATable();
+			hideMessage();
+		}, f -> {
+		});
 	}
 
 	@UiHandler("collapsePanel")
@@ -952,6 +969,7 @@ public class MainCRA extends MainEntryPoint {
 		this.allCCCsCB.setValue(false);
 		this.emitCCCsCB.setValue(false);
 		this.peddingCCCsCB.setValue(true);
+		ValueChangeEvent.fire(peddingCCCsCB, true);
 	}
 
 	private void showCRAS() {
@@ -979,7 +997,6 @@ public class MainCRA extends MainEntryPoint {
 
 	public void clearSelectionModel() {
 		this.selectionCCCInfoModel.clear();
-		this.selectionCraModel.clear();
 	}
 
 	private String getCCCType(Byte type) {
@@ -1027,23 +1044,22 @@ public class MainCRA extends MainEntryPoint {
 
 	private void onListCras() {
 		showLoading("Obteniendo CRAs generados...");
-		this.mainCRAObjectNew.getCRAs(
-				mainCRAObjectNew.getDefaultLiquidDate().getTime(), 
-				s -> {
-					showCRAS();
-					initCRATable();
-					hideMessage();
-				}, 
-				f -> {});
+		this.mainCRAObjectNew.getCRAs(findingDateCRA.getTime(), s -> {
+			setDateLBSelected();
+			initCRATable();
+			showCRAS();
+			hideMessage();
+		}, f -> {
+		});
 	}
 
 	private void onNewCRA() {
 		showLoading("Obteniendo CCCs para generar CRAs...");
 		this.mainCRAObjectNew.getEnterprisesCCCInfo(findingDate.getTime(), s -> {
 			initEnterpriseSB();
-			showCCCs();
-			initCCCsTable();
 			clearSelectionModel();
+			initCCCsTable();
+			showCCCs();
 			hideMessage();
 		}, f -> {
 		});
@@ -1075,44 +1091,44 @@ public class MainCRA extends MainEntryPoint {
 
 			mainCRAObjectNew.checkIfRectificative(findingDate, selectedCCCIdList, isRectificative -> {
 				if (Boolean.TRUE.equals(isRectificative)) {
-					AonConfirmDialog confirmDialog = new AonConfirmDialog();
-					confirmDialog.confirm("AVISO: Rectificativo",
-							"Ya existe un fichero CRA para esta cuenta de cotizaci\u00F3n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana."
-									+ "\u00BFDesea generar un fichero rectificativo?",
-							new AonConfirmDialogCallback() {
+					AonDialog dialog = new AonDialog("AVISO: Rectificativo",
+							new HTML("Ya existe un fichero CRA para esta(s) cuenta(s) de cotizaci\u00F3n en este periodo."
+									+ "\u00BFDesea generar un fichero rectificativo?"));
 
-								@Override
-								public void onAccept() {
-									createNewCRARectificative(cccsSelected, cccList, selectedCCCIdList, cccId);
-								}
+					dialog.confirm(new AonAcceptDialogCallback() {
 
-								@Override
-								public void onCancel() {
-									// Cancel dialog
-								}
-								
-							});
+						@Override
+						public void onCancel() {
+							// Nothing to do here
+						}
+
+						@Override
+						public void onAccept() {
+							createNewCRARectificative(cccsSelected, cccList, selectedCCCIdList, cccId);
+						}
+					});
 
 				} else {
 					mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList, p -> {
-						if (AonStringUtils.isBlank(p)) {
-							createNewCRA(cccsSelected, cccList, cccIdList, cccId);
-						} else {
-							AonConfirmDialog confirmDialog = new AonConfirmDialog();
-							confirmDialog.confirm("AVISO", p, new AonConfirmDialogCallback() {
+						createNewCRA(cccsSelected, cccList, cccIdList, cccId);
+					}, noSalariesMessage -> {
+						
+						AonDialog dialog = new AonDialog("AVISO: CRA",
+								new HTML(noSalariesMessage.getMessage()
+										+ "\u00BFDesea generar el fichero CRA sin incluir este trabajador?"));
 
-								@Override
-								public void onAccept() {
-									createNewCRA(cccsSelected, cccList, cccIdList, cccId);
-								}
+						dialog.confirm(new AonAcceptDialogCallback() {
 
-								@Override
-								public void onCancel() {
-									// Cancel dialog
-								}
-							});
-						}
-					}, f -> {
+							@Override
+							public void onCancel() {
+								// Nothing to do here
+							}
+
+							@Override
+							public void onAccept() {
+								createNewCRA(cccsSelected, cccList, cccIdList, cccId);
+							}
+						});
 					});
 				}
 			}, f -> {
@@ -1124,44 +1140,22 @@ public class MainCRA extends MainEntryPoint {
 		showLoading("Generando CRA...");
 		mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N", v -> {
 			showSuccess("CRA", "CRA generado correctamente");
-			if (AonStringUtils.isBlank(v)) {
-				for (CCCInfo cccInfo : cccsSelected) {
-					cccInfo.getCRADates().add(findingDate);
-				}
-				showCRAS();
-				mainCRAObjectNew.getCRAs(findingDate.getTime(), a -> {
-					initCRATable();
-					setInitialLBAndCBSelected();
-				}, b -> {
-				});
-
-			} else
-				showError("Error CRA", v);
+			
+			onListCras();
 		}, f -> {
+			showError("Error CRA", f.getMessage().split(":")[1]);
 		});
 	}
 
 	public void createNewCRARectificative(ArrayList<CCCInfo> cccsSelected, ArrayList<String> cccList, ArrayList<Integer> cccIdList, Integer cccId) {
 		showLoading("Generando CRA Rectificativo...");
 		mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R", v -> {
-			if (AonStringUtils.isBlank(v)) {
-				showSuccess("CRA", "CRA Rectificativo generado correctamente");
-				showInfo("INTRUCCIONES: CRA Rectificativo", "Debe enviar el CRA rectificativo que se ha generado en el historial de CRAs rectificativos, para anular el anterior y actualizar la informacion.");
-				
-				for (CCCInfo cccInfo : cccsSelected) {
-					cccInfo.getCRADates().add(findingDate);
-				}
+			showSuccess("CRA", "CRA Rectificativo generado correctamente");
+			showInfo("INTRUCCIONES: CRA Rectificativo",
+					"Debe enviar el CRA rectificativo que se ha generado en el historial de CRAs rectificativos, para anular el anterior y actualizar la informacion.");
 
-				showCRAS();
-				mainCRAObjectNew.getCRAs(findingDate.getTime(), s -> {
-					initCRATable();
-					setInitialLBAndCBSelected();
-				}, f -> {
-				});
-			} else 
-				showError("Error CRA Rectificativo", v);
-		}, f -> {
-		});
+			onListCras();
+		}, f -> showError("Error CRA Rectificativo", f.getMessage().split(":")[1]));
 	}
 
 	// --------------------------- MessagePanel

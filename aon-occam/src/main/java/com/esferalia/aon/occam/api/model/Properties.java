@@ -203,11 +203,15 @@ public interface Properties {
 		Property<Integer> getSellerProperty();
 		Property<Integer> getWorkplaceProperty();
 		
+		Property<Integer> getMonthBillingDateProperty();
 		Property<Integer> getCategoryProperty();
 	
 		Property<Byte> getStatusProperty(); // CUSTOMER
 		Property<Integer> getScopeProperty(); // CUSTOMER
 		Property<Integer> getSegmentProperty(); // RSEGMENT
+		
+		Property<Integer> getProductCategoryProperty(); // PRODUCT
+		Property<Integer> getProductTagProperty(); // PRODUCT
 		
 	}
 	
@@ -267,6 +271,7 @@ public interface Properties {
 		Property<String> getProductNameProperty();
 		
 		Property<Integer> getRegistryProperty();
+		Property<Byte> getTypeProperty();
 	}
 	
 	public interface ItemCompositionProperties {
@@ -342,6 +347,8 @@ public interface Properties {
 		Property<Integer> getScopeProperty();
 		Property<String> getSubdomainsuffixProperty();
 		Property<Byte> getTypeProperty();
+		Property<Integer> getAonCustomerProperty();
+		Property<Byte> getAonStatusProperty();
 	}
 	
 	public interface DomainAppProperties {
@@ -545,6 +552,7 @@ public interface Properties {
 		Property<Date> getStartDateProperty();
 		Property<Date> getEndDateProperty();
 		Property<Byte> getStatusProperty();
+		Property<Byte> getTypeProperty();
 	}
 	
 	public interface RegistryMediaProperties{
@@ -759,6 +767,12 @@ public interface Properties {
 		Property<Byte> getSystemProperty();
 	}
 	
+	public interface CnoProperties{
+		Property<Integer> getIdProperty();
+		Property<String> getCodeProperty();
+		Property<String> getTitleProperty();
+	}
+	
 	public interface IAEProperties {
 		Property<Integer> getIdProperty();
 		Property<String> getSectionProperty();
@@ -900,6 +914,14 @@ public interface Properties {
 		Property<Double> getNetProperty();
 		Property<Timestamp> getReceptionStartDateProperty();
 		Property<Timestamp> getReceptionEndDateProperty();
+	}
+	
+	
+	public interface DeliveryPackagingProperties extends AuditProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getDeliveryProperty();
+		Property<Integer> getItemProperty();
 	}
 	
 	public interface RegistryProperties {
@@ -1563,7 +1585,7 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<Integer> getRegistryProperty();
 		Property<String> getTypeProperty();
-		
+		Property<Byte> getSecurityLevelProperty();	
 	}
 
 	public interface TimeControlProperties {
@@ -1804,5 +1826,15 @@ public interface Properties {
 		Property<Date> getEndDateProperty();
 		Property<Double> getVatPercentProperty();
 		Property<Double> getRetentionPercentProperty();
-	}	
+	}
+	
+	public interface QuestionProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Byte> getActiveProperty();
+		Property<String> getQuestionTextProperty();
+		Property<Byte> getTypeProperty();
+		Property<String> getArgumentProperty();
+		Property<String> getAliasProperty();
+	}
 }

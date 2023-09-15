@@ -18,7 +18,7 @@ public class RetentionCertificate implements Serializable {
 	
 	/**
 	 * *************************************************************************
-	 * Rendimientos del trabajo, dietas exceptuadas de gravamen y rentas exentas
+	 * Rendimientos del trabajo, dietas exceptuadas de gravamen y rentas exentas (Modelo 190) y Rendimientos del capital mobiliario y determinadas rentas (Modelo 193)
 	 * *************************************************************************
 	 */
 	// Rendimientos de trabajo
@@ -45,8 +45,8 @@ public class RetentionCertificate implements Serializable {
 	
 	// Cantidades reintegradas por el perceptor en el ejercicio por haber sido
 	// indebida o excesivamente percibidas en ejercicios anteriores (reintegros)
-	private double refundAmount;
-	private double refundReduction;
+	private double refundAmount;     // Certificado Retenciones Modelo 193, se pone aqui el importe de las percepciones
+	private double refundReduction;  // Certificado Retenciones Modelo 193, se pone aqui el importe de las reducciones
 	private RetentionCertificate refund1;
 	private RetentionCertificate refund2;
 	private RetentionCertificate refund3;
@@ -57,22 +57,23 @@ public class RetentionCertificate implements Serializable {
 	
 	/** 
 	 * ****************************************
-	 * Rendimientos de actividades economicas
+	 * Rendimientos de actividades economicas (Modelo 190) y Rendimientos del capital mobiliario y determinadas rentas (Modelo 193)
 	 * ****************************************
 	 */
 	// Rendimientos de actividades agricolas o ganaderas
-	// clave H, subclave 02
-	private RetentionCertificate prof1;
+	// clave H, subclaves 01 y 02
+	private RetentionCertificate prof1;  // Certificado Retenciones Modelo 193: Clave A
 	// Rendimientos de actividades forestales
 	// clave H, subclave 03
-	private RetentionCertificate prof2;
+	private RetentionCertificate prof2;  // Certificado Retenciones Modelo 193: Clave B
 	// Rendimientos de actividades empresariales en estimacion objetiva
 	// previstas en el art. 95.6 del Reglamento del IRPF
 	// clave H, subclave 04
-	private RetentionCertificate prof3;
+	private RetentionCertificate prof3;  // Certificado Retenciones Modelo 193: Clave C
 	// Rendimientos a que se refiere el articulo 75.2.b) del Reglamento del
 	// IRPF, que deban calificarse como rendimientos de actividades economicas
-	private RetentionCertificate prof4;
+	// clave I
+	private RetentionCertificate prof4;  // Certificado Retenciones Modelo 193: Clave D
 	
 	
 	public Integer getId() {

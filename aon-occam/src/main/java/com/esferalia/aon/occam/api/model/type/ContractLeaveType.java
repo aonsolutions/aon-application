@@ -4,6 +4,21 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum ContractLeaveType {
 	
+    	// 	LeaveType ( from payroll )
+        //	COMMON_DISEASE
+        //	OCCUPATIONAL_DISEASE
+        //	MATERNITY
+        //	PATERNITY
+        //	PREGNANCY_RISK
+        //	BREASTFEEDING_RISK
+        //	NON_OCCUPATIONAL_DISEASE
+        //	COMMON_DISEASE_AT_LACK
+        //	COMMON_OCCUPATIONAL_DISEASE
+    	//	OBSERVATION_OCCUPATIONAL_DISEASE
+        //	MENSTRUATION
+        //	PREGNANCY_STOP
+        //	PREGNANCY_39_WEEK
+
 	ENFERMEDAD_COMUN(1, "Enfermedad Com\u00fan"), 
 	ACCIDENTE_LABORAL(3, "Accidente de trabajo"), 
 	MATERNIDAD(6, "Maternidad"), 
@@ -14,6 +29,9 @@ public enum ContractLeaveType {
 	ENFERMEDAD_COMUN_CARENCIA(5, "Enfermedad com\u00fan periodo de carencia"),
 	ENFERMEDAD_COMUN_PRESTACION(3,"Enfermedad com\u00fan, prestaci\u00f3n profesional (COVID-19)"),
 	PERIODO_OBSERVACION_EP(5,"Periodo de Observaci\u00f3n por Enfermedad Profesional"),
+	MENSTRUACION(1,"Menstruaci\u00F3n Incapacitante Secundaria"),
+	INTERRUPCION_EMBARAZO(1,"Interrupci\u00F3n del Embarazo"),
+	SEMANA_39_EMBARAZO(1,"Semana Trig\u00E9sima Novena de Gestaci\u00F3n")
 	;
 	
 //  TGSS

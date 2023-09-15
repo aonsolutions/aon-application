@@ -1,6 +1,6 @@
 package solutions.aon.sepe.exceptions.statusCode;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.FailingHttpStatusCodeException;
 
 import solutions.aon.sepe.exceptions.SepeException;
 

@@ -94,7 +94,32 @@
     "FILE_SELECT_DELETE"    : "Eliminar"
   },
   "BILLING": {
-
+    "SUBTITLE": "Importe total",
+    "BANKS": "Bancos",
+    "BILLING": "Facturación",
+    "SALES": "Ventas",
+    "BILLS": "Gastos",
+    "SALES_CHECK": "Facturas",
+    "REPORTS": "Informes",
+    "TREASURY": "Tesorería",
+    "CREATE_SALES_INVOICE": "Crear factura de venta",
+    "ADD_BANK": "Añadir un banco",
+    "DESCRIPTION": "Descripción",
+    "BALANCE": "Saldo",
+    "LAST_UPDATE": "Ult. actualización",
+    "IBAN_PLACEHOLDER": "Escribe un IBAN",
+    "DESCRIPTION_PLACEHOLDER": "Escribe una descripción",
+    "SWIFT_PLACEHOLDER": "Escribe un SWIFT",
+    "DATE": "Fecha",
+    "NUMBER": "Numero",
+    "CONTACT": "Contacto",
+    "BASE_IMP": "Base imp",
+    "IMP": "Impuesto",
+    "REC_EQ": "Recargo EQ",
+    "RETEN": "Retención",
+    "ACCOUNTED": "Contabilizado",
+    "STATUS": "Estado",
+    "AMOUNT": "Cantidad"
   },
   "CONSULTING": {
 

@@ -15,10 +15,10 @@ public enum Mod2002022LQ1032Key implements Serializable, IMod200KeysProvider  {
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
 
-	 C01(new Mod2002022Key[]{Mod2002022Key.LQ1744,Mod2002022Key.LQ1745,null                },"2019")
-	,C02(new Mod2002022Key[]{Mod2002022Key.LQ1985,Mod2002022Key.LQ1986,Mod2002022Key.LQ1987},"2020")
-	,C03(new Mod2002022Key[]{Mod2002022Key.LQ2407,Mod2002022Key.LQ2408,Mod2002022Key.LQ2409},"2021(*)")
-	,C04(new Mod2002022Key[]{Mod2002022Key.LQ1106,Mod2002022Key.LQ1107,Mod2002022Key.LQ1108},"2021")
+	 C01(new Mod2002022Key[]{Mod2002022Key.LQ1985,Mod2002022Key.LQ1986,null                },"2020")
+	,C02(new Mod2002022Key[]{Mod2002022Key.LQ2407,Mod2002022Key.LQ2408,Mod2002022Key.LQ2409},"2021")
+	,C03(new Mod2002022Key[]{Mod2002022Key.LQ1106,Mod2002022Key.LQ1107,Mod2002022Key.LQ1108},"2022(*)")
+	,C04(new Mod2002022Key[]{Mod2002022Key.LQ1401,Mod2002022Key.LQ1402,Mod2002022Key.LQ1403},"2022")
 	,C05(new Mod2002022Key[]{Mod2002022Key.LQ1137,Mod2002022Key.LQ1032,Mod2002022Key.LQ1139},"Total")
 	,C06(new Mod2002022Key[]{Mod2002022Key.LQ1140,null                ,null                },"Reserva de capitalizaci\u00F3n dotada en el ejercicio")
 	;

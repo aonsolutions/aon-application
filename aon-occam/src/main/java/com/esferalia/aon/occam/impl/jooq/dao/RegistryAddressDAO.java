@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.StreetType;
@@ -85,7 +86,7 @@ public class RegistryAddressDAO {
 					.setRegistry(r.getValue(RADDRESS.REGISTRY))
 					.setMain(r.getValue(RADDRESS.TYPE)==MAIN_ADDRESS)
 					.setRecipient(r.getValue(RADDRESS.RECIPIENT))
-					.setStreetType(StreetType.safeValueOf(r.getValue(RADDRESS.STREET_TYPE)))
+					.setStreetType(StreetType.getForAeatCode(r.getValue(RADDRESS.STREET_TYPE), AonLanguage.SPANISH))
 					.setAddress(r.getValue(RADDRESS.ADDRESS))
 					.setNumber(r.getValue(RADDRESS.NUMBER))
 					.setAddress2(r.getValue(RADDRESS.ADDRESS2))
@@ -147,22 +148,7 @@ public class RegistryAddressDAO {
 					geozone = GeoZoneDAO.get(ctx, f -> f.getCodeProperty().eq(address.getZip().substring(0, 2)));
 				}
 				
-				if((geozone == null || geozone.isEmpty()) && address.getProvince() != null) {
-					geozone = GeoZoneDAO.get(ctx, f -> f.getNameProperty().eq(address.getProvince()));
-				}
-				
 				if((geozone == null || geozone.isEmpty()) && address.getCountry() != null) {
-					if(address.getProvince() == null) address.setProvince(address.getCity());
-					geozone = GeoZoneDAO.get(ctx, f -> f.getNameProperty().eq(address.getProvince()));
-					if(geozone == null ||  geozone.isEmpty()) {
-						geozone = new GeoZone()
-	 							.setDomain(address.getDomain())
-								.setName(address.getProvince() )
-								.setCode("00")
-								.setSystem(true);		
-						geozone = GeoZoneDAO.insert(ctx, geozone);
-					}
-					
 					GeoZone geozoneCountry  = GeoZoneDAO.get(ctx, f -> f.getCodeProperty().eq(address.getCountry().getIso2()));					
 					if(geozoneCountry == null || geozoneCountry.isEmpty()) {
 						geozoneCountry = new GeoZone()
@@ -172,8 +158,22 @@ public class RegistryAddressDAO {
 								.setSystem(true);
 						geozoneCountry = GeoZoneDAO.insert(ctx, geozoneCountry);
 					}
-					
+
+					if(AonStringUtils.isBlank(address.getProvince())) address.setProvince(address.getCity());
+					geozone = GeoZoneDAO.getChild(ctx, geozoneCountry.getId(), f -> f.getNameProperty().eq(address.getProvince()));
+					if(geozone == null ||  geozone.isEmpty()) {
+						geozone = new GeoZone()
+	 							.setDomain(address.getDomain())
+								.setName(address.getProvince() )
+								.setCode("00")
+								.setSystem(true);		
+						geozone = GeoZoneDAO.insert(ctx, geozone);
+					}
 					GeoZoneDAO.bind(ctx, address.getDomain(), geozoneCountry.getId(), geozone.getId());
+				}
+				
+				if((geozone == null || geozone.isEmpty()) && !AonStringUtils.isBlank(address.getProvince())) {
+					geozone = GeoZoneDAO.get(ctx, f -> f.getNameProperty().eq(address.getProvince()));
 				}
 				
 				if(geozone != null && !geozone.isEmpty()) {

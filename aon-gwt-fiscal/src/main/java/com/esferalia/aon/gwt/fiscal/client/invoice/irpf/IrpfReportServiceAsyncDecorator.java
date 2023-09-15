@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class IrpfReportServiceAsyncDecorator implements IrpfReportServiceAsync {
@@ -19,7 +20,7 @@ public class IrpfReportServiceAsyncDecorator implements IrpfReportServiceAsync {
 	}
 
 	@Override
-	public void getIrpfBreakdownSummary(Occam occam, IRPFParams params, AsyncCallback<LinkedList<IrpfBreakdown>> callback) {
+	public void getIrpfBreakdownSummary(Occam occam, IRPFParams params, AsyncCallback<IrpfSummary> callback) {
 		AON.start();
 		fsa.getIrpfBreakdownSummary(occam, params, new AsyncCallbackWrapper<>(callback));
 	}

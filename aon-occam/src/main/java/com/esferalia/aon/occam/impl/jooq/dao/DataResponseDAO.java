@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -246,6 +247,40 @@ public class DataResponseDAO {
 		return dr;
 	}
 	
+	// Carga del PDF de la declaración del modelo fiscal, de forma manual por el usuario 
+	public static void insertPDFModel(AONContext ctx, IFiscalModel fm, String data) {
+		
+		final Pair<DataResponseSource,DataAttachSource> pair = getDataResponseData( fm );
+		if (pair.getLeft() == null || pair.getRight() == null) {
+			throw new AonCoreException("Modelo no soportado en la grabación del PDF presentado");
+		}
+		
+		// Primero borramos el que ya exista previamente, para que se quede solo el último PDF presentado (bien cargado manualmente o grabado por la AEAT)
+		deleteAEATResponse(ctx, fm); 
+		
+		// Ahora añadimos un registro a data_response y otro a data_attach
+		String codeDescription = "Carga PDF Manual";
+		DataResponseDAO.insertDataResponse(ctx, 
+			new DataResponse()
+				.setSource(pair.getLeft())
+				.setSourceId(fm.getId())
+				.setCode(codeDescription)
+				.setDomain(fm.getDomain())
+				.setResponseDate(new Date()));
+
+		byte[] data64 = Base64.getDecoder().decode(data);
+		AttachmentDAO.insertDataAttach(ctx, new Attach()
+				.setSourceType(pair.getRight().value())
+				.setSourceBatch(fm.getId())
+				.setType(DataAttachType.RESPONSE_OK.value())
+				.setAttachType(AttachType.DATA)
+				.setDomain(new Domain().setId(fm.getDomain()))
+				.setData( data64 )
+				.setMimeType(MimeType.PDF)
+				.setDescription(codeDescription));
+		
+	}
+	
 	public static Pair<DataResponseSource, DataAttachSource> getDataResponseData(IFiscalModel fm) {
 		final Pair<DataResponseSource,DataAttachSource> pair = new Pair<>(null, null);
 		fm.getModel().visit( new IFiscalModelTypeVisitor() {
@@ -287,13 +322,35 @@ public class DataResponseDAO {
 				pair.setLeft( DataResponseSource.MOD390 ).setRight(DataAttachSource.MOD390);
 			}
 			@Override public void visitM390HF() { /* nothing */ }
-			@Override public void visitM349() { /* nothing */ }
-			@Override public void visitM347() { /* nothing */ }
 			
-			@Override public void visitM200() { /* nothing */ }
-			@Override public void visitM193() { /* nothing */ }
-			@Override public void visitM184() { /* nothing */ }
-			@Override public void visitM180() { /* nothing */ }
+			@Override 
+			public void visitM349() { 
+				pair.setLeft( DataResponseSource.MOD349 ).setRight(DataAttachSource.MOD349); 
+			}
+			
+			@Override 
+			public void visitM347() { 
+				pair.setLeft( DataResponseSource.MOD347 ).setRight(DataAttachSource.MOD347); 
+			}
+			
+			@Override public void visitM200() {
+				pair.setLeft( DataResponseSource.MOD200 ).setRight(DataAttachSource.MOD200);				 
+			}
+			
+			@Override 
+			public void visitM193() { 
+				pair.setLeft( DataResponseSource.MOD193 ).setRight(DataAttachSource.MOD193); 
+			}
+			
+			@Override 
+			public void visitM184() { 
+				pair.setLeft( DataResponseSource.MOD184 ).setRight(DataAttachSource.MOD184); 
+			}
+			
+			@Override 
+			public void visitM180() { 
+				pair.setLeft( DataResponseSource.MOD180 ).setRight(DataAttachSource.MOD180);
+			}
 			
 		});
 		return pair;
@@ -326,8 +383,7 @@ public class DataResponseDAO {
 				ctx.log().info("Deleting dataResponse {0} filas", count);
 				deleteDataResponse(ctx, f-> f.getIdProperty().eq( dr.getId()) );
 			});
-	}
-	
+	}	
 
 	private static synchronized byte[] getUrlFile(String pdfUrl) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -343,7 +399,6 @@ public class DataResponseDAO {
 			AonIOUtils.closeQuietly(is);
 		}
 		return null;
-	}
-	
+	}	
 	
 }

@@ -112,8 +112,6 @@ public class JooqContractTransform {
 		Result<Record> contractDatas = dslContext.selectDistinct().from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 				.and(CONTRACT_DATA.NAME.ne("TC2"))
-				.and(CONTRACT_DATA.NAME.ne("SEPE_ID"))
-				.and(CONTRACT_DATA.NAME.ne("COMUNICATION_DATE"))
 				.and(CONTRACT_DATA.NAME.ne("CNO"))
 				.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.eq(parseDateToSQL(endDate))))
 				.orderBy(CONTRACT_DATA.ID.desc())

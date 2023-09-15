@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.server.fiscal.mod115;
 
 import java.util.LinkedList;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Mod115Service;
@@ -83,11 +83,6 @@ public class Mod115ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Mod115 create(Occam occam, Mod115 mod115) {
 		return MODEL115.create(occam, mod115);
-	}
-
-	@Override
-	public Mod115 reset(Occam occam, Mod115 mod115) {
-		return MODEL115.reset(occam, mod115);
 	}
 
 	@Override

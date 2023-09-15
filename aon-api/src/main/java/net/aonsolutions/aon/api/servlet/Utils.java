@@ -17,11 +17,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -40,30 +40,6 @@ public class Utils {
 
 	private Utils() {
 		throw new IllegalAccessError("Utility class");
-	}
-	
-	public static void giveBackData(HttpServletResponse resp, byte[] data, String name) throws ServletException, IOException{
-		Integer length = data.length;
-		ByteArrayInputStream bais = new ByteArrayInputStream(data);
-	        
-		resp.addHeader("Content-Disposition","attachment; filename=\""+name +"\"");
-		resp.setContentType("application/msexcel");
-		
-		if (length > 0 && length <= Integer.MAX_VALUE)
-        	resp.setContentLength((int)length);
-        ServletOutputStream out = resp.getOutputStream();
-        resp.setBufferSize(32768);
-        int bufSize = resp.getBufferSize();
-        byte[] buffer = new byte[bufSize];
-        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
-        int bytes;
-        while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
-        	out.write(buffer, 0, bytes);
-    
-        bis.close();
-        bais.close();
-        out.flush();
-        out.close();
 	}
 	
 	public static void giveBack(HttpServletRequest req, HttpServletResponse resp,
@@ -85,40 +61,8 @@ public class Utils {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
-	public static String getMd5(String str){
-		MessageDigest md = null;
-		try {
-			md = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		}
-        md.update(str.getBytes());
-        byte byteData[] = md.digest();
-
-        //convert the byte to hex format method 1
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < byteData.length; i++) {
-        	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-        }
-        
-        return sb.toString();
-	}
 	
-	public static String getShortString(String str){
-		StringBuilder title = new StringBuilder();
-		String[] string = str.split(" ");
-		for(Integer i = 0; i < string.length; i++){
-			String s = string[i];
-			while(s.length()>30){
-				title.append(s.substring(0, 29)+ " ");
-				s = s.substring(30);
-			}
-			title.append(s + " ");
-		}
-		return title.toString();
-	}
-	
-	public static String checkString(String str){
+	public static String checkString(String str) {
 		return new String(str.getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
 	}
 	

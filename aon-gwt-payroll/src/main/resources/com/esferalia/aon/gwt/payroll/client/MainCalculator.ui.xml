@@ -7,7 +7,9 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 	
 	<ui:style>
-		.monthListBox-item {
+		.dateListBox-item, 
+		.monthListBox-item
+		 {
 			padding-left: 16px;
 		}
 		
@@ -54,6 +56,19 @@
 									styleName="aon-selectOneMenu"
 									monthStyles="{style.monthListBox-item}"
 									highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}" />
+							</td>
+						</tr>
+						<tr>
+							<td class="aon-panelGrid-odd">
+								<g:Label styleName="aon-outputLabel">Pago</g:Label>
+							</td>
+							<td class="aon-panelGrid-even">
+								<aon:DateListBox
+									debugId="payDateListBox"
+									ui:field="payDateListBox" 
+									styleName="aon-selectOneMenu"
+									normalStyles="{style.dateListBox-item}"
+									highlightStyles="aon-bold aon-black aon-icon-accept {style.dateListBox-item}" />
 							</td>
 						</tr>
 						<tr>

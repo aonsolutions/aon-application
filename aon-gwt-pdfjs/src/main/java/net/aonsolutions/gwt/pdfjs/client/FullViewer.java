@@ -52,6 +52,7 @@ public class FullViewer extends Frame {
 		
 		getElement().getStyle().setProperty("margin-left", "auto");;	
 		getElement().getStyle().setProperty("margin-right", "auto");;
+		getElement().getStyle().setProperty("border-radius", "10px");;
 		getElement().getStyle().setBorderWidth(0, Unit.PX);
 
 		String fileURL = null;

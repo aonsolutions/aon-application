@@ -38,6 +38,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -129,8 +131,24 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			byte[] bLogo = null;
 			if (logo.isPresent())
 				bLogo = logo.get().readAllBytes();
+			
+			List<IDefaultPayroll> orderedPayrolls = new LinkedList<>();
+			if (payrolls != null) {
+				payrolls.stream().sorted((o1, o2) -> {
+					String name1 = o1.getEmployee().orElse(null);
+					String name2 = o2.getEmployee().orElse(null);
+					Date date1 = o1.getLiquidPeriodEnd().orElse(null);
+					Date date2 = o2.getLiquidPeriodEnd().orElse(null);
+					int strCompare = AonStringUtils.compare(name1, name2);
+					if (strCompare != 0) {
+						return strCompare;
+					} else {
+						return com.esferalia.aon.watson.util.AonDateUtils.compare(date1, date2);
+					}
+				}).forEach(orderedPayrolls::add);
+			}
 
-			for (IDefaultPayroll payroll : payrolls) {
+			for (IDefaultPayroll payroll : orderedPayrolls) {
 				if (bLogo != null)
 					logo = Optional.ofNullable(new ByteArrayInputStream(bLogo));
 
@@ -441,11 +459,11 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		
 		Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions = p.getDeductions();
 		
-		PDFDeduction ccDeduction = DefaultPayrollFuseBox.getSingleDeductionByType(allDeductions, DeductionType.COMMON_CONTINGENCY, "Contingencias comunes", d -> AonStringUtils.notEquals("MEI", d.getName().orElse(null)));
+		PDFDeduction ccDeduction = DefaultPayrollFuseBox.getSingleDeductionByType(allDeductions, DeductionType.COMMON_CONTINGENCY, "Contingencias Comunes", d -> AonStringUtils.notEquals("MEI", d.getName().orElse(null)));
 		y -= NORMAL_LINE_JUMP + 2;
 		drawDeduction(ccDeduction.getDescription().orElse(""), ccDeduction.getPercent().orElse(0d), ccDeduction.getAmount().orElse(0d));
 		
-		PDFDeduction meiDeduction = getSingleDeductionByType(allDeductions, DeductionType.COMMON_CONTINGENCY, "Mecanismo de equidad intergeneracional", d -> AonStringUtils.equals("MEI", d.getName().orElse(null)));
+		PDFDeduction meiDeduction = getSingleDeductionByType(allDeductions, DeductionType.MEI, "Mecanismo de Equidad Intergeneracional (MEI)", d -> AonStringUtils.equals("MEI", d.getName().orElse(null)));
 		y -= LITTLE_LINE_JUMP;
 		drawDeduction(meiDeduction.getDescription().orElse(""), meiDeduction.getPercent().orElse(0d), meiDeduction.getAmount().orElse(0d));
 
@@ -460,18 +478,18 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		y -= LITTLE_LINE_JUMP;
 		drawText(contents, "Horas extraordinarias", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
 		
-		PDFDeduction strucDeduction = getSingleDeductionByType(allDeductions, DeductionType.STRUCTURAL_OVERTIME, "Fuerza mayor o estructurales");
+		PDFDeduction strucDeduction = getSingleDeductionByType(allDeductions, DeductionType.STRUCTURAL_OVERTIME, "Fuerza mayor o Estructurales");
 		y -= LITTLE_LINE_JUMP;
 		drawDeduction(strucDeduction.getDescription().orElse(""), strucDeduction.getPercent().orElse(0d), strucDeduction.getAmount().orElse(0d), 10);
 		
-		PDFDeduction noStrucDeduction = getSingleDeductionByType(allDeductions, DeductionType.NON_STRUCTURAL_OVERTIME, "No estructurales");
+		PDFDeduction noStrucDeduction = getSingleDeductionByType(allDeductions, DeductionType.NON_STRUCTURAL_OVERTIME, "No Estructurales");
 		y -= LITTLE_LINE_JUMP;
 		drawDeduction(noStrucDeduction.getDescription().orElse(""), noStrucDeduction.getPercent().orElse(0d), noStrucDeduction.getAmount().orElse(0d), 10);
 		
 		y -= LITTLE_LINE_JUMP;
 		drawDeductionNoPercent("TOTAL APORTACIONES", p.getTotalSSContributions().orElse(0d));
 		
-		PDFDeduction irpfDeduction = getSingleDeductionByType(allDeductions, DeductionType.IRPF, "2. Impuesto sobre la renta de las personas físicas");
+		PDFDeduction irpfDeduction = getSingleDeductionByType(allDeductions, DeductionType.IRPF, "2. Impuesto sobre la renta de las personas Físicas");
 		y -= LITTLE_LINE_JUMP;
 		drawDeduction(irpfDeduction.getDescription().orElse(""), irpfDeduction.getPercent().orElse(0d), irpfDeduction.getAmount().orElse(0d), -10f);
 		

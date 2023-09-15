@@ -38,6 +38,11 @@ public class Idcplccc {
 			}
 			
 			@Override
+			protected boolean isQuoteByRealDays(String ssNum, String ccc, Date start, Date end) {
+			    return cb.isQuoteByRealDays(ssNum, ccc, start, end);
+			}
+			
+			@Override
 			protected boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
 				return cb.isPartTimeEmployee(ssNum, ccc, start, end);
 			}

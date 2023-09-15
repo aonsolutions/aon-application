@@ -2,7 +2,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
@@ -10,12 +10,11 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ1032Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ1033_1Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ1033_2Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ243Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ547Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ554Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ561Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ579Key;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -50,12 +49,12 @@ public class Page09 extends PageAbs {
 		AON.MSG.futurePending()		
 	};
 	
-	private static final String FOOTER_547 = "(*) S\u00F3lo debe cumplimentarse esta fila si la entidad tiene bases imponibles negativas por otro per\u00EDodo impositivo iniciado tambi\u00E9n en 2021, pero inferior a 12 meses y previo al ejercicio declarado.";
-	private static final String FOOTER_561 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene cuotas negativas por otro per\u00EDodo impositivo iniciado tambi\u00E9n en 2021, pero inferior a 12 meses y previo al ejercicio declarado.";
-	private static final String FOOTER_1032 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene reservas pendientes de integrar en un per\u00EDodo impositivo anterior iniciado en 2021.";
-	private static final String FOOTER_1033 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene reducciones pendientes de integrar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2021.";
+	private static final String FOOTER_547 = "(*) S\u00F3lo debe cumplimentarse esta fila si la entidad tiene bases imponibles negativas por otro per\u00EDodo impositivo iniciado tambi\u00E9n en 2022, pero inferior a 12 meses y previo al ejercicio declarado.";
+	private static final String FOOTER_561 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene cuotas negativas por otro per\u00EDodo impositivo iniciado tambi\u00E9n en 2022, pero inferior a 12 meses y previo al ejercicio declarado.";
+	private static final String FOOTER_1032 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene reservas pendientes de integrar en un per\u00EDodo impositivo anterior iniciado en 2022.";
+	private static final String FOOTER_1033 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene reducciones pendientes de integrar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2022.";
 	
-	public Page09( Model200PageCallback callback ) {
+	public Page09( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 	
@@ -88,6 +87,14 @@ public class Page09 extends PageAbs {
 				if (key == Mod2002022Key.LQ550TG || key == Mod2002022Key.LQ550T0 ) {
 					margin = true;
 				}
+				
+				if (key == Mod2002022Key.LQ541 || key == Mod2002022Key.LQ1887) {
+					paintDescription(table, "R\u00E9gimen especial de buques y empresas navieras en Canarias", row,0, true);
+					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
+					row++;
+					margin = true;
+				}
+				
 				if (key == Mod2002022Key.LQ1033) {
 					paintDescription(table, "S\u00F3lo entidades de reducida dimensi\u00F3n", row,0, true);
 					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
@@ -128,7 +135,7 @@ public class Page09 extends PageAbs {
 					margin = true;
 				}
 				if (key == Mod2002022Key.LQ1576) {
-					paintDescription(table, "R\u00E9gimen especial de entidades navieras en Canarias", row, 0, true);
+					paintDescription(table, "R\u00E9gimen especial de buques y empresas navieras en Canarias", row, 0, true);
 					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
 					row++;
 					margin = true;
@@ -139,7 +146,7 @@ public class Page09 extends PageAbs {
 					row++;
 					margin = true;
 				}				
-				if (key == Mod2002022Key.LQ550 || key == Mod2002022Key.LQ558 || key == Mod2002022Key.LQ562 || key == Mod2002022Key.LQ1032 || key == Mod2002022Key.LQ1330) {
+				if (key == Mod2002022Key.LQ547 || key == Mod2002022Key.LQ550 || key == Mod2002022Key.LQ552 || key == Mod2002022Key.LQ558 || key == Mod2002022Key.LQ562 || key == Mod2002022Key.LQ1032 || key == Mod2002022Key.LQ1330) {
 					margin = false;
 				}
 								
@@ -147,6 +154,12 @@ public class Page09 extends PageAbs {
 				
 				if (margin) {
 					table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft20());
+				}				
+				
+				if (key == Mod2002022Key.LQ1890
+						&& callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0009) 
+						&& callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010)) {
+					row = paintKeyBreakdownLink(table, row, Mod2002022Key.LQ1887, Mod2002022LQ243Key.values(), HEADERS_4, FOOTER_547);
 				}
 				
      			if (key == Mod2002022Key.LQ554) {
@@ -165,15 +178,15 @@ public class Page09 extends PageAbs {
 				}
     			if (key == Mod2002022Key.LQ547 && !callback.getMod200Object().getMod200().isCooperativa()) {
 					row = paintKeyBreakdownLink(table, row, Mod2002022Key.LQ547, Mod2002022LQ547Key.values(), HEADERS_4, FOOTER_547);    				
-				}    			
-    			if (key == Mod2002022Key.LQ1034) {
-					row = paintKeyBreakdownLinkLQ1033(table, row, Mod2002022Key.LQ1033.getDescription());
+				} 
+    			if (key == Mod2002022Key.LQ1034 && callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0006)) {
+					row = paintKeyBreakdownLinkLQ1033(table, row);
 				}
 			}
 		}
 	}
 	
-	protected int paintKeyBreakdownLinkLQ1033(final FlexTable tab,int row,final String label) {
+	protected int paintKeyBreakdownLinkLQ1033(FlexTable tab, int row) {
 		final int boxRow = row-1;
 		final int boxCell = tab.getCellCount(boxRow) - 1;
 		
@@ -228,7 +241,6 @@ public class Page09 extends PageAbs {
 				});
 		tableDetail2.addStyleName(AON.CSS.aonPaddingTop());
 		r = 1;
-		col = 0;
 		for (IMod200KeysProvider key : Mod2002022LQ1033_2Key.values()) {
 			Label desc = new Label(key.getDescription() );
 			if ("Total".equals(key.getDescription()))
@@ -248,20 +260,13 @@ public class Page09 extends PageAbs {
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		
-		breakdown.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				container.setVisible( !container.isVisible() );
-				for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
-					tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(
-							container.isVisible()?backgroundColor:"#FFFFFF");	
-				}
-				container.getElement().getStyle().setBackgroundColor(
-						container.isVisible()?backgroundColor:"#FFFFFF");
+		breakdown.addClickHandler(event -> {
+			container.setVisible( !container.isVisible() );
+			for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
+				tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(container.isVisible()?backgroundColor:"#FFFFFF");	
 			}
-			
-		});
+			container.getElement().getStyle().setBackgroundColor(container.isVisible()?backgroundColor:"#FFFFFF");
+		});		
 		
 		paintFooterNote(container, FOOTER_1033);
 		
@@ -270,9 +275,8 @@ public class Page09 extends PageAbs {
 	
 	@Override
 	protected boolean isDisabled(IMod200Key key) {
-		if (key == Mod2002022Key.LQ1032 
-				&& (callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0009) 
-				|| callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0010))) {
+		if ((key == Mod2002022Key.LQ1032 || key == Mod2002022Key.LQ1887 || key == Mod2002022Key.LQ1890) && 
+			(callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0009) || callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0010))) {
 			return false;
 		}
 		if (key == Mod2002022Key.LQ562 

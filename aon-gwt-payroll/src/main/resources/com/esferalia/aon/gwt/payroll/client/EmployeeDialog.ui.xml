@@ -5,30 +5,24 @@
 
 	<ui:Style>
 	
-		.mr-10{
-			margin-right: 10px !important;
+		.form {
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
 		}
-		
+	
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
-			margin: 5px 10px;
-		}
-		
-		.messagePanel {
-			width: 1000px;
-		    padding: 0.5rem 0;
+			margin: .5rem 1rem;
 		}
 	
 	</ui:Style>
 
-
-	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel"> 
-		<g:VerticalPanel>
-			<g:HTMLPanel ui:field="messageContainer" styleName="{style.messagePanel}"/>
-			<a:Employee ui:field="employee"/>
-			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
-		</g:VerticalPanel>
+	<g:HTMLPanel styleName="{style.form}">
+		<g:HTMLPanel ui:field="messageContainer" />
+		<a:Employee ui:field="employee"/>
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
 	</g:HTMLPanel>
 
 </ui:UiBinder>

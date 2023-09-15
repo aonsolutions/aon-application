@@ -471,7 +471,7 @@ public class Model2002021 extends DockLayoutPanel {
 											@Override
 											public void onSuccess(Mod2002021 mod200) {
 												popup.hide();
-												mod200Callback.reset(options, mod200);
+												mod200Callback.reset(mod200);
 												markAsDirty();
 											}
 
@@ -510,7 +510,7 @@ public class Model2002021 extends DockLayoutPanel {
 			Upload upload = new Upload() {
 				
 				@Override
-				protected void onUpload(String data) {
+				protected void onUpload(String data, String type) {
 					mod200Object.fillMod2002021AccountingData(options.getDomainName(), options.getDomain(), options.getUser(), data, new AsyncCallback<Mod2002021>() {
 						@Override public void onSuccess(Mod2002021 result) {	
 							markAsDirty();

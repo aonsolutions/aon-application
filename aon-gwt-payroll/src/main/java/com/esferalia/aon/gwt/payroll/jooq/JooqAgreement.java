@@ -31,6 +31,7 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -550,8 +551,15 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 	public static List<Agreement> getAgreements(DSLContext dslContext, boolean allAgreements, Integer... domains) throws SQLException {
 		
 		// @formatter:off
+//		ArrayList<Integer> selectedDomains = 
+//				allAgreements ? new ArrayList<>(Arrays.asList(domains)) 
+//				:  new ArrayList<>(Arrays.asList(new Integer[] {domains[0]}));
+
+		ArrayList<Integer> selectedDomains = new ArrayList<>(Arrays.asList(domains));
+		if(allAgreements) selectedDomains.add(0);
+		
 		Result<AgreementRecord> result = dslContext.select().from(AGREEMENT)
-			.where(AGREEMENT.DOMAIN.in(domains))
+			.where(AGREEMENT.DOMAIN.in(selectedDomains))
 			.or(AGREEMENT.ID.in(
 					dslContext
 					.select(DSL.cast(APP_PARAM.VALUE, Integer.class))
@@ -566,7 +574,6 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 					.where(APP_PARAM.DOMAIN.equal(0))
 					.and(APP_PARAM.NAME.eq("PAY_SYSTEM_AGREEMENT"))
 			))
-			.or(AGREEMENT.ID.eq(0))
 			.orderBy(AGREEMENT.DOMAIN.desc(), AGREEMENT.DESCRIPTION)
 			.fetchInto(AGREEMENT);
 
@@ -583,8 +590,11 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			agreement.setLevels(Collections.emptySet());
 			
 			boolean hasContracts = hasContract(dslContext, record.getId(), domains[0]);
-			if(Boolean.FALSE.equals(allAgreements) && Boolean.FALSE.equals(hasContracts))
-				continue;
+			
+			if(!allAgreements) {
+				if(!hasContracts && record.getDomain().intValue() != domains[0].intValue()) continue;
+			}
+			
 			agreement.setHasContract(hasContracts);
 			agreements.add(agreement);
 
@@ -607,6 +617,16 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.limit(limit)
 				.fetchInto(AGREEMENT);
 		// @formatter:on
+		
+		Result<Record> resultContracts = dslContext.select().from(AGREEMENT)
+				.join(AGREEMENT_LEVEL)
+				.on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT.ID))
+				.join(CONTRACT)
+				.on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
+				.where(AGREEMENT.ID.lt(0))	
+				.and(CONTRACT.DOMAIN.in(domains))
+				.orderBy(AGREEMENT.DOMAIN.desc(), AGREEMENT.DESCRIPTION)
+				.fetch();
 
 		List<Agreement> agreements = new LinkedList<Agreement>();
 		for (AgreementRecord record : result) {
@@ -625,7 +645,31 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			agreements.add(agreement);
 
 		}
+		
+		for (Record record : resultContracts) {
+			if(!containAgreement(record.get(AGREEMENT.ID), agreements)) {
+				Agreement agreement = new Agreement();
+
+				agreement.setId(record.get(AGREEMENT.ID)); // Not NULL
+				agreement.setDomain(record.get(AGREEMENT.DOMAIN));
+				agreement.setDescription(record.get(AGREEMENT.DESCRIPTION));
+				agreement.setSSNumber(record.get(AGREEMENT.SS_NUMBER));
+				agreement.setOwner(null == record.get(AGREEMENT.OWNER) || (byte)0 == record.get(AGREEMENT.OWNER) ? AgreementOwner.AONSOLUTIONS : AgreementOwner.SERVICONVENIOS);
+				
+				agreement.setLevels(Collections.emptySet());
+
+				boolean hasContracts = hasContract(dslContext, record.get(AGREEMENT.ID), domains[0]);
+				agreement.setHasContract(hasContracts);
+				agreements.add(agreement);
+			}
+		}
+		
 		return agreements;
+	}
+
+	private static boolean containAgreement(Integer agreementId, List<Agreement> agreements) {
+		Optional<Agreement> agreementOpt = agreements.stream().filter(agreement -> agreement.getId() == agreementId).findAny();
+		return agreementOpt.isPresent();
 	}
 
 	public static Agreement getAgreement(DSLContext dslContext,

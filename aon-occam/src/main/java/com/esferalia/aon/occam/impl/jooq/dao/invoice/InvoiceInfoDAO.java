@@ -15,8 +15,8 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceInfoProperties;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
@@ -115,7 +115,7 @@ public class InvoiceInfoDAO {
 				.setId(r.getValue(INVOICE_INFO.ID))
 				.setDomain(r.getValue(INVOICE_INFO.DOMAIN))
 				.setInvoice(r.getValue(INVOICE_INFO.INVOICE))
-				.setType(InvoiceCommunicationType.safeValueOf(r.getValue(INVOICE_INFO.TYPE)))
+				.setType(OldInvoiceCommunicationType.safeValueOf(r.getValue(INVOICE_INFO.TYPE)))
 				.setStatus(InvoiceCommunicationStatus.safeValueOf(r.getValue(INVOICE_INFO.STATUS)));
 		}
 	}

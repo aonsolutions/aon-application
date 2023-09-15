@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance.utilities;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public class FinanceUtilitiesParams implements Serializable {
@@ -12,6 +13,7 @@ public class FinanceUtilitiesParams implements Serializable {
 	private InvoiceType invoiceType;
 	private Date fromDate;
 	private Date toDate;
+	private IRPFParams irpfParams;
 
 	public InvoiceType getInvoiceType() {
 		return invoiceType;
@@ -36,5 +38,14 @@ public class FinanceUtilitiesParams implements Serializable {
 		this.toDate = toDate;
 		return this;
 	}
+	public IRPFParams getIrpfParams() {
+		return irpfParams;
+	}
+	public FinanceUtilitiesParams setIrpfParams(IRPFParams irpfParams) {
+		this.irpfParams = irpfParams;
+		return this;
+	}
+	
+	
 
 }

@@ -2955,6 +2955,97 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testGtzdoExtrasIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "SALARIO_BASE";
+						this.quoteExpression = "PRORRATEAR()";
+						this.month = Month.DECEMBER;
+						this.start = "01/07";
+						this.end = "31/12";
+						this.issue = "31/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "SALARIO_BASE ";
+						this.quoteExpression = "PRORRATEAR()";
+						this.month = Month.JUNE;
+						this.start = "01/01";
+						this.end = "30/06";
+						this.issue = "30/06";
+					}
+				}, 
+				});
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						}
+				, new String[] {
+				}, 
+				category);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+
+		PaymentConceptRecord gtzdo = addConcept(aonContext, "GARANTIZADO");
+		addPayment(aonContext, contract, gtzdo, "GTZDO(TODO)", "0.00");
+		PaymentConceptRecord sbase = addConcept(aonContext, "SALARIO_BASE");
+		addPayment(aonContext, contract, sbase, "1000.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		
+		// Month without ITs 
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		org.junit.Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		org.junit.Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		
+		// June with extra without ITs
+		startDate = add(startDate, Calendar.MONTH, 5);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		org.junit.Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		org.junit.Assert.assertEquals(2000.00, salary.getTotalPayment(), DELTA);
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startDate, endDate, null);
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		org.junit.Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		org.junit.Assert.assertEquals(2000.00, salary.getTotalPayment(), DELTA);
+		
+		endDate = getLastDayOfYear(getToday());
+		startDate = getFirstDayOfMonth(endDate);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, add(startDate, Calendar.DAY_OF_MONTH, 22), null, null);
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		org.junit.Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		org.junit.Assert.assertEquals(2000.00, salary.getTotalPayment(), DELTA);
+	
+	}
+
+
+	@Test
 	public void testGtzdoNotAllI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();

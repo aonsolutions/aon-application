@@ -2,6 +2,7 @@ import {webkitRequestMobile} from '../services/service.js';
 import { CONSTANT, EVENT, MSG, TAG } from "../environments/environments.js";
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { getDomainUserRoles } from '../services/companyService.js';
+import * as COLORS from '../environments/colors.js';
 
 export class AonElement extends HTMLElement{
 
@@ -217,5 +218,17 @@ export class AonElement extends HTMLElement{
 
   onClick(fn) {
     this.addEventListener(EVENT.CLICK, fn);
+  }
+
+  isString(obj) {
+		return Object.prototype.toString.call(obj) === '[object String]';
+	}
+
+  getPrimaryColor() {
+    return COLORS.AON_PRIMARY;
+  }
+
+  getSecondaryColor() {
+    return COLORS.AON_SECONDARY;
   }
 }

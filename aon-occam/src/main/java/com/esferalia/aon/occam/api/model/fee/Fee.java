@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
@@ -36,6 +37,7 @@ public class Fee implements Serializable{
 	private InvoicingGroup invoicingGroup;
 	private Seller seller;
 	private Workplace workplace;
+	private boolean modify = false;
 	
 		
 	public Double getQuantity() {
@@ -93,7 +95,8 @@ public class Fee implements Serializable{
 	}
 	
 	public Double getDiscount() {
-		return AonNumberUtils.toDouble(getDiscountExpr());
+		DiscountExpression de = new DiscountExpression(getDiscountExpr());
+		return de.getPercentage();
 	}
 
 	public Fee setDiscount(Double discount) {
@@ -249,4 +252,14 @@ public class Fee implements Serializable{
 		this.customer = customer;
 		return this;
 	}
+
+	public boolean isModify() {
+		return modify;
+	}
+
+	public Fee setModify(boolean modify) {
+		this.modify = modify;
+		return this;
+	}
+	
 }

@@ -29,7 +29,7 @@ class Mod303BIZKAIA2022Declaration extends Mod303BIZKAIA {
 	public static final double SURCHARGE_PERCENT4 = 1.75;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isBizkaia() && mod.getYear() >= 2022 && mod.getPeriod() != Period.T4;
+		return  mod.isBizkaia() && mod.getYear() == 2022 && mod.getPeriod() != Period.T4;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -702,29 +702,29 @@ class Mod303BIZKAIA2022Declaration extends Mod303BIZKAIA {
 	@Override
 	protected String getSamePeriodExplain(AONContext ctx, Mod303 mod303, Mod303Key key) {
 		if (key == Mod303Key.BZ_C041) {
-			return getExplain(ctx, mod303, key
+			return DeclarationInfoUtil.getExplain(ctx, mod303, key
 				, Mod303DAO.getSamePeriodEffectiveModels(ctx, mod303)
 					.filter( Mod303::isToDeposit)
-				, new ExplainRowManager());
+				, new DeclarationInfoUtil.ExplainRowManager());
 		} else {
-			return getExplain(ctx, mod303, key
+			return DeclarationInfoUtil.getExplain(ctx, mod303, key
 				, Mod303DAO.getSamePeriodEffectiveModels(ctx, mod303)
 					.filter( Mod303::isToPayback)
-				, new ExplainRowManager());
+				, new DeclarationInfoUtil.ExplainRowManager());
 		}
 	}
 	@Override
 	protected String getCompensationExplain( AONContext ctx, Mod303 mod303, Mod303Key key) {
 		if (mod303 .isFirstPeriod()) {
-			return getExplain(ctx, mod303, key
+			return DeclarationInfoUtil.getExplain(ctx, mod303, key
 				, Mod390HFDAO.getLastPeriodEffectiveModels(ctx, mod303)
 					.filter(Mod390HF::isToCompensate)
-				, new ExplainRowManager());
+				, new DeclarationInfoUtil.ExplainRowManager());
 		} 
-		return getExplain(ctx, mod303, key
+		return DeclarationInfoUtil.getExplain(ctx, mod303, key
 				, Mod303DAO.getLastPeriodEffectiveModels(ctx, mod303)
 					.filter(Mod303::isToCompensate)
-				, new ExplainRowManager());
+				, new DeclarationInfoUtil.ExplainRowManager());
 	}
 	
 	

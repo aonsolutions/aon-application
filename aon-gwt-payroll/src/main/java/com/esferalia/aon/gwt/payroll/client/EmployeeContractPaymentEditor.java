@@ -336,7 +336,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 				break;
 			case 3:
 				paymentTaxedExpression.setEnabled(false);
-				paymentTaxedExpression.setValue("BASE_CTA_ESP=_P");
+				paymentTaxedExpression.setValue("BASE_CTA_ESP=( isdef BASE_CTA_ESP ? BASE_CTA_ESP : 0.00 ) + _P; _P");
 				break;
 			default:
 				paymentTaxedExpression.setEnabled(true);

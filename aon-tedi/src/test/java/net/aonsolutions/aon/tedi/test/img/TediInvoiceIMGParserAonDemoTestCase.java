@@ -1,19 +1,17 @@
 package net.aonsolutions.aon.tedi.test.img;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.mysql.cj.jdbc.Driver;
 
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceTax;
@@ -94,58 +92,58 @@ public class TediInvoiceIMGParserAonDemoTestCase  extends AbstractTediTest {
 			System.out.println( TediInvoiceJSON.toJSON( tediInvoiceBuilder.get() ).toString(2) );
 
 			
-			assertNotNull(file + "Invoice not parsed!", invoice);
+			assertNotNull(invoice, file + "Invoice not parsed!");
 
 			// FECHA DE EMISIÓN
-			assertNotNull(file + " Invoice has no date!",invoice.getDate());
-			assertEquals(file + " Date does not match!", template.getDate(), invoice.getDate());
+			assertNotNull(invoice.getDate(),file + " Invoice has no date!");
+			assertEquals(template.getDate(), invoice.getDate(),file + " Date does not match!");
 			// DOCUMENTO SENDER
-			assertNotNull(file + " Invoice has no sender!",invoice.getSender());
-			assertNotNull(file + " Invoice has no document sender!",invoice.getSender().getDocument());
-			assertEquals(file + " Sender document does not match!", template.getSenderDocument(), invoice.getSender().getDocument());
+			assertNotNull(invoice.getSender(),file + " Invoice has no sender!");
+			assertNotNull(invoice.getSender().getDocument(),file + " Invoice has no document sender!");
+			assertEquals(template.getSenderDocument(), invoice.getSender().getDocument(),file + " Sender document does not match!");
 			// DOCUMENTO RECEIVER
-			assertNotNull(file + " Invoice has no receiver!",invoice.getReceiver());
-			assertNotNull(file + " Invoice has no document receiver!",invoice.getReceiver().getDocument());
-			assertEquals(file + " Receiver document does not match!", template.getReceiverDocument(), invoice.getReceiver().getDocument());
+			assertNotNull(invoice.getReceiver(),file + " Invoice has no receiver!");
+			assertNotNull(invoice.getReceiver().getDocument(),file + " Invoice has no document receiver!");
+			assertEquals(template.getReceiverDocument(), invoice.getReceiver().getDocument(),file + " Receiver document does not match!");
 			// TAXES
-			assertNotNull(file + " Invoice has no taxes!",invoice.getTaxes());
-			assertEquals(file + " Invoice taxes number does not match!", template.getTaxNumber(), invoice.getTaxes().size());
+			assertNotNull(invoice.getTaxes(),file + " Invoice has no taxes!");
+			assertEquals(template.getTaxNumber(), invoice.getTaxes().size(),file + " Invoice taxes number does not match!");
 
 			// BASE AL 10%
 			if (template.getTaxBase10() == null) {
-				assertNull(file + " Invoice has 10% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 10 ));	
+				assertNull(getTaxBase(invoice, TediTaxType.IVA, 10 ),file + " Invoice has 10% VAT base!");	
 			} else {
-				assertNotNull(file + " Invoice has no 10% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 10 ));
-				assertEquals(file + " Invoice 10% VAT base not match: ",template.getTaxBase10() , getTaxBase(invoice, TediTaxType.IVA, 10 ),0);
+				assertNotNull(getTaxBase(invoice, TediTaxType.IVA, 10 ),file + " Invoice has no 10% VAT base!");
+				assertEquals(template.getTaxBase10() , getTaxBase(invoice, TediTaxType.IVA, 10 ),0,file + " Invoice 10% VAT base not match: ");
 			}
 
 			// CUOTA AL 10%
 			if (template.getTaxQuota10() == null) {
-				assertNull(file + " Invoice has 10% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 10 ));	
+				assertNull(getTaxQuota(invoice, TediTaxType.IVA, 10 ),file + " Invoice has 10% VAT quota!");	
 			} else {
-				assertNotNull(file + " Invoice has no 10% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 10 ));
-				assertEquals(file + " Invoice 10% VAT quota not match: ",template.getTaxQuota10() , getTaxQuota(invoice, TediTaxType.IVA, 10 ),0);
+				assertNotNull(getTaxQuota(invoice, TediTaxType.IVA, 10 ),file + " Invoice has no 10% VAT quota!");
+				assertEquals(template.getTaxQuota10() , getTaxQuota(invoice, TediTaxType.IVA, 10 ),0,file + " Invoice 10% VAT quota not match: ");
 			}
 
 			// BASE AL 21%
 			if (template.getTaxBase21() == null) {
-				assertNull(file + " Invoice has 21% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 21 ));	
+				assertNull(getTaxBase(invoice, TediTaxType.IVA, 21 ),file + " Invoice has 21% VAT base!");	
 			} else {
-				assertNotNull(file + " Invoice has no 21% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 21 ));
-				assertEquals(file + " Invoice 21% VAT base not match: ",template.getTaxBase21() , getTaxBase(invoice, TediTaxType.IVA, 21 ),0);
+				assertNotNull(getTaxBase(invoice, TediTaxType.IVA, 21 ),file + " Invoice has no 21% VAT base!");
+				assertEquals(template.getTaxBase21() , getTaxBase(invoice, TediTaxType.IVA, 21 ),0,file + " Invoice 21% VAT base not match: ");
 			}
 			
 			// CUOTA AL 21%
 			if (template.getTaxQuota21() == null) {
-				assertNull(file + " Invoice has 21% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 21 ));	
+				assertNull(getTaxQuota(invoice, TediTaxType.IVA, 21 ),file + " Invoice has 21% VAT quota!");	
 			} else {
-				assertNotNull(file + " Invoice has no 21% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 21 ));
-				assertEquals(file + " Invoice 21% VAT quota not match: ",template.getTaxQuota21() , getTaxQuota(invoice, TediTaxType.IVA, 21 ),0);
+				assertNotNull(getTaxQuota(invoice, TediTaxType.IVA, 21 ),file + " Invoice has no 21% VAT quota!");
+				assertEquals(template.getTaxQuota21() , getTaxQuota(invoice, TediTaxType.IVA, 21 ),0,file + " Invoice 21% VAT quota not match: ");
 			}
 			
 			// TOTAL
-			assertNotNull(file + " Invoice has no total!",invoice.getTotal());
-			assertEquals(file + " Invoice total not match: ",template.getTotal() , invoice.getTotal().doubleValue(),0);
+			assertNotNull(invoice.getTotal(),file + " Invoice has no total!");
+			assertEquals(template.getTotal() , invoice.getTotal().doubleValue(),0,file + " Invoice total not match: ");
 		} finally {
 			Date end = new Date();
 			out.append("*  ");

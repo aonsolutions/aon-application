@@ -86,5 +86,11 @@ public class MODEL347 {
 			getImpl().writeMailMergeReport(ctx, mod347, writer);
 		}
 	}
+	
+	public static Mod347 aeatPresentation(Occam occam, Mod347 mod, String aeatResponse) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().aeatPresentation(ctx, mod, aeatResponse);
+		}
+	}
 
 }

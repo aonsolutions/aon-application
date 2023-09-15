@@ -6,9 +6,11 @@ import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -107,6 +109,32 @@ public class FinanceAutoComplete {
 		}
 	};
 	
+	/**
+	 * Se rellena paymethod. 
+	 */
+	public static final BiConsumer<Finance,AONContext> COMPLETE_PAYMETHOD = (finance, ctx) -> {
+		if(finance.getPayMethod() == null) {
+			PayMethod pm = null;
+			if(finance.getPayMethodName() != null) {
+				pm = PayMethodDAO.get(ctx, f -> f.getNameProperty().eq(finance.getPayMethodName()));
+			} else if(finance.getPayMethodType() != null) {
+				pm = PayMethodDAO.get(ctx, f -> f.getTypeProperty().eq(finance.getPayMethodType().value()));
+			}
+			
+			if(pm == null && finance.getPayMethodType() != null) {
+				pm = new PayMethod()
+						.setDomain(finance.getDomain())
+						.setName(finance.getPayMethodName() != null  
+								? finance.getPayMethodName() 
+								: finance.getPayMethodType().getDescription())
+						.setType(finance.getPayMethodType());
+				pm = PayMethodDAO.save(ctx, pm);
+			}
+			if(pm != null) 
+				finance.setPayMethod(pm.getId());
+		}
+	};
+	
 	public static void completeFinance(AONContext ctx, Finance finance) throws AonCoreException {
 			COMPLETE_REGISTRY_IF_EMPTY
 			.andThen(COMPLETE_REGISTRY_DOCUMENT_IF_EMPTY)
@@ -114,6 +142,7 @@ public class FinanceAutoComplete {
 			.andThen(COMPLETE_SECURITY_LEVEL_IF_EMPTY)
 			.andThen(COMPLETE_SCOPE_IF_EMPTY)
 			.andThen(COMPLETE_PAYMENT)
+			.andThen(COMPLETE_PAYMETHOD)
 			.accept(finance, ctx);
 	}
 

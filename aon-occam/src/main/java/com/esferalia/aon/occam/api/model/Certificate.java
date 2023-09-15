@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class Certificate implements Serializable {
 	
 	// ----------------------------- Certificate enums
@@ -19,12 +22,6 @@ public class Certificate implements Serializable {
 		PRIVATE
 	}
 	
-	public enum CertificateType {
-		TGSS,
-		SEPE,
-		AEAT
-	}
-	
 	// ----------------------------- Variables
 
 	private static final long serialVersionUID = 1L;
@@ -34,12 +31,10 @@ public class Certificate implements Serializable {
 	private CertificateOwner owner;
 	private String description;
 	private CertificateSecurity confidential;
-	private Boolean hasCertificate;
 	private Date updateDate;
 	private byte[] data;
 	private String type;
 	
-	private Integer passwordId;
 	private String password;
 	
 	private List<CertificateType> tags;
@@ -86,26 +81,47 @@ public class Certificate implements Serializable {
 	}
 
 	public Certificate setDescription(String description) {
-		this.description = description;
+		if(description != null && description.contains("HIDE")) {
+			String[] hide = description.split("HIDE\\(");
+			String[] hidePass = hide[1].split("\\)");
+			this.description = hide[0];
+			this.password = hidePass.length > 0 ? hidePass[0] : "";
+		} else {
+			this.description = description != null ? description : "";
+			this.password = "";
+		}
 		return this;
 	}
 
 	public CertificateSecurity getConfidential() {
+		if(confidential == null) {
+			confidential = CertificateSecurity.PUBLIC;
+		}
 		return confidential;
+	}
+	
+	public boolean isConfidential() {
+		return CertificateSecurity.PRIVATE.equals(getConfidential());
 	}
 
 	public Certificate setConfidential(CertificateSecurity confidential) {
 		this.confidential = confidential;
 		return this;
 	}
-
-	public Boolean getHasCertificate() {
-		return hasCertificate;
+	
+	public Certificate setConfidential(boolean confidential) {
+		this.confidential = confidential 
+			? CertificateSecurity.PRIVATE
+			: CertificateSecurity.PUBLIC;				
+		return this;
 	}
 
-	public Certificate setHasCertificate(Boolean hasCertificate) {
-		this.hasCertificate = hasCertificate;
-		return this;
+	public boolean hasPassword() {
+		return !AonStringUtils.isBlank(getPassword());
+	}
+	
+	public boolean hasCertificate() {
+		return getData() != null;
 	}
 
 	public Date getUpdateDate() {
@@ -132,15 +148,6 @@ public class Certificate implements Serializable {
 
 	public Certificate setType(String type) {
 		this.type = type;
-		return this;
-	}
-
-	public Integer getPasswordId() {
-		return passwordId;
-	}
-
-	public Certificate setPasswordId(Integer passwordId) {
-		this.passwordId = passwordId;
 		return this;
 	}
 
@@ -185,4 +192,7 @@ public class Certificate implements Serializable {
 		return this;
 	}
 	
+	public boolean isEmpty() {
+		return getData() == null && getPassword() == null;
+	}
 }

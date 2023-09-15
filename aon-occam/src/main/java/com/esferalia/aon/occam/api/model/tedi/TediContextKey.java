@@ -151,6 +151,12 @@ public enum TediContextKey  implements Serializable {
 			visitor.visitFinanceAmountZero(callback);
 		}
 	},
+	FINANCE_WRONG_DUE_DATE("fecha del vencimiento incorrecta") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitFinanceAmountZero(callback);
+		}
+	},
 	FINANCE_WRONG_ACCOUNT_BANK("Cuenta bancaria incorrecta.") {
 		@Override
 		public void visit(ITediContextVisitor visitor,ICallback callback) {

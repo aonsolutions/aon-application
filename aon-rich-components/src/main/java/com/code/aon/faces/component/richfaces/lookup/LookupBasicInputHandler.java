@@ -4,7 +4,7 @@ import static com.code.aon.faces.component.util.HTML.DISABLED_ATTR;
 
 import java.io.IOException;
 
-import javax.el.ELException;
+import jakarta.el.ELException;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 

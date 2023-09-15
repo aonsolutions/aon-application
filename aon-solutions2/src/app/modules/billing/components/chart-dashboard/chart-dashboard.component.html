@@ -1,0 +1,25 @@
+<app-card class="dashboard-billing dashboard" [routerLink]="'/bank'" [queryParams]="{ num: direction }">
+  <div body>
+    <div class="import">
+      <div class="text blue">{{ name }}</div>
+      <p class="subtitle">{{ subtitle }}</p>
+      <p class="number">{{ money }} €</p>
+    </div>
+    <div class="chart">
+      <app-chart
+        [chartType]="chartType"
+        [chartData]="chartData"
+        >
+      </app-chart>
+    </div>
+  </div>
+  <div footer>
+    <p
+      *ngFor="let menuItem of menuItem"
+      [ngClass]=" selected === menuItem.text ? 'selected' : 'no-selected' "
+      (click)="menuItem.click()"
+    >
+      {{ menuItem.text }}
+    </p>
+  </div>
+</app-card>

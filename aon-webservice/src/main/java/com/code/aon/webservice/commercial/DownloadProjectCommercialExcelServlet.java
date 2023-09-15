@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -167,7 +167,15 @@ public class DownloadProjectCommercialExcelServlet extends HttpServlet {
     	
     	cont = 1;
     	AON.getProjectCommercialStream(domain.getName(), domain.getId(), userName, f -> projectCommercialFilter(req, f))
-    	.sorted((p1, p2)->p2.getDate().compareTo(p1.getDate()))
+    	.sorted((p1, p2) -> {
+    		if(p2.getDate() == null && p1.getDate() == null)
+    			return 0;            
+    		else if(p2.getDate() == null)
+    			return -1;
+    		else if (p1.getDate() == null)
+    			return 1; 	
+    		return p2.getDate().compareTo(p1.getDate());	
+    	})
     	.forEach(result -> {
     		row = hoja.createRow(cont++);
     		

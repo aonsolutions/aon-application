@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod123.Model123.Model123Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model716Navarra extends Model123Base {
@@ -62,7 +63,7 @@ public class Model716Navarra extends Model123Base {
 
 				@Override
 				public String getCheckDataResponseDataAction() {
-					return null;
+					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod123CheckDataResponseData";
 				}
 
 				@Override

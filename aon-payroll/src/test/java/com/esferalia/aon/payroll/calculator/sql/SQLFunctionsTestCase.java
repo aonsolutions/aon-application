@@ -15,24 +15,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C200;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C209;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C230;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C239;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C250;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C289;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C501;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C502;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C503;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C508;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C510;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C518;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C520;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C530;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C540;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C541;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C550;
-import static com.esferalia.aon.payroll.enumeration.ContractCode.C552;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
@@ -49,6 +31,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -75,6 +58,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
@@ -1444,6 +1428,133 @@ public class SQLFunctionsTestCase extends
 	}
 
 	@Test
+	public void testCalcCompensations() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		ContractRecord contract = newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap());
+		
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+			getSQLContractSettleContext(connection, 
+			contract.getStartDate(), 
+			getToday(), 
+			contract);
+		//@formatter:on
+		
+		Date startDate = contract.getStartDate(); //getFirstDayOfMonth(getToday());
+		Date endDate = getToday(); //getLastDayOfMonth(getToday());
+
+		List<ITimedResult<Object>> results =  ctx.getExpressionContext().eval("CGPJ_INDEMNIZACIONES = CALCULO_INDEMNIZACIONES(INICIO_NOMINA, FIN_NOMINA, 66.66);", 
+				startDate,
+				endDate, 
+				Object.class);
+		
+		org.junit.Assert.assertEquals(1, results.size());
+		org.junit.Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		org.junit.Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		
+		Map<Integer,Map<String,Object>> compensations = (Map<Integer,Map<String,Object>>) results.get(0).getValue();
+		
+		compensations.values().forEach( compensation -> System.out.println( 
+		compensation.get("title") + " " + 
+		compensation.get("description") + " " + 
+		compensation.get("amount") 
+		+"[" + compensation.get("days") + "]") );
+		
+	}
+
+	@Test
+	public void testEvalTemplate() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		ContractRecord contract = newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap());
+		
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+			getSQLContractSettleContext(connection, 
+			contract.getStartDate(), 
+			getToday(), 
+			contract);
+		//@formatter:on
+
+		// 1. DESPIDO IMPROCEDENTE 										-- Salario diario x meses x 2,75: 11182.22[1827]
+		// 2. EXTINCIÓN DEL CONTRATO POR VOLUNTAD DEL TRABAJADOR EN CASO DE INCUMPLIMIENTO GRAVE DEL EMPRESARIO -- Salario diario x meses x 2,75: 11182.22[1827]
+		// 3. EXTINCIÓN POR CAUSAS OBJETIVAS PROCEDENTE Y TRABAJADOR INDEFINIDO NO FIJO 			-- Salario diario x meses x 20 / 12: 6777.1[1827]
+		// 4. DESPIDO COLECTIVO PROCEDENTE 									-- Salario diario x meses x 20 / 12: 6777.1[1827]
+		// 5. MOVILIDAD GEOGRÁFICA 										-- Salario diario x meses x 20 / 12: 6777.1[1827]
+		// 6. MODIFICACIÓN SUSTANCIAL DE CONDICIONES DE TRABAJO 						-- Salario diario x meses x 20 / 12: 6777.1[1827]
+		// 7. EXTINCIÓN DEL CONTRATO TEMPORAL - Contrato celebrado a partir del 1-1-2015 			-- Salario diario x dias x 12 / 365: 4003.98[1827]
+		
+		Map<Integer, Map<String, Object>> cgpjIndemnizaciones = new HashMap<>();
+		Map<String, Object> indemnizacion = new HashMap<>();
+		indemnizacion.put("title", "1. DESPIDO IMPROCEDENTE");
+		indemnizacion.put("description", "-- Salario diario x meses x 2,75:");
+		indemnizacion.put("amount", 11182.22);
+		indemnizacion.put("days", 1827);
+		cgpjIndemnizaciones.put(1, indemnizacion);
+		indemnizacion = new HashMap<>();
+		indemnizacion.put("title", "2. EXTINCIÓN DEL CONTRATO POR VOLUNTAD DEL TRABAJADOR EN CASO DE INCUMPLIMIENTO GRAVE DEL EMPRESARIO");
+		indemnizacion.put("description", "-- Salario diario x meses x 2,75:");
+		indemnizacion.put("amount", 11182.22);
+		indemnizacion.put("days", 1827);
+		cgpjIndemnizaciones.put(2, indemnizacion);
+		indemnizacion = new HashMap<>();
+		indemnizacion.put("title", "3. EXTINCIÓN POR CAUSAS OBJETIVAS PROCEDENTE Y TRABAJADOR INDEFINIDO NO FIJO");
+		indemnizacion.put("description", "- Salario diario x meses x 20 / 12:");
+		indemnizacion.put("amount", 11182.22);
+		indemnizacion.put("days", 1827);
+		cgpjIndemnizaciones.put(3, indemnizacion);
+		indemnizacion = new HashMap<>();
+		indemnizacion.put("title", "4. DESPIDO COLECTIVO PROCEDENTE");
+		indemnizacion.put("description", "-- Salario diario x meses x 20 / 12:");
+		indemnizacion.put("amount", 11182.22);
+		indemnizacion.put("days", 1827);
+		cgpjIndemnizaciones.put(4, indemnizacion);
+		indemnizacion = new HashMap<>();
+		indemnizacion.put("title", "5. MOVILIDAD GEOGRÁFICA");
+		indemnizacion.put("description", "-- Salario diario x meses x 20 / 12:");
+		indemnizacion.put("amount", 11182.22);
+		indemnizacion.put("days", 1827);
+		cgpjIndemnizaciones.put(5, indemnizacion);
+		indemnizacion = new HashMap<>();
+		indemnizacion.put("title", "6. MODIFICACIÓN SUSTANCIAL");
+		indemnizacion.put("description", "-- Salario diario x meses x 20 / 12:");
+		indemnizacion.put("amount", 11182.22);
+		indemnizacion.put("days", 1827);
+		cgpjIndemnizaciones.put(6, indemnizacion);
+		indemnizacion = new HashMap<>();
+		indemnizacion.put("title", "7. EXTINCIÓN DEL CONTRATO TEMPORAL");
+		indemnizacion.put("description", "-- Contrato celebrado a partir del 1-1-2015 - Salario diario x dias x 12 / 365:");
+		indemnizacion.put("amount", 11182.22);
+		indemnizacion.put("days", 1827);
+		cgpjIndemnizaciones.put(7, indemnizacion);
+		
+		ctx.getExpressionContext().setVariable("CGPJ_INDEMNIZACIONES", cgpjIndemnizaciones, startDate, endDate);
+
+		try {
+    		List<ITimedResult<Object>> results =  
+    		ctx.getExpressionContext().eval("MSG_CGPJ_INDEMNIZACIONES='<table><tbody></tbody></table><table><tbody>@foreach{value:values}<tr><td>@{value.title} @{value.description}</td><td>@{value.amount}</td></tr>@end{}</tbody></table><div class=\\'aon-text-right\\'><span class=\\'aon-icon aon-icon-logo\\' />aon Solutions</div>';AVISO(EVAL_TEMPLATE(CGPJ_INDEMNIZACIONES,MSG_CGPJ_INDEMNIZACIONES));", 
+    				startDate,
+    				endDate, 
+    				Object.class);
+		} catch ( CheckException e ) {
+	    		System.out.println(e.getMessage());
+	    		return;
+		}
+		
+		Assert.fail();
+    		
+	}
+
+	@Test
 	public void testSectionFunctionI() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
@@ -1680,6 +1791,111 @@ public class SQLFunctionsTestCase extends
 		;
 		
 		
+	}
+
+	@Test
+	public void testScopeFunctionI() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		
+		
+		AgreementLevelCategoryRecord category = newAgreement(aonContext, new Extra[] {},
+			new HashMap<String, String>() {
+			    {
+				put("SALARIO_MENSUAL", "1000.00");
+			    }
+			});
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(
+				aonContext, 
+				getToday(), 
+				new HashMap<String,String>(){{
+				    put("DIAS_MES", "30.00");
+				}} ,
+				new String[0], 
+				new String[0],
+				category
+				));
+		//@formatter:on
+		
+		
+		Date today = getToday();
+		
+		List<ITimedResult<ExpressionScope>>  scopes = 
+				ctx.getExpressionContext().eval(
+						String.format("AMBITO('%s')",
+							ContextVariable.IRPF_PERCENT.getName()
+						)
+						, startDate
+						, endDate, ExpressionScope.class );
+		
+		Assert.assertEquals(ExpressionScope.APPLICATION, scopes.get(0).getValue());
+
+		ctx.getExpressionContext().eval(
+			String.format("AMBITO('%s') == APPLICATION ",
+				ContextVariable.IRPF_PERCENT.getName()
+			)
+			, startDate
+			, endDate, Boolean.class )
+		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+
+		scopes = 
+			ctx.getExpressionContext().eval(
+					String.format("AMBITO('%s')",
+						ContextVariable.MONTH_DAYS.getName()
+					)
+					, startDate
+					, endDate, ExpressionScope.class );
+	
+		Assert.assertEquals(ExpressionScope.CONTRACT, scopes.get(0).getValue());
+
+		ctx.getExpressionContext().eval(
+			String.format("AMBITO('%s') == CONTRACT ",
+				ContextVariable.MONTH_DAYS.getName()
+			)
+			, startDate
+			, endDate, Boolean.class )
+		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+
+		scopes = 
+			ctx.getExpressionContext().eval(
+					String.format("AMBITO('SALARIO_MENSUAL')"
+					)
+					, startDate
+					, endDate, ExpressionScope.class );
+	
+		Assert.assertEquals(ExpressionScope.AGREEMENT, scopes.get(0).getValue());
+
+		ctx.getExpressionContext().eval(
+			String.format("AMBITO('SALARIO_MENSUAL') == AGREEMENT "
+			)
+			, startDate
+			, endDate, Boolean.class )
+		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+
+		ctx.getExpressionContext().eval(
+			String.format("AMBITO('SALARIO_MENSUAL') < CONTRACT "
+			)
+			, startDate
+			, endDate, Boolean.class )
+		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+
+		ctx.getExpressionContext().eval(
+			String.format("AMBITO('SALARIO_MENSUAL') < APPLICATION "
+			)
+			, startDate
+			, endDate, Boolean.class )
+		.forEach( r -> org.junit.Assert.assertFalse(r.getValue()) );
 	}
 
 	//------------------------------------------------------------------------

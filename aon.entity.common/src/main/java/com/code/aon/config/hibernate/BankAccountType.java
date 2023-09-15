@@ -31,7 +31,7 @@ public class BankAccountType extends StringType {
 		String value = StringUtils.trimToNull(xml);
 		if (value == null) {
 			return null;
-		}
+		} else value = value.toUpperCase();
 
 		BankAccount bankAccount = new BankAccount();
 		bankAccount.setCountry(Country.valueOf(StringUtils.substring(value, 0, 2)));

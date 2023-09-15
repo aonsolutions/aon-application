@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -55,6 +57,8 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
+import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
  * Class to print Payroll PDF file with PDFbox
@@ -116,7 +120,23 @@ public class PayrollTemplate implements IPayrollTemplate{
 			if (logo.isPresent())
 				bLogo = logo.get().readAllBytes();
 	
-			for (IDefaultPayroll payroll : payrolls) {
+			List<IDefaultPayroll> orderedPayrolls = new LinkedList<>();
+			if (payrolls != null) {
+				payrolls.stream().sorted((o1, o2) -> {
+					String name1 = o1.getEmployee().orElse(null);
+					String name2 = o2.getEmployee().orElse(null);
+					Date date1 = o1.getLiquidPeriodEnd().orElse(null);
+					Date date2 = o2.getLiquidPeriodEnd().orElse(null);
+					int strCompare = AonStringUtils.compare(name1, name2);
+					if (strCompare != 0) {
+						return strCompare;
+					} else {
+						return AonDateUtils.compare(date1, date2);
+					}
+				}).forEach(orderedPayrolls::add);
+			}
+	
+			for (IDefaultPayroll payroll : orderedPayrolls) {
 				if (bLogo != null)
 					logo = Optional.ofNullable(new ByteArrayInputStream(bLogo));
 	
@@ -281,10 +301,13 @@ public class PayrollTemplate implements IPayrollTemplate{
 								.mapToDouble(accrual -> safeDouble(accrual.getAmount())).sum();
 						if (localTotal != 0)
 						{
-							String paymentTxt = m.getKey() + ". " + getType(m.getKey(), lang);
+							String craNumber = m.getKey() < 100 ? (m.getKey() + ".") : "";
+							String paymentTxt = getType(m.getKey(), lang);
 							String paymentTotalTxt = toLatinNumber(localTotal) + " " + text("MONEDA");
 
-							drawText(contents, paymentTxt, x, y, BLACK, HELVETICA_BOLD, fontSize);
+							drawText(contents, craNumber, x, y, BLACK, HELVETICA_BOLD, fontSize);
+							
+							drawText(contents, paymentTxt, x + 15, y, BLACK, HELVETICA_BOLD, fontSize);
 							drawTextRight(contents, new PDRectangle(x + 355, y - 5, 100, 10), paymentTotalTxt, BLACK,
 									HELVETICA, fontSize, 5, 5);
 							drawBox(contents, x, y - 2, 455, .2f, BLACK);
@@ -360,7 +383,7 @@ public class PayrollTemplate implements IPayrollTemplate{
 							m.getValue().stream().forEach(n ->
 							{
 								String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("MONEDA");
-								String entryTxt = " por " + n.getDescription().orElse("");
+								String entryTxt = " por " + n.getDescription().orElse("").replaceAll("<.*>", "");
 								String entryPercent = (n.getPercent().isEmpty()) ? ""
 										: toLatinNumber(n.getPercent().get()) + " % ";
 

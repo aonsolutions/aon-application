@@ -66,6 +66,13 @@
 		</dependency>
 	
 		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>invofox.sdk</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>solutions.aon</groupId>
 			<artifactId>aon.seg.social</artifactId>
 			<version>${project.version}</version>
@@ -92,14 +99,21 @@
       		<version>${project.version}</version>
       		<scope>provided</scope>
     	</dependency>
-		
-		<dependency>
-      		<groupId>javax.servlet</groupId>
-      		<artifactId>javax.servlet-api</artifactId>
-      		<version>3.1.0</version>
-      		<scope>provided</scope>
-   		</dependency>
 
+	    <dependency>
+     		<groupId>org.apache.tomcat</groupId>
+     		<artifactId>tomcat-servlet-api</artifactId>
+      		<version>10.1.7</version>
+      		<scope>provided</scope>
+    	</dependency>
+
+		<dependency>
+			<groupId>jakarta.platform</groupId>
+			<artifactId>jakarta.jakartaee-web-api</artifactId>
+			<version>10.0.0</version>
+			<scope>compile</scope>
+		</dependency>
+		
 	    <dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>

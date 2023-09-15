@@ -107,4 +107,15 @@ public enum FiscalModelType implements Serializable{
 			|| this == M202;
 	}
 	
+	public boolean isInformative() {
+		return this == M347 
+			|| this == M349 
+			|| this == M390
+			|| this == M390_HF 
+			|| this == M180 
+			|| this == M184 
+			|| this == M190 
+			|| this == M193;
+	}
+	
 }

@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.io.ByteArrayInputStream;
 import java.net.MalformedURLException;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediService;

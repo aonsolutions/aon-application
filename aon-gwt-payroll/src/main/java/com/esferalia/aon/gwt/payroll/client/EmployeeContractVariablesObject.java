@@ -122,8 +122,8 @@ public class EmployeeContractVariablesObject {
 			}
 		}
 		
-		this.contractVariablesFiltered.sort((o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate()));
-		Collections.reverse(this.contractVariablesFiltered);
+		this.contractVariablesFiltered.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
+//		Collections.reverse(this.contractVariablesFiltered);
 		
 		return this.contractVariablesFiltered;
 	}

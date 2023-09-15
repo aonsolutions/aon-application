@@ -100,10 +100,11 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.Occupation;
+import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -194,7 +195,7 @@ public class EmployeesServiceHelper {
 		
 //		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-		byte data [] =  SistemaRED.getTA(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+		byte data [] =  SistemaRED.getTA(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
 	}
 
@@ -213,7 +214,7 @@ public class EmployeesServiceHelper {
 //		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 
-		byte data [] =  SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+		byte data [] =  SistemaRED.getIDC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
 	}
 
@@ -230,7 +231,7 @@ public class EmployeesServiceHelper {
 //		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		
-		byte data [] =  SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+		byte data [] =  SistemaRED.getIDCNSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
 	}
 	
@@ -900,7 +901,7 @@ public class EmployeesServiceHelper {
 			if ( employee.getContractType().isPresent() ) {
 				String ssContractType = employee.getContractType().get();
 				String aonContractType = getString(dataList, ContextVariable.TC2, "");
-				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 ) {
+				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 && !AonStringUtils.endsWith(ssContractType, "9") ) {
 					employeeStatus.and(
 							new EmployeeStatus.MismatchedContractType()
 							.setAonContractType(aonContractType)
@@ -1005,7 +1006,7 @@ public class EmployeesServiceHelper {
 		
 		Collection<Idc> idcDates;
 		try {
-			idcDates = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, nss);
+			idcDates = SistemaRED.getIDCDates(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, nss);
 		} catch (SegSocialException e1) {
 			return ssContractData;
 		}
@@ -1025,7 +1026,7 @@ public class EmployeesServiceHelper {
 		for (Date startDate : dates) {				
 			byte data[] = null;
 			try {
-				data = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, nss, startDate);
+				data = SistemaRED.getIDC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, nss, startDate);
 				Map<ContextVariable, Object> contractData = com.esferalia.aon.in.payroll.tgss.idc.Idc.getContractData(data);
 				for ( ContextVariable v : stringVars ) {
 					if ( contractData.containsKey(v) ) {					
@@ -1683,10 +1684,10 @@ public class EmployeesServiceHelper {
 				extends SQLContractSalaryCalculatorContext {
 
 			public SalaryCalculatorContextImpl(Connection connection,
-					Date startDate, Date endDate, Date issueDate,
+					Date startDate, Date endDate, Date issueDate, Date chargeDate,
 					Criteria criteria)
 							throws SQLException, ExpressionException {
-				super(connection, startDate, endDate, issueDate, criteria);
+				super(connection, startDate, endDate, issueDate, chargeDate, criteria);
 			}
 
 			public Object __br(Date date) throws ExpressionException, SQLException, SalaryException {
@@ -1772,7 +1773,7 @@ public class EmployeesServiceHelper {
 						@Override
 						public int getAñoNacimiento() {
 							Date birthDate = SalaryCalculatorContextImpl.this.getDate(SQLConstants.PERSON, SQLConstants.PersonColumns.BIRTH_DATE);
-							return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 1969;
+							return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 0;
 						}
 
 					};
@@ -2040,8 +2041,12 @@ public class EmployeesServiceHelper {
 
 		}
 
-		SalaryCalculatorContextImpl ctx = new SalaryCalculatorContextImpl(conn,
-				draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(),
+		SalaryCalculatorContextImpl ctx = 
+			new SalaryCalculatorContextImpl(conn,
+				draft.getStartDate(), 
+				draft.getEndDate(), 
+				draft.getIssueDate(), 
+				draft.getChargeDate(),
 				criteria);
 
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
@@ -2069,7 +2074,7 @@ public class EmployeesServiceHelper {
 
 		SQLContractSalaryCalculatorContext ctx = new SQLContractExtraCalculatorContext(
 				conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), draft.getIssueDate(), criteria);
+				draft.getIssueDate(), draft.getChargeDate(), criteria);
 
 
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
@@ -2101,7 +2106,7 @@ public class EmployeesServiceHelper {
 
 		SQLSettleDraftCalculatorContext draftCtx = new SQLSettleDraftCalculatorContext(
 				draft, conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), criteria);
+				draft.getIssueDate(), draft.getChargeDate(), criteria);
 		draftCtx.next();
 		draftCtx.setListener(listener);
 		return draftCtx;
@@ -2126,8 +2131,7 @@ public class EmployeesServiceHelper {
 				draft.getEmployee().getId());
 	
 		SQLContractSalaryCalculatorContext ctx = new SQLContractDelayCalculatorContext(
-				conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), criteria) {
+				conn, draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(), draft.getChargeDate(), criteria) {
 			
 			@Override
 			protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(ISalaryBuilder<T> salaryBuilder) {
@@ -2277,6 +2281,17 @@ public class EmployeesServiceHelper {
 		return enterprisePayroll;
 	}
 	
+
+	public static <S extends com.esferalia.aon.payroll.Salary >  S calculate(Connection conn, SalaryDraft draft, GenericContractSalaryCalculator<S, ISQLContractSalaryCalculatorContext> calculator) {
+
+        	try {
+        	    ISQLContractSalaryCalculatorContext ctx = 
+        		    getSalaryCalculatorContext(conn, draft, irpfOut -> {});
+        		return calculator.calculate(ctx);
+        	} catch (ExpressionException | SQLException | SalaryException e) {
+        		throw new IllegalArgumentException(e);
+        	}  
+	}
 
 	public static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
 			Connection conn, SalaryDraft draft, T salaryBuilder, L draftBuilder, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> calculator) {

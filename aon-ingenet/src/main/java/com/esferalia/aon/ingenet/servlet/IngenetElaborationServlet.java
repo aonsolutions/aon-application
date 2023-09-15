@@ -10,10 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -265,9 +265,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		String content = fillErrorMessage(respuesta.getERRORES(), errorList);
 		log(IngenetLogLevel.ERROR, subject, content, "elaboraciones", xml, RECIPIENTS_TO_FAILURES);
 		
-		httpResponse.setContentType("application/xml");
-		httpResponse.setContentLength(xml.length());
-		
+		httpResponse.setContentType("application/xml");		
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
 		out.flush();
@@ -279,7 +277,6 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		String xml = IngenetXmlValidator.convertToXml(elaboraciones, RESPUESTAELABORACIONES.class);
 		
 		httpResponse.setContentType("application/xml");
-		httpResponse.setContentLength(xml.length());
 		PrintWriter out = httpResponse.getWriter();
 		out.print(xml);
 		out.flush();

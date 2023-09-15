@@ -1,6 +1,8 @@
 // ----- A
 
+export const ABOUT = 'About';
 export const ACCEPT = 'Accept';
+export const ACCESS = "Access";
 export const ACCOUNT = 'Account';
 export const ACCOUNTED = 'Accounted';
 export const ACCOUNTEDS = 'Accounted';
@@ -20,8 +22,11 @@ export const ADD_REMARKS = 'Add Remarks';
 export const ADD_TAG = 'Add Tag';
 export const ADD_TAX = 'Add Tax';
 export const ADD_TYPE = 'Add Type';
+export const ADDITIONAL_HIRING = "Additional hiring";
 export const ADDITIONAL_INFORMATION = 'Additional Information';
 export const ADDRESS = 'Address';
+export const ALL= 'All';
+export const ALL1= 'All';
 export const ALL_FILES = 'All Files';
 export const AMOUNT = 'Amount';
 export const API_DOCUMENTATION = 'API Documentation';
@@ -42,8 +47,10 @@ export const BARCODE = 'Barcode';
 export const BASE = 'Base';
 export const BASQUE = 'Basque';
 export const BILLING = 'Billing';
+export const BILLABLE_USERS = "Billable users";
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Booking';
+export const BOOKING_PANEL = 'Booking panel';
 export const BOX_CRITERION = 'Box Criterion';
 export const BUDGET = 'Budget';
 export const BUDGETS = 'Budgets';
@@ -59,6 +66,7 @@ export const CERTIFICATE = 'Certificate';
 export const CERTIFICATES = 'Certificates';
 export const CHANGE_TYPE = 'Change Type';
 export const CHARGES_AND_PAYMENTS = 'Charges and Payments';
+export const CHOOSE_A_DOMAIN = 'Choose a domain, please';
 export const CITY = 'City';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
@@ -80,15 +88,23 @@ export const CONFIGURATION = 'Configuration';
 export const CONTACT = 'Contact';
 export const CONTACT_DATA = 'Contact Data';
 export const CONTACTS = 'Contacts';
+export const CONTAINER = 'Container';
 export const CONTRACT = 'Contract';
+export const CONTRACTED_PRODUCTS = "Contracted products";
+export const CONTRACTED_USERS = "Contracted users";
 export const CONTRACT_PAYROLL = 'Contract';
 export const CONTRACTS = 'Contracts';
+export const COPIED_TO_CLIPBOARD = "Copied to clipboard";
+export const COPY = "Copy";
 export const COUNTRY = 'Country';
 export const CREATE = 'Create';
 export const CREDITOR = 'Creditor';
 export const CREDITORS = 'Creditors';
 export const CUSTOM_VIEW = 'Custom View';
 export const CUSTOMER = 'Customer';
+export const CUSTOMER_SEARCH = 'Customer search';
+export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND = "Customers related with this domain were not found";
+export const CUSTOMER_SEARCH_NOT_FOUND = "Customers related with this search were not found";
 export const CUSTOMERS = 'Customers';
 
 // ----- D
@@ -114,6 +130,7 @@ export const DEUTSCH = 'German';
 export const DOCUMENT = 'Document';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documentary';
+export const DOMAIN_SEARCH = 'Domain search';
 export const DOWNLOAD = 'Download';
 export const DOWNLOAD_FILE = 'Download File';
 export const DOWNLOAD_FILES = 'Download Files';
@@ -142,6 +159,7 @@ export const EXIT = 'Exit';
 export const EXPENSE = 'Expense';
 export const EXPENSES = 'Expenses';
 export const EXPIRATIONS = 'Expirations';
+export const EXPIRED = 'Expired';
 
 // ----- F
 
@@ -150,6 +168,7 @@ export const FILE = 'File';
 export const FILE_DATA = 'File Data'
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
+export const FIND_LINKED_DOMAINS = "Find linked domains";
 export const FOOTER = 'Footer';
 
 // ----- G
@@ -168,6 +187,7 @@ export const GROUPS = 'Groups';
 export const HEADER = 'Header';
 export const HELP = 'Help';
 export const HIRING = 'Hiring';
+export const HIRING_DATA = "Hiring data";
 export const HOLDER = 'Holder';
 export const HOLDERS = 'Holders';
 export const HOURS = "Hours";
@@ -207,6 +227,14 @@ export const LANGUAGE = 'Language';
 export const LAST = 'Last';
 export const LAST_LOCATION = 'Last Location';
 export const LAST_STATUS = 'Last Status';
+export const LINK = 'Link';
+export const LINK_CLIENT = "Link client";
+export const LINKED = 'Linked';
+export const LINKED1 = 'Linked';
+export const LINKING = "Linking";
+export const LINK_DOMAINS = 'Link Domains with Customers';
+export const LINK_DOMAIN_QUESTION = "Do you want to link this client to the domain?";
+export const LOADING = 'Loading';
 export const LOCATION = 'Location';
 
 // ----- M
@@ -234,15 +262,19 @@ export const NEW_REQUEST = 'New Request';
 export const NEW_WAREHOUSE = 'New Warehouse';
 export const NEXT = 'Next';
 export const NIF = 'NIF';
+export const NOT_LINKED = 'Not linked';
+export const NOT_LINKED1 = 'Not linked';
 export const NOTIFICATION = 'Notification';
 export const NOTIFICATIONS = 'Notifications';
 export const NOTES = 'Notes';
 export const NOTE = 'Note';
 export const NUMBER = 'Number';
+export const NUMBER_OF_USERS = 'Number of users';
 
 // ----- O
 export const OBSERVATION = 'Observation';
 export const OFFICE = 'Office';
+export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Only domains without any linked customer";
 export const ONLY_PORTAL = 'Only Portal';
 export const OPEN = 'Open';
 export const OPEN_MENU = 'Open Menu';
@@ -254,6 +286,7 @@ export const OTHER_SERVICES = 'Other Services';
 
 // ----- P
 
+export const PARENT_APPS = "Parent apps";
 export const PAUSE = 'Pause';
 export const PASSWORD = 'Password';
 export const PAYMETHOD = 'Payment Method';
@@ -274,6 +307,8 @@ export const PRINT = 'Print';
 export const PRINT_INVOICE = 'Print Invoice';
 export const PROCESSED_MOVEMENT = "The discharge has been processed successfully";
 export const PRODUCT = 'Product';
+export const PRODUCT_NOT_EMPTY = "Product cannot be empty";
+export const PRODUCT_MUST_BE_SELECTED = "Product must be selected";
 export const PRODUCTS = 'Products';
 export const PROVINCE = 'Province';
 
@@ -342,6 +377,7 @@ export const SIZE = 'Size';
 export const SPANISH = 'Spanish';
 export const STATISTICS = 'Statistics';
 export const STATUS = "Status";
+export const STATUS_NOT_EMPTY = "Status cannot be empty";
 export const SUPPLIED = 'Supplied';
 export const SUPPLIER = 'Supplier';
 export const SUPPLIERS = 'Suppliers';
@@ -377,6 +413,10 @@ export const TYPES = 'Types';
 
 // ----- U
 
+export const UNLINK = "Unlink";
+export const UNLINK_DOMAIN_QUESTION = "Do you want to unlink this client from the domain?";
+export const UNLINK_CLIENT = "Unlink client";
+export const UNLINKED = "Unlinked";
 export const UPDATED_CONTRACT = "The contract has been modified successfully";
 export const UPLOAD = 'Upload';
 export const UPLOAD_FILE = 'Upload File';
@@ -384,6 +424,7 @@ export const USER = 'User';
 export const USER_DATA = 'User Data';
 export const USER_MANAGEMENT = 'User Management';
 export const USERS = 'Users';
+export const UTILITIES = 'Utilities';
 
 // ----- V
 

@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -193,7 +194,7 @@ public class JooqPDFSettlementBuilder {
 			.setEnterpriseName(trimToEmpty(settlementRecord.get(SALARY.ENTERPRISE_NAME)).toUpperCase(LOCALE_ES))
 			.setEnterpriseAddress(!AonStringUtils.isEmpty(raddress.getFullAddress()) ? raddress.getFullAddress() : settlementRecord.get(SALARY.ENTERPRISE_ADDRESS))
 			.setEnterpriseNIF(settlementRecord.get(SALARY.ENTERPRISE_DOCUMENT))
-			.setEndDate(settlementRecord.get(SALARY.END_DATE))
+			.setEndDate(AonDateUtils.addDays(settlementRecord.get(SALARY.START_DATE), settlementRecord.get(SALARY.TIME_UNITS) -1 ))
 			.setDeductionTotal(settlementRecord.get(SALARY.TOTAL_DEDUCTION))
 			.setAccrualTotal(settlementRecord.get(SALARY.TOTAL_PAYMENT))
 			.setTotal(settlementRecord.get(SALARY.TOTAL_LIQUID))
@@ -240,6 +241,11 @@ public class JooqPDFSettlementBuilder {
 
 					@Override
 					public Double visitCommonContigency(DeductionType deductionType) {
+						return AonNumberUtils.zeroIfNull(salary.getCommonContingenciesBase()) > 0 ? deduction.getAmount() / salary.getCommonContingenciesBase() * 100: null;
+					}
+					
+					@Override
+					public Double visitMEI(DeductionType deductionType) {
 						return AonNumberUtils.zeroIfNull(salary.getCommonContingenciesBase()) > 0 ? deduction.getAmount() / salary.getCommonContingenciesBase() * 100: null;
 					}
 
@@ -316,18 +322,24 @@ public class JooqPDFSettlementBuilder {
 	private static String getDeductionDescription(String name, DeductionType type) {
 		if (type == null)
 			return "Otros";
+		// TODO: Delete this
 		if ( AonStringUtils.equals("MEI", name))
-			return "Mecanismo de equidad intergeneracional";
+			return "Mecanismo Equidad Intergeneracional (MEI)";
 		return type.accept(new DeductionType.Visitor<String> () {
 						
 			@Override
 			public String visitCommonContigency(DeductionType deductionType) {
-				return "Contingencias comunes";
+				return "Contingencias Comunes";
+			}
+			
+			@Override
+			public String visitMEI(DeductionType deductionType) {
+			    return "Mecanismo Equidad Intergeneracional (MEI)";
 			}
 
 			@Override
 			public String visitProfessionalContigency(DeductionType deductionType) {
-				return "Contingencias profesionales";
+				return "Contingencias Profesionales";
 			}
 
 			@Override
@@ -337,22 +349,22 @@ public class JooqPDFSettlementBuilder {
 
 			@Override
 			public String visitJobTraining(DeductionType deductionType) {
-				return "Formación profesional";
+				return "Formación Profesional";
 			}
 
 			@Override
 			public String visitStructuralOvertime(DeductionType deductionType) {
-				return "Horas extraordinarias estructurales";
+				return "Horas Extraordinarias Estructurales";
 			}
 
 			@Override
 			public String visitNonStructuralOvertime(DeductionType deductionType) {
-				return "Horas extraordinarias de fuerza mayor";
+				return "Horas Extraordinarias de Fuerza Mayor";
 			}
 
 			@Override
 			public String visitIrpf(DeductionType deductionType) {
-				return "Retribuciones dinerarias";
+				return "Retribuciones Dinerarias";
 			}
 
 			@Override
@@ -362,7 +374,7 @@ public class JooqPDFSettlementBuilder {
 
 			@Override
 			public String visitInkind(DeductionType deductionType) {
-				return "En especie";
+				return "En Especie";
 			}
 
 			@Override
@@ -377,7 +389,7 @@ public class JooqPDFSettlementBuilder {
 
 			@Override
 			public String visitIT(DeductionType deductionType) {
-				return "Incapacidad temporal";
+				return "Incapacidad Temporal";
 			}
 
 			@Override
@@ -402,11 +414,16 @@ public class JooqPDFSettlementBuilder {
 		if (type == null)
 			return 6;
 		return type.accept(new DeductionType.Visitor<Integer> () {
-
+		    
 			@Override
 			public Integer visitCommonContigency(DeductionType deductionType) {
 				return 1;
 			}
+
+		    	@Override
+		    	public Integer visitMEI(DeductionType deductionType) {
+		    	    return 1;
+		    	}
 
 			@Override
 			public Integer visitProfessionalContigency(DeductionType deductionType) {

@@ -51,14 +51,25 @@
       </div>
       <mat-grid-list cols="3" class="menu-left-option-footer-icon-expanded">
         <mat-grid-tile colspan="1" *ngFor="let shortcut of shortcuts;">
-          <span class="griss" routerLink={{shortcut.routerlink}}>
+          <span 
+            class="griss"
+            (click)="opened = !opened"
+            routerLink={{shortcut.routerlink}}>
             <app-icon [shape]="shortcut.shape"></app-icon>
           </span>
         </mat-grid-tile>
       </mat-grid-list>
     </div>
   </mat-sidenav>
-  <mat-sidenav-content id="body-container">
+  <mat-sidenav-content 
+    id="body-container"
+    [ngClass]="opened ? 'menu-open-content' : ''"
+  >
+    <div 
+      *ngIf="opened"
+      id='menu-open' 
+      (click)="opened = !opened"
+    ></div>
     <ng-content></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>

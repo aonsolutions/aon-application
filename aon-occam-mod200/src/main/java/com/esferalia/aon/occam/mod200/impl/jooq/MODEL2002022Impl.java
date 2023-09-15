@@ -36,4 +36,10 @@ public class MODEL2002022Impl implements IMODEL2002022 {
 				configuration -> Mod2002022DAO.delete(ctx, mod200));
 	}
 	
+	@Override
+	public Mod2002022 aeatPresentation(AONContext ctx, Mod2002022 mod, String aeatResponse) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod2002022DAO.aeatPresentation(ctx, mod, aeatResponse));
+	}
+	
 }

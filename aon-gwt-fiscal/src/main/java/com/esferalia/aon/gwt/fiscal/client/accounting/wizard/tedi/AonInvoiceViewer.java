@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceStatusVisitor;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -58,6 +59,9 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 			.addCell( new Label("Factura de " + invoice.getType().getDescription())
 					,AON.CSS.aonBold(),AON.CSS.aonTextCenter()
 					,AON.CSS.aonFontXLarger(),AON.CSS.aonWidth300())
+			.addCell( new Label(" (" + invoice.getId() + ") ")
+					,AON.CSS.aonBold(),AON.CSS.aonTextCenter()
+					,AON.CSS.aonFontSmall(),AON.CSS.aonWidth100())
 			.addCell( getAttributes( invoice )
 					,AON.CSS.aonWidthAuto(),AON.CSS.aonTextCenter())
 			.addCellIf( source != null , new Label( "M\u00F3dulo origen: " + source.getDescription() )
@@ -198,7 +202,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 			for (InvoiceBreakdown detail : invoice.getBreakdown()) {
 				String typeLabel = detail.getTaxType().getName();
 				if (detail.getTaxType() == TaxType.RETENTION && detail.getWithholdingType() != null) {
-					typeLabel = typeLabel + " (" + detail.getWithholdingType().getDescription() + ")";
+					typeLabel = typeLabel + " (" + detail.getWithholdingType().getAbbreviatedDescription() + ")";
 				} 
 				String percent = AON.FMT.format( detail.getPercentage())+"%";
 				double quota = detail.getQuota(); 
@@ -233,13 +237,45 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 				.addCell(new Label( AON.MSG.payMethod()), AON.CSS.aonWidth150())
 				.addCell(new Label( AON.MSG.bankAccount()), AON.CSS.aonWidthAuto())
 				.addCell(new Label( AON.MSG.amount()), AON.CSS.aonWidth150(),AON.CSS.aonTextRight())
+				.addCell(new Label( AON.MSG.status()), AON.CSS.aonWidth150())
 			;
 			for (Finance finance : invoice.getFinances()) {
+				Label statusLabel = new Label( finance.getFinanceStatus() == null? "??" : finance.getFinanceStatus().getDescription());				
+				if (finance.getFinanceStatus() != null) {
+					finance.getFinanceStatus().visit( new IFinanceStatusVisitor() {
+						@Override
+						public void visitSettled() {
+							statusLabel.setStyleName(AON.CSS.aonColorBlue());
+						}
+						
+						@Override
+						public void visitReturned() {
+							statusLabel.setStyleName(AON.CSS.aonColorRed());
+							statusLabel.addStyleName(AON.CSS.aonBold());
+						}
+						
+						@Override
+						public void visitPending() {
+							statusLabel.setStyleName(AON.CSS.aonColorRed());
+						}
+						
+						@Override
+						public void visitPaid() {
+							statusLabel.setStyleName(AON.CSS.aonColorGreen());
+						}
+						
+						@Override
+						public void visitBatched() {
+							statusLabel.setStyleName(AON.CSS.aonColorGreen());
+						}
+					});
+				}
 				tab.addRow()
 					.addCell(new Label( AON.DATE_FORMAT.format(finance.getDueDate())))
 					.addCell(new Label( finance.getPayMethodName()))
 					.addCell(new Label( finance.getBankAccount()!=null?finance.getBankAccount().getIban():""))
 					.addCell(new Label( AON.FMT.format( finance.getAmount())),AON.CSS.aonTextRight())
+					.addCell(statusLabel,AON.CSS.aonTextCenter())
 					;
 			}
 			

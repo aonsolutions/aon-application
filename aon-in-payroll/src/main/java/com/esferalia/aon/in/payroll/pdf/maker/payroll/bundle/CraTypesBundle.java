@@ -65,7 +65,8 @@ public class CraTypesBundle   extends ListResourceBundle{
 		{"58","Horas complementarias voluntarias"},
 		{"59","Vacaciones no disfrutadas retribuidas tras fallecimiento"},
 		{"60","Vacaciones retribuidas no disfrutadas. Cotización durante contrato"},
-		{"61","Pluses de transporte y de distancia"}
+		{"61","Pluses de transporte y de distancia"},
+		{"100","Prestaciones"}
 	  };
 
 	@Override

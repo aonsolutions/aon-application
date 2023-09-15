@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:d="urn:import:com.google.gwt.user.datepicker.client"
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client' 
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
@@ -24,7 +25,35 @@
 								</g:HorizontalPanel>										
 							</td>
 						</tr>
+						
+						<tr> 
+							<td>
+								<g:HorizontalPanel>
+									<g:Label ui:field="ITRlbl" />
+								</g:HorizontalPanel>										
+							</td>
+						</tr>
+						
+						<tr> 
+							<td>
+								<g:HorizontalPanel>
+									<g:Label ui:field="ITR8234001lbl" />
+									<g:ListBox ui:field="ITR8234001"></g:ListBox>
+								</g:HorizontalPanel>										
+							</td>
+						</tr>
+						
+						<tr> 
+							<td>
+								<g:HorizontalPanel>
+									<g:Label ui:field="ITR8234002lbl" />
+									<aon:DateBoxEx ui:field="ITR8234002"></aon:DateBoxEx>
+								</g:HorizontalPanel>										
+							</td>
+						</tr>
 					</table>
+					
+					<g:HTMLPanel ui:field="table1Panel">
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
 							<g:InlineLabel text="Titular real persona física con porcentaje de participación superior al 25%" />
@@ -33,7 +62,9 @@
 							<g:FlexTable ui:field="table" />
 						</div>
 					</div>
+					</g:HTMLPanel>
 					
+					<g:HTMLPanel ui:field="table2Panel">
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
 							<g:InlineLabel text="Titular real persona física asimilada" />
@@ -42,7 +73,9 @@
 							<g:FlexTable ui:field="table2" />
 						</div>
 					</div>
-					
+					</g:HTMLPanel>
+
+					<g:HTMLPanel ui:field="table3Panel">
 					<div class="{aonResources.css.aonGroup}">
 						<div class="{aonResources.css.aonGroupTitle}">
 							<g:InlineLabel text="Detalle de las sociedades intervinientes en la cadena de control" />
@@ -51,7 +84,40 @@
 							<g:FlexTable ui:field="table3" />
 						</div>
 					</div>
+					</g:HTMLPanel>
 					
+					<g:HTMLPanel ui:field="table4Panel">
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="Titular real persona física con porcentaje de participación en el capital superior al 25%" />
+						</div>
+						<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+							<g:FlexTable ui:field="table4" />
+						</div>
+					</div>
+					</g:HTMLPanel>
+	
+					<g:HTMLPanel ui:field="table5Panel">
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="Titular real persona física con porcentaje de participación por derechos de voto superior al 25%" />
+						</div>
+						<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+							<g:FlexTable ui:field="table5" />
+						</div>
+					</div>
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel ui:field="table6Panel">
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="Titular real persona física asimilada" />
+						</div>
+						<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+							<g:FlexTable ui:field="table6" />
+						</div>
+					</div>
+					</g:HTMLPanel>
 					
 				</div>
 			</div>

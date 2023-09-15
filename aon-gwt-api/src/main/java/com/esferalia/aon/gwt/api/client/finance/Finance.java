@@ -48,6 +48,19 @@ public class Finance extends Methods{
 		});
 	}
 	
+	public void downloadExcelCustomerWithoutFee(){
+		String str = "domain="+ getDomainName() + "&login="+getUserName() + "&type=excel";
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "ms/download_customer_without_fee/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
 	public void downloadPdfFeeProjection(HashMap<String, LinkedList<String>> filterMap){
 		String str = getFilter(filterMap) + "&domain="+ getDomainName() + "&login="+getUserName() + "&type=pdf";
 		impl.base(str, new AsyncCallback<String>() {

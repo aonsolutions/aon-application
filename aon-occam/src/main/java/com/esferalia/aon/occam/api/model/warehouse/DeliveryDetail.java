@@ -13,7 +13,7 @@ public class DeliveryDetail implements Serializable {
 	 */
 	private static final long serialVersionUID = -3053139577316342602L;
 	private Integer id;
-	private int domain;
+	private Integer domain;
 	private Delivery delivery;
 	private short line;
 	private Item item;
@@ -38,10 +38,10 @@ public class DeliveryDetail implements Serializable {
 		this.id = id;
 		return this;
 	}
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
-	public DeliveryDetail setDomain(int domain) {
+	public DeliveryDetail setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}

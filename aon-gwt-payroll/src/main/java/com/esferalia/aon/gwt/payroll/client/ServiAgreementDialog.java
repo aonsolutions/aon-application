@@ -14,6 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -42,6 +43,8 @@ public abstract class ServiAgreementDialog extends AonCustomDialog {
 	interface MyStyle extends CssResource {
 		String flex();
 		String loadingPanel();
+		String dialogGlass();
+		String dialogZIndex();
 	}
 	
 	@UiField
@@ -106,6 +109,15 @@ public abstract class ServiAgreementDialog extends AonCustomDialog {
 		MultiWordSuggestOracle orclServiAgreement = (MultiWordSuggestOracle) serviAgreementsSB.getSuggestOracle();
 		orclServiAgreement.addAll(serviAgreementsDescriptionSuggest);
 		serviAgreementsSB.setAutoSelectEnabled(true);
+		serviAgreementsSB.getElement().setPropertyString("placeholder", "Escriba el nombre del convenio...");
+		
+		serviAgreementsSB.getValueBox().addKeyUpHandler(e -> {
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				serviAgreementsSB.setText("");
+				serviAgreementsSB.showSuggestionList();
+			} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
+				serviAgreementsSB.hideSuggestionList();
+		});
 		
 		serviAgreementsSB.addSelectionHandler(e -> {
 			String agreementSelected = serviAgreementsSB.getValue();
@@ -120,7 +132,10 @@ public abstract class ServiAgreementDialog extends AonCustomDialog {
 				@Override
 				public void onFailure(Throwable caught) {
 					AonDialog errorDialog = new AonDialog("Error obtenci\u00f3n XML", new HTMLPanel(caught.getMessage()));
+					errorDialog.setGlassStyleName(style.dialogGlass());
+					errorDialog.addStyleName(style.dialogZIndex());
 					errorDialog.warning();
+					hide();
 				}
 
 				@Override

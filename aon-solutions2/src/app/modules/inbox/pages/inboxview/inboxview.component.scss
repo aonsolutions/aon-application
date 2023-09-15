@@ -1,6 +1,6 @@
 @import "src/styles.scss";
-::ng-deep{
 
+::ng-deep{
   #button-create{
     display         : flex;
     justify-content : center;
@@ -151,6 +151,10 @@
     flex-grow: 0;
     display: flex;
     flex-direction: row;
+<<<<<<< HEAD
+=======
+    align-items: flex-start;
+>>>>>>> aongate
   }
 
   .content-btn-inbox{
@@ -214,4 +218,11 @@
   .inputSend{
     margin-bottom: 30px;
   }
+<<<<<<< HEAD
+=======
+
+  .mat-focus-indicator{
+    background-color: white;
+  }
+>>>>>>> aongate
 }

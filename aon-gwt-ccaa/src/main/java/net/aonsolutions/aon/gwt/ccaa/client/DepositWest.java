@@ -139,7 +139,7 @@ public class DepositWest extends ScrollPanel{
     				.setHandler(menuClickHandler(DepositMenu.AR, year)));
     	}
     	
-    	if(year >= 2020) {
+    	if(year >= 2020 && year < 2022) {
     		item.addItem(new AonMenuItem().setTitle(DepositMenu.DC.getDescription())
     				.setHandler(menuClickHandler(DepositMenu.DC, year)));
     	}
