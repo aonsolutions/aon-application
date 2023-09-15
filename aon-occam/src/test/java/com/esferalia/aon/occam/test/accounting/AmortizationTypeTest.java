@@ -29,8 +29,7 @@ public class AmortizationTypeTest extends AbstractOccamTest {
 		AmortizationType amortizationType = AonFaker.getAmortizationType(ctx);
 		AmortizationTypeParams amp = new AmortizationTypeParams();
 		List<AmortizationType> saved = AmortizationTypeDAO.getList(ctx, amp);
-		List<Integer> deletedIds = new ArrayList<>();
-
+		
 		AmortizationTypeDAO.save(ctx, amortizationType);
 		int amortizationTypeId = amortizationType.getDomain().getId();
 		for (int i = 0; i < saved.size(); i++) {

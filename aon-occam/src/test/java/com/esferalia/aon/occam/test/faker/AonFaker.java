@@ -460,10 +460,10 @@ public class AonFaker {
 				.setDomain(new Domain()
 				.setId(ctx.getDomainId())
 				.setName(AonRandom.string(-1, 1, 14))) //creo q no hace falta, comprobar luego
-				.setFixedAssetAccount(AonRandom.string(-1, 1, 4))
+				.setFixedAssetAccount(	AonRandom.string(-1, 1, 4))
 				.setAccumulatedAccount(AonRandom.string(-1, 1, 4))
 				.setAllocationAccount(AonRandom.string(-1, 1, 4))
-				.setPercentage(null)
+				.setPercentage(AonRandom.getDouble(0, 15))
 				.setDescription(faker.beer().name());
 	}
 	
