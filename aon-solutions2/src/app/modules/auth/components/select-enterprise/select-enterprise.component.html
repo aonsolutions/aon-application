@@ -3,21 +3,19 @@
     <mat-grid-tile [gridCols]="{xs:2,sm:2,md:6,lg:8,xl:8}"></mat-grid-tile>
     <mat-grid-tile [gridCols]="{xs:20,sm:20,md:12,lg:8,xl:8}">
       <div class="contTitleEnterprise">
-        <app-list-element >
-            <div class="titleAuth">
-              <div>{{ "ENTERPRISES.SELECT_A_COMPANY" | translate }}</div>
-              <span>{{ "ENTERPRISES.ENTER_THE_COMPANY" | translate }}</span>
+        <div class="titleAuth">
+          <div>{{ "ENTERPRISES.SELECT_A_COMPANY" | translate }}</div>
+          <span>{{ "ENTERPRISES.ENTER_THE_COMPANY" | translate }}</span>
+        </div>
+        <div id="itemEnterprise">
+          <div *ngFor="let enterprise of enterprises">
+            <div (click)="selectEnterprise(enterprise)">
+              <app-icon [class]="'griss size-42'"  [shape]="'business'"></app-icon>
+              <caption>{{ enterprise.Name }}</caption>
+              <span>{{ enterprise.Document }}</span>
             </div>
-            <app-list-element id="itemEnterprise">
-              <div *ngFor="let enterprise of enterprises">
-                <div (click)="selectEnterprise(enterprise)">
-                  <app-icon [class]="'griss size-42'"  [shape]="'business'"></app-icon>
-                  <caption>{{ enterprise.Name }}</caption>
-                  <span>{{ enterprise.Document }}</span>
-                </div>
-              </div>
-            </app-list-element>
-        </app-list-element>
+          </div>
+        </div>
       </div>
     </mat-grid-tile>
   </mat-grid-list>
