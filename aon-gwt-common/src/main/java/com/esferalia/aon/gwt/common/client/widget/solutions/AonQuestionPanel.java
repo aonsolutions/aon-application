@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -72,12 +71,12 @@ public abstract class AonQuestionPanel extends SimplePanel {
 	
 	public AonQuestionPanel(final String domainName,final int domain,final String user, Integer id, final AonQuestionPanelCallback callback) {
 		initializeCommonService();
-		commonService.getQuestion(domainName, domain, user, id, new AsyncCallback<Optional<Question>>() {
+		commonService.getQuestion(domainName, domain, user, id, new AsyncCallback<Question>() {
 			
 			@Override
-			public void onSuccess(Optional<Question> result) {
-				if (result.isEmpty()) result = Optional.of(new Question());
-				show(domainName, domain, user, result.get(), callback);
+			public void onSuccess(Question result) {
+				if (result == null) result = new Question();
+				show(domainName, domain, user, result, callback);
 			}
 			
 			@Override

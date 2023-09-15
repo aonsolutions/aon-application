@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.common.client;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -123,7 +122,7 @@ public interface CommonService extends RemoteService {
 	List<Question> getQuestions(QuestionParams params) throws AonCoreException;
 	void deleteQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException;
 	Question saveQuestion(String domainName, int domain, String user, Question question) throws AonCoreException;
-	Optional<Question> getQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	Question getQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException;
 	Boolean checkQuestionAlias(String domainName, Integer domain, String user, String alias) throws AonCoreException;
 	
 }

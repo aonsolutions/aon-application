@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.common.client;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -299,7 +298,7 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void getQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Optional<Question>> callback) throws AonCoreException {
+	public void getQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Question> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getQuestion(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
 	}

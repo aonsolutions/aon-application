@@ -4,7 +4,6 @@ package com.esferalia.aon.gwt.common.client;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -122,7 +121,7 @@ public interface CommonServiceAsync {
 	void getQuestions(QuestionParams params, AsyncCallback<List<Question>> asyncCallback) throws AonCoreException;
 	void deleteQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void saveQuestion(String domainName, int domain, String user, Question question, AsyncCallback<Question> asyncCallback) throws AonCoreException;
-	void getQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Optional<Question>> asyncCallback) throws AonCoreException;
+	void getQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Question> asyncCallback) throws AonCoreException;
 	void checkQuestionAlias(String domainName, Integer domain, String user, String alias, AsyncCallback<Boolean> asyncCallback) throws AonCoreException;
 
 }
