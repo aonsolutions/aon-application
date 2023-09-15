@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.SurveyQuestion.SURVEY_QUESTION;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -57,17 +58,19 @@ public class QuestionDAO {
 		return !questionRecords.isEmpty();
 	}
 
-	public static Question get(CloseableAONContext ctx, Integer id) {
+	public static Optional<Question> get(CloseableAONContext ctx, Integer id) {
 		Record questionRecord = ctx.getDslContext().select().from(QUESTION)
 				.where(QUESTION.ID.eq(id))
 				.fetchOne();
+		
+		if(null == questionRecord) return Optional.empty();
 		
 		Question question = new QuestionFiller().apply(questionRecord);
 		getQuestionValues(ctx, question);
 		hasSurvey(ctx, question);
 		hasRProfile(ctx, question);
 		
-		return question;
+		return Optional.of(question);
 	}
 	
 	public static List<Question> getList(CloseableAONContext ctx, QuestionParams params) {

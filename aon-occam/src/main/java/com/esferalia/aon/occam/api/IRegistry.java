@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -245,7 +246,7 @@ public interface IRegistry {
 	public List<Question> getQuestionList(CloseableAONContext ctx, QuestionParams params);
 	public void deleteQuestion(CloseableAONContext ctx, Integer id);
 	public Question saveQuestion(CloseableAONContext ctx, Question question);
-	public Question getQuestion(CloseableAONContext ctx, Integer id);
+	public Optional<Question> getQuestion(CloseableAONContext ctx, Integer id);
 	public Boolean checkQuestionAlias(CloseableAONContext ctx, String alias);
 	
 	// REGISTRY PROFILE

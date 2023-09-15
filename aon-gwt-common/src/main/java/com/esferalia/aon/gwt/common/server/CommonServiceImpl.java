@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.common.server;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -294,7 +295,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public Question getQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException {
+	public Optional<Question> getQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException {
 		return AON.getQuestion(domainName, domain, user, id);
 	}
 	@Override

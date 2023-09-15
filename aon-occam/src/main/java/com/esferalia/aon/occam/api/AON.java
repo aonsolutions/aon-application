@@ -7961,7 +7961,7 @@ public class AON {
 		}
 	}
 
-	public static Question getQuestion(String domainName, int domain, String user, Integer id) {
+	public static Optional<Question> getQuestion(String domainName, int domain, String user, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getRegistry().getQuestion(ctx, id);
 		}
