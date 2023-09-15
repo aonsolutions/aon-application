@@ -22,6 +22,7 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -214,6 +215,14 @@ public class BookingCheckDAO {
 			.execute();
 		
 		return bookingCheck;
+	}
+	
+	public static void delete(CloseableAONContext ctx, LinkedList<BookingCheck> selectedBookings) {
+		selectedBookings.forEach(bookingCheck -> {
+			ctx.getDslContext().delete(RITEM)
+				.where(RITEM.ID.eq(bookingCheck.getId()))
+				.execute();
+		});
 	}
 
 	private static Condition createCustomerFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {

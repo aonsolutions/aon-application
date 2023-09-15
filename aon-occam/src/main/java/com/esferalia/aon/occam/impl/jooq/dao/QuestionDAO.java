@@ -62,6 +62,8 @@ public class QuestionDAO {
 				.where(QUESTION.ID.eq(id))
 				.fetchOne();
 		
+		if(null == questionRecord) return null;
+		
 		Question question = new QuestionFiller().apply(questionRecord);
 		getQuestionValues(ctx, question);
 		hasSurvey(ctx, question);

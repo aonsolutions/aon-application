@@ -298,6 +298,9 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				// Create RItem for @Conectas | xx.yy.zz | xx=01 Asesoria | yy=Empresa/Despacho | zz=24 Basica, 25 Estandar, 26 Profesional 
 				updateConectaBookingRItem(domainCompany, booking, aonCustomer, errors, api);
 				
+				// Create RItem for @Conectas users - 01.00.USER - Quantity = childBillingUsers
+				updateConectaUserBookingRItem(domainCompany, booking, aonCustomer, errors, api);
+				
 			}
 		} else if (bookingJson == null || bookingJson.isEmpty()) {
 			errors.put(createError(null, null, null, "Contrataci\u00f3n no encontrada"));
@@ -346,6 +349,11 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			});
 		}
 		
+	}
+	
+	private static void updateConectaUserBookingRItem(DomainCompany domainCompany, Booking booking, Integer aonCustomer, JSONArray errors, AonApiData api) {
+		String userBarCode = "01.00.USR";
+		updateRItem(domainCompany, booking, aonCustomer, errors, api, userBarCode, booking.getResume().getChildBillingUsers().toString());
 	}
 	
 	private static void updateRItem(DomainCompany domainCompany, Booking booking, Integer aonCustomer, JSONArray errors, AonApiData api, String barCode, String quantity) {
@@ -435,6 +443,9 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 						// Create RItem for @Conectas | xx.yy.zz | xx=01 Asesoria | yy=Empresa/Despacho | zz=24 Basica, 25 Estandar, 26 Profesional 
 						updateConectaBookingRItem(api, booking, customerId, logs);
 						
+						// Create RItem for @Conectas users - 01.00.USER - Quantity = childBillingUsers
+						updateConectaUserookingRItem(api, booking, customerId, logs);
+						
 					} else  {
 //						throw new AonApiException("Contratación no encontrada");
 					}
@@ -448,7 +459,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		else return logJson;
 
 	}
-	
+
 	private static JSONObject createLog(DomainType domainType, String app, String barCode, String message) {
 		JSONObject log = new JSONObject();
 		log.put("log", message + " -- domainType: " + domainType.name() + ", app: " + app + ", barCode: " + barCode);
@@ -534,6 +545,11 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			sb.append(AonStringUtils.leftPad(AonNumberUtils.toString(aonAppOrdinal), 2, '0'));
 		}
 		return sb.toString();
+	}
+	
+	private static void updateConectaUserookingRItem(AonApiData api, Booking booking, Integer aonCustomer, JSONArray logs) {
+		String userBarCode = "01.00.USR";
+		updateRItem(api, booking, aonCustomer, userBarCode, booking.getResume().getChildBillingUsers().toString(), "01.00.USR", logs);
 	}
 
 	private static JSONObject deleteBookingRitems(AonApiData api) {
