@@ -32,6 +32,9 @@
       background-color: $background-button-primary !important;
     }
     // select
+    app-list-element .list-element ul li.select{
+      font-family: Roboto-Medium;
+    }
     app-list-element .list-element ul li.select .circle{
       background-color: $background-button-primary !important;
     }
