@@ -10,8 +10,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SERFRUIT;
 import com.esferalia.aon.occam.api.json.CarrierPackingJSON;
 import com.esferalia.aon.occam.api.json.DeliveryJSON;
-import com.esferalia.aon.occam.api.json.SerfruitDeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.SerfruitDeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
@@ -114,10 +114,12 @@ public class DeliveryServlet extends AonApiHttpServlet {
 //		a = a.replaceAll("\"", "'");
 //		JSONObject json = new JSONObject(a);
 //		api.setData(json);
-		
+
 		Delivery delivery = DeliveryJSON.fromJSON(api.getData());
-		delivery = AON.saveDelivery(api.getDomain(), api.getUser(), delivery);
-			
+		if(JsonUtils.getboolean(api.getData(), IJsonNames.SERFRUIT)) {
+			delivery = SERFRUIT.saveDelivery(api.getDomain(), api.getUser(), delivery);
+		} else delivery = AON.saveDelivery(api.getDomain(), api.getUser(), delivery);
+
 		if(JsonUtils.has(api.getData(), IJsonNames.PACKAGING)) {
 			List<SerfruitDeliveryPackaging> list =  SerfruitDeliveryPackagingJSON.fromJSON(JsonUtils.getJSONArray(api.getData(), IJsonNames.PACKAGING));
 			SERFRUIT.saveDeliveryPackaging(api.getDomain(), api.getUser()
