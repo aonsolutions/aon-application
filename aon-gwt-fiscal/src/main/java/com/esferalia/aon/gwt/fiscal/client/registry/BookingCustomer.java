@@ -89,9 +89,6 @@ public class BookingCustomer extends HTMLPanel {
 			RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 			requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 			
-			requestBuilder.setHeader("domain_name", customer.getDomain().getName());
-			requestBuilder.setHeader("domain_id", customer.getDomain().getId().toString());
-			
 			try {
 			    // Send the request
 			    requestBuilder.sendRequest(null, new RequestCallback() {
