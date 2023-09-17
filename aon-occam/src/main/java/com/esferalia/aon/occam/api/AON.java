@@ -8012,5 +8012,11 @@ public class AON {
 			getFinance().saveBookingCheck(ctx, bookingCheck);
 		}
 	}
+
+	public static void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domain, user)){
+			getFinance().deleteBookingList(ctx, selectedBookings);
+		}
+	}
 	
 }

@@ -1338,8 +1338,8 @@ public class BookingPanel extends MainEntryPoint {
 		// Create a URL builder and add query parameters
 		UrlBuilder urlBuilder = new UrlBuilder();
 		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		// urlBuilder.setHost("localhost:8080");
-		 urlBuilder.setHost("aon.solutions"); 
+//		urlBuilder.setHost("localhost:8080");
+		urlBuilder.setHost("aon.solutions"); 
 		urlBuilder.setPath(baseUrl);
 		
 		// Create the request builder with the complete URL

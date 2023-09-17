@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -88,4 +89,5 @@ public interface RegistryService extends RemoteService {
 	LinkedList<BookingCheck> getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params);
 	LinkedList<BookingCheck> getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params);
 	void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck);
+	void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings);
 }
