@@ -51,11 +51,11 @@ const routes: Routes = [
             (m) => m.TaxPanelModule
           ),
       },
-      // {
-      //   path: 'employee-panel',
-      //   loadChildren: () =>
-      //     import('src/app/modules/employee-panel/employee-panel.module').then((m) => m.EmployeePanelModule),
-      // },
+      {
+        path: 'employee-panel',
+        loadChildren: () =>
+          import('src/app/modules/employee-panel/employee-panel.module').then((m) => m.EmployeePanelModule),
+      },
       {
         path: 'documentation',
         loadChildren: () =>
