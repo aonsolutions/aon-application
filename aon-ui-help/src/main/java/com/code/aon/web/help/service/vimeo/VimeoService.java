@@ -125,19 +125,4 @@ public class VimeoService {
 	public List<ProjectItem> getItemsFromFolder(Folder folder) {
     	return vimeoResult.getItemsFromFolder(folder).get();
     }
-	
-	public int countVideos(Folder folder) {
-		Optional<List<ProjectItem>> videos = vimeoResult.getItemsFromFolder(folder);
-		
-		int numberOfVideos = 0;
-		
-		if (videos.isPresent()) {
-			for (ProjectItem projectItem : videos.get()) {
-				if (projectItem.getRawType().equals("video"))
-					numberOfVideos++;
-			}
-		}
-		
-		return numberOfVideos;
-	}
 }

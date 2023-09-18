@@ -143,17 +143,6 @@
 			margin: 25;
 		}
 		
-		.count-videos{
-			font-size: 1.05rem;
-			text-align: right;
-			color: #2C5AA6;
-		}
-		
-		.item-info {
-    		display: flex;
-   	 		align-items: center;
-		}
-		
 		.list .list-item-vimeo-dad .list-item-vimeo-son{
 			position: relative;
 			width: calc(100% + 1.934rem + 1.934rem);
@@ -339,17 +328,10 @@
 									<aon:if test="#{vimeoItem.getRawType() == 'folder'}">
 										<aon:div styleClass="list-item-vimeo-dad"
 											onclick="toggleVideos('videoContainer_#{vimeoItem.getFolder().getIdentifier()}');return;">
-											
-											<div class="item info">
-												<aon:outputText value="#{vimeoItem.getFolder().getName()}" />
-												<div class="item info" style="text-align: right; float: right;">
-													<aon:outputText styleClass="count-videos" value="#{vimeo.countVideos(vimeoItem.getFolder())}" />
-													<aon:outputText style="text-align: right; float: right; color: #2C5AA6;" value="smart_display" styleClass="icon file material-icons" />
-												</div>
-											</div>
-											
+											<aon:outputText value="#{vimeoItem.getFolder().getName()}" />
 											<div id="videoContainer_#{vimeoItem.getFolder().getIdentifier()}"
 												style="display: none;">
+											
 												<ui:repeat
 													value="#{vimeo.getItemsFromFolder(vimeoItem.getFolder())}"
 													var="video">
