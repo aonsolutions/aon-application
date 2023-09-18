@@ -103,6 +103,7 @@
     "REPORTS": "Informes",
     "TREASURY": "Tesorería",
     "CREATE_SALES_INVOICE": "Crear factura de venta",
+    "CREATE_BILLS_INVOICE": "Crear factura de gasto",
     "ADD_BANK": "Añadir un banco",
     "DESCRIPTION": "Descripción",
     "BALANCE": "Saldo",
@@ -119,7 +120,13 @@
     "RETEN": "Retención",
     "ACCOUNTED": "Contabilizado",
     "STATUS": "Estado",
-    "AMOUNT": "Cantidad"
+    "AMOUNT": "Cantidad",
+    "SEND_BILL": "Enviar factura",
+    "SEND": "Enviar",
+    "CANCEL": "Cancelar",
+    "ACCEPT": "Aceptar",
+    "DUPLICATE_BILL": "Vas a duplicar esta factura, ¿Deseas continuar?",
+    "DELETE_BILL": "¿Deseas eliminar esta factura?"
   },
   "CONSULTING": {
 
@@ -149,7 +156,8 @@
     "DOWNLOAD_PDF": "DESCARGAR PDF",
     "TO_RECTIFY":"¿Quieres rectificar?",
     "RECTIFIED_MODEL":"  Una vez hayas rectificado el modelo, se archivará como una consulta en tu Bandeja.",
-    "SEND":"Enviar"
+    "SEND":"Enviar",
+    "ALL_MODELS":"Todos los modelos"
    },
   "PROFILE": {
     "CONTACT_DETAILS":   "Datos contacto",

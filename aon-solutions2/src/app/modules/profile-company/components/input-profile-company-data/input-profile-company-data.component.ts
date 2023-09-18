@@ -8,26 +8,22 @@ import { EnterpriseService } from '../../../../core/services/enterprise.service'
 })
 export class InputProfileCompanyDataComponent implements OnInit {
   enterprises: any[] = [];
-   emailList: string[] = [''];
+  emailList: string[] = ['', ''];
+  addForm: number = 0;
+  addMail: number = 0;
 
-  constructor(private enterpriseService: EnterpriseService) {}
-
-  addEmail() {
-  this.emailList.push('');
-  }
-  ngOnInit(): void {
+  constructor(private enterpriseService: EnterpriseService) {
     this.enterpriseService.getEnterprise('B16880148').then((enterprise) => {
       this.enterprises.push(enterprise);
     });
-    console.log('tab', this.enterprises);
   }
+
+  ngOnInit(): void {
+
+  }
+
+  addEmail() {
+    this.emailList.push('');
+  }
+
 }
-
-//   ngOnInit(): void {
-//     this.enterpriseService.getEnterpriseList().then((enterpriseCollection) => {
-//       this.enterprises = enterpriseCollection.toArray();
-//       console.log(this.enterprises);
-//     });
-//   }
-// }
-

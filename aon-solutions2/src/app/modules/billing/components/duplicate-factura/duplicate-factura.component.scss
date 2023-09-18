@@ -1,0 +1,25 @@
+@import "src/styles.scss";
+
+::ng-deep {
+  .title {
+    font-size: 1rem;
+    font-family: "Roboto-Bold";
+  }
+
+  .buttonsAccept {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: $margin-top;
+
+    .accept {
+      background: $background-button-dark;
+      color: $color-quarter;
+    }
+
+    .accept:hover {
+      background: $background-button-dark-hover;
+    }
+  }
+}
