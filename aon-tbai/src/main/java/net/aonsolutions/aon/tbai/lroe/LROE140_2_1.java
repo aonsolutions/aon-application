@@ -1,12 +1,22 @@
 package net.aonsolutions.aon.tbai.lroe;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.Person;
@@ -96,9 +106,12 @@ public class LROE140_2_1 extends LROE140 {
 		} else if(invoice.isIntracommunity()){
 			IDOtroType otro = new IDOtroType();
 			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			
 			String document = invoice.getRegistryDocument();
 			if(!document.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
-				document = invoice.getRegistryDocumentCountry().getIso2() + document;
+				boolean isGrecia = Country.GR.equals(invoice.getRegistryDocumentCountry());
+				String countryDocument = isGrecia ? "EL" : invoice.getRegistryDocumentCountry().getIso2();
+				document = countryDocument + document;
 			}
 			otro.setID(document);
 			otro.setIDType(IDType.NIF_IVA.getName());
@@ -127,6 +140,9 @@ public class LROE140_2_1 extends LROE140 {
 		cabecera.setFechaRecepcion(AonDateUtils.format(receptionDate, DATE_FORMAT));
 
 		if(invoice.isRectifier()) {
+			cabecera.setSerieFactura(reference.substring(0, 1));
+			cabecera.setNumFactura(reference.substring(1));
+			
 			FacturaRectificativaImporteType rectificativa = new FacturaRectificativaImporteType(); 
 			rectificativa.setCodigo(ClaveCodigoFacturaRectificativaEnum.R_1); 
 			rectificativa.setTipo(ClaveTipoRectificativaEnum.I); // por diferencia o por sustitucion
@@ -148,6 +164,11 @@ public class LROE140_2_1 extends LROE140 {
 		Double total = invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
 		.mapToDouble(r -> {
 			r.setBase(AonMathUtils.round(r.getBase()));
+			if(invoice.isExtracommunity()) {
+				r.setPercentage(0.0);
+				r.setQuota(0.0);
+				r.setSurchargeQuota(0.0);	
+			}
 			if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
 				r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
 			}
@@ -155,10 +176,17 @@ public class LROE140_2_1 extends LROE140 {
 		}).sum();
 		
 		factura.setDescripcionOperacion("Factura " + invoice.getReferenceCode());
-		factura.setImporteTotalFactura(total.toString());
+		factura.setImporteTotalFactura(Double.toString(AonMathUtils.round(total)));
 		ClavesGastoType claves = new ClavesGastoType();
 		IDClaveGastoType clave = new IDClaveGastoType();
-		clave.setClaveRegimenIvaOpTrascendencia("01");
+		
+		String key = "01";
+		if(invoice.isWithholdingFarmer()) key = "02";
+		if(invoice.isVatAccrualPayment()) key = "07";
+		if(invoice.isIntracommunity()) key = "09";
+		if(invoice.isExtracommunity()) key = "13";
+		clave.setClaveRegimenIvaOpTrascendencia(key);
+		
 		claves.getIDClave().add(clave);
 		factura.setClaves(claves);
 		return factura;
@@ -170,6 +198,12 @@ public class LROE140_2_1 extends LROE140 {
 			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
 			InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
 			tax.setBase(AonMathUtils.round(tax.getBase()));			
+			if(invoice.isExtracommunity()) {
+				tax.setPercentage(0.0);
+				tax.setQuota(0.0);
+				tax.setDeductiblePercent(0.0);
+				tax.setDeductibleQuota(0.0);
+			}
 			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 			}
@@ -178,16 +212,22 @@ public class LROE140_2_1 extends LROE140 {
 
 			r.setBaseImponible(Double.toString(tax.getBase()));	
 			r.setTipoImpositivo(Double.toString(tax.getPercentage()));
+			
 			if(tax.getDeductiblePercent() > 0 && tax.getDeductibleQuota() == 0.0) {
 				tax.setDeductibleQuota(AonMathUtils.round(tax.getQuota() * tax.getDeductiblePercent() / 100));
 			}
-			r.setCuotaIVADeducible(Double.toString(tax.getDeductibleQuota()));
-			r.setCuotaIVASoportada(Double.toString(tax.getQuota()));
+			r.setCuotaIVADeducible(Double.toString(AonMathUtils.round(tax.getDeductibleQuota())));
+			r.setCuotaIVASoportada(Double.toString(AonMathUtils.round(tax.getQuota())));
 
 			r.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
 			if(!AonStringUtils.isBlank(detail.getAccountCode())) {
 				r.setConcepto(detail.getAccountCode().substring(0, 3));
-				if(irpf != null) r.setImporteGastoIRPF(Double.toString(irpf.getQuota()));
+				if(irpf != null) {
+					if(irpf.getPercentage() > 0 && irpf.getQuota() == 0.0) {
+						irpf.setQuota(AonMathUtils.round(irpf.getBase() * irpf.getPercentage() / 100));
+					}
+					r.setImporteGastoIRPF(Double.toString(irpf.getQuota()));
+				}
 			}			
 			r.setInversionSujetoPasivo(invoice.isIsp() ? SiNoEnum.S : SiNoEnum.N);
 			if(invoice.isSurcharge()) {
@@ -230,7 +270,10 @@ public class LROE140_2_1 extends LROE140 {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p140, bos );
 			// TODO SAVE DATA_REQUEST!!!!!
-			byte[] data = toGzip(bos.toByteArray());
+			byte[] xml = bos.toByteArray();
+			Document doc = getDocument(xml);
+			System.out.println(toString(doc));
+			byte[] data = toGzip(xml);
 			return send(tbaiConfiguration, buildJSON(person, info), data);
 		} catch (Exception e) {
 			return error(e);
@@ -250,7 +293,10 @@ public class LROE140_2_1 extends LROE140 {
 		factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
 //		factura.setSerieFactura(invoice.getSeries());
 		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
-		factura.setNumFactura(reference);
+		if(invoice.isRectifier()) {
+			factura.setSerieFactura(reference.substring(0, 1));
+			factura.setNumFactura(reference.substring(1));
+		} else factura.setNumFactura(reference);
 		anulacion.setIDGasto(factura);
 		
 		anulaciones.getGasto().add(anulacion);
@@ -268,7 +314,9 @@ public class LROE140_2_1 extends LROE140 {
 			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
 			String document = invoice.getRegistryDocument();
 			if(!document.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
-				document = invoice.getRegistryDocumentCountry().getIso2() + document;
+				boolean isGrecia = Country.GR.equals(invoice.getRegistryDocumentCountry());
+				String countryDocument = isGrecia ? "EL" : invoice.getRegistryDocumentCountry().getIso2();
+				document = countryDocument + document;
 			}
 			otro.setID(document);
 			otro.setIDType(IDType.NIF_IVA.getName());
@@ -335,7 +383,10 @@ public class LROE140_2_1 extends LROE140 {
 		fechaRec.setHasta(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaRecepcion(fechaRec);
 		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
-		cabecera.setNumFactura(reference);
+		if(invoice.isRectifier()) {
+			cabecera.setSerieFactura(reference.substring(0, 1));
+			cabecera.setNumFactura(reference.substring(1));
+		} else cabecera.setNumFactura(reference);
 		return cabecera;
 	}
 	
@@ -368,6 +419,33 @@ public class LROE140_2_1 extends LROE140 {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+	
+	
+	public Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
+		InputStream is = new ByteArrayInputStream(data);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(is);
+		return doc;
+	}
+	
+	public String toString(Document doc) {
+		try {
+			java.io.StringWriter sw = new java.io.StringWriter();
+			javax.xml.transform.TransformerFactory tf = javax.xml.transform.TransformerFactory.newInstance();
+			javax.xml.transform.Transformer transformer = tf.newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+			transformer.transform(new javax.xml.transform.dom.DOMSource(doc),
+					new javax.xml.transform.stream.StreamResult(sw));
+			return sw.toString();
+		} catch (Exception ex) {
+			throw new RuntimeException("Error converting to String", ex);
 		}
 	}
 }

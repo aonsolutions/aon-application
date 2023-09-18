@@ -33,6 +33,8 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
@@ -81,6 +83,12 @@ public class ACCOUNTING {
 	public static Stream<Account> getAccounts(AccountParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
 			return getAccounting().getAccounts(ctx, params);
+		}
+	}
+	
+	public static List<Account> getAccountsList(AccountParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getAccounting().getAccountsList(ctx, params);
 		}
 	}
 
@@ -563,6 +571,18 @@ public class ACCOUNTING {
 			return getAccounting().unbalancedEntries(ctx);
 		}
 	}
+	
+	public static AccUtilitiesResult outOfDateEntries(String domainName, String user, Domain domain) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+			return getAccounting().outOfDateEntries(ctx);
+		}
+	}
+	
+	public static AccUtilitiesResult moveOutOfDateEntries(String domainName, String user, Domain domain, AccUtilitiesResult findResult) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+			return getAccounting().moveOutOfDateEntries(ctx, findResult);
+		}
+	}
 
 	public static AccUtilitiesResult wrongRecordedInvoices(String domainName, String user, Domain domain) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
@@ -654,9 +674,12 @@ public class ACCOUNTING {
 			return  getAccounting().getTrialBalanceReport(ctx, params);
 		}
 	}
+	
+	public static AccountBalanceReport getAccountBalanceReport(Occam occam, AccountingReportParams params) {
+		return getAccountBalanceReport(occam.getDomainName(),occam.getDomain(),occam.getUser(), params); 
+	}
 
-	public static AccountBalanceReport getAccountBalanceReport(String domainName, int domain, String user,
-			AccountingReportParams params) {
+	public static AccountBalanceReport getAccountBalanceReport(String domainName, int domain, String user, AccountingReportParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return  getAccounting().getBalanceReport(ctx, params);
 		}
@@ -694,4 +717,26 @@ public class ACCOUNTING {
 			return getAccounting().generateLowerLevels(ctx, account, minLevel);
 		}
 	}
+
+	// AMORTIZATION TYPE
+	
+	public static List<AmortizationType> getAmortizationTypeList(String domainName, int domain, String user, AmortizationTypeParams params) throws AonCoreException {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getAccounting().getAmortizationTypeList(ctx, params);
+		}
+	}
+
+	public static void deleteAmortizationTypes(String domainName, int domain, String user, List<Integer> deleteIds) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getAccounting().deleteAmortizationTypes(ctx, deleteIds);
+		}
+	}
+	
+	public static void saveAmortizationType(String domainName, int domain, String user, AmortizationType amortizationType) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getAccounting().saveAmortizationType(ctx, amortizationType);
+		}
+	}
+
+
 }

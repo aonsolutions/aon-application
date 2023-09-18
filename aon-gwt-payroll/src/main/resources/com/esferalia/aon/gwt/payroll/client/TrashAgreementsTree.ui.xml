@@ -3,10 +3,12 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 	
+		.mr05 { margin-right: .5rem; }
+	
 	</ui:style>
 	<g:DockLayoutPanel unit='PX'>
 		<g:center>
-			<g:ScrollPanel ui:field="scrollPanel">
+			<g:ScrollPanel ui:field="scrollPanel" styleName="{style.mr05}">
 				<g:Tree ui:field="tree">
 				</g:Tree>
 			</g:ScrollPanel>

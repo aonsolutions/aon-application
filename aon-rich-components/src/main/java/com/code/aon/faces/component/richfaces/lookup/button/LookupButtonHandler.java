@@ -2,9 +2,9 @@ package com.code.aon.faces.component.richfaces.lookup.button;
 
 import java.io.IOException;
 
-import javax.el.ELException;
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
+import jakarta.el.ELException;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.event.MethodExpressionActionListener;

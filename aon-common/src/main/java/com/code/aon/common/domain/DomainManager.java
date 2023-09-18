@@ -1,11 +1,18 @@
 package com.code.aon.common.domain;
 
+import static java.beans.Introspector.decapitalize;
+
+import java.beans.Introspector;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Objects;
 
 import com.code.aon.common.annotations.Heritable;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+
+import jakarta.persistence.Column;
 
 
 public class DomainManager {
@@ -66,12 +73,14 @@ public class DomainManager {
 	}
 
 	public synchronized static Expression getCurrentDomainExpression(Class<?> entityClass) {
-		String alias = entityClass.getSimpleName() + DOMAIN_PROPERTY;
-		if ( isHeritable(entityClass) ) {
-			Object[] values = new Object[]{getDomainProvider().getParentDomain(), getCurrentDomain()};
-			return ExpressionUtilities.getInExpression(alias, values);
-		}
-		return ExpressionUtilities.getEqualExpression(alias, getCurrentDomain());
+	    String domainProperty = getDomainProperty(entityClass);
+
+	    String alias = entityClass.getSimpleName() + domainProperty;
+	    if (isHeritable(entityClass)) {
+		Object[] values = new Object[] { getDomainProvider().getParentDomain(), getCurrentDomain() };
+		return ExpressionUtilities.getInExpression(alias, values);
+	    }
+	    return ExpressionUtilities.getEqualExpression(alias, getCurrentDomain());
 	}
 
 
@@ -113,4 +122,15 @@ public class DomainManager {
 		return 1;
 	}
 	
+	/**
+	 * @param entityClass
+	 * @return
+	 */
+	private synchronized static String getDomainProperty(Class<?> entityClass) {
+	    return  Arrays.stream(entityClass.getMethods())
+	    .filter( m -> m.getAnnotation(DomainFilter.class) != null)
+	    .map( m -> "."+ decapitalize(m.getName().substring(3)))
+	    .findAny().orElse(DOMAIN_PROPERTY);
+	}
+
 }

@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
@@ -29,6 +30,7 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 	private CheckBox replacement = new CheckBox();
 	private CheckBox complementary = new CheckBox();
 	private CheckBox generateFromYearStart = new CheckBox();
+	private ListBox useChargeDateBox = new ListBox();
 		
 	private FlowPanel rootPanel;
 	private SimpleLayoutPanel headerPanel = new SimpleLayoutPanel();
@@ -62,6 +64,10 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 		replacement = new CheckBox();
 		complementary = new CheckBox();
 		generateFromYearStart = new CheckBox();
+		useChargeDateBox = new ListBox();
+		useChargeDateBox.addItem("Fecha de emisi\u00F3n");
+		useChargeDateBox.addItem("Fecha de pago");
+		useChargeDateBox.setSelectedIndex(0);
 		
 		admonList.addChangeHandler( event -> {
 			model.setAdministration( admonList.getValue() );
@@ -97,6 +103,11 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 			}
 		});
 
+		useChargeDateBox.addChangeHandler( event -> {
+			model.setUseChargeDate( useChargeDateBox.getSelectedIndex() == 1);
+			initialize(model, callback );
+		});
+
 		generateFromYearStart.addClickHandler(event -> model.setGenerateFromYearStart(generateFromYearStart.getValue()));
 	}
 		
@@ -124,6 +135,7 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 		paintComplementary(model,tab);
 		paintReplacement(model,tab);
 		paintGenerateFromYearStart(model,tab);
+		paintUseChargeDateBox(model,tab);
 		rootPanel.add(getButtonsPanel(model,callback));
 	}
 	
@@ -150,7 +162,9 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 		complementary.setValue(model.isComplementary());
 		replacement.setValue(model.isReplacement());
 		generateFromYearStart.setValue(model.isGenerateFromYearStart());
+		useChargeDateBox.setSelectedIndex(model.mustUseChargeDate()?1:0);
 	}
+	
 	private void paintMessages(Mod111 model, Model111Callback callback) {
 		if (model.getMessages() != null && !model.getMessages().isEmpty()) {
 			FlowPanel messages = new FlowPanel();
@@ -160,11 +174,14 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 			messages.addStyleName( AON.CSS.aonPadding());
 			messages.addStyleName( AON.CSS.aonBackgroundHighlightedOrange());
 			for (String msg : model.getMessages()) {
+				FlowPanel messagePanel = new FlowPanel();
+				messagePanel.setStyleName( AON.CSS.aonTextCenter() );
 				Label message = new Label(msg);
 				message.setStyleName(AON.CSS.aonLabelWithIcon());
 				message.addStyleName(AON.CSS.aonIconWarning());
 				message.addStyleName(AON.CSS.aonBold());
-				messages.add(message);
+				messagePanel.add(message);
+				messages.add(messagePanel);
 			}
 			rootPanel.add(messages);
 		}
@@ -217,6 +234,12 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 				.addCell(new Label(),AON.CSS.aonTableLabel())
 				.addCell(generateFromYearStart,AON.CSS.aonWidth400());
 		}
+	}
+
+	private void paintUseChargeDateBox(Mod111 model, AonDisplayTable tab) {
+		tab.addRow()
+			.addCell(new Label("Seleccionar las n\u00F3minas por"),AON.CSS.aonTableLabel())
+			.addCell(useChargeDateBox,AON.CSS.aonWidth400());
 	}
 
 	private FlowPanel getButtonsPanel(Mod111 model, final Model111Callback callback) {

@@ -310,7 +310,7 @@ public class MainContrataContractObject {
 	}
 
 	public boolean hasPayroll() {
-		return this.domainUserRoles.hasPayroll();
+		return this.domainUserRoles.isPayrollManager();
 	}
 
 	public Pair<String, String> getPrincipalAccount() {

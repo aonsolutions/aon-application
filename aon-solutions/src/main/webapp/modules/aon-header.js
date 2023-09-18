@@ -19,6 +19,7 @@ import { TASK_SOURCE } from './messenger/MessengerEnums.js';
 import * as LS from '../services/localStorageService.js';
 import { Language } from '../models/Language.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
+import { AonDialog } from '../components/aon-dialog.js';
 
 export class AonHeader extends AonElement {
 
@@ -75,7 +76,7 @@ export class AonHeader extends AonElement {
 	build() {
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aonHeaderWeb';
-		div.className = CSS.AON_HEADER; //this.isBeta() ? CSS.AON_HEADER_BETA : CSS.AON_HEADER;
+		div.className = CSS.AON_HEADER_BETA;
 		this.appendChild(div);
 
 		let helpOption = new AonDialogMenu();
@@ -140,16 +141,16 @@ export class AonHeader extends AonElement {
 					this.dur = new DomainUserRoles(r);
 					let d = this.getElement('aonHeaderDialogHelpOption');
 					let options = []
-					let support = {
-						name: MSG.SUPPORT + ' / CAU',
-						icon: MATERIAL_ICONS.SUPPORT_AGENT,
-						fn: () =>{
-							let aonMessenger = new AonMessenger();
-							aonMessenger.cau = 1;
-							aonMessenger._filter.source = TASK_SOURCE.CAU;
-							this.rootPanel(aonMessenger);
-						}
-					};
+					// let support = {
+					// 	name: MSG.SUPPORT + ' / CAU',
+					// 	icon: MATERIAL_ICONS.SUPPORT_AGENT,
+					// 	fn: () =>{
+					// 		let aonMessenger = new AonMessenger();
+					// 		aonMessenger.cau = 1;
+					// 		aonMessenger._filter.source = TASK_SOURCE.CAU;
+					// 		this.rootPanel(aonMessenger);
+					// 	}
+					// };
 					
 					let language = {
 						name: MSG.LANGUAGE,
@@ -181,22 +182,23 @@ export class AonHeader extends AonElement {
 						} ]
 					};
 
-					let help = {
-						name: MSG.HELP,
-						icon: 'help_outline',
-						fn: () =>{
-							let iframe = document.createElement("iframe");
-							iframe.height = "100%";
-							iframe.width = "100%";
-							iframe.src = "https://faqs.aonsolutions.es";
-							this.rootPanel(iframe);
-						} 
-					};
+					// let help = {
+					// 	name: MSG.HELP,
+					// 	icon: 'help_outline',
+					// 	fn: () => {
+					// 		let iframe = document.createElement("iframe");
+					// 		iframe.height = "100%";
+					// 		iframe.width = "100%";
+					// 		iframe.src = "https://faqs.aonsolutions.es";
+					// 		this.rootPanel(iframe);
+					// 	} 
+					// };
 
-					if(LS.getDomainId())
-						options.push(support)
-					if(this.isBeta()) options.push(language);
-					options.push(help);
+					// if(LS.getDomainId())
+					// 	options.push(support)
+					// if(this.isBeta())
+					options.push(language);
+					// options.push(help);
 
 					if(this.dur.isDev()) {
 						options.push({
@@ -220,6 +222,13 @@ export class AonHeader extends AonElement {
 							fn: () => this.rootPanel(iframe)
 						});
 					}
+
+					let about = {
+						name: MSG.ABOUT,
+						icon: MATERIAL_ICONS.INFO,
+						fn: () => this.about()
+					}
+					options.push(about)
 
 					d.setMenuOptions(options, top, left);
 					d.open();
@@ -371,13 +380,8 @@ export class AonHeader extends AonElement {
 	buildLogo() {
 		let aonLogo = this.getElement('aonLogo');
 
-		if(window.location.href.includes('ayudat')){
-			aonLogo.src = '../assets/ayudat-logo2.png';
-		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
-			aonLogo.src = '../assets/ayudat-logo3.png';
-			// aonLogo.src = '../assets/tedi-logo.png';
-			// aonLogo.style.top = '0px';
-		} else aonLogo.src = '../assets/aon-logo2.png';
+		aonLogo.src = '../assets/aon-logo.svg';
+
 		aonLogo.addEventListener('click', () => {
 			if(LS.getDomainId()){
 				this.rootPanelHtml(this.isMobile()
@@ -435,7 +439,52 @@ export class AonHeader extends AonElement {
 			aonHeaderCompany.style.right = '180px';
 			aonHeaderCompanyList.style.display = 'none';
 		}
+	}
 
+	about() {
+		const aboutDialogId = "aboutDialog";
+		let d = this.getElement(aboutDialogId);
+		if(!d){
+		  d = new AonDialog();
+		  d.id = aboutDialogId;
+		  this.appendChild(d);
+		}
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.ABOUT);
+		d.setContent(this.aboutContent());
+		d.open();
+	}
+
+	aboutContent() {
+		let aboutContent = this.createElement(TAG.DIV);
+
+		let img = this.createElement(TAG.IMG);
+		img.src = '../assets/aon-logo2.png';
+		img.style.maxWidth = '360px';
+		img.style.maxHeight = '60px';
+		aboutContent.appendChild(img);
+
+		let contactDiv = this.createElement(TAG.DIV);
+		contactDiv.style.marginTop = '10px';
+		contactDiv.innerHTML = '<div id="aonContent:j_id36:j_id49"><span class="aon-outputText" style="font-weight: bold; font-size: 11px; color: #666;">Datos de contacto:</span></div><div id="aonContent:j_id36:j_id51" style="margin-left: 5%"><div id="aonContent:j_id36:j_id52"><span class="aon-outputText" style="font-size: 11px; color: #666;">Teléfono: (+34) 945 121 010</span></div><div id="aonContent:j_id36:j_id54"><span class="aon-outputText" style="font-size: 11px; color: #666;">Correos:</span><span class="aon-outputText" style="display:block;font-size: 11px; color: #666; padding-left: .8em;">· soporte@aonSolutions.es / Atención a usuarios</span><span class="aon-outputText" style="display:block;font-size: 11px; color: #666; padding-left: .8em;">· comercial@aonSolutions.es / Ventas y contratación</span><span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· administración@aonSolutions.es / Facturación, cobros y pagos</span></div><div id="aonContent:j_id36:j_id59"><span class="aon-outputText" style="font-size: 11px; color: #666;">Horario:</span><span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· Lunes a jueves de 8:30 a 14:00 / 15:30 a 18:30</span><span class="aon-outputText" style="display:block; font-size: 11px; color: #666; padding-left: .8em;">· Viernes de 8:30 a 14:00</span><span class="aon-outputText" style="display:block;font-size: 11px; color: #666; padding-left: .8em;">· Verano de 8:00 a 15:00</span></div></div>';
+		aboutContent.appendChild(contactDiv);
+
+		let divInfo = this.createElement(TAG.DIV);
+		divInfo.style.color = '#666';
+		divInfo.style.fontSize = '9px';
+		divInfo.style.borderTop = '1px solid #ddd';
+		divInfo.style.marginTop = '10px';
+		divInfo.style.padding = '15px';
+		divInfo.innerHTML = `
+		  <span>
+			<a target="_blank" class="aonLink" href="http://www.aonsolutions.es">
+			  aonSolutions
+			</a> ${MSG.REGISTERED_TRADEMARK_AON}
+		  </span>
+		  <div id="aonManifest"></div>`;
+		aboutContent.appendChild(divInfo);
+		return aboutContent;
 	}
 }
 

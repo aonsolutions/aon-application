@@ -16,8 +16,8 @@ import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.HtmlDefinitionTerm;
 
 import solutions.aon.sepe.exceptions.SepeException;
 

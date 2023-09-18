@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.payroll.shared.AgreementComunica;
 import com.esferalia.aon.gwt.payroll.shared.AgreementComunicaInfo;
@@ -154,6 +155,10 @@ public class MainConfigComunicaObject {
 		List<EnterpriseCCC> ccccs = new ArrayList<>();
 		this.activities.forEach(activity -> ccccs.addAll(activity.getCccs()));
 		return ccccs;
+	}
+	
+	public List<EnterpriseCCC> getActiveCCCs() {
+		return getCCCs().stream().filter(ccc -> !ccc.isDeleted()).collect(Collectors.toList());
 	}
 	
 	public Set<Entry<Integer, String>> getActivities() {

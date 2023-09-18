@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.util.LinkedList;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilitiesService;
@@ -76,6 +76,16 @@ public class AccountingUtilitiesServiceImpl extends AonStatelessRemoteServiceSer
 	@Override
 	public AccUtilitiesResult unbalancedEntries(String domainName, String user, Domain domain) {
 		return ACCOUNTING.unbalancedEntries(domainName, user, domain);
+	}
+	
+	@Override
+	public AccUtilitiesResult outOfDateEntries(String domainName, String user, Domain domain) {
+		return ACCOUNTING.outOfDateEntries(domainName, user, domain);
+	}
+	
+	@Override
+	public AccUtilitiesResult moveOutOfDateEntries(String domainName, String user, Domain domain, AccUtilitiesResult findResult) {
+		return ACCOUNTING.moveOutOfDateEntries(domainName, user, domain, findResult);
 	}
 
 	@Override

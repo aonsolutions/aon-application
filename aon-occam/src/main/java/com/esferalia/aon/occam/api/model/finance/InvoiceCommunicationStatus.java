@@ -6,15 +6,19 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceCommunicationStatus implements Serializable{
 
-	PENDING,
-	ACCEPTED,
-	ACCEPTED_WITH_ERRORS,
-	WRONG,
-	ANNULLED;
+	PENDING("Pendiente"),
+	ACCEPTED("Aceptada"),
+	ACCEPTED_WITH_ERRORS("Aceptada con Errores"),
+	WRONG("Incorrecta"),
+	CANCELLED("Anulada");
 	
+	String description;
+	private InvoiceCommunicationStatus(String description) {
+		this.description = description;
+	}
 	
-	private InvoiceCommunicationStatus() {
-
+	public String getDescription() {
+		return description;
 	}
 	
 	public Byte value(){
@@ -58,6 +62,6 @@ public enum InvoiceCommunicationStatus implements Serializable{
 	}
 	
 	public boolean isAnnulled() {
-		return InvoiceCommunicationStatus.ANNULLED.equals(this);
+		return InvoiceCommunicationStatus.CANCELLED.equals(this);
 	}
 }

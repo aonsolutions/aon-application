@@ -622,6 +622,8 @@ public class RawdocModule extends MainEntryPoint {
 									.setExtraInfoTabVisible(false)
 									.setExternalCallback(new ModuleCallback() {
 
+										private static final long serialVersionUID = -2947804456883665519L;
+
 										@Override
 										public void onRemove(IAccountEntryWrapper removed) {
 											entryDialog.hide();

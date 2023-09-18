@@ -3,5 +3,6 @@
   mat-flat-table
   [displayedColumns]="displayedColumns"
   [data]="bodyTable"
+  (listenParentRow)="rowClick($event)"
 >
 </app-table>

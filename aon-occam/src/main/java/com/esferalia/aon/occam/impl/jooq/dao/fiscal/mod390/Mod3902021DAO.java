@@ -976,25 +976,25 @@ public class Mod3902021DAO {
 	public static double getVatAccrualPaymentOutputBase(AONContext ctx, Mod390 mod390) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod390);
-		return VATDAO.getVatAccrualPaymentOutputBase(ctx,fromDate,toDate);
+		return Mod390DAO.getVatAccrualPaymentOutputBase(ctx,fromDate,toDate);
 	}
 
 	public static double getVatAccrualPaymentOutputQuota(AONContext ctx, Mod390 mod390) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod390);
-		return VATDAO.getVatAccrualPaymentOutputQuota(ctx,fromDate,toDate);
+		return Mod390DAO.getVatAccrualPaymentOutputQuota(ctx,fromDate,toDate);
 	}
 
 	public static double getVatAccrualPaymentInputBase(AONContext ctx, Mod390 mod390) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod390);
-		return VATDAO.getVatAccrualPaymentInputBase(ctx,fromDate,toDate);
+		return Mod390DAO.getVatAccrualPaymentInputBase(ctx,fromDate,toDate);
 	}
 
 	public static double getVatAccrualPaymentInputQuota(AONContext ctx, Mod390 mod390) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod390);
-		return VATDAO.getVatAccrualPaymentInputQuota(ctx,fromDate,toDate);
+		return Mod390DAO.getVatAccrualPaymentInputQuota(ctx,fromDate,toDate);
 	}
 
 	// -----------------------------------------------------------------------

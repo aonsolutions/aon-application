@@ -1,6 +1,6 @@
 package com.code.aon.faces.component.richfaces.dataPaginator;
 
-import javax.el.ValueExpression;
+import jakarta.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
 import org.richfaces.component.html.HtmlDatascroller;

@@ -13,9 +13,9 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -496,7 +496,10 @@ public class TaskServlet extends AonApiHttpServlet{
 		json.put(IJsonNames.COMPANY, CompanyJSON.toJSON(company));
 		
 		AonToken aonToken = SECURITY.getAonToken(api.getToken());
-		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+
+		Auth auth = aonToken.getAuth() != null
+			? AON_SOLUTIONS.getAuth(aonToken.getAuth())
+			: AON_SOLUTIONS.getAuth(api.getUser().getAuth().getAuth());
 		json.put(IJsonNames.AUTH, AuthJSON.toJSON(auth));
 		
 		return json;

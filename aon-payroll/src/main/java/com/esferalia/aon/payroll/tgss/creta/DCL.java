@@ -331,17 +331,22 @@ public class DCL {
 
 				@Override
 				public Double visitJobTraining(DeductionType deductionType) {
-					return visit(deduction -> deduction.isJobTraining());
+					return visit(Deduction::isJobTraining);
 				}
 
 				@Override
 				public Double visitUnemployent(DeductionType deductionType) {
-					return visit(deduction -> deduction.isUnemployment());
+					return visit(Deduction::isUnemployment);
 				}
 
 				@Override
 				public Double visitCommonContigency(DeductionType deductionType) {
-					return visit(deduction -> deduction.isCommonContingency());
+					return visit(Deduction::isCommonContingency);
+				}
+				
+				@Override
+				public Double visitMEI(DeductionType deductionType) {
+				    return visit(Deduction::isMei);
 				}
 
 				private Double visit(Predicate<Deduction> filter) {
@@ -352,32 +357,37 @@ public class DCL {
 			importe += type.accept(new DeductionType.Visitor<Double>() {
 				@Override
 				public Double visitIT(DeductionType deductionType) {
-					return visit(cost -> cost.isIT());
+					return visit(Cost::isIT);
 				}
 
 				@Override
 				public Double visitIMS(DeductionType deductionType) {
-					return visit(cost -> cost.isIMS());
+					return visit(Cost::isIMS);
 				}
 
 				@Override
 				public Double visitFogasa(DeductionType deductionType) {
-					return visit(cost -> cost.isFogasa());
+					return visit(Cost::isFogasa);
 				}
 
 				@Override
 				public Double visitJobTraining(DeductionType deductionType) {
-					return visit(cost -> cost.isJobTraining());
+					return visit(Cost::isJobTraining);
 				}
 
 				@Override
 				public Double visitUnemployent(DeductionType deductionType) {
-					return visit(cost -> cost.isUnemployment());
+					return visit(Cost::isUnemployment);
 				}
 
 				@Override
 				public Double visitCommonContigency(DeductionType deductionType) {
-					return visit(cost -> cost.isCommonContingency());
+					return visit(Cost::isCommonContingency);
+				}
+				
+				@Override
+				public Double visitMEI(DeductionType deductionType) {
+				    return visit(Cost::isMei);
 				}
 
 				private Double visit(Predicate<Cost> filter) {

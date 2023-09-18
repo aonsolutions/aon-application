@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDayOfWeek;
 import static com.esferalia.aon.watson.util.AonDateUtils.compare;
 import static com.esferalia.aon.watson.util.AonDateUtils.max;
@@ -58,6 +59,7 @@ import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.Salary.Cost;
@@ -65,8 +67,13 @@ import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
+import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -78,6 +85,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class JooqPayrollBuilder {
 	
 	private static String[] WEEK_DAYS = {"DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"};
+	private static List<String> PRESTATION_CONCEPTS = Arrays.asList("PREST_IT", "MTNAD", "ERE");
 	
 	/**
 	 * Method to generate a PDF payroll from database data and place it on the
@@ -179,9 +187,9 @@ public class JooqPayrollBuilder {
 			DefaultPayrollBuilder payrollBuilder = new DefaultPayrollBuilder();
 			// PAYROLL RELATED DATA
 			{
-				payrollBuilder.setLiquidPeriodStart(salary.getStartDate());
-				payrollBuilder.setLiquidPeriodEnd(salary.getEndDate());
 				payrollBuilder.setTotalDays(salary.getSalaryDays());
+				payrollBuilder.setLiquidPeriodStart(salary.getStartDate());
+				payrollBuilder.setLiquidPeriodEnd(getSalaryEndDate(salary));
 				
 				/**
 				 * Comparing salary type
@@ -225,19 +233,35 @@ public class JooqPayrollBuilder {
 					.innerJoin(RADDRESS).on(WORKPLACE.ADDRESS.eq(RADDRESS.ID))
 					.where(SALARY.ID.eq(salary.getId())).fetchOneInto(RADDRESS);
 				
-//				Registry registry = AON.getRegistry(
-//						aonContext.getDomainName(), 
-//						aonContext.getDomainId(), 
-//						"",
-//						p -> p.getDocumentProperty().eq(salary.getEnterpriseDocument()).and(p.getDomainProperty().eq(aonContext.getDomainId()))
-//				);
-
+				//----- FOR MAIN ADDRESS -----
+				List<RAddress> raddessList = AON.getRAddressStream(
+						aonContext.getDomainName(), 
+						aonContext.getDomainId(),
+						aonContext.getUser(), 
+						f -> f.getRegistryProperty().eq(registryAddress.getRegistry()).and(f.getDomainProperty().eq(aonContext.getDomainId())))
+				.collect(Collectors.toList());
+				
+				Optional<RAddress> mainRaddress = raddessList.stream().filter(rad -> rad != null && AonNumberUtils.equals(AonNumberUtils.toByte(0), rad.getType())).findFirst();
+				
+				RAddress raddress = null;
+				
+				if (raddessList != null && !raddessList.isEmpty()) {
+					raddress = mainRaddress.isPresent() ? mainRaddress.get() : raddessList.get(0);
+				}
+				
+				//----------------------------
+				/*
+				//----- FOR WORKPLACE ADDRESS -----
+				
 				RAddress raddress = AON.getRAddress(
-							aonContext.getDomainName(), 
-							aonContext.getDomainId(),
-							aonContext.getUser(), 
-							p -> p.getRegistryProperty().eq(registryAddress.getRegistry()).and(p.getDomainProperty().eq(aonContext.getDomainId()))
-						);
+						aonContext.getDomainName(), 
+						aonContext.getDomainId(),
+						aonContext.getUser(), 
+						f -> f.getIdProperty().eq(registryAddress.getId()).and(f.getDomainProperty().eq(aonContext.getDomainId())));
+				
+				//---------------------------------
+				*/
+				
 				
 				String add = !isEmpty(raddress.getFullAddress()) ? raddress.getFullAddress() : salary.getEnterpriseAddress();
 
@@ -334,22 +358,34 @@ public class JooqPayrollBuilder {
 						forceMajeureBase[0] += p.getAmount();
 					}
 					
-
+					
 					PDFPayment accrual = new PDFPayment(p.getAmount(), description);
 					
 					// Check this!! (set CRA0001 if not exist)
 					if(null == p.getPaymentType())
 						p.setPaymentType(com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0001);
 					
-					if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
-						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<PDFPayment>());
-
-					if (paymentMap.get(p.getPaymentType().ordinal()).stream().anyMatch(
-							acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().orElse(null)))) {
-						PDFPayment repAcc = paymentMap.get(p.getPaymentType().ordinal()).stream().findFirst().get();
+					
+					int craKey = p.getPaymentType().ordinal();
+					if (com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0001.equals(p.getPaymentType())) {
+						//TODO: COMPROBAR PREST_IT, ERE% Y MTNAD
+						if (PRESTATION_CONCEPTS.contains(p.getName()) || AonStringUtils.equals("ERE_", AonStringUtils.substring(p.getName(), 0, 4))) {
+							craKey = 100;
+						}
+					}
+					if (!paymentMap.containsKey(craKey)) {
+						paymentMap.put(craKey, new ArrayList<PDFPayment>());						
+					}
+					
+					
+					Optional<PDFPayment> repeated = paymentMap.get(craKey).stream().filter(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().orElse(null))).findFirst();
+					
+					if (repeated.isPresent()) {
+						PDFPayment repAcc = repeated.get();
 						repAcc.setAmount(repAcc.getAmount().orElse(0d) + p.getAmount());
-					} else
-						paymentMap.get(p.getPaymentType().ordinal()).add(accrual);
+					} else {
+						paymentMap.get(craKey).add(accrual);						
+					}
 				});
 				payrollBuilder.setAccruals(paymentMap);
 			}
@@ -415,15 +451,15 @@ public class JooqPayrollBuilder {
 					deductionMap.put(2, new ArrayList<PDFDeduction>());
 
 				if (!inserted.contains("CGC"))
-					deductionMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias comunes", 0d));
+					deductionMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias Comunes", 0d));
 				if (!inserted.contains("MEI"))
-					deductionMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de equidad intergeneracional", 0d, DeductionType.COMMON_CONTINGENCY));
+					deductionMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de Equidad Intergeneracional (MEI)", 0d, DeductionType.MEI));
 				if (!inserted.contains("DESMPL"))
 					deductionMap.get(1).add(new PDFDeduction(0d, "DESMPL", "Desempleo", 0d));
 				if (!inserted.contains("FP"))
-					deductionMap.get(1).add(new PDFDeduction(0d, "FP", "Formación profesional", 0d));
+					deductionMap.get(1).add(new PDFDeduction(0d, "FP", "Formación Profesional", 0d));
 				if (!inserted.contains("IRPF"))
-					deductionMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones dinerarias", 0d));
+					deductionMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones Dinerarias", 0d));
 
 				// EMBARGOS (placed at 'Other deductions' -type 5- field on 'Deductions')
 				{
@@ -463,10 +499,10 @@ public class JooqPayrollBuilder {
 						totalEnterprise += (cost.getAmount() != null ? cost.getAmount() : 0d);
 						switch (cost.getCostType()) {
 							case COMMON_CONTINGENCY:
-							    	if (AonStringUtils.equals("MEI_E", cost.getName()))
-							    	    meiApEnterprise += safeValue(cost.getAmount());
-							    	else
-							    	    commonContApEnterprise += safeValue(cost.getAmount());
+							    	commonContApEnterprise += safeValue(cost.getAmount());
+								break;
+							case MEI:
+							    	meiApEnterprise += safeValue(cost.getAmount());
 								break;
 							case IT:
 							case IMS:
@@ -576,7 +612,7 @@ public class JooqPayrollBuilder {
 								}
 							});
 				}
-
+				
 				// SETTING BASES
 				{
 					costBuilder.setCommonContBase(Optional.ofNullable(salary.getCommonContingenciesBase()));
@@ -729,21 +765,18 @@ public class JooqPayrollBuilder {
 			
 
 			List<SalaryData> holidays = contractDataTmp.getOrDefault("DIAS_VACACIONES", Collections.emptyList());
+			List<SalaryData> noWorkDays = contractDataTmp.getOrDefault("NO_LABORABLE", Collections.emptyList());
 			List<Date> holidayList = listHolidays(holidays, salaryEnd);
+			List<Date> noWorkDaysList = listHolidays(noWorkDays, salaryEnd);
 			
-			params.getEntries().entrySet().stream()
-			.filter(entry -> holidayList.stream()
-					.filter(d -> salaryPeriod.intersects(new Period(d, d)))
-					.map(AonDateUtils::getDay)
-					.anyMatch(d -> AonNumberUtils.equals(d, entry.getKey()))
-			).forEach(entry -> entry.getValue().setHoliday(true));
-			
+			setHolidays(params, holidayList, salaryPeriod, entry -> entry.setHoliday(true));
+			setHolidays(params, noWorkDaysList, salaryPeriod, entry -> entry.setNotWorkingDay(true));
 			
 			Set<Date> workedDaysSet = new LinkedHashSet<>();
 			while (date.compareTo(salary.getEndDate()) <= 0) {
 				int day = AonDateUtils.getDay(date);
 				PartTimeEntry entry = new PartTimeEntry();
-				if (isWorkedDay(date, salaryData, salary.getEndDate(), holidayList)) {
+				if (isWorkedDay(date, salaryData, salary.getEndDate(), holidayList, noWorkDaysList)) {
 					Double dayHours = getDayHours(date, salaryData, salary.getEndDate());
 					entry.setOrdinary(dayHours);
 					if (dayHours != null && dayHours > 0) {
@@ -823,15 +856,33 @@ public class JooqPayrollBuilder {
 		}
 	}
 	
+	@FunctionalInterface
+	private static interface HolidayCallback {
+		void set(PartTimeEntry entry);
+	}
+	
+	private static void setHolidays(PartTimeParams params, List<Date> holidayList, Period salaryPeriod, HolidayCallback callback) {
+		params.getEntries().entrySet().stream()
+		.filter(entry -> holidayList.stream()
+				.filter(d -> salaryPeriod.intersects(new Period(d, d)))
+				.map(AonDateUtils::getDay)
+				.anyMatch(d -> AonNumberUtils.equals(d, entry.getKey()))
+		).forEach(entry -> callback.set(entry.getValue()));
+	}
+	
 	private static List<Date> listHolidays(List<SalaryData> holidaysData, Date salaryEndDate) {
 		if (holidaysData != null) {
 			List<Date> dateList = new ArrayList<>();
 			holidaysData.stream().filter(Objects::nonNull).forEach(data -> {
 				Date sd = data.getStartDate();
 				Date ed = data.getEndDate() != null ? data.getEndDate() : salaryEndDate;
-				new Period(sd, ed).forEachDay(cal -> {
-					dateList.add(cal.getTime());
-				});
+				try {
+					new Period(sd, ed).forEachDay(cal -> {
+						dateList.add(cal.getTime());
+					});					
+				} catch (Exception e) {
+					//Falla porque alguien ha puesto la fecha de fin menor que la de inicio
+				}
 			});
 			return dateList;
 		}
@@ -899,8 +950,13 @@ public class JooqPayrollBuilder {
 			return null;
 		String name = "HORAS_" + WEEK_DAYS[AonDateUtils.getDayOfWeek(date) - 1];
 		Optional<SalaryData> optHoursData = salaryData.getOrDefault(name, Collections.emptyList()).stream().filter(sd -> {
+		try {			
 			Period period = new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd);
 			return period.contains(date);
+		} catch (IllegalArgumentException e) {
+			//Si el periodo es erróneo
+			return false;
+		}
 		}).findFirst();
 		if (optHoursData.isPresent()) {
 			return getExpressionValue(optHoursData.get().getExpression());
@@ -917,26 +973,41 @@ public class JooqPayrollBuilder {
 		}
 	}
 
-	private static boolean areThereDaysData(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd) {
+	private static boolean areThereDaysData(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd) {	
 		if (salaryData == null || date == null || salaryEnd == null)
 			return false;
 		List<String> days = Arrays.asList(WEEK_DAYS);
-		return days.stream().anyMatch(day -> salaryData.containsKey("HORAS_" + day) && salaryData.get("HORAS_" + day).stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)));
+		return days.stream().anyMatch(day -> salaryData.containsKey("HORAS_" + day) && salaryData.get("HORAS_" + day).stream().anyMatch(sd -> {
+			try {
+				return new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date);
+			} catch (IllegalArgumentException e) {
+				//Período erróneo
+				return false;
+			}
+		}));
 	}
 
-	private static boolean isWorkedDay(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd,List<Date> holidayList) {
+	private static boolean isWorkedDay(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd,List<Date> holidayList, List<Date> noWorkDaysList) {
 		if (salaryData == null || date == null || salaryEnd == null)
 			return false;
 		if (holidayList != null && holidayList.contains(date)) {
 			return false;
 		}
+		if (noWorkDaysList != null && noWorkDaysList.contains(date)) {
+			return false;
+		}
 		List<SalaryData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
+		List<SalaryData> realSessions = salaryData.getOrDefault("JORNADAS_REALES", Collections.emptyList());
 		boolean isInWorkPeriod = workedDays.stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date));
 		if (isInWorkPeriod) {
 			if (areThereDaysData(date, salaryData, salaryEnd)) {
 				return true;
+			} else if (!realSessions.isEmpty()) {
+				//TODO
+				return realSessions.stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date));
+			} else {				
+				return AonDateUtils.getDayOfWeek(date) > 1 && AonDateUtils.getDayOfWeek(date) < 7;
 			}
-			return AonDateUtils.getDayOfWeek(date) > 1 && AonDateUtils.getDayOfWeek(date) < 7;
 		}
 		return false;
 	}
@@ -948,7 +1019,12 @@ public class JooqPayrollBuilder {
 	 * @return true | false
 	 */
 	private static boolean filter(Payment payment) {
-		return !(payment.getAmount() == 0 && payment.getQuote() == 0);
+		List<String> excludedConcepts = Arrays.asList("PREST_IT");
+		List<String> excludedDescriptionWords = Arrays.asList("vacaciones");
+		
+		return !(payment.getAmount() == 0 && payment.getQuote() == 0)
+				|| excludedConcepts.contains(payment.getName())
+				|| excludedDescriptionWords.stream().anyMatch(word -> AonStringUtils.containsIgnoreCase(payment.getDescription(), word));
 	}
 
 	/**
@@ -1021,6 +1097,7 @@ public class JooqPayrollBuilder {
 		case 3:
 		case 4:
 		case 5:
+		case 13:
 			return 1;
 		case 6:
 			return 2;
@@ -1046,6 +1123,7 @@ public class JooqPayrollBuilder {
 		case 3:
 		case 4:
 		case 5:
+		case 13:
 			return 1;
 		case 6:
 			return 2;
@@ -1064,7 +1142,7 @@ public class JooqPayrollBuilder {
 	    switch (deductionName) {
 	    	case "MEI" :
 		case "MEI_E" :
-			return "Mecanismo de equidad intergeneracional";
+			return "Mecanismo de Equidad Intergeneracional (MEI)";
 		default:
 			return null;
 	    }
@@ -1077,27 +1155,29 @@ public class JooqPayrollBuilder {
 	private static String chooseDescription (DeductionType dt) {
 		switch (dt.ordinal()) {
 		case 0:
-			return "Contingencias comunes";
+			return "Contingencias Comunes";
 		case 1:
-			return "Contingencias profesionales";
+			return "Contingencias Profesionales";
 		case 2:
 			return "Desempleo";
 		case 3:
-			return "Formación profesional";
+			return "Formación Profesional";
 		case 4:
-			return "Horas extraordinarias (Estruc.)";
+			return "Horas Extraordinarias (Estruc.)";
 		case 5:
-			return "Horas extraordinarias (No Estruc.)";
+			return "Horas Extraordinarias (No Estruc.)";
 		case 6:
-			return "Retribuciones dinerarias";
+			return "Retribuciones Dinerarias";
 		case 7:
 			return "Anticipo";
 		case 8:
-			return "En especie";
+			return "En Especie";
 		case 10:
 			return "Embargo";
+		case 13:
+			return "Mecanismo de Equidad Intergeneracional (MEI)";
 		default:
-			return "Otras deducciones";
+			return "Otras Deducciones";
 		}
 	}
 	
@@ -1128,6 +1208,8 @@ public class JooqPayrollBuilder {
 			return "En especie";
 		case 10:
 			return "Embargo";
+		case 13:
+			return "Mecanismo de Equidad Intergeneracional (MEI)";
 		default:
 			return "Otras deducciones";
 		}
@@ -1155,8 +1237,21 @@ public class JooqPayrollBuilder {
 				return "OTRO";
 			case 10:
 				return "EMBARGO";
+			case 13:
+				return "MEI";
 			default:
 				return null;
 		}
 	}
+	
+	private static Date getSalaryEndDate(Salary salary) {
+	    Date startDate = salary.getStartDate();
+	    return salary.getContextData().getOrDefault(ContextVariable.NO_HOLIDAYS.getName(), Collections.emptyList()).stream()
+		    .map(ContextData::getStartDate)
+		    .filter( d -> d.after(startDate) )
+		    .collect(Collectors.minBy(Date::compareTo))
+		    .map(d -> AonDateUtils.addDays(d,-1))
+		    .orElse(salary.getEndDate());
+	}
+	
 }

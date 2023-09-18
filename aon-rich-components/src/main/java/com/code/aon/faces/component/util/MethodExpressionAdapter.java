@@ -1,8 +1,8 @@
 package com.code.aon.faces.component.util;
 
-import javax.el.ELContext;
-import javax.el.MethodExpression;
-import javax.el.MethodInfo;
+import jakarta.el.ELContext;
+import jakarta.el.MethodExpression;
+import jakarta.el.MethodInfo;
 
 import org.apache.commons.lang.ArrayUtils;
 

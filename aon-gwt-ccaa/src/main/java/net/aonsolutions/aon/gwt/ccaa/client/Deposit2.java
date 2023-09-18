@@ -10,6 +10,7 @@ import java.util.Vector;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
+import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -32,7 +33,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.polymer.vaadin.widget.VaadinUpload;
 
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.FreeText;
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.MemoryDocuments;
@@ -327,7 +327,7 @@ public class Deposit2 extends DockLayoutPanel {
 			index++;
 		}
 		
-		if(year >= 2020){
+		if(year >= 2020 && year <= 2022){
 			flex_table.setWidget(index, 0, new Label(CVA));
 			CheckBox cbCVA = new CheckBox();cbCVA.setValue(true);
 			flex_table.setWidget(index, 1, cbCVA);
@@ -533,14 +533,12 @@ public class Deposit2 extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert("export");
 				inma.getDepositExercises(getAonData(), new AsyncCallback<String[]>() {
 
 					@Override public void onFailure(Throwable caught) {}
 
 					@Override
 					public void onSuccess(String[] result) {
-						Window.alert("export2");
 						String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_deposit/"
 				            	+ "?domain_id=" + Integer.toString(getAonData().getDomain().getId())
 				            	+ "&year="+ year;
@@ -617,44 +615,41 @@ public class Deposit2 extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				VaadinUpload upload = new VaadinUpload();
-				String dataRequest = "?domain_name="+ getAonData().getDomain().getName() 
-						+ "&domain_id="+ getAonData().getDomain().getId()
-						+ "&login="+ getAonData().getUser().getLogin()
-						+ "&year="+ getYear();
-						
-				upload.setTarget(GWT.getModuleBaseURL() + "uploadD2" + dataRequest);
-				AonDialog dialog = new AonDialog("Importar", upload);
-				dialog.setAutoHideEnabled(true);
-				dialog.confirm(new AonAcceptDialogCallback() {
+				Upload upload = new Upload() {
+					
+					@Override
+					protected void onUpload(String data, String type) {
+						getInma().upload(getAonData(), data, type, getYear(), new AsyncCallback<Void>() {
 							
-					@Override
-					public void onCancel() {
-						dialog.hide();
-					}
-						
-					@Override
-					public void onAccept() {
-						dialog.hide();
-						getInma().getSchema(getAonData(), getCompany(), getYear(), false, new AsyncCallback<Map<String, String>>() {
+							@Override
+							public void onSuccess(Void result) {
+								getInma().getSchema(getAonData(), getCompany(), getYear(), false, new AsyncCallback<Map<String, String>>() {
 
-							@Override public void onFailure(Throwable caught) {}
+									@Override public void onFailure(Throwable caught) {}
 
-							@Override 
-							public void onSuccess(Map<String, String> result) {
-								Map<String, String> m = new HashMap<String, String>();
-								for (String k : getDeposit().keySet()) {
-									m.put(k, getDeposit().get(k));
-								}
-								getUndoStack().push(m);
-								getRedoStack().clear();
-								
-								setDeposit(result);
-								refreshPage();	
+									@Override 
+									public void onSuccess(Map<String, String> result) {
+										Map<String, String> m = new HashMap<String, String>();
+										for (String k : getDeposit().keySet()) {
+											m.put(k, getDeposit().get(k));
+										}
+										getUndoStack().push(m);
+										getRedoStack().clear();
+										
+										setDeposit(result);
+										refreshPage();	
+									}
+								});
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+							
 							}
 						});
 					}
-				});
+				};
+				upload.upload();				
 			}
 		};
 	}

@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.ExplainRowManager;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -29,7 +30,7 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isAraba() && mod.getYear() > 2021 && mod.getPeriod() != Period.T4;
+		return  mod.isAraba() && mod.getYear() > 2021 && mod.getYear() < 2023 && mod.getPeriod() != Period.T4;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		 Mod303Key.AR_C030,Mod303Key.AR_C031,Mod303Key.AR_C032
@@ -575,19 +576,19 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 	}
 	@Override
 	protected String getSamePeriodExplain(AONContext ctx, Mod303 mod303, Mod303Key key) {
-		return getExplain(ctx, mod303, key
+		return DeclarationInfoUtil.getExplain(ctx, mod303, key
 			, Mod303DAO.getSamePeriodEffectiveModels(ctx, mod303)
 			, new ExplainRowManager());
 	}
 	@Override
 	protected String getCompensationExplain( AONContext ctx, Mod303 mod303, Mod303Key key) {
 		if (mod303 .isFirstPeriod()) {
-			return getExplain(ctx, mod303, key
+			return DeclarationInfoUtil.getExplain(ctx, mod303, key
 				, Mod390HFDAO.getLastPeriodEffectiveModels(ctx, mod303)
 					.filter(Mod390HF::isToCompensate)
 				, new ExplainRowManager());
 		} 
-		return getExplain(ctx, mod303, key
+		return DeclarationInfoUtil.getExplain(ctx, mod303, key
 				, Mod303DAO.getLastPeriodEffectiveModels(ctx, mod303)
 				.filter(Mod303::isToCompensate)
 				, new ExplainRowManager());

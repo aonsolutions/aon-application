@@ -9,22 +9,17 @@ import java.util.HashMap;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Mod2002022Object.IMod200ChangeListener;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -38,59 +33,59 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class PageAbs extends ResizeComposite {
 	
 	protected static final String ACCOUNTING_STATEMENTS_FOOTER = "(N) Modelo normal de dep\u00F3sito de cuentas en el Registro Mercantil; (A) Modelo abreviado de dep\u00F3sito de cuentas en el Registro Mercantil; (P) Modelo PYMES de dep\u00F3sito de cuentas en el Registro Mercantil.";
+	protected static final String PARTICIPATIONS_LABEL = "Participaciones que a fin de per\u00EDodo sean igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.";
 	protected static final int BOX_LENGTH = 5;	
 
-	private ExpressionResolver resolver = new ExpressionResolver() {
-		@Override
-		public void resolve(String expression, AsyncCallback<Double> callback) {
-			PageAbs.this.callback.getMod200Object().mathExpression(expression,callback);
-		}
-	};
+	private ExpressionResolver resolver = (expression, callback) -> 
+		PageAbs.this.callback.getMod200Object().mathExpression(expression,callback);			
 	
 	protected HashMap<IMod200Key, AonDoubleBox> inputs = new HashMap<IMod200Key, AonDoubleBox>();
 	protected ArrayList<Widget> otherInputs = new ArrayList<Widget>();
 	protected FlowPanel basePanel;
-	protected Model200PageCallback callback;
+	protected Model2002022PageCallback callback = null;
 	
-	public PageAbs(Model200PageCallback callback) {
+	protected PageAbs() {
+		super();
+	}
+	
+	protected PageAbs(Model2002022PageCallback callback) {
 		this.callback = callback;
 		
-		callback.getMod200Object().register(new IMod200ChangeListener() {
-			
-			@Override
-			public void mod200Changed(Mod2002022 mod200) {
-				for (IMod200Key key : inputs.keySet()) {
-					DoubleVariableEx var = mod200.getDraftMap().get(key);
-					if (var != null && !var.isChangedByUser()) {
-						// Se repintan los valores calculados automaticamente
-						AonDoubleBox input = inputs.get(key);
-						input.setValue(var.getValue());						
-					}
+		callback.getMod200Object().register(mod200 -> {
+			for (IMod200Key key : inputs.keySet()) {
+				DoubleVariableEx v = mod200.getDraftMap().get(key);
+				if (v != null && !v.isChangedByUser()) {
+					// Se repintan los valores calculados automaticamente
+					AonDoubleBox input = inputs.get(key);
+					input.setValue(v.getValue());						
 				}
-			}
+			}			
 		});
 		
 		addBasePanel();
 		initializeTable();
 
 	}
-	
+
 	protected abstract void initializeTable();
 	
-	protected void dump() {		
+	protected void dump() {
 		
-		// Se repintan los valores calculados automáticamente. DraftMap lleva los valores que se han modificado o 
-		// calculado automáticamente, desde que hemos entrado en el modelo
-		for (IMod200Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
-			if (inputs.containsKey(key)) {
-				AonDoubleBox input = inputs.get(key);
-				DoubleVariableEx var = callback.getMod200Object().getMod200().getDraftMap().get(key);
-				input.setValue(var.getValue());
+		if (callback != null) {
+			
+			// Se repintan los valores calculados automáticamente. DraftMap lleva los valores que se han modificado o 
+			// calculado automáticamente, desde que hemos entrado en el modelo			
+			for (IMod200Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
+				if (inputs.containsKey(key)) {
+					AonDoubleBox input = inputs.get(key);
+					DoubleVariableEx v = callback.getMod200Object().getMod200().getDraftMap().get(key);
+					input.setValue(v.getValue());
+				}
 			}
-		}
+		}	
 		
 		// Habilitar/Deshabilitar controles de la pagina
-		setEnabled();
+		setEnabled();		
 		
 	}
 	
@@ -120,20 +115,22 @@ public abstract class PageAbs extends ResizeComposite {
 	// Habilitar/Deshabilitar los controles de edicion de la página 
 	protected void setEnabled() {
 		
-		// Se habilitan si el modelo es editable y la casilla no está deshabilitada
-		for (IMod200Key key : inputs.keySet()) {
-			inputs.get(key).setEnabled(isEditable(key));
-		}
-		
-		// Se habilitan si el modelo es editable
-		boolean enabled = isEditable();
-		for (Widget input : otherInputs) {
-			if (input instanceof AonDateBox) {
-				((AonDateBox) input).setEnabled(enabled);
-			} else if (input instanceof FocusWidget) {
-				((FocusWidget) input).setEnabled(enabled);
-			} else if (input instanceof AonIbanTextBox) {
-				((AonIbanTextBox) input).setEnabled(enabled);
+		if (callback != null) {		
+			// Se habilitan si el modelo es editable y la casilla no está deshabilitada
+			for (IMod200Key key : inputs.keySet()) {
+				inputs.get(key).setEnabled(isEditable(key));
+			}
+			
+			// Se habilitan si el modelo es editable
+			boolean enabled = isEditable();
+			for (Widget input : otherInputs) {
+				if (input instanceof AonDateBox) {
+					((AonDateBox) input).setEnabled(enabled);
+				} else if (input instanceof FocusWidget) {
+					((FocusWidget) input).setEnabled(enabled);
+				} else if (input instanceof AonIbanTextBox) {
+					((AonIbanTextBox) input).setEnabled(enabled);
+				}
 			}
 		}
 		
@@ -143,6 +140,8 @@ public abstract class PageAbs extends ResizeComposite {
 		ScrollPanel scroll = new ScrollPanel();
 		basePanel = new FlowPanel();		
 		basePanel.addStyleName(AON.CSS.aonPaddingBottom());
+		basePanel.getElement().getStyle().setProperty("max-width", "1200px");
+		
 		scroll.add(basePanel);
 		initWidget(scroll);		
 	}
@@ -229,43 +228,39 @@ public abstract class PageAbs extends ResizeComposite {
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
 		text.setValue(callback.getMod200Object().getDoubleValue(k));
 		text.setEnabled(enabled);
-		text.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				try {
-					if (AonStringUtils.isEmpty(text.getText())) {
-						text.setValue(0.0,false);
-					}
-					
-					Double d = text.getValueOrThrow();
-					text.addStyleName(AON.AON_CSS.aonChanged());
-					callback.getMod200Object().doubleValueChanged(k, d);
-					callback.markAsDirty();
-					
-					// Caso especial, la casilla 103 de Deducciones de Doble Imposición, es la 
-					// misma en 4 apartados, pero aqui se graba con 4 claves distintas, así que 
-					// si se modifica cualquiera de ellas, se hace que todas tengan el mismo valor
-					if (k==Mod2002022Key.BN103A) {						
-						AonDoubleBox db = inputs.get(Mod2002022Key.BN103B);
-						db.setValue(d,true);
-					}
-					else if (k==Mod2002022Key.BN103B) {						
-						AonDoubleBox db = inputs.get(Mod2002022Key.BN103C);
-						db.setValue(d,true);						
-					}
-					else if (k==Mod2002022Key.BN103C) {						
-						AonDoubleBox db = inputs.get(Mod2002022Key.BN103D);
-						db.setValue(d,true);
-					}
-					else if (k==Mod2002022Key.BN103D) {						
-						AonDoubleBox db = inputs.get(Mod2002022Key.BN103A);
-						db.setValue(d,true);
-					}
-					
-				} catch (ParseException e) {
-					// nothing
+		text.addValueChangeHandler( event -> {
+			try {
+				if (AonStringUtils.isEmpty(text.getText())) {
+					text.setValue(0.0,false);
 				}
+				
+				Double d = text.getValueOrThrow();
+				text.addStyleName(AON.AON_CSS.aonChanged());
+				callback.getMod200Object().doubleValueChanged(k, d);
+				callback.markAsDirty();
+				
+				// Caso especial, la casilla 103 de Deducciones de Doble Imposición, es la 
+				// misma en 4 apartados, pero aqui se graba con 4 claves distintas, así que 
+				// si se modifica cualquiera de ellas, se hace que todas tengan el mismo valor
+				if (k==Mod2002022Key.BN103A) {						
+					AonDoubleBox db = inputs.get(Mod2002022Key.BN103B);
+					db.setValue(d,true);
+				}
+				else if (k==Mod2002022Key.BN103B) {						
+					AonDoubleBox db = inputs.get(Mod2002022Key.BN103C);
+					db.setValue(d,true);						
+				}
+				else if (k==Mod2002022Key.BN103C) {						
+					AonDoubleBox db = inputs.get(Mod2002022Key.BN103D);
+					db.setValue(d,true);
+				}
+				else if (k==Mod2002022Key.BN103D) {						
+					AonDoubleBox db = inputs.get(Mod2002022Key.BN103A);
+					db.setValue(d,true);
+				}
+				
+			} catch (ParseException e) {
+				// nothing
 			}
 		});
 			
@@ -277,7 +272,6 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 	}
-
 	
 	protected int paintKeyBreakdownLink(final FlexTable tab, int row, Mod2002022Key breakdownKey, IMod200KeysProvider[] keysProvider, String[] headers, String... footernotes) {
 		
@@ -310,7 +304,7 @@ public abstract class PageAbs extends ResizeComposite {
 				// las casillas en la pantalla y tal y como está montado ahora el 
 				// repintado de todas las casillas, al recalcular solo se pinta una de las 
 				// casillas, si ambas casillas son la misma
-				if (k != null && k != breakdownKey) {
+				if (k != null && k != breakdownKey && k != Mod2002022Key.LQ1890) {  // Caso especial desglose CASILLA 243, lleva dos subtotales
 					if (paintDesc) {
 						// Casilla [2287] comienza bloque de información adicional, dentro del desglose de la [590]
 						if (k == Mod2002022Key.BN2287) {							
@@ -338,19 +332,12 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, tab.getCellCount(boxRow)); 
 		
-		breakdown.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				container.setVisible( !container.isVisible() );
-				for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
-					tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(
-							container.isVisible()?backgroundColor:"#FFFFFF");	
-				}
-				container.getElement().getStyle().setBackgroundColor(
-						container.isVisible()?backgroundColor:"#FFFFFF");
+		breakdown.addClickHandler(event -> {
+			container.setVisible( !container.isVisible() );
+			for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
+				tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(container.isVisible()?backgroundColor:"#FFFFFF");	
 			}
-			
+			container.getElement().getStyle().setBackgroundColor(container.isVisible()?backgroundColor:"#FFFFFF");
 		});
 		
 		return ++row;
@@ -454,7 +441,7 @@ public abstract class PageAbs extends ResizeComposite {
 		
 		FlexTable tab = new FlexTable();
 		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab.addStyleName(AON.CSS.aonMargin());
+		tab.addStyleName(AON.CSS.aonMargin());		
 		
 		// Ancho de las columnas de importes
 		for (int i = 0; i < numAmountCols; i++) {
@@ -507,7 +494,7 @@ public abstract class PageAbs extends ResizeComposite {
 	protected void paintFooterNote(Panel container, String... notes) {
  
 		for (String text : notes) {
-			Label footernote = new Label(text);
+			Label footernote = new Label(text);			
 			footernote.setWidth("95%");
 			footernote.addStyleName(AON.CSS.aonFontSmaller());
 			footernote.addStyleName(AON.CSS.aonBlockCenter());
@@ -542,4 +529,25 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 	}
 	
+	public AonDisplayTable addRegistryTable(String... headers) {
+		AonDisplayTable tab = new AonDisplayTable();
+//		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		tab4.addStyleName(AON.CSS.aonBlockCenter());
+		tab.getElement().getStyle().setProperty("margin-left", "1%");		
+		
+		if (headers.length > 0) {
+			AonDisplayTableRow row = tab.addRow();
+			for (String s : headers) {
+				Label l = new Label(s);
+				l.addStyleName(AON.CSS.aonMarginRight());				
+				row.addCell(l, AON.CSS.aonBold(), AON.CSS.aonBorderBottom());
+			}				
+			row.addCell(new Label(""), AON.CSS.aonBorderBottom()); // Ultima cabecera, para el icono de borrar línea
+		}
+		
+		basePanel.add(tab);
+		return tab;
+	}
+	
 }
+

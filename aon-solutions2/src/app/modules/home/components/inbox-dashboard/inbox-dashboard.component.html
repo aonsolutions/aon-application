@@ -1,39 +1,17 @@
-<!--<app-card
-  [class]="'padding'"
->
-  <div header class="head-card">
-    <div class="line-head"></div>
-    <div class="text">
-      {{ 'HOME.INBOX'|translate }}
-    </div>
+<div id="home-inbox">
+  <div header>
+    <div class="line"></div>
+    <div class="text">{{ 'HOME.INBOX'|translate }}</div>
   </div>
-  <div body class="content-center">
-    <app-list-dashboard
-      *ngFor="let item of messages"
-      [type]="item.Type === 'consulta' ? 1 : (item.Type === 'tarea' ? 2 : (item.Type === 'notificación' ? 3 : 0))"
-      [name]="item.Name"
-      [title]="item.Title"
-      [status]="item.Status"
-      [date]="item.Date | date:'EEE, HH:mm'"
-      [description]="item.Description"
-    ></app-list-dashboard>
+  <app-table
+    mat-table
+    mat-flat-table
+    [displayedColumns]="displayedColumns"
+    [data]="bodyTable"
+    (listenParentRow)="rowClick($event)"
+  ></app-table>
+  <hr>
+  <div id="home-inbox-total">
+    <span class="text" [routerLink]="routerlink" >ver todo los mensajes</span> <span class="circle red">{{ messageTotal }}</span>
   </div>
-
-  <div footer class="messages-footer">
-    <div class="see-all">
-      {{ 'HOME.ALL_MESSAGES'|translate }}
-    </div>
-    <div class="circle">
-      <span class="number-circle"> {{ totalMessages }} </span>
-    </div>
-  </div>
-</app-card>-->
-
-<app-table
-  mat-table
-  mat-flat-table
-  [displayedColumns]="displayedColumns"
-  [data]="bodyTable"
-  (listenParentRow)="rowClick($event)"
->
-</app-table>
+</div>

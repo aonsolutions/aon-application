@@ -2,8 +2,8 @@ package com.code.aon.faces.component.richfaces.lookup;
 
 import static com.code.aon.faces.component.richfaces.IRichFacesTags.PROPERTY;
 
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
 import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
 

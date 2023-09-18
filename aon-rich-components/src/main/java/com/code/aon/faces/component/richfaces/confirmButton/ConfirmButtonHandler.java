@@ -5,9 +5,9 @@ import static com.code.aon.faces.controller.IRichConstants.ATTRIBUTE_PREFFIX;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.el.ELException;
-import javax.el.ValueExpression;
-import javax.el.VariableMapper;
+import jakarta.el.ELException;
+import jakarta.el.ValueExpression;
+import jakarta.el.VariableMapper;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;

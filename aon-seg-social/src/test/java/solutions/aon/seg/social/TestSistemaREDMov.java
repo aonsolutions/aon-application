@@ -15,7 +15,7 @@ import java.util.Optional;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.FailingHttpStatusCodeException;
 
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.NotExistingYetException;

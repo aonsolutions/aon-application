@@ -1,5 +1,7 @@
 package com.esferalia.aon.watson.util;
 
+import java.math.BigDecimal;
+
 public class AonNumberUtils {
 
 	public static final Integer INTEGER_ZERO = Integer.valueOf(0);
@@ -148,6 +150,10 @@ public class AonNumberUtils {
 
 	public static double zeroIfNull(Double value) {
 		return (value==null?0:value);
+	}
+
+	public static double zeroIfNull(BigDecimal value) {
+		return (value==null?0:value.doubleValue());
 	}
 
 	public static int zeroIfNull(Integer value) {

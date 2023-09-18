@@ -131,6 +131,10 @@ public class PayrollImpl implements IPayroll {
 	
 	// -------------------- CONTRACT DATA
 	
+	public void saveContractDatas(AONContext ctx, List<ContractData> contractData){
+		ctx.getDslContext().transaction(configuration -> ContractDataDAO.save(ctx, contractData));
+	}	
+	
 	public LinkedList<ContractData> saveContractData(AONContext ctx, ContractData ...contractData){
 		return ctx.getDslContext().transactionResult(configuration -> ContractDataDAO.insert(ctx, contractData));
 	}	

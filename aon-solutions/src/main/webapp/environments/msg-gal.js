@@ -1,6 +1,8 @@
 // ----- A
 
+export const ABOUT = 'Acerca de';
 export const ACCEPT = 'Aceptar';
+export const ACCESS = "Acceso";
 export const ACCOUNT = 'Cuenta';
 export const ACCOUNTED = 'Contabilizada'; 
 export const ACCOUNTEDS = 'Contabilizadas';
@@ -20,8 +22,11 @@ export const ADD_REMARKS = 'Engadir Observacións';
 export const ADD_TAG = 'Engadir Etiqueta';
 export const ADD_TAX = 'Engadir Imposto';
 export const ADD_TYPE = 'Añadir Tipo';
+export const ADDITIONAL_HIRING = "Contratación adicional";
 export const ADDITIONAL_INFORMATION = 'Información Adicional';
 export const ADDRESS = 'Dirección';
+export const ALL = 'Todo';
+export const ALL1 = 'Todos';
 export const ALL_FILES = 'Todos os Ficheiros';
 export const AMOUNT = 'Importe';
 export const API_DOCUMENTATION = 'Documentación API';
@@ -42,8 +47,10 @@ export const BARCODE = 'Código de Barras';
 export const BASE = 'Base';
 export const BASQUE = 'Euskera';
 export const BILLING = 'Facturación';
+export const BILLABLE_USERS = "Usuarios facturables";
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Contratación';
+export const BOOKING_PANEL = 'Panel de Contratación';
 export const BOX_CRITERION = 'Criterio de Caixa';
 export const BUDGET = 'Orzamento';
 export const BUDGETS = 'Orzamentos';
@@ -59,6 +66,7 @@ export const CERTIFICATE = 'Certificado';
 export const CERTIFICATES = 'Certificados';
 export const CHANGE_TYPE = 'Cambiar Tipo';
 export const CHARGES_AND_PAYMENTS = 'Cargos e Pagamentos';
+export const CHOOSE_A_DOMAIN = 'Por favor, seleccione un dominio';
 export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicacións Clásicas';
 export const CLASSIC_VIEW = 'Vista Clásica';
@@ -81,15 +89,23 @@ export const CONFIGURATION = 'Configuración';
 export const CONTACT = 'Contacto';
 export const CONTACT_DATA = 'Datos do Contacto';
 export const CONTACTS = 'Contactos';
+export const CONTAINER = 'Envase';
 export const CONTRACT = 'Contratar';
+export const CONTRACTED_PRODUCTS = "Produtos contratados";
+export const CONTRACTED_USERS = "Usuarios contratados";
 export const CONTRACT_PAYROLL = 'Contrato';
 export const CONTRACTS = 'Contratos';
+export const COPIED_TO_CLIPBOARD = "Copiado ao portapapeis";
+export const COPY = "Copiar";
 export const COUNTRY = 'País'
 export const CREATE = 'Crear';
 export const CREDITOR = 'Acredor';
 export const CREDITORS = 'Acredores';
 export const CUSTOM_VIEW = 'Vista Personalizada';
 export const CUSTOMER = 'Cliente';
+export const CUSTOMER_SEARCH = 'Procura de cliente';
+export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND = "Non se atoparon clientes relacionados con este dominio";
+export const CUSTOMER_SEARCH_NOT_FOUND = "Non se atoparon clientes relacionados con esta procura";
 export const CUSTOMERS = 'Clientes';
 
 // ----- D
@@ -115,6 +131,7 @@ export const DEUTSCH = 'Alemán';
 export const DOCUMENT = 'Documento';
 export const DOCUMENTS = 'Documentos';
 export const DOCUMENTARY = 'Documental';
+export const DOMAIN_SEARCH = 'Procura de dominio';
 export const DOWNLOAD = 'Descargar';
 export const DOWNLOAD_FILE = 'Descargar Ficheiro';
 export const DOWNLOAD_FILES = 'Descargar Ficheiros';
@@ -143,6 +160,7 @@ export const EXIT = 'Saída';
 export const EXPENSE = 'Gasto';
 export const EXPENSES = 'Gastos';
 export const EXPIRATIONS = 'Vencementos';
+export const EXPIRED = 'Expirado';
 
 // ----- F
 
@@ -151,6 +169,7 @@ export const FILE = 'Ficheiro';
 export const FILE_DATA = 'Datos do Ficheiro';
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
+export const FIND_LINKED_DOMAINS = "Buscar dominios vinculados";
 export const FOOTER = 'Pé';
 
 // ----- G
@@ -169,6 +188,7 @@ export const GROUPS = 'Grupos';
 export const HEADER = 'Cabeceira';
 export const HELP = 'Axuda';
 export const HIRING = 'Contratación';
+export const HIRING_DATA = "Datos de contratación";
 export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulares';
 export const HOURS = "Horas";
@@ -209,6 +229,14 @@ export const LANGUAGE = 'Idioma';
 export const LAST = 'Última';
 export const LAST_LOCATION = 'Última ubicación';
 export const LAST_STATUS = 'Último estado';
+export const LINK = 'Vincular';
+export const LINK_CLIENT = "Vincular cliente";
+export const LINKING = "Vinculación";
+export const LINKED = 'Vinculado';
+export const LINKED1 = 'Vinculados';
+export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
+export const LINK_DOMAIN_QUESTION = "Desexa vincular este cliente co dominio?";
+export const LOADING = 'Cargando';
 export const LOCATION = 'Ubicación';
 
 // ----- M
@@ -236,16 +264,20 @@ export const NEW_REQUEST = 'Nova Solicitude';
 export const NEW_WAREHOUSE = 'Nova Almacén';
 export const NEXT = 'Seguinte';
 export const NIF = 'NIF';
+export const NOT_LINKED = 'Non vinculado';
+export const NOT_LINKED1 = 'Non vinculados';
 export const NOTIFICATION = 'Notificación';
 export const NOTIFICATIONS = 'Notificacións';
 export const NOTES = 'Notas';
 export const NOTE = 'Nota';
 export const NUMBER = 'Número';
+export const NUMBER_OF_USERS = 'Número de usuarios';
 
 // ----- O
 
 export const OBSERVATION = 'Observación';
 export const OFFICE = 'Despacho';
+export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Só dominios sen cliente vinculado";
 export const ONLY_PORTAL = 'Só Portal';
 export const OPEN = 'Abrir';
 export const OPEN_MENU = 'Abrir Menú';
@@ -256,6 +288,7 @@ export const OTHER_SERVICES = 'Outros Servizos';
 
 // ----- P
 
+export const PARENT_APPS = "Aplicacións do pai";
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Contrasinal';
 export const PAYMETHOD = 'Forma de Pagament'
@@ -276,6 +309,8 @@ export const PRINT = 'Imprimir';
 export const PRINT_INVOICE = 'Imprimir Factura';
 export const PROCESSED_MOVEMENT = 'El alta se ha procesado correctamente';
 export const PRODUCT = 'Produto';
+export const PRODUCT_NOT_EMPTY = "O produto non pode estar baleiro";
+export const PRODUCT_MUST_BE_SELECTED = "É obrigatorio seleccionar un produto";
 export const PRODUCTS = 'Produtos';
 export const PROVINCE = 'Provincia';
 
@@ -344,6 +379,7 @@ export const SIZE = 'Tamaño';
 export const SPANISH = 'Castelán';
 export const STATISTICS = 'Estatística';
 export const STATUS = "Estado";
+export const STATUS_NOT_EMPTY = "O estado non pode quedar baleiro";
 export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Provedor';
 export const SUPPLIERS = 'Provedores';
@@ -379,6 +415,10 @@ export const TYPES = 'Tipos';
 
 // ----- U
 
+export const UNLINK = "Desvincular";
+export const UNLINK_DOMAIN_QUESTION = "Desexa desvincular este cliente do dominio?";
+export const UNLINK_CLIENT = "Desvincular cliente";
+export const UNLINKED = "Sen vincular";
 export const UPDATED_CONTRACT = 'El contrato se ha modificado correctamente';
 export const UPLOAD = 'Subir';
 export const UPLOAD_FILE = 'Subir Ficheiro';
@@ -386,6 +426,7 @@ export const USER = 'Usuario';
 export const USER_DATA = 'Datos do Usuario';
 export const USER_MANAGEMENT = 'Xestión de Usuarios';
 export const USERS = 'Usuarios';
+export const UTILITIES = 'Utilidades';
 
 // ----- V
 

@@ -3,7 +3,8 @@ package com.esferalia.aon.payroll.irpf.sql;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementDate;
+import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementEndDate;
+import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementStartDate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -66,8 +67,8 @@ import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
@@ -485,6 +486,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		private static Collection<IrpfContractSalaryCalculatorContext> getContexts(
 				ISQLContractSalaryCalculatorContext ctx) {
 			List<Period> periods = getPeriods(ctx);
+			Collections.sort(periods, (p1,p2) -> p2.compareTo(p1));
 			List<IrpfContractSalaryCalculatorContext> ctxs = new ArrayList<IrpfContractSalaryCalculatorContext>(
 					periods.size());
 			for (Period period : periods)
@@ -663,6 +665,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			public double getIrpf() {
 				return 0.00;
 			}
+			
+		    @Override
+		    protected void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
+		    }
 		});
 	}
 
@@ -761,17 +767,9 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	@Override
 	public int getAñoNacimiento() {
-		int añoNacimiento = ctx.getInt(SQLConstants.PERSON,
-				PersonColumns.BIRTH_DATE);
-
-		// Caused by: com.esferalia.aon.salary.expression.CheckException:
-		// cvc-minInclusive-valid: Value '0' is not facet-valid with respect to
-		// minInclusive '1905' for type
-		// '#AnonType_AñoNacimientotipo_RetenidoEntrada2015'.
-
-		// TODO: Ask for correct year...
-		
-		return añoNacimiento < 1905 ? 1905 : añoNacimiento;
+		Date birthDate = ctx.getDate(SQLConstants.PERSON,
+			PersonColumns.BIRTH_DATE);
+		return birthDate != null ? AonDateUtils.getYear(birthDate) : 0;
 	}
 
 	@Override
@@ -1178,7 +1176,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				totalIrpf += salaryRs.getDouble(SalaryColumns.TOTAL_IRPF);
 				socialSecurityContributons += salaryRs
 						.getDouble(SalaryColumns.SOCIAL_SECURITY_CONTRIBUTIONS);
-				dates.add(salaryRs.getDate(SalaryColumns.START_DATE));
+				dates.add(AonDateUtils.getMonthFirstDay(salaryRs.getDate(SalaryColumns.END_DATE)));
 				int type = salaryRs.getInt(SalaryColumns.TYPE);
 				if ( type == 1)  {
 					proExtBase -= salaryRs.getDouble(SalaryColumns.IRPF_BASE);
@@ -1422,11 +1420,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		//@formatter:on
 		
 		for (AgreementExtraRecord agreementExtraRecord : result) {
-			Date startDate = parseAgreementDate(
+			Date startDate = parseAgreementStartDate(
 					agreementExtraRecord.getStartDate(), year);
-			Date endDate = parseAgreementDate(
+			Date endDate = parseAgreementEndDate(
 					agreementExtraRecord.getEndDate(), year);
-			Date issueDate = parseAgreementDate(
+			Date issueDate = parseAgreementStartDate(
 					agreementExtraRecord.getIssueDate(), year);
 			
 			

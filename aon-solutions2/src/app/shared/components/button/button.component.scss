@@ -29,8 +29,10 @@
         margin-right  : $margin-button-icon-right;
         top           : $top-button-icon !important;
       }
-      .appButton set-icon path{
-        color         : $color-primary;
+      
+      .appButton mat-icon svg,
+      .appButton set-icon svg{
+        fill         : $color-primary;
       }
 
     // Text aling
@@ -52,8 +54,9 @@
       background-color: $background-button-dark-hover;
     }
       // Buton icon
-      .appButton.white:hover set-icon path{
-        color         : $color-quarter;
+      .appButton.white:hover mat-icon svg,
+      .appButton.white:hover set-icon svg{
+        fill         : $color-quarter;
       }
   //
   // Color Dark
@@ -67,11 +70,13 @@
       background-color: $background-button-dark-hover;
     }
       // Buton icon
-      .appButton.dark set-icon path{
-        color         : $color-quarter;
+      .appButton.dark mat-icon svg,
+      .appButton.dark set-icon svg{
+        fill         : $color-quarter;
       }
-      .appButton.dark:hover set-icon path{
-        color         : $color-quarter;
+      .appButton.dark mat-icon svg,
+      .appButton.dark:hover set-icon svg{
+        fill         : $color-quarter;
       }
   //
   // Color Red
@@ -85,13 +90,15 @@
       background-color: $background-button-red-hover;
     }
       // Buton icon
-      .appButton.red set-icon path{
-        color         : $color-quarter;
+      .appButton.red mat-icon svg,
+      .appButton.red set-icon svg{
+        fill         : $color-quarter;
       }
-      .appButton.red:hover set-icon path{
-        color         : $color-quarter;
+      .appButton.red:hover mat-icon svg,
+      .appButton.red:hover set-icon svg{
+        fill         : $color-quarter;
       }
-    // Boder pink
+    // Boder red
       .appButton.border-red{
         border          : $border-button-red;
       }
@@ -99,11 +106,13 @@
         background-color: $background-button-red-hover2;
       }
         // Buton icon
-        .appButton.border-red set-icon path{
-          color         : $background-button-red;
+        .appButton.border-red mat-icon svg,
+        .appButton.border-red set-icon svg{
+          fill         : $background-button-red;
         }
-        .appButton.border-red:hover set-icon path{
-          color         : $background-button-red;
+        .appButton.border-red:hover mat-icon svg,
+        .appButton.border-red:hover set-icon svg{
+          fill         : $background-button-red;
         }
   //
   // Color Blue
@@ -117,13 +126,15 @@
       background-color: $background-button-blue-hover;
     }
       // Buton icon
-      .appButton.blue set-icon path{
-        color         : $color-quarter;
+      .appButton.blue mat-icon svg,
+      .appButton.blue set-icon svg{
+        fill         : $color-quarter;
       }
-      .appButton.blue:hover set-icon path{
-        color         : $color-quarter;
+      .appButton.blue:hover mat-icon svg,
+      .appButton.blue:hover set-icon svg{
+        fill         : $color-quarter;
       }
-    // Boder pink
+    // Boder blue
       .appButton.border-blue{
         border          : $border-button-blue;
       }
@@ -131,11 +142,13 @@
         background-color: $background-button-blue-hover2;
       }
         // Buton icon
-        .appButton.border-blue set-icon path{
-          color         : $background-button-blue;
+        .appButton.border-blue mat-icon svg,
+        .appButton.border-blue set-icon svg{
+          fill         : $background-button-blue;
         }
-        .appButton.border-blue:hover set-icon path{
-          color         : $background-button-blue;
+        .appButton.border-blue:hover mat-icon svg,
+        .appButton.border-blue:hover set-icon svg{
+          fill         : $background-button-blue;
         }
   //
   // Color Pink
@@ -149,11 +162,13 @@
       background-color: $background-button-pink-hover;
     }
       // Buton icon
-      .appButton.pink set-icon path{
-        color         : $color-quarter;
+      .appButton.pink mat-icon svg,
+      .appButton.pink set-icon svg{
+        fill         : $color-quarter;
       }
-      .appButton.pink:hover set-icon path{
-        color         : $color-quarter;
+      .appButton.pink:hover mat-icon svg,
+      .appButton.pink:hover set-icon svg{
+        fill         : $color-quarter;
       }
     // Boder pink
       .appButton.border-pink{
@@ -163,11 +178,13 @@
         background-color: $background-button-pink-hover2;
       }
         // Buton icon
-        .appButton.border-pink set-icon path{
-          color         : $background-button-pink;
+        .appButton.border-pink mat-icon svg,
+        .appButton.border-pink set-icon svg{
+          fill         : $background-button-pink;
         }
-        .appButton.border-pink:hover set-icon path{
-          color         : $background-button-pink;
+        .appButton.border-pink:hover mat-icon svg,
+        .appButton.border-pink:hover set-icon svg{
+          fill         : $background-button-pink;
         }
   //
   // Color Purple
@@ -181,11 +198,13 @@
       background-color: $background-button-purple-hover;
     }
       // Buton icon
-      .appButton.purple set-icon path{
-        color         : $color-quarter;
+      .appButton.purple mat-icon svg,
+      .appButton.purple set-icon svg{
+        fill         : $color-quarter;
       }
-      .appButton.purple:hover set-icon path{
-        color         : $color-quarter;
+      .appButton.purple:hover mat-icon svg,
+      .appButton.purple:hover set-icon svg{
+        fill         : $color-quarter;
       }
     // Boder purple
       .appButton.border-purple{
@@ -195,11 +214,13 @@
         background-color: $background-button-purple-hover2;
       }
         // Buton icon
-        .appButton.border-purple set-icon path{
-          color         : $background-button-purple;
+        .appButton.border-purple mat-icon svg,
+        .appButton.border-purple set-icon svg{
+          fill         : $background-button-purple;
         }
-        .appButton.border-purple:hover set-icon path{
-          color         : $background-button-purple;
+        .appButton.border-purple:hover mat-icon svg,
+        .appButton.border-purple:hover set-icon svg{
+          fill         : $background-button-purple;
         }
   //
   // Color Green
@@ -213,11 +234,13 @@
       background-color: $background-button-green-hover;
     }
       // Buton icon
-      .appButton.green set-icon path{
-        color         : $color-quarter;
+      .appButton.green mat-icon svg,
+      .appButton.green set-icon svg{
+        fill         : $color-quarter;
       }
-      .appButton.green:hover set-icon path{
-        color         : $color-quarter;
+      .appButton.green:hover mat-icon svg,
+      .appButton.green:hover set-icon svg{
+        fill         : $color-quarter;
       }
     // Boder green
       .appButton.border-green{
@@ -227,11 +250,13 @@
         background-color: $background-button-green-hover2;
       }
         // Buton icon
-        .appButton.border-green set-icon path{
-          color         : $background-button-green;
+        .appButton.border-green mat-icon svg,
+        .appButton.border-green set-icon svg{
+          fill         : $background-button-green;
         }
-        .appButton.border-green:hover set-icon path{
-          color         : $background-button-green;
+        .appButton.border-green:hover mat-icon svg,
+        .appButton.border-green:hover set-icon svg{
+          fill         : $background-button-green;
         }
   //
   // Color Orange
@@ -245,11 +270,13 @@
       background-color: $background-button-orange-hover;
     }
       // Buton icon
-      .appButton.orange set-icon path{
-        color         : $color-quarter;
+      .appButton.orange mat-icon svg,
+      .appButton.orange set-icon svg{
+        fill         : $color-quarter;
       }
-      .appButton.orange:hover set-icon path{
-        color         : $color-quarter;
+      .appButton.orange:hover mat-icon svg,
+      .appButton.orange:hover set-icon svg{
+        fill         : $color-quarter;
       }
     // Boder orange
       .appButton.border-orange{
@@ -259,11 +286,13 @@
         background-color: $background-button-orange-hover2;
       }
         // Buton icon
-        .appButton.border-orange set-icon path{
-          color         : $background-button-orange;
+        .appButton.border-orange mat-icon svg,
+        .appButton.border-orange set-icon svg{
+          fill         : $background-button-orange;
         }
-        .appButton.border-orange:hover set-icon path{
-          color         : $background-button-orange;
+        .appButton.border-orange:hover mat-icon svg,
+        .appButton.border-orange:hover set-icon svg{
+          fill         : $background-button-orange;
         }
 
   //
@@ -320,14 +349,14 @@
       margin          : 0
     }
 
-    .appButton.icon-background app-icon:nth-child(2) path,
-    .appButton.icon-background-red app-icon:nth-child(2) path,
-    .appButton.icon-background-blue app-icon:nth-child(2) path,
-    .appButton.icon-background-pink app-icon:nth-child(2) path,
-    .appButton.icon-background-purple app-icon:nth-child(2) path,
-    .appButton.icon-background-green app-icon:nth-child(2) path,
-    .appButton.icon-background-orange app-icon:nth-child(2) path{
-      color: $color-icon;
+    .appButton.icon-background app-icon:nth-child(2) svg,
+    .appButton.icon-background-red app-icon:nth-child(2) svg,
+    .appButton.icon-background-blue app-icon:nth-child(2) svg,
+    .appButton.icon-background-pink app-icon:nth-child(2) svg,
+    .appButton.icon-background-purple app-icon:nth-child(2) svg,
+    .appButton.icon-background-green app-icon:nth-child(2) svg,
+    .appButton.icon-background-orange app-icon:nth-child(2) svg{
+      fill: $color-icon;
       margin: 0
     }
 
@@ -352,8 +381,8 @@
       .appButton.icon-background-red:hover{
         border: solid $border-size-primary $color-red;
       }
-      .appButton.icon-background-red app-icon path{
-        color: $color-red;
+      .appButton.icon-background-red app-icon svg{
+        fill: $color-red;
       }
       .appButton.icon-background-red app-icon{
         background-color: $background-button-red-hover2;
@@ -362,8 +391,8 @@
       .appButton.icon-background-blue:hover{
         border: solid $border-size-primary $color-blue;
       }
-      .appButton.icon-background-blue app-icon path{
-        color: $color-blue;
+      .appButton.icon-background-blue app-icon svg{
+        fill: $color-blue;
       }
       .appButton.icon-background-blue app-icon{
         background-color: $background-button-blue-hover2;
@@ -372,8 +401,8 @@
       .appButton.icon-background-pink:hover{
         border: solid $border-size-primary $color-pink;
       }
-      .appButton.icon-background-pink app-icon path{
-        color: $color-pink;
+      .appButton.icon-background-pink app-icon svg{
+        fill: $color-pink;
       }
       .appButton.icon-background-pink app-icon{
         background-color: $background-button-pink-hover2;
@@ -382,8 +411,8 @@
       .appButton.icon-background-purple:hover{
         border: solid $border-size-primary $color-purple;
       }
-      .appButton.icon-background-purple app-icon path{
-        color: $color-purple;
+      .appButton.icon-background-purple app-icon svg{
+        fill: $color-purple;
       }
       .appButton.icon-background-purple app-icon{
         background-color: $background-button-purple-hover2;
@@ -392,8 +421,8 @@
       .appButton.icon-background-green:hover{
         border: solid $border-size-primary $color-green;
       }
-      .appButton.icon-background-green app-icon path{
-        color: $color-green;
+      .appButton.icon-background-green app-icon svg{
+        fill: $color-green;
       }
       .appButton.icon-background-green app-icon{
         background-color: $background-button-green-hover2;
@@ -402,8 +431,8 @@
       .appButton.icon-background-orange:hover{
         border: solid $border-size-primary $color-orange;
       }
-      .appButton.icon-background-orange app-icon path{
-        color: $color-orange;
+      .appButton.icon-background-orange app-icon svg{
+        fill: $color-orange;
       }
       .appButton.icon-background-orange app-icon{
         background-color: $background-button-orange-hover2;

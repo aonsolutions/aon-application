@@ -18,6 +18,7 @@ public class InvestAsset implements Serializable {
 	private double vatPercent;
 	private double retentionPercent;
 	private double percent;
+	private String properties;
 
 	public Integer getId() {
 		return id;
@@ -120,5 +121,16 @@ public class InvestAsset implements Serializable {
 		this.percent = percent;
 		return this;
 	}
+
+	public String getProperties() {
+		return properties;
+	}
+
+	public InvestAsset setProperties(String properties) {
+		this.properties = properties;
+		return this;
+	}
+	
+	
 
 }

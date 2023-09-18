@@ -1,9 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
-	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'
-	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' >
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EnterpriseDraft.MyStyle">
 		.container {
@@ -12,7 +9,7 @@
 		
 		.flexColumnCenter {
 			width: 100%;
-			margin-top: 60px;
+			margin-top: 50px;
 			display: flex;
 			flex-direction: column;
 		}
@@ -27,9 +24,7 @@
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
-			<g:HTMLPanel ui:field="centerContainer" styleName="{style.flexColumnCenter}">
-				<g:HTMLPanel ui:field="messageContainer" />
-			</g:HTMLPanel>
+			<g:HTMLPanel ui:field="centerContainer" styleName="{style.flexColumnCenter}" />
 		</g:center>
 	</g:DockLayoutPanel>
 	

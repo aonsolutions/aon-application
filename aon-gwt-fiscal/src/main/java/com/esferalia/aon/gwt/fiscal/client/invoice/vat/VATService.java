@@ -18,7 +18,6 @@ public interface VATService extends RemoteService {
 	AonConfiguration getAonConfiguration(Occam occam) throws AonCoreException;
 	LinkedList<VatSummaryContext> getVatSummaryContext(Occam occam,AccountingReportParams params) throws AonCoreException;
 	LinkedList<VatContext> getVatContext(Occam occam,AccountingReportParams params) throws AonCoreException;
-//	String getVatContextReport(Occam occam,AccountingReportParams params) throws AonCoreException;
 	Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException;
 	
 }

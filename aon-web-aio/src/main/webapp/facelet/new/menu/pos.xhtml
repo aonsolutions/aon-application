@@ -8,6 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:div id="posMenuPopup" style="display:none" 
+	onclick="javascript:selectItemHeader(this.id)"
 	onmouseout="javascript:hideMenuPopup(this.id)" 
 	onmouseover="javascript:showMenuPopup(this.id)" >
 
@@ -20,6 +21,7 @@
 
 					<aon:panelGroup>
 						<aon:panelGrid id="group_pos"
+							rendered="#{actionDenied.renderedGroup('group_pos')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-pos aon-direct-access-panel">
 							<f:facet name="header">
@@ -28,18 +30,21 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_opening-tpv" 
+										rendered="#{actionDenied.renderedOption('posOpening_form-tpv')}"
 										action="posOpening_form-tpv"
 										actionListener="#{posOpening.onReset}"
 										value="#{bundle.finance_posOpening_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_closing-tpv" 
+										rendered="#{actionDenied.renderedOption('')}"
 										action="posClosing_form-tpv"
 										actionListener="#{posClosing.onLoad}" 
 										value="#{bundle.finance_posClosing_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_invoice" 
+										rendered="#{actionDenied.renderedOption('posInvoice_form')}"
 										action="posInvoice_form"
 										actionListener="#{posInvoice.onLoad}" 
 										value="#{bundle.finance_pos_invoice_management_module}" />
@@ -47,6 +52,7 @@
 								<aon:if test="#{aonRole.financeOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="pos_finance_batch-tpv" 
+											rendered="#{actionDenied.renderedOption('posFinance_search-tpv')}"
 											action="posFinance_search-tpv"
 											actionListener="#{posFinance.onEditSearch}"
 											value="#{bundle.finance_posFinance_module}" />
@@ -55,6 +61,7 @@
 								<aon:if test="#{aonRole.productOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="product" 
+											rendered="#{actionDenied.renderedOption('product_search')}"
 											action="product_search"
 											actionListener="#{product.onEditSearch}"
 											value="#{bundle.aon_role_product}" />
@@ -66,6 +73,7 @@
 					
 					<aon:panelGroup>
 						<aon:panelGrid id="group_pos_auxiliaries"
+							rendered="#{actionDenied.renderedGroup('group_pos_auxiliaries')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-utilities aon-direct-access-panel">
 							<f:facet name="header">
@@ -74,18 +82,21 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productTag-pos" 
+										rendered="#{actionDenied.renderedOption('productTag_form-pos')}"
 										action="productTag_form-pos" 
 										actionListener="#{productTag.onCancel}"
 										value="#{bundle.product_tag_module}"/>	
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productCategory-pos" 
+										rendered="#{actionDenied.renderedOption('productCategory-pos')}"
 										action="productCategory-pos"
 										value="#{bundle.aon_categories}" />
 								</aon:div>								
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posDefinition-tpv" 
+											rendered="#{actionDenied.renderedOption('pos_search-tpv')}"
 											action="pos_search-tpv"
 											actionListener="#{pos.onEditSearch}"
 											value="#{bundle.finance_pos_definition_module}" />
@@ -94,6 +105,7 @@
 								<aon:if test="#{aonRole.admin or aonRole.config or aonRole.saleOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posShift-tpv" 
+											rendered="#{actionDenied.renderedOption('posShift_search-tpv')}"
 											action="posShift_search-tpv"
 											actionListener="#{posShift.onEditSearch}"
 											value="#{bundle.report_posShift_list}" />
@@ -101,6 +113,7 @@
 								</aon:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="itemTagPrint-tpv" 
+										rendered="#{actionDenied.renderedOption('itemTagPrint_search-tpv')}"
 										action="itemTagPrint_search-tpv"
 										actionListener="#{itemTagPrint.onEditSearch}"
 										value="#{bundle.product_tag_print_module}"/>	

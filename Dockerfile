@@ -1,4 +1,4 @@
-FROM tomcat:9-jdk17
+FROM tomcat:10-jdk17
 
 ARG AON_VERSION=9.23-SNAPSHOT
 
@@ -37,6 +37,12 @@ ENV JACKSON_CORE_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/j
 ENV JACKSON_DATABIND_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.10.0.pr3/jackson-databind-2.10.0.pr3.jar
 ENV COMMONS_CODEC_URL=https://repo1.maven.org/maven2/commons-codec/commons-codec/1.9/commons-codec-1.9.jar
 ENV JSON_URL=https://repo1.maven.org/maven2/org/json/json/20180813/json-20180813.jar
+
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends unzip; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*;
 
 RUN set -x \
 	\
@@ -120,7 +126,7 @@ ENV TZ=Europe/Madrid
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
 
 # Enable all algorithms
-RUN sed -i -e  '/^\(jdk.tls.disabledAlgorithms\)/,+1 s/^/#/'  /usr/local/openjdk-17/conf/security/java.security
+RUN sed -i -e  '/^\(jdk.tls.disabledAlgorithms\)/,+1 s/^/#/'  /opt/java/openjdk/conf/security/java.security
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]

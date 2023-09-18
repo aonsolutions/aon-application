@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111Declaration;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
@@ -81,53 +82,65 @@ public class Mod111ScriptTest extends AbstractOccamTest {
 	private void test( Mod111 mod111, IModelScript<Mod111Key>[] scripts) {
 		for (IModelScript<Mod111Key> script : scripts) {
 			try {
-				for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
-					String info = MODEL111.getInfo(getOccam(), mod111, script, infoKey);
-					infoKey.visit( new IFiscalModelKeyInfoVisitor<String>(){
-						
-						private String arrayNotNull() {
-							JSONArray array = new JSONArray(info);
-							Assert.assertNotNull(array);
-							return null;
+				if (script != null) {
+					for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
+						if (infoKey != null && script.getKeys() != null) {
+							for (Mod111Key key : script.getKeys() ) {
+								String info = MODEL111.getInfo(getOccam(), mod111, script, infoKey);
+								infoKey.visit( new IFiscalModelKeyInfoVisitor<String>(){
+									
+									private String arrayNotNull() {
+										JSONArray array = new JSONArray(info);
+										Assert.assertNotNull(array);
+										return null;
+									}
+									
+									@Override public String visitCompute() { return arrayNotNull(); }
+									@Override public String visitModelInvoiceVatBreakdown() { return arrayNotNull(); }
+									@Override public String visitModelInvoiceIrpfBreakdown() {return arrayNotNull(); }
+									@Override public String visitModelSalaryIrpfBreakdown() {return arrayNotNull(); }
+									@Override public String visitModelOutVatAccrualInvoice() {return arrayNotNull(); }
+									@Override public String visitModelInVatAccrualInvoice() {return arrayNotNull(); }
+									
+									@Override 
+									public String visitComputeKey() {
+										Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
+										if (key != null && Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
+											Assert.assertNotNull(info);
+											Assert.assertNotEquals(info, "");
+										} else if (key != null) {
+											JSONObject json = new JSONObject(info);
+											Assert.assertNotNull(json);
+											JSONArray array = json.getJSONArray("messages");
+											Assert.assertNotNull(array);
+										}
+										return null;
+									}
+									
+									@Override 
+									public String visitNone() { 
+										Assert.assertEquals(AonStringUtils.EMPTY,info);
+										return null;
+									}
+									
+			
+									@Override public String visitInvoice() {return null;}
+									@Override public String visitInAccrualInvoice() {return null;}
+									@Override public String visitOutAccrualInvoice() {return null;}
+									@Override public String visitDiffInvoice() {return null;}
+									@Override public String visitDiffInAccrualInvoice() {return null;}
+									@Override public String visitDiffOutAccrualInvoice() {return null;}
+									@Override public String visitSalary() {return null;}
+									@Override public String visitDiffSalary() {return null;}
+									@Override public String visitActAccount() {return null;}
+									@Override public String visitTitle() {return null;}
+									@Override public String visitIrpfActivity() {return null;}
+									@Override public String visitCorporate() {return null;}
+									@Override public String visitProrratedModelInvoiceVatBreakdown() {return null;}
+								});
+							}
 						}
-						
-						@Override public String visitCompute() { return arrayNotNull(); }
-						@Override public String visitModelInvoiceVatBreakdown() { return arrayNotNull(); }
-						@Override public String visitModelInvoiceIrpfBreakdown() {return arrayNotNull(); }
-						@Override public String visitModelSalaryIrpfBreakdown() {return arrayNotNull(); }
-						@Override public String visitModelOutVatAccrualInvoice() {return arrayNotNull(); }
-						@Override public String visitModelInVatAccrualInvoice() {return arrayNotNull(); }
-						
-						@Override 
-						public String visitComputeKey() {
-							JSONObject json = new JSONObject(info);
-							Assert.assertNotNull(json);
-							JSONArray array = json.getJSONArray("messages");
-							Assert.assertNotNull(array);
-							return null;
-						}
-						
-						@Override 
-						public String visitNone() { 
-							Assert.assertEquals(AonStringUtils.EMPTY,info);
-							return null;
-						}
-						
-
-						@Override public String visitInvoice() {return null;}
-						@Override public String visitInAccrualInvoice() {return null;}
-						@Override public String visitOutAccrualInvoice() {return null;}
-						@Override public String visitDiffInvoice() {return null;}
-						@Override public String visitDiffInAccrualInvoice() {return null;}
-						@Override public String visitDiffOutAccrualInvoice() {return null;}
-						@Override public String visitSalary() {return null;}
-						@Override public String visitDiffSalary() {return null;}
-						@Override public String visitActAccount() {return null;}
-						@Override public String visitTitle() {return null;}
-						@Override public String visitIrpfActivity() {return null;}
-						@Override public String visitCorporate() {return null;}
-						@Override public String visitProrratedModelInvoiceVatBreakdown() {return null;}
-					});
+					}
 				}
 			} catch (Exception e) {
 				System.out.println( " \t [ERROR]" 

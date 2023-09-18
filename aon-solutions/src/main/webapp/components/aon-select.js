@@ -218,9 +218,13 @@ export class AonSelect extends AonElement {
 
       input.onInput(({target})=>{
         if(this.disableKeyUp) {
-          let optios = this.getOptions().filter(opt => {
-            return opt[this.nameAlias].toUpperCase().includes(target.value.toUpperCase()) || this.checkSelectable(opt);
-          })
+          let val = target.value.toUpperCase();
+          let optios = this.getOptions();
+          if (val) {
+            optios = this.getOptions().filter(opt => {
+              return opt[this.nameAlias].toUpperCase().includes(val) || this.checkSelectable(opt);
+            })
+          }
           this.buildOptions(optios);
         }
       });
@@ -234,7 +238,9 @@ export class AonSelect extends AonElement {
           this.keyboardSelected(ev);
         } 
       });
-
+      if (this.multiple) {
+        this.displayMultiple();
+      }
     }
   }
 
@@ -328,6 +334,7 @@ export class AonSelect extends AonElement {
         } else {
           this.removeSelectable(option);
         }
+        this.dispatchEvent(new Event(EVENT.CHANGE));
       });
     }
   
@@ -351,12 +358,13 @@ export class AonSelect extends AonElement {
     const selectable = this.getSelectable();
     const length = selectable.length;
 
-    if(length){
-      input.value = selectable[0][this.nameAlias];
-      input.setLabelCount(length - 1);
-    } else {
-      input.value ="";
-    }
+    this.displayMultiple();
+    // if(length){
+    //   input.value = selectable[0][this.nameAlias];
+    //   input.setLabelCount(length - 1);
+    // } else {
+    //   input.value ="";
+    // }
 
     this.dispatchEvent(new CustomEvent(EVENT.SELECT, {
       detail: {
@@ -365,6 +373,18 @@ export class AonSelect extends AonElement {
         option
       }
     }))
+  }
+
+  displayMultiple() {
+    const input = this.getInput();
+    const selectable = this.getSelectable();
+    const length = selectable.length;
+    if(length){
+      input.value = selectable[0][this.nameAlias];
+      input.setLabelCount(length - 1);
+    } else {
+      input.value ="";
+    }
   }
 
   keyboardSelected({key}){

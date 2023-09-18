@@ -1,7 +1,7 @@
 import { CONSTANT } from "../../environments/environments.js";
 import { RegistryType } from "../../models/enums.js";
 import { round } from "../../services/utils.js";
-import { getSurchargeByVat, TaxType } from "./invoiceEnums.js";
+import { getSurchargeByVat, TaxType, WithholdingType } from "./invoiceEnums.js";
 import * as LS from '../../services/localStorageService.js';
 
 export class Invoice {
@@ -439,6 +439,12 @@ export class Invoice {
     return this.withholdingFarmer  && this.withholdingFarmer != CONSTANT.FALSE;;
   }
 
+  setWithholdingType(withholdingType) {
+    this.calculateWithholdingFromTax(withholdingType);
+    this.calculateTotalFromTax();
+    return this;
+  }
+
   setWithholdingFarmer(withholdingFarmer) {
     this.withholdingFarmer = withholdingFarmer;
     this.calculateWithholdingFromTax();
@@ -558,16 +564,23 @@ export class Invoice {
     return this;
   }
 
-  calculateWithholdingFromDetail() {
+  calculateWithholdingFromDetail(withholdingType) {
     if(this.isWithholding() && this.taxes.filter(f => TaxType.IRPF === f.tax).length === 0) {
+      let percentage = withholdingType ? withholdingType.percentage
+        : (this.isWithholdingFarmer() ? 2.0 : 15.0);
+
+      let wt = withholdingType ? withholdingType.id
+        : (this.isWithholdingFarmer() ? CONSTANT.FARMER : CONSTANT.PROFESSIONAL);
+
       let tax = {
         tax: TaxType.IRPF,
         type: this.isWithholdingFarmer() ? TaxType.IRPF_AGRI : TaxType.IRPF_PROF,
-        percentage: this.isWithholdingFarmer() ? 2.0 : 15.0,
+        percentage: percentage,
         base: 0.0,
         quota: 0.0,
         surcharge: 0.0,
-        surcharge_quota: 0.0
+        surcharge_quota: 0.0,
+        withholding_type: wt
        };
        this.taxes.push(tax);
     }
@@ -581,12 +594,27 @@ export class Invoice {
 
       this.taxes.forEach((tax, i) => {
        if(TaxType.IRPF === tax.tax){
+          withholdingType = withholdingType ||  WithholdingType.find(v => v.id == tax.withholding_type);
+          let percentage = withholdingType ? withholdingType.percentage
+            : (this.isWithholdingFarmer() ? 2.0 : 15.0);
+
+          let wt = withholdingType ? withholdingType.id
+            : (this.isWithholdingFarmer() ? CONSTANT.FARMER : CONSTANT.PROFESSIONAL);
           tax.type = this.isWithholdingFarmer() 
             ? TaxType.IRPF_AGRI : (TaxType.IRPF_AGRI === tax.type ? TaxType.IRPF_PROF : tax.type);
-         tax.percentage = this.isWithholdingFarmer() 
-           ? 2.0 : (tax.percentage === 2.0 ? 15.0 : tax.percentage);
+         tax.percentage = percentage;
          tax.base = base;
+         tax.withholding_type = wt;
          this.taxes[i] = this.calculateTax(tax); 
+         this.details.forEach((d, i) => {
+          if(!d.prepayment) {
+            d.withholding = true;
+            d.withholding_type = tax.withholding_type;
+            d.withholding_percentage = tax.percentage;
+            d.withholding_quota = round(d.amount / 100 * tax.percentage);
+            this.details[i] = d;
+          }
+        });
         }
       });
     } else if(this.taxes.filter(f => TaxType.IRPF === f.tax).length > 0){
@@ -600,16 +628,23 @@ export class Invoice {
     }     
   }
 
-  calculateWithholdingFromTax() {
+  calculateWithholdingFromTax(withholdingType) {
     if(this.isWithholding() && this.taxes.filter(f => TaxType.IRPF === f.tax).length === 0) {
+      let percentage = withholdingType ? withholdingType.percentage
+        : (this.isWithholdingFarmer() ? 2.0 : 15.0);
+
+      let wt = withholdingType ? withholdingType.id
+        : (this.isWithholdingFarmer() ? CONSTANT.FARMER : CONSTANT.PROFESSIONAL);
+
       let tax = {
         tax: TaxType.IRPF,
-        type: this.isWithholdingFarmer() ? TaxType.IRPF_AGRI : TaxType.IRPF_PROF,
-        percentage: this.isWithholdingFarmer() ? 2.0 : 15.0,
+        type: TaxType.IRPF,
+        percentage: percentage,
         base: 0.0,
         quota: 0.0,
         surcharge: 0.0,
-        surcharge_quota: 0.0
+        surcharge_quota: 0.0,
+        withholding_type: wt
        };
        this.taxes.push(tax);
     }
@@ -624,17 +659,23 @@ export class Invoice {
       });
 
       this.taxes.forEach((tax, i) => {
-        if(TaxType.IRPF === tax.tax){
-          tax.type = this.isWithholdingFarmer() 
-            ? TaxType.IRPF_AGRI : (TaxType.IRPF_AGRI === tax.type ? TaxType.IRPF_PROF : tax.type);
-          tax.percentage = this.isWithholdingFarmer() 
-            ? 2.0 : (tax.percentage === 2.0 ? 15.0 : tax.percentage);
+        if(TaxType.IRPF === tax.tax) {
+          withholdingType = withholdingType || WithholdingType.find(v => v.id == tax.withholding_type);
+          let percentage = withholdingType ? withholdingType.percentage
+            : (this.isWithholdingFarmer() ? 2.0 : 15.0);
+  
+          let wt = withholdingType ? withholdingType.id
+            : (this.isWithholdingFarmer() ? CONSTANT.FARMER : CONSTANT.PROFESSIONAL);
+      
+          tax.type = TaxType.IRPF;
+          tax.percentage = percentage;
           tax.base = base;
+          tax.withholding_type = wt;
           this.taxes[i] = this.calculateTax(tax); 
           this.details.forEach((d, i) => {
             if(!d.prepayment) {
               d.withholding = true;
-              d.withholding_type = tax.type;
+              d.withholding_type = tax.withholding_type;
               d.withholding_percentage = tax.percentage;
               d.withholding_quota = round(d.amount / 100 * tax.percentage);
               this.details[i] = d;
@@ -694,7 +735,7 @@ export class Invoice {
   }
 
   calculateTaxFromTotal() {
-    if(this.isEmitida() && (!this.isNacional() || this.isExempt)){
+    if(this.isEmitida() && (!this.isNacional() || this.isExempt())){
       this.taxes = [{
           tax:TaxType.IVA,
           type: TaxType.IVA,

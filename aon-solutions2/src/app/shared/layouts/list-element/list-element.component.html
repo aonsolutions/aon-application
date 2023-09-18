@@ -1,11 +1,7 @@
-<div class="listElement"
-    [ngStyle]="{
-        'height': '100%',
-        'width': '100%',
-        'padding': padding,
-        'border': border,
-        'borderColor': color,
-        'borderRadius': borderRadius
-}">
-    <ng-content></ng-content>
+<div 
+  class="list-element"
+>
+  <ul>
+    <ng-content select="[menu]" ></ng-content>
+  </ul>
 </div>

@@ -86,5 +86,10 @@ public class MODEL349 {
 		}
 	}
 	
+	public static Mod349 aeatPresentation(Occam occam, Mod349 mod, String aeatResponse) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().aeatPresentation(ctx, mod, aeatResponse);
+		}
+	}
 
 }

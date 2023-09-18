@@ -283,7 +283,6 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			inputVatAccount.setRequired(false);
 			outputVatAccount.setRequired(false);
 			adjAccount.setRequired(false);
-			final boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests( this );
 			expAccount.setValue(vat.getExpAccountId(),vat.getExpAccountCode(),vat.getExpAccountDescription(),
 					(callback.getInvoice().getRegistry() != null && callback.getInvoice().getRegistry().getId() != null));
 			expAccount.addSelectionHandler( new SelectionHandler<Account>() {
@@ -417,6 +416,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			investAsset.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
+					boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests( InvoicePanelRow.this );
 					if (investAsset.getValue() == null) {
 						vat.setInvestAsset( null );
 						vat.setDeductiblePercent(100.0);
@@ -440,6 +440,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			});
 			add(getCell(investAssetCell,investAsset));
 
+			boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests( InvoicePanelRow.this );
 			dedPercent.getElement().getStyle().setWidth(50, Unit.PX);
 			dedPercent.setValue(vat.getDeductiblePercent());
 			dedPercentCell.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null);

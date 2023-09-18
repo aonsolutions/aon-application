@@ -1,10 +1,14 @@
 package com.esferalia.aon.occam.impl.jooq.fiscal;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.fiscal.IMODEL123;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
@@ -92,13 +96,17 @@ public class MODEL123Impl implements IMODEL123 {
 				configuration -> Mod123DAO.create(ctx,mod123));
 	}
 	@Override
-	public Mod123 reset(AONContext ctx, Mod123 mod123) {
-		return ctx.getDslContext().transactionResult(
-			configuration -> Mod123DAO.reset(ctx,mod123));
-	}
-	@Override
 	public String getInfo(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod123InfoDAO.getInfo(ctx,mod123,script,infoKey);
+	}
+	@Override
+	public Stream<IrpfBreakdown> getInfo(CloseableAONContext ctx, Mod123 mod123, Mod123Key key, IDAOCallback callback) {
+		return  Mod123InfoDAO.getModelInvoicesInfo(ctx, mod123, key)
+			.onClose(() -> {
+				if (callback != null) {
+					callback.onFinish();
+				}
+			});
 	}
 	@Override
 	public Mod123 aeatPresentation(AONContext ctx, Mod123 mod123, String aeatResponse) {

@@ -12,8 +12,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;

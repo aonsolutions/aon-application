@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.CarrierPackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
@@ -228,6 +229,12 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	// ------------------ CARRIER PACKING
+	
+	@Override
+	public List<CarrierPacking> getCarrierPackingList(AONContext ctx, CarrierPackingFilter filter, Options...options){
+		return ctx.getDslContext().transactionResult(configuration ->
+			CarrierPackingDAO.getList(ctx, filter, options));
+	}
 
 	@Override
 	public Stream<String> getCarrierPackingSeries(AONContext ctx){

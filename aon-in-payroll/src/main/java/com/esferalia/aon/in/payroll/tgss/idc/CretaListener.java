@@ -1,8 +1,10 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
+import static com.esferalia.aon.watson.util.AonStringUtils.normalized;
 
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +30,7 @@ public class CretaListener implements IdcParserListener {
 	
 	private static final class CretaTramoBuilder extends TramoBuilder {
 		Map<String, DatoSolicitado> datosMap = new HashMap<>();
+		List<Predicate<DatoSolicitado>> filters = new ArrayList<>();
 
 		public void clear() {
 			datosMap.clear();
@@ -37,9 +40,15 @@ public class CretaListener implements IdcParserListener {
 			return datosMap.isEmpty();
 		}
 		
+		public boolean hasDato(Predicate<DatoSolicitado> filter) {
+		    return datosMap.keySet().stream()
+		    	.anyMatch(key -> filter.test(datosMap.get(key)));
+		}
+		
 		@Override
 		public TramoBuilder addDato(DatoSolicitado dato) {
-			datosMap.putIfAbsent(getKey(dato), dato);
+		    	if (!filter(dato))
+		    	    datosMap.putIfAbsent(getKey(dato), dato);
 			return this;
 		}
 
@@ -59,6 +68,15 @@ public class CretaListener implements IdcParserListener {
 			return dato.getTipoDato() + dato.getCodigo();
 		}
 		
+		protected void filter(Predicate<DatoSolicitado> filter) {
+		    clear(filter);
+		    filters.add(filter);
+		}
+
+		private boolean filter(DatoSolicitado datoSolicitado) {
+		    return filters.stream().anyMatch(predicate -> predicate.test(datoSolicitado));
+		}
+		
 	}
 
 	Optional<String> cnae = Optional.empty();
@@ -75,7 +93,11 @@ public class CretaListener implements IdcParserListener {
 	protected TipoIpf getTipoIpf( String naf ) {
 		return TipoIpf.DNI;
 	}
-	
+
+	protected boolean isQuoteByRealDays(String ssNum, String ccc, Date start, Date end) {
+		return false;
+	}
+
 	protected boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
 		return false;
 	}
@@ -132,9 +154,9 @@ public class CretaListener implements IdcParserListener {
 		TrabajadorBuilder builder = new TrabajadorBuilder();
 		builder.setNaf(nss);
 		
-		builder.setName(getName(name));		
-		builder.setFirstSurname(getFirstSurname(name));		
-		builder.setSecondSurname(getSecondSurname(name));		
+		builder.setName(normalized(getName(name)));		
+		builder.setFirstSurname(normalized(getFirstSurname(name)));		
+		builder.setSecondSurname(normalized(getSecondSurname(name)));		
 		
 		builder.setNumeroIpf(getIpf(nss));
 		builder.setTipoIpf(getTipoIpf(nss));
@@ -150,7 +172,7 @@ public class CretaListener implements IdcParserListener {
 	@Override
 	public void onEmployeeQuoteGroup(String group, boolean monthly) {
 		tramoBuilder.ifPresent(b -> b.setGrupoCotizacion(group));
-		if ( !monthly && isDaily(group ) ) {
+		if ( /*!monthly &&*/ isDaily(group ) ) {
 			tramoBuilder.ifPresent(b -> addModalidadSalario(b));
 		}
 	}
@@ -171,15 +193,20 @@ public class CretaListener implements IdcParserListener {
 		tramoBuilder.ifPresent( b -> addActivoNormal(ssNum, ccc, start, end, b) );
 	}
 
-	protected void addActivoNormal(String ssNum, String ccc, Date start, Date end, TramoBuilder b) {
-		if ( isPartTimeEmployee(ssNum, ccc, start, end ))
+	protected void addActivoNormal(String ssNum, String ccc, Date start, Date end, CretaTramoBuilder b) {
+		if ( isQuoteByRealDays(ssNum, ccc, start, end )) {
+		    	b.filter(CretaListener::skipI51);
+		    	addTiempoCompletoNormal(b) ; // REG.GRAL.(SIST.ESP.AGRARIO CCC) COTIZACION POR JR
+		}else if ( isPartTimeEmployee(ssNum, ccc, start, end )) {
 			addTiempoParcialNormal(b);
-		else if ( isScholarEmployee(ssNum, ccc, start, end))
+		} else if ( isScholarEmployee(ssNum, ccc, start, end)) {
 			addBecariosNormal(b);
-		else if ( isTraining421Employee(ssNum, ccc, start, end))
-			addFormacionNormal(b);
-		else 
+		} else if ( isTraining421Employee(ssNum, ccc, start, end)) {
+			addFormacionEnAlternanciaNormal(b);
+		    	b.filter(CretaListener::skipI51);
+		} else { 
 			addTiempoCompletoNormal(b);
+		}
 	}
 
 	@Override
@@ -222,8 +249,19 @@ public class CretaListener implements IdcParserListener {
 			default:
 				break;
 			}
-			onNoEmployeeQuotePEC(ssNum, ccc, start, end);
+			if ( !b.hasDato(d -> "C".equalsIgnoreCase(d.getTipoDato()) ))
+			    onNoEmployeeQuotePEC(ssNum, ccc, start, end);
 		});
+	}
+	
+	@Override
+	public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo,
+	    String quota, String colective, Date start, Date end) {
+	    if (isMonthlySEA(colective)) { 
+		tramoBuilder .ifPresent(b -> b.filter(d -> "I".equals(d.getTipoDato())));
+	    }
+		
+	    IdcParserListener.super.onEmployeeQuotePEC(ssNum, ccc, code, description, portTipo, quota, colective, start, end);
 	}
 	
 	public TrabajadoresTramos getTrabajadoresTramos() {
@@ -241,6 +279,14 @@ public class CretaListener implements IdcParserListener {
 		return trabajadoresTramosBuilder.create();
 	}
 	
+	private static boolean  skipI51(DatoSolicitado d ) {
+	    return AonStringUtils.equals( d.getCodigo(),"51");
+	}
+
+	private static boolean isMonthlySEA(String colective) {
+		return AonStringUtils.equals("4216", colective); 
+	}
+
 	private static String getName( String fullName) {
 		String names []  = fullName.split("\\s", -1);
 		return names.length > 0 ? names[0] : "-";
@@ -366,6 +412,53 @@ public class CretaListener implements IdcParserListener {
 		tramoBuilder.addDato(dataSolicitadoBuilder.create());
 	}
 	
+	private static void addFormacionEnAlternanciaNormal(TramoBuilder tramoBuilder) {
+		
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+	    	// 3.1 Contratos formativos en alternancia (TRL 087 )
+	    	// 3.1.1 Tramo en situación de activo "normal" (PEC 0978 o 0979)
+		// Base de contingencias comunes
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("500");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Aportación plan pensiones
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("301");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Accidentes de Trabajo
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("601");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Horas Extras Fuerza Mayor
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("501");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// N horas formación teórica presencial 
+		dataSolicitadoBuilder.setTipo("H");
+		dataSolicitadoBuilder.setCodigo("03");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// N horas formación teórica a distancia 
+		dataSolicitadoBuilder.setTipo("H");
+		dataSolicitadoBuilder.setCodigo("04");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// N horas tutoría 
+		dataSolicitadoBuilder.setTipo("H");
+		dataSolicitadoBuilder.setCodigo("06");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Bonificación tutoría
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("737");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+
 	private static void addBecariosNormal(TramoBuilder tramoBuilder) {
 		
 	}

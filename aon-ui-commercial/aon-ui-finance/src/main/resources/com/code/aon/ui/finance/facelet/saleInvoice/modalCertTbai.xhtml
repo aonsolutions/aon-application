@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<aon:panelGroup id="showCertTbaiWindow">
+		<aon:if test="#{saleInvoice.showCertTbaiWindow}">
+			<rich:modalPanel id="fiscalCertTbaiModalPanel"
+				minWidth="400" minHeight="200" zindex="90"
+				showWhenRendered="#{saleInvoice.showCertTbaiWindow}" >
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="Emitir Factura TicketBAI" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showCertTbaiWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{saleInvoice.showCertTbaiWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="certTbaiForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+										<aon:commandButton id="certTbaiAccept"	
+											rendered="#{!saleInvoice.invoiceTbaiAccepted}"
+											value="Enviar"
+											action="#{saleInvoice.issueInvoice}"
+											styleClass="aon-finding-toolbar-item aon-icon-check-black"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+											oncomplete="Richfaces.hideModalPanel('waitProccess')">
+												<rich:componentControl for="fiscalCertTbaiModalPanel"
+													event="onclick" operation="hide"/>		
+												<f:setPropertyActionListener
+													target="#{saleInvoice.showCertTbaiWindow}"
+													value="#{false}" />
+										</aon:commandButton>
+										
+										<aon:commandButton id="certTbaiModify"
+											rendered="#{!saleInvoice.invoiceTbaiAccepted and !saleInvoice.bizkaia}"
+											value="Modificar"
+											action="#{saleInvoice.modifyInvoice}"
+											styleClass="aon-finding-toolbar-item aon-icon-check-black"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+											oncomplete="Richfaces.hideModalPanel('waitProccess')">
+												<rich:componentControl for="fiscalCertTbaiModalPanel"
+													event="onclick" operation="hide"/>		
+												<f:setPropertyActionListener
+													target="#{saleInvoice.showCertTbaiWindow}"
+													value="#{false}" />
+										</aon:commandButton>
+										
+										<aon:commandButton id="certTbaiSubsanar"	
+											rendered="#{!saleInvoice.invoiceTbaiAccepted  and !saleInvoice.bizkaia}"
+											value="Subsanar"
+											action="#{saleInvoice.subsanarInvoice}"
+											styleClass="aon-finding-toolbar-item aon-icon-check-black"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+											oncomplete="Richfaces.hideModalPanel('waitProccess')">
+												<rich:componentControl for="fiscalCertTbaiModalPanel"
+													event="onclick" operation="hide"/>		
+												<f:setPropertyActionListener
+													target="#{saleInvoice.showCertTbaiWindow}"
+													value="#{false}" />
+										</aon:commandButton>
+									</aon:div>
+									
+									<aon:panelGrid id="menuGrid" columns="2" dir="true">
+		
+										<aon:outputLabel for="keystore" value="Certificado" />
+										<aon:selectOneMenu id="keystore" value="#{saleInvoice.certificate}" >
+											<f:selectItems value="#{saleInvoice.digitalCertificates}" />
+											<a4j:support event="onchange" reRender="showCertTbaiWindow" ajaxSingle="true" />
+										</aon:selectOneMenu>
+										
+										<aon:outputLabel rendered="#{!saleInvoice.pass}" for="password" value="#{bundle.aon_login_passwd}" />
+										<aon:inputSecret rendered="#{!saleInvoice.pass}" id="password" value="#{saleInvoice.password}" />
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>							
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

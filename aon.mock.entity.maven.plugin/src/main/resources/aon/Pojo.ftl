@@ -1,10 +1,10 @@
 // AON-MOCK-ENTITY ${date}
 package ${aonPackage};
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 <#if hasUniqueConstraint>
-import javax.persistence.UniqueConstraint;
+import jakarta.persistence.UniqueConstraint;
 </#if>
 import ${generatedPackage}.${generatedEntity};
 

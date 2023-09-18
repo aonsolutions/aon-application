@@ -55,12 +55,11 @@
 		<scope>compile</scope>
 	</dependency>
     <dependency>
-		<groupId>net.sourceforge.htmlunit</groupId>
+		<groupId>org.htmlunit</groupId>
 		<artifactId>htmlunit</artifactId>
-		<version>2.43.0</version>
-		<!-- <version>2.25</version> -->
+		<version>3.1.0</version>
 		<scope>compile</scope>
-	</dependency>
+     </dependency>
     <dependency>
       <groupId>com.esferalia.aon</groupId>
       <artifactId>aon.watson</artifactId>
@@ -176,7 +175,7 @@
       <groupId>es.aeat</groupId>
       <artifactId>ModRet2023</artifactId>
       <scope>compile</scope>
-      <version>1.1</version>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>com.esferalia.aon</groupId>

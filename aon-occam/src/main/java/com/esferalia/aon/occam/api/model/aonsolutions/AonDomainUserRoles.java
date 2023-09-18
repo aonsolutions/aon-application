@@ -19,12 +19,13 @@ public class AonDomainUserRoles extends DomainUserRoles{
 	public AonDomainUserRoles(DomainUserRoles dur) {
 		super();
 		setDomain(dur.getDomain());
+		setParentDomain(dur.getParentDomain());
 		setUser(dur.getUser());
 		setDomainApps(dur.getDomainApps());
 		setDomainUserRoles(dur.getDomainUserRoles());
 		setParentDomainApps(dur.getParentDomainApps());
 		setParentDomainUserRoles(dur.getParentDomainUserRoles());
-		
+		setDomainPayer(dur.isDomainPayer());
 		setOldDomainModules(dur.getOldDomainModules());
 		setOldParentDomainModules(dur.getOldParentDomainModules());
 
@@ -53,6 +54,7 @@ public class AonDomainUserRoles extends DomainUserRoles{
 		}
 		json.put(IJsonNames.USER, UserJSON.toJSON(getUser()));
 		json.put(IJsonNames.DOMAIN, DomainJSON.toJSON(getDomain()));
+		json.put(IJsonNames.PARENT_DOMAIN, DomainJSON.toJSON(getParentDomain()));
 		json.put(IJsonNames.MAX_DEFINED_USERS, getDomain().getMaxDefinedUsers());
 		json.put(IJsonNames.DEFINED_USERS, getDomain().getDefinedUsers());
 		
@@ -64,6 +66,7 @@ public class AonDomainUserRoles extends DomainUserRoles{
 		json.put("parentDomainApps", parentDomainApps);
 		json.put("domainUserRoles", domainUserRoles);
 		json.put("parentDomainUserRoles", parentDomainUserRoles);
+		json.put("domainPayer", isDomainPayer());
 
 		json.put("oldUserRoles", oldUserRoles);
 		return json;

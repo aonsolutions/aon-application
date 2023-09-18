@@ -3,11 +3,11 @@ package com.esferalia.aon.gwt.payroll.server;
 import java.io.IOException;
 import java.util.Optional;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
@@ -34,15 +34,13 @@ public class PayrollPrintServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doPost(req, resp);
 	}
-	
-	
-	
-	
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Integer[] ids = new Integer[req.getParameterValues("id").length];
+		String[] idsArray = req.getParameterValues("id");
+		Integer[] ids = new Integer[idsArray != null ? idsArray.length : 0];
 		for (int i = 0; i < ids.length; i++)
-			ids[i] = Integer.parseInt(req.getParameterValues("id")[i]);
+			ids[i] = Integer.parseInt(idsArray[i]);
 		resp.setContentType(MimeType.MIME_PDF.getName());
 		String cLimitStr = req.getParameter(PayrollPrintService.Parameter.COMPLEMENTARY_LIMIT.getName());
 		Double cLimit = null;

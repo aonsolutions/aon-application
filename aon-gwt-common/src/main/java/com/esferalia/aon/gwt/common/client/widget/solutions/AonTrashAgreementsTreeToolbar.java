@@ -76,6 +76,7 @@ public class AonTrashAgreementsTreeToolbar extends Composite {
 		
 		searchTextBox = new TextBox();
 		searchTextBox.addStyleName(style.textBox());
+		searchTextBox.addStyleName("aon-SearchTextBox");
 		searchTextBox.getElement().setPropertyString("placeholder", "Filtrar convenios");
 		searchTextBox.addKeyUpHandler(event -> {
 			for(Listener listener : listeners)
@@ -106,6 +107,14 @@ public class AonTrashAgreementsTreeToolbar extends Composite {
 		
 		delete4EverButton.ensureDebugId("delete4EverButton");
 		restoreButton.ensureDebugId("restoreButton");
+	}
+
+	public void setVisibleDraft4EverButton(boolean visible) {
+		this.delete4EverButton.setVisible(visible);
+	}
+
+	public void setVisibleRestoreButton(boolean visible) {
+		this.restoreButton.setVisible(visible);
 	}
 	
 }

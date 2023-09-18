@@ -35,6 +35,7 @@ public class Mod2002022Object implements Serializable {
 		this.options = options;
 		this.mod200 = mod200;
 		initialized = (mod200.getId() != null);
+		
 	}
 
 	public boolean isInitialized() {
@@ -53,8 +54,7 @@ public class Mod2002022Object implements Serializable {
 			for (IMod200ChangeListener listener : changeListeners) {
 				listener.mod200Changed(mod2002);
 			}
-		}
-		
+		}		
 	}
 
 	public void initializeMod200(final AsyncCallback<Mod2002022> callback) {
@@ -106,11 +106,11 @@ public class Mod2002022Object implements Serializable {
 		});
 	}
 	
-	public void fillMod2002022AccountingData(String domainName, int domain, String user, String data, final AsyncCallback<Mod2002022> callback) {
+	public void fillMod2002022AccountingData(String data, final AsyncCallback<Mod2002022> callback) {
 		Model200.getMod2002022Service().fillMod2002022AccountingData(options.getOccam(), mod200, data, new AsyncCallback<Mod2002022>() {
 			
 			@Override
-			public void onSuccess(Mod2002022 result) {
+			public void onSuccess(Mod2002022 result) {				
 				mod200 = result;
 				calculate();
 				fireMod200Changed(mod200);
@@ -118,9 +118,8 @@ public class Mod2002022Object implements Serializable {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				initialized = false;
-				callback.onFailure(caught);
+			public void onFailure(Throwable caught) {				
+				callback.onFailure(caught);				
 			}
 		});
 	}
@@ -129,7 +128,7 @@ public class Mod2002022Object implements Serializable {
 		return mod200;
 	}
 
-	private void setMod200(Mod2002022 mod200) {
+	public void setMod200(Mod2002022 mod200) {
 		this.mod200 = mod200;
 		fireMod200Changed(mod200);
 	}
@@ -145,7 +144,7 @@ public class Mod2002022Object implements Serializable {
 	}
 
 	public boolean isVisible(Mod2002022Key key) {
-		return  mod200.getVisibleMap().containsKey(key);
+		return mod200.getVisibleMap().containsKey(key);		
 	}
 	
 	public void doubleValueChanged(IMod200Key k, double value) {
@@ -164,7 +163,7 @@ public class Mod2002022Object implements Serializable {
 		try {
 			double ret = Model200.resolve(expression);
 			callback.onSuccess(ret);
-		} catch (Throwable t) {
+		} catch (Throwable t) {		
 			callback.onFailure(t);
 		}
 	}

@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:valueParam name="fieldDisabled" default="#{lookup != null and productTo.id != null}" />
+	<aon:valueParam name="productStock" default="#{productTo.stock}" />
+	<aon:valueParam name="itemCount" default="#{productTo.itemCount}" />
+
+	<aon:outputLabel for="#{controller.pojoShortName}_code" value="#{bundle.aon_id}" />
+	<aon:inputText id="#{controller.pojoShortName}_code" 
+		value="#{productTo.code}" size="20" maxlength="15" 
+		onblur="toUpperCase(this);" required="true"
+		disabled="#{fieldDisabled}"
+		ajaxSingle="true" />
+
+	<aon:outputLabel for="#{controller.pojoShortName}_name" value="#{bundle.aon_name}" />
+	<aon:inputText id="#{controller.pojoShortName}_name" 
+		value="#{productTo.name}" required="true"
+		size="64" maxlength="64"
+		disabled="#{fieldDisabled}"
+		ajaxSingle="true" />
+
+	<aon:if test="#{aonConfiguration.bean.product.showType}">
+		<aon:outputLabel for="#{controller.pojoShortName}_type"
+			value="#{bundle.aon_type}" />
+		<aon:panelGrid columns="2" columnClasses="aon-width-200, aon-width-auto">
+			<aon:selectOneMenu id="#{controller.pojoShortName}_type" styleClass="aon-margin-right"
+				value="#{productTo.type}" required="true"
+				disabled="#{fieldDisabled}">
+				<f:selectItems value="#{productCollections.commonProductTypes}" />
+			</aon:selectOneMenu>
+			<aon:div>
+				<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator}">
+					<aon:outputLabel for="#{controller.pojoShortName}_kind" 
+						styleClass="aon-margin-right aon-italic"
+						value="#{bundle.aon_kind}" />
+					<aon:selectOneMenu id="#{controller.pojoShortName}_kind" styleClass="aon-margin-right"
+						value="#{productTo.kind}" required="true"
+						disabled="#{fieldDisabled}">
+						<f:selectItems value="#{productCollections.productKinds}" />
+					</aon:selectOneMenu>
+				</aon:if>
+			</aon:div>
+		</aon:panelGrid>
+	</aon:if>
+
+	<aon:outputLabel for="#{controller.pojoShortName}_category" value="#{bundle.aon_category}" />
+	<aon:selectOneMenu id="#{controller.pojoShortName}_category"
+		value="#{productTo.category}"
+		disabled="#{fieldDisabled}"
+		reRender="#{categoryChangeReRender}" ajaxSingle="false">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{productCollections.categories}" />
+	</aon:selectOneMenu>
+
+	<aon:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
+		<aon:outputLabel for="#{controller.pojoShortName}_brand" value="#{bundle.tas_make}" />
+		<aon:selectOneMenu id="#{controller.pojoShortName}_brand" value="#{productTo.brand}"
+			disabled="#{fieldDisabled}"
+			ajaxSingle="true">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{productCollections.brands}" />
+		</aon:selectOneMenu>
+	</aon:if>
+
+	<aon:if test="#{productSearch.selectableTagsCount > 0}">
+		<ui:include src="/com/code/aon/ui/config/facelet/tag/input.xhtml">
+			<ui:param name="searchController" value="#{productSearch}" />
+		</ui:include>	
+	</aon:if>
+
+	<aon:outputLabel for="#{controller.pojoShortName}_vat" value="#{bundle.aon_vat}" />
+	<aon:div>
+		<aon:selectOneMenu id="#{controller.pojoShortName}_vat" 
+			value="#{productTo.vat}" required="true"
+			disabled="#{fieldDisabled}"
+			reRender="#{controller.pojoShortName}_vat_percentage,Item_sales_price" ajaxSingle="true">
+			<f:selectItems value="#{configCollections.vatTaxes}" />
+		</aon:selectOneMenu>
+		<aon:outputLabel id="#{controller.pojoShortName}_vat_percentage" styleClass="aon-margin-left aon-italic"
+			value="#{productTo.vat.percentage}">
+			<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+		</aon:outputLabel>
+		<aon:outputLabel value="%" />
+	</aon:div>
+
+	<aon:outputLabel for="#{controller.pojoShortName}_retention" value="#{bundle.aon_retention}" />
+	<aon:div>
+		<aon:selectOneMenu id="#{controller.pojoShortName}_retention" 
+			value="#{productTo.retention}"
+			disabled="#{fieldDisabled}"
+			reRender="#{controller.pojoShortName}_retention_percentage,Item_sales_price" ajaxSingle="true">
+			<f:selectItem itemLabel="-" itemValue="" />
+			<f:selectItems value="#{configCollections.retentionTaxes}" />
+		</aon:selectOneMenu>
+		<aon:panelGroup id="#{controller.pojoShortName}_retention_percentage">
+			<aon:outputLabel styleClass="aon-margin-left aon-italic"
+				value="#{productTo.retention.percentage}"
+				rendered="#{productTo.withholding}">
+				<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+			</aon:outputLabel>
+			<aon:outputLabel value="%" rendered="#{productTo.withholding}" />
+		</aon:panelGroup>
+	</aon:div>
+
+	<aon:if test="#{aonConfiguration.bean.product.showSerializable and warehouseCollections.warehouseCount > 0}">
+		<aon:outputLabel for="#{controller.pojoShortName}_serializable" value="#{bundle.aon_serializable}"
+			rendered="#{controller.nevv or productTo.serializable or itemCount == 1}" />
+		<aon:div id="#{controller.pojoShortName}_serializable_div" styleClass="aon-noborder"
+			rendered="#{controller.nevv or productTo.serializable or itemCount == 1}">
+			<aon:selectOneRadio id="#{controller.pojoShortName}_serializable"
+				styleClass="aon-vertical-align-middle aon-margin-right" style="display:inline-table;" 
+				value="#{productTo.serializable}"
+				rendered="#{controller.nevv or itemCount == 1}"
+				disabled="#{fieldDisabled or productTo.composition or (!productTo.serializable and productStock != 0)}"
+				valueChangeListener="#{controller.onSerializableChanged}"
+				ajaxSingle="true" reRender="#{controller.pojoShortName}_serializable_div,#{controller.pojoShortName}_features">
+				<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+				<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+			</aon:selectOneRadio>
+			<aon:div style="display:inline;"
+				rendered="#{productTo.serializable}">
+				<aon:outputLabel for="#{controller.pojoShortName}_lotable" 
+					styleClass="aon-margin-left aon-margin-right aon-bold aon-italic aon-vertical-align-middle"
+					value="#{bundle.aon_serialization_type}"
+					rendered="#{controller.nevv or itemCount == 1}" />
+				<aon:selectOneRadio id="#{controller.pojoShortName}_lotable"
+					styleClass="aon-vertical-align-middle" style="display:inline-table;" 
+					value="#{productTo.lotable}"
+					rendered="#{controller.nevv or itemCount == 1 or !productTo.lotable}"
+					disabled="#{fieldDisabled}">
+					<f:selectItem itemLabel="#{bundle.aon_serializable_unitary}" itemValue="#{false}" />
+					<f:selectItem itemLabel="#{bundle.aon_serializable_batch}" itemValue="#{true}" />
+				</aon:selectOneRadio>
+				<aon:panelGroup rendered="#{!controller.nevv and itemCount > 1 and productTo.lotable}">
+					<aon:outputLabel styleClass="aon-bold aon-italic"
+						value="#{bundle.aon_serializable_unitary}"
+						rendered="#{!productTo.lotable}" />
+					<aon:outputLabel styleClass="aon-bold aon-italic"
+						value="#{bundle.aon_serializable_batch}"
+						rendered="#{productTo.lotable}" />
+				</aon:panelGroup>
+			</aon:div>
+		</aon:div>
+	</aon:if>
+
+	<aon:if test="#{aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showComposition}">
+		<aon:outputLabel value="#{bundle.asset_features}" />
+		<aon:div id="#{controller.pojoShortName}_features">
+			<aon:if test="#{aonConfiguration.bean.product.showStock and warehouseCollections.warehouseCount > 0}">
+				<aon:selectBooleanCheckbox id="#{controller.pojoShortName}_inventoriable"
+					value="#{productTo.inventoriable}"
+					rendered="#{!productTo.composition}"
+					disabled="#{fieldDisabled or productTo.serializable or productStock != 0}"
+					ajaxSingle="true" reRender="#{controller.pojoShortName}_features" />
+				<aon:outputLabel for="#{controller.pojoShortName}_inventoriable" styleClass="aon-margin-right aon-italic"
+					value="#{bundle.product_inventoriable}"
+					rendered="#{!productTo.composition}" />
+			</aon:if>
+
+			<aon:if test="#{aonConfiguration.bean.product.showComposition}">
+				<aon:if test="#{warehouseCollections.warehouseCount > 0}">
+					<aon:selectBooleanCheckbox id="#{controller.pojoShortName}_manufactured"
+						value="#{productTo.manufactured}"
+						disabled="#{fieldDisabled}"
+						rendered="#{!productTo.composition}"
+						valueChangeListener="#{controller.onManufacturedChanged}"
+						ajaxSingle="true" reRender="#{controller.pojoShortName}_features" />
+					<aon:outputLabel for="#{controller.pojoShortName}_manufactured" styleClass="aon-margin-right aon-italic"
+						value="#{bundle.product_manufactured_product}"
+						rendered="#{!productTo.composition}" />
+				</aon:if>
+
+				<aon:selectBooleanCheckbox id="#{controller.pojoShortName}_composition"
+					value="#{productTo.composition}"
+					disabled="#{fieldDisabled}"
+					rendered="#{!productTo.inventoriable and !productTo.manufactured}"
+					valueChangeListener="#{controller.onCompositionChanged}"
+					ajaxSingle="true" reRender="#{controller.pojoShortName}_serializable_div,#{controller.pojoShortName}_features" />
+				<aon:outputLabel for="#{controller.pojoShortName}_composition" styleClass="aon-margin-right aon-italic"
+					value="#{bundle.product_composite_product}"
+					rendered="#{!productTo.inventoriable and !productTo.manufactured}" />
+
+				<aon:panelGroup id="#{controller.pojoShortName}_composition_price">
+					<aon:selectBooleanCheckbox value="#{productTo.compositionPrice}"
+						disabled="#{fieldDisabled}"
+						rendered="#{productTo.composition}" />
+					<aon:outputLabel for="#{controller.pojoShortName}_composition_price" styleClass="aon-margin-right aon-italic"
+						value="#{bundle.product_composition_price}"
+						rendered="#{productTo.composition}" />
+				</aon:panelGroup>
+			</aon:if>
+
+			<aon:if test="#{configCollections.packingTypeTagsCount > 0}">
+				<aon:selectBooleanCheckbox id="#{controller.pojoShortName}_packaged"
+					value="#{productTo.packaged}"
+					disabled="#{fieldDisabled or (!controller.nevv and itemCount > 1)}"
+					rendered="#{!productTo.composition}"
+					ajaxSingle="true" reRender="#{categoryChangeReRender}"  />
+				<aon:outputLabel for="#{controller.pojoShortName}_packaged" styleClass="aon-margin-right aon-italic"
+					value="#{bundle.product_packaged}"
+					rendered="#{!productTo.composition}" />
+			</aon:if>
+			
+			<aon:selectBooleanCheckbox id="#{controller.pojoShortName}_perishable"
+					value="#{productTo.perishable}"
+					ajaxSingle="true" reRender="daysToExpire"  />
+			<aon:outputLabel for="#{controller.pojoShortName}_perishable" styleClass="aon-margin-right aon-italic"
+				value="#{bundle.product_perishable}"
+			/>
+		</aon:div>
+	
+		<aon:outputLabel value="#{bundle.product_days_to_expire}" rendered="#{productTo.perishable}"/>
+		<aon:inputText id="#{controller.pojoShortName}_days_to_expire" 
+			value="#{productTo.daysToExpire}" size="10" maxlength="5"
+			rendered="#{productTo.perishable}"/>
+			
+	</aon:if>
+
+	<aon:outputLabel for="#{controller.pojoShortName}_status" value="#{bundle.aon_status}" />
+	<aon:panelGrid columns="2" columnClasses="aon-width-240, aon-width-auto">
+		<aon:selectOneRadio id="#{controller.pojoShortName}_status" value="#{productTo.status}"
+			disabled="#{fieldDisabled}">
+			<f:selectItems value="#{productCollections.productStatuses}" />
+		</aon:selectOneRadio>
+		<aon:if test="#{!controller.nevv and productTo.inventoriable}">
+			<aon:div>
+				<aon:outputLabel styleClass="aon-margin-right aon-bold aon-uppercase"
+					value="#{bundle.product_stock} #{bundle.aon_product}:" />
+				<aon:outputText value="#{productStock}" styleClass="aon-bold">
+					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+				</aon:outputText>
+			</aon:div>
+		</aon:if>
+	</aon:panelGrid>
+
+</ui:composition>

@@ -718,7 +718,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	private boolean showHours;
 	private boolean showHoursExtraCompl;
 	private int month;
-	private int year = DateUtils.getYear();
+	private int year = DateUtils.getYear() - 1900;
 	
 	private DefinitionMenu definitionMenu;
 	private UtilityMenu utilityMenu;
@@ -2025,10 +2025,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		
 		yearLB.addChangeHandler(e -> changeYear());
 		
-		setSelectedValueLB(yearLB, year+"");
-		year = year - 1900;
+		setSelectedValueLB(yearLB, DateUtils.getYear()+"");
 		
-		year = DateUtils.getYear();
+		year = year - 1900;
 		
 	}
 

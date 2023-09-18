@@ -39,13 +39,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -72,6 +65,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Salary;
@@ -80,12 +74,11 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.payroll.Employee.ExpressionData;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
-import com.esferalia.aon.payroll.tgss.creta.Bases.AddZeroDatoBasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.ConstantDatoBasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.CustomizeBasesCallback;
@@ -104,6 +97,13 @@ import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import net.aonsolutions.core.tgss.creta.jaxb.Dato;
 import net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.Fecha;
@@ -153,12 +153,21 @@ public class CretaServlet extends HttpServlet
 			// TODO Auto-generated method stub
 			return TrabajadoresTramosCallback.super.getTipoIpf(naf);
 		}
+		
+		@Override
+		public boolean isQuoteByRealDays(String naf, String ccc, Date start, Date end) {
+		    return 
+		    getEmployee(naf, start).map(this::hasRealDays).orElse(false)
+		    ;
+		}
 
 		@Override
 		public boolean isPartTimeEmployee(String naf, String ccc, Date start, Date end) {
 			return 
 			getEmployee(naf, start)
-			.map( e -> isPartialTime(e, start) || is3XX(e, start))
+			.map( e -> is3XX(e, start) // INDEFINIDO, FIJO DISCONTINUO
+				|| ( !isFullTime(e, start) &&( isPartialTime(e, start) || is2XX(e, start) || is5XX(e, start)))
+			)
 			.orElse(TrabajadoresTramosCallback.super.isPartTimeEmployee(naf, ccc, start, end))
 			;
 		}
@@ -190,8 +199,27 @@ public class CretaServlet extends HttpServlet
 			return employee.getContractType(Employee.toLocalDate(date)).map( tc2 -> AonStringUtils.startsWith(tc2, "3")).orElse(false);
 		}
 
+		private boolean is2XX(Employee employee, Date date) {
+			return employee.getContractType(Employee.toLocalDate(date)).map( tc2 -> AonStringUtils.startsWith(tc2, "2")).orElse(false);
+		}
+
+		private boolean is5XX(Employee employee, Date date) {
+			return employee.getContractType(Employee.toLocalDate(date)).map( tc2 -> AonStringUtils.startsWith(tc2, "5")).orElse(false);
+		}
+
+
+		private boolean isFullTime(Employee employee, Date date) {
+			return employee.getFactor(Employee.toLocalDate(date)).map( factor ->  factor == 1.00  ).orElse(false);
+		}
+
 		private boolean isPartialTime(Employee employee, Date date) {
 			return employee.getFactor(Employee.toLocalDate(date)).map( factor ->  factor < 1.00  ).orElse(false);
+		}
+
+		private boolean hasRealDays(Employee employee) {
+			return employee.getDatas()
+			.getOrDefault("JORNADAS_REALES", Collections.emptyList()).stream()
+			.map( ExpressionData::getExpression ).filter(AonStringUtils::isNotBlank).count() > 0;
 		}
 	}
 
@@ -259,7 +287,9 @@ public class CretaServlet extends HttpServlet
 					;
 			
 			String i54 = req.getParameter(CretaService.Parameter.I54.name() );
-			ConstantDatoBasesCallback i54Callback = new ConstantDatoBasesCallback("54", "I", i54);
+			BasesCallback i54Callback = AonStringUtils.isBlank(i54) ? 
+				new Bases.DefaultsCallback().add("54", "1")
+				:new ConstantDatoBasesCallback("54", "I", i54 );
 	
 			InfoPickerBasesCallback pickerBasesCb = new InfoPickerBasesCallback();
 	
@@ -274,7 +304,7 @@ public class CretaServlet extends HttpServlet
 			ProgressCallback progressCb = new ProgressCallback() {
 				@Override
 				public void progress(String message) {
-					os.printf(",\r\n{\"percent\": 0.00, \"msg\":\"%s\"}", message);
+					os.printf(",\r\n{\"percent\": 0.00, \"msg\":\"%s\"}", escape(message));
 					os.flush();
 				}
 			};
@@ -317,8 +347,11 @@ public class CretaServlet extends HttpServlet
 					// Try with IDC first
 					trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req));
 				} catch ( Throwable t ) {
-					trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 				}
+			}
+
+			if ( trabajadoresYTramosIss.isEmpty() ) {
+				trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 			}
 			
 			NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
@@ -365,6 +398,11 @@ public class CretaServlet extends HttpServlet
 	
 			os.printf("\"messages\":[],\r\n");
 	
+			AonStringUtils.mapIfNotBlank(i54, str -> os.printf("\"i54\":\"%s\",\r\n", str ));
+			
+			pickerBasesCb.getBases().getLiquidacion().stream().findFirst()
+			.ifPresent(l -> os.printf("\"type\":\"%s\",\r\n", l.getTipo() ));
+				
 			os.printf("\"rectifying\":%b,\r\n", indicadorReftificacion );
 	
 			os.printf("\"requestSendRNT\":%b,\r\n", solicitudRecepcionRNT );
@@ -766,7 +804,7 @@ public class CretaServlet extends HttpServlet
 		String number = ccc.substring(4);
 		
 		byte [] idc = SistemaRED.getIDCCCC(
-			certificate.getCertificate(), 
+			certificate.getData(), 
 			certificate.getPassword(), 
 			certificate.getType(), 
 			regime, 
@@ -784,7 +822,7 @@ public class CretaServlet extends HttpServlet
 		List<byte[]> list = new LinkedList<>();
 		for ( String naf: nafs ) {
 			byte [] idc = SistemaRED.getIDCNSS(
-				certificate.getCertificate(), 
+				certificate.getData(), 
 				certificate.getPassword(), 
 				certificate.getType(), 
 				regime, 
@@ -798,7 +836,7 @@ public class CretaServlet extends HttpServlet
 	}
 	
 	
-	private static Map<String, List<Employee>> getEmployees(AONContext ctx, Date date, String ccc, String [] nafs) {
+	private static Map<String, List<Employee>> getEmployees(AONContext ctx, Date date, String ccc, String ...nafs) {
 		try {
 			String login = ctx.getUser();
 			Integer domainId = ctx.getDomainId();
@@ -806,18 +844,17 @@ public class CretaServlet extends HttpServlet
 			
 			java.sql.Date startDate = new java.sql.Date(AonDateUtils.getFirstDayOfMonth(date).getTime());
 			java.sql.Date endDate = new java.sql.Date(AonDateUtils.getLastDayOfMonth(date).getTime());
-			
 			String cccN = AonStringUtils.substring(ccc, 4);
-			
 			return 
 			PAYROLL.getEmployees(
 			domainName, 
 			domainId, 
 			login, 
 			p -> p.getCCCProperty().eq(cccN)
-			.and(p.getNafProperty().in(nafs))
 			.and(p.getStartDateProperty().le(endDate)
 			.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(startDate))))
+			.and((nafs != null && nafs.length > 0 ) ?  p.getNafProperty().in(nafs) : p.getNafProperty().isNotNull()) // Non Freak way ( KISS ) 
+			//.and(Arrays.stream(nafs).map(naf -> p.getNafProperty().eq(naf)).reduce(Filter::or).orElse(p.getNafProperty().isNotNull())) 
 			).collect(Collectors.groupingBy(Employee::getNaf))
 			;
 		} catch ( Exception e) {
@@ -1410,7 +1447,8 @@ public class CretaServlet extends HttpServlet
 
 	private static class InfoPickerBasesCallback implements BasesCallback {
 		
-		private net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases;
+		private net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = 
+			new net.aonsolutions.core.tgss.creta.jaxb.bases.Bases();
 
 		private List<Event> errors = new ArrayList<Event>();
 		private List<Event> warnings = new ArrayList<Event>();
@@ -2745,5 +2783,18 @@ public class CretaServlet extends HttpServlet
 		.map( t -> t.getNaf() )
 		.toArray(String[]::new);
 	}
+	
+	private String escape(String raw) {
+	    String escaped = raw;
+	    escaped = escaped.replace("\\", "\\\\");
+	    escaped = escaped.replace("\"", "\\\"");
+	    escaped = escaped.replace("\b", "\\b");
+	    escaped = escaped.replace("\f", "\\f");
+	    escaped = escaped.replace("\n", "\\n");
+	    escaped = escaped.replace("\r", "\\r");
+	    escaped = escaped.replace("\t", "\\t");
+	    // TODO: escape other non-printing characters using uXXXX notation
+	    return escaped;
+	}	
 
 }

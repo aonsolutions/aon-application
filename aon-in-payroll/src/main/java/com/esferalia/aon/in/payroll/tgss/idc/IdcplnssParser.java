@@ -124,7 +124,7 @@ public class IdcplnssParser {
 					String law = matcher.group("law");
 										
 					onEmployeeQuotePEC(listener, enterpriseCCC, employeeNss, startDate, endDate, code, description,
-							tipo, quota);
+							tipo, quota, colective);
 					
 					matcher = tryy(reader, EMPLOYEE_PEC);
 				}
@@ -149,19 +149,21 @@ public class IdcplnssParser {
 
 
 	private static void onEmployeeQuotePEC(IdcParserListener listener, String enterpriseCCC, String employeeeNss,
-			Date startDate, Date endDate, String code, String description, String tipo, String quota) {
-		code = remove(code, " ");
-		tipo = remove(tipo, " ");
-		quota = remove(quota, " ");
-		listener.onEmployeeQuotePEC(
-				employeeeNss,
-				enterpriseCCC,
-				code, 
-				description,
-				tipo, 
-				quota,
-				startDate,
-				endDate);
+		Date startDate, Date endDate, String code, String description, String tipo, String quota, String colective) {
+        	code = remove(code, " ");
+        	tipo = remove(tipo, " ");
+        	quota = remove(quota, " ");
+        	colective = remove(colective, " ");
+        	listener.onEmployeeQuotePEC(
+        			employeeeNss,
+        			enterpriseCCC,
+        			code, 
+        			description,
+        			tipo, 
+        			quota,
+        			colective,
+        			startDate,
+        			endDate);
 	}
 
 	private static void onEmployeeQuoteGroup(IdcParserListener listener, String group) {

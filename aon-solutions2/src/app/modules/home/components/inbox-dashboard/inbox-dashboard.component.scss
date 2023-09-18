@@ -1,68 +1,49 @@
 @import 'src/styles.scss';
 
-app-card{
-  cursor: pointer;
-}
+::ng-deep{
+  #home-inbox{
+    border  : $border;
+    padding : $padding;
+  }
+  
+  #home-inbox [header]{
+    display       : flex;
+    gap           : 0.5rem;
+    width         : 100%;
+    padding-bottom: $padding-bottom; 
+  }
+  #home-inbox [header] .line {
+    max-width     : 0rem;
+    height        : 1.35rem;
+    border-radius : 20rem;
+    border        : 0.15rem solid $color-red;
+  }
+  #home-inbox [header] .text {
+    width       : 100%;
+    display     : flex;
+    align-items : center;
+    font-family : Roboto-Bold;
+    font-size   : 1.2rem;
+  }
 
-.head-card {
-  width: 100%;
-  height: 10%;
-  display: flex;
-  align-items: center;
-  padding-top: 1rem;
-}
+  #home-inbox thead{
+    display: none;
+  }
+  #home-inbox td{
+    cursor: pointer;
+  }
+  
+  #home-inbox hr{
+    margin-top  : 0;
+    margin-left : 0;
+    margin-right: 0;
+  }
+  
+  #home-inbox #home-inbox-total .text{
+    font-family : Roboto-Medium;
+    font-size   : 0.7rem;
+    color       : $color-red;
+    cursor      : pointer; 
+  }
 
-.head-card .line-head {
-  width: .3rem;
-  height: 1.65rem;
-  margin: 0 .6rem 0 0;
-  border-radius: 1.55rem;
-  background-color: #f6655a;
 }
-
-.head-card .text {
-  font-weight: 700;
-  font-size: 1.2rem;
-  line-height: 1.8rem;
-}
-
-.content-center {
-  width: 100%;
-  height: 70%;
-  padding-top: 1rem;
-}
-
-.messages-footer {
-  width: 100%;
-  display: flex;
-  font-size: .7rem;
-  padding-top: 1.25rem;
-  border-top: .05rem solid #d2d2d6;
-}
-
-.messages-footer .see-all {
-  color: #f6655a;
-  cursor: pointer;
-  margin-right: 1%;
-}
-
-.messages-footer .circle {
-  width: 1.4rem;
-  height: 1.4rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: .8rem;
-  background-color: #feedec;
-}
-
-.circle .number-circle {
-  font-size: .7rem;
-  font-weight: 500;
-}
-
-.see-all-messages {
-  display: flex;
-}
-

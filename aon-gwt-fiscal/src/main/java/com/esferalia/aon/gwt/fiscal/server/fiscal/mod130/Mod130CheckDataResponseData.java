@@ -2,11 +2,11 @@ package com.esferalia.aon.gwt.fiscal.server.fiscal.mod130;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
@@ -28,7 +28,7 @@ public class Mod130CheckDataResponseData extends HttpServlet {
 					.setDomainName(params.getDomainName())
 					.setDomain(params.getDomainId())
 					.setUser(params.getUser());
-			Mod130 mod130 = MODEL130.getMod130(occam, params.getMod());
+			Mod130 mod130 = MODEL130.get(occam, params.getMod());
 			if (mod130 == null) {
 				ModelAdmonUtils.giveExceptionBack(resp, "Declaración no encontrada" );
 			}

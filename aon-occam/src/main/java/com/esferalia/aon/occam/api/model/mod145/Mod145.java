@@ -33,6 +33,7 @@ public class Mod145 implements Serializable {
 	private Double foodAnnuity;
 	private Double irpfPercent;
 	private boolean deductionHomeLoan;
+	private boolean ceutaMelillaPalma;
 	
 	private List<IrpfDataAscendants> ascendants;
 	private List<IrpfDataDescendients> descendients;
@@ -240,6 +241,15 @@ public class Mod145 implements Serializable {
 
 	public Mod145 setDeductionHomeLoan(boolean deductionHomeLoan) {
 		this.deductionHomeLoan = deductionHomeLoan;
+		return this;
+	}
+
+	public boolean isCeutaMelillaPalma() {
+		return ceutaMelillaPalma;
+	}
+
+	public Mod145 setCeutaMelillaPalma(boolean ceutaMelillaPalma) {
+		this.ceutaMelillaPalma = ceutaMelillaPalma;
 		return this;
 	}
 

@@ -26,7 +26,9 @@ if(Language.ENGLISH === language) {
 
 // ----- A
 
+export const ABOUT = MSG.ABOUT;
 export const ACCEPT = MSG.ACCEPT;
+export const ACCESS = MSG.ACCESS;
 export const ACCOUNT = MSG.ACCOUNT;
 export const ACCOUNTED = MSG.ACCOUNTED;
 export const ACCOUNTEDS = MSG.ACCOUNTEDS;
@@ -50,10 +52,13 @@ export const ADD_TAG = MSG.ADD_TAG;
 export const ADD_TAX = MSG.ADD_TAX;
 export const ADD_TYPE = MSG.TYPE;
 export const ADD_WORKGROUP = "Añadir grupo de trabajo"; //TODO
+export const ADDITIONAL_HIRING = MSG.ADDITIONAL_HIRING;
 export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
 export const ADDITIONAL_DATA = "Datos adicionales"; //TODO
 export const ADDRESS = MSG.ADDRESS;
 export const ALIAS = 'Alias';// TODO
+export const ALL = MSG.ALL;
+export const ALL1 = MSG.ALL1;
 export const ALL_FILES = MSG.ALL_FILES;
 export const AMOUNT = MSG.AMOUNT;
 export const AON_BLUE = 'Azul Aon';
@@ -85,9 +90,11 @@ export const BASQUE = MSG.BASQUE;
 export const BIC_SWIFT = 'Bic / Swift';// TODO
 export const BARCODE = MSG.BARCODE;
 export const BILLING = MSG.BILLING;
+export const BILLABLE_USERS = MSG.BILLABLE_USERS;
 export const BLOCKED_POPUP = "Ventana bloqueada!";// TODO
 export const BLOCKED = "Bloqueado";// TODO
 export const BOOKING = MSG.BOOKING;
+export const BOOKING_PANEL = MSG.BOOKING_PANEL;
 export const BORDER = 'Borde';
 export const BOX_CRITERION = MSG.BOX_CRITERION;
 export const BUDGET = MSG.BUDGET;
@@ -107,6 +114,7 @@ export const CERTIFICATES = MSG.CERTIFICATES;
 export const CHANGE_TYPE = MSG.CHANGE_TYPE;
 export const CHARGES_AND_PAYMENTS = MSG.CHARGES_AND_PAYMENTS;
 export const CHANGE_PASSWORD = "Cambiar Contraseña"; //TODO
+export const CHOOSE_A_DOMAIN = MSG.CHOOSE_A_DOMAIN;
 export const CITY = MSG.CITY;
 export const CLASSIC_APPLICATIONS = MSG.CLASSIC_APPLICATIONS;
 export const CLASSIC_VIEW = MSG.CLASSIC_VIEW;
@@ -133,12 +141,18 @@ export const CONCEPT = MSG.CONCEPT;
 export const CONCEPTS = MSG.CONCEPTS;
 export const CONFIDENTIAL = MSG.CONFIDENTIAL;
 export const CONFIGURATION = MSG.CONFIGURATION;
+export const CONSOLE = 'Console'; 
 export const CONTACT = MSG.CONTACT;
 export const CONTACT_DATA = MSG.CONTACT_DATA;
 export const CONTACTS = MSG.CONTACTS;
+export const CONTAINER = MSG.CONTAINER;
 export const CONTRACT = MSG.CONTRACT;
 export const CONTRACT_PAYROLL = MSG.CONTRACT_PAYROLL;
+export const CONTRACTED_PRODUCTS = MSG.CONTRACTED_PRODUCTS;
+export const CONTRACTED_USERS = MSG.CONTRACTED_USERS;
 export const CONTRACTS = MSG.CONTRACTS;
+export const COPIED_TO_CLIPBOARD = MSG.COPIED_TO_CLIPBOARD;
+export const COPY = MSG.COPY;
 export const COUNTRY = MSG.COUNTRY;
 export const CREATE = MSG.CREATE;
 export const CREATE_INVOICE = 'Crear Factura';
@@ -148,6 +162,9 @@ export const CREDITOR = MSG.CREDITOR;
 export const CREDITORS = MSG.CREDITORS;
 export const CUSTOM_VIEW = MSG.CUSTOM_VIEW;
 export const CUSTOMER = MSG.CUSTOMER;
+export const CUSTOMER_SEARCH = MSG.CUSTOMER_SEARCH;
+export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND  = MSG.CUSTOMER_SEARCH_DOMAIN_NOT_FOUND;
+export const CUSTOMER_SEARCH_NOT_FOUND  = MSG.CUSTOMER_SEARCH_NOT_FOUND;
 export const CUSTOMERS = MSG.CUSTOMERS;
 export const CUSTOMIZE_INVOICE = 'Personalizar Factura';
 export const CONVERSATION = 'Conversación'; // TODO
@@ -177,6 +194,7 @@ export const DELETE_TAX = MSG.DELETE_TAX;
 export const DELETE_WAREHOUSE = MSG.DELETE_WAREHOUSE;
 export const DELETED_DATA = MSG.DELETED_DATA;
 export const DELIVERY_TAG = "Etiqueta de Envío";
+export const DELIVERY = 'Albarán de Venta';
 export const DESCRIPTION = MSG.DESCRIPTION;
 export const DETAILED = MSG.DETAILED;
 export const DEUTSCH = MSG.DEUTSCH;
@@ -185,6 +203,7 @@ export const DOCUMENTS = MSG.DOCUMENTS;
 export const DOMAIN = "Dominio"; //TODO
 export const DOMAIN_PARENT = "Dominio Padre"; //TODO
 export const DOCUMENTARY = MSG.DOCUMENTARY;
+export const DOMAIN_SEARCH = MSG.DOMAIN_SEARCH;
 export const DOWNLOAD = MSG.DOWNLOAD;
 export const DOWNLOAD_FILE = MSG.DOWNLOAD_FILE;
 export const DOWNLOAD_FILES = MSG.DOWNLOAD_FILES;
@@ -219,6 +238,7 @@ export const EXPENSE = MSG.EXPENSE;
 export const EXPENSES = MSG.EXPENSES; 
 export const EXPIRATION_DATE = "Fecha expiración"; // TODO;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
+export const EXPIRED = MSG.EXPIRED;
 export const ESTIMATED_TIME = "Tiempo estimado";
 
 // ----- F
@@ -231,6 +251,7 @@ export const FILTERS = "Filtros";//TODO
 export const FISCAL = 'Fiscal';//TODO
 export const FISCAL_DATA = 'Datos Fiscales'; // TODO
 export const FOLIO = 'Folio';
+export const FIND_LINKED_DOMAINS = MSG.FIND_LINKED_DOMAINS;
 export const FOOTER = MSG.FOOTER;
 export const FORMALITIES = 'Trámites';//TODO
 
@@ -252,6 +273,7 @@ export const GROUPED = "Agrupadas";//TODO
 export const HEADER = MSG.HEADER;
 export const HELP = MSG.HELP;
 export const HIRING = MSG.HIRING;
+export const HIRING_DATA = MSG.HIRING_DATA;
 export const HISTORIC = MSG.HISTORIC;
 export const HOLDER = MSG.HOLDER;
 export const HOLDERS = MSG.HOLDERS;
@@ -335,7 +357,14 @@ export const LAST_LOCATION = MSG.LAST_LOCATION;
 export const LAST_STATUS = MSG.LAST_STATUS;
 export const LAST_MODIFICATION = "Última modificación";
 export const LOCATION = MSG.LOCATION;
-export const LINK = "Vincular";//TODO
+export const LINK = MSG.LINK;
+export const LINK_CLIENT = MSG.LINK_CLIENT;
+export const LINKING = MSG.LINKING;
+export const LINKED = MSG.LINKED;
+export const LINKED1 = MSG.LINKED1;
+export const LINK_DOMAINS = MSG.LINK_DOMAINS;
+export const LINK_DOMAIN_QUESTION = MSG.LINK_DOMAIN_QUESTION;
+export const LOADING = MSG.LOADING;
 // ----- M
 
 export const MARK_ENTRY = MSG.MARK_ENTRY;
@@ -377,9 +406,12 @@ export const NEW_SALE = 'Nuevo Pedido de Venta';
 export const NEW_WAREHOUSE= MSG.NEW_WAREHOUSE;
 export const NEXT = MSG.NEXT;
 export const NIF = MSG.NIF;
+export const NOT_LINKED = MSG.NOT_LINKED;
+export const NOT_LINKED1 = MSG.NOT_LINKED1;
 export const NOTIFICATION = MSG.NOTIFICATION;
 export const NOTIFICATIONS = MSG.NOTIFICATIONS;
 export const NUMBER = MSG.NUMBER;
+export const NUMBER_OF_USERS = MSG.NUMBER_OF_USERS;
 export const NOTARY = 'Notario'; //TODO
 export const NOTES = MSG.NOTES;
 export const NOTE = MSG.NOTE;
@@ -388,6 +420,7 @@ export const NOTICE = "Noticia"; //TODO
 
 export const OBSERVATION = MSG.OBSERVATION;
 export const OFFICE = MSG.OFFICE;
+export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = MSG.ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER;
 export const ONLY_PORTAL = MSG.ONLY_PORTAL;
 export const OPEN = MSG.OPEN;
 export const OPEN_MENU = MSG.OPEN_MENU;
@@ -399,6 +432,7 @@ export const OTHER_SERVICES = MSG.OTHER_SERVICES;
 // ----- P
 
 export const PACKAGING = 'Empaquetado';
+export const PARENT_APPS = MSG.PARENT_APPS;
 export const PASSWORD = MSG.PASSWORD;
 export const PAUSE = MSG.PAUSE;
 export const PAYMETHOD = MSG.PAYMETHOD;
@@ -425,6 +459,8 @@ export const PRINTER = 'Impresora';
 export const PROCESSED_MOVEMENT  = MSG.PROCESSED_MOVEMENT;
 export const PROCESSED_MOVEMENT_BJ = "La baja se ha procesado correctamente";//TODO
 export const PRODUCT = MSG.PRODUCT;
+export const PRODUCT_NOT_EMPTY = MSG.PRODUCT_NOT_EMPTY;
+export const PRODUCT_MUST_BE_SELECTED = MSG.PRODUCT_MUST_BE_SELECTED;
 export const PRODUCTS = MSG.PRODUCTS;
 export const PROVINCE = MSG.PROVINCE;
 export const PROCESS_TYPE = "Tipo de trámite"; //TODO
@@ -531,6 +567,7 @@ export const SURCHARGE = MSG.SURCHARGE;
 export const SURCHARGE_RE = 'R.E.'; // TODO
 export const SURNAME = MSG.SURNAME;
 export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
+export const STATUS_NOT_EMPTY = MSG.STATUS_NOT_EMPTY;
 export const STORE = "Archivar"; //TODO
 export const START_DATE = "Fecha inicio";//TODO
 
@@ -574,6 +611,10 @@ export const TO_SHOW = "Mostrar";//TODO
 
 // ----- U
 
+export const UNLINK = MSG.UNLINK;
+export const UNLINK_DOMAIN_QUESTION = MSG.UNLINK_DOMAIN_QUESTION;
+export const UNLINK_CLIENT = MSG.UNLINK_CLIENT;
+export const UNLINKED = MSG.UNLINKED;
 export const UPDATED_CONTRACT = MSG.UPDATED_CONTRACT;
 export const UPLOAD = MSG.UPLOAD;
 export const UPDATE = "Actualizar"; //TODO
@@ -583,6 +624,7 @@ export const USER = MSG.USER;
 export const USER_DATA = MSG.USER_DATA;
 export const USER_MANAGEMENT = MSG.USER_MANAGEMENT;
 export const USERS = MSG.USERS;
+export const UTILITIES = MSG.UTILITIES;
 
 // ----- V
 

@@ -51,5 +51,11 @@ public class MODEL193Impl implements IMODEL193 {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod193DAO.duplicate(ctx, mod193));		
 	}
+	
+	@Override
+	public Mod193 aeatPresentation(AONContext ctx, Mod193 mod, String aeatResponse) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod193DAO.aeatPresentation(ctx, mod, aeatResponse));
+	}
 
 }

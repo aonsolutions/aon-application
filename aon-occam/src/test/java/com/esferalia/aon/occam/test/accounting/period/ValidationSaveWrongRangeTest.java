@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
-import com.esferalia.aon.occam.test.faker.AonFaker;
+import com.esferalia.aon.occam.test.faker.AccountingFaker;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -20,7 +20,7 @@ public class ValidationSaveWrongRangeTest extends AbstractOccamTest {
 
 	@Test
 	public void testPeriodWrongRange() {
-		AccountPeriod ap = AonFaker.getTodayActiveAccountPeriod( ctx );
+		AccountPeriod ap = AccountingFaker.getTodayActiveAccountPeriod( ctx );
 		Date start = ap.getInitiationDate();
 		Date end = ap.getDeadline(); 
 		ap.setInitiationDate(end);

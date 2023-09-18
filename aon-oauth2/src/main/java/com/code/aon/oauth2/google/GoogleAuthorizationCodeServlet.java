@@ -8,9 +8,9 @@ import static com.code.aon.oauth2.google.GoogleAuthorizationServletUtils.newFlow
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.code.aon.oauth2.Utils;
 import com.code.aon.oauth2.sessionInfo.SessionEnterpriseInfo;

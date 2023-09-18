@@ -10,6 +10,9 @@ import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -40,8 +43,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import javax.servlet.annotation.WebServlet;
-
 import org.jooq.DSLContext;
 import org.jooq.tools.json.JSONObject;
 import org.mvel2.CompileException;
@@ -63,6 +64,7 @@ import com.esferalia.aon.gwt.common.shared.UnknownVariablesWarning;
 import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
+import com.esferalia.aon.gwt.payroll.jooq.JooqAddress;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreementTab;
@@ -109,6 +111,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -156,7 +159,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.DOC;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
@@ -166,8 +169,9 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.doc.Doc;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
@@ -214,12 +218,12 @@ import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RbankColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ScopeColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
-import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.Bonuses;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
@@ -244,6 +248,7 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.sun.xml.messaging.saaj.util.ByteOutputStream;
 
 import aon.sepe.objects.Contract;
+import jakarta.servlet.annotation.WebServlet;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -492,14 +497,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Enterprise> getEnterprises(String domain, String user, int offset, int limit) {
+	public List<Enterprise> getEnterprises(String domain, String user, String condition, int offset, int limit) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
-			return getEnterprises(connection, userId, domainId, offset, limit);
+			return getEnterprises(connection, userId, domainId, condition, offset, limit);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -561,10 +566,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(domain);
 			Integer domainID = AonServletUtils.getDomainID(domain);
-			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 
 			return JooqAgreement.getTrashAgreements(connection, offset, limit,
-					domainID, parentDomainID);
+					domainID);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -1178,7 +1182,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 
 	private static List<Enterprise> getEnterprises(Connection connection, int userId,
-			int domainId, int offset, int limit) throws SQLException {
+			int domainId, String condition, int offset, int limit) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
@@ -1189,6 +1193,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ ", " + SQLConstants.REGISTRY
 					+ " LEFT JOIN " + SQLConstants.RBANK + " ON (" + SQLConstants.REGISTRY + "."+ RegistryColumns.ID + " = " + SQLConstants.RBANK +"." + RbankColumns.REGISTRY + ")"
 					+ ", " + SQLConstants.DOMAIN 
+					+ " LEFT JOIN " + SQLConstants.SCOPE + " ON (" + SQLConstants.DOMAIN + "." + DomainColumns.SCOPE + " = " + SQLConstants.SCOPE  + "." + ScopeColumns.ID + ")" 
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY 
 					+ ", " + SQLConstants.ENTERPRISE_CCC
 					+ " LEFT JOIN " + SQLConstants.SALARY + " ON (" 
@@ -1217,13 +1222,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 						+ " )"     
 					
 					+ " AND " + SQLConstants.DOMAIN + "." + DomainColumns.ACTIVE + " = 1 " 
-
+					+ " AND (" + condition +")"
 					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID
 					+ ", " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.ID
 					+ ", " + SQLConstants.SALARY + "." + SalaryColumns.SOCIAL_SECURITY_NUMBER
 					+ ", " + SQLConstants.SALARY + "." + SalaryColumns.START_DATE
-					+ " LIMIT ?, ?"
+					//+ " LIMIT ?, ?"
 					);
 			// @formatter:on
 			int i = 1;
@@ -1237,28 +1242,35 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			calendar.add(Calendar.DAY_OF_MONTH,-1);
 //			stmt.setDate(i++, new java.sql.Date(calendar.getTimeInMillis()));
 
-			stmt.setInt(i++, offset);
-			stmt.setInt(i++, limit);
+//			stmt.setInt(i++, offset);
+//			stmt.setInt(i++, limit);
 			
 			CCC ccc = null;
 			Employee employee = null;
 			Activity activity = null;
 			Enterprise enterprise = null;
 
-			
 			rs = stmt.executeQuery();
-			
+			int enterprisesOffset = 0;
 			List<Enterprise> enterprises = new LinkedList<Enterprise>();
 			while (rs.next()) {
 				Integer registry = rs.getInt(SQLConstants.ENTERPRISE +"." + EnterpriseColumns.REGISTRY);
 				
 				if ( enterprise == null || !enterprise.getId().equals(registry) ) {
+
+				    	// Enterprises real LIMIT 
+				    	if ( enterprises.size() == limit )
+				    	    break;
+				    	
 					enterprise = new Enterprise();
 					enterprise.setId(registry); // Not
 //					enterprise.setName(rs.getString(SQLConstants.REGISTRY +"." + RegistryColumns.NAME));
 					enterprise.setName(rs.getString(SQLConstants.DOMAIN +"." + DomainColumns.DESCRIPTION));
 					enterprise.setDomain(rs.getInt(SQLConstants.ENTERPRISE +"." + EnterpriseColumns.DOMAIN));
-					enterprises.add(enterprise);
+					
+					// Enterprise real  OFFSET 
+					if ( enterprisesOffset++ >= offset  )
+					    enterprises.add(enterprise);
 				}
 				
 				Integer rbankId = (Integer) rs.getObject(SQLConstants.RBANK +"."+RbankColumns.ID);
@@ -1325,6 +1337,53 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			if (stmt != null)
 				stmt.close();
 
+		}
+
+	}
+	
+	private static List<CCC> getEnterprisesCCCs(Connection connection, int domainId) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			// @formatter:off
+			stmt = connection.prepareStatement(
+					"SELECT * FROM "
+					+ SQLConstants.ENTERPRISE_CCC
+					+ " LEFT JOIN " + SQLConstants.ENTERPRISE_ACTIVITY + " ON (" + SQLConstants.ENTERPRISE_CCC + "."+ EnterpriseCccColumns.ENTERPRISE_ACTIVITY + " = " + SQLConstants.ENTERPRISE_ACTIVITY +"." + EnterpriseActivityColumns.ID + ")"
+					+ " LEFT JOIN " + SQLConstants.GEOZONE + " ON (" + SQLConstants.GEOZONE + "."+ GeozoneColumns.ID + " = " + SQLConstants.ENTERPRISE_CCC +"." + EnterpriseCccColumns.GEOZONE + ")"
+					+ " LEFT JOIN " + SQLConstants.ENTERPRISE + " ON (" + SQLConstants.ENTERPRISE_ACTIVITY + "."+ EnterpriseActivityColumns.ENTERPRISE + " = " + SQLConstants.ENTERPRISE +"." + EnterpriseColumns.REGISTRY + ")"
+					+ " WHERE " + SQLConstants.ENTERPRISE +"."+ EnterpriseColumns.DOMAIN + " = ? " 
+					);
+			// @formatter:on
+			int i = 1;
+			stmt.setInt(i++, domainId);
+			
+			List<CCC> cccs = new ArrayList<>();
+			
+			rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				Integer cccId = (Integer) rs.getObject(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.ID);
+				if ( cccId == null )
+					continue;
+
+				CCC ccc = new CCC();
+				ccc.setId( cccId );
+				ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.CCC));
+				ccc.setGeozone(rs.getString(SQLConstants.GEOZONE +"."+GeozoneColumns.CODE));
+				ccc.setRegime(JooqEnterprise.getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.TYPE)).getCode());
+				ccc.setType(rs.getByte(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.TYPE));
+					
+				cccs.add(ccc);
+			}
+
+			return cccs;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
 		}
 
 	}
@@ -1945,29 +2004,26 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) {
+	public void createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			
-			Boolean existAnySalary = Cra.existAnySalary(cccList, findingDate, connection);
-			
-			if(Boolean.FALSE.equals(existAnySalary)) {
-				return "No existe n\u00F3minas con valores para notificar en el CRA";
-			}
+			if(Boolean.FALSE.equals(Cra.existAnySalary(cccList, findingDate, connection)))
+				throw new IllegalArgumentException("No existe n\u00F3minas con valores para notificar en el CRA");
 			
 			java.util.Date fileNameDate = new java.util.Date();
 			String fileName = new SimpleDateFormat("ddHHmmss").format(fileNameDate);
 			
-			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, userId, cccList, findingDate, fileName, connection);
+			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, parentDomainId, userId, cccList, findingDate, fileName, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
-			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
+			JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
 			
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -2161,7 +2217,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	@Override
 	public String getSalariesPDF(String domain, String currentUser, Integer enterpriseID, List<Integer> salaryIds) throws IllegalArgumentException {
-		try (ByteOutputStream os = new ByteOutputStream(); 
+		int salaryCount = salaryIds != null ? salaryIds.size() : 1;
+		try (ByteOutputStream os = new ByteOutputStream(salaryCount * 30 * 1024); 
 		CloseableAONContext aonContext = AONContext.getAONContext(domain, currentUser)) {
 			String salaryReport = getReportKey(domain, enterpriseID, SalaryType.SALARY);
 			
@@ -2196,7 +2253,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 						, ids);
 			}
 			
-			String base64Pdf = Base64.getEncoder().encodeToString(os.getBytes());
+			byte[] bytes = os.toByteArray();
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(bytes);
 			
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
@@ -2231,11 +2290,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	// ----------------------------------------------
 
 	@Override
-	public String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) {
+	public void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) {
 		try(Connection connection = AonServletUtils.getConnection(currentDomainName)){
-			return JooqCRA.checkCreateNewCRA(connection, findingDate, cccList);
-		}catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+			JooqCRA.checkCreateNewCRA(connection, findingDate, cccList);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
 
@@ -2257,6 +2316,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			return JooqContrataContract.getEmployeesInfo(connection, domainId, allEmployees);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public List<EmployeeContractInfo> getFJEmployeesInfo(String domainName) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.getFJEmployeesInfo(connection, domainId);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2340,11 +2409,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			List<CCC> cccs = getEnterprises(connection, userId, domainId, 0, Short.MAX_VALUE).stream()
-			.filter(e -> enterpriseId == null || e.getId().equals(enterpriseId) )
-			.flatMap(e -> e.getActivities().stream() )
-			.flatMap(a -> a.getCccs().stream())
-			.collect(Collectors.toList());
+			List<CCC> cccs = getEnterprisesCCCs(connection, domainId);
 			
 			List<Integer> cccIds = cccs.stream().map( ccc-> ccc.getId() ).collect(Collectors.toList());
 			
@@ -2358,6 +2423,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			for ( CCC ccc: cccsMap.values() ) {
 				Collection<solutions.aon.seg.social.object.Employee> ssEmployees = new ArrayList<>();
+				
+				if(AonStringUtils.equals(ccc.getRegime(), "0138")) {
+					enterpriseStatus.and(new EnterpriseStatus.UnknownErrorAnd().setMessage("Importaci\u00f3n contratos asociados al r\u00e9gimen 'Emplead\u0040s de hogar' en desarrollo"));
+					continue;
+				};
 				
 				try {
 					ssEmployees = SistemaRED.getTotalEmployees(certificate.getData(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
@@ -2811,6 +2881,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				return "CONTINGENCIAS COMUNES";
 			}
 			
+			@Override
+			public String visitMEI(DeductionType deductionType) {
+			    return "MECANISMO EQUIDAD INTERGENERACIONAL";
+			}
+			
 		});
 	}
 
@@ -3047,7 +3122,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
 			
 			List<SecondaryUser> secondaryUsers = new ArrayList<SecondaryUser>(secondaryUsersCollection);
@@ -3090,7 +3165,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
 			
 		} catch (SQLException | SegSocialException e) {
@@ -3107,7 +3182,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
 			
 		} catch (SQLException | SegSocialException e) {
@@ -3124,7 +3199,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			
 			Collection<solutions.aon.seg.social.object.Employee> employeeCollection = SistemaRED.ipfxnaf(is, certificate.getPassword(), certificate.getType(), nssList);
 			solutions.aon.seg.social.object.Employee employee = (solutions.aon.seg.social.object.Employee) employeeCollection.toArray()[0];
@@ -3150,7 +3225,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			
 			solutions.aon.seg.social.object.Employee employee = SistemaRED.nafxipf(is, certificate.getPassword(), certificate.getType(), ipf, apellido1, apellido2);
 			
@@ -3186,7 +3261,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			days = JooqEmployee.getDays(connection, docNum, dateFrom);
 			
-//			return SistemaRED.sendPaternity(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
+//			return SistemaRED.sendPaternity(certificate.getData(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
 			return false;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -3196,7 +3271,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public void deleteComunicateIT(String domainName, String userLogin, String affiliationNumber,
 			String regime, String contributionAccount, java.util.Date dateFrom, java.util.Date dateTo,
-			java.util.Date startDate) {
+			java.util.Date startDate) throws IllegalArgumentException {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -3205,10 +3280,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			SistemaRED.removePaternity(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
+			SistemaRED.removePaternity(certificate.getData(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
 		
-		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
@@ -3260,8 +3335,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return agreementId;
 		
 		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException("El convenio con c\u00F3digo " + serviAgreementCode + " (ServiConvenios) no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
 		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -3278,13 +3356,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public boolean checkIfRectificative(String domainName, java.util.Date findingDate,
-			ArrayList<Integer> selectedCCCList) {
+	public boolean checkIfRectificative(String domainName, java.util.Date findingDate, ArrayList<Integer> selectedCCCList) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			AONContext ctx = new AONContext(connection);
-			DSLContext dslContext = ctx.getDslContext();
-			
-			return JooqCRA.checkIfRectificative(dslContext, findingDate, selectedCCCList);
+			return JooqCRA.checkIfRectificative(connection, findingDate, selectedCCCList);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -3304,7 +3378,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITBaja(
-					certificate.getCertificate(), 
+					certificate.getData(), 
 					certificate.getPassword(), 
 					certificate.getType(), 
 					regime, 
@@ -3341,7 +3415,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITConfirmation(
-					certificate.getCertificate(), 
+					certificate.getData(), 
 					certificate.getPassword(), 
 					certificate.getType(), 
 					regime, 
@@ -3374,7 +3448,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITAlta(
-					certificate.getCertificate(), 
+					certificate.getData(), 
 					certificate.getPassword(), 
 					certificate.getType(), 
 					regime, 
@@ -3403,7 +3477,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			
 			Contract contract = Sepe.getContractData(is, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate);
 			
@@ -3536,13 +3610,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			if(certificateType == com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType.TGSS) {
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
+				InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
 				SistemaRED.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 			}
 			
 			if(certificateType == com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType.SEPE) {
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
-				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
+				InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
 				Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 			}
 			
@@ -3603,8 +3677,28 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			AON.deleteCertificate(domain, domainId, login, 
 					certificate.getId(),
-					f -> f.getIdProperty().eq(certificate.getId()), 
-					r -> r.getIdProperty().eq(certificate.getPasswordId()));
+					f -> f.getIdProperty().eq(certificate.getId()), null);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void downloadCertificate(String domain, String login, Integer certificateId, String filePath) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			com.esferalia.aon.occam.api.model.Certificate certificate = AON.getCertificate(domain, domainId, login, f -> f.getIdProperty().eq(certificateId));
+			
+			File f = new File(filePath);
+			try {
+				FileOutputStream fos = new FileOutputStream(f);
+				fos.write(certificate.getData());
+				fos.close();
+			} catch (FileNotFoundException e) {
+				System.err.println("Archivo no encontrado");
+			} catch (IOException e) {
+				System.err.println("Error al escribir");
+			}
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -3660,7 +3754,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			} else
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
 			
 			List<SecondaryUser> secondaryUsers = new ArrayList<>(secondaryUsersCollection);
@@ -3696,7 +3790,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	private Certificate parseCertificate(com.esferalia.aon.occam.api.model.Certificate certificate) {
 		return new Certificate()
-				.setCertificate(certificate.getData())
+				.setData(certificate.getData())
 				.setPassword(certificate.getPassword())
 				.setType(certificate.getType());
 	}
@@ -3716,7 +3810,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
 			
 		} catch (SQLException | SegSocialException e) {
@@ -3738,7 +3832,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			} else
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
 			
 		} catch (SQLException | SegSocialException e) {
@@ -3828,6 +3922,21 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Optional<java.util.Date> lastDate = agreement.getSortedDates().stream().findFirst();
 			if(lastDate.isPresent()) year = lastDate.get().getYear() + 1900;
 			AgreementUpdate.checkAndUpdateServiAgreement(connection, domainId, userLogin, agreement.getId(), agreement.getSSNumber(), year);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public boolean canUpdateServiAgreement(String domainName, String userLogin, AgreementInfo agreement) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer year = 0;
+			Optional<java.util.Date> lastDate = agreement.getSortedDates().stream().findFirst();
+			if(lastDate.isPresent()) year = lastDate.get().getYear() + 1900;
+			return AgreementUpdate.canUpdateServiAgreement(agreement.getSSNumber(), year);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -4111,7 +4220,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			ISalary salary = getSalary(domain, agreement, context, levelId);
+			com.esferalia.aon.payroll.Salary salary = getSalary(domain, agreement, context, levelId);
 
 			try {
 				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
@@ -4644,8 +4753,59 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	
+	// ------------------------------------------------ Country/Province
+	
+	@Override
+	public List<Country> getCountries(String domainName) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqAddress.getCountries(connection, domainId);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	// ------------------------------------------------ MainMassiveContracts
 
+	@Override
+	public List<ContractData> getMassiveCNOs(String domainName, String user) throws IllegalArgumentException {
+		try {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return PAYROLL.getContractDataStream(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("CNO"))).collect(Collectors.toList());
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
+	@Override
+	public void updateMassiveCNOs(String domainName, String user, List<ContractData> contractDatas) throws IllegalArgumentException {
+		try {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			PAYROLL.saveContractDatas(domainName, domainId, user, contractDatas);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public void duplicateContract(String domainName, String user, EmployeeContractInfo employee, java.util.Date newStartDate) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqContrataContract.duplicateContract(connection, employee, newStartDate);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	@Override
+	public void duplicateContract(String domainName, String user, List<EmployeeContractInfo> employees, java.util.Date newStartDate) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqContrataContract.duplicateContract(connection, employees, newStartDate);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
 	// ------------------------------------------------ Partes IT
 
 	@Override

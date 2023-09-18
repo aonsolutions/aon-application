@@ -1,6 +1,6 @@
 package com.code.aon.faces.component.richfaces.componentGroup;
 
-import javax.el.MethodExpression;
+import jakarta.el.MethodExpression;
 import javax.faces.component.UIComponent;
 
 import org.apache.commons.lang.ArrayUtils;

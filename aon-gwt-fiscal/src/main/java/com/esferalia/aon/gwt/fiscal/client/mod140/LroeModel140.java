@@ -18,16 +18,17 @@ import com.esferalia.aon.gwt.common.shared.AonMenuItem;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificationPopupParams;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.SiiService;
-import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationService;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -35,7 +36,9 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -59,10 +62,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class LroeModel140 extends DockLayoutPanel {
 	
-	private static final SiiServiceAsync SII_SERVICE;
+	private static final InvoiceCommunicationServiceAsync SII_SERVICE;
 	static {
-		SiiServiceAsync siiServiceRaw = GWT.create(SiiService.class);
-		SII_SERVICE = new SiiServiceAsyncDecorator(siiServiceRaw); 
+		InvoiceCommunicationServiceAsync siiServiceRaw = GWT.create(InvoiceCommunicationService.class);
+		SII_SERVICE = new InvoiceCommunicationServiceAsyncDecorator(siiServiceRaw); 
 	}
 	
 	private final AonMenuItem chapter1 = new AonMenuItem()
@@ -120,6 +123,10 @@ public class LroeModel140 extends DockLayoutPanel {
 			.setDisabled(true)
 			.addItem(new AonMenuItem().setTitle("8.1 Alta"))
 			.addItem(new AonMenuItem().setTitle("8.2 Baja"));
+	
+	private final AonMenuItem utilities = new AonMenuItem()
+			.setTitle("Utilidades")
+			.addItem(new AonMenuItem().setTitle("Anular Factura Emitida"));
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
 	private FiscalModel model;
@@ -180,7 +187,7 @@ public class LroeModel140 extends DockLayoutPanel {
 		this.filterParams = new InvoiceParams()
 			.setDomain(getOptions().getDomain())
 			.setType(InvoiceType.SALES)
-			.setCommunicationType(InvoiceCommunicationType.LROE_1_1);
+			.setCommunicationType(OldInvoiceCommunicationType.LROE_1_1);
 	}
 	
 	private AonMenu getMenu() {
@@ -193,6 +200,7 @@ public class LroeModel140 extends DockLayoutPanel {
 		aonMenu.addItem(chapter6);
 		aonMenu.addItem(chapter7);
 		aonMenu.addItem(chapter8);
+//		aonMenu.addItem(utilities);
 		return aonMenu;
 	}
 		
@@ -321,7 +329,7 @@ public class LroeModel140 extends DockLayoutPanel {
 	private String getStatusName(InvoiceCommunicationStatus st) {
 		if(InvoiceCommunicationStatus.ACCEPTED.equals(st)) return "Aceptada";
 		else if(InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS.equals(st)) return "Aceptada con Errores";
-		else if(InvoiceCommunicationStatus.ANNULLED.equals(st)) return "Anulada";
+		else if(InvoiceCommunicationStatus.CANCELLED.equals(st)) return "Anulada";
 		else if(InvoiceCommunicationStatus.WRONG.equals(st)) return "Incorrecta";
 		else return "Pendiente";
 	}
@@ -439,7 +447,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE_1_1)
+				.setCommunicationType(OldInvoiceCommunicationType.LROE_1_1)
 				.setType(InvoiceType.SALES);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
@@ -452,7 +460,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE_1_2)
+				.setCommunicationType(OldInvoiceCommunicationType.LROE_1_2)
 				.setType(InvoiceType.SALES);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
@@ -465,7 +473,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE_2_1)
+				.setCommunicationType(OldInvoiceCommunicationType.LROE_2_1)
 				.setType(InvoiceType.PURCHASE)
 				.addType(InvoiceType.EXPENSES);
 				invoiceGrid.setFilterParams(getFilterParams());
@@ -557,7 +565,7 @@ public class LroeModel140 extends DockLayoutPanel {
 					getModel140().getBreakdownPanel().setWidget(vp);
 					if(alta) {
 						selectedInvoices.stream().forEach(invoice -> {
-							if(invoice.getInvoiceInfo().getStatus().isAccepted() && !InvoiceCommunicationType.LROE_2_1.equals(getFilterParams().getCommunicationType())) {
+							if(invoice.getInvoiceInfo().getStatus().isAccepted() && !OldInvoiceCommunicationType.LROE_2_1.equals(getFilterParams().getCommunicationType())) {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {
@@ -568,7 +576,11 @@ public class LroeModel140 extends DockLayoutPanel {
 										if(!result.isError()) { 	
 											String message = "La factura " + invoice.getReferenceCode() + " se ha enviado correctamente.";
 											vp.add(getOkMessage(message));
-										} else vp.add(getErrorMessage(result.getErrorMessage()));
+										} else {
+											if(result.getErrorMessage().contains("B4_2000116")) {
+												vp.add(getActionErrorMessage(result.getErrorMessage(), invoice));
+											} else vp.add(getErrorMessage(result.getErrorMessage()));
+										}
 										
 										if(selectedInvoices.size() >= vp.getWidgetCount()) {
 											invoiceGrid.setFilterParams(getFilterParams());
@@ -606,6 +618,71 @@ public class LroeModel140 extends DockLayoutPanel {
 	
 	public Label getErrorMessage(String message ){
 		return getMessage(message, "red");
+	}
+	
+	public HorizontalPanel getActionErrorMessage(String message, Invoice invoice){
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.add(getMessage(message, "red"));
+		Label l = new Label("Pulse aqui para a\u00f1adir Bien");
+		l.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+		l.getElement().getStyle().setColor("#0069c2");
+		l.getElement().getStyle().setCursor(Cursor.POINTER);
+		l.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+
+				SII_SERVICE.getInvestAssets(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<List<InvestAsset>>() {
+					
+					@Override
+					public void onSuccess(List<InvestAsset> result) {
+						ListBox lb = new ListBox();
+						for (InvestAsset ia : result) {
+							lb.addItem(ia.getDescription(), ia.getId().toString());
+						}
+
+						AonDialog dialog = new AonDialog("A\u00f1adir Bien", lb);
+
+						dialog.confirm(new AonAcceptDialogCallback() {
+							
+							@Override
+							public void onCancel() {
+								dialog.hide();
+							}
+							
+							@Override
+							public void onAccept() {
+								dialog.hide();
+								SII_SERVICE.assignInvestAsset2Invoice(options.getDomainName(), options.getDomain(), options.getUser(), 
+										lb.getValue(lb.getSelectedIndex()), invoice, new AsyncCallback<Void>() {
+											
+											@Override
+											public void onSuccess(Void result) {
+												
+											}
+											
+											@Override
+											public void onFailure(Throwable caught) {
+												
+											}
+										});
+
+							}
+						});	
+						
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+
+			}
+		});
+		hp.add(l);
+		return hp;
 	}
 	
 	public Label getWarningMessage(String message ){

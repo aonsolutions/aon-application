@@ -839,6 +839,7 @@ class EntriesRemover extends OptionBase {
 		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {}
 		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {}
 		@Override public void visitAccountChange(AccUtilitiesItemType type) {}
+		@Override public void visitOutOfDateEntry(AccUtilitiesItemType type) {}
 		
 		@Override public void visitDeleteEntries(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();
@@ -907,6 +908,7 @@ class EntriesRemover extends OptionBase {
 			itemPanel.add(new InlineLabel(item.getMessage()));
 			logPanel.add(itemPanel);
 		}
+
 	}
 	
 	public AccountEntryParams getWidgetParams() {

@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -175,11 +176,22 @@ public class FacturasEmitidas extends SIIBuilt {
 		suministro.setCabecera(cabecera(company, mod, terceros));
 		
 		// BODY
-		Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+
+		VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
+		
+		EnterpriseActivity activity = AON.getEnterpriseActivity(domain.getName(), domain.getId(), login, vat.getActivity());
+		if(activity == null) {
+			activity = AON.getEnterpriseActivities(domain.getName(), domain.getId(), login)
+					.findFirst().orElse(new EnterpriseActivity());
+		}
+		boolean exempt = (activity.getVatRegime() != null && activity.getVatRegime().isExempt()) 
+				|| vat.isIntracommunity() || vat.isExtracommunity() || vat.isCanCeuMel();
+		
+		Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 				.mapToDouble(f -> f.getBase()).sum();
 		Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 				.mapToDouble(f -> f.getBase()).sum();
-		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && f.getPercentage() > 0  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0)  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 				.map(f -> new VatData().setBase(f.getBase())
 						.setPercentage(f.getPercentage())
 						.setQuota(f.getQuota())
@@ -187,7 +199,6 @@ public class FacturasEmitidas extends SIIBuilt {
 						.setSurchargeQuota(f.getSurchargeQuota()))
 				.collect(Collectors.toCollection(LinkedList::new));
 			
-		VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
 		LRfacturasEmitidasType factura = new LRfacturasEmitidasType();
 		
 		factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
@@ -270,7 +281,7 @@ public class FacturasEmitidas extends SIIBuilt {
 		
 		// IMPORTE TOTAL 
 		//Double total2 = contextList.stream().filter(g -> g.getInvoice().equals(invoice)).mapToDouble(g -> g.getBase() + g.getQuota()).sum();
-		Double total = noSujeta + exenta + noExenta.stream().mapToDouble(f -> f.getBase() + f.getQuota()).sum();
+		Double total = noSujeta + exenta + noExenta.stream().mapToDouble(f -> f.getBase() + f.getQuota() + f.getSurchargeQuota()).sum();
 		fet.setImporteTotal(Double.toString(AonMathUtils.round(total)));
 		fet.setMacrodato(total >= 100000000 ? MacrodatoType.S: MacrodatoType.N);
 		// BASE IMPONIBLE A COSTE (OPTIONAL)
@@ -397,13 +408,13 @@ public class FacturasEmitidas extends SIIBuilt {
 						diva3.getDetalleIVA().add(diet);
 					});
 					noExenta3.setDesgloseIVA(diva3);
-					noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
-					if(vat.isOtherISP()){
-						noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_2);
-					}	
+					noExenta3.setTipoNoExenta(vat.isOtherISP() 
+							? TipoOperacionSujetaNoExentaType.S_2
+							: TipoOperacionSujetaNoExentaType.S_1);
 					st3.setNoExenta(noExenta3);
 				}
-				prestacion.setSujeta(st3);		
+				if(st3.getExenta() != null || st3.getNoExenta() != null)
+					prestacion.setSujeta(st3);
 				tcdt.setPrestacionServicios(prestacion);
 			} else {
 				TipoSinDesgloseType entrega = new TipoSinDesgloseType();
@@ -446,10 +457,13 @@ public class FacturasEmitidas extends SIIBuilt {
 
 					https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta noExenta2 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta();
 					noExenta2.setDesgloseIVA(diva2);
-					noExenta2.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
+					noExenta2.setTipoNoExenta(vat.isOtherISP()
+							? TipoOperacionSujetaNoExentaType.S_2
+							: TipoOperacionSujetaNoExentaType.S_1);
 					st2.setNoExenta(noExenta2); // TODO
 				}
-				entrega.setSujeta(st2);
+				if(st2.getExenta() != null || st2.getNoExenta() != null)
+					entrega.setSujeta(st2);
 				tcdt.setEntrega(entrega);
 			}				
 			tipoDesglose.setDesgloseTipoOperacion(tcdt);
@@ -505,12 +519,15 @@ public class FacturasEmitidas extends SIIBuilt {
 				});
 
 				noExenta1.setDesgloseIVA(diva);
-				TipoOperacionSujetaNoExentaType noExType = TipoOperacionSujetaNoExentaType.S_1;
-				// TODO inversion sujeto pasivo 
-				noExenta1.setTipoNoExenta(noExType); // TODO 
+
+				noExenta1.setTipoNoExenta(vat.isOtherISP()
+						? TipoOperacionSujetaNoExentaType.S_2
+						: TipoOperacionSujetaNoExentaType.S_1);
+				
 				st.setNoExenta(noExenta1);
 			}
-			tsdt.setSujeta(st);
+			if(st.getExenta() != null || st.getNoExenta() != null)
+				tsdt.setSujeta(st);
 			tipoDesglose.setDesgloseFactura(tsdt);
 		}
 		fet.setTipoDesglose(tipoDesglose);
@@ -535,11 +552,21 @@ public class FacturasEmitidas extends SIIBuilt {
 		
 		// BODY
 		invoiceList.stream().forEach(invoice -> {	
-			Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
+
+			EnterpriseActivity activity = AON.getEnterpriseActivity(domain.getName(), domain.getId(), login, vat.getActivity());
+			if(activity == null) {
+				activity = AON.getEnterpriseActivities(domain.getName(), domain.getId(), login)
+						.findFirst().orElse(new EnterpriseActivity());
+			}
+			boolean exempt = (activity.getVatRegime() != null && activity.getVatRegime().isExempt()) 
+					|| vat.isIntracommunity() || vat.isExtracommunity() || vat.isCanCeuMel();
+			
+			Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.mapToDouble(f -> f.getBase()).sum();
 			Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.mapToDouble(f -> f.getBase()).sum();
-			LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getPercentage() > 0  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+			LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoice) &&( !exempt || f.getPercentage() > 0 ) && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.map(f -> new VatData().setBase(f.getBase())
 							.setPercentage(f.getPercentage())
 							.setQuota(f.getQuota())
@@ -547,7 +574,6 @@ public class FacturasEmitidas extends SIIBuilt {
 							.setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
 			
-			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
 
 			LRfacturasEmitidasType factura = new LRfacturasEmitidasType();
 			
@@ -633,7 +659,7 @@ public class FacturasEmitidas extends SIIBuilt {
 			
 			// IMPORTE TOTAL 
 			//Double total2 = contextList.stream().filter(g -> g.getInvoice().equals(invoice)).mapToDouble(g -> g.getBase() + g.getQuota()).sum();
-			Double total = noSujeta + exenta + noExenta.stream().mapToDouble(f -> f.getBase() + f.getQuota()).sum();
+			Double total = noSujeta + exenta + noExenta.stream().mapToDouble(f -> f.getBase() + f.getQuota() + f.getSurchargeQuota()).sum();
 			fet.setImporteTotal(Double.toString(AonMathUtils.round(total)));
 			fet.setMacrodato(total >= 100000000 ? MacrodatoType.S: MacrodatoType.N);
 			// BASE IMPONIBLE A COSTE (OPTIONAL)
@@ -763,7 +789,8 @@ public class FacturasEmitidas extends SIIBuilt {
 								: TipoOperacionSujetaNoExentaType.S_1);
 						st3.setNoExenta(noExenta3);
 					}
-					prestacion.setSujeta(st3);		
+					if(st3.getExenta() != null || st3.getNoExenta() != null)
+						prestacion.setSujeta(st3);		
 					tcdt.setPrestacionServicios(prestacion);
 				} else {
 					TipoSinDesgloseType entrega = new TipoSinDesgloseType();
@@ -806,10 +833,13 @@ public class FacturasEmitidas extends SIIBuilt {
 
 						https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta noExenta2 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta();
 						noExenta2.setDesgloseIVA(diva2);
-						noExenta2.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
+						noExenta2.setTipoNoExenta(vat.isOtherISP()
+								? TipoOperacionSujetaNoExentaType.S_2
+								: TipoOperacionSujetaNoExentaType.S_1);
 						st2.setNoExenta(noExenta2); // TODO
 					}
-					entrega.setSujeta(st2);
+					if(st2.getExenta() != null || st2.getNoExenta() != null)
+						entrega.setSujeta(st2);
 					tcdt.setEntrega(entrega);
 				}				
 				tipoDesglose.setDesgloseTipoOperacion(tcdt);
@@ -871,7 +901,8 @@ public class FacturasEmitidas extends SIIBuilt {
 						: TipoOperacionSujetaNoExentaType.S_1); 
 					st.setNoExenta(noExenta1);
 				}
-				tsdt.setSujeta(st);
+				if(st.getExenta() != null || st.getNoExenta() != null)
+					tsdt.setSujeta(st);
 				tipoDesglose.setDesgloseFactura(tsdt);
 			}
 			fet.setTipoDesglose(tipoDesglose);

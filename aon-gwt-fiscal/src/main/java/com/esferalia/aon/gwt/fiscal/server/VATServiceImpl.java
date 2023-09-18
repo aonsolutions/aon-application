@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.VATService;
@@ -33,13 +33,6 @@ public class VATServiceImpl extends AonStatelessRemoteServiceServlet implements 
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-//	@Override
-//	public String getVatContextReport(Occam occam, AccountingReportParams params) throws AonCoreException {
-//		return VATFormatter.formatInvoices("LISTADO IVA", FiscalUtils.toString(params), 
-//			FISCAL.getVatContext(occam, params)
-//				.collect(Collectors.toCollection(LinkedList::new)));
-//	}
-
 	@Override
 	public LinkedList<VatSummaryContext> getVatSummaryContext(Occam occam, AccountingReportParams params) throws AonCoreException {
 		return FISCAL.getVatSummaryContext(occam, params)

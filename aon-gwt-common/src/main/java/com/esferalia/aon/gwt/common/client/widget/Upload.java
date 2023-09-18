@@ -12,7 +12,7 @@ public abstract class Upload {
 	
 	}
 	
-	protected abstract void onUpload(String data);
+	protected abstract void onUpload(String data, String type);
 	
 	public void upload() {
 		Document doc = Document.get();
@@ -25,10 +25,12 @@ public abstract class Upload {
 	private final native void files(Element input, Upload thiz) /*-{
 		input.addEventListener("change", function(event) {
 		var reader = new FileReader();
-		reader.readAsDataURL(input.files[0]);
+		var file = input.files[0];
+		var type = file.type;
+		reader.readAsDataURL(file);
 			reader.onload = function() {
 				var base64File = reader.result.split(',')[1];
-				thiz.@com.esferalia.aon.gwt.common.client.widget.Upload::onUpload(*)(base64File);
+				thiz.@com.esferalia.aon.gwt.common.client.widget.Upload::onUpload(*)(base64File, type);
 			}
 		});
 	}-*/;

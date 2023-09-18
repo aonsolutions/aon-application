@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Base64;
 import java.util.LinkedList;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;

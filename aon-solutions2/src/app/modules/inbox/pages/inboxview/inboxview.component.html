@@ -1,47 +1,84 @@
 <app-grid-layout>
   <!--SIDENAV-->
   <div nav>
-    <!--CREATE BUTTON-->
-    <div id="space" *ngIf="selectedTab !== 0 && selectedTab !== 1"></div>
-    <div id="button-create">
-      <app-button
-        *ngIf="selectedTab !== 2 && selectedTab !== 3"
-        [class]="'red left'"
-        (click)="showModal()"
-      >
-        <app-icon shape="add_comment"></app-icon>
-        {{ "INBOX.CREATE" | translate }}
-      </app-button>
-      <app-modal-controller #modal>
-        <app-create-query *ngIf="isModalVisible"></app-create-query>
-      </app-modal-controller>
+    <!--CREATE BUTTON // siempre tiene que tener el mismo hueco -->
+    <div 
+      id="button-create"
+    >
+      <!-- Ocultar donde es necesario -->
+      <span *ngIf="selectedTab !== 2 && selectedTab !== 3">
+        <app-button
+          [class]="'red left'"
+          (click)="showModal()"
+        >
+          <app-icon shape="add_comment"></app-icon>
+          {{ "INBOX.CREATE" | translate }}
+        </app-button>
+        <app-modal-controller #modal>
+          <app-create-query *ngIf="isModalVisible"></app-create-query>
+        </app-modal-controller>
+      </span>
     </div>
     <!--FIN CREATE BUTTON-->
     <!--List -->
-    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 0">
-      <app-icon shape="all_inbox"></app-icon>
-      &nbsp;&nbsp; {{ "INBOX.INBOX" | translate }}
-    </app-button>
-
-    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 1">
-      <app-icon shape="chat"></app-icon>
-      &nbsp;&nbsp; {{ "INBOX.QUERIES" | translate }}
-    </app-button>
-
-    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 2">
-      <app-icon shape="playlist_add_check"></app-icon>
-      &nbsp;&nbsp; {{ "INBOX.TASKS" | translate }}
-    </app-button>
-    <app-button [width]="'100%'" [class]="'left'" (click)="selectedTab = 3">
-      <app-icon shape="notifications_none"></app-icon>
-      &nbsp;&nbsp; {{ "INBOX.NOTIFICATIONS" | translate }}
-    </app-button>
+    <app-list-element class="red">
+      <div menu>
+        <li
+          [ngClass]="{'select': selectedTab === 0}"
+          (click)="selectedTab = 0; onTabChange()"
+        >
+          <app-icon shape="all_inbox"></app-icon>
+          {{ "INBOX.INBOX" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ totalMessageCount }}
+            </span>
+          </span>
+        </li>
+        <li
+          [ngClass]="{'select': selectedTab === 1}"
+          (click)="selectedTab = 1; onTabChange()"
+        >
+          <app-icon shape="chat"></app-icon>
+          {{ "INBOX.QUERIES" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ consultaMessageCount }}
+            </span>
+          </span>
+        </li>
+        <li
+          [ngClass]="{'select': selectedTab === 2}"
+          (click)="selectedTab = 2; onTabChange()"
+        >
+          <app-icon shape="playlist_add_check"></app-icon>
+          {{ "INBOX.TASKS" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ consultaMessageCount }}
+            </span>
+          </span>
+        </li>
+        <li
+          [ngClass]="{'select': selectedTab === 3}"
+          (click)="selectedTab = 3; onTabChange()"
+        >
+          <app-icon shape="notifications_none"></app-icon>
+          {{ "INBOX.NOTIFICATIONS" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ consultaMessageCount }}
+            </span>
+          </span>
+        </li>
+      </div>
+    </app-list-element>
     <!--FIN List -->
   </div>
   <!--FIN SIDENAV-->
   <!--CONTENIDO-->
   <div content>
-    <div class="margin width-40" *ngIf="selectedTab !== 4">
+    <div class="padding width-40">
       <app-input
         [appearance]="'outline'"
         [class]="'search'"
@@ -50,7 +87,12 @@
       ></app-input>
     </div>
     <ng-container *ngIf="selectedTab == 0">
-      <app-table-component></app-table-component>
+      <div class="padding">
+        <app-table-component
+          (rowClicked)="rowClickHandler($event)"
+        >
+        </app-table-component>
+      </div>
     </ng-container>
     <ng-container *ngIf="selectedTab == 1">
       <app-tabs
@@ -59,21 +101,29 @@
         [paddingLeftHeader]="'1rem'"
         [tabColor]="'red'"
       >
-        <div tool>
-          <span>{{ "INBOX.THIS_WEEK" | translate }}</span>
-          <app-icon shape="more_vert"></app-icon>
+        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+          <span>{{ selectedFilterText }}</span>
+          <app-icon
+            shape="more_vert"
+          ></app-icon>
+          <app-dropdown-menu #menu *ngIf="menuItem.length > 0" [menuItem]="menuItem" >
+            <button>
+              {{ "INBOX.THIS_WEEK" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.THIS_MONTH" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.ALLS" | translate }}
+            </button>
+          </app-dropdown-menu>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 0">
+        <div content>
           <app-table-queries
-            [filterStatus]="['abierta', 'cerrada']"
+            [filterTabSelec]="this.tabIndex"
+            [filterDate]="this.filterDate"
             (rowClicked)="rowClickHandler($event)"
           ></app-table-queries>
-        </div>
-        <div content class="padding" *ngIf="this.tabIndex == 1">
-          <app-table-queries [filterStatus]="['abierta']"></app-table-queries>
-        </div>
-        <div content class="padding" *ngIf="this.tabIndex == 2">
-          <app-table-queries [filterStatus]="['cerrada']"></app-table-queries>
         </div>
       </app-tabs>
     </ng-container>
@@ -85,24 +135,30 @@
         [paddingLeftHeader]="'1rem'"
         [tabColor]="'red'"
       >
-        <div tool>
-          <span>{{ "INBOX.THIS_WEEK" | translate }}</span>
-          <app-icon shape="more_vert"></app-icon>
+        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+          <span>{{ selectedFilterText }}</span>
+          <app-icon
+            shape="more_vert"
+          ></app-icon>
+          <app-dropdown-menu #menu *ngIf="menuItem.length > 0" [menuItem]="menuItem" >
+            <button>
+              {{ "INBOX.THIS_WEEK" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.THIS_MONTH" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.ALLS" | translate }}
+            </button>
+          </app-dropdown-menu>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 0">
+        <div content>
           <app-table-tasks
-            [filterStatus]="['realizada', 'pendiente']"
             (noPendingTasks)="showNoTasksMessage($event)"
+            (rowClicked)="rowClickHandler($event)"
+            [filterTabSelec]="this.tabIndex"
+            [filterDate]="this.filterDate"
           ></app-table-tasks>
-          <ng-template #noTasks *ngIf="noTasksMessage">{{
-            "INBOX.NO_PENDING_TASKS" | translate
-          }}</ng-template>
-        </div>
-        <div content class="padding" *ngIf="this.tabIndex == 1">
-          <app-table-tasks [filterStatus]="['pendiente']"></app-table-tasks>
-        </div>
-        <div content class="padding" *ngIf="this.tabIndex == 2">
-          <app-table-tasks [filterStatus]="['realizada']"></app-table-tasks>
         </div>
       </app-tabs>
     </ng-container>
@@ -113,23 +169,28 @@
         [paddingLeftHeader]="'1rem'"
         [tabColor]="'red'"
       >
-        <div tool>
-          <span class="margin-right">{{ "INBOX.THIS_WEEK" | translate }}</span>
-          <app-icon shape="more_vert"></app-icon>
+        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+          <span>{{ selectedFilterText }}</span>
+          <app-icon
+            shape="more_vert"
+          ></app-icon>
+          <app-dropdown-menu #menu *ngIf="menuItem.length > 0" [menuItem]="menuItem" >
+            <button>
+              {{ "INBOX.THIS_WEEK" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.THIS_MONTH" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.ALLS" | translate }}
+            </button>
+          </app-dropdown-menu>
         </div>
-        <div content class="padding" *ngIf="this.tabIndex == 0">
+        <div content>
           <app-table-notifications
-            [filterStatus]="['nueva', 'vista']"
-          ></app-table-notifications>
-        </div>
-        <div content class="padding" *ngIf="this.tabIndex == 1">
-          <app-table-notifications
-            [filterStatus]="['nueva']"
-          ></app-table-notifications>
-        </div>
-        <div content class="padding" *ngIf="this.tabIndex == 2">
-          <app-table-notifications
-            [filterStatus]="['vista']"
+            (rowClicked)="rowClickHandler($event)"
+            [filterTabSelec]="this.tabIndex"
+            [filterDate]="this.filterDate"
           ></app-table-notifications>
         </div>
       </app-tabs>
@@ -138,26 +199,91 @@
 
   <!--FIN CONTENIDO-->
   <!--Detail-->
-  <div detail *ngIf="showDetail" class="padding">
+  <div detail *ngIf="showDetail">
     <div *ngIf="messagesChat">
-      <div *ngFor="let messageChat of messagesChat; let i = index">
-        <div class="headerMessage">
-          <div class="state">
-            <p>estado</p>
-          </div>
-          <div class="icons">
-            <app-icon shape="reply"></app-icon>
+      <div class="content-state">
+        <div class="state">
+          <p>{{ messagesData.Status }}</p>
+        </div>
+        <div class="icons" *ngIf="selectedTab === 1 || selectedTab === 2 || selectedTab === 0">
+          <app-icon shape="reply"></app-icon>
           <app-icon shape="archive"></app-icon>
+        </div>
+      </div>
+      <hr />
+      <div class="content-head-message">
+        <div class="content-title-date">
+          <div class="arrow-title">
+            <app-icon class="icon-back" shape="arrow_back"></app-icon>
+            <p class="title">{{ messagesData.Title }}</p>
           </div>
-          <hr>
+          <div>
+            <p>{{ datepipe.transform(messagesData.Date, "EEEE, HH:mm") }}</p>
+          </div>
         </div>
-        <div class="chat">
-          <p>{{ messageChat.Name }}</p>
-          <p>{{ messageChat.Description }}</p>
-          <p>{{ messageChat.Date}}</p>
-          <hr>
+      </div>
+      <div *ngIf="selectedTab === 1 || (selectedTab === 0 && messagesData.Type === 'consulta')">
+        <div *ngFor="let messageChat of messagesChat; let i = index">
+          <div class="chat">
+            <p class="name">{{ messageChat.Name }}</p>
+            <p class="description">{{ messageChat.Description }}</p>
+            <p class="date">
+              {{ datepipe.transform(messageChat.Date, "EEEE, HH:mm") }}
+            </p>
+          </div>
+          <hr />
         </div>
+      </div>
+      <div *ngIf="selectedTab === 2 || (selectedTab === 0 && messagesData.Type === 'tarea')">
+        <div class="content-tasks">
+          <p class="name-tasks">{{ messagesData.Name }}</p>
+          <p class="descrption-tasks">{{ messagesData.Description }}</p>
+        </div>
+        <div class="content-btn-inbox">
+          <div class="btns">
+            <app-button
+              class="btn-inbox-01"
+              [class]="'red left'"
+              [width]="'100%'"
+            >
+              <app-icon shape="playlist_add_check"></app-icon>
+              Tramitar
+            </app-button>
+            <app-button
+              class="btn-inbox-01"
+              [class]="'red left'"
+              [width]="'100%'"
+              (click)="consultarClicked()"
+            >
+              <app-icon shape="chat"></app-icon>
+              Consultar
+            </app-button>
+          </div>
 
+          <div class="clickConsultar" *ngIf="showSendButton">
+            <app-input
+              [type]="'text'"
+              [placeholder]="'Escribe...'"
+              class="inputSend"
+            ></app-input>
+            <div class="send-button">
+              <app-button
+                class="btn-inbox-01"
+                [class]="'red left'"
+                [width]="'100%'"
+              >
+                <app-icon shape="send"></app-icon>
+                Enviar
+              </app-button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="selectedTab === 3 || (selectedTab === 0 && messagesData.Type === 'notificacion')">
+        <div class="content-tasks">
+          <p class="name-tasks">{{ messagesData.Name }}</p>
+          <p class="descrption-tasks">{{ messagesData.Description }}</p>
+        </div>
       </div>
     </div>
   </div>

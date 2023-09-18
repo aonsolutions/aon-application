@@ -29,7 +29,7 @@ public class Mod2002022 extends Mod200 {
 
 	private boolean initializedFromLastYear;
 	
-	private String cnae;
+	private String cnae;  
 	
 	private int periodType;
 	private Date periodStart;
@@ -63,7 +63,9 @@ public class Mod2002022 extends Mod200 {
 	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>();   // UTES - Relación de socios
 	private LinkedList<GroupEntitie> groupEntities = new LinkedList<GroupEntitie>();               // Grupos de Sociedades- NIF de las entidades del grupo 
 	private LinkedList<String> establishments = new LinkedList<String>();	                       // No residentes - NIF de los establecimientos permanentes, en caso de entidad titular
-	private LinkedList<String> filmProductions = new LinkedList<String>();                         // Información adicional producciones cinematográficas españolas y espectáculos en vivo 
+	private LinkedList<String> filmProductions = new LinkedList<String>();                         // Información adicional producciones cinematográficas españolas y espectáculos en vivo
+	private LinkedList<String> sicav1 = new LinkedList<String>(); // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la sociedad/es disuelta/s
+	private LinkedList<String> sicav2 = new LinkedList<String>(); // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la/las IIC donde reinvierte
 	
 	private String devType;
 	private String payType;
@@ -240,6 +242,18 @@ public class Mod2002022 extends Mod200 {
 	public void setFilmProductions(LinkedList<String> filmProductions) {
 		this.filmProductions = filmProductions;		
 	}
+	public LinkedList<String> getSicav1() {
+		return sicav1;
+	}
+	public void setSicav1(LinkedList<String> sicav1) {
+		this.sicav1 = sicav1;		
+	}
+	public LinkedList<String> getSicav2() {
+		return sicav2;
+	}
+	public void setSicav2(LinkedList<String> sicav2) {
+		this.sicav2 = sicav2;		
+	}
 	public String getDevType() {
 		return devType;
 	}
@@ -379,11 +393,11 @@ public class Mod2002022 extends Mod200 {
 	}
 	
 	public DoubleVariableEx getVariable(IMod200Key key) {
-		DoubleVariableEx var = getDraftMap().get(key);
-		if (var == null ) {
-			var = getKeysMap().get(key);
+		DoubleVariableEx v = getDraftMap().get(key);
+		if (v == null ) {
+			v = getKeysMap().get(key);
 		}
-		return var; 
+		return v; 
 	}
 	
 	public DoubleVariableEx getKey(IMod200Key key) {
@@ -435,6 +449,11 @@ public class Mod2002022 extends Mod200 {
 	
 	public boolean isCooperativa() {
 		return isChecked(Mod2002022Key.C0017) || isChecked(Mod2002022Key.C0018) || isChecked(Mod2002022Key.C0019);
+	}
+	
+	@Override
+	public boolean isStrictToDeposit() {
+		return (canBeSent() || isSent()) && ("I".equals(getPayType()));
 	}
 	
 }

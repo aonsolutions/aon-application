@@ -28,12 +28,8 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 	public static List<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType) throws SegSocialException{
 		List<SecondaryUser> list =  new  LinkedList<>();
-		SSLContext sslContext = null;
-		try {
-			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
-		} catch (Exception e1) {
-			throw new InvalidCertificateException();
-		}
+		SSLContext sslContext = Toolkit.getTrustedSSLContext(certificateInputStream, certificatePassword, certificateType);
+		
 		String link = "";
 		String ticket = "";
 		HttpPost httpPost = null;

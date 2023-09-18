@@ -11,15 +11,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -75,16 +74,16 @@ public class TbaiEmisionGipuzkoaTest {
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
 		invoiceDetail.setDescription("Test Detail 1");
 		invoiceDetail.setQuantity(1.0);
-		invoiceDetail.setPrice(10.0);
+		invoiceDetail.setPrice(1.0);
 		invoiceDetail.setSurcharge(0.0);
 		invoiceDetail.setLine((short) 0);
 		invoiceDetail.setDiscountExpression("0.0");
 		
 		InvoiceTax tax = new InvoiceTax();
-		tax.setBase(10.0);
+		tax.setBase(1.0);
 		tax.setPercentage(21.0);
 		tax.setSurcharge(0.0);
-		tax.setQuota(2.1);
+		tax.setQuota(0.21);
 		tax.setSurchargeQuota(0.0);
 		tax.setTaxType(TaxType.VAT);
 		tax.setVatDeductionType(VatDeductionType.WITH_RIGHT);
@@ -93,9 +92,9 @@ public class TbaiEmisionGipuzkoaTest {
 		invoice.getDetails().add(invoiceDetail);
 		
 		InvoiceBreakdown ib = new InvoiceBreakdown();
-		ib.setBase(10.0);
+		ib.setBase(1.0);
 		ib.setPercentage(21.0);
-		ib.setQuota(2.1);
+		ib.setQuota(0.21);
 		ib.setSurcharge(0.0);
 		ib.setSurchargeQuota(0.0);
 		invoice.getBreakdown().add(ib);
@@ -115,9 +114,8 @@ public class TbaiEmisionGipuzkoaTest {
 		InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream(CERT_NAME);
 		return new Certificate()
 				.setData(AonIOUtils.toByteArray(is))
-				.setCompany(new Random().nextBoolean())
 				.setConfidential(new Random().nextBoolean())
-				.setName(CERT_NAME)
+				.setDescription(CERT_NAME)
 				.setPassword(CERT_PASSWORD)
 				.setType(CERT_TYPE);
 	}
@@ -133,7 +131,7 @@ public class TbaiEmisionGipuzkoaTest {
 	TbaiBlockchain blockchain;
 	
 //	@Test
-//	public void test() {	
+//	public void test() throws Exception {	
 //		TbaiMain tbaiMain = new TbaiMain();
 //		try {
 //			tbaiMain.createEmisionTBAI(getCompany(), buildInvoice(), getTbaiConfiguration());

@@ -85,6 +85,11 @@ public class ProductUtils {
         if(producttype.getFECHALOTESERIE()!=null){
             Date serialDate = AonDateUtils.parse(producttype.getFECHALOTESERIE(), "yyyyMMdd");
             item.setSerialDate(serialDate != null ? serialDate : new Date());
+            if(product.isPerishable()) {
+            	Date expireDate = AonDateUtils.addDays(item.getSerialDate(),
+            			product.getDaysToExpire() != null ? product.getDaysToExpire() : 0);
+            	item.setExpireDate(expireDate);
+            }
         }
         if(producttype.getNUMEROLOTESERIE()!=null){
             item.setSerialNumber(producttype.getNUMEROLOTESERIE());

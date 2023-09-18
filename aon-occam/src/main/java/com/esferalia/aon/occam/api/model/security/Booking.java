@@ -1,22 +1,29 @@
 package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 
 public class Booking implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	
 	private Domain domain;
 	private Company company;
+	private DomainType type;
 	private List<AonApp> apps;
+	private List<AonApp> parentApps;
 	private Integer numberOfUsers;
 	private String payer;
 
+	private BookingResume resume;
+	
 	public Domain getDomain() {
 		return domain;
 	}
@@ -36,11 +43,36 @@ public class Booking implements Serializable {
 	}
 	
 	public List<AonApp> getApps() {
+		if(apps == null) {
+			apps = new LinkedList<>();
+		}
 		return apps;
 	}
 	
 	public Booking setApps(List<AonApp> apps) {
 		this.apps = apps;
+		return this;
+	}
+	
+	public Booking addApp(AonApp app) {
+		getApps().add(app);
+		return this;
+	}
+	
+	public List<AonApp> getParentApps() {
+		if(parentApps == null) {
+			parentApps = new LinkedList<>();
+		}
+		return parentApps;
+	}
+	
+	public Booking setParentApps(List<AonApp> parentApps) {
+		this.parentApps = parentApps;
+		return this;
+	}
+	
+	public Booking addParentApp(AonApp parentApp) {
+		getParentApps().add(parentApp);
 		return this;
 	}
 	
@@ -59,6 +91,24 @@ public class Booking implements Serializable {
 	
 	public Booking setPayer(String payer) {
 		this.payer = payer;
+		return this;
+	}
+	
+	public BookingResume getResume() {
+		return resume;
+	}
+	
+	public Booking setResume(BookingResume resume) {
+		this.resume = resume;
+		return this;
+	}
+	
+	public DomainType getType() {
+		return type;
+	}
+	
+	public Booking setType(DomainType type) {
+		this.type = type;
 		return this;
 	}
 }

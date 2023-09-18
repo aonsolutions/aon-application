@@ -1,0 +1,17 @@
+<app-card class="dashboard min blue" [routerLink]="'/bank'" [queryParams]="{ num: '4' }">
+  <div header>
+    <div class="text blue">{{ 'BILLING.BANKS'| translate }}</div>
+  </div>
+  <div body class="list-bank">
+    <div *ngFor="let bank of banks" class="list-bank-row">
+      <div class="list-bank-name">
+        {{ bank.Name }}
+        <!-- {{ bank.Logo }} -->
+      </div>
+      <div class="list-bank-money">{{ bank.Total }} €</div>
+    </div>
+  </div>
+  <div footer class="list-bank-footer">
+    {{ totalAmount }} €
+  </div>
+</app-card>
