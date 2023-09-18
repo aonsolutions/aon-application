@@ -22,9 +22,11 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.config.InsertIAE1516;
 import net.aonsolutions.db.up2date.config.InsertIAE575576;
 import net.aonsolutions.db.up2date.payroll.NoteInsert;
+import net.aonsolutions.db.up2date.security.UdpateAonPacks;
 import net.aonsolutions.db.up2date.tgss.SuspendJobAndSalaryDaysInsert;
 import net.aonsolutions.db.up2date.warehouse.DeliveryPackagingCreation;
 import net.aonsolutions.db.up2date.warehouse.SalesInfoCreation;
+
 public class Up2Date {
 
 	private static Update[] UPDATES = {
@@ -391,7 +393,8 @@ public class Up2Date {
 	    // ProductPerishableUpdate.PRODUCT_PEISHABLE_UPDATE,
 	    DeliveryPackagingCreation.DELIVERY_PACKAGING_CREATION,
 	    SalesInfoCreation.SALES_INFO_CREATION,
-	    InsertIAE1516.INSERT_IAE_1516
+	    InsertIAE1516.INSERT_IAE_1516,
+	    UdpateAonPacks.UPDATE_AON_PACKS
 	};
 
     // ------------------------------------------------------------------------
