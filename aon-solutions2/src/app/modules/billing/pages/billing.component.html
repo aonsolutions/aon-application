@@ -1,24 +1,29 @@
 <app-grid-layout>
-  <div content class="padding">
+  <div content class="padding" *ngIf="!showMenu">
     <!-- Facturación -->
-    <div class="box">
+    <div class="box facturacion">
       <div class="header">
         <div class="line"></div>
         <div class="text">{{ "BILLING.BILLING" | translate }}</div>
       </div>
       <div class="data">
-        <div id="charts">
+        <div id="charts-billing">
           <div class="chart" *ngFor="let chartItem of chartItems">
             <app-chart-dashboard
-              [name]      = "chartItem.name"
-              [typeDate]  = "chartItem.typeDate"
-              [direction] = "chartItem.direction"
+              [name]="chartItem.name"
+              [typeDate]="chartItem.typeDate"
+              (click)="
+                selectedTab = chartItem.select;
+                selectedMenu = 1;
+                showMenu = true
+              "
             ></app-chart-dashboard>
           </div>
         </div>
       </div>
     </div>
     <!-- Fin facturación -->
+
     <!-- Tesoreria -->
     <div class="box tesoreria">
       <div class="header">
@@ -27,10 +32,1391 @@
       </div>
       <div class="data">
         <div class="chart">
-          <app-banks-dashboard [bankList]="banks$"></app-banks-dashboard>
+          <app-banks-dashboard
+            [bankList]="banks$"
+            (click)="selectedTab = 4; selectedMenu = 2; showMenu = true"
+          ></app-banks-dashboard>
         </div>
       </div>
     </div>
     <!-- Fin Tesoreria -->
   </div>
+  <!--SIDENAV-->
+  <div nav *ngIf="showMenu">
+    <!--List -->
+    <div class="header-submenu" (click)="selectedMenu = 1; selectedTab = 1">
+      <div class="line blue"></div>
+      <div class="text">
+        {{ "BILLING.BILLING" | translate }}
+      </div>
+    </div>
+    <div [class]="selectedMenu === 1 ? 'activated' : 'no-activated'">
+      <app-button
+        [width]="'100%'"
+        [class]="selectedTab === 1 ? 'blue left' : 'left'"
+        (click)="selectedTab = 1"
+      >
+        <app-icon class="blue" shape="trending_up"></app-icon>
+        &nbsp;&nbsp; {{ "BILLING.SALES" | translate }}
+      </app-button>
+      <app-button
+        [width]="'100%'"
+        [class]="selectedTab === 2 ? 'blue left' : 'left'"
+        (click)="selectedTab = 2"
+      >
+        <app-icon class="blue" shape="trending_down"></app-icon>
+        &nbsp;&nbsp; {{ "BILLING.BILLS" | translate }}
+      </app-button>
+      <app-button
+        [width]="'100%'"
+        [class]="selectedTab === 3 ? 'blue left' : 'left'"
+        (click)="selectedTab = 3"
+      >
+        <app-icon class="blue" shape="assignment"></app-icon>
+        &nbsp;&nbsp; {{ "BILLING.REPORTS" | translate }}
+      </app-button>
+    </div>
+    <div class="header-submenu" (click)="selectedMenu = 2; selectedTab = 4">
+      <div class="line blue"></div>
+      <div class="text">{{ "BILLING.TREASURY" | translate }}</div>
+    </div>
+    <div [class]="selectedMenu === 2 ? 'activated' : 'no-activated'">
+      <app-button
+        [width]="'100%'"
+        [class]="selectedTab === 4 ? 'blue left' : 'left'"
+        (click)="selectedTab = 4"
+      >
+        <app-icon class="blue" shape="account_balance"></app-icon>
+        &nbsp;&nbsp; {{ "BILLING.BANKS" | translate }}
+      </app-button>
+    </div>
+    <!--FIN List -->
+  </div>
+  <!--FIN SIDENAV-->
+
+  <!--CONTENIDO-->
+  <div content *ngIf="showMenu">
+    <!-- VENTAS -->
+    <ng-container *ngIf="selectedTab == 1">
+      <app-grid-layout>
+        <div header class="menu">
+          <div class="margin width-40">
+            <app-input
+              [appearance]="'outline'"
+              [class]="'search'"
+              [type]="'search'"
+              [placeholder]="'INBOX.TEXT' | translate"
+            ></app-input>
+          </div>
+          <div class="buttons">
+            <app-button
+              *ngFor="let button of buttonsVentas"
+              class="icon-border"
+              (click)="openModal(button.modal)"
+            >
+              <app-icon [shape]="button.shape" ></app-icon>
+            </app-button>
+            <!-- Icono personalizado -->
+            <mat-icon svgIcon="add-note"></mat-icon>
+            <!-- Fin icono personalizado -->
+          </div>
+        </div>
+        <div content>
+          <app-tabs class="tabs" [tabs]="tabs" [tabColor]="'blue'">
+            <div tool>
+              <app-button class="blue button" (click)="selectedTab = 5">
+                <app-icon shape="add"></app-icon>
+                &nbsp;&nbsp; {{ "BILLING.CREATE_SALES_INVOICE" | translate }}
+              </app-button>
+            </div>
+          </app-tabs>
+
+          <div class="padding">
+            <div id="upload">
+              <app-file-upload-button>
+                {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
+                <app-icon shape="cloud_upload" class="margin-left"></app-icon>
+              </app-file-upload-button>
+            </div>
+            <div>
+              <app-sales-table
+                (selectedSales)="showSales($event)"
+              ></app-sales-table>
+            </div>
+          </div>
+        </div>
+      </app-grid-layout>
+    </ng-container>
+    <!-- FIN VENTAS -->
+
+    <!-- GASTOS -->
+    <ng-container *ngIf="selectedTab == 2">
+      <app-grid-layout>
+        <div header class="menu">
+          <div class="margin width-40">
+            <app-input
+              [appearance]="'outline'"
+              [class]="'search'"
+              [type]="'search'"
+              [placeholder]="'INBOX.TEXT' | translate"
+            ></app-input>
+          </div>
+          <div class="buttons">
+            <app-button
+              *ngFor="let button of buttonsGastos"
+              class="icon-border"
+            >
+              <app-icon [shape]="button.shape"></app-icon>
+            </app-button>
+          </div>
+        </div>
+        <div content>
+          <app-tabs class="tabs" [tabs]="tabs" [tabColor]="'blue'">
+            <div tool>
+              <app-button class="blue button" (click)="selectedTab = 5">
+                <app-icon shape="add"></app-icon>
+                &nbsp;&nbsp; {{ "BILLING.CREATE_BILLS_INVOICE" | translate }}
+              </app-button>
+            </div>
+          </app-tabs>
+          <div class="padding">
+            <div id="upload">
+              <app-file-upload-button>
+                {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
+                <app-icon shape="cloud_upload" class="margin-left"></app-icon>
+              </app-file-upload-button>
+            </div>
+            <app-bills-table></app-bills-table>
+          </div>
+        </div>
+      </app-grid-layout>
+    </ng-container>
+    <!-- FIN GASTOS -->
+
+    <!-- INFORMES -->
+    <ng-container class="padding" *ngIf="selectedTab == 3">
+      <div class="padding">
+        <p class="text">Resultados 2023</p>
+        <div id="charts">
+          <div class="chart" *ngFor="let chartItem of chartReports">
+            <app-chart-dashboard-reports
+              [name]="chartItem.name"
+              [typeDate]="chartItem.typeDate"
+            ></app-chart-dashboard-reports>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- FIN INFORMES -->
+
+    <!-- BANCOS -->
+    <ng-container *ngIf="selectedTab == 4">
+      <div class="banks padding">
+        <!-- Añadir un banco -->
+        <div class="add-bank" *ngIf="!addBank" (click)="addBank = true">
+          <app-icon class="blue icono" shape="account_balance"></app-icon>
+          <p class="title">{{ "BILLING.ADD_BANK" | translate }}</p>
+          <p>
+            Conecta AON con tus bancos para tener un control de tus movimientos
+          </p>
+        </div>
+        <div class="add-bank-true" *ngIf="addBank">
+          <app-icon
+            class="blue button"
+            shape="add"
+            (click)="addBank = false"
+          ></app-icon>
+          <!-- Formulario añadir banco -->
+          <div class="form">
+            <app-input
+              [appearance]="'outline'"
+              [label]="'IBAN'"
+              [class]="'text'"
+              [type]="'text'"
+              [placeholder]="'BILLING.IBAN_PLACEHOLDER' | translate"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'BILLING.DESCRIPTION' | translate"
+              [class]="'text'"
+              [type]="'text'"
+              [placeholder]="'BILLING.DESCRIPTION_PLACEHOLDER' | translate"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'BIC SWIFT'"
+              [class]="'text'"
+              [type]="'text'"
+              [placeholder]="'BILLING.SWIFT_PLACEHOLDER' | translate"
+            ></app-input>
+            <!-- Fin formulario añadir banco -->
+          </div>
+        </div>
+        <!-- Fin añadir banco -->
+        <!-- Listado de bancos -->
+        <div *ngFor="let bank of banksView">
+          <div
+            class="bank"
+            *ngIf="!editBank[bank.id]"
+            (click)="selectedTab = 9"
+          >
+            <div class="buttons">
+              <!-- Icono de sincronización -->
+              <app-icon
+                *ngIf="bank.sync === 'sync'"
+                class="griss"
+                shape="autorenew"
+              ></app-icon>
+              <app-icon
+                *ngIf="bank.sync === 'syncProblem'"
+                class="griss"
+                shape="sync_problem"
+              ></app-icon>
+              <app-icon
+                *ngIf="bank.sync === 'syncLost'"
+                class="griss"
+                shape="sync_disabled"
+              ></app-icon>
+              <!-- Fin de icono de sincronización -->
+              <app-icon
+                class="griss"
+                shape="edit"
+                (click)="editar(bank.id)"
+              ></app-icon>
+            </div>
+            <app-icon class="blue" shape="account_balance"></app-icon>
+            <p class="name-bank">{{ bank.name }}</p>
+            <div class="money">
+              <p class="balance">{{ "BILLING.BALANCE" | translate }}</p>
+              <p>{{ bank.balance }} €</p>
+            </div>
+            <div class="iban">
+              <p>{{ bank.iban }}</p>
+            </div>
+            <div class="footer">
+              <p>{{ "BILLING.LAST_UPDATE" | translate }}</p>
+              <p>{{ bank.date }}</p>
+            </div>
+          </div>
+          <!-- Edición del banco -->
+          <div class="bank" *ngIf="editBank[bank.id]">
+            <div class="buttons">
+              <app-icon
+                *ngIf="bank.sync === 'sync'"
+                class="griss"
+                shape="autorenew"
+              ></app-icon>
+              <app-icon
+                *ngIf="bank.sync === 'syncProblem'"
+                class="griss"
+                shape="sync_problem"
+              ></app-icon>
+              <app-icon
+                *ngIf="bank.sync === 'syncLost'"
+                class="griss"
+                shape="sync_disabled"
+              ></app-icon>
+              <app-icon
+                class="griss"
+                shape="done"
+                (click)="guardar(bank.id)"
+              ></app-icon>
+            </div>
+            <div class="form">
+              <app-input
+                [appearance]="'outline'"
+                [label]="'IBAN'"
+                [class]="'text'"
+                [type]="'text'"
+                [value]="bank.iban"
+                [placeholder]="'BILLING.IBAN_PLACEHOLDER' | translate"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'BILLING.DESCRIPTION' | translate"
+                [class]="'text'"
+                [type]="'text'"
+                [value]="bank.name"
+                [placeholder]="'BILLING.DESCRIPTION_PLACEHOLDER' | translate"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'BIC SWIFT'"
+                [class]="'text'"
+                [type]="'text'"
+                [value]="bank.swift"
+                [placeholder]="'BILLING.SWIFT_PLACEHOLDER' | translate"
+              ></app-input>
+            </div>
+          </div>
+          <!-- Fin de edición de banco -->
+        </div>
+        <!-- Fin listado de bancos -->
+      </div>
+    </ng-container>
+    <!-- FIN BANCOS -->
+
+    <!-- CREAR FACTURA VENTA-->
+    <ng-container *ngIf="selectedTab == 5">
+      <div class="createSalesBill">
+        <div class="header">
+          <div class="left">
+            <app-icon
+              class="griss button"
+              shape="arrow_back"
+              (click)="atrasVenta()"
+            ></app-icon>
+            <p class="title">Factura de venta</p>
+          </div>
+          <div class="right">
+            <app-button [class]="'button'" [width]="'5rem'">
+              Previsualizar
+            </app-button>
+            <app-button [class]="'button save'" [width]="'5rem'">
+              Guardar
+            </app-button>
+          </div>
+        </div>
+        <div class="linea"></div>
+        <div class="padding" body>
+          <div class="InvoiceData">
+            <div class="left">
+              <p>Datos factura</p>
+            </div>
+            <div class="right">
+              <div class="buttons">
+                <app-button
+                  *ngFor="let button of buttonsFacturaVenta"
+                  [class]="'icon-border'"
+                >
+                  <app-icon [shape]="button.shape"></app-icon>
+                </app-button>
+              </div>
+            </div>
+          </div>
+          <div class="linea2"></div>
+          <div class="form">
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Serie'"
+              [type]="'select'"
+              [options]="optionsSerie"
+              [width]="'12rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Número'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <label for="date">
+              <p>Fecha</p>
+              <app-input
+                [appearance]="'outline'"
+                [type]="'date'"
+                [width]="'8rem'"
+              ></app-input>
+            </label>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Total'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'NIF'"
+              [type]="'text'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Razón social/Nombre'"
+              [type]="'text'"
+              [width]="'15rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Categoría'"
+              [type]="'select'"
+              [options]="optionsCategory"
+              [width]="'15rem'"
+            ></app-input>
+          </div>
+          <div class="concept">
+            <div class="left">
+              <p>Conceptos</p>
+            </div>
+            <div class="linea2"></div>
+            <div class="form">
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Procuto'"
+                [type]="'text'"
+                [width]="'13rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Cantidad'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Precio'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Descuento'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Importe'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'IVA'"
+                [type]="'select'"
+                [options]="optionsIVA"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'IRPF'"
+                [type]="'select'"
+                [options]="optionsIRPF"
+              ></app-input>
+            </div>
+            <div class="button">
+              <app-icon shape="add" [class]="'blue'"></app-icon>
+              Añadir
+            </div>
+          </div>
+          <div class="left">
+            <p>Detalle impuestos</p>
+          </div>
+          <div class="linea2"></div>
+          <div class="form">
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Tipo de transacción'"
+              [type]="'select'"
+              [options]="optionsTransaction"
+              [width]="'20rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Actividad'"
+              [type]="'select'"
+              [options]="optionsActivity"
+              [width]="'20rem'"
+            ></app-input>
+            <label class="centered-label" for="criterio">
+              <input type="checkbox" name="criterio" id="criterio" />
+              <p>Criterio de caja</p>
+            </label>
+            <label class="centered-label" for="re">
+              <input type="checkbox" name="re" id="re" />
+              <p>R.E.</p>
+            </label>
+            <label class="centered-label" for="reg">
+              <input type="checkbox" name="reg" id="reg" />
+              <p>Reg. agri. gan. y pesca</p>
+            </label>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'IVA'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Base'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Cuota'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'IRPF'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Base'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Cuota'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Tipo IRPF'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+          </div>
+          <div class="expiration">
+            <div class="left">
+              <p>Vencimientos</p>
+            </div>
+            <div class="linea2"></div>
+            <div class="form">
+              <label for="date">
+                <p>Fecha</p>
+                <app-input
+                  [appearance]="'outline'"
+                  [type]="'date'"
+                  [width]="'8rem'"
+                ></app-input>
+              </label>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Forma de pago'"
+                [type]="'select'"
+                [options]="optionsPay"
+                [width]="'20rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Cuenta bancaria'"
+                [type]="'text'"
+                [width]="'20rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Importe'"
+                [type]="'text'"
+                [width]="'8rem'"
+              ></app-input>
+            </div>
+            <div class="button">
+              <app-icon shape="add" [class]="'blue'"></app-icon>
+              Añadir
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- FIN CREAR FACTURA VENTA -->
+
+    <!-- CREAR FACTURA GASTO -->
+    <ng-container *ngIf="selectedTab == 6">
+      <div class="createSalesBill">
+        <div class="header">
+          <div class="left">
+            <app-icon
+              class="griss button"
+              shape="arrow_back"
+              (click)="atrasVenta()"
+            ></app-icon>
+            <p class="title">Factura de gastos</p>
+          </div>
+          <div class="right">
+            <app-button [class]="'button'" [width]="'5rem'">
+              Previsualizar
+            </app-button>
+            <app-button [class]="'button save'" [width]="'5rem'">
+              Guardar
+            </app-button>
+          </div>
+        </div>
+        <div class="linea"></div>
+        <div class="padding">
+          <div class="InvoiceData">
+            <div class="left">
+              <p>Datos factura</p>
+            </div>
+            <div class="right">
+              <div class="buttons">
+                <app-button
+                  *ngFor="let button of buttonsFacturaVenta"
+                  [class]="'icon-border'"
+                >
+                  <app-icon [shape]="button.shape"></app-icon>
+                </app-button>
+              </div>
+            </div>
+          </div>
+          <div class="linea2"></div>
+          <div class="form">
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Serie'"
+              [type]="'select'"
+              [options]="optionsSerie"
+              [width]="'12rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Número'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <label for="date">
+              <p>Fecha</p>
+              <app-input
+                [appearance]="'outline'"
+                [type]="'date'"
+                [width]="'8rem'"
+              ></app-input>
+            </label>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Total'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'NIF'"
+              [type]="'text'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Razón social/Nombre'"
+              [type]="'text'"
+              [width]="'15rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Categoría'"
+              [type]="'select'"
+              [options]="optionsCategory"
+              [width]="'15rem'"
+            ></app-input>
+          </div>
+          <div class="concept">
+            <div class="left">
+              <p>Conceptos</p>
+            </div>
+            <div class="linea2"></div>
+            <div class="form">
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Procuto'"
+                [type]="'text'"
+                [width]="'13rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Cantidad'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Precio'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Descuento'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Importe'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'IVA'"
+                [type]="'select'"
+                [options]="optionsIVA"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'IRPF'"
+                [type]="'select'"
+                [options]="optionsIRPF"
+              ></app-input>
+            </div>
+            <div class="button">
+              <app-icon shape="add" [class]="'blue'"></app-icon>
+              Añadir
+            </div>
+          </div>
+          <div class="left">
+            <p>Detalle impuestos</p>
+          </div>
+          <div class="linea2"></div>
+          <div class="form">
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Tipo de transacción'"
+              [type]="'select'"
+              [options]="optionsTransaction"
+              [width]="'20rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Actividad'"
+              [type]="'select'"
+              [options]="optionsActivity"
+              [width]="'20rem'"
+            ></app-input>
+            <label class="centered-label" for="criterio">
+              <input type="checkbox" name="criterio" id="criterio" />
+              <p>Criterio de caja</p>
+            </label>
+            <label class="centered-label" for="re">
+              <input type="checkbox" name="re" id="re" />
+              <p>R.E.</p>
+            </label>
+            <label class="centered-label" for="reg">
+              <input type="checkbox" name="reg" id="reg" />
+              <p>Reg. agri. gan. y pesca</p>
+            </label>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'IVA'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Base'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Cuota'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'IRPF'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Base'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Cuota'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Tipo IRPF'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+          </div>
+          <div class="expiration">
+            <div class="left">
+              <p>Vencimientos</p>
+            </div>
+            <div class="linea2"></div>
+            <div class="form">
+              <label for="date">
+                <p>Fecha</p>
+                <app-input
+                  [appearance]="'outline'"
+                  [type]="'date'"
+                  [width]="'8rem'"
+                ></app-input>
+              </label>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Forma de pago'"
+                [type]="'select'"
+                [options]="optionsPay"
+                [width]="'20rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Cuenta bancaria'"
+                [type]="'text'"
+                [width]="'20rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Importe'"
+                [type]="'text'"
+                [width]="'8rem'"
+              ></app-input>
+            </div>
+            <div class="button">
+              <app-icon shape="add" [class]="'blue'"></app-icon>
+              Añadir
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- FIN CREAR FACTURA GASTO -->
+
+    <!-- VER FACTURA -->
+    <ng-container *ngIf="selectedTab == 7">
+      <div class="createSalesBill">
+        <div class="header">
+          <div class="left">
+            <app-icon
+              class="griss button"
+              shape="arrow_back"
+              (click)="atrasVenta()"
+            ></app-icon>
+            <p class="title">Factura 8123123912841</p>
+          </div>
+          <div class="right">
+            <app-button [class]="'button'" [width]="'5rem'">
+              Previsualizar
+            </app-button>
+          </div>
+        </div>
+        <div class="linea"></div>
+        <div class="padding">
+          <div class="InvoiceData">
+            <div class="left">
+              <p>Datos factura</p>
+            </div>
+            <div class="right">
+              <div class="buttons">
+                <app-button
+                  *ngFor="let button of buttonsEdit"
+                  [class]="'icon-border'"
+                >
+                  <app-icon [shape]="button.shape"></app-icon>
+                </app-button>
+              </div>
+            </div>
+          </div>
+          <div class="linea2"></div>
+          <div class="form">
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Serie'"
+              [type]="'select'"
+              [options]="optionsSerie"
+              [width]="'12rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Número'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <label for="date">
+              <p>Fecha</p>
+              <app-input
+                [appearance]="'outline'"
+                [type]="'date'"
+                [width]="'8rem'"
+              ></app-input>
+            </label>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Total'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'NIF'"
+              [type]="'text'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Razón social/Nombre'"
+              [type]="'text'"
+              [width]="'15rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Categoría'"
+              [type]="'select'"
+              [options]="optionsCategory"
+              [width]="'15rem'"
+            ></app-input>
+          </div>
+          <div class="concept">
+            <div class="left">
+              <p>Conceptos</p>
+            </div>
+            <div class="linea2"></div>
+            <div class="form">
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Procuto'"
+                [type]="'text'"
+                [width]="'13rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Cantidad'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Precio'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Descuento'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Importe'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'IVA'"
+                [type]="'select'"
+                [options]="optionsIVA"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'IRPF'"
+                [type]="'select'"
+                [options]="optionsIRPF"
+              ></app-input>
+            </div>
+            <div class="button">
+              <app-icon shape="add" [class]="'blue'"></app-icon>
+              Añadir
+            </div>
+          </div>
+          <div class="left">
+            <p>Detalle impuestos</p>
+          </div>
+          <div class="linea2"></div>
+          <div class="form">
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Tipo de transacción'"
+              [type]="'select'"
+              [options]="optionsTransaction"
+              [width]="'20rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Actividad'"
+              [type]="'select'"
+              [options]="optionsActivity"
+              [width]="'20rem'"
+            ></app-input>
+            <label class="centered-label" for="criterio">
+              <input type="checkbox" name="criterio" id="criterio" />
+              <p>Criterio de caja</p>
+            </label>
+            <label class="centered-label" for="re">
+              <input type="checkbox" name="re" id="re" />
+              <p>R.E.</p>
+            </label>
+            <label class="centered-label" for="reg">
+              <input type="checkbox" name="reg" id="reg" />
+              <p>Reg. agri. gan. y pesca</p>
+            </label>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'IVA'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Base'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Cuota'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'IRPF'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Base'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Cuota'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Tipo IRPF'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+          </div>
+          <div class="expiration">
+            <div class="left">
+              <p>Vencimientos</p>
+            </div>
+            <div class="linea2"></div>
+            <div class="form">
+              <label for="date">
+                <p>Fecha</p>
+                <app-input
+                  [appearance]="'outline'"
+                  [type]="'date'"
+                  [width]="'8rem'"
+                ></app-input>
+              </label>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Forma de pago'"
+                [type]="'select'"
+                [options]="optionsPay"
+                [width]="'20rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Cuenta bancaria'"
+                [type]="'text'"
+                [width]="'20rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Importe'"
+                [type]="'text'"
+                [width]="'8rem'"
+              ></app-input>
+            </div>
+            <div class="button">
+              <app-icon shape="add" [class]="'blue'"></app-icon>
+              Añadir
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- FIN VER FACTURA -->
+
+    <!-- EDITAR FACTURA -->
+    <ng-container *ngIf="selectedTab == 8">
+      <div class="createSalesBill">
+        <div class="header">
+          <div class="left">
+            <app-icon
+              class="griss button"
+              shape="arrow_back"
+              (click)="atrasVenta()"
+            ></app-icon>
+            <p class="title">Factura 8123123912841</p>
+          </div>
+          <div class="right">
+            <app-button [class]="'button'" [width]="'5rem'">
+              Previsualizar
+            </app-button>
+          </div>
+        </div>
+        <div class="linea"></div>
+        <div class="padding">
+          <div class="InvoiceData">
+            <div class="left">
+              <p>Datos factura</p>
+            </div>
+            <div class="right">
+              <div class="buttons">
+                <app-button
+                  *ngFor="let button of buttonsEdit"
+                  [class]="'icon-border'"
+                >
+                  <app-icon [shape]="button.shape"></app-icon>
+                </app-button>
+              </div>
+            </div>
+          </div>
+          <div class="linea2"></div>
+          <div class="form">
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Serie'"
+              [type]="'select'"
+              [options]="optionsSerie"
+              [width]="'12rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Número'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <label for="date">
+              <p>Fecha</p>
+              <app-input
+                [appearance]="'outline'"
+                [type]="'date'"
+                [width]="'8rem'"
+              ></app-input>
+            </label>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Total'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'NIF'"
+              [type]="'text'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Razón social/Nombre'"
+              [type]="'text'"
+              [width]="'15rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Categoría'"
+              [type]="'select'"
+              [options]="optionsCategory"
+              [width]="'15rem'"
+            ></app-input>
+          </div>
+          <div class="concept">
+            <div class="left">
+              <p>Conceptos</p>
+            </div>
+            <div class="linea2"></div>
+            <div class="form">
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Procuto'"
+                [type]="'text'"
+                [width]="'13rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Cantidad'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Precio'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Descuento'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Importe'"
+                [type]="'text'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'IVA'"
+                [type]="'select'"
+                [options]="optionsIVA"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'IRPF'"
+                [type]="'select'"
+                [options]="optionsIRPF"
+              ></app-input>
+            </div>
+            <div class="button">
+              <app-icon shape="add" [class]="'blue'"></app-icon>
+              Añadir
+            </div>
+          </div>
+          <div class="left">
+            <p>Detalle impuestos</p>
+          </div>
+          <div class="linea2"></div>
+          <div class="form">
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Tipo de transacción'"
+              [type]="'select'"
+              [options]="optionsTransaction"
+              [width]="'20rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Actividad'"
+              [type]="'select'"
+              [options]="optionsActivity"
+              [width]="'20rem'"
+            ></app-input>
+            <label class="centered-label" for="criterio">
+              <input type="checkbox" name="criterio" id="criterio" />
+              <p>Criterio de caja</p>
+            </label>
+            <label class="centered-label" for="re">
+              <input type="checkbox" name="re" id="re" />
+              <p>R.E.</p>
+            </label>
+            <label class="centered-label" for="reg">
+              <input type="checkbox" name="reg" id="reg" />
+              <p>Reg. agri. gan. y pesca</p>
+            </label>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'IVA'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Base'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Cuota'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'IRPF'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Base'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Cuota'"
+              [type]="'text'"
+              [width]="'8rem'"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'Tipo IRPF'"
+              [type]="'select'"
+              [options]="optionsActivity"
+            ></app-input>
+          </div>
+          <div class="expiration">
+            <div class="left">
+              <p>Vencimientos</p>
+            </div>
+            <div class="linea2"></div>
+            <div class="form">
+              <label for="date">
+                <p>Fecha</p>
+                <app-input
+                  [appearance]="'outline'"
+                  [type]="'date'"
+                  [width]="'8rem'"
+                ></app-input>
+              </label>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Forma de pago'"
+                [type]="'select'"
+                [options]="optionsPay"
+                [width]="'20rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Cuenta bancaria'"
+                [type]="'text'"
+                [width]="'20rem'"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'Importe'"
+                [type]="'text'"
+                [width]="'8rem'"
+              ></app-input>
+            </div>
+            <div class="button">
+              <app-icon shape="add" [class]="'blue'"></app-icon>
+              Añadir
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- FIN EDITAR FACTURA -->
+
+    <!-- VER BANCO -->
+    <ng-container *ngIf="selectedTab == 9">
+      <div class="view-bank">
+        <app-grid-layout>
+          <div header class="header">
+            <div class="left">
+              <app-icon
+                class="griss"
+                shape="arrow_back"
+                (click)="atras()"
+              ></app-icon>
+              <p class="title">Caixabank</p>
+            </div>
+            <div class="right">
+              <p class="griss">Ult. actualización 12/12/2020</p>
+              <app-button class="button">
+                <app-icon class="blue" shape="sync_disabled"></app-icon>
+                &nbsp;&nbsp; Desconectar banco
+              </app-button>
+            </div>
+          </div>
+          <div content>
+            <div class="filter-container padding">
+              <div class="searchbar">
+                <app-input
+                  [appearance]="'outline'"
+                  [class]="'search'"
+                  [type]="'search'"
+                  [placeholder]="'INBOX.TEXT' | translate"
+                ></app-input>
+              </div>
+              <app-input
+                [appearance]="'outline'"
+                [class]="'date'"
+                [type]="'date'"
+                [placeholder]="'INBOX.TEXT' | translate"
+              ></app-input>
+            </div>
+            <div class="padding">
+              <app-bank-table></app-bank-table>
+            </div>
+          </div>
+        </app-grid-layout>
+      </div>
+    </ng-container>
+    <!-- FIN VER BANCO -->
+  </div>
+
+  <!-- MODALES -->
+  <app-modal-controller #modal> </app-modal-controller>
+  <!-- FIN MODALES -->
+
+  <!--FIN CONTENIDO-->
 </app-grid-layout>

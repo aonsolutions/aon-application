@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -9,12 +9,15 @@ import { TranslateService } from '@ngx-translate/core';
 
 export class SalesTableComponent implements OnInit {
 
+  @Output() selectedSales = new EventEmitter<any>();
+
   displayedColumns: string[] = ['check', 'date', 'number', 'contact', 'total', 'status'];
 
   headerTable: any = {};
 
   dataBody: any[] = [
     {
+      key: 1,
       date: '30/05/2023',
       number: '0001',
       contact: 'Juan Pérez',
@@ -22,6 +25,7 @@ export class SalesTableComponent implements OnInit {
       status: true,
     },
     {
+      key: 2,
       date: '30/05/2023',
       number: '0002',
       contact: 'Juan Pérez',
@@ -29,6 +33,7 @@ export class SalesTableComponent implements OnInit {
       status: false,
     },
     {
+      key: 3,
       date: '30/05/2023',
       number: '0003',
       contact: 'Juan Pérez',
@@ -70,6 +75,7 @@ export class SalesTableComponent implements OnInit {
       column.number  = element.number;
       column.contact = element.contact;
       column.total   = element.total + ' &euro;';
+      column.key     = element.key;
       column.status  =
         element.status === true ? { icon: [{ check_circle: 'griss' }] } : '';
 
@@ -83,4 +89,9 @@ export class SalesTableComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  rowClick(object: any) {
+
+    this.selectedSales.emit(object.key)
+
+  }
 }

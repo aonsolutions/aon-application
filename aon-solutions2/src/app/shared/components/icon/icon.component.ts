@@ -16,7 +16,7 @@ export class IconComponent implements OnInit {
   @Input() padding : string = '';
 
   constructor() {}
-  
+
   ngOnInit(): void {
   }
 
