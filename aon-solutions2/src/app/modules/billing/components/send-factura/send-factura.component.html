@@ -1,0 +1,25 @@
+<div class="modal-container-send">
+  <div class="issue">
+    <div>
+      <span class="title">
+        {{ "BILLING.SEND_BILL" | translate }}
+      </span>
+    </div>
+  </div>
+  <div class="formSend">
+    <app-input
+      [appearance]="'outline'"
+      [class]="'inputText'"
+      [type]="'text'"
+      [placeholder]="'INBOX.TEXT' | translate"
+    ></app-input>
+  </div>
+  <div class="buttonsSend">
+    <app-button [class]="'center send'" [width]="'5rem'">
+      {{ "BILLING.SEND" | translate }}
+    </app-button>
+    <app-button [class]="'center'" [width]="'5rem'" (click)="closeModal()">
+      {{ "BILLING.CANCEL" | translate }}
+    </app-button>
+  </div>
+</div>

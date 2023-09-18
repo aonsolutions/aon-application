@@ -1,0 +1,34 @@
+@import "src/styles.scss";
+
+::ng-deep {
+  .modal-container-delete {
+    width: 20rem;
+  }
+
+  .title-container {
+    display: flex;
+    justify-content: center;
+
+    .title {
+      font-size: 1rem;
+      font-family: "Roboto-Bold";
+    }
+  }
+
+  .buttonsSend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: $margin-top;
+
+    .send {
+      background: $background-button-dark;
+      color: $color-quarter;
+    }
+
+    .send:hover {
+      background: $background-button-dark-hover;
+    }
+  }
+}
