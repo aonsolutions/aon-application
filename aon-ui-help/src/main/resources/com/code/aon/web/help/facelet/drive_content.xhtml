@@ -77,6 +77,14 @@
 			padding		: 1rem;
 		}
 		
+		.drive-content .aon-label-top-drive-folder {
+			font-family	: arial, verdana, "sans-serif";
+			color		: #929292;
+			font-size	: 0.708rem;
+			font-weight	: thin;
+			padding		: 1rem;
+		}
+		
 		.drive-content .aon-label-menu{
 			font-family	: arial, verdana, "sans-serif";
 			color		: #002469;
@@ -127,6 +135,22 @@
 			margin: 25;
 		}
 		
+		.list .list-item-drive-folder {
+			display: flex;
+			align-content: center;
+			align-items: center;
+			width: 11.745rem;
+			height: 4.009rem;
+			padding: 1.934rem;
+			border: 1px solid #f1f1f1;
+			transition: background-color .25s;
+			border-radius: .25rem;
+			color: #000000;
+			font-size: 1.05rem;
+			cursor: pointer;
+		}
+		
+		
 		.list .list-item-vimeo-dad{
 			display: grid;
 			align-content: center;
@@ -141,6 +165,17 @@
 			font-size: 1.05rem;
 			cursor: pointer;
 			margin: 25;
+		}
+		
+		.count-videos{
+			font-size: 1.05rem;
+			text-align: right;
+			color: #2C5AA6;
+		}
+		
+		.item-info {
+    		display: flex;
+   	 		align-items: center;
 		}
 		
 		.list .list-item-vimeo-dad .list-item-vimeo-son{
@@ -245,69 +280,136 @@
 				/>
 				<aon:div styleClass="box-column list">
 					<c:forEach items="#{help.content}" var="file">
-						<!-- FOLDER -->
-						<aon:if test="${file.isFolder() and !file.isFaqFolder()}">
-							<aon:commandLink 
-								styleClass="list-item" 
-								reRender="driveContent"
-							>
-								<f:setPropertyActionListener target="#{vimeo.showVimeo}"
-									value="#{false}" />
-								<f:setPropertyActionListener target="#{help.file}"
-									value="#{file}" />
-					 <!--  			<f:setPropertyActionListener target="#{vimeo.driveFolderName}" value -->
-								<aon:outputText rendered="${!help.isHome()}"
-									value="drive_file_move" styleClass="icon material-icons" />
-								<aon:outputText value="#{file.name}" />
-								<!-- AON ICONS -->
-								<aon:outputText
-									rendered="${help.isHome() and !help.isAonModule(file)}"
-									value="" styleClass="icon aon-module aon-button" />
-								<aon:outputText rendered="${help.isPayroll(file)}" value=""
-									styleClass="icon aon-module aon-button-payroll" />
-								<aon:outputText rendered="${help.isConfig(file)}" value=""
-									styleClass="icon aon-module aon-button-tools" />
-								<aon:outputText rendered="${help.isManagement(file)}" value=""
-									styleClass="icon aon-module aon-button" />
-								<aon:outputText rendered="${help.isAccounting(file)}" value=""
-									styleClass="icon aon-module aon-button-account" />
-								<aon:outputText rendered="${help.isConecta(file)}" value=""
-									styleClass="icon aon-module aon-button-conecta" />
-								<aon:outputText rendered="${help.isFiscal(file)}" value=""
-									styleClass="icon aon-module aon-button-fiscal" />
-							</aon:commandLink>
-						</aon:if>
-
-						<!-- PDF -->
-						<aon:if test="${file.isPDF()}">
-							<a
-								href="./html/pdfjs/viewer.html?encoded=true&amp;newtoolbar=true&amp;file=#{help.getFileServletUrl(file)}"
-								class="list-item" target="_blank"> <aon:outputText
-									value="description" styleClass="icon file material-icons" /> <aon:outputText
-									value="#{file.name}" />
-							</a>
-						</aon:if>
-
-						<!-- VIDEO -->
-						<aon:if test="${file.isVideo()}">
-							<aon:div>
-								<aon:div styleClass="list-item"
-									onclick="javascript:displayVideo(this);return;">
-									<aon:outputText value="smart_display"
-										styleClass="icon file material-icons" />
+					
+						<!-- MAIN PAGE -->
+						<aon:if test="${!vimeo.inFolderDrive}">
+					
+							<!-- FOLDER -->
+							<aon:if test="${file.isFolder() and !file.isFaqFolder()}">
+								<aon:commandLink 
+									styleClass="list-item" 
+									reRender="driveContent"
+								>
+									<f:setPropertyActionListener target="#{vimeo.showVimeo}"
+										value="#{false}" />
+									<f:setPropertyActionListener target="#{help.file}"
+										value="#{file}" />
+										
+										
+						 			<f:setPropertyActionListener target="#{vimeo.driveFolderName}"
+						 				value="#{file.name}" />
+						 			<f:setPropertyActionListener target="#{vimeo.inFolderDrive}"
+						 				value="#{true}" />
+						 					 
+						 
+									<aon:outputText rendered="${!help.isHome()}"
+										value="drive_file_move" styleClass="icon material-icons" />
 									<aon:outputText value="#{file.name}" />
-								</aon:div>
-								<aon:div styleClass="ifrmContainer"
-									style="display:none; justify-content:center; width: 100%; margin-bottom: 10px;">
-									<iframe
-										src="https://drive.google.com/file/d/#{file.getId()}/preview"
-										style="min-width: 680px;" width="50%" height="480"
-										frameBorder="0" allow="autoplay"
-										allowfullscreen="allowfullscreen"></iframe>
-									<!-- <iframe src="./html/video.html##{help.getFileServletUrl(file)}" style="min-width:680px;" width="50%" height="480"></iframe> -->
-								</aon:div>
-							</aon:div>
+									<!-- AON ICONS -->
+									<aon:outputText
+										rendered="${help.isHome() and !help.isAonModule(file)}"
+										value="" styleClass="icon aon-module aon-button" />
+									<aon:outputText rendered="${help.isPayroll(file)}" value=""
+										styleClass="icon aon-module aon-button-payroll" />
+									<aon:outputText rendered="${help.isConfig(file)}" value=""
+										styleClass="icon aon-module aon-button-tools" />
+									<aon:outputText rendered="${help.isManagement(file)}" value=""
+										styleClass="icon aon-module aon-button" />
+									<aon:outputText rendered="${help.isAccounting(file)}" value=""
+										styleClass="icon aon-module aon-button-account" />
+									<aon:outputText rendered="${help.isConecta(file)}" value=""
+										styleClass="icon aon-module aon-button-conecta" />
+									<aon:outputText rendered="${help.isFiscal(file)}" value=""
+										styleClass="icon aon-module aon-button-fiscal" />
+								</aon:commandLink>
+							</aon:if>
 						</aon:if>
+						
+						<!-- IN A FOLDER -->
+						<aon:if test="${vimeo.inFolderDrive}">
+						
+							<aon:outputText 
+								styleClass="aon-label-top-drive-folder"
+								value="TODAS LAS CARPETAS" 
+							/>
+						
+							<!-- FOLDER -->
+							<aon:div styleClass="box-column list">
+								<aon:if test="${file.isFolder() and !file.isFaqFolder()}">
+									<aon:commandLink 
+										styleClass="list-item-drive-folder" 
+										reRender="driveContent"
+									>
+										<f:setPropertyActionListener target="#{vimeo.showVimeo}"
+											value="#{false}" />
+										<f:setPropertyActionListener target="#{help.file}"
+											value="#{file}" />
+											
+											
+							 			<f:setPropertyActionListener target="#{vimeo.driveFolderName}"
+							 				value="#{file.name}" />
+							 			<f:setPropertyActionListener target="#{vimeo.inFolderDrive}"
+							 				value="#{true}" />
+							 					 
+							 
+										<aon:outputText rendered="${!help.isHome()}"
+											value="drive_file_move" styleClass="icon material-icons" />
+										<aon:outputText value="#{file.name}" />
+										<!-- AON ICONS -->
+										<aon:outputText
+											rendered="${help.isHome() and !help.isAonModule(file)}"
+											value="" styleClass="icon aon-module aon-button" />
+										<aon:outputText rendered="${help.isPayroll(file)}" value=""
+											styleClass="icon aon-module aon-button-payroll" />
+										<aon:outputText rendered="${help.isConfig(file)}" value=""
+											styleClass="icon aon-module aon-button-tools" />
+										<aon:outputText rendered="${help.isManagement(file)}" value=""
+											styleClass="icon aon-module aon-button" />
+										<aon:outputText rendered="${help.isAccounting(file)}" value=""
+											styleClass="icon aon-module aon-button-account" />
+										<aon:outputText rendered="${help.isConecta(file)}" value=""
+											styleClass="icon aon-module aon-button-conecta" />
+										<aon:outputText rendered="${help.isFiscal(file)}" value=""
+											styleClass="icon aon-module aon-button-fiscal" />
+									</aon:commandLink>
+								</aon:if>
+							</aon:div>
+							
+							
+							<!-- PDF -->
+							<aon:if test="${file.isPDF()}">
+								<a
+									href="./html/pdfjs/viewer.html?encoded=true&amp;newtoolbar=true&amp;file=#{help.getFileServletUrl(file)}"
+									class="list-item" target="_blank"> <aon:outputText
+										value="description" styleClass="icon file material-icons" /> <aon:outputText
+										value="#{file.name}" />
+								</a>
+							</aon:if>
+	
+							<!-- VIDEO -->
+							<aon:if test="${file.isVideo()}">
+								<aon:div>
+									<aon:div styleClass="list-item"
+										onclick="javascript:displayVideo(this);return;">
+										<aon:outputText value="smart_display"
+											styleClass="icon file material-icons" />
+										<aon:outputText value="#{file.name}" />
+									</aon:div>
+									<aon:div styleClass="ifrmContainer"
+										style="display:none; justify-content:center; width: 100%; margin-bottom: 10px;">
+										<iframe
+											src="https://drive.google.com/file/d/#{file.getId()}/preview"
+											style="min-width: 680px;" width="50%" height="480"
+											frameBorder="0" allow="autoplay"
+											allowfullscreen="allowfullscreen"></iframe>
+										<!-- <iframe src="./html/video.html##{help.getFileServletUrl(file)}" style="min-width:680px;" width="50%" height="480"></iframe> -->
+									</aon:div>
+								</aon:div>
+							</aon:if>
+						
+						</aon:if>
+							
+							
 					</c:forEach>
 				</aon:div>
 
@@ -328,10 +430,17 @@
 									<aon:if test="#{vimeoItem.getRawType() == 'folder'}">
 										<aon:div styleClass="list-item-vimeo-dad"
 											onclick="toggleVideos('videoContainer_#{vimeoItem.getFolder().getIdentifier()}');return;">
-											<aon:outputText value="#{vimeoItem.getFolder().getName()}" />
+											
+											<div class="item info">
+												<aon:outputText value="#{vimeoItem.getFolder().getName()}" />
+												<div class="item info" style="text-align: right; float: right;">
+													<aon:outputText styleClass="count-videos" value="#{vimeo.countVideos(vimeoItem.getFolder())}" />
+													<aon:outputText style="text-align: right; float: right; color: #2C5AA6;" value="smart_display" styleClass="icon file material-icons" />
+												</div>
+											</div>
+											
 											<div id="videoContainer_#{vimeoItem.getFolder().getIdentifier()}"
 												style="display: none;">
-											
 												<ui:repeat
 													value="#{vimeo.getItemsFromFolder(vimeoItem.getFolder())}"
 													var="video">
