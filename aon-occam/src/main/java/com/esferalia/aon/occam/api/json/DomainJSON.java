@@ -98,8 +98,15 @@ public class DomainJSON {
 			.putOpt(IJsonNames.MODIFICATION_USER, domain.getModificationUser())
 			.putOpt(IJsonNames.MODIFICATION_DATE, AonDateUtils.format(domain.getModificationDate(), AonDateUtils.DATE_TIME_FORMAT))
 			.putOpt(IJsonNames.AON_CUSTOMER, domain.getAonCustomer())
-			.putOpt(IJsonNames.AON_STATUS, domain.getAonStatus() == null?null:domain.getAonStatus().toString())			
+			.putOpt(IJsonNames.AON_STATUS, domain.getAonStatus() == null?null:domain.getAonStatus().toString())	
+			.putOpt(IJsonNames.APPS, domain.getApps() == null ? null : getDomainApps(domain))	
 			;		
+	}
+
+	private static JSONArray getDomainApps(Domain domain) {
+		JSONArray apps = new JSONArray();
+		domain.getApps().stream().forEach(app -> apps.put(app.getApp().name()));
+		return apps;
 	}
 
 		
