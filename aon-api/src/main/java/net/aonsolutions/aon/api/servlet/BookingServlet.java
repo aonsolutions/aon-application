@@ -83,9 +83,9 @@ public class BookingServlet extends AonApiHttpServlet {
 		Integer domainId = api.getData().optInt(IJsonNames.DOMAIN_ID);
 		if (AonStringUtils.isNotBlank(domainName) && AonNumberUtils.zeroIfNull(domainId) > 0) {
 			Domain domain = AON.getDomain(domainName, domainId, api.getUser().getLogin());
-			return BookingJSON.toJSON(AON.getBooking(domain, api.getUser()));			
+			return BookingJSON.toJSON(AON.getBooking(domain, api.getUser()), true);			
 		}
-		return BookingJSON.toJSON(AON.getBooking(api.getDomain(), api.getUser()));
+		return BookingJSON.toJSON(AON.getBooking(api.getDomain(), api.getUser()), true);
 	}
 	
 	private static JSONObject getBookingCustomer(AonApiData api) {
