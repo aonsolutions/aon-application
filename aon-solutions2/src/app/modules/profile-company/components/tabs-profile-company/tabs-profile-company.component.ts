@@ -41,6 +41,11 @@ export class TabsProfileCompanyComponent implements OnInit {
       });
   }
 
+  updateRegistryEnterprise(updatedRegistry: any) {
+    // Actualiza el objeto registryEnterprises con el valor recibido del hijo
+    this.registryEnterprises[0] = updatedRegistry;
+  }
+
   onSave() {
     // Llama a la función para actualizar los datos en el servidor
     this.registryEnterpriseService
@@ -68,5 +73,11 @@ export class TabsProfileCompanyComponent implements OnInit {
     this.registryEnterprises[0] = { ...originalRegistryEnterprise };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Recuperar el objeto registryEnterprise desde el LocalStorage al inicializar el componente
+  const storedRegistryEnterprise = localStorage.getItem('registryEnterprise');
+  if (storedRegistryEnterprise) {
+    this.registryEnterprises[0] = JSON.parse(storedRegistryEnterprise);
+  }
+  }
 }

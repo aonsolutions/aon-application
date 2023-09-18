@@ -38,7 +38,8 @@
     <app-grid-layout>
       <div content>
         <app-input-profile-registry-data
-        
+        [registryEnterprise]="registryEnterprises[0]"
+        (registryEnterpriseChange)="updateRegistryEnterprise($event)"
         ></app-input-profile-registry-data>
       </div>
     </app-grid-layout>
