@@ -1,6 +1,7 @@
 <div *ngFor="let user of users">
   <div class="form">
     <app-input
+      (inputValue)="getValue($event, user, 'Name')"
       [type]="'text'"
       [label]="'PROFILE.NAME' | translate"
       [placeholder]="'PROFILE.NAME' | translate"
@@ -8,6 +9,7 @@
       [value]="user.Name"
     ></app-input>
     <app-input
+      (inputValue)="getValue($event, user, 'Lastname')"
       [type]="'text'"
       [label]="'PROFILE.LAST_NAME' | translate"
       [placeholder]="'PROFILE.LAST_NAME' | translate"
@@ -17,6 +19,7 @@
   </div>
   <div class="form">
     <app-input
+      (inputValue)="getValue($event, user, 'Email')"
       [type]="'text'"
       [label]="'PROFILE.EMAIL' | translate"
       [placeholder]="'PROFILE.EMAIL' | translate"
@@ -24,6 +27,7 @@
       [value]="user.Email"
     ></app-input>
     <app-input
+      (inputValue)="getValue($event, user, 'Phone')"
       [type]="'text'"
       [label]="'PROFILE.PHONE' | translate"
       [placeholder]="'PROFILE.PHONE' | translate"
@@ -70,4 +74,25 @@
       </app-input>
     </div>
   </div>
+
+  <form>
+    <div tool>
+      <app-button
+        type="submit"
+        [class]="'dark'"
+        [width]="'100%'"
+        (click)="onSave()"
+      >
+        {{ "PROFILE.SAVE" | translate }}
+      </app-button>
+      <app-button
+        type="button"
+        [class]="'white'"
+        [width]="'100%'"
+        (click)="onCancel()"
+      >
+        {{ "PROFILE.CANCEL" | translate }}
+      </app-button>
+    </div>
+  </form>
 </div>

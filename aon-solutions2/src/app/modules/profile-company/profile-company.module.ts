@@ -25,6 +25,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { TableProfileCertificateComponent } from './components/table-profile-certificate/table-profile-certificate.component';
 import { ModalValidatedCertificateComponent } from './components/modal-validated-certificate/modal-validated-certificate.component';
 import { ModalInfoCertificateComponent } from './components/modal-info-certificate/modal-info-certificate.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { ModalInfoCertificateComponent } from './components/modal-info-certifica
     MatDialogModule,
     MatTableModule,
     MatPaginatorModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    ReactiveFormsModule
 
   ]
 })

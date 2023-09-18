@@ -1,17 +1,17 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { ChartType } from 'chart.js';
-import { TranslateService } from '@ngx-translate/core';
-import { ReportingService } from 'src/app/core/services/reporting.service';
-import { MenuItem } from 'src/app/core/models/interface/menu-item';
-import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { ChartType } from 'chart.js';
+import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { ReportingService } from 'src/app/core/services/reporting.service';
+import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 
 @Component({
-  selector: 'app-chart-dashboard',
-  templateUrl: './chart-dashboard.component.html',
-  styleUrls: ['./chart-dashboard.component.scss'],
+  selector: 'app-chart-dashboard-reports',
+  templateUrl: './chart-dashboard-reports.component.html',
+  styleUrls: ['./chart-dashboard-reports.component.scss'],
 })
-export class ChartDashboardComponent implements OnInit {
+export class ChartDashboardReportsComponent implements OnInit {
   @ViewChild('chart') dropdownMenuComponent: DropdownMenuComponent =
     new DropdownMenuComponent();
   @Input() name: string = '';
@@ -33,13 +33,10 @@ export class ChartDashboardComponent implements OnInit {
   constructor(
     private translateService: TranslateService,
     private reportingService: ReportingService,
-    private router: Router,
+    private router: Router
   ) {
     this.translateService
-      .get([
-        'HOME.LAST_12_MONTHS',
-        'BILLING.SUBTITLE',
-      ])
+      .get(['HOME.LAST_12_MONTHS', 'BILLING.SUBTITLE'])
       .subscribe((result) => {
         // El valor cargado de serie
         this.selected = result['HOME.LAST_12_MONTHS'];
