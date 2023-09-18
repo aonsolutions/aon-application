@@ -1,13 +1,14 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
+import com.esferalia.aon.gwt.common.client.json.BookingJSON;
 import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomerTooltip;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
+import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -62,6 +64,75 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 public class BookingCustomer extends HTMLPanel {
 	
 	// ------- BookingWithOutFee
+	
+	class ConectaUsersCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			conectaUsers(bookingWithOutFeeMenu.getCustomer());
+		}
+		
+		public void conectaUsers(Customer customer) {
+			// Create the base URL
+			String baseUrl = "/ms/api/booking/customer";
+
+			// Create a URL builder and add query parameters
+			UrlBuilder urlBuilder = new UrlBuilder();
+			urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+//			urlBuilder.setHost("localhost:8080");
+			urlBuilder.setHost("aon.solutions"); 
+			urlBuilder.setPath(baseUrl);
+			
+			urlBuilder.setParameter("customer", customer.getId().toString());
+			
+			// Create the request builder with the complete URL
+			RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+			requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+			
+			try {
+			    // Send the request
+			    requestBuilder.sendRequest(null, new RequestCallback() {
+			        public void onResponseReceived(Request request, Response response) {
+			            if (response.getStatusCode() == 200) {
+			            	String responseBody = response.getText();
+			            	List<Booking> bookingList = BookingJSON.parseBookingJSONArr(responseBody);
+			            	if(!bookingList.isEmpty()) {
+			            		Booking booking = bookingList.get(0);
+			            		if(null != booking.getResume() && !booking.getResume().getChilds().isEmpty()) {
+			            			List<Domain> childConectaUsers = booking.getResume().getChilds().stream().filter(child -> child.getMaxDefinedUsers() != null && child.getMaxDefinedUsers() > 1).collect(Collectors.toList());
+			            			
+			            			// Create Widget
+			            			String htmlBody = "<ul>";
+			            			
+			            			for(Domain childConectaUser : childConectaUsers) {
+			            				htmlBody += "<li>" + (childConectaUser.getMaxDefinedUsers() - 1) + " x " + childConectaUser.getDescription() + "</li>";
+			            			}
+			            			
+			            			htmlBody += "</ul>";
+			            			
+			            			HTMLPanel html = new HTMLPanel(htmlBody);
+			            			html.getElement().getStyle().setPaddingLeft(2, Unit.EM);
+			            			
+			            			AonDialog dialog = new AonDialog("Usuario Adicional Conect\u0040", html);
+			            			dialog.info();
+			            			
+			            		}
+			            	}
+			            } else {
+			            	AonMessagePanel.showError(messagePanel, response.getText());
+			            }
+			        }
+
+					public void onError(Request request, Throwable exception) {
+						AonMessagePanel.showError(messagePanel, exception.getMessage());
+			        }
+			    });
+			} catch (RequestException e) {
+				AonMessagePanel.showError(messagePanel, e.getMessage());
+			}
+		}
+
+	}
 	
 	class CreateCustomerFeeCommand implements ScheduledCommand {
 
@@ -135,6 +206,49 @@ public class BookingCustomer extends HTMLPanel {
 
 	}
 	
+	class RemoveBookingCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			removeBooking();
+		}
+		
+		private void removeBooking() {
+			AonDialog dialog = new AonDialog("Eliminaci\u00f3n Contrataci\u00f3n",
+					new HTML("Se va a proceder a eliminar la contrataci\u00f3n.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+			
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+
+				@Override
+				public void onAccept() {
+					AonMessagePanel.showLoading(messagePanel, "Elimando contrataci\u00f3n seleccionada ...");
+					LinkedList<BookingCheck> selectedBookings = new LinkedList<>();
+					selectedBookings.add(new BookingCheck().setId(bookingWithOutFeeMenu.getId()));
+					
+					SERVICE.deleteBookingList(options.getDomainName(), options.getDomain(), options.getUser(), selectedBookings,new AsyncCallback<Void>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Error eliminando contrataci\u00f3n: " + caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							AonMessagePanel.showSuccess(messagePanel, "Se han eliminado la contrataci\u00f3n correctamente");
+							setBookingCustomer(customer, customerDomains);
+						}
+					});
+				}
+			});
+		}
+
+	}
+	
 	class BookingWithOutFeeMenu extends AonContextMenu {
 		
 		private Integer id;
@@ -144,10 +258,15 @@ public class BookingCustomer extends HTMLPanel {
 		
 		private MenuItem createCustomerFee;
 		private MenuItem updateBooking;
+		private MenuItem deleteBooking;
+		private MenuItem conectaUsers;
+		
 
 		public BookingWithOutFeeMenu() {
 			createCustomerFee = addMenuItem("Crear Cuota", new CreateCustomerFeeCommand(), AON.CSS.aonIconAdd(), "createCustomerFee");
 			updateBooking = addMenuItem("Actualizar Contrataci\u00f3n", new UpdateBookingCommand(), AON.CSS.aonIconEdit(), "updateBooking");
+			deleteBooking = addMenuItem("Eliminar Contrataci\u00f3n", new RemoveBookingCommand(), AON.CSS.aonIconDelete(), "deleteBooking");
+			conectaUsers = addMenuItem("Informaci\u00f3n Usuarios", new ConectaUsersCommand(), AON.CSS.aonIconInfo(), "conectaUsers");
 		}
 		
 		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
@@ -186,6 +305,7 @@ public class BookingCustomer extends HTMLPanel {
 
 		public void setBookingCheck(BookingCheck bookingCheck) {
 			this.bookingCheck = bookingCheck;
+			this.conectaUsers.setVisible(AonStringUtils.equalsIgnoreCase(this.bookingCheck.getItem().getBarcode(), "01.00.USR"));
 		}
 		
 		public void setHasFee(boolean hasFee) {
@@ -412,7 +532,7 @@ public class BookingCustomer extends HTMLPanel {
 		
 		this.add(focusPanel);
 	}
-	
+
 	public void setBookingCustomer(Customer customer, List<DomainCompany> customerDomains) {
 		this.customer = customer;
 		this.customerDomains = customerDomains;
@@ -603,7 +723,7 @@ public class BookingCustomer extends HTMLPanel {
 
 			@Override
 			public void onAccept() {
-				syncDomains2();
+				syncDomains();
 			//	syncDomains();
 			}
 		});
@@ -1302,156 +1422,15 @@ public class BookingCustomer extends HTMLPanel {
 	}
 
 	
-	private void syncDomains2() {
-		updateBookingRitems2();
-	}
 	private void syncDomains() {
-		for(DomainCompany domainCompany : this.customerDomains) {
-			AonMessagePanel.showLoading(messagePanel, "Obteniendo contrataci\u00f3n para el dominio " + domainCompany.getDomain().getDescription() + " ...");
-			
-			// Create the base URL
-			String baseUrl = "/ms/api/booking/";
-
-			// Create a URL builder and add query parameters
-			UrlBuilder urlBuilder = new UrlBuilder();
-			urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-			urlBuilder.setHost("aon.solutions"); 
-			urlBuilder.setPath(baseUrl);
-			
-			urlBuilder.setParameter("domainName", domainCompany.getDomain().getName());
-			urlBuilder.setParameter("domainId", domainCompany.getDomain().getId().toString());
-			
-			// Create the request builder with the complete URL
-			RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-			requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-			
-			try {
-			    // Send the request
-			    requestBuilder.sendRequest(null, new RequestCallback() {
-			        public void onResponseReceived(Request request, Response response) {
-			            if (response.getStatusCode() == 200) {
-
-			                String bookingJSON = response.getText();
-			                AonMessagePanel.hideMessage(messagePanel);
-			                getDomain(domainCompany, bookingJSON);
-			                
-			            } else {
-			            	AonMessagePanel.showError(messagePanel, response.getText());
-			            }
-			        }
-
-					public void onError(Request request, Throwable exception) {
-						AonMessagePanel.showError(messagePanel, exception.getMessage());
-			        }
-			    });
-			} catch (RequestException e) {
-				AonMessagePanel.showError(messagePanel, e.getMessage());
-			}
-		}
+		updateBookingRitems();
 	}
 	
-	private void getDomain(DomainCompany domainCompany, String bookingJSON) {
-		AonMessagePanel.showLoading(messagePanel, "Obteniendo informaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " ...");
-		
-		// Create the base URL
-		String baseUrl = "/ms/api/domain/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost("aon.solutions"); 
-		urlBuilder.setPath(baseUrl);
-		
-		urlBuilder.setParameter("domainId", domainCompany.getDomain().getId().toString());
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-
-		                String domainJSON = response.getText();
-		                AonMessagePanel.hideMessage(messagePanel);
-		                updateBookingRitems(domainCompany, domainJSON, bookingJSON);
-		                
-		            } else {
-		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
-	}
-	
-	private void updateBookingRitems(DomainCompany domainCompany, String domainJSON, String bookingJSON) {
-		AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el dominio " + domainCompany.getDomain().getDescription() + " ...");
-		
-		// Create the base URL
-		String baseUrl = "/ms/api/domain/booking/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost(Window.Location.getHost()); 
-		urlBuilder.setPath(baseUrl);
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		
-		JSONObject body = new JSONObject();
-		body.put("domain", JSONParser.parseStrict(domainJSON));
-		body.put("booking", JSONParser.parseStrict(bookingJSON));
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	if(AonStringUtils.isNotBlank(response.getText()) && AonStringUtils.containsIgnoreCase(response.getText(), "errors")) {
-		            		List<String> errors = parseErrors(response.getText());
-		            		String errorMessage = "";
-		            		for(String error : errors)
-		            			errorMessage += error + "\n";
-		            		AonMessagePanel.showError(messagePanel, errorMessage);
-		            	} else {
-		            		AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " se ha realizado correctamente");
-		            		Timer timer = new Timer() {
-			           		     @Override
-			           		     public void run() {
-			           		    	setBookingCustomer(customer, customerDomains);
-			           		     }
-			           		};
-			           		timer.schedule(2500);
-		            	}
-		            } else {
-		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
-	}
-	
-	private void updateBookingRitems2() {
+	private void updateBookingRitems() {
 		AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el cliente " + customer.getName() + " ...");
 		
 		// Create the base URL
-		String baseUrl = "/ms/api/domain/booking2/";
+		String baseUrl = "/ms/api/domain/booking-customer/";
 
 		// Create a URL builder and add query parameters
 		UrlBuilder urlBuilder = new UrlBuilder();
@@ -1471,14 +1450,25 @@ public class BookingCustomer extends HTMLPanel {
 		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
 		        public void onResponseReceived(Request request, Response response) {
 		            if (response.getStatusCode() == 200) {
-		            	if(AonStringUtils.isNotBlank(response.getText()) && AonStringUtils.containsIgnoreCase(response.getText(), "errors")) {
-		            		List<String> errors = parseErrors(response.getText());
-		            		String errorMessage = "";
-		            		for(String error : errors)
-		            			errorMessage += error + "\n";
-		            		AonMessagePanel.showError(messagePanel, errorMessage);
-		            	} else
-		            		AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del cliente " + customer.getName() + " se ha realizado correctamente");
+		            	
+		            	AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del cliente " + customer.getName() + " se ha realizado correctamente");
+	            		
+		            	Timer timer = new Timer() {
+		           		     @Override
+		           		     public void run() {
+		           		    	setBookingCustomer(customer, customerDomains);;
+		           		     }
+		           		};
+		           		timer.schedule(2500);
+		           		
+		           		Timer logTimer = new Timer() {
+  		           		     @Override
+  		           		     public void run() {
+  		           		    	 showSyncLogs(response.getText());
+  		           		     }
+  		           		};
+  		           		logTimer.schedule(4500);
+  		           		
 		            } else {
 		            	AonMessagePanel.showError(messagePanel, response.getText());
 		            }
@@ -1492,18 +1482,27 @@ public class BookingCustomer extends HTMLPanel {
 			AonMessagePanel.showError(messagePanel, e.getMessage());
 		}
 	}
+	
+	private void showSyncLogs(String response) {
+		if(AonStringUtils.isNotBlank(response) && AonStringUtils.containsIgnoreCase(response, "logs"))
+    		AonMessagePanel.showWarning(messagePanel, parseErrors(response));
+	}
 
-	private List<String> parseErrors(String jsonErrors) {
-		List<String> list = new ArrayList<>();
+	private HTMLPanel parseErrors(String jsonErrors) {
+		String htmlBody = "<ul>";
 		
 		JSONObject jsonObj = JSONParser.parseStrict(jsonErrors).isObject();
-		JSONArray arr = jsonObj.get("errors").isArray();
+		JSONArray arr = jsonObj.get("logs").isArray();
 		
-		for(Integer i = 0; i < arr.size(); i++) {
-			list.add(arr.get(i).isObject().get("error").isString().stringValue());
-		}
- 		
-		return list;
+		for(Integer i = 0; i < arr.size(); i++)
+			htmlBody += "<li>" + arr.get(i).isObject().get("log").isString().stringValue() + "</li>";
+
+		htmlBody += "</ul>";
+		
+		HTMLPanel html = new HTMLPanel(htmlBody);
+		html.getElement().getStyle().setPaddingLeft(2, Unit.EM);
+		
+		return html;
 	}
 	
 }

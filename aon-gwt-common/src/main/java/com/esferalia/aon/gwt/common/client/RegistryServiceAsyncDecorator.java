@@ -269,4 +269,10 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		serviceAsync.saveBookingCheck(domainName, domain, user, bookingCheck, new AsyncCallbackWrapper<Void>(callback));
 	}
 
+	@Override
+	public void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.deleteBookingList(domainName, domain, user, selectedBookings, new AsyncCallbackWrapper<Void>(callback));
+	}
+
 }

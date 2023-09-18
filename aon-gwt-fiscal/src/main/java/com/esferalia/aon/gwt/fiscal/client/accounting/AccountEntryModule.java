@@ -1266,7 +1266,6 @@ public class AccountEntryModule extends MainEntryPoint {
 	public void onDuplicate() {
 		final AccountEntry orig = wizardContent.getMainEntry();
 		final AonCustomDialog dialog = new AonCustomDialog();
-		dialog.setWidth("500px");
 		dialog.setCaption(AON.MSG.duplicate());
 		FlowPanel rootPanel = new FlowPanel();
 		rootPanel.setStyleName(AON.CSS.aonScrollArea());
@@ -1286,7 +1285,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.period()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-		table.getCellFormatter().addStyleName(row, 0, AON.CSS.aonWidth200());
 		AccountPeriodBox period = new AccountPeriodBox();
 		period.fill(getOptions().getConfiguration().accounting().getPeriods());
 		period.select(orig.getPeriod());
@@ -1307,6 +1305,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		mantainConcept.setValue(true);
 		
 		final AonTextBox concept = new AonTextBox();
+		concept.setVisibleLength(25);
 		concept.setMaxLength(32);
 		concept.setEnabled(false);
 		concept.setValue("Mantener original");
@@ -1334,6 +1333,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		mantainDocument.setStyleName(AON.CSS.aonNowrap());
 		mantainDocument.setValue(true);
 		final AonTextBox document = new AonTextBox();
+		document.setVisibleLength(25);
 		document.setMaxLength(32);
 		document.setEnabled(false);
 		document.setValue("Mantener original");
@@ -1357,8 +1357,8 @@ public class AccountEntryModule extends MainEntryPoint {
 
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		final CheckBox invert = new CheckBox( AON.MSG.invertData());
-		table.setWidget(row,0,invert);
-		table.setWidget(row,1,new Label());
+		table.setWidget(row,0,new Label());
+		table.setWidget(row,1,invert);
 		rootPanel.add( table );
 		
 		FlowPanel buttons = new FlowPanel();

@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.SerfruitDeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO.SalesPropertiesDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SerfruitDAO {
@@ -57,6 +58,26 @@ public class SerfruitDAO {
 		
 		return SalesDAO.getStream(ctx, f -> filter.filter(new SalesPropertiesDAO())
 				.and(f.getSalesDetailIdProperty().in(salesDetailIds)), options);
+	}
+
+	public static Delivery saveDelivery(AONContext ctx, Delivery delivery) {
+		for (DeliveryDetail detail : delivery.getDetails()) {
+			Item item = detail.getItem();
+			item.setId(null);
+			item.setDescription(item.getDescription() + " #" + item.getSerialNumber());
+			if(item.getProduct().isPerishable()) {
+				Date expireDate = AonDateUtils.addDays(item.getSerialDate(), 
+					item.getProduct().getDaysToExpire() != null ? item.getProduct().getDaysToExpire() : 0);
+				item.setExpireDate(expireDate);
+			}
+			item = ItemDAO.save(ctx, item);
+			detail.setItem(item);
+		}
+		delivery = DeliveryDAO.save(ctx, delivery);
+		
+		// TODO ACTUALIZAR DETALLES PEDIDO -->
+		// TODO ACTUALIZAR ELABORACION SI LA TIENE...
+		return delivery;
 	}
 	
 	public static void saveDeliveryPackaging(AONContext ctx, Delivery delivery, List<SerfruitDeliveryPackaging> packaging) {
@@ -155,6 +176,8 @@ public class SerfruitDAO {
                                 .and(f.getCodeProperty().eq(dp.getProduct().getCode())));
     
         if (product == null || product.getId() == null) {
+			ProductCategory pc = ProductCategoryDAO.get(ctx, f -> f.getIdProperty().eq(3297));
+
             product = new Product();
             product.setDomain(new Domain().setId(ctx.getDomainId()));
             product.setStatus(ProductStatus.ACTIVE);
@@ -162,7 +185,7 @@ public class SerfruitDAO {
             product.setSerializable(Boolean.FALSE);
             product.setPackaged(Boolean.FALSE);
             product.setInventoriable(Boolean.TRUE);
-            product.setCategory(new ProductCategory().setId(3297));
+            product.setCategory(pc);
             product.setCode(dp.getProduct().getCode());
             product.setName(AonStringUtils.isBlank(dp.getProduct().getName())
             		? "ENVASE AUTOGENERADO ("+ dp.getProduct().getCode() +")"
