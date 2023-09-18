@@ -31,6 +31,8 @@ export class TableNotificationsComponent implements OnChanges {
   filterStatus: string[] = ['todas', 'nueva', 'vista'];
   bodyTable: any[] = [];
   totalMessages: number = 0;
+  lenghtTitle   : number = 30;
+  lenghtMensage : number = 50;
 
   messages: ICollection<IMessage> =
     new CollectionFactory().createMessageCollection();
@@ -129,8 +131,9 @@ export class TableNotificationsComponent implements OnChanges {
       .then((response) => {
         response.forEach((message, messageKey) => {
           const column: any = Object.assign({}, message);
-
+          // key
           column.key = messageKey;
+          // Nombre del asesor
           column.name = message.Name;
 
           if (
@@ -148,8 +151,11 @@ export class TableNotificationsComponent implements OnChanges {
                   : 'background-text-griss-light'
               }">${message.Status}</span>`,
             };
+            // Asunto del mensaje
             column.title = message.Title;
+            // Mensaje
             column.description = message.Description;
+            // Fecha
             column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
             column.class = message.Status == 'nueva' ? 'border-red' : '';
             tableRow.push(column);
