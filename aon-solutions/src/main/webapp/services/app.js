@@ -660,25 +660,6 @@ export const HOTEL = {
   domainType: true,
 };
 
-export const PACK_SUITE = {
-  app: "pack_suite",
-  icon: "aon_app",
-  title: "Suite Completa",
-  subtitle: " Pack Portal | Pack Cotización | Pack Tributación",
-  color: "black",
-  apps: [
-    Apps.ACCOUNTING,
-    Apps.FISCAL,
-    Apps.PAYROLL,
-    Apps.COMUNICA,
-    Apps.DOCUMENTAL,
-    Apps.TIMECONTROL,
-    Apps.INVOICE,
-    Apps.MESSENGER
-  ],
-  price: " ", // '295€/mes'
-};
-
 export const PACK_PORTAL = {
   app: "pack_portal",
   icon: AON_ICONS.AON_PORTAL,
@@ -712,6 +693,28 @@ export const PACK_FISCAL_ACCOUNTING = {
   color: "#002469",
   apps: [Apps.FISCAL, Apps.ACCOUNTING],
   price: " ", // '120€/mes'
+};
+
+export const PACK_SUITE = {
+  app: "pack_suite",
+  icon: "aon_app",
+  title: "Suite Completa",
+  subtitle: " Pack Portal | Pack Cotización | Pack Tributación",
+  color: "black",
+  apps: [
+    Apps.ACCOUNTING,
+    Apps.FISCAL,
+    Apps.PAYROLL,
+    Apps.COMUNICA,
+    Apps.DOCUMENTAL,
+    Apps.TIMECONTROL,
+    Apps.INVOICE,
+    Apps.MESSENGER,
+    PACK_FISCAL_ACCOUNTING,
+    PACK_PAYROLL,
+    PACK_PORTAL
+  ],
+  price: " ", // '295€/mes'
 };
 
 export const Packs = {

@@ -129,7 +129,9 @@ public class DeliveriesServlet extends AonApiHttpServlet {
 //		api.setData(json);
 		
 		Delivery delivery = DeliveryJSON.fromJSON(api.getData());
-		delivery = AON.saveDelivery(api.getDomain(), api.getUser(), delivery);
+		if(JsonUtils.getboolean(api.getData(), IJsonNames.SERFRUIT)) {
+			delivery = SERFRUIT.saveDelivery(api.getDomain(), api.getUser(), delivery);
+		} else delivery = AON.saveDelivery(api.getDomain(), api.getUser(), delivery);
 			
 		if(JsonUtils.has(api.getData(), IJsonNames.PACKAGING)) {
 			List<SerfruitDeliveryPackaging> list =  SerfruitDeliveryPackagingJSON.fromJSON(JsonUtils.getJSONArray(api.getData(), IJsonNames.PACKAGING));

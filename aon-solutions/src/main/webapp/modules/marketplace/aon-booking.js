@@ -485,8 +485,8 @@ export class AonBooking extends AonElement {
 
 		let checkBox = new AonCheckbox();
 
-		table.addCell(checkBox)
-
+		let td = table.addCell(checkBox)
+		td.style.width = '15px';
 		let span3 = this.createElement(TAG.SPAN);
 		span3.innerHTML = 'He leido las <a target="_blank" class="aonLink" href="http://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf">condiciones de servicio</a> y estoy de acuerdo con las mismas'
 		table.addCell(span3);
