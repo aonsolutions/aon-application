@@ -6001,6 +6001,26 @@ if(test){
     }).catch((error) => {
         console.log('ERROR TEST FOLDERS GET LIST', error)
     })
+
+    /**
+        TEST FOR MARKS
+     */
+
+    let markFactory = new MarkFactory();
+    let markFilter = new FilterBuilder();
+    markFilter.addField('idUser', localStorage.getItem('login'))
+    
+    markFactory.createMultipleObjectCrud().getCollection().then((response) => {
+        console.log('TEST MARKS GET LIST', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST MARKS GET LIST', error)
+    })
+    
+    markFactory.createSpecificMethods().getMarksOfOneUser(localStorage.getItem('registry') || '', markFilter.getFilter()).then((response) => {
+        console.log('TEST MARKS GET LIST OF ONE USER', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST MARKS GET LIST OF ONE USER', error)
+    })
 }
 
 
@@ -6054,19 +6074,5 @@ if(test){
 // }
 
 
-let markFactory = new MarkFactory();
-let markFilter = new FilterBuilder();
-markFilter.addField('idUser', localStorage.getItem('login'))
 
-markFactory.createMultipleObjectCrud().getCollection().then((response) => {
-    console.log('TEST MARKS GET LIST', response.result.toArray());
-}).catch((error) => {
-    console.log('ERROR TEST MARKS GET LIST', error)
-})
-
-markFactory.createSpecificMethods().getMarksOfOneUser(localStorage.getItem('registry') || '', markFilter.getFilter()).then((response) => {
-    console.log('TEST MARKS GET LIST OF ONE USER', response.result.toArray());
-}).catch((error) => {
-    console.log('ERROR TEST MARKS GET LIST OF ONE USER', error)
-})
 
