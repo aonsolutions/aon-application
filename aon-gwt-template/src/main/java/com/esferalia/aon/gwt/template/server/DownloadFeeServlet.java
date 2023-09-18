@@ -4,15 +4,18 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedList;
+import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -33,9 +36,11 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "DownloadTemplatesFee", urlPatterns = { "/aon_gwt_template/ms/gwt_download_fee/*"
-															 ,"/aon_gwt_aio/ms/gwt_download_fee/*"})
+															 ,"/aon_gwt_aio/ms/gwt_download_fee/*"
+															 ,"/aon_gwt_fiscal/ms/gwt_download_fee/*"})
 public class DownloadFeeServlet extends HttpServlet {
 
 	/**
@@ -208,7 +213,7 @@ public class DownloadFeeServlet extends HttpServlet {
 	}
 	
 	
-	private Filter feeFilter(Domain domain, JSONObject filterJSON, FeeProperties f, Integer[]  a) {
+	private Filter feeFilter(Domain domain, JSONObject filterJSON, FeeProperties f, Integer[] a) {
 		Filter filter =  f.getDomainProperty().eq(domain.getId());
 
 		if(filterJSON.opt("from") != null) { // FECHA FACTURACIÓN
@@ -221,52 +226,15 @@ public class DownloadFeeServlet extends HttpServlet {
 			java.sql.Date to = new java.sql.Date(filterJSON.optLong("to"));
 			filter = filter.and(f.getBillingDateProperty().le(to))
 					.and(f.getInitialDateProperty().le(to));
-			
-		}
-		
-		if(filterJSON.opt("item") != null) {
-			Integer item = filterJSON.optInt("item");
-			filter = filter.and(f.getItemProperty().eq(item));
-		}
-		
-		if(filterJSON.opt("status") != null) {
-			Integer status = filterJSON.optInt("status");
-			filter = filter.and(f.getStatusProperty().eq(status.byteValue()));
-		}
-		
-		if(filterJSON.opt("scope") != null) {
-			Integer scope = filterJSON.optInt("scope");
-			filter = filter.and(f.getScopeProperty().eq(scope));
 		}
 		
 		if(a != null) {
 			filter = filter.and(f.getCustomerProperty().in(a));
 		}
 		
-//		if(filterJSON.opt("segment") != null) {
-//			JSONArray segment = filterJSON.optJSONArray("segment");
-//			if(segment.length() > 0) {
-//				Integer[] segments = new Integer[segment.length()];
-//				for (Integer i = 0; i < segment.length(); i++) {
-//					segments[i] = segment.getInt(i);
-//				}
-//				filter = filter.and(f.getSegmentProperty().in(segments));
-//			}
-//		}
-		
-		if(filterJSON.opt("seller") != null) {
-			Integer seller = filterJSON.optInt("seller");
-			filter = filter.and(f.getSellerProperty().eq(seller));
-		}
-		
-		if(filterJSON.opt("customer") != null) {
-			Integer customer = filterJSON.optInt("customer");
-			filter = filter.and(f.getCustomerProperty().eq(customer));
-		}
-		
-		if(filterJSON.opt("workplace") != null) {
-			Integer workplace = filterJSON.optInt("workplace");
-			filter = filter.and(f.getWorkplaceProperty().eq(workplace));
+		if(filterJSON.opt("scope") != null) {
+			Integer scope = filterJSON.optInt("scope");
+			filter = filter.and(f.getScopeProperty().eq(scope));
 		}
 		
 		if(filterJSON.opt("category") != null) {
@@ -278,6 +246,195 @@ public class DownloadFeeServlet extends HttpServlet {
 			Integer period = filterJSON.optInt("period");
 			filter = filter.and(f.getPeriodProperty().eq(period.shortValue()));
 		}
+		
+		// CUSTOMER FEE
+		
+		if(null != filterJSON.opt("month") && null == filterJSON.opt("year")) {
+			Integer month = filterJSON.optInt("month") + 1;
+			filter = filter.and(f.getMonthBillingDateProperty().eq(month));
+		} else if(null == filterJSON.opt("month") && null != filterJSON.opt("year")) {
+			Date startBillingDate = new Date(filterJSON.optInt("year"), 0, 1);
+			Date endBillingDate = new Date(filterJSON.optInt("year"), 11, 31);
+			
+			filter = filter.and(f.getBillingDateProperty().between(startBillingDate, endBillingDate));
+		} else if(null != filterJSON.opt("month") && null != filterJSON.opt("year")) {
+			Date billingDate = new Date(filterJSON.optInt("year"), filterJSON.optInt("month"), 1);
+			filter = filter.and(f.getBillingDateProperty().eq(billingDate));
+		}
+		
+		if(filterJSON.opt("periodicity") != null) {
+			Integer periodicity = filterJSON.optInt("periodicity");
+			filter = filter.and(f.getPeriodProperty().eq(periodicity.shortValue()));
+		}
+		
+		if(filterJSON.opt("customer") != null) {
+			Integer customer = filterJSON.optInt("customer");
+			filter = filter.and(f.getCustomerProperty().eq(customer));
+		}
+		
+		if(filterJSON.opt("status") != null) {
+			Integer status = filterJSON.optInt("status");
+			filter = filter.and(f.getStatusProperty().eq(status.byteValue()));
+		}
+		
+		if(filterJSON.opt("segment") != null) {
+			Integer segment = filterJSON.optInt("segment");
+			if(segment > 0) filter = filter.and(f.getSegmentProperty().eq(segment));
+		}
+		
+		if(filterJSON.opt("startDate") != null) {
+			java.sql.Date startDate = new java.sql.Date(filterJSON.optLong("startDate"));
+			
+			switch (filterJSON.optInt("startDateCompare")) {
+				case (byte) 1:
+					filter = filter.and(f.getInitialDateProperty().le(startDate));
+					break;
+				case (byte) 2:
+					filter = filter.and(f.getInitialDateProperty().ge(startDate));
+					break;
+				default:
+					filter = filter.and(f.getInitialDateProperty().eq(startDate));
+					break;
+			}
+		}
+		
+		if(filterJSON.opt("endDate") != null) {
+			java.sql.Date endDate = new java.sql.Date(filterJSON.optLong("endDate"));
+			
+			switch (filterJSON.optInt("endDateCompare")) {
+				case (byte) 1:
+					filter = filter.and(f.getFinalDateProperty().le(endDate));
+					break;
+				case (byte) 2:
+					filter = filter.and(f.getFinalDateProperty().ge(endDate));
+					break;
+				default:
+					filter = filter.and(f.getFinalDateProperty().eq(endDate));
+					break;
+			}
+		}
+		
+		if(filterJSON.opt("product") != null) {
+			Integer product = filterJSON.optInt("product");
+			filter = filter.and(f.getItemProperty().eq(product));
+		}
+		
+		if(filterJSON.opt("item") != null) {
+			Integer item = filterJSON.optInt("item");
+			filter = filter.and(f.getItemProperty().eq(item));
+		}
+		
+		if(filterJSON.opt("productCategory") != null) {
+			Integer productCategory = filterJSON.optInt("productCategory");
+			filter = filter.and(f.getProductCategoryProperty().eq(productCategory));
+		}
+		
+		if(filterJSON.opt("productTag") != null) {
+			Integer productTag = filterJSON.optInt("productTag");
+			filter = filter.and(f.getProductTagProperty().eq(productTag));
+		}
+		
+		if(filterJSON.opt("quantity") != null) {
+			String quantityStr = filterJSON.optString("quantity");
+			if(AonStringUtils.containsIgnoreCase(quantityStr, ":")) {
+				Double quantityStart = Double.parseDouble(quantityStr.split(":")[0].trim());
+				Double quantityEnd = Double.parseDouble(quantityStr.split(":")[1].trim());
+				filter = filter.and(f.getQuantityProperty().ge(quantityStart));
+				filter = filter.and(f.getQuantityProperty().le(quantityEnd));
+			} else if(AonStringUtils.containsIgnoreCase(quantityStr, ">")) {
+				String quantityStrSplit = quantityStr.split(">")[1].trim();
+				if(AonStringUtils.containsIgnoreCase(quantityStr, "=")) {
+					quantityStrSplit = quantityStrSplit.split("=")[1].trim();
+					Double quantity = Double.parseDouble(quantityStrSplit);
+					filter = filter.and(f.getQuantityProperty().ge(quantity));
+				} else {
+					Double quantity = Double.parseDouble(quantityStrSplit);
+					filter = filter.and(f.getQuantityProperty().gt(quantity));
+				}
+			} else if(AonStringUtils.containsIgnoreCase(quantityStr, "<")) {
+				String quantityStrSplit = quantityStr.split("<")[1].trim();
+				if(AonStringUtils.containsIgnoreCase(quantityStrSplit, "=")) {
+					quantityStrSplit = quantityStr.split("=")[1].trim();
+					Double quantity = Double.parseDouble(quantityStrSplit);
+					filter = filter.and(f.getQuantityProperty().le(quantity));
+				} else {
+					Double quantity = Double.parseDouble(quantityStr);
+					filter = filter.and(f.getQuantityProperty().lt(quantity));
+				}
+			} else {
+				Double quantity = Double.parseDouble(quantityStr);
+				filter = filter.and(f.getQuantityProperty().eq(quantity));
+			}
+		}
+		
+		if(filterJSON.opt("price") != null) {
+			String priceStr = filterJSON.optString("price");
+			if(AonStringUtils.containsIgnoreCase(priceStr, ":")) {
+				Double priceStart = Double.parseDouble(priceStr.split(":")[0].trim());
+				Double priceEnd = Double.parseDouble(priceStr.split(":")[1].trim());
+				filter = filter.and(f.getPriceProperty().ge(priceStart));
+				filter = filter.and(f.getPriceProperty().le(priceEnd));
+			} else if(AonStringUtils.containsIgnoreCase(priceStr, ">")) {
+				String priceStrSplit = priceStr.split(">")[1].trim();
+				if(AonStringUtils.containsIgnoreCase(priceStr, "=")) {
+					priceStrSplit = priceStrSplit.split("=")[1].trim();
+					Double price = Double.parseDouble(priceStrSplit);
+					filter = filter.and(f.getPriceProperty().ge(price));
+				} else {
+					Double price = Double.parseDouble(priceStrSplit);
+					filter = filter.and(f.getPriceProperty().gt(price));
+				}
+			} else if(AonStringUtils.containsIgnoreCase(priceStr, "<")) {
+				String priceStrSplit = priceStr.split("<")[1].trim();
+				if(AonStringUtils.containsIgnoreCase(priceStrSplit, "=")) {
+					priceStrSplit = priceStrSplit.split("=")[1].trim();
+					Double price = Double.parseDouble(priceStrSplit);
+					filter = filter.and(f.getPriceProperty().le(price));
+				} else {
+					Double price = Double.parseDouble(priceStrSplit);
+					filter = filter.and(f.getPriceProperty().lt(price));
+				}
+			} else {
+				Double price = Double.parseDouble(priceStr);
+				filter = filter.and(f.getPriceProperty().eq(price));
+			}
+		}
+		
+		if(filterJSON.opt("discount") != null) {
+			String discount = filterJSON.optString("discount");
+			filter = filter.and(f.getDiscountExprProperty().eq(discount));
+		}
+		
+		if(filterJSON.opt("seller") != null) {
+			Integer seller = filterJSON.optInt("seller");
+			filter = filter.and(f.getSellerProperty().eq(seller));
+		}
+		
+		if(filterJSON.opt("workplace") != null) {
+			Integer workplace = filterJSON.optInt("workplace");
+			filter = filter.and(f.getWorkplaceProperty().eq(workplace));
+		}
+		
+		if(filterJSON.opt("invoicingGroup") != null) {
+			Integer invoicingGroup = filterJSON.optInt("invoicingGroup");
+			filter = filter.and(f.getInvoicingGroupProperty().eq(invoicingGroup));
+		}
+		
+		if(filterJSON.opt("project") != null) {
+			Integer project = filterJSON.optInt("project");
+			filter = filter.and(f.getProjectProperty().eq(project));
+		}
+		
+		if(filterJSON.opt("feeIds") != null) {
+			 JSONObject feeIds = filterJSON.optJSONObject("feeIds");
+			 List<Integer> ids = new ArrayList<>();
+			 for(int i=0; i<feeIds.length(); i++) {
+				 ids.add(feeIds.optInt("feeId"+i));
+			 }
+			
+			filter = filter.and(f.getIdProperty().in(ids.toArray(Integer[]::new)));
+		}
+		
 		return filter;
 	
 	}

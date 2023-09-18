@@ -185,6 +185,7 @@ public class ITComunica {
 			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart, List<String> messages) {
 			try {
 				Optional<Double> baseOptional = employeeIt.getDailyCgcBase();
+				if(baseOptional.isEmpty()) throw new IllegalArgumentException("Falta la Base CC");
 				verifyData(new Object[] { 
 						 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), baseOptional.get(), employeeIt.getQuoteDays(), 
 						 employeeIt.getType(),  itPart.getDate(), employeeIt.getContractType()

@@ -14,7 +14,9 @@ public class InvoiceImportClass implements IsSerializable {
 	
 	InvoiceOpType type;
 	InvoiceType invoiceType;
+	String activity;
 	Date date;
+	Date taxDate;
 	String serie;
 	Integer number;
 	String ref;
@@ -30,6 +32,12 @@ public class InvoiceImportClass implements IsSerializable {
 	Country country;
 	String account;
 	String accountDescription;
+	String productCode;
+	String productName;
+	String productSerialNumber;
+	String productBarcode;
+	boolean suplido;
+	Double quantity;
 	Double base;
 	Double percentage;
 	Double quota;
@@ -44,12 +52,21 @@ public class InvoiceImportClass implements IsSerializable {
 	Date financeDate;
 	String financeAccount;
 	Boolean investment;
-	
+	String conceptDetail;
 	LinkedList<InvoiceImportClass> lines;
 	LinkedList<Finance> finances;
 	
 	public InvoiceImportClass() {
-		// TODO Auto-generated constructor stub
+
+	}
+	
+	public String getActivity() {
+		return activity;
+	}
+	
+	public InvoiceImportClass setActivity(String activity) {
+		this.activity = activity;
+		return this;		
 	}
 
 	public InvoiceOpType getType() {
@@ -67,6 +84,15 @@ public class InvoiceImportClass implements IsSerializable {
 
 	public InvoiceImportClass setDate(Date date) {
 		this.date = date;
+		return this;
+	}
+	
+	public Date getTaxDate() {
+		return this.taxDate;
+	}
+	
+	public InvoiceImportClass setTaxDate(Date taxDate) {
+		this.taxDate = taxDate;
 		return this;
 	}
 
@@ -364,6 +390,69 @@ public class InvoiceImportClass implements IsSerializable {
 		return this;
 	}
 	
+	public String getProductCode() {
+		return productCode;
+	}
+
+	public InvoiceImportClass setProductCode(String productCode) {
+		this.productCode = productCode;
+		return this;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public InvoiceImportClass setProductName(String productName) {
+		this.productName = productName;
+		return this;
+	}
+
+	public String getProductSerialNumber() {
+		return productSerialNumber;
+	}
+
+	public InvoiceImportClass setProductSerialNumber(String productSerialNumber) {
+		this.productSerialNumber = productSerialNumber;
+		return this;
+	}
+
+	public String getProductBarcode() {
+		return productBarcode;
+	}
+
+	public InvoiceImportClass setProductBarcode(String productBarcode) {
+		this.productBarcode = productBarcode;
+		return this;
+	}
+
+	public boolean isSuplido() {
+		return suplido;
+	}
+
+	public InvoiceImportClass setSuplido(boolean suplido) {
+		this.suplido = suplido;
+		return this;
+	}
+	
+	public Double getQuantity() {
+		return quantity;
+	}
+	
+	public InvoiceImportClass setQuantity(Double quantity) {
+		this.quantity = quantity;
+		return this;
+	}
+	
+	public String getConceptDetail() {
+		return conceptDetail;
+	}
+	
+	public InvoiceImportClass setConceptDetail(String conceptDetail) {
+		this.conceptDetail = conceptDetail;
+		return this;
+	}
+
 	public boolean isEmpty() {
 		return getType() == null && getDate() == null && getRef() == null
 			&& getSerie() == null && getNumber() == null && getName() == null

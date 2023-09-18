@@ -290,6 +290,32 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void saveContractExtensionExport(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.fillContractExtension(employeeData, contractData, new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void saveContractRelocationExport(Map<String, String> contractRelocationInfo, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.fillContractRelocation(contractData.getContractId(), contractRelocationInfo, new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	// ------------------------------------------------- Database Methods (SEPE Get files)
 
 	public void downloadCbc(Consumer<String> success, Consumer<Throwable> failure) {
@@ -622,6 +648,22 @@ public class ContrataEmployeeObject {
 	
 	public void cambioOcupacion(String ocupation, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.cambioOcupacion(employeeContractData, ocupation, date, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});	
+	}
+	
+	public void cambioCno(String cno, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.cambioCno(employeeContractData, cno, date, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -1017,6 +1059,10 @@ public class ContrataEmployeeObject {
 		contractData.setRlce(rlce);
 	}
 	
+	public void setContractCno(String cno) {
+		contractData.setCno(cno);
+	}
+	
 	public void setContractEmployeesColective(String employeesColective) {
 		contractData.setEmployeesColective(employeesColective);
 	}
@@ -1067,8 +1113,8 @@ public class ContrataEmployeeObject {
 		employeeData.setAddressZip(zipCode);
 	}
 	
-	public void setEmployeeAddressProvince(String province) {
-		employeeData.setAddressProvinces(province);
+	public void setEmployeeAddressProvince(Integer geozoneId) {
+		employeeData.setAddressProvinces(geozoneId);
 	}
 
 	public void setEmployeeAddressCity(String city) {

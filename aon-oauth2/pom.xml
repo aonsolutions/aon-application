@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20140107</version>
+			<version>20230227</version>
 		</dependency>
 
 		<dependency>
@@ -77,14 +77,14 @@
 		<!-- Google Oauth2 API -->
 		<dependency>
 			<groupId>com.google.apis</groupId>
-			<artifactId>google-api-services-oauth2</artifactId>
-			<version>v2-rev98-1.21.0</version>
+			<artifactId>google-api-services-oauth2-jakarta</artifactId>
+			<version>v2-rev141-1.25.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.api-client</groupId>
-			<artifactId>google-api-client-servlet</artifactId>
-			<version>1.21.0</version>
+			<artifactId>google-api-client-servlet-jakarta</artifactId>
+			<version>1.27.0</version>
 		</dependency>
 
 		<dependency>
@@ -167,7 +167,7 @@
 					<version>1.11.795</version>
 				</dependency>
 				<dependency>
-					<groupId>javax.mail</groupId>
+					<groupId>jakarta.mail</groupId>
 					<artifactId>mail</artifactId>
 					<version>1.4</version>
 				</dependency>

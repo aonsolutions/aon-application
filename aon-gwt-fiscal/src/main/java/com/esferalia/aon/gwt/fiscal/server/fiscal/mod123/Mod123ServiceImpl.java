@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.server.fiscal.mod123;
 
 import java.util.LinkedList;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod123.Mod123Service;
@@ -87,11 +87,6 @@ public class Mod123ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Mod123 create(Occam occam, Mod123 mod123) {
 		return MODEL123.create(occam, mod123);
-	}
-
-	@Override
-	public Mod123 reset(Occam occam, Mod123 mod123) {
-		return MODEL123.reset(occam, mod123);
 	}
 
 	@Override

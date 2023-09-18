@@ -1,7 +1,7 @@
 package com.code.aon.ui.common.domain;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 import com.code.aon.common.domain.DomainManager;
 

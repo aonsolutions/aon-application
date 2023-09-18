@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.Repeat;
+import com.esferalia.aon.occam.test.faker.AccountingFaker;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 
 
@@ -17,7 +18,7 @@ public class JsonAccountTrialBalanceReportTest extends AbstractOccamTest {
 	@Test
 	@Repeat( 20 )
 	public void test() {
-		AccountTrialBalanceReport expected = AonFaker.getAccountTrialBalanceReport( ctx );
+		AccountTrialBalanceReport expected = AccountingFaker.getAccountTrialBalanceReport( ctx );
 		JSONObject json = AccountTrialBalanceReportJSON.toJSON(expected);
 		AccountTrialBalanceReport actual = AccountTrialBalanceReportJSON.fromJSON(json);
 		Asserts.assertEqualsAccountTrialBalanceReport(expected, actual);

@@ -1,7 +1,10 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
@@ -22,41 +25,36 @@ public final class EmployeeAFIGeneration {
 	
 	public static class ETI{
 		
-		String etiHeader;
+		String header;
 		String sintaxIndent;
 		String authKey;
-		String payrollProvider;
-		String reserved5;
-		String fileName; //Length 8
-		String sufixAFI;
-		String priorityCode;
+		String reserved8;
+		String dateCreation;
+		String fileName;
+		String sufix;
+		String priority;
 		String test;
 		String registryIdent;
-		String reservedTGSS;
-		String reserved1;
+		String reserved2;
 		
 		public ETI(String authKey, String payrollProvider, String fileName, String priorityCode) {
 			super();
-			this.etiHeader = "ETI";
-			this.sintaxIndent = AonStringUtils.rightPad("AFI90W0000", 10, '0');
+			
+			this.header = "ETI";
+			this.sintaxIndent = "AFI93W0000";
 			this.authKey = AonStringUtils.leftPad(authKey, 8, '0');
-			this.payrollProvider = AonStringUtils.leftPad(payrollProvider, 3, '0');
-			this.reserved5 = AonStringUtils.leftPad("", 5, '0');
-			
-			this.fileName = AonStringUtils.isBlank(fileName) ? day + month + hour + minute : fileName;
-			
-			this.sufixAFI = "AFI";
-			this.priorityCode = priorityCode;
-			
-			this.test = " ";
-			
+			this.reserved8 = AonStringUtils.leftPad("", 8, ' ');
+			this.dateCreation = AonStringUtils.leftPad(year + month + day + hour + minute, 12, '0');;
+			this.fileName = AonStringUtils.leftPad(AonStringUtils.isBlank(fileName) ? day + month + hour + minute : fileName, 8, '0');
+			this.sufix = "AFI";
+			this.priority = "N";
+			this.test = AonStringUtils.leftPad("", 1, ' ');
 			this.registryIdent = AonStringUtils.leftPad("", 14, '0');
-			this.reservedTGSS = AonStringUtils.leftPad("", 1, ' ');
-			this.reserved1 = AonStringUtils.leftPad("", 1, ' ');
+			this.reserved2 = AonStringUtils.leftPad("", 2, ' ');
 		}
-		
-		public String getEtiHeader() {
-			return etiHeader;
+
+		public String getHeader() {
+			return header;
 		}
 		public String getSintaxIndent() {
 			return sintaxIndent;
@@ -64,35 +62,20 @@ public final class EmployeeAFIGeneration {
 		public String getAuthKey() {
 			return authKey;
 		}
-		public String getPayrollProvider() {
-			return payrollProvider;
+		public String getReserved8() {
+			return reserved8;
 		}
-		public String getReserved5() {
-			return reserved5;
-		}
-		public String getYear() {
-			return year;
-		}
-		public String getMonth() {
-			return month;
-		}
-		public String getDay() {
-			return day;
-		}
-		public String getHour() {
-			return hour;
-		}
-		public String getMinute() {
-			return minute;
+		public String getDateCreation() {
+			return dateCreation;
 		}
 		public String getFileName() {
 			return fileName;
 		}
-		public String getSufixAFI() {
-			return sufixAFI;
+		public String getSufix() {
+			return sufix;
 		}
-		public String getPriorityCode() {
-			return priorityCode;
+		public String getPriority() {
+			return priority;
 		}
 		public String getTest() {
 			return test;
@@ -100,91 +83,65 @@ public final class EmployeeAFIGeneration {
 		public String getRegistryIdent() {
 			return registryIdent;
 		}
-		public String getReservedTGSS() {
-			return reservedTGSS;
-		}
-		public String getReserved1() {
-			return reserved1;
+		public String getReserved2() {
+			return reserved2;
 		}
 		
 	}
 	
 	public static class EMP{
-		String empHeader;
-		String cccRegime;
-		String cccProvince;
-		String ccc;
+		
+		String header;
+		String fullCcc;
 		String identType;
-		String country;
-		String indet;
+		String identCountry;
+		String ident;
 		String reserved2;
-		String cccRegimePrincipal;
-		String cccProvincePrincipal;
-		String cccPrincipal;
-		String reservedCollection;
+		String fullPrincipalCcc;
+		String collection;
 		String action;
 		String reserved1;
 		
-		public EMP(String cccRegime, String cccProvince, String ccc, String identType, String country, 
-				String ident, String cccRegimePrincipal, String cccProvincePrincipal, String cccPrincipal) {
+		public EMP(String fullCcc, String identType, String identCountry, String ident, String fullPrincipalCcc) {
 			
 			super();
-			this.empHeader = "EMP";
 			
-			this.cccRegime = AonStringUtils.leftPad(cccRegime, 4, '0');
-			this.cccProvince = AonStringUtils.leftPad(cccProvince, 2, '0');
-			this.ccc = AonStringUtils.leftPad(ccc, 9, '0');
-			
-			this.identType = identType;
-			this.country = AonStringUtils.leftPad(country, 3, '0');
-			this.indet = AonStringUtils.leftPad(ident, 14, '0');
-			
-			this.reserved2 = StringUtils.leftPad("", 2, ' ');
-			
-			this.cccRegimePrincipal = AonStringUtils.leftPad(cccRegimePrincipal, 4, '0');
-			this.cccProvincePrincipal = AonStringUtils.leftPad(cccProvincePrincipal, 2, '0');
-			this.cccPrincipal = AonStringUtils.leftPad(cccPrincipal, 9, '0');
-			
-			this.reservedCollection = AonStringUtils.leftPad("", 13, ' ');
+			this.header = "EMP";
+			this.fullCcc = fullCcc;
+			this.identType = AonStringUtils.leftPad(identType, 1, '0');
+			this.identCountry = AonStringUtils.leftPad(identCountry, 3, '0');
+			this.ident = AonStringUtils.leftPad(ident, 14, '0');
+			this.reserved2 = AonStringUtils.leftPad("", 2, ' ');
+			this.fullPrincipalCcc = fullPrincipalCcc;
+			this.collection = AonStringUtils.leftPad("", 13, ' ');
 			this.action = AonStringUtils.leftPad("", 3, ' ');
 			this.reserved1 = AonStringUtils.leftPad("", 1, ' ');
+		
 		}
 		
-		public String getEmpHeader() {
-			return empHeader;
+		public String getHeader() {
+			return header;
 		}
-		public String getCccRegime() {
-			return cccRegime;
-		}
-		public String getCccProvince() {
-			return cccProvince;
-		}
-		public String getCcc() {
-			return ccc;
+		public String getFullCcc() {
+			return fullCcc;
 		}
 		public String getIdentType() {
 			return identType;
 		}
-		public String getCountry() {
-			return country;
+		public String getIdentCountry() {
+			return identCountry;
 		}
-		public String getIndet() {
-			return indet;
+		public String getIdent() {
+			return ident;
 		}
 		public String getReserved2() {
 			return reserved2;
 		}
-		public String getCccRegimePrincipal() {
-			return cccRegimePrincipal;
+		public String getFullPrincipalCcc() {
+			return fullPrincipalCcc;
 		}
-		public String getCccProvincePrincipal() {
-			return cccProvincePrincipal;
-		}
-		public String getCccPrincipal() {
-			return cccPrincipal;
-		}
-		public String getReservedCollection() {
-			return reservedCollection;
+		public String getCollection() {
+			return collection;
 		}
 		public String getAction() {
 			return action;
@@ -196,36 +153,36 @@ public final class EmployeeAFIGeneration {
 	}
 	
 	public static class RZS{
-		String rzsHeader;
-		String rzsIndicator;
-		String businessmanType;
-		String rzsName;
+		
+		String header;
+		String identRzs;
+		String businessman;
+		String rzs;
 		String authKey;
 		String reserved2;
 		
-		public RZS(String businessmanType, String rzsName) {
+		public RZS(String rzs) {
 			super();
 			
-			this.rzsHeader = "RZS";
-			this.rzsIndicator = "0";
-			this.businessmanType = businessmanType;
-			
-			this.rzsName = AonStringUtils.rightPad(rzsName, 55, ' ');
+			this.header = "RZS";
+			this.identRzs = "0";
+			this.businessman = "2";
+			this.rzs = AonStringUtils.rightPad(rzs, 55, ' ');
 			this.authKey = AonStringUtils.leftPad("", 8, '0');
 			this.reserved2 = AonStringUtils.leftPad("", 2, ' ');
 		}
 
-		public String getRzsHeader() {
-			return rzsHeader;
+		public String getHeader() {
+			return header;
 		}
-		public String getRzsIndicator() {
-			return rzsIndicator;
+		public String getIdentRzs() {
+			return identRzs;
 		}
-		public String getBusinessmanType() {
-			return businessmanType;
+		public String getBusinessman() {
+			return businessman;
 		}
-		public String getRzsName() {
-			return rzsName;
+		public String getRzs() {
+			return rzs;
 		}
 		public String getAuthKey() {
 			return authKey;
@@ -237,8 +194,9 @@ public final class EmployeeAFIGeneration {
 	}
 
 	public static class TRA{
-		String traHeader;
-		String numAfilicion;
+		
+		String header;
+		String nss;
 		String documentType;
 		String documentCountry;
 		String document;
@@ -248,13 +206,13 @@ public final class EmployeeAFIGeneration {
 		String employeeIndic;
 		String reserved5;
 		
-		public TRA(String numAfilicion, String documentType, String documentCountry, String document,
+		public TRA(String nss, String documentType, String documentCountry, String document,
 				String nationality) {
 			
 			super();
 			
-			this.traHeader = "TRA";
-			this.numAfilicion = AonStringUtils.rightPad(numAfilicion, 12, '0');
+			this.header = "TRA";
+			this.nss = AonStringUtils.rightPad(nss, 12, '0');
 			
 			this.documentType = documentType;
 			this.documentCountry = AonStringUtils.leftPad(documentCountry, 3, '0');
@@ -269,11 +227,11 @@ public final class EmployeeAFIGeneration {
 			this.reserved5 = AonStringUtils.leftPad("", 5, ' ');
 		}
 		
-		public String getTraHeader() {
-			return traHeader;
+		public String getHeader() {
+			return header;
 		}
-		public String getNumAfilicion() {
-			return numAfilicion;
+		public String getNss() {
+			return nss;
 		}
 		public String getDocumentType() {
 			return documentType;
@@ -303,7 +261,7 @@ public final class EmployeeAFIGeneration {
 	}
 	
 	public static class AYN{
-		String aynHeader;
+		String header;
 		String firstSurname;
 		String secondSurname;
 		String name;
@@ -311,15 +269,20 @@ public final class EmployeeAFIGeneration {
 		
 		public AYN(String firstSurname, String secondSurname, String name) {
 			super();
-			this.aynHeader = "AYN";
+			
+			if(name.length() > 15) name = name.substring(0, 15);
+			if(firstSurname.length() > 20) firstSurname = firstSurname.substring(0, 20);
+			if(secondSurname.length() > 20) secondSurname = secondSurname.substring(0, 20);
+			
+			this.header = "AYN";
 			this.firstSurname = AonStringUtils.rightPad(firstSurname, 20, ' ');
 			this.secondSurname = AonStringUtils.rightPad(secondSurname, 20, ' ');
 			this.name = AonStringUtils.rightPad(name, 15, ' ');
 			this.reserved12 = AonStringUtils.rightPad("", 12, ' ');
 		}
 
-		public String getAynHeader() {
-			return aynHeader;
+		public String getHeader() {
+			return header;
 		}
 		public String getFirstSurname() {
 			return firstSurname;
@@ -338,12 +301,14 @@ public final class EmployeeAFIGeneration {
 	
 	public static class MA{
 		FAB fab;
+		ODL odl;
 		OTD otd;
 		
-		public MA(FAB fab, OTD otd) {
+		public MA(FAB fab, OTD otd, ODL odl) {
 			super();
 			this.fab = fab;
 			this.otd = otd;
+			this.odl = odl;
 		}
 
 		public FAB getFab() {
@@ -357,6 +322,12 @@ public final class EmployeeAFIGeneration {
 		}
 		public void setOtd(OTD otd) {
 			this.otd = otd;
+		}
+		public ODL getOdl() {
+			return odl;
+		}
+		public void setOdl(ODL odl) {
+			this.odl = odl;
 		}
 		
 	}
@@ -403,11 +374,13 @@ public final class EmployeeAFIGeneration {
 	public static class MC{
 		FAB fab;
 		DAM dam;
+		ODL odl;
 		
-		public MC(FAB fab, DAM dam) {
+		public MC(FAB fab, DAM dam, ODL odl) {
 			super();
 			this.fab = fab;
 			this.dam = dam;
+			this.odl = odl;
 		}
 
 		public FAB getFab() {
@@ -422,16 +395,45 @@ public final class EmployeeAFIGeneration {
 		public void setDam(DAM dam) {
 			this.dam = dam;
 		}
+		public ODL getOdl() {
+			return odl;
+		}
+		public void setOdl(ODL odl) {
+			this.odl = odl;
+		}
+		
+	}
+	
+	public static class MOC{
+		FAB fab;
+		ODL odl;
+		
+		public MOC(FAB fab, ODL odl) {
+			super();
+			this.fab = fab;
+			this.odl = odl;
+		}
+
+		public FAB getFab() {
+			return fab;
+		}
+		public void setFab(FAB fab) {
+			this.fab = fab;
+		}
+		public ODL getOdl() {
+			return odl;
+		}
+		public void setOdl(ODL odl) {
+			this.odl = odl;
+		}
 		
 	}
 	
 	public static class FAB{
-		String fabHeader;
+		String header;
 		String action;
 		String situation;
-		String day;
-		String month;
-		String year;
+		String realDate;
 		String quoteGroup;
 		String daylyQG;
 		String disability;
@@ -441,25 +443,28 @@ public final class EmployeeAFIGeneration {
 		String partialityCoef;
 		String employeeColective;
 		String printInd;
-		String reserved15;
+		
+		String profesionalCat; // Only for regime 0911
+		String birthDate;
+		
 		String gender;
 		String reserved5;
 		String reWomen;
 		String disabilityAdmited;
 		String freelancer;
-		String reserved11;
+		String reserved2;
+		String rlce;
+		String reserved5Str;
 		String rent;
 		String worker;
 		
-		public FAB(String action, String situation, String day, String month, String year, String quoteGroup, String tc2, String partialityCoef, String employeeColective, String gender ) {
+		public FAB(String action, String situation, String realDate, String quoteGroup, String tc2, String partialityCoef, String employeeColective, String birthDate, String gender ) {
 			super();
-			this.fabHeader = "FAB";
+			this.header = "FAB";
 			this.action = AonStringUtils.rightPad(action, 3, ' ');
 			this.situation = AonStringUtils.leftPad(situation, 2, '0');
 			
-			this.day = AonStringUtils.leftPad(day, 2, '0');
-			this.month = AonStringUtils.leftPad(month, 2, '0');
-			this.year = AonStringUtils.leftPad(year, 4, '0');
+			this.realDate = AonStringUtils.leftPad(realDate, 8, '0');
 			
 			this.quoteGroup = AonStringUtils.leftPad(quoteGroup, 2, '0');
 			this.daylyQG = "N";
@@ -472,20 +477,25 @@ public final class EmployeeAFIGeneration {
 			this.employeeColective = AonStringUtils.leftPad(employeeColective, 3, '0');
 			this.printInd = " ";
 
-			this.reserved15 = AonStringUtils.leftPad("", 15, '0');
+			this.profesionalCat = AonStringUtils.leftPad("", 7, '0');
+			this.birthDate = AonStringUtils.leftPad(birthDate, 8, '0');
+			
 			this.gender = AonStringUtils.leftPad(gender, 1, '1');
 			this.reserved5 = AonStringUtils.leftPad("", 5, '0');
 			this.reWomen = " ";
 			this.disabilityAdmited = "N";
 			this.freelancer = " ";
+			this.reserved2 = AonStringUtils.leftPad("", 2, ' ');
 			
-			this.reserved11 = AonStringUtils.leftPad("", 11, ' ');
+			this.rlce = AonStringUtils.leftPad("", 4, '0');
+			
+			this.reserved5Str = AonStringUtils.leftPad("", 5, ' ');
 			this.rent = "N";
 			this.worker = "N";
 		}
 		
-		public String getFabHeader() {
-			return fabHeader;
+		public String getHeader() {
+			return header;
 		}
 		public String getAction() {
 			return action;
@@ -493,14 +503,8 @@ public final class EmployeeAFIGeneration {
 		public String getSituation() {
 			return situation;
 		}
-		public String getDay() {
-			return day;
-		}
-		public String getMonth() {
-			return month;
-		}
-		public String getYear() {
-			return year;
+		public String getRealDate() {
+			return realDate;
 		}
 		public String getQuoteGroup() {
 			return quoteGroup;
@@ -529,8 +533,11 @@ public final class EmployeeAFIGeneration {
 		public String getPrintInd() {
 			return printInd;
 		}
-		public String getReserved15() {
-			return reserved15;
+		public String getProfesionalCat() {
+			return profesionalCat;
+		}
+		public String getBirthDate() {
+			return birthDate;
 		}
 		public String getGender() {
 			return gender;
@@ -547,8 +554,14 @@ public final class EmployeeAFIGeneration {
 		public String getFreelancer() {
 			return freelancer;
 		}
-		public String getReserved11() {
-			return reserved11;
+		public String getReserved2() {
+			return reserved2;
+		}
+		public String getRlce() {
+			return rlce;
+		}
+		public String getReserved5Str() {
+			return reserved5Str;
 		}
 		public String getRent() {
 			return rent;
@@ -559,41 +572,86 @@ public final class EmployeeAFIGeneration {
 		
 	}
 	
-	public static class OTD{
-		String otdHeader;
+	public static class ODL{
+		String header;
 		String convCollective;
-		String excedencia;
-		String reserved15;
-		String reserved8;
-		String readmited;
-		String endDate;
-		String reserved13;
+		String reserved6;
+		String cno;
+		String reservedN6;
+		String contribution;
+		String reserved31;
 		
-		public OTD( String convCollective, String endDate ) {
-			this.otdHeader = "OTD";
+		public ODL( String convCollective,  String cno ) {
+			this.header = "ODL";
 			this.convCollective = AonStringUtils.leftPad(convCollective, 14, '0');
-			this.excedencia = AonStringUtils.rightPad("", 8, '0');
-			this.reserved15 = AonStringUtils.rightPad("", 15, '0');
-			this.reserved8 = AonStringUtils.rightPad("", 8, '0');
-			this.readmited = "N";
-			this.endDate = AonStringUtils.rightPad(endDate, 8, '0');
-			this.reserved13 = AonStringUtils.rightPad("", 13, ' ');
+			this.reserved6 = AonStringUtils.rightPad("", 6, ' ');
+			this.cno = AonStringUtils.leftPad(cno, 4, '0');;
+			this.reservedN6 = AonStringUtils.rightPad("", 6, '0');
+			this.contribution = AonStringUtils.rightPad("", 6, '0');
+			this.reserved31 = AonStringUtils.rightPad("", 31, ' ');
 		}
-		
-		public String getOtdHeader() {
-			return otdHeader;
+
+		public String getHeader() {
+			return header;
 		}
 		public String getConvCollective() {
 			return convCollective;
 		}
+		public String getReserved6() {
+			return reserved6;
+		}
+		public String getCno() {
+			return cno;
+		}
+		public String getReservedN6() {
+			return reservedN6;
+		}
+		public String getContribution() {
+			return contribution;
+		}
+		public String getReserved31() {
+			return reserved31;
+		}
+		
+	}
+	
+	public static class OTD{
+		String header;
+		String reserved14;
+		String excedencia;
+		String excedenciaCcc;
+		String notifDate;
+		String readmited;
+		String endDate;
+		String boatType;
+		String reserved12;
+		
+		public OTD( String endDate ) {
+			this.header = "OTD";
+			this.reserved14 = AonStringUtils.rightPad("", 14, ' ');
+			this.excedencia = AonStringUtils.rightPad("", 8, '0');
+			this.excedenciaCcc = AonStringUtils.rightPad("", 15, '0');
+			this.notifDate = AonStringUtils.rightPad("", 8, '0');
+			this.readmited = "N";
+			this.endDate = AonStringUtils.rightPad(endDate, 8, '0');
+			this.boatType = AonStringUtils.rightPad("", 1, '0');
+			this.reserved12 = AonStringUtils.rightPad("", 12, ' ');
+		}
+		
+		public String getHeader() {
+			return header;
+		}
+		public String getReserved14() {
+			return reserved14;
+		}
 		public String getExcedencia() {
 			return excedencia;
 		}
-		public String getReserved15() {
-			return reserved15;
+		public String getExcedenciaCcc() {
+			return excedenciaCcc;
 		}
-		public String getReserved8() {
-			return reserved8;
+		public String getNotifDate() {
+			return notifDate;
 		}
 		public String getReadmited() {
 			return readmited;
@@ -601,108 +659,123 @@ public final class EmployeeAFIGeneration {
 		public String getEndDate() {
 			return endDate;
 		}
-		public String getReserved13() {
-			return reserved13;
+		public String getBoatType() {
+			return boatType;
+		}
+		public String getReserved12() {
+			return reserved12;
 		}
 		
 	}
 	
 	public static class DAM{
-		String damHeader;
-		String reserved8;
+		String header;
+		String contractStartDate;
 		String fic;
-		String reserved48;
+		String reserved19;
+		String relevo;
+		String reserved11;
+		String familyVinc;
+		String reserved16;
 		String ocupation;
+		String reserved8;
 		
-		public DAM ( String ocupation, String startDate ) {
-			this.damHeader = "DAM";
-			this.reserved8 = AonStringUtils.leftPad(startDate, 8, '0');
-			this.fic = "N";
-			this.reserved48 = AonStringUtils.leftPad("", 48, '0');
+		public DAM (String ocupation) {
+			this.header = "DAM";
+			this.contractStartDate = AonStringUtils.leftPad("", 8, '0');
+			this.fic = " ";
+			this.reserved19 = AonStringUtils.leftPad("", 19, '0');
+			this.relevo = " ";
+			this.reserved11 = AonStringUtils.leftPad("", 11, '0');
+			this.familyVinc = " ";
+			this.reserved16 = AonStringUtils.leftPad("", 16, '0');
 			this.ocupation = AonStringUtils.leftPad(ocupation, 2, ' ');
+			this.reserved8 = AonStringUtils.leftPad("", 8, '0');
 		}
-		
-		public String getDamHeader() {
-			return damHeader;
+
+		public String getHeader() {
+			return header;
 		}
-		public String getReserved8() {
-			return reserved8;
+		public String getContractStartDate() {
+			return contractStartDate;
 		}
 		public String getFic() {
 			return fic;
 		}
-		public String getReserved48() {
-			return reserved48;
+		public String getReserved19() {
+			return reserved19;
+		}
+		public String getRelevo() {
+			return relevo;
+		}
+		public String getReserved11() {
+			return reserved11;
+		}
+		public String getFamilyVinc() {
+			return familyVinc;
+		}
+		public String getReserved16() {
+			return reserved16;
 		}
 		public String getOcupation() {
 			return ocupation;
+		}
+		public String getReserved8() {
+			return reserved8;
 		}
 		
 	}
 	
 	public static class FCT{
-		String fctHeader;
+		String header;
 		String reserved6;
-		String holidayDay;
-		String holidayMonth;
-		String holidayYear;
-		String reserved53;
+		String holidayDate;
+		String reserved32;
+		String reserved16;
+		String saa;
+		String reserved2;
 		
-		public FCT ( String holidayDay, String holidayMonth, String holidayYear ) {
-			this.fctHeader = "FCT";
-			this.reserved6 = AonStringUtils.leftPad("", 6, ' ');
-			this.holidayDay = AonStringUtils.leftPad(holidayDay, 2, '0');
-			this.holidayMonth = AonStringUtils.leftPad(holidayMonth, 2, '0');
-			this.holidayYear = AonStringUtils.leftPad(holidayYear, 4, '0');
-			this.reserved53 = AonStringUtils.leftPad("", 53, ' ');
+		public FCT ( String holidayDate, String saa ) {
+			this.header = "FCT";
+			this.reserved6 = AonStringUtils.leftPad("", 6, '0');
+			this.holidayDate = AonStringUtils.leftPad(holidayDate, 8, '0');
+			this.reserved32 = AonStringUtils.leftPad("", 32, '0');
+			this.reserved16 = AonStringUtils.leftPad("", 16, ' ');
+			this.saa = AonStringUtils.leftPad(saa, 3, '0');
+			this.reserved2 = AonStringUtils.leftPad("", 2, ' ');
 		}
 
-		public String getFctHeader() {
-			return fctHeader;
-		}
-		public void setFctHeader(String fctHeader) {
-			this.fctHeader = fctHeader;
+		public String getHeader() {
+			return header;
 		}
 		public String getReserved6() {
 			return reserved6;
 		}
-		public void setReserved6(String reserved6) {
-			this.reserved6 = reserved6;
+		public String getHolidayDate() {
+			return holidayDate;
 		}
-		public String getHolidayDay() {
-			return holidayDay;
+		public String getReserved32() {
+			return reserved32;
 		}
-		public void setHolidayDay(String holidayDay) {
-			this.holidayDay = holidayDay;
+		public String getReserved16() {
+			return reserved16;
 		}
-		public String getHolidayMonth() {
-			return holidayMonth;
+		public String getSaa() {
+			return saa;
 		}
-		public void setHolidayMonth(String holidayMonth) {
-			this.holidayMonth = holidayMonth;
-		}
-		public String getHolidayYear() {
-			return holidayYear;
-		}
-		public void setHolidayYear(String holidayYear) {
-			this.holidayYear = holidayYear;
-		}
-		public String getReserved53() {
-			return reserved53;
-		}
-		public void setReserved53(String reserved53) {
-			this.reserved53 = reserved53;
+		public String getReserved2() {
+			return reserved2;
 		}
 		
 	}
 	
 	public static class ETF{
-		String etfHeader;
+		String header;
 		String sintaxIndent;
 		String authKey;
-		String payrollProvider;
-		String reserved5;
-		String fileName; //Length 8
+		String reserved8;
+		String dateCreation;
+		String fileName;
 		String sufixAFI;
 		String priorityCode;
 		String test;
@@ -710,26 +783,25 @@ public final class EmployeeAFIGeneration {
 		String countLines;
 		String reserved3;
 		
-		public ETF(String authKey, String payrollProvider, String fileName, String priorityCode, String countEmployees, String countLines) {
+		public ETF(String authKey, String payrollProvider, String fileName, String countEmployees, String countLines) {
 			super();
-			this.etfHeader = "ETF";
-			this.sintaxIndent = "AFI90W0000";
-			this.authKey = StringUtils.leftPad(authKey, 8, '0');
-			this.payrollProvider = payrollProvider;
-			this.reserved5 = StringUtils.leftPad("", 5, '0');
-			
-			this.fileName = (null == fileName) ? day + month + hour + minute : fileName;
-			
+			this.header = "ETF";
+			this.sintaxIndent = "AFI93W0000";
+			this.authKey = AonStringUtils.leftPad(authKey, 8, '0');
+			this.reserved8 = AonStringUtils.leftPad("", 8, ' ');
+			this.dateCreation = AonStringUtils.leftPad(year + month + day + hour + minute, 12, '0');;
+			this.fileName = AonStringUtils.leftPad(AonStringUtils.isBlank(fileName) ? day + month + hour + minute : fileName, 8, '0');
 			this.sufixAFI = "AFI";
-			this.priorityCode = priorityCode;
+			this.priorityCode = "N";
+			
 			this.test = " ";
 			this.countEmp = StringUtils.leftPad(countEmployees, 5, '0');
 			this.countLines = StringUtils.leftPad(countLines, 8, '0');
 			this.reserved3 = StringUtils.leftPad("", 3, ' ');
 		}
-		
-		public String getEtiHeader() {
-			return etfHeader;
+
+		public String getHeader() {
+			return header;
 		}
 		public String getSintaxIndent() {
 			return sintaxIndent;
@@ -737,26 +809,11 @@ public final class EmployeeAFIGeneration {
 		public String getAuthKey() {
 			return authKey;
 		}
-		public String getPayrollProvider() {
-			return payrollProvider;
+		public String getReserved8() {
+			return reserved8;
 		}
-		public String getReserved5() {
-			return reserved5;
-		}
-		public String getYear() {
-			return year;
-		}
-		public String getMonth() {
-			return month;
-		}
-		public String getDay() {
-			return day;
-		}
-		public String getHour() {
-			return hour;
-		}
-		public String getMinute() {
-			return minute;
+		public String getDateCreation() {
+			return dateCreation;
 		}
 		public String getFileName() {
 			return fileName;
@@ -770,9 +827,6 @@ public final class EmployeeAFIGeneration {
 		public String getTest() {
 			return test;
 		}
-		public String getEtfHeader() {
-			return etfHeader;
-		}
 		public String getCountEmp() {
 			return countEmp;
 		}
@@ -781,6 +835,39 @@ public final class EmployeeAFIGeneration {
 		}
 		public String getReserved3() {
 			return reserved3;
+		}
+		
+	}
+	
+	public static class ContractCNO{
+		EMP emp;
+		RZS rzs;
+		TRA tra;
+		AYN ayn;
+		MOC moc;
+		
+		public ContractCNO(EMP emp, RZS rzs, TRA tra, AYN ayn, MOC moc) {
+			super();
+			this.emp = emp;
+			this.rzs = rzs;
+			this.tra = tra;
+			this.ayn = ayn;
+			this.moc = moc;
+		}
+		public EMP getEmp() {
+			return emp;
+		}
+		public RZS getRzs() {
+			return rzs;
+		}
+		public TRA getTra() {
+			return tra;
+		}
+		public AYN getAyn() {
+			return ayn;
+		}
+		public MOC getMoc() {
+			return moc;
 		}
 		
 	}
@@ -804,21 +891,15 @@ public final class EmployeeAFIGeneration {
 		//EMP
 		JSONObject empJson = (JSONObject) employeeData.get("EMP");
 		EMP emp = new EMP(
-				empJson.get("cccRegime").toString(),
-				empJson.get("cccProvince").toString(),
-				empJson.get("ccc").toString(),
+				empJson.get("fullCcc").toString(),
 				empJson.get("identType").toString(),
 				empJson.get("country").toString(),
 				empJson.get("ident").toString(),
-				empJson.get("cccRegimePrincipal").toString(),
-				empJson.get("cccProvincePrincipal").toString(),
-				empJson.get("cccPrincipal").toString());
+				empJson.get("fullPrincipalCcc").toString());
 		
 		//RZS
 		JSONObject rzsJson = (JSONObject) employeeData.get("RZS");
-		RZS rzs = new RZS(
-				rzsJson.get("businessmanType").toString(), 
-				rzsJson.get("rzsName").toString());
+		RZS rzs = new RZS(rzsJson.get("rzsName").toString());
 		
 		//TRA
 		JSONObject traJson = (JSONObject) employeeData.get("TRA");
@@ -844,21 +925,26 @@ public final class EmployeeAFIGeneration {
 			FAB fab = new FAB(
 					fabJson.get("action").toString(), 
 					fabJson.get("situation").toString(),
-					fabJson.get("day").toString(),
-					fabJson.get("month").toString(),
-					fabJson.get("year").toString(),
+					fabJson.get("realDate").toString(),
 					fabJson.get("quoteGroup").toString(),
 					fabJson.get("tc2").toString(),
 					fabJson.get("partialityCoef") == null ? "000" : fabJson.get("partialityCoef").toString(),
 					fabJson.get("employeeColective") == null ? "" : fabJson.get("employeeColective").toString(),
+					fabJson.get("birthDate") == null ? "" : fabJson.get("birthDate").toString(),
 					fabJson.get("gender").toString());
 			
+			JSONObject odlJson = (JSONObject) sdcJson.get("ODL");
+			ODL odl = new ODL(
+					odlJson.get("convCollective").toString(),
+					odlJson.get("cno") == null ? "" : odlJson.get("cno").toString());
+			
 			JSONObject otdJson = (JSONObject) sdcJson.get("OTD");
-			OTD otd = new OTD(
-					otdJson.get("convCollective").toString(),
+			OTD otd = null;
+			if(null != otdJson)
+				otd = new OTD(
 					otdJson.get("endDate") == null ? "" : otdJson.get("endDate").toString());
 			
-			ma = new MA(fab, otd);
+			ma = new MA(fab, otd, odl);
 		}
 		
 		//EDC
@@ -869,23 +955,21 @@ public final class EmployeeAFIGeneration {
 			FAB fab = new FAB(
 					fabJson.get("action").toString(), 
 					fabJson.get("situation").toString(),
-					fabJson.get("day").toString(),
-					fabJson.get("month").toString(),
-					fabJson.get("year").toString(),
+					fabJson.get("realDate").toString(),
 					fabJson.get("quoteGroup").toString(),
 					fabJson.get("tc2").toString(),
-					fabJson.get("partialityCoef").toString(),
+					fabJson.get("partialityCoef") == null ? "000" : fabJson.get("partialityCoef").toString(),
 					fabJson.get("employeeColective") == null ? "" : fabJson.get("employeeColective").toString(),
+					fabJson.get("birthDate") == null ? "" : fabJson.get("birthDate").toString(),
 					fabJson.get("gender").toString());
 			
-			DAM dam = new DAM("", ""); // 	JSONObject damJson = (JSONObject) edcJson.get("DAM");
+			DAM dam = new DAM(""); // 	JSONObject damJson = (JSONObject) edcJson.get("DAM");
 			
 			JSONObject fctJson = (JSONObject) edcJson.get("FCT");
 			if(null != fctJson) {
 				FCT fct = new FCT(
-						fctJson.get("dayHoliday").toString(),
-						fctJson.get("monthHoliday").toString(),
-						fctJson.get("yearHoliday").toString());
+						fctJson.get("holidayDate").toString(),
+						fctJson.get("saa").toString());
 				
 				mb = new MB(fab, dam, fct);
 			} else
@@ -900,19 +984,23 @@ public final class EmployeeAFIGeneration {
 			FAB fab = new FAB(
 					fabJson.get("action").toString(), 
 					fabJson.get("situation").toString(),
-					fabJson.get("day").toString(),
-					fabJson.get("month").toString(),
-					fabJson.get("year").toString(),
+					fabJson.get("realDate").toString(),
 					fabJson.get("quoteGroup").toString(),
 					fabJson.get("tc2").toString(),
 					fabJson.get("partialityCoef") == null ? "000" : fabJson.get("partialityCoef").toString(),
 					fabJson.get("employeeColective") == null ? "" : fabJson.get("employeeColective").toString(),
+					fabJson.get("birthDate") == null ? "" : fabJson.get("birthDate").toString(),
 					fabJson.get("gender").toString());
 			
 			JSONObject damJson = (JSONObject) chcJson.get("DAM");
-			DAM dam = new DAM(damJson.get("ocupation") == null ? "" : damJson.get("ocupation").toString(), damJson.get("startDate").toString());
+			DAM dam = new DAM(damJson.get("ocupation") == null ? "" : damJson.get("ocupation").toString());
 			
-			mc = new MC(fab, dam);
+			JSONObject odlJson = (JSONObject) chcJson.get("ODL");
+			ODL odl = new ODL(
+					odlJson.get("convCollective") == null ? "" : odlJson.get("convCollective").toString(),
+					odlJson.get("cno") == null ? "" : odlJson.get("cno").toString());
+			
+			mc = new MC(fab, dam, odl);
 		}
 	
 		//CONF
@@ -920,17 +1008,14 @@ public final class EmployeeAFIGeneration {
 		Integer staticLines = Integer.parseInt(confJson.get("staticLines").toString());
 		Integer employeeLines = Integer.parseInt(confJson.get("employeeLines").toString());
 		Integer numEmployees = Integer.parseInt(confJson.get("numEmployees").toString());
-		String settleHolidaysLine = confJson.get("settleHolidaysLine").toString();
-		Integer holidaysLine = AonStringUtils.isBlank(settleHolidaysLine) ? 0 : Integer.parseInt(settleHolidaysLine);
-		Integer totalLines = numEmployees * employeeLines + staticLines + holidaysLine;
+		Integer totalLines = numEmployees * employeeLines + staticLines;
 				
 		//ETF
 		JSONObject etfJson = (JSONObject) employeeData.get("ETF");
 		ETF etf = new ETF(
 				etfJson.get("authkey").toString(), 
 				etfJson.get("payrollProvider").toString(), 
-				null == etfJson.get("fileName") ? null : etfJson.get("fileName").toString(), 
-				etfJson.get("priorityCode").toString(),
+				null == etfJson.get("fileName") ? null : etfJson.get("fileName").toString(),
 				numEmployees+"",
 				totalLines+"");
 		
@@ -939,61 +1024,51 @@ public final class EmployeeAFIGeneration {
 		return employeeAFI;
 		
 	}
-	
+
 	private static String createEmployeeAFI(ETI eti, EMP emp, RZS rzs, TRA tra, AYN ayn, MA ma, MB mb, MC mc, ETF etf) {
 		
 		String employeeAFI = "";
 		
 		employeeAFI +=
-				eti.getEtiHeader() +
+				eti.getHeader() +
 				eti.getSintaxIndent() +
 				eti.getAuthKey() +
-				eti.getPayrollProvider() +
-				eti.getReserved5() +
-				eti.getYear() +
-				eti.getMonth() +
-				eti.getDay() +
-				eti.getHour() +
-				eti.getMinute() +
-				eti.getFileName() +
-				eti.getSufixAFI() +
-				eti.getPriorityCode() +
+				eti.getReserved8() + 
+				eti.getDateCreation() +
+				eti.getFileName() + 
+				eti.getSufix() +
+				eti.getPriority() +
 				eti.getTest() +
 				eti.getRegistryIdent() +
-				eti.getReservedTGSS() +
-				eti.getReserved1() +
+				eti.getReserved2() +
 				"\r\n";
 		
 		employeeAFI +=
-				emp.getEmpHeader() +
-				emp.getCccRegime() +
-				emp.getCccProvince() +
-				emp.getCcc() +
-				emp.getIdentType() +
-				emp.getCountry() +
-				emp.getIndet() +
-				emp.getReserved2() +
-				emp.getCccRegimePrincipal() +
-				emp.getCccProvincePrincipal() +
-				emp.getCccPrincipal() +
-				emp.getReservedCollection() +
+				emp.getHeader() + 
+				emp.getFullCcc() +
+				emp.getIdentType() + 
+				emp.getIdentCountry() + 
+				emp.getIdent() + 
+				emp.getReserved2() + 
+				emp.getFullPrincipalCcc() +
+				emp.getCollection() +
 				emp.getAction() +
 				emp.getReserved1() +
 				"\r\n";
 		
 		employeeAFI +=
-				rzs.getRzsHeader() +
-				rzs.getRzsIndicator() +
-				rzs.getBusinessmanType() +
-				rzs.getRzsName() +
+				rzs.getHeader() +
+				rzs.getIdentRzs() +
+				rzs.getBusinessman() +
+				rzs.getRzs() +
 				rzs.getAuthKey() +
 				rzs.getReserved2() +
 				"\r\n";
 		
 		if(null != ma) {
 			employeeAFI +=
-					tra.getTraHeader() +
-					tra.getNumAfilicion() +
+					tra.getHeader() +
+					tra.getNss() +
 					tra.getDocumentType() +
 					tra.getDocumentCountry() +
 					tra.getDocument() +
@@ -1005,7 +1080,7 @@ public final class EmployeeAFIGeneration {
 					"\r\n";
 			
 			employeeAFI +=
-					ayn.getAynHeader() +
+					ayn.getHeader() +
 					ayn.getFirstSurname() +
 					ayn.getSecondSurname() +
 					ayn.getName() +
@@ -1013,12 +1088,10 @@ public final class EmployeeAFIGeneration {
 					"\r\n";
 			
 			employeeAFI +=
-					ma.getFab().getFabHeader() +
+					ma.getFab().getHeader() +
 					ma.getFab().getAction() +
 					ma.getFab().getSituation() +
-					ma.getFab().getYear() +
-					ma.getFab().getMonth() +
-					ma.getFab().getDay() +
+					ma.getFab().getRealDate() +
 					ma.getFab().getQuoteGroup() +
 					ma.getFab().getDaylyQG() +
 					ma.getFab().getDisability() +
@@ -1028,33 +1101,48 @@ public final class EmployeeAFIGeneration {
 					ma.getFab().getPartialityCoef() +
 					ma.getFab().getEmployeeColective() +
 					ma.getFab().getPrintInd() +
-					ma.getFab().getReserved15() +
+					ma.getFab().getProfesionalCat() +
+					ma.getFab().getBirthDate() +
 					ma.getFab().getGender() +
 					ma.getFab().getReserved5() +
 					ma.getFab().getReWomen() +
 					ma.getFab().getDisabilityAdmited() + 
 					ma.getFab().getFreelancer() +
-					ma.getFab().getReserved11() +
+					ma.getFab().getReserved2() +
+					ma.getFab().getRlce() +
+					ma.getFab().getReserved5Str() +
 					ma.getFab().getRent() +
 					ma.getFab().getWorker() + 
 					"\r\n";
 			
 			employeeAFI +=
-					ma.getOtd().getOtdHeader() +
-					ma.getOtd().getConvCollective() +
-					ma.getOtd().getExcedencia() +
-					ma.getOtd().getReserved15() +
-					ma.getOtd().getReserved8() +
-					ma.getOtd().getReadmited() +
-					ma.getOtd().getEndDate() +
-					ma.getOtd().getReserved13() +
+					ma.getOdl().getHeader() +
+					ma.getOdl().getConvCollective() +
+					ma.getOdl().getReserved6() +
+					ma.getOdl().getCno() +
+					ma.getOdl().getReservedN6() +
+					ma.getOdl().getContribution() +
+					ma.getOdl().getReserved31() +
 					"\r\n";
+			
+			if(null != ma.getOtd())
+				employeeAFI +=
+						ma.getOtd().getHeader() +
+						ma.getOtd().getReserved14() +
+						ma.getOtd().getExcedencia() +
+						ma.getOtd().getExcedenciaCcc() +
+						ma.getOtd().getNotifDate() +
+						ma.getOtd().getReadmited() +
+						ma.getOtd().getEndDate() +
+						ma.getOtd().getBoatType() +
+						ma.getOtd().getReserved12() +
+						"\r\n";
 		}
 			
 		if(null != mb) {
 			employeeAFI +=
-					tra.getTraHeader() +
-					tra.getNumAfilicion() +
+					tra.getHeader() +
+					tra.getNss() +
 					tra.getDocumentType() +
 					tra.getDocumentCountry() +
 					tra.getDocument() +
@@ -1066,7 +1154,7 @@ public final class EmployeeAFIGeneration {
 					"\r\n";
 			
 			employeeAFI +=
-					ayn.getAynHeader() +
+					ayn.getHeader() +
 					ayn.getFirstSurname() +
 					ayn.getSecondSurname() +
 					ayn.getName() +
@@ -1074,12 +1162,10 @@ public final class EmployeeAFIGeneration {
 					"\r\n";
 			
 			employeeAFI +=
-					mb.getFab().getFabHeader() +
+					mb.getFab().getHeader() +
 					mb.getFab().getAction() +
 					mb.getFab().getSituation() +
-					mb.getFab().getYear() +
-					mb.getFab().getMonth() +
-					mb.getFab().getDay() +
+					mb.getFab().getRealDate() +
 					mb.getFab().getQuoteGroup() +
 					mb.getFab().getDaylyQG() +
 					mb.getFab().getDisability() +
@@ -1089,42 +1175,50 @@ public final class EmployeeAFIGeneration {
 					mb.getFab().getPartialityCoef() +
 					mb.getFab().getEmployeeColective() +
 					mb.getFab().getPrintInd() +
-					mb.getFab().getReserved15() +
+					mb.getFab().getProfesionalCat() +
+					mb.getFab().getBirthDate() +
 					mb.getFab().getGender() +
 					mb.getFab().getReserved5() +
 					mb.getFab().getReWomen() +
 					mb.getFab().getDisabilityAdmited() + 
 					mb.getFab().getFreelancer() +
-					mb.getFab().getReserved11() +
+					mb.getFab().getReserved2() +
+					mb.getFab().getRlce() +
+					mb.getFab().getReserved5Str() +
 					mb.getFab().getRent() +
 					mb.getFab().getWorker() + 
 					"\r\n";
 			
 			employeeAFI +=
-					mb.getDam().getDamHeader() +
-					mb.getDam().getReserved8() +
+					mb.getDam().getHeader() +
+					mb.getDam().getContractStartDate() +
 					mb.getDam().getFic() +
-					mb.getDam().getReserved48() +
+					mb.getDam().getReserved19() +
+					mb.getDam().getRelevo() +
+					mb.getDam().getReserved11() +
+					mb.getDam().getFamilyVinc() +
+					mb.getDam().getReserved16() +
 					mb.getDam().getOcupation() +
 					mb.getDam().getReserved8() +
 					"\r\n";
 			
 			if(null != mb.getFct())
 				employeeAFI +=
-						mb.getFct().getFctHeader() +
+						mb.getFct().getHeader() +
 						mb.getFct().getReserved6() +
-						mb.getFct().getHolidayDay() +
-						mb.getFct().getHolidayMonth() +
-						mb.getFct().getHolidayYear() +
-						mb.getFct().getReserved53() +
+						mb.getFct().getHolidayDate() +
+						mb.getFct().getReserved32() +
+						mb.getFct().getReserved16() +
+						mb.getFct().getSaa() +
+						mb.getFct().getReserved2() +
 						"\r\n";
 
 		}
 			
 		if(null != mc) {
 			employeeAFI +=
-					tra.getTraHeader() +
-					tra.getNumAfilicion() +
+					tra.getHeader() +
+					tra.getNss() +
 					tra.getDocumentType() +
 					tra.getDocumentCountry() +
 					tra.getDocument() +
@@ -1136,7 +1230,7 @@ public final class EmployeeAFIGeneration {
 					"\r\n";
 			
 			employeeAFI +=
-					ayn.getAynHeader() +
+					ayn.getHeader() +
 					ayn.getFirstSurname() +
 					ayn.getSecondSurname() +
 					ayn.getName() +
@@ -1144,12 +1238,10 @@ public final class EmployeeAFIGeneration {
 					"\r\n";
 			
 			employeeAFI +=
-					mc.getFab().getFabHeader() +
+					mc.getFab().getHeader() +
 					mc.getFab().getAction() +
 					mc.getFab().getSituation() +
-					mc.getFab().getYear() +
-					mc.getFab().getMonth() +
-					mc.getFab().getDay() +
+					mc.getFab().getRealDate() +
 					mc.getFab().getQuoteGroup() +
 					mc.getFab().getDaylyQG() +
 					mc.getFab().getDisability() +
@@ -1159,39 +1251,258 @@ public final class EmployeeAFIGeneration {
 					mc.getFab().getPartialityCoef() +
 					mc.getFab().getEmployeeColective() +
 					mc.getFab().getPrintInd() +
-					mc.getFab().getReserved15() +
+					mc.getFab().getProfesionalCat() +
+					mc.getFab().getBirthDate() +
 					mc.getFab().getGender() +
 					mc.getFab().getReserved5() +
 					mc.getFab().getReWomen() +
 					mc.getFab().getDisabilityAdmited() + 
 					mc.getFab().getFreelancer() +
-					mc.getFab().getReserved11() +
+					mc.getFab().getReserved2() +
+					mc.getFab().getRlce() +
+					mc.getFab().getReserved5Str() +
 					mc.getFab().getRent() +
 					mc.getFab().getWorker() + 
 					"\r\n";
 			
 			employeeAFI +=
-					mc.getDam().getDamHeader() +
-					mc.getDam().getReserved8() +
+					mc.getDam().getHeader() +
+					mc.getDam().getContractStartDate() +
 					mc.getDam().getFic() +
-					mc.getDam().getReserved48() +
+					mc.getDam().getReserved19() +
+					mc.getDam().getRelevo() +
+					mc.getDam().getReserved11() +
+					mc.getDam().getFamilyVinc() +
+					mc.getDam().getReserved16() +
 					mc.getDam().getOcupation() +
 					mc.getDam().getReserved8() +
+					"\r\n";
+			
+			employeeAFI +=
+					mc.getOdl().getHeader() +
+					mc.getOdl().getConvCollective() +
+					mc.getOdl().getReserved6() +
+					mc.getOdl().getCno() +
+					mc.getOdl().getReservedN6() +
+					mc.getOdl().getContribution() +
+					mc.getOdl().getReserved31() +
 					"\r\n";
 
 		}
 		
 		employeeAFI +=
-				etf.getEtfHeader() +
+				etf.getHeader() +
 				etf.getSintaxIndent() +
 				etf.getAuthKey() +
-				etf.getPayrollProvider() +
-				etf.getReserved5() +
-				etf.getYear() +
-				etf.getMonth() +
-				etf.getDay() +
-				etf.getHour() +
-				etf.getMinute() +
+				etf.getReserved8() +
+				etf.getDateCreation() +
+				etf.getFileName() +
+				etf.getSufixAFI() +
+				etf.getPriorityCode() +
+				etf.getTest() +
+				etf.getCountEmp() +
+				etf.getCountLines() +
+				etf.getReserved3() +
+				"\r\n";
+		
+		return employeeAFI;
+	}
+	
+	public static String generateEmployeesCNOAFI (JSONObject employeeData) {
+		//RESULT
+		String employeeAFI = null;
+		List<ContractCNO> contractsCNO = new ArrayList<>();
+		
+		//ETI
+		JSONObject etiJson = (JSONObject) employeeData.get("ETI");
+		ETI eti = new ETI(
+				etiJson.get("authkey").toString(), 
+				etiJson.get("payrollProvider").toString(), 
+				null == etiJson.get("fileName") ? null : etiJson.get("fileName").toString(), 
+				etiJson.get("prorityCode").toString());
+		
+		//CONTRACTS
+		JSONArray contractsArr = (JSONArray) employeeData.get("CONTRACTS");
+		for(int i=0; i<contractsArr.size(); i++) {
+			JSONObject contract = (JSONObject) contractsArr.get(i);
+			
+			//EMP
+			JSONObject empJson = (JSONObject) contract.get("EMP");
+			EMP emp = new EMP(
+					empJson.get("fullCcc").toString(),
+					empJson.get("identType").toString(),
+					empJson.get("country").toString(),
+					empJson.get("ident").toString(),
+					empJson.get("fullPrincipalCcc").toString());
+			
+			//RZS
+			JSONObject rzsJson = (JSONObject) contract.get("RZS");
+			RZS rzs = new RZS(rzsJson.get("rzsName").toString());
+			
+			//TRA
+			JSONObject traJson = (JSONObject) contract.get("TRA");
+			TRA tra = new TRA(
+					traJson.get("numAfiliacion").toString(),
+					traJson.get("documentType").toString(), 
+					traJson.get("documentCountry").toString(),
+					traJson.get("document").toString(),
+					traJson.get("nationality").toString());
+			
+			//AYN
+			JSONObject aynJson = (JSONObject) contract.get("AYN");
+			AYN ayn = new AYN(
+					aynJson.get("firstSurname").toString(), 
+					aynJson.get("secondSurname").toString(), 
+					aynJson.get("name").toString());
+			
+			//MOC
+			JSONObject mocJson = (JSONObject) contract.get("MOC");
+			MOC moc = null;
+			if(null != mocJson) {
+				JSONObject fabJson = (JSONObject) mocJson.get("FAB");
+				FAB fab = new FAB(
+						fabJson.get("action").toString(), 
+						fabJson.get("situation").toString(),
+						fabJson.get("realDate").toString(),
+						fabJson.get("quoteGroup").toString(),
+						fabJson.get("tc2").toString(),
+						fabJson.get("partialityCoef") == null ? "000" : fabJson.get("partialityCoef").toString(),
+						fabJson.get("employeeColective") == null ? "" : fabJson.get("employeeColective").toString(),
+						fabJson.get("birthDate") == null ? "" : fabJson.get("birthDate").toString(),
+						fabJson.get("gender").toString());
+				
+				JSONObject odlJson = (JSONObject) mocJson.get("ODL");
+				ODL odl = new ODL(
+						odlJson.get("convCollective") == null ? "" : odlJson.get("convCollective").toString(),
+						odlJson.get("cno") == null ? "" : odlJson.get("cno").toString());
+				
+				moc = new MOC(fab, odl);
+			}
+			
+			contractsCNO.add(new ContractCNO(emp, rzs, tra, ayn, moc));
+		}
+	
+		//ETF
+		JSONObject etfJson = (JSONObject) employeeData.get("ETF");
+		ETF etf = new ETF(
+				etfJson.get("authkey").toString(), 
+				etfJson.get("payrollProvider").toString(), 
+				null == etfJson.get("fileName") ? null : etfJson.get("fileName").toString(),
+				etfJson.get("employees").toString(),
+				etfJson.get("totalLines").toString());
+		
+		employeeAFI = createEmployeesCNOAFI(eti, contractsCNO, etf);
+		
+		return employeeAFI;
+		
+	}
+	
+	private static String createEmployeesCNOAFI(ETI eti, List<ContractCNO> contractsCNO, ETF etf) {
+		String employeeAFI = "";
+		
+		employeeAFI +=
+				eti.getHeader() +
+				eti.getSintaxIndent() +
+				eti.getAuthKey() +
+				eti.getReserved8() + 
+				eti.getDateCreation() +
+				eti.getFileName() + 
+				eti.getSufix() +
+				eti.getPriority() +
+				eti.getTest() +
+				eti.getRegistryIdent() +
+				eti.getReserved2() +
+				"\r\n";
+		
+		for(ContractCNO contractCNO : contractsCNO) {
+			employeeAFI +=
+					contractCNO.getEmp().getHeader() + 
+					contractCNO.getEmp().getFullCcc() +
+					contractCNO.getEmp().getIdentType() + 
+					contractCNO.getEmp().getIdentCountry() + 
+					contractCNO.getEmp().getIdent() + 
+					contractCNO.getEmp().getReserved2() + 
+					contractCNO.getEmp().getFullPrincipalCcc() +
+					contractCNO.getEmp().getCollection() +
+					contractCNO.getEmp().getAction() +
+					contractCNO.getEmp().getReserved1() +
+					"\r\n";
+			
+			employeeAFI +=
+					contractCNO.getRzs().getHeader() +
+					contractCNO.getRzs().getIdentRzs() +
+					contractCNO.getRzs().getBusinessman() +
+					contractCNO.getRzs().getRzs() +
+					contractCNO.getRzs().getAuthKey() +
+					contractCNO.getRzs().getReserved2() +
+					"\r\n";
+			
+			employeeAFI +=
+					contractCNO.getTra().getHeader() +
+					contractCNO.getTra().getNss() +
+					contractCNO.getTra().getDocumentType() +
+					contractCNO.getTra().getDocumentCountry() +
+					contractCNO.getTra().getDocument() +
+					contractCNO.getTra().getReserved3() +
+					contractCNO.getTra().getDecodeControl() +
+					contractCNO.getTra().getNationality() +
+					contractCNO.getTra().getEmployeeIndic() +
+					contractCNO.getTra().getReserved5() +
+					"\r\n";
+			
+			employeeAFI +=
+					contractCNO.getAyn().getHeader() +
+					contractCNO.getAyn().getFirstSurname() +
+					contractCNO.getAyn().getSecondSurname() +
+					contractCNO.getAyn().getName() +
+					contractCNO.getAyn().getReserved12() +
+					"\r\n";
+			
+			employeeAFI +=
+					contractCNO.getMoc().getFab().getHeader() +
+					contractCNO.getMoc().getFab().getAction() +
+					contractCNO.getMoc().getFab().getSituation() +
+					contractCNO.getMoc().getFab().getRealDate() +
+					contractCNO.getMoc().getFab().getQuoteGroup() +
+					contractCNO.getMoc().getFab().getDaylyQG() +
+					contractCNO.getMoc().getFab().getDisability() +
+					contractCNO.getMoc().getFab().getTc2() +
+					contractCNO.getMoc().getFab().getReserved1() +
+					contractCNO.getMoc().getFab().getSubWomen() +
+					contractCNO.getMoc().getFab().getPartialityCoef() +
+					contractCNO.getMoc().getFab().getEmployeeColective() +
+					contractCNO.getMoc().getFab().getPrintInd() +
+					contractCNO.getMoc().getFab().getProfesionalCat() +
+					contractCNO.getMoc().getFab().getBirthDate() +
+					contractCNO.getMoc().getFab().getGender() +
+					contractCNO.getMoc().getFab().getReserved5() +
+					contractCNO.getMoc().getFab().getReWomen() +
+					contractCNO.getMoc().getFab().getDisabilityAdmited() + 
+					contractCNO.getMoc().getFab().getFreelancer() +
+					contractCNO.getMoc().getFab().getReserved2() +
+					contractCNO.getMoc().getFab().getRlce() +
+					contractCNO.getMoc().getFab().getReserved5Str() +
+					contractCNO.getMoc().getFab().getRent() +
+					contractCNO.getMoc().getFab().getWorker() + 
+					"\r\n";
+			
+			employeeAFI +=
+					contractCNO.getMoc().getOdl().getHeader() +
+					contractCNO.getMoc().getOdl().getConvCollective() +
+					contractCNO.getMoc().getOdl().getReserved6() +
+					contractCNO.getMoc().getOdl().getCno() +
+					contractCNO.getMoc().getOdl().getReservedN6() +
+					contractCNO.getMoc().getOdl().getContribution() +
+					contractCNO.getMoc().getOdl().getReserved31() +
+					"\r\n";
+		}
+		
+		employeeAFI +=
+				etf.getHeader() +
+				etf.getSintaxIndent() +
+				etf.getAuthKey() +
+				etf.getReserved8() +
+				etf.getDateCreation() +
 				etf.getFileName() +
 				etf.getSufixAFI() +
 				etf.getPriorityCode() +

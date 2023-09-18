@@ -8,22 +8,19 @@ export interface Tabs {
 @Component({
   selector: 'app-tabs-profile-company',
   templateUrl: './tabs-profile-company.component.html',
-  styleUrls: ['./tabs-profile-company.component.scss']
+  styleUrls: ['./tabs-profile-company.component.scss'],
 })
-
 export class TabsProfileCompanyComponent implements OnInit {
   tabIndex: number = 0;
   tabs: Tabs[] = [];
 
-  constructor(
-    private translateService: TranslateService
-  ) {
+  constructor(private translateService: TranslateService) {
     this.translateService
       .get([
         'PROFILE.PERSONAL_INFORMATION',
         'PROFILE.COMPANY_INFORMATION',
         'PROFILE.REGISTRATION_INFORMATION',
-        'PROFILE.CERTIFICATES'
+        'PROFILE.CERTIFICATES',
       ])
       .subscribe((result) => {
         this.tabs = [
@@ -35,6 +32,5 @@ export class TabsProfileCompanyComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 }

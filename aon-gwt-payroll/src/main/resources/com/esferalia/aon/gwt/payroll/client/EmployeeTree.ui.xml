@@ -3,6 +3,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:payroll='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'
 	>
 	
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
@@ -21,32 +22,64 @@
 	.messageMT {
 		margin-top: 5px;
 	}
+	
+	.animate{
+		width: 340px;
+	}
+	
+	.flex {
+		display: flex;
+	}
+	
+	.felxColumn {
+		display: flex;
+		flex-direction: column;
+		gap: .5rem;
+	}
+	
+	.toolbar{
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 40px;
+		border-top: 0px none;
+		border-bottom: 1px solid rgb(221, 221, 221);
+		font-size: 16px;
+	}
+	
+	.heightAll { height: 100%; }
+	
+	.widthAll { width: 100%; } 
 
 	</ui:style>
 
 	<ui:image field='configgroup' src='configgroup.png' />
 	<ui:image field='employeesgroup' src='employeesgroup.png' />
+	
+	<g:HTMLPanel styleName="{style.flex} {style.widthAll}">
+	
+		<payroll:Employees ui:field='employees' extended="true" formers="false" styleName="aon-EmployeeTree-Employees {style.animate}" />
+	
+		<g:SplitLayoutPanel ui:field="dockLayoutPanel"  styleName="aon-EmployeeTree {style.widthAll}" >
+			<g:center>
+				<g:HTMLPanel styleName="{style.felxColumn}">
+					<g:HTMLPanel ui:field="messagePanel" debugId="messagePanel" styleName="{style.messageMT} aon-EmployeeTree-Messages" />
+					<aon:DetailPanel ui:field='employeeDetail' styleName="aon-EmployeeTree-EmployeeDetail" />
+				</g:HTMLPanel>
+			</g:center>
+	
+			<g:south size="0">
+				<aon:solutions.AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector} aon-EmployeeTree-Events">
+					<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
+				</aon:solutions.AonMinimizePanel>
+			</g:south>
+	
+		</g:SplitLayoutPanel>
+	
+	</g:HTMLPanel>
 
 
-	<g:SplitLayoutPanel ui:field="splitLayoutPanel" debugId="messagePanel" >
-		<g:north size="42" >
-			<g:SimpleLayoutPanel ui:field="messagePanel" styleName="{style.messageMT}" />
-		</g:north>
-
-		<g:west size='275'>
-				<payroll:Employees ui:field='employees' extended="true" formers="false"/>
-		</g:west>
-		
-		<g:center>
-			<aon:DetailPanel ui:field='employeeDetail' />
-		</g:center>
-
-		<g:south size="0">
-			<aon:solutions.AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
-				<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
-			</aon:solutions.AonMinimizePanel>
-		</g:south>
-
-	</g:SplitLayoutPanel>
+	
 
 </ui:UiBinder>

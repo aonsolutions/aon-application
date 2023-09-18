@@ -8,6 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:div id="enterpriseMenuPopup" style="display:none" 
+	onclick="javascript:selectItemHeader(this.id)"
 	onmouseout="javascript:hideMenuPopup(this.id)" 
 	onmouseover="javascript:showMenuPopup(this.id)" >
 
@@ -20,6 +21,7 @@
 
 					<aon:panelGroup>
 						<aon:panelGrid id="group_enterprise_security"
+							rendered="#{actionDenied.renderedGroup('group_enterprise_security')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-company aon-direct-access-panel">
 							<f:facet name="header">
@@ -28,12 +30,14 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="newDomain-enterprise"
+										rendered="#{actionDenied.renderedOption('newDomain_form-enterprise')}"
 										action="newDomain_form-enterprise"
 										actionListener="#{adminNewDomain.onInit}"
 										value="#{bundle.admin_new_domain}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="removeDomain-enterprise"
+										rendered="#{actionDenied.renderedOption('removeDomain_form-enterprise')}"
 										action="removeDomain_form-enterprise"
 										actionListener="#{adminRemoveDomain.onInit}"
 										value="#{bundle.admin_remove_domain}" />

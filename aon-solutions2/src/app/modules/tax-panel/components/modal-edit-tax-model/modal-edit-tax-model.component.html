@@ -1,15 +1,21 @@
 <div class="modal-container">
-  <app-icon class="close-button" shape="close" (click)="closeModal()"></app-icon>
+  <app-icon
+    class="close-button"
+    shape="close"
+    (click)="closeModal()"
+  ></app-icon>
 
-  <p class="title-modal-edit-tax-model">¿Quieres rectificar?</p>
+  <p class="title-modal-edit-tax-model">
+    {{ "TAX_PANEL.PAYMENTMETHOD" | translate }}
+  </p>
   <p class="text-modal-edit-tax-model">
-    Una vez hayas rectificado el modelo, se archivará como una consulta en tu Bandeja.
+    {{ "TAX_PANEL.RECTIFIED_MODEL" | translate }}
   </p>
 
   <app-input [type]="'text'"></app-input>
 
   <app-button [mat-dialog-close]="true" [class]="'orange left'">
     <app-icon shape="send"></app-icon>
-    Enviar
+    {{ "TAX_PANEL.SEND" | translate }}
   </app-button>
 </div>

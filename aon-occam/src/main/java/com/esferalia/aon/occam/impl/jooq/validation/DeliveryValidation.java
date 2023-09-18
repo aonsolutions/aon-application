@@ -5,6 +5,7 @@ import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -44,8 +45,22 @@ public class DeliveryValidation {
 		}
 	};
 	
+	public static final BiConsumer<AONContext, Delivery> COMPLETE_TOTAL_PACKAGES = (ctx, delivery) -> {
+		if(delivery.getTotalPackages() == null) {
+			delivery.setTotalPackages(0.0);
+		}
+	};
+	
+	public static final BiConsumer<AONContext, Delivery> COMPLETE_TOTAL_WEIGHT = (ctx, delivery) -> {
+		if(delivery.getTotalWeight() == null) {
+			delivery.setTotalWeight(0.0);
+		}
+	};
+	
 	public static void autocomplete(AONContext ctx, Delivery delivery) throws AonCoreException{
-		COMPLETE_DATE 
+		COMPLETE_DATE
+		.andThen(COMPLETE_TOTAL_PACKAGES)
+		.andThen(COMPLETE_TOTAL_WEIGHT)
 		.accept(ctx, delivery);
 		
 	}

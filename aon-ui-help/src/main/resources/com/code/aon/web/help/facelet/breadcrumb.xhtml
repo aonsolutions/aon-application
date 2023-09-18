@@ -54,7 +54,6 @@
 			<aon:outputText value="school" styleClass="material-icons" style="color:#606060"/>
 			
 			<c:forEach items="#{help.breadcrumb}" var="file">
-				<aon:form>
 						<!-- immediate="true" reRender="driveDiv" -->
 					<!-- FOLDER -->
 					<aon:if test="${file.isFolder()}">
@@ -92,7 +91,6 @@
 					</aon:if>		
 					
 					<span class="separator material-icons">navigate_next</span>
-				</aon:form>
 			</c:forEach>
 
 		</aon:div>

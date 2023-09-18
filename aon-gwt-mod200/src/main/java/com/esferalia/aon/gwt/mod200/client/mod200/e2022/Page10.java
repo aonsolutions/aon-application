@@ -2,7 +2,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1280Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1344Key;
@@ -32,10 +32,10 @@ public class Page10 extends PageAbs {
 			AON.MSG.futurePending()
 	};
 	
-	private static final String FOOTER_1 = "(*) S\u00F3lo debe cumplimentarse esta fila si la entidad tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2021.";
+	private static final String FOOTER_1 = "(*) S\u00F3lo debe cumplimentarse esta fila si la entidad tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2022.";
 	private static final String FOOTER_2 = "(**) Para los contribuyentes cuyo importe neto de la cifra de negocios sea al menos de 20 millones de euros durante los 12 meses anteriores a la fecha en que se inicie el per\u00EDodo impositivo, el importe no podr\u00E1 exceder conjuntamente del 50% de la cuota \u00EDntegra del contribuyente (DA 15\u00AA LIS).";
 	
-	public Page10( Model200PageCallback callback ) {
+	public Page10( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 	

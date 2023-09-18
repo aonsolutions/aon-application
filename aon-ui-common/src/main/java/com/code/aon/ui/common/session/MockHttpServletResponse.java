@@ -7,9 +7,9 @@ import java.util.Locale;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.output.NullOutputStream;
 

@@ -1,91 +1,64 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
-import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilities.IOption;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesModule.IOption;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 
-	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
-		@Template ("<span class=\"gwt-InlineLabel .aon-padding-right aon-padding-left-20 {1}\">{0}</span>")
-		SafeHtml tab(String title, String icon);
-	}
-	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
-	
-	private String domainName;
-	private String user;
+	private FinanceUtilitiesModuleOptions options;
 	private Domain domain;
 	
-	private final static int NOTIFICATIONS_TAB = 0;
-	private final static int RESULTS_TAB = 1;
+	private static final int NOTIFICATIONS_TAB = 0;
+	private static final int RESULTS_TAB = 1;
 	
-	private DockLayoutPanel mainPanel;
+	private AonLayoutPanel mainPanel;
 	private SplitLayoutPanel splitLayoutPanel;
-	private MinimizePanel footPanel;
-	private TabLayoutPanel tabLayout; 
+	private AonMinimizePanel footPanel;
+	private AonTabLayoutPanel tabLayout; 
 	private SimpleLayoutPanel notificationsContent;
 	private SimpleLayoutPanel resultContent;
 	
-	public OptionBase(String domainName, String user, Domain domain) {
-		this.domainName = domainName;
-		this.user = user;
+	OptionBase(FinanceUtilitiesModuleOptions options, Domain domain) {
+		this.options = options;
 		this.domain = domain;
 		
-		mainPanel = new DockLayoutPanel(Unit.PX);
-		mainPanel.addNorth(getToolbarPanel(), 25);
+		mainPanel = new AonLayoutPanel(Unit.PX);
+		mainPanel.setStyleName(AON.AON_CSS.aonSelector());
+		
+		mainPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
 		
 		splitLayoutPanel = new SplitLayoutPanel();
-		footPanel = new MinimizePanel();
-		footPanel.addMinimizeHandler(new MinimizeHandler() {
-			
-			@Override
-			public void onMinimize(MinimizeEvent event) {
-				closeFootPanel();
-			}
-		});
-		footPanel.addMaximizeHandler(new MaximizeHandler() {
-			
-			@Override
-			public void onMaximize(MaximizeEvent event) {
-				openFootPanel();
-			}
-		});
+		footPanel = new AonMinimizePanel();
+		footPanel.addMinimizeHandler(event -> closeFootPanel());
+		footPanel.addMaximizeHandler(event -> openFootPanel());
 		footPanel.setStyleName(AON.AON_CSS.aonSelector());
-		tabLayout = new TabLayoutPanel(26, Unit.PX);
+		tabLayout = new AonTabLayoutPanel(26, Unit.PX);
 		tabLayout.setWidth("100%");
 		
 		notificationsContent = new SimpleLayoutPanel();
-		tabLayout.add(notificationsContent, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.notifications(), AON.AON_CSS.aonIconJournalLog()));
+		tabLayout.add(notificationsContent, AON.MSG.notifications());
 		
 		resultContent = new SimpleLayoutPanel();
-		tabLayout.add(resultContent, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.result(), AON.AON_CSS.aonIconModel()));
+		tabLayout.add(resultContent, AON.MSG.result());
 		
 		footPanel.add(tabLayout);
 		splitLayoutPanel.addSouth(footPanel, 30);
@@ -98,7 +71,8 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 		splitLayoutPanel.animate(500);
 	}
 	protected void openFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+		int size = Window.getClientHeight() / 2;
+		splitLayoutPanel.setWidgetSize(footPanel, size);
 		splitLayoutPanel.animate(500);
 	}
 	protected void openFootPanelIfNeeded() {
@@ -107,15 +81,13 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 		}
 	}
 	
-	protected String getDomainName() {
-		return domainName;
-	}
-	protected String getUser() {
-		return user;
+	protected FinanceUtilitiesModuleOptions getOptions() {
+		return options;
 	}
 	protected Domain getDomain() {
 		return domain;
 	}
+	
 	protected void showResults(Widget widget) {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(RESULTS_TAB);
@@ -196,14 +168,7 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 		optLabel.setText(getOptionDescription());
 		optLabel.setStyleName(AON.AON_CSS.aonClickableBlock());
 		optLabel.addStyleName(AON.AON_CSS.aonPadding());
-		
-		optLabel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				SelectionEvent.<IOption>fire(OptionBase.this, OptionBase.this);
-			}
-		});
+		optLabel.addClickHandler(event -> SelectionEvent.<IOption>fire(OptionBase.this, OptionBase.this));
 		return optLabel;
 	}
 	
@@ -212,29 +177,8 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
-	protected Widget getToolbarPanel() {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label(AonStringUtils.abbreviate(getOptionDescription(),30)));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
-		toolbarPanel.add(toolbar);
-		return toolbarPanel;
+	protected AonToolbar getToolbarPanel() {
+		return new AonToolbar(AonStringUtils.abbreviate(getOptionDescription(),30));
 	}
 
 	protected abstract Widget paintResults(FinanceUtilitiesResult result);

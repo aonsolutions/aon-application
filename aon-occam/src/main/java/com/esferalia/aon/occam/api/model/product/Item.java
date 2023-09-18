@@ -21,6 +21,7 @@ public class Item implements Serializable {
 	private String description;
 	private String serialNumber;
 	private Date serialDate;
+	private Date expireDate;
 	private String barcode;
 	
 	private ProductStatus status;
@@ -118,6 +119,15 @@ public class Item implements Serializable {
 	
 	public Item setSerialDate(Date serialDate) {
 		this.serialDate = serialDate;
+		return this;
+	}
+
+	public Date getExpireDate() {
+		return expireDate;
+	}
+	
+	public Item setExpireDate(Date expireDate) {
+		this.expireDate = expireDate;
 		return this;
 	}
 

@@ -14,6 +14,7 @@ import java.util.LinkedList;
 
 import org.jooq.Record2;
 import org.jooq.Record7;
+import org.jooq.Record8;
 import org.jooq.Result;
 
 import com.esferalia.aon.gwt.template.server.CatalogueInfo;
@@ -23,6 +24,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 
@@ -97,10 +99,10 @@ public class DBCatalogue {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Date today = new Date(new java.util.Date().getTime());
-			Result<Record7<Integer, String, Integer, Integer, String, String, String>> record = null;
+			Result<Record8<Integer, String, Integer, Integer, String, String, String, String>> record = null;
 			if(wp != null && dt != null){
 				record = ctx.getDslContext().selectDistinct(ITEM.PRODUCT, PRODUCT.NAME, WORKPLACE_DEPARTMENT.WORKPLACE,
-						WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
+						WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, PRODUCT.CODE)
 				.from(CATALOGUE).join(CATALOGUE_ITEM).on(CATALOGUE.ID.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
@@ -119,7 +121,7 @@ public class DBCatalogue {
 				.fetch();
 			}
 			else if(wp != null && dt == null){
-				record = ctx.getDslContext().select(ITEM.PRODUCT, PRODUCT.NAME, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
+				record = ctx.getDslContext().select(ITEM.PRODUCT, PRODUCT.NAME, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, PRODUCT.CODE)
 				.from(CATALOGUE).join(CATALOGUE_ITEM).on(CATALOGUE.ID.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
@@ -137,7 +139,7 @@ public class DBCatalogue {
 				.fetch();
 			}
 			else if(wp == null && dt == null){
-				record = ctx.getDslContext().select(ITEM.PRODUCT, PRODUCT.NAME, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3)
+				record = ctx.getDslContext().select(ITEM.PRODUCT, PRODUCT.NAME, WORKPLACE_DEPARTMENT.WORKPLACE, WORKPLACE_DEPARTMENT.DEPARTMENT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, PRODUCT.CODE)
 				.from(CATALOGUE).join(CATALOGUE_ITEM).on(CATALOGUE.ID.eq(CATALOGUE_ITEM.CATALOGUE))
 				.join(ITEM).on(ITEM.ID.eq(CATALOGUE_ITEM.ITEM))
 				.join(WORKPLACE_DEPARTMENT).on(WORKPLACE_DEPARTMENT.CATALOGUE.eq(CATALOGUE_ITEM.CATALOGUE))
@@ -160,10 +162,8 @@ public class DBCatalogue {
 					Department d = getDepartment(domain, w, r.value4(), login);
 					c.setDepartment(d.getName());
 					c.setWorkplace(w.getDescription());
-					OldProduct p = AON.getProduct(domain.getName(), domain.getId(), login,
-							f -> f.getIdProperty().eq(r.getValue(ITEM.PRODUCT))); 
-					c.setProductCode(p.getCode());
-					c.setProductName(p.getName());
+					c.setProductCode(r.getValue(PRODUCT.CODE));
+					c.setProductName(r.getValue(PRODUCT.NAME));
 					if(r.value5() != null) c.setDetail(r.value5());
 					else c.setDetail("");
 					if(r.value6() != null) c.setDetail2(r.value6());

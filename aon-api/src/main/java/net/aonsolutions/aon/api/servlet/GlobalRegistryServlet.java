@@ -1,10 +1,10 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.logging.Logger;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,30 +39,42 @@ public class GlobalRegistryServlet extends HttpServlet{
 	}
 	
 	public static Filter registryFilter(RegistryProperties f, HttpServletRequest req) {
-    	Filter filter =  f.getDomainProperty().eq(DOMAIN_ID);
-    	
-    	String document = req.getParameter("document");
-    	if(document != null) {
-    		filter = filter.and(f.getDocumentProperty().like(document + "%"));
-    	} 
-    	
-    	String name = req.getParameter("name");
-    	if(name != null) {
-    		filter = filter.and(f.getNameProperty().like("%" + name + "%"));    		
-    	} 
-    	
-    	String value = req.getParameter("value");
-    	if(value != null) {
-    		filter = filter.and(
-    				f.getDocumentProperty().like("%" + value + "%")
-    				.or(f.getNameProperty().like("%" + value + "%")));
-    	}
-    
-    	filter.page(1);
-    	filter.perPage(20);
-    	
-		return filter;
-    }
+	    Filter filter = f.getDomainProperty().eq(DOMAIN_ID);
+
+	    String document = req.getParameter("document");
+	    if (document != null) {
+		filter = filter.and(f.getDocumentProperty().like(document + "%"));
+	    }
+
+	    String name = req.getParameter("name");
+	    name = name != null ? name.trim() : ""; 
+	    if (name.length() > 0) {
+		filter = filter.and(f.getNameProperty().match(toBooleanMode(name)));
+	    }
+
+	    String value = req.getParameter("value");
+	    value = value != null ? value.trim() : ""; 
+	    if (value.length() > 0) {
+		filter = filter.and(f.getDocumentProperty().like("%" + value + "%")
+			.or(f.getNameProperty().match(toBooleanMode(value))));
+	    }
+
+	    filter.page(1);
+	    filter.perPage(20);
+
+	    return filter;
+	}
+	
+	private static String toBooleanMode(String str) {
+	    StringBuilder buffer = new StringBuilder();
+	    for ( String word : str.split("\\W+") ) {
+		buffer.append("+");
+		buffer.append(word);
+	    }
+	    buffer.append("*");
+	    return buffer.toString();
+	}
+ 
 
 	
 }

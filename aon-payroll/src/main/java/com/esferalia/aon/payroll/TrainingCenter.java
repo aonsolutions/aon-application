@@ -1,8 +1,8 @@
 package com.esferalia.aon.payroll;
 
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;

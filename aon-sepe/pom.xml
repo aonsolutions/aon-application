@@ -37,25 +37,17 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20180813</version>
+			<version>20230227</version>
 			<scope>compile</scope>
-			
 		</dependency>
+		
 		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20180813</version>
-			<scope>compile</scope>
-			
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.htmlunit</groupId>
+			<groupId>org.htmlunit</groupId>
 			<artifactId>htmlunit</artifactId>
-			<version>2.43.0</version>
-			<!-- <version>2.25</version> -->
+			<version>3.1.0</version>
 			<scope>compile</scope>
-			
 		</dependency>
+		
 		<dependency>
 			<groupId>commons-cli</groupId>
 			<artifactId>commons-cli</artifactId>

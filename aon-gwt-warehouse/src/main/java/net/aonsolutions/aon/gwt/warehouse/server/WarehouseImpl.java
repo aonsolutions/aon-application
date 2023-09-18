@@ -1,6 +1,6 @@
 package net.aonsolutions.aon.gwt.warehouse.server;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

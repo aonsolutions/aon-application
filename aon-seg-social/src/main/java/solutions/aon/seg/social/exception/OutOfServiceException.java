@@ -1,5 +1,8 @@
 package solutions.aon.seg.social.exception;
 
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.html.HtmlPage;
+
 public class OutOfServiceException extends SegSocialException{
 
 	public OutOfServiceException(String string) {
@@ -9,5 +12,9 @@ public class OutOfServiceException extends SegSocialException{
 	public OutOfServiceException(String string, Throwable motivation) {
 		super(string, motivation);
 	}
+	
+	
+
+
 	
 }

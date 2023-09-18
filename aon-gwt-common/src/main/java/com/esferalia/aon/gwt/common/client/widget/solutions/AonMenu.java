@@ -36,7 +36,7 @@ public class AonMenu extends HTMLPanel{
 		chapter.getElement().getStyle().setDisplay(Display.FLEX);
 		if(!item.isDisabled()) chapter.getElement().getStyle().setCursor(Cursor.POINTER);
 		else chapter.getElement().getStyle().setOpacity(0.5);
-		AonIcon icon = new AonIcon("arrow_right");
+		AonIcon icon = new AonIcon(item.isOpened() ? "arrow_drop_down" : "arrow_right");
 		if(!item.getItems().isEmpty()) {
 			chapter.add(icon);
 		}
@@ -52,7 +52,7 @@ public class AonMenu extends HTMLPanel{
 		
 		VerticalPanel vp1 = new VerticalPanel();
 		vp1.getElement().getStyle().setPaddingLeft(25, Unit.PX);
-		vp1.setVisible(false);
+		vp1.setVisible(item.isOpened());
 		item.getItems().stream().forEach(r -> vp1.add(buildItemChild(r)));
 
 		vp.add(vp1);

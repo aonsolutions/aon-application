@@ -5,594 +5,355 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
-	<ui:with field='res'
-		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
-	<ui:style
-		type="com.esferalia.aon.gwt.payroll.client.Employee.MyStyle">
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.Employee.MyStyle">
+	
+	
 		
-		.form {
-			padding: 10px;
-		}
-
-		.noselect {
-			-webkit-touch-callout: none; /* iOS Safari */
-			-webkit-user-select: none; /* Safari */
-			-khtml-user-select: none; /* Konqueror HTML */
-			-moz-user-select: none; /* Firefox */
-			-ms-user-select: none; /* Internet Explorer/Edge */
-			user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+		.agreementTitle {
+			height: 40px;
+			align-items: center;
+			display: flex;
 		}
 		
-		@external gwt-Selector;
-		@external gwt-SuggestBoxPopup;
-		.gwt-SuggestBoxPopup {
-			z-index: 105;
+		.alignTextCenter { text-align: center; }
+		
+		.container {
+			margin: 1rem 1rem 0;
+			display: flex;
+			flex-direction: column;
 		}
 		
-		.gwt-Selector .gwt-SuggestBoxPopup {
-			z-index: 105;
-			height: inherit;
+		.firstColumn{
+			min-width: 200px;
+			padding: 5px;
+			background-color: #f6f6f6; 
 		}
-
-		.headerStyle{
-			top: -0.5em;
-			font-size: 12px;
-			margin-left: 10px;
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			width: 100%;
+			margin: 2px 0;
+			gap: 5px;
 		}
-
+		
+		.flexColumn{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+		}
+		
+		.flexBetween{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		
+		.flexItem{
+			display: flex;
+			align-items: center;
+			gap: .5rem;
+		}
+		
+		.firstColumnTextStyle { padding: 5px !important; }
+		
+		.heightAll { height: 100%; }
+		
+		.heightTB { height: 1.1rem; }
+		
+		.mt20 { margin-top: 20px; }
+		
+		.mw { min-width: fit-content; }
+		
 		.requiredColor{
 			color: #2152A5;
 			font-weight: bold !important;
 		}
-
-		.maxWidth{
-		width: 100%;
-		}
-
-		.maxWidthTextBox{
-		width: 99%;
-		}
-
-		.maxWidthTextBox2{
-		width: 98%;
-		}
-
-		.maxWidthTextBox3{
-		width: 97%;
-		}
-
-		.maxWidthTextBox4{
-			width: 96%;
-		}
-
-		.dateBoxStyle{
-		width: 98% !important;
-		text-align: center !important;
-		}
-
-		.dateBoxStyle2{
-		width: 96% !important;
-		text-align: center !important;
-		}
-
-		.alignTextCenter{
-		text-align: center;
-		}
-
-		.firstColumnTextStyle{
-		padding:
-		5px !important;
-		}
-
-		.nssWidht{
-			width: 96%;
-		}
-
-		.paddingLeft{
-			padding-left: 2px;
-		}
-
-		.retaTopLabel{
-			top: 330px;
-		}
+		
+		.shortTB { width: 70px; }
 		
 		.styleBorder{
-			border-style: solid; 
-			width: 975px; 
-			border-width: 1px; 
-		    margin: 20px 10px 10px 10px;
+			border: 1px solid black;
+			border-radius: 5px;
+			padding: 0 1rem .5rem;
 		}
 		
-		.styleBorder2{
-			border-style: solid; 
-			width: 975px; 
-			border-width: 1px;
-			margin: 20px 10px 10px 10px;
-		}
-		
-		.fontSaveStyle{
+		.tittle{
+			position: relative;
+			top: -10px;
+			left: 20px;
+			width: 130px;
+			padding: 0 5px;
+			background-color: white;
+			font-size: 12px;
 			font-weight: bold;
-    		color: #000;
-    		white-space: nowrap;
-    		font-size: smaller;
-    		padding-left: 30px;
-    		width: 80px;	
+			text-align: center;
 		}
 		
+		.widthAll { width: 100% !important; }
+
+		/* INNER CLASS */
+		
+		.errorBorder { border: 1px solid red !important; }
+
 		.journeyDurationWarning{
 			font-weight: bold;
 			font-size: 11px;
 			cursor: pointer;
 		}
 		
-		.journeyDuration{
-			font-size: 11px;
-			cursor: pointer;
+		.warningTB { border: 1px solid red !important; }
+		
+		
+		.iconButton {
+			display:flex;
+  			background-color: transparent;
+  			border: none;
+  				padding: 0;
+  				margin: 0;
+  				width: 24px;
+ 				height: 24px;
+  				cursor: pointer;
+  				left: 25px;
 		}
 		
-		.addressPadding{
-			padding-top: 2px;
-			padding-right: 10px;
-			padding-left: 5px;
+		.drag-over {
+ 			 border: 2px dashed #2152A5;
+				}
+	
+		.gwt-fileUpload{
+			display:flex;
+				width: 250px;
+ 				height: 25px;
 		}
 		
-		.labelsWidth{
-			width: 100px;
+		.uploaded{
+			border: 2px solid green;
+			padding-right: 25px;
+			padding-bottom: 25px;
 		}
 		
-		.mr-10{
-			margin-right: 10px;
+		.uploadedFail{
+			border: 2px solid red;
+			padding-right: 20px;
+			padding-bottom: 20px;
 		}
 		
-		.flexPanel{
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
+		.uploadButtonHidde{
+			
 		}
 		
-		.flex{
-			display: flex;
-			align-items: center;
-			gap: 5px;
-		}
 		
-		.flexGrow{
-			flex-grow: 1;
-		}
-		
-		.warningTB{
-			border: 1px solid red;
-		}
-		
-		.noHover{
-		    pointer-events: none !important;
-		    cursor: auto !important;
-		}
-		
-		.heightTB{
-			height: 1.1rem;
-		}
-		
-		.partialityTB{
-			width: 50px;
-			text-align: center;
-		}
-		
-		.errorBorder{
-			border: 1px solid red;
-		}
 	</ui:style>
+	
+	<ui:import field="com.google.gwt.user.client.ui.FormPanel.*" />
 
-   	<g:HTMLPanel> 
-        <g:VerticalPanel styleName="{style.styleBorder}"> 
-	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Datos de contrato</g:Label>
-	    	<g:HTMLPanel>
-				<table ui:field="contractDataTable" debugId="contractDataTable"
-					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
-					<tbody>
-						<!-- LINEA 0 -->
-					    <tr>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					    </tr>
-					    <!-- LINEA 1 -->
-					    <tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName='{style.firstColumnTextStyle}'>Documento</g:Label>
-							</td>
-							<td ui:field="documentTypeCell" debugId="documentTypeCell">
-								<g:HTMLPanel ui:field="horizontalPanel" styleName="{style.flex}">
-							        <g:Label styleName='{style.alignTextCenter}' ui:field="documentType" debugId="document_type"></g:Label>
-							   </g:HTMLPanel>
-							</td>
-							<td>
-								<g:HorizontalPanel>
-									<g:HTMLPanel ui:field="documentPanel" styleName="{style.flex}">
-										<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
-									</g:HTMLPanel>
-								</g:HorizontalPanel>
-							</td>
-							<td style="width: 10%;" ui:field="nationalityLabelCell" debugId="nationalityLabelCell">
-								<g:Label ui:field="nationalityLabel" debugId="nationalityLabel" styleName='{style.alignTextCenter}'>Nacionalidad</g:Label>
-							</td>
-							<td ui:field="nationalityCell" debugId="nationalityCell">
-								<g:SuggestBox ui:field="nationality" debugId="nationality" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
-							</td>
-							<td style="width: 10%;">
-								<g:Label styleName='{style.alignTextCenter}'>Nº S.S.</g:Label>
-							</td>
-							<td >
-								<g:HorizontalPanel>
-									<g:HTMLPanel ui:field="ssNumberPanel" styleName="{style.flex}">
-										<g:SuggestBox ui:field="securitySocialNum" debugId="security_social_num" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
-									</g:HTMLPanel>
-								</g:HorizontalPanel>
-							</td>
-						</tr>
-						<!-- LINEA 2 -->
-					    <tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Nombre</g:Label>
-							</td>
-							<td colspan="2">
-								<g:HTMLPanel ui:field="namePanel" styleName="{style.flex}">
-									<g:SuggestBox ui:field="name" debugId="name" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
-								</g:HTMLPanel>
-							</td>
-							<td>
-								<g:Label ui:field="firstSurnameLabel" debugId="firstSurnameLabel"
-									styleName='{style.alignTextCenter}'>1er Apellido</g:Label>
-							</td>
-							<td >
-								<g:SuggestBox ui:field="firstSurname" debugId="first_surname" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
-							</td>
-							<td style="width: 10%;">
-								<g:Label styleName='{style.alignTextCenter}'>2º Apellido</g:Label>
-							</td>
-							<td >
-								<g:TextBox ui:field="secondSurname" debugId="second_surname" styleName='aon-inputText {style.maxWidthTextBox4} {style.heightTB}'></g:TextBox>
-							</td>
-						</tr>
-						<!-- LINEA 3 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de cotización</g:Label>
-							</td>
-							<td colspan="3">
-								<g:ListBox ui:field="ssRegimeType" debugId="ssRegimeType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-							<td style="width: 10%;">
-								<g:Label styleName='{style.alignTextCenter}'>Tipo Tributación</g:Label>
-							</td>
-							<td colspan="2">
-								<g:ListBox ui:field="mdTBTLB" debugId="mdTBT" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-						</tr>
-						<!-- LINEA 4 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Actividad - Cuenta de cotización</g:Label>
-							</td>
-							<td colspan="6">
-								<g:HTMLPanel ui:field="activityCCCPanel" styleName="{style.flex}">
-									<g:ListBox ui:field="activityCCC" debugId="activityCCC" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-								</g:HTMLPanel>
-							</td>
-						</tr>
-						<!-- LINEA 5 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Modalidad Cotización</g:Label>
-							</td>
-							<td colspan="6">
-								<g:ListBox ui:field="mdCTZLB" debugId="mdCTZ" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-						</tr>
-						<!-- LINEA 6 -->
-						<tr>
-						    <td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Centro de trabajo</g:Label>
-							</td>
-							<td colspan="6">
-								<g:HTMLPanel ui:field="workplacePanel" styleName="{style.flex}">
-									<g:ListBox ui:field="workplace" debugId="workplace" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-								</g:HTMLPanel>
-							</td>
-						</tr>
-						<!-- LINEA 7 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de contrato</g:Label>
-							</td>
-							<td colspan="6" ui:field="contractTypeNode" debugId="contractTypeNode">
-								<g:HTMLPanel ui:field="contractTypePanel" styleName="{style.flex}">
-									<g:ListBox ui:field="contractTypeLB" debugId="contractType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-								</g:HTMLPanel>
-							</td>
-							<td ui:field="contractFreelancerNode" debugId="contractFreelancerNode" colspan="6">
-								<g:Label ui:field="contractTypeFreelance" debugId="contractTypeFreelance"
-									styleName='{style.maxWidthTextBox}'>
-									Régimen especial de trabajadores autónomos
-								</g:Label>
-							</td>
-						</tr>
-						<!-- LINEA 8 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">Modalidad</g:Label>
-							</td>
-							<td colspan="6">
-								<g:ListBox ui:field="modality" debugId="modality" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-						</tr>
-						<!-- LINEA 9 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">Periodo contratación</g:Label>
-							</td>
-							<td>
-								<g:Label styleName='{style.requiredColor}'>Fecha inicio</g:Label>
-							</td>
-							<td>
-								<g:HTMLPanel ui:field="startDatePanel" styleName="{style.flex}">
-									<a:DateBoxEx ui:field="startDate" debugId="start_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
-								</g:HTMLPanel>
-							</td>
-							<td>
-								<g:Label styleName='{style.alignTextCenter}'>Fecha fin</g:Label>
-							</td>
-							<td>
-								<a:DateBoxEx ui:field="endDate" debugId="end_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
-							</td>
-							<td style="width: 12%;">
-								<g:Label ui:field="seniorityDateLabel" debugId="seniority_date_label" styleName='{style.alignTextCenter}'>Fecha antigüedad</g:Label>
-							</td>
-							<td>
-								<g:HTMLPanel ui:field="seniorityDatePanel" styleName="{style.flex}">
-									<a:DateBoxEx ui:field="seniorityDate" debugId="seniority_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle2} {style.heightTB}'></a:DateBoxEx>
-								</g:HTMLPanel>
-							</td>
-						</tr>
-						<!-- LINEA 10 -->
-						<tr>
-							<td rowspan="2" style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">Categoría/Nivel retributario</g:Label>
-							</td>
-							<td>
-								<g:Label>Convenio</g:Label>
-							</td>
-							<td colspan="5">
-								<g:SuggestBox ui:field="agreement" debugId="agreement" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
-							</td>
-						</tr>
-						<!-- LINEA 11 -->
-						<tr>
-							<td>
-								<g:Label>Nivel/Categoría</g:Label>
-							</td>
-							<td colspan="3">
-								<g:ListBox ui:field="level" debugId="level" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-							<td>
-								<g:Label styleName='{style.alignTextCenter}'>Mostrar como</g:Label>
-							</td>
-							<td>
-								<g:TextBox ui:field="category" debugId="category" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
-							</td>
-						</tr>
-						<!-- LINEA 12 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">Grupo de cotización</g:Label>
-							</td>
-							<td colspan="6">
-								<g:ListBox ui:field="quoteGroup" debugId="quote_group" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-						</tr>
-						<!-- LINEA 13 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">I. cotización mensual</g:Label>
-							</td>
-							<td colspan="6">
-								<g:Button ui:field="quoteGroupCotizB"></g:Button>
-							</td>
-						</tr>
-						<!-- LINEA 14 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">Ocupación</g:Label>
-							</td>
-							<td colspan="6">
-								<g:ListBox ui:field="occupation" debugId="occupation" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-						</tr>
-						<!-- LINEA 15 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">RLCE</g:Label>
-							</td>
-							<td colspan="6">
-								<g:ListBox ui:field="rlce" debugId="rlce" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-						</tr>
-						<!-- LINEA 16 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle} {style.requiredColor}">Colectivo Trabajadores</g:Label>
-							</td>
-							<td colspan="6">
-								<g:ListBox ui:field="employeesColective" debugId="employeesColective" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-						</tr>
-						<!-- LINEA 17 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Tipo de jornada</g:Label>
-							</td>
-							<td colspan="6">
-								<g:ListBox ui:field="journeyType" debugId="journeyType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-						</tr>
-						<!-- LINEA 18 -->
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">Duración de lo jornada</g:Label>
-							</td>
-							<td colspan="6">
-								<g:HTMLPanel styleName="{style.flexPanel}">
-									<g:HTMLPanel ui:field="journeyDuration" debugId="journeyDuration" styleName="{style.flex}" />
-									<g:HTMLPanel styleName="{style.flex}">
-										<g:Label styleName="{style.mr-10}">Coef. Parcialidad: </g:Label>
-										<a:DoubleBox ui:field="partialityCoef" debugId="journeyDuration" styleName="{style.partialityTB} {style.heightTB}"></a:DoubleBox>
-									</g:HTMLPanel>
-								</g:HTMLPanel>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</g:HTMLPanel>
-		</g:VerticalPanel>
-		<g:VerticalPanel ui:field="employeeTablePanel" styleName="{style.styleBorder2}"> 
-			<g:Label ui:field="labelEmployee" debugId="labelEmployee" width="105px" styleName='aon-group-title {style.headerStyle}'>Datos personales</g:Label>
-			<g:HTMLPanel>
-				<table ui:field="employeeDataTable" debugId="employeeDataTable"
-					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
-					<body>
-					    <tr>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					    </tr>
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">Fecha de nacimiento</g:Label>
-							</td>
-							<td colspan="2">
-								<a:DateBoxEx ui:field="birthDate" debugId="birth_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
-							</td>
-							<td style="width: 100px;">
-								<g:HorizontalPanel styleName="{style.paddingLeft} {style.labelsWidth}">
-									<g:Label ui:field="age" debugId="age"></g:Label>
-									<g:Label styleName='{style.alignTextCenter}'>Sexo</g:Label>
-								</g:HorizontalPanel>
-							</td>
-							<td colspan="2">
-								<g:ListBox ui:field="gender" debugId="gender" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-							<td>
-								<g:Label>Estado Civil</g:Label>
-							</td>
-							<td colspan="2">
-								<g:ListBox ui:field="civilStatus" debugId="civilStatus" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-						</tr>
-						<tr>
-							<td rowspan="2" style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName='{style.firstColumnTextStyle}'>Dirección</g:Label>
-							</td>
-							<td>
-							    <g:ListBox ui:field="streetType" debugId="street_type" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-							</td>
-							<td colspan="3">
-								<g:SuggestBox ui:field="address" debugId="address" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
-							</td>
-							<td>
-								<g:HorizontalPanel>
-									<g:Label styleName='{style.alignTextCenter} {style.addressPadding}'>Nº</g:Label>
-									<g:TextBox ui:field="addressNum" debugId="addressNum" styleName='aon-inputText {style.maxWidth} {style.heightTB}'></g:TextBox>
-									<g:Label styleName='{style.alignTextCenter} {style.addressPadding} {style.mr-10} {style.maxWidth}'>Rest. Dir.</g:Label>
-								</g:HorizontalPanel>
-							</td>
-							<td colspan="3">
-								<g:TextBox ui:field="addressInfo" debugId="addressInfo" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:TextBox>
-							</td>
-						</tr>
-						<tr>
-							<td style="width: 10%;">
-								<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>C.P.</g:Label>
-							</td>
-							<td>
-								<g:HTMLPanel ui:field="addressZipPanel" styleName="{style.flex}">
-									<g:TextBox ui:field="addressZip" debugId="addressZip" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
-								</g:HTMLPanel>
-							</td>
-							<td style="width: 8%;">
-								<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>  Provincia  </g:Label>
-								
-							</td>
-							<td colspan="2">
-								<g:ListBox ui:field="addressProvince" debugId="addressProvince" styleName='aon-inputText {style.maxWidth}'></g:ListBox>
-							</td>
-							<td style="width: 9%;">
-								<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>Municipio</g:Label>
-							</td>
-							<td colspan="2"> 
-								<g:ListBox ui:field="addressMunicipality" debugId="addressMunicipality" styleName='aon-inputText {style.maxWidthTextBox}'></g:ListBox>
-							</td>
-						</tr>
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">Contacto</g:Label>
-							</td>
-							<td>
-								<g:Label styleName='{style.alignTextCenter}'>Móvil</g:Label>
-							</td>
-							<td>
-								<g:TextBox ui:field="mobile" debugId="mobile" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
-							</td>
-							<td>
-								<g:Label styleName='{style.alignTextCenter}'>Teléfono</g:Label>
-							</td>
-							<td colspan="2">
-								<g:TextBox ui:field="phone" debugId="phone" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
-							</td>
-							<td>
-								<g:Label styleName='{style.alignTextCenter}'>eMail</g:Label>
-							</td>
-							<td colspan="2">
-								<g:TextBox ui:field="email" debugId="email" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
-							</td>
-						</tr>
-						<tr>
-							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">Forma de pago</g:Label>
-							</td>
-							<td colspan="2">
-								<g:ListBox ui:field="payMethod" debugId="payMethod" styleName='{style.maxWidth}'></g:ListBox>
-							</td>
-							<td style="width: 8%;">
-								<g:Label styleName='{style.alignTextCenter}'>IBAN</g:Label>
-							</td>
-							<td colspan="3">
-								<g:HTMLPanel ui:field="accountPanel" styleName="{style.flex}">
-									<g:SuggestBox ui:field="account" debugId="account" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
-								</g:HTMLPanel>
-							</td>
-							<td>
-								<g:Label styleName='{style.alignTextCenter}'>BIC</g:Label>
-							</td>
-							<td>
-								<g:TextBox ui:field="bic" debugId="bic" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
-							</td>
-							
-						</tr>
-					</body>
-				</table>
-			</g:HTMLPanel>
-		</g:VerticalPanel>
-       </g:HTMLPanel> 
+   	<g:HTMLPanel styleName="{style.container}">
+   	
+   		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll}" debugId="employeeTablePanel">
+	   		<g:HTMLPanel styleName="{style.styleBorder}">
+	    		<g:Label styleName='{style.tittle}'>Datos Contrato</g:Label>
+		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}" ui:field="contractDataTable">
+		    		
+		    		<!-- LINEA 0 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Documento" />
+		    			<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.widthAll} {style.heightTB}'/>
+		    			<g:Label styleName='{style.mw}' ui:field="documentType" debugId="document_type" />
+		    			
+		    			<!--  FILEUPLOAD-->
+<!-- 						<g:HTMLPanel > 											 -->
+<!-- 						  <g:FormPanel ui:field="formPanel" visible="true" method="POST" action="DNIServlet" encoding="multipart/form-data"> -->
+<!-- 						    <g:HTMLPanel styleName="{style.flex}"> -->
+<!-- 						       <g:Button ui:field="uploadButton" styleName="{style.iconButton}" > -->
+<!-- 						        <i class="material-icons">publish</i> -->
+<!-- 						      </g:Button> -->
+<!-- 						      <g:FileUpload ui:field="fileUpload" visible= "false" styleName="{style.gwt-fileUpload}"/> -->
+<!-- 						    </g:HTMLPanel> -->
+<!-- 						  </g:FormPanel> -->
+<!-- 						</g:HTMLPanel> -->
+					    <!-- FILEUPLOAD-->
+			
+		    			<g:HTMLPanel styleName="{style.flexItem} {style.widthAll}" ui:field="nationalityPanel">
+		    				<g:Label ui:field="nationalityLabel" debugId="nationalityLabel" styleName='{style.mw}' text="Nacionalidad" />
+		    				<g:SuggestBox ui:field="nationality" debugId="nationality" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+		    			</g:HTMLPanel>
+		    			<g:Label styleName='{style.mw}' text="Nº S.S." />
+		    			<g:SuggestBox ui:field="securitySocialNum" debugId="security_social_num" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+					</g:HTMLPanel>
+					<!-- LINEA 1 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Nombre" />
+		    			<g:SuggestBox ui:field="name" debugId="name" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+		    			<g:Label ui:field="firstSurnameLabel" styleName='{style.mw}' text="1er Apellido" />
+		    			<g:SuggestBox ui:field="firstSurname" debugId="first_surname" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+		    			<g:Label styleName='{style.mw}' text="2º Apellido" />
+		    			<g:TextBox ui:field="secondSurname" debugId="second_surname" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+					</g:HTMLPanel>
+					<!-- LINEA 2 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Tipo de cotización" />
+		    			<g:ListBox ui:field="ssRegimeType" debugId="ssRegimeType" styleName='aon-selectOneMenu {style.widthAll}' />
+		    			<g:Label styleName='{style.mw}' text="Tipo Tributación" />
+		    			<g:ListBox ui:field="mdTBTLB" debugId="mdTBT" styleName='aon-selectOneMenu {style.widthAll}' />
+					</g:HTMLPanel>
+					<!-- LINEA 3 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Actividad - Cuenta de cotización" />
+		    			<g:ListBox ui:field="activityCCC" debugId="activityCCC" styleName='aon-selectOneMenu {style.widthAll}' />
+					</g:HTMLPanel>
+					<!-- LINEA 4 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Modalidad Cotización" />
+		    			<g:ListBox ui:field="mdCTZLB" debugId="mdCTZ" styleName='aon-selectOneMenu {style.widthAll}' />
+					</g:HTMLPanel>
+					<!-- LINEA 5 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Centro de trabajo" />
+		    			<g:ListBox ui:field="workplace" debugId="workplace" styleName='aon-selectOneMenu {style.widthAll}' />
+					</g:HTMLPanel>
+					<!-- LINEA 6 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Tipo de contrato" />
+		    			<g:ListBox ui:field="contractTypeLB" debugId="contractType" styleName='aon-selectOneMenu {style.widthAll}' />
+		    			<g:Label ui:field="contractTypeFreelance" debugId="contractTypeFreelance" styleName='{style.mw}' text="Régimen especial de trabajadores autónomos" />
+					</g:HTMLPanel>
+					<!-- LINEA 7 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Modalidad" />
+		    			<g:ListBox ui:field="modality" debugId="modality" styleName='aon-selectOneMenu {style.widthAll}' />
+					</g:HTMLPanel>
+					<!-- LINEA 8 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Periodo contratación" />
+		    			<g:Label styleName='{style.requiredColor} {style.mw}' text="Fecha inicio" />
+		    			<a:DateBoxEx ui:field="startDate" debugId="start_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
+		    			<g:Label styleName='{style.mw}' text="Fecha fin" />
+		    			<a:DateBoxEx ui:field="endDate" debugId="end_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
+		    			<g:Label styleName='{style.mw}' text="Fecha antigüedad" />
+		    			<a:DateBoxEx ui:field="seniorityDate" debugId="seniority_date" styleName='aon-inputText {style.alignTextCenter} {style.widthAll} {style.heightTB}' />
+					</g:HTMLPanel>
+					<!-- LINEA 9 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+	    				<g:Label  styleName='{style.firstColumn} {style.agreementTitle}' text="Categoría/Nivel retributario" />
+	    				<g:HTMLPanel styleName="{style.flexColumn} {style.widthAll}">
+	    					<g:HTMLPanel styleName="{style.flex}">
+	    						<g:Label styleName='{style.mw}' text="Convenio" />
+	    						<g:SuggestBox ui:field="agreement" debugId="agreement" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+	    					</g:HTMLPanel>
+	    					<g:HTMLPanel styleName="{style.flex}">
+	    						<g:Label styleName='{style.mw}' text="Nivel/Categoría" />
+				    			<g:ListBox ui:field="level" debugId="level" styleName='aon-selectOneMenu {style.widthAll}' />
+				    			<g:Label styleName='{style.mw}' text="Mostrar como" />
+				    			<g:TextBox ui:field="category" debugId="category" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+	    					</g:HTMLPanel>
+	    				</g:HTMLPanel>
+					</g:HTMLPanel>
+					<!-- LINEA 10 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Grupo de cotización" />
+		    			<g:ListBox ui:field="quoteGroup" debugId="quote_group" styleName='aon-selectOneMenu {style.widthAll}' />
+					</g:HTMLPanel>
+					<!-- LINEA 11 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="I. Cotización mensual" />
+		    			<g:Button ui:field="quoteGroupCotizB" />
+					</g:HTMLPanel>
+					<!-- LINEA 12 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Ocupación" />
+		    			<g:ListBox ui:field="occupation" debugId="occupation" styleName='aon-selectOneMenu {style.widthAll}' />
+					</g:HTMLPanel>
+					<!-- LINEA 13 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="RLCE" />
+		    			<g:ListBox ui:field="rlce" debugId="rlce" styleName='aon-selectOneMenu {style.widthAll}' />
+					</g:HTMLPanel>
+					<!-- LINEA 14 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Colectivo Trabajadores" />
+		    			<g:ListBox ui:field="employeesColective" debugId="employeesColective" styleName='aon-selectOneMenu {style.widthAll}' />
+					</g:HTMLPanel>
+					<!-- LINEA 15 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Tipo Jornada" />
+		    			<g:ListBox ui:field="journeyType" debugId="journeyType" styleName='aon-selectOneMenu {style.widthAll}' />
+					</g:HTMLPanel>
+					<!-- LINEA 16 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Duración Jornada" />
+		    			<g:HTMLPanel styleName="{style.flexBetween} {style.widthAll}">
+							<g:HTMLPanel ui:field="journeyDuration" debugId="journeyDuration" styleName="{style.flexItem}" />
+							<g:HTMLPanel styleName="{style.flexItem}">
+								<g:Label styleName="{style.mw}" text="Coef. Parcialidad:" />
+								<a:DoubleBox ui:field="partialityCoef" debugId="journeyDuration" styleName=" {style.shortTB} {style.alignTextCenter} {style.heightTB}"></a:DoubleBox>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<!-- LINEA 17 -->
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="CNO" />
+		    			<g:SuggestBox ui:field="cnoSB" debugId="cnoSB" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+					</g:HTMLPanel>
+					
+		    	</g:HTMLPanel>
+		    </g:HTMLPanel>
+	   	</g:HTMLPanel>
+		
+		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.mt20}" debugId="employeeTablePanel" ui:field="employeeTablePanel">
+	   		<g:HTMLPanel styleName="{style.styleBorder}">
+	    		<g:Label styleName='{style.tittle}'>Datos Personales</g:Label>
+		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Fecha de nacimiento" />
+		    			<a:DateBoxEx ui:field="birthDate" debugId="birth_date" styleName="aon-inputText {style.alignTextCenter} {style.heightTB} {style.widthAll}" />
+		    			<g:Label styleName='{style.mw}' ui:field="age" debugId="age" />
+						<g:Label styleName='{style.mw}' text="Sexo" />
+						<g:ListBox ui:field="gender" debugId="gender" styleName='aon-selectOneMenu {style.widthAll}' />
+						<g:Label styleName="{style.mw}" text="Estado Civil" />
+						<g:ListBox ui:field="civilStatus" debugId="civilStatus" styleName='aon-selectOneMenu {style.widthAll}' />
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label  styleName='{style.firstColumn}' text="Dirección" />
+		    			<g:ListBox ui:field="streetType" debugId="street_type" styleName='aon-selectOneMenu' />
+		    			<g:SuggestBox ui:field="address" debugId="address" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+		    			<g:Label styleName='{style.mw}' text="Nº" />
+						<g:TextBox ui:field="addressNum" debugId="addressNum" styleName='aon-inputText {style.shortTB} {style.alignTextCenter} {style.heightTB}' />
+						<g:Label styleName='{style.mw}' text="Rest. Dir" />
+						<g:TextBox ui:field="addressInfo" debugId="addressInfo" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label styleName='{style.firstColumn}' text="C.P." />
+		    			<g:TextBox ui:field="addressZip" debugId="addressZip" styleName='aon-inputText {style.alignTextCenter} {style.heightTB}' />
+		    			<g:Label styleName="{style.mw}" text="Provincia" />
+		    			<g:ListBox ui:field="addressProvince" debugId="addressProvince" styleName='aon-inputText {style.widthAll}' />
+		    			<g:Label styleName='{style.mw}' text="Municipio" />
+		    			<g:ListBox ui:field="addressMunicipality" debugId="addressMunicipality" styleName='aon-inputText {style.widthAll}' />
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label styleName='{style.firstColumn}' text="Contacto" />
+		    			<g:Label styleName='{style.mw}' text="Móvil" />
+		    			<g:TextBox ui:field="mobile" debugId="mobile" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+		    			<g:Label styleName='{style.mw}' text="Teléfono" />
+		    			<g:TextBox ui:field="phone" debugId="phone" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+		    			<g:Label styleName='{style.mw}' text="eMail" />
+		    			<g:TextBox ui:field="email" debugId="email" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.flex}">
+		    			<g:Label styleName='{style.firstColumn}' text="Forma de pago" />
+		    			<g:ListBox ui:field="payMethod" debugId="payMethod" styleName='' />
+		    			<g:Label styleName='{style.mw}' text="IBAN" />
+		    			<g:SuggestBox ui:field="account" debugId="account" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+		    			<g:Label styleName='{style.mw}' text="BIC" />
+		    			<g:TextBox ui:field="bic" debugId="bic" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+					</g:HTMLPanel>
+		    	</g:HTMLPanel>
+		    </g:HTMLPanel>
+	   	</g:HTMLPanel>
+			
+	</g:HTMLPanel> 
 </ui:UiBinder> 
 

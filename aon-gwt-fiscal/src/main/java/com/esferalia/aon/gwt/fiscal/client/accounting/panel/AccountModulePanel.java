@@ -1,6 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
@@ -8,8 +14,11 @@ import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountModuleOptions;
 import com.esferalia.aon.occam.api.model.AccountParams;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -34,16 +43,21 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 	private TextBox alias;
 	private ListBox active;
 	private ListBox level;
-	private TextBox costCenter;
+	private ListBox costCenter;
 
 	private AonSearchPanelButton cleanButton;
 	private AonSearchPanelButton refreshButton;
+	
+	private static CommonServiceAsync COMMON_SERVICE;
 
 	public AccountModulePanel(AccountModuleOptions options) {
 		super(Unit.PX);
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonMarginBottom());
 		northPanel = new SimpleLayoutPanel();
+		
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		id = new IntegerBox();
 		id.setVisibleLength(8);
@@ -84,10 +98,13 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 		active.setSelectedIndex(2);
 		active.addChangeHandler(event -> onSearch( options ));
 
-		costCenter = new TextBox();
-		costCenter.setVisibleLength(15);
+		costCenter = new ListBox();
+		costCenter.addItem("-", "");
+		getCostCenters(options, costCenterStream -> {
+			costCenterStream.forEach(costCenterIt -> costCenter.addItem(costCenterIt.getValue(), costCenterIt.getValue()));
+		});
 		costCenter.setStyleName(AON.CSS.aonInputText());
-		costCenter.addValueChangeHandler(event -> onSearch( options ));
+		costCenter.addChangeHandler(event -> onSearch( options ));
 
 		tab = new FlexTable();
 		tab.setStyleName(AON.CSS.aonSearchPanel());
@@ -140,7 +157,7 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 			alias.setValue(null,false);
 			active.setSelectedIndex(2);
 			level.setSelectedIndex(0);
-			costCenter.setValue(null,false);
+			setSelectedValueLB(costCenter, "");
 			code.setFocus(true);
 			onSearch( options );
 		});
@@ -169,6 +186,18 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 		centerPanel = new SimpleLayoutPanel();
 		add(centerPanel);
 		onSearch( options );
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
 	}
 	
 	@Override
@@ -213,8 +242,23 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 			.setAlias(alias.getValue())
 			.setActive(active.getSelectedIndex()==2?null: active.getSelectedIndex() == 0)
 			.setLevel(level.getSelectedIndex()==0?null:((byte) level.getSelectedIndex()))
-			.setCostCenter(costCenter.getValue())
+			.setCostCenter(costCenter.getSelectedValue())
 			;
+	}
+	
+	private void getCostCenters(AccountModuleOptions options, Consumer<List<ApplicationParameter>> success) {
+		COMMON_SERVICE.getCostCenters(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<List<ApplicationParameter>>() {
+			
+			@Override
+			public void onSuccess(List<ApplicationParameter> customer) {
+				success.accept(customer);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Error
+			}
+		});
 	}
 	
 }

@@ -114,6 +114,7 @@ abstract class Model184Base extends DockLayoutPanel {
 	protected void select(Mod184 mod184) {
 		setModel(mod184);
 		refreshToolbarState();
+		styleStatusLabel();
 	}
 
 	private AonToolbar getToolbarPanel() {

@@ -815,6 +815,8 @@ public class JooqContrata {
 				return factory.createCONTRATO402TYPE();
 			} else if (code.equals(ContractCode.C403.getValue())) {
 				return factory.createCONTRATO403TYPE();
+			} else if (code.equals("407")) {
+				return factory.createCONTRATO402TYPE();
 			} else if (code.equals(ContractCode.C410.getValue())) {
 				return factory.createCONTRATO410TYPE();
 			} else if (code.equals(ContractCode.C420.getValue())) {
@@ -835,6 +837,8 @@ public class JooqContrata {
 				return factory.createCONTRATO502TYPE();
 			} else if (code.equals(ContractCode.C503.getValue())) {
 				return factory.createCONTRATO503TYPE();
+			} else if (code.equals("507")) {
+				return factory.createCONTRATO502TYPE();
 			} else if (code.equals(ContractCode.C510.getValue())) {
 				return factory.createCONTRATO510TYPE();
 			} else if (code.equals(ContractCode.C520.getValue())) {
@@ -913,6 +917,8 @@ public class JooqContrata {
 				contratoType = createContract402(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C403.getValue())) {
 				contratoType = createContract403(contratoType, employeeContractInfo);
+			} else if (tc2.equals("407")) {
+				contratoType = createContract402(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C410.getValue())) {
 				contratoType = createContract410(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C420.getValue())) {
@@ -933,6 +939,8 @@ public class JooqContrata {
 				contratoType = createContract502(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C503.getValue())) {
 				contratoType = createContract503(contratoType, employeeContractInfo);
+			} else if (tc2.equals("507")) {
+				contratoType = createContract502(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C510.getValue())) {
 				contratoType = createContract510(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C520.getValue())) {
@@ -1366,10 +1374,10 @@ public class JooqContrata {
 			datos.setFIJODISCONTINUOPERIODICO(employeeContractInfo.getContractSpecificData().getRepeatFD()!=null && employeeContractInfo.getContractSpecificData().getRepeatFD()?"S":"N");
 		}
 //		datos.setHORASANUALESTIEMPOCOMPLETO(params.getHorasAnualesTiempoCompleto());
-		String duracionconvenio = (employeeContractInfo.getContractSpecificData().getAgreementHours()==null?"":completeLength(employeeContractInfo.getContractSpecificData().getAgreementHours(), 4, "0", false))+(employeeContractInfo.getContractSpecificData().getAgreementMinutes()==null?"":completeLength(employeeContractInfo.getContractSpecificData().getAgreementMinutes(), 2, "0", false));
-		String duracionformacion = (employeeContractInfo.getContractSpecificData().getFormationHours()==null?"":completeLength(employeeContractInfo.getContractSpecificData().getFormationHours(), 4, "0", false))+(employeeContractInfo.getContractSpecificData().getFormationMinutes()==null?"":completeLength(employeeContractInfo.getContractSpecificData().getFormationMinutes(), 2, "0", false));
-		String duracionjornada = (employeeContractInfo.getContractSpecificData().getJourneyDurationHours()==null?"":completeLength(employeeContractInfo.getContractSpecificData().getJourneyDurationHours(), 4, "0", false))+(employeeContractInfo.getContractSpecificData().getJourneyDurationMinutes()==null?"":completeLength(employeeContractInfo.getContractSpecificData().getJourneyDurationMinutes(), 2, "0", false));
 		
+		String duracionconvenio = AonStringUtils.leftPad(AonStringUtils.isBlank(employeeContractInfo.getContractSpecificData().getAgreementHours()) ? "" : employeeContractInfo.getContractSpecificData().getAgreementHours(), 4, '0')+AonStringUtils.leftPad(AonStringUtils.isBlank(employeeContractInfo.getContractSpecificData().getAgreementMinutes()) ? "" : employeeContractInfo.getContractSpecificData().getAgreementMinutes(), 2, '0');
+		String duracionformacion = AonStringUtils.leftPad(AonStringUtils.isBlank(employeeContractInfo.getContractSpecificData().getFormationHours()) ? "" : employeeContractInfo.getContractSpecificData().getFormationHours(), 4, '0')+AonStringUtils.leftPad(AonStringUtils.isBlank(employeeContractInfo.getContractSpecificData().getFormationMinutes()) ? "" : employeeContractInfo.getContractSpecificData().getFormationMinutes(), 2, '0');
+		String duracionjornada = AonStringUtils.leftPad(AonStringUtils.isBlank(employeeContractInfo.getContractSpecificData().getJourneyDurationHours()) ? "" : employeeContractInfo.getContractSpecificData().getJourneyDurationHours(), 4, '0')+AonStringUtils.leftPad(AonStringUtils.isBlank(employeeContractInfo.getContractSpecificData().getJourneyDurationMinutes()) ? "" : employeeContractInfo.getContractSpecificData().getJourneyDurationMinutes(), 2, '0');
 		
 		datos.setHORASCONVENIO(duracionconvenio.isEmpty()?null:completeLength(duracionconvenio, 6, "0", false));
 		datos.setHORASFORMACION(duracionformacion.isEmpty()?null:completeLength(duracionformacion, 6, "0", false));

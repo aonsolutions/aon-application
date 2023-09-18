@@ -1,5 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.api.setting;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,6 +20,7 @@ public class PdfFormats {
 		if (number == null)
 			return "";
 		DecimalFormat formater = new DecimalFormat("###,##0.00");
+		formater.setRoundingMode(RoundingMode.HALF_UP);
 		return formater.format(number);
 	}
 	
@@ -33,6 +35,7 @@ public class PdfFormats {
 		if (number == null)
 			return "";
 		DecimalFormat formater = new DecimalFormat("0.00");
+		formater.setRoundingMode(RoundingMode.HALF_UP);
 		return formater.format(number);
 	}
 	

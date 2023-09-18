@@ -1,10 +1,10 @@
-import {AonElement} from '../components/AonElement.js';
-import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu, AccountingPortalMenu} from  '../services/app.js';
-import {getDomainUserRoles} from  '../services/service.js';
-import {DomainUserRoles} from '../models/DomainUserRoles.js';
-import {  CONSTANT, CSS, EVENT, MATERIAL_ICONS,  TAG } from '../environments/environments.js';
-import {AonDocumental} from './documental/aon-documental.js';
-import {AonDocumentalAyudat} from './documental/ayudat/aon-documental-ayudat.js';
+import { AonElement } from '../components/AonElement.js';
+import { Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu, AccountingPortalMenu} from  '../services/app.js';
+import { getDomainUserRoles } from  '../services/service.js';
+import { DomainUserRoles } from '../models/DomainUserRoles.js';
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS,  TAG } from '../environments/environments.js';
+import { AonDocumental } from './documental/aon-documental.js';
+import { AonDocumentalAyudat } from './documental/ayudat/aon-documental-ayudat.js';
 import './project/aon-project-panel.js';
 import * as GWT from "../gwt/gwt.js";
 import { AonMessenger } from './messenger/aon-messenger.js';
@@ -19,9 +19,8 @@ import { AonNote } from './note/aon-note.js';
 import { AonInvoicePanel } from './invoice/aon-invoice-panel.js';
 import { AonBooking } from './marketplace/aon-booking.js';
 import { AonOfficePanel } from './office/aon-office-panel.js';
+import { AonConsole } from './console/aon-console.js';
 
-// import './example/aon-example.js';
-// import './faqs/aon-faqs.js';
 const ID = 'id';
 const OPENED = 'opened';
 const APP = 'app';
@@ -108,20 +107,26 @@ export class AonMenu extends AonElement {
 		let open = this.getAttribute('opened');
 
 		if(open) {
+			this.getElement('aonShowMenuButton').style.display = 'block';
 			this.close();
 		} else if(this.getAttribute('app')){
 			aonMenuSidenav.style.width = '250px';
 			this.setAttribute('opened', true);
+			this.getElement('aonShowMenuButton').style.display = 'none';
 		} else {
 			aonMenuSidenav.style.width = '60px';
 			this.getRootPanel().style.marginRight = '60px';
 			this.setAttribute('opened', true);
+			this.getElement('aonShowMenuButton').style.display = 'none';
 		}
 		this.toolbarClose();
 	}
 
 	appSelection(app) {
-		switch(app){
+		switch(app) {
+			case Apps.CONSOLE.app:
+				this.rootPanel(new AonConsole());
+				break;
 			case Apps.DOCUMENTAL.app:
 				this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
 				break;
@@ -168,7 +173,7 @@ export class AonMenu extends AonElement {
 	build() {
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = "aonMenuSidenav";
-		aonMenuSidenav.className = "aonMenuSidenav";
+		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV_BETA;
 		this.appendChild(aonMenuSidenav);
 
 		aonMenuSidenav.addEventListener(EVENT.MOUSELEAVE, () => {
@@ -565,6 +570,7 @@ export class AonMenu extends AonElement {
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		aonMenuSidenav.style.transitionDuration = '0ms';
 		aonMenuSidenav.style.width = '0px';
+		this.getElement('aonShowMenuButton').style.display = 'block';
 		this.getRootPanel().style.marginRight = '0px';
 		this.removeAttribute('opened');
 		this.toolbarClose();
@@ -601,10 +607,14 @@ export class AonMenu extends AonElement {
 			return this.getDur().isInvoice();
 		else if(MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
-		else if(MenuApps.TOOLS.app === app.app ||MenuApps.NOTES.app === app.app)
+		else if(MenuApps.NOTES.app === app.app)
 			return true;
+		else if(MenuApps.TOOLS.app === app.app)
+			return this.isBeta();
 		else if(MenuApps.OFFICE.app === app.app){
 			return this.isBeta() && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
+		} else if(MenuApps.CONSOLE.app === app.app){
+			return this.isBeta();
 		}
 		else return false;
 	}

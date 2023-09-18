@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;

@@ -35,6 +35,7 @@ public enum ContextVariable implements IResourceable {
 	NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS", VariableType.INTEGER, false),
 	WORKED_DAYS("DIAS_TRABAJADOS", VariableType.INTEGER, false), 
 	NON_WORKED_DAYS("DIAS_NO_TRABAJADOS", VariableType.INTEGER, false), 
+	WORK_DAYS("DIAS_TRABAJANDO", VariableType.INTEGER, false),
 	WEEK_DAYS("DIAS_SEMANA", VariableType.INTEGER, false),
 	CONTRACT_DAYS("DIAS_CONTRATO", VariableType.INTEGER, false),
 	SALARY_DAYS("DIAS_NOMINA", VariableType.INTEGER, false), PAY_DAYS("DIAS_PAGA", VariableType.INTEGER, false),
@@ -53,6 +54,9 @@ public enum ContextVariable implements IResourceable {
 	COMMON_DISEASE_DAYS_366("DIAS_ENFERMEDAD_COMUN_366", VariableType.INTEGER, false),
 	OCCUPATIONAL_DISEASE_DAYS("DIAS_ENFERMEDAD_PROFESIONAL", VariableType.INTEGER, false),
 	OCCUPATIONAL_DISEASE_DAYS_366("DIAS_ENFERMEDAD_PROFESIONAL_366", VariableType.INTEGER, false),
+	MENSTRUATION_DAYS("DIAS_MENSTRUACION", VariableType.INTEGER, false),
+	PREGNANCY_STOP_DAYS("DIAS_INTERRUPCION_EMBARAZO", VariableType.INTEGER, false),
+	PREGNANCY_39_WEEK_DAYS("DIAS_SEMANA_39_EMBARAZO", VariableType.INTEGER, false),
 	PAYMENTS("NUM_PAGAS", VariableType.INTEGER, false), 
 	REAL_DAYS("DIAS_REALES", VariableType.INTEGER, false),
 	STRIKE_DAYS("DIAS_HUELGA", VariableType.INTEGER, false), 
@@ -81,7 +85,6 @@ public enum ContextVariable implements IResourceable {
 	// ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
 	// ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
 
-	COMPENSATION_DAYS("DIAS_INDEMNIZACION", VariableType.INTEGER, false),
 	COMPENSATION_CAUSE("CAUSA_INDEMNIZACION", VariableType.INTEGER, false),
 	WORKED_YEARS("AÑOS_TRABAJADOS", VariableType.INTEGER, false),
 
@@ -117,6 +120,8 @@ public enum ContextVariable implements IResourceable {
 	CGC_BASE_MIN("BASE_CGC_MIN", VariableType.DOUBLE),
 	CGC_BASE_MAX("BASE_CGC_MAX", VariableType.DOUBLE),
 	CGC_BASE_MIN_HOUR("BASE_CGC_MIN_HORA", VariableType.DOUBLE),
+	MONEY_IRPF_BASE("BASE_IRPF_DINERO", VariableType.DOUBLE), 
+	INKIND_IRPF_BASE("BASE_IRPF_ESPECIE", VariableType.DOUBLE), 
 
 	CGP_BASE_MIN("BASE_CGP_MIN", VariableType.DOUBLE), CGP_BASE_MAX("BASE_CGP_MAX", VariableType.DOUBLE),
 	SENIOR_BASE("BASE_ANTIGUEDAD", VariableType.DOUBLE), STRUCTURAL_OVERTIME_BASE("BASE_ESTR", VariableType.DOUBLE),
@@ -126,11 +131,18 @@ public enum ContextVariable implements IResourceable {
 	ERE_BASE_FORCE_OFF("BASE_ERE_FZA_EXONERADO", VariableType.DOUBLE), 
 	DIRECT_BASE("BASE_PAGO_DIRECTO", VariableType.DOUBLE),
 	ADDITIONAL_BASE("BASE_HORAS_COMPL", VariableType.DOUBLE),
+	EXCESS_BASE("BASE_EXCESO", VariableType.DOUBLE, false), 
+	UNPAID_BASE("BASE_UNPAID", VariableType.DOUBLE),
 
 	CGC_BASE_RAW("BASE_CGC_BRUTA", VariableType.DOUBLE), CGP_BASE_RAW("BASE_CGP_BRUTA", VariableType.DOUBLE),
 	CGC_BASE_ENTERPRISE("BASE_CGC_E", VariableType.DOUBLE, false), CGP_BASE_ENTERPRISE("BASE_CGP_E", VariableType.DOUBLE, false),
 
 	REGULATORY_BASE("BASE_REGULADORA", VariableType.DOUBLE, false),
+
+	TOTAL_CGC_BASE("TOTAL_BASE_CGC", VariableType.DOUBLE, false), 
+	TOTAL_CGP_BASE("TOTAL_BASE_CGP", VariableType.DOUBLE, false),
+	TOTAL_CGC_BASE_ENTERPRISE("TOTAL_BASE_CGC_E", VariableType.DOUBLE, false), 
+	TOTAL_CGP_BASE_ENTERPRISE("TOTAL_BASE_CGP_E", VariableType.DOUBLE, false),
 
 	// Cuotas
 	CGC_EMPLOYEE("CGC", VariableType.DOUBLE), CGC_ENTERPRISE("CGC_E", VariableType.DOUBLE),
@@ -143,6 +155,8 @@ public enum ContextVariable implements IResourceable {
 	EMPLOYEE_QUOTA("CUOTA_TRABAJADOR", VariableType.DOUBLE),
 	STRUCTURAL_OVERTIME_EMPLOYEE("ESTR", VariableType.DOUBLE), STRUCTURAL_OVERTIME_ENTERPRISE("ESTR_E", VariableType.DOUBLE),
 	NON_STRUCTURAL_OVERTIME_EMPLOYEE("NESTR", VariableType.DOUBLE), NON_STRUCTURAL_OVERTIME_ENTERPRISE("NESTR_E", VariableType.DOUBLE),
+	SOLIDARITY_EMPLOYEE("SOLIDARIDAD", VariableType.DOUBLE ),SOLIDARITY_ENTERPRISE("SOLIDARIDAD_E", VariableType.DOUBLE ),
+	
 	
 
 	// Datos 'temporales' del contrato
@@ -183,6 +197,7 @@ public enum ContextVariable implements IResourceable {
 	ERE_FORCE_OFF("ERE_FZA_EXONERADO", VariableType.BOOLEAN), 
 	MATERNITY("MTNAD", VariableType.BOOLEAN),
 	QUOTE_IT("COTIZACION_IT", VariableType.QUOTE_IT_DROP),
+	UNPAID("UNPAID", VariableType.BOOLEAN),
 
 	// Quote Regime
 	MORE_THAN_65("MAYOR_65", VariableType.BOOLEAN, false),
@@ -194,6 +209,7 @@ public enum ContextVariable implements IResourceable {
 	EMBARGO_PAID("EMBARGADO", VariableType.DOUBLE, false),
 	EMBARGO_LIMIT("EMBARGABLE", VariableType.DOUBLE, false), 
 	EMBARGO_MAX("MAX_EMBARGABLE", VariableType.DOUBLE, false),
+	TOTAL_EMBARGO("TOTAL_EMBARGADO", VariableType.DOUBLE, false),
 
 
 	// Salary Type
@@ -253,8 +269,12 @@ public enum ContextVariable implements IResourceable {
 	MONTH_END("FIN_MES", VariableType.DATE),
 	YEAR_END("FIN_AÑO", VariableType.DATE),
 	TODAY("TODAY", VariableType.DATE),
+	EVAL_TEMPLATE("EVAL_TEMPLATE", VariableType.UNKNOWN),
+	CGPJ_COMPENSATIONS("CGPJ_INDEMNIZACIONES", VariableType.UNKNOWN),
+	CALC_COMPENSATIONS("CALCULO_INDEMNIZACIONES", VariableType.UNKNOWN),
 
-	OLD("ANTIGÜEDAD", VariableType.DOUBLE), EXCESS("EXCESO", VariableType.DOUBLE),
+	OLD("ANTIGÜEDAD", VariableType.DOUBLE), 
+	EXCESS("EXCESO", VariableType.DOUBLE),
 	EVERYTHING("TODO", VariableType.DOUBLE),
 
 	IT_START("INICIO_IT", VariableType.DATE),
@@ -277,7 +297,7 @@ public enum ContextVariable implements IResourceable {
 //	PREST_IT("PREST_IT", VariableType.DOUBLE),
 	DIRECT_PAY("PAGO_DIRECTO", VariableType.BOOLEAN),
 
-	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN),
+	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN, false),
 
 	ON_ACCOUNT_AGREEMENT("A_CUENTA_CONVENIO", VariableType.UNKNOWN),
 
@@ -301,7 +321,7 @@ public enum ContextVariable implements IResourceable {
 	SLD_C763("BONIFICACION_FORMACION_CONTINUA", VariableType.DOUBLE, false),
 
 	
-//	DO_DAYS("JORNADAS_REALES", VariableType.DOUBLE, false),
+	DO_DAYS("JORNADAS_REALES", VariableType.DOUBLE, false),
 	IF_DAYS("JORNADAS_TEORICAS", VariableType.DOUBLE, false),
 
 	
@@ -311,13 +331,16 @@ public enum ContextVariable implements IResourceable {
 	EFECTIVE_START("INICIO_EFECTIVO", VariableType.DATE, false),
 	EFECTIVE_END("FIN_EFECTIVO", VariableType.DATE, false),
 	
-	IN_KIND("_EN_ESPECIE",  VariableType.DOUBLE, false),
+	IN_KIND("EN_ESPECIE",  VariableType.DOUBLE, false),
+	TMP_IN_KIND("_EN_ESPECIE",  VariableType.DOUBLE, false),
 	IRPF_CTA_ESP("IRPF_CTA_ESP",  VariableType.DOUBLE, false),
 	BASE_CTA_ESP("BASE_CTA_ESP",  VariableType.DOUBLE, false),
 
 	// Percentages
 	CGC_EMPLOYEE_PERCENT("PORCENTAJE_CGC", VariableType.DOUBLE,false), 
+	MEI_EMPLOYEE_PERCENT("PORCENTAJE_MEI", VariableType.DOUBLE,false), 
 	CGC_ENTERPRISE_PERCENT("PORCENTAJE_CGC_E", VariableType.DOUBLE,false),
+	MEI_ENTERPRISE_PERCENT("PORCENTAJE_MEI_E", VariableType.DOUBLE,false),
 	IT_ENTERPRISE_PERCENT("TARIFA_IT", VariableType.DOUBLE,false), 
 	IMS_ENTERPRISE_PERCENT("TARIFA_IMS", VariableType.DOUBLE,false),
 	FP_EMPLOYEE_PERCENT("PORCENTAJE_FP", VariableType.DOUBLE,false), 
@@ -325,6 +348,8 @@ public enum ContextVariable implements IResourceable {
 	UNEMPLOY_EMPLOYEE_PERCENT("PORCENTAJE_DESMPL", VariableType.DOUBLE, false), 
 	UNEMPLOY_ENTERPRISE_PERCENT("PORCENTAJE_DESMPL_E", VariableType.DOUBLE, false),
 	FOGASA_ENTERPRISE_PERCENT("PORCENTAJE_FOGASA", VariableType.DOUBLE, false), 
+	SOLIDARITY_EMPLOYEE_PERCENT("PORCENTAJE_SOLIDARIDAD", VariableType.DOUBLE,false), 
+	SOLIDARITY_ENTERPRISE_PERCENT("PORCENTAJE_SOLIDARIDAD_E", VariableType.DOUBLE,false), 
 	NON_STRUCTURAL_OVERTIME_EMPLOYEE_PERCENT("PORCENTAJE_NEXTR", VariableType.DOUBLE,false), 
 	NON_STRUCTURAL_OVERTIME_ENTERPRISE_PERCENT("PORCENTAJE_NEXTR", VariableType.DOUBLE,false), 
 	
@@ -357,7 +382,10 @@ public enum ContextVariable implements IResourceable {
 	
 	PAY_PRORRATED("PAGAS_PRORRATEADAS", VariableType.BOOLEAN),
 	
-	MONTHLY_ADJUST("AJUSTE_MENSUAL", VariableType.BOOLEAN)
+	MONTHLY_ADJUST("AJUSTE_MENSUAL", VariableType.BOOLEAN),
+	
+	EXTRA_PAYMENT("EXTRA_DEVENGADO", VariableType.DOUBLE),
+
 	
 	;
 
@@ -382,6 +410,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String MONTHS = "MESES";
 	public static final String SECTION = "TRAMO";
 	public static final String WARNING = "AVISO";
+	public static final String SCOPE = "AMBITO";
 	public static final String ISDEF = "DEFINIDA";
 	public static final String ISREAD = "UTILIZADA";
 	public static final String CHECK_VAR = "CHECK_VAR";
@@ -453,7 +482,7 @@ public enum ContextVariable implements IResourceable {
 	Arrays.stream(ContextVariable.values())
 	.filter(v->v.getName().startsWith(ERE_BASE.getName()))
 	.toArray(ContextVariable[]::new);
-	
+
 	public static ContextVariable [] ERE_DAYSS  =
 	Arrays.stream(ContextVariable.values())
 	.filter(v->v.getName().startsWith(ERE_DAYS.getName()))
@@ -469,6 +498,13 @@ public enum ContextVariable implements IResourceable {
 	.map( v -> v.getName())
 	.filter(s -> s.startsWith(ERE_FACTOR.getName()))
 	.toArray(String[]::new);
+
+	
+	public static ContextVariable [] FREES  =
+	new ContextVariable [] { UNPAID, DIRECT_PAY, MATERNITY} ;
+
+	public static ContextVariable [] FREE_BASES  =
+	new ContextVariable [] { UNPAID_BASE, DIRECT_BASE, MATERNITY_BASE} ;
 
 	private final String name;
 	private VariableType type;
@@ -547,6 +583,10 @@ public enum ContextVariable implements IResourceable {
 
 	public static double br() {
 		return 666;
+	}
+
+	public static String getDecimalNameFor(Double round) {
+	    return String.format(Locale.ROOT, "DECIMAL_%.2f", round);
 	}
 
 }

@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -19,7 +20,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class WorkplaceDraft extends Composite {
+public abstract class WorkplaceDraft extends Composite {
 	
 	// ------------------------------------------------- Workpalce
 	
@@ -29,32 +30,43 @@ public class WorkplaceDraft extends Composite {
 		public void onWorkplaceDescriptionChange() {
 			String workplacedescription = workplaceDescription.getValue();
 			workplaceDraftObject.setWorkplaceDescription(workplacedescription);
+			setToolbaTitle(workplacedescription);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onWorkplaceAddressChange(Integer addressId) {
 			workplaceDraftObject.setWorkplaceAddress(AonNumberUtils.equals(-1, addressId) ? null : addressId);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onWorkplaceEconomicConcertChange() {
 			Byte economicConcert = Byte.valueOf(this.workplaceEconomicConcert.getSelectedValue());
 			workplaceDraftObject.setWorkplaceEconomicConcert(economicConcert);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onWorkplaceAgreementChange(Integer agreementId) {
 			workplaceDraftObject.setWorkplaceAgreement(agreementId);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onWorkplaceActivityChange(Integer activityId) {
 			workplaceDraftObject.setWorkplaceActivity(AonNumberUtils.equals(-1, activityId) ? null : activityId);
+			setHasChange(true);
 		}
 
 		@Override
-		public void fireWarningMessage(Map<String, String> warningMap) {
-			AonMessagePanel.showWarning(messagePanel, warningMap);
+		public void fireErrorMessage(Map<String, String> messages) {
+			showErrorMessage(messages);
+		}
+
+		@Override
+		public void fireHideMessage() {
+			hideMessage();
 		}
 		
 	}
@@ -80,19 +92,17 @@ public class WorkplaceDraft extends Composite {
 	@UiField
 	HTMLPanel centerContainer;
 	
-	@UiField
-	HTMLPanel messagePanel;
-	
 	// ------------------------------------------------- Variables
 
 	private WorkplaceDraftObject workplaceDraftObject;
 	
 	private Workplace workplace;
-
+	
 	private AonToolbar toolbar;
-	private AonToolbarButton undoAll;
-	private AonToolbarButton undo;
-	private AonToolbarButton redo;
+	private AonToolbarButton acceptButton;
+	private AonToolbarButton undoAllButton;
+	
+	private boolean hasChange;
 	
 	// ------------------------------------------------- Constructor
 
@@ -116,28 +126,18 @@ public class WorkplaceDraft extends Composite {
 		this.workplaceDraftObject.initializeWorkplace(
 				s -> { 
 						initializeView();
-				   	   	initializeUndoRedo();
+						setHasChange(false);
 					 }
 				, f -> {}
 		);
 	}
 	
 	private void initializeView() {
+		setToolbaTitle(workplaceDraftObject.getWorkplaceDescription());
+		
 		workplace.initializeView();
 		initializeListBox();
 		fillWorkplaceInfo();	
-	}
-	
-	private void initializeUndoRedo() {
-		undo.setEnabled(workplaceDraftObject.canUndo());
-		undoAll.setEnabled(workplaceDraftObject.canUndo());
-		redo.setEnabled(workplaceDraftObject.canRedo());
-
-		workplaceDraftObject.addUndoManagerListener( undoManager -> {
-			undo.setEnabled(undoManager.canUndo());
-			undoAll.setEnabled(undoManager.canUndo());
-			redo.setEnabled(undoManager.canRedo());
-		});
 	}
 
 	private void initializeListBox() {
@@ -161,7 +161,6 @@ public class WorkplaceDraft extends Composite {
 		setSelectedValueLB(workplace.workplaceEconomicConcert, workplaceDraftObject.getWorkplaceEconomicConcert());	
 		if(!workplaceDraftObject.getWorkplaceAgreements().isEmpty()) 
 			((SuggestBox) workplace.workplaceAgreementPanel.getWidget(0)).setValue(workplaceDraftObject.getAgreementDescription());
-//			setSelectedValueLB((ListBox) workplace.workplaceAgreementPanel.getWidget(0), workplaceDraftObject.getWorkplaceAgreement());
 		if(!workplaceDraftObject.getWorkplaceActivities().isEmpty())
 			setSelectedValueLB((ListBox) workplace.workplaceActivityPanel.getWidget(0), workplaceDraftObject.getWorkplaceActivity());
 	}
@@ -183,25 +182,43 @@ public class WorkplaceDraft extends Composite {
 	private void getToolbarPanel() {
 		toolbar = new AonToolbar("Centro de trabajo");
 
-		AonToolbarButton accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		accept.addClickHandler(e -> onAccept());
-		toolbar.add(accept);
+		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		acceptButton.ensureDebugId("acceptWorkplaceBtn");
+		acceptButton.addClickHandler(e -> onAccept());
+		toolbar.add(acceptButton);
+		
+		undoAllButton = new AonToolbarButton( AON.MSG.undo() + " todo", AON.CSS.aonIconUndoAll() );
+		undoAllButton.ensureDebugId("undoAllButton");
+		undoAllButton.addClickHandler(e -> {
+			AonDialog confirmDialog =  new AonDialog("Restaurar CT", new HTMLPanel("\u00bfDesea realmente deshacer los cambios realizados en el centro de trabajo <b>" + workplaceDraftObject.getAgreementDescription() + "</b> \u003f <br>Este proceso es irreversible."));
+			confirmDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do
+				}
+				
+				@Override
+				public void onAccept() {
+					workplaceDraftObject.initializeWorkplace(
+							s -> { 
+									initializeView();
+									setHasChange(false);
+								 }
+							, f -> {}
+					);
+				}
+			});
+		});
+		toolbar.add(undoAllButton);
 		
 		AonToolbarButton newContract = new AonToolbarButton( "Nuevo contrato", AON.CSS.aonIconAdd() );
 		newContract.addClickHandler(e -> onNewContract());
 		toolbar.add(newContract);
-		
-		undoAll = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll() );
-		undoAll.addClickHandler(e -> onUndoAll());
-		toolbar.add(undoAll);
-		
-		undo = new AonToolbarButton( AON.MSG.undo(), AON.CSS.aonIconUndo() );
-		undo.addClickHandler(e -> onUndo());
-		toolbar.add(undo);
-		
-		redo = new AonToolbarButton( "Rehacer", AON.CSS.aonIconRedo() );
-		redo.addClickHandler(e -> onRedo());
-		toolbar.add(redo);
+	}
+	
+	private void setToolbaTitle(String title) {
+		toolbar.setTitle(title);
 	}
 	
 	// ------------------------------------------------- Toolbar.Methods
@@ -209,9 +226,8 @@ public class WorkplaceDraft extends Composite {
 	private void onAccept() {
 		workplaceDraftObject.updateWorkplace(
 				r -> {
-					Map<String, String> successMap = new HashMap<>();
-					successMap.put("Centro trabajo guardado", "Todos los cambios han sido guardados correctamente");
-					AonMessagePanel.showSuccess(messagePanel, successMap);
+					showSuccessMessage(new HashMap<String, String>(){{ put("CT Guardado", "Todos los cambios han sido guardados correctamente"); }});
+					setHasChange(false);
 				}, 
 				t -> {}
 		);
@@ -221,29 +237,16 @@ public class WorkplaceDraft extends Composite {
 		EmployeeTree.showNewContract();
 	}
 
-	private void onUndoAll() {
-		while ( workplaceDraftObject.canUndo() )
-			workplaceDraftObject.undo();
-		initializeView();
-		Map<String, String> infoMap = new HashMap<>();
-		infoMap.put("Cambios deshechos", "Todos los cambios han sido deshechos");
-		AonMessagePanel.showInfo(messagePanel, infoMap);
-	}
-
-	private void onUndo() {
-		workplaceDraftObject.undo();
-		initializeView();
-		Map<String, String> infoMap = new HashMap<>();
-		infoMap.put("Cambio deshecho", "El \u00FAltimo cambio ha sido deshecho");
-		AonMessagePanel.showInfo(messagePanel, infoMap);
+	private void setHasChange(boolean hasChange) {
+		this.hasChange = hasChange;
+		acceptButton.setEnabled(this.hasChange);
+		undoAllButton.setEnabled(this.hasChange);
 	}
 	
-	private void onRedo() {
-		workplaceDraftObject.redo();
-		initializeView();
-		Map<String, String> infoMap = new HashMap<>();
-		infoMap.put("Cambio rehecho", "El \u00FAltimo cambio ha sido rehecho");
-		AonMessagePanel.showInfo(messagePanel, infoMap);
-	}
+	// -------------------------------------------------- Abstract Methods
+
+	protected abstract void showSuccessMessage(Map<String, String> messages);
+	protected abstract void showErrorMessage(Map<String, String> messages);
+	protected abstract void hideMessage();
 	
 }

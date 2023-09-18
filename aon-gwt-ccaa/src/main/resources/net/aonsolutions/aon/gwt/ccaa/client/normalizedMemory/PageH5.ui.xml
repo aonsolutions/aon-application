@@ -34,7 +34,17 @@
 							</td>
 						</tr> 
 					</table>
-					<g:FlexTable ui:field="table"/>
+					<g:HTMLPanel ui:field="tablePanel">
+						<div class="{aonResources.css.aonGroup}">
+							<div class="{aonResources.css.aonGroupTitle}">
+								<g:InlineLabel text="Indicadores de Sostenibilidad (contenido voluntario)" />
+							</div>
+							<div class="{aonResources.css.aonGroupBody}">
+								<g:FlexTable ui:field="table" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonMarginTop}" />
+							</div>
+						</div>
+					</g:HTMLPanel>
+					
 				</g:HTMLPanel>
 			</g:ScrollPanel>
 		</g:Tab>

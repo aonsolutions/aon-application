@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageM14_2 extends PageAbs {

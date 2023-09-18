@@ -147,7 +147,7 @@ public class IRPFFormatter {
 						  )
 					+ AonStringUtils.rightPad(FMT.format(br.getTaxDate()),12)					
 					+ AonStringUtils.SPACE
-					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(br.getWithholdingType().getDescription(),14),15)		
+					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(br.getWithholdingType().getAbbreviatedDescription(),14),15)		
 					+ AonStringUtils.leftPad(DEC.format(br.getBase()),15)		
 					+ AonStringUtils.leftPad(DEC.format(br.getQuota()),15)
 					+ (hasParticipationPercent?AonStringUtils.leftPad(AonStringUtils.leftPad(DEC.format(participationPercent),15),15):"") 

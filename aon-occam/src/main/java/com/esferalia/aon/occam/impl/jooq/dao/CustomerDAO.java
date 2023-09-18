@@ -4,6 +4,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -31,8 +32,10 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -43,6 +46,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -114,7 +118,7 @@ public class CustomerDAO {
 					.setTransaction(InvoiceTransactionType.safeValueOf(getValue(r, CUSTOMER.TRANSACTION)))
 					.setWithholding(getBoolean(r, CUSTOMER.WITHHOLDING))
 					.setStatus(RegistryStatus.safeValueOf(getValue(r, CUSTOMER.STATUS)))
-					.setRelationship(r.getValue(RRELATIONSHIP.ID)!=null);
+					.setRelationship(getValue(r, RRELATIONSHIP.ID)!=null);
 		}
 	}
 	
@@ -162,6 +166,73 @@ public class CustomerDAO {
 		return getStream(ctx, filter)
 			.findFirst()
 			.orElse(new Customer());
+	}
+	
+	public static List<Customer> getCustomerWithoutFee(AONContext ctx) {
+		return ctx.getDslContext().select()
+		.from(CUSTOMER)
+		.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+		.leftOuterJoin(CUSTOMER_FEE).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER)
+			.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(AonDateUtils.toSql(new Date()))))
+		)
+		.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
+		.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
+		.and(CUSTOMER_FEE.ID.isNull())
+		.fetch().stream().map(new CustomerFiller())
+		.collect(Collectors.toList());
+	}
+	
+	public static List<Customer> getCustomerWithoutFee(AONContext ctx, CustomerParams customerParams) {
+		if(null != customerParams.getLimit()) {
+			return ctx.getDslContext().select()
+			.from(CUSTOMER)
+			.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+			.leftOuterJoin(CUSTOMER_FEE).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER)
+				.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(AonDateUtils.toSql(new Date()))))
+			)
+			.where(createCustomerCondition(ctx, customerParams))
+	//		.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
+	//		.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
+			.and(CUSTOMER_FEE.ID.isNull())
+			.offset(customerParams.getOffset())
+			.limit(customerParams.getLimit())
+			.fetch().stream().map(new CustomerFiller())
+			.collect(Collectors.toList());
+		} else 
+			return ctx.getDslContext().select()
+			.from(CUSTOMER)
+			.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+			.leftOuterJoin(CUSTOMER_FEE).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER)
+				.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(AonDateUtils.toSql(new Date()))))
+			)
+			.where(createCustomerCondition(ctx, customerParams))
+	//		.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
+	//		.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
+			.and(CUSTOMER_FEE.ID.isNull())
+			.fetch().stream().map(new CustomerFiller())
+			.collect(Collectors.toList());
+	}
+	
+	private static Condition createCustomerCondition(AONContext ctx, CustomerParams customerParams) {
+		Integer domain = null != customerParams.getDomain() ? customerParams.getDomain() : ctx.getDomainId();
+		Condition condition = CUSTOMER.DOMAIN.eq(domain);
+		
+		User user = SecurityDAO.getUser(ctx);
+		if(user.getDomain() == ctx.getDomainId()) {
+			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
+			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
+		}
+		
+		if(AonStringUtils.isNotBlank(customerParams.getCustomer())) 
+			condition = condition.and(REGISTRY.NAME.eq(customerParams.getCustomer()));
+		
+		if(null != customerParams.getCustomerStatus())
+			condition = condition.and(CUSTOMER.STATUS.eq(customerParams.getCustomerStatus()));
+		
+		if(null != customerParams.getCustomerIds() && !customerParams.getCustomerIds().isEmpty())
+			condition = condition.and(CUSTOMER.REGISTRY.in(customerParams.getCustomerIds()));
+		
+		return condition;
 	}
 	
 	public static Customer save(AONContext ctx, Customer customer) {

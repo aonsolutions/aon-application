@@ -76,6 +76,9 @@ public abstract class Mod145 extends Composite {
 	DateBoxEx endDateBx;
 	
 	@UiField
+	Button ceutaMelillaB;
+	
+	@UiField
 	Button fiscalExclusionB;
 	
 	@UiField
@@ -169,7 +172,7 @@ public abstract class Mod145 extends Composite {
 		getElement().getStyle().setHeight(100, Unit.PCT);
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		
-		scrollPanel.setHeight((Window.getClientHeight() - 230) + "px");
+		scrollPanel.setHeight((Window.getClientHeight() - 260) + "px");
 		
 		familySituationLB.addStyleName(style.fsMaxWidth());
 		
@@ -274,6 +277,7 @@ public abstract class Mod145 extends Composite {
 		
 		this.startDateBx.setValue(this.mod145.getStartDate());
 		this.endDateBx.setValue(this.mod145.getEndDate());
+		getEnableDisableButton(this.ceutaMelillaB, this.mod145.isCeutaMelillaPalma());
 		getEnableDisableButton(this.fiscalExclusionB, this.mod145.isFiscalExclusion());
 		getEnableDisableButton(this.irpfRequestB, null != this.mod145.getIrpfPercent());
 		
@@ -443,6 +447,7 @@ public abstract class Mod145 extends Composite {
 		startDateBx.setValue(null);
 		endDateBx.setValue(null);
 		
+		getEnableDisableButton(ceutaMelillaB, false);
 		getEnableDisableButton(fiscalExclusionB, false);
 		getEnableDisableButton(irpfRequestB, false);
 		
@@ -584,6 +589,14 @@ public abstract class Mod145 extends Composite {
 		this.mod145.setEndDate(endDateBx.getValue());
 	}
 	
+	@UiHandler("ceutaMelillaB")
+	void onCeutaMelillaBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(ceutaMelillaB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(ceutaMelillaB, value);
+		this.mod145.setCeutaMelillaPalma(value);
+	}
+	
 	@UiHandler("fiscalExclusionB")
 	void onFiscalExclusionBChange(ClickEvent event) {
 		Boolean oldValue = isActiveToggleButton(fiscalExclusionB);
@@ -608,6 +621,9 @@ public abstract class Mod145 extends Composite {
 			irpfPercentPanel.setVisible(true);
 			this.mod145.setFiscalExclusion(false);
 			getEnableDisableButton(fiscalExclusionB, false);
+		} else {
+			irpfPercentPanel.setVisible(false);
+			this.mod145.setIrpfPercent(null);
 		}
 	}
 	
@@ -766,14 +782,19 @@ public abstract class Mod145 extends Composite {
 	}
 
 	public void onSave() {
-		showLoadingMessage("Guardando Mod145...");
-		this.mod145Object.saveMod145(
-				this.mod145, 
-				s -> {
-					showSuccessMessage("Mod 145", "Mod 145 guardado correctamente");
-					setMod145Object(this.mod145Object);
-				},
-				f -> showErrorMessage("Mod 145", f.getMessage()));
+		Date startDate = startDateBx.getValue();
+		if(null == startDate)
+			showErrorMessage("Mod145", "Para poder grabar un Mod145 es necesario indicar la fecha de inicio");
+		else {
+			showLoadingMessage("Guardando Mod145...");
+			this.mod145Object.saveMod145(
+					this.mod145, 
+					s -> {
+						showSuccessMessage("Mod 145", "Mod 145 guardado correctamente");
+						setMod145Object(this.mod145Object);
+					},
+					f -> showErrorMessage("Mod 145", f.getMessage()));
+		}
 	}
 	
 	public void onDelete() {

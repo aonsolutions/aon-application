@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -56,6 +57,8 @@ public class DomainJSON {
 			.setCreationDate(JsonUtils.getDate(json, IJsonNames.CREATION_DATE))
 			.setModificationUser(JsonUtils.getString(json, IJsonNames.MODIFICATION_USER))
 			.setModificationDate(JsonUtils.getDate(json, IJsonNames.MODIFICATION_DATE))
+			.setAonCustomer(JsonUtils.getInteger(json, IJsonNames.AON_CUSTOMER))
+			.setAonStatus(AonStatus.safeValueOf(JsonUtils.getString(json,IJsonNames.AON_STATUS)))
 		;
 	}
 
@@ -94,6 +97,8 @@ public class DomainJSON {
 			.putOpt(IJsonNames.CREATION_DATE, AonDateUtils.format(domain.getCreationDate(), AonDateUtils.DATE_TIME_FORMAT))
 			.putOpt(IJsonNames.MODIFICATION_USER, domain.getModificationUser())
 			.putOpt(IJsonNames.MODIFICATION_DATE, AonDateUtils.format(domain.getModificationDate(), AonDateUtils.DATE_TIME_FORMAT))
+			.putOpt(IJsonNames.AON_CUSTOMER, domain.getAonCustomer())
+			.putOpt(IJsonNames.AON_STATUS, domain.getAonStatus() == null?null:domain.getAonStatus().toString())			
 			;		
 	}
 

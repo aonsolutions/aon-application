@@ -7,17 +7,17 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.mod200.api.MODEL2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
-import com.esferalia.aon.occam.mod200.server.format.Mod2002022Writer;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2022.Mod2002022Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
@@ -29,7 +29,7 @@ public class Mod2002022File extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
-			int id = Integer.parseInt(req.getParameter("modId"));
+			int id = Integer.parseInt(req.getParameter("modelID"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user");

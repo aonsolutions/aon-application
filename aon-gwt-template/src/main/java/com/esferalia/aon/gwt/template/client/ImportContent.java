@@ -3,17 +3,22 @@ package com.esferalia.aon.gwt.template.client;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.RegistryService;
+import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
+import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.Upload;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonProgressBarDialog;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.template.shared.AccountEntryImportClass;
 import com.esferalia.aon.gwt.template.shared.AccountImportClass;
-import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Error;
-import com.esferalia.aon.gwt.template.shared.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.InvoiceImportClass;
 import com.esferalia.aon.gwt.template.shared.RegistryImportClass;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.ImportError;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,12 +30,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ImportContent extends Composite {
 	final ITemplateAsync item = GWT.create(ITemplate.class);
-	
+	private static RegistryServiceAsync SERVICE;
+
 	interface PageBinder extends UiBinder<Widget, ImportContent> {
 	}
 
@@ -41,7 +49,7 @@ public class ImportContent extends Composite {
 	@UiField Button importButton;
 	
 	AonData aonData;	
-	ProgressBarDialog pbd;
+	AonProgressBarDialog pbd;
 	LinkedList<String> verror = new LinkedList<>();
 	LinkedList<String> werror = new LinkedList<>();
 
@@ -60,13 +68,22 @@ public class ImportContent extends Composite {
 	
 	public ImportContent(AonData aonData) {
 		this.aonData = aonData;
+		
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		
 		importButton = new Button();
 		initWidget(pageBinder.createAndBindUi(this));
 		init();
 	}
 	
 	private void init() {
-		typeList.addItem("Facturas", ImportType.INVOICE.name());
+		if(getAonData().getDomain().getName().contains("serval")
+				|| getAonData().getDomain().getName().contains("ayudat")
+				|| getAonData().getDomain().getName().contains("aonsolutions.org")) {
+			typeList.addItem("Facturas Contabilidad", ImportType.INVOICE.name());
+			typeList.addItem("Facturas Gesti\u00f3n", ImportType.SERVAL_INVOICE.name());
+		} else typeList.addItem("Facturas", ImportType.INVOICE.name());
 		typeList.addItem("Clientes, Proveedores y Acreedores", ImportType.REGISTRY.name());
 		typeList.addItem("Plan General Contable",ImportType.PGC.name());
 		typeList.addItem("Libro Diario", ImportType.DIARY.name());
@@ -80,92 +97,78 @@ public class ImportContent extends Composite {
 		importation(type);
 	}	
 	
-	private void importation(ImportType type){	
+	private void importation(ImportType importType){	
 		verror = new LinkedList<>();
 		werror = new LinkedList<>();
 		Upload upload = new Upload() {
 			
 			@Override
-			protected void onUpload(String data) {
-				pbd = new ProgressBarDialog("Procesando Excel...") {};
+			protected void onUpload(String data, String type) {
+				pbd = new AonProgressBarDialog("Procesando Excel...") {};
 				pbd.addStyleName("gwt-PopupPanel-template");
 				pbd.setGlassEnabled(true);
 				pbd.show();
 				
-				if(ImportType.INVOICE.equals(type)) {
+				if(ImportType.INVOICE.equals(importType)) {
 					item.executeInvoice(getDomain(), getUser(), data, new AsyncCallback<List<InvoiceImportClass>>() {
 						@Override
 						public void onSuccess(List<InvoiceImportClass> result) {
-							pbd.completed();
-							pbd.hide();
-							pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
-							pbd.addStyleName("gwt-PopupPanel-template");
-							pbd.setGlassEnabled(true);
-							pbd.show();
+							loadingAonProgressBar(ImportType.INVOICE);
 							insertInvoices(result, 0);
 						}
 							
 						@Override
 						public void onFailure(Throwable caught) {}
 					});
-				} else if(ImportType.REGISTRY.equals(type)) {
+				} else if(ImportType.SERVAL_INVOICE.equals(importType)) {
+					item.executeServalInvoice(getDomain(), getUser(), data, new AsyncCallback<List<InvoiceImportClass>>() {
+						@Override
+						public void onSuccess(List<InvoiceImportClass> result) {
+							loadingAonProgressBar(ImportType.SERVAL_INVOICE);
+							insertServalInvoices(result, 0);
+						}
+							
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+				} else if(ImportType.REGISTRY.equals(importType)) {
 					item.executeRegistry(getDomain(), getUser(), data, new AsyncCallback<List<RegistryImportClass>>() {
 						@Override
 						public void onSuccess(List<RegistryImportClass> result) {
-							pbd.completed();
-							pbd.hide();
-							pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
-							pbd.addStyleName("gwt-PopupPanel-template");
-							pbd.setGlassEnabled(true);
-							pbd.show();
+							loadingAonProgressBar(ImportType.REGISTRY);
 							insertRegistries(result, 0);
 						}
 							
 						@Override
 						public void onFailure(Throwable caught) {}
 					});
-				} else if(ImportType.PGC.equals(type)) { 
+				} else if(ImportType.PGC.equals(importType)) { 
 					item.executePGC(getDomain(), getUser(), data, new AsyncCallback<List<AccountImportClass>>() {
 						@Override
 						public void onSuccess(List<AccountImportClass> result) {
-							pbd.completed();
-							pbd.hide();
-							pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
-							pbd.addStyleName("gwt-PopupPanel-template");
-							pbd.setGlassEnabled(true);
-							pbd.show();
+							loadingAonProgressBar(ImportType.PGC);
 							insertPGC(result, 0);
 						}
 							
 						@Override
 						public void onFailure(Throwable caught) {}
 					});
-				} else if(ImportType.DIARY.equals(type)) {
+				} else if(ImportType.DIARY.equals(importType)) {
 					item.executeDiary(getDomain(), getUser(), data, new AsyncCallback<List<AccountEntryImportClass>>() {
 						@Override
 						public void onSuccess(List<AccountEntryImportClass> result) {
-							pbd.completed();
-							pbd.hide();
-							pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
-							pbd.addStyleName("gwt-PopupPanel-template");
-							pbd.setGlassEnabled(true);
-							pbd.show();
+							loadingAonProgressBar(ImportType.DIARY);
 							insertDiary(result, 0);
 						}
 							
 						@Override
 						public void onFailure(Throwable caught) {}
 					});
-				} else if(ImportType.FEE.equals(type)) {
-					item.executeFee(getDomain(), getUser(), data, new AsyncCallback<List<FeeInfo>>() {
+				} else if(ImportType.FEE.equals(importType)) {
+					SERVICE.parseFeeFile(getDomain(), getUser(), data, new AsyncCallback<List<Fee>>() {
 						@Override
-						public void onSuccess(List<FeeInfo> result) {
-							pbd.completed();
-							pbd.hide();
-							pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
-							pbd.addStyleName("gwt-PopupPanel-template");
-							pbd.setGlassEnabled(true);
-							pbd.show();
+						public void onSuccess(List<Fee> result) {
+							loadingAonProgressBar(ImportType.FEE);
 							insertFee(result, 0);
 						}
 							
@@ -174,128 +177,19 @@ public class ImportContent extends Composite {
 					});
 				}
 				
-//				item.executeExcel(getDomain(), getUser(), null, type, null, null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
-//							
-//					@Override
-//					public void onSuccess(Integer result) {
-//						pbd.completed();
-//						pbd.hide();
-//						pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
-//						pbd.addStyleName("gwt-PopupPanel-template");
-//						pbd.setGlassEnabled(true);
-//						pbd.show();
-//						insert(type, 0, result);
-//					}
-//						
-//					@Override
-//					public void onFailure(Throwable caught) {}
-//				});	
 			}
 		};
 		upload.upload();
-//		
-//		Dialog d = new Dialog("Importar " + type.getName(),"Importar",true,"Cancelar",true,"importOnly");
-//		d.setUrl(GWT.getModuleBaseURL());
-//		TemplatesDialog popup = new TemplatesDialog(aonData, d) {
-//			
-//			@Override
-//			protected void onCancel() {
-//				hide();
-//			}
-//			
-//			@Override
-//			protected void onAccept() {
-//				hide();
-//				pbd = new ProgressBarDialog("Procesando Excel...") {};
-//				pbd.addStyleName("gwt-PopupPanel-template");
-//				pbd.setGlassEnabled(true);
-//				pbd.show();
-//						
-//				item.executeExcel(getDomain(), getUser(), null, type, null, null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
-//							
-//					@Override
-//					public void onSuccess(Integer result) {
-//						pbd.completed();
-//						pbd.hide();
-//						pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
-//						pbd.addStyleName("gwt-PopupPanel-template");
-//						pbd.setGlassEnabled(true);
-//						pbd.show();
-//						insert(type, 0, result);
-//					}
-//						
-//					@Override
-//					public void onFailure(Throwable caught) {}
-//				});	
-//			}
-//		};
-//		popup.addStyleName("gwt-PopupPanel-template");
-//		popup.setGlassEnabled(true);
-//		popup.center();
 	}
-
-	private void insert(ImportType type, Integer index, Integer lines) {
-		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
-			@Override
-			public void onSuccess(Error result) {
-				Double progress = (result.getLine().doubleValue() / lines.doubleValue()) * 100.0;
-				if(!result.getError()) {
-					verror.add(result.getTextError().getFirst());
-				}
-				if(result.getTextWarning() != null && result.getTextWarning().size() > 0) {
-					werror.addAll(result.getTextWarning());
-				}
-				pbd.updateProgress(progress.intValue());
-				if(result.getLine() < lines - 1) {
-					insert(type, result.getLine() + 1, lines);
-				} else {
-					pbd.completed();
-					pbd.hide();
-					Error error = new Error();
-					error.setError(verror.size() == 0);
-					error.setTextError(verror);
-					error.setTextWarning(werror);
-					Dialog dialog = new Dialog("Importar " + type.getName(),"Aceptar",true,"Cancelar",false,"importResponse");
-					dialog.setError(error);
-					TemplatesDialog popup2 = new TemplatesDialog(getAonData(), dialog){
-
-						@Override
-						protected void onAccept() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();			
-						}
-
-						@Override
-						protected void onCancel() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();
-						}
-					};
-					popup2.addStyleName("gwt-PopupPanel-template");
-					popup2.setGlassEnabled(true);
-					popup2.center();
-				}
-			}
-				
-			@Override public void onFailure(Throwable caught) {
-				pbd.completed();
-				pbd.hide();
-			}
-		};
-		
-		if (ImportType.INVOICE.equals(type)) {
-			item.insertInvoices(getDomain(), getUser(), index, callback);
-		} else if(ImportType.DIARY.equals(type)) {
-			item.insertDiary(getDomain(), getUser(), index, callback);
-		} else if(ImportType.PGC.equals(type)) {
-			item.insertPGC(getDomain(), getUser(), index, callback);
-		} else if(ImportType.REGISTRY.equals(type)) {
-			item.insertRegistries(getDomain(), getUser(), index, callback);
-		} else if(ImportType.FEE.equals(type)) {
-			item.insertFee(getDomain(), getUser(), index, callback);
-		}
+	
+	private void loadingAonProgressBar(ImportType type) {
+		pbd.completed();
+		pbd.hide();
+		pbd = new AonProgressBarDialog("Importando " + type.getName() + "...") {};
+		pbd.addStyleName("gwt-PopupPanel-template");
+		pbd.setGlassEnabled(true);
+		pbd.center();
+		pbd.show();
 	}
 	
 	private void insertInvoices(List<InvoiceImportClass> invoices, Integer index) {
@@ -313,35 +207,7 @@ public class ImportContent extends Composite {
 				pbd.updateProgress(progress.intValue());
 				if(result.getLine() < lines - 1) {
 					insertInvoices(invoices, result.getLine() + 1);
-				} else {
-					pbd.completed();
-					pbd.hide();
-					Error error = new Error();
-					error.setError(verror.size() == 0);
-					error.setTextError(verror);
-					error.setTextWarning(werror);
-					Dialog dialog = new Dialog("Importar " + ImportType.INVOICE.getName(),"Aceptar",true,"Cancelar",false,"importResponse");
-					dialog.setError(error);
-					TemplatesDialog popup2 = new TemplatesDialog(getAonData(), dialog){
-
-						@Override
-						protected void onAccept() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();			
-						}
-
-						@Override
-						protected void onCancel() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();
-						}
-					};
-					popup2.addStyleName("gwt-PopupPanel-template");
-					popup2.setGlassEnabled(true);
-					popup2.center();
-				}
+				} else error(ImportType.INVOICE);
 			}
 				
 			@Override public void onFailure(Throwable caught) {
@@ -351,6 +217,33 @@ public class ImportContent extends Composite {
 			}
 		};
 		item.insertInvoice(getDomain(), getUser(), invoices.get(index), index, callback);
+	}
+	
+	private void insertServalInvoices(List<InvoiceImportClass> invoices, Integer index) {
+		Integer lines = invoices.size();
+		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
+			@Override
+			public void onSuccess(Error result) {
+				Double progress = (result.getLine().doubleValue() / lines.doubleValue()) * 100.0;
+				if(!result.getError()) {
+					verror.add(result.getTextError().getFirst());
+				}
+				if(result.getTextWarning() != null && result.getTextWarning().size() > 0) {
+					werror.addAll(result.getTextWarning());
+				}
+				pbd.updateProgress(progress.intValue());
+				if(result.getLine() < lines - 1) {
+					insertServalInvoices(invoices, result.getLine() + 1);
+				} else error(ImportType.INVOICE);
+			}
+				
+			@Override public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+				pbd.completed();
+				pbd.hide();
+			}
+		};
+		item.insertServalInvoice(getDomain(), getUser(), invoices.get(index), index, callback);
 	}
 	
 	private void insertRegistries(List<RegistryImportClass> registries, Integer index) {
@@ -368,35 +261,7 @@ public class ImportContent extends Composite {
 				pbd.updateProgress(progress.intValue());
 				if(result.getLine() < lines - 1) {
 					insertRegistries(registries, result.getLine() + 1);
-				} else {
-					pbd.completed();
-					pbd.hide();
-					Error error = new Error();
-					error.setError(verror.size() == 0);
-					error.setTextError(verror);
-					error.setTextWarning(werror);
-					Dialog dialog = new Dialog("Importar " + ImportType.INVOICE.getName(),"Aceptar",true,"Cancelar",false,"importResponse");
-					dialog.setError(error);
-					TemplatesDialog popup2 = new TemplatesDialog(getAonData(), dialog){
-
-						@Override
-						protected void onAccept() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();			
-						}
-
-						@Override
-						protected void onCancel() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();
-						}
-					};
-					popup2.addStyleName("gwt-PopupPanel-template");
-					popup2.setGlassEnabled(true);
-					popup2.center();
-				}
+				} else error(ImportType.REGISTRY);
 			}
 				
 			@Override public void onFailure(Throwable caught) {
@@ -423,35 +288,7 @@ public class ImportContent extends Composite {
 				pbd.updateProgress(progress.intValue());
 				if(result.getLine() < lines - 1) {
 					insertPGC(pgc, result.getLine() + 1);
-				} else {
-					pbd.completed();
-					pbd.hide();
-					Error error = new Error();
-					error.setError(verror.size() == 0);
-					error.setTextError(verror);
-					error.setTextWarning(werror);
-					Dialog dialog = new Dialog("Importar " + ImportType.INVOICE.getName(),"Aceptar",true,"Cancelar",false,"importResponse");
-					dialog.setError(error);
-					TemplatesDialog popup2 = new TemplatesDialog(getAonData(), dialog){
-
-						@Override
-						protected void onAccept() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();			
-						}
-
-						@Override
-						protected void onCancel() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();
-						}
-					};
-					popup2.addStyleName("gwt-PopupPanel-template");
-					popup2.setGlassEnabled(true);
-					popup2.center();
-				}
+				} else error(ImportType.PGC);
 			}
 				
 			@Override public void onFailure(Throwable caught) {
@@ -478,35 +315,7 @@ public class ImportContent extends Composite {
 				pbd.updateProgress(progress.intValue());
 				if(result.getLine() < lines - 1) {
 					insertDiary(diary, result.getLine() + 1);
-				} else {
-					pbd.completed();
-					pbd.hide();
-					Error error = new Error();
-					error.setError(verror.size() == 0);
-					error.setTextError(verror);
-					error.setTextWarning(werror);
-					Dialog dialog = new Dialog("Importar " + ImportType.INVOICE.getName(),"Aceptar",true,"Cancelar",false,"importResponse");
-					dialog.setError(error);
-					TemplatesDialog popup2 = new TemplatesDialog(getAonData(), dialog){
-
-						@Override
-						protected void onAccept() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();			
-						}
-
-						@Override
-						protected void onCancel() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();
-						}
-					};
-					popup2.addStyleName("gwt-PopupPanel-template");
-					popup2.setGlassEnabled(true);
-					popup2.center();
-				}
+				} else error(ImportType.DIARY);
 			}
 				
 			@Override public void onFailure(Throwable caught) {
@@ -518,11 +327,11 @@ public class ImportContent extends Composite {
 		item.insertDiary(getDomain(), getUser(), diary.get(index), index, callback);
 	}
 	
-	private void insertFee(List<FeeInfo> fee, Integer index) {
-		Integer lines = fee.size();
-		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
+	private void insertFee(List<Fee> fees, Integer index) {
+		Integer lines = fees.size();
+		AsyncCallback<ImportError> callback = new AsyncCallback<ImportError>() {
 			@Override
-			public void onSuccess(Error result) {
+			public void onSuccess(ImportError result) {
 				Double progress = (result.getLine().doubleValue() / lines.doubleValue()) * 100.0;
 				if(!result.getError()) {
 					verror.add(result.getTextError().getFirst());
@@ -532,36 +341,8 @@ public class ImportContent extends Composite {
 				}
 				pbd.updateProgress(progress.intValue());
 				if(result.getLine() < lines - 1) {
-					insertFee(fee, result.getLine() + 1);
-				} else {
-					pbd.completed();
-					pbd.hide();
-					Error error = new Error();
-					error.setError(verror.size() == 0);
-					error.setTextError(verror);
-					error.setTextWarning(werror);
-					Dialog dialog = new Dialog("Importar " + ImportType.INVOICE.getName(),"Aceptar",true,"Cancelar",false,"importResponse");
-					dialog.setError(error);
-					TemplatesDialog popup2 = new TemplatesDialog(getAonData(), dialog){
-
-						@Override
-						protected void onAccept() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();			
-						}
-
-						@Override
-						protected void onCancel() {
-							verror = new LinkedList<>();
-							werror = new LinkedList<>();
-							hide();
-						}
-					};
-					popup2.addStyleName("gwt-PopupPanel-template");
-					popup2.setGlassEnabled(true);
-					popup2.center();
-				}
+					insertFee(fees, result.getLine() + 1);
+				} else error(ImportType.FEE);
 			}
 				
 			@Override public void onFailure(Throwable caught) {
@@ -569,8 +350,33 @@ public class ImportContent extends Composite {
 				pbd.hide();
 			}
 		};
-		
-		item.insertFee(getDomain(), getUser(), fee.get(index), index, callback);
+		SERVICE.importFee(getDomain(), getUser(), fees.get(index), index, callback);
 	}
 	
+	private void error(ImportType type) {
+		pbd.completed();
+		pbd.hide();
+		
+		ImportError error = new ImportError();
+		error.setError(verror.isEmpty());
+		error.setTextError(verror);
+		error.setTextWarning(werror);
+		
+		VerticalPanel vPanel = new VerticalPanel();
+		error.getTextError().forEach(errorIt -> {
+			Label label = new Label(errorIt);
+			label.getElement().getStyle().setColor("red");
+			vPanel.add(label);
+		});
+		error.getTextWarning().forEach(warnIt -> {
+			Label label = new Label(warnIt);
+			label.getElement().getStyle().setColor("orange");
+			vPanel.add(label);
+		});
+		if(verror.isEmpty() && werror.isEmpty()) {
+			vPanel.add(new Label("La importaci\u00f3n se ha realizado correctamente."));
+		}
+		AonDialog dialog = new AonDialog("Importar " + type.getName(), vPanel);
+		dialog.info();
+	}
 }

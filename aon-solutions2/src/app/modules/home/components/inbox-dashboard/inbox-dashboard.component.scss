@@ -45,15 +45,5 @@
     color       : $color-red;
     cursor      : pointer; 
   }
-  #home-inbox #home-inbox-total .total{
-    background-color: $background-button-red-hover2;
-    margin-left     : $margin-left / 2;
-    width           : 1.7rem;
-    height          : 1.7rem;
-    border-radius   : 100rem; 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    
-  }
+
 }

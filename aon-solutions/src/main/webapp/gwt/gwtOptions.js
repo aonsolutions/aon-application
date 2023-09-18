@@ -195,3 +195,10 @@ export const NORDIGEN = {
   module: GWT_FISCAL,
   entryPoint: 'NordigenModule'
 }
+
+export const BOOKING_PANEL = {
+  title: MSG.BOOKING_PANEL,
+  name: MSG.BOOKING_PANEL,
+  module: GWT_FISCAL,
+  entryPoint: 'BookingPanel'
+}

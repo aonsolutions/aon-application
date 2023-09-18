@@ -319,7 +319,9 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 			if (descs != null && descs.size() > 0) {
 				int i = 1;
 				for (IrpfDataDescendientsRecord desc : descs) {
-					int descYear = desc.getAdoptionYear() == null?desc.getBirthYear():desc.getAdoptionYear();
+					int descYear = desc.getAdoptionYear() == null?
+							AonNumberUtils.toint(desc.getBirthYear())
+							:desc.getAdoptionYear();
 					boolean lessThan3 = ( curYear - 3 ) <=  descYear;
 					boolean disability = desc.getDisabilityLevel() != null;
 					boolean disability33 = desc.getDisabilityLevel() != null && desc.getDisabilityLevel() == 0;

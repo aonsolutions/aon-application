@@ -22,7 +22,7 @@
 	}
 	
 	.aon-direct-access-list-element.selected {
-    	background-color: #eaeaea !important;
+    	background-color: #eaeaea;
     	border-top-right-radius: 50px 50px;
     	border-bottom-right-radius: 50px 50px;
 	}
@@ -49,7 +49,7 @@
 			<aon:div 
 				id="filterMenuPortlet" >
 				<aon:div styleClass="aon-direct-access-list">
-					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{domainSwitcher.showActive ? 'selected':''}">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{!help.notificationsEnabled and !help.contentEnabled and domainSwitcher.showActive ? 'selected':''}">
 						
 						<aon:commandLink id="activeDomainEnterprise"
 							styleClass="aon-width-all aon-black "
@@ -57,16 +57,20 @@
 						>
 							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="domain" />
 							<aon:outputText value=" Activas" />
+							<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+							<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
 						</aon:commandLink> 	
 						
 					</aon:div>
-					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{domainSwitcher.showInactive ? 'selected':''}">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{!help.notificationsEnabled and !help.contentEnabled and domainSwitcher.showInactive ? 'selected':''}">
 						<aon:commandLink id="inactiveDomainEnterprise"
 							styleClass="aon-width-all aon-black"
 							actionListener="#{domainSwitcher.showInactive}"
 						>
 							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-black" value="domain_disabled" />
 							<aon:outputText value=" Inactivas" />
+							<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+							<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
 						</aon:commandLink> 	
 					</aon:div>
 					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
@@ -76,15 +80,19 @@
 						>
 							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="share" />
 							<aon:outputText value=" Compartidas" />
+							<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+							<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
 						</aon:commandLink> 	
 					</aon:div>
-					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{domainSwitcher.showOffice ? 'selected':''}">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left #{!help.notificationsEnabled and !help.contentEnabled and domainSwitcher.showOffice ? 'selected':''}">
 						<aon:commandLink id="officeDomainEnterprise"
 							styleClass="aon-width-all aon-black"
 							actionListener="#{domainSwitcher.showOffice}"
 						>
 							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="work" />
 							<aon:outputText value=" Despacho" />
+							<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+							<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
 						</aon:commandLink> 	
 					</aon:div>
 					

@@ -1,20 +1,34 @@
 package com.esferalia.aon.gwt.common.server;
 
 import java.util.LinkedList;
-
-import javax.servlet.annotation.WebServlet;
+import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
+
+import jakarta.servlet.annotation.WebServlet;
+import net.aonsolutions.aon.templates.FeeImport;
 
 @WebServlet(name = "Aon Registry Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Registry", "/aon_gwt_aio/ms/Registry"})
 public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implements RegistryService {
@@ -79,6 +93,138 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 		return AON.save(domainName, domain,user, supplierFull);
 	}
 	
+	// **************************************************
+	// *********************************** [CUSTOMER FEE]
+	// **************************************************
+	
+	@Override
+	public Map<String, Customer> getCustomersSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getCustomersSuggestion(domainName, domain, user, query);
+	}
+	@Override
+	public Map<String, OldItem> getProductsSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getProductsSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
+	public Map<String, Integer> getProductCategoriesSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getProductCategoriesSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
+	public Map<String, Integer> getProductTagsSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getProductTagsSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
+	public Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams) {
+		return AON.getCustomerProductsUpdates(domainName, domain, user, customerFeeParams);
+	}
+	
+	@Override
+	public LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams) {
+		return AON.getFeeList(domainName, domain, user, customerFeeParams);
+	}
+	
+	@Override
+	public Integer saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> feeList) {
+		return AON.saveFees(domainName, domain, user, feeList);
+	}
 
+	@Override
+	public Integer saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params) {
+		return AON.saveMassiveFees(domainName, domain, user, fee, params);
+	}
+	
+	@Override
+	public void createCustomerFeeList(String domainName, int domainId, String user, Fee fee) {
+		Domain domain = AON.getDomain(domainName, domainId, user);
+		fee.setDomain(domain);
+		AON.createCustomerFeeList(domainName, domainId, user, fee);
+	}
+	
+	@Override
+	public Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user) {
+		return AON.getMinMaxCustomerFeeYear(domainName, domain, user);
+	}
+	
+	@Override
+	public Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode) {
+		return AON.getItemIdByProductCode(domainName, domain, user, productCode);
+	}
+	
+	@Override
+	public void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees) {
+		AON.deleteFee(domainName, domain, user, selectedFees.stream());
+	}
+	
+	@Override
+	public void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params) {
+		AON.deleteFee(domainName, domain, user, params);
+	}
+	
+	@Override
+	public Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getWorkplacesSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
+	public Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getSellersSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
+	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getInvoicingGroupsSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
+	public Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String query) {
+		return AON.getProjectsSuggestion(domainName, domain, user, customerId, query);
+	}
+	@Override
+	public List<Fee> parseFeeFile(Domain domain, User user, String data) {
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+		return FeeImport.getInstance().importation(domain, user.getLogin(), fileData);
+	}
+	@Override
+	public ImportError importFee(Domain domain, User user, Fee fee, Integer index) {
+		return FeeImport.insertFee(domain, user, index, fee);
+	}
+	
+	@Override
+	public List<Customer> getCustomerWithoutFee(String domainName, int domainId, String user, CustomerParams customerParams) {
+		Domain domain = AON.getDomain(domainName, domainId, user, f->f.getNameProperty().eq(domainName));
+		return AON.getCustomerWithoutFee(domain, user, customerParams);
+	}
+	
+	// **************************************************
+	// ********************************** [BOOKING CHECK]
+	// **************************************************
+
+	@Override
+	public LinkedList<BookingCheck> getBookingWithoutFeeList(String domainName, int domain, String user, CustomerFeeParams params) {
+		return AON.getBookingWithoutFeeList(domainName, domain, user, params);
+	}
+	
+	@Override
+	public LinkedList<BookingCheck> getFeeWithoutBookingList(String domainName, int domain, String user, CustomerFeeParams params) {
+		return AON.getFeeWithoutBookingList(domainName, domain, user, params);
+	}
+	
+	@Override
+	public LinkedList<BookingCheck> getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		return AON.getBookingCheckList(domainName, domain, user, params);
+	}
+	
+	@Override
+	public LinkedList<BookingCheck> getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		return AON.getCustomerBookingCheckList(domainName, domain, user, params);
+	}
+	
+	@Override
+	public void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
+		AON.saveBookingCheck(domainName, domain, user, bookingCheck);
+	}
 	
 }

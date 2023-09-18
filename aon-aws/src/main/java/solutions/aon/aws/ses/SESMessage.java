@@ -153,7 +153,9 @@ public class SESMessage {
 	}
 	
 	public boolean isReplyTo() {
-		return getReplyTo() != null;
+		return getReplyTo() != null
+			&& !getReplyTo().isEmpty()
+			&& !getReplyTo().isBlank();
 	}
 
 	public List<File> getFiles() {

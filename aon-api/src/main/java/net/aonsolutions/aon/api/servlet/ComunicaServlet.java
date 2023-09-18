@@ -21,9 +21,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.json.JSONArray;
@@ -46,7 +46,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.Auth;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
@@ -109,6 +109,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				case "/quote-group":
 					LOGGER.info("QUOTE-GROUP SERVLET - GET METHOD");
 					response(req, resp,	getQuoteGroup());
+				break;
+				case "/cno":
+					LOGGER.info("CNO SERVLET - GET METHOD");
+					response(req, resp,	getCno(initialize(req)));
 				break;
 				case "/contract-type":
 					LOGGER.info("CONTRACT-TYPE SERVLET - GET METHOD");
@@ -326,6 +330,22 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		}
 		return arr;
 	}
+	
+	private JSONArray getCno(AonApiData api) {
+		JSONArray arr = new JSONArray();
+		Domain domain = api.getDomain();
+		
+		AON.getCno(domain.getName(), domain.getId(), api.getUser().getLogin()).forEach(cno -> {
+			arr.put(
+					new JSONObject()
+					.put("cnoCode", cno.getCode())
+					.put("cno", cno.getTitle())
+
+			);
+		});
+		
+		return arr;
+	}
 
 	private byte[] getTA(AonApiData api) throws Exception {
 		Domain domain = api.getDomain();
@@ -525,6 +545,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String nss         = params.optString("nss");
 		String ipf         = params.optString("ipf");
 		String gc          = params.optString("gc");
+		String cno          = params.optString("cno");
 		String contract    = params.optString("contract");	
 		String ocup        = params.has("ocup") && !params.isNull("ocup") ? params.optString("ocup") : null;
 		String coef        = params.has("coef") && !params.isNull("coef") ? params.optString("coef") : null;
@@ -545,6 +566,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setOcup(ocup)
 		.setColec(convenio)
 		.setGc(gc)
+		.setCno(cno)
 		.setContract(contract)
 		.setCollective(collective)
 		.setRlce(rlce)
@@ -557,16 +579,32 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		}
 	
 		Employee employee = builder.build();
+		byte[] pdf = null;
 		
-		byte[] pdf = AonComunica.communicateAlta(employee, certificate);
-
-		try {AonComunica.addContract(domain, EmployeeParse.toEmployeeOccam(employee), certificate);} 
-		catch (Exception e) {}
-
-		if(employee.getName().isPresent()) {			
-			sendMovEmailNotification(api, employee, fra, SituationType.ALTA, certificate);
+		try {
+			pdf = AonComunica.communicateAlta(employee, certificate);
+			
+			try {
+				if(employee.getName().isPresent()) {			
+					sendMovEmailNotification2(api, employee, fra, SituationType.ALTA, certificate, pdf);
+				}
+			} catch (Exception e) {
+				System.out.println("FALLO MANDANDO EMAIL");
+				e.printStackTrace();
+			}
+			
+			try {
+				AonComunica.addContract(domain, EmployeeParse.toEmployeeOccam(employee), certificate);
+			} catch (Exception e) {
+				System.out.println("FALLO CREANDO CONTRATO");
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			System.out.println("FALLO COMUNICANDO");
+			e.printStackTrace();
+			throw new Exception(e.getMessage());
 		}
-		
+
 		String base64 = new String(Base64.getEncoder().encode(pdf));
 		
 		return new JSONObject().put(IJsonNames.FILE, base64);
@@ -834,6 +872,61 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				}catch (Exception e) {
 					e.printStackTrace();
 				}
+				
+				sendEmail(api, subject, body, files);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		newThread.start();
+	}
+	
+	private void sendMovEmailNotification2(AonApiData api, Employee employee, Date date, SituationType situation, Certificate certificate, byte[] ta){
+		Thread newThread = new Thread(() -> {
+			try {
+				User user = api.getUser();
+				String pre =  situation.equals(SituationType.ALTA) ? "el" : "la";
+				Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), user.getLogin());
+				String subject = "TGSS | "+situation.getName()+" de "+employee.getName().get();
+				String body = "La Tesorer\u00eda General de la Seguridad Social ha procedido a reconocer "+pre+" <b>"+situation.getName()+"</b> "
+						+ "en el R\u00e9gimen General de D./D\u00f1a. <b>"+employee.getName().get()+"</b>, "
+						+ "con n\u00famero de afiliaci\u00f3n <b>"+employee.getNss()+"</b> y DNI/NIE <b>"+employee.getIpf()+"</b>, con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>, "
+						+ "como trabajador de <b>"+company.getName()+"</b> "
+						+ "con c\u00f3digo de cuenta de cotizaci\u00f3n <b>"+employee.getRegime()+" "+ employee.getCtaCti().get()+"</b>.";
+			
+				//---------------------------SEND NOTIFICATION
+				sendNotification(api, body); 
+
+				//--------------------SEND EMAIL
+				String regime = employee.getRegime();
+				String ccc = employee.getCtaCti().get();
+				String nss = employee.getNss();
+
+				LinkedList<File> files = new LinkedList<>();
+				
+				try {
+					File file = File.createTempFile("duplicateTA", ".pdf");
+					FileOutputStream os = new FileOutputStream(file);
+		            os.write(ta);
+		            os.close();
+					files.add(file);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				try {
+					Date now = new Date();
+					Date newDate = date.compareTo(now) > 0 ? now : date;
+					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, newDate);
+					File file = File.createTempFile("duplicadoIDC", ".pdf");
+					FileOutputStream os = new FileOutputStream(file);
+		            os.write(fileByte);
+		            os.close();
+					files.add(file);
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+				
 				sendEmail(api, subject, body, files);
 			} catch (Exception e) {
 				e.printStackTrace();

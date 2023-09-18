@@ -1785,6 +1785,7 @@ input:disabled+label {
 .aon-progress-bar-dialog-panel {
 	border: 1px solid #808080;
 	padding-bottom: 20px;
+	margin: 0 1rem .5rem 1rem;
 }
 
 .active {
@@ -1831,7 +1832,7 @@ input:disabled+label {
 	line-height: 20px;
 	color: #fff;
 	text-align: center;
-	background-color: #337ab7;
+	background-color: #2152a5;
 	-webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
 	box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
 	-webkit-transition: width .6s ease;
@@ -3160,6 +3161,10 @@ input:disabled+label {
 		position: absolute;
 		right: 3px;
 		top: 3px;
+	}
+	
+	@sprite .aon-icon-enable-gray {
+		gwt-image: "aon_icon_enable_gray";
 	}
 
 	@sprite .aon-icon-enable {

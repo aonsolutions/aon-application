@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.server.console;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServlet;
 
 import org.jooq.Schema;
 

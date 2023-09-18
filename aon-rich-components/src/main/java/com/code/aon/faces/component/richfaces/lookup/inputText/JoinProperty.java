@@ -5,7 +5,7 @@ package com.code.aon.faces.component.richfaces.lookup.inputText;
 
 import java.io.Serializable;
 
-import javax.el.ValueExpression;
+import jakarta.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
 import com.code.aon.AonVersion;

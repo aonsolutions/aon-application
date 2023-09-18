@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -167,10 +168,27 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 	private void accept() {
 		Map<String, String> saveMessage = canSave();
 		if(saveMessage.isEmpty()) {
+			checkContractVariableValue();
 			onAccept(contractVariable);
 			hide();
 		} else
 			AonMessagePanel.showError(messagePanel, saveMessage);
+	}
+
+	private void checkContractVariableValue() {
+		ArrayList<String> quoteVariables = new ArrayList<>();
+		quoteVariables.add("CNO");
+		quoteVariables.add("OCUPACION");
+		quoteVariables.add("TC2");
+		quoteVariables.add("GRUPO_COTIZACION");
+		quoteVariables.add("OPCION_CONTRATO");
+		
+		if( quoteVariables.contains(contractVariable.getDescription()) && 
+			AonStringUtils.isNotBlank(contractVariable.getExpression()) && 
+			!contractVariable.getExpression().contains("\"")) {
+			
+			contractVariable.setExpression("\"" + contractVariable.getExpression() + "\"");
+		}
 	}
 
 	private Map<String, String> canSave() {

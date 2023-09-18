@@ -1,11 +1,13 @@
 package com.esferalia.aon.occam.api.fiscal;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
@@ -116,16 +118,14 @@ public class MODEL123 {
 			return getImpl().getInfo(ctx, mod123, script, infoKey);
 		}
 	}
+	public static Stream<IrpfBreakdown> getInfo(Occam occam, Mod123 mod123,Mod123Key key) {
+	 	final CloseableAONContext ctx = AONContext.getAONContext(occam);
+	 	return getImpl().getInfo(ctx, mod123, key, () -> AONContext.closeQuietly(ctx));
+	}
 
 	public static Mod123 aeatPresentation(Occam occam, Mod123 mod123, String aeatResponse) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().aeatPresentation(ctx, mod123, aeatResponse);
-		}
-	}
-
-	public static Mod123 reset(Occam occam, Mod123 mod123) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().reset(ctx, mod123);
 		}
 	}
 

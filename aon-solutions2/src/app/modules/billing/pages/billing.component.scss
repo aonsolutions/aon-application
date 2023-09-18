@@ -1,0 +1,51 @@
+@import "src/styles.scss";
+
+::ng-deep {
+  .box {
+    flex-grow: 0;
+    border: $border;
+    border-radius: $border-radius;
+    padding: $padding;
+  }
+
+  .box .header {
+    display : flex;
+    gap     : 0.5rem;
+    width   : 100%;
+    align-items: center;
+  }
+
+  #list-Dashboard,
+  #charts,
+  #buttons-dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .header .line {
+    max-width     : 0rem;
+    height        : 1.35rem;
+    border-radius : 20rem;
+    border: 0.15rem solid $color-blue;
+  }
+
+  .header .text {
+    font-size: 1rem;
+    font-family: "Roboto-Bold";
+  }
+
+  .data {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 0 0 1rem;
+    margin-top: 1rem;
+    cursor: pointer;
+  }
+
+  .tesoreria {
+    margin-top: $margin-top;
+    cursor: pointer;
+  }
+}

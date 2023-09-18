@@ -10,6 +10,8 @@ public class Mod303Activity implements Serializable {
 	
 	private static final long serialVersionUID = 1503338850244122274L;
 	
+	private int index;
+	
 	private String epigraph;
 	private String description;
 	private int specialEpigraph;
@@ -41,6 +43,17 @@ public class Mod303Activity implements Serializable {
 	
 	private double maxImport;
 	
+	private double may19Hours; 		//Mayores de 19 años
+	private double men19Hours; 		//Menores de 19 años y trabajadores con contratos de aprendizaje o formación, que no sean discapacitados.
+	private double disHours; 		//Discapacitados con grado de minusvalía igual o superior al 33 por 100
+	private double yearHours; 		//Horas anuales
+	
+	private double ownerHours; 		//Horas anuales del titular. (máximo 1.800 horas)
+	private boolean ownerDis; 		//Indique si el titular es discapacitado en grado igual o superior al 33%
+	private double spouseHours; 	//Horas anuales del cónyuge. (máximo 1.800 horas)
+	private double childMen18Hours; //Horas anuales de los hijos menores de 18 años.
+	
+	private LinkedList<Mod303ActivityDesk> desks;
 	private LinkedList<Mod303ActivityModule> modules;
 	
 	public Mod303Activity() {
@@ -52,6 +65,24 @@ public class Mod303Activity implements Serializable {
 		modules.add(new Mod303ActivityModule());
 		modules.add(new Mod303ActivityModule());
 		modules.add(new Mod303ActivityModule());
+		
+		initializeDesks();
+	}
+	
+	private void initializeDesks() {
+		desks = new LinkedList<>();
+		desks.add(new Mod303ActivityDesk());
+		desks.add(new Mod303ActivityDesk());
+		desks.add(new Mod303ActivityDesk());
+		desks.add(new Mod303ActivityDesk());
+	}
+
+	public int getIndex() {
+		return index;
+	}
+	public Mod303Activity setIndex(int index) {
+		this.index = index;
+		return this;
 	}
 	
 	public String getFullDescription() {
@@ -265,15 +296,87 @@ public class Mod303Activity implements Serializable {
 		this.cad = cad;
 		return this;
 	}
+	
+	public double getMay19Hours() {
+		return may19Hours;
+	}
+	public Mod303Activity setMay19Hours(double may19Hours) {
+		this.may19Hours = may19Hours;
+		return this;
+	}
 
+	public double getMen19Hours() {
+		return men19Hours;
+	}
+	public Mod303Activity setMen19Hours(double men19Hours) {
+		this.men19Hours = men19Hours;
+		return this;
+	}
+
+	public double getDisHours() {
+		return disHours;
+	}
+	public Mod303Activity setDisHours(double disHours) {
+		this.disHours = disHours;
+		return this;
+	}
+
+	public double getYearHours() {
+		return yearHours;
+	}
+	public Mod303Activity setYearHours(double yearHours) {
+		this.yearHours = yearHours;
+		return this;
+	}
+
+	public double getOwnerHours() {
+		return ownerHours;
+	}
+	public Mod303Activity setOwnerHours(double ownerHours) {
+		this.ownerHours = ownerHours;
+		return this;
+	}
+
+	public boolean isOwnerDis() {
+		return ownerDis;
+	}
+	public Mod303Activity setOwnerDis(boolean ownerDis) {
+		this.ownerDis = ownerDis;
+		return this;
+	}
+
+	public double getSpouseHours() {
+		return spouseHours;
+	}
+	public Mod303Activity setSpouseHours(double spouseHours) {
+		this.spouseHours = spouseHours;
+		return this;
+	}
+
+	public double getChildMen18Hours() {
+		return childMen18Hours;
+	}
+	public Mod303Activity setChildMen18Hours(double childMen18Hours) {
+		this.childMen18Hours = childMen18Hours;
+		return this;
+	}
+	
+	public LinkedList<Mod303ActivityDesk> getDesks() {
+		return desks;
+	}
+	public Mod303Activity setDesks(LinkedList<Mod303ActivityDesk> desks) {
+		this.desks = desks;
+		return this;
+	}
+	
 	public LinkedList<Mod303ActivityModule> getModules() {
 		return modules;
 	}
-
 	public Mod303Activity setModules(LinkedList<Mod303ActivityModule> modules) {
 		this.modules = modules;
 		return this;
 	}
+	
 	public void initialize() {
 		this.setEpigraph(null);
 		this.setDescription(null);
@@ -297,7 +400,16 @@ public class Mod303Activity implements Serializable {
 		this.setCmn(0);
 		this.setCad(0);
 		this.setMaxImport(Double.MAX_VALUE);
+		this.setMay19Hours(0.0);
+		this.setMen19Hours(0.0);
+		this.setDisHours(0.0);
+		this.setYearHours(0.0);
+		this.setOwnerHours(0.0);
+		this.setOwnerDis(false);
+		this.setSpouseHours(0.0);
+		this.setChildMen18Hours(0.0);
 		this.setModules(new LinkedList<>());
+		initializeDesks();
 	}
 
 	public static Mod303Activity clone(Mod303Activity toClone) {
@@ -324,7 +436,21 @@ public class Mod303Activity implements Serializable {
 				.setCmn(toClone.getCmn())
 				.setCad(toClone.getCad())
 				.setMaxImport(toClone.getMaxImport())
+				.setMay19Hours(toClone.getMay19Hours())
+				.setMen19Hours(toClone.getMen19Hours())
+				.setDisHours(toClone.getDisHours())
+				.setYearHours(toClone.getYearHours())
+				.setOwnerHours(toClone.getOwnerHours())
+				.setOwnerDis(toClone.isOwnerDis())
+				.setSpouseHours(toClone.getSpouseHours())
+				.setChildMen18Hours(toClone.getChildMen18Hours())
 				;
+		if (toClone.getDesks() != null) {
+			act.setDesks( new LinkedList<>());
+			for (Mod303ActivityDesk desk : toClone.getDesks()) {
+				act.getDesks().add( Mod303ActivityDesk.clone(desk) );
+			}
+		}
 		if (toClone.getModules() != null) {
 			act.setModules( new LinkedList<>());
 			for (Mod303ActivityModule mod : toClone.getModules()) {
@@ -332,6 +458,14 @@ public class Mod303Activity implements Serializable {
 			}
 		}
 		return act;
+	}
+
+	public boolean isNotEmpty() {
+		return !isEmpty();
+	}
+
+	private boolean isEmpty() {
+		return AonStringUtils.isBlank(epigraph);
 	}
 
 }

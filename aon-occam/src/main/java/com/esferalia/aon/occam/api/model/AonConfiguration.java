@@ -9,8 +9,10 @@ import com.esferalia.aon.occam.api.model.config.AccountingConfig;
 import com.esferalia.aon.occam.api.model.config.FiscalConfig;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PayMethodTypeDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -33,6 +35,7 @@ public class AonConfiguration implements Serializable {
 	private LinkedList<String> invoiceSalesSeries;
 	private LinkedList<String> invoiceRectificationSeries;
 	private LinkedList<EnterpriseActivity> enterpriseActivities;
+	private LinkedList<EnterpriseActivity> allEnterpriseActivities;
 	private LinkedList<InvestAsset> investAsset;
 	private LinkedList<Workplace> workplaces;
 	private LinkedList<Tax> vatTaxes;
@@ -41,8 +44,10 @@ public class AonConfiguration implements Serializable {
 	private LinkedList<PayMethod> payMethods;
 	private LinkedList<PayMethodTypeDetail> payMethodTypeDetails;
 	private LinkedList<Tax> withholdingTaxes;
+	private LinkedList<Segment> segments;
 	
 	private boolean ocrActive;
+	private Item ocrDefaultItem;
 	private boolean betaEnabled;
 	private boolean alphaEnabled;
 
@@ -142,6 +147,16 @@ public class AonConfiguration implements Serializable {
 		this.invoiceRectificationSeries.add(serie);
 	}
 
+	public LinkedList<EnterpriseActivity> getAllActivities() {
+		return allEnterpriseActivities;
+	}
+	public AonConfiguration setAllEnterpriseActivities(LinkedList<EnterpriseActivity> allEnterpriseActivities) {
+		this.allEnterpriseActivities = allEnterpriseActivities;
+		return this;
+	}
+	public boolean hasAllActivities() {
+		return this.allEnterpriseActivities != null && this.allEnterpriseActivities.size() > 0;
+	}
 	public LinkedList<EnterpriseActivity> getActivities() {
 		return enterpriseActivities;
 	}
@@ -231,7 +246,7 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 	public boolean hasAvailableScopes() {
-		return getAvailableScopes() != null &&  getAvailableScopes().size() > 0;
+		return getAvailableScopes() != null && !getAvailableScopes().isEmpty();
 	}
 			
 	public Tax getDefaultVatPercent() {
@@ -242,6 +257,17 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 	
+	public boolean hasSegments() {
+		return segments != null && !segments.isEmpty();
+	}
+	public LinkedList<Segment> getSegments() {
+		return segments;
+	}
+	public AonConfiguration setSegments(LinkedList<Segment> segments) {
+		this.segments = segments;
+		return this;
+	}
+
 	public LinkedList<Tax> getWithholdingTaxes() {
 		return withholdingTaxes;
 	}
@@ -310,6 +336,14 @@ public class AonConfiguration implements Serializable {
 	}
 	public AonConfiguration setOCRActive(boolean ocrActive) {
 		this.ocrActive = ocrActive;
+		return this;
+	}
+	
+	public Item getOcrDefaultItem() {
+		return ocrDefaultItem;
+	}
+	public AonConfiguration setOcrDefaultItem(Item ocrDefaultItem) {
+		this.ocrDefaultItem = ocrDefaultItem;
 		return this;
 	}
 	

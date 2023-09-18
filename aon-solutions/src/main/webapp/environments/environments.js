@@ -8,6 +8,7 @@ export const URL_PDF_VIEWER = "https://mozilla.github.io/pdf.js/build/pdf.js";
 export const SIG_URL = "https://aonsolutions.org";
 export const SIG_DOMAIN_NAME = "sig.aonsolutions.org";
 export const SIG_DOMAIN_ID = 5;
+export const PRO_URL = "https://aon.solutions";
 //----TEST
 // export const SIG_URL = "https://b4da-47-62-53-208.ngrok.io";
 // export const SIG_DOMAIN_NAME = "b72384936-ayudat.rvasquez.net";

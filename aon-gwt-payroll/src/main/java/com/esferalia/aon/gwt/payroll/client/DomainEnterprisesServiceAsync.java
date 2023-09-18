@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -52,12 +53,14 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
+
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -159,7 +162,11 @@ public class DomainEnterprisesServiceAsync {
 	}
 
 	public void getEnterprises(int offset, int limit, AsyncCallback<List<Enterprise>> callback) {
-		enterprisesServiceAsync.getEnterprises(getCurrentDomainName(), getCurrentUser(), offset, limit, callback);
+		enterprisesServiceAsync.getEnterprises(getCurrentDomainName(), getCurrentUser(), " 1 = 1", offset, limit, callback);
+	}
+
+	public void getEnterprises(int offset, int limit, String condition, AsyncCallback<List<Enterprise>> callback) {
+		enterprisesServiceAsync.getEnterprises(getCurrentDomainName(), getCurrentUser(), condition, offset, limit, callback);
 	}
 
 	public void getEnterprisesCosts(List<Integer> enterpriseIds, AsyncCallback<List<Cost>> callback) {
@@ -259,11 +266,11 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getCRAs(getCurrentDomainName(), getCurrentUser(), liquidDateTime, asyncCallback);
 	}
 	
-	public void createNewCRA(long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<String> asyncCallback) {
+	public void createNewCRA(long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.createNewCRA(getCurrentDomainName(), getCurrentUser(), findingDate, cccList, cccIdList, cccId, type, asyncCallback);
 	}
 	
-	public void checkCreateNewCRA(long findingDate, ArrayList<Integer> cccList, AsyncCallback<String> asyncCallback) {
+	public void checkCreateNewCRA(long findingDate, ArrayList<Integer> cccList, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.checkCreateNewCRA(getCurrentDomainName(), findingDate, cccList, asyncCallback);
 	}
 	
@@ -341,6 +348,10 @@ public class DomainEnterprisesServiceAsync {
 
 	public void getEmployeesInfo(Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback) {
 		enterprisesServiceAsync.getEmployeesInfo(getCurrentDomainName(), allEmployees, asyncCallback);
+	}
+	
+	public void getFJEmployeesInfo(AsyncCallback<List<EmployeeContractInfo>> asyncCallback) {
+		enterprisesServiceAsync.getFJEmployeesInfo(getCurrentDomainName(), asyncCallback);
 	}
 	
 	public void getEmployeeInfo(Integer contractId, AsyncCallback<EmployeeContractInfo> asyncCallback) {
@@ -590,6 +601,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.deleteCertificate(getCurrentDomainName(), getCurrentUser(), certificate, asyncCallback);
 	}
 	
+	public void downloadCertificate(Integer certificateId, String filePath, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.downloadCertificate(getCurrentDomainName(), getCurrentUser(), certificateId, filePath, asyncCallback);
+	}
+	
 	public void getCertificateInfo(Integer certificateId, AsyncCallback<CertificateInfo> asyncCallback)  throws IllegalArgumentException  {
 		enterprisesServiceAsync.getCertificateInfo(getCurrentDomainName(), getCurrentUser(), certificateId, asyncCallback);
 	}
@@ -665,6 +680,10 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void checkAndUpdateServiAgreement(AgreementInfo agreement, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.checkAndUpdateServiAgreement(getCurrentDomainName(), getCurrentUser(), agreement, asyncCallback);
+	}
+	
+	public void canUpdateServiAgreement(AgreementInfo agreement, AsyncCallback<Boolean> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.canUpdateServiAgreement(getCurrentDomainName(), getCurrentUser(), agreement, asyncCallback);
 	}
 	
 	public void deletePayments(List<Integer> paymentIds, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
@@ -749,6 +768,30 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getUpdateCert(String regime, String ccc, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getUpdateCert(getCurrentDomainName(), getCurrentUser(), regime, ccc, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Country/Province
+	
+	public void getCountries(AsyncCallback<List<Country>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getCountries(getCurrentDomainName(), asyncCallback);
+	}
+	
+	// ------------------------------------------------ MainMassiveContracts
+
+	public void getMassiveCNOs(AsyncCallback<List<ContractData>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getMassiveCNOs(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+
+	public void updateMassiveCNOs(List<ContractData> contractDatas, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.updateMassiveCNOs(getCurrentDomainName(), getCurrentUser(), contractDatas, asyncCallback);
+	}
+	
+	public void duplicateContract(EmployeeContractInfo employee, Date newStartDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.duplicateContract(getCurrentDomainName(), getCurrentUser(), employee, newStartDate, asyncCallback);
+	}
+	
+	public void duplicateContract(List<EmployeeContractInfo> employees, Date newStartDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.duplicateContract(getCurrentDomainName(), getCurrentUser(), employees, newStartDate, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

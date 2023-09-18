@@ -20,24 +20,24 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebResponse;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlLabel;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+import org.htmlunit.ElementNotFoundException;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.Page;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebResponse;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.DomNodeList;
+import org.htmlunit.html.HtmlDivision;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlLabel;
+import org.htmlunit.html.HtmlOption;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlRadioButtonInput;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlTableCell;
+import org.htmlunit.html.HtmlTableRow;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -81,9 +81,9 @@ class SistemaREDI {
 			String ccc1 = ccc.substring(0, 2);
 			String ccc2 = ccc.substring(2);
 
-			jacadaform.getInputByName("txt_SDFREGCTA_ayuda").setValueAttribute(regime);
-			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(ccc1);
-			jacadaform.getInputByName("txt_SDFNUMCTA").setValueAttribute(ccc2);
+			jacadaform.getInputByName("txt_SDFREGCTA_ayuda").setValue(regime);
+			jacadaform.getInputByName("txt_SDFTESCTA").setValue(ccc1);
+			jacadaform.getInputByName("txt_SDFNUMCTA").setValue(ccc2);
 			// click en 'Continuar'
 			
 			htmlPage = clickAndCheckCode(jacadaform.getInputByValue("Continuar"));
@@ -305,31 +305,31 @@ class SistemaREDI {
 			// Filling the fields
 			
 			try {
-				jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
-				jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+				jacadaform.getInputByName("txt_SDFTESNAF").setValue(Toolkit.SplitString(affiliationNumber, 2)[0]);
+				jacadaform.getInputByName("txt_SDFNAF").setValue(Toolkit.SplitString(affiliationNumber, 2)[1]);
 			} catch (ElementNotFoundException enfe) {
 			}
 			try {
-				jacadaform.getInputByName("txt_SDFREGCTA_NH").setValueAttribute(regime);
+				jacadaform.getInputByName("txt_SDFREGCTA_NH").setValue(regime);
 			} catch (ElementNotFoundException enfe) {
 				try {
-					jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
+					jacadaform.getInputByName("txt_SDFREGCTA").setValue(regime);
 				} catch (ElementNotFoundException oenfe) { 
-					jacadaform.getInputByName("txt_SDFREGCTA_ayuda").setValueAttribute(regime);
+					jacadaform.getInputByName("txt_SDFREGCTA_ayuda").setValue(regime);
 				}
 			} 
 			jacadaform.getInputByName("txt_SDFTESCTA")
-					.setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
+					.setValue(Toolkit.SplitString(ccc, 2)[0]);
 			jacadaform.getInputByName("txt_SDFCUENTA")
-					.setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
+					.setValue(Toolkit.SplitString(ccc, 2)[1]);
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.setTime(date);
 			try {
-				jacadaform.getInputByName("txt_SDFDIA").setValueAttribute("" + calendar.get(Calendar.DAY_OF_MONTH));
+				jacadaform.getInputByName("txt_SDFDIA").setValue("" + calendar.get(Calendar.DAY_OF_MONTH));
 			} catch (ElementNotFoundException enfe) {
 			}
-			jacadaform.getInputByName("txt_SDFMES").setValueAttribute("" + (calendar.get(Calendar.MONTH) + 1));
-			jacadaform.getInputByName("txt_SDFAO").setValueAttribute("" + calendar.get(Calendar.YEAR));
+			jacadaform.getInputByName("txt_SDFMES").setValue("" + (calendar.get(Calendar.MONTH) + 1));
+			jacadaform.getInputByName("txt_SDFAO").setValue("" + calendar.get(Calendar.YEAR));
 
 			// Selecting document's printing method
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
@@ -510,22 +510,22 @@ class SistemaREDI {
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
-			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
-			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+			jacadaform.getInputByName("txt_SDFTESNAF").setValue(Toolkit.SplitString(affiliationNumber, 2)[0]);
+			jacadaform.getInputByName("txt_SDFNAF").setValue(Toolkit.SplitString(affiliationNumber, 2)[1]);
 			try {
-				jacadaform.getInputByName("txt_SDFREGCTA_NH").setValueAttribute(regime);
+				jacadaform.getInputByName("txt_SDFREGCTA_NH").setValue(regime);
 			} catch (ElementNotFoundException enfe) {
-				jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
+				jacadaform.getInputByName("txt_SDFREGCTA").setValue(regime);
 			}
 			jacadaform.getInputByName("txt_SDFTESCTA")
-					.setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
+					.setValue(Toolkit.SplitString(ccc, 2)[0]);
 			jacadaform.getInputByName("txt_SDFCUENTA")
-					.setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
+					.setValue(Toolkit.SplitString(ccc, 2)[1]);
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.setTime(fecha);
-			jacadaform.getInputByName("txt_SDFDIA").setValueAttribute("" + calendar.get(Calendar.DAY_OF_MONTH));
-			jacadaform.getInputByName("txt_SDFMES").setValueAttribute("" + (calendar.get(Calendar.MONTH) + 1));
-			jacadaform.getInputByName("txt_SDFAO").setValueAttribute("" + calendar.get(Calendar.YEAR));
+			jacadaform.getInputByName("txt_SDFDIA").setValue("" + calendar.get(Calendar.DAY_OF_MONTH));
+			jacadaform.getInputByName("txt_SDFMES").setValue("" + (calendar.get(Calendar.MONTH) + 1));
+			jacadaform.getInputByName("txt_SDFAO").setValue("" + calendar.get(Calendar.YEAR));
 			// Selecting document's printing method
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 //			ArrayList<byte[]> ret=new ArrayList<byte[]>();
@@ -594,8 +594,8 @@ class SistemaREDI {
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Inputting contribution account and regime
-			jacadaform.getInputByName("txt_SDFWMIDENT").setValueAttribute(ccc);
-			jacadaform.getInputByName("txt_SDFWMRESU").setValueAttribute(regime);
+			jacadaform.getInputByName("txt_SDFWMIDENT").setValue(ccc);
+			jacadaform.getInputByName("txt_SDFWMRESU").setValue(regime);
 			// Selecting document's printing method
 			Iterable<DomElement> itOptions = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for (DomElement option : itOptions) {
@@ -646,17 +646,17 @@ class SistemaREDI {
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
-			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
-			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+			jacadaform.getInputByName("txt_SDFTESNAF").setValue(Toolkit.SplitString(affiliationNumber, 2)[0]);
+			jacadaform.getInputByName("txt_SDFNAF").setValue(Toolkit.SplitString(affiliationNumber, 2)[1]);
 			try {
-				jacadaform.getInputByName("txt_SDFREGCTA_NH").setValueAttribute(regime);
+				jacadaform.getInputByName("txt_SDFREGCTA_NH").setValue(regime);
 			} catch (ElementNotFoundException enfe) {
-				jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
+				jacadaform.getInputByName("txt_SDFREGCTA").setValue(regime);
 			}
 			jacadaform.getInputByName("txt_SDFTESCTA")
-					.setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
+					.setValue(Toolkit.SplitString(ccc, 2)[0]);
 			jacadaform.getInputByName("txt_SDFCUENTA")
-					.setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
+					.setValue(Toolkit.SplitString(ccc, 2)[1]);
 			// Selecting document's printing method
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for (DomElement de : it) {
@@ -731,13 +731,13 @@ class SistemaREDI {
 			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
-			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
-			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
-			jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
+			jacadaform.getInputByName("txt_SDFTESNAF").setValue(Toolkit.SplitString(affiliationNumber, 2)[0]);
+			jacadaform.getInputByName("txt_SDFNAF").setValue(Toolkit.SplitString(affiliationNumber, 2)[1]);
+			jacadaform.getInputByName("txt_SDFREGCTA").setValue(regime);
 			jacadaform.getInputByName("txt_SDFTESCTA")
-					.setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
+					.setValue(Toolkit.SplitString(ccc, 2)[0]);
 			jacadaform.getInputByName("txt_SDFCUENTA")
-					.setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
+					.setValue(Toolkit.SplitString(ccc, 2)[1]);
 			// Selecting document's printing method
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for (DomElement de : it) {
@@ -768,7 +768,7 @@ class SistemaREDI {
 					}
 				}
 				htmlPage = clickAndCheckCode(htmlPage.getElementById("Sub2206301003"));
-				//System.out.println(htmlPage.asText());
+				//System.out.println(htmlPage.asNormalizedText());
 				try {
 					HtmlUnitToolkit.getSSCode(htmlPage);
 				} catch (NoMoreDataException nmde) {
@@ -801,27 +801,27 @@ class SistemaREDI {
 			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			HtmlForm jacadaform=htmlPage.getFormByName("jacadaform");
 			//NSS
-			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
-			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+			jacadaform.getInputByName("txt_SDFTESNAF").setValue(Toolkit.SplitString(affiliationNumber, 2)[0]);
+			jacadaform.getInputByName("txt_SDFNAF").setValue(Toolkit.SplitString(affiliationNumber, 2)[1]);
 			//REGIME
-			jacadaform.getInputByName("txt_SDFREGCTA_ayuda").setValueAttribute(regime);
+			jacadaform.getInputByName("txt_SDFREGCTA_ayuda").setValue(regime);
 			//CCC
-			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
-			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
+			jacadaform.getInputByName("txt_SDFTESCTA").setValue(Toolkit.SplitString(ccc, 2)[0]);
+			jacadaform.getInputByName("txt_SDFCUENTA").setValue(Toolkit.SplitString(ccc, 2)[1]);
 			//Settlement period
 			if(!settlementPeriod.isEmpty()) {
 				Calendar c=Calendar.getInstance();
 				c.setTime(settlementPeriod.get());
 				String month=""+c.get(Calendar.MONTH)+1;
 				String year=""+c.get(Calendar.YEAR);
-				jacadaform.getInputByName("txt_SDFMES").setValueAttribute(month);
-				jacadaform.getInputByName("txt_SDFAO").setValueAttribute(year);
+				jacadaform.getInputByName("txt_SDFMES").setValue(month);
+				jacadaform.getInputByName("txt_SDFAO").setValue(year);
 			}
 			//PRINTING METHOD
 			HtmlSelect printSelect=jacadaform.getSelectByName("cbo_ListaTipoImpresion");
 			printSelect.getOptionByText("OnLine").setSelected(true);
 			//GETTING THE PDF
-			if(clickAndCheckCode(jacadaform.getInputByValue("Continuar")) instanceof com.gargoylesoftware.htmlunit.UnexpectedPage) {
+			if(clickAndCheckCode(jacadaform.getInputByValue("Continuar")) instanceof org.htmlunit.UnexpectedPage) {
 				InputStream is=clickAndCheckCode(jacadaform.getInputByValue("Continuar")).getWebResponse().getContentAsStream();
 				byte[] ret=is.readAllBytes();
 				is.close();
@@ -856,7 +856,7 @@ class SistemaREDI {
 //		CCC
 			{
 				HtmlInput inputCcc = (HtmlInput) htmlPage.getElementById("idCCC");
-				inputCcc.setValueAttribute(ccc);
+				inputCcc.setValue(ccc);
 			}
 //		REGIME
 			{
@@ -899,7 +899,7 @@ class SistemaREDI {
 			{
 				DomNodeList<DomNode> liquidationOrigins = htmlPage.querySelectorAll("input[name='ORIGEN_LIQUIDACION']");
 				HtmlInput liquidationOriginInput = (HtmlInput) liquidationOrigins.stream()
-						.filter(origin -> ((HtmlInput)origin).getValueAttribute().equalsIgnoreCase(liqOrigin.getValue())).findFirst().get();
+						.filter(origin -> ((HtmlInput)origin).getValue().equalsIgnoreCase(liqOrigin.getValue())).findFirst().get();
 				clickAndCheckCode(liquidationOriginInput);
 			}
 //		ACCEPT
@@ -1097,7 +1097,7 @@ class SistemaREDI {
 						}
 						else {
 							HtmlInput nafInput = (HtmlInput) htmlPage.getElementById("NAF_TRABAJADOR");
-							nafInput.setValueAttribute(naf);
+							nafInput.setValue(naf);
 						}
 						htmlPage = clickAndCheckCode(htmlPage.getElementById("SPM.ACC.CONSULTAR"));
 						try {

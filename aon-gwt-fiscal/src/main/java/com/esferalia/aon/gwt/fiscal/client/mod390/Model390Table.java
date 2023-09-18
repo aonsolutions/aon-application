@@ -3,13 +3,16 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridCell;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
@@ -78,7 +81,7 @@ public class Model390Table extends SimpleLayoutPanel implements HasSelectionHand
 			
 			@Override
 			public void onSuccess(LinkedList<Mod390> result) {
-				paint(result);
+				paint(cbk, result);
 				popup.hide();					
 			}
 
@@ -100,6 +103,7 @@ public class Model390Table extends SimpleLayoutPanel implements HasSelectionHand
 		, SST("S"					, 20 ,AON.CSS.aonTextCenter())
 		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())
 		, AUTO(AON.MSG.name()		, 0  ,AON.CSS.aonTextLeft())
+		, DEL(" "					, 20 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
@@ -142,7 +146,7 @@ public class Model390Table extends SimpleLayoutPanel implements HasSelectionHand
 		return tab;
 	}
 	
-	private void paint(LinkedList<Mod390> result) {
+	private void paint(Model390Callback cbk, LinkedList<Mod390> result) {
 		for ( Mod390 mod390 : result) {
 			
 			InlineLabel admon = new InlineLabel();
@@ -176,10 +180,43 @@ public class Model390Table extends SimpleLayoutPanel implements HasSelectionHand
 			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod390.getStatus()) );
 			row.add( statusCell );
 			
+			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+			deleteButton.addClickHandler( e -> {
+				e.preventDefault();
+				e.stopPropagation();
+				AonConfirmDialog cd = new AonConfirmDialog();
+				cd.confirm(AON.MSG.confirmDeclarationDeleteAction(), new AonConfirmDialogCallback() {
+
+					@Override
+					public void onAccept() {
+
+						Model390.MOD390_SERVICE.delete(cbk.getOptions().getOccam(), mod390,new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void result) {
+								refresh(cbk );
+							}
+		
+							@Override
+							public void onFailure(Throwable caught) {
+								cbk.showError( AON.MSG.unableToDeleteDeclaration(caught.getMessage()) );
+							}
+						});
+					}
+
+					@Override
+					public void onCancel() {
+						deleteButton.setEnabled(true);
+					}
+					
+				});
+			});
+			boolean canBeRemoved =  mod390.isPending() || mod390.isBlocked();  
 			row.addCell( comp , AON.CSS.aonTextCenter())
 				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod390.getDocument()))
 				.addCell( new InlineLabel(mod390.getFullName()))
+				.addCell( canBeRemoved ? deleteButton : new Label() ) 
 				;
 		}
 		

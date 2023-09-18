@@ -14,11 +14,11 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -285,6 +285,7 @@ public class CommunicationServlet extends HttpServlet {
 		return array;
 	}
 	
+	// TODO getLastDataResponseDetailStream cambiar..
 	private JSONArray getIngenetSalesAll(Domain domain, String login, HttpServletRequest req) {
 		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
@@ -418,6 +419,8 @@ public class CommunicationServlet extends HttpServlet {
 		return array;
 	}
 
+	
+	// TODO getLastDataResponseDetailStream cambiar..
 	private JSONArray getIngenetSales(Domain domain, String login, HttpServletRequest req) {
 		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
@@ -474,7 +477,7 @@ public class CommunicationServlet extends HttpServlet {
 		return ids;
 	}
 	
-	
+	// TODO getLastDataResponseDetailStream cambiar..
 	private Object reopenIngenetSales(Domain domain, String userName, String[] idList) {
 		List<Integer> _idList = Arrays.asList(idList).stream().map(o -> Integer.parseInt(o))
 				.collect(Collectors.toCollection(LinkedList::new));

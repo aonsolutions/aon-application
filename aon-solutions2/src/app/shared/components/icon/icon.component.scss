@@ -12,29 +12,40 @@
 /*
   Color
 */
-  .dark set-icon path{
-    color: $color-dark;
+  mat-icon svg{
+    fill: $color-dark;
   }
-  .griss set-icon path{
-    color: $color-secondary;
+  .dark mat-icon svg,
+  .dark set-icon svg{
+    fill: $color-dark;
   }
-  .red set-icon path{
-    color: $color-red;
+  .griss mat-icon svg,
+  .griss set-icon svg{
+    fill: $color-secondary;
   }
-  .blue set-icon path{
-    color: $color-blue;
+  .red mat-icon svg,
+  .red set-icon svg{
+    fill: $color-red;
   }
-  .orange set-icon path{
-    color: $color-orange;
+  .blue .mat-icon svg,
+  .blue set-icon svg{
+    fill: $color-blue;
   }
-  .green set-icon path{
-    color: $color-green;
+  .orange mat-icon svg,
+  .orange set-icon svg{
+    fill: $color-orange;
   }
-  .pink set-icon path{
-    color: $color-pink;
+  .green mat-icon svg,
+  .green set-icon svg{
+    fill: $color-green;
   }
-  .purple set-icon path{
-    color: $color-purple;
+  .pink mat-icon svg,
+  .pink set-icon svg{
+    fill: $color-pink;
+  }
+  .purple mat-icon svg,
+  .purple set-icon svg{
+    fill: $color-purple;
   }
 
   .icon-right {

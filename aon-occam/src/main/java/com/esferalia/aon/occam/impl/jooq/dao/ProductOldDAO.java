@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
+import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.sql.Date;
@@ -143,6 +144,7 @@ public class ProductOldDAO {
 		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
 
 		@Override public Property<Integer> getRegistryProperty() {return null;}
+		@Override public Property<Byte> getTypeProperty() {return null;}
 	}
 	
 	protected static class ProductTagPropertiesDAO implements ProductTagProperties {
@@ -343,30 +345,6 @@ public class ProductOldDAO {
 		.returning().fetch().stream().map(new FullProductFiller()).findFirst().orElse(new OldProduct());
 	}
 	
-	public static void insertWithId(AONContext ctx, OldProduct p) {
-		ctx.checkWrite();
-		ctx.getDslContext().transaction(configuration -> {
-			ProductOldValidation.validate(ctx, p);
-			Timestamp creationDate = null, modificationDate = null;
-			if(p.getCreationDate() != null)
-				creationDate = new java.sql.Timestamp(p.getCreationDate().getTime());
-			if(p.getModificationDate() != null)
-				modificationDate = new java.sql.Timestamp(p.getModificationDate().getTime());
-			
-			ctx.getDslContext()
-				.insertInto(PRODUCT,PRODUCT.ID, PRODUCT.DOMAIN, PRODUCT.NAME, PRODUCT.CODE, PRODUCT.BRAND, PRODUCT.CATEGORY,
-						PRODUCT.INVENTORIABLE, PRODUCT.SERIALIZABLE, PRODUCT.LOTABLE, PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION,
-						PRODUCT.TYPE, PRODUCT.MANUFACTURED, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE, PRODUCT.SALES_ACCOUNT,
-						PRODUCT.PURCHASE_ACCOUNT, PRODUCT.CREATION_USER, PRODUCT.CREATION_DATE, PRODUCT.MODIFICATION_USER,
-						PRODUCT.MODIFICATION_DATE, PRODUCT.KIND, PRODUCT.PACKAGED)
-					.values(p.getId(), p.getDomain(), p.getName(), p.getCode(), p.getBrand(), p.getCategory(), p.getInventoriable(),
-							p.getSerializable(), p.getLotable(), p.getStatus(), p.getVat(), p.getRetention(), p.getType(),
-							p.getManufactured(),p.getComposition(), p.getCompositionPrice(), p.getSalesAccount(), p.getPurchaseAccount(),
-							p.getCreationUser(), creationDate, p.getModificationUser(), modificationDate,
-							p.getKind() != null ? p.getKind() : 0, p.getPackagedValue())
-					.execute();
-		});
-	}
 	public static LinkedList<OldProduct> insert(AONContext ctx, Stream<OldProduct> ps) {
 		ctx.checkWrite();
 		AONContext sctx = ctx;
@@ -391,32 +369,6 @@ public class ProductOldDAO {
 		});
 		return insertQuery.returning().fetch().stream().map(new ImportProductFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
-	}
-	public static void insertWithId(AONContext ctx, Stream<OldProduct> ps) {
-		ctx.checkWrite();
-		ctx.getDslContext().transaction(configuration -> {
-			InsertValuesStepN<ProductRecord> productQuery = ctx.getDslContext().insertInto(PRODUCT,PRODUCT.ID, PRODUCT.DOMAIN,
-					PRODUCT.NAME, PRODUCT.CODE, PRODUCT.BRAND, PRODUCT.CATEGORY, PRODUCT.INVENTORIABLE, PRODUCT.SERIALIZABLE,
-					PRODUCT.LOTABLE, PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION, PRODUCT.TYPE, PRODUCT.MANUFACTURED,
-					PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE, PRODUCT.SALES_ACCOUNT, PRODUCT.PURCHASE_ACCOUNT,
-					PRODUCT.CREATION_USER, PRODUCT.CREATION_DATE, PRODUCT.MODIFICATION_USER, PRODUCT.MODIFICATION_DATE,
-					PRODUCT.PACKAGED, PRODUCT.KIND);
-			ps.forEach(p ->{
-				ProductOldValidation.validate(ctx, p);
-				Timestamp creationDate = null, modificationDate = null;
-				if(p.getCreationDate() != null)
-					creationDate = new java.sql.Timestamp(p.getCreationDate().getTime());
-				if(p.getModificationDate() != null)
-					modificationDate = new java.sql.Timestamp(p.getModificationDate().getTime());
-				
-				productQuery.values(p.getId(), p.getDomain(), p.getName(), p.getCode(), p.getBrand(), p.getCategory(),
-						p.getInventoriable(), p.getSerializable(), p.getLotable(), p.getStatus(), p.getVat(), p.getRetention(),
-						p.getType(), p.getManufactured(),p.getComposition(), p.getCompositionPrice(), p.getSalesAccount(),
-						p.getPurchaseAccount(), p.getCreationUser(), creationDate, p.getModificationUser(), modificationDate,
-						p.getPackagedValue(), p.getKind());
-			});
-			productQuery.execute();
-		});
 	}
 	
 	public static void update(AONContext ctx, OldProduct p) {
@@ -545,7 +497,7 @@ public class ProductOldDAO {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			Vector<Integer> ids = new Vector<Integer>();
-			pts.forEach(p ->{
+			pts.forEach(p -> {
 				ids.add(p.getId());
 			});
 			ctx.getDslContext()

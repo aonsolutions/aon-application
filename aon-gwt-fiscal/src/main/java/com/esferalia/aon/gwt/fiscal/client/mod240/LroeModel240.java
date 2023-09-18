@@ -7,33 +7,46 @@ import java.util.List;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
+import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.DocumentTypeListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIcon;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMenu;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSearchBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.shared.AonMenuItem;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificationPopupParams;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.SiiService;
-import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationService;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
+import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
+import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -44,18 +57,20 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class LroeModel240 extends DockLayoutPanel {
 	
-	private static final SiiServiceAsync SII_SERVICE;
+	private static final InvoiceCommunicationServiceAsync SII_SERVICE;
 	static {
-		SiiServiceAsync siiServiceRaw = GWT.create(SiiService.class);
-		SII_SERVICE = new SiiServiceAsyncDecorator(siiServiceRaw); 
+		InvoiceCommunicationServiceAsync siiServiceRaw = GWT.create(InvoiceCommunicationService.class);
+		SII_SERVICE = new InvoiceCommunicationServiceAsyncDecorator(siiServiceRaw); 
 	}
 	
 	private final AonMenuItem chapter1 = new AonMenuItem()
@@ -101,6 +116,11 @@ public class LroeModel240 extends DockLayoutPanel {
 			.addItem(new AonMenuItem().setTitle("6.2 Operaciones de seguros"))
 			.addItem(new AonMenuItem().setTitle("6.3 Agencias de viajes"));
 	
+	private final AonMenuItem utilities = new AonMenuItem()
+			.setTitle("Utilidades")
+			.addItem(new AonMenuItem().setTitle("Anular Factura Emitida")
+					.setHandler(cancelInvoiceUtilityHandler()));
+	
 	private FiscalModel model;
 	private FiscalModelModuleOptions<FiscalModel> options;
 	InvoiceGrid invoiceGrid;
@@ -128,7 +148,79 @@ public class LroeModel240 extends DockLayoutPanel {
 			
 			@Override
 			public void info(Integer invoice, String reference) {
-				Window.alert("En desarrollo...");
+				SII_SERVICE.getInvoiceTrackingList(options.getDomainName(), options.getDomain(), options.getUser(), invoice, new AsyncCallback<List<InvoiceTracking>>() {
+					
+					@Override
+					public void onSuccess(List<InvoiceTracking> result) {
+						FlexTable table = new FlexTable();
+						table.setWidth("100%");
+						if(result.isEmpty()) {
+							table.setWidget(0, 0, new Label("No se ha realizado ning\u00fan env\u00edo."));
+						} else {
+							result.stream().forEach(r -> {
+								Integer row = table.getRowCount();
+								table.setWidget(row, 0, new Label(AonDateUtils.formatDate(r.getInvoiceBatch().getDate())));
+								table.setWidget(row, 1, new Label(r.getInvoiceBatch().getOperation().getDescription()));
+								table.setWidget(row, 2, new Label(r.getInvoiceBatchDetail().getStatus().getDescription()));
+								
+								HorizontalPanel hp = new HorizontalPanel();
+								AonIcon downloadRequest = new AonIcon("download");
+								downloadRequest.setTitle("Descargar Petici\u00f3n");
+								downloadRequest.getElement().getStyle().setCursor(Cursor.POINTER);
+								downloadRequest.onClick(new ClickHandler() {
+									
+									@Override
+									public void onClick(ClickEvent event) {
+										SII_SERVICE.getRequestUrl(options.getDomainName(), options.getDomain(), options.getUser(), r.getInvoiceBatch().getDataResponse(), new AsyncCallback<String>() {
+											
+											@Override
+											public void onSuccess(String url) {
+												Window.open(GWT.getModuleBaseURL() + url, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");	
+											}
+											
+											@Override
+											public void onFailure(Throwable arg0) {}
+										});
+									}
+								});
+								
+								hp.add(downloadRequest);
+								
+								AonIcon downloadResponse = new AonIcon("download");
+								downloadResponse.setTitle("Descargar Respuesta");
+								downloadResponse.getElement().getStyle().setCursor(Cursor.POINTER);
+								downloadResponse.onClick(new ClickHandler() {
+									
+									@Override
+									public void onClick(ClickEvent event) {
+										SII_SERVICE.getResponseUrl(options.getDomainName(), options.getDomain(), options.getUser(), r.getInvoiceBatch().getDataResponse(), new AsyncCallback<String>() {
+											
+											@Override
+											public void onSuccess(String url) {
+												Window.open(GWT.getModuleBaseURL() + url, "_blank",null);//"status=0,toolbar=0,menubar=0,location=0");	
+											}
+											
+											@Override
+											public void onFailure(Throwable arg0) {}
+										});
+									}
+								});
+								
+								hp.add(downloadResponse);
+								table.setWidget(row, 3, hp);
+							});
+						}
+						AonDialog dialog = new AonDialog("Informaci\u00f3n", table);
+						dialog.info();
+					}
+					
+					@Override
+					public void onFailure(Throwable arg0) {
+						AonDialog dialog = new AonDialog("Informaci\u00f3n", new Label("No se ha realizado ning\u00fan env\u00edo."));
+						dialog.info();
+					}
+				});
+				
 			}
 
 			@Override
@@ -162,7 +254,7 @@ public class LroeModel240 extends DockLayoutPanel {
 		this.filterParams = new InvoiceParams()
 			.setDomain(getOptions().getDomain())
 			.setType(InvoiceType.SALES)
-			.setCommunicationType(InvoiceCommunicationType.LROE_1_1);
+			.setCommunicationType(OldInvoiceCommunicationType.LROE_1_1);
 //			.setCommunicationStatus(InvoiceCommunicationStatus.PENDING);
 	}
 	
@@ -176,6 +268,7 @@ public class LroeModel240 extends DockLayoutPanel {
 		aonMenu.addItem(chapter4);
 		aonMenu.addItem(chapter5);
 		aonMenu.addItem(chapter6);
+//		aonMenu.addItem(utilities);
 		return aonMenu;
 	}
 
@@ -196,7 +289,7 @@ public class LroeModel240 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE_1_1)
+				.setCommunicationType(OldInvoiceCommunicationType.LROE_1_1)
 				.setType(InvoiceType.SALES)
 				.setTbaiDeleted(false);
 				invoiceGrid.setFilterParams(getFilterParams());
@@ -210,7 +303,7 @@ public class LroeModel240 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE_1_2)
+				.setCommunicationType(OldInvoiceCommunicationType.LROE_1_2)
 				.setType(InvoiceType.SALES)
 				.setTbaiDeleted(false);
 				invoiceGrid.setFilterParams(getFilterParams());
@@ -224,7 +317,7 @@ public class LroeModel240 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE_2)
+				.setCommunicationType(OldInvoiceCommunicationType.LROE_2)
 				.setType(InvoiceType.PURCHASE)
 				.addType(InvoiceType.EXPENSES)
 				.setTbaiDeleted(false);
@@ -243,7 +336,83 @@ public class LroeModel240 extends DockLayoutPanel {
 		};
 	}
 	
+	private ClickHandler cancelInvoiceUtilityHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				VerticalPanel vp = new VerticalPanel();
+				
+				HorizontalPanel hp1 = new HorizontalPanel();
+				Label label1 = new Label(AON.MSG.series());
+				label1.setWidth("125px");
+				label1.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+				hp1.add(label1);
+				TextBox series = new TextBox();
+				series.setStyleName("aon-inputText");
+				series.setWidth("80px");
+				hp1.add(series);
+				vp.add(hp1);
+				
+				HorizontalPanel hp2 = new HorizontalPanel();
+				Label label2 = new Label(AON.MSG.number());
+				label2.setWidth("125px");
+				label2.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+				hp2.add(label2);
+				TextBox number = new TextBox();
+				number.setStyleName("aon-inputText");
+				number.setWidth("80px");
+				hp2.add(number);
+				vp.add(hp2);
+				
+				HorizontalPanel hp3 = new HorizontalPanel();
+				Label label3 = new Label(AON.MSG.expeditionDate());
+				label3.setWidth("125px");
+				label3.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+				hp3.add(label3);
+				DateBoxEx expeditionDate = new DateBoxEx();
+				hp3.add(expeditionDate);
+				vp.add(hp3);
+				
+				AonDialog cancelInvoicedialog = new AonDialog("Anular Factura Emitida (No existente en AON)", vp);
+
+				cancelInvoicedialog.confirm(new AonAcceptDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						cancelInvoicedialog.hide();
+					}
+					
+					@Override
+					public void onAccept() {
+						
+						cancelInvoicedialog.hide();
+						AonCertificationPopupParams params = new AonCertificationPopupParams()
+								.setShowDocument(false)
+								.setShowName(false);
+
+						AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
+								
+							@Override
+							protected void onCancel() {
+								hide();
+							}
+								
+							@Override
+							protected void onAccept( AEATParams params) {
+								hide();
+									
+							}
+						};
+						certPopup.center();
+					}
+				});
+			}
+		};
+	}
 	
+
 	
 	public FiscalModel getModel() {
 		return model;
@@ -365,7 +534,7 @@ public class LroeModel240 extends DockLayoutPanel {
 	private String getStatusName(InvoiceCommunicationStatus st) {
 		if(InvoiceCommunicationStatus.ACCEPTED.equals(st)) return "Aceptada";
 		else if(InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS.equals(st)) return "Aceptada con Errores";
-		else if(InvoiceCommunicationStatus.ANNULLED.equals(st)) return "Anulada";
+		else if(InvoiceCommunicationStatus.CANCELLED.equals(st)) return "Anulada";
 		else if(InvoiceCommunicationStatus.WRONG.equals(st)) return "Incorrecta";
 		else return "Pendiente";
 	}
@@ -450,7 +619,7 @@ public class LroeModel240 extends DockLayoutPanel {
 					getModel240().getBreakdownPanel().setWidget(vp);
 					if(alta) {
 						selectedInvoices.stream().forEach(invoice -> {
-							if(invoice.getInvoiceInfo().getStatus().isAccepted() && !InvoiceCommunicationType.LROE_2.equals(getFilterParams().getCommunicationType())) {
+							if(invoice.getInvoiceInfo().getStatus().isAccepted() && !OldInvoiceCommunicationType.LROE_2.equals(getFilterParams().getCommunicationType())) {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {
@@ -464,7 +633,12 @@ public class LroeModel240 extends DockLayoutPanel {
 										if(!result.isError()) { 	
 											String message = "La factura " + reference + " se ha enviado correctamente.";
 											vp.add(getOkMessage(message));
-										} else vp.add(getErrorMessage("Factura " + reference + ": " + result.getErrorMessage()));
+										} else {
+											if(result.getErrorCode().equals("AON_001")
+												|| result.getErrorCode().equals("B4_2000013")) {
+												vp.add(getActionErrorMessage(result, invoice));
+											} else vp.add(getErrorMessage("Factura " + reference + ": " + result.getErrorMessage()));
+										} 
 										
 										if(selectedInvoices.size() >= vp.getWidgetCount()) {
 											invoiceGrid.setFilterParams(getFilterParams());
@@ -545,5 +719,78 @@ public class LroeModel240 extends DockLayoutPanel {
 	
 	public Model240 getModel240() {
 		return model240;
+	}
+	
+	public HorizontalPanel getActionErrorMessage(ICResponse resp, Invoice invoice){
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.add(getMessage("Factura "+ invoice.getReferenceCode() + ": " + resp.getErrorMessage(), "red"));
+		if("AON_001".equals(resp.getErrorCode())
+				|| "B4_2000013".equals(resp.getErrorCode())) {
+			Label l = new Label("Pulse aqui para a\u00f1adir el Documento");
+			l.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+			l.getElement().getStyle().setColor("#0069c2");
+			l.getElement().getStyle().setCursor(Cursor.POINTER);
+			l.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					FlexTable documentTable = new FlexTable();
+
+					documentTable.setWidget(0, 0, new Label("Tipo de Documento"));
+
+					DocumentTypeListBox dtlb = new DocumentTypeListBox();
+					dtlb.setValue(invoice.getRegistryDocumentType());
+
+					documentTable.setWidget(0, 1, dtlb);
+
+					
+					documentTable.setWidget(1, 0, new Label("Pa\u00eds de Documento"));
+
+					CountryListBox clb = new CountryListBox();
+					clb.setValue(invoice.getRegistryDocumentCountry());
+					documentTable.setWidget(1, 1, clb);
+					
+					documentTable.setWidget(2, 0, new Label("Documento"));
+					
+					AonDocumentTextBox tb = new AonDocumentTextBox();
+					tb.setValue(invoice.getRegistryDocument());
+					documentTable.setWidget(2, 1, tb);
+					
+					AonDialog dialog = new AonDialog("A\u00f1adir Documento", documentTable);
+
+					dialog.confirm(new AonAcceptDialogCallback() {
+							
+							@Override
+							public void onCancel() {
+								dialog.hide();
+							}
+								
+							@Override
+							public void onAccept() {
+								dialog.hide();
+								invoice.setRegistryDocumentCountry(clb.getValue());
+								invoice.setRegistryDocumentType(dtlb.getValue());
+								invoice.setRegistryDocument(tb.getValue());
+								SII_SERVICE.addDocumentInvoice(options.getDomainName(), options.getDomain(), options.getUser(), invoice, new AsyncCallback<Void>() {
+										
+										@Override
+										public void onSuccess(Void result) {
+											
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+										
+										}
+									});
+							}
+					});	
+					
+				}
+			});
+			
+			hp.add(l);
+		}
+		return hp;
 	}
 }

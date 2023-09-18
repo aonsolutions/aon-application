@@ -247,6 +247,14 @@ public enum AppParam {
 	, EDI_COMPANY_CODE
 	
 	, SSCC_LAST_NUMBER
+	
+	, SERES_FTP_SERVER_NAME
+	, SERES_FTP_USER
+	, SERES_FTP_PASSWORD
+	, SERES_FTP_PORT
+	
+	, AON_DOMAIN_PAYER
+	, OCR_DEFAULT_ITEM
 	;
 	
 	public String getValue() {

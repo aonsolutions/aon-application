@@ -27,9 +27,9 @@ public class MODEL130 {
 		}
 	}
 
-	public static Mod130 getMod130(Occam occam, int id) {
+	public static Mod130 get(Occam occam, int id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getMod130(ctx, id);
+			return getImpl().get(ctx, id);
 		}
 	}
 
@@ -57,9 +57,39 @@ public class MODEL130 {
 		}
 	}
 
+	public static void delete(Occam occam, Mod130 mod130) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			getImpl().delete(ctx, mod130);
+		}
+	}
+
+	public static Mod130 initialize(Occam occam, Mod130 mod130) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().initialize(ctx, mod130);
+		}
+	}
+
+	public static Mod130 create(Occam occam,Mod130 mod130) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().create(ctx, mod130);
+		}
+	}
+
+	public static Mod130 aeatPresentation(Occam occam, Mod130 mod130, String aeatResponse) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().aeatPresentation(ctx, mod130, aeatResponse);
+		}
+	}
+
 	public static Mod130 markAsFinished(Occam occam, Mod130 mod130) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsFinished(ctx, mod130);
+		}
+	}
+
+	public static Mod130 markAsPending(Occam occam, Mod130 mod130) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsPending(ctx, mod130);
 		}
 	}
 
@@ -75,48 +105,23 @@ public class MODEL130 {
 		}
 	}
 	
-	public static Mod130 markAsPending(Occam occam, Mod130 mod130) {
+	public static Mod130 markAsCustomerAccepted(Occam occam, Mod130 mod130) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().markAsPending(ctx, mod130);
+			return getImpl().markAsCustomerAccepted(ctx, mod130);
 		}
 	}
 
-	public static void deleteMod130(Occam occam, Mod130 mod130) {
+	public static Mod130 markAsCustomerRejected(Occam occam, Mod130 mod130, String reason) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			getImpl().delete(ctx, mod130);
+			return getImpl().markAsCustomerRejected(ctx, mod130, reason);
 		}
 	}
 
-	public static Mod130 initializeMod130(Occam occam, Mod130 mod130) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().initialize(ctx, mod130);
-		}
-	}
-
-	public static Mod130 createMod130(Occam occam,Mod130 mod130) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().create(ctx, mod130);
-		}
-	}
-
-	public static String getMod130Info(Occam occam, Mod130 mod130, IModelScript<Mod130Key> script,
+	public static String getInfo(Occam occam, Mod130 mod130, IModelScript<Mod130Key> script,
 			FiscalModelKeyInfo infoKey) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getInfo(ctx, mod130, script, infoKey);
 		}
 	}
-
-	public static Mod130 aeatPresentation(Occam occam, Mod130 mod130, String aeatResponse) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().aeatPresentation(ctx, mod130, aeatResponse);
-		}
-	}
-
-	public static Mod130 resetMod130(Occam occam, Mod130 mod130) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().reset(ctx, mod130);
-		}
-	}
-
 
 }

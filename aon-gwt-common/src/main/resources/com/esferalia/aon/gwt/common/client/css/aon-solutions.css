@@ -172,6 +172,8 @@
 .aon_icon_view_document { background-image: iconViewDocument;}
 @url iconDeleteForever aonIconDeleteForever;
 .aon_icon_delete_forever { background-image: iconDeleteForever;}
+@url iconDeleteForeverRed aonIconDeleteForeverRed;
+.aon_icon_delete_forever_red { background-image: iconDeleteForeverRed;}
 @url iconTgss aonIconTgss;
 .aon_icon_tgss { background-image: iconTgss;}
 @url iconTgssCra aonIconTgssCra;
@@ -210,6 +212,32 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconGroupOff aonIconGroupOff;
+.aon_icon_group_off { background-image: iconGroupOff;}
+@url iconGroup aonIconGroup;
+.aon_icon_group { background-image: iconGroup;}
+@url iconTune aonIconTune;
+.aon_icon_tune { background-image: iconTune;}
+@url iconPin aonIconPin;
+.aon_icon_pin { background-image: iconPin;}
+@url iconPerson aonIconPerson;
+.aon_icon_person { background-image: iconPerson;}
+@url iconPersonOff aonIconPersonOff;
+.aon_icon_person_off { background-image: iconPersonOff;}
+@url iconEnterprise aonIconEnterprise;
+.aon_icon_enterprise { background-image: iconEnterprise;}
+@url iconActivity aonIconActivity;
+.aon_icon_activity { background-image: iconActivity;}
+@url iconFormatIndentIncrease aonIconFormatIndentIncrease;
+.aon_icon_format_indent_increase { background-image: iconFormatIndentIncrease;}
+@url iconFormatIndentDecrease aonIconFormatIndentDecrease;
+.aon_icon_format_indent_decrease { background-image: iconFormatIndentDecrease;}
+@url iconTableView aonIconTableView;
+.aon_icon_table_view { background-image: iconTableView;}
+@url iconCloudSync aonIconCloudSync;
+.aon_icon_cloud_sync { background-image: iconCloudSync;}
+@url iconAccountTree aonIconAccountTree;
+.aon_icon_account_tree { background-image: iconAccountTree;}
 @url iconMoveDown aonIconMoveDown;
 .aon_icon_move_down { background-image: iconMoveDown;}
 @url iconStatics aonIconStatics;
@@ -238,6 +266,8 @@
 .aon_icon_lock { background-image: iconLock;}
 @url iconUnLock aonIconUnLock;
 .aon_icon_unlock { background-image: iconUnLock;}
+@url iconLockReset aonIconLockReset;
+.aon_icon_lock_reset { background-image: iconLockReset;}
 @url iconRenew aonIconRenew;
 .aon_icon_renew { background-image: iconRenew;}
 @url iconRenewWhite aonIconRenewWhite;
@@ -290,6 +320,8 @@
 .aon_icon_download { background-image: iconDownload;}
 @url iconUpload aonIconUpload;
 .aon_icon_upload { background-image: iconUpload;}
+@url iconUploadFile aonIconUploadFile;
+.aon_icon_upload_file { background-image: iconUploadFile;}
 @url iconWizard aonIconWizard;
 .aon_icon_wizard { background-image: iconWizard;}
 @url iconMinus aonIconMinus;
@@ -401,8 +433,27 @@
 .aon_inline_block {
 	display: inline-block;
 }
+.aon_cmd_item{
+	background-position: center left;
+	background-repeat: no-repeat;
+	padding-left: 25px !important;
+	background-size: contain;
+}
 .aon_display_flex {
 	display: flex;	
+}
+
+.aon_display_flex_center {
+	display: flex;	
+	justify-content: center;
+	align-items: center;
+}
+
+.aon_display_flex_end {
+	display: flex;	
+	justify-content: flex-end;
+	align-items: center;
+	gap: .5rem;
 }
 
 .aon_display_table {
@@ -469,6 +520,12 @@
 	line-height: 200%;
 }
 
+.aon_line {
+	  width: 100%;
+	  border-bottom: 2px solid #eee;
+	  margin: .5rem 0;
+}
+
 .aon_ellipsis {
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -500,6 +557,9 @@
 .aon_width_all {
 	width: 100%;
 }
+.aon_width_half {
+	width: 50%;
+}
 .aon_height_all {
 	height: 100%;
 }
@@ -523,7 +583,9 @@
 .aon_width_150 { width: 150px; }
 .aon_width_200 { width: 200px; }
 .aon_width_300 { width: 300px; }
+.aon_width_320 { width: 320px; }
 .aon_width_400 { width: 400px; }
+.aon_width_440 { width: 440px; }
 .aon_width_600 { width: 600px; }
 
 .aon_fixed_font {
@@ -800,6 +862,23 @@
 	text-align: center;
 }
 
+.aon_dialog_button {
+	background-attachment: scroll;
+	background-clip: border-box;
+	background-color: inherit;
+	background-position: 1px -2px;
+	background-repeat: no-repeat;
+	background-size: auto auto;
+	border: 1px solid #aaa;
+	cursor: pointer;
+	height: 24px;
+	overflow: visible;
+	padding-left: 25px;
+	text-align: left;
+	text-transform: uppercase;
+	width: auto;
+}
+
 /* TABLE  */
 .aon_table {
 	border-collapse: collapse;
@@ -868,6 +947,40 @@
 .aon_align_items_baseline {
 	align-items: baseline;
 }
+
+.aon_flex_column {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.aon_flex_between {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+    gap: .5rem;
+}
+
+.aon_flex_column_between {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+    gap: .5rem;
+}
+
+.aon_flex_wrap {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.aon_item_flex{
+	display: flex;
+	align-items: center;
+	gap: .5rem
+}
+
 .aon_flex_block_inline {
     align-items: center;
     box-sizing: border-box;
@@ -912,9 +1025,9 @@
 	/*height: 2rem;*/
 	min-height: 2.2rem;
 	/*align-items: center;*/
-	border-radius: 0.5em;
+	border-radius: 0.5rem;
     display: flex;
-    margin: 0 1em;
+    margin: 0 1rem;
     width: auto;
     justify-content: space-between;
    /* margin-top: .5rem;*/
@@ -1188,7 +1301,7 @@
 	background: white none repeat scroll 0 0;
 	box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4);
 	clip: unset !important;
-	border-radius: 4px;
+	border-radius: 10px;
 }
 .aon_custom_dialog_panel {
 	margin: 0px;
@@ -1202,7 +1315,7 @@
 
 .aon_custom_dialog .popupContent {
 	background-color: white;
-	border-radius: 4px;
+	border-radius: 10px;
 }
 .aon_custom_dialog_header {
 	margin: 0px;
@@ -1612,6 +1725,35 @@
 	width: auto;
 	height: auto;
 	padding-left: 15px !important;
+}
+
+.aon_filter_panel {
+	padding: .5rem;
+	background-color: #f6f8fc;
+	border: #ccc 1px solid;
+}
+
+.aon_header_table {
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: .8em;
+	text-align: left;
+	padding-left: 0.5rem;
+}
+
+.aon_header_sticky {
+	position: sticky;
+	top: 0;
+	height: 1.5rem;
+	background-color: #eee;
+}
+
+.aon_odd_table_row {
+	background-color: #f8f7f7;
+}
+
+.aon_modify_table_row {
+	background-color: lightyellow !important;
 }
 
 .aon_search_panel {

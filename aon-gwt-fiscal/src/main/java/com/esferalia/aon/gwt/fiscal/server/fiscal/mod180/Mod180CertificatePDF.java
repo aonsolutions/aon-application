@@ -188,9 +188,9 @@ public class Mod180CertificatePDF {
 		
 		addLabel2Cell(tab2, "Rendimientos dinerarios");
 		addEmptyCell(tab2);
-		addNumericBodyCell(tab2, AonMathUtils.isZero(perception)?"":FMT.format(perception));
-		addEmptyCell(tab2);
 		addNumericBodyCell(tab2, AonMathUtils.isZero(retention)?"":FMT.format(retention));
+		addEmptyCell(tab2);
+		addNumericBodyCell(tab2, AonMathUtils.isZero(perception)?"":FMT.format(perception));
 		
 		
 		addEmptyCell(tab2, 2);
@@ -204,9 +204,9 @@ public class Mod180CertificatePDF {
 		
 		addLabel2Cell(tab2, "Rendimientos en especie");
 		addEmptyCell(tab2);
-		addNumericBodyCell(tab2, AonMathUtils.isZero(inKindPerception)?"":FMT.format(inKindPerception));
-		addEmptyCell(tab2);
 		addNumericBodyCell(tab2, AonMathUtils.isZero(inKindRetention)?"":FMT.format(inKindRetention));
+		addEmptyCell(tab2);
+		addNumericBodyCell(tab2, AonMathUtils.isZero(inKindPerception)?"":FMT.format(inKindPerception));
 
 		document.add(tab2);
 		

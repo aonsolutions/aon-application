@@ -273,6 +273,8 @@ public abstract class ContractAttachDialog extends AonCustomDialog {
 		typeLB.addItem("Notificaci\u00f3n Laboral", "107");
 		typeLB.addItem("Transformaci\u00f3n (Comunicaci\u00f3n SEPE)", "108");
 		typeLB.addItem("Borrador transformaci\u00f3n contrato", "109");
+		typeLB.addItem("Borrador pr\u00f3rroga contrato", "110");
+		typeLB.addItem("Borrador propuesta recolocaci\u00f3n", "111");
 		typeLB.addItem("Otros", "106");
 	}
 	

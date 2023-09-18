@@ -11,6 +11,11 @@ import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -43,6 +48,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SystemPayment;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.QuoteCalculator;
@@ -50,6 +56,7 @@ import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection.Filter;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.SalaryException;
@@ -59,6 +66,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -128,6 +136,30 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		}
 	}
 	
+	@Override
+	protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
+	    	Date endDate = SmartSQLContractSettleCalculatorContext.this.settleEndDate;
+	    	Date startDate = SmartSQLContractSettleCalculatorContext.this.getStartDate();
+		ITimedVariable<Double> days = new ITimedVariable<Double>() {
+			@Override
+			public Period getPeriod() {
+				return new Period(startDate,endDate);
+			}
+
+			@Override
+			public Double getValue(Period p) {
+				return ((Long)p.getDays()).doubleValue();
+			}
+
+		};
+		for ( ContextVariable ctxVar : new ContextVariable [] {WORKED_DAYS, SALARY_DAYS, QUOTE_DAYS} ) {
+		    if ( !ctx.containsVariable(ctxVar.getName(), startDate, endDate) ) {
+			ctx.putVariable(ctxVar, days);
+		    }
+		}
+		
+	}
+	
 	// ------------------------------------------------------------------------
 	public Collection<IContractPayment> getAgreementExtraPayments() throws SQLException, ExpressionException, SalaryException {
 		AONContext aonCtx = new AONContext(connection);
@@ -175,23 +207,23 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 			
 				int year = AonDateUtils.get(settleEndDate, Calendar.YEAR );
 				
-				Date extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), year);
+				Date extraStartDate  = AgreementExtra.parseAgreementStartDate(extra.getStartDate(), year);
 				
 	//			if ( extraStartDate.after(settleEndDate))  
 	//				continue;  // Nothing to calculate
 				while ( !extraStartDate.after(settleEndDate )) {
 				
-					Date extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
-					Date extraEndDate  = AgreementExtra.parseAgreementDate(extra.getEndDate(), year);
+					Date extraIssueDate  = AgreementExtra.parseAgreementIssueDate(extra.getIssueDate(), year);
+					Date extraEndDate  = AgreementExtra.parseAgreementEndDate(extra.getEndDate(), year);
 		
 					if ( extraIssueDate.before(settleEndDate)
 						 && extraIssueDate.after(contractStartDate) ) {
-						extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
-						extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
+						extraStartDate  = AgreementExtra.parseAgreementStartDate(extra.getStartDate(), ++year);
+						extraIssueDate  = AgreementExtra.parseAgreementIssueDate(extra.getIssueDate(), year);
 						if ( extraStartDate.after(settleEndDate))  
 							break;  // Nothing to calculate
 					} else if (extraEndDate.before(settleEndDate)  ) {
-						extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
+						extraStartDate  = AgreementExtra.parseAgreementStartDate(extra.getStartDate(), ++year);
 						if ( extraStartDate.after(settleEndDate))  
 							break;  // Nothing to calculate
 					}
@@ -199,7 +231,13 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 					
 					// TODO: Extract to method ?
 					SQLExtraSalaryCalculatorContext extraCtx = 
-							new SQLExtraSalaryCalculatorContext(getConnection(), extra.getId(), year, settleEndDate, getChargeDate(), criteria) ;
+							new SQLExtraSalaryCalculatorContext(getConnection(), extra.getId(), year, settleEndDate, getChargeDate(), criteria) {
+					    @Override
+					    public Collection<IContractDeduction> getContractDeductions()
+					            throws AonException {
+					        return Collections.emptyList();
+					    }
+					};
 					if ( !extraCtx.next() )
 						break;
 					
@@ -320,7 +358,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 						calculatedExtras.add(record.getId());
 					}
 					
-					extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
+					extraStartDate  = AgreementExtra.parseAgreementStartDate(extra.getStartDate(), ++year);
 				}
 			} catch (DateFormatException e) {
 				AgreementPaymentRecord extraPayment = extras.get(i).into(AGREEMENT_PAYMENT);
@@ -567,7 +605,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 
 	private static Date getStartDate(ContractPaymentRecord extra, int year) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
@@ -581,7 +619,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	
 	private static Date getEndDate(ContractPaymentRecord extra, int year) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);

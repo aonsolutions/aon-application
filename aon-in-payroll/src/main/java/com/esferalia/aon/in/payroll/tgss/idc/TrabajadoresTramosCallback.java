@@ -15,6 +15,10 @@ public interface TrabajadoresTramosCallback {
 		return TipoIpf.DNI;
 	}
 	
+	default boolean isQuoteByRealDays(String ssNum, String ccc, Date start, Date end) {
+	    return false;
+	}
+
 	default boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
 		return false;
 	}

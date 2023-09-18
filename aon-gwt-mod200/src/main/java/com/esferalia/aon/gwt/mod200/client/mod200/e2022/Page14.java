@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -18,7 +18,7 @@ public class Page14 extends PageAbs {
 	private AonTextBox nrsAnexoVric;
 	private AonTextBox justActivos;
 
-	public Page14( Model200PageCallback callback ) {
+	public Page14( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 
@@ -145,3 +145,5 @@ public class Page14 extends PageAbs {
 	}
 
 }
+
+

@@ -8,10 +8,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.GmailUtils;
@@ -122,7 +122,7 @@ public class SendNotification {
 			e1.printStackTrace();
 		}
 	    for(String e : to) {
-	    	email.addRecipient(javax.mail.Message.RecipientType.BCC,
+	    	email.addRecipient(jakarta.mail.Message.RecipientType.BCC,
                     new InternetAddress(e));	
 	    }	
 	    email.setSubject(subject);

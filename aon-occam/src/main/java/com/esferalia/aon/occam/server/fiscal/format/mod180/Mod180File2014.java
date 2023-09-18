@@ -21,7 +21,7 @@ enum Mod180File2014 {
 	   ,(line, mod180,detail) -> line.append(AonFiscalFileUtils.text(mod180.getContactPhone(),9))		// CONTACTO. TELÉFONO
 	   ,(line, mod180,detail) -> line.append(AonFiscalFileUtils.text(mod180.getContactPerson(),40))		// CONTACTO. APELLIDOS Y NOMBRE
 	   ,(line, mod180,detail) -> line.append(AonFiscalFileUtils.unsigned(mod180.getReceipt(),13,0))			// NUMERO DE IDENTIFICATIVO DE LA DECLARACION
-	   ,(line, mod180,detail) -> line.append(" ") 											// DECLARACIÓN COMPLEMENTARIA
+	   ,(line, mod180,detail) -> line.append(mod180.isComplementary()?"C":" ")				// DECLARACIÓN COMPLEMENTARIA
 	   ,(line, mod180,detail) -> line.append(mod180.isReplacement()?"S":" ")				// DECLARACIÓN SUSTITUTIVA:
 	   ,(line, mod180,detail) -> line.append(AonFiscalFileUtils.unsigned(					// NUMERO IDENTIFICATIVO ANTERIOR
 			   mod180.getReplacedReceipt(),13,0))

@@ -50,6 +50,13 @@ public enum Mod130Key implements IFiscalModelKey {
 	public int getBox() {
 		return box;
 	}
+    @Override
+	public String getBoxFormatted() {
+		return " [" + getBoxAsString() +"] ";
+	}
+	public String getBoxAsString() {
+		return AonStringUtils.leftPad(Integer.toString(getBox()), 3, '0');
+	}
 	public static Mod130Key getKey(String value) {
 		for (Mod130Key key : Mod130Key.values()) {
 			if (AonStringUtils.equals(key.getValue(), value)) {

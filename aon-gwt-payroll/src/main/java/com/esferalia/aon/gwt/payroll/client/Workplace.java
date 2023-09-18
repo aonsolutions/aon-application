@@ -14,8 +14,6 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -29,7 +27,6 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public abstract class Workplace extends ResizeComposite{
 	
@@ -46,8 +43,10 @@ public abstract class Workplace extends ResizeComposite{
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
+		String inputPadding();
+		String inputLBHeight();
+		String inputTextHeight();
 		String warningTB();
-		String flexGrow();
 	}
 
 	// TABLA DATOS CENTRO DE TRABAJO
@@ -98,13 +97,12 @@ public abstract class Workplace extends ResizeComposite{
 	@UiHandler("workplaceDescription")
 	void onWorkplaceDescriptionChangeValue(ChangeEvent event) {
 		if(AonStringUtils.isNotBlank(workplaceDescription.getValue())) {
-			removeWarningIcon(workplaceDescription);
+			removeWarning(workplaceDescription);
+			fireHideMessage();
 			onWorkplaceDescriptionChange();		
 		} else {
-			addWarningIcon(workplaceDescription);
-			Map<String, String> warningMap = new HashMap<>();
-			warningMap.put("Descripci\u00F3n obligatoria", "Este campo es obligatorio");
-			fireWarningMessage(warningMap);
+			addWarning(workplaceDescription);
+			fireErrorMessage(new HashMap<String, String>(){{ put("Descripci\u00F3n Obligatoria", "Este campo es obligatorio"); }});
 		}
 	}
 
@@ -126,11 +124,14 @@ public abstract class Workplace extends ResizeComposite{
 	public abstract void onWorkplaceAgreementChange(Integer agreementId);
 	public abstract void onWorkplaceActivityChange(Integer activityId);
 	
-	public abstract void fireWarningMessage(Map<String, String> warningMap);
+	public abstract void fireErrorMessage(Map<String, String> messages);
+	public abstract void fireHideMessage();
 
 	// ------------------------------------------------- Initialize View
 
 	public void initializeView() {
+		removeWarning(workplaceDescription);
+		
 		resetElements();
 		initializeListBox();
 	}
@@ -167,7 +168,10 @@ public abstract class Workplace extends ResizeComposite{
 			workplaceAddressWidget = createEmptyLabel();
 		else{
 			ListBox addressListBox = new ListBox();
+			addressListBox.ensureDebugId("address");
 			addressListBox.setStyleName(STYLESELECT);
+			addressListBox.addStyleName(style.inputLBHeight());
+			addressListBox.addStyleName(style.inputPadding());
 			addressListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
 			
 			addressListBox.addItem("-", "-1");
@@ -178,12 +182,11 @@ public abstract class Workplace extends ResizeComposite{
 			addressListBox.addChangeHandler(e -> {
 				Integer addressId = Integer.valueOf(addressListBox.getSelectedValue());
 				if(addressId == -1) {
-					addWarningIcon(addressListBox);
-					Map<String, String> warningMap = new HashMap<>();
-					warningMap.put("Direcci\u00F3n obligatoria", "Este campo es obligatorio");
-					fireWarningMessage(warningMap);
+					addWarning(addressListBox);
+					fireErrorMessage(new HashMap<String, String>(){{ put("Direcci\u00F3n Obligatoria", "Este campo es obligatorio"); }});
 				} else {
-					removeWarningIcon(addressListBox);
+					removeWarning(addressListBox);
+					fireHideMessage();
 					onWorkplaceAddressChange(addressId);
 				}
 			});
@@ -234,7 +237,9 @@ public abstract class Workplace extends ResizeComposite{
 		else{
 			SuggestBox agreementSuggestBox = new SuggestBox();
 			agreementSuggestBox.setStyleName(STYLESELECT);
-			agreementSuggestBox.getElement().getStyle().setWidth(98.00, Unit.PCT);
+			agreementSuggestBox.addStyleName(style.inputTextHeight());
+			agreementSuggestBox.addStyleName(style.inputPadding());
+			agreementSuggestBox.getElement().getStyle().setProperty("width", "calc(100% - 13px)");
 			
 			this.workplacesAgreements = workplacesAgreements;
 			
@@ -284,6 +289,8 @@ public abstract class Workplace extends ResizeComposite{
 		else{
 			ListBox activityListBox = new ListBox();
 			activityListBox.setStyleName(STYLESELECT);
+			activityListBox.addStyleName(style.inputLBHeight());
+			activityListBox.addStyleName(style.inputPadding());
 			activityListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
 			
 			activityListBox.addItem("-", "-1");
@@ -325,11 +332,11 @@ public abstract class Workplace extends ResizeComposite{
 		workplaceCalendarHTMLPanel.setVisible(false);
 	}
 	
-	private void addWarningIcon(Widget widget) {
+	private void addWarning(Widget widget) {
 		widget.addStyleName(style.warningTB());
 	}
 	
-	private void removeWarningIcon(Widget widget) {
+	private void removeWarning(Widget widget) {
 		widget.removeStyleName(style.warningTB());
 	}
 

@@ -5,8 +5,8 @@ import static com.code.aon.faces.controller.IRichConstants.LOOKUP_MODAL_PANEL_SE
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.el.ValueExpression;
-import javax.el.VariableMapper;
+import jakarta.el.ValueExpression;
+import jakarta.el.VariableMapper;
 import javax.faces.component.UIComponent;
 
 import org.apache.commons.lang.StringUtils;

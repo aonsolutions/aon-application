@@ -51,6 +51,14 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/customer.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>gwt_main_customer_fee_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/customer_fee.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_main_booking_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/booking.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>gwt_supplier</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/supplier.xhtml</to-view-id>
 		</navigation-case>
@@ -242,6 +250,18 @@
 		<navigation-case>
 			<from-outcome>gwt_accountConsolidatedBalance</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountConsolidatedBalance.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_amortization_type</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/amortizationType.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_invest_asset</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/investAsset.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_accountCostCenter</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountCostCenter.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 </faces-config>

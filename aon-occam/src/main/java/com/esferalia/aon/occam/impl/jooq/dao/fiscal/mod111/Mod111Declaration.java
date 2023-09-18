@@ -18,6 +18,9 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.ExplainRowManager;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -35,15 +38,70 @@ public abstract class Mod111Declaration {
 	}
 	@FunctionalInterface
 	static interface IValueIntializer {
-		void initialize(AONContext ctx,Mod111 mod,Map<Mod111Key,Set<String>> docs
-				,Map<Mod111Key,Set<String>> pdocs,IrpfBreakdown br);
+		void initialize(AONContext ctx,Mod111 mod,Map<Mod111Key,Set<String>> docs,Map<Mod111Key, Set<String>> pdocs,IrpfBreakdown br);
 	}
 	@FunctionalInterface
 	static interface IValueUniqueIntializer {
 		void initialize(AONContext ctx,Mod111 mod);
 	}
 	
-	static Mod111Declaration getInstance( Mod111 mod) {
+	private enum Declarations {
+		 AEAT_2023 {
+			@Override boolean accept(Mod111 mod) { return Mod111AEAT2023Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111AEAT2023Declaration();}
+		}
+		,BIZKAIA_110_2023 {
+			@Override boolean accept(Mod111 mod) { return Mod110Bizkaia2023Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod110Bizkaia2023Declaration();}
+		}
+		,BIZKAIA_111_2023 {
+			@Override boolean accept(Mod111 mod) { return Mod111Bizkaia2023Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Bizkaia2023Declaration();}
+		}
+		,ARABA_2023 {
+			@Override boolean accept(Mod111 mod) { return Mod111Araba2023Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Araba2023Declaration();}
+		}
+		,GIPUZKOA_2023 {
+			@Override boolean accept(Mod111 mod) { return Mod111Gipuzkoa2023Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Gipuzkoa2023Declaration();}
+		}
+		,NAVARRA_2023 {
+			@Override boolean accept(Mod111 mod) { return Mod111Navarra2023Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Navarra2023Declaration();}
+		}
+
+		,AEAT_2021 {
+			@Override boolean accept(Mod111 mod) { return Mod111AEAT2021Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111AEAT2021Declaration();}
+		}
+		,ARABA_2021 {
+			@Override boolean accept(Mod111 mod) { return Mod111Araba2021Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Araba2021Declaration();}
+		}
+		,BIZKAIA_111_2021 {
+			@Override boolean accept(Mod111 mod) { return Mod111Bizkaia2021Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Bizkaia2021Declaration();}
+		}
+		,BIZKAIA_110_2021 {
+			@Override boolean accept(Mod111 mod) { return Mod110Bizkaia2021Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod110Bizkaia2021Declaration();}
+		}
+		,GIPUZKOA_2021 {
+			@Override boolean accept(Mod111 mod) { return Mod111Gipuzkoa2021Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Gipuzkoa2021Declaration();}
+		}
+		,NAVARRA_2021 {
+			@Override boolean accept(Mod111 mod) { return Mod111Navarra2021Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Navarra2021Declaration();}
+		}
+		;
+		abstract boolean accept(Mod111 mod);
+		abstract Mod111Declaration get();
+	}
+
+	
+	public static Mod111Declaration getInstance( Mod111 mod) {
 		if (mod.getAdministration() == null) {
 			throw new AonCoreException("No se ha indicado administraci\u00F3n para la declaraci\u00F3n");
 		}
@@ -53,18 +111,15 @@ public abstract class Mod111Declaration {
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaraci\u00F3n");	
 		}
-		if (Mod111AEAT2021Declaration.accept(mod)) 		return new Mod111AEAT2021Declaration();
-		if (Mod111Araba2021Declaration.accept(mod)) 	return new Mod111Araba2021Declaration();
-		if (Mod111Bizkaia2021Declaration.accept(mod)) 	return new Mod111Bizkaia2021Declaration();
-		if (Mod110Bizkaia2021Declaration.accept(mod)) 	return new Mod110Bizkaia2021Declaration();
-		if (Mod111Gipuzkoa2021Declaration.accept(mod)) 	return new Mod111Gipuzkoa2021Declaration();
-		if (Mod111Navarra2021Declaration.accept(mod)) 	return new Mod111Navarra2021Declaration();
-		
-		throw new AonCoreException(MessageFormat.format(
-			"No existe una declaraci\u00F3n para el modelo solicitado ({0} - {1} - {2})",
-			mod.getAdministration().getDescription()
-			,mod.getYear()
-			,mod.getPeriod().getDescription()));
+		return Arrays.stream(Declarations.values())
+				.filter(dec -> dec.accept(mod))
+				.map(Declarations::get)
+				.findFirst()
+				.orElseThrow( () -> new AonCoreException(MessageFormat.format(
+					"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
+					mod.getAdministration().getDescription()
+					,mod.getYear()
+					,mod.getPeriod().getDescription())));
 	}
 
 	IMod111KeyDAO getKey(Mod111Key key) {
@@ -109,8 +164,7 @@ public abstract class Mod111Declaration {
 			Mod111 previous = Mod111DAO.getSamePeriodFiscalModels(ctx, mod111).findFirst().orElse(null);
 			if (previous != null) {
 				mod111.setComplementary( mod111.isComplementaryDeclarationAvailable() );
-				mod111.setReplacement( mod111.isReplacementDeclarationAvailable() 
-					&& !mod111.isComplementary() );
+				mod111.setReplacement( mod111.isReplacementDeclarationAvailable() && !mod111.isComplementary() );
 				mod111.setReplacedNumber(previous.getNumber());
 			} else {
 				mod111.setComplementary( false );
@@ -120,14 +174,13 @@ public abstract class Mod111Declaration {
 	}
 
 	void initializeKeys(AONContext ctx,Mod111 mod,Map<Mod111Key,Set<String>> docs,Map<Mod111Key,Set<String>> pdocs,IrpfBreakdown  br) {
-		for (IMod111KeyDAO key : getKeys()) {
-			if (key.acceptValue(mod,br)) {
-				key.initialize(ctx, mod, docs, pdocs, br); 
-			}
-		}
+		Arrays.stream(getKeys())
+			.filter(key -> key.acceptValue(mod,br))
+			.forEach(key -> key.initialize(ctx, mod, docs, pdocs, br));
 	}
 
 	void specificInitialization(Mod111 mod111) {
+		// Nothing
 	}
 
 	static void addPerceptor(Mod111Key key,Mod111 mod
@@ -216,8 +269,8 @@ public abstract class Mod111Declaration {
 		return br;	
 	}
 
-	KeyedIrpfBreakdown addInvoice( Set<Integer> invoices, KeyedIrpfBreakdown br) {
-		invoices.add(br.getIrpfBreakdown().getInvoice());
+	KeyedIrpfBreakdown addInvoice( Set<Alcatraz> invoices, KeyedIrpfBreakdown br) {
+		invoices.add(new Alcatraz().setInvoice(br.getIrpfBreakdown().getInvoice()));
 		return br;	
 	}
 	
@@ -229,10 +282,10 @@ public abstract class Mod111Declaration {
 					, Collectors.counting()));
 	}
 
-	Set<Integer> createFromInvoices(final AONContext ctx, final Mod111 mod111) {
+	Set<Alcatraz> createFromInvoices(final AONContext ctx, final Mod111 mod111) {
 		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
-		final Set<Integer> invoices = new HashSet<>();
+		final Set<Alcatraz> invoices = new HashSet<>();
 		Stream<IrpfBreakdown> stream = null;
 		if (mustApplyReplacementSearch(mod111)) {
 			stream =  IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111);
@@ -261,10 +314,15 @@ public abstract class Mod111Declaration {
 			|| (mod111.isComplementary() && getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}
   
+	protected String getSamePeriodExplain(AONContext ctx, Mod111 mod111, Mod111Key key) {
+		return DeclarationInfoUtil.getExplain( ctx, mod111, key, Mod111DAO.getSamePeriodEffectiveModels(ctx, mod111), new ExplainRowManager());	
+	}
+
 	abstract Mod111 initialize(AONContext ctx, Mod111 mod111);
 	abstract IMod111KeyDAO valueOf(String string);
 	abstract IMod111KeyDAO[] getKeys();
 	abstract double getResult(final Mod111 mod111);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod111 mod111);
+	public abstract Mod111Key[] getSamePeriodExplainKeys();
 	
 }

@@ -1,6 +1,6 @@
 package com.code.aon.faces.component.richfaces.dataScroller2;
 
-import javax.el.ValueExpression;
+import jakarta.el.ValueExpression;
 import javax.faces.component.UIData;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;

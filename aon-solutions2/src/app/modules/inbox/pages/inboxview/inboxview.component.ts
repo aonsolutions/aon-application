@@ -1,11 +1,22 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CollectionFactory, ICollection, FilterBuilder, IMessageChat, IMessage } from 'libraries/AonSDK/aon';
+import {
+  Factory,
+  CollectionFactory,
+  ICollection,
+  FilterBuilder,
+  IMessageChat,
+  IMessage,
+  IFilter,
+} from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
 import { ModalCreateComponent } from '../../components/inbox/modal-create/modal-create.component';
 import { TableQueriesComponent } from '../../components/inbox/table-queries/table-queries.component';
+import { DatePipe } from '@angular/common';
+import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 
 export interface Tabs {
   name: string;
@@ -19,20 +30,39 @@ export interface Tabs {
 })
 export class InboxviewComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
+  @ViewChild(TableQueriesComponent, { static: false })
   collectionFactory = new CollectionFactory();
+  entityFactory = new Factory();
+  datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
+
+  messagesData: IMessage = this.entityFactory.createMessage();
+  messagesChat: ICollection<IMessageChat> =
+    this.collectionFactory.createMessageChatCollection();
+
   functionHome: any = (result: any) => this.afterModalClosed(result);
   tabsConsultas: Tabs[] = [];
   tabsTareas: Tabs[] = [];
   tabsNotificaciones: Tabs[] = [];
   selectedTab: number = 0;
+  selectedFilterDate: number = 0;
   tabIndex: number = 0;
   showDetail: boolean = false;
   noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
-  messagesChat    : ICollection<IMessageChat> = this.collectionFactory.createMessageChatCollection();
-  id: number = 0;
-  @ViewChild(TableQueriesComponent, { static: false })
+  showSendButton: boolean = false;
+  filterDate: number = 1;
+  selectedFilterText: string = "Esta semana";
+  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
+
+  consultaMessageCount: number = 0;
+  tareasMessageCount: number = 0;
+  notificacionesMessageCount: number = 0;
+  totalMessageCount: number = 0;
   tableQueriesComponent!: TableQueriesComponent;
+  menuItem: MenuItem [] = []
+  selected: string    = '';
+  items: any [] = [];
+  data:  any [] = [];
 
   constructor(
     private translateService: TranslateService,
@@ -45,18 +75,27 @@ export class InboxviewComponent implements OnInit {
         'INBOX.ALL',
         'INBOX.PENDING',
         'INBOX.REALIZED',
-        'INBOX.ALL',
         'INBOX.OPENED',
         'INBOX.CLOSED',
-        'INBOX.ALL',
         'INBOX.NEWS',
         'INBOX.VIEWS',
+        'INBOX.THIS_WEEK',
+        'INBOX.THIS_MONTH',
+        'INBOX.ALLS',
       ])
       .subscribe((result) => {
         (this.tabsTareas = [
           { name: result['INBOX.ALL'], color: 'black' },
-          { name: result['INBOX.PENDING'], color: 'black', icon: 'remove_circle'},
-          { name: result['INBOX.REALIZED'], color: 'black', icon: 'check_circle'},
+          {
+            name: result['INBOX.PENDING'],
+            color: 'black',
+            icon: 'remove_circle',
+          },
+          {
+            name: result['INBOX.REALIZED'],
+            color: 'black',
+            icon: 'check_circle',
+          },
         ]),
           (this.tabsConsultas = [
             { name: result['INBOX.ALL'], color: 'black' },
@@ -65,13 +104,29 @@ export class InboxviewComponent implements OnInit {
           ]),
           (this.tabsNotificaciones = [
             { name: result['INBOX.ALL'], color: 'black' },
-            { name: result['INBOX.NEWS'], color: 'black', icon: 'notifications_active'},
-            { name: result['INBOX.VIEWS'], color: 'black', icon: 'remove_red_eye'},
-          ]);
+            {
+              name: result['INBOX.NEWS'],
+              color: 'black',
+              icon: 'notifications_active',
+            },
+            {
+              name: result['INBOX.VIEWS'],
+              color: 'black',
+              icon: 'remove_red_eye',
+            },
+          ]),
+          (this.menuItem! = [
+            { root: true, text: result["INBOX.THIS_WEEK"], click:() =>this.filterTable(1, result["INBOX.THIS_WEEK"]) },
+            {root: true, text: result["INBOX.THIS_MONTH"],click:() =>this.filterTable(2, result["INBOX.THIS_MONTHTHIS_MONTH"])},
+            {root: true, text: result["INBOX.ALLS"], click:() =>this.filterTable(0, result["INBOX.ALLS"])},
+          ])
+
+          this.calculateMessageCounts();
       });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   showNoTasksMessage(hasNoTasks: boolean) {
     this.noTasksMessage = hasNoTasks;
@@ -83,18 +138,89 @@ export class InboxviewComponent implements OnInit {
 
   showModal() {
     this.isModalVisible = true;
-    this.modalComponent.openDialog(ModalCreateComponent, this.functionHome, 'Data from home');
+    this.modalComponent.openDialog(
+      ModalCreateComponent,
+      this.functionHome,
+      'Data from home'
+    );
   }
 
-  rowClickHandler(message: any) {
-    let filterBuilder = new FilterBuilder();
-    filterBuilder.addField('idMessage', message.key);
+  onTabChange() {
+    this.showDetail = false;
+    this.showSendButton = false;
+    this.tabIndex = 0;
+  }
 
-    this.messageChatService
-      .getMessageChatList(filterBuilder.getFilter())
-      .then((response) => {
-        this.messagesChat = response;
-    })
-    this.showDetail = true;
+  async rowClickHandler(message: any) {
+    console.log(message);
+    try {
+      const isSameRow   = this.messagesData && this.messagesData.Id === message.key;
+      this.showDetail   = !isSameRow ? true : !this.showDetail;
+      this.messagesData = await this.messageService.getMessage(message.key);
+
+      if (message.type == 'consulta') {
+        let filterBuilder = new FilterBuilder();
+        filterBuilder.addField('idMessage', message.key);
+        this.messagesChat = await this.messageChatService.getMessageChatList(
+          filterBuilder.getFilter()
+        );
+      }
+    } catch (error) {
+      console.error('Error al cargar el chat del mensaje:', error);
+    }
+  }
+
+  consultarClicked() {
+    this.showSendButton = !this.showSendButton;
+  }
+
+  filterTable(optionValue: number, name: string) {
+    this.filterDate = optionValue;
+    this.selected = name
+    switch (optionValue) {
+      case 1:
+        this.selectedFilterText = "Esta semana";
+        break;
+      case 2:
+        this.selectedFilterText = "Este mes";
+        break;
+      case 0:
+        this.selectedFilterText = "Todo";
+        break;
+      default:
+        this.selectedFilterText = "Esta semana";
+        break;
+    }
+  }
+  async calculateMessageCounts() {
+    try {
+      // Calcula el recuento para "consulta"
+      let filterBuilder = new FilterBuilder();
+      filterBuilder.addField('type', 'consulta');
+      this.consultaMessageCount = await this.messageService.getMessageCount(
+        filterBuilder.getFilter()
+      );
+
+      // Calcula el recuento para "tareas"
+      filterBuilder = new FilterBuilder();
+      filterBuilder.addField('type', 'tarea');
+      this.tareasMessageCount = await this.messageService.getMessageCount(
+        filterBuilder.getFilter()
+      );
+
+      // Calcula el recuento para "notificaciones"
+      filterBuilder = new FilterBuilder();
+      filterBuilder.addField('type', 'notificacion');
+      this.notificacionesMessageCount =
+        await this.messageService.getMessageCount(filterBuilder.getFilter());
+
+      // Calcula el recuento total
+      this.totalMessageCount =
+        this.consultaMessageCount +
+        this.tareasMessageCount +
+        this.notificacionesMessageCount;
+    } catch (error) {
+      console.error('Error al calcular el recuento de mensajes:', error);
+    }
   }
 }

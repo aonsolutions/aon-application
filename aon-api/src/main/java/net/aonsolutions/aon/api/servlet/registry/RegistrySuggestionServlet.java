@@ -2,9 +2,9 @@ package net.aonsolutions.aon.api.servlet.registry;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -90,7 +90,7 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 		if(!AonStringUtils.isBlank(document)) {
 			filter = filter.and(f.getDocumentProperty().like("%" + document + "%"));
 		} else if(!AonStringUtils.isBlank(name)) {
-			filter = filter.and(f.getNameProperty().like("%" + name + "%"));
+			filter = filter.and(f.getNameProperty().match(toBooleanMode(name)));
 		}
 		return filter;
 	}
@@ -98,5 +98,15 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 	
 	private JSONObject registryToJSON(Registry reg, Boolean global) {
 		return RegistryJSON.toJSON(reg).put("global", global);
+	}
+
+	private static String toBooleanMode(String str) {
+	    StringBuilder buffer = new StringBuilder();
+	    for ( String word : str.split("\\W+") ) {
+		buffer.append("+");
+		buffer.append(word);
+	    }
+	    buffer.append("*");
+	    return buffer.toString();
 	}
 }

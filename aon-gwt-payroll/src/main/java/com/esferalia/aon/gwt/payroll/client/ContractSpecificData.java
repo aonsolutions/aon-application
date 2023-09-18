@@ -430,6 +430,8 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		this.isTransform = null == contractTypeRecord ? false : contractTypeRecord.isTransform();
 		this.isExtension = contractEmployeeInfo.getContractInfo().isHasExtension();
 		
+		resetView();
+		
 		setDefaultView(contractEmployeeInfo.getContractInfo().getContractType());
 		reloadSepeData(finish);
 	}
@@ -1726,7 +1728,13 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			case "403":
 				set403View();
 				break;
+			case "407":
+				set402View();
+				break;
 			case "410":
+				set410View();
+				break;
+			case "418":
 				set410View();
 				break;
 			case "420":
@@ -1756,7 +1764,13 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			case "503":
 				set503View();
 				break;
+			case "507":
+				set502View();
+				break;
 			case "510":
+				set510View();
+				break;
+			case "518":
 				set510View();
 				break;
 			case "520":
@@ -1813,6 +1827,34 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			journeyTypeLB.addItem("JORNADA DIARIA","D");
 		}
 	}
+	
+	private void resetView() {
+		otherDataTableElement.getRows().getItem(1).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(2).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(3).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(4).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(5).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(6).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(7).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(8).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(9).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(10).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(11).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(12).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(13).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(14).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(15).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(16).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(17).getStyle().clearDisplay();
+		otherDataTableElement.getRows().getItem(18).getStyle().clearDisplay();
+		
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
 
 	private void setDefaultView() {
 		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
@@ -1854,8 +1896,8 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
-		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	private void set150View() {
@@ -1876,6 +1918,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	private void set200View() {
@@ -1909,6 +1952,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	private void set300View() {
@@ -1947,7 +1991,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
-		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	private void set401View() {
@@ -2065,7 +2109,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
-		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	private void set441View() {
@@ -2109,6 +2153,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCB.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	private void set452View() {
@@ -2132,6 +2177,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	private void set501View() {
@@ -2198,6 +2244,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().clearDisplay();
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2240,7 +2287,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
-		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	private void set540View() {
@@ -2307,6 +2354,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	private void set552View() {
@@ -2334,6 +2382,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	private void set970and990View() {
@@ -2407,6 +2456,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		if(Boolean.TRUE.equals(isTransform) || AonStringUtils.isNotBlank(contractSpecificData.getTransformIde())) {
 			ideTransformTB.setValue(this.contractSpecificData.getTransformIde());
 			comunicationTransformDateBx.setValue(this.contractSpecificData.getComunicationTransformDate());
+			comunicationTransformDateBx.addValueChangeHandler(e -> this.contractSpecificData.setComunicationTransformDate(e.getValue()));
 		}
 		
 		if(Boolean.TRUE.equals(isExtension) || !contractSpecificData.getExtensions().isEmpty()) {

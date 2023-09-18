@@ -1,0 +1,342 @@
+<app-grid-layout>
+  <!--SIDENAV-->
+  <div nav>
+    <!--List -->
+    <div class="header-submenu" (click)="selectedMenu = 1; selectedTab = 1">
+      <div class="line blue"></div>
+      <div class="text">
+        {{ "BILLING.BILLING" | translate }}
+      </div>
+    </div>
+    <div [class]="selectedMenu === 1 ? 'activated' : 'no-activated'">
+      <app-button
+        [width]="'100%'"
+        [class]="selectedTab === 1 ? 'blue left' : 'left'"
+        (click)="selectedTab = 1"
+      >
+        <app-icon class="blue" shape="trending_up"></app-icon>
+        &nbsp;&nbsp; {{ "BILLING.SALES" | translate }}
+      </app-button>
+      <app-button
+        [width]="'100%'"
+        [class]="selectedTab === 2 ? 'blue left' : 'left'"
+        (click)="selectedTab = 2"
+      >
+        <app-icon class="blue" shape="trending_down"></app-icon>
+        &nbsp;&nbsp; {{ "BILLING.BILLS" | translate }}
+      </app-button>
+      <app-button
+        [width]="'100%'"
+        [class]="selectedTab === 3 ? 'blue left' : 'left'"
+        (click)="selectedTab = 3"
+      >
+        <app-icon class="blue" shape="assignment"></app-icon>
+        &nbsp;&nbsp; {{ "BILLING.REPORTS" | translate }}
+      </app-button>
+    </div>
+    <div class="header-submenu" (click)="selectedMenu = 2; selectedTab = 4">
+      <div class="line blue"></div>
+      <div class="text">{{ "BILLING.TREASURY" | translate }}</div>
+    </div>
+    <div [class]="selectedMenu === 2 ? 'activated' : 'no-activated'">
+      <app-button
+        [width]="'100%'"
+        [class]="selectedTab === 4 ? 'blue left' : 'left'"
+        (click)="selectedTab = 4"
+      >
+        <app-icon class="blue" shape="account_balance"></app-icon>
+        &nbsp;&nbsp; {{ "BILLING.BANKS" | translate }}
+      </app-button>
+    </div>
+    <!--FIN List -->
+  </div>
+  <!--FIN SIDENAV-->
+
+  <!--CONTENIDO-->
+  <div content class="padding">
+    <!-- VENTAS -->
+    <ng-container *ngIf="selectedTab == 1">
+      <div class="menu">
+        <div class="margin width-40">
+          <app-input
+            [appearance]="'outline'"
+            [class]="'search'"
+            [type]="'search'"
+            [placeholder]="'INBOX.TEXT' | translate"
+          ></app-input>
+        </div>
+        <div class="buttons">
+          <app-button *ngFor="let button of buttonsVentas" class="icon-border">
+            <app-icon [shape]="button.shape"></app-icon>
+          </app-button>
+        </div>
+      </div>
+      <hr />
+      <div class="datas">
+        <p>{{ "BILLING.SALES_CHECK" | translate }}</p>
+        <app-button class="blue">
+          <app-icon shape="add"></app-icon>
+          &nbsp;&nbsp; {{ "BILLING.CREATE_SALES_INVOICE" | translate }}
+        </app-button>
+      </div>
+      <div class="lineBottomP"></div>
+      <div class="lineBottom"></div>
+      <div id="upload">
+        <app-file-upload-button>
+          {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
+          <app-icon shape="cloud_upload" class="margin-left"></app-icon>
+        </app-file-upload-button>
+      </div>
+      <app-sales-table></app-sales-table>
+    </ng-container>
+    <!-- FIN VENTAS -->
+
+    <!-- GASTOS -->
+    <ng-container *ngIf="selectedTab == 2">
+      <div class="menu">
+        <div class="margin width-40">
+          <app-input
+            [appearance]="'outline'"
+            [class]="'search'"
+            [type]="'search'"
+            [placeholder]="'INBOX.TEXT' | translate"
+          ></app-input>
+        </div>
+        <div class="buttons">
+          <app-button *ngFor="let button of buttonsGastos" class="icon-border">
+            <app-icon [shape]="button.shape"></app-icon>
+          </app-button>
+        </div>
+      </div>
+      <hr />
+      <div class="datas">
+        <p>{{ "BILLING.SALES_CHECK" | translate }}</p>
+        <app-button class="blue">
+          <app-icon shape="add"></app-icon>
+          &nbsp;&nbsp; {{ "BILLING.CREATE_SALES_INVOICE" | translate }}
+        </app-button>
+      </div>
+      <div class="lineBottomP"></div>
+      <div class="lineBottom"></div>
+      <div id="upload">
+        <app-file-upload-button>
+          {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
+          <app-icon shape="cloud_upload" class="margin-left"></app-icon>
+        </app-file-upload-button>
+      </div>
+      <app-bills-table></app-bills-table>
+    </ng-container>
+    <!-- FIN GASTOS -->
+
+    <!-- INFORMES -->
+    <ng-container *ngIf="selectedTab == 3">
+      <p class="text">Resultados 2023</p>
+      <div id="charts">
+        <div class="chart" *ngFor="let chartItem of chartItems">
+          <app-chart-dashboard
+            [name]="chartItem.name"
+            [typeDate]="chartItem.typeDate"
+          ></app-chart-dashboard>
+        </div>
+      </div>
+    </ng-container>
+    <!-- FIN INFORMES -->
+
+    <!-- BANCOS -->
+    <ng-container *ngIf="selectedTab == 4">
+      <div class="banks">
+        <div class="add-bank" *ngIf="!addBank" (click)="addBank = true">
+          <app-icon class="blue icono" shape="account_balance"></app-icon>
+          <p class="title">{{ "BILLING.ADD_BANK" | translate }}</p>
+          <p>
+            Conecta AON con tus bancos para tener un control de tus movimientos
+          </p>
+        </div>
+        <div class="add-bank-true" *ngIf="addBank">
+          <app-icon
+            class="blue button"
+            shape="add"
+            (click)="addBank = false"
+          ></app-icon>
+          <div class="form">
+            <app-input
+              [appearance]="'outline'"
+              [label]="'IBAN'"
+              [class]="'text'"
+              [type]="'text'"
+              [placeholder]="'BILLING.IBAN_PLACEHOLDER' | translate"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'BILLING.DESCRIPTION' | translate"
+              [class]="'text'"
+              [type]="'text'"
+              [placeholder]="'BILLING.DESCRIPTION_PLACEHOLDER' | translate"
+            ></app-input>
+            <app-input
+              [appearance]="'outline'"
+              [label]="'BIC SWIFT'"
+              [class]="'text'"
+              [type]="'text'"
+              [placeholder]="'BILLING.SWIFT_PLACEHOLDER' | translate"
+            ></app-input>
+          </div>
+        </div>
+        <div *ngFor="let bank of banks">
+          <div
+            class="bank"
+            *ngIf="!editBank[bank.id]"
+            (click)="selectedTab = 8"
+          >
+            <div class="buttons">
+              <app-icon
+                *ngIf="bank.sync === 'sync'"
+                class="griss"
+                shape="autorenew"
+              ></app-icon>
+              <app-icon
+                *ngIf="bank.sync === 'syncProblem'"
+                class="griss"
+                shape="sync_problem"
+              ></app-icon>
+              <app-icon
+                *ngIf="bank.sync === 'syncLost'"
+                class="griss"
+                shape="sync_disabled"
+              ></app-icon>
+              <app-icon
+                class="griss"
+                shape="edit"
+                (click)="editar(bank.id)"
+              ></app-icon>
+            </div>
+            <app-icon class="blue" shape="account_balance"></app-icon>
+            <p class="name-bank">{{ bank.name }}</p>
+            <div class="money">
+              <p class="balance">{{ "BILLING.BALANCE" | translate }}</p>
+              <p>{{ bank.balance }} €</p>
+            </div>
+            <div class="iban">
+              <p>{{ bank.iban }}</p>
+            </div>
+            <div class="footer">
+              <p>{{ "BILLING.LAST_UPDATE" | translate }}</p>
+              <p>{{ bank.date }}</p>
+            </div>
+          </div>
+          <div class="bank" *ngIf="editBank[bank.id]">
+            <div class="buttons">
+              <app-icon
+                *ngIf="bank.sync === 'sync'"
+                class="griss"
+                shape="autorenew"
+              ></app-icon>
+              <app-icon
+                *ngIf="bank.sync === 'syncProblem'"
+                class="griss"
+                shape="sync_problem"
+              ></app-icon>
+              <app-icon
+                *ngIf="bank.sync === 'syncLost'"
+                class="griss"
+                shape="sync_disabled"
+              ></app-icon>
+              <app-icon
+                class="griss"
+                shape="done"
+                (click)="guardar(bank.id)"
+              ></app-icon>
+            </div>
+            <div class="form">
+              <app-input
+                [appearance]="'outline'"
+                [label]="'IBAN'"
+                [class]="'text'"
+                [type]="'text'"
+                [value]="bank.iban"
+                [placeholder]="'BILLING.IBAN_PLACEHOLDER' | translate"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'BILLING.DESCRIPTION' | translate"
+                [class]="'text'"
+                [type]="'text'"
+                [value]="bank.name"
+                [placeholder]="'BILLING.DESCRIPTION_PLACEHOLDER' | translate"
+              ></app-input>
+              <app-input
+                [appearance]="'outline'"
+                [label]="'BIC SWIFT'"
+                [class]="'text'"
+                [type]="'text'"
+                [value]="bank.swift"
+                [placeholder]="'BILLING.SWIFT_PLACEHOLDER' | translate"
+              ></app-input>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- FIN BANCOS -->
+
+    <!-- CREAR FACTURA -->
+    <ng-container *ngIf="selectedTab == 5">
+      <h1>5</h1>
+    </ng-container>
+    <!-- FIN CREAR FACTURA -->
+
+    <!-- VER FACTURA -->
+    <ng-container *ngIf="selectedTab == 6">
+      <h1>6</h1>
+    </ng-container>
+    <!-- FIN VER FACTURA -->
+
+    <!-- EDITAR FACTURA -->
+    <ng-container *ngIf="selectedTab == 7">
+      <h1>7</h1>
+    </ng-container>
+    <!-- FIN EDITAR FACTURA -->
+
+    <!-- VER BANCO -->
+    <ng-container *ngIf="selectedTab == 8">
+      <div class="view-bank">
+        <div class="header">
+          <div class="left">
+            <app-icon class="griss button" shape="arrow_back"></app-icon>
+            <p class="title">Caixabank</p>
+          </div>
+          <div class="right">
+            <p class="griss">Ult. actualización 12/12/2020</p>
+            <app-button class="button">
+              <app-icon class="blue" shape="sync_disabled"></app-icon>
+              &nbsp;&nbsp; Desconectar banco
+            </app-button>
+          </div>
+        </div>
+        <hr />
+        <div class="filter-container">
+          <div class="searchbar">
+            <app-input
+              [appearance]="'outline'"
+              [class]="'search'"
+              [type]="'search'"
+              [placeholder]="'INBOX.TEXT' | translate"
+            ></app-input>
+          </div>
+          <app-input
+            [appearance]="'outline'"
+            [class]="'date'"
+            [type]="'date'"
+            [placeholder]="'INBOX.TEXT' | translate"
+          ></app-input>
+        </div>
+        <hr />
+        <app-bank-table></app-bank-table>
+      </div>
+    </ng-container>
+    <!-- FIN VER BANCO -->
+  </div>
+  <!--FIN CONTENIDO-->
+
+  <div content class="padding"></div>
+</app-grid-layout>

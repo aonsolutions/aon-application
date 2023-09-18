@@ -1,0 +1,13 @@
+@import "src/styles.scss";
+
+.modal-validated {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title-modal-validated {
+  padding:0 $padding 0 $padding;
+  font-size:   $font-size-default;
+}

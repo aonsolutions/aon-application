@@ -1,0 +1,141 @@
+package com.esferalia.aon.gwt.fiscal.client;
+
+import java.util.List;
+
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
+import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
+import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
+import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommunicationServiceAsync {
+
+	private InvoiceCommunicationServiceAsync ssa;
+
+	public InvoiceCommunicationServiceAsyncDecorator(InvoiceCommunicationServiceAsync siiServiceAsync) {
+		this.ssa = siiServiceAsync;
+	}
+	
+	// --------------------------------------------------------------- FINANCE
+	@Override
+	public void getSiiConfiguration(String domainName, int domainId, String user, AsyncCallback<SiiConfiguration> callback) {
+		AON.start();
+		ssa.getSiiConfiguration(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getInvestAssets(String domainName, int domainId, String user, AsyncCallback<List<InvestAsset>> callback) {
+		AON.start();
+		ssa.getInvestAssets(domainName, domainId, user, callback);
+	}
+	
+	@Override
+	public void assignInvestAsset2Invoice(String domainName, int domainId, String user, String investAsset, Invoice invoice, AsyncCallback<Void> callback) {
+		AON.start();
+		ssa.assignInvestAsset2Invoice(domainName, domainId, user, investAsset, invoice, callback);
+	}
+	
+	@Override
+	public void addDocumentInvoice(String domainName, int domainId, String user, Invoice invoice, AsyncCallback<Void> callback) {
+		AON.start();
+		ssa.addDocumentInvoice(domainName, domainId, user, invoice, callback);
+	}
+	
+	@Override
+	public void getInvoices(String domainName, int domainId, String user, InvoiceParams params, AsyncCallback<List<Invoice>> callback) {
+		AON.start();
+		ssa.getInvoices(domainName, domainId, user, params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void altaLroe140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
+			Invoice invoice, AEATParams aeatParams, AsyncCallback<ICResponse> callback) {
+		AON.start();
+		ssa.altaLroe140(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
+		
+	}
+
+	@Override
+	public void bajaLroe140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
+			Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+		AON.start();
+		ssa.bajaLroe140(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
+	}
+	
+	@Override
+	public void altaLroe240(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
+			Invoice invoice, AEATParams aeatParams, AsyncCallback<ICResponse> callback) {
+		AON.start();
+		ssa.altaLroe240(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
+		
+	}
+
+	@Override
+	public void bajaLroe240(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
+			Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+		AON.start();
+		ssa.bajaLroe240(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
+	}
+	
+	@Override
+	public void altaSii(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
+			Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+		AON.start();
+		ssa.altaSii(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
+		
+	}
+
+	@Override
+	public void bajaSii(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
+			Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+		AON.start();
+		ssa.bajaSii(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
+	}
+	
+	@Override
+	public void refresh140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback) {
+		AON.start();
+		ssa.refresh140(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
+	}
+	
+	@Override
+	public void refresh240(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback) {
+		AON.start();
+		ssa.refresh240(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
+	}
+	
+	@Override
+	public void cancel(String domainName, int domainId, String user, InvoiceCommunicationType type, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+		AON.start();
+		ssa.cancel(domainName, domainId, user, type, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
+	}
+	
+	
+	@Override
+	public void getInvoiceTrackingList(String domainName, int domainId, String login, Integer invoice, AsyncCallback<List<InvoiceTracking>> callback) {
+		AON.start();
+		ssa.getInvoiceTrackingList(domainName, domainId, login, invoice, new AsyncCallbackWrapper<>(callback));	
+	}
+	
+	@Override
+	public void getRequestUrl(String domainName, int domainId, String login, Integer dataResponse, AsyncCallback<String> callback) {
+		AON.start();
+		ssa.getRequestUrl(domainName, domainId, login, dataResponse, new AsyncCallbackWrapper<>(callback));	
+	}
+	
+	@Override
+	public void getResponseUrl(String domainName, int domainId, String login, Integer dataResponse, AsyncCallback<String> callback) {
+		AON.start();
+		ssa.getResponseUrl(domainName, domainId, login, dataResponse, new AsyncCallbackWrapper<>(callback));	
+	}
+
+	
+	
+}

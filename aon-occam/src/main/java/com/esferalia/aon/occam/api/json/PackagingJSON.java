@@ -1,5 +1,9 @@
 package com.esferalia.aon.occam.api.json;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -11,6 +15,14 @@ public class PackagingJSON {
 	
 	}
 
+	public static List<Packaging> fromJSON(JSONArray array) {
+		LinkedList<Packaging> list = new LinkedList<>();
+		for(Integer i = 0; i < array.length(); i++) {
+			list.add(fromJSON(array.getJSONObject(i)));
+		}
+ 		return list;
+	}
+	
 	public static Packaging fromJSON(JSONObject json) {
 		return new Packaging()
 			.setBase(ItemJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.BASE)))

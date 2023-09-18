@@ -34,6 +34,7 @@ public class Model349NewDeclarationPopup extends DockLayoutPanel {
 	private AonTextBox replacedReceiptBox = new AonTextBox();
 	private CheckBox diffCalculation = new CheckBox();
 	private AonToolbar toolbar;
+	private CheckBox manualDeclaration = new CheckBox();
 	
 	protected Model349NewDeclarationPopup(final Mod349 model, final Model349Callback callback) {
 		super( Unit.PX );
@@ -85,6 +86,7 @@ public class Model349NewDeclarationPopup extends DockLayoutPanel {
 		paintReplacement(model,callback,tab);
 		paintReplacedReceipt(model,tab);
 		paintDiffCalculation(model,tab);
+		paintManualDeclaration(model,tab);
 		rootPanel.add(getButtonsPanel(model,callback));
 	}
 
@@ -168,6 +170,13 @@ public class Model349NewDeclarationPopup extends DockLayoutPanel {
 		diffCalculation.setValue(model.isDiffEnabled());
 		diffCalculation.addClickHandler(event -> model.setDiffEnabled(diffCalculation.getValue()));
 		tab.addLabelWidgetRow("", diffCalculation);
+	}
+	
+	private void paintManualDeclaration(Mod349 model, AonDisplayTable tab) {
+		manualDeclaration.setText(AON.MSG.manualDeclaration());
+		manualDeclaration.setValue(model.isManualDeclaration());
+		manualDeclaration.addClickHandler(event -> model.setManualDeclaration(manualDeclaration.getValue()));
+		tab.addLabelWidgetRow("", manualDeclaration);
 	}
 
 	private Widget getButtonsPanel(Mod349 model, Model349Callback callback) {

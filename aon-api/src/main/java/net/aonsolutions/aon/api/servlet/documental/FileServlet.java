@@ -7,9 +7,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -31,7 +31,9 @@ import net.aonsolutions.aon.google.apis.drive.AonDrive;
 import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "AonApiFileServlet", urlPatterns = { "/ms/api/file/*" })
+@WebServlet(name = "AonApiFileServlet", urlPatterns = { "/ms/api/file/*",
+														"/aon_gwt_aio/ms/api/file/*",
+														"/aon_gwt_fiscal/ms/api/file/*"})
 public class FileServlet extends AonApiHttpServlet{
 	
 	private static final Logger LOGGER  = Logger.getLogger(FileServlet.class.getName());

@@ -167,12 +167,15 @@ class NoLowLevelAccountFinder extends OptionBase {
 		@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {}
 		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {}
 		@Override public void visitAccountChange(AccUtilitiesItemType type) {}
+		@Override public void visitOutOfDateEntry(AccUtilitiesItemType type) {}
+		
 		@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();
 			InlineLabel msgLabel = new InlineLabel(item.getMessage());
 			itemPanel.add(msgLabel);
 			domainPanel.add(itemPanel);
 		}
+
 	}
 	
 }

@@ -318,8 +318,11 @@ public class PeriodEntriesManager {
 		validateParameters(AccountEntryType.CLOSING);
 		AccountingUtil util = new AccountingUtil();
 		if (!util.existsEntry(params.getPeriod(), AccountEntryType.OPERATING, SecurityLevel.OFFICIAL)) {
-			String msg = "No existe el asiento de explotación en el ejercicio " + params.getPeriod().getName() + ".";
-			throw new ManagerBeanException(msg);
+			List<?> list = getUnbalancedAccounts(params.getPeriod(), AccountEntryType.OPERATING,SecurityLevel.OFFICIAL);
+			if (list != null && !list.isEmpty()) {
+				String msg = "No existe el asiento de explotación en el ejercicio " + params.getPeriod().getName() + ".";
+				throw new ManagerBeanException(msg);
+			}
 		}
 	}
 

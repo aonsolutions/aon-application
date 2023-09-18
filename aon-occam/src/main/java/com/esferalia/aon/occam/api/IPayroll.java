@@ -48,6 +48,7 @@ public interface IPayroll {
 	
 	public Stream<ContractData> getContractDataStream(AONContext ctx, ContractDataFilter filter);
 	public LinkedList<ContractData> saveContractData(AONContext ctx, ContractData ...contractData);
+	public void saveContractDatas(AONContext ctx, List<ContractData> contractData);
 
 	// -------------------- IRPF DATA
 

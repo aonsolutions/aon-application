@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -198,6 +199,11 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		public void onContractRLCEChange(String rlce) {
 			contrataEmployeeObject.setContractRlce(rlce);
 		}
+
+		@Override
+		public void onEmployeeCnoSuggestionChange(String cno) {
+			contrataEmployeeObject.setContractCno(cno);
+		}
 		
 		@Override
 		public void onContractEmployeesColectiveChange(String employeesColective) {
@@ -293,9 +299,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		}
 
 		@Override
-		public void onEmployeeAddressProvinceChange(String addressProvinceCode) {
-			contrataEmployeeObject.setEmployeeAddressProvince(addressProvinceCode);
-			contrataEmployeeObject.setEmployeeAddressCity("-1");
+		public void onEmployeeAddressProvinceChange(Integer geozoneId) {
+			contrataEmployeeObject.setEmployeeAddressProvince(geozoneId);
+			contrataEmployeeObject.setEmployeeAddressCity(null);
 		}
 		
 		@Override
@@ -339,6 +345,12 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		public void fireError(String title, String message) {
 			showError2(title, message);
 		}
+
+		@Override
+		public void onUploadDni() {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	// ------------------------------------------------- UiFields
@@ -359,13 +371,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected ContractEmployeeUI() {
 		employee = new EmployeeImplementation();
 		initWidget(uiBinder.createAndBindUi(this));
-		setDefaultEmployeeView();
-	}
-
-	// ------------------------------------------------- Init preView
-
-	private void setDefaultEmployeeView() {
-		employee.hideClearEmployee();
 	}
 	
 	// ------------------------------------------------- setContrataEmployeeObject
@@ -494,7 +499,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.addressInfo.setValue(employeeData.getAddressInfo());
 		employee.addressZip.setValue(employeeData.getAddressZip());
 		
-		setSelectedValueLB(employee.addressProvince, employeeData.getAddressProvinces());
+		employee.selectProvince(employeeData.getAddressProvinces());
 		employee.updateMunicipalities();
 		setSelectedValueLB(employee.addressMunicipality, employeeData.getAddressCity());
 
@@ -515,15 +520,17 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		if (null != contractData.getSsRegimen() && contractData.getSsRegimen() == 3) { 
 			employee.showElementsFreelancerTable();
 			fillContractFreelancerTable(contractData);
+			hideAfiOption();
 			showHideContractOtherData(-1);
 		} else {
 			employee.hideElementsFreelancerTable();
 			fillContractTable(contractData);
+			showAfiOption();
 			if(AonStringUtils.isNotBlank(contractData.getContractType()))
 				showHideContractOtherData(Integer.parseInt(contractData.getContractType()));
 		}
 	}
-	
+
 	private void fillContractFreelancerTable(ContractInfo contractData) {
 		// RETA
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
@@ -638,6 +645,10 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.getEnableDisableButton(employee.quoteGroupCotizB, contractData.getQuoteGroupIdxMonth());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
+		
+		CNO cno = employee.getCNOByCode(contractData.getCno());
+		if(cno != null) employee.cnoSB.setValue(cno.getCode() + " - " + cno.getTitle());
+		if(!employee.isCnoSelected()) showWarningMessage("CNO", "El CNO es obligatorio para todas las altas a partir del 01/01/2023");
 	}
 	
 	private static boolean isCompleteJourneyContract(String contractTypeCodeStr) {
@@ -763,5 +774,8 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract AonMinimizePanel getFootPanel();
 	protected abstract MonthListBox getIDCMonthListBox();
 	protected abstract void showErrorMessage(String title, String message);
+	protected abstract void showWarningMessage(String title, String message);
+	protected abstract void showAfiOption();
+	protected abstract void hideAfiOption();
 	
 }

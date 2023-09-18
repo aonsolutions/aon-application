@@ -33,7 +33,7 @@ public class Mod130WriterAEAT2016 implements IMod130Writer{
 		   
 		   ,(wr, mod) -> wr.append("<T13001000>")
 		   ,(wr, mod) -> wr.append(" ")
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationType().getValue(), 1))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationResultType().getValue(), 1))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isEntity()?mod.getName():mod.getSurname(),60))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isEntity()?" ":mod.getName(),20))

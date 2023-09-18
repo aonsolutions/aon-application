@@ -94,12 +94,6 @@ public class Mod111ServiceAsyncDecorator implements Mod111ServiceAsync {
 	}
 
 	@Override
-	public void reset(Occam occam, Mod111 mod111, AsyncCallback<Mod111> callback) {
-		AON.start();
-		fsa.reset(occam, mod111,new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
 	public void delete(Occam occam, Mod111 mod111, AsyncCallback<Void> callback) {
 		AON.start();
 		fsa.delete(occam, mod111, new AsyncCallbackWrapper<>(callback));

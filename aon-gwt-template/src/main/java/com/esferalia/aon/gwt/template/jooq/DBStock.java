@@ -34,6 +34,7 @@ import org.jooq.InsertValuesStep4;
 import org.jooq.InsertValuesStep5;
 import org.jooq.Record1;
 import org.jooq.Record16;
+import org.jooq.Record18;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record5;
@@ -1013,7 +1014,10 @@ public class DBStock {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
-			Result<Record16<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp>> data = ctx.getDslContext().select( PROPOSAL.WORKPLACE, PROPOSAL.DEPARTMENT, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE)
+			Result<Record18<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp, String, String>> data = ctx.getDslContext()
+					.select( PROPOSAL.WORKPLACE, PROPOSAL.DEPARTMENT, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  
+							PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER,
+							PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE, PRODUCT.CODE, PRODUCT.NAME)
 								.from(PROPOSAL_DETAIL).join(PROPOSAL).on(PROPOSAL.ID.eq(PROPOSAL_DETAIL.PROPOSAL))
 								.join(ITEM).on(PROPOSAL_DETAIL.ITEM.eq(ITEM.ID)).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PROPOSAL_DETAIL.PROPOSAL.eq(proposalId))
@@ -1024,14 +1028,12 @@ public class DBStock {
 			
 			LinkedList<StockInfo> v = new LinkedList<StockInfo>();
 			
-			for(Record16<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> r : data){
+			for(Record18<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp, String, String> r : data){
 				StockInfo si  = new StockInfo();
 				Workplace wp = DBCatalogue.getWorkplace(domain, new User().setLogin(login), r.value1());
 				Department d = DBCatalogue.getDepartment(domain, wp, r.value2(), login);
 				Record5<Integer, String, String, String, String> rd = ctx.getDslContext().select(ITEM.PRODUCT,ITEM.DETAIL,ITEM.DETAIL2, ITEM.DETAIL3, ITEM.SERIAL_NUMBER).from(ITEM).where(ITEM.ID.eq(r.value6())).fetchOne();
 				Integer productId = rd.getValue(ITEM.PRODUCT);
-				com.esferalia.aon.occam.api.model.product.OldProduct p = AON.getProduct(domain.getName(), domain.getId(), login,
-						f -> f.getIdProperty().eq(productId));
 				si.setDepartmentStr(d.getName());
 				si.setWorkplaceStr(wp.getDescription());
 				si.setDomainId(domain.getId());
@@ -1041,8 +1043,8 @@ public class DBStock {
 						.setDetail3(rd.getValue(ITEM.DETAIL3))
 						.setSerialNumber(rd.getValue(ITEM.SERIAL_NUMBER)));
 				si.setQuantity(r.value8());
-				si.setProductName(p.getName());
-				si.setProduct(p.getCode());
+				si.setProductName(r.getValue(PRODUCT.NAME));
+				si.setProduct(r.getValue(PRODUCT.CODE));
 				v.add(si);
 			}
 			return v;

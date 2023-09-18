@@ -1,21 +1,20 @@
 @import "src/styles.scss";
 
 ::ng-deep{
-  
+
   #upload,
   #list-Dashboard,
   #charts,
   #inbox,
-  #buttons-dashboard,
-  {
+  #buttons-dashboard {
     padding-left    : $padding-left;
     padding-right   : $padding-right;
     padding-bottom  : $padding-bottom;
-  }  
+  }
   #charts{
     padding-bottom  : 0;
   }
-  
+
   #list-Dashboard,
   #charts,
   #buttons-dashboard{
@@ -23,13 +22,13 @@
     flex-wrap       : wrap;
     gap             : 1rem;
   }
-  
+
   #list-Dashboard app-button .appButton{
     margin: 0;
   }
 
   #charts .chart .card{
-    
+
   }
 
 }

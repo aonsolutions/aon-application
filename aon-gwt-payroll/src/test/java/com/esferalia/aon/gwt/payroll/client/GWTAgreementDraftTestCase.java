@@ -15,10 +15,12 @@ import java.util.Set;
 import org.junit.Before;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
@@ -35,6 +37,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
@@ -305,10 +308,24 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
+		
+		@Override
+		public void cambioCno(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+				String cno, Date fecha, AsyncCallback<Void> callback) {
+			// TODO Auto-generated method stub
+			
+		}
 
 		@Override
 		public void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 				String cat, Date fecha, AsyncCallback<Void> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void sendLlamamientoSEPE(String currentDomainName, String currentUser,
+				EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -598,6 +615,35 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		public void getEmployeeCtoExtension(String currentDomainName, String currentUser, String enterpriseCIF,
 				String document, Integer contractId, Date extensionDate, Integer extensionNum, String sepeExtensionId,
 				AsyncCallback<String> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate,
+				AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel,
+				AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void fillContractExtension(String currentDomainName, EmployeeInfo employeeData,
+				ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void fillContractRelocation(String currentDomainName, Integer contractId,
+				Map<String, String> contractRelocationInfo, AsyncCallback<Void> callback)
+				throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}		
@@ -890,10 +936,24 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 						// TODO Auto-generated method stub
 						
 					}
+					
+					@Override
+					public void cambioCno(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+							String cno, Date fecha, AsyncCallback<Void> callback) {
+						// TODO Auto-generated method stub
+						
+					}
 
 					@Override
 					public void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 							String cat, Date fecha, AsyncCallback<Void> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void sendLlamamientoSEPE(String currentDomainName, String currentUser,
+							EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
 						// TODO Auto-generated method stub
 						
 					}
@@ -1188,6 +1248,35 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					public void getEmployeeCtoExtension(String currentDomainName, String currentUser,
 							String enterpriseCIF, String document, Integer contractId, Date extensionDate,
 							Integer extensionNum, String sepeExtensionId, AsyncCallback<String> callback)
+							throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate,
+							AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel,
+							AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void fillContractExtension(String currentDomainName, EmployeeInfo employeeData,
+							ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void fillContractRelocation(String currentDomainName, Integer contractId,
+							Map<String, String> contractRelocationInfo, AsyncCallback<Void> callback)
 							throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						

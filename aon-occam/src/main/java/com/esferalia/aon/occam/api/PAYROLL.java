@@ -191,6 +191,12 @@ public class PAYROLL {
 		}
 	}
 	
+	public static void saveContractDatas(String domainName, Integer domainId, String login, List<ContractData> contractData) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			getPayroll().saveContractDatas(ctx, contractData);
+		} 
+	}
+	
 	public static LinkedList<ContractData> saveContractData(String domainName, Integer domainId, String login, ContractData ...contractData) {
 		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
 			return getPayroll().saveContractData(ctx, contractData);

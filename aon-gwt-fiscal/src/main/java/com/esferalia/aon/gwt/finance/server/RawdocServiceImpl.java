@@ -3,8 +3,8 @@ package com.esferalia.aon.gwt.finance.server;
 import java.util.Base64;
 import java.util.LinkedList;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.RawdocService;

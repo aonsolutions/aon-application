@@ -21,8 +21,8 @@ public class Mod390HFExcelAction extends ModelVAExcelAction<Mod390HF,Mod390Key> 
 
 	@Override
 	protected String getDeclarationType() {
-		return (model.getDeclarationType()!=null
-				?model.getDeclarationType().getDescription()
+		return (model.getDeclarationResultType()!=null
+				?model.getDeclarationResultType().getDescription()
 				:AonStringUtils.EMPTY);
 	}
 

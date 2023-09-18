@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
-import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -14,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,79 +23,46 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public abstract class Mod303Declaration {
-	private static final double ZERO = 0.0;
-	static final DecimalFormat DEC2 = new DecimalFormat("#,##0.00");
-	static final String styledTag = "<{0} style = \"{1}\">"; 
-	static final String marginTop = "margin-top: 20px;";
-	static final String border = "border: solid gray 0.5px; padding: 2px 5px;";
-	static final String paddingLeft = "padding-left: 15px;";
-	static final String noWrap = "white-space: nowrap;";
-	static final String fontLarger = "font-size: 1.2em;";
-	static final String textCenter = "text-align: center;";
-	static final String colorLightYellow = "background-color: lightyellow;";
-	static final String colorLightGreen = "background-color:  #DAF7A6 ;";
-	static final String colorLightOrange = "background-color: #FFD580;";
-	static final String textRight= "text-align: right;";
-	static final String width500 = "width: 500px;";
-	static final String width150 = "width: 150px;";
-	static final String width200 = "width: 200px;";
-	static final String bold = "font-weight: bold;";
-	static final String blockCenter = "margin-left: auto;margin-right: auto;";
 	
+	private static final double ZERO = 0.0;
 	private static final String EMTPY_JSON = "{messages : []}";
 	// 1 de Julio del 2021		
 	public static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
 
-	static class ExplainRowManager implements Function<FiscalModel,String> {
-		private double sum = 0.0;
-		private boolean something = false;
-
-		@Override
-		public String apply(FiscalModel fm) {
-			something = true;
-			sum(fm.getDeclarationResult());
-			return new StringBuilder()
-				.append("<tr>")
-					.append( MessageFormat.format(styledTag, "td", paddingLeft+border+noWrap) )
-						.append("Resultado de la liquidaci\u00F3n "
-							+ fm.getModelFullName()
-							+ AonObjectUtils.defaultIfNull(fm.getDeclarationResultType(), t -> " (" + t.getDescription() + ")"))
-					.append("</td>")
-					.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
-						.append(DEC2.format(fm.getDeclarationResult()))
-					.append("</td>")
-				.append("</tr>")
-				.toString();		
-		}
-		public boolean hasSomething() {
-			return something;
-		}
-		public ExplainRowManager setSomething(boolean something) {
-			this.something = something;
-			return this;
-		}
-		public double getSum() {
-			return sum;
-		}
-		public ExplainRowManager sum(double amount) {
-			sum = AonMathUtils.round(sum + amount);
-			return this;
-		} 
-	}
-
 	private enum Declarations {
-		 AEAT_2022 {
+		 AEAT_2023 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2023Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2023Declaration();}
+		}
+		,ARABA_2023{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2023Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2023Declaration();}
+		}
+		,BIZKAIA_2023 {
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2023Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2023Declaration();}
+		}
+		,GIPUZKOA_2023 {
+			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2023Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2023Declaration();}
+		}
+		,NAVARRA_2023{
+			@Override boolean accept(Mod303 mod) { return Mod303NAVARRA2023Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303NAVARRA2023Declaration();}
+		}
+		 // Ejercicios Anteriores
+		,AEAT_2022 {
 			@Override boolean accept(Mod303 mod) { return Mod303AEAT2022Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303AEAT2022Declaration();}
 		}
@@ -354,7 +319,7 @@ public abstract class Mod303Declaration {
 		mod303.setDiffCalculationMandatory(false);
 		mod303.setDiffCalculationDisabled(true);
 		boolean resolved = false;
-		if (!mod303.isFirstPeriod() && mod303.getYear() >= 2021 ) { 
+		if (!mod303.isFirstPeriod() && mod303.getYear() == 2022 ) { 
 			List<Integer> ids = FiscalModelDAO.getPreviousModels(ctx, mod303, Mod303::new)
 				.map(FiscalModel::getId)
 				.collect(Collectors.toCollection(LinkedList::new));
@@ -421,8 +386,8 @@ public abstract class Mod303Declaration {
 			|| (mod303.isComplementary() && getComplementaryBehaviour(mod303) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}
 	
-	protected Set<Integer> createFromInvoices(AONContext ctx, Mod303 mod303) {
-		final Set<Integer> invoices = new HashSet<>();
+	protected Set<Alcatraz> createFromInvoices(AONContext ctx, Mod303 mod303) {
+		final Set<Alcatraz> invoices = new HashSet<>();
 		getVatContextStream(ctx, mod303)
 			.flatMap(vt -> Arrays.stream( getKeys() ).map( key -> new KeyedVatContext(key, vt)))
 			.filter(kbr -> kbr.getKey().acceptValue(mod303,kbr.getVatContext()))
@@ -446,8 +411,12 @@ public abstract class Mod303Declaration {
 		return VATDAO.getNotInModelVatBreakdown(ctx,mod303);
 	}
 
-	private KeyedVatContext addInvoice( Set<Integer> invoices, KeyedVatContext vt) {
-		invoices.add(vt.getVatContext().getInvoice());
+	private KeyedVatContext addInvoice( Set<Alcatraz> invoices, KeyedVatContext vt) {
+		invoices.add( new Alcatraz()
+			.setInvoice(vt.getVatContext().getInvoice())
+			.setFinance(vt.getVatContext().getFinance())
+			.setFinanceTracking(vt.getVatContext().getFinanceTracking()));
+		;
 		return vt;	
 	}
 	protected void initializeDeclarationType(Mod303 mod303) {
@@ -493,13 +462,13 @@ public abstract class Mod303Declaration {
 		}
 	}
 
-	public Set<Integer> createOnTheFly(AONContext ctx, Mod303 mod303) {
+	public Set<Alcatraz> createOnTheFly(AONContext ctx, Mod303 mod303) {
 		if (hasSimplifiedRegime()) {
 			initializeSimplifiedRegime(ctx, mod303);
 		}
 		firstInitialization(ctx, mod303);
 		if (!mod303.isManualDeclaration()) {
-			Set<Integer> invoices = createFromInvoices(ctx,mod303);
+			Set<Alcatraz> invoices = createFromInvoices(ctx,mod303);
 			invoices.addAll( createVatAccrualKeysFromInvoices(ctx,mod303) );
 			resolveDiffCalculation(ctx, mod303);
 			return invoices;
@@ -521,6 +490,9 @@ public abstract class Mod303Declaration {
 	protected String getCompensationExplain(AONContext ctx, Mod303 mod303, Mod303Key key) {
 		return EMTPY_JSON;
 	}
+	protected String getRegularizationExplain(AONContext ctx, Mod303 mod303, Mod303Key key) {
+		return EMTPY_JSON;
+	}
 	public Mod303Key[] getSamePeriodExplainKeys() {
 		return new Mod303Key[] {};
 	}
@@ -528,263 +500,6 @@ public abstract class Mod303Declaration {
 		return EMTPY_JSON;
 	}
 	
-	protected String getRegularizationExplain(AONContext ctx, Mod303 mod303, Mod303Key key) {
-		StringBuilder buf = new StringBuilder();
-		buf.append("<div "
-				+ "style=\"" 
-				+ "padding-right: 15px; padding-left: 15px; margin-right: auto; "
-				+ "margin-left: auto; width:100%; display: flex;flex-wrap: wrap; "
-				+ "justify-content: center; box-sizing: border-box"
-				+ "\">");
-		buf.append( MessageFormat.format(styledTag, "table cellspacing=\"0\"",  blockCenter+marginTop ) )
-			.append("<tr>")
-				.append( MessageFormat.format(styledTag, "td colspan=\"12\"",  textCenter+bold+fontLarger+border) )
-					.append("Casilla " + key.getBoxFormatted())
-				.append("</td>")
-			.append("</tr>")
-			.append("<tr>")
-				.append( MessageFormat.format(styledTag, "td",  textCenter+bold+fontLarger+border) )
-					.append("")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td colspan=\"5\"", textRight+bold+border+noWrap+textCenter+colorLightYellow))
-					.append("DECLARADO")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td colspan=\"5\"", textRight+bold+border+noWrap+textCenter+colorLightGreen))
-					.append("NUEVO %")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td colspan=\"5\"", textRight+bold+border+noWrap+textCenter+colorLightOrange))
-					.append("A DECLARAR")
-				.append("</td>")
-			.append("</tr>")
-			
-			.append("<tr>")
-				.append( MessageFormat.format(styledTag, "td", border+noWrap) )
-					.append("Declaraci\u00F3n")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td colspan=\"3\"", textRight+border+noWrap+textCenter+colorLightYellow))
-					.append("IVA con prorrata")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td", textRight+border+noWrap+textCenter+colorLightYellow))
-					.append("IVA sin prorrata")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td", textRight+border+noWrap+textCenter+colorLightYellow))
-					.append("Total IVA deducido")
-				.append("</td>")
-				
-
-				.append( MessageFormat.format(styledTag, "td colspan=\"3\"", textRight+border+noWrap+textCenter+colorLightGreen))
-					.append("IVA con prorrata")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td", textRight+border+noWrap+textCenter+colorLightGreen))
-					.append("IVA sin prorrata")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td", textRight+border+noWrap+textCenter+colorLightGreen))
-					.append("Total IVA deducido")
-				.append("</td>")
-				
-				.append( MessageFormat.format(styledTag, "td colspan=\"2\"", textRight+border+noWrap+textCenter+colorLightOrange))
-					.append("Diferencia")
-				.append("</td>")
-			.append("</tr>")
-			
-			;
-		
-		MutableDouble sumDeclared = new MutableDouble();
-		MutableDouble sumMustDeclared = new MutableDouble();
-		MutableDouble sumDiference = new MutableDouble();
-
-		ExplainRowManager rowManager =  new ExplainRowManager() {
-			
-			@Override
-			public String apply(FiscalModel fm) {
-				Mod303 m303 = (Mod303) fm;
-				setSomething(true);
-				sum(fm.getDeclarationResult());
-				double percent = m303.getProratePercent();	
-
-				Mod303Declaration dec =  Mod303Declaration.getInstance(m303);
-				MutableDouble sumProrratedMustDeclared = new MutableDouble();
-				MutableDouble sumUnprorratedMustDeclared = new MutableDouble();
-				VATDAO.getModelVatBreakdown(ctx, m303)
-					.filter( br -> Arrays.stream(dec.getProrateKeys())
-							.map(dec::getKey )
-							.anyMatch(kd -> kd.acceptValue(m303, br)))
-					.forEach(br -> {
-						if (mustApplyProrrate(m303,br)) {
-							sumProrratedMustDeclared.add(br.getDeductibleQuota());
-						} else {
-							sumUnprorratedMustDeclared.add(br.getDeductibleQuota());
-						}
-					});
-				
-				double declared = 0.0;
-				if ( fm.getMap() != null && !fm.getMap().isEmpty()) {
-					for(String key : fm.getMap().keySet() ) {
-						if (isProrrated( Mod303Key.getKey(key))) {
-							declared = declared + fm.getAmount(key); 
-						}
-					}
-				}
-				double prorratedQuota = sumProrratedMustDeclared.doubleValue(); 
-				double unprorratedQuota = sumUnprorratedMustDeclared.doubleValue();
-				
-				double mustProrrated = AonMathUtils.round(prorratedQuota * mod303.getProratePercent() / 100);
-				double mustDeclared = AonMathUtils.round(mustProrrated +  unprorratedQuota);
-				
-				double diference = AonMathUtils.round(mustDeclared - declared);
-		
-				sumDeclared.add(declared); 
-				sumMustDeclared.add(mustDeclared);
-				sumDiference.add(diference);
-				
-				return new StringBuilder()
-					.append("<tr>")
-						.append( MessageFormat.format(styledTag, "td", border+noWrap) )
-							.append(fm.getModelFullName()
-								+ AonObjectUtils.defaultIfNull(fm.getDeclarationResultType(), t -> " (" + t.getDescription() + ")"))
-						.append("</td>")
-						
-						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightYellow) )				
-							.append(DEC2.format(prorratedQuota))
-						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightYellow) )				
-							.append(DEC2.format(percent))
-							.append(" %")
-						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightYellow) )				
-							.append(DEC2.format(AonMathUtils.round(declared - unprorratedQuota)))
-						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightYellow) )				
-							.append(DEC2.format(unprorratedQuota))
-						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightYellow) )				
-							.append(DEC2.format(declared))
-						.append("</td>")
-						
-						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightGreen) )				
-							.append(DEC2.format(prorratedQuota))
-						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightGreen) )				
-						.append(DEC2.format(mod303.getProratePercent()))
-							.append(" %")
-						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightGreen) )				
-							.append(DEC2.format(mustProrrated))
-						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightGreen) )				
-							.append(DEC2.format(unprorratedQuota))
-						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightGreen) )				
-							.append(DEC2.format(mustDeclared))
-						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightOrange) )				
-							.append(DEC2.format(diference))
-						.append("</td>")
-					.append("</tr>")
-					.toString()
-					;		
-			}
-		};		
-		
-		
-		Mod303DAO.getPreviousEffectiveModels(ctx, mod303)
-			.forEach( fm ->  buf.append( rowManager.apply(fm) ));
-		
-		if (rowManager.hasSomething()) {
-			buf.append("<tr>")
-				.append( MessageFormat.format(styledTag, "td",  bold+fontLarger+border) )
-					.append("Total")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width200+border+colorLightYellow) )
-					.append("")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightYellow) )
-					.append("")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightYellow) )
-					.append("")
-				.append("</td>")
-				
-				
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightYellow) )
-					.append("")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width200+border+colorLightYellow) )
-					.append(DEC2.format(AonMathUtils.round(sumDeclared.getValue())))
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightGreen) )
-					.append("")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightGreen) )
-					.append("")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightGreen) )
-					.append("")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightGreen) )
-					.append("")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width200+border+colorLightGreen) )
-					.append(DEC2.format(AonMathUtils.round(sumMustDeclared.getValue())))
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width200+border+colorLightOrange) )
-					.append(DEC2.format(AonMathUtils.round(sumDiference.getValue())))
-				.append("</td>")
-			.append("</tr>");
-		} else {
-			buf.append("<tr>")
-				.append( MessageFormat.format(styledTag, "td colspan=\"2\"",  textCenter+fontLarger+border) )
-					.append("No se han encontrado datos para el c\u00E1lculo.")
-				.append("</td>")
-			.append("</tr>");
-		}
-		buf.append("</div>");
-		buf.append("</div>");
-		return buf.toString();
-	}
-
-	protected <T extends FiscalModel> String getExplain( AONContext ctx, Mod303 mod303, Mod303Key key, Stream<T> stream, ExplainRowManager rowManager) {
-		StringBuilder buf = new StringBuilder();
-		buf.append("<div style=\"" +
-				  "padding-right: 15px; padding-left: 15px; margin-right: auto; "
-				+ "margin-left: auto; width:100%; display: flex;flex-wrap: wrap; "
-				+ "justify-content: center; box-sizing: border-box"
-				+ "\">")
-			.append("<div style=\"" 
-				+ "border-radius: 4px; background: #fff; box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);"
-				+ "transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);"
-				+ "padding: 4px 5px 5px 10px; margin: 20px 10px 10px 10px; cursor: pointer;"
-				+ "flex: 0 1 40%; min-height: 120px; min-width: 350px;"
-				+ "\">");
-		buf.append( MessageFormat.format(styledTag, "table cellspacing=\"0\"",  blockCenter+marginTop+border ) )
-			.append("<tr>")
-				.append( MessageFormat.format(styledTag, "td colspan=\"2\"",  textCenter+bold+fontLarger+border) )
-					.append("Casilla " + key.getBoxFormatted())
-				.append("</td>")
-			.append("</tr>");
-		
-		stream.forEach( fm ->  buf.append( rowManager.apply(fm) ));
-		if (rowManager.hasSomething()) {
-			buf.append("<tr>")
-				.append( MessageFormat.format(styledTag, "td",  bold+fontLarger+border) )
-					.append("Total")
-				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+fontLarger+border) )
-					.append(DEC2.format(AonMathUtils.round(rowManager.getSum())))
-				.append("</td>")
-			.append("</tr>");
-		} else {
-			buf.append("<tr>")
-				.append( MessageFormat.format(styledTag, "td colspan=\"2\"",  textCenter+fontLarger+border) )
-					.append("No se han encontrado datos para el c\u00E1lculo.")
-				.append("</td>")
-			.append("</tr>");
-		}
-//		buf.append("</div>");
-		buf.append("</div>");
-		return buf.toString();
-	}
-
 	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
 	public abstract IMod303KeyDAO valueOf(String string);
 	public abstract IMod303KeyDAO[] getKeys();
@@ -796,6 +511,6 @@ public abstract class Mod303Declaration {
 	abstract Mod303 initialize(AONContext ctx, Mod303 mod303);
 	abstract double getResult(final Mod303 mod303);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod303 mod303);
-	abstract Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303);
+	abstract Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303);
 	
 }

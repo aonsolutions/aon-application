@@ -7,7 +7,6 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.User;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
@@ -72,12 +71,19 @@ public class DomainUserRolesController implements Serializable {
 	}
 
 	public boolean isDocumental() {
-		return getDur().isDocumental()
-			|| getDur().isOldDocumental();
+		return getDur().isDocumental();
+	}
+	
+	public boolean isCommercial() {
+		return getDur().isCommercial();
+	}
+	
+	public boolean isWarehouse() {
+		return getDur().isWarehouse();
 	}
 	
 	public boolean isBank() {
-		return getDur().hasApp(AonApp.BANK);
+		return getDur().isBank();
 	}
 	
 	public boolean isAula() {
@@ -88,9 +94,7 @@ public class DomainUserRolesController implements Serializable {
 		if(token == null && getDur().getUser().getAuth().isEmpty()) {
 			token = AonToken.build(getDur().getUser(), AonDateUtils.addDays(new Date(), 1), AonUtil.getDomainName());
 		} else if(token == null) {
-			token = AonToken.build(
-				AON_SOLUTIONS.getAuth(getDur().getUser().getAuth().getAuth()),
-				AonDateUtils.addDays(new Date(), 1), AonUtil.getDomainName());
+			token = AonToken.build(getDur().getUser().getAuth(), AonDateUtils.addDays(new Date(), 1));
 		}
 		return token;
 	}
@@ -100,9 +104,8 @@ public class DomainUserRolesController implements Serializable {
 		Integer domainId = DomainManager.getCurrentDomain();
 		User user = UserUtils.getInstance().getLoggedUser();
 		this.dur = SECURITY.getDomainUserRoles(domainName, domainId, user.getLogin(), user.getId());			
-		this.token = AonToken.build(
-			AON_SOLUTIONS.getAuth(getDur().getUser().getAuth().getAuth()),
-			AonDateUtils.addDays(new Date(), 1), AonUtil.getDomainName());
+		this.token = AonToken.build(getDur().getUser().getAuth(),
+			AonDateUtils.addDays(new Date(), 1));
 	}
 	
 	

@@ -21,5 +21,6 @@ public interface IMODEL349 {
 	public Mod349 changeStatus(AONContext ctx, Mod349 mod349, FiscalStatus newStatus);
 	public String getInfo(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey);
 	public Mod349 duplicate(AONContext ctx,Mod349 mod349);
+	public Mod349 aeatPresentation(AONContext ctx, Mod349 mod, String aeatResponse);
 	
 }

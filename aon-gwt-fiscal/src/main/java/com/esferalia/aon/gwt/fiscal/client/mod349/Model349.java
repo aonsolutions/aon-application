@@ -112,6 +112,14 @@ public class Model349 extends MainEntryPoint {
 				breakdownPanel.remove( breakdownPanel.getWidget() ); 
 			}
 		}
+		
+		public void cleanAndCloseInfoPanel() {
+			Widget w = breakdownPanel.getWidget();
+			if (w != null) {
+				breakdownPanel.remove( breakdownPanel.getWidget() ); 
+			}
+			closeFootPanel();
+		}
 
 		public void onSelect(Mod349 mod349, Integer selectedIndex) {
 			select(mod349, selectedIndex);
@@ -209,11 +217,15 @@ public class Model349 extends MainEntryPoint {
 		AON.ensureInjected();
 
 		aonLayout = new AonLayoutPanel();
+		aonLayout.addStyleName("aon-Model");
 		splitLayoutPanel = new SplitLayoutPanel( 2 );
 		aonLayout.add(splitLayoutPanel);
 		
 		declarationContainer = new SimpleLayoutPanel();
-		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
+		declarationContainer.addStyleName("aon-Model-Detail");
+		AonMinimizePanel minimizePanel = getMinimizePanel();
+		minimizePanel.addStyleName("aon-Model-Info");
+		splitLayoutPanel.addSouth(minimizePanel, 30);
 
 		splitLayoutPanel.add(declarationContainer);
 		

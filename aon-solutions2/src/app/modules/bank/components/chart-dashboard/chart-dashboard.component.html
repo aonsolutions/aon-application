@@ -1,0 +1,12 @@
+<app-card class="dashboard" onclick="redirect('home')">
+  <div body>
+    <div class="chart">
+      <app-chart
+        [chartLabels] = "chartLabels"
+        [chartType]   = "chartType"
+        [chartData]   = "chartData"
+        >
+      </app-chart>
+    </div>
+  </div>
+</app-card>

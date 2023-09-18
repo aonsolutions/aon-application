@@ -2,8 +2,8 @@ package com.code.aon.academy;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import org.apache.commons.lang.time.DateUtils;
 

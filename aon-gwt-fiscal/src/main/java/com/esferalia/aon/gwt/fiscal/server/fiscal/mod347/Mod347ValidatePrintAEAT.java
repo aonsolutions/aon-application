@@ -13,11 +13,11 @@ import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
 import com.esferalia.aon.occam.api.fiscal.MODEL347;
@@ -37,13 +37,11 @@ public class Mod347ValidatePrintAEAT extends HttpServlet {
 	private static final long serialVersionUID = -8391437522744646639L;
 	
 	private enum AeatUrl {
-		URL_2021_2_SEMESTER {
+		URL_2021 {
 
 			@Override
 			protected boolean accept(Mod347 mod347) {
-				return mod347.getYear() == 2021
-					|| (mod347.getYear() == 2021 && mod347.getPeriod().isLastSemester())
-					;
+				return mod347.getYear() >= 2021;
 			}
 
 			@Override
@@ -69,8 +67,8 @@ public class Mod347ValidatePrintAEAT extends HttpServlet {
 					return aeatUrl;
 				}
 			}
-			throw new AonCoreException("No se encontrÛ una configuraciÛn v·lida para la peticiÛn de validaciÛn a la AEAT." +
-				" Descargue el archivo para su presentaciÛn y acceda a los servidores de la Agencia Tributaria manualmente.");
+			throw new AonCoreException("No se encontr√≥ una configuraci√≥n v√°lida para la petici√≥n de validaci√≥n a la AEAT." +
+				" Descargue el archivo para su presentaci√≥n y acceda a los servidores de la Agencia Tributaria manualmente.");
 		}
 
 		protected abstract boolean accept( Mod347 mod347);
@@ -91,7 +89,6 @@ public class Mod347ValidatePrintAEAT extends HttpServlet {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}
 			AeatUrl aeatURL = AeatUrl.getAeatUrl(mod347);
-			System.out.println(aeatURL.getUrl());
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( aeatURL.getUrl() ))
 				.POST(HttpRequest.BodyPublishers.ofString(aeatURL.getUrlParameters(mod347)))

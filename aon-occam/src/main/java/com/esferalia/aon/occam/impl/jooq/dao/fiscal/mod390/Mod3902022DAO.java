@@ -253,13 +253,24 @@ public class Mod3902022DAO {
 		 // Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA
 		 ,C0653	 (Mod3902022DetailKey.C0653, null) // MIRAR CASILLA 654
 		 // Entregas intracomunitarias de bienes y servicios
-		 ,C0103	 (Mod3902022DetailKey.C0103, ((mod, vc) -> (vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
+		 ,C0103	 (Mod3902022DetailKey.C0103, ((mod, vc) -> (
+				 vc.isIntracommunitySales() && 
+				 !vc.isWithoutRightDeductionType())))
+
 		 // Exportaciones y otras operaciones exentas con derecho a deducción
-		 ,C0104	 (Mod3902022DetailKey.C0104, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isExtracommunity() || vc.isCanCeuMel()) )))
+		 ,C0104	 (Mod3902022DetailKey.C0104, ((mod, vc) -> (vc.isSales() 
+			&& !vc.isWithoutRightDeductionType() 
+			&& vc.isExtracommunity())))
+		 
 		 // Operaciones exentas sin derecho a deducción
-		 ,C0105	 (Mod3902022DetailKey.C0105, ((mod, vc) -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
+		 ,C0105	 (Mod3902022DetailKey.C0105, ((mod, vc) -> (vc.isSales() 
+			&& !vc.isNational() && vc.isWithoutRightDeductionType())))
+		 
 		 // Operaciones no sujetas por reglas de localización (excepto las incluidas en la casilla 126)
-		 ,C0110	 (Mod3902022DetailKey.C0110, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isOtherISP())))
+		 ,C0110	 (Mod3902022DetailKey.C0110, ((mod, vc) -> (vc.isSales() 
+			&& !vc.isWithoutRightDeductionType() 
+			&& (vc.isOtherISP() || vc.isCanCeuMel()))))
+		 
 		 // Operaciones sujetas con inversión del sujeto pasivo
 		 ,C0125	 (Mod3902022DetailKey.C0125, null)
 		 // Operaciones no sujetas por reglas de localización acogidas a los regímenes especiales de ventanilla única
@@ -558,7 +569,7 @@ public class Mod3902022DAO {
 		if (AonStringUtils.contains(model, "<AEATIVA2022>"))  {
 			StringReader reader = new StringReader(rec.getValue(FS_MODEL390.MODEL));
 			try {
-				if (mod390.getYear() == 2022) {
+				if (mod390.getYear() >= 2022) {
 					JAXBContext context = JAXBContext.newInstance(AEATIVA2022.class);
 					Unmarshaller um = context.createUnmarshaller();
 					AEATIVA2022 iva = (AEATIVA2022) um.unmarshal(reader);
@@ -596,7 +607,7 @@ public class Mod3902022DAO {
 	
 	private static String getXMLModel( Mod3902022 mod390 ) {
 		try {
-			if (mod390.getYear() == 2022) {
+			if (mod390.getYear() >= 2022) {
 				AEATIVA2022 iva = Mod390toAEATIVA2022.getAEATIVA2022(mod390);
 				StringWriter writer = new StringWriter();
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2022.class);
@@ -733,10 +744,6 @@ public class Mod3902022DAO {
 			mod390.setBox107(map.get(Mod3902022DetailKey.C0107).getTaxableBase());
 			mod390.setBox108(map.get(Mod3902022DetailKey.C0108).getTaxableBase());
 			mod390.setBox110(map.get(Mod3902022DetailKey.C0110).getTaxableBase());
-			mod390.setBox125(map.get(Mod3902022DetailKey.C0125).getTaxableBase());
-			mod390.setBox126(map.get(Mod3902022DetailKey.C0126).getTaxableBase());
-			mod390.setBox127(map.get(Mod3902022DetailKey.C0127).getTaxableBase());
-			mod390.setBox128(map.get(Mod3902022DetailKey.C0128).getTaxableBase());
 			mod390.setBox125(map.get(Mod3902022DetailKey.C0125).getTaxableBase());
 			mod390.setBox126(map.get(Mod3902022DetailKey.C0126).getTaxableBase());
 			mod390.setBox127(map.get(Mod3902022DetailKey.C0127).getTaxableBase());
@@ -1024,25 +1031,25 @@ public class Mod3902022DAO {
 	public static double getVatAccrualPaymentOutputBase(AONContext ctx, Mod390 mod390) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod390);
-		return VATDAO.getVatAccrualPaymentOutputBase(ctx,fromDate,toDate);
+		return Mod390DAO.getVatAccrualPaymentOutputBase(ctx,fromDate,toDate);
 	}
 
 	public static double getVatAccrualPaymentOutputQuota(AONContext ctx, Mod390 mod390) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod390);
-		return VATDAO.getVatAccrualPaymentOutputQuota(ctx,fromDate,toDate);
+		return Mod390DAO.getVatAccrualPaymentOutputQuota(ctx,fromDate,toDate);
 	}
 
 	public static double getVatAccrualPaymentInputBase(AONContext ctx, Mod390 mod390) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod390);
-		return VATDAO.getVatAccrualPaymentInputBase(ctx,fromDate,toDate);
+		return Mod390DAO.getVatAccrualPaymentInputBase(ctx,fromDate,toDate);
 	}
 
 	public static double getVatAccrualPaymentInputQuota(AONContext ctx, Mod390 mod390) {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod390);
-		return VATDAO.getVatAccrualPaymentInputQuota(ctx,fromDate,toDate);
+		return Mod390DAO.getVatAccrualPaymentInputQuota(ctx,fromDate,toDate);
 	}
 
 	// *******************

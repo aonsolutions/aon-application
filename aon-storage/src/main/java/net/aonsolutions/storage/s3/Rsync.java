@@ -21,6 +21,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -39,6 +43,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CopyObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.util.Base64;
 import com.esferalia.aon.jooq.Keys;
@@ -165,7 +170,7 @@ public class Rsync {
 			String password = line.getOptionValue(passwordOption);
 			String database = line.getOptionValue(databaseOption);
 			String table = line.getOptionValue(tableOption);
-			String where = line.getOptionValue(whereOption);
+			String where = line.getOptionValue(whereOption, "1=1");
 
 			String endpoint = line.getOptionValue(endpointOption);
 			String region = line.getOptionValue(regionOption);
@@ -184,9 +189,10 @@ public class Rsync {
 
 			AmazonS3 s3 = AmazonS3ClientBuilder
 					.standard()
+					//.withRegion(region)
 					.withEndpointConfiguration(new EndpointConfiguration(endpoint, region))
 					.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
-					.build();			
+					.build();
 			
 			rSyncContractDoc(dslContext, where, s3, bucket);
 			
@@ -253,13 +259,18 @@ public class Rsync {
 		;
 	}
 
-	private static String putAttach(AmazonS3 s3, String bucket, byte[] data, String contentType, Map<String, String> userData) throws IOException, NoSuchAlgorithmException {
+	private static String putAttach(AmazonS3 s3, String bucket, byte[] data, String contentType, Map<String, String> userMetaData) throws IOException, NoSuchAlgorithmException {
 		try (InputStream is = new ByteArrayInputStream(data)) {
 			
 			String sha1Hex = toHex(MessageDigest.getInstance("SHA1").digest(data));
 			
 			if ( s3.doesObjectExist(bucket, sha1Hex) ) {
-				System.err.printf("Upps. Contract's attach already at '%s' [%s] :-|\n" , bucket, sha1Hex);
+				ObjectMetadata metaData = s3.getObjectMetadata(bucket, sha1Hex);
+				userMetaData.forEach( (key,value) -> metaData.getUserMetadata().merge(key, value, Rsync::join ));
+				s3.copyObject(new CopyObjectRequest(bucket, sha1Hex, bucket, sha1Hex).withNewObjectMetadata(metaData));
+				
+				System.err.printf("Upps. Contract's attach already at '%s' [%s] (%s):-|\n" , bucket, sha1Hex, metaData.getUserMetadata());
+				
 				return sha1Hex;
 			}
 
@@ -269,10 +280,29 @@ public class Rsync {
 			metaData.setContentMD5(md5Base64);
 			metaData.setContentLength(data.length);
 			metaData.setContentType(contentType);
-			metaData.setUserMetadata(userData);
+			metaData.setUserMetadata(userMetaData);
 			s3.putObject(bucket, sha1Hex, is, metaData);
 			return sha1Hex;
 		} 
+	}
+	
+	private static String join(String s1, String s2) {
+	    if ( s2 == null || s2.isBlank()) {
+		return s1;
+	    }
+	    if ( s1 == null || s1.isBlank() ) {
+		return s2;
+	    }
+	    
+	    if ( s1.equalsIgnoreCase(s2) ) {
+		return s1;
+	    }
+	    
+	    if ( s1.toUpperCase().contains(s2.toUpperCase())) {
+		return s1;
+	    }
+	    
+	    return String.join(",", s1, s2);	    
 	}
 	
 

@@ -1,7 +1,10 @@
+import { AonDate } from "../../components/aon-date.js";
 import { AonSelect } from "../../components/aon-select.js";
+import { AonSwitch } from "../../components/aon-switch.js";
 import { MSG, EVENT } from "../../environments/environments.js";
 import { Project } from "../../models/project/Project.js";
-import { AonTargetItemAdd } from "../registry/target/item/aon-target-item-add.js";
+import { updateAllTargetItem } from "../../services/productService.js";
+import { AonItemAdd } from "../registry/target/item/aon-item-add.js";
 import { AonOfficeLinkSimpleList } from "./aon-office-link-simple-list.js";
 
 
@@ -116,7 +119,7 @@ const buildDialogProducts = (aonOfficePanel) => {
     dialog.clear();
     dialog.setTitle(MSG.ASSIGN+" "+MSG.PRODUCTS);
 
-    let aonTargetItemAdd = new AonTargetItemAdd();
+    let aonTargetItemAdd = new AonItemAdd();
 
     dialog.setContent(aonTargetItemAdd);
     
@@ -131,6 +134,54 @@ const buildDialogProducts = (aonOfficePanel) => {
     
         dialog.close();
         application.stopLoading();
+
+    }, MSG.SAVE);
+
+    dialog.open();
+}   
+/**
+ * 
+ * @param {AonOfficePanel} aonOfficePanel 
+ */
+const buildDialogProductsUpdate = (aonOfficePanel) => {
+    const application = aonOfficePanel.getApplication();
+    const dialog = application.getDialog();
+    dialog.autoclose = false;
+    dialog.width = '40%';
+    dialog.clear();
+    dialog.setTitle(MSG.UPDATE+" "+MSG.PRODUCTS);
+
+    let div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.flexDirection = "column";
+    div.style.width = "100%";
+    dialog.setContent(div);
+
+    let aonDate = new AonDate();
+    aonDate.id = "aonDate1";
+    aonDate.title = "A partir de las facturas con fecha:";
+    div.appendChild(aonDate);
+
+    let aonSwitch = new AonSwitch();
+    aonSwitch.style.width= "100%";
+    aonSwitch.id = "switchWeas";
+    aonSwitch.title = "¿Desea inactivar los productos con fecha anterior?";
+    div.appendChild(aonSwitch);
+    
+    dialog.addSendAction(async()=>{
+        if (aonDate.getValue()){
+            application.startLoading();
+    
+            await updateAllTargetItem({
+              start_date: aonDate.getValue(),
+              question: aonSwitch.isChecked()
+            })
+            .then(() => aonOfficePanel.showMessage())
+            .catch((err) => aonOfficePanel.showError(err));
+        
+            dialog.close();
+            application.stopLoading();
+        }
 
     }, MSG.SAVE);
 
@@ -185,6 +236,7 @@ const builDialogRelationship = (aonOfficePanel, data) => {
 export const OfficeUtils = {
     buildDialogExpediente,
     buildDialogProducts,
+    buildDialogProductsUpdate,
     getCustomerStatus,
     builDialogRelationship
 }
