@@ -812,7 +812,6 @@ export class AonDomainCustomer extends AonElement {
                 domainName: dName,
                 domainId: dId,
               });
-              console.log(booking);
             } catch (error) {
               console.error(error);
             }
@@ -1327,23 +1326,13 @@ export class AonDomainCustomer extends AonElement {
         //let summaryDomains = summary ? summary.domain : {};
         let summaryDomains = summary ? summary.domainTypes : {};
 
-        console.log("sumaryApps : " + summaryApps);
-
         this.createSummaryItem(summaryContainer, MSG.APPLICATIONS, summaryApps);
-
-        console.log("summaryUsers : " + summaryUsers);
-        console.log("childBillingUsers : " + summary.childBillingUsers);
-        console.log("childDefinedUsers : " + summary.childDefinedUsers);
-
-        this.createUsersSummaryItem(summaryContainer, MSG.USERS, summaryUsers, summary.childBillingUsers, summary.childDefinedUsers, []);
-
-        //this.createSummaryItem(summaryContainer, MSG.USERS, summaryUsers, [], "user");
+        this.createUsersSummaryItem(summaryContainer, MSG.USERS, summaryUsers, summary.childBillingUsers, summary.childDefinedUsers);
 
         for (let dt in summaryDomains) {
           let domainType = this.getDomainTypeDescription(dt);
           let application = summaryDomains[dt];
 
-          //this.createSummaryItem(summaryContainer, `${domainType}: ${application.number}`, application.apps, application.childs, "domain");
           this.createSummaryItem(summaryContainer, `${domainType}: ${application.number}`, application.childApps, application.childs, "domain");
         }
         
@@ -1467,7 +1456,7 @@ export class AonDomainCustomer extends AonElement {
     }
   }
 
-  createUsersSummaryItem(summaryContainer, title, summaryElements, childBillingUsers, childDefinedUsers, childs) {
+  createUsersSummaryItem(summaryContainer, title, summaryElements, childBillingUsers, childDefinedUsers) {
     if (summaryElements) {
       let summaryElementsContainer = document.createElement("div");
       summaryElementsContainer.style.display = "flex";
@@ -1499,15 +1488,9 @@ export class AonDomainCustomer extends AonElement {
           itemTitle = summaryElement;
         }
         
-        let users = childs.filter(c => c.apps && c.apps.includes(summaryElement));
-        let totalUsers = users.map(c => c.maxDefinedUsers).reduce((a, b) => a + b, 0);
-        summaryElementsItem.innerText = `${itemTitle}: ${summaryElements[summaryElement]}/${totalUsers} usr.`;
+        summaryElementsItem.innerText = `${itemTitle}: ${summaryElements[summaryElement]} usr.`;
         summaryElementsContainer.appendChild(summaryElementsItem);
-        
       }
-
-      let users = childs.filter(c => c.apps && c.apps.includes(summaryElement));
-      let totalUsers = users.map(c => c.maxDefinedUsers).reduce((a, b) => a + b, 0);
 
       let childdefinedusersElementsItem = document.createElement("div");
       childdefinedusersElementsItem.style.display = "block";
@@ -1516,7 +1499,7 @@ export class AonDomainCustomer extends AonElement {
         
       let childdefinedusersTitle = MSG.CONTRACTED_USERS;
         
-      childdefinedusersElementsItem.innerText = `${childdefinedusersTitle}: ${childDefinedUsers}/${totalUsers} usr.`;
+      childdefinedusersElementsItem.innerText = `${childdefinedusersTitle}: ${childDefinedUsers} usr.`;
       summaryElementsContainer.appendChild(childdefinedusersElementsItem);
 
       let childbillingusersElementsItem = document.createElement("div");
@@ -1526,9 +1509,8 @@ export class AonDomainCustomer extends AonElement {
       
       let childbillingusersTitle = MSG.BILLABLE_USERS;
       
-      childbillingusersElementsItem.innerText = `${childbillingusersTitle}: ${childBillingUsers}/${totalUsers} usr.`;
+      childbillingusersElementsItem.innerText = `${childbillingusersTitle}: ${childBillingUsers} usr.`;
       summaryElementsContainer.appendChild(childbillingusersElementsItem);
-      
     }
   }
 
