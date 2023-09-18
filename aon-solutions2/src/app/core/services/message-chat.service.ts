@@ -11,6 +11,9 @@ export class MessageChatService {
 
   constructor() { }
 
+  async getMessageChatCount(filter?: IFilter): Promise<number> {
+    return (await this.multipleObjectCrud.getCollection(filter)).result.size();
+  }
   async getMessageChatList(filter: IFilter): Promise<ICollection<IMessageChat>> {
     return (await this.multipleObjectCrud.getCollection(filter)).result;
   }

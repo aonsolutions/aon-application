@@ -1,13 +1,13 @@
 <div class="modal-container">
-  <div class="issue">
+  <div class="button-close-query">
+    <app-icon shape="fullscreen"></app-icon>
+    <app-icon shape="close" (click)="closeModal()"></app-icon>
+  </div>
+  <div class="issue-query">
     <div>
       <span class="new-query Roboto-24-sp-H5">
         {{ "INBOX.NEW_QUERY" | translate }}
       </span>
-    </div>
-    <div class="buttons">
-      <app-icon shape="fullscreen"></app-icon>
-      <app-icon shape="close" (click)="closeModal()"></app-icon>
     </div>
   </div>
   <div class="content-input">

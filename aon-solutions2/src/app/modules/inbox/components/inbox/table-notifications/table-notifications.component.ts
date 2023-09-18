@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import {
   CollectionFactory,
   FilterBuilder,
@@ -15,11 +23,12 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './table-notifications.component.html',
   styleUrls: ['./table-notifications.component.scss'],
 })
-export class TableNotificationsComponent implements OnInit {
-  @Input() filterStatus: string[] = [];
+export class TableNotificationsComponent implements OnChanges {
   @Input() public messageList: Observable<ICollection<IMessage>> | undefined;
+  @Input() filterDate: number = 0;
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
-
+  @Input() filterTabSelec: number = 0;
+  filterStatus: string[] = ['todas', 'nueva', 'vista'];
   bodyTable: any[] = [];
   totalMessages: number = 0;
 
@@ -47,62 +56,112 @@ export class TableNotificationsComponent implements OnInit {
     date: 'Date',
   };
 
-  private updateTableData() {
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateTableData();
+  }
+
+  filterTable(filterType: number) {
+    if (filterType === 1) {
+      // Filtro por semana
+      const startDate = this.getStartDateOfWeek();
+      const endDate = this.getEndDateOfWeek();
+      this.updateTableData(startDate, endDate);
+    } else if (filterType === 2) {
+      // Filtro por mes
+      const startDate = this.getStartDateOfMonth();
+      const endDate = this.getEndDateOfMonth();
+      this.updateTableData(startDate, endDate);
+    } else {
+      // Filtro por todas las fechas
+      this.updateTableData();
+    }
+  }
+
+  private getStartDateOfWeek(): string {
+    const currentDate = new Date();
+    const startDate = new Date(currentDate);
+    startDate.setDate(startDate.getDate() - startDate.getDay()); // Inicio de la semana actual (domingo)
+    return this.formatDate(startDate);
+  }
+
+  private getEndDateOfWeek(): string {
+    const currentDate = new Date();
+    const endDate = new Date(currentDate);
+    endDate.setDate(endDate.getDate() + (6 - endDate.getDay())); // Fin de la semana actual (sábado)
+    return this.formatDate(endDate);
+  }
+
+  private getStartDateOfMonth(): string {
+    const currentDate = new Date();
+    const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    return this.formatDate(startDate);
+  }
+
+  private getEndDateOfMonth(): string {
+    const currentDate = new Date();
+    const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    return this.formatDate(endDate);
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private updateTableData(startDate?: string, endDate?: string) {
+    let tableRow: any[] = [];
     const datepipe: DatePipe = new DatePipe(
       this.translateService.getDefaultLang()
     );
     let filterBuilder = new FilterBuilder();
     filterBuilder.addField('type', 'notificacion');
+    // if(this.filterStatus[this.filterTabSelec] === 'todas')
+    //   filterBuilder.addField('status', this.filterStatus[this.filterTabSelec]);
 
-    let tableRow: any[] = [];
-
+    if (this.filterDate > 0) {
+      filterBuilder.addInterval('date', startDate, endDate);
+    }
     this.messageService
-    .getMessageList(filterBuilder.getFilter())
-    .then((response) => {
-      response.forEach((message, messageKey) => {
-        const column: any = Object.assign({}, message);
+      .getMessageList(filterBuilder.getFilter())
+      .then((response) => {
+        response.forEach((message, messageKey) => {
+          const column: any = Object.assign({}, message);
 
-        column.key = messageKey;
-        column.name = message.Name;
+          column.key = messageKey;
+          column.name = message.Name;
 
-        if (
-          !this.filterStatus.length ||
-          this.filterStatus.includes(message.Status.toLowerCase())
-        ) {
-          const lowerCaseStatus = message.Status.toLowerCase();
-          console.log(lowerCaseStatus);
-          column.status = {
-            icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
-            text: `<span class="${
-              lowerCaseStatus.includes('nueva')
-                ? 'background-text-red-light'
-                : 'background-text-griss-light'
-            }">${message.Status}</span>`,
-          };
-          column.title = message.Title;
-          column.description = message.Description;
-          column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
-          column.class = message.Status == 'nueva' ? 'border-red' : '';
-          tableRow.push(column);
-        }
+          if (
+            this.filterStatus[this.filterTabSelec] ===
+              message.Status.toLowerCase() ||
+            this.filterStatus[this.filterTabSelec] === 'todas'
+          ) {
+            const lowerCaseStatus = message.Status.toLowerCase();
+            console.log(lowerCaseStatus);
+            column.status = {
+              icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
+              text: `<span class="${
+                lowerCaseStatus.includes('nueva')
+                  ? 'background-text-red-light'
+                  : 'background-text-griss-light'
+              }">${message.Status}</span>`,
+            };
+            column.title = message.Title;
+            column.description = message.Description;
+            column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
+            column.class = message.Status == 'nueva' ? 'border-red' : '';
+            tableRow.push(column);
+          }
+        });
+
+        this.bodyTable = tableRow;
       });
-
-      this.bodyTable = tableRow;
-    });
   }
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
-
-  ngOnInit(): void {
-    this.updateTableData();
-    if (this.messageList) {
-      this.messageList.subscribe((messages) => {
-        this.messages = messages;
-        this.totalMessages = this.messages.size();
-      });
-    }
-  }
 
   rowClick(message: any) {
     this.rowClicked.emit(message);
