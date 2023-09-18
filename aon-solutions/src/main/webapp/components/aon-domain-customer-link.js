@@ -1336,9 +1336,6 @@ export class AonDomainCustomer extends AonElement {
           this.createSummaryItem(summaryContainer, `${domainType}: ${application.number}`, application.childApps, application.childs, "domain");
         }
         
-
-
-
         appsContainer.appendChild(summaryContainer);
       }
       
@@ -1392,7 +1389,7 @@ export class AonDomainCustomer extends AonElement {
   }
 
   createSummaryItem(summaryContainer, title, summaryElements, childs, type) {
-    if (summaryElements) {
+    if (summaryElements && Object.keys(summaryElements).length > 0) {
       let summaryElementsContainer = document.createElement("div");
       summaryElementsContainer.style.display = "flex";
       summaryElementsContainer.style.flexDirection = "column";
