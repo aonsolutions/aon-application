@@ -4,7 +4,7 @@
 
 
 // true para activar que los datos lleguen desde la api, false para usar datos ficticion locales
-let APIEnvironment = false;
+let APIEnvironment = true;
 // true activa unos tests simples para ver que los métodos funcionan correctamente, false para desactivarlos
 let test: boolean = false;
 
@@ -374,6 +374,25 @@ export class MarkFactory implements ISingleObjectCrudFactory<IMark>, IMultipleOb
     }
 }
 
+export class MarkDetailFactory implements ISingleObjectCrudFactory<IMarkDetail>, IMultipleObjectCrudFactory<IMarkDetail> {
+    createSingleObjectCrud(): ISingleObjectCrud<IMarkDetail> {
+        return new GenericSingleObjectCrud<MarkDetail>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<MarkDetail>(new ApiMarkDetail(), MarkDetail) : 
+            new GenericSingleObjectCrudRepository<MarkDetail>(new StorableMarkDetail(), MarkDetail)
+            ), 
+            MarkDetail);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IMarkDetail> {
+        return new GenericMultipleObjectCrud<MarkDetail>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<MarkDetail>(new ApiMarkDetail(), MarkDetail) : 
+            new GenericMultipleObjectCrudRepository<MarkDetail>(new StorableMarkDetail(), MarkDetail)
+            ), 
+            MarkDetail);
+    }
+}
+
 export class UserFactory implements ISingleObjectCrudFactory<IUser>, IMultipleObjectCrudFactory<IUser> {
     createSingleObjectCrud(): ISingleObjectCrud<IUser> {
         return new GenericSingleObjectCrud<User>( 
@@ -562,6 +581,16 @@ interface IMessageSpecificMethods {
 }
 
 interface IMarkSpecificMethods {
+    /**
+     * Returns all the marks for one user
+     */
+    getMarksOfOneUser(userId: string, filter: IFilter): Promise<IResponse<ICollection<IMark>>>;
+}
+
+interface IMarkDetailSpecificMethods {
+    /**
+     * Marks an entry
+     */
     markEntry(): Promise<IResponse<boolean>>;
     /**
      * Marks a pause
@@ -769,32 +798,16 @@ class MessageSpecificMethods implements IMessageSpecificMethods {
 }
 
 class MarkSpecificMethods implements IMarkSpecificMethods {
-
+    
     repository = new APIMarkSpecificMethodsRepository();
-
-    async markEntry(): Promise<IResponse<boolean>> {
+    
+    async getMarksOfOneUser(userId: string, filter?: IFilter): Promise<IResponse<ICollection<IMark>>> {
         try{
-            return new Response<boolean>(await this.repository.markEntry());
+            return new Response<ICollection<IMark>>(await this.repository.getMarksOfOneUser(userId, filter));
         }catch(error){
             throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
         }
     }
-
-    async markPause(): Promise<IResponse<boolean>> {
-        try{
-            return new Response<boolean>(await this.repository.markPause());
-        }catch(error){
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
-        }
-    }
-
-    async markExit(): Promise<IResponse<boolean>> {
-        try{
-            return new Response<boolean>(await this.repository.markExit());
-        }catch(error){
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
-        }
-    }    
 }
 
 
@@ -927,9 +940,7 @@ interface IMessageSpecificMethodsRepository {
 }
 
 interface IMarkSpecificMethodsRepository {
-    markEntry(): Promise<boolean>;
-    markPause(): Promise<boolean>;
-    markExit(): Promise<boolean>;
+    getMarksOfOneUser(userId: string, filter: IFilter): Promise<ICollection<IMark>>;
 }
 
 /*
@@ -1338,20 +1349,30 @@ class APIMessageSpecificMethodsRepository implements IMessageSpecificMethodsRepo
 }
 
 class APIMarkSpecificMethodsRepository implements IMarkSpecificMethodsRepository {
-
     private http: ApiHttpRequest = new ApiHttpRequest();
     private model: ApiMark = new ApiMark();
-
-    async markEntry(): Promise<boolean> {
-        throw new Error("Method not implemented.");
-    }
-
-    async markPause(): Promise<boolean> {
-        throw new Error("Method not implemented.");
-    }
-
-    async markExit(): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    
+    async getMarksOfOneUser(userId: string, filter?: IFilter): Promise<ICollection<IMark>> {
+        let url = '/ms/api/timecontrol/list-holder';
+        let params = {
+            taskHolderId: userId,
+            group: 'DAY',
+            startDate: '2023-09-04',
+            endDate: '2023-09-08'
+        }
+        url = this.http.makeURL(url, params);
+        let method = GET_METHOD;
+        let collection: ICollection<IMark> = new Collection<IMark>();
+        let response = await this.http.httpRequest(BASE_URL + url, method, {}, {})
+        response.forEach((element: any) => {
+            collection.add(this.model.parseDataToReceive(element, GET_MULTIPLE, filter))
+        })
+        if(this.model.localFilter() && collection.size() > 0){
+            if(filter?.intervalFields || filter?.fields) collection = collection.filter(filter);
+            if(filter?.orderBy) collection.sort(filter);
+            if(filter?.pageItems && filter.pageNum) collection = collection.paginate(filter.pageNum,filter.pageItems);
+        }
+        return collection;
     }
 }
 
@@ -2128,10 +2149,10 @@ export interface IMark extends ICollectable {
 
 export interface IMarkDetail extends ICollectable {
     Id: string,
-    lastDate: Date,
-    lastModification: Date,
-    status: string,
-    location: any
+    LastDate: Date,
+    LastModification: Date,
+    Status: string,
+    Location: any
 }
 export interface IPause {
     StartPause: Date,
@@ -4026,7 +4047,10 @@ class ApiMessage extends Message implements IApiModel {
             message.Description = description.observation ? description.observation : '';
             message.Date = new Date(data.start_date);
             message.Type = data.source == 'query' ? 'consulta' : 'tarea';
-            message.Status = data.status ? data.status : '';
+            if(data.source == 'task')
+                message.Status = data.status && data.status == 'pending' ? 'pendiente' : 'realizada';
+            else
+                message.Status = data.status && data.status == 'pending' ? 'abierta' : 'cerrada';
             message.EndDate = new Date();
             message.Key = data.id + (data.source == 'query' ? ';consulta' : ';tarea');
             return message;
@@ -4038,7 +4062,7 @@ class ApiMessage extends Message implements IApiModel {
             message.Description = data.body ? data.body : '';
             message.Date = new Date(data.date);
             message.Type = 'notificacion';
-            message.Status = data.status ? data.status : 0;
+            message.Status = data.status && data.status == 1 ? 'vista' : 'nueva';
             message.EndDate = new Date();
             message.Key = data.id + ';notificacion';
             return message;
@@ -4989,11 +5013,33 @@ class Mark implements IMark, IModel  {
 
 class ApiMark implements IApiModel {
 
+    http = new ApiHttpRequest();
+
     getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        if(currentMethod == GET_MULTIPLE && filter && filter.fields?.has('idUser')){
+            const params = {
+                group: 'DAY',
+                startDate: '2023-09-06',
+                endDate: '2023-09-06',
+                active: true,
+                user: filter.fields?.get('idUser')
+            }
+            return [this.http.makeURL('/ms/api/timecontrol/list-holder', params)];
+        }
+        if(currentMethod == GET_MULTIPLE){
+            const params = {
+                group: 'DAY',
+                startDate: '2023-09-06',
+                endDate: '2023-09-06',
+                active: true
+            }
+            return [this.http.makeURL('/ms/api/timecontrol/list', params)];
+        }
         throw new Error("Method not implemented.");
     }
 
     getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE) return GET_METHOD
         throw new Error("Method not implemented.");
     }
 
@@ -5027,6 +5073,133 @@ class StorableMark extends Mark implements IStorable<Mark> {
     }
     getLocalStorage(): string {
         return 'marks';
+    }
+}
+
+class MarkDetail implements IMarkDetail, IModel {
+    private key: string;
+    private apiObject: any;
+    private id: string;
+    private lastDate: Date;
+    private lastModification: Date;
+    private status: string;
+    private location: any;
+
+    public get Key(){
+        return this.key;
+    }
+
+    public set Key(value: string){
+        this.key = value;
+    }
+
+    public get ApiObject(){
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any){
+        this.apiObject = value;
+    }
+
+    public get Id(){
+        return this.id;
+    }
+
+    public set Id(value: string){
+        this.id = value;
+    }
+
+    public get LastDate(){
+        return this.lastDate;
+    }
+
+    public set LastDate(value: Date){
+        this.lastDate = value;
+    }
+
+    public get LastModification(){
+        return this.lastModification;
+    }
+
+    public set LastModification(value: Date){
+        this.lastModification = value;
+    }
+
+    public get Status(){
+        return this.status;
+    }
+
+    public set Status(value: string){
+        this.status = value;
+    }
+
+    public get Location(){
+        return this.location;
+    }
+
+    public set Location(value: any){
+        this.location = value;
+    }
+
+    constructor(id?: string, lastDate?: Date, lastModification?: Date, status?: string, location?: any) {
+        this.id = id || '';
+        this.lastDate = lastDate || new Date();
+        this.lastModification = lastModification || new Date();
+        this.status = status || '';
+        this.location = location || {};
+        this.key = new KeyGenerator().generate(15);
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('id', this.id);
+        map.set('lastDate', this.lastDate);
+        map.set('lastModification', this.lastModification);
+        map.set('status', this.status);
+        map.set('location', this.location);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('id', this.id);
+        map.set('lastDate', this.lastDate);
+        map.set('lastModification', this.lastModification);
+        map.set('status', this.status);
+        map.set('location', this.location);
+        return map;
+    }
+    
+}
+
+class StorableMarkDetail extends MarkDetail implements IStorable<MarkDetail> {
+    getCollection(): ICollection<MarkDetail> {
+        return marksDetails;
+    }
+    getLocalStorage(): string {
+        return 'marksDetails';
+    }
+}
+
+class ApiMarkDetail extends MarkDetail implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        return false;
     }
 }
 
@@ -5492,6 +5665,7 @@ let localContracts = new LocalStorage<Contract>(Contract);
 
 let users: ICollection<User> = new Collection<User>();
 let marks: ICollection<Mark> = new Collection<Mark>();
+let marksDetails: ICollection<MarkDetail> = new Collection<MarkDetail>();
 let storableUsers = new StorableUser();
 let localUsers = new LocalStorage<User>(User);
 users = localUsers.read(storableUsers.getLocalStorage())
@@ -5878,3 +6052,21 @@ if(test){
 //         });
 //     });
 // }
+
+
+let markFactory = new MarkFactory();
+let markFilter = new FilterBuilder();
+markFilter.addField('idUser', localStorage.getItem('login'))
+
+markFactory.createMultipleObjectCrud().getCollection().then((response) => {
+    console.log('TEST MARKS GET LIST', response.result.toArray());
+}).catch((error) => {
+    console.log('ERROR TEST MARKS GET LIST', error)
+})
+
+markFactory.createSpecificMethods().getMarksOfOneUser(localStorage.getItem('registry') || '', markFilter.getFilter()).then((response) => {
+    console.log('TEST MARKS GET LIST OF ONE USER', response.result.toArray());
+}).catch((error) => {
+    console.log('ERROR TEST MARKS GET LIST OF ONE USER', error)
+})
+
