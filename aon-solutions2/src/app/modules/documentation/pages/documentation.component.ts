@@ -21,19 +21,20 @@ export class DocumentationComponent implements OnInit {
   fileToShow        : IDocument   = this.factory.createDocument();
   showMenu          : boolean     = false;
   selecFolder       : string      = '';
+  selectedCards     : string[]    = [];
   showFiles         : boolean     = false;
   showNoElements    : boolean     = false;
   showDetail        : boolean     = false;
   menuItem          : MenuItem [] = []
   subMenuItemFolder : MenuItem [] = []
-  
+
   constructor(
     private translateService: TranslateService,
-    private documentService : DocumentService, 
+    private documentService : DocumentService,
     private folderService   : FolderService)
   {
     /*
-      Inicialmente solo devolvemos carpetas correspondientes a la rai­z
+      Inicialmente solo devolvemos carpetas correspondientes a la raiï¿½z
       es por ello que no pasamos parametro, para que por defecto sea ''
     */
       this.getDocumentation();
@@ -53,8 +54,8 @@ export class DocumentationComponent implements OnInit {
       // Menu con los datos traducidos
       this.translateService.get(
         [
-          "DOCUMENTATION.FILE_SELECT_PREVIEW", "DOCUMENTATION.FILE_SELECT_MOVE_TO", 
-          "DOCUMENTATION.FILE_SELECT_EDIT_NAME", "DOCUMENTATION.FILE_SELECT_LABEL_AS", 
+          "DOCUMENTATION.FILE_SELECT_PREVIEW", "DOCUMENTATION.FILE_SELECT_MOVE_TO",
+          "DOCUMENTATION.FILE_SELECT_EDIT_NAME", "DOCUMENTATION.FILE_SELECT_LABEL_AS",
           "DOCUMENTATION.FILE_SELECT_DOWLOAD", "DOCUMENTATION.FILE_SELECT_DELETE",
         ]
       ).subscribe( result => {
@@ -83,11 +84,11 @@ export class DocumentationComponent implements OnInit {
   getDocumentation(folder: string = '', id: string = '') {
     let filter    = new FilterBuilder();
     filter.addField('parent', folder);
-    
+
     this.folderService.getFolderList(filter.getFilter()).then(listFolders => {
       if (folder === '') {
         // 1 - Listado de carpetas
-        // La primera vez que cargamos la vista no mostramos el menu lateral 
+        // La primera vez que cargamos la vista no mostramos el menu lateral
         // con el listado de carpetas
         this.showMenu                 = false;
         this.documentationListFolders = listFolders;
@@ -114,7 +115,7 @@ export class DocumentationComponent implements OnInit {
           })
           this.showFiles  = true;
         }
-       
+
         if(!this.showMenu){
           // Mostramos el menu
           this.showMenu = true;
@@ -132,7 +133,7 @@ export class DocumentationComponent implements OnInit {
     const finalExtension = extension.split('/').pop();
     return name+'.'+finalExtension;
   }
-  
+
   /*
     La carpeta que se esta visualizando
   */
@@ -151,7 +152,7 @@ export class DocumentationComponent implements OnInit {
     let element = document.getElementById(id);
     element!.classList.add('select-folder');
   }
-  
+
   /*
     Lee un documento para mostrar el previo
   */
@@ -166,7 +167,7 @@ export class DocumentationComponent implements OnInit {
     this.fileToShow = file;
     return file;
   }
-  
+
   /*
     Cerrar el previo de la imagen
   */
@@ -196,8 +197,19 @@ export class DocumentationComponent implements OnInit {
       }
     }
     selectViewFile(id: string){
+      // Verificamos si el card esta guardado
+      const isSaved = this.selectedCards.includes(id);
       // Cogemos el div principal del card
       let element = document.getElementById(id);
+
+      if(!isSaved) {
+        this.selectedCards.push(id);
+      } else {
+        const indexCard = this.selectedCards.indexOf(id);
+        this.selectedCards.splice(indexCard, 1);
+      }
+      console.log('Selected Cards: ', this.selectedCards);
+
       // Si no existe la agregamos, si existe la removemos
       if(!element!.classList.contains('select')){
         element!.classList.add('select');
