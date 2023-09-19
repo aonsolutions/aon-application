@@ -208,7 +208,6 @@ export class DocumentationComponent implements OnInit {
         const indexCard = this.selectedCards.indexOf(id);
         this.selectedCards.splice(indexCard, 1);
       }
-      console.log('Selected Cards: ', this.selectedCards);
 
       // Si no existe la agregamos, si existe la removemos
       if(!element!.classList.contains('select')){
@@ -218,4 +217,22 @@ export class DocumentationComponent implements OnInit {
       }
     }
 
+    /**
+     * Alterna la selección de todos los documentos en la lista.
+     *
+     * @return {void} La función no devuelve ningún valor.
+     */
+    toggleSelectAll() {
+      const documentsArray = this.documentsList.toArray();
+      const allSelected = this.selectedCards.length === documentsArray.length;
+
+      if (allSelected) {  // Si estan todas seleccionadas, las quitamos
+        this.selectedCards = [];
+      } else {  // Si no estan todas seleccionadas, las seleccionamos
+        documentsArray.forEach((card, i) => {
+          document.getElementById('fileCheck-' + i)?.click();
+          this.selectedCards.push('file-' + i);
+        })
+      }
+    }
 }
