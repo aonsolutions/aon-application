@@ -7651,8 +7651,8 @@ let storableMessages = new StorableMessage();
 let localMessages = new LocalStorage<Message>(Message);
 messages = localMessages.read(storableMessages.getLocalStorage())
 if(messages.size() == 0){
-    messages.add(new Message('Asesor1','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-12 12:00"),'consulta','abierta', new Date("2023-08-24 23:30"), true));
-    messages.add(new Message('Asesor2','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-26 14:00"),'consulta','abierta', new Date("2023-08-24 23:30"), false));
+    messages.add(new Message('Asesor1','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-12 12:00"),'consulta','abierta', new Date("2023-08-24 23:30"), false));
+    messages.add(new Message('Asesor2','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-26 14:00"),'consulta','abierta', new Date("2023-08-24 23:30"), true));
     messages.add(new Message('Asesor3','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-07-16 15:00"),'consulta','cerrada', new Date("2023-08-24 23:30"), true));
     messages.add(new Message('Asesor1','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-05-16 12:30"),'notificacion','vista'));
     messages.add(new Message('Asesor2','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-06-17 18:02"),'notificacion','nueva'));
@@ -7673,7 +7673,7 @@ let filteredMessages = messages.filter(filter.getFilter());
 if(messageChats.size() == 0 && filteredMessages.size() != 0){
     messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:30"), 'enviado'));
     messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:31"), 'recibido'));
-    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:32"), 'enviado'));
+    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:32"), 'recibido'));
     localMessageChats.write(storableMessageChats.getLocalStorage(), messageChats);
 }
 
