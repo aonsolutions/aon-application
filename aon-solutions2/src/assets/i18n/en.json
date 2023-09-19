@@ -150,7 +150,15 @@
     "TO_RECTIFY": "Do you want to rectify?",
     "RECTIFIED_MODEL": "Once you have rectified the model, it will be archived as a query in your Inbox.",
     "SEND":"Send",
-    "ALL_MODELS":"All models"
+    "ALL_MODELS":"All models",
+    "DIRECT_DEBIT": "Direct debit",
+    "NRC": "nrc (online banking or bank branch)",
+    "DEFERRAL_INSTALLMENT": "deferral / installment",
+    "ACCOUNT_NUMBER": "Account number",
+    "NEXT": "NEXT",
+    "DESCRIPTION": "Descripción",
+    "NUM_OF_INSTALLMENTS":"Nº installments (max. 12)",
+    "INFO_DEFERRAL": "The legal interest of 3.25% will be applied"
   },
     "PROFILE": {
     "CONTACT_DETAILS":   "Contact details",

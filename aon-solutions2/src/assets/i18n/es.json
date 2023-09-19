@@ -150,7 +150,15 @@
     "TO_RECTIFY":"¿Quieres rectificar?",
     "RECTIFIED_MODEL":"  Una vez hayas rectificado el modelo, se archivará como una consulta en tu Bandeja.",
     "SEND":"Enviar",
-    "ALL_MODELS":"Todos los modelos"
+    "ALL_MODELS":"Todos los modelos",
+    "DIRECT_DEBIT":"Domiciliación Bancaria",
+    "NRC":"nrc (banca online u oficina bancaria)",
+    "DEFERRAL_INSTALLMENT":"aplazamiento / fraccionamiento",
+    "ACCOUNT_NUMBER":"Número de cuenta",
+    "NEXT": "SIGUIENTE",
+    "DESCRIPTION": "Descripción",
+    "NUM_OF_INSTALLMENTS":"Nº de plazos (máx. 12)",
+    "INFO_DEFERRAL": "Se aplicará el interés legal del 3,25%"
    },
   "PROFILE": {
     "CONTACT_DETAILS":   "Datos contacto",
