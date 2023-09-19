@@ -70,36 +70,42 @@ public class JsonUtils {
 	}
 
 	public static Double getDouble(JSONObject json, String key ) {
-		return AonNumberUtils.toDouble(  json.optNumber(key, null)); 
+		Number opt = json.optNumber(key, null);
+		return null == opt ? null : AonNumberUtils.toDouble(opt); 
 	}
 	
 	public static Double getdouble(JSONObject json, String key ) {
-		Number n = AonNumberUtils.toDouble(json.optNumber(key, null));
-		return n==null?0:n.doubleValue();
+		Number opt = json.optNumber(key, null);
+		return null == opt ? null : AonNumberUtils.toDouble(opt).doubleValue(); 
 	}
 	
 	public static Short getShort(JSONObject json, String key) {
-		Number n = AonNumberUtils.toDouble(json.optNumber(key, null));
-		return n==null?0:n.shortValue();
+		Number opt = json.optNumber(key, null);
+		return null == opt ? null : AonNumberUtils.toDouble(opt).shortValue(); 
 	}
 	
 	public static Integer getInteger(JSONObject json, String key ) {
 		if(json == null) return null;
-		return json.opt(key) != null ? AonNumberUtils.toInteger(json.optNumber(key, null)) : null; 
+		Number opt = json.optNumber(key, null);
+		return null == opt ? null : AonNumberUtils.toInteger(opt);
 	}
 	
 	public static Integer optInteger(JSONObject json, String key ) {
-		return json != null ? AonNumberUtils.toInteger(json.optNumber(key, null)) : null; 
+		if(json == null) return null;
+		Number opt = json.optNumber(key, null);
+		return null == opt ? null : AonNumberUtils.toInteger(opt);
 	}
 	
 	public static Integer getInt(JSONObject json, String key ) {
-		Number n = AonNumberUtils.toInteger(  json.optNumber(key, null)); 
-		return n==null?0:n.intValue();
+		if(json == null) return null;
+		Number opt = json.optNumber(key, null);
+		return null == opt ? 0 : AonNumberUtils.toInteger(opt).intValue();
 	}
 	
 	public static Byte getByte(JSONObject json, String key ) {
-		Number n = AonNumberUtils.toInteger(json.optNumber(key, null)); 
-		return n == null ? 0 : n.byteValue();
+		if(json == null) return null;
+		Number opt = json.optNumber(key, null);
+		return null == opt ? 0 : AonNumberUtils.toInteger(opt).byteValue();
 	}
 	
 	public static Date getDate(JSONObject json, String key ) {

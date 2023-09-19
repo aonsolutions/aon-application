@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -64,6 +66,106 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 public class BookingCustomer extends HTMLPanel {
 	
 	// ------- BookingWithOutFee
+	
+	class AonAppUsersCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			aonAppUsers(bookingWithOutFeeMenu.getCustomer());
+		}
+		
+		public void aonAppUsers(Customer customer) {
+			// Create the base URL
+			String baseUrl = "/ms/api/booking/customer";
+
+			// Create a URL builder and add query parameters
+			UrlBuilder urlBuilder = new UrlBuilder();
+			urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+//			urlBuilder.setHost("localhost:8080");
+			urlBuilder.setHost("aon.solutions"); 
+			urlBuilder.setPath(baseUrl);
+			
+			urlBuilder.setParameter("customer", customer.getId().toString());
+			
+			// Create the request builder with the complete URL
+			RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+			requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+			
+			try {
+			    // Send the request
+			    requestBuilder.sendRequest(null, new RequestCallback() {
+			        public void onResponseReceived(Request request, Response response) {
+			            if (response.getStatusCode() == 200) {
+			            	String responseBody = response.getText();
+			            	List<Booking> bookingList = BookingJSON.parseBookingJSONArr(responseBody);
+			            	if(!bookingList.isEmpty()) {
+			            		Booking booking = bookingList.get(0);
+			            		if(null != booking.getResume() && !booking.getResume().getChilds().isEmpty()) {
+			            			
+			            			List<String> barCodes = new ArrayList<>();
+			            			String barCode = bookingWithOutFeeMenu.bookingCheck.getItem().getBarcode();
+			            			
+			            			if(barCode.contains(",")) {
+			            				String[] splits = barCode.split(",");
+			            				for(int i=0; i < splits.length; i++)
+			            					barCodes.add(splits[i].trim());
+			            			} else
+			            				barCodes.add(barCode);
+			            			
+			            			AonApp aonApp = AonApp.safeValueOf(Integer.parseInt(barCodes.stream().filter(barCodeIt -> barCodeIt.split("\\.").length == 3).findFirst().get().split("\\.")[2]));
+			            			
+			            			// Create Widget
+			            			String htmlBody = "<ul>";
+			            			
+			            			for(Domain childDomain : booking.getResume().getChilds()) {
+			            				if(null != childDomain.getApps()) {
+			            					
+			            					long hasApp = childDomain.getApps().stream().filter(domainApp -> domainApp.getApp().equals(aonApp)).count();
+				            				
+			            					List<AonApp> childApps = childDomain.getApps().stream().map(app -> app.getApp()).collect(Collectors.toList());
+			            					
+			            					String message = "aonApp : " + aonApp + 
+			            							"\nchildDomain : " + childDomain.getDescription() +
+			            							"\napps size : " + childDomain.getApps().size();
+			            					
+			            					message += "\napps : ";
+			            					for(AonApp app : childApps)
+			            						message += app + ", ";
+			            					
+			            					message +=	"\nhasApp : " + hasApp;
+			            					
+			            					Window.alert(message);
+			            					
+			            					if(hasApp > 0) {
+				            					htmlBody += "<li>" + childDomain.getDescription() + " -- " + childDomain.getName() + "</li>";
+				            				}
+			            				}
+			            			}
+			            			
+			            			htmlBody += "</ul>";
+			            			
+			            			HTMLPanel html = new HTMLPanel(htmlBody);
+			            			html.getElement().getStyle().setPaddingLeft(2, Unit.EM);
+			            			
+			            			AonDialog dialog = new AonDialog(aonApp.getDescription(), html);
+			            			dialog.info();
+			            		}
+			            	}
+			            } else {
+			            	AonMessagePanel.showError(messagePanel, response.getText());
+			            }
+			        }
+
+					public void onError(Request request, Throwable exception) {
+						AonMessagePanel.showError(messagePanel, exception.getMessage());
+			        }
+			    });
+			} catch (RequestException e) {
+				AonMessagePanel.showError(messagePanel, e.getMessage());
+			}
+		}
+
+	}
 	
 	class ConectaUsersCommand implements ScheduledCommand {
 
@@ -260,6 +362,7 @@ public class BookingCustomer extends HTMLPanel {
 		private MenuItem updateBooking;
 		private MenuItem deleteBooking;
 		private MenuItem conectaUsers;
+		private MenuItem aonAppUsers;
 		
 
 		public BookingWithOutFeeMenu() {
@@ -267,6 +370,7 @@ public class BookingCustomer extends HTMLPanel {
 			updateBooking = addMenuItem("Actualizar Contrataci\u00f3n", new UpdateBookingCommand(), AON.CSS.aonIconEdit(), "updateBooking");
 			deleteBooking = addMenuItem("Eliminar Contrataci\u00f3n", new RemoveBookingCommand(), AON.CSS.aonIconDelete(), "deleteBooking");
 			conectaUsers = addMenuItem("Informaci\u00f3n Usuarios", new ConectaUsersCommand(), AON.CSS.aonIconInfo(), "conectaUsers");
+			aonAppUsers = addMenuItem("Informaci\u00f3n Usuarios", new AonAppUsersCommand(), AON.CSS.aonIconInfo(), "aonAppUsers");
 		}
 		
 		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
@@ -305,7 +409,20 @@ public class BookingCustomer extends HTMLPanel {
 
 		public void setBookingCheck(BookingCheck bookingCheck) {
 			this.bookingCheck = bookingCheck;
-			this.conectaUsers.setVisible(AonStringUtils.equalsIgnoreCase(this.bookingCheck.getItem().getBarcode(), "01.00.USR"));
+			
+			List<String> barCodes = new ArrayList<>();
+			String barCode = this.bookingCheck.getItem().getBarcode();
+			if(barCode.contains(",")) {
+				String[] splits = barCode.split(",");
+				for(int i=0; i < splits.length; i++)
+					barCodes.add(splits[i].trim());
+			} else
+				barCodes.add(barCode);
+			
+			this.conectaUsers.setVisible(barCodes.contains("01.00.USR"));
+			
+			boolean isChildBarCode = !barCodes.isEmpty() && barCodes.stream().filter(barCodeIt -> barCodeIt.split("\\.").length == 3).count() > 0;
+			this.aonAppUsers.setVisible(isChildBarCode && !barCodes.contains("01.00.USR"));
 		}
 		
 		public void setHasFee(boolean hasFee) {
@@ -724,7 +841,6 @@ public class BookingCustomer extends HTMLPanel {
 			@Override
 			public void onAccept() {
 				syncDomains();
-			//	syncDomains();
 			}
 		});
 	}
@@ -1131,7 +1247,7 @@ public class BookingCustomer extends HTMLPanel {
 	}
 	
 	private void createFeeWithoutBookingGrid() {
-		feeWithoutBookingGrid = new Grid(0, 7);
+		feeWithoutBookingGrid = new Grid(0, 9);
 		feeWithoutBookingGrid.clear();
 		feeWithoutBookingGrid.setWidth("100%");
 
@@ -1141,6 +1257,8 @@ public class BookingCustomer extends HTMLPanel {
 		Label code = new Label("CODIGO");
 		Label conceptStatus = new Label("ESTADO");
 		Label quantity = new Label("CANTIDAD");
+		Label price = new Label("PRECIO");
+		Label discount = new Label("DESCUENTO");
 		Label startDate = new Label("F. DESDE");
 		Label endDate = new Label("F. HASTA");
 		Label action = new Label("");
@@ -1149,6 +1267,8 @@ public class BookingCustomer extends HTMLPanel {
 		code.addStyleName(AON.CSS.aonHeaderTable());
 		conceptStatus.addStyleName(AON.CSS.aonHeaderTable());
 		quantity.addStyleName(AON.CSS.aonHeaderTable());
+		price.addStyleName(AON.CSS.aonHeaderTable());
+		discount.addStyleName(AON.CSS.aonHeaderTable());
 		startDate.addStyleName(AON.CSS.aonHeaderTable());
 		endDate.addStyleName(AON.CSS.aonHeaderTable());
 		action.addStyleName(AON.CSS.aonHeaderTable());
@@ -1158,9 +1278,11 @@ public class BookingCustomer extends HTMLPanel {
 		feeWithoutBookingGrid.setWidget(row, 1, code);
 		feeWithoutBookingGrid.setWidget(row, 2, conceptStatus);
 		feeWithoutBookingGrid.setWidget(row, 3, quantity);
-		feeWithoutBookingGrid.setWidget(row, 4, startDate);
-		feeWithoutBookingGrid.setWidget(row, 5, endDate);
-		feeWithoutBookingGrid.setWidget(row, 6, action);
+		feeWithoutBookingGrid.setWidget(row, 4, price);
+		feeWithoutBookingGrid.setWidget(row, 5, discount);
+		feeWithoutBookingGrid.setWidget(row, 6, startDate);
+		feeWithoutBookingGrid.setWidget(row, 7, endDate);
+		feeWithoutBookingGrid.setWidget(row, 8, action);
 		
 		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
 		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
@@ -1169,6 +1291,8 @@ public class BookingCustomer extends HTMLPanel {
 		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
 		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
 		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
+		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
+		feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
 		
 		setColumnWidthFeeWithoutBooking();
 		fillFeeWithoutBooking();
@@ -1177,10 +1301,12 @@ public class BookingCustomer extends HTMLPanel {
 	private void setColumnWidthFeeWithoutBooking() {
 		feeWithoutBookingGrid.getColumnFormatter().getElement(1).getStyle().setWidth(160, Unit.PX);
 		feeWithoutBookingGrid.getColumnFormatter().getElement(2).getStyle().setWidth(85, Unit.PX);
-		feeWithoutBookingGrid.getColumnFormatter().getElement(3).getStyle().setWidth(160, Unit.PX);
+		feeWithoutBookingGrid.getColumnFormatter().getElement(3).getStyle().setWidth(80, Unit.PX);
 		feeWithoutBookingGrid.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
 		feeWithoutBookingGrid.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
-		feeWithoutBookingGrid.getColumnFormatter().getElement(6).getStyle().setWidth(25, Unit.PX);
+		feeWithoutBookingGrid.getColumnFormatter().getElement(6).getStyle().setWidth(80, Unit.PX);
+		feeWithoutBookingGrid.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
+		feeWithoutBookingGrid.getColumnFormatter().getElement(8).getStyle().setWidth(25, Unit.PX);
 	}
 
 	private void fillFeeWithoutBooking() {
@@ -1216,6 +1342,8 @@ public class BookingCustomer extends HTMLPanel {
 			Label codeLabel = new Label(bookingCheck.getItem().getProduct().getCode());
 			Label productStatusLabel = new Label(getFeeStatus(bookingCheck));
 			Label quantityLabel = new Label(AonStringUtils.isBlank(bookingCheck.getQuantity()) ? "1.0" : bookingCheck.getQuantity());
+			Label priceLabel = new Label(null == bookingCheck.getPrice() ? "0.0" : bookingCheck.getPrice().toString());
+			Label discountyLabel = new Label(AonStringUtils.isBlank(bookingCheck.getDiscountExpr()) ? "0.0" : bookingCheck.getDiscountExpr());
 			Label startDateLabel = new Label(formatDate(bookingCheck.getStartDate()));
 			Label endDateLabel = new Label(formatDate(bookingCheck.getEndDate()));
 			
@@ -1233,15 +1361,19 @@ public class BookingCustomer extends HTMLPanel {
 			feeWithoutBookingGrid.setWidget(row, 1, codeLabel);
 			feeWithoutBookingGrid.setWidget(row, 2, productStatusLabel);
 			feeWithoutBookingGrid.setWidget(row, 3, quantityLabel);
-			feeWithoutBookingGrid.setWidget(row, 4, startDateLabel);
-			feeWithoutBookingGrid.setWidget(row, 5, endDateLabel);
-			feeWithoutBookingGrid.setWidget(row, 6, actionBtn);
+			feeWithoutBookingGrid.setWidget(row, 4, priceLabel);
+			feeWithoutBookingGrid.setWidget(row, 5, discountyLabel);
+			feeWithoutBookingGrid.setWidget(row, 6, startDateLabel);
+			feeWithoutBookingGrid.setWidget(row, 7, endDateLabel);
+			feeWithoutBookingGrid.setWidget(row, 8, actionBtn);
 			
 			if (row % 2 == 0) {
 				productLabel.addStyleName(AON.CSS.aonOddTableRow());
 				codeLabel.addStyleName(AON.CSS.aonOddTableRow());
 				productStatusLabel.addStyleName(AON.CSS.aonOddTableRow());
 				quantityLabel.addStyleName(AON.CSS.aonOddTableRow());
+				priceLabel.addStyleName(AON.CSS.aonOddTableRow());
+				discountyLabel.addStyleName(AON.CSS.aonOddTableRow());
 				startDateLabel.addStyleName(AON.CSS.aonOddTableRow());
 				endDateLabel.addStyleName(AON.CSS.aonOddTableRow());
 				actionBtn.addStyleName(AON.CSS.aonOddTableRow());
@@ -1253,12 +1385,17 @@ public class BookingCustomer extends HTMLPanel {
 				feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 4, AON.CSS.aonOddTableRow());
 				feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 5, AON.CSS.aonOddTableRow());
 				feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 6, AON.CSS.aonOddTableRow());
+				feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 7, AON.CSS.aonOddTableRow());
+				feeWithoutBookingGrid.getCellFormatter().addStyleName(row, 8, AON.CSS.aonOddTableRow());
 			}
 			
 			feeWithoutBookingGrid.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
+			feeWithoutBookingGrid.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
 			feeWithoutBookingGrid.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
 			feeWithoutBookingGrid.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
 			feeWithoutBookingGrid.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			feeWithoutBookingGrid.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
+			feeWithoutBookingGrid.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.CENTER);
 				
 			feeWithoutBookingGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 		}

@@ -9,9 +9,12 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainJSON {
 	
@@ -59,7 +62,21 @@ public class DomainJSON {
 			.setModificationDate(JsonUtils.getDate(json, IJsonNames.MODIFICATION_DATE))
 			.setAonCustomer(JsonUtils.getInteger(json, IJsonNames.AON_CUSTOMER))
 			.setAonStatus(AonStatus.safeValueOf(JsonUtils.getString(json,IJsonNames.AON_STATUS)))
+			.setApps(getDomainApps(JsonUtils.getJSONArray(json, IJsonNames.APPS)))
 		;
+		
+	}
+
+	private static List<DomainApp> getDomainApps(JSONArray jsonArray) {
+		LinkedList<DomainApp> list = new LinkedList<>();
+		for(Integer i = 0; i < jsonArray.length(); i++) {
+			String app = jsonArray.get(i).toString();
+			try {
+				app = AonStringUtils.isNotBlank(app) ? app.split("\"")[1] : "";
+				list.add(new DomainApp().setApp(AonApp.safeValueOf(app)));
+			} catch (Exception e) {}
+		}
+ 		return list;
 	}
 
 	public static JSONArray toJSON(List<Domain> domains) {
