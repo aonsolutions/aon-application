@@ -1261,7 +1261,6 @@ export interface IDocument extends ICollectable {
 }
 
 export interface IFolder extends ICollectable {
-    Key : string;
     Name: string;
     Path: string;
     Parent: string;

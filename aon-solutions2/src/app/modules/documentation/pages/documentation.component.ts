@@ -50,7 +50,7 @@ export class DocumentationComponent implements OnInit {
       this.folderService.getFolderList(filter.getFilter()).then(listFolders => {
         listFolders.forEach(folder => {
           this.subMenuItemFolder.push(
-            {root: true, text: folder.Name, click:() => this.getMoveFile(folder.Path)},
+            {root: true, text: folder.Name, icon: 'folder', click:() => this.getMoveFile(folder.Path)},
           );
         });
       })
