@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.BookingResume;
@@ -17,6 +18,7 @@ import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -213,7 +215,18 @@ public class BookingJSON {
 			.setModificationDate(JsonGWTUtils.getDate(json, IJsonNames.MODIFICATION_DATE))
 			.setAonCustomer(JsonGWTUtils.getInteger(json, IJsonNames.AON_CUSTOMER))
 			.setAonStatus(AonStatus.safeValueOf(JsonGWTUtils.getString(json,IJsonNames.AON_STATUS)))
+			.setApps(getDomainApps(JsonGWTUtils.getJSONArray(json, IJsonNames.APPS)))
 		;
+	}
+
+	private static List<DomainApp> getDomainApps(JSONArray jsonArray) {
+		LinkedList<DomainApp> list = new LinkedList<>();
+		for(Integer i = 0; i < jsonArray.size(); i++) {
+			String app = jsonArray.get(i).toString();
+			app = AonStringUtils.isNotBlank(app) ? app.split("\"")[1] : "";
+			list.add(new DomainApp().setApp(AonApp.safeValueOf(app)));
+		}
+ 		return list;
 	}
 	
 	private static DomainTypeInfo domainTypeInfoJson(JSONObject domainTypeInfoJson) {
