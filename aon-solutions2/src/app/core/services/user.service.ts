@@ -6,29 +6,36 @@ import { ICollection, IFilter, IUser, UserFactory } from 'libraries/AonSDK/aon';
 })
 export class UserService {
 
-  private singleObjectCrud = new UserFactory().createSingleObjectCrud();
-  private multipleObjectCrud = new UserFactory().createMultipleObjectCrud();
+  private factory = new UserFactory();
+  private specificMethods = new UserFactory().createSpecificMethods();
 
   constructor() { }
 
   async getUserList(filter?: IFilter): Promise<ICollection<IUser>> {
-    return (await this.multipleObjectCrud.getCollection(filter)).result;
+    return (await this.factory.createMultipleObjectCrud().getCollection(filter)).result;
   }
 
   async getUser(pkey: any): Promise<IUser> {
-    return (await this.singleObjectCrud.getElement(pkey)).result;
+    return (await this.factory.createSingleObjectCrud().getElement(pkey)).result;
   }
 
   async createUser(user: IUser): Promise<IUser> {
-    return (await this.singleObjectCrud.createElement(user)).result;
+    return (await this.factory.createSingleObjectCrud().createElement(user)).result;
   }
 
   async deleteUser(pkey: any): Promise<boolean> {
-    return (await this.singleObjectCrud.deleteElement(pkey)).result;
+    return (await this.factory.createSingleObjectCrud().deleteElement(pkey)).result;
   }
 
   async updateUser(user: IUser): Promise<IUser> {
-    return (await this.singleObjectCrud.updateElement(user)).result;
+    return (await this.factory.createSingleObjectCrud().updateElement(user)).result;
   }
 
+  async getCurrentUserData(): Promise<IUser> {
+    return (await this.specificMethods.getCurrentUserData()).result;
+  }
+
+  async updateCurrentUserData(user: IUser): Promise<IUser> {
+    return (await this.specificMethods.updateCurrentUserData(user)).result;
+  }
 }
