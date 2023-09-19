@@ -43,7 +43,7 @@ phases:
       #- docker tag aonsolutions/aon-application:test $REPOSITORY_URI/aon-application:test
       #- docker push $REPOSITORY_URI/aon-application:test      
       - docker build --no-cache -t aonsolutions/aon-db-up2date:test ./aon-db-up2date
-      - mysql < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql
+      - mysql -h $(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+') -u dbuser --password=serubd2000 < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql
       - |
         docker run \
         -e DB_USER=dbuser \
