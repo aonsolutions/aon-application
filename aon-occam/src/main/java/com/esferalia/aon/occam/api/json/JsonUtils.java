@@ -70,13 +70,12 @@ public class JsonUtils {
 	}
 
 	public static Double getDouble(JSONObject json, String key ) {
-		Number opt = json.optNumber(key, null);
-		return null == opt ? null : AonNumberUtils.toDouble(opt); 
+		return AonNumberUtils.toDouble(  json.optNumber(key, null)); 
 	}
 	
 	public static Double getdouble(JSONObject json, String key ) {
-		Number opt = json.optNumber(key, null);
-		return null == opt ? null : AonNumberUtils.toDouble(opt).doubleValue(); 
+		Number n = AonNumberUtils.toDouble(json.optNumber(key, null));
+		return n==null?0:n.doubleValue();
 	}
 	
 	public static Short getShort(JSONObject json, String key) {
