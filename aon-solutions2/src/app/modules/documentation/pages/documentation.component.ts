@@ -226,13 +226,17 @@ export class DocumentationComponent implements OnInit {
       const documentsArray = this.documentsList.toArray();
       const allSelected = this.selectedCards.length === documentsArray.length;
 
-      if (allSelected) {  // Si estan todas seleccionadas, las quitamos
-        this.selectedCards = [];
-      } else {  // Si no estan todas seleccionadas, las seleccionamos
-        documentsArray.forEach((card, i) => {
+      documentsArray.forEach((card, i) => {
+        // Deseleccionamos elementos
+        if (allSelected && this.selectedCards.includes('file-' + i)) {
           document.getElementById('fileCheck-' + i)?.click();
-          this.selectedCards.push('file-' + i);
-        })
-      }
+        } else {
+          // Seleccionamos elementos que no estén seleccionados previamente
+          if (!this.selectedCards.includes('file-' + i)) {
+            document.getElementById('fileCheck-' + i)?.click();
+          }
+        }
+      })
     }
+
 }
