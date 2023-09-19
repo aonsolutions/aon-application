@@ -158,6 +158,7 @@ public enum AonError implements Serializable{
 	
 	
 	// --------------------------------------------- AMORTIZATION TYPE
+	,AMORTIZATION_TYPE_ID_EXISTS("El id para el tipo de amortizacion no puede estar repetido")
 	,AMORTIZATION_TYPE_NULL("El tipo de amortizacion es nulo.")
 	,AMORTIZATION_TYPE_EMPTY("El tipo de amortizacion esta vacío.")
 	,AMORTIZATION_TYPE_NULL_DESCRIPTION("La descripcion del tipo de amortizacion es nula")
