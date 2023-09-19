@@ -7,7 +7,7 @@
       "SELECT"          : "Select an option",
       "SELECT_MULTIPLE" : "Select the options"
     },
-    "SEND": "Send"
+    "SEND": "Send",
   },
   "HEADER": {
     "EDIT_PROFILE": "Edit profile",
@@ -86,11 +86,13 @@
     "ASSIGN_TO":"assign to"
   },
   "DOCUMENTATION": {
+    "FILE_SELECT_ALL"       : "Select all",
+    "FILE_UNSELECT_ALL"     : "Unselect all",
     "FILE_SELECT_PREVIEW"   : "Preview",
     "FILE_SELECT_MOVE_TO"   : "Move to",
     "FILE_SELECT_EDIT_NAME" : "Edit name",
     "FILE_SELECT_LABEL_AS"  : "Label as",
-    "FILE_SELECT_DOWLOAD"   : "Dowload",
+    "FILE_SELECT_DOWLOAD"   : "Download",
     "FILE_SELECT_DELETE"    : "Delete"
   },
   "BILLING": {
