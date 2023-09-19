@@ -44,6 +44,7 @@ import { GridLayoutComponent } from './layouts/grid-layout/grid-layout.component
 import { IconComponent } from './components/icon/icon.component';
 import { InputComponent } from './components/input/input.component';
 import { ListElementComponent } from './layouts/list-element/list-element.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ModalControllerComponent } from './components/modal-controller/modal-controller.component';
 import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
@@ -109,6 +110,7 @@ import { TopBarComponent } from './layouts/top-bar/top-bar.component';
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
+    MatTooltipModule,
     PdfJsViewerModule,
     ReactiveFormsModule,
     RouterModule,
