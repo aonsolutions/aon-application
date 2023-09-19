@@ -1,37 +1,54 @@
-FROM maven:3-openjdk-17
+FROM openjdk:21-jdk-bullseye
 
 RUN set -eux; \
-	microdnf install \
-	selinux-policy-targeted procps sudo hostname mysql-server
+	apt-get update
 
-#RUN sudo -u mysql mysqld --initialize-insecure
-
-# Install git, SSH, unzip and other utilities
+# Install sudo
 RUN set -eux; \
-	microdnf install \
-	ca-certificates curl gnupg2 unzip \
-	btrfs-progs e2fsprogs xfsprogs iproute
+	apt-get install -y sudo debconf-utils
 
-# Install Docker
-WORKDIR /etc/yum.repos.d
-RUN curl -fsSLO  https://download.docker.com/linux/centos/docker-ce.repo
+# Install Maven
 RUN set -eux; \
-	microdnf install docker-ce docker-ce-cli containerd.io
-ENV DIND_COMMIT="37498f009d8bf25fbb6199e8ccd34bed84f2874b"
-RUN set -eux \
-	&& curl "https://raw.githubusercontent.com/docker/docker/${DIND_COMMIT}/hack/dind" --output /usr/local/bin/dind \
-	&& chmod +x /usr/local/bin/dind
+	apt-get install -y maven
 
-# Install Python3
+# Install MySQL
 RUN set -eux; \
-	microdnf install python3 python3-pip \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& microdnf clean all
+	wget https://dev.mysql.com/get/mysql-apt-config_0.8.25-1_all.deb; \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y ./mysql-apt-config_0.8.25-1_all.deb; \
+	echo "mysql-apt-config     mysql-apt-config/select-server  select  mysql-8.0" | debconf-set-selections; 
+
+RUN set -eux; \
+	apt-get update; \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server; \
+	echo "mysql-community-server        mysql-server/default-auth-override      select Use Legacy Authentication Method (Retain MySQL 5.x Compatibility)" | debconf-set-selections
+
+# Add Docker's official GPG key:
+RUN set -eux; \
+	apt-get install -y ca-certificates curl gnupg; \
+	sudo install -m 0755 -d /etc/apt/keyrings; \
+	wget -O - https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg; \
+	chmod a+r /etc/apt/keyrings/docker.gpg
+
+# Add Docker's repository to Apt sources:
+RUN set -eux; \
+	echo \
+	"deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+	"$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+	tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+RUN set -eux; \
+	apt-get update;
+
+# Install the Docker's packages.	
+RUN set -eux; \
+	apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Install AWS CLI
 RUN set -eux; \
-	pip3 install awscli --upgrade \
-	&& aws --version
+	apt-get install -y awscli 
+
+RUN set -eux \
+	rm -rf /var/lib/apt/lists/*
 
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
@@ -40,7 +57,6 @@ RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
 ENV TZ=Europe/Madrid
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-#ENV AON_TMP=/tmp/aon-application
 
 WORKDIR /root/.m2
 COPY repository.zip .
@@ -48,39 +64,17 @@ RUN set -x \
     && unzip repository.zip \
     && rm repository.zip
 
-#COPY araba-eus.pem .
-#COPY bizkaia-eus.pem .
-#COPY gipuzkoa-eus.pem .
-#COPY seg-social-es.pem .
-#ENV KEYSTORE=/opt/java/openjdk/lib/security/cacerts
-#RUN set -x \
-#    && for pem in *.pem; do \
-#    keytool -importcert -alias ${pem%.*} -keystore $KEYSTORE -file $pem -storepass changeit -noprompt \
-#    && keytool -list -keystore $KEYSTORE -storepass changeit -alias ${pem%.*}; \
-#    done
-
-
-COPY tomcat:10-jdk17.tar /root
-COPY openjdk:17-slim.tar /root
+COPY openjdk:21-slim.tar /root
+COPY tomcat:11.0-jdk21-openjdk.tar /root
 
 ENV AON_CONF=/etc/aon-aio
 
 RUN mkdir -p $AON_CONF
 COPY connection $AON_CONF
-#RUN mkdir -p $AON_TMP
-#WORKDIR /tmp/aon-application
-#COPY pom.xml .
-#RUN set -x   \
-#    && mvn -N clean     \
-#    && mvn -N install   \
-#    && mvn -N dependency:go-offline         \
-#    && rm -rf $AON_TMP
-
 
 WORKDIR /root
 COPY .aws.tar.gz .aws.tar.gz
 RUN set -x \
-        \
         && tar -xvzf .aws.tar.gz \
         && rm .aws.tar.gz
 
