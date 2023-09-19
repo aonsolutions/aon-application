@@ -4,21 +4,21 @@
 <hr />
 <div *ngFor="let enterprise of enterprises">
   <div class="form">
-    <app-input
-      *ngFor="let email of emailList; let i = index"
-      [type]="'text'"
-      [label]="'PROFILE.EMAIL' | translate"
-      [placeholder]="'PROFILE.EMAIL' | translate"
-      [value]="email"
-    ></app-input>
-
-    <div class="input-profile-contact-data-add">
+    <div class="email-row">
+      <app-input
+        *ngFor="let email of emailList; let i = index"
+        [type]="'text'"
+        [label]="'Email ' + (i + 1) | translate"
+        [placeholder]="'PROFILE.EMAIL' | translate"
+        [value]="enterprise.Email"
+      ></app-input>
+    </div>
+    <div class="button-add-mail">
       <app-button class="icon-border" (click)="addEmail()">
         <app-icon [shape]="'add'"></app-icon>
       </app-button>
     </div>
   </div>
-
   <div class="form">
     <app-input
       [type]="'text'"

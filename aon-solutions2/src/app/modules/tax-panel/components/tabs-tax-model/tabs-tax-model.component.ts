@@ -33,7 +33,7 @@ export class TabsTaxModelComponent implements OnInit {
   modelsYears: any[] = [];
   models: any;
   tabs: Tabs[] = [];
-  selectedModel: number = 0;
+  selectedModel: any = '0';
   currentDate = new Date();
   selectedYear: string = this.currentDate.getFullYear().toString();
 
@@ -75,7 +75,9 @@ export class TabsTaxModelComponent implements OnInit {
     // Datos del modelo
     taxModelService.getTaxModelList().then((response) => {
       this.models = response;
-      this.modelsList.push({ value: 0, text: 'Todos' });
+      this.translateService.get('TAX_PANEL.ALL_MODELS').subscribe((translatedText) => {
+        this.modelsList.push({ value: 0, text: translatedText });
+      });
 
       response.forEach((element) => {
         if (!this.modelsList.some((model) => model.text === element.Name)) {

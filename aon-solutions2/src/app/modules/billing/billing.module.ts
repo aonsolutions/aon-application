@@ -9,6 +9,14 @@ import { FormsModule } from '@angular/forms';
 import { ModelsDashboardComponent } from './components/models-dashboard/models-dashboard.component';
 import { ChartDashboardComponent } from './components/chart-dashboard/chart-dashboard.component';
 import { BanksDashboardComponent } from './components/banks-dashboard/banks-dashboard.component';
+import { SalesTableComponent } from './components/sales-table/sales-table.component';
+import { BillsTableComponent } from './components/bills-table/bills-table.component';
+import { BankTableComponent } from './components/bank-table/bank-table.component';
+import { ChartDashboardReportsComponent } from './components/chart-dashboard-reports/chart-dashboard-reports.component';
+import { DuplicateFacturaComponent } from './components/duplicate-factura/duplicate-factura.component';
+import { SendFacturaComponent } from './components/send-factura/send-factura.component';
+import { DeleteFacturaComponent } from './components/delete-factura/delete-factura.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -16,6 +24,13 @@ import { BanksDashboardComponent } from './components/banks-dashboard/banks-dash
     ModelsDashboardComponent,
     ChartDashboardComponent,
     BanksDashboardComponent,
+    SalesTableComponent,
+    BillsTableComponent,
+    BankTableComponent,
+    ChartDashboardReportsComponent,
+    DuplicateFacturaComponent,
+    SendFacturaComponent,
+    DeleteFacturaComponent
   ],
   imports: [
     CommonModule,
@@ -23,6 +38,7 @@ import { BanksDashboardComponent } from './components/banks-dashboard/banks-dash
     BillingRoutingModule,
     SetMaterialModule,
     SharedModule,
+    MatIconModule
   ]
 })
 export class BillingModule { }

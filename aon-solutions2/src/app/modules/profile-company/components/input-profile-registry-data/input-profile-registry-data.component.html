@@ -1,6 +1,7 @@
 <div *ngFor="let registryEnterprise of registryEnterprises">
   <div class="form">
     <app-input
+      (inputValue)="getValue($event, registryEnterprise, 'Description')"
       [type]="'text'"
       [label]="'PROFILE.DESCRIPTION' | translate"
       [placeholder]="'PROFILE.DESCRIPTION' | translate"
@@ -10,11 +11,13 @@
 
   <div class="form">
     <app-input
+      (inputValue)="getValue($event, registryEnterprise, 'DateCreation')"
       [label]="'PROFILE.DATE_OF_CREATION' | translate"
       [type]="'date'"
       [value]="registryEnterprise.DateCreation"
     ></app-input>
     <app-input
+      (inputValue)="getValue($event, registryEnterprise, 'DateRegistration')"
       [label]="'PROFILE.REGISTRATION_DATE' | translate"
       [type]="'date'"
       [value]="registryEnterprise.DateRegistration"
@@ -23,6 +26,7 @@
 
   <div class="form">
     <app-input
+      (inputValue)="getValue($event, registryEnterprise, 'Notary')"
       [type]="'text'"
       [label]="'PROFILE.NOTARY' | translate"
       [placeholder]="'PROFILE.NOTARY' | translate"
@@ -32,16 +36,38 @@
 
   <div class="form">
     <app-input
+      (inputValue)="getValue($event, registryEnterprise, 'Protocol')"
       [type]="'text'"
       [label]="'PROFILE.PROTOCOL' | translate"
       [placeholder]="'PROFILE.PROTOCOL' | translate"
       [value]="registryEnterprise.Protocol"
     ></app-input>
     <app-input
+      (inputValue)="getValue($event, registryEnterprise, 'Inscription')"
       [type]="'text'"
       [label]="'PROFILE.REGISTRATION' | translate"
       [placeholder]="'PROFILE.REGISTRATION' | translate"
       [value]="registryEnterprise.Inscription"
     ></app-input>
   </div>
+  <form>
+    <div tool>
+      <app-button
+        type="submit"
+        [class]="'dark'"
+        [width]="'100%'"
+
+      >
+        {{ "PROFILE.SAVE" | translate }}
+      </app-button>
+      <app-button
+        type="button"
+        [class]="'white'"
+        [width]="'100%'"
+     
+      >
+        {{ "PROFILE.CANCEL" | translate }}
+      </app-button>
+    </div>
+  </form>
 </div>
