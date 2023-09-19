@@ -5,6 +5,8 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -14,8 +16,11 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.QuestionValue;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -34,6 +39,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.QuestionType;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -666,5 +672,36 @@ public class AonFaker {
 			.setDetail3(AonRandom.string(50, 10));
 	}
 	
+	/* */
+	public static Question getQuestion(AONContext ctx) {		
+		QuestionValue questionValue = new QuestionValue()
+				.setDomain(ctx.getDomainId())
+				.setValueText(faker.zelda().character())
+				.setValueNumber((double) 1234)
+				.setValueDate(new Date())
+				.setQuestion(new Question());
+
+	
+		List<QuestionValue> questionValues = new LinkedList<>();
+		questionValues.add(questionValue);
+
+		return new Question()
+				.setDomain(ctx.getDomainId())
+				.setActive(true)
+				.setText(faker.gameOfThrones().quote())
+				.setType(QuestionType.TEXT)
+				.setArgument(faker.gameOfThrones().house())
+				.setAlias(faker.gameOfThrones().character())
+				.setValues(questionValues);
+	}
+	
+	public static QuestionValue getQuestionValue(AONContext ctx) {
+		return new QuestionValue()
+				.setDomain(ctx.getDomainId())
+				.setValueText(faker.zelda().character())
+				.setValueNumber((double) 1234)
+				.setValueDate(new Date())
+				.setQuestion(new Question());
+	}
 }
 

@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.QuestionValue;
 import com.esferalia.aon.occam.api.model.registry.QuestionType;
+import com.esferalia.aon.occam.impl.jooq.validation.QuestionValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class QuestionDAO {
@@ -140,6 +141,7 @@ public class QuestionDAO {
 	}
 
 	public static Question save(AONContext ctx, Question question) {
+		QuestionValidation.validate(ctx, question);
 		return question.getId() != null
 				? update(ctx, question)
 				: insert(ctx, question);
