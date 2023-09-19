@@ -422,6 +422,113 @@ export class ContractFactory implements ISingleObjectCrudFactory<IContract>, IMu
 
 }
 
+export class ContactFactory implements ISingleObjectCrudFactory<IContact>, IMultipleObjectCrudFactory<IContact> {
+    createSingleObjectCrud(): ISingleObjectCrud<IContact> {
+        return new GenericSingleObjectCrud<Contact>(new GenericSingleObjectCrudRepository<Contact>(new StorableContact(), Contact), Contact);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IContact> {
+        return new GenericMultipleObjectCrud<Contact>(new GenericMultipleObjectCrudRepository<Contact>(new StorableContact(), Contact), Contact);
+    }
+}
+
+export class ProductFactory implements ISingleObjectCrudFactory<IProduct>, IMultipleObjectCrudFactory<IProduct> {
+    createSingleObjectCrud(): ISingleObjectCrud<IProduct> {
+        return new GenericSingleObjectCrud<Product>(new GenericSingleObjectCrudRepository<Product>(new StorableProduct(), Product), Product);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IProduct> {
+        return new GenericMultipleObjectCrud<Product>(new GenericMultipleObjectCrudRepository<Product>(new StorableProduct(), Product), Product);
+    }
+    createSpecificMethods(): IProductSpecificMethods {
+        return new ProductSpecificMethods(new LocalProductSpecificMethodsRepository());
+    }
+}
+
+class IRPFFactory implements IMultipleObjectCrudFactory<IIRPF> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IIRPF> {
+        return new GenericMultipleObjectCrud<IRPF>(new GenericMultipleObjectCrudRepository<IRPF>(new StorableIRPF(), IRPF), IRPF);
+    }
+}
+
+class TaxFactory implements IMultipleObjectCrudFactory<ITax> {
+    createMultipleObjectCrud(): IMultipleObjectReader<ITax> {
+        return new GenericMultipleObjectCrud<Tax>(new GenericMultipleObjectCrudRepository<Tax>(new StorableTax(), Tax), Tax);
+    }
+}
+
+class PaymentMethodFactory implements IMultipleObjectCrudFactory<IPaymentMethod> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IPaymentMethod> {
+        return new GenericMultipleObjectCrud<PaymentMethod>(new GenericMultipleObjectCrudRepository<PaymentMethod>(new StorablePaymentMethod(), PaymentMethod), PaymentMethod);
+    }
+}
+
+class InvoiceCategoryFactory implements IMultipleObjectCrudFactory<IInvoiceCategory> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IInvoiceCategory> {
+        return new GenericMultipleObjectCrud<InvoiceCategory>(new GenericMultipleObjectCrudRepository<InvoiceCategory>(new StorableInvoiceCategory(), InvoiceCategory), InvoiceCategory);
+    }
+}
+
+class InvoiceSerieFactory implements IMultipleObjectCrudFactory<IInvoiceSerie> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IInvoiceSerie> {
+        return new GenericMultipleObjectCrud<InvoiceSerie>(new GenericMultipleObjectCrudRepository<InvoiceSerie>(new StorableInvoiceSerie(), InvoiceSerie), InvoiceSerie);
+    }
+}
+
+class InvoiceActivityFactory implements IMultipleObjectCrudFactory<IInvoiceActivity> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IInvoiceActivity> {
+        return new GenericMultipleObjectCrud<InvoiceActivity>(new GenericMultipleObjectCrudRepository<InvoiceActivity>(new StorableInvoiceActivity(), InvoiceActivity), InvoiceActivity);
+    }
+}
+
+class InvoiceTransactionTypeFactory implements IMultipleObjectCrudFactory<IInvoiceTransactionType> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IInvoiceTransactionType> {
+        return new GenericMultipleObjectCrud<InvoiceTransactionType>(new GenericMultipleObjectCrudRepository<InvoiceTransactionType>(new StorableInvoiceTransactionType(), InvoiceTransactionType), InvoiceTransactionType);
+    }
+}
+
+class ProductCodeFactory implements IMultipleObjectCrudFactory<IProductCode> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IProductCode> {
+        return new GenericMultipleObjectCrud<ProductCode>(new GenericMultipleObjectCrudRepository<ProductCode>(new StorableProductCode(), ProductCode), ProductCode);
+    }
+} 
+
+class ProductClassFactory implements IMultipleObjectCrudFactory<IProductClass> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IProductClass> {
+        return new GenericMultipleObjectCrud<ProductClass>(new GenericMultipleObjectCrudRepository<ProductClass>(new StorableProductClass(), ProductClass), ProductClass);
+    }
+}
+
+class ProductCategoryFactory implements IMultipleObjectCrudFactory<IProductCategory> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IProductCategory> {
+        return new GenericMultipleObjectCrud<ProductCategory>(new GenericMultipleObjectCrudRepository<ProductCategory>(new StorableProductCategory(), ProductCategory), ProductCategory);
+    }
+}
+
+class ProductTypeFactory implements IMultipleObjectCrudFactory<IProductType> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IProductType> {
+        return new GenericMultipleObjectCrud<ProductType>(new GenericMultipleObjectCrudRepository<ProductType>(new StorableProductType(), ProductType), ProductType);
+    }
+}
+
+class ProductStatusFactory implements IMultipleObjectCrudFactory<IProductStatus> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IProductStatus> {
+        return new GenericMultipleObjectCrud<ProductStatus>(new GenericMultipleObjectCrudRepository<ProductStatus>(new StorableProductStatus(), ProductStatus), ProductStatus);
+    }
+}
+
+export class InvoiceFactory implements ISingleObjectCrudFactory<IInvoice>, IMultipleObjectCrudFactory<IInvoice> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IInvoice> {
+        return new GenericMultipleObjectCrud<Invoice>(new GenericMultipleObjectCrudRepository<Invoice>(new StorableInvoice(), Invoice), Invoice);
+    }
+
+    createSingleObjectCrud(): ISingleObjectCrud<IInvoice> {
+        return new GenericSingleObjectCrud<Invoice>(new GenericSingleObjectCrudRepository<Invoice>(new StorableInvoice(), Invoice), Invoice);
+    }
+
+    createSpecificMethods(): IInvoiceSpecificMethods {
+        return new InvoiceSpecificMethods(new LocalInvoiceSpecificMethodsRepository());
+    }
+}
+
 /*
  *
  * INTERFACES TO DEFINE METHODS FOR CLIENT
@@ -600,6 +707,66 @@ interface IMarkDetailSpecificMethods {
      * Marks an exit
      */
     markExit(): Promise<IResponse<boolean>>;
+}
+
+interface IProductSpecificMethods {
+    /**
+     * Returns all the products status
+     */
+    getProductStatus(filter?: IFilter): Promise<IResponse<ICollection<IProductStatus>>>;
+    /**
+     * Returns all the product codes
+     */
+    getProductCodes(filter?: IFilter): Promise<IResponse<ICollection<IProductCode>>>;
+    /**
+     * Returns all the product types
+     */
+    getProductTypes(filter?: IFilter): Promise<IResponse<ICollection<IProductType>>>;
+    /**
+     * Returns all the product classes
+     */
+    getProductClasses(filter?: IFilter): Promise<IResponse<ICollection<IProductClass>>>;
+    /**
+     * Returns all the product categories
+     */
+    getProductCategories(filter?: IFilter): Promise<IResponse<ICollection<IProductCategory>>>;
+}
+
+interface IInvoiceSpecificMethods {
+    /**
+     * Returns all the taxes
+     */
+    getTaxList(filter?: IFilter): Promise<IResponse<ICollection<ITax>>>;
+    /**
+     * Returns all the IRPF
+     * @param filter 
+     */
+    getIRPFList(filter?: IFilter): Promise<IResponse<ICollection<IIRPF>>>;
+    /**
+     * Returns all the invoice categories
+     * @param filter 
+     */
+    getInvoiceCategoryList(filter?: IFilter): Promise<IResponse<ICollection<IInvoiceCategory>>>;
+    /**
+     * Returns all the invoice series
+     * @param filter 
+     */
+    getInvoiceSerieList(filter?: IFilter): Promise<IResponse<ICollection<IInvoiceSerie>>>;
+    /**
+     * Returns all the invoice types
+     * @param filter 
+     */
+    getTransactionTypeList(filter?: IFilter): Promise<IResponse<ICollection<IInvoiceTransactionType>>>;
+    /**
+     * Returns all the payment methods
+     * @param filter 
+     */
+    getPaymentMethodList(filter?: IFilter): Promise<IResponse<ICollection<ITax>>>;
+    /**
+     * Returns all the invoice activities
+     * @param filter 
+     */
+    getInvoiceActivityList(filter?: IFilter): Promise<IResponse<ICollection<ITax>>>;
 }
 
 
@@ -810,7 +977,91 @@ class MarkSpecificMethods implements IMarkSpecificMethods {
     }
 }
 
+class ProductSpecificMethods implements IProductSpecificMethods {
 
+    protected SpecificMethodsRepository: LocalProductSpecificMethodsRepository;
+
+    constructor(ProductSpecificMethodsRepository: LocalProductSpecificMethodsRepository) {
+        this.SpecificMethodsRepository = ProductSpecificMethodsRepository;
+    }
+
+    async getProductStatus(filter?: IFilter): Promise<IResponse<ICollection<IProductStatus>>> {
+        try{
+            return new Response<ICollection<IProductStatus>>(this.SpecificMethodsRepository.getProductStatus(filter));
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getProductCodes(filter?: IFilter): Promise<IResponse<ICollection<IProductCode>>> {
+        try{
+            return new Response<ICollection<IProductCode>>(this.SpecificMethodsRepository.getProductCodes(filter));
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getProductTypes(filter?: IFilter): Promise<IResponse<ICollection<IProductType>>> {
+        try{
+            return new Response<ICollection<IProductType>>(this.SpecificMethodsRepository.getProductTypes(filter));
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getProductClasses(filter?: IFilter): Promise<IResponse<ICollection<IProductClass>>> {
+        try{
+            return new Response<ICollection<IProductClass>>(this.SpecificMethodsRepository.getProductClasses(filter));
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getProductCategories(filter?: IFilter): Promise<IResponse<ICollection<IProductCategory>>> {
+        try{
+            return new Response<ICollection<IProductCategory>>(this.SpecificMethodsRepository.getProductCategories(filter));
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+    
+}
+
+class InvoiceSpecificMethods implements IInvoiceSpecificMethods {
+    protected SpecificMethodsRepository: LocalInvoiceSpecificMethodsRepository;
+
+    constructor(SpecificMethodsRepository: LocalInvoiceSpecificMethodsRepository){
+        this.SpecificMethodsRepository = SpecificMethodsRepository;
+    }
+
+    async getTaxList(filter?: IFilter | undefined): Promise<IResponse<ICollection<ITax>>> {
+        return new Response<ICollection<ITax>>((await new TaxFactory().createMultipleObjectCrud().getCollection(filter)).result);
+    }
+
+    async getIRPFList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IIRPF>>> {
+        return new Response<ICollection<IIRPF>>((await new IRPFFactory().createMultipleObjectCrud().getCollection(filter)).result);
+    }
+
+    async getInvoiceCategoryList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IInvoiceCategory>>> {
+        return new Response<ICollection<IInvoiceCategory>>((await new InvoiceCategoryFactory().createMultipleObjectCrud().getCollection(filter)).result);
+    }
+
+    async getInvoiceSerieList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IInvoiceSerie>>> {
+        return new Response<ICollection<IInvoiceSerie>>((await new InvoiceSerieFactory().createMultipleObjectCrud().getCollection(filter)).result);
+    }
+
+    async getTransactionTypeList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IInvoiceTransactionType>>> {
+        return new Response<ICollection<IInvoiceTransactionType>>((await new InvoiceTransactionTypeFactory().createMultipleObjectCrud().getCollection(filter)).result);
+    }
+
+    async getPaymentMethodList(filter?: IFilter | undefined): Promise<IResponse<ICollection<ITax>>> {
+        return new Response<ICollection<ITax>>((await new PaymentMethodFactory().createMultipleObjectCrud().getCollection(filter)).result);
+    }
+
+    async getInvoiceActivityList(filter?: IFilter | undefined): Promise<IResponse<ICollection<ITax>>> {
+        return new Response<ICollection<ITax>>((await new InvoiceActivityFactory().createMultipleObjectCrud().getCollection(filter)).result);
+    }
+}
 
 /*
  *
@@ -941,6 +1192,24 @@ interface IMessageSpecificMethodsRepository {
 
 interface IMarkSpecificMethodsRepository {
     getMarksOfOneUser(userId: string, filter: IFilter): Promise<ICollection<IMark>>;
+}
+
+interface IProductSpecificMethodsRepository {
+    getProductStatus(filter: IFilter): Promise<ICollection<IProductStatus>>;
+    getProductCodes(filter: IFilter): Promise<ICollection<IProductCode>>;
+    getProductTypes(filter: IFilter): Promise<ICollection<IProductType>>;
+    getProductClasses(filter: IFilter): Promise<ICollection<IProductClass>>;
+    getProductCategories(filter: IFilter): Promise<ICollection<IProductCategory>>;
+}
+
+interface IInvoiceSpecificMethodsRepository {
+    getTaxList(filter?: IFilter | undefined): Promise<ICollection<ITax>>;
+    getIRPFList(filter?: IFilter | undefined): Promise<ICollection<IIRPF>>;
+    getInvoiceCategoryList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceCategory>>;
+    getInvoiceSerieList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceSerie>>;
+    getTransactionTypeList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceTransactionType>>;
+    getPaymentMethodList(filter?: IFilter | undefined): Promise<ICollection<ITax>>;
+    getInvoiceActivityList(filter?: IFilter | undefined): Promise<ICollection<ITax>>;
 }
 
 /*
@@ -1442,6 +1711,48 @@ class ReportingRepository implements IReportingRepository {
 
 }
 
+class LocalProductSpecificMethodsRepository implements IProductSpecificMethodsRepository {
+    async getProductStatus(filter?: IFilter): Promise<ICollection<IProductStatus>> {
+        return (await new ProductStatusFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+    async getProductCodes(filter?: IFilter): Promise<ICollection<IProductCode>> {
+        return (await new ProductCodeFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+    async getProductTypes(filter?: IFilter): Promise<ICollection<IProductType>> {
+        return (await new ProductTypeFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+    async getProductClasses(filter?: IFilter): Promise<ICollection<IProductClass>> {
+        return (await new ProductClassFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+    async getProductCategories(filter?: IFilter): Promise<ICollection<IProductCategory>> {
+        return (await new ProductCategoryFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+}
+
+class LocalInvoiceSpecificMethodsRepository implements IInvoiceSpecificMethodsRepository {
+    getTaxList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
+        throw new Error("Method not implemented.");
+    }
+    getIRPFList(filter?: IFilter | undefined): Promise<ICollection<IIRPF>> {
+        throw new Error("Method not implemented.");
+    }
+    getInvoiceCategoryList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceCategory>> {
+        throw new Error("Method not implemented.");
+    }
+    getInvoiceSerieList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceSerie>> {
+        throw new Error("Method not implemented.");
+    }
+    getTransactionTypeList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceTransactionType>> {
+        throw new Error("Method not implemented.");
+    }
+    getPaymentMethodList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
+        throw new Error("Method not implemented.");
+    }
+    getInvoiceActivityList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
+        throw new Error("Method not implemented.");
+    }
+}
+
 /*
  *
  * UTILITIES INTERFACE, FOR EXAMPLE COLLECTION TO MANAGE A LIST OF OBJECTS
@@ -1591,9 +1902,9 @@ class ApiHttpRequest implements IApiHttpRequest {
 }
 
 class KeyGenerator {
-    characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    static characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     constructor(){}
-    generate(length: number): string {
+    static generate(length: number): string {
         let result = ''
         for (let i = 0; i < length; i++) {
             const randomIndex = Math.floor(Math.random() * this.characters.length);
@@ -2056,6 +2367,10 @@ export interface IBank extends ICollectable {
     Name: string;
     Total: number;
     Logo: string;
+    SwiftBic: string;
+    Iban: string;
+    LastUpdate: Date;
+    SyncStatus: string;
 }
 
 export type statusTaxModel = 'en proceso' | 'pendiente' | 'rectificado' | 'confirmado' | 'presentado';
@@ -2133,17 +2448,17 @@ export interface IContract extends ICollectable {
 
 export interface IMark extends ICollectable {
     // Id: string, // ????
-    Name: string, // nombre del usuario que marca
     // Lastname: string, 
+    // Pause: IPause,
+    // Ccc: string, // código cuenta de cotización
+    // Workplace: string,
+    Name: string, // nombre del usuario que marca
     IdUser: string, // id del usuario que marca
     Date: Date, // fecha del marcage
     EntryDate: Date, // hora de entrada del marcaje
     ExitDate: Date, // hora de salida del marcaje
     Time: Date; // duracion del marcaje total
-    // Pause: IPause,
     Location: any, // localizacion al marcar
-    // Ccc: string, // código cuenta de cotización
-    // Workplace: string,
     Status: string // entrada, salida, pausa
 }
 
@@ -2154,10 +2469,12 @@ export interface IMarkDetail extends ICollectable {
     Status: string,
     Location: any
 }
+
 export interface IPause {
     StartPause: Date,
     EndPause: Date
 }
+
 export interface IUser extends ICollectable {
     Name: string,
     Lastname: string,
@@ -2165,7 +2482,8 @@ export interface IUser extends ICollectable {
     Email: string,
     Password: string,
     Phone: string,
-    Active: boolean
+    Active: boolean,
+    Enterprises: string [],
 }
 
 interface IAuth extends ICollectable{
@@ -2481,7 +2799,117 @@ export enum Status {
   UserAssigned = "user-assigned",
 }
 
+interface ISimpleValue {
+    Value: string;
+}
 
+export enum InvoiceType { GASTO = 'gasto', VENTA = 'venta' }
+
+export enum InvoiceStatus { A_CONTABILIZAR = 'a_contabilizar', CONTABILIZADO = 'contabilizado' }
+
+export interface IInvoice extends ICollectable{
+    Serie: IInvoiceSerie;
+    InvoiceNumber: string;
+    Date: Date;
+    TotalAmount: number;
+    Contact: IContact;
+    Category: IInvoiceCategory;
+    Lines: ICollection<IInvoiceLine>;
+    TransactionType: IInvoiceTransactionType;
+    Activity: IInvoiceActivity;
+    CriCaja: boolean;
+    RE: boolean;
+    RegAgri: boolean;
+    Tax: ITax;
+    TaxBase: number;
+    TaxQuota: number;
+    IRPF: IIRPF;
+    IRPFBase: number;
+    IRPFQuota: number;
+    InvoiceExpirationLines: ICollection<IInvoiceExpirationLine>;
+    Rectified: boolean;
+    Type: InvoiceType;
+    Status: InvoiceStatus;
+}
+
+export interface IInvoiceLine extends ICollectable{
+    Product: IProduct;
+    Quantity: number;
+    Price: number;
+    Discount: number;
+    TotalPrice: number;
+    Tax: ITax;
+    IRPF: IIRPF;
+}
+
+export interface IInvoiceExpirationLine extends ICollectable{
+    Date: Date;
+    PaymentMethod: IPaymentMethod;
+    BankAccount: string;
+    Amount: number;
+}
+
+export interface IInvoiceSerie extends ICollectable, ISimpleValue {}
+
+export interface IInvoiceTransactionType extends ICollectable, ISimpleValue{}
+
+export interface IInvoiceActivity extends ICollectable, ISimpleValue{}
+
+export interface IIRPF extends ICollectable, ISimpleValue {
+    Type: string;
+}
+
+export interface ITax extends ICollectable, ISimpleValue {}
+
+export interface IPaymentMethod extends ICollectable, ISimpleValue {}
+
+export interface IInvoiceCategory extends ICollectable, ISimpleValue {}
+
+export interface IProduct extends ICollectable{
+    Code: IProductCode;
+    Name: string;
+    Category: IProductCategory;
+    Class: IProductClass;
+    Type: IProductType;
+    Status: IProductStatus;
+    Tax: ITax;
+    IRPF: IIRPF;
+    BarCode: string;
+    Description: string;
+    CostPrice: number;
+    Benefit: number;
+    Price: number;
+    Pvp: number;
+}
+
+export interface IProductCode extends ICollectable, ISimpleValue {}
+
+export interface IProductCategory extends ICollectable, ISimpleValue {}
+
+export interface IProductClass extends ICollectable, ISimpleValue {}
+
+export interface IProductType extends ICollectable, ISimpleValue {}
+
+export interface IProductStatus extends ICollectable, ISimpleValue {}
+
+export interface IContact extends ICollectable{
+    Name: string;
+    ComercialName: string;
+    Country: string;
+    /**
+     * Can be DNI, CIF, etc
+     */
+    Document: string;
+    Address: string;
+    Email: string;
+    Phone: string;
+    Web: string;
+    BankAccount: string;
+    PaymentMethod: IPaymentMethod;
+    TransactionType: IInvoiceTransactionType;
+    IRPF: boolean;
+    RE: boolean;
+}
 
 /*
  *
@@ -2490,6 +2918,21 @@ export enum Status {
  */
 
 export class Factory implements IFactory {
+    createInvoice(serie?: IInvoiceSerie, invoiceNumber?: string, date?: Date, totalAmount?: number, contact?: IContact, category?: IInvoiceCategory, 
+        lines?: ICollection<IInvoiceLine>, transactionType?: IInvoiceTransactionType, activity?: IInvoiceActivity, criCaja?: boolean, re?: boolean, 
+        regAgri?: boolean, tax?: ITax, taxBase?: number, taxQuota?: number, irpf?: IIRPF, irpfbase?: number, irpfquota?: number, 
+        type?: InvoiceType, rectified?: boolean): IInvoice {
+        return new Invoice(serie, invoiceNumber, date, totalAmount, contact, category, lines, transactionType, activity, criCaja, re, regAgri, tax, taxBase, taxQuota, irpf, irpfbase, irpfquota, type, rectified);
+    }
+
+    createProduct(code?: IProductCode, name?: string, category?: IProductCategory, productClass?: IProductClass, type?: IProductType, status?: IProductStatus, tax?: ITax, irpf?: IIRPF, barCode?: string, description?: string, costPrice?: number, benefit?: number, price?: number, pvp?: number): IProduct {
+        return new Product(code, name, category, productClass, type, status, tax, irpf, barCode, description, costPrice, benefit, price, pvp);
+    }
+
+    createContact(name?: string, comercialName?: string, country?: string, document?: string, address?: string, email?: string, phone?: string, web?: string, bankAccount?: string, paymentMethod?: IPaymentMethod, transactionType?: IInvoiceTransactionType, irpf?: boolean, re?: boolean): IContact {
+        return new Contact(name, comercialName, country, document, address, email, phone, web, bankAccount, paymentMethod, transactionType, irpf, re);
+    }
+
     createDocument(file?: string, fileName?: string, fileSize?: number, fileType?: string, date?: Date, path?: string): IDocument {
         return new Document(file, fileName, fileSize, fileType, date, path);
     }
@@ -2540,6 +2983,14 @@ export class Factory implements IFactory {
 }
 
 export class CollectionFactory implements ICollectionFactory {
+    createProductCollection(): ICollection<IProduct> {
+      return new Collection<Product>();
+    }
+
+    createContactCollection(): ICollection<IContact> {
+      return new Collection<Contact>();
+    }
+
     createDocumentCollection(): ICollection<IDocument> {
       return new Collection<Document>();
     }
@@ -2594,6 +3045,58 @@ export class CollectionFactory implements ICollectionFactory {
 
     createContractCollection(): ICollection<IContract> {
       return new Collection<Contract>();
+    }
+}
+
+class SimpleValue implements IModel{
+    protected key: string;
+    protected value: string;
+    protected apiObject: any;
+
+    constructor(value?: string) {
+        this.key = KeyGenerator.generate(15);
+        this.value = value || '';
+        this.apiObject = {};
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Value() {
+        return this.value;
+    }
+
+    public set Value(value: string) {
+        this.value = value;
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('value', this.value);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('value', this.value);
+        return map;
     }
 }
 
@@ -2923,9 +3426,10 @@ class Certificate implements ICertificate, IModel {
     private aeat: boolean;
     private documentUser: string;
     private key: string;
+    private isValid: boolean;
     protected apiObject: any;
 
-    constructor(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean, documentUser?: string) {
+    constructor(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean, documentUser?: string, isValid?: boolean) {
         this.name = name || '';
         this.representationType = representationType || '';
         this.expeditionDate = expeditionDate || new Date();
@@ -2936,6 +3440,7 @@ class Certificate implements ICertificate, IModel {
         this.sepe = sepe || false;
         this.aeat = aeat || false;
         this.documentUser = documentUser || '';
+        this.isValid = isValid || false;
         this.key = documentUser || '';
     }
 
@@ -2945,6 +3450,14 @@ class Certificate implements ICertificate, IModel {
 
     public set ApiObject(value: any) {
         this.apiObject = value;
+    }
+
+    public get IsValid(): boolean{
+        return this.isValid;
+    }
+
+    public set IsValid(value: boolean){
+        this.isValid = value;
     }
 
     public get Name(): string {
@@ -3025,6 +3538,10 @@ class Certificate implements ICertificate, IModel {
 
     public get Key(): string {
         return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
     }
 
     getKey(): string {
@@ -3345,7 +3862,7 @@ class RegistryEnterprise implements IRegistryEnterprise, IModel {
   protected apiObject: any;
 
   constructor(idEnterprise?: string, description?: string, dateCreation?: Date, dateRegistration?: Date, notary?: string, protocol?: string, inscription?: string, key?: string) {
-    this.id = new KeyGenerator().generate(15);
+    this.id = KeyGenerator.generate(15);
     this.idEnterprise = idEnterprise || '';
     this.description = description || '';
     this.dateCreation = dateCreation || new Date();
@@ -3567,11 +4084,58 @@ class StorableDocumentNote extends DocumentNote implements IStorable<DocumentNot
 }
 
 class Bank implements IBank, IModel  {
+    private swiftBic: string;
+    private iban: string;
+    private lastUpdate: Date;
+    private syncStatus: string;
     private name: string;
     private key: string;
     private total: number;
     private logo: string;
     protected apiObject: any;
+    
+    constructor(name?: string, total?: number, logo?: string, swift?: string, iban?: string, lastUpdate?: Date, syncStatus?: string) {
+        this.name = name || '';
+        this.total = total || 0;
+        this.logo = logo || '';
+        this.key = KeyGenerator.generate(15);
+        this.swiftBic = swift || '';
+        this.iban = iban || '';
+        this.lastUpdate = lastUpdate || new Date();
+        this.syncStatus = syncStatus || '';
+    }
+
+    public get Iban(): string {
+        return this.iban;
+    }
+
+    public set Iban(value: string) {
+        this.iban = value;
+    }
+
+    public get LastUpdate(): Date {
+        return this.lastUpdate;
+    }
+
+    public set LastUpdate(value: Date) {
+        this.lastUpdate = value;
+    }
+
+    public get SyncStatus(): string {
+        return this.syncStatus;
+    }
+
+    public set SyncStatus(value: string) {
+        this.syncStatus = value;
+    }
+    
+    public get SwiftBic(): string {
+        return this.swiftBic;
+    }
+
+    public set SwiftBic(value: string) {
+        this.swiftBic = value;
+    }
 
     public get ApiObject(): any {
         return this.apiObject;
@@ -3580,14 +4144,7 @@ class Bank implements IBank, IModel  {
     public set ApiObject(value: any) {
         this.apiObject = value;
     }
-
-    constructor(name?: string, total?: number, logo?: string) {
-        this.name = name || '';
-        this.total = total || 0;
-        this.logo = logo || '';
-        this.key = name || '';
-    }
-
+    
     public get Name(): string {
         return this.name;
     }
@@ -3628,6 +4185,10 @@ class Bank implements IBank, IModel  {
         let map = new Map<string, any>();
         map.set('name', this.Name);
         map.set('total', this.Total);
+        map.set('swift', this.SwiftBic);
+        map.set('iban', this.Iban);
+        map.set('lastUpdate', this.LastUpdate);
+        map.set('syncStatus', this.SyncStatus);
         return map;
     }
 
@@ -3635,6 +4196,10 @@ class Bank implements IBank, IModel  {
         let map = new Map<string, any>();
         map.set('name', this.Name);
         map.set('total', this.Total);
+        map.set('swift', this.SwiftBic);
+        map.set('iban', this.Iban);
+        map.set('lastUpdate', this.LastUpdate);
+        map.set('syncStatus', this.SyncStatus);
         return map;
     }
 }
@@ -3871,7 +4436,7 @@ class Message implements IMessage, IModel  {
     }
 
     constructor(name?: string, title?: string, description?: string, date?: Date, type?: string, status?: string, endDate?: Date) {
-        this.id = new KeyGenerator().generate(15);
+        this.id = KeyGenerator.generate(15);
         this.name = name || '';
         this.title = title || '';
         this.description = description || '';
@@ -4088,7 +4653,7 @@ class TaskHolder implements ITaskHolder, IModel {
 
     constructor(name?: string) {
         this.name = name || '';
-        this.id = new KeyGenerator().generate(15);
+        this.id = KeyGenerator.generate(15);
         this.key = this.id;
     }
 
@@ -4196,7 +4761,7 @@ class MessageChat implements IMessageChat, IModel  {
     }
 
     constructor(idMessage?: string, name?: string, description?: string, date?: Date, type?: string) {
-        this.id = new KeyGenerator().generate(15);
+        this.id = KeyGenerator.generate(15);
         this.idMessage = idMessage || '';
         this.name = name || '';
         this.description = description || '';
@@ -4296,7 +4861,6 @@ class ApiMessageChat extends MessageChat implements IApiModel {
     getMethod(currentMethod: string, filter?: IFilter | undefined): string {
         if(currentMethod == GET_MULTIPLE)
             return GET_METHOD;
-            console.log('qwe')
         throw new ErrorResponse('0199')
     }
 
@@ -4786,7 +5350,7 @@ class Mark implements IMark, IModel  {
     }
 
     constructor(name?: string, idUser?: string, date?: Date, entryDate?: Date, exitDate?: Date, time?: Date, location?: any, status?: string) {
-        this.key = new KeyGenerator().generate(15);
+        this.key = KeyGenerator.generate(15);
         this.name = name || '';
         this.idUser = idUser || '';
         this.date = date || new Date();
@@ -4854,7 +5418,7 @@ class Mark implements IMark, IModel  {
 
 
 //     constructor(name?: string, lastName?: string, idEmployee?: string, date?: Date, entryDate?: Date, exitDate?: Date, pause?: IPause, location?: string, ccc?: string, workplace?: string, status?: string) {
-//         this.id = new KeyGenerator().generate(15);
+//         this.id = KeyGenerator.generate(15);
 //         this.name = name || '';
 //         this.lastName = lastName || '';
 //         this.idEmployee = idEmployee || '';
@@ -5147,7 +5711,7 @@ class MarkDetail implements IMarkDetail, IModel {
         this.lastModification = lastModification || new Date();
         this.status = status || '';
         this.location = location || {};
-        this.key = new KeyGenerator().generate(15);
+        this.key = KeyGenerator.generate(15);
     }
 
     getKey(): string {
@@ -5212,6 +5776,7 @@ class User implements IUser, IModel  {
     private phone: string;
     private active: boolean;
     private key: string;
+    private enterprises: string [];
     protected apiObject: any;
 
     public get ApiObject(): any {
@@ -5222,7 +5787,7 @@ class User implements IUser, IModel  {
         this.apiObject = value;
     }
 
-    constructor(name?: string, lastname?: string, document?: string, email?: string, password?: string, phone?: string, active?: boolean) {
+    constructor(name?: string, lastname?: string, document?: string, email?: string, password?: string, phone?: string, active?: boolean, enterprises?: string[]) {
         this.name = name || '';
         this.lastname = lastname || '';
         this.document = document || '';
@@ -5230,7 +5795,16 @@ class User implements IUser, IModel  {
         this.password = password || '';
         this.phone = phone || '';
         this.active = active || true;
+        this.enterprises = enterprises || [];
         this.key = document || '';
+    }
+
+    public get Enterprises(): string[] {
+        return this.enterprises;
+    }
+
+    public set Enterprises(value: string[]) {
+        this.enterprises = value;
     }
 
     public get Name(): string {
@@ -5388,7 +5962,7 @@ class DocumentTag implements IDocumentTag, IModel {
 
     constructor(name?: string) {
         this.name = name || '';
-        this.key = new KeyGenerator().generate(15);
+        this.key = KeyGenerator.generate(15);
         this.apiObject = {};
     }
 
@@ -5465,11 +6039,1249 @@ class ApiDocumentTag extends DocumentTag implements IApiModel {
 
 }
 
+class Contact implements IContact, IModel {
+    private key: string;
+    private apiObject: any;
+    private name: string;
+    private comercialName: string;
+    private country: string;
+    private document: string;
+    private address: string;
+    private email: string;
+    private phone: string;
+    private web: string;
+    private bankAccount: string;
+    private paymentMethod: IPaymentMethod;
+    private transactionType: IInvoiceTransactionType;
+    private irpf: boolean;
+    private re: boolean;
+
+    constructor(name?: string, comercialName?: string, country?: string, document?: string, address?: string, email?: string, phone?: string, web?: string, bankAccount?: string, paymentMethod?: IPaymentMethod, transactionType?: IInvoiceTransactionType, irpf?: boolean, re?: boolean) {
+        this.key = KeyGenerator.generate(15);
+        this.apiObject = {};
+        this.name = name || '';
+        this.comercialName = comercialName || '';
+        this.country = country || '';
+        this.document = document || '';
+        this.address = address || '';
+        this.email = email || '';
+        this.phone = phone || '';
+        this.web = web || '';
+        this.bankAccount = bankAccount || '';
+        this.paymentMethod = paymentMethod || new PaymentMethod();
+        this.transactionType = transactionType || new InvoiceTransactionType();
+        this.irpf = irpf || false;
+        this.re = re || false;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Name(): string {
+        return this.name;
+    }
+
+    public set Name(value: string) {
+        this.name = value;
+    }
+
+    public get ComercialName(): string {
+        return this.comercialName;
+    }
+
+    public set ComercialName(value: string) {
+        this.comercialName = value;
+    }
+
+    public get Country(): string {
+        return this.country;
+    }
+
+    public set Country(value: string) {
+        this.country = value;
+    }
+
+    public get Document(): string {
+        return this.document;
+    }
+
+    public set Document(value: string) {
+        this.document = value;
+    }
+
+    public get Address(): string {
+        return this.address;
+    }
+
+    public set Address(value: string) {
+        this.address = value;
+    }
+
+    public get Email(): string {
+        return this.email;
+    }
+
+    public set Email(value: string) {
+        this.email = value;
+    }
+
+    public get Phone(): string {
+        return this.phone;
+    }
+
+    public set Phone(value: string) {
+        this.phone = value;
+    }
+
+    public get Web(): string {
+        return this.web;
+    }
+
+    public set Web(value: string) {
+        this.web = value;
+    }
+
+    public get BankAccount(): string {
+        return this.bankAccount;
+    }
+
+    public set BankAccount(value: string) {
+        this.bankAccount = value;
+    }
+
+    public get PaymentMethod(): IPaymentMethod {
+        return this.paymentMethod;
+    }
+
+    public set PaymentMethod(value: IPaymentMethod) {
+        this.paymentMethod = value;
+    }
+
+    public get TransactionType(): IInvoiceTransactionType {
+        return this.transactionType;
+    }
+
+    public set TransactionType(value: IInvoiceTransactionType) {
+        this.transactionType = value;
+    }
+
+    public get IRPF(): boolean {
+        return this.irpf;
+    }
+
+    public set IRPF(value: boolean) {
+        this.irpf = value;
+    }
+
+    public get RE(): boolean {
+        return this.re;
+    }
+
+    public set RE(value: boolean) {
+        this.re = value;
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('comercialName', this.comercialName);
+        map.set('country', this.country);
+        map.set('document', this.document);
+        map.set('address', this.address);
+        map.set('email', this.email);
+        map.set('phone', this.phone);
+        map.set('web', this.web);
+        return map;
+    }
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('comercialName', this.comercialName);
+        map.set('country', this.country);
+        map.set('document', this.document);
+        map.set('address', this.address);
+        map.set('email', this.email);
+        map.set('phone', this.phone);
+        map.set('web', this.web);
+        return map;
+    }
+
+}
+
+class StorableContact implements IStorable<Contact> {
+    getCollection(): ICollection<Contact> {
+        return contacts;
+    }
+    getLocalStorage(): string {
+        return 'contacts';
+    }
+}
+
+class ApiContact implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
+}
+
+class PaymentMethod extends SimpleValue implements IPaymentMethod, IModel {}
+
+class StorablePaymentMethod implements IStorable<PaymentMethod> {
+    getCollection(): ICollection<PaymentMethod> {
+        return paymentMethods;
+    }
+    getLocalStorage(): string {
+        return 'paymentMethods';
+    }
+}
+
+class ApiPaymentMethod implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
+}
+
+class InvoiceTransactionType extends SimpleValue implements IInvoiceTransactionType, IModel {}
+
+class StorableInvoiceTransactionType implements IStorable<InvoiceTransactionType> {
+    getCollection(): ICollection<InvoiceTransactionType> {
+        return invoiceTransactionTypes;
+    }
+    getLocalStorage(): string {
+        return 'invoiceTransactionTypes';
+    }
+}
+
+class ApiInvoiceTransactionType implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
+}
+
+
+class IRPF extends SimpleValue implements IIRPF, IModel{
+    private type: string;
+
+    constructor(value?: string, type?: string) {
+        super(value);
+        this.type = type || '';
+    }
+
+    public get Type() {
+        return this.type;
+    }
+
+    public set Type(value: string) {
+        this.type = value;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('value', this.value);
+        map.set('type', this.type);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('value', this.value);
+        map.set('type', this.type);
+        return map;
+    }
+}
+
+class StorableIRPF implements IStorable<IRPF> {
+    getCollection(): ICollection<IRPF> {
+        return irpf;
+    }
+    getLocalStorage(): string {
+        return 'irpf';
+    }
+}
+
+class Tax extends SimpleValue implements ITax, IModel {}
+
+class StorableTax implements IStorable<Tax> {
+    getCollection(): ICollection<Tax> {
+        return taxes;
+    }
+    getLocalStorage(): string {
+        return 'taxes';
+    }
+}
+
+class ProductCategory extends SimpleValue implements IProductCategory, IModel{}
+
+class StorableProductCategory implements IStorable<ProductCategory> {
+    getCollection(): ICollection<ProductCategory> {
+        return productCategories;
+    }
+    getLocalStorage(): string {
+        return 'productCategories';
+    }
+}
+
+class ProductClass extends SimpleValue implements IProductClass, IModel{}
+
+class StorableProductClass implements IStorable<ProductClass> {
+    getCollection(): ICollection<ProductClass> {
+        return productClasses;
+    }
+    getLocalStorage(): string {
+        return 'productClasses';
+    }
+}
+
+class ProductType extends SimpleValue implements IProductType, IModel{}
+
+class StorableProductType implements IStorable<ProductType> {
+    getCollection(): ICollection<ProductType> {
+        return productTypes;
+    }
+    getLocalStorage(): string {
+        return 'productTypes';
+    }
+}
+
+class ProductStatus extends SimpleValue implements IProductStatus, IModel{}
+
+class StorableProductStatus implements IStorable<ProductStatus> {
+    getCollection(): ICollection<ProductStatus> {
+        return productStatuses;
+    }
+    getLocalStorage(): string {
+        return 'productStatuses';
+    }
+}
+
+class ProductCode extends SimpleValue implements IProductCode, IModel{}
+
+class StorableProductCode implements IStorable<ProductCode> {
+    getCollection(): ICollection<ProductCode> {
+        return productCodes;
+    }
+    getLocalStorage(): string {
+        return 'productCodes';
+    }
+}
+
+class Product implements IProduct, IModel {
+    private key: string;
+    private apiObject: any;
+    private code: IProductCode;
+    private name: string;
+    private category: IProductCategory;
+    private class: IProductClass;
+    private type: IProductType;
+    private status: IProductStatus;
+    private tax: ITax;
+    private irpf: IIRPF;
+    private barCode: string;
+    private description: string;
+    private costPrice: number;
+    private benefit: number;
+    private price: number;
+    private pvp: number;
+
+    constructor(code?: IProductCode, name?: string, category?: IProductCategory, productClass?: IProductClass, type?: IProductType, status?: IProductStatus,
+        tax?: ITax, irpf?: IIRPF, barCode?: string, description?: string, costPrice?: number, benefit?: number, price?: number, pvp?: number) {
+        this.apiObject = {};
+        this.key = KeyGenerator.generate(15);
+        this.code = code || new ProductCode();
+        this.name = name || '';
+        this.category = category || new ProductCategory();
+        this.class = productClass || new ProductClass();
+        this.type = type || new ProductType();
+        this.status = status || new ProductStatus();
+        this.tax = tax || new Tax();
+        this.irpf = irpf || new IRPF();
+        this.barCode = barCode || '';
+        this.description = description || '';
+        this.costPrice = costPrice || 0;
+        this.benefit = benefit || 0;
+        this.price = price || 0;
+        this.pvp = pvp || 0;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Code() {
+        return this.code;
+    }
+
+    public set Code(value: IProductCode) {
+        this.code = value;
+    }
+
+    public get Name() {
+        return this.name;
+    }
+
+    public set Name(value: string) {
+        this.name = value;
+    }
+
+    public get Category() {
+        return this.category;
+    }
+
+    public set Category(value: IProductCategory) {
+        this.category = value;
+    }
+
+    public get Class() {
+        return this.class;
+    }
+
+    public set Class(value: IProductClass) {
+        this.class = value;
+    }
+
+    public get Type() {
+        return this.type;
+    }
+
+    public set Type(value: IProductType) {
+        this.type = value;
+    }
+
+    public get Status() {
+        return this.status;
+    }
+
+    public set Status(value: IProductStatus) {
+        this.status = value;
+    }
+
+    public get Tax() {
+        return this.tax;
+    }
+
+    public set Tax(value: ITax) {
+        this.tax = value;
+    }
+
+    public get IRPF() {
+        return this.irpf;
+    }
+
+    public set IRPF(value: IIRPF) {
+        this.irpf = value;
+    }
+
+    public get BarCode() {
+        return this.barCode;
+    }
+
+    public set BarCode(value: string) {
+        this.barCode = value;
+    }
+
+    public get Description() {
+        return this.description;
+    }
+
+    public set Description(value: string) {
+        this.description = value;
+    }
+
+    public get CostPrice() {
+        return this.costPrice;
+    }
+
+    public set CostPrice(value: number) {
+        this.costPrice = value;
+    }
+
+    public get Benefit() {
+        return this.benefit;
+    }
+
+    public set Benefit(value: number) {
+        this.benefit = value;
+    }
+
+    public get Price() {
+        return this.price;
+    }
+
+    public set Price(value: number) {
+        this.price = value;
+    }
+
+    public get Pvp() {
+        return this.pvp;
+    }
+
+    public set Pvp(value: number) {
+        this.pvp = value;
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('code', this.code);
+        map.set('name', this.name);
+        map.set('category', this.category);
+        map.set('class', this.class);
+        map.set('type', this.type);
+        map.set('status', this.status);
+        map.set('tax', this.tax);
+        map.set('irpf', this.irpf);
+        map.set('barCode', this.barCode);
+        map.set('description', this.description);
+        map.set('costPrice', this.costPrice);
+        map.set('benefit', this.benefit);
+        map.set('price', this.price);
+        map.set('pvp', this.pvp);
+        return map;
+    }
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('code', this.code);
+        map.set('name', this.name);
+        map.set('category', this.category);
+        map.set('class', this.class);
+        map.set('type', this.type);
+        map.set('status', this.status);
+        map.set('tax', this.tax);
+        map.set('irpf', this.irpf);
+        map.set('barCode', this.barCode);
+        map.set('description', this.description);
+        map.set('costPrice', this.costPrice);
+        map.set('benefit', this.benefit);
+        map.set('price', this.price);
+        map.set('pvp', this.pvp);
+        return map;
+    }
+}
+
+class StorableProduct implements IStorable<Product> {
+    getCollection(): ICollection<Product> {
+        return products;
+    }
+    getLocalStorage(): string {
+        return 'products';
+    }
+}
+
+class InvoiceSerie extends SimpleValue implements IInvoiceSerie, IModel {}
+
+class StorableInvoiceSerie implements IStorable<InvoiceSerie> {
+    getCollection(): ICollection<InvoiceSerie> {
+        return invoiceSeries;
+    }
+    getLocalStorage(): string {
+        return 'invoiceSeries';
+    }
+}
+
+class InvoiceActivity extends SimpleValue implements IInvoiceActivity, IModel {}
+
+class StorableInvoiceActivity implements IStorable<InvoiceActivity> {
+    getCollection(): ICollection<InvoiceActivity> {
+        return invoiceActivities;
+    }
+    getLocalStorage(): string {
+        return 'invoiceActivities';
+    }
+}
+
+class InvoiceCategory extends SimpleValue implements IInvoiceCategory, IModel {}
+
+class StorableInvoiceCategory implements IStorable<InvoiceCategory> {
+    getCollection(): ICollection<InvoiceCategory> {
+        return invoiceCategories;
+    }
+    getLocalStorage(): string {
+        return 'invoiceCategories';
+    }
+}
+
+class InvoiceLine implements IInvoiceLine, IModel {
+    key: string;
+    apiObject: any;
+    product: IProduct;
+    quantity: number;
+    price: number;
+    discount: number;
+    totalPrice: number;
+    tax: ITax;
+    irpf: IIRPF;
+
+    constructor(product?: IProduct,quantity?: number,price?: number,discount?: number,totalPrice?: number,tax?: ITax,irpf?: IIRPF){
+        this.apiObject = {};
+        this.key = KeyGenerator.generate(15);
+        this.product = product || new Product();
+        this.quantity = quantity || 0;
+        this.price = price || 0;
+        this.discount = discount || 0;
+        this.totalPrice = totalPrice || 0;
+        this.tax = tax || new Tax();
+        this.irpf = irpf || new IRPF();
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Product(): IProduct {
+        return this.product;
+    }
+
+    public set Product(value: IProduct) {
+        this.product = value;
+    }
+
+    public get Quantity(): number {
+        return this.quantity;
+    }
+
+    public set Quantity(value: number) {
+        this.quantity = value;
+    }
+
+    public get Price(): number {
+        return this.price;
+    }
+
+    public set Price(value: number) {
+        this.price = value;
+    }
+
+    public get Discount(): number {
+        return this.discount;
+    }
+
+    public set Discount(value: number) {
+        this.discount = value;
+    }
+
+    public get TotalPrice(): number {
+        return this.totalPrice;
+    }
+
+    public set TotalPrice(value: number) {
+        this.totalPrice = value;
+    }
+
+    public get Tax(): ITax {
+        return this.tax;
+    }
+
+    public set Tax(value: ITax) {
+        this.tax = value;
+    }
+
+    public get IRPF(): IIRPF {
+        return this.irpf;
+    }
+
+    public set IRPF(value: IIRPF) {
+        this.irpf = value;
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        return new Map<string,any>();
+    }
+
+    getSortableFields(): Map<string, any> {
+        return new Map<string,any>();
+    }
+}
+
+class Invoice implements IInvoice, IModel {
+    key: string;
+    apiObject: any;
+    serie: IInvoiceSerie;
+    invoiceNumber: string;
+    date: Date;
+    totalAmount: number;
+    contact: IContact;
+    category: IInvoiceCategory;
+    lines: ICollection<IInvoiceLine>;
+    transactionType: IInvoiceTransactionType;
+    activity: IInvoiceActivity;
+    criCaja: boolean;
+    re: boolean;
+    regAgri: boolean;
+    tax: ITax;
+    taxBase: number;
+    taxQuota: number;
+    irpf: IIRPF;
+    irpfbase: number;
+    irpfquota: number;
+    invoiceExpirationLines: ICollection<IInvoiceExpirationLine>;
+    type: InvoiceType;
+    rectified: boolean;
+    status: InvoiceStatus;
+
+    constructor(serie?: IInvoiceSerie, invoiceNumber?: string, date?: Date, totalAmount?: number, contact?: IContact, category?: IInvoiceCategory, 
+    lines?: ICollection<IInvoiceLine>, transactionType?: IInvoiceTransactionType, activity?: IInvoiceActivity, criCaja?: boolean, re?: boolean, 
+    regAgri?: boolean, tax?: ITax, taxBase?: number, taxQuota?: number, irpf?: IIRPF, irpfbase?: number, irpfquota?: number, type?: InvoiceType, 
+    rectified?: boolean, status?: InvoiceStatus){
+        this.serie = serie || new InvoiceSerie();
+        this.invoiceNumber = invoiceNumber || '';
+        this.date = date || new Date();
+        this.totalAmount = totalAmount || 0;
+        this.contact = contact || new Contact();
+        this.category = category || new InvoiceCategory();
+        this.lines = lines || new Collection<IInvoiceLine>();
+        this.transactionType = transactionType || new InvoiceTransactionType();
+        this.activity = activity || new InvoiceActivity();
+        this.criCaja = criCaja || false;
+        this.re = re || false;
+        this.regAgri = regAgri || false;
+        this.tax = tax || new Tax();
+        this.taxBase = taxBase || 0;
+        this.taxQuota = taxQuota || 0;
+        this.irpf = irpf || new IRPF();
+        this.irpfbase = irpfbase || 0;
+        this.irpfquota = irpfquota || 0;
+        this.invoiceExpirationLines = new Collection<IInvoiceExpirationLine>();
+        this.key = KeyGenerator.generate(15);
+        this.apiObject = {};
+        this.type = type || InvoiceType.GASTO;
+        this.rectified = rectified || false;
+        this.status = status || InvoiceStatus.A_CONTABILIZAR;
+    }
+
+    public get Status(): InvoiceStatus {
+        return this.status;
+    }
+
+    public set Status(value: InvoiceStatus) {
+        this.status = value;
+    }
+
+    public get Type(): InvoiceType {
+        return this.type;
+    }
+
+    public set Type(value: InvoiceType) {
+        this.type = value;
+    }
+
+    public get Rectified(): boolean {
+        return this.rectified;
+    }
+
+    public set Rectified(value: boolean) {
+        this.rectified = value;
+    }
+
+    public get Key(){
+        return this.key;
+    }
+
+    public set Key(value: string){
+        this.key = value;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Serie(): IInvoiceSerie {
+        return this.serie;
+    }
+
+    public set Serie(value: IInvoiceSerie) {
+        this.serie = value;
+    }
+
+    public get InvoiceNumber(): string {
+        return this.invoiceNumber;
+    }
+
+    public set InvoiceNumber(value: string) {
+        this.invoiceNumber = value;
+    }
+
+    public get Date(): Date {
+        return this.date;
+    }
+
+    public set Date(value: Date) {
+        this.date = value;
+    }
+
+    public get TotalAmount(): number {
+        return this.totalAmount;
+    }
+
+    public set TotalAmount(value: number) {
+        this.totalAmount = value;
+    }
+
+    public get Contact(): IContact {
+        return this.contact;
+    }
+
+    public set Contact(value: IContact) {
+        this.contact = value;
+    }
+
+    public get Category(): IInvoiceCategory {
+        return this.category;
+    }
+
+    public set Category(value: IInvoiceCategory) {
+        this.category = value;
+    }
+
+    public get Lines(): ICollection<IInvoiceLine> {
+        return this.lines;
+    }
+
+    public set Lines(value: ICollection<IInvoiceLine>) {
+        this.lines = value;
+    }
+
+    public get TransactionType(): IInvoiceTransactionType {
+        return this.transactionType;
+    }
+
+    public set TransactionType(value: IInvoiceTransactionType) {
+        this.transactionType = value;
+    }
+
+    public get Activity(): IInvoiceActivity {
+        return this.activity;
+    }
+
+    public set Activity(value: IInvoiceActivity) {
+        this.activity = value;
+    }
+
+    public get CriCaja(): boolean {
+        return this.criCaja;
+    }
+
+    public set CriCaja(value: boolean) {
+        this.criCaja = value;
+    }
+
+    public get RE(): boolean {
+        return this.re;
+    }
+
+    public set RE(value: boolean) {
+        this.re = value;
+    }
+
+    public get RegAgri(): boolean {
+        return this.regAgri;
+    }
+
+    public set RegAgri(value: boolean) {
+        this.regAgri = value;
+    }
+
+    public get Tax(): ITax {
+        return this.tax;
+    }
+
+    public set Tax(value: ITax) {
+        this.tax = value;
+    }
+
+    public get TaxBase(): number {
+        return this.taxBase;
+    }
+
+    public set TaxBase(value: number) {
+        this.taxBase = value;
+    }
+
+    public get TaxQuota(): number {
+        return this.taxQuota;
+    }
+
+    public set TaxQuota(value: number) {
+        this.taxQuota = value;
+    }
+
+    public get IRPF(): IIRPF {
+        return this.irpf;
+    }
+
+    public set IRPF(value: IIRPF) {
+        this.irpf = value;
+    }
+
+    public get IRPFBase(): number {
+        return this.irpfbase;
+    }
+
+    public set IRPFBase(value: number) {
+        this.irpfbase = value;
+    }
+
+    public get IRPFQuota(): number {
+        return this.irpfquota;
+    }
+
+    public set IRPFQuota(value: number) {
+        this.irpfquota = value;
+    }
+
+    public get InvoiceExpirationLines(): ICollection<IInvoiceExpirationLine> {
+        return this.invoiceExpirationLines;
+    }
+
+    public set InvoiceExpirationLines(value: ICollection<IInvoiceExpirationLine>) {
+        this.invoiceExpirationLines = value;
+    }
+    
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string,any>();
+        map.set('serie', this.serie.Value);
+        map.set('invoiceNumber', this.invoiceNumber);
+        map.set('date', this.date);
+        map.set('totalAmount', this.totalAmount);
+        map.set('contact', this.contact.Name);
+        map.set('category', this.category.Value);
+        map.set('transactionType', this.transactionType.Value);
+        map.set('activity', this.activity.Value);
+        map.set('criCaja', this.criCaja);
+        map.set('re', this.re);
+        map.set('regAgri', this.regAgri);
+        map.set('tax', this.tax.Value);
+        map.set('taxBase', this.taxBase);
+        map.set('taxQuota', this.taxQuota);
+        map.set('irpf', this.irpf.Value);
+        map.set('irpfbase', this.irpfbase);
+        map.set('irpfquota', this.irpfquota);
+        map.set('type', this.type);
+        map.set('rectified', this.rectified);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string,any>();
+        map.set('serie', this.serie.Value);
+        map.set('invoiceNumber', this.invoiceNumber);
+        map.set('date', this.date);
+        map.set('totalAmount', this.totalAmount);
+        map.set('contact', this.contact.Name);
+        map.set('category', this.category.Value);
+        map.set('transactionType', this.transactionType.Value);
+        map.set('activity', this.activity.Value);
+        map.set('criCaja', this.criCaja);
+        map.set('re', this.re);
+        map.set('regAgri', this.regAgri);
+        map.set('tax', this.tax.Value);
+        map.set('taxBase', this.taxBase);
+        map.set('taxQuota', this.taxQuota);
+        map.set('irpf', this.irpf.Value);
+        map.set('irpfbase', this.irpfbase);
+        map.set('irpfquota', this.irpfquota);
+        map.set('type', this.type);
+        map.set('rectified', this.rectified);
+        return map;
+    }
+}
+
+class StorableInvoice implements IStorable<Invoice> {
+    getCollection(): ICollection<Invoice> {
+        return invoices;
+    }
+    getLocalStorage(): string {
+        return 'invoices';
+    }
+}
+
+class ApiInvoice implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
+}
+
+
 /**
  *
  * READ FROM LOCAL STORAGE ON PROYECT START FOR DEVELOPMENT
  *
  */
+
+let productCodes: ICollection<ProductCode> = new Collection<ProductCode>();
+let storableProductCodes = new StorableProductCode();
+let localProductCodes = new LocalStorage<ProductCode>(ProductCode);
+productCodes = localProductCodes.read(storableProductCodes.getLocalStorage());
+if(productCodes.size() == 0){
+    productCodes.add(new ProductCode('0000'));
+    productCodes.add(new ProductCode('0001'));
+    productCodes.add(new ProductCode('0002'));
+    productCodes.add(new ProductCode('0003'));
+    productCodes.add(new ProductCode('0004'));
+    productCodes.add(new ProductCode('0005'));
+    localProductCodes.write(storableProductCodes.getLocalStorage(), productCodes);
+}
+
+let productCategories: ICollection<ProductCategory> = new Collection<ProductCategory>();
+let storableProductCategories = new StorableProductCategory();
+let localProductCategories = new LocalStorage<ProductCategory>(ProductCategory);
+productCategories = localProductCategories.read(storableProductCategories.getLocalStorage());
+if(productCategories.size() == 0){
+    productCategories.add(new ProductCategory('Categoria 1'));
+    productCategories.add(new ProductCategory('Categoria 2'));
+    productCategories.add(new ProductCategory('Categoria 3'));
+    localProductCategories.write(storableProductCategories.getLocalStorage(), productCategories);
+}
+
+let productClasses: ICollection<ProductClass> = new Collection<ProductClass>();
+let storableProductClasses = new StorableProductClass();
+let localProductClasses = new LocalStorage<ProductClass>(ProductClass);
+productClasses = localProductClasses.read(storableProductClasses.getLocalStorage())
+if(productClasses.size() == 0){
+    productClasses.add(new ProductClass('Clase 1'));
+    productClasses.add(new ProductClass('Clase 2'));
+    productClasses.add(new ProductClass('Clase 3'));
+    localProductClasses.write(storableProductClasses.getLocalStorage(), productClasses);
+}
+
+let productTypes: ICollection<ProductType> = new Collection<ProductType>();
+let storableProductTypes = new StorableProductType();
+let localProductTypes = new LocalStorage<ProductType>(ProductType);
+productTypes = localProductTypes.read(storableProductTypes.getLocalStorage());
+if(productTypes.size() == 0){
+    productTypes.add(new ProductType('Tipo 1'));
+    productTypes.add(new ProductType('Tipo 2'));
+    productTypes.add(new ProductType('Tipo 3'));
+    localProductTypes.write(storableProductTypes.getLocalStorage(), productTypes);
+}
+
+let productStatuses: ICollection<ProductStatus> = new Collection<ProductStatus>();
+let storableProductStatuses = new StorableProductStatus();
+let localProductStatuses = new LocalStorage<ProductStatus>(ProductStatus);
+productStatuses = localProductStatuses.read(storableProductStatuses.getLocalStorage());
+if(productStatuses.size() == 0){
+    productStatuses.add(new ProductStatus('ProductStatus 1'));
+    productStatuses.add(new ProductStatus('ProductStatus 2'));
+    productStatuses.add(new ProductStatus('ProductStatus 3'));
+    productStatuses.add(new ProductStatus('ProductStatus 4'));
+    localProductStatuses.write(storableProductStatuses.getLocalStorage(), productStatuses);
+}
+
+
+let irpf: ICollection<IRPF> = new Collection<IRPF>();
+let storableIRPF = new StorableIRPF();
+let localIRPF = new LocalStorage<IRPF>(IRPF);
+irpf = localIRPF.read(storableIRPF.getLocalStorage());
+if(irpf.size() == 0){
+    irpf.add(new IRPF('15', 'profesional'));
+    irpf.add(new IRPF('19', 'arrendamiento'));
+    localIRPF.write(storableIRPF.getLocalStorage(), irpf);
+}
+
+let taxes: ICollection<Tax> = new Collection<Tax>();
+let storableTaxes = new StorableTax();
+let localTaxes = new LocalStorage<Tax>(Tax);
+taxes = localTaxes.read(storableTaxes.getLocalStorage())
+if(taxes.size() == 0){
+    taxes.add(new Tax('9'));
+    taxes.add(new Tax('15'));
+    taxes.add(new Tax('19'));
+    taxes.add(new Tax('21'));
+    localTaxes.write(storableTaxes.getLocalStorage(), taxes);
+}
+
+let products: ICollection<Product> = new Collection<Product>();
+let storableProducts = new StorableProduct();
+let localProducts = new LocalStorage<Product>(Product);
+products = localProducts.read(storableProducts.getLocalStorage())
+if(products.size() == 0){
+    products.add(new Product(productCodes.toArray()[0], 'Producto 1', productCategories.toArray()[0], productClasses.toArray()[0], productCategories.toArray()[0], productTypes.toArray()[0], 
+        productStatuses.toArray()[0], irpf.toArray()[0], 'bar code 1', 'descripcion del producto', 32.23, 23.2, 132, 123));
+    products.add(new Product(productCodes.toArray()[1], 'Producto 2', productCategories.toArray()[1], productClasses.toArray()[1], productCategories.toArray()[1], productTypes.toArray()[1], 
+        productStatuses.toArray()[1], irpf.toArray()[1], 'bar code 2', 'descripcion del producto 2', 123, 54, 32, 323));
+    products.add(new Product(productCodes.toArray()[0], 'Producto 3', productCategories.toArray()[0], productClasses.toArray()[0], productCategories.toArray()[0], productTypes.toArray()[0], 
+        productStatuses.toArray()[0], irpf.toArray()[0], 'bar code 3', 'descripcion del producto 3', 23, 22, 32, 323));
+    localProducts.write(storableProducts.getLocalStorage(), products);
+}
+
+let paymentMethods: ICollection<PaymentMethod> = new Collection<PaymentMethod>();
+let storablePaymentMethods = new StorablePaymentMethod();
+let localPaymentMethods = new LocalStorage<PaymentMethod>(PaymentMethod);
+paymentMethods = localPaymentMethods.read(storablePaymentMethods.getLocalStorage())
+if(paymentMethods.size() == 0){
+    paymentMethods.add(new PaymentMethod('Transferencia'));
+    paymentMethods.add(new PaymentMethod('Tarjeta de crédito'));
+    paymentMethods.add(new PaymentMethod('Paypal'));
+    localPaymentMethods.write(storablePaymentMethods.getLocalStorage(), paymentMethods);
+}
+
+let invoiceTransactionTypes: ICollection<InvoiceTransactionType> = new Collection<InvoiceTransactionType>();
+let storableInvoiceTransactionTypes = new StorableInvoiceTransactionType();
+let localInvoiceTransactionTypes = new LocalStorage<InvoiceTransactionType>(InvoiceTransactionType);
+invoiceTransactionTypes = localInvoiceTransactionTypes.read(storableInvoiceTransactionTypes.getLocalStorage())
+if(invoiceTransactionTypes.size() == 0){
+    invoiceTransactionTypes.add(new InvoiceTransactionType('Tipo 1'));
+    invoiceTransactionTypes.add(new InvoiceTransactionType('Tipo 2'));
+    invoiceTransactionTypes.add(new InvoiceTransactionType('Tipo 3'));
+    localInvoiceTransactionTypes.write(storableInvoiceTransactionTypes.getLocalStorage(), invoiceTransactionTypes);
+}
+
+let contacts: ICollection<Contact> = new Collection<Contact>();
+let storableContacs = new StorableContact();
+let localContacts = new LocalStorage<Contact>(Contact);
+contacts = localContacts.read(storableContacs.getLocalStorage())
+if(contacts.size() == 0){ 
+    contacts.add(new Contact('Nombre del contacto', 'Comercial', 'España', '123456789', 'Calle falsa 123', 'asd@example.com', '2431412413', 'www.123.com', '123456789', paymentMethods.toArray()[0], invoiceTransactionTypes.toArray()[0], false, false));
+    contacts.add(new Contact('Contacto test', 'Nombre comercial', 'España', '123456789', 'Calle falsa asd', '123@example.com', '4123143232', 'www.qwe.com', '123456789', paymentMethods.toArray()[1], invoiceTransactionTypes.toArray()[1], false, false));
+    contacts.add(new Contact('Contacto de prueba', 'Comercial test', 'España', '123456789', 'Calle falsa 123', 'qwe@example.com', '537534534534', 'www.asd.com', '123456789', paymentMethods.toArray()[2], invoiceTransactionTypes.toArray()[2], false, false));
+    localContacts.write(storableContacs.getLocalStorage(), contacts);
+}
+
+let invoiceSeries: ICollection<InvoiceSerie> = new Collection<InvoiceSerie>();
+let storableInvoiceSeries = new StorableInvoiceSerie();
+let localInvoiceSeries = new LocalStorage<InvoiceSerie>(InvoiceSerie);
+invoiceSeries = localInvoiceSeries.read(storableInvoiceSeries.getLocalStorage());
+if(invoiceSeries.size() == 0){
+    invoiceSeries.add(new InvoiceSerie('Serie 1'));
+    invoiceSeries.add(new InvoiceSerie('Serie 2'));
+    invoiceSeries.add(new InvoiceSerie('Serie 3'));
+    localInvoiceSeries.write(storableInvoiceSeries.getLocalStorage(), invoiceSeries);
+}
+
+let invoiceActivities: ICollection<InvoiceActivity> = new Collection<InvoiceActivity>();
+let storableInvoiceActivities = new StorableInvoiceActivity();
+let localInvoiceActivities = new LocalStorage<InvoiceActivity>(InvoiceActivity);
+invoiceActivities = localInvoiceActivities.read(storableInvoiceActivities.getLocalStorage())
+if(invoiceActivities.size() == 0){
+    invoiceActivities.add(new InvoiceActivity('Actividad 1'));
+    invoiceActivities.add(new InvoiceActivity('Actividad 2'));
+    invoiceActivities.add(new InvoiceActivity('Actividad 3'));
+    localInvoiceActivities.write(storableInvoiceActivities.getLocalStorage(), invoiceActivities);
+}
+
+let invoiceCategories: ICollection<InvoiceCategory> = new Collection<InvoiceCategory>();
+let storableInvoiceCategories = new StorableInvoiceCategory();
+let localInvoiceCategories = new LocalStorage<InvoiceCategory>(InvoiceCategory);
+invoiceCategories = localInvoiceCategories.read(storableInvoiceCategories.getLocalStorage());
+if(invoiceCategories.size() == 0){
+    invoiceCategories.add(new InvoiceCategory('Categoria 1'));
+    invoiceCategories.add(new InvoiceCategory('Categoria 2'));
+    invoiceCategories.add(new InvoiceCategory('Categoria 3'));
+    localInvoiceCategories.write(storableInvoiceCategories.getLocalStorage(), invoiceCategories);
+}
+
+let invoices: ICollection<Invoice> = new Collection<Invoice>();
+let storableInvoices = new StorableInvoice();
+let localInvoices = new LocalStorage<Invoice>(Invoice);
+invoices = localInvoices.read(storableInvoices.getLocalStorage());
+let invoiceLines = new Collection<IInvoiceLine>();
+invoiceLines.add(new InvoiceLine(products.toArray()[0],1,20,0,20, taxes.toArray()[0], irpf.toArray()[0]));
+if(invoices.size() == 0){
+    invoices.add(new Invoice(invoiceSeries.toArray()[0], '1', new Date(), 200, contacts.toArray()[0], invoiceCategories.toArray()[0], invoiceLines,
+    invoiceTransactionTypes.toArray()[0], invoiceActivities.toArray()[0], false, false, false, taxes.toArray()[0], 10, 5, irpf.toArray()[0], 10, 5));
+    invoices.add(new Invoice(invoiceSeries.toArray()[0], '1', new Date(), 200, contacts.toArray()[0], invoiceCategories.toArray()[0], invoiceLines,
+    invoiceTransactionTypes.toArray()[0], invoiceActivities.toArray()[0], false, false, false, taxes.toArray()[0], 10, 5, irpf.toArray()[0], 10, 5));
+}
 
 let documents: ICollection<Document> = new Collection<Document>();
 let storableDocuments = new StorableDocument();
@@ -5591,9 +7403,9 @@ let storableBanks = new StorableBank();
 let localBanks = new LocalStorage<Bank>(Bank);
 banks = localBanks.read(storableBanks.getLocalStorage());
 if(banks.size() == 0){
-    banks.add(new Bank('Caixa Bank',1500,'whereIsMyPath?'));
-    banks.add(new Bank('Banco Nación',500,'whereIsMyPath?2'));
-    banks.add(new Bank('Bankinter',2500,'whereIsMyPath?3'));
+    banks.add(new Bank('Caixa Bank',1500,'whereIsMyPath?','1','ES0402260523912937810527', new Date(), 'syncStatus'));
+    banks.add(new Bank('Banco Nación',500,'whereIsMyPath?2','1','ES0402260523912937810527', new Date(), 'syncStatus'));
+    banks.add(new Bank('Bankinter',2500,'whereIsMyPath?3','1','ES0402260523912937810527', new Date(), 'syncStatus'));
     localBanks.write(storableBanks.getLocalStorage(), banks);
 }
 
@@ -5614,7 +7426,6 @@ if(taxModels.size() == 0){
     taxModels.add(new TaxModel( '303','IVA','pendiente','domicialición bancaria','1345',4,2023));
     taxModels.add(new TaxModel( '130','IVA','presentado','tranferencia','541',4,2023));
     taxModels.add(new TaxModel( '347','IVA','rectificado','domicialición bancaria','1354',4,2023));
-
     taxModels.add(new TaxModel( '180','IVA','presentado','a','356',1,2022));
     taxModels.add(new TaxModel( '303','IVA','presentado','b','789',1,2022));
     taxModels.add(new TaxModel( '180','IVA','presentado','a','1245',2,2022));
@@ -5677,43 +7488,22 @@ let contracts: ICollection<Contract> = new Collection<Contract>();
 let storableContracts = new StorableContract();
 let localContracts = new LocalStorage<Contract>(Contract);
 
-let users: ICollection<User> = new Collection<User>();
 let marks: ICollection<Mark> = new Collection<Mark>();
+let storableMarks = new StorableMark();
+let localMarks = new LocalStorage<Mark>(Mark);
+
 let marksDetails: ICollection<MarkDetail> = new Collection<MarkDetail>();
+let storableMarksDetails = new StorableMarkDetail();
+let localMarksDetails = new LocalStorage<MarkDetail>(MarkDetail);
+
+let users: ICollection<User> = new Collection<User>();
 let storableUsers = new StorableUser();
 let localUsers = new LocalStorage<User>(User);
 users = localUsers.read(storableUsers.getLocalStorage())
 if(users.size() == 0){
-  users.add(new User(
-    'Kathryn',
-    'Ledner',
-    '35532252N',
-    'kathrynledner@gmail.test',
-    'test',
-    '690619302',
-    true
-    ));
-
-  users.add(new User(
-    'Eusebio',
-    'González',
-    '94385657M',
-    'eusebiogonzalez@gmail.test',
-    'test',
-    '656796396',
-    true
-  ));
-
-  users.add(new User(
-    'Juan',
-    'Macejkovic',
-    '11556837G',
-    'juanmacejkovic@gmail.test',
-    'test',
-    '619068048',
-    true
-  ));
-
+  users.add(new User('Kathryn','Ledner','35532252N','kathrynledner@gmail.test','test','690619302',true,['B16880148','U14241855','U53716270']));
+  users.add(new User('Eusebio','González','94385657M','eusebiogonzalez@gmail.test','test','656796396',true,['B16880148','U14241855','U53716270']));
+  users.add(new User('Juan','Macejkovic','11556837G','juanmacejkovic@gmail.test','test','619068048',true,['B16880148','U14241855','U53716270']));
   localUsers.write(storableUsers.getLocalStorage(), users);
 }
 
