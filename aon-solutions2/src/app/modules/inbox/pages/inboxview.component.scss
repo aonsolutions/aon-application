@@ -1,0 +1,76 @@
+@import "src/styles.scss";
+
+::ng-deep{
+  #button-create{
+    display         : flex;
+    justify-content : center;
+    height          : 3.4rem;
+  }
+
+  #table-inbox thead{
+    display: none;
+  }
+  #table-inbox tbody td{
+    cursor: pointer;
+  }
+  #table-inbox .mat-column-statusIcon{
+    width: 1.2rem;
+  }
+  #table-inbox .mat-column-total{
+    width: 1.7rem;
+  }
+
+  .inbox-content-state{
+    min-width: 30.1rem;
+    display: flex;
+    border-bottom: $border;
+  }
+
+  .inbox-content-state .inbox-icons{
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+    align-content: unset;
+    text-align: end;
+  }
+
+  .inbox-message{
+    display: flex;
+  }
+  .inbox-message .inbox-message-title{
+    max-width: 19rem;
+    font-family: Roboto-Bold;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .inbox-message .inbox-message-date{
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+    align-content: unset;
+  }
+
+  .inbox-name-tasks{
+    font-family: Roboto-Medium;
+  }
+
+  .inbox-chat{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    border-bottom: 1px solid silver;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .inbox-chat .inbox-chat-name{
+    font-family: Roboto-Medium;
+  }
+  .inbox-chat .inbox-chat-date{
+    display:flex;
+    justify-content: flex-end;
+  }
+}

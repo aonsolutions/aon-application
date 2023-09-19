@@ -1,9 +1,8 @@
 @import "src/styles.scss";
 
 ::ng-deep {
-
   .text {
-    font-family: 'Roboto-Bold';
+    font-family: "Roboto-Bold";
   }
 
   .subtitle {
@@ -14,23 +13,26 @@
     display: flex;
     gap: 1rem;
     height: 11.8rem;
-  }
-
-  .dashboard-billing [body] .import {
-    width: 15rem !important;
-  }
-
-  .dashboard-billing [body] .chart {
-    height: 11.8rem;
-  }
-
-  [footer] {
-    display: flex;
-    gap: 1rem;
-  }
-
-  [footer]:hover {
     cursor: pointer;
+  }
+
+  // .dashboard-billing [body] .import {
+  //   width: 15rem !important;
+  // }
+
+  // .dashboard-billing [body] .chart {
+  //   height: 11.8rem;
+  // }
+
+  .dashboard-billing {
+    [footer] {
+      display: flex;
+      gap: 1rem;
+    }
+
+    [footer]:hover {
+      cursor: pointer;
+    }
   }
 
   .no-selected {

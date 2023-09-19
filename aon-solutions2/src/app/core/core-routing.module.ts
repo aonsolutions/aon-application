@@ -40,22 +40,17 @@ const routes: Routes = [
           import('src/app/modules/billing/billing.module').then((m) => m.BillingModule),
       },
       {
-        path: 'bank',
-        loadChildren: () =>
-          import('src/app/modules/bank/bank.module').then((m) => m.BankModule),
-      },
-      {
         path: 'tax-panel',
         loadChildren: () =>
           import('src/app/modules/tax-panel/tax-panel.module').then(
             (m) => m.TaxPanelModule
           ),
       },
-      // {
-      //   path: 'employee-panel',
-      //   loadChildren: () =>
-      //     import('src/app/modules/employee-panel/employee-panel.module').then((m) => m.EmployeePanelModule),
-      // },
+      {
+        path: 'employee-panel',
+        loadChildren: () =>
+          import('src/app/modules/employee-panel/employee-panel.module').then((m) => m.EmployeePanelModule),
+      },
       {
         path: 'documentation',
         loadChildren: () =>

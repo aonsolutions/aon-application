@@ -1,0 +1,6 @@
+<app-table
+  [displayedColumns]="displayedColumns"
+  [head]="headerTable"
+  [data]="bodyTable"
+  (listenParentRow)="rowClick($event)"
+></app-table>
