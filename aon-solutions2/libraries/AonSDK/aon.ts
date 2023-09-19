@@ -271,15 +271,9 @@ export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>,
             ), 
             Enterprise);
     }
-}
-
-export class RegistryEnterpriseFactory implements ISingleObjectCrudFactory<IRegistryEnterprise>, IMultipleObjectCrudFactory<IRegistryEnterprise> {
-  createSingleObjectCrud(): ISingleObjectCrud<IRegistryEnterprise> {
-      return new GenericSingleObjectCrud<RegistryEnterprise>(new GenericSingleObjectCrudRepository<RegistryEnterprise>(new StorableRegistryEnterprise(), RegistryEnterprise), RegistryEnterprise);
-  }
-  createMultipleObjectCrud(): IMultipleObjectCrud<IRegistryEnterprise> {
-      return new GenericMultipleObjectCrud<RegistryEnterprise>(new GenericMultipleObjectCrudRepository<RegistryEnterprise>(new StorableRegistryEnterprise(), RegistryEnterprise), RegistryEnterprise);
-  }
+    createSpecificMethods(): IEnterpriseSpecificMethods {
+        return new EnterpriseSpecificMethods(new LocalEnterpriseSpecificMethodsRepository());
+    }
 }
 
 export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleObjectCrudFactory<IBank> {
@@ -300,6 +294,15 @@ export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleOb
             Bank);
     }
 }
+
+export class RegistryEnterpriseFactory implements ISingleObjectCrudFactory<IRegistryEnterprise>, IMultipleObjectCrudFactory<IRegistryEnterprise> {
+    createSingleObjectCrud(): ISingleObjectCrud<IRegistryEnterprise> {
+        throw new Error('Method not implemented.');
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IRegistryEnterprise> {
+        throw new Error('Method not implemented.');
+    }
+  }
 
 export class TaxModelFactory implements ISingleObjectCrudFactory<ITaxModel>, IMultipleObjectCrudFactory<ITaxModel> {
     createSingleObjectCrud(): ISingleObjectCrud<ITaxModel> {
@@ -341,7 +344,7 @@ export class EmployeeFactory implements ISingleObjectCrudFactory<IEmployee>, IMu
 
 export class AuthenticationFactory implements IAuthenticationManagerFactory {
     createAuthenticationManager(): IAuthenticationManager {
-        return new AuthenticationManager(APIEnvironment ? new APIAuthenticationRepository() : new AuthenticationRepository(new StorableAuth()));
+        return new AuthenticationManager(APIEnvironment ? new APIAuthenticationRepository() : new AuthenticationRepository(new StorableUser()));
     }
 }
 
@@ -395,20 +398,13 @@ export class MarkDetailFactory implements ISingleObjectCrudFactory<IMarkDetail>,
 
 export class UserFactory implements ISingleObjectCrudFactory<IUser>, IMultipleObjectCrudFactory<IUser> {
     createSingleObjectCrud(): ISingleObjectCrud<IUser> {
-        return new GenericSingleObjectCrud<User>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<User>(new ApiUser(), User) : 
-            new GenericSingleObjectCrudRepository<User>(new StorableUser(), User)
-            ), 
-            User);
+        throw new Error('Method not implemented.');
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IUser> {
-        return new GenericMultipleObjectCrud<User>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<User>(new ApiUser(), User) : 
-            new GenericMultipleObjectCrudRepository<User>(new StorableUser(), User)
-            ), 
-            User);
+        throw new Error('Method not implemented.');
+    }
+    createSpecificMethods(): IUserSpecificMethods {
+        return new UserSpecificMethods(new LocalUserSpecificMethodsRepository());
     }
 }
 
@@ -769,6 +765,18 @@ interface IInvoiceSpecificMethods {
     getInvoiceActivityList(filter?: IFilter): Promise<IResponse<ICollection<ITax>>>;
 }
 
+interface IEnterpriseSpecificMethods {
+    getCurrentEnterpriseData(): Promise<IResponse<IEnterprise>>;
+    getCurrentEnterpriseRegistryData(): Promise<IResponse<IRegistryEnterprise>>;
+    updateCurrentEnterpriseData(enterprise: IEnterprise): Promise<IResponse<IEnterprise>>;
+    updateCurrentEnterpriseRegistryData(registryEnterprise: IRegistryEnterprise): Promise<IResponse<IRegistryEnterprise>>;
+}
+
+interface IUserSpecificMethods {
+    getCurrentUserData(): Promise<IResponse<IUser>>;
+    updateCurrentUserData(user: IUser): Promise<IResponse<IUser>>;
+}
+
 
 /*
  *
@@ -1035,31 +1043,123 @@ class InvoiceSpecificMethods implements IInvoiceSpecificMethods {
     }
 
     async getTaxList(filter?: IFilter | undefined): Promise<IResponse<ICollection<ITax>>> {
-        return new Response<ICollection<ITax>>((await new TaxFactory().createMultipleObjectCrud().getCollection(filter)).result);
+        try {
+            return new Response<ICollection<ITax>>(this.SpecificMethodsRepository.getTaxList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
     }
 
     async getIRPFList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IIRPF>>> {
-        return new Response<ICollection<IIRPF>>((await new IRPFFactory().createMultipleObjectCrud().getCollection(filter)).result);
+        try {
+            return new Response<ICollection<IIRPF>>(this.SpecificMethodsRepository.getIRPFList());   
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
     }
 
     async getInvoiceCategoryList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IInvoiceCategory>>> {
-        return new Response<ICollection<IInvoiceCategory>>((await new InvoiceCategoryFactory().createMultipleObjectCrud().getCollection(filter)).result);
+        try {
+            return new Response<ICollection<IInvoiceCategory>>(this.SpecificMethodsRepository.getInvoiceCategoryList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
     }
 
     async getInvoiceSerieList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IInvoiceSerie>>> {
-        return new Response<ICollection<IInvoiceSerie>>((await new InvoiceSerieFactory().createMultipleObjectCrud().getCollection(filter)).result);
+        try {
+            return new Response<ICollection<IInvoiceSerie>>(this.SpecificMethodsRepository.getInvoiceSerieList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
     }
 
     async getTransactionTypeList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IInvoiceTransactionType>>> {
-        return new Response<ICollection<IInvoiceTransactionType>>((await new InvoiceTransactionTypeFactory().createMultipleObjectCrud().getCollection(filter)).result);
+        try {
+            return new Response<ICollection<IInvoiceTransactionType>>(this.SpecificMethodsRepository.getTransactionTypeList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
     }
 
     async getPaymentMethodList(filter?: IFilter | undefined): Promise<IResponse<ICollection<ITax>>> {
-        return new Response<ICollection<ITax>>((await new PaymentMethodFactory().createMultipleObjectCrud().getCollection(filter)).result);
+        try {
+            return new Response<ICollection<ITax>>(this.SpecificMethodsRepository.getPaymentMethodList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
     }
 
     async getInvoiceActivityList(filter?: IFilter | undefined): Promise<IResponse<ICollection<ITax>>> {
-        return new Response<ICollection<ITax>>((await new InvoiceActivityFactory().createMultipleObjectCrud().getCollection(filter)).result);
+        try {
+            return new Response<ICollection<ITax>>(this.SpecificMethodsRepository.getInvoiceActivityList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+}
+
+class EnterpriseSpecificMethods implements IEnterpriseSpecificMethods {
+    protected SpecificMethodsRepository: IEnterpriseSpecificMethodsRepository;
+
+    constructor(SpecificMethodsRepository: IEnterpriseSpecificMethodsRepository){
+        this.SpecificMethodsRepository = SpecificMethodsRepository;
+    }
+
+    async getCurrentEnterpriseData(): Promise<IResponse<IEnterprise>> {
+        try {
+            return new Response<IEnterprise>(await this.SpecificMethodsRepository.getCurrentEnterpriseData());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getCurrentEnterpriseRegistryData(): Promise<IResponse<IRegistryEnterprise>> {
+        try {
+            return new Response<IRegistryEnterprise>(await this.SpecificMethodsRepository.getCurrentEnterpriseRegistryData());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async updateCurrentEnterpriseData(enterprise: Enterprise): Promise<IResponse<IEnterprise>> {
+        try {
+            return new Response<IEnterprise>(await this.SpecificMethodsRepository.updateCurrentEntepriseData(enterprise));
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async updateCurrentEnterpriseRegistryData(registryEnterprise: RegistryEnterprise): Promise<IResponse<IRegistryEnterprise>> {
+        try {
+            return new Response<IRegistryEnterprise>(await this.SpecificMethodsRepository.updateCurrentEnterpriseRegistryData(registryEnterprise));
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+}
+
+class UserSpecificMethods implements IUserSpecificMethods {
+    protected SpecificMethodsRepository: IUserSpecificMethodsRepository;
+
+    constructor(SpecificMethodsRepository: IUserSpecificMethodsRepository){
+        this.SpecificMethodsRepository = SpecificMethodsRepository;
+    }
+
+    async getCurrentUserData(): Promise<IResponse<IUser>> {
+        try {
+            return new Response<IUser>(await this.SpecificMethodsRepository.getCurrentUserData());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async updateCurrentUserData(user: User): Promise<IResponse<IUser>> {
+        try {
+            return new Response<IUser>(await this.SpecificMethodsRepository.updateCurrentUserData(user));
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
     }
 }
 
@@ -1212,6 +1312,18 @@ interface IInvoiceSpecificMethodsRepository {
     getInvoiceActivityList(filter?: IFilter | undefined): Promise<ICollection<ITax>>;
 }
 
+interface IEnterpriseSpecificMethodsRepository {
+    getCurrentEnterpriseData(): Promise<IEnterprise>;
+    updateCurrentEntepriseData(enterprise: IEnterprise): Promise<IEnterprise>;
+    getCurrentEnterpriseRegistryData(): Promise<IRegistryEnterprise>;
+    updateCurrentEnterpriseRegistryData(registryEnterprise: IRegistryEnterprise): Promise<IRegistryEnterprise>;
+}
+
+interface IUserSpecificMethodsRepository {
+    getCurrentUserData(): Promise<IUser>;
+    updateCurrentUserData(user: IUser): Promise<IUser>;
+}
+
 /*
  *
  * CONCRETE REPOSITORY IMPLEMENTATION
@@ -1331,9 +1443,9 @@ class GenericSingleObjectCrudRepository<T extends IModel> implements ISingleObje
 
 class AuthenticationRepository implements IAuthenticationRepository {
 
-    private storableAuth: IStorable<IAuth>;
+    private storableAuth: IStorable<IUser>;
 
-    constructor(storableAuth: IStorable<IAuth>) {
+    constructor(storableAuth: IStorable<IUser>) {
         this.storableAuth = storableAuth;
     }
 
@@ -1341,8 +1453,13 @@ class AuthenticationRepository implements IAuthenticationRepository {
     }
 
     async login(email: string, password: string): Promise<void> {
-        let collection = this.storableAuth.getCollection()
-        if(collection.exists(email) && collection.get(email).Password == password) localStorage.setItem('token', 'testToken')
+        let filter = new FilterBuilder();
+        filter.addField('email', email);
+        let collection = this.storableAuth.getCollection().filter(filter.getFilter());
+        if(collection.size() == 1 && collection.toArray()[0].Password == password){
+            localStorage.setItem('token', 'testToken')
+            localStorage.setItem('user', collection.toArray()[0].Document)
+        }
         else throw new ErrorResponse('0101');
     }
 
@@ -1351,7 +1468,8 @@ class AuthenticationRepository implements IAuthenticationRepository {
             localStorage.removeItem('token'); 
             localStorage.removeItem('enterprise');
             localStorage.removeItem('domainId'); 
-            localStorage.removeItem('domainName'); 
+            localStorage.removeItem('domainName');
+            localStorage.removeItem('user');
         }
         else throw new ErrorResponse('0111');
     }
@@ -1730,26 +1848,60 @@ class LocalProductSpecificMethodsRepository implements IProductSpecificMethodsRe
 }
 
 class LocalInvoiceSpecificMethodsRepository implements IInvoiceSpecificMethodsRepository {
-    getTaxList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
-        throw new Error("Method not implemented.");
+    async getTaxList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
+        return (await new TaxFactory().createMultipleObjectCrud().getCollection(filter)).result;
     }
-    getIRPFList(filter?: IFilter | undefined): Promise<ICollection<IIRPF>> {
-        throw new Error("Method not implemented.");
+
+    async getIRPFList(filter?: IFilter | undefined): Promise<ICollection<IIRPF>> {
+        return (await new IRPFFactory().createMultipleObjectCrud().getCollection(filter)).result;
     }
-    getInvoiceCategoryList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceCategory>> {
-        throw new Error("Method not implemented.");
+
+    async getInvoiceCategoryList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceCategory>> {
+        return (await new InvoiceCategoryFactory().createMultipleObjectCrud().getCollection(filter)).result;
     }
-    getInvoiceSerieList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceSerie>> {
-        throw new Error("Method not implemented.");
+
+    async getInvoiceSerieList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceSerie>> {
+        return (await new InvoiceSerieFactory().createMultipleObjectCrud().getCollection(filter)).result;
     }
-    getTransactionTypeList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceTransactionType>> {
-        throw new Error("Method not implemented.");
+
+    async getTransactionTypeList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceTransactionType>> {
+        return (await new InvoiceTransactionTypeFactory().createMultipleObjectCrud().getCollection(filter)).result;
     }
-    getPaymentMethodList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
-        throw new Error("Method not implemented.");
+
+    async getPaymentMethodList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
+        return (await new PaymentMethodFactory().createMultipleObjectCrud().getCollection(filter)).result;
     }
-    getInvoiceActivityList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
-        throw new Error("Method not implemented.");
+
+    async getInvoiceActivityList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
+        return (await new InvoiceActivityFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+}
+
+class LocalEnterpriseSpecificMethodsRepository implements IEnterpriseSpecificMethodsRepository {
+    async getCurrentEnterpriseData(): Promise<IEnterprise> {
+        return enterprises.get(localStorage.getItem('enterprise') || '');
+    }
+
+    async updateCurrentEntepriseData(enterprise: Enterprise): Promise<IEnterprise> {
+        return  new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise).update(enterprise);
+    }
+
+    async getCurrentEnterpriseRegistryData(): Promise<IRegistryEnterprise> {
+        return registryEnterprises.get(localStorage.getItem('enterprise') || '');
+    }
+
+    async updateCurrentEnterpriseRegistryData(registryEnterprise: RegistryEnterprise): Promise<IRegistryEnterprise> {
+        return  new GenericSingleObjectCrudRepository<RegistryEnterprise>(new StorableRegistryEnterprise(), RegistryEnterprise).update(registryEnterprise);
+    }
+}
+
+class LocalUserSpecificMethodsRepository implements IUserSpecificMethodsRepository {
+    async getCurrentUserData(): Promise<IUser> {
+        return users.get(localStorage.getItem('user') || '');
+    }
+
+    async updateCurrentUserData(user: User): Promise<IUser> {
+        return new GenericSingleObjectCrudRepository<User>(new StorableUser(), User).update(user);
     }
 }
 
@@ -2918,6 +3070,14 @@ export interface IContact extends ICollectable{
  */
 
 export class Factory implements IFactory {
+    createInvoiceLine(product?: IProduct,quantity?: number,price?: number,discount?: number,totalPrice?: number,tax?: ITax,irpf?: IIRPF): IInvoiceLine {
+        return new InvoiceLine(product, quantity, price, discount, totalPrice, tax, irpf);
+    }
+
+    createInvoiceExpirationLine(date?: Date, paymentMethod?: IPaymentMethod, bankAccount?: string, amount?: number): IInvoiceExpirationLine {
+        return new InvoiceExpirationLine(date, paymentMethod, bankAccount, amount);
+    }
+
     createInvoice(serie?: IInvoiceSerie, invoiceNumber?: string, date?: Date, totalAmount?: number, contact?: IContact, category?: IInvoiceCategory, 
         lines?: ICollection<IInvoiceLine>, transactionType?: IInvoiceTransactionType, activity?: IInvoiceActivity, criCaja?: boolean, re?: boolean, 
         regAgri?: boolean, tax?: ITax, taxBase?: number, taxQuota?: number, irpf?: IIRPF, irpfbase?: number, irpfquota?: number, 
@@ -2983,6 +3143,10 @@ export class Factory implements IFactory {
 }
 
 export class CollectionFactory implements ICollectionFactory {
+    createInvoiceCollection(): ICollection<IInvoice> {
+      return new Collection<Invoice>();
+    }
+
     createProductCollection(): ICollection<IProduct> {
       return new Collection<Product>();
     }
@@ -5196,67 +5360,6 @@ class StorableContract extends Contract implements IStorable<Contract> {
     }
 }
 
-class Auth implements IAuth  {
-    private email: string;
-    private password: string;
-    private key: string;
-
-    constructor(email?: string, password?: string) {
-        this.email = email || '';
-        this.password = password || '';
-        this.key = email || '';
-    }
-
-    public get Email(): string {
-        return this.email;
-    }
-
-    public set Email(value: string) {
-        this.email = value;
-    }
-
-    public get Password(): string {
-        return this.password;
-    }
-
-    public set Password(value: string) {
-        this.password = value;
-    }
-
-    public get Key() {
-        return this.key;
-    }
-
-    public set Key(value: string){
-        this.key = value;
-    }
-
-    getKey(): string {
-        return this.email;
-    }
-
-    getFilterableFields(): Map<string, any> {
-        let map = new Map<string, any>();
-        map.set('email', this.email);
-        return map;
-    }
-
-    getSortableFields(): Map<string, any> {
-        let map = new Map<string, any>();
-        map.set('email', this.email);
-        return map;
-    }
-}
-
-class StorableAuth extends Auth implements IStorable<Auth> {
-    getCollection(): ICollection<Auth> {
-        return auths;
-    }
-    getLocalStorage(): string {
-        return 'auths';
-    }
-}
-
 class Mark implements IMark, IModel  {
     private key: string;
     private apiObject: any;
@@ -6773,6 +6876,94 @@ class InvoiceLine implements IInvoiceLine, IModel {
     }
 }
 
+class InvoiceExpirationLine implements IInvoiceExpirationLine, IModel {
+    date: Date;
+    paymentMethod: IPaymentMethod;
+    bankAccount: string;
+    amount: number;
+    key: string;
+    apiObject: any;
+    
+    constructor(date?: Date, paymentMethod?: IPaymentMethod, bankAccount?: string, amount?: number){
+        this.apiObject = {};
+        this.key = KeyGenerator.generate(15);
+        this.date = date || new Date();
+        this.paymentMethod = paymentMethod || new PaymentMethod();
+        this.bankAccount = bankAccount || '';
+        this.amount = amount || 0;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Date() {
+        return this.date;
+    }
+
+    public set Date(value: Date) {
+        this.date = value;
+    }
+
+    public get PaymentMethod(): IPaymentMethod {
+        return this.paymentMethod;
+    }
+
+    public set PaymentMethod(value: IPaymentMethod) {
+        this.paymentMethod = value;
+    }
+
+    public get BankAccount(): string {
+        return this.bankAccount;
+    }
+
+    public set BankAccount(value: string) {
+        this.bankAccount = value;
+    }
+
+    public get Amount(): number {
+        return this.amount;
+    }
+
+    public set Amount(value: number) {
+        this.amount = value;
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string,any>();
+        map.set('date', this.date);
+        map.set('paymentMethod', this.paymentMethod.Value);
+        map.set('bankAccount', this.bankAccount);
+        map.set('amount', this.amount);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string,any>();
+        map.set('date', this.date);
+        map.set('paymentMethod', this.paymentMethod.Value);
+        map.set('bankAccount', this.bankAccount);
+        map.set('amount', this.amount);
+        return map;
+    }
+}
+
 class Invoice implements IInvoice, IModel {
     key: string;
     apiObject: any;
@@ -7501,22 +7692,13 @@ let storableUsers = new StorableUser();
 let localUsers = new LocalStorage<User>(User);
 users = localUsers.read(storableUsers.getLocalStorage())
 if(users.size() == 0){
-  users.add(new User('Kathryn','Ledner','35532252N','kathrynledner@gmail.test','test','690619302',true,['B16880148','U14241855','U53716270']));
-  users.add(new User('Eusebio','González','94385657M','eusebiogonzalez@gmail.test','test','656796396',true,['B16880148','U14241855','U53716270']));
-  users.add(new User('Juan','Macejkovic','11556837G','juanmacejkovic@gmail.test','test','619068048',true,['B16880148','U14241855','U53716270']));
+  users.add(new User('Kathryn','Ledner','35532252N','kathrynledner@gmail.test','test','690619302',true));
+  users.add(new User('Eusebio','González','94385657M','eusebiogonzalez@gmail.test','test','656796396',true));
+  users.add(new User('Juan','Macejkovic','11556837G','juanmacejkovic@gmail.test','test','619068048',true));
+  users.add(new User('Admin','Admin','12345678A','admin','admin','698475145',true));
+  users.add(new User('Test','Test','98765432B','test@aonsolutions.test','test','652145784',true));
   localUsers.write(storableUsers.getLocalStorage(), users);
 }
-
-let auths: ICollection<Auth> = new Collection<Auth>();
-let storableAuths = new StorableAuth();
-let localAuths = new LocalStorage<Auth>(Auth);
-auths = localAuths.read(storableAuths.getLocalStorage())
-if(auths.size() == 0){
-    auths.add(new Auth('test@aonsolutions.test', 'test'));
-    auths.add(new Auth('admin', 'admin'));
-    localAuths.write(storableAuths.getLocalStorage(), auths);
-}
-
 
 
 /*
