@@ -1465,11 +1465,12 @@ class AuthenticationRepository implements IAuthenticationRepository {
 
     async logout(): Promise<void> {
         if(localStorage.getItem('token')) { 
-            localStorage.removeItem('token'); 
-            localStorage.removeItem('enterprise');
-            localStorage.removeItem('domainId'); 
-            localStorage.removeItem('domainName');
-            localStorage.removeItem('user');
+            // localStorage.removeItem('token'); 
+            // localStorage.removeItem('enterprise');
+            // localStorage.removeItem('domainId'); 
+            // localStorage.removeItem('domainName');
+            // localStorage.removeItem('user');
+            localStorage.clear();
         }
         else throw new ErrorResponse('0111');
     }
@@ -2144,7 +2145,8 @@ export class FilterBuilder {
      */
     addField(field: string, value:any): void {
         if(!this.filter.fields) this.filter.fields = new Map<string,any>();
-        this.filter.fields?.set(field, value);
+        if(!this.filter.fields?.has(field)) this.filter.fields?.set(field, []);
+        this.filter.fields?.get(field)?.push(value);
     }
     /**
      * Add new interval field to filter
@@ -2300,7 +2302,7 @@ export class Collection<T extends ICollectable> implements ICollection<T> {
         if(filter.fields?.size != 0)
             filter.fields?.forEach((value, key) => {
                 filteredArray = filteredArray.filter(element =>
-                    element.getFilterableFields().has(key.toLowerCase()) ? element.getFilterableFields().get(key.toLowerCase()) == value : true//element.getFilterableFields().get(key.toLowerCase()).includes(value)
+                    element.getFilterableFields().has(key.toLowerCase()) ? value.includes(element.getFilterableFields().get(key.toLowerCase())) : true//element.getFilterableFields().get(key.toLowerCase()).includes(value)
                 )
             })
         // Apply the filter usings interval fields and >= and <= operator
@@ -2546,6 +2548,7 @@ export interface IMessage extends ICollectable {
     Type: string;
     Status: string;
     EndDate: Date;
+    LastMessageChatOrigin: boolean;
 }
 
 export interface ITaskHolder extends ICollectable {
@@ -4587,6 +4590,7 @@ class Message implements IMessage, IModel  {
     private type: string;
     private status: string;
     private endDate: Date;
+    private lastMessageChatOrigin: boolean;
     private key: string;
     private taskHolder : TaskHolder;
     protected apiObject: any;
@@ -4599,7 +4603,7 @@ class Message implements IMessage, IModel  {
         this.apiObject = value;
     }
 
-    constructor(name?: string, title?: string, description?: string, date?: Date, type?: string, status?: string, endDate?: Date) {
+    constructor(name?: string, title?: string, description?: string, date?: Date, type?: string, status?: string, endDate?: Date, lastMessageChatOrigin?: boolean) {
         this.id = KeyGenerator.generate(15);
         this.name = name || '';
         this.title = title || '';
@@ -4610,6 +4614,15 @@ class Message implements IMessage, IModel  {
         this.endDate = endDate || new Date();
         this.key = this.id || '';
         this.taskHolder = new TaskHolder();
+        this.lastMessageChatOrigin = false;
+    }
+
+    public get LastMessageChatOrigin() {
+        return this.lastMessageChatOrigin;
+    }
+
+    public set LastMessageChatOrigin(value: boolean) {
+        this.lastMessageChatOrigin = value;
     }
 
     public get Id(): string {
@@ -7638,9 +7651,9 @@ let storableMessages = new StorableMessage();
 let localMessages = new LocalStorage<Message>(Message);
 messages = localMessages.read(storableMessages.getLocalStorage())
 if(messages.size() == 0){
-    messages.add(new Message('Asesor1','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-12 12:00"),'consulta','abierta'));
-    messages.add(new Message('Asesor2','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-26 14:00"),'consulta','abierta'));
-    messages.add(new Message('Asesor3','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-07-16 15:00"),'consulta','cerrada'));
+    messages.add(new Message('Asesor1','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-12 12:00"),'consulta','abierta', new Date("2023-08-24 23:30"), true));
+    messages.add(new Message('Asesor2','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-26 14:00"),'consulta','abierta', new Date("2023-08-24 23:30"), false));
+    messages.add(new Message('Asesor3','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-07-16 15:00"),'consulta','cerrada', new Date("2023-08-24 23:30"), true));
     messages.add(new Message('Asesor1','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-05-16 12:30"),'notificacion','vista'));
     messages.add(new Message('Asesor2','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-06-17 18:02"),'notificacion','nueva'));
     messages.add(new Message('Asesor3','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-07-18 08:05"),'notificacion','nueva'));
@@ -8058,7 +8071,3 @@ if(test){
 //         });
 //     });
 // }
-
-
-
-
