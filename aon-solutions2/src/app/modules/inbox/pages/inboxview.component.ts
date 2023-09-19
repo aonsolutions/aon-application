@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Factory,
@@ -50,8 +50,11 @@ export class InboxviewComponent implements OnInit {
   noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
   showSendButton: boolean = false;
+  showSendButtons: boolean = false;
   filterDate: number = 1;
   selectedFilterText: string = "Esta semana";
+  expandedIndex: number = -1;
+  noTasksMessageText: string = "";
   @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
 
   consultaMessageCount: number = 0;
@@ -130,6 +133,9 @@ export class InboxviewComponent implements OnInit {
 
   showNoTasksMessage(hasNoTasks: boolean) {
     this.noTasksMessage = hasNoTasks;
+    if (hasNoTasks) {
+      this.noTasksMessageText = "No hay tareas pendientes.";
+    }
   }
 
   afterModalClosed(result?: any) {
@@ -137,7 +143,6 @@ export class InboxviewComponent implements OnInit {
   }
 
   showModal() {
-    this.isModalVisible = true;
     this.modalComponent.openDialog(
       ModalCreateComponent,
       this.functionHome,
@@ -148,7 +153,12 @@ export class InboxviewComponent implements OnInit {
   onTabChange() {
     this.showDetail = false;
     this.showSendButton = false;
+    this.showSendButtons = false;
     this.tabIndex = 0;
+  }
+
+  backTable() {
+    this.showDetail = false;
   }
 
   async rowClickHandler(message: any) {
@@ -165,6 +175,7 @@ export class InboxviewComponent implements OnInit {
           filterBuilder.getFilter()
         );
       }
+      this.changeView();
     } catch (error) {
       console.error('Error al cargar el chat del mensaje:', error);
     }
@@ -172,6 +183,10 @@ export class InboxviewComponent implements OnInit {
 
   consultarClicked() {
     this.showSendButton = !this.showSendButton;
+  }
+
+  replyconsultarClicked() {
+    this.showSendButtons = !this.showSendButtons;
   }
 
   filterTable(optionValue: number, name: string) {
@@ -226,5 +241,14 @@ export class InboxviewComponent implements OnInit {
 
   closeDetail() {
     this.showDetail = false;
+  }
+
+  toggleDescription(index: number): void {
+    this.expandedIndex = this.expandedIndex === index ? -1 : index;
+  }
+
+  changeView(): void {
+    this.showSendButton = false;
+    this.showSendButtons = false;
   }
 }

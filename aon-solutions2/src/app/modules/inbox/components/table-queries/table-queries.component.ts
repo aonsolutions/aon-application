@@ -158,7 +158,7 @@ export class TableQueriesComponent implements OnChanges {
               this.messageTotal! = response < 100 ? response.toString() : '+99';
               console.log(this.messageTotal);
 
-            column.total = "<span class='messageTotal'>" + this.messageTotal + '</span>'
+            column.total = "<span class='circle green'>" + this.messageTotal + '</span>'
 
           });
 

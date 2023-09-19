@@ -159,6 +159,9 @@
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
           ></app-table-tasks>
+          <div *ngIf="selectedTab == 2 && this.tabIndex == 1 && noTasksMessage" class="padding inbox-no-tasks-message">
+            {{ noTasksMessageText }}
+          </div>
         </div>
       </app-tabs>
     </ng-container>
@@ -204,38 +207,51 @@
         <div class="background-text-red-light">
           {{ messagesData.Status }}
         </div>
-        <div class="inbox-icons" *ngIf="selectedTab < 3">
-          <app-icon shape="reply"></app-icon>
+        <div class="inbox-icons" *ngIf="messagesData.Type === 'consulta'">
+          <app-icon class="inbox-icon-reply" shape="reply" (click)="replyconsultarClicked()"></app-icon>
           <app-icon shape="archive"></app-icon>
         </div>
       </div>
 
       <div class="inbox-message padding">
         <div class="inbox-message-title">
-          <app-icon class="icon-back" shape="arrow_back"></app-icon>
+          <app-icon class="inbox-icon-back" (click)="backTable()" shape="arrow_back"></app-icon>
           {{ messagesData.Title }}
         </div>
         <div class="inbox-message-date">
           {{ datepipe.transform(messagesData.Date, "EEEE, HH:mm") }}
         </div>
       </div>
-
-      <div
-        class="padding"
-        *ngIf="messagesData.Type === 'consulta'"
-      >
-        <div
-          class="inbox-chat"
-          *ngFor="let messageChat of messagesChat; let i = index"
-        >
-          <div class="inbox-chat-name">{{ messageChat.Name }}</div>
-          <div class="inbox-chat-description">{{ messageChat.Description }}</div>
-          <div class="inbox-chat-date">
-            {{ datepipe.transform(messageChat.Date, "EEEE, HH:mm") }}
+      <div class="padding" *ngIf="messagesData.Type === 'consulta'">
+        <div class="inbox-chat" (click)="toggleDescription(i)" *ngFor="let messageChat of messagesChat; let i = index">
+          <div class="inbox-chat-name">
+            {{ messageChat.Name }}
+            <div *ngIf="expandedIndex === i" class="inbox-chat-description-side">{{ messageChat.Description }}</div>
           </div>
+          <div class="inbox-chat-description">
+            <div *ngIf="expandedIndex !== i">{{ messageChat.Description }}</div>
+          </div>
+          <div class="inbox-chat-date">{{ datepipe.transform(messageChat.Date, "EEEE, HH:mm") }}</div>
         </div>
       </div>
-
+      <div class="padding" *ngIf="showSendButtons && messagesData.Type === 'consulta'">
+        <app-input
+          [type]="'text'"
+          [placeholder]="'Escribe...'"
+          class="inputSend"
+        ></app-input>
+        <div class="inbox-send-button">
+          <app-button
+            [class]="'red left'"
+            [width]="'11rem'"
+            [fontSize]="'0.7rem'"
+            [padding]="'0rem 1rem'"
+          >
+            <app-icon shape="send"></app-icon>
+            Enviar
+          </app-button>
+        </div>
+      </div>
       <div
         class="padding"
         *ngIf="messagesData.Type === 'notificacion' || messagesData.Type === 'tarea'"
@@ -244,40 +260,48 @@
         {{ messagesData.Description }}
 
         <div
+          class="inbox-btns-content"
           *ngIf="messagesData.Type === 'tarea'"
-          class="content-btn-inbox"
         >
-          <div class="btns">
+          <div class="inbox-btns">
             <app-button
-              class="btn-inbox-01"
-              [class]="'red left'"
-              [width]="'100%'"
+              class="inbox-btn-01"
+              [class]="'red left inbox-btn-01'"
+              [width]="'11rem'"
+              [fontSize]="'0.7rem'"
+              [padding]="'0rem 1rem'"
             >
               <app-icon shape="playlist_add_check"></app-icon>
               Tramitar
             </app-button>
             <app-button
-              class="btn-inbox-01"
-              [class]="'red left'"
-              [width]="'100%'"
-              (click)="consultarClicked()"
+            [width]="'11rem'"
+            [color]="'black'"
+            [backgroundColor]="'white'"
+            [hoverBackgroundColor]="'#feedec'"
+            [border]="'.05rem solid #f6655a'"
+            [align]="'left'"
+            [fontSize]="'0.7rem'"
+            [borderRadius]="'.3rem'"
+            [padding]="'0rem 1rem'"
+            (click)="consultarClicked()"
             >
               <app-icon shape="chat"></app-icon>
               Consultar
             </app-button>
           </div>
-
-          <div class="clickConsultar" *ngIf="showSendButton">
+          <div class="padding" *ngIf="showSendButton">
             <app-input
               [type]="'text'"
               [placeholder]="'Escribe...'"
               class="inputSend"
             ></app-input>
-            <div class="send-button">
+            <div class="inbox-send-button">
               <app-button
-                class="btn-inbox-01"
                 [class]="'red left'"
-                [width]="'100%'"
+                [width]="'11rem'"
+                [fontSize]="'0.7rem'"
+                [padding]="'0rem 1rem'"
               >
                 <app-icon shape="send"></app-icon>
                 Enviar

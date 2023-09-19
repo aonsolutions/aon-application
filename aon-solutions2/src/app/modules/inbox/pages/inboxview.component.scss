@@ -26,6 +26,11 @@
     border-bottom: $border;
   }
 
+  .inbox-no-tasks-message {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
   .inbox-content-state .inbox-icons{
     width: 100%;
     display: flex;
@@ -34,6 +39,14 @@
     justify-content: flex-end;
     align-content: unset;
     text-align: end;
+  }
+
+  .inbox-icon-reply{
+    cursor: pointer;
+  }
+
+  .inbox-icon-back {
+    cursor: pointer;
   }
 
   .inbox-message{
@@ -65,6 +78,7 @@
     border-bottom: 1px solid silver;
     gap: 1rem;
     padding: 1rem;
+    cursor: pointer;
   }
   .inbox-chat .inbox-chat-name{
     font-family: Roboto-Medium;
@@ -72,5 +86,28 @@
   .inbox-chat .inbox-chat-date{
     display:flex;
     justify-content: flex-end;
+  }
+
+  .inbox-btns-content{
+    margin-top: 1.5rem;
+  }
+  .inbox-btns{
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .inbox-btn-01{
+    margin-right: 1rem;
+  }
+  .inbox-send-button{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+
+  .inbox-chat-description-side{
+    margin-top: 1rem;
+    font-size: 16px;
+    color: var(--gray-50);
   }
 }
