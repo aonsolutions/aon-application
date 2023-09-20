@@ -103,6 +103,9 @@ public class ConfigurationController implements Serializable {
 	}
 
 	public void setPageLimit(Integer pageLimit) {
+		if (pageLimit == null) {
+			pageLimit = DEFAULT_PAGE_LIMIT;
+		}
 		this.pageLimit = pageLimit;
 	}
 

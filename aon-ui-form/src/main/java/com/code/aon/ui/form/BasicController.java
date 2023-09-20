@@ -185,6 +185,9 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @param pageLimit
 	 */
 	public void setPageLimit(Integer pageLimit) {
+		if ( pageLimit == null ) {
+			pageLimit = getDefaultPageLimit();
+		}
 		this.pageLimit = pageLimit;
 	}
 	
