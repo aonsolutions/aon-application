@@ -5,6 +5,7 @@ import { CollectionFactory, Factory, FilterBuilder, ICollection, IDocument, IFol
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 import { TranslateService } from '@ngx-translate/core';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector    : 'app-documentation',
@@ -28,10 +29,12 @@ export class DocumentationComponent implements OnInit {
   showFiles         : boolean     = false;
   showNoElements    : boolean     = false;
   showDetail        : boolean     = false;
+  showSelectedCount : boolean     = false;
+  showSelectAllBtn  : boolean     = true;
   menuItem          : MenuItem [] = []
   subMenuItemFolder : MenuItem [] = []
   search            : string      = '';
-  
+
   constructor(
     private translateService: TranslateService,
     private documentService : DocumentService,
@@ -208,18 +211,25 @@ export class DocumentationComponent implements OnInit {
         elements[0].classList.remove('select-view');
       }
     }
-    selectViewFile(id: string){
-      // Verificamos si el card esta guardado
-      const isSaved = this.selectedCards.includes(id);
-      // Cogemos el div principal del card
-      let element = document.getElementById(id);
+    selectViewFile(id: string) {
+      const documents_array = this.documentsList.toArray();
+      const is_saved = this.selectedCards.includes(id);
+      let element = document.getElementById(id);  // Cogemos el div principal del card
 
-      if(!isSaved) {
+      // Verificamos si el card esta guardado. Si no lo esta se añade, de lo contrario lo quitamos.
+      if(!is_saved) {
         this.selectedCards.push(id);
       } else {
         const indexCard = this.selectedCards.indexOf(id);
         this.selectedCards.splice(indexCard, 1);
       }
+
+      const sel_cards_length = this.selectedCards.length;
+      // Si es el último elemento, ocultamos botón de "Seleccionar todos"
+      this.showSelectAllBtn = !(sel_cards_length === documents_array.length);
+
+      // Si hay elementos seleccionados, muestra el mensaje de recuento, de lo contrario lo oculta.
+      this.showSelectedCount = (sel_cards_length > 0) ? true : false;
 
       // Si no existe la agregamos, si existe la removemos
       if(!element!.classList.contains('select')){
@@ -280,12 +290,12 @@ export class DocumentationComponent implements OnInit {
       }
     }
 
-  /**
+    /**
      * Alterna la seleccion de todos los documentos en la lista.
      *
      * @return {void} La funcion no devuelve ningun valor.
- */
-    toggleSelectAll() {
+    */
+    selectAll() {
       const documentsArray = this.documentsList.toArray();
       const allSelected = this.selectedCards.length === documentsArray.length;
 
@@ -299,7 +309,23 @@ export class DocumentationComponent implements OnInit {
             document.getElementById('fileCheck-' + i)?.click();
           }
         }
-      })
+      });
+
+      // Actualiza visibilidad de botón.
+      this.showSelectAllBtn = allSelected;
     }
+
+    /**
+    * Deselecciona todos los elementos y oculta el mensaje de recuento.
+    *
+    * @return {void} La funcion no devuelve ningun valor.
+    */
+    deselectAll() {
+      this.selectedCards = [];
+      this.showSelectedCount = false;
+      this.showSelectAllBtn = true;
+    }
+
+
 
 }
