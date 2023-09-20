@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
@@ -673,13 +674,23 @@ public class AonFaker {
 	}
 	
 	/* */
-	public static Question getQuestion(AONContext ctx) {		
+	public static Question getQuestion(AONContext ctx) {
+		QuestionType type = getQuestionType();
+			
 		QuestionValue questionValue = new QuestionValue()
 				.setDomain(ctx.getDomainId())
-				.setValueText(faker.zelda().character())
-				.setValueNumber((double) 1234)
-				.setValueDate(new Date())
 				.setQuestion(new Question());
+		
+		if (type.equals(QuestionType.TEXT)) {
+			questionValue.setValueText(faker.zelda().character());
+		}
+		if (type.equals(QuestionType.DATE)) {
+			questionValue.setValueDate(faker.date().birthday());
+		}
+		if (type.equals(QuestionType.NUMBER)) {
+			questionValue.setValueNumber(faker.number().randomDouble(2,(int) Double.MIN_VALUE, (int) Double.MAX_VALUE));
+		}
+		
 
 	
 		List<QuestionValue> questionValues = new LinkedList<>();
@@ -689,19 +700,17 @@ public class AonFaker {
 				.setDomain(ctx.getDomainId())
 				.setActive(true)
 				.setText(faker.gameOfThrones().quote())
-				.setType(QuestionType.TEXT)
+				.setType(type)
 				.setArgument(faker.gameOfThrones().house())
 				.setAlias(faker.gameOfThrones().character())
 				.setValues(questionValues);
 	}
 	
-	public static QuestionValue getQuestionValue(AONContext ctx) {
-		return new QuestionValue()
-				.setDomain(ctx.getDomainId())
-				.setValueText(faker.zelda().character())
-				.setValueNumber((double) 1234)
-				.setValueDate(new Date())
-				.setQuestion(new Question());
+	public static QuestionType getQuestionType() {
+		Random random = new Random();
+		QuestionType[] types = QuestionType.values();
+		int type = random.nextInt(types.length);
+		return types[type];
 	}
 }
 

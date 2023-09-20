@@ -44,7 +44,7 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		// delete
 		QuestionDAO.delete(ctx, questionId);
 		Question deleted = QuestionDAO.get(ctx, questionId);
-		assertNull(deleted.getId());
+		assertNull(deleted);
 	}
 
 	
