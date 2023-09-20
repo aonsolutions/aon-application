@@ -12,10 +12,13 @@
     {{ "TAX_PANEL.RECTIFIED_MODEL" | translate }}
   </p>
 
-  <app-input (inputValue)="getValue($event)" [type]="'text'"> </app-input>
+  <app-input
+    (inputValue)="getValue($event)"
+    [type]="'text'">
+  </app-input>
 
   <app-button [mat-dialog-close]="true" [class]="'orange left'">
-    <app-icon shape="send"></app-icon>
+    <app-icon shape="send" (click)="createMessage()"></app-icon>
     {{ "TAX_PANEL.SEND" | translate }}
   </app-button>
 </div>

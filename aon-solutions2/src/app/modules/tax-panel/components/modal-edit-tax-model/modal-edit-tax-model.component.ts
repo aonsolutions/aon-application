@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { IMessage } from 'libraries/AonSDK/aon';
+import { Factory, IMessage } from 'libraries/AonSDK/aon';
 import { MessageService } from 'src/app/core/services/message.service';
 
 @Component({
@@ -11,12 +11,31 @@ import { MessageService } from 'src/app/core/services/message.service';
 export class ModalEditTaxModelComponent implements OnInit {
   inputValue: string = '';
 
+  // let factory = new Factory();
+
+  // let messageTest: IMessage = factory.createMessage();
+
+  // message: IMessage = {
+  //   Id: '',
+  //   Name: '',
+  //   Title: '',
+  //   Description: '',
+  //   Date: new Date(),
+  //   Type: 'consulta',
+  //   Status: 'abierta',
+  //   EndDate: new Date()
+  //   // getKey: () => this.message.Id;
+  //   // getFilterableFields: () => string[],
+  //   // getSortableFields: () => string[],;
+  // };
+
   getValue(value: string): void {
-    this.inputValue = value;
+    // this.message.Description = value;
   }
   closeModal(): void {
     this.dialogRef.close();
   }
+
   constructor(
     private messageService: MessageService,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -25,15 +44,18 @@ export class ModalEditTaxModelComponent implements OnInit {
 
   }
   createMessage(): void {
-    // const newMessage: IMessage = {
-    //   Description: this.inputValue,
-    // };
+    // this.messageService.createMessage(this.message)
+    //   .then((createdMessage: IMessage) => {
 
-    // this.inputValue !== '' && this.messageService.createMessage(newMessage).then((messageCreated) => {
 
-    //   console.log('Mensaje creado:', messageCreated);
-    //   this.closeModal();
-    // });
+    //     console.log('Mensaje creado:', createdMessage);
+    //     // Reinicia el valor del input
+    //     this.message.Description = '';
+    //   })
+    //   .catch((error: any) => {
+    //     // Maneja el error
+    //     console.error('Error al crear el mensaje:', error);
+    //   });
   }
 
 
