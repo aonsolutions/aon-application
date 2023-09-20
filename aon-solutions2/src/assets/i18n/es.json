@@ -86,6 +86,8 @@
     "ASSIGN_TO": "Asignar a"
   },
   "DOCUMENTATION": {
+    "FILE_SELECT_ALL"       : "Seleccionar todos",
+    "FILE_UNSELECT_ALL"     : "Deseleccionar todos",
     "FILE_SELECT_PREVIEW"   : "Vista previa",
     "FILE_SELECT_MOVE_TO"   : "Mover a",
     "FILE_SELECT_EDIT_NAME" : "Cambiar nombre",
