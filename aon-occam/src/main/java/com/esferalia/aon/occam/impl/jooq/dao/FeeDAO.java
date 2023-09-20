@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
@@ -115,6 +116,7 @@ public class FeeDAO {
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
 				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
+		
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
 			if(customerFeeParams.getSegment() == -1)
 				fromCustomerRecords = fromCustomerRecords 	
@@ -122,7 +124,9 @@ public class FeeDAO {
 			else fromCustomerRecords = fromCustomerRecords 	
 				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
 		}
-				
+			
+		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
+		
 		Result<Record> feeRecords = fromCustomerRecords 
 				.where(condition)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
@@ -351,7 +355,8 @@ public class FeeDAO {
 					: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setWorkplace(checkField(r, WORKPLACE.ID)
 					? WorkplaceFiller.build(r)
-					: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)));
+					: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)))
+				.setHasRItem(r.get(RITEM.ID) != null);
 		}
 	}
 

@@ -1633,6 +1633,7 @@ public class BookingPanel extends MainEntryPoint {
 			}
 
 			private void syncAllDomain(List<DomainCompany> companies) {
+				AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para los dominios seleccionados ...");
 				int syncDomain = 0;
 				
 				for(DomainCompany domainCompany : companies) {
@@ -1662,8 +1663,6 @@ public class BookingPanel extends MainEntryPoint {
 					        public void onResponseReceived(Request request, Response response) {
 					            if (response.getStatusCode() == 200) {
 					            	
-					            	AonMessagePanel.showLoading(messagePanel, "[" + (iteration + 1) + " / " + companies.size() + "] Sincronizando contrataci\u00f3n para el dominio " + domainCompany.getDomain().getDescription() + " ...");
-									
 					            	if((iteration + 1) == companies.size())
 										AonMessagePanel.showSuccess(messagePanel, "La sicronizaci\u00f3n de dominios se ha realizado correctamente.");
 			  		           		
