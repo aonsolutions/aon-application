@@ -194,10 +194,6 @@ export class TableQueriesComponent implements OnChanges {
             };
             column.class = (message.Status == 'abierta') ? 'border-red' : '';
             tableRow.push(column);
-
-            if (this.selectedMessage === null) {
-              this.selectedMessage = { ...message };
-            }
           }
         });
 

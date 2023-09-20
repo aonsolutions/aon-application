@@ -5,6 +5,12 @@
     display         : flex;
     justify-content : center;
     height          : 3.4rem;
+    margin: 1rem;
+
+  }
+  .mat-column-description span, .mat-column-date span{
+    font-size: 16px;
+    color: #787885;
   }
 
   #table-inbox thead{
@@ -86,6 +92,8 @@
   .inbox-chat .inbox-chat-date{
     display:flex;
     justify-content: flex-end;
+    color: #787885;
+    font-size: 16px;
   }
 
   .inbox-btns-content{
@@ -109,5 +117,10 @@
     margin-top: 1rem;
     font-size: 16px;
     color: var(--gray-50);
+  }
+
+  .inbox-chat-description .ng-star-inserted{
+    font-size: 16px;
+    color: #787885;
   }
 }
