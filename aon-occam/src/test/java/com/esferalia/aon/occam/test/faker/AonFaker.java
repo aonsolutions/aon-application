@@ -457,7 +457,7 @@ public class AonFaker {
 	
 	public static AmortizationType getAmortizationType(AONContext ctx) {
 		return new AmortizationType()
-				.setDomain(new Domain()
+				.setDomain(new Domain() 
 				.setId(ctx.getDomainId())
 				.setName(AonRandom.string(-1, 1, 14))) //creo q no hace falta, comprobar luego
 				.setFixedAssetAccount(	AonRandom.string(-1, 1, 4))
