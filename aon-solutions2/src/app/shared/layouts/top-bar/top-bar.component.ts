@@ -36,6 +36,8 @@ export class TopBarComponent implements OnInit, OnChanges {
     private appComponent    : AppComponent
   ){
     this.router.events.subscribe((event) => {
+      const contentContainer = document.querySelector('.mat-sidenav-content') || window;
+      contentContainer.scrollTo(0, 0);
       event instanceof NavigationEnd ? this.checkCurrentRoute() : null
     })
 
