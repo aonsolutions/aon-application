@@ -6,13 +6,13 @@
     gap             : 1rem;
     align-items     : end;
   }
-  
+
   #document-content{
     display   : flex;
     flex-wrap : wrap;
     gap       : 1rem;
   }
- 
+
   #file-detail{
     display         : flex;
     justify-content : space-between;
@@ -24,10 +24,17 @@
     overflow      : hidden;
     text-overflow : ellipsis;
   }
-  #file-detail .close{
+  #file-detail .close, #selected-elements span app-icon{
     cursor: pointer;
   }
-  
+
+  #selected-elements {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
   .folder.select-folder .appButton.icon-background-pink{
     border          : solid $border-size-primary $color-pink;
     background-color: $background-button-pink-hover2;

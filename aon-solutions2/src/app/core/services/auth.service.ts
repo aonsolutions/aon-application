@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationFactory, IEnterprise } from 'libraries/AonSDK/aon';
-import { TaxModelService } from './tax-model.service';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthService extends CommonService {
 
   authManager = new AuthenticationFactory().createAuthenticationManager()
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    super();
+  }
 
   async login(email: string, password: string): Promise<boolean> {
     let login = (await this.authManager.login(email, password)).result;

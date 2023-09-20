@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ReportingFactory } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ReportingService {
+export class ReportingService extends CommonService {
 
   private reportingDataAccesss = new ReportingFactory().createReportingDataAccess();
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   async getVentasGastos(): Promise<any> {
     return (await this.reportingDataAccesss.ventasGastos()).result;
