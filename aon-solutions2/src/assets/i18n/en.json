@@ -165,7 +165,9 @@
     "NEXT": "NEXT",
     "DESCRIPTION": "Descripción",
     "NUM_OF_INSTALLMENTS":"Nº installments (max. 12)",
-    "INFO_DEFERRAL": "The legal interest of 3.25% will be applied"
+    "INFO_DEFERRAL": "The legal interest of 3.25% will be applied",
+    "CONFIRM": "CONFIRM",
+    "BACK": "BACK"
   },
     "PROFILE": {
     "CONTACT_DETAILS":   "Contact details",

@@ -165,7 +165,9 @@
     "NEXT": "SIGUIENTE",
     "DESCRIPTION": "Descripción",
     "NUM_OF_INSTALLMENTS":"Nº de plazos (máx. 12)",
-    "INFO_DEFERRAL": "Se aplicará el interés legal del 3,25%"
+    "INFO_DEFERRAL": "Se aplicará el interés legal del 3,25%",
+    "CONFIRM": "CONFIRMAR",
+    "BACK": "VOLVER"
    },
   "PROFILE": {
     "CONTACT_DETAILS":   "Datos contacto",

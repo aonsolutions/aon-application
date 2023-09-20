@@ -51,7 +51,7 @@
   margin-top: -$margin-top;
   margin-bottom: $margin-bottom;
   padding-top: $padding-top;
-
+  padding-bottom: $padding-bottom;
 }
 
 #add-button {
@@ -65,10 +65,37 @@
   flex-direction: row;
   gap: 1rem;
   width: 100%;
+
 }
 
-.text_installment{
-  font-size:  $font-size-800;
+.text_installment {
+  font-size: $font-size-800;
   color: $color-secondary;
   padding-left: 1rem;
+}
+
+.createBank {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1rem;
+}
+
+.account_number {
+  margin-bottom: $margin-bottom;
+}
+
+.button-container {
+  align-self: flex-end;
+}
+
+.confirmation-view{
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: center;
+width: 50%;
+}
+
+.text-confirmation-view{
+  
 }
