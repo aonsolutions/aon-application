@@ -375,6 +375,19 @@ class SistemaREDMov {
 				form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
 			}
 		}
+		///////////////////////////////////////////////////////////////////////////////////////////////// ALTAS PARA REGIMEN DE ARTISTA Y COND DE DESEMPLEADO
+		if (employee.getRegime().equals("0112")) {
+			employee.getArtistRegimen().ifPresent(artistRegimen ->{
+				form.getInputByName("txt_SDFCATPROF_ayuda").setValue(artistRegimen);
+				form.getInputByName("txt_SDFCATPROF_ayuda").setValueAttribute(artistRegimen);
+			});	
+		}
+		
+		employee.getUnemployedStatus().ifPresent(unemployedStatus ->{
+			form.getInputByName("txt_SDFDESEMP_ayuda").setValue(unemployedStatus);
+			form.getInputByName("txt_SDFDESEMP_ayuda").setValueAttribute(unemployedStatus);
+		});
+		//////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		employee.getQuoteMonth().ifPresent(quote->{
 			DomNode quoteMonthNode = form.querySelector("#SDFINDGCMENSUAL"); 
