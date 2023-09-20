@@ -5,7 +5,7 @@ RUN set -eux; \
 
 # Install sudo
 RUN set -eux; \
-	apt-get install -y sudo debconf-utils
+	apt-get install -y sudo debconf-utils iproute2
 
 # Install Maven
 RUN set -eux; \
