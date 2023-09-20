@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ContactFactory, Factory, ICollection, IContact, IFilter } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ContactService {
+export class ContactService extends CommonService {
 
   private contactFactory = new ContactFactory();
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   async getContact(key: string): Promise<IContact>{
     return (await this.contactFactory.createSingleObjectCrud().getElement(key)).result;

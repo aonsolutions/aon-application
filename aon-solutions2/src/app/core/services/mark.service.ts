@@ -1,11 +1,12 @@
 import { Injectable, Renderer2 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ICollection, IFilter, IMark, MarkFactory } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MarkService {
+export class MarkService extends CommonService {
 
   private singleObjectCrud = new MarkFactory().createSingleObjectCrud();
   private multipleObjectCrud = new MarkFactory().createMultipleObjectCrud();
@@ -13,7 +14,9 @@ export class MarkService {
   constructor(
     private domSanitizer: DomSanitizer,
     private renderer: Renderer2
-  ) {}
+  ) {
+    super();
+  }
 
 
   async getMarkList(filter?: IFilter): Promise<ICollection<IMark>> {
