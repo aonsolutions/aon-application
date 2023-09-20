@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationFactory } from 'libraries/AonSDK/aon';
+import { AuthenticationFactory, IEnterprise } from 'libraries/AonSDK/aon';
+import { TaxModelService } from './tax-model.service';
 
 @Injectable({
   providedIn: 'root',
@@ -30,8 +31,8 @@ export class AuthService {
     return (await this.authManager.tokenLogin(token)).result;
   }
 
-  setEnterprise(cif: string): boolean {
-    return this.authManager.setEnterprise(cif).result;
+  setEnterprise(enterprise: IEnterprise): boolean {
+    return this.authManager.setEnterprise(enterprise).result;
   }
 
   isEnterpriseSelected(): boolean {

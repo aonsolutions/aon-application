@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { InboxviewComponent } from './pages/inboxview.component';
+import { EmployeeComponent } from './pages/employee.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: InboxviewComponent
-  },
+    component: EmployeeComponent
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class InboxRoutingModule { }
+export class EmployeePanelRoutingModule { }

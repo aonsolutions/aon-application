@@ -12,8 +12,8 @@ import {
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
-import { ModalCreateComponent } from '../../components/inbox/modal-create/modal-create.component';
-import { TableQueriesComponent } from '../../components/inbox/table-queries/table-queries.component';
+import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
+import { TableQueriesComponent } from '../components/table-queries/table-queries.component';
 import { DatePipe } from '@angular/common';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
@@ -222,5 +222,9 @@ export class InboxviewComponent implements OnInit {
     } catch (error) {
       console.error('Error al calcular el recuento de mensajes:', error);
     }
+  }
+
+  closeDetail() {
+    this.showDetail = false;
   }
 }

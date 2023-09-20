@@ -35,16 +35,21 @@
         [gridCols]="{xs:23,sm:23,md:23,lg:11,xl:11}"
       >
         <app-button class="icon-border">
-          <app-icon [shape]="'select_all'"></app-icon>
+          <app-icon
+            [shape]="selectedCards.length ? 'playlist_add_check' : 'select_all'"
+            [toolTip]="selectedCards.length ? ('DOCUMENTATION.FILE_UNSELECT_ALL' | translate) : ('DOCUMENTATION.FILE_SELECT_ALL' | translate)"
+            (click)="toggleSelectAll()"
+          >
+          </app-icon>
         </app-button>
         <app-button class="icon-border">
-          <app-icon [shape]="'folder_special'"></app-icon>
+          <app-icon [shape]="'folder_special'" [toolTip]="'DOCUMENTATION.FILE_SELECT_MOVE_TO' | translate"></app-icon>
         </app-button>
         <app-button class="icon-border">
-          <app-icon [shape]="'cloud_download'"></app-icon>
+          <app-icon [shape]="'cloud_download'" [toolTip]="'DOCUMENTATION.FILE_SELECT_DOWLOAD' | translate"></app-icon>
         </app-button>
         <app-button class="icon-border">
-          <app-icon [shape]="'delete'"></app-icon>
+          <app-icon [shape]="'delete'" [toolTip]="'DOCUMENTATION.FILE_SELECT_DELETE' | translate"></app-icon>
         </app-button>
       </mat-grid-tile>
       <!--Opciones en los ficheros-->
@@ -102,7 +107,7 @@
         (click)="loadFile(cardFile, 'file-'+i)"
       >
         <div header>
-          <input (click)="selectViewFile('file-'+i)" type="checkbox">
+          <input [id]="'fileCheck-'+i" (click)="selectViewFile('file-'+i)" type="checkbox">
           <!--Menu del archivo-->
           <span
             class='card-menu'

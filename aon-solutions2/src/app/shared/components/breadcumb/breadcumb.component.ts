@@ -4,6 +4,7 @@ import { DropdownMenuComponent } from '../dropdown-menu/dropdown-menu.component'
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { EnterpriseService } from 'src/app/core/services/enterprise.service';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { IEnterprise } from 'libraries/AonSDK/aon';
 
 @Component({
   selector: 'app-breadcumb',
@@ -28,12 +29,14 @@ export class BreadcumbComponent implements OnInit {
     this.enterpriseService.getEnterpriseList()
     .then(
       (response) => {
-        let actualDocument = this.authService.getEnterpriseSelected();
-        response.forEach((element) => {
-          this.menuItem.push({root:true, text:element.Name, click: () => this.setEnterpriseSelected(element.Name,element.Document)})
-          if(element.Document == actualDocument) this.selectedEnterprise = element.Name;
-        })
-        this.haveData = true;
+        if(response.size() > 0){
+          let actualDocument = this.authService.getEnterpriseSelected();
+          response.forEach((element) => {
+            this.menuItem.push({root:true, text:element.Name, click: () => this.setEnterpriseSelected(element)})
+            if(element.Document == actualDocument) this.selectedEnterprise = element.Name;
+          })
+          this.haveData = true;
+        }
       }
     )
     .catch(
@@ -47,9 +50,9 @@ export class BreadcumbComponent implements OnInit {
     this.currentRoute = this.router.url.replace('/','');
   }
 
-  setEnterpriseSelected(name : any, cif: any){
-    this.selectedEnterprise = name;
-    this.authService.setEnterprise(cif)
+  setEnterpriseSelected(element: IEnterprise){
+    this.selectedEnterprise = element.Name;
+    this.authService.setEnterprise(element);
   }
 
 }
