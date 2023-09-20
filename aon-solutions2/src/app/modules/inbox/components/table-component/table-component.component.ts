@@ -11,25 +11,26 @@ import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
 
-
 @Component({
   selector: 'app-table-component',
   templateUrl: './table-component.component.html',
   styleUrls: ['./table-component.component.scss'],
 })
+
 export class TableComponentComponent implements OnInit {
   @Input() filter: any = {};
   @Input() public messageList: Observable<ICollection<IMessage>> | undefined;
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
-
+  lenghtTitle   : number = 30;
+  lenghtMensage : number = 50;
   headerTable: any = {};
   bodyTable: any[] = [];
   messageTotal: string = '0';
   selectedMessage: IMessage | null = null;
   messages: ICollection<IMessage> =
-    new CollectionFactory().createMessageCollection();
-
+  new CollectionFactory().createMessageCollection();
   displayedColumns: string[] = [
+    'nameIcon',
     'name',
     'statusIcon',
     'status',
@@ -37,7 +38,7 @@ export class TableComponentComponent implements OnInit {
     'description',
     'total',
     'date',
-    'action',
+    'action'
   ];
 
   constructor(
@@ -52,13 +53,14 @@ export class TableComponentComponent implements OnInit {
     );
 
     this.headerTable = {
-      name: 'Name',
-      status: 'Status',
-      title: 'Title',
-      description: 'Description',
-      total: 'Total',
-      date: 'Date',
-      action: 'Action',
+      nameIcon    : 'nameIcon',
+      name        : 'Name',
+      status      : 'Status',
+      title       : 'Title',
+      description : 'Description',
+      total       : 'Total',
+      date        : 'Date',
+      action      : 'Action'
     };
 
     // Obtener la lista de mensajes
@@ -71,11 +73,40 @@ export class TableComponentComponent implements OnInit {
           .getMessageChatCount(filterBuilderTotal.getFilter())
           .then((response) => {
             this.messageTotal! = response < 100 ? response.toString() : '+99';
-            column = Object.assign({}, message);
-            column.key = messageKey;
-            column.name = message.Name;
-
+            column                = Object.assign({}, message);
             const lowerCaseStatus = message.Status.toLowerCase();
+            // Leido o no leido
+            column.class = 'border-red';
+            tableRow.push(column);
+            // key
+            column.key            = messageKey;
+            // Icono del mensaje
+            switch (message.Status) {
+              case 'abierta':
+              case 'cerrada':
+                column.nameIcon = {
+                  icon: [{ speaker_notes: 'red' }],
+                  text: ''
+                };
+                break;
+              case 'pendiente':
+              case 'realizada':
+                column.nameIcon = {
+                  icon: [{ playlist_add_check: 'red' }],
+                  text: ''
+                };
+                break;
+              case 'nueva':
+              case 'vista':
+                column.nameIcon = {
+                  icon: [{ notifications: 'red' }],
+                  text: ''
+                };
+                break;
+            }
+            // Nombre del asesor
+            column.name           = message.Name;
+            // Icono del ultimo en contestar
             column.statusIcon = {
               icon: lowerCaseStatus.includes('abierta')
                 ? [{ reply_all: 'green' }]
@@ -84,55 +115,25 @@ export class TableComponentComponent implements OnInit {
             };
             column.status = {
               icon: [],
-              text:
-                "<span class='background-text-red-light'>" +
-                message.Status +
-                '</span>',
+              text: "<span class='background-text-red-light'>" + message.Status + '</span>',
             };
-            column.title = message.Title;
-            column.description = message.Description;
-            if (message.Type === 'consulta') {
-              column.total =
-                "<span class='messageTotal'>" + this.messageTotal + '</span>';
-            } else {
-              column.total = '';
-            }
+            // Asunto del mensaje
+            column.title = message.Title.length > this.lenghtTitle ? message.Title.substring(0, this.lenghtTitle) + '...' : message.Title;
+            // Mensaje
+            column.description = message.Description.length > this.lenghtMensage ? message.Description.substring(0, this.lenghtMensage) + '...'  : message.Description;
+            // Total de respuesta de una consulta
+            column.total = message.Type === 'consulta' ?
+              "<span class='circle green'>" + this.messageTotal + '</span>'
+              :
+              '';
+            // Fecha
             column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
-
+            // Abrir o cerrar
             column.action = {
               icon: lowerCaseStatus.includes('abierta')
                 ? [{ archive: 'grey' }]
                 : [],
             };
-            switch (message.Status) {
-              case 'abierta':
-              case 'cerrada':
-                column.name = {
-                  icon: [{ speaker_notes: 'red' }],
-                  text: message.Name,
-                };
-                break;
-              case 'pendiente':
-              case 'realizada':
-                column.name = {
-                  icon: [{ playlist_add_check: 'red' }],
-                  text: message.Name,
-                };
-                break;
-              case 'nueva':
-              case 'vista':
-                column.name = {
-                  icon: [{ notifications: 'red' }],
-                  text: message.Name,
-                };
-                break;
-            }
-            column.class = 'border-red';
-            tableRow.push(column);
-
-            if (this.selectedMessage === null) {
-              this.selectedMessage = { ...message };
-            }
           });
         this.bodyTable = tableRow;
       });

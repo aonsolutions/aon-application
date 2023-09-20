@@ -23,6 +23,8 @@
           [appearanceDetail]="''"
           [class]="'search'"
           [type]="'search'"
+          [value]="search"
+          (inputValue)="searchDocumentation(search = $event)"
         ></app-input>
       </mat-grid-tile>
       <!--FIN Buscar-->
@@ -72,10 +74,10 @@
       *ngFor="let folder of documentationListFolders; let i = index"
       (click)="
         getDocumentation(folder.Path);
-        selectFolder('folder-'+i)
+        selectFolder(folder.Path)
       "
-      [id]="'folder-'+i"
-      [ngClass]="{'select-folder': selecFolder == 'folder-'+i}"
+      [id]="folder.Path"
+      [ngClass]="{'select-folder': selecFolder == folder.Path}"
       class="folder icon-background-pink bold item-folder left"
       [width]="'100%'"
     ><app-icon [shape]="'folder_open'"></app-icon>
@@ -96,7 +98,7 @@
       <app-button
         *ngFor="let folder of ( !showMenu ? documentationListFolders : documentationListSubFolders); let i = index"
         (click)="
-          getDocumentation(folder.Path, 'folder-'+i);
+          getDocumentation(folder.Path, folder.Path);
         "
         class="icon-background-pink bold left"
         width="width"

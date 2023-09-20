@@ -2,7 +2,7 @@
   <!--SIDENAV-->
   <div nav>
     <!--CREATE BUTTON // siempre tiene que tener el mismo hueco -->
-    <div 
+    <div
       id="button-create"
     >
       <!-- Ocultar donde es necesario -->
@@ -55,7 +55,7 @@
           {{ "INBOX.TASKS" | translate }}
           <span class="right">
             <span class="circle">
-              {{ consultaMessageCount }}
+              {{ tareasMessageCount }}
             </span>
           </span>
         </li>
@@ -67,7 +67,7 @@
           {{ "INBOX.NOTIFICATIONS" | translate }}
           <span class="right">
             <span class="circle">
-              {{ consultaMessageCount }}
+              {{ notificacionesMessageCount }}
             </span>
           </span>
         </li>
@@ -78,13 +78,15 @@
   <!--FIN SIDENAV-->
   <!--CONTENIDO-->
   <div content>
-    <div class="padding width-40">
-      <app-input
-        [appearance]="'outline'"
-        [class]="'search'"
-        [type]="'search'"
-        [placeholder]="'INBOX.TEXT' | translate"
-      ></app-input>
+    <div class="padding">
+      <div class="width-40">
+        <app-input
+          [appearance]="'outline'"
+          [class]="'search'"
+          [type]="'search'"
+          [placeholder]="'INBOX.TEXT' | translate"
+        ></app-input>
+      </div>
     </div>
     <ng-container *ngIf="selectedTab == 0">
       <div class="padding">
@@ -98,7 +100,6 @@
       <app-tabs
         [tabs]="tabsConsultas"
         (changeTabIndex)="this.tabIndex = $event"
-        [paddingLeftHeader]="'1rem'"
         [tabColor]="'red'"
       >
         <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
@@ -118,7 +119,7 @@
             </button>
           </app-dropdown-menu>
         </div>
-        <div content>
+        <div content class="padding">
           <app-table-queries
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
@@ -132,7 +133,6 @@
       <app-tabs
         [tabs]="tabsTareas"
         (changeTabIndex)="this.tabIndex = $event"
-        [paddingLeftHeader]="'1rem'"
         [tabColor]="'red'"
       >
         <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
@@ -152,7 +152,7 @@
             </button>
           </app-dropdown-menu>
         </div>
-        <div content>
+        <div content class="padding">
           <app-table-tasks
             (noPendingTasks)="showNoTasksMessage($event)"
             (rowClicked)="rowClickHandler($event)"
@@ -166,7 +166,6 @@
       <app-tabs
         [tabs]="tabsNotificaciones"
         (changeTabIndex)="this.tabIndex = $event"
-        [paddingLeftHeader]="'1rem'"
         [tabColor]="'red'"
       >
         <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
@@ -186,7 +185,7 @@
             </button>
           </app-dropdown-menu>
         </div>
-        <div content>
+        <div content class="padding">
           <app-table-notifications
             (rowClicked)="rowClickHandler($event)"
             [filterTabSelec]="this.tabIndex"
@@ -201,45 +200,53 @@
   <!--Detail-->
   <div detail *ngIf="showDetail">
     <div *ngIf="messagesChat">
-      <div class="content-state">
-        <div class="state">
-          <p>{{ messagesData.Status }}</p>
+      <div class="inbox-content-state padding">
+        <div class="background-text-red-light">
+          {{ messagesData.Status }}
         </div>
-        <div class="icons" *ngIf="selectedTab === 1 || selectedTab === 2 || selectedTab === 0">
+        <div class="inbox-icons" *ngIf="selectedTab < 3">
           <app-icon shape="reply"></app-icon>
           <app-icon shape="archive"></app-icon>
         </div>
       </div>
-      <hr />
-      <div class="content-head-message">
-        <div class="content-title-date">
-          <div class="arrow-title">
-            <app-icon class="icon-back" shape="arrow_back"></app-icon>
-            <p class="title">{{ messagesData.Title }}</p>
-          </div>
-          <div>
-            <p>{{ datepipe.transform(messagesData.Date, "EEEE, HH:mm") }}</p>
+
+      <div class="inbox-message padding">
+        <div class="inbox-message-title">
+          <app-icon class="icon-back" shape="arrow_back"></app-icon>
+          {{ messagesData.Title }}
+        </div>
+        <div class="inbox-message-date">
+          {{ datepipe.transform(messagesData.Date, "EEEE, HH:mm") }}
+        </div>
+      </div>
+
+      <div
+        class="padding"
+        *ngIf="messagesData.Type === 'consulta'"
+      >
+        <div
+          class="inbox-chat"
+          *ngFor="let messageChat of messagesChat; let i = index"
+        >
+          <div class="inbox-chat-name">{{ messageChat.Name }}</div>
+          <div class="inbox-chat-description">{{ messageChat.Description }}</div>
+          <div class="inbox-chat-date">
+            {{ datepipe.transform(messageChat.Date, "EEEE, HH:mm") }}
           </div>
         </div>
       </div>
-      <div *ngIf="selectedTab === 1 || (selectedTab === 0 && messagesData.Type === 'consulta')">
-        <div *ngFor="let messageChat of messagesChat; let i = index">
-          <div class="chat">
-            <p class="name">{{ messageChat.Name }}</p>
-            <p class="description">{{ messageChat.Description }}</p>
-            <p class="date">
-              {{ datepipe.transform(messageChat.Date, "EEEE, HH:mm") }}
-            </p>
-          </div>
-          <hr />
-        </div>
-      </div>
-      <div *ngIf="selectedTab === 2 || (selectedTab === 0 && messagesData.Type === 'tarea')">
-        <div class="content-tasks">
-          <p class="name-tasks">{{ messagesData.Name }}</p>
-          <p class="descrption-tasks">{{ messagesData.Description }}</p>
-        </div>
-        <div class="content-btn-inbox">
+
+      <div
+        class="padding"
+        *ngIf="messagesData.Type === 'notificacion' || messagesData.Type === 'tarea'"
+      >
+        <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
+        {{ messagesData.Description }}
+
+        <div
+          *ngIf="messagesData.Type === 'tarea'"
+          class="content-btn-inbox"
+        >
           <div class="btns">
             <app-button
               class="btn-inbox-01"
@@ -277,12 +284,6 @@
               </app-button>
             </div>
           </div>
-        </div>
-      </div>
-      <div *ngIf="selectedTab === 3 || (selectedTab === 0 && messagesData.Type === 'notificacion')">
-        <div class="content-tasks">
-          <p class="name-tasks">{{ messagesData.Name }}</p>
-          <p class="descrption-tasks">{{ messagesData.Description }}</p>
         </div>
       </div>
     </div>

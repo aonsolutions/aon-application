@@ -15,8 +15,11 @@ export class DocumentationComponent implements OnInit {
   @ViewChild('file') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
   collectionFactory = new CollectionFactory();
   factory           = new Factory();
+  originalListFolders         : ICollection<IFolder>    = this.collectionFactory.createFolderCollection();
   documentationListFolders    : ICollection<IFolder>    = this.collectionFactory.createFolderCollection();
   documentationListSubFolders : ICollection<IFolder>    = this.collectionFactory.createFolderCollection();
+  originalDocListSubFolders   : ICollection<IFolder>    = this.collectionFactory.createFolderCollection();
+  originalListDocuments       : ICollection<IDocument>  = this.collectionFactory.createDocumentCollection();
   documentsList               : ICollection<IDocument>  = this.collectionFactory.createDocumentCollection();
   fileToShow        : IDocument   = this.factory.createDocument();
   showMenu          : boolean     = false;
@@ -27,7 +30,8 @@ export class DocumentationComponent implements OnInit {
   showDetail        : boolean     = false;
   menuItem          : MenuItem [] = []
   subMenuItemFolder : MenuItem [] = []
-
+  search            : string      = '';
+  
   constructor(
     private translateService: TranslateService,
     private documentService : DocumentService,
@@ -47,7 +51,7 @@ export class DocumentationComponent implements OnInit {
       this.folderService.getFolderList(filter.getFilter()).then(listFolders => {
         listFolders.forEach(folder => {
           this.subMenuItemFolder.push(
-            {root: true, text: folder.Name, click:() => this.getMoveFile(folder.Path)},
+            {root: true, text: folder.Name, icon: 'folder', click:() => this.getMoveFile(folder.Path)},
           );
         });
       })
@@ -65,7 +69,7 @@ export class DocumentationComponent implements OnInit {
           {root: true, text: result["DOCUMENTATION.FILE_SELECT_EDIT_NAME"], icon:'edit'           , colorIcon:'black'},
           {root: true, text: result["DOCUMENTATION.FILE_SELECT_LABEL_AS"] , icon:'label'          , colorIcon:'black'},
           {root: true, text: result["DOCUMENTATION.FILE_SELECT_DOWLOAD"]  , icon:'cloud_download' , colorIcon:'black'},
-          {root: true, text: result["DOCUMENTATION.FILE_SELECT_DELETE"]   , icon:'delete' , colorIcon:'black'},
+          {root: true, text: result["DOCUMENTATION.FILE_SELECT_DELETE"]   , icon:'delete'         , colorIcon:'black'},
         //  {root:true, text: result['HEADER.LOGOUT']       , icon:'exit_to_app', colorIcon:'black', click:() => this.delete()},
         ];
       });
@@ -84,13 +88,17 @@ export class DocumentationComponent implements OnInit {
   getDocumentation(folder: string = '', id: string = '') {
     let filter    = new FilterBuilder();
     filter.addField('parent', folder);
+    this.search = '';
+    this.documentationListFolders = this.originalListFolders;
 
     this.folderService.getFolderList(filter.getFilter()).then(listFolders => {
+//      console.log(listFolders);
       if (folder === '') {
         // 1 - Listado de carpetas
         // La primera vez que cargamos la vista no mostramos el menu lateral
         // con el listado de carpetas
         this.showMenu                 = false;
+        this.originalListFolders      = listFolders;
         this.documentationListFolders = listFolders;
       } else {
         // Si contiene sub carpetas
@@ -101,6 +109,8 @@ export class DocumentationComponent implements OnInit {
           this.showDetail     = false;
           this.showNoElements = false;
           this.documentationListSubFolders = listFolders;
+          this.originalDocListSubFolders   = listFolders;
+
         } else {
           // 3 - No tiene sub carpetas, cargamos los documentos
           const filterDocument = new FilterBuilder();
@@ -111,7 +121,8 @@ export class DocumentationComponent implements OnInit {
             const firstValue    = Object.keys(documentsList).length > 0 ? Object.values(documentsList)[0] : 0;
             this.showNoElements = firstValue.size > 0 ? false : true;
             // Agregamos los datos devueltos
-            this.documentsList = documentsList;
+            this.originalListDocuments = documentsList;
+            this.documentsList         = documentsList;
           })
           this.showFiles  = true;
         }
@@ -138,8 +149,9 @@ export class DocumentationComponent implements OnInit {
     La carpeta que se esta visualizando
   */
   selectFolder(id: string){
-    console.log(this.selecFolder)
-    console.log('select folder')
+//    console.log(this.selecFolder)
+//    console.log('select folder')
+
     // Eliminamos si existe otro marcado
     if(this.selecFolder === ''){
       this.selecFolder = ''
@@ -217,11 +229,62 @@ export class DocumentationComponent implements OnInit {
       }
     }
 
-    /**
-     * Alterna la selección de todos los documentos en la lista.
+  /*
+    Buscador de documentacion
+  */
+    searchDocumentation(search: string){
+      // Si estamos en la vista de archivos
+      if(this.showMenu){
+        if( this.showFiles ){
+        // Si no hay nada en el input, mostramos la lista original
+        if(search === '' ){
+            this.documentsList = this.originalListDocuments;
+        // Si hay algo en el input, filtramos la lista
+        } else {
+          this.documentsList = this.collectionFactory.createDocumentCollection();
+          this.originalListDocuments.forEach(document => {
+            if( document.FileName.toLowerCase().includes(search.toLowerCase()) ){
+              this.documentsList.add(document);
+            }
+          });
+        }
+      } else {
+        if(search === ''){
+          // Si no hay nada en el input, mostramos la lista original
+          this.documentationListSubFolders = this.originalDocListSubFolders;
+        } else {
+          // Si hay algo en el input, filtramos la lista
+          this.documentationListSubFolders = this.collectionFactory.createFolderCollection();
+          this.originalDocListSubFolders.forEach(folder => {
+            if( folder.Name.toLowerCase().includes(search.toLowerCase()) ){
+              this.documentationListSubFolders.add(folder);
+            }
+          });
+        }
+      }
+      // Si estamos en la vista de carpetas
+      } else {
+        if(search === ''){
+          // Si no hay nada en el input, mostramos la lista original
+          this.documentationListFolders = this.originalListFolders;
+        } else {
+          // Si hay algo en el input, filtramos la lista
+          this.documentationListFolders = this.collectionFactory.createFolderCollection();
+
+          this.originalListFolders.forEach(folder => {
+            if( folder.Name.toLowerCase().includes(search.toLowerCase()) ){
+              this.documentationListFolders.add(folder);
+            }
+          });
+        }
+      }
+    }
+
+  /**
+     * Alterna la seleccion de todos los documentos en la lista.
      *
-     * @return {void} La función no devuelve ningún valor.
-     */
+     * @return {void} La funcion no devuelve ningun valor.
+ */
     toggleSelectAll() {
       const documentsArray = this.documentsList.toArray();
       const allSelected = this.selectedCards.length === documentsArray.length;

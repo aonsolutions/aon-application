@@ -38,31 +38,31 @@ export class GridColsDirective implements OnInit {
       if (result.breakpoints[Breakpoints.XSmall]) {
         if(this.gridCols.xs){
           this.tile.colspan = this.gridCols.xs;
-          console.log('---> XSmall <----');
+//          console.log('---> XSmall <----');
         }
       }
       if (result.breakpoints[Breakpoints.Small]) {
         if(this.gridCols.sm){
           this.tile.colspan = this.gridCols.sm;
-          console.log('---> Small <----');
+//          console.log('---> Small <----');
         }
       }
       if (result.breakpoints[Breakpoints.Medium]) {
         if(this.gridCols.md){
           this.tile.colspan = this.gridCols.md;
-          console.log('---> Medium <----');
+//          console.log('---> Medium <----');
         }
       }
       if (result.breakpoints[Breakpoints.Large]) {
         if(this.gridCols.lg){
           this.tile.colspan = this.gridCols.lg;
-          console.log('---> large <----');
+//          console.log('---> large <----');
         }
       }
       if (result.breakpoints[Breakpoints.XLarge]) {
         if(this.gridCols.xl){
           this.tile.colspan = this.gridCols.xl;
-          console.log('---> XLarge <----');
+//          console.log('---> XLarge <----');
         }
       }
     });
