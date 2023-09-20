@@ -1,22 +1,38 @@
 <span *ngIf="this.menuItem[0].root == true" [matMenuTriggerFor]="menu"></span>
-<a mat-menu-item [matMenuTriggerFor]="menu" (mouseover)="openDropdownMenu()" *ngIf="this.submenu.text != ''">
-  <app-icon *ngIf="submenu.icon != undefined" [attr.shape]="submenu.icon"></app-icon>
-  <ng-container *ngIf="submenu.icon != undefined">&nbsp;&nbsp;</ng-container>
-  <span>{{submenu.text}}</span>
-</a>
-<mat-menu #menu="matMenu">
-  <ng-container *ngFor="let item of menuItem">
-    <ng-container *ngIf="item.children != null">
-      <app-dropdown-menu [submenu]="item" [menuItem]="item.children"></app-dropdown-menu>
-    </ng-container>
-    <a 
-      mat-menu-item 
-      *ngIf="item.children == null" 
+<mat-menu
+  #menu="matMenu"
+>
+  <span *ngFor="let item of menuItem">
+    <span *ngIf="item.children != null">
+      <a mat-menu-item [matMenuTriggerFor]="submenu">
+        <app-icon *ngIf="item.icon != undefined" shape="{{ item.icon }}" color="{{ item.colorIcon }}"></app-icon>
+        {{item.text}}
+      </a>
+    </span>
+    <a
+      mat-menu-item
+      *ngIf="item.children == null"
       [routerLink]="item.routerlink"
       (click)="item.click != undefined ? item.click() : '';"
     >
       <app-icon *ngIf="item.icon != undefined" shape="{{ item.icon }}" color="{{ item.colorIcon }}"></app-icon>
       {{item.text}}
     </a>
-  </ng-container>
+  </span>
+</mat-menu>
+
+<mat-menu #submenu="matMenu">
+  <div *ngFor="let item of menuItem">
+    <div *ngFor="let subitem of item.children">
+      <a
+        mat-menu-item
+        *ngIf="subitem.children == null"
+        [routerLink]="subitem.routerlink"
+        (click)="subitem.click != undefined ? subitem.click() : '';"
+      >
+        <app-icon *ngIf="subitem.icon != undefined" shape="{{ subitem.icon }}" color="{{ subitem.colorIcon }}"></app-icon>
+        {{subitem.text}}
+      </a>
+    </div>
+  </div>
 </mat-menu>

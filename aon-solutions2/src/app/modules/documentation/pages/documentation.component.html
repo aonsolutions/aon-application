@@ -5,7 +5,7 @@
     <mat-grid-list class="margin-top margin-bottom" [cols]="24" [rowHeight]="'2.8rem'">
       <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
       <mat-grid-tile [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
-        <app-file-upload-button> 
+        <app-file-upload-button>
           {{ 'COMMON.FILE_UPLOAD_BUTTON'|translate }}
           <app-icon shape="cloud_upload" class="margin-left"></app-icon>
         </app-file-upload-button>
@@ -16,33 +16,40 @@
     <!--<mat-grid-list class="margin-top margin-bottom" [cols]="24" [rowHeight]="'3.8rem'">-->
     <mat-grid-list class="margin-top margin-bottom" [cols]="24" [rowHeight]="'3.8rem'">
       <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
-      <!--Buscar--> 
+      <!--Buscar-->
       <mat-grid-tile [gridCols]="{xs:20,sm:18,md:14,lg:11,xl:11}">
         <app-input
           [appearance]="'outline'"
           [appearanceDetail]="''"
           [class]="'search'"
           [type]="'search'"
+          [value]="search"
+          (inputValue)="searchDocumentation(search = $event)"
         ></app-input>
       </mat-grid-tile>
-      <!--FIN Buscar--> 
+      <!--FIN Buscar-->
       <!--Opciones en los ficheros-->
-      <mat-grid-tile 
+      <mat-grid-tile
         id="document-options"
         *ngIf="showFiles"
         [gridCols]="{xs:23,sm:23,md:23,lg:11,xl:11}"
       >
         <app-button class="icon-border">
-          <app-icon [shape]="'select_all'"></app-icon>
+          <app-icon
+            [shape]="selectedCards.length ? 'playlist_add_check' : 'select_all'"
+            [toolTip]="selectedCards.length ? ('DOCUMENTATION.FILE_UNSELECT_ALL' | translate) : ('DOCUMENTATION.FILE_SELECT_ALL' | translate)"
+            (click)="toggleSelectAll()"
+          >
+          </app-icon>
         </app-button>
         <app-button class="icon-border">
-          <app-icon [shape]="'folder_special'"></app-icon>
+          <app-icon [shape]="'folder_special'" [toolTip]="'DOCUMENTATION.FILE_SELECT_MOVE_TO' | translate"></app-icon>
         </app-button>
         <app-button class="icon-border">
-          <app-icon [shape]="'cloud_download'"></app-icon>
+          <app-icon [shape]="'cloud_download'" [toolTip]="'DOCUMENTATION.FILE_SELECT_DOWLOAD' | translate"></app-icon>
         </app-button>
         <app-button class="icon-border">
-          <app-icon [shape]="'delete'"></app-icon>
+          <app-icon [shape]="'delete'" [toolTip]="'DOCUMENTATION.FILE_SELECT_DELETE' | translate"></app-icon>
         </app-button>
       </mat-grid-tile>
       <!--Opciones en los ficheros-->
@@ -52,15 +59,15 @@
 <!--FIN Header-->
 <!--Nav-->
   <div nav *ngIf="showMenu">
-    <app-button 
+    <app-button
       *ngFor="let folder of documentationListFolders; let i = index"
       (click)="
         getDocumentation(folder.Path);
-        selectFolder('folder-'+i)
+        selectFolder(folder.Path)
       "
-      [id]="'folder-'+i"
-      [ngClass]="{'select-folder': selecFolder == 'folder-'+i}"
-      class="folder icon-background-pink bold item-folder left" 
+      [id]="folder.Path"
+      [ngClass]="{'select-folder': selecFolder == folder.Path}"
+      class="folder icon-background-pink bold item-folder left"
       [width]="'100%'"
     ><app-icon [shape]="'folder_open'"></app-icon>
       {{ folder.Name }}
@@ -75,14 +82,14 @@
       No hay elementos que mostrar
     </div>
   <!--FIN No ducumentos-->
-  <!--Mostrar carpetas--> 
+  <!--Mostrar carpetas-->
     <ng-container *ngIf="!showFiles">
-      <app-button 
+      <app-button
         *ngFor="let folder of ( !showMenu ? documentationListFolders : documentationListSubFolders); let i = index"
         (click)="
-          getDocumentation(folder.Path, 'folder-'+i);
+          getDocumentation(folder.Path, folder.Path);
         "
-        class="icon-background-pink bold left" 
+        class="icon-background-pink bold left"
         width="width"
       >
         <app-icon [shape]="'folder_open'"></app-icon>
@@ -91,7 +98,7 @@
       </app-button>
     </ng-container>
   <!--FIN Mostrar carpetas-->
-  <!--Mostrar ficheros--> 
+  <!--Mostrar ficheros-->
     <ng-container *ngIf="showFiles">
       <app-card
         [class]="'file pink'"
@@ -100,7 +107,7 @@
         (click)="loadFile(cardFile, 'file-'+i)"
       >
         <div header>
-          <input (click)="selectViewFile('file-'+i)" type="checkbox">
+          <input [id]="'fileCheck-'+i" (click)="selectViewFile('file-'+i)" type="checkbox">
           <!--Menu del archivo-->
           <span
             class='card-menu'
@@ -127,19 +134,19 @@
         </div>
       </app-card>
     </ng-container>
-  <!--FIN Mostrar ficheros--> 
+  <!--FIN Mostrar ficheros-->
   </div>
 <!--FIN Content-->
 <!--Detail-->
   <div detail *ngIf="showDetail">
-  <!--Nombre fichero--> 
+  <!--Nombre fichero-->
     <div id='file-detail'>
-      <span 
+      <span
         class="name"
       >
         {{ getNameWithExtension(fileToShow.FileName, fileToShow.FileType) }}
       </span>
-      <span 
+      <span
         class="close"
         (click)="
           closeShowDocumentation()
@@ -148,9 +155,9 @@
         <app-icon [shape]="'close'"></app-icon>
       </span>
     </div>
-  <!--FIN Nombre fichero--> 
-  <!--Mostrar previo del fichero--> 
-    <!--Mostrar PDF--> 
+  <!--FIN Nombre fichero-->
+  <!--Mostrar previo del fichero-->
+    <!--Mostrar PDF-->
     <ng-container *ngIf="fileToShow.FileType.split('/')[0] === 'pdf'; else showImage">
       <app-file-viewer
         [locale]="'es-ES'"
@@ -158,13 +165,13 @@
         [pdfSrc]="'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf'"
       ></app-file-viewer>
     </ng-container>
-    <!--FIN Mostrar PDF--> 
-    <!--Mostrar imagen--> 
+    <!--FIN Mostrar PDF-->
+    <!--Mostrar imagen-->
     <ng-template #showImage>
       <img [src]="'data:'+ fileToShow.FileType +';base64,' + fileToShow.File" alt="Image">
     </ng-template>
-    <!--FIN Mostrar imagen--> 
-  <!--FIN Mostrar previo del fichero--> 
+    <!--FIN Mostrar imagen-->
+  <!--FIN Mostrar previo del fichero-->
   </div>
 <!--FIN Detail-->
 </app-grid-layout>
