@@ -34,17 +34,20 @@
         *ngIf="showFiles"
         [gridCols]="{xs:23,sm:23,md:23,lg:11,xl:11}"
       >
-      <span id="selected-elements" *ngIf="showSelectedCount" (click)="deselectAll()">
-        <app-icon shape="indeterminate_check_box"></app-icon>
-        {{ selectedCards.length }} seleccionados
-      </span>
+
+      <div id="selected-elements">
+        <span *ngIf="showSelectedCount" (click)="toggleSelectAll()">
+          <app-icon shape="indeterminate_check_box"></app-icon>
+          {{ selectedCards.length }} seleccionados
+        </span>
+      </div>
 
 
         <app-button
           *ngIf="showSelectAllBtn"
           class="icon-border"
           [toolTip]="'DOCUMENTATION.FILE_SELECT_ALL' | translate"
-          (click)="selectAll()"
+          (click)="toggleSelectAll()"
         >
           <app-icon
             [shape]="'select_all'"

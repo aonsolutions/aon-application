@@ -5,7 +5,6 @@ import { CollectionFactory, Factory, FilterBuilder, ICollection, IDocument, IFol
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 import { TranslateService } from '@ngx-translate/core';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector    : 'app-documentation',
@@ -34,6 +33,7 @@ export class DocumentationComponent implements OnInit {
   menuItem          : MenuItem [] = []
   subMenuItemFolder : MenuItem [] = []
   search            : string      = '';
+
 
   constructor(
     private translateService: TranslateService,
@@ -295,7 +295,7 @@ export class DocumentationComponent implements OnInit {
      *
      * @return {void} La funcion no devuelve ningun valor.
     */
-    selectAll() {
+    toggleSelectAll() {
       const documentsArray = this.documentsList.toArray();
       const allSelected = this.selectedCards.length === documentsArray.length;
 
@@ -313,19 +313,7 @@ export class DocumentationComponent implements OnInit {
 
       // Actualiza visibilidad de botón.
       this.showSelectAllBtn = allSelected;
+      this.showSelectedCount = (this.selectedCards.length > 0) ? true : false;
     }
-
-    /**
-    * Deselecciona todos los elementos y oculta el mensaje de recuento.
-    *
-    * @return {void} La funcion no devuelve ningun valor.
-    */
-    deselectAll() {
-      this.selectedCards = [];
-      this.showSelectedCount = false;
-      this.showSelectAllBtn = true;
-    }
-
-
 
 }
