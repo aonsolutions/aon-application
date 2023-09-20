@@ -160,7 +160,12 @@
             [filterDate]="this.filterDate"
           ></app-table-tasks>
           <div *ngIf="selectedTab == 2 && this.tabIndex == 1 && noTasksMessage" class="padding inbox-no-tasks-message">
-            {{ noTasksMessageText }}
+            <ng-container *ngIf="noTasksMessage && filterDate === 1">
+              {{ noTasksThisWeekMessage }}
+            </ng-container>
+            <ng-container *ngIf="noTasksMessage && filterDate === 2">
+              {{ noTasksThisMonthMessage }}
+            </ng-container>
           </div>
         </div>
       </app-tabs>

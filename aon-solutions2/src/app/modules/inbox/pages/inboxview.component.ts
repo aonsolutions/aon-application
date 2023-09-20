@@ -55,6 +55,8 @@ export class InboxviewComponent implements OnInit {
   selectedFilterText: string = "Esta semana";
   expandedIndex: number = -1;
   noTasksMessageText: string = "";
+  noTasksThisWeekMessage: string = "No hay tareas pendientes esta semana.";
+  noTasksThisMonthMessage: string = "No hay tareas pendientes este mes.";
   @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
 
   consultaMessageCount: number = 0;
@@ -133,10 +135,16 @@ export class InboxviewComponent implements OnInit {
 
   showNoTasksMessage(hasNoTasks: boolean) {
     this.noTasksMessage = hasNoTasks;
+
     if (hasNoTasks) {
-      this.noTasksMessageText = "No hay tareas pendientes.";
+      if (this.filterDate === 1) {
+        this.noTasksMessageText = this.noTasksThisWeekMessage;
+      } else if (this.filterDate === 2) {
+        this.noTasksMessageText = this.noTasksThisMonthMessage;
+      }
     }
   }
+
 
   afterModalClosed(result?: any) {
     console.log(result);
