@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Output, ViewChild, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Shortcut } from 'src/app/core/models/interface/shortcut';
 import { MenuButton } from 'src/app/core/models/interface/menu-button';
@@ -12,7 +12,7 @@ import { MenuButton } from 'src/app/core/models/interface/menu-button';
 export class SideNavComponent implements OnInit {
   items           : MenuButton[]  = [];
   shortcuts       : Shortcut[]    = [];
-  selectedProduct : any;
+  selectedProduct : boolean       = false;
   opened          : boolean;
   resize          : number;
 
@@ -30,6 +30,10 @@ export class SideNavComponent implements OnInit {
     this.opened         = false;
     this.resize         = 1;
     this.subMenuOpened  = false;
+
+    this.router.events.subscribe((event) => {
+      event instanceof NavigationEnd ? this.checkCurrentRoute() : null
+    })
 
     this.translateService.get(
       ['MENU.INBOX', 'MENU.BILLING', 'MENU.TAX_PANEL', 'MENU.EMPLOYEE_PANEL', 'MENU.DOCUMENTATION']
@@ -59,7 +63,7 @@ export class SideNavComponent implements OnInit {
       if(element.routerlink == this.currentRoute){
         element.selected = true;
       }
-    });
+    }); 
   }
 
   setOpened(state:boolean){
@@ -83,6 +87,18 @@ export class SideNavComponent implements OnInit {
           button.style.left = menuWidth+"px";
         }
       }, 1);
+  }
+
+  checkCurrentRoute() {
+    let exist = false
+    this.items.forEach(element => {
+      if(this.router.url.split('/', 2)[1] === element.routerlink){
+        exist = true;
+      }
+    });
+    if(!exist){
+      this.deselectAll();    
+    }
   }
 
   select(item: MenuButton){
