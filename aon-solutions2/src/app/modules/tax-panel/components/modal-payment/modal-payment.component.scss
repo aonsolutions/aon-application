@@ -25,6 +25,7 @@
 .title-modal-payment {
   font-family: "Roboto-Bold";
   font-size: $font-size-24;
+
 }
 
 .text-modal-payment {
@@ -51,7 +52,6 @@
   margin-top: -$margin-top;
   margin-bottom: $margin-bottom;
   padding-top: $padding-top;
-  padding-bottom: $padding-bottom;
 }
 
 #add-button {
@@ -63,15 +63,18 @@
 .installment {
   display: flex;
   flex-direction: row;
-  gap: 1rem;
   width: 100%;
-
+  justify-content: center;
+  margin-bottom: $margin-bottom;
+  gap: 1rem;
+  margin-right: 1rem;
+  margin-top: -1rem;
 }
 
 .text_installment {
   font-size: $font-size-800;
   color: $color-secondary;
-  padding-left: 1rem;
+  padding-left: $padding-left;
 }
 
 .createBank {
@@ -86,16 +89,70 @@
 }
 
 .button-container {
-  align-self: flex-end;
+  display: flex;
+  justify-content: flex-end;
+  align-content: center;
+
 }
 
-.confirmation-view{
-  // display: flex;
-  // flex-direction: column;
-  // justify-content: center;
-width: 50%;
+.confirmation-view {
+  width: 80%;
 }
 
-.text-confirmation-view{
-  
+.text-confirmation-view {
+  color: $color-secondary;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
+
+.content-confirmation-view {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  border: 0.05rem solid #d2d2d6;
+  border-radius: 0.2rem;
+  margin-bottom: $margin-bottom;
+}
+
+.line-content {
+  border-bottom: 0.05rem solid #d2d2d6;
+}
+
+.text-content {
+  color: $color-secondary;
+  text-transform: uppercase;
+  font-size: $font-size-800;
+  width: 100%;
+  margin-bottom: $margin-bottom;
+  padding-left: $padding-left;
+}
+
+.input-padding {
+  padding: $padding;
+}
+
+.add {
+  padding-right: $padding-right;
+  margin-top: -$margin-top;
+  padding-bottom: $padding-bottom;
+}
+
+.info {
+  padding-right: $padding-right;
+  margin-bottom: -$margin-bottom;
+}
+
+.close-icon {
+  padding-right: $padding-right;
+}
+
+.button-confirm-back {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  gap: 1rem;
+  margin-right: 1rem;
+ }
