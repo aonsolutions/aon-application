@@ -96,6 +96,9 @@ public class ConfigurationController implements Serializable {
 	}
 
 	public Integer getPageLimit() {
+		if(pageLimit == null) {
+			pageLimit = DEFAULT_PAGE_LIMIT;
+		}
 		return pageLimit;
 	}
 
@@ -104,6 +107,9 @@ public class ConfigurationController implements Serializable {
 	}
 
 	public Integer getLinesPageLimit() {
+		if(linesPageLimit == null) {
+			linesPageLimit = DEFAULT_LINES_PAGE_LIMIT;
+		}
 		return linesPageLimit;
 	}
 
