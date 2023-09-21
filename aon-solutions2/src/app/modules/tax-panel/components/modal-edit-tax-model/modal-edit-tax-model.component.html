@@ -5,17 +5,20 @@
     (click)="closeModal()"
   ></app-icon>
 
-  <p class="title-modal-edit-tax-model">
-    {{ "TAX_PANEL.PAYMENTMETHOD" | translate }}
+  <p class="title-modal-edit">
+    {{ "TAX_PANEL.TO_RECTIFY" | translate }}
   </p>
   <p class="text-modal-edit-tax-model">
     {{ "TAX_PANEL.RECTIFIED_MODEL" | translate }}
   </p>
 
-  <app-input [type]="'text'"></app-input>
+  <app-input
+    (inputValue)="getValue($event)"
+    [type]="'text'">
+  </app-input>
 
   <app-button [mat-dialog-close]="true" [class]="'orange left'">
-    <app-icon shape="send"></app-icon>
+    <app-icon shape="send" (click)="createMessage()"></app-icon>
     {{ "TAX_PANEL.SEND" | translate }}
   </app-button>
 </div>

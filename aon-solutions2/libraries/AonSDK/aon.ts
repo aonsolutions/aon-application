@@ -685,7 +685,7 @@ interface IMessageSpecificMethods {
      * Returns true if the operation was succes
      * @param message The message of type notification to mark as read
      */
-    markAsReadNotification(message: Message): Promise<IResponse<boolean>>;
+    markAsReadNotification(message: IMessage): Promise<IResponse<boolean>>;
 }
 
 interface IMarkSpecificMethods {
@@ -4979,12 +4979,12 @@ class ApiTaskHolder extends TaskHolder implements IApiModel {
 
 class StorableTaskHolder extends TaskHolder implements IStorable<TaskHolder> {
     getCollection(): ICollection<TaskHolder> {
+        return taskHolders;
         throw new Error("Method not implemented.");
-        // return taskHolders;
     }
     getLocalStorage(): string {
-        throw new Error("Method not implemented.");
         return 'taskHolders';
+        throw new Error("Method not implemented.");
     }
 }
 
@@ -7440,6 +7440,17 @@ if(productStatuses.size() == 0){
     localProductStatuses.write(storableProductStatuses.getLocalStorage(), productStatuses);
 }
 
+let taskHolders: ICollection<TaskHolder> = new Collection<TaskHolder>();
+let storableTaskHolders = new StorableTaskHolder();
+let localTaskHolders = new LocalStorage<TaskHolder>(TaskHolder);
+taskHolders = localTaskHolders.read(storableTaskHolders.getLocalStorage());
+if(taskHolders.size() == 0){
+    taskHolders.add(new TaskHolder('Asesor 1'));
+    taskHolders.add(new TaskHolder('Asesor 2'));
+    taskHolders.add(new TaskHolder('Asesor 3'));
+    localTaskHolders.write(storableTaskHolders.getLocalStorage(), taskHolders);
+}
+
 
 let irpf: ICollection<IRPF> = new Collection<IRPF>();
 let storableIRPF = new StorableIRPF();
@@ -8130,10 +8141,3 @@ if(test){
 //         });
 //     });
 // }
-
-
-
-
-let testfilter = new FilterBuilder()
-testfilter.addField('path','/a_contabilizar');
-console.log(documents.filter(testfilter.getFilter()))
