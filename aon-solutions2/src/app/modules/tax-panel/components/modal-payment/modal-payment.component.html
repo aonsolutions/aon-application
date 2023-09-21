@@ -51,8 +51,23 @@
           [value]=""
           *ngIf="!showCreateBank"
         >
-          <app-icon [shape]="'credit_card'" suffix></app-icon>
+          <app-icon
+            [shape]="'credit_card'"
+            suffix
+            (click)="listBanks()"
+          ></app-icon>
         </app-input>
+
+<!-- Mostrar la lista de bancos -->
+<div *ngIf="showBanksList">
+  <h3>Lista de Bancos</h3>
+  <ul>
+    <li *ngFor="let bank of banks">{{ bank.Iban }}</li>
+  </ul>
+</div>
+
+
+
       </div>
     </div>
 
@@ -153,8 +168,9 @@
   <!-- Vista Confirmación -->
   <div class="confirmation-view" *ngIf="showConfirmation">
     <p class="text-confirmation-view">
-      {{ "TAX_PANEL.ON" | translate }} + 'FECHA' +   {{ "TAX_PANEL.CHARGED_ACCOUNT" | translate }} + 'IBAN' + {{ "TAX_PANEL.AN_AMOUNT" | translate }} + '€€€€'
-    
+      {{ "TAX_PANEL.ON" | translate }} + 'FECHA' +
+      {{ "TAX_PANEL.CHARGED_ACCOUNT" | translate }} + 'IBAN' +
+      {{ "TAX_PANEL.AN_AMOUNT" | translate }} + '€€€€'
     </p>
 
     <div class="content-confirmation-view">

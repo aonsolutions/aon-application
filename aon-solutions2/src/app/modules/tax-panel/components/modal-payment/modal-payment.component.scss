@@ -25,7 +25,6 @@
 .title-modal-payment {
   font-family: "Roboto-Bold";
   font-size: $font-size-24;
-
 }
 
 .text-modal-payment {
@@ -92,7 +91,6 @@
   display: flex;
   justify-content: flex-end;
   align-content: center;
-
 }
 
 .confirmation-view {
@@ -125,7 +123,6 @@
   text-transform: uppercase;
   font-size: $font-size-800;
   width: 100%;
-  margin-bottom: $margin-bottom;
   padding-left: $padding-left;
 }
 
@@ -154,5 +151,6 @@
   width: 100%;
   justify-content: center;
   gap: 1rem;
-  margin-right: 1rem;
- }
+  margin-right: $margin-right;
+
+}
