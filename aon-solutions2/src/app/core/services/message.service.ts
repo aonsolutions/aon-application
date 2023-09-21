@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import { ICollection, IFilter, IMessage, MessageFactory } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class MessageService {
+export class MessageService extends CommonService {
 
   private singleObjectCrud = new MessageFactory().createSingleObjectCrud();
   private multipleObjectCrud = new MessageFactory().createMultipleObjectCrud();
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   async getMessageList(filter?: IFilter): Promise<ICollection<IMessage>> {
     return (await this.multipleObjectCrud.getCollection(filter)).result;

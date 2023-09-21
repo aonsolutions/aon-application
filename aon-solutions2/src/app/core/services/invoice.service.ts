@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Factory, ICollection, IFilter, IIRPF, IInvoice, IInvoiceActivity, IInvoiceCategory, IInvoiceSerie, IInvoiceTransactionType, IPaymentMethod, ITax, InvoiceFactory } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class InvoiceService {
+export class InvoiceService extends CommonService {
 
   invoiceFactory: InvoiceFactory;
 
   constructor(){
+    super();
     this.invoiceFactory = new InvoiceFactory();
   }
 

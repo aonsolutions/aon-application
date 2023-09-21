@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
 import { ContractFactory, ICollection, IContract, IFilter } from 'libraries/AonSDK/aon';
 import { ErrorService } from './error.service';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ContractService {
+export class ContractService extends CommonService {
 
   private singleObjectCrud = new ContractFactory().createSingleObjectCrud();
   private multipleObjectCrud = new ContractFactory().createMultipleObjectCrud();
 
-  constructor(private errorService: ErrorService) { }
+  constructor(private errorService: ErrorService) {
+    super();
+  }
 
   async getContractList(filter?: IFilter): Promise<ICollection<IContract>> {
     return (await this.multipleObjectCrud.getCollection(filter)).result;
