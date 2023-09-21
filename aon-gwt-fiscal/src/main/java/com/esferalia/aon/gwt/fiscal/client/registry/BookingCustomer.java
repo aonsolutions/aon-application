@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -103,27 +104,41 @@ public class BookingCustomer extends HTMLPanel {
 			            			List<String> barCodes = new ArrayList<>();
 			            			String barCode = bookingWithOutFeeMenu.bookingCheck.getItem().getBarcode();
 			            			
-			            			if(barCode.contains(",")) {
-			            				String[] splits = barCode.split(",");
+			            			if(barCode.contains("/")) {
+			            				String[] splits = barCode.split("/");
 			            				for(int i=0; i < splits.length; i++)
 			            					barCodes.add(splits[i].trim());
 			            			} else
 			            				barCodes.add(barCode);
 			            			
+			            			DomainType domainType = DomainType.safeValueOf(Integer.parseInt(barCodes.stream().filter(barCodeIt -> barCodeIt.split("\\.").length == 3).findFirst().get().split("\\.")[1]));
 			            			AonApp aonApp = AonApp.safeValueOf(Integer.parseInt(barCodes.stream().filter(barCodeIt -> barCodeIt.split("\\.").length == 3).findFirst().get().split("\\.")[2]));
 			            			
 			            			// Create Widget
 			            			String htmlBody = "<ul>";
 			            			
-			            			for(Domain childDomain : booking.getResume().getChilds()) {
-			            				if(null != childDomain.getApps()) {
-			            					
-			            					long hasApp = childDomain.getApps().stream().filter(domainApp -> domainApp.getApp().equals(aonApp)).count();
-				            				
-			            					if(hasApp > 0) {
-				            					htmlBody += "<li>(" + childDomain.getMaxDefinedUsers() + " usr.) -- " +  childDomain.getDescription() + " -- " + childDomain.getName() + "</li>";
+			            			if(domainType.equals(DomainType.OFFICE)) {
+			            				for(Domain childDomain : booking.getResume().getChilds()) {
+				            				if(null != childDomain.getApps() && childDomain.getDomainType().equals(DomainType.OFFICE)) {
+				            					
+				            					long hasApp = childDomain.getApps().stream().filter(domainApp -> domainApp.getApp().equals(aonApp)).count();
+					            				
+				            					if(hasApp > 0) {
+					            					htmlBody += "<li>(" + childDomain.getMaxDefinedUsers() + " usr.) -- " +  childDomain.getDescription() + " -- " + childDomain.getName() + "</li>";
+					            				}
 				            				}
-			            				}
+				            			}
+			            			} else {
+			            				for(Domain childDomain : booking.getResume().getChilds()) {
+				            				if(null != childDomain.getApps() && !childDomain.getDomainType().equals(DomainType.OFFICE)) {
+				            					
+				            					long hasApp = childDomain.getApps().stream().filter(domainApp -> domainApp.getApp().equals(aonApp)).count();
+					            				
+				            					if(hasApp > 0) {
+					            					htmlBody += "<li>(" + childDomain.getMaxDefinedUsers() + " usr.) -- " +  childDomain.getDescription() + " -- " + childDomain.getName() + "</li>";
+					            				}
+				            				}
+				            			}
 			            			}
 			            			
 			            			htmlBody += "</ul>";
@@ -396,8 +411,8 @@ public class BookingCustomer extends HTMLPanel {
 			
 			List<String> barCodes = new ArrayList<>();
 			String barCode = this.bookingCheck.getItem().getBarcode();
-			if(barCode.contains(",")) {
-				String[] splits = barCode.split(",");
+			if(barCode.contains("/")) {
+				String[] splits = barCode.split("/");
 				for(int i=0; i < splits.length; i++)
 					barCodes.add(splits[i].trim());
 			} else
@@ -1140,7 +1155,10 @@ public class BookingCustomer extends HTMLPanel {
 					@Override
 					public void onSuccess(LinkedList<BookingCheck> bookingCheckListDB) {
 						if(bookingCheckListDB.isEmpty()) showBookingMessage();
-						else fillBookingGrid(bookingCheckListDB);
+						else {
+							bookingCheckListDB.sort((o1, o2) -> o2.hasFee().compareTo(o1.hasFee()));
+							fillBookingGrid(bookingCheckListDB);
+						}
 					}
 				});
 	}
@@ -1366,7 +1384,10 @@ public class BookingCustomer extends HTMLPanel {
 			@Override
 			public void onSuccess(LinkedList<Fee> feesDB) {
 				if(feesDB.isEmpty()) showFeeMessage();
-				else fillFeeGrid(feesDB);
+				else {
+					feesDB.sort((o1, o2) -> o2.hasRItem().compareTo(o1.hasRItem()));
+					fillFeeGrid(feesDB);
+				}
 			}
 		});
 	}
@@ -1382,7 +1403,7 @@ public class BookingCustomer extends HTMLPanel {
 			Label productStatusLabel = new Label(getFeeStatus(fee));
 			
 			Label ritemLabel = new Label(fee.hasRItem() ? "SI" : "NO");
-			if(!fee.hasRItem()) {
+			if(!fee.hasRItem() && !AonStringUtils.containsIgnoreCase(fee.getItem().getBarcode(), "info")) {
 				ritemLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 				ritemLabel.getElement().getStyle().setColor("red");
 			}
