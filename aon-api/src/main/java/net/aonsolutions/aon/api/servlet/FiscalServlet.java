@@ -28,7 +28,10 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMenuDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
@@ -107,10 +110,18 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.addAll( Mod130DAO.getMod130s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod131DAO.getMod131s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod202DAO.getMod202s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
+			
+			// Comprobar si está configurado la presentación automática de modelos
+			int presModelAutoEnabled = AppParamDAO.fetchIntValue(ctx, AppParam.FS_PRES_MODEL_AUTO_ENABLED);
+			
 			JSONArray jsonModels = new JSONArray();
 
 			models.forEach(model-> {
-				try {jsonModels.put(FiscalModelJSON.toJSON(model));}
+				try {
+					jsonModels.put(FiscalModelJSON.toJSON(model)
+							// Indicar si el modelo se puede presetnar automaticamente (por ahora solo modelo 303 de la Agencia Tributaria)
+							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY && model.getModel() == FiscalModelType.M303 ? presModelAutoEnabled : 0));  
+				}
 				catch (Exception e) {
 					throw new AonApiException("Error al obtener el modelo "+ model.getModel().getName()+" "+e.getMessage());
 				}

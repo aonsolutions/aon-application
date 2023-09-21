@@ -221,6 +221,8 @@ public class ConfigurationDAO {
 			(ctx, config, value) -> config.fiscal().setMod303ByDifferenceDisabled( AonEnumUtils.getAonBoolean(value) ));
 		APM.put(AppParam.FS_CUSTOMER_CHECK_ENABLED, 
 			(ctx, config, value) -> config.fiscal().setCustomerCheckEnabled(AonEnumUtils.getAonBoolean(value) ));
+		APM.put(AppParam.FS_PRES_MODEL_AUTO_ENABLED, 
+				(ctx, config, value) -> config.fiscal().setPresModelAutoEnabled(AonEnumUtils.getAonBoolean(value) ));
 		APM.put(AppParam.FS_CERT_DOCUMENT, 
 				(ctx, config, value) -> config.fiscal().setCertificateDocument(value));
 		APM.put(AppParam.FS_CERT_NAME, 

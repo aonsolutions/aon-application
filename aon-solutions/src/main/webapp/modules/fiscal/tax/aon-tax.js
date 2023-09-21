@@ -292,6 +292,16 @@ export class AonTax extends AonElement {
     })
 
     div.appendChild(checkBox);
+    
+    // Si esta configurado presentacion automatica, mostrar texto informandolo
+	if (resp.presModelAuto==1) {
+	    const divTextPres =  this.createElement(TAG.DIV);
+	    divTextPres.style.marginTop = 4; 
+	    divTextPres.style.textAlign = "center";
+	    divTextPres.textContent = "Si acepta los datos, el modelo se presentará automaticamente.";
+	    div.appendChild(divTextPres);
+    }    
+    
     divMain.appendChild(div);
 
     const buttonCancel = dialog.addCancelAction(() =>{
