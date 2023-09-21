@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Factory, ICollection, IFilter, IProduct, IProductCategory, IProductClass, IProductCode, IProductStatus, IProductType, ProductFactory } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
+export class ProductService extends CommonService {
 
   factory = new ProductFactory();
 
-  constructor(){}
+  constructor(){
+    super();
+  }
 
   async getProduct(key: string): Promise<IProduct> {
     return (await this.factory.createSingleObjectCrud().getElement(key)).result

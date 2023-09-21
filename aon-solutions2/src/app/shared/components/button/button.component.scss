@@ -29,7 +29,7 @@
         margin-right  : $margin-button-icon-right;
         top           : $top-button-icon !important;
       }
-      
+
       .appButton mat-icon svg,
       .appButton set-icon svg{
         fill         : $color-primary;
@@ -452,7 +452,7 @@
     .appButton.icon-only set-icon{
       margin-right    : 0;
     }
-    
+
   //
   // Buton only icon border
   //
@@ -464,7 +464,7 @@
     .appButton.icon-border set-icon{
       margin-right    : 0;
     }
-    
+
   :host {
     display : flex;
     width   : var(--widthHost);

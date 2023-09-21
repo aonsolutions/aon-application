@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
 import { EnterpriseFactory, ICollection, IEnterprise, IFilter, IRegistryEnterprise } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class EnterpriseService {
+export class EnterpriseService extends CommonService {
 
   private singleObjectCrud = new EnterpriseFactory().createSingleObjectCrud();
   private enterpriseCollectionCrud = new EnterpriseFactory().createMultipleObjectCrud();
   private specificMethods = new EnterpriseFactory().createSpecificMethods();
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   async getEnterpriseList(filter?: IFilter): Promise<ICollection<IEnterprise>> {
     return (await this.enterpriseCollectionCrud.getCollection(filter)).result;

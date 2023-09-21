@@ -3,13 +3,16 @@ import { Injectable } from '@angular/core';
 import { ICommunity, ICountry } from 'libraries/AonSDK/aon';
 import { environment } from 'src/environments/environment';
 import { ErrorService } from './error.service';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CountryService {
+export class CountryService extends CommonService {
 
-  constructor(private http: HttpClient, private errorService: ErrorService) { }
+  constructor(private http: HttpClient, private errorService: ErrorService) {
+    super();
+  }
 
   /**
   * Recupera todos los países de la API REST.

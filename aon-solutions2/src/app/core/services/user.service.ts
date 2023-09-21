@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import { ICollection, IFilter, IUser, UserFactory } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class UserService extends CommonService {
 
   private factory = new UserFactory();
   private specificMethods = new UserFactory().createSpecificMethods();
 
-  constructor() { }
+  constructor() {
+    super();
+  }
 
   async getUserList(filter?: IFilter): Promise<ICollection<IUser>> {
     return (await this.factory.createMultipleObjectCrud().getCollection(filter)).result;
