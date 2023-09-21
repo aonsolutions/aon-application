@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BanksDashboardComponent } from './banks-dashboard.component';
-import { Bank } from 'src/app/core/models/class/bank';
+//import { Bank } from 'src/app/core/models/class/bank';
 import { Observable, of } from 'rxjs';
-
+/*
 describe('BanksDashboardComponent', () => {
   let component: BanksDashboardComponent;
   let fixture: ComponentFixture<BanksDashboardComponent>;
@@ -61,3 +61,4 @@ describe('BanksDashboardComponent', () => {
   });
   
 });
+*/

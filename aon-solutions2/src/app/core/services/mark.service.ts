@@ -40,6 +40,7 @@ export class MarkService extends CommonService {
   }
 
   // Obtener lista de marcajes y después generar un documento PDF
+  /*
   async downloadMarkList(filter?: IFilter): Promise<void> {
     const markList = await this.getMarkList(filter);
 
@@ -72,5 +73,6 @@ export class MarkService extends CommonService {
     this.renderer.removeChild(document.body, pdfContainer);
 
   }
+  */
 
 }

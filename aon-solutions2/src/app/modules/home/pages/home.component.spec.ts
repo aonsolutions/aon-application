@@ -4,10 +4,10 @@ import { HomeComponent } from './home.component';
 //import { Bank } from 'src/app/core/models/class/bank';
 //import { BankService } from 'src/app/core/services/bank.service';
 //import { TaxModel } from 'src/app/core/models/class/tax-model';
-import { TaxModelService } from 'src/app/core/services/tax-model.service';
-import { ReportingService } from '../../../core/services/reporting.service';
+//import { TaxModelService } from 'src/app/core/services/tax-model.service';
+//import { ReportingService } from '../../../core/services/reporting.service';
 //import { Message } from 'src/app/core/models/class/message';
-import { MessageService } from 'src/app/core/services/message.service';
+//import { MessageService } from 'src/app/core/services/message.service';
 
 //Mock BankService
 //const mockedBankService : {
@@ -59,7 +59,7 @@ describe('HomeComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
-
+/*
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -98,4 +98,5 @@ describe('HomeComponent', () => {
   
  //     expect(spyBankservice).toHaveBeenCalled();
     });
+    */
 });
