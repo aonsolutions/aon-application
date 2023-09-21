@@ -14,6 +14,7 @@
   }
  
   #file-detail{
+    min-width       : 25rem;
     display         : flex;
     justify-content : space-between;
     gap             : 1rem;
@@ -26,6 +27,10 @@
   }
   #file-detail .close{
     cursor: pointer;
+  }
+  
+  #doc-file-viewer{
+    height: 34.5rem;
   }
   
   .folder.select-folder .appButton.icon-background-pink{

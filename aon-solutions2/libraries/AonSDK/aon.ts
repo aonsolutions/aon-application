@@ -4,9 +4,9 @@
 
 
 // true para activar que los datos lleguen desde la api, false para usar datos ficticion locales
-let APIEnvironment = false;
+let APIEnvironment  = true;
 // true activa unos tests simples para ver que los métodos funcionan correctamente, false para desactivarlos
-let test: boolean = false;
+let test: boolean   = false;
 
 /**
  * 

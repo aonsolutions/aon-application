@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl : './documentation.component.html',
   styleUrls   : ['./documentation.component.scss']
 })
+
 export class DocumentationComponent implements OnInit {
   @ViewChild('file') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
   collectionFactory = new CollectionFactory();
@@ -31,6 +32,7 @@ export class DocumentationComponent implements OnInit {
   menuItem          : MenuItem [] = []
   subMenuItemFolder : MenuItem [] = []
   search            : string      = '';
+  localePDF         : string      = this.translateService.getDefaultLang() === 'es' ? 'es-ES' : 'en-EN';
   
   constructor(
     private translateService: TranslateService,
@@ -86,13 +88,12 @@ export class DocumentationComponent implements OnInit {
   4 - No contiene ningun tipo de dato en la carpeta pasada
 */
   getDocumentation(folder: string = '', id: string = '') {
-    let filter    = new FilterBuilder();
-    filter.addField('parent', folder);
     this.search = '';
     this.documentationListFolders = this.originalListFolders;
-
+    
+    let filter = new FilterBuilder();
+    filter.addField('parent', folder);
     this.folderService.getFolderList(filter.getFilter()).then(listFolders => {
-//      console.log(listFolders);
       if (folder === '') {
         // 1 - Listado de carpetas
         // La primera vez que cargamos la vista no mostramos el menu lateral
