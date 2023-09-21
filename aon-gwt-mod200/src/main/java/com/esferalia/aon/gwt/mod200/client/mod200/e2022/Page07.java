@@ -6,19 +6,17 @@ import java.text.ParseException;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.EcpnType;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
 public class Page07 extends PageAbs {
 
-	private static enum Page7Column {
+	private enum Page7Column {
 		 COL00(""                 ,true ,true ,true )
 		,COL01(AON.MSG.ecpnMsg1() ,true ,true ,true )
 		,COL02(AON.MSG.ecpnMsg2() ,true ,true ,true )
@@ -60,7 +58,7 @@ public class Page07 extends PageAbs {
 		}
 	}
 	
-	private static enum Page7Row {
+	private enum Page7Row {
 		 ROW1 (""                 ,false,true ,true ,true ,null )
 		,ROW2 (AON.MSG.ecpnMsg15(),true ,true ,true ,true ,new Mod2002022Key[] {Mod2002022Key.TC380,Mod2002022Key.TC381,Mod2002022Key.TC382,Mod2002022Key.TC383,Mod2002022Key.TC384,Mod2002022Key.TC385,Mod2002022Key.TC386,Mod2002022Key.TC387,Mod2002022Key.TC388,Mod2002022Key.TC389,Mod2002022Key.TC390,Mod2002022Key.TC391,Mod2002022Key.TC392,Mod2002022Key.TC393})
 		,ROW3 (AON.MSG.ecpnMsg16(),false,true ,true ,true ,new Mod2002022Key[] {Mod2002022Key.TC394,Mod2002022Key.TC395,Mod2002022Key.TC396,Mod2002022Key.TC397,Mod2002022Key.TC398,Mod2002022Key.TC399,Mod2002022Key.TC400,Mod2002022Key.TC401,Mod2002022Key.TC402,Mod2002022Key.TC403,Mod2002022Key.TC404,Mod2002022Key.TC405,Mod2002022Key.TC406,Mod2002022Key.TC407})
@@ -120,7 +118,7 @@ public class Page07 extends PageAbs {
 		}
 	}
 
-	public Page07( Model200PageCallback callback ) {
+	public Page07( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 
@@ -130,8 +128,7 @@ public class Page07 extends PageAbs {
 		basePanel.clear();
 		basePanel.add(getTitle(AON.MSG.patrimonioCambios() + " (*)"));
 		
-		FlexTable table = new FlexTable();
-		table = new FlexTable();
+		FlexTable table = new FlexTable();		
 		table.setStyleName(AON.AON_CSS.aonMarginBottom());
 		
 		FlowPanel tableContainer = new FlowPanel();
@@ -187,21 +184,18 @@ public class Page07 extends PageAbs {
 							panel.add(code);
 							
 							final AonDoubleBox text = new AonDoubleBox(8);
-							text.addChangeHandler(new ChangeHandler() {
-								@Override
-								public void onChange(ChangeEvent event) {
-									try {
-										if (AonStringUtils.isEmpty(text.getText())) {
-											text.setValue(0.0,false);
-										}
-										Double d = text.getValueOrThrow();
-										text.addStyleName(AON.AON_CSS.aonChanged());
-										callback.getMod200Object().doubleValueChanged(key, d);
-										callback.markAsDirty();
-									} catch (ParseException e) {
-										// nothing.
+							text.addChangeHandler(event -> {
+								try {
+									if (AonStringUtils.isEmpty(text.getText())) {
+										text.setValue(0.0,false);
 									}
-								}
+									Double d = text.getValueOrThrow();
+									text.addStyleName(AON.AON_CSS.aonChanged());
+									callback.getMod200Object().doubleValueChanged(key, d);
+									callback.markAsDirty();
+								} catch (ParseException e) {
+									// nothing.
+								}								
 							});
 							text.setValue(callback.getMod200Object().getDoubleValue(key));
 							text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
@@ -233,3 +227,5 @@ public class Page07 extends PageAbs {
 	}	
 	
 }
+
+

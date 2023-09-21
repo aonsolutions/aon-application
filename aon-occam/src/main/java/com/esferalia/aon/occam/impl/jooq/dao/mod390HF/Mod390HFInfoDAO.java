@@ -148,13 +148,13 @@ public class Mod390HFInfoDAO extends FiscalModelDAO {
 	}
 	
 	private static Stream<VatContext> getModelOutVatAccrualInvoicesInfo(AONContext ctx, final Mod390HF mod, IMod390KeyDAO keyDAO) {
-		return VATDAO.getModelAccrualInvoices(ctx, mod)
+		return VATDAO.getModelCritCajaInvoices(ctx, mod)
 			.filter( VatContext::isSales )	
 			.filter( br ->  keyDAO.acceptValue(mod, br));
 	}
 		
 	private static Stream<VatContext> getModelInVatAccrualInvoicesInfo(AONContext ctx, final Mod390HF mod, IMod390KeyDAO keyDAO) {
-		return VATDAO.getModelAccrualInvoices(ctx, mod)
+		return VATDAO.getModelCritCajaInvoices(ctx, mod)
 				.filter( VatContext::isNotSales )	
 				.filter( br ->  keyDAO.acceptValue(mod, br));
 	}

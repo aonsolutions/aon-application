@@ -306,6 +306,7 @@ public class PropertiesDAO {
  		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.SELLER);}
 		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.START_DATE);}
 		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.END_DATE);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.TYPE);}
 	}
 	
 	

@@ -69,7 +69,7 @@ public class SQLCollections {
 			return systemPaymentList;
 		}
 
-	public static Collection<IContractPayment> paymentsCollection(ResultSet rs) 
+	public static Collection<IContractPayment> contractPaymentsCollection(ResultSet rs) 
 		throws SQLException {
 		
 		SQLContractPayment sqlContractPayments = 

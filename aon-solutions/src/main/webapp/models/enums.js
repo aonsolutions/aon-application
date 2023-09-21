@@ -50,7 +50,12 @@ export const Role = {
 	SELFCONTA: 'SELFCONTA',
 	SALTRA: 'SALTRA',
 	SALTRA_MANAGER: 'SALTRA_MANAGER',
-	SALTRA_PORTAL: 'SALTRA_PORTAL'
+	SALTRA_PORTAL: 'SALTRA_PORTAL',
+	WAREHOUSE: 'WAREHOUSE',
+	COMMERCIAL: 'COMMERCIAL',
+	TREASURY: 'TREASURY',
+	MARKETING: 'MARKETING',
+	GROUPWARE: 'GROUPWARE'
 }
 
 export const OldModule = {
@@ -107,7 +112,12 @@ export const App = {
 	BASIC_MANAGEMENT: 'BASIC_MANAGEMENT',
 	STANDAR_MANAGEMENT: 'STANDAR_MANAGEMENT',
 	PROFESSIONAL_MANAGEMENT: 'PROFESSIONAL_MANAGEMENT',
-	API_SERVICE: 'API_SERVICE'
+	API_SERVICE: 'API_SERVICE',
+	WAREHOUSE: 'WAREHOUSE',
+	COMMERCIAL: 'COMMERCIAL',
+	MARKETING: 'MARKETING',
+	TREASURY: 'TREASURY',
+	GROUPWARE: 'GROUPWARE'
 }
 
 export const RegistryType = {
@@ -249,3 +259,51 @@ export const InvestAssetTypeOptions = [
 	{value: 'ACCOUNT_GROUP_23_ASSET', name: 'Bienes Grupo 23 PGC'}, //MSG.ACCOUNT_GROUP_23_ASSET},
 	{value: 'BUILDING_PLOT', name: 'Solar'} //MSG.BUILDING_PLOT}
 ]
+
+export const DomainType = {
+	ENTERPRISE: "Empresa",
+	CONSULTANCY: "Asesoría",
+	GARAGE: "Garaje",
+	ACADEMY: "Academia",
+	HOTEL: "Hotel",
+	ADMIN: "Administración",
+	OFFICE: "Despacho",
+	GENERIC: "Genérico",
+	COMMERCE: "Comercio",
+	KIT_DIGITAL: "Kit Digital"
+}
+
+export const RegistryItemStatus = {
+	ACTIVE: 'Activo',
+	INTERESTED: 'Interesado',
+	REFUSED: 'Rechazado',
+	INACTIVE: 'Inactivo'
+}
+
+export const BookingItemStatus = {
+	BILLABLE: 'Facturable',
+	NOT_BILLABLE: 'No facturable',
+	NOT_CONTRACTABLE: 'No contratable',
+	INACTIVE: 'Inactivo'
+}
+
+export const AonStatus = {
+	BILLABLE: 'Facturable',
+	NOT_BILLABLE: 'No facturable'
+}
+
+export const RegistryStatus = {
+	ACTIVE: 'Activo',
+	INACTIVE: 'Inactivo',
+	BLOCKED: 'Bloqueado'
+}
+
+export const RegistrySellerStatus = {
+	ACTIVE: 'Activo',
+    INACTIVE: 'Inactivo'
+}
+
+export const RegistrySellerType = {
+    COMERCIAL: 'Comercial',
+    SOPORTE: 'Soporte'
+}

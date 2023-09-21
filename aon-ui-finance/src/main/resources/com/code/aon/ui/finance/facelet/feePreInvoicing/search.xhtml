@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="preInvoicingForm">
+
+			<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="preInvoicingToolbar" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_pre_invoicing_module}" />
+				<ui:param name="toolbarDescription"	value="#{bundle.aon_search}" />
+
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="preInvoicing-clear"
+						value="#{bundle.aon_clear}"
+						type="reset" ajaxSingle="true"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+					<aon:htmlCommandLink id="preInvoicing-report"
+						value="#{bundle.aon_listing}" target="_blank"
+						actionListener="#{preInvoicing.onReport}"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="preInvoicing" />
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2">
+					<ui:include src="/com/code/aon/ui/customer/facelet/invoicingGroup/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{preInvoicing.invoicingParams.invoicingGroup}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupInputSize" value="10"/>
+					</ui:include>
+
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{preInvoicing.invoicingParams.customer}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupInputSize" value="10"/>
+					</ui:include>
+
+					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+						<ui:param name="lookupBean" value="#{saleItemLookup}" />
+						<ui:param name="lookupTo" value="#{preInvoicing.invoicingParams.item}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
+					</ui:include>
+
+					<aon:outputLabel for="Item_product_category" 
+						value="#{bundle.aon_category}" />
+					<aon:selectOneMenu id="Item_product_category" value="#{preInvoicing.invoicingParams.category}">
+						<f:selectItem itemLabel="-" itemValue="#{null}" />
+						<f:selectItems value="#{productCollections.categories}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel value="#{bundle.aon_period}" />
+					<aon:panelGrid columns="4">
+						<aon:outputLabel for="BillingDate_Month"
+							value="#{bundle.aon_month}" />
+						<aon:selectOneMenu id="BillingDate_Month"
+							value="#{preInvoicing.invoicingParams.month}">
+							<f:selectItems value="#{commonCollections.months}" />
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="BillingDate_Year"
+							value="#{bundle.aon_year}" />
+						<aon:inputText id="BillingDate_Year" size="5"
+							value="#{preInvoicing.invoicingParams.year}" />
+					</aon:panelGrid>
+
+					<aon:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel for="CustomerFee_Confidential"
+							value="#{bundle.aon_confidential}" />
+						<aon:selectOneRadio id="CustomerFee_Confidential" 
+							value="#{preInvoicing.invoicingParams.confidential}">
+							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+						</aon:selectOneRadio>
+					</aon:if>
+
+					<aon:outputLabel for="CustomerFee_WorkPlace"
+						value="#{bundle.purchase_workplace}" />
+					<aon:selectOneMenu id="CustomerFee_WorkPlace"
+						value="#{preInvoicing.invoicingParams.workPlace}">
+						<f:selectItem itemLabel="-" itemValue="#{null}" />
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+					</aon:selectOneMenu>
+
+					<aon:if test="#{currentUserScopes[1] != null}">
+						<aon:outputLabel for="CustomerFee_Customer_Scope"
+							value="#{bundle.aon_scope}" />
+						<aon:selectOneMenu id="CustomerFee_Customer_Scope"
+							value="#{preInvoicing.invoicingParams.scope}">
+							<f:selectItem itemLabel="-" itemValue="#{null}" />
+							<f:selectItems value="#{currentUserScopes}" />
+						</aon:selectOneMenu>
+					</aon:if>
+					
+					<aon:outputLabel for="CustomerFee_Customer_Segment" value="#{bundle.aon_segment}" />				
+					<aon:div id="segmentDiv">
+						<a4j:repeat value="#{preInvoicing.invoicingParams.segments}" rowKeyVar="index" var="segmentTo">
+							<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+								<aon:selectOneMenu id="CustomerFee_Customer_Segment"
+									value="#{preInvoicing.invoicingParams.segments[index]}">
+									<f:selectItem itemLabel="-" itemValue="#{preInvoicing.invoicingParams.emptySegment}"/>
+									<f:selectItems value="#{registryCollections.segments}" />
+									<a4j:support actionListener="#{preInvoicing.onCheckSegment}" 
+										event="onchange" ajaxSingle="true" 
+										reRender="aonMessagesContainer,segmentDiv"/>
+								</aon:selectOneMenu>
+								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+									actionListener="#{preInvoicing.onRemoveSegment}" reRender="segmentDiv" value="&#160;"
+									rendered="#{segmentTo.id != null}">
+									<f:param name="index" value="#{index}" />
+								</aon:commandButton>
+								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" ajaxSingle="true"
+									actionListener="#{preInvoicing.onAddSegment}" reRender="segmentDiv" value="&#160;"
+									rendered="#{(segmentTo.id != null) and (index == (preInvoicing.invoicingParams.segmentsSize-1))}"/>					
+							</aon:div>
+						</a4j:repeat>
+							<aon:div>
+								<aon:outputText style="color:red; font-weight: bold;"
+									value="#{preInvoicing.segmentsWarning}"/>
+							</aon:div>
+					</aon:div>						
+					
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{invoicingGroupLookup}" />
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
+	</ui:define>
+</ui:composition>

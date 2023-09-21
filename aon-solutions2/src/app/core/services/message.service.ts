@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
-import { ICollection, IFilter, IMessage, MessageFactory } from 'libraries/AonSDK/aon';
+import { ICollection, IFilter, IMessage, ITaskHolder, MessageFactory, TaskHolderFactory } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class MessageService {
+export class MessageService extends CommonService {
 
   private singleObjectCrud = new MessageFactory().createSingleObjectCrud();
   private multipleObjectCrud = new MessageFactory().createMultipleObjectCrud();
+  private specificMethods = new MessageFactory().createMessageSpecificMethods();
+  private multipleObjectCrudTaskHolders = new TaskHolderFactory().createMultipleObjectCrud();
+  private singleObjectCrudTaskHolders = new TaskHolderFactory().createSingleObjectCrud();
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   async getMessageList(filter?: IFilter): Promise<ICollection<IMessage>> {
     return (await this.multipleObjectCrud.getCollection(filter)).result;
@@ -27,12 +33,28 @@ export class MessageService {
     return (await this.singleObjectCrud.updateElement(messages)).result;
   }
 
-  async deleteMessage(pkey: any): Promise<boolean> {
-    return (await this.singleObjectCrud.deleteElement(pkey)).result;
+  async createMessage(message: IMessage): Promise<IMessage> {
+    return (await this.singleObjectCrud.createElement(message)).result;
   }
 
-  async createMessage(messages: IMessage): Promise<IMessage> {
-    return (await this.singleObjectCrud.createElement(messages)).result;
+  async archiveMessage(message: IMessage): Promise<IMessage> {
+    return (await this.specificMethods.archiveMessage(message)).result;
+  }
+
+  async reopenMessage(message: IMessage): Promise<IMessage> {
+    return (await this.specificMethods.reopenMessage(message)).result;
+  }
+
+  async getTaskHoldersList(filter?: IFilter): Promise<ICollection<ITaskHolder>> {
+    return (await this.multipleObjectCrudTaskHolders.getCollection(filter)).result;
+  }
+
+  async getTaskHolder(pkey: any): Promise<ITaskHolder> {
+    return (await this.singleObjectCrudTaskHolders.getElement(pkey)).result;
+  }
+
+  async markAsReadNotification(message: IMessage): Promise<boolean> {
+    return (await this.specificMethods.markAsReadNotification(message)).result;
   }
 
 }

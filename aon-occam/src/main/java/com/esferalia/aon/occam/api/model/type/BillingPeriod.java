@@ -8,8 +8,8 @@ public enum BillingPeriod implements Serializable{
 	BI_MONTHLY(2),
 	THREE_MONTHLY(3),
 	FOUR_MONTHLY(4),
-	SIX_MONTHLY(6),
-	YEARLY(12);
+	SIX_MONTHLY(5),
+	YEARLY(6);
 
    
    private int value;

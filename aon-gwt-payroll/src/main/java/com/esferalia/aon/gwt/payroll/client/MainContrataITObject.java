@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -304,7 +303,9 @@ public class MainContrataITObject {
 						impl.deleteComunicateIT(affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallback<Void>() {
 
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								failure.accept(caught);
+							}
 
 							@Override
 							public void onSuccess(Void result) {
@@ -313,7 +314,9 @@ public class MainContrataITObject {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
 				});
 	}
 	
@@ -557,16 +560,11 @@ public class MainContrataITObject {
 	private void initITList(List<ITEmployee> employeesInfoList) {
 		itsList.clear();
 
-		for(ITEmployee employee : employeesList)
+		for(ITEmployee employee : employeesInfoList)
 			for(IT it : employee.getIts())
 				itsList.add(it);
 		
-		itsList.sort(new Comparator<IT>() {
-			@Override
-			public int compare(IT it1, IT it2) {
-				return it1.getStartDate().compareTo(it2.getStartDate());
-			}
-		});
+		itsList.sort((IT it1, IT it2) -> it1.getStartDate().compareTo(it2.getStartDate()) );
 		
 		Collections.reverse(itsList);
 	}

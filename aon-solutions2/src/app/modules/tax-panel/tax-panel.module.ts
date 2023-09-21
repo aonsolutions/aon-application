@@ -17,7 +17,7 @@ import { TableTaxModelComponent } from './components/table-tax-model/table-tax-m
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import {  MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { ModalEditTaxModelComponent } from './components/modal-edit-tax-model/modal-edit-tax-model.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ModalPaymentComponent } from './components/modal-payment/modal-payment.component';

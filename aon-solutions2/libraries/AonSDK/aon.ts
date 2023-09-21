@@ -1,7 +1,39 @@
-import { Location } from '@angular/common';
-import { Type } from '@angular/core';
 /**
- *
+ *  Configuration parameters
+ */
+
+
+// true para activar que los datos lleguen desde la api, false para usar datos ficticion locales
+let APIEnvironment  = false;
+// true activa unos tests simples para ver que los métodos funcionan correctamente, false para desactivarlos
+let test: boolean   = false;
+
+/**
+ * 
+ * CONSTS
+ * 
+ */
+
+// URL for test environment
+const BASE_URL = 'https://aonsolutions.org';
+
+const GET_SINGLE = 'singleObjectGet'
+const CREATE_SINGLE = 'singleObjectCreate';
+const UPDATE_SINGLE = 'singleObjectUpdate';
+const DELETE_SINGLE = 'singleObjectDelete';
+const GET_MULTIPLE = 'multipleObjectGet';
+const CREATE_MULTIPLE = 'multipleObjectCreate';
+const UPDATE_MULTIPLE = 'multipleObjectUpdate';
+const DELETE_MULTIPLE = 'multipleObjectDelete';
+
+const GET_METHOD = 'GET';
+const POST_METHOD = 'POST';
+const PUT_METHOD = 'PUT';
+const DELETE_METHOD = 'DELETE';
+
+
+/**
+ * 
  * ERROR DATA
  *
  */
@@ -68,131 +100,316 @@ interface IReportingDataAccessFactory {
 
 export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMultipleObjectCrudFactory<IDocument> {
     createSingleObjectCrud(): ISingleObjectCrud<IDocument> {
-        return new GenericSingleObjectCrud<Document>(new GenericSingleObjectCrudRepository<Document>(new StorableDocument(), Document), Document);
+        return new GenericSingleObjectCrud<Document>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Document>(new ApiDocument(), Document) : 
+            new GenericSingleObjectCrudRepository<Document>(new StorableDocument(), Document)
+            ), 
+            Document);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocument> {
-        return new GenericMultipleObjectCrud<Document>(new GenericMultipleObjectCrudRepository<Document>(new StorableDocument(), Document), Document);
+        return new GenericMultipleObjectCrud<Document>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Document>(new ApiDocument(), Document) : 
+            new GenericMultipleObjectCrudRepository<Document>(new StorableDocument(), Document)
+            ), 
+            Document);
+    }
+}
+
+export class DocumentTagFactory implements ISingleObjectCrudFactory<IDocumentTag>, IMultipleObjectCrudFactory<IDocumentTag> {
+    createSingleObjectCrud(): ISingleObjectCrud<IDocumentTag> {
+        return new GenericSingleObjectCrud<DocumentTag>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<DocumentTag>(new ApiDocumentTag(), DocumentTag) : 
+            new GenericSingleObjectCrudRepository<DocumentTag>(new StorableDocumentTag(), DocumentTag)
+            ), 
+            DocumentTag);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IDocumentTag> {
+        return new GenericMultipleObjectCrud<DocumentTag>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<DocumentTag>(new ApiDocumentTag(), DocumentTag) : 
+            new GenericMultipleObjectCrudRepository<DocumentTag>(new StorableDocumentTag(), DocumentTag)
+            ), 
+            DocumentTag);
     }
 }
 
 export class CertificateFactory implements ISingleObjectCrudFactory<ICertificate>, IMultipleObjectCrudFactory<ICertificate> {
     createSingleObjectCrud(): ISingleObjectCrud<ICertificate> {
-        return new GenericSingleObjectCrud<Certificate>(new GenericSingleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate), Certificate);
+        return new GenericSingleObjectCrud<Certificate>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Certificate>(new ApiCertificate(), Certificate) : 
+            new GenericSingleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate)
+            ), 
+            Certificate);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<ICertificate> {
-        return new GenericMultipleObjectCrud<Certificate>(new GenericMultipleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate), Certificate);
+        return new GenericMultipleObjectCrud<Certificate>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Certificate>(new ApiCertificate(), Certificate) : 
+            new GenericMultipleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate)
+            ), 
+            Certificate);
     }
 }
 
 export class FolderFactory implements ISingleObjectCrudFactory<IFolder>, IMultipleObjectCrudFactory<IFolder> {
     createSingleObjectCrud(): ISingleObjectCrud<IFolder> {
-        return new GenericSingleObjectCrud<Folder>(new GenericSingleObjectCrudRepository<Folder>(new StorableFolder(), Folder), Folder);
+        return new GenericSingleObjectCrud<Folder>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Folder>(new ApiFolder(), Folder) : 
+            new GenericSingleObjectCrudRepository<Folder>(new StorableFolder(), Folder)
+            ), 
+            Folder);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IFolder> {
-        return new GenericMultipleObjectCrud<Folder>(new GenericMultipleObjectCrudRepository<Folder>(new StorableFolder(), Folder), Folder);
+        return new GenericMultipleObjectCrud<Folder>( 
+            (APIEnvironment ? 
+            new APIFolderMultipleObjectCrudRepository() : 
+            new GenericMultipleObjectCrudRepository<Folder>(new StorableFolder(), Folder)
+            ), 
+            Folder);
     }
 }
 
 export class DocumenNoteFactory implements ISingleObjectCrudFactory<IDocumentNote>, IMultipleObjectCrudFactory<IDocumentNote> {
     createSingleObjectCrud(): ISingleObjectCrud<IDocumentNote> {
-        return new GenericSingleObjectCrud<DocumentNote>(new GenericSingleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote), DocumentNote);
+        return new GenericSingleObjectCrud<DocumentNote>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<DocumentNote>(new ApiDocumentNote(), DocumentNote) : 
+            new GenericSingleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote)
+            ), 
+            DocumentNote);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocumentNote> {
-        return new GenericMultipleObjectCrud<DocumentNote>(new GenericMultipleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote), DocumentNote);
+        return new GenericMultipleObjectCrud<DocumentNote>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<DocumentNote>(new ApiDocumentNote(), DocumentNote) : 
+            new GenericMultipleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote)
+            ), 
+            DocumentNote);
     }
 }
 
 export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMultipleObjectCrudFactory<IMessage> {
     createSingleObjectCrud(): ISingleObjectCrud<IMessage> {
-        return new GenericSingleObjectCrud<Message>(new GenericSingleObjectCrudRepository<Message>(new StorableMessage(), Message), Message);
+        return new GenericSingleObjectCrud<Message>( 
+            (APIEnvironment ? 
+            // new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message) : 
+            new APIMessageSingleObjectCrudRepository(new ApiMessage(), Message) : 
+            new GenericSingleObjectCrudRepository<Message>(new StorableMessage(), Message)
+            ), 
+            Message);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessage> {
-        return new GenericMultipleObjectCrud<Message>(new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message), Message);
+        return new GenericMultipleObjectCrud<Message>( 
+            (APIEnvironment ? 
+            new APIMessageMultipleObjectCrudRepository(new ApiMessage(), Message) : 
+            new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message)
+            ), 
+            Message);
+    }
+    createMessageSpecificMethods(): IMessageSpecificMethods {
+        return new MessageSpecificMethods(
+            (APIEnvironment ? 
+            new APIMessageSpecificMethodsRepository() :
+            new LocalMessageSpecificMethodsRepository()
+            )
+        )
+    }
+}
+
+export class TaskHolderFactory implements ISingleObjectCrudFactory<ITaskHolder>, IMultipleObjectCrudFactory<ITaskHolder> {
+    createSingleObjectCrud(): ISingleObjectCrud<ITaskHolder> {
+        return new GenericSingleObjectCrud<TaskHolder>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<TaskHolder>(new ApiTaskHolder(), TaskHolder) : 
+            new GenericSingleObjectCrudRepository<TaskHolder>(new StorableTaskHolder(), TaskHolder)
+            ), 
+            TaskHolder);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<ITaskHolder> {
+        return new GenericMultipleObjectCrud<TaskHolder>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<TaskHolder>(new ApiTaskHolder(), TaskHolder) : 
+            new GenericMultipleObjectCrudRepository<TaskHolder>(new StorableTaskHolder(), TaskHolder)
+            ), 
+            TaskHolder);
     }
 }
 
 export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat>, IMultipleObjectCrudFactory<IMessageChat> {
     createSingleObjectCrud(): ISingleObjectCrud<IMessageChat> {
-        return new GenericSingleObjectCrud<MessageChat>(new GenericSingleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat), MessageChat);
+        return new GenericSingleObjectCrud<MessageChat>( 
+            (APIEnvironment ? 
+            new APIMessageChatSingleObjectCrudRepository(new ApiMessageChat(), MessageChat) : 
+            new GenericSingleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat)
+            ), 
+            MessageChat);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessageChat> {
-        return new GenericMultipleObjectCrud<MessageChat>(new GenericMultipleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat), MessageChat);
+        return new GenericMultipleObjectCrud<MessageChat>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<MessageChat>(new ApiMessageChat(), MessageChat) : 
+            new GenericMultipleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat)
+            ), 
+            MessageChat);
     }
 }
 
 export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>, IMultipleObjectCrudFactory<IEnterprise> {
-  createSingleObjectCrud(): ISingleObjectCrud<IEnterprise> {
-    return new GenericSingleObjectCrud<Enterprise>(new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
-  }
-
-  createMultipleObjectCrud(): IMultipleObjectCrud<IEnterprise> {
-    return new GenericMultipleObjectCrud<Enterprise>(new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise), Enterprise);
-  }
-}
-
-export class RegistryEnterpriseFactory implements ISingleObjectCrudFactory<IRegistryEnterprise>, IMultipleObjectCrudFactory<IRegistryEnterprise> {
-  createSingleObjectCrud(): ISingleObjectCrud<IRegistryEnterprise> {
-      return new GenericSingleObjectCrud<RegistryEnterprise>(new GenericSingleObjectCrudRepository<RegistryEnterprise>(new StorableRegistryEnterprise(), RegistryEnterprise), RegistryEnterprise);
-  }
-  createMultipleObjectCrud(): IMultipleObjectCrud<IRegistryEnterprise> {
-      return new GenericMultipleObjectCrud<RegistryEnterprise>(new GenericMultipleObjectCrudRepository<RegistryEnterprise>(new StorableRegistryEnterprise(), RegistryEnterprise), RegistryEnterprise);
-  }
+    createSingleObjectCrud(): ISingleObjectCrud<IEnterprise> {
+        return new GenericSingleObjectCrud<Enterprise>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Enterprise>(new ApiEnterprise(), Enterprise) : 
+            new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise)
+            ), 
+            Enterprise);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IEnterprise> {
+        return new GenericMultipleObjectCrud<Enterprise>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Enterprise>(new ApiEnterprise(), Enterprise) : 
+            new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise)
+            ), 
+            Enterprise);
+    }
+    createSpecificMethods(): IEnterpriseSpecificMethods {
+        return new EnterpriseSpecificMethods(new LocalEnterpriseSpecificMethodsRepository());
+    }
 }
 
 export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleObjectCrudFactory<IBank> {
     createSingleObjectCrud(): ISingleObjectCrud<IBank> {
-        return new GenericSingleObjectCrud<Bank>(new GenericSingleObjectCrudRepository<Bank>(new StorableBank(), Bank), Bank);
+        return new GenericSingleObjectCrud<Bank>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Bank>(new ApiBank(), Bank) : 
+            new GenericSingleObjectCrudRepository<Bank>(new StorableBank(), Bank)
+            ), 
+            Bank);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IBank> {
-        return new GenericMultipleObjectCrud<Bank>(new GenericMultipleObjectCrudRepository<Bank>(new StorableBank(), Bank), Bank);
+        return new GenericMultipleObjectCrud<Bank>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Bank>(new ApiBank(), Bank) : 
+            new GenericMultipleObjectCrudRepository<Bank>(new StorableBank(), Bank)
+            ), 
+            Bank);
     }
 }
 
+export class RegistryEnterpriseFactory implements ISingleObjectCrudFactory<IRegistryEnterprise>, IMultipleObjectCrudFactory<IRegistryEnterprise> {
+    createSingleObjectCrud(): ISingleObjectCrud<IRegistryEnterprise> {
+        throw new Error('Method not implemented.');
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IRegistryEnterprise> {
+        throw new Error('Method not implemented.');
+    }
+  }
+
 export class TaxModelFactory implements ISingleObjectCrudFactory<ITaxModel>, IMultipleObjectCrudFactory<ITaxModel> {
     createSingleObjectCrud(): ISingleObjectCrud<ITaxModel> {
-        return new GenericSingleObjectCrud<TaxModel>(new GenericSingleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel), TaxModel);
+        return new GenericSingleObjectCrud<TaxModel>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<TaxModel>(new ApiTaxModel(), TaxModel) : 
+            new GenericSingleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel)
+            ), 
+            TaxModel);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<ITaxModel> {
-        return new GenericMultipleObjectCrud<TaxModel>(new GenericMultipleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel), TaxModel);
+        return new GenericMultipleObjectCrud<TaxModel>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<TaxModel>(new ApiTaxModel(), TaxModel) : 
+            new GenericMultipleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel)
+            ), 
+            TaxModel);
     }
 }
 
 export class EmployeeFactory implements ISingleObjectCrudFactory<IEmployee>, IMultipleObjectCrudFactory<IEmployee> {
     createSingleObjectCrud(): ISingleObjectCrud<IEmployee> {
-        return new GenericSingleObjectCrud<Employee>(new GenericSingleObjectCrudRepository<Employee>(new StorableEmployee(), Employee), Employee);
+        return new GenericSingleObjectCrud<Employee>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Employee>(new ApiEmployee(), Employee) : 
+            new GenericSingleObjectCrudRepository<Employee>(new StorableEmployee(), Employee)
+            ), 
+            Employee);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IEmployee> {
-        return new GenericMultipleObjectCrud<Employee>(new GenericMultipleObjectCrudRepository<Employee>(new StorableEmployee(), Employee), Employee);
+        return new GenericMultipleObjectCrud<Employee>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Employee>(new ApiEmployee(), Employee) : 
+            new GenericMultipleObjectCrudRepository<Employee>(new StorableEmployee(), Employee)
+            ), 
+            Employee);
     }
 }
 
 export class AuthenticationFactory implements IAuthenticationManagerFactory {
     createAuthenticationManager(): IAuthenticationManager {
-        return new AuthenticationManager(new AuthenticationRepository(new StorableAuth()));
+        return new AuthenticationManager(APIEnvironment ? new APIAuthenticationRepository() : new AuthenticationRepository(new StorableUser()));
     }
 }
 
 export class ReportingFactory implements IReportingDataAccessFactory {
     createReportingDataAccess(): IReportingDataAccess {
+        // TO DO - create reporting repository for api
         return new ReportingDataAccess(new ReportingRepository());
     }
 }
 
 export class MarkFactory implements ISingleObjectCrudFactory<IMark>, IMultipleObjectCrudFactory<IMark> {
     createSingleObjectCrud(): ISingleObjectCrud<IMark> {
-        return new GenericSingleObjectCrud<Mark>(new GenericSingleObjectCrudRepository<Mark>(new StorableMark(), Mark), Mark);
+        return new GenericSingleObjectCrud<Mark>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<Mark>(new ApiMark(), Mark) : 
+            new GenericSingleObjectCrudRepository<Mark>(new StorableMark(), Mark)
+            ), 
+            Mark);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMark> {
-        return new GenericMultipleObjectCrud<Mark>(new GenericMultipleObjectCrudRepository<Mark>(new StorableMark(), Mark), Mark);
+        return new GenericMultipleObjectCrud<Mark>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<Mark>(new ApiMark(), Mark) : 
+            new GenericMultipleObjectCrudRepository<Mark>(new StorableMark(), Mark)
+            ), 
+            Mark);
+    }
+    createSpecificMethods(): IMarkSpecificMethods {
+        return new MarkSpecificMethods();
+    }
+}
+
+export class MarkDetailFactory implements ISingleObjectCrudFactory<IMarkDetail>, IMultipleObjectCrudFactory<IMarkDetail> {
+    createSingleObjectCrud(): ISingleObjectCrud<IMarkDetail> {
+        return new GenericSingleObjectCrud<MarkDetail>( 
+            (APIEnvironment ? 
+            new APIGenericSingleObjectCrudRepository<MarkDetail>(new ApiMarkDetail(), MarkDetail) : 
+            new GenericSingleObjectCrudRepository<MarkDetail>(new StorableMarkDetail(), MarkDetail)
+            ), 
+            MarkDetail);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IMarkDetail> {
+        return new GenericMultipleObjectCrud<MarkDetail>( 
+            (APIEnvironment ? 
+            new APIGenericMultipleObjectCrudRepository<MarkDetail>(new ApiMarkDetail(), MarkDetail) : 
+            new GenericMultipleObjectCrudRepository<MarkDetail>(new StorableMarkDetail(), MarkDetail)
+            ), 
+            MarkDetail);
     }
 }
 
 export class UserFactory implements ISingleObjectCrudFactory<IUser>, IMultipleObjectCrudFactory<IUser> {
     createSingleObjectCrud(): ISingleObjectCrud<IUser> {
-        return new GenericSingleObjectCrud<User>(new GenericSingleObjectCrudRepository<User>(new StorableUser(), User), User);
+        throw new Error('Method not implemented.');
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IUser> {
-        return new GenericMultipleObjectCrud<User>(new GenericMultipleObjectCrudRepository<User>(new StorableUser(), User), User);
+        throw new Error('Method not implemented.');
+    }
+    createSpecificMethods(): IUserSpecificMethods {
+        return new UserSpecificMethods(new LocalUserSpecificMethodsRepository());
     }
 }
 
@@ -204,6 +421,113 @@ export class ContractFactory implements ISingleObjectCrudFactory<IContract>, IMu
         return new GenericMultipleObjectCrud<Contract>(new GenericMultipleObjectCrudRepository<Contract>(new StorableContract(), Contract), Contract);
     }
 
+}
+
+export class ContactFactory implements ISingleObjectCrudFactory<IContact>, IMultipleObjectCrudFactory<IContact> {
+    createSingleObjectCrud(): ISingleObjectCrud<IContact> {
+        return new GenericSingleObjectCrud<Contact>(new GenericSingleObjectCrudRepository<Contact>(new StorableContact(), Contact), Contact);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IContact> {
+        return new GenericMultipleObjectCrud<Contact>(new GenericMultipleObjectCrudRepository<Contact>(new StorableContact(), Contact), Contact);
+    }
+}
+
+export class ProductFactory implements ISingleObjectCrudFactory<IProduct>, IMultipleObjectCrudFactory<IProduct> {
+    createSingleObjectCrud(): ISingleObjectCrud<IProduct> {
+        return new GenericSingleObjectCrud<Product>(new GenericSingleObjectCrudRepository<Product>(new StorableProduct(), Product), Product);
+    }
+    createMultipleObjectCrud(): IMultipleObjectCrud<IProduct> {
+        return new GenericMultipleObjectCrud<Product>(new GenericMultipleObjectCrudRepository<Product>(new StorableProduct(), Product), Product);
+    }
+    createSpecificMethods(): IProductSpecificMethods {
+        return new ProductSpecificMethods(new LocalProductSpecificMethodsRepository());
+    }
+}
+
+class IRPFFactory implements IMultipleObjectCrudFactory<IIRPF> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IIRPF> {
+        return new GenericMultipleObjectCrud<IRPF>(new GenericMultipleObjectCrudRepository<IRPF>(new StorableIRPF(), IRPF), IRPF);
+    }
+}
+
+class TaxFactory implements IMultipleObjectCrudFactory<ITax> {
+    createMultipleObjectCrud(): IMultipleObjectReader<ITax> {
+        return new GenericMultipleObjectCrud<Tax>(new GenericMultipleObjectCrudRepository<Tax>(new StorableTax(), Tax), Tax);
+    }
+}
+
+class PaymentMethodFactory implements IMultipleObjectCrudFactory<IPaymentMethod> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IPaymentMethod> {
+        return new GenericMultipleObjectCrud<PaymentMethod>(new GenericMultipleObjectCrudRepository<PaymentMethod>(new StorablePaymentMethod(), PaymentMethod), PaymentMethod);
+    }
+}
+
+class InvoiceCategoryFactory implements IMultipleObjectCrudFactory<IInvoiceCategory> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IInvoiceCategory> {
+        return new GenericMultipleObjectCrud<InvoiceCategory>(new GenericMultipleObjectCrudRepository<InvoiceCategory>(new StorableInvoiceCategory(), InvoiceCategory), InvoiceCategory);
+    }
+}
+
+class InvoiceSerieFactory implements IMultipleObjectCrudFactory<IInvoiceSerie> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IInvoiceSerie> {
+        return new GenericMultipleObjectCrud<InvoiceSerie>(new GenericMultipleObjectCrudRepository<InvoiceSerie>(new StorableInvoiceSerie(), InvoiceSerie), InvoiceSerie);
+    }
+}
+
+class InvoiceActivityFactory implements IMultipleObjectCrudFactory<IInvoiceActivity> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IInvoiceActivity> {
+        return new GenericMultipleObjectCrud<InvoiceActivity>(new GenericMultipleObjectCrudRepository<InvoiceActivity>(new StorableInvoiceActivity(), InvoiceActivity), InvoiceActivity);
+    }
+}
+
+class InvoiceTransactionTypeFactory implements IMultipleObjectCrudFactory<IInvoiceTransactionType> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IInvoiceTransactionType> {
+        return new GenericMultipleObjectCrud<InvoiceTransactionType>(new GenericMultipleObjectCrudRepository<InvoiceTransactionType>(new StorableInvoiceTransactionType(), InvoiceTransactionType), InvoiceTransactionType);
+    }
+}
+
+class ProductCodeFactory implements IMultipleObjectCrudFactory<IProductCode> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IProductCode> {
+        return new GenericMultipleObjectCrud<ProductCode>(new GenericMultipleObjectCrudRepository<ProductCode>(new StorableProductCode(), ProductCode), ProductCode);
+    }
+} 
+
+class ProductClassFactory implements IMultipleObjectCrudFactory<IProductClass> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IProductClass> {
+        return new GenericMultipleObjectCrud<ProductClass>(new GenericMultipleObjectCrudRepository<ProductClass>(new StorableProductClass(), ProductClass), ProductClass);
+    }
+}
+
+class ProductCategoryFactory implements IMultipleObjectCrudFactory<IProductCategory> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IProductCategory> {
+        return new GenericMultipleObjectCrud<ProductCategory>(new GenericMultipleObjectCrudRepository<ProductCategory>(new StorableProductCategory(), ProductCategory), ProductCategory);
+    }
+}
+
+class ProductTypeFactory implements IMultipleObjectCrudFactory<IProductType> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IProductType> {
+        return new GenericMultipleObjectCrud<ProductType>(new GenericMultipleObjectCrudRepository<ProductType>(new StorableProductType(), ProductType), ProductType);
+    }
+}
+
+class ProductStatusFactory implements IMultipleObjectCrudFactory<IProductStatus> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IProductStatus> {
+        return new GenericMultipleObjectCrud<ProductStatus>(new GenericMultipleObjectCrudRepository<ProductStatus>(new StorableProductStatus(), ProductStatus), ProductStatus);
+    }
+}
+
+export class InvoiceFactory implements ISingleObjectCrudFactory<IInvoice>, IMultipleObjectCrudFactory<IInvoice> {
+    createMultipleObjectCrud(): IMultipleObjectReader<IInvoice> {
+        return new GenericMultipleObjectCrud<Invoice>(new GenericMultipleObjectCrudRepository<Invoice>(new StorableInvoice(), Invoice), Invoice);
+    }
+
+    createSingleObjectCrud(): ISingleObjectCrud<IInvoice> {
+        return new GenericSingleObjectCrud<Invoice>(new GenericSingleObjectCrudRepository<Invoice>(new StorableInvoice(), Invoice), Invoice);
+    }
+
+    createSpecificMethods(): IInvoiceSpecificMethods {
+        return new InvoiceSpecificMethods(new LocalInvoiceSpecificMethodsRepository());
+    }
 }
 
 /*
@@ -327,7 +651,7 @@ interface IAuthenticationManager {
      * @param enterprise The enterprise selected
      * @returns Returns true if the enterprise was set or false otherwise
      */
-    setEnterprise(enterprise: string): IResponse<boolean>;
+    setEnterprise(enterprise: IEnterprise): IResponse<boolean>;
 }
 
 /**
@@ -337,6 +661,127 @@ interface IReportingDataAccess {
     cobrosPagos(): Promise<IResponse<Object>>;
     ventasGastos(): Promise<IResponse<Object>>;
 }
+
+/**
+ * Interface for specific methods of message 
+ */
+interface IMessageSpecificMethods {
+    /**
+     * Archive an open message
+     * @param element The message
+     */
+    archiveMessage(element: IMessage): Promise<IResponse<IMessage>>;
+    /**
+     * Reopen an archived message
+     * @param element The message
+     */
+    reopenMessage(element: IMessage): Promise<IResponse<IMessage>>;
+    /**
+     * Returns the number of messages
+     * @param filter The filter
+     */
+    getMessageCount(filter?: IFilter): Promise<IResponse<number>>;
+    /**
+     * Returns true if the operation was succes
+     * @param message The message of type notification to mark as read
+     */
+    markAsReadNotification(message: IMessage): Promise<IResponse<boolean>>;
+}
+
+interface IMarkSpecificMethods {
+    /**
+     * Returns all the marks for one user
+     */
+    getMarksOfOneUser(userId: string, filter: IFilter): Promise<IResponse<ICollection<IMark>>>;
+}
+
+interface IMarkDetailSpecificMethods {
+    /**
+     * Marks an entry
+     */
+    markEntry(): Promise<IResponse<boolean>>;
+    /**
+     * Marks a pause
+     */
+    markPause(): Promise<IResponse<boolean>>;
+    /**
+     * Marks an exit
+     */
+    markExit(): Promise<IResponse<boolean>>;
+}
+
+interface IProductSpecificMethods {
+    /**
+     * Returns all the products status
+     */
+    getProductStatus(filter?: IFilter): Promise<IResponse<ICollection<IProductStatus>>>;
+    /**
+     * Returns all the product codes
+     */
+    getProductCodes(filter?: IFilter): Promise<IResponse<ICollection<IProductCode>>>;
+    /**
+     * Returns all the product types
+     */
+    getProductTypes(filter?: IFilter): Promise<IResponse<ICollection<IProductType>>>;
+    /**
+     * Returns all the product classes
+     */
+    getProductClasses(filter?: IFilter): Promise<IResponse<ICollection<IProductClass>>>;
+    /**
+     * Returns all the product categories
+     */
+    getProductCategories(filter?: IFilter): Promise<IResponse<ICollection<IProductCategory>>>;
+}
+
+interface IInvoiceSpecificMethods {
+    /**
+     * Returns all the taxes
+     */
+    getTaxList(filter?: IFilter): Promise<IResponse<ICollection<ITax>>>;
+    /**
+     * Returns all the IRPF
+     * @param filter 
+     */
+    getIRPFList(filter?: IFilter): Promise<IResponse<ICollection<IIRPF>>>;
+    /**
+     * Returns all the invoice categories
+     * @param filter 
+     */
+    getInvoiceCategoryList(filter?: IFilter): Promise<IResponse<ICollection<IInvoiceCategory>>>;
+    /**
+     * Returns all the invoice series
+     * @param filter 
+     */
+    getInvoiceSerieList(filter?: IFilter): Promise<IResponse<ICollection<IInvoiceSerie>>>;
+    /**
+     * Returns all the invoice types
+     * @param filter 
+     */
+    getTransactionTypeList(filter?: IFilter): Promise<IResponse<ICollection<IInvoiceTransactionType>>>;
+    /**
+     * Returns all the payment methods
+     * @param filter 
+     */
+    getPaymentMethodList(filter?: IFilter): Promise<IResponse<ICollection<ITax>>>;
+    /**
+     * Returns all the invoice activities
+     * @param filter 
+     */
+    getInvoiceActivityList(filter?: IFilter): Promise<IResponse<ICollection<ITax>>>;
+}
+
+interface IEnterpriseSpecificMethods {
+    getCurrentEnterpriseData(): Promise<IResponse<IEnterprise>>;
+    getCurrentEnterpriseRegistryData(): Promise<IResponse<IRegistryEnterprise>>;
+    updateCurrentEnterpriseData(enterprise: IEnterprise): Promise<IResponse<IEnterprise>>;
+    updateCurrentEnterpriseRegistryData(registryEnterprise: IRegistryEnterprise): Promise<IResponse<IRegistryEnterprise>>;
+}
+
+interface IUserSpecificMethods {
+    getCurrentUserData(): Promise<IResponse<IUser>>;
+    updateCurrentUserData(user: IUser): Promise<IResponse<IUser>>;
+}
+
 
 /*
  *
@@ -401,6 +846,7 @@ class GenericMultipleObjectCrud<T extends IModel> implements IMultipleObjectCrud
         try {
             return new Response<ICollection<T>>(await this.repository.get(filter));
         } catch (error) {
+            throw error;
             throw error instanceof ErrorResponse ?  error : new ErrorResponse('0206');
         }
     }
@@ -474,8 +920,14 @@ class AuthenticationManager implements IAuthenticationManager {
         return new Response<boolean>(localStorage.getItem('enterprise') ? true : false);
     }
 
-    setEnterprise(enterprise: string): IResponse<boolean> {
-        if(enterprise) localStorage.setItem('enterprise', enterprise);
+    setEnterprise(enterprise: IEnterprise): IResponse<boolean> {
+        if(enterprise){
+            localStorage.setItem('enterprise', enterprise.Document);
+            localStorage.setItem('domainId', enterprise.DomainId);
+            localStorage.setItem('domainName', enterprise.DomainName);
+            localStorage.setItem('registry', enterprise.Registry);
+            this.authenticationRepository.userInfo();
+        }
         else throw new ErrorResponse('0113');
         return new Response<boolean>(true);
     }
@@ -501,6 +953,223 @@ class ReportingDataAccess implements IReportingDataAccess {
         return new Response<Object>(this.reportingRepository.ventasGastos());
     }
 
+}
+
+class MessageSpecificMethods implements IMessageSpecificMethods {
+
+    repository: IMessageSpecificMethodsRepository;
+
+    constructor(repository: IMessageSpecificMethodsRepository) {
+        this.repository = repository;
+    }
+
+    async archiveMessage(element: Message): Promise<IResponse<IMessage>> {
+        return new Response<IMessage>(await this.repository.archiveMessage(element));
+    }
+
+    async reopenMessage(element: Message): Promise<IResponse<IMessage>> {
+        return new Response<IMessage>(await this.repository.reopenMessage(element));
+    }
+
+    async getMessageCount(filter?: IFilter): Promise<IResponse<number>> {
+        return new Response<number>(await this.repository.getMessageCount(filter));
+    }
+
+    async markAsReadNotification(message: Message): Promise<IResponse<boolean>> {
+        return new Response<boolean>(await this.repository.markAsReadNotification(message));
+    }
+
+}
+
+class MarkSpecificMethods implements IMarkSpecificMethods {
+    
+    repository = new APIMarkSpecificMethodsRepository();
+    
+    async getMarksOfOneUser(userId: string, filter?: IFilter): Promise<IResponse<ICollection<IMark>>> {
+        try{
+            return new Response<ICollection<IMark>>(await this.repository.getMarksOfOneUser(userId, filter));
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+}
+
+class ProductSpecificMethods implements IProductSpecificMethods {
+
+    protected SpecificMethodsRepository: LocalProductSpecificMethodsRepository;
+
+    constructor(ProductSpecificMethodsRepository: LocalProductSpecificMethodsRepository) {
+        this.SpecificMethodsRepository = ProductSpecificMethodsRepository;
+    }
+
+    async getProductStatus(filter?: IFilter): Promise<IResponse<ICollection<IProductStatus>>> {
+        try{
+            return new Response<ICollection<IProductStatus>>(this.SpecificMethodsRepository.getProductStatus(filter));
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getProductCodes(filter?: IFilter): Promise<IResponse<ICollection<IProductCode>>> {
+        try{
+            return new Response<ICollection<IProductCode>>(this.SpecificMethodsRepository.getProductCodes(filter));
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getProductTypes(filter?: IFilter): Promise<IResponse<ICollection<IProductType>>> {
+        try{
+            return new Response<ICollection<IProductType>>(this.SpecificMethodsRepository.getProductTypes(filter));
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getProductClasses(filter?: IFilter): Promise<IResponse<ICollection<IProductClass>>> {
+        try{
+            return new Response<ICollection<IProductClass>>(this.SpecificMethodsRepository.getProductClasses(filter));
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getProductCategories(filter?: IFilter): Promise<IResponse<ICollection<IProductCategory>>> {
+        try{
+            return new Response<ICollection<IProductCategory>>(this.SpecificMethodsRepository.getProductCategories(filter));
+        }catch(error){
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+    
+}
+
+class InvoiceSpecificMethods implements IInvoiceSpecificMethods {
+    protected SpecificMethodsRepository: LocalInvoiceSpecificMethodsRepository;
+
+    constructor(SpecificMethodsRepository: LocalInvoiceSpecificMethodsRepository){
+        this.SpecificMethodsRepository = SpecificMethodsRepository;
+    }
+
+    async getTaxList(filter?: IFilter | undefined): Promise<IResponse<ICollection<ITax>>> {
+        try {
+            return new Response<ICollection<ITax>>(this.SpecificMethodsRepository.getTaxList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getIRPFList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IIRPF>>> {
+        try {
+            return new Response<ICollection<IIRPF>>(this.SpecificMethodsRepository.getIRPFList());   
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getInvoiceCategoryList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IInvoiceCategory>>> {
+        try {
+            return new Response<ICollection<IInvoiceCategory>>(this.SpecificMethodsRepository.getInvoiceCategoryList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getInvoiceSerieList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IInvoiceSerie>>> {
+        try {
+            return new Response<ICollection<IInvoiceSerie>>(this.SpecificMethodsRepository.getInvoiceSerieList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getTransactionTypeList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IInvoiceTransactionType>>> {
+        try {
+            return new Response<ICollection<IInvoiceTransactionType>>(this.SpecificMethodsRepository.getTransactionTypeList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getPaymentMethodList(filter?: IFilter | undefined): Promise<IResponse<ICollection<ITax>>> {
+        try {
+            return new Response<ICollection<ITax>>(this.SpecificMethodsRepository.getPaymentMethodList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getInvoiceActivityList(filter?: IFilter | undefined): Promise<IResponse<ICollection<ITax>>> {
+        try {
+            return new Response<ICollection<ITax>>(this.SpecificMethodsRepository.getInvoiceActivityList());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+}
+
+class EnterpriseSpecificMethods implements IEnterpriseSpecificMethods {
+    protected SpecificMethodsRepository: IEnterpriseSpecificMethodsRepository;
+
+    constructor(SpecificMethodsRepository: IEnterpriseSpecificMethodsRepository){
+        this.SpecificMethodsRepository = SpecificMethodsRepository;
+    }
+
+    async getCurrentEnterpriseData(): Promise<IResponse<IEnterprise>> {
+        try {
+            return new Response<IEnterprise>(await this.SpecificMethodsRepository.getCurrentEnterpriseData());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async getCurrentEnterpriseRegistryData(): Promise<IResponse<IRegistryEnterprise>> {
+        try {
+            return new Response<IRegistryEnterprise>(await this.SpecificMethodsRepository.getCurrentEnterpriseRegistryData());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async updateCurrentEnterpriseData(enterprise: Enterprise): Promise<IResponse<IEnterprise>> {
+        try {
+            return new Response<IEnterprise>(await this.SpecificMethodsRepository.updateCurrentEntepriseData(enterprise));
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async updateCurrentEnterpriseRegistryData(registryEnterprise: RegistryEnterprise): Promise<IResponse<IRegistryEnterprise>> {
+        try {
+            return new Response<IRegistryEnterprise>(await this.SpecificMethodsRepository.updateCurrentEnterpriseRegistryData(registryEnterprise));
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+}
+
+class UserSpecificMethods implements IUserSpecificMethods {
+    protected SpecificMethodsRepository: IUserSpecificMethodsRepository;
+
+    constructor(SpecificMethodsRepository: IUserSpecificMethodsRepository){
+        this.SpecificMethodsRepository = SpecificMethodsRepository;
+    }
+
+    async getCurrentUserData(): Promise<IResponse<IUser>> {
+        try {
+            return new Response<IUser>(await this.SpecificMethodsRepository.getCurrentUserData());
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
+    async updateCurrentUserData(user: User): Promise<IResponse<IUser>> {
+        try {
+            return new Response<IUser>(await this.SpecificMethodsRepository.updateCurrentUserData(user));
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
 }
 
 /*
@@ -596,11 +1265,72 @@ interface IAuthenticationRepository {
      * @param token The token
      */
     tokenLogin(token: string): Promise<void>;
+    /**
+     * Set login on localStorage
+     */
+    userInfo(): Promise<void>;
 }
 
 interface IReportingRepository {
     cobrosPagos(): Promise<any>;
     ventasGastos(): Promise<any>;
+}
+
+interface IMessageSpecificMethodsRepository {
+    /**
+     * Archive an open message
+     * @param element The message
+     */
+    archiveMessage(element: IMessage): Promise<IMessage>;
+    /**
+     * Reopen an archived message
+     * @param element The message
+     */
+    reopenMessage(element: IMessage): Promise<IMessage>;
+    /**
+     * Returns the number of messages
+     * @param filter The filter
+     */
+    getMessageCount(filter?: IFilter): Promise<number>;
+    /**
+     * Returns true if the operation was succes
+     * @param message The message of type notification to mark as read
+     */
+    markAsReadNotification(message: IMessage): Promise<boolean>;
+}
+
+interface IMarkSpecificMethodsRepository {
+    getMarksOfOneUser(userId: string, filter: IFilter): Promise<ICollection<IMark>>;
+}
+
+interface IProductSpecificMethodsRepository {
+    getProductStatus(filter: IFilter): Promise<ICollection<IProductStatus>>;
+    getProductCodes(filter: IFilter): Promise<ICollection<IProductCode>>;
+    getProductTypes(filter: IFilter): Promise<ICollection<IProductType>>;
+    getProductClasses(filter: IFilter): Promise<ICollection<IProductClass>>;
+    getProductCategories(filter: IFilter): Promise<ICollection<IProductCategory>>;
+}
+
+interface IInvoiceSpecificMethodsRepository {
+    getTaxList(filter?: IFilter | undefined): Promise<ICollection<ITax>>;
+    getIRPFList(filter?: IFilter | undefined): Promise<ICollection<IIRPF>>;
+    getInvoiceCategoryList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceCategory>>;
+    getInvoiceSerieList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceSerie>>;
+    getTransactionTypeList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceTransactionType>>;
+    getPaymentMethodList(filter?: IFilter | undefined): Promise<ICollection<ITax>>;
+    getInvoiceActivityList(filter?: IFilter | undefined): Promise<ICollection<ITax>>;
+}
+
+interface IEnterpriseSpecificMethodsRepository {
+    getCurrentEnterpriseData(): Promise<IEnterprise>;
+    updateCurrentEntepriseData(enterprise: IEnterprise): Promise<IEnterprise>;
+    getCurrentEnterpriseRegistryData(): Promise<IRegistryEnterprise>;
+    updateCurrentEnterpriseRegistryData(registryEnterprise: IRegistryEnterprise): Promise<IRegistryEnterprise>;
+}
+
+interface IUserSpecificMethodsRepository {
+    getCurrentUserData(): Promise<IUser>;
+    updateCurrentUserData(user: IUser): Promise<IUser>;
 }
 
 /*
@@ -722,26 +1452,390 @@ class GenericSingleObjectCrudRepository<T extends IModel> implements ISingleObje
 
 class AuthenticationRepository implements IAuthenticationRepository {
 
-    private storableAuth: IStorable<IAuth>;
+    private storableAuth: IStorable<IUser>;
 
-    constructor(storableAuth: IStorable<IAuth>) {
+    constructor(storableAuth: IStorable<IUser>) {
         this.storableAuth = storableAuth;
     }
 
+    async userInfo(): Promise<void> {
+    }
+
     async login(email: string, password: string): Promise<void> {
-        let collection = this.storableAuth.getCollection()
-        if(collection.exists(email) && collection.get(email).Password == password) localStorage.setItem('token', 'testToken')
+        let filter = new FilterBuilder();
+        filter.addField('email', email);
+        let collection = this.storableAuth.getCollection().filter(filter.getFilter());
+        if(collection.size() == 1 && collection.toArray()[0].Password == password){
+            localStorage.setItem('token', 'testToken')
+            localStorage.setItem('user', collection.toArray()[0].Document)
+        }
         else throw new ErrorResponse('0101');
     }
 
     async logout(): Promise<void> {
-        if(localStorage.getItem('token')) { localStorage.removeItem('token'); localStorage.removeItem('enterprise'); }
+        if(localStorage.getItem('token')) { 
+            // localStorage.removeItem('token'); 
+            // localStorage.removeItem('enterprise');
+            // localStorage.removeItem('domainId'); 
+            // localStorage.removeItem('domainName');
+            // localStorage.removeItem('user');
+            localStorage.clear();
+        }
         else throw new ErrorResponse('0111');
     }
 
     async tokenLogin(token: string): Promise<void> {
         if(!localStorage.getItem('token')) localStorage.setItem('token', 'testToken');
         else throw new ErrorResponse('0101');
+    }
+}
+
+
+// REPOSITORIO PARA LAS LLAMADAS GLOBALES A LA API PARA OPERACIONES CRUD SOBRE UN SOLO OBJETO, 
+// SI SE NECESITA UN COMPORTAMIENTO ESPECIFICO HEREDAR Y SOBREESCRIBIR DICHO MÉTODO
+class APIGenericSingleObjectCrudRepository<T extends IModel> implements ISingleObjectCrudRepository<T> {
+    protected httpRequest: IApiHttpRequest = new ApiHttpRequest();
+    protected type: { new (): T };
+    protected model: IModel;
+    protected apiModel: IApiModel;
+
+    constructor(apiModel: IApiModel, type: { new (): T }){
+        this.type = type;
+        this.model = new this.type();
+        this.apiModel = apiModel;
+    }
+
+    async get(key: string, type?: string): Promise<T> {
+        // TO DO revisar filter, type y id
+        let filter = new FilterBuilder();
+        filter.addField('id',key);
+        if(type) filter.addField('type',type)
+        let url = this.apiModel.getUrl(GET_SINGLE, filter.getFilter());
+        let method = this.apiModel.getMethod(GET_SINGLE, filter.getFilter());
+        let response = await this.httpRequest.httpRequest(BASE_URL + url, method, {}, {})
+        return this.apiModel.parseDataToReceive(response, GET_SINGLE);
+    }
+
+    async create(element: T): Promise<T> {
+        let data = this.apiModel.parseDataToSend(element, CREATE_SINGLE);
+        let response = await this.httpRequest.httpRequest(BASE_URL + this.apiModel.getUrl(CREATE_SINGLE), this.apiModel.getMethod(CREATE_SINGLE), {}, data);
+        return this.apiModel.parseDataToReceive(response, GET_SINGLE);
+    }
+
+    async update(element: T): Promise<T> {
+        let data = this.apiModel.parseDataToSend(element, UPDATE_SINGLE);
+        let url = this.apiModel.getUrl(UPDATE_SINGLE);
+        let method = this.apiModel.getMethod(UPDATE_SINGLE);
+        let response = await this.httpRequest.httpRequest(BASE_URL + url, method, element, data)
+        if(response) return element;
+        throw new ErrorResponse('0199')
+    }
+
+    async delete(key: string): Promise<void> {
+        throw new ErrorResponse('0199')
+    }
+
+}
+
+// REPOSITORIO PARA LAS LLAMADAS GLOBALES A LA API PARA OPERACIONES CRUD SOBRE UN CONJUNTO DE OBJETOS, 
+// SI SE NECESITA UN COMPORTAMIENTO ESPECIFICO HEREDAR Y SOBREESCRIBIR DICHO MÉTODO
+class APIGenericMultipleObjectCrudRepository<T extends IModel> implements IMultipleObjectCrudRepository<T> {
+
+    protected httpRequest: IApiHttpRequest = new ApiHttpRequest();
+    protected type: { new (): T };
+    protected model: IModel;
+    protected apiModel: IApiModel;
+
+    constructor(apiModel: IApiModel, type: { new (): T }){
+        this.type = type;
+        this.model = new this.type();
+        this.apiModel = apiModel;
+    }
+
+    async get(filter?: IFilter): Promise<ICollection<T>> {
+        let urls = this.apiModel.getUrl(GET_MULTIPLE,filter);
+        let method = this.apiModel.getMethod(GET_MULTIPLE,filter);
+        let collection: ICollection<T> = new Collection<T>();
+        for(let url of urls){
+            let response = await this.httpRequest.httpRequest(BASE_URL + url, method, {}, {})
+            response.forEach((element: any) => {
+                collection.add(this.apiModel.parseDataToReceive(element, GET_MULTIPLE, filter))
+            })
+        }
+        if(this.apiModel.localFilter() && collection.size() > 0){
+            if(filter?.intervalFields || filter?.fields) collection = collection.filter(filter);
+            if(filter?.orderBy) collection.sort(filter);
+            if(filter?.pageItems && filter.pageNum) collection = collection.paginate(filter.pageNum,filter.pageItems);
+        }
+        return collection;
+    }
+
+    async create(collection: ICollection<T>): Promise<ICollection<T>> {
+        throw new ErrorResponse('0199')
+    }
+
+    async update(collection: ICollection<T>): Promise<ICollection<T>> {
+        throw new ErrorResponse('0199')
+    }
+
+    async delete(keys: string[]): Promise<void> {
+        throw new ErrorResponse('0199')
+    }
+
+}
+
+class APIFolderMultipleObjectCrudRepository extends APIGenericMultipleObjectCrudRepository<Folder> {
+
+    constructor(){
+        super(new ApiFolder(), Folder);
+    }
+
+    async get(filter?: IFilter | undefined): Promise<ICollection<Folder>> {
+        let collection: ICollection<Folder> = new Collection<Folder>();
+        for(let folder of apiFolders)
+            collection.add(folder)
+        let response = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/workplace',GET_METHOD,{},{})
+        let workplaces = ''
+        response.forEach((element: any) => {
+            workplaces+=element.id + ';'
+        })
+        let filterFolder = new FilterBuilder();
+        if(!filter) {
+            filterFolder.addField('workplace', workplaces)
+        }else{
+            filter.fields?.set('workplace', workplaces)
+        }
+        collection.copyArrayToCollection((await super.get(filter ? filter : filterFolder.getFilter())).toArray())
+        if(filter && filter.fields || filter?.intervalFields) collection = collection.filter(filter); 
+        if(filter && filter.orderBy) collection.sort(filter);
+        return collection;
+    }
+
+}
+
+class APIMessageSingleObjectCrudRepository extends APIGenericSingleObjectCrudRepository<Message> {
+    constructor(apiModel: ApiMessage, type: { new (): Message }){
+        super(apiModel, type);
+    }
+
+    async create(message: Message): Promise<Message> {
+        let cauInfo = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/cau', GET_METHOD, {}, {})
+        let sender = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/taskholder?id=' + localStorage.getItem('registry'), GET_METHOD, {}, {})
+        let taskHolder = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/taskholder?id=' + message.TaskHolder.Id, GET_METHOD, {}, {})
+        let domain = {
+            id: localStorage.getItem('domainId'),
+            name: localStorage.getItem('domainName')
+        }
+        let workflow = {
+            comment: "",
+            domain: localStorage.getItem('domainId'),
+            task_holder: sender,
+            type: "opened",
+            email: cauInfo.auth.email || ''
+        }
+        let description = JSON.stringify({
+            observation: message.Description,
+            cauinfo: cauInfo,
+        })
+        let json = {
+            domain: domain,
+            sender: sender,
+            task_holder: taskHolder,
+            workgroup: {},
+            title: message.Title,
+            registry: {},
+            workflow: [workflow],
+            description: description,
+            status: 'pending',
+            source: 'query',
+            source_id: null,
+            files: [],
+            project: {},
+            tags: [],
+            childs: [],
+            domaintmp: domain,
+            workflowtmp: workflow,
+            mytaskholder: sender,
+            auth: cauInfo.auth,
+            domaincompany: cauInfo.company.domain
+        }
+        let newMessage: Message = this.apiModel.parseDataToReceive(await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task', POST_METHOD, {}, json), GET_SINGLE);
+        return newMessage;
+    }
+}
+
+class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleObjectCrudRepository<Message> {
+    constructor(apiModel: ApiMessage, type: { new (): Message }){
+        super(apiModel, type);
+    }
+}
+
+class APIMessageChatSingleObjectCrudRepository extends APIGenericSingleObjectCrudRepository<MessageChat> {
+    constructor(apiModel: ApiMessageChat, type: { new (): MessageChat }){
+        super(apiModel, type);
+    }
+
+    async create(messageChat: MessageChat): Promise<MessageChat> {
+        //comment
+        //domain
+        //email
+        //task
+        //task_holder
+        //type
+        let sender = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/taskholder?id=' + localStorage.getItem('registry'), GET_METHOD, {}, {})
+        let json = {
+            comment: messageChat.Description,
+            domain: localStorage.getItem('domainId'),
+            email: '',
+            task: messageChat.IdMessage,
+            task_holder: sender,
+            type: 'comment'
+        }
+        let newMessage: MessageChat = this.apiModel.parseDataToReceive(await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/workflow', POST_METHOD, {}, json), GET_MULTIPLE);
+        return newMessage;
+        throw new ErrorResponse('0199')
+    }
+}
+
+class APIMessageSpecificMethodsRepository implements IMessageSpecificMethodsRepository {
+
+    protected httpRequest: IApiHttpRequest = new ApiHttpRequest();
+    repository = new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message);
+
+    async archiveMessage(element: Message): Promise<IMessage> {
+        if(element.Type != 'notificacion'){
+            element.Status = element.Type == TypeMessage.CONSULTA ? StatusMessage.CERRADA : StatusMessage.REALIZADA;
+            let updatedMessage: IMessage = await this.repository.update(element);
+            return updatedMessage;
+        }
+        throw new ErrorResponse('0199');
+    }
+
+    async reopenMessage(element: Message): Promise<IMessage> {
+        if(element.Type != 'notificacion'){
+            element.Status = element.Type == TypeMessage.CONSULTA ? StatusMessage.ABIERTA : StatusMessage.PENDIENTE;
+            let updatedMessage: IMessage = await this.repository.update(element);
+            return updatedMessage;
+        }
+        throw new ErrorResponse('0199');
+    }
+
+    async getMessageCount(filter?: IFilter): Promise<number> {
+        if(filter && filter.fields && filter.fields.get('type') == 'notificacion'){
+            let result = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/notification/total-notification', GET_METHOD, {}, {})
+            return result.notification
+        } else if(filter && filter.fields && (filter.fields.get('type') == 'tarea' || filter.fields.get('type') == 'consulta')){
+            let result = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/status/count?task_holder=' + localStorage.getItem('registry'), GET_METHOD, {}, {});
+            return result.status.pending;
+        } else {
+            let result1 = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/notification/total-notification', GET_METHOD, {}, {})
+            let result2 = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/status/count?task_holder=' + localStorage.getItem('registry'), GET_METHOD, {}, {});
+            return result1.notification + result2.status.pending;
+        }
+    }
+
+    async markAsReadNotification(element: Message): Promise<boolean> {
+        if(element.Type == 'notificacion'){
+            let result = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/notification/mark-read-notification', POST_METHOD, {}, {source_id: element.Id});
+            if(result.success && result.success == true)
+                return true;
+            else 
+                return false;
+        }
+        else
+            throw new ErrorResponse('0199');
+    }
+}
+
+class LocalMessageSpecificMethodsRepository implements IMessageSpecificMethodsRepository {
+    async archiveMessage(element: Message): Promise<IMessage> {
+        element.Type == TypeMessage.CONSULTA ? element.Status = StatusMessage.CERRADA : StatusMessage.REALIZADA
+        messages.add(element);
+        return element;
+    }
+
+    async reopenMessage(element: Message): Promise<IMessage> {
+        element.Type == TypeMessage.CONSULTA ? element.Status = StatusMessage.ABIERTA : StatusMessage.PENDIENTE
+        messages.add(element);
+        return element;
+    }
+
+    async getMessageCount(filter?: IFilter | undefined): Promise<number> {
+        return (await new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message).get(filter)).size();
+    }
+
+    async markAsReadNotification(message: Message): Promise<boolean> {
+        message.Status = StatusMessage.VISTA;
+        messages.add(message);
+        return true;
+    }
+}
+
+class APIMarkSpecificMethodsRepository implements IMarkSpecificMethodsRepository {
+    private http: ApiHttpRequest = new ApiHttpRequest();
+    private model: ApiMark = new ApiMark();
+    
+    async getMarksOfOneUser(userId: string, filter?: IFilter): Promise<ICollection<IMark>> {
+        let url = '/ms/api/timecontrol/list-holder';
+        let params = {
+            taskHolderId: userId,
+            group: 'DAY',
+            startDate: '2023-09-04',
+            endDate: '2023-09-08'
+        }
+        url = this.http.makeURL(url, params);
+        let method = GET_METHOD;
+        let collection: ICollection<IMark> = new Collection<IMark>();
+        let response = await this.http.httpRequest(BASE_URL + url, method, {}, {})
+        response.forEach((element: any) => {
+            collection.add(this.model.parseDataToReceive(element, GET_MULTIPLE, filter))
+        })
+        if(this.model.localFilter() && collection.size() > 0){
+            if(filter?.intervalFields || filter?.fields) collection = collection.filter(filter);
+            if(filter?.orderBy) collection.sort(filter);
+            if(filter?.pageItems && filter.pageNum) collection = collection.paginate(filter.pageNum,filter.pageItems);
+        }
+        return collection;
+    }
+}
+
+class APIAuthenticationRepository implements IAuthenticationRepository {
+
+    httpRequest = new ApiHttpRequest();
+
+    constructor() {
+    }
+
+    async login(email: string, password: string): Promise<void> {
+        let data = {
+            username: email,
+            password: password
+        }
+        let url = BASE_URL + '/ms/api/login'
+        let method = 'POST';
+        let customHeaders = {}
+        let result = await this.httpRequest.httpRequest(url,method,customHeaders,data)
+        if(result.type == "error") throw new ErrorResponse('0101');
+        else localStorage.setItem('token', result.session_id);
+    }
+
+    async logout(): Promise<void> {
+        if(localStorage.getItem('token')) { 
+            localStorage.removeItem('token'); 
+            localStorage.removeItem('enterprise');
+            localStorage.removeItem('domainId'); 
+            localStorage.removeItem('domainName'); 
+        }
+        else throw new ErrorResponse('0111');
+    }
+
+    async tokenLogin(token: string): Promise<void> {
+    }
+
+    async userInfo(): Promise<void> {
+        let userInfo = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/user/info', GET_METHOD, {}, {})
+        if(userInfo.type == "error") throw new ErrorResponse('0101');
+        localStorage.setItem('login', userInfo.login);
     }
 }
 
@@ -771,11 +1865,92 @@ class ReportingRepository implements IReportingRepository {
 
 }
 
+class LocalProductSpecificMethodsRepository implements IProductSpecificMethodsRepository {
+    async getProductStatus(filter?: IFilter): Promise<ICollection<IProductStatus>> {
+        return (await new ProductStatusFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+    async getProductCodes(filter?: IFilter): Promise<ICollection<IProductCode>> {
+        return (await new ProductCodeFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+    async getProductTypes(filter?: IFilter): Promise<ICollection<IProductType>> {
+        return (await new ProductTypeFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+    async getProductClasses(filter?: IFilter): Promise<ICollection<IProductClass>> {
+        return (await new ProductClassFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+    async getProductCategories(filter?: IFilter): Promise<ICollection<IProductCategory>> {
+        return (await new ProductCategoryFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+}
+
+class LocalInvoiceSpecificMethodsRepository implements IInvoiceSpecificMethodsRepository {
+    async getTaxList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
+        return (await new TaxFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+
+    async getIRPFList(filter?: IFilter | undefined): Promise<ICollection<IIRPF>> {
+        return (await new IRPFFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+
+    async getInvoiceCategoryList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceCategory>> {
+        return (await new InvoiceCategoryFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+
+    async getInvoiceSerieList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceSerie>> {
+        return (await new InvoiceSerieFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+
+    async getTransactionTypeList(filter?: IFilter | undefined): Promise<ICollection<IInvoiceTransactionType>> {
+        return (await new InvoiceTransactionTypeFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+
+    async getPaymentMethodList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
+        return (await new PaymentMethodFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+
+    async getInvoiceActivityList(filter?: IFilter | undefined): Promise<ICollection<ITax>> {
+        return (await new InvoiceActivityFactory().createMultipleObjectCrud().getCollection(filter)).result;
+    }
+}
+
+class LocalEnterpriseSpecificMethodsRepository implements IEnterpriseSpecificMethodsRepository {
+    async getCurrentEnterpriseData(): Promise<IEnterprise> {
+        return enterprises.get(localStorage.getItem('enterprise') || '');
+    }
+
+    async updateCurrentEntepriseData(enterprise: Enterprise): Promise<IEnterprise> {
+        return  new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise).update(enterprise);
+    }
+
+    async getCurrentEnterpriseRegistryData(): Promise<IRegistryEnterprise> {
+        return registryEnterprises.get(localStorage.getItem('enterprise') || '');
+    }
+
+    async updateCurrentEnterpriseRegistryData(registryEnterprise: RegistryEnterprise): Promise<IRegistryEnterprise> {
+        return  new GenericSingleObjectCrudRepository<RegistryEnterprise>(new StorableRegistryEnterprise(), RegistryEnterprise).update(registryEnterprise);
+    }
+}
+
+class LocalUserSpecificMethodsRepository implements IUserSpecificMethodsRepository {
+    async getCurrentUserData(): Promise<IUser> {
+        return users.get(localStorage.getItem('user') || '');
+    }
+
+    async updateCurrentUserData(user: User): Promise<IUser> {
+        return new GenericSingleObjectCrudRepository<User>(new StorableUser(), User).update(user);
+    }
+}
+
 /*
  *
  * UTILITIES INTERFACE, FOR EXAMPLE COLLECTION TO MANAGE A LIST OF OBJECTS
  *
  */
+
+interface IApiHttpRequest {
+    httpRequest(url: string, method: string, customHeaders: any, data: any): Promise<any>;
+    makeURL(url: string, params: any): string;
+}
 
 export interface IResponse<T> {
     code: string;
@@ -888,10 +2063,36 @@ export interface IFilter {
  *
  */
 
+class ApiHttpRequest implements IApiHttpRequest {
+    async httpRequest(url: string, method: string, customHeaders: any = {}, data: any): Promise<any> {
+        let headersAuth = {
+            session_id: localStorage.getItem('token'),
+            domain_name: localStorage.getItem('domainName'),
+            domain_id: localStorage.getItem('domainId'),
+            domain_login: localStorage.getItem('login'),
+        }
+        let headers = new Object();
+        Object.assign(headers,customHeaders);
+        Object.assign(headers,headersAuth);
+        let options = new Object();
+        Object.defineProperty(options,'method',{value: method});
+        Object.defineProperty(options,'headers',{value: headers});
+        if(method == 'POST') Object.defineProperty(options,'body',{value: JSON.stringify(data)});
+        let result = await fetch(url,options);
+        let dataJson = await result.json();
+        return dataJson;
+    }
+    
+    makeURL(url: string, params: any): string {
+        const esc = encodeURIComponent;
+        return url + '?' + Object.keys(params).map(k => `${esc(k)}=${esc(params[k as keyof typeof params])}`).join('&')
+    }
+}
+
 class KeyGenerator {
-    characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    static characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     constructor(){}
-    generate(length: number): string {
+    static generate(length: number): string {
         let result = ''
         for (let i = 0; i < length; i++) {
             const randomIndex = Math.floor(Math.random() * this.characters.length);
@@ -930,7 +2131,7 @@ class LocalStorage<T extends ICollectable> implements ILocalStorage<T> {
     constructor(type: { new (): T }) {
         this.type = type;
     }
-
+    
     read(model:string): ICollection<T> {
         let collection: ICollection<T> = new Collection<T>();
         if(localStorage.getItem(model)){
@@ -979,7 +2180,8 @@ export class FilterBuilder {
      */
     addField(field: string, value:any): void {
         if(!this.filter.fields) this.filter.fields = new Map<string,any>();
-        this.filter.fields?.set(field, value);
+        if(!this.filter.fields?.has(field)) this.filter.fields?.set(field, []);
+        this.filter.fields?.get(field)?.push(value);
     }
     /**
      * Add new interval field to filter
@@ -1135,7 +2337,7 @@ export class Collection<T extends ICollectable> implements ICollection<T> {
         if(filter.fields?.size != 0)
             filter.fields?.forEach((value, key) => {
                 filteredArray = filteredArray.filter(element =>
-                    typeof value != 'string' ? element.getFilterableFields().get(key.toLowerCase()) == value : element.getFilterableFields().get(key.toLowerCase()) == value//element.getFilterableFields().get(key.toLowerCase()).includes(value)
+                    element.getFilterableFields().has(key.toLowerCase()) ? value.includes(element.getFilterableFields().get(key.toLowerCase())) : true//element.getFilterableFields().get(key.toLowerCase()).includes(value)
                 )
             })
         // Apply the filter usings interval fields and >= and <= operator
@@ -1185,7 +2387,7 @@ export class Collection<T extends ICollectable> implements ICollection<T> {
  *
  */
 
-interface IFactory {
+export interface IFactory {
     createDocument(): IDocument;
     createFolder(): IFolder;
     createCertificate(): ICertificate;
@@ -1200,7 +2402,7 @@ interface IFactory {
     createUser(): IUser;
 }
 
-interface ICollectionFactory {
+export interface ICollectionFactory {
     createDocumentCollection(): ICollection<IDocument>;
     createFolderCollection(): ICollection<IFolder>;
     createEnterpriseCollection(): ICollection<IEnterprise>;
@@ -1238,6 +2440,42 @@ interface IModel extends ICollectable {
      * Internal key of object not visible outside SDK
      */
     Key: string;
+    /**
+     * API json object
+     */
+    ApiObject: any;
+    
+}
+
+interface IApiModel {
+    /**
+     * Get the url needed for the api http request.
+     * @param currentMethod The method is calling the api
+     * @return And array with the method of http needed and the url
+     */
+    getUrl(currentMethod: string, filter?: IFilter): string[];
+    /**
+     * Get method and the url of http needed for the api http request. POST, GET...
+     * @param currentMethod The method is calling the api
+     * @return And array with the method of http needed and the url
+     */
+    getMethod(currentMethod:string, filter?: IFilter): string;
+    /**
+     * Parse de data to send to format api
+     * @param data to send
+     * @returns data parsed for api
+     */
+    parseDataToSend(data: any, currentMethod?:string, filter?: IFilter): any;
+    /**
+     * Parse de data received to sdk object
+     * @param data received
+     * @returns data parsed for sdk object
+     */
+    parseDataToReceive(data: any, currentMethod?:string, filter?: IFilter): any;
+    /**
+     * @returns true if filters are applied in local, false otherwhise
+     */
+    localFilter(currentMethod?: string, filter?: IFilter): boolean;
 }
 
 interface IStorable<T extends ICollectable> {
@@ -1258,6 +2496,11 @@ export interface IDocument extends ICollectable {
     FileType: string;
     Path: string;
     Date: Date;
+    Tag: DocumentTag[];
+}
+
+export interface IDocumentTag extends ICollectable {
+    Name: string;
 }
 
 export interface IFolder extends ICollectable {
@@ -1290,6 +2533,9 @@ export interface IEnterprise extends ICollectable {
     Phone: string;
     Website: string;
     Document: string;
+    DomainName: string;
+    DomainId: string;
+    Registry: string;
 }
 
 export interface IRegistryEnterprise extends ICollectable {
@@ -1311,6 +2557,10 @@ export interface IBank extends ICollectable {
     Name: string;
     Total: number;
     Logo: string;
+    SwiftBic: string;
+    Iban: string;
+    LastUpdate: Date;
+    SyncStatus: string;
 }
 
 export type statusTaxModel = 'en proceso' | 'pendiente' | 'rectificado' | 'confirmado' | 'presentado';
@@ -1325,15 +2575,37 @@ export interface ITaxModel extends ICollectable {
     Year: number;
 }
 
+export enum StatusMessage {
+    VISTA = 'vista',
+    NUEVA = 'nueva',
+    ABIERTA = 'abierta',
+    CERRADA = 'cerrada',
+    PENDIENTE = 'pendiente',
+    REALIZADA = 'realizada'
+}
+
+export enum TypeMessage {
+    CONSULTA = 'consulta',
+    TAREA = 'tarea',
+    NOTIFICACION = 'notificacion',
+    NULL = 'null'
+}
+
 export interface IMessage extends ICollectable {
     Id: string;
     Name: string;
     Title: string;
     Description: string;
     Date: Date;
-    Type: string;
-    Status: string;
+    Type: TypeMessage;
+    Status: StatusMessage;
     EndDate: Date;
+    LastMessageChatOrigin: boolean;
+}
+
+export interface ITaskHolder extends ICollectable {
+    Id: string;
+    Name: string;
 }
 
 export interface IMessageChat extends ICollectable {
@@ -1356,43 +2628,69 @@ export interface IEmployee extends ICollectable {
 }
 
 export interface IContract extends ICollectable {
-  Name: string;
-  LastName: string;
-  Type: string;
-  GrossCost: number;
-  StartDate: Date;
-  EndDate?: Date;
-  WorkCenter: string;
-  Active: boolean;
+    Name: string;
+    LastName: string;
+    Type: string;
+    GrossCost: number;
+    StartDate: Date;
+    EndDate?: Date;
+    WorkCenter: string;
+    Active: boolean;
 }
 
+// export interface IMark extends ICollectable {
+//     Id: string;
+//     Name: string,
+//     Lastname: string,
+//     IdEmployee: string, // Ver si este es necesario, o id del usuario
+//     Date: Date,
+//     EntryDate: Date,
+//     ExitDate: Date,
+//     Pause: IPause,
+//     Location: string,
+//     Ccc: string, // código cuenta de cotización
+//     Workplace: string,
+//     Status: string
+// }
+
 export interface IMark extends ICollectable {
-  Id: string;
-  Name: string,
-  Lastname: string,
-  IdEmployee: string, // Ver si este es necesario, o id del usuario
-  Date: Date,
-  EntryDate: Date,
-  ExitDate: Date,
-  Pause: IPause,
-  Location: string,
-  Ccc: string, // código cuenta de cotización
-  Workplace: string,
-  Status: string
+    // Id: string, // ????
+    // Lastname: string, 
+    // Pause: IPause,
+    // Ccc: string, // código cuenta de cotización
+    // Workplace: string,
+    Name: string, // nombre del usuario que marca
+    IdUser: string, // id del usuario que marca
+    Date: Date, // fecha del marcage
+    EntryDate: Date, // hora de entrada del marcaje
+    ExitDate: Date, // hora de salida del marcaje
+    Time: Date; // duracion del marcaje total
+    Location: any, // localizacion al marcar
+    Status: string // entrada, salida, pausa
+}
+
+export interface IMarkDetail extends ICollectable {
+    Id: string,
+    LastDate: Date,
+    LastModification: Date,
+    Status: string,
+    Location: any
 }
 
 export interface IPause {
-  StartPause: Date,
-  EndPause: Date
+    StartPause: Date,
+    EndPause: Date
 }
+
 export interface IUser extends ICollectable {
-  Name: string,
-  Lastname: string,
-  Document: string,
-  Email: string,
-  Password: string,
-  Phone: string,
-  Active: boolean
+    Name: string,
+    Lastname: string,
+    Document: string,
+    Email: string,
+    Password: string,
+    Phone: string,
+    Active: boolean,
+    Enterprises: string [],
 }
 
 interface IAuth extends ICollectable{
@@ -1708,7 +3006,117 @@ export enum Status {
   UserAssigned = "user-assigned",
 }
 
+interface ISimpleValue {
+    Value: string;
+}
 
+export enum InvoiceType { GASTO = 'gasto', VENTA = 'venta' }
+
+export enum InvoiceStatus { A_CONTABILIZAR = 'a_contabilizar', CONTABILIZADO = 'contabilizado' }
+
+export interface IInvoice extends ICollectable{
+    Serie: IInvoiceSerie;
+    InvoiceNumber: string;
+    Date: Date;
+    TotalAmount: number;
+    Contact: IContact;
+    Category: IInvoiceCategory;
+    Lines: ICollection<IInvoiceLine>;
+    TransactionType: IInvoiceTransactionType;
+    Activity: IInvoiceActivity;
+    CriCaja: boolean;
+    RE: boolean;
+    RegAgri: boolean;
+    Tax: ITax;
+    TaxBase: number;
+    TaxQuota: number;
+    IRPF: IIRPF;
+    IRPFBase: number;
+    IRPFQuota: number;
+    InvoiceExpirationLines: ICollection<IInvoiceExpirationLine>;
+    Rectified: boolean;
+    Type: InvoiceType;
+    Status: InvoiceStatus;
+}
+
+export interface IInvoiceLine extends ICollectable{
+    Product: IProduct;
+    Quantity: number;
+    Price: number;
+    Discount: number;
+    TotalPrice: number;
+    Tax: ITax;
+    IRPF: IIRPF;
+}
+
+export interface IInvoiceExpirationLine extends ICollectable{
+    Date: Date;
+    PaymentMethod: IPaymentMethod;
+    BankAccount: string;
+    Amount: number;
+}
+
+export interface IInvoiceSerie extends ICollectable, ISimpleValue {}
+
+export interface IInvoiceTransactionType extends ICollectable, ISimpleValue{}
+
+export interface IInvoiceActivity extends ICollectable, ISimpleValue{}
+
+export interface IIRPF extends ICollectable, ISimpleValue {
+    Type: string;
+}
+
+export interface ITax extends ICollectable, ISimpleValue {}
+
+export interface IPaymentMethod extends ICollectable, ISimpleValue {}
+
+export interface IInvoiceCategory extends ICollectable, ISimpleValue {}
+
+export interface IProduct extends ICollectable{
+    Code: IProductCode;
+    Name: string;
+    Category: IProductCategory;
+    Class: IProductClass;
+    Type: IProductType;
+    Status: IProductStatus;
+    Tax: ITax;
+    IRPF: IIRPF;
+    BarCode: string;
+    Description: string;
+    CostPrice: number;
+    Benefit: number;
+    Price: number;
+    Pvp: number;
+}
+
+export interface IProductCode extends ICollectable, ISimpleValue {}
+
+export interface IProductCategory extends ICollectable, ISimpleValue {}
+
+export interface IProductClass extends ICollectable, ISimpleValue {}
+
+export interface IProductType extends ICollectable, ISimpleValue {}
+
+export interface IProductStatus extends ICollectable, ISimpleValue {}
+
+export interface IContact extends ICollectable{
+    Name: string;
+    ComercialName: string;
+    Country: string;
+    /**
+     * Can be DNI, CIF, etc
+     */
+    Document: string;
+    Address: string;
+    Email: string;
+    Phone: string;
+    Web: string;
+    BankAccount: string;
+    PaymentMethod: IPaymentMethod;
+    TransactionType: IInvoiceTransactionType;
+    IRPF: boolean;
+    RE: boolean;
+}
 
 /*
  *
@@ -1717,6 +3125,29 @@ export enum Status {
  */
 
 export class Factory implements IFactory {
+    createInvoiceLine(product?: IProduct,quantity?: number,price?: number,discount?: number,totalPrice?: number,tax?: ITax,irpf?: IIRPF): IInvoiceLine {
+        return new InvoiceLine(product, quantity, price, discount, totalPrice, tax, irpf);
+    }
+
+    createInvoiceExpirationLine(date?: Date, paymentMethod?: IPaymentMethod, bankAccount?: string, amount?: number): IInvoiceExpirationLine {
+        return new InvoiceExpirationLine(date, paymentMethod, bankAccount, amount);
+    }
+
+    createInvoice(serie?: IInvoiceSerie, invoiceNumber?: string, date?: Date, totalAmount?: number, contact?: IContact, category?: IInvoiceCategory, 
+        lines?: ICollection<IInvoiceLine>, transactionType?: IInvoiceTransactionType, activity?: IInvoiceActivity, criCaja?: boolean, re?: boolean, 
+        regAgri?: boolean, tax?: ITax, taxBase?: number, taxQuota?: number, irpf?: IIRPF, irpfbase?: number, irpfquota?: number, 
+        type?: InvoiceType, rectified?: boolean): IInvoice {
+        return new Invoice(serie, invoiceNumber, date, totalAmount, contact, category, lines, transactionType, activity, criCaja, re, regAgri, tax, taxBase, taxQuota, irpf, irpfbase, irpfquota, type, rectified);
+    }
+
+    createProduct(code?: IProductCode, name?: string, category?: IProductCategory, productClass?: IProductClass, type?: IProductType, status?: IProductStatus, tax?: ITax, irpf?: IIRPF, barCode?: string, description?: string, costPrice?: number, benefit?: number, price?: number, pvp?: number): IProduct {
+        return new Product(code, name, category, productClass, type, status, tax, irpf, barCode, description, costPrice, benefit, price, pvp);
+    }
+
+    createContact(name?: string, comercialName?: string, country?: string, document?: string, address?: string, email?: string, phone?: string, web?: string, bankAccount?: string, paymentMethod?: IPaymentMethod, transactionType?: IInvoiceTransactionType, irpf?: boolean, re?: boolean): IContact {
+        return new Contact(name, comercialName, country, document, address, email, phone, web, bankAccount, paymentMethod, transactionType, irpf, re);
+    }
+
     createDocument(file?: string, fileName?: string, fileSize?: number, fileType?: string, date?: Date, path?: string): IDocument {
         return new Document(file, fileName, fileSize, fileType, date, path);
     }
@@ -1749,7 +3180,7 @@ export class Factory implements IFactory {
         return new TaxModel(name, taxType, status, paymentMethod, result, trimester, year);
     }
 
-    createMessage(name?: string, title?: string, description?: string, date?: Date, type?: string, status?: string, endDate?: Date): IMessage {
+    createMessage(name?: string, title?: string, description?: string, date?: Date, type?: TypeMessage, status?: StatusMessage, endDate?: Date): IMessage {
         return new Message(name, title, description, date, type, status, endDate);
     }
 
@@ -1767,6 +3198,18 @@ export class Factory implements IFactory {
 }
 
 export class CollectionFactory implements ICollectionFactory {
+    createInvoiceCollection(): ICollection<IInvoice> {
+      return new Collection<Invoice>();
+    }
+
+    createProductCollection(): ICollection<IProduct> {
+      return new Collection<Product>();
+    }
+
+    createContactCollection(): ICollection<IContact> {
+      return new Collection<Contact>();
+    }
+
     createDocumentCollection(): ICollection<IDocument> {
       return new Collection<Document>();
     }
@@ -1824,6 +3267,58 @@ export class CollectionFactory implements ICollectionFactory {
     }
 }
 
+class SimpleValue implements IModel{
+    protected key: string;
+    protected value: string;
+    protected apiObject: any;
+
+    constructor(value?: string) {
+        this.key = KeyGenerator.generate(15);
+        this.value = value || '';
+        this.apiObject = {};
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Value() {
+        return this.value;
+    }
+
+    public set Value(value: string) {
+        this.value = value;
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('value', this.value);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('value', this.value);
+        return map;
+    }
+}
+
 class Document implements IDocument, IModel {
     private file: string;
     private fileName: string;
@@ -1832,8 +3327,19 @@ class Document implements IDocument, IModel {
     private path: string;
     private date: Date;
     private key: string;
+    private id: string;
+    private tag: DocumentTag[];
+    protected apiObject: any;
 
-    constructor(file?: string, fileName?: string, fileSize?: number, fileType?: string, date?: Date, path?: string) {
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    constructor(file?: string, fileName?: string, fileSize?: number, fileType?: string, date?: Date, path?: string, tag?: DocumentTag[], id?: string) {
         this.file = file || '';
         this.fileName = fileName || '';
         this.fileSize = fileSize || 0;
@@ -1841,6 +3347,17 @@ class Document implements IDocument, IModel {
         this.path =  path || '';
         this.date = date || new Date();
         this.key = path && fileName ? path + '/' + fileName : '';
+        this.id = KeyGenerator.generate(15);
+        this.apiObject = '';
+        this.tag = tag || [];
+    }
+
+    public get Tag(): DocumentTag[] {
+        return this.tag;
+    }
+
+    public set Tag(value: DocumentTag[]) {
+        this.tag = value;
     }
 
     public get FileName(): string {
@@ -1899,8 +3416,16 @@ class Document implements IDocument, IModel {
         this.key = key;
     }
 
+    public get Id(): string {
+        return this.id;
+    }
+
+    public set Id(id: string) {
+        this.id = id;
+    } 
+
     getKey(): string {
-        return this.path + '/' + this.fileName;
+        return this.path + '/' + this.id;
     }
 
     getFilterableFields(): Map<string,any> {
@@ -1909,6 +3434,9 @@ class Document implements IDocument, IModel {
         map.set('filesize', this.FileSize);
         map.set('filetype', this.FileType);
         map.set('path', this.Path);
+        this.tag.forEach(tag => {
+            map.set('tag', tag.Name);
+        })
         return map;
     }
 
@@ -1920,6 +3448,68 @@ class Document implements IDocument, IModel {
         map.set('path', this.Path);
         return map;
     }
+}
+
+class ApiDocument extends Document implements IApiModel {
+
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        // a contabilizar, contabilizado, papelera - inbox, rejected, draft
+        if(currentMethod == GET_MULTIPLE){
+            if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/a_contabilizar')
+                return ['/ms/api/invoice?status=inbox'];
+            if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/contabilizado')
+                return ['/ms/api/invoice?status=inbox'];
+                // return ['/ms/api/invoice?status=rejected'];
+            if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/fiscal')
+                return ['/ms/api/fiscal/models'];
+            if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/papelera')
+                return ['/ms/api/invoice?status=draft'];
+            if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase().includes('/laboral'))
+                return ['/ms/api/contract/enterprise/salaries?document=' + filter.fields.get('path')[0].split('/')[2]]
+        }
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any, currentMethod:string, filter: IFilter) {
+        let document = new Document()
+        if(filter && filter.fields && filter.fields?.has('path') && filter.fields?.get('path')[0].indexOf('/laboral') !== -1){
+            document.ApiObject = data;
+            document.File = ''
+            document.FileName = 'Nómina';
+            document.FileSize = 0
+            document.FileType = ''
+            document.Date = new Date()
+            document.Path = filter.fields?.get('path')
+            document.Key = data.id ? data.id : ''
+            document.Id = data.id ? data.id : ''
+        }else {
+            document.ApiObject = data;
+            document.File = data.file && data.file.path ? data.file.path : '';
+            document.FileName = data.name ? data.name : '';
+            document.FileSize = 0;
+            document.FileType = data.file && data.file.content_type ? data.file.content_type : '';
+            document.Date = data.date ? data.date : new Date();
+            document.Path = filter.fields?.get('path')
+            document.Key = data.id ? data.id : '';
+            document.Id = data.id ? data.id : '';
+        }
+        return document;
+    }
+
 }
 
 class StorableDocument extends Document implements IStorable<Document> {
@@ -1936,6 +3526,15 @@ class Folder implements IFolder, IModel  {
     private path: string;
     private parent: string;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(name?: string, parent?: string) {
         this.name = name || '';
@@ -1995,6 +3594,48 @@ class Folder implements IFolder, IModel  {
     }
 }
 
+class ApiFolder extends Folder implements IApiModel {
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        let urls: string [] = [];
+        if(currentMethod == GET_MULTIPLE){
+            if(filter && filter.fields && filter.fields?.has('workplace')){
+                filter.fields?.get('workplace')[0].split(';').forEach((element: any) => {
+                    if(element) urls.push('/ms/api/contract/employee/workplace?workplace=' + element)
+                })
+                return urls;
+            }
+            else
+                return ['/ms/api/contract/employee/workplace'];
+        }
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return true;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let folder = new Folder();
+        folder.ApiObject = data;
+        folder.Key = data.document ? data.document : '';
+        folder.Name = data.name && data.surName && data.secondSurName ? data.name + " " + data.surName + " " + data.secondSurName : '';
+        folder.Parent = '/laboral';
+        folder.Path = '/laboral/' + folder.Key;
+        return folder;
+        throw new ErrorResponse('0199')
+    }
+}
+
 class StorableFolder extends Folder implements IStorable<Folder> {
     getCollection(): ICollection<Folder> {
         return folders;
@@ -2005,154 +3646,187 @@ class StorableFolder extends Folder implements IStorable<Folder> {
 }
 
 class Certificate implements ICertificate, IModel {
-  private name: string;
-  private representationType: string;
-  private expeditionDate: Date;
-  private expirationDate: Date;
-  private alias: string;
-  private type: string;
-  private tgss: boolean;
-  private sepe: boolean;
-  private aeat: boolean;
-  private documentUser: string;
-  private key: string;
+    private name: string;
+    private representationType: string;
+    private expeditionDate: Date;
+    private expirationDate: Date;
+    private alias: string;
+    private type: string;
+    private tgss: boolean;
+    private sepe: boolean;
+    private aeat: boolean;
+    private documentUser: string;
+    private key: string;
+    private isValid: boolean;
+    protected apiObject: any;
 
-  constructor(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean, documentUser?: string) {
-    this.name = name || '';
-    this.representationType = representationType || '';
-    this.expeditionDate = expeditionDate || new Date();
-    this.expirationDate = expirationDate || new Date();
-    this.alias = alias || '';
-    this.type = type || '';
-    this.tgss = tgss || false;
-    this.sepe = sepe || false;
-    this.aeat = aeat || false;
-    this.documentUser = documentUser || '';
-    this.key = documentUser || '';
-  }
+    constructor(name?: string, representationType?: string, expeditionDate?: Date, expirationDate?: Date, alias?: string, type?: string, tgss?: boolean, sepe?: boolean, aeat?: boolean, documentUser?: string, isValid?: boolean) {
+        this.name = name || '';
+        this.representationType = representationType || '';
+        this.expeditionDate = expeditionDate || new Date();
+        this.expirationDate = expirationDate || new Date();
+        this.alias = alias || '';
+        this.type = type || '';
+        this.tgss = tgss || false;
+        this.sepe = sepe || false;
+        this.aeat = aeat || false;
+        this.documentUser = documentUser || '';
+        this.isValid = isValid || false;
+        this.key = documentUser || '';
+    }
 
-  public get Name(): string {
-    return this.name;
-  }
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
 
-  public set Name(value: string) {
-    this.name = value;
-  }
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
-  public get RepresentationType(): string {
-    return this.representationType;
-  }
+    public get IsValid(): boolean{
+        return this.isValid;
+    }
 
-  public set RepresentationType(value: string) {
-    this.representationType = value;
-  }
+    public set IsValid(value: boolean){
+        this.isValid = value;
+    }
 
-  public get ExpeditionDate(): Date {
-    return this.expeditionDate;
-  }
+    public get Name(): string {
+        return this.name;
+    }
 
-  public set ExpeditionDate(value: Date) {
-    this.expeditionDate = value;
-  }
+    public set Name(value: string) {
+        this.name = value;
+    }
 
-  public get ExpirationDate(): Date {
-    return this.expirationDate;
-  }
+    public get RepresentationType(): string {
+        return this.representationType;
+    }
 
-  public set ExpirationDate(value: Date) {
-    this.expirationDate = value;
-  }
+    public get ExpeditionDate(): Date {
+        return this.expeditionDate;
+    }
 
-  public get Alias(): string {
-    return this.alias;
-  }
+    public set ExpeditionDate(value: Date) {
+        this.expeditionDate = value;
+    }
 
-  public set Alias(value: string) {
-    this.alias = value;
-  }
+    public get ExpirationDate(): Date {
+        return this.expirationDate;
+    }
 
-  public get Type(): string {
-    return this.type;
-  }
+    public set ExpirationDate(value: Date) {
+        this.expirationDate = value;
+    }
 
-  public set Type(value: string) {
-    this.type = value;
-  }
+    public get Alias(): string {
+        return this.alias;
+    }
 
-  public get Tgss(): boolean {
-    return this.tgss;
-  }
+    public set Alias(value: string) {
+        this.alias = value;
+    }
 
-  public set Tgss(value: boolean) {
-    this.tgss = value;
-  }
+    public get Type(): string {
+        return this.type;
+    }
 
-  public get Sepe(): boolean {
-    return this.sepe;
-  }
+    public set Type(value: string) {
+        this.type = value;
+    }
 
-  public set Sepe(value: boolean) {
-    this.sepe = value;
-  }
+    public get Tgss(): boolean {
+        return this.tgss;
+    }
 
-  public get Aeat(): boolean {
-    return this.aeat;
-  }
+    public set Tgss(value: boolean) {
+        this.tgss = value;
+    }
 
-  public set Aeat(value: boolean) {
-    this.aeat = value;
-  }
+    public get Sepe(): boolean {
+        return this.sepe;
+    }
 
-  public get DocumentUser(): string {
-    return this.documentUser;
-  }
+    public set Sepe(value: boolean) {
+        this.sepe = value;
+    }
 
-  public set DocumentUser(value: string) {
-    this.documentUser = value;
-  }
+    public get Aeat(): boolean {
+        return this.aeat;
+    }
 
-  public get Key(): string {
-    return this.key;
-  }
+    public set Aeat(value: boolean) {
+        this.aeat = value;
+    }
 
-  public set Key(value: string) {
-    this.key = value;
-  }
+    public get DocumentUser(): string {
+        return this.documentUser;
+    }
 
-  getKey(): string {
-    return this.documentUser;
-  }
+    public set DocumentUser(value: string) {
+        this.documentUser = value;
+    }
 
-  getFilterableFields(): Map<string,any> {
-    let map = new Map<string, any>();
-    map.set('name', this.Name);
-    map.set('representationType', this.RepresentationType);
-    map.set('expeditionDate', this.ExpeditionDate);
-    map.set('expirationDate', this.ExpirationDate);
-    map.set('alias', this.Alias);
-    map.set('type', this.Type);
-    map.set('tgss', this.Tgss);
-    map.set('sepe', this.Sepe);
-    map.set('aeat', this.Aeat);
-    map.set('documentUser', this.DocumentUser);
-    return map;
-  }
+    public get Key(): string {
+        return this.key;
+    }
 
-  getSortableFields(): Map<string,any> {
-    let map = new Map<string, any>();
-    map.set('name', this.Name);
-    map.set('representationType', this.RepresentationType);
-    map.set('expeditionDate', this.ExpeditionDate);
-    map.set('expirationDate', this.ExpirationDate);
-    map.set('alias', this.Alias);
-    map.set('type', this.Type);
-    map.set('tgss', this.Tgss);
-    map.set('sepe', this.Sepe);
-    map.set('aeat', this.Aeat);
-    map.set('documentUser', this.DocumentUser);
-    return map;
-  }
+    public set Key(value: string) {
+        this.key = value;
+    }
 
+    getKey(): string {
+        return this.documentUser;
+    }
+
+    getFilterableFields(): Map<string,any> {
+        let map = new Map<string, any>();
+        map.set('name', this.Name);
+        map.set('representationType', this.RepresentationType);
+        map.set('expeditionDate', this.ExpeditionDate);
+        map.set('expirationDate', this.ExpirationDate);
+        map.set('alias', this.Alias);
+        map.set('type', this.Type);
+        map.set('tgss', this.Tgss);
+        map.set('sepe', this.Sepe);
+        map.set('aeat', this.Aeat);
+        map.set('documentUser', this.DocumentUser);
+        return map;
+    }
+
+    getSortableFields(): Map<string,any> {
+        let map = new Map<string, any>();
+        map.set('name', this.Name);
+        map.set('representationType', this.RepresentationType);
+        map.set('expeditionDate', this.ExpeditionDate);
+        map.set('expirationDate', this.ExpirationDate);
+        map.set('alias', this.Alias);
+        map.set('type', this.Type);
+        map.set('tgss', this.Tgss);
+        map.set('sepe', this.Sepe);
+        map.set('aeat', this.Aeat);
+        map.set('documentUser', this.DocumentUser);
+        return map;
+    }
+
+}
+
+class ApiCertificate extends Certificate implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
 }
 
 class StorableCertificate extends Certificate implements IStorable<Certificate> {
@@ -2165,6 +3839,8 @@ class StorableCertificate extends Certificate implements IStorable<Certificate> 
 }
 
 class Enterprise implements IEnterprise, IModel {
+    private domainName: string;
+    private domainId: string;
     private name: string;
     private profilePhoto: string;
     private address: string;
@@ -2175,7 +3851,41 @@ class Enterprise implements IEnterprise, IModel {
     private phone: string;
     private website: string;
     private document: string;
+    private registry: string;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Registry(): string {
+        return this.registry;
+    }
+
+    public set Registry(value: string) {
+        this.registry = value;
+    }
+
+    public get DomainName(): string{
+        return this.domainName;
+    }
+
+    public set DomainName(value: string){
+        this.domainName = value;
+    }
+
+    public get DomainId(): string {
+        return this.domainId;
+    }
+
+    public set DomainId(value: string) {
+        this.domainId = value;
+    }
 
     public get Name(): string {
       return this.name;
@@ -2261,7 +3971,11 @@ class Enterprise implements IEnterprise, IModel {
         return this.key;
     }
 
-    constructor(name?: string, document?: string, profilePhoto?: string, address?: string, country?: string, province?: string, socialReason?: string, email?: string, phone?: string, website?: string, key?: string) {
+    public set Key(key: string) {
+        this.key = key;
+    }
+
+    constructor(name?: string, document?: string, profilePhoto?: string, address?: string, country?: string, province?: string, socialReason?: string, email?: string, phone?: string, website?: string, registry?: string, key?: string) {
         this.name = name || '';
         this.profilePhoto = profilePhoto || '';
         this.address = address || '';
@@ -2273,6 +3987,9 @@ class Enterprise implements IEnterprise, IModel {
         this.website = website || '';
         this.document = document || document || '';
         this.key = document || '';
+        this.domainId = '';
+        this.domainName = '';
+        this.registry = '';
     }
 
     getKey(): string {
@@ -2295,6 +4012,65 @@ class Enterprise implements IEnterprise, IModel {
 
 }
 
+class ApiEnterprise extends Enterprise implements IApiModel {
+    getUrl(currentMethod: string, filter: IFilter): string [] {
+        if(currentMethod == GET_MULTIPLE)
+            return ['/ms/api/company'];
+        if(currentMethod == GET_SINGLE)
+            return ['/ms/api/company/one?id=' + filter.fields?.get('id')];
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+        if(currentMethod == GET_SINGLE)
+            return GET_METHOD;
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any): any {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any, currentMethod: string): any {
+        if(currentMethod == GET_MULTIPLE){
+            let enterprise = new Enterprise();
+            enterprise.ApiObject = data;
+            enterprise.Document = data.document ? data.document : '';
+            enterprise.Name = data.name ? data.name : ''
+            enterprise.Key = data.document ? data.document : '';
+            enterprise.DomainName = data.domain ? data.domain : '';
+            enterprise.DomainId = data.id ? data.id : '';
+            enterprise.Registry = data.registry ? data.registry : '';
+            return enterprise;
+        }else if (currentMethod == GET_SINGLE){
+            let enterprise = new Enterprise();
+            enterprise.ApiObject = data;
+            enterprise.Address = data.address.address
+            enterprise.Country = data.address.country
+            enterprise.Document = data.document
+            enterprise.DomainId = data.domain.id
+            enterprise.DomainName = data.domain.name
+            enterprise.Email = '' // TO DO
+            enterprise.Key = data.document
+            enterprise.Name = data.name
+            enterprise.Phone = '' // TO DO
+            enterprise.ProfilePhoto = 
+            enterprise.Province = data.address.province
+            enterprise.Registry = data.id
+            enterprise.SocialReason = '' // TO DO
+            enterprise.Website = '' // TO DO
+            return enterprise;
+        }
+        throw new ErrorResponse('0199')
+    }
+}
+
 class StorableEnterprise extends Enterprise implements IStorable<Enterprise> {
     getCollection(): ICollection<Enterprise> {
         return enterprises;
@@ -2314,9 +4090,10 @@ class RegistryEnterprise implements IRegistryEnterprise, IModel {
   private protocol: string;
   private inscription: string;
   private key: string;
+  protected apiObject: any;
 
   constructor(idEnterprise?: string, description?: string, dateCreation?: Date, dateRegistration?: Date, notary?: string, protocol?: string, inscription?: string, key?: string) {
-    this.id = new KeyGenerator().generate(15);
+    this.id = KeyGenerator.generate(15);
     this.idEnterprise = idEnterprise || '';
     this.description = description || '';
     this.dateCreation = dateCreation || new Date();
@@ -2326,6 +4103,15 @@ class RegistryEnterprise implements IRegistryEnterprise, IModel {
     this.inscription = inscription || '';
     this.key = this.idEnterprise;
   }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
   public get Id(): string {
     return this.id;
   }
@@ -2444,6 +4230,15 @@ class DocumentNote implements IDocumentNote, IModel  {
     private text: string;
     private path: string;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(text?: string, path?: string) {
         this.text = text || '';
@@ -2492,6 +4287,24 @@ class DocumentNote implements IDocumentNote, IModel  {
     }
 }
 
+class ApiDocumentNote extends DocumentNote implements IApiModel {
+    getUrl(currentMethod: string): string[] {
+        throw new ErrorResponse('0199')
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new ErrorResponse('0199')
+    }
+    localFilter(): boolean {
+        return false;
+    }
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+    parseDataToReceive(data: any) {
+        throw new ErrorResponse('0199')
+    }
+}
+
 class StorableDocumentNote extends DocumentNote implements IStorable<DocumentNote> {
     getCollection(): ICollection<DocumentNote> {
         return documentNotes;
@@ -2502,18 +4315,67 @@ class StorableDocumentNote extends DocumentNote implements IStorable<DocumentNot
 }
 
 class Bank implements IBank, IModel  {
+    private swiftBic: string;
+    private iban: string;
+    private lastUpdate: Date;
+    private syncStatus: string;
     private name: string;
     private key: string;
     private total: number;
     private logo: string;
-
-    constructor(name?: string, total?: number, logo?: string) {
+    protected apiObject: any;
+    
+    constructor(name?: string, total?: number, logo?: string, swift?: string, iban?: string, lastUpdate?: Date, syncStatus?: string) {
         this.name = name || '';
         this.total = total || 0;
         this.logo = logo || '';
-        this.key = name || '';
+        this.key = KeyGenerator.generate(15);
+        this.swiftBic = swift || '';
+        this.iban = iban || '';
+        this.lastUpdate = lastUpdate || new Date();
+        this.syncStatus = syncStatus || '';
     }
 
+    public get Iban(): string {
+        return this.iban;
+    }
+
+    public set Iban(value: string) {
+        this.iban = value;
+    }
+
+    public get LastUpdate(): Date {
+        return this.lastUpdate;
+    }
+
+    public set LastUpdate(value: Date) {
+        this.lastUpdate = value;
+    }
+
+    public get SyncStatus(): string {
+        return this.syncStatus;
+    }
+
+    public set SyncStatus(value: string) {
+        this.syncStatus = value;
+    }
+    
+    public get SwiftBic(): string {
+        return this.swiftBic;
+    }
+
+    public set SwiftBic(value: string) {
+        this.swiftBic = value;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+    
     public get Name(): string {
         return this.name;
     }
@@ -2547,13 +4409,17 @@ class Bank implements IBank, IModel  {
     }
 
     getKey(): string {
-        return this.name;
+        return this.key;
     }
 
     getFilterableFields(): Map<string,any> {
         let map = new Map<string, any>();
         map.set('name', this.Name);
         map.set('total', this.Total);
+        map.set('swift', this.SwiftBic);
+        map.set('iban', this.Iban);
+        map.set('lastUpdate', this.LastUpdate);
+        map.set('syncStatus', this.SyncStatus);
         return map;
     }
 
@@ -2561,7 +4427,43 @@ class Bank implements IBank, IModel  {
         let map = new Map<string, any>();
         map.set('name', this.Name);
         map.set('total', this.Total);
+        map.set('swift', this.SwiftBic);
+        map.set('iban', this.Iban);
+        map.set('lastUpdate', this.LastUpdate);
+        map.set('syncStatus', this.SyncStatus);
         return map;
+    }
+}
+
+class ApiBank extends Bank implements IApiModel {
+    getUrl(currentMethod: string): string[] {
+        if(currentMethod == GET_MULTIPLE)
+            return ['/ms/api/company/banks'];
+            throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+            throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let bank = new Bank();
+        bank.ApiObject = data;
+        bank.Key = data.id
+        bank.Logo = ''
+        bank.Name = data.alias ? data.alias : ''
+        bank.Total = 0
+        return bank;
     }
 }
 
@@ -2583,6 +4485,15 @@ class TaxModel implements ITaxModel, IModel  {
     private trimester: number;
     private year: number;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(name?: string, taxType?: string, status?: statusTaxModel, paymentMethod?: string, result?: string, trimester?: number, year?: number) {
         this.name = name || '';
@@ -2661,8 +4572,7 @@ class TaxModel implements ITaxModel, IModel  {
     }
 
     getKey(): string {
-        if(this.name && this.trimester && this.year) return this.name + this.trimester.toString() + this.year.toString();
-        else return '';
+        return this.key;
     }
 
     getFilterableFields(): Map<string, any> {
@@ -2690,6 +4600,42 @@ class TaxModel implements ITaxModel, IModel  {
     }
 }
 
+class ApiTaxModel extends TaxModel implements IApiModel {
+    getUrl(currentMethod: string): string[] {
+        if(currentMethod == GET_MULTIPLE)
+            return ['/ms/api/fiscal/models']
+            throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+            throw new ErrorResponse('0199')
+    }
+
+    localFilter(currentMethod: string, filter?: IFilter): boolean {
+        return true;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let tax = new TaxModel();
+        tax.ApiObject = data;
+        tax.Key = data.id;
+        tax.Name = data.model ? (data.model == 'IVA' ? '303' : data.model) : '';
+        tax.PaymentMethod = '';
+        tax.Result = data.result ? data.result : '';
+        tax.Status = data.status ? data.status : '';
+        tax.TaxType = '';
+        tax.Trimester = data.period ? data.period : '';
+        tax.Year = data.year ? data.year : '';
+        return tax;
+    }
+}
+
 class StorableTaxModel extends TaxModel implements IStorable<TaxModel> {
     getCollection(): ICollection<TaxModel> {
         return taxModels;
@@ -2705,21 +4651,42 @@ class Message implements IMessage, IModel  {
     private title: string;
     private description: string;
     private date: Date;
-    private type: string;
-    private status: string;
+    private type: TypeMessage;
+    private status: StatusMessage;
     private endDate: Date;
+    private lastMessageChatOrigin: boolean;
     private key: string;
+    private taskHolder : TaskHolder;
+    protected apiObject: any;
 
-    constructor(name?: string, title?: string, description?: string, date?: Date, type?: string, status?: string, endDate?: Date) {
-        this.id = new KeyGenerator().generate(15);
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    constructor(name?: string, title?: string, description?: string, date?: Date, type?: TypeMessage, status?: StatusMessage, endDate?: Date, lastMessageChatOrigin?: boolean) {
+        this.id = KeyGenerator.generate(15);
         this.name = name || '';
         this.title = title || '';
         this.description = description || '';
         this.date = date || new Date();
-        this.type = type || '';
-        this.status = status || '';
+        this.type = type || TypeMessage.NULL;
+        this.status = status || (type == 'consulta' ? StatusMessage.ABIERTA : type == 'tarea' ? StatusMessage.PENDIENTE : StatusMessage.NUEVA);
         this.endDate = endDate || new Date();
         this.key = this.id || '';
+        this.taskHolder = new TaskHolder();
+        this.lastMessageChatOrigin = false;
+    }
+
+    public get LastMessageChatOrigin() {
+        return this.lastMessageChatOrigin;
+    }
+
+    public set LastMessageChatOrigin(value: boolean) {
+        this.lastMessageChatOrigin = value;
     }
 
     public get Id(): string {
@@ -2728,6 +4695,14 @@ class Message implements IMessage, IModel  {
 
     public set Id(value: string) {
         this.id = value;
+    }
+
+    public get TaskHolder(): TaskHolder {
+        return this.taskHolder;
+    }
+
+    public set TaskHolder(value: TaskHolder) {
+        this.taskHolder = value;
     }
 
     public get Name(): string {
@@ -2762,19 +4737,19 @@ class Message implements IMessage, IModel  {
         this.date = value;
     }
 
-    public get Type(): string {
+    public get Type(): TypeMessage {
         return this.type;
     }
 
-    public set Type(value: string) {
+    public set Type(value: TypeMessage) {
         this.type = value;
     }
 
-    public get Status(): string {
+    public get Status(): StatusMessage {
         return this.status;
     }
 
-    public set Status(value: string) {
+    public set Status(value: StatusMessage) {
         this.status = value;
     }
 
@@ -2823,12 +4798,193 @@ class Message implements IMessage, IModel  {
     }
 }
 
+class ApiMessage extends Message implements IApiModel {
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        if(currentMethod == GET_MULTIPLE){
+            if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.NOTIFICACION)
+                return ['/ms/api/notification?page=1&perPage=100']
+            else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.CONSULTA)
+                return ['/ms/api/task?source=query&page=1&perPage=100&task_holder=' + localStorage.getItem('registry') + '&sender=' + localStorage.getItem('registry')]
+            else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.TAREA)
+                return ['/ms/api/task?source=task&page=1&perPage=100&task_holder=' + localStorage.getItem('registry') + '&sender=' + localStorage.getItem('registry')]
+            else
+                return ['/ms/api/notification?page=1&perPage=100','/ms/api/task?source=query&page=1&perPage=100','/ms/api/task?source=task&page=1&perPage=100']
+        }else if (currentMethod == GET_SINGLE){
+            if(filter && filter.fields?.has('id') &&  
+            (filter.fields.get('id')[0].toLowerCase().split(';')[1] == 'consulta' || filter.fields.get('id')[0].toLowerCase().split(';')[1] == 'tarea'))
+                return ['/ms/api/task/one?id=' + filter.fields.get('id')[0].split(';')[0]];
+        }else if(currentMethod == UPDATE_SINGLE){
+            return ['/ms/api/task']
+        }
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+        if(currentMethod == GET_SINGLE)
+            return GET_METHOD;
+        if(currentMethod == UPDATE_SINGLE)
+            return POST_METHOD;
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return true;
+    }
+
+    parseDataToSend(data: Message, currentMethod:string) {
+        if(currentMethod == UPDATE_SINGLE){
+            let object = data.ApiObject;
+            let status;
+            if(data.Type == TypeMessage.NOTIFICACION)
+                status = data.Status == StatusMessage.VISTA ? 1 : 0;
+            else
+                status = data.Status == StatusMessage.ABIERTA || data.Status == StatusMessage.PENDIENTE ? 'pending' : 'deleted';
+            object.status = status;
+            return object;
+        }
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let message = new Message();
+        if(data.source && (data.source == 'task' || data.source == 'query')){
+            let description = JSON.parse(data.description);
+            message.ApiObject = data;
+            message.Id = data.id + (data.source == 'query' ? ';' + TypeMessage.CONSULTA : ';' + TypeMessage.TAREA);
+            message.Name = data.sender.name  ? data.sender.name : '';
+            message.Title = data.title ? data.title : '';
+            message.Description = description.observation ? description.observation : '';
+            message.Date = new Date(data.start_date);
+            message.Type = data.source == 'query' ? TypeMessage.CONSULTA : TypeMessage.TAREA;
+            if(data.source == 'task')
+                message.Status = data.status && data.status == StatusMessage.PENDIENTE ? StatusMessage.PENDIENTE : StatusMessage.REALIZADA;
+            else
+                message.Status = data.status && data.status == StatusMessage.PENDIENTE ? StatusMessage.ABIERTA : StatusMessage.CERRADA;
+            message.EndDate = new Date();
+            message.Key = message.Id;
+            return message;
+        }else {
+            message.ApiObject = data;
+            message.Id = data.id + ';' + TypeMessage.NOTIFICACION;
+            message.Name = data.source ? data.source : '';
+            message.Title = data.title ? data.title : '';
+            message.Description = data.body ? data.body : '';
+            message.Date = new Date(data.date);
+            message.Type = TypeMessage.NOTIFICACION;
+            message.Status = data.status && data.status == 1 ? StatusMessage.VISTA : StatusMessage.NUEVA;
+            message.EndDate = new Date();
+            message.Key = message.Id;
+            return message;
+        }
+        throw new ErrorResponse('0199')
+    }
+}
+
 class StorableMessage extends Message implements IStorable<Message> {
     getCollection(): ICollection<Message> {
         return messages;
     }
     getLocalStorage(): string {
         return 'messages';
+    }
+}
+
+class TaskHolder implements ITaskHolder, IModel {
+    protected id: string;
+    protected name: string;
+    protected key: string;
+    protected apiObject: any;
+
+    constructor(name?: string) {
+        this.name = name || '';
+        this.id = KeyGenerator.generate(15);
+        this.key = this.id;
+    }
+
+    public get Id(): string {
+        return this.id;
+    }
+
+    public set Id(value: string) {
+        this.id = value;
+    }
+
+    public get Name(): string {
+        return this.name;
+    }
+
+    public set Name(value: string) {
+        this.name = value;
+    }
+
+    public get Key(): string {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    getKey(): string {
+        return this.id;
+    }
+    getFilterableFields(): Map<string, any> {
+        throw new Error("Method not implemented.");
+    }
+    getSortableFields(): Map<string, any> {
+        throw new Error("Method not implemented.");
+    }
+    
+}
+
+class ApiTaskHolder extends TaskHolder implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        if(currentMethod == GET_MULTIPLE)
+            return ['/ms/api/taskholder/list'];
+        if(currentMethod == GET_SINGLE)
+            return ['/ms/api/taskholder?id=' + filter?.fields?.get('id')];
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE || currentMethod == GET_SINGLE)
+            return GET_METHOD;
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        let taskHolder = new TaskHolder(); 
+        taskHolder.ApiObject = data;
+        taskHolder.Id = data.id;
+        taskHolder.Key = data.id;
+        taskHolder.Name = data.name;
+        return taskHolder;
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        return true;
+    }
+    
+}
+
+class StorableTaskHolder extends TaskHolder implements IStorable<TaskHolder> {
+    getCollection(): ICollection<TaskHolder> {
+        return taskHolders;
+        throw new Error("Method not implemented.");
+    }
+    getLocalStorage(): string {
+        return 'taskHolders';
+        throw new Error("Method not implemented.");
     }
 }
 
@@ -2840,9 +4996,18 @@ class MessageChat implements IMessageChat, IModel  {
     private date: Date;
     private type: string;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(idMessage?: string, name?: string, description?: string, date?: Date, type?: string) {
-        this.id = new KeyGenerator().generate(15);
+        this.id = KeyGenerator.generate(15);
         this.idMessage = idMessage || '';
         this.name = name || '';
         this.description = description || '';
@@ -2932,6 +5097,42 @@ class MessageChat implements IMessageChat, IModel  {
     }
 }
 
+class ApiMessageChat extends MessageChat implements IApiModel {
+    getUrl(currentMethod: string, filter: IFilter): string[] {
+        if(currentMethod == GET_MULTIPLE && filter && filter.fields && filter.fields.has('idMessage'))
+            return ['/ms/api/task/workflow?task='+filter.fields.get('idMessage')+'&domainId='+localStorage.getItem('domainId')+'&domainName='+localStorage.getItem('domainName')]
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE)
+            return GET_METHOD;
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        let messageChat = new MessageChat();
+        messageChat.ApiObject = data;
+        messageChat.Id = data.id
+        messageChat.IdMessage = data.task
+        messageChat.Key = data.id
+        messageChat.Name = data.task_holder.name
+        messageChat.Type = data.task_holder.id == localStorage.getItem('registry') ? 'send' : 'received';
+        messageChat.Description = data.comment
+        messageChat.Date = data.modification_date;
+        return messageChat;
+        throw new ErrorResponse('0199')
+    }
+}
+
 class StorableMessageChat extends MessageChat implements IStorable<MessageChat> {
     getCollection(): ICollection<MessageChat> {
         return messageChats;
@@ -2950,6 +5151,15 @@ class Employee implements IEmployee, IModel  {
     private naf: string;
     private active: boolean;
     private key: string;
+    protected apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
 
     constructor(name?: string, lastname?: string, document?: string, email?: string, phone?: string, naf?: string, active?: boolean) {
         this.key = document || '';
@@ -3055,6 +5265,28 @@ class Employee implements IEmployee, IModel  {
     }
 }
 
+class ApiEmployee extends Employee implements IApiModel {
+    getUrl(currentMethod: string): string[] {
+        throw new ErrorResponse('0199')
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new ErrorResponse('0199')
+    }
+
+    localFilter(): boolean {
+        return false;
+    }
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
+    }
+
+    parseDataToReceive(data: any) {
+        throw new ErrorResponse('0199')
+    }
+}
+
 class StorableEmployee extends Employee implements IStorable<Employee> {
     getCollection(): ICollection<Employee> {
         return employees;
@@ -3074,6 +5306,15 @@ class Contract implements IContract, IModel  {
     private workCenter: string;
     private active: boolean;
     private key: string;
+    protected apiObject: any;
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
 
     constructor(name?: string, lastName?: string, type?: string, grossCost?: number, startDate?: Date, endDate?: Date, workCenter?: string, active?: boolean) {
         this.key = name || '';
@@ -3086,6 +5327,7 @@ class Contract implements IContract, IModel  {
         this.workCenter = workCenter || '';
         this.active = active || false;
     }
+    
 
     public get Name(): string {
       return this.name;
@@ -3200,15 +5442,578 @@ class StorableContract extends Contract implements IStorable<Contract> {
     }
 }
 
-class Auth implements IAuth, IModel  {
+class Mark implements IMark, IModel  {
+    private key: string;
+    private apiObject: any;
+    private name: string;
+    private idUser: string;
+    private date: Date;
+    private entryDate: Date;
+    private exitDate: Date;
+    private time: Date;
+    private location: any;
+    private status: string;
+
+    public get Key(): string {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Name(): string {
+        return this.name;
+    }
+
+    public set Name(value: string) {
+        this.name = value;
+    }
+
+    public get IdUser(): string {
+        return this.idUser;
+    }
+
+    public set IdUser(value: string) {
+        this.idUser = value;
+    }
+
+    public get Date(): Date {
+        return this.date;
+    }
+
+    public set Date(value: Date) {
+        this.date = value;
+    }
+
+    public get EntryDate(): Date {
+        return this.entryDate;
+    }
+
+    public set EntryDate(value: Date) {
+        this.entryDate = value;
+    }
+
+    public get ExitDate(): Date {
+        return this.exitDate;
+    }
+
+    public set ExitDate(value: Date) {
+        this.exitDate = value;
+    }
+
+    public get Time(): Date {
+        return this.time;
+    }
+
+    public set Time(value: Date) {
+        this.time = value;
+    }
+
+    public get Location(): any {
+        return this.location;
+    }
+
+    public set Location(value: any) {
+        this.location = value;
+    }
+
+    public get Status(): string {
+        return this.status;
+    }
+
+    public set Status(value: string) {
+        this.status = value;
+    }
+
+    constructor(name?: string, idUser?: string, date?: Date, entryDate?: Date, exitDate?: Date, time?: Date, location?: any, status?: string) {
+        this.key = KeyGenerator.generate(15);
+        this.name = name || '';
+        this.idUser = idUser || '';
+        this.date = date || new Date();
+        this.entryDate = entryDate || new Date();
+        this.exitDate = exitDate || new Date();
+        this.time = time || new Date();
+        this.location = location || '';
+        this.status = status || '';
+    }
+
+    getKey(): string {
+        return this.Key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('idUser', this.idUser);
+        map.set('date', this.date);
+        map.set('entryDate', this.entryDate);
+        map.set('exitDate', this.exitDate);
+        map.set('time', this.time);
+        map.set('location', this.location);
+        map.set('status', this.status);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('idUser', this.idUser);
+        map.set('date', this.date);
+        map.set('entryDate', this.entryDate);
+        map.set('exitDate', this.exitDate);
+        map.set('time', this.time);
+        map.set('location', this.location);
+        map.set('status', this.status);
+        return map;
+    }
+}
+
+// class Mark implements IMark, IModel  {
+//     private id: string;
+//     private name: string;
+//     private lastName: string;
+//     private idEmployee: string;
+//     private date: Date;
+//     private entryDate: Date;
+//     private exitDate: Date;
+//     private pause: IPause;
+//     private location: string ;
+//     private ccc: string;
+//     private workplace: string ;
+//     private status: string ;
+//     private key: string;
+//     protected apiObject: any;
+
+//     public get ApiObject(): any {
+//         return this.apiObject;
+//     }
+    
+//     public set ApiObject(value: any) {
+//         this.apiObject = value;
+//     }
+
+
+//     constructor(name?: string, lastName?: string, idEmployee?: string, date?: Date, entryDate?: Date, exitDate?: Date, pause?: IPause, location?: string, ccc?: string, workplace?: string, status?: string) {
+//         this.id = KeyGenerator.generate(15);
+//         this.name = name || '';
+//         this.lastName = lastName || '';
+//         this.idEmployee = idEmployee || '';
+//         this.date = date || new Date();
+//         this.entryDate = entryDate || new Date();
+//         this.exitDate = exitDate || new Date();
+//         this.pause = pause || { StartPause: new Date(), EndPause: new Date() };
+//         this.location = location || '';
+//         this.ccc = ccc || '';
+//         this.workplace = workplace || '';
+//         this.status = status || '';
+//         this.key = this.id || '';
+//     }
+
+//     public get Id(): string {
+//         return this.id;
+//     }
+
+//     public set Id(value: string) {
+//         this.id = value;
+//     }
+
+//     public get Name(): string {
+//         return this.name;
+//     }
+
+//     public set Name(value: string) {
+//         this.name = value;
+//     }
+
+//     public get Lastname(): string {
+//         return this.lastName;
+//     }
+
+//     public set Lastname(value: string) {
+//         this.lastName = value;
+//     }
+
+//     public get IdEmployee(): string {
+//         return this.idEmployee;
+//     }
+
+//     public set IdEmployee(value: string) {
+//         this.idEmployee = value;
+//     }
+
+//     public get Date(): Date {
+//         return this.date;
+//     }
+
+//     public set Date(value: Date) {
+//         this.date = value;
+//     }
+
+//     public get EntryDate(): Date {
+//         return this.entryDate;
+//     }
+
+//     public set EntryDate(value: Date) {
+//         this.entryDate = value;
+//     }
+
+//     public get ExitDate(): Date {
+//         return this.exitDate;
+//     }
+
+//     public set ExitDate(value: Date) {
+//         this.exitDate = value;
+//     }
+
+//     public get Pause(): IPause {
+//         return this.pause;
+//     }
+
+//     public set Pause(value: IPause) {
+//         this.pause = value;
+//     }
+
+//     public get Location(): string {
+//         return this.location;
+//     }
+
+//     public set Location(value: string) {
+//         this.location = value;
+//     }
+
+//     public get Ccc(): string {
+//         return this.ccc;
+//     }
+
+//     public set Ccc(value: string) {
+//         this.ccc = value;
+//     }
+
+//     public get Workplace(): string {
+//         return this.workplace;
+//     }
+
+//     public set Workplace(value: string) {
+//         this.workplace = value;
+//     }
+
+//     public get Status(): string {
+//         return this.status;
+//     }
+
+//     public set Status(value: string) {
+//         this.status = value;
+//     }
+
+//     public get Key() {
+//         return this.key;
+//     }
+
+//     public set Key(value: string) {
+//         this.key = value;
+//     }
+
+//     getKey(): string {
+//         return this.idEmployee;
+//     }
+
+//     getFilterableFields(): Map<string, any> {
+//         let map = new Map<string, any>();
+//         map.set('name', this.name);
+//         map.set('lastname', this.lastName);
+//         map.set('idEmployee', this.idEmployee);
+//         map.set('date', this.date);
+//         map.set('entryDate', this.entryDate);
+//         map.set('exitDate', this.exitDate);
+//         map.set('pause', this.pause);
+//         map.set('location', this.location);
+//         map.set('ccc', this.ccc);
+//         map.set('workplace', this.workplace);
+//         map.set('status', this.status);
+//         return map;
+//     }
+
+//     getSortableFields(): Map<string, any> {
+//         let map = new Map<string, any>();
+//         map.set('name', this.name);
+//         map.set('lastname', this.lastName);
+//         map.set('idEmployee', this.idEmployee);
+//         map.set('date', this.date);
+//         map.set('entryDate', this.entryDate);
+//         map.set('exitDate', this.exitDate);
+//         map.set('pause', this.pause);
+//         map.set('location', this.location);
+//         map.set('ccc', this.ccc);
+//         map.set('workplace', this.workplace);
+//         map.set('status', this.status);
+//         return map;
+//     }
+
+// }
+
+class ApiMark implements IApiModel {
+
+    http = new ApiHttpRequest();
+
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        if(currentMethod == GET_MULTIPLE && filter && filter.fields?.has('idUser')){
+            const params = {
+                group: 'DAY',
+                startDate: '2023-09-06',
+                endDate: '2023-09-06',
+                active: true,
+                user: filter.fields?.get('idUser')
+            }
+            return [this.http.makeURL('/ms/api/timecontrol/list-holder', params)];
+        }
+        if(currentMethod == GET_MULTIPLE){
+            const params = {
+                group: 'DAY',
+                startDate: '2023-09-06',
+                endDate: '2023-09-06',
+                active: true
+            }
+            return [this.http.makeURL('/ms/api/timecontrol/list', params)];
+        }
+        throw new Error("Method not implemented.");
+    }
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE) return GET_METHOD
+        throw new Error("Method not implemented.");
+    }
+
+    parseDataToSend(data: any, currentMethod?: string, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+
+    parseDataToReceive(data: any, currentMethod?: string, filter?: IFilter | undefined) {
+        let mark = new Mark();
+        mark.ApiObject = data;
+        mark.IdUser = data.task_holder.id ? data.task_holder.id : '';
+        mark.Name = data.task_holder.name ? data.task_holder.name : '';
+        mark.Location = data.coordinates ? data.coordinates : {};
+        mark.Status = data.status ? data.status : '';
+        mark.Date = data.date ? new Date(data.date) : new Date();
+        mark.EntryDate
+        mark.ExitDate
+        return mark;
+        throw new Error("Method not implemented.");
+    }
+
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        return false;
+    }
+
+}
+
+class StorableMark extends Mark implements IStorable<Mark> {
+    getCollection(): ICollection<Mark> {
+        return marks;
+    }
+    getLocalStorage(): string {
+        return 'marks';
+    }
+}
+
+class MarkDetail implements IMarkDetail, IModel {
+    private key: string;
+    private apiObject: any;
+    private id: string;
+    private lastDate: Date;
+    private lastModification: Date;
+    private status: string;
+    private location: any;
+
+    public get Key(){
+        return this.key;
+    }
+
+    public set Key(value: string){
+        this.key = value;
+    }
+
+    public get ApiObject(){
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any){
+        this.apiObject = value;
+    }
+
+    public get Id(){
+        return this.id;
+    }
+
+    public set Id(value: string){
+        this.id = value;
+    }
+
+    public get LastDate(){
+        return this.lastDate;
+    }
+
+    public set LastDate(value: Date){
+        this.lastDate = value;
+    }
+
+    public get LastModification(){
+        return this.lastModification;
+    }
+
+    public set LastModification(value: Date){
+        this.lastModification = value;
+    }
+
+    public get Status(){
+        return this.status;
+    }
+
+    public set Status(value: string){
+        this.status = value;
+    }
+
+    public get Location(){
+        return this.location;
+    }
+
+    public set Location(value: any){
+        this.location = value;
+    }
+
+    constructor(id?: string, lastDate?: Date, lastModification?: Date, status?: string, location?: any) {
+        this.id = id || '';
+        this.lastDate = lastDate || new Date();
+        this.lastModification = lastModification || new Date();
+        this.status = status || '';
+        this.location = location || {};
+        this.key = KeyGenerator.generate(15);
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('id', this.id);
+        map.set('lastDate', this.lastDate);
+        map.set('lastModification', this.lastModification);
+        map.set('status', this.status);
+        map.set('location', this.location);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('id', this.id);
+        map.set('lastDate', this.lastDate);
+        map.set('lastModification', this.lastModification);
+        map.set('status', this.status);
+        map.set('location', this.location);
+        return map;
+    }
+    
+}
+
+class StorableMarkDetail extends MarkDetail implements IStorable<MarkDetail> {
+    getCollection(): ICollection<MarkDetail> {
+        return marksDetails;
+    }
+    getLocalStorage(): string {
+        return 'marksDetails';
+    }
+}
+
+class ApiMarkDetail extends MarkDetail implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        return false;
+    }
+}
+
+class User implements IUser, IModel  {
+    private name: string;
+    private lastname: string;
+    private document: string;
     private email: string;
     private password: string;
+    private phone: string;
+    private active: boolean;
     private key: string;
+    private enterprises: string [];
+    protected apiObject: any;
 
-    constructor(email?: string, password?: string) {
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+    
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    constructor(name?: string, lastname?: string, document?: string, email?: string, password?: string, phone?: string, active?: boolean, enterprises?: string[]) {
+        this.name = name || '';
+        this.lastname = lastname || '';
+        this.document = document || '';
         this.email = email || '';
         this.password = password || '';
-        this.key = email || '';
+        this.phone = phone || '';
+        this.active = active || true;
+        this.enterprises = enterprises || [];
+        this.key = document || '';
+    }
+
+    public get Enterprises(): string[] {
+        return this.enterprises;
+    }
+
+    public set Enterprises(value: string[]) {
+        this.enterprises = value;
+    }
+
+    public get Name(): string {
+        return this.name;
+    }
+
+    public set Name(value: string) {
+        this.name = value;
+    }
+
+    public get Lastname(): string {
+        return this.lastname;
+    }
+
+    public set Lastname(value: string) {
+        this.lastname = value;
+    }
+
+    public get Document(): string {
+        return this.document;
+    }
+
+    public set Document(value: string) {
+        this.document = value;
     }
 
     public get Email(): string {
@@ -3227,6 +6032,22 @@ class Auth implements IAuth, IModel  {
         this.password = value;
     }
 
+    public get Phone(): string {
+        return this.phone;
+    }
+
+    public set Phone(value: string) {
+        this.phone = value;
+    }
+
+    public get Active(): boolean {
+        return this.active;
+    }
+
+    public set Active(value: boolean) {
+        this.active = value;
+    }
+
     public get Key() {
         return this.key;
     }
@@ -3236,331 +6057,54 @@ class Auth implements IAuth, IModel  {
     }
 
     getKey(): string {
-        return this.email;
+        return this.key;
     }
 
     getFilterableFields(): Map<string, any> {
         let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('lastname', this.lastname);
+        map.set('document', this.document);
         map.set('email', this.email);
+        map.set('password', this.password);
+        map.set('phone', this.phone);
+        map.set('active', this.active);
         return map;
     }
 
     getSortableFields(): Map<string, any> {
         let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('lastname', this.lastname);
+        map.set('document', this.document);
         map.set('email', this.email);
+        map.set('password', this.password);
+        map.set('phone', this.phone);
+        map.set('active', this.active);
         return map;
     }
 }
 
-class StorableAuth extends Auth implements IStorable<Auth> {
-    getCollection(): ICollection<Auth> {
-        return auths;
+class ApiUser extends User implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new ErrorResponse('0199')
     }
-    getLocalStorage(): string {
-        return 'auths';
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new ErrorResponse('0199')
     }
-}
 
-class Mark implements IMark, IModel  {
-  private id: string;
-  private name: string;
-  private lastName: string;
-  private idEmployee: string;
-  private date: Date;
-  private entryDate: Date;
-  private exitDate: Date;
-  private pause: IPause;
-  private location: string ;
-  private ccc: string;
-  private workplace: string ;
-  private status: string ;
-  private key: string;
-
-
-  constructor(name?: string, lastName?: string, idEmployee?: string, date?: Date, entryDate?: Date, exitDate?: Date, pause?: IPause, location?: string, ccc?: string, workplace?: string, status?: string) {
-    this.id = new KeyGenerator().generate(15);
-    this.name = name || '';
-    this.lastName = lastName || '';
-    this.idEmployee = idEmployee || '';
-    this.date = date || new Date();
-    this.entryDate = entryDate || new Date();
-    this.exitDate = exitDate || new Date();
-    this.pause = pause || { StartPause: new Date(), EndPause: new Date() };
-    this.location = location || '';
-    this.ccc = ccc || '';
-    this.workplace = workplace || '';
-    this.status = status || '';
-    this.key = this.id || '';
-  }
-
-
-  public get Id(): string {
-    return this.id;
-  }
-
-  public set Id(value: string) {
-    this.id = value;
-  }
-
-  public get Name(): string {
-    return this.name;
-  }
-
-  public set Name(value: string) {
-    this.name = value;
-  }
-
-  public get Lastname(): string {
-    return this.lastName;
-  }
-
-  public set Lastname(value: string) {
-    this.lastName = value;
-  }
-
-  public get IdEmployee(): string {
-    return this.idEmployee;
-  }
-
-  public set IdEmployee(value: string) {
-    this.idEmployee = value;
-  }
-
-  public get Date(): Date {
-    return this.date;
-  }
-
-  public set Date(value: Date) {
-    this.date = value;
-  }
-
-  public get EntryDate(): Date {
-    return this.entryDate;
-  }
-
-  public set EntryDate(value: Date) {
-    this.entryDate = value;
-  }
-
-  public get ExitDate(): Date {
-    return this.exitDate;
-  }
-
-  public set ExitDate(value: Date) {
-    this.exitDate = value;
-  }
-
-  public get Pause(): IPause {
-    return this.pause;
-  }
-
-  public set Pause(value: IPause) {
-    this.pause = value;
-  }
-
-  public get Location(): string {
-    return this.location;
-  }
-
-  public set Location(value: string) {
-    this.location = value;
-  }
-
-  public get Ccc(): string {
-    return this.ccc;
-  }
-
-  public set Ccc(value: string) {
-    this.ccc = value;
-  }
-
-  public get Workplace(): string {
-    return this.workplace;
-  }
-
-  public set Workplace(value: string) {
-    this.workplace = value;
-  }
-
-  public get Status(): string {
-    return this.status;
-  }
-
-  public set Status(value: string) {
-    this.status = value;
-  }
-
-  public get Key() {
-    return this.key;
-  }
-
-  public set Key(value: string) {
-    this.key = value;
-  }
-
-  getKey(): string {
-    return this.idEmployee;
-  }
-
-  getFilterableFields(): Map<string, any> {
-    let map = new Map<string, any>();
-    map.set('name', this.name);
-    map.set('lastname', this.lastName);
-    map.set('idEmployee', this.idEmployee);
-    map.set('date', this.date);
-    map.set('entryDate', this.entryDate);
-    map.set('exitDate', this.exitDate);
-    map.set('pause', this.pause);
-    map.set('location', this.location);
-    map.set('ccc', this.ccc);
-    map.set('workplace', this.workplace);
-    map.set('status', this.status);
-    return map;
-  }
-
-  getSortableFields(): Map<string, any> {
-    let map = new Map<string, any>();
-    map.set('name', this.name);
-    map.set('lastname', this.lastName);
-    map.set('idEmployee', this.idEmployee);
-    map.set('date', this.date);
-    map.set('entryDate', this.entryDate);
-    map.set('exitDate', this.exitDate);
-    map.set('pause', this.pause);
-    map.set('location', this.location);
-    map.set('ccc', this.ccc);
-    map.set('workplace', this.workplace);
-    map.set('status', this.status);
-    return map;
-  }
-
-}
-
-class StorableMark extends Mark implements IStorable<Mark> {
-    getCollection(): ICollection<Mark> {
-        return marks;
+    localFilter(): boolean {
+        return false;
     }
-    getLocalStorage(): string {
-        return 'marks';
+
+    parseDataToSend(data: any) {
+        throw new ErrorResponse('0199')
     }
-}
 
-class User implements IUser, IModel  {
-  private name: string;
-  private lastname: string;
-  private document: string;
-  private email: string;
-  private password: string;
-  private phone: string;
-  private active: boolean;
-  private key: string;
-
-  constructor(name?: string, lastname?: string, document?: string, email?: string, password?: string, phone?: string, active?: boolean) {
-    this.name = name || '';
-    this.lastname = lastname || '';
-    this.document = document || '';
-    this.email = email || '';
-    this.password = password || '';
-    this.phone = phone || '';
-    this.active = active || true;
-    this.key = document || '';
-  }
-
-  public get Name(): string {
-    return this.name;
-  }
-
-  public set Name(value: string) {
-    this.name = value;
-  }
-
-  public get Lastname(): string {
-    return this.lastname;
-  }
-
-  public set Lastname(value: string) {
-    this.lastname = value;
-  }
-
-  public get Document(): string {
-    return this.document;
-  }
-
-  public set Document(value: string) {
-    this.document = value;
-  }
-
-  public get Email(): string {
-    return this.email;
-  }
-
-  public set Email(value: string) {
-    this.email = value;
-  }
-
-  public get Password(): string {
-    return this.password;
-  }
-
-  public set Password(value: string) {
-    this.password = value;
-  }
-
-  public get Phone(): string {
-    return this.phone;
-  }
-
-  public set Phone(value: string) {
-    this.phone = value;
-  }
-
-  public get Active(): boolean {
-    return this.active;
-  }
-
-  public set Active(value: boolean) {
-    this.active = value;
-  }
-
-  public get Key() {
-    return this.key;
-  }
-
-  public set Key(value: string){
-    this.key = value;
-  }
-
-  public getKey(): string {
-    return this.key;
-  }
-
-  public getFilterableFields(): Map<string, any> {
-    let map = new Map<string, any>();
-
-    map.set('name', this.name);
-    map.set('lastname', this.lastname);
-    map.set('document', this.document);
-    map.set('email', this.email);
-    map.set('password', this.password);
-    map.set('phone', this.phone);
-    map.set('active', this.active);
-
-    return map;
-  }
-
-  public getSortableFields(): Map<string, any> {
-    let map = new Map<string, any>();
-
-    map.set('name', this.name);
-    map.set('lastname', this.lastname);
-    map.set('document', this.document);
-    map.set('email', this.email);
-    map.set('password', this.password);
-    map.set('phone', this.phone);
-    map.set('active', this.active);
-
-    return map;
-  }
+    parseDataToReceive(data: any) {
+        throw new ErrorResponse('0199')
+    }
 }
 
 class StorableUser extends User implements IStorable<User> {
@@ -3572,6 +6116,1264 @@ class StorableUser extends User implements IStorable<User> {
     }
 }
 
+class DocumentTag implements IDocumentTag, IModel {
+    private key: string;
+    private name: string;
+    private apiObject: any;
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Name(): string {
+        return this.name;
+    }
+
+    public set Name(value: string) {
+        this.name = value;
+    }
+
+    constructor(name?: string) {
+        this.name = name || '';
+        this.key = KeyGenerator.generate(15);
+        this.apiObject = {};
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        return map;
+    }
+}
+
+class StorableDocumentTag extends DocumentTag implements IStorable<DocumentTag> {
+    getCollection(): ICollection<DocumentTag> {
+        return documentTags;
+    }
+    getLocalStorage(): string {
+        return 'documentTags';
+    }
+}
+
+class ApiDocumentTag extends DocumentTag implements IApiModel {
+
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        if(currentMethod == GET_MULTIPLE) return GET_METHOD;
+        if(currentMethod == CREATE_SINGLE) return POST_METHOD;
+        if(currentMethod == UPDATE_SINGLE) return POST_METHOD;
+        throw new Error("Method not implemented.");
+    }
+
+    parseDataToSend(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        if(currentMethod == CREATE_SINGLE)
+            return {'name': data.Name};
+        if(currentMethod == UPDATE_SINGLE){
+            data.ApiObject.name = data.name;
+            return data.ApiObject;
+        }
+        throw new Error("Method not implemented.");
+    }
+
+    parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
+        let tag = new DocumentTag();
+        tag.Name = data.name;
+        tag.ApiObject = data;
+        tag.Key = data.id;
+        return tag;
+        throw new Error("Method not implemented.");
+    }
+
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        return true;
+    }
+
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        if(currentMethod == GET_MULTIPLE){
+            return ['/ms/api/attachment/' + localStorage.getItem('domainName') + '/' + localStorage.getItem('login') + '/tag?domain=' + localStorage.getItem('domainId')];
+        }
+        if(currentMethod == CREATE_SINGLE){
+            return ['/ms/api/attachment/' + localStorage.getItem('domainName') + '/' + localStorage.getItem('login') + '/tag/create'];
+        }
+        if(currentMethod == UPDATE_SINGLE){
+            return ['/ms/api/attachment/' + localStorage.getItem('domainName') + '/' + localStorage.getItem('login') + '/tag/edit/' + filter?.fields?.get('id')];
+        }
+        throw new ErrorResponse('0199')
+    }
+
+}
+
+class Contact implements IContact, IModel {
+    private key: string;
+    private apiObject: any;
+    private name: string;
+    private comercialName: string;
+    private country: string;
+    private document: string;
+    private address: string;
+    private email: string;
+    private phone: string;
+    private web: string;
+    private bankAccount: string;
+    private paymentMethod: IPaymentMethod;
+    private transactionType: IInvoiceTransactionType;
+    private irpf: boolean;
+    private re: boolean;
+
+    constructor(name?: string, comercialName?: string, country?: string, document?: string, address?: string, email?: string, phone?: string, web?: string, bankAccount?: string, paymentMethod?: IPaymentMethod, transactionType?: IInvoiceTransactionType, irpf?: boolean, re?: boolean) {
+        this.key = KeyGenerator.generate(15);
+        this.apiObject = {};
+        this.name = name || '';
+        this.comercialName = comercialName || '';
+        this.country = country || '';
+        this.document = document || '';
+        this.address = address || '';
+        this.email = email || '';
+        this.phone = phone || '';
+        this.web = web || '';
+        this.bankAccount = bankAccount || '';
+        this.paymentMethod = paymentMethod || new PaymentMethod();
+        this.transactionType = transactionType || new InvoiceTransactionType();
+        this.irpf = irpf || false;
+        this.re = re || false;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Name(): string {
+        return this.name;
+    }
+
+    public set Name(value: string) {
+        this.name = value;
+    }
+
+    public get ComercialName(): string {
+        return this.comercialName;
+    }
+
+    public set ComercialName(value: string) {
+        this.comercialName = value;
+    }
+
+    public get Country(): string {
+        return this.country;
+    }
+
+    public set Country(value: string) {
+        this.country = value;
+    }
+
+    public get Document(): string {
+        return this.document;
+    }
+
+    public set Document(value: string) {
+        this.document = value;
+    }
+
+    public get Address(): string {
+        return this.address;
+    }
+
+    public set Address(value: string) {
+        this.address = value;
+    }
+
+    public get Email(): string {
+        return this.email;
+    }
+
+    public set Email(value: string) {
+        this.email = value;
+    }
+
+    public get Phone(): string {
+        return this.phone;
+    }
+
+    public set Phone(value: string) {
+        this.phone = value;
+    }
+
+    public get Web(): string {
+        return this.web;
+    }
+
+    public set Web(value: string) {
+        this.web = value;
+    }
+
+    public get BankAccount(): string {
+        return this.bankAccount;
+    }
+
+    public set BankAccount(value: string) {
+        this.bankAccount = value;
+    }
+
+    public get PaymentMethod(): IPaymentMethod {
+        return this.paymentMethod;
+    }
+
+    public set PaymentMethod(value: IPaymentMethod) {
+        this.paymentMethod = value;
+    }
+
+    public get TransactionType(): IInvoiceTransactionType {
+        return this.transactionType;
+    }
+
+    public set TransactionType(value: IInvoiceTransactionType) {
+        this.transactionType = value;
+    }
+
+    public get IRPF(): boolean {
+        return this.irpf;
+    }
+
+    public set IRPF(value: boolean) {
+        this.irpf = value;
+    }
+
+    public get RE(): boolean {
+        return this.re;
+    }
+
+    public set RE(value: boolean) {
+        this.re = value;
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('comercialName', this.comercialName);
+        map.set('country', this.country);
+        map.set('document', this.document);
+        map.set('address', this.address);
+        map.set('email', this.email);
+        map.set('phone', this.phone);
+        map.set('web', this.web);
+        return map;
+    }
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('name', this.name);
+        map.set('comercialName', this.comercialName);
+        map.set('country', this.country);
+        map.set('document', this.document);
+        map.set('address', this.address);
+        map.set('email', this.email);
+        map.set('phone', this.phone);
+        map.set('web', this.web);
+        return map;
+    }
+
+}
+
+class StorableContact implements IStorable<Contact> {
+    getCollection(): ICollection<Contact> {
+        return contacts;
+    }
+    getLocalStorage(): string {
+        return 'contacts';
+    }
+}
+
+class ApiContact implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
+}
+
+class PaymentMethod extends SimpleValue implements IPaymentMethod, IModel {}
+
+class StorablePaymentMethod implements IStorable<PaymentMethod> {
+    getCollection(): ICollection<PaymentMethod> {
+        return paymentMethods;
+    }
+    getLocalStorage(): string {
+        return 'paymentMethods';
+    }
+}
+
+class ApiPaymentMethod implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
+}
+
+class InvoiceTransactionType extends SimpleValue implements IInvoiceTransactionType, IModel {}
+
+class StorableInvoiceTransactionType implements IStorable<InvoiceTransactionType> {
+    getCollection(): ICollection<InvoiceTransactionType> {
+        return invoiceTransactionTypes;
+    }
+    getLocalStorage(): string {
+        return 'invoiceTransactionTypes';
+    }
+}
+
+class ApiInvoiceTransactionType implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
+}
+
+
+class IRPF extends SimpleValue implements IIRPF, IModel{
+    private type: string;
+
+    constructor(value?: string, type?: string) {
+        super(value);
+        this.type = type || '';
+    }
+
+    public get Type() {
+        return this.type;
+    }
+
+    public set Type(value: string) {
+        this.type = value;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('value', this.value);
+        map.set('type', this.type);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('value', this.value);
+        map.set('type', this.type);
+        return map;
+    }
+}
+
+class StorableIRPF implements IStorable<IRPF> {
+    getCollection(): ICollection<IRPF> {
+        return irpf;
+    }
+    getLocalStorage(): string {
+        return 'irpf';
+    }
+}
+
+class Tax extends SimpleValue implements ITax, IModel {}
+
+class StorableTax implements IStorable<Tax> {
+    getCollection(): ICollection<Tax> {
+        return taxes;
+    }
+    getLocalStorage(): string {
+        return 'taxes';
+    }
+}
+
+class ProductCategory extends SimpleValue implements IProductCategory, IModel{}
+
+class StorableProductCategory implements IStorable<ProductCategory> {
+    getCollection(): ICollection<ProductCategory> {
+        return productCategories;
+    }
+    getLocalStorage(): string {
+        return 'productCategories';
+    }
+}
+
+class ProductClass extends SimpleValue implements IProductClass, IModel{}
+
+class StorableProductClass implements IStorable<ProductClass> {
+    getCollection(): ICollection<ProductClass> {
+        return productClasses;
+    }
+    getLocalStorage(): string {
+        return 'productClasses';
+    }
+}
+
+class ProductType extends SimpleValue implements IProductType, IModel{}
+
+class StorableProductType implements IStorable<ProductType> {
+    getCollection(): ICollection<ProductType> {
+        return productTypes;
+    }
+    getLocalStorage(): string {
+        return 'productTypes';
+    }
+}
+
+class ProductStatus extends SimpleValue implements IProductStatus, IModel{}
+
+class StorableProductStatus implements IStorable<ProductStatus> {
+    getCollection(): ICollection<ProductStatus> {
+        return productStatuses;
+    }
+    getLocalStorage(): string {
+        return 'productStatuses';
+    }
+}
+
+class ProductCode extends SimpleValue implements IProductCode, IModel{}
+
+class StorableProductCode implements IStorable<ProductCode> {
+    getCollection(): ICollection<ProductCode> {
+        return productCodes;
+    }
+    getLocalStorage(): string {
+        return 'productCodes';
+    }
+}
+
+class Product implements IProduct, IModel {
+    private key: string;
+    private apiObject: any;
+    private code: IProductCode;
+    private name: string;
+    private category: IProductCategory;
+    private class: IProductClass;
+    private type: IProductType;
+    private status: IProductStatus;
+    private tax: ITax;
+    private irpf: IIRPF;
+    private barCode: string;
+    private description: string;
+    private costPrice: number;
+    private benefit: number;
+    private price: number;
+    private pvp: number;
+
+    constructor(code?: IProductCode, name?: string, category?: IProductCategory, productClass?: IProductClass, type?: IProductType, status?: IProductStatus,
+        tax?: ITax, irpf?: IIRPF, barCode?: string, description?: string, costPrice?: number, benefit?: number, price?: number, pvp?: number) {
+        this.apiObject = {};
+        this.key = KeyGenerator.generate(15);
+        this.code = code || new ProductCode();
+        this.name = name || '';
+        this.category = category || new ProductCategory();
+        this.class = productClass || new ProductClass();
+        this.type = type || new ProductType();
+        this.status = status || new ProductStatus();
+        this.tax = tax || new Tax();
+        this.irpf = irpf || new IRPF();
+        this.barCode = barCode || '';
+        this.description = description || '';
+        this.costPrice = costPrice || 0;
+        this.benefit = benefit || 0;
+        this.price = price || 0;
+        this.pvp = pvp || 0;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Code() {
+        return this.code;
+    }
+
+    public set Code(value: IProductCode) {
+        this.code = value;
+    }
+
+    public get Name() {
+        return this.name;
+    }
+
+    public set Name(value: string) {
+        this.name = value;
+    }
+
+    public get Category() {
+        return this.category;
+    }
+
+    public set Category(value: IProductCategory) {
+        this.category = value;
+    }
+
+    public get Class() {
+        return this.class;
+    }
+
+    public set Class(value: IProductClass) {
+        this.class = value;
+    }
+
+    public get Type() {
+        return this.type;
+    }
+
+    public set Type(value: IProductType) {
+        this.type = value;
+    }
+
+    public get Status() {
+        return this.status;
+    }
+
+    public set Status(value: IProductStatus) {
+        this.status = value;
+    }
+
+    public get Tax() {
+        return this.tax;
+    }
+
+    public set Tax(value: ITax) {
+        this.tax = value;
+    }
+
+    public get IRPF() {
+        return this.irpf;
+    }
+
+    public set IRPF(value: IIRPF) {
+        this.irpf = value;
+    }
+
+    public get BarCode() {
+        return this.barCode;
+    }
+
+    public set BarCode(value: string) {
+        this.barCode = value;
+    }
+
+    public get Description() {
+        return this.description;
+    }
+
+    public set Description(value: string) {
+        this.description = value;
+    }
+
+    public get CostPrice() {
+        return this.costPrice;
+    }
+
+    public set CostPrice(value: number) {
+        this.costPrice = value;
+    }
+
+    public get Benefit() {
+        return this.benefit;
+    }
+
+    public set Benefit(value: number) {
+        this.benefit = value;
+    }
+
+    public get Price() {
+        return this.price;
+    }
+
+    public set Price(value: number) {
+        this.price = value;
+    }
+
+    public get Pvp() {
+        return this.pvp;
+    }
+
+    public set Pvp(value: number) {
+        this.pvp = value;
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('code', this.code);
+        map.set('name', this.name);
+        map.set('category', this.category);
+        map.set('class', this.class);
+        map.set('type', this.type);
+        map.set('status', this.status);
+        map.set('tax', this.tax);
+        map.set('irpf', this.irpf);
+        map.set('barCode', this.barCode);
+        map.set('description', this.description);
+        map.set('costPrice', this.costPrice);
+        map.set('benefit', this.benefit);
+        map.set('price', this.price);
+        map.set('pvp', this.pvp);
+        return map;
+    }
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string, any>();
+        map.set('code', this.code);
+        map.set('name', this.name);
+        map.set('category', this.category);
+        map.set('class', this.class);
+        map.set('type', this.type);
+        map.set('status', this.status);
+        map.set('tax', this.tax);
+        map.set('irpf', this.irpf);
+        map.set('barCode', this.barCode);
+        map.set('description', this.description);
+        map.set('costPrice', this.costPrice);
+        map.set('benefit', this.benefit);
+        map.set('price', this.price);
+        map.set('pvp', this.pvp);
+        return map;
+    }
+}
+
+class StorableProduct implements IStorable<Product> {
+    getCollection(): ICollection<Product> {
+        return products;
+    }
+    getLocalStorage(): string {
+        return 'products';
+    }
+}
+
+class InvoiceSerie extends SimpleValue implements IInvoiceSerie, IModel {}
+
+class StorableInvoiceSerie implements IStorable<InvoiceSerie> {
+    getCollection(): ICollection<InvoiceSerie> {
+        return invoiceSeries;
+    }
+    getLocalStorage(): string {
+        return 'invoiceSeries';
+    }
+}
+
+class InvoiceActivity extends SimpleValue implements IInvoiceActivity, IModel {}
+
+class StorableInvoiceActivity implements IStorable<InvoiceActivity> {
+    getCollection(): ICollection<InvoiceActivity> {
+        return invoiceActivities;
+    }
+    getLocalStorage(): string {
+        return 'invoiceActivities';
+    }
+}
+
+class InvoiceCategory extends SimpleValue implements IInvoiceCategory, IModel {}
+
+class StorableInvoiceCategory implements IStorable<InvoiceCategory> {
+    getCollection(): ICollection<InvoiceCategory> {
+        return invoiceCategories;
+    }
+    getLocalStorage(): string {
+        return 'invoiceCategories';
+    }
+}
+
+class InvoiceLine implements IInvoiceLine, IModel {
+    key: string;
+    apiObject: any;
+    product: IProduct;
+    quantity: number;
+    price: number;
+    discount: number;
+    totalPrice: number;
+    tax: ITax;
+    irpf: IIRPF;
+
+    constructor(product?: IProduct,quantity?: number,price?: number,discount?: number,totalPrice?: number,tax?: ITax,irpf?: IIRPF){
+        this.apiObject = {};
+        this.key = KeyGenerator.generate(15);
+        this.product = product || new Product();
+        this.quantity = quantity || 0;
+        this.price = price || 0;
+        this.discount = discount || 0;
+        this.totalPrice = totalPrice || 0;
+        this.tax = tax || new Tax();
+        this.irpf = irpf || new IRPF();
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Product(): IProduct {
+        return this.product;
+    }
+
+    public set Product(value: IProduct) {
+        this.product = value;
+    }
+
+    public get Quantity(): number {
+        return this.quantity;
+    }
+
+    public set Quantity(value: number) {
+        this.quantity = value;
+    }
+
+    public get Price(): number {
+        return this.price;
+    }
+
+    public set Price(value: number) {
+        this.price = value;
+    }
+
+    public get Discount(): number {
+        return this.discount;
+    }
+
+    public set Discount(value: number) {
+        this.discount = value;
+    }
+
+    public get TotalPrice(): number {
+        return this.totalPrice;
+    }
+
+    public set TotalPrice(value: number) {
+        this.totalPrice = value;
+    }
+
+    public get Tax(): ITax {
+        return this.tax;
+    }
+
+    public set Tax(value: ITax) {
+        this.tax = value;
+    }
+
+    public get IRPF(): IIRPF {
+        return this.irpf;
+    }
+
+    public set IRPF(value: IIRPF) {
+        this.irpf = value;
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        return new Map<string,any>();
+    }
+
+    getSortableFields(): Map<string, any> {
+        return new Map<string,any>();
+    }
+}
+
+class InvoiceExpirationLine implements IInvoiceExpirationLine, IModel {
+    date: Date;
+    paymentMethod: IPaymentMethod;
+    bankAccount: string;
+    amount: number;
+    key: string;
+    apiObject: any;
+    
+    constructor(date?: Date, paymentMethod?: IPaymentMethod, bankAccount?: string, amount?: number){
+        this.apiObject = {};
+        this.key = KeyGenerator.generate(15);
+        this.date = date || new Date();
+        this.paymentMethod = paymentMethod || new PaymentMethod();
+        this.bankAccount = bankAccount || '';
+        this.amount = amount || 0;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Key() {
+        return this.key;
+    }
+
+    public set Key(value: string) {
+        this.key = value;
+    }
+
+    public get Date() {
+        return this.date;
+    }
+
+    public set Date(value: Date) {
+        this.date = value;
+    }
+
+    public get PaymentMethod(): IPaymentMethod {
+        return this.paymentMethod;
+    }
+
+    public set PaymentMethod(value: IPaymentMethod) {
+        this.paymentMethod = value;
+    }
+
+    public get BankAccount(): string {
+        return this.bankAccount;
+    }
+
+    public set BankAccount(value: string) {
+        this.bankAccount = value;
+    }
+
+    public get Amount(): number {
+        return this.amount;
+    }
+
+    public set Amount(value: number) {
+        this.amount = value;
+    }
+
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string,any>();
+        map.set('date', this.date);
+        map.set('paymentMethod', this.paymentMethod.Value);
+        map.set('bankAccount', this.bankAccount);
+        map.set('amount', this.amount);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string,any>();
+        map.set('date', this.date);
+        map.set('paymentMethod', this.paymentMethod.Value);
+        map.set('bankAccount', this.bankAccount);
+        map.set('amount', this.amount);
+        return map;
+    }
+}
+
+class Invoice implements IInvoice, IModel {
+    key: string;
+    apiObject: any;
+    serie: IInvoiceSerie;
+    invoiceNumber: string;
+    date: Date;
+    totalAmount: number;
+    contact: IContact;
+    category: IInvoiceCategory;
+    lines: ICollection<IInvoiceLine>;
+    transactionType: IInvoiceTransactionType;
+    activity: IInvoiceActivity;
+    criCaja: boolean;
+    re: boolean;
+    regAgri: boolean;
+    tax: ITax;
+    taxBase: number;
+    taxQuota: number;
+    irpf: IIRPF;
+    irpfbase: number;
+    irpfquota: number;
+    invoiceExpirationLines: ICollection<IInvoiceExpirationLine>;
+    type: InvoiceType;
+    rectified: boolean;
+    status: InvoiceStatus;
+
+    constructor(serie?: IInvoiceSerie, invoiceNumber?: string, date?: Date, totalAmount?: number, contact?: IContact, category?: IInvoiceCategory, 
+    lines?: ICollection<IInvoiceLine>, transactionType?: IInvoiceTransactionType, activity?: IInvoiceActivity, criCaja?: boolean, re?: boolean, 
+    regAgri?: boolean, tax?: ITax, taxBase?: number, taxQuota?: number, irpf?: IIRPF, irpfbase?: number, irpfquota?: number, type?: InvoiceType, 
+    rectified?: boolean, status?: InvoiceStatus){
+        this.serie = serie || new InvoiceSerie();
+        this.invoiceNumber = invoiceNumber || '';
+        this.date = date || new Date();
+        this.totalAmount = totalAmount || 0;
+        this.contact = contact || new Contact();
+        this.category = category || new InvoiceCategory();
+        this.lines = lines || new Collection<IInvoiceLine>();
+        this.transactionType = transactionType || new InvoiceTransactionType();
+        this.activity = activity || new InvoiceActivity();
+        this.criCaja = criCaja || false;
+        this.re = re || false;
+        this.regAgri = regAgri || false;
+        this.tax = tax || new Tax();
+        this.taxBase = taxBase || 0;
+        this.taxQuota = taxQuota || 0;
+        this.irpf = irpf || new IRPF();
+        this.irpfbase = irpfbase || 0;
+        this.irpfquota = irpfquota || 0;
+        this.invoiceExpirationLines = new Collection<IInvoiceExpirationLine>();
+        this.key = KeyGenerator.generate(15);
+        this.apiObject = {};
+        this.type = type || InvoiceType.GASTO;
+        this.rectified = rectified || false;
+        this.status = status || InvoiceStatus.A_CONTABILIZAR;
+    }
+
+    public get Status(): InvoiceStatus {
+        return this.status;
+    }
+
+    public set Status(value: InvoiceStatus) {
+        this.status = value;
+    }
+
+    public get Type(): InvoiceType {
+        return this.type;
+    }
+
+    public set Type(value: InvoiceType) {
+        this.type = value;
+    }
+
+    public get Rectified(): boolean {
+        return this.rectified;
+    }
+
+    public set Rectified(value: boolean) {
+        this.rectified = value;
+    }
+
+    public get Key(){
+        return this.key;
+    }
+
+    public set Key(value: string){
+        this.key = value;
+    }
+
+    public get ApiObject(): any {
+        return this.apiObject;
+    }
+
+    public set ApiObject(value: any) {
+        this.apiObject = value;
+    }
+
+    public get Serie(): IInvoiceSerie {
+        return this.serie;
+    }
+
+    public set Serie(value: IInvoiceSerie) {
+        this.serie = value;
+    }
+
+    public get InvoiceNumber(): string {
+        return this.invoiceNumber;
+    }
+
+    public set InvoiceNumber(value: string) {
+        this.invoiceNumber = value;
+    }
+
+    public get Date(): Date {
+        return this.date;
+    }
+
+    public set Date(value: Date) {
+        this.date = value;
+    }
+
+    public get TotalAmount(): number {
+        return this.totalAmount;
+    }
+
+    public set TotalAmount(value: number) {
+        this.totalAmount = value;
+    }
+
+    public get Contact(): IContact {
+        return this.contact;
+    }
+
+    public set Contact(value: IContact) {
+        this.contact = value;
+    }
+
+    public get Category(): IInvoiceCategory {
+        return this.category;
+    }
+
+    public set Category(value: IInvoiceCategory) {
+        this.category = value;
+    }
+
+    public get Lines(): ICollection<IInvoiceLine> {
+        return this.lines;
+    }
+
+    public set Lines(value: ICollection<IInvoiceLine>) {
+        this.lines = value;
+    }
+
+    public get TransactionType(): IInvoiceTransactionType {
+        return this.transactionType;
+    }
+
+    public set TransactionType(value: IInvoiceTransactionType) {
+        this.transactionType = value;
+    }
+
+    public get Activity(): IInvoiceActivity {
+        return this.activity;
+    }
+
+    public set Activity(value: IInvoiceActivity) {
+        this.activity = value;
+    }
+
+    public get CriCaja(): boolean {
+        return this.criCaja;
+    }
+
+    public set CriCaja(value: boolean) {
+        this.criCaja = value;
+    }
+
+    public get RE(): boolean {
+        return this.re;
+    }
+
+    public set RE(value: boolean) {
+        this.re = value;
+    }
+
+    public get RegAgri(): boolean {
+        return this.regAgri;
+    }
+
+    public set RegAgri(value: boolean) {
+        this.regAgri = value;
+    }
+
+    public get Tax(): ITax {
+        return this.tax;
+    }
+
+    public set Tax(value: ITax) {
+        this.tax = value;
+    }
+
+    public get TaxBase(): number {
+        return this.taxBase;
+    }
+
+    public set TaxBase(value: number) {
+        this.taxBase = value;
+    }
+
+    public get TaxQuota(): number {
+        return this.taxQuota;
+    }
+
+    public set TaxQuota(value: number) {
+        this.taxQuota = value;
+    }
+
+    public get IRPF(): IIRPF {
+        return this.irpf;
+    }
+
+    public set IRPF(value: IIRPF) {
+        this.irpf = value;
+    }
+
+    public get IRPFBase(): number {
+        return this.irpfbase;
+    }
+
+    public set IRPFBase(value: number) {
+        this.irpfbase = value;
+    }
+
+    public get IRPFQuota(): number {
+        return this.irpfquota;
+    }
+
+    public set IRPFQuota(value: number) {
+        this.irpfquota = value;
+    }
+
+    public get InvoiceExpirationLines(): ICollection<IInvoiceExpirationLine> {
+        return this.invoiceExpirationLines;
+    }
+
+    public set InvoiceExpirationLines(value: ICollection<IInvoiceExpirationLine>) {
+        this.invoiceExpirationLines = value;
+    }
+    
+    getKey(): string {
+        return this.key;
+    }
+
+    getFilterableFields(): Map<string, any> {
+        let map = new Map<string,any>();
+        map.set('serie', this.serie.Value);
+        map.set('invoiceNumber', this.invoiceNumber);
+        map.set('date', this.date);
+        map.set('totalAmount', this.totalAmount);
+        map.set('contact', this.contact.Name);
+        map.set('category', this.category.Value);
+        map.set('transactionType', this.transactionType.Value);
+        map.set('activity', this.activity.Value);
+        map.set('criCaja', this.criCaja);
+        map.set('re', this.re);
+        map.set('regAgri', this.regAgri);
+        map.set('tax', this.tax.Value);
+        map.set('taxBase', this.taxBase);
+        map.set('taxQuota', this.taxQuota);
+        map.set('irpf', this.irpf.Value);
+        map.set('irpfbase', this.irpfbase);
+        map.set('irpfquota', this.irpfquota);
+        map.set('type', this.type);
+        map.set('rectified', this.rectified);
+        return map;
+    }
+
+    getSortableFields(): Map<string, any> {
+        let map = new Map<string,any>();
+        map.set('serie', this.serie.Value);
+        map.set('invoiceNumber', this.invoiceNumber);
+        map.set('date', this.date);
+        map.set('totalAmount', this.totalAmount);
+        map.set('contact', this.contact.Name);
+        map.set('category', this.category.Value);
+        map.set('transactionType', this.transactionType.Value);
+        map.set('activity', this.activity.Value);
+        map.set('criCaja', this.criCaja);
+        map.set('re', this.re);
+        map.set('regAgri', this.regAgri);
+        map.set('tax', this.tax.Value);
+        map.set('taxBase', this.taxBase);
+        map.set('taxQuota', this.taxQuota);
+        map.set('irpf', this.irpf.Value);
+        map.set('irpfbase', this.irpfbase);
+        map.set('irpfquota', this.irpfquota);
+        map.set('type', this.type);
+        map.set('rectified', this.rectified);
+        return map;
+    }
+}
+
+class StorableInvoice implements IStorable<Invoice> {
+    getCollection(): ICollection<Invoice> {
+        return invoices;
+    }
+    getLocalStorage(): string {
+        return 'invoices';
+    }
+}
+
+class ApiInvoice implements IApiModel {
+    getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+        throw new Error("Method not implemented.");
+    }
+    getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToSend(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    parseDataToReceive(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+        throw new Error("Method not implemented.");
+    }
+    localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+        throw new Error("Method not implemented.");
+    }
+}
+
 
 /**
  *
@@ -3579,43 +7381,230 @@ class StorableUser extends User implements IStorable<User> {
  *
  */
 
+let productCodes: ICollection<ProductCode> = new Collection<ProductCode>();
+let storableProductCodes = new StorableProductCode();
+let localProductCodes = new LocalStorage<ProductCode>(ProductCode);
+productCodes = localProductCodes.read(storableProductCodes.getLocalStorage());
+if(productCodes.size() == 0){
+    productCodes.add(new ProductCode('0000'));
+    productCodes.add(new ProductCode('0001'));
+    productCodes.add(new ProductCode('0002'));
+    productCodes.add(new ProductCode('0003'));
+    productCodes.add(new ProductCode('0004'));
+    productCodes.add(new ProductCode('0005'));
+    localProductCodes.write(storableProductCodes.getLocalStorage(), productCodes);
+}
+
+let productCategories: ICollection<ProductCategory> = new Collection<ProductCategory>();
+let storableProductCategories = new StorableProductCategory();
+let localProductCategories = new LocalStorage<ProductCategory>(ProductCategory);
+productCategories = localProductCategories.read(storableProductCategories.getLocalStorage());
+if(productCategories.size() == 0){
+    productCategories.add(new ProductCategory('Categoria 1'));
+    productCategories.add(new ProductCategory('Categoria 2'));
+    productCategories.add(new ProductCategory('Categoria 3'));
+    localProductCategories.write(storableProductCategories.getLocalStorage(), productCategories);
+}
+
+let productClasses: ICollection<ProductClass> = new Collection<ProductClass>();
+let storableProductClasses = new StorableProductClass();
+let localProductClasses = new LocalStorage<ProductClass>(ProductClass);
+productClasses = localProductClasses.read(storableProductClasses.getLocalStorage())
+if(productClasses.size() == 0){
+    productClasses.add(new ProductClass('Clase 1'));
+    productClasses.add(new ProductClass('Clase 2'));
+    productClasses.add(new ProductClass('Clase 3'));
+    localProductClasses.write(storableProductClasses.getLocalStorage(), productClasses);
+}
+
+let productTypes: ICollection<ProductType> = new Collection<ProductType>();
+let storableProductTypes = new StorableProductType();
+let localProductTypes = new LocalStorage<ProductType>(ProductType);
+productTypes = localProductTypes.read(storableProductTypes.getLocalStorage());
+if(productTypes.size() == 0){
+    productTypes.add(new ProductType('Tipo 1'));
+    productTypes.add(new ProductType('Tipo 2'));
+    productTypes.add(new ProductType('Tipo 3'));
+    localProductTypes.write(storableProductTypes.getLocalStorage(), productTypes);
+}
+
+let productStatuses: ICollection<ProductStatus> = new Collection<ProductStatus>();
+let storableProductStatuses = new StorableProductStatus();
+let localProductStatuses = new LocalStorage<ProductStatus>(ProductStatus);
+productStatuses = localProductStatuses.read(storableProductStatuses.getLocalStorage());
+if(productStatuses.size() == 0){
+    productStatuses.add(new ProductStatus('ProductStatus 1'));
+    productStatuses.add(new ProductStatus('ProductStatus 2'));
+    productStatuses.add(new ProductStatus('ProductStatus 3'));
+    productStatuses.add(new ProductStatus('ProductStatus 4'));
+    localProductStatuses.write(storableProductStatuses.getLocalStorage(), productStatuses);
+}
+
+let taskHolders: ICollection<TaskHolder> = new Collection<TaskHolder>();
+let storableTaskHolders = new StorableTaskHolder();
+let localTaskHolders = new LocalStorage<TaskHolder>(TaskHolder);
+taskHolders = localTaskHolders.read(storableTaskHolders.getLocalStorage());
+if(taskHolders.size() == 0){
+    taskHolders.add(new TaskHolder('Asesor 1'));
+    taskHolders.add(new TaskHolder('Asesor 2'));
+    taskHolders.add(new TaskHolder('Asesor 3'));
+    localTaskHolders.write(storableTaskHolders.getLocalStorage(), taskHolders);
+}
+
+
+let irpf: ICollection<IRPF> = new Collection<IRPF>();
+let storableIRPF = new StorableIRPF();
+let localIRPF = new LocalStorage<IRPF>(IRPF);
+irpf = localIRPF.read(storableIRPF.getLocalStorage());
+if(irpf.size() == 0){
+    irpf.add(new IRPF('15', 'profesional'));
+    irpf.add(new IRPF('19', 'arrendamiento'));
+    localIRPF.write(storableIRPF.getLocalStorage(), irpf);
+}
+
+let taxes: ICollection<Tax> = new Collection<Tax>();
+let storableTaxes = new StorableTax();
+let localTaxes = new LocalStorage<Tax>(Tax);
+taxes = localTaxes.read(storableTaxes.getLocalStorage())
+if(taxes.size() == 0){
+    taxes.add(new Tax('9'));
+    taxes.add(new Tax('15'));
+    taxes.add(new Tax('19'));
+    taxes.add(new Tax('21'));
+    localTaxes.write(storableTaxes.getLocalStorage(), taxes);
+}
+
+let products: ICollection<Product> = new Collection<Product>();
+let storableProducts = new StorableProduct();
+let localProducts = new LocalStorage<Product>(Product);
+products = localProducts.read(storableProducts.getLocalStorage())
+if(products.size() == 0){
+    products.add(new Product(productCodes.toArray()[0], 'Producto 1', productCategories.toArray()[0], productClasses.toArray()[0], productCategories.toArray()[0], productTypes.toArray()[0], 
+        productStatuses.toArray()[0], irpf.toArray()[0], 'bar code 1', 'descripcion del producto', 32.23, 23.2, 132, 123));
+    products.add(new Product(productCodes.toArray()[1], 'Producto 2', productCategories.toArray()[1], productClasses.toArray()[1], productCategories.toArray()[1], productTypes.toArray()[1], 
+        productStatuses.toArray()[1], irpf.toArray()[1], 'bar code 2', 'descripcion del producto 2', 123, 54, 32, 323));
+    products.add(new Product(productCodes.toArray()[0], 'Producto 3', productCategories.toArray()[0], productClasses.toArray()[0], productCategories.toArray()[0], productTypes.toArray()[0], 
+        productStatuses.toArray()[0], irpf.toArray()[0], 'bar code 3', 'descripcion del producto 3', 23, 22, 32, 323));
+    localProducts.write(storableProducts.getLocalStorage(), products);
+}
+
+let paymentMethods: ICollection<PaymentMethod> = new Collection<PaymentMethod>();
+let storablePaymentMethods = new StorablePaymentMethod();
+let localPaymentMethods = new LocalStorage<PaymentMethod>(PaymentMethod);
+paymentMethods = localPaymentMethods.read(storablePaymentMethods.getLocalStorage())
+if(paymentMethods.size() == 0){
+    paymentMethods.add(new PaymentMethod('Transferencia'));
+    paymentMethods.add(new PaymentMethod('Tarjeta de crédito'));
+    paymentMethods.add(new PaymentMethod('Paypal'));
+    localPaymentMethods.write(storablePaymentMethods.getLocalStorage(), paymentMethods);
+}
+
+let invoiceTransactionTypes: ICollection<InvoiceTransactionType> = new Collection<InvoiceTransactionType>();
+let storableInvoiceTransactionTypes = new StorableInvoiceTransactionType();
+let localInvoiceTransactionTypes = new LocalStorage<InvoiceTransactionType>(InvoiceTransactionType);
+invoiceTransactionTypes = localInvoiceTransactionTypes.read(storableInvoiceTransactionTypes.getLocalStorage())
+if(invoiceTransactionTypes.size() == 0){
+    invoiceTransactionTypes.add(new InvoiceTransactionType('Tipo 1'));
+    invoiceTransactionTypes.add(new InvoiceTransactionType('Tipo 2'));
+    invoiceTransactionTypes.add(new InvoiceTransactionType('Tipo 3'));
+    localInvoiceTransactionTypes.write(storableInvoiceTransactionTypes.getLocalStorage(), invoiceTransactionTypes);
+}
+
+let contacts: ICollection<Contact> = new Collection<Contact>();
+let storableContacs = new StorableContact();
+let localContacts = new LocalStorage<Contact>(Contact);
+contacts = localContacts.read(storableContacs.getLocalStorage())
+if(contacts.size() == 0){ 
+    contacts.add(new Contact('Nombre del contacto', 'Comercial', 'España', '123456789', 'Calle falsa 123', 'asd@example.com', '2431412413', 'www.123.com', '123456789', paymentMethods.toArray()[0], invoiceTransactionTypes.toArray()[0], false, false));
+    contacts.add(new Contact('Contacto test', 'Nombre comercial', 'España', '123456789', 'Calle falsa asd', '123@example.com', '4123143232', 'www.qwe.com', '123456789', paymentMethods.toArray()[1], invoiceTransactionTypes.toArray()[1], false, false));
+    contacts.add(new Contact('Contacto de prueba', 'Comercial test', 'España', '123456789', 'Calle falsa 123', 'qwe@example.com', '537534534534', 'www.asd.com', '123456789', paymentMethods.toArray()[2], invoiceTransactionTypes.toArray()[2], false, false));
+    localContacts.write(storableContacs.getLocalStorage(), contacts);
+}
+
+let invoiceSeries: ICollection<InvoiceSerie> = new Collection<InvoiceSerie>();
+let storableInvoiceSeries = new StorableInvoiceSerie();
+let localInvoiceSeries = new LocalStorage<InvoiceSerie>(InvoiceSerie);
+invoiceSeries = localInvoiceSeries.read(storableInvoiceSeries.getLocalStorage());
+if(invoiceSeries.size() == 0){
+    invoiceSeries.add(new InvoiceSerie('Serie 1'));
+    invoiceSeries.add(new InvoiceSerie('Serie 2'));
+    invoiceSeries.add(new InvoiceSerie('Serie 3'));
+    localInvoiceSeries.write(storableInvoiceSeries.getLocalStorage(), invoiceSeries);
+}
+
+let invoiceActivities: ICollection<InvoiceActivity> = new Collection<InvoiceActivity>();
+let storableInvoiceActivities = new StorableInvoiceActivity();
+let localInvoiceActivities = new LocalStorage<InvoiceActivity>(InvoiceActivity);
+invoiceActivities = localInvoiceActivities.read(storableInvoiceActivities.getLocalStorage())
+if(invoiceActivities.size() == 0){
+    invoiceActivities.add(new InvoiceActivity('Actividad 1'));
+    invoiceActivities.add(new InvoiceActivity('Actividad 2'));
+    invoiceActivities.add(new InvoiceActivity('Actividad 3'));
+    localInvoiceActivities.write(storableInvoiceActivities.getLocalStorage(), invoiceActivities);
+}
+
+let invoiceCategories: ICollection<InvoiceCategory> = new Collection<InvoiceCategory>();
+let storableInvoiceCategories = new StorableInvoiceCategory();
+let localInvoiceCategories = new LocalStorage<InvoiceCategory>(InvoiceCategory);
+invoiceCategories = localInvoiceCategories.read(storableInvoiceCategories.getLocalStorage());
+if(invoiceCategories.size() == 0){
+    invoiceCategories.add(new InvoiceCategory('Categoria 1'));
+    invoiceCategories.add(new InvoiceCategory('Categoria 2'));
+    invoiceCategories.add(new InvoiceCategory('Categoria 3'));
+    localInvoiceCategories.write(storableInvoiceCategories.getLocalStorage(), invoiceCategories);
+}
+
+let invoices: ICollection<Invoice> = new Collection<Invoice>();
+let storableInvoices = new StorableInvoice();
+let localInvoices = new LocalStorage<Invoice>(Invoice);
+invoices = localInvoices.read(storableInvoices.getLocalStorage());
+let invoiceLines = new Collection<IInvoiceLine>();
+invoiceLines.add(new InvoiceLine(products.toArray()[0],1,20,0,20, taxes.toArray()[0], irpf.toArray()[0]));
+if(invoices.size() == 0){
+    invoices.add(new Invoice(invoiceSeries.toArray()[0], '1', new Date(), 200, contacts.toArray()[0], invoiceCategories.toArray()[0], invoiceLines,
+    invoiceTransactionTypes.toArray()[0], invoiceActivities.toArray()[0], false, false, false, taxes.toArray()[0], 10, 5, irpf.toArray()[0], 10, 5));
+    invoices.add(new Invoice(invoiceSeries.toArray()[0], '1', new Date(), 200, contacts.toArray()[0], invoiceCategories.toArray()[0], invoiceLines,
+    invoiceTransactionTypes.toArray()[0], invoiceActivities.toArray()[0], false, false, false, taxes.toArray()[0], 10, 5, irpf.toArray()[0], 10, 5));
+}
+
+let largeImage = "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"
+let pdf = "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bGFncyAzMgogICAvRm9udEJCb3ggWyAtMTAyMCAtNDYyIDE3OTMgMTIzMiBdCiAgIC9JdGFsaWNBbmdsZSAwCiAgIC9Bc2NlbnQgOTI4CiAgIC9EZXNjZW50IC0yMzUKICAgL0NhcEhlaWdodCAxMjMyCiAgIC9TdGVtViA4MAogICAvU3RlbUggODAKICAgL0ZvbnRGaWxlMiAxMSAwIFIKPj4KZW5kb2JqCjYgMCBvYmoKPDwgL1R5cGUgL0ZvbnQKICAgL1N1YnR5cGUgL1RydWVUeXBlCiAgIC9CYXNlRm9udCAvTlBKWUZRK0RlamFWdVNhbnMKICAgL0ZpcnN0Q2hhciAzMgogICAvTGFzdENoYXIgMjQzCiAgIC9Gb250RGVzY3JpcHRvciAxNSAwIFIKICAgL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcKICAgL1dpZHRocyBbIDMxNyAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDY5OCAwIDAgMCAwIDAgMjk0IDAgMCAwIDAgMCAwIDAgMCAwIDYzNCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDYxMiAwIDU0OSAwIDYxNSAwIDAgMCAyNzcgMCAwIDI3NyA5NzQgNjMzIDYxMSA2MzQgMCA0MTEgNTIwIDM5MiAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCA2MTEgXQogICAgL1RvVW5pY29kZSAxMyAwIFIKPj4KZW5kb2JqCjEgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzCiAgIC9LaWRzIFsgMiAwIFIgNyAwIFIgXQogICAvQ291bnQgMgo+PgplbmRvYmoKMTYgMCBvYmoKPDwgL1Byb2R1Y2VyIChjYWlybyAxLjE2LjAgKGh0dHBzOi8vY2Fpcm9ncmFwaGljcy5vcmcpKQogICAvQ3JlYXRpb25EYXRlIChEOjIwMjMwNTA4MDk0MTIzKzAyJzAwKQo+PgplbmRvYmoKMTcgMCBvYmoKPDwgL1R5cGUgL0NhdGFsb2cKICAgL1BhZ2VzIDEgMCBSCj4+CmVuZG9iagp4cmVmCjAgMTgKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDA4MDQ0IDAwMDAwIG4gCjAwMDAwMDEwOTAgMDAwMDAgbiAKMDAwMDAwMDk4MSAwMDAwMCBuIAowMDAwMDAwMDE1IDAwMDAwIG4gCjAwMDAwMDA5NTkgMDAwMDAgbiAKMDAwMDAwNzM3MiAwMDAwMCBuIAowMDAwMDAyMjg4IDAwMDAwIG4gCjAwMDAwMDIxNzkgMDAwMDAgbiAKMDAwMDAwMTMyMiAwMDAwMCBuIAowMDAwMDAyMTU2IDAwMDAwIG4gCjAwMDAwMDI1MjAgMDAwMDAgbiAKMDAwMDAwNjY3NCAwMDAwMCBuIAowMDAwMDA2Njk4IDAwMDAwIG4gCjAwMDAwMDcwNzcgMDAwMDAgbiAKMDAwMDAwNzEwMCAwMDAwMCBuIAowMDAwMDA4MTE1IDAwMDAwIG4gCjAwMDAwMDgyMzIgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSAxOAogICAvUm9vdCAxNyAwIFIKICAgL0luZm8gMTYgMCBSCj4+CnN0YXJ0eHJlZgo4Mjg1CiUlRU9GCg=="
+let smallImage = "iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAkFBMVEX///8iHx8AAAAfHBwbGBgdGhoaFhYYFBQWEhL8/Pz5+fnm5uYRDAz29vYhHR3w8PCMi4s0MTEOCAgrKCjr6+vb29uEg4PDwsJDQUEmIyO4t7dXVVVMSkrl5OQKAADQz8+qqamamZmhoKBmZWU9Ozuwr6/MzMy8vLxubW1gXl4xLy9JR0d1dHRSUFB9fHxcWlo9FQvaAAALMUlEQVR4nO2de3OqOhDAG0J4KCggKKLy8oWK+v2/3d2lnXNPW4KoWNIz+f1z7wzUyZLNvrLJeXuTSCQSiUQikUgkEolEIpFIJBKJRCKRSCQSiUQikUgkEolEIpEIiB3s9tttmuZ5mm6j/W5l9z2iLvH32bQ8LN3JnBmWpdP5xF0eymk28/seWSckWXF2iWFojFJKKuB/mGYY8825yIK+x/ckdnaajzSVfojFmArAf95lpapGJqd80PcoH8aeHRTvXToNVPO4CcPTcrFYnsKNe5wz/f2RGivr2a9clP7+Gus4U6rFNotimu+Dsfn+aDAOomwKyqsaDN8wvMPvW5J+dLBQPmrQ8yXbr+reATHLk27gTOreYf+7ZJyVlXwsdi/bpEEFx7u0GHm0msfLzvy5AT5J4GwslE9x8+TmzAx3zuRdxjCrnWoB2S8oLC8au/mqlZm0A4fgF1HJYvbqsXWBmc1VkM9imd9a68xViVaJavPslUPrhuFZAZXT5sWdGpecq4lXTuPXjKszEtWAcerL6P4/zUIdvo3hJt2PqjvM2QQ0VJ1cho/8dbLGUEfbzMS1qYOtq6JNzB8MUYbOUQMRw0jUOG6QVgIuZg8P0N5uQER9sxVTRDNycXiLZ7IFc3YEe6O5DyzjH6Bag9bpyeAriKuVvOtmTJ2SYBRtLJ/+nSFqAlPEyxuHFkMV7SANCkIdZ1G0QNxegB80rp0EljsUUSvEyhnNDAVcdOOszX2oEjrPhHKL0ZESdbPv6NcG+QR/TqQwPFh0+9HtEgyqvhYnmTIddIRdLpxhiCLmwugpumk1vPnFV5Gzvp6Xi7UT3TSUO4MSdhTFZQwLyF/1bdMr5ji5TBTFMjRV1QxLUdxp0JwmXTwIH0oxUikz8tBRNL2y2p4U66Mc/FEUtpRFY31t7IJ/VcQwNv5ZI5Q1KJQfnRX1QzCmquxDVL25TrpFxTgLsRKjmJDY4T9PLlSrpDMUY4MVYdeLqxIiMY4Of/HahSHKJJ5gCifckZr7szaqCm/HcpsESLJLi0mMtWDGDvwgYaZRop1fMuT72CswhRk3oUsxkCY0Drer8R+VM8er3I2rUjDfr/s4iYYAScYSp5C7ClMd60vGPP32CQZZVfRXNa4Me5WCl+1qnA+zglVoZTyLscXCGxsVtVPsX0lVXuMp6hAmkW16D2wcHaaQp2lJVVl0eUVQ0zliussVIqUQC+YdDPIZBmeVGLwAcrjE2CvkxwLvlR2t4Dj2BP5er5//n2PmgsHjzJE5pThD2wafZucQ8NEJZ54GpU7YqWdb44wICzlKOtvg6PlmFrGnZASOnWOp0gml8/TJIT5JoUOWUx99jS9g7bXyRsYxXmAFkvMZghMjVkMw8QMEsAz1af0zVGC2uZkeJODY1ZDz2lXrO02MXEonae0j24GAnLXYS7pAAKqk9YvVAT3vN9fPwBSE9f4sAENI3RZZsQ8eVVvUa/qMUGI05mUvxpxaMLj6zz/DBI+jwJ/B6MyqV1N7QkncZ6qPUYdWH1fZGUjYrq67w8g2rX8G5tia9pgHBwuNsPp58g+gwG6rXxkfQRWL+ok66P2aml0IlqDeXQ83MOxLq1+xq/iz3l/AMmDLHss1e/TI9aZuBRYybmcjBpVC10u4jQk99rgrHEHmNK//wgEsLm7W8AVMMZV6Y4prlPUYt20tMprX72gn/FHXv8v/UF6fEoIOTeot3QxH3dIIBnwJh/ioRwlTlLDeCO66mUNb6bUcZeYeSFj/rGFevtH0NfBRj3veecyVEKsbLT++ucV3OfFdzxJucQ7rzfwQ3LjXrodr4FgQwdb/TM9a+hYR8Bb1EYcPiY+2aPUrNqZga06G2LOlgRSQ5/Gr5Injxr+A9jLmFDLAVdJ5jx6/IWp7m2Ha1yqowZDG4xgleMZ46fFPgJG3ygk+g5Parihvugxe5JjSviNvLMVo13qHaKP9oC2MRFQpKUefXUosp8+ujEzjK9EeuxfWN0dnn7AWwFlqyRwkTJ8Y4NM01GnexiVMIu/h/zgqbs5xPkRGQfpe6zS4EA1eqQLEJ+rphiHc40shzx+sYS0f+t3NL3WwErwhTDVCrOYBJksdVitvbyIJe6+XvuVzUFOeT1iBKyde2WAKgzX4FI1TUq5+fXTss9QGBFWpiGdOsBg48kruLCYooMopR2J5QyfqU/2qXVCANeWvtRTPinhXjq2IzhY2L3CbxWagpKxdreeF7GGQBqdijfkVNpkYm6ymEBA4Rzxj4XG10ARfRI/9twtPKNEP3N58O8dtbkau+Zd8f5id8fCBqkXcem8Awbu67L/lGyNsj++yzGhijQhV5+HlL5cwKzcET9Z4Tc4uwk4FAQ7RjCHoMg4NFZngMEJhmBErYeFkmVNslBhbpqlGyoaDGcO1QaguQh8tdrU11g3NfEn1qkWIGZbnWe/HKqkxXzQ6gmrjo+x4sA+RYFPIofGVlXOYWNr/jW0jqlvHdd5YqLJxCjkbNj+Mfbk1iW/Yu+dcJwrMH2DFnntwohsnh3aWKFMIY5mPiN7Ym4jglQPZtCyKcprvd8FNE3mFcM4Q5JTXGCZxpLXJAAZjHxi3cQBYUbZuNQH8GHvI4rTmlXg32A/Ibwj7aTATHN3OBO8hxX3hPrdGv4BJnnHt8JTLGBJ/thFmCmF9XVi3HWgZ6n2v9ZmvJJBEPXcu7xPYpqMuBTGkH1QnLrhNmHdiOxgc9Jzbf8WHFIN1dUh5Bxqhnh46S/xCcgzAuzk245fYENd3X+l3sFO0m32wCGs3YRe/1C14jodqHXiMlQuGORYi5P7MYNpNqGxOMaVu1S720wRLrYvdTAxI1VC0M7IV5pZQovI2kdpi4/lRrf/yUy1+icXBJ91YVfa5iBOQfqaqbz7X8Do7Nm1j9E8V2ayfcNXjAyRNhniu8A82DJB4zd35jTjg63VBzlXWswMl4x+huckeXCETWEeRTHni4oHVGqaQCayjyADvVvCmD3Vm26ijxu198Z7BnXfafOyZB5Z7RoaA4doXUux5feTeDh9v32nXgdMvfoHV+PX9f3hF/Rbsvo96ghNe9nR3aJNV8ahoaW89UZXv3+kydgQvURDi6PZtbAdGq9/nMoZ4d8ioq0LPy1ld8fDrPfVcGw9jagJdZnKL3QRDG+7u/jfMreAB93ewLqVtWpfekhACbpK+bjwvYIG3WixbLiv/qoOD6f/k/V3YWHprOWgbb2rRji8eUeckE7x9JW3zKqo04xwuEhgzxQBVbWE88LQFJb8gWvvKeIou4/bJumCD1xIItc/UltUBL2stb8TgfoEtmsXviNa+skMfMG+OUwZV/HMWayOtPbgU2aTxnrotxrB9t5A+AXbaqG7DUpy5jIyYYDuFd3HF3kz+TW7BScc9uZ8cUdf4eI0lN60drvEetLPIxcPb7KptxXo1HEwx6RX7duvbVI5/VH/xQxbj0TdBN2HaY2f6qD7jj0bYIC3O7Y8Pgw1ThH33eHg/D4kFant6nBUWifWvUQuetiHWM7s4ApHgZaTK5VP4VpnR/s9SdAUW30j8d/g2nlqjZ7cahQJPXdC/TtnZmfVLMyYuDjoG9scx5HjDpyL4JtN9jC8x7mZ85MPbOeb/0/7PinTJal2VpiqfscML+L1CyIaSJ0iW6DMOK7xVHv0E99Di72WG1QpwgCsUVT39ewK+H5oFEdH/cy8i/OWk4CCIDjPJBP0XOp4HtwirC6HTvkfyKqqEEPyEWP/qQaf4Jd5Ec/m3HOFnVgdP4d04+48QnA//mqf/yvDfnkGJRCKRSCQSiUQikUgkEolEIpFIJBKJRCKRSCQSiUQieS3/AZzjrH8362VjAAAAAElFTkSuQmCC"
+
 let documents: ICollection<Document> = new Collection<Document>();
 let storableDocuments = new StorableDocument();
 let localDocuments = new LocalStorage<Document>(Document);
 documents = localDocuments.read(storableDocuments.getLocalStorage())
 if(documents.size() == 0){
-    documents.add(new Document('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',
-     'file1', 1, 'image/png', new Date(), '/a_contabilizar'));
-    documents.add(new Document('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',
-     'file2', 2, 'image/png', new Date(), '/a_contabilizar'));
-    documents.add(new Document('iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAkFBMVEX///8iHx8AAAAfHBwbGBgdGhoaFhYYFBQWEhL8/Pz5+fnm5uYRDAz29vYhHR3w8PCMi4s0MTEOCAgrKCjr6+vb29uEg4PDwsJDQUEmIyO4t7dXVVVMSkrl5OQKAADQz8+qqamamZmhoKBmZWU9Ozuwr6/MzMy8vLxubW1gXl4xLy9JR0d1dHRSUFB9fHxcWlo9FQvaAAALMUlEQVR4nO2de3OqOhDAG0J4KCggKKLy8oWK+v2/3d2lnXNPW4KoWNIz+f1z7wzUyZLNvrLJeXuTSCQSiUQikUgkEolEIpFIJBKJRCKRSCQSiUQikUgkEolEIpEIiB3s9tttmuZ5mm6j/W5l9z2iLvH32bQ8LN3JnBmWpdP5xF0eymk28/seWSckWXF2iWFojFJKKuB/mGYY8825yIK+x/ckdnaajzSVfojFmArAf95lpapGJqd80PcoH8aeHRTvXToNVPO4CcPTcrFYnsKNe5wz/f2RGivr2a9clP7+Gus4U6rFNotimu+Dsfn+aDAOomwKyqsaDN8wvMPvW5J+dLBQPmrQ8yXbr+reATHLk27gTOreYf+7ZJyVlXwsdi/bpEEFx7u0GHm0msfLzvy5AT5J4GwslE9x8+TmzAx3zuRdxjCrnWoB2S8oLC8au/mqlZm0A4fgF1HJYvbqsXWBmc1VkM9imd9a68xViVaJavPslUPrhuFZAZXT5sWdGpecq4lXTuPXjKszEtWAcerL6P4/zUIdvo3hJt2PqjvM2QQ0VJ1cho/8dbLGUEfbzMS1qYOtq6JNzB8MUYbOUQMRw0jUOG6QVgIuZg8P0N5uQER9sxVTRDNycXiLZ7IFc3YEe6O5DyzjH6Bag9bpyeAriKuVvOtmTJ2SYBRtLJ/+nSFqAlPEyxuHFkMV7SANCkIdZ1G0QNxegB80rp0EljsUUSvEyhnNDAVcdOOszX2oEjrPhHKL0ZESdbPv6NcG+QR/TqQwPFh0+9HtEgyqvhYnmTIddIRdLpxhiCLmwugpumk1vPnFV5Gzvp6Xi7UT3TSUO4MSdhTFZQwLyF/1bdMr5ji5TBTFMjRV1QxLUdxp0JwmXTwIH0oxUikz8tBRNL2y2p4U66Mc/FEUtpRFY31t7IJ/VcQwNv5ZI5Q1KJQfnRX1QzCmquxDVL25TrpFxTgLsRKjmJDY4T9PLlSrpDMUY4MVYdeLqxIiMY4Of/HahSHKJJ5gCifckZr7szaqCm/HcpsESLJLi0mMtWDGDvwgYaZRop1fMuT72CswhRk3oUsxkCY0Drer8R+VM8er3I2rUjDfr/s4iYYAScYSp5C7ClMd60vGPP32CQZZVfRXNa4Me5WCl+1qnA+zglVoZTyLscXCGxsVtVPsX0lVXuMp6hAmkW16D2wcHaaQp2lJVVl0eUVQ0zliussVIqUQC+YdDPIZBmeVGLwAcrjE2CvkxwLvlR2t4Dj2BP5er5//n2PmgsHjzJE5pThD2wafZucQ8NEJZ54GpU7YqWdb44wICzlKOtvg6PlmFrGnZASOnWOp0gml8/TJIT5JoUOWUx99jS9g7bXyRsYxXmAFkvMZghMjVkMw8QMEsAz1af0zVGC2uZkeJODY1ZDz2lXrO02MXEonae0j24GAnLXYS7pAAKqk9YvVAT3vN9fPwBSE9f4sAENI3RZZsQ8eVVvUa/qMUGI05mUvxpxaMLj6zz/DBI+jwJ/B6MyqV1N7QkncZ6qPUYdWH1fZGUjYrq67w8g2rX8G5tia9pgHBwuNsPp58g+gwG6rXxkfQRWL+ok66P2aml0IlqDeXQ83MOxLq1+xq/iz3l/AMmDLHss1e/TI9aZuBRYybmcjBpVC10u4jQk99rgrHEHmNK//wgEsLm7W8AVMMZV6Y4prlPUYt20tMprX72gn/FHXv8v/UF6fEoIOTeot3QxH3dIIBnwJh/ioRwlTlLDeCO66mUNb6bUcZeYeSFj/rGFevtH0NfBRj3veecyVEKsbLT++ucV3OfFdzxJucQ7rzfwQ3LjXrodr4FgQwdb/TM9a+hYR8Bb1EYcPiY+2aPUrNqZga06G2LOlgRSQ5/Gr5Injxr+A9jLmFDLAVdJ5jx6/IWp7m2Ha1yqowZDG4xgleMZ46fFPgJG3ygk+g5Parihvugxe5JjSviNvLMVo13qHaKP9oC2MRFQpKUefXUosp8+ujEzjK9EeuxfWN0dnn7AWwFlqyRwkTJ8Y4NM01GnexiVMIu/h/zgqbs5xPkRGQfpe6zS4EA1eqQLEJ+rphiHc40shzx+sYS0f+t3NL3WwErwhTDVCrOYBJksdVitvbyIJe6+XvuVzUFOeT1iBKyde2WAKgzX4FI1TUq5+fXTss9QGBFWpiGdOsBg48kruLCYooMopR2J5QyfqU/2qXVCANeWvtRTPinhXjq2IzhY2L3CbxWagpKxdreeF7GGQBqdijfkVNpkYm6ymEBA4Rzxj4XG10ARfRI/9twtPKNEP3N58O8dtbkau+Zd8f5id8fCBqkXcem8Awbu67L/lGyNsj++yzGhijQhV5+HlL5cwKzcET9Z4Tc4uwk4FAQ7RjCHoMg4NFZngMEJhmBErYeFkmVNslBhbpqlGyoaDGcO1QaguQh8tdrU11g3NfEn1qkWIGZbnWe/HKqkxXzQ6gmrjo+x4sA+RYFPIofGVlXOYWNr/jW0jqlvHdd5YqLJxCjkbNj+Mfbk1iW/Yu+dcJwrMH2DFnntwohsnh3aWKFMIY5mPiN7Ym4jglQPZtCyKcprvd8FNE3mFcM4Q5JTXGCZxpLXJAAZjHxi3cQBYUbZuNQH8GHvI4rTmlXg32A/Ibwj7aTATHN3OBO8hxX3hPrdGv4BJnnHt8JTLGBJ/thFmCmF9XVi3HWgZ6n2v9ZmvJJBEPXcu7xPYpqMuBTGkH1QnLrhNmHdiOxgc9Jzbf8WHFIN1dUh5Bxqhnh46S/xCcgzAuzk245fYENd3X+l3sFO0m32wCGs3YRe/1C14jodqHXiMlQuGORYi5P7MYNpNqGxOMaVu1S720wRLrYvdTAxI1VC0M7IV5pZQovI2kdpi4/lRrf/yUy1+icXBJ91YVfa5iBOQfqaqbz7X8Do7Nm1j9E8V2ayfcNXjAyRNhniu8A82DJB4zd35jTjg63VBzlXWswMl4x+huckeXCETWEeRTHni4oHVGqaQCayjyADvVvCmD3Vm26ijxu198Z7BnXfafOyZB5Z7RoaA4doXUux5feTeDh9v32nXgdMvfoHV+PX9f3hF/Rbsvo96ghNe9nR3aJNV8ahoaW89UZXv3+kydgQvURDi6PZtbAdGq9/nMoZ4d8ioq0LPy1ld8fDrPfVcGw9jagJdZnKL3QRDG+7u/jfMreAB93ewLqVtWpfekhACbpK+bjwvYIG3WixbLiv/qoOD6f/k/V3YWHprOWgbb2rRji8eUeckE7x9JW3zKqo04xwuEhgzxQBVbWE88LQFJb8gWvvKeIou4/bJumCD1xIItc/UltUBL2stb8TgfoEtmsXviNa+skMfMG+OUwZV/HMWayOtPbgU2aTxnrotxrB9t5A+AXbaqG7DUpy5jIyYYDuFd3HF3kz+TW7BScc9uZ8cUdf4eI0lN60drvEetLPIxcPb7KptxXo1HEwx6RX7duvbVI5/VH/xQxbj0TdBN2HaY2f6qD7jj0bYIC3O7Y8Pgw1ThH33eHg/D4kFant6nBUWifWvUQuetiHWM7s4ApHgZaTK5VP4VpnR/s9SdAUW30j8d/g2nlqjZ7cahQJPXdC/TtnZmfVLMyYuDjoG9scx5HjDpyL4JtN9jC8x7mZ85MPbOeb/0/7PinTJal2VpiqfscML+L1CyIaSJ0iW6DMOK7xVHv0E99Di72WG1QpwgCsUVT39ewK+H5oFEdH/cy8i/OWk4CCIDjPJBP0XOp4HtwirC6HTvkfyKqqEEPyEWP/qQaf4Jd5Ec/m3HOFnVgdP4d04+48QnA//mqf/yvDfnkGJRCKRSCQSiUQikUgkEolEIpFIJBKJRCKRSCQSiUQieS3/AZzjrH8362VjAAAAAElFTkSuQmCC',
-     'file3', 3, 'image/png', new Date(), '/contabilizado'));
-    documents.add(new Document('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',
-     'file4', 4, 'image/png', new Date(), '/contabilizado'));
-    documents.add(new Document('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',
-     'file5', 5, 'image/png', new Date(), '/papelera'));
-    documents.add(new Document('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',
-     'file6', 6, 'image/png', new Date(), '/papelera'));
-    documents.add(new Document('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',
-     'file7', 6, 'image/png', new Date(), '/fiscal'));
-    documents.add(new Document('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',
-     'file8', 6, 'image/png', new Date(), '/fiscal'));
-    documents.add(new Document('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',
-     'file9', 6, 'image/png', new Date(), '/laboral/maria_rico_gómez'));
-    documents.add(new Document('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',
-     'file10', 6, 'image/png', new Date(), '/laboral/juan_carlos_aragón_pérez'));
-    documents.add(new Document('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',
-     'file11', 6, 'image/png', new Date(), '/laboral/juan_carlos_aragón_pérez'));
-    documents.add(new Document('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',
-     'file12', 6, 'image/png', new Date(), '/laboral/11556837G'));
-    documents.add(new Document('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',
-     'file13', 6, 'image/png', new Date(), '/laboral/juan_carlos_aragón_pérez'));
-    documents.add(new Document('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',
-     'file14', 6, 'image/png', new Date(), '/laboral/86638678R'));
+    documents.add(new Document(smallImage, 'file1', 1, 'image/png', new Date(), '/a_contabilizar'));
+    documents.add(new Document(largeImage, 'file2', 2, 'image/png', new Date(), '/a_contabilizar'));
+    documents.add(new Document(pdf, 'file3', 3, 'application/pdf', new Date(), '/contabilizado'));
+    documents.add(new Document(smallImage, 'file4', 4, 'image/png', new Date(), '/contabilizado'));
+    documents.add(new Document(smallImage, 'file5', 5, 'image/png', new Date(), '/papelera'));
+    documents.add(new Document(largeImage, 'file6', 6, 'image/png', new Date(), '/papelera'));
+    documents.add(new Document(pdf, 'file7', 6, 'application/pdf', new Date(), '/fiscal'));
+    documents.add(new Document(largeImage, 'file8', 6, 'image/png', new Date(), '/fiscal'));
+    documents.add(new Document(smallImage, 'file9', 6, 'image/png', new Date(), '/laboral/maria_rico_gómez'));
+    documents.add(new Document(smallImage, 'file10', 6, 'image/png', new Date(), '/laboral/juan_carlos_aragón_pérez'));
+    documents.add(new Document(smallImage, 'file11', 6, 'image/png', new Date(), '/laboral/juan_carlos_aragón_pérez'));
+    documents.add(new Document(smallImage, 'file12', 6, 'image/png', new Date(), '/laboral/11556837G'));
+    documents.add(new Document(smallImage, 'file13', 6, 'image/png', new Date(), '/laboral/juan_carlos_aragón_pérez'));
+    documents.add(new Document(smallImage, 'file14', 6, 'image/png', new Date(), '/laboral/86638678R'));
     localDocuments.write(storableDocuments.getLocalStorage(), documents);
 }
 
+let documentTags: ICollection<DocumentTag> = new Collection<DocumentTag>();
+let storableDocumentTags = new StorableDocumentTag();
+let localDocumentTags = new LocalStorage<DocumentTag>(DocumentTag);
+documentTags = localDocumentTags.read(storableDocumentTags.getLocalStorage())
+if(documentTags.size() == 0){
+    documentTags.add(new DocumentTag('Tag 1'));
+    documentTags.add(new DocumentTag('Tag 2'));
+    localDocumentTags.write(storableDocumentTags.getLocalStorage(), documentTags);
+}
+
 let folders: ICollection<Folder> = new Collection<Folder>();
+let api: ICollection<Folder> = new Collection<Folder>();
 let storableFolders = new StorableFolder();
 let localFolders = new LocalStorage<Folder>(Folder);
 folders = localFolders.read(storableFolders.getLocalStorage())
@@ -3630,6 +7619,7 @@ if(folders.size() == 0){
     folders.add(new Folder('Maria Rico Álvarez', '/laboral'));
     localFolders.write(storableFolders.getLocalStorage(), folders);
 }
+let apiFolders = folders.slice(0,5);
 
 let certificates: ICollection<Certificate> = new Collection<Certificate>();
 let storableCertificates = new StorableCertificate();
@@ -3641,6 +7631,7 @@ if(certificates.size() == 0){
   certificates.add(new Certificate('María Elena Tirado Chacón', 'Persona Física', new Date('Wed Mar 22 2023 15:48:30 GMT+0100 '), new Date('Fri Aug 02 2025 12:43:24 GMT+0100'), 'Andrea', 'Público', false, true, false, '11556837G'));
   localCertificates.write(storableCertificates.getLocalStorage(), certificates);
 }
+
 
 let enterprises: ICollection<Enterprise> = new Collection<Enterprise>();
 let storableEnterprises = new StorableEnterprise();
@@ -3686,9 +7677,9 @@ let storableBanks = new StorableBank();
 let localBanks = new LocalStorage<Bank>(Bank);
 banks = localBanks.read(storableBanks.getLocalStorage());
 if(banks.size() == 0){
-    banks.add(new Bank('Caixa Bank',1500,'whereIsMyPath?'));
-    banks.add(new Bank('Banco Nación',500,'whereIsMyPath?2'));
-    banks.add(new Bank('Bankinter',2500,'whereIsMyPath?3'));
+    banks.add(new Bank('Caixa Bank',1500,'whereIsMyPath?','1','ES0402260523912937810527', new Date(), 'syncStatus'));
+    banks.add(new Bank('Banco Nación',500,'whereIsMyPath?2','1','ES0402260523912937810527', new Date(), 'syncStatus'));
+    banks.add(new Bank('Bankinter',2500,'whereIsMyPath?3','1','ES0402260523912937810527', new Date(), 'syncStatus'));
     localBanks.write(storableBanks.getLocalStorage(), banks);
 }
 
@@ -3709,6 +7700,19 @@ if(taxModels.size() == 0){
     taxModels.add(new TaxModel( '303','IVA','pendiente','domicialición bancaria','1345',4,2023));
     taxModels.add(new TaxModel( '130','IVA','presentado','tranferencia','541',4,2023));
     taxModels.add(new TaxModel( '347','IVA','rectificado','domicialición bancaria','1354',4,2023));
+    taxModels.add(new TaxModel( '180','IVA','presentado','a','356',1,2022));
+    taxModels.add(new TaxModel( '303','IVA','presentado','b','789',1,2022));
+    taxModels.add(new TaxModel( '180','IVA','presentado','a','1245',2,2022));
+    taxModels.add(new TaxModel( '303','IVA','presentado','b','1024',2,2022));
+    taxModels.add(new TaxModel( '180','IVA','en proceso','a','1538',3,2022));
+    taxModels.add(new TaxModel( '303','IVA','pendiente','b','987',3,2022));
+    taxModels.add(new TaxModel( '130','IVA','presentado','b','189',3,2022));
+    taxModels.add(new TaxModel( '347','IVA','rectificado','b','684',3,2022));
+    taxModels.add(new TaxModel( '180','IVA','en proceso','a','1784',4,2022));
+    taxModels.add(new TaxModel( '303','IVA','pendiente','a','1345',4,2022));
+    taxModels.add(new TaxModel( '130','IVA','presentado','b','541',4,2022));
+    taxModels.add(new TaxModel( '347','IVA','rectificado','a','1354',4,2022));
+
     localTaxModels.write(storableTaxModels.getLocalStorage(), taxModels);
 }
 
@@ -3717,15 +7721,15 @@ let storableMessages = new StorableMessage();
 let localMessages = new LocalStorage<Message>(Message);
 messages = localMessages.read(storableMessages.getLocalStorage())
 if(messages.size() == 0){
-    messages.add(new Message('Asesor1','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-12 12:00"),'consulta','abierta'));
-    messages.add(new Message('Asesor2','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-26 14:00"),'consulta','abierta'));
-    messages.add(new Message('Asesor3','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-07-16 15:00"),'consulta','cerrada'));
-    messages.add(new Message('Asesor1','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-05-16 12:30"),'notificacion','vista'));
-    messages.add(new Message('Asesor2','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-06-17 18:02"),'notificacion','nueva'));
-    messages.add(new Message('Asesor3','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-07-18 08:05"),'notificacion','nueva'));
-    messages.add(new Message('Asesor1','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-06-03 10:01"),'tarea','realizada',new Date("2023-08-24 23:30")));
-    messages.add(new Message('Asesor2','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-06-19 12:25"),'tarea','pendiente',new Date("2023-08-28 22:30")));
-    messages.add(new Message('Asesor3','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-07-22 15:30"),'tarea','pendiente',new Date("2023-09-05 21:30")));
+    messages.add(new Message('Asesor1','Asunto Asunto Asunto Asunto Asunto Asunto Asunto 1','sunt in culpa qui officia deserunt sunt in culpa qui officia deserunt sunt in culpa qui officia deserunt sunt in culpa qui officia deseruntsunt in culpa qui officia deseruntsunt in culpa qui officia deserunt sunt in culpa qui officia deseruntsunt in culpa qui officia deserunt sunt in culpa qui officia deserunt sunt in culpa qui officia deseruntsunt in culpa qui officia deserunt sunt in culpa qui officia deserunt sunt in culpa qui officia deserunt sunt in culpa qui officia deserunt',new Date("2023-06-12 12:00"),TypeMessage.CONSULTA, StatusMessage.ABIERTA));
+    messages.add(new Message('Asesor2','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-06-26 14:00"),TypeMessage.CONSULTA,StatusMessage.ABIERTA));
+    messages.add(new Message('Asesor3','Asunto 1','sunt in culpa qui officia deserunt',new Date("2023-07-16 15:00"),TypeMessage.CONSULTA,StatusMessage.CERRADA));
+    messages.add(new Message('Asesor1','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-05-16 12:30"),TypeMessage.NOTIFICACION,StatusMessage.VISTA));
+    messages.add(new Message('Asesor2','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-06-17 18:02"),TypeMessage.NOTIFICACION,StatusMessage.NUEVA));
+    messages.add(new Message('Asesor3','Asunto 2','sunt in culpa qui officia deserunt',new Date("2023-07-18 08:05"),TypeMessage.NOTIFICACION,StatusMessage.NUEVA));
+    messages.add(new Message('Asesor1','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-06-03 10:01"),TypeMessage.TAREA,StatusMessage.REALIZADA,new Date("2023-08-24 23:30")));
+    messages.add(new Message('Asesor2','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-06-19 12:25"),TypeMessage.TAREA,StatusMessage.REALIZADA,new Date("2023-08-28 22:30")));
+    messages.add(new Message('Asesor3','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-07-22 15:30"),TypeMessage.TAREA,StatusMessage.PENDIENTE,new Date("2023-09-05 21:30")));
     localMessages.write(storableMessages.getLocalStorage(), messages);
 }
 
@@ -3739,7 +7743,7 @@ let filteredMessages = messages.filter(filter.getFilter());
 if(messageChats.size() == 0 && filteredMessages.size() != 0){
     messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:30"), 'enviado'));
     messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:31"), 'recibido'));
-    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:32"), 'enviado'));
+    messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:32"), 'recibido'));
     localMessageChats.write(storableMessageChats.getLocalStorage(), messageChats);
 }
 
@@ -3758,56 +7762,341 @@ let contracts: ICollection<Contract> = new Collection<Contract>();
 let storableContracts = new StorableContract();
 let localContracts = new LocalStorage<Contract>(Contract);
 
-let users: ICollection<User> = new Collection<User>();
 let marks: ICollection<Mark> = new Collection<Mark>();
+let storableMarks = new StorableMark();
+let localMarks = new LocalStorage<Mark>(Mark);
+
+let marksDetails: ICollection<MarkDetail> = new Collection<MarkDetail>();
+let storableMarksDetails = new StorableMarkDetail();
+let localMarksDetails = new LocalStorage<MarkDetail>(MarkDetail);
+
+let users: ICollection<User> = new Collection<User>();
 let storableUsers = new StorableUser();
 let localUsers = new LocalStorage<User>(User);
 users = localUsers.read(storableUsers.getLocalStorage())
 if(users.size() == 0){
-  users.add(new User(
-    'Kathryn',
-    'Ledner',
-    '35532252N',
-    'kathrynledner@gmail.test',
-    'test',
-    '690619302',
-    true
-    ));
-
-  users.add(new User(
-    'Eusebio',
-    'González',
-    '94385657M',
-    'eusebiogonzalez@gmail.test',
-    'test',
-    '656796396',
-    true
-  ));
-
-  users.add(new User(
-    'Juan',
-    'Macejkovic',
-    '11556837G',
-    'juanmacejkovic@gmail.test',
-    'test',
-    '619068048',
-    true
-  ));
-
+  users.add(new User('Kathryn','Ledner','35532252N','kathrynledner@gmail.test','test','690619302',true));
+  users.add(new User('Eusebio','González','94385657M','eusebiogonzalez@gmail.test','test','656796396',true));
+  users.add(new User('Juan','Macejkovic','11556837G','juanmacejkovic@gmail.test','test','619068048',true));
+  users.add(new User('Admin','Admin','12345678A','admin','admin','698475145',true));
+  users.add(new User('Test','Test','98765432B','test@aonsolutions.test','test','652145784',true));
   localUsers.write(storableUsers.getLocalStorage(), users);
 }
 
-let auths: ICollection<Auth> = new Collection<Auth>();
-let storableAuths = new StorableAuth();
-let localAuths = new LocalStorage<Auth>(Auth);
-auths = localAuths.read(storableAuths.getLocalStorage())
-if(auths.size() == 0){
-    auths.add(new Auth('test@aonsolutions.test', 'test'));
-    auths.add(new Auth('admin', 'admin'));
-    localAuths.write(storableAuths.getLocalStorage(), auths);
+
+/*
+    TESTING API FUNCTIONS
+*/
+
+if(test){
+
+    /*
+        TEST FOR DOCUMENTS
+    */
+    
+    let documentFactory = new DocumentFactory();
+    let filterBuider =  new FilterBuilder();
+    filterBuider.addField('path','/a_contabilizar');
+    documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
+        console.log('TEST DOCUMENTS GET LIST A_CONTABILIZAR', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST DOCUMENTS GET LIST A_CONTABILIZAR', error)
+    })
+    filterBuider.clearAll();
+    filterBuider.addField('path','/contabilizado');
+    documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
+        console.log('TEST DOCUMENTS GET LIST CONTABILIZADO(*)', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST DOCUMENTS GET LIST CONTABILIZADO(*)', error)
+    })
+    filterBuider.clearAll();
+    filterBuider.addField('path','/papelera');
+    documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
+        console.log('TEST DOCUMENTS GET LIST PAPELERA', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST DOCUMENTS GET LIST PAPELERA', error)
+    })
+    filterBuider.clearAll();
+    filterBuider.addField('path','/fiscal');
+    documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
+        console.log('TEST DOCUMENTS GET LIST FISCAL',response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST DOCUMENTS GET LIST FISCAL', error)
+    })
+    filterBuider.clearAll();
+    filterBuider.addField('path','/laboral/51198000T');
+    documentFactory.createMultipleObjectCrud().getCollection(filterBuider.getFilter()).then((response) => {
+        console.log('TEST DOCUMENTS GET LIST LABORAL', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR DOCUMENTS TEST GET LIST LABORAL', error)
+    })
+
+    /**
+        TEST FOR DOCUMENT_TAGS
+     */
+    
+    // let tagFactory = new DocumentTagFactory();
+    // tagFactory.createMultipleObjectCrud().getCollection().then((response) => {
+    //     console.log('TEST DOCUMENT_TAG GET LIST', response.result.toArray());
+    // }).catch((error) => {
+    //     console.log('ERROR TEST DOCUMENT_TAG GET LIST', error)
+    // })
+    // let tag = new DocumentTag();
+    // tag.Name = 'Tag 1';
+    // tagFactory.createSingleObjectCrud().createElement(tag).then((response) => {
+    //     console.log('TEST DOCUMENT_TAG CREATE', response.result);
+    // }).catch((error) => {
+    //     console.log('ERROR TEST DOCUMENT_TAG CREATE', error)
+    // })
+
+    // tagFactory.createMultipleObjectCrud().getCollection().then((response) => {
+    //     tagFactory.createSingleObjectCrud().updateElement(response.result.toArray()[0]).then((response) => {
+    //     console.log('TEST DOCUMENT_TAG UPDATE', response.result);
+    // }).catch((error) => {
+    //     console.log('ERROR TEST DOCUMENT_TAG UPDATE', error)
+    // })
+    // }).catch((error) => {
+    //     console.log('ERROR TEST DOCUMENT_TAG UPDATE', error)
+    // })
+    
+    /*
+        TEST FOR ENTERPRISE
+    */
+    
+    let enterpriseFactory = new EnterpriseFactory();
+    enterpriseFactory.createMultipleObjectCrud().getCollection().then((response) => {
+        console.log('TEST GET ENTERPRISES', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST GET ENTERPRISES', error)
+    })
+    enterpriseFactory.createSingleObjectCrud().getElement('702378').then((element) => {
+        console.log('TEST GET ENTERPRISE BY ID', element.result);
+    }).catch((error) => {
+        console.log('ERROR TEST GET ENTERPRISE BY ID', error)
+    })
+    
+    
+    /*
+        TEST FOR MESSAGES
+    */
+    
+    let filterMessage = new FilterBuilder();
+    let messageFactory = new MessageFactory();
+    filterMessage.addField('type','consulta');
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        console.log('TEST MESSAGES GET CONSULTA', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST MESSAGES GET CONSULTA', error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','tarea');
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        console.log('TEST MESSAGES GET TAREA', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST MESSAGES GET TAREA', error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','notificacion');
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        console.log('TEST MESSAGES GET NOTIFICACION', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST MESSAGES GET NOTIFICATION', error)
+    })
+    filterMessage.clearAll();
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        console.log('TEST MESSAGES GET ALL', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST MESSAGES GET ALL', error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','consulta');
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        messageFactory.createSingleObjectCrud().getElement(response.result.toArray()[0].Id).then((element) => {
+            console.log('TEST MESSAGE GET ONE ', element.result);
+        }).catch((error) => {
+            console.log('ERROR TEST MESSAGE GET ONE ', error)    
+        })
+    }).catch((error) => {
+        console.log('ERROR TEST GET ONE MESSAGE', error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','consulta');
+    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+        messageFactory.createMessageSpecificMethods().archiveMessage(response.result.toArray()[0]).then((response) => {
+            console.log('TEST MESSAGE ARCHIVE',response);
+        }).catch((error) => {
+            console.log('ERROR TEST MESSAGE ARCHIVE',error);
+        })
+        messageFactory.createMessageSpecificMethods().reopenMessage(response.result.toArray()[0]).then((response) => {
+            console.log('TEST MESSAGE REOPEN',response);
+        }).catch((error) => {
+            console.log('ERROR TEST MESSAGE REOPEN',error);
+        })
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','tarea');
+    messageFactory.createMessageSpecificMethods().getMessageCount(filterMessage.getFilter()).then((response) => {
+        console.log('TEST MESSAGE COUNT TASK',response.result)
+    }).catch((error) => {
+        console.log(error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','consulta');
+    messageFactory.createMessageSpecificMethods().getMessageCount(filterMessage.getFilter()).then((response) => {
+        console.log('TEST MESSAGE COUNT QUERY',response.result)
+    }).catch((error) => {
+        console.log(error)
+    })
+    filterMessage.clearAll();
+    filterMessage.addField('type','notificacion');
+    messageFactory.createMessageSpecificMethods().getMessageCount(filterMessage.getFilter()).then((response) => {
+        console.log('TEST MESSAGE COUNT NOTIFICATION',response.result)
+    }).catch((error) => {
+        console.log(error)
+    })
+    filterMessage.clearAll();
+    messageFactory.createMessageSpecificMethods().getMessageCount().then((response) => {
+        console.log('TEST MESSAGE COUNT ALL',response.result)
+    }).catch((error) => {
+        console.log(error)
+    })
+    let taskHolderTest = new TaskHolder();
+    taskHolderTest.Name = 'Name'
+    taskHolderTest.Id = '713845'
+    let testMessage = new Message();
+    testMessage.Date = new Date();
+    testMessage.Description = 'sunt in culpa qui officia deserunt'
+    testMessage.EndDate = new Date();
+    testMessage.Name = taskHolderTest.Name
+    testMessage.Status = StatusMessage.PENDIENTE
+    testMessage.Title = 'titulo de ejemplo'
+    testMessage.Type = TypeMessage.TAREA
+    testMessage.TaskHolder = taskHolderTest;
+
+    let testMessageCreate = new MessageFactory();
+    testMessageCreate.createSingleObjectCrud().createElement(testMessage).then((response) => {
+        console.log('TEST MESSAGE CREATE', response.result);
+    }).catch((error) => {
+        console.log('ERROR TEST MESSAGE CREATE', error)
+    })
+    let notification = new Message();
+    notification.Type = TypeMessage.NOTIFICACION;
+    notification.Id = '29500';
+    messageFactory.createMessageSpecificMethods().markAsReadNotification(notification).then((response) => {
+        console.log('TEST MESSAGE MARK AS READ NOTIFICATION', response.result);
+    }).catch((error) => {
+        console.log('ERROR TEST MESSAGE MARK AS READ NOTIFICATION', error)
+    })
+
+
+    /*
+        TEST FOR MESSAGE CHAT
+    */
+    
+    let filterMessageChat = new FilterBuilder();
+    let filterMessage2 = new FilterBuilder();
+    let messageChatFactory = new MessageChatFactory();
+    let messageFactory2 = new MessageFactory();
+    filterMessage2.addField('type','consulta');
+    messageFactory2.createMultipleObjectCrud().getCollection(filterMessage2.getFilter()).then((response) => {
+        //response.result.toArray()[0].Id
+        filterMessageChat.addField('idMessage', '29475');
+        messageChatFactory.createMultipleObjectCrud().getCollection(filterMessageChat.getFilter()).then((response) => {
+            console.log('TEST MESSAGECHAT GET LIST', response.result.toArray());
+        }).catch((error) => {
+            console.log('ERROR TEST MESSAGECHAT GET LIST', error)
+        })
+    })
+
+    let messageChatCreate = new MessageChat();
+    messageChatCreate.IdMessage = '29490';
+    messageChatCreate.Description = 'sunt in culpa qui officia deserunt';
+    messageChatFactory.createSingleObjectCrud().createElement(messageChatCreate).then((response) => {
+        console.log('TEST MESSAGECHAT CREATE', response.result);
+    }).catch((error) => {
+        console.log('ERROR TEST MESSAGECHAT CREATE', error)
+    })
+
+    /*
+        TEST FOR TASKHOLDERS
+    */
+
+    let taskHolderFactory = new TaskHolderFactory();
+    taskHolderFactory.createMultipleObjectCrud().getCollection().then((response) => {
+        console.log('TEST TASKHOLDERS GET LIST', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST TASKHOLDERS GET LIST', error)
+    })
+    taskHolderFactory.createSingleObjectCrud().getElement('702381').then((response) => {
+        console.log('TEST TASKHOLDERS GET ONE', response.result);
+    }).catch((error) => {
+        console.log('ERROR TEST TASKHOLDERS GET ONE', error)
+    })
+    
+    
+    
+    /*
+        TEST FOR TAXMODELS
+    */
+    
+    let taxFactory = new TaxModelFactory();
+    let filterTax = new FilterBuilder();
+    filterTax.addField('trimester','T3')
+    taxFactory.createMultipleObjectCrud().getCollection(filterTax.getFilter()).then((response) => {
+        console.log('TEST TAXMODELS GET LIST', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST TAXMODELS GET LIST', error)
+    })
+    
+    /*
+        TEST FOR BANKS
+    */
+    
+    let bankFactory = new BankFactory();
+    bankFactory.createMultipleObjectCrud().getCollection().then((response) => {
+        console.log('TEST BANKS GET LIST', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST BANKS GET LIST', error)
+    })
+    
+    
+    /*
+        TEST FOR FOLDERS
+    */
+    
+    let folderFactory = new FolderFactory();
+    folderFactory.createMultipleObjectCrud().getCollection().then((response) =>  {
+        console.log('TEST FOLDERS GET LIST', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST FOLDERS GET LIST', error)
+    })
+
+    /**
+        TEST FOR MARKS
+     */
+
+    let markFactory = new MarkFactory();
+    let markFilter = new FilterBuilder();
+    markFilter.addField('idUser', localStorage.getItem('login'))
+    
+    markFactory.createMultipleObjectCrud().getCollection().then((response) => {
+        console.log('TEST MARKS GET LIST', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST MARKS GET LIST', error)
+    })
+    
+    markFactory.createSpecificMethods().getMarksOfOneUser(localStorage.getItem('registry') || '', markFilter.getFilter()).then((response) => {
+        console.log('TEST MARKS GET LIST OF ONE USER', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST MARKS GET LIST OF ONE USER', error)
+    })
 }
 
 
+
+/*
+    LAMBDA FUNCTION AMAZON
+*/
 
 // function getLambda() : Promise<any>{
 //     return new Promise((resolve,reject) => {

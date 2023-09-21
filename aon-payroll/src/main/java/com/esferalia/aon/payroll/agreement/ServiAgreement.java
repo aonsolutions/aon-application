@@ -4,17 +4,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
+import org.htmlunit.BrowserVersion;
+import org.htmlunit.DefaultCredentialsProvider;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.NicelyResynchronizingAjaxController;
+import org.htmlunit.Page;
+import org.htmlunit.WebClient;
 
 import solutions.aon.sepe.exceptions.certificate.InvalidCertificateException;
 
 public class ServiAgreement {
 	
+	private final static String AGREEMENTS_URL = "www2.serviconvenios.com/aconvenios.xml";
 	private final static String URL = "aonsolutions.serviconvenios.com/";
 	private final static String USER = "aonsolutions";
 	private final static String PASS = "lNgFdEw&65hD@";
@@ -32,6 +33,23 @@ public class ServiAgreement {
 		
 		private Extension(String value) {
 			this.value = value;
+		}
+	}
+	
+	public static InputStream get_agreements_file() throws IllegalArgumentException {
+		try {
+			WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
+			webClient.getOptions().setCssEnabled(false);
+			webClient.getOptions().setDownloadImages(false);
+			webClient.setJavaScriptTimeout(10000);
+			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			
+			Page page = webClient.getPage("http://" + AGREEMENTS_URL);
+			InputStream is = page.getWebResponse().getContentAsStream();
+			return is;
+		} catch (FailingHttpStatusCodeException | IOException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
 		}
 	}
 	

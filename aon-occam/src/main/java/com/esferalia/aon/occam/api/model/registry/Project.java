@@ -235,7 +235,7 @@ public class Project implements Serializable {
 	}
 	
 	protected <T extends Project> T copy(Project project, T child) {
-		if (registry != null) {
+		if (project != null) {
 			child.setId(project.getId());
 			child.setDomain(project.getDomain());
 			child.setName(project.getName());

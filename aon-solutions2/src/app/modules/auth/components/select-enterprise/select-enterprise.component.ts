@@ -24,7 +24,7 @@ export class SelectEnterpriseComponent implements OnInit {
   selectEnterprise(enterprise: IEnterprise) {
     // TODO: Llamar servicio JWT(generico) para que establezca empresa seleccionada en session
     // TODO: Establecer si guardamos toda la empresa, o por el contrario usar id/document
-    this.authService.setEnterprise(enterprise.Document)
+    this.authService.setEnterprise(enterprise)
     this.router.navigate(['']);
   }
 

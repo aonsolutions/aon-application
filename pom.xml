@@ -29,7 +29,12 @@
 	</properties>
 
 	<modules>
+		<!--  
+		<module>jakarta.persistence-api</module>
+		-->
 
+		<!-- NET AONSULTIONS PLUGINS -->
+		<module>invofox.sdk</module>
 
 		<!-- MAVEN PLUGINS -->
 		<module>aon-alias-maven-plugin</module>
@@ -86,9 +91,11 @@
 		<module>aon-sii</module>
 		<module>aon-seres</module>
 		<module>aon-tbai</module>
+		<module>aon-invoice-communication</module>
 		<module>aon-external-sources</module>
 		<module>aon-sign</module>		
 		<module>aon-bank</module>
+		<module>aon-templates</module>
 		
 		<!-- ENTITY -->
 		<module>aon-carrier</module>
@@ -172,6 +179,7 @@
 		<module>aon-gwt-seres</module>
 		<module>aon-gwt-commercial</module>
 		<module>aon-gwt-communication</module>
+		<module>aon-gwt-marketing</module>
 
 
 		<!-- API -->

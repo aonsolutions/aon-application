@@ -13,7 +13,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
-import com.esferalia.aon.occam.test.faker.AonFaker;
+import com.esferalia.aon.occam.test.faker.AccountingFaker;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
@@ -31,7 +31,7 @@ public class CheckMaxDateTest extends AbstractOccamTest {
 		}
 		year = ( year != -1)? (year+1):AonDateUtils.getYear(new Date()); 
 		Date lastDate1 = AonDateUtils.getYearLastDay(year);
-		AccountPeriod period = AonFaker.getAccountPeriod(ctx, lastDate1, AccountPeriodStatus.ACTIVE);
+		AccountPeriod period = AccountingFaker.getAccountPeriod(ctx, lastDate1, AccountPeriodStatus.ACTIVE);
 		period = ACCOUNTING.save(ctx, period);
 		Date lastDate2 = AccountPeriodDAO.getMaxDate(ctx);
 		assertTrue(AonDateUtils.isSameDay(lastDate1,lastDate2));

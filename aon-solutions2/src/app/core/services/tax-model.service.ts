@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import { ICollection, IFilter, ITaxModel, TaxModelFactory, statusTaxModel } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TaxModelService {
+export class TaxModelService extends CommonService {
 
   private multipleObjectCrud  = new TaxModelFactory().createMultipleObjectCrud();
   private singleObjectCrud    = new TaxModelFactory().createSingleObjectCrud();
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   async getTaxModelList(filter?: IFilter): Promise<ICollection<ITaxModel>> {
     return (await this.multipleObjectCrud.getCollection(filter)).result;

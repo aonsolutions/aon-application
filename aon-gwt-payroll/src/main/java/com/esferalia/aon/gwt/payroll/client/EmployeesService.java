@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
@@ -251,8 +252,11 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);
 
-	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl,
-			boolean isTransform);
+	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, boolean isTransform) throws IllegalArgumentException;
+	
+	void fillContractExtension(String currentDomainName, EmployeeInfo employeeData, ContractInfo contractData) throws IllegalArgumentException;
+	
+	void fillContractRelocation(String currentDomainName, Integer contractId, Map<String, String> contractRelocationInfo) throws IllegalArgumentException;
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data);
 
@@ -293,12 +297,17 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 			String ocup, Date fecha) throws IllegalArgumentException;
+	
+	void cambioCno(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String cno, Date fecha) throws IllegalArgumentException;
 
 	void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			String cat, Date fecha) throws IllegalArgumentException;
 
 	// ------------------------------------------------- SEPE Comunications
 	
+	void sendLlamamientoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
+
 	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
 
 	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
@@ -368,5 +377,11 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	List<Certifica2Info> getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
 			Date endDate);
+
+	// ------------------------------------------------- Agreement ContextProvider
+	
+	ContextDescriptor getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate) throws IllegalArgumentException;
+
+	List<Result> evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel) throws IllegalArgumentException, EvalException;
 
 }

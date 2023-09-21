@@ -224,11 +224,15 @@ public class Model390 extends MainEntryPoint {
 		AON.ensureInjected();
 
 		aonLayout = new AonLayoutPanel();
+		aonLayout.addStyleName("aon-Model");
 		splitLayoutPanel = new SplitLayoutPanel( 2 );
 		aonLayout.add(splitLayoutPanel);
 		
 		declarationContainer = new SimpleLayoutPanel();
-		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
+		declarationContainer.addStyleName("aon-Model-Detail");
+		AonMinimizePanel minimizePanel = getMinimizePanel();
+		minimizePanel.addStyleName("aon-Model-Info");
+		splitLayoutPanel.addSouth(minimizePanel, 30);
 
 		splitLayoutPanel.add(declarationContainer);
 		
@@ -332,7 +336,7 @@ public class Model390 extends MainEntryPoint {
 	private void select(Model390ModuleOptions options, Mod390 selected) {
 		cleanErrorMessage();
 		if (selected.isAEAT()) {
-			if (selected.getYear() == 2022) {
+			if (selected.getYear() >= 2022) {
 				declarationContainer.setWidget(new Model3902022(new Model390Callback(),selected));
 			}  else if (selected.getYear() == 2021) {
 				declarationContainer.setWidget(new Model3902021(new Model390Callback(),selected));

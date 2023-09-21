@@ -30,6 +30,12 @@ public class ProjectImpl implements IProject{
 	// ------------------------------------- PROJECT
 	
 	@Override
+	public Project getProject(AONContext ctx, ProjectFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> ProjectDAO.get(ctx, filter));
+	}
+	
+	@Override
 	public Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> ProjectDAO.getStream(ctx, filter));

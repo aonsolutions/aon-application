@@ -1,0 +1,292 @@
+<app-grid-layout>
+  <!--SIDENAV-->
+  <div nav>
+    <!--CREATE BUTTON // siempre tiene que tener el mismo hueco -->
+    <div
+      id="button-create"
+    >
+      <!-- Ocultar donde es necesario -->
+      <span *ngIf="selectedTab !== 2 && selectedTab !== 3">
+        <app-button
+          [class]="'red left'"
+          (click)="showModal()"
+        >
+          <app-icon shape="add_comment"></app-icon>
+          {{ "INBOX.CREATE" | translate }}
+        </app-button>
+        <app-modal-controller #modal>
+          <app-create-query *ngIf="isModalVisible"></app-create-query>
+        </app-modal-controller>
+      </span>
+    </div>
+    <!--FIN CREATE BUTTON-->
+    <!--List -->
+    <app-list-element class="red">
+      <div menu>
+        <li
+          [ngClass]="{'select': selectedTab === 0}"
+          (click)="selectedTab = 0; onTabChange()"
+        >
+          <app-icon shape="all_inbox"></app-icon>
+          {{ "INBOX.INBOX" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ totalMessageCount }}
+            </span>
+          </span>
+        </li>
+        <li
+          [ngClass]="{'select': selectedTab === 1}"
+          (click)="selectedTab = 1; onTabChange()"
+        >
+          <app-icon shape="chat"></app-icon>
+          {{ "INBOX.QUERIES" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ consultaMessageCount }}
+            </span>
+          </span>
+        </li>
+        <li
+          [ngClass]="{'select': selectedTab === 2}"
+          (click)="selectedTab = 2; onTabChange()"
+        >
+          <app-icon shape="playlist_add_check"></app-icon>
+          {{ "INBOX.TASKS" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ tareasMessageCount }}
+            </span>
+          </span>
+        </li>
+        <li
+          [ngClass]="{'select': selectedTab === 3}"
+          (click)="selectedTab = 3; onTabChange()"
+        >
+          <app-icon shape="notifications_none"></app-icon>
+          {{ "INBOX.NOTIFICATIONS" | translate }}
+          <span class="right">
+            <span class="circle">
+              {{ notificacionesMessageCount }}
+            </span>
+          </span>
+        </li>
+      </div>
+    </app-list-element>
+    <!--FIN List -->
+  </div>
+  <!--FIN SIDENAV-->
+  <!--CONTENIDO-->
+  <div content>
+    <div class="padding">
+      <div class="width-40">
+        <app-input
+          [appearance]="'outline'"
+          [class]="'search'"
+          [type]="'search'"
+          [placeholder]="'INBOX.TEXT' | translate"
+        ></app-input>
+      </div>
+    </div>
+    <ng-container *ngIf="selectedTab == 0">
+      <div class="padding">
+        <app-table-component
+          (rowClicked)="rowClickHandler($event)"
+        >
+        </app-table-component>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="selectedTab == 1">
+      <app-tabs
+        [tabs]="tabsConsultas"
+        (changeTabIndex)="this.tabIndex = $event"
+        [tabColor]="'red'"
+      >
+        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+          <span>{{ selectedFilterText }}</span>
+          <app-icon
+            shape="more_vert"
+          ></app-icon>
+          <app-dropdown-menu #menu *ngIf="menuItem.length > 0" [menuItem]="menuItem" >
+            <button>
+              {{ "INBOX.THIS_WEEK" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.THIS_MONTH" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.ALLS" | translate }}
+            </button>
+          </app-dropdown-menu>
+        </div>
+        <div content class="padding">
+          <app-table-queries
+            [filterTabSelec]="this.tabIndex"
+            [filterDate]="this.filterDate"
+            (rowClicked)="rowClickHandler($event)"
+          ></app-table-queries>
+        </div>
+      </app-tabs>
+    </ng-container>
+
+    <ng-container *ngIf="selectedTab == 2">
+      <app-tabs
+        [tabs]="tabsTareas"
+        (changeTabIndex)="this.tabIndex = $event"
+        [tabColor]="'red'"
+      >
+        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+          <span>{{ selectedFilterText }}</span>
+          <app-icon
+            shape="more_vert"
+          ></app-icon>
+          <app-dropdown-menu #menu *ngIf="menuItem.length > 0" [menuItem]="menuItem" >
+            <button>
+              {{ "INBOX.THIS_WEEK" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.THIS_MONTH" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.ALLS" | translate }}
+            </button>
+          </app-dropdown-menu>
+        </div>
+        <div content class="padding">
+          <app-table-tasks
+            (noPendingTasks)="showNoTasksMessage($event)"
+            (rowClicked)="rowClickHandler($event)"
+            [filterTabSelec]="this.tabIndex"
+            [filterDate]="this.filterDate"
+          ></app-table-tasks>
+        </div>
+      </app-tabs>
+    </ng-container>
+    <ng-container *ngIf="selectedTab == 3">
+      <app-tabs
+        [tabs]="tabsNotificaciones"
+        (changeTabIndex)="this.tabIndex = $event"
+        [tabColor]="'red'"
+      >
+        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+          <span>{{ selectedFilterText }}</span>
+          <app-icon
+            shape="more_vert"
+          ></app-icon>
+          <app-dropdown-menu #menu *ngIf="menuItem.length > 0" [menuItem]="menuItem" >
+            <button>
+              {{ "INBOX.THIS_WEEK" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.THIS_MONTH" | translate }}
+            </button>
+            <button>
+              {{ "INBOX.ALLS" | translate }}
+            </button>
+          </app-dropdown-menu>
+        </div>
+        <div content class="padding">
+          <app-table-notifications
+            (rowClicked)="rowClickHandler($event)"
+            [filterTabSelec]="this.tabIndex"
+            [filterDate]="this.filterDate"
+          ></app-table-notifications>
+        </div>
+      </app-tabs>
+    </ng-container>
+  </div>
+
+  <!--FIN CONTENIDO-->
+  <!--Detail-->
+  <div detail *ngIf="showDetail">
+    <div *ngIf="messagesChat">
+      <div class="inbox-content-state padding">
+        <div class="background-text-red-light">
+          {{ messagesData.Status }}
+        </div>
+        <div class="inbox-icons" *ngIf="selectedTab < 3">
+          <app-icon shape="reply"></app-icon>
+          <app-icon shape="archive"></app-icon>
+        </div>
+      </div>
+
+      <div class="inbox-message padding">
+        <div class="inbox-message-title">
+          <app-icon class="icon-back" shape="arrow_back"></app-icon>
+          {{ messagesData.Title }}
+        </div>
+        <div class="inbox-message-date">
+          {{ datepipe.transform(messagesData.Date, "EEEE, HH:mm") }}
+        </div>
+      </div>
+
+      <div
+        class="padding"
+        *ngIf="messagesData.Type === 'consulta'"
+      >
+        <div
+          class="inbox-chat"
+          *ngFor="let messageChat of messagesChat; let i = index"
+        >
+          <div class="inbox-chat-name">{{ messageChat.Name }}</div>
+          <div class="inbox-chat-description">{{ messageChat.Description }}</div>
+          <div class="inbox-chat-date">
+            {{ datepipe.transform(messageChat.Date, "EEEE, HH:mm") }}
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="padding"
+        *ngIf="messagesData.Type === 'notificacion' || messagesData.Type === 'tarea'"
+      >
+        <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
+        {{ messagesData.Description }}
+
+        <div
+          *ngIf="messagesData.Type === 'tarea'"
+          class="content-btn-inbox"
+        >
+          <div class="btns">
+            <app-button
+              class="btn-inbox-01"
+              [class]="'red left'"
+              [width]="'100%'"
+            >
+              <app-icon shape="playlist_add_check"></app-icon>
+              Tramitar
+            </app-button>
+            <app-button
+              class="btn-inbox-01"
+              [class]="'red left'"
+              [width]="'100%'"
+              (click)="consultarClicked()"
+            >
+              <app-icon shape="chat"></app-icon>
+              Consultar
+            </app-button>
+          </div>
+
+          <div class="clickConsultar" *ngIf="showSendButton">
+            <app-input
+              [type]="'text'"
+              [placeholder]="'Escribe...'"
+              class="inputSend"
+            ></app-input>
+            <div class="send-button">
+              <app-button
+                class="btn-inbox-01"
+                [class]="'red left'"
+                [width]="'100%'"
+              >
+                <app-icon shape="send"></app-icon>
+                Enviar
+              </app-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--FIN Detail-->
+</app-grid-layout>

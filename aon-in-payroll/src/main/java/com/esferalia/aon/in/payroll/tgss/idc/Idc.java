@@ -12,6 +12,7 @@ import java.util.Objects;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
 
@@ -66,6 +67,12 @@ public class Idc {
 		public void onContractType(String contractType) {
 			contractData.put(ContextVariable.TC2, contractType);
 		}
+		
+		@Override
+		public void onRlce(String rlce) {
+			if(AonStringUtils.containsIgnoreCase(rlce, "PRACT. NO LAB. EMP"))
+				contractData.put(ContextVariable.TC2, "000");
+		}
 
 		@Override
 		public void onContractOcupation(String ocupation) {
@@ -85,10 +92,10 @@ public class Idc {
 		@Override
 		public void onEmployeeQuoteTypes(Double it, Double ims, Double unemployment) {
 			if (Objects.nonNull(it)) {
-				contractData.put(ContextVariable.IT_RATE, it);
+				contractData.put(ContextVariable.IT_PERCENT, it);
 			}
 			if (Objects.nonNull(ims)) {
-				contractData.put(ContextVariable.IMS_RATE, ims);
+				contractData.put(ContextVariable.IMS_PERCENT, ims);
 			}
 			
 			if (Objects.nonNull(unemployment)) {

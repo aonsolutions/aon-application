@@ -181,6 +181,9 @@ public interface Images extends ClientBundle, Tree.Resources {
 
 	@Source("aon-icon-progress-bar.png")
 	ImageResource aonIconProgressBar();
+	
+	@Source("aon-icon-enable-gray.png")
+	ImageResource aon_icon_enable_gray();
 
 	@Source("aon-icon-enable.png")
 	ImageResource aon_icon_enable();

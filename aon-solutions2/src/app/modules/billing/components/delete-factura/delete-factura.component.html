@@ -1,0 +1,17 @@
+<div class="modal-container-delete">
+  <div class="issue">
+    <div class="title-container">
+      <span class="title">
+        {{ "BILLING.DELETE_BILL" | translate }}
+      </span>
+    </div>
+  </div>
+  <div class="buttonsSend">
+    <app-button [class]="'center send'" [width]="'5rem'">
+      {{ "BILLING.ACCEPT" | translate }}
+    </app-button>
+    <app-button [class]="'center'" [width]="'5rem'" (click)="closeModal()">
+      {{ "BILLING.CANCEL" | translate }}
+    </app-button>
+  </div>
+</div>

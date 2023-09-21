@@ -4,7 +4,7 @@ import static com.code.aon.faces.controller.IRichConstants.EDIT_DATA_TABLE_ID;
 
 import java.io.IOException;
 
-import javax.el.ELException;
+import jakarta.el.ELException;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;

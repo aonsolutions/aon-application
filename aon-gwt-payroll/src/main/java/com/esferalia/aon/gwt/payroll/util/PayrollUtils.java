@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.payroll.util;
 
-import com.esferalia.aon.salary.enumeration.DeductionType;
-import com.esferalia.aon.salary.enumeration.DeductionTypeVisitor;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PayrollUtils {
@@ -14,6 +12,7 @@ public class PayrollUtils {
 		case 3:
 		case 4:
 		case 5:
+		case 13:
 			return 1;
 		case 6:
 			return 2;
@@ -27,8 +26,9 @@ public class PayrollUtils {
 	}
 	
 	public static String getDeductionNameDescription(String name) {
-	    if ( AonStringUtils.equals("MEI", name))
-		return "Mecanismo de equidad intergeneracional";
+	    if ( AonStringUtils.equals("MEI", name)) {
+		return "Mecanismo de Equidad Intergeneracional (MEI)";
+	    }
 	    return null;
 	}
 	
@@ -36,23 +36,25 @@ public class PayrollUtils {
 
 		switch (type) {
 		case 0:
-			return "Contingencias comunes";
+			return "Contingencias Comunes";
 		case 2:
 			return "Desempleo";
 		case 3:
-			return "Formación profesional";
+			return "Formación Profesional";
 		case 4:
-			return "Horas extraordinarias (Estruc.)";
+			return "Horas Extraordinarias (Estruc.)";
 		case 5:
-			return "Horas extraordinarias (No Estruc.)";
+			return "Horas Extraordinarias (No Estruc.)";
 		case 6:
-			return "Retribuciones dinerarias";
+			return "Retribuciones Dinerarias";
 		case 7:
 			return "Anticipo";
 		case 8:
-			return "En especie";
+			return "En Especie";
 		case 10:
 			return "Embargo";
+		case 13:
+			return "Mecanismo de Equidad Intergeneracional (MEI)";
 		default:
 			return "Otras deducciones";
 		}

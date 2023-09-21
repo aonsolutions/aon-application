@@ -1,19 +1,31 @@
 @import "src/styles.scss";
 
-.title-modal-edit-tax-model{
-  font-weight: bold;
-  font-size:   $font-size-24;
- }
-
- .text-modal-edit-tax-model{
-color: $color-secondary;
- }
-
-
-.close-button {
-display: flex;
-justify-content: right;
-cursor: pointer;
+.modal-container {
+  margin-top: $margin-top;
+  margin-right: $margin-right;
+  margin-left: $margin-left;
 }
 
+.close-button {
+  display: flex;
+  justify-content: right;
+  cursor: pointer;
+}
+
+.title-modal-edit {
+  font-family: "Roboto-Bold";
+  font-size: $font-size-24;
+}
+
+.text-modal-edit-tax-model {
+  color: $color-secondary;
+  font-size: $font-size-primary;
+  padding-bottom: $padding-bottom;
+}
+
+app-button {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: $padding-top;
+}
 

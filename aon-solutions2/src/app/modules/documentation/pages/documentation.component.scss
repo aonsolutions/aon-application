@@ -6,14 +6,15 @@
     gap             : 1rem;
     align-items     : end;
   }
-  
+
   #document-content{
     display   : flex;
     flex-wrap : wrap;
     gap       : 1rem;
   }
- 
+
   #file-detail{
+    min-width       : 25rem;
     display         : flex;
     justify-content : space-between;
     gap             : 1rem;
@@ -24,10 +25,21 @@
     overflow      : hidden;
     text-overflow : ellipsis;
   }
-  #file-detail .close{
+  #file-detail .close, #selected-elements span app-icon{
     cursor: pointer;
   }
   
+  #doc-file-viewer{
+    height: 34.5rem;
+  }
+
+  #selected-elements {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
   .folder.select-folder .appButton.icon-background-pink{
     border          : solid $border-size-primary $color-pink;
     background-color: $background-button-pink-hover2;

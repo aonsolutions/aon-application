@@ -2,7 +2,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.BalanceType;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 
 public class Page05 extends PageAbs {
 
-	public Page05( Model200PageCallback callback ) {
+	public Page05( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 	
@@ -35,8 +35,8 @@ public class Page05 extends PageAbs {
 
 	@Override
 	protected boolean isAvailable() {
-		boolean av = super.isAvailable()
-  		  && (callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0026));
-		return av;
+		return super.isAvailable()
+  		  && (callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0026));		
 	}
 }
+

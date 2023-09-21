@@ -2,9 +2,11 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDError;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -119,6 +121,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void showErrorMessage(String title, String message) {
 			showError(title, message);
 		}
+		
+		@Override
+		protected void showWarningMessage(String title, String message) {
+			showWarning(title, message);
+		}
+
+		@Override
+		protected void showAfiOption() {
+			tgssContextMenu.afi.setVisible(true);
+			tgssContextMenu.comunicateAFI.setVisible(true);
+			tgssContextMenu.altaConsolidadaDelete.setVisible(true);
+		}
+
+		@Override
+		protected void hideAfiOption() {
+			tgssContextMenu.afi.setVisible(false);
+			tgssContextMenu.comunicateAFI.setVisible(false);
+			tgssContextMenu.altaConsolidadaDelete.setVisible(false);
+		}
 
 	}
 
@@ -222,6 +243,35 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			exportContract(consumer, failure, true);
 		}
 		
+		@Override
+		protected void onExportExtensionPDF(Consumer<String> consumer, Consumer<Throwable> failure) {
+			exportExtensionContract(consumer, failure);
+		}
+		
+		@Override
+		protected void onExportRelocationPDF(Map<String, String> contractRelocationInfo, Consumer<String> consumer, Consumer<Throwable> failure) {
+			exportRelocationContract(contractRelocationInfo, consumer, failure);
+		}
+		
+		private void exportExtensionContract(Consumer<String> consumer, Consumer<Throwable> failure) {
+			showLoading("Generando borrador de contrato");
+			contrataEmployeeObject.getContractOtherInfo(s -> {
+				contrataEmployeeObject.getContractSpecificData(su -> {
+					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+					contrataEmployeeObject.saveContractExtensionExport(
+							a -> consumer.accept("El borrador de la pr\u00f3rroga de contrato se ha generado correctamente"),
+							e -> failure.accept(e));
+				}, f -> failure.accept(f));
+			}, f -> failure.accept(f));
+		}
+		
+		private void exportRelocationContract(Map<String, String> contractRelocationInfo, Consumer<String> consumer, Consumer<Throwable> failure) {
+			showLoading("Generando borrador propuesta recolocaci\u00f3n");
+			contrataEmployeeObject.saveContractRelocationExport(contractRelocationInfo,
+					a -> consumer.accept("El borrador de la propuesta recolocaci\u00f3n del contrato se ha generado correctamente"),
+					e -> failure.accept(e));
+		}
+
 		private void exportContract(Consumer<String> consumer, Consumer<Throwable> failure, boolean isTransform) {
 			showLoading("Generando borrador de contrato");
 			contrataEmployeeObject.getContractOtherInfo(s -> {
@@ -530,8 +580,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			taEnd.setVisible(endDate != null);
 		}
 		
-		public void setStartDate(Date startDate) {
-			altaConsolidadaDelete.setVisible(DateUtils.isAfterOrEquals(new Date(), startDate));
+		public void setStartDate(Date startDate, boolean isReta) {
+			altaConsolidadaDelete.setVisible(DateUtils.isAfterOrEquals(new Date(), startDate) && !isReta);
 		}
 		
 		public void setPrevAlta(boolean prevAlta) {
@@ -949,6 +999,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	class ExportExtensionContractCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractAttachUI.exportExtensionContract();
+		}
+	}
+	
+	class ExportRelocationContractCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractAttachUI.exportRelocationContract();
+		}
+	}
+	
 	class ExportTransformContractCommand implements ScheduledCommand {
 
 		@Override
@@ -969,11 +1035,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		private MenuItem exportContract;
 		private MenuItem exportTransformContract;
+		private MenuItem exportExtensionContract;
+		private MenuItem exportRelocationContract;
 		private MenuItem modificationPDF;
 		
 		public AttachContextMenu() {
 			exportContract = addMenuItem("Borrador Contrato", new ExportContractCommand(), AON.CSS.aonIconPdf(), "exportContract");
 			exportTransformContract = addMenuItem("Borrador Contrato (Transformac\u00f3n)", new ExportTransformContractCommand(), AON.CSS.aonIconPdf(), "exportTransformContract");
+			exportExtensionContract = addMenuItem("Borrador Contrato (Pr\u00f3rroga)", new ExportExtensionContractCommand(), AON.CSS.aonIconPdf(), "exportExtensionContract");
+			exportRelocationContract = addMenuItem("Borrador Propuesta Recolocaci\u00f3n", new ExportRelocationContractCommand(), AON.CSS.aonIconPdf(), "exportRelocationContract");
 			modificationPDF = addMenuItem("Notificaci\u00f3n Laboral", new ModificationPDFCommand(), AON.CSS.aonIconPdf(), "modificationPDF");	
 		}
 		
@@ -985,6 +1055,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public void showHideExportTransformMI(boolean visible) {
 			exportTransformContract.setVisible(visible);
+		}
+		
+		public void showHideExportExtensionMI(boolean visible) {
+			exportExtensionContract.setVisible(visible);
+		}
+		
+		public void showHideExportRelocationMI(boolean visible) {
+			exportRelocationContract.setVisible(visible);
 		}
 
 	}
@@ -1238,7 +1316,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- Initialize View
 	
 	private void setScrollPanelsHeight() {
-		scrolledPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
+		scrolledPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 260.00, Unit.PX);
 		scrolledPanelContractOtherData.getElement().getStyle().setHeight(Window.getClientHeight() - 250.00, Unit.PX);
 		scrolledPanelClauses.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
 		scrolledPanelAttach.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
@@ -1248,7 +1326,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void initFootPanel() {
 		footPanel.addMaximizeHandler(e -> showFootPanel());
-		footPanel.addMinimizeHandler(e -> hideFootPanel());
+		footPanel.addMinimizeHandler(e -> closeFootPanel());
 		footPanel.clearButtons();
 		footPanel.addButtonLess();
 	}
@@ -1284,6 +1362,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		loadData(s -> {
 			loadToolbar();
 			hideMessage();
+			// CheckCNO
+			if(0 == tabLayOutPanel.getSelectedIndex() && contrataEmployeeObject.getContractData().getSsRegimen() != (byte)3 && !contractEmployeeUI.employee.isCnoSelected())
+				showWarning("CNO", "El CNO es obligatorio para todas las altas a partir del 01/01/2023");
 			checkButtonsToolbar();
 			finish.accept(null);
 		});
@@ -1331,6 +1412,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			} catch (Exception e) {
 				// Nothing to do here
 			}
+			attachContextMenu.showHideExportExtensionMI(null != contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getExtensionDate());
+			attachContextMenu.showHideExportRelocationMI(isRelocationContractType(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType()));
 			finish.accept(null);
 			break;
 		case 5:
@@ -1357,6 +1440,24 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			finish.accept(null);
 			break;
 		}
+	}
+
+	private boolean isRelocationContractType(String contractType) {
+		List<Integer> constructionContractTypes = new ArrayList<>();
+		constructionContractTypes.add(100);
+		constructionContractTypes.add(109);
+		constructionContractTypes.add(130);
+		constructionContractTypes.add(139);
+		constructionContractTypes.add(150);
+		constructionContractTypes.add(189);
+		constructionContractTypes.add(200);
+		constructionContractTypes.add(209);
+		constructionContractTypes.add(230);
+		constructionContractTypes.add(239);
+		constructionContractTypes.add(250);
+		constructionContractTypes.add(289);
+		
+		return AonStringUtils.isNotBlank(contractType) && constructionContractTypes.contains(Integer.parseInt(contractType));
 	}
 
 	private void loadToolbar() {
@@ -1768,9 +1869,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			// Nothing to do here
 		}
 		
-		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), contractEmployeeUI.getContractType(),
-				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
-				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
+		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), 
+				contractEmployeeUI.getContractType(),
+				contractEmployeeUI.getQuoteGroup(), 
+				contractEmployeeUI.getOccupation(),
+				contractEmployeeUI.getPartialityCoef(), 
+				this.contrataEmployeeObject.getContractData().getCno(), 
+				this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(),
 				this.contrataEmployeeObject.getContractData().hasSettle(),
@@ -1813,6 +1918,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				// Nothing to do here
 			}
 
+			@Override
+			protected void onCnoContract(String cno, Date date) {
+				// TODO Auto-generated method stub
+				
+			}
+
 		};
 	}
 
@@ -1825,9 +1936,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			// Nothing to do here
 		}
 		
-		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), contractEmployeeUI.getContractType(),
-				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
-				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
+		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), 
+				contractEmployeeUI.getContractType(),
+				contractEmployeeUI.getQuoteGroup(), 
+				contractEmployeeUI.getOccupation(),
+				contractEmployeeUI.getPartialityCoef(), 
+				this.contrataEmployeeObject.getContractData().getCno(), 
+				this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(), 
 				this.contrataEmployeeObject.getContractData().hasSettle(),
@@ -1845,6 +1960,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.cambioCoef(partialityCoef, date,
 						s -> showSuccess("AVISO: Parcialidad",
 								"El coeficiente de parcialidad ha sido notificado a la Seguridad Social."),
+						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+			}
+			
+			@Override
+			protected void onCnoContract(String cno, Date date) {
+				showLoading("Comunicando CNO (TGSS) ...");
+				contrataEmployeeObject.cambioCno(cno, date,
+						s -> showSuccess("AVISO: CNO",
+								"El cambio de CNO ha sido notificado a la Seguridad Social."),
 						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 			}
 
@@ -2201,21 +2325,23 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void sendContract() {
-		showLoading("Notificando contrato...");
-		contrataEmployeeObject.sendContract(s -> {
-			showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
-			downloadCto(
-				su -> sendBasicCopyTimer(
-						success -> downloadCbc(suc -> loadWindow(succe -> {})),
-						failure -> loadWindow(succe -> {})), 
-				fa -> loadWindow(succe -> {}));
-			contrataEmployeeObject.getComunicationInfo();
-		}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
-		
-//		contrataEmployeeObject.sendContract(s -> {
-//			showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
-//			sendBasicCopyTimer(su -> downloadCto(suc -> downloadCbc(succ -> loadWindow(succe -> {}))));
-//		}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+		String contractType = contrataEmployeeObject.getContractData().getContractType();
+		Date endDate = contrataEmployeeObject.getContractData().getEndDate();
+		if(AonStringUtils.isNotBlank(contractType) && (AonStringUtils.equalsIgnoreCase(contractType, "402") || AonStringUtils.equalsIgnoreCase(contractType, "502"))
+				&& null == endDate)
+			showWarning("Fecha fin", "Los contratos 402 y 502 deben tener definido la fecha fin del contrato");
+		else {
+			showLoading("Notificando contrato...");
+			contrataEmployeeObject.sendContract(s -> {
+				showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
+				downloadCto(
+					su -> sendBasicCopyTimer(
+							success -> downloadCbc(suc -> loadWindow(succe -> {})),
+							failure -> loadWindow(succe -> {})), 
+					fa -> loadWindow(succe -> {}));
+				contrataEmployeeObject.getComunicationInfo();
+			}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+		}
 	}
 
 	private void downloadCto(Consumer<Void> succes, Consumer<Void> failure) {
@@ -2726,23 +2852,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		footPanel.addButtonLess();
 	}
 
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 20);
-		splitLayoutPanel.animate(500);
-	}
-
 	private void optionNotAllowed() {
-		AonDialog dialog = new AonDialog("Informaci\u00f3n", new HTML("Opci\u00f3n no permitida"));
+		AonDialog dialog = new AonDialog("Informaci\u00f3n", new HTML("Opci\u00f3n no permitida ya que existen n\u00f3minas emitidas. Debe realizar este cambio manualmente a traves de Cambios AFI, creando un tramo con su fecha correspondiente."));
 		dialog.info();
 	}
-
-	private void hideFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 20);
+	
+	private void showFootPanel() {
+		footPanel.addButtonMore();
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 		splitLayoutPanel.animate(500);
 	}
-
-	private void showFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 200);
+	
+	private void closeFootPanel() {
+		footPanel.addButtonLess();
+		splitLayoutPanel.setWidgetSize(footPanel, 17);
 		splitLayoutPanel.animate(500);
 	}
 
@@ -2792,7 +2915,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		Date endDate = contrataEmployeeObject.getContractData().getEndDate();
 		
 		tgssContextMenu.setIsComunica(this.isComunica);
-		tgssContextMenu.setStartDate(startDate);
+		tgssContextMenu.setStartDate(startDate, (null != contrataEmployeeObject.getContractData().getSsRegimen() && contrataEmployeeObject.getContractData().getSsRegimen() == 3));
 		tgssContextMenu.setEndDate(endDate);
 		tgssContextMenu.setPrevAlta(checkPrevAlta());
 	}

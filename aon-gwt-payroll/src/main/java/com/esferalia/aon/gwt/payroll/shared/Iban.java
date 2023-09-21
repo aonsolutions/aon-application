@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 @SuppressWarnings("serial")
 public class Iban implements Serializable{
 	
@@ -29,6 +31,8 @@ public class Iban implements Serializable{
         int len = iban.length();
         if (len < 4 || !iban.matches("[0-9A-Z]+") || DEFINITIONS.getOrDefault(iban.substring(0, 2), 0) != len)
             return false;
+        
+        if(AonStringUtils.equalsIgnoreCase(iban.substring(0, 2), "FR")) return true;
  
         iban = iban.substring(4) + iban.substring(0, 4);
  

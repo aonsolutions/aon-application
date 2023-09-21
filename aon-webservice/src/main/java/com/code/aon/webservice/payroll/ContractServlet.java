@@ -4,15 +4,19 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -93,7 +97,9 @@ public class ContractServlet extends HttpServlet{
 					Date end = c.getEndDate() != null && AonDateUtils.getYear(c.getEndDate()) == year ? c.getEndDate() : ejFinalDate;
 					Number number =(Number) MVEL.eval(c.getExpression());
 					Double coef = number.doubleValue();
-					list.stream().filter(o -> o.getName().equals("TC2") && (o.getEndDate() == null || o.getEndDate().compareTo(start) > 0) && o.getStartDate().compareTo(end) <= 0).forEach(h -> {
+					list.stream().filter(o -> o.getName().equals("TC2") && (o.getEndDate() == null || o.getEndDate().compareTo(start) > 0) && o.getStartDate().compareTo(end) <= 0)
+					.filter(distinctByKey(p -> p.getName() + " " + p.getStartDate() + " " + p.getEndDate()))
+					.forEach(h -> {
 						Date start2 = h.getStartDate().compareTo(start) > 0 ? h.getStartDate() : start;
 						Date end2 = (h.getEndDate() != null && h.getEndDate().compareTo(end) < 0) ? AonDateUtils.addDays(h.getEndDate(),1) : end;
 						if (end2.compareTo(start2) >= 0) {
@@ -118,6 +124,7 @@ public class ContractServlet extends HttpServlet{
 				Date start = AonDateUtils.getYear(contract.getStartDate()) == year ? contract.getStartDate() : ejInitDate;
 				Date end = contract.getEndDate() != null && AonDateUtils.getYear(contract.getEndDate()) == year ? contract.getEndDate() : ejFinalDate;	
 				list.stream().filter(o -> o.getName().equals("TC2") && (o.getEndDate() == null || o.getEndDate().compareTo(start) > 0) && o.getStartDate().compareTo(end) <= 0)
+				.filter(distinctByKey(p -> p.getName() + " " + p.getStartDate() + " " + p.getEndDate()))
 				.forEach(h -> {
 					Date start2 = h.getStartDate().compareTo(start) > 0 ? h.getStartDate() : start;
 					Date end2 = (h.getEndDate() != null && h.getEndDate().compareTo(end) < 0) ? AonDateUtils.addDays(h.getEndDate(),1) : end;
@@ -171,4 +178,8 @@ public class ContractServlet extends HttpServlet{
 		return array;
 	}
 	
+	public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+	    Map<Object, Boolean> map = new ConcurrentHashMap<>();
+	    return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+	}
 }

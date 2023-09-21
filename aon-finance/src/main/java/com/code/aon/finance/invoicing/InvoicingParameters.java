@@ -1,10 +1,14 @@
 package com.code.aon.finance.invoicing;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -17,6 +21,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
+import com.code.aon.registry.Segment;
 
 public class InvoicingParameters implements Serializable {
 	
@@ -37,6 +42,9 @@ public class InvoicingParameters implements Serializable {
 	private WorkPlace workPlace;
 	private Scope scope;
 	private List<Scope> scopes;
+	private Segment segment;
+	private Segment[] segments;
+
 
 	private Series invoiceSeries;
 	private int invoiceNumber;
@@ -216,14 +224,49 @@ public class InvoicingParameters implements Serializable {
 		setConfidential(false);
 		setWorkPlace(new WorkPlace());
 		setScope(new Scope());
+		setSegment(new Segment());
 	}
 
 	public List<Integer> getScopeIds() {
-		List<Integer> scopeIds = new LinkedList<Integer>();
-		for (Scope scope : getScopes()) {
-			scopeIds.add(scope.getId());
+		List<Integer> scopeIds = new LinkedList<>();
+		for (Scope sc : getScopes()) {
+			scopeIds.add(sc.getId());
 		}
 		return scopeIds;
 	}
-
+	
+	
+	public Segment getSegment() {
+		return segment;
+	}
+	public void setSegment(Segment segment) {
+		this.segment = segment;
+	}
+	public int getSegmentsSize() {
+		return ArrayUtils.getLength(segments);
+	}	
+	public Segment getEmptySegment() {
+		return new Segment();
+	}
+	
+	public Segment[] getSegments() {
+		if (segments == null) {
+			segments = new Segment[]{new Segment()};
+		}
+		return segments;
+	}
+	public void setSegments(Segment[] segments) {
+		this.segments = segments;
+	}
+	
+	public List<Integer> getSegmentsIds() {
+		if (getSegments() != null) {
+			return Arrays.stream(getSegments())
+				.filter( s -> s != null)
+				.filter( s -> s.getId() != null)
+				.map( s -> s.getId() )
+				.collect(Collectors.toCollection(LinkedList::new));
+		}
+		return new LinkedList<>();
+	}
 }

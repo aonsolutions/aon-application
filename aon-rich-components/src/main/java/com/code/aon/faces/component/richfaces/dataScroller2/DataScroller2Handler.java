@@ -2,8 +2,8 @@ package com.code.aon.faces.component.richfaces.dataScroller2;
 
 import static com.code.aon.faces.controller.IRichConstants.ATTRIBUTE_PREFFIX;
 
-import javax.el.ValueExpression;
-import javax.el.VariableMapper;
+import jakarta.el.ValueExpression;
+import jakarta.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;
 import javax.faces.component.UIViewRoot;

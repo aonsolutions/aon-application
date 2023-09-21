@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
 import { DocumenNoteFactory, IDocumentNote } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DocumentNoteService {
+export class DocumentNoteService extends CommonService {
 
   singleObjectCrud = new DocumenNoteFactory().createSingleObjectCrud();
 
-  constructor() { }
+  constructor() {
+    super();
+  }
 
   async getDocumentNote(pkey: any): Promise<IDocumentNote> {
     return (await this.singleObjectCrud.getElement(pkey)).result;

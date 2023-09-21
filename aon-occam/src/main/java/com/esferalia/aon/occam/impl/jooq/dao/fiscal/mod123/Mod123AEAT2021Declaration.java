@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod123AEAT2021Declaration extends Mod123Declaration {
 	
@@ -16,34 +17,25 @@ public class Mod123AEAT2021Declaration extends Mod123Declaration {
 	
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{
 		 CT_C01(Mod123Key.CT_C01
-			, (mod,br) -> br.isMovableCapital()
+			, (mod,br) -> isMovableCapital(br)
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.CT_C01,mod,docs,br)
 			,null,null,null)
 		,CT_C02(Mod123Key.CT_C02
-			, (mod,br) -> br.isMovableCapital()
+			, (mod,br) -> isMovableCapital(br)
 			, (ctx,mod,docs,br) -> addBase(Mod123Key.CT_C02,mod,br)
 			,null,null,null)
 		,CT_C03(Mod123Key.CT_C03
-			, (mod,br) -> br.isMovableCapital()
+			, (mod,br) -> isMovableCapital(br)
 			, (ctx,mod,docs,br) -> addQuota(Mod123Key.CT_C03,mod,br)
-			,null
-			,null
-			,null)
+			,null,null,null)
 		,CT_C04(Mod123Key.CT_C04, null,null,null,null,null)
 		,CT_C05(Mod123Key.CT_C05, null,null,null,null,null)
 		,CT_C06(Mod123Key.CT_C06, null,null,null, "CT_C03+CT_C05",null)
 		,CT_C07(Mod123Key.CT_C07, null,null
 			, (ctx,mod) -> mod.putAmount(Mod123Key.CT_C07,mod.isComplementary()
-				?Mod123DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod123::getDeclarationResult).sum()
+				?Mod123DAO.getSamePeriodEffectiveModels(ctx, mod).mapToDouble(Mod123::getDeclarationResult).sum()
 				:0.0)
-			,null
-			,"{messages : ["
-				+ "\"Declaraciones en el mismo periodo/ejercicio:\","
-				+ "@foreach{fm : periodModels}"
-				+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
-				+ "@end{}"
-				+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(CT_C07)}\""
-			+"]}")
+			,null,null)
 		,CT_C08(Mod123Key.CT_C08, null,null,null, "CT_C06-CT_C07",null)
 		,CT_TIP (Mod123Key.CT_TIP,null,null,null,null,null)
 
@@ -122,6 +114,19 @@ public class Mod123AEAT2021Declaration extends Mod123Declaration {
 		mod123.setComplementaryDeclarationAvailable(true);
 		mod123.setReplacementDeclarationAvailable(false);
 		return super.initializeModel(ctx, mod123);
+	}
+
+	@Override
+	public Mod123Key[] getSamePeriodExplainKeys() {
+		return new Mod123Key[] {Mod123Key.CT_C07}; 
+	}
+
+	private static boolean isMovableCapital(IrpfBreakdown br) {
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
+			|| br.getWithholdingType() == WithholdingType.M193_C1
+			|| br.getWithholdingType() == WithholdingType.M193_C2
+			|| br.getWithholdingType() == WithholdingType.M193_C3);
 	}
 
 }

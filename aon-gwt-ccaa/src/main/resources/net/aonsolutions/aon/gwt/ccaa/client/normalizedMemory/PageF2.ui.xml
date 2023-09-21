@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:d="urn:import:com.google.gwt.user.datepicker.client"
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client' 
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
@@ -197,6 +198,17 @@
 									<td>
 										<g:TextBox ui:field="ROAC" styleName="{aonResources.css.aonInputText}"></g:TextBox>
 									</td>
+									<td>
+										<g:TextBox ui:field="ROAC2" styleName="{aonResources.css.aonInputText}"></g:TextBox>
+									</td>
+									<td>
+										<g:Label ui:field="ROACDateLabel"></g:Label>
+									</td>
+									<td>
+										<d:DateBox ui:field="ROACDate" styleName="{aonResources.css.aonInputText}"></d:DateBox>
+									</td>
+									
+									
 								</tr>
 							</table>
 						</div>

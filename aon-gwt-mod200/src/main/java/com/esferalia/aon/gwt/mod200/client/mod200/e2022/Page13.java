@@ -2,7 +2,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -17,7 +17,7 @@ public class Page13 extends PageAbs {
 			"TOTAL"
 	};
 	
-	public Page13( Model200PageCallback callback ) {
+	public Page13( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 	
@@ -73,9 +73,9 @@ public class Page13 extends PageAbs {
 	
 	@Override
 	protected boolean isAvailable() {
-		boolean av = super.isAvailable()
+		return super.isAvailable()
   		  && (callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0028));
-		return av;
 	}
 	
 }
+

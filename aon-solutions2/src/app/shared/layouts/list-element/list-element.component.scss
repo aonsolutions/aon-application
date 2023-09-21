@@ -1,12 +1,91 @@
-.listElement{ 
-    height: auto;
-    width: auto;
-    box-sizing: border-box;
-}
+@import 'src/styles.scss';
+::ng-deep{
+  
+  app-list-element .list-element ul{
+    display: none;
+  }
+  
+  app-list-element .list-element ul:not(:empty){
+    display         : list-item;
+    list-style-type : none;
+    padding         : 0;
+    margin          : 0 (-$padding); // Quitamos el paddin del padre
+  }
+  app-list-element .list-element ul li{
+    display       : flex;
+    gap           : 1rem;
+    cursor        : pointer;
+    text-transform: uppercase;
+    padding       : $padding;
+    align-items   : center;
+  }
+  
+  app-list-element .list-element ul li .right{
+    text-align: end;
+    width     : 100% !important;
+  }
+  
+  /*
+    color
+  */
+    app-list-element .list-element ul li:hover .circle{
+      background-color: $background-button-primary !important;
+    }
+    // select
+    app-list-element .list-element ul li.select{
+      font-family: Roboto-Medium;
+    }
+    app-list-element .list-element ul li.select .circle{
+      background-color: $background-button-primary !important;
+    }
 
-:host {
-    display: flex;
-    width: var(--widthHost);
-    height: var(--heightHost);
-    box-sizing: border-box;
+    /* Red */
+      app-list-element.red .list-element ul li:hover{
+        background-color: $background-button-red-hover2;
+      }
+      // select
+      app-list-element.red .list-element ul li.select{
+        background-color: $background-button-red-hover2;
+      }
+    /* Blue */
+      app-list-element.blue .list-element ul li:hover{
+        background-color: $background-button-blue-hover2;
+      }
+      // select
+      app-list-element.blue .list-element ul li.select{
+        background-color: $background-button-blue-hover2;
+      }
+    /* Pink */
+      app-list-element.pink .list-element ul li:hover{
+        background-color: $background-button-pink-hover2;
+      }
+      // select
+      app-list-element.pink .list-element ul li.select{
+        background-color: $background-button-pink-hover2;
+      }
+    /* Purple */
+      app-list-element.purple .list-element ul li:hover{
+        background-color: $background-button-purple-hover2;
+      }
+      // select
+      app-list-element.purple .list-element ul li.select{
+        background-color: $background-button-purple-hover2;
+      }
+    /* Green */
+      app-list-element.green .list-element ul li:hover{
+        background-color: $background-button-green-hover2;
+      }
+      // select
+      app-list-element.green .list-element ul li.select{
+        background-color: $background-button-green-hover2;
+      }
+    /* Orange */
+      app-list-element.orange .list-element ul li:hover{
+        background-color: $background-button-orange-hover2;
+      }
+      // select
+      app-list-element.orange .list-element ul li.select{
+        background-color: $background-button-orange-hover2;
+      }
+ 
 }

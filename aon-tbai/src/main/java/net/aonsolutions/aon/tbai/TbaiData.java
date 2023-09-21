@@ -84,7 +84,6 @@ public class TbaiData {
 		final Unmarshaller jaxbMarshaller = jaxbContext.createUnmarshaller();
 		InputStream is = new ByteArrayInputStream(requestAttach.getData());
 		return (TicketBai) jaxbMarshaller.unmarshal(is);
-
 	}
 	
 	public TBAIInformation get(Domain domain, User user, Integer invoice) {
@@ -146,7 +145,7 @@ public class TbaiData {
 		DataRequest request = new DataRequest()
 				.setDomain(domain.getId())
 				.setDate(new Date())
-				.setBlackBox(InvoiceJSON.toJSON(invoice).toString())
+				.setBlackBox("")
 				.setType(DataRequestType.TBAI);
 		String md5 = getMd5(request.getDomain() + request.getDate().toString() + request.getBlackBox() + request.getType().value());
 		request.setMd5(md5);
@@ -173,7 +172,7 @@ public class TbaiData {
 		DataRequest request = new DataRequest()
 				.setDomain(domain.getId())
 				.setDate(new Date())
-				.setBlackBox(json.toString())
+				.setBlackBox("")
 				.setType(DataRequestType.TBAI);
 		String md5 = getMd5(request.getDomain() + request.getDate().toString() + request.getBlackBox() + request.getType().value());
 		request.setMd5(md5);
@@ -324,6 +323,87 @@ public class TbaiData {
 			
 			AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
 		}
+		return dr;
+	}
+	
+	public DataResponse saveResponseZuzendu(Domain domain, User user, Invoice invoice, byte[] request, TbaiResponse response, String tbaiUrl) {
+		
+		JSONObject json = new JSONObject();
+		json.put("tbai", "emision");
+		json.put("invoice", InvoiceJSON.toJSON(invoice).toString());
+		DataRequest dataRequest = new DataRequest()
+				.setDomain(domain.getId())
+				.setDate(new Date())
+				.setBlackBox("")
+				.setType(DataRequestType.TBAI);
+		String md5 = getMd5(dataRequest.getDomain() + dataRequest.getDate().toString() + dataRequest.getBlackBox() + dataRequest.getType().value());
+		dataRequest.setMd5(md5);
+		
+		dataRequest = AON.saveDataRequest(domain.getName(), domain.getId(), user.getLogin(), dataRequest);
+		
+		Attach attach = new Attach()
+				.setDomain(domain)
+				.setAttachType(AttachType.DATA)
+				.setType(DataAttachType.REQUEST.value())
+				.setSource(DataAttachSource.TBAI.value())
+				.setSourceId(dataRequest.getId())
+				.setMimeType(MimeType.XML)
+				.setData(request);
+		
+		AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+		
+		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
+		DataResponse dr = new DataResponse()
+				.setDomain(domain.getId())
+				.setCode(response.getResponseStatus())
+				.setResponseDate(new Date())
+				.setSource(source)
+				.setSourceId(invoice.getId())
+				.setDataRequest(dataRequest.getId());
+		
+		dr = AON.insertDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr);
+		
+		DataResponseDetail drd1 = new DataResponseDetail()
+				.setDomain(domain.getId())
+				.setDataResponse(dr.getId())
+				.setDataVariable("tbaiId")
+				.setDataValue(response.getTbaiId());
+		
+		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd1);
+		
+		
+		
+		DataResponseDetail drd = new DataResponseDetail()
+				.setDomain(domain.getId())
+				.setDataResponse(dr.getId())
+				.setDataVariable("response")
+				.setDataValue(response.toJSON().toString());
+		
+		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd);
+		
+		DataResponseDetail drd3 = new DataResponseDetail()
+				.setDomain(domain.getId())
+				.setDataResponse(dr.getId())
+				.setDataVariable("tbaiUrl")
+				.setDataValue(tbaiUrl);
+		
+		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd3);
+		
+		if(response.getData() != null) {
+			Attach responseAttach = new Attach()
+					.setDomain(domain)
+					.setAttachType(AttachType.DATA)
+					.setType(response.isOk() 
+						? DataAttachType.RESPONSE_OK.value() 
+						: DataAttachType.RESPONSE_ERROR.value())
+					.setSource(DataAttachSource.TBAI.value())
+					.setSourceId(dr.getId())
+					.setMimeType(MimeType.XML)
+					.setData(response.getData());
+			
+			AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), responseAttach);
+		}
+		
 		return dr;
 	}
 	

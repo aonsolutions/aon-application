@@ -1,13 +1,14 @@
 <div class="structure-title">
-  {{ 'PROFILE.GENERAL_INFORMATION'| translate }}
+  {{ "PROFILE.GENERAL_INFORMATION" | translate }}
 </div>
 
-<hr>
+<hr />
 
-<div class="structure-container">
+<div *ngFor="let enterprise of enterprises" class="structure-container">
   <div class="structure-photo">
-    <p class="photo"> {{ 'PROFILE.PHOTO'| translate }}</p>
+    <p class="photo">{{ "PROFILE.PHOTO" | translate }}</p>
     <div class="upload-circle">
+      <!-- {{ enterprise.ProfilePhoto }} -->
       <app-button class="icon-border">
         <app-icon [shape]="'clear'"></app-icon>
       </app-button>
@@ -16,7 +17,7 @@
   <div class="structure-form">
     <div class="form upload">
       <app-file-upload-button>
-        {{ 'PROFILE.CLICK_DRAG_DROP'| translate }}
+        {{ "PROFILE.CLICK_DRAG_DROP" | translate }}
         <app-icon shape="cloud_upload" class="margin-left"></app-icon>
       </app-file-upload-button>
     </div>
@@ -25,7 +26,8 @@
       <app-input
         [type]="'text'"
         [label]="'PROFILE.TRADE_NAME' | translate"
-        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+        [placeholder]="'PROFILE.TRADE_NAME' | translate"
+        [value]="enterprise.Name"
       >
       </app-input>
     </div>
@@ -33,7 +35,8 @@
       <app-input
         [type]="'text'"
         [label]="'PROFILE.ADRESS' | translate"
-        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+        [placeholder]="'PROFILE.ADRESS' | translate"
+        [value]="enterprise.Address"
       >
       </app-input>
     </div>
@@ -42,16 +45,17 @@
       <app-input
         [type]="'select'"
         [label]="'PROFILE.COUNTRY' | translate"
-        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+        [placeholder]="'PROFILE.COUNTRY' | translate"
         [options]="optionsCountry"
         (selectionChange)="onCountrySelection($event)"
+        [value]="enterprise.Country"
       >
       </app-input>
       <app-input
         [type]="'select'"
         [label]="'PROFILE.CITY' | translate"
-        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
-        [options]="showProvinceField() ? optionsProvince : []"
+        [placeholder]="'PROFILE.CITY' | translate"
+        [value]="enterprise.Province"
       >
       </app-input>
     </div>
@@ -60,15 +64,17 @@
       <app-input
         [type]="'text'"
         [label]="'PROFILE.LEGAL_NAME' | translate"
-        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+        [placeholder]="'PROFILE.LEGAL_NAME' | translate"
         [disabled]="'disabled'"
+        [value]="enterprise.SocialReason"
       >
       </app-input>
       <app-input
         [type]="'text'"
         [label]="'PROFILE.TIN' | translate"
-        [placeholder]="'PROFILE.PLACEHOLDER' | translate"
+        [placeholder]="'PROFILE.TIN' | translate"
         [disabled]="'disabled'"
+        [value]="enterprise.Document"
       >
       </app-input>
     </div>

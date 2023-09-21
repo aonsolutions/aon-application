@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IRegistry;
 import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.AonCompany;
@@ -35,13 +36,15 @@ import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
-import com.esferalia.aon.occam.api.model.registry.Question;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -55,6 +58,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -65,6 +69,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainLinkedDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.QuestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
@@ -73,7 +78,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryNoteDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryPayMethodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryProfileDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySegmentDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistrySellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -290,7 +297,7 @@ public class RegistryImpl implements IRegistry{
 
 
 	@Override
-	public Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry) {
+	public Stream<com.esferalia.aon.occam.api.model.registry.Question> getRegistryQuestionStream(AONContext ctx, Integer registry) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getRegistryQuestionStream(ctx, registry));
 	}
@@ -302,6 +309,19 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	// -------------------- CUSTOMER
+	
+
+	@Override
+	public List<Customer> getCustomerWithoutFee(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getCustomerWithoutFee(ctx));
+	}
+
+	@Override
+	public List<Customer> getCustomerWithoutFee(AONContext ctx, CustomerParams customerParams) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getCustomerWithoutFee(ctx, customerParams));
+	}
 	
 	@Override
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter) {
@@ -326,6 +346,44 @@ public class RegistryImpl implements IRegistry{
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> SellerDAO.getStream(ctx, filter));
+	}
+
+	@Override
+	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SellerDAO.getStream(ctx, filter, offset, limit));
+	}
+	
+	// -------------------- RSELLER
+	
+	@Override
+	public RegistrySeller getRegistrySeller(AONContext ctx, RegistrySellerFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistrySellerDAO.get(ctx, filter));
+	}
+	
+	@Override
+	public Stream<RegistrySeller> getRegistrySellerStream(AONContext ctx, RegistrySellerFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistrySellerDAO.getStream(ctx, filter));
+	}
+	
+	@Override
+	public Stream<RegistrySeller> getRegistrySellerStream(AONContext ctx, RegistrySellerFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistrySellerDAO.getStream(ctx, filter, offset, limit));
+	}
+	
+	@Override
+	public RegistrySeller saveRegistrySeller(AONContext ctx, RegistrySeller registrySeller) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistrySellerDAO.save(ctx, registrySeller));
+	}
+	
+	@Override
+	public int deleteRegistrySeller(AONContext ctx, RegistrySellerFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistrySellerDAO.delete(ctx, filter));
 	}
 	
 	// -------------------- CARRIER
@@ -414,6 +472,12 @@ public class RegistryImpl implements IRegistry{
 	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getRItemStream(ctx, filter));
+	}
+	
+	@Override
+	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter, int limit, int offset) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.getRItemStream(ctx, filter, limit, offset));
 	}
 
 	// -------------------- SUPPLIER
@@ -722,5 +786,42 @@ public class RegistryImpl implements IRegistry{
 		return ctx.getDslContext().transactionResult(
 				configuration -> DomainLinkedDAO.save(ctx, domainLinked));
 	}
+	
+	// QUESTION
 
+	@Override
+	public List<Question> getQuestionList(CloseableAONContext ctx, QuestionParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> QuestionDAO.getList(ctx, params));
+	}
+
+	@Override
+	public void deleteQuestion(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> QuestionDAO.delete(ctx, id));
+	}
+
+	@Override
+	public Question saveQuestion(CloseableAONContext ctx, Question question) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> QuestionDAO.save(ctx, question));
+	}
+
+	@Override
+	public Question getQuestion(CloseableAONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> QuestionDAO.get(ctx, id));
+	}
+
+	@Override
+	public Boolean checkQuestionAlias(CloseableAONContext ctx, String alias) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> QuestionDAO.checkAlias(ctx, alias));
+	}
+
+	// REGISTRY PROFILE
+	
+	@Override
+	public void saveRegistryProfile(CloseableAONContext ctx, Integer registryId, String questionAlias, String value) {
+		ctx.getDslContext().transaction(configuration -> RegistryProfileDAO.save(ctx,registryId, questionAlias, value));
+	}
 }

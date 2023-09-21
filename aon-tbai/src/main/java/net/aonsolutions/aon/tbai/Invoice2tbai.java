@@ -19,6 +19,7 @@ import ticketbai.anulacion.IDFactura;
 import ticketbai.emision.Cabecera;
 import ticketbai.emision.CabeceraFacturaType;
 import ticketbai.emision.CausaExencionType;
+import ticketbai.emision.CausaNoSujetaType;
 import ticketbai.emision.ClaveTipoFacturaType;
 import ticketbai.emision.ClaveTipoRectificativaType;
 import ticketbai.emision.ClavesType;
@@ -31,6 +32,7 @@ import ticketbai.emision.Destinatarios;
 import ticketbai.emision.DetalleExentaType;
 import ticketbai.emision.DetalleIVAType;
 import ticketbai.emision.DetalleNoExentaType;
+import ticketbai.emision.DetalleNoSujeta;
 import ticketbai.emision.DetallesFacturaType;
 import ticketbai.emision.Emisor;
 import ticketbai.emision.EmitidaPorTercerosType;
@@ -48,6 +50,7 @@ import ticketbai.emision.IDDetalleFacturaType;
 import ticketbai.emision.IDFacturaRectificadaSustituidaType;
 import ticketbai.emision.IDOtro;
 import ticketbai.emision.NoExentaType;
+import ticketbai.emision.NoSujetaType;
 import ticketbai.emision.PrestacionServicios;
 import ticketbai.emision.SiNoType;
 import ticketbai.emision.SoftwareFacturacionType;
@@ -234,13 +237,23 @@ public class Invoice2tbai {
 			receiver.setCodigoPostal(invoice.getAddress().getZip());
 			receiver.setDireccion(invoice.getAddress().getFullAddress()); 
 
-			if(invoice.isNational() || (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
+			if((invoice.isNational() && Country.ES.equals(invoice.getRegistryDocumentCountry())) 
+					|| (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
 				receiver.setNIF(invoice.getRegistryDocument().replace(" ", ""));			
 			} else {
 				IDOtro other = new IDOtro();
 				other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-				other.setIDType(IDType.OTRO.getName());
-				other.setID(invoice.getRegistryDocument().replace(" ", ""));
+				other.setIDType(invoice.isIntracommunity() 
+						? IDType.NIF_IVA.getName()
+						: IDType.OTRO.getName());
+				
+				String doc = invoice.getRegistryDocument().replace(" ", "");
+				if(!doc.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
+					boolean isGrecia = Country.GR.equals(invoice.getRegistryDocumentCountry());
+					String countryDocument = isGrecia ? "EL" : invoice.getRegistryDocumentCountry().getIso2();
+					doc = countryDocument + doc;
+				}
+				other.setID(doc);
 				receiver.setIDOtro(other);
 			}
 			
@@ -270,7 +283,9 @@ public class Invoice2tbai {
 
 		if(invoice.isRectifier()) {
 			FacturaRectificativaType rectificativa = new FacturaRectificativaType(); 
-			rectificativa.setCodigo(ClaveTipoFacturaType.R_1);
+			rectificativa.setCodigo(invoice.isSimplified()
+					? ClaveTipoFacturaType.R_5
+					: ClaveTipoFacturaType.R_1);
 			rectificativa.setTipo(ClaveTipoRectificativaType.I); // por diferencia o por sustitucion
 			cabecera.setFacturaRectificativa(rectificativa);
 			
@@ -290,11 +305,11 @@ public class Invoice2tbai {
 		datos.setDescripcionFactura("FACTURA " + invoice.getReferenceCode());
 		
 		DetallesFacturaType detalles = new DetallesFacturaType();
-		invoice.getDetails().stream().filter(f -> !f.isPrepayment()).forEach(detail -> {
+		invoice.getDetails().stream().forEach(detail -> {
 			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(null);
 			if(tax != null) {
 				IDDetalleFacturaType detalle = new IDDetalleFacturaType();
-				detalle.setCantidad(Double.toString(detail.getQuantity()));
+				detalle.setCantidad(Double.toString(AonMathUtils.round(detail.getQuantity(), 4)));
 				String description = detail.getDescription().replace("\n", " ");
 				if(description.length() > 249) {
 					description = description.substring(0, 249);
@@ -311,7 +326,26 @@ public class Invoice2tbai {
 				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 					tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 				}
+				
+				if(tax.getSurcharge() > 0 && tax.getSurchargeQuota() == 0.0) {
+					tax.setSurchargeQuota(AonMathUtils.round(tax.getBase() * tax.getSurcharge() / 100));
+				}
+				
 				double total =  AonMathUtils.round(tax.getBase() + tax.getQuota() + tax.getSurchargeQuota());
+				detalle.setImporteTotal(Double.toString(total));
+				if(total != 0.0)
+					detalles.getIDDetalleFactura().add(detalle);
+			} else {
+				IDDetalleFacturaType detalle = new IDDetalleFacturaType();
+				detalle.setCantidad(Double.toString(AonMathUtils.round(detail.getQuantity(), 4)));
+				String description = detail.getDescription().replace("\n", " ");
+				if(description.length() > 249) {
+					description = description.substring(0, 249);
+				}			
+				detalle.setDescripcionDetalle(description);
+				detalle.setImporteUnitario(Double.toString(AonMathUtils.round(detail.getPrice(), 4)));
+				detalle.setDescuento(Double.toString(0.0));
+				double total = AonMathUtils.round(detail.getQuantity() * detail.getPrice());
 				detalle.setImporteTotal(Double.toString(total));
 				if(total != 0.0)
 					detalles.getIDDetalleFactura().add(detalle);
@@ -319,7 +353,7 @@ public class Invoice2tbai {
 		});
 		
 		Double totalAmount = AonMathUtils.round(detalles.getIDDetalleFactura().stream().mapToDouble(r -> Double.parseDouble(r.getImporteTotal())).sum());
-		Double total = invoice.getTotal();
+		Double total = AonMathUtils.round(invoice.getTotal());
 		datos.setDetallesFactura(detalles);
 		if(invoice.isWithholding()) {
 			double ret = invoice.getBreakdown().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType()))
@@ -346,7 +380,12 @@ public class Invoice2tbai {
 	
 		ClavesType claves = new ClavesType();
 		IDClaveType clave = new IDClaveType();
-		clave.setClaveRegimenIvaOpTrascendencia("01");
+		
+		String key = "01";
+		if(invoice.isExtracommunity()) key = "02";
+//		if(invoice.isSurcharge()) key = "51";
+		
+		clave.setClaveRegimenIvaOpTrascendencia(key);
 		claves.getIDClave().add(clave);
 		datos.setClaves(claves);
 		factura.setDatosFactura(datos);
@@ -355,22 +394,33 @@ public class Invoice2tbai {
 
 		SujetaType sujeta = new SujetaType();
 		
+		boolean exempt = invoice.getActivity().getVatRegime().isExempt() || invoice.isIntracommunity() || invoice.isExtracommunity();
+		
 		NoExentaType noExenta = new NoExentaType();
 		DetalleNoExentaType detalleNoExenta = new DetalleNoExentaType();
 		detalleNoExenta.setTipoNoExenta(invoice.isIsp() ? TipoOperacionSujetaNoExentaType.S_2 : TipoOperacionSujetaNoExentaType.S_1);
 		DesgloseIVAType desgloseIVA = new DesgloseIVAType();
-		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && (f.getPercentage() > 0 || invoice.isIsp())).forEach(r -> {
+		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
+				&& (!exempt || (exempt && f.getPercentage() > 0) || invoice.isIsp())).forEach(r -> {
 			if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
 				r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
 			}
+			
+			if(r.getSurcharge() > 0 && r.getSurchargeQuota() == 0.0) {
+				r.setSurchargeQuota(AonMathUtils.round(r.getBase() * r.getSurcharge() / 100));
+			}
+			
 			DetalleIVAType  detalleIVA = new DetalleIVAType();
 			detalleIVA.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
 			detalleIVA.setCuotaImpuesto(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getQuota())));
 			detalleIVA.setCuotaRecargoEquivalencia(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
 			detalleIVA.setTipoImpositivo(invoice.isIsp() ? "0.0" : Double.toString(r.getPercentage()));
-			detalleIVA.setTipoRecargoEquivalencia(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getSurcharge())));
-			detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(invoice.isSurcharge() ? SiNoType.S : SiNoType.N);
-			desgloseIVA.getDetalleIVA().add(detalleIVA);
+			detalleIVA.setTipoRecargoEquivalencia(invoice.isIsp() || "0.0".equals(detalleIVA.getTipoImpositivo())
+					? "0.0" : Double.toString(AonMathUtils.round(r.getSurcharge())));
+			
+			detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(SiNoType.N);//invoice.isSurcharge() ? SiNoType.S : SiNoType.N);
+			if(r.getBase() != 0.0)
+				desgloseIVA.getDetalleIVA().add(detalleIVA);
 		});
 		
 		if(!desgloseIVA.getDetalleIVA().isEmpty()) {
@@ -381,7 +431,7 @@ public class Invoice2tbai {
 		}
 		
 		ExentaType exenta = new ExentaType();
-		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {
+		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) &&  exempt && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {
 			DetalleExentaType detalleExenta = new DetalleExentaType();
 			detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
 			detalleExenta.setCausaExencion(CausaExencionType.E_6);
@@ -393,20 +443,32 @@ public class Invoice2tbai {
 		});
 		if(!exenta.getDetalleExenta().isEmpty())
 			sujeta.setExenta(exenta);
+			
+		Double totalSuplidos = invoice.getDetails().stream()
+				.filter(f -> f.isPrepayment() || f.getInvoiceTaxes().isEmpty())
+				.mapToDouble(r -> r.getQuantity() * r.getPrice()).sum();
+		NoSujetaType noSujeta = new NoSujetaType();
+		DetalleNoSujeta detalleNoSujeta = new DetalleNoSujeta();
+		detalleNoSujeta.setCausa(CausaNoSujetaType.OT);
+		detalleNoSujeta.setImporte(Double.toString(AonMathUtils.round(totalSuplidos)));
+		noSujeta.getDetalleNoSujeta().add(detalleNoSujeta);
 		
 		if(invoice.isNational() || (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
 			DesgloseFacturaType desgloseFactura = new DesgloseFacturaType();
 			desgloseFactura.setSujeta(sujeta);
+			if(totalSuplidos > 0.0) desgloseFactura.setNoSujeta(noSujeta);
 			desglose.setDesgloseFactura(desgloseFactura);
 		} else if(invoice.isService()){
 			PrestacionServicios serv = new PrestacionServicios();
 			serv.setSujeta(sujeta);
+			if(totalSuplidos > 0.0) serv.setNoSujeta(noSujeta);
 			DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();
 			desgloseFactura.setPrestacionServicios(serv);
 			desglose.setDesgloseTipoOperacion(desgloseFactura);
 		} else {
 			Entrega entrega = new Entrega();
 			entrega.setSujeta(sujeta);
+			if(totalSuplidos > 0.0) entrega.setNoSujeta(noSujeta);
 			DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();
 			desgloseFactura.setEntrega(entrega);
 			desglose.setDesgloseTipoOperacion(desgloseFactura);

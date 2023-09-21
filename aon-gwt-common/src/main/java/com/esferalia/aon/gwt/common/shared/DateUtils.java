@@ -29,6 +29,12 @@ public class DateUtils {
 		return date;
 	}
 
+
+	public static Date setDayOfMonth(Date date, int day) {
+		date.setDate(day);
+		return date;
+	}
+	
 	public static Date addDays2Date(Date date, int days) {
 		date.setDate(date.getDate() + days);
 		return date;

@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.transaction.NotSupportedException;
+import jakarta.transaction.NotSupportedException;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Cursor;

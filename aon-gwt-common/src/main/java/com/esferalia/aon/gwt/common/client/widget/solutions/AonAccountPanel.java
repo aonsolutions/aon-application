@@ -14,7 +14,6 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -128,6 +127,31 @@ public class AonAccountPanel extends SimplePanel implements Focusable {
 						}
 					});
 				}
+			}
+		});
+		codeBox.addBlurHandler(e -> {
+			String prefix = codeBox.getValue();
+			if(AonStringUtils.contains(prefix, ".")) {
+				Integer zeroOffset = 9 - (prefix.length() - 1); // Length 9 - code - dot
+				String zeroPad = AonStringUtils.leftPad("", zeroOffset, '0');
+				prefix = prefix.replace(".", zeroPad);
+				codeBox.setValue(prefix);
+			} else if(AonStringUtils.contains(prefix, "?")) {
+				prefix = AonStringUtils.remove(prefix, '?');
+				commonService.getAccountNextCode(domainName, domain, user, prefix, new AsyncCallback<String>() {
+
+					@Override
+					public void onSuccess(String result) {
+						codeBox.setValue(result);
+						descriptionBox.selectAll();
+						descriptionBox.setFocus(true);
+					}
+					@Override
+					public void onFailure(Throwable caught) {
+						errorPanel.showError(caught.getMessage());
+						codeBox.setFocus(true);
+					}
+				});
 			}
 		});
 		table.setWidget(0,1,codeBox);

@@ -70,7 +70,7 @@ public class JooqActivity {
 				.fetch();
 		
 		for(Record r : cnae2009Records)
-			cnae2009Map.put(r.get(CNAE2009.ID), r.get(CNAE2009.CODE) + " - " + r.get(CNAE2009.TITLE));
+			cnae2009Map.put(r.get(CNAE2009.ID), AonStringUtils.leftPad(r.get(CNAE2009.CODE), 4, '0') + " - " + r.get(CNAE2009.TITLE));
 		
 		return cnae2009Map;
 	}

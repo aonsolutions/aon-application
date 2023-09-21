@@ -60,11 +60,11 @@
 			<version>1.4.2b</version>
 		</dependency>
 		<dependency>
-      		<groupId>javax.servlet</groupId>
-      		<artifactId>javax.servlet-api</artifactId>
-      		<version>3.1.0</version>
-      		<scope>provided</scope>
-   		</dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-servlet-api</artifactId>
+			<version>10.1.7</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>
  

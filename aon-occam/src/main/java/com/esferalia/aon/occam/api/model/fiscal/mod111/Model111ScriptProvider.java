@@ -1,8 +1,5 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod111;
 
-import java.util.Arrays;
-import java.util.stream.Stream;
-
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
@@ -14,10 +11,68 @@ public class Model111ScriptProvider {
 	}
 	
 	private enum Model111Script {
-		AEAT_2022_SCRIPT {
+		AEAT_2023_SCRIPT {
 			@Override
 			boolean accept(Mod111 mod111) {
-				return mod111.isAEAT() && mod111.getYear() > 2021;
+				return mod111.isAEAT() && mod111.getYear() >= 2023;
+			}
+	
+			@Override
+			IModelScript<Mod111Key>[] getScript() {
+				return Model111AEAT2023Script.values();
+			}
+		}
+		,BIZKAIA_2023_110_SCRIPT {
+			@Override
+			boolean accept(Mod111 mod111) {
+				return mod111.isBizkaia() && mod111.getYear() >= 2023 && mod111.isQuarterPeriod();
+			}
+	
+			@Override
+			IModelScript<Mod111Key>[] getScript() {
+				return Model110Bizkaia2023Script.values();
+			}
+		}
+		,BIZKAIA_2023_111_SCRIPT {
+			@Override
+			boolean accept(Mod111 mod111) {
+				return mod111.isBizkaia() && mod111.getYear() >= 2023 && mod111.isMonthPeriod();
+			}
+	
+			@Override
+			IModelScript<Mod111Key>[] getScript() {
+				return Model111Bizkaia2022Script.values();
+			}
+		}
+		,GIPUZKOA_2023_SCRIPT {
+			@Override
+			boolean accept(Mod111 mod111) {
+				return mod111.isGipuzkoa() && mod111.getYear() >= 2023;
+			}
+	
+			@Override
+			IModelScript<Mod111Key>[] getScript() {
+				return Model110Gipuzkoa2023Script.values();
+			}
+		}
+		// ************************************ OLDERS
+		,ARABA_2023_SCRIPT {
+			@Override
+			boolean accept(Mod111 mod111) {
+				return mod111.isAraba() && mod111.getYear() >= 2023;
+			}
+	
+			@Override
+			IModelScript<Mod111Key>[] getScript() {
+				return Model111Araba2023Script.values();
+			}
+		}
+		
+		
+		,AEAT_2022_SCRIPT {
+			@Override
+			boolean accept(Mod111 mod111) {
+				return mod111.isAEAT() && mod111.getYear() == 2022;
 			}
 	
 			@Override
@@ -39,7 +94,7 @@ public class Model111ScriptProvider {
 		,ARABA_2022_SCRIPT {
 			@Override
 			boolean accept(Mod111 mod111) {
-				return mod111.isAraba() && mod111.getYear() > 2021;
+				return mod111.isAraba() && mod111.getYear() > 2021 && mod111.getYear() < 2023;
 			}
 	
 			@Override
@@ -72,7 +127,7 @@ public class Model111ScriptProvider {
 		,BIZKAIA_2022_110_SCRIPT {
 			@Override
 			boolean accept(Mod111 mod111) {
-				return mod111.isBizkaia() && mod111.getYear() > 2021 && mod111.isQuarterPeriod();
+				return mod111.isBizkaia() && mod111.getYear() > 2021 && mod111.getYear() < 2023 && mod111.isQuarterPeriod();
 			}
 	
 			@Override
@@ -94,7 +149,7 @@ public class Model111ScriptProvider {
 		,BIZKAIA_2022_111_SCRIPT {
 			@Override
 			boolean accept(Mod111 mod111) {
-				return mod111.isBizkaia() && mod111.getYear() > 2021 && mod111.isMonthPeriod();
+				return mod111.isBizkaia() && mod111.getYear() > 2021 && mod111.getYear() < 2023 && mod111.isMonthPeriod();
 			}
 	
 			@Override
@@ -113,10 +168,10 @@ public class Model111ScriptProvider {
 				return Model111BizkaiaScript.values();
 			}
 		}
-		,GIPUZKOA_SCRIPT {
+		,GIPUZKOA_2021_SCRIPT {
 			@Override
 			boolean accept(Mod111 mod111) {
-				return mod111.isGipuzkoa();
+				return mod111.isGipuzkoa() && mod111.getYear() < 2023;
 			}
 	
 			@Override

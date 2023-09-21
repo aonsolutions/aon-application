@@ -9,17 +9,9 @@
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.ActivityDraft.MyStyle">
-		.container {
-			margin: 0 10px;
-		}
+		.container { margin: 0 10px; }
 		
-		.flexCenter	{
-			width: 100%;
-		}
-		
-		.mainPanel{
-			margin-top: 1rem;
-		}
+		.widthAll { width: 100%; }
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
@@ -30,12 +22,11 @@
 			</g:DeckPanel>
 		</g:north>
 		<g:center>
-			<g:HTMLPanel ui:field="centerContainer" styleName="{style.flexCenter}">
-				<g:HTMLPanel ui:field="messagePanel" />
+			<g:HTMLPanel ui:field="centerContainer" styleName="{style.widthAll}">
 				<g:DeckPanel ui:field="mainDeckPanel">
-					<g:HTMLPanel ui:field="mainPanel" styleName="{style.mainPanel}"/>
+					<g:HTMLPanel ui:field="mainPanel"/>
 					<g:SimpleLayoutPanel ui:field="scrolledPDFPanel">
-						<p:FullViewer styleName="reset" ui:field='pdfViewer' />
+						<p:FullViewer styleName="reset" ui:field='pdfViewer' debugId="printPreviewViewer" />
 					</g:SimpleLayoutPanel> 
 				</g:DeckPanel>
 			</g:HTMLPanel>

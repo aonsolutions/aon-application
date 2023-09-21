@@ -3,7 +3,7 @@
     border: none;
     margin-top: 1px;
     height: 37px;
-
+    background-color: transparent;
 }
 
 .aonSearchInput:focus {

@@ -27,19 +27,19 @@
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcmail-jdk14</artifactId>
+			<artifactId>bcmail-jdk14-jakarta</artifactId>
 			<version>1.38</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk14</artifactId>
+			<artifactId>bcprov-jdk14-jakarta</artifactId>
 			<version>1.38</version>
 			<scope>compile</scope>			
 		</dependency>
 		<dependency>
 			<groupId>com.sun.mail</groupId>
-			<artifactId>javax.mail</artifactId>
+			<artifactId>jakarta.mail</artifactId>
 			<version>1.5.0</version>
 		</dependency>				
 	</dependencies>

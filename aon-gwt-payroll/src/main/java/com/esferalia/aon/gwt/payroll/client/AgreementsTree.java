@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -51,7 +52,7 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		
 		void onAgreementContextMenu(Agreement agreement, ContextMenuEvent event);
 		
-		void getAgreements();
+		void getAgreements(Consumer<Void> finish);
 	}
 	
 	// ------------------------------------------- Images

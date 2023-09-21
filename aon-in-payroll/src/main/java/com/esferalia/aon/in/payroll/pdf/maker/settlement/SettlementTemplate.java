@@ -19,8 +19,6 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawBox;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawText;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRight;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes.getType;
-import static com.esferalia.aon.watson.util.AonStringUtils.trimToEmpty;
-import static com.esferalia.aon.watson.util.AonStringUtils.upperCase;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,8 +31,6 @@ import java.util.ResourceBundle;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationWidget;
-import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfFile;
@@ -267,10 +263,14 @@ public class SettlementTemplate extends PdfFile {
 					if (localTotal != 0)
 					{
 
-						String paymentTxt	   = m.getKey() + ". " + getType(m.getKey(), lang);
+						String craNumber = m.getKey() < 100 ? (m.getKey() + ".") : "";
+						String paymentTxt = getType(m.getKey(), lang);
 						String paymentTotalTxt = toLatinNumber(localTotal) + " " + text("CURRENCY");
 
-						drawText(contents, paymentTxt, x(), y(), BLACK, HELVETICA_BOLD, fontsize);
+//						drawText(contents, paymentTxt, x(), y(), BLACK, HELVETICA_BOLD, fontsize);
+						drawText(contents, craNumber, x(), y(), BLACK, HELVETICA_BOLD, fontsize);
+						
+						drawText(contents, paymentTxt, x() + 15, y(), BLACK, HELVETICA_BOLD, fontsize);
 						drawTextRight(contents, new PDRectangle(x() + 292, y() - 5, 100, 10), paymentTotalTxt, BLACK,
 								HELVETICA, 9f, 5, 5);
 						drawBox(contents, x(), y() - 2, 392, .2f, BLACK);

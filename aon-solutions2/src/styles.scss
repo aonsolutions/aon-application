@@ -106,10 +106,12 @@ $bottom-button-icon: 0.5rem;
   $margin-button-icon-right       : 0.5rem;
   $margin-button-icon-bottom      : 0.5rem;
   /* Primary */
-    $background-button-primary      : #fff;
-    $background-button-hover        : #f0f0f1;
-    $border-button                  : solid $border-size-primary $color-border-primary ;
-    $border-button-radius           : 0.2rem;
+    $background-button-primary        : #fff;
+    $background-button-hover          : #f0f0f1;
+    $background-button-hover-rgba     : rgba(240, 240, 241, 0);
+    $background-button-hover-view-rgba: rgba(240, 240, 241, 1);
+    $border-button                    : solid $border-size-primary $color-border-primary ;
+    $border-button-radius             : 0.2rem;
   /* Dark */
     $background-button-dark         : #19191d;
     $background-button-dark-hover   : #292a31;
@@ -479,3 +481,51 @@ html {
     border-top: none;
     margin    : $margin;
   }
+
+/*
+  Texto en un circulo
+*/
+  .circle{
+    margin-left     : $margin-left / 2;
+    width           : 1.7rem;
+    height          : 1.7rem;
+    border-radius   : 100rem; 
+    display         : inline-flex;
+    align-items     : center;
+    justify-content : center;
+    color           : $color-primary;
+  }
+  
+  /* Red */
+    .red .circle,
+    .circle.red{
+      background-color: $background-button-red-hover2;
+    }
+  /* Blue */
+    .blue .circle,
+    .circle.blue{
+     background-color: $background-button-blue-hover2;
+    }
+  /* Pink */
+    .pink .circle,
+    .circle.pink{
+      background-color: $background-button-pink-hover2;
+    }
+  /* Purple */
+    .purple .circle,
+    .circle.purple{
+      background-color: $background-button-purple-hover2;
+    }
+  /* Green */
+    .green .circle,
+    .circle.green{
+      background-color: $background-button-green-hover2;
+    }
+  /* Orange */
+    .orange .circle,
+    .circle.orange{
+      background-color: $background-button-orange-hover2;
+    }
+/*
+  FIN Texto en un circulo
+*/

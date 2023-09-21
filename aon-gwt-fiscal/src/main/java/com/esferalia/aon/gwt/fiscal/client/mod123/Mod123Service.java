@@ -29,7 +29,6 @@ public interface Mod123Service extends RemoteService {
 	Mod123 initialize(Occam occam, Mod123 mod123) throws AonCoreException;
 	Mod123 create(Occam occam, Mod123 mod123) throws AonCoreException;
 	String getInfo(Occam occam, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
-	Mod123 reset(Occam occam, Mod123 model);
 	Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException;
 	
 }

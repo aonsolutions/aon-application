@@ -16,9 +16,8 @@ public enum Mod2002022BN565_1Key implements Serializable, IMod200KeysProvider {
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
-	
-	 C01(new Mod2002022Key[]{Mod2002022Key.BN201 ,Mod2002022Key.BN202 ,null                },"2011")
-	,C02(new Mod2002022Key[]{Mod2002022Key.BN904 ,Mod2002022Key.BN905 ,Mod2002022Key.BN906 },"2012")
+	 
+     C02(new Mod2002022Key[]{Mod2002022Key.BN904 ,Mod2002022Key.BN905 ,null                },"2012")
 	,C03(new Mod2002022Key[]{Mod2002022Key.BN990 ,Mod2002022Key.BN991 ,Mod2002022Key.BN992 },"2013")
 	,C04(new Mod2002022Key[]{Mod2002022Key.BN997 ,Mod2002022Key.BN998 ,Mod2002022Key.BN999 },"2014")
 	,C05(new Mod2002022Key[]{Mod2002022Key.BN246 ,Mod2002022Key.BN247 ,Mod2002022Key.BN248 },"2015 Sin reiteraci\u00F3n de donaciones a una misma entidad")
@@ -33,14 +32,16 @@ public enum Mod2002022BN565_1Key implements Serializable, IMod200KeysProvider {
 	,C14(new Mod2002022Key[]{Mod2002022Key.BN842 ,Mod2002022Key.BN844 ,Mod2002022Key.BN845 },"2019 Con reiteraci\u00F3n de donaciones a una misma entidad")
 	,C15(new Mod2002022Key[]{Mod2002022Key.BN2227,Mod2002022Key.BN2228,Mod2002022Key.BN2229},"2020 Sin reiteraci\u00F3n de donaciones a una misma entidad")
 	,C16(new Mod2002022Key[]{Mod2002022Key.BN868 ,Mod2002022Key.BN869 ,Mod2002022Key.BN871 },"2020 Con reiteraci\u00F3n de donaciones a una misma entidad")
-	,C17(new Mod2002022Key[]{Mod2002022Key.BN2380,Mod2002022Key.BN2381,Mod2002022Key.BN2382},"2021(*) Sin reiteraci\u00F3n de donaciones a una misma entidad")
-	,C18(new Mod2002022Key[]{Mod2002022Key.BN872 ,Mod2002022Key.BN873 ,Mod2002022Key.BN2498},"2021(*) Con reiteraci\u00F3n de donaciones a una misma entidad")
-	,C19(new Mod2002022Key[]{Mod2002022Key.BN2499,Mod2002022Key.BN876 ,Mod2002022Key.BN890 },"2021 Sin reiteraci\u00F3n de donaciones a una misma entidad")
-	,C20(new Mod2002022Key[]{Mod2002022Key.BN891 ,Mod2002022Key.BN892 ,Mod2002022Key.BN893 },"2021 Con reiteraci\u00F3n de donaciones a una misma entidad")
-	,C21(new Mod2002022Key[]{Mod2002022Key.BN1689,Mod2002022Key.BN1690,Mod2002022Key.BN1691},"Subtotal donaciones 2011 a 2014")                                                  
-	,C22(new Mod2002022Key[]{Mod2002022Key.BN1692,Mod2002022Key.BN1693,Mod2002022Key.BN1694},"Subtotal donaciones 2015 a 2021 sin reiteraci\u00F3n de donaciones a una misma entidad")
-	,C23(new Mod2002022Key[]{Mod2002022Key.BN1695,Mod2002022Key.BN1696,Mod2002022Key.BN1697},"Subtotal donaciones 2015 a 2021 con reiteraci\u00F3n de donaciones a una misma entidad")
-	,C24(new Mod2002022Key[]{Mod2002022Key.BN1698,Mod2002022Key.BN1699,Mod2002022Key.BN1700},"Total")
+	,C17(new Mod2002022Key[]{Mod2002022Key.BN2380,Mod2002022Key.BN2381,Mod2002022Key.BN2382},"2021 Sin reiteraci\u00F3n de donaciones a una misma entidad")
+	,C18(new Mod2002022Key[]{Mod2002022Key.BN872 ,Mod2002022Key.BN873 ,Mod2002022Key.BN2498},"2021 Con reiteraci\u00F3n de donaciones a una misma entidad")
+	,C19(new Mod2002022Key[]{Mod2002022Key.BN2499,Mod2002022Key.BN876 ,Mod2002022Key.BN890 },"2022(*) Sin reiteraci\u00F3n de donaciones a una misma entidad")
+	,C20(new Mod2002022Key[]{Mod2002022Key.BN891 ,Mod2002022Key.BN892 ,Mod2002022Key.BN893 },"2022(*) Con reiteraci\u00F3n de donaciones a una misma entidad")
+	,C21(new Mod2002022Key[]{Mod2002022Key.BN1323,Mod2002022Key.BN1324,Mod2002022Key.BN1325},"2022 Sin reiteraci\u00F3n de donaciones a una misma entidad")
+	,C22(new Mod2002022Key[]{Mod2002022Key.BN1326,Mod2002022Key.BN1327,Mod2002022Key.BN1328},"2022 Con reiteraci\u00F3n de donaciones a una misma entidad")
+	,C23(new Mod2002022Key[]{Mod2002022Key.BN1689,Mod2002022Key.BN1690,Mod2002022Key.BN1691},"Subtotal donaciones 2012 a 2014")                                                  
+	,C24(new Mod2002022Key[]{Mod2002022Key.BN1692,Mod2002022Key.BN1693,Mod2002022Key.BN1694},"Subtotal donaciones 2015 a 2022 sin reiteraci\u00F3n de donaciones a una misma entidad")
+	,C25(new Mod2002022Key[]{Mod2002022Key.BN1695,Mod2002022Key.BN1696,Mod2002022Key.BN1697},"Subtotal donaciones 2015 a 2022 con reiteraci\u00F3n de donaciones a una misma entidad")
+	,C26(new Mod2002022Key[]{Mod2002022Key.BN1698,Mod2002022Key.BN1699,Mod2002022Key.BN1700},"Total")
 	;
 	 
     private String description;

@@ -4,18 +4,28 @@
     font-family: "Roboto-Medium";
   }
 
-  #company .form{
-    padding-left: 0!important;
-    padding-right: 0!important;
+  #company .form {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 1rem !important;
+
   }
 
-  .input-profile-contact-data-add {
+  .appButton {
+    margin-bottom: 0 !important;
+  }
+
+  .form .button-add-mail {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     height: 2.4125rem;
   }
-  .input-profile-contact-data-add app-button button{
-    margin: 0;
+
+  .form .email-row {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 1rem;
+    width: 100%;
   }
 }

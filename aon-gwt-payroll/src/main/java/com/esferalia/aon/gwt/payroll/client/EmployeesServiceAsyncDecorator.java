@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
@@ -796,6 +797,18 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	@Override
+	public void fillContractExtension(String currentDomainName, EmployeeInfo employeeData, ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.fillContractExtension(currentDomainName, employeeData, contractData, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
+	public void fillContractRelocation(String currentDomainName, Integer contractId, Map<String, String> contractRelocationInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.fillContractRelocation(currentDomainName, contractId, contractRelocationInfo, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
 	public void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data,
 			AsyncCallback<Void> callback) {
 		AON.start();
@@ -894,12 +907,24 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
+	public void cambioCno(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String cno, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.cambioCno(currentDomainName, user, employeeContractInfo, cno, fecha, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
 	public void cambioCatProf(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String cat, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.cambioCatProf(currentDomainName, user, employeeContractInfo, cat, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	// ------------------------------------------------- SEPE Comunications
+
+	@Override
+	public void sendLlamamientoSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.sendLlamamientoSEPE(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
+	}
 
 	@Override
 	public void sendContractoSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
@@ -1084,6 +1109,22 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 			AsyncCallback<List<Certifica2Info>> callback) {
 		AON.start();
 		employeesServiceAsync.getSalariesOccam(currentDomainName, login, itEmployee, startDate, endDate, new AsyncCallbackWrapper<>(callback));
+	}
+
+	// ------------------------------------------------- Agreement ContextProvider
+	
+	@Override
+	public void getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate,
+			AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getAgreementContext(currentDomainName, fxLevel, startDate, endDate, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel,
+			AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException {
+		AON.start();
+		employeesServiceAsync.evalAgreement(currentDomainName, expression, startDate, fxLevel, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

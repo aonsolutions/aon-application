@@ -1,0 +1,415 @@
+@import "src/styles.scss";
+
+::ng-deep {
+  .box {
+    flex-grow: 0;
+    border: $border;
+    border-radius: $border-radius;
+    padding: $padding;
+  }
+
+  .box .header {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    align-items: center;
+  }
+
+  #list-Dashboard,
+  #charts-billing,
+  #buttons-dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .header .line {
+    max-width: 0rem;
+    height: 1.35rem;
+    border-radius: 20rem;
+    border: 0.15rem solid $color-blue;
+  }
+
+  .header .text {
+    font-size: 1rem;
+    font-family: "Roboto-Bold";
+  }
+
+  .data {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 0 0 1rem;
+    margin-top: 1rem;
+  }
+
+  .tesoreria {
+    margin-top: $margin-top;
+    cursor: pointer;
+  }
+
+  .header-submenu {
+    display: flex;
+    align-items: center;
+    margin-top: $margin-top;
+    margin-left: $margin-left;
+    margin-bottom: $margin-bottom;
+    cursor: pointer;
+  }
+
+  .header-submenu .line {
+    margin-right: 20px;
+  }
+
+  .header-submenu .line {
+    max-width: 0rem;
+    height: 1.35rem;
+    border-radius: 20rem;
+    border: 0.15rem solid $color-blue;
+  }
+
+  .header-submenu .text {
+    font-family: "Roboto-Bold";
+  }
+
+  .menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .activated {
+    display: block;
+  }
+
+  .no-activated {
+    display: none;
+  }
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: $margin-right;
+    gap: 1rem;
+
+    .button {
+      border: 0.05rem solid $color-icon;
+    }
+  }
+
+  .datas {
+    display: flex;
+    justify-content: space-between;
+    margin-left: $margin-left;
+    margin-right: $margin-right;
+    align-items: flex-end;
+  }
+
+  .lineBottomP {
+    border-bottom: 0.2rem solid $color-blue;
+    margin-bottom: $margin-bottom;
+    margin-left: $margin-left;
+    width: 5rem;
+    position: absolute;
+  }
+
+  .lineBottom {
+    border-bottom: 0.05rem solid $color-icon;
+    margin-bottom: $margin-bottom;
+    margin-left: $margin-left;
+    width: 97.5%;
+  }
+
+  .banks {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .add-bank {
+    display: flex;
+    flex-direction: column;
+    border: $border-size-primary solid $color-icon;
+    border-radius: $border-radius;
+    height: 18rem;
+    width: 15rem;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+
+    .icono {
+      background-color: $background-button-blue-hover2;
+      padding: $padding / 2;
+      border-radius: $border-radius;
+    }
+
+    .title {
+      font-family: "Roboto-Bold";
+      color: $color-blue;
+    }
+  }
+
+  .add-bank-true {
+    display: flex;
+    flex-direction: column;
+    border: $border-size-primary solid $color-icon;
+    border-radius: $border-radius;
+    height: 18rem;
+    width: 15rem;
+
+    .button {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: $margin-top;
+      margin-right: $margin-right;
+      cursor: pointer;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .bank {
+    display: flex;
+    flex-direction: column;
+    border: $border-size-primary solid $color-icon;
+    border-radius: $border-radius;
+    height: 18rem;
+    align-items: center;
+    text-align: center;
+    width: 17rem;
+    cursor: pointer;
+  }
+
+  .bank {
+    .buttons {
+      width: 90%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: $margin;
+      cursor: pointer;
+    }
+
+    .name-bank {
+      font-family: "Roboto-Bold";
+    }
+
+    .money {
+      display: flex;
+      justify-content: space-between;
+      width: 90%;
+
+      .balance {
+        color: $color-icon;
+      }
+    }
+
+    .iban {
+      background-color: $color-border-primary;
+      border-radius: $border-radius;
+      width: 90%;
+      text-align: start;
+      padding-left: $padding-left;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      width: 90%;
+      height: 100%;
+      align-items: flex-end;
+
+      p {
+        color: $color-icon;
+      }
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      width: 90%;
+      margin-top: $margin-top;
+    }
+  }
+
+  .createSalesBill {
+    .linea {
+      background: $color-border-primary;
+      height: 0.05rem;
+      width: 100%;
+      margin-top: $margin-top;
+    }
+
+    .linea2 {
+      background: $color-border-primary;
+      height: 0.05rem;
+      width: 100%;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      width: 95%;
+      height: 3rem;
+
+      .left {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin-top: 1rem;
+        padding-left: $padding-left;
+
+        .button {
+          cursor: pointer;
+        }
+
+        .title {
+          font-family: "Roboto-Bold";
+          margin-bottom: 1.3rem;
+        }
+      }
+
+      .right {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1rem;
+
+        .button {
+          text-transform: capitalize;
+        }
+
+        .save {
+          background-color: $background-button-dark;
+          color: $color-quarter;
+        }
+      }
+    }
+
+    .InvoiceData {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: $margin-top;
+
+      .left {
+        display: flex;
+        flex-direction: column;
+        width: 40%;
+      }
+    }
+
+    .concept {
+      .button {
+        display: flex;
+        margin-left: 2rem;
+        margin-bottom: $margin-bottom;
+        color: $color-blue;
+        cursor: pointer;
+        align-items: center;
+        gap: 1rem;
+        width: 5rem;
+      }
+    }
+
+    .expiration {
+      .button {
+        display: flex;
+        margin-left: 2rem;
+        margin-bottom: $margin-bottom;
+        color: $color-blue;
+        cursor: pointer;
+        align-items: center;
+        gap: 1rem;
+        width: 5rem;
+      }
+    }
+
+    .form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: $margin-top;
+
+      .centered-label {
+        display: flex;
+        align-items: center;
+        input {
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+
+        p {
+          margin-left: -1rem;
+          margin-bottom: 1.5rem;
+        }
+      }
+
+      label {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .view-bank {
+    .header {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      align-items: center;
+      padding: $padding;
+      margin-bottom: $margin-bottom;
+
+      .left {
+        display: flex;
+        gap: 1rem;
+        height: 2.5rem;
+        align-items: center;
+
+        .button {
+          cursor: pointer;
+        }
+
+        .title {
+          font-family: "Roboto-Bold";
+        }
+      }
+
+      .right {
+        display: flex;
+        gap: 1rem;
+        height: 2.5rem;
+        width: 20rem;
+        align-items: center;
+        text-align: end;
+        margin-right: 2rem;
+
+        .button {
+          margin-top: 0.5rem;
+        }
+      }
+    }
+
+    .filter-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: $margin-bottom;
+      border-bottom: $border;
+      .searchbar {
+        width: 40%;
+      }
+    }
+
+  }
+
+  .button {
+    margin-top: -0.55rem;
+  }
+
+}

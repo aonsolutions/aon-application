@@ -1,5 +1,18 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.DEC2;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.blockCenter;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.bold;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.border;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.fontLarger;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.marginTop;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.noWrap;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.paddingLeft;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.styledTag;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.textCenter;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.textRight;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.width150;
+
 import java.text.MessageFormat;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -35,7 +48,7 @@ class Mod303GIPUZKOA2022Declaration extends Mod303GIPUZKOA {
 	public static final double SURCHARGE_PERCENT3 = 0.5;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isGipuzkoa() && mod.getYear() > 2021 && mod.getPeriod() != Period.T4;
+		return mod.isGipuzkoa() && mod.getYear() > 2021 && mod.getYear() < 2023 && mod.getPeriod() != Period.T4;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		  Mod303Key.GP_C018
@@ -520,6 +533,7 @@ class Mod303GIPUZKOA2022Declaration extends Mod303GIPUZKOA {
 		buf.append("</div>");
 		return buf.toString();
 	}
+	
 	private <T extends FiscalModel> void painTableRow(StringBuilder buf, T fm) {
 		buf.append("<tr>")
 			.append( MessageFormat.format(styledTag, "td", paddingLeft+border+noWrap) )
@@ -527,7 +541,7 @@ class Mod303GIPUZKOA2022Declaration extends Mod303GIPUZKOA {
 					+ fm.getModelFullName()
 					+ AonObjectUtils.defaultIfNull(fm.getDeclarationResultType(), t -> " (" + t.getDescription() + ")"))
 			.append("</td>")
-			.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
+			.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )
 				.append(DEC2.format(fm.getDeclarationResult()))
 			.append("</td>")
 		.append("</tr>");

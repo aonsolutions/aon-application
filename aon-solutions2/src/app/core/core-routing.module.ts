@@ -20,7 +20,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    component: SidenavLayoutComponent, 
+    component: SidenavLayoutComponent,
     children: [
       {
         path: 'home',
@@ -34,11 +34,11 @@ const routes: Routes = [
             (m) => m.InboxModule
           ),
       },
-//       {
-//         path: 'billing',
-//         loadChildren: () =>
-//           import('src/app/modules/billing/billing.module').then((m) => m.BillingModule),
-//       },
+      {
+        path: 'billing',
+        loadChildren: () =>
+          import('src/app/modules/billing/billing.module').then((m) => m.BillingModule),
+      },
       {
         path: 'tax-panel',
         loadChildren: () =>
@@ -46,11 +46,11 @@ const routes: Routes = [
             (m) => m.TaxPanelModule
           ),
       },
-      // {
-      //   path: 'employee-panel',
-      //   loadChildren: () =>
-      //     import('src/app/modules/employee-panel/employee-panel.module').then((m) => m.EmployeePanelModule),
-      // },
+      {
+        path: 'employee-panel',
+        loadChildren: () =>
+          import('src/app/modules/employee-panel/employee-panel.module').then((m) => m.EmployeePanelModule),
+      },
       {
         path: 'documentation',
         loadChildren: () =>

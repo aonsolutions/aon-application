@@ -50,8 +50,13 @@ public class WorkplaceDialog extends AonCustomDialog {
 		}
 
 		@Override
-		public void fireWarningMessage(Map<String, String> warningMap) {
-			AonMessagePanel.showWarning(messagePanel, warningMap);
+		public void fireErrorMessage(Map<String, String> messages) {
+			AonMessagePanel.showError(messagePanel, messages);
+		}
+
+		@Override
+		public void fireHideMessage() {
+			AonMessagePanel.hideMessage(messagePanel);
 		}
 		
 	}
@@ -84,6 +89,8 @@ public class WorkplaceDialog extends AonCustomDialog {
 		
 		setCaption("Nuevo Centro de Trabajo");
 		setWidget(binder.createAndBindUi(this));
+		
+		AonMessagePanel.hideMessage(messagePanel);
 		
 		workplace.hideCalendarPanel();
 		
@@ -144,7 +151,7 @@ public class WorkplaceDialog extends AonCustomDialog {
 	}
 	
 	private void onAcceptDialog() {
-		if(canSaveWorkplace()) {
+		if(canSaveWorkplace()) 
 			workplaceDialogObject.createWorkplace(
 					s -> {
 						hide();
@@ -152,11 +159,8 @@ public class WorkplaceDialog extends AonCustomDialog {
 					},
 					f -> {}
 			);
-		}else {
-			Map<String, String> warningMap = new HashMap<>();
-			warningMap.put("Campos obligatorios", "Los campos azules son obligatorios");
-			AonMessagePanel.showWarning(messagePanel, warningMap);
-		}
+		else
+			AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Campos Obligatorios", "Los campos azules son obligatorios"); }});
 	}
 	
 	private boolean canSaveWorkplace() {

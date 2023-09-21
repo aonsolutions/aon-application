@@ -13,6 +13,9 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountOperatingReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountStatementReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountTrialBalanceReport;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AmortizationType;
+import com.esferalia.aon.gwt.fiscal.client.accounting.CostCenterModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.InvestAssetModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.period.AccountingPeriodModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilities;
 import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
@@ -20,7 +23,7 @@ import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.nordigen.NordigenModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.paymethod.PayMethodModule;
-import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilities;
+import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesModule;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.VatReport;
@@ -28,7 +31,9 @@ import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.BookingPanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
 import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
@@ -54,6 +59,8 @@ public class MainEntryPoint implements EntryPoint {
 	
 	
 	private static final String ENTRY_POINT_PARAM = "entryPoint";
+	private static final String ELEMENT_TARGET = "elementTarget";
+		
 	//
 	//    ================================================================== CONSOLE
 	//
@@ -192,8 +199,10 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== REGISTRY
 	//
 	private static final String RG_CUSTOMER_ENTRY_POINT = "Customer";
+	private static final String RG_CUSTOMER_FEE_ENTRY_POINT = "CustomerFee";
 	private static final String RG_SUPPLIER_ENTRY_POINT = "Supplier";
 	private static final String RG_CREDITOR_ENTRY_POINT = "Creditor";
+	private static final String RG_BOOKING_ENTRY_POINT = "BookingPanel";
 	//	
 	//    ================================================================== FINANCE
 	//
@@ -219,6 +228,9 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String ACC_ACCOUNTING_UTILITIES_ENTRY_POINT = "AccountingUtilities";
 	private static final String ACC_ACCOUNTING_BALANCE_REPORT_ENTRY_POINT = "AccountBalanceReport";
 	private static final String ACC_ACCOUNTING_CONSOLIDATED_BALANCE_REPORT_ENTRY_POINT = "AccountConsolidatedBalanceReport";
+	private static final String ACC_AMORTIZATION_TYPE_ENTRY_POINT = "AmortizationType";
+	private static final String ACC_COST_CENTER_ENTRY_POINT = "CostCenterModule";
+	private static final String INVEST_ASSET_ENTRY_POINT = "InvestAssetModule";
 	//
 	//    ================================================================== RAWDOC
 	//
@@ -235,6 +247,7 @@ public class MainEntryPoint implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);	
+		String elementTarget = getParameter(GWT.getModuleName(), ELEMENT_TARGET);
 		if(getToken() != null) {
 			Occam occam = new Occam()
 				.setDomainName(getCurrentDomainName())
@@ -244,7 +257,7 @@ public class MainEntryPoint implements EntryPoint {
 			COMMON_SERVICE.getAonConfiguration(occam, params, new AsyncCallback<AonConfiguration>() {
 				
 				@Override public void onSuccess(AonConfiguration config) {
-					selection(entryPoint,aonConfiguration);
+					selection(entryPoint,elementTarget,aonConfiguration);
 				}
 				
 				@Override public void onFailure(Throwable arg0) {
@@ -252,13 +265,13 @@ public class MainEntryPoint implements EntryPoint {
 				}
 			});
 		} else {
-			selection(entryPoint,null);
+			selection(entryPoint,elementTarget,null);
 		}
 
 		
 	}
 	
-	private void selection(String entryPoint,AonConfiguration aonConfiguration) {
+	private void selection(String entryPoint,String elementTarget,AonConfiguration aonConfiguration) {
 		try {
 			ConsoleEntryPoint consoleEntryPoint = ConsoleEntryPoint.valueOf(entryPoint);
 			consoleEntryPoint.run();
@@ -318,7 +331,7 @@ public class MainEntryPoint implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					ModelMatrix modelMatrix = new ModelMatrix();
-					modelMatrix.onModuleLoad();
+					modelMatrix.onModuleLoad(elementTarget);
 				}
 			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_CONFIG_POINT)) {
@@ -347,6 +360,36 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					CustomerModule customerModule = new CustomerModule();
 					customerModule.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(RG_CUSTOMER_FEE_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					CustomerFee customerFee = new CustomerFee();
+					customerFee.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(RG_BOOKING_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					BookingPanel bookingPanel = new BookingPanel();
+					bookingPanel.onModuleLoad();
 				}
 				
 			});
@@ -456,7 +499,7 @@ public class MainEntryPoint implements EntryPoint {
 				
 			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_FINANCE_UTILITIES_ENTRY_POINT)) {
-			GWT.runAsync(FinanceUtilities.class, new RunAsyncCallback() {
+			GWT.runAsync(FinanceUtilitiesModule.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
@@ -465,7 +508,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					FinanceUtilities financeUtilities = new FinanceUtilities();
+					FinanceUtilitiesModule financeUtilities = new FinanceUtilitiesModule();
 					financeUtilities.onModuleLoad();
 				}
 				
@@ -647,6 +690,51 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					AccountConsolidatedBalanceReport report = new AccountConsolidatedBalanceReport();
 					report.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(ACC_AMORTIZATION_TYPE_ENTRY_POINT)) {
+			GWT.runAsync(AmortizationType.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					AmortizationType amortizationType = new AmortizationType();
+					amortizationType.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(INVEST_ASSET_ENTRY_POINT)) {
+			GWT.runAsync(InvestAssetModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					InvestAssetModule investAssetModule = new InvestAssetModule();
+					investAssetModule.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(ACC_COST_CENTER_ENTRY_POINT)) {
+			GWT.runAsync(CostCenterModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					CostCenterModule costCenterModule = new CostCenterModule();
+					costCenterModule.onModuleLoad();
 				}
 				
 			});

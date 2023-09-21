@@ -25,6 +25,7 @@ public interface IAccUtilitiesItem extends Serializable {
 		void visitDeleteEntries(AccUtilitiesItemType type);
 		void visitInvoiceIntegrity(AccUtilitiesItemType accUtilitiesItemType);
 		void visitAccountChange(AccUtilitiesItemType type);
+		void visitOutOfDateEntry(AccUtilitiesItemType type);
 	}
 
 	public static enum AccUtilitiesItemType {
@@ -119,6 +120,12 @@ public interface IAccUtilitiesItem extends Serializable {
 				visitor.visitAccountChange(this);
 			}
 		 }
+		,OUT_OF_DATE_ENTRY{
+			@Override
+			public void visit(IAccUtilitiesItemTypeVisitor visitor) {
+				visitor.visitOutOfDateEntry(this);		
+			}
+		}
 		;
 		
 		public void visit(IAccUtilitiesItemTypeVisitor visitor) {

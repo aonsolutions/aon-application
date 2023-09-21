@@ -1,6 +1,6 @@
 package com.code.aon.faces.component.richfaces.actionHotKey;
 
-import javax.el.ValueExpression;
+import jakarta.el.ValueExpression;
 import javax.faces.component.UIComponent;
 
 import org.apache.commons.lang.StringUtils;

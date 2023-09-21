@@ -24,9 +24,9 @@ public class SQLDraftExtraTestCase extends SQLExtraTestCase {
 		Employee employee = new Employee();
 		employee.setId(contract.getId());
 		
-		java.util.Date endDate = AgreementExtra.parseAgreementDate(extra.getEndDate(), year);
-		java.util.Date  startDate = AgreementExtra.parseAgreementDate(extra.getStartDate(), year);
-		java.util.Date  issueDate = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
+		java.util.Date endDate = AgreementExtra.parseAgreementEndDate(extra.getEndDate(), year);
+		java.util.Date  startDate = AgreementExtra.parseAgreementStartDate(extra.getStartDate(), year);
+		java.util.Date  issueDate = AgreementExtra.parseAgreementIssueDate(extra.getIssueDate(), year);
 		
 		SalaryDraft draft = new SalaryDraft();
 		draft.setEmployee(employee);

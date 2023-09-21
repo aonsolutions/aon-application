@@ -1,21 +1,14 @@
 package com.esferalia.aon.gwt.fiscal.server.fiscal.mod190;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL190;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -23,32 +16,16 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.RetentionCertificate;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfCopyFields;
-import com.lowagie.text.pdf.PdfReader;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRReport;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import com.itextpdf.text.DocumentException;
 
 @WebServlet(name = "Mod190 Certificate Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model190CertificatePrint" })
 public class Mod190CertificatePrint extends HttpServlet {
 	
 	private static final long serialVersionUID = -534949591948520519L;
 	
-	public final String REPORT_TEMPLATE_EMPLOYEE 		= "/com/code/aon/ui/fiscal/report/mod190_retentionCertificate_page1.jasper";
-	public final String REPORT_TEMPLATE_PROFESSIONAL 	= "/com/code/aon/ui/fiscal/report/mod190_retentionCertificate_page2.jasper";
-
-	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			int id = Integer.parseInt(req.getParameter("mod190"));
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
@@ -59,65 +36,54 @@ public class Mod190CertificatePrint extends HttpServlet {
 				.setDomain(domainId)
 				.setUser(user);
 			Mod190 mod190 = MODEL190.get(occam, id);
-
+			
 			// Trabajadores
 			Map<String, RetentionCertificate> employeeCertificates = new HashMap<>();
 			mod190.getDetails().forEach(detail -> {createEmployeeCertificate(mod190, detail, employeeCertificates);});
-			byte[] employeeData = createReport(JRReport.class.getResourceAsStream(REPORT_TEMPLATE_EMPLOYEE), employeeCertificates.values());
-			
+						
 			// Profesionales
 			Map<String, RetentionCertificate> professionalCertificates = new HashMap<>();
 			mod190.getDetails().forEach(detail -> {createProfessionalCertificate(mod190, detail, professionalCertificates);});
-			byte[] professionalData = createReport(JRReport.class.getResourceAsStream(REPORT_TEMPLATE_PROFESSIONAL), professionalCertificates.values());
-			
-			resp.setContentType(MimeType.PDF.getName());
-			
-			String s = mod190.getName();
-		    StringBuilder sb = new StringBuilder();
-		    if(!Character.isJavaIdentifierStart(s.charAt(0))) {
-		        sb.append("_");
-		    }
-		    for (char c : s.toCharArray()) {
-		        if(Character.isJavaIdentifierPart(c)) {
-		            sb.append(c);
-		        }
-		    }		
-			
-		    String fileName = "CertificadoRetenciones_" 
-					+ "_" + mod190.getYear() 
-					+ "_" + sb.toString();
-			
+						
+			String s = sanitize(mod190.getName());
+		    String fileName = "CertificadoRetenciones_" + "_" + mod190.getYear() + "_" + s;
+		    
+		    resp.setContentType(MimeType.PDF.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
-			AonIOUtils.copy(new ByteArrayInputStream(mergePdf(employeeData, professionalData)), resp.getOutputStream());
-			
+			Mod190CertificatePDF print = new Mod190CertificatePDF();
+			print.printMod190Certificate(resp.getOutputStream(), occam, employeeCertificates, professionalCertificates);
 			resp.flushBuffer();
-		} catch (Throwable e) {
+		} catch (IOException | DocumentException e) {
 			throw new ServletException(e);
 		}
 	}
-	
-	public byte[] createReport(InputStream inputStream, Collection<RetentionCertificate> values) throws JRException {
-		byte[] data = null; 
-		if(values!=null && values.size()>0){
-			JasperPrint jasperPrint = JasperFillManager.fillReport(
-					inputStream,
-					new HashMap<String, Object>(),
-					new JRBeanCollectionDataSource(values));
-			data = JasperExportManager.exportReportToPdf(jasperPrint);
-		}
-		return data;
+		
+	private String sanitize(String seq) {
+		if (seq == null) return null;
+		StringBuilder sb = new StringBuilder();
+	    if(!Character.isJavaIdentifierStart(seq.charAt(0))) {
+	        sb.append("_");
+	    }
+	    for (char c : seq.toCharArray()) {
+	        if(Character.isJavaIdentifierPart(c)) {
+	            sb.append(c);
+	        }
+	    }
+	    return sb.toString();
 	}
-
+	
 	public void createEmployeeCertificate(Mod190 mod190, Mod190Detail detail, Map<String, RetentionCertificate> map){
-		if(detail.getKey().equals("A") || detail.getKey().equals("L")){
+		if (detail.getKey().equals("A") || detail.getKey().equals("L") || detail.getKey().equals("E")){
 			RetentionCertificate cert = null;
 			if(map.containsKey(detail.getDocument())){
 				cert = map.get(detail.getDocument());
 			} else {
 				cert = new RetentionCertificate();
 			}
-			
-			cert = completeCertificate(mod190, detail, cert, "A");
+
+			if (detail.getKey().equals("A") || detail.getKey().equals("E")){
+				cert = completeCertificate(mod190, detail, cert, detail.getKey());
+			}
 			
 			// TODO: ¿se debe pedir en el 190?
 			cert.setForecastPlanContributions(0);
@@ -125,7 +91,7 @@ public class Mod190CertificatePrint extends HttpServlet {
 			// TODO: ¿se debe pedir en el 190?
 			cert.setDependencyContributions(0);
 			
-			if(detail.getKey().equals("A")){
+			if (detail.getKey().equals("A") || detail.getKey().equals("E")){
 				cert.setApplicableReduction(cert.getApplicableReduction() + detail.getApplicableReduction());
 				cert.setDeducibleExpense(cert.getDeducibleExpense() + detail.getDeducibleExpense());
 			}
@@ -139,7 +105,7 @@ public class Mod190CertificatePrint extends HttpServlet {
 			cert.setRefund2(obtainRefunds(mod190.getYear()-2));
 			cert.setRefund3(obtainRefunds(mod190.getYear()-3));
 			
-			if(detail.getKey().equals("L")){
+			if (detail.getKey().equals("L")){
 				if(detail.getSubKey().equals("01")){
 					cert.setJourneyDiet(cert.getJourneyDiet() + detail.getPerception());
 				} else if(detail.getSubKey().equals("05") || detail.getSubKey().equals("20")){
@@ -153,31 +119,32 @@ public class Mod190CertificatePrint extends HttpServlet {
 	
 
 	private void createProfessionalCertificate(Mod190 mod190, Mod190Detail detail, Map<String, RetentionCertificate> map){
-		if(detail.getKey().equals("G") || detail.getKey().equals("H") || detail.getKey().equals("E")){
+		if (detail.getKey().equals("G") || detail.getKey().equals("H") || detail.getKey().equals("I")) {
 			RetentionCertificate cert = null;
-			if(map.containsKey(detail.getDocument())){
+			if (map.containsKey(detail.getDocument())){
 				cert = map.get(detail.getDocument());
 			} else {
 				cert = new RetentionCertificate();
+				cert.setProf1(new RetentionCertificate());
+				cert.setProf2(new RetentionCertificate());
+				cert.setProf3(new RetentionCertificate());
+				cert.setProf4(new RetentionCertificate());
 			}
 			
-			if(detail.getKey().equals("G")){
-				cert = completeCertificate(mod190, detail, cert, "G");
-			} else if(detail.getKey().equals("E")){
-				cert = completeCertificate(mod190, detail, cert, "E");
-			} else if(detail.getKey().equals("H")){
-				if(detail.getSubKey().equals("01")){
-					cert = completeCertificate(mod190, detail, cert, "H" );
-				} else {
-					cert = completeCertificate(mod190, detail, cert, null );
-					if( detail.getSubKey().equals("02")){
-						cert.setProf1(completeCertificate(mod190, detail, new RetentionCertificate(), "H"));
-					} else if(detail.getSubKey().equals("03")){
-						cert.setProf2(completeCertificate(mod190, detail, new RetentionCertificate(), "H"));
-					} else if(detail.getSubKey().equals("04")){
-						cert.setProf3(completeCertificate(mod190, detail, new RetentionCertificate(), "H"));
-					}
-				}
+			if (detail.getKey().equals("G")) {
+				cert = completeCertificate(mod190, detail, cert, "G");			 
+			} else if(detail.getKey().equals("H")) {
+				cert = completeCertificate(mod190, detail, cert, null );
+				if(detail.getSubKey().equals("01") || detail.getSubKey().equals("02")){
+					cert.setProf1(completeCertificate(mod190, detail, cert.getProf1(), "H"));
+				} else if(detail.getSubKey().equals("03")){
+					cert.setProf2(completeCertificate(mod190, detail, cert.getProf2(), "H"));
+				} else if(detail.getSubKey().equals("04")){
+					cert.setProf3(completeCertificate(mod190, detail, cert.getProf3(), "H"));
+				}				
+			} else if(detail.getKey().equals("I")) {
+				cert = completeCertificate(mod190, detail, cert, null );
+				cert.setProf4(completeCertificate(mod190, detail, cert.getProf4(), "I"));
 			}
 			
 			map.put(cert.getEmployeeDocument(), cert);
@@ -220,65 +187,5 @@ public class Mod190CertificatePrint extends HttpServlet {
 		
 		return null;
 	}
-	
-	// ***************************
-	// ***************************
-	// UTILS
-	// ***************************
-	// ***************************
-	public byte[] mergePdf(byte[]... documents) throws IOException, DocumentException {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		
-		List<PdfReader> pdfReaderList = new ArrayList<PdfReader>();
-		for(byte[] document: documents){
-			if(document!=null){
-				pdfReaderList.add(new PdfReader(document));
-			}
-		}
-
-		PdfCopyFields copy = new PdfCopyFields(outputStream);
-		copy.open();
-
-		if (null != pdfReaderList && !pdfReaderList.isEmpty()) {
-			Iterator<PdfReader> iter = pdfReaderList.iterator();
-			while (iter.hasNext()) {
-				String pageNOs = "";
-				PdfReader pdfReader = (PdfReader) iter.next();
-				int noOfPages = pdfReader.getNumberOfPages();
-				if (noOfPages > 0) {
-					pageNOs = getNumderOfPages(noOfPages);
-				}
-				copy.addDocument(pdfReader, pageNOs);
-			}
-		}
-		copy.close();
-		return outputStream.toByteArray();
-	}
-	
-	/**
-	 * Function to get page numbers in string with comma separated
-	 * 
-	 * @param noOfPages
-	 * @return
-	 */
-	private static String getNumderOfPages(int noOfPages) {
-		String pageNOs = "";
-		boolean flag = false;
-		for (int i = 0; i < noOfPages; i++) {
-
-			if (flag == true) {
-				Integer c = (Integer) i;
-				pageNOs = pageNOs.concat("," + c.toString());
-			}
-			if (flag == false) {
-				Integer c = (Integer) i;
-				pageNOs = c.toString();
-				flag = true;
-			}
-		}
-		return pageNOs;
-	}
-	
 
 }
-

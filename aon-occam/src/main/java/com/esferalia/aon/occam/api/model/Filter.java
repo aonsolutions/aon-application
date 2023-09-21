@@ -20,6 +20,7 @@ public interface Filter extends Serializable{
 		Filter isNull();
 		Filter isNotNull();
 		Filter like(T t);
+		Filter match(T t);
 		Filter between(T min, T max);
 	}
 	
@@ -312,6 +313,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface CnoFilter{
+		Filter filter(CnoProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface IAEFilter{
 		Filter filter(IAEProperties properties);
 	}
@@ -369,6 +375,11 @@ public interface Filter extends Serializable{
 	@FunctionalInterface
 	public interface CarrierPackingFilter{
 		Filter filter(CarrierPackingProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface DeliveryPackagingFilter{
+		Filter filter(DeliveryPackagingProperties properties);
 	}
 	
 	@FunctionalInterface
@@ -718,6 +729,11 @@ public interface Filter extends Serializable{
 	@FunctionalInterface
 	public interface Mod145Filter{
 		Filter filter(Mod145Properties properties);
+	}
+	
+	@FunctionalInterface
+	public interface QuestionFilter{
+		Filter filter(QuestionProperties properties);
 	}
 	
 }

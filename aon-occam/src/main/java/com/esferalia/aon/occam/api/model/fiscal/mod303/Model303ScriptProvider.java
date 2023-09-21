@@ -7,11 +7,56 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 public class Model303ScriptProvider {
 
 	private enum Model303Script {
-		AEAT_2021_2_SCRIPT {
+		AEAT_2023_SCRIPT {
+			@Override
+			boolean accept(Mod303 mod303) {
+				return mod303.isAEAT() && mod303.getYear() >= 2023;
+			}
+	
+			@Override
+			IModelScript<Mod303Key>[] getScript() {
+				return Model3032023AEATPrintScript.values();
+			}
+		}
+		,BIZKAIA_2023 {
+			@Override
+			boolean accept(Mod303 mod303) {
+				return mod303.isBizkaia() && mod303.getYear() >= 2023;
+			}
+	
+			@Override
+			IModelScript<Mod303Key>[] getScript() {
+				return Model3032023BIZKAIAPrintScript.values();
+			}
+		}
+		,ARABA_2023 {
+			@Override
+			boolean accept(Mod303 mod303) {
+				return mod303.isAraba() && mod303.getYear() >= 2023;
+			}
+	
+			@Override
+			IModelScript<Mod303Key>[] getScript() {
+				return Model3032023ARABAPrintScript.values();
+			}
+		}
+		,GIPUZKOA_2023 {
+			@Override
+			boolean accept(Mod303 mod303) {
+				return mod303.isGipuzkoa() && mod303.getYear() >= 2023;
+			}
+	
+			@Override
+			IModelScript<Mod303Key>[] getScript() {
+				return Model3032023GIPUZKOAPrintScript.values();
+			}
+		}
+		// Ejercicios anteriroes
+		,AEAT_2021_2_SCRIPT {
 			@Override
 			boolean accept(Mod303 mod303) {
 				return mod303.isAEAT() && 
-					(mod303.getYear() > 2021 || (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester()));
+					(mod303.getYear() == 2022 || (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester()));
 			}
 	
 			@Override
@@ -44,7 +89,7 @@ public class Model303ScriptProvider {
 		,ARABA_2022 {
 			@Override
 			boolean accept(Mod303 mod303) {
-				return mod303.isAraba() && mod303.getYear() > 2021;
+				return mod303.isAraba() && mod303.getYear() == 2022;
 			}
 	
 			@Override
@@ -66,7 +111,7 @@ public class Model303ScriptProvider {
 		,GIPUZKOA {
 			@Override
 			boolean accept(Mod303 mod303) {
-				return mod303.isGipuzkoa();
+				return mod303.isGipuzkoa() && mod303.getYear() < 2023;
 			}
 	
 			@Override
@@ -77,7 +122,7 @@ public class Model303ScriptProvider {
 		,BIZKAIA_2022 {
 			@Override
 			boolean accept(Mod303 mod303) {
-				return mod303.isBizkaia() && mod303.getYear() > 2021;
+				return mod303.isBizkaia() && mod303.getYear() == 2022;
 			}
 	
 			@Override

@@ -3,9 +3,9 @@ package com.code.aon.webmail.db;
 import static com.code.aon.webmail.bean.IMailConstants.DEFAULT_SMTP_PORT;
 import static com.code.aon.webmail.bean.IMailConstants.IMAP;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 

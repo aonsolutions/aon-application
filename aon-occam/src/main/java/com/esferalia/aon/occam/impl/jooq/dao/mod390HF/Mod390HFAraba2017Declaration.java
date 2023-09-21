@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -802,7 +803,7 @@ public class Mod390HFAraba2017Declaration extends Mod390HFArabaDeclaration {
 	}
 
 	@Override
-	Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
+	Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
 		return null;
 	}
 	

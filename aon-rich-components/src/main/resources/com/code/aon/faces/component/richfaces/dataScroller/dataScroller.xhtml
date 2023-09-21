@@ -40,10 +40,14 @@
 	    	<aon:panelGroup>
 				<aon:dataPaginator for="#{dataTable}"  
 					fastStep="5" paginator="true"
-					paginatorMaxPages="5" rendered="#{(pageSize > 0) and (rowCount > pageSize)}"
-					ajaxSingle="true" oncomplete="#{oncomplete}" page="#{page}"
-					fastControls="#{((rowCount > 0) and ((rowCount/pageSize) >= 10))?'show':'hide'}"
-					styleClass="aon-dataScroller-buttons" reRender="#{dataTable}PaginatorInfo"/>
+					paginatorMaxPages="7" 
+					rendered="#{(pageSize > 0) and (rowCount > pageSize)}"
+					ajaxSingle="true" 
+					oncomplete="#{oncomplete}" 
+					page="#{page}"
+					fastControls="#{'hide'}"
+					styleClass="aon-dataScroller-buttons" 
+					reRender="#{dataTable}PaginatorInfo"/>
 			</aon:panelGroup>			    	
 			<aon:panelGroup rendered="#{!hidePageSizeSelector}" styleClass="text-right">
 				<aon:outputText styleClass="aon-margin-right"

@@ -12,14 +12,14 @@
   <dependencies>
     <!-- -->
     <dependency>
-      <groupId>javax.faces</groupId>
+      <groupId>jakarta.faces</groupId>
       <artifactId>jsf-api</artifactId>
       <version>1.2_14</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.richfaces.framework</groupId>
-      <artifactId>richfaces-api</artifactId>
+      <artifactId>richfaces-api-jakarta</artifactId>
       <version>3.3.3.Final</version>
       <scope>compile</scope>
     </dependency>
@@ -80,7 +80,7 @@
     </dependency>
     <dependency>
       <groupId>com.google.api-client</groupId>
-      <artifactId>google-api-client-servlet</artifactId>
+      <artifactId>google-api-client-servlet-jakarta</artifactId>
       <version>1.27.0</version>
     </dependency>
     <dependency>
@@ -121,7 +121,7 @@
     <!-- Google Oauth2 API -->
     <dependency>
       <groupId>com.google.apis</groupId>
-      <artifactId>google-api-services-oauth2</artifactId>
+      <artifactId>google-api-services-oauth2-jakarta</artifactId>
       <version>v2-rev141-1.25.0</version>
     </dependency>
     <!-- Google Contacts API -->
@@ -131,7 +131,7 @@
       <version>1.0.10-alpha</version>
     </dependency>
     <dependency>
-      <groupId>javax.mail</groupId>
+      <groupId>jakarta.mail</groupId>
       <artifactId>mail</artifactId>
       <version>1.4</version>
     </dependency>

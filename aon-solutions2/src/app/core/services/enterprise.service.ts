@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
-import { EnterpriseFactory, ICollection, IEnterprise, IFilter } from 'libraries/AonSDK/aon';
+import { EnterpriseFactory, ICollection, IEnterprise, IFilter, IRegistryEnterprise } from 'libraries/AonSDK/aon';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class EnterpriseService {
+export class EnterpriseService extends CommonService {
 
   private singleObjectCrud = new EnterpriseFactory().createSingleObjectCrud();
   private enterpriseCollectionCrud = new EnterpriseFactory().createMultipleObjectCrud();
+  private specificMethods = new EnterpriseFactory().createSpecificMethods();
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   async getEnterpriseList(filter?: IFilter): Promise<ICollection<IEnterprise>> {
     return (await this.enterpriseCollectionCrud.getCollection(filter)).result;
@@ -29,6 +33,22 @@ export class EnterpriseService {
 
   async updateEnterprise(enterprise: IEnterprise): Promise<IEnterprise> {
     return (await this.singleObjectCrud.updateElement(enterprise)).result;
+  }
+
+  async getCurrentEntepriseData(): Promise<IEnterprise> {
+    return (await this.specificMethods.getCurrentEnterpriseData()).result;
+  }
+
+  async getCurrentEnterpriseRegistryData(): Promise<IRegistryEnterprise> {
+    return (await this.specificMethods.getCurrentEnterpriseRegistryData()).result;
+  }
+
+  async updateCurrentEnterpriseData(enterprise: IEnterprise): Promise<IEnterprise> {
+    return (await this.specificMethods.updateCurrentEnterpriseData(enterprise)).result;
+  }
+
+  async updateCurrentEnterpriseRegistryData(enterprise: IRegistryEnterprise): Promise<IRegistryEnterprise> {
+    return (await this.specificMethods.updateCurrentEnterpriseRegistryData(enterprise)).result;
   }
 
 }

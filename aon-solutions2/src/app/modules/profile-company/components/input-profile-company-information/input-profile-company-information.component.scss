@@ -5,32 +5,29 @@
     font-family: "Roboto-Medium";
   }
 
-  hr{
-    margin-left: 0!important;
-    margin-right: 0!important;
+  hr {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
   .structure-container {
-    display       : flex;
+    display: flex;
     flex-direction: row;
-    gap           : 2rem;
+    gap: 2rem;
   }
 
   .structure-container .structure-photo {
-    display       : flex;
-    gap           : 1rem;
-    align-items   : center;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
     justify-content: center;
   }
 
-  .structure-container .structure-photo .photo {
-  }
-
   .structure-container .structure-photo .upload-circle {
-    width           : 4rem;
-    height          : 4rem;
-    border-radius   : 50%;
-    border          : $border;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: $border;
   }
 
   .structure-container .structure-photo .icon-border {
@@ -42,15 +39,15 @@
     cursor: pointer;
   }
 
-  .structure-container .structure-form{
+  .structure-container .structure-form {
     width: 100%;
   }
-  .structure-container .structure-form .form.upload{
-    padding-top: $padding-top!important;
+  .structure-container .structure-form .form.upload {
+    padding-top: $padding-top !important;
   }
 
   @media screen and (max-width: 1599px) {
-    .structure-container{
+    .structure-container {
       display: block;
       padding-top: $padding-top;
     }

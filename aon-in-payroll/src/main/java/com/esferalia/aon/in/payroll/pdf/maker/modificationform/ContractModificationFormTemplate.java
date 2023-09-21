@@ -137,7 +137,10 @@ public class ContractModificationFormTemplate implements AutoCloseable {
 			String modificationTitle = upperCase(trimToEmpty(this.modificationForm.getModificationTitle()));
 			
 			if (AonStringUtils.isNotBlank(modificationTitle)) {
-				modificationTitle = modificationTitle.replace("\u0080", "\u20AC");
+				modificationTitle = modificationTitle
+						.replace("\u0080", "\u20AC")
+						.replace("\uFFFD", "?")
+						;
 			}
 			
 			PDTextField textField = new PDTextField(this.form);

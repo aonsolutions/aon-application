@@ -18,6 +18,7 @@ public interface INordigenConstants {
 	public static final String MAX_HISTORICAL_DAYS_PARAM = "max_historical_days";
 	public static final String OFFSET_PARAM = "offset";
 	public static final String PAYMENTS_ENABLED_PARAM = "payments_enabled";
+	public static final String PAYMENTS_SUPPORTED_PARAM = "payments_supported";
 	public static final String RADD_INFO_REQUISITION_ATTRIBUTE_PATTERN = "NORDIGEN\\[(?<rbank>\\d+)\\]";
 	public static final String RADD_INFO_REQUISITION_ATTRIBUTE_PROFIX = "NORDIGEN[";
 	public static final String RADD_INFO_REQUISITION_ATTRIBUTE_SUFFIX = "]";

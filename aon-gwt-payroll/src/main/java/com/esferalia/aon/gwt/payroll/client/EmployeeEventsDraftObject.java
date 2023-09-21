@@ -555,9 +555,6 @@ public class EmployeeEventsDraftObject {
 		filterSet.add("SMI");
 		filterSet.add("HIDE");
 		filterSet.add("TODO");
-		filterSet.add("SEPE_ID");
-		filterSet.add("IDE");
-		filterSet.add("COMUNICATION_DATE");
 		filterSet.add("ORIGINAL_START_DATE");
 		filterSet.add("ORIGINAL_END_DATE");
 		
@@ -588,9 +585,6 @@ public class EmployeeEventsDraftObject {
 		filterSet.add("DIAS_");
 		filterSet.add("OCUPACI");
 		filterSet.add("COEFICIENTE_PARCIALIDAD");
-		filterSet.add("SEPE_IDE");
-		filterSet.add("IDE");
-		filterSet.add("COMUNICATION_DATE");
 		filterSet.add("ORIGINAL_START_DATE");
 		filterSet.add("ORIGINAL_END_DATE");
 		

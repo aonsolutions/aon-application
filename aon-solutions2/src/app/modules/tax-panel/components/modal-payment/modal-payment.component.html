@@ -1,21 +1,211 @@
-<div>
-  <p class="title-modal-payment">Método de pago</p>
+<div class="modal-container">
+  <p class="title-modal-payment">{{ "TAX_PANEL.PAYMENTMETHOD" | translate }}</p>
 
-  <mat-radio-group
-    class="text-modal-payment"
-    aria-label="Select an option"
-  >
-    <mat-radio-button
-      *ngFor="let option of radioButtonOptions"
-      [value]="option.value"
-      [checked]="option.checked"
+  <div *ngIf="!showConfirmation">
+    <mat-radio-group
+      class="text-modal-payment"
+      aria-label="Select an option"
+      [(ngModel)]="selectedOption"
     >
-      {{ option.name }}
-    </mat-radio-button>
-  </mat-radio-group>
+      <mat-radio-button value="1">
+        {{ "TAX_PANEL.DIRECT_DEBIT" | translate }}
+      </mat-radio-button>
+    </mat-radio-group>
 
-  <app-button [mat-dialog-close]="true" [class]="'orange left'">
-    <app-icon shape="send"></app-icon>
-    Enviar
-  </app-button>
+    <!-- Opción 1: DIRECT DEBIT -->
+    <div class="radio_option" *ngIf="selectedOption === '1'">
+      <div class="input-padding">
+        <div class="add">
+          <app-icon
+            [shape]="'add'"
+            class="orange"
+            id="add-button"
+            (click)="toggleCreateBank()"
+          ></app-icon>
+        </div>
+        <div class="createBank" *ngIf="showCreateBank">
+          <app-input
+            [type]="'text'"
+            [label]="'IBAN'"
+            [placeholder]="'IBAN'"
+          ></app-input>
+
+          <app-input
+            [type]="'text'"
+            [label]="'TAX_PANEL.DESCRIPTION' | translate"
+            [placeholder]="'TAX_PANEL.DESCRIPTION' | translate"
+          ></app-input>
+
+          <app-input
+            [type]="'text'"
+            [label]="'BIC SWIFT'"
+            [placeholder]="'BIC SWIFT'"
+          ></app-input>
+        </div>
+
+        <app-input
+          [type]="'text'"
+          [label]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
+          [placeholder]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
+          [suffixShowIcon]="true"
+          [value]=""
+          *ngIf="!showCreateBank"
+        >
+          <app-icon
+            [shape]="'credit_card'"
+            suffix
+            (click)="listBanks()"
+          ></app-icon>
+        </app-input>
+
+<!-- Mostrar la lista de bancos -->
+<div *ngIf="showBanksList">
+  <h3>Lista de Bancos</h3>
+  <ul>
+    <li *ngFor="let bank of banks">{{ bank.Iban }}</li>
+  </ul>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <mat-radio-group
+      class="text-modal-payment"
+      aria-label="Select an option"
+      [(ngModel)]="selectedOption"
+    >
+      <mat-radio-button value="2">
+        {{ "TAX_PANEL.NRC" | translate }}
+      </mat-radio-button>
+    </mat-radio-group>
+
+    <!-- Opción 2: NRC -->
+    <div class="radio_option" *ngIf="selectedOption === '2'">
+      <div class="input-padding">
+        <app-input
+          [type]="'text'"
+          [label]="'NRC'"
+          [placeholder]="'NRC'"
+          [value]=""
+        >
+        </app-input>
+      </div>
+    </div>
+
+    <mat-radio-group
+      class="text-modal-payment"
+      aria-label="Select an option"
+      [(ngModel)]="selectedOption"
+    >
+      <mat-radio-button value="3">
+        {{ "TAX_PANEL.DEFERRAL_INSTALLMENT" | translate }}
+      </mat-radio-button>
+    </mat-radio-group>
+
+    <!-- Opción 3: DEFERRAL INSTALLMENT -->
+    <div class="radio_option" *ngIf="selectedOption === '3'">
+      <div class="info">
+        <app-icon
+          [size]="'0.75rem'"
+          [shape]="'info'"
+          class="griss"
+          id="add-button"
+          (click)="showText = !showText"
+          *ngIf="!showText"
+        ></app-icon>
+      </div>
+
+      <div *ngIf="!showText">
+        <div class="account_number">
+          <div class="input-padding">
+            <app-input
+              [type]="'text'"
+              [label]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
+              [placeholder]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
+              [value]=""
+            >
+            </app-input>
+          </div>
+        </div>
+
+        <div class="installment">
+          <app-input [type]="'date'" [value]=""></app-input>
+          <app-input
+            [label]="'TAX_PANEL.NUM_OF_INSTALLMENTS' | translate"
+            [type]="'number'"
+            [value]=""
+          ></app-input>
+        </div>
+      </div>
+
+      <!-- vista info -->
+      <div *ngIf="showText">
+        <div class="close-icon">
+          <app-icon
+            [size]="'0.75rem'"
+            [shape]="'close'"
+            class="griss"
+            id="add-button"
+            (click)="showText = !showText"
+          ></app-icon>
+        </div>
+        <p class="text_installment">
+          {{ "TAX_PANEL.INFO_DEFERRAL" | translate }}
+        </p>
+      </div>
+    </div>
+
+    <div class="button-container">
+      <app-button [class]="'orange left'" (click)="showConfirmation = true">
+        <app-icon shape="arrow_forward"></app-icon>
+        {{ "TAX_PANEL.NEXT" | translate }}
+      </app-button>
+    </div>
+  </div>
+
+  <!-- Vista Confirmación -->
+  <div class="confirmation-view" *ngIf="showConfirmation">
+    <p class="text-confirmation-view">
+      {{ "TAX_PANEL.ON" | translate }} + 'FECHA' +
+      {{ "TAX_PANEL.CHARGED_ACCOUNT" | translate }} + 'IBAN' +
+      {{ "TAX_PANEL.AN_AMOUNT" | translate }} + '€€€€'
+    </p>
+
+    <div class="content-confirmation-view">
+      <div class="line-content">
+        <p class="text-content">{{ "TAX_PANEL.DIRECT_DEBIT" | translate }}</p>
+      </div>
+      <div class="input-padding">
+        <app-input
+          [type]="'text'"
+          [label]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
+          [placeholder]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
+          [disabled]="'disabled'"
+          [value]=""
+        >
+        </app-input>
+      </div>
+    </div>
+
+    <div class="button-confirm-back">
+      <div>
+        <app-button
+          [class]="'border-orange left'"
+          (click)="showConfirmation = false"
+        >
+          <app-icon shape="arrow_back"></app-icon>
+          {{ "TAX_PANEL.BACK" | translate }}
+        </app-button>
+      </div>
+
+      <div>
+        <app-button [mat-dialog-close]="true" [class]="'orange left'">
+          <app-icon shape="done_all"></app-icon>
+          {{ "TAX_PANEL.CONFIRM" | translate }}
+        </app-button>
+      </div>
+    </div>
+  </div>
 </div>

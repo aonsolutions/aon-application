@@ -21,25 +21,74 @@ export const domainName = () => localStorage.getItem("aon_domain_name") ? localS
 export const domainLogin = () => localStorage.getItem("aon_domain_login") || "";
 
 const xmlHttpRequestAon = (method, url, token, sendData) =>{
-  let xhr = new XMLHttpRequest();
-  if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
-  xhr.open(method, url);
-  xhr.setRequestHeader("session_id", token);
-  xhr.setRequestHeader("domain_id", domainId());
-  xhr.setRequestHeader("domain_name", domainName());
-  xhr.setRequestHeader("domain_login", domainLogin());
-  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  return xhr;
+  let header = {
+    "session_id": token,
+    "domain_id": domainId(),
+    "domain_name": domainName(),
+    "domain_login": domainLogin(),
+    "Content-Type": "application/json;charset=UTF-8",
+    "Access-Control-Allow-Origin": "*"
+  }
+  return xmlHttpRequest(method, url, header, sendData);
 }
 
 const xmlHttpRequestXml = (method, url, sendData) =>{
+  const header = {
+    "Content-Type": "text/xml",
+    "Access-Control-Allow-Origin": "*"
+  }
+  return xmlHttpRequest(method, url, header, sendData);
+}
+
+const xmlHttpRequestInvofox = (method, url, sendData) =>{
+  const header = {
+    "x-api-key": "$2b$10$ZyMOXKSmPwl4VUFk76wFWuK9aCDsXRiaxytOwpqk3gK.epVl6Mfwi",
+    "Content-Type": "application/json;charset=UTF-8",
+    "Access-Control-Allow-Origin": "*"
+  }
+  return xmlHttpRequest(method, url, header, sendData);
+}
+
+const xmlHttpRequest = (method, url, header, sendData) =>{
   let xhr = new XMLHttpRequest();
   if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
   xhr.open(method, url);
-  xhr.setRequestHeader("Content-Type", "text/xml");
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  for (let name in header) {
+    xhr.setRequestHeader(name, header[name]);
+  }
   return xhr;
+}
+
+export const requestInvofox = (method, url, sendData, fn) => {
+  try {
+    let xhr = xmlHttpRequestInvofox(method, url, sendData);
+    xhr.send(JSON.stringify(sendData));
+    xhr.onload = () => {
+      if (xhr.status != 200) {
+        // analyze HTTP status of the response
+        console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        fn(undefined, xhr.response);
+      } else {
+        // show the result
+        console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        let response = !xhr.response ? "[]" : xhr.response;
+        fn(response);
+      }
+    };
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        console.log(`Received ${event.loaded} of ${event.total} bytes`);
+      } else {
+        console.log(`Received ${event.loaded} bytes`); // no Content-Length
+      }
+    };
+    xhr.onerror = () => {
+      console.log("Request failed");
+    };
+  } catch (error) {
+    console.log("error");
+    fn(undefined, error);
+  }
 }
 
 export const request = (method, url, token, sendData, fn) => {
@@ -144,6 +193,43 @@ export const requestSig = (method, url, token, sendData, fn) => {
   }
 };
 
+export const requestPro = (method, url, sendData, fn) => {
+  try {
+    let xhr = new XMLHttpRequest();
+    if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
+    xhr.open(method, url);
+    xhr.setRequestHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    xhr.send(JSON.stringify(sendData));
+    xhr.onload = () => {
+      if (xhr.status != 200) {
+        // analyze HTTP status of the response
+        console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        fn(undefined, xhr.response);
+      } else {
+        // show the result
+        console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        let response = !xhr.response ? "[]" : xhr.response;
+        fn(response);
+      }
+    };
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        console.log(`Received ${event.loaded} of ${event.total} bytes`);
+      } else {
+        console.log(`Received ${event.loaded} bytes`); // no Content-Length
+      }
+    };
+    xhr.onerror = () => {
+      console.log("Request failed");
+    };
+  } catch (error) {
+    console.log("error");
+    fn(undefined, error);
+  }
+};
+
 
 export const requestFile = (method, url, sendData, fn) => {
   try {
@@ -180,9 +266,53 @@ export const get = (url, data) => {
   });
 };
 
+export const getInvofox = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestInvofox("GET", url, data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
+export const postInvofox = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestInvofox("POST", url, data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
+export const getPro = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestPro("GET", url, data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
 export const post = (url, data) => {
   return new Promise((resolve, reject) => {
     request("POST", url, getToken(), data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
+export const postPro = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestPro("POST", url, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));
@@ -213,9 +343,31 @@ export const put = (url, data) => {
   });
 };
 
+export const putPro = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestPro("PUT", url, data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
 export const remove = (url, data) => {
   return new Promise((resolve, reject) => {
     request("DELETE", url, getToken(), data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
+export const removePro = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestPro("DELETE", url, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));

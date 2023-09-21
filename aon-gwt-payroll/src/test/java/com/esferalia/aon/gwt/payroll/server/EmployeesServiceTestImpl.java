@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
@@ -831,8 +832,22 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public void cambioCno(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String cno, Date fecha) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 			String cat, Date fecha) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendLlamamientoSEPE(String currentDomainName, String currentUser,
+			EmployeeContractInfo employeeContractInfo) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1098,5 +1113,33 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ContextDescriptor getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Result> evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel)
+			throws IllegalArgumentException, EvalException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void fillContractExtension(String currentDomainName, EmployeeInfo employeeData, ContractInfo contractData)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void fillContractRelocation(String currentDomainName, Integer contractId,
+			Map<String, String> contractRelocationInfo) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
 	}
 }

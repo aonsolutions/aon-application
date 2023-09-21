@@ -147,6 +147,10 @@ public class Salary implements Serializable {
 			return description;
 		}
 
+		public boolean isMei() {
+			return false;
+		}
+
 		public boolean isIrpf() {
 			return false;
 		}
@@ -177,10 +181,6 @@ public class Salary implements Serializable {
 
 	public static class CommonContingecyDeduction extends Deduction {
 
-		public CommonContingecyDeduction(Double amount, String code, String description) {
-			super(amount, description, AonStringUtils.defaultIfBlank(code, "CGC"), DeductionType.COMMON_CONTINGENCY);
-		}
-
 		public CommonContingecyDeduction(Double amount, String description) {
 			super(amount, description, "CGC", DeductionType.COMMON_CONTINGENCY);
 		}
@@ -191,6 +191,17 @@ public class Salary implements Serializable {
 		}
 	}
 	
+	public static class MeiDeduction extends Deduction {
+
+		public MeiDeduction(Double amount, String description) {
+			super(amount, description, "MEI", DeductionType.MEI);
+		}
+
+		@Override
+		public boolean isMei() {
+			return true;
+		}
+	}
 
 	public static class ProfessionalContingecyDeduction extends Deduction {
 
@@ -266,6 +277,10 @@ public class Salary implements Serializable {
 			return false;
 		}
 
+		public boolean isMei() {
+			return false;
+		}
+
 		public boolean isFogasa() {
 			return false;
 		}
@@ -294,8 +309,8 @@ public class Salary implements Serializable {
 
 	public static class CommonContingecyCost extends Cost {
 
-		public CommonContingecyCost(Double amount, String name, String description) {
-			super(amount, description, AonStringUtils.defaultIfBlank(name,"CGC_E"), DeductionType.COMMON_CONTINGENCY);
+		public CommonContingecyCost(Double amount, String description) {
+			super(amount, description, "CGC_E", DeductionType.COMMON_CONTINGENCY);
 		}
 
 		@Override
@@ -304,6 +319,18 @@ public class Salary implements Serializable {
 		}
 	}
 	
+	public static class MeiCost extends Cost {
+
+		public MeiCost(Double amount, String description) {
+			super(amount, description, "MEI_E", DeductionType.MEI);
+		}
+
+		@Override
+		public boolean isMei() {
+			return true;
+		}
+	}
+
 	public static class UnemploymentCost extends Cost{
 
 		public UnemploymentCost(Double amount, String description) {
@@ -817,9 +844,14 @@ public class Salary implements Serializable {
 				.accept(new DeductionType.Visitor<Cost>() {
 				@Override
 				public Cost visitCommonContigency(DeductionType deductionType) {
-					return new CommonContingecyCost(amount, code, description);
+					return new CommonContingecyCost(amount, description);
 				}
 				
+				@Override
+				public Cost visitMEI(DeductionType deductionType) {
+				    return new MeiCost(amount, description);
+				}
+
 				@Override
 				public Cost visitUnemployent(
 						DeductionType deductionType) {
@@ -847,7 +879,7 @@ public class Salary implements Serializable {
 				public Cost visitIMS(DeductionType deductionType) {
 					return new IMSCost(amount, description);
 				}
-
+				
 			});
 		} catch (Exception e) {
 		}
@@ -884,7 +916,12 @@ public class Salary implements Serializable {
 				.accept(new DeductionType.Visitor<Deduction>() {
 				@Override
 				public Deduction visitCommonContigency(DeductionType deductionType) {
-					return new CommonContingecyDeduction(amount, code, description);
+					return new CommonContingecyDeduction(amount, description);
+				}
+				
+				@Override
+				public Deduction visitMEI(DeductionType deductionType) {
+				    return new MeiDeduction(amount, description);
 				}
 				
 				@Override

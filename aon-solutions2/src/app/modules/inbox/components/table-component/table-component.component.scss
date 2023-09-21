@@ -1,0 +1,7 @@
+@import 'src/styles.scss';
+
+::ng-deep{
+  #table-inbox .mat-column-nameIcon{
+    width: 1.2rem;
+  }
+}

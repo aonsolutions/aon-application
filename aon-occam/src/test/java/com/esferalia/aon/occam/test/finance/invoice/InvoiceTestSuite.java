@@ -5,6 +5,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.esferalia.aon.occam.test.product.TargetItemTest;
+
 @RunWith(Suite.class)
 @SuiteClasses({
 	ValidationSaveEmptyDomainTest.class,
@@ -13,6 +15,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	ValidationSaveEmptyInvoiceTypeTest.class,
 	ValidationSaveEmptyRegistryTest.class,
 	InsertInvoiceTest.class,
+	TargetItemTest.class
 //	DeleteAllInvoicesTest.class,
 })
 public class InvoiceTestSuite {

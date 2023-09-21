@@ -73,7 +73,7 @@ public class Mod123InfoDAO {
 					
 					@Override 
 					public String visitComputeKey() {
-						return new JSONObject( getComputeKey(ctx, mod123, script, keyDAO) ).toString();
+						return getComputeKey(ctx, mod123, script, keyDAO);
 					}
 					
 					@Override 
@@ -90,6 +90,10 @@ public class Mod123InfoDAO {
 			.orElse(null);
 	}
 	
+	public static Stream<IrpfBreakdown> getModelInvoicesInfo(AONContext ctx, final Mod123 mod123, Mod123Key key) {
+		Mod123Declaration dec = Mod123Declaration.getInstance(mod123);
+		return getModelInvoicesInfo(ctx, mod123, dec.getKey(key)); 
+	}
 	private static Stream<IrpfBreakdown> getModelInvoicesInfo(AONContext ctx, final Mod123 mod123, IMod123KeyDAO keyDAO) {
 		return IRPFDAO.getModelInputInvoicesIrpfBreakdown(ctx, mod123)
 			.filter( br ->  keyDAO.acceptValue(mod123, br));
@@ -189,18 +193,24 @@ public class Mod123InfoDAO {
 	}
 	
 	private static String getComputeKey(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script,IMod123KeyDAO keyDAO) {
-		Mod123MVELContext mvelCtx = new Mod123MVELContext(mod123); 
-		mvelCtx.put("mod", mod123);
-		mvelCtx.put("periodModels", FiscalModelDAO.getSamePeriodModels(ctx, mod123, Mod123::new).collect(Collectors.toCollection(LinkedList::new)));
-		mvelCtx.put("lastPeriodModels", FiscalModelDAO.getLastPeriodModels(ctx, mod123, Mod123::new).collect(Collectors.toCollection(LinkedList::new)));
-		mvelCtx.put("models", Mod123DAO.getMod123s(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
+		Mod123Declaration dec = Mod123Declaration.getInstance(mod123);
 		StringBuilder buf = new StringBuilder();
 		for (Mod123Key key : script.getKeys() ) {
 			if (key != null) {
-				String template = keyDAO.getTemplate();
-				if (AonStringUtils.isNotBlank( template )) {
-					Object result = TemplateRuntime.eval(template, mvelCtx);
-					buf.append(result != null ? result.toString() : null);
+				if (Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
+					buf.append(dec.getSamePeriodExplain( ctx, mod123, key));
+					return buf.toString();
+				} else {
+					Mod123MVELContext mvelCtx = new Mod123MVELContext(mod123); 
+					mvelCtx.put("mod", mod123);
+					mvelCtx.put("periodModels", FiscalModelDAO.getSamePeriodModels(ctx, mod123, Mod123::new).collect(Collectors.toCollection(LinkedList::new)));
+					mvelCtx.put("lastPeriodModels", FiscalModelDAO.getLastPeriodModels(ctx, mod123, Mod123::new).collect(Collectors.toCollection(LinkedList::new)));
+					mvelCtx.put("models", Mod123DAO.getMod123s(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
+					String template = keyDAO.getTemplate();
+					if (AonStringUtils.isNotBlank( template )) {
+						Object result = TemplateRuntime.eval(template, mvelCtx);
+						buf.append(result != null ? result.toString() : null);
+					}
 				}
 			}
 		}

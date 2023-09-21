@@ -62,6 +62,14 @@ public class ContractFill {
 		
 	}
 	
+	public static byte[] fillContractExtension(Map<String, String> contractExtensionFillInfo) throws IllegalArgumentException {
+		return fillExtensionContract(contractExtensionFillInfo);
+	}
+	
+	public static byte[] fillContractRelocation(Map<String, String> contractRelocationFillInfo) throws IllegalArgumentException {
+		return fillRelocationContract(contractRelocationFillInfo);
+	}
+	
 	private static void initializeFieldNames() {
 		FIELDNAMESTOMAP.clear();
 		FIELDNAMESTOMAP.put("Texto10", "ENTERPRISE_COUNTRY_CODE");
@@ -83,6 +91,8 @@ public class ContractFill {
 		FIELDNAMESTOMAP.put("DEN_NVFOR", "E_FORMATIVE_LVL");
 		FIELDNAMESTOMAP.put("COD_NVFOR", "E_FORMATIVE_LVL_CODE");
 		FIELDNAMESTOMAP.put("HOR_JOR_HH", "I_PARTIALLY_TIME_HOURS");
+//		FIELDNAMESTOMAP.put("FX_NAC_TRA", "E_BDAT");
+//		FIELDNAMESTOMAP.put("FX_INICIO", "C_START");
 	}
 	
 	private static void checkContractOtherInfo(Map<String, String> contractOtherInfo) {
@@ -110,6 +120,86 @@ public class ContractFill {
 		if(contractOtherInfo.get("P_SEPE_MUNICIPALITY") == null) contractOtherInfo.put("P_SEPE_MUNICIPALITY", "A TRAVES DE CONTRATA");
 		if(contractOtherInfo.get("T_SEPE_MUNICIPALITY") == null) contractOtherInfo.put("T_SEPE_MUNICIPALITY", "A TRAVES DE CONTRATA");
 		
+	}
+	
+	private static byte[] fillExtensionContract(Map<String, String> contractExtensionFillInfo) {
+		InputStream is = ContractFill.class.getResourceAsStream("prorroga.pdf");
+		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+			pdfDocument.setAllSecurityToBeRemoved(true);
+			
+			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
+			PDAcroForm acroForm = doc.getAcroForm();
+			
+			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				
+				acroForm.setDefaultResources(resources);
+				
+				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
+					String fieldName = field.getPartialName();
+					String newValue = contractExtensionFillInfo.getOrDefault(fieldName, "");
+					newValue = AonStringUtils.isBlank(newValue) ? "" : newValue.toUpperCase();
+					setField(field, newValue);	
+				}
+			}
+			
+	        pdfDocument.setAllSecurityToBeRemoved(true);
+	        
+			pdfDocument.save(out);
+			pdfDocument.close();
+			
+			return out.toByteArray();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private static byte[] fillRelocationContract(Map<String, String> contractRelocationFillInfo) {
+		InputStream is = ContractFill.class.getResourceAsStream("propuestaRecolocacion.pdf");
+		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+			pdfDocument.setAllSecurityToBeRemoved(true);
+			
+			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
+			PDAcroForm acroForm = doc.getAcroForm();
+			
+			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				
+				acroForm.setDefaultResources(resources);
+				
+				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
+					String fieldName = field.getPartialName();
+					String newValue = contractRelocationFillInfo.getOrDefault(fieldName, "");
+					newValue = AonStringUtils.isBlank(newValue) ? "" : newValue.toUpperCase();
+					setField(field, newValue);	
+				}
+			}
+			
+	        pdfDocument.setAllSecurityToBeRemoved(true);
+	        
+			pdfDocument.save(out);
+			pdfDocument.close();
+			
+			return out.toByteArray();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	private static byte[] fillIndefiniteContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
@@ -461,7 +551,10 @@ public class ContractFill {
 						String newValue = contractFillInfo.getOrDefault(renderFieldName, "");
 						setField(field, newValue);
 					} else {
-					
+						if(AonStringUtils.equalsIgnoreCase(fieldName, "TEXTOCasilla de verificaci\u00f3n25") && null != contractOtherInfo.get("T_EMPLOYEE_CONTRACT_DIST_ADDR")) {
+							 ((PDCheckBox) field).check();
+						}
+						
 						if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "$aon:")) {
 							valueStr = valueStr.replace("$aon:", "");
 							
@@ -580,7 +673,15 @@ public class ContractFill {
 	    if (field instanceof PDTextField) {
 	    	try{
 		        field.setValue(value);
+		        ((PDTextField) field).setValue(value);
 		        ((PDTextField) field).setDefaultValue(value);
+	    	} catch (Exception e) {
+				System.out.println("ERR : " + field.getValueAsString());
+			}
+	    } else if (field instanceof PDCheckBox) {
+	    	try{
+		        if(AonStringUtils.isBlank(value) || AonStringUtils.equals(value, "N")) ((PDCheckBox) field).unCheck();
+		        else ((PDCheckBox) field).check();
 	    	} catch (Exception e) {
 				System.out.println("ERR : " + field.getValueAsString());
 			}

@@ -570,7 +570,7 @@ export class AonMobileInvoice extends AonInvoice {
 				getItems(data).then(r => {
 					description.buildOptions(r.map(r => {return {
 						name: r.name,
-						value: r.id,
+						value: r,
 						item: r};}));
 				}).catch(e => this.showError(e));
 			  } 
@@ -583,7 +583,7 @@ export class AonMobileInvoice extends AonInvoice {
 		description.addEventListener(EVENT.SELECT,(e) => {
 			console.log(e.detail);
 			detail.description = e.detail.name; 
-			detail.item = e.detail.item.id;
+			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
 			this.invoice.setDetail(detail, i);
 			this.setFocus(this.DETAIL_DESCRIPTION + i);
@@ -663,7 +663,7 @@ export class AonMobileInvoice extends AonInvoice {
 				getItems(data).then(r => {
 					description.buildOptions(r.map(r => {return {
 						name: r.name,
-						value: r.id,
+						value: r,
 						item: r};}));
 				}).catch(e => this.showError(e));
 			  } 
@@ -676,7 +676,7 @@ export class AonMobileInvoice extends AonInvoice {
 		description.addEventListener(EVENT.SELECT,(e) => {
 			console.log(e.detail);
 			detail.description = e.detail.name; 
-			detail.item = e.detail.item.id;
+			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
 			this.invoice.setDetail(detail, i);
 			this.reload();
@@ -1021,7 +1021,7 @@ export class AonMobileInvoice extends AonInvoice {
 			fileDiv.style.display = 'block';
 			this.clearElement(fileDiv);
 			let viewer = new AonViewer();
-			viewer.type = !this.getInvoice().file && this.getInvoice().isEmitida()
+			viewer.type = !this.getInvoice().file || this.getInvoice().isEmitida()
 				? 'application/pdf' : this.getInvoice().file.content_type;
 			
 			let json = this.getInvoice();
@@ -1029,7 +1029,7 @@ export class AonMobileInvoice extends AonInvoice {
 			json.domain_name = LS.getDomainName();
 			json.login = LS.getDomainLogin();
 			
-			viewer.file = !this.getInvoice().file && this.getInvoice().isEmitida()
+			viewer.file = !this.getInvoice().file || this.getInvoice().isEmitida()
 				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(json))
 				: this.getInvoice().file.url;
 			viewer.width = fileDiv.offsetWidth;

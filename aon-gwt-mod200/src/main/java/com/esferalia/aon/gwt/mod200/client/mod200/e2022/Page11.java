@@ -1,16 +1,19 @@
-// LIQUIDACION (IV): OTRAS DEDUCCIONES, CUOTA LIQUIDA POSITIVA
+// LIQUIDACION (IV): OTRAS DEDUCCIONES, CUOTA LIQUIDA
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model2002022PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN082Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1039Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1040Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1041Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN2314Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN2315Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN565Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN565_1Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN565_2Key;
@@ -20,8 +23,6 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN588Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN590Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -60,14 +61,22 @@ public class Page11 extends PageAbs {
 			"Deducci\u00F3n resto del grupo"
 	};
 	
-	private static final String FOOTER_1 = "(*) S\u00F3lo debe cumplimentarse si tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2021.";
+	private static final String[] HEADERS_1039_2314 = new String[] {
+			"Ejercicio de generaci\u00F3n",
+			AON.MSG.pendingDeduction(),			
+			AON.MSG.current(),
+			"Importe abonado por insuficiencia de cuota",
+			AON.MSG.futurePending()
+	};		
+	
+	private static final String FOOTER_1 = "(*) S\u00F3lo debe cumplimentarse si tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2022.";
 	private static final String FOOTER_588_1 = "(***) Excepto deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 36.2 LIS) que se declaran en las casillas [01039] de la p\u00E1g. 14 y, en su caso, en la casilla [01042] de la p\u00E1g. 14 bis.";
-	private static final String FOOTER_588_2 = "(****) Programas cuya vigencia se inicia a partir de 2022: S\u00F3lo debe cumplimentarse esta fila si la entidad tiene un per\u00EDodo impositivo que no coincida con el a\u00F1o natural y ha realizado gastos con derecho a deducci\u00F3n a partir de 2022.";
+	private static final String FOOTER_588_2 = "(****) Programas cuya vigencia se inicia a partir de 2023: S\u00F3lo debe cumplimentarse esta fila si la entidad tiene un per\u00EDodo impositivo que no coincida con el a\u00F1o natural y ha realizado gastos con derecho a deducci\u00F3n a partir de 2022.";
 	private static final String FOOTER_082 = "(**) Entre otros requisitos, ser\u00E1 necesario que transcurra, al menos, uno a\u00F1o desde la finalizaci\u00F3n del per\u00EDodo impositivo en que se gener\u00F3 la deducci\u00F3n, sin que la misma haya sido objeto de aplicaci\u00F3n.";
 	
 	private FlowPanel filmPanel;
 
-	public Page11( Model200PageCallback callback ) {
+	public Page11( Model2002022PageCallback callback ) {
 		super(callback);
 	}
 	
@@ -76,7 +85,7 @@ public class Page11 extends PageAbs {
 		
 		basePanel.clear();	
 		
-		basePanel.add(getTitle(AON.MSG.otherDeductions()));
+		basePanel.add(getTitle("Otras deducciones. Cuota l\u00EDquida"));
 		
 		FlexTable table = addTable();
 		
@@ -107,26 +116,42 @@ public class Page11 extends PageAbs {
 				}
 				if (key == Mod2002022Key.BN1041) {
 					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN1041,Mod2002022BN1041Key.values(),HEADERS_3, FOOTER_1);
-				}				
-				if (key == Mod2002022Key.BN1039) {
-					FlexTable table2 = new FlexTable();
-					table2.setWidth("100%");
-					table2.setCellSpacing(0);
-					table2.getColumnFormatter().setWidth(1, "150px");
-					table2.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());					
-					paintKey(table2,Mod2002022Key.BN1039M,0);
-					table.setWidget(row, 0, table2);
-					row++;
-				}				
-				if (key == Mod2002022Key.BN2314) {
-					FlexTable table2 = new FlexTable();
-					table2.setWidth("100%");
-					table2.setCellSpacing(0);
-				   	table2.getColumnFormatter().setWidth(1, "150px");
-					table2.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());					
-					paintKey(table2,Mod2002022Key.BN2314M,0);
-					table.setWidget(row, 0, table2);
-					row++;
+				}	
+				
+				if (key == Mod2002022Key.BN2315
+						&& callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0009) 
+						&& callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010)) {
+					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN2315,Mod2002022BN2315Key.values(),HEADERS_1, FOOTER_1);
+				}
+				
+				if (key == Mod2002022Key.BN1039) {  
+					if (callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0009) && 
+						callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010))
+						row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN1039,Mod2002022BN1039Key.values(),HEADERS_1039_2314, FOOTER_1);
+					// Casilla Importe Máximo para la casilla 1039 (Se elimina a primeros de julio de 2023)
+//					FlexTable table2 = new FlexTable();
+//					table2.setWidth("100%");
+//					table2.setCellSpacing(0);
+//					table2.getColumnFormatter().setWidth(1, "150px");
+//					table2.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());					
+//					paintKey(table2,Mod2002022Key.BN1039M,0);
+//					table.setWidget(row, 0, table2);
+//					row++;
+				}	
+				
+				if (key == Mod2002022Key.BN2314) {  
+					if (callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0009) && 
+						callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010))
+						row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN2314,Mod2002022BN2314Key.values(),HEADERS_1039_2314, FOOTER_1);
+					// Casilla Importe Máximo para la casilla 2314 (Se elimina a primeros de julio de 2023)
+//					FlexTable table2 = new FlexTable();
+//					table2.setWidth("100%");
+//					table2.setCellSpacing(0);
+//				   	table2.getColumnFormatter().setWidth(1, "150px");
+//					table2.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());					
+//					paintKey(table2,Mod2002022Key.BN2314M,0);
+//					table.setWidget(row, 0, table2);
+//					row++;
 				}
 				
 			}
@@ -146,7 +171,7 @@ public class Page11 extends PageAbs {
 		filmPanel.clear();
 		
 		filmPanel.add(getTitle("Informaci\u00F3n adicional producciones cinematogr\u00E1ficas espa\u00F1olas y espect\u00E1culos en vivo"));
-		paintLabel(filmPanel, "Los contribuyentes que participen en la financiaci\u00F3n de producciones cinematogr\u00E1ficas espa\u00F1olas y espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales (arts. 36.1 y 3 LIS y art. 39.7 LIS) consignar\u00E1n, a continuaci\u00F3n, el NIF del contribuyente que realiza la producci\u00F3n o espect\u00E1culo.", false);
+		paintLabel(filmPanel, "Los contribuyentes que participen en la financiaci\u00F3n de producciones cinematogr\u00E1ficas espa\u00F1olas y espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales (arts. 36.1, 36.3 y 39.7 LIS) consignar\u00E1n, a continuaci\u00F3n, el NIF del contribuyente que realiza la producci\u00F3n o espect\u00E1culo.", false);
 		
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.setWidth("30%");
@@ -187,7 +212,7 @@ public class Page11 extends PageAbs {
 		// Botón añadir 
 		AonTableButton addButton = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
 		addButton.addClickHandler(event -> {
-			callback.getMod200Object().getMod200().getFilmProductions().add(new String());
+			callback.getMod200Object().getMod200().getFilmProductions().add("");
 			paintFilmPanel();
 		});
 		tab.addRow().addCell(addButton);
@@ -241,19 +266,14 @@ public class Page11 extends PageAbs {
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, tab.getCellCount(boxRow)); 
 		
-		breakdown.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				container.setVisible( !container.isVisible() );
-				for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
-					tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(
-							container.isVisible()?backgroundColor:"#FFFFFF");	
-				}
-				container.getElement().getStyle().setBackgroundColor(
-						container.isVisible()?backgroundColor:"#FFFFFF");
+		breakdown.addClickHandler(event -> {
+			container.setVisible( !container.isVisible() );
+			for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
+				tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(
+						container.isVisible()?backgroundColor:"#FFFFFF");	
 			}
-			
+			container.getElement().getStyle().setBackgroundColor(
+					container.isVisible()?backgroundColor:"#FFFFFF");
 		});
 		
 		return ++row;
@@ -296,6 +316,16 @@ public class Page11 extends PageAbs {
 		if (footernote != null)
 			paintFooterNote(container, footernote);
 		
+	}
+	
+	@Override
+	protected boolean isDisabled(IMod200Key key) {
+		// Si están marcados los caracteres 9 o 10, estas casillas se cumplimentan directamente, no a través de desglose
+		if ((key == Mod2002022Key.BN2315 || key == Mod2002022Key.BN1039 || key == Mod2002022Key.BN2314 ) && 
+			(callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0009) || callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0010))) {
+			return false;
+		}
+		return super.isDisabled(key);
 	}
 	
 }

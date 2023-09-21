@@ -2,9 +2,9 @@ package com.code.aon.warehouse;
 
 import java.util.Iterator;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -40,7 +40,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			employeeDialogObject.resetEmptyInfo();
 			this.resetEmployeeInfo();
 			this.unblockVariablesExistingContract();
-			this.hideClearEmployee();
 		}
 		
 		@Override
@@ -211,6 +210,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		}
 		
 		@Override
+		public void onEmployeeCnoSuggestionChange(String cno) {
+			employeeDialogObject.setContractCno(cno);
+		}
+		
+		@Override
 		public void onContractEmployeesColectiveChange(String employeesColective) {
 			employeeDialogObject.setContractEmployeesColective(employeesColective);
 		}
@@ -303,8 +307,8 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		}
 		
 		@Override
-		public void onEmployeeAddressProvinceChange(String addressProvinceCode) {
-			employeeDialogObject.setEmployeeAddressProvince(addressProvinceCode);
+		public void onEmployeeAddressProvinceChange(Integer geozoneId) {
+			employeeDialogObject.setEmployeeAddressProvince(geozoneId);
 			employeeDialogObject.setEmployeeAddressCity(null);
 		}
 
@@ -356,6 +360,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 					f -> {}
 			);	
 		}
+
+		@Override
+		public void onUploadDni() {
+			
+		}
 		
 	}	
 
@@ -392,8 +401,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 		getButtonsPanel();
 		
-		employee.hideClearEmployee();
-		
 		if(Boolean.TRUE.equals(hideEmployeePanel))
 			employee.hideEmployeeTable();
 	}
@@ -428,7 +435,16 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		initAgreements();
 		initPayMethods();
 		fillDefaultFields();
-		initFocus();	
+		initFocus();
+		showDialog();
+	}
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
 	}
 
 	private void initSuggestBox() {
@@ -482,7 +498,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		fillExistingContract();
 		if(isContractActive)
 		   employee.blockVariablesExistingContract();
-		employee.showClearEmployee();
 	}
 
 	private void fillExistingEmployee() {
@@ -505,7 +520,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.addressNum.setValue(employeeData.getAddresNum());
 		employee.addressZip.setValue(employeeData.getAddressZip());
 		
-		setSelectedValueLB(employee.addressProvince, employeeData.getAddressProvinces());
+		employee.selectProvince(employeeData.getAddressProvinces());
 		employee.updateMunicipalities();
 		setSelectedValueLB(employee.addressMunicipality, employeeData.getAddressCity());
 

@@ -58,6 +58,15 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOAAddit
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOARScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOAResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022NAVARRARGScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023AEATGeneralRegimeScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023AEATPrintScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023AEATResultScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023ARABAPrintScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023ARABARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023BIZKAIAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023BIZKAIAScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023GIPUZKOAPrintScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023GIPUZKOARScript1;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
@@ -98,6 +107,9 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 		test( mod303, Model3032022AEATResultScript.values() );
 		test( mod303, Model3032022AEATSimplifiedRegime4TScript.values() );
 		test( mod303, Model3032022AEATSimplifiedRegimeScript.values() );
+		test( mod303, Model3032023AEATGeneralRegimeScript1.values() );
+		test( mod303, Model3032023AEATPrintScript.values() );
+		test( mod303, Model3032023AEATResultScript.values() );
 	}
 	
 	@Test
@@ -123,7 +135,9 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 			test( mod303,Model3032021GIPUZKOAAdditionalDataScript.values() );
 			test( mod303,Model3032022GIPUZKOAAdditionalDataScript.values() );
 			test( mod303,Model3032022GIPUZKOAResultScript.values() );
-			test( mod303,Model3032022GIPUZKOARScript1.values() );	
+			test( mod303,Model3032022GIPUZKOARScript1.values() );
+			test( mod303,Model3032023GIPUZKOARScript1.values() );
+			test( mod303,Model3032023GIPUZKOAPrintScript.values() );
 		}
 	}
 	
@@ -152,6 +166,8 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 			test( mod303,Model3032022BIZKAIAScript1.values() );
 			test( mod303,Model3032022BIZKAIAScript2.values() );
 			test( mod303,Model3032022BIZKAIASpecificOperationsScript.values() );
+			test( mod303,Model3032023BIZKAIAScript.values() );
+			test( mod303,Model3032023BIZKAIAAdditionalDataScript.values() );
 		}			
 	}
 	
@@ -184,6 +200,8 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 			test( mod303,Model3032022ARABAResultScript.values() );
 			test( mod303,Model3032022ARABARScript1.values() );
 			test( mod303,Model3032022ARABAScript2.values() );
+			test( mod303,Model3032023ARABARScript1.values() );
+			test( mod303,Model3032023ARABAPrintScript.values() );
 		}
 	}
 	

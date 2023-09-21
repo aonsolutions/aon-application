@@ -1,0 +1,489 @@
+package com.code.aon.ui.finance.file.edi;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.AonVersion;
+import com.code.aon.common.util.AonFile;
+import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.customer.Customer;
+import com.code.aon.faces.component.util.DownloadUtil;
+import com.code.aon.faces.controller.LogPanelController;
+import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryNote;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.file.seres.connect.invoice.v4.data.RECTL;
+import com.esferalia.aon.seres.ftp.FtpFile;
+import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
+import com.esferalia.aon.seres.reader.connect.ConnectInvoiceReader;
+
+public class FtpSaleInvoiceDownloadHandler implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	private static final Logger LOGGER = LoggerFactory.getLogger(FtpSaleInvoiceDownloadHandler.class);
+	
+	private final String PARAM_FTP_SERVER_NAME = "SERES_FTP_SERVER_NAME";
+	private final String PARAM_FTP_PORT = "SERES_FTP_SERVER_PORT";
+	private final String PARAM_FTP_USER = "SERES_FTP_USER";
+	private final String PARAM_FTP_PASSWORD = "SERES_FTP_PASSWORD";
+	private final String PARAM_FTP_REMOTE_PATH = "SERES_FTP_PATH_PULL_INVOICE";
+	
+	private IController controller;
+	private boolean showEdiFtpWindow;
+	
+	private String server;
+	private Integer port;
+	private String user;
+	private String password;
+	private String remotePath;
+	
+	private Date date;
+	private boolean deleteOnComplete;
+	private boolean testing;
+	
+	private boolean showFtpServerConnectionData;
+	
+	private List<FtpFileOrder> unreadSalesList;
+			
+	private SerializableListDataModel unreadSalesModel;
+	
+	private List<String> remoteDirectoryList;
+	
+	private SerializableListDataModel remoteDirectoryModel;
+	
+	public FtpSaleInvoiceDownloadHandler(IController controller) {
+		this.controller = controller;
+	}
+
+	
+	public SerializableListDataModel getUnreadSalesModel() {
+		if(unreadSalesModel == null){
+			unreadSalesModel = new SerializableListDataModel(unreadSalesList);
+		}
+		return unreadSalesModel;
+	}
+	
+	public SerializableListDataModel getRemoteDirectoryModel() {
+		if(remoteDirectoryModel == null){
+			remoteDirectoryModel = new SerializableListDataModel(remoteDirectoryList);
+		}
+		return remoteDirectoryModel;
+	}
+	
+	public String getServer() {
+		return server;
+	}
+
+	public void setServer(String server) {
+		this.server = server;
+	}
+	
+	public String getRemotePath() {
+		return remotePath;
+	}
+
+	public void setRemotePath(String remotePath) {
+		this.remotePath = remotePath;
+	}
+	
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public boolean isDeleteOnComplete() {
+		return deleteOnComplete;
+	}
+
+	public void setDeleteOnComplete(boolean deleteOnComplete) {
+		this.deleteOnComplete = deleteOnComplete;
+	}
+
+	public boolean isTesting() {
+		return testing;
+	}
+
+	public void setTesting(boolean testing) {
+		this.testing = testing;
+	}
+
+	public boolean isShowEdiFtpWindow() {
+		return showEdiFtpWindow;
+	}
+
+	public void setShowEdiFtpWindow(boolean showEdiFtpWindow) {
+		this.showEdiFtpWindow = showEdiFtpWindow;
+	}
+	
+	public boolean isShowFtpServerConnectionData(){
+		return showFtpServerConnectionData;
+	}
+	
+
+	private void initContext() {
+		ApplicationParameter pServer = AppParamUtil.getParameter(PARAM_FTP_SERVER_NAME);
+		ApplicationParameter pPort = AppParamUtil.getParameter(PARAM_FTP_PORT);
+		ApplicationParameter pUser = AppParamUtil.getParameter(PARAM_FTP_USER);
+		ApplicationParameter pPasswd = AppParamUtil.getParameter(PARAM_FTP_PASSWORD);
+		ApplicationParameter pPath = AppParamUtil.getParameter(PARAM_FTP_REMOTE_PATH);
+		
+		if (pServer != null)
+			server = pServer.getValue();
+		if (pPort != null && NumberUtils.isNumber(pPort.getValue()))
+			port = Integer.valueOf(pPort.getValue());
+		else 
+			port = 21;
+		if (pUser != null)
+			user = pUser.getValue();
+		if (pPasswd != null)
+			password = pPasswd.getValue();
+		if (pPath != null)
+			remotePath = pPath.getValue();
+		else 
+			remotePath = "/";
+	}
+	
+	private void checkValidLogin() {
+		try {
+			showFtpServerConnectionData = false;
+			SeresFtpConnectionProvider.checkLogin(server, port, user, password);
+		} catch (Exception e) {
+			showFtpServerConnectionData = true;
+			AonUtil.addErrorMessage(e.getMessage());
+		} 
+	}
+
+	private void saveLoginInfo() {
+		AppParamUtil.insertParameter(PARAM_FTP_SERVER_NAME, server);
+		if (port != null && port!=21)
+			AppParamUtil.insertParameter(PARAM_FTP_PORT, String.valueOf(port));
+		AppParamUtil.insertParameter(PARAM_FTP_USER, user);
+		AppParamUtil.insertParameter(PARAM_FTP_PASSWORD, password);
+		AppParamUtil.insertParameter(PARAM_FTP_REMOTE_PATH, remotePath);
+	}
+	
+	public void onShowFtpEdi(ActionEvent event) {
+		controller.onReset(event);
+		unreadSalesList = null;
+		unreadSalesModel = null;
+		remoteDirectoryList = null;
+		remoteDirectoryModel = null;
+		showFtpServerConnectionData = false;
+		getLogPanel().reset();
+		
+		initContext();
+		checkValidLogin();
+		
+		setDate(new Date());
+		deleteOnComplete = true;
+		testing = false;
+		
+		onRetrieveFtpEdi(event);
+	}
+	
+	public void onShowFtpServerConnectionData(ActionEvent event) {
+		showFtpServerConnectionData = !showFtpServerConnectionData;
+	}
+	
+	public void onShowFtpDirectoryTree(ActionEvent event) {
+		try {
+			remoteDirectoryList = SeresFtpConnectionProvider.retrieveDirectoryList(null,
+					server, port, user, password);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+		} 
+		remoteDirectoryModel = null;
+	}
+	
+	public void onSelectFtpDirectory(ActionEvent event) {
+		if (remoteDirectoryModel.isRowAvailable()){
+			setRemotePath((String) remoteDirectoryModel.getRowData());
+		}
+		remoteDirectoryList = null;
+		remoteDirectoryModel = null;
+	}
+	
+	public void onRetrieveFtpEdi(ActionEvent event) {
+		if (showFtpServerConnectionData) {
+			saveLoginInfo();
+			checkValidLogin();
+		}
+		try {
+			List<FtpFile> list = SeresFtpConnectionProvider.retrieveFileList(
+						remotePath, date, date, server, port, user,
+						password);
+			
+			ConnectInvoiceReader reader = new ConnectInvoiceReader();
+			EdiInvoiceImporterHandler handler = new EdiInvoiceImporterHandler(controller);
+			unreadSalesList = new LinkedList<>();
+			if(list!=null && !list.isEmpty()){
+				list.forEach(ftpFile -> {
+					unreadSalesList.add(obtainStrippedOrder(reader, handler, ftpFile));
+				});
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+		if(unreadSalesList!=null) {
+			unreadSalesList.sort(new Comparator<FtpFileOrder>() {
+				@Override
+				public int compare(FtpFileOrder file0, FtpFileOrder file1) {
+					return file1.getFtpFile().getModificationDate().compareTo(
+							file0.getFtpFile().getModificationDate());
+				}
+			});
+		}
+		unreadSalesModel = null;
+	}
+	
+	private FtpFileOrder obtainStrippedOrder(ConnectInvoiceReader reader, EdiInvoiceImporterHandler handler, FtpFile ftpFile) {
+		FtpFileOrder order = new FtpFileOrder();
+		order.setFtpFile(ftpFile);
+		
+		byte[] byteFile = obtainFtpFile(ftpFile.getName());
+		RECTL rectl = null;
+		try {
+			AonFile aonFile  = (new AonFile());
+			aonFile.setData(byteFile);
+			rectl = reader.readFile(aonFile.openStream());
+			
+			String customerCode = handler.obtainCustomerCode(rectl);
+			RegistryNote customerRegistryNote = handler.searchCustomerRNote(customerCode);
+			order.setCustomerCode(customerCode);
+			if(customerRegistryNote!=null && customerRegistryNote.getId()!=null){
+				Customer customer = handler.obtainCustomer(customerRegistryNote.getRegistry().getId());
+				RegistryAddress address = handler.obtainAddress(Integer.valueOf(customerRegistryNote.getDescription()));
+				if(customer!=null && customer.getId()!=null){
+					order.setCustomerName(customer.getRegistry().getName());
+				}
+				if(address!=null && address.getId()!=null){
+					order.setDeliveryAddress(address.getFullAddress());
+				}
+			} else {
+				order.setCustomerName("***no registrado***");
+			}
+			order.setChargeDate(handler.getDateTimeFormatter().parse(rectl.getFecha_horaDelMensaje()));
+			
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage());
+		}
+		return order;
+	}
+
+
+	public void onImportFileHide(ActionEvent event) {
+		getLogPanel().finish();
+	}
+	
+	private byte[] obtainFtpFile(String name) {
+		try {
+			return SeresFtpConnectionProvider.retrieveFile(remotePath,
+					name, server, port, user, password);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+			getLogPanel().error(e.getMessage());
+		} 
+		return null;
+	}
+			
+	public String onDownloadFile(ActionEvent event) {
+		if(getUnreadSalesModel().isRowAvailable()){
+			FtpFileOrder ftpFileOrder = (FtpFileOrder) getUnreadSalesModel().getRowData();
+			
+			byte[] byteFile = obtainFtpFile(ftpFileOrder.getFtpFile().getName());
+			
+			FileOutput output = null;
+			HttpServletResponse response = null;
+			OutputStream out = null;
+			try {
+				output = new FileOutput();
+				output.setContent(byteFile);
+				
+				// download file
+				byte[] data = output.getContent();
+				int size = data.length;
+				response = DownloadUtil.getResponse();
+				out = DownloadUtil.initDownload(response, ftpFileOrder.getFtpFile().getName(), null, size);
+				InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
+				IOUtils.copy( fileIn, out );
+				IOUtils.closeQuietly(fileIn);
+			} catch (IOException e) {
+	        	AonUtil.addErrorMessage(e.getMessage());
+	        	throw new AbortProcessingException(e.getMessage(), e);
+	        } catch (Throwable e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(), e);
+			} finally {
+				DownloadUtil.finishDownload(response, out);
+			}
+		}
+		return null;
+	}
+	
+	public void onImportFile(ActionEvent event) {
+		
+		if(getUnreadSalesModel().isRowAvailable()) {
+			if(! isTesting()){
+				setShowEdiFtpWindow(false);
+			}
+			
+			FtpFileOrder ftpFileOrder = (FtpFileOrder) getUnreadSalesModel().getRowData();
+			
+			byte[] byteFile = obtainFtpFile(ftpFileOrder.getFtpFile().getName());
+			
+			getLogPanel()
+					.info("Iniciando importacion de fichero EDI (CONNECT)");
+			EdiInvoiceImporterHandler connectHandler = new EdiInvoiceImporterHandler(controller);
+			connectHandler.setAonFile(new AonFile());
+			connectHandler.getAonFile().setData(byteFile);
+			try {
+				connectHandler.importFile(event, isTesting());
+				if(isDeleteOnComplete()){
+					deleteFile(ftpFileOrder.getFtpFile());
+				}
+			} catch (Throwable th) {
+				getLogPanel()
+						.error("No se reconoce el formato del fichero, o no se ajusta al formato CONNECT");
+				getLogPanel().info(
+						"Iniciando importacion de fichero EDI (UDAPA)");
+				UdapaEdiInvoiceImporterHandler udapaHandler = new UdapaEdiInvoiceImporterHandler(controller);
+				udapaHandler.setAonFile(new AonFile());
+				udapaHandler.getAonFile().setData(byteFile);
+				try {
+					udapaHandler.importFile(event, isTesting());
+					if(isDeleteOnComplete()){
+						deleteFile(ftpFileOrder.getFtpFile());
+					}
+				} catch (Throwable th2) {
+					getLogPanel()
+							.error("No se reconoce el formato del fichero, o no se ajusta al formato CONNECT");
+				}
+			}
+		}
+		
+	}
+	
+	public void onDeleteFile(ActionEvent event) {
+		if (getUnreadSalesModel().isRowAvailable()) {
+			FtpFileOrder ftpFileOrder = (FtpFileOrder) getUnreadSalesModel().getRowData();
+			deleteFile(ftpFileOrder.getFtpFile());
+			unreadSalesList.remove(ftpFileOrder);
+			getUnreadSalesModel().setWrappedData(unreadSalesList);
+		}
+	}
+		
+	private boolean deleteFile(FtpFile ftpFile) {
+		if (ftpFile!=null) {
+			getLogPanel().info(
+					"Borrando el fichero EDI del servidor FTP de SERESNET");
+			try {
+				String remotePath = this.remotePath;
+				remotePath += remotePath != null && remotePath.endsWith("/") ? ""
+						: "/";
+				remotePath += ftpFile.getName();
+				boolean completed = SeresFtpConnectionProvider.deleteFile(
+						remotePath, server, port, user, password);
+				if (!completed) {
+					getLogPanel().error("El fichero no se ha podido borrar.");
+				}
+				return completed;
+			} catch (Throwable th) {
+				getLogPanel().error(th.getMessage());
+			}
+		}
+		return false;
+	}
+	
+	
+	private LogPanelController getLogPanel(){
+		return LogPanelController.getInstance();
+	}
+
+
+	public class FtpFileOrder implements Serializable {
+		private static final long serialVersionUID = 1L;
+		private FtpFile ftpFile;
+		private String customerName;
+		private String customerCode;
+		private String deliveryAddress;
+		private Date chargeDate;
+		public FtpFile getFtpFile() {
+			return ftpFile;
+		}
+		public void setFtpFile(FtpFile ftpFile) {
+			this.ftpFile = ftpFile;
+		}
+		public String getCustomerName() {
+			return customerName;
+		}
+		public void setCustomerName(String customerName) {
+			this.customerName = customerName;
+		}
+		public String getCustomerCode() {
+			return customerCode;
+		}
+		public void setCustomerCode(String customerCode) {
+			this.customerCode = customerCode;
+		}
+		public String getDeliveryAddress() {
+			return deliveryAddress;
+		}
+		public void setDeliveryAddress(String deliveryAddress) {
+			this.deliveryAddress = deliveryAddress;
+		}
+		public Date getChargeDate() {
+			return chargeDate;
+		}
+		public void setChargeDate(Date chargeDate) {
+			this.chargeDate = chargeDate;
+		}
+	}
+	
+}
