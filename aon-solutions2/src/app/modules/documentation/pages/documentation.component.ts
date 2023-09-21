@@ -117,7 +117,7 @@ export class DocumentationComponent implements OnInit {
         } else {
           // 3 - No tiene sub carpetas, cargamos los documentos
           const filterDocument = new FilterBuilder();
-          filterDocument.addField('Path', folder);
+          filterDocument.addField('path', folder);
           this.documentService.getDocumentList(filterDocument.getFilter()).then(documentsList => {
             // 4 - Se mira si tenemos documentos o no, Si no tenemos:
             // this.showNoElements = true, para mostrar el mensaje correspondiente
