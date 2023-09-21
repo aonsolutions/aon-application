@@ -68,7 +68,7 @@ export class TableTaxModelComponent implements OnChanges {
   private updateTableData() {
     let filterBuilder = new FilterBuilder();
     if (this.trimester > 0) {
-      filterBuilder.addField('trimester', this.trimester);
+      filterBuilder.addField('trimester', +this.trimester);
     }
 
     if (this.inputModel > 0) {
@@ -76,7 +76,7 @@ export class TableTaxModelComponent implements OnChanges {
     }
 
     if (this.inputYear !== '') {
-      filterBuilder.addField('year', this.inputYear);
+      filterBuilder.addField('year', +this.inputYear);
     }
 
     this.taxModelService
