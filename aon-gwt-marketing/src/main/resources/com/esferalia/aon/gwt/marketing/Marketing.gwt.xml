@@ -4,9 +4,7 @@
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name="com.google.gwt.i18n.I18N" />
-	<inherits name='com.google.gwt.visualization.Visualization'/>
 	<inherits name="com.google.gwt.logging.Logging"/>
-	<inherits name='net.aonsolutions.gwt.pdfjs.PdfJs'/>
 	
 <!-- 
 	<inherits name='com.esferalia.aon.js.payroll.Payroll'/>
@@ -39,12 +37,8 @@
 
 	<!-- Specify the app entry point class. -->
 	<inherits name="com.esferalia.aon.gwt.common.Common" />
-	<inherits name="com.esferalia.aon.gwt.api.Api" />
 	<inherits name="com.esferalia.aon.occam.api.Occam" />
 	
-	<!-- Include GWTUpload library -->
-  	<inherits name="gwtupload.GWTUpload"/>
-  	
 	<!-- Other module inherits --> 
 	<entry-point class='com.esferalia.aon.gwt.marketing.client.MainEntryPoint' />
 	
