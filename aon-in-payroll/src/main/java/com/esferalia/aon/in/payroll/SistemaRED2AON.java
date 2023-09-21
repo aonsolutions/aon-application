@@ -332,9 +332,8 @@ public class SistemaRED2AON {
 	    for (Liquidacion liquidation : liquidations) {
 		
 		
-		// Liquidacion Confirmada
-		if ( liquidation.getErrores().getError().stream()
-		.noneMatch( error -> error.getCodigoErr().equals("R9529")) )
+		// Numero Liquidacion
+		if ( AonStringUtils.isBlank(liquidation.getNumeroLiquidacion()) )
 		    continue;
 		
 		if ( !added.add(liquidation.getNumeroLiquidacion()) )
@@ -487,31 +486,29 @@ public class SistemaRED2AON {
 	java.sql.Date startDate = toSqlDate(liquidacion.getPeriodoDesde());
 	java.sql.Date ctrlDate = toSqlDate(liquidacion.getFechaControl());
 	
-	String regimen = liquidacion.getCcc().getRegimen();
 	String ccc = liquidacion.getCcc().getProvincia() + liquidacion.getCcc().getNumero();
 	
+	String numLiquidation = liquidacion.getNumeroLiquidacion();
+
 	String authorized = getAuthorized(login, domainId, domainName, ccc);
 
 	Map<String,List<Employee>> employees = getEmployees(login, domainId, domainName, ccc, startDate, endDate, nafs);
 	
 	nafs = employees.keySet().toArray(new String[employees.size()]);
 
-	LiquidationType liquidationType = 
-	Arrays.stream(LiquidationType.values())
-	.filter(l -> AonStringUtils.equals(l.getValue(), liquidacion.getTipo()))
-	.findAny().orElseThrow(NoSuchElementException::new);
 	
 	Map<String, Map<String, Map<Period, Map<String, Calc>>>> allCalcs = 
 	SistemaRED.getCalcByNAF(
 			certificateData, 
 			certificatePassword, 
 			certificateType, 
-			ccc, 
-			Regime.fromValue(regimen), 
-			startDate, 
-			endDate, 
-			liquidationType, 
-			LiquidationOrigin.TODAS, 
+			//ccc, 
+			//Regime.fromValue(regimen), 
+			//startDate, 
+			//endDate, 
+			//liquidationType, 
+			//LiquidationOrigin.TODAS,
+			numLiquidation,
 			authorized,
 			nafs
 			);

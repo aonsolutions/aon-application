@@ -850,6 +850,7 @@ class SistemaREDI {
 		
 	}
 	
+
 	static HtmlPage liquidationPageFill(HtmlPage htmlPage, final String ccc,
 			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
 			final SistemaRED.LiquidationOrigin liqOrigin) throws ElementNotFoundException, IOException, SegSocialException {
@@ -880,7 +881,7 @@ class SistemaREDI {
 //			TO
 			{
 				Calendar calendarTo = Calendar.getInstance();
-				calendarTo.setTime(dateFrom);
+				calendarTo.setTime(dateTo);
 				HtmlSelect selectMonthTo = (HtmlSelect) htmlPage.getElementById("idMesHasta");
 				String strMonthTo = calendarTo.get(Calendar.MONTH)<9?"0"+(calendarTo.get(Calendar.MONTH)+1):""+(calendarTo.get(Calendar.MONTH)+1);
 				HtmlOption selectedMonthTo = selectMonthTo.getOptionByValue(strMonthTo);
@@ -910,6 +911,28 @@ class SistemaREDI {
 		return htmlPage;
 	}
 	
+    	static HtmlPage liquidationPageFill(HtmlPage htmlPage, final String numLiquidation )
+    		throws ElementNotFoundException, IOException, SegSocialException {
+    	    //  OPCION 2
+    	    {
+    		
+    		HtmlRadioButtonInput inputOpcion2 = (HtmlRadioButtonInput) htmlPage.getElementById("idOpcion2");
+		inputOpcion2.click();
+    	    }
+    	    // NÚMERO LIQUIDACION
+    	    {
+    		HtmlInput inputNumeroLiquidacion = (HtmlInput) htmlPage.getElementById("idNumeroLiquidacion");
+    		inputNumeroLiquidacion.setValue(numLiquidation);
+    		
+    	    }
+    	    //	ACCEPT
+    	    {
+    		htmlPage = clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ACEPTAR"));
+    	    }
+    
+    	    return htmlPage;
+    	}
+
 	//RETURNS A COLLECTION OF ALL LIQUIDATIONS AVAILABLE FOR AN ENTERPRISE WITHIN THE DATE SPECIFIED
 	public static Collection<Liquidation> CalculationQueryByCCC(final InputStream certificateInputStream,
 		final String certificatePassword, final String certificateType, final String ccc,

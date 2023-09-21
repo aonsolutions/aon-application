@@ -12,7 +12,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +32,7 @@ import org.htmlunit.html.HtmlTableBody;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
 
+import solutions.aon.seg.social.SistemaRED.LiquidationType;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.OutOfServiceException;
@@ -43,6 +46,13 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 class Calculations {
+	
+    	@FunctionalInterface
+    	private static interface LiquidationPageFill {
+	    HtmlPage fill(HtmlPage htmlPage) throws IOException, SegSocialException;
+	}
+
+
 	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationQueryByCCC(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String ccc,
 			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
@@ -227,13 +237,41 @@ class Calculations {
 	
 	
 	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, final String ccc,
-			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
-			final SistemaRED.LiquidationOrigin liqOrigin, String authorized, String... nafs) throws SegSocialException{
+		final String certificatePassword, final String certificateType, String numLiquidation, String authorized, String... nafs) throws SegSocialException{
+	    
+	    Object[] arrFields = { numLiquidation };
+	    Toolkit.verifyData(arrFields);
+
+	    return workersCalculationByCCCandNAFS(
+		    certificateInputStream, 
+		    certificatePassword, 
+		    certificateType, 
+		    authorized, 
+		    htmlPage -> SistemaREDI.liquidationPageFill(htmlPage, numLiquidation), 
+		    nafs);
+	}
+
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
+		final String certificatePassword, final String certificateType, final String ccc,
+		final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+		final SistemaRED.LiquidationOrigin liqOrigin, String authorized, String... nafs) throws SegSocialException{
+	    
+	    Object[] arrFields = { ccc, regime, dateFrom, dateTo, liqType, liqOrigin };
+	    Toolkit.verifyData(arrFields);
+
+	    return workersCalculationByCCCandNAFS(
+		    certificateInputStream, 
+		    certificatePassword, 
+		    certificateType, 
+		    authorized, 
+		    htmlPage -> SistemaREDI.liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin), 
+		    nafs);
+	}
+	
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized,LiquidationPageFill liquidationPageFill,  String... nafs) throws SegSocialException{
 		
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
-		Toolkit.verifyData(arrFields);
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
@@ -247,7 +285,7 @@ class Calculations {
 					}
 				}
 			} catch (NullPointerException e) {}
-			htmlPage=SistemaREDI.liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
+			htmlPage=liquidationPageFill.fill(htmlPage);
 			try {
 				SistemaREDI.checkLiquidationExceptions(htmlPage);
 			}catch(NullPointerException | ElementNotFoundException e) {
