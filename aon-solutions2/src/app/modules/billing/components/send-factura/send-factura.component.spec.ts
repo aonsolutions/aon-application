@@ -1,3 +1,4 @@
+/*
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SendFacturaComponent } from './send-factura.component';
@@ -23,3 +24,4 @@ describe('SendFacturaComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+*/

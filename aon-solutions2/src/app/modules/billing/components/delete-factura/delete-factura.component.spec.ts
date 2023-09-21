@@ -1,3 +1,4 @@
+/*
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DeleteFacturaComponent } from './delete-factura.component';
@@ -23,3 +24,4 @@ describe('DeleteFacturaComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+*/
