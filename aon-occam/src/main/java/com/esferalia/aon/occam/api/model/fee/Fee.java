@@ -37,7 +37,7 @@ public class Fee implements Serializable{
 	private Seller seller;
 	private Workplace workplace;
 	private boolean modify = false;
-	private boolean hasRItem = false;
+	private Boolean hasRItem = false;
 	
 		
 	public Double getQuantity() {
@@ -262,7 +262,7 @@ public class Fee implements Serializable{
 		return this;
 	}
 	
-	public boolean hasRItem() {
+	public Boolean hasRItem() {
 		return this.hasRItem;
 	}
 

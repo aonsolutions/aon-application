@@ -103,15 +103,15 @@ public class FeeDAO {
 	
 	public static LinkedList<Fee> getFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
 		Condition condition = createFeeCondition(ctx, customerFeeParams);
-		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().select().from(CUSTOMER_FEE)
+		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().selectDistinct().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
-				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
+//				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
+//				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
 				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
@@ -135,6 +135,8 @@ public class FeeDAO {
 			.fetch();
 		
 		System.out.println("Customer Fee size : " + feeRecords.size());
+		
+		feeRecords.forEach(r -> System.out.println("Id : " + r.get(CUSTOMER_FEE.ID) + ", Domain : " + r.get(CUSTOMER_FEE.DOMAIN) + ", Customer : " + r.get(CUSTOMER_FEE.CUSTOMER) + ", Line : " + r.get(CUSTOMER_FEE.LINE)));
 		
 		return feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}

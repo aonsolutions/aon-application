@@ -29,7 +29,7 @@ public class BookingCheck implements Serializable{
 	
 	private Workplace workplace;
 	
-	private boolean hasFee;
+	private Boolean hasFee;
 	
 	private String quantityFee;
 	private String quantityRItem;
@@ -151,7 +151,7 @@ public class BookingCheck implements Serializable{
 		return this;
 	}
 
-	public boolean hasFee() {
+	public Boolean hasFee() {
 		return hasFee;
 	}
 
