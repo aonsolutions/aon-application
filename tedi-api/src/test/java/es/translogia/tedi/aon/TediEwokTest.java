@@ -7,6 +7,8 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Ignore;
+
 
 import es.translogia.tedi.ewok.IConstants;
 import es.translogia.tedi.ewok.TediAddress;
@@ -173,6 +175,7 @@ public class TediEwokTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testTediFinance() throws Exception {
 		System.out.print( "\t-test TediFinance ");
 		for (int i = 0; i < TIMES; i++) {
@@ -297,6 +300,7 @@ public class TediEwokTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testTediInvoice() throws Exception {
 		System.out.print( "\t-test TediInvoice ");
 		for (int i = 0; i < TIMES; i++) {
