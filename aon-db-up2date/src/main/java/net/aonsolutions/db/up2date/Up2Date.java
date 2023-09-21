@@ -359,7 +359,7 @@ public class Up2Date {
         // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
 	    // PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
 	    // IndemnizacionTemporalUpdate.INDEMNIZACIONTEMPORALUPDATE,
-        // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
+	    // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
 	    // TrainningBases2023Fix.TRAINNINGBASES2023FIX,
 	    // CGPJInsert.CGPJINSERT,
 	    // Trainning421ExcessQuote.TRAINNING421EXCESSQUOTE,
@@ -371,8 +371,8 @@ public class Up2Date {
 	    // DomainAonCustomer.DOMAIN_AON_CUSTOMER,
 	    // FixBofFormTDistan.FIXBOFFORMTDISTAN,
 	    // PermissionUnPaidDaysFix.PERMISSIONNOTPAIDDAYSFIX,
-		NoteInsert.NOTEINSERT,
-		SuspendJobAndSalaryDaysInsert.SUSPENDJOBANDSALARYDAYSINSERT,
+	    // NoteInsert.NOTEINSERT,
+	    // SuspendJobAndSalaryDaysInsert.SUSPENDJOBANDSALARYDAYSINSERT,
 
 		
 	    // ----------------------------------------------------------------

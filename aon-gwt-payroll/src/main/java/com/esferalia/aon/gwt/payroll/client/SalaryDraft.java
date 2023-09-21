@@ -5038,7 +5038,7 @@ public class SalaryDraft extends ResizeComposite
 		InlineHTML minusHTML = new InlineHTML("&minus;");
 		minusPanel.add( minusHTML );
 		minusPanel.add( amountWidget );
-		minusPanel.setCellWidth(minusHTML, "99%");
+		//minusPanel.setCellWidth(minusHTML, "99%");
 		minusPanel.setCellHorizontalAlignment(minusHTML, HorizontalAlignmentConstant.startOf(Direction.RTL));
 		minusPanel.setCellHorizontalAlignment(amountWidget, HorizontalAlignmentConstant.startOf(Direction.RTL));
 		amountsPanel.add(minusPanel);
