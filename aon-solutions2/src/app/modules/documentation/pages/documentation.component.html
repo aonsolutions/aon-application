@@ -179,13 +179,13 @@
   <!--FIN Nombre fichero-->
   <!--Mostrar previo del fichero-->
     <!--Mostrar PDF-->
-    <ng-container *ngIf="fileToShow.FileType.split('/')[0] === 'pdf'; else showImage">
+    <div id="doc-file-viewer" *ngIf="fileToShow.FileType.split('/')[1] === 'pdf'; else showImage">
       <app-file-viewer
-        [locale]="'es-ES'"
+        [locale]="localePDF"
         [zoom]="'auto'"
-        [pdfSrc]="'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf'"
+        [pdfSrc]="fileToShow.File"
       ></app-file-viewer>
-    </ng-container>
+    </div>
     <!--FIN Mostrar PDF-->
     <!--Mostrar imagen-->
     <ng-template #showImage>

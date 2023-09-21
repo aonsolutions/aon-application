@@ -4,9 +4,9 @@
 
 
 // true para activar que los datos lleguen desde la api, false para usar datos ficticion locales
-let APIEnvironment = false;
+let APIEnvironment  = false;
 // true activa unos tests simples para ver que los métodos funcionan correctamente, false para desactivarlos
-let test: boolean = false;
+let test: boolean   = false;
 
 /**
  * 
@@ -1606,6 +1606,8 @@ class APIFolderMultipleObjectCrudRepository extends APIGenericMultipleObjectCrud
             filter.fields?.set('workplace', workplaces)
         }
         collection.copyArrayToCollection((await super.get(filter ? filter : filterFolder.getFilter())).toArray())
+        if(filter && filter.fields || filter?.intervalFields) collection = collection.filter(filter); 
+        if(filter && filter.orderBy) collection.sort(filter);
         return collection;
     }
 
@@ -3456,13 +3458,12 @@ class ApiDocument extends Document implements IApiModel {
             if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/a_contabilizar')
                 return ['/ms/api/invoice?status=inbox'];
             if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/contabilizado')
-                throw new ErrorResponse('0199')
+                return ['/ms/api/invoice?status=inbox'];
                 // return ['/ms/api/invoice?status=rejected'];
             if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/fiscal')
                 return ['/ms/api/fiscal/models'];
             if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/papelera')
-                throw new ErrorResponse('0199')
-                // return ['/ms/api/invoice?status=draft'];
+                return ['/ms/api/invoice?status=draft'];
             if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase().includes('/laboral'))
                 return ['/ms/api/contract/enterprise/salaries?document=' + filter.fields.get('path')[0].split('/')[2]]
         }
@@ -3485,10 +3486,10 @@ class ApiDocument extends Document implements IApiModel {
 
     parseDataToReceive(data: any, currentMethod:string, filter: IFilter) {
         let document = new Document()
-        if(filter && filter.fields && filter.fields?.has('path') && filter.fields?.get('path').includes('/laboral')){
+        if(filter && filter.fields && filter.fields?.has('path') && filter.fields?.get('path')[0].indexOf('/laboral') !== -1){
             document.ApiObject = data;
             document.File = ''
-            document.FileName = 'Nómina' + (data.startDate ? data.startDate : '') + ' - ' + (data.endDate ? data.endDate : '');
+            document.FileName = 'Nómina';
             document.FileSize = 0
             document.FileType = ''
             document.Date = new Date()
@@ -3627,7 +3628,7 @@ class ApiFolder extends Folder implements IApiModel {
         let folder = new Folder();
         folder.ApiObject = data;
         folder.Key = data.document ? data.document : '';
-        folder.Name = data.name && data.surname ? data.name + data.surname : '';
+        folder.Name = data.name && data.surName && data.secondSurName ? data.name + " " + data.surName + " " + data.secondSurName : '';
         folder.Parent = '/laboral';
         folder.Path = '/laboral/' + folder.Key;
         return folder;

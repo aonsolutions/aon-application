@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Base64ToArrayBuffer } from 'src/app/core/utilities/file';
 
 @Component({
   selector: 'app-file-viewer',
@@ -6,15 +7,16 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./file-viewer.component.scss']
 })
 export class FileViewerComponent implements OnInit {
+  @Input() pdfSrc : string = '';
+  @Input() zoom   : string = 'page-width'
+  @Input() locale : string = 'es-ES';
+  pdfBytes        : any;
 
-  @Input() pdfSrc: string = '';
-  @Input() zoom: string = 'page-width'
-  @Input() locale: string = 'es-ES';
-
-  constructor() { }
+  constructor(
+  ) { }
 
   ngOnInit(): void {
-  }
-
+    this.pdfBytes = Base64ToArrayBuffer(this.pdfSrc);
+  } 
 
 }

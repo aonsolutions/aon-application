@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { b64toBlob } from '../utilities/file';
+import { Base64toBlob } from '../utilities/file';
 import { DocumentFactory, ICollection, IDocument, IFilter } from 'libraries/AonSDK/aon';
 import { CommonService } from './common.service';
 
@@ -38,7 +38,7 @@ export class DocumentService extends CommonService {
 
   async downloadDocument(path: string): Promise<void> {
     let response: IDocument = (await this.singleObjectCrud.getElement(path)).result
-    const blob = b64toBlob(response.File, response.FileType);
+    const blob = Base64toBlob(response.File, response.FileType);
     const blobUrl = URL.createObjectURL(blob);
     const a = document.createElement('a')
     a.href = blobUrl
