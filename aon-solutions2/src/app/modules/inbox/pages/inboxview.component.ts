@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Factory,
@@ -52,22 +58,38 @@ export class InboxviewComponent implements OnInit {
   showSendButton: boolean = false;
   showSendButtons: boolean = false;
   filterDate: number = 1;
-  selectedFilterText: string = "Esta semana";
+  selectedFilterText: string = 'Esta semana';
   expandedIndex: number = -1;
-  noTasksMessageText: string = "";
-  noTasksThisWeekMessage: string = "No hay tareas pendientes esta semana.";
-  noTasksThisMonthMessage: string = "No hay tareas pendientes este mes.";
-  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
+  newMessageDescription: string = '';
+  noTasksMessageText: string = '';
+  filterPending: boolean = false;
+  noTasksThisWeekMessage: string = 'No hay tareas pendientes esta semana.';
+  noTasksThisMonthMessage: string = 'No hay tareas pendientes este mes.';
+  noTasksPendingThisMonthMessage: string = 'No hay tareas realizadas este mes.';
+  noTasksPendingThisWeekMessage: string =
+    'No hay tareas realizadas esta semana.';
+  noNotificationsThisWeek: string = 'No hay notificaciones nuevas esta semana.';
+  noNotificationsThisMonth: string = 'No hay notificaciones nuevas este mes.';
+  noNotificationsViewThisMonth: string =
+    'No hay notificaciones vistas este mes.';
+  noNotificationsViewThisWeek: string =
+    'No hay notificaciones vistas esta semana.';
+  noQueriesThisWeek: string = 'No hay consultas abiertas esta semana.';
+  noQueriesThisMonth: string = 'No hay consultas abiertas este mes.';
+  noQueriesClosedThisMonth: string = 'No hay consultas cerradas este mes.';
+  noQueriesClosedThisWeek: string = 'No hay consultas cerradas esta semana.';
+  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
+    new DropdownMenuComponent();
 
   consultaMessageCount: number = 0;
   tareasMessageCount: number = 0;
   notificacionesMessageCount: number = 0;
   totalMessageCount: number = 0;
   tableQueriesComponent!: TableQueriesComponent;
-  menuItem: MenuItem [] = []
-  selected: string    = '';
-  items: any [] = [];
-  data:  any [] = [];
+  menuItem: MenuItem[] = [];
+  selected: string = '';
+  items: any[] = [];
+  data: any[] = [];
 
   constructor(
     private translateService: TranslateService,
@@ -121,30 +143,80 @@ export class InboxviewComponent implements OnInit {
             },
           ]),
           (this.menuItem! = [
-            { root: true, text: result["INBOX.THIS_WEEK"], click:() =>this.filterTable(1, result["INBOX.THIS_WEEK"]) },
-            {root: true, text: result["INBOX.THIS_MONTH"],click:() =>this.filterTable(2, result["INBOX.THIS_MONTHTHIS_MONTH"])},
-            {root: true, text: result["INBOX.ALLS"], click:() =>this.filterTable(0, result["INBOX.ALLS"])},
-          ])
+            {
+              root: true,
+              text: result['INBOX.THIS_WEEK'],
+              click: () => this.filterTable(1, result['INBOX.THIS_WEEK']),
+            },
+            {
+              root: true,
+              text: result['INBOX.THIS_MONTH'],
+              click: () =>
+                this.filterTable(2, result['INBOX.THIS_MONTHTHIS_MONTH']),
+            },
+            {
+              root: true,
+              text: result['INBOX.ALLS'],
+              click: () => this.filterTable(0, result['INBOX.ALLS']),
+            },
+          ]);
 
-          this.calculateMessageCounts();
+        this.calculateMessageCounts();
       });
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
+  //No hay tareas pendientes ni realizadas:
   showNoTasksMessage(hasNoTasks: boolean) {
     this.noTasksMessage = hasNoTasks;
 
     if (hasNoTasks) {
       if (this.filterDate === 1) {
-        this.noTasksMessageText = this.noTasksThisWeekMessage;
+        this.noTasksMessageText = this.filterPending
+          ? this.noTasksPendingThisWeekMessage
+          : this.noTasksThisWeekMessage;
       } else if (this.filterDate === 2) {
-        this.noTasksMessageText = this.noTasksThisMonthMessage;
+        this.noTasksMessageText = this.filterPending
+          ? this.noTasksPendingThisMonthMessage
+          : this.noTasksThisMonthMessage;
       }
     }
   }
 
+  //No hay notificaciones nuevas ni vistas:
+  showNoNotificacions(hasNoTasks: boolean) {
+    this.noTasksMessage = hasNoTasks;
+
+    if (hasNoTasks) {
+      if (this.filterDate === 1) {
+        this.noTasksMessageText = this.filterPending
+          ? this.noNotificationsThisWeek
+          : this.noNotificationsViewThisWeek;
+      } else if (this.filterDate === 2) {
+        this.noTasksMessageText = this.filterPending
+          ? this.noNotificationsThisMonth
+          : this.noNotificationsViewThisWeek;
+      }
+    }
+  }
+
+  //No hay consultas abiertas ni cerradas:
+  showNoQueries(hasNoTasks: boolean) {
+    this.noTasksMessage = hasNoTasks;
+
+    if (hasNoTasks) {
+      if (this.filterDate === 1) {
+        this.noTasksMessageText = this.filterPending
+          ? this.noQueriesThisWeek
+          : this.noQueriesClosedThisWeek;
+      } else if (this.filterDate === 2) {
+        this.noTasksMessageText = this.filterPending
+          ? this.noQueriesThisMonth
+          : this.noQueriesClosedThisWeek;
+      }
+    }
+  }
 
   afterModalClosed(result?: any) {
     console.log(result);
@@ -170,10 +242,10 @@ export class InboxviewComponent implements OnInit {
   }
 
   async rowClickHandler(message: any) {
-    console.log(message);
     try {
-      const isSameRow   = this.messagesData && this.messagesData.Id === message.key;
-      this.showDetail   = !isSameRow ? true : !this.showDetail;
+      const isSameRow =
+        this.messagesData && this.messagesData.Id === message.key;
+      this.showDetail = !isSameRow ? true : !this.showDetail;
       this.messagesData = await this.messageService.getMessage(message.key);
 
       if (message.type == 'consulta') {
@@ -199,19 +271,19 @@ export class InboxviewComponent implements OnInit {
 
   filterTable(optionValue: number, name: string) {
     this.filterDate = optionValue;
-    this.selected = name
+    this.selected = name;
     switch (optionValue) {
       case 1:
-        this.selectedFilterText = "Esta semana";
+        this.selectedFilterText = 'Esta semana';
         break;
       case 2:
-        this.selectedFilterText = "Este mes";
+        this.selectedFilterText = 'Este mes';
         break;
       case 0:
-        this.selectedFilterText = "Todo";
+        this.selectedFilterText = 'Todo';
         break;
       default:
-        this.selectedFilterText = "Esta semana";
+        this.selectedFilterText = 'Esta semana';
         break;
     }
   }
@@ -258,5 +330,53 @@ export class InboxviewComponent implements OnInit {
   changeView(): void {
     this.showSendButton = false;
     this.showSendButtons = false;
+  }
+
+  newMessageDescriptionChange(newValue: string) {
+    this.newMessageDescription = newValue;
+  }
+
+  async createChatMessage(description: string) {
+    if (this.messagesData) {
+      const chatId = this.messagesData.Id;
+      const chatName = this.messagesData.Name;
+
+      const newMessageChat: IMessageChat = {
+        Id: '',
+        IdMessage: chatId,
+        Name: chatName,
+        Description: description,
+        Date: new Date(),
+        Type: 'chat',
+        getKey: () => 'fakeKey',
+        getFilterableFields: () => new Map(),
+        getSortableFields: () => new Map(),
+      };
+
+      try {
+        // Crear el mensaje
+        const createdMessageChat =
+          await this.messageChatService.createMessageChat(newMessageChat);
+
+        // Agregar el nuevo mensaje
+        this.messagesChat.add(createdMessageChat);
+
+      } catch (error) {
+        console.error('Error al crear el mensaje de chat:', error);
+      }
+    }
+  }
+
+  sendChatMessage() {
+    // para no enviar mensajes vacíos
+    if (this.newMessageDescription.trim() === '') {
+      return;
+    }
+
+    // Llama a la función para crear un nuevo mensaje de chat
+    this.createChatMessage(this.newMessageDescription);
+
+    // Limpia el campo de entrada después de enviar el mensaje
+    this.newMessageDescription = '';
   }
 }

@@ -28,6 +28,7 @@ export class TableQueriesComponent implements OnChanges {
   @Input() public messageList: Observable<ICollection<IMessage>> | undefined;
   @Output() messageTitleSelected: EventEmitter<string> = new EventEmitter<string>();
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
+  @Output() noPendingQueries: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() id: number = 0;
   messageTotal: string = '0';
   bodyTable: any[] = [];
@@ -100,14 +101,14 @@ export class TableQueriesComponent implements OnChanges {
   private getStartDateOfWeek(): string {
     const currentDate = new Date();
     const startDate = new Date(currentDate);
-    startDate.setDate(startDate.getDate() - startDate.getDay()); // Inicio de la semana actual (domingo)
+    startDate.setDate(startDate.getDate() - startDate.getDay()); // Inicio de la semana actual
     return this.formatDate(startDate);
   }
 
   private getEndDateOfWeek(): string {
     const currentDate = new Date();
     const endDate = new Date(currentDate);
-    endDate.setDate(endDate.getDate() + (6 - endDate.getDay())); // Fin de la semana actual (sábado)
+    endDate.setDate(endDate.getDate() + (6 - endDate.getDay())); // Fin de la semana actual
     return this.formatDate(endDate);
   }
 
@@ -148,6 +149,7 @@ export class TableQueriesComponent implements OnChanges {
       .then((response) => {
         this.messagess = response;
         this.messagesSubject.next(this.messagess);
+        let pendingQueriesFound = false;
         response.forEach((message, messageKey) => {
           // Mensajes - total
           let filterBuilderTotal = new FilterBuilder();
@@ -156,10 +158,8 @@ export class TableQueriesComponent implements OnChanges {
             .getMessageChatCount(filterBuilderTotal.getFilter())
             .then((response) => {
               this.messageTotal! = response < 100 ? response.toString() : '+99';
-              console.log(this.messageTotal);
 
             column.total = "<span class='circle green'>" + this.messageTotal + '</span>'
-
           });
 
           const column: any = Object.assign({}, message);
@@ -186,7 +186,7 @@ export class TableQueriesComponent implements OnChanges {
             };
             column.title = message.Title;
             column.description = message.Description;
-            column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
+            column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
             column.action = {
               icon: lowerCaseStatus.includes('abierta')
                 ? [{ archive: 'grey' }]
@@ -194,10 +194,16 @@ export class TableQueriesComponent implements OnChanges {
             };
             column.class = (message.Status == 'abierta') ? 'border-red' : '';
             tableRow.push(column);
+
+            if (message.Status.toLowerCase().includes('nueva')) {
+              pendingQueriesFound = true;
+            }
           }
         });
 
         this.bodyTable = tableRow;
+
+        this.noPendingQueries.emit(!pendingQueriesFound);
       });
   }
 

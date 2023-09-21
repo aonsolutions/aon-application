@@ -127,7 +127,7 @@ export class TableComponentComponent implements OnInit {
               :
               '';
             // Fecha
-            column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
+            column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
             // Abrir o cerrar
             column.action = {
               icon: lowerCaseStatus.includes('abierta')

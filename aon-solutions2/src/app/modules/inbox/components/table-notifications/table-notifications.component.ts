@@ -28,6 +28,8 @@ export class TableNotificationsComponent implements OnChanges {
   @Input() filterDate: number = 0;
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
   @Input() filterTabSelec: number = 0;
+  @Output() noPendingNotification: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   filterStatus: string[] = ['todas', 'nueva', 'vista'];
   bodyTable: any[] = [];
   totalMessages: number = 0;
@@ -129,6 +131,7 @@ export class TableNotificationsComponent implements OnChanges {
     this.messageService
       .getMessageList(filterBuilder.getFilter())
       .then((response) => {
+        let pendingNotificacionsFound = false;
         response.forEach((message, messageKey) => {
           const column: any = Object.assign({}, message);
           // key
@@ -156,13 +159,19 @@ export class TableNotificationsComponent implements OnChanges {
             // Mensaje
             column.description = message.Description;
             // Fecha
-            column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
+            column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
             column.class = message.Status == 'nueva' ? 'border-red' : '';
             tableRow.push(column);
+
+            if (message.Status.toLowerCase().includes('nueva')) {
+              pendingNotificacionsFound = true;
+            }
           }
         });
 
         this.bodyTable = tableRow;
+
+        this.noPendingNotification.emit(!pendingNotificacionsFound);
       });
   }
 

@@ -154,7 +154,7 @@ export class TableTasksComponent implements OnChanges {
           };
           column.title = message.Title;
           column.description = message.Description;
-          column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
+          column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
           column.class = (message.Status == 'pendiente') ? 'border-red' : '';
           tableRow.push(column);
 

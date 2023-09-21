@@ -121,10 +121,27 @@
         </div>
         <div content class="padding">
           <app-table-queries
+            (noPendingQueries)="showNoQueries($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
             (rowClicked)="rowClickHandler($event)"
           ></app-table-queries>
+          <div *ngIf="selectedTab == 1 && this.tabIndex == 1 && noTasksMessage" class="padding inbox-no-tasks-message">
+            <ng-container *ngIf="noTasksMessage && filterDate === 1">
+              {{ noQueriesThisWeek }}
+            </ng-container>
+            <ng-container *ngIf="noTasksMessage && filterDate === 2">
+              {{ noQueriesThisMonth }}
+            </ng-container>
+          </div>
+          <div *ngIf="selectedTab == 1 && this.tabIndex == 2 && noTasksMessage" class="padding inbox-no-tasks-message">
+            <ng-container *ngIf="noTasksMessage && filterDate === 1">
+              {{ noQueriesClosedThisWeek }}
+            </ng-container>
+            <ng-container *ngIf="noTasksMessage && filterDate === 2">
+              {{ noQueriesClosedThisMonth }}
+            </ng-container>
+          </div>
         </div>
       </app-tabs>
     </ng-container>
@@ -167,6 +184,14 @@
               {{ noTasksThisMonthMessage }}
             </ng-container>
           </div>
+          <div *ngIf="selectedTab == 2 && this.tabIndex == 2 && noTasksMessage" class="padding inbox-no-tasks-message">
+            <ng-container *ngIf="noTasksMessage && filterDate === 1">
+              {{ noTasksPendingThisWeekMessage }}
+            </ng-container>
+            <ng-container *ngIf="noTasksMessage && filterDate === 2">
+              {{ noTasksPendingThisMonthMessage }}
+            </ng-container>
+          </div>
         </div>
       </app-tabs>
     </ng-container>
@@ -195,10 +220,27 @@
         </div>
         <div content class="padding">
           <app-table-notifications
+            (noPendingNotification)="showNoNotificacions($event)"
             (rowClicked)="rowClickHandler($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
           ></app-table-notifications>
+          <div *ngIf="selectedTab == 3 && this.tabIndex == 1 && noTasksMessage" class="padding inbox-no-tasks-message">
+            <ng-container *ngIf="noTasksMessage && filterDate === 1">
+              {{ noNotificationsThisWeek }}
+            </ng-container>
+            <ng-container *ngIf="noTasksMessage && filterDate === 2">
+              {{ noNotificationsThisMonth }}
+            </ng-container>
+          </div>
+          <div *ngIf="selectedTab == 3 && this.tabIndex == 2 && noTasksMessage" class="padding inbox-no-tasks-message">
+            <ng-container *ngIf="noTasksMessage && filterDate === 1">
+              {{ noNotificationsViewThisWeek }}
+            </ng-container>
+            <ng-container *ngIf="noTasksMessage && filterDate === 2">
+              {{ noNotificationsViewThisMonth }}
+            </ng-container>
+          </div>
         </div>
       </app-tabs>
     </ng-container>
@@ -224,9 +266,11 @@
           {{ messagesData.Title }}
         </div>
         <div class="inbox-message-date">
-          {{ datepipe.transform(messagesData.Date, "EEEE, HH:mm") }}
+          {{ datepipe.transform(messagesData.Date, 'MM/dd/yyyy, HH:mm') }}
         </div>
       </div>
+    <!--Chat-->
+    <form (ngSubmit)="sendChatMessage()">
       <div class="padding" *ngIf="messagesData.Type === 'consulta'">
         <div class="inbox-chat" (click)="toggleDescription(i)" *ngFor="let messageChat of messagesChat; let i = index">
           <div class="inbox-chat-name">
@@ -236,7 +280,7 @@
           <div class="inbox-chat-description">
             <div *ngIf="expandedIndex !== i">{{ messageChat.Description }}</div>
           </div>
-          <div class="inbox-chat-date">{{ datepipe.transform(messageChat.Date, "EEEE, HH:mm") }}</div>
+          <div class="inbox-chat-date">{{ datepipe.transform(messageChat.Date, 'MM/dd/yyyy, HH:mm') }}</div>
         </div>
       </div>
       <div class="padding" *ngIf="showSendButtons && messagesData.Type === 'consulta'">
@@ -244,6 +288,8 @@
           [type]="'text'"
           [placeholder]="'Escribe...'"
           class="inputSend"
+          [value]="newMessageDescription"
+          (inputValue)="newMessageDescription = $event"
         ></app-input>
         <div class="inbox-send-button">
           <app-button
@@ -251,12 +297,15 @@
             [width]="'11rem'"
             [fontSize]="'0.7rem'"
             [padding]="'0rem 1rem'"
+            (click)="sendChatMessage()"
+            type="submit"
           >
             <app-icon shape="send"></app-icon>
             Enviar
           </app-button>
         </div>
       </div>
+    </form>
       <div
         class="padding"
         *ngIf="messagesData.Type === 'notificacion' || messagesData.Type === 'tarea'"
@@ -318,4 +367,10 @@
     </div>
   </div>
   <!--FIN Detail-->
+  <!--Natalia, [21/9/23 10:32]
+ya tengo lo de los mensajes y tio estoy intentando lo del input que cuando le de a enviar se cree el nuevo mensaje de chat y se añada al que esta abierto y no se, lo he quitao to porque me estaba haciendo un lio
+por que claro yo donde lo tendria que hacer en mi componente de consultas y luego llevarmelo a inboxview que es donde tengo el html entiendo
+
+Natalia, [21/9/23 10:32]
+pero no se me he hecho un lio porque en mi cabeza no entra eso, y tampoco he hecho un input mandando cosas nunca-->
 </app-grid-layout>
