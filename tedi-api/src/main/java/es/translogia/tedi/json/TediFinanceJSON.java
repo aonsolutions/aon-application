@@ -1,5 +1,7 @@
 package es.translogia.tedi.json;
 
+import java.text.SimpleDateFormat;
+
 import org.json.JSONObject;
 
 import es.translogia.tedi.ewok.IConstants;
@@ -11,8 +13,8 @@ import es.translogia.tedi.json.FunctionalInterfaces.ITediFinanceToJSON;
 public enum TediFinanceJSON {
 
 	DUE_DATE(
-		(finance, json) -> finance.setDueDate(TediJSONUtils.parseDate(json.optString(IConstants.DUE_DATE))),
-		(finance, json) -> TediJSONUtils.put(json, IConstants.DUE_DATE, finance.getDueDate())
+		(finance, json) -> finance.setDueDate(TediJSONUtils.parseDate(json.optString(IConstants.DUE_DATE), new SimpleDateFormat("yyyy-MM-dd"))),
+		(finance, json) -> TediJSONUtils.put(json, IConstants.DUE_DATE, finance.getDueDate(), new SimpleDateFormat("yyyy-MM-dd"))
 	),
 	AMOUNT(
 		(finance, json) -> finance.setAmount(TediJSONUtils.optDouble(json, IConstants.AMOUNT)),
@@ -55,5 +57,4 @@ public enum TediFinanceJSON {
 		}
 		return emailInfo;
 	}
-
 }
