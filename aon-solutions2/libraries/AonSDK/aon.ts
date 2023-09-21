@@ -4630,7 +4630,8 @@ class ApiTaxModel extends TaxModel implements IApiModel {
         tax.Result = data.result ? data.result : '';
         tax.Status = data.status ? data.status : '';
         tax.TaxType = '';
-        tax.Trimester = data.period ? data.period : '';
+        tax.Trimester = data.period ? +data.period.replace('T',""): 1;
+        console.log(data.period, tax.Trimester)
         tax.Year = data.year ? data.year : '';
         return tax;
     }
