@@ -96,14 +96,23 @@ public class ConfigurationController implements Serializable {
 	}
 
 	public Integer getPageLimit() {
+		if(pageLimit == null) {
+			pageLimit = DEFAULT_PAGE_LIMIT;
+		}
 		return pageLimit;
 	}
 
 	public void setPageLimit(Integer pageLimit) {
+		if (pageLimit == null) {
+			pageLimit = DEFAULT_PAGE_LIMIT;
+		}
 		this.pageLimit = pageLimit;
 	}
 
 	public Integer getLinesPageLimit() {
+		if(linesPageLimit == null) {
+			linesPageLimit = DEFAULT_LINES_PAGE_LIMIT;
+		}
 		return linesPageLimit;
 	}
 
