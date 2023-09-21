@@ -14,76 +14,59 @@ import org.jooq.TableLike;
 
 
 public class AmortizationTypeValidation {
-
-	//CAMBIAR A PRIVATE FINAL MODIF
-	// Validaciones para evitar que los campos queden vacio
 	
-	public static BiConsumer<AmortizationType, AONContext> AMORTIZATION_TYPE_NULL = (amortizationType, ctx) -> {
+	private static final BiConsumer<AmortizationType, AONContext> AMORTIZATION_TYPE_NULL = (amortizationType, ctx) -> {
 		if (amortizationType == null) {
 			throw new AonCoreException(AonError.AMORTIZATION_TYPE_NULL.getMessage());
 		}
-	}; 
-	
+	}; 	
 
-	public static BiConsumer<AmortizationType, AONContext> AMORTIZATION_EMPTY_DOMAIN = (amortizationType, ctx) -> {
+	private static final BiConsumer<AmortizationType, AONContext> AMORTIZATION_EMPTY_DOMAIN = (amortizationType, ctx) -> {
 		if (amortizationType.getDomain() == null) {
 			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 		}
 	};
 	
-	public static BiConsumer<AONContext, AmortizationType > AMORTIZATION_TYPE_NULL_ACCUMULATED_ACCOUNT = ( ctx, amortizationType) -> {
+	private static final BiConsumer<AmortizationType, AONContext  > AMORTIZATION_TYPE_NULL_ACCUMULATED_ACCOUNT = (  amortizationType,ctx) -> {
 		if (amortizationType.getAccumulatedAccount() == null) {
 			throw new AonCoreException(AonError.AMORTIZATION_TYPE_NULL_ACCUMULATED_ACCOUNT.getMessage());
 		}
 	};
 
-	public static BiConsumer<AmortizationType, AONContext> AMORTIZATION_TYPE_NULL_DESCRIPTION = (amortizationType, ctx) -> {
+	private static final BiConsumer<AmortizationType, AONContext> AMORTIZATION_TYPE_NULL_DESCRIPTION = (amortizationType, ctx) -> {
 		if (amortizationType.getDescription() == null) {
 			throw new AonCoreException(AonError.AMORTIZATION_TYPE_NULL_DESCRIPTION.getMessage());
 		}
 	};
-	
-	public static BiConsumer<AmortizationType, AONContext> AMORTIZATION_TYPE_LENGHT_EXCEED = (amortizationType, ctx) -> {
-		if (amortizationType.getDescription() == null) {
-			throw new AonCoreException(AonError.AMORTIZATION_TYPE_LENGHT_EXCEED.getMessage());
-		} 
-	};
 
-
-	public static BiConsumer<AmortizationType, AONContext> AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT = (amortizationType, ctx) -> {
+	private static final BiConsumer<AmortizationType, AONContext> AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT = (amortizationType, ctx) -> {
 		if (amortizationType.getFixedAssetAccount() == null) {
 			throw new AonCoreException(AonError.AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT.getMessage());
 		}
 	};
 
-	public static BiConsumer<AmortizationType, AONContext> AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT = (amortizationType, ctx) -> {
+	private static final BiConsumer<AmortizationType, AONContext> AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT = (amortizationType, ctx) -> {
 		if (amortizationType.getAllocationAccount() == null) {
 			throw new AonCoreException(AonError.AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT.getMessage());
 		}
 	};
 	
-	public static BiConsumer<AmortizationType, AONContext> ID_EXISTS = (amortizationType, ctx) ->{
+	private static final BiConsumer<AmortizationType, AONContext> ID_EXISTS = (amortizationType, ctx) ->{
 		if (!existsId(ctx, amortizationType, AMORTIZATION_TYPE, AMORTIZATION_TYPE.ID)) {
             throw new AonCoreException("El registro con el ID especificado no existe.");
-
 		}
 	};
 	
 	public static void validate(AONContext ctx, AmortizationType amortizationType) throws AonCoreException {
-		AMORTIZATION_EMPTY_DOMAIN
-		.accept(amortizationType, ctx);
+		AMORTIZATION_TYPE_NULL.
+		andThen(AMORTIZATION_EMPTY_DOMAIN). 
+		andThen(AMORTIZATION_TYPE_NULL_ACCUMULATED_ACCOUNT).
+		andThen(AMORTIZATION_TYPE_NULL_DESCRIPTION).
+		andThen(AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT). 
+		andThen(AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT).
+		accept(amortizationType, ctx);
 	}
 	
-	public static boolean exists(AONContext ctx, AmortizationType amortizationType, TableLike<?> table, Field<String> column ) {
-		return ctx.getDslContext()
-				.select(column)
-				.from(table)
-				.where(column.eq(amortizationType.getId().toString()))
-				.stream() 
-				.map(rec -> rec.getValue(column))
-				.findFirst()
-				.orElse(null) != null;
-	}
 	
 	public static boolean existsId(AONContext ctx, AmortizationType amortizationType, TableLike<?> table, Field<Integer> column) {
 		return ctx.getDslContext()
@@ -101,6 +84,4 @@ public class AmortizationTypeValidation {
 		.accept(amortizationType, ctx);
 	}
 	
-	
-
 }

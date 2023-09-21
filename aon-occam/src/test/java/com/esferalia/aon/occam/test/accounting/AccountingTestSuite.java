@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.test.accounting.period.AccountPeriodTestSuite;
 @SuiteClasses({
 	AccountPeriodTestSuite.class,
 	AccountEntryTestSuite.class,
+	AmortizationTypeTest.class
 	// BalanceTestSuite.class
 })
 public class AccountingTestSuite {

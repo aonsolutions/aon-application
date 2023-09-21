@@ -158,7 +158,6 @@ public enum AonError implements Serializable{
 	
 	
 	// --------------------------------------------- AMORTIZATION TYPE
-	,AMORTIZATION_EMPTY_DOMAIN("El dominio no puede ser nulo o vacio")
 	,AMORTIZATION_TYPE_NULL("El tipo de amortizacion es nulo.")
 	,AMORTIZATION_TYPE_NULL_DESCRIPTION("La descripcion del tipo de amortizacion es nula")
 	,AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT("El valor de la cuenta fija de activos es nulo")
