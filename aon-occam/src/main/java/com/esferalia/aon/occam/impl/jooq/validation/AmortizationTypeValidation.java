@@ -2,18 +2,20 @@ package com.esferalia.aon.occam.impl.jooq.validation;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
-import static com.esferalia.aon.jooq.tables.AmortizationType.AMORTIZATION_TYPE;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
+
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-
+import java.util.List;
 import java.util.function.BiConsumer;
-
-import org.jooq.Field;
-import org.jooq.TableLike;
 
 
 public class AmortizationTypeValidation {
+	
+	private AmortizationTypeValidation() {
+		
+	}
 	
 	private static final BiConsumer<AmortizationType, AONContext> AMORTIZATION_TYPE_NULL = (amortizationType, ctx) -> {
 		if (amortizationType == null) {
@@ -51,11 +53,35 @@ public class AmortizationTypeValidation {
 		}
 	};
 	
-	private static final BiConsumer<AmortizationType, AONContext> ID_EXISTS = (amortizationType, ctx) ->{
-		if (!existsId(ctx, amortizationType, AMORTIZATION_TYPE, AMORTIZATION_TYPE.ID)) {
-            throw new AonCoreException("El registro con el ID especificado no existe.");
+	private static final BiConsumer<AmortizationTypeParams, AONContext>AMORTIZATION_TYPE_PARAMS_NULL = (amortizationTypeParams, ctx) ->{
+		if (amortizationTypeParams == null) {
+			throw new AonCoreException(AonError.AMORTIZATION_TYPE_NULL.getMessage());
 		}
 	};
+	
+	private static final BiConsumer<AONContext, List<Integer> > DELETE_IDS_NULL = (ctx, deleteIds) ->{
+		if (deleteIds == null) {
+			throw new AonCoreException(AonError.AMORTIZATION_TYPE_NULL.getMessage());
+		}
+	};
+	
+	
+	
+	private static final BiConsumer<AmortizationType, AONContext>AMORTIZATION_TYPE_INVALID_LENGTH = (amortizationType, ctx) -> {
+		String accAccount = amortizationType.getAccumulatedAccount();
+		String assAccount = amortizationType.getFixedAssetAccount();
+		String allAccount = amortizationType.getAllocationAccount();
+		String desc = amortizationType.getDescription();
+		if (accAccount != null && accAccount.length() > 4) {
+			throw new AonCoreException(AonError.INVALID_LENGTH.getMessage());
+		}else if (assAccount != null && assAccount.length()> 4) {
+			throw new AonCoreException(AonError.INVALID_LENGTH.getMessage());
+		}else if (allAccount != null && allAccount.length() >4) {
+			throw new AonCoreException(AonError.INVALID_LENGTH.getMessage());
+		}else if (desc != null && desc.length() > 64) {
+			throw new AonCoreException(AonError.INVALID_LENGTH.getMessage());
+		}
+	}; 
 	
 	public static void validate(AONContext ctx, AmortizationType amortizationType) throws AonCoreException {
 		AMORTIZATION_TYPE_NULL.
@@ -64,24 +90,16 @@ public class AmortizationTypeValidation {
 		andThen(AMORTIZATION_TYPE_NULL_DESCRIPTION).
 		andThen(AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT). 
 		andThen(AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT).
+		andThen(AMORTIZATION_TYPE_INVALID_LENGTH).
 		accept(amortizationType, ctx);
 	}
 	
-	
-	public static boolean existsId(AONContext ctx, AmortizationType amortizationType, TableLike<?> table, Field<Integer> column) {
-		return ctx.getDslContext()
-				.select(column)
-				.from(table)
-				.where(column.eq(amortizationType.getId()))
-				.stream()
-				.map(rec -> rec.getValue(column))
-				.findFirst()
-				.orElse(null)!=null;
+	public static void validateParams(AmortizationTypeParams params ,AONContext ctx )throws AonCoreException{
+		AMORTIZATION_TYPE_PARAMS_NULL.accept(params, ctx );
 	}
 	
-	public static void validateDeletion(AONContext ctx, AmortizationType amortizationType) {
-		ID_EXISTS
-		.accept(amortizationType, ctx);
+	public static void validateList(AONContext ctx, List<Integer> lista) throws AonCoreException{
+		DELETE_IDS_NULL.accept(ctx, lista);
 	}
 	
 }

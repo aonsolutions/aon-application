@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.AmortizationTypeValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AmortizationTypeDAO {
@@ -61,7 +62,7 @@ public class AmortizationTypeDAO {
 	
 	public static List<AmortizationType> getList(AONContext ctx, AmortizationTypeParams params) {
 		Condition condition = createAmortizationTypeCondition(params);
-		
+		AmortizationTypeValidation.validateParams(params, ctx);
 		return ctx.getDslContext()
 				.select().from(AMORTIZATION_TYPE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(AMORTIZATION_TYPE.DOMAIN))
@@ -96,13 +97,14 @@ public class AmortizationTypeDAO {
 	}
 
 	public static void save(AONContext ctx, AmortizationType amortizationType) {
+		AmortizationTypeValidation.validate(ctx, amortizationType);
 		if (amortizationType.getId() == null) insert(ctx, amortizationType);
 		else update(ctx, amortizationType);
 	}
 	
 	private static void insert(AONContext ctx, AmortizationType amortizationType) {
-		ctx.checkWrite();
-		
+		ctx.checkWrite();  
+		 
 		Integer insertId = ctx.getDslContext()
 				.insertInto(AMORTIZATION_TYPE)
 				.set(AMORTIZATION_TYPE.DOMAIN, amortizationType.getDomain().getId())
@@ -113,10 +115,10 @@ public class AmortizationTypeDAO {
 				.set(AMORTIZATION_TYPE.ALLOCATION_ACCOUNT, amortizationType.getAllocationAccount())
 				.returning(AMORTIZATION_TYPE.ID)
 				.fetchOne()
-				.getValue(AMORTIZATION_TYPE.ID);
+				.getValue(AMORTIZATION_TYPE.ID); 
 		
 		ctx.log().debug("INSERT AMORTIZATION TYPE id: {0}", insertId);
-	}
+	} 
 	
 	public static void update(AONContext ctx, AmortizationType amortizationType) {
 		ctx.checkWrite();
@@ -134,6 +136,7 @@ public class AmortizationTypeDAO {
 	}
 
 	public static void delete(AONContext ctx, List<Integer> deleteIds) {
+		AmortizationTypeValidation.validateList(ctx, deleteIds);
 		deleteIds.forEach(id -> delete(ctx, id));
 	}
 	

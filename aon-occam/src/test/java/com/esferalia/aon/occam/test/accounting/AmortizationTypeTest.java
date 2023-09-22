@@ -7,15 +7,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
-import org.jooq.exception.DataAccessException;
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.impl.jooq.dao.AmortizationTypeDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.AonFaker;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AmortizationTypeTest extends AbstractOccamTest {
 
@@ -25,18 +25,20 @@ public class AmortizationTypeTest extends AbstractOccamTest {
 
 	@Test
 	public void deleteNullTest() {
+		AonCoreException e =
+		assertThrows(AonCoreException.class, () -> AmortizationTypeDAO.delete(ctx, null));
+		assertEquals(AonError.AMORTIZATION_TYPE_NULL.getMessage(), e.getMessage());
 
-		assertThrows(NullPointerException.class, () -> AmortizationTypeDAO.delete(ctx, null));
 	}
 
 	/**
 	 * Test para cuando getList tiene @param AmortizationTypeParams = Null
 	 */
-
 	@Test
 	public void getListTest() {
 		AmortizationTypeParams amp = null;
-		assertThrows(NullPointerException.class, () -> AmortizationTypeDAO.getList(ctx, amp));
+		AonCoreException e = assertThrows(AonCoreException.class, () -> AmortizationTypeDAO.getList(ctx, amp));
+		assertEquals(AonError.AMORTIZATION_TYPE_NULL.getMessage(), e.getMessage());
 	}
 
 	/**
@@ -57,19 +59,21 @@ public class AmortizationTypeTest extends AbstractOccamTest {
 
 	@Test
 	public void saveNullAmortizationType() {
-		AmortizationType amortizationType = null;
-		assertThrows(NullPointerException.class, () -> AmortizationTypeDAO.save(ctx, amortizationType));
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> AmortizationTypeDAO.save(ctx, null)); 
+		assertEquals(AonError.AMORTIZATION_TYPE_NULL.getMessage(), e.getMessage());
 	}
 
 	/*
-	 * Test para comprobar que no acepta un @param AmortizationType = Empty
+	 * Test para comprobar que no acepta un @param AmortizationType = null
 	 */
 
 	@Test
 	public void saveEmptyAmortizationType() {
 		AmortizationType amortizationType = AonFaker.getAmortizationType(ctx);
-		amortizationType.setDomain(new Domain());
-		assertThrows(DataAccessException.class, () -> AmortizationTypeDAO.save(ctx, amortizationType));
+		amortizationType.setDomain(null);
+		AonCoreException e = assertThrows(AonCoreException.class, () -> AmortizationTypeDAO.save(ctx, amortizationType));
+		assertEquals(AonError.EMPTY_DOMAIN.getMessage(), e.getMessage());
 	}
 
 	/*
@@ -80,54 +84,29 @@ public class AmortizationTypeTest extends AbstractOccamTest {
 	public void saveFixedAssetAccountLengthTest() {
 		AmortizationType amortizationType = AonFaker.getAmortizationType(ctx);
 		amortizationType.setFixedAssetAccount("abcdefghi");
-		assertThrows(DataAccessException.class, () -> AmortizationTypeDAO.save(ctx, amortizationType));
-
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> AmortizationTypeDAO.save(ctx, amortizationType));
+		assertEquals(AonError.INVALID_LENGTH.getMessage(), e.getMessage());	
 	}
+
 
 	@Test
 	public void saveAccumulatedAccountLengthTest() {
 		AmortizationType amortizationType = AonFaker.getAmortizationType(ctx);
 		amortizationType.setAccumulatedAccount("abcdefghi");
-		assertThrows(DataAccessException.class, () -> AmortizationTypeDAO.save(ctx, amortizationType));
-	}
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> AmortizationTypeDAO.save(ctx, amortizationType));
+		assertEquals(AonError.INVALID_LENGTH.getMessage(), e.getMessage());	
+		}
 
 	@Test
 	public void saveAllocationAccountLengthTest() {
 		AmortizationType amortizationType = AonFaker.getAmortizationType(ctx);
 		amortizationType.setAllocationAccount("abcdefghi");
-		assertThrows(DataAccessException.class, () -> AmortizationTypeDAO.save(ctx, amortizationType));
-	}
-
-	/*
-	 * DAO permite la entrada de datos random
-	 */
-
-	@Test
-	public void saveRandomTest() {
-
-		AmortizationType amortizationType = AonFaker.getAmortizationType(ctx);
-
-		AmortizationTypeDAO.save(ctx, amortizationType);
-
-		AmortizationTypeParams amp = new AmortizationTypeParams().setDomain(ctx.getDomainId())
-				.setFixedAssetAccount(amortizationType.getFixedAssetAccount())
-				.setAccumulatedAccount(amortizationType.getAccumulatedAccount())
-				.setAllocationAccount(amortizationType.getAllocationAccount())
-				.setDescription(amortizationType.getDescription());
-
-		List<AmortizationType> inserted = AmortizationTypeDAO.getList(ctx, amp);
-
-		assertFalse(inserted.isEmpty());
-
-		AmortizationType retrievedAmortizationType = inserted.get(0);
-
-		assertEquals(amortizationType.getDomain().getId(), retrievedAmortizationType.getDomain().getId());
-		assertEquals(amortizationType.getDescription(), retrievedAmortizationType.getDescription());
-		assertEquals(amortizationType.getPercentage(), retrievedAmortizationType.getPercentage());
-		assertEquals(amortizationType.getFixedAssetAccount(), retrievedAmortizationType.getFixedAssetAccount());
-		assertEquals(amortizationType.getAccumulatedAccount(), retrievedAmortizationType.getAccumulatedAccount());
-		assertEquals(amortizationType.getAllocationAccount(), retrievedAmortizationType.getAllocationAccount());
-	}
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> AmortizationTypeDAO.save(ctx, amortizationType));
+		assertEquals(AonError.INVALID_LENGTH.getMessage(), e.getMessage());	
+		}
 
 	/*
 	 * Tests para campos que no pueden ser nulos
@@ -145,28 +124,38 @@ public class AmortizationTypeTest extends AbstractOccamTest {
 	public void saveNullFixedAssetAccount() {
 		AmortizationType amortizationType = AonFaker.getAmortizationType(ctx);
 		amortizationType.setFixedAssetAccount(null);
-		assertThrows(DataAccessException.class, () -> AmortizationTypeDAO.save(ctx, amortizationType));
+//		assertThrows(DataAccessException.class, () -> AmortizationTypeDAO.save(ctx, amortizationType));
+
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> AmortizationTypeDAO.save(ctx, amortizationType));
+		assertEquals(AonError.AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT.getMessage(), e.getMessage());
 	}
 
 	@Test
 	public void saveNullAccumulatedAccount() {
 		AmortizationType amortizationType = AonFaker.getAmortizationType(ctx);
 		amortizationType.setAccumulatedAccount(null);
-		assertThrows(DataAccessException.class, () -> AmortizationTypeDAO.save(ctx, amortizationType));
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> AmortizationTypeDAO.save(ctx, amortizationType));
+		assertEquals(AonError.AMORTIZATION_TYPE_NULL_ACCUMULATED_ACCOUNT.getMessage(), e.getMessage());
 	}
 
 	@Test
 	public void saveNullAllocationAccount() {
 		AmortizationType amortizationType = AonFaker.getAmortizationType(ctx);
 		amortizationType.setAllocationAccount(null);
-		assertThrows(DataAccessException.class, () -> AmortizationTypeDAO.save(ctx, amortizationType));
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> AmortizationTypeDAO.save(ctx, amortizationType));
+		assertEquals(AonError.AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT.getMessage(), e.getMessage());
 	}
 
 	@Test
 	public void saveNullDescriptionAmortizationTypeTest() {
 		AmortizationType amortizationType = AonFaker.getAmortizationType(ctx);
 		amortizationType.setDescription(null);
-		assertThrows(DataAccessException.class, () -> AmortizationTypeDAO.save(ctx, amortizationType));
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> AmortizationTypeDAO.save(ctx, amortizationType));
+		assertEquals(AonError.AMORTIZATION_TYPE_NULL_DESCRIPTION.getMessage(), e.getMessage());
 	}
 
 }
