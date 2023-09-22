@@ -1,26 +1,58 @@
 package net.aonsolutions.aon.api.servlet;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.time.Duration;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.json.FiscalMatrixParamsJSON;
 import com.esferalia.aon.occam.api.json.FiscalModelJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
@@ -28,9 +60,13 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMenuDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
@@ -40,11 +76,21 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod130.Mod130DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
+import com.esferalia.aon.occam.server.fiscal.format.mod303.Mod303Writer;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.http.AonHttpUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.api.services.drive.Drive;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @WebServlet(name = "AonFiscalServlet", urlPatterns = {"/ms/api/fiscal/*"})
 
@@ -134,7 +180,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	
 	private JSONObject markAsFinished(AonApiData api) {
 		try ( final CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
-			JSONObject params = api.getData();
+			JSONObject params = api.getData();			
 			FiscalModelDeclarationType declarationType = FiscalModelDeclarationType.valueOf(JsonUtils.getString(params, IJsonNames.TYPE));
 			if (declarationType!=null) {
 				Integer id = JsonUtils.getInteger(params, IJsonNames.ID);
@@ -143,6 +189,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 				String bankBIC = JsonUtils.getString(params, IJsonNames.BIC);
 				String reasonReject = params.optString("reasonReject");
 				boolean reject = !reasonReject.isEmpty();
+				String nrc = "";  // FALTA - EL NRC DEBERÁ VENIR COMO PARAMETRO
+				
+				int presModelAuto = reject ? 0 : JsonUtils.getInt(params, "presModelAuto");  // Presentación automática del modelo
 				
 				FiscalModelType modelType = FiscalModelType.safeValueOf(JsonUtils.getString(params , IJsonNames.MODEL));
 	
@@ -240,7 +289,28 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if(reject) {
 							Mod303DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
-							Mod303DAO.markAsFinished(ctx, model);
+							// Finalizar el modelo 
+							// FALTA - NO SE SI ES NECESARIO FINALIZAR EL MODELO O PRESENTARLO DIRECTAMENTE, EL 
+							// TEMA ESTA EN QUE SI HAY ALGUN ERROR EN LA PRESENTACION EL MODELO SE QUEDE COMO FINALIZADO O COMO ENVIO A CLIENTE ??							 
+							//Mod303DAO.markAsFinished(ctx, model);
+							// FALTA - Presentación automática del modelo 
+							if (presModelAuto == 1) {
+								
+								// FALTA - PRUEBA CON DATOS FICTICIOS
+								AEATParams params = new AEATParams()
+										.setDomainName(api.getDomain().getName())
+										.setDomainId(api.getDomain().getId())
+										.setUser(api.getUser().getLogin())
+										.setMod(model.getId())
+										.setName("FICTICIO")
+										.setDocument("99999018D")
+										.setCertificateId(54396)
+										.setPass("")  // La dejamos en blanco, para que se coja la que tiene guardada el certificado
+										.setNrc(nrc)
+										.setTest(true);								
+								
+								send(params, model);
+							}							
 						}
 					}
 					
@@ -259,5 +329,398 @@ public class FiscalServlet extends AonApiHttpServlet{
 				throw new AonApiException("Tipo requerido");
 		}
 	}
+	
+	// FALTA - METODOS PARA LA PRESENTACION DEL MODELO
+	
+	//private void send(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model ) {
+	private void send(AEATParams aeatParams, IFiscalModel model) {
+		try {
+			String period = model.getPeriod().getName();
+			if ( model.getModel() == FiscalModelType.M202) {
+				if ( model.getPeriod() == Period.T1) period = "1P";
+				else if ( model.getPeriod() == Period.T2) period = "2P";
+				else if ( model.getPeriod() == Period.T3) period = "3P";
+			}
+			if ( model.getModel() == FiscalModelType.M390) {
+				period = "0A";	
+			}
+			byte[] fileContent = getModelFile(model);
+			JSONObject params = new JSONObject();
+			params.put("MODELO", FiscalModelUtils.getModelName(model));
+			params.put("EJERCICIO", AonNumberUtils.toString( model.getYear()));
+			params.put("PERIODO", period);
+			params.put("NRC", (model.isStrictToDeposit()?aeatParams.getNrc() : ""));
+			params.put("IDI", "ES");
+			params.put("F01", getUnencodedFile(fileContent,StandardCharsets.UTF_8));
+			params.put("FIR", "FirmaBasica");
+			params.put("FIRNIF", aeatParams.getDocument());
+			params.put("FIRNOMBRE", aeatParams.getName());
+			
+			String url = aeatParams.isTest() 
+				? "https://prewww1.aeat.es/wlpl/PFTW-PICW/PresBasicaDos"
+				: "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasicaDos";
+
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( getKeyManagers(aeatParams),
+					new TrustManager[] { new DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.POST(HttpRequest.BodyPublishers.ofString(params.toString()))
+				.build();
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+			
+			if (response.statusCode() == 302) {
+				//ModelAdmonUtils.giveRedirectBack( resp,response,httpClient );
+				throw new AonApiException("ERROR 302");				
+			} else {
+				String ct = getContentTypeHeader(response);
+				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
+					if (!manageJSONContent(aeatParams, model ,response.body())) {						
+						throw new AonApiException("ERROR DEVUELTO POR LA AEAT");						
+					}
+				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
+					//ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
+					throw new AonApiException("ERROR: " + response.body());
+				} else {	
+					//ModelAdmonUtils.giveExceptionBack(resp,"No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
+					throw new AonApiException("ERROR: No se ha encontrado una respuesta válida por parte de la Agencia Tributaria." + response.body());
+				}
+			}
+//			return new JSONObject().put("status", "OK");
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			//ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+			throw new AonApiException("ERROR: " + e.getMessage());
+		}
+//		return null;
+	}
+	
+	private byte[] getModelFile(IFiscalModel fm) throws AonCoreException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
+		fm.getModel().visit(new IFiscalModelTypeVisitor() {
+			
+			@Override 
+			public void visitM111() {
+//				try {
+//					Mod111Writer.fillWriter( getMod111(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			
+			@Override public void visitM115() { 
+//				try {
+//					Mod115Writer.fillWriter( getMod115(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			@Override 
+			public void visitM123() { 
+//				try {
+//					Mod123Writer.fillWriter( getMod123(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			@Override 
+			public void visitM130() { 
+//				try {
+//					Mod130Writer.fillWriter( getMod130(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			@Override 
+			public void visitM131() { 
+//				try {
+//					Mod131Writer.fillWriter( getMod131(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			@Override 
+			public void visitM202() { 
+//				try {
+//					Mod202Writer.fillWriter( getMod202(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			@Override 
+			public void visitM303() { 
+				try {
+					Mod303Writer.fillWriter( getMod303(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override 
+			public void visitM190() { 
+//				try {
+//					Mod190Writer.fillWriter( getMod190(fm) , writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			
+			@Override 
+			public void visitM390() { 
+//				try {
+//					if (fm instanceof Mod3902022) {
+//						Mod3902022 mod = (Mod3902022) fm;
+//						Mod3902022Writer.fillWriter( mod , writer);
+//					} else  if (fm instanceof Mod3902021) {
+//						Mod3902021 mod = (Mod3902021) fm;
+//						Mod3902021Writer.fillWriter( mod , writer);
+//					}
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			@Override public void visitM390HF() { /* Auto-generated method stub */}
+			@Override 
+			public void visitM349() { 
+//				try {
+//					Mod349Writer.fillWriter( getMod349(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			
+			@Override 
+			public void visitM347() { 
+//				try {
+//					Mod347Writer.fillWriter( getMod347(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			
+			@Override public void visitM200() { /* Auto-generated method stub */}
+			@Override 
+			public void visitM193() { 
+//				try {
+//					Mod193Writer.fillWriter( getMod193(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			
+			@Override 
+			public void visitM184() { 
+//				try {
+//					Mod184Writer.fillWriter( getMod184(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+			
+			@Override 
+			public void visitM180() {				
+//				try {
+//					Mod180Writer.fillWriter( getMod180(fm), writer);
+//				} catch (IOException e) {
+//					throw new AonCoreException(e);
+//				}
+			}
+		});
+		return output.toByteArray();
+	}
+	
+	private Mod303 getMod303(IFiscalModel fm) {
+		return (fm instanceof Mod303)?(Mod303)fm:null;
+	}
+	
+	private synchronized String getUnencodedFile(byte[] content, Charset charset) {
+		return changeCharacters(new String(content, charset));
+	}
+	
+	private String changeCharacters(String fileString) {
+		fileString = fileString.replace("'", " ");
+		fileString = fileString.replace("&", " ");
+		fileString = fileString.replace("\n", "");
+		fileString = fileString.replace("\r", "");
+		return fileString;
+	}
+	
+	private static synchronized KeyManager[] getKeyManagers(AEATParams params) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException{
+		Attach attach = AON.getAttach(params.getDomainName(), params.getDomainId(), params.getUser(), f ->
+			f.getIdProperty().eq(params.getCertificateId())
+			.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
+		if(attach.getData() == null){
+			DomainGserviceaccount g = AON.getDomainGserviceaccount(params.getDomainName(), params.getDomainId(), params.getUser());
+			Drive drive = AonDrive.getInstace().serviceInitialize(g);
+			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+		}
+		if(AonStringUtils.isBlank(params.getPass())) {
+			params.setPass(attach.getDescription().split("HIDE\\(")[1].split("\\)")[0]);
+		}
+		ByteArrayInputStream key = new ByteArrayInputStream(attach.getData());
+		KeyStore keyStore = KeyStore.getInstance("PKCS12");
+	    keyStore.load(key, params.getPass().toCharArray());
+    	KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+   		kmf.init(keyStore, params.getPass().toCharArray());
+   		return kmf.getKeyManagers();
+	}
+	
+	private class DefaultTrustManager implements X509TrustManager {
+
+		@Override
+		public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+		}
+
+		@Override
+		public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+		}
+
+		@Override
+		public X509Certificate[] getAcceptedIssuers() {
+			return null;
+		}
+	}
+	
+	private String getContentTypeHeader(HttpResponse<byte[]> response) {
+		return getHeader(response, AonHttpUtils.CONTENT_TYPE);
+	}
+	
+	private String getHeader(HttpResponse<byte[]> response, String header) {
+		HttpHeaders headers = response.headers();
+		List<String> headerList =  headers.map().get(header);
+		if (headerList != null && !headerList.isEmpty() ) {
+			return headerList.get(0);
+		}
+		return null;
+	}
+	
+	private boolean manageJSONContent(AEATParams aeatParams, IFiscalModel fm, byte[] body) {
+		AEATResponse response = AEATJson.toJSON(body); 
+		if (response.isCorrect()) {
+			manageRightResponse(aeatParams,fm,new String(body));
+			return true; // FALTA
+		} else {
+			return false;
+			// FALTA - SE PODRIA INTENTAR GRABAR TAMBIEN LA RESPUESTA SI LUEGO SE PUEDE VER DESDE ALGUN SITIO PARA VER LOS ERRORES QUE HA DADO
+			//manageWrongResponse(resp, response);
+			//throw new AonApiException("ERRORES AEAT: ERRORES DEVUELTOS POR LA AGENCIA TRIBUTARIA.");
+		}
+	}
+	
+	private void manageRightResponse(AEATParams aeatParams, IFiscalModel fm, String aeatResponse) {
+		Occam occam = new Occam()
+				.setDomainName(aeatParams.getDomainName())
+				.setDomain(aeatParams.getDomainId())
+				.setUser(aeatParams.getUser());
+		fm.getModel().visit(new IFiscalModelTypeVisitor() {
+			
+			@Override 
+			public void visitM111() {
+//				MODEL111.aeatPresentation(occam, getMod111(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM115() { 
+//				MODEL115.aeatPresentation(occam, getMod115(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM123() { 
+//				MODEL123.aeatPresentation(occam, getMod123(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM130() { 
+//				MODEL130.aeatPresentation(occam, getMod130(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM131() { 
+//				MODEL131.aeatPresentation(occam, getMod131(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM202() { 
+//				MODEL202.aeatPresentation(occam, getMod202(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM303() { 
+				MODEL303.aeatPresentation(occam, getMod303(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM390() { 
+//				if (fm instanceof Mod3902021) {
+//					Mod3902021 mod = (Mod3902021) fm;
+//					MODEL3902021.aeatPresentation(occam, mod , aeatResponse);
+//				}
+//				if (fm instanceof Mod3902022) {
+//					Mod3902022 mod = (Mod3902022) fm;
+//					MODEL3902022.aeatPresentation(occam, mod , aeatResponse);
+//				}
+			}
+			@Override public void visitM390HF() { /* Auto-generated method stub */}
+			
+			@Override 
+			public void visitM349() {
+//				MODEL349.aeatPresentation(occam, getMod349(fm) , aeatResponse);
+			}
+			
+			@Override 
+			public void visitM347() { 
+//				MODEL347.aeatPresentation(occam, getMod347(fm) , aeatResponse);
+			}
+			
+			@Override public void visitM200() { /* Auto-generated method stub */}
+			
+			@Override 
+			public void visitM193() { 
+//				MODEL193.aeatPresentation(occam, getMod193(fm) , aeatResponse);				
+			}
+			
+			@Override 
+			public void visitM190() { 
+//				MODEL190.aeatPresentation(occam, getMod190(fm) , aeatResponse);
+			}
+			
+			@Override 
+			public void visitM184() { 
+//				MODEL184.aeatPresentation(occam, getMod184(fm) , aeatResponse);
+			}
+			
+			@Override 
+			public void visitM180() {
+//				MODEL180.aeatPresentation(occam, getMod180(fm) , aeatResponse);
+			}
+			
+		});
+		// FALTA - NO HACE NADA MAS SIMPLEMENTE SE GRABA EL PDF, AL VOLVER A SACAR LAS LISTA DE MODELOS SE PODRA VER EL PDF SI SE QUIERE
+		//giveDataResponseDataBack(resp, aeatParams, fm);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
 }
 

@@ -1,6 +1,6 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { isEmptyObject, serializeForm, waitEl, disabledForm, formatNumber } from "../../../services/utils.js";
-import { getAttach, openFileBase64, setModelStatus } from "../../../services/service.js";
+import { getAttach, openFileBase64, setModelStatus, getAeatCertificates } from "../../../services/service.js";
 import { CONST_FISCAL } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
@@ -164,9 +164,9 @@ export class AonTax extends AonElement {
     return formatNumber(total, 2, "EUR");
   }
 
-  openDialog(resp) {
+  openDialog(resp) {	
     const dialog = this.applicationEl.getDialog();
-    dialog.clear();
+    dialog.clear();    
     if (!this.isMobile()){ 
       dialog.width = "500px";
     }
@@ -267,6 +267,14 @@ export class AonTax extends AonElement {
     aonInputNrc.disabled = true;
     if(resp.nrc) aonInputNrc.value = resp.nrc;
     divNrc.appendChild(aonInputNrc);
+    
+    const aonSelect2 = new AonSelect();
+    aonSelect2.name = "certi";
+    aonSelect2.id = "certi";
+    aonSelect2.title = "CERTI";
+    aonSelect2.hidden = false;
+    form.appendChild(aonSelect2);
+    
     //---END FORM---
 
     return div;
@@ -359,6 +367,17 @@ export class AonTax extends AonElement {
         }
       }
     })
+    
+    const certi = this.getElement('certi');
+    getAeatCertificates().then(certs => {
+			certi.setOptions(certs.map(s => {
+				return {
+				  value: s.id,
+				  name: s.name
+				}
+			  }));
+		});
+    
   }
 
   replaceAllPoint(str){
@@ -413,7 +432,20 @@ export class AonTax extends AonElement {
     try {
       const form = {...resp,...this.getFormValues()};
       this.clearModels();
-      await setModelStatus(form);
+      await setModelStatus(form).then((v) => {console.info(v)}, null);
+      
+      // FALTA 
+      //$.post(`${API_URL}/fiscal/markAsFinished`, form, (data, status) => {  console.log(data);     });
+      
+      //console.info(respuesta);
+      
+      //this.showMessage(respuesta);
+      
+      // FALTA - VER POSIBILIDAD DE MOSTRAR LOS ERRORES
+      //window.open(respuesta, '_blank');
+      //const newUrl = URL.createObjectURL(respuesta);
+      //openFileDesktop(newUrl);      
+      
       await this.getTable();
       this.showMessage();
     } catch (error) {
