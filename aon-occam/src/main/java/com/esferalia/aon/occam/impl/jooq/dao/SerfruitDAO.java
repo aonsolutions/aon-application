@@ -65,6 +65,7 @@ public class SerfruitDAO {
 			Item item = detail.getItem();
 			item.setId(null);
 			item.setDescription(item.getDescription() + " #" + item.getSerialNumber());
+			item.setBarcode(null);
 			if(item.getProduct().isPerishable()) {
 				Date expireDate = AonDateUtils.addDays(item.getSerialDate(), 
 					item.getProduct().getDaysToExpire() != null ? item.getProduct().getDaysToExpire() : 0);

@@ -55,5 +55,4 @@ public enum TediFinanceJSON {
 		}
 		return emailInfo;
 	}
-
 }

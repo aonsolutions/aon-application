@@ -10,6 +10,7 @@ import static com.esferalia.aon.salary.expression.Period.min;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -20,11 +21,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -43,7 +49,6 @@ import com.esferalia.aon.in.payroll.tgss.idc.Idc.IdcListener;
 import com.esferalia.aon.in.payroll.tgss.idc.PEC;
 import com.esferalia.aon.in.payroll.tgss.sld.SLDSalaries;
 import com.esferalia.aon.in.payroll.utils.EmployeeParse;
-import com.esferalia.aon.jooq.tables.EnterpriseActivity;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -54,8 +59,10 @@ import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
-import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -69,6 +76,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion;
+import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Periodo;
+import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta;
 import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaRED.LiquidationOrigin;
@@ -104,6 +115,20 @@ public class SistemaRED2AON {
 		.desc("Date to sync ( MM/yyyy ), default "+ dateFormat.format(new Date())+" .")
 		.build();
 	
+		Option fromOption = Option.builder()
+		.hasArg()
+		.longOpt("from")
+		.argName("date")
+		.desc("Date to sync from ( MM/yyyy ), default "+ dateFormat.format(new Date())+" .")
+		.build();
+
+		Option toOption = Option.builder()
+		.hasArg()
+		.longOpt("to")
+		.argName("date")
+		.desc("Date to sync to ( MM/yyyy ), default "+ dateFormat.format(new Date())+" .")
+		.build();
+
 		Option whereOption = Option.builder("w")
 		.hasArg()
 		.longOpt("where")
@@ -139,6 +164,8 @@ public class SistemaRED2AON {
 
 		Options options = new Options();
 		options.addOption(helpOption);
+		options.addOption(toOption);
+		options.addOption(fromOption);
 		options.addOption(dateOption);
 		options.addOption(whereOption);
 		options.addOption(databasesOption);
@@ -153,9 +180,14 @@ public class SistemaRED2AON {
 			CommandLineParser parser = new DefaultParser();
 			commandLine = parser.parse(options, args);
 			
-			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(dateFormat.parse(commandLine.getOptionValue(dateOption.getLongOpt(), dateFormat.format(new Date()))));
+			String dateArg = commandLine.getOptionValue(dateOption.getLongOpt(), dateFormat.format(new Date()));
 			
-			java.sql.Date date = new java.sql.Date(firstDayOfMonth.getTime());
+			Date  fromDate = dateFormat.parse(commandLine.getOptionValue(fromOption.getLongOpt(), dateArg ));
+			Date  toDate = dateFormat.parse(commandLine.getOptionValue(toOption.getLongOpt(), dateArg ));
+
+			
+			java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(new java.sql.Date(fromDate.getTime()));
+			java.sql.Date endDate = AonDateUtils.getLastDayOfMonth(new java.sql.Date(toDate.getTime()));
 			
 			Condition condition = DSL.condition(commandLine.getOptionValue(whereOption.getLongOpt(), "1=1"));
 			
@@ -195,8 +227,6 @@ public class SistemaRED2AON {
 						byte [] certificateData=  certificate.getData();
 						String certificatePassword =  certificate.getPassword();
 						
-						java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(date);
-						java.sql.Date endDate = AonDateUtils.getLastDayOfMonth(date);
 						
 						try {
 							if ( calcs ) {
@@ -210,7 +240,8 @@ public class SistemaRED2AON {
 										regimen, 
 										ccc, 
 										startDate, 
-										endDate,
+										//endDate,
+										LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV,
 										nafs);
 								
 								Integer enterpriseId = domain.get(ENTERPRISE_ACTIVITY.ENTERPRISE);
@@ -279,6 +310,83 @@ public class SistemaRED2AON {
 	// ------------------------------------------------------------------------
 
 	public static void addCalcs( 
+		AONContext aonContext,
+		String login,
+		String domainName, 
+		Integer domainId,
+		byte [] certificateData,
+		String certificatePassword, 
+		String certificateType, 
+		String regimen, 
+		String ccc, 
+		java.sql.Date month,
+		LiquidationType liquidationType,
+		String ...nafs) {
+	    
+	    java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(month);
+	    
+	    Set<String> added = new HashSet<>();
+	    
+	    List<Liquidacion> liquidations = getLiquidations(login, domainId, domainName, ccc, startDate, liquidationType, nafs);
+	    
+	    for (Liquidacion liquidation : liquidations) {
+		
+		
+		// Numero Liquidacion
+		if ( AonStringUtils.isBlank(liquidation.getNumeroLiquidacion()) )
+		    continue;
+		
+		if ( !added.add(liquidation.getNumeroLiquidacion()) )
+		    continue;
+		
+		try {
+        		addCalcs(aonContext, 
+        			login, 
+        			domainName, 
+        			domainId, 
+        			certificateData, 
+        			certificatePassword, 
+        			certificateType, 
+        			liquidation,
+        			nafs);
+		} catch ( Exception e ) {
+		    e.printStackTrace();
+		    // TODO:
+		}
+	    }
+	}
+
+	public static void addCalcs( 
+		AONContext aonContext,
+		String login,
+		String domainName, 
+		Integer domainId,
+		byte [] certificateData,
+		String certificatePassword, 
+		String certificateType, 
+		String regimen, 
+		String ccc, 
+		java.sql.Date startDate, 
+		java.sql.Date endDate ,
+		String ...nafs) throws SegSocialException {
+	    	
+	    	// first of all liquidations from with PeriodoDesde=startDate & PeriodoHasta=endDate 
+		addCalcs(aonContext, 
+			    login, 
+			    domainName, 
+			    domainId, 
+			    certificateData, 
+			    certificatePassword, 
+			    certificateType, 
+			    regimen, 
+			    ccc, 
+			    startDate, 
+			    endDate, 
+			    LiquidationType.TODAS, 
+			    nafs);
+	}
+
+	public static void addCalcs( 
 			AONContext aonContext,
 			String login,
 			String domainName, 
@@ -290,6 +398,7 @@ public class SistemaRED2AON {
 			String ccc, 
 			java.sql.Date startDate, 
 			java.sql.Date endDate ,
+			LiquidationType liquidationType,
 			String ...nafs) throws SegSocialException {
 		
 		String authorized = getAuthorized(login, domainId, domainName, ccc);
@@ -307,7 +416,7 @@ public class SistemaRED2AON {
 				Regime.fromValue(regimen), 
 				startDate, 
 				endDate, 
-				LiquidationType.TODAS, 
+				liquidationType, 
 				LiquidationOrigin.TODAS, 
 				authorized,
 				nafs
@@ -326,6 +435,7 @@ public class SistemaRED2AON {
 						Salary salary = SLDSalaries.getSalary(liq, ccc, naf, nafCalcs, period);
 						salary.setEmployeeDocument(employee.getDni());
 						
+						
 						Date l13startDate = null;
 						if ( salary.getSalaryType() == SalaryType.L13 ) {
 							l13startDate = salary.getStartDate();
@@ -333,7 +443,7 @@ public class SistemaRED2AON {
 							salary.setIssueDate(min(salary.getEndDate(), endDate));
 						}
 						
-						employee.getName().ifPresent(name -> salary.setEmployeeName(name) );
+						employee.getName().ifPresent(salary::setEmployeeName);
 						
 						try {
 							AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));
@@ -359,6 +469,99 @@ public class SistemaRED2AON {
 		
 	}
 	
+	public static void addCalcs( 
+		AONContext aonContext,
+		String login,
+		String domainName, 
+		Integer domainId,
+		byte [] certificateData,
+		String certificatePassword, 
+		String certificateType, 
+		Liquidacion liquidacion,
+		String ...nafs) throws SegSocialException {
+	
+	
+	
+	java.sql.Date endDate = toSqlDate(liquidacion.getPeriodoHasta());
+	java.sql.Date startDate = toSqlDate(liquidacion.getPeriodoDesde());
+	java.sql.Date ctrlDate = toSqlDate(liquidacion.getFechaControl());
+	
+	String ccc = liquidacion.getCcc().getProvincia() + liquidacion.getCcc().getNumero();
+	
+	String numLiquidation = liquidacion.getNumeroLiquidacion();
+
+	String authorized = getAuthorized(login, domainId, domainName, ccc);
+
+	Map<String,List<Employee>> employees = getEmployees(login, domainId, domainName, ccc, startDate, endDate, nafs);
+	
+	nafs = employees.keySet().toArray(new String[employees.size()]);
+
+	
+	Map<String, Map<String, Map<Period, Map<String, Calc>>>> allCalcs = 
+	SistemaRED.getCalcByNAF(
+			certificateData, 
+			certificatePassword, 
+			certificateType, 
+			//ccc, 
+			//Regime.fromValue(regimen), 
+			//startDate, 
+			//endDate, 
+			//liquidationType, 
+			//LiquidationOrigin.TODAS,
+			numLiquidation,
+			authorized,
+			nafs
+			);
+	
+	
+	
+	allCalcs.forEach((liq, liqCalcs) -> liqCalcs.forEach(( naf, nafCalcs ) -> {
+			
+			employees.get(naf).forEach(employee -> {
+				try {
+					Period period = new Period(employee.getStartDate(), 
+							employee.getEndDate().orElse(null));
+					
+					
+					Salary salary = SLDSalaries.getSalary(liq, ccc, naf, nafCalcs, period);
+					salary.setIssueDate(ctrlDate);
+					salary.setEmployeeDocument(employee.getDni());
+					
+					
+					Date l13startDate = null;
+					if ( salary.getSalaryType() == SalaryType.L13 ) {
+						l13startDate = salary.getStartDate();
+						salary.setStartDate(employee.getStartDate());
+						salary.setIssueDate(min(salary.getEndDate(), endDate));
+					}
+					
+					employee.getName().ifPresent(salary::setEmployeeName);
+					
+					try {
+						AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));
+					} catch ( Exception e ) {
+						java.sql.Date settleEndDate = addDays(l13startDate, -1);
+						Map<String,List<Employee>> oldEmployees = 
+								getEmployees(login, domainId, domainName, ccc, settleEndDate, settleEndDate, p -> p.getNafProperty().eq(naf));
+						oldEmployees.get(naf).forEach(oldEmployee -> {
+							salary.setStartDate(oldEmployee.getStartDate());
+							salary.setIssueDate(min(salary.getEndDate(), endDate));
+							AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));	
+						} );
+					}
+					
+				} catch ( Exception e ) {
+					e.printStackTrace();
+					System.err.println(e.getMessage());
+				}
+			});
+	
+	}));
+	
+	
+}
+
+
 	private static java.sql.Date addDays( java.util.Date date, int days ) {
 		return new java.sql.Date(AonDateUtils.addDays(date, -1).getTime());		
 	}
@@ -410,6 +613,64 @@ public class SistemaRED2AON {
 		return authorized;
 	}
 	
+	private static List<Liquidacion> getLiquidations(String login, Integer domainId, String domainName, String ccc,
+		java.sql.Date startDate, LiquidationType liquidationType, String [] nafs) {
+	    
+	    
+	    RegistryAttachmentType type = RegistryAttachmentType.CRETA_RESPUESTA;
+	    
+	    Domain domain = AON.getDomain(domainName, domainId, login);
+	    
+	    Stream<Attach> respuestas = 
+	    AON.getAttachStream(
+		    domain.getName(), 
+		    domain.getId(), 
+		    login, 
+		    p -> 
+		    	p.getDomainProperty().in(new Integer[]{domain.getId(), domain.getParentId()})
+			.and(p.getTypeProperty().eq((byte)type.ordinal()))
+			.and(p.getAttachDateProperty().ge(startDate))
+			.and(p.getDataProperty().like(("%"+ccc.substring(2)+"%"+liquidationType.getValue()+"%" ).getBytes())),
+		    AttachType.REGISTRY, 
+		    true);
+
+	    Stream<Liquidacion> l03 = respuestas
+	    //.peek(attach -> System.out.println(new String(attach.getData())))
+	    .map(attach -> unmarshall(Respuesta.class, attach.getData()))
+	    .filter(Optional::isPresent).map(Optional::get).map( Respuesta::getLiquidacion)
+	    .flatMap(List::stream).filter(liquidacion -> toDate(liquidacion.getFechaControl()).compareTo(startDate) >= 0 )
+	    ;
+	    
+	    return l03.toList();
+	}
+	
+	private static <T> Optional<T> unmarshall( Class<T> clazz, byte [] data ) {
+	    try ( InputStream is = new ByteArrayInputStream(data) ){
+		return Optional.of(Utils.unmarshal(clazz, is));
+	    } catch ( Exception e ) {
+		return Optional.empty();
+	    }
+	}
+	
+	private static Date toDate(Periodo periodo) {
+	    Calendar calendar = Calendar.getInstance();
+	    
+	    calendar.set(Calendar.MILLISECOND, 0 );
+	    calendar.set(Calendar.SECOND, 0 );
+	    calendar.set(Calendar.MINUTE, 0 );
+	    calendar.set(Calendar.HOUR_OF_DAY, 0 );
+
+	    calendar.set(Calendar.DAY_OF_MONTH, 1 );
+	    calendar.set(Calendar.YEAR, Integer.parseInt(periodo.getAnho()));
+	    calendar.set(Calendar.MONTH, Integer.parseInt(periodo.getMes())-1);
+	    
+	    return calendar.getTime();
+	}
+
+	private static java.sql.Date toSqlDate(Periodo periodo) {
+	    return new java.sql.Date(toDate(periodo).getTime());
+	}
+
 	private static Map<String,List<Employee>> getEmployees(String login, Integer domainId, String domainName, String ccc,
 			java.sql.Date firstDayOfMonth, java.sql.Date lastDayOfMonth, String ...nafs) {
 		if ( nafs == null || nafs.length == 0 )
@@ -436,7 +697,6 @@ public class SistemaRED2AON {
 		.collect(Collectors.toMap(Employee::getNaf, Collections::singletonList, (l1,l2) -> Stream.concat(l1.stream(), l2.stream()).collect(Collectors.toList())))
 		;
 	}
-
 
 	private static Map<String,List<Employee>> getEmployees(String login, Integer domainId, String domainName, String ccc,
 			java.sql.Date firstDayOfMonth, java.sql.Date lastDayOfMonth, EmployeeFilter filter) {

@@ -22,9 +22,11 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.config.InsertIAE1516;
 import net.aonsolutions.db.up2date.config.InsertIAE575576;
 import net.aonsolutions.db.up2date.payroll.NoteInsert;
+import net.aonsolutions.db.up2date.security.UdpateAonPacks;
 import net.aonsolutions.db.up2date.tgss.SuspendJobAndSalaryDaysInsert;
 import net.aonsolutions.db.up2date.warehouse.DeliveryPackagingCreation;
 import net.aonsolutions.db.up2date.warehouse.SalesInfoCreation;
+
 public class Up2Date {
 
 	private static Update[] UPDATES = {
@@ -357,7 +359,7 @@ public class Up2Date {
         // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
 	    // PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
 	    // IndemnizacionTemporalUpdate.INDEMNIZACIONTEMPORALUPDATE,
-        // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
+	    // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
 	    // TrainningBases2023Fix.TRAINNINGBASES2023FIX,
 	    // CGPJInsert.CGPJINSERT,
 	    // Trainning421ExcessQuote.TRAINNING421EXCESSQUOTE,
@@ -369,8 +371,8 @@ public class Up2Date {
 	    // DomainAonCustomer.DOMAIN_AON_CUSTOMER,
 	    // FixBofFormTDistan.FIXBOFFORMTDISTAN,
 	    // PermissionUnPaidDaysFix.PERMISSIONNOTPAIDDAYSFIX,
-		NoteInsert.NOTEINSERT,
-		SuspendJobAndSalaryDaysInsert.SUSPENDJOBANDSALARYDAYSINSERT,
+	    // NoteInsert.NOTEINSERT,
+	    // SuspendJobAndSalaryDaysInsert.SUSPENDJOBANDSALARYDAYSINSERT,
 
 		
 	    // ----------------------------------------------------------------
@@ -391,7 +393,8 @@ public class Up2Date {
 	    // ProductPerishableUpdate.PRODUCT_PEISHABLE_UPDATE,
 	    DeliveryPackagingCreation.DELIVERY_PACKAGING_CREATION,
 	    SalesInfoCreation.SALES_INFO_CREATION,
-	    InsertIAE1516.INSERT_IAE_1516
+	    InsertIAE1516.INSERT_IAE_1516,
+	    UdpateAonPacks.UPDATE_AON_PACKS
 	};
 
     // ------------------------------------------------------------------------

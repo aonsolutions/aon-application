@@ -439,6 +439,11 @@
 	padding-left: 25px !important;
 	background-size: contain;
 }
+
+.aon_row_highlight{
+	background-color: #eaf1fb !important;	
+}
+
 .aon_display_flex {
 	display: flex;	
 }

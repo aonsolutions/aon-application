@@ -102,8 +102,6 @@ public class BookingCheckDAO {
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
 		
-		System.out.println(bookingCheckSelect.getSQL());
-		
 		Result<Record> bookingCheckRecords = bookingCheckSelect
 				.where(condition)
 				.and(RITEM.TYPE.eq((byte)4))
@@ -132,7 +130,7 @@ public class BookingCheckDAO {
 				.where(condition)
 //				.and(CUSTOMER_FEE.ID.isNull())
 				.and(RITEM.TYPE.eq((byte)4))
-				.orderBy(RITEM.REGISTRY)
+				.orderBy(RITEM.REGISTRY, CUSTOMER_FEE.LINE)
 				.offset(customerFeeParams.getOffset())
 				.limit(customerFeeParams.getLimit())
 			.fetch();

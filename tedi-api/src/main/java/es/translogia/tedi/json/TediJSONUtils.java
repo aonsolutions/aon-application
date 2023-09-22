@@ -17,6 +17,11 @@ public class TediJSONUtils {
 	public static JSONObject put(JSONObject json, String key, Date date) {
 		return json.put(key, TediJSONUtils.formatDate(date));
 	}
+	
+	
+	public static JSONObject put(JSONObject json, String key, Date date, SimpleDateFormat format) {
+		return json.put(key, TediJSONUtils.format(date, format));
+	}
 
 	public static Double optDouble(JSONObject json, String key) {
 		Double value = json.optDouble(key);

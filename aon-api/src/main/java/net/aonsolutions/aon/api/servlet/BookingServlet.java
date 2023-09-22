@@ -2,10 +2,6 @@ package net.aonsolutions.aon.api.servlet;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,11 +11,13 @@ import com.esferalia.aon.occam.api.json.BookingJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
-import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
@@ -83,9 +81,9 @@ public class BookingServlet extends AonApiHttpServlet {
 		Integer domainId = api.getData().optInt(IJsonNames.DOMAIN_ID);
 		if (AonStringUtils.isNotBlank(domainName) && AonNumberUtils.zeroIfNull(domainId) > 0) {
 			Domain domain = AON.getDomain(domainName, domainId, api.getUser().getLogin());
-			return BookingJSON.toJSON(AON.getBooking(domain, api.getUser()));			
+			return BookingJSON.toJSON(AON.getBooking(domain, api.getUser()), true);			
 		}
-		return BookingJSON.toJSON(AON.getBooking(api.getDomain(), api.getUser()));
+		return BookingJSON.toJSON(AON.getBooking(api.getDomain(), api.getUser()), true);
 	}
 	
 	private static JSONObject getBookingCustomer(AonApiData api) {

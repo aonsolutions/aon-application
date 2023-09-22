@@ -598,6 +598,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_cmd_item")
 	String aonCmdItem();
 	
+	@ClassName("aon_row_highlight")
+	String aonRowHighlight();
+	
 	@ClassName("aon_display_flex")
 	String aonDisplayFlex();
 	

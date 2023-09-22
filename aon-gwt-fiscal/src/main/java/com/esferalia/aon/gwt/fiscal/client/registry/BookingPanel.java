@@ -1063,7 +1063,7 @@ public class BookingPanel extends MainEntryPoint {
 	}
 
 	private void createFeeHeader() {
-		bookingCheckTable = new Grid(0, isBookingWithOutFee() ? 8 : 10);
+		bookingCheckTable = new Grid(0, isBookingWithOutFee() ? 8 : 12);
 		bookingCheckTable.clear();
 		bookingCheckTable.setWidth("100%");
 
@@ -1075,6 +1075,8 @@ public class BookingPanel extends MainEntryPoint {
 		Label concept = new Label("PRODUCTO");
 		Label conceptStatus = new Label("ESTADO");
 		Label quantity = new Label("CANTIDAD");
+		Label price = new Label("PRECIO");
+		Label discount = new Label("DESCUENTO");
 		Label startDate = new Label("F. DESDE");
 		Label endDate = new Label("F. HASTA");
 		Label url = new Label("");
@@ -1086,6 +1088,8 @@ public class BookingPanel extends MainEntryPoint {
 		concept.addStyleName(AON.CSS.aonHeaderTable());
 		conceptStatus.addStyleName(AON.CSS.aonHeaderTable());
 		quantity.addStyleName(AON.CSS.aonHeaderTable());
+		price.addStyleName(AON.CSS.aonHeaderTable());
+		discount.addStyleName(AON.CSS.aonHeaderTable());
 		startDate.addStyleName(AON.CSS.aonHeaderTable());
 		endDate.addStyleName(AON.CSS.aonHeaderTable());
 		url.addStyleName(AON.CSS.aonHeaderTable());
@@ -1101,10 +1105,12 @@ public class BookingPanel extends MainEntryPoint {
 			bookingCheckTable.setWidget(row, 6, url);
 			bookingCheckTable.setWidget(row, 7, action);
 		} else {
-			bookingCheckTable.setWidget(row, 6, startDate);
-			bookingCheckTable.setWidget(row, 7, endDate);
-			bookingCheckTable.setWidget(row, 8, url);
-			bookingCheckTable.setWidget(row, 9, action);
+			bookingCheckTable.setWidget(row, 6, price);
+			bookingCheckTable.setWidget(row, 7, discount);
+			bookingCheckTable.setWidget(row, 8, startDate);
+			bookingCheckTable.setWidget(row, 9, endDate);
+			bookingCheckTable.setWidget(row, 10, url);
+			bookingCheckTable.setWidget(row, 11, action);
 		}
 		
 		bookingCheckTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
@@ -1121,6 +1127,8 @@ public class BookingPanel extends MainEntryPoint {
 			bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
 			bookingCheckTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
 			bookingCheckTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 10, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 11, AON.CSS.aonHeaderSticky());
 		}
 		
 		scrollPanel.add(bookingCheckTable);
@@ -1139,8 +1147,10 @@ public class BookingPanel extends MainEntryPoint {
 			bookingCheckTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
 			bookingCheckTable.getColumnFormatter().getElement(6).getStyle().setWidth(80, Unit.PX);
 			bookingCheckTable.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
-			bookingCheckTable.getColumnFormatter().getElement(8).getStyle().setWidth(25, Unit.PX);
-			bookingCheckTable.getColumnFormatter().getElement(9).getStyle().setWidth(25, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(8).getStyle().setWidth(80, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(9).getStyle().setWidth(80, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(10).getStyle().setWidth(25, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(11).getStyle().setWidth(25, Unit.PX);
 		}
 	}
 	
@@ -1183,6 +1193,10 @@ public class BookingPanel extends MainEntryPoint {
 		Label productLabel = new Label(getProductDescription(bookingCheck));
 		Label productStatusLabel = new Label(Integer.parseInt(bookingCheckType.getSelectedValue()) == 0 ? getProductStatus(bookingCheck) : getFeeStatus(bookingCheck));
 		Label quantityLabel = new Label(AonStringUtils.isBlank(bookingCheck.getQuantity()) ? "1.0" : bookingCheck.getQuantity());
+		
+		Label priceLabel = new Label(bookingCheck.getPrice() == null ? "0.0" : bookingCheck.getPrice().toString());
+		Label discountLabel = new Label(AonStringUtils.isBlank(bookingCheck.getDiscountExpr()) ? "0.0" : bookingCheck.getDiscountExpr());
+		
 		Label startDateLabel = new Label(formatDate(bookingCheck.getStartDate()));
 		Label endDateLabel = new Label(formatDate(bookingCheck.getEndDate()));
 		
@@ -1237,10 +1251,12 @@ public class BookingPanel extends MainEntryPoint {
 			bookingCheckTable.setWidget(row, 6, urlBtn);
 			bookingCheckTable.setWidget(row, 7, actionBtn);
 		} else {
-			bookingCheckTable.setWidget(row, 6, startDateLabel);
-			bookingCheckTable.setWidget(row, 7, endDateLabel);
-			bookingCheckTable.setWidget(row, 8, urlBtn);
-			bookingCheckTable.setWidget(row, 9, actionBtn);
+			bookingCheckTable.setWidget(row, 6, priceLabel);
+			bookingCheckTable.setWidget(row, 7, discountLabel);
+			bookingCheckTable.setWidget(row, 8, startDateLabel);
+			bookingCheckTable.setWidget(row, 9, endDateLabel);
+			bookingCheckTable.setWidget(row, 10, urlBtn);
+			bookingCheckTable.setWidget(row, 11, actionBtn);
 		}
 		
 		// Check Status
@@ -1290,6 +1306,8 @@ public class BookingPanel extends MainEntryPoint {
 			productLabel.addStyleName(AON.CSS.aonOddTableRow());
 			productStatusLabel.addStyleName(AON.CSS.aonOddTableRow());
 			quantityLabel.addStyleName(AON.CSS.aonOddTableRow());
+			priceLabel.addStyleName(AON.CSS.aonOddTableRow());
+			discountLabel.addStyleName(AON.CSS.aonOddTableRow());
 			startDateLabel.addStyleName(AON.CSS.aonOddTableRow());
 			endDateLabel.addStyleName(AON.CSS.aonOddTableRow());
 			urlBtn.addStyleName(AON.CSS.aonOddTableRow());
@@ -1309,6 +1327,8 @@ public class BookingPanel extends MainEntryPoint {
 				bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonOddTableRow());
 				bookingCheckTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonOddTableRow());
 				bookingCheckTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 10, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 11, AON.CSS.aonOddTableRow());
 			}
 		}
 		
@@ -1324,6 +1344,8 @@ public class BookingPanel extends MainEntryPoint {
 			bookingCheckTable.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
 			bookingCheckTable.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.CENTER);
 			bookingCheckTable.getCellFormatter().getElement(row, 9).getStyle().setTextAlign(TextAlign.CENTER);	
+			bookingCheckTable.getCellFormatter().getElement(row, 10).getStyle().setTextAlign(TextAlign.CENTER);	
+			bookingCheckTable.getCellFormatter().getElement(row, 11).getStyle().setTextAlign(TextAlign.CENTER);	
 		}
 
 		bookingCheckTable.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
@@ -1603,7 +1625,66 @@ public class BookingPanel extends MainEntryPoint {
 		new AonDomainSelectionDialog("Dominios", companies) {
 			
 			@Override
-			protected void onAccept(DomainCompany domainCompany) {
+			protected void onAccept(DomainCompany domainCompany, boolean allDomains) {
+				if(allDomains)
+					syncAllDomain(companies);
+				else
+					syncDomain(domainCompany);
+			}
+
+			private void syncAllDomain(List<DomainCompany> companies) {
+				AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para los dominios seleccionados ...");
+				int syncDomain = 0;
+				
+				for(DomainCompany domainCompany : companies) {
+					final int iteration = syncDomain;
+					
+					Integer customerId = domainCompany.getDomain().getAonCustomer();
+					
+					// Create the base URL
+					String baseUrl = "/ms/api/domain/booking-customer/";
+
+					// Create a URL builder and add query parameters
+					UrlBuilder urlBuilder = new UrlBuilder();
+					urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+					urlBuilder.setHost(Window.Location.getHost()); 
+					urlBuilder.setPath(baseUrl);
+					
+					// Create the request builder with the complete URL
+					RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+					requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+					
+					JSONObject body = new JSONObject();
+					body.put("customer", new JSONNumber(customerId));
+					
+					try {
+					    // Send the request
+					    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+					        public void onResponseReceived(Request request, Response response) {
+					            if (response.getStatusCode() == 200) {
+					            	
+					            	if((iteration + 1) == companies.size())
+										AonMessagePanel.showSuccess(messagePanel, "La sicronizaci\u00f3n de dominios se ha realizado correctamente.");
+			  		           		
+					            } else {
+					            	AonMessagePanel.showError(messagePanel, response.getText());
+					            }
+					        }
+
+							public void onError(Request request, Throwable exception) {
+								AonMessagePanel.showError(messagePanel, exception.getMessage());
+					        }
+					    });
+					} catch (RequestException e) {
+						AonMessagePanel.showError(messagePanel, e.getMessage());
+					}
+					
+					syncDomain++;
+				}
+				
+			}
+
+			private void syncDomain(DomainCompany domainCompany) {
 				AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el dominio seleccionado ...");
 				
 				Integer customerId = domainCompany.getDomain().getAonCustomer();
