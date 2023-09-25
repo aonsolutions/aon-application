@@ -23,6 +23,10 @@
 .aon_icon_delete_list { background-image: iconDeleteList;}
 @url iconEmit aonIconEmit;
 .aon_icon_emit { background-image: iconEmit;}
+@url iconSync aonIconSync;
+.aon_icon_sync { background-image: iconSync;}
+@url iconSyncDisabled aonIconSyncDisabled;
+.aon_icon_sync_disabled { background-image: iconSyncDisabled;}
 @url iconDrive aonIconDrive;
 .aon_icon_drive { background-image: iconDrive;}
 @url iconEditCalendar aonIconEditCalendar;
