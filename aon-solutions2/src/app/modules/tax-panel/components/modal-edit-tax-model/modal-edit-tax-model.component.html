@@ -1,5 +1,5 @@
 <form (ngSubmit)="sendMessage()">
-  <div class="modal-container" >
+  <div class="modal-container">
     <app-icon
       class="close-button"
       shape="close"
@@ -17,12 +17,18 @@
       [type]="'text'"
       [value]="newMessageDescription"
       (inputValue)="newMessageDescription = $event"
-      >
+    >
     </app-input>
 
-    <app-button [mat-dialog-close]="true" [class]="'orange left'" (click)="sendMessage()">
-      <app-icon shape="send"></app-icon>
-      {{ "TAX_PANEL.SEND" | translate }}
-    </app-button>
+    <div class="container-button">
+      <app-button
+        [mat-dialog-close]="true"
+        [class]="'orange left'"
+        (click)="sendMessage()"
+      >
+        <app-icon shape="send"></app-icon>
+        {{ "TAX_PANEL.SEND" | translate }}
+      </app-button>
+    </div>
   </div>
-  </form>
+</form>

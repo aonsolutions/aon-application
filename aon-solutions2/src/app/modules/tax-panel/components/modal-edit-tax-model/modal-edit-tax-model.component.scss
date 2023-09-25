@@ -23,9 +23,13 @@
   padding-bottom: $padding-bottom;
 }
 
-app-button {
+.container-button {
   display: flex;
   justify-content: flex-end;
-  padding-top: $padding-top;
 }
 
+app-button {
+  width: fit-content;
+  margin-left: auto;
+  padding-top: $padding-top;
+}

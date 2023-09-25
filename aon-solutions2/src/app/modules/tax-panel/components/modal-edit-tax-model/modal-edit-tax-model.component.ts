@@ -1,6 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CollectionFactory, Factory, ICollection, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/aon';
+import {
+  CollectionFactory,
+  ErrorResponse,
+  Factory,
+  ICollection,
+  IMessage,
+  StatusMessage,
+  TypeMessage,
+} from 'libraries/AonSDK/aon';
 import { MessageService } from 'src/app/core/services/message.service';
 
 @Component({
@@ -15,7 +23,7 @@ export class ModalEditTaxModelComponent implements OnInit {
   messagesData: IMessage = this.entityFactory.createMessage();
   collectionFactory = new CollectionFactory();
   messages: ICollection<IMessage> =
-  this.collectionFactory.createMessageCollection();
+    this.collectionFactory.createMessageCollection();
 
   newMessageDescriptionChange(newValue: string) {
     this.newMessageDescription = newValue;
@@ -32,42 +40,40 @@ export class ModalEditTaxModelComponent implements OnInit {
     private messageService: MessageService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ModalEditTaxModelComponent>
-  ) {
-
-  }
-  async createMessage(description: string){
+  ) {}
+  async createMessage(description: string) {
     if (this.messagesData) {
       const messageId = this.messagesData.Id;
-      // const messageName = this.messagesData.Name;
+      const messageName = this.messagesData.Name;
+      const messageTitle = this.messagesData.Title;
 
       const newMessage: IMessage = {
         Id: messageId,
-        Name: '',
-        Title: '',
+        Name: messageName,
+        Title: messageTitle,
         Description: description,
         Date: new Date(),
         Status: StatusMessage.ABIERTA,
         Type: TypeMessage.CONSULTA,
         EndDate: new Date(),
         LastMessageChatOrigin: false,
-        getKey: () => 'fakeKey',
+        getKey: () => messageId,
         getFilterableFields: () => new Map(),
         getSortableFields: () => new Map(),
       };
 
       try {
         // Crear el mensaje
-        const createdMessage =
-          await this.messageService.createMessage(newMessage);
+        const createdMessage = await this.messageService.createMessage(
+          newMessage
+        );
 
         // Agregar el nuevo mensaje
         this.messages.add(createdMessage);
-
       } catch (error) {
-        console.error('Error al crear el mensaje de chat:', error);
+        throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
       }
     }
-
   }
 
   sendMessage() {

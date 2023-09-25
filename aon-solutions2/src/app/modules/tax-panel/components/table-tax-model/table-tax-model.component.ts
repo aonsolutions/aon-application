@@ -139,9 +139,9 @@ export class TableTaxModelComponent implements OnChanges {
   modalClick(object: any) {
     // Fila de la tabla que se esta usando
     // Boton que ha sido clickeado
-    console.log(object);
+    // console.log(object);
     // reference icon click
-    console.log(object.keyButton);
+    // console.log(object.keyButton);
 
     switch (object.keyButton) {
       case 'edit':
