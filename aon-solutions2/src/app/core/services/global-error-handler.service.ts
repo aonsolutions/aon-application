@@ -24,6 +24,7 @@ export class GlobalErrorHandlerService implements ErrorHandler{
   }
 
   launchError(errorList: any){
+
     if(errorList instanceof CustomError || errorList instanceof Response || errorList instanceof ErrorResponse)
       this.errorService.displayError(errorList)
   }

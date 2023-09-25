@@ -6,6 +6,7 @@ import { CustomError } from '../models/class/custom-error';
 import { ICustomError } from '../models/interface/icustom-error';
 import { IResponse } from 'libraries/AonSDK/AonSDK';
 import { Response } from 'libraries/AonSDK/AonSDK';
+import { ErrorResponse } from 'libraries/AonSDK/aon';
 
 @Injectable({
   providedIn: 'root'
@@ -36,10 +37,12 @@ export class ErrorService {
     }else if(code instanceof Response){
       if(this.getError(code.code))
         dataError.push(this.getError(code.code))
+    } else if (code instanceof ErrorResponse){
+      dataError.push(code.result)
     }
     if(this.snackBar._openedSnackBarRef){
       this.snackBar._openedSnackBarRef?.instance.data.errorList.push(dataError)
-    } else {    
+    } else {
       this.zone.run(() => {
         this.snackBar.openFromComponent(ErrorSnackBarComponent,{
           horizontalPosition: 'center',
