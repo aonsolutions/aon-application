@@ -312,7 +312,6 @@ public class CustomerFee extends MainEntryPoint {
 				containerCustomer.add(deckPanelCustomer);
 				
 				scrollPanelCustomer = new ScrollPanel();
-				Window.alert("filterCustomerContentPanel.getOffsetHeight() : " + filterCustomerContentPanel.getOffsetHeight());
 				scrollPanelCustomer.setHeight((Window.getClientHeight() - 230 - filterCustomerContentPanel.getOffsetHeight()) + "px");
 				scrollPanelCustomer.addScrollHandler(e -> {
 					// ------------------------------------ Ignore scroll up.
@@ -365,8 +364,7 @@ public class CustomerFee extends MainEntryPoint {
 				container.add(deckPanel);
 				
 				scrollPanel = new ScrollPanel();
-				Window.alert("filterContentPanel.getOffsetHeight() : " + filterContentPanel.getOffsetHeight());
-				scrollPanel.setHeight((Window.getClientHeight() - 230 - filterContentPanel.getOffsetHeight()) + "px");
+				scrollPanel.setHeight((Window.getClientHeight() - 180 - filterContentPanel.getOffsetHeight()) + "px");
 				scrollPanel.addScrollHandler(e -> {
 					// ------------------------------------ Ignore scroll up.
 					int oldScrollPos = lastScrollPos;
@@ -727,7 +725,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void createCustomerFilterPanel(final RegistryModuleOptions opt, AsyncCallback<Void> endCallback) {
-		HTMLPanel filterCustomerContentPanel = new HTMLPanel("");
+		filterCustomerContentPanel = new HTMLPanel("");
 		filterCustomerContentPanel.addStyleName(AON.CSS.aonFlexBetween());
 		filterCustomerContentPanel.addStyleName(AON.CSS.aonFilterPanel());
 		filterCustomerContentPanel.getElement().getStyle().setProperty("margin", "0 1rem");
