@@ -58,16 +58,15 @@
           ></app-icon>
         </app-input>
 
-<!-- Mostrar la lista de bancos -->
-<div *ngIf="showBanksList">
-  <h3>Lista de Bancos</h3>
-  <ul>
-    <li *ngFor="let bank of banks">{{ bank.Iban }}</li>
-  </ul>
-</div>
-
-
-
+        <!-- Mostrar la lista de bancos -->
+        <div *ngIf="showBanksList">
+          <app-input
+            (inputValue)="selectBank($event)"
+            [type]="'select'"
+            [options]="banksList"
+            [value]="this.selectedBank"
+          ></app-input>
+        </div>
       </div>
     </div>
 

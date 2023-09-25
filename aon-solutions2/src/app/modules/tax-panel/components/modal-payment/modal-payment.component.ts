@@ -15,13 +15,14 @@ export class ModalPaymentComponent implements OnInit {
   showCreateBank: boolean = false;
   showConfirmation: boolean = false;
   public showBanksList: boolean = false;
+  banksList: any[] = [];
+  selectedBank: any = '';
 
-  public collectionFactory  = new CollectionFactory();
+  public collectionFactory = new CollectionFactory();
   banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
   private banksSubject = new BehaviorSubject<ICollection<IBank>>(
     this.collectionFactory.createBankCollection()
   );
-
 
   constructor(
     private bankService: BankService,
@@ -39,20 +40,18 @@ export class ModalPaymentComponent implements OnInit {
     this.showConfirmation = true;
   }
 
-listBanks(){
-  console.log("Se hizo clic en el ícono de la tarjeta de crédito");
-  this.bankService.getBankList().then((response) => {
-    console.log("Solicitando la lista de bancos...", response);
-    this.banks = response;
-    this.banksSubject.next(this.banks);
+  listBanks() {
+    this.bankService.getBankList().then((response) => {
+      this.banks = response;
+      this.banksSubject.next(this.banks);
 
+      this.showBanksList = true;
 
-    this.showBanksList = true;
+      this.banksList = this.banks
+        .toArray()
+        .map((element) => ({ value: element.Iban, text: element.Iban }));
+    });
+  }
 
-  });
+  selectBank(event: any) {}
 }
-
-
-}
-
-

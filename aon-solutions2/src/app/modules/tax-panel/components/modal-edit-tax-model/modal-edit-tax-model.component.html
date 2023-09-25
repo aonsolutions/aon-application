@@ -1,24 +1,28 @@
-<div class="modal-container">
-  <app-icon
-    class="close-button"
-    shape="close"
-    (click)="closeModal()"
-  ></app-icon>
+<form (ngSubmit)="sendMessage()">
+  <div class="modal-container" >
+    <app-icon
+      class="close-button"
+      shape="close"
+      (click)="closeModal()"
+    ></app-icon>
 
-  <p class="title-modal-edit">
-    {{ "TAX_PANEL.TO_RECTIFY" | translate }}
-  </p>
-  <p class="text-modal-edit-tax-model">
-    {{ "TAX_PANEL.RECTIFIED_MODEL" | translate }}
-  </p>
+    <p class="title-modal-edit">
+      {{ "TAX_PANEL.TO_RECTIFY" | translate }}
+    </p>
+    <p class="text-modal-edit-tax-model">
+      {{ "TAX_PANEL.RECTIFIED_MODEL" | translate }}
+    </p>
 
-  <app-input
-    (inputValue)="getValue($event)"
-    [type]="'text'">
-  </app-input>
+    <app-input
+      [type]="'text'"
+      [value]="newMessageDescription"
+      (inputValue)="newMessageDescription = $event"
+      >
+    </app-input>
 
-  <app-button [mat-dialog-close]="true" [class]="'orange left'">
-    <app-icon shape="send" (click)="createMessage()"></app-icon>
-    {{ "TAX_PANEL.SEND" | translate }}
-  </app-button>
-</div>
+    <app-button [mat-dialog-close]="true" [class]="'orange left'" (click)="sendMessage()">
+      <app-icon shape="send"></app-icon>
+      {{ "TAX_PANEL.SEND" | translate }}
+    </app-button>
+  </div>
+  </form>
