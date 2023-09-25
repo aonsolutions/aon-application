@@ -6,6 +6,7 @@ import { CustomError } from '../models/class/custom-error';
 import { ICustomError } from '../models/interface/icustom-error';
 import { IResponse } from 'libraries/AonSDK/AonSDK';
 import { Response } from 'libraries/AonSDK/AonSDK';
+import { ErrorResponse } from 'libraries/AonSDK/aon';
 
 @Injectable({
   providedIn: 'root'
@@ -22,32 +23,53 @@ export class ErrorService {
   }
 
   displayError(code: ICustomError | IResponse): void {
-    let dataError: Array<string> = []
-    if(code instanceof CustomError){
-      if(typeof code.data != 'string'){
+    let dataError: Array<string> = [];
+
+    if (code instanceof CustomError) {
+      if (typeof code.data !== 'string') {
         code.data.forEach((error) => {
-          if(this.getError(error))
-            dataError.push(this.getError(error))
-        })
-      }else{
-        if(this.getError(code.data))
-          dataError.push(this.getError(code.data))
+          const uniqueError = this.getError(error);
+
+          // Verificar si el mensaje de error ya existe en dataError
+          if (uniqueError && !dataError.includes(uniqueError)) {
+            dataError.push(uniqueError);
+          }
+        });
+      } else {
+        const uniqueError = this.getError(code.data);
+
+        if (uniqueError && !dataError.includes(uniqueError)) {
+          dataError.push(uniqueError);
+        }
       }
-    }else if(code instanceof Response){
-      if(this.getError(code.code))
-        dataError.push(this.getError(code.code))
+    } else if (code instanceof Response) {
+      const uniqueError = this.getError(code.code);
+
+      if (uniqueError && !dataError.includes(uniqueError)) {
+        dataError.push(uniqueError);
+      }
+    } else if (code instanceof ErrorResponse) {
+      const uniqueError = code.result;
+
+      if (uniqueError && !dataError.includes(uniqueError)) {
+        dataError.push(uniqueError);
+      }
     }
-    if(this.snackBar._openedSnackBarRef){
-      this.snackBar._openedSnackBarRef?.instance.data.errorList.push(dataError)
-    } else {    
+
+    if (this.snackBar._openedSnackBarRef) {
+      // Reemplazar el array completo en lugar de agregar elementos individuales
+      this.snackBar._openedSnackBarRef.instance.data.errorList = dataError;
+    } else {
       this.zone.run(() => {
-        this.snackBar.openFromComponent(ErrorSnackBarComponent,{
+        this.snackBar.openFromComponent(ErrorSnackBarComponent, {
           horizontalPosition: 'center',
           verticalPosition: 'top',
           data: {
             errorList: dataError,
-            preClose: () => {this.dismiss()}
-          }
+            preClose: () => {
+              this.dismiss();
+            },
+          },
         });
       });
     }
