@@ -12,7 +12,7 @@ public enum TediFinanceJSON {
 
 	DUE_DATE(
 		(finance, json) -> finance.setDueDate(TediJSONUtils.parseDate(json.optString(IConstants.DUE_DATE))),
-		(finance, json) -> TediJSONUtils.put(json, IConstants.DUE_DATE, finance.getDueDate())
+		(finance, json) -> TediJSONUtils.putDate(json, IConstants.DUE_DATE, finance.getDueDate())
 	),
 	AMOUNT(
 		(finance, json) -> finance.setAmount(TediJSONUtils.optDouble(json, IConstants.AMOUNT)),
