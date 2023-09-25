@@ -139,6 +139,7 @@ public class CustomerFee extends MainEntryPoint {
 	private Integer minYear;
 	private Integer maxYear;
 	
+	private HTMLPanel filterContentPanel;
 	private ListBox monthListBox;
 	private ListBox yearListBox;
 	private ListBox periocityListBox;
@@ -166,6 +167,7 @@ public class CustomerFee extends MainEntryPoint {
 	private SuggestBox projectSuggestBox;
 	
 	// Filter Customer
+	private HTMLPanel filterCustomerContentPanel;
 	private SuggestBox customerSuggestBoxCustomer;
 	private ListBox customerStatusListBoxCustomer;
 	
@@ -314,7 +316,7 @@ public class CustomerFee extends MainEntryPoint {
 				containerCustomer.add(deckPanelCustomer);
 				
 				scrollPanelCustomer = new ScrollPanel();
-				scrollPanelCustomer.setHeight((Window.getClientHeight() - 230) + "px");
+				scrollPanelCustomer.setHeight((Window.getClientHeight() - 230 - filterCustomerContentPanel.getOffsetHeight()) + "px");
 				scrollPanelCustomer.addScrollHandler(e -> {
 					// ------------------------------------ Ignore scroll up.
 					int oldScrollPos = lastScrollPosCusotmer;
@@ -366,7 +368,7 @@ public class CustomerFee extends MainEntryPoint {
 				container.add(deckPanel);
 				
 				scrollPanel = new ScrollPanel();
-				scrollPanel.setHeight((Window.getClientHeight() - 230) + "px");
+				scrollPanel.setHeight((Window.getClientHeight() - 180 - filterContentPanel.getOffsetHeight()) + "px");
 				scrollPanel.addScrollHandler(e -> {
 					// ------------------------------------ Ignore scroll up.
 					int oldScrollPos = lastScrollPos;
@@ -397,7 +399,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 
 	private void createFilterPanel(final RegistryModuleOptions opt, AsyncCallback<Void> endCallback) {
-		HTMLPanel filterContentPanel = new HTMLPanel("");
+		filterContentPanel = new HTMLPanel("");
 		filterContentPanel.addStyleName(AON.CSS.aonFlexBetween());
 		filterContentPanel.addStyleName(AON.CSS.aonFilterPanel());
 		filterContentPanel.getElement().getStyle().setProperty("margin", "0 1rem");
@@ -741,10 +743,10 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void createCustomerFilterPanel(final RegistryModuleOptions opt, AsyncCallback<Void> endCallback) {
-		HTMLPanel filterContentPanel = new HTMLPanel("");
-		filterContentPanel.addStyleName(AON.CSS.aonFlexBetween());
-		filterContentPanel.addStyleName(AON.CSS.aonFilterPanel());
-		filterContentPanel.getElement().getStyle().setProperty("margin", "0 1rem");
+		filterCustomerContentPanel = new HTMLPanel("");
+		filterCustomerContentPanel.addStyleName(AON.CSS.aonFlexBetween());
+		filterCustomerContentPanel.addStyleName(AON.CSS.aonFilterPanel());
+		filterCustomerContentPanel.getElement().getStyle().setProperty("margin", "0 1rem");
 		
 		HTMLPanel filterLeftPanel = new HTMLPanel("");
 		filterLeftPanel.addStyleName(AON.CSS.aonFlexColumn());
@@ -789,10 +791,10 @@ public class CustomerFee extends MainEntryPoint {
 		
 		filterRightPanel.add(resetBtn);
 		
-		filterContentPanel.add(filterLeftPanel);
-		filterContentPanel.add(filterRightPanel);
+		filterCustomerContentPanel.add(filterLeftPanel);
+		filterCustomerContentPanel.add(filterRightPanel);
 
-		containerCustomer.add(filterContentPanel);
+		containerCustomer.add(filterCustomerContentPanel);
 		
 		endCallback.onSuccess(null);
 	}

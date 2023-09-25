@@ -18,7 +18,6 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.RegistrySellerType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class Fee implements Serializable{
 
@@ -45,6 +44,7 @@ public class Fee implements Serializable{
 	private RegistrySeller rSeller;
 	private Workplace workplace;
 	private boolean modify = false;
+	private Boolean hasRItem = false;
 	
 		
 	public Double getQuantity() {
@@ -295,6 +295,17 @@ public class Fee implements Serializable{
 		return this;
 	}
 	
+<<<<<<< HEAD
 	
+=======
+	public Boolean hasRItem() {
+		return this.hasRItem;
+	}
+
+	public Fee setHasRItem(boolean hasRItem) {
+		this.hasRItem = hasRItem;
+		return this;
+	}
+>>>>>>> master
 	
 }

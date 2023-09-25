@@ -812,7 +812,6 @@ export class AonDomainCustomer extends AonElement {
                 domainName: dName,
                 domainId: dId,
               });
-              console.log(booking);
             } catch (error) {
               console.error(error);
             }
@@ -1321,24 +1320,22 @@ export class AonDomainCustomer extends AonElement {
         summaryContainer.appendChild(summaryTitleContainer);
 
         let summary = booking.resume;
-        let summaryApps = summary ? summary.apps : null;
-        let summaryUsers = summary ? summary.user : null;
+        let summaryApps = summary ? summary.childApps : null;
+        let summaryUsers = summary ? summary.userTypes : null;
         
-        let summaryDomains = summary ? summary.domain : {};
+        //let summaryDomains = summary ? summary.domain : {};
+        let summaryDomains = summary ? summary.domainTypes : {};
 
         this.createSummaryItem(summaryContainer, MSG.APPLICATIONS, summaryApps);
-        this.createSummaryItem(summaryContainer, MSG.USERS, summaryUsers, [], "user");
+        this.createUsersSummaryItem(summaryContainer, MSG.USERS, summaryUsers, summary.childBillingUsers, summary.childDefinedUsers);
 
         for (let dt in summaryDomains) {
           let domainType = this.getDomainTypeDescription(dt);
           let application = summaryDomains[dt];
 
-          this.createSummaryItem(summaryContainer, `${domainType}: ${application.number}`, application.apps, application.childs, "domain");
+          this.createSummaryItem(summaryContainer, `${domainType}: ${application.number}`, application.childApps, application.childs, "domain");
         }
         
-
-
-
         appsContainer.appendChild(summaryContainer);
       }
       
@@ -1392,7 +1389,7 @@ export class AonDomainCustomer extends AonElement {
   }
 
   createSummaryItem(summaryContainer, title, summaryElements, childs, type) {
-    if (summaryElements) {
+    if (summaryElements && Object.keys(summaryElements).length > 0) {
       let summaryElementsContainer = document.createElement("div");
       summaryElementsContainer.style.display = "flex";
       summaryElementsContainer.style.flexDirection = "column";
@@ -1453,6 +1450,64 @@ export class AonDomainCustomer extends AonElement {
           });
         }
       }
+    }
+  }
+
+  createUsersSummaryItem(summaryContainer, title, summaryElements, childBillingUsers, childDefinedUsers) {
+    if (summaryElements) {
+      let summaryElementsContainer = document.createElement("div");
+      summaryElementsContainer.style.display = "flex";
+      summaryElementsContainer.style.flexDirection = "column";
+      summaryElementsContainer.style.width = "100%";
+      summaryContainer.appendChild(summaryElementsContainer);
+      let summaryElementsTitle = document.createElement("div");
+      summaryElementsTitle.style.display = "block";
+      summaryElementsTitle.style.width = "100%";
+      summaryElementsTitle.style.fontWeight = "bold";
+      summaryElementsTitle.style.marginLeft = "5px";
+      summaryElementsTitle.innerText = title;
+      summaryElementsContainer.appendChild(summaryElementsTitle);
+      
+      let sumElements = Object.keys(summaryElements);
+      sumElements.sort(this.appsComparator);
+
+      for (const summaryElement of sumElements) {
+        let summaryElementsItem = document.createElement("div");
+        summaryElementsItem.style.display = "block";
+        summaryElementsItem.style.width = "100%";
+        summaryElementsItem.style.marginLeft = "10px";
+        
+        let itemTitle = "";
+        let elementName = (summaryElement ? summaryElement : "").toLowerCase().trim();
+        if(elementName == "shared"){
+          itemTitle = MSG.SHARED;
+        } else {
+          itemTitle = summaryElement;
+        }
+        
+        summaryElementsItem.innerText = `${itemTitle}: ${summaryElements[summaryElement]} usr.`;
+        summaryElementsContainer.appendChild(summaryElementsItem);
+      }
+
+      let childdefinedusersElementsItem = document.createElement("div");
+      childdefinedusersElementsItem.style.display = "block";
+      childdefinedusersElementsItem.style.width = "100%";
+      childdefinedusersElementsItem.style.marginLeft = "10px";
+        
+      let childdefinedusersTitle = MSG.CONTRACTED_USERS;
+        
+      childdefinedusersElementsItem.innerText = `${childdefinedusersTitle}: ${childDefinedUsers} usr.`;
+      summaryElementsContainer.appendChild(childdefinedusersElementsItem);
+
+      let childbillingusersElementsItem = document.createElement("div");
+      childbillingusersElementsItem.style.display = "block";
+      childbillingusersElementsItem.style.width = "100%";
+      childbillingusersElementsItem.style.marginLeft = "10px";
+      
+      let childbillingusersTitle = MSG.BILLABLE_USERS;
+      
+      childbillingusersElementsItem.innerText = `${childbillingusersTitle}: ${childBillingUsers} usr.`;
+      summaryElementsContainer.appendChild(childbillingusersElementsItem);
     }
   }
 

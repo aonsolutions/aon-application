@@ -6267,19 +6267,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Copy Contract
-			byte[] pdfBytes = JooqContractAttach.getCopyBasic(connection, contractId);
+			String base64Pdf = JooqContractAttach.getCopyBasic(connection, contractId);
 
 			// If not exist download
-			if (null == pdfBytes) {
+			if (null == base64Pdf) {
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate)
+				byte [] pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate)
 						: Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
 				JooqContractAttach.setCopyBasic(connection, domainId, contractId, pdfBytes);
+				base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 			}
-
-			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
@@ -6304,21 +6303,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Copy Contract
-			byte[] pdfBytes = JooqContractAttach.getCopyBasic(connection, contractId);
+			String base64Pdf = JooqContractAttach.getCopyBasic(connection, contractId);
 
 			System.out.println("getEmployeeCbcTransform()\ncif : " + cif + "\nipf : " + ipf + "\nstartDate : " + startDate + "\nsepeIde : " + sepeIde);
 
 			// If not exist download
-			if (null == pdfBytes) {
+			if (null == base64Pdf) {
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				pdfBytes = AonStringUtils.isBlank(sepeIde) ?  Sepe.getTransformationCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
+				byte[] pdfBytes = AonStringUtils.isBlank(sepeIde) ?  Sepe.getTransformationCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
 						: Sepe.getTransformationCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
 				JooqContractAttach.setCopyBasic(connection, domainId, contractId, pdfBytes);
+				base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 			}
-
-			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
@@ -6343,19 +6341,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Copy Contract
-			byte[] pdfBytes = JooqContractAttach.getCopyContract(connection, contractId);
+			String base64Pdf = JooqContractAttach.getCopyContract(connection, contractId);
 
 			// If not exist download
-			if (null == pdfBytes) {
+			if (null == base64Pdf) {
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate)
+				byte [] pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate)
 						: Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
 				JooqContractAttach.setCopyContract(connection, domainId, contractId, pdfBytes);
+				base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 			}
-
-			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
@@ -6381,22 +6378,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Copy Contract
-			byte[] pdfBytes = JooqContractAttach.getCopyContractTransform(connection, contractId);
+			String base64Pdf = JooqContractAttach.getCopyContractTransform(connection, contractId);
 			
 			System.out.println("getEmployeeCtoTransform()\ncif : " + cif + "\nipf : " + ipf + "\nstartDate : " + startDate + "\nsepeIde : " + sepeIde);
 
 			// If not exist download
-			if (null == pdfBytes) {
+			if (null == base64Pdf) {
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
+				byte [] pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
 						: Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
 				
 				JooqContractAttach.setCopyContractTransform(connection, domainId, contractId, pdfBytes);
+				base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 			}
-
-			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
@@ -6453,18 +6449,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Copy Contract
-			byte[] pdfBytes = JooqContractAttach.getCertifica2PDF(connection, contractId);
+			String base64Pdf = JooqContractAttach.getCertifica2PDF(connection, contractId);
 
 			// If not exist download
-			if (null == pdfBytes) {
+			if (null == base64Pdf) {
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
-				pdfBytes = Sepe.certEnterprisePdf(new ByteArrayInputStream(certificate.getData()),
+				byte [] pdfBytes = Sepe.certEnterprisePdf(new ByteArrayInputStream(certificate.getData()),
 						certificate.getPassword(), certificate.getType(), nif, endDate);
 
 				JooqContractAttach.setCertifica2PDF(connection, domainId, contractId, pdfBytes);
+				base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 			}
-
-			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
