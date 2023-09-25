@@ -131,6 +131,24 @@ export class TableQueriesComponent implements OnChanges {
     return `${year}-${month}-${day}`;
   }
 
+    // Método para cambiar el estado de una consulta a "Cerrada"
+    archiveMessage(message: IMessage) {
+      this.messageService.archiveMessage(message).then((updatedMessage) => {
+        console.log('Consulta archivada:', updatedMessage);
+      }).catch((error) => {
+        console.error('Error al archivar consulta:', error);
+      });
+    }
+
+    // Método para cambiar el estado de una consulta a "Abierta"
+    reopenMessage(message: IMessage) {
+      this.messageService.reopenMessage(message).then((updatedMessage) => {
+        console.log('Consulta abierta:', updatedMessage);
+      }).catch((error) => {
+        console.error('Error al reabrir consulta:', error);
+      });
+    }
+
   private updateTableData(startDate?: string, endDate?: string) {
     let tableRow: any[] = [];
     const datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
@@ -165,7 +183,7 @@ export class TableQueriesComponent implements OnChanges {
           const column: any = Object.assign({}, message);
           column.key = messageKey;
           column.name = message.Name;
-          // eliminar mi if cuando tenga el filtro desde la api y descomentar lo de arriba
+          // TODO: eliminar mi if cuando tenga el filtro desde la api y descomentar lo de arriba
           if (
             this.filterStatus[this.filterTabSelec] === message.Status.toLowerCase()
             || this.filterStatus[this.filterTabSelec] === 'todas'
