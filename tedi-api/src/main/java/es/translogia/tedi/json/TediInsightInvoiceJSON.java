@@ -57,7 +57,7 @@ public enum TediInsightInvoiceJSON {
 	),
 	ISSUE_DATE(
 		(insight, json) -> insight.setIssueDate(TediJSONUtils.parseDate(json.optString(IConstants.ISSUE_DATE))),
-		(insight, json) -> TediJSONUtils.put(json, IConstants.ISSUE_DATE, insight.getIssueDate())
+		(insight, json) -> TediJSONUtils.putDate(json, IConstants.ISSUE_DATE, insight.getIssueDate())
 	),
 	TOTAL(
 		(insight, json) -> insight.setTotal(TediJSONUtils.optDouble(json, IConstants.TOTAL)),

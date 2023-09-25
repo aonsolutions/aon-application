@@ -3,6 +3,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
+	<script type="text/javascript">
+		localStorage.setItem('customer', '#{customer.to.id}');
+	</script>
+	
 	<aon:if test="#{customer.showAlumnData}">
 		<aon:methodParam name="searchActionListener" value="#{customer.onAlumnEditSearch}" type="actionListener" />
 	</aon:if>

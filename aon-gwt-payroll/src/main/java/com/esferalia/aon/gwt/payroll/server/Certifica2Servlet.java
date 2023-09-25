@@ -89,14 +89,21 @@ public class Certifica2Servlet extends HttpServlet {
 				}
 				
 			} else if(AonStringUtils.equalsIgnoreCase(type, "PDF")) {
-				res.setContentType(MimeType.MIME_PDF.getName());
-				res.setHeader("Content-disposition", "attachment; filename=\"Certifica2_" + document + ".pdf\"");
-				
 				// Get employee endDate
 				String endDateStr = req.getParameter("endDate");
 				Date endDate = formatEndDate(endDateStr);
 				
-				data = getCertEnterprisePDF(domainName, userLogin, contractId, document, endDate);
+				// Don't like to much
+				String url = getCertEnterprisePDF(domainName, userLogin, contractId, document, endDate);
+				if ( url != null ) {
+				    res.sendRedirect(url);
+				    return;
+				}
+				
+				res.setContentType(MimeType.MIME_PDF.getName());
+				res.setHeader("Content-disposition", "attachment; filename=\"Certifica2_" + document + ".pdf\"");
+				data = getSepeCertEnterprisePDF(domainName, userLogin, contractId, document, endDate);
+				
 			} else if(AonStringUtils.equalsIgnoreCase(type, "MANUAL")) {
 				res.setContentType(MimeType.MIME_PDF.getName());
 				res.setHeader("Content-disposition", "attachment; filename=\"Certifica2_" + document + ".pdf\"");
@@ -115,7 +122,7 @@ public class Certifica2Servlet extends HttpServlet {
 		
 	}
 
-	private byte[] getCertEnterprisePDF(String domainName, String userLogin, Integer contractId, String document, Date endDate) {
+	private String getCertEnterprisePDF(String domainName, String userLogin, Integer contractId, String document, Date endDate) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			// Get domain id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -123,16 +130,28 @@ public class Certifica2Servlet extends HttpServlet {
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Copy Contract
-			byte[] pdfBytes = JooqContractAttach.getCertifica2PDF(connection, contractId);
+			return JooqContractAttach.getCertifica2PDF(connection, contractId);
+			
+		} catch (CertificateNotFoundException e) {
+			throw new IllegalArgumentException(
+					"No existe certificado SEPE. Por favor introduzcalo desde el apartado Gesti\u00F3n Certificados");
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
-			// If not exist download
-			if (null == pdfBytes) {
-				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
-				pdfBytes = Sepe.certEnterprisePdf(new ByteArrayInputStream(certificate.getData()),
-						certificate.getPassword(), certificate.getType(), document, endDate);
+	private byte[] getSepeCertEnterprisePDF(String domainName, String userLogin, Integer contractId, String document, Date endDate) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-				JooqContractAttach.setCertifica2PDF(connection, domainId, contractId, pdfBytes);
-			}
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			byte [] pdfBytes = Sepe.certEnterprisePdf(new ByteArrayInputStream(certificate.getData()),
+				certificate.getPassword(), certificate.getType(), document, endDate);
+
+			JooqContractAttach.setCertifica2PDF(connection, domainId, contractId, pdfBytes);
 
 			return pdfBytes;
 			
