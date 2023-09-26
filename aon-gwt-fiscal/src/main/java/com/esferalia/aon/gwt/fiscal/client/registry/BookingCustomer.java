@@ -1242,13 +1242,12 @@ public class BookingCustomer extends HTMLPanel {
 			rowLabels.add(quantityLabel);
 			
 			for(Label label : rowLabels) {
-				label.addMouseOverHandler(e -> {
-					addHighlightRow(bookingGrid, row);
-				});
-				label.addMouseOutHandler(e -> {
-					removeHighlightRow(bookingGrid, row);
-				});
+				label.addMouseOverHandler(e -> addHighlightRow(bookingGrid, row));
+				label.addMouseOutHandler(e -> removeHighlightRow(bookingGrid, row));
 			}
+			
+			actionBtn.addMouseOverHandler(e -> addHighlightRow(bookingGrid, row));
+			actionBtn.addMouseOutHandler(e -> removeHighlightRow(bookingGrid, row));
 			
 			if (row % 2 == 0) {
 				productLabel.addStyleName(AON.CSS.aonOddTableRow());
@@ -1506,13 +1505,12 @@ public class BookingCustomer extends HTMLPanel {
 			rowLabels.add(billingDateLabel);
 			
 			for(Label label : rowLabels) {
-				label.addMouseOverHandler(e -> {
-					addHighlightRow(feeGrid, row);
-				});
-				label.addMouseOutHandler(e -> {
-					removeHighlightRow(feeGrid, row);
-				});
+				label.addMouseOverHandler(e -> addHighlightRow(feeGrid, row));
+				label.addMouseOutHandler(e -> removeHighlightRow(feeGrid, row));
 			}
+			
+			actionBtn.addMouseOverHandler(e -> addHighlightRow(feeGrid, row));
+			actionBtn.addMouseOutHandler(e -> removeHighlightRow(feeGrid, row));
 			
 			if (row % 2 == 0) {
 				productLabel.addStyleName(AON.CSS.aonOddTableRow());
