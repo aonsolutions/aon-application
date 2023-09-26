@@ -1,7 +1,5 @@
 import {
   Component,
-  EventEmitter,
-  Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -9,11 +7,11 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Factory,
   CollectionFactory,
+  ErrorResponse,
   ICollection,
   FilterBuilder,
   IMessageChat,
   IMessage,
-  IFilter,
 } from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
@@ -42,6 +40,8 @@ export class InboxviewComponent implements OnInit {
   datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
 
   messagesData: IMessage = this.entityFactory.createMessage();
+  messageChat: IMessageChat = this.entityFactory.createMessageChat();
+
   messagesChat: ICollection<IMessageChat> =
     this.collectionFactory.createMessageChatCollection();
 
@@ -337,18 +337,16 @@ export class InboxviewComponent implements OnInit {
   }
 
   async createChatMessage(description: string) {
-    if (this.messagesData) {
-      const chatId = this.messagesData.Id;
-      const chatName = this.messagesData.Name;
+    if (this.messagesData || this.messageChat) {
 
       const newMessageChat: IMessageChat = {
-        Id: '',
-        IdMessage: chatId,
-        Name: chatName,
+        Id: this.messageChat.Id,
+        IdMessage: this.messagesData.Id,
+        Name: '',
         Description: description,
         Date: new Date(),
         Type: 'chat',
-        getKey: () => 'fakeKey',
+        getKey: () => this.messageChat.Id,
         getFilterableFields: () => new Map(),
         getSortableFields: () => new Map(),
       };
@@ -362,7 +360,7 @@ export class InboxviewComponent implements OnInit {
         this.messagesChat.add(createdMessageChat);
 
       } catch (error) {
-        console.error('Error al crear el mensaje de chat:', error);
+        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
       }
     }
   }

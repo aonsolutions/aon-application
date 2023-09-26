@@ -9,9 +9,9 @@ let APIEnvironment  = false;
 let test: boolean   = false;
 
 /**
- * 
+ *
  * CONSTS
- * 
+ *
  */
 
 // URL for test environment
@@ -33,7 +33,7 @@ const DELETE_METHOD = 'DELETE';
 
 
 /**
- * 
+ *
  * ERROR DATA
  *
  */
@@ -100,120 +100,120 @@ interface IReportingDataAccessFactory {
 
 export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMultipleObjectCrudFactory<IDocument> {
     createSingleObjectCrud(): ISingleObjectCrud<IDocument> {
-        return new GenericSingleObjectCrud<Document>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Document>(new ApiDocument(), Document) : 
+        return new GenericSingleObjectCrud<Document>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<Document>(new ApiDocument(), Document) :
             new GenericSingleObjectCrudRepository<Document>(new StorableDocument(), Document)
-            ), 
+            ),
             Document);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocument> {
-        return new GenericMultipleObjectCrud<Document>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Document>(new ApiDocument(), Document) : 
+        return new GenericMultipleObjectCrud<Document>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<Document>(new ApiDocument(), Document) :
             new GenericMultipleObjectCrudRepository<Document>(new StorableDocument(), Document)
-            ), 
+            ),
             Document);
     }
 }
 
 export class DocumentTagFactory implements ISingleObjectCrudFactory<IDocumentTag>, IMultipleObjectCrudFactory<IDocumentTag> {
     createSingleObjectCrud(): ISingleObjectCrud<IDocumentTag> {
-        return new GenericSingleObjectCrud<DocumentTag>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<DocumentTag>(new ApiDocumentTag(), DocumentTag) : 
+        return new GenericSingleObjectCrud<DocumentTag>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<DocumentTag>(new ApiDocumentTag(), DocumentTag) :
             new GenericSingleObjectCrudRepository<DocumentTag>(new StorableDocumentTag(), DocumentTag)
-            ), 
+            ),
             DocumentTag);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocumentTag> {
-        return new GenericMultipleObjectCrud<DocumentTag>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<DocumentTag>(new ApiDocumentTag(), DocumentTag) : 
+        return new GenericMultipleObjectCrud<DocumentTag>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<DocumentTag>(new ApiDocumentTag(), DocumentTag) :
             new GenericMultipleObjectCrudRepository<DocumentTag>(new StorableDocumentTag(), DocumentTag)
-            ), 
+            ),
             DocumentTag);
     }
 }
 
 export class CertificateFactory implements ISingleObjectCrudFactory<ICertificate>, IMultipleObjectCrudFactory<ICertificate> {
     createSingleObjectCrud(): ISingleObjectCrud<ICertificate> {
-        return new GenericSingleObjectCrud<Certificate>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Certificate>(new ApiCertificate(), Certificate) : 
+        return new GenericSingleObjectCrud<Certificate>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<Certificate>(new ApiCertificate(), Certificate) :
             new GenericSingleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate)
-            ), 
+            ),
             Certificate);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<ICertificate> {
-        return new GenericMultipleObjectCrud<Certificate>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Certificate>(new ApiCertificate(), Certificate) : 
+        return new GenericMultipleObjectCrud<Certificate>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<Certificate>(new ApiCertificate(), Certificate) :
             new GenericMultipleObjectCrudRepository<Certificate>(new StorableCertificate(), Certificate)
-            ), 
+            ),
             Certificate);
     }
 }
 
 export class FolderFactory implements ISingleObjectCrudFactory<IFolder>, IMultipleObjectCrudFactory<IFolder> {
     createSingleObjectCrud(): ISingleObjectCrud<IFolder> {
-        return new GenericSingleObjectCrud<Folder>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Folder>(new ApiFolder(), Folder) : 
+        return new GenericSingleObjectCrud<Folder>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<Folder>(new ApiFolder(), Folder) :
             new GenericSingleObjectCrudRepository<Folder>(new StorableFolder(), Folder)
-            ), 
+            ),
             Folder);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IFolder> {
-        return new GenericMultipleObjectCrud<Folder>( 
-            (APIEnvironment ? 
-            new APIFolderMultipleObjectCrudRepository() : 
+        return new GenericMultipleObjectCrud<Folder>(
+            (APIEnvironment ?
+            new APIFolderMultipleObjectCrudRepository() :
             new GenericMultipleObjectCrudRepository<Folder>(new StorableFolder(), Folder)
-            ), 
+            ),
             Folder);
     }
 }
 
 export class DocumenNoteFactory implements ISingleObjectCrudFactory<IDocumentNote>, IMultipleObjectCrudFactory<IDocumentNote> {
     createSingleObjectCrud(): ISingleObjectCrud<IDocumentNote> {
-        return new GenericSingleObjectCrud<DocumentNote>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<DocumentNote>(new ApiDocumentNote(), DocumentNote) : 
+        return new GenericSingleObjectCrud<DocumentNote>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<DocumentNote>(new ApiDocumentNote(), DocumentNote) :
             new GenericSingleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote)
-            ), 
+            ),
             DocumentNote);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocumentNote> {
-        return new GenericMultipleObjectCrud<DocumentNote>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<DocumentNote>(new ApiDocumentNote(), DocumentNote) : 
+        return new GenericMultipleObjectCrud<DocumentNote>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<DocumentNote>(new ApiDocumentNote(), DocumentNote) :
             new GenericMultipleObjectCrudRepository<DocumentNote>(new StorableDocumentNote(), DocumentNote)
-            ), 
+            ),
             DocumentNote);
     }
 }
 
 export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMultipleObjectCrudFactory<IMessage> {
     createSingleObjectCrud(): ISingleObjectCrud<IMessage> {
-        return new GenericSingleObjectCrud<Message>( 
-            (APIEnvironment ? 
-            // new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message) : 
-            new APIMessageSingleObjectCrudRepository(new ApiMessage(), Message) : 
+        return new GenericSingleObjectCrud<Message>(
+            (APIEnvironment ?
+            // new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message) :
+            new APIMessageSingleObjectCrudRepository(new ApiMessage(), Message) :
             new GenericSingleObjectCrudRepository<Message>(new StorableMessage(), Message)
-            ), 
+            ),
             Message);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessage> {
-        return new GenericMultipleObjectCrud<Message>( 
-            (APIEnvironment ? 
-            new APIMessageMultipleObjectCrudRepository(new ApiMessage(), Message) : 
+        return new GenericMultipleObjectCrud<Message>(
+            (APIEnvironment ?
+            new APIMessageMultipleObjectCrudRepository(new ApiMessage(), Message) :
             new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message)
-            ), 
+            ),
             Message);
     }
     createMessageSpecificMethods(): IMessageSpecificMethods {
         return new MessageSpecificMethods(
-            (APIEnvironment ? 
+            (APIEnvironment ?
             new APIMessageSpecificMethodsRepository() :
             new LocalMessageSpecificMethodsRepository()
             )
@@ -223,57 +223,57 @@ export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMult
 
 export class TaskHolderFactory implements ISingleObjectCrudFactory<ITaskHolder>, IMultipleObjectCrudFactory<ITaskHolder> {
     createSingleObjectCrud(): ISingleObjectCrud<ITaskHolder> {
-        return new GenericSingleObjectCrud<TaskHolder>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<TaskHolder>(new ApiTaskHolder(), TaskHolder) : 
+        return new GenericSingleObjectCrud<TaskHolder>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<TaskHolder>(new ApiTaskHolder(), TaskHolder) :
             new GenericSingleObjectCrudRepository<TaskHolder>(new StorableTaskHolder(), TaskHolder)
-            ), 
+            ),
             TaskHolder);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<ITaskHolder> {
-        return new GenericMultipleObjectCrud<TaskHolder>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<TaskHolder>(new ApiTaskHolder(), TaskHolder) : 
+        return new GenericMultipleObjectCrud<TaskHolder>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<TaskHolder>(new ApiTaskHolder(), TaskHolder) :
             new GenericMultipleObjectCrudRepository<TaskHolder>(new StorableTaskHolder(), TaskHolder)
-            ), 
+            ),
             TaskHolder);
     }
 }
 
 export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat>, IMultipleObjectCrudFactory<IMessageChat> {
     createSingleObjectCrud(): ISingleObjectCrud<IMessageChat> {
-        return new GenericSingleObjectCrud<MessageChat>( 
-            (APIEnvironment ? 
-            new APIMessageChatSingleObjectCrudRepository(new ApiMessageChat(), MessageChat) : 
+        return new GenericSingleObjectCrud<MessageChat>(
+            (APIEnvironment ?
+            new APIMessageChatSingleObjectCrudRepository(new ApiMessageChat(), MessageChat) :
             new GenericSingleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat)
-            ), 
+            ),
             MessageChat);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessageChat> {
-        return new GenericMultipleObjectCrud<MessageChat>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<MessageChat>(new ApiMessageChat(), MessageChat) : 
+        return new GenericMultipleObjectCrud<MessageChat>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<MessageChat>(new ApiMessageChat(), MessageChat) :
             new GenericMultipleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat)
-            ), 
+            ),
             MessageChat);
     }
 }
 
 export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>, IMultipleObjectCrudFactory<IEnterprise> {
     createSingleObjectCrud(): ISingleObjectCrud<IEnterprise> {
-        return new GenericSingleObjectCrud<Enterprise>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Enterprise>(new ApiEnterprise(), Enterprise) : 
+        return new GenericSingleObjectCrud<Enterprise>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<Enterprise>(new ApiEnterprise(), Enterprise) :
             new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise)
-            ), 
+            ),
             Enterprise);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IEnterprise> {
-        return new GenericMultipleObjectCrud<Enterprise>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Enterprise>(new ApiEnterprise(), Enterprise) : 
+        return new GenericMultipleObjectCrud<Enterprise>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<Enterprise>(new ApiEnterprise(), Enterprise) :
             new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise)
-            ), 
+            ),
             Enterprise);
     }
     createSpecificMethods(): IEnterpriseSpecificMethods {
@@ -283,19 +283,19 @@ export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>,
 
 export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleObjectCrudFactory<IBank> {
     createSingleObjectCrud(): ISingleObjectCrud<IBank> {
-        return new GenericSingleObjectCrud<Bank>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Bank>(new ApiBank(), Bank) : 
+        return new GenericSingleObjectCrud<Bank>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<Bank>(new ApiBank(), Bank) :
             new GenericSingleObjectCrudRepository<Bank>(new StorableBank(), Bank)
-            ), 
+            ),
             Bank);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IBank> {
-        return new GenericMultipleObjectCrud<Bank>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Bank>(new ApiBank(), Bank) : 
+        return new GenericMultipleObjectCrud<Bank>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<Bank>(new ApiBank(), Bank) :
             new GenericMultipleObjectCrudRepository<Bank>(new StorableBank(), Bank)
-            ), 
+            ),
             Bank);
     }
 }
@@ -311,38 +311,38 @@ export class RegistryEnterpriseFactory implements ISingleObjectCrudFactory<IRegi
 
 export class TaxModelFactory implements ISingleObjectCrudFactory<ITaxModel>, IMultipleObjectCrudFactory<ITaxModel> {
     createSingleObjectCrud(): ISingleObjectCrud<ITaxModel> {
-        return new GenericSingleObjectCrud<TaxModel>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<TaxModel>(new ApiTaxModel(), TaxModel) : 
+        return new GenericSingleObjectCrud<TaxModel>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<TaxModel>(new ApiTaxModel(), TaxModel) :
             new GenericSingleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel)
-            ), 
+            ),
             TaxModel);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<ITaxModel> {
-        return new GenericMultipleObjectCrud<TaxModel>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<TaxModel>(new ApiTaxModel(), TaxModel) : 
+        return new GenericMultipleObjectCrud<TaxModel>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<TaxModel>(new ApiTaxModel(), TaxModel) :
             new GenericMultipleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel)
-            ), 
+            ),
             TaxModel);
     }
 }
 
 export class EmployeeFactory implements ISingleObjectCrudFactory<IEmployee>, IMultipleObjectCrudFactory<IEmployee> {
     createSingleObjectCrud(): ISingleObjectCrud<IEmployee> {
-        return new GenericSingleObjectCrud<Employee>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Employee>(new ApiEmployee(), Employee) : 
+        return new GenericSingleObjectCrud<Employee>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<Employee>(new ApiEmployee(), Employee) :
             new GenericSingleObjectCrudRepository<Employee>(new StorableEmployee(), Employee)
-            ), 
+            ),
             Employee);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IEmployee> {
-        return new GenericMultipleObjectCrud<Employee>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Employee>(new ApiEmployee(), Employee) : 
+        return new GenericMultipleObjectCrud<Employee>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<Employee>(new ApiEmployee(), Employee) :
             new GenericMultipleObjectCrudRepository<Employee>(new StorableEmployee(), Employee)
-            ), 
+            ),
             Employee);
     }
 }
@@ -362,19 +362,19 @@ export class ReportingFactory implements IReportingDataAccessFactory {
 
 export class MarkFactory implements ISingleObjectCrudFactory<IMark>, IMultipleObjectCrudFactory<IMark> {
     createSingleObjectCrud(): ISingleObjectCrud<IMark> {
-        return new GenericSingleObjectCrud<Mark>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<Mark>(new ApiMark(), Mark) : 
+        return new GenericSingleObjectCrud<Mark>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<Mark>(new ApiMark(), Mark) :
             new GenericSingleObjectCrudRepository<Mark>(new StorableMark(), Mark)
-            ), 
+            ),
             Mark);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMark> {
-        return new GenericMultipleObjectCrud<Mark>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<Mark>(new ApiMark(), Mark) : 
+        return new GenericMultipleObjectCrud<Mark>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<Mark>(new ApiMark(), Mark) :
             new GenericMultipleObjectCrudRepository<Mark>(new StorableMark(), Mark)
-            ), 
+            ),
             Mark);
     }
     createSpecificMethods(): IMarkSpecificMethods {
@@ -384,19 +384,19 @@ export class MarkFactory implements ISingleObjectCrudFactory<IMark>, IMultipleOb
 
 export class MarkDetailFactory implements ISingleObjectCrudFactory<IMarkDetail>, IMultipleObjectCrudFactory<IMarkDetail> {
     createSingleObjectCrud(): ISingleObjectCrud<IMarkDetail> {
-        return new GenericSingleObjectCrud<MarkDetail>( 
-            (APIEnvironment ? 
-            new APIGenericSingleObjectCrudRepository<MarkDetail>(new ApiMarkDetail(), MarkDetail) : 
+        return new GenericSingleObjectCrud<MarkDetail>(
+            (APIEnvironment ?
+            new APIGenericSingleObjectCrudRepository<MarkDetail>(new ApiMarkDetail(), MarkDetail) :
             new GenericSingleObjectCrudRepository<MarkDetail>(new StorableMarkDetail(), MarkDetail)
-            ), 
+            ),
             MarkDetail);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMarkDetail> {
-        return new GenericMultipleObjectCrud<MarkDetail>( 
-            (APIEnvironment ? 
-            new APIGenericMultipleObjectCrudRepository<MarkDetail>(new ApiMarkDetail(), MarkDetail) : 
+        return new GenericMultipleObjectCrud<MarkDetail>(
+            (APIEnvironment ?
+            new APIGenericMultipleObjectCrudRepository<MarkDetail>(new ApiMarkDetail(), MarkDetail) :
             new GenericMultipleObjectCrudRepository<MarkDetail>(new StorableMarkDetail(), MarkDetail)
-            ), 
+            ),
             MarkDetail);
     }
 }
@@ -490,7 +490,7 @@ class ProductCodeFactory implements IMultipleObjectCrudFactory<IProductCode> {
     createMultipleObjectCrud(): IMultipleObjectReader<IProductCode> {
         return new GenericMultipleObjectCrud<ProductCode>(new GenericMultipleObjectCrudRepository<ProductCode>(new StorableProductCode(), ProductCode), ProductCode);
     }
-} 
+}
 
 class ProductClassFactory implements IMultipleObjectCrudFactory<IProductClass> {
     createMultipleObjectCrud(): IMultipleObjectReader<IProductClass> {
@@ -663,7 +663,7 @@ interface IReportingDataAccess {
 }
 
 /**
- * Interface for specific methods of message 
+ * Interface for specific methods of message
  */
 interface IMessageSpecificMethods {
     /**
@@ -740,32 +740,32 @@ interface IInvoiceSpecificMethods {
     getTaxList(filter?: IFilter): Promise<IResponse<ICollection<ITax>>>;
     /**
      * Returns all the IRPF
-     * @param filter 
+     * @param filter
      */
     getIRPFList(filter?: IFilter): Promise<IResponse<ICollection<IIRPF>>>;
     /**
      * Returns all the invoice categories
-     * @param filter 
+     * @param filter
      */
     getInvoiceCategoryList(filter?: IFilter): Promise<IResponse<ICollection<IInvoiceCategory>>>;
     /**
      * Returns all the invoice series
-     * @param filter 
+     * @param filter
      */
     getInvoiceSerieList(filter?: IFilter): Promise<IResponse<ICollection<IInvoiceSerie>>>;
     /**
      * Returns all the invoice types
-     * @param filter 
+     * @param filter
      */
     getTransactionTypeList(filter?: IFilter): Promise<IResponse<ICollection<IInvoiceTransactionType>>>;
     /**
      * Returns all the payment methods
-     * @param filter 
+     * @param filter
      */
     getPaymentMethodList(filter?: IFilter): Promise<IResponse<ICollection<ITax>>>;
     /**
      * Returns all the invoice activities
-     * @param filter 
+     * @param filter
      */
     getInvoiceActivityList(filter?: IFilter): Promise<IResponse<ICollection<ITax>>>;
 }
@@ -982,9 +982,9 @@ class MessageSpecificMethods implements IMessageSpecificMethods {
 }
 
 class MarkSpecificMethods implements IMarkSpecificMethods {
-    
+
     repository = new APIMarkSpecificMethodsRepository();
-    
+
     async getMarksOfOneUser(userId: string, filter?: IFilter): Promise<IResponse<ICollection<IMark>>> {
         try{
             return new Response<ICollection<IMark>>(await this.repository.getMarksOfOneUser(userId, filter));
@@ -1041,7 +1041,7 @@ class ProductSpecificMethods implements IProductSpecificMethods {
             throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
         }
     }
-    
+
 }
 
 class InvoiceSpecificMethods implements IInvoiceSpecificMethods {
@@ -1061,7 +1061,7 @@ class InvoiceSpecificMethods implements IInvoiceSpecificMethods {
 
     async getIRPFList(filter?: IFilter | undefined): Promise<IResponse<ICollection<IIRPF>>> {
         try {
-            return new Response<ICollection<IIRPF>>(this.SpecificMethodsRepository.getIRPFList());   
+            return new Response<ICollection<IIRPF>>(this.SpecificMethodsRepository.getIRPFList());
         } catch (error) {
             throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
         }
@@ -1473,10 +1473,10 @@ class AuthenticationRepository implements IAuthenticationRepository {
     }
 
     async logout(): Promise<void> {
-        if(localStorage.getItem('token')) { 
-            // localStorage.removeItem('token'); 
+        if(localStorage.getItem('token')) {
+            // localStorage.removeItem('token');
             // localStorage.removeItem('enterprise');
-            // localStorage.removeItem('domainId'); 
+            // localStorage.removeItem('domainId');
             // localStorage.removeItem('domainName');
             // localStorage.removeItem('user');
             localStorage.clear();
@@ -1491,7 +1491,7 @@ class AuthenticationRepository implements IAuthenticationRepository {
 }
 
 
-// REPOSITORIO PARA LAS LLAMADAS GLOBALES A LA API PARA OPERACIONES CRUD SOBRE UN SOLO OBJETO, 
+// REPOSITORIO PARA LAS LLAMADAS GLOBALES A LA API PARA OPERACIONES CRUD SOBRE UN SOLO OBJETO,
 // SI SE NECESITA UN COMPORTAMIENTO ESPECIFICO HEREDAR Y SOBREESCRIBIR DICHO MÉTODO
 class APIGenericSingleObjectCrudRepository<T extends IModel> implements ISingleObjectCrudRepository<T> {
     protected httpRequest: IApiHttpRequest = new ApiHttpRequest();
@@ -1537,7 +1537,7 @@ class APIGenericSingleObjectCrudRepository<T extends IModel> implements ISingleO
 
 }
 
-// REPOSITORIO PARA LAS LLAMADAS GLOBALES A LA API PARA OPERACIONES CRUD SOBRE UN CONJUNTO DE OBJETOS, 
+// REPOSITORIO PARA LAS LLAMADAS GLOBALES A LA API PARA OPERACIONES CRUD SOBRE UN CONJUNTO DE OBJETOS,
 // SI SE NECESITA UN COMPORTAMIENTO ESPECIFICO HEREDAR Y SOBREESCRIBIR DICHO MÉTODO
 class APIGenericMultipleObjectCrudRepository<T extends IModel> implements IMultipleObjectCrudRepository<T> {
 
@@ -1606,7 +1606,7 @@ class APIFolderMultipleObjectCrudRepository extends APIGenericMultipleObjectCrud
             filter.fields?.set('workplace', workplaces)
         }
         collection.copyArrayToCollection((await super.get(filter ? filter : filterFolder.getFilter())).toArray())
-        if(filter && filter.fields || filter?.intervalFields) collection = collection.filter(filter); 
+        if(filter && filter.fields || filter?.intervalFields) collection = collection.filter(filter);
         if(filter && filter.orderBy) collection.sort(filter);
         return collection;
     }
@@ -1739,7 +1739,7 @@ class APIMessageSpecificMethodsRepository implements IMessageSpecificMethodsRepo
             let result = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/notification/mark-read-notification', POST_METHOD, {}, {source_id: element.Id});
             if(result.success && result.success == true)
                 return true;
-            else 
+            else
                 return false;
         }
         else
@@ -1774,7 +1774,7 @@ class LocalMessageSpecificMethodsRepository implements IMessageSpecificMethodsRe
 class APIMarkSpecificMethodsRepository implements IMarkSpecificMethodsRepository {
     private http: ApiHttpRequest = new ApiHttpRequest();
     private model: ApiMark = new ApiMark();
-    
+
     async getMarksOfOneUser(userId: string, filter?: IFilter): Promise<ICollection<IMark>> {
         let url = '/ms/api/timecontrol/list-holder';
         let params = {
@@ -1820,11 +1820,11 @@ class APIAuthenticationRepository implements IAuthenticationRepository {
     }
 
     async logout(): Promise<void> {
-        if(localStorage.getItem('token')) { 
-            localStorage.removeItem('token'); 
+        if(localStorage.getItem('token')) {
+            localStorage.removeItem('token');
             localStorage.removeItem('enterprise');
-            localStorage.removeItem('domainId'); 
-            localStorage.removeItem('domainName'); 
+            localStorage.removeItem('domainId');
+            localStorage.removeItem('domainName');
         }
         else throw new ErrorResponse('0111');
     }
@@ -2082,7 +2082,7 @@ class ApiHttpRequest implements IApiHttpRequest {
         let dataJson = await result.json();
         return dataJson;
     }
-    
+
     makeURL(url: string, params: any): string {
         const esc = encodeURIComponent;
         return url + '?' + Object.keys(params).map(k => `${esc(k)}=${esc(params[k as keyof typeof params])}`).join('&')
@@ -2113,7 +2113,7 @@ export class Response<T> implements IResponse<T> {
     }
 }
 
-class ErrorResponse implements IResponse<string> {
+export class ErrorResponse implements IResponse<string> {
     code: string;
     description: string;
     result: string;
@@ -2131,7 +2131,7 @@ class LocalStorage<T extends ICollectable> implements ILocalStorage<T> {
     constructor(type: { new (): T }) {
         this.type = type;
     }
-    
+
     read(model:string): ICollection<T> {
         let collection: ICollection<T> = new Collection<T>();
         if(localStorage.getItem(model)){
@@ -2444,7 +2444,7 @@ interface IModel extends ICollectable {
      * API json object
      */
     ApiObject: any;
-    
+
 }
 
 interface IApiModel {
@@ -2655,7 +2655,7 @@ export interface IContract extends ICollectable {
 
 export interface IMark extends ICollectable {
     // Id: string, // ????
-    // Lastname: string, 
+    // Lastname: string,
     // Pause: IPause,
     // Ccc: string, // código cuenta de cotización
     // Workplace: string,
@@ -3133,9 +3133,9 @@ export class Factory implements IFactory {
         return new InvoiceExpirationLine(date, paymentMethod, bankAccount, amount);
     }
 
-    createInvoice(serie?: IInvoiceSerie, invoiceNumber?: string, date?: Date, totalAmount?: number, contact?: IContact, category?: IInvoiceCategory, 
-        lines?: ICollection<IInvoiceLine>, transactionType?: IInvoiceTransactionType, activity?: IInvoiceActivity, criCaja?: boolean, re?: boolean, 
-        regAgri?: boolean, tax?: ITax, taxBase?: number, taxQuota?: number, irpf?: IIRPF, irpfbase?: number, irpfquota?: number, 
+    createInvoice(serie?: IInvoiceSerie, invoiceNumber?: string, date?: Date, totalAmount?: number, contact?: IContact, category?: IInvoiceCategory,
+        lines?: ICollection<IInvoiceLine>, transactionType?: IInvoiceTransactionType, activity?: IInvoiceActivity, criCaja?: boolean, re?: boolean,
+        regAgri?: boolean, tax?: ITax, taxBase?: number, taxQuota?: number, irpf?: IIRPF, irpfbase?: number, irpfquota?: number,
         type?: InvoiceType, rectified?: boolean): IInvoice {
         return new Invoice(serie, invoiceNumber, date, totalAmount, contact, category, lines, transactionType, activity, criCaja, re, regAgri, tax, taxBase, taxQuota, irpf, irpfbase, irpfquota, type, rectified);
     }
@@ -3422,7 +3422,7 @@ class Document implements IDocument, IModel {
 
     public set Id(id: string) {
         this.id = id;
-    } 
+    }
 
     getKey(): string {
         return this.path + '/' + this.id;
@@ -3858,7 +3858,7 @@ class Enterprise implements IEnterprise, IModel {
     public get ApiObject(): any {
         return this.apiObject;
     }
-    
+
     public set ApiObject(value: any) {
         this.apiObject = value;
     }
@@ -4060,7 +4060,7 @@ class ApiEnterprise extends Enterprise implements IApiModel {
             enterprise.Key = data.document
             enterprise.Name = data.name
             enterprise.Phone = '' // TO DO
-            enterprise.ProfilePhoto = 
+            enterprise.ProfilePhoto =
             enterprise.Province = data.address.province
             enterprise.Registry = data.id
             enterprise.SocialReason = '' // TO DO
@@ -4235,7 +4235,7 @@ class DocumentNote implements IDocumentNote, IModel  {
     public get ApiObject(): any {
         return this.apiObject;
     }
-    
+
     public set ApiObject(value: any) {
         this.apiObject = value;
     }
@@ -4324,7 +4324,7 @@ class Bank implements IBank, IModel  {
     private total: number;
     private logo: string;
     protected apiObject: any;
-    
+
     constructor(name?: string, total?: number, logo?: string, swift?: string, iban?: string, lastUpdate?: Date, syncStatus?: string) {
         this.name = name || '';
         this.total = total || 0;
@@ -4359,7 +4359,7 @@ class Bank implements IBank, IModel  {
     public set SyncStatus(value: string) {
         this.syncStatus = value;
     }
-    
+
     public get SwiftBic(): string {
         return this.swiftBic;
     }
@@ -4371,11 +4371,11 @@ class Bank implements IBank, IModel  {
     public get ApiObject(): any {
         return this.apiObject;
     }
-    
+
     public set ApiObject(value: any) {
         this.apiObject = value;
     }
-    
+
     public get Name(): string {
         return this.name;
     }
@@ -4490,7 +4490,7 @@ class TaxModel implements ITaxModel, IModel  {
     public get ApiObject(): any {
         return this.apiObject;
     }
-    
+
     public set ApiObject(value: any) {
         this.apiObject = value;
     }
@@ -4810,7 +4810,7 @@ class ApiMessage extends Message implements IApiModel {
             else
                 return ['/ms/api/notification?page=1&perPage=100','/ms/api/task?source=query&page=1&perPage=100','/ms/api/task?source=task&page=1&perPage=100']
         }else if (currentMethod == GET_SINGLE){
-            if(filter && filter.fields?.has('id') &&  
+            if(filter && filter.fields?.has('id') &&
             (filter.fields.get('id')[0].toLowerCase().split(';')[1] == 'consulta' || filter.fields.get('id')[0].toLowerCase().split(';')[1] == 'tarea'))
                 return ['/ms/api/task/one?id=' + filter.fields.get('id')[0].split(';')[0]];
         }else if(currentMethod == UPDATE_SINGLE){
@@ -4944,7 +4944,7 @@ class TaskHolder implements ITaskHolder, IModel {
     getSortableFields(): Map<string, any> {
         throw new Error("Method not implemented.");
     }
-    
+
 }
 
 class ApiTaskHolder extends TaskHolder implements IApiModel {
@@ -4964,7 +4964,7 @@ class ApiTaskHolder extends TaskHolder implements IApiModel {
         throw new Error("Method not implemented.");
     }
     parseDataToReceive(data: any, currentMethod: string, filter?: IFilter | undefined) {
-        let taskHolder = new TaskHolder(); 
+        let taskHolder = new TaskHolder();
         taskHolder.ApiObject = data;
         taskHolder.Id = data.id;
         taskHolder.Key = data.id;
@@ -4974,7 +4974,7 @@ class ApiTaskHolder extends TaskHolder implements IApiModel {
     localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
         return true;
     }
-    
+
 }
 
 class StorableTaskHolder extends TaskHolder implements IStorable<TaskHolder> {
@@ -5001,7 +5001,7 @@ class MessageChat implements IMessageChat, IModel  {
     public get ApiObject(): any {
         return this.apiObject;
     }
-    
+
     public set ApiObject(value: any) {
         this.apiObject = value;
     }
@@ -5156,7 +5156,7 @@ class Employee implements IEmployee, IModel  {
     public get ApiObject(): any {
         return this.apiObject;
     }
-    
+
     public set ApiObject(value: any) {
         this.apiObject = value;
     }
@@ -5327,7 +5327,7 @@ class Contract implements IContract, IModel  {
         this.workCenter = workCenter || '';
         this.active = active || false;
     }
-    
+
 
     public get Name(): string {
       return this.name;
@@ -5596,7 +5596,7 @@ class Mark implements IMark, IModel  {
 //     public get ApiObject(): any {
 //         return this.apiObject;
 //     }
-    
+
 //     public set ApiObject(value: any) {
 //         this.apiObject = value;
 //     }
@@ -5922,7 +5922,7 @@ class MarkDetail implements IMarkDetail, IModel {
         map.set('location', this.location);
         return map;
     }
-    
+
 }
 
 class StorableMarkDetail extends MarkDetail implements IStorable<MarkDetail> {
@@ -5967,7 +5967,7 @@ class User implements IUser, IModel  {
     public get ApiObject(): any {
         return this.apiObject;
     }
-    
+
     public set ApiObject(value: any) {
         this.apiObject = value;
     }
@@ -6965,7 +6965,7 @@ class InvoiceExpirationLine implements IInvoiceExpirationLine, IModel {
     amount: number;
     key: string;
     apiObject: any;
-    
+
     constructor(date?: Date, paymentMethod?: IPaymentMethod, bankAccount?: string, amount?: number){
         this.apiObject = {};
         this.key = KeyGenerator.generate(15);
@@ -7072,9 +7072,9 @@ class Invoice implements IInvoice, IModel {
     rectified: boolean;
     status: InvoiceStatus;
 
-    constructor(serie?: IInvoiceSerie, invoiceNumber?: string, date?: Date, totalAmount?: number, contact?: IContact, category?: IInvoiceCategory, 
-    lines?: ICollection<IInvoiceLine>, transactionType?: IInvoiceTransactionType, activity?: IInvoiceActivity, criCaja?: boolean, re?: boolean, 
-    regAgri?: boolean, tax?: ITax, taxBase?: number, taxQuota?: number, irpf?: IIRPF, irpfbase?: number, irpfquota?: number, type?: InvoiceType, 
+    constructor(serie?: IInvoiceSerie, invoiceNumber?: string, date?: Date, totalAmount?: number, contact?: IContact, category?: IInvoiceCategory,
+    lines?: ICollection<IInvoiceLine>, transactionType?: IInvoiceTransactionType, activity?: IInvoiceActivity, criCaja?: boolean, re?: boolean,
+    regAgri?: boolean, tax?: ITax, taxBase?: number, taxQuota?: number, irpf?: IIRPF, irpfbase?: number, irpfquota?: number, type?: InvoiceType,
     rectified?: boolean, status?: InvoiceStatus){
         this.serie = serie || new InvoiceSerie();
         this.invoiceNumber = invoiceNumber || '';
@@ -7293,7 +7293,7 @@ class Invoice implements IInvoice, IModel {
     public set InvoiceExpirationLines(value: ICollection<IInvoiceExpirationLine>) {
         this.invoiceExpirationLines = value;
     }
-    
+
     getKey(): string {
         return this.key;
     }
@@ -7479,11 +7479,11 @@ let storableProducts = new StorableProduct();
 let localProducts = new LocalStorage<Product>(Product);
 products = localProducts.read(storableProducts.getLocalStorage())
 if(products.size() == 0){
-    products.add(new Product(productCodes.toArray()[0], 'Producto 1', productCategories.toArray()[0], productClasses.toArray()[0], productCategories.toArray()[0], productTypes.toArray()[0], 
+    products.add(new Product(productCodes.toArray()[0], 'Producto 1', productCategories.toArray()[0], productClasses.toArray()[0], productCategories.toArray()[0], productTypes.toArray()[0],
         productStatuses.toArray()[0], irpf.toArray()[0], 'bar code 1', 'descripcion del producto', 32.23, 23.2, 132, 123));
-    products.add(new Product(productCodes.toArray()[1], 'Producto 2', productCategories.toArray()[1], productClasses.toArray()[1], productCategories.toArray()[1], productTypes.toArray()[1], 
+    products.add(new Product(productCodes.toArray()[1], 'Producto 2', productCategories.toArray()[1], productClasses.toArray()[1], productCategories.toArray()[1], productTypes.toArray()[1],
         productStatuses.toArray()[1], irpf.toArray()[1], 'bar code 2', 'descripcion del producto 2', 123, 54, 32, 323));
-    products.add(new Product(productCodes.toArray()[0], 'Producto 3', productCategories.toArray()[0], productClasses.toArray()[0], productCategories.toArray()[0], productTypes.toArray()[0], 
+    products.add(new Product(productCodes.toArray()[0], 'Producto 3', productCategories.toArray()[0], productClasses.toArray()[0], productCategories.toArray()[0], productTypes.toArray()[0],
         productStatuses.toArray()[0], irpf.toArray()[0], 'bar code 3', 'descripcion del producto 3', 23, 22, 32, 323));
     localProducts.write(storableProducts.getLocalStorage(), products);
 }
@@ -7514,7 +7514,7 @@ let contacts: ICollection<Contact> = new Collection<Contact>();
 let storableContacs = new StorableContact();
 let localContacts = new LocalStorage<Contact>(Contact);
 contacts = localContacts.read(storableContacs.getLocalStorage())
-if(contacts.size() == 0){ 
+if(contacts.size() == 0){
     contacts.add(new Contact('Nombre del contacto', 'Comercial', 'España', '123456789', 'Calle falsa 123', 'asd@example.com', '2431412413', 'www.123.com', '123456789', paymentMethods.toArray()[0], invoiceTransactionTypes.toArray()[0], false, false));
     contacts.add(new Contact('Contacto test', 'Nombre comercial', 'España', '123456789', 'Calle falsa asd', '123@example.com', '4123143232', 'www.qwe.com', '123456789', paymentMethods.toArray()[1], invoiceTransactionTypes.toArray()[1], false, false));
     contacts.add(new Contact('Contacto de prueba', 'Comercial test', 'España', '123456789', 'Calle falsa 123', 'qwe@example.com', '537534534534', 'www.asd.com', '123456789', paymentMethods.toArray()[2], invoiceTransactionTypes.toArray()[2], false, false));
@@ -7793,7 +7793,7 @@ if(test){
     /*
         TEST FOR DOCUMENTS
     */
-    
+
     let documentFactory = new DocumentFactory();
     let filterBuider =  new FilterBuilder();
     filterBuider.addField('path','/a_contabilizar');
@@ -7834,7 +7834,7 @@ if(test){
     /**
         TEST FOR DOCUMENT_TAGS
      */
-    
+
     // let tagFactory = new DocumentTagFactory();
     // tagFactory.createMultipleObjectCrud().getCollection().then((response) => {
     //     console.log('TEST DOCUMENT_TAG GET LIST', response.result.toArray());
@@ -7858,11 +7858,11 @@ if(test){
     // }).catch((error) => {
     //     console.log('ERROR TEST DOCUMENT_TAG UPDATE', error)
     // })
-    
+
     /*
         TEST FOR ENTERPRISE
     */
-    
+
     let enterpriseFactory = new EnterpriseFactory();
     enterpriseFactory.createMultipleObjectCrud().getCollection().then((response) => {
         console.log('TEST GET ENTERPRISES', response.result.toArray());
@@ -7874,12 +7874,12 @@ if(test){
     }).catch((error) => {
         console.log('ERROR TEST GET ENTERPRISE BY ID', error)
     })
-    
-    
+
+
     /*
         TEST FOR MESSAGES
     */
-    
+
     let filterMessage = new FilterBuilder();
     let messageFactory = new MessageFactory();
     filterMessage.addField('type','consulta');
@@ -7914,7 +7914,7 @@ if(test){
         messageFactory.createSingleObjectCrud().getElement(response.result.toArray()[0].Id).then((element) => {
             console.log('TEST MESSAGE GET ONE ', element.result);
         }).catch((error) => {
-            console.log('ERROR TEST MESSAGE GET ONE ', error)    
+            console.log('ERROR TEST MESSAGE GET ONE ', error)
         })
     }).catch((error) => {
         console.log('ERROR TEST GET ONE MESSAGE', error)
@@ -7992,7 +7992,7 @@ if(test){
     /*
         TEST FOR MESSAGE CHAT
     */
-    
+
     let filterMessageChat = new FilterBuilder();
     let filterMessage2 = new FilterBuilder();
     let messageChatFactory = new MessageChatFactory();
@@ -8032,13 +8032,13 @@ if(test){
     }).catch((error) => {
         console.log('ERROR TEST TASKHOLDERS GET ONE', error)
     })
-    
-    
-    
+
+
+
     /*
         TEST FOR TAXMODELS
     */
-    
+
     let taxFactory = new TaxModelFactory();
     let filterTax = new FilterBuilder();
     filterTax.addField('trimester','T3')
@@ -8047,23 +8047,23 @@ if(test){
     }).catch((error) => {
         console.log('ERROR TEST TAXMODELS GET LIST', error)
     })
-    
+
     /*
         TEST FOR BANKS
     */
-    
+
     let bankFactory = new BankFactory();
     bankFactory.createMultipleObjectCrud().getCollection().then((response) => {
         console.log('TEST BANKS GET LIST', response.result.toArray());
     }).catch((error) => {
         console.log('ERROR TEST BANKS GET LIST', error)
     })
-    
-    
+
+
     /*
         TEST FOR FOLDERS
     */
-    
+
     let folderFactory = new FolderFactory();
     folderFactory.createMultipleObjectCrud().getCollection().then((response) =>  {
         console.log('TEST FOLDERS GET LIST', response.result.toArray());
@@ -8078,13 +8078,13 @@ if(test){
     let markFactory = new MarkFactory();
     let markFilter = new FilterBuilder();
     markFilter.addField('idUser', localStorage.getItem('login'))
-    
+
     markFactory.createMultipleObjectCrud().getCollection().then((response) => {
         console.log('TEST MARKS GET LIST', response.result.toArray());
     }).catch((error) => {
         console.log('ERROR TEST MARKS GET LIST', error)
     })
-    
+
     markFactory.createSpecificMethods().getMarksOfOneUser(localStorage.getItem('registry') || '', markFilter.getFilter()).then((response) => {
         console.log('TEST MARKS GET LIST OF ONE USER', response.result.toArray());
     }).catch((error) => {

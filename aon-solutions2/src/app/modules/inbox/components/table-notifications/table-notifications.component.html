@@ -5,5 +5,6 @@
   [displayedColumns]="displayedColumns"
   [data]="bodyTable"
   (listenParentRow)="rowClick($event)"
+  *ngIf="bodyTable && bodyTable.length > 0"
 >
 </app-table>

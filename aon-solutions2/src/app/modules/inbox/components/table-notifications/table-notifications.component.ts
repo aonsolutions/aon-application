@@ -12,6 +12,7 @@ import {
   FilterBuilder,
   ICollection,
   IMessage,
+  StatusMessage,
 } from 'libraries/AonSDK/aon';
 import { Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
@@ -160,11 +161,15 @@ export class TableNotificationsComponent implements OnChanges {
             column.description = message.Description;
             // Fecha
             column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
-            column.class = message.Status == 'nueva' ? 'border-red' : '';
+            column.class = message.Status == StatusMessage.NUEVA ? 'border-red' : '';
             tableRow.push(column);
 
-            if (message.Status.toLowerCase().includes('nueva')) {
-              pendingNotificacionsFound = true;
+            if (message.Status === StatusMessage.NUEVA) {
+              message.Status = StatusMessage.VISTA;
+
+              this.messageService.updateMessage(message).then(updatedMessage => {
+                console.log(`Notificación marcada como vista: ${updatedMessage.Id}`);
+              });
             }
           }
         });
@@ -178,7 +183,14 @@ export class TableNotificationsComponent implements OnChanges {
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
-  rowClick(message: any) {
+  rowClick(message: IMessage) {
+    this.markAsViewed(message);
+    console.log('message', message.Status);
+
     this.rowClicked.emit(message);
+  }
+
+  markAsViewed(message: IMessage) {
+
   }
 }
