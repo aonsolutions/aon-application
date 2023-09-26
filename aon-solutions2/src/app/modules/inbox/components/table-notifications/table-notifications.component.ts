@@ -18,6 +18,7 @@ import { Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { IFilter } from '../../../../../../libraries/AonSDK/aon';
 
 @Component({
   selector: 'app-table-notifications',
@@ -29,13 +30,14 @@ export class TableNotificationsComponent implements OnChanges {
   @Input() filterDate: number = 0;
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
   @Input() filterTabSelec: number = 0;
-  @Output() noPendingNotification: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() noPendingNotification: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
 
   filterStatus: string[] = ['todas', 'nueva', 'vista'];
   bodyTable: any[] = [];
   totalMessages: number = 0;
-  lenghtTitle   : number = 30;
-  lenghtMensage : number = 50;
+  lenghtTitle: number = 30;
+  lenghtMensage: number = 50;
 
   messages: ICollection<IMessage> =
     new CollectionFactory().createMessageCollection();
@@ -60,7 +62,6 @@ export class TableNotificationsComponent implements OnChanges {
     description: 'Description',
     date: 'Date',
   };
-
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateTableData();
@@ -99,13 +100,21 @@ export class TableNotificationsComponent implements OnChanges {
 
   private getStartDateOfMonth(): string {
     const currentDate = new Date();
-    const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const startDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
     return this.formatDate(startDate);
   }
 
   private getEndDateOfMonth(): string {
     const currentDate = new Date();
-    const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    const endDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    );
     return this.formatDate(endDate);
   }
 
@@ -146,7 +155,7 @@ export class TableNotificationsComponent implements OnChanges {
             this.filterStatus[this.filterTabSelec] === 'todas'
           ) {
             const lowerCaseStatus = message.Status.toLowerCase();
-            console.log(lowerCaseStatus);
+
             column.status = {
               icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
               text: `<span class="${
@@ -161,16 +170,9 @@ export class TableNotificationsComponent implements OnChanges {
             column.description = message.Description;
             // Fecha
             column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
-            column.class = message.Status == StatusMessage.NUEVA ? 'border-red' : '';
+            column.class =
+              message.Status == StatusMessage.NUEVA ? 'border-red' : '';
             tableRow.push(column);
-
-            if (message.Status === StatusMessage.NUEVA) {
-              message.Status = StatusMessage.VISTA;
-
-              this.messageService.updateMessage(message).then(updatedMessage => {
-                console.log(`Notificación marcada como vista: ${updatedMessage.Id}`);
-              });
-            }
           }
         });
 
@@ -183,14 +185,29 @@ export class TableNotificationsComponent implements OnChanges {
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
-  rowClick(message: IMessage) {
-    this.markAsViewed(message);
-    console.log('message', message.Status);
+  // rowClick(message: IMessage) {
+  //   this.rowClicked.emit(message);
+  // }
 
+  rowClick(message: IMessage) {
     this.rowClicked.emit(message);
+    console.log('message',message);
+
+    this.updateStatus(message);
+    console.log('pilla updateStatus');
   }
 
-  markAsViewed(message: IMessage) {
+  updateStatus(message: IMessage) {
+    if (message.Status == StatusMessage.NUEVA) {
+      message.Status = StatusMessage.VISTA;
 
+      try {
+        this.messageService.updateMessage(message);
+
+        this.updateTableData();
+      } catch (error) {
+        console.error('Error al actualizar el mensaje:', error);
+      }
+    }
   }
 }

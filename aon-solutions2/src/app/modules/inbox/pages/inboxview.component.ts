@@ -242,6 +242,8 @@ export class InboxviewComponent implements OnInit {
   }
 
   async rowClickHandler(message: any) {
+    console.log(message, 'message');
+
     try {
       const isSameRow =
         this.messagesData && this.messagesData.Id === message.key;
@@ -337,7 +339,7 @@ export class InboxviewComponent implements OnInit {
   }
 
   async createChatMessage(description: string) {
-    if (this.messagesData || this.messageChat) {
+    if (this.messagesData && this.messageChat) {
 
       const newMessageChat: IMessageChat = {
         Id: this.messageChat.Id,
