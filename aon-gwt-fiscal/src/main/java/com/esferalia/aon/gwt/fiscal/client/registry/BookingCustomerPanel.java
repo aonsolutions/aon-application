@@ -1485,13 +1485,18 @@ public class BookingCustomerPanel extends MainEntryPoint {
 		
 		backBtn = new AonToolbarButton("Lista Contrataci\u00f3n", AON.CSS.aonIconBack());
 		backBtn.setVisible(false);
-		backBtn.addClickHandler(e -> showBookingList());
+		backBtn.addClickHandler(e -> back());
 		
 		toolbar.add(bookingCheckType);
 		toolbar.add(syncDomains);
 		toolbar.add(checkItems);
 		toolbar.add(backBtn);
 	}
+	
+	public static native void back()
+	/*-{
+		$wnd.backCustomer();
+	}-*/;
 	
 	private void checkItems() {
 		AonMessagePanel.showLoading(messagePanel, "Comprobando items ...");
