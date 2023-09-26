@@ -58,21 +58,25 @@ export class ModalCreateComponent implements OnInit {
 
 
   loadAdvisors(event: any) {
-
+    this.selectedAdvisor = event;
+    if (this.selectedAdvisor) {
+      this.messagesData.Name = this.selectedAdvisor;
+      this.messagesData.Title = 'Sin titulo';
+    }
   }
 
   async createMessage(description: string){
     if (this.messagesData) {
       const messageId = this.messagesData.Id;
-      const messageName = this.messagesData.Name;
+console.log('messafeDAta', this.messagesData);
 
       const newMessage: IMessage = {
         Id: messageId,
-        Name: messageName,
-        Title: '',
+        Name: this.messagesData.Name,
+        Title: this.messagesData.Title,
         Description: description,
         Date: new Date(),
-        Status: StatusMessage.ABIERTA,
+        Status: StatusMessage.CERRADA,
         Type: TypeMessage.CONSULTA,
         EndDate: new Date(),
         LastMessageChatOrigin: false,
