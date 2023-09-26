@@ -44,12 +44,11 @@ export class ModalEditTaxModelComponent implements OnInit {
   async createMessage(description: string) {
     if (this.messagesData) {
       const messageId = this.messagesData.Id;
-      const messageName = this.messagesData.Name;
       const messageTitle = this.messagesData.Title;
 
       const newMessage: IMessage = {
         Id: messageId,
-        Name: messageName,
+        Name: '',
         Title: messageTitle,
         Description: description,
         Date: new Date(),

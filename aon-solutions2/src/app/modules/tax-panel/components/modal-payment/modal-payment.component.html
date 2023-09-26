@@ -44,29 +44,15 @@
         </div>
 
         <app-input
-          [type]="'text'"
+          [type]="'select'"
           [label]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
           [placeholder]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
-          [suffixShowIcon]="true"
-          [value]=""
+          [options]="banksList"
+          [value]="this.selectedBank"
+          (inputValue)="listBanks()"
           *ngIf="!showCreateBank"
         >
-          <app-icon
-            [shape]="'credit_card'"
-            suffix
-            (click)="listBanks()"
-          ></app-icon>
         </app-input>
-
-        <!-- Mostrar la lista de bancos -->
-        <div *ngIf="showBanksList">
-          <app-input
-            (inputValue)="selectBank($event)"
-            [type]="'select'"
-            [options]="banksList"
-            [value]="this.selectedBank"
-          ></app-input>
-        </div>
       </div>
     </div>
 
@@ -157,11 +143,26 @@
     </div>
 
     <div class="button-container">
-      <app-button [class]="'orange left'" (click)="showConfirmation = true">
+      <app-button
+        [class]="'orange left'"
+        (click)="showConfirmation = true"
+        *ngIf="selectedOption !== '2' && selectedOption !== '3'"
+      >
         <app-icon shape="arrow_forward"></app-icon>
         {{ "TAX_PANEL.NEXT" | translate }}
       </app-button>
     </div>
+  </div>
+
+  <!-- Botón de confirmación para NRC y APLAZAMIENTO -->
+  <div
+    class="button-container"
+    *ngIf="selectedOption === '2' || selectedOption === '3'"
+  >
+    <app-button [mat-dialog-close]="true" [class]="'orange left'">
+      <app-icon shape="done_all"></app-icon>
+      {{ "TAX_PANEL.CONFIRM" | translate }}
+    </app-button>
   </div>
 
   <!-- Vista Confirmación -->

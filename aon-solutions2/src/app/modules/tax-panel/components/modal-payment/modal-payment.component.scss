@@ -91,6 +91,7 @@
   display: flex;
   justify-content: flex-end;
   align-content: center;
+  align-self: flex-end;
 }
 
 .confirmation-view {
@@ -152,5 +153,6 @@
   justify-content: center;
   gap: 1rem;
   margin-right: $margin-right;
-
 }
+
+

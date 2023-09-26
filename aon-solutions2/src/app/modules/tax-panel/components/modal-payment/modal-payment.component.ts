@@ -17,6 +17,7 @@ export class ModalPaymentComponent implements OnInit {
   public showBanksList: boolean = false;
   banksList: any[] = [];
   selectedBank: any = '';
+  isCreateBankOpen: boolean = false;
 
   public collectionFactory = new CollectionFactory();
   banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
@@ -30,7 +31,9 @@ export class ModalPaymentComponent implements OnInit {
     public dialogRef: MatDialogRef<ModalPaymentComponent>
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.listBanks();
+  }
 
   toggleCreateBank() {
     this.showCreateBank = !this.showCreateBank;
@@ -50,8 +53,15 @@ export class ModalPaymentComponent implements OnInit {
       this.banksList = this.banks
         .toArray()
         .map((element) => ({ value: element.Iban, text: element.Iban }));
+
+      // Asigna el primer banco de la lista a selectedBank
+      if (this.banksList.length > 0) {
+        this.selectedBank = this.banksList[0].value;
+      }
     });
   }
 
   selectBank(event: any) {}
+
+  getValue($event: any) {}
 }
