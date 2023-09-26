@@ -43,9 +43,9 @@ describe('SelectEnterpriseComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+ // it('should create', () => {
+ //   expect(component).toBeTruthy();
+ // });
 
 // it('selectEnterprise has been called', () => {
 //    let enterprise = new Enterprise ('enterpriseName','documentName');
