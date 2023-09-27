@@ -10,6 +10,7 @@ import {
   TypeMessage,
 } from 'libraries/AonSDK/aon';
 import { MessageService } from 'src/app/core/services/message.service';
+import { TaxModelService } from '../../../../core/services/tax-model.service';
 
 @Component({
   selector: 'app-modal-edit-tax-model',
@@ -25,19 +26,21 @@ export class ModalEditTaxModelComponent implements OnInit {
   messages: ICollection<IMessage> =
     this.collectionFactory.createMessageCollection();
 
+    dataSeparator:string = ';';
+    dataParts:string = '';
+
+
   newMessageDescriptionChange(newValue: string) {
     this.newMessageDescription = newValue;
   }
 
-  getValue(value: string): void {
-    // this.message.Description = value;
-  }
   closeModal(): void {
     this.dialogRef.close();
   }
 
   constructor(
     private messageService: MessageService,
+    public taxModelService: TaxModelService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ModalEditTaxModelComponent>
   ) {}
@@ -48,8 +51,8 @@ export class ModalEditTaxModelComponent implements OnInit {
 
       const newMessage: IMessage = {
         Id: messageId,
-        Name: '',
-        Title: messageTitle,
+        Name: '' ,
+        Title: this.dataParts,
         Description: description,
         Date: new Date(),
         Status: StatusMessage.ABIERTA,
@@ -88,5 +91,8 @@ export class ModalEditTaxModelComponent implements OnInit {
     this.newMessageDescription = '';
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.dataParts = this.data['key'].split(this.dataSeparator);
+    console.log(this.dataParts);
+  }
 }

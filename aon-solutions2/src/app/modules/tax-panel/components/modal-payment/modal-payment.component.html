@@ -17,7 +17,7 @@
       <div class="input-padding">
         <div class="add">
           <app-icon
-            [shape]="'add'"
+          [shape]="showCreateBank ? 'check' : 'add'"
             class="orange"
             id="add-button"
             (click)="toggleCreateBank()"
@@ -146,7 +146,7 @@
       <app-button
         [class]="'orange left'"
         (click)="showConfirmation = true"
-        *ngIf="selectedOption !== '2' && selectedOption !== '3'"
+        *ngIf="selectedOption !== '2' && selectedOption !== '3' && !showCreateBank"
       >
         <app-icon shape="arrow_forward"></app-icon>
         {{ "TAX_PANEL.NEXT" | translate }}
