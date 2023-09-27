@@ -155,7 +155,7 @@ export class TableTaxModelComponent implements OnChanges {
         this.modalComponentPayment.openDialog(
           ModalPaymentComponent,
           this.functionHome,
-          'Data from home'
+          object
         );
         break;
       case 'eye':

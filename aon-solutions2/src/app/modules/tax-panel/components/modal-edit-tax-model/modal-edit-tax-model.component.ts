@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import {
   CollectionFactory,
   ErrorResponse,
@@ -10,7 +11,6 @@ import {
   TypeMessage,
 } from 'libraries/AonSDK/aon';
 import { MessageService } from 'src/app/core/services/message.service';
-import { TaxModelService } from '../../../../core/services/tax-model.service';
 
 @Component({
   selector: 'app-modal-edit-tax-model',
@@ -26,9 +26,8 @@ export class ModalEditTaxModelComponent implements OnInit {
   messages: ICollection<IMessage> =
     this.collectionFactory.createMessageCollection();
 
-    dataSeparator:string = ';';
-    dataParts:string = '';
-
+  dataSeparator: string = ';';
+  dataParts: string[] = [];
 
   newMessageDescriptionChange(newValue: string) {
     this.newMessageDescription = newValue;
@@ -40,19 +39,35 @@ export class ModalEditTaxModelComponent implements OnInit {
 
   constructor(
     private messageService: MessageService,
-    public taxModelService: TaxModelService,
+    private translateService: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ModalEditTaxModelComponent>
   ) {}
+
   async createMessage(description: string) {
     if (this.messagesData) {
       const messageId = this.messagesData.Id;
-      const messageTitle = this.messagesData.Title;
+
+      let title = '';
+      this.translateService
+        .get('TAX_PANEL.RECTIFYING_MODEL')
+        .subscribe((rectifyingModel) => {
+          this.translateService
+            .get('TAX_PANEL.TRIMESTER')
+            .subscribe((trimester) => {
+              this.translateService
+                .get('TAX_PANEL.OF')
+                .subscribe((of) => {
+                  title = `${rectifyingModel} ${this.dataParts[0]}, ${trimester} ${this.dataParts[1]}, ${of} ${this.dataParts[2]}`;
+                  console.log(title);
+                });
+            });
+        });
 
       const newMessage: IMessage = {
         Id: messageId,
-        Name: '' ,
-        Title: this.dataParts,
+        Name: '',
+        Title: title,
         Description: description,
         Date: new Date(),
         Status: StatusMessage.ABIERTA,
