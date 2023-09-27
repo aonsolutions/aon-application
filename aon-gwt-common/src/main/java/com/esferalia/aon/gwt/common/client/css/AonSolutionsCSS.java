@@ -378,6 +378,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_lock")
 	String aonIconLock();
 	
+	@ClassName("aon_icon_sync")
+	String aonIconSync();
+	
+	@ClassName("aon_icon_sync_disabled")
+	String aonIconSyncDisabled();
+	
 	@ClassName("aon_icon_unlock")
 	String aonIconUnLock();
 	
@@ -597,6 +603,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_cmd_item")
 	String aonCmdItem();
+	
+	@ClassName("aon_row_highlight")
+	String aonRowHighlight();
 	
 	@ClassName("aon_display_flex")
 	String aonDisplayFlex();

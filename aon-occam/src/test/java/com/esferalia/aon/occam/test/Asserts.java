@@ -48,8 +48,10 @@ import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.product.Brand;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
@@ -972,5 +974,43 @@ public class Asserts {
 			assertEquals("Argument",expected.getArgument(),actual.getArgument());
 			assertEquals("Alias",expected.getAlias(),actual.getAlias());
 		}
+	}
+
+	public static void assertEqualsItem(Item expected, Item actual) {
+		assertEqualsNulls( "Item", expected, actual);
+		assertEquals("Id",expected.getId(), actual.getId());
+		assertEquals("Domain",expected.getDomain().getId(), actual.getDomain().getId());
+		assertEquals("Detail",expected.getDetail(), actual.getDetail());
+		assertEquals("Detail2",expected.getDetail2(), actual.getDetail2());
+		assertEquals("Detail3",expected.getDetail3(), actual.getDetail3());
+		assertEquals("Description",expected.getDescription(), actual.getDescription());
+		assertEquals("SerialNumber",expected.getSerialNumber(), actual.getSerialNumber());
+		assertEquals("SerialDate",expected.getSerialDate(), actual.getSerialDate());
+		assertEquals("ExpireDate",expected.getExpireDate(), actual.getExpireDate());
+		assertEquals("Barcode",expected.getBarcode(), actual.getBarcode());
+		assertEquals("Status",expected.getStatus(), actual.getStatus());
+		assertEqualsProduct(expected.getProduct(), actual.getProduct());
+		assertEquals("Price",expected.getPrice(), actual.getPrice(), DELTA);
+		assertEquals("ExpensesPercent",expected.getExpensesPercent(), actual.getExpensesPercent(), DELTA);
+		assertEquals("ExpensesFixed",expected.getExpensesFixed(), actual.getExpensesFixed(), DELTA);
+		assertEquals("ProfitPercent",expected.getProfitPercent(), actual.getProfitPercent(), DELTA);
+		assertEquals("PurchasePrice",expected.getPurchasePrice(), actual.getPurchasePrice(), DELTA);
+		assertEquals("Internet",expected.isInternet(), actual.isInternet());
+		assertEqualsTag(expected.getPackFormatTag(), actual.getPackFormatTag());
+		assertEquals("PackUnits",expected.getPackUnits(), actual.getPackUnits());
+		assertEqualsTag(expected.getPackUnitsTag(), actual.getPackUnitsTag());
+		assertEquals("PackMeasurement",expected.getPackMeasurement(), actual.getPackMeasurement(), DELTA);
+		assertEqualsTag(expected.getPackMeasurementTag(), actual.getPackMeasurementTag());
+		assertEqualsTag(expected.getStockUnitTag(), actual.getStockUnitTag());
+	}
+	
+	public static void assertEqualsTag(Tag expected, Tag actual) {
+		assertEquals("Id",expected.getId(), actual.getId());
+		assertEquals("Domain",expected.getDomain(), actual.getDomain());
+		assertEquals("Type",expected.getType(), actual.getType());
+		assertEquals("Name",expected.getName(), actual.getName());
+		assertEquals("Color",expected.getColor(), actual.getColor());
+		assertEquals("StartDate",expected.getStartDate(), actual.getStartDate());
+		assertEquals("EndDate",expected.getEndDate(), actual.getEndDate());
 	}
 }

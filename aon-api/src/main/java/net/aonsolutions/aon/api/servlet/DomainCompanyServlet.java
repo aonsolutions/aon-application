@@ -452,6 +452,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new  AonApiException(e.getMessage());
 		}
 		
@@ -549,7 +550,8 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	
 	private static void updateConectaUserookingRItem(AonApiData api, Booking booking, Integer aonCustomer, JSONArray logs) {
 		String userBarCode = "01.00.USR";
-		updateRItem(api, booking, aonCustomer, userBarCode, booking.getResume().getChildBillingUsers().toString(), "01.00.USR", logs);
+		String childBillingUsers = null != booking.getResume().getChildBillingUsers() ? booking.getResume().getChildBillingUsers().toString() : "0";
+		updateRItem(api, booking, aonCustomer, userBarCode, childBillingUsers, "01.00.USR", logs);
 	}
 
 	private static JSONObject deleteBookingRitems(AonApiData api) {

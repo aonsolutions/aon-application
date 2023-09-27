@@ -48,7 +48,7 @@ public enum TediInvoiceJSON {
 	),
 	DATE(
 		(invoice, json) -> invoice.setDate(TediJSONUtils.parseDate(json.optString(IConstants.DATE))),
-		(invoice, json) -> TediJSONUtils.put(json, IConstants.DATE, invoice.getDate())
+		(invoice, json) -> TediJSONUtils.putDate(json, IConstants.DATE, invoice.getDate())
 	),
 	TRANSACTION(
 		(invoice, json) -> invoice.setTransaction(json.optEnum(TediInvoiceTransaction.class, IConstants.TRANSACTION)),

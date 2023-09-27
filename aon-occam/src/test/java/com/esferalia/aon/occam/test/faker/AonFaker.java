@@ -450,9 +450,11 @@ public class AonFaker {
 		return  new Item()
 			.setDomain(new Domain().setId(ctx.getDomainId()))
 			.setProduct(product)
+			.setStatus(  AonRandom.getRandomProductStatus())
 			.setDetail("11")
 			.setDetail2("22")
-			.setDetail2("33");
+			.setDetail2("33")
+			.setPackUnits( AonRandom.number(0,100));
 	}
 	
 	public static Brand getBrand( AONContext ctx ) {

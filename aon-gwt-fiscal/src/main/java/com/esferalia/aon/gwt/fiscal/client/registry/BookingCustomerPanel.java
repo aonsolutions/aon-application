@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -59,7 +60,6 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -76,7 +76,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class BookingPanel extends MainEntryPoint {
+public class BookingCustomerPanel extends MainEntryPoint {
 	
 	// ------- FeeWithOutBooking
 	
@@ -236,7 +236,6 @@ public class BookingPanel extends MainEntryPoint {
 	private AonToolbar toolbar;
 	private ListBox bookingCheckType;
 	private AonToolbarButton syncDomains;
-	private AonToolbarButton unSyncDomains;
 	private AonToolbarButton checkItems;
 	private AonToolbarButton backBtn;
 	
@@ -359,55 +358,30 @@ public class BookingPanel extends MainEntryPoint {
 		messagePanel = new HTMLPanel("");
 		container.add(messagePanel);
 		
-		createFilterPanel(opt, new AsyncCallback<Void>() {
-
+		Integer customer = getCustomer();
+		RegistryParams params = new RegistryParams()
+				.setId(customer)
+				.setDomain(options.getDomain());
+		SERVICE.getCustomers(options.getDomainName(), options.getDomain(), options.getUser(), params, 0, 1, new AsyncCallback<LinkedList<Customer>>() {
+			
 			@Override
-			public void onFailure(Throwable caught) {
-				dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				deckPanel = new DeckPanel();
-				deckPanel.getElement().getStyle().setProperty("margin", "0 1rem");
-				container.add(deckPanel);
-				
-				scrollPanel = new ScrollPanel();
-				scrollPanel.setHeight((Window.getClientHeight() - 230) + "px");
-				scrollPanel.addScrollHandler(e -> {
-					// ------------------------------------ Ignore scroll up.
-					int oldScrollPos = lastScrollPos;
-					lastScrollPos = scrollPanel.getVerticalScrollPosition();
-					if (oldScrollPos >= lastScrollPos) {
-						return;
-					}
-					// -----------------------------------------------------
-					if (isSearchEnabled()) {
-						int maxScrollTop = scrollPanel.getWidget().getOffsetHeight() - scrollPanel.getOffsetHeight();
-						if (lastScrollPos >= maxScrollTop) {
-							disableSearch();
-							searchFees();
-						}
-					}
-				});
-				
-				initializeDeckPanel();
-
-				AonMessagePanel.showLoading(messagePanel, "Cargando panel de facturaci\u00f3n ...");
-				resetFilter();
-				onSearchFees();
-				AonMessagePanel.hideMessage(messagePanel);
+			public void onSuccess(LinkedList<Customer> c) {
+				if(c != null && !c.isEmpty())
+					checkCustomerDomains(c.get(0));
 			}
 			
+			@Override
+			public void onFailure(Throwable arg0) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		
-		showBookingList();
 	}
 	
 	private void showBookingList() {
 		bookingCheckType.setVisible(true);
 		syncDomains.setVisible(true);
-		unSyncDomains.setVisible(true);
 		checkItems.setVisible(true);
 		backBtn.setVisible(false);
 		
@@ -419,7 +393,6 @@ public class BookingPanel extends MainEntryPoint {
 	private void showBookingCustomer(String customerName) {
 		bookingCheckType.setVisible(false);
 		syncDomains.setVisible(false);
-		unSyncDomains.setVisible(false);
 		checkItems.setVisible(false);
 		backBtn.setVisible(true);
 		
@@ -1243,7 +1216,7 @@ public class BookingPanel extends MainEntryPoint {
 		}
 		
 		AonToolbarSmallButton urlBtn = new AonToolbarSmallButton("URL", AON.CSS.aonIconInfo());
-		urlBtn.addClickHandler(e -> {checkCustomerDomains(bookingCheck);});
+		urlBtn.addClickHandler(e -> {checkCustomerDomains(bookingCheck.getCustomer());});
 		
 		bookingCheckTable.setWidget(row, 0, typeLabel);
 		bookingCheckTable.setWidget(row, 1, customerLabel);
@@ -1355,11 +1328,11 @@ public class BookingPanel extends MainEntryPoint {
 		bookingCheckTable.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 	}
 
-	private void checkCustomerDomains(BookingCheck bookingCheck) {
+	private void checkCustomerDomains(Customer customer) {
 		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios del cliente ...");
 		
 		// Create the base URL
-		String baseUrl = "/ms/api/domain/" + bookingCheck.getCustomer().getId().toString();
+		String baseUrl = "/ms/api/domain/" + customer.getId().toString();
 
 		// Create a URL builder and add query parameters
 		UrlBuilder urlBuilder = new UrlBuilder();
@@ -1382,8 +1355,8 @@ public class BookingPanel extends MainEntryPoint {
 		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
 		                AonMessagePanel.hideMessage(messagePanel);
 		                
-		                showBookingCustomer(bookingCheck.getCustomer().getName());
-		                bookingCustomer.setBookingCustomer(bookingCheck.getCustomer(), companies);
+		                showBookingCustomer(customer.getName());
+		                bookingCustomer.setBookingCustomer(customer, companies);
 		                
 		            } else {
 		            	AonMessagePanel.showError(messagePanel, response.getText());
@@ -1500,14 +1473,9 @@ public class BookingPanel extends MainEntryPoint {
 			onSearchFees();
 		});
 		
-		syncDomains = new AonToolbarButton("Sincronizar dominio", AON.CSS.aonIconSync());
+		syncDomains = new AonToolbarButton("Sincronizar dominio", AON.CSS.aonIconCloudSync());
 		syncDomains.addClickHandler(e -> {
 			syncDomain();
-		});
-		
-		unSyncDomains = new AonToolbarButton("Desincronizar dominio", AON.CSS.aonIconSyncDisabled());
-		unSyncDomains.addClickHandler(e -> {
-			unSyncDomain();
 		});
 		
 		checkItems = new AonToolbarButton("Comprobar items", AON.CSS.aonIconInfo());
@@ -1517,14 +1485,18 @@ public class BookingPanel extends MainEntryPoint {
 		
 		backBtn = new AonToolbarButton("Lista Contrataci\u00f3n", AON.CSS.aonIconBack());
 		backBtn.setVisible(false);
-		backBtn.addClickHandler(e -> showBookingList());
+		backBtn.addClickHandler(e -> back());
 		
 		toolbar.add(bookingCheckType);
 		toolbar.add(syncDomains);
-		toolbar.add(unSyncDomains);
 		toolbar.add(checkItems);
 		toolbar.add(backBtn);
 	}
+	
+	public static native void back()
+	/*-{
+		$wnd.backCustomer();
+	}-*/;
 	
 	private void checkItems() {
 		AonMessagePanel.showLoading(messagePanel, "Comprobando items ...");
@@ -1643,7 +1615,6 @@ public class BookingPanel extends MainEntryPoint {
 			}
 
 			private void syncAllDomain(List<DomainCompany> companies) {
-				AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para los dominios seleccionados ...");
 				int syncDomain = 0;
 				
 				for(DomainCompany domainCompany : companies) {
@@ -1673,6 +1644,8 @@ public class BookingPanel extends MainEntryPoint {
 					        public void onResponseReceived(Request request, Response response) {
 					            if (response.getStatusCode() == 200) {
 					            	
+					            	AonMessagePanel.showLoading(messagePanel, "[" + (iteration + 1) + " / " + companies.size() + "] Sincronizando contrataci\u00f3n para el dominio " + domainCompany.getDomain().getDescription() + " ...");
+									
 					            	if((iteration + 1) == companies.size())
 										AonMessagePanel.showSuccess(messagePanel, "La sicronizaci\u00f3n de dominios se ha realizado correctamente.");
 			  		           		
@@ -1730,108 +1703,6 @@ public class BookingPanel extends MainEntryPoint {
 				           		     }
 				           		};
 				           		timer.schedule(3500);
-		  		           		
-				            } else {
-				            	AonMessagePanel.showError(messagePanel, response.getText());
-				            }
-				        }
-
-						public void onError(Request request, Throwable exception) {
-							AonMessagePanel.showError(messagePanel, exception.getMessage());
-				        }
-				    });
-				} catch (RequestException e) {
-					AonMessagePanel.showError(messagePanel, e.getMessage());
-				}
-			}
-		};
-	}
-	
-	private void unSyncDomain() {
-		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios ...");
-		
-		// Create the base URL
-		String baseUrl = "/ms/api/domain/";
-
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-//		urlBuilder.setHost("localhost:8080");
-		urlBuilder.setHost("aon.solutions"); 
-		urlBuilder.setPath(baseUrl);
-		
-		 urlBuilder.setParameter("linked", "true");
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-
-		                String responseBody = response.getText();
-		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
-		                AonMessagePanel.hideMessage(messagePanel);
-		                showSelectUnsyncDomainsDialog(companies);
-		                
-		            } else {
-		            	AonMessagePanel.showError(messagePanel, response.getText());
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					AonMessagePanel.showError(messagePanel, exception.getMessage());
-		        }
-		    });
-		} catch (RequestException e) {
-			AonMessagePanel.showError(messagePanel, e.getMessage());
-		}
-	}
-	
-	private void showSelectUnsyncDomainsDialog(List<DomainCompany> companies) {
-		new AonDomainSelectionDialog("Dominios", companies) {
-			
-			@Override
-			protected void onAccept(DomainCompany domainCompany, boolean allDomains) {
-				unSyncDomain(companies, domainCompany, allDomains);
-			}
-
-			private void unSyncDomain(List<DomainCompany> companies, DomainCompany domainCompany, boolean allDomains) {
-				AonMessagePanel.showLoading(messagePanel, "Desincronizando contrataci\u00f3n para" + (allDomains ? " todos los dominios ..." : " el dominio seleccionado ..."));
-				
-				// Create the base URL
-				String baseUrl = "/ms/api/domain/booking/";
-
-				// Create a URL builder and add query parameters
-				UrlBuilder urlBuilder = new UrlBuilder();
-				urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-				urlBuilder.setHost(Window.Location.getHost()); 
-				urlBuilder.setPath(baseUrl);
-				
-				// Create the request builder with the complete URL
-				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.DELETE, urlBuilder.buildString());
-				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-				
-				Integer customerId = allDomains ? 0 : domainCompany.getDomain().getAonCustomer();
-				
-				JSONObject body = new JSONObject();
-				body.put("customer", new JSONNumber(customerId));
-				
-				if(allDomains) body.put("all", new JSONString("true"));
-				
-				try {
-				    // Send the request
-				    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-				        public void onResponseReceived(Request request, Response response) {
-				            if (response.getStatusCode() == 200) {
-				            	
-				            	if(allDomains)
-				            		AonMessagePanel.showSuccess(messagePanel, "La desincronizaci\u00f3n de los dominios se ha realizado correctamente");
-				            	else
-				            		AonMessagePanel.showSuccess(messagePanel, "La desincronizaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " se ha realizado correctamente");
 		  		           		
 				            } else {
 				            	AonMessagePanel.showError(messagePanel, response.getText());
