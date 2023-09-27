@@ -242,29 +242,29 @@ export const createContractData = (parent, isManager) => {
 		}, divC.element);
 	}
 
-	divC = createDiv({ classes: [CSS.AON_COL_XS_12] })
-	divC.appendTo(parent);
-	CreateComponent.createAonSelect({
-		attributes: {
-			name: "artist",
-			id: "artist",
-			title: "Regimen de Artistas (opcional)",
-			default: CONSTANT.TRUE,
-			autocomplete: CONSTANT.OFF
-		}
-	}, divC.element);
-	
-	divC = createDiv({ classes: [CSS.AON_COL_XS_12] })
-	divC.appendTo(parent);
-	CreateComponent.createAonSelect({
-		attributes: {
-			name: "unemployed",
-			id: "unemployed",
-			title: "Condición de Desempleado (opcional)",
-			default: CONSTANT.TRUE,
-			autocomplete: CONSTANT.OFF
-		}
-	}, divC.element);
+//	divC = createDiv({ classes: [CSS.AON_COL_XS_12] })
+//	divC.appendTo(parent);
+//	CreateComponent.createAonSelect({
+//		attributes: {
+//			name: "artist",
+//			id: "artist",
+//			title: "Regimen de Artistas (opcional)",
+//			default: CONSTANT.TRUE,
+//			autocomplete: CONSTANT.OFF
+//		}
+//	}, divC.element);
+//	
+//	divC = createDiv({ classes: [CSS.AON_COL_XS_12] })
+//	divC.appendTo(parent);
+//	CreateComponent.createAonSelect({
+//		attributes: {
+//			name: "unemployed",
+//			id: "unemployed",
+//			title: "Condición de Desempleado (opcional)",
+//			default: CONSTANT.TRUE,
+//			autocomplete: CONSTANT.OFF
+//		}
+//	}, divC.element);
 
 
 
