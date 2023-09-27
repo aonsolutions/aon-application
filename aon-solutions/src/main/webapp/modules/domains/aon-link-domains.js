@@ -45,7 +45,7 @@ export class AonLinkDomains extends AonElement {
 		this.appendChild(this.DOMAINS_TOOLBAR);
 		this.DOMAINS_TOOLBAR.removeButtons();
 
-		let toolbarButton2Params = {
+		/*let toolbarButton2Params = {
 			id: "DeleteClientItemsButton",
 			name: "Eliminar relaciones de productos",
 			title: "Eliminar relaciones de productos",
@@ -82,9 +82,9 @@ export class AonLinkDomains extends AonElement {
 			dialog.setContent(itemDeleteContainer);
 			dialog.autoclose = false;
 			dialog.open();
-		});
+		});*/
 
-		let toolbarButtonParams = {
+		/*let toolbarButtonParams = {
 			id: "UpdateClientItemsButton",
 			name: "Actualizar productos",
 			title: "Actualizar productos",
@@ -101,7 +101,7 @@ export class AonLinkDomains extends AonElement {
 			dialog.autoclose = false;
 			dialog.open();
 		});
-		button.querySelector("i").classList.add("material-icons-outlined");
+		button.querySelector("i").classList.add("material-icons-outlined");*/
 
 
 		let adcContainer = document.createElement("div");
@@ -109,7 +109,7 @@ export class AonLinkDomains extends AonElement {
 		adcContainer.style.height = "calc(100% - 40px)";
 		let adc = new AonDomainCustomer();
 		adcContainer.appendChild(adc);
-		this.appendChild(adcContainer);
+		this.appendChild(adcContainer);n
 	}
 
 	showView(view, data, filter = undefined){
