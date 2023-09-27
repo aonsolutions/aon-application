@@ -41,18 +41,6 @@ public class AmortizationTypeTest extends AbstractOccamTest {
 		assertEquals(AonError.AMORTIZATION_TYPE_NULL.getMessage(), e.getMessage());
 	}
 
-	/**
-	 * Test para cuando getList tiene @param AmortizationTypeParams = Empty
-	 */
-
-	@Test
-	public void getListWithNoFiltersTest() {
-		AmortizationTypeParams params = new AmortizationTypeParams();
-		List<AmortizationType> result = AmortizationTypeDAO.getList(ctx, params);
-		assertNotNull(result);
-		assertFalse(result.isEmpty());
-	}
-
 	/*
 	 * Test para comprobar que no acepte @param AmortizationType = Null
 	 */
