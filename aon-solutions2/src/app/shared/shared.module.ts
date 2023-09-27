@@ -55,6 +55,8 @@ import { TableComponent } from './components/table/table.component';
 import { TabsComponent } from './components/tabs/tabs.component';
 import { TagComponent } from './components/tag/tag.component';
 import { TopBarComponent } from './layouts/top-bar/top-bar.component';
+import { SpinnerAwaitComponent } from './components/spinner-await/spinner-await.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -88,7 +90,8 @@ import { TopBarComponent } from './layouts/top-bar/top-bar.component';
     TableComponent,
     TabsComponent,
     TagComponent,
-    TopBarComponent
+    TopBarComponent,
+    SpinnerAwaitComponent
   ],
   imports: [
     ChartsModule,
@@ -104,6 +107,7 @@ import { TopBarComponent } from './layouts/top-bar/top-bar.component';
     MatInputModule,
     MatMenuModule,
     MatPaginatorModule,
+    MatProgressSpinnerModule,
     MatSelectModule,
     MatSidenavModule,
     MatSortModule,
@@ -141,6 +145,7 @@ import { TopBarComponent } from './layouts/top-bar/top-bar.component';
     SideNavComponent,
     SidenavHoverDirective,
     SidenavLayoutComponent,
+    SpinnerAwaitComponent,
     TableComponent,
     TabsComponent,
     TagComponent,
