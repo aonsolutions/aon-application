@@ -2821,7 +2821,7 @@ public class CustomerFee extends MainEntryPoint {
 			if(AonStringUtils.isNotBlank(periocityListBox.getSelectedValue())) json.put("periodicity", new JSONNumber(Integer.parseInt(periocityListBox.getSelectedValue())));
 			if(null != customerSuggestions.get(customerSuggestBox.getValue())) json.put("customer", new JSONNumber(customerSuggestions.get(customerSuggestBox.getValue()).getId()));
 			if(AonStringUtils.isNotBlank(customerStatusListBox.getSelectedValue())) json.put("status", new JSONNumber(Integer.parseInt(customerStatusListBox.getSelectedValue())));
-			if(null != segmentListBox && AonStringUtils.isNotBlank(segmentListBox.getSelectedValue())) json.put("segment", new JSONNumber(Integer.parseInt(segmentListBox.getSelectedValue())));
+			if(null != segmentListBox && AonStringUtils.isNotBlank(segmentListBox.getSelectedValue())) json.put("segmentId", new JSONNumber(Integer.parseInt(segmentListBox.getSelectedValue())));
 			if(AonStringUtils.isNotBlank(startCompareLB.getSelectedValue())) json.put("startDateCompare", new JSONNumber(Integer.parseInt(startCompareLB.getSelectedValue())));
 			if(null != startDateBox.getValue()) json.put("startDate", new JSONNumber(startDateBox.getValue().getTime()));
 			if(AonStringUtils.isNotBlank(endCompareLB.getSelectedValue())) json.put("endDateCompare", new JSONNumber(Integer.parseInt(endCompareLB.getSelectedValue())));
