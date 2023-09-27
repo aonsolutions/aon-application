@@ -271,8 +271,8 @@ export class AonTax extends AonElement {
     const aonSelect2 = new AonSelect();
     aonSelect2.name = "certi";
     aonSelect2.id = "certi";
-    aonSelect2.title = "CERTI";
-    aonSelect2.hidden = false;
+    aonSelect2.title = "Certificado para la Presentación del Modelo";
+    aonSelect2.hidden = (resp.presModelAuto==0);
     form.appendChild(aonSelect2);
     
     //---END FORM---
@@ -306,8 +306,14 @@ export class AonTax extends AonElement {
 	    const divTextPres =  this.createElement(TAG.DIV);
 	    divTextPres.style.marginTop = 4; 
 	    divTextPres.style.textAlign = "center";
-	    divTextPres.textContent = "Si acepta los datos, el modelo se presentará automaticamente.";
+	    if (resp.testEnvironment) {
+	       divTextPres.textContent = "ENTORNO DE PRUEBAS: Si acepta los datos, el modelo se presentará automaticamente.";
+	    }
+	    else { 
+	       divTextPres.textContent = "Si acepta los datos, el modelo se presentará automaticamente.";
+	    }
 	    div.appendChild(divTextPres);
+	     
     }    
     
     divMain.appendChild(div);
@@ -394,6 +400,13 @@ export class AonTax extends AonElement {
           formObj["bankBic"] = bankObj.bic;
         }
       }
+      
+      const nrc = this.getElement('nrc');
+      formObj["nrc"] = nrc.value;      
+      
+      const certi = this.getElement('certi');
+      formObj["certi"] = certi.value;
+      
       return formObj;
   }
 
@@ -432,21 +445,8 @@ export class AonTax extends AonElement {
     try {
       const form = {...resp,...this.getFormValues()};
       this.clearModels();
-      await setModelStatus(form).then((v) => {console.info(v)}, null);
-      
-      // FALTA 
-      //$.post(`${API_URL}/fiscal/markAsFinished`, form, (data, status) => {  console.log(data);     });
-      
-      //console.info(respuesta);
-      
-      //this.showMessage(respuesta);
-      
-      // FALTA - VER POSIBILIDAD DE MOSTRAR LOS ERRORES
-      //window.open(respuesta, '_blank');
-      //const newUrl = URL.createObjectURL(respuesta);
-      //openFileDesktop(newUrl);      
-      
-      await this.getTable();
+      await setModelStatus(form);
+      await this.getTable();      
       this.showMessage();
     } catch (error) {
       console.error(error);

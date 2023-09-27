@@ -19,6 +19,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -80,6 +81,7 @@ import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.mod303.Mod303Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
@@ -157,8 +159,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.addAll( Mod131DAO.getMod131s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod202DAO.getMod202s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			
-			// Comprobar si está configurado la presentación automática de modelos
+			// Comprobar si está configurado la presentación automática de modelos y estamos en Entorno de Pruebas
 			int presModelAutoEnabled = AppParamDAO.fetchIntValue(ctx, AppParam.FS_PRES_MODEL_AUTO_ENABLED);
+			boolean testEnvironment = AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.FS_AEAT_TEST_ENV));
 			
 			JSONArray jsonModels = new JSONArray();
 
@@ -166,7 +169,10 @@ public class FiscalServlet extends AonApiHttpServlet{
 				try {
 					jsonModels.put(FiscalModelJSON.toJSON(model)
 							// Indicar si el modelo se puede presetnar automaticamente (por ahora solo modelo 303 de la Agencia Tributaria)
-							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY && model.getModel() == FiscalModelType.M303 ? presModelAutoEnabled : 0));  
+							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY && model.getModel() == FiscalModelType.M303 ? presModelAutoEnabled : 0)
+							.put("testEnvironment", testEnvironment)							
+							);
+					
 				}
 				catch (Exception e) {
 					throw new AonApiException("Error al obtener el modelo "+ model.getModel().getName()+" "+e.getMessage());
@@ -189,11 +195,18 @@ public class FiscalServlet extends AonApiHttpServlet{
 				String bankBIC = JsonUtils.getString(params, IJsonNames.BIC);
 				String reasonReject = params.optString("reasonReject");
 				boolean reject = !reasonReject.isEmpty();
-				String nrc = "";  // FALTA - EL NRC DEBERÁ VENIR COMO PARAMETRO
-				
+				String nrc = JsonUtils.optString(params, "nrc");  // FALTA - EL NRC DEBERÁ VENIR COMO PARAMETRO
+				Integer certi = JsonUtils.getInteger(params, "certi"); // FALTA 				
 				int presModelAuto = reject ? 0 : JsonUtils.getInt(params, "presModelAuto");  // Presentación automática del modelo
 				
+				boolean test = JsonUtils.getboolean(params, "testEnvironment");  // Entorno de pruebas
+				
 				FiscalModelType modelType = FiscalModelType.safeValueOf(JsonUtils.getString(params , IJsonNames.MODEL));
+				
+				// Comprobar si hay presentacion automática del modelo y no se ha seleccionado certificado
+				if (presModelAuto == 1 && certi == null) {
+					throw new AonApiException("ERROR: Debe seleccionar certificado.");
+				}
 	
 				modelType.visit(new IFiscalModelTypeVisitor() {
 					@Override
@@ -295,20 +308,17 @@ public class FiscalServlet extends AonApiHttpServlet{
 							//Mod303DAO.markAsFinished(ctx, model);
 							// FALTA - Presentación automática del modelo 
 							if (presModelAuto == 1) {
-								
-								// FALTA - PRUEBA CON DATOS FICTICIOS
 								AEATParams params = new AEATParams()
 										.setDomainName(api.getDomain().getName())
 										.setDomainId(api.getDomain().getId())
 										.setUser(api.getUser().getLogin())
 										.setMod(model.getId())
-										.setName("FICTICIO")
-										.setDocument("99999018D")
-										.setCertificateId(54396)
+										.setName("")    // FALTA - PRUEBA CON DATOS FICTICIOS DEBERIA OBTENERSE DEL CERTIFICADO O NO SE DE DONDE
+										.setDocument("")
+										.setCertificateId(certi)
 										.setPass("")  // La dejamos en blanco, para que se coja la que tiene guardada el certificado
 										.setNrc(nrc)
-										.setTest(true);								
-								
+										.setTest(test);  // FALTA - DEBE OBTENERSE DE LA CONFIGURACION
 								send(params, model);
 							}							
 						}
@@ -334,7 +344,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	
 	//private void send(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model ) {
 	private void send(AEATParams aeatParams, IFiscalModel model) {
-		try {
+		try {			
 			String period = model.getPeriod().getName();
 			if ( model.getModel() == FiscalModelType.M202) {
 				if ( model.getPeriod() == Period.T1) period = "1P";
@@ -385,8 +395,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 			} else {
 				String ct = getContentTypeHeader(response);
 				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
-					if (!manageJSONContent(aeatParams, model ,response.body())) {						
-						throw new AonApiException("ERROR DEVUELTO POR LA AEAT");						
+					if (!manageJSONContent(aeatParams, model, response.body())) {						
+						throw new AonApiException("ERROR EN LA PRESENTACIÓN DEL MODELO");						
 					}
 				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
 					//ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
@@ -572,8 +582,48 @@ public class FiscalServlet extends AonApiHttpServlet{
 		ByteArrayInputStream key = new ByteArrayInputStream(attach.getData());
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 	    keyStore.load(key, params.getPass().toCharArray());
+	    
+	    
+	    
+	    
+	    String alias = "";
+	    Enumeration<String> e = keyStore.aliases();   //Obtengo los alias de los certificados
+	    while (e.hasMoreElements()){
+	             alias = e.nextElement();
+	            System.out.println("alias:"  + alias);
+	    }   
+	   
+	    
+	    X509Certificate c = (X509Certificate) keyStore.getCertificate(alias);
+	    
+	    String name = c.getSubjectX500Principal().toString();
+	    
+	    int start = name.indexOf("SURNAME=");
+	    int end = name.indexOf(",", start);
+	    if (end == -1) {
+	        end = name.length();
+	    }
+	    String surname = name.substring(start + 8, end);
+	    
+	    start = name.indexOf("SERIALNUMBER=");
+	    end = name.indexOf(",", start);
+	    if (end == -1) {
+	        end = name.length();
+	    }
+	    String serial = name.substring(start + 13, end);
+	    
+	    // FALTA - PRUEBA A PONER DOCUMENTO Y NOMBRE DEL CERTIFICADO
+	    params.setDocument(serial);
+	    params.setName(surname.toUpperCase());	    
+	    
+	    System.out.println("certificate:"  + name);
+	    System.out.println("surname:"  + surname);
+	    System.out.println("serial:"  + serial);    
+	    
+	    
     	KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
    		kmf.init(keyStore, params.getPass().toCharArray());
+   		   		
    		return kmf.getKeyManagers();
 	}
 	
