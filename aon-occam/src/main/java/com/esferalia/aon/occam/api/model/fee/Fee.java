@@ -295,9 +295,6 @@ public class Fee implements Serializable{
 		return this;
 	}
 	
-<<<<<<< HEAD
-	
-=======
 	public Boolean hasRItem() {
 		return this.hasRItem;
 	}
@@ -306,6 +303,5 @@ public class Fee implements Serializable{
 		this.hasRItem = hasRItem;
 		return this;
 	}
->>>>>>> master
 	
 }

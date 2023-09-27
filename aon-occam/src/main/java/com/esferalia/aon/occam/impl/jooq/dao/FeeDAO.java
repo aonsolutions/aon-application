@@ -147,12 +147,8 @@ public class FeeDAO {
 		
 		
 		System.out.println("Customer Fee size : " + feeRecords.size());
-		
-<<<<<<< HEAD
-		
-=======
+
 		feeRecords.forEach(r -> System.out.println("Id : " + r.get(CUSTOMER_FEE.ID) + ", Domain : " + r.get(CUSTOMER_FEE.DOMAIN) + ", Customer : " + r.get(CUSTOMER_FEE.CUSTOMER) + ", Line : " + r.get(CUSTOMER_FEE.LINE)));
->>>>>>> master
 		
 		return feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -346,8 +342,7 @@ public class FeeDAO {
 			return buildFee(r);
 		}
 		
-		public static Fee buildFee(Record r) {	
-
+		public static Fee buildFee(Record r) {			
 			return new Fee()
 				.setId(r.getValue(CUSTOMER_FEE.ID))
 				.setDomain(checkField(r, DOMAIN.ID) 
@@ -374,19 +369,13 @@ public class FeeDAO {
 				.setProject(new Project().setId(r.getValue(CUSTOMER_FEE.PROJECT)))
 				.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
 				.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
-				.setSellerType(r.getValue(RSELLER.TYPE))
 				.setSeller(checkField(r, SELLER.REGISTRY)
 					? SellerFiller.build(r)
 					: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setWorkplace(checkField(r, WORKPLACE.ID)
 					? WorkplaceFiller.build(r)
-<<<<<<< HEAD
-					: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)));
-			
-=======
 					: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)))
 				.setHasRItem(r.get(RITEM.ID) != null);
->>>>>>> master
 		}
 	}
 
