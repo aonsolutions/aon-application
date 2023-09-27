@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -78,12 +79,15 @@ public interface RegistryService extends RemoteService {
 	List<Fee> parseFeeFile(Domain domain, User user, String data);
 	ImportError importFee(Domain domain, User user, Fee fee, Integer index);
 	
+	List<Customer> getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams);
+	
 	// **************************************************
 	// ********************************** [BOOKING CHECK]
 	// **************************************************
 	LinkedList<BookingCheck> getBookingWithoutFeeList(String domainName, int domain, String user, CustomerFeeParams params);
 	LinkedList<BookingCheck> getFeeWithoutBookingList(String domainName, int domain, String user, CustomerFeeParams params);
 	LinkedList<BookingCheck> getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params);
+	LinkedList<BookingCheck> getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params);
 	void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck);
-
+	void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings);
 }

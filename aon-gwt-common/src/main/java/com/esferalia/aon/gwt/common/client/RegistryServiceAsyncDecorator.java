@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -214,6 +215,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		AON.start();
 		serviceAsync.importFee(domain, user, fee, index, new AsyncCallbackWrapper<ImportError>(callback));
 	}
+	
+	@Override
+	public void getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams, AsyncCallback<List<Customer>> callback) {
+		AON.start();
+		serviceAsync.getCustomerWithoutFee(domainName, domain, user, customerParams, new AsyncCallbackWrapper<List<Customer>>(callback));
+	}
 
 	// **************************************************
 	// ********************************** [BOOKING CHECK]
@@ -236,11 +243,23 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		AON.start();
 		serviceAsync.getBookingCheckList(domainName, domain, user, params, new AsyncCallbackWrapper<LinkedList<BookingCheck>>(callback));
 	}
+	
+	@Override
+	public void getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<LinkedList<BookingCheck>> callback) {
+		AON.start();
+		serviceAsync.getCustomerBookingCheckList(domainName, domain, user, params, new AsyncCallbackWrapper<LinkedList<BookingCheck>>(callback));
+	}
 
 	@Override
 	public void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck, AsyncCallback<Void> callback) {
 		AON.start();
 		serviceAsync.saveBookingCheck(domainName, domain, user, bookingCheck, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.deleteBookingList(domainName, domain, user, selectedBookings, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 }

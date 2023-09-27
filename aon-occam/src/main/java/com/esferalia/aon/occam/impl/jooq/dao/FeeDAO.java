@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
@@ -102,19 +103,20 @@ public class FeeDAO {
 	
 	public static LinkedList<Fee> getFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
 		Condition condition = createFeeCondition(ctx, customerFeeParams);
-		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().select().from(CUSTOMER_FEE)
+		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().selectDistinct().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
-				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
+//				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
+//				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
 				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
+		
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
 			if(customerFeeParams.getSegment() == -1)
 				fromCustomerRecords = fromCustomerRecords 	
@@ -122,7 +124,9 @@ public class FeeDAO {
 			else fromCustomerRecords = fromCustomerRecords 	
 				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
 		}
-				
+			
+		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
+		
 		Result<Record> feeRecords = fromCustomerRecords 
 				.where(condition)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
@@ -131,6 +135,8 @@ public class FeeDAO {
 			.fetch();
 		
 		System.out.println("Customer Fee size : " + feeRecords.size());
+		
+		feeRecords.forEach(r -> System.out.println("Id : " + r.get(CUSTOMER_FEE.ID) + ", Domain : " + r.get(CUSTOMER_FEE.DOMAIN) + ", Customer : " + r.get(CUSTOMER_FEE.CUSTOMER) + ", Line : " + r.get(CUSTOMER_FEE.LINE)));
 		
 		return feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -296,7 +302,7 @@ public class FeeDAO {
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
-				.leftOuterJoin(RSEGMENT).on(CUSTOMER.REGISTRY.eq(RSEGMENT.ID))
+				.leftOuterJoin(RSEGMENT).on(CUSTOMER.REGISTRY.eq(RSEGMENT.REGISTRY))
 				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
 				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
@@ -351,7 +357,8 @@ public class FeeDAO {
 					: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setWorkplace(checkField(r, WORKPLACE.ID)
 					? WorkplaceFiller.build(r)
-					: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)));
+					: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)))
+				.setHasRItem(r.get(RITEM.ID) != null);
 		}
 	}
 

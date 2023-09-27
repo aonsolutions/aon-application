@@ -253,13 +253,24 @@ public class Mod3902022DAO {
 		 // Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA
 		 ,C0653	 (Mod3902022DetailKey.C0653, null) // MIRAR CASILLA 654
 		 // Entregas intracomunitarias de bienes y servicios
-		 ,C0103	 (Mod3902022DetailKey.C0103, ((mod, vc) -> (vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
+		 ,C0103	 (Mod3902022DetailKey.C0103, ((mod, vc) -> (
+				 vc.isIntracommunitySales() && 
+				 !vc.isWithoutRightDeductionType())))
+
 		 // Exportaciones y otras operaciones exentas con derecho a deducción
-		 ,C0104	 (Mod3902022DetailKey.C0104, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isExtracommunity() || vc.isCanCeuMel()) )))
+		 ,C0104	 (Mod3902022DetailKey.C0104, ((mod, vc) -> (vc.isSales() 
+			&& !vc.isWithoutRightDeductionType() 
+			&& vc.isExtracommunity())))
+		 
 		 // Operaciones exentas sin derecho a deducción
-		 ,C0105	 (Mod3902022DetailKey.C0105, ((mod, vc) -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
+		 ,C0105	 (Mod3902022DetailKey.C0105, ((mod, vc) -> (vc.isSales() 
+			&& !vc.isNational() && vc.isWithoutRightDeductionType())))
+		 
 		 // Operaciones no sujetas por reglas de localización (excepto las incluidas en la casilla 126)
-		 ,C0110	 (Mod3902022DetailKey.C0110, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isOtherISP())))
+		 ,C0110	 (Mod3902022DetailKey.C0110, ((mod, vc) -> (vc.isSales() 
+			&& !vc.isWithoutRightDeductionType() 
+			&& (vc.isOtherISP() || vc.isCanCeuMel()))))
+		 
 		 // Operaciones sujetas con inversión del sujeto pasivo
 		 ,C0125	 (Mod3902022DetailKey.C0125, null)
 		 // Operaciones no sujetas por reglas de localización acogidas a los regímenes especiales de ventanilla única

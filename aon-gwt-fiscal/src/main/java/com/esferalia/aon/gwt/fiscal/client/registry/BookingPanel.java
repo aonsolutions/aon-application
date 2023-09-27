@@ -17,45 +17,34 @@ import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.json.JsonGWTUtils;
+import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainSelectionDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.BookingCheck;
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
-import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.Segment;
-import com.esferalia.aon.occam.api.model.security.Booking;
-import com.esferalia.aon.occam.api.model.security.BookingResume;
-import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
-import com.esferalia.aon.occam.api.model.type.AonStatus;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
@@ -67,10 +56,11 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -87,6 +77,8 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class BookingPanel extends MainEntryPoint {
+	
+	// ------- FeeWithOutBooking
 	
 	class RemoveCustomerFeeCommand implements ScheduledCommand {
 
@@ -151,6 +143,81 @@ public class BookingPanel extends MainEntryPoint {
 		}
 
 	}
+	
+	// ------- BookingWithOutFee
+	
+	class CreateCustomerFeeCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			createCustomerFee(bookingWithOutFeeMenu.getItem(), bookingWithOutFeeMenu.getCustomer());
+		}
+
+	}
+	
+	class UpdateBookingCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			updateBooking();
+		}
+
+	}
+	
+	class BookingWithOutFeeMenu extends AonContextMenu {
+		
+		private Integer id;
+		private OldItem item;
+		private Customer customer;
+		private BookingCheck bookingCheck;
+		
+		private MenuItem createCustomerFee;
+		private MenuItem updateBooking;
+
+		public BookingWithOutFeeMenu() {
+			createCustomerFee = addMenuItem("Crear Cuota", new CreateCustomerFeeCommand(), AON.CSS.aonIconAdd(), "createCustomerFee");
+			updateBooking = addMenuItem("Actualizar Contrataci\u00f3n", new UpdateBookingCommand(), AON.CSS.aonIconEdit(), "updateBooking");
+		}
+		
+		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
+			MenuItem item = addItem(title, command, iconStyle, AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+			item.ensureDebugId(debugId);
+			return item;
+		}
+		
+		public void setId(Integer id) {
+			this.id = id;
+		}
+		
+		public Integer getId() {
+			return this.id;
+		}
+
+		public OldItem getItem() {
+			return item;
+		}
+
+		public void setItem(OldItem item) {
+			this.item = item;
+		}
+
+		public Customer getCustomer() {
+			return customer;
+		}
+
+		public void setCustomer(Customer customer) {
+			this.customer = customer;
+		}
+		
+		public BookingCheck getBookingCheck() {
+			return bookingCheck;
+		}
+
+		public void setBookingCheck(BookingCheck bookingCheck) {
+			this.bookingCheck = bookingCheck;
+		}
+
+	}
 
 	// Services
 	private static RegistryServiceAsync SERVICE;
@@ -161,6 +228,7 @@ public class BookingPanel extends MainEntryPoint {
 	
 	// Context Menu
 	private FeeWithoutbookintMenu feeWithoutbookintMenu;
+	private BookingWithOutFeeMenu bookingWithOutFeeMenu;
 
 	// Content
 	private DockLayoutPanel dockLayoutPanel;
@@ -168,8 +236,16 @@ public class BookingPanel extends MainEntryPoint {
 	private AonToolbar toolbar;
 	private ListBox bookingCheckType;
 	private AonToolbarButton syncDomains;
+	private AonToolbarButton unSyncDomains;
+	private AonToolbarButton checkItems;
+	private AonToolbarButton backBtn;
+	
+	private DeckPanel mainDeckPanel;
+	private BookingCustomer bookingCustomer;
 	
 	// Filter
+	private boolean expandFilter = false;
+	
 	private Integer minYear;
 	private Integer maxYear;
 	
@@ -180,10 +256,15 @@ public class BookingPanel extends MainEntryPoint {
 	private ListBox customerStatusListBox;
 	private ListBox segmentListBox;
 	private SuggestBox conceptSuggestBox;
+	private ListBox conceptStatusListBox;
 	private ListBox startCompareLB;
 	private AonDateBox startDateBox;
 	private ListBox endCompareLB;
 	private AonDateBox endDateBox;
+	
+	private HTMLPanel filterExpandPanel;
+	private ListBox domainTypeListBox;
+	private ListBox domainStatusListBox;
 	
 	// BookingCheck Table
 	private HTMLPanel container;
@@ -233,11 +314,16 @@ public class BookingPanel extends MainEntryPoint {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		feeWithoutbookintMenu = new FeeWithoutbookintMenu();
+		bookingWithOutFeeMenu = new BookingWithOutFeeMenu();
 
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		opt.getParentWidget().add(dockLayoutPanel);
 		
 		dockLayoutPanel.clear();
+		
+		mainDeckPanel = new DeckPanel();
+		
+		bookingCustomer = new BookingCustomer(SERVICE, opt);
 
 		if (opt.getConfiguration() == null) {
 			COMMON_SERVICE.getAonConfiguration(opt.getDomainName(), opt.getDomain(), opt.getUser(),
@@ -261,11 +347,14 @@ public class BookingPanel extends MainEntryPoint {
 	private void loadModule(final RegistryModuleOptions opt) {
 		createToolbar();
 		dockLayoutPanel.addNorth(toolbar, 50);
-
+		
 		container = new HTMLPanel("");
 		container.clear();
 		container.addStyleName(AON.CSS.aonFlexColumn());
-		dockLayoutPanel.add(container);
+		
+		mainDeckPanel.add(container);
+		mainDeckPanel.add(bookingCustomer);
+		dockLayoutPanel.add(mainDeckPanel);
 
 		messagePanel = new HTMLPanel("");
 		container.add(messagePanel);
@@ -312,6 +401,31 @@ public class BookingPanel extends MainEntryPoint {
 			
 		});
 		
+		showBookingList();
+	}
+	
+	private void showBookingList() {
+		bookingCheckType.setVisible(true);
+		syncDomains.setVisible(true);
+		unSyncDomains.setVisible(true);
+		checkItems.setVisible(true);
+		backBtn.setVisible(false);
+		
+		toolbar.setTitle("Panel Contrataci\u00f3n");
+		
+		mainDeckPanel.showWidget(0);
+	}
+	
+	private void showBookingCustomer(String customerName) {
+		bookingCheckType.setVisible(false);
+		syncDomains.setVisible(false);
+		unSyncDomains.setVisible(false);
+		checkItems.setVisible(false);
+		backBtn.setVisible(true);
+		
+		toolbar.setTitle(customerName);
+		
+		mainDeckPanel.showWidget(1);
 	}
 
 	private void createFilterPanel(final RegistryModuleOptions opt, AsyncCallback<Void> endCallback) {
@@ -397,9 +511,13 @@ public class BookingPanel extends MainEntryPoint {
 		Label conceptLabel = new Label("Producto");
 		conceptLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		createConceptSuggestBox();
+		createConceptStatusListBox();
 
 		conceptItemPanel.add(conceptLabel);
 		conceptItemPanel.add(conceptSuggestBox);
+		
+		if(isBookingWithOutFee())
+			conceptItemPanel.add(conceptStatusListBox);
 
 		filterDefaultPanel.add(conceptItemPanel);
 		
@@ -451,12 +569,37 @@ public class BookingPanel extends MainEntryPoint {
 
 		filterDefaultPanel.add(endDateItemPanel);
 		
+		// Filter Expand Panel
+		filterExpandPanel = new HTMLPanel("");
+		filterExpandPanel.addStyleName(AON.CSS.aonFlexWrap());
+		filterExpandPanel.getElement().getStyle().setDisplay(Display.NONE);
+		
+		// Domain
+		Label domainLabel = new Label("Dominio");
+		domainLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		createDomainTypeListBox();
+		createDomainStatusListBox();
+		
+		filterExpandPanel.add(domainLabel);
+		filterExpandPanel.add(domainTypeListBox);
+		filterExpandPanel.add(domainStatusListBox);
+		
 		// Right buttons
 		HTMLPanel filterRightPanel = new HTMLPanel("");
 		filterRightPanel.addStyleName(AON.CSS.aonFlexWrap());
 		filterRightPanel.getElement().getStyle().setProperty("height", "100%");
 		filterRightPanel.getElement().getStyle().setProperty("align-items", "flex-start");
 		filterRightPanel.getElement().getStyle().setProperty("flex-wrap", "nowrap");
+		
+		AonToolbarSmallButton expandFilterBtn = new AonToolbarSmallButton("Mas filtros", AON.CSS.aonIconTune());
+		expandFilterBtn.addClickHandler(e -> {
+			expandFilter = !expandFilter;
+			if(expandFilter) {
+				filterExpandPanel.getElement().getStyle().clearDisplay();
+			} else {
+				filterExpandPanel.getElement().getStyle().setDisplay(Display.NONE);
+			}
+		});
 		
 		AonToolbarSmallButton resetBtn = new AonToolbarSmallButton("Borrar filtros", AON.CSS.aonIconClear());
 		resetBtn.addClickHandler(e -> {
@@ -470,7 +613,9 @@ public class BookingPanel extends MainEntryPoint {
 		});
 		
 		filterLeftPanel.add(filterDefaultPanel);
+		filterLeftPanel.add(filterExpandPanel);
 		
+		filterRightPanel.add(expandFilterBtn);
 		filterRightPanel.add(resetBtn);
 		
 		filterContentPanel.add(filterLeftPanel);
@@ -478,7 +623,7 @@ public class BookingPanel extends MainEntryPoint {
 
 		container.add(filterContentPanel);
 	}
-	
+
 	private ListBox createMonthListBox() {
 		ListBox lb = new ListBox();
 		lb.setHeight("2em");
@@ -673,6 +818,41 @@ public class BookingPanel extends MainEntryPoint {
 		});
 	}
 	
+	private void createConceptStatusListBox() {
+		conceptStatusListBox = new ListBox();
+		conceptStatusListBox.setHeight("2em");
+		conceptStatusListBox.getElement().getStyle().setProperty("padding", "0 5px");
+		conceptStatusListBox.addItem("-", "");
+		conceptStatusListBox.addItem("Facturable", "0");
+		conceptStatusListBox.addItem("No Facturable", "1");
+		conceptStatusListBox.addItem("No Contratado", "2");
+		conceptStatusListBox.addItem("Inactivo", "3");
+		conceptStatusListBox.setSelectedIndex(1);
+		conceptStatusListBox.addChangeHandler(e -> onSearchFees());
+	}
+	
+	// ------- DOMAIN ---------
+	
+	private void createDomainTypeListBox() {
+		domainTypeListBox = new ListBox();
+		domainTypeListBox.setHeight("2em");
+		domainTypeListBox.getElement().getStyle().setProperty("padding", "0 5px");
+		domainTypeListBox.addItem("-", "");
+		domainTypeListBox.addItem("Facturable", "0");
+		domainTypeListBox.addItem("No Facturable", "1");
+		domainTypeListBox.addChangeHandler(e -> onSearchFees());
+	}
+
+	private void createDomainStatusListBox() {
+		domainStatusListBox = new ListBox();
+		domainStatusListBox.setHeight("2em");
+		domainStatusListBox.getElement().getStyle().setProperty("padding", "0 5px");
+		domainStatusListBox.addItem("-", "");
+		domainStatusListBox.addItem("Inactivo", "0");
+		domainStatusListBox.addItem("Activo", "1");
+		domainStatusListBox.addChangeHandler(e -> onSearchFees());
+	}
+	
 	// ------- RESET FILTER ---------
 
 	private void resetFilter() {
@@ -682,10 +862,14 @@ public class BookingPanel extends MainEntryPoint {
 		customerStatusListBox.setSelectedIndex(0);
 		if (null != segmentListBox) segmentListBox.setSelectedIndex(0);
 		conceptSuggestBox.setValue("");
+		conceptStatusListBox.setSelectedIndex(0);
 		startCompareLB.setSelectedIndex(0);
 		startDateBox.setValue(null);
 		endCompareLB.setSelectedIndex(0);
 		endDateBox.setValue(null);
+		
+		domainTypeListBox.setSelectedIndex(0);
+		domainStatusListBox.setSelectedIndex(0);
 		
 		if(null != params) {
 			params.setMonth(null);
@@ -694,6 +878,30 @@ public class BookingPanel extends MainEntryPoint {
 			params.setCustomerStatus(null);
 			params.setSegment(null);
 			params.setProduct(null);
+			params.setProductStatus(null);
+			params.setStartCompare((byte)0);
+			params.setStartDate(null);
+			params.setEndCompare((byte)0);
+			params.setEndDate(null);
+			
+			params.setDomainType(null);
+			params.setDomainStatus(null);
+		}
+	}
+	
+	private void resetFilterChangeType() {
+		monthListBox.setSelectedIndex(0);
+		if (null != yearListBox) yearListBox.setSelectedIndex(0);
+		
+		startCompareLB.setSelectedIndex(0);
+		startDateBox.setValue(null);
+		endCompareLB.setSelectedIndex(0);
+		endDateBox.setValue(null);
+		
+		if(null != params) {
+			params.setMonth(null);
+			params.setYear(null);
+			
 			params.setStartCompare((byte)0);
 			params.setStartDate(null);
 			params.setEndCompare((byte)0);
@@ -785,20 +993,21 @@ public class BookingPanel extends MainEntryPoint {
 	private void createParams() {
 		if(null == params) params = new CustomerFeeParams();
 		params.setDomain(options.getDomain());
-		
-//		Window.alert("conceptSuggestBox : " + conceptSuggestBox.getValue() + "\nItem : " + productSuggestions.get(conceptSuggestBox.getValue()) + "\nproductSuggestions size : " + productSuggestions.size()
-//		+ "\n" + (productSuggestions.size() == 1 ? productSuggestions.keySet().stream().findFirst().get() : ""));
-		
+				
 		params.setMonth(AonStringUtils.isBlank(monthListBox.getSelectedValue()) ? null : Integer.parseInt(monthListBox.getSelectedValue()));
 		params.setYear(AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue()));
 		params.setCustomer(null != customerSuggestions.get(customerSuggestBox.getValue()) ? customerSuggestions.get(customerSuggestBox.getValue()).getName() : null);
 		params.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBox.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBox.getSelectedValue()));
 		params.setSegment(segmentListBox != null && segmentListBox.getSelectedIndex() > 0 ? AonNumberUtils.toInteger( segmentListBox.getSelectedValue()) : null);
 		params.setProduct(null != productSuggestions.get(conceptSuggestBox.getValue()) ? productSuggestions.get(conceptSuggestBox.getValue()).getId() : null);
+		params.setProductStatus(AonStringUtils.isBlank(conceptStatusListBox.getSelectedValue()) ? null : Byte.parseByte(conceptStatusListBox.getSelectedValue()));
 		params.setStartCompare(Byte.parseByte(startCompareLB.getSelectedValue()));
 		params.setStartDate(startDateBox.getValue());
 		params.setEndCompare(Byte.parseByte(endCompareLB.getSelectedValue()));
 		params.setEndDate(endDateBox.getValue());
+		
+		params.setDomainType(AonStringUtils.isBlank(domainTypeListBox.getSelectedValue()) ? null : Byte.parseByte(domainTypeListBox.getSelectedValue()));
+		params.setDomainStatus(AonStringUtils.isBlank(domainStatusListBox.getSelectedValue()) ? null : Byte.parseByte(domainStatusListBox.getSelectedValue()));
 		
 		params.setLimit(limit);
 		params.setOffset(offset.getValue());
@@ -858,7 +1067,7 @@ public class BookingPanel extends MainEntryPoint {
 	}
 
 	private void createFeeHeader() {
-		bookingCheckTable = new Grid(0, 10);
+		bookingCheckTable = new Grid(0, isBookingWithOutFee() ? 8 : 12);
 		bookingCheckTable.clear();
 		bookingCheckTable.setWidth("100%");
 
@@ -870,6 +1079,8 @@ public class BookingPanel extends MainEntryPoint {
 		Label concept = new Label("PRODUCTO");
 		Label conceptStatus = new Label("ESTADO");
 		Label quantity = new Label("CANTIDAD");
+		Label price = new Label("PRECIO");
+		Label discount = new Label("DESCUENTO");
 		Label startDate = new Label("F. DESDE");
 		Label endDate = new Label("F. HASTA");
 		Label url = new Label("");
@@ -881,6 +1092,8 @@ public class BookingPanel extends MainEntryPoint {
 		concept.addStyleName(AON.CSS.aonHeaderTable());
 		conceptStatus.addStyleName(AON.CSS.aonHeaderTable());
 		quantity.addStyleName(AON.CSS.aonHeaderTable());
+		price.addStyleName(AON.CSS.aonHeaderTable());
+		discount.addStyleName(AON.CSS.aonHeaderTable());
 		startDate.addStyleName(AON.CSS.aonHeaderTable());
 		endDate.addStyleName(AON.CSS.aonHeaderTable());
 		url.addStyleName(AON.CSS.aonHeaderTable());
@@ -892,22 +1105,36 @@ public class BookingPanel extends MainEntryPoint {
 		bookingCheckTable.setWidget(row, 3, concept);
 		bookingCheckTable.setWidget(row, 4, conceptStatus);
 		bookingCheckTable.setWidget(row, 5, quantity);
-		bookingCheckTable.setWidget(row, 6, startDate);
-		bookingCheckTable.setWidget(row, 7, endDate);
-		bookingCheckTable.setWidget(row, 8, url);
-		bookingCheckTable.setWidget(row, 9, action);
-
+		if(isBookingWithOutFee()) {
+			bookingCheckTable.setWidget(row, 6, url);
+			bookingCheckTable.setWidget(row, 7, action);
+		} else {
+			bookingCheckTable.setWidget(row, 6, price);
+			bookingCheckTable.setWidget(row, 7, discount);
+			bookingCheckTable.setWidget(row, 8, startDate);
+			bookingCheckTable.setWidget(row, 9, endDate);
+			bookingCheckTable.setWidget(row, 10, url);
+			bookingCheckTable.setWidget(row, 11, action);
+		}
+		
 		bookingCheckTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
 		bookingCheckTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
 		bookingCheckTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonHeaderSticky());
 		bookingCheckTable.getCellFormatter().addStyleName(row, 3, AON.CSS.aonHeaderSticky());
 		bookingCheckTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
 		bookingCheckTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonHeaderSticky());
-		bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
-		bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
-		bookingCheckTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
-		bookingCheckTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
-
+		if(isBookingWithOutFee()) {
+			bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
+		} else {
+			bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 10, AON.CSS.aonHeaderSticky());
+			bookingCheckTable.getCellFormatter().addStyleName(row, 11, AON.CSS.aonHeaderSticky());
+		}
+		
 		scrollPanel.add(bookingCheckTable);
 	}
 	
@@ -916,11 +1143,23 @@ public class BookingPanel extends MainEntryPoint {
 		bookingCheckTable.getColumnFormatter().getElement(2).getStyle().setWidth(80, Unit.PX);
 		bookingCheckTable.getColumnFormatter().getElement(3).getStyle().setWidth(30, Unit.PCT);
 		bookingCheckTable.getColumnFormatter().getElement(4).getStyle().setWidth(80, Unit.PX);
-		bookingCheckTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
-		bookingCheckTable.getColumnFormatter().getElement(6).getStyle().setWidth(80, Unit.PX);
-		bookingCheckTable.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
-		bookingCheckTable.getColumnFormatter().getElement(8).getStyle().setWidth(25, Unit.PX);
-		bookingCheckTable.getColumnFormatter().getElement(9).getStyle().setWidth(25, Unit.PX);
+		if(isBookingWithOutFee()) {
+			bookingCheckTable.getColumnFormatter().getElement(5).getStyle().setWidth(160, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(6).getStyle().setWidth(25, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(7).getStyle().setWidth(25, Unit.PX);
+		} else {
+			bookingCheckTable.getColumnFormatter().getElement(5).getStyle().setWidth(80, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(6).getStyle().setWidth(80, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(7).getStyle().setWidth(80, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(8).getStyle().setWidth(80, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(9).getStyle().setWidth(80, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(10).getStyle().setWidth(25, Unit.PX);
+			bookingCheckTable.getColumnFormatter().getElement(11).getStyle().setWidth(25, Unit.PX);
+		}
+	}
+	
+	private boolean isBookingWithOutFee() {
+		return Integer.parseInt(bookingCheckType.getSelectedValue()) == 0;
 	}
 	
 	private void disableMoreData() {
@@ -956,23 +1195,28 @@ public class BookingPanel extends MainEntryPoint {
 		Label customerLabel = new Label(bookingCheck.getCustomer().getName());
 		Label customerStatusLabel = new Label(bookingCheck.getCustomer().getStatus().getDescription());
 		Label productLabel = new Label(getProductDescription(bookingCheck));
-		Label productStatusLabel = new Label(Integer.parseInt(bookingCheckType.getSelectedValue()) == 1 ? getFeeStatus(bookingCheck) : getProductStatus(bookingCheck));
+		Label productStatusLabel = new Label(Integer.parseInt(bookingCheckType.getSelectedValue()) == 0 ? getProductStatus(bookingCheck) : getFeeStatus(bookingCheck));
 		Label quantityLabel = new Label(AonStringUtils.isBlank(bookingCheck.getQuantity()) ? "1.0" : bookingCheck.getQuantity());
+		
+		Label priceLabel = new Label(bookingCheck.getPrice() == null ? "0.0" : bookingCheck.getPrice().toString());
+		Label discountLabel = new Label(AonStringUtils.isBlank(bookingCheck.getDiscountExpr()) ? "0.0" : bookingCheck.getDiscountExpr());
+		
 		Label startDateLabel = new Label(formatDate(bookingCheck.getStartDate()));
 		Label endDateLabel = new Label(formatDate(bookingCheck.getEndDate()));
 		
 		AonToolbarSmallButton actionBtn = new AonToolbarSmallButton(getActionTitle(), AON.CSS.aonIconMoreVertical());
-		if(Integer.parseInt(bookingCheckType.getSelectedValue()) == 0) {
-			actionBtn.removeStyleName(AON.CSS.aonIconMoreVertical());
-			actionBtn.addStyleName(AON.CSS.aonIconAdd());
-		}
 		actionBtn.addClickHandler(e -> {
+			NativeEvent nativeEvent = e.getNativeEvent();
 			switch (Integer.parseInt(bookingCheckType.getSelectedValue())) {
 				case 0:
-					createCustomerFee(bookingCheck.getItem(), bookingCheck.getCustomer());
+					bookingWithOutFeeMenu.setPopupPosition(nativeEvent.getClientX() - 150, nativeEvent.getClientY());
+					bookingWithOutFeeMenu.show();
+					bookingWithOutFeeMenu.setId(bookingCheck.getId());
+					bookingWithOutFeeMenu.setItem(bookingCheck.getItem());
+					bookingWithOutFeeMenu.setCustomer(bookingCheck.getCustomer());
+					bookingWithOutFeeMenu.setBookingCheck(bookingCheck);
 					break;
 				case 1:
-					NativeEvent nativeEvent = e.getNativeEvent();
 					feeWithoutbookintMenu.setPopupPosition(nativeEvent.getClientX() - 150, nativeEvent.getClientY());
 					feeWithoutbookintMenu.show();
 					feeWithoutbookintMenu.setId(bookingCheck.getId());
@@ -1007,15 +1251,46 @@ public class BookingPanel extends MainEntryPoint {
 		bookingCheckTable.setWidget(row, 3, productLabel);
 		bookingCheckTable.setWidget(row, 4, productStatusLabel);
 		bookingCheckTable.setWidget(row, 5, quantityLabel);
-		bookingCheckTable.setWidget(row, 6, startDateLabel);
-		bookingCheckTable.setWidget(row, 7, endDateLabel);
-		bookingCheckTable.setWidget(row, 8, urlBtn);
-		bookingCheckTable.setWidget(row, 9, actionBtn);
+		if(isBookingWithOutFee()) {
+			bookingCheckTable.setWidget(row, 6, urlBtn);
+			bookingCheckTable.setWidget(row, 7, actionBtn);
+		} else {
+			bookingCheckTable.setWidget(row, 6, priceLabel);
+			bookingCheckTable.setWidget(row, 7, discountLabel);
+			bookingCheckTable.setWidget(row, 8, startDateLabel);
+			bookingCheckTable.setWidget(row, 9, endDateLabel);
+			bookingCheckTable.setWidget(row, 10, urlBtn);
+			bookingCheckTable.setWidget(row, 11, actionBtn);
+		}
+		
+		// Check Status
+		if (bookingCheck.getCustomer().getStatus() == RegistryStatus.INACTIVE) {
+			customerStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			customerStatusLabel.getElement().getStyle().setColor("red");
+		} else if (bookingCheck.getCustomer().getStatus() == RegistryStatus.BLOCKED) {
+			customerStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			customerStatusLabel.getElement().getStyle().setColor("orange");
+		}
 		
 		if(Integer.parseInt(bookingCheckType.getSelectedValue()) == 0) {
-			productLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-			productLabel.getElement().getStyle().setColor("red");
-			productLabel.setTitle("Existe contrataci\u00f3n, pero no cuota");
+			
+			String productStatus = getProductStatus(bookingCheck);
+			
+			if(AonStringUtils.equalsIgnoreCase(productStatus, "Facturable")) {
+				productLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				productLabel.getElement().getStyle().setColor("red");
+				productLabel.setTitle("Existe contrataci\u00f3n, pero no cuota");
+			} else if(AonStringUtils.equalsIgnoreCase(productStatus, "No Facturable")) {
+				productStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				productStatusLabel.getElement().getStyle().setColor("green");
+			} else if(AonStringUtils.equalsIgnoreCase(productStatus, "No Contratado")) {
+				productStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				productStatusLabel.getElement().getStyle().setColor("red");
+			} else if(AonStringUtils.equalsIgnoreCase(productStatus, "Inactivo")) {
+				productStatusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				productStatusLabel.getElement().getStyle().setColor("orange");
+			}			
+			
 		} else if(Integer.parseInt(bookingCheckType.getSelectedValue()) == 1) {
 			productLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 			productLabel.getElement().getStyle().setColor("orange");
@@ -1035,6 +1310,8 @@ public class BookingPanel extends MainEntryPoint {
 			productLabel.addStyleName(AON.CSS.aonOddTableRow());
 			productStatusLabel.addStyleName(AON.CSS.aonOddTableRow());
 			quantityLabel.addStyleName(AON.CSS.aonOddTableRow());
+			priceLabel.addStyleName(AON.CSS.aonOddTableRow());
+			discountLabel.addStyleName(AON.CSS.aonOddTableRow());
 			startDateLabel.addStyleName(AON.CSS.aonOddTableRow());
 			endDateLabel.addStyleName(AON.CSS.aonOddTableRow());
 			urlBtn.addStyleName(AON.CSS.aonOddTableRow());
@@ -1046,20 +1323,34 @@ public class BookingPanel extends MainEntryPoint {
 			bookingCheckTable.getCellFormatter().addStyleName(row, 3, AON.CSS.aonOddTableRow());
 			bookingCheckTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonOddTableRow());
 			bookingCheckTable.getCellFormatter().addStyleName(row, 5, AON.CSS.aonOddTableRow());
-			bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonOddTableRow());
-			bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonOddTableRow());
-			bookingCheckTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonOddTableRow());
-			bookingCheckTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonOddTableRow());
+			if(isBookingWithOutFee()) {
+				bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonOddTableRow());
+			} else {
+				bookingCheckTable.getCellFormatter().addStyleName(row, 6, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 7, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 8, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 9, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 10, AON.CSS.aonOddTableRow());
+				bookingCheckTable.getCellFormatter().addStyleName(row, 11, AON.CSS.aonOddTableRow());
+			}
 		}
 		
 		bookingCheckTable.getCellFormatter().getElement(row, 0).getStyle().setTextAlign(TextAlign.CENTER);
 		bookingCheckTable.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
 		bookingCheckTable.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
 		bookingCheckTable.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
-		bookingCheckTable.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
-		bookingCheckTable.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
-		bookingCheckTable.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.CENTER);
-		bookingCheckTable.getCellFormatter().getElement(row, 9).getStyle().setTextAlign(TextAlign.CENTER);
+		if(isBookingWithOutFee()) {
+			bookingCheckTable.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingCheckTable.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
+		} else {
+			bookingCheckTable.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingCheckTable.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingCheckTable.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.CENTER);
+			bookingCheckTable.getCellFormatter().getElement(row, 9).getStyle().setTextAlign(TextAlign.CENTER);	
+			bookingCheckTable.getCellFormatter().getElement(row, 10).getStyle().setTextAlign(TextAlign.CENTER);	
+			bookingCheckTable.getCellFormatter().getElement(row, 11).getStyle().setTextAlign(TextAlign.CENTER);	
+		}
 
 		bookingCheckTable.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 	}
@@ -1068,23 +1359,19 @@ public class BookingPanel extends MainEntryPoint {
 		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios del cliente ...");
 		
 		// Create the base URL
-		String baseUrl = "/ms/api/domain/";
+		String baseUrl = "/ms/api/domain/" + bookingCheck.getCustomer().getId().toString();
 
 		// Create a URL builder and add query parameters
 		UrlBuilder urlBuilder = new UrlBuilder();
 		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+//		urlBuilder.setHost("localhost:8080");
 		urlBuilder.setHost("aon.solutions"); 
 		urlBuilder.setPath(baseUrl);
-		
-		urlBuilder.setParameter("customer", bookingCheck.getCustomer().getId().toString());
 		
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 		
-		Window.alert("checkCustomerDomains RequestBuilder GET : " + urlBuilder.buildString());
-		Window.alert("checkCustomerDomains RequestBuilder Header (session_id) : " + requestBuilder.getHeader("session_id"));
-
 		try {
 		    // Send the request
 		    requestBuilder.sendRequest(null, new RequestCallback() {
@@ -1092,10 +1379,11 @@ public class BookingPanel extends MainEntryPoint {
 		            if (response.getStatusCode() == 200) {
 		            	
 		                String responseBody = response.getText();
-		                Window.alert("Customer Domain \n" + responseBody);
-		                List<DomainCompany> companies = parseDomainCompanyJSON(responseBody);
+		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
 		                AonMessagePanel.hideMessage(messagePanel);
-		                showDomainsDialog(companies);
+		                
+		                showBookingCustomer(bookingCheck.getCustomer().getName());
+		                bookingCustomer.setBookingCustomer(bookingCheck.getCustomer(), companies);
 		                
 		            } else {
 		            	AonMessagePanel.showError(messagePanel, response.getText());
@@ -1111,148 +1399,6 @@ public class BookingPanel extends MainEntryPoint {
 		}
 	}
 	
-	private void showDomainsDialog(List<DomainCompany> companies) {
-		HTMLPanel widget = new HTMLPanel("");
-		widget.addStyleName(AON.CSS.aonFlexColumn());
-		
-		for(DomainCompany domainCompany : companies) {
-			HTMLPanel widgetDomain = new HTMLPanel("");
-			widgetDomain.addStyleName(AON.CSS.aonItemFlex());
-			
-			Label domain = new Label(domainCompany.getDomain().getDescription());
-			AonTableButton btn = new AonTableButton("Ir a", AON.CSS.aonIconSend());
-			btn.addClickHandler(e -> {
-				Window.open(domainCompany.getDomain().getName(),"_blank","");
-			});
-			Label status = new Label("Estado : " + (domainCompany.getDomain().isActive() ? "Activo" : "Inactivo"));
-			
-			widgetDomain.add(domain);
-			widgetDomain.add(status);
-			widgetDomain.add(btn);
-			
-			widget.add(widgetDomain);
-		}
-		
-		AonDialog dialog = new AonDialog("Dominios", widget);
-		dialog.info();
-	}
-	
-	private List<DomainCompany> parseDomainCompanyJSON(String responseBody) {
-		JSONArray arr = JSONParser.parseStrict(responseBody).isArray();
-		LinkedList<DomainCompany> list = new LinkedList<>();
-		
-		for(Integer i = 0; i < arr.size(); i++) {
-			list.add(fromJSONToDomainCompany(arr.get(i)));
-		}
- 		
-		return list;
-	}
-	
-	private Booking parseBookingJSON(String responseBody) {
-		Booking booking = fromJSONToBooking(JSONParser.parseStrict(responseBody).isObject());
-		return booking;
-	}
-	
-	private Booking fromJSONToBooking(JSONObject jsonObj) {
-		List<AonApp> apps = new LinkedList<>();
-		List<AonApp> parentApps = new LinkedList<>();
-		
-		JSONArray appsArr = JsonGWTUtils.getJSONArray(jsonObj, IJsonNames.APPS);
-		for(int i=0; i<appsArr.size(); i++)
-			apps.add(AonApp.safeValueOf(appsArr.get(i).toString()));
-		
-		JSONArray parentAppsArr = JsonGWTUtils.getJSONArray(jsonObj, IJsonNames.PARENT_APPS);
-		for(int i=0; i<parentAppsArr.size(); i++)
-			parentApps.add(AonApp.safeValueOf(parentAppsArr.get(i).toString()));
-		
-		return new Booking()
-			.setDomain(parseDomain(jsonObj.get(IJsonNames.DOMAIN)))
-			.setCompany(parseCompany(jsonObj.get(IJsonNames.COMPANY)))
-			.setType(DomainType.safeValueOf(JsonGWTUtils.getString(jsonObj, IJsonNames.TYPE)))
-			.setApps(apps)
-			.setParentApps(parentApps)
-			.setNumberOfUsers(JsonGWTUtils.getInt(jsonObj, IJsonNames.NUMBER_OF_USERS))
-			.setPayer(JsonGWTUtils.getString(jsonObj, IJsonNames.PAYER));
-	}
-
-	private DomainCompany fromJSONToDomainCompany(JSONValue json) {
-		if(json == null) return new DomainCompany();
-		return new DomainCompany()
-				.setSchema(json.isObject().get(IJsonNames.SCHEMA).toString())
-				.setDomain(parseDomain(json.isObject().get(IJsonNames.DOMAIN)))
-				.setCompany(parseCompany(json.isObject().get(IJsonNames.COMPANY)))
-		;
-	}
-
-	private Domain parseDomain(JSONValue json) {
-		if(json == null) return new Domain();
-		
-		JSONObject jsonObj = json.isObject();
-		
-		return new Domain()
-			.setId(JsonGWTUtils.getInteger(jsonObj,IJsonNames.ID))
-			.setName(JsonGWTUtils.getString(jsonObj, IJsonNames.NAME))
-			.setDescription(JsonGWTUtils.getString(jsonObj, IJsonNames.DESCRIPTION))
-			.setOwner(JsonGWTUtils.getString(jsonObj, IJsonNames.OWNER))
-			.setParentId(JsonGWTUtils.optInteger(jsonObj, IJsonNames.PARENT_ID))
-			.setDomainType( DomainType.safeValueOf( JsonGWTUtils.getString(jsonObj,IJsonNames.DOMAIN_TYPE) ))
-			.setEnableHeredity(JsonGWTUtils.getboolean(jsonObj, IJsonNames.ENABLE_HEREDITY))
-			.setDomainManagement(JsonGWTUtils.getboolean(jsonObj, IJsonNames.DOMAIN_MANAGEMENT))
-			.setDisableDomainManagement(JsonGWTUtils.getboolean(jsonObj, IJsonNames.DISABLE_DOMAIN_MANAGEMENT))
-			.setActive(JsonGWTUtils.getboolean(jsonObj, IJsonNames.ACTIVE))
-			.setScope(JsonGWTUtils.getInteger(jsonObj,IJsonNames.SCOPE))
-			.setMaxDefinedUsers( JsonGWTUtils.getInteger(jsonObj,IJsonNames.MAX_DEFINED_USERS))
-			.setDefinedUsers( JsonGWTUtils.getInteger(jsonObj,IJsonNames.DEFINED_USERS))
-			.setMaxDocumentSize( JsonGWTUtils.getInteger(jsonObj,IJsonNames.MAX_DOCUMENT_SIZE))
-			.setMaxTotalDocumentSize( JsonGWTUtils.getInteger(jsonObj,IJsonNames.MAX_TOTAL_DOCUMENT_SIZE))
-			.setLastAccessUser(JsonGWTUtils.getString(jsonObj, IJsonNames.LAST_ACCESS_USER))
-			.setLastAccessDate(JsonGWTUtils.getDate(jsonObj, IJsonNames.LAST_ACCESS_DATE))
-			.setExpirationDate(JsonGWTUtils.getDate(jsonObj, IJsonNames.EXPIRATION_DATE))
-			.setCreationUser(JsonGWTUtils.getString(jsonObj, IJsonNames.CREATION_USER))
-			.setCreationDate(JsonGWTUtils.getDate(jsonObj, IJsonNames.CREATION_DATE))
-			.setModificationUser(JsonGWTUtils.getString(jsonObj, IJsonNames.MODIFICATION_USER))
-			.setModificationDate(JsonGWTUtils.getDate(jsonObj, IJsonNames.MODIFICATION_DATE))
-			.setAonCustomer(JsonGWTUtils.getInteger(jsonObj, IJsonNames.AON_CUSTOMER))
-			.setAonStatus(AonStatus.safeValueOf(JsonGWTUtils.getString(jsonObj,IJsonNames.AON_STATUS)))
-		;
-	}
-
-	private Company parseCompany(JSONValue json) {
-		if(json == null) return new Company();
-		
-		JSONObject jsonObj = json.isObject();
-		
-		return new Company()
-				.copy(parseRegistry(json))
-				.setActive(JsonGWTUtils.getboolean(jsonObj, IJsonNames.ACTIVE))
-				.setSurcharge(JsonGWTUtils.getboolean(jsonObj, IJsonNames.SURCHARGE))
-				.setWithholding(JsonGWTUtils.getboolean(jsonObj, IJsonNames.WITHHOLDING))
-				.setVatAccrualPayment(JsonGWTUtils.getboolean(jsonObj, IJsonNames.VAT_ACCRUAL_PAYMENT))
-				.seteInvoice(JsonGWTUtils.getboolean(jsonObj, IJsonNames.E_INVOICE));
-	}
-	
-	public Registry parseRegistry(JSONValue json) {
-		if(json == null) {
-			return new Registry();
-		}
-		
-		JSONObject jsonObj = json.isObject();
-		
-		return new Registry() 
-			.setId(JsonGWTUtils.getInteger(jsonObj, IJsonNames.ID))
-			.setDomain(parseDomain(json))
-			.setDocument(JsonGWTUtils.getString(jsonObj,IJsonNames.DOCUMENT))
-			.setDocumentCountry(Country.safeValueOf(JsonGWTUtils.getString(jsonObj,IJsonNames.DOCUMENT_COUNTRY)))
-			.setDocumentType(DocumentType.safeValueOf(JsonGWTUtils.getString(jsonObj,IJsonNames.DOCUMENT_TYPE)))
-			.setName(JsonGWTUtils.getString(jsonObj,IJsonNames.NAME))
-			.setAlias(JsonGWTUtils.getString(jsonObj,IJsonNames.ALIAS))
-			.setLegalPerson(JsonGWTUtils.getboolean(jsonObj, IJsonNames.LEGAL_PERSON))
-			.setNationality(Country.safeValueOf(JsonGWTUtils.getString(jsonObj,IJsonNames.NATIONALITY)))
-			.setConfidential(JsonGWTUtils.getboolean(jsonObj, IJsonNames.CONFIDENTIAL))
-			.setGlobal(JsonGWTUtils.getboolean(jsonObj, IJsonNames.GLOBAL))
-			.setDirty(JsonGWTUtils.getboolean(jsonObj, IJsonNames.DIRTY));
-	}
-
 	private String getFeeStatus(BookingCheck bookingCheck) {
 		return 	bookingCheck.getEndDate() == null || 
 				(new Date().before(bookingCheck.getEndDate()) && 
@@ -1261,8 +1407,8 @@ public class BookingPanel extends MainEntryPoint {
 	}
 
 	private String getProductStatus(BookingCheck bookingCheck) {
-		if(bookingCheck.getStatus().equals(RegistryItemStatus.ACTIVE)) return "Factrable";
-		else if(bookingCheck.getStatus().equals(RegistryItemStatus.INTERESTED)) return "No Factrable";
+		if(bookingCheck.getStatus().equals(RegistryItemStatus.ACTIVE)) return "Facturable";
+		else if(bookingCheck.getStatus().equals(RegistryItemStatus.INTERESTED)) return "No Facturable";
 		else if(bookingCheck.getStatus().equals(RegistryItemStatus.REFUSED)) return " No Contratado";
 		else if(bookingCheck.getStatus().equals(RegistryItemStatus.INACTIVE)) return "Inactivo";
 		else return "";
@@ -1275,7 +1421,7 @@ public class BookingPanel extends MainEntryPoint {
 			case 1:
 				return "Cuota";
 			default:
-				return "Contrataci\u00f3n";
+				return "Cuota";
 		}
 	}
 	
@@ -1286,7 +1432,7 @@ public class BookingPanel extends MainEntryPoint {
 			case 1:
 				return "Cuota";
 			default:
-				return "Contr.";
+				return "Cuota";
 		}
 	}
 
@@ -1341,11 +1487,11 @@ public class BookingPanel extends MainEntryPoint {
 		bookingCheckType = new ListBox();
 		bookingCheckType.addItem("Contrataci\u00f3n Sin Cuotas", "0");
 		bookingCheckType.addItem("Cuotas Sin Contrataci\u00f3n", "1");
-		bookingCheckType.addItem("Contrataci\u00f3n Correcta", "2");
+		bookingCheckType.addItem("Cuotas Correctas", "2");
 		
 		bookingCheckType.addChangeHandler(e -> {
 			checkPeriodVisibility();
-			resetFilter();
+			resetFilterChangeType();
 			bookingCheckList.clear();
 			resetFeeTable();
 			enableMoreData();
@@ -1354,13 +1500,91 @@ public class BookingPanel extends MainEntryPoint {
 			onSearchFees();
 		});
 		
-		syncDomains = new AonToolbarButton("Sincronizar dominio", AON.CSS.aonIconCloudSync());
+		syncDomains = new AonToolbarButton("Sincronizar dominio", AON.CSS.aonIconSync());
 		syncDomains.addClickHandler(e -> {
 			syncDomain();
 		});
 		
+		unSyncDomains = new AonToolbarButton("Desincronizar dominio", AON.CSS.aonIconSyncDisabled());
+		unSyncDomains.addClickHandler(e -> {
+			unSyncDomain();
+		});
+		
+		checkItems = new AonToolbarButton("Comprobar items", AON.CSS.aonIconInfo());
+		checkItems.addClickHandler(e -> {
+			checkItems();
+		});
+		
+		backBtn = new AonToolbarButton("Lista Contrataci\u00f3n", AON.CSS.aonIconBack());
+		backBtn.setVisible(false);
+		backBtn.addClickHandler(e -> showBookingList());
+		
 		toolbar.add(bookingCheckType);
 		toolbar.add(syncDomains);
+		toolbar.add(unSyncDomains);
+		toolbar.add(checkItems);
+		toolbar.add(backBtn);
+	}
+	
+	private void checkItems() {
+		AonMessagePanel.showLoading(messagePanel, "Comprobando items ...");
+		
+		// Create the base URL
+		String baseUrl = "/ms/api/domain/check-items/";
+
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost(Window.Location.getHost()); 
+		urlBuilder.setPath(baseUrl);
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(null, new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+		            	AonMessagePanel.hideMessage(messagePanel);
+		            	showCheckedItems(response.getText());
+		            } else {
+		            	AonMessagePanel.showError(messagePanel, response.getText());
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        }
+		    });
+		} catch (RequestException e) {
+			AonMessagePanel.showError(messagePanel, e.getMessage());
+		}
+	}
+
+	private void showCheckedItems(String response) {
+		if(AonStringUtils.isNotBlank(response) && AonStringUtils.containsIgnoreCase(response, "items")) {
+			AonDialog dialog = new AonDialog("Items no encontrados", parseItems(response));
+			dialog.info();
+		}
+	}
+	
+	private HTMLPanel parseItems(String jsonItems) {
+		String htmlBody = "<ul>";
+		
+		JSONObject jsonObj = JSONParser.parseStrict(jsonItems).isObject();
+		JSONArray arr = jsonObj.get("items").isArray();
+		
+		for(Integer i = 0; i < arr.size(); i++)
+			htmlBody += "<li>" + arr.get(i).isObject().get("item").isString().stringValue() + "</li>";
+
+		htmlBody += "</ul>";
+		
+		HTMLPanel html = new HTMLPanel(htmlBody);
+		html.getElement().getStyle().setPaddingLeft(2, Unit.EM);
+		
+		return html;
 	}
 
 	private void syncDomain() {
@@ -1372,17 +1596,15 @@ public class BookingPanel extends MainEntryPoint {
 		// Create a URL builder and add query parameters
 		UrlBuilder urlBuilder = new UrlBuilder();
 		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+//		urlBuilder.setHost("localhost:8080");
 		urlBuilder.setHost("aon.solutions"); 
 		urlBuilder.setPath(baseUrl);
 		
-//		urlBuilder.setParameter("linked", "false");
+		 urlBuilder.setParameter("linked", "true");
 		
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		
-		Window.alert("syncDomain RequestBuilder GET : " + urlBuilder.buildString());
-		Window.alert("syncDomain RequestBuilder Header (session_id) : " + requestBuilder.getHeader("session_id"));
 		
 		try {
 		    // Send the request
@@ -1391,8 +1613,7 @@ public class BookingPanel extends MainEntryPoint {
 		            if (response.getStatusCode() == 200) {
 
 		                String responseBody = response.getText();
-		                Window.alert("Domains \n" + responseBody);
-		                List<DomainCompany> companies = parseDomainCompanyJSON(responseBody);
+		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
 		                AonMessagePanel.hideMessage(messagePanel);
 		                showSelectDomainsDialog(companies);
 		                
@@ -1414,40 +1635,102 @@ public class BookingPanel extends MainEntryPoint {
 		new AonDomainSelectionDialog("Dominios", companies) {
 			
 			@Override
-			protected void onAccept(DomainCompany domainCompany) {
-				AonMessagePanel.showLoading(messagePanel, "Obteniendo contrataci\u00f3n para el dominio seleccionado ...");
+			protected void onAccept(DomainCompany domainCompany, boolean allDomains) {
+				if(allDomains)
+					syncAllDomain(companies);
+				else
+					syncDomain(domainCompany);
+			}
+
+			private void syncAllDomain(List<DomainCompany> companies) {
+				AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para los dominios seleccionados ...");
+				int syncDomain = 0;
+				
+				for(DomainCompany domainCompany : companies) {
+					final int iteration = syncDomain;
+					
+					Integer customerId = domainCompany.getDomain().getAonCustomer();
+					
+					// Create the base URL
+					String baseUrl = "/ms/api/domain/booking-customer/";
+
+					// Create a URL builder and add query parameters
+					UrlBuilder urlBuilder = new UrlBuilder();
+					urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+					urlBuilder.setHost(Window.Location.getHost()); 
+					urlBuilder.setPath(baseUrl);
+					
+					// Create the request builder with the complete URL
+					RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+					requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+					
+					JSONObject body = new JSONObject();
+					body.put("customer", new JSONNumber(customerId));
+					
+					try {
+					    // Send the request
+					    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+					        public void onResponseReceived(Request request, Response response) {
+					            if (response.getStatusCode() == 200) {
+					            	
+					            	if((iteration + 1) == companies.size())
+										AonMessagePanel.showSuccess(messagePanel, "La sicronizaci\u00f3n de dominios se ha realizado correctamente.");
+			  		           		
+					            } else {
+					            	AonMessagePanel.showError(messagePanel, response.getText());
+					            }
+					        }
+
+							public void onError(Request request, Throwable exception) {
+								AonMessagePanel.showError(messagePanel, exception.getMessage());
+					        }
+					    });
+					} catch (RequestException e) {
+						AonMessagePanel.showError(messagePanel, e.getMessage());
+					}
+					
+					syncDomain++;
+				}
+				
+			}
+
+			private void syncDomain(DomainCompany domainCompany) {
+				AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el dominio seleccionado ...");
+				
+				Integer customerId = domainCompany.getDomain().getAonCustomer();
 				
 				// Create the base URL
-				String baseUrl = "/ms/api/booking/";
+				String baseUrl = "/ms/api/domain/booking-customer/";
 
 				// Create a URL builder and add query parameters
 				UrlBuilder urlBuilder = new UrlBuilder();
 				urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-				urlBuilder.setHost("aon.solutions"); 
+				urlBuilder.setHost(Window.Location.getHost()); 
 				urlBuilder.setPath(baseUrl);
 				
-				urlBuilder.setParameter("domainName", domainCompany.getDomain().getName());
-				urlBuilder.setParameter("domainId", domainCompany.getDomain().getId().toString());
-				
 				// Create the request builder with the complete URL
-				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
 				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 				
-				Window.alert("booking RequestBuilder GET : " + urlBuilder.buildString());
-				Window.alert("booking RequestBuilder Header (session_id) : " + requestBuilder.getHeader("session_id"));
+				JSONObject body = new JSONObject();
+				body.put("customer", new JSONNumber(customerId));
 				
 				try {
 				    // Send the request
-				    requestBuilder.sendRequest(null, new RequestCallback() {
+				    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
 				        public void onResponseReceived(Request request, Response response) {
 				            if (response.getStatusCode() == 200) {
-
-				                String responseBody = response.getText();
-				                Window.alert("Booking \n" + responseBody);
-				                Booking booking = parseBookingJSON(responseBody);
-				                AonMessagePanel.hideMessage(messagePanel);
-				                updateBookingRitems(domainCompany, booking);
-				                
+				            	
+				            	AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " se ha realizado correctamente");
+			            		
+				            	Timer timer = new Timer() {
+				           		     @Override
+				           		     public void run() {
+				           		    	showSyncLogs(response.getText());
+				           		     }
+				           		};
+				           		timer.schedule(3500);
+		  		           		
 				            } else {
 				            	AonMessagePanel.showError(messagePanel, response.getText());
 				            }
@@ -1461,31 +1744,27 @@ public class BookingPanel extends MainEntryPoint {
 					AonMessagePanel.showError(messagePanel, e.getMessage());
 				}
 			}
-		
 		};
 	}
-
-	private void updateBookingRitems(DomainCompany domainCompany, Booking booking) {
-		AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el dominio seleccionado ...");
+	
+	private void unSyncDomain() {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios ...");
 		
 		// Create the base URL
-		String baseUrl = "/ms/api/domain/booking/";
+		String baseUrl = "/ms/api/domain/";
 
 		// Create a URL builder and add query parameters
 		UrlBuilder urlBuilder = new UrlBuilder();
 		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+//		urlBuilder.setHost("localhost:8080");
 		urlBuilder.setHost("aon.solutions"); 
 		urlBuilder.setPath(baseUrl);
 		
-		urlBuilder.setParameter("domain", toJson(domainCompany).toString());
-		urlBuilder.setParameter("booking", toJson(booking).toString());
+		 urlBuilder.setParameter("linked", "true");
 		
 		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
-		
-		Window.alert("booking sync RequestBuilder GET : " + urlBuilder.buildString());
-		Window.alert("booking sync RequestBuilder Header (session_id) : " + requestBuilder.getHeader("session_id"));
 		
 		try {
 		    // Send the request
@@ -1494,9 +1773,9 @@ public class BookingPanel extends MainEntryPoint {
 		            if (response.getStatusCode() == 200) {
 
 		                String responseBody = response.getText();
-		                Window.alert("Booking Sync \n" + responseBody);
-		                AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n se ha realizado correctamente");
-		                
+		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
+		                AonMessagePanel.hideMessage(messagePanel);
+		                showSelectUnsyncDomainsDialog(companies);
 		                
 		            } else {
 		            	AonMessagePanel.showError(messagePanel, response.getText());
@@ -1512,192 +1791,86 @@ public class BookingPanel extends MainEntryPoint {
 		}
 	}
 	
-	private JSONObject toJson(Booking booking) {
-		JSONArray apps = new JSONArray();
-		JSONArray parentApps = new JSONArray();
-		
-		for(int i=0; i<booking.getApps().size(); i++)
-			apps.set(i, new JSONString(booking.getApps().get(i).name()));
-		
-		for(int i=0; i<booking.getParentApps().size(); i++)
-			parentApps.set(i, new JSONString(booking.getParentApps().get(i).name()));
+	private void showSelectUnsyncDomainsDialog(List<DomainCompany> companies) {
+		new AonDomainSelectionDialog("Dominios", companies) {
+			
+			@Override
+			protected void onAccept(DomainCompany domainCompany, boolean allDomains) {
+				unSyncDomain(companies, domainCompany, allDomains);
+			}
 
-		return new JSONObject()
-			.put(IJsonNames.DOMAIN, toJSON(booking.getDomain()))
-			.isObject()
-			.put(IJsonNames.COMPANY, toJSON(booking.getCompany()))
-			.isObject()
-			.put(IJsonNames.TYPE, new JSONString(booking.getType() != null ? booking.getType().name() : null))
-			.isObject()
-			.put(IJsonNames.APPS, apps) 
-			.isObject()
-			.put(IJsonNames.PARENT_APPS, parentApps) 
-			.isObject()
-			.put(IJsonNames.NUMBER_OF_USERS, new JSONString(booking.getNumberOfUsers() + ""))
-			.isObject()
-			.put(IJsonNames.PAYER, new JSONString(booking.getPayer()))
-			.isObject()
-			.put(IJsonNames.RESUME, booking.getResume() != null ? bookingResume(booking.getResume()): null)
-			.isObject();
-	}
-	
-	private static JSONObject bookingResume(BookingResume resume) {
-		JSONObject o = new JSONObject();
-		if(resume != null) { 
-			JSONObject domain = new JSONObject();
-			resume.getDomainTypes().keySet().forEach(r ->{
-				DomainTypeInfo dti = resume.getDomainTypes().get(r);
-				JSONObject oa = new JSONObject();
-				oa.put("number", new JSONString(dti.getNumber() + ""));
+			private void unSyncDomain(List<DomainCompany> companies, DomainCompany domainCompany, boolean allDomains) {
+				AonMessagePanel.showLoading(messagePanel, "Desincronizando contrataci\u00f3n para" + (allDomains ? " todos los dominios ..." : " el dominio seleccionado ..."));
 				
-				JSONObject apps = new JSONObject();
-				dti.getChildApps().keySet().forEach(r2 -> apps.put(r2.name(), new JSONString(dti.getChildApps().get(r2) + "")));
-				oa.put(IJsonNames.APPS, apps);
+				// Create the base URL
+				String baseUrl = "/ms/api/domain/booking/";
 
-				oa.put("childs", childJson(dti.getChilds()));
+				// Create a URL builder and add query parameters
+				UrlBuilder urlBuilder = new UrlBuilder();
+				urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+				urlBuilder.setHost(Window.Location.getHost()); 
+				urlBuilder.setPath(baseUrl);
+				
+				// Create the request builder with the complete URL
+				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.DELETE, urlBuilder.buildString());
+				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+				
+				Integer customerId = allDomains ? 0 : domainCompany.getDomain().getAonCustomer();
+				
+				JSONObject body = new JSONObject();
+				body.put("customer", new JSONNumber(customerId));
+				
+				if(allDomains) body.put("all", new JSONString("true"));
+				
+				try {
+				    // Send the request
+				    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+				        public void onResponseReceived(Request request, Response response) {
+				            if (response.getStatusCode() == 200) {
+				            	
+				            	if(allDomains)
+				            		AonMessagePanel.showSuccess(messagePanel, "La desincronizaci\u00f3n de los dominios se ha realizado correctamente");
+				            	else
+				            		AonMessagePanel.showSuccess(messagePanel, "La desincronizaci\u00f3n del dominio " + domainCompany.getDomain().getDescription() + " se ha realizado correctamente");
+		  		           		
+				            } else {
+				            	AonMessagePanel.showError(messagePanel, response.getText());
+				            }
+				        }
 
-				domain.put(r.name(), oa);	
-			});
-			o.put(IJsonNames.DOMAIN, domain);
-
-			JSONObject user = new JSONObject();
-			resume.getUserTypes().keySet().forEach(r -> user.put(r.name(), new JSONString(resume.getUserTypes().get(r) + "")));
-			user.put("childDefinedUsers", new JSONString(resume.getChildDefinedUsers() + ""));
-			user.put("childBillingUsers", new JSONString(resume.getChildBillingUsers() + ""));
-			
-			o.put(IJsonNames.USER, user);
-		}
-		return o;
+						public void onError(Request request, Throwable exception) {
+							AonMessagePanel.showError(messagePanel, exception.getMessage());
+				        }
+				    });
+				} catch (RequestException e) {
+					AonMessagePanel.showError(messagePanel, e.getMessage());
+				}
+			}
+		};
 	}
 	
-	private static JSONArray childJson(List<Domain> childs) {
-		JSONArray array = new JSONArray();
+	private void showSyncLogs(String response) {
+		if(AonStringUtils.isNotBlank(response) && AonStringUtils.containsIgnoreCase(response, "logs"))
+    		AonMessagePanel.showWarning(messagePanel, parseErrors(response));
+	}
+
+	private HTMLPanel parseErrors(String jsonErrors) {
+		String htmlBody = "<ul>";
 		
-		for(int i=0; i<childs.size(); i++) {
-			JSONArray apps = new JSONArray();
-			Domain d = childs.get(i);
-			
-			for(int j=0; j<d.getApps().size(); j++)
-				apps.set(j, new JSONString(d.getApps().get(j).getApp().name()));
-			
-			JSONObject json = new JSONObject();
-			json.put(IJsonNames.ID, new JSONString(d.getId().toString()));
-			json.put(IJsonNames.NAME, new JSONString(d.getName()));
-			json.put(IJsonNames.DESCRIPTION, new JSONString(d.getDescription()));
-			json.put(IJsonNames.APPS, apps);
-			json.put(IJsonNames.MAX_DEFINED_USERS, new JSONString(d.getMaxDefinedUsers() + ""));
-			
-			array.set(i, json);
-		}
+		JSONObject jsonObj = JSONParser.parseStrict(jsonErrors).isObject();
+		JSONArray arr = jsonObj.get("logs").isArray();
 		
-		return array;
-	}
+		for(Integer i = 0; i < arr.size(); i++)
+			htmlBody += "<li>" + arr.get(i).isObject().get("log").isString().stringValue() + "</li>";
 
-	private JSONObject toJson(DomainCompany domainCompany) {
-		if(domainCompany == null) return new JSONObject();
-		return new JSONObject()
-				.put(IJsonNames.SCHEMA, new JSONString(domainCompany.getSchema()))
-				.isObject()
-				.put(IJsonNames.DOMAIN, toJSON(domainCompany.getDomain()))
-				.isObject()
-				.put(IJsonNames.COMPANY,toJSON(domainCompany.getCompany()))
-				.isObject()
-			;	
+		htmlBody += "</ul>";
+		
+		HTMLPanel html = new HTMLPanel(htmlBody);
+		html.getElement().getStyle().setPaddingLeft(2, Unit.EM);
+		
+		return html;
 	}
-
-	private JSONObject toJSON(Domain domain) {
-		if(domain == null) return new JSONObject();
-		return new JSONObject()
-			.put(IJsonNames.ID, new JSONString(domain.getId().toString()))
-			.isObject()
-			.put(IJsonNames.NAME,new JSONString( domain.getName()))
-			.isObject()
-			.put(IJsonNames.DESCRIPTION, new JSONString(domain.getDescription()))
-			.isObject()
-			.put(IJsonNames.OWNER, new JSONString(domain.getOwner()))
-			.isObject()
-			.put(IJsonNames.PARENT_ID, new JSONString(domain.getParentId().toString()))
-			.isObject()
-			.put(IJsonNames.DOMAIN_TYPE, new JSONString(domain.getDomainType() == null?null:domain.getDomainType().toString()))
-			.isObject()
-			.put(IJsonNames.ENABLE_HEREDITY, new JSONString(domain.isEnableHeredity() + ""))
-			.isObject()
-			.put(IJsonNames.DOMAIN_MANAGEMENT, new JSONString(domain.isDomainManagement() + ""))
-			.isObject()
-			.put(IJsonNames.DISABLE_DOMAIN_MANAGEMENT, new JSONString(domain.isDisableDomainManagement() + ""))
-			.isObject()
-			.put(IJsonNames.ACTIVE, new JSONString(domain.isActive() + ""))
-			.isObject()
-			.put(IJsonNames.SCOPE, new JSONString(domain.getScope()+ ""))
-			.isObject()
-			.put(IJsonNames.MAX_DEFINED_USERS, new JSONString(domain.getMaxDefinedUsers() + ""))
-			.isObject()
-			.put(IJsonNames.DEFINED_USERS, new JSONString(domain.getDefinedUsers()+ ""))
-			.isObject()
-			.put(IJsonNames.MAX_DOCUMENT_SIZE, new JSONString(domain.getMaxDocumentSize() + ""))
-			.isObject()
-			.put(IJsonNames.MAX_TOTAL_DOCUMENT_SIZE,new JSONString( domain.getMaxTotalDocumentSize() + ""))
-			.isObject()
-			.put(IJsonNames.LAST_ACCESS_USER, new JSONString(domain.getLastAccessUser()))
-			.isObject()
-			.put(IJsonNames.LAST_ACCESS_DATE, new JSONString(formatFullDate.format(domain.getLastAccessDate())))
-			.isObject()
-			.put(IJsonNames.EXPIRATION_DATE, new JSONString(formatFullDate.format(domain.getExpirationDate())))
-			.isObject()
-			.put(IJsonNames.CREATION_USER, new JSONString(domain.getCreationUser()))
-			.isObject()
-			.put(IJsonNames.CREATION_DATE, new JSONString(formatFullDate.format(domain.getCreationDate())))
-			.isObject()
-			.put(IJsonNames.MODIFICATION_USER, new JSONString(domain.getModificationUser()))
-			.isObject()
-			.put(IJsonNames.MODIFICATION_DATE, new JSONString(formatFullDate.format(domain.getModificationDate())))
-			.isObject()
-			.put(IJsonNames.AON_CUSTOMER, new JSONString(domain.getAonCustomer() + ""))
-			.isObject()
-			.put(IJsonNames.AON_STATUS,new JSONString(domain.getAonStatus() == null?null:domain.getAonStatus().toString()))
-			.isObject()
-			;
-	}
-
-	private JSONObject toJSON(Company company) {
-		return toJSONRegistry(company)
-				.put(IJsonNames.ACTIVE, new JSONString(company.isActive() + ""))
-				.isObject()
-				.put(IJsonNames.SURCHARGE, new JSONString(company.isSurcharge() + ""))
-				.isObject()
-				.put(IJsonNames.WITHHOLDING, new JSONString(company.isWithholding() + ""))
-				.isObject()
-				.put(IJsonNames.VAT_ACCRUAL_PAYMENT, new JSONString(company.isVatAccrualPayment() + ""))
-				.isObject()
-				.put(IJsonNames.E_INVOICE,new JSONString( company.iseInvoice() + ""))
-				.isObject();
-	}
-
-	private JSONObject toJSONRegistry(Company registry) {
-		if(registry == null || registry.isEmpty()) return new JSONObject();
-		return new JSONObject()
-			.put(IJsonNames.ID, new JSONString(registry.getId().toString()))
-			.isObject()
-			.put(IJsonNames.DOMAIN, toJSON(registry.getDomain()))
-			.isObject()
-			.put(IJsonNames.DOCUMENT, new JSONString(registry.getDocument()))
-			.isObject()
-			.put(IJsonNames.DOCUMENT_COUNTRY, new JSONString(registry.getDocumentCountry() != null ? registry.getDocumentCountry().getIso2(): null))
-			.isObject()
-			.put(IJsonNames.DOCUMENT_TYPE, new JSONString(registry.getDocumentType() != null ? registry.getDocumentType().name(): null))
-			.isObject()
-			.put(IJsonNames.NAME, new JSONString(registry.getName()))
-			.isObject()
-			.put(IJsonNames.ALIAS, new JSONString(registry.getAlias()))
-			.isObject()
-			.put(IJsonNames.LEGAL_PERSON, new JSONString(registry.isLegalPerson() + ""))
-			.isObject()
-			.put(IJsonNames.NATIONALITY, new JSONString(registry.getNationality() != null ? registry.getNationality().getIso2() : null))
-			.isObject()
-			.put(IJsonNames.CONFIDENTIAL, new JSONString(registry.isConfidential() + ""))
-			.isObject();
-	}
-
+	
 	private void checkPeriodVisibility() {
 		switch (Integer.parseInt(bookingCheckType.getSelectedValue())) {
 			case 0:
@@ -1777,6 +1950,9 @@ public class BookingPanel extends MainEntryPoint {
 					}
 				});
 			}
+			
+			@Override
+			protected void onUpdate(BookingCheck bookingCheck) {}
 		};
 	}
 	
@@ -1810,6 +1986,35 @@ public class BookingPanel extends MainEntryPoint {
 			@Override
 			protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
 			
+		};
+	}
+	
+	private void updateBooking() {
+		new BookingCheckDialog(options, bookingWithOutFeeMenu.getBookingCheck()) {
+			
+			@Override
+			protected void onCreate(BookingCheck bookingCheck) {}
+			
+			@Override
+			protected void onUpdate(BookingCheck bookingCheck) {
+				SERVICE.saveBookingCheck(options.getDomainName(), options.getDomain(), options.getUser(), bookingCheck, new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						AonMessagePanel.showSuccess(messagePanel, "Se ha actualizado la contrataci\u00f3n correctamente");
+						resetFeeTable();
+						enableMoreData();
+						offset.setValue(0);
+						showInitialMessage();
+						onSearchFees();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Error actualizando contrataci\u00f3n: " + caught.getMessage());
+					}
+				});
+			}
 		};
 	}
 

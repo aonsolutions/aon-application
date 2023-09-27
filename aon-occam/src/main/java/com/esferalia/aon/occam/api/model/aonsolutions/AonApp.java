@@ -14,7 +14,7 @@ public enum AonApp implements Serializable {
 	 */
 	INVOICE(getEmptyModules(), "Facturas"), 
 	DOCUMENTAL(getDocumentalModules(), "Documental"),
-	MESSENGER(getMessengerModules(), "Mensajería"),
+	MESSENGER(getMessengerModules(), "Mensajer\u00eda"),
 	ACCOUNTING(getAccountingModules(), "Contabilidad"),
 	FISCAL(getFiscalModules(), "Fiscal"),
 	PAYROLL(getPayrollModules(), "Laboral"),
@@ -27,19 +27,19 @@ public enum AonApp implements Serializable {
 	BANK(getEmptyModules(), "Bancos"),
 	TIMECONTROL(getEmptyModules(), "Control Horario"),
 	@Deprecated
-	MANAGEMENT(getManagementModules(), "Gestión"),
+	MANAGEMENT(getManagementModules(), "Gesti\u00f3n"),
 	PACK_SUITE(getEmptyModules(), "Suite Completa"),
 	PACK_PORTAL(getEmptyModules(), "Pack Portal"),
-	PACK_PAYROLL(getEmptyModules(), "Pack Cotización"),
-	PACK_FISCAL_ACCOUNTING(getEmptyModules(), "Pack Tributación"),
+	PACK_PAYROLL(getEmptyModules(), "Pack Cotizaci\u00f3n"),
+	PACK_FISCAL_ACCOUNTING(getEmptyModules(), "Pack Tributaci\u00f3n"),
 	SELFCONTA(getEmptyModules(), "Selfconta"),
 	CUSTOM_VIEW(getEmptyModules(), "Vista Personalizada"),
 	AULA(getEmptyModules(), "Aula"),
 	NOTES(getEmptyModules(), "Notas"),
 	SALTRA(getEmptyModules(), "Saltra"),
-	BASIC_MANAGEMENT(getEmptyModules(), "Gestión Básica"),
-	STANDAR_MANAGEMENT(getStandarManagementModules(), "Gestión Estándar"),
-	PROFESSIONAL_MANAGEMENT(getEmptyModules(), "Gestión Profesional"),
+	BASIC_MANAGEMENT(getEmptyModules(), "Gesti\u00f3n B\u00e1sica"),
+	STANDAR_MANAGEMENT(getStandarManagementModules(), "Gesti\u00f3n Est\u00e1ndar"),
+	PROFESSIONAL_MANAGEMENT(getEmptyModules(), "Gesti\u00f3n Profesional"),
 	@Deprecated
 	KIT_DIGITAL_FACE(getBasicManagementModules(), "Kit Digital FACe"),
 	@Deprecated
@@ -47,10 +47,10 @@ public enum AonApp implements Serializable {
 	@Deprecated
 	KIT_DIGITAL_ERP(getKitDigitalErpModules(), "Kit Digital ERP"),
 	API_SERVICE(getEmptyModules(), "Servicio API"),
-	WAREHOUSE(getWarehouseModules(), "Almacén"),
+	WAREHOUSE(getWarehouseModules(), "Almac\u00e9n"),
 	COMMERCIAL(getCommercialModules(), "Comercial"),
 	MARKETING(getMarketingModules(), "Marketing"),
-	TREASURY(getTreasuryModules(), "Tesorería"),
+	TREASURY(getTreasuryModules(), "Tesorer\u00eda"),
 	GROUPWARE(getGroupwareModules(), "Expedientes")
 	;
 	

@@ -11,6 +11,7 @@ export const COMPANY_BANKS = `${COMPANY}/banks`;
 export const COMPANY_ACTIVITIES = `${COMPANY}/activities`;
 export const COMPANY_APPROLES = `${COMPANY}/approles`;
 export const COMPANY_HEADER = `${COMPANY}/header`;
+export const DELIVERIES = `${API}/deliveries`;
 export const ELABORATION = `${API}/elaboration`;
 export const PROJECTS = `${API}/projects`;
 export const WAREHOUSES = `${API}/warehouses`;

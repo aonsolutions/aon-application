@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.config.AccountingConfig;
 import com.esferalia.aon.occam.api.model.config.FiscalConfig;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PayMethodTypeDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.Segment;
@@ -46,6 +47,7 @@ public class AonConfiguration implements Serializable {
 	private LinkedList<Segment> segments;
 	
 	private boolean ocrActive;
+	private Item ocrDefaultItem;
 	private boolean betaEnabled;
 	private boolean alphaEnabled;
 
@@ -334,6 +336,14 @@ public class AonConfiguration implements Serializable {
 	}
 	public AonConfiguration setOCRActive(boolean ocrActive) {
 		this.ocrActive = ocrActive;
+		return this;
+	}
+	
+	public Item getOcrDefaultItem() {
+		return ocrDefaultItem;
+	}
+	public AonConfiguration setOcrDefaultItem(Item ocrDefaultItem) {
+		this.ocrDefaultItem = ocrDefaultItem;
 		return this;
 	}
 	

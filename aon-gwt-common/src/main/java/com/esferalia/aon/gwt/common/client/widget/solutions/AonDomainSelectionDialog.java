@@ -10,10 +10,10 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -23,9 +23,13 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 	private List<DomainCompany> companies;
 	private DomainCompany domainCompany;
 	
+	private boolean selectAll = false;
+	
 	public AonDomainSelectionDialog(String caption, List<DomainCompany> companies) {
 		this.setCaption(caption);
 		this.showCloseButton(true);
+		
+		setWidth("300px");
 		
 		this.companies = companies;
 		
@@ -43,13 +47,10 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 		selectLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		content.add(selectLabel);
 		
-		ScrollPanel scroll = new ScrollPanel();
-		scroll.getElement().getStyle().setProperty("min-width", "300px");
-		scroll.getElement().getStyle().setProperty("max-height", "300px");
-		
 		SuggestBox domainSuggestBox = new SuggestBox();
 		domainSuggestBox.setHeight("2em");
-		domainSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		domainSuggestBox.getElement().getStyle().setProperty("padding", "0");
+		domainSuggestBox.getElement().getStyle().setProperty("width", "99%");
 		domainSuggestBox.setAutoSelectEnabled(false);
 		domainSuggestBox.getElement().setPropertyString("placeholder", "Dominio: busque por descripci\u00f3n");
 		
@@ -63,11 +64,31 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 		
 		domainSuggestBox.addSelectionHandler(e -> {
 			domainSuggestBox.hideSuggestionList();
-			getCompanyDomain(e.getSelectedItem().toString());
+			getCompanyDomain(domainSuggestBox.getValue());
 		});
 		
-		scroll.add(domainSuggestBox);
-	    content.add(scroll);
+		domainSuggestBox.addKeyUpHandler(e -> {
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				domainSuggestBox.showSuggestionList();
+			}
+		});
+		
+		HTMLPanel rowPanel = new HTMLPanel("");
+		rowPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		CheckBox selectAllDomainsCB = new CheckBox();
+		selectAllDomainsCB.addClickHandler(e -> {
+			selectAll = selectAllDomainsCB.getValue();
+			domainSuggestBox.setEnabled(!selectAll);
+			
+		});
+		Label selectAllDomainsL = new Label("Seleccionar todos los dominios");
+		
+		rowPanel.add(selectAllDomainsCB);
+		rowPanel.add(selectAllDomainsL);
+		
+		content.add(domainSuggestBox);
+		content.add(rowPanel);
 	    
 	    HTMLPanel buttonsPanel = new HTMLPanel("");
 	    buttonsPanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
@@ -76,7 +97,7 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtnDialog.setText(AON.MSG.accept());
 		acceptBtnDialog.addClickHandler(e -> {
-			onAccept(domainCompany);
+			onAccept(domainCompany, selectAll);
 			hide();
 		});
 
@@ -99,6 +120,6 @@ public abstract class AonDomainSelectionDialog extends AonCustomDialog {
 		});
 	}
 
-	protected abstract void onAccept(DomainCompany domainCompany);
+	protected abstract void onAccept(DomainCompany domainCompany, boolean selectAll);
 	
 }

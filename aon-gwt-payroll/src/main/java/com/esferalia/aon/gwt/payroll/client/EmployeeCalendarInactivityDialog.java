@@ -82,7 +82,7 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 		typeInactivity.addItem("Excedencia");
 		typeInactivity.addItem("Fijo/Discontinuo");
 		typeInactivity.addItem( "Permiso no Retribuido", "PERMISO_NO_RETRIBUIDO");
-		typeInactivity.addItem("Suspensi\u00f3n de Empleo y Sueldo");
+		typeInactivity.addItem("Suspensi\u00f3n de Empleo y Sueldo", "SUSPENSION_EMPLEO_SUELDO");
 		typeInactivity.addItem("ERE");
 		typeInactivity.addItem("ERE Fuerza mayor");
 		typeInactivity.addItem("ERE Fuerza mayor (Exoneraci\u00F3n de cuotas)");

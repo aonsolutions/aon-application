@@ -83,6 +83,14 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconAddBlock();
 	
+	@Source("icons/aon-icon-sync.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconSync();
+	
+	@Source("icons/aon-icon-sync-disabled.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconSyncDisabled();
+	
 	@Source("icons/aon-icon-email.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconEmail();
@@ -158,6 +166,14 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-paste.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconPaste();
+	
+	@Source("icons/aon-icon-group-off.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconGroupOff();
+	
+	@Source("icons/aon-icon-group.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconGroup();
 	
 	@Source("icons/aon-icon-tune.svg")
 	@MimeType("image/svg+xml")

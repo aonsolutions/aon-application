@@ -14,6 +14,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONEY_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.UNPAID;
 
 import java.text.DecimalFormatSymbols;
 import java.util.AbstractMap;
@@ -842,9 +843,10 @@ public class SalaryDraftBuilder
 		if (siblingPayment != null) {
 			if (isDelay(payment)
 				|| isExtra(payment)
+				|| isUnpaid(payment)
 				|| isNotZero(amount) 
 				|| isNotZero(quote)
-				|| isNotZero(tax) ) {
+				|| isNotZero(tax)) {
 				Payment compositePayment = newCompositePayment(siblingPayment, draftPayment);
 				replacePayment(siblingPayment, compositePayment);
 
@@ -854,6 +856,7 @@ public class SalaryDraftBuilder
 			salaryDraft.addPayment(draftPayment);
 			if ( isDelay(payment)
 				|| isExtra(payment)
+				|| isUnpaid(payment)
 				|| isNotZero(amount) 
 				|| isNotZero(quote)
 				|| isNotZero(tax)) {
@@ -1905,6 +1908,10 @@ public class SalaryDraftBuilder
 
 	private boolean isDelay(Payment payment) {
 		return payment.getSalaryType() == Salary.Type.DELAY;
+	}
+
+	private boolean isUnpaid(IPayment payment) {
+		return AonStringUtils.equals(payment.getName(),UNPAID.getName());
 	}
 
 	private boolean isNotZero(Double amount) {

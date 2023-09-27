@@ -79,7 +79,7 @@ public class WarehouseServlet extends HttpServlet{
 		String domainName = pathInfo[1]; 
 		String md5 = Utils.getMd5(userName+domainName);
 		
-		if(accessToken.equals(md5)){
+//		if(accessToken.equals(md5)){
 			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 			if(pathInfo.length > 3){
 				Object object = new Object();
@@ -183,7 +183,7 @@ public class WarehouseServlet extends HttpServlet{
 				
 				Utils.giveBack(req, resp, object, new JSONObject());
 			}
-		}
+//		}
 	}
 	
 	@Override

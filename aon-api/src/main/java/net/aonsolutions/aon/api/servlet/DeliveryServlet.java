@@ -10,15 +10,15 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SERFRUIT;
 import com.esferalia.aon.occam.api.json.CarrierPackingJSON;
 import com.esferalia.aon.occam.api.json.DeliveryJSON;
-import com.esferalia.aon.occam.api.json.DeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.SerfruitDeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
+import com.esferalia.aon.occam.api.model.warehouse.SerfruitDeliveryPackaging;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -114,12 +114,14 @@ public class DeliveryServlet extends AonApiHttpServlet {
 //		a = a.replaceAll("\"", "'");
 //		JSONObject json = new JSONObject(a);
 //		api.setData(json);
-		
+
 		Delivery delivery = DeliveryJSON.fromJSON(api.getData());
-		delivery = AON.saveDelivery(api.getDomain(), api.getUser(), delivery);
-			
+		if(JsonUtils.getboolean(api.getData(), IJsonNames.SERFRUIT)) {
+			delivery = SERFRUIT.saveDelivery(api.getDomain(), api.getUser(), delivery);
+		} else delivery = AON.saveDelivery(api.getDomain(), api.getUser(), delivery);
+
 		if(JsonUtils.has(api.getData(), IJsonNames.PACKAGING)) {
-			List<DeliveryPackaging> list =  DeliveryPackagingJSON.fromJSON(JsonUtils.getJSONArray(api.getData(), IJsonNames.PACKAGING));
+			List<SerfruitDeliveryPackaging> list =  SerfruitDeliveryPackagingJSON.fromJSON(JsonUtils.getJSONArray(api.getData(), IJsonNames.PACKAGING));
 			SERFRUIT.saveDeliveryPackaging(api.getDomain(), api.getUser()
 					, delivery, list);
 		}
@@ -165,6 +167,12 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		if(to != null) {
 			filter = filter.and(f.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(to)));
 		}		
+		
+		Integer customer = JsonUtils.getInteger(api.getData(), IJsonNames.CUSTOMER);
+		if(customer != null) {
+			filter = filter.and(f.getCustomerProperty().eq(customer));
+		}
+
 		return filter;
 	}
 }

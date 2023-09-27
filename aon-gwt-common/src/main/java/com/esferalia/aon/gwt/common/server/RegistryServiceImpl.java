@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.servlet.annotation.WebServlet;
-
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.BookingCheck;
@@ -21,6 +19,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -28,6 +27,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
 
+import jakarta.servlet.annotation.WebServlet;
 import net.aonsolutions.aon.templates.FeeImport;
 
 @WebServlet(name = "Aon Registry Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Registry", "/aon_gwt_aio/ms/Registry"})
@@ -192,6 +192,12 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 		return FeeImport.insertFee(domain, user, index, fee);
 	}
 	
+	@Override
+	public List<Customer> getCustomerWithoutFee(String domainName, int domainId, String user, CustomerParams customerParams) {
+		Domain domain = AON.getDomain(domainName, domainId, user, f->f.getNameProperty().eq(domainName));
+		return AON.getCustomerWithoutFee(domain, user, customerParams);
+	}
+	
 	// **************************************************
 	// ********************************** [BOOKING CHECK]
 	// **************************************************
@@ -210,9 +216,19 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public LinkedList<BookingCheck> getBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
 		return AON.getBookingCheckList(domainName, domain, user, params);
 	}
+	
+	@Override
+	public LinkedList<BookingCheck> getCustomerBookingCheckList(String domainName, int domain, String user, CustomerFeeParams params) {
+		return AON.getCustomerBookingCheckList(domainName, domain, user, params);
+	}
+	
 	@Override
 	public void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
 		AON.saveBookingCheck(domainName, domain, user, bookingCheck);
+	}
+	@Override
+	public void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings) {
+		AON.deleteBookingList(domainName, domain, user, selectedBookings);
 	}
 	
 }

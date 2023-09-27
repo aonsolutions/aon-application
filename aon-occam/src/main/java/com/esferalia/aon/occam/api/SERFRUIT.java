@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
+import com.esferalia.aon.occam.api.model.warehouse.SerfruitDeliveryPackaging;
 import com.esferalia.aon.occam.impl.jooq.SerfruitImpl;
 
 public class SERFRUIT {
@@ -37,8 +37,13 @@ public class SERFRUIT {
 		}
 	}
 	
+	public static Delivery saveDelivery(Domain domain, User user, Delivery delivery) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getSerfruit().saveDelivery(ctx, delivery);
+		}
+	}
 	
-	public static void saveDeliveryPackaging(Domain domain, User user, Delivery delivery, List<DeliveryPackaging> packaging) {
+	public static void saveDeliveryPackaging(Domain domain, User user, Delivery delivery, List<SerfruitDeliveryPackaging> packaging) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			getSerfruit().saveDeliveryPackaging(ctx, delivery, packaging);
 		}

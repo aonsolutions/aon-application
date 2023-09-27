@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountPanel.AonAccountPanelCallback;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonValidationUtil;
 import com.google.gwt.core.client.GWT;
@@ -132,6 +133,14 @@ public class AonAccountBox extends ResizeComposite implements HasValue<String>
 		
 	}
 	
+	public AonAccountBox(final Occam occam) {
+		this(occam,true);
+	}
+	
+	public AonAccountBox(final Occam occam,boolean showDescription) {
+		this(occam.getDomainName(),occam.getDomain(),occam.getUser(),showDescription);
+	}
+
 	public AonAccountBox(final String domainName, final int domain,final String user) {
 		this(domainName,domain,user,true);
 	}
@@ -203,13 +212,6 @@ public class AonAccountBox extends ResizeComposite implements HasValue<String>
 		descriptionLabel.addStyleName(AON.CSS.aonFontSmall());
 		descriptionLabel.setVisible(showDescription);
 		
-		AonTableButton cleanAccount = new AonTableButton("Limpiar", AON.CSS.aonIconRefresh());
-		cleanAccount.addClickHandler(e -> {
-			setValue(null);
-			accountTextBox.addStyleName(AON.CSS.aonInputTextError() );
-			SelectionEvent.fire(AonAccountBox.this, null );
-		});
-		
 		account.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
@@ -242,7 +244,6 @@ public class AonAccountBox extends ResizeComposite implements HasValue<String>
 		rootPanel.addStyleName(AON.CSS.aonItemFlex() );
 		rootPanel.add(account);
 		rootPanel.add(descriptionLabel);
-		rootPanel.add(showDescription ? cleanAccount : new InlineLabel());
 		initWidget(rootPanel);
 	}
 	

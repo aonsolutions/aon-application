@@ -228,15 +228,6 @@
 											</aon:commandLink>
 										</aon:div>
 										
-										<!-- Listado de Clientes sin Cuota -->
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="no_fee_customers-treasury"
-												rendered="#{actionDenied.renderedOption('noFeeCustomer_list-treasury')}"
-												action="noFeeCustomer_list-treasury"
-												actionListener="#{customerFee.onNoFeeCustomers}"
-												value="#{bundle.finance_fee_no_fee_customer_module}"/>
-										</aon:div>
-										
 										<!-- Panel Facturación Cuotas -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_customer_fee_list"

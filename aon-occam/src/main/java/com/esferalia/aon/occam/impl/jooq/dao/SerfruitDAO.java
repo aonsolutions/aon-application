@@ -35,9 +35,10 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
+import com.esferalia.aon.occam.api.model.warehouse.SerfruitDeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO.SalesPropertiesDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SerfruitDAO {
@@ -58,15 +59,36 @@ public class SerfruitDAO {
 		return SalesDAO.getStream(ctx, f -> filter.filter(new SalesPropertiesDAO())
 				.and(f.getSalesDetailIdProperty().in(salesDetailIds)), options);
 	}
+
+	public static Delivery saveDelivery(AONContext ctx, Delivery delivery) {
+		for (DeliveryDetail detail : delivery.getDetails()) {
+			Item item = detail.getItem();
+			item.setId(null);
+			item.setDescription(item.getDescription() + " #" + item.getSerialNumber());
+			item.setBarcode(null);
+			if(item.getProduct().isPerishable()) {
+				Date expireDate = AonDateUtils.addDays(item.getSerialDate(), 
+					item.getProduct().getDaysToExpire() != null ? item.getProduct().getDaysToExpire() : 0);
+				item.setExpireDate(expireDate);
+			}
+			item = ItemDAO.save(ctx, item);
+			detail.setItem(item);
+		}
+		delivery = DeliveryDAO.save(ctx, delivery);
+		
+		// TODO ACTUALIZAR DETALLES PEDIDO -->
+		// TODO ACTUALIZAR ELABORACION SI LA TIENE...
+		return delivery;
+	}
 	
-	public static void saveDeliveryPackaging(AONContext ctx, Delivery delivery, List<DeliveryPackaging> packaging) {
+	public static void saveDeliveryPackaging(AONContext ctx, Delivery delivery, List<SerfruitDeliveryPackaging> packaging) {
 		Warehouse w = getWarehouse(ctx, delivery);
 		StringBuilder builder = new StringBuilder();
 		processPackaging(ctx, delivery, packaging, w, null, builder);
 		insertAttachPackaging(ctx, delivery, builder);
 	}
 
-	private static void processPackaging(AONContext ctx, Delivery delivery, List<DeliveryPackaging> packaging, Warehouse w, Integer parentLine, StringBuilder builder) {
+	private static void processPackaging(AONContext ctx, Delivery delivery, List<SerfruitDeliveryPackaging> packaging, Warehouse w, Integer parentLine, StringBuilder builder) {
 	
 		packaging.stream().forEach(dp -> {
 			if(dp.getDeliveryLine() == null) {
@@ -99,7 +121,7 @@ public class SerfruitDAO {
 		AttachmentDAO.insertDataAttach(ctx, attach);
 	}
 	
-	private static DeliveryDetail insertDetail(AONContext ctx, Delivery delivery, DeliveryPackaging dp, Integer line, Warehouse w) {
+	private static DeliveryDetail insertDetail(AONContext ctx, Delivery delivery, SerfruitDeliveryPackaging dp, Integer line, Warehouse w) {
 		Item p = getPackage(ctx, dp);
 		if(p != null) {
 			DeliveryDetail detail = new DeliveryDetail();
@@ -121,7 +143,7 @@ public class SerfruitDAO {
 
 	}
 	
-	private static Integer getLine(DeliveryPackaging dp ) {
+	private static Integer getLine(SerfruitDeliveryPackaging dp ) {
 		if(dp.getDeliveryLine() != null) return dp.getDeliveryLine();
 		
 		Integer line = null;
@@ -149,12 +171,14 @@ public class SerfruitDAO {
 		return warehouse;
 	}
 	
-    public static Item getPackage(AONContext ctx, DeliveryPackaging dp) {
+    public static Item getPackage(AONContext ctx, SerfruitDeliveryPackaging dp) {
         Product product = ProductDAO.get(ctx, f -> f.getDomainProperty()
                                 .eq(ctx.getDomainId())
                                 .and(f.getCodeProperty().eq(dp.getProduct().getCode())));
     
         if (product == null || product.getId() == null) {
+			ProductCategory pc = ProductCategoryDAO.get(ctx, f -> f.getIdProperty().eq(3297));
+
             product = new Product();
             product.setDomain(new Domain().setId(ctx.getDomainId()));
             product.setStatus(ProductStatus.ACTIVE);
@@ -162,7 +186,7 @@ public class SerfruitDAO {
             product.setSerializable(Boolean.FALSE);
             product.setPackaged(Boolean.FALSE);
             product.setInventoriable(Boolean.TRUE);
-            product.setCategory(new ProductCategory().setId(3297));
+            product.setCategory(pc);
             product.setCode(dp.getProduct().getCode());
             product.setName(AonStringUtils.isBlank(dp.getProduct().getName())
             		? "ENVASE AUTOGENERADO ("+ dp.getProduct().getCode() +")"
@@ -178,7 +202,7 @@ public class SerfruitDAO {
         return getItem(ctx, product, dp);
     }
     
-    public static Item getItem(AONContext ctx, Product product, DeliveryPackaging dp)  {
+    public static Item getItem(AONContext ctx, Product product, SerfruitDeliveryPackaging dp)  {
         Item baseItem = ItemDAO.get(ctx,
                         f -> f.getDomainProperty()
                                 .eq(ctx.getDomainId())

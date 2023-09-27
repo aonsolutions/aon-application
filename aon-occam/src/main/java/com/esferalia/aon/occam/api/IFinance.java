@@ -239,7 +239,9 @@ public interface IFinance {
 	LinkedList<BookingCheck> getBookingWithoutFeeList(CloseableAONContext ctx, CustomerFeeParams params);
 	LinkedList<BookingCheck> getFeeWithoutBookingList(CloseableAONContext ctx, CustomerFeeParams params);
 	LinkedList<BookingCheck> getBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
+	LinkedList<BookingCheck> getCustomerBookingCheckList(CloseableAONContext ctx, CustomerFeeParams params);
 	void saveBookingCheck(CloseableAONContext ctx, BookingCheck bookingCheck);
+	void deleteBookingList(CloseableAONContext ctx, LinkedList<BookingCheck> selectedBookings);
 
 }
 	

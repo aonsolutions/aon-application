@@ -22,6 +22,7 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -79,6 +80,7 @@ public class BookingCheckDAO {
 		Result<Record> feeWithoutBookingRecords = feeWithoutBookingSelect
 				.where(condition)
 				.and(RITEM.ID.isNull())
+				.and(ITEM.BARCODE.isNull().or(ITEM.BARCODE.notLikeIgnoreCase("info%")))
 				.orderBy(CUSTOMER_FEE.CUSTOMER)
 				.offset(customerFeeParams.getOffset())
 				.limit(customerFeeParams.getLimit())
@@ -100,8 +102,6 @@ public class BookingCheckDAO {
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
 		
-		System.out.println(bookingCheckSelect.getSQL());
-		
 		Result<Record> bookingCheckRecords = bookingCheckSelect
 				.where(condition)
 				.and(RITEM.TYPE.eq((byte)4))
@@ -113,6 +113,31 @@ public class BookingCheckDAO {
 		System.out.println("Fee With Booking size : " + bookingCheckRecords.size());
 		
 		return bookingCheckRecords.stream().map(new FeeWithOutBookingFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<BookingCheck> getCustomerBookingCheckList(AONContext ctx, CustomerFeeParams customerFeeParams){
+		Condition condition = createRitemCondition(ctx, customerFeeParams);
+		
+		SelectOnConditionStep<Record> bookingWithoutFeeSelect = ctx.getDslContext().select().from(RITEM)
+				.join(DOMAIN).on(DOMAIN.ID.eq(RITEM.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(RITEM.REGISTRY))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(RITEM.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.leftJoin(CUSTOMER_FEE).on(CUSTOMER_FEE.CUSTOMER.eq(RITEM.REGISTRY).and(CUSTOMER_FEE.ITEM.eq(RITEM.ITEM)));
+		
+		Result<Record> bookingWithoutFeeRecords = bookingWithoutFeeSelect
+				.where(condition)
+//				.and(CUSTOMER_FEE.ID.isNull())
+				.and(RITEM.TYPE.eq((byte)4))
+				.orderBy(RITEM.REGISTRY, CUSTOMER_FEE.LINE)
+				.offset(customerFeeParams.getOffset())
+				.limit(customerFeeParams.getLimit())
+			.fetch();
+		
+		System.out.println("Customer Booking size : " + bookingWithoutFeeRecords.size());
+		
+		return bookingWithoutFeeRecords.stream().map(new CustomerBookingFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static BookingCheck save(AONContext ctx, BookingCheck bookingCheck) {
@@ -189,6 +214,14 @@ public class BookingCheckDAO {
 		
 		return bookingCheck;
 	}
+	
+	public static void delete(CloseableAONContext ctx, LinkedList<BookingCheck> selectedBookings) {
+		selectedBookings.forEach(bookingCheck -> {
+			ctx.getDslContext().delete(RITEM)
+				.where(RITEM.ID.eq(bookingCheck.getId()))
+				.execute();
+		});
+	}
 
 	private static Condition createCustomerFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
 		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
@@ -248,6 +281,14 @@ public class BookingCheckDAO {
 				break;
 			}
 		}
+
+		if(null != customerFeeParams.getDomainType()){
+			condition = condition.and(DOMAIN.AONSTATUS.eq(customerFeeParams.getDomainType()));
+		}
+		
+		if(null != customerFeeParams.getDomainStatus()){
+			condition = condition.and(DOMAIN.ACTIVE.eq(customerFeeParams.getDomainStatus()));
+		}
 		
 		return condition;
 	}
@@ -269,6 +310,9 @@ public class BookingCheckDAO {
 		
 		if(null != customerFeeParams.getProduct())
 			condition = condition.and(RITEM.ITEM.eq(customerFeeParams.getProduct()));
+		
+		if(null != customerFeeParams.getProductStatus())
+			condition = condition.and(RITEM.STATUS.eq(customerFeeParams.getProductStatus()));
 		
 		if(null != customerFeeParams.getStartDate()){
 			switch (customerFeeParams.getStartCompare()) {
@@ -296,6 +340,14 @@ public class BookingCheckDAO {
 				condition = condition.and(RITEM.END_DATE.eq(new Date(customerFeeParams.getEndDate().getTime())));
 				break;
 			}
+		}
+		
+		if(null != customerFeeParams.getDomainType()){
+			condition = condition.and(DOMAIN.AONSTATUS.eq(customerFeeParams.getDomainType()));
+		}
+		
+		if(null != customerFeeParams.getDomainStatus()){
+			condition = condition.and(DOMAIN.ACTIVE.eq(customerFeeParams.getDomainStatus()));
 		}
 		
 		return condition;
@@ -363,6 +415,42 @@ public class BookingCheckDAO {
 					.setWorkplace(checkField(r, WORKPLACE.ID)
 							? WorkplaceFiller.build(r)
 							: new Workplace().setId(r.getValue(RITEM.WORKPLACE)))
+					;
+		}
+	}
+	
+	protected static class CustomerBookingFiller extends Filler implements Function<Record, BookingCheck> {
+
+		@Override
+		public BookingCheck apply(Record r) {
+			return buildFee(r);
+		}
+		
+		public static BookingCheck buildFee(Record r) {			
+			return new BookingCheck()
+					.setId(r.getValue(RITEM.ID))
+					.setDomain(checkField(r, RITEM.ID) 
+						? DomainFiller.build(r) 
+						: new Domain().setId(r.getValue(RITEM.DOMAIN)))
+					.setCustomer(checkField(r, CUSTOMER.REGISTRY)
+						? CustomerFiller.buildCustomer(r, CUSTOMER_ALIAS)
+						: new Customer().copy(new Registry().setId(r.getValue(RITEM.REGISTRY))))
+					.setItem(checkField(r, ITEM.ID)
+						? ItemFiller.buildItem(r)
+						: new OldItem().setId(r.getValue(RITEM.ITEM)))	
+					.setType(RegistryMode.values()[r.getValue(RITEM.TYPE)])
+					.setStatus(RegistryItemStatus.values()[r.getValue(RITEM.STATUS)])
+					.setQuantity(r.getValue(RITEM.QUANTITY))
+					.setPrice(r.getValue(RITEM.PRICE))
+					.setDiscountExpr(r.getValue(RITEM.DISCOUNT_EXPR))
+					.setStartDate(r.getValue(RITEM.START_DATE))
+					.setEndDate(r.getValue(RITEM.END_DATE))
+					.setWorkplace(checkField(r, WORKPLACE.ID)
+							? WorkplaceFiller.build(r)
+							: new Workplace().setId(r.getValue(RITEM.WORKPLACE)))
+					.setHasFee(r.get(CUSTOMER_FEE.ID) != null)
+					.setQuantityFee(null != r.get(CUSTOMER_FEE.QUANTITY) ? r.get(CUSTOMER_FEE.QUANTITY).intValue() + "" : "0")
+					.setQuantityRItem(r.get(RITEM.QUANTITY))
 					;
 		}
 	}

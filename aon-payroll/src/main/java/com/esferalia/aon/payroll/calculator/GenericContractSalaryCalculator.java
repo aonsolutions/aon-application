@@ -1077,7 +1077,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					}
 				}
 				try {
-
+				    	sectionByItem(start, end, expressionContext, contractDeduction);
+				    	
 					Double deduction = resolveDeduction(expressionContext, contractDeduction, deductionStart,
 							deductionEnd);
 					totalDeduction += deduction;
@@ -1093,6 +1094,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						onCheckError(e.getMessage());
 				} catch (RemoveException e) {
 					// TODO: Something ??? It's really necessary...
+				    	addResult(expressionContext, contractDeduction.getName(), start, end, 0.00);
 				} catch (InvalidVariables e) {
 					onInvalidData(contractDeduction, e.getMessage(), e.getVariables());
 				} catch (InterruptedException e) {
@@ -1238,11 +1240,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				if ( !filter.test(contractCost) )
 					continue;
 				
-				Date costStart = Period.max(contractCost.getStartDate(), start);
+
+			    	Date costStart = Period.max(contractCost.getStartDate(), start);
 				Date costEnd = Period.min(contractCost.getEndDate(), end);
 
 				try {
-					List<ITimedResult<Double>> amounts = expressionContext.addExpression(contractCost, costStart,
+				    	sectionByItem(start, end, expressionContext, contractCost);
+
+				    	List<ITimedResult<Double>> amounts = expressionContext.addExpression(contractCost, costStart,
 							costEnd, Double.class);
 					double cost = 0.00;
 					for (ITimedResult<Double> amount : amounts) {
@@ -1302,17 +1307,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			for (IContractBonus contractBonus : contractBonuses) {
 
-				Date bonusStart = Period.max(contractBonus.getStartDate(), start);
-				Date bonusEnd = Period.min(contractBonus.getEndDate(), end);
-
-				if (bonusEnd.before(bonusStart)) {
-					continue; // TODO : must be done in context ?
-				}
-				
-				if ( bonusStart.after(start))
-					ContextFunctions.section(expressionContext, AonDateUtils.add(bonusStart, Calendar.DAY_OF_MONTH,-1));
-				if ( bonusEnd.before(end))
-					ContextFunctions.section(expressionContext, bonusEnd);
+				sectionByItem(start, end, expressionContext, contractBonus);
 					
 			}
 
@@ -1320,6 +1315,21 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			throw new SalaryException(e.getMessage(), e);
 		}
 
+	}
+
+	private void sectionByItem(Date start, Date end, ExpressionContext expressionContext,
+		IHashStartAndEndDate contractItem) {
+	    Date itemStart = Period.max(contractItem.getStartDate(), start);
+	    Date itemEnd = Period.min(contractItem.getEndDate(), end);
+
+	    if (itemEnd.before(itemStart)) {
+	    	return;
+	    }
+	    
+	    if ( itemStart.after(start))
+	    	ContextFunctions.section(expressionContext, AonDateUtils.add(itemStart, Calendar.DAY_OF_MONTH,-1));
+	    if ( itemEnd.before(end))
+	    	ContextFunctions.section(expressionContext, itemEnd);
 	}
 
 	protected Double fillBonus(IContractSalaryCalculatorContext ctx) throws SalaryException {

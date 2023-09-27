@@ -185,6 +185,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.AbstractContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.CompositeCollection;
 import com.esferalia.aon.payroll.calculator.CompositeCosts;
+import com.esferalia.aon.payroll.calculator.CompositeDeductions;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader;
@@ -1733,8 +1734,23 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			deductionStmt.setInt(1, id);
 			ResultSet rs = deductionStmt.executeQuery();
 			this.sqlContractDeduction.setResultSet(rs);
-			HierarchyDeductions hierarchyDeductions = new HierarchyDeductions(this.sqlContractDeduction,
-					getCCCDeductions().iterator(), getSSRegimeDeductions().iterator());
+//			HierarchyDeductions hierarchyDeductions = new HierarchyDeductions(this.sqlContractDeduction,
+//					getCCCDeductions().iterator(), getSSRegimeDeductions().iterator());
+			CompositeDeductions hierarchyDeductions = new CompositeDeductions(this.sqlContractDeduction,
+				getCCCDeductions(), getSSRegimeDeductions()) {
+
+			    	@Override
+				protected int getLevel(IContractDeduction item) {
+			    	    
+			    	    if ( item instanceof ISystemDeduction ) {
+			    		return ((ISystemDeduction) item).getDomain();
+			    	    } else {
+			    		int level =  super.getLevel(item);
+			    		return level + ( Integer.MAX_VALUE - 100 ) ;
+			    	    }
+				}
+			    
+			};
 			return hierarchyDeductions;
 		} catch (SQLException e) {
 			throw new AonException(e);

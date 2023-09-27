@@ -378,6 +378,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface DeliveryPackagingFilter{
+		Filter filter(DeliveryPackagingProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface CarrierFilter{
 		Filter filter(CarrierProperties properties);
 	}

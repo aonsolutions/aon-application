@@ -228,6 +228,7 @@ export const SYNC_ALT = 'sync_alt';
 // ----- T
 
 export const TUNE = 'tune';
+export const THUNDERSTORM = 'thunderstorm';
 
 // ----- U
 
