@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
-import { FilterBuilder } from 'libraries/AonSDK/aon';
+import { FilterBuilder } from 'libraries/AonSDK/src/aon';
 import { TranslateService } from '@ngx-translate/core';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';

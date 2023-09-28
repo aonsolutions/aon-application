@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DocumenNoteFactory, IDocumentNote } from 'libraries/AonSDK/aon';
+import { DocumenNoteFactory, IDocumentNote } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
