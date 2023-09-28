@@ -58,26 +58,11 @@ export class InboxviewComponent implements OnInit {
   showSendButton: boolean = false;
   showSendButtons: boolean = false;
   filterDate: number = 1;
-  selectedFilterText: string = 'Esta semana';
+  selectedFilterText: string = '';
   expandedIndex: number = -1;
   newMessageDescription: string = '';
   noTasksMessageText: string = '';
   filterPending: boolean = false;
-  noTasksThisWeekMessage: string = 'No hay tareas pendientes esta semana.';
-  noTasksThisMonthMessage: string = 'No hay tareas pendientes este mes.';
-  noTasksPendingThisMonthMessage: string = 'No hay tareas realizadas este mes.';
-  noTasksPendingThisWeekMessage: string =
-    'No hay tareas realizadas esta semana.';
-  noNotificationsThisWeek: string = 'No hay notificaciones nuevas esta semana.';
-  noNotificationsThisMonth: string = 'No hay notificaciones nuevas este mes.';
-  noNotificationsViewThisMonth: string =
-    'No hay notificaciones vistas este mes.';
-  noNotificationsViewThisWeek: string =
-    'No hay notificaciones vistas esta semana.';
-  noQueriesThisWeek: string = 'No hay consultas abiertas esta semana.';
-  noQueriesThisMonth: string = 'No hay consultas abiertas este mes.';
-  noQueriesClosedThisMonth: string = 'No hay consultas cerradas este mes.';
-  noQueriesClosedThisWeek: string = 'No hay consultas cerradas esta semana.';
   @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
     new DropdownMenuComponent();
 
@@ -162,60 +147,11 @@ export class InboxviewComponent implements OnInit {
           ]);
 
         this.calculateMessageCounts();
+        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
       });
   }
 
-  ngOnInit(): void {}
-
-  //No hay tareas pendientes ni realizadas:
-  showNoTasksMessage(hasNoTasks: boolean) {
-    this.noTasksMessage = hasNoTasks;
-
-    if (hasNoTasks) {
-      if (this.filterDate === 1) {
-        this.noTasksMessageText = this.filterPending
-          ? this.noTasksPendingThisWeekMessage
-          : this.noTasksThisWeekMessage;
-      } else if (this.filterDate === 2) {
-        this.noTasksMessageText = this.filterPending
-          ? this.noTasksPendingThisMonthMessage
-          : this.noTasksThisMonthMessage;
-      }
-    }
-  }
-
-  //No hay notificaciones nuevas ni vistas:
-  showNoNotificacions(hasNoTasks: boolean) {
-    this.noTasksMessage = hasNoTasks;
-
-    if (hasNoTasks) {
-      if (this.filterDate === 1) {
-        this.noTasksMessageText = this.filterPending
-          ? this.noNotificationsThisWeek
-          : this.noNotificationsViewThisWeek;
-      } else if (this.filterDate === 2) {
-        this.noTasksMessageText = this.filterPending
-          ? this.noNotificationsThisMonth
-          : this.noNotificationsViewThisWeek;
-      }
-    }
-  }
-
-  //No hay consultas abiertas ni cerradas:
-  showNoQueries(hasNoTasks: boolean) {
-    this.noTasksMessage = hasNoTasks;
-
-    if (hasNoTasks) {
-      if (this.filterDate === 1) {
-        this.noTasksMessageText = this.filterPending
-          ? this.noQueriesThisWeek
-          : this.noQueriesClosedThisWeek;
-      } else if (this.filterDate === 2) {
-        this.noTasksMessageText = this.filterPending
-          ? this.noQueriesThisMonth
-          : this.noQueriesClosedThisWeek;
-      }
-    }
+  ngOnInit(): void {
   }
 
   afterModalClosed(result?: any) {
@@ -276,19 +212,20 @@ export class InboxviewComponent implements OnInit {
     this.selected = name;
     switch (optionValue) {
       case 1:
-        this.selectedFilterText = 'Esta semana';
+        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
         break;
       case 2:
-        this.selectedFilterText = 'Este mes';
+        this.selectedFilterText = this.translateService.instant('INBOX.THIS_MONTH');
         break;
       case 0:
-        this.selectedFilterText = 'Todo';
+        this.selectedFilterText = this.translateService.instant('INBOX.ALLS');
         break;
       default:
-        this.selectedFilterText = 'Esta semana';
+        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
         break;
     }
   }
+
   async calculateMessageCounts() {
     try {
       // Calcula el recuento para "consulta"
@@ -344,7 +281,7 @@ export class InboxviewComponent implements OnInit {
       const newMessageChat: IMessageChat = {
         Id: this.messageChat.Id,
         IdMessage: this.messagesData.Id,
-        Name: '',
+        Name: this.messagesData.Name,
         Description: description,
         Date: new Date(),
         Type: 'chat',

@@ -94,6 +94,11 @@
           (rowClicked)="rowClickHandler($event)"
         >
         </app-table-component>
+        <div *ngIf="selectedTab == 0 && noTasksMessage" class="padding inbox-no-tasks-message">
+          <ng-container *ngIf="noTasksMessage">
+            {{ "INBOX.NOMESSAGES" | translate }}
+          </ng-container>
+        </div>
       </div>
     </ng-container>
     <ng-container *ngIf="selectedTab == 1">
@@ -103,7 +108,7 @@
         [tabColor]="'red'"
       >
         <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
-          <span>{{ selectedFilterText }}</span>
+          <span>{{ selectedFilterText}}</span>
           <app-icon
             shape="more_vert"
           ></app-icon>
@@ -121,27 +126,10 @@
         </div>
         <div content class="padding">
           <app-table-queries
-            (noPendingQueries)="showNoQueries($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
             (rowClicked)="rowClickHandler($event)"
           ></app-table-queries>
-          <div *ngIf="selectedTab == 1 && this.tabIndex == 1 && noTasksMessage" class="padding inbox-no-tasks-message">
-            <ng-container *ngIf="noTasksMessage && filterDate === 1">
-              {{ noQueriesThisWeek }}
-            </ng-container>
-            <ng-container *ngIf="noTasksMessage && filterDate === 2">
-              {{ noQueriesThisMonth }}
-            </ng-container>
-          </div>
-          <div *ngIf="selectedTab == 1 && this.tabIndex == 2 && noTasksMessage" class="padding inbox-no-tasks-message">
-            <ng-container *ngIf="noTasksMessage && filterDate === 1">
-              {{ noQueriesClosedThisWeek }}
-            </ng-container>
-            <ng-container *ngIf="noTasksMessage && filterDate === 2">
-              {{ noQueriesClosedThisMonth }}
-            </ng-container>
-          </div>
         </div>
       </app-tabs>
     </ng-container>
@@ -171,27 +159,10 @@
         </div>
         <div content class="padding">
           <app-table-tasks
-            (noPendingTasks)="showNoTasksMessage($event)"
             (rowClicked)="rowClickHandler($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
           ></app-table-tasks>
-          <div *ngIf="selectedTab == 2 && this.tabIndex == 1 && noTasksMessage" class="padding inbox-no-tasks-message">
-            <ng-container *ngIf="noTasksMessage && filterDate === 1">
-              {{ noTasksThisWeekMessage }}
-            </ng-container>
-            <ng-container *ngIf="noTasksMessage && filterDate === 2">
-              {{ noTasksThisMonthMessage }}
-            </ng-container>
-          </div>
-          <div *ngIf="selectedTab == 2 && this.tabIndex == 2 && noTasksMessage" class="padding inbox-no-tasks-message">
-            <ng-container *ngIf="noTasksMessage && filterDate === 1">
-              {{ noTasksPendingThisWeekMessage }}
-            </ng-container>
-            <ng-container *ngIf="noTasksMessage && filterDate === 2">
-              {{ noTasksPendingThisMonthMessage }}
-            </ng-container>
-          </div>
         </div>
       </app-tabs>
     </ng-container>
@@ -220,27 +191,10 @@
         </div>
         <div content class="padding">
           <app-table-notifications
-            (noPendingNotification)="showNoNotificacions($event)"
             (rowClicked)="rowClickHandler($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
           ></app-table-notifications>
-          <div *ngIf="selectedTab == 3 && this.tabIndex == 1 && noTasksMessage" class="padding inbox-no-tasks-message">
-            <ng-container *ngIf="noTasksMessage && filterDate === 1">
-              {{ noNotificationsThisWeek }}
-            </ng-container>
-            <ng-container *ngIf="noTasksMessage && filterDate === 2">
-              {{ noNotificationsThisMonth }}
-            </ng-container>
-          </div>
-          <div *ngIf="selectedTab == 3 && this.tabIndex == 2 && noTasksMessage" class="padding inbox-no-tasks-message">
-            <ng-container *ngIf="noTasksMessage && filterDate === 1">
-              {{ noNotificationsViewThisWeek }}
-            </ng-container>
-            <ng-container *ngIf="noTasksMessage && filterDate === 2">
-              {{ noNotificationsViewThisMonth }}
-            </ng-container>
-          </div>
         </div>
       </app-tabs>
     </ng-container>
@@ -272,6 +226,8 @@
     <!--Chat-->
     <form (ngSubmit)="sendChatMessage()">
       <div class="padding" *ngIf="messagesData.Type === 'consulta'">
+        <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
+        {{ messagesData.Description }}
         <div class="inbox-chat" (click)="toggleDescription(i)" *ngFor="let messageChat of messagesChat; let i = index">
           <div class="inbox-chat-name">
             {{ messageChat.Name }}

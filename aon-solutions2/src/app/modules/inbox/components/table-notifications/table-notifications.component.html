@@ -1,4 +1,5 @@
 <app-table
+  *ngIf="bodyTable.length > 0"
   id="table-inbox"
   mat-table
   mat-flat-table
@@ -7,3 +8,6 @@
   (listenParentRow)="rowClick($event)"
 >
 </app-table>
+<div *ngIf="bodyTable.length === 0">
+  <div>{{ message }}</div>
+</div>

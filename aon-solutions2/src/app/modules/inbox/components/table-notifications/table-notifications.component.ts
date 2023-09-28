@@ -38,7 +38,7 @@ export class TableNotificationsComponent implements OnChanges {
   totalMessages: number = 0;
   lenghtTitle: number = 30;
   lenghtMensage: number = 50;
-
+  message: string = '';
   messages: ICollection<IMessage> =
     new CollectionFactory().createMessageCollection();
 
@@ -67,21 +67,19 @@ export class TableNotificationsComponent implements OnChanges {
     this.updateTableData();
   }
 
-  filterTable(filterType: number) {
-    if (filterType === 1) {
-      // Filtro por semana
-      const startDate = this.getStartDateOfWeek();
-      const endDate = this.getEndDateOfWeek();
-      this.updateTableData(startDate, endDate);
-    } else if (filterType === 2) {
-      // Filtro por mes
-      const startDate = this.getStartDateOfMonth();
-      const endDate = this.getEndDateOfMonth();
-      this.updateTableData(startDate, endDate);
-    } else {
-      // Filtro por todas las fechas
-      this.updateTableData();
+  filterTableDate() {
+    let date: { start: string; end: string } = { start: '', end: '' };
+    switch (this.filterDate) {
+      case 1:
+        date.start = this.getStartDateOfWeek();
+        date.end   = this.getEndDateOfWeek();
+      break
+      case 2:
+        date.start = this.getStartDateOfMonth();
+        date.end = this.getEndDateOfMonth();
+      break
     }
+    return date;
   }
 
   private getStartDateOfWeek(): string {
@@ -125,61 +123,83 @@ export class TableNotificationsComponent implements OnChanges {
     return `${year}-${month}-${day}`;
   }
 
-  private updateTableData(startDate?: string, endDate?: string) {
+  private updateTableData() {
     let tableRow: any[] = [];
     const datepipe: DatePipe = new DatePipe(
       this.translateService.getDefaultLang()
     );
     let filterBuilder = new FilterBuilder();
     filterBuilder.addField('type', 'notificacion');
-    // if(this.filterStatus[this.filterTabSelec] === 'todas')
-    //   filterBuilder.addField('status', this.filterStatus[this.filterTabSelec]);
-
     if (this.filterDate > 0) {
-      filterBuilder.addInterval('date', startDate, endDate);
+      let dates = this.filterTableDate()
+
+      filterBuilder.addInterval('date', dates.start, dates.end);
     }
     this.messageService
-      .getMessageList(filterBuilder.getFilter())
-      .then((response) => {
-        let pendingNotificacionsFound = false;
-        response.forEach((message, messageKey) => {
-          const column: any = Object.assign({}, message);
-          // key
-          column.key = messageKey;
-          // Nombre del asesor
-          column.name = message.Name;
+    .getMessageList(filterBuilder.getFilter())
+    .then((response) => {
+      let pendingNotificacionsFound = false;
+      response.forEach((message, messageKey) => {
+        const column: any = Object.assign({}, message);
+        // key
+        column.key = messageKey;
+        // Nombre del asesor
+        column.name = message.Name;
 
-          if (
-            this.filterStatus[this.filterTabSelec] ===
-              message.Status.toLowerCase() ||
-            this.filterStatus[this.filterTabSelec] === 'todas'
-          ) {
-            const lowerCaseStatus = message.Status.toLowerCase();
+        if (
+          this.filterStatus[this.filterTabSelec] ===
+            message.Status.toLowerCase() ||
+          this.filterStatus[this.filterTabSelec] === 'todas'
+        ) {
+          const lowerCaseStatus = message.Status.toLowerCase();
 
-            column.status = {
-              icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
-              text: `<span class="${
-                lowerCaseStatus.includes('nueva')
-                  ? 'background-text-red-light'
-                  : 'background-text-griss-light'
-              }">${message.Status}</span>`,
-            };
-            // Asunto del mensaje
-            column.title = message.Title;
-            // Mensaje
-            column.description = message.Description;
-            // Fecha
-            column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
-            column.class =
-              message.Status == StatusMessage.NUEVA ? 'border-red' : '';
-            tableRow.push(column);
+          column.status = {
+            icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
+            text: `<span class="${
+              lowerCaseStatus.includes('nueva')
+                ? 'background-text-red-light'
+                : 'background-text-griss-light'
+            }">${message.Status}</span>`,
+          };
+          // Asunto del mensaje
+          column.title = message.Title;
+          // Mensaje
+          column.description = message.Description;
+          // Fecha
+          column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
+          column.class =
+            message.Status == StatusMessage.NUEVA ? 'border-red' : '';
+          tableRow.push(column);
+        }
+      });
+
+      this.bodyTable = tableRow;
+      this.noPendingNotification.emit(!pendingNotificacionsFound);
+
+      if (response.size() === 0) {
+        this.translateService.get([
+          'INBOX.NONOTIFICATIONSTHISWEEK',
+          'INBOX.NONOTIFICATIONSTHISMONTH',
+          'NOMESSAGES'
+        ]).subscribe((result) => {
+          switch (this.filterDate) {
+            case 1:
+              this.message = result['INBOX.NONOTIFICATIONSTHISWEEK'];
+              break;
+            case 2:
+              this.message = result['INBOX.NONOTIFICATIONSTHISMONTH'];
+              break;
+            default:
+              this.message = result['INBOX.NOMESSAGES'];
+              break;
           }
         });
+      } else {
+        this.message = '';
+      }
 
-        this.bodyTable = tableRow;
-
-        this.noPendingNotification.emit(!pendingNotificacionsFound);
-      });
+      this.noPendingNotification.emit(true);
+    });
   }
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
