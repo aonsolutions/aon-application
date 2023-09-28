@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ICommunity, ICountry } from 'libraries/AonSDK/aon';
+import { ICommunity, ICountry } from 'libraries/AonSDK/src/aon';
 import { environment } from 'src/environments/environment';
 import { ErrorService } from './error.service';
 import { CommonService } from './common.service';
