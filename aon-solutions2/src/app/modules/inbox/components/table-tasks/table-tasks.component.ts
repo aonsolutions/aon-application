@@ -27,6 +27,7 @@ export class TableTasksComponent implements OnChanges {
   bodyTable: any[] = [];
   showDetail: boolean = false;
   totalMessages: number = 0;
+  message: string = '';
   @Output() noPendingTasks: EventEmitter<boolean> = new EventEmitter<boolean>();
   messages: ICollection<IMessage> =
   new CollectionFactory().createMessageCollection();
@@ -65,21 +66,19 @@ export class TableTasksComponent implements OnChanges {
     this.updateTableData();
   }
 
-  filterTable(filterType: number) {
-    if (filterType === 1) {
-      // Filtro por semana
-      const startDate = this.getStartDateOfWeek();
-      const endDate = this.getEndDateOfWeek();
-      this.updateTableData(startDate, endDate);
-    } else if (filterType === 2) {
-      // Filtro por mes
-      const startDate = this.getStartDateOfMonth();
-      const endDate = this.getEndDateOfMonth();
-      this.updateTableData(startDate, endDate);
-    } else {
-      // Filtro por todas las fechas
-      this.updateTableData();
+  filterTableDate() {
+    let date: { start: string; end: string } = { start: '', end: '' };
+    switch (this.filterDate) {
+      case 1:
+        date.start = this.getStartDateOfWeek();
+        date.end   = this.getEndDateOfWeek();
+      break
+      case 2:
+        date.start = this.getStartDateOfMonth();
+        date.end = this.getEndDateOfMonth();
+      break
     }
+    return date;
   }
 
   private getStartDateOfWeek(): string {
@@ -121,16 +120,14 @@ export class TableTasksComponent implements OnChanges {
 
       let filterBuilder = new FilterBuilder();
       filterBuilder.addField('type', 'tarea');
-    // if(this.filterStatus[this.filterTabSelec] === 'todas')
-    //   filterBuilder.addField('status', this.filterStatus[this.filterTabSelec]);
+      if (this.filterDate > 0) {
+        let dates = this.filterTableDate()
 
-    if (this.filterDate > 0) {
-      filterBuilder.addInterval('date', startDate, endDate);
-    }
-
-     this.messageService
-     .getMessageList(filterBuilder.getFilter())
-     .then((response) => {
+        filterBuilder.addInterval('date', dates.start, dates.end);
+      }
+      this.messageService
+      .getMessageList(filterBuilder.getFilter())
+      .then((response) => {
       this.messagess = response;
       this.messagesSubject.next(this.messagess);
       let pendingTasksFound = false;
@@ -169,6 +166,29 @@ export class TableTasksComponent implements OnChanges {
         }
       });
       this.bodyTable = tableRow;
+      this.noPendingTasks.emit(!pendingTasksFound);
+      // No tenemos mensaje en la tabla
+      if (response.size() === 0) {
+        this.translateService.get([
+          'INBOX.NOTASKSTHISWEEKMESSAGE',
+          'INBOX.NOTASKSTHISMONTHMESSAGE',
+          'NOMESSAGES'
+        ]).subscribe((result) => {
+        switch (this.filterDate) {
+          case 1:
+            this.message = result['INBOX.NOTASKSTHISWEEKMESSAGE'];
+            break;
+          case 2:
+            this.message = result['INBOX.NOTASKSTHISMONTHMESSAGE'];
+            break;
+          default:
+            this.message = result['INBOX.NOMESSAGES'];
+            break;
+        }
+       });
+      } else {
+        this.message = '';
+      }
 
       this.noPendingTasks.emit(!pendingTasksFound);
     });

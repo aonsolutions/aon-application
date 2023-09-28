@@ -25,6 +25,7 @@ export class ModalCreateComponent implements OnInit {
 
   inputValue: string = '';
   newMessageDescription: string = '';
+  newMessageAsunto: string = '';
   entityFactory = new Factory();
   messagesData: IMessage = this.entityFactory.createMessage();
   collectionFactory = new CollectionFactory();
@@ -33,6 +34,7 @@ export class ModalCreateComponent implements OnInit {
 
   newMessageDescriptionChange(newValue: string) {
     this.newMessageDescription = newValue;
+    this.newMessageAsunto = newValue;
   }
   constructor(
     private messageService: MessageService,
@@ -65,7 +67,7 @@ export class ModalCreateComponent implements OnInit {
     }
   }
 
-  async createMessage(description: string){
+  async createMessage(description: string, asunto: string){
     if (this.messagesData) {
       const messageId = this.messagesData.Id;
 console.log('messafeDAta', this.messagesData);
@@ -73,7 +75,7 @@ console.log('messafeDAta', this.messagesData);
       const newMessage: IMessage = {
         Id: messageId,
         Name: this.messagesData.Name,
-        Title: this.messagesData.Title,
+        Title: asunto,
         Description: description,
         Date: new Date(),
         Status: StatusMessage.CERRADA,
@@ -105,9 +107,10 @@ console.log('messafeDAta', this.messagesData);
     }
 
     // Llama a la función para crear un nuevo mensaje
-    this.createMessage(this.newMessageDescription);
+    this.createMessage(this.newMessageDescription, this.newMessageAsunto);
 
     // Limpia el campo de entrada después de enviar el mensaje
     this.newMessageDescription = '';
+    this.newMessageAsunto = '';
   }
 }

@@ -21,6 +21,7 @@ export class TableComponentComponent implements OnInit {
   @Input() filter: any = {};
   @Input() public messageList: Observable<ICollection<IMessage>> | undefined;
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
+  @Output() noPendingMessages: EventEmitter<boolean> = new EventEmitter<boolean>();
   lenghtTitle   : number = 30;
   lenghtMensage : number = 50;
   headerTable: any = {};
@@ -65,6 +66,7 @@ export class TableComponentComponent implements OnInit {
 
     // Obtener la lista de mensajes
     this.messageService.getMessageList().then((response) => {
+      let pendingQueriesFound = false;
     response.forEach((message, messageKey) => {
         // Mensajes - total
         let filterBuilderTotal = new FilterBuilder();
@@ -136,6 +138,7 @@ export class TableComponentComponent implements OnInit {
             };
           });
         this.bodyTable = tableRow;
+        this.noPendingMessages.emit(!pendingQueriesFound);
       });
     });
   }

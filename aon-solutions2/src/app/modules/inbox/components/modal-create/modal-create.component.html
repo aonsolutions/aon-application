@@ -21,10 +21,17 @@
     [label]="'INBOX.ASSIGN_TO' | translate"
     >
     </app-input>
+       <app-input
+      [type]="'text'"
+      [placeholder]="'INBOX.TEXT' | translate"
+      [label]="'INBOX.SUBJECT' | translate"
+      [value]="newMessageAsunto"
+      (inputValue)="newMessageAsunto = $event"
+    ></app-input>
     <app-input
       [type]="'textarea'"
       [placeholder]="'INBOX.TEXT' | translate"
-      [label]="'INBOX.SUBJECT' | translate"
+      [label]="'INBOX.DESCRIPTION' | translate"
       [value]="newMessageDescription"
       (inputValue)="newMessageDescription = $event"
     ></app-input>

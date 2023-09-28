@@ -35,6 +35,7 @@ export class TableQueriesComponent implements OnChanges {
   showDetail: boolean = false;
   totalMessages: number = 0;
   currentFilterDate: number = 0;
+  message: string = '';
   selectedMessage: IMessage | null = null;
   messages: ICollection<IMessage> =
   new CollectionFactory().createMessageCollection();
@@ -80,21 +81,19 @@ export class TableQueriesComponent implements OnChanges {
     this.updateTableData();
   }
 
-  filterTable(filterType: number) {
-    if (filterType === 1) {
-      // Filtro por semana
-      const startDate = this.getStartDateOfWeek();
-      const endDate = this.getEndDateOfWeek();
-      this.updateTableData(startDate, endDate);
-    } else if (filterType === 2) {
-      // Filtro por mes
-      const startDate = this.getStartDateOfMonth();
-      const endDate = this.getEndDateOfMonth();
-      this.updateTableData(startDate, endDate);
-    } else {
-      // Filtro por todas las fechas
-      this.updateTableData();
+  filterTableDate() {
+    let date: { start: string; end: string } = { start: '', end: '' };
+    switch (this.filterDate) {
+      case 1:
+        date.start = this.getStartDateOfWeek();
+        date.end   = this.getEndDateOfWeek();
+      break
+      case 2:
+        date.start = this.getStartDateOfMonth();
+        date.end = this.getEndDateOfMonth();
+      break
     }
+    return date;
   }
 
   //Filtros para las fechas
@@ -131,7 +130,7 @@ export class TableQueriesComponent implements OnChanges {
     return `${year}-${month}-${day}`;
   }
 
-    // Método para cambiar el estado de una consulta a "Cerrada"
+    //TODO Método para cambiar el estado de una consulta a "Cerrada"
     archiveMessage(message: IMessage) {
       this.messageService.archiveMessage(message).then((updatedMessage) => {
         console.log('Consulta archivada:', updatedMessage);
@@ -140,7 +139,7 @@ export class TableQueriesComponent implements OnChanges {
       });
     }
 
-    // Método para cambiar el estado de una consulta a "Abierta"
+    //TODO Método para cambiar el estado de una consulta a "Abierta"
     reopenMessage(message: IMessage) {
       this.messageService.reopenMessage(message).then((updatedMessage) => {
         console.log('Consulta abierta:', updatedMessage);
@@ -149,19 +148,17 @@ export class TableQueriesComponent implements OnChanges {
       });
     }
 
-  private updateTableData(startDate?: string, endDate?: string) {
+  private updateTableData() {
     let tableRow: any[] = [];
     const datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
 
     let filterBuilder = new FilterBuilder();
     filterBuilder.addField('type', 'consulta');
-    // if(this.filterStatus[this.filterTabSelec] === 'todas')
-    //   filterBuilder.addField('status', this.filterStatus[this.filterTabSelec]);
-
     if (this.filterDate > 0) {
-      filterBuilder.addInterval('date', startDate, endDate);
-    }
+      let dates = this.filterTableDate()
 
+      filterBuilder.addInterval('date', dates.start, dates.end);
+    }
     this.messageService
       .getMessageList(filterBuilder.getFilter())
       .then((response) => {
@@ -220,7 +217,29 @@ export class TableQueriesComponent implements OnChanges {
         });
 
         this.bodyTable = tableRow;
-
+      this.noPendingQueries.emit(!pendingQueriesFound);
+      // No tenemos mensaje en la tabla
+      if (response.size() === 0) {
+        this.translateService.get([
+          'INBOX.NOQUERIESTHISWEEK',
+          'INBOX.NOQUERIESTHISMONTH',
+          ''
+        ]).subscribe((result) => {
+        switch (this.filterDate) {
+          case 1:
+              this.message = result['INBOX.NOQUERIESTHISWEEK'];
+            break;
+          case 2:
+            this.message = result['INBOX.NOQUERIESTHISMONTH'];
+            break;
+          default:
+            this.message = result['INBOX.NOMESSAGES']
+            break;
+        }
+      });
+      } else {
+        this.message = '';
+      }
         this.noPendingQueries.emit(!pendingQueriesFound);
       });
   }
