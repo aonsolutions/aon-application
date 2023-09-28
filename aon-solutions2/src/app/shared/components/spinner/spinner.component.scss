@@ -7,6 +7,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: black;
+  }
+
+  .container-spinner .round-spinner{
+    // border: 1px solid black;
+    border-radius: 100%;
+    background-color: rgba($color: $color-icon, $alpha: 0.2);
+    padding: $padding / 2;
   }
 }
