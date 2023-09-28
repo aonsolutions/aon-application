@@ -19,7 +19,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -41,6 +40,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.json.FiscalMatrixParamsJSON;
 import com.esferalia.aon.occam.api.json.FiscalModelJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMenuDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
@@ -363,8 +364,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 			params.put("IDI", "ES");
 			params.put("F01", getUnencodedFile(fileContent,StandardCharsets.UTF_8));
 			params.put("FIR", "FirmaBasica");
-			params.put("FIRNIF", aeatParams.getDocument());
-			params.put("FIRNOMBRE", aeatParams.getName());
+//			params.put("FIRNIF", aeatParams.getDocument());
+//			params.put("FIRNOMBRE", aeatParams.getName());
 			
 			String url = aeatParams.isTest() 
 				? "https://prewww1.aeat.es/wlpl/PFTW-PICW/PresBasicaDos"
@@ -374,6 +375,10 @@ public class FiscalServlet extends AonApiHttpServlet{
 			sslContext.init( getKeyManagers(aeatParams),
 					new TrustManager[] { new DefaultTrustManager() },
 					new SecureRandom());
+			
+			params.put("FIRNIF", aeatParams.getDocument());
+			params.put("FIRNOMBRE", aeatParams.getName());
+			
 			HttpClient httpClient = HttpClient.newBuilder()
 		            .version(HttpClient.Version.HTTP_2)
 		            .connectTimeout(Duration.ofSeconds(120))
@@ -586,39 +591,55 @@ public class FiscalServlet extends AonApiHttpServlet{
 	    
 	    
 	    
-	    String alias = "";
-	    Enumeration<String> e = keyStore.aliases();   //Obtengo los alias de los certificados
-	    while (e.hasMoreElements()){
-	             alias = e.nextElement();
-	            System.out.println("alias:"  + alias);
-	    }   
-	   
 	    
-	    X509Certificate c = (X509Certificate) keyStore.getCertificate(alias);
+	    // OBTENER DATOS DEL CERTIFICADO
 	    
-	    String name = c.getSubjectX500Principal().toString();
+//	    String alias = "";
+//	    Enumeration<String> e = keyStore.aliases();   //Obtengo los alias de los certificados
+//	    while (e.hasMoreElements()){
+//	             alias = e.nextElement();
+//	            System.out.println("alias:"  + alias);
+//	    }   
+//	   
+//	    
+//	    X509Certificate c = (X509Certificate) keyStore.getCertificate(alias);
+//	    
+//	    String name = c.getSubjectX500Principal().toString();
+//	    
+//	    int start = name.indexOf("SURNAME=");
+//	    int end = name.indexOf(",", start);
+//	    if (end == -1) {
+//	        end = name.length();
+//	    }
+//	    String surname = name.substring(start + 8, end);
+//	    
+//	    start = name.indexOf("SERIALNUMBER=");
+//	    end = name.indexOf(",", start);
+//	    if (end == -1) {
+//	        end = name.length();
+//	    }
+//	    String serial = name.substring(start + 13, end);
+//	    
+//	    // FALTA - PRUEBA A PONER DOCUMENTO Y NOMBRE DEL CERTIFICADO
+//	    params.setDocument(serial);
+//	    params.setName(surname.toUpperCase());
 	    
-	    int start = name.indexOf("SURNAME=");
-	    int end = name.indexOf(",", start);
-	    if (end == -1) {
-	        end = name.length();
-	    }
-	    String surname = name.substring(start + 8, end);
+	 // FIN OBTENER DATOS DEL CERTIFICADO
 	    
-	    start = name.indexOf("SERIALNUMBER=");
-	    end = name.indexOf(",", start);
-	    if (end == -1) {
-	        end = name.length();
-	    }
-	    String serial = name.substring(start + 13, end);
+	    // OTRA FORMA DE HACERLO 
 	    
-	    // FALTA - PRUEBA A PONER DOCUMENTO Y NOMBRE DEL CERTIFICADO
-	    params.setDocument(serial);
-	    params.setName(surname.toUpperCase());	    
+	    CertificateInfo info = CertificateDAO.verifyCertificate(attach.getData(), params.getPass());
 	    
-	    System.out.println("certificate:"  + name);
-	    System.out.println("surname:"  + surname);
-	    System.out.println("serial:"  + serial);    
+	    // FALTA - COGEMOS EL NIF Y NOMBRE DEL TITULAR DEL CERTIFICADO, SE SUPONE QUE EN LOS CERTIFICADOS DE REPRESENTACION, TAMBIEN SE DEBE
+	    // COGER ESE, AUNQUE EN EL ENTORNO DE PRUEBAS SE OBLIGA A QUE EL NIF DEL DECLARANTE Y DEL CERTIFICADO SEAN IGUALES
+	    params.setDocument(AonStringUtils.trimToEmpty(info.getDocument()).toUpperCase());
+	    params.setName((AonStringUtils.trimToEmpty(info.getSurname()) + " " + AonStringUtils.trimToEmpty(info.getName())).toUpperCase());
+	    
+	    // FIN OTRA FORMA	    
+	    
+	    //System.out.println("certificate:"  + name);
+	    System.out.println("surname: "  + params.getName());
+	    System.out.println("document: "  + params.getDocument());   
 	    
 	    
     	KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
