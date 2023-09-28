@@ -205,29 +205,7 @@ export class TableNotificationsComponent implements OnChanges {
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
-  // rowClick(message: IMessage) {
-  //   this.rowClicked.emit(message);
-  // }
-
-  rowClick(message: IMessage) {
+   rowClick(message: IMessage) {
     this.rowClicked.emit(message);
-    console.log('message',message);
-
-    this.updateStatus(message);
-    console.log('pilla updateStatus');
-  }
-
-  updateStatus(message: IMessage) {
-    if (message.Status == StatusMessage.NUEVA) {
-      message.Status = StatusMessage.VISTA;
-
-      try {
-        this.messageService.updateMessage(message);
-
-        this.updateTableData();
-      } catch (error) {
-        console.error('Error al actualizar el mensaje:', error);
-      }
-    }
   }
 }

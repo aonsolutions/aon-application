@@ -12,6 +12,8 @@ import {
   FilterBuilder,
   IMessageChat,
   IMessage,
+  StatusMessage,
+  TypeMessage,
 } from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
@@ -178,8 +180,7 @@ export class InboxviewComponent implements OnInit {
   }
 
   async rowClickHandler(message: any) {
-    console.log(message, 'message');
-
+    console.log(message);
     try {
       const isSameRow =
         this.messagesData && this.messagesData.Id === message.key;
@@ -194,6 +195,18 @@ export class InboxviewComponent implements OnInit {
         );
       }
       this.changeView();
+
+      if (message.Status === StatusMessage.NUEVA) {
+        console.log('Cambiando estado del mensaje de NUEVA a VISTA');
+        message.Status = StatusMessage.VISTA;
+
+        try {
+          await this.messageService.updateMessage(message);
+
+        } catch (error) {
+          console.error('Error al actualizar el mensaje:', error);
+        }
+      }
     } catch (error) {
       console.error('Error al cargar el chat del mensaje:', error);
     }
@@ -276,15 +289,16 @@ export class InboxviewComponent implements OnInit {
   }
 
   async createChatMessage(description: string) {
-    if (this.messagesData && this.messageChat) {
+    if (this.messageChat && this.messagesData) {
+      const messageChatId = this.messageChat.Id;
 
       const newMessageChat: IMessageChat = {
-        Id: this.messageChat.Id,
+        Id: messageChatId,
         IdMessage: this.messagesData.Id,
         Name: this.messagesData.Name,
         Description: description,
         Date: new Date(),
-        Type: 'chat',
+        Type: TypeMessage.CONSULTA,
         getKey: () => this.messageChat.Id,
         getFilterableFields: () => new Map(),
         getSortableFields: () => new Map(),
@@ -294,6 +308,8 @@ export class InboxviewComponent implements OnInit {
         // Crear el mensaje
         const createdMessageChat =
           await this.messageChatService.createMessageChat(newMessageChat);
+console.log('createdMessageChat', createdMessageChat);
+console.log('new message chat', newMessageChat);
 
         // Agregar el nuevo mensaje
         this.messagesChat.add(createdMessageChat);
