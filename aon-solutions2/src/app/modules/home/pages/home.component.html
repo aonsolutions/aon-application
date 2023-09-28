@@ -23,7 +23,7 @@
   <!-- Ventas, Cobros, Impuestos, tus bancos -->
     <div id="charts">
       <div class="chart" *ngFor="let chartItem of chartItems">
-        <app-chart-dashboard 
+        <app-chart-dashboard
           [name]      ="chartItem.name"
           [typeDate]  ="chartItem.typeDate"
         ></app-chart-dashboard>
@@ -32,7 +32,7 @@
         <app-models-dashboard></app-models-dashboard>
       </div>
       <div class="chart">
-        <app-banks-dashboard [bankList]="banks$"></app-banks-dashboard>
+        <app-banks-dashboard></app-banks-dashboard>
       </div>
     </div>
   <!-- FIN Ventas, Cobros, Impuestos, tus bancos -->
@@ -46,9 +46,9 @@
   <!-- FIN Bandeja de email -->
   <!-- Acceso a gestion, panel de impuestos, empleados y doc -->
     <div id="buttons-dashboard">
-      <div 
-        class="button-dashboard" 
-        *ngFor="let menuItem of menuItems" 
+      <div
+        class="button-dashboard"
+        *ngFor="let menuItem of menuItems"
         [routerLink]="menuItem.routerlink"
       >
         <app-menu-button-dashboard

@@ -2,12 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/aon';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
-import { BankService } from 'src/app/core/services/bank.service';
-import { MessageService } from 'src/app/core/services/message.service';
-import { ReportingService } from 'src/app/core/services/reporting.service';
-import { TaxModelService } from 'src/app/core/services/tax-model.service';
-import { CountryService } from 'src/app/core/services/country.service';
-
  interface ShortcutDashboard {
   shape : string;
   name  : string;
@@ -46,10 +40,6 @@ export class HomeComponent implements OnInit {
   public banks$ = this.banksSubject.asObservable();
 
   constructor(
-    private bankService     : BankService,
-    private taxModelService : TaxModelService,
-    private reportingService: ReportingService,
-    private messageService  : MessageService,
     private translateService: TranslateService,
   ) {
     this.translateService.get([
@@ -99,12 +89,6 @@ export class HomeComponent implements OnInit {
           class     : 'button-dashboard pink'
         },
       ];
-      //bankService
-      this.bankService.getBankList().then((response) => {
-        this.banks = response;
-        this.banksSubject.next(this.banks);
-      });
-
     });
   }
 
