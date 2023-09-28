@@ -4,7 +4,7 @@
 
 
 // true para activar que los datos lleguen desde la api, false para usar datos ficticion locales
-let APIEnvironment  = false;
+let APIEnvironment  = true;
 // true activa unos tests simples para ver que los métodos funcionan correctamente, false para desactivarlos
 let test: boolean   = false;
 
@@ -15,7 +15,9 @@ let test: boolean   = false;
  */
 
 // URL for test environment
-const BASE_URL = 'https://aonsolutions.org';
+// const BASE_URL = 'https://aonsolutions.org';
+
+const BASE_URL = 'http://localhost:8080';
 
 const GET_SINGLE = 'singleObjectGet'
 const CREATE_SINGLE = 'singleObjectCreate';
@@ -114,6 +116,9 @@ export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMu
             new GenericMultipleObjectCrudRepository<Document>(new StorableDocument(), Document)
             ),
             Document);
+    }
+    createDocumentSpecificMethods(): IDocumentSpecificMethods {
+        return new DocumentSpecificMethods(APIEnvironment ? new ApiDocumentSpecificMethodsRepository() : new LocalDocumentSpecificMethodsRepository());
     }
 }
 
@@ -271,7 +276,7 @@ export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>,
     createMultipleObjectCrud(): IMultipleObjectCrud<IEnterprise> {
         return new GenericMultipleObjectCrud<Enterprise>(
             (APIEnvironment ?
-            new APIGenericMultipleObjectCrudRepository<Enterprise>(new ApiEnterprise(), Enterprise) :
+            new ApiEnterpriseMultipleObjectCrudRepository() :
             new GenericMultipleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise)
             ),
             Enterprise);
@@ -355,8 +360,9 @@ export class AuthenticationFactory implements IAuthenticationManagerFactory {
 
 export class ReportingFactory implements IReportingDataAccessFactory {
     createReportingDataAccess(): IReportingDataAccess {
-        // TO DO - create reporting repository for api
-        return new ReportingDataAccess(new ReportingRepository());
+        return new ReportingDataAccess( APIEnvironment ? 
+             new ApiReportingRepository() :
+             new ReportingRepository());
     }
 }
 
@@ -782,6 +788,10 @@ interface IUserSpecificMethods {
     updateCurrentUserData(user: IUser): Promise<IResponse<IUser>>;
 }
 
+interface IDocumentSpecificMethods {
+    getRawFile(document: IDocument): Promise<IResponse<string>>;
+}
+
 
 /*
  *
@@ -946,11 +956,11 @@ class ReportingDataAccess implements IReportingDataAccess {
     }
 
     async cobrosPagos(): Promise<IResponse<Object>> {
-        return new Response<Object>(this.reportingRepository.cobrosPagos());
+        return new Response<Object>(await this.reportingRepository.cobrosPagos());
     }
 
     async ventasGastos(): Promise<IResponse<Object>> {
-        return new Response<Object>(this.reportingRepository.ventasGastos());
+        return new Response<Object>(await this.reportingRepository.ventasGastos());
     }
 
 }
@@ -1172,6 +1182,22 @@ class UserSpecificMethods implements IUserSpecificMethods {
     }
 }
 
+class DocumentSpecificMethods implements IDocumentSpecificMethods {
+    protected SpecificMethodsRepository: IDocumentSpecificMethodsRepository;
+
+    constructor(SpecificMethodsRepository: IDocumentSpecificMethodsRepository){
+        this.SpecificMethodsRepository = SpecificMethodsRepository;
+    }
+
+    async getRawFile(document: IDocument): Promise<IResponse<string>> {
+        try {
+            return new Response<string>(await this.SpecificMethodsRepository.getRawFile(document));
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+}
+
 /*
  *
  * REPOSITORY INTERFACES
@@ -1331,6 +1357,10 @@ interface IEnterpriseSpecificMethodsRepository {
 interface IUserSpecificMethodsRepository {
     getCurrentUserData(): Promise<IUser>;
     updateCurrentUserData(user: IUser): Promise<IUser>;
+}
+
+interface IDocumentSpecificMethodsRepository {
+    getRawFile(document: IDocument): Promise<string>;
 }
 
 /*
@@ -1523,8 +1553,10 @@ class APIGenericSingleObjectCrudRepository<T extends IModel> implements ISingleO
     }
 
     async update(element: T): Promise<T> {
+        let filter = new FilterBuilder();
+        filter.addField('id', element.Key);
         let data = this.apiModel.parseDataToSend(element, UPDATE_SINGLE);
-        let url = this.apiModel.getUrl(UPDATE_SINGLE);
+        let url = this.apiModel.getUrl(UPDATE_SINGLE, filter.getFilter());
         let method = this.apiModel.getMethod(UPDATE_SINGLE);
         let response = await this.httpRequest.httpRequest(BASE_URL + url, method, element, data)
         if(response) return element;
@@ -1584,6 +1616,22 @@ class APIGenericMultipleObjectCrudRepository<T extends IModel> implements IMulti
 
 }
 
+class ApiEnterpriseMultipleObjectCrudRepository extends APIGenericMultipleObjectCrudRepository<Enterprise> {
+    constructor(){
+        super(new ApiEnterprise(), Enterprise);
+    }
+
+    async get(filter?: IFilter | undefined): Promise<ICollection<Enterprise>> {
+        let collection: ICollection<Enterprise> = await super.get(filter)
+        collection.forEach((element: Enterprise) => {
+            if(element.Key == ''){
+                collection.remove(element.getKey());
+            }
+        })
+        return collection;
+    }
+}
+
 class APIFolderMultipleObjectCrudRepository extends APIGenericMultipleObjectCrudRepository<Folder> {
 
     constructor(){
@@ -1594,18 +1642,18 @@ class APIFolderMultipleObjectCrudRepository extends APIGenericMultipleObjectCrud
         let collection: ICollection<Folder> = new Collection<Folder>();
         for(let folder of apiFolders)
             collection.add(folder)
-        let response = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/workplace',GET_METHOD,{},{})
-        let workplaces = ''
-        response.forEach((element: any) => {
-            workplaces+=element.id + ';'
-        })
-        let filterFolder = new FilterBuilder();
-        if(!filter) {
-            filterFolder.addField('workplace', workplaces)
-        }else{
-            filter.fields?.set('workplace', workplaces)
-        }
-        collection.copyArrayToCollection((await super.get(filter ? filter : filterFolder.getFilter())).toArray())
+        // let response = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/workplace',GET_METHOD,{},{})
+        // let workplaces = ''
+        // response.forEach((element: any) => {
+        //     workplaces+=element.id + ';'
+        // })
+        // let filterFolder = new FilterBuilder();
+        // if(!filter) {
+        //     filterFolder.addField('workplace', workplaces)
+        // }else{
+        //     filter.fields?.set('workplace', workplaces)
+        // }
+        collection.copyArrayToCollection((await super.get(filter)).toArray())
         if(filter && filter.fields || filter?.intervalFields) collection = collection.filter(filter);
         if(filter && filter.orderBy) collection.sort(filter);
         return collection;
@@ -1865,6 +1913,29 @@ class ReportingRepository implements IReportingRepository {
 
 }
 
+class ApiReportingRepository implements IReportingRepository {
+
+    private httpRequest = new ApiHttpRequest();
+
+    async cobrosPagos(): Promise<any> {
+        throw new Error("Method not implemented.");
+    }
+
+    async ventasGastos(): Promise<any> {
+        let json = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/stat/invoice', GET_METHOD, {}, {})
+        /** PARSE JSON TO CHARTS.JS LIBRARY => MAYBE THIS WILL BE DO IT IN THE FUTURE IN ANGULAR PROJECT SERVICE */
+        let keys = Object.keys(json);
+        let datasets: any[] = [], ventas: any[] = [], gastos: any[] = [];
+        for(let i = 0; i < keys.length; i++){
+            ventas.push(json[keys[i]].Ventas)
+            gastos.push(json[keys[i]].Gastos)
+        }
+        datasets.push({data:ventas, label:'ventas'})
+        datasets.push({data:gastos, label:'gastos'})
+        return { datasets: datasets, label: keys };
+    }
+}
+
 class LocalProductSpecificMethodsRepository implements IProductSpecificMethodsRepository {
     async getProductStatus(filter?: IFilter): Promise<ICollection<IProductStatus>> {
         return (await new ProductStatusFactory().createMultipleObjectCrud().getCollection(filter)).result;
@@ -1938,6 +2009,29 @@ class LocalUserSpecificMethodsRepository implements IUserSpecificMethodsReposito
 
     async updateCurrentUserData(user: User): Promise<IUser> {
         return new GenericSingleObjectCrudRepository<User>(new StorableUser(), User).update(user);
+    }
+}
+
+class LocalDocumentSpecificMethodsRepository implements IDocumentSpecificMethodsRepository {
+    async getRawFile(document: IDocument): Promise<string> {
+        switch(document.File){
+            case '/largeImage':
+                return largeImage;
+            case '/smallImage':
+                return smallImage;
+            case '/pdf':
+                return pdf;
+            default:
+                return smallImage;
+        }
+    }
+}
+
+class ApiDocumentSpecificMethodsRepository implements IDocumentSpecificMethodsRepository {
+    httpRequest = new ApiHttpRequest();
+
+    async getRawFile(document: IDocument): Promise<string> {
+        return this.httpRequest.httpRequest(BASE_URL + document.Path, GET_METHOD, {}, {});
     }
 }
 
@@ -2064,6 +2158,11 @@ export interface IFilter {
  */
 
 class ApiHttpRequest implements IApiHttpRequest {
+
+    async get(url:string, customHeaders: any = {}, data: any): Promise<any> {
+        return await this.httpRequest(url, "POST", customHeaders, data);
+    }
+
     async httpRequest(url: string, method: string, customHeaders: any = {}, data: any): Promise<any> {
         let headersAuth = {
             session_id: localStorage.getItem('token'),
@@ -2496,11 +2595,19 @@ export interface IDocument extends ICollectable {
     FileType: string;
     Path: string;
     Date: Date;
-    Tag: DocumentTag[];
+    Tag: ICollection<IDocumentTag>;
 }
 
 export interface IDocumentTag extends ICollectable {
     Name: string;
+}
+
+export enum MainFolders {
+    ACONTABILIZAR = '/a_contabilizar',
+    CONTABILIZADO = '/contabilizado',
+    PAPELERA = '/papelera',
+    FISCAL = '/fiscal',
+    LABORAL = '/laboral',
 }
 
 export interface IFolder extends ICollectable {
@@ -3328,7 +3435,7 @@ class Document implements IDocument, IModel {
     private date: Date;
     private key: string;
     private id: string;
-    private tag: DocumentTag[];
+    private tag: ICollection<IDocumentTag>;
     protected apiObject: any;
 
     public get ApiObject(): any {
@@ -3339,7 +3446,7 @@ class Document implements IDocument, IModel {
         this.apiObject = value;
     }
 
-    constructor(file?: string, fileName?: string, fileSize?: number, fileType?: string, date?: Date, path?: string, tag?: DocumentTag[], id?: string) {
+    constructor(file?: string, fileName?: string, fileSize?: number, fileType?: string, date?: Date, path?: string, tag?: Collection<DocumentTag>, id?: string) {
         this.file = file || '';
         this.fileName = fileName || '';
         this.fileSize = fileSize || 0;
@@ -3349,14 +3456,14 @@ class Document implements IDocument, IModel {
         this.key = path && fileName ? path + '/' + fileName : '';
         this.id = KeyGenerator.generate(15);
         this.apiObject = '';
-        this.tag = tag || [];
+        this.tag = tag || new Collection<IDocumentTag>();
     }
 
-    public get Tag(): DocumentTag[] {
+    public get Tag(): ICollection<IDocumentTag> {
         return this.tag;
     }
 
-    public set Tag(value: DocumentTag[]) {
+    public set Tag(value: ICollection<IDocumentTag>) {
         this.tag = value;
     }
 
@@ -3455,17 +3562,18 @@ class ApiDocument extends Document implements IApiModel {
     getUrl(currentMethod: string, filter: IFilter): string[] {
         // a contabilizar, contabilizado, papelera - inbox, rejected, draft
         if(currentMethod == GET_MULTIPLE){
-            if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/a_contabilizar')
-                return ['/ms/api/invoice?status=inbox'];
-            if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/contabilizado')
+            if(filter && filter.fields && filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == MainFolders.ACONTABILIZAR)
+                return ['/ms/api/invoice?status=inbox', '/ms/api/documental/files?type=all&page=' + (filter && filter.pageNum ? filter.pageNum : '1') + '&per_page=' + (filter && filter.pageItems ? filter.pageItems : '30') + '&domain=' + localStorage.getItem('domainId')];
+            if(filter && filter.fields && filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == MainFolders.CONTABILIZADO)
                 return ['/ms/api/invoice?status=inbox'];
                 // return ['/ms/api/invoice?status=rejected'];
-            if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/fiscal')
+            if(filter && filter.fields && filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == MainFolders.FISCAL)
                 return ['/ms/api/fiscal/models'];
-            if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == '/papelera')
+            if(filter && filter.fields && filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase() == MainFolders.PAPELERA)
                 return ['/ms/api/invoice?status=draft'];
-            if(filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase().includes('/laboral'))
-                return ['/ms/api/contract/enterprise/salaries?document=' + filter.fields.get('path')[0].split('/')[2]]
+            if(filter && filter.fields && filter.fields?.has('path') && filter.fields.get('path')[0].toLowerCase().includes(MainFolders.LABORAL))
+                throw new ErrorResponse('0199')
+                // return ['/ms/api/contract/enterprise/salaries?document=' + filter.fields.get('path')[0].split('/')[2]]
         }
         throw new ErrorResponse('0199')
     }
@@ -3496,7 +3604,7 @@ class ApiDocument extends Document implements IApiModel {
             document.Path = filter.fields?.get('path')
             document.Key = data.id ? data.id : ''
             document.Id = data.id ? data.id : ''
-        }else {
+        }else if(!data.title){
             document.ApiObject = data;
             document.File = data.file && data.file.path ? data.file.path : '';
             document.FileName = data.name ? data.name : '';
@@ -3504,6 +3612,23 @@ class ApiDocument extends Document implements IApiModel {
             document.FileType = data.file && data.file.content_type ? data.file.content_type : '';
             document.Date = data.date ? data.date : new Date();
             document.Path = filter.fields?.get('path')
+            document.Key = data.id ? data.id : '';
+            document.Id = data.id ? data.id : '';
+        }else{
+            document.ApiObject = data;
+            document.File = data.file && data.file.url ? data.file.url : '';
+            document.FileName = data.title ? data.title : '';
+            document.FileSize = data.size ? data.size : 0;
+            document.FileType = data.file && data.file.type ? data.file.type : '';
+            document.Date = data.date ? data.date : new Date(data.date);
+            document.Path = filter.fields?.get('path')
+            if(data.tags){
+                data.tags.forEach((tag: any) => {
+                    let newTag = new DocumentTag(tag)
+                    newTag.Key = tag.id
+                    document.Tag.add(newTag)
+                })
+            }
             document.Key = data.id ? data.id : '';
             document.Id = data.id ? data.id : '';
         }
@@ -3598,14 +3723,7 @@ class ApiFolder extends Folder implements IApiModel {
     getUrl(currentMethod: string, filter: IFilter): string[] {
         let urls: string [] = [];
         if(currentMethod == GET_MULTIPLE){
-            if(filter && filter.fields && filter.fields?.has('workplace')){
-                filter.fields?.get('workplace')[0].split(';').forEach((element: any) => {
-                    if(element) urls.push('/ms/api/contract/employee/workplace?workplace=' + element)
-                })
-                return urls;
-            }
-            else
-                return ['/ms/api/contract/employee/workplace'];
+            return ['/ms/api/contract']
         }
         throw new ErrorResponse('0199')
     }
@@ -3627,8 +3745,8 @@ class ApiFolder extends Folder implements IApiModel {
     parseDataToReceive(data: any) {
         let folder = new Folder();
         folder.ApiObject = data;
-        folder.Key = data.document ? data.document : '';
-        folder.Name = data.name && data.surName && data.secondSurName ? data.name + " " + data.surName + " " + data.secondSurName : '';
+        folder.Key = data.ipf ? data.ipf : '';
+        folder.Name = data.name ? data.name : '';
         folder.Parent = '/laboral';
         folder.Path = '/laboral/' + folder.Key;
         return folder;
@@ -4039,6 +4157,7 @@ class ApiEnterprise extends Enterprise implements IApiModel {
 
     parseDataToReceive(data: any, currentMethod: string): any {
         if(currentMethod == GET_MULTIPLE){
+            if(data.type == 'CONSULTANCY') return new Enterprise();
             let enterprise = new Enterprise();
             enterprise.ApiObject = data;
             enterprise.Document = data.document ? data.document : '';
@@ -7576,20 +7695,20 @@ let storableDocuments = new StorableDocument();
 let localDocuments = new LocalStorage<Document>(Document);
 documents = localDocuments.read(storableDocuments.getLocalStorage())
 if(documents.size() == 0){
-    documents.add(new Document(smallImage, 'file1', 1, 'image/png', new Date(), '/a_contabilizar'));
-    documents.add(new Document(largeImage, 'file2', 2, 'image/png', new Date(), '/a_contabilizar'));
-    documents.add(new Document(pdf, 'file3', 3, 'application/pdf', new Date(), '/contabilizado'));
-    documents.add(new Document(smallImage, 'file4', 4, 'image/png', new Date(), '/contabilizado'));
-    documents.add(new Document(smallImage, 'file5', 5, 'image/png', new Date(), '/papelera'));
-    documents.add(new Document(largeImage, 'file6', 6, 'image/png', new Date(), '/papelera'));
-    documents.add(new Document(pdf, 'file7', 6, 'application/pdf', new Date(), '/fiscal'));
-    documents.add(new Document(largeImage, 'file8', 6, 'image/png', new Date(), '/fiscal'));
-    documents.add(new Document(smallImage, 'file9', 6, 'image/png', new Date(), '/laboral/maria_rico_gómez'));
-    documents.add(new Document(smallImage, 'file10', 6, 'image/png', new Date(), '/laboral/juan_carlos_aragón_pérez'));
-    documents.add(new Document(smallImage, 'file11', 6, 'image/png', new Date(), '/laboral/juan_carlos_aragón_pérez'));
-    documents.add(new Document(smallImage, 'file12', 6, 'image/png', new Date(), '/laboral/11556837G'));
-    documents.add(new Document(smallImage, 'file13', 6, 'image/png', new Date(), '/laboral/juan_carlos_aragón_pérez'));
-    documents.add(new Document(smallImage, 'file14', 6, 'image/png', new Date(), '/laboral/86638678R'));
+    documents.add(new Document('/smallImage', 'file1', 1, 'image/png', new Date(), MainFolders.ACONTABILIZAR));
+    documents.add(new Document('/largeImage', 'file2', 2, 'image/png', new Date(), MainFolders.ACONTABILIZAR));
+    documents.add(new Document('/pdf', 'file3', 3, 'application/pdf', new Date(), MainFolders.CONTABILIZADO));
+    documents.add(new Document('/smallImage', 'file4', 4, 'image/png', new Date(), MainFolders.CONTABILIZADO));
+    documents.add(new Document('/smallImage', 'file5', 5, 'image/png', new Date(), MainFolders.PAPELERA));
+    documents.add(new Document('/largeImage', 'file6', 6, 'image/png', new Date(), MainFolders.PAPELERA));
+    documents.add(new Document('/pdf', 'file7', 6, 'application/pdf', new Date(), MainFolders.FISCAL));
+    documents.add(new Document('/largeImage', 'file8', 6, 'image/png', new Date(), MainFolders.FISCAL));
+    documents.add(new Document('/smallImage', 'file9', 6, 'image/png', new Date(), MainFolders.LABORAL + '/maria_rico_gómez'));
+    documents.add(new Document('/smallImage', 'file10', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
+    documents.add(new Document('/smallImage', 'file11', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
+    documents.add(new Document('/smallImage', 'file12', 6, 'image/png', new Date(), MainFolders.LABORAL + '/11556837G'));
+    documents.add(new Document('/smallImage', 'file13', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
+    documents.add(new Document('/smallImage', 'file14', 6, 'image/png', new Date(), MainFolders.LABORAL + '/86638678R'));
     localDocuments.write(storableDocuments.getLocalStorage(), documents);
 }
 
@@ -7783,7 +7902,6 @@ if(users.size() == 0){
   localUsers.write(storableUsers.getLocalStorage(), users);
 }
 
-
 /*
     TESTING API FUNCTIONS
 */
@@ -7835,12 +7953,12 @@ if(test){
         TEST FOR DOCUMENT_TAGS
      */
 
-    // let tagFactory = new DocumentTagFactory();
-    // tagFactory.createMultipleObjectCrud().getCollection().then((response) => {
-    //     console.log('TEST DOCUMENT_TAG GET LIST', response.result.toArray());
-    // }).catch((error) => {
-    //     console.log('ERROR TEST DOCUMENT_TAG GET LIST', error)
-    // })
+    let tagFactory = new DocumentTagFactory();
+    tagFactory.createMultipleObjectCrud().getCollection().then((response) => {
+        console.log('TEST DOCUMENT_TAG GET LIST', response.result.toArray());
+    }).catch((error) => {
+        console.log('ERROR TEST DOCUMENT_TAG GET LIST', error)
+    })
     // let tag = new DocumentTag();
     // tag.Name = 'Tag 1';
     // tagFactory.createSingleObjectCrud().createElement(tag).then((response) => {
@@ -7921,18 +8039,18 @@ if(test){
     })
     filterMessage.clearAll();
     filterMessage.addField('type','consulta');
-    messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
-        messageFactory.createMessageSpecificMethods().archiveMessage(response.result.toArray()[0]).then((response) => {
-            console.log('TEST MESSAGE ARCHIVE',response);
-        }).catch((error) => {
-            console.log('ERROR TEST MESSAGE ARCHIVE',error);
-        })
-        messageFactory.createMessageSpecificMethods().reopenMessage(response.result.toArray()[0]).then((response) => {
-            console.log('TEST MESSAGE REOPEN',response);
-        }).catch((error) => {
-            console.log('ERROR TEST MESSAGE REOPEN',error);
-        })
-    })
+    // messageFactory.createMultipleObjectCrud().getCollection(filterMessage.getFilter()).then((response) => {
+    //     messageFactory.createMessageSpecificMethods().archiveMessage(response.result.toArray()[0]).then((response) => {
+    //         console.log('TEST MESSAGE ARCHIVE',response);
+    //     }).catch((error) => {
+    //         console.log('ERROR TEST MESSAGE ARCHIVE',error);
+    //     })
+    //     messageFactory.createMessageSpecificMethods().reopenMessage(response.result.toArray()[0]).then((response) => {
+    //         console.log('TEST MESSAGE REOPEN',response);
+    //     }).catch((error) => {
+    //         console.log('ERROR TEST MESSAGE REOPEN',error);
+    //     })
+    // })
     filterMessage.clearAll();
     filterMessage.addField('type','tarea');
     messageFactory.createMessageSpecificMethods().getMessageCount(filterMessage.getFilter()).then((response) => {
@@ -7960,33 +8078,33 @@ if(test){
     }).catch((error) => {
         console.log(error)
     })
-    let taskHolderTest = new TaskHolder();
-    taskHolderTest.Name = 'Name'
-    taskHolderTest.Id = '713845'
-    let testMessage = new Message();
-    testMessage.Date = new Date();
-    testMessage.Description = 'sunt in culpa qui officia deserunt'
-    testMessage.EndDate = new Date();
-    testMessage.Name = taskHolderTest.Name
-    testMessage.Status = StatusMessage.PENDIENTE
-    testMessage.Title = 'titulo de ejemplo'
-    testMessage.Type = TypeMessage.TAREA
-    testMessage.TaskHolder = taskHolderTest;
+    // let taskHolderTest = new TaskHolder();
+    // taskHolderTest.Name = 'Name'
+    // taskHolderTest.Id = '713845'
+    // let testMessage = new Message();
+    // testMessage.Date = new Date();
+    // testMessage.Description = 'sunt in culpa qui officia deserunt'
+    // testMessage.EndDate = new Date();
+    // testMessage.Name = taskHolderTest.Name
+    // testMessage.Status = StatusMessage.PENDIENTE
+    // testMessage.Title = 'titulo de ejemplo'
+    // testMessage.Type = TypeMessage.TAREA
+    // testMessage.TaskHolder = taskHolderTest;
 
-    let testMessageCreate = new MessageFactory();
-    testMessageCreate.createSingleObjectCrud().createElement(testMessage).then((response) => {
-        console.log('TEST MESSAGE CREATE', response.result);
-    }).catch((error) => {
-        console.log('ERROR TEST MESSAGE CREATE', error)
-    })
-    let notification = new Message();
-    notification.Type = TypeMessage.NOTIFICACION;
-    notification.Id = '29500';
-    messageFactory.createMessageSpecificMethods().markAsReadNotification(notification).then((response) => {
-        console.log('TEST MESSAGE MARK AS READ NOTIFICATION', response.result);
-    }).catch((error) => {
-        console.log('ERROR TEST MESSAGE MARK AS READ NOTIFICATION', error)
-    })
+    // let testMessageCreate = new MessageFactory();
+    // testMessageCreate.createSingleObjectCrud().createElement(testMessage).then((response) => {
+    //     console.log('TEST MESSAGE CREATE', response.result);
+    // }).catch((error) => {
+    //     console.log('ERROR TEST MESSAGE CREATE', error)
+    // })
+    // let notification = new Message();
+    // notification.Type = TypeMessage.NOTIFICACION;
+    // notification.Id = '29500';
+    // messageFactory.createMessageSpecificMethods().markAsReadNotification(notification).then((response) => {
+    //     console.log('TEST MESSAGE MARK AS READ NOTIFICATION', response.result);
+    // }).catch((error) => {
+    //     console.log('ERROR TEST MESSAGE MARK AS READ NOTIFICATION', error)
+    // })
 
 
     /*
@@ -7999,8 +8117,7 @@ if(test){
     let messageFactory2 = new MessageFactory();
     filterMessage2.addField('type','consulta');
     messageFactory2.createMultipleObjectCrud().getCollection(filterMessage2.getFilter()).then((response) => {
-        //response.result.toArray()[0].Id
-        filterMessageChat.addField('idMessage', '29475');
+        filterMessageChat.addField('idMessage', response.result.toArray()[0].Id);
         messageChatFactory.createMultipleObjectCrud().getCollection(filterMessageChat.getFilter()).then((response) => {
             console.log('TEST MESSAGECHAT GET LIST', response.result.toArray());
         }).catch((error) => {
@@ -8008,14 +8125,14 @@ if(test){
         })
     })
 
-    let messageChatCreate = new MessageChat();
-    messageChatCreate.IdMessage = '29490';
-    messageChatCreate.Description = 'sunt in culpa qui officia deserunt';
-    messageChatFactory.createSingleObjectCrud().createElement(messageChatCreate).then((response) => {
-        console.log('TEST MESSAGECHAT CREATE', response.result);
-    }).catch((error) => {
-        console.log('ERROR TEST MESSAGECHAT CREATE', error)
-    })
+    // let messageChatCreate = new MessageChat();
+    // messageChatCreate.IdMessage = '29490';
+    // messageChatCreate.Description = 'sunt in culpa qui officia deserunt';
+    // messageChatFactory.createSingleObjectCrud().createElement(messageChatCreate).then((response) => {
+    //     console.log('TEST MESSAGECHAT CREATE', response.result);
+    // }).catch((error) => {
+    //     console.log('ERROR TEST MESSAGECHAT CREATE', error)
+    // })
 
     /*
         TEST FOR TASKHOLDERS
@@ -8141,3 +8258,12 @@ if(test){
 //         });
 //     });
 // }
+
+
+let documentFactory = new DocumentFactory()
+
+let filterTest = new FilterBuilder()
+filterTest.addField('path','/a_contabilizar')
+documentFactory.createMultipleObjectCrud().getCollection(filterTest.getFilter()).then((response) => {
+    console.log(response.result)
+})
