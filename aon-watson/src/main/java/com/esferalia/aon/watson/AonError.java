@@ -230,6 +230,13 @@ public enum AonError implements Serializable{
 	,EMPTY_RAWDOC_TYPE("El tipo del documento es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_RAWDOC_STATUS("El estado del documento es un dato obligatorio, no puede estar vac\u00EDo") 
 	,EXIST_USER_WORKGROUP("El usuario ya pertenece al grupo.")
+	// --------------------------------------------- QUESTION
+	,QUESTION_NULL("El valor de la pregunta es nulo.")
+	,QUESTION_EMPTY("El valor de la pregunta est\u00E1 vac\u00EDo.")
+	,EMPTY_QUESTION_TEXT("El valor del texto de la pregunta est\u00E1 vac\u00EDo")
+	,EMPTY_TYPE("El valor del tipo de la pregunta est\u00E1 vac\u00EDo")
+	,INVALID_SIZE_QUESTION_TEXT("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
+	,INVALID_SIZE_ALIAS("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	;
 	
 	

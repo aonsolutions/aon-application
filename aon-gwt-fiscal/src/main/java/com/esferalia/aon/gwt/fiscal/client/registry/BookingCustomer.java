@@ -47,6 +47,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
@@ -1433,7 +1434,8 @@ public class BookingCustomer extends HTMLPanel {
 			public void onSuccess(LinkedList<Fee> feesDB) {
 				if(feesDB.isEmpty()) showFeeMessage();
 				else {
-					feesDB.sort((o1, o2) -> o2.hasRItem().compareTo(o1.hasRItem()));
+					// Order by has booking associated
+					// feesDB.sort((o1, o2) -> o2.hasRItem().compareTo(o1.hasRItem()));
 					fillFeeGrid(feesDB);
 				}
 			}
@@ -1460,8 +1462,8 @@ public class BookingCustomer extends HTMLPanel {
 			
 			Label periodicityLabel = new Label(getPeriodicityLabel(fee.getPeriod().getValue()));
 			Label quantityLabel = new Label(fee.getQuantity() == null ? "0" : fee.getQuantity().intValue() + "");
-			Label priceLabel = new Label(null == fee.getPrice() ? "0.0" : fee.getPrice().toString());
-			Label discountyLabel = new Label(AonStringUtils.isBlank(fee.getDiscountExpr()) ? "0.0" : fee.getDiscountExpr());
+			Label priceLabel = new Label(formatDouble(fee.getPrice()));
+			Label discountyLabel = new Label(formatDouble(fee.getDiscountExpr()));
 			Label startDateLabel = new Label(formatDate(fee.getStartDate()));
 			Label endDateLabel = new Label(formatDate(fee.getEndDate()));
 			Label billingDateLabel = new Label(formatBillingDate(fee.getBillingDate()));
@@ -1575,6 +1577,16 @@ public class BookingCustomer extends HTMLPanel {
 	private String formatBillingDate(Date date) {
 		if(null == date) return "";
 		return formatBillingDate.format(date);
+	}
+	
+	private String formatDouble(Double number) {
+		if(null == number) return "0.00";
+		return NumberFormat.getFormat("0.00").format(number);
+	}
+	
+	private String formatDouble(String number) {
+		if(AonStringUtils.isBlank(number)) return "0.00";
+		return NumberFormat.getFormat("0.00").format(Double.parseDouble(number));
 	}
 
 	private String getPeriodicityLabel(Integer periodicityIdx) {

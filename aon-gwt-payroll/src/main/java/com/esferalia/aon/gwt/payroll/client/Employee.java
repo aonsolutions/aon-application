@@ -1196,9 +1196,7 @@ public abstract class Employee extends ResizeComposite {
 		this.ssRegimeType.addItem("SOCIOS COOP", "1");
 		this.ssRegimeType.addItem("JUBILACION ACTIVA", "2");
 		this.ssRegimeType.addItem("GARANTIA JUVENIL", "4");
-
 		this.ssRegimeType.addItem("ASIMILADO AL R\u00C9GIMEN GENERAL", "5");
-		disable(this.ssRegimeType, "5");
 
 		// MODALIDAD DE COTIZACION
 		this.mdTBTLB.addItem("COM\u00daN", "0");
@@ -1255,6 +1253,13 @@ public abstract class Employee extends ResizeComposite {
 		for (int i = 0; i < StreetType.values().length; i++)
 			this.streetType.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getShortCode());
 
+	}
+	
+	public void checkCCCType(Byte cccType) {
+		if(null != cccType && cccType == (byte)4)
+			enable(this.ssRegimeType, "5");
+		else
+			disable(this.ssRegimeType, "5");
 	}
 
 	private void initializeProvince() {
@@ -2019,6 +2024,16 @@ public abstract class Employee extends ResizeComposite {
 			OptionElement option = options.getItem(i);
 			if (AonStringUtils.equals(option.getValue(), value)) {
 				option.setDisabled(true);
+			}
+		}
+	}
+	
+	private void enable(ListBox listBox, String value) {
+		NodeList<OptionElement> options = ((SelectElement) listBox.getElement().cast()).getOptions();
+		for (int i = 0; i < options.getLength(); i++) {
+			OptionElement option = options.getItem(i);
+			if (AonStringUtils.equals(option.getValue(), value)) {
+				option.setDisabled(false);
 			}
 		}
 	}
