@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ReportingFactory } from 'libraries/AonSDK/aon';
+import { ReportingFactory } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({

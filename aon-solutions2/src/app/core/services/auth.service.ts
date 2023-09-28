@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationFactory, IEnterprise } from 'libraries/AonSDK/aon';
+import { AuthenticationFactory, IEnterprise } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
