@@ -70,7 +70,6 @@ export class ModalCreateComponent implements OnInit {
   async createMessage(description: string, asunto: string){
     if (this.messagesData) {
       const messageId = this.messagesData.Id;
-console.log('messafeDAta', this.messagesData);
 
       const newMessage: IMessage = {
         Id: messageId,
