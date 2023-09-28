@@ -1,11 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-spinner-await',
-  templateUrl: './spinner-await.component.html',
-  styleUrls: ['./spinner-await.component.scss']
+  selector: 'app-spinner',
+  templateUrl: './spinner.component.html',
+  styleUrls: ['./spinner.component.scss']
 })
-export class SpinnerAwaitComponent implements OnInit {
+export class SpinnerComponent implements OnInit {
   @Input() color: string = 'primary';
   @Input() diameter: number = 70;
   @Input() strokeWidth: number = 5;
