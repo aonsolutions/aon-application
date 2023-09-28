@@ -1818,6 +1818,10 @@ public class BookingCustomer extends HTMLPanel {
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 		
+		requestBuilder.setHeader("domain_name", options.getDomainName());
+		requestBuilder.setHeader("domain_login", options.getUser());
+		requestBuilder.setHeader("domain_id", String.valueOf(options.getDomain()));
+		
 		JSONObject body = new JSONObject();
 		body.put("customer", new JSONNumber(customer.getId()));
 		
