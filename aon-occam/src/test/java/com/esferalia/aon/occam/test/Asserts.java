@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
@@ -25,7 +26,9 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -960,6 +963,19 @@ public class Asserts {
 			assertEquals("Status", expected.getStatus().value(), actual.getStatus().value());
 		}
 	}
+	
+	public static void assertEqualsQuestion(Question expected, Question actual) {
+		if (expected != null && actual != null) {
+			assertEquals("Id",expected.getId(),actual.getId());
+			assertEquals("Domain",expected.getDomain(),actual.getDomain());
+			assertEquals("Active",expected.isActive(),actual.isActive());
+			assertEquals("Text",expected.getText(),actual.getText());
+			assertEquals("Type",expected.getType(),actual.getType());
+			assertEquals("Argument",expected.getArgument(),actual.getArgument());
+			assertEquals("Alias",expected.getAlias(),actual.getAlias());
+		}
+	}
+
 	public static void assertEqualsItem(Item expected, Item actual) {
 		assertEqualsNulls( "Item", expected, actual);
 		assertEquals("Id",expected.getId(), actual.getId());
@@ -997,5 +1013,4 @@ public class Asserts {
 		assertEquals("StartDate",expected.getStartDate(), actual.getStartDate());
 		assertEquals("EndDate",expected.getEndDate(), actual.getEndDate());
 	}
-	
 }
