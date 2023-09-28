@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ICollection, IFilter, IRegistryEnterprise, RegistryEnterpriseFactory } from 'libraries/AonSDK/src/aon';
+import { ICollection, IFilter, IRegistryEnterprise, RegistryEnterpriseFactory } from 'libraries/AonSDK/aon';
 import { CommonService } from './common.service';
 
 @Injectable({

@@ -8,7 +8,7 @@ import {
   IMessageChat,
   IMessage,
   IFilter,
-} from 'libraries/AonSDK/src/aon';
+} from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';

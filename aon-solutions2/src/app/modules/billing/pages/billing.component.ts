@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/aon';
 import { BehaviorSubject } from 'rxjs';
 import { BankService } from 'src/app/core/services/bank.service';
 import { SendFacturaComponent } from '../components/send-factura/send-factura.component';

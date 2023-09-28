@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { EnterpriseService } from './enterprise.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { AonSDK } from 'libraries/AonSDK/src/AonSDK';
+import { AonSDK } from 'libraries/AonSDK/AonSDK';
 
 
 describe('EnterpriseService', () => {

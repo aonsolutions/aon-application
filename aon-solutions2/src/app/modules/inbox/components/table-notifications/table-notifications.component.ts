@@ -12,7 +12,7 @@ import {
   FilterBuilder,
   ICollection,
   IMessage,
-} from 'libraries/AonSDK/src/aon';
+} from 'libraries/AonSDK/aon';
 import { Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { DatePipe } from '@angular/common';

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Factory, IMessage } from 'libraries/AonSDK/src/aon';
+import { Factory, IMessage } from 'libraries/AonSDK/aon';
 import { MessageService } from 'src/app/core/services/message.service';
 
 @Component({

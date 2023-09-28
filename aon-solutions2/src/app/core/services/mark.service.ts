@@ -1,6 +1,6 @@
 import { Injectable, Renderer2 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ICollection, IFilter, IMark, MarkFactory } from 'libraries/AonSDK/src/aon';
+import { ICollection, IFilter, IMark, MarkFactory } from 'libraries/AonSDK/aon';
 import { CommonService } from './common.service';
 
 @Injectable({

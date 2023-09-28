@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { CollectionFactory, FilterBuilder, ICollection, IMessage } from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, FilterBuilder, ICollection, IMessage } from 'libraries/AonSDK/aon';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { DatePipe } from '@angular/common';

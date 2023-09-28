@@ -1,24 +1,15 @@
 {
-  "name": "aon-sdk",
+  "name": "AonSDK",
   "version": "1.0.0",
-  "description": "AON SOLUTIONS SDK for TypeScript && JavaScript",
-  "main": "index.ts",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "format": "prettier --write \"src/**/*.ts\"",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
-
-    "all": "npm run format & npm run build"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": {
-    "name": "Aon Solutions",
-    "email": "info@aonsolutions.es",
-    "url": "https://aonsolutions.es"
-  },
-  "license": "MIT",
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "prettier": "^3.0.3"
+    "typescript": "^5.1.3"
   }
 }
