@@ -295,6 +295,7 @@ public class JooqEmployee {
 			.set(CONTRACT.SENIORITY_DATE, parseDate(contractData.getSeniorityDate()) == null ? contractStartDate :  parseDate(contractData.getSeniorityDate()))
 			.set(CONTRACT.CATEGORY_DESCRIPTION, (null == contractData.getAgreementCategory() || "" == contractData.getAgreementCategory()) ? null : contractData.getAgreementCategory())
 			.set(CONTRACT.AGREEMENT_LEVEL, contractData.getAgreementLevelId())
+			.set(CONTRACT.SS_REGIME, contractData.getSsRegimen())
 			.returning(CONTRACT.ID)
 			.fetchOne();
 		
