@@ -5,10 +5,14 @@ import {
   FilterBuilder,
   ICollection,
   IMessage,
+<<<<<<< HEAD
 } from 'libraries/AonSDK/src/aon';
 =======
 import { CollectionFactory, FilterBuilder, ICollection, IMessage } from 'libraries/AonSDK/aon';
 >>>>>>> ncastaneda
+=======
+} from 'libraries/AonSDK/aon';
+>>>>>>> 34a67d6cfb8e38787ba50c59d7ffbfaf122e6361
 import { Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { DatePipe } from '@angular/common';

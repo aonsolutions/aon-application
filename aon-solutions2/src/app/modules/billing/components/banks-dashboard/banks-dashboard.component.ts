@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/aon';
 
 @Component({
   selector: 'app-banks-dashboard',

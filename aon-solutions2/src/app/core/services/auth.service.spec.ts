@@ -5,7 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
-import { AonSDK } from 'libraries/AonSDK/src/AonSDK';
+import { AonSDK } from 'libraries/AonSDK/AonSDK';
 
 /*
 describe('AuthService', () => {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BankFactory, Factory, IBank, ICollection, IFilter } from 'libraries/AonSDK/src/aon';
+import { BankFactory, Factory, IBank, ICollection, IFilter } from 'libraries/AonSDK/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
