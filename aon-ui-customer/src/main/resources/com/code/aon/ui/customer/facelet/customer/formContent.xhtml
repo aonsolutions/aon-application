@@ -13,7 +13,7 @@
 		<ui:param name="includeRegistryScope" value="#{true}"/>
 		<ui:define name="afterIdContent">
 			<aon:if test="#{showTargetLink}">
-				<aon:div id="CustomerTargetDiv" rendered="#{controller.target}" style="display: inline;">
+				<aon:div id="CustomerTargetDiv" rendered="#{controller.target}" style="display: inline;margin-left: 10px;">
 					<aon:outputText value="#{bundle.aon_target}" />
 					<aon:commandLink id="target_link" immediate="true"
 						styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
@@ -24,12 +24,13 @@
 				</aon:div>
 			</aon:if>
 			
-			<aon:if test="#{domainSwitcher.sig}"> 
-				<aon:div id="BookingDiv" style="display: inline;">
+ 			<aon:if test="#{domainSwitcher.sig}">
+				<aon:div id="BookingDiv" style="display: inline;margin-left: 10px;">
 					<aon:commandLink id="gwt_booking_customer"
+					style="color:#002469 !important;font-weight: bold;"
 						action="gwt_main_booking_customer"
-						title="Panel Contratación"
-						value="Panel Contratación" target="gwt">
+						title="[Panel Contratación]"
+						value="[Panel Contratación]" target="gwt">
 					</aon:commandLink>
 				</aon:div>
 			</aon:if>
