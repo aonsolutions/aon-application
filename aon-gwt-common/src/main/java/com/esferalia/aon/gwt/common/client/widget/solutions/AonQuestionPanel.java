@@ -407,21 +407,6 @@ public abstract class AonQuestionPanel extends SimplePanel {
 	    }
 	    lBox.setSelectedIndex(indexToFind);
 	}
-	
-	private void checkQuestionAlias(String domainName, Integer domain, String user, String alias, Consumer<Boolean> success) {
-		commonService.checkQuestionAlias(domainName, domain, user, alias, new AsyncCallback<Boolean>() {
-			
-			@Override
-			public void onSuccess(Boolean existAlias) {
-				success.accept(existAlias);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// Error
-			}
-		});
-	}
 
 	protected abstract void onResize();
 

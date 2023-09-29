@@ -813,12 +813,6 @@ public class RegistryImpl implements IRegistry{
 				configuration -> QuestionDAO.get(ctx, id));
 	}
 
-	@Override
-	public Boolean checkQuestionAlias(CloseableAONContext ctx, String alias) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> QuestionValidation.checkAlias(ctx, alias));
-	}
-
 	// REGISTRY PROFILE
 	
 	@Override
