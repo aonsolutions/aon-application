@@ -306,7 +306,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 							// Finalizar el modelo 
 							// FALTA - NO SE SI ES NECESARIO FINALIZAR EL MODELO O PRESENTARLO DIRECTAMENTE, EL 
 							// TEMA ESTA EN QUE SI HAY ALGUN ERROR EN LA PRESENTACION EL MODELO SE QUEDE COMO FINALIZADO O COMO ENVIO A CLIENTE ??							 
-							//Mod303DAO.markAsFinished(ctx, model);
+							Mod303DAO.markAsFinished(ctx, model);
 							// FALTA - Presentación automática del modelo 
 							if (presModelAuto == 1) {
 								AEATParams params = new AEATParams()
@@ -401,7 +401,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 				String ct = getContentTypeHeader(response);
 				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
 					if (!manageJSONContent(aeatParams, model, response.body())) {						
-						throw new AonApiException("ERROR EN LA PRESENTACIÓN DEL MODELO");						
+						//throw new AonApiException("ERROR EN LA PRESENTACIÓN DEL MODELO");
+						throw new AonApiException("ERROR " + new String(response.body()));
+						
 					}
 				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
 					//ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
@@ -679,15 +681,19 @@ public class FiscalServlet extends AonApiHttpServlet{
 	
 	private boolean manageJSONContent(AEATParams aeatParams, IFiscalModel fm, byte[] body) {
 		AEATResponse response = AEATJson.toJSON(body); 
-		if (response.isCorrect()) {
-			manageRightResponse(aeatParams,fm,new String(body));
-			return true; // FALTA
-		} else {
-			return false;
-			// FALTA - SE PODRIA INTENTAR GRABAR TAMBIEN LA RESPUESTA SI LUEGO SE PUEDE VER DESDE ALGUN SITIO PARA VER LOS ERRORES QUE HA DADO
-			//manageWrongResponse(resp, response);
-			//throw new AonApiException("ERRORES AEAT: ERRORES DEVUELTOS POR LA AGENCIA TRIBUTARIA.");
-		}
+		// FALTA - VAMOS A GRABAR EL RESULTADO AUNQUE SEA ERRONEO PARA QUE SE PUEDA VER POSTERIORMENTE
+		// FALTARIA EN EL DAO NO MARCAR EL MODELO COMO ENVIADO SI HA HABIDO ERRORES
+		manageRightResponse(aeatParams, fm, new String(body));
+		return response.isCorrect();
+//		if (response.isCorrect()) {
+//			manageRightResponse(aeatParams,fm,new String(body));
+//			return true; // FALTA
+//		} else {
+//			return false;
+//			// FALTA - SE PODRIA INTENTAR GRABAR TAMBIEN LA RESPUESTA SI LUEGO SE PUEDE VER DESDE ALGUN SITIO PARA VER LOS ERRORES QUE HA DADO
+//			//manageWrongResponse(resp, response);
+//			//throw new AonApiException("ERRORES AEAT: ERRORES DEVUELTOS POR LA AGENCIA TRIBUTARIA.");
+//		}
 	}
 	
 	private void manageRightResponse(AEATParams aeatParams, IFiscalModel fm, String aeatResponse) {
