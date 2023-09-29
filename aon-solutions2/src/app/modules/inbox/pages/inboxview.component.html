@@ -94,6 +94,11 @@
           (rowClicked)="rowClickHandler($event)"
         >
         </app-table-component>
+        <div *ngIf="selectedTab == 0 && noTasksMessage" class="padding inbox-no-tasks-message">
+          <ng-container *ngIf="noTasksMessage">
+            {{ "INBOX.NOMESSAGES" | translate }}
+          </ng-container>
+        </div>
       </div>
     </ng-container>
     <ng-container *ngIf="selectedTab == 1">
@@ -103,7 +108,7 @@
         [tabColor]="'red'"
       >
         <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
-          <span>{{ selectedFilterText }}</span>
+          <span>{{ selectedFilterText}}</span>
           <app-icon
             shape="more_vert"
           ></app-icon>
@@ -154,7 +159,6 @@
         </div>
         <div content class="padding">
           <app-table-tasks
-            (noPendingTasks)="showNoTasksMessage($event)"
             (rowClicked)="rowClickHandler($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
@@ -204,38 +208,60 @@
         <div class="background-text-red-light">
           {{ messagesData.Status }}
         </div>
-        <div class="inbox-icons" *ngIf="selectedTab < 3">
-          <app-icon shape="reply"></app-icon>
+        <div class="inbox-icons" *ngIf="messagesData.Type === 'consulta'">
+          <app-icon class="inbox-icon-reply" shape="reply" (click)="replyconsultarClicked()"></app-icon>
           <app-icon shape="archive"></app-icon>
         </div>
       </div>
 
       <div class="inbox-message padding">
         <div class="inbox-message-title">
-          <app-icon class="icon-back" shape="arrow_back"></app-icon>
+          <app-icon class="inbox-icon-back" (click)="backTable()" shape="arrow_back"></app-icon>
           {{ messagesData.Title }}
         </div>
         <div class="inbox-message-date">
-          {{ datepipe.transform(messagesData.Date, "EEEE, HH:mm") }}
+          {{ datepipe.transform(messagesData.Date, 'MM/dd/yyyy, HH:mm') }}
         </div>
       </div>
-
-      <div
-        class="padding"
-        *ngIf="messagesData.Type === 'consulta'"
-      >
-        <div
-          class="inbox-chat"
-          *ngFor="let messageChat of messagesChat; let i = index"
-        >
-          <div class="inbox-chat-name">{{ messageChat.Name }}</div>
-          <div class="inbox-chat-description">{{ messageChat.Description }}</div>
-          <div class="inbox-chat-date">
-            {{ datepipe.transform(messageChat.Date, "EEEE, HH:mm") }}
+    <!--Chat-->
+    <form (ngSubmit)="sendChatMessage()">
+      <div class="padding" *ngIf="messagesData.Type === 'consulta'">
+        <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
+        {{ messagesData.Description }}
+        <div class="inbox-chat" (click)="toggleDescription(i)" *ngFor="let messageChat of messagesChat; let i = index">
+          <div class="inbox-chat-name">
+            {{ messageChat.Name }}
+            <div *ngIf="expandedIndex === i" class="inbox-chat-description-side">{{ messageChat.Description }}</div>
           </div>
+          <div class="inbox-chat-description">
+            <div *ngIf="expandedIndex !== i">{{ messageChat.Description }}</div>
+          </div>
+          <div class="inbox-chat-date">{{ datepipe.transform(messageChat.Date, 'MM/dd/yyyy, HH:mm') }}</div>
         </div>
       </div>
-
+      <div class="padding" *ngIf="showSendButtons && messagesData.Type === 'consulta'">
+        <app-input
+          [type]="'text'"
+          [placeholder]="'Escribe...'"
+          class="inputSend"
+          [value]="newMessageDescription"
+          (inputValue)="newMessageDescription = $event"
+        ></app-input>
+        <div class="inbox-send-button">
+          <app-button
+            [class]="'red left'"
+            [width]="'11rem'"
+            [fontSize]="'0.7rem'"
+            [padding]="'0rem 1rem'"
+            (click)="sendChatMessage()"
+            type="submit"
+          >
+            <app-icon shape="send"></app-icon>
+            Enviar
+          </app-button>
+        </div>
+      </div>
+    </form>
       <div
         class="padding"
         *ngIf="messagesData.Type === 'notificacion' || messagesData.Type === 'tarea'"
@@ -244,40 +270,48 @@
         {{ messagesData.Description }}
 
         <div
+          class="inbox-btns-content"
           *ngIf="messagesData.Type === 'tarea'"
-          class="content-btn-inbox"
         >
-          <div class="btns">
+          <div class="inbox-btns">
             <app-button
-              class="btn-inbox-01"
-              [class]="'red left'"
-              [width]="'100%'"
+              class="inbox-btn-01"
+              [class]="'red left inbox-btn-01'"
+              [width]="'11rem'"
+              [fontSize]="'0.7rem'"
+              [padding]="'0rem 1rem'"
             >
               <app-icon shape="playlist_add_check"></app-icon>
               Tramitar
             </app-button>
             <app-button
-              class="btn-inbox-01"
-              [class]="'red left'"
-              [width]="'100%'"
-              (click)="consultarClicked()"
+            [width]="'11rem'"
+            [color]="'black'"
+            [backgroundColor]="'white'"
+            [hoverBackgroundColor]="'#feedec'"
+            [border]="'.05rem solid #f6655a'"
+            [align]="'left'"
+            [fontSize]="'0.7rem'"
+            [borderRadius]="'.3rem'"
+            [padding]="'0rem 1rem'"
+            (click)="consultarClicked()"
             >
               <app-icon shape="chat"></app-icon>
               Consultar
             </app-button>
           </div>
-
-          <div class="clickConsultar" *ngIf="showSendButton">
+          <div class="padding" *ngIf="showSendButton">
             <app-input
               [type]="'text'"
               [placeholder]="'Escribe...'"
               class="inputSend"
             ></app-input>
-            <div class="send-button">
+            <div class="inbox-send-button">
               <app-button
-                class="btn-inbox-01"
                 [class]="'red left'"
-                [width]="'100%'"
+                [width]="'11rem'"
+                [fontSize]="'0.7rem'"
+                [padding]="'0rem 1rem'"
               >
                 <app-icon shape="send"></app-icon>
                 Enviar
