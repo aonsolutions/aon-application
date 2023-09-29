@@ -1171,7 +1171,7 @@ public class BookingCustomer extends HTMLPanel {
 	private void fillBooking() {
 		CustomerFeeParams params = new CustomerFeeParams()
 				.setDomain(options.getDomain())
-				.setCustomer(this.customer.getName())
+				.setCustomer(this.customer.getId())
 				.setOffset(0)
 				.setLimit(100);
 		
@@ -1419,7 +1419,7 @@ public class BookingCustomer extends HTMLPanel {
 	private void fillFee() {
 		CustomerFeeParams params = new CustomerFeeParams()
 				.setDomain(options.getDomain())
-				.setCustomer(this.customer.getName())
+				.setCustomer(this.customer.getId())
 				.setOffset(0)
 				.setLimit(Integer.MAX_VALUE);
 		

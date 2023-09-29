@@ -16,7 +16,7 @@ public class CustomerFeeParams implements Serializable {
 	
 	private Byte periodicity;
 	
-	private String customer;
+	private Integer customer;
 	private Byte customerStatus;
 	
 	private Integer product;
@@ -88,10 +88,10 @@ public class CustomerFeeParams implements Serializable {
 		this.periodicity = periodicity;
 		return this;
 	}
-	public String getCustomer() {
+	public Integer getCustomer() {
 		return customer;
 	}
-	public CustomerFeeParams setCustomer(String customer) {
+	public CustomerFeeParams setCustomer(Integer customer) {
 		this.customer = customer;
 		return this;
 	}
