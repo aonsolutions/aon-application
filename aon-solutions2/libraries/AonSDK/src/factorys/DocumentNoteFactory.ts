@@ -4,7 +4,7 @@ import { ISingleObjectCrud, IMultipleObjectCrud } from "../interfaces/serviceInt
 import { DocumentNote, ApiDocumentNote, StorableDocumentNote } from "../models/DocumentNote";
 import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
-import { APIEnvironment } from "../utils/constants";
+import { APIEnvironment } from "../utils/Environment";
 
 export class DocumenNoteFactory implements ISingleObjectCrudFactory<IDocumentNote>, IMultipleObjectCrudFactory<IDocumentNote> {
     createSingleObjectCrud(): ISingleObjectCrud<IDocumentNote> {

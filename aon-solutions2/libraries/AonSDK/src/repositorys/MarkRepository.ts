@@ -4,7 +4,7 @@ import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { ApiMark } from "../models/Mark";
 import { Collection } from "../utils/Collection";
 import { ApiHttpRequest } from "../utils/Http";
-import { GET_METHOD, BASE_URL, GET_MULTIPLE } from "../utils/constants";
+import { GET_METHOD, BASE_URL, GET_MULTIPLE } from "../utils/Environment";
 
 export class APIMarkSpecificMethodsRepository implements IMarkSpecificMethodsRepository {
     private http: ApiHttpRequest = new ApiHttpRequest();
@@ -18,10 +18,10 @@ export class APIMarkSpecificMethodsRepository implements IMarkSpecificMethodsRep
             startDate: '2023-09-04',
             endDate: '2023-09-08'
         }
-        url = this.http.makeURL(url, params);
+        url = ApiHttpRequest.makeURL(url, params);
         let method = GET_METHOD;
         let collection: ICollection<IMark> = new Collection<IMark>();
-        let response = await this.http.httpRequest(BASE_URL + url, method, {}, {})
+        let response = await ApiHttpRequest.httpRequest(BASE_URL + url, method, {}, {})
         response.forEach((element: any) => {
             collection.add(this.model.parseDataToReceive(element, GET_MULTIPLE, filter))
         })

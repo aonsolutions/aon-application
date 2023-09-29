@@ -6,7 +6,7 @@ import { GenericSingleObjectCrudRepository, GenericMultipleObjectCrudRepository 
 import { APIMessageSingleObjectCrudRepository, APIMessageMultipleObjectCrudRepository, APIMessageSpecificMethodsRepository, LocalMessageSpecificMethodsRepository } from "../repositorys/MessageRepository";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
 import { MessageSpecificMethods } from "../services/MessageService";
-import { APIEnvironment } from "../utils/constants";
+import { APIEnvironment } from "../utils/Environment";
 
 export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMultipleObjectCrudFactory<IMessage> {
     createSingleObjectCrud(): ISingleObjectCrud<IMessage> {

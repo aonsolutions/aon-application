@@ -18,6 +18,34 @@ export class InvoiceExpirationLine implements IInvoiceExpirationLine, IModel {
         this.bankAccount = bankAccount || '';
         this.amount = amount || 0;
     }
+    getDate(): Date {
+        return this.date
+    }
+    setDate(value: Date): IInvoiceExpirationLine {
+        this.date = value;
+        return this
+    }
+    getPaymentMethod(): IPaymentMethod {
+        return this.paymentMethod
+    }
+    setPaymentMethod(value: IPaymentMethod): IInvoiceExpirationLine {
+        this.paymentMethod = value;
+        return this
+    }
+    getBankAccount(): string {
+        return this.bankAccount
+    }
+    setBankAccount(value: string): IInvoiceExpirationLine {
+        this.bankAccount = value;
+        return this
+    }
+    getAmount(): number {
+        return this.amount
+    }
+    setAmount(value: number): IInvoiceExpirationLine {
+        this.amount = value;
+        return this
+    }
 
     public get ApiObject(): any {
         return this.apiObject;

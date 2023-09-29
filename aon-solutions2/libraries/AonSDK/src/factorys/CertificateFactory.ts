@@ -4,7 +4,7 @@ import { ISingleObjectCrud, IMultipleObjectCrud } from "../interfaces/serviceInt
 import { Certificate, ApiCertificate, StorableCertificate } from "../models/Certificate";
 import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
-import { APIEnvironment } from "../utils/constants";
+import { APIEnvironment } from "../utils/Environment";
 
 export class CertificateFactory implements ISingleObjectCrudFactory<ICertificate>, IMultipleObjectCrudFactory<ICertificate> {
     createSingleObjectCrud(): ISingleObjectCrud<ICertificate> {

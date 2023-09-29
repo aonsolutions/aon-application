@@ -4,7 +4,7 @@ import { ISingleObjectCrud, IMultipleObjectCrud } from "../interfaces/serviceInt
 import { TaskHolder, ApiTaskHolder, StorableTaskHolder } from "../models/TaskHolder";
 import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
-import { APIEnvironment } from "../utils/constants";
+import { APIEnvironment } from "../utils/Environment";
 
 export class TaskHolderFactory implements ISingleObjectCrudFactory<ITaskHolder>, IMultipleObjectCrudFactory<ITaskHolder> {
     createSingleObjectCrud(): ISingleObjectCrud<ITaskHolder> {

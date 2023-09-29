@@ -1,12 +1,24 @@
-import { IApiHttpRequest } from "../interfaces/utilitiesInterfaces";
+import { DELETE_METHOD, GET_METHOD, POST_METHOD, PUT_METHOD } from "./Environment";
 
-export class ApiHttpRequest implements IApiHttpRequest {
+export class ApiHttpRequest {
 
-    async get(url:string, customHeaders: any = {}, data: any): Promise<any> {
-        return await this.httpRequest(url, "POST", customHeaders, data);
+    static async get(url:string, customHeaders: any = {}, data: any): Promise<any> {
+        return await this.httpRequest(url, GET_METHOD, customHeaders, data);
     }
 
-    async httpRequest(url: string, method: string, customHeaders: any = {}, data: any): Promise<any> {
+    static async post(url:string, customHeaders: any = {}, data: any): Promise<any> {
+        return await this.httpRequest(url, POST_METHOD, customHeaders, data);
+    }
+
+    static async put(url:string, customHeaders: any = {}, data: any): Promise<any> {
+        return await this.httpRequest(url, PUT_METHOD, customHeaders, data);
+    }
+
+    static async delete(url:string, customHeaders: any = {}, data: any): Promise<any> {
+        return await this.httpRequest(url, DELETE_METHOD, customHeaders, data);
+    }
+
+    static async httpRequest(url: string, method: string, customHeaders: any = {}, data: any): Promise<any> {
         let headersAuth = {
             session_id: localStorage.getItem('token'),
             domain_name: localStorage.getItem('domainName'),
@@ -25,7 +37,7 @@ export class ApiHttpRequest implements IApiHttpRequest {
         return dataJson;
     }
 
-    makeURL(url: string, params: any): string {
+    static makeURL(url: string, params: any): string {
         const esc = encodeURIComponent;
         return url + '?' + Object.keys(params).map(k => `${esc(k)}=${esc(params[k as keyof typeof params])}`).join('&')
     }

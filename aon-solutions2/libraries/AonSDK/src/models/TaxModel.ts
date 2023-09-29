@@ -2,7 +2,8 @@ import { ITaxModel, IModel, statusTaxModel, IApiModel, IStorable } from "../inte
 import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { ErrorResponse } from "../utils/Response";
-import { GET_MULTIPLE, GET_METHOD } from "../utils/constants";
+import { GET_MULTIPLE, GET_METHOD } from "../utils/Environment";
+import { Bank } from "./Bank";
 
 export class TaxModel implements ITaxModel, IModel  {
     private name: string;
@@ -33,6 +34,55 @@ export class TaxModel implements ITaxModel, IModel  {
         this.year = year || 0;
         if(name && trimester && year) this.key = name + ';' + trimester.toString() + ';' + year.toString();
         else this.key = ''
+    }
+    getName(): string {
+        return this.name
+    }
+    setName(value: string): ITaxModel {
+        this.name = value;
+        return this
+    }
+    getTaxType(): string {
+        return this.taxType
+    }
+    setTaxType(value: string): ITaxModel {
+        this.taxType = value;
+        return this
+    }
+    getStatus(): statusTaxModel {
+        return this.status
+    }
+    setStatus(value: statusTaxModel): ITaxModel {
+        this.status = value;
+        return this
+    }
+    getPaymentMethod(): string {
+        return this.paymentMethod
+    }
+    setPaymentMethod(value: string): ITaxModel {
+        this.paymentMethod = value;
+        return this
+    }
+    getResult(): string {
+        return this.result
+    }
+    setResult(value: string): ITaxModel {
+        this.result = value;
+        return this
+    }
+    getTrimester(): number {
+        return this.trimester
+    }
+    setTrimester(value: number): ITaxModel {
+        this.trimester = value;
+        return this
+    }
+    getYear(): number {
+        return this.year
+    }
+    setYear(value: number): ITaxModel {
+        this.year = value;
+        return this
     }
 
     public get Name(): string {
@@ -158,7 +208,7 @@ export class ApiTaxModel extends TaxModel implements IApiModel {
         tax.Result = data.result ? data.result : '';
         tax.Status = data.status ? data.status : '';
         tax.TaxType = '';
-        tax.Trimester = data.period ? data.period : '';
+        tax.Trimester = data.period ? +data.period.replace('T','') : 0;
         tax.Year = data.year ? data.year : '';
         return tax;
     }

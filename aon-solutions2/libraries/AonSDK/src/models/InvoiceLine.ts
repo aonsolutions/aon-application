@@ -26,6 +26,55 @@ export class InvoiceLine implements IInvoiceLine, IModel {
         this.tax = tax || new Tax();
         this.irpf = irpf || new IRPF();
     }
+    getProduct(): IProduct {
+        return this.product
+    }
+    setProduct(value: IProduct): IInvoiceLine {
+        this.product = value;
+        return this
+    }
+    getQuantity(): number {
+        return this.quantity
+    }
+    setQuantity(value: number): IInvoiceLine {
+        this.quantity = value;
+        return this
+    }
+    getPrice(): number {
+        return this.price
+    }
+    setPrice(value: number): IInvoiceLine {
+        this.price = value;
+        return this
+    }
+    getDiscount(): number {
+        return this.discount
+    }
+    setDiscount(value: number): IInvoiceLine {
+        this.discount = value;
+        return this
+    }
+    getTotalPrice(): number {
+        return this.totalPrice
+    }
+    setTotalPrice(value: number): IInvoiceLine {
+        this.totalPrice = value;
+        return this
+    }
+    getTax(): ITax {
+        return this.tax
+    }
+    setTax(value: ITax): IInvoiceLine {
+        this.tax = value;
+        return this
+    }
+    getIRPF(): IIRPF {
+        return this.irpf
+    }
+    setIRPF(value: IIRPF): IInvoiceLine {
+        this.irpf = value;
+        return this
+    }
 
     public get ApiObject(): any {
         return this.apiObject;

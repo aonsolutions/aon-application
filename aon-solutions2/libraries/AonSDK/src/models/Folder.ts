@@ -1,7 +1,7 @@
 import { IFolder, IModel, IApiModel, IStorable } from "../interfaces/modelsInterfaces";
 import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
-import { GET_MULTIPLE, GET_METHOD } from "../utils/constants";
+import { GET_MULTIPLE, GET_METHOD } from "../utils/Environment";
 import { ErrorResponse } from "../utils/Response";
 
 export class Folder implements IFolder, IModel  {
@@ -24,6 +24,27 @@ export class Folder implements IFolder, IModel  {
         this.path = parent?.toLocaleLowerCase().split(' ').join('_') + '/' + name?.toLocaleLowerCase().split(' ').join('_') || '';
         this.parent = parent || '';
         this.key = this.path || '';
+    }
+    getName(): string {
+        return this.name;
+    }
+    setName(value: string): IFolder {
+        this.name = value;
+        return this
+    }
+    getPath(): string {
+        return this.path;
+    }
+    setPath(value: string): IFolder {
+        this.path = value;
+        return this
+    }
+    getParent(): string {
+        return this.parent;
+    }
+    setParent(value: string): IFolder {
+        this.parent = value;
+        return this
     }
 
     public get Name(): string {

@@ -6,7 +6,7 @@ import { ApiDocumentSpecificMethodsRepository, LocalDocumentSpecificMethodsRepos
 import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
 import { DocumentSpecificMethods } from "../services/DocumentService";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
-import { APIEnvironment } from "../utils/constants";
+import { APIEnvironment } from "../utils/Environment";
 import { Document } from "../models/Document";
 
 export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMultipleObjectCrudFactory<IDocument> {

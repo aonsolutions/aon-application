@@ -3,7 +3,7 @@ import { ICollection, IFilter } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { KeyGenerator } from "../utils/KeyGenerator";
 import { ErrorResponse } from "../utils/Response";
-import { GET_MULTIPLE, GET_METHOD } from "../utils/constants";
+import { GET_MULTIPLE, GET_METHOD } from "../utils/Environment";
 import { DocumentTag } from "./DocumentTag";
 
 export class Document implements IDocument, IModel {
@@ -37,6 +37,55 @@ export class Document implements IDocument, IModel {
         this.id = KeyGenerator.generate(15);
         this.apiObject = '';
         this.tag = tag || new Collection<IDocumentTag>();
+    }
+    getFile(): string {
+        return this.file
+    }
+    setFile(value: string): IDocument {
+        this.file = value;
+        return this
+    }
+    getFileName(): string {
+        return this.fileName
+    }
+    setFileName(value: string): IDocument {
+        this.fileName = value;
+        return this
+    }
+    getFileSize(): number {
+        return this.fileSize
+    }
+    setFileSize(value: number): IDocument {
+        this.fileSize = value;
+        return this
+    }
+    getFileType(): string {
+        return this.fileType
+    }
+    setFileType(value: string): IDocument {
+        this.fileType = value;
+        return this
+    }
+    getPath(): string {
+        return this.path
+    }
+    setPath(value: string): IDocument {
+        this.path = value;
+        return this
+    }
+    getDate(): Date {
+        return this.date
+    }
+    setDate(value: Date): IDocument {
+        this.date = value;
+        return this
+    }
+    getTag(): ICollection<IDocumentTag> {
+        return this.tag
+    }
+    setTag(value: ICollection<IDocumentTag>): IDocument {
+        this.tag = value;
+        return this
     }
 
     public get Tag(): ICollection<IDocumentTag> {

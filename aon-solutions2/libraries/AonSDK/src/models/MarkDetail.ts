@@ -76,6 +76,34 @@ export class MarkDetail implements IMarkDetail, IModel {
         this.location = location || {};
         this.key = KeyGenerator.generate(15);
     }
+    getLastDate(): Date {
+        return this.lastDate;
+    }
+    setLastDate(value: Date): IMarkDetail {
+        this.lastDate = value;
+        return this;
+    }
+    getLastModification(): Date {
+        return this.lastModification;
+    }
+    setLastModification(value: Date): IMarkDetail {
+        this.lastModification = value;
+        return this;
+    }
+    getStatus(): string {
+        return this.status;
+    }
+    setStatus(value: string): IMarkDetail {
+        this.status = value;
+        return this;
+    }
+    getLocation() {
+        return this.location;
+    }
+    setLocation(value: any): IMarkDetail {
+        this.location = value;
+        return this;
+    }
 
     getKey(): string {
         return this.key;

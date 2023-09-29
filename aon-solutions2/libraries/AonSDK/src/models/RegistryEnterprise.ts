@@ -27,13 +27,13 @@ export class RegistryEnterprise implements IRegistryEnterprise, IModel {
     this.key = this.idEnterprise;
   }
 
-    public get ApiObject(): any {
-        return this.apiObject;
-    }
+  public get ApiObject(): any {
+      return this.apiObject;
+  }
 
-    public set ApiObject(value: any) {
-        this.apiObject = value;
-    }
+  public set ApiObject(value: any) {
+      this.apiObject = value;
+  }
 
   public get Id(): string {
     return this.id;
@@ -59,12 +59,30 @@ export class RegistryEnterprise implements IRegistryEnterprise, IModel {
     this.description = value;
   }
 
+  public getDescription(): string {
+    return this.description;
+  }
+
+  public setDescription(value: string): RegistryEnterprise {
+    this.description = value;
+    return this;
+  }
+
   public get DateCreation(): Date {
     return this.dateCreation;
   }
 
   public set DateCreation(value: Date) {
     this.dateCreation = value;
+  }
+
+  public getDateCreation(): Date {
+    return this.dateCreation;
+  }
+
+  public setDateCreation(value: Date): RegistryEnterprise {
+    this.dateCreation = value;
+    return this;
   }
 
   public get DateRegistration(): Date {
@@ -75,12 +93,30 @@ export class RegistryEnterprise implements IRegistryEnterprise, IModel {
     this.dateRegistration = value;
   }
 
+  public getDateRegistration(): Date {
+    return this.dateRegistration;
+  }
+
+  public setDateRegistration(value: Date): RegistryEnterprise {
+    this.dateRegistration = value;
+    return this;
+  }
+
   public get Notary(): string {
     return this.notary;
   }
 
   public set Notary(value: string) {
     this.notary = value;
+  }
+
+  public getNotary(): string {
+    return this.notary;
+  }
+
+  public setNotary(value: string): RegistryEnterprise {
+    this.notary = value;
+    return this;
   }
 
   public get Protocol(): string {
@@ -91,12 +127,30 @@ export class RegistryEnterprise implements IRegistryEnterprise, IModel {
     this.protocol = value;
   }
 
+  public getProtocol(): string {
+    return this.protocol;
+  }
+
+  public setProtocol(value: string): RegistryEnterprise {
+    this.protocol = value;
+    return this;
+  }
+
   public get Inscription(): string {
     return this.inscription;
   }
 
   public set Inscription(value: string) {
     this.inscription = value;
+  }
+
+  public getInscription(): string {
+    return this.inscription;
+  }
+
+  public setInscription(value: string): RegistryEnterprise {
+    this.inscription = value;
+    return this;
   }
 
   public get Key(): string {

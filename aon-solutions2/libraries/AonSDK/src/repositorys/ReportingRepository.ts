@@ -1,6 +1,6 @@
 import { IReportingRepository } from "../interfaces/repositoryInterfaces";
 import { ApiHttpRequest } from "../utils/Http";
-import { BASE_URL, GET_METHOD } from "../utils/constants";
+import { BASE_URL, GET_METHOD } from "../utils/Environment";
 
 export class ReportingRepository implements IReportingRepository {
 
@@ -37,7 +37,7 @@ export class ApiReportingRepository implements IReportingRepository {
     }
 
     async ventasGastos(): Promise<any> {
-        let json = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/stat/invoice', GET_METHOD, {}, {})
+        let json = await ApiHttpRequest.get(BASE_URL + '/ms/api/stat/invoice', {}, {})
         /** PARSE JSON TO CHARTS.JS LIBRARY => MAYBE THIS WILL BE DO IT IN THE FUTURE IN ANGULAR PROJECT SERVICE */
         let keys = Object.keys(json);
         let datasets: any[] = [], ventas: any[] = [], gastos: any[] = [];

@@ -104,16 +104,32 @@ export interface IStorable<T extends ICollectable> {
 
 export interface IDocument extends ICollectable {
     File: string;
+    getFile(): string;
+    setFile(value: string): IDocument;
     FileName: string;
+    getFileName(): string;
+    setFileName(value: string): IDocument;
     FileSize: number;
+    getFileSize(): number;
+    setFileSize(value: number): IDocument;
     FileType: string;
+    getFileType(): string;
+    setFileType(value: string): IDocument;
     Path: string;
+    getPath(): string;
+    setPath(value: string): IDocument;
     Date: Date;
+    getDate(): Date;
+    setDate(value: Date): IDocument;
     Tag: ICollection<IDocumentTag>;
+    getTag(): ICollection<IDocumentTag>;
+    setTag(value: ICollection<IDocumentTag>): IDocument;
 }
 
 export interface IDocumentTag extends ICollectable {
     Name: string;
+    getName(): string;
+    setName(value: string): IDocumentTag;
 }
 
 export enum MainFolders {
@@ -126,74 +142,170 @@ export enum MainFolders {
 
 export interface IFolder extends ICollectable {
     Name: string;
+    getName(): string;
+    setName(value: string): IFolder;
     Path: string;
+    getPath(): string;
+    setPath(value: string): IFolder;
     Parent: string;
+    getParent(): string;
+    setParent(value: string): IFolder;
 }
 
 export interface ICertificate extends ICollectable {
   Name: string;
+  getName(): string;
+  setName(value: string): ICertificate;
   RepresentationType: string;
+  getRepresentationType(): string;
+  setRepresentationType(value: string): ICertificate;
   ExpeditionDate: Date;
+  getExpeditionDate(): Date;
+  setExpeditionDate(value: Date): ICertificate;
   ExpirationDate: Date;
+  getExpirationDate(): Date;
+  setExpirationDate(value: Date): ICertificate;
   Alias: string;
+  getAlias(): string;
+  setAlias(value: string): ICertificate;
   Type: string;
+  getType(): string;
+  setType(value: string): ICertificate;
   Tgss: boolean;
+  getTgss(): boolean;
+  setTgss(value: boolean): ICertificate;
   Sepe: boolean;
+  getSepe(): boolean;
+  setSepe(value: boolean): ICertificate;
   Aeat: boolean;
+  getAeat(): boolean;
+  setAeat(value: boolean): ICertificate;
   DocumentUser: string;
+  getDocumentUser(): string;
+  setDocumentUser(value: string): ICertificate;
 }
 
 export interface IEnterprise extends ICollectable {
     Name: string;
+    getName(): string;
+    setName(value: string): IEnterprise;
     ProfilePhoto: string;
+    getProfilePhoto(): string;
+    setProfilePhoto(value: string): IEnterprise;
     Address: string;
+    getAdress(): string;
+    setAdress(value: string): IEnterprise;
     Country: string;
+    getCountry(): string;
+    setCountry(value: string): IEnterprise;
     Province: string;
+    getProvince(): string;
+    setProvince(value: string): IEnterprise;
     SocialReason: string;
+    getSocialReason(): string;
+    setSocialReason(value: string): IEnterprise;
     Email: string;
+    getEmail(): string;
+    setEmail(value: string): IEnterprise;
     Phone: string;
+    getPhone(): string;
+    setPhone(value: string): IEnterprise;
     Website: string;
+    getWebsite(): string;
+    setWebsite(value: string): IEnterprise;
     Document: string;
+    getDocument(): string;
+    setDocument(value: string): IEnterprise;
     DomainName: string;
+    getDomainName(): string;
+    setDomainName(value: string): IEnterprise;
     DomainId: string;
+    getDomainId(): string;
+    setDomainId(value: string): IEnterprise;
     Registry: string;
+    getRegistry(): string;
+    setRegistry(value: string): IEnterprise;
 }
 
 export interface IRegistryEnterprise extends ICollectable {
-  IdEnterprise: string,
-  Description: string,
-  DateCreation: Date,
-  DateRegistration: Date,
-  Notary: string,
-  Protocol: string,
-  Inscription: string
+  IdEnterprise: string;
+  Description: string;
+  getDescription(): string;
+  setDescription(value: string): IRegistryEnterprise;
+  DateCreation: Date;
+  getDateCreation(): Date;
+  setDateCreation(value: Date): IRegistryEnterprise;
+  DateRegistration: Date;
+  getDateRegistration(): Date;
+  setDateRegistration(value: Date): IRegistryEnterprise;
+  Notary: string;
+  getNotary(): string;
+  setNotary(value: string): IRegistryEnterprise;
+  Protocol: string;
+  getProtocol(): string;
+  setProtocol(value: string): IRegistryEnterprise;
+  Inscription: string;
+  getInscription(): string;
+  setInscription(value: string): IRegistryEnterprise;
 }
 
 export interface IDocumentNote extends ICollectable {
     Text: string;
+    getText(): string;
+    setText(value: string): IDocumentNote;
     Path: string;
+    getPath(): string;
+    setPath(value: string): IDocumentNote;
 }
 
 export interface IBank extends ICollectable {
     Name: string;
+    getName(): string;
+    setName(value: string): IBank;
     Total: number;
+    getTotal(): number;
+    setTotal(value: number): IBank;
     Logo: string;
+    getLogo(): string;
+    setLogo(value: string): IBank;
     SwiftBic: string;
+    getSwiftBic(): string;
+    setSwiftBic(value: string): IBank;
     Iban: string;
+    getIban(): string;
+    setIban(value: string): IBank;
     LastUpdate: Date;
+    getLastUpdate(): Date;
+    setLastUpdate(value: Date): IBank;
     SyncStatus: string;
+    getSyncStatus(): string;
+    setSyncStatus(value: string): IBank;
 }
 
 export type statusTaxModel = 'en proceso' | 'pendiente' | 'rectificado' | 'confirmado' | 'presentado';
 
 export interface ITaxModel extends ICollectable {
     Name: string;
+    getName(): string;
+    setName(value: string): ITaxModel;
     TaxType: string;
+    getTaxType(): string;
+    setTaxType(value: string): ITaxModel;
     Status: statusTaxModel;
+    getStatus(): statusTaxModel;
+    setStatus(value: statusTaxModel): ITaxModel;
     PaymentMethod: string;
+    getPaymentMethod(): string;
+    setPaymentMethod(value: string): ITaxModel;
     Result: string;
+    getResult(): string;
+    setResult(value: string): ITaxModel;
     Trimester: number;
+    getTrimester(): number;
+    setTrimester(value: number): ITaxModel;
     Year: number;
+    getYear(): number;
+    setYear(value: number): ITaxModel;
 }
 
 export enum StatusMessage {
@@ -215,48 +327,106 @@ export enum TypeMessage {
 export interface IMessage extends ICollectable {
     Id: string;
     Name: string;
+    getName(): string;
+    setName(value: string): IMessage;
     Title: string;
+    getTitle(): string;
+    setTitle(value: string): IMessage;
     Description: string;
+    getDescription(): string;
+    setDescription(value: string): IMessage;
     Date: Date;
+    getDate(): Date;
+    setDate(value: Date): IMessage;
     Type: TypeMessage;
+    getType(): TypeMessage;
+    setType(value: TypeMessage): IMessage;
     Status: StatusMessage;
+    getStatus(): StatusMessage;
+    setStatus(value: StatusMessage): IMessage;
     EndDate: Date;
+    getEndDate(): Date;
+    setEndDate(value: Date): IMessage;
     LastMessageChatOrigin: boolean;
+    getLastMessageChatOrigin(): boolean;
+    setLastMessageChatOrigin(value: boolean): IMessage;
 }
 
 export interface ITaskHolder extends ICollectable {
     Id: string;
     Name: string;
+    getName(): string;
+    setName(value: string): ITaskHolder;
 }
 
 export interface IMessageChat extends ICollectable {
     Id: string;
     IdMessage: string;
+    getIdMessage(): string;
+    setIdMessage(value: string): IMessageChat;
     Name: string;
+    getName(): string;
+    setName(value: string): IMessageChat;
     Description: string;
+    getDescription(): string;
+    setDescription(value: string): IMessageChat;
     Date: Date;
+    getDate(): Date;
+    setDate(value: Date): IMessageChat;
     Type: string;
+    getType(): string;
+    setType(value: string): IMessageChat;
 }
 
 export interface IEmployee extends ICollectable {
     Name: string;
+    getName(): string;
+    setName(value: string): IEmployee;
     Lastname: string;
+    getLastname(): string;
+    setLastname(value: string): IEmployee;
     Document: string;
+    getDocument(): string;
+    setDocument(value: string): IEmployee;
     Email: string;
+    getEmail(): string;
+    setEmail(value: string): IEmployee;
     Phone: string;
+    getPhone(): string;
+    setPhone(value: string): IEmployee;
     Naf: string;
+    getNaf(): string;
+    setNaf(value: string): IEmployee;
     Active: boolean;
+    getActive(): boolean;
+    setActive(value: boolean): IEmployee;
 }
 
 export interface IContract extends ICollectable {
     Name: string;
+    getName(): string;
+    setName(value: string): IContract;
     LastName: string;
+    getLastName(): string;
+    setLastName(value: string): IContract;
     Type: string;
+    getType(): string;
+    setType(value: string): IContract;
     GrossCost: number;
+    getGrossCost(): number;
+    setGrossCost(value: number): IContract;
     StartDate: Date;
+    getStartDate(): Date;
+    setStartDate(value: Date): IContract;
     EndDate?: Date;
+    getEndDate(): Date;
+    setEndDate(value: Date): IContract;
     WorkCenter: string;
+    getWorkCenter(): string;
+    setWorkCenter(value: string): IContract;
     Active: boolean;
+    getActive(): boolean;
+    setActive(value: boolean): IContract;
 }
 
 // export interface IMark extends ICollectable {
@@ -281,21 +451,45 @@ export interface IMark extends ICollectable {
     // Ccc: string, // código cuenta de cotización
     // Workplace: string,
     Name: string, // nombre del usuario que marca
+    getName(): string;
+    setName(value: string): IMark;
     IdUser: string, // id del usuario que marca
+    getIdUser(): string;
+    setIdUser(value: string): IMark;
     Date: Date, // fecha del marcage
+    getDate(): Date;
+    setDate(value: Date): IMark;
     EntryDate: Date, // hora de entrada del marcaje
+    getEntryDate(): Date;
+    setEntryDate(value: Date): IMark;
     ExitDate: Date, // hora de salida del marcaje
+    getExitDate(): Date;
+    setExitDate(value: Date): IMark;
     Time: Date; // duracion del marcaje total
+    getTime(): Date;
+    setTime(value: Date): IMark;
     Location: any, // localizacion al marcar
+    getLocation(): any;
+    setLocation(value: any): IMark;
     Status: string // entrada, salida, pausa
+    getStatus(): string;
+    setStatus(value: string): IMark;
 }
 
 export interface IMarkDetail extends ICollectable {
-    Id: string,
-    LastDate: Date,
-    LastModification: Date,
-    Status: string,
+    Id: string
+    LastDate: Date
+    getLastDate(): Date;
+    setLastDate(value: Date): IMarkDetail;
+    LastModification: Date
+    getLastModification(): Date;
+    setLastModification(value: Date): IMarkDetail;
+    Status: string
+    getStatus(): string;
+    setStatus(value: string): IMarkDetail;
     Location: any
+    getLocation(): any;
+    setLocation(value: any): IMarkDetail;
 }
 
 export interface IPause {
@@ -305,13 +499,29 @@ export interface IPause {
 
 export interface IUser extends ICollectable {
     Name: string,
+    getName(): string;
+    setName(value: string): IUser;
     Lastname: string,
+    getLastname(): string;
+    setLastname(value: string): IUser;
     Document: string,
+    getDocument(): string;
+    setDocument(value: string): IUser;
     Email: string,
+    getEmail(): string;
+    setEmail(value: string): IUser;
     Password: string,
+    getPassword(): string;
+    setPassword(value: string): IUser;
     Phone: string,
+    getPhone(): string;
+    setPhone(value: string): IUser;
     Active: boolean,
+    getActive(): boolean;
+    setActive(value: boolean): IUser;
     Enterprises: string [],
+    getEnterprises(): string [];
+    setEnterprises(value: string[]): IUser;
 }
 
 export interface IAuth extends ICollectable{
@@ -629,6 +839,8 @@ export enum Status {
 
 export interface ISimpleValue {
     Value: string;
+    getValue(): string;
+    setValue(value: string): ISimpleValue;
 }
 
 export enum InvoiceType { GASTO = 'gasto', VENTA = 'venta' }
@@ -637,44 +849,110 @@ export enum InvoiceStatus { A_CONTABILIZAR = 'a_contabilizar', CONTABILIZADO = '
 
 export interface IInvoice extends ICollectable{
     Serie: IInvoiceSerie;
+    getSerie(): IInvoiceSerie;
+    setSerie(value: IInvoiceSerie): IInvoice;
     InvoiceNumber: string;
+    getInvoiceNumber(): string;
+    setInvoiceNumber(value: string): IInvoice;
     Date: Date;
+    getInvoiceDate(): Date;
+    setInvoiceDate(value: Date): IInvoice;
     TotalAmount: number;
+    getTotalAmount(): number;
+    setTotalAmount(value: number): IInvoice;
     Contact: IContact;
+    getContact(): IContact;
+    setContact(value: IContact): IInvoice;
     Category: IInvoiceCategory;
+    getCategory(): IInvoiceCategory;
+    setCategory(value: IInvoiceCategory): IInvoice;
     Lines: ICollection<IInvoiceLine>;
+    getLines(): ICollection<IInvoiceLine>;
+    setLines(value: ICollection<IInvoiceLine>): IInvoice;
     TransactionType: IInvoiceTransactionType;
+    getTransactionType(): IInvoiceTransactionType;
+    setTransactionType(value: IInvoiceTransactionType): IInvoice;
     Activity: IInvoiceActivity;
+    getActivity(): IInvoiceActivity;
+    setActivity(value: IInvoiceActivity): IInvoice;
     CriCaja: boolean;
+    getCriCaja(): boolean;
+    setCriCaja(value: boolean): IInvoice;
     RE: boolean;
+    getRE(): boolean;
+    setRE(value: boolean): IInvoice;
     RegAgri: boolean;
+    getRegAgri(): boolean;
+    setRegAgri(value: boolean): IInvoice;
     Tax: ITax;
+    getTax(): ITax;
+    setTax(value: ITax): IInvoice;
     TaxBase: number;
+    getTaxBase(): number;
+    setTaxBase(value: number): IInvoice;
     TaxQuota: number;
+    getTaxQuota(): number;
+    setTaxQuota(value: number): IInvoice;
     IRPF: IIRPF;
+    getIRPF(): IIRPF;
+    setIRPF(value: IIRPF): IInvoice;
     IRPFBase: number;
+    getIRPFBase(): number;
+    setIRPFBase(value: number): IInvoice;
     IRPFQuota: number;
+    getIRPFQuota(): number;
+    setIRPFQuota(value: number): IInvoice;
     InvoiceExpirationLines: ICollection<IInvoiceExpirationLine>;
+    getInvoiceExpirationLines(): ICollection<IInvoiceExpirationLine>;
+    setInvoiceExpirationLines(value: ICollection<IInvoiceExpirationLine>): IInvoice;
     Rectified: boolean;
+    getRectified(): boolean;
+    setRectified(value: boolean): IInvoice;
     Type: InvoiceType;
+    getType(): InvoiceType;
+    setType(value: InvoiceType): IInvoice;
     Status: InvoiceStatus;
+    getStatus(): InvoiceStatus;
+    setStatus(value: InvoiceStatus): IInvoice;
 }
 
 export interface IInvoiceLine extends ICollectable{
     Product: IProduct;
+    getProduct(): IProduct;
+    setProduct(value: IProduct): IInvoiceLine;
     Quantity: number;
+    getQuantity(): number;
+    setQuantity(value: number): IInvoiceLine;
     Price: number;
+    getPrice(): number;
+    setPrice(value: number): IInvoiceLine;
     Discount: number;
+    getDiscount(): number;
+    setDiscount(value: number): IInvoiceLine;
     TotalPrice: number;
+    getTotalPrice(): number;
+    setTotalPrice(value: number): IInvoiceLine;
     Tax: ITax;
+    getTax(): ITax;
+    setTax(value: ITax): IInvoiceLine;
     IRPF: IIRPF;
+    getIRPF(): IIRPF;
+    setIRPF(value: IIRPF): IInvoiceLine;
 }
 
 export interface IInvoiceExpirationLine extends ICollectable{
     Date: Date;
+    getDate(): Date;
+    setDate(value: Date): IInvoiceExpirationLine;
     PaymentMethod: IPaymentMethod;
+    getPaymentMethod(): IPaymentMethod;
+    setPaymentMethod(value: IPaymentMethod): IInvoiceExpirationLine;
     BankAccount: string;
+    getBankAccount(): string;
+    setBankAccount(value: string): IInvoiceExpirationLine;
     Amount: number;
+    getAmount(): number;
+    setAmount(value: number): IInvoiceExpirationLine;
 }
 
 export interface IInvoiceSerie extends ICollectable, ISimpleValue {}
@@ -685,6 +963,8 @@ export interface IInvoiceActivity extends ICollectable, ISimpleValue{}
 
 export interface IIRPF extends ICollectable, ISimpleValue {
     Type: string;
+    getType(): string;
+    setType(value: string): IIRPF;
 }
 
 export interface ITax extends ICollectable, ISimpleValue {}
@@ -695,19 +975,47 @@ export interface IInvoiceCategory extends ICollectable, ISimpleValue {}
 
 export interface IProduct extends ICollectable{
     Code: IProductCode;
+    getCode(): IProductCode;
+    setCode(value: IProductCode): IProduct;
     Name: string;
+    getName(): string;
+    setName(value: string): IProduct;
     Category: IProductCategory;
+    getCategory(): IProductCategory;
+    setCategory(value: IProductCategory): IProduct;
     Class: IProductClass;
+    getClass(): IProductClass;
+    setClass(value: IProductClass): IProduct;
     Type: IProductType;
+    getType(): IProductType;
+    setType(value: IProductType): IProduct;
     Status: IProductStatus;
+    getStatus(): IProductStatus;
+    setStatus(value: IProductStatus): IProduct;
     Tax: ITax;
+    getTax(): ITax;
+    setTax(value: ITax): IProduct;
     IRPF: IIRPF;
+    getIRPF(): IIRPF;
+    setIRPF(value: IIRPF): IProduct;
     BarCode: string;
+    getBarCode(): string;
+    setBarCode(value: string): IProduct;
     Description: string;
+    getDescription(): string;
+    setDescription(value: string): IProduct;
     CostPrice: number;
+    getCostPrice(): number;
+    setCostPrice(value: number): IProduct;
     Benefit: number;
+    getBenefit(): number;
+    setBenefit(value: number): IProduct;
     Price: number;
+    getPrice(): number;
+    setPrice(value: number): IProduct;
     Pvp: number;
+    getPvp(): number;
+    setPvp(value: number): IProduct;
 }
 
 export interface IProductCode extends ICollectable, ISimpleValue {}
@@ -722,19 +1030,42 @@ export interface IProductStatus extends ICollectable, ISimpleValue {}
 
 export interface IContact extends ICollectable{
     Name: string;
+    getName(): string;
+    setName(value: string): IContact;
     ComercialName: string;
+    getComercialName(): string;
+    setComercialName(value: string): IContact;
     Country: string;
-    /**
-     * Can be DNI, CIF, etc
-     */
+    getCountry(): string;
+    setCountry(value: string): IContact;
     Document: string;
+    getDocument(): string;
+    setDocument(value: string): IContact;
     Address: string;
+    getAddress(): string;
+    setAddress(value: string): IContact;
     Email: string;
+    getEmail(): string;
+    setEmail(value: string): IContact;
     Phone: string;
+    getPhone(): string;
+    setPhone(value: string): IContact;
     Web: string;
+    getWeb(): string;
+    setWeb(value: string): IContact;
     BankAccount: string;
+    getBankAccount(): string;
+    setBankAccount(value: string): IContact;
     PaymentMethod: IPaymentMethod;
+    getPaymentMethod(): IPaymentMethod;
+    setPaymentMethod(value: IPaymentMethod): IContact;
     TransactionType: IInvoiceTransactionType;
+    getTransactionType(): IInvoiceTransactionType;
+    setTransactionType(value: IInvoiceTransactionType): IContact;
     IRPF: boolean;
+    getIRPF(): boolean;
+    setIRPF(value: boolean): IContact;
     RE: boolean;
+    getRE(): boolean;
+    setRE(value: boolean): IContact;
 }

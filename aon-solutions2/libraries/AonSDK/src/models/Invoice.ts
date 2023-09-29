@@ -65,6 +65,160 @@ export class Invoice implements IInvoice, IModel {
         this.rectified = rectified || false;
         this.status = status || InvoiceStatus.A_CONTABILIZAR;
     }
+    getSerie(): IInvoiceSerie {
+        return this.serie
+    }
+    setSerie(value: IInvoiceSerie): IInvoice {
+        this.serie = value;
+        return this
+    }
+    getInvoiceNumber(): string {
+        return this.invoiceNumber
+    }
+    setInvoiceNumber(value: string): IInvoice {
+        this.invoiceNumber = value;
+        return this
+    }
+    getInvoiceDate(): Date {
+        return this.date
+    }
+    setInvoiceDate(value: Date): IInvoice {
+        this.date = value;
+        return this
+    }
+    getTotalAmount(): number {
+        return this.totalAmount
+    }
+    setTotalAmount(value: number): IInvoice {
+        this.totalAmount = value;
+        return this
+    }
+    getContact(): IContact {
+        return this.contact
+    }
+    setContact(value: IContact): IInvoice {
+        this.contact = value;
+        return this
+    }
+    getCategory(): IInvoiceCategory {
+        return this.category
+    }
+    setCategory(value: IInvoiceCategory): IInvoice {
+        this.category = value;
+        return this
+    }
+    getLines(): ICollection<IInvoiceLine> {
+        return this.lines
+    }
+    setLines(value: ICollection<IInvoiceLine>): IInvoice {
+        this.lines = value;
+        return this
+    }
+    getTransactionType(): IInvoiceTransactionType {
+        return this.transactionType
+    }
+    setTransactionType(value: IInvoiceTransactionType): IInvoice {
+        this.transactionType = value;
+        return this
+    }
+    getActivity(): IInvoiceActivity {
+        return this.activity
+    }
+    setActivity(value: IInvoiceActivity): IInvoice {
+        this.activity = value;
+        return this
+    }
+    getCriCaja(): boolean {
+        return this.criCaja
+    }
+    setCriCaja(value: boolean): IInvoice {
+        this.criCaja = value;
+        return this
+    }
+    getRE(): boolean {
+        return this.re
+    }
+    setRE(value: boolean): IInvoice {
+        this.re = value;
+        return this
+    }
+    getRegAgri(): boolean {
+        return this.regAgri
+    }
+    setRegAgri(value: boolean): IInvoice {
+        this.regAgri = value;
+        return this
+    }
+    getTax(): ITax {
+        return this.tax
+    }
+    setTax(value: ITax): IInvoice {
+        this.tax = value;
+        return this
+    }
+    getTaxBase(): number {
+        return this.taxBase
+    }
+    setTaxBase(value: number): IInvoice {
+        this.taxBase = value;
+        return this
+    }
+    getTaxQuota(): number {
+        return this.taxQuota
+    }
+    setTaxQuota(value: number): IInvoice {
+        this.taxQuota = value;
+        return this
+    }
+    getIRPF(): IIRPF {
+        return this.irpf
+    }
+    setIRPF(value: IIRPF): IInvoice {
+        this.irpf = value;
+        return this
+    }
+    getIRPFBase(): number {
+        return this.irpfbase
+    }
+    setIRPFBase(value: number): IInvoice {
+        this.irpfbase = value;
+        return this
+    }
+    getIRPFQuota(): number {
+        return this.irpfquota
+    }
+    setIRPFQuota(value: number): IInvoice {
+        this.irpfquota = value;
+        return this
+    }
+    getInvoiceExpirationLines(): ICollection<IInvoiceExpirationLine> {
+        return this.invoiceExpirationLines
+    }
+    setInvoiceExpirationLines(value: ICollection<IInvoiceExpirationLine>): IInvoice {
+        this.invoiceExpirationLines = value;
+        return this
+    }
+    getRectified(): boolean {
+        return this.rectified
+    }
+    setRectified(value: boolean): IInvoice {
+        this.rectified = value;
+        return this
+    }
+    getType(): InvoiceType {
+        return this.type
+    }
+    setType(value: InvoiceType): IInvoice {
+        this.type = value;
+        return this
+    }
+    getStatus(): InvoiceStatus {
+        return this.status
+    }
+    setStatus(value: InvoiceStatus): IInvoice {
+        this.status = value;
+        return this
+    }
 
     public get Status(): InvoiceStatus {
         return this.status;

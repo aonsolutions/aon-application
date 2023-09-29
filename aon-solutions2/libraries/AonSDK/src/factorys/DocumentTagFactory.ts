@@ -4,7 +4,7 @@ import { ISingleObjectCrud, IMultipleObjectCrud } from "../interfaces/serviceInt
 import { DocumentTag, ApiDocumentTag, StorableDocumentTag } from "../models/DocumentTag";
 import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
-import { APIEnvironment } from "../utils/constants";
+import { APIEnvironment } from "../utils/Environment";
 
 export class DocumentTagFactory implements ISingleObjectCrudFactory<IDocumentTag>, IMultipleObjectCrudFactory<IDocumentTag> {
     createSingleObjectCrud(): ISingleObjectCrud<IDocumentTag> {

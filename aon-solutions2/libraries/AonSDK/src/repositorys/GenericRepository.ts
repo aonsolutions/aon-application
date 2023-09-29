@@ -1,15 +1,11 @@
 import { IModel, IApiModel, IStorable } from "../interfaces/modelsInterfaces";
 import { ISingleObjectCrudRepository, IMultipleObjectCrudRepository } from "../interfaces/repositoryInterfaces";
-import { IApiHttpRequest, IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
-import { Collection } from "../utils/Collection";
-import { FilterBuilder } from "../utils/FilterBuilder";
+import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { ApiHttpRequest } from "../utils/Http";
 import { LocalStorage } from "../utils/LocalStorage";
 import { ErrorResponse } from "../utils/Response";
-import { GET_SINGLE, BASE_URL, CREATE_SINGLE, UPDATE_SINGLE, GET_MULTIPLE } from "../utils/constants";
 
 export class APIGenericSingleObjectCrudRepository<T extends IModel> implements ISingleObjectCrudRepository<T> {
-    protected httpRequest: IApiHttpRequest = new ApiHttpRequest();
     protected type: { new (): T };
     protected model: IModel;
     protected apiModel: IApiModel;
@@ -21,34 +17,40 @@ export class APIGenericSingleObjectCrudRepository<T extends IModel> implements I
     }
 
     async get(key: string, type?: string): Promise<T> {
-        // TO DO revisar filter, type y id
-        let filter = new FilterBuilder();
-        filter.addField('id',key);
-        if(type) filter.addField('type',type)
-        let url = this.apiModel.getUrl(GET_SINGLE, filter.getFilter());
-        let method = this.apiModel.getMethod(GET_SINGLE, filter.getFilter());
-        let response = await this.httpRequest.httpRequest(BASE_URL + url, method, {}, {})
-        return this.apiModel.parseDataToReceive(response, GET_SINGLE);
+        console.log(this.type, '<= type from Generic method getsingle')
+        throw new ErrorResponse('0199');
+        // let filter = new FilterBuilder();
+        // filter.addField('id',key);
+        // if(type) filter.addField('type',type)
+        // let url = this.apiModel.getUrl(GET_SINGLE, filter.getFilter());
+        // let method = this.apiModel.getMethod(GET_SINGLE, filter.getFilter());
+        // let response = await this.httpRequest.httpRequest(BASE_URL + url, method, {}, {})
+        // return this.apiModel.parseDataToReceive(response, GET_SINGLE);
     }
 
     async create(element: T): Promise<T> {
-        let data = this.apiModel.parseDataToSend(element, CREATE_SINGLE);
-        let response = await this.httpRequest.httpRequest(BASE_URL + this.apiModel.getUrl(CREATE_SINGLE), this.apiModel.getMethod(CREATE_SINGLE), {}, data);
-        return this.apiModel.parseDataToReceive(response, GET_SINGLE);
+        console.log(this.type, '<= type from Generic method createsingle')
+        throw new ErrorResponse('0199');
+        // let data = this.apiModel.parseDataToSend(element, CREATE_SINGLE);
+        // let response = await this.httpRequest.httpRequest(BASE_URL + this.apiModel.getUrl(CREATE_SINGLE), this.apiModel.getMethod(CREATE_SINGLE), {}, data);
+        // return this.apiModel.parseDataToReceive(response, GET_SINGLE);
     }
 
     async update(element: T): Promise<T> {
-        let filter = new FilterBuilder();
-        filter.addField('id', element.Key);
-        let data = this.apiModel.parseDataToSend(element, UPDATE_SINGLE);
-        let url = this.apiModel.getUrl(UPDATE_SINGLE, filter.getFilter());
-        let method = this.apiModel.getMethod(UPDATE_SINGLE);
-        let response = await this.httpRequest.httpRequest(BASE_URL + url, method, element, data)
-        if(response) return element;
-        throw new ErrorResponse('0199')
+        console.log(this.type, '<= type from Generic method updatesingle')
+        throw new ErrorResponse('0199');
+        // let filter = new FilterBuilder();
+        // filter.addField('id', element.Key);
+        // let data = this.apiModel.parseDataToSend(element, UPDATE_SINGLE);
+        // let url = this.apiModel.getUrl(UPDATE_SINGLE, filter.getFilter());
+        // let method = this.apiModel.getMethod(UPDATE_SINGLE);
+        // let response = await this.httpRequest.httpRequest(BASE_URL + url, method, element, data)
+        // if(response) return element;
+        // throw new ErrorResponse('0199')
     }
 
     async delete(key: string): Promise<void> {
+        console.log(this.type, '<= type from Generic method deletesingle')
         throw new ErrorResponse('0199')
     }
 
@@ -58,7 +60,6 @@ export class APIGenericSingleObjectCrudRepository<T extends IModel> implements I
 // SI SE NECESITA UN COMPORTAMIENTO ESPECIFICO HEREDAR Y SOBREESCRIBIR DICHO MÉTODO
 export class APIGenericMultipleObjectCrudRepository<T extends IModel> implements IMultipleObjectCrudRepository<T> {
 
-    protected httpRequest: IApiHttpRequest = new ApiHttpRequest();
     protected type: { new (): T };
     protected model: IModel;
     protected apiModel: IApiModel;
@@ -70,32 +71,37 @@ export class APIGenericMultipleObjectCrudRepository<T extends IModel> implements
     }
 
     async get(filter?: IFilter): Promise<ICollection<T>> {
-        let urls = this.apiModel.getUrl(GET_MULTIPLE,filter);
-        let method = this.apiModel.getMethod(GET_MULTIPLE,filter);
-        let collection: ICollection<T> = new Collection<T>();
-        for(let url of urls){
-            let response = await this.httpRequest.httpRequest(BASE_URL + url, method, {}, {})
-            response.forEach((element: any) => {
-                collection.add(this.apiModel.parseDataToReceive(element, GET_MULTIPLE, filter))
-            })
-        }
-        if(this.apiModel.localFilter() && collection.size() > 0){
-            if(filter?.intervalFields || filter?.fields) collection = collection.filter(filter);
-            if(filter?.orderBy) collection.sort(filter);
-            if(filter?.pageItems && filter.pageNum) collection = collection.paginate(filter.pageNum,filter.pageItems);
-        }
-        return collection;
+        console.log(this.type, '<= type from Generic method getmultiple')
+        throw new ErrorResponse('0199');
+        // let urls = this.apiModel.getUrl(GET_MULTIPLE,filter);
+        // let method = this.apiModel.getMethod(GET_MULTIPLE,filter);
+        // let collection: ICollection<T> = new Collection<T>();
+        // for(let url of urls){
+        //     let response = await this.httpRequest.httpRequest(BASE_URL + url, method, {}, {})
+        //     response.forEach((element: any) => {
+        //         collection.add(this.apiModel.parseDataToReceive(element, GET_MULTIPLE, filter))
+        //     })
+        // }
+        // if(this.apiModel.localFilter() && collection.size() > 0){
+        //     if(filter?.intervalFields || filter?.fields) collection = collection.filter(filter);
+        //     if(filter?.orderBy) collection.sort(filter);
+        //     if(filter?.pageItems && filter.pageNum) collection = collection.paginate(filter.pageNum,filter.pageItems);
+        // }
+        // return collection;
     }
 
     async create(collection: ICollection<T>): Promise<ICollection<T>> {
+        console.log(this.type, '<= type from Generic method createmultiple')
         throw new ErrorResponse('0199')
     }
 
     async update(collection: ICollection<T>): Promise<ICollection<T>> {
+        console.log(this.type, '<= type from Generic method updatemultiple')
         throw new ErrorResponse('0199')
     }
 
     async delete(keys: string[]): Promise<void> {
+        console.log(this.type, '<= type from Generic method deletemultiple')
         throw new ErrorResponse('0199')
     }
 

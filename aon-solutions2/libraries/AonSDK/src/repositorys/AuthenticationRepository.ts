@@ -3,7 +3,45 @@ import { IAuthenticationRepository } from "../interfaces/repositoryInterfaces";
 import { FilterBuilder } from "../utils/FilterBuilder";
 import { ApiHttpRequest } from "../utils/Http";
 import { ErrorResponse } from "../utils/Response";
-import { BASE_URL, GET_METHOD } from "../utils/constants";
+import { BASE_URL, GET_METHOD } from "../utils/Environment";
+
+
+export class APIAuthenticationRepository implements IAuthenticationRepository {
+
+    constructor() {
+    }
+
+    async login(email: string, password: string): Promise<void> {
+        let data = {
+            username: email,
+            password: password
+        }
+        let url = BASE_URL + '/ms/api/login'
+        let customHeaders = {}
+        let result = await ApiHttpRequest.post(url,customHeaders,data)
+        if(result.type == "error") throw new ErrorResponse('0101');
+        else localStorage.setItem('token', result.session_id);
+    }
+
+    async logout(): Promise<void> {
+        if(localStorage.getItem('token')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('enterprise');
+            localStorage.removeItem('domainId');
+            localStorage.removeItem('domainName');
+        }
+        else throw new ErrorResponse('0111');
+    }
+
+    async tokenLogin(token: string): Promise<void> {
+    }
+
+    async userInfo(): Promise<void> {
+        let userInfo = await ApiHttpRequest.httpRequest(BASE_URL + '/ms/api/user/info', GET_METHOD, {}, {})
+        if(userInfo.type == "error") throw new ErrorResponse('0101');
+        localStorage.setItem('login', userInfo.login);
+    }
+}
 
 export class AuthenticationRepository implements IAuthenticationRepository {
 
@@ -36,7 +74,6 @@ export class AuthenticationRepository implements IAuthenticationRepository {
             // localStorage.removeItem('user');
             localStorage.clear();
         }
-        else throw new ErrorResponse('0111');
     }
 
     async tokenLogin(token: string): Promise<void> {
@@ -45,42 +82,4 @@ export class AuthenticationRepository implements IAuthenticationRepository {
     }
 }
 
-export class APIAuthenticationRepository implements IAuthenticationRepository {
 
-    httpRequest = new ApiHttpRequest();
-
-    constructor() {
-    }
-
-    async login(email: string, password: string): Promise<void> {
-        let data = {
-            username: email,
-            password: password
-        }
-        let url = BASE_URL + '/ms/api/login'
-        let method = 'POST';
-        let customHeaders = {}
-        let result = await this.httpRequest.httpRequest(url,method,customHeaders,data)
-        if(result.type == "error") throw new ErrorResponse('0101');
-        else localStorage.setItem('token', result.session_id);
-    }
-
-    async logout(): Promise<void> {
-        if(localStorage.getItem('token')) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('enterprise');
-            localStorage.removeItem('domainId');
-            localStorage.removeItem('domainName');
-        }
-        else throw new ErrorResponse('0111');
-    }
-
-    async tokenLogin(token: string): Promise<void> {
-    }
-
-    async userInfo(): Promise<void> {
-        let userInfo = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/user/info', GET_METHOD, {}, {})
-        if(userInfo.type == "error") throw new ErrorResponse('0101');
-        localStorage.setItem('login', userInfo.login);
-    }
-}

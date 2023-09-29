@@ -34,6 +34,62 @@ export class User implements IUser, IModel  {
         this.enterprises = enterprises || [];
         this.key = document || '';
     }
+    getName(): string {
+        return this.name;
+    }
+    setName(value: string): IUser {
+        this.name = value;
+        return this
+    }
+    getLastname(): string {
+        return this.lastname;
+    }
+    setLastname(value: string): IUser {
+        this.lastname = value;
+        return this
+    }
+    getDocument(): string {
+        return this.document;
+    }
+    setDocument(value: string): IUser {
+        this.document = value;
+        return this
+    }
+    getEmail(): string {
+        return this.email;
+    }
+    setEmail(value: string): IUser {
+        this.email = value;
+        return this
+    }
+    getPassword(): string {
+        return this.password;
+    }
+    setPassword(value: string): IUser {
+        this.password = value;
+        return this
+    }
+    getPhone(): string {
+        return this.phone;
+    }
+    setPhone(value: string): IUser {
+        this.phone = value;
+        return this
+    }
+    getActive(): boolean {
+        return this.active
+    }
+    setActive(value: boolean): IUser {
+        this.active = value;
+        return this
+    }
+    getEnterprises(): string[] {
+        return this.enterprises
+    }
+    setEnterprises(value: string[]): IUser {
+        this.enterprises = value;
+        return this
+    }
 
     public get Enterprises(): string[] {
         return this.enterprises;

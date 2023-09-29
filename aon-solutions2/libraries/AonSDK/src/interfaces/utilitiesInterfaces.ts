@@ -1,10 +1,5 @@
 import { ICollectable } from "./modelsInterfaces";
 
-export interface IApiHttpRequest {
-    httpRequest(url: string, method: string, customHeaders: any, data: any): Promise<any>;
-    makeURL(url: string, params: any): string;
-}
-
 export interface IResponse<T> {
     code: string;
     description: string;

@@ -1,5 +1,5 @@
 import { IResponse } from "../interfaces/utilitiesInterfaces";
-import { ERRORS } from "./constants";
+import { ERRORS } from "./Environment";
 
 export class Response<T> implements IResponse<T> {
     code: string;

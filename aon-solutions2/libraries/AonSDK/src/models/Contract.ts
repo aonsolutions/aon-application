@@ -33,6 +33,62 @@ export class Contract implements IContract, IModel  {
         this.workCenter = workCenter || '';
         this.active = active || false;
     }
+    getName(): string {
+        return this.name
+    }
+    setName(value: string): IContract {
+        this.name = value;
+        return this
+    }
+    getLastName(): string {
+        return this.lastName
+    }
+    setLastName(value: string): IContract {
+        this.lastName = value;
+        return this
+    }
+    getType(): string {
+        return this.type
+    }
+    setType(value: string): IContract {
+        this.type = value;
+        return this
+    }
+    getGrossCost(): number {
+        return this.grossCost
+    }
+    setGrossCost(value: number): IContract {
+        this.grossCost = value;
+        return this
+    }
+    getStartDate(): Date {
+        return this.startDate
+    }
+    setStartDate(value: Date): IContract {
+        this.startDate = value;
+        return this
+    }
+    getEndDate(): Date {
+        return this.endDate ? this.endDate : new Date()
+    }
+    setEndDate(value: Date): IContract {
+        this.endDate = value;
+        return this
+    }
+    getWorkCenter(): string {
+        return this.workCenter
+    }
+    setWorkCenter(value: string): IContract {
+        this.workCenter = value;
+        return this
+    }
+    getActive(): boolean {
+        return this.active
+    }
+    setActive(value: boolean): IContract {
+        this.active = value;
+        return this
+    }
 
 
     public get Name(): string {

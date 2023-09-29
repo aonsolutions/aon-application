@@ -3,7 +3,7 @@ import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { KeyGenerator } from "../utils/KeyGenerator";
 import { ErrorResponse } from "../utils/Response";
-import { GET_MULTIPLE, GET_SINGLE, UPDATE_SINGLE, GET_METHOD, POST_METHOD } from "../utils/constants";
+import { GET_MULTIPLE, GET_SINGLE, UPDATE_SINGLE, GET_METHOD, POST_METHOD } from "../utils/Environment";
 import { TaskHolder } from "./TaskHolder";
 
 export class Message implements IMessage, IModel  {
@@ -40,6 +40,62 @@ export class Message implements IMessage, IModel  {
         this.key = this.id || '';
         this.taskHolder = new TaskHolder();
         this.lastMessageChatOrigin = false;
+    }
+    getName(): string {
+        return this.name
+    }
+    setName(value: string): IMessage {
+        this.name = value;
+        return this
+    }
+    getTitle(): string {
+        return this.title
+    }
+    setTitle(value: string): IMessage {
+        this.title = value;
+        return this
+    }
+    getDescription(): string {
+        return this.description
+    }
+    setDescription(value: string): IMessage {
+        this.description = value;
+        return this
+    }
+    getDate(): Date {
+        return this.date
+    }
+    setDate(value: Date): IMessage {
+        this.date = value;
+        return this
+    }
+    getType(): TypeMessage {
+        return this.type
+    }
+    setType(value: TypeMessage): IMessage {
+        this.type = value;
+        return this
+    }
+    getStatus(): StatusMessage {
+        return this.status
+    }
+    setStatus(value: StatusMessage): IMessage {
+        this.status = value;
+        return this
+    }
+    getEndDate(): Date {
+        return this.endDate
+    }
+    setEndDate(value: Date): IMessage {
+        this.endDate = value;
+        return this
+    }
+    getLastMessageChatOrigin(): boolean {
+        return this.lastMessageChatOrigin
+    }
+    setLastMessageChatOrigin(value: boolean): IMessage {
+        this.lastMessageChatOrigin = value;
+        return this
     }
 
     public get LastMessageChatOrigin() {

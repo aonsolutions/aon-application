@@ -1,4 +1,23 @@
 /**
+ * GLOBAL EXPORTS
+ */
+export { AuthFunctions } from "./exportFunctions/AuthFunctions";
+export { BankFunctions } from "./exportFunctions/BankFunctions";
+export { CertificateFunctions } from "./exportFunctions/CertificateFunctions";
+export { ContactFunctions } from "./exportFunctions/ContactFunctions";
+export { DocumentFunctions } from "./exportFunctions/DocumentFunctions";
+export { EmployeeFunctions } from "./exportFunctions/EmployeeFunctions";
+export { EnterpriseFunctions } from "./exportFunctions/EnterpriseFunctions";
+export { FolderFunctions } from "./exportFunctions/FolderFunctions";
+export { MarkFunctions } from "./exportFunctions/MarkFunctions";
+export { MessageChatFunctions } from "./exportFunctions/MessageChatFunctions";
+export { MessageFunctions } from "./exportFunctions/MessageFunctions";
+export { ProductFunctions } from "./exportFunctions/ProductFunctions";
+export { RegistryEnterpriseFunctions } from "./exportFunctions/RegistryEnterpriseFunctions";
+export { ReportingFunctions } from "./exportFunctions/ReportingFunctions";
+export { TaxModelFunctions } from "./exportFunctions/TaxModelFunctions";
+export { UserFunctions } from "./exportFunctions/UserFunctions";
+/**
  * INTERFACES EXPORTS
  */
 export { IEnterprise } from "./interfaces/modelsInterfaces";
@@ -28,10 +47,19 @@ export { IResponse } from "./interfaces/utilitiesInterfaces";
 export { ICollection } from "./interfaces/utilitiesInterfaces";
 export { IFilter } from "./interfaces/utilitiesInterfaces";
 export { ITaskHolder } from "./interfaces/modelsInterfaces";
-
+export { IInvoice } from "./interfaces/modelsInterfaces";
+export { IInvoiceCategory } from "./interfaces/modelsInterfaces";
+export { IInvoiceTransactionType } from "./interfaces/modelsInterfaces";
+export { IInvoiceActivity } from "./interfaces/modelsInterfaces";
+export { IContact } from "./interfaces/modelsInterfaces";
+export { IMark } from "./interfaces/modelsInterfaces";
+export { IProduct } from "./interfaces/modelsInterfaces";
+export { IProductCategory } from "./interfaces/modelsInterfaces";
+export { IProductStatus } from "./interfaces/modelsInterfaces";
 /**
  * FACTORYS EXPORTS
- */
+*/
+export { ContactFactory } from "./factorys/ContactFactory";
 export { DocumentFactory } from "./factorys/DocumentFactory";
 export { DocumentTagFactory } from "./factorys/DocumentTagFactory";
 export { EnterpriseFactory } from "./factorys/EnterpriseFactory";
@@ -61,6 +89,8 @@ export { TaskHolderFactory } from "./factorys/TaskHolderFactory";
 export { ReportingFactory } from "./factorys/ReportingFactory";
 export { ICountry } from "./interfaces/modelsInterfaces";
 export { ICommunity } from "./interfaces/modelsInterfaces";
+export { EmployeeFactory } from "./factorys/EmployeeFactory";
+export { ProductFactory } from "./factorys/ProductFactory";
 
 /**
  * EXPORTS UTILS
@@ -68,6 +98,10 @@ export { ICommunity } from "./interfaces/modelsInterfaces";
 export { Response } from "./utils/Response";
 export { ErrorResponse } from "./utils/Response";
 export { FilterBuilder } from "./utils/FilterBuilder";
-
 import { generateData } from "./utils/GenerateFakeData";
+// import { test } from "./utils/Environment";
+// import { makeTest } from "./tests/genericTest";
+
 generateData();
+
+// if(test) makeTest();

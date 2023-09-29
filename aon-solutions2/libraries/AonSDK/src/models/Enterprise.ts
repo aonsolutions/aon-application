@@ -1,7 +1,7 @@
 import { IEnterprise, IModel, IApiModel, IStorable } from "../interfaces/modelsInterfaces";
 import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
-import { GET_MULTIPLE, GET_SINGLE, GET_METHOD } from "../utils/constants";
+import { GET_MULTIPLE, GET_SINGLE, GET_METHOD } from "../utils/Environment";
 import { ErrorResponse } from "../utils/Response";
 
 export class Enterprise implements IEnterprise, IModel {
@@ -156,6 +156,97 @@ export class Enterprise implements IEnterprise, IModel {
         this.domainId = '';
         this.domainName = '';
         this.registry = '';
+    }
+    getName(): string {
+        return this.name;
+    }
+    setName(value: string): IEnterprise {
+        this.name = value;
+        return this
+    }
+    getProfilePhoto(): string {
+        return this.profilePhoto;
+    }
+    setProfilePhoto(value: string): IEnterprise {
+        this.profilePhoto = value;
+        return this
+    }
+    getAdress(): string {
+        return this.address;
+    }
+    setAdress(value: string): IEnterprise {
+        this.address = value;
+        return this
+    }
+    getCountry(): string {
+        return this.country;
+    }
+    setCountry(value: string): IEnterprise {
+        this.country = value;
+        return this
+    }
+    getProvince(): string {
+        return this.province;
+    }
+    setProvince(value: string): IEnterprise {
+        this.province = value;
+        return this
+    }
+    getSocialReason(): string {
+        return this.socialReason;
+    }
+    setSocialReason(value: string): IEnterprise {
+        this.socialReason = value;
+        return this
+    }
+    getEmail(): string {
+        return this.email;
+    }
+    setEmail(value: string): IEnterprise {
+        this.email = value;
+        return this
+    }
+    getPhone(): string {
+        return this.phone;
+    }
+    setPhone(value: string): IEnterprise {
+        this.phone = value;
+        return this
+    }
+    getWebsite(): string {
+        return this.website;
+    }
+    setWebsite(value: string): IEnterprise {
+        this.website = value;
+        return this
+    }
+    getDocument(): string {
+        return this.document;
+    }
+    setDocument(value: string): IEnterprise {
+        this.document = value;
+        return this
+    }
+    getDomainName(): string {
+        return this.domainName;
+    }
+    setDomainName(value: string): IEnterprise {
+        this.domainName = value;
+        return this
+    }
+    getDomainId(): string {
+        return this.domainId;
+    }
+    setDomainId(value: string): IEnterprise {
+        this.domainId = value;
+        return this
+    }
+    getRegistry(): string {
+        return this.registry;
+    }
+    setRegistry(value: string): IEnterprise {
+        this.registry = value;
+        return this
     }
 
     getKey(): string {

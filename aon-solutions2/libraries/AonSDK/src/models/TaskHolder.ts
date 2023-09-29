@@ -2,7 +2,7 @@ import { ITaskHolder, IModel, IApiModel, IStorable } from "../interfaces/modelsI
 import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { KeyGenerator } from "../utils/KeyGenerator";
-import { GET_MULTIPLE, GET_SINGLE, GET_METHOD } from "../utils/constants";
+import { GET_MULTIPLE, GET_SINGLE, GET_METHOD } from "../utils/Environment";
 
 export class TaskHolder implements ITaskHolder, IModel {
     protected id: string;
@@ -14,6 +14,13 @@ export class TaskHolder implements ITaskHolder, IModel {
         this.name = name || '';
         this.id = KeyGenerator.generate(15);
         this.key = this.id;
+    }
+    getName(): string {
+        return this.name;
+    }
+    setName(value: string): ITaskHolder {
+        this.name = value;
+        return this
     }
 
     public get Id(): string {

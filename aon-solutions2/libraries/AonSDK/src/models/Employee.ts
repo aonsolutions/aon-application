@@ -32,6 +32,55 @@ export class Employee implements IEmployee, IModel  {
         this.naf = naf || '';
         this.active = active || false;
     }
+    getName(): string {
+        return this.name
+    }
+    setName(value: unknown): IEmployee {
+        this.name = value as string;
+        return this
+    }
+    getLastname(): string {
+        return this.lastname
+    }
+    setLastname(value: string): IEmployee {
+        this.lastname = value;
+        return this
+    }
+    getDocument(): string {
+        return this.document
+    }
+    setDocument(value: string): IEmployee {
+        this.document = value;
+        return this
+    }
+    getEmail(): string {
+        return this.email
+    }
+    setEmail(value: string): IEmployee {
+        this.email = value;
+        return this
+    }
+    getPhone(): string {
+        return this.phone
+    }
+    setPhone(value: string): IEmployee {
+        this.phone = value;
+        return this
+    }
+    getNaf(): string {
+        return this.naf
+    }
+    setNaf(value: string): IEmployee {
+        this.naf = value;
+        return this
+    }
+    getActive(): boolean {
+        return this.active
+    }
+    setActive(value: boolean): IEmployee {
+        this.active = value;
+        return this
+    }
 
     public get Name(): string {
         return this.name;

@@ -1,12 +1,13 @@
 import { IMessage, TypeMessage, StatusMessage } from "../interfaces/modelsInterfaces";
 import { IMessageSpecificMethodsRepository } from "../interfaces/repositoryInterfaces";
-import { IApiHttpRequest, IFilter } from "../interfaces/utilitiesInterfaces";
+import { ICollection, IFilter } from "../interfaces/utilitiesInterfaces";
 import { Message, ApiMessage, StorableMessage } from "../models/Message";
 import { ApiHttpRequest } from "../utils/Http";
 import { ErrorResponse } from "../utils/Response";
-import { BASE_URL, GET_METHOD, POST_METHOD, GET_SINGLE } from "../utils/constants";
+import { BASE_URL, GET_METHOD, POST_METHOD, GET_SINGLE } from "../utils/Environment";
 import { APIGenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "./GenericRepository";
 import { messages } from "../models/Message";
+import { Collection } from "../utils/Collection";
 
 export class APIMessageSingleObjectCrudRepository extends APIGenericSingleObjectCrudRepository<Message> {
     constructor(apiModel: ApiMessage, type: { new (): Message }){
@@ -14,9 +15,9 @@ export class APIMessageSingleObjectCrudRepository extends APIGenericSingleObject
     }
 
     async create(message: Message): Promise<Message> {
-        let cauInfo = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/cau', GET_METHOD, {}, {})
-        let sender = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/taskholder?id=' + localStorage.getItem('registry'), GET_METHOD, {}, {})
-        let taskHolder = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/taskholder?id=' + message.TaskHolder.Id, GET_METHOD, {}, {})
+        let cauInfo = await ApiHttpRequest.get(BASE_URL + '/ms/api/task/cau', {}, {})
+        let sender = await ApiHttpRequest.get(BASE_URL + '/ms/api/taskholder?id=' + localStorage.getItem('registry'), {}, {})
+        let taskHolder = await ApiHttpRequest.get(BASE_URL + '/ms/api/taskholder?id=' + message.TaskHolder.Id, {}, {})
         let domain = {
             id: localStorage.getItem('domainId'),
             name: localStorage.getItem('domainName')
@@ -54,7 +55,7 @@ export class APIMessageSingleObjectCrudRepository extends APIGenericSingleObject
             auth: cauInfo.auth,
             domaincompany: cauInfo.company.domain
         }
-        let newMessage: Message = this.apiModel.parseDataToReceive(await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task', POST_METHOD, {}, json), GET_SINGLE);
+        let newMessage: Message = this.apiModel.parseDataToReceive(await ApiHttpRequest.post(BASE_URL + '/ms/api/task', {}, json), GET_SINGLE);
         return newMessage;
     }
 }
@@ -63,11 +64,30 @@ export class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleOb
     constructor(apiModel: ApiMessage, type: { new (): Message }){
         super(apiModel, type);
     }
+
+    async get(filter?: IFilter | undefined): Promise<ICollection<Message>> {
+        let url;
+        if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.NOTIFICACION)
+                url = ['/ms/api/notification?page=1&perPage=100']
+            else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.CONSULTA)
+                url = ['/ms/api/task?source=query&page=1&perPage=100&task_holder=' + localStorage.getItem('registry') + '&sender=' + localStorage.getItem('registry')]
+            else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.TAREA)
+                url = ['/ms/api/task?source=task&page=1&perPage=100&task_holder=' + localStorage.getItem('registry') + '&sender=' + localStorage.getItem('registry')]
+            else
+                url = ['/ms/api/notification?page=1&perPage=100','/ms/api/task?source=query&page=1&perPage=100','/ms/api/task?source=task&page=1&perPage=100']
+        let collection: ICollection<Message> = new Collection<Message>();
+        for(let element of url){
+            let response = await ApiHttpRequest.get(BASE_URL + element, {}, {});
+            response.forEach((element: any) => {
+                collection.add(this.apiModel.parseDataToReceive(element))
+            })
+        }
+        return collection;
+    }
 }
 
 export class APIMessageSpecificMethodsRepository implements IMessageSpecificMethodsRepository {
 
-    protected httpRequest: IApiHttpRequest = new ApiHttpRequest();
     repository = new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message);
 
     async archiveMessage(element: Message): Promise<IMessage> {
@@ -90,21 +110,21 @@ export class APIMessageSpecificMethodsRepository implements IMessageSpecificMeth
 
     async getMessageCount(filter?: IFilter): Promise<number> {
         if(filter && filter.fields && filter.fields.get('type') == 'notificacion'){
-            let result = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/notification/total-notification', GET_METHOD, {}, {})
+            let result = await ApiHttpRequest.get(BASE_URL + '/ms/api/notification/total-notification', {}, {})
             return result.notification
         } else if(filter && filter.fields && (filter.fields.get('type') == 'tarea' || filter.fields.get('type') == 'consulta')){
-            let result = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/status/count?task_holder=' + localStorage.getItem('registry'), GET_METHOD, {}, {});
+            let result = await ApiHttpRequest.get(BASE_URL + '/ms/api/task/status/count?task_holder=' + localStorage.getItem('registry'), {}, {});
             return result.status.pending;
         } else {
-            let result1 = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/notification/total-notification', GET_METHOD, {}, {})
-            let result2 = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/task/status/count?task_holder=' + localStorage.getItem('registry'), GET_METHOD, {}, {});
+            let result1 = await ApiHttpRequest.get(BASE_URL + '/ms/api/notification/total-notification', {}, {})
+            let result2 = await ApiHttpRequest.get(BASE_URL + '/ms/api/task/status/count?task_holder=' + localStorage.getItem('registry'), {}, {});
             return result1.notification + result2.status.pending;
         }
     }
 
     async markAsReadNotification(element: Message): Promise<boolean> {
         if(element.Type == 'notificacion'){
-            let result = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/notification/mark-read-notification', POST_METHOD, {}, {source_id: element.Id});
+            let result = await ApiHttpRequest.post(BASE_URL + '/ms/api/notification/mark-read-notification', {}, {source_id: element.Id});
             if(result.success && result.success == true)
                 return true;
             else

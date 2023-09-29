@@ -3,7 +3,7 @@ import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { KeyGenerator } from "../utils/KeyGenerator";
 import { ErrorResponse } from "../utils/Response";
-import { GET_MULTIPLE, GET_METHOD } from "../utils/constants";
+import { GET_MULTIPLE, GET_METHOD } from "../utils/Environment";
 
 export class Bank implements IBank, IModel  {
     private swiftBic: string;
@@ -35,12 +35,30 @@ export class Bank implements IBank, IModel  {
         this.iban = value;
     }
 
+    public getIban(): string {
+        return this.iban;
+    }
+
+    public setIban(value: string): Bank {
+        this.iban = value;
+        return this;
+    }
+
     public get LastUpdate(): Date {
         return this.lastUpdate;
     }
 
     public set LastUpdate(value: Date) {
         this.lastUpdate = value;
+    }
+
+    public getLastUpdate(): Date {
+        return this.lastUpdate;
+    }
+
+    public setLastUpdate(value: Date): Bank {
+        this.lastUpdate = value;
+        return this;
     }
 
     public get SyncStatus(): string {
@@ -51,12 +69,30 @@ export class Bank implements IBank, IModel  {
         this.syncStatus = value;
     }
 
+    public getSyncStatus(): string {
+        return this.syncStatus;
+    }
+
+    public setSyncStatus(value: string): Bank {
+        this.syncStatus = value;
+        return this;
+    }
+
     public get SwiftBic(): string {
         return this.swiftBic;
     }
 
     public set SwiftBic(value: string) {
         this.swiftBic = value;
+    }
+
+    public getSwiftBic(): string {
+        return this.swiftBic;
+    }
+
+    public setSwiftBic(value: string): Bank {
+        this.swiftBic = value;
+        return this;
     }
 
     public get ApiObject(): any {
@@ -75,6 +111,15 @@ export class Bank implements IBank, IModel  {
         this.name = value;
     }
 
+    public getName(): string {
+        return this.name;
+    }
+
+    public setName(value: string): Bank {
+        this.name = value;
+        return this;
+    }
+
     public get Total(): number {
         return this.total;
     }
@@ -83,12 +128,30 @@ export class Bank implements IBank, IModel  {
         this.total = value;
     }
 
+    public getTotal(): number {
+        return this.total;
+    }
+
+    public setTotal(value: number): Bank {
+        this.total = value;
+        return this;
+    }
+
     public get Logo(): string {
         return this.logo;
     }
 
     public set Logo(value: string) {
         this.logo = value;
+    }
+
+    public getLogo(): string {
+        return this.logo;
+    }
+
+    public setLogo(value: string): Bank {
+        this.logo = value;
+        return this;
     }
 
     public get Key(): string {

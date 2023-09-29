@@ -47,6 +47,104 @@ export class Product implements IProduct, IModel {
         this.price = price || 0;
         this.pvp = pvp || 0;
     }
+    getCode(): IProductCode {
+        return this.code
+    }
+    setCode(value: IProductCode): IProduct {
+        this.code = value;
+        return this
+    }
+    getName(): string {
+        return this.name
+    }
+    setName(value: string): IProduct {
+        this.name = value;
+        return this
+    }
+    getCategory(): IProductCategory {
+        return this.category
+    }
+    setCategory(value: IProductCategory): IProduct {
+        this.category = value;
+        return this
+    }
+    getClass(): IProductClass {
+        return this.class
+    }
+    setClass(value: IProductClass): IProduct {
+        this.class = value;
+        return this
+    }
+    getType(): IProductType {
+        return this.type
+    }
+    setType(value: IProductType): IProduct {
+        this.type = value;
+        return this
+    }
+    getStatus(): IProductStatus {
+        return this.status
+    }
+    setStatus(value: IProductStatus): IProduct {
+        this.status = value;
+        return this
+    }
+    getTax(): ITax {
+        return this.tax
+    }
+    setTax(value: ITax): IProduct {
+        this.tax = value;
+        return this
+    }
+    getIRPF(): IIRPF {
+        return this.irpf
+    }
+    setIRPF(value: IIRPF): IProduct {
+        this.irpf = value;
+        return this
+    }
+    getBarCode(): string {
+        return this.barCode
+    }
+    setBarCode(value: string): IProduct {
+        this.barCode = value;
+        return this
+    }
+    getDescription(): string {
+        return this.description
+    }
+    setDescription(value: string): IProduct {
+        this.description = value;
+        return this
+    }
+    getCostPrice(): number {
+        return this.costPrice
+    }
+    setCostPrice(value: number): IProduct {
+        this.costPrice = value;
+        return this
+    }
+    getBenefit(): number {
+        return this.benefit
+    }
+    setBenefit(value: number): IProduct {
+        this.benefit = value;
+        return this
+    }
+    getPrice(): number {
+        return this.price
+    }
+    setPrice(value: number): IProduct {
+        this.price = value;
+        return this
+    }
+    getPvp(): number {
+        return this.pvp
+    }
+    setPvp(value: number): IProduct {
+        this.pvp = value;
+        return this
+    }
 
     public get ApiObject(): any {
         return this.apiObject;

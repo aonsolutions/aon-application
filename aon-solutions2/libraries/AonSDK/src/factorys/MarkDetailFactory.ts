@@ -4,7 +4,7 @@ import { ISingleObjectCrud, IMultipleObjectCrud } from "../interfaces/serviceInt
 import { MarkDetail, ApiMarkDetail, StorableMarkDetail } from "../models/MarkDetail";
 import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
-import { APIEnvironment } from "../utils/constants";
+import { APIEnvironment } from "../utils/Environment";
 
 export class MarkDetailFactory implements ISingleObjectCrudFactory<IMarkDetail>, IMultipleObjectCrudFactory<IMarkDetail> {
     createSingleObjectCrud(): ISingleObjectCrud<IMarkDetail> {

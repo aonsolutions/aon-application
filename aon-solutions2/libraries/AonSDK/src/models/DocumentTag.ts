@@ -3,7 +3,7 @@ import { ICollection, IFilter } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { KeyGenerator } from "../utils/KeyGenerator";
 import { ErrorResponse } from "../utils/Response";
-import { GET_MULTIPLE, GET_METHOD, CREATE_SINGLE, POST_METHOD, UPDATE_SINGLE } from "../utils/constants";
+import { GET_MULTIPLE, GET_METHOD, CREATE_SINGLE, POST_METHOD, UPDATE_SINGLE } from "../utils/Environment";
 
 export class DocumentTag implements IDocumentTag, IModel {
     private key: string;
@@ -38,6 +38,13 @@ export class DocumentTag implements IDocumentTag, IModel {
         this.name = name || '';
         this.key = KeyGenerator.generate(15);
         this.apiObject = {};
+    }
+    getName(): string {
+        return this.name;
+    }
+    setName(value: string): IDocumentTag {
+        this.name = value;
+        return this
     }
 
     getKey(): string {

@@ -31,6 +31,76 @@ export class Certificate implements ICertificate, IModel {
         this.isValid = isValid || false;
         this.key = documentUser || '';
     }
+    getName(): string {
+        return this.name
+    }
+    setName(value: string): ICertificate {
+        this.name = value;
+        return this
+    }
+    getRepresentationType(): string {
+        return this.representationType
+    }
+    setRepresentationType(value: string): ICertificate {
+        this.representationType = value;
+        return this
+    }
+    getExpeditionDate(): Date {
+        return this.expeditionDate
+    }
+    setExpeditionDate(value: Date): ICertificate {
+        this.expeditionDate = value;
+        return this
+    }
+    getExpirationDate(): Date {
+        return this.expirationDate
+    }
+    setExpirationDate(value: Date): ICertificate {
+        this.expirationDate = value;
+        return this
+    }
+    getAlias(): string {
+        return this.alias
+    }
+    setAlias(value: string): ICertificate {
+        this.alias = value;
+        return this
+    }
+    getType(): string {
+        return this.type
+    }
+    setType(value: string): ICertificate {
+        this.type = value;
+        return this
+    }
+    getTgss(): boolean {
+        return this.tgss
+    }
+    setTgss(value: boolean): ICertificate {
+        this.tgss = value;
+        return this
+    }
+    getSepe(): boolean {
+        return this.sepe
+    }
+    setSepe(value: boolean): ICertificate {
+        this.sepe = value;
+        return this
+    }
+    getAeat(): boolean {
+        return this.aeat
+    }
+    setAeat(value: boolean): ICertificate {
+        this.aeat = value;
+        return this
+    }
+    getDocumentUser(): string {
+        return this.documentUser
+    }
+    setDocumentUser(value: string): ICertificate {
+        this.documentUser = value;
+        return this
+    }
 
     public get ApiObject(): any {
         return this.apiObject;

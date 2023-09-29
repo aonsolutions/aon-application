@@ -1,7 +1,7 @@
-import { IModel } from "../interfaces/modelsInterfaces";
+import { IModel, ISimpleValue } from "../interfaces/modelsInterfaces";
 import { KeyGenerator } from "../utils/KeyGenerator";
 
-export class SimpleValue implements IModel{
+export class SimpleValue implements ISimpleValue, IModel{
     protected key: string;
     protected value: string;
     protected apiObject: any;
@@ -10,6 +10,13 @@ export class SimpleValue implements IModel{
         this.key = KeyGenerator.generate(15);
         this.value = value || '';
         this.apiObject = {};
+    }
+    getValue(): string {
+        return this.value
+    }
+    setValue(value: string): ISimpleValue {
+        this.value = value;
+        return this
     }
 
     public get ApiObject(): any {

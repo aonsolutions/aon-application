@@ -10,6 +10,13 @@ export class IRPF extends SimpleValue implements IIRPF, IModel{
         super(value);
         this.type = type || '';
     }
+    getType(): string {
+        return this.type
+    }
+    setType(value: string): IIRPF {
+        this.type = value;
+        return this
+    }
 
     public get Type() {
         return this.type;

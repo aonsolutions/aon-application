@@ -3,7 +3,7 @@ import { IAuthenticationManager } from "../interfaces/serviceInterfaces";
 import { StorableUser } from "../models/User";
 import { APIAuthenticationRepository, AuthenticationRepository } from "../repositorys/AuthenticationRepository";
 import { AuthenticationManager } from "../services/AuthenticationService";
-import { APIEnvironment } from "../utils/constants";
+import { APIEnvironment } from "../utils/Environment";
 
 export class AuthenticationFactory implements IAuthenticationManagerFactory {
     createAuthenticationManager(): IAuthenticationManager {

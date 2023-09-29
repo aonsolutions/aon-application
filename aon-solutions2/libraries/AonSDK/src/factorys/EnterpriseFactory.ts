@@ -6,7 +6,7 @@ import { ApiEnterpriseMultipleObjectCrudRepository, LocalEnterpriseSpecificMetho
 import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
 import { EnterpriseSpecificMethods } from "../services/EnterpriseService";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
-import { APIEnvironment } from "../utils/constants";
+import { APIEnvironment } from "../utils/Environment";
 
 export class EnterpriseFactory implements ISingleObjectCrudFactory<IEnterprise>, IMultipleObjectCrudFactory<IEnterprise> {
     createSingleObjectCrud(): ISingleObjectCrud<IEnterprise> {

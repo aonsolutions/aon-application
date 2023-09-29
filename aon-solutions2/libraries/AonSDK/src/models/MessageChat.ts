@@ -3,7 +3,7 @@ import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { KeyGenerator } from "../utils/KeyGenerator";
 import { ErrorResponse } from "../utils/Response";
-import { GET_MULTIPLE, GET_METHOD } from "../utils/constants";
+import { GET_MULTIPLE, GET_METHOD } from "../utils/Environment";
 
 export class MessageChat implements IMessageChat, IModel  {
     private id: string;
@@ -31,6 +31,41 @@ export class MessageChat implements IMessageChat, IModel  {
         this.date = date || new Date();
         this.type = type || '';
         this.key = this.id || '';
+    }
+    getIdMessage(): string {
+        return this.idMessage;
+    }
+    setIdMessage(value: string): IMessageChat {
+        this.idMessage = value;
+        return this
+    }
+    getName(): string {
+        return this.name;
+    }
+    setName(value: string): IMessageChat {
+        this.name = value;
+        return this
+    }
+    getDescription(): string {
+        return this.description;
+    }
+    setDescription(value: string): IMessageChat {
+        this.description = value;
+        return this
+    }
+    getDate(): Date {
+        return this.date;
+    }
+    setDate(value: Date): IMessageChat {
+        this.date = value;
+        return this
+    }
+    getType(): string {
+        return this.type;
+    }
+    setType(value: string): IMessageChat {
+        this.type = value;
+        return this
     }
 
     public get Id(): string {
@@ -137,14 +172,14 @@ export class ApiMessageChat extends MessageChat implements IApiModel {
 
     parseDataToReceive(data: any) {
         let messageChat = new MessageChat();
-        messageChat.ApiObject = data;
-        messageChat.Id = data.id
-        messageChat.IdMessage = data.task
-        messageChat.Key = data.id
-        messageChat.Name = data.task_holder.name
-        messageChat.Type = data.task_holder.id == localStorage.getItem('registry') ? 'send' : 'received';
-        messageChat.Description = data.comment
-        messageChat.Date = data.modification_date;
+        messageChat.ApiObject = data ? data : {};
+        messageChat.Id = data.id ? data.id : ''
+        messageChat.IdMessage = data.task ? data.task : ''
+        messageChat.Key = data.id ? data.id : ''
+        messageChat.Name = data.task_holder && data.task_holder.name ? data.task_holder.name : ''
+        messageChat.Type =  data.task_holder &&  data.task_holder.id &&data.task_holder.id == localStorage.getItem('registry') ? 'send' : 'received';
+        messageChat.Description = data.comment ? data.comment : ''
+        messageChat.Date = data.modification_date ? data.modification_date : new Date();
         return messageChat;
         throw new ErrorResponse('0199')
     }

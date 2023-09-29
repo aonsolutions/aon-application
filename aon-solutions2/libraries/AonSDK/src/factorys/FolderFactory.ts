@@ -5,7 +5,7 @@ import { Folder, ApiFolder, StorableFolder } from "../models/Folder";
 import { APIFolderMultipleObjectCrudRepository } from "../repositorys/FolderRepository";
 import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
-import { APIEnvironment } from "../utils/constants";
+import { APIEnvironment } from "../utils/Environment";
 
 export class FolderFactory implements ISingleObjectCrudFactory<IFolder>, IMultipleObjectCrudFactory<IFolder> {
     createSingleObjectCrud(): ISingleObjectCrud<IFolder> {

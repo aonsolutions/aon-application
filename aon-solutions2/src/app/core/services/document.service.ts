@@ -24,7 +24,6 @@ export class DocumentService extends CommonService {
   }
 
   async updateDocument(documents: IDocument | ICollection<IDocument>): Promise<IDocument | ICollection<IDocument>> {
-    console.log(typeof documents);
     return (await this.singleObjectCrud.updateElement(documents as IDocument)).result;
   }
 

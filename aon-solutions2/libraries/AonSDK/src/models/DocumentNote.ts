@@ -22,6 +22,20 @@ export class DocumentNote implements IDocumentNote, IModel  {
         this.path = path || '';
         this.key = path || '';
     }
+    getText(): string {
+        return this.text
+    }
+    setText(value: string): IDocumentNote {
+        this.text = value;
+        return this
+    }
+    getPath(): string {
+        return this.path
+    }
+    setPath(value: string): IDocumentNote {
+        this.path = value;
+        return this
+    }
 
     public get Text(): string {
         return this.text;

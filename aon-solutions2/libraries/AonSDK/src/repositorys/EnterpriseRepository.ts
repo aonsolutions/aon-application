@@ -3,8 +3,11 @@ import { IEnterpriseSpecificMethodsRepository } from "../interfaces/repositoryIn
 import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Enterprise, ApiEnterprise, StorableEnterprise } from "../models/Enterprise";
 import { RegistryEnterprise, StorableRegistryEnterprise } from "../models/RegistryEnterprise";
+import { Collection } from "../utils/Collection";
+import { BASE_URL, GET_MULTIPLE, GET_SINGLE } from "../utils/Environment";
 import { enterprises, registryEnterprises } from "../utils/GenerateFakeData";
-import { APIGenericMultipleObjectCrudRepository, GenericSingleObjectCrudRepository } from "./GenericRepository";
+import { ApiHttpRequest } from "../utils/Http";
+import { APIGenericMultipleObjectCrudRepository, APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository } from "./GenericRepository";
 
 export class ApiEnterpriseMultipleObjectCrudRepository extends APIGenericMultipleObjectCrudRepository<Enterprise> {
     constructor(){
@@ -12,7 +15,11 @@ export class ApiEnterpriseMultipleObjectCrudRepository extends APIGenericMultipl
     }
 
     async get(filter?: IFilter | undefined): Promise<ICollection<Enterprise>> {
-        let collection: ICollection<Enterprise> = await super.get(filter)
+        let collection: ICollection<Enterprise> = new Collection<Enterprise>();
+        let response = await ApiHttpRequest.get(BASE_URL + '/ms/api/company', {}, {})
+        response.forEach((element: any) => {
+            collection.add(this.apiModel.parseDataToReceive(element, GET_MULTIPLE, filter))
+        })
         collection.forEach((element: Enterprise) => {
             if(element.Key == ''){
                 collection.remove(element.getKey());
@@ -20,6 +27,18 @@ export class ApiEnterpriseMultipleObjectCrudRepository extends APIGenericMultipl
         })
         return collection;
     }
+}
+
+export class ApiEnterpriseSingleObjectCrudRepository extends APIGenericSingleObjectCrudRepository<Enterprise> {
+    constructor(){
+        super(new ApiEnterprise(), Enterprise);
+    }
+
+    async get(key: string, type?: string | undefined): Promise<Enterprise> {
+        let response: IEnterprise = await ApiHttpRequest.get('/ms/api/company/one', {}, {})    
+        return this.apiModel.parseDataToReceive(response, GET_SINGLE);
+    }
+    
 }
 
 export class LocalEnterpriseSpecificMethodsRepository implements IEnterpriseSpecificMethodsRepository {

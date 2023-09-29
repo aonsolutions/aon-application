@@ -39,6 +39,97 @@ export class Contact implements IContact, IModel {
         this.irpf = irpf || false;
         this.re = re || false;
     }
+    getName(): string {
+        return this.name
+    }
+    setName(value: string): IContact {
+        this.name = value;
+        return this
+    }
+    getComercialName(): string {
+        return this.comercialName
+    }
+    setComercialName(value: string): IContact {
+        this.comercialName = value;
+        return this
+    }
+    getCountry(): string {
+        return this.country
+    }
+    setCountry(value: string): IContact {
+        this.country = value;
+        return this
+    }
+    getDocument(): string {
+        return this.document
+    }
+    setDocument(value: string): IContact {
+        this.document = value;
+        return this
+    }
+    getAddress(): string {
+        return this.address
+    }
+    setAddress(value: string): IContact {
+        this.address = value;
+        return this
+    }
+    getEmail(): string {
+        return this.email
+    }
+    setEmail(value: string): IContact {
+        this.email = value;
+        return this
+    }
+    getPhone(): string {
+        return this.phone
+    }
+    setPhone(value: string): IContact {
+        this.phone = value;
+        return this
+    }
+    getWeb(): string {
+        return this.web
+    }
+    setWeb(value: string): IContact {
+        this.web = value;
+        return this
+    }
+    getBankAccount(): string {
+        return this.bankAccount
+    }
+    setBankAccount(value: string): IContact {
+        this.bankAccount = value;
+        return this
+    }
+    getPaymentMethod(): IPaymentMethod {
+        return this.paymentMethod
+    }
+    setPaymentMethod(value: IPaymentMethod): IContact {
+        this.paymentMethod = value;
+        return this
+    }
+    getTransactionType(): IInvoiceTransactionType {
+        return this.transactionType
+    }
+    setTransactionType(value: IInvoiceTransactionType): IContact {
+        this.transactionType = value;
+        return this
+    }
+    getIRPF(): boolean {
+        return this.irpf
+    }
+    setIRPF(value: boolean): IContact {
+        this.irpf = value;
+        return this
+    }
+    getRE(): boolean {
+        return this.re
+    }
+    setRE(value: boolean): IContact {
+        this.re = value;
+        return this
+    }
 
     public get ApiObject(): any {
         return this.apiObject;

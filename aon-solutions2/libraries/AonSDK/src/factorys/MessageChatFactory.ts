@@ -3,9 +3,9 @@ import { IMessageChat } from "../interfaces/modelsInterfaces";
 import { ISingleObjectCrud, IMultipleObjectCrud } from "../interfaces/serviceInterfaces";
 import { MessageChat, ApiMessageChat, StorableMessageChat } from "../models/MessageChat";
 import { GenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
-import { APIMessageChatSingleObjectCrudRepository } from "../repositorys/MessageChatRepository";
+import { APIMessageChatMultipleObjectCrudRepository, APIMessageChatSingleObjectCrudRepository } from "../repositorys/MessageChatRepository";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
-import { APIEnvironment } from "../utils/constants";
+import { APIEnvironment } from "../utils/Environment";
 
 export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat>, IMultipleObjectCrudFactory<IMessageChat> {
     createSingleObjectCrud(): ISingleObjectCrud<IMessageChat> {
@@ -19,7 +19,7 @@ export class MessageChatFactory implements ISingleObjectCrudFactory<IMessageChat
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessageChat> {
         return new GenericMultipleObjectCrud<MessageChat>(
             (APIEnvironment ?
-            new APIGenericMultipleObjectCrudRepository<MessageChat>(new ApiMessageChat(), MessageChat) :
+            new APIMessageChatMultipleObjectCrudRepository(new ApiMessageChat(), MessageChat) :
             new GenericMultipleObjectCrudRepository<MessageChat>(new StorableMessageChat(), MessageChat)
             ),
             MessageChat);

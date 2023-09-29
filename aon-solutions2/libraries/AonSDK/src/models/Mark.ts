@@ -3,7 +3,7 @@ import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { ApiHttpRequest } from "../utils/Http";
 import { KeyGenerator } from "../utils/KeyGenerator";
-import { GET_MULTIPLE, GET_METHOD } from "../utils/constants";
+import { GET_MULTIPLE, GET_METHOD } from "../utils/Environment";
 
 export class Mark implements IMark, IModel  {
     private key: string;
@@ -107,6 +107,62 @@ export class Mark implements IMark, IModel  {
         this.time = time || new Date();
         this.location = location || '';
         this.status = status || '';
+    }
+    getName(): string {
+        return this.name;
+    }
+    setName(value: string): IMark {
+        this.name = value;
+        return this;
+    }
+    getIdUser(): string {
+        return this.idUser;
+    }
+    setIdUser(value: string): IMark {
+        this.idUser = value;
+        return this;
+    }
+    getDate(): Date {
+        return this.date;
+    }
+    setDate(value: Date): IMark {
+        this.date = value;
+        return this;
+    }
+    getEntryDate(): Date {
+        return this.entryDate;
+    }
+    setEntryDate(value: Date): IMark {
+        this.entryDate = value;
+        return this;
+    }
+    getExitDate(): Date {
+        return this.exitDate;
+    }
+    setExitDate(value: Date): IMark {
+        this.exitDate = value;
+        return this;
+    }
+    getTime(): Date {
+        return this.time;
+    }
+    setTime(value: Date): IMark {
+        this.time = value;
+        return this;
+    }
+    getLocation() {
+        return this.location;
+    }
+    setLocation(value: any): IMark {
+        this.location = value;
+        return this;
+    }
+    getStatus(): string {
+        return this.status;
+    }
+    setStatus(value: string): IMark {
+        this.status = value;
+        return this;
     }
 
     getKey(): string {
@@ -336,7 +392,7 @@ export class ApiMark implements IApiModel {
                 active: true,
                 user: filter.fields?.get('idUser')
             }
-            return [this.http.makeURL('/ms/api/timecontrol/list-holder', params)];
+            return [ApiHttpRequest.makeURL('/ms/api/timecontrol/list-holder', params)];
         }
         if(currentMethod == GET_MULTIPLE){
             const params = {
@@ -345,7 +401,7 @@ export class ApiMark implements IApiModel {
                 endDate: '2023-09-06',
                 active: true
             }
-            return [this.http.makeURL('/ms/api/timecontrol/list', params)];
+            return [ApiHttpRequest.makeURL('/ms/api/timecontrol/list', params)];
         }
         throw new Error("Method not implemented.");
     }
