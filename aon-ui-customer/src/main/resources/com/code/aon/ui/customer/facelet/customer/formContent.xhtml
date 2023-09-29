@@ -23,6 +23,16 @@
 						action="target_form" />
 				</aon:div>
 			</aon:if>
+			
+			<aon:if test="#{domainSwitcher.sig}"> 
+				<aon:div id="BookingDiv" style="display: inline;">
+					<aon:commandLink id="gwt_booking_customer"
+						action="gwt_main_booking_customer"
+						title="Panel Contratación"
+						value="Panel Contratación" target="gwt">
+					</aon:commandLink>
+				</aon:div>
+			</aon:if>
 		</ui:define>
 	</ui:decorate>
 

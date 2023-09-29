@@ -186,17 +186,11 @@ public class TediEwokTest {
 	}
 	
 	private  void tediFinanceAssert(TediFinance finance, JSONObject json ) {
-		try {
-			assertEquals(finance.getDueDate(), TediJSONUtils.parseDate( json.optString(IConstants.DUE_DATE)));
-			assertEquals(finance.getAmount(), json.optDouble(IConstants.AMOUNT));
-			assertEquals(finance.getIban(), json.optString(IConstants.IBAN));
-			assertEquals(finance.getPayMethod(), json.optEnum(TediPayMethod.class, IConstants.PAY_METHOD));
-			assertEquals(finance.getPending(), json.optBoolean(IConstants.PENDING));
-		} catch (Throwable e) {
-			System.out.println(finance.getDueDate() );
-			System.out.println(TediJSONUtils.parseDate( json.optString(IConstants.DUE_DATE)) );
-			throw e;
-		}
+		assertEquals(finance.getDueDate(), TediJSONUtils.parseDate( json.optString(IConstants.DUE_DATE)));
+		assertEquals(finance.getAmount(), json.optDouble(IConstants.AMOUNT));
+		assertEquals(finance.getIban(), json.optString(IConstants.IBAN));
+		assertEquals(finance.getPayMethod(), json.optEnum(TediPayMethod.class, IConstants.PAY_METHOD));
+		assertEquals(finance.getPending(), json.optBoolean(IConstants.PENDING));
 	}
 	
 	@Test

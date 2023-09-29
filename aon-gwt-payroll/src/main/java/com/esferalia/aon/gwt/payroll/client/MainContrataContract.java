@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
-import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
@@ -29,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.cell.client.ActionCell;
@@ -466,7 +466,8 @@ public class MainContrataContract extends MainEntryPoint {
 		ssNumberColumn.setSortable(true);
 		ssNumberColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		employeeDataGrid.setColumnWidth(ssNumberColumn, 10, Unit.PCT);
-
+		
+		// Columns
 		TextColumn<EmployeeContractInfo> contractTypeColumn = new TextColumn<EmployeeContractInfo>() {
 			@Override
 			public String getValue(EmployeeContractInfo employeeContractInfo) {
@@ -476,7 +477,16 @@ public class MainContrataContract extends MainEntryPoint {
 					return "BECARIO";
 				return employeeContractInfo.getContractInfo().getContractType();
 			}
-
+			
+			@Override
+			public void render(Context context, EmployeeContractInfo employeeContractInfo, SafeHtmlBuilder sb) {
+				if (null != employeeContractInfo) {
+					if((byte) 3 == employeeContractInfo.getContractInfo().getSsRegimen()) sb.appendHtmlConstant("<div title=\"Reta\">RETA</div>");
+					else if("000".equals(employeeContractInfo.getContractInfo().getContractType())) sb.appendHtmlConstant("<div title=\"Becario\">BECARIO</div>");
+					else sb.appendHtmlConstant("<div title=\"" + employeeContractInfo.getContractInfo().getContractType() + " - " + new ContractType().getContractTypes().get(Integer.parseInt(employeeContractInfo.getContractInfo().getContractType())).getContractTypeDescription() + "\">" + employeeContractInfo.getContractInfo().getContractType() + "</div>");
+				} else
+					super.render(context, employeeContractInfo, sb);
+			}
 		};
 
 		contractTypeColumn.setSortable(true);

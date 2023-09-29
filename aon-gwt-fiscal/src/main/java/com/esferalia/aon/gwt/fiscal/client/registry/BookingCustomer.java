@@ -47,6 +47,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
@@ -61,6 +62,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class BookingCustomer extends HTMLPanel {
 	
@@ -824,12 +826,23 @@ public class BookingCustomer extends HTMLPanel {
 		customerTable.setWidget(newRow, 8, lastAccessLabel);
 		customerTable.setWidget(newRow, 9, nameLabel);
 		
-		AonTableButton syncBtn = new AonTableButton("Sincronizar", AON.CSS.aonIconCloudSync());
+		HTMLPanel buttonPanel = new HTMLPanel("");
+		buttonPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		AonTableButton syncBtn = new AonTableButton("Sincronizar", AON.CSS.aonIconSync());
 		syncBtn.addClickHandler(e -> {
 			syncCustomerDomains();
 		});
 		
-		customerTable.setWidget(newRow, 10, syncBtn);
+		AonTableButton unSyncBtn = new AonTableButton("Desincronizar", AON.CSS.aonIconSyncDisabled());
+		unSyncBtn.addClickHandler(e -> {
+			unSyncCustomerDomains();
+		});
+		
+		buttonPanel.add(syncBtn);
+		buttonPanel.add(unSyncBtn);
+		
+		customerTable.setWidget(newRow, 10, buttonPanel);
 		
 		if (newRow % 2 == 0) {
 			domainTypeLabel.addStyleName(AON.CSS.aonOddTableRow());
@@ -886,6 +899,24 @@ public class BookingCustomer extends HTMLPanel {
 			@Override
 			public void onAccept() {
 				syncDomains();
+			}
+		});
+	}
+	
+	private void unSyncCustomerDomains() {
+		AonDialog dialog = new AonDialog("Desincronizaci\u00f3n Dominios Cliente",
+				new HTML("Se va a proceder a desincronizar los dominios del cliente <b>" + this.customer.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la desincronizaci\u00f3n\u003f. Este proceso sera irreversible."));
+		
+		dialog.confirm(new AonAcceptDialogCallback() {
+
+			@Override
+			public void onCancel() {
+				// Nothing to do here
+			}
+
+			@Override
+			public void onAccept() {
+				unSyncDomains();
 			}
 		});
 	}
@@ -1167,6 +1198,8 @@ public class BookingCustomer extends HTMLPanel {
 		showBookingGrid();
 		
 		for(BookingCheck bookingCheck : bookingCheckListDB) {
+			List<Label> rowLabels = new ArrayList<>();
+			
 			int row = bookingGrid.insertRow(bookingGrid.getRowCount());
 			
 			Label productLabel = new Label(bookingCheck.getItem().getProduct().getName());
@@ -1203,6 +1236,20 @@ public class BookingCustomer extends HTMLPanel {
 			bookingGrid.setWidget(row, 4, quantityLabel);
 			bookingGrid.setWidget(row, 5, actionBtn);
 			
+			rowLabels.add(productLabel);
+			rowLabels.add(codeLabel);
+			rowLabels.add(feeLabel);
+			rowLabels.add(productStatusLabel);
+			rowLabels.add(quantityLabel);
+			
+			for(Label label : rowLabels) {
+				label.addMouseOverHandler(e -> addHighlightRow(bookingGrid, row));
+				label.addMouseOutHandler(e -> removeHighlightRow(bookingGrid, row));
+			}
+			
+			actionBtn.addMouseOverHandler(e -> addHighlightRow(bookingGrid, row));
+			actionBtn.addMouseOutHandler(e -> removeHighlightRow(bookingGrid, row));
+			
 			if (row % 2 == 0) {
 				productLabel.addStyleName(AON.CSS.aonOddTableRow());
 				codeLabel.addStyleName(AON.CSS.aonOddTableRow());
@@ -1224,6 +1271,8 @@ public class BookingCustomer extends HTMLPanel {
 			bookingGrid.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
 				
 			bookingGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
+			
+			
 		}
 
 	}
@@ -1385,7 +1434,8 @@ public class BookingCustomer extends HTMLPanel {
 			public void onSuccess(LinkedList<Fee> feesDB) {
 				if(feesDB.isEmpty()) showFeeMessage();
 				else {
-					feesDB.sort((o1, o2) -> o2.hasRItem().compareTo(o1.hasRItem()));
+					// Order by has booking associated
+					// feesDB.sort((o1, o2) -> o2.hasRItem().compareTo(o1.hasRItem()));
 					fillFeeGrid(feesDB);
 				}
 			}
@@ -1396,6 +1446,8 @@ public class BookingCustomer extends HTMLPanel {
 		showFeeGrid();
 		
 		for(Fee fee : feesDB) {
+			List<Label> rowLabels = new ArrayList<>();
+			
 			int row = feeGrid.insertRow(feeGrid.getRowCount());
 
 			Label productLabel = new Label(fee.getItem().getProduct().getName());
@@ -1410,8 +1462,8 @@ public class BookingCustomer extends HTMLPanel {
 			
 			Label periodicityLabel = new Label(getPeriodicityLabel(fee.getPeriod().getValue()));
 			Label quantityLabel = new Label(fee.getQuantity() == null ? "0" : fee.getQuantity().intValue() + "");
-			Label priceLabel = new Label(null == fee.getPrice() ? "0.0" : fee.getPrice().toString());
-			Label discountyLabel = new Label(AonStringUtils.isBlank(fee.getDiscountExpr()) ? "0.0" : fee.getDiscountExpr());
+			Label priceLabel = new Label(formatDouble(fee.getPrice()));
+			Label discountyLabel = new Label(formatDouble(fee.getDiscountExpr()));
 			Label startDateLabel = new Label(formatDate(fee.getStartDate()));
 			Label endDateLabel = new Label(formatDate(fee.getEndDate()));
 			Label billingDateLabel = new Label(formatBillingDate(fee.getBillingDate()));
@@ -1441,6 +1493,26 @@ public class BookingCustomer extends HTMLPanel {
 			feeGrid.setWidget(row, 9, endDateLabel);
 			feeGrid.setWidget(row, 10, billingDateLabel);
 			feeGrid.setWidget(row, 11, actionBtn);
+			
+			rowLabels.add(productLabel);
+			rowLabels.add(codeLabel);
+			rowLabels.add(productStatusLabel);
+			rowLabels.add(ritemLabel);
+			rowLabels.add(periodicityLabel);
+			rowLabels.add(quantityLabel);
+			rowLabels.add(priceLabel);
+			rowLabels.add(discountyLabel);
+			rowLabels.add(startDateLabel);
+			rowLabels.add(endDateLabel);
+			rowLabels.add(billingDateLabel);
+			
+			for(Label label : rowLabels) {
+				label.addMouseOverHandler(e -> addHighlightRow(feeGrid, row));
+				label.addMouseOutHandler(e -> removeHighlightRow(feeGrid, row));
+			}
+			
+			actionBtn.addMouseOverHandler(e -> addHighlightRow(feeGrid, row));
+			actionBtn.addMouseOutHandler(e -> removeHighlightRow(feeGrid, row));
 			
 			if (row % 2 == 0) {
 				productLabel.addStyleName(AON.CSS.aonOddTableRow());
@@ -1505,6 +1577,16 @@ public class BookingCustomer extends HTMLPanel {
 	private String formatBillingDate(Date date) {
 		if(null == date) return "";
 		return formatBillingDate.format(date);
+	}
+	
+	private String formatDouble(Double number) {
+		if(null == number) return "0.00";
+		return NumberFormat.getFormat("0.00").format(number);
+	}
+	
+	private String formatDouble(String number) {
+		if(AonStringUtils.isBlank(number)) return "0.00";
+		return NumberFormat.getFormat("0.00").format(Double.parseDouble(number));
 	}
 
 	private String getPeriodicityLabel(Integer periodicityIdx) {
@@ -1736,6 +1818,10 @@ public class BookingCustomer extends HTMLPanel {
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
 		
+		requestBuilder.setHeader("domain_name", options.getDomainName());
+		requestBuilder.setHeader("domain_login", options.getUser());
+		requestBuilder.setHeader("domain_id", String.valueOf(options.getDomain()));
+		
 		JSONObject body = new JSONObject();
 		body.put("customer", new JSONNumber(customer.getId()));
 		
@@ -1762,6 +1848,55 @@ public class BookingCustomer extends HTMLPanel {
   		           		     }
   		           		};
   		           		logTimer.schedule(4500);
+  		           		
+		            } else {
+		            	AonMessagePanel.showError(messagePanel, response.getText());
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        }
+		    });
+		} catch (RequestException e) {
+			AonMessagePanel.showError(messagePanel, e.getMessage());
+		}
+	}
+	
+	private void unSyncDomains() {
+		AonMessagePanel.showLoading(messagePanel, "Desincronizando contrataci\u00f3n para el cliente " + customer.getName() + " ...");
+		
+		// Create the base URL
+		String baseUrl = "/ms/api/domain/booking/";
+
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost(Window.Location.getHost()); 
+		urlBuilder.setPath(baseUrl);
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.DELETE, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		JSONObject body = new JSONObject();
+		body.put("customer", new JSONNumber(customer.getId()));
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+		            	
+		            	AonMessagePanel.showSuccess(messagePanel, "La desincronizaci\u00f3n del cliente " + customer.getName() + " se ha realizado correctamente");
+	            		
+		            	Timer timer = new Timer() {
+		           		     @Override
+		           		     public void run() {
+		           		    	setBookingCustomer(customer, customerDomains);;
+		           		     }
+		           		};
+		           		timer.schedule(2500);
   		           		
 		            } else {
 		            	AonMessagePanel.showError(messagePanel, response.getText());
