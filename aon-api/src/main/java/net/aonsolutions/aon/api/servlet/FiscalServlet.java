@@ -306,7 +306,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 							// Finalizar el modelo 
 							// FALTA - NO SE SI ES NECESARIO FINALIZAR EL MODELO O PRESENTARLO DIRECTAMENTE, EL 
 							// TEMA ESTA EN QUE SI HAY ALGUN ERROR EN LA PRESENTACION EL MODELO SE QUEDE COMO FINALIZADO O COMO ENVIO A CLIENTE ??							 
-							Mod303DAO.markAsFinished(ctx, model);
+							//Mod303DAO.markAsFinished(ctx, model);
 							// FALTA - Presentación automática del modelo 
 							if (presModelAuto == 1) {
 								AEATParams params = new AEATParams()
@@ -394,6 +394,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 			HttpResponse<byte[]> response = httpClient
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
 			
+			// FALTA - IGUAL HABRIA QUE DEVOLVER EL ERROR AEAT CON EL BODY EN EL MENSAJE Y ASI QUE SE MUESTRE PARA VER SI SON ERRORES DE LA AEAT O INDEFINIDOS
+			// SE PODRIA CREAR APIAEATERRORES PARA CUANDO DEVUELVEN ERRORES Y APIAEATEXCEPTION PARA EL RESTO DE EXCEPCIONES
 			if (response.statusCode() == 302) {
 				//ModelAdmonUtils.giveRedirectBack( resp,response,httpClient );
 				throw new AonApiException("ERROR 302");				
@@ -402,12 +404,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
 					if (!manageJSONContent(aeatParams, model, response.body())) {						
 						//throw new AonApiException("ERROR EN LA PRESENTACIÓN DEL MODELO");
-						throw new AonApiException("ERROR " + new String(response.body()));
-						
+//						throw new AonApiException("ERROR AEAT " + new String(response.body()));
+						throw new AonApiAeatException(new String(response.body()));
 					}
 				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
 					//ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
-					throw new AonApiException("ERROR: " + response.body());
+					throw new AonApiException("ERROR AEAT " + response.body());
 				} else {	
 					//ModelAdmonUtils.giveExceptionBack(resp,"No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
 					throw new AonApiException("ERROR: No se ha encontrado una respuesta válida por parte de la Agencia Tributaria." + response.body());
@@ -590,11 +592,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 	    keyStore.load(key, params.getPass().toCharArray());
 	    
-	    
-	    
-	    
-	    
-	    // OBTENER DATOS DEL CERTIFICADO
+	    // FALTA - OBTENER DATOS DEL CERTIFICADO
 	    
 //	    String alias = "";
 //	    Enumeration<String> e = keyStore.aliases();   //Obtengo los alias de los certificados
@@ -683,7 +681,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 		AEATResponse response = AEATJson.toJSON(body); 
 		// FALTA - VAMOS A GRABAR EL RESULTADO AUNQUE SEA ERRONEO PARA QUE SE PUEDA VER POSTERIORMENTE
 		// FALTARIA EN EL DAO NO MARCAR EL MODELO COMO ENVIADO SI HA HABIDO ERRORES
-		manageRightResponse(aeatParams, fm, new String(body));
+		// Si la presentacion es correcta, grabar la respuesta y el PDF y marcar el modelo como presentado
+		if (response.isCorrect())
+			manageRightResponse(aeatParams, fm, new String(body));
 		return response.isCorrect();
 //		if (response.isCorrect()) {
 //			manageRightResponse(aeatParams,fm,new String(body));
@@ -782,22 +782,15 @@ public class FiscalServlet extends AonApiHttpServlet{
 		
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	class AonApiAeatException extends AonApiException {
 
-	
+	    public AonApiAeatException() {
+	        super();
+	    }
+	    
+	    public AonApiAeatException(String message) {
+	        super(message);
+	    }
+	}
 	
 }
-
