@@ -230,6 +230,7 @@ public enum AonError implements Serializable{
 	,EMPTY_TYPE("El valor del tipo de la pregunta est\u00E1 vac\u00EDo")
 	,INVALID_SIZE_QUESTION_TEXT("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	,INVALID_SIZE_ALIAS("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
+	,REPEATED_ALIAS("No puede haber dos preguntas con el mismo alias")
 	;
 	
 	

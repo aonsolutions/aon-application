@@ -1,10 +1,15 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
+import org.jooq.Record;
+
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.product.Brand;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -60,6 +65,13 @@ public class QuestionValidation {
 		}
 	};
 	
+	// the alias is not repeated
+	private static final BiConsumer<AONContext, Question> REPEATED_ALIAS = (ctx, question) -> {
+		if (checkAlias(ctx, question.getAlias())) {
+			throw new AonCoreException(AonError.REPEATED_ALIAS.getMessage());
+		}
+	};
+	
 	public static void validate(AONContext ctx, Question question) throws AonCoreException{
 		NULL.andThen(EMPTY)
 		.andThen(EMPTY_DOMAIN)
@@ -67,6 +79,17 @@ public class QuestionValidation {
 		.andThen(EMPTY_TYPE)
 		.andThen(INVALID_SIZE_QUESTION_TEXT)
 		.andThen(INVALID_SIZE_ALIAS)
+		.andThen(REPEATED_ALIAS)
 		.accept(ctx, question);
 	}
+	
+	public static Boolean checkAlias(AONContext ctx, String alias) {
+		List<Record> questionRecords = ctx.getDslContext().select().from(QUESTION)
+				.where(QUESTION.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+				.and(QUESTION.ALIAS.eq(alias))
+				.fetch();
+		
+		return !questionRecords.isEmpty();
+	}
+
 }

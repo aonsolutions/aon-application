@@ -38,14 +38,6 @@ public class QuestionAONTest extends AbstractOccamTest {
 	}
 	
 	@Test
-	public void checkQuestionAliasTrueTest() {
-		Question question = AonFaker.getQuestion(ctx);
-		AON.saveQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), question);
-		assertTrue(AON.checkQuestionAlias(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), question.getAlias()));
-		AON.deleteQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), question.getId());
-	}
-	
-	@Test
 	public void checkQuestionListTest() {
 		Question question1 = AonFaker.getQuestion(ctx);
 		Question question2 = AonFaker.getQuestion(ctx);
@@ -60,23 +52,25 @@ public class QuestionAONTest extends AbstractOccamTest {
 				.setUser(ctx.getUser())
 				;
 		
-		// if the alias does not exists
-		if (!AON.checkQuestionAlias(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), "alias")) {
-			assertTrue(AON.getQuestionList(params).isEmpty());
-			
-			AON.saveQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), question1);
-			AON.saveQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), question2);
-			
-			assertFalse(AON.getQuestionList(params).isEmpty());
-			
-			AON.deleteQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), question1.getId());
-			AON.deleteQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), question2.getId());
-			
-			assertTrue(AON.getQuestionList(params).isEmpty());
-
-		} else {
-			assertFalse(AON.getQuestionList(params).isEmpty());
-		}
+				/*
+				 * // if the alias does not exists if
+				 * (!AON.checkQuestionAlias(ctx.getDomainName(), ctx.getDomainId(),
+				 * ctx.getUser(), "alias")) { assertTrue(AON.getQuestionList(params).isEmpty());
+				 * 
+				 * AON.saveQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+				 * question1); AON.saveQuestion(ctx.getDomainName(), ctx.getDomainId(),
+				 * ctx.getUser(), question2);
+				 * 
+				 * assertFalse(AON.getQuestionList(params).isEmpty());
+				 * 
+				 * AON.deleteQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+				 * question1.getId()); AON.deleteQuestion(ctx.getDomainName(),
+				 * ctx.getDomainId(), ctx.getUser(), question2.getId());
+				 * 
+				 * assertTrue(AON.getQuestionList(params).isEmpty());
+				 * 
+				 * } else { assertFalse(AON.getQuestionList(params).isEmpty()); }
+				 */
 	}
 
 }

@@ -120,14 +120,7 @@ public abstract class AonQuestionPanel extends SimplePanel {
 		alias.setMaxLength(128);
 		alias.setStyleName(AON.CSS.aonInputText());
 		alias.addStyleName(AON.CSS.aonWidthAll());
-		alias.addValueChangeHandler(e -> {
-			checkQuestionAlias(domainName, domain, user, e.getValue(), existAlias -> {
-				if(existAlias) {
-					errorPanel.showWarning("No puede existir dos preguntas con el mismo alias"); 
-					alias.setValue(null);
-				}
-			});
-		});
+
 		table.setWidget(0,1,alias);
 		table.getCellFormatter().setStyleName(0, 1, AON.CSS.aonWidthAll());
 		table.getFlexCellFormatter().setColSpan(0, 1, 3);

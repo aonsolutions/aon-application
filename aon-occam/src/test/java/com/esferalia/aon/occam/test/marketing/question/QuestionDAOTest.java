@@ -1,8 +1,6 @@
 package com.esferalia.aon.occam.test.marketing.question;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -15,14 +13,13 @@ import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
-import com.esferalia.aon.occam.api.model.QuestionValue;
 import com.esferalia.aon.occam.impl.jooq.dao.QuestionDAO;
+import com.esferalia.aon.occam.impl.jooq.validation.QuestionValidation;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.github.javafaker.Faker;
 
 public class QuestionDAOTest extends AbstractOccamTest {
 	
@@ -61,7 +58,7 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	}
 	
 	@Test
-	public void saveEmptyDomainQuestionTest() {
+	public void saveNullDomainQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
 		question.setDomain(null);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
@@ -103,30 +100,20 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	}
 	
 	@Test
-	public void checkAliasText() {
-		Question question = AonFaker.getQuestion(ctx);
-		String alias = "alias";
-		question.setAlias(alias);
-		QuestionDAO.insert(ctx, question);
+	public void saveRepeatedAliasQuestionTest() {
+		Question question1 = AonFaker.getQuestion(ctx);
+		Question question2 = AonFaker.getQuestion(ctx);
 		
-		assertTrue(QuestionDAO.checkAlias(ctx, alias));
+		question1.setAlias("alias");
+		question2.setAlias("alias");
 		
-		QuestionDAO.delete(ctx, question.getId());
-	}
-	
-	@Test
-	public void checkAliasFalseText() {
-		String alias = "alias";
-		QuestionParams questionParams = new QuestionParams();
-		questionParams.setAlias(alias);
+		QuestionDAO.save(ctx, question1);
 		
-		List<Question> questionList = QuestionDAO.getList(ctx, questionParams);
+		AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question2));
+		assertEquals(AonError.REPEATED_ALIAS.getMessage(),e.getMessage());
 		
-		if (questionList.isEmpty()) {
-			assertFalse(QuestionDAO.checkAlias(ctx, alias));
-		} else {
-			assertTrue(QuestionDAO.checkAlias(ctx, alias));
-		}
+		QuestionDAO.delete(ctx, question1.getId());
+		QuestionDAO.delete(ctx, question2.getId());
 	}
 	
 	@Test
@@ -134,23 +121,20 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		Question question1 = AonFaker.getQuestion(ctx);
 		Question question2 = AonFaker.getQuestion(ctx);
 		
-		String alias = "alias in common";
+		question1.setActive(true);
+		question2.setActive(false);
 		
-		question1.setAlias(alias);
-		question2.setAlias(alias);
-		
-		QuestionParams questionParams = new QuestionParams();
-		questionParams.setAlias(alias);
-		
-		// after inserting the questionList
 		QuestionDAO.insert(ctx, question1);
 		QuestionDAO.insert(ctx, question2);
 		
+		QuestionParams questionParams = new QuestionParams();
+		questionParams.setActive((byte) 1);
+		
 		List<Question> actual = QuestionDAO.getList(ctx, questionParams);
 		
-		// check that all the elements has that alias
+		// check that all the elements has that param
 		for (Question question : actual) {
-			assertEquals(question.getAlias(),alias);
+			assertTrue(question.isActive());
 		}
 
 		QuestionDAO.delete(ctx, question1.getId());
@@ -163,8 +147,12 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		QuestionParams questionParams = new QuestionParams();
 		questionParams.setAlias(alias);
 				
-		if (!QuestionDAO.checkAlias(ctx, alias)) {
-			assertEquals(QuestionDAO.getList(ctx, questionParams), new LinkedList<>());
+		if (!QuestionValidation.checkAlias(ctx, alias)) {
+			assertTrue(QuestionDAO.getList(ctx, questionParams).isEmpty());
+		} else {
+			for (Question question : QuestionDAO.getList(ctx, questionParams)) {
+				assertEquals(alias,question.getAlias());
+			}
 		}
 	}
 }

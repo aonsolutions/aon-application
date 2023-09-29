@@ -49,14 +49,6 @@ public class QuestionDAO {
 		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(QUESTION.ALIAS);}
 	}
 	
-	public static Boolean checkAlias(CloseableAONContext ctx, String alias) {
-		List<Record> questionRecords = ctx.getDslContext().select().from(QUESTION)
-				.where(QUESTION.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-				.and(QUESTION.ALIAS.eq(alias))
-				.fetch();
-		
-		return !questionRecords.isEmpty();
-	}
 
 	public static Question get(CloseableAONContext ctx, Integer id) {
 		Record questionRecord = ctx.getDslContext().select().from(QUESTION)
