@@ -20,29 +20,37 @@
             [shape]="showCreateBank ? 'check' : 'add'"
             class="orange"
             id="add-button"
-            (click)="toggleCreateBank()"
+            (click)= "showCreateBank ? createBank() : toggleCreateBank()"
+
           ></app-icon>
         </div>
-        <div class="createBank" *ngIf="showCreateBank">
-          <app-input
-            [type]="'text'"
-            [label]="'IBAN'"
-            [placeholder]="'IBAN'"
-          ></app-input>
+        <ng-container *ngIf="showCreateBank">
+          <div class="createBank">
+            <app-input
+              (inputValue)="newBankIban = $event"
+              [type]="'text'"
+              [label]="'IBAN'"
+              [placeholder]="'IBAN'"
+              [value]="newBankIban"
+            ></app-input>
 
-          <app-input
-            [type]="'text'"
-            [label]="'TAX_PANEL.DESCRIPTION' | translate"
-            [placeholder]="'TAX_PANEL.DESCRIPTION' | translate"
-          ></app-input>
+            <app-input
+              (inputValue)="newBankDescription = $event"
+              [type]="'text'"
+              [label]="'TAX_PANEL.DESCRIPTION' | translate"
+              [placeholder]="'TAX_PANEL.DESCRIPTION' | translate"
+              [value]="newBankDescription"
+            ></app-input>
 
-          <app-input
-            [type]="'text'"
-            [label]="'BIC SWIFT'"
-            [placeholder]="'BIC SWIFT'"
-          ></app-input>
-        </div>
-
+            <app-input
+              (inputValue)="newBankBic = $event"
+              [type]="'text'"
+              [label]="'BIC SWIFT'"
+              [placeholder]="'BIC SWIFT'"
+              [value]="newBankBic"
+            ></app-input>
+          </div>
+        </ng-container>
         <app-input
           [type]="'select'"
           [label]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"

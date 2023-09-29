@@ -1,5 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/aon';
+import {
+  CollectionFactory,
+  ErrorResponse,
+  IBank,
+  ICollection,
+} from 'libraries/AonSDK/aon';
 import { BehaviorSubject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BankService } from 'src/app/core/services/bank.service';
@@ -14,10 +19,13 @@ export class ModalPaymentComponent implements OnInit {
   showText: boolean = false;
   showCreateBank: boolean = false;
   showConfirmation: boolean = false;
-  public showBanksList: boolean = false;
+  showBanksList: boolean = false;
   banksList: any[] = [];
-  selectedBank: any = '';
+  selectedBank: string = '';
   isCreateBankOpen: boolean = false;
+  newBankDescription: string = '';
+  newBankIban: string = '';
+  newBankBic: string = '';
 
   public collectionFactory = new CollectionFactory();
   banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
@@ -63,5 +71,47 @@ export class ModalPaymentComponent implements OnInit {
 
   selectBank(event: any) {}
 
-  getValue($event: any) {}
+  async createBank() {
+
+      // Elimina espacios en blanco alrededor de los valores de entrada
+  const trimmedDescription = this.newBankDescription.trim();
+  const trimmedIban = this.newBankIban.trim();
+  const trimmedBic = this.newBankBic.trim();
+
+  // Verifica si alguno de los campos está vacío después de quitar los espacios en blanco
+  if (!trimmedDescription || !trimmedIban || !trimmedBic) {
+    // Si al menos uno de los campos está vacío, no envíes el mensaje
+    // Puedes mostrar un mensaje de error o realizar alguna otra acción aquí
+    console.log('Uno o más campos están vacíos. No se enviará el mensaje.');
+    return;
+  }
+
+    const newBank: IBank = {
+      Name: this.newBankDescription,
+      Total: 0,
+      Logo: '',
+      SwiftBic: this.newBankBic,
+      Iban: this.newBankIban,
+      LastUpdate: new Date(),
+      SyncStatus: '',
+      getKey: () => this.newBankIban,
+      getFilterableFields: () => new Map(),
+      getSortableFields: () => new Map(),
+    };
+
+    try {
+      //  Crear el banco
+      const createdBank = await this.bankService.createBank(newBank);
+
+      // Después de enviar el mensaje, restablece los valores de los campos
+      this.newBankDescription = '';
+      this.newBankIban = '';
+      this.newBankBic = '';
+
+      // Cierra el diálogo modal después de enviar el mensaje si es necesario
+      // this.dialogRef.close();
+    } catch (error) {
+      throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
+    }
+  }
 }
