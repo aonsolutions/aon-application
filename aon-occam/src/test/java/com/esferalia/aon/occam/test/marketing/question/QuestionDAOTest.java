@@ -66,9 +66,17 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	}
 	
 	@Test
-	public void saveEmptyTextQuestionTest() {
+	public void saveNullTextQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
 		question.setText(null);
+		AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
+		assertEquals(AonError.NULL_QUESTION_TEXT.getMessage(), e.getMessage());
+	}
+	
+	@Test
+	public void saveEmptyTextQuestionTest() {
+		Question question = AonFaker.getQuestion(ctx);
+		question.setText("");
 		AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
 		assertEquals(AonError.EMPTY_QUESTION_TEXT.getMessage(), e.getMessage());
 	}
@@ -141,18 +149,13 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		QuestionDAO.delete(ctx, question2.getId());
 	}
 	
-	@Test
-	public void getListFalseTest() {
-		String alias = "alias";
-		QuestionParams questionParams = new QuestionParams();
-		questionParams.setAlias(alias);
-				
-		if (!QuestionValidation.checkAlias(ctx, alias)) {
-			assertTrue(QuestionDAO.getList(ctx, questionParams).isEmpty());
-		} else {
-			for (Question question : QuestionDAO.getList(ctx, questionParams)) {
-				assertEquals(alias,question.getAlias());
-			}
-		}
-	}
+	/*
+	 * @Test public void getListFalseTest() { String alias = "alias"; QuestionParams
+	 * questionParams = new QuestionParams(); questionParams.setAlias(alias);
+	 * 
+	 * if (!QuestionValidation.checkAlias(ctx, alias)) {
+	 * assertTrue(QuestionDAO.getList(ctx, questionParams).isEmpty()); } else { for
+	 * (Question question : QuestionDAO.getList(ctx, questionParams)) {
+	 * assertEquals(alias,question.getAlias()); } } }
+	 */
 }

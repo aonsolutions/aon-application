@@ -181,6 +181,7 @@ public abstract class AonQuestionPanel extends SimplePanel {
     	okButton.setStyleName(AON.CSS.aonOkButton());
     	okButton.setText( AON.MSG.accept());
     	okButton.addKeyUpHandler( keyUpHandler);
+    	
     	okButton.addClickHandler(new ClickHandler() {
 			
 			@Override

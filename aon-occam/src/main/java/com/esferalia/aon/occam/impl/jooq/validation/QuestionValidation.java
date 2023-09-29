@@ -3,7 +3,9 @@ package com.esferalia.aon.occam.impl.jooq.validation;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -12,6 +14,7 @@ import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import static com.esferalia.aon.jooq.tables.Question.QUESTION;
 
@@ -39,16 +42,22 @@ public class QuestionValidation {
 			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 	};
 	
+	// the question_text is null (not_null)
+	private static final BiConsumer<AONContext, Question> NULL_QUESTION_TEXT = (ctx, question) -> {
+		if (question.getText() == null)
+			throw new AonCoreException(AonError.NULL_QUESTION_TEXT.getMessage());
+	};
+	
 	// the question_text is empty (not_null)
 	private static final BiConsumer<AONContext, Question> EMPTY_QUESTION_TEXT = (ctx, question) -> {
-		if (question.getText() == null)
+		if (question.getText().isEmpty())
 			throw new AonCoreException(AonError.EMPTY_QUESTION_TEXT.getMessage());
 	};
 	
-	// the type is empty (not_null)
-	private static final BiConsumer<AONContext, Question> EMPTY_TYPE = (ctx, question) -> {
+	// the type is null (not_null)
+	private static final BiConsumer<AONContext, Question> NULL_TYPE = (ctx, question) -> {
 		if (question.getType() == null)
-			throw new AonCoreException(AonError.EMPTY_TYPE.getMessage());
+			throw new AonCoreException(AonError.NULL_TYPE.getMessage());
 	};
 	
 	// the size of question_text is valid
@@ -67,7 +76,7 @@ public class QuestionValidation {
 	
 	// the alias is not repeated
 	private static final BiConsumer<AONContext, Question> REPEATED_ALIAS = (ctx, question) -> {
-		if (checkAlias(ctx, question.getAlias())) {
+		if (AonStringUtils.isNotBlank(question.getAlias()) && checkAlias(ctx, question)) {
 			throw new AonCoreException(AonError.REPEATED_ALIAS.getMessage());
 		}
 	};
@@ -76,19 +85,22 @@ public class QuestionValidation {
 		NULL.andThen(EMPTY)
 		.andThen(EMPTY_DOMAIN)
 		.andThen(EMPTY_QUESTION_TEXT)
-		.andThen(EMPTY_TYPE)
+		.andThen(NULL_QUESTION_TEXT)
+		.andThen(NULL_TYPE)
 		.andThen(INVALID_SIZE_QUESTION_TEXT)
 		.andThen(INVALID_SIZE_ALIAS)
 		.andThen(REPEATED_ALIAS)
 		.accept(ctx, question);
 	}
 	
-	public static Boolean checkAlias(AONContext ctx, String alias) {
+	public static boolean checkAlias(AONContext ctx, Question question) {
+		Condition condition = question.getId() == null ? DSL.trueCondition() : QUESTION.ID.ne(question.getId());
 		List<Record> questionRecords = ctx.getDslContext().select().from(QUESTION)
-				.where(QUESTION.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-				.and(QUESTION.ALIAS.eq(alias))
-				.fetch();
-		
+			.where(QUESTION.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			.and(QUESTION.ALIAS.eq(question.getAlias()))
+		 	.and(condition)
+			.fetch();
+			
 		return !questionRecords.isEmpty();
 	}
 
