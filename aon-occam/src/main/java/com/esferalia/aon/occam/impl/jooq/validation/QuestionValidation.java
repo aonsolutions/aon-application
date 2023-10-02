@@ -77,7 +77,7 @@ public class QuestionValidation {
 	 * Throws an exception if the size of the question_text is invalid
 	 */
 	private static final BiConsumer<AONContext, Question> INVALID_SIZE_QUESTION_TEXT = (ctx, question) -> {
-		if (question != null && question.getText() != null && question.getText().length() > QUESTION.QUESTION_TEXT.getDataType().length())
+		if (question != null && AonStringUtils.length(question.getText()) > QUESTION.QUESTION_TEXT.getDataType().length())
 			throw new AonCoreException(AonError.INVALID_SIZE_QUESTION_TEXT.getMessage());
 	};
 	
@@ -85,9 +85,8 @@ public class QuestionValidation {
 	 * Throws an exception if the size of the alias is invalid
 	 */
 	private static final BiConsumer<AONContext, Question> INVALID_SIZE_ALIAS = (ctx, question) -> {
-		if (question != null && question.getAlias() != null) {
-			if (question.getAlias().length() > QUESTION.ALIAS.getDataType().length())
-				throw new AonCoreException(AonError.INVALID_SIZE_ALIAS.getMessage());
+		if (question != null && AonStringUtils.length(question.getAlias()) > QUESTION.ALIAS.getDataType().length()) {
+			throw new AonCoreException(AonError.INVALID_SIZE_ALIAS.getMessage());
 		}
 	};
 	
