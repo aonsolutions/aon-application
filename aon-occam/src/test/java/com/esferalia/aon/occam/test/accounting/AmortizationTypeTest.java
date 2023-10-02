@@ -23,7 +23,6 @@ public class AmortizationTypeTest extends AbstractOccamTest {
 		AonCoreException e =
 		assertThrows(AonCoreException.class, () -> AmortizationTypeDAO.delete(ctx, null));
 		assertEquals(AonError.AMORTIZATION_TYPE_NULL.getMessage(), e.getMessage());
-
 	}
 
 	/**
@@ -71,8 +70,7 @@ public class AmortizationTypeTest extends AbstractOccamTest {
 				() -> AmortizationTypeDAO.save(ctx, amortizationType));
 		assertEquals(AonError.INVALID_LENGTH.getMessage(), e.getMessage());	
 	}
-
-
+	
 	@Test
 	public void saveAccumulatedAccountLengthTest() {
 		AmortizationType amortizationType = AonFaker.getAmortizationType(ctx);

@@ -61,8 +61,8 @@ public class AmortizationTypeDAO {
 	}
 	
 	public static List<AmortizationType> getList(AONContext ctx, AmortizationTypeParams params) {
-		Condition condition = createAmortizationTypeCondition(params);
 		AmortizationTypeValidation.validateParams(params, ctx);
+		Condition condition = createAmortizationTypeCondition(params);
 		return ctx.getDslContext()
 				.select().from(AMORTIZATION_TYPE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(AMORTIZATION_TYPE.DOMAIN))

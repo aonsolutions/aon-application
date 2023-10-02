@@ -65,6 +65,12 @@ public class AmortizationTypeValidation {
 		}
 	};
 	
+	private static final BiConsumer<AmortizationType, AONContext> INCORRECT_PERCENTAGE_DATA = (amortizationType, ctx) ->{
+		if (amortizationType.getPercentage() == null) {
+			throw new AonCoreException(AonError.AMORTIZATION_TYPE_NULL_PERCENTAGE.getMessage());
+		}
+	};
+	
 	
 	
 	private static final BiConsumer<AmortizationType, AONContext>AMORTIZATION_TYPE_INVALID_LENGTH = (amortizationType, ctx) -> {
@@ -91,6 +97,7 @@ public class AmortizationTypeValidation {
 		andThen(AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT). 
 		andThen(AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT).
 		andThen(AMORTIZATION_TYPE_INVALID_LENGTH).
+		andThen(INCORRECT_PERCENTAGE_DATA).
 		accept(amortizationType, ctx);
 	}
 	
