@@ -20,10 +20,6 @@ export const getEmployee = (data) => get(`${API_URL}/comunica/get-employee`, dat
 
 export const getRlce = (data) => get(`${API_URL}/comunica/rlce`, data);
 
-export const getArtistRegimen = (data) => get(`${API_URL}/comunica/artist`, data);
-
-export const getUnemployedStatus = (data) => get(`${API_URL}/comunica/unemployed`, data);
-
 export const getOccupation = (data) => get(`${API_URL}/comunica/occupation`, data);
 
 export const getQuoteGroup = (data) => get(`${API_URL}/comunica/quote-group`, data);

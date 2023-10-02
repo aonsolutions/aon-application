@@ -4,8 +4,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
-import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
-
 
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -16,7 +14,6 @@ import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 
-import com.esferalia.aon.jooq.tables.Rseller;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -71,19 +68,10 @@ public class SellerDAO {
 		return ctx.getDslContext().select()
 				.from(SELLER)
 				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
-				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE)).join(RSELLER).on(SELLER.DOMAIN.eq(RSELLER.DOMAIN))
+				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
 				.where(SELLER_PROPERTIES.getConditions(filter));	
 	}
 
-	//ORIGINAL
-//	private static SelectConditionStep<Record> select(AONContext ctx, SellerFilter filter) {
-//		return ctx.getDslContext().select()
-//				.from(SELLER)
-//				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
-//				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
-//				.where(SELLER_PROPERTIES.getConditions(filter));	
-//	}
-	
 	public static Seller get(AONContext ctx, SellerFilter filter){
 		return select(ctx, filter).limit(1).fetch().stream().map(new SellerFiller())
 			.findFirst()
@@ -171,7 +159,5 @@ public class SellerDAO {
 						: new Scope().setId(r.getValue(SELLER.SCOPE)));
 		}
 	}
-	
-	
 	
 }

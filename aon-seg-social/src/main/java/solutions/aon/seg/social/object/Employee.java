@@ -40,9 +40,6 @@ public class Employee {
 	private String collective; // COLECTIVO DEL TRABAJADOR
 	private String cno; // CNO
 	
-	private String artistRegimen;
-	private String unemployedStatus;
-	
 	public Boolean quoteMonth;
 	
 	private String asociativeSA; //INDICATIVO (Situaciones adicionales de afiliacion) solo cuando tenga vacaciones
@@ -86,8 +83,6 @@ public class Employee {
 		if(mdCtz != null)	visitor.visitMdCtz(mdCtz);
 		if(quoteMonth != null) visitor.visitQuoteMonth(quoteMonth);
 		if(asociativeSA != null) visitor.visitAsociativeSA(asociativeSA);
-		if (artistRegimen !=null) visitor.visitArtistRegimen(artistRegimen);
-		if (unemployedStatus != null) visitor.visitUnemployedStatus(unemployedStatus);
 	}
 	
 	public String getIpf() {return ipf;}
@@ -122,9 +117,6 @@ public class Employee {
 	public Optional<String> getCno() {return Optional.ofNullable(cno);}
 	public Optional<Boolean> getQuoteMonth() {return Optional.ofNullable(quoteMonth);}
 	public Optional<String> getAsociativeSA() {return Optional.ofNullable(asociativeSA);}
-	///////////////////////////////////////////////////////////////////////////
-	public Optional<String> getArtistRegimen() {return Optional.ofNullable(artistRegimen);}
-	public Optional<String> getUnemployedStatus() {return Optional.ofNullable(unemployedStatus);}
 	
 	@Override
 	public String toString() {
@@ -201,11 +193,6 @@ public class Employee {
 			public void visitQuoteMonth(Boolean quoteMonth) {stringBuffer.append(String.format(" quoteMonth : \"%s\" ", quoteMonth));}
 			@Override
 			public void visitAsociativeSA(String asociativeSA) {stringBuffer.append(String.format(" asociativeSA : \"%s\" ", asociativeSA));}
-			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			@Override
-			public void visitArtistRegimen(String artistRegimen) {stringBuffer.append(String.format(" artist : \"%s\" ", artistRegimen));}
-			@Override
-			public void visitUnemployedStatus(String unemployedStatus) {stringBuffer.append(String.format(" unemployed : \"%s\" ", unemployedStatus));}
 		});
 		stringBuffer.append('}');
 		return stringBuffer.toString();
@@ -249,8 +236,6 @@ public class Employee {
 		private String cno;
 		private Boolean quoteMonth;
 		private String asociativeSA;
-		private String artistRegimen;
-		private String unemployedStatus;
 
 		public EmployeeBuilder(){}		
 		
@@ -464,18 +449,7 @@ public class Employee {
 			this.asociativeSA = asociativeSA;
 			return this;
 		}
-		/////////////////////////////////////////////////////////////////////////////////////////////////
-		public EmployeeBuilder setArtistRegimen(String artistRegimen) {
-			if (artistRegimen != null && !artistRegimen.trim().equals("")) this.artistRegimen = artistRegimen.trim(); 
-			else this.artistRegimen = null;
-			return this;			
-		}
-
-		public EmployeeBuilder setUnemployedStatus(String unemployedStatus) {
-			if (unemployedStatus != null && !unemployedStatus.trim().equals("")) this.unemployedStatus = unemployedStatus.trim();
-			else this.unemployedStatus = null;
-			return this;
-		}
+		
 		
 		public Employee build(){
 			Employee employee = new Employee();
@@ -516,9 +490,6 @@ public class Employee {
 			employee.cno = this.cno;
 			employee.quoteMonth = this.quoteMonth;
 			employee.asociativeSA = this.asociativeSA;
-			////////////////////////////////////////////////////
-			employee.artistRegimen = this.artistRegimen;
-			employee.unemployedStatus = this.unemployedStatus;
 			return employee;
 		}
 
@@ -560,9 +531,6 @@ public class Employee {
 		void visitCno(String cno);
 		void visitMdCtz(String mdCtz);
 		void visitAsociativeSA(String asociativeSA);
-		//////////////////////////////////////////////////////////
-		void visitArtistRegimen(String artistRegimen);
-		void visitUnemployedStatus(String unemployedStatus);
 	}
 	
 	public static abstract class AbstractVisitor implements Visitor {
@@ -632,11 +600,6 @@ public class Employee {
 		public void visitMdCtz(String mdCtz) {}
 		@Override
 		public void visitQuoteMonth(Boolean quoteMonth) {}
-		/////////////////////////////////////////////////////////////////////////
-		@Override
-		public void visitArtistRegimen(String artistRegimen) {}
-		@Override
-		public void visitUnemployedStatus(String unemployedStatus) {}
 	}
 
 	@Override
@@ -673,9 +636,6 @@ public class Employee {
 		result = prime * result + ((tlf == null) ? 0 : tlf.hashCode());
 		result = prime * result + ((vinFam == null) ? 0 : vinFam.hashCode());
 		result = prime * result + ((workTimeReduct == null) ? 0 : workTimeReduct.hashCode());
-		/////////////////////////////////////////////////////////////////////////////////////////
-		result = prime * result + ((artistRegimen == null) ? 0 : artistRegimen.hashCode());
-		result = prime * result + ((unemployedStatus == null) ? 0 : unemployedStatus.hashCode());
 		return result;
 	}
 
@@ -838,21 +798,6 @@ public class Employee {
 				return false;
 		} else if (!workTimeReduct.equals(other.workTimeReduct))
 			return false;
-		/////////////////////////////////////////////////////////////////////////////
-		if (artistRegimen == null) {
-			if (other.artistRegimen != null) {
-				return false;
-		}else if (!artistRegimen.equals(other.artistRegimen)) {
-			return false;
-			}
-		}
-		if (unemployedStatus == null) {
-			if (other.unemployedStatus != null) {
-				return false;
-		}else if (!unemployedStatus.equals(other.unemployedStatus)) {
-			return false;
-			}
-		}
 		return true;
 	}
 }

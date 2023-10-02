@@ -4,10 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,25 +30,20 @@ import solutions.aon.in.invoice.templates.ParserContext;
 public class DniParserMain {
 
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, InvoiceIMGException, UnknownInvoiceException, UnknownPDFException {
-//
-//		InputStream inputStream1 = new FileInputStream("/tmp/dniGuille.pdf");
-//		InputStream inputStream2 = new FileInputStream("/tmp/dniGuille2.pdf");
-//		InputStream inputStream1 = new FileInputStream("/tmp/dniJaviDelante.pdf");
-//		InputStream inputStream2 = new FileInputStream("/tmp/dniJaviDetras.pdf");
-		InputStream inputStream1 = new FileInputStream("/tmp/dniJuanma1.pdf");
-		InputStream inputStream2 = new FileInputStream("/tmp/dniJuanma2.pdf");
-		
-		DNIParser dnip = new DNIParser();
+
+		InputStream is6 = new FileInputStream("/tmp/dniPapaDelante.pdf");
+		InputStream is = new FileInputStream("/tmp/dniPapaDelante.jpg");
 		MyDniDataListener listener = new MyDniDataListener();
 		
-		List<InputStream> inputStreams = new ArrayList<InputStream>();        
+		DNIParser.parse(is6);
+		String text = DNIParser.getText();
+		DNIParser.getOldDniFront(text, listener);
 		
-		inputStreams.add(inputStream1);
-		inputStreams.add(inputStream2);
-        
-		dnip.parse(inputStreams);
-		String text = dnip.getText();
-		dnip.getNewDniBothPdf(text, listener);
+		byte[] bytes = IOUtils.toByteArray(is);
+		text =	DNIParser.extractImage(bytes);
+		DNIParser.getOldDniFront(text, listener);
+
+
 	}
 	
 	
