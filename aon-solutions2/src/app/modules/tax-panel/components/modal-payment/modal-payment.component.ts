@@ -72,32 +72,43 @@ export class ModalPaymentComponent implements OnInit {
   selectBank(event: any) {}
 
   async createBank() {
+    // Elimina espacios en blanco alrededor de los valores de entrada
+    const trimmedDescription = this.newBankDescription.trim();
+    const trimmedIban = this.newBankIban.trim();
+    const trimmedBic = this.newBankBic.trim();
 
-      // Elimina espacios en blanco alrededor de los valores de entrada
-  const trimmedDescription = this.newBankDescription.trim();
-  const trimmedIban = this.newBankIban.trim();
-  const trimmedBic = this.newBankBic.trim();
+    // Verifica si alguno de los campos está vacío después de quitar los espacios en blanco
+    if (!trimmedDescription || !trimmedIban || !trimmedBic) {
+      // Si al menos uno de los campos está vacío, no envíes el mensaje
+      // Puedes mostrar un mensaje de error o realizar alguna otra acción aquí
+      console.log('Uno o más campos están vacíos. No se enviará el mensaje.');
+      return;
+    }
 
-  // Verifica si alguno de los campos está vacío después de quitar los espacios en blanco
-  if (!trimmedDescription || !trimmedIban || !trimmedBic) {
-    // Si al menos uno de los campos está vacío, no envíes el mensaje
-    // Puedes mostrar un mensaje de error o realizar alguna otra acción aquí
-    console.log('Uno o más campos están vacíos. No se enviará el mensaje.');
-    return;
-  }
+    // Convierte el IBAN a mayúsculas antes de verificar duplicados
+    const ibanToCheck = this.newBankIban.toUpperCase();
 
-    const newBank: IBank = {
-      Name: this.newBankDescription,
-      Total: 0,
-      Logo: '',
-      SwiftBic: this.newBankBic,
-      Iban: this.newBankIban,
-      LastUpdate: new Date(),
-      SyncStatus: '',
-      getKey: () => this.newBankIban,
-      getFilterableFields: () => new Map(),
-      getSortableFields: () => new Map(),
-    };
+    // Verifica si el IBAN ya existe en la lista de bancos
+    const isDuplicateIban = this.banks
+      .toArray()
+      .some((element) => element.Iban.toUpperCase() === ibanToCheck);
+
+    if (isDuplicateIban) {
+      // Muestra un mensaje de error o realiza la acción adecuada para manejar un IBAN duplicado
+      console.log('El IBAN ya existe en la lista de bancos.');
+      return;
+    }
+
+   //crear banco
+    const newBank : IBank = this.bankService.objectFactory.createBank()
+    newBank.Name = this.newBankDescription;
+    newBank.Total = 0;
+    newBank.Logo = '';
+    newBank.SwiftBic = this.newBankBic;
+    newBank.Iban = ibanToCheck;
+    newBank.LastUpdate = new Date();
+    newBank.SyncStatus = '';
+
 
     try {
       //  Crear el banco
@@ -107,11 +118,13 @@ export class ModalPaymentComponent implements OnInit {
       this.newBankDescription = '';
       this.newBankIban = '';
       this.newBankBic = '';
-
-      // Cierra el diálogo modal después de enviar el mensaje si es necesario
-      // this.dialogRef.close();
     } catch (error) {
       throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
     }
+
+    this.showCreateBank = false;
+
+    this.listBanks();
   }
+
 }
