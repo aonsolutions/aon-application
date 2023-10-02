@@ -42,7 +42,6 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
-import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
@@ -161,7 +160,6 @@ public class CustomerFee extends MainEntryPoint {
 
 	private HTMLPanel filterExpandPanel2;
 	private SuggestBox sellerSuggestBox;
-	private SuggestBox supportSuggestBox;
 	private SuggestBox workplaceSuggestBox;
 	private SuggestBox invoicingGroupSuggestBox;
 	private SuggestBox projectSuggestBox;
@@ -206,8 +204,6 @@ public class CustomerFee extends MainEntryPoint {
 	private Map<String, Integer> productTagSuggestions = new TreeMap<>();
 	
 	private Map<String, Seller> sellerSuggestions = new TreeMap<>();
-	private Map<String, RegistrySeller> supportSuggestions = new TreeMap<>();
-
 	private Map<String, Workplace> workplaceSuggestions = new TreeMap<>();
 	private Map<String, InvoicingGroup> invoicingGroupSuggestions = new TreeMap<>();
 	private Map<String, Project> projectSuggestions = new TreeMap<>();
@@ -643,22 +639,8 @@ public class CustomerFee extends MainEntryPoint {
 
 		sellerItemPanel.add(sellerLabel);
 		sellerItemPanel.add(sellerSuggestBox);
-		
-		//Support
-		HTMLPanel supportItemPanel = new HTMLPanel("");
-		supportItemPanel.addStyleName(AON.CSS.aonItemFlex());
-		
-		Label supportLabel = new Label("Soporte");
-		supportLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		createSupportSuggestBox();
-		
-		supportItemPanel.add(supportLabel);
-		supportItemPanel.add(supportSuggestBox);
-		
-		//NUEVO/////////////////////////////////////////////////////////
 
 		filterExpandPanel2.add(sellerItemPanel);
-		filterExpandPanel2.add(supportItemPanel);
 		
 		// Workplace
 		HTMLPanel workplaceItemPanel = new HTMLPanel("");
@@ -1177,63 +1159,13 @@ public class CustomerFee extends MainEntryPoint {
 			
 			@Override
 			public void onSuccess(Map<String, Seller> sellerSuggestionsDB) {
-				
 				sellerSuggestions = sellerSuggestionsDB;
+				
 				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) sellerSuggestBox.getSuggestOracle();
 				orclSb.clear();
 				orclSb.addAll(sellerSuggestions.keySet());
 				orclSb.setDefaultSuggestionsFromText(sellerSuggestions.keySet());
 				sellerSuggestBox.showSuggestionList();
-								
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
-			
-		});
-	}
-	
-	private void createSupportSuggestBox() {
-		supportSuggestBox = new SuggestBox();
-		supportSuggestBox.setWidth("240px");
-		supportSuggestBox.setHeight("2em");
-		supportSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
-		supportSuggestBox.setAutoSelectEnabled(false);
-		supportSuggestBox.getElement().setPropertyString("placeholder", "Soporte: busque descripci\u00f3n");
-		
-
-		supportSuggestBox.addSelectionHandler(e -> {
-			supportSuggestBox.hideSuggestionList();
-			onSearchFees();
-		});
-		
-		supportSuggestBox.addKeyUpHandler(e -> {
-			String sellerQuery = supportSuggestBox.getValue();
-			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				supportSuggestBox.setValue("");
-				sellerQuery = null;
-				getSupportSuggestion(sellerQuery);
-			} else if(AonStringUtils.isNotBlank(sellerQuery) && sellerQuery.length() > 3)
-				getSupportSuggestion(sellerQuery);
-		});
-		
-	}
-	
-	
-	private void getSupportSuggestion(String sellerQuery) {
-		SERVICE.getSupporstSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), sellerQuery, new AsyncCallback<Map<String, RegistrySeller>>() {
-			
-			@Override
-			public void onSuccess(Map<String, RegistrySeller> suppSuggestionsDB) {
-				supportSuggestions = suppSuggestionsDB;
-				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) supportSuggestBox.getSuggestOracle();
-				orclSb.clear();
-				orclSb.addAll(supportSuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(supportSuggestions.keySet());
-				supportSuggestBox.showSuggestionList();
 			}
 			
 			@Override
@@ -2835,10 +2767,6 @@ public class CustomerFee extends MainEntryPoint {
 			if(AonStringUtils.isNotBlank(discountTextBox.getValue()))  json.put("discount", new JSONString(discountTextBox.getValue()));
 			
 			if(null != sellerSuggestions.get(sellerSuggestBox.getValue())) json.put("seller", new JSONNumber(sellerSuggestions.get(sellerSuggestBox.getValue()).getId()));
-			
-			//NUEVO
-			if(null != supportSuggestions.get(supportSuggestBox.getValue())) json.put("support", new JSONNumber(supportSuggestions.get(supportSuggestBox.getValue()).getId()));
-				
 			if(null != workplaceSuggestions.get(workplaceSuggestBox.getValue())) json.put("workplace", new JSONNumber(workplaceSuggestions.get(workplaceSuggestBox.getValue()).getId()));
 			if(null != invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue())) json.put("invoicingGroup", new JSONNumber(invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()).getId()));
 			if(null != projectSuggestions.get(projectSuggestBox.getValue())) json.put("project", new JSONNumber(projectSuggestions.get(projectSuggestBox.getValue()).getId()));

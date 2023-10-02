@@ -309,8 +309,6 @@
 				<a:DoubleBox ui:field="partialityCoef" styleName="{style.width99}" />
 				<g:Label styleName="{style.bold}">CNO</g:Label>
 				<g:SuggestBox ui:field="cno" styleName="{style.width100}" />
-				<g:FormPanel ui:field="fp" visible="false" method="POST" action="CnoServlet">
-				</g:FormPanel>
 			</g:HTMLPanel>
 		
 		</g:DeckPanel>

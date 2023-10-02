@@ -21,7 +21,6 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
-import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -172,11 +171,6 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, String query) {
 		return AON.getSellersSuggestion(domainName, domain, user, query);
-	}
-	
-	@Override
-	public Map<String, RegistrySeller> getSupporstSuggestion(String domainName, int domain, String user, String query) {
-		return AON.getSupporstSuggestion(domainName, domain, user, query);
 	}
 	
 	@Override

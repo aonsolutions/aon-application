@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
-import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -70,11 +69,6 @@ public interface RegistryServiceAsync {
 	
 	void getWorkplacesSuggestion(String domainName, int domain, String user, String workplaceQuery, AsyncCallback<Map<String, Workplace>> asyncCallback);
 	void getSellersSuggestion(String domainName, int domain, String user, String sellerQuery, AsyncCallback<Map<String, Seller>> asyncCallback);
-	
-	void getSupporstSuggestion(String domainName, int domain, String user, String sellerQuery, AsyncCallback<Map<String, RegistrySeller>> asyncCallback);
-	
-//	void getSellerType(String domainName, int domain, String user, String sellerQuery, AsyncCallback<Map<String, RegistrySeller>> asyncCallback);
-	
 	void getInvoicingGroupsSuggestion(String domainName, int domain, String user, String invoicingGroupQuery, AsyncCallback<Map<String, InvoicingGroup>> asyncCallback);
 	void getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String projectQuery, AsyncCallback<Map<String, Project>> asyncCallback);
 	

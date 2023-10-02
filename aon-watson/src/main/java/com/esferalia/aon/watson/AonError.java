@@ -156,13 +156,6 @@ public enum AonError implements Serializable{
 	, BRAND_EMPTY("El valor de la marca esta vacío.")
 	, BRAND_REPEAT("Ya existe una marca con el mismo nombre.")
 	
-	
-	// --------------------------------------------- AMORTIZATION TYPE
-	,AMORTIZATION_TYPE_NULL("El tipo de amortizacion es nulo.")
-	,AMORTIZATION_TYPE_NULL_DESCRIPTION("La descripcion del tipo de amortizacion es nula")
-	,AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT("El valor de la cuenta fija de activos es nulo")
-	,AMORTIZATION_TYPE_NULL_ACCUMULATED_ACCOUNT("El valor de la cuenta acumulada es nulo")
-	,AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT("El valor de la cuenta de asignacion es nulo")	  
 	// --------------------------------------------- INVOICE
 	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TAX_DATE("La fecha I.V.A. de la factura es un dato obligatorio, no puede estar vac\u00EDa")
@@ -186,7 +179,7 @@ public enum AonError implements Serializable{
 	,INVOICE_CANT_DELETE_SII("No es posible borrar la factura porque est\u00E1 enviada al SII. Dar de baja la factura en el SII.")
 	,INVOICE_CANT_DELETE_TBAI("No es posible borrar la factura porque est\u00E1 enviada a Ticket Bai. Dar de baja la factura en Ticket Bai.")
 	,INVOICE_CANT_DELETE_MODEL("Imposible borrar o modificar, la factura ha sido declarada en modelos fiscales: {0}")
-	,TRACKING_CANT_DELETE_MODEL("Imposible borrar o modificar, el vto. ha sido declarada en modelos fiscales: {0}") 
+	,TRACKING_CANT_DELETE_MODEL("Imposible borrar o modificar, el vto. ha sido declarada en modelos fiscales: {0}")
 
 	// --------------------------------------------- DUA
 	,INVOICE_DUA_NATIONAL_INVOICE_EMPTY("No se ha indicado una factura nacional tipo DUA")

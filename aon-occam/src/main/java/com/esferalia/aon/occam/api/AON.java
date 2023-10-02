@@ -2670,12 +2670,6 @@ public class AON {
 		}
 	}
 	
-	public static Map<String, RegistrySeller> getSupporstSuggestion(String domainName, int domainId, String login, String query) {
-		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getSupporstSuggestion(ctx, domainId, query);
-		}
-	}
-	
 	public static Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getInvoicingGroupsSuggestion(ctx, domainId, query);
