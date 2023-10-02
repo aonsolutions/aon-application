@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CollectionFactory, Factory } from 'libraries/AonSDK/aon';
+import { CollectionFactory, Factory } from 'libraries/AonSDK/src/aon';
 
 @Injectable({
   providedIn: 'root'

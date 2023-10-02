@@ -4,7 +4,7 @@ import { DropdownMenuComponent } from '../dropdown-menu/dropdown-menu.component'
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { EnterpriseService } from 'src/app/core/services/enterprise.service';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { IEnterprise } from 'libraries/AonSDK/aon';
+import { IEnterprise } from 'libraries/AonSDK/src/aon';
 
 @Component({
   selector: 'app-breadcumb',

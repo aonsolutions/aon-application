@@ -4,7 +4,7 @@ import {
   FilterBuilder,
   ICollection,
   IMessage,
-} from 'libraries/AonSDK/aon';
+} from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { DatePipe } from '@angular/common';
@@ -162,6 +162,7 @@ export class TableQueriesComponent implements OnChanges {
     this.messageService
       .getMessageList(filterBuilder.getFilter())
       .then((response) => {
+        console.log(response)
         this.messagess = response;
         this.messagesSubject.next(this.messagess);
         let pendingQueriesFound = false;

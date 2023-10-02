@@ -1,4 +1,4 @@
-import { ErrorResponse, IBank, ICollection } from 'libraries/AonSDK/aon';
+import { ErrorResponse, IBank, ICollection } from 'libraries/AonSDK/src/aon';
 import { BankService } from './../../../../core/services/bank.service';
 import { Component, OnInit } from '@angular/core';
 

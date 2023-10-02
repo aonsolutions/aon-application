@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DocumentService } from 'src/app/core/services/document.service';
 import { FolderService } from 'src/app/core/services/folder.service';
-import { CollectionFactory, Factory, FilterBuilder, ICollection, IDocument, IFolder } from 'libraries/AonSDK/aon';
+import { CollectionFactory, Factory, FilterBuilder, ICollection, IDocument, IFolder } from 'libraries/AonSDK/src/aon';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 import { TranslateService } from '@ngx-translate/core';

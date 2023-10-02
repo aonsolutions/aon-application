@@ -1,7 +1,7 @@
 
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CollectionFactory, ErrorResponse, Factory, ICollection, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/aon';
+import { CollectionFactory, ErrorResponse, Factory, ICollection, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
 import { MessageService } from 'src/app/core/services/message.service';
 
 
@@ -71,20 +71,13 @@ export class ModalCreateComponent implements OnInit {
     if (this.messagesData) {
       const messageId = this.messagesData.Id;
 
-      const newMessage: IMessage = {
-        Id: messageId,
-        Name: this.messagesData.Name,
-        Title: asunto,
-        Description: description,
-        Date: new Date(),
-        Status: StatusMessage.CERRADA,
-        Type: TypeMessage.CONSULTA,
-        EndDate: new Date(),
-        LastMessageChatOrigin: false,
-        getKey: () => messageId,
-        getFilterableFields: () => new Map(),
-        getSortableFields: () => new Map(),
-      };
+      const newMessage = this.messageService.objectFactory.createMessage()
+      .setName(this.messagesData.Name)
+      .setDescription(description)
+      .setType(TypeMessage.CONSULTA)
+      .setStatus(StatusMessage.CERRADA)
+      .setTitle(asunto)
+      .setLastMessageChatOrigin(false);
 
       try {
         // Crear el mensaje
