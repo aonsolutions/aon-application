@@ -178,8 +178,8 @@ public class FeeDAO {
 		if(null != customerFeeParams.getPeriodicity())
 			condition = condition.and(CUSTOMER_FEE.PERIOD.eq(customerFeeParams.getPeriodicity().shortValue()));
 		
-		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomer())) 
-			condition = condition.and(CUSTOMER_ALIAS.NAME.eq(customerFeeParams.getCustomer()));
+		if(null != customerFeeParams.getCustomer()) 
+			condition = condition.and(CUSTOMER.REGISTRY.eq(customerFeeParams.getCustomer()));
 		
 		if(null != customerFeeParams.getCustomerStatus())
 			condition = condition.and(CUSTOMER.STATUS.eq(customerFeeParams.getCustomerStatus()));
