@@ -10,6 +10,8 @@ import {
   IMessage,
   StatusMessage,
   TypeMessage,
+  IFilter,
+
 } from 'libraries/AonSDK/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';

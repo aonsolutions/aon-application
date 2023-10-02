@@ -11,7 +11,6 @@ import {
   FilterBuilder,
   ICollection,
   IMessage,
-  StatusMessage,
 } from 'libraries/AonSDK/aon';
 import { Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
@@ -139,36 +138,30 @@ export class TableNotificationsComponent implements OnChanges {
       let pendingNotificacionsFound = false;
       response.forEach((message, messageKey) => {
         const column: any = Object.assign({}, message);
+        const lowerCaseStatus = message.Status.toLowerCase();
+
+        column.status = {
+          icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
+          text: `<span class="${
+            lowerCaseStatus.includes('nueva')
+              ? 'background-text-red-light'
+              : 'background-text-griss-light'
+          }">${message.Status}</span>`,
+        };
         // key
         column.key = messageKey;
         // Nombre del asesor
         column.name = message.Name;
-
-        if (
-          this.filterStatus[this.filterTabSelec] ===
-            message.Status.toLowerCase() ||
-          this.filterStatus[this.filterTabSelec] === 'todas'
-        ) {
-          const lowerCaseStatus = message.Status.toLowerCase();
-
-          column.status = {
-            icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
-            text: `<span class="${
-              lowerCaseStatus.includes('nueva')
-                ? 'background-text-red-light'
-                : 'background-text-griss-light'
-            }">${message.Status}</span>`,
-          };
-          // Asunto del mensaje
-          column.title = message.Title;
-          // Mensaje
-          column.description = message.Description;
-          // Fecha
-          column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
-          column.class =
-            message.Status == StatusMessage.NUEVA ? 'border-red' : '';
-          tableRow.push(column);
-        }
+        // Asunto del mensaje
+        column.title = message.Title;
+        // Mensaje
+        column.description = message.Description;
+        // Fecha
+        column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
+        // Marcar como nueva
+        column.class = lowerCaseStatus.includes('nueva') ? 'border-red' : '';
+        // Agregamos el mensaje
+        tableRow.push(column);
       });
 
       this.bodyTable = tableRow;
