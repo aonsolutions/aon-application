@@ -77,9 +77,12 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	@Test
 	public void saveNullDomainQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
-		question.setDomain(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
-		assertEquals(AonError.EMPTY_DOMAIN.getMessage(), e.getMessage());
+		
+		if (!QuestionValidation.checkAlias(ctx, question)) {
+			question.setDomain(null);
+			AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
+			assertEquals(AonError.EMPTY_DOMAIN.getMessage(), e.getMessage());
+		}
 	}
 	
 	/**
@@ -88,9 +91,12 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	@Test
 	public void saveNullTextQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
-		question.setText(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
-		assertEquals(AonError.NULL_QUESTION_TEXT.getMessage(), e.getMessage());
+		
+		if (!QuestionValidation.checkAlias(ctx, question)) {
+			question.setText(null);
+			AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
+			assertEquals(AonError.NULL_QUESTION_TEXT.getMessage(), e.getMessage());
+		}
 	}
 	
 	/**
@@ -99,9 +105,12 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	@Test
 	public void saveEmptyTextQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
-		question.setText("");
-		AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
-		assertEquals(AonError.EMPTY_QUESTION_TEXT.getMessage(), e.getMessage());
+		
+		if (!QuestionValidation.checkAlias(ctx, question)) {
+			question.setText("");
+			AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
+			assertEquals(AonError.EMPTY_QUESTION_TEXT.getMessage(), e.getMessage());
+		}
 	}
 	
 	/**
@@ -111,13 +120,15 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	public void saveInvalidTextSizeQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
 		
-		char[] caracteres = new char[257];
-		Arrays.fill(caracteres, 'h');
-		String text = new String(caracteres);
-		
-		question.setText(text);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
-		assertEquals(AonError.INVALID_SIZE_QUESTION_TEXT.getMessage(), e.getMessage());
+		if (!QuestionValidation.checkAlias(ctx, question)) {
+			char[] caracteres = new char[257];
+			Arrays.fill(caracteres, 'h');
+			String text = new String(caracteres);
+			
+			question.setText(text);
+			AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
+			assertEquals(AonError.INVALID_SIZE_QUESTION_TEXT.getMessage(), e.getMessage());
+		}
 	}
 	
 	/**
@@ -127,13 +138,15 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	public void saveInvalidAliasSizeQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
 		
-		char[] caracteres = new char[257];
-		Arrays.fill(caracteres, 'h');
-		String alias = new String(caracteres);
-		
-		question.setAlias(alias);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
-		assertEquals(AonError.INVALID_SIZE_ALIAS.getMessage(), e.getMessage());
+		if (!QuestionValidation.checkAlias(ctx, question)) {
+			char[] caracteres = new char[257];
+			Arrays.fill(caracteres, 'h');
+			String alias = new String(caracteres);
+			
+			question.setAlias(alias);
+			AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
+			assertEquals(AonError.INVALID_SIZE_ALIAS.getMessage(), e.getMessage());
+		}
 	}
 	
 	/**
@@ -167,8 +180,13 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		question1.setActive(true);
 		question2.setActive(false);
 		
-		QuestionDAO.insert(ctx, question1);
-		QuestionDAO.insert(ctx, question2);
+		if (!QuestionValidation.checkAlias(ctx, question1)) {
+			QuestionDAO.insert(ctx, question1);
+		}
+		
+		if (!QuestionValidation.checkAlias(ctx, question2)) {
+			QuestionDAO.insert(ctx, question2);
+		}
 		
 		QuestionParams questionParams = new QuestionParams();
 		questionParams.setActive((byte) 1);

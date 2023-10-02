@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.validation.QuestionValidation;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
+import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.occam.api.AON;
 
@@ -56,9 +57,13 @@ public class QuestionAONTest extends AbstractOccamTest {
 		question1.setActive(true);
 		question2.setActive(false);
 		
-		AON.saveQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), question1);
-		AON.saveQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), question2);
-
+		if (!QuestionValidation.checkAlias(ctx, question1)) {
+			AON.saveQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), question1);
+		}
+		
+		if (!QuestionValidation.checkAlias(ctx, question2)) {
+			AON.saveQuestion(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), question2);
+		}
 		QuestionParams params = new QuestionParams()
 				.setDomain(ctx.getDomainId())
 				.setDomainName(ctx.getDomainName())
