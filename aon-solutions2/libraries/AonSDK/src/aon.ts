@@ -56,6 +56,8 @@ export { IMark } from "./interfaces/modelsInterfaces";
 export { IProduct } from "./interfaces/modelsInterfaces";
 export { IProductCategory } from "./interfaces/modelsInterfaces";
 export { IProductStatus } from "./interfaces/modelsInterfaces";
+export { StatusMessage } from "./interfaces/modelsInterfaces";
+export { TypeMessage } from "./interfaces/modelsInterfaces";
 /**
  * FACTORYS EXPORTS
 */
@@ -98,6 +100,7 @@ export { ProductFactory } from "./factorys/ProductFactory";
 export { Response } from "./utils/Response";
 export { ErrorResponse } from "./utils/Response";
 export { FilterBuilder } from "./utils/FilterBuilder";
+import { StatusMessage } from "./interfaces/modelsInterfaces";
 import { generateData } from "./utils/GenerateFakeData";
 // import { test } from "./utils/Environment";
 // import { makeTest } from "./tests/genericTest";

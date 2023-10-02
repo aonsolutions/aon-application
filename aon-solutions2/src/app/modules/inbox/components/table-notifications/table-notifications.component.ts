@@ -28,12 +28,15 @@ export class TableNotificationsComponent implements OnChanges {
   @Input() filterDate: number = 0;
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
   @Input() filterTabSelec: number = 0;
+  @Output() noPendingNotification: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
+
   filterStatus: string[] = ['todas', 'nueva', 'vista'];
   bodyTable: any[] = [];
   totalMessages: number = 0;
-  lenghtTitle   : number = 30;
-  lenghtMensage : number = 50;
-
+  lenghtTitle: number = 30;
+  lenghtMensage: number = 50;
+  message: string = '';
   messages: ICollection<IMessage> =
     new CollectionFactory().createMessageCollection();
 
@@ -58,26 +61,23 @@ export class TableNotificationsComponent implements OnChanges {
     date: 'Date',
   };
 
-
   ngOnChanges(changes: SimpleChanges): void {
     this.updateTableData();
   }
 
-  filterTable(filterType: number) {
-    if (filterType === 1) {
-      // Filtro por semana
-      const startDate = this.getStartDateOfWeek();
-      const endDate = this.getEndDateOfWeek();
-      this.updateTableData(startDate, endDate);
-    } else if (filterType === 2) {
-      // Filtro por mes
-      const startDate = this.getStartDateOfMonth();
-      const endDate = this.getEndDateOfMonth();
-      this.updateTableData(startDate, endDate);
-    } else {
-      // Filtro por todas las fechas
-      this.updateTableData();
+  filterTableDate() {
+    let date: { start: string; end: string } = { start: '', end: '' };
+    switch (this.filterDate) {
+      case 1:
+        date.start = this.getStartDateOfWeek();
+        date.end   = this.getEndDateOfWeek();
+      break
+      case 2:
+        date.start = this.getStartDateOfMonth();
+        date.end = this.getEndDateOfMonth();
+      break
     }
+    return date;
   }
 
   private getStartDateOfWeek(): string {
@@ -96,13 +96,21 @@ export class TableNotificationsComponent implements OnChanges {
 
   private getStartDateOfMonth(): string {
     const currentDate = new Date();
-    const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const startDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
     return this.formatDate(startDate);
   }
 
   private getEndDateOfMonth(): string {
     const currentDate = new Date();
-    const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    const endDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    );
     return this.formatDate(endDate);
   }
 
@@ -113,63 +121,105 @@ export class TableNotificationsComponent implements OnChanges {
     return `${year}-${month}-${day}`;
   }
 
-  private updateTableData(startDate?: string, endDate?: string) {
+  private updateTableData() {
     let tableRow: any[] = [];
     const datepipe: DatePipe = new DatePipe(
       this.translateService.getDefaultLang()
     );
     let filterBuilder = new FilterBuilder();
     filterBuilder.addField('type', 'notificacion');
-    // if(this.filterStatus[this.filterTabSelec] === 'todas')
-    //   filterBuilder.addField('status', this.filterStatus[this.filterTabSelec]);
-
     if (this.filterDate > 0) {
-      filterBuilder.addInterval('date', startDate, endDate);
+      let dates = this.filterTableDate()
+
+      filterBuilder.addInterval('date', dates.start, dates.end);
     }
     this.messageService
-      .getMessageList(filterBuilder.getFilter())
-      .then((response) => {
-        response.forEach((message, messageKey) => {
-          const column: any = Object.assign({}, message);
-          // key
-          column.key = messageKey;
-          // Nombre del asesor
-          column.name = message.Name;
+    .getMessageList(filterBuilder.getFilter())
+    .then((response) => {
+      let pendingNotificacionsFound = false;
+      response.forEach((message, messageKey) => {
+        const column: any = Object.assign({}, message);
+        const lowerCaseStatus = message.Status.toLowerCase();
 
-          if (
-            this.filterStatus[this.filterTabSelec] ===
-              message.Status.toLowerCase() ||
-            this.filterStatus[this.filterTabSelec] === 'todas'
-          ) {
-            const lowerCaseStatus = message.Status.toLowerCase();
-            console.log(lowerCaseStatus);
-            column.status = {
-              icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
-              text: `<span class="${
-                lowerCaseStatus.includes('nueva')
-                  ? 'background-text-red-light'
-                  : 'background-text-griss-light'
-              }">${message.Status}</span>`,
-            };
-            // Asunto del mensaje
-            column.title = message.Title;
-            // Mensaje
-            column.description = message.Description;
-            // Fecha
-            column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
-            column.class = message.Status == 'nueva' ? 'border-red' : '';
-            tableRow.push(column);
+        column.status = {
+          icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
+          text: `<span class="${
+            lowerCaseStatus.includes('nueva')
+              ? 'background-text-red-light'
+              : 'background-text-griss-light'
+          }">${message.Status}</span>`,
+        };
+        // key
+        column.key = messageKey;
+        // Nombre del asesor
+        column.name = message.Name;
+        // Asunto del mensaje
+        column.title = message.Title;
+        // Mensaje
+        column.description = message.Description;
+        // Fecha
+        column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
+        // Marcar como nueva
+        column.class = lowerCaseStatus.includes('nueva') ? 'border-red' : '';
+        // Agregamos el mensaje
+        tableRow.push(column);
+      });
+
+      this.bodyTable = tableRow;
+      this.noPendingNotification.emit(!pendingNotificacionsFound);
+
+      if (response.size() === 0) {
+        this.translateService.get([
+          'INBOX.NONOTIFICATIONSTHISWEEK',
+          'INBOX.NONOTIFICATIONSTHISMONTH',
+          'NOMESSAGES'
+        ]).subscribe((result) => {
+          switch (this.filterDate) {
+            case 1:
+              this.message = result['INBOX.NONOTIFICATIONSTHISWEEK'];
+              break;
+            case 2:
+              this.message = result['INBOX.NONOTIFICATIONSTHISMONTH'];
+              break;
+            default:
+              this.message = result['INBOX.NOMESSAGES'];
+              break;
           }
         });
+      } else {
+        this.message = '';
+      }
 
-        this.bodyTable = tableRow;
-      });
+      this.noPendingNotification.emit(true);
+    });
   }
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
-  rowClick(message: any) {
+  // rowClick(message: IMessage) {
+  //   this.rowClicked.emit(message);
+  // }
+
+  rowClick(message: IMessage) {
     this.rowClicked.emit(message);
+    console.log('message',message);
+
+    this.updateStatus(message);
+    console.log('pilla updateStatus');
+  }
+
+  updateStatus(message: IMessage) {
+//    if (message.Status == StatusMessage.NUEVA) {
+//      message.Status = StatusMessage.VISTA;
+//
+//      try {
+//        this.messageService.updateMessage(message);
+//
+//        this.updateTableData();
+//      } catch (error) {
+//        console.error('Error al actualizar el mensaje:', error);
+//      }
+//    }
   }
 }

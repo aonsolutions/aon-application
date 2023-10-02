@@ -1,7 +1,7 @@
 import { MessageChat, ApiMessageChat } from "../models/MessageChat";
 import { ApiHttpRequest } from "../utils/Http";
 import { ErrorResponse } from "../utils/Response";
-import { BASE_URL, GET_METHOD, POST_METHOD, GET_MULTIPLE } from "../utils/Environment";
+import { BASE_URL, GET_MULTIPLE } from "../utils/Environment";
 import { APIGenericMultipleObjectCrudRepository, APIGenericSingleObjectCrudRepository } from "./GenericRepository";
 import { IFilter, ICollection } from "../aon";
 import { Collection } from "../utils/Collection";

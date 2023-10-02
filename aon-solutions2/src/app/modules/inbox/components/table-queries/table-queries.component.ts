@@ -28,12 +28,14 @@ export class TableQueriesComponent implements OnChanges {
   @Input() public messageList: Observable<ICollection<IMessage>> | undefined;
   @Output() messageTitleSelected: EventEmitter<string> = new EventEmitter<string>();
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
+  @Output() noPendingQueries: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() id: number = 0;
   messageTotal: string = '0';
   bodyTable: any[] = [];
   showDetail: boolean = false;
   totalMessages: number = 0;
   currentFilterDate: number = 0;
+  message: string = '';
   selectedMessage: IMessage | null = null;
   messages: ICollection<IMessage> =
   new CollectionFactory().createMessageCollection();
@@ -79,35 +81,33 @@ export class TableQueriesComponent implements OnChanges {
     this.updateTableData();
   }
 
-  filterTable(filterType: number) {
-    if (filterType === 1) {
-      // Filtro por semana
-      const startDate = this.getStartDateOfWeek();
-      const endDate = this.getEndDateOfWeek();
-      this.updateTableData(startDate, endDate);
-    } else if (filterType === 2) {
-      // Filtro por mes
-      const startDate = this.getStartDateOfMonth();
-      const endDate = this.getEndDateOfMonth();
-      this.updateTableData(startDate, endDate);
-    } else {
-      // Filtro por todas las fechas
-      this.updateTableData();
+  filterTableDate() {
+    let date: { start: string; end: string } = { start: '', end: '' };
+    switch (this.filterDate) {
+      case 1:
+        date.start = this.getStartDateOfWeek();
+        date.end   = this.getEndDateOfWeek();
+      break
+      case 2:
+        date.start = this.getStartDateOfMonth();
+        date.end = this.getEndDateOfMonth();
+      break
     }
+    return date;
   }
 
   //Filtros para las fechas
   private getStartDateOfWeek(): string {
     const currentDate = new Date();
     const startDate = new Date(currentDate);
-    startDate.setDate(startDate.getDate() - startDate.getDay()); // Inicio de la semana actual (domingo)
+    startDate.setDate(startDate.getDate() - startDate.getDay()); // Inicio de la semana actual
     return this.formatDate(startDate);
   }
 
   private getEndDateOfWeek(): string {
     const currentDate = new Date();
     const endDate = new Date(currentDate);
-    endDate.setDate(endDate.getDate() + (6 - endDate.getDay())); // Fin de la semana actual (sábado)
+    endDate.setDate(endDate.getDate() + (6 - endDate.getDay())); // Fin de la semana actual
     return this.formatDate(endDate);
   }
 
@@ -130,24 +130,42 @@ export class TableQueriesComponent implements OnChanges {
     return `${year}-${month}-${day}`;
   }
 
-  private updateTableData(startDate?: string, endDate?: string) {
+    //TODO Método para cambiar el estado de una consulta a "Cerrada"
+    archiveMessage(message: IMessage) {
+      this.messageService.archiveMessage(message).then((updatedMessage) => {
+        console.log('Consulta archivada:', updatedMessage);
+      }).catch((error) => {
+        console.error('Error al archivar consulta:', error);
+      });
+    }
+
+    //TODO Método para cambiar el estado de una consulta a "Abierta"
+    reopenMessage(message: IMessage) {
+      this.messageService.reopenMessage(message).then((updatedMessage) => {
+        console.log('Consulta abierta:', updatedMessage);
+      }).catch((error) => {
+        console.error('Error al reabrir consulta:', error);
+      });
+    }
+
+  private updateTableData() {
     let tableRow: any[] = [];
     const datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
 
     let filterBuilder = new FilterBuilder();
     filterBuilder.addField('type', 'consulta');
-    // if(this.filterStatus[this.filterTabSelec] === 'todas')
-    //   filterBuilder.addField('status', this.filterStatus[this.filterTabSelec]);
-
     if (this.filterDate > 0) {
-      filterBuilder.addInterval('date', startDate, endDate);
-    }
+      let dates = this.filterTableDate()
 
+      filterBuilder.addInterval('date', dates.start, dates.end);
+    }
     this.messageService
       .getMessageList(filterBuilder.getFilter())
       .then((response) => {
+        console.log(response)
         this.messagess = response;
         this.messagesSubject.next(this.messagess);
+        let pendingQueriesFound = false;
         response.forEach((message, messageKey) => {
           // Mensajes - total
           let filterBuilderTotal = new FilterBuilder();
@@ -156,16 +174,14 @@ export class TableQueriesComponent implements OnChanges {
             .getMessageChatCount(filterBuilderTotal.getFilter())
             .then((response) => {
               this.messageTotal! = response < 100 ? response.toString() : '+99';
-              console.log(this.messageTotal);
 
-            column.total = "<span class='messageTotal'>" + this.messageTotal + '</span>'
-
+            column.total = "<span class='circle green'>" + this.messageTotal + '</span>'
           });
 
           const column: any = Object.assign({}, message);
           column.key = messageKey;
           column.name = message.Name;
-          // eliminar mi if cuando tenga el filtro desde la api y descomentar lo de arriba
+          // TODO: eliminar mi if cuando tenga el filtro desde la api y descomentar lo de arriba
           if (
             this.filterStatus[this.filterTabSelec] === message.Status.toLowerCase()
             || this.filterStatus[this.filterTabSelec] === 'todas'
@@ -186,7 +202,7 @@ export class TableQueriesComponent implements OnChanges {
             };
             column.title = message.Title;
             column.description = message.Description;
-            column.date = datepipe.transform(message.Date, 'EEEE, HH:mm');
+            column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
             column.action = {
               icon: lowerCaseStatus.includes('abierta')
                 ? [{ archive: 'grey' }]
@@ -195,13 +211,37 @@ export class TableQueriesComponent implements OnChanges {
             column.class = (message.Status == 'abierta') ? 'border-red' : '';
             tableRow.push(column);
 
-            if (this.selectedMessage === null) {
-              this.selectedMessage = { ...message };
+            if (message.Status.toLowerCase().includes('nueva')) {
+              pendingQueriesFound = true;
             }
           }
         });
 
         this.bodyTable = tableRow;
+      this.noPendingQueries.emit(!pendingQueriesFound);
+      // No tenemos mensaje en la tabla
+      if (response.size() === 0) {
+        this.translateService.get([
+          'INBOX.NOQUERIESTHISWEEK',
+          'INBOX.NOQUERIESTHISMONTH',
+          ''
+        ]).subscribe((result) => {
+        switch (this.filterDate) {
+          case 1:
+              this.message = result['INBOX.NOQUERIESTHISWEEK'];
+            break;
+          case 2:
+            this.message = result['INBOX.NOQUERIESTHISMONTH'];
+            break;
+          default:
+            this.message = result['INBOX.NOMESSAGES']
+            break;
+        }
+      });
+      } else {
+        this.message = '';
+      }
+        this.noPendingQueries.emit(!pendingQueriesFound);
       });
   }
 

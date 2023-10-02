@@ -67,14 +67,19 @@ export class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleOb
 
     async get(filter?: IFilter | undefined): Promise<ICollection<Message>> {
         let url;
+        let taskHolderAndSender = /*'&task_holder=' + localStorage.getItem('registry') +*/ '&sender=' + localStorage.getItem('registry') + '&status=pending'
         if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.NOTIFICACION)
-                url = ['/ms/api/notification?page=1&perPage=100']
-            else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.CONSULTA)
-                url = ['/ms/api/task?source=query&page=1&perPage=100&task_holder=' + localStorage.getItem('registry') + '&sender=' + localStorage.getItem('registry')]
-            else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.TAREA)
-                url = ['/ms/api/task?source=task&page=1&perPage=100&task_holder=' + localStorage.getItem('registry') + '&sender=' + localStorage.getItem('registry')]
-            else
-                url = ['/ms/api/notification?page=1&perPage=100','/ms/api/task?source=query&page=1&perPage=100','/ms/api/task?source=task&page=1&perPage=100']
+            url = ['/ms/api/notification?page=1&perPage=100']
+        else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.CONSULTA)
+            url = ['/ms/api/task?source=query&page=1&perPage=100' + taskHolderAndSender]
+        else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.TAREA)
+            url = ['/ms/api/task?source=task&page=1&perPage=100' + taskHolderAndSender]
+        else
+            url = [
+                '/ms/api/notification?page=1&perPage=100',
+                '/ms/api/task?source=query&page=1&perPage=100' + taskHolderAndSender,
+                '/ms/api/task?source=task&page=1&perPage=100' + taskHolderAndSender
+            ]
         let collection: ICollection<Message> = new Collection<Message>();
         for(let element of url){
             let response = await ApiHttpRequest.get(BASE_URL + element, {}, {});
@@ -82,6 +87,7 @@ export class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleOb
                 collection.add(this.apiModel.parseDataToReceive(element))
             })
         }
+        console.log(collection)
         return collection;
     }
 }

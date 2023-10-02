@@ -16,6 +16,7 @@ import { TableTasksComponent } from './components/table-tasks/table-tasks.compon
 import { TableNotificationsComponent } from './components/table-notifications/table-notifications.component';
 import { ModalCreateComponent } from './components/modal-create/modal-create.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     InboxviewComponent,
@@ -34,7 +35,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatIconModule,
     MatGridListModule,
     MatTableModule,
-    MatDialogModule
+    MatDialogModule,
+    FormsModule
   ],
 })
 

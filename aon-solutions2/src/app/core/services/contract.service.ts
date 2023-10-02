@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ContractFactory, ICollection, IContract, IFilter } from 'libraries/AonSDK/aon';
+import { ContractFactory, ICollection, IContract, IFilter } from 'libraries/AonSDK/src/aon';
 import { ErrorService } from './error.service';
 import { CommonService } from './common.service';
 

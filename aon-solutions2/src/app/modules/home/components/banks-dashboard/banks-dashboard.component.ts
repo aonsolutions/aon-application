@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/src/aon';
+import { ErrorResponse, IBank, ICollection } from 'libraries/AonSDK/src/aon';
+import { BankService } from './../../../../core/services/bank.service';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-banks-dashboard',
@@ -12,25 +12,29 @@ import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/src/aon'
   },
 })
 export class BanksDashboardComponent implements OnInit {
-  public collectionFactory = new CollectionFactory();
-  banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
+  spinner: boolean = true;
   totalAmount: number = 0;
-  @Input() public bankList: Observable<ICollection<IBank>> | undefined;
+  banks!: ICollection<IBank>;
 
-  constructor() {}
-
-  ngOnInit(): void {
-    if (this.bankList) {
-      this.bankList.subscribe((banks) => {
-        this.banks = banks
-        this.calculateTotalAmount()
-
-
+  constructor(private bankService: BankService) {
+    try {
+      this.bankService.getBankList().then((response) => {
+        this.banks = response;
+        response.forEach((bank) => {
+          this.totalAmount += bank.Total;
         });
+      }).catch((error) => {
+        throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
+      }).finally(() => {
+        this.spinner = false;
+      });
+    } catch (error) {
+      throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
     }
   }
-  calculateTotalAmount(): void {
-    this.totalAmount = this.banks.toArray().reduce((sum, bank) => sum + bank.Total, 0);
+
+  ngOnInit(): void {
+
   }
 
   hasBanks(): boolean {
