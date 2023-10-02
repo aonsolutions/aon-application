@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -19,6 +18,8 @@ import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import static com.esferalia.aon.jooq.tables.Question.QUESTION;;
 
 /**
  * Tests the mehotds of the class QuestionDAO
@@ -48,12 +49,10 @@ public class QuestionDAOTest extends AbstractOccamTest {
 			Question deleted = QuestionDAO.get(ctx, questionId);
 			assertNull(deleted);
 		}
-		
-		
 	}
 
 	/**
-	 * Test that it throws and exception if the question is null
+	 * Test that it throws an exception if the question is null
 	 */
 	@Test
 	public void saveNullQuestionTest() {
@@ -62,7 +61,7 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	}
 	
 	/**
-	 * Test that it throws and exception if the question is empty
+	 * Test that it throws an exception if the question is empty
 	 */
 	@Test
 	public void saveEmptyQuestionTest() {
@@ -71,7 +70,7 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	}
 	
 	/**
-	 * Test that it throws and exception if we save a question where the domain is null
+	 * Test that it throws an exception if we save a question where the domain is null
 	 */
 	@Test
 	public void saveNullDomainQuestionTest() {
@@ -85,7 +84,7 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	}
 	
 	/**
-	 * Test that it throws and exception if we save a question where the text is null
+	 * Test that it throws an exception if we save a question where the text is null
 	 */
 	@Test
 	public void saveNullTextQuestionTest() {
@@ -99,7 +98,7 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	}
 	
 	/**
-	 * Test that it throws and exception if we save a question where the text is empty
+	 * Test that it throws an exception if we save a question where the text is empty
 	 */
 	@Test
 	public void saveEmptyTextQuestionTest() {
@@ -113,17 +112,14 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	}
 	
 	/**
-	 * Test that it throws and exception if we save a question where the size of the text is invalid
+	 * Test that it throws an exception if we save a question where the size of the text is invalid
 	 */
 	@Test
 	public void saveInvalidTextSizeQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
 		
 		if (!QuestionValidation.checkAlias(ctx, question)) {
-			char[] caracteres = new char[257];
-			Arrays.fill(caracteres, 'h');
-			String text = new String(caracteres);
-			
+			String text = AonStringUtils.repeat("h", QUESTION.QUESTION_TEXT.getDataType().length() + 1);
 			question.setText(text);
 			AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
 			assertEquals(AonError.INVALID_SIZE_QUESTION_TEXT.getMessage(), e.getMessage());
@@ -131,17 +127,14 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	}
 	
 	/**
-	 * Test that it throws and exception if we save a question where the size of the alias is invalid
+	 * Test that it throws an exception if we save a question where the size of the alias is invalid
 	 */
 	@Test
 	public void saveInvalidAliasSizeQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
 		
 		if (!QuestionValidation.checkAlias(ctx, question)) {
-			char[] caracteres = new char[257];
-			Arrays.fill(caracteres, 'h');
-			String alias = new String(caracteres);
-			
+			String alias = AonStringUtils.repeat("h", QUESTION.ALIAS.getDataType().length() + 1);
 			question.setAlias(alias);
 			AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, question));
 			assertEquals(AonError.INVALID_SIZE_ALIAS.getMessage(), e.getMessage());
@@ -149,7 +142,7 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	}
 	
 	/**
-	 * Test that it throws and exception if we save a question where the alias is repeated
+	 * Test that it throws an exception if we save a question where the alias is repeated
 	 */
 	@Test
 	public void saveRepeatedAliasQuestionTest() {
@@ -169,7 +162,7 @@ public class QuestionDAOTest extends AbstractOccamTest {
 	}
 	
 	/**
-	 * Test that it throws and exception if we get a list without the params that we set
+	 * Test that it throws an exception if we get a list without the params that we set
 	 */
 	@Test
 	public void getListTest() {
