@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ICollection, IFilter, ITaxModel, TaxModelFactory, statusTaxModel } from 'libraries/AonSDK/aon';
+import { ICollection, IFilter, ITaxModel, TaxModelFactory, statusTaxModel } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
@@ -22,24 +22,24 @@ export class TaxModelService extends CommonService {
     return (await this.singleObjectCrud.getElement(key)).result;
   }
 
-  async createTaxModel(taxModel: ITaxModel): Promise<ITaxModel> {
-    return (await this.singleObjectCrud.createElement(taxModel)).result;
-  }
+  // async createTaxModel(taxModel: ITaxModel): Promise<ITaxModel> {
+  //   return (await this.singleObjectCrud.createElement(taxModel)).result;
+  // }
 
-  async updateTaxModel(taxModel: ITaxModel): Promise<ITaxModel> {
-    return (await this.singleObjectCrud.updateElement(taxModel)).result;
-  }
+  // async updateTaxModel(taxModel: ITaxModel): Promise<ITaxModel> {
+  //   return (await this.singleObjectCrud.updateElement(taxModel)).result;
+  // }
 
-  async deleteTaxModel(key: string): Promise<boolean> {
-    return (await this.singleObjectCrud.deleteElement(key)).result;
-  }
+  // async deleteTaxModel(key: string): Promise<boolean> {
+  //   return (await this.singleObjectCrud.deleteElement(key)).result;
+  // }
 
-  async markTaxModelAsPaid(key: string, status: statusTaxModel): Promise<ITaxModel> {
-    const taxModel = await this.getTax(key);
-    taxModel.Status = status;
+  // async markTaxModelAsPaid(key: string, status: statusTaxModel): Promise<ITaxModel> {
+  //   const taxModel = await this.getTax(key);
+  //   taxModel.Status = status;
 
-    return this.updateTaxModel(taxModel);
-  }
+  //   return this.updateTaxModel(taxModel);
+  // }
 
   // En el trimestre que estamos
   // Restorna:

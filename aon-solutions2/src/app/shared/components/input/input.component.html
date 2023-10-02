@@ -58,12 +58,12 @@
       [required]="required"
       [placeholder]="placeholder"
       (ngModelChange)="returnValue($event)"
-      [class]="appearanceDetail" 
+      [class]="appearanceDetail"
     />
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </div>
-  
+
   <!-- INPUTS TIPO SELECT -->
     <mat-select
       *ngIf="type=='select'"
@@ -113,24 +113,22 @@
     {{label}} <span [innerHTML]="'COMMON.INPUT.REQUIRE' | translate"></span>
   </mat-error>
 
-  <!--*ngIf="this.suffixIcon !== ''"--> 
-  <span 
-    matSuffix 
+  <!--*ngIf="this.suffixIcon !== ''"-->
+  <span
+    matSuffix
     *ngIf="suffixShowIcon"
-    [ngClass]="classSuffix" 
-    (click)="this.selectFunction()"
+    [ngClass]="classSuffix"
+    (click)="selectFunction($event)"
   >
-    <app-button 
-      class="icon-only"
-    >
-      <app-icon 
+    <app-button class="icon-only">
+      <app-icon
         *ngIf="suffixBehavior === 'showPass'"
-        [shape]="this.suffixIcon" 
+        [shape]="suffixIcon"
         suffix
       ></app-icon>
       <ng-content *ngIf="suffixBehavior !== 'showPass'" select="[suffix]"></ng-content>
     </app-button>
   </span>
-  
+
   <mat-hint *ngIf="hint != ''">{{hint}}</mat-hint>
 </mat-form-field>

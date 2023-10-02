@@ -1,4 +1,3 @@
-import { IResponse } from "libraries/AonSDK/AonSDK";
 import { ICustomError } from "../interface/icustom-error";
 
 export class CustomError implements ICustomError{

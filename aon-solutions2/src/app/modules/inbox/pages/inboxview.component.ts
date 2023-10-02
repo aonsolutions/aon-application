@@ -1,18 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  Factory,
-  CollectionFactory,
-  ErrorResponse,
-  ICollection,
-  FilterBuilder,
-  IMessageChat,
-  IMessage,
-  StatusMessage,
-  TypeMessage,
-  IFilter,
-
-} from 'libraries/AonSDK/aon';
+import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage, IFilter } from 'libraries/AonSDK/src/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
@@ -309,17 +297,11 @@ export class InboxviewComponent implements OnInit {
       console.log('messagesCHAT', this.messageChat);
       console.log('messagesDATA', this.messagesData);
 
-      const newMessageChat: IMessageChat = {
-        Id: this.messageChat.Id,
-        IdMessage: this.messagesData.Id,
-        Name: this.messagesData.Name,
-        Description: description,
-        Date: new Date(),
-        Type: TypeMessage.CONSULTA,
-        getKey: () => this.messageChat.Id,
-        getFilterableFields: () => new Map(),
-        getSortableFields: () => new Map(),
-      };
+      const newMessageChat = this.messageService.objectFactory.createMessageChat()
+      .setIdMessage(this.messagesData.Id)
+      .setName(this.messagesData.Name)
+      .setDescription(description)
+      .setType('chat');
 
       try {
         // Crear el mensaje
@@ -339,7 +321,7 @@ export class InboxviewComponent implements OnInit {
   //mensaje de consulta
   async createMessage(description: string) {
 console.log(this.messagesData);
-
+/*
       const newMessage: IMessage = {
         Id: this.messagesData.Id,
         Name: this.messagesData.Name,
@@ -369,7 +351,7 @@ console.log(this.messagesData);
       } catch (error) {
         throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
       }
-
+*/
   }
 
   sendChatMessage() {
