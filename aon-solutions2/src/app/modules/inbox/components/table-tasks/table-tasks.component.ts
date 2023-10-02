@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { CollectionFactory, FilterBuilder, ICollection, IMessage } from 'libraries/AonSDK/aon';
+import { CollectionFactory, ErrorResponse, Factory, FilterBuilder, ICollection, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/aon';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { DatePipe } from '@angular/common';
@@ -23,6 +23,9 @@ export class TableTasksComponent implements OnChanges {
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
   @Input() id: number = 0;
 
+  newMessageDescription: string = '';
+  entityFactory = new Factory();
+  messagesData: IMessage = this.entityFactory.createMessage();
   selectedMessage: IMessage | null = null;
   bodyTable: any[] = [];
   showDetail: boolean = false;
@@ -91,7 +94,7 @@ export class TableTasksComponent implements OnChanges {
   private getEndDateOfWeek(): string {
     const currentDate = new Date();
     const endDate = new Date(currentDate);
-    endDate.setDate(endDate.getDate() + (6 - endDate.getDay())); // Fin de la semana actual (sábado)
+    endDate.setDate(endDate.getDate() + (7 - endDate.getDay()));
     return this.formatDate(endDate);
   }
 

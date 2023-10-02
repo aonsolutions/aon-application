@@ -226,8 +226,10 @@
     <!--Chat-->
     <form (ngSubmit)="sendChatMessage()">
       <div class="padding" *ngIf="messagesData.Type === 'consulta'">
-        <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
-        {{ messagesData.Description }}
+        <div class="padding-bottom">
+          <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
+          {{ messagesData.Description }}
+        </div>
         <div class="inbox-chat" (click)="toggleDescription(i)" *ngFor="let messageChat of messagesChat; let i = index">
           <div class="inbox-chat-name">
             {{ messageChat.Name }}
@@ -257,11 +259,12 @@
             type="submit"
           >
             <app-icon shape="send"></app-icon>
-            Enviar
+            {{ "COMMON.SEND" | translate }}
           </app-button>
         </div>
       </div>
     </form>
+
       <div
         class="padding"
         *ngIf="messagesData.Type === 'notificacion' || messagesData.Type === 'tarea'"
@@ -300,24 +303,29 @@
               Consultar
             </app-button>
           </div>
+          <form (ngSubmit)="sendMessage()">
           <div class="padding" *ngIf="showSendButton">
             <app-input
               [type]="'text'"
               [placeholder]="'Escribe...'"
               class="inputSend"
+              [value]="newMessageDescription"
+              (inputValue)="newMessageDescription = $event"
             ></app-input>
-            <div class="inbox-send-button">
-              <app-button
+          <div class="inbox-send-button">
+            <app-button
                 [class]="'red left'"
                 [width]="'11rem'"
                 [fontSize]="'0.7rem'"
                 [padding]="'0rem 1rem'"
-              >
-                <app-icon shape="send"></app-icon>
-                Enviar
-              </app-button>
+                (click)="sendMessage()"
+            >
+            <app-icon shape="send"></app-icon>
+            {{ "COMMON.SEND" | translate }}
+            </app-button>
             </div>
           </div>
+        </form>
         </div>
       </div>
     </div>
