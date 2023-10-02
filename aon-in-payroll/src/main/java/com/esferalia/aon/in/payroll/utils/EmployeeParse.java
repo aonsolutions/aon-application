@@ -137,14 +137,10 @@ public class EmployeeParse {
 			@Override public void visitProfesCat(String profesCat) {}
 			@Override public void visitFrv(Date frv) {}
 			@Override public void visitQuoteMonth(Boolean quoteMonth) {	}
-
-			@Override
-			public void visitAsociativeSA(String asociativeSA) {
-				// TODO Auto-generated method stub
-				
-			}
+			@Override public void visitAsociativeSA(String asociativeSA) {}
+			@Override public void visitArtistRegimen(String artistRegimen) {}
+			@Override public void visitUnemployedStatus(String unemployedStatus) {}
 		});
-		
 		return employee;
 	}
 	

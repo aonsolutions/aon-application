@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -191,6 +192,18 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		AON.start();
 		serviceAsync.getSellersSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Seller>>(callback));
 	}
+	
+	@Override
+	public void getSupporstSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, RegistrySeller>> callback) {
+		AON.start();
+		serviceAsync.getSupporstSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, RegistrySeller>>(callback));
+	}
+	
+//	@Override
+//	public void getSellerType(String domainName, int domain, String user, String query, AsyncCallback<Map<String, RegistrySeller>> callback) {
+//		AON.start();
+//		serviceAsync.getSellerType(domainName, domain, user, query, callback);
+//	}
 
 	@Override
 	public void getInvoicingGroupsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, InvoicingGroup>> callback) {

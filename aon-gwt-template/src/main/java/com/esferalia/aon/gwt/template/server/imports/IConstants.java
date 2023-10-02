@@ -18,7 +18,7 @@ public interface IConstants {
 	
 	String[] FEE_TITLES = {
 			IConstants.CLIENTE, IConstants.PRODUCTO, IConstants.CANTIDAD, IConstants.PRECIO, IConstants.DESCUENTO, IConstants.FECHA_INICIO,
-			IConstants.FECHA_FIN, IConstants.FECHA_FACTURACION, IConstants.FECHA_FACTURACION2, IConstants.PERIODO, IConstants.COMERCIAL, 
+			IConstants.FECHA_FIN, IConstants.FECHA_FACTURACION, IConstants.FECHA_FACTURACION2, IConstants.PERIODO, IConstants.COMERCIAL, IConstants.SOPORTE,
 			IConstants.CENTRO_DE_TRABAJO, IConstants.CENTRO_TRABAJO, IConstants.GRUPO, IConstants.GRUPO_FACTURACION, IConstants.GRUPO_FACTURACION2, 
 			IConstants.GRUPO_DE_FACTURACION, IConstants.GRUPO_DE_FACTURACION2, IConstants.CONFIDENCIAL, IConstants.DESCRIPCION,
 			IConstants.DESCRIPCION2, IConstants.EXPEDIENTE, IConstants.DETALLE, IConstants.DETALLE1, IConstants.DETALLE_1, IConstants.DETALLE2, IConstants.DETALLE_2,
@@ -114,6 +114,11 @@ public interface IConstants {
 	String PERIODO = "PERIODO";
 	String COMERCIAL = "COMERCIAL";
 	String NOMBRE_COMERCIAL = "NOMBRE COMERCIAL";
+	//////////////
+	String SOPORTE = "SOPORTE";
+	String NOMBRE_SOPORTE = "NOMBRE SOPORTE";
+	////////////
+	
 	String CENTRO_DE_TRABAJO = "CENTRO DE TRABAJO";
 	String CENTRO_TRABAJO = "CENTRO TRABAJO";
 	String GRUPO = "GRUPO";

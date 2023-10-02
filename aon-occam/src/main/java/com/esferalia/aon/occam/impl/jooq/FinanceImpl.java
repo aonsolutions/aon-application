@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -221,6 +222,13 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getSellersSuggestion(ctx, domainId, query));
 	}
+	
+	@Override
+	public Map<String, RegistrySeller> getSupporstSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getSupportsSuggestion(ctx, domainId, query));
+	}
+	
 
 	@Override
 	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(CloseableAONContext ctx, int domainId, String query) {

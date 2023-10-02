@@ -3,11 +3,14 @@ package com.esferalia.aon.gwt.payroll.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import com.amazonaws.util.IOUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeData;
 import com.esferalia.aon.in.payroll.img.DNIParser;
-import com.esferalia.aon.in.payroll.img.MyDniDataListener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
@@ -27,84 +30,112 @@ public class DNIServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		MyDniDataListener listener = new MyDniDataListener();
+		List<InputStream> inputStreams = new ArrayList<InputStream>();
 		Part filePart = req.getPart("archivo");
+		Collection<Part> filesPart = req.getParts();
+		for (Iterator iterator = filesPart.iterator(); iterator.hasNext();) {
+			Part part = (Part) iterator.next();
+			InputStream is = part.getInputStream();
+			inputStreams.add(is);
+
+		}
+
 		String fileName = filePart.getSubmittedFileName();
-		System.out.println(fileName);
+//		System.out.println(fileName);
+		int accion;
+
+		DNIParser dnip = new DNIParser();
 
 		EmployeeData ed = new EmployeeData();
-		String text;
-		String json;
+		String text = "";
+		String json = "";
+		String dni = "";
+		String nombre = "";
+		String apellido1 = "";
+		String apellido2 = "";
+		String nacionalidad = "";
+		String[] lineas = {};
 		PrintWriter os;
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		int action;
-
 		if (fileName.contains(".pdf")) {
-			action = 0;
-		} else if (fileName.contains(".jpg") || fileName.contains(".png")) {
-			action = 1;
+			accion = 0;
+		} else if (fileName.contains(".jpg")) {
+			accion = 1;
 		} else {
-			action = 2;
+			accion = 2;
 		}
-		
-		switch (action) {
 
+		switch (accion) {
 		case 0:
-			InputStream is = filePart.getInputStream();
-
-			DNIParser.parse(is);
-			text = DNIParser.getText();
-			DNIParser.getNewDniBothPdf(text, listener);
-			ed.setDni(DNIParser.dni.replaceAll("\\r", ""));
-			ed.setNacionalidad(DNIParser.nacionalidad.replaceAll("\\r", ""));
-			ed.setNombre(DNIParser.nombre.replaceAll("\\r", ""));
-			ed.setApellido1(DNIParser.apellido1.replaceAll("\\r", ""));
-			ed.setApellido2(DNIParser.apellido2.replaceAll("\\r", ""));
-
-			json = objectMapper.writeValueAsString(ed);
-
-			resp.setContentType("text/html");
-
-			os = resp.getWriter();
-
-			os.println(json);
-			os.flush();
-			os.close();
-
-			System.out.println(json);
-			
+			dnip.parse(inputStreams);
+			text = dnip.getText();
 			break;
 
 		case 1:
-			InputStream prueba2 = filePart.getInputStream();
-			byte[] bytes = IOUtils.toByteArray(prueba2);
-			text = DNIParser.extractImage(bytes);
-			DNIParser.getNewDniBothJpg(text, listener);
+			for (Iterator i = filesPart.iterator(); i.hasNext();) {
+				Part part = (Part) i.next();
+				InputStream is = part.getInputStream();
 
-			ed.setDni(DNIParser.dni.replaceAll("\\r", ""));
-			ed.setNacionalidad(DNIParser.nacionalidad.replaceAll("\\r", ""));
-			ed.setNombre(DNIParser.nombre.replaceAll("\\r", ""));
-			ed.setApellido1(DNIParser.apellido1.replaceAll("\\r", ""));
-			ed.setApellido2(DNIParser.apellido2.replaceAll("\\r", ""));
-
-			json = objectMapper.writeValueAsString(ed);
-
-			resp.setContentType("text/html");
-
-			os = resp.getWriter();
-
-			os.println(json);
-			os.flush();
-			os.close();
-
-			System.out.println(json);
-
+				byte[] bytes = IOUtils.toByteArray(is);
+				text = dnip.extractImage(bytes);
+			}
 			break;
-			
 		case 2:
-				throw new IOException();
+			System.out.println("El archivo no es valido");
+			break;
 		}
+
+		System.out.println(text);
+		lineas = text.split("\n");
+		for (int i = 0; i < lineas.length; i++) {
+			String linea = lineas[i];
+			if (linea.startsWith("DNI") || linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
+				dni = lineas[i + 1];
+				if (!dnip.validateDni(dni)) {
+					dni = "";
+					continue;
+				}
+
+			} else if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
+				apellido1 = lineas[i + 1];
+				apellido2 = lineas[i + 2];
+
+			} else if (linea.startsWith("NOMBRE") || linea.startsWith("NONBRE")) {
+				nombre = lineas[i + 1];
+
+			} else if (linea.startsWith("NACIONALIDAD")) {
+				nacionalidad = lineas[i + 3];
+				if (!dnip.validateNationality(nacionalidad)) {
+					nacionalidad = "";
+					continue;
+				}
+				if (nacionalidad.equals("ESP")) {
+					nacionalidad = "ESPAÑA";
+				}
+
+			}
+		}
+
+		ed.setDni(dni.replaceAll("\\r", ""));
+		ed.setNacionalidad(nacionalidad.replaceAll("\\r", ""));
+		ed.setNombre(nombre.replaceAll("\\r", ""));
+		ed.setApellido1(apellido1.replaceAll("\\r", ""));
+		ed.setApellido2(apellido2.replaceAll("\\r", ""));
+
+		json = objectMapper.writeValueAsString(ed);
+
+		resp.setContentType("text/html");
+
+		os = resp.getWriter();
+
+		os.println(json);
+
+		os.flush();
+		os.close();
+
+		System.out.println(json);
+
 	}
 
 	@Override

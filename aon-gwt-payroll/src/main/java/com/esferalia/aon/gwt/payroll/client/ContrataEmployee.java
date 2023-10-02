@@ -60,6 +60,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
@@ -521,6 +522,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			onComunicateAFI();
 		}
 	}
+	
 
 	class TGSSContextMenu extends ContextMenu {
 
@@ -540,10 +542,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem altaConsolidadaDelete;
 		private MenuItem comunicateAFI;
 		
+		
 		public TGSSContextMenu() {
 
 			afi = addMenuItem("Cambios AFI", new AFICommand(), AON.CSS.aonIconTgss(), "afi");
 			peculiarities = addMenuItem("Peculiaridades de cotizaci\u00F3n", new PeculiaritiesCommand(), AON.CSS.aonIconTgss(), "peculiarities");
+			
 			
 			addSeparator();
 
@@ -561,6 +565,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 			altaConsolidadaDelete = addMenuItem("Eliminar alta consolidada", new AltaConsolidadaDeleteCommand(), AON.CSS.aonIconSend(), "altaConsolidadaDelete");
 			comunicateAFI = addMenuItem("Notificaci\u00f3n AFI (TGSS)", new ComunicateAFICommand(), AON.CSS.aonIconSend(), "comunicateAFI");
+			
+
 			
 		}
 		
@@ -1123,7 +1129,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	@UiField(provided = true)
 	Mod145 mod145;
-
+	
+//	@UiField(provided = true)
+//	ContractCNoUI contractCNoUi;
+	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 

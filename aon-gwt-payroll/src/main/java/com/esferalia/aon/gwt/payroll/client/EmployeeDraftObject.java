@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.Rbank;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDraftObject extends AbstractDraftObject{
@@ -369,7 +370,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			
 			@Override
 			public void onSuccess(Void result) {
-				success.accept(result);
+				success.accept(result);				
 			}
 			
 			@Override

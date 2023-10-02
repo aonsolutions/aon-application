@@ -141,10 +141,7 @@
 			padding-right: 20px;
 			padding-bottom: 20px;
 		}
-		
-		.uploadButtonHidde{
-			
-		}
+
 		
 		
 	</ui:style>
@@ -157,25 +154,29 @@
 	   		<g:HTMLPanel styleName="{style.styleBorder}">
 	    		<g:Label styleName='{style.tittle}'>Datos Contrato</g:Label>
 		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}" ui:field="contractDataTable">
-		    		
+
 		    		<!-- LINEA 0 -->
 		    		<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}' text="Documento" />
 		    			<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.widthAll} {style.heightTB}'/>
 		    			<g:Label styleName='{style.mw}' ui:field="documentType" debugId="document_type" />
 		    			
-		    			<!--  FILEUPLOAD-->
-<!-- 						<g:HTMLPanel > 											 -->
-<!-- 						  <g:FormPanel ui:field="formPanel" visible="true" method="POST" action="DNIServlet" encoding="multipart/form-data"> -->
-<!-- 						    <g:HTMLPanel styleName="{style.flex}"> -->
-<!-- 						       <g:Button ui:field="uploadButton" styleName="{style.iconButton}" > -->
-<!-- 						        <i class="material-icons">publish</i> -->
-<!-- 						      </g:Button> -->
+<!-- 		    			 FILEUPLOAD -->
+						<g:HTMLPanel > 											
+						  <g:FormPanel ui:field="formPanel" visible="true" method="POST" action="DNIServlet" encoding="multipart/form-data">
+						    <g:HTMLPanel styleName="{style.flex}">
+						       <g:Button ui:field="uploadButton" styleName="{style.iconButton}" >
+						        <i class="material-icons">publish</i>
+						      </g:Button>
 <!-- 						      <g:FileUpload ui:field="fileUpload" visible= "false" styleName="{style.gwt-fileUpload}"/> -->
-<!-- 						    </g:HTMLPanel> -->
-<!-- 						  </g:FormPanel> -->
-<!-- 						</g:HTMLPanel> -->
+						      <a:MultiFileUpload ui:field="multiFileUpload" visible ="false"></a:MultiFileUpload>
+						    </g:HTMLPanel>
+						  </g:FormPanel>
+						</g:HTMLPanel>
 					    <!-- FILEUPLOAD-->
+					    
+					    
+					    
 			
 		    			<g:HTMLPanel styleName="{style.flexItem} {style.widthAll}" ui:field="nationalityPanel">
 		    				<g:Label ui:field="nationalityLabel" debugId="nationalityLabel" styleName='{style.mw}' text="Nacionalidad" />

@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -79,6 +80,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	private HTMLPanel sellerPanel;
 	private SuggestBox sellerSuggestBox;
 	
+	private HTMLPanel supportPanel;
+	private SuggestBox supportSuggestBox;
+	
 	private HTMLPanel invoicingGroupPanel;
 	private SuggestBox invoicingGroupSuggestBox;
 	
@@ -97,13 +101,15 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	
 	private Map<String, Workplace> workplaceSuggestions = new TreeMap<>();
 	private Map<String, Seller> sellerSuggestions = new TreeMap<>();
+	private Map<String, RegistrySeller> supportSuggestions = new TreeMap<>();
+
 	private Map<String, InvoicingGroup> invoicingGroupSuggestions = new TreeMap<>();
 	private Map<String, Project> projectSuggestions = new TreeMap<>();
 
 	private Fee fee;
 	private boolean isSameProduct = false;
 	private boolean isNewFee = false;
-	private OldItem item;
+	private OldItem item; 
 	private Customer customer;
 
 	// ------------------------------------------------- Constructor
@@ -203,6 +209,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			createSellerPanel();
 			container.add(sellerPanel);
 			
+			createSupportPanel();
+			container.add(supportPanel);
+			
 			createInvoicingGroupPanel();
 			container.add(invoicingGroupPanel);
 			
@@ -214,7 +223,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		container.add(buttonsPanel);
 		
 		mainPanel.add(container);
-		
+		    
 		this.setWidget(mainPanel);
 	}
 	
@@ -668,6 +677,50 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		sellerPanel.add(sellerLabel);
 		sellerPanel.add(sellerSuggestBox);
 	}
+	
+	
+	private void createSupportPanel(){
+		supportPanel = new HTMLPanel("");
+		supportPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		Label supportLabel = new Label("Soporte");
+		supportLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
+		supportLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		supportSuggestBox = new SuggestBox();
+		supportSuggestBox.setWidth("100%");
+		supportSuggestBox.setHeight("2em");
+		supportSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		supportSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
+		supportSuggestBox.setAutoSelectEnabled(false);
+		supportSuggestBox.getElement().setPropertyString("placeholder", "Soporte: busque por nombre");
+		
+		supportSuggestBox.addSelectionHandler(e -> {
+			supportSuggestBox.hideSuggestionList();
+			if(null != fee) fee.setSeller(sellerSuggestions.get(supportSuggestBox.getValue()));
+		});
+		
+		supportSuggestBox.addValueChangeHandler(e -> {
+			if(null != fee && AonStringUtils.isBlank(supportSuggestBox.getValue())) fee.setSeller(null);
+		});
+		
+		supportSuggestBox.addKeyUpHandler(e -> {
+			String sellerQuery = supportSuggestBox.getValue();
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				supportSuggestBox.setValue("");
+				sellerQuery = null;
+				getSupportSuggestion(sellerQuery);
+			} else if(AonStringUtils.isNotBlank(sellerQuery) && sellerQuery.length() > 3)
+				getSupportSuggestion(sellerQuery);
+		});
+		
+		if(null != fee) supportSuggestBox.setValue(fee.getSeller().getName());
+		
+		supportPanel.add(supportLabel);
+		supportPanel.add(supportSuggestBox);
+		
+		
+	}
 
 	private void getSellersSuggestion(String sellerQuery) {
 		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), sellerQuery, new AsyncCallback<Map<String, Seller>>() {
@@ -681,6 +734,29 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 				orclSb.addAll(sellerSuggestions.keySet());
 				orclSb.setDefaultSuggestionsFromText(sellerSuggestions.keySet());
 				sellerSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+	
+	
+	private void getSupportSuggestion(String sellerQuery) {
+		SERVICE.getSupporstSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), sellerQuery, new AsyncCallback<Map<String, RegistrySeller>>() {
+			
+			@Override
+			public void onSuccess(Map<String, RegistrySeller> suppSuggestionsDB) {
+				supportSuggestions = suppSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) supportSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(supportSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(supportSuggestions.keySet());
+				supportSuggestBox.showSuggestionList();
 			}
 			
 			@Override
