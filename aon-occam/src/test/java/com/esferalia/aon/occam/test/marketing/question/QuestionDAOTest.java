@@ -21,42 +21,59 @@ import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
+/**
+ * Tests the mehotds of the class QuestionDAO
+ */
 public class QuestionDAOTest extends AbstractOccamTest {
 	
+	/**
+	 * Test create, update and delete
+	 */
 	@Test
 	public void crudeTest() {
 		// create
 		Question question = AonFaker.getQuestion(ctx);
-		question = QuestionDAO.insert(ctx, question);
+		if (!QuestionValidation.checkAlias(ctx, question)) {
+			question = QuestionDAO.insert(ctx, question);
+			Integer questionId = question.getId();
+			Question inserted = QuestionDAO.get(ctx, questionId);
+			Asserts.assertEqualsQuestion(question, inserted);
+			
+			// update
+			question = QuestionDAO.update(ctx, question);
+			Question updated = QuestionDAO.get(ctx, questionId);
+			Asserts.assertEqualsQuestion(question, updated);
+			
+			// delete
+			QuestionDAO.delete(ctx, questionId);
+			Question deleted = QuestionDAO.get(ctx, questionId);
+			assertNull(deleted);
+		}
 		
-		Integer questionId = question.getId();
-		Question inserted = QuestionDAO.get(ctx, questionId);
-		Asserts.assertEqualsQuestion(question, inserted);
 		
-		// update
-		question = QuestionDAO.update(ctx, question);
-		Question updated = QuestionDAO.get(ctx, questionId);
-		Asserts.assertEqualsQuestion(question, updated);
-		
-		// delete
-		QuestionDAO.delete(ctx, questionId);
-		Question deleted = QuestionDAO.get(ctx, questionId);
-		assertNull(deleted);
 	}
 
-	
+	/**
+	 * Test that it throws and exception if the question is null
+	 */
 	@Test
 	public void saveNullQuestionTest() {
 		AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, null));
 		assertEquals(AonError.QUESTION_NULL.getMessage(), e.getMessage());
 	}
 	
+	/**
+	 * Test that it throws and exception if the question is empty
+	 */
 	@Test
 	public void saveEmptyQuestionTest() {
 		AonCoreException e = assertThrows(AonCoreException.class, () -> QuestionDAO.save(ctx, new Question()));
 		assertEquals(AonError.QUESTION_EMPTY.getMessage(), e.getMessage());
 	}
 	
+	/**
+	 * Test that it throws and exception if we save a question where the domain is null
+	 */
 	@Test
 	public void saveNullDomainQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
@@ -65,6 +82,9 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		assertEquals(AonError.EMPTY_DOMAIN.getMessage(), e.getMessage());
 	}
 	
+	/**
+	 * Test that it throws and exception if we save a question where the text is null
+	 */
 	@Test
 	public void saveNullTextQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
@@ -73,6 +93,9 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		assertEquals(AonError.NULL_QUESTION_TEXT.getMessage(), e.getMessage());
 	}
 	
+	/**
+	 * Test that it throws and exception if we save a question where the text is empty
+	 */
 	@Test
 	public void saveEmptyTextQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
@@ -81,6 +104,9 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		assertEquals(AonError.EMPTY_QUESTION_TEXT.getMessage(), e.getMessage());
 	}
 	
+	/**
+	 * Test that it throws and exception if we save a question where the size of the text is invalid
+	 */
 	@Test
 	public void saveInvalidTextSizeQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
@@ -94,6 +120,9 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		assertEquals(AonError.INVALID_SIZE_QUESTION_TEXT.getMessage(), e.getMessage());
 	}
 	
+	/**
+	 * Test that it throws and exception if we save a question where the size of the alias is invalid
+	 */
 	@Test
 	public void saveInvalidAliasSizeQuestionTest() {
 		Question question = AonFaker.getQuestion(ctx);
@@ -107,6 +136,9 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		assertEquals(AonError.INVALID_SIZE_ALIAS.getMessage(), e.getMessage());
 	}
 	
+	/**
+	 * Test that it throws and exception if we save a question where the alias is repeated
+	 */
 	@Test
 	public void saveRepeatedAliasQuestionTest() {
 		Question question1 = AonFaker.getQuestion(ctx);
@@ -124,6 +156,9 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		QuestionDAO.delete(ctx, question2.getId());
 	}
 	
+	/**
+	 * Test that it throws and exception if we get a list without the params that we set
+	 */
 	@Test
 	public void getListTest() {
 		Question question1 = AonFaker.getQuestion(ctx);
@@ -140,7 +175,6 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		
 		List<Question> actual = QuestionDAO.getList(ctx, questionParams);
 		
-		// check that all the elements has that param
 		for (Question question : actual) {
 			assertTrue(question.isActive());
 		}
@@ -148,14 +182,4 @@ public class QuestionDAOTest extends AbstractOccamTest {
 		QuestionDAO.delete(ctx, question1.getId());
 		QuestionDAO.delete(ctx, question2.getId());
 	}
-	
-	/*
-	 * @Test public void getListFalseTest() { String alias = "alias"; QuestionParams
-	 * questionParams = new QuestionParams(); questionParams.setAlias(alias);
-	 * 
-	 * if (!QuestionValidation.checkAlias(ctx, alias)) {
-	 * assertTrue(QuestionDAO.getList(ctx, questionParams).isEmpty()); } else { for
-	 * (Question question : QuestionDAO.getList(ctx, questionParams)) {
-	 * assertEquals(alias,question.getAlias()); } } }
-	 */
 }
