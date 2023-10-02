@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'src/app/core/services/message.service';
-import { FilterBuilder } from 'libraries/AonSDK/aon';
+import { FilterBuilder } from 'libraries/AonSDK/src/aon';
 
 @Component({
   selector    : 'app-inbox',

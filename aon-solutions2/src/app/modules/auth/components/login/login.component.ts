@@ -1,6 +1,6 @@
 import { Component, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ErrorResponse } from 'libraries/AonSDK/aon';
+import { ErrorResponse } from 'libraries/AonSDK/src/aon';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 

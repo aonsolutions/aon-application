@@ -4,9 +4,9 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { ErrorSnackBarComponent } from 'src/app/shared/components/error-snack-bar/error-snack-bar.component';
 import { CustomError } from '../models/class/custom-error';
 import { ICustomError } from '../models/interface/icustom-error';
-import { IResponse } from 'libraries/AonSDK/AonSDK';
-import { Response } from 'libraries/AonSDK/AonSDK';
-import { ErrorResponse } from 'libraries/AonSDK/aon';
+import { IResponse } from 'libraries/AonSDK/src/aon';
+import { Response } from 'libraries/AonSDK/src/aon';
+import { ErrorResponse } from 'libraries/AonSDK/src/aon';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +22,7 @@ export class ErrorService {
     return CustomErrorList[('error' + code) as keyof typeof CustomErrorList];
   }
 
-  displayError(code: ICustomError | IResponse): void {
+  displayError(code: ICustomError | IResponse<any>): void {
     let dataError: Array<string> = [];
 
     if (code instanceof CustomError) {

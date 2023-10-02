@@ -13,7 +13,7 @@ import {
   IMessageChat,
   IMessage,
   IFilter,
-} from 'libraries/AonSDK/aon';
+} from 'libraries/AonSDK/src/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
@@ -279,17 +279,11 @@ export class InboxviewComponent implements OnInit {
   async createChatMessage(description: string) {
     if (this.messagesData && this.messageChat) {
 
-      const newMessageChat: IMessageChat = {
-        Id: this.messageChat.Id,
-        IdMessage: this.messagesData.Id,
-        Name: this.messagesData.Name,
-        Description: description,
-        Date: new Date(),
-        Type: 'chat',
-        getKey: () => this.messageChat.Id,
-        getFilterableFields: () => new Map(),
-        getSortableFields: () => new Map(),
-      };
+      const newMessageChat = this.messageService.objectFactory.createMessageChat()
+      .setIdMessage(this.messagesData.Id)
+      .setName(this.messagesData.Name)
+      .setDescription(description)
+      .setType('chat');
 
       try {
         // Crear el mensaje

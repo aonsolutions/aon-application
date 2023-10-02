@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/aon';
+import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/src/aon';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
  interface ShortcutDashboard {

@@ -9,7 +9,7 @@ import { TaxModelService } from 'src/app/core/services/tax-model.service';
 import { ModalEditTaxModelComponent } from '../modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../modal-payment/modal-payment.component';
 import { ModalTaxesDetailsComponent } from '../modal-taxes-details/modal-taxes-details.component';
-import { FilterBuilder } from 'libraries/AonSDK/aon';
+import { FilterBuilder } from 'libraries/AonSDK/src/aon';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
