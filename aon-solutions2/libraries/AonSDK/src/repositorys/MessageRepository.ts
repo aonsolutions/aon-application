@@ -4,10 +4,11 @@ import { ICollection, IFilter } from "../interfaces/utilitiesInterfaces";
 import { Message, ApiMessage, StorableMessage } from "../models/Message";
 import { ApiHttpRequest } from "../utils/Http";
 import { ErrorResponse } from "../utils/Response";
-import { BASE_URL, GET_METHOD, POST_METHOD, GET_SINGLE } from "../utils/Environment";
+import { BASE_URL, GET_SINGLE } from "../utils/Environment";
 import { APIGenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "./GenericRepository";
 import { messages } from "../models/Message";
 import { Collection } from "../utils/Collection";
+import { MESSAGE_URL } from "../utils/ApiUrls";
 
 export class APIMessageSingleObjectCrudRepository extends APIGenericSingleObjectCrudRepository<Message> {
     constructor(apiModel: ApiMessage, type: { new (): Message }){
@@ -67,18 +68,40 @@ export class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleOb
 
     async get(filter?: IFilter | undefined): Promise<ICollection<Message>> {
         let url;
-        let taskHolderAndSender = /*'&task_holder=' + localStorage.getItem('registry') +*/ '&sender=' + localStorage.getItem('registry') + '&status=pending'
-        if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.NOTIFICACION)
-            url = ['/ms/api/notification?page=1&perPage=100']
-        else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.CONSULTA)
-            url = ['/ms/api/task?source=query&page=1&perPage=100' + taskHolderAndSender]
-        else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.TAREA)
-            url = ['/ms/api/task?source=task&page=1&perPage=100' + taskHolderAndSender]
+        let generateParams = (source?: string): any => {
+            let params = {
+                page: filter?.pageItems ? filter.pageItems : 1,
+                perPage: filter?.pageItems ? filter.pageItems : filter?.fields?.has('type') ? 10 : 30,
+            }
+            if(source)
+                Object.defineProperties(params, {
+                    'task_holder': {
+                        value: localStorage.getItem('registry'),
+                        enumerable : true,
+                    },
+                    'sender': {
+                        value: localStorage.getItem('registry'),
+                        enumerable : true,
+                    }
+                })
+            if(source)
+                Object.defineProperty(params, 'source', {
+                    value: source,
+                    enumerable : true,
+                })
+            return params;
+        }
+        if(filter?.fields?.get('type') == TypeMessage.NOTIFICACION)
+            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams())]
+        else if(filter?.fields?.get('type') == TypeMessage.CONSULTA)
+            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams('query'))]
+        else if(filter?.fields?.get('type') == TypeMessage.TAREA)
+            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams('task'))]
         else
             url = [
-                '/ms/api/notification?page=1&perPage=100',
-                '/ms/api/task?source=query&page=1&perPage=100' + taskHolderAndSender,
-                '/ms/api/task?source=task&page=1&perPage=100' + taskHolderAndSender
+                ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams()),
+                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams('query')),
+                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams('task'))
             ]
         let collection: ICollection<Message> = new Collection<Message>();
         for(let element of url){
@@ -87,7 +110,6 @@ export class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleOb
                 collection.add(this.apiModel.parseDataToReceive(element))
             })
         }
-        console.log(collection)
         return collection;
     }
 }

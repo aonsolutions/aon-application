@@ -92,6 +92,10 @@ export interface IAuthenticationRepository {
      * Set login on localStorage
      */
     userInfo(): Promise<void>;
+    /**
+     * Set the registry on localStorage of the user
+     */
+    setRegistry(): Promise<void>;
 }
 
 export interface IReportingRepository {

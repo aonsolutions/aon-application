@@ -276,9 +276,9 @@ export class ApiMessage extends Message implements IApiModel {
             message.Date = new Date(data.start_date);
             message.Type = data.source == 'query' ? TypeMessage.CONSULTA : TypeMessage.TAREA;
             if(data.source == 'task')
-                message.Status = data.status && data.status == StatusMessage.PENDIENTE ? StatusMessage.PENDIENTE : StatusMessage.REALIZADA;
+                message.Status = data.status && data.status == 'pending' ? StatusMessage.PENDIENTE : StatusMessage.REALIZADA;
             else
-                message.Status = data.status && data.status == StatusMessage.PENDIENTE ? StatusMessage.ABIERTA : StatusMessage.CERRADA;
+                message.Status = data.status && data.status == 'pending' ? StatusMessage.ABIERTA : StatusMessage.CERRADA;
             message.EndDate = new Date();
             message.Key = message.Id;
             return message;
