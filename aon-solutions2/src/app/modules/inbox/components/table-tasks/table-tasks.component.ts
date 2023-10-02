@@ -69,6 +69,7 @@ export class TableTasksComponent implements OnChanges {
     this.updateTableData();
   }
 
+  // Casos de fechas para usar en mi tabla
   filterTableDate() {
     let date: { start: string; end: string } = { start: '', end: '' };
     switch (this.filterDate) {
@@ -84,6 +85,7 @@ export class TableTasksComponent implements OnChanges {
     return date;
   }
 
+  // Filtros fechas principio semana
   private getStartDateOfWeek(): string {
     const currentDate = new Date();
     const startDate = new Date(currentDate);
@@ -91,6 +93,7 @@ export class TableTasksComponent implements OnChanges {
     return this.formatDate(startDate);
   }
 
+  // Filtos fechas final semana
   private getEndDateOfWeek(): string {
     const currentDate = new Date();
     const endDate = new Date(currentDate);
@@ -98,18 +101,21 @@ export class TableTasksComponent implements OnChanges {
     return this.formatDate(endDate);
   }
 
+  // Filtros fechas principio mes
   private getStartDateOfMonth(): string {
     const currentDate = new Date();
     const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     return this.formatDate(startDate);
   }
 
+  // Filtros fechas final mes
   private getEndDateOfMonth(): string {
     const currentDate = new Date();
     const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
     return this.formatDate(endDate);
   }
 
+  // Filtros fechas
   private formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -128,17 +134,20 @@ export class TableTasksComponent implements OnChanges {
 
         filterBuilder.addInterval('date', dates.start, dates.end);
       }
+
+    // Obtener la lista de mensajes
       this.messageService
       .getMessageList(filterBuilder.getFilter())
       .then((response) => {
       this.messagess = response;
       this.messagesSubject.next(this.messagess);
       let pendingTasksFound = false;
+
       response.forEach((message, messageKey) => {
         const column: any = Object.assign({}, message);
         column.key = messageKey;
         column.name = message.Name;
-          // eliminar mi if cuando tenga el filtro desde la api y descomentar lo de arriba
+
         if (
           this.filterStatus[this.filterTabSelec] === message.Status.toLowerCase()
           || this.filterStatus[this.filterTabSelec] === 'todas'
@@ -152,24 +161,23 @@ export class TableTasksComponent implements OnChanges {
                 : 'background-text-griss-light'
             }">${message.Status}</span>`,
           };
+
+          // Asunto del mensaje
           column.title = message.Title;
+          // Mensaje
           column.description = message.Description;
+          // Fecha
           column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
+          // Marcar como nueva
           column.class = (message.Status == 'pendiente') ? 'border-red' : '';
+          // Agregamos el mensaje
           tableRow.push(column);
-
-
-          if (message.Status.toLowerCase().includes('pendiente')) {
-            pendingTasksFound = true;
-          }
-
-          if (this.selectedMessage === null) {
-            this.selectedMessage = { ...message };
-          }
         }
       });
+
       this.bodyTable = tableRow;
       this.noPendingTasks.emit(!pendingTasksFound);
+
       // No tenemos mensaje en la tabla
       if (response.size() === 0) {
         this.translateService.get([

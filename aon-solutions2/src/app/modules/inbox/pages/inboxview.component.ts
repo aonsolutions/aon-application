@@ -179,7 +179,6 @@ export class InboxviewComponent implements OnInit {
   }
 
   async rowClickHandler(message: any) {
-    console.log(message);
     try {
       const isSameRow =
         this.messagesData && this.messagesData.Id === message.key;
@@ -284,6 +283,7 @@ export class InboxviewComponent implements OnInit {
     }
   }
 
+  // Cerrar details
   closeDetail() {
     this.showDetail = false;
   }
@@ -292,6 +292,7 @@ export class InboxviewComponent implements OnInit {
     this.expandedIndex = this.expandedIndex === index ? -1 : index;
   }
 
+  // ocultar o ver botones
   changeView(): void {
     this.showSendButton = false;
     this.showSendButtons = false;
@@ -303,7 +304,6 @@ export class InboxviewComponent implements OnInit {
   }
   //mensaje de chat de consultas
   async createChatMessage(description: string) {
-    // console.log('messages', this.messages);
 
     if (this.messageChat && this.messagesData) {
       console.log('messagesCHAT', this.messageChat);
@@ -377,7 +377,6 @@ console.log(this.messagesData);
     if (this.newMessageDescription.trim() === '') {
       return;
     }
-
     // Llama a la función para crear un nuevo mensaje de chat
     this.createChatMessage(this.newMessageDescription);
 
@@ -390,7 +389,6 @@ console.log(this.messagesData);
     if (this.newMessageDescription.trim() === '') {
       return;
     }
-
     // Llama a la función para crear un nuevo mensaje
     this.createMessage(this.newMessageDescription);
 

@@ -180,7 +180,7 @@ export class TableQueriesComponent implements OnChanges {
           const column: any = Object.assign({}, message);
           column.key = messageKey;
           column.name = message.Name;
-          // TODO: eliminar mi if cuando tenga el filtro desde la api y descomentar lo de arriba
+
           if (
             this.filterStatus[this.filterTabSelec] === message.Status.toLowerCase()
             || this.filterStatus[this.filterTabSelec] === 'todas'
