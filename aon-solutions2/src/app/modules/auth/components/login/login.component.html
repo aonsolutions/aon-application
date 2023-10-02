@@ -1,6 +1,5 @@
 <app-content>
   <mat-grid-list [cols]="24" rowHeight="fit" [style.height]="'100%'">
-    <!-- Tratar de omitir primet tiel, a favor de un offset o colspan -->
     <mat-grid-tile
       [gridCols]="{ xs: 2, sm: 2, md: 8, lg: 8, xl: 8 }"
     ></mat-grid-tile>
@@ -11,7 +10,8 @@
           <span>{{ "LOGIN.ACCESS_YOUR_AON_ACCOUNT" | translate }}</span>
         </div>
         <div class="inptCont">
-          <div class="cardBody">
+          <app-spinner body *ngIf="spinner"></app-spinner>
+          <div *ngIf="!spinner" class="cardBody">
             <form (ngSubmit)="loginUser()" >
               <app-input
                 (inputValue)="username = $event"
