@@ -14,20 +14,11 @@ export class APIFolderMultipleObjectCrudRepository extends APIGenericMultipleObj
         let collection: ICollection<Folder> = new Collection<Folder>();
         for(let folder of apiFolders)
             collection.add(folder)
-        // let response = await this.httpRequest.httpRequest(BASE_URL + '/ms/api/workplace',GET_METHOD,{},{})
-        // let workplaces = ''
-        // response.forEach((element: any) => {
-        //     workplaces+=element.id + ';'
-        // })
-        // let filterFolder = new FilterBuilder();
-        // if(!filter) {
-        //     filterFolder.addField('workplace', workplaces)
-        // }else{
-        //     filter.fields?.set('workplace', workplaces)
-        // }
         collection.copyArrayToCollection((await super.get(filter)).toArray())
-        if(filter && filter.fields || filter?.intervalFields) collection = collection.filter(filter);
-        if(filter && filter.orderBy) collection.sort(filter);
+        if(collection.size() > 0){
+            if(filter && filter.fields || filter?.intervalFields) collection = collection.filter(filter);
+            if(filter && filter.orderBy) collection.sort(filter);
+        }
         return collection;
     }
 

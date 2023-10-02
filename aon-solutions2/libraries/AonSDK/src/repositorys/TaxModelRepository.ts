@@ -18,14 +18,11 @@ export class APITaxModelMultipleObjectCrudRepository extends APIGenericMultipleO
         response.forEach((element: any) => {
             collection.add(this.apiModel.parseDataToReceive(element))
         })
-        if(filter) console.log(filter)
-        console.log('before =>', collection)
         if(collection.size() > 0){
             if(filter?.intervalFields || filter?.fields) collection = collection.filter(filter);
-            // if(filter?.orderBy) collection.sort(filter);
-            // if(filter?.pageItems && filter.pageNum) collection = collection.paginate(filter.pageNum,filter.pageItems);
+            if(filter?.orderBy) collection.sort(filter);
+            if(filter?.pageItems && filter.pageNum) collection = collection.paginate(filter.pageNum,filter.pageItems);
         }
-        console.log('after =>', collection)
         return collection;
     }
 

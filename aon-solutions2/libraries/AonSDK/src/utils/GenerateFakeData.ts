@@ -1,4 +1,4 @@
-import { IInvoiceLine, MainFolders, TypeMessage, StatusMessage } from "../interfaces/modelsInterfaces";
+import { IInvoiceLine, MainFolders, TypeMessage, StatusMessage, statusTaxModel } from "../interfaces/modelsInterfaces";
 import { Bank, StorableBank, setBanks } from "../models/Bank";
 import { Certificate, StorableCertificate, certificates, setCertificates } from "../models/Certificate";
 import { Contact, StorableContact, contacts, setContacts } from "../models/Contact";
@@ -341,30 +341,30 @@ export function generateData(){
     let localTaxModels = new LocalStorage<TaxModel>(TaxModel);
     setTaxModels(localTaxModels.read(storableTaxModels.getLocalStorage()))
     if(taxModels.size() == 0){
-        taxModels.add(new TaxModel( '180','IVA','presentado','domicialición bancaria','356',1,2023));
-        taxModels.add(new TaxModel( '303','IVA','presentado','tranferencia','789',1,2023));
-        taxModels.add(new TaxModel( '180','IVA','presentado','domicialición bancaria','1245',2,2023));
-        taxModels.add(new TaxModel( '303','IVA','presentado','tranferencia','1024',2,2023));
-        taxModels.add(new TaxModel( '180','IVA','en proceso','domicialición bancaria','1538',3,2023));
-        taxModels.add(new TaxModel( '303','IVA','pendiente','tranferencia','987',3,2023));
-        taxModels.add(new TaxModel( '130','IVA','presentado','tranferencia','189',3,2023));
-        taxModels.add(new TaxModel( '347','IVA','rectificado','tranferencia','684',3,2023));
-        taxModels.add(new TaxModel( '180','IVA','en proceso','domicialición bancaria','1784',4,2023));
-        taxModels.add(new TaxModel( '303','IVA','pendiente','domicialición bancaria','1345',4,2023));
-        taxModels.add(new TaxModel( '130','IVA','presentado','tranferencia','541',4,2023));
-        taxModels.add(new TaxModel( '347','IVA','rectificado','domicialición bancaria','1354',4,2023));
-        taxModels.add(new TaxModel( '180','IVA','presentado','a','356',1,2022));
-        taxModels.add(new TaxModel( '303','IVA','presentado','b','789',1,2022));
-        taxModels.add(new TaxModel( '180','IVA','presentado','a','1245',2,2022));
-        taxModels.add(new TaxModel( '303','IVA','presentado','b','1024',2,2022));
-        taxModels.add(new TaxModel( '180','IVA','en proceso','a','1538',3,2022));
-        taxModels.add(new TaxModel( '303','IVA','pendiente','b','987',3,2022));
-        taxModels.add(new TaxModel( '130','IVA','presentado','b','189',3,2022));
-        taxModels.add(new TaxModel( '347','IVA','rectificado','b','684',3,2022));
-        taxModels.add(new TaxModel( '180','IVA','en proceso','a','1784',4,2022));
-        taxModels.add(new TaxModel( '303','IVA','pendiente','a','1345',4,2022));
-        taxModels.add(new TaxModel( '130','IVA','presentado','b','541',4,2022));
-        taxModels.add(new TaxModel( '347','IVA','rectificado','a','1354',4,2022));
+        taxModels.add(new TaxModel( '180','IVA',statusTaxModel.PRESENTADO,'domicialición bancaria','356',1,2023));
+        taxModels.add(new TaxModel( '303','IVA',statusTaxModel.PRESENTADO,'tranferencia','789',1,2023));
+        taxModels.add(new TaxModel( '180','IVA',statusTaxModel.PRESENTADO,'domicialición bancaria','1245',2,2023));
+        taxModels.add(new TaxModel( '303','IVA',statusTaxModel.PRESENTADO,'tranferencia','1024',2,2023));
+        taxModels.add(new TaxModel( '180','IVA',statusTaxModel.EN_PROCESO,'domicialición bancaria','1538',3,2023));
+        taxModels.add(new TaxModel( '303','IVA',statusTaxModel.PENDIENTE,'tranferencia','987',3,2023));
+        taxModels.add(new TaxModel( '130','IVA',statusTaxModel.PRESENTADO,'tranferencia','189',3,2023));
+        taxModels.add(new TaxModel( '347','IVA',statusTaxModel.RECTIFICADO,'tranferencia','684',3,2023));
+        taxModels.add(new TaxModel( '180','IVA',statusTaxModel.EN_PROCESO,'domicialición bancaria','1784',4,2023));
+        taxModels.add(new TaxModel( '303','IVA',statusTaxModel.PENDIENTE,'domicialición bancaria','1345',4,2023));
+        taxModels.add(new TaxModel( '130','IVA',statusTaxModel.PRESENTADO,'tranferencia','541',4,2023));
+        taxModels.add(new TaxModel( '347','IVA',statusTaxModel.RECTIFICADO,'domicialición bancaria','1354',4,2023));
+        taxModels.add(new TaxModel( '180','IVA',statusTaxModel.PRESENTADO,'a','356',1,2022));
+        taxModels.add(new TaxModel( '303','IVA',statusTaxModel.PRESENTADO,'b','789',1,2022));
+        taxModels.add(new TaxModel( '180','IVA',statusTaxModel.PRESENTADO,'a','1245',2,2022));
+        taxModels.add(new TaxModel( '303','IVA',statusTaxModel.PRESENTADO,'b','1024',2,2022));
+        taxModels.add(new TaxModel( '180','IVA',statusTaxModel.EN_PROCESO,'a','1538',3,2022));
+        taxModels.add(new TaxModel( '303','IVA',statusTaxModel.PENDIENTE,'b','987',3,2022));
+        taxModels.add(new TaxModel( '130','IVA',statusTaxModel.PRESENTADO,'b','189',3,2022));
+        taxModels.add(new TaxModel( '347','IVA',statusTaxModel.RECTIFICADO,'b','684',3,2022));
+        taxModels.add(new TaxModel( '180','IVA',statusTaxModel.EN_PROCESO,'a','1784',4,2022));
+        taxModels.add(new TaxModel( '303','IVA',statusTaxModel.PENDIENTE,'a','1345',4,2022));
+        taxModels.add(new TaxModel( '130','IVA',statusTaxModel.PRESENTADO,'b','541',4,2022));
+        taxModels.add(new TaxModel( '347','IVA',statusTaxModel.RECTIFICADO,'a','1354',4,2022));
     
         localTaxModels.write(storableTaxModels.getLocalStorage(), taxModels);
     }

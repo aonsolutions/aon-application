@@ -4,18 +4,18 @@ import { ICollection, IFilter, IResponse } from "../interfaces/utilitiesInterfac
 import { Response } from "../utils/Response";
 
 export class MessageChatFunctions {
-    private singleObjectCrud = new MessageChatFactory().createSingleObjectCrud();
-    private multipleObjectCrud = new MessageChatFactory().createMultipleObjectCrud();
+    private static singleObjectCrud = new MessageChatFactory().createSingleObjectCrud();
+    private static multipleObjectCrud = new MessageChatFactory().createMultipleObjectCrud();
 
-    async getMessageChatCount(filter?: IFilter): Promise<IResponse<number>> {
+    static async getMessageChatCount(filter?: IFilter): Promise<IResponse<number>> {
         return new Response((await this.multipleObjectCrud.getCollection(filter)).result.size());
     }
 
-    async getMessageChatList(filter: IFilter): Promise<IResponse<ICollection<IMessageChat>>> {
+    static async getMessageChatList(filter: IFilter): Promise<IResponse<ICollection<IMessageChat>>> {
         return (await this.multipleObjectCrud.getCollection(filter));
     }
 
-    async createMessageChat(messageChats: IMessageChat): Promise<IResponse<IMessageChat>> {
+    static async createMessageChat(messageChats: IMessageChat): Promise<IResponse<IMessageChat>> {
         return (await this.singleObjectCrud.createElement(messageChats));
     }
 }

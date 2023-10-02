@@ -1,7 +1,8 @@
+import { ErrorResponse, FilterBuilder } from "../aon";
 import { ICollection, IFilter } from "../interfaces/utilitiesInterfaces";
 import { ApiDocumentTag, DocumentTag } from "../models/DocumentTag";
 import { Collection } from "../utils/Collection";
-import { BASE_URL } from "../utils/Environment";
+import { BASE_URL, CREATE_SINGLE, GET_SINGLE, UPDATE_SINGLE } from "../utils/Environment";
 import { ApiHttpRequest } from "../utils/Http";
 import { APIGenericMultipleObjectCrudRepository, APIGenericSingleObjectCrudRepository } from "./GenericRepository";
 
@@ -11,11 +12,20 @@ export class APIDocumentTagSingleObjectCrudRepository extends APIGenericSingleOb
     }
 
     async create(element: DocumentTag): Promise<DocumentTag> {
-        throw new Error("Method not implemented.");
+        let data = this.apiModel.parseDataToSend(element, CREATE_SINGLE);
+        let response = await ApiHttpRequest.httpRequest(BASE_URL + this.apiModel.getUrl(CREATE_SINGLE), this.apiModel.getMethod(CREATE_SINGLE), {}, data);
+        return this.apiModel.parseDataToReceive(response, GET_SINGLE);
     }
 
     async update(element: DocumentTag): Promise<DocumentTag> {
-        throw new Error("Method not implemented.");
+        let filter = new FilterBuilder();
+        filter.addField('id', element.Key);
+        let data = this.apiModel.parseDataToSend(element, UPDATE_SINGLE);
+        let url = this.apiModel.getUrl(UPDATE_SINGLE, filter.getFilter());
+        let method = this.apiModel.getMethod(UPDATE_SINGLE);
+        let response = await ApiHttpRequest.httpRequest(BASE_URL + url, method, element, data)
+        if(response) return element;
+        throw new ErrorResponse('0199')
     }
 }
 

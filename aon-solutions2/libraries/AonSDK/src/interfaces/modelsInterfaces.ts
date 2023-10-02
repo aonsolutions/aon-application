@@ -282,7 +282,13 @@ export interface IBank extends ICollectable {
     setSyncStatus(value: string): IBank;
 }
 
-export type statusTaxModel = 'en proceso' | 'pendiente' | 'rectificado' | 'confirmado' | 'presentado';
+export enum statusTaxModel {
+  EN_PROCESO = 'en proceso',
+  PENDIENTE = 'pendiente',
+  RECTIFICADO = 'rectificado',
+  CONFIMRADO = 'confirmado',
+  PRESENTADO = 'presentado'
+} 
 
 export interface ITaxModel extends ICollectable {
     Name: string;

@@ -27,7 +27,7 @@ export class TaxModel implements ITaxModel, IModel  {
     constructor(name?: string, taxType?: string, status?: statusTaxModel, paymentMethod?: string, result?: string, trimester?: number, year?: number) {
         this.name = name || '';
         this.taxType = taxType || '';
-        this.status = status || 'pendiente';
+        this.status = status || statusTaxModel.PENDIENTE;
         this.paymentMethod = paymentMethod || '';
         this.result = result || '';
         this.trimester = trimester || 0;
@@ -204,7 +204,7 @@ export class ApiTaxModel extends TaxModel implements IApiModel {
         tax.ApiObject = data;
         tax.Key = data.id;
         tax.Name = data.model ? (data.model == 'IVA' ? '303' : data.model) : '';
-        tax.PaymentMethod = '';
+        tax.PaymentMethod = data.type ? data.type : '';
         tax.Result = data.result ? data.result : '';
         tax.Status = data.status ? data.status : '';
         tax.TaxType = '';

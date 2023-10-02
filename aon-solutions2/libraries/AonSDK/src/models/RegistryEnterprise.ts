@@ -1,5 +1,5 @@
-import { IRegistryEnterprise, IModel, IStorable } from "../interfaces/modelsInterfaces";
-import { ICollection } from "../interfaces/utilitiesInterfaces";
+import { IRegistryEnterprise, IModel, IStorable, IApiModel } from "../interfaces/modelsInterfaces";
+import { ICollection, IFilter } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { KeyGenerator } from "../utils/KeyGenerator";
 
@@ -200,6 +200,25 @@ export class StorableRegistryEnterprise extends RegistryEnterprise implements IS
   getLocalStorage(): string {
       return 'registryEnterprises';
   }
+}
+
+export class ApiRegistryEnterprise implements IApiModel {
+  getUrl(currentMethod: string, filter?: IFilter | undefined): string[] {
+    throw new Error("Method not implemented.");
+  }
+  getMethod(currentMethod: string, filter?: IFilter | undefined): string {
+    throw new Error("Method not implemented.");
+  }
+  parseDataToSend(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+    throw new Error("Method not implemented.");
+  }
+  parseDataToReceive(data: any, currentMethod?: string | undefined, filter?: IFilter | undefined) {
+    throw new Error("Method not implemented.");
+  }
+  localFilter(currentMethod?: string | undefined, filter?: IFilter | undefined): boolean {
+    throw new Error("Method not implemented.");
+  }
+
 }
 
 export let registryEnterprises : ICollection<RegistryEnterprise> = new Collection<RegistryEnterprise>();

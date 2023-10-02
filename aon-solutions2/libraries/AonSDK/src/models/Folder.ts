@@ -100,7 +100,6 @@ export class Folder implements IFolder, IModel  {
 
 export class ApiFolder extends Folder implements IApiModel {
     getUrl(currentMethod: string, filter: IFilter): string[] {
-        let urls: string [] = [];
         if(currentMethod == GET_MULTIPLE){
             return ['/ms/api/contract']
         }
@@ -146,4 +145,10 @@ export let folders: ICollection<Folder> = new Collection<Folder>();
 export function setFolders(value: any) { folders = value; };
 export let api: ICollection<Folder> = new Collection<Folder>();
 export function setApi(value: any) { api = value; };
-export let apiFolders = folders.slice(0,5);
+export let apiFolders = new Collection<Folder>();
+
+apiFolders.add(new Folder('A contabilizar', ''));
+apiFolders.add(new Folder('Contabilizado', ''));
+apiFolders.add(new Folder('Papelera', ''));
+apiFolders.add(new Folder('Fiscal', ''));
+apiFolders.add(new Folder('Laboral', ''));
