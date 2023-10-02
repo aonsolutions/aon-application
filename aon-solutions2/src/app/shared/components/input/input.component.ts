@@ -56,7 +56,7 @@ export class InputComponent implements OnInit {
     private dateAdapter: DateAdapter<any>
   ) {
     // Idioma para los DATEPICKER
-    this.dateAdapter.setLocale(this.translateService.getDefaultLang());    
+    this.dateAdapter.setLocale(this.translateService.getDefaultLang());
   }
 
   ngOnInit(): void {
@@ -64,11 +64,14 @@ export class InputComponent implements OnInit {
     if(this.type == 'password' && this.suffixBehavior === 'showPass'){
       this.suffixShowIcon = true;
       this.suffixIcon     = 'eye';
-      this.suffixBehavior = 'showPass'; 
+      this.suffixBehavior = 'showPass';
     }
   }
 
-  selectFunction() {
+  selectFunction(event: MouseEvent) {
+    // Se evita que se active el envio del formulario cuando se hace click en el span del input
+    event.preventDefault();
+
     switch(this.suffixBehavior){
       case 'clear':
         this.clear();
