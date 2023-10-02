@@ -1171,7 +1171,7 @@ public class BookingCustomer extends HTMLPanel {
 	private void fillBooking() {
 		CustomerFeeParams params = new CustomerFeeParams()
 				.setDomain(options.getDomain())
-				.setCustomer(this.customer.getName())
+				.setCustomer(this.customer.getId())
 				.setOffset(0)
 				.setLimit(100);
 		
@@ -1419,7 +1419,7 @@ public class BookingCustomer extends HTMLPanel {
 	private void fillFee() {
 		CustomerFeeParams params = new CustomerFeeParams()
 				.setDomain(options.getDomain())
-				.setCustomer(this.customer.getName())
+				.setCustomer(this.customer.getId())
 				.setOffset(0)
 				.setLimit(Integer.MAX_VALUE);
 		
@@ -1817,6 +1817,10 @@ public class BookingCustomer extends HTMLPanel {
 		// Create the request builder with the complete URL
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		requestBuilder.setHeader("domain_name", options.getDomainName());
+		requestBuilder.setHeader("domain_login", options.getUser());
+		requestBuilder.setHeader("domain_id", String.valueOf(options.getDomain()));
 		
 		JSONObject body = new JSONObject();
 		body.put("customer", new JSONNumber(customer.getId()));

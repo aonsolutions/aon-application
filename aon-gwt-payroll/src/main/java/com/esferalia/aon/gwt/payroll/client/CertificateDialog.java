@@ -240,7 +240,8 @@ public abstract class CertificateDialog extends AonCustomDialog {
 				JSONValue json = JSONParser.parseStrict(jsonStr);
 				parseJSON(json.isObject());
 			} catch (NullPointerException | IllegalArgumentException err){
-				showError("Formato", "Error formateando la informaci\u00f3n");
+				acceptBtnDialog.setVisible(true);
+				// showError("Formato", "Error formateando la informaci\u00f3n");
 			}
 		});
 		
