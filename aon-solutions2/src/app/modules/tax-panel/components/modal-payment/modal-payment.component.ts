@@ -27,6 +27,7 @@ export class ModalPaymentComponent implements OnInit {
   newBankIban: string = '';
   newBankBic: string = '';
 
+
   public collectionFactory = new CollectionFactory();
   banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
   private banksSubject = new BehaviorSubject<ICollection<IBank>>(
@@ -48,8 +49,11 @@ export class ModalPaymentComponent implements OnInit {
   }
 
   showConfirmationContent() {
+
     this.showConfirmation = true;
   }
+
+
 
   listBanks() {
     this.bankService.getBankList().then((response) => {
@@ -69,7 +73,11 @@ export class ModalPaymentComponent implements OnInit {
     });
   }
 
-  selectBank(event: any) {}
+  selectBank(event: any) {
+    this.selectedBank = event.target.value;
+    console.log(this.selectedBank);
+
+  }
 
   async createBank() {
     // Elimina espacios en blanco alrededor de los valores de entrada
@@ -79,9 +87,9 @@ export class ModalPaymentComponent implements OnInit {
 
     // Verifica si alguno de los campos está vacío después de quitar los espacios en blanco
     if (!trimmedDescription || !trimmedIban || !trimmedBic) {
-      // Si al menos uno de los campos está vacío, no envíes el mensaje
-      // Puedes mostrar un mensaje de error o realizar alguna otra acción aquí
-      console.log('Uno o más campos están vacíos. No se enviará el mensaje.');
+      // Si al menos uno de los campos está vací, que no se envíe el mensaje
+      // muestra mensaje de error por consola
+
       return;
     }
 
@@ -99,8 +107,8 @@ export class ModalPaymentComponent implements OnInit {
       return;
     }
 
-   //crear banco
-    const newBank : IBank = this.bankService.objectFactory.createBank()
+    //crear banco
+    const newBank: IBank = this.bankService.objectFactory.createBank();
     newBank.Name = this.newBankDescription;
     newBank.Total = 0;
     newBank.Logo = '';
@@ -108,7 +116,6 @@ export class ModalPaymentComponent implements OnInit {
     newBank.Iban = ibanToCheck;
     newBank.LastUpdate = new Date();
     newBank.SyncStatus = '';
-
 
     try {
       //  Crear el banco
@@ -126,5 +133,4 @@ export class ModalPaymentComponent implements OnInit {
 
     this.listBanks();
   }
-
 }

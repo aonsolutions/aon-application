@@ -70,10 +70,12 @@
   margin-top: -1rem;
 }
 
-.text_installment {
+.text-installment {
   font-size: $font-size-800;
   color: $color-secondary;
   padding-left: $padding-left;
+  text-transform: none;
+
 }
 
 .createBank {

@@ -29,6 +29,7 @@
                 [type]="'text'"
                 [label]="'IBAN'"
                 [placeholder]="'IBAN'"
+                [required]="'required'"
                 [value]="newBankIban"
               ></app-input>
 
@@ -37,6 +38,7 @@
                 [type]="'text'"
                 [label]="'TAX_PANEL.DESCRIPTION' | translate"
                 [placeholder]="'TAX_PANEL.DESCRIPTION' | translate"
+                [required]="'required'"
                 [value]="newBankDescription"
               ></app-input>
 
@@ -45,6 +47,7 @@
                 [type]="'text'"
                 [label]="'BIC SWIFT'"
                 [placeholder]="'BIC SWIFT'"
+                [required]="'required'"
                 [value]="newBankBic"
               ></app-input>
             </div>
@@ -54,8 +57,9 @@
             [label]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
             [placeholder]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
             [options]="banksList"
-            [value]="this.selectedBank"
+            [value]="selectedBank"
             (inputValue)="listBanks()"
+            (change)="selectBank($event)"
             *ngIf="!showCreateBank"
           >
           </app-input>
@@ -139,7 +143,7 @@
                 (click)="showText = !showText"
               ></app-icon>
             </div>
-            <p class="text_installment">
+            <p class="text-installment">
               {{ "TAX_PANEL.INFO_DEFERRAL" | translate }}
             </p>
           </div>
@@ -172,7 +176,7 @@
     </app-button>
   </div>
 
-  <!-- Vista Confirmación -->
+  <!-- Vista Confirmación para IBAN -->
   <div class="confirmation-view" *ngIf="showConfirmation">
     <p class="text-confirmation-view">
       {{ "TAX_PANEL.ON" | translate }} + 'FECHA' +
