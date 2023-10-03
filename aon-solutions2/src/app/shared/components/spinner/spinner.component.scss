@@ -1,7 +1,7 @@
 @import 'src/styles.scss';
 
 ::ng-deep{
-  .container-spinner{
+  app-spinner{
     position: absolute;
     top: 0;
     left: 0;
@@ -13,7 +13,7 @@
     z-index: 1;
   }
 
-  .container-spinner .round-spinner{
+  app-spinner .round-spinner{
     border-radius: 100%;
     background-color: $color-icon;
     padding: $padding / 2;
