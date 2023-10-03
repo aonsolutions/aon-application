@@ -7,7 +7,7 @@ import { CommonService } from './common.service';
 })
 export class ProductService extends CommonService {
 
-  factory = new ProductFactory();
+  private factory = new ProductFactory();
 
   constructor(){
     super();

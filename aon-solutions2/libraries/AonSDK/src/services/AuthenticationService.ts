@@ -53,8 +53,8 @@ export class AuthenticationManager implements IAuthenticationManager {
             localStorage.setItem('enterprise', enterprise.Document);
             localStorage.setItem('domainId', enterprise.DomainId);
             localStorage.setItem('domainName', enterprise.DomainName);
-            localStorage.setItem('registry', enterprise.Registry);
             this.authenticationRepository.userInfo();
+            this.authenticationRepository.setRegistry();
         }
         else throw new ErrorResponse('0113');
         return new Response<boolean>(true);

@@ -7,7 +7,7 @@ import { CommonService } from './common.service';
 })
 export class DocumentNoteService extends CommonService {
 
-  singleObjectCrud = new DocumenNoteFactory().createSingleObjectCrud();
+  private singleObjectCrud = new DocumenNoteFactory().createSingleObjectCrud();
 
   constructor() {
     super();
