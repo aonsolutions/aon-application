@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ICollection, IFilter, ITaxModel, TaxModelFactory, statusTaxModel } from 'libraries/AonSDK/src/aon';
+import { IBank, ICollection, IFilter, ITaxModel, TaxModelFactory, statusTaxModel } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
@@ -9,9 +9,23 @@ export class TaxModelService extends CommonService {
 
   private multipleObjectCrud  = new TaxModelFactory().createMultipleObjectCrud();
   private singleObjectCrud    = new TaxModelFactory().createSingleObjectCrud();
+  private specificMethods     = new TaxModelFactory().createSpecificMethods();
 
   constructor() {
     super();
+    this.test();
+  }
+
+  async test(){
+    // let models = await this.getTaxModelList();
+    // models.forEach(element => {
+    //   console.log(element.Status);
+    //   if(element.Status == statusTaxModel.PENDIENTE){
+        
+    //   }
+
+    // })
+    // console.log(models);
   }
 
   async getTaxModelList(filter?: IFilter): Promise<ICollection<ITaxModel>> {
@@ -20,6 +34,14 @@ export class TaxModelService extends CommonService {
 
   async getTax(key : string): Promise<ITaxModel> {
     return (await this.singleObjectCrud.getElement(key)).result;
+  }
+
+  async payTaxModelWithNRC(model: ITaxModel, nrc: string): Promise<boolean> {
+    return (await this.specificMethods.payTaxModelWithNRC(model, nrc)).result;
+  }
+
+  async payTaxModelWithBank(model: ITaxModel, bank: IBank): Promise<boolean> {
+    return (await this.specificMethods.payTaxModelWithBank(model, bank)).result;
   }
 
   // async createTaxModel(taxModel: ITaxModel): Promise<ITaxModel> {

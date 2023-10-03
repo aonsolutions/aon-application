@@ -18,6 +18,7 @@ export class ApiEnterpriseMultipleObjectCrudRepository extends APIGenericMultipl
         let collection: ICollection<Enterprise> = new Collection<Enterprise>();
         let response = await ApiHttpRequest.get(BASE_URL + '/ms/api/company', {}, {})
         response.forEach((element: any) => {
+            console.log(this.apiModel.parseDataToReceive(element, GET_MULTIPLE, filter))
             collection.add(this.apiModel.parseDataToReceive(element, GET_MULTIPLE, filter))
         })
         collection.forEach((element: Enterprise) => {

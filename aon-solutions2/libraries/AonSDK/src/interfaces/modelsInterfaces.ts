@@ -286,7 +286,7 @@ export enum statusTaxModel {
   EN_PROCESO = 'en proceso',
   PENDIENTE = 'pendiente',
   RECTIFICADO = 'rectificado',
-  CONFIMRADO = 'confirmado',
+  CONFIRMADO = 'confirmado',
   PRESENTADO = 'presentado'
 } 
 

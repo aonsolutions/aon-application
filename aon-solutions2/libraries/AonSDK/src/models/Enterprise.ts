@@ -2,6 +2,7 @@ import { IEnterprise, IModel, IApiModel, IStorable } from "../interfaces/modelsI
 import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { GET_MULTIPLE, GET_SINGLE, GET_METHOD } from "../utils/Environment";
+import { KeyGenerator } from "../utils/KeyGenerator";
 import { ErrorResponse } from "../utils/Response";
 
 export class Enterprise implements IEnterprise, IModel {
@@ -152,7 +153,7 @@ export class Enterprise implements IEnterprise, IModel {
         this.phone = phone || '';
         this.website = website || '';
         this.document = document || document || '';
-        this.key = document || '';
+        this.key = KeyGenerator.generate(15);
         this.domainId = '';
         this.domainName = '';
         this.registry = '';
@@ -250,7 +251,7 @@ export class Enterprise implements IEnterprise, IModel {
     }
 
     getKey(): string {
-        return this.document;
+        return this.Key;
     }
 
     getFilterableFields(): Map<string, any> {
@@ -301,7 +302,7 @@ export class ApiEnterprise extends Enterprise implements IApiModel {
             enterprise.ApiObject = data;
             enterprise.Document = data.document ? data.document : '';
             enterprise.Name = data.name ? data.name : ''
-            enterprise.Key = data.document ? data.document : '';
+            enterprise.Key = data.id ? data.id : '';
             enterprise.DomainName = data.domain ? data.domain : '';
             enterprise.DomainId = data.id ? data.id : '';
             enterprise.Registry = data.registry ? data.registry : '';
@@ -315,7 +316,7 @@ export class ApiEnterprise extends Enterprise implements IApiModel {
             enterprise.DomainId = data.domain.id
             enterprise.DomainName = data.domain.name
             enterprise.Email = '' // TO DO
-            enterprise.Key = data.document
+            enterprise.Key = data.id
             enterprise.Name = data.name
             enterprise.Phone = '' // TO DO
             enterprise.ProfilePhoto =

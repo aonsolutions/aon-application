@@ -225,3 +225,27 @@ export class StorableTaxModel extends TaxModel implements IStorable<TaxModel> {
 
 export let taxModels: ICollection<TaxModel> = new Collection<TaxModel>();
 export function setTaxModels(value: any) { taxModels = value; };
+
+// PENDING("Pendiente")
+// FINISHED("Finalizado")
+// BATCHED("En Lote")
+// BLOCKED("Bloqueado")
+// SENT("Presentado")
+// MISSING("Desconocido")
+// CUSTOMER_CHECK("Envio a cliente")
+// CUSTOMER_ACCEPTED("Aceptado por cliente")
+// CUSTOMER_REJECTED("Rechazado por cliente")
+
+
+export function statusParse(status: string){
+    switch(status){
+        case 'SENT':
+            return statusTaxModel.PENDIENTE;
+        case 'CONFIRMED':
+            return statusTaxModel.CONFIRMADO;
+        case 'CUSTOMER_CHECK':
+            return statusTaxModel.PENDIENTE;
+        default:
+            return statusTaxModel.PENDIENTE;
+    }
+}
