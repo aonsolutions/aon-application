@@ -101,7 +101,7 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 				
 				ArrayList<Integer> salaryIds = new ArrayList<Integer>();
 				for(Entry<String, String> entry : params.entrySet())
-					if(AonStringUtils.containsIgnoreCase(entry.getKey(), "id"))
+					if(AonStringUtils.startsWithIgnoreCase(entry.getKey(), "id"))
 						salaryIds.add(Integer.valueOf(entry.getValue()));
 				
 				impl.checkEmployeesEmails(salaryIds, new AsyncCallback<String>() {
