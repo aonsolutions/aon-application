@@ -7,8 +7,8 @@ import { CommonService } from './common.service';
 })
 export class BankService extends CommonService{
 
-  bankCollectionCrud = new BankFactory().createMultipleObjectCrud();
-  bankCrud = new BankFactory().createSingleObjectCrud();
+  private bankCollectionCrud = new BankFactory().createMultipleObjectCrud();
+  private bankCrud = new BankFactory().createSingleObjectCrud();
 
   constructor() {
     super();

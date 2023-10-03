@@ -16,9 +16,9 @@ export class APIMessageSingleObjectCrudRepository extends APIGenericSingleObject
     }
 
     async create(message: Message): Promise<Message> {
-        let cauInfo = await ApiHttpRequest.get(BASE_URL + '/ms/api/task/cau', {}, {})
-        let sender = await ApiHttpRequest.get(BASE_URL + '/ms/api/taskholder?id=' + localStorage.getItem('registry'), {}, {})
-        let taskHolder = await ApiHttpRequest.get(BASE_URL + '/ms/api/taskholder?id=' + message.TaskHolder.Id, {}, {})
+        let cauInfo = await ApiHttpRequest.get(BASE_URL + MESSAGE_URL.GET_CAU, {}, {})
+        let sender = await ApiHttpRequest.get(BASE_URL + MESSAGE_URL.GET_TASK_HOLDER_ONE + '?id=' + localStorage.getItem('registry'), {}, {})
+        let taskHolder = await ApiHttpRequest.get(BASE_URL + MESSAGE_URL.GET_TASK_HOLDER_ONE + '?id=' + message.TaskHolder.Id, {}, {})
         let domain = {
             id: localStorage.getItem('domainId'),
             name: localStorage.getItem('domainName')
@@ -119,7 +119,7 @@ export class APIMessageSpecificMethodsRepository implements IMessageSpecificMeth
     repository = new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message);
 
     async archiveMessage(element: Message): Promise<IMessage> {
-        if(element.Type != 'notificacion'){
+        if(element.Type != TypeMessage.NOTIFICACION){
             element.Status = element.Type == TypeMessage.CONSULTA ? StatusMessage.CERRADA : StatusMessage.REALIZADA;
             let updatedMessage: IMessage = await this.repository.update(element);
             return updatedMessage;
@@ -128,7 +128,7 @@ export class APIMessageSpecificMethodsRepository implements IMessageSpecificMeth
     }
 
     async reopenMessage(element: Message): Promise<IMessage> {
-        if(element.Type != 'notificacion'){
+        if(element.Type != TypeMessage.NOTIFICACION){
             element.Status = element.Type == TypeMessage.CONSULTA ? StatusMessage.ABIERTA : StatusMessage.PENDIENTE;
             let updatedMessage: IMessage = await this.repository.update(element);
             return updatedMessage;
@@ -137,10 +137,10 @@ export class APIMessageSpecificMethodsRepository implements IMessageSpecificMeth
     }
 
     async getMessageCount(filter?: IFilter): Promise<number> {
-        if(filter && filter.fields && filter.fields.get('type') == 'notificacion'){
+        if(filter?.fields?.get('type') == TypeMessage.NOTIFICACION){
             let result = await ApiHttpRequest.get(BASE_URL + '/ms/api/notification/total-notification', {}, {})
             return result.notification
-        } else if(filter && filter.fields && (filter.fields.get('type') == 'tarea' || filter.fields.get('type') == 'consulta')){
+        } else if(filter?.fields?.get('type') == TypeMessage.TAREA || filter?.fields?.get('type') == TypeMessage.CONSULTA){
             let result = await ApiHttpRequest.get(BASE_URL + '/ms/api/task/status/count?task_holder=' + localStorage.getItem('registry'), {}, {});
             return result.status.pending;
         } else {
@@ -151,7 +151,7 @@ export class APIMessageSpecificMethodsRepository implements IMessageSpecificMeth
     }
 
     async markAsReadNotification(element: Message): Promise<boolean> {
-        if(element.Type == 'notificacion'){
+        if(element.Type == TypeMessage.NOTIFICACION){
             let result = await ApiHttpRequest.post(BASE_URL + '/ms/api/notification/mark-read-notification', {}, {source_id: element.Id});
             if(result.success && result.success == true)
                 return true;
