@@ -138,5 +138,9 @@ public class Question implements Serializable {
 		this.values.add(questionValue);
 	}
 
+	public boolean isEmpty() {
+		return this.active == null && this.alias == null && this.argument == null && this.domain == null && this.id == null && this.text == null && this.type == null && this.values == null; 
+	}
+
 	
 }

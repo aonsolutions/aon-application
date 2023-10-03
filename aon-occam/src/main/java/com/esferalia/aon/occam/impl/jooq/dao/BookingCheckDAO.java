@@ -22,6 +22,7 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.BookingCheck;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -36,7 +37,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class BookingCheckDAO {
 	
@@ -101,8 +101,6 @@ public class BookingCheckDAO {
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)));
 		
-		System.out.println(bookingCheckSelect.getSQL());
-		
 		Result<Record> bookingCheckRecords = bookingCheckSelect
 				.where(condition)
 				.and(RITEM.TYPE.eq((byte)4))
@@ -131,7 +129,7 @@ public class BookingCheckDAO {
 				.where(condition)
 //				.and(CUSTOMER_FEE.ID.isNull())
 				.and(RITEM.TYPE.eq((byte)4))
-				.orderBy(RITEM.REGISTRY)
+				.orderBy(RITEM.REGISTRY, CUSTOMER_FEE.LINE)
 				.offset(customerFeeParams.getOffset())
 				.limit(customerFeeParams.getLimit())
 			.fetch();
@@ -215,6 +213,14 @@ public class BookingCheckDAO {
 		
 		return bookingCheck;
 	}
+	
+	public static void delete(CloseableAONContext ctx, LinkedList<BookingCheck> selectedBookings) {
+		selectedBookings.forEach(bookingCheck -> {
+			ctx.getDslContext().delete(RITEM)
+				.where(RITEM.ID.eq(bookingCheck.getId()))
+				.execute();
+		});
+	}
 
 	private static Condition createCustomerFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
 		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
@@ -238,8 +244,8 @@ public class BookingCheckDAO {
 			condition = condition.and(CUSTOMER_FEE.BILLING_DATE.eq(parseSQLDate(billingDate)));
 		}
 			
-		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomer())) 
-			condition = condition.and(CUSTOMER_ALIAS.NAME.eq(customerFeeParams.getCustomer()));
+		if(null != customerFeeParams.getCustomer()) 
+			condition = condition.and(CUSTOMER.REGISTRY.eq(customerFeeParams.getCustomer()));
 		
 		if(null != customerFeeParams.getCustomerStatus())
 			condition = condition.and(CUSTOMER.STATUS.eq(customerFeeParams.getCustomerStatus()));
@@ -295,8 +301,8 @@ public class BookingCheckDAO {
 			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
 		}
 			
-		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomer())) 
-			condition = condition.and(CUSTOMER_ALIAS.NAME.eq(customerFeeParams.getCustomer()));
+		if(null != customerFeeParams.getCustomer()) 
+			condition = condition.and(CUSTOMER.REGISTRY.eq(customerFeeParams.getCustomer()));
 		
 		if(null != customerFeeParams.getCustomerStatus())
 			condition = condition.and(CUSTOMER.STATUS.eq(customerFeeParams.getCustomerStatus()));

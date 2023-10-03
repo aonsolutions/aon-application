@@ -226,5 +226,9 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public void saveBookingCheck(String domainName, int domain, String user, BookingCheck bookingCheck) {
 		AON.saveBookingCheck(domainName, domain, user, bookingCheck);
 	}
+	@Override
+	public void deleteBookingList(String domainName, int domain, String user, LinkedList<BookingCheck> selectedBookings) {
+		AON.deleteBookingList(domainName, domain, user, selectedBookings);
+	}
 	
 }

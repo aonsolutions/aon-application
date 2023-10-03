@@ -19,20 +19,10 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.config.InsertIAE1516;
+import net.aonsolutions.db.up2date.config.InsertIAE474;
 import net.aonsolutions.db.up2date.config.InsertIAE575576;
-import net.aonsolutions.db.up2date.fiscal.AlterInvestAsset;
-import net.aonsolutions.db.up2date.management.AlterRitem;
-import net.aonsolutions.db.up2date.management.AlterRsellerAddType;
-import net.aonsolutions.db.up2date.payroll.CRA0050ExcesoRefactor;
-import net.aonsolutions.db.up2date.payroll.ContractSepeIdUpdate;
-import net.aonsolutions.db.up2date.payroll.FixBofFormTDistan;
-import net.aonsolutions.db.up2date.payroll.NoteInsert;
-import net.aonsolutions.db.up2date.product.ProductPerishableUpdate;
-import net.aonsolutions.db.up2date.tgss.PermissionUnPaidDaysFix;
-import net.aonsolutions.db.up2date.tgss.SuspendJobAndSalaryDaysInsert;
-import net.aonsolutions.db.up2date.tgss.TrainingQuote2023Fix;
-import net.aonsolutions.db.up2date.tgss.TrainningBaseCgcMinUndo;
-import net.aonsolutions.db.up2date.tgss.PermissionUnPaidDaysFix;
+import net.aonsolutions.db.up2date.security.UdpateAonPacks;
 import net.aonsolutions.db.up2date.warehouse.DeliveryPackagingCreation;
 import net.aonsolutions.db.up2date.warehouse.SalesInfoCreation;
 
@@ -401,7 +391,10 @@ public class Up2Date {
 	    InsertIAE575576.INSERT_IAE_755756,
 	    // ProductPerishableUpdate.PRODUCT_PEISHABLE_UPDATE,
 	    DeliveryPackagingCreation.DELIVERY_PACKAGING_CREATION,
-	    SalesInfoCreation.SALES_INFO_CREATION
+	    SalesInfoCreation.SALES_INFO_CREATION,
+	    InsertIAE1516.INSERT_IAE_1516,
+	    UdpateAonPacks.UPDATE_AON_PACKS,
+	    InsertIAE474.INSERT_IAE_474
 	};
 
     // ------------------------------------------------------------------------

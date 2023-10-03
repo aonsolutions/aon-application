@@ -66,7 +66,8 @@ public class IMG2AONTestCase extends AbstractTediTest {
 //			assertEquals(file + " Invoice domain does not match: ", DOMAIN_ID.intValue() , inv.getDomain());
 			
 			// Activity
-			assertNull(inv.getActivity(),file + "Not Null Activity!");
+			assertNotNull(inv.getActivity(),file + "Null Activity!");
+			assertNull(inv.getActivity().getId(),file + "Not Null Activity ID!");
 			// Epigraph
 			assertNull(inv.getEpigraph(),file + "Not Null Epigraph!");
 			// InvestAsset
