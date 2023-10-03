@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.code.aon.facturae.nuevo.FacturaeWriter2;
+import com.code.aon.facturae.v322.FacturaeWriter;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -71,9 +72,11 @@ public class FaceServlet extends AonApiHttpServlet {
 						.and(f.getActiveProperty().eq((byte)1)));
 			}
 
-			FacturaeWriter2 facturae = new FacturaeWriter2(domain, user, company, workplace, invoice);
+//			Version 3.2
+//			FacturaeWriter2 facturae = new FacturaeWriter2(domain, user, company, workplace, invoice);
+//			Version 3.2.2
+			FacturaeWriter facturae = new FacturaeWriter(domain, user, company, workplace, invoice);
 			byte[] data = facturae.generate();
-			
 			try {
 				Certificate certificate = checkCertificate(api);
 				byte[] signedData = FacturaeSigner.getInstance().sign(certificate, data);

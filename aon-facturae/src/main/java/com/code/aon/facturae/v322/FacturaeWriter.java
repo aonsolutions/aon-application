@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.gob.facturae.formato.versiones.facturaev3_2_2.AddressType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.AdministrativeCentreType;
@@ -529,7 +530,16 @@ public class FacturaeWriter {
 		invoiceIssueData.setInvoiceCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setTaxCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setLanguageName(LanguageCodeType.ES);
-//		invoiceIssueData.setFileReference("");
+
+		String filereference = null;
+		Integer i = 0;
+		while(AonStringUtils.isBlank(filereference) && i < invoice.getDetails().size()) {
+			filereference = getIssuerContractReference(invoice.getDetails().get(i), true);
+			i++;	
+		}
+		if(!AonStringUtils.isBlank(filereference)) {
+			invoiceIssueData.setFileReference(filereference);
+		}
 		return invoiceIssueData;
 	}
 	
