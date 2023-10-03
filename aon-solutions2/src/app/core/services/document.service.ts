@@ -10,6 +10,7 @@ export class DocumentService extends CommonService {
 
   private singleObjectCrud = new DocumentFactory().createSingleObjectCrud();
   private multipleObjectCrud = new DocumentFactory().createMultipleObjectCrud();
+  private specificMethods = new DocumentFactory().createDocumentSpecificMethods();
 
   constructor() {
     super();
@@ -33,6 +34,10 @@ export class DocumentService extends CommonService {
 
   async createDocument(documents: IDocument): Promise<IDocument> {
     return (await this.singleObjectCrud.createElement(documents)).result;
+  }
+
+  async getDocumentFile(document: IDocument): Promise<string> {
+    return (await this.specificMethods.getRawFile(document)).result
   }
 
   async downloadDocument(path: string): Promise<void> {

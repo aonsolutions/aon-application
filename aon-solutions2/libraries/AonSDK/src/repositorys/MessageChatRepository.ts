@@ -39,7 +39,7 @@ export class APIMessageChatMultipleObjectCrudRepository extends APIGenericMultip
             url = '/ms/api/task/workflow?task='+filter.fields.get('idMessage')+'&domainId='+localStorage.getItem('domainId')+'&domainName='+localStorage.getItem('domainName');
         else
             throw new Error('No se ha introducido el id')
-        let response = await ApiHttpRequest.get(BASE_URL + '/ms/api/fiscal/models', {}, {});
+        let response = await ApiHttpRequest.get(BASE_URL + url, {}, {});
         let collection: ICollection<MessageChat> = new Collection<MessageChat>();
         response.forEach((element: any) => {
             collection.add(this.apiModel.parseDataToReceive(element))
