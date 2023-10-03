@@ -9,27 +9,25 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
 
-import com.code.aon.facturae.nuevo.FacturaeWriter2;
 import com.code.aon.facturae.v322.FacturaeWriter;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
-import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import net.aonsolutions.aon.sign.FacturaeSigner;
@@ -72,8 +70,6 @@ public class FaceServlet extends AonApiHttpServlet {
 						.and(f.getActiveProperty().eq((byte)1)));
 			}
 
-//			Version 3.2
-//			FacturaeWriter2 facturae = new FacturaeWriter2(domain, user, company, workplace, invoice);
 //			Version 3.2.2
 			FacturaeWriter facturae = new FacturaeWriter(domain, user, company, workplace, invoice);
 			byte[] data = facturae.generate();
