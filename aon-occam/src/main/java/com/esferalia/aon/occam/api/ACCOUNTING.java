@@ -723,15 +723,14 @@ public class ACCOUNTING {
 	
 	public static List<AmortizationType> getAmortizationTypeList(String domainName, int domain, String user, AmortizationTypeParams params) throws AonCoreException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) { 
-			AmortizationTypeValidation.validateAccountingCtx(ctx);
 			AmortizationTypeValidation.validateParams(params, ctx);
 			return getAccounting().getAmortizationTypeList(ctx, params);
+
 		}
 	}
 
 	public static void deleteAmortizationTypes(String domainName, int domain, String user, List<Integer> deleteIds) throws AonCoreException  {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
-			AmortizationTypeValidation.validateAccountingCtx(ctx); 
 			AmortizationTypeValidation.validateList(ctx, deleteIds);
 			getAccounting().deleteAmortizationTypes(ctx, deleteIds);
 		}
@@ -739,7 +738,6 @@ public class ACCOUNTING {
 	
 	public static void saveAmortizationType(String domainName, int domain, String user, AmortizationType amortizationType) throws AonCoreException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
-			AmortizationTypeValidation.validateAccountingCtx(ctx);
 			AmortizationTypeValidation.validate(ctx, amortizationType);
 			getAccounting().saveAmortizationType(ctx, amortizationType);
 		}

@@ -11,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.AmortizationType.AMORTIZATION_TYPE;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 
 public class AmortizationTypeValidation {
@@ -105,20 +104,6 @@ public class AmortizationTypeValidation {
 			throw new AonCoreException(AonError.INVALID_LENGTH.getMessage());
 		}
 	};
-	 
-	private static final Consumer< AONContext> ACCOUNTING_DOMAIN_NULL = ctx ->{
-		int domain = ctx.getDomainId();
-		if (domain == 0) {
-			throw new AonCoreException(AonError.ACCOUNTING_DOMAIN_NULL.getMessage());
-		}
-	};
-	
-	private static final Consumer<AONContext> ACCOUNTING_USER_NULL = ctx ->{
-		String user = ctx.getUser();
-		if (user == null) {
-			throw new AonCoreException(AonError.ACCOUNTING_USER_NULL.getMessage());
-		}
-	};
 	
 	public static void validate(AONContext ctx, AmortizationType amortizationType) throws AonCoreException {
 		AMORTIZATION_TYPE_NULL.
@@ -141,12 +126,6 @@ public class AmortizationTypeValidation {
 	
 	public static void validateList(AONContext ctx, List<Integer> lista) throws AonCoreException{
 		DELETE_IDS_NULL.accept(ctx, lista);
-	}
-	
-	public static void validateAccountingCtx(AONContext ctx) throws AonCoreException{
-		ACCOUNTING_DOMAIN_NULL.
-		andThen(ACCOUNTING_USER_NULL).
-		accept(ctx);
 	}
 	
 }

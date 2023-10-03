@@ -60,8 +60,6 @@ public enum AonError implements Serializable{
 	// -----------------------------------------------------------
 	// --------------------- ACCOUNTING --------------------------
 	// -----------------------------------------------------------
-	,ACCOUNTING_DOMAIN_NULL("El valor del dominio es nulo")
-	,ACCOUNTING_USER_NULL("El usuario es nulo") 
 	
 	// -------------------------------------------- -------ACCOUNT
 	,ACCOUNT_EMPTY_CODE("La cuenta contable es un dato obligatorio, no puede estar vac\u00EDo.")
