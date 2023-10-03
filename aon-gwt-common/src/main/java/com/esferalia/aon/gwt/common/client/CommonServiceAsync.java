@@ -122,6 +122,4 @@ public interface CommonServiceAsync {
 	void deleteQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void saveQuestion(String domainName, int domain, String user, Question question, AsyncCallback<Question> asyncCallback) throws AonCoreException;
 	void getQuestion(String domainName, int domain, String user, Integer id, AsyncCallback<Question> asyncCallback) throws AonCoreException;
-	void checkQuestionAlias(String domainName, Integer domain, String user, String alias, AsyncCallback<Boolean> asyncCallback) throws AonCoreException;
-
 }

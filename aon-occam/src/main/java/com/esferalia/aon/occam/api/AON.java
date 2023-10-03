@@ -7967,12 +7967,6 @@ public class AON {
 		}
 	}
 	
-	public static Boolean checkQuestionAlias(String domainName, int domain, String user, String alias) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
-			return getRegistry().checkQuestionAlias(ctx, alias);
-		}
-	}
-	
 	// ---------------- RegistryProfile
 	
 	public static void saveRegistryProfile(Domain domain, String user, Integer registryId, String questionAlias, String value) {
