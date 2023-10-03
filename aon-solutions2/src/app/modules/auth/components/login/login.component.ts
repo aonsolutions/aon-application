@@ -27,13 +27,16 @@ export class LoginComponent implements OnInit {
 
 loginUser() {
   this.spinner = true;
+  setTimeout(() => {
+
     try {
       this.auth.login(this.username, this.password);
     } catch (error) {
       throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
     } finally {
-      this.spinner = false;
+      //this.spinner = false;
     }
+  }, 2000);
 }
 
   ngOnDestroy() {

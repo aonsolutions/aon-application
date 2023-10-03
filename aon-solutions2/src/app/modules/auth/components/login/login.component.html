@@ -10,8 +10,8 @@
           <span>{{ "LOGIN.ACCESS_YOUR_AON_ACCOUNT" | translate }}</span>
         </div>
         <div class="inptCont">
-          <app-spinner body *ngIf="spinner"></app-spinner>
-          <div *ngIf="!spinner" class="cardBody">
+          <div class="cardBody">
+            <app-spinner *ngIf="spinner"></app-spinner>
             <form (ngSubmit)="loginUser()" >
               <app-input
                 (inputValue)="username = $event"
