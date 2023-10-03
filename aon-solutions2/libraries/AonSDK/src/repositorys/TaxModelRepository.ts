@@ -1,4 +1,6 @@
-import { ICollection, IFilter, ITaxModel } from "../aon";
+import { IBank, ICollection, IFilter, ITaxModel } from "../aon";
+import { IModel } from "../interfaces/modelsInterfaces";
+import { ITaxModelSpecificMethodsRepository } from "../interfaces/repositoryInterfaces";
 import { ApiTaxModel, TaxModel } from "../models/TaxModel";
 import { Collection } from "../utils/Collection";
 import { BASE_URL } from "../utils/Environment";
@@ -26,4 +28,21 @@ export class APITaxModelMultipleObjectCrudRepository extends APIGenericMultipleO
         return collection;
     }
 
+    
+}
+export class ApiTaxModelSpecificMethodsRepository implements ITaxModelSpecificMethodsRepository {
+    payTaxModelWithNRC(model: IModel, nrc: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    payTaxModelWithBank(model: IModel, bank: IBank): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+} 
+export class LocalTaxModelSpecificMethosdsRepository implements ITaxModelSpecificMethodsRepository{
+    payTaxModelWithNRC(model: IModel, nrc: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    payTaxModelWithBank(model: IModel, bank: IBank): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
 }
