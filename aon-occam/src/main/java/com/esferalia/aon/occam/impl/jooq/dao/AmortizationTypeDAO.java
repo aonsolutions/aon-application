@@ -12,9 +12,6 @@ import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.AmortizationTypeFilter;
-import com.esferalia.aon.occam.api.model.AmortizationTypeProperties;
-import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
@@ -24,26 +21,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class AmortizationTypeDAO {
 	
 	private AmortizationTypeDAO() {}
-	
-	private static final AmortizationTypePropertiesDAO AMORTIZATION_TYPE_PROPERTIES = new AmortizationTypePropertiesDAO();
-	private static class AmortizationTypePropertiesDAO implements AmortizationTypeProperties {
-		
-		private Condition[] getConditions(AmortizationTypeFilter filter) {
-			if (filter==null) return new Condition[0];
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(AMORTIZATION_TYPE.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(AMORTIZATION_TYPE.DOMAIN);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(AMORTIZATION_TYPE.DESCRIPTION);}
-		@Override public Property<Double> getPercentageProperty() {return new FilterDAO.PropertyDAO<>(AMORTIZATION_TYPE.PERCENTAGE);}
-		@Override public Property<String> getFixedAssetAccountProperty() {return new FilterDAO.PropertyDAO<>(AMORTIZATION_TYPE.FIXED_ASSET_ACCOUNT);}
-		@Override public Property<String> getAccumulatedAccountProperty() {return new FilterDAO.PropertyDAO<>(AMORTIZATION_TYPE.ACCUMULATED_ACCOUNT);}
-		@Override public Property<String> getAllocationAccountProperty() {return new FilterDAO.PropertyDAO<>(AMORTIZATION_TYPE.ALLOCATION_ACCOUNT);}
-
-	}
 	
 	public static class AmortizationTypeFiller extends Filler implements Function<Record,AmortizationType> {
 		
@@ -136,7 +113,7 @@ public class AmortizationTypeDAO {
 	}
 
 	public static void delete(AONContext ctx, List<Integer> deleteIds) {
-		AmortizationTypeValidation.validateList(ctx, deleteIds);
+		AmortizationTypeValidation.validateList(ctx, deleteIds); 
 		deleteIds.forEach(id -> delete(ctx, id));
 	}
 	

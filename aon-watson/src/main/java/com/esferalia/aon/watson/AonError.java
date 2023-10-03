@@ -60,6 +60,8 @@ public enum AonError implements Serializable{
 	// -----------------------------------------------------------
 	// --------------------- ACCOUNTING --------------------------
 	// -----------------------------------------------------------
+	,ACCOUNTING_DOMAIN_NULL("El valor del dominio es nulo")
+	,ACCOUNTING_USER_NULL("El usuario es nulo") 
 	
 	// -------------------------------------------- -------ACCOUNT
 	,ACCOUNT_EMPTY_CODE("La cuenta contable es un dato obligatorio, no puede estar vac\u00EDo.")
@@ -164,6 +166,13 @@ public enum AonError implements Serializable{
 	,AMORTIZATION_TYPE_NULL_ACCUMULATED_ACCOUNT("El valor de la cuenta acumulada es nulo")
 	,AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT("El valor de la cuenta de asignacion es nulo")
 	,AMORTIZATION_TYPE_NULL_PERCENTAGE("El valor del porcentaje es nulo")
+	,AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT_LENGTH("La longitud del dato para la cuenta fija excede el permitido")
+	,AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT_LENGTH("La longitud del campo para la cuenta acumulada excede el permitido")
+	,AMORTIZATION_TYPE_ALLOCATION_ACCOUNT_LENGTH("La longitud del campo para la cuenta de asignacion excede el permitido")
+	,AMORTIZATION_TYPE_FIXED_DESCRIPTION_LENGTH("La longitud del campo para la descripcion excede el permitido")
+	,AMORTIZATION_TYPE_PARAMS_NULL("Los parametros son nulos")
+	
+	
 	// --------------------------------------------- INVOICE
 	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TAX_DATE("La fecha I.V.A. de la factura es un dato obligatorio, no puede estar vac\u00EDa")
@@ -238,6 +247,10 @@ public enum AonError implements Serializable{
 	,EMPTY_TYPE("El valor del tipo de la pregunta est\u00E1 vac\u00EDo")
 	,INVALID_SIZE_QUESTION_TEXT("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	,INVALID_SIZE_ALIAS("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
+	
+	
+	
+	,NULL_FILE_UPLOADED("El archivo seleccionado es nulo")
 	;
 	
 	
