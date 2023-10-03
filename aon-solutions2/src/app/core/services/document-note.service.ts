@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DocumenNoteFactory, IDocumentNote } from 'libraries/AonSDK/aon';
+import { DocumenNoteFactory, IDocumentNote } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
@@ -7,7 +7,7 @@ import { CommonService } from './common.service';
 })
 export class DocumentNoteService extends CommonService {
 
-  singleObjectCrud = new DocumenNoteFactory().createSingleObjectCrud();
+  private singleObjectCrud = new DocumenNoteFactory().createSingleObjectCrud();
 
   constructor() {
     super();

@@ -1,10 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-  CollectionFactory,
-  ErrorResponse,
-  IBank,
-  ICollection,
-} from 'libraries/AonSDK/aon';
+import { CollectionFactory, ErrorResponse, IBank, ICollection } from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BankService } from 'src/app/core/services/bank.service';

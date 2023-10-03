@@ -9,7 +9,7 @@ import {
   IMessage,
   StatusMessage,
   TypeMessage,
-} from 'libraries/AonSDK/aon';
+} from 'libraries/AonSDK/src/aon';
 import { MessageService } from 'src/app/core/services/message.service';
 
 @Component({
@@ -64,29 +64,29 @@ export class ModalEditTaxModelComponent implements OnInit {
             });
         });
 
-      const newMessage: IMessage = {
-        Id: messageId,
-        Name: '',
-        Title: title,
-        Description: description,
-        Date: new Date(),
-        Status: StatusMessage.ABIERTA,
-        Type: TypeMessage.CONSULTA,
-        EndDate: new Date(),
-        LastMessageChatOrigin: false,
-        getKey: () => messageId,
-        getFilterableFields: () => new Map(),
-        getSortableFields: () => new Map(),
-      };
+      // const newMessage: IMessage = {
+      //   Id: messageId,
+      //   Name: '',
+      //   Title: title,
+      //   Description: description,
+      //   Date: new Date(),
+      //   Status: StatusMessage.ABIERTA,
+      //   Type: TypeMessage.CONSULTA,
+      //   EndDate: new Date(),
+      //   LastMessageChatOrigin: false,
+      //   getKey: () => messageId,
+      //   getFilterableFields: () => new Map(),
+      //   getSortableFields: () => new Map(),
+      // };
 
       try {
         // Crear el mensaje
-        const createdMessage = await this.messageService.createMessage(
-          newMessage
-        );
+        // const createdMessage = await this.messageService.createMessage(
+        //    newMessage
+        // );
 
         // Agregar el nuevo mensaje
-        this.messages.add(createdMessage);
+        // this.messages.add(createdMessage);
       } catch (error) {
         throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
       }

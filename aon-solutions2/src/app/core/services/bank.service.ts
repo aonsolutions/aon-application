@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BankFactory, Factory, IBank, ICollection, IFilter } from 'libraries/AonSDK/aon';
+import { BankFactory, Factory, IBank, ICollection, IFilter } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
@@ -7,8 +7,8 @@ import { CommonService } from './common.service';
 })
 export class BankService extends CommonService{
 
-  bankCollectionCrud = new BankFactory().createMultipleObjectCrud();
-  bankCrud = new BankFactory().createSingleObjectCrud();
+  private bankCollectionCrud = new BankFactory().createMultipleObjectCrud();
+  private bankCrud = new BankFactory().createSingleObjectCrud();
 
   constructor() {
     super();

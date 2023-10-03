@@ -81,9 +81,16 @@
     "CREATE": "Create",
     "NEW_QUERY": "New query",
     "SUBJECT": "Subject",
+    "DESCRIPTION": "Description",
     "TEXT": "Text",
-    "NO_PENDING_TASKS": "No pending tasks",
-    "ASSIGN_TO":"assign to"
+    "ASSIGN_TO":"assign to",
+    "NOTASKSTHISWEEKMESSAGE": "No assignments this week.",
+    "NOTASKSTHISMONTHMESSAGE": "No assignments this month.",
+    "NONOTIFICATIONSTHISWEEK": "No notifications this week.",
+    "NONOTIFICATIONSTHISMONTH": "No notifications this month.",
+    "NOQUERIESTHISWEEK": "No queries this week.",
+    "NOQUERIESTHISMONTH": "No queries this month.",
+    "NOMESSAGES": "No messages."
   },
   "DOCUMENTATION": {
     "FILE_SELECT_ALL"       : "Select all",

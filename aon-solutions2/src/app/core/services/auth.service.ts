@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationFactory, IEnterprise } from 'libraries/AonSDK/aon';
+import { AuthenticationFactory, IEnterprise } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
@@ -8,7 +8,7 @@ import { CommonService } from './common.service';
 })
 export class AuthService extends CommonService {
 
-  authManager = new AuthenticationFactory().createAuthenticationManager()
+  private authManager = new AuthenticationFactory().createAuthenticationManager()
 
   constructor(private router: Router) {
     super();

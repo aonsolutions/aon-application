@@ -2,7 +2,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { EnterpriseService } from 'src/app/core/services/enterprise.service';
-import { CollectionFactory, ICollection, IEnterprise } from 'libraries/AonSDK/aon';
+import { CollectionFactory, ICollection, IEnterprise } from 'libraries/AonSDK/src/aon';
 
 @Component({
   selector: 'app-select-enterprise',

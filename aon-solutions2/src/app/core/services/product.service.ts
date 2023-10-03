@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Factory, ICollection, IFilter, IProduct, IProductCategory, IProductClass, IProductCode, IProductStatus, IProductType, ProductFactory } from 'libraries/AonSDK/aon';
+import { Factory, ICollection, IFilter, IProduct, IProductCategory, IProductClass, IProductCode, IProductStatus, IProductType, ProductFactory } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
@@ -7,7 +7,7 @@ import { CommonService } from './common.service';
 })
 export class ProductService extends CommonService {
 
-  factory = new ProductFactory();
+  private factory = new ProductFactory();
 
   constructor(){
     super();

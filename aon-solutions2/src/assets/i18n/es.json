@@ -81,9 +81,16 @@
     "CREATE": "Crear",
     "NEW_QUERY": "Nueva consulta",
     "SUBJECT": "Asunto",
+    "DESCRIPTION": "Descripción",
     "TEXT": "Texto",
-    "NO_PENDING_TASKS": "No hay tareas pendientes",
-    "ASSIGN_TO": "Asignar a"
+    "ASSIGN_TO": "Asignar a",
+    "NOTASKSTHISWEEKMESSAGE": "No hay tareas esta semana.",
+    "NOTASKSTHISMONTHMESSAGE": "No hay tareas este mes.",
+    "NONOTIFICATIONSTHISWEEK": "No hay notificaciones esta semana.",
+    "NONOTIFICATIONSTHISMONTH": "No hay notificaciones este mes.",
+    "NOQUERIESTHISWEEK": "No hay consultas esta semana.",
+    "NOQUERIESTHISMONTH": "No hay consultas este mes.",
+    "NOMESSAGES": "No hay mensajes."
   },
   "DOCUMENTATION": {
     "FILE_SELECT_ALL"       : "Seleccionar todos",

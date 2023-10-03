@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Base64toBlob } from '../utilities/file';
-import { DocumentFactory, ICollection, IDocument, IFilter } from 'libraries/AonSDK/aon';
+import { DocumentFactory, ICollection, IDocument, IFilter } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
@@ -10,6 +10,7 @@ export class DocumentService extends CommonService {
 
   private singleObjectCrud = new DocumentFactory().createSingleObjectCrud();
   private multipleObjectCrud = new DocumentFactory().createMultipleObjectCrud();
+  private specificMethods = new DocumentFactory().createDocumentSpecificMethods();
 
   constructor() {
     super();
@@ -24,7 +25,6 @@ export class DocumentService extends CommonService {
   }
 
   async updateDocument(documents: IDocument | ICollection<IDocument>): Promise<IDocument | ICollection<IDocument>> {
-    console.log(typeof documents);
     return (await this.singleObjectCrud.updateElement(documents as IDocument)).result;
   }
 
@@ -34,6 +34,10 @@ export class DocumentService extends CommonService {
 
   async createDocument(documents: IDocument): Promise<IDocument> {
     return (await this.singleObjectCrud.createElement(documents)).result;
+  }
+
+  async getDocumentFile(document: IDocument): Promise<string> {
+    return (await this.specificMethods.getRawFile(document)).result
   }
 
   async downloadDocument(path: string): Promise<void> {

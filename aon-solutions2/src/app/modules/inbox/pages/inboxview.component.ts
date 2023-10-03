@@ -1,14 +1,19 @@
-import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Factory,
   CollectionFactory,
+  ErrorResponse,
   ICollection,
   FilterBuilder,
   IMessageChat,
   IMessage,
   IFilter,
-} from 'libraries/AonSDK/aon';
+} from 'libraries/AonSDK/src/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
@@ -36,6 +41,8 @@ export class InboxviewComponent implements OnInit {
   datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
 
   messagesData: IMessage = this.entityFactory.createMessage();
+  messageChat: IMessageChat = this.entityFactory.createMessageChat();
+
   messagesChat: ICollection<IMessageChat> =
     this.collectionFactory.createMessageChatCollection();
 
@@ -50,19 +57,25 @@ export class InboxviewComponent implements OnInit {
   noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
   showSendButton: boolean = false;
+  showSendButtons: boolean = false;
   filterDate: number = 1;
-  selectedFilterText: string = "Esta semana";
-  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
+  selectedFilterText: string = '';
+  expandedIndex: number = -1;
+  newMessageDescription: string = '';
+  noTasksMessageText: string = '';
+  filterPending: boolean = false;
+  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
+    new DropdownMenuComponent();
 
   consultaMessageCount: number = 0;
   tareasMessageCount: number = 0;
   notificacionesMessageCount: number = 0;
   totalMessageCount: number = 0;
   tableQueriesComponent!: TableQueriesComponent;
-  menuItem: MenuItem [] = []
-  selected: string    = '';
-  items: any [] = [];
-  data:  any [] = [];
+  menuItem: MenuItem[] = [];
+  selected: string = '';
+  items: any[] = [];
+  data: any[] = [];
 
   constructor(
     private translateService: TranslateService,
@@ -116,20 +129,30 @@ export class InboxviewComponent implements OnInit {
             },
           ]),
           (this.menuItem! = [
-            { root: true, text: result["INBOX.THIS_WEEK"], click:() =>this.filterTable(1, result["INBOX.THIS_WEEK"]) },
-            {root: true, text: result["INBOX.THIS_MONTH"],click:() =>this.filterTable(2, result["INBOX.THIS_MONTHTHIS_MONTH"])},
-            {root: true, text: result["INBOX.ALLS"], click:() =>this.filterTable(0, result["INBOX.ALLS"])},
-          ])
+            {
+              root: true,
+              text: result['INBOX.THIS_WEEK'],
+              click: () => this.filterTable(1, result['INBOX.THIS_WEEK']),
+            },
+            {
+              root: true,
+              text: result['INBOX.THIS_MONTH'],
+              click: () =>
+                this.filterTable(2, result['INBOX.THIS_MONTHTHIS_MONTH']),
+            },
+            {
+              root: true,
+              text: result['INBOX.ALLS'],
+              click: () => this.filterTable(0, result['INBOX.ALLS']),
+            },
+          ]);
 
-          this.calculateMessageCounts();
+        this.calculateMessageCounts();
+        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
       });
   }
 
   ngOnInit(): void {
-  }
-
-  showNoTasksMessage(hasNoTasks: boolean) {
-    this.noTasksMessage = hasNoTasks;
   }
 
   afterModalClosed(result?: any) {
@@ -137,7 +160,6 @@ export class InboxviewComponent implements OnInit {
   }
 
   showModal() {
-    this.isModalVisible = true;
     this.modalComponent.openDialog(
       ModalCreateComponent,
       this.functionHome,
@@ -148,14 +170,21 @@ export class InboxviewComponent implements OnInit {
   onTabChange() {
     this.showDetail = false;
     this.showSendButton = false;
+    this.showSendButtons = false;
     this.tabIndex = 0;
   }
 
+  backTable() {
+    this.showDetail = false;
+  }
+
   async rowClickHandler(message: any) {
-    console.log(message);
+    console.log(message, 'message');
+
     try {
-      const isSameRow   = this.messagesData && this.messagesData.Id === message.key;
-      this.showDetail   = !isSameRow ? true : !this.showDetail;
+      const isSameRow =
+        this.messagesData && this.messagesData.Id === message.key;
+      this.showDetail = !isSameRow ? true : !this.showDetail;
       this.messagesData = await this.messageService.getMessage(message.key);
 
       if (message.type == 'consulta') {
@@ -165,6 +194,7 @@ export class InboxviewComponent implements OnInit {
           filterBuilder.getFilter()
         );
       }
+      this.changeView();
     } catch (error) {
       console.error('Error al cargar el chat del mensaje:', error);
     }
@@ -174,24 +204,29 @@ export class InboxviewComponent implements OnInit {
     this.showSendButton = !this.showSendButton;
   }
 
+  replyconsultarClicked() {
+    this.showSendButtons = !this.showSendButtons;
+  }
+
   filterTable(optionValue: number, name: string) {
     this.filterDate = optionValue;
-    this.selected = name
+    this.selected = name;
     switch (optionValue) {
       case 1:
-        this.selectedFilterText = "Esta semana";
+        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
         break;
       case 2:
-        this.selectedFilterText = "Este mes";
+        this.selectedFilterText = this.translateService.instant('INBOX.THIS_MONTH');
         break;
       case 0:
-        this.selectedFilterText = "Todo";
+        this.selectedFilterText = this.translateService.instant('INBOX.ALLS');
         break;
       default:
-        this.selectedFilterText = "Esta semana";
+        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
         break;
     }
   }
+
   async calculateMessageCounts() {
     try {
       // Calcula el recuento para "consulta"
@@ -226,5 +261,54 @@ export class InboxviewComponent implements OnInit {
 
   closeDetail() {
     this.showDetail = false;
+  }
+
+  toggleDescription(index: number): void {
+    this.expandedIndex = this.expandedIndex === index ? -1 : index;
+  }
+
+  changeView(): void {
+    this.showSendButton = false;
+    this.showSendButtons = false;
+  }
+
+  newMessageDescriptionChange(newValue: string) {
+    this.newMessageDescription = newValue;
+  }
+
+  async createChatMessage(description: string) {
+    if (this.messagesData && this.messageChat) {
+
+      const newMessageChat = this.messageService.objectFactory.createMessageChat()
+      .setIdMessage(this.messagesData.Id)
+      .setName(this.messagesData.Name)
+      .setDescription(description)
+      .setType('chat');
+
+      try {
+        // Crear el mensaje
+        const createdMessageChat =
+          await this.messageChatService.createMessageChat(newMessageChat);
+
+        // Agregar el nuevo mensaje
+        this.messagesChat.add(createdMessageChat);
+
+      } catch (error) {
+        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
+      }
+    }
+  }
+
+  sendChatMessage() {
+    // para no enviar mensajes vacíos
+    if (this.newMessageDescription.trim() === '') {
+      return;
+    }
+
+    // Llama a la función para crear un nuevo mensaje de chat
+    this.createChatMessage(this.newMessageDescription);
+
+    // Limpia el campo de entrada después de enviar el mensaje
+    this.newMessageDescription = '';
   }
 }

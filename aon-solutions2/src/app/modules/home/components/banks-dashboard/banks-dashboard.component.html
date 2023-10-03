@@ -6,7 +6,12 @@
       <app-icon [shape]="'add'"></app-icon>
     </div>
   </div>
-  <div body class="list-bank">
+  <app-spinner body *ngIf="spinner"></app-spinner>
+  <div
+    *ngIf="!spinner"
+    body
+    class="list-bank"
+  >
     <div *ngFor="let bank of banks" class="list-bank-row">
       <div class="list-bank-name">
         {{ bank.Name }}
@@ -14,12 +19,16 @@
       </div>
       <div class="list-bank-money">{{ bank.Total }} €</div>
     </div>
-      <div class="bank-link-create" *ngIf="!hasBanks()">{{ 'HOME.CREATE_YOUR_FIRST_BANK'|translate }}</div>
-      <div class="banks-create-text" *ngIf="!hasBanks()">
-        {{ 'HOME.CONNECT_AON'|translate }}
-      </div>
+    <div class="bank-link-create" *ngIf="!hasBanks()">{{ 'HOME.CREATE_YOUR_FIRST_BANK'|translate }}</div>
+    <div class="banks-create-text" *ngIf="!hasBanks()">
+      {{ 'HOME.CONNECT_AON'|translate }}
+    </div>
   </div>
-  <div footer class="list-bank-footer">
+  <div
+    *ngIf="!spinner"
+    footer
+    class="list-bank-footer"
+  >
     {{ totalAmount }} €
   </div>
 </app-card>
