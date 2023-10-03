@@ -12,25 +12,24 @@ export class MessageFactory implements ISingleObjectCrudFactory<IMessage>, IMult
     createSingleObjectCrud(): ISingleObjectCrud<IMessage> {
         return new GenericSingleObjectCrud<Message>(
             (APIEnvironment ?
-            // new APIGenericSingleObjectCrudRepository<Message>(new ApiMessage(), Message) :
-            new APIMessageSingleObjectCrudRepository(new ApiMessage(), Message) :
-            new GenericSingleObjectCrudRepository<Message>(new StorableMessage(), Message)
+                new APIMessageSingleObjectCrudRepository(new ApiMessage(), Message) :
+                new GenericSingleObjectCrudRepository<Message>(new StorableMessage(), Message)
             ),
             Message);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IMessage> {
         return new GenericMultipleObjectCrud<Message>(
             (APIEnvironment ?
-            new APIMessageMultipleObjectCrudRepository(new ApiMessage(), Message) :
-            new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message)
+                new APIMessageMultipleObjectCrudRepository(new ApiMessage(), Message) :
+                new GenericMultipleObjectCrudRepository<Message>(new StorableMessage(), Message)
             ),
             Message);
     }
     createMessageSpecificMethods(): IMessageSpecificMethods {
         return new MessageSpecificMethods(
             (APIEnvironment ?
-            new APIMessageSpecificMethodsRepository() :
-            new LocalMessageSpecificMethodsRepository()
+                new APIMessageSpecificMethodsRepository() :
+                new LocalMessageSpecificMethodsRepository()
             )
         )
     }
