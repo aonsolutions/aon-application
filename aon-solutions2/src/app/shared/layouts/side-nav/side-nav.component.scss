@@ -23,9 +23,9 @@
   }
 
   #menu-left.menu-left-open{
-    position      : absolute; 
+    position      : absolute;
     min-width     : $menu-width-open;
-    width         : auto; 
+    width         : auto;
     text-align    : left;
     padding-left  : $padding-left;
     padding-right : $padding-right;
@@ -166,7 +166,7 @@
     padding-left    : $margin-button-icon-left;
     background-color: $background-button-hover;
   }
-  
+
   // Priorizar vista sobre el menu
   #menu-container #body-container #menu-open{
     position        : fixed;

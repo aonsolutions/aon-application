@@ -1,4 +1,4 @@
-import { ICollectable, IMessage, IMark, IProductStatus, IProductCode, IProductType, IProductClass, IProductCategory, ITax, IIRPF, IInvoiceCategory, IInvoiceSerie, IInvoiceTransactionType, IEnterprise, IRegistryEnterprise, IUser, IDocument } from "./modelsInterfaces";
+import { ICollectable, IMessage, IMark, IProductStatus, IProductCode, IProductType, IProductClass, IProductCategory, ITax, IIRPF, IInvoiceCategory, IInvoiceSerie, IInvoiceTransactionType, IEnterprise, IRegistryEnterprise, IUser, IDocument, IModel, IBank } from "./modelsInterfaces";
 import { IFilter, ICollection } from "./utilitiesInterfaces";
 
 export interface IRepositorySingleObjectReader<T> {
@@ -162,4 +162,9 @@ export interface IUserSpecificMethodsRepository {
 
 export interface IDocumentSpecificMethodsRepository {
     getRawFile(document: IDocument): Promise<string>;
+}
+
+export interface ITaxModelSpecificMethodsRepository {
+    payTaxModelWithNRC(model: IModel, nrc: string): Promise<boolean>;
+    payTaxModelWithBank(model: IModel, bank: IBank): Promise<boolean>;
 }
