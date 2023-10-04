@@ -1,8 +1,9 @@
-import { AuthService } from 'src/app/core/services/auth.service';
 import { Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
+
+import { AuthService } from 'src/app/core/services/auth.service';
+import { CollectionFactory, ErrorResponse, ICollection, IEnterprise } from 'libraries/AonSDK/src/aon';
 import { EnterpriseService } from 'src/app/core/services/enterprise.service';
-import { CollectionFactory, ICollection, IEnterprise } from 'libraries/AonSDK/src/aon';
 
 @Component({
   selector: 'app-select-enterprise',
@@ -11,21 +12,49 @@ import { CollectionFactory, ICollection, IEnterprise } from 'libraries/AonSDK/sr
 })
 export class SelectEnterpriseComponent implements OnInit {
   enterprises: ICollection<IEnterprise> = new CollectionFactory().createEnterpriseCollection();
+  spinner: boolean = true;
 
+/**
+ * Inicializar el componente y obtener la lista de empresas del servicio de empresas.
+ *
+ * @param {AuthService} authService - El servicio de autenticación utilizado para la autenticación de usuarios.
+ * @param {EnterpriseService} enterpriseService - El servicio utilizado para interactuar con los datos de las empresas.
+ * @param {Router} router - El enrutador utilizado para la navegación.
+ * @throws {ErrorResponse} Si ocurre un error durante la construcción de la instancia.
+ * @finally Establece el valor de la propiedad spinner en false.
+ */
   constructor(private authService: AuthService, private enterpriseService: EnterpriseService, private router: Router) {
-    this.enterpriseService.getEnterpriseList().then((enterprises) => {
-      this.enterprises = enterprises;
-    });
+    setTimeout(() => {
+
+      try {
+        this.enterpriseService.getEnterpriseList().then((enterprises) => {
+          this.enterprises = enterprises;
+        });
+      } catch (error) {
+        throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
+      } finally {
+        this.spinner = false;
+      }
+    }, 2000);
   }
 
   ngOnInit() {
   }
 
+  /**
+   * Selecciona una empresa y la establece en el servicio de autenticación.
+   * Navega a la página de inicio.
+   *
+   * @param {IEnterprise} enterprise - La empresa que se va a seleccionar.
+   * @return {void} No se devuelve nada.
+   */
   selectEnterprise(enterprise: IEnterprise) {
-    // TODO: Llamar servicio JWT(generico) para que establezca empresa seleccionada en session
-    // TODO: Establecer si guardamos toda la empresa, o por el contrario usar id/document
-    this.authService.setEnterprise(enterprise)
-    this.router.navigate(['']);
+    try {
+      this.authService.setEnterprise(enterprise)
+      this.router.navigate(['']);
+    } catch (error) {
+      throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
+    }
   }
 
 }
