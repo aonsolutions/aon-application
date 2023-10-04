@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AuthenticationFactory, ErrorResponse, IEnterprise } from 'libraries/AonSDK/src/aon';
+import { AuthenticationFactory, IEnterprise } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
