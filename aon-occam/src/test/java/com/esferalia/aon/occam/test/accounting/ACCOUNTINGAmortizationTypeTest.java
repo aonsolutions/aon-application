@@ -12,10 +12,10 @@ import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-public class ACCOUNTINGTest extends AbstractOccamTest {
+public class ACCOUNTINGAmortizationTypeTest extends AbstractOccamTest {
 
 	/*
-	 * Tests for ACCOUNTING class
+	 * Tests for ACCOUNTING class functions of AmortizationType
 	 * */
 	
 	/*
