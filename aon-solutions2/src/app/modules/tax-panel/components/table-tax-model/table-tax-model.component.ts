@@ -139,7 +139,7 @@ export class TableTaxModelComponent implements OnChanges {
   modalClick(object: any) {
     // Fila de la tabla que se esta usando
     // Boton que ha sido clickeado
-    console.log(object);
+    //console.log(object);
     // reference icon click
     console.log(object.keyButton);
 
@@ -148,21 +148,21 @@ export class TableTaxModelComponent implements OnChanges {
         this.modalComponentEdit.openDialog(
           ModalEditTaxModelComponent,
           this.functionHome,
-          'Data from home'
+          object
         );
         break;
       case 'done_all':
         this.modalComponentPayment.openDialog(
           ModalPaymentComponent,
           this.functionHome,
-          'Data from home'
+          object
         );
         break;
       case 'eye':
         this.modalComponentTaxesDetails.openDialog(
           ModalTaxesDetailsComponent,
           this.functionHome,
-          'Data from home'
+          object
         );
         break;
     }

@@ -179,7 +179,10 @@
     "BACK": "BACK",
     "ON":"On",
     "CHARGED_ACCOUNT":"your account will be charged",
-    "AN_AMOUNT":"an amount of"
+    "AN_AMOUNT":"an amount of",
+    "RECTIFYING_MODEL":"Rectifying model",
+    "TRIMESTER":"Trimester",
+    "OF":"of"
   },
     "PROFILE": {
     "CONTACT_DETAILS":   "Contact details",

@@ -179,7 +179,10 @@
     "BACK": "VOLVER",
     "ON":"El día",
     "CHARGED_ACCOUNT":"se te cargará en la cuenta",
-    "AN_AMOUNT":"un importe de"
+    "AN_AMOUNT":"un importe de",
+    "RECTIFYING_MODEL":"Rectificando el modelo",
+    "TRIMESTER": "Trimestre",
+    "OF":"del"
    },
   "PROFILE": {
     "CONTACT_DETAILS":   "Datos contacto",

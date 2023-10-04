@@ -1,40 +1,43 @@
 <div>
-  <p class="title-modal-taxes">{{ "TAX_PANEL.MODEL" | translate }} 000</p>
+  <p class="title-modal-taxes">{{ "TAX_PANEL.MODEL" | translate }} {{dataParts[0]}} </p>
 
   <div class="head-text">
     <div style="display: inline-block">
       <p class="text-modal-taxes-details">
         {{ "TAX_PANEL.TOTAL_ACCRUED_FEE" | translate }}
       </p>
-      <p class="number-modal-taxes-details-devengada">21,00 €</p>
+      <p class="number-modal-taxes-details-devengada"> €</p>
     </div>
 
     <div style="display: inline-block">
       <p class="text-modal-taxes-details">
         {{ "TAX_PANEL.TOTAL_DEDUCTIBLE_FEE" | translate }}
       </p>
-      <p class="number-modal-taxes-details-deducible">0,00 €</p>
+      <p class="number-modal-taxes-details-deducible"> €</p>
     </div>
   </div>
 
-  <div style="background-color: #f9f9fa; margin: 2.5rem">
+  <div style="background-color: #f9f9fa; margin: 1rem">
     <div class="text-inside-taxes-details">
       <div class="text-inside-taxes-in">
         <p class="text-inside-taxes-details">
           {{ "TAX_PANEL.FEES_TO_BE_OFFSET" | translate }}
         </p>
-        <p class="number-inside-taxes-details">0,00 €</p>
+        <p class="number-inside-taxes-details"> €</p>
       </div>
-      <p class="total-number-inside-taxes-details">21,00 €</p>
+      <p class="total-number-inside-taxes-details"> €</p>
 
       <hr style="color: #d2d2d6; margin-left: 0.5rem" />
 
-      <p class="text-inside-taxes-details">
-        {{ "TAX_PANEL.TO_DEDUCT_SUPPLEMENTARY_ASSESSMENT" | translate }}
-      </p>
-      <p class="number-inside-taxes-details">0,00 €</p>
+      <div class="text-inside-taxes-in">
+        <p class="text-inside-taxes-details">
+          {{ "TAX_PANEL.TO_DEDUCT_SUPPLEMENTARY_ASSESSMENT" | translate }}
+        </p>
+        <p class="number-inside-taxes-details"> €</p>
+      </div>
 
-      <hr style="color: #d2d2d6; margin-left: 0.5rem" />
+      <hr />
+
     </div>
 
     <p class="result-modal-taxes-details">

@@ -100,15 +100,10 @@ export class Folder implements IFolder, IModel  {
 
 export class ApiFolder extends Folder implements IApiModel {
     getUrl(currentMethod: string, filter: IFilter): string[] {
-        if(currentMethod == GET_MULTIPLE){
-            return ['/ms/api/contract']
-        }
         throw new ErrorResponse('0199')
     }
 
     getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        if(currentMethod == GET_MULTIPLE)
-            return GET_METHOD;
         throw new ErrorResponse('0199')
     }
 

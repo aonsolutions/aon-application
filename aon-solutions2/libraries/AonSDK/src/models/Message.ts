@@ -217,51 +217,26 @@ export class Message implements IMessage, IModel  {
 
 export class ApiMessage extends Message implements IApiModel {
     getUrl(currentMethod: string, filter: IFilter): string[] {
-        if(currentMethod == GET_MULTIPLE){
-            if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.NOTIFICACION)
-                return ['/ms/api/notification?page=1&perPage=100']
-            else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.CONSULTA)
-                return ['/ms/api/task?source=query&page=1&perPage=100&task_holder=' + localStorage.getItem('registry') + '&sender=' + localStorage.getItem('registry')]
-            else if(filter && filter.fields?.has('type') && filter.fields.get('type') == TypeMessage.TAREA)
-                return ['/ms/api/task?source=task&page=1&perPage=100&task_holder=' + localStorage.getItem('registry') + '&sender=' + localStorage.getItem('registry')]
-            else
-                return ['/ms/api/notification?page=1&perPage=100','/ms/api/task?source=query&page=1&perPage=100','/ms/api/task?source=task&page=1&perPage=100']
-        }else if (currentMethod == GET_SINGLE){
-            if(filter && filter.fields?.has('id') &&
-            (filter.fields.get('id')[0].toLowerCase().split(';')[1] == 'consulta' || filter.fields.get('id')[0].toLowerCase().split(';')[1] == 'tarea'))
-                return ['/ms/api/task/one?id=' + filter.fields.get('id')[0].split(';')[0]];
-        }else if(currentMethod == UPDATE_SINGLE){
-            return ['/ms/api/task']
-        }
-        throw new ErrorResponse('0199')
+        throw new Error("Method not implemented.");
     }
 
     getMethod(currentMethod: string, filter?: IFilter | undefined): string {
-        if(currentMethod == GET_MULTIPLE)
-            return GET_METHOD;
-        if(currentMethod == GET_SINGLE)
-            return GET_METHOD;
-        if(currentMethod == UPDATE_SINGLE)
-            return POST_METHOD;
-        throw new ErrorResponse('0199')
+        throw new Error("Method not implemented.");
     }
 
     localFilter(): boolean {
         return true;
     }
 
-    parseDataToSend(data: Message, currentMethod:string) {
-        if(currentMethod == UPDATE_SINGLE){
-            let object = data.ApiObject;
-            let status;
-            if(data.Type == TypeMessage.NOTIFICACION)
-                status = data.Status == StatusMessage.VISTA ? 1 : 0;
-            else
-                status = data.Status == StatusMessage.ABIERTA || data.Status == StatusMessage.PENDIENTE ? 'pending' : 'deleted';
-            object.status = status;
-            return object;
-        }
-        throw new ErrorResponse('0199')
+    parseDataToSend(data: Message) {
+        let object = data.ApiObject;
+        let status;
+        if(data.Type == TypeMessage.NOTIFICACION)
+            status = data.Status == StatusMessage.VISTA ? 1 : 0;
+        else
+            status = data.Status == StatusMessage.ABIERTA || data.Status == StatusMessage.PENDIENTE ? 'pending' : 'deleted';
+        object.status = status;
+        return object;
     }
 
     parseDataToReceive(data: any) {
@@ -276,9 +251,9 @@ export class ApiMessage extends Message implements IApiModel {
             message.Date = new Date(data.start_date);
             message.Type = data.source == 'query' ? TypeMessage.CONSULTA : TypeMessage.TAREA;
             if(data.source == 'task')
-                message.Status = data.status && data.status == StatusMessage.PENDIENTE ? StatusMessage.PENDIENTE : StatusMessage.REALIZADA;
+                message.Status = data.status && data.status == 'pending' ? StatusMessage.PENDIENTE : StatusMessage.REALIZADA;
             else
-                message.Status = data.status && data.status == StatusMessage.PENDIENTE ? StatusMessage.ABIERTA : StatusMessage.CERRADA;
+                message.Status = data.status && data.status == 'pending' ? StatusMessage.ABIERTA : StatusMessage.CERRADA;
             message.EndDate = new Date();
             message.Key = message.Id;
             return message;

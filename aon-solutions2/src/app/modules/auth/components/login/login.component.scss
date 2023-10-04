@@ -23,9 +23,10 @@
 }
 
 .inptCont {
+  position      : relative;
   border        : $border;
   border-radius : $border-radius;
-  padding       : 1.85rem 1.25rem;
+  padding       : $padding;
 }
 
 .inputLogin {
@@ -36,9 +37,9 @@
 .divider {
   display     : flex;
   align-items : center;
-  margin      : 1rem 0;
+  margin      : $margin 0;
   color       : $color-third;
-  font-size   : 0.5rem;;
+  font-size   : 0.5rem;
 }
 
 .divider::before, .divider::after {

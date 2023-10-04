@@ -29,8 +29,6 @@ export class InputProfilePersonalDataComponent implements OnInit {
   }
 
   onSave() {
-
-
     this.userService
       .updateUser(this.users[0])
       .then((updatedUser) => {

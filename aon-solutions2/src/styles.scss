@@ -462,6 +462,26 @@ html {
   .padding-bottom-2{
     padding-bottom: $padding-bottom * 2;
   }
+
+/*
+  Border
+*/
+  .border{
+    border: $border;
+  }
+  .border-top{
+    border-top: $border;
+  }
+  .border-left{
+    border-left: $border;
+  }
+  .border-right{
+    border-right: $border;
+  }
+  .border-radius{
+    border-radius: $border-radius;
+  }
+
 /*
   Form
 */
@@ -473,6 +493,7 @@ html {
   .form:first-of-type{
     padding-top: $padding*2;
   }
+  
 /*
   Hr
 */
@@ -489,13 +510,13 @@ html {
     margin-left     : $margin-left / 2;
     width           : 1.7rem;
     height          : 1.7rem;
-    border-radius   : 100rem; 
+    border-radius   : 100rem;
     display         : inline-flex;
     align-items     : center;
     justify-content : center;
     color           : $color-primary;
   }
-  
+
   /* Red */
     .red .circle,
     .circle.red{

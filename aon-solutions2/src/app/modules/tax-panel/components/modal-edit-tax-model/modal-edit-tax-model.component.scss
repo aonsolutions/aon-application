@@ -4,6 +4,7 @@
   margin-top: $margin-top;
   margin-right: $margin-right;
   margin-left: $margin-left;
+  display: block;
 }
 
 .close-button {
@@ -23,9 +24,13 @@
   padding-bottom: $padding-bottom;
 }
 
-app-button {
+.container-button {
   display: flex;
   justify-content: flex-end;
-  padding-top: $padding-top;
 }
 
+app-button {
+  width: fit-content;
+  margin-left: auto;
+  padding-top: $padding-top;
+}
