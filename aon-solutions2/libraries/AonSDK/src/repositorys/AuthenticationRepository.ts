@@ -41,6 +41,11 @@ export class APIAuthenticationRepository implements IAuthenticationRepository {
         if(userInfo.type == "error") throw new ErrorResponse('0101');
         localStorage.setItem('login', userInfo.login);
     }
+
+    async setRegistry(): Promise<void> {
+        let user = await ApiHttpRequest.httpRequest(BASE_URL + '/ms/api/taskholder/user', GET_METHOD, {}, {})
+        localStorage.setItem('registry', user[0].id);
+    }
 }
 
 export class AuthenticationRepository implements IAuthenticationRepository {
@@ -79,6 +84,9 @@ export class AuthenticationRepository implements IAuthenticationRepository {
     async tokenLogin(token: string): Promise<void> {
         if(!localStorage.getItem('token')) localStorage.setItem('token', 'testToken');
         else throw new ErrorResponse('0101');
+    }
+
+    async setRegistry(): Promise<void> {
     }
 }
 

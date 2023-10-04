@@ -1,9 +1,9 @@
 import { ErrorHandler, Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { ErrorService } from './error.service';
+
 import { CustomError } from '../models/class/custom-error';
-import { Response } from 'libraries/AonSDK/src/aon';
-import { ErrorResponse } from 'libraries/AonSDK/src/aon';
+import { environment } from 'src/environments/environment';
+import { ErrorResponse, Response } from 'libraries/AonSDK/src/aon';
+import { ErrorService } from './error.service';
 
 @Injectable({
   providedIn: 'root'

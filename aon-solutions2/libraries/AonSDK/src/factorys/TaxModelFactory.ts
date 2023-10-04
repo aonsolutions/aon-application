@@ -1,10 +1,11 @@
 import { ISingleObjectCrudFactory, IMultipleObjectCrudFactory } from "../interfaces/factoryInterfaces";
 import { ITaxModel } from "../interfaces/modelsInterfaces";
-import { ISingleObjectCrud, IMultipleObjectCrud } from "../interfaces/serviceInterfaces";
+import { ISingleObjectCrud, IMultipleObjectCrud, ITaxModelSpecificMethods } from "../interfaces/serviceInterfaces";
 import { TaxModel, ApiTaxModel, StorableTaxModel } from "../models/TaxModel";
 import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
-import { APITaxModelMultipleObjectCrudRepository } from "../repositorys/TaxModelRepository";
+import { APITaxModelMultipleObjectCrudRepository, ApiTaxModelSpecificMethodsRepository, LocalTaxModelSpecificMethosdsRepository } from "../repositorys/TaxModelRepository";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
+import { TaxModelSpecificMethods } from "../services/TaxModelService";
 import { APIEnvironment } from "../utils/Environment";
 
 export class TaxModelFactory implements ISingleObjectCrudFactory<ITaxModel>, IMultipleObjectCrudFactory<ITaxModel> {
@@ -23,5 +24,11 @@ export class TaxModelFactory implements ISingleObjectCrudFactory<ITaxModel>, IMu
             new GenericMultipleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel)
             ),
             TaxModel);
+    }
+    createSpecificMethods(): ITaxModelSpecificMethods{
+        return new TaxModelSpecificMethods(APIEnvironment ?
+            new ApiTaxModelSpecificMethodsRepository() : 
+            new LocalTaxModelSpecificMethosdsRepository()
+        )
     }
 }

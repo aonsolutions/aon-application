@@ -8,7 +8,7 @@ import { CommonService } from './common.service';
 })
 export class AuthService extends CommonService {
 
-  authManager = new AuthenticationFactory().createAuthenticationManager()
+  private authManager = new AuthenticationFactory().createAuthenticationManager()
 
   constructor(private router: Router) {
     super();
