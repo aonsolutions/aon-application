@@ -24,18 +24,10 @@ export class SelectEnterpriseComponent implements OnInit {
  * @finally Establece el valor de la propiedad spinner en false.
  */
   constructor(private authService: AuthService, private enterpriseService: EnterpriseService, private router: Router) {
-    setTimeout(() => {
-
-      try {
-        this.enterpriseService.getEnterpriseList().then((enterprises) => {
-          this.enterprises = enterprises;
-        });
-      } catch (error) {
-        throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
-      } finally {
-        this.spinner = false;
-      }
-    }, 2000);
+    this.enterpriseService.getEnterpriseList().then((enterprises) => {
+      this.spinner = false;
+      this.enterprises = enterprises;
+    })
   }
 
   ngOnInit() {
