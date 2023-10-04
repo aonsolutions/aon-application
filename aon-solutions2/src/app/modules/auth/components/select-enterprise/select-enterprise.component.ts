@@ -41,12 +41,8 @@ export class SelectEnterpriseComponent implements OnInit {
    * @return {void} No se devuelve nada.
    */
   selectEnterprise(enterprise: IEnterprise) {
-    try {
-      this.authService.setEnterprise(enterprise)
-      this.router.navigate(['']);
-    } catch (error) {
-      throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
-    }
+    this.authService.setEnterprise(enterprise)
+    this.router.navigate(['']);
   }
 
 }
