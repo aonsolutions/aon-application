@@ -10,40 +10,38 @@
           <span>{{ "LOGIN.ACCESS_YOUR_AON_ACCOUNT" | translate }}</span>
         </div>
         <div class="inptCont">
-          <app-spinner body *ngIf="spinner"></app-spinner>
-          <div *ngIf="!spinner" class="cardBody">
-            <form (ngSubmit)="loginUser()" >
-              <app-input
-                (inputValue)="username = $event"
-                [type]="'text'"
-                [label]="'LOGIN.USER' | translate"
-                [placeholder]="'LOGIN.USER' | translate"
-                [required]="'required'"
-                class="inputLogin"
-              ></app-input>
-              <app-input
-                (inputValue)="password = $event"
-                [type]="'password'"
-                [suffixBehavior]="'showPass'"
-                [label]="'LOGIN.PASSWORD' | translate"
-                [placeholder]="'LOGIN.PASSWORD' | translate"
-                [required]="'required'"
-                class="inputLogin"
-              ></app-input>
-              <app-button
-                [class]="'white'"
-                [width]="'100%'"
-              >
-                {{ "LOGIN.LOGIN" | translate }}
-              </app-button>
-            </form>
-            <div class="divider">
-              {{ "LOGIN.OR_ACCESS" | translate }}
-            </div>
-            <app-button [class]="'dark'" [width]="'100%'">
-              {{ "LOGIN.WITHOUT_PASSWORD" | translate }}
+          <app-spinner *ngIf="spinner"></app-spinner>
+          <form (ngSubmit)="loginUser()" >
+            <app-input
+              (inputValue)="username = $event"
+              [type]="'text'"
+              [label]="'LOGIN.USER' | translate"
+              [placeholder]="'LOGIN.USER' | translate"
+              [required]="'required'"
+              class="inputLogin"
+            ></app-input>
+            <app-input
+              (inputValue)="password = $event"
+              [type]="'password'"
+              [suffixBehavior]="'showPass'"
+              [label]="'LOGIN.PASSWORD' | translate"
+              [placeholder]="'LOGIN.PASSWORD' | translate"
+              [required]="'required'"
+              class="inputLogin"
+            ></app-input>
+            <app-button
+              [class]="'white'"
+              [width]="'100%'"
+            >
+              {{ "LOGIN.LOGIN" | translate }}
             </app-button>
+          </form>
+          <div class="divider">
+            {{ "LOGIN.OR_ACCESS" | translate }}
           </div>
+          <app-button [class]="'dark'" [width]="'100%'">
+            {{ "LOGIN.WITHOUT_PASSWORD" | translate }}
+          </app-button>
         </div>
       </div>
     </mat-grid-tile>

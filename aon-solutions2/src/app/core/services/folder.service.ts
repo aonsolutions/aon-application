@@ -18,15 +18,4 @@ export class FolderService extends CommonService {
     return (await this.multipleObjectCrud.getCollection(filter)).result;
   }
 
-  async getFolder(pkey: any): Promise<IFolder> {
-    return (await this.singleObjectCrud.getElement(pkey)).result;
-  }
-
-  async createFolder(folder: IFolder): Promise<IFolder> {
-    return (await this.singleObjectCrud.createElement(folder)).result;
-  }
-
-  async deleteFolder(pkey: any): Promise<boolean> {
-    return (await this.singleObjectCrud.deleteElement(pkey)).result;
-  }
 }

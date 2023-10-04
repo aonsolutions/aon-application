@@ -22,15 +22,11 @@ export class MessageService extends CommonService {
   }
 
   async getMessageCount(filter?: IFilter): Promise<number> {
-    return (await this.multipleObjectCrud.getCollection(filter)).result.size();
+    return (await this.specificMethods.getMessageCount(filter)).result;
   }
 
   async getMessage(pkey: any): Promise<IMessage> {
     return (await this.singleObjectCrud.getElement(pkey)).result;
-  }
-
-  async updateMessage(messages: IMessage): Promise<IMessage> {
-    return (await this.singleObjectCrud.updateElement(messages)).result;
   }
 
   async createMessage(message: IMessage): Promise<IMessage> {
