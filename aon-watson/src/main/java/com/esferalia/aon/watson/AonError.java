@@ -170,7 +170,6 @@ public enum AonError implements Serializable{
 	,AMORTIZATION_TYPE_FIXED_DESCRIPTION_LENGTH("La longitud del campo para la descripcion excede el permitido")
 	,AMORTIZATION_TYPE_PARAMS_NULL("Los parametros son nulos")
 	
-	
 	// --------------------------------------------- INVOICE
 	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TAX_DATE("La fecha I.V.A. de la factura es un dato obligatorio, no puede estar vac\u00EDa")
@@ -194,7 +193,7 @@ public enum AonError implements Serializable{
 	,INVOICE_CANT_DELETE_SII("No es posible borrar la factura porque est\u00E1 enviada al SII. Dar de baja la factura en el SII.")
 	,INVOICE_CANT_DELETE_TBAI("No es posible borrar la factura porque est\u00E1 enviada a Ticket Bai. Dar de baja la factura en Ticket Bai.")
 	,INVOICE_CANT_DELETE_MODEL("Imposible borrar o modificar, la factura ha sido declarada en modelos fiscales: {0}")
-	,TRACKING_CANT_DELETE_MODEL("Imposible borrar o modificar, el vto. ha sido declarada en modelos fiscales: {0}") 
+	,TRACKING_CANT_DELETE_MODEL("Imposible borrar o modificar, el vto. ha sido declarada en modelos fiscales: {0}")
 
 	// --------------------------------------------- DUA
 	,INVOICE_DUA_NATIONAL_INVOICE_EMPTY("No se ha indicado una factura nacional tipo DUA")
@@ -242,13 +241,16 @@ public enum AonError implements Serializable{
 	,QUESTION_NULL("El valor de la pregunta es nulo.")
 	,QUESTION_EMPTY("El valor de la pregunta est\u00E1 vac\u00EDo.")
 	,EMPTY_QUESTION_TEXT("El valor del texto de la pregunta est\u00E1 vac\u00EDo")
-	,EMPTY_TYPE("El valor del tipo de la pregunta est\u00E1 vac\u00EDo")
+	,NULL_QUESTION_TEXT("El valor del texto de la pregunta es nulo")
+	,NULL_TYPE("El valor del tipo de la pregunta es nulo")
 	,INVALID_SIZE_QUESTION_TEXT("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	,INVALID_SIZE_ALIAS("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	
 	
 	
 	,NULL_FILE_UPLOADED("El archivo seleccionado es nulo")
+	,REPEATED_ALIAS("No puede haber dos preguntas con el mismo alias")
+
 	;
 	
 	

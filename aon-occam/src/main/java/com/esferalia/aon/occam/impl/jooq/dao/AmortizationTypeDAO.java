@@ -40,6 +40,7 @@ public class AmortizationTypeDAO {
 	public static List<AmortizationType> getList(AONContext ctx, AmortizationTypeParams params) {
 		AmortizationTypeValidation.validateParams(params, ctx);
 		Condition condition = createAmortizationTypeCondition(params);
+
 		return ctx.getDslContext()
 				.select().from(AMORTIZATION_TYPE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(AMORTIZATION_TYPE.DOMAIN))
@@ -80,8 +81,8 @@ public class AmortizationTypeDAO {
 	}
 	
 	private static void insert(AONContext ctx, AmortizationType amortizationType) {
-		ctx.checkWrite();  
-		 
+		ctx.checkWrite();
+		
 		Integer insertId = ctx.getDslContext()
 				.insertInto(AMORTIZATION_TYPE)
 				.set(AMORTIZATION_TYPE.DOMAIN, amortizationType.getDomain().getId())
@@ -92,10 +93,10 @@ public class AmortizationTypeDAO {
 				.set(AMORTIZATION_TYPE.ALLOCATION_ACCOUNT, amortizationType.getAllocationAccount())
 				.returning(AMORTIZATION_TYPE.ID)
 				.fetchOne()
-				.getValue(AMORTIZATION_TYPE.ID); 
+				.getValue(AMORTIZATION_TYPE.ID);
 		
 		ctx.log().debug("INSERT AMORTIZATION TYPE id: {0}", insertId);
-	} 
+	}
 	
 	public static void update(AONContext ctx, AmortizationType amortizationType) {
 		ctx.checkWrite();

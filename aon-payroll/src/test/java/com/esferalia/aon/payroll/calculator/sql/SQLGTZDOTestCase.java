@@ -3659,6 +3659,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 					null,
 					new HashMap<String,String>() {
 					{
+						put("SMI","756.00 * 12 / 14");
 						put("BASE_CGC_MIN","756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
 					}
 					}
@@ -3733,6 +3734,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 					null,
 					new HashMap<String,String>() {
 					{
+						put("SMI","756.00 * 12 / 14");
 						put("BASE_CGC_MIN","756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
 					}
 					}
@@ -5017,6 +5019,99 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(
 				1000.00 / 30 * ( 11 * 0.75 + 12 * 0.60 + ( monthDays - 26 ) * 0.60 + 11 * 0.25 ), 
 				salary.getTotalPayment() 
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+
+	@Test
+	public void testGtzdoConstantLimit() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+		
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+					put("GRUPO_COTIZACION", "\"07\"");
+				}
+				}
+				, new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"( P_0 + P_1 ) * 0.10"
+						
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addSystemData(aonContext, contract.getStartDate(), contract.getEndDate(), 
+			new HashMap<String,String>(){
+			{
+			    	put("SMI", "1050");
+			    	put("BASE_HORARIA", "FALSO()");
+				put("BASE_CGC_MIN", "[ "
+					+ "\"07\":(MAX(7.59, (BASE_HORARIA ? 7.59 * HORAS_TRABAJADAS : 1260.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) ))) "
+					+ ",\"11\":(MAX(7.59, (BASE_HORARIA ? 7.59 * HORAS_TRABAJADAS : (MODALIDAD_MENSUAL ? 1260.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)  : 42.00 * DIAS_NOMINA ))))] [GRUPO_COTIZACION]" );
+			}
+			}
+		);
+		
+		//addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = getFirstDayOfMonth(getToday());
+		
+		Date startDate = add( getFirstDayOfMonth(getToday()), Calendar.MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		Date endIt = AonDateUtils.add(startDate, Calendar.DATE, 19);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+		addPrestIts(aonContext, contract);
+
+		addPayment(aonContext, 
+			contract, 
+			contract.getStartDate(), 
+			contract.getEndDate(), 
+			"MEJORA PREST.SS INCAPACIDAD TEMPORAL", 
+			"600.00", 
+			"_P", 
+			"0.00", 
+			PaymentType.CRA_0055);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
+		
+		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		//@formatter:off
+		Assert.assertEquals(
+			600 +
+			1650.00 / 30 * 0.75 * 20 +
+			1650.00 / 30  * ( monthDays - 20 )  
+			, salary.getTotalPayment() 
+				
 				, DELTA);
 		//@formatter:on
 		

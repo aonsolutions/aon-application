@@ -297,9 +297,5 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public Question getQuestion(String domainName, int domain, String user, Integer id) throws AonCoreException {
 		return AON.getQuestion(domainName, domain, user, id);
 	}
-	@Override
-	public Boolean checkQuestionAlias(String domainName, Integer domain, String user, String alias) throws AonCoreException {
-		return AON.checkQuestionAlias(domainName, domain, user, alias);
-	}
 	
 }

@@ -13,14 +13,12 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
-import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,18 +31,12 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Record2;
 import org.jooq.Result;
 import org.jooq.SelectOnConditionStep;
-import org.jooq.TableField;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.jooq.tables.records.CustomerRecord;
-import com.esferalia.aon.jooq.tables.records.DomainRecord;
-import com.esferalia.aon.jooq.tables.records.RsellerRecord;
-import com.esferalia.aon.jooq.tables.records.SellerRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -59,7 +51,6 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
-import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
@@ -69,7 +60,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoicingGroupFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO.ProjectFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistrySellerDAO.RegistrySellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
@@ -144,15 +134,13 @@ public class FeeDAO {
 				.limit(customerFeeParams.getLimit())
 			.fetch();
 		
-		
-		
 		System.out.println("Customer Fee size : " + feeRecords.size());
-
+		
 		feeRecords.forEach(r -> System.out.println("Id : " + r.get(CUSTOMER_FEE.ID) + ", Domain : " + r.get(CUSTOMER_FEE.DOMAIN) + ", Customer : " + r.get(CUSTOMER_FEE.CUSTOMER) + ", Line : " + r.get(CUSTOMER_FEE.LINE)));
 		
 		return feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
-		
+	
 	private static Condition createFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
 		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
 		
@@ -306,14 +294,9 @@ public class FeeDAO {
 		return condition;
 	}
 
-	
-	
-
 	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
-
 		Result<Record> feeRecords = ctx.getDslContext().select().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
-				.join(RSELLER).on(RSELLER.REGISTRY.eq(CUSTOMER_FEE.SELLER))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
@@ -330,11 +313,11 @@ public class FeeDAO {
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 			.fetch();
 		
-
 		System.out.println("Customer Fee size : " + feeRecords.size());
-		    		return feeRecords.stream().map(new FeeFiller());
+		
+		return feeRecords.stream().map(new FeeFiller());
 	}
-
+	
 	protected static class FeeFiller extends Filler implements Function<Record, Fee> {
 
 		@Override
@@ -659,44 +642,12 @@ public class FeeDAO {
 			Seller seller = SellerFiller.build(r);
 			suggestions.put(r.get(REGISTRY.NAME), seller);
 		});
-		System.out.println(condition);
-
+		
 		System.out.println("getSellersSuggestion size : " + suggestions.size());
 		
 		return suggestions;
 	}
 	
-	
-	public static Map<String, RegistrySeller> getSupportsSuggestion(CloseableAONContext ctx, int domainId, String query){
-		Map<String, RegistrySeller> suggestions = new HashMap<>();
-		Condition condition = RSELLER.DOMAIN.eq(domainId);
-		byte type = 1;
-
-		if (AonStringUtils.isNotBlank(query)) condition = condition.and(REGISTRY.NAME.containsIgnoreCase(query));
-		
-		Result<Record> supportRecords = ctx.getDslContext()
-				.select().from(RSELLER)
-				.join(REGISTRY)
-				.on(REGISTRY.ID.eq(RSELLER.REGISTRY)).join(DOMAIN).on(DOMAIN.ID.eq(RSELLER.DOMAIN)).join(SELLER).on(RSELLER.DOMAIN.eq(SELLER.DOMAIN))
-				.where(RSELLER.TYPE.eq(type)).fetch();
-		
-		supportRecords.forEach(r -> {
-			RegistrySeller support = RegistrySellerFiller.build(r);
-			suggestions.put(r.get(REGISTRY.NAME), support);
-		});
-		//ABRIR FISCAL
-		System.out.println(REGISTRY.NAME);
-		System.out.println("getSupportsSuggestion size : " + suggestions.size());
-		
-		return suggestions;
-
-	}
-		
-
-	
-
-	
-
 	public static Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(CloseableAONContext ctx, int domainId, String query) {
 		Map<String, InvoicingGroup> suggestions = new HashMap<>();
 		

@@ -39,11 +39,9 @@ import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.EmployeeJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
-import com.esferalia.aon.occam.api.model.ArtistRegimen;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.UnemployedStatus;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
@@ -103,14 +101,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				case "/rlce":
 					LOGGER.info("RLCE SERVLET - GET METHOD");
 					response(req, resp,	getRlce());
-				break;
-				case "/artist":
-					LOGGER.info("ARTIST REGIMEN SERVLET - GET METHOD");
-					response(req, resp,	getArtistRegimen());
-				break;
-				case "/unemployed":
-					LOGGER.info("UNEMPLOYED STATUS SERVLET - GET METHOD");
-					response(req, resp,	getUnemployedStatus());
 				break;
 				case "/occupation":
 					LOGGER.info("OCCUPATION SERVLET - GET METHOD");
@@ -304,20 +294,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		JSONArray arr = new JSONArray();
 		for( Entry<String, String> rlce : RLCE.getRLCE().entrySet()) 
 			arr.put(new JSONObject().put(IJsonNames.VALUE, rlce.getKey()).put(IJsonNames.NAME, rlce.getValue()));
-		return arr;
-	}
-	
-	private JSONArray getArtistRegimen() {
-		JSONArray arr = new JSONArray();
-		for( Entry<String, String> artistRegimen : ArtistRegimen.getArtistRegimen().entrySet()) 
-			arr.put(new JSONObject().put(IJsonNames.VALUE, artistRegimen.getKey()).put(IJsonNames.NAME, artistRegimen.getValue()));
-		return arr;
-	}
-	
-	private JSONArray getUnemployedStatus() {
-		JSONArray arr = new JSONArray();
-		for( Entry<String, String> unemployedStatus : UnemployedStatus.getUnemployedStatus().entrySet()) 
-			arr.put(new JSONObject().put(IJsonNames.VALUE, unemployedStatus.getKey()).put(IJsonNames.NAME, unemployedStatus.getValue()));
 		return arr;
 	}
 	
@@ -575,10 +551,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String coef        = params.has("coef") && !params.isNull("coef") ? params.optString("coef") : null;
 		String convenio    = params.has("convenio") && !params.isNull("convenio") ? params.optString("convenio") : "60888888888888";
 		String rlce        = params.has("rlce") && !params.isNull("rlce") ? params.optString("rlce") : null; 
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		String artistRegimen = params.has("artist") && !params.isNull("artist") ? params.optString("artist"):null;
-		String unemployedStatus = params.has("unemployed") && !params.isNull("unemployed") ? params.optString("unemployed"):null;
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		String collective  = params.has("collective") && !params.isNull("collective") ? params.optString("collective") : null;
 		String modCtz      = params.has("md_ctz") && !params.isNull("md_ctz") ? params.optString("md_ctz") : null; //para regime agrario
 		Boolean quoteMonth = params.optBoolean("quoteMonth");
@@ -598,18 +570,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setContract(contract)
 		.setCollective(collective)
 		.setRlce(rlce)
-		.setArtistRegimen(artistRegimen)
-		.setUnemployedStatus(unemployedStatus)
 		.setMdctz(modCtz)
 		.setQuoteMonth(quoteMonth);
-		
-		
-		//¿Desde donde recoge regime?pdte
-//		if (regime == null) {
-//			builder.setRegime(artistRegimen);
-//		}else if (artistRegimen == null) {
-//			builder.setRegime(null);
-//		}
 		
 		if(coef!=null) {
 			Integer fact = Integer.parseInt(coef);

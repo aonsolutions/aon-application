@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -20,7 +19,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
 import com.esferalia.aon.gwt.payroll.shared.SettleReason;
 import com.esferalia.aon.occam.api.model.type.ContractType;
@@ -37,15 +35,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -54,9 +44,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -65,13 +53,8 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DatePicker;
-import com.google.gwt.xhr.client.ReadyStateChangeHandler;
-import com.google.gwt.xhr.client.XMLHttpRequest;
-
-import solutions.aon.seg.social.AonSegSocialJuanma;
 
 public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
@@ -148,9 +131,6 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 	@UiField
 	HTMLPanel buttonsPanel;
-	
-	@UiField
-	FormPanel fp;
 
 	// ------------------------------------------------- Variables
 
@@ -188,7 +168,6 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private boolean hasSettle = false;
 	
 	private Map<String, CNO> cnoMap;
-	
 
 	// ------------------------------------------------- Constructor
 
@@ -224,7 +203,6 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		this.contractId = contractId;
 		this.domainId = domainId;
 		this.workplaceId = workplaceId;
-		
 
 		impl.getEmployeeAFIChanges(contractId, new AsyncCallback<AFIChanges>() {
 
@@ -265,54 +243,6 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 		// EnsureDebugID para TEST
 		this.acceptBtnDialog.ensureDebugId("input_accept");
-	}
-		
-	
-	private Employee employee;
-	//TODO: PASAR DATOS DE EMPLEADO ; NSS, CCC, DOCUMENT, REGIMEN
-	
-	public void sendData(String newCno) {
-	
-//		employee.getDocumentValue();
-//		Window.alert(employee.document.getValue());
-		String cnoActal=this.cnoOriginal;
-		String cnoNuevo = newCno;
-
-	    String url = "/aon-aio/CnoServlet";
-//	    String dataTest = "12345";
-	    XMLHttpRequest xhr = XMLHttpRequest.create();
-	    xhr.open("POST", url);
-
-	    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-	    xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
-	        @Override
-	        public void onReadyStateChange(XMLHttpRequest xhr) {
-	            if (xhr.getReadyState() == XMLHttpRequest.DONE) {
-	                if (xhr.getStatus() >= 200 && xhr.getStatus() < 300) {
-	                    // Success response
-	                    String responseText = xhr.getResponseText();
-	                    Window.alert("Response received: " + responseText);
-	                } else {
-	                    // Error response
-	                    Window.alert("Error: " + xhr.getStatusText());
-	                }
-	            }
-	        }
-	    });
-
-	    xhr.send("data=" +cnoActal+ " "+cnoNuevo);
-	}
-	
-	
-	
-	@UiHandler("cno")
-	void onCnoChange(SelectionEvent<SuggestOracle.Suggestion> event) {
-//		String newCno = cno.getValue();
-	    String newCno = event.getSelectedItem().getDisplayString();
-		Window.alert(newCno);
-		sendData(newCno);
-//		fp.submit();
 	}
 	
 	private void initializeCNOSuggest() {
@@ -728,8 +658,6 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		afiChangesMap.addAFIChangeByDate(selectedDate, "COEFICIENTE_PARCIALIDAD",
 				null != value ? value.toString() : null);
 	}
-		
-
 
 	// ------------------------------------------------- Check what to update
 

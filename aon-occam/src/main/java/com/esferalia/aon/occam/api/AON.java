@@ -2670,12 +2670,6 @@ public class AON {
 		}
 	}
 	
-	public static Map<String, RegistrySeller> getSupporstSuggestion(String domainName, int domainId, String login, String query) {
-		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getSupporstSuggestion(ctx, domainId, query);
-		}
-	}
-	
 	public static Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getInvoicingGroupsSuggestion(ctx, domainId, query);
@@ -7970,12 +7964,6 @@ public class AON {
 	public static Question getQuestion(String domainName, int domain, String user, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getRegistry().getQuestion(ctx, id);
-		}
-	}
-	
-	public static Boolean checkQuestionAlias(String domainName, int domain, String user, String alias) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
-			return getRegistry().checkQuestionAlias(ctx, alias);
 		}
 	}
 	

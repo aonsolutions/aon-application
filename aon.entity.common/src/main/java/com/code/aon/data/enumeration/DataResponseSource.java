@@ -34,7 +34,14 @@ public enum DataResponseSource implements IResourceable {
 	NOTIFICATION_TOKEN,
 	MOD202,
 	MOD190,
-	LROE;
+	LROE,
+	MOD180,
+	MOD193,
+	MOD184,
+	MOD347,
+	MOD349,
+	MOD200,
+	LROE_TEST;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_data_response_source_";

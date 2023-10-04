@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
-import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -74,11 +73,6 @@ public interface RegistryService extends RemoteService {
 	
 	Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, String workplaceQuery);
 	Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, String sellerQuery);
-	Map<String, RegistrySeller> getSupporstSuggestion(String domainName, int domain, String user, String sellerQuery);
-	
-	
-//	void getSellerType(String domainName, int domain, String user, String sellerQuery, AsyncCallback<Map<String, RegistrySeller>> asyncCallback);
-
 	Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, String invoicingGroupQuery);
 	Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String projectQuery);
 	

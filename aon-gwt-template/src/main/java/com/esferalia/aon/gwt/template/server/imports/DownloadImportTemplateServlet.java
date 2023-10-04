@@ -165,8 +165,6 @@ public class DownloadImportTemplateServlet extends HttpServlet {
 		columnList.add(IConstants.PERIODO);
 		columnList.add(IConstants.COMERCIAL);
 		columnList.add(IConstants.NOMBRE_COMERCIAL);
-		columnList.add(IConstants.SOPORTE);
-		columnList.add(IConstants.NOMBRE_SOPORTE);
 		columnList.add(IConstants.CENTRO_DE_TRABAJO);
 		columnList.add(IConstants.GRUPO_FACTURACION);
 		columnList.add(IConstants.CONFIDENCIAL);

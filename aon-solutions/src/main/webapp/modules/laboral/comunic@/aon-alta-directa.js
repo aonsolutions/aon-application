@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, disabledForm, sortBy } from '../../../services/utils.js';
-import { getRlce, getContractType, getOccupation, getQuoteGroup, getCno, sendAlta, sendBaja, getJourneyType, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja, getWorkersCollective, getApplicationParameters, openFileBase64, getArtistRegimen, getUnemployedStatus } from '../../../services/service.js'
+import { getRlce, getContractType, getOccupation, getQuoteGroup, getCno, sendAlta, sendBaja, getJourneyType, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja, getWorkersCollective, getApplicationParameters, openFileBase64 } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, APP_PARAMS_PAYROLL, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, CSS, EVENT, MSG } from '../../../environments/environments.js';
@@ -135,8 +135,6 @@ export class AonAltaDirecta extends AonElement {
             this.getJourneyType(),
             this.getOccupation(),
             this.getRlce(),
-            this.getArtistRegimen(),
-            this.getUnemployedStatus(),
             this.getWorkersCollective()
         ]).catch(e=> console.log(e));
 
@@ -509,32 +507,7 @@ export class AonAltaDirecta extends AonElement {
 
         } catch (error){}
     }
-    
-    async getArtistRegimen(){
-		try{
-			let artistRegimen = this.getElement('artist');
-			if(artistRegimen){
-				let resp = await getArtistRegimen();
-                let options = sortBy( resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})), 'value', 'asc');
-                
-                artistRegimen.setOptions(options);
-			}
-		}catch (error){}
-	}
-	
-	async getUnemployedStatus(){
-		try{
-			let unemployedStatus = this.getElement('unemployed');
-			if(unemployedStatus){
-				let resp = await getUnemployedStatus();
-                let options = sortBy( resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})), 'value', 'asc');
-                
-                unemployedStatus.setOptions(options);
-			}
-		}catch (error){}
-	}
-    
-    
+
     async getWorkersCollective() {
         try {
             let collective = this.getElement('collective');

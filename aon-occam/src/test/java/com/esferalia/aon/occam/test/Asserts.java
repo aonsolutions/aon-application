@@ -502,13 +502,6 @@ public class Asserts {
 		assertEquals("Name",expected.getName(), actual.getName());
 	}
 	
-	public static void assertEqualsAmortizationType(AmortizationType expected, AmortizationType actual) {
-		assertEquals("Id",expected.getId(), actual.getId());
-		assertEquals("Domain",expected.getDomain(), actual.getDomain());	
-
-	}
-	
-	
 	public static void assertEqualsProductCategory(ProductCategory expected, ProductCategory actual) {
 		assertEqualsNulls( "ProductCategory", expected, actual);
 		assertEquals("Id",expected.getId(), actual.getId());

@@ -1107,6 +1107,7 @@ public abstract class EmployeeDraft extends Composite {
 		} catch (Exception e) {
 			// Nothing to do here
 		}
+		
 		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
 				employee.startDate.getValue(),
 				employee.endDate.getValue(),
@@ -1328,7 +1329,6 @@ public abstract class EmployeeDraft extends Composite {
 						s -> showSuccess("AVISO: CNO",
 								"El cambio de CNO ha sido notificado a la Seguridad Social."),
 						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
-				
 			}
 
 			@Override

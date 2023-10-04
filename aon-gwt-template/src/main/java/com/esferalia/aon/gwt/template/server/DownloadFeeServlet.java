@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.template.server;
 
-
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -33,12 +31,10 @@ import org.json.JSONObject;
 import com.esferalia.aon.gwt.template.server.imports.DownloadImportTemplateServlet;
 import com.esferalia.aon.gwt.template.server.imports.IConstants;
 import com.esferalia.aon.occam.api.AON;
-
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.fee.Fee;
-
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -68,7 +64,6 @@ public class DownloadFeeServlet extends HttpServlet {
         ByteArrayOutputStream archivo = new ByteArrayOutputStream();
         HSSFSheet hoja = libro.createSheet("Plantilla 1");
         Integer columns = columnList.size();
-     
         
         Row fila = hoja.createRow(0);
         
@@ -106,12 +101,9 @@ public class DownloadFeeServlet extends HttpServlet {
         	celda.setCellStyle(style);
         }
         Cell celdaf = fila.createCell(columns);
-        celdaf.setCellStyle(style);      
-        
+        celdaf.setCellStyle(style);
   
         LinkedList<Fee> fees;
-		
-
         if(filterJSON.opt("segment") != null) {
 			JSONArray segment = filterJSON.optJSONArray("segment");
 			if(segment.length() > 0) {
@@ -126,16 +118,10 @@ public class DownloadFeeServlet extends HttpServlet {
        
         for(Integer i = 0; i < fees.size(); i++) {
         	Row row = hoja.createRow(i+1);
-               
-    		Fee fee = fees.get(i);
-    		byte sellerType = fee.getSellerType();
         	for(Integer j = 0; j < columnList.size(); j++) {
         		Cell cell = row.createCell(j);
         		String title = columnList.get(j);
-        		 fee = fees.get(i);
-        		
-        		
-         
+        		Fee fee = fees.get(i);
         		if(IConstants.CLIENTE.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getCustomer().getDocument());
         		} else if(IConstants.RAZON_SOCIAL.equalsIgnoreCase(title)) {
@@ -159,26 +145,11 @@ public class DownloadFeeServlet extends HttpServlet {
         			cell.setCellStyle(dateStyle);
         		} else if(IConstants.PERIODO.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getPeriod().getValue());
-        		}
-
-        		if (sellerType == 0) {
-    				if (IConstants.COMERCIAL.equalsIgnoreCase(title)) {
-            			cell.setCellValue(fee.getSeller().getDocument());
-
-					}else if (IConstants.NOMBRE_COMERCIAL.equalsIgnoreCase(title)) {
-	        			cell.setCellValue(fee.getSeller().getName());
-					}
-				}else if (sellerType == 1) {
-					if (IConstants.SOPORTE.equalsIgnoreCase(title)) {
-	        			cell.setCellValue(fee.getSeller().getDocument());
-
-					}else if (IConstants.NOMBRE_SOPORTE.equalsIgnoreCase(title)) {
-	        			cell.setCellValue(fee.getSeller().getName());
-
-					}
-				}
-        		
-        		else if(IConstants.CENTRO_DE_TRABAJO.equalsIgnoreCase(title) || IConstants.CENTRO_TRABAJO.equalsIgnoreCase(title)) {
+        		} else if(IConstants.COMERCIAL.equalsIgnoreCase(title)) {
+        			cell.setCellValue(fee.getSeller().getDocument());
+        		} else if(IConstants.NOMBRE_COMERCIAL.equalsIgnoreCase(title)) {
+        			cell.setCellValue(fee.getSeller().getName());
+        		} else if(IConstants.CENTRO_DE_TRABAJO.equalsIgnoreCase(title) || IConstants.CENTRO_TRABAJO.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getWorkplace().getDescription());
         		} else if(IConstants.GRUPO_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_FACTURACION2.equalsIgnoreCase(title) || IConstants.GRUPO.equalsIgnoreCase(title)
         				|| IConstants.GRUPO_DE_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_DE_FACTURACION2.equalsIgnoreCase(title)) {
@@ -476,6 +447,4 @@ public class DownloadFeeServlet extends HttpServlet {
 		}
 		return decode;
 	}
-	
-
 }

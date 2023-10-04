@@ -246,9 +246,9 @@ public class JooqMail {
 					.where(SALARY.ID.eq(salaryId))
 					.fetchOne();
 			
-			Integer contractId = salaryRecord.get(SALARY.CONTRACT);
+			Integer contractId = null == salaryRecord ? null : salaryRecord.get(SALARY.CONTRACT);
 			
-			if(!visitedContracts.contains(contractId)) {
+			if(null != contractId && !visitedContracts.contains(contractId)) {
 				Record rMediaEmailRecord = dslContext.select().from(RMEDIA)
 						.where(RMEDIA.MEDIA.eq((byte)4))
 						.and(RMEDIA.REGISTRY.eq(
