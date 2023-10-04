@@ -17,20 +17,13 @@ export class BanksDashboardComponent implements OnInit {
   banks!: ICollection<IBank>;
 
   constructor(private bankService: BankService) {
-    try {
-      this.bankService.getBankList().then((response) => {
-        this.banks = response;
-        response.forEach((bank) => {
-          this.totalAmount += bank.Total;
-        });
-      }).catch((error) => {
-        throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
-      }).finally(() => {
-        this.spinner = false;
+    this.bankService.getBankList().then((response) => {
+      this.banks = response;
+      response.forEach((bank) => {
+        this.totalAmount += bank.Total;
       });
-    } catch (error) {
-      throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
-    }
+      this.spinner = false;
+    });
   }
 
   ngOnInit(): void {
