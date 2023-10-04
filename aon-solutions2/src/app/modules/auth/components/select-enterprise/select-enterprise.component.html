@@ -8,6 +8,7 @@
           <span>{{ "ENTERPRISES.ENTER_THE_COMPANY" | translate }}</span>
         </div>
         <div id="itemEnterprise">
+          <app-spinner *ngIf="spinner"></app-spinner>
           <div *ngFor="let enterprise of enterprises">
             <div (click)="selectEnterprise(enterprise)">
               <app-icon [class]="'griss size-42'"  [shape]="'business'"></app-icon>
