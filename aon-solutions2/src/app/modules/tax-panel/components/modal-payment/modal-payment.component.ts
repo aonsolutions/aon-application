@@ -1,5 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { CollectionFactory, ErrorResponse, IBank, ICollection } from 'libraries/AonSDK/src/aon';
+import {
+  CollectionFactory,
+  ErrorResponse,
+  IBank,
+  ICollection,
+} from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BankService } from 'src/app/core/services/bank.service';
@@ -22,7 +27,6 @@ export class ModalPaymentComponent implements OnInit {
   newBankIban: string = '';
   newBankBic: string = '';
 
-
   public collectionFactory = new CollectionFactory();
   banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
   private banksSubject = new BehaviorSubject<ICollection<IBank>>(
@@ -33,22 +37,19 @@ export class ModalPaymentComponent implements OnInit {
     private bankService: BankService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ModalPaymentComponent>
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     this.listBanks();
   }
+
+  ngOnInit(): void {}
 
   toggleCreateBank() {
     this.showCreateBank = !this.showCreateBank;
   }
 
   showConfirmationContent() {
-
     this.showConfirmation = true;
   }
-
-
 
   listBanks() {
     this.bankService.getBankList().then((response) => {
@@ -69,9 +70,7 @@ export class ModalPaymentComponent implements OnInit {
   }
 
   selectBank(event: any) {
-    this.selectedBank = event.target.value;
-    console.log(this.selectedBank);
-
+    this.selectedBank = event;
   }
 
   async createBank() {
@@ -79,14 +78,6 @@ export class ModalPaymentComponent implements OnInit {
     const trimmedDescription = this.newBankDescription.trim();
     const trimmedIban = this.newBankIban.trim();
     const trimmedBic = this.newBankBic.trim();
-
-    // Verifica si alguno de los campos está vacío después de quitar los espacios en blanco
-    if (!trimmedDescription || !trimmedIban || !trimmedBic) {
-      // Si al menos uno de los campos está vací, que no se envíe el mensaje
-      // muestra mensaje de error por consola
-
-      return;
-    }
 
     // Convierte el IBAN a mayúsculas antes de verificar duplicados
     const ibanToCheck = this.newBankIban.toUpperCase();

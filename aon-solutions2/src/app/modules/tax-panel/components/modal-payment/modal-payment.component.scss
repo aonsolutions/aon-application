@@ -1,160 +1,133 @@
 @import "src/styles.scss";
 
-::ng-deep .mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
-  background-color: black !important;
+::ng-deep {
+  .mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element,
+  .mat-radio-button.mat-accent .mat-radio-inner-circle,
+  .mat-radio-button.mat-accent .mat-radio-checked .mat-radio-outer-circle {
+    background-color: black !important;
+  }
+
+  .modal-container {
+    margin-right: $margin-right;
+    margin-left: $margin-left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+  }
+
+  .title-modal-payment {
+    font-family: "Roboto-Bold";
+    font-size: $font-size-24;
+  }
+
+  .text-modal-payment {
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .mat-radio-button {
+    padding: $padding;
+  }
+
+  #add-button {
+    display: flex;
+    justify-content: right;
+    cursor: pointer;
+  }
+
+  .installment {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: $margin-bottom;
+    gap: 1rem;
+    margin-right: $margin-right;
+    margin-top: -$margin-top;
+  }
+
+  .text-installment {
+    font-size: $font-size-800;
+    color: $color-secondary;
+    padding-left: $padding-left;
+    text-transform: none;
+  }
+
+  .createBank {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    align-content: center;
+    align-self: flex-end;
+  }
+
+  .account_number {
+    margin-bottom: $margin-bottom;
+  }
+
+  .confirmation-view {
+    width: 80%;
+  }
+
+  .text-confirmation-view {
+    color: $color-secondary;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .content-confirmation-view {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    border: $border;
+    border-radius: $border-radius;
+    margin-bottom: $margin-bottom;
+  }
+
+  .line-content {
+    border-bottom: $border;
+  }
+
+  .text-content {
+    color: $color-secondary;
+    text-transform: uppercase;
+    font-size: $font-size-800;
+    width: 100%;
+    padding-left: $padding-left;
+  }
+
+  .add {
+    padding-right: $padding-right;
+    padding-bottom: $padding-bottom;
+  }
+
+  .info {
+    padding-right: $padding-right;
+    padding-bottom: -$padding-bottom;
+  }
+
+  .close-icon {
+    padding-right: $padding-right;
+  }
+
+  .button-confirm-back {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    gap: 1rem;
+    margin-right: $margin-right;
+  }
 }
-
-::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle {
-  background-color: black !important; /*inner circle color change*/
-}
-
-::ng-deep.mat-radio-button.mat-accent.mat-radio-checked
-  .mat-radio-outer-circle {
-  border-color: black !important; /*outer ring color change*/
-}
-
-.modal-container {
-  margin-right: $margin-right;
-  margin-left: $margin-left;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.title-modal-payment {
-  font-family: "Roboto-Bold";
-  font-size: $font-size-24;
-}
-
-.text-modal-payment {
-  text-transform: uppercase;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.mat-radio-button {
-  border: 0.05rem solid #d2d2d6;
-  border-radius: 0.2rem;
-  padding: $padding;
-  margin-bottom: $margin-bottom;
-}
-
-.radio_option {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 1rem;
-  border: 0.05rem solid #d2d2d6;
-  border-radius: 0.2rem;
-  margin-top: -$margin-top;
-  margin-bottom: $margin-bottom;
-  padding-top: $padding-top;
-}
-
-#add-button {
-  display: flex;
-  justify-content: right;
-  cursor: pointer;
-}
-
-.installment {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: center;
-  margin-bottom: $margin-bottom;
-  gap: 1rem;
-  margin-right: 1rem;
-  margin-top: -1rem;
-}
-
-.text-installment {
-  font-size: $font-size-800;
-  color: $color-secondary;
-  padding-left: $padding-left;
-  text-transform: none;
-
-}
-
-.createBank {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 1rem;
-}
-
-.account_number {
-  margin-bottom: $margin-bottom;
-}
-
-.button-container {
-  display: flex;
-  justify-content: flex-end;
-  align-content: center;
-  align-self: flex-end;
-}
-
-.confirmation-view {
-  width: 80%;
-}
-
-.text-confirmation-view {
-  color: $color-secondary;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.content-confirmation-view {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1rem;
-  border: 0.05rem solid #d2d2d6;
-  border-radius: 0.2rem;
-  margin-bottom: $margin-bottom;
-}
-
-.line-content {
-  border-bottom: 0.05rem solid #d2d2d6;
-}
-
-.text-content {
-  color: $color-secondary;
-  text-transform: uppercase;
-  font-size: $font-size-800;
-  width: 100%;
-  padding-left: $padding-left;
-}
-
-.input-padding {
-  padding: $padding;
-}
-
-.add {
-  padding-right: $padding-right;
-  margin-top: -$margin-top;
-  padding-bottom: $padding-bottom;
-}
-
-.info {
-  padding-right: $padding-right;
-  margin-bottom: -$margin-bottom;
-}
-
-.close-icon {
-  padding-right: $padding-right;
-}
-
-.button-confirm-back {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: center;
-  gap: 1rem;
-  margin-right: $margin-right;
-}
-
-

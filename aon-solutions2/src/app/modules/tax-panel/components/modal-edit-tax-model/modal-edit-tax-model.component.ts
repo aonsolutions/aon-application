@@ -64,26 +64,22 @@ export class ModalEditTaxModelComponent implements OnInit {
             });
         });
 
-      // const newMessage: IMessage = {
-      //   Id: messageId,
-      //   Name: '',
-      //   Title: title,
-      //   Description: description,
-      //   Date: new Date(),
-      //   Status: StatusMessage.ABIERTA,
-      //   Type: TypeMessage.CONSULTA,
-      //   EndDate: new Date(),
-      //   LastMessageChatOrigin: false,
-      //   getKey: () => messageId,
-      //   getFilterableFields: () => new Map(),
-      //   getSortableFields: () => new Map(),
-      // };
+      const newMessage: IMessage = this.messageService.objectFactory.createMessage();
+      newMessage.Id = messageId;
+      newMessage.Name = '';
+      newMessage.Title = title;
+      newMessage.Description = description;
+      newMessage.Date = new Date();
+      newMessage.Status = StatusMessage.ABIERTA;
+      newMessage.Type = TypeMessage.CONSULTA;
+      newMessage.EndDate = new Date();
+      newMessage.LastMessageChatOrigin = false;
 
       try {
         // Crear el mensaje
-        // const createdMessage = await this.messageService.createMessage(
-        //    newMessage
-        // );
+        const createdMessage = await this.messageService.createMessage(
+          newMessage
+         );
 
         // Agregar el nuevo mensaje
         // this.messages.add(createdMessage);
