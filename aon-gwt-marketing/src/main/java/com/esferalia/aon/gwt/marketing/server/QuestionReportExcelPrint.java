@@ -16,9 +16,6 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
-import com.esferalia.aon.gwt.marketing.client.MainEntryPoint;
-import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
-import com.esferalia.aon.gwt.marketing.client.marketing.QuestionModule;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
