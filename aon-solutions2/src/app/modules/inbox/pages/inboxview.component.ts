@@ -189,25 +189,16 @@ export class InboxviewComponent implements OnInit {
             messageStatus.Status = StatusMessage.VISTA;
             }
           }
-          if (message.type === 'consulta') {
-            if (messageStatus.Status === StatusMessage.CERRADA) {
-                messageStatus.Status = StatusMessage.ABIERTA;
-            }
-
-          }
           try {
             this.messageService.updateMessage(messageStatus);
           } catch (error) {
             throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
           }
-
-        console.log('mesageStatus', message.Status);
-
       });
-    } catch (error) {
-      throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
+      } catch (error) {
+        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
+      }
     }
-  }
 
   consultarClicked() {
     this.showSendButton = !this.showSendButton;
@@ -290,12 +281,11 @@ export class InboxviewComponent implements OnInit {
   newMessageDescriptionChange(newValue: string) {
     this.newMessageDescription = newValue;
   }
+
   //mensaje de chat de consultas
   async createChatMessage(description: string) {
 
     if (this.messageChat && this.messagesData) {
-      console.log('messagesCHAT', this.messageChat);
-      console.log('messagesDATA', this.messagesData);
 
       const newMessageChat = this.messageService.objectFactory.createMessageChat()
       .setIdMessage(this.messagesData.Id)
@@ -306,9 +296,7 @@ export class InboxviewComponent implements OnInit {
       try {
         // Crear el mensaje
         const createdMessageChat =
-          await this.messageChatService.createMessageChat(newMessageChat);
-        console.log('createdMessageChat', createdMessageChat);
-        console.log('new message chat', newMessageChat);
+        await this.messageChatService.createMessageChat(newMessageChat);
 
         // Agregar el nuevo mensaje
         this.messagesChat.add(createdMessageChat);
@@ -319,39 +307,27 @@ export class InboxviewComponent implements OnInit {
   }
 
   //mensaje de consulta
-  async createMessage(description: string) {
-console.log(this.messagesData);
-/*
-      const newMessage: IMessage = {
-        Id: this.messagesData.Id,
-        Name: this.messagesData.Name,
-        Title: this.messagesData.Title,
-        Description: description,
-        Date: new Date(),
-        Status: StatusMessage.CERRADA,
-        Type: TypeMessage.TAREA,
-        EndDate: new Date(),
-        LastMessageChatOrigin: false,
-        getKey: () => this.messagesData.Id,
-        getFilterableFields: () => new Map(),
-        getSortableFields: () => new Map(),
-      };
+  async createMessage(description: string){
+    if (this.messagesData) {
+
+      const newMessage = this.messageService.objectFactory.createMessage()
+      .setName(this.messagesData.Name)
+      .setDescription(description)
+      .setType(TypeMessage.CONSULTA)
+      .setStatus(StatusMessage.CERRADA)
+      .setLastMessageChatOrigin(false);
 
       try {
-      console.log('entroooo');
-
         // Crear el mensaje
         const createdMessage = await this.messageService.createMessage(newMessage);
-          console.log('createdMessage', createdMessage);
-
-
         this.messagesData = createdMessage;
         // Agregar el nuevo mensaje
         this.messages.add(createdMessage);
       } catch (error) {
-        throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
+        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
+
       }
-*/
+    }
   }
 
   sendChatMessage() {

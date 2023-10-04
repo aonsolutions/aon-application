@@ -128,13 +128,15 @@ export class TableComponentComponent implements OnInit {
           :
           '';
         // Fecha
-        column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
+        column.date = datepipe.transform(message.Date, 'dd/MM/yyyy, HH:mm');
         // Abrir o cerrar
         column.action = {
           icon: lowerCaseStatus.includes('abierta')
             ? [{ archive: 'grey' }]
+            : lowerCaseStatus.includes('cerrada')
+            ? [{ replay: 'grey' }]
             : [],
-        };
+          };
         this.bodyTable = tableRow;
         this.noPendingMessages.emit(!pendingQueriesFound);
       });

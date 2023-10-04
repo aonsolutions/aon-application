@@ -82,39 +82,36 @@ export class TableNotificationsComponent implements OnChanges {
 
   // Filtros fechas principio semana
   private getStartDateOfWeek(): string {
-    const currentDate = new Date();
-    const startDate = new Date(currentDate);
-    startDate.setDate(startDate.getDate() - startDate.getDay()); // Inicio de la semana actual (domingo)
+    const startDate = new Date();
+    const currentDay = startDate.getDay();
+    const startDay = currentDay === 0 ? 6 : currentDay - 1;
+    startDate.setDate(startDate.getDate() - startDay);
     return this.formatDate(startDate);
   }
 
   // Filtos fechas final semana
   private getEndDateOfWeek(): string {
-    const currentDate = new Date();
-    const endDate = new Date(currentDate);
-    endDate.setDate(endDate.getDate() + (6 - endDate.getDay())); // Fin de la semana actual (sábado)
+    const endDate = new Date();
+    const currentDay = endDate.getDay();
+    const remainingDays = 7 - currentDay - 1;
+    endDate.setDate(endDate.getDate() + remainingDays);
     return this.formatDate(endDate);
   }
 
   // Filtros fechas principio mes
   private getStartDateOfMonth(): string {
-    const currentDate = new Date();
-    const startDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      1
-    );
+    const startDate = new Date();
+    const month = startDate.getMonth() + 1;
+    startDate.setDate(1);
     return this.formatDate(startDate);
   }
 
   // Filtros fechas final mes
   private getEndDateOfMonth(): string {
-    const currentDate = new Date();
-    const endDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0
-    );
+    const endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + 1);
+    const month = endDate.getMonth() === 0 ? 12 : endDate.getMonth();
+    endDate.setDate(0);
     return this.formatDate(endDate);
   }
 
@@ -168,7 +165,7 @@ export class TableNotificationsComponent implements OnChanges {
             // Mensaje
             column.description = message.Description;
             // Fecha
-            column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
+            column.date = datepipe.transform(message.Date, 'dd/MM/yyyy, HH:mm');
             // Marcar como nueva
             column.class = lowerCaseStatus.includes('nueva')
               ? 'border-red'
