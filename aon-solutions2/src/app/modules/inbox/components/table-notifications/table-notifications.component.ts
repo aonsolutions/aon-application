@@ -3,7 +3,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -65,55 +64,58 @@ export class TableNotificationsComponent implements OnChanges {
     this.updateTableData();
   }
 
+  // Casos de fechas para usar en mi tabla
   filterTableDate() {
     let date: { start: string; end: string } = { start: '', end: '' };
     switch (this.filterDate) {
       case 1:
         date.start = this.getStartDateOfWeek();
-        date.end   = this.getEndDateOfWeek();
-      break
+        date.end = this.getEndDateOfWeek();
+        break;
       case 2:
         date.start = this.getStartDateOfMonth();
         date.end = this.getEndDateOfMonth();
-      break
+        break;
     }
     return date;
   }
 
+  // Filtros fechas principio semana
   private getStartDateOfWeek(): string {
-    const currentDate = new Date();
-    const startDate = new Date(currentDate);
-    startDate.setDate(startDate.getDate() - startDate.getDay()); // Inicio de la semana actual (domingo)
+    const startDate = new Date();
+    const currentDay = startDate.getDay();
+    const startDay = currentDay === 0 ? 6 : currentDay - 1;
+    startDate.setDate(startDate.getDate() - startDay);
     return this.formatDate(startDate);
   }
 
+  // Filtos fechas final semana
   private getEndDateOfWeek(): string {
-    const currentDate = new Date();
-    const endDate = new Date(currentDate);
-    endDate.setDate(endDate.getDate() + (6 - endDate.getDay())); // Fin de la semana actual (sábado)
+    const endDate = new Date();
+    const currentDay = endDate.getDay();
+    const remainingDays = 7 - currentDay - 1;
+    endDate.setDate(endDate.getDate() + remainingDays);
     return this.formatDate(endDate);
   }
 
+  // Filtros fechas principio mes
   private getStartDateOfMonth(): string {
-    const currentDate = new Date();
-    const startDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      1
-    );
+    const startDate = new Date();
+    const month = startDate.getMonth() + 1;
+    startDate.setDate(1);
     return this.formatDate(startDate);
   }
 
+  // Filtros fechas final mes
   private getEndDateOfMonth(): string {
-    const currentDate = new Date();
-    const endDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0
-    );
+    const endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + 1);
+    const month = endDate.getMonth() === 0 ? 12 : endDate.getMonth();
+    endDate.setDate(0);
     return this.formatDate(endDate);
   }
 
+  // Filtros fechas
   private formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -129,97 +131,86 @@ export class TableNotificationsComponent implements OnChanges {
     let filterBuilder = new FilterBuilder();
     filterBuilder.addField('type', 'notificacion');
     if (this.filterDate > 0) {
-      let dates = this.filterTableDate()
+      let dates = this.filterTableDate();
 
       filterBuilder.addInterval('date', dates.start, dates.end);
     }
     this.messageService
-    .getMessageList(filterBuilder.getFilter())
-    .then((response) => {
-      let pendingNotificacionsFound = false;
-      response.forEach((message, messageKey) => {
-        const column: any = Object.assign({}, message);
-        const lowerCaseStatus = message.Status.toLowerCase();
+      .getMessageList(filterBuilder.getFilter())
+      .then((response) => {
+        let pendingNotificacionsFound = false;
+        response.forEach((message, messageKey) => {
+          const column: any = Object.assign({}, message);
+          const lowerCaseStatus = message.Status.toLowerCase();
+          // key
+          column.key = messageKey;
+          // Nombre del asesor
+          column.name = message.Name;
+          if (
+            this.filterStatus[this.filterTabSelec] ===
+              message.Status.toLowerCase() ||
+            this.filterStatus[this.filterTabSelec] === 'todas'
+          ) {
+            column.status = {
+              icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
+              text: `<span class="${
+                lowerCaseStatus.includes('nueva')
+                  ? 'background-text-red-light'
+                  : 'background-text-griss-light'
+              }">${message.Status}</span>`,
+            };
 
-        column.status = {
-          icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
-          text: `<span class="${
-            lowerCaseStatus.includes('nueva')
-              ? 'background-text-red-light'
-              : 'background-text-griss-light'
-          }">${message.Status}</span>`,
-        };
-        // key
-        column.key = messageKey;
-        // Nombre del asesor
-        column.name = message.Name;
-        // Asunto del mensaje
-        column.title = message.Title;
-        // Mensaje
-        column.description = message.Description;
-        // Fecha
-        column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
-        // Marcar como nueva
-        column.class = lowerCaseStatus.includes('nueva') ? 'border-red' : '';
-        // Agregamos el mensaje
-        tableRow.push(column);
-      });
-
-      this.bodyTable = tableRow;
-      this.noPendingNotification.emit(!pendingNotificacionsFound);
-
-      if (response.size() === 0) {
-        this.translateService.get([
-          'INBOX.NONOTIFICATIONSTHISWEEK',
-          'INBOX.NONOTIFICATIONSTHISMONTH',
-          'NOMESSAGES'
-        ]).subscribe((result) => {
-          switch (this.filterDate) {
-            case 1:
-              this.message = result['INBOX.NONOTIFICATIONSTHISWEEK'];
-              break;
-            case 2:
-              this.message = result['INBOX.NONOTIFICATIONSTHISMONTH'];
-              break;
-            default:
-              this.message = result['INBOX.NOMESSAGES'];
-              break;
+            // Asunto del mensaje
+            column.title = message.Title;
+            // Mensaje
+            column.description = message.Description;
+            // Fecha
+            column.date = datepipe.transform(message.Date, 'dd/MM/yyyy, HH:mm');
+            // Marcar como nueva
+            column.class = lowerCaseStatus.includes('nueva')
+              ? 'border-red'
+              : '';
+            // Agregamos el mensaje
+            tableRow.push(column);
           }
         });
-      } else {
-        this.message = '';
-      }
 
-      this.noPendingNotification.emit(true);
-    });
+        this.bodyTable = tableRow;
+        this.noPendingNotification.emit(!pendingNotificacionsFound);
+
+        // No tenemos mensaje en la tabla
+        if (response.size() === 0) {
+          this.translateService
+            .get([
+              'INBOX.NONOTIFICATIONSTHISWEEK',
+              'INBOX.NONOTIFICATIONSTHISMONTH',
+              'NOMESSAGES',
+            ])
+            .subscribe((result) => {
+              switch (this.filterDate) {
+                case 1:
+                  this.message = result['INBOX.NONOTIFICATIONSTHISWEEK'];
+                  break;
+                case 2:
+                  this.message = result['INBOX.NONOTIFICATIONSTHISMONTH'];
+                  break;
+                default:
+                  this.message = result['INBOX.NOMESSAGES'];
+                  break;
+              }
+            });
+        } else {
+          this.message = '';
+        }
+
+        this.noPendingNotification.emit(true);
+      });
   }
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
-  // rowClick(message: IMessage) {
-  //   this.rowClicked.emit(message);
-  // }
-
   rowClick(message: IMessage) {
     this.rowClicked.emit(message);
-    console.log('message',message);
-
-    this.updateStatus(message);
-    console.log('pilla updateStatus');
-  }
-
-  updateStatus(message: IMessage) {
-//    if (message.Status == StatusMessage.NUEVA) {
-//      message.Status = StatusMessage.VISTA;
-//
-//      try {
-//        this.messageService.updateMessage(message);
-//
-//        this.updateTableData();
-//      } catch (error) {
-//        console.error('Error al actualizar el mensaje:', error);
-//      }
-//    }
   }
 }

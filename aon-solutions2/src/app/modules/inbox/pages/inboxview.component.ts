@@ -1,19 +1,6 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  Factory,
-  CollectionFactory,
-  ErrorResponse,
-  ICollection,
-  FilterBuilder,
-  IMessageChat,
-  IMessage,
-  IFilter,
-} from 'libraries/AonSDK/src/aon';
+import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage, IFilter } from 'libraries/AonSDK/src/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
@@ -39,12 +26,13 @@ export class InboxviewComponent implements OnInit {
   collectionFactory = new CollectionFactory();
   entityFactory = new Factory();
   datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
+  messages: ICollection<IMessage> =
+  new CollectionFactory().createMessageCollection();
+  messagesChat: ICollection<IMessageChat> =
+  this.collectionFactory.createMessageChatCollection();
 
   messagesData: IMessage = this.entityFactory.createMessage();
   messageChat: IMessageChat = this.entityFactory.createMessageChat();
-
-  messagesChat: ICollection<IMessageChat> =
-    this.collectionFactory.createMessageChatCollection();
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
   tabsConsultas: Tabs[] = [];
@@ -148,12 +136,12 @@ export class InboxviewComponent implements OnInit {
           ]);
 
         this.calculateMessageCounts();
-        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
+        this.selectedFilterText =
+          this.translateService.instant('INBOX.THIS_WEEK');
       });
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   afterModalClosed(result?: any) {
     console.log(result);
@@ -179,8 +167,6 @@ export class InboxviewComponent implements OnInit {
   }
 
   async rowClickHandler(message: any) {
-    console.log(message, 'message');
-
     try {
       const isSameRow =
         this.messagesData && this.messagesData.Id === message.key;
@@ -195,10 +181,24 @@ export class InboxviewComponent implements OnInit {
         );
       }
       this.changeView();
-    } catch (error) {
-      console.error('Error al cargar el chat del mensaje:', error);
+
+      this.messageService.getMessage(message.key).then((messageStatus) => {
+
+          if (message.type === 'notificacion') {
+            if (messageStatus.Status === StatusMessage.NUEVA) {
+            messageStatus.Status = StatusMessage.VISTA;
+            }
+          }
+          try {
+//            this.messageService.updateMessage(messageStatus);
+          } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
+          }
+      });
+      } catch (error) {
+        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
+      }
     }
-  }
 
   consultarClicked() {
     this.showSendButton = !this.showSendButton;
@@ -213,16 +213,19 @@ export class InboxviewComponent implements OnInit {
     this.selected = name;
     switch (optionValue) {
       case 1:
-        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
+        this.selectedFilterText =
+          this.translateService.instant('INBOX.THIS_WEEK');
         break;
       case 2:
-        this.selectedFilterText = this.translateService.instant('INBOX.THIS_MONTH');
+        this.selectedFilterText =
+          this.translateService.instant('INBOX.THIS_MONTH');
         break;
       case 0:
         this.selectedFilterText = this.translateService.instant('INBOX.ALLS');
         break;
       default:
-        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
+        this.selectedFilterText =
+          this.translateService.instant('INBOX.THIS_WEEK');
         break;
     }
   }
@@ -259,6 +262,7 @@ export class InboxviewComponent implements OnInit {
     }
   }
 
+  // Cerrar details
   closeDetail() {
     this.showDetail = false;
   }
@@ -267,17 +271,21 @@ export class InboxviewComponent implements OnInit {
     this.expandedIndex = this.expandedIndex === index ? -1 : index;
   }
 
+  // ocultar o ver botones
   changeView(): void {
     this.showSendButton = false;
     this.showSendButtons = false;
   }
 
+  //Crear mensaje de consulta
   newMessageDescriptionChange(newValue: string) {
     this.newMessageDescription = newValue;
   }
 
+  //mensaje de chat de consultas
   async createChatMessage(description: string) {
-    if (this.messagesData && this.messageChat) {
+
+    if (this.messageChat && this.messagesData) {
 
       const newMessageChat = this.messageService.objectFactory.createMessageChat()
       .setIdMessage(this.messagesData.Id)
@@ -288,13 +296,36 @@ export class InboxviewComponent implements OnInit {
       try {
         // Crear el mensaje
         const createdMessageChat =
-          await this.messageChatService.createMessageChat(newMessageChat);
+        await this.messageChatService.createMessageChat(newMessageChat);
 
         // Agregar el nuevo mensaje
         this.messagesChat.add(createdMessageChat);
+      } catch (error) {
+        throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
+      }
+    }
+  }
 
+  //mensaje de consulta
+  async createMessage(description: string){
+    if (this.messagesData) {
+
+      const newMessage = this.messageService.objectFactory.createMessage()
+      .setName(this.messagesData.Name)
+      .setDescription(description)
+      .setType(TypeMessage.CONSULTA)
+      .setStatus(StatusMessage.CERRADA)
+      .setLastMessageChatOrigin(false);
+
+      try {
+        // Crear el mensaje
+        const createdMessage = await this.messageService.createMessage(newMessage);
+        this.messagesData = createdMessage;
+        // Agregar el nuevo mensaje
+        this.messages.add(createdMessage);
       } catch (error) {
         throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
+
       }
     }
   }
@@ -304,9 +335,20 @@ export class InboxviewComponent implements OnInit {
     if (this.newMessageDescription.trim() === '') {
       return;
     }
-
     // Llama a la función para crear un nuevo mensaje de chat
     this.createChatMessage(this.newMessageDescription);
+
+    // Limpia el campo de entrada después de enviar el mensaje
+    this.newMessageDescription = '';
+  }
+
+  sendMessage() {
+    // para no enviar mensajes vacíos
+    if (this.newMessageDescription.trim() === '') {
+      return;
+    }
+    // Llama a la función para crear un nuevo mensaje
+    this.createMessage(this.newMessageDescription);
 
     // Limpia el campo de entrada después de enviar el mensaje
     this.newMessageDescription = '';

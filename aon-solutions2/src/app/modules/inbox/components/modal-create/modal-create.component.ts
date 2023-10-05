@@ -58,7 +58,7 @@ export class ModalCreateComponent implements OnInit {
     this.dialogRef.close();
   }
 
-
+  // Cargar los asesores
   loadAdvisors(event: any) {
     this.selectedAdvisor = event;
     if (this.selectedAdvisor) {
@@ -69,8 +69,6 @@ export class ModalCreateComponent implements OnInit {
 
   async createMessage(description: string, asunto: string){
     if (this.messagesData) {
-      const messageId = this.messagesData.Id;
-console.log('messafeDAta', this.messagesData);
 
       const newMessage = this.messageService.objectFactory.createMessage()
       .setName(this.messagesData.Name)
