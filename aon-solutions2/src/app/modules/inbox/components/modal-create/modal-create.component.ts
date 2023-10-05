@@ -21,8 +21,7 @@ export class ModalCreateComponent implements OnInit {
   advisors: any = "";
   advisorsList: any[] = [];
   selectedAdvisor: string | undefined;
-
-
+  spinner: boolean = true;
   inputValue: string = '';
   newMessageDescription: string = '';
   newMessageAsunto: string = '';
@@ -78,16 +77,13 @@ export class ModalCreateComponent implements OnInit {
       .setTitle(asunto)
       .setLastMessageChatOrigin(false);
 
-      try {
         // Crear el mensaje
         const createdMessage = await this.messageService.createMessage(newMessage);
         this.messagesData = createdMessage;
         // Agregar el nuevo mensaje
         this.messages.add(createdMessage);
-      } catch (error) {
-        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-
-      }
+        // Desactivo el spinner
+        this.spinner = false;
     }
   }
 

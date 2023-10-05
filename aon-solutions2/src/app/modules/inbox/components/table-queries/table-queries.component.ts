@@ -138,27 +138,15 @@ export class TableQueriesComponent implements OnChanges {
 
     //TODO Método para cambiar el estado de una consulta a "Cerrada"
     archiveMessage(message: IMessage) {
-      console.log('entra en archiveMessage');
 
     this.messageService.archiveMessage(message).then((updatedMessage) => {
-      try {
-          this.messageService.updateMessage(updatedMessage);
-        } catch (error) {
-          throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-        }
       })
     }
 
     //TODO Método para cambiar el estado de una consulta a "Abierta"
     reopenMessage(message: IMessage) {
-      console.log('entra en reopenMessage');
 
       this.messageService.reopenMessage(message).then((updatedMessage) => {
-        try {
-          this.messageService.updateMessage(updatedMessage);
-        } catch (error) {
-          throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-        }
       })
     }
 
@@ -226,18 +214,6 @@ export class TableQueriesComponent implements OnChanges {
                  ? [{ archive: 'grey' }]
                  : [{ replay: 'grey' }],
              };
-            // switch(message.Status) {
-            //   case 'abierta':
-            //     column.action = [{archive : 'grey'}];
-            //     column.archiveClick = () => this.archiveMessage(message);
-            //     break;
-            //   case 'cerrada':
-            //     column.action = [{ replay: 'grey' }];
-            //     column.replayClick = () => this.reopenMessage(message);
-            //     break;
-            //   default:
-            //     column.action = [];
-            // }
             column.class = (message.Status == 'abierta') ? 'border-red' : '';
             // Agregamos el mensaje
             tableRow.push(column);

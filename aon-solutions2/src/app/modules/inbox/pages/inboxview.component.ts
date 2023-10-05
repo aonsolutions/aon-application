@@ -50,8 +50,7 @@ export class InboxviewComponent implements OnInit {
   selectedFilterText: string = '';
   expandedIndex: number = -1;
   newMessageDescription: string = '';
-  noTasksMessageText: string = '';
-  filterPending: boolean = false;
+  spinner: boolean = true;
   @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
     new DropdownMenuComponent();
 
@@ -167,7 +166,6 @@ export class InboxviewComponent implements OnInit {
   }
 
   async rowClickHandler(message: any) {
-    try {
       const isSameRow =
         this.messagesData && this.messagesData.Id === message.key;
       this.showDetail = !isSameRow ? true : !this.showDetail;
@@ -189,15 +187,7 @@ export class InboxviewComponent implements OnInit {
             messageStatus.Status = StatusMessage.VISTA;
             }
           }
-          try {
-            this.messageService.updateMessage(messageStatus);
-          } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-          }
       });
-      } catch (error) {
-        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-      }
     }
 
   consultarClicked() {
@@ -231,7 +221,6 @@ export class InboxviewComponent implements OnInit {
   }
 
   async calculateMessageCounts() {
-    try {
       // Calcula el recuento para "consulta"
       let filterBuilder = new FilterBuilder();
       filterBuilder.addField('type', 'consulta');
@@ -257,9 +246,6 @@ export class InboxviewComponent implements OnInit {
         this.consultaMessageCount +
         this.tareasMessageCount +
         this.notificacionesMessageCount;
-    } catch (error) {
-      console.error('Error al calcular el recuento de mensajes:', error);
-    }
   }
 
   // Cerrar details
@@ -293,16 +279,14 @@ export class InboxviewComponent implements OnInit {
       .setDescription(description)
       .setType('chat');
 
-      try {
         // Crear el mensaje
         const createdMessageChat =
         await this.messageChatService.createMessageChat(newMessageChat);
 
         // Agregar el nuevo mensaje
         this.messagesChat.add(createdMessageChat);
-      } catch (error) {
-        throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
-      }
+        // Desactivo el spinner
+        this.spinner = false;
     }
   }
 
@@ -317,16 +301,13 @@ export class InboxviewComponent implements OnInit {
       .setStatus(StatusMessage.CERRADA)
       .setLastMessageChatOrigin(false);
 
-      try {
         // Crear el mensaje
         const createdMessage = await this.messageService.createMessage(newMessage);
         this.messagesData = createdMessage;
         // Agregar el nuevo mensaje
         this.messages.add(createdMessage);
-      } catch (error) {
-        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-
-      }
+        // Desactivo el spinner
+        this.spinner = false;
     }
   }
 

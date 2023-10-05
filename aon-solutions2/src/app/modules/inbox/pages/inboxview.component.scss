@@ -10,7 +10,7 @@
   }
   .mat-column-description span, .mat-column-date span{
     font-size: 16px;
-    color: #787885;
+    color: $color-secondary;
   }
 
   #table-inbox thead{
@@ -77,7 +77,7 @@
   .inbox-chat{
     display: grid;
     grid-template-columns: auto auto auto;
-    border-bottom: 1px solid silver;
+    border-bottom: $border;
     gap: 1rem;
     padding: $padding ;
     cursor: pointer;
