@@ -17,15 +17,16 @@ export class TaxModelService extends CommonService {
   }
 
   async test(){
-    // let models = await this.getTaxModelList();
-    // models.forEach(element => {
-    //   console.log(element.Status);
-    //   if(element.Status == statusTaxModel.PENDIENTE){
-        
-    //   }
-
-    // })
-    // console.log(models);
+    let models = await this.getTaxModelList();
+    let bank = this.objectFactory.createBank()
+    .setIban('ES1420809551285889685459');
+    models.forEach(async element => {
+      if(element.Status == statusTaxModel.PENDIENTE){
+        let response = await this.payTaxModelWithBank(element, bank);
+        console.log(response)
+      }
+    })
+    console.log(models);
   }
 
   async getTaxModelList(filter?: IFilter): Promise<ICollection<ITaxModel>> {

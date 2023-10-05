@@ -300,7 +300,7 @@ export class ApiEnterprise extends Enterprise implements IApiModel {
             if(data.type == 'CONSULTANCY') return new Enterprise();
             let enterprise = new Enterprise();
             enterprise.ApiObject = data;
-            enterprise.Document = data.document ? data.document : '';
+            enterprise.Document = data.document ? data.document : KeyGenerator.generate(9);
             enterprise.Name = data.name ? data.name : ''
             enterprise.Key = data.id ? data.id : '';
             enterprise.DomainName = data.domain ? data.domain : '';

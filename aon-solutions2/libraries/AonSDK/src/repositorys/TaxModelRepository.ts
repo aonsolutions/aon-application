@@ -6,8 +6,25 @@ import { TAXMODEL_URL } from "../utils/ApiUrls";
 import { Collection } from "../utils/Collection";
 import { BASE_URL } from "../utils/Environment";
 import { ApiHttpRequest } from "../utils/Http";
-import { APIGenericMultipleObjectCrudRepository } from "./GenericRepository";
+import { APIGenericMultipleObjectCrudRepository, APIGenericSingleObjectCrudRepository } from "./GenericRepository";
 
+
+export class APITaxModelSingleObjectCrudRepository extends APIGenericSingleObjectCrudRepository<TaxModel> {
+
+    constructor(){
+        super(new ApiTaxModel(), TaxModel);
+    }
+
+    async get(key: string): Promise<TaxModel> {
+        let response = await ApiHttpRequest.get(BASE_URL + TAXMODEL_URL.GET_TAXMODEL_LIST, {}, {});
+        let collection: ICollection<TaxModel> = new Collection<TaxModel>();
+        response.forEach((element: any) => {
+            collection.add(this.apiModel.parseDataToReceive(element))
+        })
+        return collection.get(key);
+    }
+
+}
 
 export class APITaxModelMultipleObjectCrudRepository extends APIGenericMultipleObjectCrudRepository<TaxModel> {
 
@@ -39,7 +56,7 @@ export class ApiTaxModelSpecificMethodsRepository implements ITaxModelSpecificMe
             value: nrc,
             writable: false
         })
-        let response = await ApiHttpRequest.get(BASE_URL + TAXMODEL_URL.PAY_TAXMODEL, {}, json);
+        let response = await ApiHttpRequest.post(BASE_URL + TAXMODEL_URL.PAY_TAXMODEL, {}, json);
         if(response) return true;
         else throw new Error('Error al pagar el modelo fiscal')
     }
@@ -48,9 +65,10 @@ export class ApiTaxModelSpecificMethodsRepository implements ITaxModelSpecificMe
         let json = model.ApiObject;
         Object.defineProperty(json, 'iban', {
             value: bank.Iban,
+            enumerable: true,
             writable: false
         })
-        let response = await ApiHttpRequest.get(BASE_URL + TAXMODEL_URL.PAY_TAXMODEL, {}, json);
+        let response = await ApiHttpRequest.post(BASE_URL + TAXMODEL_URL.PAY_TAXMODEL, {}, json);
         if(response) return true;
         else throw new Error('Error al pagar el modelo fiscal')
     }

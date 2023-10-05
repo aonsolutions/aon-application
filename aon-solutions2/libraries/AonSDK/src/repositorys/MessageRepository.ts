@@ -121,23 +121,41 @@ export class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleOb
     }
 
     async get(filter?: IFilter | undefined): Promise<ICollection<Message>> {
-        let url;
+        let url: any = [];
         let perPage = filter?.pageItems ? filter?.pageItems : 0;
         let pageNum = filter?.pageNum ? filter?.pageNum : 0;
         if(filter?.fields?.get('type') == TypeMessage.NOTIFICACION)
-            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage))]
-        else if(filter?.fields?.get('type') == TypeMessage.CONSULTA)
-            url = [
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, 'query', 'pending')),
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, 'query', 'finished')),
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, 'query', 'deleted'))
-            ]
-        else if(filter?.fields?.get('type') == TypeMessage.TAREA)
-            url = [
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, 'task', 'pending')),
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, 'task', 'finished')),
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, 'task', 'deleted')),
-            ]
+            if(filter?.fields?.get('status') == StatusMessage.NUEVA){
+                console.log('nueva')
+                url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage, 'notification', 0))]
+            }else if(filter?.fields?.get('status') == StatusMessage.VISTA){
+                console.log('vista')
+                url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage, 'notification', 1))]
+            }else{
+                console.log('todas')
+                url = [
+                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage/2, 'notification', 1)),
+                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage/2, 'notification', 0))
+                ]
+            }
+        else if(filter?.fields?.get('type') == TypeMessage.CONSULTA || filter?.fields?.get('type') == TypeMessage.TAREA){
+            if(filter?.fields?.get('status') == StatusMessage.ABIERTA || filter?.fields?.get('status') == StatusMessage.PENDIENTE)
+                url = [
+                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'pending'))
+                ]
+            else if (filter?.fields?.get('status') == StatusMessage.CERRADA || filter?.fields?.get('status') == StatusMessage.REALIZADA){
+                url = [
+                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage/2, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'finished')),
+                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage/2, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'deleted'))
+                ]
+            }else{
+                url = [
+                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage/3, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'pending')),
+                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage/3, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'finished')),
+                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage/3, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'deleted'))
+                ]
+            }
+        }
         else
             url = [
                 ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage, 'notification', 0)),

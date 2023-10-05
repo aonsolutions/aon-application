@@ -287,7 +287,9 @@ export enum statusTaxModel {
   PENDIENTE = 'pendiente',
   RECTIFICADO = 'rectificado',
   CONFIRMADO = 'confirmado',
-  PRESENTADO = 'presentado'
+  PRESENTADO = 'presentado',
+  BLOQUEADO = 'bloqueado',
+  DESCONOCIDO = 'desconocido'
 } 
 
 export interface ITaxModel extends ICollectable {
