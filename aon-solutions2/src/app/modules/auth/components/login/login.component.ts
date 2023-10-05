@@ -1,7 +1,8 @@
-import { Component, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ErrorResponse } from 'libraries/AonSDK/src/aon';
+import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+
 import { AuthService } from 'src/app/core/services/auth.service';
+import { ErrorResponse } from 'libraries/AonSDK/src/aon';
 
 @Component({
   selector    : 'app-login',
@@ -15,11 +16,10 @@ export class LoginComponent implements OnInit {
   spinner     : boolean = false;
 
   constructor(
-    public auth: AuthService, 
-    private router: Router, 
-    private activatedRoute: ActivatedRoute, 
-  ) { 
-  
+    public auth: AuthService,
+    private activatedRoute: ActivatedRoute,
+  ) {
+
   }
 
   ngOnInit(): void {
@@ -31,13 +31,10 @@ export class LoginComponent implements OnInit {
 
   loginUser() {
     this.spinner = true;
-      try {
-        this.auth.login(this.username, this.password);
-      } catch (error) {
-        throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
-      } finally {
-        this.spinner = false;
-      }
+
+    this.auth.login(this.username, this.password).then(() => {
+      this.spinner = false;
+    });
   }
 
   ngOnDestroy() {

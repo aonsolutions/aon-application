@@ -52,8 +52,8 @@ export function generateData(){
         productCodes.add(new ProductCode('0005'));
         localProductCodes.write(storableProductCodes.getLocalStorage(), productCodes);
     }
-    
-    
+
+
     let storableProductCategories = new StorableProductCategory();
     let localProductCategories = new LocalStorage<ProductCategory>(ProductCategory);
     setProductCategories(localProductCategories.read(storableProductCategories.getLocalStorage()));
@@ -63,8 +63,8 @@ export function generateData(){
         productCategories.add(new ProductCategory('Categoria 3'));
         localProductCategories.write(storableProductCategories.getLocalStorage(), productCategories);
     }
-    
-    
+
+
     let storableProductClasses = new StorableProductClass();
     let localProductClasses = new LocalStorage<ProductClass>(ProductClass);
     setProductClasses(localProductClasses.read(storableProductClasses.getLocalStorage()));
@@ -74,8 +74,8 @@ export function generateData(){
         productClasses.add(new ProductClass('Clase 3'));
         localProductClasses.write(storableProductClasses.getLocalStorage(), productClasses);
     }
-    
-    
+
+
     let storableProductTypes = new StorableProductType();
     let localProductTypes = new LocalStorage<ProductType>(ProductType);
     setProductTypes(localProductTypes.read(storableProductTypes.getLocalStorage()));
@@ -85,8 +85,8 @@ export function generateData(){
         productTypes.add(new ProductType('Tipo 3'));
         localProductTypes.write(storableProductTypes.getLocalStorage(), productTypes);
     }
-    
-    
+
+
     let storableProductStatuses = new StorableProductStatus();
     let localProductStatuses = new LocalStorage<ProductStatus>(ProductStatus);
     setProductStatuses(localProductStatuses.read(storableProductStatuses.getLocalStorage()));
@@ -97,8 +97,8 @@ export function generateData(){
         productStatuses.add(new ProductStatus('ProductStatus 4'));
         localProductStatuses.write(storableProductStatuses.getLocalStorage(), productStatuses);
     }
-    
-    
+
+
     let storableTaskHolders = new StorableTaskHolder();
     let localTaskHolders = new LocalStorage<TaskHolder>(TaskHolder);
     setTaskHolders(localTaskHolders.read(storableTaskHolders.getLocalStorage()));
@@ -108,9 +108,9 @@ export function generateData(){
         taskHolders.add(new TaskHolder('Asesor 3'));
         localTaskHolders.write(storableTaskHolders.getLocalStorage(), taskHolders);
     }
-    
-    
-    
+
+
+
     let storableIRPF = new StorableIRPF();
     let localIRPF = new LocalStorage<IRPF>(IRPF);
     setIRPF(localIRPF.read(storableIRPF.getLocalStorage()));
@@ -119,8 +119,8 @@ export function generateData(){
         irpf.add(new IRPF('19', 'arrendamiento'));
         localIRPF.write(storableIRPF.getLocalStorage(), irpf);
     }
-    
-    
+
+
     let storableTaxes = new StorableTax();
     let localTaxes = new LocalStorage<Tax>(Tax);
     setTax(localTaxes.read(storableTaxes.getLocalStorage()))
@@ -131,8 +131,8 @@ export function generateData(){
         taxes.add(new Tax('21'));
         localTaxes.write(storableTaxes.getLocalStorage(), taxes);
     }
-    
-    
+
+
     let storableProducts = new StorableProduct();
     let localProducts = new LocalStorage<Product>(Product);
     setProducts(localProducts.read(storableProducts.getLocalStorage()));
@@ -145,8 +145,8 @@ export function generateData(){
             productStatuses.toArray()[0], irpf.toArray()[0], 'bar code 3', 'descripcion del producto 3', 23, 22, 32, 323));
         localProducts.write(storableProducts.getLocalStorage(), products);
     }
-    
-    
+
+
     let storablePaymentMethods = new StorablePaymentMethod();
     let localPaymentMethods = new LocalStorage<PaymentMethod>(PaymentMethod);
     setPaymentMethods(localPaymentMethods.read(storablePaymentMethods.getLocalStorage()))
@@ -156,8 +156,8 @@ export function generateData(){
         paymentMethods.add(new PaymentMethod('Paypal'));
         localPaymentMethods.write(storablePaymentMethods.getLocalStorage(), paymentMethods);
     }
-    
-    
+
+
     let storableInvoiceTransactionTypes = new StorableInvoiceTransactionType();
     let localInvoiceTransactionTypes = new LocalStorage<InvoiceTransactionType>(InvoiceTransactionType);
     setInvoiceTransactionTypes(localInvoiceTransactionTypes.read(storableInvoiceTransactionTypes.getLocalStorage()))
@@ -167,8 +167,8 @@ export function generateData(){
         invoiceTransactionTypes.add(new InvoiceTransactionType('Tipo 3'));
         localInvoiceTransactionTypes.write(storableInvoiceTransactionTypes.getLocalStorage(), invoiceTransactionTypes);
     }
-    
-    
+
+
     let storableContacs = new StorableContact();
     let localContacts = new LocalStorage<Contact>(Contact);
     setContacts(localContacts.read(storableContacs.getLocalStorage()))
@@ -178,8 +178,8 @@ export function generateData(){
         contacts.add(new Contact('Contacto de prueba', 'Comercial test', 'España', '123456789', 'Calle falsa 123', 'qwe@example.com', '537534534534', 'www.asd.com', '123456789', paymentMethods.toArray()[2], invoiceTransactionTypes.toArray()[2], false, false));
         localContacts.write(storableContacs.getLocalStorage(), contacts);
     }
-    
-    
+
+
     let storableInvoiceSeries = new StorableInvoiceSerie();
     let localInvoiceSeries = new LocalStorage<InvoiceSerie>(InvoiceSerie);
     setInvoiceSeries(localInvoiceSeries.read(storableInvoiceSeries.getLocalStorage()));
@@ -189,8 +189,8 @@ export function generateData(){
         invoiceSeries.add(new InvoiceSerie('Serie 3'));
         localInvoiceSeries.write(storableInvoiceSeries.getLocalStorage(), invoiceSeries);
     }
-    
-    
+
+
     let storableInvoiceActivities = new StorableInvoiceActivity();
     let localInvoiceActivities = new LocalStorage<InvoiceActivity>(InvoiceActivity);
     setInvoiceActivities(localInvoiceActivities.read(storableInvoiceActivities.getLocalStorage()))
@@ -200,8 +200,8 @@ export function generateData(){
         invoiceActivities.add(new InvoiceActivity('Actividad 3'));
         localInvoiceActivities.write(storableInvoiceActivities.getLocalStorage(), invoiceActivities);
     }
-    
-    
+
+
     let storableInvoiceCategories = new StorableInvoiceCategory();
     let localInvoiceCategories = new LocalStorage<InvoiceCategory>(InvoiceCategory);
     setInvoiceCategories(localInvoiceCategories.read(storableInvoiceCategories.getLocalStorage()));
@@ -211,8 +211,8 @@ export function generateData(){
         invoiceCategories.add(new InvoiceCategory('Categoria 3'));
         localInvoiceCategories.write(storableInvoiceCategories.getLocalStorage(), invoiceCategories);
     }
-    
-    
+
+
     let storableInvoices = new StorableInvoice();
     let localInvoices = new LocalStorage<Invoice>(Invoice);
     setInvoices(localInvoices.read(storableInvoices.getLocalStorage()));
@@ -224,8 +224,8 @@ export function generateData(){
         invoices.add(new Invoice(invoiceSeries.toArray()[0], '1', new Date(), 200, contacts.toArray()[0], invoiceCategories.toArray()[0], invoiceLines,
         invoiceTransactionTypes.toArray()[0], invoiceActivities.toArray()[0], false, false, false, taxes.toArray()[0], 10, 5, irpf.toArray()[0], 10, 5));
     }
-    
-    
+
+
     let storableDocuments = new StorableDocument();
     let localDocuments = new LocalStorage<Document>(Document);
     setDocuments(localDocuments.read(storableDocuments.getLocalStorage()))
@@ -246,8 +246,8 @@ export function generateData(){
         documents.add(new Document('/smallImage', 'file14', 6, 'image/png', new Date(), MainFolders.LABORAL + '/86638678R'));
         localDocuments.write(storableDocuments.getLocalStorage(), documents);
     }
-    
-    
+
+
     let storableDocumentTags = new StorableDocumentTag();
     let localDocumentTags = new LocalStorage<DocumentTag>(DocumentTag);
     setDocumentTags(localDocumentTags.read(storableDocumentTags.getLocalStorage()))
@@ -256,9 +256,9 @@ export function generateData(){
         documentTags.add(new DocumentTag('Tag 2'));
         localDocumentTags.write(storableDocumentTags.getLocalStorage(), documentTags);
     }
-    
-    
-    
+
+
+
     let storableFolders = new StorableFolder();
     let localFolders = new LocalStorage<Folder>(Folder);
     setFolders(localFolders.read(storableFolders.getLocalStorage()));
@@ -273,9 +273,9 @@ export function generateData(){
         folders.add(new Folder('Maria Rico Álvarez', '/laboral'));
         localFolders.write(storableFolders.getLocalStorage(), folders);
     }
-    
-    
-    
+
+
+
     let storableCertificates = new StorableCertificate();
     let localCertificates = new LocalStorage<Certificate>(Certificate);
     setCertificates(localCertificates.read(storableCertificates.getLocalStorage()))
@@ -285,32 +285,36 @@ export function generateData(){
       certificates.add(new Certificate('María Elena Tirado Chacón', 'Persona Física', new Date('Wed Mar 22 2023 15:48:30 GMT+0100 '), new Date('Fri Aug 02 2025 12:43:24 GMT+0100'), 'Andrea', 'Público', false, true, false, '11556837G'));
       localCertificates.write(storableCertificates.getLocalStorage(), certificates);
     }
-    
-    
-    
+
+
+
     let storableEnterprises = new StorableEnterprise();
     let storableRegistryEnterprises = new StorableRegistryEnterprise();
-    
+
     let localRegistryEnterprises = new LocalStorage<RegistryEnterprise>(RegistryEnterprise);
     let localEnterprises = new LocalStorage<Enterprise>(Enterprise);
     setEnterprises(localEnterprises.read(storableEnterprises.getLocalStorage()))
     setRegistryEnterprises(localRegistryEnterprises.read(storableRegistryEnterprises.getLocalStorage()));
-    
+
     if(enterprises.size() == 0){
         enterprises.add(new Enterprise('Pet Estudio', 'B16880148'));
         enterprises.add(new Enterprise('MENG SA', 'U14241855'));
         enterprises.add(new Enterprise('PORTABAGE SL', 'U53716270'));
+        enterprises.add(new Enterprise('Reséndez, Briones and Barragán', 'V74530528'));
+        enterprises.add(new Enterprise('Marrero S.A.', 'N3038065C'));
+        enterprises.add(new Enterprise('Gallegos e Hijos S.L.', 'J85226413'));
+        enterprises.add(new Enterprise('Aponte S.L.', 'S9668644I'));
         localEnterprises.write(storableEnterprises.getLocalStorage(), enterprises);
     }
-    
+
     if (registryEnterprises.size() == 0){
         registryEnterprises.add(new RegistryEnterprise('B16880148', 'lorem ipsum ...', new Date(), new Date(), 'Esperanza', 'Protocolo 1', 'Inscripción 1'));
         registryEnterprises.add(new RegistryEnterprise('U14241855', 'lorem ipsum ...', new Date(), new Date(), 'Jorge Luis', 'Protocolo 2', 'Inscripción 2'));
         registryEnterprises.add(new RegistryEnterprise('U53716270', 'lorem ipsum ...', new Date(), new Date(), 'Manuela', 'Protocolo 3', 'Inscripción 3'));
         localRegistryEnterprises.write(storableRegistryEnterprises.getLocalStorage(), registryEnterprises);
     }
-    
-    
+
+
     let storableDocumentNotes = new StorableDocumentNote();
     let localDocumentNotes = new LocalStorage<DocumentNote>(DocumentNote);
     setDocumentNotes(localDocumentNotes.read(storableDocumentNotes.getLocalStorage()));
@@ -324,8 +328,8 @@ export function generateData(){
         documentNotes.add(new DocumentNote('texto de la nota', '/laboral/86638678R/file13'));
         localDocumentNotes.write(storableDocumentNotes.getLocalStorage(), documentNotes);
     }
-    
-    
+
+
     let storableBanks = new StorableBank();
     let localBanks = new LocalStorage<Bank>(Bank);
     setBanks(localBanks.read(storableBanks.getLocalStorage()));
@@ -335,8 +339,8 @@ export function generateData(){
         banks.add(new Bank('Bankinter',2500,'whereIsMyPath?3','1','ES0402260523912937810527', new Date(), 'syncStatus'));
         localBanks.write(storableBanks.getLocalStorage(), banks);
     }
-    
-    
+
+
     let storableTaxModels = new StorableTaxModel();
     let localTaxModels = new LocalStorage<TaxModel>(TaxModel);
     setTaxModels(localTaxModels.read(storableTaxModels.getLocalStorage()))
@@ -365,11 +369,11 @@ export function generateData(){
         taxModels.add(new TaxModel( '303','IVA',statusTaxModel.PENDIENTE,'a','1345',4,2022));
         taxModels.add(new TaxModel( '130','IVA',statusTaxModel.PRESENTADO,'b','541',4,2022));
         taxModels.add(new TaxModel( '347','IVA',statusTaxModel.RECTIFICADO,'a','1354',4,2022));
-    
+
         localTaxModels.write(storableTaxModels.getLocalStorage(), taxModels);
     }
-    
-    
+
+
     let storableMessages = new StorableMessage();
     let localMessages = new LocalStorage<Message>(Message);
     setMessages(localMessages.read(storableMessages.getLocalStorage()))
@@ -385,8 +389,8 @@ export function generateData(){
         messages.add(new Message('Asesor3','Asunto 3','sunt in culpa qui officia deserunt',new Date("2023-07-22 15:30"),TypeMessage.TAREA,StatusMessage.PENDIENTE,new Date("2023-09-05 21:30")));
         localMessages.write(storableMessages.getLocalStorage(), messages);
     }
-    
-    
+
+
     let storableMessageChats = new StorableMessageChat();
     let localMessageChats = new LocalStorage<MessageChat>(MessageChat);
     setMessageChats(localMessageChats.read(storableMessageChats.getLocalStorage()));
@@ -399,8 +403,8 @@ export function generateData(){
         messageChats.add(new MessageChat(filteredMessages.toArray()[0].Key,'Asesor1','sunt in culpa qui officia deserunt',new Date("2023-06-12 15:32"), 'recibido'));
         localMessageChats.write(storableMessageChats.getLocalStorage(), messageChats);
     }
-    
-    
+
+
     let storableEmployees = new StorableEmployee();
     let localEmployees = new LocalStorage<Employee>(Employee);
     setEmployees(localEmployees.read(storableEmployees.getLocalStorage()));
@@ -410,20 +414,20 @@ export function generateData(){
         employees.add(new Employee('Juan Carlos','Aragón Pérez','11556837G','juancarlosaragonperez@gmail.test','619068048','490423363729',true));
         localEmployees.write(storableEmployees.getLocalStorage(), employees);
     }
-    
-    
+
+
     let storableContracts = new StorableContract();
     let localContracts = new LocalStorage<Contract>(Contract);
-    
-    
+
+
     let storableMarks = new StorableMark();
     let localMarks = new LocalStorage<Mark>(Mark);
-    
-    
+
+
     let storableMarksDetails = new StorableMarkDetail();
     let localMarksDetails = new LocalStorage<MarkDetail>(MarkDetail);
-    
-    
+
+
     let storableUsers = new StorableUser();
     let localUsers = new LocalStorage<User>(User);
     setUsers(localUsers.read(storableUsers.getLocalStorage()))
@@ -434,7 +438,7 @@ export function generateData(){
       users.add(new User('Admin','Admin','12345678A','admin','admin','698475145',true));
       users.add(new User('Test','Test','98765432B','test@aonsolutions.test','test','652145784',true));
       localUsers.write(storableUsers.getLocalStorage(), users);
-    }    
+    }
 }
 
 export let pdf = "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bGFncyAzMgogICAvRm9udEJCb3ggWyAtMTAyMCAtNDYyIDE3OTMgMTIzMiBdCiAgIC9JdGFsaWNBbmdsZSAwCiAgIC9Bc2NlbnQgOTI4CiAgIC9EZXNjZW50IC0yMzUKICAgL0NhcEhlaWdodCAxMjMyCiAgIC9TdGVtViA4MAogICAvU3RlbUggODAKICAgL0ZvbnRGaWxlMiAxMSAwIFIKPj4KZW5kb2JqCjYgMCBvYmoKPDwgL1R5cGUgL0ZvbnQKICAgL1N1YnR5cGUgL1RydWVUeXBlCiAgIC9CYXNlRm9udCAvTlBKWUZRK0RlamFWdVNhbnMKICAgL0ZpcnN0Q2hhciAzMgogICAvTGFzdENoYXIgMjQzCiAgIC9Gb250RGVzY3JpcHRvciAxNSAwIFIKICAgL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcKICAgL1dpZHRocyBbIDMxNyAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDY5OCAwIDAgMCAwIDAgMjk0IDAgMCAwIDAgMCAwIDAgMCAwIDYzNCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDYxMiAwIDU0OSAwIDYxNSAwIDAgMCAyNzcgMCAwIDI3NyA5NzQgNjMzIDYxMSA2MzQgMCA0MTEgNTIwIDM5MiAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCA2MTEgXQogICAgL1RvVW5pY29kZSAxMyAwIFIKPj4KZW5kb2JqCjEgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzCiAgIC9LaWRzIFsgMiAwIFIgNyAwIFIgXQogICAvQ291bnQgMgo+PgplbmRvYmoKMTYgMCBvYmoKPDwgL1Byb2R1Y2VyIChjYWlybyAxLjE2LjAgKGh0dHBzOi8vY2Fpcm9ncmFwaGljcy5vcmcpKQogICAvQ3JlYXRpb25EYXRlIChEOjIwMjMwNTA4MDk0MTIzKzAyJzAwKQo+PgplbmRvYmoKMTcgMCBvYmoKPDwgL1R5cGUgL0NhdGFsb2cKICAgL1BhZ2VzIDEgMCBSCj4+CmVuZG9iagp4cmVmCjAgMTgKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDA4MDQ0IDAwMDAwIG4gCjAwMDAwMDEwOTAgMDAwMDAgbiAKMDAwMDAwMDk4MSAwMDAwMCBuIAowMDAwMDAwMDE1IDAwMDAwIG4gCjAwMDAwMDA5NTkgMDAwMDAgbiAKMDAwMDAwNzM3MiAwMDAwMCBuIAowMDAwMDAyMjg4IDAwMDAwIG4gCjAwMDAwMDIxNzkgMDAwMDAgbiAKMDAwMDAwMTMyMiAwMDAwMCBuIAowMDAwMDAyMTU2IDAwMDAwIG4gCjAwMDAwMDI1MjAgMDAwMDAgbiAKMDAwMDAwNjY3NCAwMDAwMCBuIAowMDAwMDA2Njk4IDAwMDAwIG4gCjAwMDAwMDcwNzcgMDAwMDAgbiAKMDAwMDAwNzEwMCAwMDAwMCBuIAowMDAwMDA4MTE1IDAwMDAwIG4gCjAwMDAwMDgyMzIgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSAxOAogICAvUm9vdCAxNyAwIFIKICAgL0luZm8gMTYgMCBSCj4+CnN0YXJ0eHJlZgo4Mjg1CiUlRU9GCg=="

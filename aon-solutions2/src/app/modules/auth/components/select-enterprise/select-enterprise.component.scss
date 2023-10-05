@@ -17,7 +17,7 @@
   margin-bottom : $margin-bottom;
 }
 
-.titleAuth span{
+.titleAuth span {
   font-size   : $font-size-head-span;
   color       : $color-secondary;
 }
@@ -25,10 +25,14 @@
 /*
   Select enterprise
 */
-  #itemEnterprise{
+  #itemEnterprise {
     border        : $border;
     border-radius : $border-radius;
+    height        : 16.5rem;
+    overflow-y    : auto;
+    position      : relative;
   }
+
   #itemEnterprise div div {
     flex-direction: row;
     display       : flex;
@@ -41,14 +45,16 @@
     margin        : $margin;
     border-radius : $border-radius;
     border        : $border;
-  }  
-  #itemEnterprise caption{
+  }
+
+  #itemEnterprise caption {
     white-space   : nowrap;
     overflow      : hidden;
     text-overflow : ellipsis;
     font-family   : 'Roboto-Bold';
     font-size     : $font-size-24;
   }
-  #itemEnterprise span{
+
+  #itemEnterprise span {
     color         : $color-secondary;
   }
