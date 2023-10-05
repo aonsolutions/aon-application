@@ -82,12 +82,14 @@ export class TableTaxModelComponent implements OnChanges {
     this.taxModelService
       .getTaxModelList(filterBuilder.getFilter())
       .then((response) => {
+        console.log('esto es',response)
         // Tax
         let tableRow: any = [];
         response.forEach(function (tax, taxKey) {
           let column: any = {};
           // clone object
           column = Object.assign({}, tax);
+
           // Object Tax
           // Predefinimos la key de la fila
           column.key = taxKey;
@@ -130,16 +132,18 @@ export class TableTaxModelComponent implements OnChanges {
           }
           // Add object date table
           tableRow.push(column);
+
         });
         // Tax date format for table
         this.bodyTable = tableRow;
       });
+
   }
 
   modalClick(object: any) {
     // Fila de la tabla que se esta usando
     // Boton que ha sido clickeado
-    //console.log(object);
+    console.log(object);
     // reference icon click
     console.log(object.keyButton);
 

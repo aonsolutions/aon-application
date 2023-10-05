@@ -14,7 +14,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-transform: uppercase;
   }
 
   .title-modal-payment {
@@ -23,7 +22,6 @@
   }
 
   .text-modal-payment {
-    text-transform: uppercase;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -31,6 +29,7 @@
 
   .mat-radio-button {
     padding: $padding;
+    text-transform: uppercase;
   }
 
   #add-button {

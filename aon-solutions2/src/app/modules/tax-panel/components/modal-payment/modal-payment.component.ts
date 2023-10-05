@@ -27,6 +27,7 @@ export class ModalPaymentComponent implements OnInit {
   newBankIban: string = '';
   newBankBic: string = '';
 
+
   public collectionFactory = new CollectionFactory();
   banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
   private banksSubject = new BehaviorSubject<ICollection<IBank>>(
@@ -103,20 +104,18 @@ export class ModalPaymentComponent implements OnInit {
     newBank.LastUpdate = new Date();
     newBank.SyncStatus = '';
 
-    try {
-      //  Crear el banco
-      const createdBank = await this.bankService.createBank(newBank);
+    //  Crear el banco
+    const createdBank = await this.bankService.createBank(newBank);
 
-      // Después de enviar el mensaje, restablece los valores de los campos
-      this.newBankDescription = '';
-      this.newBankIban = '';
-      this.newBankBic = '';
-    } catch (error) {
-      throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
-    }
+    // Después de enviar el mensaje, restablece los valores de los campos
+    this.newBankDescription = '';
+    this.newBankIban = '';
+    this.newBankBic = '';
 
     this.showCreateBank = false;
 
     this.listBanks();
   }
+
+  sendPayment() {}
 }
