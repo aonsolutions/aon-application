@@ -15,7 +15,6 @@ import { DataAttachSource } from "../../../models/DataAttachSource.js";
 // import { Attach } from "../../../models/Attach.js";
 
 export class AonTax extends AonElement {
-	
 	ERROR_TEMPLATE_START = "<html>"
 			+"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>"
 			+"<body>";
@@ -43,7 +42,6 @@ export class AonTax extends AonElement {
 				 +"padding-top: 20px;"
 				 +"padding-bottom: 20px;"
 			+"\">";
-//	ERROR_TEMPLATE_BODY = "<li>{0}</li>";
 	ERROR_TEMPLATE_AFTER = "</ul>";
 	ERROR_TEMPLATE_END = "</body></html>";	
 	
@@ -202,6 +200,12 @@ export class AonTax extends AonElement {
     if (!this.isMobile()){ 
       dialog.width = "500px";
     }
+    
+    // FALTA - ESCONDER BOTONES
+    if (dialog.getButtonAccept())
+       dialog.getButtonAccept().remove();
+    if (dialog.getButtonCancel())
+       dialog.getButtonCancel().remove();
 
     let div = this.builDialog(resp);
     dialog.setContent(div);
@@ -473,152 +477,92 @@ export class AonTax extends AonElement {
   }
 
   async save(resp){
+	  
     this.applicationEl.startLoading();
     try {
+		
       const form = {...resp,...this.getFormValues()};
       this.clearModels();
       await setModelStatus(form);
       await this.getTable();      
       this.showMessage();
+      
     } catch (error) {
+      
       console.error(error);
           
-      let error_json = JSON.parse(error);
-      
-      // if (error_json) CONTROLAR POSIBLE NULO
-      
-            
-      // FALTA - COMPROBAR SI EL ERROR ES DE LA PRESENTACION DEL MODELO
-      //if (error.includes("ERROR AEAT")) {
-	  //if (error.includes("AonApiAeatException")) {
-	  if (error_json.class_name == "AonApiAeatException") {  // Error en la presentación del modelo 
-		  
-      	//this.showMessageError("ERROR EN LA PRESENTACION DEL MODELO " + (error.replace("ERROR AEAT","")).trim());
-      	//this.showMessageError("ERROR EN LA PRESENTACION DEL MODELO");
-      	
-//      	this.showToast({
-//        	type: CONSTANT.ERROR,
-//      		message: "ERROR EN LA PRESENTACION DEL MODELO",
-//      		delay: 5000
-//    	}); 
-      	
-      	//window.open((error.replace("ERROR AEAT","")).trim(), '_blank');
-      	
-      	//let text = (error.replace("ERROR AEAT","")).trim();
-      	//let text = error.message;
-      	//text = text.replace("ERROR AEAT","");
-      	//text = text.trim();
-      	//console.error(text);
-      	let text2 = (error.replace("ERROR AEAT","")).trim();
-      	let otro = JSON.parse(text2);
-      	//let text = otro.message;
-      	
-      	let mensajes = JSON.parse(otro.message);
-      	
-      	let text20 = "<html>"
-			+"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>"
-			+"<body>"
-	+ "<div style=\""
-				+"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
-				+"font-weight: bold;"
-				+"margin-top: 20px;"
-			+"\">"
-			+ "Mensajes de Error devueltos por la Agencia Tributaria, en la presentación del modelo:"
-			+"</div>"
-			
-	+ "<html>"
-			+"<ul style=\""
-				 +"background-attachment: scroll;"
-				 +"background-clip: border-box;"
-				 +"background-position: 3px 2px;"
-				 +"background-repeat: no-repeat;"
-				 +"background-size: auto auto;"
-				 +"background-color: #ffd0d0;"
-				 +"border: solid black 1px;"
-				 +"font-size: small;"
-				 +"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
-				 +"font-weight: bold;"
-				 +"border: solid black 1px;"
-				 +"padding-top: 20px;"
-				 +"padding-bottom: 20px;"
-			+"\">"
-			
-			
-	+ "<li>" + mensajes.respuesta.errores + "</li>";
-	+ "</ul>";
-	+ "</body></html>";
-	
-	
-	let text = this.ERROR_TEMPLATE_START
-		+this.ERROR_TEMPLATE_AEAT	
-		+this.ERROR_TEMPLATE_BEFORE		
-		+ "<li>" + mensajes.respuesta.errores + "</li>";
-		+this.ERROR_TEMPLATE_AFTER
-		+this.ERROR_TEMPLATE_END;
-      	
-      	//let file = new Blob([text], { type: "text/plain" });
-      	//let file = new Blob([text], { type: "application/json" });
-      	let file = new Blob([text], { type: "text/html" });
-      	
-      	if (this.isMobile()) {
-      	//if (webkitRequestMobile()){
-      //------------ IS MOBILE APP---------
-    //const base64Data = `data:${contentType},${base64Str}`;
-    //await sendActionMobile(file);
-    
-    const aonTable = this.getElement(this.TABLE_ID);
-    if (aonTable) {
-      try {
-        aonTable.removeAllLi();
-        //aonTable.addLi(mensajes.respuesta.errores);
-        //aonTable.addLi({
-        //  title:"Total",
-        //  iconHtmlCustom: /*html*/ `<span style="float: right;color: black;font-weight: 600; margin-top: 10px;">${this.getTotal(resp)}</span>`,
-        //});
-        
-        //aonTable.addLi();
-        
-        aonTable.addLi({
-          title: /*html*/ `<span style="text-wrap: wrap;text-align: center;color: red;display: block;">PRESENTACION DEL MODELO</span>`,
-          subtitle: /*html*/ `<span style="text-wrap: wrap;text-align: center;color: red;display: block;">Mensajes de Error devueltos por la Agencia Tributaria:</span>`
-          //iconHtmlCustom: /*html*/ `<span style="text-wrap: wrap">${this.getTotal(resp)}</span>`,
-        });
-        
-        mensajes.respuesta.errores.forEach((res) => {
-          //aonTable.addLi(res);
-          aonTable.addLi({
-          title: /*html*/ `<span style="text-wrap: wrap;font-size: small;">${res}</span>`,  
-          //iconHtmlCustom: /*html*/ `<span style="float: right;color: black;font-weight: 600; margin-top: 10px;">${this.getTotal(resp)}</span>`,
-        });
-        });
-          
-        
-      } catch (e) {
-        console.log(e);
-      }
-    }
-    
-    
-    
-  } else {
-      	
-      	      	
-      	let url = URL.createObjectURL(file);
-      	window.open(url, '_blank');
-      	}
-      	
-      	//this.showMessageError("ERROR EN LA PRESENTACION DEL MODELO");
-      	
-      	//let blob = (error.replace("ERROR AEAT","")).trim();      	
-      	//const newUrl = URL.createObjectURL(blob);
-        //openFileDesktop(newUrl);
-      	
-      }
-      else { 
-      	this.showMessageError(error);
-      }
-      //this.showToast(error);
-    }
+      // FALTA - Controlar los posibles errores    
+      let errorJson = JSON.parse(error);      
+      if (errorJson) {
+		  if (errorJson.class_name == "AonApiAeatError") {
+			  
+			  // La Agencia Tributaria ha devuelto errores en la presentación del modelo, mostramos los errores
+			  
+			  let errorMessages = JSON.parse(errorJson.message);
+			  
+			  if (this.isMobile()) {
+				  
+				  // MOBILE: Se muestran los mensajes de error en la misma tabla de los modelos
+				  
+				  const aonTable = this.getElement(this.TABLE_ID);
+				  if (aonTable) {
+					  aonTable.removeAllLi();
+					  aonTable.addLi({
+						  title: /*html*/ `<span style="text-wrap: wrap;text-align: center;color: red;display: block;">PRESENTACION DEL MODELO</span>`,
+					      subtitle: /*html*/ `<span style="text-wrap: wrap;text-align: center;color: red;display: block;">Mensajes de Error devueltos por la Agencia Tributaria:</span>`
+					  });
+					  errorMessages.respuesta.errores.forEach((res) => {
+						  aonTable.addLi({
+							  title: /*html*/ `<span style="text-wrap: wrap;font-size: small;">${res}</span>`
+						  });
+					  });
+					  
+				  }
+			  } else {
+				  
+				  // DESKTOP: Se muestran los mensajes de error en una pestaña nueva del navegador
+			  
+			  	  let text = this.ERROR_TEMPLATE_START + 
+			                 this.ERROR_TEMPLATE_AEAT + 
+			                 this.ERROR_TEMPLATE_BEFORE + 
+			                 "<li>" + errorMessages.respuesta.errores + "</li>" +
+			                 this.ERROR_TEMPLATE_AFTER +
+			                 this.ERROR_TEMPLATE_END;
+			      let file = new Blob([text], { type: "text/html" });
+      			  let url = URL.createObjectURL(file);
+      	          window.open(url, '_blank');
+				  
+			  }
+			  		  
+		  } else if (errorJson.class_name == "AonApiAeatException") {
+			  
+			  // La presentación del modelo no se ha producido correctamente
+			  
+			  if (this.isMobile()) {
+				  
+				  // MOBILE: Simplemente se muestra error en la presentación del modelo
+				  this.showMessageError("ERROR EN LA PRESENTACIÓN DEL MODELO");
+				  
+			  } else {
+				  
+				  // DESKTOP: Se intenta mostrar en una ventana nueva del navegador el documento HTML devuelto en la llamada a la presentación				  
+				  let text = errorJson.message;
+			      let file = new Blob([text], { type: "text/html" });
+      			  let url = URL.createObjectURL(file);
+      	          window.open(url, '_blank');
+				  
+			  }
+			  
+		  } else {
+			  
+			  // Otros errores no relacionados directamente con la llamada a la presentación del modelo
+			  
+			  this.showMessageError(errorJson.message);			  
+		  }		  
+	  } else {
+		this.showMessageError(error);  
+	  }
+    } 
     this.applicationEl.stopLoading();
   }
 

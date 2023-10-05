@@ -169,9 +169,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.forEach(model-> {
 				try {
 					jsonModels.put(FiscalModelJSON.toJSON(model)
-							// Indicar si el modelo se puede presetnar automaticamente (por ahora solo modelo 303 de la Agencia Tributaria)
-							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY && model.getModel() == FiscalModelType.M303 ? presModelAutoEnabled : 0)
-							.put("testEnvironment", testEnvironment)							
+							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY && model.getModel() == FiscalModelType.M303 ? presModelAutoEnabled : 0) // Presentación automática del modelo (por ahora solo modelo 303 de la Agencia Tributaria)
+							.put("testEnvironment", testEnvironment)  // Entorno de pruebas							
 							);
 					
 				}
@@ -196,10 +195,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 				String bankBIC = JsonUtils.getString(params, IJsonNames.BIC);
 				String reasonReject = params.optString("reasonReject");
 				boolean reject = !reasonReject.isEmpty();
-				String nrc = JsonUtils.optString(params, "nrc");  // FALTA - EL NRC DEBERÁ VENIR COMO PARAMETRO
-				Integer certi = JsonUtils.getInteger(params, "certi"); // FALTA 				
-				int presModelAuto = reject ? 0 : JsonUtils.getInt(params, "presModelAuto");  // Presentación automática del modelo
-				
+				String nrc = JsonUtils.optString(params, "nrc");  
+				Integer certi = JsonUtils.getInteger(params, "certi");  				
+				int presModelAuto = reject ? 0 : JsonUtils.getInt(params, "presModelAuto");  // Presentación automática del modelo				
 				boolean test = JsonUtils.getboolean(params, "testEnvironment");  // Entorno de pruebas
 				
 				FiscalModelType modelType = FiscalModelType.safeValueOf(JsonUtils.getString(params , IJsonNames.MODEL));
@@ -208,6 +206,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 				if (presModelAuto == 1 && certi == null) {
 					throw new AonApiException("ERROR: Debe seleccionar certificado.");
 				}
+				
+				// FALTA - TAMBIEN SE PODRIA COMPROBAR SI ES INGRESO Y NO SE HA PUESTO EL NRC
 	
 				modelType.visit(new IFiscalModelTypeVisitor() {
 					@Override
@@ -304,22 +304,21 @@ public class FiscalServlet extends AonApiHttpServlet{
 							Mod303DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
 							// Finalizar el modelo 
-							// FALTA - NO SE SI ES NECESARIO FINALIZAR EL MODELO O PRESENTARLO DIRECTAMENTE, EL 
-							// TEMA ESTA EN QUE SI HAY ALGUN ERROR EN LA PRESENTACION EL MODELO SE QUEDE COMO FINALIZADO O COMO ENVIO A CLIENTE ??							 
+							// FALTA - POR AHORA PARA HACER PRUEBAS CUANDO SE DEVUELVEN ERRORES, NO LO VOY A FINALIZAR							 
 							//Mod303DAO.markAsFinished(ctx, model);
-							// FALTA - Presentación automática del modelo 
+							// Presentación automática del modelo 
 							if (presModelAuto == 1) {
 								AEATParams params = new AEATParams()
 										.setDomainName(api.getDomain().getName())
 										.setDomainId(api.getDomain().getId())
 										.setUser(api.getUser().getLogin())
 										.setMod(model.getId())
-										.setName("")    // FALTA - PRUEBA CON DATOS FICTICIOS DEBERIA OBTENERSE DEL CERTIFICADO O NO SE DE DONDE
-										.setDocument("")
+										.setName("")      // Lo dejamos en blanco, para que se coja del certificado
+										.setDocument("")  // Lo dejamos en blanco, para que se coja del certificado
 										.setCertificateId(certi)
 										.setPass("")  // La dejamos en blanco, para que se coja la que tiene guardada el certificado
 										.setNrc(nrc)
-										.setTest(test);  // FALTA - DEBE OBTENERSE DE LA CONFIGURACION
+										.setTest(test);  
 								send(params, model);
 							}							
 						}
@@ -341,9 +340,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	// FALTA - METODOS PARA LA PRESENTACION DEL MODELO
+	// METODOS PARA LA PRESENTACION DEL MODELO
 	
-	//private void send(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model ) {
 	private void send(AEATParams aeatParams, IFiscalModel model) {
 		try {			
 			String period = model.getPeriod().getName();
@@ -376,6 +374,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 					new TrustManager[] { new DefaultTrustManager() },
 					new SecureRandom());
 			
+			// Añadir los parametros FIRNIF y FIRNOMBRE cuyos valores se obtienen en la llamada a getKeyManagers
 			params.put("FIRNIF", aeatParams.getDocument());
 			params.put("FIRNOMBRE", aeatParams.getName());
 			
@@ -394,36 +393,31 @@ public class FiscalServlet extends AonApiHttpServlet{
 			HttpResponse<byte[]> response = httpClient
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
 			
-			// FALTA - IGUAL HABRIA QUE DEVOLVER EL ERROR AEAT CON EL BODY EN EL MENSAJE Y ASI QUE SE MUESTRE PARA VER SI SON ERRORES DE LA AEAT O INDEFINIDOS
-			// SE PODRIA CREAR APIAEATERRORES PARA CUANDO DEVUELVEN ERRORES Y APIAEATEXCEPTION PARA EL RESTO DE EXCEPCIONES
 			if (response.statusCode() == 302) {
-				//ModelAdmonUtils.giveRedirectBack( resp,response,httpClient );
-				throw new AonApiException("ERROR 302");				
+				//giveRedirectBack( resp,response,httpClient );				
+				throw new AonApiException("ERROR EN LA PRESENTACION: Redirect code");
 			} else {
 				String ct = getContentTypeHeader(response);
 				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
 					if (!manageJSONContent(aeatParams, model, response.body())) {						
-						//throw new AonApiException("ERROR EN LA PRESENTACIÓN DEL MODELO");
-//						throw new AonApiException("ERROR AEAT " + new String(response.body()));
-						throw new AonApiAeatException(new String(response.body()));
+						throw new AonApiAeatError(new String(response.body()));
 					}
 				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
 					//ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
-					throw new AonApiException("ERROR AEAT " + response.body());
+					throw new AonApiAeatException(new String(response.body()));
 				} else {	
 					//ModelAdmonUtils.giveExceptionBack(resp,"No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
-					throw new AonApiException("ERROR: No se ha encontrado una respuesta válida por parte de la Agencia Tributaria." + response.body());
+					throw new AonApiException("ERROR EN LA PRESENTACION DEL MODELO");
 				}
 			}
-//			return new JSONObject().put("status", "OK");
 		} catch (InterruptedException e) {
 			// Restore interrupted state...
 			Thread.currentThread().interrupt();
 		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
-			//ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
-			throw new AonApiException("ERROR: " + e.getMessage());
+			//ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());			
+			throw new AonApiException("ERROR PRESENTACION: " + e.getMessage());
 		}
-//		return null;
+		
 	}
 	
 	private byte[] getModelFile(IFiscalModel fm) throws AonCoreException {
@@ -592,41 +586,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 	    keyStore.load(key, params.getPass().toCharArray());
 	    
-	    // FALTA - OBTENER DATOS DEL CERTIFICADO
-	    
-//	    String alias = "";
-//	    Enumeration<String> e = keyStore.aliases();   //Obtengo los alias de los certificados
-//	    while (e.hasMoreElements()){
-//	             alias = e.nextElement();
-//	            System.out.println("alias:"  + alias);
-//	    }   
-//	   
-//	    
-//	    X509Certificate c = (X509Certificate) keyStore.getCertificate(alias);
-//	    
-//	    String name = c.getSubjectX500Principal().toString();
-//	    
-//	    int start = name.indexOf("SURNAME=");
-//	    int end = name.indexOf(",", start);
-//	    if (end == -1) {
-//	        end = name.length();
-//	    }
-//	    String surname = name.substring(start + 8, end);
-//	    
-//	    start = name.indexOf("SERIALNUMBER=");
-//	    end = name.indexOf(",", start);
-//	    if (end == -1) {
-//	        end = name.length();
-//	    }
-//	    String serial = name.substring(start + 13, end);
-//	    
-//	    // FALTA - PRUEBA A PONER DOCUMENTO Y NOMBRE DEL CERTIFICADO
-//	    params.setDocument(serial);
-//	    params.setName(surname.toUpperCase());
-	    
-	 // FIN OBTENER DATOS DEL CERTIFICADO
-	    
-	    // OTRA FORMA DE HACERLO 
+	    // Obtener los datos del presentador (NIF y Nombre) del certificado 
 	    
 	    CertificateInfo info = CertificateDAO.verifyCertificate(attach.getData(), params.getPass());
 	    
@@ -635,12 +595,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 	    params.setDocument(AonStringUtils.trimToEmpty(info.getDocument()).toUpperCase());
 	    params.setName((AonStringUtils.trimToEmpty(info.getSurname()) + " " + AonStringUtils.trimToEmpty(info.getName())).toUpperCase());
 	    
-	    // FIN OTRA FORMA	    
-	    
-	    //System.out.println("certificate:"  + name);
+	    // FALTA QUITAR
 	    System.out.println("surname: "  + params.getName());
 	    System.out.println("document: "  + params.getDocument());   
-	    
 	    
     	KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
    		kmf.init(keyStore, params.getPass().toCharArray());
@@ -679,21 +636,10 @@ public class FiscalServlet extends AonApiHttpServlet{
 	
 	private boolean manageJSONContent(AEATParams aeatParams, IFiscalModel fm, byte[] body) {
 		AEATResponse response = AEATJson.toJSON(body); 
-		// FALTA - VAMOS A GRABAR EL RESULTADO AUNQUE SEA ERRONEO PARA QUE SE PUEDA VER POSTERIORMENTE
-		// FALTARIA EN EL DAO NO MARCAR EL MODELO COMO ENVIADO SI HA HABIDO ERRORES
 		// Si la presentacion es correcta, grabar la respuesta y el PDF y marcar el modelo como presentado
 		if (response.isCorrect())
 			manageRightResponse(aeatParams, fm, new String(body));
 		return response.isCorrect();
-//		if (response.isCorrect()) {
-//			manageRightResponse(aeatParams,fm,new String(body));
-//			return true; // FALTA
-//		} else {
-//			return false;
-//			// FALTA - SE PODRIA INTENTAR GRABAR TAMBIEN LA RESPUESTA SI LUEGO SE PUEDE VER DESDE ALGUN SITIO PARA VER LOS ERRORES QUE HA DADO
-//			//manageWrongResponse(resp, response);
-//			//throw new AonApiException("ERRORES AEAT: ERRORES DEVUELTOS POR LA AGENCIA TRIBUTARIA.");
-//		}
 	}
 	
 	private void manageRightResponse(AEATParams aeatParams, IFiscalModel fm, String aeatResponse) {
@@ -777,14 +723,66 @@ public class FiscalServlet extends AonApiHttpServlet{
 			}
 			
 		});
-		// FALTA - NO HACE NADA MAS SIMPLEMENTE SE GRABA EL PDF, AL VOLVER A SACAR LAS LISTA DE MODELOS SE PODRA VER EL PDF SI SE QUIERE
-		//giveDataResponseDataBack(resp, aeatParams, fm);
 		
 	}
 	
+//	private synchronized void giveRedirectBack(HttpServletResponse resp, HttpResponse<byte[]> response, HttpClient httpClient) throws IOException, InterruptedException {
+//		String locationHeader = getLocationHeader(response); 
+//		if (AonStringUtils.isBlank( locationHeader)) {
+//			//giveExceptionBack(resp, "Redirect code");
+//			throw new AonApiException("ERROR EN LA PRESENTACION: Redirect code");
+//		} else {
+//			giveRedirectBack(httpClient, resp, locationHeader, MimeType.HTML);
+//		}
+//	}
+//	
+//	private String getLocationHeader(HttpResponse<byte[]> response) {
+//		return getHeader(response, AonHttpUtils.LOCATION);
+//	}
+//	
+//	private synchronized void giveRedirectBack( HttpClient httpClient, HttpServletResponse resp, String location, MimeType mimeType) throws IOException, InterruptedException {
+//		HttpRequest locationRequest = HttpRequest.newBuilder()
+//				.uri(URI.create( location ))
+//				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+//				.GET()
+//				.build();
+//		HttpResponse<byte[]> locationResponse = httpClient
+//				.send(locationRequest, HttpResponse.BodyHandlers.ofByteArray());
+//		giveBase64Back(resp, locationResponse.body(), mimeType);
+//	}
+//	
+//	private synchronized void giveBase64Back( HttpServletResponse resp, byte[] data, MimeType mimeType )  {
+//		try {
+//			resp.setHeader(AonHttpUtils.CONTENT_TYPE, mimeType.getName());
+//			resp.setHeader(AonHttpUtils.CONTENT_ENCODING, StandardCharsets.UTF_8.displayName());				
+//			AonIOUtils.write( Base64.getEncoder().encode(data), resp.getOutputStream() );
+//			resp.flushBuffer();
+//		} catch (IOException e) {
+//			throw new AonCoreException(MessageFormat.format("Unexpected exception [{0}] ", e.getMessage()));	
+//		}
+//	}
+	
+	// Se utilizará para devolver los errores que se han producido en la presentación, es decir cuando la llamada al 
+	// servicio de presentación del modelo es correcta, pero la Agencia Tributaria devuelve mensajes de error
+	class AonApiAeatError extends AonApiException {
+		
+		private static final long serialVersionUID = 5030570086298704983L;
+
+		public AonApiAeatError() {
+	        super();
+	    }
+	    
+	    public AonApiAeatError(String message) {
+	        super(message);
+	    }
+	}
+	
+	// Se utilizará para devolver cualquier otro error que se produzca en la llamada a la presentación del modelo 
 	class AonApiAeatException extends AonApiException {
 
-	    public AonApiAeatException() {
+		private static final long serialVersionUID = 735277798302398475L;
+
+		public AonApiAeatException() {
 	        super();
 	    }
 	    
@@ -792,5 +790,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 	        super(message);
 	    }
 	}
+
 	
 }
