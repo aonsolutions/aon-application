@@ -85,6 +85,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
+import com.esferalia.aon.occam.impl.jooq.validation.QuestionValidation;
 
 public class RegistryImpl implements IRegistry{
 	
@@ -810,12 +811,6 @@ public class RegistryImpl implements IRegistry{
 	public Question getQuestion(CloseableAONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> QuestionDAO.get(ctx, id));
-	}
-
-	@Override
-	public Boolean checkQuestionAlias(CloseableAONContext ctx, String alias) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> QuestionDAO.checkAlias(ctx, alias));
 	}
 
 	// REGISTRY PROFILE

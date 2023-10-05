@@ -15,11 +15,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.facturae.enumeration.PaymentMeans2;
 import com.code.aon.facturae.enumeration.TaxTypeCode;
 import com.code.aon.product.util.DiscountExpression;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -36,9 +38,12 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
+import es.gob.facturae.formato.versiones.facturaev3_2_2.AccountType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.AddressType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.AdministrativeCentreType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.AdministrativeCentresType;
@@ -55,6 +60,8 @@ import es.gob.facturae.formato.versiones.facturaev3_2_2.DiscountsAndRebatesType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.Facturae;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.FileHeaderType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.IndividualType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InstallmentType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InstallmentsType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceClassType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceDocumentTypeType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceHeaderType;
@@ -506,8 +513,46 @@ public class FacturaeWriter {
 			invoiceType.setLegalLiterals( getLegalLiterals() );			
 		}
 		invoiceType.setItems( getItems(invoiceType) );
-//		addPaymentDetails( invoiceType );
+		addPaymentDetails( invoiceType );
 		return invoiceType;
+	}
+	
+	private void addPaymentDetails( InvoiceType invoiceType ) {
+		InstallmentsType installments = new InstallmentsType();
+		for( Finance finance : invoice.getFinances() ) {
+			installments.getInstallment().add( getInstallment(finance) );
+		}
+		if (! installments.getInstallment().isEmpty() ) {
+			invoiceType.setPaymentDetails( installments );
+		}
+	}
+	
+	private InstallmentType getInstallment( Finance finance ) {
+		InstallmentType installment = new InstallmentType();
+		installment.setInstallmentDueDate( Util.toXMLCalendar(finance.getDueDate()) );
+		installment.setInstallmentAmount( finance.getAmount() );
+		PaymentMeans2 paymentMeans = null;
+		paymentMeans = getPaymentMeans( finance.getPayMethodType() );
+		installment.setPaymentMeans( paymentMeans.getValue() );			
+		if ( finance.getBankAccount() != null ) {
+			AccountType account = new AccountType();
+			account.setIBAN( finance.getBankAccount().getIban() );
+			if ( paymentMeans != PaymentMeans2.TRANSFERENCIA ) {
+				installment.setAccountToBeDebited(account);
+			} else {
+				installment.setAccountToBeCredited(account);
+			}
+		}
+		return installment;
+	}
+	
+
+	private PaymentMeans2 getPaymentMeans(PayMethodType payMethodType ) {
+		PaymentMeans2 paymentMeans = null;
+		if ( payMethodType != null ) {
+			paymentMeans = PaymentMeans2.getPaymentMeans(payMethodType);	
+		}
+		return (paymentMeans != null) ? paymentMeans : PaymentMeans2.AL_CONTADO;
 	}
 	
 	private InvoiceHeaderType getInvoiceHeader() {
@@ -529,7 +574,16 @@ public class FacturaeWriter {
 		invoiceIssueData.setInvoiceCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setTaxCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setLanguageName(LanguageCodeType.ES);
-//		invoiceIssueData.setFileReference("");
+
+		String filereference = null;
+		Integer i = 0;
+		while(AonStringUtils.isBlank(filereference) && i < invoice.getDetails().size()) {
+			filereference = getIssuerContractReference(invoice.getDetails().get(i), true);
+			i++;	
+		}
+		if(!AonStringUtils.isBlank(filereference)) {
+			invoiceIssueData.setFileReference(filereference);
+		}
 		return invoiceIssueData;
 	}
 	

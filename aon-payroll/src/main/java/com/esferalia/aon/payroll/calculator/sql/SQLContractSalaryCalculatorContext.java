@@ -6372,7 +6372,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public static Integer getDomain(SSRegimeType ssRegime) {
-		return (-1) * ssRegime.ordinal();
+	    	switch (ssRegime) {
+		case SEA_WORKERS: // Really ASSIMILATED
+			return (-1) * SSRegimeType.GENERAL.ordinal();
+		default:
+			return (-1) * ssRegime.ordinal();
+		}
 	}
 
 	protected static String orderBy(String stmt, OrderByList orderBy) {

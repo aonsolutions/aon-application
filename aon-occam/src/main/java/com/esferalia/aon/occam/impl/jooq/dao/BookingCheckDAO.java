@@ -37,7 +37,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class BookingCheckDAO {
 	
@@ -245,8 +244,8 @@ public class BookingCheckDAO {
 			condition = condition.and(CUSTOMER_FEE.BILLING_DATE.eq(parseSQLDate(billingDate)));
 		}
 			
-		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomer())) 
-			condition = condition.and(CUSTOMER_ALIAS.NAME.eq(customerFeeParams.getCustomer()));
+		if(null != customerFeeParams.getCustomer()) 
+			condition = condition.and(CUSTOMER.REGISTRY.eq(customerFeeParams.getCustomer()));
 		
 		if(null != customerFeeParams.getCustomerStatus())
 			condition = condition.and(CUSTOMER.STATUS.eq(customerFeeParams.getCustomerStatus()));
@@ -302,8 +301,8 @@ public class BookingCheckDAO {
 			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
 		}
 			
-		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomer())) 
-			condition = condition.and(CUSTOMER_ALIAS.NAME.eq(customerFeeParams.getCustomer()));
+		if(null != customerFeeParams.getCustomer()) 
+			condition = condition.and(CUSTOMER.REGISTRY.eq(customerFeeParams.getCustomer()));
 		
 		if(null != customerFeeParams.getCustomerStatus())
 			condition = condition.and(CUSTOMER.STATUS.eq(customerFeeParams.getCustomerStatus()));
