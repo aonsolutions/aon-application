@@ -145,8 +145,14 @@ export const AON_MOBILE_SALE = 'aon-mobile-sale';
 export const AON_SALES_LIST = 'aon-sales-list';
 export const AON_SALES = 'aon-sales';
 
+export const AON_MOBILE_DELIVERY_LIST = 'aon-mobile-delivery-list';
+export const AON_MOBILE_DELIVERY = 'aon-mobile-delivery';
+export const AON_DELIVERY_LIST = 'aon-delivery-list';
+export const AON_DELIVERY = 'aon-delivery';
+
 export const AON_MENU = 'aon-menu';
 export const AON_MOBILE_MENU = 'aon-mobile-menu';
 
 export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH, AON_AUTOSIZE_TEXTAREA, AON_CHECKBOX].join(", ");
 
+export const AON_QUANTITY = 'aon-quantity';

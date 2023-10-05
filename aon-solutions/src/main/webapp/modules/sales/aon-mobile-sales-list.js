@@ -1,5 +1,5 @@
 import { AonMobileList } from '../../components/aon-mobile-list.js';
-import { MATERIAL_ICONS, TAG } from '../../environments/environments.js';
+import { EVENT, MATERIAL_ICONS, TAG } from '../../environments/environments.js';
 import { getSales } from '../../services/salesService.js';
 import { AonMobileSale } from './aon-mobile-sale.js';
 
@@ -14,21 +14,27 @@ export class AonMobileSalesList extends AonMobileList {
     connectedCallback () {
         this.initialize();
         this.init();
-        this.addEventListener('more', () => {
-    		if(this.more)
-    			this.loadMore()
-    	});
+        this.addEventListener(EVENT.MORE, this.moreFn);
+    }
+    
+    moreFn = () => {
+        if(this.more)
+            this.loadMore()
+    };
+
+    disconnectedCallback() {
+        this.removeEventListener(EVENT.MORE, this.moreFn);
     }
 
     initialize() {
-        this.filter =  {
+        this.filter = this.filter || {
             page: 1,
             perPage: 30,
             full: true,
             to: new Date(),
             status: 'PENDING'
         };
-        this.more = false;
+        this.more = true;
     }
 
     loadMore() {
@@ -68,7 +74,6 @@ export class AonMobileSalesList extends AonMobileList {
         aonSale.setSale(sale);
         this.getApplication().setContent(aonSale);
     }
-    
 
 }
 

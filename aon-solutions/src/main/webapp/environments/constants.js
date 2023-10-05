@@ -89,6 +89,7 @@ export const DELETE = 'delete';
 export const DELETE_INVOICE = 'deleteInvoice';
 export const DELETE_FILE = 'deleteFile';
 export const DELETE_FOREVER = 'deleteForever';
+export const DELIVERY = 'delivery';
 export const DESCRIPTION = 'description';
 export const DETAILS = 'details';
 export const DISCOUNT = 'discount';

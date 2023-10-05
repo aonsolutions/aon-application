@@ -123,7 +123,7 @@ export class AonMobileElaboration extends AonElement {
 			this.buildPackaging(parent);
 			break;
 		}
-	  }
+	}
 
   	buildElaboration(parent){
 		this.buildElaborationGeneral(parent);
@@ -201,8 +201,8 @@ export class AonMobileElaboration extends AonElement {
 	buildPackaging(parent){
 		let div = this.createElement(TAG.DIV, "aonPackageDiv")
 		let packaging = new AonMobilePackageList();
-		packaging.setElaborationToolbar(this.ELABORATION_TOOLBAR);
-		packaging.setElaborationPackages(this.elaboration.packaging);
+		packaging.setToolbar(this.ELABORATION_TOOLBAR);
+		packaging.setPackages(this.elaboration.packaging);
 		div.appendChild(packaging);
 		parent.appendChild(div);
 	}
