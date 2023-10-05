@@ -170,9 +170,10 @@ export class Document implements IDocument, IModel {
         map.set('filesize', this.FileSize);
         map.set('filetype', this.FileType);
         map.set('path', this.Path);
-        this.tag.forEach(tag => {
-            map.set('tag', tag.Name);
-        })
+        // if(this.tag.size() > 0)
+        //     this.tag.forEach(tag => {
+        //         map.set('tag', tag.Name);
+        //     })
         return map;
     }
 

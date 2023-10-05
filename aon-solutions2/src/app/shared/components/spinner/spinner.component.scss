@@ -1,18 +1,23 @@
 @import 'src/styles.scss';
 
 ::ng-deep{
-  .container-spinner{
+  app-spinner{
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1;
   }
 
-  .container-spinner .round-spinner{
-    // border: 1px solid black;
+  app-spinner .round-spinner{
     border-radius: 100%;
-    background-color: rgba($color: $color-icon, $alpha: 0.2);
+    background-color: $color-icon;
     padding: $padding / 2;
+    opacity: 0.7;
   }
+
 }
