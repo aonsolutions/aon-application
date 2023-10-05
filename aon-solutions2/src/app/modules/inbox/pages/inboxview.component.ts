@@ -190,7 +190,7 @@ export class InboxviewComponent implements OnInit {
             }
           }
           try {
-            this.messageService.updateMessage(messageStatus);
+//            this.messageService.updateMessage(messageStatus);
           } catch (error) {
             throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
           }

@@ -142,7 +142,7 @@ export class TableQueriesComponent implements OnChanges {
 
     this.messageService.archiveMessage(message).then((updatedMessage) => {
       try {
-          this.messageService.updateMessage(updatedMessage);
+//          this.messageService.updateMessage(updatedMessage);
         } catch (error) {
           throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
         }
@@ -155,7 +155,7 @@ export class TableQueriesComponent implements OnChanges {
 
       this.messageService.reopenMessage(message).then((updatedMessage) => {
         try {
-          this.messageService.updateMessage(updatedMessage);
+//          this.messageService.updateMessage(updatedMessage);
         } catch (error) {
           throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
         }
