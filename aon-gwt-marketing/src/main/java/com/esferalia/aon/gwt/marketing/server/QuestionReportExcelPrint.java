@@ -58,7 +58,7 @@ public class QuestionReportExcelPrint extends HttpServlet {
 			
 			resp.flushBuffer();
 			list.stream().close();
-		} catch (Throwable e) {
+		} catch (RuntimeException e) {
 			throw new ServletException(e);
 		}
 	}

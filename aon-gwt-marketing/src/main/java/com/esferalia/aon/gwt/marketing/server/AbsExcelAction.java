@@ -60,7 +60,7 @@ public abstract class AbsExcelAction  {
 		workbook = new SXSSFWorkbook(1);
 		
 		
-	    sheet = (SXSSFSheet) workbook.createSheet(name);
+	    sheet = workbook.createSheet(name);
 	    dataFormat = workbook.getCreationHelper().createDataFormat();
 	    rowCount = 0;
 	    cellCount = 0;
@@ -202,15 +202,15 @@ public abstract class AbsExcelAction  {
 
         /** The directory where the temporary files will be created (<code>null</code> to use the default directory). */
         private File dir;
+        private static final String PROPERTY = "poi.keep.tmp.files";
 
         @Override
 		public File createTempFile(String prefix, String suffix) throws IOException {
             // Identify and create our temp dir, if needed
-        	
             if (dir == null || !dir.canWrite()) {
                 dir = new File(System.getProperty("java.io.tmpdir"), "poifiles");
                 dir.mkdir();
-                if (System.getProperty("poi.keep.tmp.files") == null)
+                if (System.getProperty(PROPERTY) == null)
                     dir.deleteOnExit();
             }
 
@@ -218,7 +218,7 @@ public abstract class AbsExcelAction  {
             File newFile = File.createTempFile(prefix, suffix, dir);
 
             // Set the delete on exit flag, unless explicitly disabled
-            if (System.getProperty("poi.keep.tmp.files") == null)
+            if (System.getProperty(PROPERTY) == null)
                 newFile.deleteOnExit();
 
             // All done
@@ -227,10 +227,9 @@ public abstract class AbsExcelAction  {
         
         @Override
         public File createTempDirectory(String prefix) throws IOException {
-        	// TODO Auto-generated method stub
             File dir = new File(System.getProperty("java.io.tmpdir"), prefix);
             dir.mkdir();
-            if (System.getProperty("poi.keep.tmp.files") == null)
+            if (System.getProperty(PROPERTY) == null)
                 dir.deleteOnExit();
             return dir;
         }

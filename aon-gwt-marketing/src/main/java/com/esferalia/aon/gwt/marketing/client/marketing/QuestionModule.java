@@ -67,17 +67,14 @@ public class QuestionModule extends MainEntryPoint {
 		// excel button
 		final AonToolbarButton excel = new AonToolbarButton( AON.MSG.export() , AON.CSS.aonIconExcel());
 
-		excel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
+		excel.addClickHandler(event -> {
 				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_QUESTION_REPORT_PRINT);
 				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 				domainNameHidden.setValue(getCurrentDomainName());
 				userHidden.setValue(getCurrentUser());
 				diskForm.submit();
-			}
 		});
+		
 		toolbar.add(excel);
 
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
