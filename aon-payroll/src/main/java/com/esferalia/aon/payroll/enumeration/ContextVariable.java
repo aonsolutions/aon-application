@@ -163,7 +163,9 @@ public enum ContextVariable implements IResourceable {
 	// Datos 'temporales' del contrato
 	
 	TC2("TC2", VariableType.TC2_DROP, false), CNO("CNO", VariableType.CNO_LOOKUP, false),
-	IPREM("IPREM", VariableType.DOUBLE, false), CATEGORY("CATEGORIA", VariableType.STRING, false),
+	SMI("SMI", VariableType.DOUBLE, false), 
+	IPREM("IPREM", VariableType.DOUBLE, false), 
+	CATEGORY("CATEGORIA", VariableType.STRING, false),
 	INDEFINITE("INDEFINIDO", VariableType.BOOLEAN, false), OCCUPATION("OCUPACION", VariableType.OCCUPATION_DROP, false),
 //	GUARANTEED("GARANTIZADO", VariableType.DOUBLE, false),
 	IRREGULAR("IRREGULAR", VariableType.BOOLEAN, false), 

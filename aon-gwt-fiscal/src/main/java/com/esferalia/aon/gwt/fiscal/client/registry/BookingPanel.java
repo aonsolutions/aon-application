@@ -252,10 +252,16 @@ public class BookingPanel extends MainEntryPoint {
 	private HTMLPanel periodItemPanel;
 	private ListBox monthListBox;
 	private ListBox yearListBox;
+	
+	MultiWordSuggestOracle customers = new MultiWordSuggestOracle();
 	private SuggestBox customerSuggestBox;
+	
 	private ListBox customerStatusListBox;
 	private ListBox segmentListBox;
+	
+	MultiWordSuggestOracle products = new MultiWordSuggestOracle();
 	private SuggestBox conceptSuggestBox;
+	
 	private ListBox conceptStatusListBox;
 	private ListBox startCompareLB;
 	private AonDateBox startDateBox;
@@ -278,7 +284,6 @@ public class BookingPanel extends MainEntryPoint {
 	
 	// Search Variables
 	private CustomerFeeParams params;
-	private Date billingDate;
 	
 	private Map<String, Customer> customerSuggestions = new TreeMap<>();
 	
@@ -291,7 +296,6 @@ public class BookingPanel extends MainEntryPoint {
 	private int lastScrollPos = 0;
 	
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
-	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	
 	@Override
 	public void onModuleLoad() {
@@ -488,6 +492,7 @@ public class BookingPanel extends MainEntryPoint {
 			
 			segmentListBox = new ListBox();
 			segmentListBox.setHeight("2em");
+			segmentListBox.setWidth("100px");
 			segmentListBox.getElement().getStyle().setProperty("padding", "0 5px");
 			segmentListBox.addItem("-", "");
 			segmentListBox.addItem("SIN SEGMENTO", "-1");
@@ -534,6 +539,7 @@ public class BookingPanel extends MainEntryPoint {
 		});
 		
 		startDateBox = new AonDateBox();
+		startDateBox.setWidth("70px");
 		startDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		startDateBox.addStyleName("gwt-TextBox");
 		setInputStyle(startDateBox);
@@ -558,6 +564,7 @@ public class BookingPanel extends MainEntryPoint {
 		});
 		
 		endDateBox = new AonDateBox();
+		endDateBox.setWidth("70px");
 		endDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		endDateBox.addStyleName("gwt-TextBox");
 		setInputStyle(endDateBox);
@@ -687,6 +694,7 @@ public class BookingPanel extends MainEntryPoint {
 	private ListBox createCompareListBox() {
 		ListBox lb = new ListBox();
 		lb.setHeight("2em");
+		lb.setWidth("30px");
 		lb.getElement().getStyle().setProperty("padding", "0 5px");
 
 		lb.addItem("=", "0");
@@ -699,7 +707,7 @@ public class BookingPanel extends MainEntryPoint {
 	// ------- CUSTOMER ---------
 	
 	private void createCustomerSuggestBox() {
-		customerSuggestBox = new SuggestBox();
+		customerSuggestBox = new SuggestBox(customers);
 		customerSuggestBox.setWidth("225px");
 		customerSuggestBox.setHeight("2em");
 		customerSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
@@ -747,12 +755,7 @@ public class BookingPanel extends MainEntryPoint {
 			@Override
 			public void onSuccess(Map<String, Customer> customerSuggestionsDB) {
 				customerSuggestions = customerSuggestionsDB;
-				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerSuggestBox.getSuggestOracle();
-				orclSb.clear();
-				orclSb.addAll(customerSuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(customerSuggestions.keySet());
-				customerSuggestBox.showSuggestionList();
+				customers.addAll(customerSuggestions.keySet());
 			}
 			
 			@Override
@@ -766,7 +769,7 @@ public class BookingPanel extends MainEntryPoint {
 	// ------- PRODUCT ---------
 
 	private void createConceptSuggestBox() {
-		conceptSuggestBox = new SuggestBox();
+		conceptSuggestBox = new SuggestBox(products);
 		conceptSuggestBox.setWidth("240px");
 		conceptSuggestBox.setHeight("2em");
 		conceptSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
@@ -802,12 +805,7 @@ public class BookingPanel extends MainEntryPoint {
 			@Override
 			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
 				productSuggestions = productSuggestionsDB;
-				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) conceptSuggestBox.getSuggestOracle();
-				orclSb.clear();
-				orclSb.addAll(productSuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(productSuggestions.keySet());
-				conceptSuggestBox.showSuggestionList();
+				products.addAll(productSuggestions.keySet());
 			}
 			
 			@Override
@@ -996,7 +994,7 @@ public class BookingPanel extends MainEntryPoint {
 				
 		params.setMonth(AonStringUtils.isBlank(monthListBox.getSelectedValue()) ? null : Integer.parseInt(monthListBox.getSelectedValue()));
 		params.setYear(AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue()));
-		params.setCustomer(null != customerSuggestions.get(customerSuggestBox.getValue()) ? customerSuggestions.get(customerSuggestBox.getValue()).getName() : null);
+		params.setCustomer(null != customerSuggestions.get(customerSuggestBox.getValue()) ? customerSuggestions.get(customerSuggestBox.getValue()).getId() : null);
 		params.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBox.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBox.getSelectedValue()));
 		params.setSegment(segmentListBox != null && segmentListBox.getSelectedIndex() > 0 ? AonNumberUtils.toInteger( segmentListBox.getSelectedValue()) : null);
 		params.setProduct(null != productSuggestions.get(conceptSuggestBox.getValue()) ? productSuggestions.get(conceptSuggestBox.getValue()).getId() : null);
