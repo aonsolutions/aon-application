@@ -850,6 +850,8 @@ public abstract class EmployeeDraft extends Composite {
 	}
 
 	private void fillContractTable(ContractInfo contractData) {
+		employee.checkCCCType(contractData.getCccType());
+		
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
 		setSelectedValueLB(employee.mdTBTLB, contractData.getMdTBT()+"");
 		
