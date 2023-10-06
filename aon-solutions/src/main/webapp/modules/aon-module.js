@@ -1,6 +1,10 @@
 import { AonElement } from '../components/AonElement.js';
 import { getToken , getCompanies, getUser, login} from '../services/service.js';
 import { AonLogin } from './login/aon-login.js';
+
+// Uncomment for aon-new-login
+// import { AonNewLogin } from './login/aon-new-login.js';
+
 import { AonHome } from './aon-home.js';
 import { TAG } from '../environments/environments.js'; 
 import * as LS  from '../services/localStorageService.js';
@@ -28,6 +32,13 @@ export class AonModule extends AonElement {
 		this.AON_MODULE_LOADER = 'aonModuleLoader';
 	}
 	
+	// Uncomment for aon-new-login
+	// buildLogin(){
+	// 	this.clear();
+	// 	let login = new AonNewLogin();
+	// 	login.id = this.AON_LOGIN;
+	// 	this.appendChild(login)
+	// }
 
 	buildLogin(){
 		this.clear();

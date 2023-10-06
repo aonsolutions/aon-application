@@ -28,13 +28,18 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class VatReportPDF {
+public class VatReportPDF implements IAccountReportPDF {
 
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00;(#,##0.00)");
 	private static final Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 7);
 	private static final Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD);
 	
 	private final DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+	
+	@Override
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
+		printReport(outputStream, params);
+	}
 
 	public void printReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
 		
@@ -266,4 +271,5 @@ public class VatReportPDF {
 		}
 
 	}
+
 }
