@@ -34,17 +34,17 @@
   }
 
   #itemEnterprise div div {
-    flex-direction: row;
-    display       : flex;
-    gap           : 36.8px;
-    padding       : $padding;
-    justify-content: flex-start;
-    align-items   : center;
-    cursor        : pointer;
-    font-size     : $font-size-24;
-    margin        : $margin;
-    border-radius : $border-radius;
-    border        : $border;
+    flex-direction  : row;
+    display         : flex;
+    gap             : $margin;
+    padding         : $padding;
+    justify-content : flex-start;
+    align-items     : center;
+    cursor          : pointer;
+    font-size       : $font-size-24;
+    margin          : $margin;
+    border-radius   : $border-radius;
+    border          : $border;
   }
 
   #itemEnterprise caption {

@@ -11,7 +11,7 @@
 
   .dashboard-billing [body] {
     display: flex;
-    gap: 1rem;
+    gap   : $margin;
     height: 11.8rem;
     cursor: pointer;
   }
@@ -27,7 +27,7 @@
   .dashboard-billing {
     [footer] {
       display: flex;
-      gap: 1rem;
+      gap: $margin;
     }
 
     [footer]:hover {
