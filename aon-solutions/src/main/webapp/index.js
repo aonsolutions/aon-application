@@ -10,9 +10,7 @@ import './css/aon-css-utils.css';
 import './css/aon-grid.css';
 import './css/aon-mobile.css';
 import './css/aon.css';
-
-// Uncomment for aon-new-login
-// import './css/aon-figma.css';
+import './css/aon-figma.css';
 
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM =  (token) => {

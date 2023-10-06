@@ -6,7 +6,12 @@
 }
 
 .aonInputMsg {
-	height: 15px;
+	height: 25px;
+	margin-left: 15px;
+}
+
+.aonInputMsgError {
+	color: var(--aonError);
 }
 
 .aonInputBoxLabel > input {
@@ -31,6 +36,9 @@
 	color: var(--aonGray);
 }
 
+.aonInputBoxLabelInputError {
+	border: 2px solid var(--aonError) !important;
+}
 
 .aonInputBoxLabel > span {
 	top: -8px;
@@ -42,6 +50,10 @@
 	left: 5px;
 	font-size: 12px;
 	/* color: var(--aonGray); */
+}
+
+.aonInputBoxLabelSpanError {
+	color: var(--aonError);
 }
 
 .aonInputBoxLabel > span:focus {
