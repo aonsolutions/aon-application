@@ -201,7 +201,6 @@ export class AonTax extends AonElement {
       dialog.width = "500px";
     }
     
-    // FALTA - ESCONDER BOTONES
     if (dialog.getButtonAccept())
        dialog.getButtonAccept().remove();
     if (dialog.getButtonCancel())
@@ -308,7 +307,7 @@ export class AonTax extends AonElement {
     aonSelect2.name = "certi";
     aonSelect2.id = "certi";
     aonSelect2.title = "Certificado para la Presentación";
-    aonSelect2.hidden = (resp.presModelAuto==0);
+    aonSelect2.hidden = (resp.presModelAuto==0 || "CUSTOMER_CHECK"!=resp.status);
     form.appendChild(aonSelect2);
     
     //---END FORM---
@@ -376,7 +375,7 @@ export class AonTax extends AonElement {
         if(!value) return false;
       } 
       this.save(resp).then(()=>{
-        dialog.close();
+        dialog.close();        
       });
     });
 
@@ -409,15 +408,18 @@ export class AonTax extends AonElement {
         }
       }
     })
-    
-    const certi = this.getElement('certi');
+   
+    const certi = this.getElement('certi');    
     getAeatCertificates().then(certs => {
 			certi.setOptions(certs.map(s => {
 				return {
 				  value: s.id,
 				  name: s.name
 				}
-			  }));
+			  }));			  
+			if (certi.getOptions().length == 1) {
+				certi.value = certi.getOptions()[0].value;
+			}
 		});
     
   }
@@ -430,12 +432,12 @@ export class AonTax extends AonElement {
       let banks = this.getApplicationParent().BANKS;
       let formObj = serializeForm(this.getElement(`${this.id}Form`));
       if(!isEmptyObject(banks) && formObj.iban){
-        const bankObj = banks.find(bank =>  this.replaceAllPoint(bank.bankAccount) === formObj.iban);
+        const bankObj = banks.find(bank =>  this.replaceAllPoint(bank.bank_account) == formObj.iban);
         if(bankObj){
           formObj["bankAlias"] = bankObj.alias;
-          formObj["bankBic"] = bankObj.bic;
-        }
-      }
+          formObj["bic"] = bankObj.bic;
+        } 
+      } 
       
       const nrc = this.getElement('nrc');
       formObj["nrc"] = nrc.value;      
@@ -446,7 +448,7 @@ export class AonTax extends AonElement {
       return formObj;
   }
 
-  visibleFields({type}){
+  visibleFields({type,status}){
     if(type){
       let iban = this.getElement("iban");
       let divNrc = this.getElement("divNrc");
@@ -454,7 +456,8 @@ export class AonTax extends AonElement {
       let nrcHidden  = true;
       switch(type){
         case CONST_FISCAL.DEPOSIT:
-          ibanHidden = nrcHidden = false;
+          // ibanHidden = false; // El IBAN no se necesita en el ingreso, solo se necesita el NRC 
+          nrcHidden = "CUSTOMER_CHECK"!=status;
         break;
         case CONST_FISCAL.BANK:
         case CONST_FISCAL.PAYBACK:
@@ -491,7 +494,7 @@ export class AonTax extends AonElement {
       
       console.error(error);
           
-      // FALTA - Controlar los posibles errores    
+      // Controlar los posibles errores    
       let errorJson = JSON.parse(error);      
       if (errorJson) {
 		  if (errorJson.class_name == "AonApiAeatError") {
@@ -524,13 +527,18 @@ export class AonTax extends AonElement {
 			  
 			  	  let text = this.ERROR_TEMPLATE_START + 
 			                 this.ERROR_TEMPLATE_AEAT + 
-			                 this.ERROR_TEMPLATE_BEFORE + 
-			                 "<li>" + errorMessages.respuesta.errores + "</li>" +
-			                 this.ERROR_TEMPLATE_AFTER +
-			                 this.ERROR_TEMPLATE_END;
+			                 this.ERROR_TEMPLATE_BEFORE;
+			                 
+			      errorMessages.respuesta.errores.forEach((res) => {
+					  text = text + "<li>" + res + "</li>";
+				  }); 	  
+			                 
+			      text = text + this.ERROR_TEMPLATE_AFTER +
+			                    this.ERROR_TEMPLATE_END;
 			      let file = new Blob([text], { type: "text/html" });
       			  let url = URL.createObjectURL(file);
       	          window.open(url, '_blank');
+      	          await this.getTable();
 				  
 			  }
 			  		  
@@ -540,7 +548,8 @@ export class AonTax extends AonElement {
 			  
 			  if (this.isMobile()) {
 				  
-				  // MOBILE: Simplemente se muestra error en la presentación del modelo
+				  // MOBILE: Simplemente se muestra error en la presentación del modelo				  
+				  await this.getTable();
 				  this.showMessageError("ERROR EN LA PRESENTACIÓN DEL MODELO");
 				  
 			  } else {
@@ -550,6 +559,7 @@ export class AonTax extends AonElement {
 			      let file = new Blob([text], { type: "text/html" });
       			  let url = URL.createObjectURL(file);
       	          window.open(url, '_blank');
+      	          await this.getTable();
 				  
 			  }
 			  
@@ -557,12 +567,14 @@ export class AonTax extends AonElement {
 			  
 			  // Otros errores no relacionados directamente con la llamada a la presentación del modelo
 			  
-			  this.showMessageError(errorJson.message);			  
+			  await this.getTable();
+			  this.showMessageError(errorJson.message);
+			  			  
 		  }		  
 	  } else {
 		this.showMessageError(error);  
 	  }
-    } 
+    }     
     this.applicationEl.stopLoading();
   }
 

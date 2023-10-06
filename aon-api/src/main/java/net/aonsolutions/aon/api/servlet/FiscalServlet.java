@@ -100,7 +100,7 @@ import net.aonsolutions.aon.google.apis.drive.AonDrive;
 public class FiscalServlet extends AonApiHttpServlet{
 		
 	private static final long serialVersionUID = -8021598700474389724L;
-	
+ 
 	private static final Logger LOGGER  = Logger.getLogger(FiscalServlet.class.getName());
 
 	@Override
@@ -207,8 +207,16 @@ public class FiscalServlet extends AonApiHttpServlet{
 					throw new AonApiException("ERROR: Debe seleccionar certificado.");
 				}
 				
-				// FALTA - TAMBIEN SE PODRIA COMPROBAR SI ES INGRESO Y NO SE HA PUESTO EL NRC
-	
+				// Comprobar si hay presentación automática, es ingreso y no se ha indicado NRC
+				if (presModelAuto == 1 && declarationType == FiscalModelDeclarationType.DEPOSIT && AonStringUtils.isBlank(nrc)) {
+					throw new AonApiException("ERROR: Debe indicar NRC.");
+				}
+				
+				// Comprobar si hay presentación autómatica, es domiciliación o devolución y no se ha indicado IBAN
+				if (presModelAuto == 1 && (declarationType == FiscalModelDeclarationType.BANK || declarationType == FiscalModelDeclarationType.PAYBACK) && AonStringUtils.isBlank(iban)) {
+					throw new AonApiException("ERROR: Debe indicar IBAN.");
+				}				
+				
 				modelType.visit(new IFiscalModelTypeVisitor() {
 					@Override
 					public void visitM111() {
@@ -235,6 +243,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
+							model.getFinance().setBankAlias(bankAlias);
+							model.getFinance().setBic(bankBIC);
 						}
 						if(reject) {
 							Mod115DAO.markAsCustomerRejected(ctx, model, reasonReject);
@@ -250,6 +260,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
+							model.getFinance().setBankAlias(bankAlias);
+							model.getFinance().setBic(bankBIC);
 						}
 						if(reject) {
 							Mod123DAO.markAsCustomerRejected(ctx, model, reasonReject);
@@ -265,6 +277,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
+							model.getFinance().setBankAlias(bankAlias);
+							model.getFinance().setBic(bankBIC);
 						}
 	
 						Mod130DAO.markAsFinished(ctx, model); 
@@ -277,6 +291,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
+							model.getFinance().setBankAlias(bankAlias);
+							model.getFinance().setBic(bankBIC);
 						}
 						Mod131DAO.markAsFinished(ctx, model);
 					}
@@ -288,6 +304,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
+							model.getFinance().setBankAlias(bankAlias);
+							model.getFinance().setBic(bankBIC);
 						}
 						Mod202DAO.markAsFinished(ctx, model); 
 					}
@@ -296,16 +314,17 @@ public class FiscalServlet extends AonApiHttpServlet{
 					public void visitM303() {
 						Mod303 model = Mod303DAO.get(ctx, id);
 						model.setDeclarationResultType(declarationType);
-						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
+						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {							
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
+							model.getFinance().setBankAlias(bankAlias);
+							model.getFinance().setBic(bankBIC);
 						}
 						if(reject) {
 							Mod303DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
-							// Finalizar el modelo 
-							// FALTA - POR AHORA PARA HACER PRUEBAS CUANDO SE DEVUELVEN ERRORES, NO LO VOY A FINALIZAR							 
-							//Mod303DAO.markAsFinished(ctx, model);
+							// Finalizar el modelo	 
+							Mod303DAO.markAsFinished(ctx, model);
 							// Presentación automática del modelo 
 							if (presModelAuto == 1) {
 								AEATParams params = new AEATParams()
@@ -313,10 +332,10 @@ public class FiscalServlet extends AonApiHttpServlet{
 										.setDomainId(api.getDomain().getId())
 										.setUser(api.getUser().getLogin())
 										.setMod(model.getId())
-										.setName("")      // Lo dejamos en blanco, para que se coja del certificado
-										.setDocument("")  // Lo dejamos en blanco, para que se coja del certificado
 										.setCertificateId(certi)
-										.setPass("")  // La dejamos en blanco, para que se coja la que tiene guardada el certificado
+										.setName("")      // Lo dejamos en blanco, para que se coja del certificado
+										.setDocument("")  // Lo dejamos en blanco, para que se coja del certificado										
+										.setPass("")      // La dejamos en blanco, para que se coja la que tiene guardada el certificado
 										.setNrc(nrc)
 										.setTest(test);  
 								send(params, model);
@@ -358,7 +377,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			params.put("MODELO", FiscalModelUtils.getModelName(model));
 			params.put("EJERCICIO", AonNumberUtils.toString( model.getYear()));
 			params.put("PERIODO", period);
-			params.put("NRC", (model.isStrictToDeposit()?aeatParams.getNrc() : ""));
+			params.put("NRC", aeatParams.getNrc());			
 			params.put("IDI", "ES");
 			params.put("F01", getUnencodedFile(fileContent,StandardCharsets.UTF_8));
 			params.put("FIR", "FirmaBasica");
@@ -590,14 +609,13 @@ public class FiscalServlet extends AonApiHttpServlet{
 	    
 	    CertificateInfo info = CertificateDAO.verifyCertificate(attach.getData(), params.getPass());
 	    
-	    // FALTA - COGEMOS EL NIF Y NOMBRE DEL TITULAR DEL CERTIFICADO, SE SUPONE QUE EN LOS CERTIFICADOS DE REPRESENTACION, TAMBIEN SE DEBE
+	    // COGEMOS EL NIF Y NOMBRE DEL TITULAR DEL CERTIFICADO, SE SUPONE QUE EN LOS CERTIFICADOS DE REPRESENTACION, TAMBIEN SE DEBE
 	    // COGER ESE, AUNQUE EN EL ENTORNO DE PRUEBAS SE OBLIGA A QUE EL NIF DEL DECLARANTE Y DEL CERTIFICADO SEAN IGUALES
 	    params.setDocument(AonStringUtils.trimToEmpty(info.getDocument()).toUpperCase());
 	    params.setName((AonStringUtils.trimToEmpty(info.getSurname()) + " " + AonStringUtils.trimToEmpty(info.getName())).toUpperCase());
 	    
-	    // FALTA QUITAR
-	    System.out.println("surname: "  + params.getName());
-	    System.out.println("document: "  + params.getDocument());   
+//	    System.out.println("surname: "  + params.getName());
+//	    System.out.println("document: "  + params.getDocument());   
 	    
     	KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
    		kmf.init(keyStore, params.getPass().toCharArray());
