@@ -112,11 +112,13 @@ export class AonNewInput extends AonElement {
         msgDiv.id = this.MSG;
         msgDiv.className = CSS.AON_INPUT_MSG
         parent.appendChild(msgDiv);
+        msgDiv.style.display = 'none';
     }
 
     buildErrorMessage(message) {
         let div = this.getElement(this.MSG);
         this.clearElement(div);
+        div.style.display = '';
         
         let span = this.createElement(TAG.SPAN);
         span.id = this.MSG_SPAN;
@@ -158,6 +160,7 @@ export class AonNewInput extends AonElement {
 
         let div = this.getElement(this.MSG);
         this.clearElement(div);
+        div.style.display = 'none';
     }
 
     getId() {

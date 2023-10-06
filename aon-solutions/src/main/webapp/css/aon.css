@@ -472,12 +472,12 @@
 }
 
 .aonToolbar2 { /* NUEVO LOGIN */
-  border-bottom: solid 0.05rem #d2d2d6;
-  height: 3.5rem;
   display: flex;
-  padding: 0 2rem;
   align-items: center;
   justify-content: space-between;
+  height: 4rem;
+  border-bottom: solid 0.05rem #d2d2d6;
+  padding: 0 2rem;
 }
 
 .aonToolbarBeta {
