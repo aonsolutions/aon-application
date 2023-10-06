@@ -5,10 +5,12 @@ import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
 import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
-import { TableQueriesComponent } from '../components/table-queries/table-queries.component';
+// import { TableQueriesComponent } from '../components/table-queries/table-queries.component';
 import { DatePipe } from '@angular/common';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
+import { TablesInboxComponent } from '../components/tables-inbox/table-inbox.component';
+
 
 export interface Tabs {
   name: string;
@@ -22,7 +24,7 @@ export interface Tabs {
 })
 export class InboxviewComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
-  @ViewChild(TableQueriesComponent, { static: false })
+  @ViewChild(TablesInboxComponent, { static: false })
   collectionFactory = new CollectionFactory();
   entityFactory = new Factory();
   datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
@@ -48,6 +50,7 @@ export class InboxviewComponent implements OnInit {
   showSendButtons: boolean = false;
   filterDate: number = 1;
   selectedFilterText: string = '';
+  selectedFilterType: string = '';
   expandedIndex: number = -1;
   newMessageDescription: string = '';
   spinner: boolean = true;
@@ -58,7 +61,6 @@ export class InboxviewComponent implements OnInit {
   tareasMessageCount: number = 0;
   notificacionesMessageCount: number = 0;
   totalMessageCount: number = 0;
-  tableQueriesComponent!: TableQueriesComponent;
   menuItem: MenuItem[] = [];
   selected: string = '';
   items: any[] = [];
