@@ -9,6 +9,7 @@ import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statis
 import { Apps, getAppsByDur } from '../../services/app.js';
 import { AonSaltra } from '../laboral/aon-saltra.js';
 import { getPosition } from '../../services/maps.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonMobileDesktop extends AonElement {
 
