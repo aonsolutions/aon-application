@@ -1,15 +1,18 @@
+import { GenericMultipleObjectCrud, GenericSingleObjectCrud } from "../services/GenericCrudService";
+import { GenericMultipleObjectCrudRepository, GenericSingleObjectCrudRepository } from "../repositorys/GenericRepository";
+import { ISingleObjectCrud, IMultipleObjectCrud, IUserSpecificMethods } from "../interfaces/serviceInterfaces";
 import { ISingleObjectCrudFactory, IMultipleObjectCrudFactory } from "../interfaces/factoryInterfaces";
 import { IUser } from "../interfaces/modelsInterfaces";
-import { ISingleObjectCrud, IMultipleObjectCrud, IUserSpecificMethods } from "../interfaces/serviceInterfaces";
 import { LocalUserSpecificMethodsRepository } from "../repositorys/UserRepository";
+import { StorableUser, User } from "../models/User";
 import { UserSpecificMethods } from "../services/UserService";
 
 export class UserFactory implements ISingleObjectCrudFactory<IUser>, IMultipleObjectCrudFactory<IUser> {
     createSingleObjectCrud(): ISingleObjectCrud<IUser> {
-        throw new Error('Method not implemented.');
+      return new GenericSingleObjectCrud<User>(new GenericSingleObjectCrudRepository<User>(new StorableUser(), User), User);
     }
     createMultipleObjectCrud(): IMultipleObjectCrud<IUser> {
-        throw new Error('Method not implemented.');
+      return new GenericMultipleObjectCrud<User>(new GenericMultipleObjectCrudRepository<User>(new StorableUser(), User), User);
     }
     createSpecificMethods(): IUserSpecificMethods {
         return new UserSpecificMethods(new LocalUserSpecificMethodsRepository());
