@@ -21,6 +21,7 @@ import { AonToast } from "../../components/aon-toast.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { Language } from "../../models/Language.js";
 import * as COLORS from "../../environments/colors.js";
+import { AonNewInput } from "../../components/aon-new-input.js";
 
 export class AonLogin extends AonElement {
   tag;
@@ -98,17 +99,19 @@ export class AonLogin extends AonElement {
     aonLoader.id = 'aonLoginLoader';
     divContent.appendChild(aonLoader);
 
-    let userInput = this.createAonElement(new AonInput(), 'aonLoginUser', MSG.USER);
-
+    let userInput = this.createAonElement(
+      LS.isNewTheme() ? new AonNewInput() : new AonInput()
+      , 'aonLoginUser', MSG.USER);
     userInput.addEventListener(EVENT.KEYUP, () => {
       this.getElement('aonLoginMagicLink').setDisabled(!userInput.value.includes('@')); 
     })
     divContent.appendChild(userInput);
 
-    let passwordInput = this.createAonElement(new AonInput(), 'aonLoginPassword', MSG.PASSWORD);
+    let passwordInput = this.createAonElement(
+      LS.isNewTheme() ? new AonNewInput() : new AonInput()
+      , 'aonLoginPassword', MSG.PASSWORD);
     passwordInput.type = 'password';
     divContent.appendChild(passwordInput);
-
 
     let divButtons = this.createElement(TAG.DIV);
     divButtons.style.display = 'flex';

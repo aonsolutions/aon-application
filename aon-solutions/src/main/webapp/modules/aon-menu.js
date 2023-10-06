@@ -7,6 +7,7 @@ import { AonDocumental } from './documental/aon-documental.js';
 import { AonDocumentalAyudat } from './documental/ayudat/aon-documental-ayudat.js';
 import './project/aon-project-panel.js';
 import * as GWT from "../gwt/gwt.js";
+import * as LS from "../services/localStorageService.js";
 import { AonMessenger } from './messenger/aon-messenger.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonFiscal } from './fiscal/aon-fiscal.js';
@@ -173,7 +174,7 @@ export class AonMenu extends AonElement {
 	build() {
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = "aonMenuSidenav";
-		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV_BETA;
+		aonMenuSidenav.className = LS.isNewTheme() ? CSS.AON_MENU_SIDENAV : CSS.AON_MENU_SIDENAV_BETA;
 		this.appendChild(aonMenuSidenav);
 
 		aonMenuSidenav.addEventListener(EVENT.MOUSELEAVE, () => {

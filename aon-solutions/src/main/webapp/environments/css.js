@@ -60,6 +60,7 @@ export const AON_MENU_SIDENAV_SUBAPP_LIST = 'aonMenuSidenavSubAppList';
 export const AON_COMPANY_LIST = 'aonCompanyList';
 export const AON_SIDENAV_DIV = 'aonSidenavDiv';
 export const AON_SIDENAV_TITLE = 'aonSidenavTitle';
+export const AON_SIDENAV_TITLE_ARROW = 'aonSidenavTitleArrow';
 export const AON_SIDENAV = 'aonSidenav';
 export const AON_SIDENAV_BETA = 'aonSidenavBeta';
 export const AON_CONTENT = 'aonContent';
@@ -148,6 +149,12 @@ export const AON_MOBILE_SUB_CONTENT = 'aonMobileSubContent';
  // aon-loader.css
 
 export const AON_LOADING = 'aonLoading';
+
+// aon-new-input.css
+
+export const AON_INPUT_BOX = 'aonInputBox';
+export const AON_INPUT_BOX_LABEL = 'aonInputBoxLabel';
+export const AON_INPUT_MSG = 'aonInputMsg';
 
 // aon-input.css
 

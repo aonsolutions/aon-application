@@ -78,6 +78,7 @@
 		} else {
 			localStorage.removeItem('rootPanel');
 		}
+		localStorage.setItem('aon_solutions', true);
 		removeRootPanel(panel);
 		preStartModule(module);
 		if (window.document.createElement && window.document.getElementsByTagName) {
