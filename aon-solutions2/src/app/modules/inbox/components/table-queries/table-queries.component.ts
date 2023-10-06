@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import {
   CollectionFactory,
+  ErrorResponse,
   FilterBuilder,
   ICollection,
   IMessage,
@@ -97,26 +98,30 @@ export class TableQueriesComponent implements OnChanges {
   }
 
   //Filtros para las fechas
+  // Inicio de la semana actual
   private getStartDateOfWeek(): string {
     const currentDate = new Date();
     const startDate = new Date(currentDate);
-    startDate.setDate(startDate.getDate() - startDate.getDay()); // Inicio de la semana actual
+    startDate.setDate(startDate.getDate() - startDate.getDay() + 1);
     return this.formatDate(startDate);
   }
 
+  // Fin de la semana actual
   private getEndDateOfWeek(): string {
     const currentDate = new Date();
     const endDate = new Date(currentDate);
-    endDate.setDate(endDate.getDate() + (6 - endDate.getDay())); // Fin de la semana actual
+    endDate.setDate(endDate.getDate() + (6 - endDate.getDay()) + 1);
     return this.formatDate(endDate);
   }
 
+  // inicio del mes actual
   private getStartDateOfMonth(): string {
     const currentDate = new Date();
     const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     return this.formatDate(startDate);
   }
 
+  // fin del mes actual
   private getEndDateOfMonth(): string {
     const currentDate = new Date();
     const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -127,25 +132,34 @@ export class TableQueriesComponent implements OnChanges {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return `${day}/${month}/${year}`;
+
   }
 
     //TODO Método para cambiar el estado de una consulta a "Cerrada"
     archiveMessage(message: IMessage) {
-      this.messageService.archiveMessage(message).then((updatedMessage) => {
-        console.log('Consulta archivada:', updatedMessage);
-      }).catch((error) => {
-        console.error('Error al archivar consulta:', error);
-      });
+      console.log('entra en archiveMessage');
+
+    this.messageService.archiveMessage(message).then((updatedMessage) => {
+      try {
+//          this.messageService.updateMessage(updatedMessage);
+        } catch (error) {
+          throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
+        }
+      })
     }
 
     //TODO Método para cambiar el estado de una consulta a "Abierta"
     reopenMessage(message: IMessage) {
+      console.log('entra en reopenMessage');
+
       this.messageService.reopenMessage(message).then((updatedMessage) => {
-        console.log('Consulta abierta:', updatedMessage);
-      }).catch((error) => {
-        console.error('Error al reabrir consulta:', error);
-      });
+        try {
+//          this.messageService.updateMessage(updatedMessage);
+        } catch (error) {
+          throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
+        }
+      })
     }
 
   private updateTableData() {
@@ -162,7 +176,6 @@ export class TableQueriesComponent implements OnChanges {
     this.messageService
       .getMessageList(filterBuilder.getFilter())
       .then((response) => {
-        console.log(response)
         this.messagess = response;
         this.messagesSubject.next(this.messagess);
         let pendingQueriesFound = false;
@@ -181,7 +194,7 @@ export class TableQueriesComponent implements OnChanges {
           const column: any = Object.assign({}, message);
           column.key = messageKey;
           column.name = message.Name;
-          // TODO: eliminar mi if cuando tenga el filtro desde la api y descomentar lo de arriba
+
           if (
             this.filterStatus[this.filterTabSelec] === message.Status.toLowerCase()
             || this.filterStatus[this.filterTabSelec] === 'todas'
@@ -200,20 +213,34 @@ export class TableQueriesComponent implements OnChanges {
                 message.Status +
                 '</span>',
             };
-            column.title = message.Title;
-            column.description = message.Description;
-            column.date = datepipe.transform(message.Date, 'MM/dd/yyyy, HH:mm');
-            column.action = {
-              icon: lowerCaseStatus.includes('abierta')
-                ? [{ archive: 'grey' }]
-                : [{ replay: 'grey' }],
-            };
-            column.class = (message.Status == 'abierta') ? 'border-red' : '';
-            tableRow.push(column);
 
-            if (message.Status.toLowerCase().includes('nueva')) {
-              pendingQueriesFound = true;
-            }
+            // Asunto del mensaje
+            column.title = message.Title;
+            // Mensaje
+            column.description = message.Description;
+            // Fecha
+            column.date = datepipe.transform(message.Date, 'dd/MM/yyyy, HH:mm');
+            // Marcar como nueva
+             column.action = {
+               icon: lowerCaseStatus.includes('abierta')
+                 ? [{ archive: 'grey' }]
+                 : [{ replay: 'grey' }],
+             };
+            // switch(message.Status) {
+            //   case 'abierta':
+            //     column.action = [{archive : 'grey'}];
+            //     column.archiveClick = () => this.archiveMessage(message);
+            //     break;
+            //   case 'cerrada':
+            //     column.action = [{ replay: 'grey' }];
+            //     column.replayClick = () => this.reopenMessage(message);
+            //     break;
+            //   default:
+            //     column.action = [];
+            // }
+            column.class = (message.Status == 'abierta') ? 'border-red' : '';
+            // Agregamos el mensaje
+            tableRow.push(column);
           }
         });
 
@@ -224,7 +251,7 @@ export class TableQueriesComponent implements OnChanges {
         this.translateService.get([
           'INBOX.NOQUERIESTHISWEEK',
           'INBOX.NOQUERIESTHISMONTH',
-          ''
+          'NOMESSAGES'
         ]).subscribe((result) => {
         switch (this.filterDate) {
           case 1:
