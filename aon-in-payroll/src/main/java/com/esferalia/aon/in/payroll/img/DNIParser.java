@@ -8,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -33,6 +36,7 @@ import solutions.aon.in.invoice.img.InvoiceIMGException;
 import solutions.aon.in.invoice.pdf.InvoicePDFException;
 
 public class DNIParser {
+
 	public static String text;
 	public static String dni;
 	public static String nombre;
@@ -41,20 +45,33 @@ public class DNIParser {
 	public static String nacionalidad;
 
 	// CONVIERTE IMAGEN DEL DNI A DOCUMENT USANDO BYTES
-	public static String extractImage(byte[] bytes) throws InvoiceIMGException {
+	public static String extractImage(byte[] bytes) {
+		DniParserValidation.validateBytes(bytes);
 		return extract(new Document().withBytes(ByteBuffer.wrap(bytes)));
 
 	}
 
 	// RECOGE UN INPUTSTREAM Y LO TRANSFORMA EN PDDocument
+
 	public static void parse(InputStream is) throws IOException {
+		DniParserValidation.validateInputstream(is);
 		try (PDDocument doc = Loader.loadPDF(is)) {
 			parser(doc);
-		}
+		} 
+	}
+	
+	public void parse(List<InputStream> inputStreams) throws IOException {
+		DniParserValidation.validateInputStreamList(inputStreams);
+	    for (InputStream is : inputStreams) {
+	        try (PDDocument doc = Loader.loadPDF(is)) {
+	            parser(doc);
+	        }
+	    }
 	}
 
 	// RECOGE LAS IMAGENES DEL PDF Y LAS ALMACENA EN BYTE[]
 	public static Collection<byte[]> getImages(PDDocument document) throws IOException {
+		DniParserValidation.validatePDDoc(document);
 		LinkedList<byte[]> images = new LinkedList<byte[]>();
 		for (PDPage page : document.getPages()) {
 			PDResources pdResources = page.getResources();
@@ -72,29 +89,30 @@ public class DNIParser {
 	}
 
 	public static String parser(PDDocument doc) throws IOException {
-		AccessPermission ap = doc.getCurrentAccessPermission();
+		DniParserValidation.validatePDDoc(doc);
+	    AccessPermission ap = doc.getCurrentAccessPermission();
+	    DNIParser dnip = new DNIParser();
 
-		if (!ap.canExtractContent()) {
-			throw new InvoicePDFException("You do not have permission to extract text");
-		}
-		PDFTextStripper stripper = new PDFTextStripper();
-		stripper.setSortByPosition(true);
-		setText(stripper.getText(doc));
-		if (isBlank(getText())) {
-			setText(getImages(doc).stream().map(img -> extractImage(img)).collect(Collectors.joining("\r\n")));
-		}
-		return getText();
-
+	    if (!ap.canExtractContent()) {
+	        throw new InvoicePDFException("You do not have permission to extract text");
+	    }
+	    PDFTextStripper stripper = new PDFTextStripper();
+	    stripper.setSortByPosition(true);
+	    String extractedText = stripper.getText(doc);
+	    if (isBlank(extractedText)) {
+	        extractedText = getImages(doc).stream().map(img -> dnip.extractImage(img)).collect(Collectors.joining(System.lineSeparator()));
+	    }
+	    dnip.setText( extractedText);
+	    return dnip.getText();
 	}
 
 	// UNA VEZ CONVERTIDO EL FORMATO DEL DNI LO PASA A TEXTO PLANO
 	public static String extract(Document doc) {
-		if (doc != null && doc.getBytes() != null
-				&& (doc.getBytes().position() + doc.getBytes().remaining()) > (20 * 1024 * 1024)) {
-			throw new InvoiceIMGException("Las imagenes a analizar no pueden superar los 5MB de tamaño");
-		}
+
 
 		AmazonTextract client = AmazonTextractClientBuilder.defaultClient();
+
+		DniParserValidation.validateDoc(doc);
 
 		DetectDocumentTextRequest detectDocumentTextRequest = new DetectDocumentTextRequest().withDocument(doc);
 
@@ -130,88 +148,10 @@ public class DNIParser {
 		return text;
 	}
 
-	// FORMATO PARA DNI POSTERIOR A 2021 CUANDO SOLO ES PARTE DE ALANTE TANTO PDF
-	// COMO JPG
-	public static void getNewDniFront(String text, DniDataListener listener) {
-		String[] lineas = text.split("\n");
-		String dni = null;
-		String nombre = null;
-		String apellido1 = null;
-		String apellido2 = null;
-		String fechaNacimiento = null;
-		Date fechaNac = null;
-		String sexo = null;
-		String nacionalidad = null;
-
-		for (int i = 0; i < lineas.length; i++) {
-			String linea = lineas[i];
-			if (linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
-				dni = lineas[i + 1];
-				listener.onDniData(dni);
-			} else if (linea.startsWith("APELLIDOS")) {
-				apellido1 = lineas[i + 1];
-				apellido2 = lineas[i + 2];
-				listener.onApellidosData(apellido1, apellido2);
-			} else if (linea.startsWith("NOMBRE")) {
-				nombre = lineas[i + 1];
-				listener.onNombreData(nombre);
-			} else if (linea.startsWith("SEXO")) {
-				sexo = lineas[i + 3];
-				listener.onSexoData(sexo);
-			} else if (linea.startsWith("NACIONALIDAD")) {
-				nacionalidad = lineas[i + 3];
-				listener.onNacionalidadData(nacionalidad);
-			} else if (linea.startsWith("NACIMIENTO")) {
-				fechaNacimiento = lineas[i + 3];
-				SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-				try {
-					fechaNac = format.parse(fechaNacimiento);
-					listener.onFechaNacimientoData(fechaNac);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
-		}
-
-	}
-
-	// FORMATO PARA DNI POSTERIOR A 2021 CUANDO SOLO ES PARTE DE ATRAS Y ES JPG
-	public static void getNewDniBackJpg(String text, DniDataListener listener) {
-		String[] lineas = text.split("\n");
-		String direccion = null;
-		String localidad = null;
-		String lugarNacimiento = null;
-		String nombrePadre = null;
-		String nombreMadre = null;
-
-		System.out.println(text);
-
-		for (int i = 0; i < lineas.length; i++) {
-			String linea = lineas[i];
-
-			if (linea.startsWith("DOMICILIO")) {
-				direccion = lineas[i + 1];
-				listener.onDireccionData(direccion);
-				localidad = lineas[i + 2];
-				listener.onLocalidadData(localidad);
-			} else if (linea.startsWith("LUGAR DE NACIMIENTO")) {
-				lugarNacimiento = lineas[i + 1];
-				listener.onLugarNacimientoData(lugarNacimiento);
-			} else if (linea.startsWith("HIJO/A DE")) {
-				nombrePadre = lineas[i + 1];
-				listener.onNombrePadreData(nombrePadre);
-				nombreMadre = lineas[i + 3];
-				listener.onNombreMadreData(nombreMadre);
-			}
-
-		}
-
-	}
-
 	// FORMATO PARA DNI POSTERIOR A 2021 VIENEN LAS DOS PARTES JUNTAS
 	// Y EL DOCUMENTO ES UNA IMAGEN
 	public static void getNewDniBothJpg(String text, DniDataListener listener) {
+		DniParserValidation.validateText(text);
 		String[] lineas = text.split("\n");
 		String dni = null;
 		String nombre = null;
@@ -272,196 +212,50 @@ public class DNIParser {
 		}
 	}
 
-	// FORMATO PARA DNI ANTERIOR A 2021 CUANDO SOLO ES LA PARTE DE ALANTE TANTO PDF
-	// COMO JPG
-	public static void getOldDniFront(String text, DniDataListener listener) {
-		String[] lineas = text.split("\n");
-		String dni = null;
-		String nombre = null;
-		String apellido1 = null;
-		String apellido2 = null;
-		String fechaNacimiento = null;
-		Date fechaNac = null;
-		String sexo = null;
-		String nacionalidad = null;
-
-		for (int i = 0; i < lineas.length; i++) {
-			String linea = lineas[i];
-
-			if (linea.startsWith("APELLIDOS")) {
-				apellido1 = lineas[i + 1];
-				apellido2 = lineas[i + 2];
-				listener.onApellidosData(apellido1, apellido2);
-			} else if (linea.startsWith("NOMBRE")) {
-				nombre = lineas[i + 1];
-				listener.onNombreData(nombre);
-			} else if (linea.startsWith("SEXO")) {
-				sexo = lineas[i + 2];
-				listener.onSexoData(sexo);
-			} else if (linea.startsWith("NACIONALIDAD")) {
-				nacionalidad = lineas[i + 2];
-				listener.onNacionalidadData(nacionalidad);
-			} else if (linea.startsWith("FECHA DE NACIMIENTO")) {
-				fechaNacimiento = lineas[i + 1];
-				SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-				try {
-					fechaNac = format.parse(fechaNacimiento);
-					listener.onFechaNacimientoData(fechaNac);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if (linea.startsWith("DNI")) {
-				dni = lineas[i];
-				listener.onDniData(dni);
-
-			}
-		}
+	
+	public boolean validateDni(String dni) {
+		dni = dni.trim();
+        String patternDni = "\\d{8}[A-HJ-NP-TV-Z]";		
+        Pattern pattern = Pattern.compile(patternDni);
+        Matcher matcher = pattern.matcher(dni);
+		return matcher.matches();
 	}
-
-	// FORMATO PARA DNI ANTERIOR A 2021 CUANDO SOLO ES LA PARTE DE ATRAS
-	public static void getOldDniBackJpg(String text, DniDataListener listener) {
-		String[] lineas = text.split("\n");
-		String direccion = null;
-		String localidad = null;
-		String lugarNacimiento = null;
-		String nombrePadres = null;
-
-		for (int i = 0; i < lineas.length; i++) {
-			String linea = lineas[i];
-			if (linea.startsWith("DOMICILIO")) {
-				direccion = lineas[i + 1];
-				listener.onDireccionData(direccion);
-				localidad = lineas[i + 2];
-				listener.onLocalidadData(localidad);
-			} else if (linea.startsWith("LUGAR DE NACIMIENTO")) {
-				lugarNacimiento = lineas[i + 1];
-				listener.onLugarNacimientoData(lugarNacimiento);
-			} else if (linea.startsWith("HIJO/A DE")) {
-				nombrePadres = lineas[i + 1];
-				String[] aux = nombrePadres.split("/");
-				String part1 = aux[0];
-				String part2 = aux[1];
-				listener.onNombrePadreData(part1);
-				listener.onNombreMadreData(part2);
-			}
-
-		}
-
+	
+	
+	public boolean validateNationality(String nacionalidad) { 
+		nacionalidad = nacionalidad.trim();
+		String patternNat = "[A-Z]{3}";
+		Pattern pattern = Pattern.compile(patternNat);
+		Matcher matcher = pattern.matcher(nacionalidad);
+		return matcher.matches();
 	}
-
-	// FORMATO PARA DNI ANTERIOR A 2021 y VIENEN AMBAS CARAS EN UNA IMAGEN
-	public static void getOldDniBoth(String text, DniDataListener listener) {
-		String[] lineas = text.split("\n");
-		String dni = null;
-		String nombre = null;
-		String apellido1 = null;
-		String apellido2 = null;
-		String fechaNacimiento = null;
-		Date fechaNac = null;
-		String sexo = null;
-		String nacionalidad = null;
-		String direccion = null;
-		String localidad = null;
-		String lugarNacimiento = null;
-		String nombrePadres = null;
-
-		for (int i = 0; i < lineas.length; i++) {
-			String linea = lineas[i];
-
-			if (linea.startsWith("APELLIDOS")) {
-				apellido1 = lineas[i + 1];
-				apellido2 = lineas[i + 2];
-				listener.onApellidosData(apellido1, apellido2);
-			} else if (linea.startsWith("NOMBRE")) {
-				nombre = lineas[i + 1];
-				listener.onNombreData(nombre);
-			} else if (linea.startsWith("SEXO")) {
-				sexo = lineas[i + 2];
-				listener.onSexoData(sexo);
-			} else if (linea.startsWith("NACIONALIDAD")) {
-				nacionalidad = lineas[i + 2];
-				listener.onNacionalidadData(nacionalidad);
-			} else if (linea.startsWith("FECHA DE NACIMIENTO")) {
-				fechaNacimiento = lineas[i + 1];
-				SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-				try {
-					fechaNac = format.parse(fechaNacimiento);
-					listener.onFechaNacimientoData(fechaNac);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if (linea.startsWith("DNI")) {
-				dni = lineas[i];
-				listener.onDniData(dni);
-
-			} else if (linea.startsWith("DOMICILIO")) {
-				direccion = lineas[i + 1];
-				listener.onDireccionData(direccion);
-				localidad = lineas[i + 2];
-				listener.onLocalidadData(localidad);
-			} else if (linea.startsWith("LUGAR DE NACIMIENTO")) {
-				lugarNacimiento = lineas[i + 1];
-				listener.onLugarNacimientoData(lugarNacimiento);
-			} else if (linea.startsWith("HIJO/A DE")) {
-				nombrePadres = lineas[i + 1];
-				String[] aux = nombrePadres.split("/");
-				String part1 = aux[0];
-				String part2 = aux[1];
-				listener.onNombrePadreData(part1);
-				listener.onNombreMadreData(part2);
-			}
-		}
-	}
-
-	// FORMATO PARA DNI POSTERIOR A 2021 CUANDO SOLO ES PARTE DE ATRAS Y EL
-	// DOCUMENTO ES UN PDF
-	public static void getNewDniBackPdf(String text, DniDataListener listener) {
-		String[] lineas = text.split("\n");
-		String direccion = null;
-		String localidad = null;
-		String lugarNacimiento = null;
-		String nombrePadre = null;
-		String nombreMadre = null;
-
-		for (int i = 0; i < lineas.length; i++) {
-			String linea = lineas[i];
-
-			if (linea.startsWith("DOMICILIO")) {
-				direccion = lineas[i + 1];
-				listener.onDireccionData(direccion);
-				localidad = lineas[i + 2];
-				listener.onLocalidadData(localidad);
-			} else if (linea.startsWith("LUGAR DE NACIMIENTO")) {
-				lugarNacimiento = lineas[i + 1];
-				listener.onLugarNacimientoData(lugarNacimiento);
-			} else if (linea.startsWith("HIJO/A DE")) {
-				nombrePadre = lineas[i + 1];
-				listener.onNombrePadreData(nombrePadre);
-				nombreMadre = lineas[i + 2];
-				listener.onNombreMadreData(nombreMadre);
-			}
-
-		}
-
-	}
+	
+//	public boolean validateNames(String nombre) {
+//		nombre = nombre.trim();
+//		String patternNames ="[A-Z]";
+//		Pattern pattern = Pattern.compile(patternNames);
+//		Matcher matcher = pattern.matcher(nombre);
+//		return matcher.matches();
+//	}
 
 	// FORMATO PARA DNI POSTERIOR A 2021 Y VIENEN LAS DOS PARTES JUNTAS EN PDF
 	public static void getNewDniBothPdf(String text, DniDataListener listener) {
+		DniParserValidation.validateText(text);
+		DNIParser dnip = new DNIParser();
 		String[] lineas = text.split("\n");
+		String dni = null;
+		String nombre = null;
+		String apellido1 = null;
+		String apellido2 = null;
 		String fechaNacimiento = null;
 		Date fechaNac = null;
 		String sexo = null;
-		String direccion = null;
-		String localidad = null;
-		String lugarNacimiento = null;
-		String nombrePadres = null;
+		String nacionalidad = null;
 
 		for (int i = 0; i < lineas.length; i++) {
 			String linea = lineas[i];
-			if (linea.startsWith("DNI")) {
-				dni = lineas[i + 1];
-				listener.onDniData(dni);
-			} else if (linea.startsWith("APELLIDOS")) {
+
+			if (linea.startsWith("APELLIDOS")) {
 				apellido1 = lineas[i + 1];
 				apellido2 = lineas[i + 2];
 				listener.onApellidosData(apellido1, apellido2);
@@ -469,13 +263,13 @@ public class DNIParser {
 				nombre = lineas[i + 1];
 				listener.onNombreData(nombre);
 			} else if (linea.startsWith("SEXO")) {
-				sexo = lineas[i + 3];
+				sexo = lineas[i + 2];
 				listener.onSexoData(sexo);
 			} else if (linea.startsWith("NACIONALIDAD")) {
-				nacionalidad = lineas[i + 3];
+				nacionalidad = lineas[i + 2];
 				listener.onNacionalidadData(nacionalidad);
-			} else if (linea.startsWith("NACIMIENTO")) {
-				fechaNacimiento = lineas[i + 3];
+			} else if (linea.startsWith("FECHA DE NACIMIENTO")) {
+				fechaNacimiento = lineas[i + 1];
 				SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
 				try {
 					fechaNac = format.parse(fechaNacimiento);
@@ -483,54 +277,11 @@ public class DNIParser {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if (linea.startsWith("DOMICILIO")) {
-				direccion = lineas[i + 1];
-				listener.onDireccionData(direccion);
-				localidad = lineas[i + 2];
-				listener.onLocalidadData(localidad);
-			} else if (linea.startsWith("LUGAR DE NACIMIENTO")) {
-				lugarNacimiento = lineas[i + 1];
-				listener.onLugarNacimientoData(lugarNacimiento);
-			} else if (linea.startsWith("HIJO/A DE")) {
-				nombrePadres = lineas[i + 1];
-				String[] aux = nombrePadres.split("/");
-				String part1 = aux[0];
-				String part2 = aux[1];
-				listener.onNombrePadreData(part1);
-				listener.onNombreMadreData(part2);
+			} else if (linea.startsWith("DNI")) {
+				dni = lineas[i];
+				listener.onDniData(dni);
+
 			}
-
-		}
-
-	}
-
-	public static void getOldDniBackPdf(String text, DniDataListener listener) {
-		String[] lineas = text.split("\n");
-		String direccion = null;
-		String localidad = null;
-		String lugarNacimiento = null;
-		String nombrePadres = null;
-
-		System.out.println(text);
-		for (int i = 0; i < lineas.length; i++) {
-			String linea = lineas[i];
-			if (linea.startsWith("DOMICILIO")) {
-				direccion = lineas[i + 1];
-				listener.onDireccionData(direccion);
-				localidad = lineas[i + 2];
-				listener.onLocalidadData(localidad);
-			} else if (linea.startsWith("LUGAR DE NACIMIENTO")) {
-				lugarNacimiento = lineas[i + 1];
-				listener.onLugarNacimientoData(lugarNacimiento);
-			} else if (linea.startsWith("HIJO/A DE")) {
-				nombrePadres = lineas[i + 1];
-				String[] aux = nombrePadres.split("/");
-				String part1 = aux[0];
-				String part2 = aux[1];
-				listener.onNombrePadreData(part1);
-				listener.onNombreMadreData(part2);
-			}
-
 		}
 	}
 
@@ -556,7 +307,7 @@ public class DNIParser {
 		return text;
 	}
 
-	public static void setText(String text) {
+	public void setText(String text) {
 		DNIParser.text = text;
 	}
 

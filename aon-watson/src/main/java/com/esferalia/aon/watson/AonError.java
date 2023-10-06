@@ -251,6 +251,10 @@ public enum AonError implements Serializable{
 	,NULL_FILE_UPLOADED("El archivo seleccionado es nulo")
 	,REPEATED_ALIAS("No puede haber dos preguntas con el mismo alias")
 
+	,NULL_FILES_UPLOADED("Los archivos seleccionados son nulos")
+	,FILE_SIZE_EXCEEDED("El tamaño de archivo no puede superar los 5MB")
+	,NULL_TEXT_RECEIVED("El texto recibido es nulo")
+	,INVALID_DNI_FORMAT("El formato del dni no es valido")
 	;
 	
 	

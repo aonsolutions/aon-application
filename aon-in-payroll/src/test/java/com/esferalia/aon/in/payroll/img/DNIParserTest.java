@@ -1,254 +1,97 @@
 package com.esferalia.aon.in.payroll.img;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Random;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.amazonaws.services.textract.model.Document;
-import com.amazonaws.services.textract.model.UnsupportedDocumentException;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 
-import solutions.aon.in.invoice.pdf.InvoicePDFException;
 
 public class DNIParserTest {
+	DNIParser dniParser = new DNIParser();
+	
+
+	public void extractImageNullTest() {
+		byte [] bytes = null;
+		AonCoreException e = assertThrows(AonCoreException.class, 
+				() ->DNIParser.extractImage(bytes));
+		assertEquals(AonError.NULL_FILE_UPLOADED.getMessage(), e.getMessage());
+	}
+	
+	@Test
+	public void parseNullTest() {
+		InputStream is = null;
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> DNIParser.parse(is));
+		assertEquals(AonError.NULL_FILE_UPLOADED.getMessage(), e.getMessage());
+	}
+	
+	@Test
+	public void parseNullListTest() {
+		List<InputStream> inputStreams = null;
+			AonCoreException e = assertThrows(AonCoreException.class,
+					()-> dniParser.parse(inputStreams));
+		assertEquals(AonError.NULL_FILES_UPLOADED.getMessage(), e.getMessage());
+	}
+	
+	@Test
+	public void getNullImagesTest() {
+		PDDocument document = null;
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> DNIParser.getImages(document));
+		assertEquals(AonError.NULL_FILE_UPLOADED.getMessage(), e.getMessage());
+	}
+	
+	@Test
+	public void parserNullTest() {
+		PDDocument document = null;
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> DNIParser.parser(document));
+		assertEquals(AonError.NULL_FILE_UPLOADED.getMessage(), e.getMessage());
+	}
+	
+	@Test
+	public void extractNullTest() {
+		Document document = null;
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> DNIParser.extract(document));
+		assertEquals(AonError.NULL_FILE_UPLOADED.getMessage(), e.getMessage());
+	}
+	
 
 	@Test
-	public void testExtractImage() {
-		String file = "/tmp/document-31.pdf";
-		try {
-			InputStream is = new FileInputStream(file);
-			byte[] bytes = IOUtils.toByteArray(is);
-			DNIParser.extractImage(bytes);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedDocumentException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+	public void extractSizeExceededTest() throws Exception {
+		String file = "/tmp/Seguridad-informática.pdf";
+		InputStream is = new FileInputStream(file);
+		byte[] bytes = IOUtils.toByteArray(is);
+		AonCoreException e = assertThrows(AonCoreException.class, 
+				() -> DNIParser.extractImage(bytes));
+		assertEquals(AonError.FILE_SIZE_EXCEEDED.getMessage(), e.getMessage());
 	}
 
-	@Test
-	public void testParse() {
-		String file = "/tmp/dniJuanmaDelante.jpg";
-		try {
-			InputStream is = new FileInputStream(file);
-			PDDocument doc = Loader.loadPDF(is);
-			DNIParser.parser(doc);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void testGetImages() {
-		String file = "/tmp/afk.pdf";
-		try {
-			InputStream is = new FileInputStream(file);
-			PDDocument doc = Loader.loadPDF(is);
-			DNIParser.getImages(doc);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	@Test
-	public void testParser() {
-		String file = "/tmp/afk.pdf";
-		try {
-			InputStream is = new FileInputStream(file);
-			PDDocument doc = Loader.loadPDF(is);
-			DNIParser.parser(doc);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InvoicePDFException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-
-	@Test
-	public void testGetNewDniFront() {
-		String file = "/tmp/dniJuanmaDelante.jpg";
+	public void getDniNullJpg() {
+		String text = null;
 		MyDniDataListener listener = new MyDniDataListener();
-
-		try {
-			InputStream is = new FileInputStream(file);
-			DNIParser.parse(is);
-			String text = DNIParser.getText();
-			DNIParser.getNewDniFront(text, listener);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> DNIParser.getNewDniBothJpg(text, listener));
+		assertEquals(AonError.NULL_TEXT_RECEIVED.getMessage(), e.getMessage());
+	} 
+	
 	@Test
-	public void testGetNewDniBackJpg() {
-		String file = "/tmp/dniJuanmaDelante.jpg";
+	public void getDniNullPdf() {
+		String text = null;
 		MyDniDataListener listener = new MyDniDataListener();
-
-		try {
-			InputStream is = new FileInputStream(file);
-			byte[] bytes = IOUtils.toByteArray(is);
-			String text = DNIParser.extractImage(bytes);
-			DNIParser.getNewDniBackJpg(text, listener);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (UnsupportedDocumentException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	@Test
-	public void testGetNewDniBothjpg() {
-		String file = "/tmp/dniJuanmaDelante.pdf";
-		MyDniDataListener listener = new MyDniDataListener();
-
-		try {
-			InputStream is = new FileInputStream(file);
-			byte[] bytes = IOUtils.toByteArray(is);
-			String text = DNIParser.extractImage(bytes);
-			DNIParser.getNewDniBothJpg(text, listener);
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (UnsupportedDocumentException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	@Test
-	public void testGetOldDniFront() {
-		String file = "/tmp/dniBorjita.jpg";
-//		String file2 = "/tmp/dniPapaDelante.pdf";
-		MyDniDataListener listener = new MyDniDataListener();
-
-		try {
-			InputStream is = new FileInputStream(file);
-			byte[] bytes = IOUtils.toByteArray(is);
-			String text = DNIParser.extractImage(bytes);
-			DNIParser.getOldDniFront(text, listener);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (UnsupportedDocumentException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void testGetOldDniBackJpg() {
-		String file = "/tmp/dniJuanmaDelante.jpg";
-		MyDniDataListener listener = new MyDniDataListener();
-
-		try {
-			InputStream is = new FileInputStream(file);
-			byte[] bytes = IOUtils.toByteArray(is);
-			String text = DNIParser.extractImage(bytes);
-			DNIParser.getOldDniBackJpg(text, listener);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (UnsupportedDocumentException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	@Test
-	public void testGetoldDniBoth() {
-		String file = "/tmp/dniJuanmaDelante.pdf";
-		MyDniDataListener listener = new MyDniDataListener();
-
-		try {
-			InputStream is = new FileInputStream(file);
-			DNIParser.parse(is);
-			String text = DNIParser.getText();
-			DNIParser.getOldDniBoth(text, listener);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (UnsupportedDocumentException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void testGetNewDniBackPdf() {
-		String file = "/tmp/dniJuanmaDelante.pdf";
-		MyDniDataListener listener = new MyDniDataListener();
-		try {
-			InputStream is = new FileInputStream(file);
-			DNIParser.parse(is);
-			String text = DNIParser.getText();
-			DNIParser.getNewDniBackPdf(text, listener);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (UnsupportedDocumentException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void testgetNewDniBothPdf() {
-		String file = "/tmp/dniJuanmaCompleto.pdf";
-		MyDniDataListener listener = new MyDniDataListener();
-		try {
-			InputStream is = new FileInputStream(file);
-			DNIParser.parse(is);
-			String text = DNIParser.getText();
-			DNIParser.getNewDniBothPdf(text, listener);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (UnsupportedDocumentException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void testGetOldDniBackPdf() {
-		String file = "/tmp/dniJuanmaCompleto.pdf";
-		MyDniDataListener listener = new MyDniDataListener();
-		try {
-			InputStream is = new FileInputStream(file);
-			DNIParser.parse(is);
-			String text = DNIParser.getText();
-			DNIParser.getOldDniBackPdf(text, listener);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (UnsupportedDocumentException e) {
-			e.printStackTrace();
-		}
-	}
-
+		AonCoreException e = assertThrows(AonCoreException.class,
+				() -> DNIParser.getNewDniBothPdf(text, listener));
+		assertEquals(AonError.NULL_TEXT_RECEIVED.getMessage(), e.getMessage());
+	} 
 }
