@@ -1,5 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, CSS, EVENT, TAG } from "../../environments/environments";
+import * as LS from '../../services/localStorageService.js';
 
 export class AonMobileConsoleHome extends AonElement {
 

@@ -46,6 +46,7 @@ export const AON_LI = 'aonLi';
 export const AON_LI_SPAN = 'aonLiSpan';
 export const AON_LI_SPAN_SUBTITLE = 'aonLiSpanSubtitle';
 export const AON_TOOLBAR = 'aonToolbar';
+export const AON_TOOLBAR2 = 'aonToolbar2'; // NUEVO LOGIN...
 export const AON_TOOLBAR_BETA = 'aonToolbarBeta';
 export const AON_TOOLBAR_TITLE = 'aonToolbarTitle';
 export const AON_TOOLBAR_SECTION = 'aonToolbarSection';
@@ -75,6 +76,7 @@ export const AON_OPACITY = 'aonOpacity';
 export const AON_MENU_ITEM_SPAN = 'aonMenuItemSpan';
 export const AON_DIV_BUTTON = 'aonDivButton';
 export const AON_SEARCH_BOX = 'aonSearchBox';
+export const AON_SEARCH_BOX_BETA = 'aonSearchBoxBeta';
 export const AON_FORM_CENTER = 'aonFormCenter';
 export const AON_CONNECTED = 'aonConnected';
 export const AON_CARD = 'aonCard';
@@ -166,7 +168,11 @@ export const AON_LOADING = 'aonLoading';
 
 export const AON_INPUT_BOX = 'aonInputBox';
 export const AON_INPUT_BOX_LABEL = 'aonInputBoxLabel';
+export const AON_INPUT_BOX_LABEL_INPUT_ERROR = 'aonInputBoxLabelInputError'
+export const AON_INPUT_BOX_LABEL_SPAN_ERROR = 'aonInputBoxLabelSpanError'
 export const AON_INPUT_MSG = 'aonInputMsg';
+export const AON_INPUT_MSG_ERROR = 'aonInputMsgError';
+
 
 // aon-input.css
 

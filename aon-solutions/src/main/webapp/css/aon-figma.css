@@ -279,6 +279,7 @@
     line-height: var(--roboto-button-line-height);
     font-style: var(--roboto-button-font-style);
     height: 2.4rem;
+    cursor: pointer;
   }
 
   .aonLoginButton:hover{
@@ -315,6 +316,7 @@
     line-height: var(--roboto-button-line-height);
     font-style: var(--roboto-button-font-style);
     height: 2.4rem;
+    cursor: pointer;
   }
 
   .aonMagicButton:hover {

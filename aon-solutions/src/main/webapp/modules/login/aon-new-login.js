@@ -21,6 +21,8 @@ import { AonToast } from "../../components/aon-toast.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { Language } from "../../models/Language.js";
 import * as COLORS from "../../environments/colors.js";
+import { AonEmail } from "../../components/aon-email.js";
+import { AonNewInput } from "../../components/aon-new-input.js";
 
 export class AonNewLogin extends AonElement {
   tag;
@@ -36,7 +38,7 @@ export class AonNewLogin extends AonElement {
 
     // Toolbar
     let toolbar = this.createElement(TAG.DIV);
-    toolbar.className = CSS.AON_TOOLBAR;
+    toolbar.className = CSS.AON_TOOLBAR2;
     this.appendChild(toolbar);
 
     let divLogoToolbar = this.createElement(TAG.DIV);
@@ -69,12 +71,12 @@ export class AonNewLogin extends AonElement {
 
     let h1 = this.createElement(TAG.H1);
     h1.className = CSS.AON_LOGIN_TITLE;
-    h1.innerHTML = "Inicia Sesión";
+    h1.innerHTML = MSG.SIGN_IN;
     divForm.appendChild(h1);
 
     let h2 = this.createElement(TAG.H1);
     h2.className = CSS.AON_LOGIN_SUB_TITLE;
-    h2.innerHTML = "Accede a tu cuenta de AON";
+    h2.innerHTML = MSG.ACCESS_TO_YOUR_AON_ACCOUNT;
     divForm.appendChild(h2);
 
     // Form
@@ -89,14 +91,15 @@ export class AonNewLogin extends AonElement {
     aonLoader.id = 'aonLoginLoader';
     formContent.appendChild(aonLoader);
 
-    let userInput = this.createAonElement(new AonInput(), 'aonLoginUser', MSG.USER);
-
+    let userInput = this.createAonElement(new AonEmail(), 'aonLoginUser', MSG.USER);
+    userInput.setRequired(true);
     userInput.addEventListener(EVENT.KEYUP, () => {
       this.getElement('aonLoginMagicLink').disabled = !userInput.value.includes('@'); 
     })
     formContent.appendChild(userInput);
 
-    let passwordInput = this.createAonElement(new AonInput(), 'aonLoginPassword', MSG.PASSWORD);
+    let passwordInput = this.createAonElement(new AonNewInput(), 'aonLoginPassword', MSG.PASSWORD);
+    passwordInput.setRequired(true);
     passwordInput.type = 'password';
     formContent.appendChild(passwordInput);
 
@@ -119,7 +122,7 @@ export class AonNewLogin extends AonElement {
     dividerButtons.className = CSS.AON_DIVIDER_BUTTONS;
     let dividerSpan = this.createElement(TAG.SPAN);
     dividerSpan.className = CSS.AON_DIVIDER_SPAN,
-    dividerSpan.innerHTML = "o ACCEDE";
+    dividerSpan.innerHTML = MSG.OR_ACCESS;
     dividerButtons.appendChild(dividerSpan);
     divButtons.appendChild(dividerButtons);
 
@@ -407,5 +410,6 @@ export class AonNewLogin extends AonElement {
     }
   }
 }
-
-window.customElements.define("aon-login", AonLogin);
+if(!window.customElements.get(TAG.AON_NEW_LOGIN)){
+	window.customElements.define(TAG.AON_NEW_LOGIN, AonNewLogin);
+}
