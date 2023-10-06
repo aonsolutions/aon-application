@@ -12,15 +12,13 @@ import "../company/aon-parent.js";
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
 import { webkitRequestMobile } from "../../services/request.js";
-import { AonInput } from "../../components/aon-input.js";
 import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
-import { AonButton } from "../../components/aon-button.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 import { AonToast } from "../../components/aon-toast.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { Language } from "../../models/Language.js";
-import * as COLORS from "../../environments/colors.js";
+import { AonNewInput } from "../../components/aon-new-input.js";
 
 export class AonNewLogin extends AonElement {
   tag;
@@ -89,14 +87,14 @@ export class AonNewLogin extends AonElement {
     aonLoader.id = 'aonLoginLoader';
     formContent.appendChild(aonLoader);
 
-    let userInput = this.createAonElement(new AonInput(), 'aonLoginUser', MSG.USER);
+    let userInput = this.createAonElement(new AonNewInput(), 'aonLoginUser', MSG.USER);
 
     userInput.addEventListener(EVENT.KEYUP, () => {
       this.getElement('aonLoginMagicLink').disabled = !userInput.value.includes('@'); 
     })
     formContent.appendChild(userInput);
 
-    let passwordInput = this.createAonElement(new AonInput(), 'aonLoginPassword', MSG.PASSWORD);
+    let passwordInput = this.createAonElement(new AonNewInput(), 'aonLoginPassword', MSG.PASSWORD);
     passwordInput.type = 'password';
     formContent.appendChild(passwordInput);
 
@@ -289,7 +287,7 @@ export class AonNewLogin extends AonElement {
     dialog.setTitle("MAGIC LINK");
     let form = this.createElement("form");
     form.action = "#";
-    let aonInput = new AonInput();
+    let aonInput = new AonNewInput();
     aonInput.id = "aonLoginMagicLinkEmail";
     aonInput.description = "Email";
     aonInput.autocomplete = "on";
@@ -305,7 +303,7 @@ export class AonNewLogin extends AonElement {
     dialog.setTitle(MSG.RECOVER_PASSWORD);
     let form = this.createElement("form");
     form.action = "#";
-    let aonInput = new AonInput();
+    let aonInput = new AonNewInput();
     aonInput.id = "aonLoginRememberEmail";
     aonInput.description = "Email";
     aonInput.autocomplete = "on";
@@ -408,4 +406,4 @@ export class AonNewLogin extends AonElement {
   }
 }
 
-window.customElements.define("aon-login", AonLogin);
+window.customElements.define("aon-new-login", AonNewLogin);
