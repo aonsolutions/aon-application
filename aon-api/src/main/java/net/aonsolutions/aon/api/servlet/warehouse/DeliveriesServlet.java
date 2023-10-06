@@ -155,6 +155,11 @@ public class DeliveriesServlet extends AonApiHttpServlet {
 	
 	private static Filter deliveryFilter(AonApiData api, DeliveryProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+	
+		Integer id = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+		if(id != null) {
+			filter = filter.and(f.getIdProperty().eq(id));
+		}
 		
 		String series = JsonUtils.getString(api.getData(), IJsonNames.SERIES);
 		if(!AonStringUtils.isBlank(series)) {

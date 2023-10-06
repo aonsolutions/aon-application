@@ -40,7 +40,7 @@ const load = () => {
     favicon();  
     loadScriptFirebase();
     document.body.appendChild(new AonModule());
-    if(!isMobile()) document.body.className = 'aonBodyBeta';
+    if(!isMobile() && !LS.isNewTheme()) document.body.className = 'aonBodyBeta';
     loadScripts(); 
     window.loadScripts = () => loadScripts();
 }

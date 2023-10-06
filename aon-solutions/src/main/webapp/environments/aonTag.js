@@ -45,6 +45,7 @@ export const AON_DOMAIN_CUSTOMER = 'aon-domain-customer';
 export const AON_ICON_BUTTON = 'aon-icon-button';
 export const AON_ICON = 'aon-icon';
 export const AON_INPUT = 'aon-input';
+export const AON_NEW_INPUT = 'aon-new-input';
 export const AON_LOADER = 'aon-loader';
 export const AON_MOBILE_LIST = 'aon-mobile-list';
 export const AON_NUMBER = 'aon-number';
@@ -145,8 +146,14 @@ export const AON_MOBILE_SALE = 'aon-mobile-sale';
 export const AON_SALES_LIST = 'aon-sales-list';
 export const AON_SALES = 'aon-sales';
 
+export const AON_MOBILE_DELIVERY_LIST = 'aon-mobile-delivery-list';
+export const AON_MOBILE_DELIVERY = 'aon-mobile-delivery';
+export const AON_DELIVERY_LIST = 'aon-delivery-list';
+export const AON_DELIVERY = 'aon-delivery';
+
 export const AON_MENU = 'aon-menu';
 export const AON_MOBILE_MENU = 'aon-mobile-menu';
 
 export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH, AON_AUTOSIZE_TEXTAREA, AON_CHECKBOX].join(", ");
 
+export const AON_QUANTITY = 'aon-quantity';

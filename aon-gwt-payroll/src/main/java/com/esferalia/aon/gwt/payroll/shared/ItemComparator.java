@@ -31,13 +31,24 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 		String description0 = p0.getDescription();
 		String description1 = p1.getDescription();
 
-		for ( String log: new String [] {"ADVERTENCIA", "NOTA", "INFO"}  ) {
+		for ( String log: new String [] {"ADVERTENCIA", "NOTA", "INFO" }  ) {
 		    boolean log0 = Objects.equals(log, name0);
 		    boolean log1 = Objects.equals(log, name1);
 		    if (log0) {
 			
 			return log1 ? compareByOrder(description0, description1) : 1; // p1 < p0
 		    } else if (log1) {
+			return -1; // p0 < p1
+		    }
+		}
+
+		for ( String bonus: new String [] {"BONIF" }  ) {
+		    boolean bonus0 = Objects.equals(bonus, name0);
+		    boolean bonus1 = Objects.equals(bonus, name1);
+		    if (bonus0) {
+			
+			return bonus1 ? compareByOrder(description0, description1) : 1; // p1 < p0
+		    } else if (bonus1) {
 			return -1; // p0 < p1
 		    }
 		}
