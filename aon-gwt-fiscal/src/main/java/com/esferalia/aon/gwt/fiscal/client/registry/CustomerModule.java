@@ -18,10 +18,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDi
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeHandler;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
@@ -30,7 +26,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
-import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.RegistryParams;
@@ -42,17 +37,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -76,10 +62,17 @@ public class CustomerModule extends MainEntryPoint {
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	
-	private static final String FINANCE_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/FinanceReportExcelPrint";
+	private static RegistryServiceAsync service;
+	static {
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		service = new RegistryServiceAsyncDecorator(registryServiceRaw);
+	}
 	
-	private static RegistryServiceAsync SERVICE;
-	private static CommonServiceAsync COMMON_SERVICE;
+	private static final CommonServiceAsync commonService;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
+	}
 	
 	private static class CustomerRow {
 		private int row;
@@ -98,24 +91,19 @@ public class CustomerModule extends MainEntryPoint {
 	}
 	
 	private DockLayoutPanel dockLayoutPanel;
-	private SimpleLayoutPanel centerLayoutPanel;
-	private ScrollPanel centerPanel;
 	private FlowPanel container;
 	private AonDisplayGrid tab;
-	private int autoWidth; 
 	private SplitLayoutPanel splitLayoutPanel;
 	private AonMinimizePanel footPanel;
 	private TabLayoutPanel tabLayout;
 	private ScrollPanel extraInfoContainer;
 	
-	private LinkedHashMap<Integer,CustomerRow> customers = new LinkedHashMap<Integer,CustomerRow>();
-	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<Integer>();
+	private LinkedHashMap<Integer,CustomerRow> customers = new LinkedHashMap<>();
+	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<>();
 	
 	private CustomerModuleSearchPanel searchPanel;
 	private AonToolbar toolbar;
-	private AonToolbarButton addButton;
-	private AonToolbarButton searchButton;
-	private AonToolbarButton exportButton;
+	
 	private AonToolbarButton checkAll; 
 	private AonToolbarButton uncheckAll;
 	
@@ -126,10 +114,10 @@ public class CustomerModule extends MainEntryPoint {
 	private boolean minimizedByUser;
 	private int extraInfoTabIndex;
 	
-	final private int limit = 100;
-	final private MutableInt offset = new MutableInt(0);
-	final private MutableInt moreData = new MutableInt(0);
-	final private MutableInt searchEnabled = new MutableInt( 0 ); 
+	private static final int LIMIT = 100;
+	private final MutableInt offset = new MutableInt(0);
+	private final MutableInt moreData = new MutableInt(0);
+	private final MutableInt searchEnabled = new MutableInt( 0 ); 
 	private int lastScrollPos = 0;
 	
 	@Override
@@ -146,17 +134,11 @@ public class CustomerModule extends MainEntryPoint {
 	public void onModuleLoad( final RegistryModuleOptions opt ) {
 		AON.ensureInjected();
 
-		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
-		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
-
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
-
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		opt.getParentWidget().add(dockLayoutPanel);
 		
 		if ( opt.getConfiguration() == null) {
-			COMMON_SERVICE.getAonConfiguration(opt.getDomainName(),opt.getDomain(),opt.getUser(),new AsyncCallback<AonConfiguration>() {
+			commonService.getAonConfiguration(opt.getDomainName(),opt.getDomain(),opt.getUser(),new AsyncCallback<AonConfiguration>() {
 				@Override
 				public void onSuccess(AonConfiguration result) {
 					opt.setConfiguration(result);
@@ -174,6 +156,7 @@ public class CustomerModule extends MainEntryPoint {
 	}
 	
 	private void loadModule( final RegistryModuleOptions opt ) {
+		SimpleLayoutPanel centerLayoutPanel = new SimpleLayoutPanel();
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
 		searchPanel = new CustomerModuleSearchPanel(opt);
 		dockLayoutPanel.addNorth(searchPanel, RegistryModuleSearchPanel.HEIGHT);
@@ -183,49 +166,40 @@ public class CustomerModule extends MainEntryPoint {
 		splitLayoutPanel = new SplitLayoutPanel();
 		dockLayoutPanel.add(splitLayoutPanel);
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
-		centerLayoutPanel = new SimpleLayoutPanel();
-		centerPanel = new ScrollPanel();
+		ScrollPanel centerPanel = new ScrollPanel();
 		centerPanel.setStyleName(AON.CSS.aonScrollArea());
 		centerPanel.addStyleName(AON.CSS.aonMarginBottom());
 		container = new FlowPanel();
 		centerPanel.setWidget(container);
 		centerLayoutPanel.setWidget(centerPanel);
 		splitLayoutPanel.add(centerLayoutPanel);
-		centerPanel.addScrollHandler(new ScrollHandler() {
-
-			public void onScroll(ScrollEvent event) {
-				// ------------------------------------ Ignore scroll up.
-				int oldScrollPos = lastScrollPos;
-				lastScrollPos = centerPanel.getVerticalScrollPosition();
-				if (oldScrollPos >= lastScrollPos) {
-					return;
-				}
-				// -----------------------------------------------------
-				if (isSearchEnabled()) {
-					int maxScrollTop = centerPanel.getWidget().getOffsetHeight() - centerPanel.getOffsetHeight();
-					if (lastScrollPos >= maxScrollTop) {
-						disableSearch();
-						search(opt, searchPanel.getParams( opt ),offset.getValue());
-					}
-				}
-			}
-		});
-		searchPanel.addValueChangeHandler( new ValueChangeHandler<RegistryParams>() {
+		
+		centerPanel.addScrollHandler(event -> {
+			int oldScrollPos = lastScrollPos;
+			lastScrollPos = centerPanel.getVerticalScrollPosition();
 			
-			@Override
-			public void onValueChange(ValueChangeEvent<RegistryParams> event) {
-				RegistryParams params = event.getValue();
-				search( opt, params );
+			if (oldScrollPos >= lastScrollPos) {
+				return;
+			}
+
+			if (isSearchEnabled()) {
+				int maxScrollTop = centerPanel.getWidget().getOffsetHeight() - centerPanel.getOffsetHeight();
+				if (lastScrollPos >= maxScrollTop) {
+					disableSearch();
+					search(opt, searchPanel.getParams( opt ),offset.getValue());
+				}
 			}
 		});
-		Scheduler.get().scheduleDeferred(new Command() {
-	        public void execute() {
-	        	search(opt, searchPanel.getParams( opt ));		
-	        }
-	    });		
+		
+		searchPanel.addValueChangeHandler(event -> {
+			RegistryParams params = event.getValue();
+			search( opt, params );
+		});
+		
+		Scheduler.get().scheduleDeferred(() -> search(opt, searchPanel.getParams(opt)));		
 	}
 
-	private static enum COLS {
+	private enum COLS {
 		  CHK(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
 	    , STA(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
 		, SEC(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
@@ -234,18 +208,14 @@ public class CustomerModule extends MainEntryPoint {
 		, DOC("N\u00BA Documento"		, 130,AON.CSS.aonTextLeft())
 		, AUTO(AON.MSG.name()			, 0  ,AON.CSS.aonTextLeft())
 		, ALS(AON.MSG.alias()			, 200,AON.CSS.aonTextLeft())
-    //, ACT(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
+		//, ACT(AonStringUtils.EMPTY	, 20 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
 		int colWidth;
 		String cellStyleClass;
 
-		private COLS(String headerLabel,int colWidth) {
-			this(headerLabel, colWidth, null);
-		}
-
-		private COLS(String headerLabel,int colWidth,String cellStyleClass) {
+		private COLS(String headerLabel,int colWidth, String cellStyleClass) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
 			this.cellStyleClass = cellStyleClass;
@@ -267,7 +237,7 @@ public class CustomerModule extends MainEntryPoint {
 		tab.addStyleName(AON.CSS.aonNoPadding());
 		tab.addStyleName(AON.CSS.aonBlockCenter());
 		
-		autoWidth = container.getOffsetWidth() - 80;
+		int autoWidth = container.getOffsetWidth() - 80;
 		for ( COLS col : COLS.values()) {
 			if (col != COLS.AUTO ) {
 				autoWidth -= (col.getColWidth() + 2); 
@@ -305,115 +275,88 @@ public class CustomerModule extends MainEntryPoint {
 		formFlowPanel.add(userHidden);
 		toolbar.add(diskForm);
 
-		addButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
-		addButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				final AonSimpleDialog dialog = new AonSimpleDialog();
-				dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
-				dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-				dialog.setCaption(AON.MSG.customer());
-				AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(opt, CustomerFull.initialize(opt.getDomain()), new AonRegistryFullPanelCallback<CustomerFull>() {
-					
-					@Override
-					public void setFocus(boolean b) {
-						// callback.setFocus(b);
-					}
-					
-					@Override
-					public void onError(Throwable caught) {
-						showError(caught.getMessage());
-					};
-					
-					@Override
-					public void onCancel() {
-						dialog.hide();		
-					}
-					
-					@Override
-					public void onAccept(CustomerFull rf) {
-						dialog.hide();
-					}
-
-					@Override
-					public void onDocumenthanged(CustomerFull registryFull) {
-					}
-				});
-				dialog.add( customerPanel );
-				dialog.center();
-				dialog.show();
+		AonToolbarButton addButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
+		
+		addButton.addClickHandler(event -> {
+			final AonSimpleDialog dialog = new AonSimpleDialog();
+			dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+			dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+			dialog.setCaption(AON.MSG.customer());
 				
-				Scheduler.get().scheduleDeferred(new Command() {
-			        public void execute() {
-			        	customerPanel.setFocus(true);
-			        }
-			    });		
+			AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(opt, CustomerFull.initialize(opt.getDomain()), new AonRegistryFullPanelCallback<CustomerFull>() {
+				@Override
+				public void setFocus(boolean b) {
+					// Empty method
+				}
+						
+				@Override
+				public void onError(Throwable caught) {
+					showError(caught.getMessage());
+				}
+					
+				@Override
+				public void onCancel() {
+					dialog.hide();		
+				}
+						
+				@Override
+				public void onAccept(CustomerFull rf) {
+					dialog.hide();
+				}
+	
+				@Override
+				public void onDocumenthanged(CustomerFull registryFull) {
+					// Empty method
+				}
+			});
 				
-			}
+			dialog.add( customerPanel );
+			dialog.center();
+			dialog.show();
+				
+			Scheduler.get().scheduleDeferred(() -> customerPanel.setFocus(true));	
+				
 		});
+		
 		toolbar.add(addButton);
 
-		searchButton = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
-		searchButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
+		AonToolbarButton searchButton = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
+		searchButton.addClickHandler(event -> {
 				enableMoreData();
 				container.clear();
 				tab = getTable();
 				container.add(tab);
 				offset.setValue(0);
 				search(opt, searchPanel.getParams( opt ), offset.getValue());
-			}
 		});
+		
 		toolbar.add(searchButton);
 
-		exportButton = new AonToolbarButton( AON.MSG.export(), AON.CSS.aonIconExcel() );
-		exportButton.setEnabled(false);
-		exportButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				diskForm.setAction(GWT.getHostPageBaseURL() + FINANCE_REPORT_EXCEL_PRINT);
-				registryParamsHidden.setValue(JsonParams.convert(searchPanel.getParams( opt )));
-				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				userHidden.setValue(getCurrentUser());
-				diskForm.submit();
-			}
-		});
-//		toolbar.add(exportButton);
-
-		checkAll  = new AonToolbarButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
+		checkAll = new AonToolbarButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
 		checkAll.setEnabled(false);
-		checkAll .addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				checkAll( opt, true );
-			}
-		});
+		
+		checkAll .addClickHandler(event -> checkAll(true));
+		
 		toolbar.add(checkAll );
 		
-		uncheckAll  = new AonToolbarButton( AON.MSG.selectNone(), AON.CSS.aonIconCheck() );
+		uncheckAll = new AonToolbarButton( AON.MSG.selectNone(), AON.CSS.aonIconCheck() );
 		uncheckAll.setEnabled(false);
-		uncheckAll.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				checkAll( opt, false );
-			}
-		});
+		
+		uncheckAll.addClickHandler(event -> checkAll(false));
+		
 		toolbar.add(uncheckAll);
 
 		return toolbar;
 	}
 	
-	protected void checkAll(final RegistryModuleOptions opt, boolean check) {
+	protected void checkAll(boolean check) {
 		for (CustomerRow customerRow : customers.values()) {
 			customerRow.getCustomer().setSelected(check);
 			manageSelection(customerRow.getCustomer());
 			AonDisplayGridRow row = (AonDisplayGridRow) tab.getWidget(customerRow.getRow());
 			AonDisplayGridCell cell = (AonDisplayGridCell) row.getWidget(0);
 			Widget w = cell.getWidget(0);
+			
 			if (check) {
 				w.addStyleName(AON.CSS.aonIconChecked());
 				w.removeStyleName(AON.CSS.aonIconCheck());
@@ -426,21 +369,14 @@ public class CustomerModule extends MainEntryPoint {
 
 	private AonMinimizePanel getMinimizePanel() {
 		footPanel = new AonMinimizePanel();
-		footPanel.addMinimizeHandler(new MinimizeHandler() {
-			
-			@Override
-			public void onMinimize(MinimizeEvent event) {
+		
+		footPanel.addMinimizeHandler(event -> {
 				minimizedByUser = true;
 				closeFootPanel();
-			}
 		});
-		footPanel.addMaximizeHandler(new MaximizeHandler() {
-			
-			@Override
-			public void onMaximize(MaximizeEvent event) {
-				openFootPanel();
-			}
-		});
+		
+		footPanel.addMaximizeHandler(event -> openFootPanel());
+		
 		footPanel.setStyleName(AON.CSS.aonSelector());
 		tabLayout = new TabLayoutPanel(26, Unit.PX);
 		tabLayout.setWidth("100%");
@@ -451,18 +387,14 @@ public class CustomerModule extends MainEntryPoint {
 		extraInfoContainer = new ScrollPanel();
 		tabLayout.add(extraInfoContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.additionalData(), AON.CSS.aonIconInfo()));
 		extraInfoTabIndex = tabIndex;
-		tabIndex++;
-
 
 		tabLayout.setAnimationDuration(300);
-		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Integer> event) {
+		
+		tabLayout.addSelectionHandler(event -> {
 				minimizedByUser = false;
 				openFootPanelIfNeeded();
-			}
 		});
+		
 		return footPanel; 
 	}
 
@@ -497,47 +429,45 @@ public class CustomerModule extends MainEntryPoint {
 	}
 
 	private void search(final RegistryModuleOptions opt, RegistryParams params, final int ofs) {
-		if (!isMoreData()) return; 
-		SERVICE.getCustomers(opt.getDomainName(),opt.getDomain(),opt.getUser(), params, ofs, limit
-				, new AsyncCallback<LinkedList<Customer>>() {
-					
-					@Override
-					public void onSuccess(LinkedList<Customer> result) {
-						checkAll.setEnabled(false);
-						uncheckAll.setEnabled(false);
-						exportButton.setEnabled(false);
-						if (result != null && !result.isEmpty()) {
-							result.forEach( customer -> paintRow(opt,customer));
-							offset.setValue(ofs + result.size());
-							enableMoreData();
-							checkAll.setEnabled(true);
-							uncheckAll.setEnabled(true);
-							exportButton.setEnabled(true);
-						} else {
-							Label label = new Label(AON.MSG.noData());
-							label.setStyleName(AON.CSS.aonBlockMessage());
-							label.addStyleName(AON.CSS.aonBlockInfoMessage());
-							label.addStyleName(AON.CSS.aonMarginTop());
-							container.add(label);
-							disableMoreData();
-						}
-						enableSearch();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						showError(caught.getMessage());
-					}
-				});
+		if (!isMoreData()) return;
 		
+		service.getCustomers(opt.getDomainName(),opt.getDomain(),opt.getUser(), params, ofs, LIMIT
+		, new AsyncCallback<LinkedList<Customer>>() {
+			@Override
+			public void onSuccess(LinkedList<Customer> result) {
+				checkAll.setEnabled(false);
+				uncheckAll.setEnabled(false);
+				
+				if (result != null && !result.isEmpty()) {
+					result.forEach( customer -> paintRow(opt,customer));
+					offset.setValue(ofs + result.size());
+					enableMoreData();
+					checkAll.setEnabled(true);
+					uncheckAll.setEnabled(true);
+				} else {
+					Label label = new Label(AON.MSG.noData());
+					label.setStyleName(AON.CSS.aonBlockMessage());
+					label.addStyleName(AON.CSS.aonBlockInfoMessage());
+					label.addStyleName(AON.CSS.aonMarginTop());
+					container.add(label);
+					disableMoreData();
+				}
+				enableSearch();
+			}
+					
+			@Override
+			public void onFailure(Throwable caught) {
+				showError(caught.getMessage());
+			}
+		});	
 	}
 	
-	public void addExtraInfo( String htmlText) {
+	public void addExtraInfo (String htmlText) {
 		HTMLPanel panel = new HTMLPanel(htmlText);
 		addExtraInfo(panel);
 	}
 	
-	public void addExtraInfo( Widget widget) {
+	public void addExtraInfo (Widget widget) {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(extraInfoTabIndex);
 		extraInfoContainer.setWidget(widget);
@@ -563,7 +493,7 @@ public class CustomerModule extends MainEntryPoint {
 	}
 	
 	private void openFootPanel() {
-		int effectiveHeigth = 5;
+		double effectiveHeigth = 5;
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / effectiveHeigth);
 		splitLayoutPanel.animate(500);
 	}
@@ -577,9 +507,8 @@ public class CustomerModule extends MainEntryPoint {
 	private void paintRow(final RegistryModuleOptions opt, Customer customer, int row) {
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction()
 				, selectedItems.contains(customer.getId())?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());
-		checkButton.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
+		
+		checkButton.addClickHandler(event -> {
 				if (selectedItems.contains(customer.getId())) {
 					customer.setSelected(false);
 					manageSelection( customer );
@@ -591,7 +520,6 @@ public class CustomerModule extends MainEntryPoint {
 					checkButton.addStyleName(AON.CSS.aonIconChecked());
 					checkButton.removeStyleName(AON.CSS.aonIconCheck());
 				}
-			}
 		});
 
 		Label confidential = new Label();
@@ -626,77 +554,10 @@ public class CustomerModule extends MainEntryPoint {
 				status.addStyleName(AON.CSS.aonIconBlock());
 			}
 		});
-
-//		AonTableButton detailsButton = new AonTableButton(AON.MSG.seeDetail(),AON.CSS.aonIconMoreVertical() );
-//		detailsButton.addStyleName(AON.CSS.aonClickable());
-//		detailsButton.addClickHandler( new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				selectCustomer(opt, customer);
-///*				
-//				SERVICE.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {
-//					
-//					@Override
-//					public void onSuccess(CustomerFull result) {
-//						final AonSimpleDialog dialog = new AonSimpleDialog();
-//						dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
-//						dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-//						dialog.setCaption(AON.MSG.customer());
-//						AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(opt, result, new AonRegistryFullPanelCallback<CustomerFull>() {
-//							
-//							@Override
-//							public void setFocus(boolean b) {
-//								// callback.setFocus(b);
-//							}
-//							
-//							@Override
-//							public void onError(Throwable caught) {
-//								showError(caught.getMessage());
-//							};
-//							
-//							@Override
-//							public void onCancel() {
-//								dialog.hide();		
-//							}
-//							
-//							@Override
-//							public void onAccept(CustomerFull rf) {
-//								dialog.hide();
-//							}
-//							@Override
-//							public void onDocumenthanged(CustomerFull registryFull) {
-//							}
-//
-//						});
-//						dialog.add( customerPanel );
-//						dialog.center();
-//						dialog.show();
-//						
-//						Scheduler.get().scheduleDeferred(new Command() {
-//					        public void execute() {
-//					        	customerPanel.setFocus(true);
-//					        }
-//					    });		
-//						
-//					}
-//					
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						showError(caught.getMessage());	
-//					}
-//				});					
-// */
-//			}
-//		});
 		
 		AonDisplayGridRow customerRow = tab.addRow();
-		customerRow.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				selectCustomer(opt, customer);
-			}
-		});
+		customerRow.addClickHandler(event -> selectCustomer(opt, customer));
+		
 		customerRow.addCell(checkButton)
 			.addCell(status)
 			.addCell(confidential)
@@ -705,7 +566,7 @@ public class CustomerModule extends MainEntryPoint {
 			.addCell(documentLabel)
 			.addCell(nameLabel)
 			.addCell(aliasLabel)
-//			.addCell(detailsButton)
+			// .addCell(detailsButton)
 			;
 	}
 	
@@ -713,6 +574,7 @@ public class CustomerModule extends MainEntryPoint {
 	private void clearSelection() {
 		selectedItems.clear();
 	}
+	
 	private void manageSelection(Customer customer) {
 		if (customer.isSelected()) {
 			selectedItems.add(customer.getId());
@@ -723,11 +585,11 @@ public class CustomerModule extends MainEntryPoint {
 	}
 	
 	private void refreshIcons() {
-		selectedCount.setText( (selectedItems.size() > 0)?  AonNumberUtils.toString(selectedItems.size()) :""); 
+		selectedCount.setText( (!selectedItems.isEmpty())?  AonNumberUtils.toString(selectedItems.size()) :""); 
 	}
 	
 	private void selectCustomer(RegistryModuleOptions opt, Customer customer) {
-		SERVICE.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {
+		service.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {
 			
 			@Override
 			public void onSuccess(CustomerFull result) {
@@ -739,13 +601,13 @@ public class CustomerModule extends MainEntryPoint {
 					
 					@Override
 					public void setFocus(boolean b) {
-						// callback.setFocus(b);
+						// Empty method
 					}
 					
 					@Override
 					public void onError(Throwable caught) {
 						showError(caught.getMessage());
-					};
+					}
 					
 					@Override
 					public void onCancel() {
@@ -758,18 +620,15 @@ public class CustomerModule extends MainEntryPoint {
 					}
 					@Override
 					public void onDocumenthanged(CustomerFull registryFull) {
-					}
-
+						// Empty method
+					}	
 				});
+				
 				dialog.add( customerPanel );
 				dialog.center();
 				dialog.show();
 				
-				Scheduler.get().scheduleDeferred(new Command() {
-			        public void execute() {
-			        	customerPanel.setFocus(true);
-			        }
-			    });		
+				Scheduler.get().scheduleDeferred(() -> customerPanel.setFocus(true));
 				
 			}
 			
