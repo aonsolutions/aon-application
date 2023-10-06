@@ -6,7 +6,6 @@
 }
 
 .aonInputMsg {
-	height: 25px;
 	margin-left: 15px;
 }
 
@@ -24,7 +23,6 @@
 	border-radius: 3px;
 	padding-bottom: 0px;
 }
-
 
 .aonInputBoxLabel > input:focus {
 	outline: none;
