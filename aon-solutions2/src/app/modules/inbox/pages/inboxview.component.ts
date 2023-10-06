@@ -187,6 +187,13 @@ export class InboxviewComponent implements OnInit {
             messageStatus.Status = StatusMessage.VISTA;
             }
           }
+
+          try {
+//            this.messageService.updateMessage(messageStatus);
+          } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
+          }
+
       });
     }
 
