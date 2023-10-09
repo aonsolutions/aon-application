@@ -629,9 +629,9 @@
   width: 60px;
   position: fixed;
   top: 60px;
-  right: 0;
+  left: 0;
   background-color: var(--aonWhite);
-  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
   overflow-x: hidden;
   z-index: 2;
 }
@@ -705,7 +705,7 @@
 
 
 .aonSidenavTitleBeta {
-  font-size: 12px;
+  font-size: 16px;
   margin-top: 15px;
   margin-bottom: 10px;
   font-weight: bold;
