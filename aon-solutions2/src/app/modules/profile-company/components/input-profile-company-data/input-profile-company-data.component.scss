@@ -25,7 +25,7 @@
   .form .email-row {
     display: grid;
     grid-template-columns: auto auto;
-    gap: 1rem;
+    gap: $margin;
     width: 100%;
   }
 }

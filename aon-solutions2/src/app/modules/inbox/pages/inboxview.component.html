@@ -90,15 +90,13 @@
     </div>
     <ng-container *ngIf="selectedTab == 0">
       <div class="padding">
-        <app-table-component
-          (rowClicked)="rowClickHandler($event)"
+        <app-table-inbox
+        (rowClicked)="rowClickHandler($event)"
+        [filterTabSelec]="this.tabIndex"
+        [filterDate]="this.filterDate"
+        [selectedTab]="this.selectedTab"
         >
-        </app-table-component>
-        <div *ngIf="selectedTab == 0 && noTasksMessage" class="padding inbox-no-tasks-message">
-          <ng-container *ngIf="noTasksMessage">
-            {{ "INBOX.NOMESSAGES" | translate }}
-          </ng-container>
-        </div>
+        </app-table-inbox>
       </div>
     </ng-container>
     <ng-container *ngIf="selectedTab == 1">
@@ -125,11 +123,13 @@
           </app-dropdown-menu>
         </div>
         <div content class="padding">
-          <app-table-queries
+          <app-table-inbox
+            (rowClicked)="rowClickHandler($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
-            (rowClicked)="rowClickHandler($event)"
-          ></app-table-queries>
+            [selectedTab]="this.selectedTab"
+          >
+          </app-table-inbox>
         </div>
       </app-tabs>
     </ng-container>
@@ -158,11 +158,13 @@
           </app-dropdown-menu>
         </div>
         <div content class="padding">
-          <app-table-tasks
+          <app-table-inbox
             (rowClicked)="rowClickHandler($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
-          ></app-table-tasks>
+            [selectedTab]="this.selectedTab"
+          >
+        </app-table-inbox>
         </div>
       </app-tabs>
     </ng-container>
@@ -190,13 +192,15 @@
           </app-dropdown-menu>
         </div>
         <div content class="padding">
-          <app-table-notifications
+          <app-table-inbox
             (rowClicked)="rowClickHandler($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
-          ></app-table-notifications>
+            [selectedTab]="this.selectedTab"
+          ></app-table-inbox>
         </div>
       </app-tabs>
+       <p>El valor de tabIndex es: {{ tabIndex | json }}</p>
     </ng-container>
   </div>
 

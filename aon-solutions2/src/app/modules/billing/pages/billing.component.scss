@@ -10,7 +10,7 @@
 
   .box .header {
     display: flex;
-    gap: 0.5rem;
+    gap: $margin / 2;
     width: 100%;
     align-items: center;
   }
@@ -20,7 +20,7 @@
   #buttons-dashboard {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: $margin;
   }
 
   .header .line {
@@ -57,6 +57,11 @@
     cursor: pointer;
   }
 
+  #list-billing{
+    display: grid;
+    gap: $margin;
+  }
+  
   .header-submenu .line {
     margin-right: 20px;
   }
@@ -91,7 +96,7 @@
     align-items: center;
     justify-content: space-between;
     margin-right: $margin-right;
-    gap: 1rem;
+    gap: $margin;
 
     .button {
       border: 0.05rem solid $color-icon;
@@ -123,7 +128,7 @@
 
   .banks {
     display: flex;
-    gap: 1rem;
+    gap: $margin;
     flex-wrap: wrap;
   }
 
@@ -259,7 +264,7 @@
 
       .left {
         display: flex;
-        gap: 1rem;
+        gap: $margin;
         align-items: center;
         margin-top: 1rem;
         padding-left: $padding-left;
@@ -276,7 +281,7 @@
 
       .right {
         display: flex;
-        gap: 1rem;
+        gap: $margin;
         justify-content: center;
         margin-top: 1rem;
 
@@ -312,7 +317,7 @@
         color: $color-blue;
         cursor: pointer;
         align-items: center;
-        gap: 1rem;
+        gap: $margin;
         width: 5rem;
       }
     }
@@ -325,7 +330,7 @@
         color: $color-blue;
         cursor: pointer;
         align-items: center;
-        gap: 1rem;
+        gap: $margin;
         width: 5rem;
       }
     }
@@ -333,7 +338,7 @@
     .form {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: $margin;
       margin-top: $margin-top;
 
       .centered-label {
@@ -352,7 +357,7 @@
 
       label {
         display: flex;
-        gap: 1rem;
+        gap: $margin;
       }
     }
   }
@@ -368,7 +373,7 @@
 
       .left {
         display: flex;
-        gap: 1rem;
+        gap: $margin;
         height: 2.5rem;
         align-items: center;
 
@@ -383,7 +388,7 @@
 
       .right {
         display: flex;
-        gap: 1rem;
+        gap: $margin;
         height: 2.5rem;
         width: 20rem;
         align-items: center;

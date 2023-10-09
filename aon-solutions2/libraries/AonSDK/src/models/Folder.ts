@@ -1,7 +1,6 @@
 import { IFolder, IModel, IApiModel, IStorable } from "../interfaces/modelsInterfaces";
 import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
-import { GET_MULTIPLE, GET_METHOD } from "../utils/Environment";
 import { ErrorResponse } from "../utils/Response";
 
 export class Folder implements IFolder, IModel  {

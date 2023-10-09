@@ -1,9 +1,9 @@
 import { ISingleObjectCrudFactory, IMultipleObjectCrudFactory } from "../interfaces/factoryInterfaces";
 import { ITaxModel } from "../interfaces/modelsInterfaces";
 import { ISingleObjectCrud, IMultipleObjectCrud, ITaxModelSpecificMethods } from "../interfaces/serviceInterfaces";
-import { TaxModel, ApiTaxModel, StorableTaxModel } from "../models/TaxModel";
-import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
-import { APITaxModelMultipleObjectCrudRepository, ApiTaxModelSpecificMethodsRepository, LocalTaxModelSpecificMethosdsRepository } from "../repositorys/TaxModelRepository";
+import { TaxModel, StorableTaxModel } from "../models/TaxModel";
+import { GenericSingleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
+import { APITaxModelMultipleObjectCrudRepository, APITaxModelSingleObjectCrudRepository, ApiTaxModelSpecificMethodsRepository, LocalTaxModelSpecificMethosdsRepository } from "../repositorys/TaxModelRepository";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
 import { TaxModelSpecificMethods } from "../services/TaxModelService";
 import { APIEnvironment } from "../utils/Environment";
@@ -12,7 +12,7 @@ export class TaxModelFactory implements ISingleObjectCrudFactory<ITaxModel>, IMu
     createSingleObjectCrud(): ISingleObjectCrud<ITaxModel> {
         return new GenericSingleObjectCrud<TaxModel>(
             (APIEnvironment ?
-            new APIGenericSingleObjectCrudRepository<TaxModel>(new ApiTaxModel(), TaxModel) :
+            new APITaxModelSingleObjectCrudRepository() :
             new GenericSingleObjectCrudRepository<TaxModel>(new StorableTaxModel(), TaxModel)
             ),
             TaxModel);

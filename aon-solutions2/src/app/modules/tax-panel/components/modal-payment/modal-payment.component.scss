@@ -44,7 +44,7 @@
     width: 100%;
     justify-content: center;
     margin-bottom: $margin-bottom;
-    gap: 1rem;
+    gap: $margin;
     margin-right: $margin-right;
     margin-top: -$margin-top;
   }
@@ -60,7 +60,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: 1rem;
+    gap: $margin;
   }
 
   .button-container {
@@ -89,7 +89,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 1rem;
+    gap: $margin;
     border: $border;
     border-radius: $border-radius;
     margin-bottom: $margin-bottom;
@@ -126,7 +126,7 @@
     flex-direction: row;
     width: 100%;
     justify-content: center;
-    gap: 1rem;
+    gap: $margin;
     margin-right: $margin-right;
   }
 }

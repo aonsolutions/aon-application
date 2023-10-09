@@ -1,4 +1,4 @@
-<app-tabs
+<!-- <app-tabs
   [tabs]="tabs"
   [tabIndex]="tabIndex"
   (changeTabIndex)="this.tabIndex = $event"
@@ -22,97 +22,46 @@
       ></app-input>
     </div>
   </div>
-  <div content *ngIf="this.tabIndex == 0">
+  <div content class="padding" *ngIf="this.tabIndex == 0">
     <app-spinner *ngIf="spinner"></app-spinner>
-    <mat-grid-list [cols]="24">
-      <mat-grid-tile
-        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-      ></mat-grid-tile>
-      <mat-grid-tile
-        class="position-top-col"
-        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
-      >
-        <app-table-tax-model
-          [trimester]="1"
-          [inputModel]="this.selectedModel"
-          [inputYear]="this.selectedYear"
-        ></app-table-tax-model>
-      </mat-grid-tile>
-    </mat-grid-list>
+    <app-table-tax-model
+      [trimester]="1"
+      [inputModel]="this.selectedModel"
+      [inputYear]="this.selectedYear"
+    ></app-table-tax-model>
   </div>
 
-  <div content *ngIf="this.tabIndex == 1">
+  <div content class="padding" *ngIf="this.tabIndex == 1">
     <app-spinner *ngIf="spinner"></app-spinner>
-    <mat-grid-list [cols]="24">
-      <mat-grid-tile
-        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-      ></mat-grid-tile>
-      <mat-grid-tile
-        class="position-top-col"
-        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
-      >
-        <app-table-tax-model
-          [trimester]="2"
-          [inputModel]="this.selectedModel"
-          [inputYear]="this.selectedYear"
-        ></app-table-tax-model>
-      </mat-grid-tile>
-    </mat-grid-list>
+    <app-table-tax-model
+      [trimester]="2"
+      [inputModel]="this.selectedModel"
+      [inputYear]="this.selectedYear"
+    ></app-table-tax-model>
   </div>
 
-  <div content *ngIf="this.tabIndex == 2">
+  <div content class="padding" *ngIf="this.tabIndex == 2">
     <app-spinner *ngIf="spinner"></app-spinner>
-    <mat-grid-list [cols]="24">
-      <mat-grid-tile
-        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-      ></mat-grid-tile>
-      <mat-grid-tile
-        class="position-top-col"
-        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
-      >
-        <app-table-tax-model
-          [trimester]="3"
-          [inputModel]="this.selectedModel"
-          [inputYear]="this.selectedYear"
-        ></app-table-tax-model>
-      </mat-grid-tile>
-    </mat-grid-list>
+    <app-table-tax-model
+      [trimester]="3"
+      [inputModel]="this.selectedModel"
+      [inputYear]="this.selectedYear"
+    ></app-table-tax-model>
   </div>
 
-  <div content *ngIf="this.tabIndex == 3">
+  <div content class="padding" *ngIf="this.tabIndex == 3">
     <app-spinner *ngIf="spinner"></app-spinner>
-    <mat-grid-list [cols]="24">
-      <mat-grid-tile
-        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-      ></mat-grid-tile>
-      <mat-grid-tile
-        class="position-top-col"
-        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
-      >
-        <app-table-tax-model
-          [trimester]="4"
-          [inputModel]="this.selectedModel"
-          [inputYear]="this.selectedYear"
-        ></app-table-tax-model>
-      </mat-grid-tile>
-    </mat-grid-list>
+    <app-table-tax-model
+      [trimester]="4"
+      [inputModel]="this.selectedModel"
+      [inputYear]="this.selectedYear"
+    ></app-table-tax-model>
   </div>
 
-  <div content *ngIf="this.tabIndex == 4">
-    <app-spinner *ngIf="spinner"></app-spinner>
-    <mat-grid-list [cols]="24">
-      <mat-grid-tile
-        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
-      ></mat-grid-tile>
-      <mat-grid-tile
-        class="position-top-col"
-        [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }"
-      >
-        <app-table-tax-model
-          [inputModel]="this.selectedModel"
-          [inputYear]="this.selectedYear"
-        ></app-table-tax-model>
-      </mat-grid-tile>
-    </mat-grid-list>
+  <div content class="padding" *ngIf="this.tabIndex == 4">
+    <app-table-tax-model
+      [inputModel]="this.selectedModel"
+      [inputYear]="this.selectedYear"
+    ></app-table-tax-model>
   </div>
-</app-tabs>
+</app-tabs> -->

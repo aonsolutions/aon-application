@@ -5,7 +5,7 @@
   class="component-table"
 >
   <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
-    <th mat-header-cell 
+    <th mat-header-cell
       *matHeaderCellDef
     >
       {{head[column]}}
@@ -16,8 +16,8 @@
       [ngClass]="data[col].class !== undefined && data[col].class !== null ? data[col].class : ''"
     >
       <!--Add text only-->
-      <span *ngIf="column !== 'actions' && !element[column].icon" [innerHTML]="element[column]"></span>
-      <span *ngIf="column !== 'actions' && element[column].icon">
+      <span *ngIf="column !== 'actions' && !element[column]?.icon" [innerHTML]="element[column]"></span>
+      <span *ngIf="column !== 'actions' && element[column]?.icon">
         <span *ngFor="let buttons of element[column].icon">
           <app-icon
             *ngFor="let color of buttons | keyvalue"
@@ -42,7 +42,7 @@
     </td>
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row 
+  <tr mat-row
     *matRowDef="let row; columns: columnsToDisplay;"
   ></tr>
 </table>

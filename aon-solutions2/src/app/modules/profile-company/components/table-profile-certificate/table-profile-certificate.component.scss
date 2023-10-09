@@ -4,12 +4,12 @@
   [tool] {
     display: flex;
     margin-bottom: -0.45rem;
-    gap: 1rem;
+    gap: $margin;
   }
 
   [content]#company {
     display: grid;
-    gap: 2rem;
+    gap: $margin * 2;
     grid-auto-flow: column;
     padding: $padding;
   }

@@ -12,22 +12,19 @@
   }
 
   .formSend {
-
     margin-top: $margin-top;
     margin-bottom: $margin-bottom;
 
     .inputText {
       width: 100%;
     }
-
   }
 
   .buttonsSend {
-
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 0.5rem;
+    gap: $margin / 2;
 
     .send {
       background: $background-button-dark;
@@ -38,6 +35,5 @@
       background: $background-button-dark-hover;
     }
   }
-
 
 }

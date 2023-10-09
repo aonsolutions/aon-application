@@ -1,6 +1,18 @@
+@import 'src/styles.scss';
 ::ng-deep {
   app-table-tax-model {
     width: 100% !important;
     top: 0px;
   }
+
+  :host {
+    height: 100%;
+    width: 100%;
+  }
+
+  .input-tax-model {
+    display: flex;
+    gap: $margin;
+  }
 }
+

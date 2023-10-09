@@ -3,7 +3,6 @@ import { IFilter, ICollection } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { ErrorResponse } from "../utils/Response";
 import { GET_MULTIPLE, GET_METHOD } from "../utils/Environment";
-import { Bank } from "./Bank";
 
 export class TaxModel implements ITaxModel, IModel  {
     private name: string;
@@ -204,9 +203,12 @@ export class ApiTaxModel extends TaxModel implements IApiModel {
         tax.ApiObject = data;
         tax.Key = data.id;
         tax.Name = data.model ? (data.model == 'IVA' ? '303' : data.model) : '';
-        tax.PaymentMethod = data.type ? data.type : '';
+        tax.PaymentMethod = 
+            statusParse(data.status) == statusTaxModel.PRESENTADO || 
+            statusParse(data.status) == statusTaxModel.CONFIRMADO
+            ? (data.iban ? 'Domiciliación bancaria' : 'NRC') : '';
         tax.Result = data.result ? data.result : '';
-        tax.Status = data.status ? data.status : '';
+        tax.Status = data.status ? statusParse(data.status) : statusTaxModel.EN_PROCESO;
         tax.TaxType = '';
         tax.Trimester = data.period ? +data.period.replace('T','') : 0;
         tax.Year = data.year ? data.year : '';
@@ -225,3 +227,38 @@ export class StorableTaxModel extends TaxModel implements IStorable<TaxModel> {
 
 export let taxModels: ICollection<TaxModel> = new Collection<TaxModel>();
 export function setTaxModels(value: any) { taxModels = value; };
+
+// PENDING("Pendiente") - en proceso
+// FINISHED("Finalizado") - confirmado
+// BATCHED("En Lote") - presentado
+// BLOCKED("Bloqueado") - bloqueado
+// SENT("Presentado") - presentado
+// MISSING("Desconocido") - desconocido
+// CUSTOMER_CHECK("Envio a cliente") - pendiente
+// CUSTOMER_ACCEPTED("Aceptado por cliente") - confirmado
+// CUSTOMER_REJECTED("Rechazado por cliente") - rectificar
+
+export function statusParse(status: string): statusTaxModel {
+    switch(status){
+        case 'PENDING':
+            return statusTaxModel.EN_PROCESO;
+        case 'FINISHED':
+            return statusTaxModel.CONFIRMADO;
+        case 'SENT':
+            return statusTaxModel.PRESENTADO;
+        case 'CUSTOMER_CHECK':
+            return statusTaxModel.PENDIENTE;
+        case 'CUSTOMER_ACCEPTED':
+            return statusTaxModel.CONFIRMADO;
+        case 'CUSTOMER_REJECTED':
+            return statusTaxModel.RECTIFICADO;
+        case 'MISSING':
+            return statusTaxModel.DESCONOCIDO;
+        case 'BATCHED':
+            return statusTaxModel.PRESENTADO;
+        case 'BLOCKED':
+            return statusTaxModel.BLOQUEADO;
+        default:
+            return statusTaxModel.EN_PROCESO;
+    }
+}

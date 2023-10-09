@@ -1,9 +1,14 @@
-:host {
-  height: 100%;
-  width: 100%;
-}
+@import 'src/styles.scss';
 
-.input-tax-model {
-  display: flex;
-  gap: 1rem;
+::ng-deep{
+
+  :host {
+    height: 100%;
+    width: 100%;
+  }
+
+  .input-tax-model {
+    display: flex;
+    gap: $margin;
+  }
 }

@@ -3,21 +3,26 @@
 ::ng-deep{
   #document-options .mat-figure{
     justify-content : end;
-    gap             : 1rem;
+    gap             : $margin;
     align-items     : end;
   }
 
   #document-content{
     display   : flex;
     flex-wrap : wrap;
-    gap       : 1rem;
+    gap       : $margin;
   }
 
+  #list-folder{
+    display: grid;
+    gap: $margin;
+  }
+  
   #file-detail{
     min-width       : 25rem;
     display         : flex;
     justify-content : space-between;
-    gap             : 1rem;
+    gap             : $margin;
     padding         : $padding;
   }
   #file-detail .name{
