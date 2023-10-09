@@ -17,7 +17,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridCell;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
@@ -37,29 +36,19 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CustomerModule extends MainEntryPoint {
-	
-	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
-		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
-		SafeHtml tab(String title, String icon);
-	}
 	
 	private static RegistryServiceAsync service;
 	static {
@@ -92,10 +81,6 @@ public class CustomerModule extends MainEntryPoint {
 	private DockLayoutPanel dockLayoutPanel;
 	private FlowPanel container;
 	private AonDisplayGrid tab;
-	private SplitLayoutPanel splitLayoutPanel;
-	private AonMinimizePanel footPanel;
-	private TabLayoutPanel tabLayout;
-	private ScrollPanel extraInfoContainer;
 	
 	private LinkedHashMap<Integer,CustomerRow> customers = new LinkedHashMap<>();
 	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<>();
@@ -110,8 +95,6 @@ public class CustomerModule extends MainEntryPoint {
 	private FlowPanel progress = new FlowPanel();
 
 	private InlineLabel selectedCount;
-	private boolean minimizedByUser;
-	private int extraInfoTabIndex;
 	
 	private static final int LIMIT = 100;
 	private final MutableInt offset = new MutableInt(0);
@@ -158,11 +141,11 @@ public class CustomerModule extends MainEntryPoint {
 		SimpleLayoutPanel centerLayoutPanel = new SimpleLayoutPanel();
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
 		searchPanel = new CustomerModuleSearchPanel(opt);
-		dockLayoutPanel.addNorth(searchPanel, 75);
+		dockLayoutPanel.addNorth(searchPanel, RegistryModuleSearchPanel.HEIGHT);
 		progressContainer.setVisible(false);
 		progressContainer.add(progress);
 		dockLayoutPanel.addNorth(progressContainer, 5);
-		splitLayoutPanel = new SplitLayoutPanel();
+		SplitLayoutPanel splitLayoutPanel = new SplitLayoutPanel();
 		dockLayoutPanel.add(splitLayoutPanel);
 		ScrollPanel centerPanel = new ScrollPanel();
 		centerPanel.setStyleName(AON.CSS.aonScrollArea());
@@ -428,36 +411,12 @@ public class CustomerModule extends MainEntryPoint {
 			}
 		});	
 	}
-	
-	public void addExtraInfo (String htmlText) {
-		HTMLPanel panel = new HTMLPanel(htmlText);
-		addExtraInfo(panel);
-	}
-	
-	public void addExtraInfo (Widget widget) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(extraInfoTabIndex);
-		extraInfoContainer.setWidget(widget);
-		extraInfoContainer.scrollToTop();
-	}
 
 	private void showError(String msg) {
 		if (AonStringUtils.isBlank(msg)) {
 			msg = "Se ha producido un error no codificado.";
 		}
 		toolbar.showErrorMessage(msg);
-	}
-
-	private void openFootPanelIfNeeded() {
-		if (!minimizedByUser && splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
-			openFootPanel();
-		}
-	}
-	
-	private void openFootPanel() {
-		double effectiveHeigth = 5;
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / effectiveHeigth);
-		splitLayoutPanel.animate(500);
 	}
 
 	private void paintRow(final RegistryModuleOptions opt, Customer customer) {

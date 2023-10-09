@@ -176,7 +176,7 @@ public class CreditorModule extends MainEntryPoint {
 	private void loadModule( final RegistryModuleOptions opt ) {
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
 		searchPanel = new CreditorModuleSearchPanel(opt);
-		dockLayoutPanel.addNorth(searchPanel, 75);
+		dockLayoutPanel.addNorth(searchPanel, RegistryModuleSearchPanel.HEIGHT);
 		progressContainer.setVisible(false);
 		progressContainer.add(progress);
 		dockLayoutPanel.addNorth(progressContainer, 5);

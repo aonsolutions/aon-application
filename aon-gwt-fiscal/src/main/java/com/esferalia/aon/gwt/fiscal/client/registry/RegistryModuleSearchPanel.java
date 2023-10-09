@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<RegistryParams>{
 
-	public static final double HEIGHT = 130;
+	public static final double HEIGHT = 75;
 	
 	private DocumentTypeListBox documentTypeBox;
 	private CountryListBox documentCountryBox;
@@ -151,7 +151,7 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 			}
 		});
 
-		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
+		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconSearch());
 		refreshButton.addStyleName(AON.CSS.aonMarginLeft());
 		refreshButton.addClickHandler(new ClickHandler() {
 			@Override
