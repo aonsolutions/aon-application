@@ -12,7 +12,7 @@ import { ToolbarType } from "../../models/enums.js";
 import { AonIframe } from "../../components/aon-iframe.js";
 import * as ACTION from "../actions.js";
 
-export class AonGraphicsTrial extends AonElement {
+export class AonDashboardGraphicsTrial extends AonElement {
   PERIODS;
   ACCOUNTS;
   params;
@@ -36,8 +36,8 @@ export class AonGraphicsTrial extends AonElement {
 
   constructor() {
     super();
-    this.id = this.id || "aonGraphicsTrial";
-    this.applicationEl = this.getApplication();
+    this.id = this.id || "aonGraphicsDashboardTrial";
+    this.applicationEl = document.querySelector("#pygContent");
   }
 
   connectedCallback() {
@@ -46,7 +46,7 @@ export class AonGraphicsTrial extends AonElement {
   }
 
   initialize() {
-    this.TOOLBAR = this.id + "Toolbar";
+    
   }
 
   async build() {
@@ -55,15 +55,12 @@ export class AonGraphicsTrial extends AonElement {
       try {
         let company = JSON.parse(localStorage.getItem("company"));
         this.params.domain = company.id;
+    
         this.params.domainName = company.domain;
       } catch (error) {
         console.log(error);
       }
     }
-
-    this.innerHTML = `
-    <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Pérdidas y Ganancias"> </aon-toolbar>
-    `;
 
     this.PERIODS = await getPeriods(this.params)
     .catch((error) => {
@@ -76,78 +73,8 @@ export class AonGraphicsTrial extends AonElement {
 
     this.selectedPeriod = lastPeriod;
 
-    this.buildToolbar();
-    this.buildPyGToolbar();
-    await this.buildFilter();
-
     this.draw();
-    if (this.selectedPeriod){
-      this.getElement("year").value = this.selectedPeriod.id;
-    }
 
-    this.getElement("show").value = this.filter != null ? this.filter.show : "yearly";
-    this.getElement("detail").value = this.params.level;
-  }
-
-  buildToolbar() {
-    this.applicationEl.removeToolbarOptions();
-    this.applicationEl.addSearchOption(!this.isMobile());
-  }
-
-  buildPyGToolbar() {
-    const toolbar = this.getElement(this.TOOLBAR);
-    if(toolbar){
-      toolbar.removeButtons();
-      toolbar.addButton2(ACTION.BACK, null);
-    }
-  }
-
-  async buildFilter() {
-    const application = this.getApplication();
-    const btnSearch = application.getSearchButton();
-    btnSearch.disabled = true;
-
-    btnSearch.buildOptionsFilter(PERIOD_FILTER);//INPUTS
-
-    btnSearch.addEventListener(EVENT.SEARCH_NEW,({ detail }) => {
-      if (detail) {
-        this.filter = detail;
-        this.build();
-      }
-    });
-
-    //------------------YEAR-----------
-    const yearEl = this.getElement("year");
-    let years = [];
-
-    for (const element of this.PERIODS) {
-      years.push({
-        name: element.name,
-        value: element.id,
-      });
-    }
-    yearEl.setOptions(years);
-    //------------------SHOW-----------
-    const showEl = this.getElement("show");
-    showEl.setOptions(getPeriodAccounting());
-
-    //----------------DETAIL-----------
-    const detailEl = this.getElement("detail");
-    let detailsJson = [
-      {
-        name: "Resumido",
-        value: 3,
-      },
-      {
-        name: "Estándar",
-        value: 5,
-      },
-      {
-        name: "Detallado",
-        value: 9,
-      },
-    ];
-    detailEl.setOptions(detailsJson);
   }
 
   async draw() {
@@ -165,9 +92,10 @@ export class AonGraphicsTrial extends AonElement {
       aonIframe.clearContent();
     }
 
-    this.getApplicationParent().loader(`#${id}`, aonIframe.getDocument());
+    // this.getElement("pygCardContent").loader(`#${id}`, aonIframe.getDocument());
 
     const result = await this.getData();
+    
     if (result) {
       await aonIframe.loadChart();
 
@@ -185,28 +113,6 @@ export class AonGraphicsTrial extends AonElement {
       aonIframe.addContent(div);
 
       AccoutingChart.colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter,  aonIframe);
-
-      let sidenavBaseId = null;
-      try {
-        sidenavBaseId = this.isMobile() ? `${this.applicationEl.getMobileSidenav().id}Content` : this.applicationEl.getSidenav().id;
-      } catch (e) {
-        sidenavBaseId = "";
-      }
-
-      const el1 = this.getElement(`${sidenavBaseId}VistaTrimestral`);
-      if (el1){
-        el1.addEventListener(EVENT.CLICK, () => this.goChart(div, result, aonIframe, "quarterly"));
-      }
-
-      const el2 = this.getElement(`${sidenavBaseId}VistaAnual`);
-      if (el2){
-        el2.addEventListener(EVENT.CLICK, () => this.goChart(div, result, aonIframe, "yearly"));
-      }
-       
-      const el3 = this.getElement(`${sidenavBaseId}VistaMensual`);
-      if (el3){
-        el3.addEventListener(EVENT.CLICK, () =>  this.goChart(div, result, aonIframe, "monthly"));
-      }
     }
   }
   
@@ -253,4 +159,4 @@ export class AonGraphicsTrial extends AonElement {
     return this.ACCOUNTS;
   };
 }
-window.customElements.define("aon-graphics-trial", AonGraphicsTrial);
+window.customElements.define("aon-dashboard-graphics-trial", AonDashboardGraphicsTrial);

@@ -28,6 +28,13 @@ import { AonAccounting } from '../accounting/aon-accounting.js';
 import { Attach } from '../../models/Attach.js';
 import { AonWarehouse } from '../warehouse/aon-warehouse.js';
 
+import * as LS  from '../../services/localStorageService.js';
+import { AonTab } from '../../components/aon-tab.js';
+import { AonNewUpload } from '../../components/aon-new-upload.js'
+import { AonDashboardButton } from '../../components/aon-dashboard-button.js';
+import { AonCard } from '../../components/aon-card.js';
+import { AonDashboardGraphicsTrial } from '../accounting/aon-graphics-dashboard-trial.js';
+
 export class AonDesktop extends AonElement {
 
 	dur;
@@ -260,17 +267,132 @@ export class AonDesktop extends AonElement {
 				aonHeader.timeControlStatus(r);
 			});
 		}
-		let div = this.createElement(TAG.DIV);
-		div.style.marginLeft = '100px';
-		div.style.marginRight = '100px';
-		aonDesktop.setContent(div);
 
-		div.appendChild(this.buildTitle(MSG.AVAILABLE.toUpperCase()));
+		// Content
+		let content = this.createElement(TAG.DIV);
+		content.id = "content";
+		content.style.margin = '0 1rem';
+		aonDesktop.setContent(content);
+
+		// Content data
+		let contentData = this.createElement(TAG.DIV);
+		contentData.id = "contentData";
+		contentData.style.margin = '1rem';
+
+		if(LS.isNewTheme()){
+			// Create tabs 
+			let tabOptions = this.tabOptions || [
+				{ title: "Aplicaciones", fn: () => this.createAppList(contentData, company)},
+				{ title: "Dashboard", fn: () => this.createDashboard(contentData, company)}
+			];
+
+			let desktopTabs = new AonTab();
+			desktopTabs.id = this.TABS;
+			desktopTabs.setOptions(tabOptions);
+			content.appendChild(desktopTabs);
+
+			// Intiliaze App List
+			this.createAppList(contentData, company);
+			content.appendChild(contentData);
+		} else {
+			// Intiliaze App List
+			this.createAppList(contentData, company);
+			content.appendChild(contentData);
+		}
+	}
+
+	uploadDocumentsDesktop(input, files){
+		uploadDocuments(input, files, this.getDur());
+	}
+
+	uploadInvoiceDesktop(input, files){
+		uploadInvoices(input, files);
+	}
+
+	createDashboard(parent){
+		// Clear parent
+		while (parent.lastElementChild) {
+			parent.removeChild(parent.lastElementChild);
+		}
+
+		let dashboard = this.createElement(TAG.DIV);
+		dashboard.id = "dashboard";
+		parent.appendChild(dashboard);
+
+		// Upload Panel
+		let upload = this.createElement(TAG.DIV);
+		upload.className = CSS.FLEX_ROW;
+		upload.id = "uploads";
+		dashboard.appendChild(upload);
+
+		let uploadDoc = new AonNewUpload();
+		uploadDoc.id = "docUpload";
+		uploadDoc.setMessage("Subir documentación");
+		uploadDoc.setType("Documental");
+		upload.appendChild(uploadDoc);
+
+		let uploadInv = new AonNewUpload();
+		uploadInv.id = "factUpload";
+		uploadInv.setMessage("Subir factura");
+		uploadInv.setType("Invoice");
+		upload.appendChild(uploadInv);
+
+		// Fast Access Buttons Panel
+		let fastAccessButtons = this.createElement(TAG.DIV);
+		fastAccessButtons.className = CSS.FLEX_ROW;
+		fastAccessButtons.id = "fastAccessButtons";
+		dashboard.appendChild(fastAccessButtons);
+
+		let newInvoice = new AonDashboardButton();
+		newInvoice.setId('newInvoice');
+		newInvoice.setIcon('add');
+		newInvoice.setTitle('NUEVA FACTURA');
+		newInvoice.addEventListener(EVENT.CLICK, () => {
+			this.addInvoice(newInvoice);
+		});
+		fastAccessButtons.appendChild(newInvoice);
+
+		let newRequest = new AonDashboardButton();
+		newRequest.setId('newRequest');
+		newRequest.setIcon('add');
+		newRequest.setTitle('CREAR CONSULTA')
+		newRequest.addEventListener(EVENT.CLICK, () => {
+			let aonMessengerChat = new AonMessenger();	
+			aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+			this.rootPanel(aonMessengerChat);
+		});
+		fastAccessButtons.appendChild(newRequest);
+
+		// Cards Panel
+		let cardsPanel = this.createElement(TAG.DIV);
+		cardsPanel.className = CSS.FLEX_ROW;
+		cardsPanel.id = "cardsPanel";
+		dashboard.appendChild(cardsPanel);
+
+		let pygCard = new AonCard();
+		pygCard.id = "pyg";
+		pygCard.title = "Pérdidas y Ganancias";
+		pygCard.firstChild().style.marginLeft = '0';
+		cardsPanel.appendChild(pygCard);
+
+		pygCard.setContent(new AonDashboardGraphicsTrial());
+		pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter")});
+
+	}
+
+	createAppList(parent, company){
+		// Clear parent
+		while (parent.lastElementChild) {
+			parent.removeChild(parent.lastElementChild);
+		}
+
+		let appsList = this.createElement(TAG.DIV);
+		appsList.id = "apps"
+		parent.appendChild(appsList);
 
 		let ul = this.createElement(TAG.UL);
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.AON_LIST_GROUP);
-
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 			
@@ -322,7 +444,7 @@ export class AonDesktop extends AonElement {
 			li.appendChild(span);
 			ul.appendChild(li);
 		}
-		div.appendChild(ul);
+		appsList.appendChild(ul);
 	}
 
 	openFirstApp(dur){
