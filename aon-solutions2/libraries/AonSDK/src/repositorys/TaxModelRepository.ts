@@ -6,6 +6,7 @@ import { TAXMODEL_URL } from "../utils/ApiUrls";
 import { Collection } from "../utils/Collection";
 import { BASE_URL } from "../utils/Environment";
 import { ApiHttpRequest } from "../utils/Http";
+import { LocalStorage } from "../utils/LocalStorage";
 import { APIGenericMultipleObjectCrudRepository, APIGenericSingleObjectCrudRepository } from "./GenericRepository";
 
 
@@ -77,17 +78,20 @@ export class ApiTaxModelSpecificMethodsRepository implements ITaxModelSpecificMe
 export class LocalTaxModelSpecificMethosdsRepository implements ITaxModelSpecificMethodsRepository{
 
     private storable = new StorableTaxModel();
+    private localStorageManager = new LocalStorage<TaxModel>(TaxModel);
 
     async payTaxModelWithNRC(model: ITaxModel, nrc: string): Promise<boolean> {
         this.storable.getCollection().remove(model.getKey())
         model.Status = statusTaxModel.CONFIRMADO
         this.storable.getCollection().add(model as TaxModel);
+        this.localStorageManager.write(this.storable.getLocalStorage(), this.storable.getCollection())
         return true;
     }
     async payTaxModelWithBank(model: ITaxModel, bank: IBank): Promise<boolean> {
         this.storable.getCollection().remove(model.getKey())
         model.Status = statusTaxModel.CONFIRMADO
         this.storable.getCollection().add(model as TaxModel);
+        this.localStorageManager.write(this.storable.getLocalStorage(), this.storable.getCollection())
         return true;
     }
 }

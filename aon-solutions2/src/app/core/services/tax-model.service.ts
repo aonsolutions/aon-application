@@ -13,20 +13,6 @@ export class TaxModelService extends CommonService {
 
   constructor() {
     super();
-    this.test();
-  }
-
-  async test(){
-    let models = await this.getTaxModelList();
-    let bank = this.objectFactory.createBank()
-    .setIban('ES1420809551285889685459');
-    models.forEach(async element => {
-      if(element.Status == statusTaxModel.PENDIENTE){
-        let response = await this.payTaxModelWithBank(element, bank);
-        console.log(response)
-      }
-    })
-    console.log(models);
   }
 
   async getTaxModelList(filter?: IFilter): Promise<ICollection<ITaxModel>> {
@@ -37,32 +23,19 @@ export class TaxModelService extends CommonService {
     return (await this.singleObjectCrud.getElement(key)).result;
   }
 
-  async payTaxModelWithNRC(model: ITaxModel, nrc: string): Promise<boolean> {
-    return (await this.specificMethods.payTaxModelWithNRC(model, nrc)).result;
+  /**
+   * Function to pay a tax model
+   * @param model The model to pay
+   * @param data Can be an object of type IBank or a string (nrc case)
+   * @returns True if model was paid and false if something goes wrong
+   */
+  async payTaxModel(model: ITaxModel, data: any): Promise<boolean> {
+    if(typeof data == 'string'){
+      return (await this.specificMethods.payTaxModelWithNRC(model, data)).result;
+    }else{
+      return (await this.specificMethods.payTaxModelWithBank(model, data)).result;
+    }
   }
-
-  async payTaxModelWithBank(model: ITaxModel, bank: IBank): Promise<boolean> {
-    return (await this.specificMethods.payTaxModelWithBank(model, bank)).result;
-  }
-
-  // async createTaxModel(taxModel: ITaxModel): Promise<ITaxModel> {
-  //   return (await this.singleObjectCrud.createElement(taxModel)).result;
-  // }
-
-  // async updateTaxModel(taxModel: ITaxModel): Promise<ITaxModel> {
-  //   return (await this.singleObjectCrud.updateElement(taxModel)).result;
-  // }
-
-  // async deleteTaxModel(key: string): Promise<boolean> {
-  //   return (await this.singleObjectCrud.deleteElement(key)).result;
-  // }
-
-  // async markTaxModelAsPaid(key: string, status: statusTaxModel): Promise<ITaxModel> {
-  //   const taxModel = await this.getTax(key);
-  //   taxModel.Status = status;
-
-  //   return this.updateTaxModel(taxModel);
-  // }
 
   // En el trimestre que estamos
   // Restorna:
