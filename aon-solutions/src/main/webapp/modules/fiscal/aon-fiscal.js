@@ -99,7 +99,15 @@ export class AonFiscal extends AonElement {
         },
       }));
 
-      application.addSidenavOptions("Ejercicio", ejercicios);
+      
+    let data = {
+			id: "Ejercicio",
+			title:"Ejercicio",
+  		name:"Ejercicio",
+      color: Apps.FISCAL.color
+		};
+
+      application.addSidenavOptions2(data, ejercicios);
 
 
       let periods = this.getDataForKey(mdls, 'period')
@@ -117,7 +125,14 @@ export class AonFiscal extends AonElement {
         },
       }));
 
-      application.addSidenavOptions("Periodo", periods);
+     
+      let data2 = {
+        id: "Periodo",
+        title:"Periodo",
+        name:"Periodo",
+        color: Apps.FISCAL.color
+      };
+      application.addSidenavOptions2(data2, periods);
 
       let models = this.getModelsNoRepeat(mdls).map(model=> ({
           ...FiscalOptions.AON_TAX, 
@@ -132,7 +147,13 @@ export class AonFiscal extends AonElement {
           }
       }));
 
-      application.addSidenavOptions("Modelo", models);
+      let data3 = {
+        id: "Modelo",
+        title:"Modelo",
+        name:"Modelo",
+        color: Apps.FISCAL.color
+      };
+      application.addSidenavOptions(data3, models);
 
       this.showView(FISCAL_VIEWS.AON_TAX);
     })
