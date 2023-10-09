@@ -36,7 +36,7 @@ export class TabsTaxModelComponent implements OnInit {
   selectedModel: any = '0';
   currentDate = new Date();
   selectedYear: string = this.currentDate.getFullYear().toString();
-
+  spinner: boolean = true;
   @Input() trimester!: number;
   @Input() tabColor: string = '';
   @HostBinding('style.--styleTabColor') styleTabColor = '';
@@ -74,10 +74,14 @@ export class TabsTaxModelComponent implements OnInit {
 
     // Datos del modelo
     taxModelService.getTaxModelList().then((response) => {
+      // setTimeout(() => {
+      this.spinner = false;
       this.models = response;
-      this.translateService.get('TAX_PANEL.ALL_MODELS').subscribe((translatedText) => {
-        this.modelsList.push({ value: 0, text: translatedText });
-      });
+      this.translateService
+        .get('TAX_PANEL.ALL_MODELS')
+        .subscribe((translatedText) => {
+          this.modelsList.push({ value: 0, text: translatedText });
+        });
 
       response.forEach((element) => {
         if (!this.modelsList.some((model) => model.text === element.Name)) {
@@ -87,12 +91,13 @@ export class TabsTaxModelComponent implements OnInit {
           this.modelsYears.push({ value: element.Year, text: element.Year });
         }
       });
+      // }, 2000);
     });
   }
-
-  ngOnInit(): void {}
   filterModel(value: number, type: number) {
     this.selectedModel = type === 1 ? value : this.selectedModel;
     this.selectedYear = type === 2 ? value.toString() : this.selectedYear;
   }
+
+  ngOnInit(): void {}
 }

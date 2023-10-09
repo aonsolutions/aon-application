@@ -121,7 +121,7 @@
               ></app-input>
             </div>
           </div>
-
+         ***** vista info
           <div *ngIf="showText">
             <div class="close-icon">
               <app-icon
@@ -158,7 +158,8 @@
     class="button-container"
     *ngIf="selectedOption === '2' || selectedOption === '3'"
   >
-    <app-button [mat-dialog-close]="true" [class]="'orange left'" (click)="sendPayment()" >
+    <app-button [mat-dialog-close]="true" [class]="'orange left'"
+    (click)="sendPayment()" >
       <app-icon shape="done_all"></app-icon>
       {{ "TAX_PANEL.CONFIRM" | translate }}
     </app-button>
@@ -166,9 +167,10 @@
   <!-- Vista Confirmación para IBAN -->
   <div class="confirmation-view" *ngIf="showConfirmation">
     <p class="text-confirmation-view">
-      {{ "TAX_PANEL.ON" | translate }} + 'FECHA' +
+      {{ "TAX_PANEL.ON" | translate }}  'FECHA'
       {{ "TAX_PANEL.CHARGED_ACCOUNT" | translate }} {{ selectedBank }}
-      {{ "TAX_PANEL.AN_AMOUNT" | translate }} + '€€€€'
+      {{ "TAX_PANEL.AN_AMOUNT" | translate }} {{ amountResult }}&euro;
+      <!-- {{ "TAX_PANEL.AN_AMOUNT" | translate }} {{ auxResult | currency:'EUR':'symbol':'1.0-2' }} -->
     </p>
     <div class="content-confirmation-view">
       <div class="line-content">
@@ -196,15 +198,13 @@
         </app-button>
       </div>
       <div>
-        <app-button
-        [mat-dialog-close]="true"
+        <app-button [mat-dialog-close]="true"
         [class]="'orange left'"
-        (click)="sendPayment()"
-        >
+        (click)="sendPayment()">
           <app-icon shape="done_all"></app-icon>
           {{ "TAX_PANEL.CONFIRM" | translate }}
         </app-button>
       </div>
     </div>
   </div>
-</div>
+ </div>

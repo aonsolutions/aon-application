@@ -23,6 +23,7 @@
     </div>
   </div>
   <div content *ngIf="this.tabIndex == 0">
+    <app-spinner *ngIf="spinner"></app-spinner>
     <mat-grid-list [cols]="24">
       <mat-grid-tile
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
@@ -41,6 +42,7 @@
   </div>
 
   <div content *ngIf="this.tabIndex == 1">
+    <app-spinner *ngIf="spinner"></app-spinner>
     <mat-grid-list [cols]="24">
       <mat-grid-tile
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
@@ -59,6 +61,7 @@
   </div>
 
   <div content *ngIf="this.tabIndex == 2">
+    <app-spinner *ngIf="spinner"></app-spinner>
     <mat-grid-list [cols]="24">
       <mat-grid-tile
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
@@ -77,6 +80,7 @@
   </div>
 
   <div content *ngIf="this.tabIndex == 3">
+    <app-spinner *ngIf="spinner"></app-spinner>
     <mat-grid-list [cols]="24">
       <mat-grid-tile
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
@@ -95,6 +99,7 @@
   </div>
 
   <div content *ngIf="this.tabIndex == 4">
+    <app-spinner *ngIf="spinner"></app-spinner>
     <mat-grid-list [cols]="24">
       <mat-grid-tile
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"

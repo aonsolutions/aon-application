@@ -33,11 +33,13 @@ export class TableTaxModelComponent implements OnChanges {
     'paymentMethod',
     'actions',
   ];
+  statusCrudo: string = '';
+
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
   constructor(
-    public taxModelService: TaxModelService,
+    private taxModelService: TaxModelService,
     private translateService: TranslateService
   ) {
     this.translateService
@@ -82,14 +84,12 @@ export class TableTaxModelComponent implements OnChanges {
     this.taxModelService
       .getTaxModelList(filterBuilder.getFilter())
       .then((response) => {
-        console.log('esto es',response)
         // Tax
         let tableRow: any = [];
         response.forEach(function (tax, taxKey) {
           let column: any = {};
           // clone object
           column = Object.assign({}, tax);
-
           // Object Tax
           // Predefinimos la key de la fila
           column.key = taxKey;
@@ -132,20 +132,23 @@ export class TableTaxModelComponent implements OnChanges {
           }
           // Add object date table
           tableRow.push(column);
-
         });
         // Tax date format for table
         this.bodyTable = tableRow;
       });
+  }
 
+  receiveStatus($event: string) {
+    this.statusCrudo = $event;
+    console.log('Nuevo status recibido:', $event);
   }
 
   modalClick(object: any) {
     // Fila de la tabla que se esta usando
     // Boton que ha sido clickeado
-    console.log(object);
+    console.log('esto es objetct', object);
     // reference icon click
-    console.log(object.keyButton);
+    console.log('esto keybutto',object.keyButton);
 
     switch (object.keyButton) {
       case 'edit':
@@ -161,6 +164,7 @@ export class TableTaxModelComponent implements OnChanges {
           this.functionHome,
           object
         );
+
         break;
       case 'eye':
         this.modalComponentTaxesDetails.openDialog(

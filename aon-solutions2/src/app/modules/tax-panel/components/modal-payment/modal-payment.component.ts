@@ -1,13 +1,15 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import {
   CollectionFactory,
-  ErrorResponse,
   IBank,
   ICollection,
+  statusTaxModel,
 } from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject } from 'rxjs';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BankService } from 'src/app/core/services/bank.service';
+import { TaxModelService } from 'src/app/core/services/tax-model.service';
+import { Status } from '../../../../../../libraries/AonSDK/src/interfaces/modelsInterfaces';
 
 @Component({
   selector: 'app-modal-payment',
@@ -26,7 +28,11 @@ export class ModalPaymentComponent implements OnInit {
   newBankDescription: string = '';
   newBankIban: string = '';
   newBankBic: string = '';
+  model: any;
+  amountResult: number = 0;
+  newStatus: string = '';
 
+  @Output() statusChanged: EventEmitter<string> = new EventEmitter<string>();
 
   public collectionFactory = new CollectionFactory();
   banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
@@ -35,14 +41,22 @@ export class ModalPaymentComponent implements OnInit {
   );
 
   constructor(
+    private taxModelService: TaxModelService,
     private bankService: BankService,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<ModalPaymentComponent>
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.listBanks();
+
+    this.taxModelService.getTax(data.key).then((response) => {
+      this.model = response;
+      this.amountResult = this.model.Result;
+      this.newStatus = this.model.Status;
+    });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+  }
 
   toggleCreateBank() {
     this.showCreateBank = !this.showCreateBank;
@@ -56,9 +70,7 @@ export class ModalPaymentComponent implements OnInit {
     this.bankService.getBankList().then((response) => {
       this.banks = response;
       this.banksSubject.next(this.banks);
-
       this.showBanksList = true;
-
       this.banksList = this.banks
         .toArray()
         .map((element) => ({ value: element.Iban, text: element.Iban }));
@@ -111,11 +123,16 @@ export class ModalPaymentComponent implements OnInit {
     this.newBankDescription = '';
     this.newBankIban = '';
     this.newBankBic = '';
-
     this.showCreateBank = false;
-
     this.listBanks();
   }
 
-  sendPayment() {}
+  sendPayment() {
+    if (this.newStatus === statusTaxModel.PENDIENTE) {
+      this.newStatus = statusTaxModel.PRESENTADO;
+    }
+    // Emite el nuevo valor de status
+    this.statusChanged.emit(this.newStatus);
+    console.log('Nuevo status emitido:', this.newStatus);
+  }
 }
