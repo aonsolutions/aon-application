@@ -13,12 +13,12 @@
   .structure-container {
     display: flex;
     flex-direction: row;
-    gap: 2rem;
+    gap: $margin * 2;
   }
 
   .structure-container .structure-photo {
     display: flex;
-    gap: 1rem;
+    gap: $margin;
     align-items: center;
     justify-content: center;
   }

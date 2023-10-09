@@ -50,14 +50,14 @@
         {{ "BILLING.BILLING" | translate }}
       </div>
     </div>
-    <div [class]="selectedMenu === 1 ? 'activated' : 'no-activated'">
+    <div id="list-billing" [class]="selectedMenu === 1 ? 'activated' : 'no-activated'">
       <app-button
         [width]="'100%'"
         [class]="selectedTab === 1 ? 'blue left' : 'left'"
         (click)="selectedTab = 1"
       >
         <app-icon class="blue" shape="trending_up"></app-icon>
-        &nbsp;&nbsp; {{ "BILLING.SALES" | translate }}
+        {{ "BILLING.SALES" | translate }}
       </app-button>
       <app-button
         [width]="'100%'"
@@ -65,7 +65,7 @@
         (click)="selectedTab = 2"
       >
         <app-icon class="blue" shape="trending_down"></app-icon>
-        &nbsp;&nbsp; {{ "BILLING.BILLS" | translate }}
+        {{ "BILLING.BILLS" | translate }}
       </app-button>
       <app-button
         [width]="'100%'"
@@ -73,7 +73,7 @@
         (click)="selectedTab = 3"
       >
         <app-icon class="blue" shape="assignment"></app-icon>
-        &nbsp;&nbsp; {{ "BILLING.REPORTS" | translate }}
+        {{ "BILLING.REPORTS" | translate }}
       </app-button>
     </div>
     <div class="header-submenu" (click)="selectedMenu = 2; selectedTab = 4">
@@ -87,7 +87,7 @@
         (click)="selectedTab = 4"
       >
         <app-icon class="blue" shape="account_balance"></app-icon>
-        &nbsp;&nbsp; {{ "BILLING.BANKS" | translate }}
+        {{ "BILLING.BANKS" | translate }}
       </app-button>
     </div>
     <!--FIN List -->
@@ -116,34 +116,30 @@
             >
               <app-icon [shape]="button.shape" ></app-icon>
             </app-button>
-            <!-- Icono personalizado -->
-            <mat-icon svgIcon="add-note"></mat-icon>
-            <!-- Fin icono personalizado -->
           </div>
         </div>
         <div content>
-          <app-tabs class="tabs" [tabs]="tabs" [tabColor]="'blue'">
+          <app-tabs [tabs]="tabs" [tabColor]="'blue'">
             <div tool>
-              <app-button class="blue button" (click)="selectedTab = 5">
+              <app-button class="blue" (click)="selectedTab = 5">
                 <app-icon shape="add"></app-icon>
-                &nbsp;&nbsp; {{ "BILLING.CREATE_SALES_INVOICE" | translate }}
+                {{ "BILLING.CREATE_SALES_INVOICE" | translate }}
               </app-button>
             </div>
+            <div content class="padding">
+              <div id="upload">
+                <app-file-upload-button>
+                  {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
+                  <app-icon shape="cloud_upload" class="margin-left"></app-icon>
+                </app-file-upload-button>
+              </div>
+              <div>
+                <app-sales-table
+                  (selectedSales)="showSales($event)"
+                ></app-sales-table>
+              </div>
+            </div>
           </app-tabs>
-
-          <div class="padding">
-            <div id="upload">
-              <app-file-upload-button>
-                {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
-                <app-icon shape="cloud_upload" class="margin-left"></app-icon>
-              </app-file-upload-button>
-            </div>
-            <div>
-              <app-sales-table
-                (selectedSales)="showSales($event)"
-              ></app-sales-table>
-            </div>
-          </div>
         </div>
       </app-grid-layout>
     </ng-container>
@@ -171,23 +167,23 @@
           </div>
         </div>
         <div content>
-          <app-tabs class="tabs" [tabs]="tabs" [tabColor]="'blue'">
+          <app-tabs [tabs]="tabs" [tabColor]="'blue'">
             <div tool>
               <app-button class="blue button" (click)="selectedTab = 5">
                 <app-icon shape="add"></app-icon>
-                &nbsp;&nbsp; {{ "BILLING.CREATE_BILLS_INVOICE" | translate }}
+                {{ "BILLING.CREATE_BILLS_INVOICE" | translate }}
               </app-button>
             </div>
-          </app-tabs>
-          <div class="padding">
-            <div id="upload">
-              <app-file-upload-button>
-                {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
-                <app-icon shape="cloud_upload" class="margin-left"></app-icon>
-              </app-file-upload-button>
+            <div content class="padding">
+              <div id="upload">
+                <app-file-upload-button>
+                  {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
+                  <app-icon shape="cloud_upload" class="margin-left"></app-icon>
+                </app-file-upload-button>
+              </div>
+              <app-bills-table></app-bills-table>
             </div>
-            <app-bills-table></app-bills-table>
-          </div>
+          </app-tabs>
         </div>
       </app-grid-layout>
     </ng-container>
@@ -366,7 +362,7 @@
               shape="arrow_back"
               (click)="atrasVenta()"
             ></app-icon>
-            <p class="title">Factura de venta</p>
+            Factura de venta
           </div>
           <div class="right">
             <app-button [class]="'button'" [width]="'5rem'">

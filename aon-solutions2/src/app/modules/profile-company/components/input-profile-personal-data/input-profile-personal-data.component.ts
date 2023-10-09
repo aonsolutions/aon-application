@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+
 import { UserService } from '../../../../core/services/user.service';
 
 @Component({
@@ -12,7 +13,7 @@ export class InputProfilePersonalDataComponent implements OnInit {
 
 
   constructor(private userService: UserService) {
-    this.userService.getUser('94385657M').then((user) => {
+    this.userService.getCurrentUserData().then((user) => {
       this.users.push(user);
     });
   }
@@ -37,24 +38,10 @@ export class InputProfilePersonalDataComponent implements OnInit {
     });
   }
 
-
-
   onCancel() {
-
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
-
-  // constructor(private userService: UserService) {
-  //   if (localStorage.getItem('enterprise')) {
-  //     this.documentEnterprise = localStorage.getItem('enterprise')!;
-  //   }
-  // }
-
-  // ngOnInit(): void {
-  //   console.log(this.documentEnterprise);
-  //   this.userService.getUser(this.documentEnterprise).then((user) => {
-  //     this.users.push(user);
-  //   });
 }

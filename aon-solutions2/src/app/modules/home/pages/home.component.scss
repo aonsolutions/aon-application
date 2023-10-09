@@ -20,7 +20,7 @@
   #buttons-dashboard{
     display         : flex;
     flex-wrap       : wrap;
-    gap             : 1rem;
+    gap             : $margin;
   }
 
   #list-Dashboard app-button .appButton{

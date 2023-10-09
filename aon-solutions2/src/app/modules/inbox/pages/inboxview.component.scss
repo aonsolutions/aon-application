@@ -40,7 +40,7 @@
   .inbox-content-state .inbox-icons{
     width: 100%;
     display: flex;
-    gap: 1rem;
+    gap: $margin;
     align-items: center;
     justify-content: flex-end;
     align-content: unset;
@@ -64,7 +64,7 @@
   .inbox-message .inbox-message-date{
     width: 100%;
     display: flex;
-    gap: 1rem;
+    gap: $margin;
     align-items: center;
     justify-content: flex-end;
     align-content: unset;
@@ -78,7 +78,7 @@
     display: grid;
     grid-template-columns: auto auto auto;
     border-bottom: $border;
-    gap: 1rem;
+    gap: $margin;
     padding: $padding ;
     cursor: pointer;
   }
