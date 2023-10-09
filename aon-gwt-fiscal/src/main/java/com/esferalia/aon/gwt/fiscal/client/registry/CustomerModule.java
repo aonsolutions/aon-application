@@ -159,13 +159,12 @@ public class CustomerModule extends MainEntryPoint {
 		SimpleLayoutPanel centerLayoutPanel = new SimpleLayoutPanel();
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
 		searchPanel = new CustomerModuleSearchPanel(opt);
-		dockLayoutPanel.addNorth(searchPanel, RegistryModuleSearchPanel.HEIGHT);
+		dockLayoutPanel.addNorth(searchPanel, 75);
 		progressContainer.setVisible(false);
 		progressContainer.add(progress);
 		dockLayoutPanel.addNorth(progressContainer, 5);
 		splitLayoutPanel = new SplitLayoutPanel();
 		dockLayoutPanel.add(splitLayoutPanel);
-		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		ScrollPanel centerPanel = new ScrollPanel();
 		centerPanel.setStyleName(AON.CSS.aonScrollArea());
 		centerPanel.addStyleName(AON.CSS.aonMarginBottom());
@@ -366,38 +365,7 @@ public class CustomerModule extends MainEntryPoint {
 			}
 		}
 	}
-
-	private AonMinimizePanel getMinimizePanel() {
-		footPanel = new AonMinimizePanel();
-		
-		footPanel.addMinimizeHandler(event -> {
-				minimizedByUser = true;
-				closeFootPanel();
-		});
-		
-		footPanel.addMaximizeHandler(event -> openFootPanel());
-		
-		footPanel.setStyleName(AON.CSS.aonSelector());
-		tabLayout = new TabLayoutPanel(26, Unit.PX);
-		tabLayout.setWidth("100%");
-		
-		footPanel.add(tabLayout);
-		int tabIndex = 0;
-		
-		extraInfoContainer = new ScrollPanel();
-		tabLayout.add(extraInfoContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.additionalData(), AON.CSS.aonIconInfo()));
-		extraInfoTabIndex = tabIndex;
-
-		tabLayout.setAnimationDuration(300);
-		
-		tabLayout.addSelectionHandler(event -> {
-				minimizedByUser = false;
-				openFootPanelIfNeeded();
-		});
-		
-		return footPanel; 
-	}
-
+	
 	public void disableMoreData() {
 		moreData.setValue(-1);
 	}
@@ -501,10 +469,7 @@ public class CustomerModule extends MainEntryPoint {
 	private void paintRow(final RegistryModuleOptions opt, Customer customer) {
 		int row = tab.getWidgetCount();
 		customers.put(customer.getId(), new CustomerRow(row, customer));
-		paintRow(opt, customer, row);
-	}
-	
-	private void paintRow(final RegistryModuleOptions opt, Customer customer, int row) {
+		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction()
 				, selectedItems.contains(customer.getId())?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());
 		
