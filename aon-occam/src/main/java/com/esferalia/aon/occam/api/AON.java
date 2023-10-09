@@ -1446,6 +1446,12 @@ public class AON {
 		}
 	}
 	
+	public static void updateRItemQuantity(Domain domain, User user, String quantity, RegistryItemFilter filter) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, user)){
+			getNewProduct().updateRItemQuantity(ctx, quantity, filter);
+		}
+	}
+	
 	public static void deleteItem(Domain domain, String login, Integer itemId) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
 			getNewProduct().deleteItem(ctx, itemId);

@@ -161,6 +161,39 @@
   background-color: #cccccc !important;
 }
 
+.aonDashboardButton{
+  padding: 10px 20px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  color: #19191d;
+  border-radius: 0.2rem;
+  background-color: #fff;
+  border: solid 0.05rem #d2d2d6;
+  gap: .5rem;
+}
+
+.aonDashboardButton i {
+  padding: .2rem;
+  background-color: #f0f0f1;
+}
+
+.aonDashboardButton span {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: #19191d;
+}
+
+.aonDashboardButton:hover{
+  background-color: #f0f0f1;
+}
+
+.aonDashboardButton:hover i{
+  background-color: #fff;
+}
+
 .aonColorIcon {
   color: #5f6368;
 }
@@ -1464,6 +1497,15 @@
   display: flex;
   height: 100%;
   width: 100%;
+}
+
+.aonNewUploadLabel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  color: #aaa;
 }
 
 .aonDesktopMenuClassicOption{
