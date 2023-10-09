@@ -49,12 +49,10 @@ export class SideNavComponent implements OnInit {
     })
 
     this.shortcuts = [
-      {routerlink: 'home', shape: 'receipt'},
-      {routerlink: 'home', shape: 'add_box'},
-      {routerlink: 'home', shape: 'person_add'},
-      {routerlink: 'home', shape: 'add_comment'},
-      {routerlink: 'home', shape: 'add_shopping_cart'},
-      {routerlink: 'home', shape: 'alarm'}
+      {routerlink: 'home',      shape: 'add_box',     toolTip: 'En construcción'},
+      {routerlink: 'tax-panel', shape: 'person_add',  toolTip: 'En construcción'},
+      {routerlink: 'inbox',     shape: 'add_comment', toolTip: 'En construcción'},
+      {routerlink: 'tax-panel', shape: 'alarm',       toolTip: 'En construcción'}
     ];
   }
 
@@ -63,7 +61,7 @@ export class SideNavComponent implements OnInit {
       if(element.routerlink == this.currentRoute){
         element.selected = true;
       }
-    }); 
+    });
   }
 
   setOpened(state:boolean){
@@ -97,7 +95,7 @@ export class SideNavComponent implements OnInit {
       }
     });
     if(!exist){
-      this.deselectAll();    
+      this.deselectAll();
     }
   }
 
