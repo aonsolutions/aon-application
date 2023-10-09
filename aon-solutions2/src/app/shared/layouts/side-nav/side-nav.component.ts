@@ -51,7 +51,7 @@ export class SideNavComponent implements OnInit {
     this.shortcuts = [
       {routerlink: 'home',      shape: 'add_box',     toolTip: 'En construcción'},
       {routerlink: 'tax-panel', shape: 'person_add',  toolTip: 'En construcción'},
-      {routerlink: 'inbox',     shape: 'add_comment', toolTip: 'En construcción'},
+      {routerlink: 'inbox',     shape: 'add_comment', toolTip: 'En construcción', options: {showModal: true}},
       {routerlink: 'tax-panel', shape: 'alarm',       toolTip: 'En construcción'}
     ];
   }

@@ -9,6 +9,7 @@ import { TableQueriesComponent } from '../components/table-queries/table-queries
 import { DatePipe } from '@angular/common';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
+import { ActivatedRoute } from '@angular/router';
 
 export interface Tabs {
   name: string;
@@ -69,7 +70,8 @@ export class InboxviewComponent implements OnInit {
     private translateService: TranslateService,
     public reportingService: ReportingService,
     private messageService: MessageService,
-    private messageChatService: MessageChatService
+    private messageChatService: MessageChatService,
+    private activatedRoute: ActivatedRoute
   ) {
     this.translateService
       .get([
@@ -141,7 +143,26 @@ export class InboxviewComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
+    this.checkOpenModal();
+  }
+
+  /**
+  * Comprueba si el parametro "showModal" esta presente en los parametros de la consulta y, en caso afirmativo, muestra el modal.
+  *
+  * @private
+  * @returns {void}
+  */
+  private checkOpenModal(): void {
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params && params['showModal']) {
+        this.showModal();
+      }
+    });
+  }
 
   afterModalClosed(result?: any) {
     console.log(result);
