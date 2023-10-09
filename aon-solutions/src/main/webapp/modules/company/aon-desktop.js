@@ -372,12 +372,11 @@ export class AonDesktop extends AonElement {
 		let pygCard = new AonCard();
 		pygCard.id = "pyg";
 		pygCard.title = "Pérdidas y Ganancias";
-		pygCard.firstChild().style.marginLeft = '0';
 		cardsPanel.appendChild(pygCard);
 
 		pygCard.setContent(new AonDashboardGraphicsTrial());
 		pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter")});
-
+		pygCard.firstChild.style.marginLeft = '0';
 	}
 
 	createAppList(parent, company){
