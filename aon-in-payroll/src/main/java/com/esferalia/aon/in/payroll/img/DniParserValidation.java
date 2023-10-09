@@ -63,23 +63,16 @@ public class DniParserValidation {
 		}
 	};
 	
-	private static final Consumer<String> INVALID_DNI_FORMAT = dni -> {
-		dni = dni.trim();
-		String patternDni = "\\d{8}[A-HJ-NP-TV-Z]";
-		Pattern pattern = Pattern.compile(patternDni);
-		Matcher matcher = pattern.matcher(dni);
-		if (!matcher.matches()) {
-			throw new AonCoreException(AonError.INVALID_DNI_FORMAT.getMessage());
-		}
-		
-	};
-	
-	
-	
-	
-	
-	
-		
+//	private static final Consumer<String> INVALID_DNI_FORMAT = dni -> {
+//		dni = dni.trim();
+//		String patternDni = "\\d{8}[A-HJ-NP-TV-Z]";
+//		Pattern pattern = Pattern.compile(patternDni);
+//		Matcher matcher = pattern.matcher(dni);
+//		if (!matcher.matches()) {
+//			throw new AonCoreException(AonError.INVALID_DNI_FORMAT.getMessage());
+//		}
+//		
+//	};
 	
 	public static void validateBytes(byte[] bytes) throws AonCoreException{
 		NULL_BYTES_FILE_UPLOADED.accept(bytes);
@@ -107,7 +100,7 @@ public class DniParserValidation {
 		NULL_TEXT_RECEIVED.accept(text);
 	}
 	
-	public static void validateDni(String dni) throws AonCoreException{
-		INVALID_DNI_FORMAT.accept(dni);
-	}
+//	public static void validateDni(String dni) throws AonCoreException{
+//		INVALID_DNI_FORMAT.accept(dni);
+//	}
 }

@@ -142,9 +142,6 @@
 			padding-bottom: 20px;
 		}
 		
-		.uploadButtonHidde{
-			
-		}
 		
 		
 	</ui:style>
@@ -165,16 +162,16 @@
 		    			<g:Label styleName='{style.mw}' ui:field="documentType" debugId="document_type" />
 		    			
 		    			<!--  FILEUPLOAD-->
-<!-- 						<g:HTMLPanel > 											 -->
-<!-- 						  <g:FormPanel ui:field="formPanel" visible="true" method="POST" action="DNIServlet" encoding="multipart/form-data"> -->
-<!-- 						    <g:HTMLPanel styleName="{style.flex}"> -->
-<!-- 						       <g:Button ui:field="uploadButton" styleName="{style.iconButton}" > -->
-<!-- 						        <i class="material-icons">publish</i> -->
-<!-- 						      </g:Button> -->
-<!-- 						      <g:FileUpload ui:field="fileUpload" visible= "false" styleName="{style.gwt-fileUpload}"/> -->
-<!-- 						    </g:HTMLPanel> -->
-<!-- 						  </g:FormPanel> -->
-<!-- 						</g:HTMLPanel> -->
+						<g:HTMLPanel > 											
+						  <g:FormPanel ui:field="formPanel" visible="true" method="POST" action="DNIServlet" encoding="multipart/form-data">
+						    <g:HTMLPanel styleName="{style.flex}">
+						       <g:Button ui:field="uploadButton" styleName="{style.iconButton}" >
+						        <i class="material-icons">publish</i>
+						      </g:Button>
+						      <a:MultiFileUpload ui:field="multiFileUpload" visible ="false"></a:MultiFileUpload>
+						    </g:HTMLPanel>
+						  </g:FormPanel>
+						</g:HTMLPanel>
 					    <!-- FILEUPLOAD-->
 			
 		    			<g:HTMLPanel styleName="{style.flexItem} {style.widthAll}" ui:field="nationalityPanel">

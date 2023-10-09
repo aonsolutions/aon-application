@@ -254,7 +254,11 @@ public enum AonError implements Serializable{
 	,NULL_FILES_UPLOADED("Los archivos seleccionados son nulos")
 	,FILE_SIZE_EXCEEDED("El tamaño de archivo no puede superar los 5MB")
 	,NULL_TEXT_RECEIVED("El texto recibido es nulo")
-	,INVALID_DNI_FORMAT("El formato del dni no es valido")
+	,INVALID_DNI_FORMAT("El formato del campo para el dni no es valido")
+	,INVALID_NATIONALITY_FORMAT("El formato del campo para la nacionalidad no es valido")
+	,INVALID_NAME_FORMAT("El formato para el campo del nombre no es valido")
+	,INVALID_FIRST_SURNAME("El formato para el campo del primer apellido no es valido")
+	,INVALID_SECOND_SURNAME("El formato para el campo del segundo apellido no es valido")
 	;
 	
 	

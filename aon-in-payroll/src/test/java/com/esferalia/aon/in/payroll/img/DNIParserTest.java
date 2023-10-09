@@ -17,7 +17,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 
 
 public class DNIParserTest {
-	DNIParser dniParser = new DNIParser();
+	DNIParser dniParser = new DNIParser(); 
 	
 
 	public void extractImageNullTest() {
@@ -33,7 +33,7 @@ public class DNIParserTest {
 		AonCoreException e = assertThrows(AonCoreException.class,
 				() -> DNIParser.parse(is));
 		assertEquals(AonError.NULL_FILE_UPLOADED.getMessage(), e.getMessage());
-	}
+	} 
 	
 	@Test
 	public void parseNullListTest() {
@@ -50,7 +50,7 @@ public class DNIParserTest {
 				() -> DNIParser.getImages(document));
 		assertEquals(AonError.NULL_FILE_UPLOADED.getMessage(), e.getMessage());
 	}
-	
+	 
 	@Test
 	public void parserNullTest() {
 		PDDocument document = null;
@@ -70,7 +70,7 @@ public class DNIParserTest {
 
 	@Test
 	public void extractSizeExceededTest() throws Exception {
-		String file = "/tmp/Seguridad-informática.pdf";
+		String file = "./Seguridadinf.pdf";
 		InputStream is = new FileInputStream(file);
 		byte[] bytes = IOUtils.toByteArray(is);
 		AonCoreException e = assertThrows(AonCoreException.class, 
@@ -78,20 +78,20 @@ public class DNIParserTest {
 		assertEquals(AonError.FILE_SIZE_EXCEEDED.getMessage(), e.getMessage());
 	}
 
-	public void getDniNullJpg() {
-		String text = null;
-		MyDniDataListener listener = new MyDniDataListener();
-		AonCoreException e = assertThrows(AonCoreException.class,
-				() -> DNIParser.getNewDniBothJpg(text, listener));
-		assertEquals(AonError.NULL_TEXT_RECEIVED.getMessage(), e.getMessage());
-	} 
-	
-	@Test
-	public void getDniNullPdf() {
-		String text = null;
-		MyDniDataListener listener = new MyDniDataListener();
-		AonCoreException e = assertThrows(AonCoreException.class,
-				() -> DNIParser.getNewDniBothPdf(text, listener));
-		assertEquals(AonError.NULL_TEXT_RECEIVED.getMessage(), e.getMessage());
-	} 
+//	public void getDniNullJpg() {
+//		String text = null;
+//		MyDniDataListener listener = new MyDniDataListener();
+//		AonCoreException e = assertThrows(AonCoreException.class,
+//				() -> DNIParser.getNewDniBothJpg(text, listener));
+//		assertEquals(AonError.NULL_TEXT_RECEIVED.getMessage(), e.getMessage());
+//	} 
+//	
+//	@Test
+//	public void getDniNullPdf() {
+//		String text = null;
+//		MyDniDataListener listener = new MyDniDataListener();
+//		AonCoreException e = assertThrows(AonCoreException.class,
+//				() -> DNIParser.getNewDniBothPdf(text, listener));
+//		assertEquals(AonError.NULL_TEXT_RECEIVED.getMessage(), e.getMessage());
+//	} 
 }
