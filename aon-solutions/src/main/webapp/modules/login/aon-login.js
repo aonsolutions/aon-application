@@ -146,10 +146,7 @@ export class AonLogin extends AonElement {
       certificateButton.setIcon(MATERIAL_ICONS.SECURITY);
       certificateButton.setTitle(MSG.SIGN_IN_WITH_CERTIFICATE);
       certificateButton.setColor("black");
-      certificateButton.addEventListener(EVENT.CLICK, () =>  {
-        window.open('/fnmtoauth2', '_blank', 'width=700,height=800,scrollbars=yes');
-        return false; 
-      });
+      certificateButton.addEventListener(EVENT.CLICK, () =>  LS.setNewTheme(true));
       divButtons.appendChild(certificateButton);
     }
 

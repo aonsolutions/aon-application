@@ -1,6 +1,7 @@
 import { MSG, CONSTANT, AON_ICONS, COLORS } from "../environments/environments.js";
 import * as GWT from "../gwt/gwt.js";
 import * as MSG_ES from "../environments/msg-es.js";
+import * as LS from  "./localStorageService.js";
 
 export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
@@ -65,7 +66,7 @@ export const FISCAL = {
   description: MSG.FISCAL,
   tag: MSG_ES.FISCAL,
   icon: AON_ICONS.AON_FISCAL,
-  color: "#002469",
+  color: LS.isNewTheme() ? "#FB982E" : "#002469",
   access: [
     {
       value: "Asesor",
@@ -91,7 +92,7 @@ export const PAYROLL = {
   description: MSG.PAYROLL,
   tag: MSG.PAYROLL,
   icon: AON_ICONS.AON_PAYROLL,
-  color: "#002469",
+  color: LS.isNewTheme() ? "#33A9A9" : "#002469",
   access: [
     {
       value: "Asesor",
@@ -190,7 +191,7 @@ export const DOCUMENTAL = {
   description: MSG.DOCUMENTARY,
   tag: MSG_ES.DOCUMENTARY,
   icon: AON_ICONS.AON_DOCUMENTAL,
-  color: "#6986BB",
+  color: LS.isNewTheme() ? "#EF6292" : "#6986BB",
   access: [
     {
       value: "Asesor",
@@ -239,7 +240,7 @@ export const INVOICE = {
   description: MSG.INVOICES,
   tag: MSG_ES.INVOICES,
   icon: AON_ICONS.AON_INVOICE,
-  color: "#4472C4",
+  color: LS.isNewTheme() ? "#4F91FF" : "#4472C4",
   access: [
     {
       value: "Asesor",
@@ -278,7 +279,7 @@ export const MESSENGER = {
   description: MSG.REQUESTS,
   tag: MSG_ES.REQUESTS,
   icon: AON_ICONS.AON_MESSENGER,
-  color: "#1fd8b9",
+  color: LS.isNewTheme() ? "#f6655a" : "#1fd8b9",
   access: [
     {
       value: "Asesor",
