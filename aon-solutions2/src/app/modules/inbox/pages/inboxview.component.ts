@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage, IFilter } from 'libraries/AonSDK/src/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
@@ -25,6 +25,7 @@ export interface Tabs {
 export class InboxviewComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
   @ViewChild(TablesInboxComponent, { static: false })
+
   collectionFactory = new CollectionFactory();
   entityFactory = new Factory();
   datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
@@ -316,7 +317,10 @@ export class InboxviewComponent implements OnInit {
         // Agregar el nuevo mensaje
         this.messages.add(createdMessage);
         // Desactivo el spinner
-        this.spinner = false;
+        setTimeout(() => {
+          this.spinner = false;
+
+        }, 2000)
     }
   }
 

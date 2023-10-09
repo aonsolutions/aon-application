@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TableInboxComponent } from './table-inbox.component';
+import { TablesInboxComponent } from './table-inbox.component';
 
 describe('TableInboxComponent', () => {
-  let component: TableInboxComponent;
-  let fixture: ComponentFixture<TableInboxComponent>;
+  let component: TablesInboxComponent;
+  let fixture: ComponentFixture<TablesInboxComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TableInboxComponent ]
+      declarations: [ TablesInboxComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TableInboxComponent);
+    fixture = TestBed.createComponent(TablesInboxComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

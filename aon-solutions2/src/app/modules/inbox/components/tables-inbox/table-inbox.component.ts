@@ -100,7 +100,8 @@ export class TablesInboxComponent implements OnChanges {
    private filterType() {
     let type = {
       'inbox': '',
-      'status': ''
+      'status': '',
+      'icon': '',
     };
 
     switch (this.selectedTab.toString()) {
@@ -214,6 +215,32 @@ export class TablesInboxComponent implements OnChanges {
           column.name = message.Name;
           const lowerCaseStatus = message.Status.toLowerCase();
 
+          // Icono del mensaje
+          if (this.selectedTab === 0) {
+          switch (message.Status) {
+            case 'abierta':
+            case 'cerrada':
+              column.name = {
+                icon: [{ speaker_notes: 'red' }],
+                text: message.Name
+              };
+              break;
+            case 'pendiente':
+            case 'realizada':
+              column.name = {
+                icon: [{ playlist_add_check: 'red' }],
+                text: message.Name
+              };
+              break;
+            case 'nueva':
+            case 'vista':
+              column.name = {
+                icon: [{ notifications: 'red' }],
+                text: message.Name
+              };
+              break;
+          }
+        }
           // Lógica específica para cada tipo de mensaje
           if (message.Type === 'tarea') {
             column.status = {

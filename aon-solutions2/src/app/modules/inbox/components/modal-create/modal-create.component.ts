@@ -15,7 +15,6 @@ export interface Holders {
   styleUrls: ['./modal-create.component.scss']
 })
 export class ModalCreateComponent implements OnInit {
-
   holders: any;
   advisors: any = "";
   advisorsList: any[] = [];
@@ -85,7 +84,6 @@ export class ModalCreateComponent implements OnInit {
         this.spinner = false;
     }
   }
-
   sendMessage() {
     // para no enviar mensajes vacíos
     if (this.newMessageDescription.trim() === '') {
