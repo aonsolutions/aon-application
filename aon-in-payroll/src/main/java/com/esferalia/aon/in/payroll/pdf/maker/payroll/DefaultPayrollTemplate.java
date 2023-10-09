@@ -24,11 +24,15 @@ import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getExtraGratificationPayment;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getExtraHoursPayment;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getIndemns;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getInfos;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getNotes;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getOtherDeduction;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getOtherDeductions;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getOtherPayments;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getPrestSS;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getSalaries;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getSingleDeductionByType;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getWarnings;
 import static java.util.ResourceBundle.getBundle;
 
 import java.io.ByteArrayInputStream;
@@ -43,6 +47,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -299,8 +304,13 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		List<PDFPayment> nonSalaries = getComplementosSalariales(allPayments);
 		List<PDFPayment> prestSS = getPrestSS(allPayments);
 		List<PDFPayment> indemns = getIndemns(allPayments);
-		List<PDFPayment> others = DefaultPayrollFuseBox.getOtherPayments(allPayments);
 		
+		List<PDFPayment> infos = getInfos(allPayments);
+		List<PDFPayment> notes = getNotes(allPayments);
+		List<PDFPayment> warnings = getWarnings(allPayments);
+		
+		List<PDFPayment> others = getOtherPayments(allPayments);
+
 		String paymentTxt;
 		try {
 			paymentTxt = 1 + ". " + getType(1, lang);
@@ -341,6 +351,26 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			drawText(contents, "Otras percepciones no salariales", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
 			y -= LITTLE_LINE_JUMP;
 			drawOrLine(others);
+			
+			if ( !infos.isEmpty() ) {
+			    infos.forEach(p -> p.setAmount(null));
+			    drawOrLine(infos);
+			}
+
+			if ( !notes.isEmpty() ) {
+			    	notes.forEach(p -> p.setAmount(null));
+        			drawText(contents, "Notas", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+        			y -= LITTLE_LINE_JUMP;
+        			drawOrLine(notes);
+			}
+		
+			if ( !warnings.isEmpty() ) {
+			    	warnings.forEach(p -> p.setAmount(null));
+        			drawText(contents, "Avisos", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+        			y -= LITTLE_LINE_JUMP;
+        			drawOrLine(warnings);
+			}
+
 		} catch (UnknownCraException e) {
 		}
 		
@@ -872,6 +902,11 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 
 	public String text(String name) {
 		return words.getString(name);
+	}
+
+	private static boolean isNotLog(int key) {
+	    return !Objects.equals(key, IPayrollTemplate.INFO) && !Objects.equals(key, IPayrollTemplate.NOTE)
+		    && !Objects.equals(key, IPayrollTemplate.WARNING);
 	}
 
 }

@@ -10,6 +10,7 @@ import './css/aon-css-utils.css';
 import './css/aon-grid.css';
 import './css/aon-mobile.css';
 import './css/aon.css';
+import './css/aon-figma.css';
 
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM =  (token) => {
@@ -37,7 +38,7 @@ const load = () => {
     favicon();  
     loadScriptFirebase();
     document.body.appendChild(new AonModule());
-    if(!isMobile()) document.body.className = 'aonBodyBeta';
+    if(!isMobile() && !LS.isNewTheme()) document.body.className = 'aonBodyBeta';
     loadScripts(); 
     window.loadScripts = () => loadScripts();
 }

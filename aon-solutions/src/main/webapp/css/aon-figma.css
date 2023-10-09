@@ -1,0 +1,379 @@
+:root {
+  --white-base: rgba(255, 255, 255, 1);
+  --dark-color: rgba(0, 0, 0, 0.87);
+  --icons-gray-50: rgba(120, 120, 133, 1);
+  --black-100: rgba(0, 0, 0, 1);
+  --gray-0: rgba(249, 249, 250, 1);
+  --gray-5: rgba(240, 240, 241, 1);
+  --gray-10: rgba(225, 225, 227, 1);
+  --gray-20: rgba(210, 210, 214, 1);
+  --gray-30: rgba(180, 180, 187, 1);
+  --gray-40: rgba(150, 150, 160, 1);
+  --gray-50: rgba(120, 120, 133, 1);
+  --gray-60: rgba(90, 91, 106, 1);
+  --gray-70: rgba(74, 75, 87, 1);
+  --gray-80: rgba(58, 58, 68, 1);
+  --gray-90: rgba(41, 42, 49, 1);
+  --gray-100: rgba(25, 25, 29, 1);
+  --blue-5: rgba(235, 242, 255, 1);
+  --blue-10: rgba(216, 230, 255, 1);
+  --blue-20: rgba(196, 218, 255, 1);
+  --blue-30: rgba(157, 194, 255, 1);
+  --blue-40: rgba(118, 169, 255, 1);
+  --blue-50: rgba(79, 145, 255, 1);
+  --blue-60: rgba(41, 121, 255, 1);
+  --blue-70: rgba(34, 100, 209, 1);
+  --blue-80: rgba(27, 78, 163, 1);
+  --blue-90: rgba(19, 55, 116, 1);
+  --blue-100: rgba(12, 33, 70, 1);
+  --green-5: rgba(237, 246, 238, 1);
+  --green-10: rgba(220, 237, 221, 1);
+  --green-20: rgba(203, 229, 204, 1);
+  --green-30: rgba(169, 211, 171, 1);
+  --green-40: rgba(135, 194, 137, 1);
+  --green-50: rgba(101, 177, 104, 1);
+  --green-60: rgba(67, 160, 71, 1);
+  --green-70: rgba(55, 131, 59, 1);
+  --green-80: rgba(43, 102, 46, 1);
+  --green-90: rgba(31, 73, 33, 1);
+  --green-100: rgba(19, 44, 20, 1);
+  --yellow-5: rgba(255, 248, 234, 1);
+  --yellow-10: rgba(255, 241, 214, 1);
+  --yellow-20: rgba(255, 234, 193, 1);
+  --yellow-30: rgba(255, 220, 153, 1);
+  --yellow-40: rgba(255, 207, 112, 1);
+  --yellow-50: rgba(255, 193, 71, 1);
+  --yellow-60: rgba(255, 180, 31, 1);
+  --yellow-70: rgba(209, 148, 26, 1);
+  --yellow-80: rgba(163, 115, 20, 1);
+  --yellow-90: rgba(116, 82, 15, 1);
+  --yellow-100: rgba(70, 50, 9, 1);
+  --red-5: rgba(254, 237, 236, 1);
+  --red-10: rgba(253, 220, 218, 1);
+  --red-20: rgba(252, 203, 200, 1);
+  --red-30: rgba(250, 169, 163, 1);
+  --red-40: rgba(248, 135, 127, 1);
+  --red-50: rgba(246, 101, 90, 1);
+  --red-60: rgba(244, 67, 54, 1);
+  --red-70: rgba(200, 55, 45, 1);
+  --red-80: rgba(156, 43, 35, 1);
+  --red-90: rgba(111, 31, 25, 1);
+  --red-100: rgba(67, 19, 15, 1);
+  --indigo-5: rgba(240, 241, 249, 1);
+  --indigo-10: rgba(225, 228, 243, 1);
+  --indigo-20: rgba(210, 214, 237, 1);
+  --indigo-30: rgba(180, 187, 226, 1);
+  --indigo-40: rgba(151, 160, 214, 1);
+  --indigo-50: rgba(121, 133, 203, 1);
+  --indigo-60: rgba(92, 107, 192, 1);
+  --indigo-70: rgba(76, 88, 158, 1);
+  --indigo-80: rgba(59, 69, 123, 1);
+  --indigo-90: rgba(42, 49, 88, 1);
+  --indigo-100: rgba(26, 30, 53, 1);
+  --teal-5: rgba(232, 245, 245, 1);
+  --teal-10: rgba(209, 235, 236, 1);
+  --teal-20: rgba(187, 226, 226, 1);
+  --teal-30: rgba(141, 207, 207, 1);
+  --teal-40: rgba(96, 188, 188, 1);
+  --teal-50: rgba(51, 169, 169, 1);
+  --teal-60: rgba(6, 150, 151, 1);
+  --teal-70: rgba(5, 123, 124, 1);
+  --teal-80: rgba(4, 96, 97, 1);
+  --teal-90: rgba(3, 69, 69, 1);
+  --teal-100: rgba(2, 41, 42, 1);
+  --orange-5: rgba(254, 243, 231, 1);
+  --orange-10: rgba(254, 232, 208, 1);
+  --orange-20: rgba(253, 220, 185, 1);
+  --orange-30: rgba(253, 198, 139, 1);
+  --orange-40: rgba(252, 175, 92, 1);
+  --orange-50: rgba(251, 152, 46, 1);
+  --orange-60: rgba(251, 130, 0, 1);
+  --orange-70: rgba(206, 107, 0, 1);
+  --orange-80: rgba(160, 83, 0, 1);
+  --orange-90: rgba(115, 60, 0, 1);
+  --orange-100: rgba(69, 36, 0, 1);
+  --pink-5: rgba(253, 237, 242, 1);
+  --pink-10: rgba(251, 220, 230, 1);
+  --pink-20: rgba(249, 202, 218, 1);
+  --pink-30: rgba(246, 168, 194, 1);
+  --pink-40: rgba(242, 133, 170, 1);
+  --pink-50: rgba(239, 98, 146, 1);
+  --pink-60: rgba(236, 64, 122, 1);
+  --pink-70: rgba(194, 53, 100, 1);
+  --pink-80: rgba(151, 41, 78, 1);
+  --pink-90: rgba(108, 30, 56, 1);
+  --pink-100: rgba(65, 18, 34, 1);
+  --roboto-96-sp-h1-font-family: "Roboto-Bold", Helvetica;
+  --roboto-96-sp-h1-font-weight: 700;
+  --roboto-96-sp-h1-font-size: 96px;
+  --roboto-96-sp-h1-letter-spacing: -2.5px;
+  --roboto-96-sp-h1-line-height: 68.5px;
+  --roboto-96-sp-h1-font-style: normal;
+  --roboto-60-sp-h2-font-family: "Roboto-Bold", Helvetica;
+  --roboto-60-sp-h2-font-weight: 700;
+  --roboto-60-sp-h2-font-size: 60px;
+  --roboto-60-sp-h2-letter-spacing: -1.5px;
+  --roboto-60-sp-h2-line-height: 80px;
+  --roboto-60-sp-h2-font-style: normal;
+  --roboto-48-sp-h3-font-family: "Roboto-Bold", Helvetica;
+  --roboto-48-sp-h3-font-weight: 700;
+  --roboto-48-sp-h3-font-size: 48px;
+  --roboto-48-sp-h3-letter-spacing: -0.5px;
+  --roboto-48-sp-h3-line-height: 56px;
+  --roboto-48-sp-h3-font-style: normal;
+  --roboto-34-sp-h4-font-family: "Roboto-Bold", Helvetica;
+  --roboto-34-sp-h4-font-weight: 700;
+  --roboto-34-sp-h4-font-size: 34px;
+  --roboto-34-sp-h4-letter-spacing: 0px;
+  --roboto-34-sp-h4-line-height: 44px;
+  --roboto-34-sp-h4-font-style: normal;
+  --roboto-24-sp-h5-font-family: "Roboto-Bold", Helvetica;
+  --roboto-24-sp-h5-font-weight: 700;
+  --roboto-24-sp-h5-font-size: 24px;
+  --roboto-24-sp-h5-letter-spacing: 0px;
+  --roboto-24-sp-h5-line-height: 36px;
+  --roboto-24-sp-h5-font-style: normal;
+  --roboto-20-sp-h6-font-family: "Roboto-Medium", Helvetica;
+  --roboto-20-sp-h6-font-weight: 500;
+  --roboto-20-sp-h6-font-size: 20px;
+  --roboto-20-sp-h6-letter-spacing: 0.15000000596046448px;
+  --roboto-20-sp-h6-line-height: 32px;
+  --roboto-20-sp-h6-font-style: normal;
+  --roboto-body-big-font-family: "Roboto-Regular", Helvetica;
+  --roboto-body-big-font-weight: 400;
+  --roboto-body-big-font-size: 20px;
+  --roboto-body-big-letter-spacing: 0.15000000596046448px;
+  --roboto-body-big-line-height: 32px;
+  --roboto-body-big-font-style: normal;
+  --roboto-body-1-font-family: "Roboto-Regular", Helvetica;
+  --roboto-body-1-font-weight: 400;
+  --roboto-body-1-font-size: 16px;
+  --roboto-body-1-letter-spacing: 0.4399999976158142px;
+  --roboto-body-1-line-height: 24px;
+  --roboto-body-1-font-style: normal;
+  --roboto-subtitle-2-font-family: "Roboto-Medium", Helvetica;
+  --roboto-subtitle-2-font-weight: 500;
+  --roboto-subtitle-2-font-size: 14px;
+  --roboto-subtitle-2-letter-spacing: 0.10000000149011612px;
+  --roboto-subtitle-2-line-height: 22px;
+  --roboto-subtitle-2-font-style: normal;
+  --roboto-button-font-family: "Roboto-Medium", Helvetica;
+  --roboto-button-font-weight: 500;
+  --roboto-button-font-size: 14px;
+  --roboto-button-letter-spacing: 0.75px;
+  --roboto-button-line-height: normal;
+  --roboto-button-font-style: normal;
+  --roboto-body-2-font-family: "Roboto-Regular", Helvetica;
+  --roboto-body-2-font-weight: 400;
+  --roboto-body-2-font-size: 14px;
+  --roboto-body-2-letter-spacing: 0.25px;
+  --roboto-body-2-line-height: 20px;
+  --roboto-body-2-font-style: normal;
+  --roboto-caption-font-family: "Roboto-Regular", Helvetica;
+  --roboto-caption-font-weight: 400;
+  --roboto-caption-font-size: 12px;
+  --roboto-caption-letter-spacing: 0.4000000059604645px;
+  --roboto-caption-line-height: 16px;
+  --roboto-caption-font-style: normal;
+  --roboto-OVERLINE-font-family: "Roboto-Medium", Helvetica;
+  --roboto-OVERLINE-font-weight: 500;
+  --roboto-OVERLINE-font-size: 10px;
+  --roboto-OVERLINE-letter-spacing: 1.5px;
+  --roboto-OVERLINE-line-height: 16px;
+  --roboto-OVERLINE-font-style: normal;
+  --shadow-dark-2dp: 0px 2px 4px 0px rgba(210, 210, 214, 1),
+    0px 1px 2px 0px rgba(180, 180, 187, 1);
+  --shadow-dark-4dp: 0px 4px 8px 0px rgba(210, 210, 214, 1),
+    0px 2px 4px 0px rgba(180, 180, 187, 1);
+  --shadow-dark-8dp: 0px 8px 16px 0px rgba(210, 210, 214, 1),
+    0px 4px 8px 0px rgba(180, 180, 187, 1);
+  --shadow-dark-16dp: 0px 16px 32px 0px rgba(210, 210, 214, 1),
+    0px 8px 16px 0px rgba(180, 180, 187, 1);
+  --shadow-dark-24dp: 0px 24px 48px 0px rgba(210, 210, 214, 1),
+    0px 12px 24px 0px rgba(180, 180, 187, 1);
+  --shadow-blue-2dp: 0px 2px 4px 0px rgba(196, 218, 255, 1),
+    0px 1px 2px 0px rgba(157, 194, 255, 1);
+  --shadow-blue-4dp: 0px 4px 8px 0px rgba(196, 218, 255, 1),
+    0px 2px 4px 0px rgba(157, 194, 255, 1);
+  --shadow-blue-8dp: 0px 8px 16px 0px rgba(196, 218, 255, 1),
+    0px 4px 8px 0px rgba(157, 194, 255, 1);
+  --shadow-blue-16dp: 0px 16px 32px 0px rgba(196, 218, 255, 1),
+    0px 8px 16px 0px rgba(157, 194, 255, 1);
+  --shadow-blue-24dp: 0px 24px 48px 0px rgba(196, 218, 255, 1),
+    0px 12px 24px 0px rgba(157, 194, 255, 1);
+  --shadow-green-2dp: 0px 2px 4px 0px rgba(203, 229, 204, 1),
+    0px 1px 2px 0px rgba(169, 211, 171, 1);
+  --shadow-green-4dp: 0px 4px 8px 0px rgba(203, 229, 204, 1),
+    0px 2px 4px 0px rgba(169, 211, 171, 1);
+  --shadow-green-8dp: 0px 8px 16px 0px rgba(203, 229, 204, 1),
+    0px 4px 8px 0px rgba(169, 211, 171, 1);
+  --shadow-green-16dp: 0px 16px 32px 0px rgba(203, 229, 204, 1),
+    0px 8px 16px 0px rgba(169, 211, 171, 1);
+  --shadow-green-24dp: 0px 24px 48px 0px rgba(203, 229, 204, 1),
+    0px 12px 24px 0px rgba(169, 211, 171, 1);
+  --shadow-yellow-2dp: 0px 2px 4px 0px rgba(255, 234, 193, 1),
+    0px 1px 2px 0px rgba(255, 220, 153, 1);
+  --shadow-yellow-4dp: 0px 4px 8px 0px rgba(255, 234, 193, 1),
+    0px 2px 4px 0px rgba(255, 220, 153, 1);
+  --shadow-yellow-8dp: 0px 8px 16px 0px rgba(255, 234, 193, 1),
+    0px 4px 8px 0px rgba(255, 220, 153, 1);
+  --shadow-yellow-16dp: 0px 16px 32px 0px rgba(255, 234, 193, 1),
+    0px 8px 16px 0px rgba(255, 220, 153, 1);
+  --shadow-yellow-24dp: 0px 24px 48px 0px rgba(255, 234, 193, 1),
+    0px 12px 24px 0px rgba(255, 220, 153, 1);
+  --shadow-red-2dp: 0px 2px 4px 0px rgba(252, 203, 200, 1),
+    0px 1px 2px 0px rgba(250, 169, 163, 1);
+  --shadow-red-4dp: 0px 4px 8px 0px rgba(252, 203, 200, 1),
+    0px 2px 4px 0px rgba(250, 169, 163, 1);
+  --shadow-red-8dp: 0px 8px 16px 0px rgba(252, 203, 200, 1),
+    0px 4px 8px 0px rgba(250, 169, 163, 1);
+  --shadow-red-16dp: 0px 16px 32px 0px rgba(252, 203, 200, 1),
+    0px 8px 16px 0px rgba(250, 169, 163, 1);
+  --shadow-red-24dp: 0px 24px 48px 0px rgba(252, 203, 200, 1),
+    0px 12px 24px 0px rgba(250, 169, 163, 1);
+  --shadow-indigo-2dp: 0px 2px 4px 0px rgba(210, 214, 237, 1),
+    0px 1px 2px 0px rgba(180, 187, 226, 1);
+  --shadow-indigo-4dp: 0px 4px 8px 0px rgba(210, 214, 237, 1),
+    0px 2px 4px 0px rgba(180, 187, 226, 1);
+  --shadow-indigo-8dp: 0px 8px 16px 0px rgba(210, 214, 237, 1),
+    0px 4px 8px 0px rgba(180, 187, 226, 1);
+  --shadow-indigo-16dp: 0px 16px 32px 0px rgba(210, 214, 237, 1),
+    0px 8px 16px 0px rgba(180, 187, 226, 1);
+  --shadow-indigo-24dp: 0px 24px 48px 0px rgba(210, 214, 237, 1),
+    0px 12px 24px 0px rgba(180, 187, 226, 1);
+  --shadow-teal-2dp: 0px 2px 4px 0px rgba(187, 226, 226, 1),
+    0px 1px 2px 0px rgba(141, 207, 207, 1);
+  --shadow-teal-4dp: 0px 4px 8px 0px rgba(187, 226, 226, 1),
+    0px 2px 4px 0px rgba(141, 207, 207, 1);
+  --shadow-teal-8dp: 0px 8px 16px 0px rgba(187, 226, 226, 1),
+    0px 4px 8px 0px rgba(141, 207, 207, 1);
+  --shadow-teal-16dp: 0px 16px 32px 0px rgba(187, 226, 226, 1),
+    0px 8px 16px 0px rgba(141, 207, 207, 1);
+  --shadow-teal-24dp: 0px 24px 48px 0px rgba(187, 226, 226, 1),
+    0px 12px 24px 0px rgba(141, 207, 207, 1);
+  --shadow-orange-2dp: 0px 2px 4px 0px rgba(253, 220, 185, 1),
+    0px 1px 2px 0px rgba(253, 198, 139, 1);
+  --shadow-orange-4dp: 0px 4px 8px 0px rgba(253, 220, 185, 1),
+    0px 2px 4px 0px rgba(253, 198, 139, 1);
+  --shadow-orange-8dp: 0px 8px 16px 0px rgba(253, 220, 185, 1),
+    0px 4px 8px 0px rgba(253, 198, 139, 1);
+  --shadow-orange-16dp: 0px 16px 32px 0px rgba(253, 220, 185, 1),
+    0px 8px 16px 0px rgba(253, 198, 139, 1);
+  --shadow-orange-24dp: 0px 24px 48px 0px rgba(253, 220, 185, 1),
+    0px 12px 24px 0px rgba(253, 198, 139, 1);
+  --shadow-pink-2dp: 0px 2px 4px 0px rgba(249, 202, 218, 1),
+    0px 1px 2px 0px rgba(246, 168, 194, 1);
+  --shadow-pink-4dp: 0px 4px 8px 0px rgba(249, 202, 218, 1),
+    0px 2px 4px 0px rgba(246, 168, 194, 1);
+  --shadow-pink-8dp: 0px 8px 16px 0px rgba(249, 202, 218, 1),
+    0px 4px 8px 0px rgba(246, 168, 194, 1);
+  --shadow-pink-16dp: 0px 16px 32px 0px rgba(249, 202, 218, 1),
+    0px 8px 16px 0px rgba(246, 168, 194, 1);
+  --shadow-pink-24dp: 0px 24px 48px 0px rgba(249, 202, 218, 1),
+    0px 12px 24px 0px rgba(246, 168, 194, 1);
+}
+
+/* -------------------- LOGIN -------------------- */
+
+.aonLogin {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.aonLoginForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.aonLoginTitle {
+  font-family: var(--roboto-34-sp-h4-font-family);
+  color: var(--gray-90);
+  font-size: 2rem;
+  margin-bottom: .5rem;
+  margin-top: 0;
+  font-weight: 600;
+  letter-spacing: 0.44px;
+}
+
+.aonLoginSubTitle {
+  font-family: var(--roboto-body-big-font-family);
+  font-weight: var(--roboto-body-big-font-weight);
+  color: var(--gray-50);
+  font-size: var(--roboto-body-big-font-size);
+  letter-spacing: 0.44px;
+}
+
+.aonLoginFormContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: solid 0.05rem #d2d2d6;
+  border-radius: 0.2rem;
+  padding: 1rem;
+  width: 35%;
+}
+
+.aonLoginButton {
+  width: 100%;
+  background-color: var(--white-base);
+  border-radius: 4px;
+  border: 1px solid var(--gray-90);
+  font-family: var(--roboto-button-font-family);
+  letter-spacing: var(--roboto-button-letter-spacing);
+  height: 3rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.aonLoginButton:hover {
+  background-color: var(--gray-90);
+  color: var(--white-base);
+}
+
+.aonDividerButtons {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #d2d2d6;
+  line-height: 0px;
+  margin: 10px 0;
+}
+
+.aonDividerSpan {
+  background: var(--white-base);
+  padding: 0 10px;
+  color: var(--icons-gray-50);
+  font-size: 10px;
+}
+
+.aonMagicButton {
+  width: 100%;
+  border-radius: 4px;
+  border: 1px solid var(--gray-90);
+  font-family: var(--roboto-button-font-family);
+  letter-spacing: var(--roboto-button-letter-spacing);
+  height: 3rem;
+  cursor: pointer;
+  color: var(--white-base);
+  background-color: var(--gray-90);
+}
+
+.aonMagicButton:hover {
+  background-color: var(--black-100);
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (max-width: 768px) {
+  .aonLoginFormContent{
+    width: 90%;
+  }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 769px) and (max-width: 992px) {
+  .aonLoginFormContent{
+    width: 60%;
+  }
+}

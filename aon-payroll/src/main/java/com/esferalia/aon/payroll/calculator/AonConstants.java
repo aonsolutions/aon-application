@@ -44,6 +44,8 @@ public class AonConstants {
 	
 	@Variable(ContextVariable.NOT_PAID_PERMISSION)
 	public static OffType NOT_PAID_PERMISSION = OffType.NOT_PAID_PERMISSION;
+	@Variable(ContextVariable.SUSPEND_JOB_AND_SALARY)
+	public static OffType SUSPEND_JOB_AND_SALARY = OffType.SUSPEND_JOB_AND_SALARY;
 
 	@Variable(ContextVariable.JANUARY)
 	public static Integer JANUARY = 1;

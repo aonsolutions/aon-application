@@ -60,7 +60,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicController.class);
-	
+    public static final int DEFAULT_PAGE_LIMIT = 20;
 	private Criteria criteria = new Criteria();
 	private Criteria backupCriteria = null;
 
@@ -164,10 +164,15 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @return int
 	 */
 	public Integer getPageLimit() {
-		if ( pageLimit == null ) {
-			return getDefaultPageLimit();
+		try {
+			if ( pageLimit == null ) {
+				return getDefaultPageLimit();
+			}
+			return pageLimit;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return DEFAULT_PAGE_LIMIT;
 		}
-		return pageLimit;
 	}
 	
 	protected int getDefaultPageLimit() {
@@ -180,6 +185,9 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @param pageLimit
 	 */
 	public void setPageLimit(Integer pageLimit) {
+		if ( pageLimit == null ) {
+			pageLimit = getDefaultPageLimit();
+		}
 		this.pageLimit = pageLimit;
 	}
 	

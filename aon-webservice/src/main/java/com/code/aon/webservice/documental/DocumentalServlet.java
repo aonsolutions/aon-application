@@ -1,16 +1,8 @@
 package com.code.aon.webservice.documental;
 
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,16 +27,21 @@ import com.esferalia.aon.occam.api.model.type.CategoryType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "DocumentalServlet", urlPatterns = { "/ms/api/attachment/*",
 														"/aon_gwt_aio/ms/attachment/*",
 														"/aon_gwt_fiscal/ms/attachment/*"})
-public class DocumentalServlet extends HttpServlet{
+public class DocumentalServlet extends AonApiHttpServlet{
 	
 	private static final Logger LOGGER  = Logger.getLogger(DocumentalServlet.class.getName());
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Documental Servlet - GET METHOD");
 		String[] pathInfo = req.getPathInfo().split("/");
 		String domainName = pathInfo[1]; 
@@ -55,7 +52,6 @@ public class DocumentalServlet extends HttpServlet{
 		Domain domain = AON.getDomain(domainName, domainId, userName);
 				
 		Object object = new Object();
-		JSONObject meta = new JSONObject();
 
 		switch (pathInfo[3]) {
 		case "file":
@@ -81,13 +77,12 @@ public class DocumentalServlet extends HttpServlet{
 			break;
 		default:
 			break;
-		}				
-			
-		Utils.giveBack(req, resp, object, meta);
+		}
+		response(req, resp, object);
 	}
 	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Documental Servlet - POST METHOD");
 		
 		JSONObject json = Utils.getRequestJSON(req);
@@ -130,13 +125,7 @@ public class DocumentalServlet extends HttpServlet{
 			default:
 				break;
 			}
-			
-			resp.setContentType("application/json;charset=UTF-8");
-			Utils.addCorsHeader(resp);
-			PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
-			os.println(object.toString());
-			os.flush();
-			os.close();
+			response(req, resp, object);
 		}
 	}
 	

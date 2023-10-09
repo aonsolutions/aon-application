@@ -1,4 +1,4 @@
-package com.code.aon.facturae.nuevo;
+package com.code.aon.facturae.v322;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 
-import es.mityc.facturae32.AmountType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.AmountType;
 
 public class Util {
 

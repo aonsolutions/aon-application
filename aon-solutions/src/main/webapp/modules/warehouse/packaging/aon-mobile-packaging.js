@@ -33,6 +33,7 @@ export class AonMobilePackaging extends AonElement {
 	PACKAGING_PRODUCT_SERIAL_DATE;
 	PACKAGING_PRODUCT_DESC;
 	PACKAGING_QUANTITY;
+	PACKAGING_COPIES;
 
 	TAG_CARD;
 
@@ -42,6 +43,7 @@ export class AonMobilePackaging extends AonElement {
 	contenedor;
 	barcode;
 	packaging;
+	packagingList;
 	fileUrl;
 
 	get id() {
@@ -72,10 +74,12 @@ export class AonMobilePackaging extends AonElement {
 		this.PACKAGING_PRODUCT_SERIAL_DATE = this.PACKAGING_PRODUCT + 'SerialDate';
 		this.PACKAGING_PRODUCT_DESC = this.PACKAGING_PRODUCT + 'Desc';
 		this.PACKAGING_QUANTITY = this.id + CONSTANT.QUANTITY.initCap();
-
+		this.PACKAGING_COPIES = this.id + 'Copies';
 		this.TAG_CARD = this.id + 'Tag' + CONSTANT.CARD.initCap();
 
 		this.VIEWER = this.id + 'Viewer';
+
+		this.packagingList = [];
 	}
 
 	build() {
@@ -173,6 +177,14 @@ export class AonMobilePackaging extends AonElement {
 		product.addEventListener(EVENT.CHANGE, () => this.changeProduct());
 
 		product.focus();
+
+		table.addRow();
+
+		let copies = this.createInput(this.PACKAGING_COPIES, "Copias");
+		copies.value = 1;
+
+		table.addCell(copies, 2);
+
 	}
 
 	changeProduct() {
@@ -213,9 +225,7 @@ export class AonMobilePackaging extends AonElement {
 
 			const {text, format, cancelled} = barcodeStr;
 			if(!cancelled) {
-				const product = this.getElement(this.PACKAGING_PRODUCT);
-				product.value = text;
-				this.changeProduct();
+				// TODO
 			}
 		} catch (error) {
 			this.showError(error);
@@ -223,23 +233,31 @@ export class AonMobilePackaging extends AonElement {
 	}
 
 	buildTag(parent){
-		let card = this.createCard(this.TAG_CARD, MSG.TAG);
-		parent.appendChild(card);
+		// let card = this.createCard(this.TAG_CARD, MSG.TAG);
+		// parent.appendChild(card);
 
 		// let div = this.createElement(TAG.DIV);
 
 		// let viewer = new AonViewer();
 		// viewer.type = 'application/pdf';			
 
-		let json = {
-			item: this.packaging.item.id,
-			container: this.packaging.container.id,
-			quantity: this.getElement(this.PACKAGING_QUANTITY).value,
-			barcode: this.packaging.base.barcode,
+		let arr = this.packagingList.map(p => {
+			let json = {
+				item: p.item.id,
+				container: p.container.id,
+				quantity: this.getElement(this.PACKAGING_QUANTITY).value,
+				barcode: p.base.barcode,
+			};
+			return json;
+		});
+		let data = {
+			packaging: arr,
 			domain_id: LS.getDomainId(),
 			domain_name: LS.getDomainName(),
 			login: LS.getDomainLogin()
-		};
+		}
+
+	
 
 		// viewer.file = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
 
@@ -248,11 +266,11 @@ export class AonMobilePackaging extends AonElement {
 		// div.appendChild(viewer);
 		// card.setContent(div);
 
-		let w = this.getElement(card.CONTENT).offsetWidth;
-		let type = 'application/pdf';
-		let url = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
-		this.fileUrl = url;
-		card.setContentHTML(`<aon-viewer id=${this.VIEWER} type="${type}" file="${url}" width="${w}"></aon-viewer>`);
+		// let w = this.getElement(card.CONTENT).offsetWidth;
+		// let type = 'application/pdf';
+		this.fileUrl  = '/ms/api/multiple_download_packaging_pdf?json=' + btoa(JSON.stringify(data));
+		
+		// card.setContentHTML(`<aon-viewer id=${this.VIEWER} type="${type}" file="${url}" width="${w}"></aon-viewer>`);
 		// fileCard.cleanSection2();
 		// fileCard.addTitleButton('Visualizar', 'visibility_off', false, () => this.closeFileCard());
 	}
@@ -275,11 +293,13 @@ export class AonMobilePackaging extends AonElement {
 			saveButton.style.display = 'none';
 			this.getApplication().startLoader();
 			this.packaging.quantity = this.getElement(this.PACKAGING_QUANTITY).value;
+			this.packaging.copies = this.getElement(this.PACKAGING_COPIES).value || 1;
 			savePackaging(this.packaging).then(r => {
 				this.getApplication().stopLoader();
 				printButton.style.display = 'block';
 				downloadButton.style.display = 'block';
-				this.packaging = r;
+				this.packaging = r[0];
+				this.packagingList = r;
 				this.buildTag(div);
 			});
 		}

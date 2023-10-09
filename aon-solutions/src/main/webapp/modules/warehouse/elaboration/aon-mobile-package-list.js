@@ -4,8 +4,8 @@ import { AonMobilePackage } from './aon-mobile-package.js';
 
 export class AonMobilePackageList extends AonMobileList {
 
-    elaborationPackages;
-    ELABORATION_TOOLBAR;
+    Packages;
+    TOOLBAR;
 
     constructor () {
         super();
@@ -22,10 +22,10 @@ export class AonMobilePackageList extends AonMobileList {
 
     init() {
         this.build();
-        if(this.elaborationPackages.length <= 0){
+        if(this.packages.length <= 0){
             this.empty();
         }
-        this.elaborationPackages.forEach((packaging, i) => this.addRow(packaging, i));
+        this.packages.forEach((packaging, i) => this.addRow(packaging, i));
     }
 
     addRow(packaging, i) {
@@ -39,19 +39,19 @@ export class AonMobilePackageList extends AonMobileList {
 
     aonPackage(packaging, i) {
         let aonPackage = new AonMobilePackage();
-        aonPackage.setElaborationToolbar(this.ELABORATION_TOOLBAR);
+        aonPackage.setElaborationToolbar(this.TOOLBAR);
         aonPackage.setPackaging(packaging);
         let div = this.getElement('aonPackageDiv');
         this.clearElement(div);
         div.appendChild(aonPackage);
     }
 
-    setElaborationPackages(elaborationPackages){
-        this.elaborationPackages = elaborationPackages;
+    setPackages(packages){
+        this.packages = packages;
     }
 
-    setElaborationToolbar(toolbar) {
-        this.ELABORATION_TOOLBAR = toolbar;
+    setToolbar(toolbar) {
+        this.TOOLBAR = toolbar;
     }
 }
 if(!window.customElements.get(TAG.AON_MOBILE_PACKAGE_LIST)){

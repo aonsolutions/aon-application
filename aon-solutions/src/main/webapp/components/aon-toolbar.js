@@ -3,6 +3,7 @@ import {ToolbarType} from '../models/enums.js';
 import { AonSearch } from './aon-search.js';
 import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonIconButton } from './aon-icon-button.js';
+import * as LS from '../services/localStorageService.js';
 
 export class AonToolbar extends AonElement {
 	HEADER;
@@ -106,7 +107,7 @@ export class AonToolbar extends AonElement {
 			titleSection.appendChild(title);
 			header.appendChild(titleSection);
 		} else {
-			header.className = CSS.AON_TOOLBAR_BETA;
+			header.className = LS.isNewTheme() ? CSS.AON_TOOLBAR : CSS.AON_TOOLBAR_BETA;
 
 			let titleSection = this.createElement(TAG.SECTION);
 			titleSection.id = this.TITLE_SECTION;

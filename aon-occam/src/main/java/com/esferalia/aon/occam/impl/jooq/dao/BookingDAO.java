@@ -70,6 +70,7 @@ public class BookingDAO {
 		
 		Booking booking = new Booking()
 				.setDomain(domain)
+				.setType(domain.getDomainType())
 				.setCompany(company)
 				.setNumberOfUsers(domain.getMaxDefinedUsers())
 				.setPayer("");

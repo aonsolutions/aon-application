@@ -29,12 +29,14 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
+import com.esferalia.aon.occam.api.model.warehouse.PackagingDelivery;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
@@ -200,6 +202,7 @@ public interface IWarehouse {
 	// 	***********************************************
 	
 	Packaging getPackaging(AONContext ctx, String barcode);
-	Packaging savePackaging(AONContext ctx, Packaging packaging);
-	
+	List<Packaging> savePackaging(AONContext ctx, Packaging packaging);
+	DeliveryPackaging getDeliveryPackaging(AONContext ctx, String sscc, Integer delivery, Integer product);
+	PackagingDelivery saveDeliveryPackaging(AONContext ctx, PackagingDelivery packaging);
 }

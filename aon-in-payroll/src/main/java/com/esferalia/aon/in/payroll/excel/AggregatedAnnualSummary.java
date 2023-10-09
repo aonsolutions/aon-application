@@ -662,44 +662,51 @@ public class AggregatedAnnualSummary {
 			LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> totalsFormulas,
 			AggregatedAnnualYearlyEntry entry, String nif, String[] periods, boolean complete,
 			LinkedHashSet<String> deductionSet, String concept, AmountCallback callback) {
-		Row deductionRow = sheet.createRow(sheet.getLastRowNum()+1);
-		sheet.addMergedRegion(new CellRangeAddress(deductionRow.getRowNum(), deductionRow.getRowNum(), 0, 2));
-		Cell deductionCell = deductionRow.createCell(0);
-		deductionCell.setCellType(CellType.STRING);
-		if (concept != null)
-			deductionCell.setCellValue(spaDeduction(concept));
-		deductionSet.add(concept);
 		
-		int[] amountCellNum = {3};
+		try {
 		
-		Arrays.stream(periods).forEach(period -> {
-			Cell amountCell = deductionRow.createCell(amountCellNum[0]++);
+			Row deductionRow = sheet.createRow(sheet.getLastRowNum()+1);
+			sheet.addMergedRegion(new CellRangeAddress(deductionRow.getRowNum(), deductionRow.getRowNum(), 0, 2));
+			Cell deductionCell = deductionRow.createCell(0);
+			deductionCell.setCellType(CellType.STRING);
+			if (concept != null)
+				deductionCell.setCellValue(spaDeduction(concept));
+			deductionSet.add(concept);
 			
-			String formula = "'" + WorkbookUtil.createSafeSheetName(nif) + "'" + "!" + CellReference.convertNumToColString(amountCell.getColumnIndex()) + (amountCell.getRowIndex()+1);
+			int[] amountCellNum = {3};
 			
-			putDeductionFormula(entry.getWorkplace(), totalsFormulas, concept, period, formula, complete);
-			
-			if (entry.getMonthlyEntries().get(period) != null) {
+			Arrays.stream(periods).forEach(period -> {
+				Cell amountCell = deductionRow.createCell(amountCellNum[0]++);
 				
-				AggregatedAnnualEntry periodEntry = entry.getMonthlyEntries().get(period);
+				String formula = "'" + WorkbookUtil.createSafeSheetName(nif) + "'" + "!" + CellReference.convertNumToColString(amountCell.getColumnIndex()) + (amountCell.getRowIndex()+1);
 				
-				amountCell.setCellType(CellType.NUMERIC);
+				putDeductionFormula(entry.getWorkplace(), totalsFormulas, concept, period, formula, complete);
 				
-				double amount = callback.getAmount(periodEntry);
-				if (amount != 0d) {
+				if (entry.getMonthlyEntries().get(period) != null) {
 					
-					if (AonStringUtils.equalsIgnoreCase("IRPF", concept) && AonNumberUtils.nullIfZero(periodEntry.getIrpfCtaEsp()) != null) {
-						amount -= AonNumberUtils.zeroIfNull(periodEntry.getIrpfCtaEsp());
+					AggregatedAnnualEntry periodEntry = entry.getMonthlyEntries().get(period);
+					
+					amountCell.setCellType(CellType.NUMERIC);
+					
+					double amount = callback.getAmount(periodEntry);
+					if (amount != 0d) {
+						
+						if (AonStringUtils.equalsIgnoreCase("IRPF", concept) && AonNumberUtils.nullIfZero(periodEntry.getIrpfCtaEsp()) != null) {
+							amount -= AonNumberUtils.zeroIfNull(periodEntry.getIrpfCtaEsp());
+						}
+						amountCell.setCellValue(amount);
 					}
-					amountCell.setCellValue(amount);
+					amountCell.setCellStyle(stylesMap.get("numberCellStyle"));
 				}
-				amountCell.setCellStyle(stylesMap.get("numberCellStyle"));
-			}
-		});
-		Cell totalCell = deductionRow.createCell(amountCellNum[0]);
-		totalCell.setCellType(CellType.FORMULA);
-		int realRowNum = totalCell.getRowIndex()+1;
-		totalCell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(totalCell.getColumnIndex()-1)+realRowNum+")");
+			});
+			Cell totalCell = deductionRow.createCell(amountCellNum[0]);
+			totalCell.setCellType(CellType.FORMULA);
+			int realRowNum = totalCell.getRowIndex()+1;
+			totalCell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(totalCell.getColumnIndex()-1)+realRowNum+")");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	private static void writePayments(Sheet sheet, Map<String, CellStyle> stylesMap,
 			LinkedHashSet<String> paymentConceptsSet, LinkedHashMap<String, LinkedHashSet<String>> orderedConcepts,

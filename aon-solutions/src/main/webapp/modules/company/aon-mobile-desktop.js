@@ -9,6 +9,7 @@ import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statis
 import { Apps, getAppsByDur } from '../../services/app.js';
 import { AonSaltra } from '../laboral/aon-saltra.js';
 import { getPosition } from '../../services/maps.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonMobileDesktop extends AonElement {
 
@@ -142,7 +143,7 @@ export class AonMobileDesktop extends AonElement {
 			img.style.position = 'relative';
 			img.src = url;
 			img.onerror = () => {
-				img.src = '../../assets/aon-logo2.png';
+				img.src = '../../assets/aon-logo.svg';
 				//companyDiv.style.display = 'none';
 			}
 			this.clearElement(companyDiv);
@@ -181,7 +182,7 @@ export class AonMobileDesktop extends AonElement {
 			let isRemoved = true;
 
 			let titleA = this.createElement(TAG.DIV);
-			titleA.className = 'aonSidenavTitle';
+			titleA.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
 			titleA.innerHTML = 'TAREAS PENDIENTES';
 			div.appendChild(titleA);
 
@@ -275,7 +276,7 @@ export class AonMobileDesktop extends AonElement {
 
 	createTitleTime(){
 		let div = this.createElement(TAG.DIV);
-		div.className = 'aonSidenavTitle';
+		div.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
 		div.innerHTML = 'CONTROL HORARIO';
 		div.style.textAlign = "left";
 		div.style.marginLeft = "0";

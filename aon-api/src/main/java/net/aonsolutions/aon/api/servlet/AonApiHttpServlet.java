@@ -379,4 +379,12 @@ public class AonApiHttpServlet extends HttpServlet{
 			return false;
 		}
 	}
+	
+	public static Options options(AonApiData api) {
+		Options options = new Options();
+		options.setPage(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
+		options.setPerPage(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
+		options.setFull(JsonUtils.getboolean(api.getData(), IJsonNames.FULL));
+		return options;
+	}
 }
