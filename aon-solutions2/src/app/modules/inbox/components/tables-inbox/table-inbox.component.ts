@@ -1,22 +1,11 @@
 import { DatePipe } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  CollectionFactory,
-  Factory,
-  FilterBuilder,
-  ICollection,
-  IMessage,
-} from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, Factory, ICollection, IMessage } from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
+import { FilterBuilder } from '../../../../../../libraries/AonSDK/src/utils/FilterBuilder';
+import { MessageChatService } from '../../../../core/services/message-chat.service';
 
 @Component({
   selector: 'app-table-inbox',
@@ -24,9 +13,7 @@ import { MessageService } from 'src/app/core/services/message.service';
   styleUrls: ['./table-inbox.component.scss'],
 })
 export class TablesInboxComponent implements OnChanges {
-  filterStatus: string[] = ['todas', 'pendiente', 'realizada', 'nueva',
-'vista', 'cerrada', 'abierta'
-];
+  filterStatus: string[] = ['todas', 'pendiente', 'realizada', 'nueva', 'vista', 'cerrada', 'abierta'];
   @Input() filterTabSelec: number = 0;
   @Input() filterDate: number = 0;
   @Input() filter: any = {};
@@ -44,11 +31,9 @@ export class TablesInboxComponent implements OnChanges {
   selectedMessage: IMessage | null = null;
   bodyTable: any[] = [];
   showDetail: boolean = false;
-  totalMessages: number = 0;
+  totalMessages: string = '0';
   message: string = '';
-  lenghtTitle: number = 30;
-  lenghtMensage: number = 50;
-
+  spinner: boolean = true;
   messages: ICollection<IMessage> =
     new CollectionFactory().createMessageCollection();
   public collectionFactory = new CollectionFactory();
@@ -73,6 +58,7 @@ export class TablesInboxComponent implements OnChanges {
 
   constructor(
     private messageService: MessageService,
+    private messageChatService: MessageChatService,
     private translateService: TranslateService
   ) {}
 
@@ -87,14 +73,7 @@ export class TablesInboxComponent implements OnChanges {
   };
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('estring',this.selectedTab.toString());
-
-     console.log('filterTabSelec:', this.filterTabSelec);
-
-    // console.log('filterDate:', this.filterDate);
-    // console.log('selectedTab:', this.selectedTab);
     this.updateTableData();
-
   }
 
   // Casos de fechas para usar en mi tabla
@@ -183,7 +162,6 @@ export class TablesInboxComponent implements OnChanges {
   // Filtros fechas principio mes
   private getStartDateOfMonth(): string {
     const startDate = new Date();
-    const month = startDate.getMonth() + 1;
     startDate.setDate(1);
     return this.formatDate(startDate);
   }
@@ -192,7 +170,6 @@ export class TablesInboxComponent implements OnChanges {
   private getEndDateOfMonth(): string {
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + 1);
-    const month = endDate.getMonth() === 0 ? 12 : endDate.getMonth();
     endDate.setDate(0);
     return this.formatDate(endDate);
   }
@@ -230,7 +207,6 @@ export class TablesInboxComponent implements OnChanges {
         this.messagess = response;
         this.messagesSubject.next(this.messagess);
         let pendingItemsFound = false;
-console.log(1, response);
 
         response.forEach((message, messageKey) => {
           const column: any = Object.assign({}, message);
@@ -249,8 +225,19 @@ console.log(1, response);
               }">${message.Status}</span>`,
             };
           } else if (message.Type === 'consulta') {
-          console.log(message.Status);
+            // Obtener el total de mensajes
+            let FilterBuilderTotal = new FilterBuilder();
+            FilterBuilderTotal.addField('idMessage', messageKey);
+            this.messageChatService
+              .getMessageChatCount(FilterBuilderTotal.getFilter())
+              .then((response) => {
+                this.totalMessages! = response < 100 ? response.toString() : '+99';
 
+                column.total = "<span class='circle green'>" +
+                this.totalMessages +
+                '</span>';
+              });
+              // obtener el status
             column.statusIcon = {
               icon: message.Status.toLowerCase().includes('abierta')
                 ? [{ reply_all: 'green' }]
@@ -271,8 +258,6 @@ console.log(1, response);
               '</span>',
             };
           } else if (message.Type === 'notificacion') {
-            console.log(message.Status);
-
             column.status = {
               icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
               text: `<span class="${
@@ -284,9 +269,14 @@ console.log(1, response);
           }
 
           // Asunto del mensaje
-          column.title = message.Title;
+          const maxLength = 20;
+          if (message.Title.length > maxLength) {
+            column.title = message.Title.substring(0, maxLength) + '...';
+          } else {
+            column.title = message.Title;
+          }
           // Mensaje
-          column.description = message.Description;
+          column.description = message.Description.substring(0, 50) + '...';
           // Fecha
           column.date = datepipe.transform(message.Date, 'dd/MM/yyyy, HH:mm');
           // Marcar como nueva
@@ -325,6 +315,8 @@ console.log(1, response);
         }
 
         this.noPendingItems.emit(!pendingItemsFound);
+        // Desactivo el spinner
+        this.spinner = false;
       });
   }
 
