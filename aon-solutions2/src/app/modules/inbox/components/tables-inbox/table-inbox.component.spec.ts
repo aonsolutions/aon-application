@@ -1,26 +1,25 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TableTasksComponent } from './table-tasks.component';
+import { TableInboxComponent } from './table-inbox.component';
 
-describe('TableTasksComponent', () => {
-  let component: TableTasksComponent;
-  let fixture: ComponentFixture<TableTasksComponent>;
+describe('TableInboxComponent', () => {
+  let component: TableInboxComponent;
+  let fixture: ComponentFixture<TableInboxComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TableTasksComponent ]
+      declarations: [ TableInboxComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TableTasksComponent);
+    fixture = TestBed.createComponent(TableInboxComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
-/*
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  */
 });

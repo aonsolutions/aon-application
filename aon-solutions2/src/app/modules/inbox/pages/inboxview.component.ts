@@ -5,10 +5,12 @@ import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
 import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
-import { TableQueriesComponent } from '../components/table-queries/table-queries.component';
+// import { TableQueriesComponent } from '../components/table-queries/table-queries.component';
 import { DatePipe } from '@angular/common';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
+import { TablesInboxComponent } from '../components/tables-inbox/table-inbox.component';
+
 
 export interface Tabs {
   name: string;
@@ -22,7 +24,7 @@ export interface Tabs {
 })
 export class InboxviewComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
-  @ViewChild(TableQueriesComponent, { static: false })
+  @ViewChild(TablesInboxComponent, { static: false })
   collectionFactory = new CollectionFactory();
   entityFactory = new Factory();
   datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
@@ -48,10 +50,10 @@ export class InboxviewComponent implements OnInit {
   showSendButtons: boolean = false;
   filterDate: number = 1;
   selectedFilterText: string = '';
+  selectedFilterType: string = '';
   expandedIndex: number = -1;
   newMessageDescription: string = '';
-  noTasksMessageText: string = '';
-  filterPending: boolean = false;
+  spinner: boolean = true;
   @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
     new DropdownMenuComponent();
 
@@ -59,7 +61,6 @@ export class InboxviewComponent implements OnInit {
   tareasMessageCount: number = 0;
   notificacionesMessageCount: number = 0;
   totalMessageCount: number = 0;
-  tableQueriesComponent!: TableQueriesComponent;
   menuItem: MenuItem[] = [];
   selected: string = '';
   items: any[] = [];
@@ -167,7 +168,6 @@ export class InboxviewComponent implements OnInit {
   }
 
   async rowClickHandler(message: any) {
-    try {
       const isSameRow =
         this.messagesData && this.messagesData.Id === message.key;
       this.showDetail = !isSameRow ? true : !this.showDetail;
@@ -189,15 +189,14 @@ export class InboxviewComponent implements OnInit {
             messageStatus.Status = StatusMessage.VISTA;
             }
           }
+
           try {
 //            this.messageService.updateMessage(messageStatus);
           } catch (error) {
             throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
           }
+
       });
-      } catch (error) {
-        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-      }
     }
 
   consultarClicked() {
@@ -231,7 +230,6 @@ export class InboxviewComponent implements OnInit {
   }
 
   async calculateMessageCounts() {
-    try {
       // Calcula el recuento para "consulta"
       let filterBuilder = new FilterBuilder();
       filterBuilder.addField('type', 'consulta');
@@ -257,9 +255,6 @@ export class InboxviewComponent implements OnInit {
         this.consultaMessageCount +
         this.tareasMessageCount +
         this.notificacionesMessageCount;
-    } catch (error) {
-      console.error('Error al calcular el recuento de mensajes:', error);
-    }
   }
 
   // Cerrar details
@@ -293,16 +288,14 @@ export class InboxviewComponent implements OnInit {
       .setDescription(description)
       .setType('chat');
 
-      try {
         // Crear el mensaje
         const createdMessageChat =
         await this.messageChatService.createMessageChat(newMessageChat);
 
         // Agregar el nuevo mensaje
         this.messagesChat.add(createdMessageChat);
-      } catch (error) {
-        throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
-      }
+        // Desactivo el spinner
+        this.spinner = false;
     }
   }
 
@@ -317,16 +310,13 @@ export class InboxviewComponent implements OnInit {
       .setStatus(StatusMessage.CERRADA)
       .setLastMessageChatOrigin(false);
 
-      try {
         // Crear el mensaje
         const createdMessage = await this.messageService.createMessage(newMessage);
         this.messagesData = createdMessage;
         // Agregar el nuevo mensaje
         this.messages.add(createdMessage);
-      } catch (error) {
-        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-
-      }
+        // Desactivo el spinner
+        this.spinner = false;
     }
   }
 

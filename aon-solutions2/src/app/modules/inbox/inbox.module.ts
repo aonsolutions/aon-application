@@ -10,21 +10,16 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTableModule } from '@angular/material/table';
-import { TableComponentComponent } from './components/table-component/table-component.component';
-import { TableQueriesComponent } from './components/table-queries/table-queries.component';
-import { TableTasksComponent } from './components/table-tasks/table-tasks.component';
-import { TableNotificationsComponent } from './components/table-notifications/table-notifications.component';
 import { ModalCreateComponent } from './components/modal-create/modal-create.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
+import { TablesInboxComponent } from './components/tables-inbox/table-inbox.component';
+
 @NgModule({
   declarations: [
     InboxviewComponent,
-    TableComponentComponent,
-    TableQueriesComponent,
-    TableTasksComponent,
-    TableNotificationsComponent,
     ModalCreateComponent,
+    TablesInboxComponent,
   ],
   imports: [
     CommonModule,
