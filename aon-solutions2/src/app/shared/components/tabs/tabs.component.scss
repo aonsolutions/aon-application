@@ -41,13 +41,20 @@
   #tabs-header #tabs-tool{
     position      : relative;
     width         : fit-content;
+    min-height    : 3.9rem;
     float         : right;
-    top           : 1.05rem;
     border-bottom : $border;
-    padding-bottom: $padding-bottom - 0.6rem;
+    padding-bottom: $padding-bottom / 2;
     padding-right : $padding-right;
+    display       : flex;
+    align-items   : flex-end;
+    gap           : $margin;
   }
-
+  
+  #tabs-header .mat-tab-header .mat-tab-label-container{
+    height: 4.45rem !important;
+  }
+  
   #tabs-header .mat-ripple{
     border-bottom : $border;
   }
