@@ -17,6 +17,10 @@
     text-align    :center;
     text-transform: uppercase;
   }
+  #tabs-header .mat-tab-list .mat-tab-label app-icon{
+    margin-right : $margin / 2;
+  }
+
   #tabs-header .mat-tab-list .mat-tab-label:hover .tab-name{
     font-family : Roboto-Medium;
   }
@@ -50,11 +54,11 @@
     align-items   : flex-end;
     gap           : $margin;
   }
-  
+
   #tabs-header .mat-tab-header .mat-tab-label-container{
     height: 4.45rem !important;
   }
-  
+
   #tabs-header .mat-ripple{
     border-bottom : $border;
   }
