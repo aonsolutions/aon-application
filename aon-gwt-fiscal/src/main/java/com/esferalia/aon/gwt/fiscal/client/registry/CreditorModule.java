@@ -176,13 +176,12 @@ public class CreditorModule extends MainEntryPoint {
 	private void loadModule( final RegistryModuleOptions opt ) {
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
 		searchPanel = new CreditorModuleSearchPanel(opt);
-		dockLayoutPanel.addNorth(searchPanel, RegistryModuleSearchPanel.HEIGHT);
+		dockLayoutPanel.addNorth(searchPanel, 75);
 		progressContainer.setVisible(false);
 		progressContainer.add(progress);
 		dockLayoutPanel.addNorth(progressContainer, 5);
 		splitLayoutPanel = new SplitLayoutPanel();
 		dockLayoutPanel.add(splitLayoutPanel);
-		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		SimpleLayoutPanel centerLayoutPanel = new SimpleLayoutPanel();
 		ScrollPanel centerPanel = new ScrollPanel();
 		centerPanel.setStyleName(AON.CSS.aonScrollArea());
