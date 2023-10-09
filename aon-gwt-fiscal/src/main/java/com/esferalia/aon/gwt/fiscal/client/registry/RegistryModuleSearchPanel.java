@@ -151,7 +151,7 @@ public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focu
 			}
 		});
 
-		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconSearch());
+		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
 		refreshButton.addStyleName(AON.CSS.aonMarginLeft());
 		refreshButton.addClickHandler(new ClickHandler() {
 			@Override

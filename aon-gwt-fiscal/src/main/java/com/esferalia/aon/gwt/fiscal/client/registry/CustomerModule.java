@@ -60,7 +60,6 @@ public class CustomerModule extends MainEntryPoint {
 		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
 		SafeHtml tab(String title, String icon);
 	}
-	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	
 	private static RegistryServiceAsync service;
 	static {
@@ -447,11 +446,6 @@ public class CustomerModule extends MainEntryPoint {
 			msg = "Se ha producido un error no codificado.";
 		}
 		toolbar.showErrorMessage(msg);
-	}
-
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 30);
-		splitLayoutPanel.animate(500);
 	}
 
 	private void openFootPanelIfNeeded() {

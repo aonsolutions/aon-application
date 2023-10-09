@@ -78,8 +78,18 @@ public class CreditorModule extends MainEntryPoint {
 	
 	private static final String FINANCE_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/FinanceReportExcelPrint";
 	
-	private static RegistryServiceAsync SERVICE;
-	private static CommonServiceAsync COMMON_SERVICE;
+	private static RegistryServiceAsync service;
+	static {
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		service = new RegistryServiceAsyncDecorator(registryServiceRaw);
+	}
+	
+	private static CommonServiceAsync commonService;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
+
+	}
 	
 	private static class CreditorRow {
 		private int row;
@@ -89,33 +99,29 @@ public class CreditorModule extends MainEntryPoint {
 			this.row = row;
 			this.creditor = creditor;
 		}
+		
 		private int getRow() {
 			return row;
 		}
+		
 		private Creditor getCreditor() {
 			return creditor;
 		}
 	}
 	
 	private DockLayoutPanel dockLayoutPanel;
-	private SimpleLayoutPanel centerLayoutPanel;
-	private ScrollPanel centerPanel;
 	private FlowPanel container;
 	private AonDisplayGrid tab;
-	private int autoWidth; 
 	private SplitLayoutPanel splitLayoutPanel;
 	private AonMinimizePanel footPanel;
 	private TabLayoutPanel tabLayout;
 	private ScrollPanel extraInfoContainer;
 	
-	private LinkedHashMap<Integer,CreditorRow> creditors = new LinkedHashMap<Integer,CreditorRow>();
-	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<Integer>();
+	private LinkedHashMap<Integer,CreditorRow> creditors = new LinkedHashMap<>();
+	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<>();
 	
 	private CreditorModuleSearchPanel searchPanel;
 	private AonToolbar toolbar;
-	private AonToolbarButton addButton;
-	private AonToolbarButton searchButton;
-	private AonToolbarButton exportButton;
 	private AonToolbarButton checkAll; 
 	private AonToolbarButton uncheckAll;
 	
@@ -126,10 +132,10 @@ public class CreditorModule extends MainEntryPoint {
 	private boolean minimizedByUser;
 	private int extraInfoTabIndex;
 	
-	final private int limit = 100;
-	final private MutableInt offset = new MutableInt(0);
-	final private MutableInt moreData = new MutableInt(0);
-	final private MutableInt searchEnabled = new MutableInt( 0 ); 
+	private static final int LIMIT = 100;
+	private static final MutableInt offset = new MutableInt(0);
+	private static final MutableInt moreData = new MutableInt(0);
+	private static final MutableInt searchEnabled = new MutableInt( 0 ); 
 	private int lastScrollPos = 0;
 	
 	@Override
@@ -145,18 +151,12 @@ public class CreditorModule extends MainEntryPoint {
 	
 	public void onModuleLoad( final RegistryModuleOptions opt ) {
 		AON.ensureInjected();
-
-		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
-		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
-
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
-
+		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		opt.getParentWidget().add(dockLayoutPanel);
 		
 		if ( opt.getConfiguration() == null) {
-			COMMON_SERVICE.getAonConfiguration(opt.getDomainName(),opt.getDomain(),opt.getUser(),new AsyncCallback<AonConfiguration>() {
+			commonService.getAonConfiguration(opt.getDomainName(),opt.getDomain(),opt.getUser(),new AsyncCallback<AonConfiguration>() {
 				@Override
 				public void onSuccess(AonConfiguration result) {
 					opt.setConfiguration(result);
@@ -183,24 +183,23 @@ public class CreditorModule extends MainEntryPoint {
 		splitLayoutPanel = new SplitLayoutPanel();
 		dockLayoutPanel.add(splitLayoutPanel);
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
-		centerLayoutPanel = new SimpleLayoutPanel();
-		centerPanel = new ScrollPanel();
+		SimpleLayoutPanel centerLayoutPanel = new SimpleLayoutPanel();
+		ScrollPanel centerPanel = new ScrollPanel();
 		centerPanel.setStyleName(AON.CSS.aonScrollArea());
 		centerPanel.addStyleName(AON.CSS.aonMarginBottom());
 		container = new FlowPanel();
 		centerPanel.setWidget(container);
 		centerLayoutPanel.setWidget(centerPanel);
 		splitLayoutPanel.add(centerLayoutPanel);
-		centerPanel.addScrollHandler(new ScrollHandler() {
-
-			public void onScroll(ScrollEvent event) {
-				// ------------------------------------ Ignore scroll up.
+		
+		centerPanel.addScrollHandler(event -> {
+				// Ignore scroll up.
 				int oldScrollPos = lastScrollPos;
 				lastScrollPos = centerPanel.getVerticalScrollPosition();
 				if (oldScrollPos >= lastScrollPos) {
 					return;
 				}
-				// -----------------------------------------------------
+
 				if (isSearchEnabled()) {
 					int maxScrollTop = centerPanel.getWidget().getOffsetHeight() - centerPanel.getOffsetHeight();
 					if (lastScrollPos >= maxScrollTop) {
@@ -208,24 +207,17 @@ public class CreditorModule extends MainEntryPoint {
 						search(opt, searchPanel.getParams( opt ),offset.getValue());
 					}
 				}
-			}
 		});
-		searchPanel.addValueChangeHandler( new ValueChangeHandler<RegistryParams>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<RegistryParams> event) {
+		
+		searchPanel.addValueChangeHandler(event -> {
 				RegistryParams params = event.getValue();
 				search( opt, params );
-			}
 		});
-		Scheduler.get().scheduleDeferred(new Command() {
-	        public void execute() {
-	        	search(opt, searchPanel.getParams( opt ));		
-	        }
-	    });		
+		
+		Scheduler.get().scheduleDeferred(() -> search(opt, searchPanel.getParams(opt)));
 	}
 
-	private static enum COLS {
+	private enum COLS {
 		  CHK(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
 	    , STA(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
 		, SEC(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
@@ -234,16 +226,12 @@ public class CreditorModule extends MainEntryPoint {
 		, DOC("N\u00BA Documento"		, 130,AON.CSS.aonTextLeft())
 		, AUTO(AON.MSG.name()			, 0  ,AON.CSS.aonTextLeft())
 		, ALS(AON.MSG.alias()			, 200,AON.CSS.aonTextLeft())
-//	    , ACT(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
+		// , ACT(AonStringUtils.EMPTY, 20 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
 		int colWidth;
 		String cellStyleClass;
-
-		private COLS(String headerLabel,int colWidth) {
-			this(headerLabel, colWidth, null);
-		}
 
 		private COLS(String headerLabel,int colWidth,String cellStyleClass) {
 			this.headerLabel = headerLabel;
@@ -267,7 +255,7 @@ public class CreditorModule extends MainEntryPoint {
 		tab.addStyleName(AON.CSS.aonNoPadding());
 		tab.addStyleName(AON.CSS.aonBlockCenter());
 		
-		autoWidth = container.getOffsetWidth() - 80;
+		int autoWidth = container.getOffsetWidth() - 80;
 		for ( COLS col : COLS.values()) {
 			if (col != COLS.AUTO ) {
 				autoWidth -= (col.getColWidth() + 2); 
@@ -305,10 +293,8 @@ public class CreditorModule extends MainEntryPoint {
 		formFlowPanel.add(userHidden);
 		toolbar.add(diskForm);
 
-		addButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
-		addButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
+		AonToolbarButton addButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
+		addButton.addClickHandler(event -> {
 				final AonSimpleDialog dialog = new AonSimpleDialog();
 				dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
 				dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
@@ -317,13 +303,13 @@ public class CreditorModule extends MainEntryPoint {
 					
 					@Override
 					public void setFocus(boolean b) {
-						// callback.setFocus(b);
+						// Empty method
 					}
 					
 					@Override
 					public void onError(Throwable caught) {
 						showError(caught.getMessage());
-					};
+					}
 					
 					@Override
 					public void onCancel() {
@@ -337,77 +323,48 @@ public class CreditorModule extends MainEntryPoint {
 
 					@Override
 					public void onDocumenthanged(CreditorFull registryFull) {
+						// Empty method
 					}
 				});
 				dialog.add( creditorPanel );
 				dialog.center();
 				dialog.show();
 				
-				Scheduler.get().scheduleDeferred(new Command() {
-			        public void execute() {
-			        	creditorPanel.setFocus(true);
-			        }
-			    });		
-				
-			}
+				Scheduler.get().scheduleDeferred(() -> creditorPanel.setFocus(true));
 		});
+		
 		toolbar.add(addButton);
 
-		searchButton = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
-		searchButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
+		AonToolbarButton searchButton = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
+		searchButton.addClickHandler(event -> {
 				enableMoreData();
 				container.clear();
 				tab = getTable();
 				container.add(tab);
 				offset.setValue(0);
 				search(opt, searchPanel.getParams( opt ), offset.getValue());
-			}
 		});
+		
 		toolbar.add(searchButton);
-
-		exportButton = new AonToolbarButton( AON.MSG.export(), AON.CSS.aonIconExcel() );
-		exportButton.setEnabled(false);
-		exportButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				diskForm.setAction(GWT.getHostPageBaseURL() + FINANCE_REPORT_EXCEL_PRINT);
-				registryParamsHidden.setValue(JsonParams.convert(searchPanel.getParams( opt )));
-				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				userHidden.setValue(getCurrentUser());
-				diskForm.submit();
-			}
-		});
-//		toolbar.add(exportButton);
 
 		checkAll  = new AonToolbarButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
 		checkAll.setEnabled(false);
-		checkAll .addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				checkAll( opt, true );
-			}
-		});
+		
+		checkAll .addClickHandler(event -> checkAll(true));
 		toolbar.add(checkAll );
 		
 		uncheckAll  = new AonToolbarButton( AON.MSG.selectNone(), AON.CSS.aonIconCheck() );
 		uncheckAll.setEnabled(false);
-		uncheckAll.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				checkAll( opt, false );
-			}
-		});
+		
+		uncheckAll.addClickHandler(event -> checkAll(false));
+		
 		toolbar.add(uncheckAll);
 
 		return toolbar;
 	}
 	
-	protected void checkAll(final RegistryModuleOptions opt, boolean check) {
+	
+	protected void checkAll(boolean check) {
 		for (CreditorRow creditorRow : creditors.values()) {
 			creditorRow.getCreditor().setSelected(check);
 			manageSelection(creditorRow.getCreditor());
@@ -426,21 +383,14 @@ public class CreditorModule extends MainEntryPoint {
 
 	private AonMinimizePanel getMinimizePanel() {
 		footPanel = new AonMinimizePanel();
-		footPanel.addMinimizeHandler(new MinimizeHandler() {
-			
-			@Override
-			public void onMinimize(MinimizeEvent event) {
+		
+		footPanel.addMinimizeHandler(event -> {
 				minimizedByUser = true;
 				closeFootPanel();
-			}
 		});
-		footPanel.addMaximizeHandler(new MaximizeHandler() {
-			
-			@Override
-			public void onMaximize(MaximizeEvent event) {
-				openFootPanel();
-			}
-		});
+		
+		footPanel.addMaximizeHandler(event -> openFootPanel());
+		
 		footPanel.setStyleName(AON.CSS.aonSelector());
 		tabLayout = new TabLayoutPanel(26, Unit.PX);
 		tabLayout.setWidth("100%");
@@ -451,18 +401,13 @@ public class CreditorModule extends MainEntryPoint {
 		extraInfoContainer = new ScrollPanel();
 		tabLayout.add(extraInfoContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.additionalData(), AON.CSS.aonIconInfo()));
 		extraInfoTabIndex = tabIndex;
-		tabIndex++;
-
 
 		tabLayout.setAnimationDuration(300);
-		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Integer> event) {
+		tabLayout.addSelectionHandler(event -> {
 				minimizedByUser = false;
 				openFootPanelIfNeeded();
-			}
 		});
+		
 		return footPanel; 
 	}
 
@@ -498,21 +443,19 @@ public class CreditorModule extends MainEntryPoint {
 
 	private void search(final RegistryModuleOptions opt, RegistryParams params, final int ofs) {
 		if (!isMoreData()) return; 
-		SERVICE.getCreditors(opt.getDomainName(),opt.getDomain(),opt.getUser(), params, ofs, limit
+		service.getCreditors(opt.getDomainName(),opt.getDomain(),opt.getUser(), params, ofs, LIMIT
 				, new AsyncCallback<LinkedList<Creditor>>() {
 					
 					@Override
 					public void onSuccess(LinkedList<Creditor> result) {
 						checkAll.setEnabled(false);
 						uncheckAll.setEnabled(false);
-						exportButton.setEnabled(false);
 						if (result != null && !result.isEmpty()) {
 							result.forEach( creditor -> paintRow(opt,creditor));
 							offset.setValue(ofs + result.size());
 							enableMoreData();
 							checkAll.setEnabled(true);
 							uncheckAll.setEnabled(true);
-							exportButton.setEnabled(true);
 						} else {
 							Label label = new Label(AON.MSG.noData());
 							label.setStyleName(AON.CSS.aonBlockMessage());
@@ -563,7 +506,7 @@ public class CreditorModule extends MainEntryPoint {
 	}
 	
 	private void openFootPanel() {
-		int effectiveHeigth = 5;
+		double effectiveHeigth = 5;
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / effectiveHeigth);
 		splitLayoutPanel.animate(500);
 	}
@@ -571,15 +514,10 @@ public class CreditorModule extends MainEntryPoint {
 	private void paintRow(final RegistryModuleOptions opt, Creditor creditor) {
 		int row = tab.getWidgetCount();
 		creditors.put(creditor.getId(), new CreditorRow(row, creditor));
-		paintRow(opt, creditor, row);
-	}
-	
-	private void paintRow(final RegistryModuleOptions opt, Creditor creditor, int row) {
-		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction()
-				, selectedItems.contains(creditor.getId())?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());
-		checkButton.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
+		
+		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedItems.contains(creditor.getId())?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());
+		
+		checkButton.addClickHandler(event -> {
 				if (selectedItems.contains(creditor.getId())) {
 					creditor.setSelected(false);
 					manageSelection( creditor );
@@ -591,10 +529,10 @@ public class CreditorModule extends MainEntryPoint {
 					checkButton.addStyleName(AON.CSS.aonIconChecked());
 					checkButton.removeStyleName(AON.CSS.aonIconCheck());
 				}
-			}
 		});
 
 		Label confidential = new Label();
+		
 		if (creditor.isConfidential()) {
 			confidential.setTitle(AON.MSG.confidential());
 			confidential.setStyleName(AON.CSS.aonIconLabel());
@@ -626,75 +564,11 @@ public class CreditorModule extends MainEntryPoint {
 				status.addStyleName(AON.CSS.aonIconBlock());
 			}
 		});
-
-//		AonTableButton detailsButton = new AonTableButton(AON.MSG.seeDetail(),AON.CSS.aonIconMoreVertical() );
-//		detailsButton.addStyleName(AON.CSS.aonClickable());
-//		detailsButton.addClickHandler( new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-///*				
-//				SERVICE.getCreditorFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), creditor.getId(), new AsyncCallback<CreditorFull>() {
-//					
-//					@Override
-//					public void onSuccess(CreditorFull result) {
-//						final AonSimpleDialog dialog = new AonSimpleDialog();
-//						dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
-//						dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-//						dialog.setCaption(AON.MSG.creditor());
-//						AonCreditorFullPanel creditorPanel = new AonCreditorFullPanel(opt, result, new AonRegistryFullPanelCallback<CreditorFull>() {
-//							
-//							@Override
-//							public void setFocus(boolean b) {
-//								// callback.setFocus(b);
-//							}
-//							
-//							@Override
-//							public void onError(Throwable caught) {
-//								showError(caught.getMessage());
-//							};
-//							
-//							@Override
-//							public void onCancel() {
-//								dialog.hide();		
-//							}
-//							
-//							@Override
-//							public void onAccept(CreditorFull rf) {
-//								dialog.hide();
-//							}
-//
-//							@Override
-//							public void onDocumenthanged(CreditorFull registryFull) {
-//							}
-//						});
-//						dialog.add( creditorPanel );
-//						dialog.center();
-//						dialog.show();
-//						
-//						Scheduler.get().scheduleDeferred(new Command() {
-//					        public void execute() {
-//					        	creditorPanel.setFocus(true);
-//					        }
-//					    });		
-//						
-//					}
-//					
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						showError(caught.getMessage());	
-//					}
-//				});					
-//			}
-//		});
-		
+	
 		AonDisplayGridRow creditorRow = tab.addRow();
-		creditorRow.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				selectCreditor(opt, creditor);
-			}
-		});
+		
+		creditorRow.addClickHandler(event -> selectCreditor(opt, creditor));
+		
 		creditorRow.addCell(checkButton)
 			.addCell(status)
 			.addCell(confidential)
@@ -703,11 +577,10 @@ public class CreditorModule extends MainEntryPoint {
 			.addCell(documentLabel)
 			.addCell(nameLabel)
 			.addCell(aliasLabel)
-//			.addCell(detailsButton)
+			// .addCell(detailsButton)
 			;
 	}
 	
-
 	private void clearSelection() {
 		selectedItems.clear();
 	}
@@ -721,11 +594,11 @@ public class CreditorModule extends MainEntryPoint {
 	}
 	
 	private void refreshIcons() {
-		selectedCount.setText( (selectedItems.size() > 0)?  AonNumberUtils.toString(selectedItems.size()) :""); 
+		selectedCount.setText( (!selectedItems.isEmpty())?  AonNumberUtils.toString(selectedItems.size()) :""); 
 	}
 	
 	private void selectCreditor(RegistryModuleOptions opt, Creditor creditor) {
-		SERVICE.getCreditorFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), creditor.getId(), new AsyncCallback<CreditorFull>() {
+		service.getCreditorFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), creditor.getId(), new AsyncCallback<CreditorFull>() {
 			
 			@Override
 			public void onSuccess(CreditorFull result) {
@@ -737,13 +610,13 @@ public class CreditorModule extends MainEntryPoint {
 					
 					@Override
 					public void setFocus(boolean b) {
-						// callback.setFocus(b);
+						// Empty method
 					}
 					
 					@Override
 					public void onError(Throwable caught) {
 						showError(caught.getMessage());
-					};
+					}
 					
 					@Override
 					public void onCancel() {
@@ -756,6 +629,7 @@ public class CreditorModule extends MainEntryPoint {
 					}
 					@Override
 					public void onDocumenthanged(CreditorFull registryFull) {
+						// Empty method
 					}
 
 				});
@@ -763,12 +637,7 @@ public class CreditorModule extends MainEntryPoint {
 				dialog.center();
 				dialog.show();
 				
-				Scheduler.get().scheduleDeferred(new Command() {
-			        public void execute() {
-			        	creditorPanel.setFocus(true);
-			        }
-			    });		
-				
+				Scheduler.get().scheduleDeferred(() -> creditorPanel.setFocus(true));		
 			}
 			
 			@Override
