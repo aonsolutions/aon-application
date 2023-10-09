@@ -34,6 +34,7 @@
           [ngClass]="!subMenuOpened ? {'menu-left-option-footer-icon-reduced' : false} : {'menu-left-option-footer-icon-reduced' : true}"
           *ngFor="let shortcut of shortcuts;"
           routerLink={{shortcut.routerlink}}
+          matTooltip="{{shortcut.toolTip}}"
         >
           <app-icon class="griss" [shape]="shortcut.shape" *ngIf="subMenuOpened"></app-icon>
         </div>
