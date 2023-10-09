@@ -12,6 +12,12 @@ export const SALES_PREPARATION = {
   icon: MATERIAL_ICONS.SHOPPING_BAG
 }
 
+export const DELIVERY = {
+  id: CONSTANT.DELIVERY.initCap(),
+  name: MSG.DELIVERY,
+  icon: MATERIAL_ICONS.LOCAL_SHIPPING
+}
+
 export const PACKAGING = {
   id: CONSTANT.PACKAGING.initCap(),
   name: MSG.PACKAGING,
@@ -32,6 +38,6 @@ export const WarehouseSidenav = {
   ELABORATION: {
     id: CONSTANT.ELABORATION.initCap(),
     name: MSG.ELABORATION.toUpperCase(),
-    options: [ELABORATION, PACKAGING, SALES_PREPARATION, TAGS]
+    options: [ELABORATION, PACKAGING, SALES_PREPARATION, DELIVERY, TAGS]
   }
 }

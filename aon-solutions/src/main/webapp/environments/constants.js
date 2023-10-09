@@ -48,6 +48,7 @@ export const BIC = 'bic';
 export const BLANK = 'blank';
 export const BOOKING_PANEL = 'bookingPanel'
 export const BOOLEAN = 'boolean';
+export const BOX = 'box';
 export const BUTTON = 'button';
 
 // ----- C
@@ -89,6 +90,7 @@ export const DELETE = 'delete';
 export const DELETE_INVOICE = 'deleteInvoice';
 export const DELETE_FILE = 'deleteFile';
 export const DELETE_FOREVER = 'deleteForever';
+export const DELIVERY = 'delivery';
 export const DESCRIPTION = 'description';
 export const DETAILS = 'details';
 export const DISCOUNT = 'discount';
@@ -160,6 +162,7 @@ export const ITEM = 'item';
 
 // ----- L
 
+export const LABEL = 'label';
 export const LAST_ACCESS = 'lastAccess';
 export const LINK_DOMAINS = 'linkDomains';
 export const LIST = 'list';
@@ -168,14 +171,15 @@ export const LOGO = 'logo';
 // ----- M
 
 export const MARKETING = 'marketing';
-export const MAX = 'max';
-export const MESSENGER = 'messenger';
-export const MIN = 'min';
-export const MOVABLE_CAPITAL = 'movableCapital';
 export const MATERIAL = "material";
 export const MATERIAL_ICONS = 'material-icons';
 export const MATERIAL_OUTLINED = 'material_outlined';
 export const MATERIAL_ICONS_OUTLINED = 'material-icons-outlined';
+export const MAX = 'max';
+export const MESSENGER = 'messenger';
+export const MIN = 'min';
+export const MOVABLE_CAPITAL = 'movableCapital';
+export const MSG = 'msg';
 
 // ----- N
 
@@ -249,6 +253,7 @@ export const RETENTION_PERCENT = 'retentionPercent';
 export const REQUIRED = 'required';
 export const RESTORE = 'restore';
 export const RESTORE_INVOICE = 'restoreInvoice';
+export const ROOT = 'root';
 export const ROOT_PANEL = 'rootPanel';
 export const ROW = 'row';
 

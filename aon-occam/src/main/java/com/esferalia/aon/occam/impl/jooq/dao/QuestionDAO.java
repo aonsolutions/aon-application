@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.QuestionValue;
 import com.esferalia.aon.occam.api.model.registry.QuestionType;
+import com.esferalia.aon.occam.impl.jooq.validation.QuestionValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class QuestionDAO {
@@ -48,14 +49,6 @@ public class QuestionDAO {
 		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(QUESTION.ALIAS);}
 	}
 	
-	public static Boolean checkAlias(CloseableAONContext ctx, String alias) {
-		List<Record> questionRecords = ctx.getDslContext().select().from(QUESTION)
-				.where(QUESTION.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-				.and(QUESTION.ALIAS.eq(alias))
-				.fetch();
-		
-		return !questionRecords.isEmpty();
-	}
 
 	public static Question get(CloseableAONContext ctx, Integer id) {
 		Record questionRecord = ctx.getDslContext().select().from(QUESTION)
@@ -140,6 +133,7 @@ public class QuestionDAO {
 	}
 
 	public static Question save(AONContext ctx, Question question) {
+		QuestionValidation.validate(ctx, question);
 		return question.getId() != null
 				? update(ctx, question)
 				: insert(ctx, question);

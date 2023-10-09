@@ -76,7 +76,7 @@ export class AonHeader extends AonElement {
 	build() {
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aonHeaderWeb';
-		div.className = CSS.AON_HEADER_BETA;
+		div.className = LS.isNewTheme() ? CSS.AON_HEADER : CSS.AON_HEADER_BETA;
 		this.appendChild(div);
 
 		let helpOption = new AonDialogMenu();
@@ -267,7 +267,6 @@ export class AonHeader extends AonElement {
 
 			clearDurum();
 			this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
-			this.defaultLogo();
 		});
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
@@ -395,15 +394,6 @@ export class AonHeader extends AonElement {
 		})
 	}
 
-	defaultLogo() {
-		let aonLogo = this.getElement('aonLogo');
-		if(window.location.href.includes('ayudat')){
-			aonLogo.src = '../assets/ayudat-logo2.png';
-		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
-			aonLogo.src = '../assets/ayudat-logo3.png';
-		} else aonLogo.src = '../assets/aon-logo2.png';
-	}
-
 	aonConfiguration() {
 		this.rootPanelHtml('<aon-configuration id="aon-configuration"></aon-configuration>');
 		let aonConfiguration = this.getElement('aon-configuration');
@@ -460,7 +450,7 @@ export class AonHeader extends AonElement {
 		let aboutContent = this.createElement(TAG.DIV);
 
 		let img = this.createElement(TAG.IMG);
-		img.src = '../assets/aon-logo2.png';
+		img.src = '../assets/aon-logo.svg';
 		img.style.maxWidth = '360px';
 		img.style.maxHeight = '60px';
 		aboutContent.appendChild(img);

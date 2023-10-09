@@ -73,9 +73,10 @@ public class SerfruitDAO {
 			}
 			item = ItemDAO.save(ctx, item);
 			detail.setItem(item);
+			detail.setDescription(item.getDescription());
 		}
 		delivery = DeliveryDAO.save(ctx, delivery);
-		
+
 		// TODO ACTUALIZAR DETALLES PEDIDO -->
 		// TODO ACTUALIZAR ELABORACION SI LA TIENE...
 		return delivery;
