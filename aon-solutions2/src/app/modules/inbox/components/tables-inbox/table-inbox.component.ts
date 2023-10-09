@@ -33,7 +33,8 @@ export class TablesInboxComponent implements OnChanges {
   @Input() public messageList: Observable<ICollection<IMessage>> | undefined;
   @Input() id: number = 0;
   @Input() type: string = '';
-
+  @Input() selectedTab: number = 0;
+  @Input() tabIndex: number = 0;
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
   @Output() noPendingItems: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -86,8 +87,14 @@ export class TablesInboxComponent implements OnChanges {
   };
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Para la tabla de tareas
+    console.log('estring',this.selectedTab.toString());
+
+     console.log('filterTabSelec:', this.filterTabSelec);
+
+    // console.log('filterDate:', this.filterDate);
+    // console.log('selectedTab:', this.selectedTab);
     this.updateTableData();
+
   }
 
   // Casos de fechas para usar en mi tabla
@@ -104,6 +111,55 @@ export class TablesInboxComponent implements OnChanges {
         break;
     }
     return date;
+  }
+
+ /**
+ * Esta función filtra el tipo según la pestaña seleccionada.
+ *
+ * @returns {string} El tipo filtrado.
+ */
+   private filterType() {
+    let type = {
+      'inbox': '',
+      'status': ''
+    };
+
+    switch (this.selectedTab.toString()) {
+      case '1':
+        type.inbox = 'consulta'
+        switch (this.filterTabSelec) {
+          case 1:
+            type.status = 'abierta';
+            break;
+          case 2:
+            type.status = 'cerrada';
+            break;
+        }
+        break;
+      case '2' :
+        type.inbox = 'tarea'
+        switch (this.filterTabSelec) {
+          case 1:
+            type.status = 'pendiente';
+            break;
+          case 2:
+            type.status = 'realizada';
+            break;
+        }
+        break;
+      case '3':
+        type.inbox = 'notificacion'
+        switch (this.filterTabSelec) {
+          case 1:
+            type.status = 'nueva';
+            break;
+          case 2:
+            type.status = 'vista';
+            break;
+        }
+      break;
+    }
+    return type;
   }
 
   // Filtros fechas principio semana
@@ -156,19 +212,13 @@ export class TablesInboxComponent implements OnChanges {
     );
 
     let filterBuilder = new FilterBuilder();
-    switch (this.type) {
-      case 'tarea':
-        filterBuilder.addField('type', 'tarea');
-        break;
-      case 'consulta':
-        filterBuilder.addField('type', 'consulta');
-        break;
-      case 'notificacion':
-        filterBuilder.addField('type', 'notificacion');
-        break;
+    if (this.filterType().inbox !== '') {
+      filterBuilder.addField('type', this.filterType().inbox);
     }
-
-    if (this.filterDate > 0) {
+    if (this.filterType().status !== '') {
+      filterBuilder.addField('status', this.filterType().status);
+    }
+    if (this.filterDate > 0 && this.filterType().inbox !== '') {
       let dates = this.filterTableDate();
       filterBuilder.addInterval('date', dates.start, dates.end);
     }
@@ -180,123 +230,70 @@ export class TablesInboxComponent implements OnChanges {
         this.messagess = response;
         this.messagesSubject.next(this.messagess);
         let pendingItemsFound = false;
+console.log(1, response);
 
         response.forEach((message, messageKey) => {
           const column: any = Object.assign({}, message);
           column.key = messageKey;
           column.name = message.Name;
+          const lowerCaseStatus = message.Status.toLowerCase();
 
-          if (
-            this.filterStatus[this.filterTabSelec] ===
-              message.Status.toLowerCase() ||
-            this.filterStatus[this.filterTabSelec] === 'todas'
-          ) {
-            const lowerCaseStatus = message.Status.toLowerCase();
+          // Lógica específica para cada tipo de mensaje
+          if (message.Type === 'tarea') {
+            column.status = {
+              icon: lowerCaseStatus.includes('realizada') ? [{}] : [],
+              text: `<span class="${
+                lowerCaseStatus.includes('pendiente')
+                  ? 'background-text-red-light'
+                  : 'background-text-griss-light'
+              }">${message.Status}</span>`,
+            };
+          } else if (message.Type === 'consulta') {
+          console.log(message.Status);
 
-            // Lógica específica para cada tipo de mensaje
-            // if (this.type === 'tarea') {
-            //   console.log('entro a tarea');
-            //   column.status = {
-            //     icon: lowerCaseStatus.includes('realizada') ? [{}] : [],
-            //     text: `<span class="${
-            //       lowerCaseStatus.includes('pendiente')
-            //         ? 'background-text-red-light'
-            //         : 'background-text-griss-light'
-            //     }">${message.Status}</span>`,
-            //   };
-            // } else if (this.type === 'consulta') {
-            //   console.log('entro a consulta');
-
-            //   column.statusIcon = {
-            //     icon: message.Status.toLowerCase().includes('abierta')
-            //       ? [{ reply_all: 'green' }]
-            //       : [],
-            //     text: '',
-            //   };
-            //   // Marcar como nueva
-            //   column.action = {
-            //     icon: lowerCaseStatus.includes('abierta')
-            //       ? [{ archive: 'grey' }]
-            //       : [{ replay: 'grey' }],
-            //   };
-            //   column.status = {
-            //     icon: [],
-            //     text:
-            //       "<span class='background-text-red-light'>" +
-            //       message.Status +
-            //       '</span>',
-            //   };
-            // } else if (this.type === 'notificacion') {
-            //   console.log('entro a notificacion');
-            //   column.status = {
-            //     icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
-            //     text: `<span class="${
-            //       lowerCaseStatus.includes('nueva')
-            //         ? 'background-text-red-light'
-            //         : 'background-text-griss-light'
-            //     }">${message.Status}</span>`,
-            //   };
-            // }
-
-            switch (this.type) {
-              case 'tarea':
-                console.log('entro a tarea');
-                column.status = {
-                  icon: lowerCaseStatus.includes('realizada') ? [{}] : [],
-                  text: `<span class="${
-                    lowerCaseStatus.includes('pendiente')
-                      ? 'background-text-red-light'
-                      : 'background-text-griss-light'
-                  }">${message.Status}</span>`,
-                };
-                break;
-              case 'consulta':
-                console.log('entro a consulta');
-                column.statusIcon = {
-                  icon: message.Status.toLowerCase().includes('abierta')
-                    ? [{ reply_all: 'green' }]
-                    : [],
-                  text: '',
-                };
-                // Marcar como nueva
-                column.action = {
-                  icon: lowerCaseStatus.includes('abierta')
-                    ? [{ archive: 'grey' }]
-                    : [{ replay: 'grey' }],
-                };
-                column.status = {
-                  icon: [],
-                  text:
-                    "<span class='background-text-red-light'>" +
-                    message.Status +
-                    '</span>',
-                };
-                break;
-              case 'notificacion':
-                console.log('entro a notificacion');
-                column.status = {
-                  icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
-                  text: `<span class="${
-                    lowerCaseStatus.includes('nueva')
-                      ? 'background-text-red-light'
-                      : 'background-text-griss-light'
-                  }">${message.Status}</span>`,
-                };
-                break;
-            }
-
-            // Asunto del mensaje
-            column.title = message.Title;
-            // Mensaje
-            column.description = message.Description;
-            // Fecha
-            column.date = datepipe.transform(message.Date, 'dd/MM/yyyy, HH:mm');
+            column.statusIcon = {
+              icon: message.Status.toLowerCase().includes('abierta')
+                ? [{ reply_all: 'green' }]
+                : [],
+              text: "",
+            };
             // Marcar como nueva
-            column.class = message.Status == 'pendiente' ? 'border-red' : '';
+            column.action = {
+              icon: lowerCaseStatus.includes('abierta')
+                ? [{ archive: 'grey' }]
+                : [{ replay: 'grey' }],
+            };
+            column.status = {
+              icon: [],
+              text:
+              `<span class="${message.Status.toLowerCase() === 'cerrada' ? 'background-text-griss-light' : 'background-text-red-light'}">` +
+              message.Status +
+              '</span>',
+            };
+          } else if (message.Type === 'notificacion') {
+            console.log(message.Status);
 
-            // Agregamos el mensaje
-            tableRow.push(column);
+            column.status = {
+              icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
+              text: `<span class="${
+                lowerCaseStatus.includes('nueva')
+                  ? 'background-text-red-light'
+                  : 'background-text-griss-light'
+              }">${message.Status}</span>`,
+            };
           }
+
+          // Asunto del mensaje
+          column.title = message.Title;
+          // Mensaje
+          column.description = message.Description;
+          // Fecha
+          column.date = datepipe.transform(message.Date, 'dd/MM/yyyy, HH:mm');
+          // Marcar como nueva
+          column.class = message.Status == 'pendiente' ? 'border-red' : '';
+
+          // Agregamos el mensaje
+          tableRow.push(column);
         });
 
         this.bodyTable = tableRow;
