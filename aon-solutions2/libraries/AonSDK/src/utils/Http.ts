@@ -19,6 +19,21 @@ export class ApiHttpRequest {
     }
 
     static async httpRequest(url: string, method: string, customHeaders: any = {}, data: any): Promise<any> {
+        let options = await this.generateHttp(method, customHeaders);
+        if(method == 'POST') Object.defineProperty(options,'body',{value: JSON.stringify(data)});
+        let result = await fetch(url,options);
+        let dataJson = await result.json();
+        return dataJson;
+    }
+
+    static async httpRequestFile(url: string, customHeaders: any = {}, data: any): Promise<any> {
+        let options = await this.generateHttp(GET_METHOD, customHeaders);
+        let result = await fetch(url,options);
+        let dataJson = await result.blob();
+        return dataJson;
+    }
+
+    private static async generateHttp(method: string, customHeaders: any = {}) {
         let headersAuth = {
             session_id: localStorage.getItem('token'),
             domain_name: localStorage.getItem('domainName'),
@@ -31,10 +46,7 @@ export class ApiHttpRequest {
         let options = new Object();
         Object.defineProperty(options,'method',{value: method});
         Object.defineProperty(options,'headers',{value: headers});
-        if(method == 'POST') Object.defineProperty(options,'body',{value: JSON.stringify(data)});
-        let result = await fetch(url,options);
-        let dataJson = await result.json();
-        return dataJson;
+        return options;
     }
 
     static makeURL(url: string, params: any): string {

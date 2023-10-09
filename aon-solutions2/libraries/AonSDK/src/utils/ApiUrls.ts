@@ -18,3 +18,7 @@ export const enum TAXMODEL_URL {
     GET_TAXMODEL_LIST = '/ms/api/fiscal/models',
     PAY_TAXMODEL = '/ms/api/fiscal/markAsFinished',
 }
+
+export const enum INVOICE_URL {
+    GET_INVOICE_LIST = '/ms/api/invoice',
+}

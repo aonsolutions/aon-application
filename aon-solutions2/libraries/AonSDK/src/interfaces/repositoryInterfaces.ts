@@ -161,7 +161,7 @@ export interface IUserSpecificMethodsRepository {
 }
 
 export interface IDocumentSpecificMethodsRepository {
-    getRawFile(document: IDocument): Promise<string>;
+    getRawFile(document: IDocument): Promise<any>;
 }
 
 export interface ITaxModelSpecificMethodsRepository {
