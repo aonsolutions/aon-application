@@ -7,7 +7,10 @@
       "SELECT"          : "Selecciona una opción",
       "SELECT_MULTIPLE" : "Selecciona las opciones"
     },
-    "SEND": "Enviar"
+    "SEND": "Enviar",
+    "UPLOAD": "Subir",
+    "CANCEL": "Cancelar",
+    "ACCEPT": "Aceptar"
   },
   "HEADER": {
     "EDIT_PROFILE": "Editar perfil",

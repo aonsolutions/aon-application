@@ -153,6 +153,12 @@ export class InboxviewComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const url = window.location.href.split('/')[4];
+
+    if(url)
+      this.messageService.getMessage(url).then((message) => {
+        this.rowClickHandler(message);
+      });
   }
 
   afterModalClosed(result?: any) {

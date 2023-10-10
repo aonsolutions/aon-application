@@ -1,0 +1,27 @@
+<div class="modal-container-send">
+  <div class="issue">
+    <div>
+      <span class="title">
+        {{ "DOCUMENTATION.FILE_SELECT_EDIT_NAME" | translate }}
+      </span>
+    </div>
+  </div>
+  <div class="formSend">
+    <app-input
+      [appearance]="'outline'"
+      [class]="'inputText'"
+      [type]="'text'"
+      [value]="data.fileName"
+      [placeholder]="'INBOX.TEXT' | translate"
+      (inputValue)="newFileName = $event"
+    ></app-input>
+  </div>
+  <div class="buttonsSend">
+    <app-button [class]="'center send'" [matDialogClose]="newFileName" [width]="'5rem'">
+      {{ "COMMON.SEND" | translate }}
+    </app-button>
+    <app-button [class]="'center'" [width]="'5rem'" (click)="closeModal()">
+      {{ "BILLING.CANCEL" | translate }}
+    </app-button>
+  </div>
+</div>

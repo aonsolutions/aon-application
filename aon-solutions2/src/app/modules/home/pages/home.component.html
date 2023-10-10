@@ -2,7 +2,7 @@
   <div content class="padding">
   <!-- Subir documentacion -->
     <div id="upload">
-      <app-file-upload-button>
+      <app-file-upload-button (click)="uploadDocument($event)">
        {{ 'COMMON.FILE_UPLOAD_BUTTON'|translate }}
         <app-icon shape="cloud_upload" class="margin-left"></app-icon>
       </app-file-upload-button>
@@ -14,6 +14,7 @@
         *ngFor="let shortcut of shortcuts"
         class="icon-background"
         [width]="'width'"
+        (click)="workingModal()"
       >
         <app-icon [shape]="shortcut.shape"></app-icon>
         {{ shortcut.name }}
@@ -60,4 +61,7 @@
     </div>
   <!-- FIN Acceso a gestion, panel de impuestos, empleados y doc -->
   </div>
+  <!-- Modal -->
+  <app-modal-controller #modal></app-modal-controller>
+  <!-- Fin Modal -->
 </app-grid-layout>
