@@ -180,13 +180,15 @@
       <app-file-viewer
         [locale]="localePDF"
         [zoom]="'auto'"
-        [pdfSrc]="fileToShow.File"
+        [pdfSrc]="fileToShow"
       ></app-file-viewer>
     </div>
     <!--FIN Mostrar PDF-->
     <!--Mostrar imagen-->
     <ng-template #showImage>
-      <img [src]="'data:'+ fileToShow.FileType +';base64,' + fileToShow.File" alt="Image">
+      <app-file-viewer
+        [pdfSrc]="fileToShow"
+      ></app-file-viewer>
     </ng-template>
     <!--FIN Mostrar imagen-->
   <!--FIN Mostrar previo del fichero-->

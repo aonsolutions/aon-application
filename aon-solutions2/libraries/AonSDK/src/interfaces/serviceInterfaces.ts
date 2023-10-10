@@ -248,7 +248,7 @@ export interface IUserSpecificMethods {
 }
 
 export interface IDocumentSpecificMethods {
-    getRawFile(document: IDocument): Promise<IResponse<string>>;
+    getRawFile(document: IDocument): Promise<IResponse<any>>;
 }
 
 export interface ITaxModelSpecificMethods {
