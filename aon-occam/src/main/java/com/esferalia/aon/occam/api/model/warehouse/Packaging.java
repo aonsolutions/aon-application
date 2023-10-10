@@ -11,6 +11,8 @@ public class Packaging {
 	Item item;
 	Item container;
 	List<Item> containers;
+	Integer copies;
+	
 	double quantity;
 	
 	public Item getBase() {
@@ -62,5 +64,24 @@ public class Packaging {
 	public Packaging setQuantity(double quantity) {
 		this.quantity = quantity;
 		return this;
+	}
+	
+	public Integer getCopies() {
+		return copies;
+	}
+	
+	public Packaging setCopies(Integer copies) {
+		this.copies = copies;
+		return this;
+	}
+	
+	public Packaging copy() {
+		return new Packaging()
+			.setBase(getBase())
+			.setContainer(getContainer())
+			.setContainers(getContainers())
+			.setCopies(getCopies())
+			.setItem(getItem())
+			.setQuantity(getQuantity());
 	}
 }

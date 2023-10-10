@@ -11,6 +11,7 @@ export const AON_APPLICATION_TOP = 'aon_application_top'; // ¿?
 export const AON_SOLUTIONS = 'aon_solutions';
 export const AON_LANGUAGE = 'aon_language';
 export const ONLY_ONE = 'onlyOne';
+export const NEW_THEME = 'new_theme';
 
 export const get = (item) => localStorage.getItem(item);
 
@@ -126,6 +127,16 @@ export const isOnlyOne = () => {
 
 export const setOnlyOne = (onlyOne) => {
     set(ONLY_ONE, onlyOne);
+}
+
+export const isNewTheme = () => {
+    const newTheme = get(NEW_THEME);
+    return newTheme &&  CONSTANT.FALSE !== newTheme;
+}
+
+export const setNewTheme = (newTheme) => {
+    set(NEW_THEME, newTheme);
+    location.reload();
 }
 
 export const removeDomain = () => {

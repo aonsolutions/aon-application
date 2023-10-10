@@ -466,9 +466,9 @@ public class Invoice2tbai {
 			detalleNoSujeta.setImporte(Double.toString(AonMathUtils.round(totalSuplidos)));
 			noSujeta.getDetalleNoSujeta().add(detalleNoSujeta);
 			
-			if(invoice.isNational() 
+			if((invoice.isNational() && Country.ES.equals(invoice.getRegistryDocumentCountry()))
 					|| (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))
-					|| (invoice.isCanCeuMel() && invoice.isService() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
+					|| (invoice.isCanCeuMel() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
 				DesgloseFacturaType desgloseFactura = new DesgloseFacturaType();
 				desgloseFactura.setSujeta(sujeta);
 				if(totalSuplidos > 0.0) desgloseFactura.setNoSujeta(noSujeta);

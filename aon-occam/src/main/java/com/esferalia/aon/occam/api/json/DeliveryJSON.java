@@ -94,6 +94,7 @@ public class DeliveryJSON {
 			.put(IJsonNames.PROJECT, ProjectJSON.toJSON(object.getProject()))
 			.put(IJsonNames.SERIES, object.getSeries())
 			.put(IJsonNames.NUMBER, object.getNumber())
+			.put(IJsonNames.REFERENCE, object.getReferenceCode())
 			.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(object.getCustomer()))
 			.put(IJsonNames.ADDRESS, RegistryAddressJSON.toJSON(object.getAddress()))
 			.put(IJsonNames.DATE, AonDateUtils.format(object.getDate(), AonDateUtils.DATE_TIME_FORMAT))
@@ -137,6 +138,7 @@ public class DeliveryJSON {
 										? object.getShippingStatus().name() : null)
 			.put(IJsonNames.STATUS_MODIFICATION_DATE, AonDateUtils.format(object.getStatusModificationDate(), AonDateUtils.DATE_TIME_FORMAT))
 			.put(IJsonNames.DETAILS, DeliveryDetailJSON.toJSON(object.getDetails()))
+			.put(IJsonNames.PACKAGING, DeliveryPackagingJSON.toJSON(object.getPackaging()))
 			;
 	}
 }

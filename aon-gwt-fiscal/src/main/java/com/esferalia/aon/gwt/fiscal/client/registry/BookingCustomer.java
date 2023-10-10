@@ -52,6 +52,8 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -62,7 +64,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class BookingCustomer extends HTMLPanel {
 	
@@ -118,6 +119,9 @@ public class BookingCustomer extends HTMLPanel {
 			            			
 			            			// Create Widget
 			            			String htmlBody = "<ul>";
+			            			
+			            			// Sort child domains
+			            			booking.getResume().getChilds().sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
 			            			
 			            			if(domainType.equals(DomainType.OFFICE)) {
 			            				for(Domain childDomain : booking.getResume().getChilds()) {
@@ -203,6 +207,9 @@ public class BookingCustomer extends HTMLPanel {
 			            		Booking booking = bookingList.get(0);
 			            		if(null != booking.getResume() && !booking.getResume().getChilds().isEmpty()) {
 			            			List<Domain> childConectaUsers = booking.getResume().getChilds().stream().filter(child -> child.getMaxDefinedUsers() != null && child.getMaxDefinedUsers() > 1).collect(Collectors.toList());
+			            			
+			            			// Sort child domains
+			            			childConectaUsers.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
 			            			
 			            			// Create Widget
 			            			String htmlBody = "<ul>";
@@ -1282,6 +1289,10 @@ public class BookingCustomer extends HTMLPanel {
 		Integer quantityFee = AonStringUtils.isNotBlank(bookingCheck.getQuantityFee()) ? Integer.parseInt(bookingCheck.getQuantityFee()) : 0;
 		Integer quantityRItem = AonStringUtils.isNotBlank(bookingCheck.getQuantityRItem()) ? Integer.parseInt(bookingCheck.getQuantityRItem()) : 0;
 		
+		if(isAditionalUser(bookingCheck)) {
+//			Window.alert(bookingCheck.getItem().getProduct().getName());
+			quantityRItem--;
+		}
 		
 		if(quantityFee != quantityRItem) {
 			quantityLabel.setText(quantityFee.toString() + "  /  " +  quantityRItem.toString());
@@ -1291,6 +1302,25 @@ public class BookingCustomer extends HTMLPanel {
 		} else quantityLabel.setText(quantityRItem.toString());
 		
 		return quantityLabel;
+	}
+	
+	private boolean isAditionalUser(BookingCheck bookingCheck) {
+		List<String> barCodes = new ArrayList<>();
+		String barCode = bookingCheck.getItem().getBarcode();
+		if(barCode.contains("/")) {
+			String[] splits = barCode.split("/");
+			for(int i=0; i < splits.length; i++)
+				barCodes.add(splits[i].trim());
+		} else
+			barCodes.add(barCode);
+		
+		RegExp regExp = RegExp.compile("^\\d{2}.USR");
+		for(String barCodeIt : barCodes) {
+			MatchResult matcher = regExp.exec(barCodeIt);
+			if(null != matcher) return true;
+		}
+		
+		return false;
 	}
 
 	private void createBookingWithOutFeeMessage() {

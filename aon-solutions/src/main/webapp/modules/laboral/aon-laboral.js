@@ -66,7 +66,14 @@ export class AonLaboral extends AonComunicaUtils {
       laboralOptions.push(aon_comunica);
     }
 
-    this.getApplication().addSidenavOptions(MSG.PAYROLL.toUpperCase(), laboralOptions);
+    let data = {
+			id: MSG.PAYROLL,
+			title: MSG.PAYROLL,
+  		name: MSG.PAYROLL,
+      color: Apps.PAYROLL.color
+		}
+
+    this.getApplication().addSidenavOptions2(data, laboralOptions);
 
     if(this.isComunica() || !this.isEmployee()){
       let aon_cta_list = PayrollOptions.AON_CCC;
@@ -84,7 +91,14 @@ export class AonLaboral extends AonComunicaUtils {
         }
         conf.push(aon_cert);
       }
-      this.getApplication().addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), conf);
+
+      let data2 = {
+        id: MSG.CONFIGURATION,
+        title: MSG.CONFIGURATION,
+        name: MSG.CONFIGURATION,
+        color: Apps.PAYROLL.color
+      }
+      this.getApplication().addSidenavOptions2(data2, conf);
     }
 
     let iconContract = this.getElement(this.getApplication().SIDENAV + PayrollOptions.AON_CONTRACT.name + "AonIcon");
