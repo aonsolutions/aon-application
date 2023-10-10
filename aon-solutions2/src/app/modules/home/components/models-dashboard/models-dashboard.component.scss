@@ -1,1 +1,12 @@
-/*@import 'src/styles.scss';*/
+@import 'src/styles.scss';
+
+::ng-deep {
+
+  .sinDatos{
+    height: 12rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+}

@@ -17,6 +17,7 @@ import { MenuButtonDashboardComponent } from './components/menu-button-dashboard
 import { ModelsDashboardComponent } from './components/models-dashboard/models-dashboard.component';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { WorkingModalComponent } from './components/working-modal/working-modal.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     InboxDashboardComponent,
     ListDashboardComponent,
     MenuButtonDashboardComponent,
-    ModelsDashboardComponent
+    ModelsDashboardComponent,
+    WorkingModalComponent
   ],
   imports: [
     CommonModule,

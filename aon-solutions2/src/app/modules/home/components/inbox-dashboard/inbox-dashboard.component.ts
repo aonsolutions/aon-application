@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'src/app/core/services/message.service';
 import { FilterBuilder } from 'libraries/AonSDK/src/aon';
+import { Router } from '@angular/router';
 
 @Component({
   selector    : 'app-inbox',
@@ -26,7 +27,8 @@ export class InboxDashboardComponent implements OnInit {
 
   constructor(
     private translateService: TranslateService,
-    private messageService : MessageService
+    private messageService : MessageService,
+    private router: Router
   ) {
     let tableRow  : any[] = [];
     let column    : any = {};
@@ -117,7 +119,8 @@ export class InboxDashboardComponent implements OnInit {
   rowClick(object: any) {
     // Fila de la tabla que se esta usando
     // Fila que ha sido clickeado
-    console.log(object);
+    // console.log(object);
+    this.router.navigate([this.routerlink, object.key]);
   }
 
 }

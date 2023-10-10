@@ -36,7 +36,7 @@ export class BillingComponent implements OnInit {
   chartReports       : ChartReports[]             = [];
   selectedMenu       : number                     = 1;
   selectedTab        : number                     = 1;
-  showMenu           : boolean                    = true;
+  showMenu           : boolean                    = false;
   buttonsVentas      : any[]                      = [];
   buttonsGastos      : any[]                      = [];
   buttonsFacturaVenta: any[]                      = [];
@@ -182,7 +182,7 @@ export class BillingComponent implements OnInit {
         id: 1,
         name: 'Caixabank',
         balance: '5.487,55',
-        iban: 'ES12 3456 7891 2345 6789',
+        iban: 'ES123456789123456789',
         date: '30/05/2023',
         swift: 'CAIXESBBXXX',
         sync: 'sync',
@@ -191,7 +191,7 @@ export class BillingComponent implements OnInit {
         id: 2,
         name: 'Santander',
         balance: '8.887,02',
-        iban: 'ES12 3456 7891 2345 6789',
+        iban: 'ES123456789123456789',
         date: '12/01/2023',
         swift: 'BSCHESMMXXX',
         sync: 'syncProblem',
@@ -200,7 +200,7 @@ export class BillingComponent implements OnInit {
         id: 3,
         name: 'Cajamar',
         balance: '1.125,54',
-        iban: 'ES12 3456 7891 2345 6789',
+        iban: 'ES123456789123456789',
         date: '30/05/2023',
         swift: 'CCRIES2AXXX',
         sync: 'syncLost',
@@ -302,5 +302,15 @@ export class BillingComponent implements OnInit {
     // }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const url = window.location.href.split('/')[4];
+
+    if( url === 'creacion' ) {
+      this.selectedMenu = 2;
+      this.selectedTab = 4;
+      this.showMenu = true;
+      this.addBank = true;
+    }
+
+  }
 }
