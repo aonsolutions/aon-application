@@ -73,9 +73,9 @@ const paintPieChart = async (data, parent, aonIframe) => {
 
   await addLegend(parent, aonIframe, newData, newColor, (evClick)=>console.log(evClick));
 
-  const workplaceEl = document.querySelector('#workplace').querySelector('LI');
+  const workplaceEl = document.querySelector('#workplace');
 
-  const workplaceText = workplaceEl && workplaceEl.textContent ? workplaceEl.textContent+": " : "";
+  const workplaceText = workplaceEl && workplaceEl.querySelector('LI') ? workplaceEl.querySelector('LI').textContent+": " : "";
 
   return {
     workplaceText,

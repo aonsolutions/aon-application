@@ -114,6 +114,9 @@ export class AonDashboardGraphicsTrial extends AonElement {
 
       AccoutingChart.colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter,  aonIframe);
     }
+
+    // aonIframe.firstChild.style.height = '';
+    
   }
   
   goChart(parent, result, aonIframe, showFilter){
