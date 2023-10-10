@@ -70,7 +70,8 @@ export class AonLaboral extends AonComunicaUtils {
 			id: MSG.PAYROLL,
 			title: MSG.PAYROLL,
   		name: MSG.PAYROLL,
-      color: Apps.PAYROLL.color
+      color: Apps.PAYROLL.color,
+      backgroundColor:Apps.PAYROLL.backgroundColor
 		}
 
     this.getApplication().addSidenavOptions2(data, laboralOptions);
@@ -96,7 +97,8 @@ export class AonLaboral extends AonComunicaUtils {
         id: MSG.CONFIGURATION,
         title: MSG.CONFIGURATION,
         name: MSG.CONFIGURATION,
-        color: Apps.PAYROLL.color
+        color: Apps.PAYROLL.color,
+        backgroundColor:Apps.PAYROLL.backgroundColor
       }
       this.getApplication().addSidenavOptions2(data2, conf);
     }

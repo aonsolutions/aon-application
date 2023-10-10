@@ -8,7 +8,7 @@ export const TIMECONTROL = {
   title: MSG.TIMECONTROL,
   description: MSG.TIMECONTROL,
   tag: MSG_ES.TIMECONTROL,
-  icon: AON_ICONS.AON_TIMECONTROL,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_TIMECONTROL : AON_ICONS.AON_TIMECONTROL,
   color: "#D1C36D",
   access: [
     {
@@ -39,7 +39,7 @@ export const ACCOUNTING = {
   title: MSG.ACCOUNTING,
   description: MSG.ACCOUNTING,
   tag: MSG_ES.ACCOUNTING,
-  icon: AON_ICONS.AON_ACCOUNTING,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_ACCOUNTING : AON_ICONS.AON_ACCOUNTING,
   color: "#002469",
   access: [
     {
@@ -65,8 +65,9 @@ export const FISCAL = {
   title: MSG.FISCAL,
   description: MSG.FISCAL,
   tag: MSG_ES.FISCAL,
-  icon: AON_ICONS.AON_FISCAL,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_FISCAL : AON_ICONS.AON_FISCAL,
   color: LS.isNewTheme() ? "#FB982E" : "#002469",
+  backgroundColor: '#fef3e7',
   access: [
     {
       value: "Asesor",
@@ -91,8 +92,9 @@ export const PAYROLL = {
   title: MSG.PAYROLL,
   description: MSG.PAYROLL,
   tag: MSG.PAYROLL,
-  icon: AON_ICONS.AON_PAYROLL,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_PAYROLL :AON_ICONS.AON_PAYROLL,
   color: LS.isNewTheme() ? "#33A9A9" : "#002469",
+  backgroundColor: '#e8f5f5',
   access: [
     {
       value: "Asesor",
@@ -190,8 +192,9 @@ export const DOCUMENTAL = {
   title: MSG.DOCUMENTARY,
   description: MSG.DOCUMENTARY,
   tag: MSG_ES.DOCUMENTARY,
-  icon: AON_ICONS.AON_DOCUMENTAL,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_DOCUMENTAL : AON_ICONS.AON_DOCUMENTAL,
   color: LS.isNewTheme() ? "#EF6292" : "#6986BB",
+  backgroundColor: '#fdedf2',
   access: [
     {
       value: "Asesor",
@@ -221,7 +224,7 @@ export const WAREHOUSE = {
   title: MSG.WAREHOUSE,
   description: MSG.WAREHOUSE,
   tag: MSG_ES.WAREHOUSE,
-  icon: AON_ICONS.AON_WAREHOUSE,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_WAREHOUSE : AON_ICONS.AON_WAREHOUSE,
   color: "#002469",
   price: " ", // '-',
   disabled: false,
@@ -239,8 +242,9 @@ export const INVOICE = {
   title: MSG.INVOICES,
   description: MSG.INVOICES,
   tag: MSG_ES.INVOICES,
-  icon: AON_ICONS.AON_INVOICE,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_INVOICE : AON_ICONS.AON_INVOICE,
   color: LS.isNewTheme() ? "#4F91FF" : "#4472C4",
+  backgroundColor: '#ebf2ff',
   access: [
     {
       value: "Asesor",
@@ -278,8 +282,9 @@ export const MESSENGER = {
   title: MSG.REQUESTS,
   description: MSG.REQUESTS,
   tag: MSG_ES.REQUESTS,
-  icon: AON_ICONS.AON_MESSENGER,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_MESSENGER : AON_ICONS.AON_MESSENGER,
   color: LS.isNewTheme() ? "#f6655a" : "#1fd8b9",
+  backgroundColor: '#feedec',
   access: [
     {
       value: "Asesor",
@@ -315,7 +320,7 @@ export const TOOLS = {
 export const NOTES = {
   app: "note",
   title: MSG.NOTES,
-  icon: AON_ICONS.AON_NOTES,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_NOTES : AON_ICONS.AON_NOTES,
   color: "#ffc000",
   price: " ", // '-'
 };
@@ -412,7 +417,7 @@ export const CONSOLE = {
 
 export const OFFICE = {
   app: "office",
-  icon: AON_ICONS.AON_OFFICE,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_OFFICE : AON_ICONS.AON_OFFICE,
   title: "Despacho",
   color: "black",
   domainType: true,
