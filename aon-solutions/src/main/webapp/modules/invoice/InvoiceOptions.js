@@ -167,3 +167,26 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     name: MSG.SII_TICKETBAI,
     icon: MATERIAL_ICONS.SETTING    
   }   
+
+  export const PENDING_DOCUMENTS = {
+    id: MSG.PENDING_DOCUMENTS,
+    title: MSG.PENDING_DOCUMENTS,
+    name: MSG.PENDING_DOCUMENTS,
+    options: [RAWDOC_INBOX, RAWDOC_REJECT, RAWDOC_DRAFT]
+  }
+
+  export const INVOICES = {
+    id: MSG.INVOICES,
+    title: MSG.INVOICES,
+    name: MSG.INVOICES,
+    options: [INVOICE_ISSUED, INVOICE_RECEIVED, INVOICE_TICKET]
+  }
+
+  export const getOptions = (dur) => {
+    let options =  [PENDING_DOCUMENTS];
+    if(dur.isInvoicePortal() || dur.isInvoiceManager()){
+      options.push(INVOICES);
+    }
+
+    return options;
+}
