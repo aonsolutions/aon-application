@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -53,6 +52,8 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -63,7 +64,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class BookingCustomer extends HTMLPanel {
 	
@@ -1290,7 +1290,7 @@ public class BookingCustomer extends HTMLPanel {
 		Integer quantityRItem = AonStringUtils.isNotBlank(bookingCheck.getQuantityRItem()) ? Integer.parseInt(bookingCheck.getQuantityRItem()) : 0;
 		
 		if(isAditionalUser(bookingCheck)) {
-			Window.alert(bookingCheck.getItem().getProduct().getName());
+//			Window.alert(bookingCheck.getItem().getProduct().getName());
 			quantityRItem--;
 		}
 		
@@ -1314,10 +1314,10 @@ public class BookingCustomer extends HTMLPanel {
 		} else
 			barCodes.add(barCode);
 		
-		Pattern pattern = Pattern.compile("^\\d{2}.USR");
+		RegExp regExp = RegExp.compile("^\\d{2}.USR");
 		for(String barCodeIt : barCodes) {
-			if (pattern.matcher(barCodeIt).matches())
-				return true;
+			MatchResult matcher = regExp.exec(barCodeIt);
+			if(null != matcher) return true;
 		}
 		
 		return false;
