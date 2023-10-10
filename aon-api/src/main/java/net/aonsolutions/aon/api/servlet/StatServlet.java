@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.StatDataJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
@@ -21,13 +22,12 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "ExampleServlet", urlPatterns = {"/ms/api/example/*"})
-public class InvoiceStatServlet extends AonApiHttpServlet {
+@WebServlet(name = "AonApiStatServlet", urlPatterns = {"/ms/api/stat/*"})
+public class StatServlet extends AonApiHttpServlet {
 		
-	private static final Logger LOGGER  = Logger.getLogger(InvoiceStatServlet.class.getName());
+	private static final Logger LOGGER  = Logger.getLogger(StatServlet.class.getName());
 	
-	public static final String EXAMPLES = "/";
-	public static final String EXAMPLE = "/:id";
+	public static final String INVOICE = "/invoice";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -45,7 +45,7 @@ public class InvoiceStatServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
-				.addRoute(EXAMPLES, InvoiceStatServlet::getAction)
+				.addRoute(INVOICE, StatServlet::getAction)
 				.apply();
 			
 			response(req, resp, object);
@@ -55,30 +55,19 @@ public class InvoiceStatServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONObject getAction(AonApiData api) {
-		
+		StatData<String, String, Double> result = AON.getStatData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), getStatParams(api));
+		return StatDataJSON.toJSON(result);
+	}
+	
+	private static StatParams getStatParams(AonApiData api) {
 		Date from = JsonUtils.getDate(api.getData(), IJsonNames.FROM);
-
-		StatParams params = new StatParams()
+		return new StatParams()
 				.setChartType(InvoiceChartType.INVOICE_TYPE_BY_MONTHS_COMBO_CHART.value())
 				.setDomain(api.getDomain().getId())
 				.setStatType(StatType.INVOICE)
-				.setFrom(from)// AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(new Date(), -11)))
+				.setFrom(from != null ? from : AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(new Date(), -11)))
 				.setTo(AonDateUtils.getMonthLastDay(new Date()))
 				;
-		StatData<String, String, Double> result = AON.getStatData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), params);
-
-
-		JSONObject json = new JSONObject();
-		
-		result.getMap().keySet().stream().forEach(mes -> {
-			JSONObject typeJSON = new JSONObject();
-			result.getMap().get(mes).keySet().stream().forEach(type -> {
-				typeJSON.put(type, result.getMap().get(mes).get(type));
-			});
-			
-			json.put(mes, typeJSON);
-		});
-		return json;
 	}
 	
 }
