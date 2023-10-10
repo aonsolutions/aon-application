@@ -2,10 +2,10 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { CollectionFactory, Factory, ICollection, IMessage } from 'libraries/AonSDK/src/aon';
+import { FilterBuilder } from 'libraries/AonSDK/src/utils/FilterBuilder';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
-import { FilterBuilder } from '../../../../../../libraries/AonSDK/src/utils/FilterBuilder';
-import { MessageChatService } from '../../../../core/services/message-chat.service';
+import { MessageChatService } from 'src/app/core/services/message-chat.service';
 
 @Component({
   selector: 'app-table-inbox',
