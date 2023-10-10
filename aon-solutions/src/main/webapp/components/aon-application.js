@@ -133,7 +133,7 @@ export class AonApplication extends AonElement {
 
       <div class="${this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex'}">
         <!-- AON APPLICATION MENU (SIDENAV) -->
-         <div id="${this.SIDENAV}" class="${this.isMobile() || LS.isNewTheme() ? 'aonMobileSidenav' : 'aonSidenavBeta'}"></div>
+         <div id="${this.SIDENAV}" class="${this.getSidenavClassName()}"></div>
 
 			   <!-- AON APPLICATION CONTENT -->
 			   <div id="${this.CONTENT}"></div>
@@ -188,6 +188,12 @@ export class AonApplication extends AonElement {
       sidenav.style.height = `calc(100vh - ${top}px)`;
       content.style.height = `calc(100vh - ${top}px)`;
     }
+  }
+
+  getSidenavClassName() {
+    if(this.isMobile()) return 'aonMobileSidenav';
+    else if(LS.isNewTheme()) return 'aonSidenav';
+    else return 'aonSidenavBeta';
   }
 
   buildMobileSidenav() {
@@ -449,7 +455,22 @@ export class AonApplication extends AonElement {
       let li = this.createElement(TAG.LI);
       li.id = id;
       li.title = option.name;
-      li.className = "aonAppMenuSidenavList aonOpacity sidenavHover";
+
+      li.className = LS.isNewTheme() 
+          ? "aonAppMenuSidenavList aonOpacity"
+          : "aonAppMenuSidenavList aonOpacity sidenavHover";  
+      
+      if(LS.isNewTheme() ) {
+        li.addEventListener(EVENT.MOUSEOVER, () => {
+					li.style.backgroundColor = data.backgroundColor || '#eaf1fb';
+				});
+
+				li.addEventListener(EVENT.MOUSELEAVE, () => {
+					li.style.backgroundColor = 'transparent';
+				});
+      }
+
+
       ul.appendChild(li);
       if(option.options) {
         li.style.paddingLeft = '6px';
@@ -488,6 +509,7 @@ export class AonApplication extends AonElement {
       if (option.icon) {
         let i = this.createElement(TAG.I);
         let iconClass = "material-icons";
+        if(data.color) i.style.color = data.color;
         if(option.icon_color) i.style.color = option.icon_color;
         if(option.icon_class) iconClass = option.icon_class;
         i.className = `${iconClass} aonVerticalMiddle`;
@@ -499,12 +521,13 @@ export class AonApplication extends AonElement {
         ai.icon  = option.aonIcon.icon;
         ai.size  = "18px";
         li.appendChild(ai);
+        if(data.color) ai.color = data.color;
         li.addEventListener(EVENT.MOUSEOVER, () => {
-          this.getElement(id + "AonIcon").color = option.aonIcon.color;
+          this.getElement(id + "AonIcon").color = data.color || option.aonIcon.color;
         });
 
         li.addEventListener(EVENT.MOUSELEAVE, () => {
-          this.getElement(id + "AonIcon").color = "#5f6368";
+          this.getElement(id + "AonIcon").color = data.color || "#5f6368";
         });
       } else if (option.img) {
         let img = this.createElement(TAG.IMG);
@@ -569,7 +592,8 @@ export class AonApplication extends AonElement {
               el.style.removeProperty("font-weight");
           });
           li.style.fontWeight= "bold"
-          li.style.backgroundColor = "#d3e3fd";
+          if(!LS.isNewTheme())
+            li.style.backgroundColor = "#d3e3fd";
 
           this.selected = id;
           let toolbar = this.getElement(this.TOOLBAR);
