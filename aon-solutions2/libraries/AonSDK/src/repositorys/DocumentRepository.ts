@@ -15,13 +15,13 @@ export class LocalDocumentSpecificMethodsRepository implements IDocumentSpecific
     async getRawFile(document: IDocument): Promise<any> {
         switch(document.File){
             case '/largeImage':
-                return Base64toBlob(largeImage);
+                return Base64toBlob(largeImage, document.FileType);
             case '/smallImage':
-                return Base64toBlob(smallImage);
+                return Base64toBlob(smallImage, document.FileType);
             case '/pdf':
-                return Base64toBlob(pdf);
+                return Base64toBlob(pdf, document.FileType);
             default:
-                return Base64toBlob(smallImage);
+                return Base64toBlob(smallImage, document.FileType);
         }
     }
 }
