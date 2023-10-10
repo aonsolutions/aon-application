@@ -1,9 +1,12 @@
-package com.code.aon.facturae.nuevo;
+package com.code.aon.facturae.v322;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -12,11 +15,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.facturae.enumeration.PaymentMeans2;
 import com.code.aon.facturae.enumeration.TaxTypeCode;
 import com.code.aon.product.util.DiscountExpression;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -33,57 +38,60 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
-import es.mityc.facturae.FacturaeVersion;
-import es.mityc.facturae.utils.MarshallerUtil;
-import es.mityc.facturae32.AddressType;
-import es.mityc.facturae32.AdministrativeCentreType;
-import es.mityc.facturae32.AdministrativeCentresType;
-import es.mityc.facturae32.AmountType;
-import es.mityc.facturae32.BatchType;
-import es.mityc.facturae32.BusinessType;
-import es.mityc.facturae32.ContactDetailsType;
-import es.mityc.facturae32.CountryType;
-import es.mityc.facturae32.CurrencyCodeType;
-import es.mityc.facturae32.DeliveryNoteType;
-import es.mityc.facturae32.DeliveryNotesReferencesType;
-import es.mityc.facturae32.DiscountType;
-import es.mityc.facturae32.DiscountsAndRebatesType;
-import es.mityc.facturae32.Facturae;
-import es.mityc.facturae32.FileHeaderType;
-import es.mityc.facturae32.IndividualType;
-import es.mityc.facturae32.InvoiceClassType;
-import es.mityc.facturae32.InvoiceDocumentTypeType;
-import es.mityc.facturae32.InvoiceHeaderType;
-import es.mityc.facturae32.InvoiceIssueDataType;
-import es.mityc.facturae32.InvoiceIssuerTypeType;
-import es.mityc.facturae32.InvoiceLineType;
-import es.mityc.facturae32.InvoiceTotalsType;
-import es.mityc.facturae32.InvoiceType;
-import es.mityc.facturae32.InvoiceType.TaxesOutputs;
-import es.mityc.facturae32.InvoicesType;
-import es.mityc.facturae32.ItemsType;
-import es.mityc.facturae32.LanguageCodeType;
-import es.mityc.facturae32.LegalEntityType;
-import es.mityc.facturae32.LegalLiteralsType;
-import es.mityc.facturae32.ModalityType;
-import es.mityc.facturae32.OverseasAddressType;
-import es.mityc.facturae32.PartiesType;
-import es.mityc.facturae32.PersonTypeCodeType;
-import es.mityc.facturae32.RegistrationDataType;
-import es.mityc.facturae32.ResidenceTypeCodeType;
-import es.mityc.facturae32.TaxIdentificationType;
-import es.mityc.facturae32.TaxOutputType;
-import es.mityc.facturae32.TaxType;
-import es.mityc.facturae32.TaxesType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.AccountType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.AddressType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.AdministrativeCentreType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.AdministrativeCentresType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.AmountType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.BatchType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.BusinessType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.ContactDetailsType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.CountryType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.CurrencyCodeType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.DeliveryNoteType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.DeliveryNotesReferencesType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.DiscountType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.DiscountsAndRebatesType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.Facturae;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.FileHeaderType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.IndividualType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InstallmentType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InstallmentsType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceClassType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceDocumentTypeType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceHeaderType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceIssueDataType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceIssuerTypeType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceLineType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceTotalsType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoiceType.TaxesOutputs;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.InvoicesType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.ItemsType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.LanguageCodeType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.LegalEntityType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.LegalLiteralsType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.ModalityType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.OverseasAddressType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.PartiesType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.PersonTypeCodeType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.RegistrationDataType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.ResidenceTypeCodeType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.TaxIdentificationType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.TaxOutputType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.TaxType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.TaxesType;
 
-public class FacturaeWriter2 {
+public class FacturaeWriter {
 	
 	private static final String RETENTION_TAX_TYPE_CODE = "04";
 
-	private static final String SCHEMA_VERSION = "3.2";
+	private static final String SCHEMA_VERSION = "3.2.2";
 	public static final String FACTURAE_EXTENSION = ".xsig";
 	
 	private static final String VAT_ACCRUAL_PAYMENT_TEXT = "R\u00E9gimen especial del criterio de caja";
@@ -94,7 +102,7 @@ public class FacturaeWriter2 {
 	private CompanyFull company;
 	private Workplace workplace;
 	
-	public FacturaeWriter2(Domain domain, User user, CompanyFull company, Workplace workplace, Invoice invoice) {
+	public FacturaeWriter(Domain domain, User user, CompanyFull company, Workplace workplace, Invoice invoice) {
 		this.domain = domain;
 		this.user = user;
 		this.company = company;
@@ -148,15 +156,22 @@ public class FacturaeWriter2 {
 
 	public byte[] generate() {
 		try {
-			Facturae facturae = getFacturae();
-			MarshallerUtil marshallerUtil32 = MarshallerUtil.getInstance(FacturaeVersion.FACTURAE_32);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			marshallerUtil32.marshal( facturae, baos);	
-			return baos.toByteArray();
+			return marshal(getFacturae(), Facturae.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static byte[] marshal(Object object, Class<?> clazz) throws JAXBException {
+		final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+		final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		jaxbMarshaller.marshal(object, bos);
+		return bos.toByteArray();
 	}
 	
 	private Facturae getFacturae() {
@@ -498,8 +513,46 @@ public class FacturaeWriter2 {
 			invoiceType.setLegalLiterals( getLegalLiterals() );			
 		}
 		invoiceType.setItems( getItems(invoiceType) );
-//		addPaymentDetails( invoiceType );
+		addPaymentDetails( invoiceType );
 		return invoiceType;
+	}
+	
+	private void addPaymentDetails( InvoiceType invoiceType ) {
+		InstallmentsType installments = new InstallmentsType();
+		for( Finance finance : invoice.getFinances() ) {
+			installments.getInstallment().add( getInstallment(finance) );
+		}
+		if (! installments.getInstallment().isEmpty() ) {
+			invoiceType.setPaymentDetails( installments );
+		}
+	}
+	
+	private InstallmentType getInstallment( Finance finance ) {
+		InstallmentType installment = new InstallmentType();
+		installment.setInstallmentDueDate( Util.toXMLCalendar(finance.getDueDate()) );
+		installment.setInstallmentAmount( finance.getAmount() );
+		PaymentMeans2 paymentMeans = null;
+		paymentMeans = getPaymentMeans( finance.getPayMethodType() );
+		installment.setPaymentMeans( paymentMeans.getValue() );			
+		if ( finance.getBankAccount() != null ) {
+			AccountType account = new AccountType();
+			account.setIBAN( finance.getBankAccount().getIban() );
+			if ( paymentMeans != PaymentMeans2.TRANSFERENCIA ) {
+				installment.setAccountToBeDebited(account);
+			} else {
+				installment.setAccountToBeCredited(account);
+			}
+		}
+		return installment;
+	}
+	
+
+	private PaymentMeans2 getPaymentMeans(PayMethodType payMethodType ) {
+		PaymentMeans2 paymentMeans = null;
+		if ( payMethodType != null ) {
+			paymentMeans = PaymentMeans2.getPaymentMeans(payMethodType);	
+		}
+		return (paymentMeans != null) ? paymentMeans : PaymentMeans2.AL_CONTADO;
 	}
 	
 	private InvoiceHeaderType getInvoiceHeader() {
@@ -517,9 +570,20 @@ public class FacturaeWriter2 {
 		InvoiceIssueDataType invoiceIssueData = new InvoiceIssueDataType();
 		XMLGregorianCalendar issuedDate = Util.toXMLCalendar(getInvoice().getIssueDate());
 		invoiceIssueData.setIssueDate( issuedDate );
+		invoiceIssueData.setOperationDate(issuedDate);
 		invoiceIssueData.setInvoiceCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setTaxCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setLanguageName(LanguageCodeType.ES);
+
+		String filereference = null;
+		Integer i = 0;
+		while(AonStringUtils.isBlank(filereference) && i < invoice.getDetails().size()) {
+			filereference = getIssuerContractReference(invoice.getDetails().get(i), true);
+			i++;	
+		}
+		if(!AonStringUtils.isBlank(filereference)) {
+			invoiceIssueData.setFileReference(filereference);
+		}
 		return invoiceIssueData;
 	}
 	

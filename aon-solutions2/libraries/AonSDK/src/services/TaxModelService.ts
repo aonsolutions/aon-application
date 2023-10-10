@@ -1,7 +1,8 @@
 import { IResponse, IBank } from "../aon";
-import { IModel } from "../interfaces/modelsInterfaces";
+import { ITaxModel } from "../interfaces/modelsInterfaces";
 import { ITaxModelSpecificMethodsRepository } from "../interfaces/repositoryInterfaces";
 import { ITaxModelSpecificMethods } from "../interfaces/serviceInterfaces";
+import { ErrorResponse, Response } from "../utils/Response"; 
 
 export class TaxModelSpecificMethods implements ITaxModelSpecificMethods {
 
@@ -11,11 +12,20 @@ export class TaxModelSpecificMethods implements ITaxModelSpecificMethods {
         this.repository = repository;
     }
 
-    payTaxModelWithNRC(model: IModel, nrc: string): Promise<IResponse<boolean>> {
-        throw new Error("Method not implemented.");
+    async payTaxModelWithNRC(model: ITaxModel, nrc: string): Promise<IResponse<boolean>> {
+        try{
+            return new Response<boolean>(await this.repository.payTaxModelWithNRC(model, nrc));
+        }catch(e){
+            throw e instanceof ErrorResponse ?  e : new ErrorResponse('0201'); 
+        }
     }
-    payTaxModelWithBank(model: IModel, bank: IBank): Promise<IResponse<boolean>> {
-        throw new Error("Method not implemented.");
+
+    async payTaxModelWithBank(model: ITaxModel, bank: IBank): Promise<IResponse<boolean>> {
+        try{
+            return new Response<boolean>(await this.repository.payTaxModelWithBank(model, bank));
+        }catch(e){
+            throw e instanceof ErrorResponse ?  e : new ErrorResponse('0201'); 
+        }
     }
 
 }

@@ -161,6 +161,7 @@ export const KEYBOARD_ARROW_DOWN = 'keyboard_arrow_down';
 // ----- L
 
 export const LOCAL_MALL = 'local_mall';
+export const LOCAL_SHIPPING = 'local_shipping';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 export const LINK = 'link';

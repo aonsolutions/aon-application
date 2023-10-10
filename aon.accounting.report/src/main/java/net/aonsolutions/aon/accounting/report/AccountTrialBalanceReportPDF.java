@@ -27,12 +27,17 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class AccountTrialBalanceReportPDF {
+public class AccountTrialBalanceReportPDF implements IAccountReportPDF {
 
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00"); //;(#,##0.00)
 	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL);
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
+	
+	@Override
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
+		trialBalanceReportReport(outputStream, params);
+	}
 
 	public void trialBalanceReportReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
 		
@@ -262,7 +267,9 @@ public class AccountTrialBalanceReportPDF {
 			totalAction.accept(report.getTotalBalance());
 		}
 		document.add(table);
+
 		document.close();
+
 	}
 
 	private float getDescriptionColumnWidth(int columns) {
@@ -425,5 +432,6 @@ public class AccountTrialBalanceReportPDF {
 			table.addCell(apcCell);
 		}
 	}
+
 	
 }

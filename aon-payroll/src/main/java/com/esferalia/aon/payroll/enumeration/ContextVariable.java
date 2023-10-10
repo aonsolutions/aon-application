@@ -80,6 +80,7 @@ public enum ContextVariable implements IResourceable {
 	
 	OFF_CAUSE("CAUSA_INACTIVIDAD", VariableType.DOUBLE, false),
 	NOT_PAID_PERMISSION("PERMISO_NO_RETRIBUIDO", VariableType.DOUBLE, false),
+	SUSPEND_JOB_AND_SALARY("SUSPENSION_EMPLEO_SUELDO", VariableType.DOUBLE, false),
 	
 
 	// ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
@@ -162,7 +163,9 @@ public enum ContextVariable implements IResourceable {
 	// Datos 'temporales' del contrato
 	
 	TC2("TC2", VariableType.TC2_DROP, false), CNO("CNO", VariableType.CNO_LOOKUP, false),
-	IPREM("IPREM", VariableType.DOUBLE, false), CATEGORY("CATEGORIA", VariableType.STRING, false),
+	SMI("SMI", VariableType.DOUBLE, false), 
+	IPREM("IPREM", VariableType.DOUBLE, false), 
+	CATEGORY("CATEGORIA", VariableType.STRING, false),
 	INDEFINITE("INDEFINIDO", VariableType.BOOLEAN, false), OCCUPATION("OCUPACION", VariableType.OCCUPATION_DROP, false),
 //	GUARANTEED("GARANTIZADO", VariableType.DOUBLE, false),
 	IRREGULAR("IRREGULAR", VariableType.BOOLEAN, false), 
@@ -419,6 +422,10 @@ public enum ContextVariable implements IResourceable {
 	public static final String FRACTIONATE = "FRACCIONAR";
 	public static final String IS_MONTHLY_DAILY = "MENSUAL_DIARIO";
 
+	public static final String INFO = "INFO";
+	public static final String NOTE = "NOTA";
+	public static final String CAUTION = "ADVERTENCIA";
+	
 	public static final String GEROA = "GEROA";
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String PREST_IT = "PREST_IT";
@@ -499,6 +506,7 @@ public enum ContextVariable implements IResourceable {
 	.filter(s -> s.startsWith(ERE_FACTOR.getName()))
 	.toArray(String[]::new);
 
+	public static String [] LOGS  = { CAUTION, NOTE, INFO};
 	
 	public static ContextVariable [] FREES  =
 	new ContextVariable [] { UNPAID, DIRECT_PAY, MATERNITY} ;

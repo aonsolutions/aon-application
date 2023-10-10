@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" >
+		<aon:if test="#{aonConfiguration.bean.customer.showPerson}">
+			<ui:param name="registryTypeReRender" value="personInfoDiv" />
+		</aon:if>
+		<ui:param name="includeRegistryScope" value="#{true}"/>
+		<ui:define name="afterIdContent">
+			<aon:if test="#{showTargetLink}">
+				<aon:div id="CustomerTargetDiv" rendered="#{controller.target}" style="display: inline;margin-left: 10px;">
+					<aon:outputText value="#{bundle.aon_target}" />
+					<aon:commandLink id="target_link" immediate="true"
+						styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+						value="&#160;" title="#{bundle.aon_go}"
+						rendered="#{controller.target}"
+						actionListener="#{controller.onLoadTarget}"
+						action="target_form" />
+				</aon:div>
+			</aon:if>
+			
+ 			<aon:if test="#{domainSwitcher.sig}">
+				<aon:div id="BookingDiv" style="display: inline;margin-left: 10px;">
+					<aon:commandLink id="gwt_booking_customer"
+					style="color:#002469 !important;font-weight: bold;"
+						action="gwt_main_booking_customer"
+						title="[Panel Contratación]"
+						value="[Panel Contratación]" target="gwt">
+					</aon:commandLink>
+				</aon:div>
+			</aon:if>
+		</ui:define>
+	</ui:decorate>
+
+	<aon:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
+	<aon:selectOneRadio id="Customer_status" value="#{controller.to.status}">
+		<f:selectItems value="#{customerCollections.customerStatuses}" />
+	</aon:selectOneRadio>
+
+	<aon:if test="#{aonConfiguration.bean.customer.showTaxInfoData}">
+		<aon:outputLabel for="Customer_transaction" value="#{bundle.aon_transaction_type}" />
+		<aon:selectOneMenu id="Customer_transaction" value="#{controller.to.transaction}">
+			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
+		</aon:selectOneMenu>
+
+		<aon:outputText value="#{bundle.customer_taxes}" />
+		<aon:div>
+			<aon:selectBooleanCheckbox id="Customer_surcharge"
+				value="#{controller.to.surcharge}" />
+			<aon:outputLabel for="Customer_surcharge" styleClass="aon-italic"
+				value="#{bundle.aon_surcharge_full}" />
+
+			<aon:selectBooleanCheckbox id="Customer_withholding" styleClass="aon-margin-left"
+				value="#{controller.to.withholding}" />
+			<aon:outputLabel for="Customer_withholding" styleClass="aon-italic"
+				value="#{bundle.aon_retention}" />
+		</aon:div>
+	</aon:if>
+	
+</ui:composition>

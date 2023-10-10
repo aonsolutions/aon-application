@@ -123,6 +123,7 @@ public final class IJsonNames {
 	public static final String CONTENT_NAME = "contentName";
 	public static final String CONTENT_SIZE = "contentSize";
 	public static final String CONTENT_TYPE = "contentType";
+	public static final String COPIES = "copies";
 	public static final String COST_CENTER = "costCenter";
 	public static final String COST_CENTERS = "costCenters";
 	public static final String COUNT = "count";

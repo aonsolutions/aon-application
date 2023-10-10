@@ -13,7 +13,7 @@ public class Question implements Serializable {
 	
 	private Integer id;
 	private Integer domain;
-	private Boolean active;
+	private boolean active;
 	private String text;
 	private QuestionType type;
 	private String argument;
@@ -46,7 +46,7 @@ public class Question implements Serializable {
 	}
 
 	public Boolean isActive() {
-		return active == null ? false : active;
+		return active;
 	}
 
 	public Question setActive(Boolean active) {
@@ -136,6 +136,10 @@ public class Question implements Serializable {
 	public void addValue(QuestionValue questionValue) {
 		if(null == values || values.isEmpty()) this.values = new ArrayList<>();
 		this.values.add(questionValue);
+	}
+
+	public boolean isEmpty() {
+		return this.alias == null && this.argument == null && this.domain == null && this.id == null && this.text == null && this.type == null && this.values == null; 
 	}
 
 	

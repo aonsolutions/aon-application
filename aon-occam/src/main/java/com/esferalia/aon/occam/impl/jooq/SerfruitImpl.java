@@ -20,6 +20,12 @@ public class SerfruitImpl implements ISerfruit {
 		return ctx.getDslContext().transactionResult(
 				configuration -> SerfruitDAO.getSalesStream(ctx, filter, options));
 	}
+	
+	@Override
+	public Delivery saveDelivery(AONContext ctx, Delivery delivery) {
+		return ctx.getDslContext().transactionResult(configuration ->  
+			SerfruitDAO.saveDelivery(ctx, delivery));
+	}
 
 	@Override
 	public void saveDeliveryPackaging(AONContext ctx, Delivery delivery, List<SerfruitDeliveryPackaging> packaging) {
