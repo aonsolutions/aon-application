@@ -153,7 +153,7 @@ export class AonFiscal extends AonElement {
         name:"Modelo",
         color: Apps.FISCAL.color
       };
-      application.addSidenavOptions(data3, models);
+      application.addSidenavOptions2(data3, models);
 
       this.showView(FISCAL_VIEWS.AON_TAX);
     })

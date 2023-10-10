@@ -175,6 +175,12 @@ export const AON_INPUT_BOX_LABEL_SPAN_ERROR = 'aonInputBoxLabelSpanError'
 export const AON_INPUT_MSG = 'aonInputMsg';
 export const AON_INPUT_MSG_ERROR = 'aonInputMsgError';
 
+// aon-access-card.css
+export const AON_ACCESS_CARD = 'aonAccessCard';
+export const AON_ACCESS_CARD_CONTENT = 'aonAccessCardContent';
+export const AON_ACCESS_CARD_LINE = 'aonAccessCardLine';
+export const AON_ACCESS_CARD_TEXT_DIV = 'aonAccessCardTextDiv';
+export const AON_ACCESS_CARD_TEXT = 'aonAccessCardText';
 
 // aon-input.css
 

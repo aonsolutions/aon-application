@@ -123,10 +123,7 @@ export class AonCard extends AonElement {
 		span.id = id + "Span";
 		span.appendChild(aib);
 		
-		console.log("title : " + this.TITLE_SECTION2);
-		console.log("title");
 		let title = this.getElement(this.TITLE_SECTION2);
-		console.log(title);
 		title.appendChild(span);
 	}
 
