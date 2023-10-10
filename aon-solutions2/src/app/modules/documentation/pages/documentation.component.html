@@ -35,7 +35,7 @@
         [gridCols]="{xs:23,sm:23,md:23,lg:11,xl:11}"
       >
         <div id="selected-elements">
-          <span *ngIf="showSelectedCount" (click)="toggleSelectAll()">
+          <span *ngIf="showSelectedCount" (click)="toggleDeselectAll()">
             <app-icon shape="indeterminate_check_box"></app-icon>
             {{ selectedCards.length }} seleccionados
           </span>
@@ -60,6 +60,7 @@
         <app-button
           class="icon-border"
           [toolTip]="'DOCUMENTATION.FILE_SELECT_DOWLOAD' | translate"
+          (click)="downloadAllSelected()"
         >
           <app-icon [shape]="'cloud_download'"></app-icon>
         </app-button>
@@ -81,7 +82,8 @@
       *ngFor="let folder of documentationListFolders; let i = index"
       (click)="
         getDocumentation(folder.Path);
-        selectFolder(folder.Path)
+        selectFolder(folder.Path);
+        toggleDeselectAll();
       "
       [id]="folder.Path"
       [ngClass]="{'select-folder': selecFolder == folder.Path}"

@@ -15,7 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
 import { UploadCompletedModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-completed-modal/upload-completed-modal.component';
 import { UploadErrorModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-error-modal/upload-error-modal.component';
-import { RenameFileComponent } from '../components/rename-file/rename-file.component';
+import { RenameFileComponent } from '../components/modal-rename-file/rename-file.component';
 
 @Component({
   selector: 'app-documentation',
@@ -129,6 +129,7 @@ export class DocumentationComponent implements OnInit {
             text: result['DOCUMENTATION.FILE_SELECT_DOWLOAD'],
             icon: 'cloud_download',
             colorIcon: 'black',
+            click: () => this.documentService.downloadDocument(this.fileToShow),
           },
           // {
           //   root: true,
@@ -213,6 +214,17 @@ export class DocumentationComponent implements OnInit {
   //     document.fileToShow
   //   );
   // }
+
+  /*
+    Descarga todos los documentos seleccionados
+  */
+  async downloadAllSelected() {
+    for (const card of this.selectedCards) {
+      const index: number = parseInt(card.split('-')[1]);
+      const document = this.documentsList.toArray()[index];
+      await this.documentService.downloadDocument(document);
+    }
+  }
 
   /*
   Devolvera:
@@ -488,19 +500,36 @@ export class DocumentationComponent implements OnInit {
     const allSelected = this.selectedCards.length === documentsArray.length;
 
     documentsArray.forEach((card, i) => {
-      // Deseleccionamos elementos
-      if (allSelected && this.selectedCards.includes('file-' + i)) {
+      // // Deseleccionamos elementos
+      // if (allSelected && this.selectedCards.includes('file-' + i)) {
+      //   document.getElementById('fileCheck-' + i)?.click();
+      // } else {
+      //   // Seleccionamos elementos que no estén seleccionados previamente
+      //   if (!this.selectedCards.includes('file-' + i)) {
+      //     document.getElementById('fileCheck-' + i)?.click();
+      //   }
+      // }
+
+      // Seleccionamos todos los elementos que no estén seleccionados previamente
+      if (!this.selectedCards.includes('file-' + i)) {
         document.getElementById('fileCheck-' + i)?.click();
-      } else {
-        // Seleccionamos elementos que no estén seleccionados previamente
-        if (!this.selectedCards.includes('file-' + i)) {
-          document.getElementById('fileCheck-' + i)?.click();
-        }
       }
     });
 
     // Actualiza visibilidad de botón.
     this.showSelectAllBtn = allSelected;
     this.showSelectedCount = this.selectedCards.length > 0 ? true : false;
+  }
+
+  toggleDeselectAll() {
+    const documentsArray = this.documentsList.toArray();
+    const allSelected = this.selectedCards.length === documentsArray.length;
+
+    documentsArray.forEach((card, i) => {
+      // Deseleccionamos elementos
+      if (allSelected && this.selectedCards.includes('file-' + i)) {
+        document.getElementById('fileCheck-' + i)?.click();
+      }
+    });
   }
 }
