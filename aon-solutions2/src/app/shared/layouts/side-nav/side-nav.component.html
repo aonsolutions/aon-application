@@ -35,7 +35,7 @@
           *ngFor="let shortcut of shortcuts;"
           routerLink={{shortcut.routerlink}}
           matTooltip="{{shortcut.toolTip}}"
-          [queryParams]="shortcut.options"
+          (click)="setOptions(shortcut)"
         >
           <app-icon class="griss" [shape]="shortcut.shape" *ngIf="subMenuOpened"></app-icon>
         </div>
@@ -58,7 +58,7 @@
             (click)="opened = !opened"
             routerLink={{shortcut.routerlink}}
             matTooltip="{{shortcut.toolTip}}"
-            [queryParams]="shortcut.options"
+            (click)="setOptions(shortcut)"
           >
             <app-icon [shape]="shortcut.shape"></app-icon>
           </span>

@@ -1,8 +1,10 @@
 import { Component, OnInit, EventEmitter, Output, ViewChild, Input } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Shortcut } from 'src/app/core/models/interface/shortcut';
+
 import { MenuButton } from 'src/app/core/models/interface/menu-button';
+import { OptionsService } from '../../services/options.service';
+import { Shortcut } from 'src/app/core/models/interface/shortcut';
 
 @Component({
   selector    : 'app-side-nav',
@@ -23,6 +25,7 @@ export class SideNavComponent implements OnInit {
   @ViewChild('iconHover') iconHover : any;
 
   constructor(
+    private optionsService: OptionsService,
     private router: Router,
     private translateService: TranslateService
   ) {
@@ -116,4 +119,7 @@ export class SideNavComponent implements OnInit {
     });
   }
 
+  setOptions(data: any){
+    this.optionsService.setOptions(data.options);
+  }
 }

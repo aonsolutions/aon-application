@@ -1,15 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage, IFilter } from 'libraries/AonSDK/src/aon';
-import { ReportingService } from 'src/app/core/services/reporting.service';
-import { MessageService } from 'src/app/core/services/message.service';
-import { MessageChatService } from 'src/app/core/services/message-chat.service';
-import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
-import { TableQueriesComponent } from '../components/table-queries/table-queries.component';
 import { DatePipe } from '@angular/common';
-import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { TranslateService } from '@ngx-translate/core';
+
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
-import { ActivatedRoute } from '@angular/router';
+import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
+import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { MessageChatService } from 'src/app/core/services/message-chat.service';
+import { MessageService } from 'src/app/core/services/message.service';
+import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
+import { OptionsService } from 'src/app/shared/services/options.service';
+import { ReportingService } from 'src/app/core/services/reporting.service';
+import { TableQueriesComponent } from '../components/table-queries/table-queries.component';
 
 export interface Tabs {
   name: string;
@@ -71,7 +72,7 @@ export class InboxviewComponent implements OnInit {
     public reportingService: ReportingService,
     private messageService: MessageService,
     private messageChatService: MessageChatService,
-    private activatedRoute: ActivatedRoute
+    private optionsService: OptionsService
   ) {
     this.translateService
       .get([
@@ -157,11 +158,12 @@ export class InboxviewComponent implements OnInit {
   * @returns {void}
   */
   private checkOpenModal(): void {
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (params && params['showModal']) {
-        this.showModal();
-      }
-    });
+    const options = this.optionsService.getOptions();
+
+    if (options && options.showModal) {
+      this.optionsService.clearOptions();
+      this.showModal();
+    }
   }
 
   afterModalClosed(result?: any) {
