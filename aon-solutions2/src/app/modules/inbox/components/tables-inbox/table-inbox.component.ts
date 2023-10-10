@@ -1,11 +1,25 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CollectionFactory, Factory, ICollection, IMessage } from 'libraries/AonSDK/src/aon';
+import {
+  CollectionFactory,
+  Factory,
+  ICollection,
+  IMessage,
+  StatusMessage,
+} from 'libraries/AonSDK/src/aon';
 import { FilterBuilder } from 'libraries/AonSDK/src/utils/FilterBuilder';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
+import { Status } from '../../../../../../libraries/AonSDK/src/interfaces/modelsInterfaces';
 
 @Component({
   selector: 'app-table-inbox',
@@ -90,21 +104,21 @@ export class TablesInboxComponent implements OnChanges {
     return date;
   }
 
- /**
- * Esta función filtra el tipo según la pestaña seleccionada.
- *
- * @returns {string} El tipo filtrado.
- */
-   private filterType() {
+  /**
+   * Esta función filtra el tipo según la pestaña seleccionada.
+   *
+   * @returns {string} El tipo filtrado.
+   */
+  private filterType() {
     let type = {
-      'inbox': '',
-      'status': '',
-      'icon': '',
+      inbox: '',
+      status: '',
+      icon: '',
     };
 
     switch (this.selectedTab.toString()) {
       case '1':
-        type.inbox = 'consulta'
+        type.inbox = 'consulta';
         switch (this.filterTabSelec) {
           case 1:
             type.status = 'abierta';
@@ -114,8 +128,8 @@ export class TablesInboxComponent implements OnChanges {
             break;
         }
         break;
-      case '2' :
-        type.inbox = 'tarea'
+      case '2':
+        type.inbox = 'tarea';
         switch (this.filterTabSelec) {
           case 1:
             type.status = 'pendiente';
@@ -126,7 +140,7 @@ export class TablesInboxComponent implements OnChanges {
         }
         break;
       case '3':
-        type.inbox = 'notificacion'
+        type.inbox = 'notificacion';
         switch (this.filterTabSelec) {
           case 1:
             type.status = 'nueva';
@@ -135,7 +149,7 @@ export class TablesInboxComponent implements OnChanges {
             type.status = 'vista';
             break;
         }
-      break;
+        break;
     }
     return type;
   }
@@ -196,7 +210,11 @@ export class TablesInboxComponent implements OnChanges {
     }
     if (this.filterDate > 0 && this.filterType().inbox !== '') {
       let dates = this.filterTableDate();
-      filterBuilder.addInterval('date', dates.start, dates.end);
+      filterBuilder.addInterval(
+        'date',
+        new Date(dates.start),
+        new Date(dates.end)
+      );
     }
 
     // Obtener la lista de mensajes
@@ -215,30 +233,30 @@ export class TablesInboxComponent implements OnChanges {
 
           // Icono del mensaje
           if (this.selectedTab === 0) {
-          switch (message.Status) {
-            case 'abierta':
-            case 'cerrada':
-              column.name = {
-                icon: [{ speaker_notes: 'red' }],
-                text: message.Name
-              };
-              break;
-            case 'pendiente':
-            case 'realizada':
-              column.name = {
-                icon: [{ playlist_add_check: 'red' }],
-                text: message.Name
-              };
-              break;
-            case 'nueva':
-            case 'vista':
-              column.name = {
-                icon: [{ notifications: 'red' }],
-                text: message.Name
-              };
-              break;
+            switch (message.Status) {
+              case 'abierta':
+              case 'cerrada':
+                column.name = {
+                  icon: [{ speaker_notes: 'red' }],
+                  text: message.Name,
+                };
+                break;
+              case 'pendiente':
+              case 'realizada':
+                column.name = {
+                  icon: [{ playlist_add_check: 'red' }],
+                  text: message.Name,
+                };
+                break;
+              case 'nueva':
+              case 'vista':
+                column.name = {
+                  icon: [{ notifications: 'red' }],
+                  text: message.Name,
+                };
+                break;
+            }
           }
-        }
           // Lógica específica para cada tipo de mensaje
           if (message.Type === 'tarea') {
             column.status = {
@@ -256,31 +274,52 @@ export class TablesInboxComponent implements OnChanges {
             this.messageChatService
               .getMessageChatCount(FilterBuilderTotal.getFilter())
               .then((response) => {
-                this.totalMessages! = response < 100 ? response.toString() : '+99';
+                this.totalMessages! =
+                  response < 100 ? response.toString() : '+99';
 
-                column.total = "<span class='circle green'>" +
-                this.totalMessages +
-                '</span>';
+                column.total =
+                  "<span class='circle green'>" +
+                  this.totalMessages +
+                  '</span>';
               });
-              // obtener el status
+            // obtener el status
             column.statusIcon = {
               icon: message.Status.toLowerCase().includes('abierta')
                 ? [{ reply_all: 'green' }]
                 : [],
-              text: "",
+              text: '',
             };
             // Marcar como nueva
-            column.action = {
-              icon: lowerCaseStatus.includes('abierta')
-                ? [{ archive: 'grey' }]
-                : [{ replay: 'grey' }],
-            };
+            // column.action = {
+            //   icon: lowerCaseStatus.includes('abierta')
+            //     ? [{ archive: 'grey' }]
+            //     : [{ replay: 'grey' }],
+            // };
+            console.log(message.Status);
+            switch (message.Status) {
+              case 'abierta':
+              case 'cerrada':
+                column.action = {
+                  icon: lowerCaseStatus.includes('abierta')
+                    ? [{ archive: 'grey' }]
+                    : [{ replay: 'grey' }],
+                  status: message.Status,
+                };
+                break;
+              default:
+                column.action = [];
+                break;
+            }
             column.status = {
               icon: [],
               text:
-              `<span class="${message.Status.toLowerCase() === 'cerrada' ? 'background-text-griss-light' : 'background-text-red-light'}">` +
-              message.Status +
-              '</span>',
+                `<span class="${
+                  message.Status.toLowerCase() === 'cerrada'
+                    ? 'background-text-griss-light'
+                    : 'background-text-red-light'
+                }">` +
+                message.Status +
+                '</span>',
             };
           } else if (message.Type === 'notificacion') {
             column.status = {
@@ -345,10 +384,28 @@ export class TablesInboxComponent implements OnChanges {
       });
   }
 
+  iconAction(message: any) {
+    console.log('entra en iconAction');
+    console.log(message);
+    this.messageService.getMessage(message.key).then((messageStatus) => {
+      if (message.Status === 'abierta') {
+        this.messageService.archiveMessage(messageStatus).then(() => {
+          this.updateTableData();
+        });
+      } else if (message.Status === 'cerrada') {
+        this.messageService.reopenMessage(messageStatus).then(() => {
+          this.updateTableData();
+        });
+      }
+    });
+  }
+
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
   rowClick(message: any) {
     this.rowClicked.emit(message);
+    this.iconAction(message);
+    console.log('sttus', message.Status);
   }
 }

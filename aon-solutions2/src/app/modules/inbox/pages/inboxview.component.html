@@ -15,7 +15,7 @@
           {{ "INBOX.CREATE" | translate }}
         </app-button>
         <app-modal-controller #modal>
-          <app-create-query *ngIf="isModalVisible"></app-create-query>
+          <app-create-query *ngIf="isModalVisible" (consultaCreated)="onConsultaCreated()"></app-create-query>
         </app-modal-controller>
       </span>
     </div>
@@ -105,7 +105,7 @@
         (changeTabIndex)="this.tabIndex = $event"
         [tabColor]="'red'"
       >
-        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+        <div tool class="inbox-filterDate" (click)="dropdownMenuComponent.openDropdownMenu();">
           <span>{{ selectedFilterText}}</span>
           <app-icon
             shape="more_vert"
@@ -140,7 +140,7 @@
         (changeTabIndex)="this.tabIndex = $event"
         [tabColor]="'red'"
       >
-        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+        <div tool class="inbox-filterDate" (click)="dropdownMenuComponent.openDropdownMenu();">
           <span>{{ selectedFilterText }}</span>
           <app-icon
             shape="more_vert"
@@ -174,7 +174,7 @@
         (changeTabIndex)="this.tabIndex = $event"
         [tabColor]="'red'"
       >
-        <div tool (click)="dropdownMenuComponent.openDropdownMenu();">
+        <div tool class="inbox-filterDate" (click)="dropdownMenuComponent.openDropdownMenu();">
           <span>{{ selectedFilterText }}</span>
           <app-icon
             shape="more_vert"
@@ -271,7 +271,7 @@
       <div
         class="padding"
         *ngIf="messagesData.Type === 'notificacion' || messagesData.Type === 'tarea'"
-      >
+        >
         <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
         {{ messagesData.Description }}
 
@@ -306,8 +306,8 @@
               Consultar
             </app-button>
           </div>
-          <form (ngSubmit)="sendMessage()">
-          <div class="padding" *ngIf="showSendButton">
+        <form (ngSubmit)="sendMessage()">
+          <div class="padding-top" *ngIf="showSendButton">
             <app-input
               [type]="'text'"
               [placeholder]="'Escribe...'"

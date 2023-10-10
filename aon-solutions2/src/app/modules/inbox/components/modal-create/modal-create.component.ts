@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CollectionFactory, Factory, ICollection, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
 import { MessageService } from 'src/app/core/services/message.service';
@@ -14,6 +14,7 @@ export interface Holders {
   styleUrls: ['./modal-create.component.scss']
 })
 export class ModalCreateComponent implements OnInit {
+  @Output() consultaCreated: EventEmitter<void> = new EventEmitter<void>();
   holders: any;
   advisors: any = "";
   advisorsList: any[] = [];
@@ -44,7 +45,7 @@ export class ModalCreateComponent implements OnInit {
         text: element.Name
       }))
      })
-  }
+    }
 
   ngOnInit(): void {
   }
@@ -81,6 +82,7 @@ export class ModalCreateComponent implements OnInit {
         this.messages.add(createdMessage);
         // Desactivo el spinner
         this.spinner = false;
+        this.consultaCreated.emit();
     }
   }
   sendMessage() {

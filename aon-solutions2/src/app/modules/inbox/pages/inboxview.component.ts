@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
@@ -23,6 +23,7 @@ export interface Tabs {
 export class InboxviewComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
   @ViewChild(TablesInboxComponent, { static: false })
+  @Output() consultaCreated: EventEmitter<void> = new EventEmitter<void>();
 
   collectionFactory = new CollectionFactory();
   entityFactory = new Factory();
@@ -147,7 +148,7 @@ export class InboxviewComponent implements OnInit {
     this.modalComponent.openDialog(
       ModalCreateComponent,
       this.functionHome,
-      'Data from home'
+      'Data from home',
     );
   }
 
@@ -178,20 +179,12 @@ export class InboxviewComponent implements OnInit {
       this.changeView();
 
       this.messageService.getMessage(message.key).then((messageStatus) => {
-
-          if (message.type === 'notificacion') {
-            if (messageStatus.Status === StatusMessage.NUEVA) {
-            messageStatus.Status = StatusMessage.VISTA;
-            }
-          }
-
-          try {
-//            this.messageService.updateMessage(messageStatus);
-          } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-          }
-
+        if (message.type === 'notificacion') {
+          this.messageService.markAsReadNotification(messageStatus);
+        }
       });
+      // Desactivo el spinner
+      this.spinner = false;
     }
 
   consultarClicked() {
@@ -222,6 +215,11 @@ export class InboxviewComponent implements OnInit {
           this.translateService.instant('INBOX.THIS_WEEK');
         break;
     }
+  }
+
+  onConsultaCreated() {
+    this.totalMessageCount++;
+    this.consultaMessageCount++;
   }
 
   async calculateMessageCounts() {
@@ -311,10 +309,7 @@ export class InboxviewComponent implements OnInit {
         // Agregar el nuevo mensaje
         this.messages.add(createdMessage);
         // Desactivo el spinner
-        setTimeout(() => {
           this.spinner = false;
-
-        }, 2000)
     }
   }
 
