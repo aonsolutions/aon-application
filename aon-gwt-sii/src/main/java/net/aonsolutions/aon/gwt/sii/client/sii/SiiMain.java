@@ -6,7 +6,6 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.documental.JsAttach;
 import com.esferalia.aon.gwt.api.client.documental.JsCertificate;
 import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
@@ -15,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -22,7 +22,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -45,6 +44,7 @@ public class SiiMain extends AonTemplate2{
 	HashMap<String, LinkedList<String>> filterMap;
 	private AonData aonData;
 	private Administration administration;
+	private SiiConfiguration siiConfiguration;
 
 	public API getAPI() {
 		return API;
@@ -76,11 +76,12 @@ public class SiiMain extends AonTemplate2{
 	}
 	
 	private void startApplication() {
-		impl.getAdministration(aonData.getDomain(), aonData.getUser().getLogin(), new AsyncCallback<Administration>() {
+		impl.getSiiConfiguration(aonData.getDomain(), aonData.getUser().getLogin(), new AsyncCallback<SiiConfiguration>() {
 			
 			@Override
-			public void onSuccess(Administration result) {
-				administration = result;
+			public void onSuccess(SiiConfiguration result) {
+				administration = result.getAdministration();
+				siiConfiguration = result;
 				initializeFilterMap();
 				toolbar();
 				westContent();
@@ -96,11 +97,14 @@ public class SiiMain extends AonTemplate2{
 		LinkedList<String> list = new LinkedList<>();
 		list.add("fe_emitidas");
 		filterMap.put("sii",list);
-		
-		Date date = new Date(2017-1900, 6, 1);
+		Date date = siiConfiguration.getIncludeDate() != null
+				? siiConfiguration.getIncludeDate()
+				: new Date(2017-1900, 6, 1);
 		if(administration.equals(Administration.ALAVA) || administration.equals(Administration.BIZKAIA)
 				|| administration.equals(Administration.GIPUZKOA) || administration.equals(Administration.NAVARRA)) {
-			date = new Date(2018-1900, 0, 1);
+			date = siiConfiguration.getIncludeDate() != null
+					? siiConfiguration.getIncludeDate()
+					: new Date(2018-1900, 0, 1);
 		}
 		
 		list = new LinkedList<>();

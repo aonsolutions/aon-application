@@ -22,6 +22,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class AccountReportPdfPageEvent extends PdfPageEventHelper {
 
 	private ReportMetadata metadata;
+	private boolean onlyCover = false;
 	private static SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	private static Font HEADER_FONT_COVER_0 = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
 	private static Font HEADER_FONT_COVER_1 = new Font(Font.FontFamily.HELVETICA, 15, Font.BOLD);
@@ -31,6 +32,11 @@ public class AccountReportPdfPageEvent extends PdfPageEventHelper {
 
 	public AccountReportPdfPageEvent(ReportMetadata metadata) {
 		this.metadata = metadata;
+	}
+	
+	public AccountReportPdfPageEvent(ReportMetadata metadata, boolean onlyCover) {
+		this.metadata = metadata;
+		this.onlyCover = onlyCover;
 	}
 	
 	@Override
@@ -59,7 +65,7 @@ public class AccountReportPdfPageEvent extends PdfPageEventHelper {
 					,(pageHeight / 5)
 					,0);
 			document.newPage();
-		} else {
+		} else if (!onlyCover) {
 			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT,
 					new Phrase(this.metadata.getCompanyName(), HEADER_FONT_1), document.leftMargin(), pageHeight - 15, 0);
 			
@@ -89,7 +95,7 @@ public class AccountReportPdfPageEvent extends PdfPageEventHelper {
 	public void onEndPage(PdfWriter writer, Document document) {
 		if (metadata.isShowCover() && writer.getPageNumber() == 1) {
 			// Nothing
-		} else {
+		} else if (!onlyCover) {
 			PdfContentByte canvas = writer.getDirectContent();
 			
 			float pageWidth = document.getPageSize().getWidth();

@@ -10,7 +10,7 @@
   }
   .mat-column-description span, .mat-column-date span{
     font-size: 16px;
-    color: #787885;
+    color: $color-secondary;
   }
 
   #table-inbox thead{
@@ -35,23 +35,19 @@
   .inbox-no-tasks-message {
     display: flex;
     justify-content: center;
-    margin-top: 2rem;
+    margin-top: $margin-head-top;
   }
   .inbox-content-state .inbox-icons{
     width: 100%;
     display: flex;
-    gap: 1rem;
+    gap: $margin;
     align-items: center;
     justify-content: flex-end;
     align-content: unset;
     text-align: end;
   }
 
-  .inbox-icon-reply{
-    cursor: pointer;
-  }
-
-  .inbox-icon-back {
+  .inbox-icon-reply, .inbox-icon-back{
     cursor: pointer;
   }
 
@@ -68,7 +64,7 @@
   .inbox-message .inbox-message-date{
     width: 100%;
     display: flex;
-    gap: 1rem;
+    gap: $margin;
     align-items: center;
     justify-content: flex-end;
     align-content: unset;
@@ -81,9 +77,9 @@
   .inbox-chat{
     display: grid;
     grid-template-columns: auto auto auto;
-    border-bottom: 1px solid silver;
-    gap: 1rem;
-    padding: 1rem;
+    border-bottom: $border;
+    gap: $margin;
+    padding: $padding ;
     cursor: pointer;
   }
   .inbox-chat .inbox-chat-name{
@@ -92,7 +88,7 @@
   .inbox-chat .inbox-chat-date{
     display:flex;
     justify-content: flex-end;
-    color: #787885;
+    color: $color-border-secondary;
     font-size: 16px;
   }
 
@@ -105,22 +101,22 @@
   }
 
   .inbox-btn-01{
-    margin-right: 1rem;
+    margin-right: $margin-right;
   }
   .inbox-send-button{
     display: flex;
     justify-content: flex-end;
-    margin-top: 1rem;
+    margin-top: $margin-top;
   }
 
   .inbox-chat-description-side{
-    margin-top: 1rem;
+    margin-top: $margin-top;
     font-size: 16px;
     color: var(--gray-50);
   }
 
   .inbox-chat-description .ng-star-inserted{
     font-size: 16px;
-    color: #787885;
+    color: $color-border-secondary;
   }
 }

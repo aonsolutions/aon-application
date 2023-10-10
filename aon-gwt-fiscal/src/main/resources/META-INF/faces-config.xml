@@ -59,6 +59,10 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/booking.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>gwt_main_booking_customer</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/bookingCustomer.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>gwt_supplier</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/supplier.xhtml</to-view-id>
 		</navigation-case>

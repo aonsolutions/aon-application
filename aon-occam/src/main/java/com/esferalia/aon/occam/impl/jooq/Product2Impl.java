@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IProduct2;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -66,9 +67,9 @@ public class Product2Impl implements IProduct2{
 	// ------------------------------------- ITEM
 	
 	@Override
-	public Item getItem(AONContext ctx, ItemFilter filter) {
+	public Item getItem(AONContext ctx, ItemFilter filter, Options...options) {
 		return ctx.getDslContext().transactionResult( configuration -> 
-			ItemDAO.get(ctx, filter));
+			ItemDAO.get(ctx, filter, options));
 	}
 	
 	@Override

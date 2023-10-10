@@ -78,7 +78,7 @@
   <!--FIN SIDENAV-->
   <!--CONTENIDO-->
   <div content>
-    <div class="padding">
+    <div class="padding-top padding-right padding-left">
       <div class="width-40">
         <app-input
           [appearance]="'outline'"
@@ -90,15 +90,13 @@
     </div>
     <ng-container *ngIf="selectedTab == 0">
       <div class="padding">
-        <app-table-component
-          (rowClicked)="rowClickHandler($event)"
+        <app-table-inbox
+        (rowClicked)="rowClickHandler($event)"
+        [filterTabSelec]="this.tabIndex"
+        [filterDate]="this.filterDate"
+        [selectedTab]="this.selectedTab"
         >
-        </app-table-component>
-        <div *ngIf="selectedTab == 0 && noTasksMessage" class="padding inbox-no-tasks-message">
-          <ng-container *ngIf="noTasksMessage">
-            {{ "INBOX.NOMESSAGES" | translate }}
-          </ng-container>
-        </div>
+        </app-table-inbox>
       </div>
     </ng-container>
     <ng-container *ngIf="selectedTab == 1">
@@ -125,11 +123,13 @@
           </app-dropdown-menu>
         </div>
         <div content class="padding">
-          <app-table-queries
+          <app-table-inbox
+            (rowClicked)="rowClickHandler($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
-            (rowClicked)="rowClickHandler($event)"
-          ></app-table-queries>
+            [selectedTab]="this.selectedTab"
+          >
+          </app-table-inbox>
         </div>
       </app-tabs>
     </ng-container>
@@ -158,11 +158,13 @@
           </app-dropdown-menu>
         </div>
         <div content class="padding">
-          <app-table-tasks
+          <app-table-inbox
             (rowClicked)="rowClickHandler($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
-          ></app-table-tasks>
+            [selectedTab]="this.selectedTab"
+          >
+        </app-table-inbox>
         </div>
       </app-tabs>
     </ng-container>
@@ -190,11 +192,12 @@
           </app-dropdown-menu>
         </div>
         <div content class="padding">
-          <app-table-notifications
+          <app-table-inbox
             (rowClicked)="rowClickHandler($event)"
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
-          ></app-table-notifications>
+            [selectedTab]="this.selectedTab"
+          ></app-table-inbox>
         </div>
       </app-tabs>
     </ng-container>
@@ -226,8 +229,10 @@
     <!--Chat-->
     <form (ngSubmit)="sendChatMessage()">
       <div class="padding" *ngIf="messagesData.Type === 'consulta'">
-        <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
-        {{ messagesData.Description }}
+        <div class="padding-bottom">
+          <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
+          {{ messagesData.Description }}
+        </div>
         <div class="inbox-chat" (click)="toggleDescription(i)" *ngFor="let messageChat of messagesChat; let i = index">
           <div class="inbox-chat-name">
             {{ messageChat.Name }}
@@ -257,11 +262,12 @@
             type="submit"
           >
             <app-icon shape="send"></app-icon>
-            Enviar
+            {{ "COMMON.SEND" | translate }}
           </app-button>
         </div>
       </div>
     </form>
+
       <div
         class="padding"
         *ngIf="messagesData.Type === 'notificacion' || messagesData.Type === 'tarea'"
@@ -300,24 +306,29 @@
               Consultar
             </app-button>
           </div>
+          <form (ngSubmit)="sendMessage()">
           <div class="padding" *ngIf="showSendButton">
             <app-input
               [type]="'text'"
               [placeholder]="'Escribe...'"
               class="inputSend"
+              [value]="newMessageDescription"
+              (inputValue)="newMessageDescription = $event"
             ></app-input>
-            <div class="inbox-send-button">
-              <app-button
+          <div class="inbox-send-button">
+            <app-button
                 [class]="'red left'"
                 [width]="'11rem'"
                 [fontSize]="'0.7rem'"
                 [padding]="'0rem 1rem'"
-              >
-                <app-icon shape="send"></app-icon>
-                Enviar
-              </app-button>
+                (click)="sendMessage()"
+            >
+            <app-icon shape="send"></app-icon>
+            {{ "COMMON.SEND" | translate }}
+            </app-button>
             </div>
           </div>
+        </form>
         </div>
       </div>
     </div>

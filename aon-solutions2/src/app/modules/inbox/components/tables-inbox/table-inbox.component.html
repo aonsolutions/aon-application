@@ -1,0 +1,13 @@
+<app-spinner *ngIf="spinner"></app-spinner>
+ <app-table
+    *ngIf="bodyTable.length > 0"
+    id="table-inbox"
+    mat-table
+    mat-flat-table
+    [displayedColumns]="displayedColumns"
+    [data]="bodyTable"
+    (listenParentRow)="rowClick($event)"
+  ></app-table>
+<div *ngIf="bodyTable.length === 0">
+  <div class="inbox-noMessage padding">{{ message }}</div>
+</div>

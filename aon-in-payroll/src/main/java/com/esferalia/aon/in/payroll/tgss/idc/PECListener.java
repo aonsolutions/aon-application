@@ -71,7 +71,7 @@ class PECListener  implements IdcParserListener {
 	@SuppressWarnings("serial")
 	static final Map<String, String> DEDUCTION_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
-			put("08", "-CUOTA_TRABAJADOR"); 	// 
+			put("08", "-CGC -FP -DESMPL"); 	// 
 		}
 	};
 
@@ -346,7 +346,7 @@ class PECListener  implements IdcParserListener {
 		String formula ;
 		
 		formula = String.format(Locale.ROOT,
-			"/*epoch:%d,pec:%s,quota:%s*//*read-only*/%s/**/",
+			"/*epoch:%d,pec:%s,quota:%s*//*read-only*/_D=(%s);_D == 0.00 ? REMOVE() : _D /**/",
 			Calendar.getInstance().getTimeInMillis(),
 			code, 
 			quota,

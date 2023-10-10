@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryPackaging.DELIVERY_PACKAGING;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -68,6 +70,8 @@ public class DeliveryPackagingDAO {
 	private static SelectConditionStep<Record> select(AONContext ctx, DeliveryPackagingFilter filter) {
 		 return ctx.getDslContext().select()
 			.from(DELIVERY_PACKAGING)
+			.join(ITEM).on(ITEM.ID.eq(DELIVERY_PACKAGING.ITEM))
+			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 			.where(DELIVERY_PACKAGING_PROPERTIES.getConditions(filter));
 	}
 
@@ -176,7 +180,7 @@ public class DeliveryPackagingDAO {
 					.setDelivery(checkField(r, DELIVERY.ID)
 							? DeliveryFiller.build(r)
 							: new Delivery().setId(getValue(r, DELIVERY_PACKAGING.DELIVERY)))
-					.setItem(checkField(r, DELIVERY.ID)
+					.setItem(checkField(r, ITEM.ID)
 							? ItemFiller.build(r)
 							: new Item().setId(getValue(r, DELIVERY_PACKAGING.ITEM)))
 					;

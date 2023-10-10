@@ -1,9 +1,8 @@
 
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CollectionFactory, ErrorResponse, Factory, ICollection, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, Factory, ICollection, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
 import { MessageService } from 'src/app/core/services/message.service';
-
 
 export interface Holders {
   Id: string;
@@ -16,13 +15,11 @@ export interface Holders {
   styleUrls: ['./modal-create.component.scss']
 })
 export class ModalCreateComponent implements OnInit {
-
   holders: any;
   advisors: any = "";
   advisorsList: any[] = [];
   selectedAdvisor: string | undefined;
-
-
+  spinner: boolean = true;
   inputValue: string = '';
   newMessageDescription: string = '';
   newMessageAsunto: string = '';
@@ -58,7 +55,7 @@ export class ModalCreateComponent implements OnInit {
     this.dialogRef.close();
   }
 
-
+  // Cargar los asesores
   loadAdvisors(event: any) {
     this.selectedAdvisor = event;
     if (this.selectedAdvisor) {
@@ -69,8 +66,6 @@ export class ModalCreateComponent implements OnInit {
 
   async createMessage(description: string, asunto: string){
     if (this.messagesData) {
-      const messageId = this.messagesData.Id;
-console.log('messafeDAta', this.messagesData);
 
       const newMessage = this.messageService.objectFactory.createMessage()
       .setName(this.messagesData.Name)
@@ -80,19 +75,15 @@ console.log('messafeDAta', this.messagesData);
       .setTitle(asunto)
       .setLastMessageChatOrigin(false);
 
-      try {
         // Crear el mensaje
         const createdMessage = await this.messageService.createMessage(newMessage);
         this.messagesData = createdMessage;
         // Agregar el nuevo mensaje
         this.messages.add(createdMessage);
-      } catch (error) {
-        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-
-      }
+        // Desactivo el spinner
+        this.spinner = false;
     }
   }
-
   sendMessage() {
     // para no enviar mensajes vacíos
     if (this.newMessageDescription.trim() === '') {

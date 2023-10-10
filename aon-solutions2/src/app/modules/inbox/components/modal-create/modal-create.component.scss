@@ -1,42 +1,40 @@
 ::ng-deep{
-.new-query{
-  flex-grow: 0;
-  font-family: Roboto;
-  font-size: 1.2rem;
-  font-weight: bold;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: 1.5;
-  letter-spacing: normal;
+  .new-query{
+    flex-grow: 0;
+    font-family: Roboto;
+    font-size: 1.2rem;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    }
+
+  .issue-query{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 56.6rem;
+    margin-left: 2rem;
+    }
+
+  .button{
+    display: flex;
+    flex-direction: row-reverse;
+    }
+
+  .content-input-inbox{
+    margin: 1.135rem 2.1rem 0.9rem 2rem;
   }
 
-.issue-query{
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 56.6rem;
-  margin: 1.135rem 2.1rem 0.9rem 2rem;
-  padding: 0;
+  .button-close-query{
+    display: flex;
+    justify-content: flex-end;
+    cursor: pointer;
   }
 
-.button{
-  justify-content: flex-start;
-  align-items: center;
-  gap: 0.5rem;
-  border-radius: 0.2rem;
-  padding: 0.5rem 0rem 0.5rem 1rem;
-  border-radius: 0.2rem;
-  margin: 1rem 0 0 19rem;
+  .content-input-inbox .mat-form-field-wrapper {
+    margin-bottom: 1rem;
   }
-
-.content-input{
-  margin: 1.135rem 2.1rem 0.9rem 2rem;
-}
-
-.button-close-query{
-  display: flex;
-  justify-content: flex-end;
-  cursor: pointer;
-}
 }

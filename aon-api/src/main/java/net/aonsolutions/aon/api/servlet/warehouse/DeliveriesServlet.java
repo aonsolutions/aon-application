@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.SERFRUIT;
 import com.esferalia.aon.occam.api.json.CarrierPackingJSON;
 import com.esferalia.aon.occam.api.json.DeliveryJSON;
@@ -115,12 +114,12 @@ public class DeliveriesServlet extends AonApiHttpServlet {
 	
 	private static JSONArray getDeliveries(AonApiData api) {
 		return DeliveryJSON.toJSON(
-			AON.getDeliveryStream(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f), deliveryOptions(api)));
+			AON.getDeliveryStream(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f), options(api)));
 	}
 	
 	private static JSONObject getDelivery(AonApiData api) {
 		return DeliveryJSON.toJSON(
-			AON.getDelivery(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f), deliveryOptions(api)));
+			AON.getDelivery(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f), options(api)));
 	}
 	
 	private JSONObject saveDelivery(AonApiData api) {
@@ -130,7 +129,9 @@ public class DeliveriesServlet extends AonApiHttpServlet {
 //		api.setData(json);
 		
 		Delivery delivery = DeliveryJSON.fromJSON(api.getData());
-		delivery = AON.saveDelivery(api.getDomain(), api.getUser(), delivery);
+		if(JsonUtils.getboolean(api.getData(), IJsonNames.SERFRUIT)) {
+			delivery = SERFRUIT.saveDelivery(api.getDomain(), api.getUser(), delivery);
+		} else delivery = AON.saveDelivery(api.getDomain(), api.getUser(), delivery);
 			
 		if(JsonUtils.has(api.getData(), IJsonNames.PACKAGING)) {
 			List<SerfruitDeliveryPackaging> list =  SerfruitDeliveryPackagingJSON.fromJSON(JsonUtils.getJSONArray(api.getData(), IJsonNames.PACKAGING));
@@ -154,6 +155,11 @@ public class DeliveriesServlet extends AonApiHttpServlet {
 	
 	private static Filter deliveryFilter(AonApiData api, DeliveryProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+	
+		Integer id = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+		if(id != null) {
+			filter = filter.and(f.getIdProperty().eq(id));
+		}
 		
 		String series = JsonUtils.getString(api.getData(), IJsonNames.SERIES);
 		if(!AonStringUtils.isBlank(series)) {
@@ -186,13 +192,5 @@ public class DeliveriesServlet extends AonApiHttpServlet {
 		}
 
 		return filter;
-	}
-	
-	private static Options deliveryOptions(AonApiData api) {
-		Options options = new Options();
-		options.setPage(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
-		options.setPerPage(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
-		options.setFull(JsonUtils.getboolean(api.getData(), IJsonNames.FULL));
-		return options;
 	}
 }

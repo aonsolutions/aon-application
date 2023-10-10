@@ -1154,15 +1154,18 @@ public class EmployeeDAO {
 
 	private static ContractData [] setData(DSLContext dslContext, String domainName, java.sql.Date startDate, java.sql.Date endDate, ContractRecord contractRecord, ContractData ...datas) {
 		
-		List<ContractData> datasList = new ArrayList<ContractData>(datas.length);
-		Arrays.stream(datas).forEach( data -> datasList.add(data));
+		List<ContractData> datasList  = Arrays.asList(datas);
+		
+		String [] names = datasList.stream().map(ContractData::getName).toArray(String[]::new);
 		
 		dslContext
 		.select()
 		.from(CONTRACT_DATA)
 		.where(CONTRACT_DATA.CONTRACT.eq(contractRecord.getId()))
+		.and(CONTRACT_DATA.NAME.in(names))
 		.and(DSL.condition(endDate == null ).or(CONTRACT_DATA.START_DATE.le(endDate)))
 		.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(startDate)))
+		
 		.fetchStream()
 		.filter( EmployeeDAO::filter )
 		.forEach( r -> {

@@ -5409,7 +5409,78 @@ public class IdcTest extends AbstractSQLTestCase {
 			double cgcEnterprisePercent = salary.getSalaryData(ContextVariable.CGC_ENTERPRISE_PERCENT.getName(), Double.class);
 			assertEquals(1.30 , cgcEnterprisePercent, 0.00);
 			
+			calendar.set(Calendar.MONTH, Calendar.MARCH);
+			Date march2023 = calendar.getTime();
+			salary = calculate(ssPecs, Collections.emptyList(), march2023, new  SalaryBuilder(), new GenericContractSalaryCalculator.Listener());
+			
+			Set<SalaryData> salaryDatas = salary.getSalaryDatas();
+			
+			List<SalaryData> cgcBaseDatas = salaryDatas.stream()
+				.filter(data -> data.getName().equals(ContextVariable.CGC_BASE.getName()))
+				.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toList();
+			
+			assertEquals(2, cgcBaseDatas.size() );
+			assertEquals(march2023, cgcBaseDatas.get(0).getStartDate() );
+			assertEquals(march092023, cgcBaseDatas.get(1).getStartDate() );
+			
+			List<SalaryData> cgcBaseEnterpriseDatas = salaryDatas.stream()
+				.filter(data -> data.getName().equals(ContextVariable.CGC_BASE_ENTERPRISE.getName()))
+				.sorted((d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate())).toList();
+			assertEquals(2, cgcBaseDatas.size() );
+			assertEquals(march2023, cgcBaseEnterpriseDatas.get(0).getStartDate() );
+			assertEquals(march092023, cgcBaseEnterpriseDatas.get(1).getStartDate() );
+			
+			salary.getSalaryDeductions().forEach( d -> System.out.println(d.getName() + ": " + d.getAmount()));
+			
+			assertEquals(
+				Double.parseDouble(cgcBaseDatas.get(1).getExpression()) *  ( 0.25 ) / 100.00  
+				+ Double.parseDouble(cgcBaseDatas.get(0).getExpression()) *  ( 4.7  + 0.10 + 1.55 + 0.10 ) / 100.00  
+				, salary.getSocialSecurityContributions(), 0.01);
+			
+			salary.getSalaryCosts().forEach( d -> System.out.println(d.getName() + ": " + d.getAmount()));
 
+			assertEquals(
+				Double.parseDouble(cgcBaseDatas.get(1).getExpression()) *  ( 1.30 + 1.40 + 2.20  ) / 100.00  
+				+ Double.parseDouble(cgcBaseDatas.get(0).getExpression()) *  ( 23.60 + 0.50 + 0.60 + 0.20 + 5.50 + 1.40 + 2.20 ) / 100.00  
+				, salary.getTotalEnterprise(), 0.01);
+			
+
+		}
+	}
+
+	@Test
+	public void testIdcXXXIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXI.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
+			//Assert.assertEquals(1, ssPecs.size());
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 11);
+			calendar.set(Calendar.MONTH, Calendar.JULY);
+			Date july112023 = calendar.getTime();
+
+			//assertPECS(ssPecs, july112023, null, 1, pec -> true);
+			
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.AUGUST);
+			Date august2023 = calendar.getTime();
+			Salary salary = calculate(ssPecs, Collections.emptyList(), august2023, new  SalaryBuilder(), new GenericContractSalaryCalculator.Listener());
+			double cgcBase = salary.getCommonBase();
+			assertEquals(cgcBase *  ( 0.10 ) / 100.00  , salary.getSocialSecurityContributions(), 0.00);
+			assertEquals(cgcBase *  ( 0.50 ) / 100.00  , salary.getTotalEnterprise() , DELTA);
+			
 		}
 	}
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BankFactory, Factory, IBank, ICollection, IFilter } from 'libraries/AonSDK/src/aon';
+
+import { BankFactory, IBank, ICollection, IFilter } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
 
 @Injectable({
@@ -33,5 +34,5 @@ export class BankService extends CommonService{
   async getBank(pkey: any): Promise<IBank> {
     return (await this.bankCrud.getElement(pkey)).result;
   }
-  
+
 }

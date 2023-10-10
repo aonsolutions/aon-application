@@ -2,6 +2,7 @@
   --aonBlue : #002469;
   --aonSecondary: #b10d4c;
   --aonOldSecondary: #12ccd1;
+  --aonError: #f6655a;
   --aonBackground: #f6f8fc;
   --aonLightBlue: #eaf1fb;
   --aonSelectedBlue: #d3e3fd;
@@ -470,6 +471,15 @@
   font-size: 16px;
 }
 
+.aonToolbar2 { /* NUEVO LOGIN */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4rem;
+  border-bottom: solid 0.05rem #d2d2d6;
+  padding: 0 2rem;
+}
+
 .aonToolbarBeta {
   display: flex;
   height: 40px;
@@ -644,11 +654,28 @@
   padding-left: 25px;
 }
 
+.aonSidenavTitleArrow {
+  max-width: 0rem;
+  height: 1.35rem;
+  border-radius: 20rem;
+  border: 0.15rem solid;
+  margin-right: 5px;   
+}
+
 .aonSidenavTitle {
   font-size: 12px;
   margin-top: 15px;
   margin-bottom: 10px;
   color: gray;
+  margin-left: 15px;
+}
+
+
+.aonSidenavTitleBeta {
+  font-size: 12px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-weight: bold;
   margin-left: 15px;
 }
 
@@ -793,6 +820,15 @@
 .aonSearchBox {
   position: absolute;
   height: 40px;
+  border: none;
+  -webkit-appearance: none;
+  outline: 0px;
+  font-size: 14px;
+}
+
+.aonSearchBoxBeta {
+  position: absolute;
+  height: 38px;
   border: none;
   -webkit-appearance: none;
   outline: 0px;
@@ -1253,6 +1289,13 @@
 
 .aonFlex {
   display: flex;
+}
+
+.aonFlexColumn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .aonBlock {

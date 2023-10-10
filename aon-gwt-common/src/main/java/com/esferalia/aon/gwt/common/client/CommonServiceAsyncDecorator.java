@@ -303,10 +303,4 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.getQuestion(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
 	}
 
-	@Override
-	public void checkQuestionAlias(String domainName, Integer domain, String user, String alias, AsyncCallback<Boolean> callback) throws AonCoreException {
-		AON.start();
-		serviceAsync.checkQuestionAlias(domainName, domain, user, alias, new AsyncCallbackWrapper<>(callback));
-	}
-
 }

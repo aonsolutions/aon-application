@@ -46,6 +46,7 @@ export const AON_LI = 'aonLi';
 export const AON_LI_SPAN = 'aonLiSpan';
 export const AON_LI_SPAN_SUBTITLE = 'aonLiSpanSubtitle';
 export const AON_TOOLBAR = 'aonToolbar';
+export const AON_TOOLBAR2 = 'aonToolbar2'; // NUEVO LOGIN...
 export const AON_TOOLBAR_BETA = 'aonToolbarBeta';
 export const AON_TOOLBAR_TITLE = 'aonToolbarTitle';
 export const AON_TOOLBAR_SECTION = 'aonToolbarSection';
@@ -60,6 +61,7 @@ export const AON_MENU_SIDENAV_SUBAPP_LIST = 'aonMenuSidenavSubAppList';
 export const AON_COMPANY_LIST = 'aonCompanyList';
 export const AON_SIDENAV_DIV = 'aonSidenavDiv';
 export const AON_SIDENAV_TITLE = 'aonSidenavTitle';
+export const AON_SIDENAV_TITLE_ARROW = 'aonSidenavTitleArrow';
 export const AON_SIDENAV = 'aonSidenav';
 export const AON_SIDENAV_BETA = 'aonSidenavBeta';
 export const AON_CONTENT = 'aonContent';
@@ -74,6 +76,7 @@ export const AON_OPACITY = 'aonOpacity';
 export const AON_MENU_ITEM_SPAN = 'aonMenuItemSpan';
 export const AON_DIV_BUTTON = 'aonDivButton';
 export const AON_SEARCH_BOX = 'aonSearchBox';
+export const AON_SEARCH_BOX_BETA = 'aonSearchBoxBeta';
 export const AON_FORM_CENTER = 'aonFormCenter';
 export const AON_CONNECTED = 'aonConnected';
 export const AON_CARD = 'aonCard';
@@ -98,6 +101,7 @@ export const AON_DOT = 'aonDot';
 export const ACTIVE = 'active';
 export const AON_DESKTOP_SLIDE_FADE = 'aonDesktopSlideFade';
 export const AON_FLEX = 'aonFlex';
+export const AON_FLEX_COLUMN = 'aonFlexColumn';
 export const AON_BLOCK = 'aonBlock';
 export const AON_SHOW_MENU = 'aonShowMenu';
 export const AON_COMPANY_LOGO = 'aonCompanyLogo';
@@ -113,8 +117,19 @@ export const AON_LIST_GROUP_TOP = 'aonListGroupTop';
 export const AON_LIST_GROUP_ITEM = 'aonListGroupItem';
 export const AON_DESKTOP_MENU_CLASSIC_OPTION = 'aonDesktopMenuClassicOption';
 export const AON_DESKTOP_MENU_CLASSIC_OPTION_AON = 'aonDesktopMenuClassicOptionAon';
-
 export const AON_NOTIFICATION_CONTENT = 'aonNotificationContent';
+
+// aon-figma.css
+
+export const AON_LOGIN = 'aonLogin';
+export const AON_LOGIN_TITLE = 'aonLoginTitle';
+export const AON_LOGIN_SUB_TITLE = 'aonLoginSubTitle';
+export const AON_LOGIN_FORM = 'aonLoginForm';
+export const AON_LOGIN_FORM_CONTENT = 'aonLoginFormContent';
+export const AON_LOGIN_BUTTON = "aonLoginButton";
+export const AON_DIVIDER_BUTTONS = "aonDividerButtons";
+export const AON_DIVIDER_SPAN = "aonDividerSpan";
+export const AON_MAGIC_BUTTON = "aonMagicButton";
 
 // aon-toast.css
 
@@ -148,6 +163,16 @@ export const AON_MOBILE_SUB_CONTENT = 'aonMobileSubContent';
  // aon-loader.css
 
 export const AON_LOADING = 'aonLoading';
+
+// aon-new-input.css
+
+export const AON_INPUT_BOX = 'aonInputBox';
+export const AON_INPUT_BOX_LABEL = 'aonInputBoxLabel';
+export const AON_INPUT_BOX_LABEL_INPUT_ERROR = 'aonInputBoxLabelInputError'
+export const AON_INPUT_BOX_LABEL_SPAN_ERROR = 'aonInputBoxLabelSpanError'
+export const AON_INPUT_MSG = 'aonInputMsg';
+export const AON_INPUT_MSG_ERROR = 'aonInputMsgError';
+
 
 // aon-input.css
 

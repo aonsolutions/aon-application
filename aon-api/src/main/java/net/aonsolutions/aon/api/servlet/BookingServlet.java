@@ -1,19 +1,24 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.CONSOLE;
 import com.esferalia.aon.occam.api.json.BookingJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -23,6 +28,7 @@ public class BookingServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(BookingServlet.class.getName());
 	
 	public static final String BOOKING= "/";
+	public static final String BOOKING_CUSTOMER = "/customer";
 	
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -46,6 +52,7 @@ public class BookingServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(BOOKING, BookingServlet::getBooking)
+				.addRoute(BOOKING_CUSTOMER, BookingServlet::getBookingCustomerArr)
 				.apply();
 			
 			response(req, resp, object);
@@ -74,10 +81,35 @@ public class BookingServlet extends AonApiHttpServlet {
 		Integer domainId = api.getData().optInt(IJsonNames.DOMAIN_ID);
 		if (AonStringUtils.isNotBlank(domainName) && AonNumberUtils.zeroIfNull(domainId) > 0) {
 			Domain domain = AON.getDomain(domainName, domainId, api.getUser().getLogin());
-			return BookingJSON.toJSON(AON.getBooking(domain, api.getUser()));			
+			return BookingJSON.toJSON(AON.getBooking(domain, api.getUser()), true);			
 		}
-		return BookingJSON.toJSON(AON.getBooking(api.getDomain(), api.getUser()));
+		return BookingJSON.toJSON(AON.getBooking(api.getDomain(), api.getUser()), true);
 	}
+	
+	private static JSONObject getBookingCustomer(AonApiData api) {
+		Integer customer = JsonUtils.getInteger(api.getData(), IJsonNames.CUSTOMER);
+		DomainCompany dc = CONSOLE.getDomains(f -> f.getAonCustomerProperty().eq(customer))
+				.findFirst().orElse(null);
+		if(dc == null) {
+			throw new AonApiException("No existe ningún dominio asociado al cliente " + customer);
+		}
+		return BookingJSON.toJSON(AON.getBooking(dc.getDomain(), api.getUser()));
+	}
+	
+	private static JSONArray getBookingCustomerArr(AonApiData api) {
+		JSONArray bookingArr = new JSONArray();
+		
+		Integer customer = JsonUtils.getInteger(api.getData(), IJsonNames.CUSTOMER);
+		
+		Stream<DomainCompany> domainCompanies = CONSOLE.getDomains(f -> f.getAonCustomerProperty().eq(customer));
+		
+		if(domainCompanies == null) throw new AonApiException("No existe ningún dominio asociado al cliente " + customer);
+		
+		domainCompanies.forEach(domainCompany -> bookingArr.put(BookingJSON.toJSON(AON.getBooking(domainCompany.getDomain(), api.getUser()), true)));
+		
+		return bookingArr;
+	}
+	
 	
 	private static JSONObject putBooking(AonApiData api) {
 		return BookingJSON.toJSON(AON.saveBooking(api.getDomain(), api.getUser(),

@@ -34,13 +34,18 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class AccountLedgerReportPDF {
+public class AccountLedgerReportPDF implements IAccountReportPDF {
 
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00;(#,##0.00)");
 	private static final DecimalFormat FMT_INT = new DecimalFormat("#,##0");
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static final Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8);
 	private static final Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
+	
+	@Override
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) throws DocumentException {		
+		printLedgerReport(outputStream, params);
+	}
 
 	public void printLedgerReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
 		
@@ -165,7 +170,9 @@ public class AccountLedgerReportPDF {
 		stream.close();
 	    
 		document.add(table);
+
 		document.close();
+
 	}
 
 	private void concat(StringBuilder buf, String string) {
@@ -395,5 +402,6 @@ public class AccountLedgerReportPDF {
 		}
 		
 	}
+
 	
 }

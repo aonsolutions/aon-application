@@ -80,6 +80,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -5034,11 +5035,14 @@ public class SalaryDraft extends ResizeComposite
 
 	private void addBonusAmountItem(Widget amountWidget, HorizontalPanel amountsPanel) {
 		HorizontalPanel minusPanel = new HorizontalPanel();
-		minusPanel.setWidth("100%");
+		minusPanel.getElement().getStyle()
+		.setProperty("marginLeft", "auto");
+		
+		amountWidget.getElement().setAttribute("size", "5");
+		
 		InlineHTML minusHTML = new InlineHTML("&minus;");
 		minusPanel.add( minusHTML );
 		minusPanel.add( amountWidget );
-		minusPanel.setCellWidth(minusHTML, "99%");
 		minusPanel.setCellHorizontalAlignment(minusHTML, HorizontalAlignmentConstant.startOf(Direction.RTL));
 		minusPanel.setCellHorizontalAlignment(amountWidget, HorizontalAlignmentConstant.startOf(Direction.RTL));
 		amountsPanel.add(minusPanel);

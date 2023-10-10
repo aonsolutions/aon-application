@@ -13,7 +13,7 @@
   }
   app-list-element .list-element ul li{
     display       : flex;
-    gap           : 1rem;
+    gap           : $margin;
     cursor        : pointer;
     text-transform: uppercase;
     padding       : $padding;

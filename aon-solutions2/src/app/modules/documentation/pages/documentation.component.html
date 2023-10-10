@@ -34,15 +34,12 @@
         *ngIf="showFiles"
         [gridCols]="{xs:23,sm:23,md:23,lg:11,xl:11}"
       >
-
-      <div id="selected-elements">
-        <span *ngIf="showSelectedCount" (click)="toggleSelectAll()">
-          <app-icon shape="indeterminate_check_box"></app-icon>
-          {{ selectedCards.length }} seleccionados
-        </span>
-      </div>
-
-
+        <div id="selected-elements">
+          <span *ngIf="showSelectedCount" (click)="toggleSelectAll()">
+            <app-icon shape="indeterminate_check_box"></app-icon>
+            {{ selectedCards.length }} seleccionados
+          </span>
+        </div>
         <app-button
           *ngIf="showSelectAllBtn"
           class="icon-border"
@@ -79,7 +76,7 @@
   </div>
 <!--FIN Header-->
 <!--Nav-->
-  <div nav *ngIf="showMenu">
+  <div id="list-folder" nav *ngIf="showMenu">
     <app-button
       *ngFor="let folder of documentationListFolders; let i = index"
       (click)="
@@ -183,13 +180,15 @@
       <app-file-viewer
         [locale]="localePDF"
         [zoom]="'auto'"
-        [pdfSrc]="fileToShow.File"
+        [pdfSrc]="fileToShow"
       ></app-file-viewer>
     </div>
     <!--FIN Mostrar PDF-->
     <!--Mostrar imagen-->
     <ng-template #showImage>
-      <img [src]="'data:'+ fileToShow.FileType +';base64,' + fileToShow.File" alt="Image">
+      <app-file-viewer
+        [pdfSrc]="fileToShow"
+      ></app-file-viewer>
     </ng-template>
     <!--FIN Mostrar imagen-->
   <!--FIN Mostrar previo del fichero-->

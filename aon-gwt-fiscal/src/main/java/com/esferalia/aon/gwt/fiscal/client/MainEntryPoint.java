@@ -31,6 +31,7 @@ import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.BookingCustomerPanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.BookingPanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
@@ -203,6 +204,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String RG_SUPPLIER_ENTRY_POINT = "Supplier";
 	private static final String RG_CREDITOR_ENTRY_POINT = "Creditor";
 	private static final String RG_BOOKING_ENTRY_POINT = "BookingPanel";
+	private static final String RG_BOOKING_CUSTOMER_ENTRY_POINT = "BookingCustomer";
 	//	
 	//    ================================================================== FINANCE
 	//
@@ -390,6 +392,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					BookingPanel bookingPanel = new BookingPanel();
 					bookingPanel.onModuleLoad();
+				}
+				
+			});
+		}  else if ( entryPoint.equalsIgnoreCase(RG_BOOKING_CUSTOMER_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					BookingCustomerPanel bcp = new BookingCustomerPanel();
+					bcp.onModuleLoad();
 				}
 				
 			});
@@ -824,6 +841,11 @@ public class MainEntryPoint implements EntryPoint {
 	public static native String getRootPanel()
 	/*-{
 		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
+	public static native int getCustomer()
+	/*-{
+		return $wnd.localStorage.getItem("customer");
 	}-*/;
 	
 	public static String getCurrentUser() {

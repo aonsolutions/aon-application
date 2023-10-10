@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -333,7 +334,7 @@ public class AonRandom {
 	}
 
 	public static BalanceType getRandomBalanceType() {
-		return getRandomBalanceType(0);
+		return getRandomBalanceType(-1);
 	}
 	public static BalanceType getRandomBalanceType(int nullThreshold) {
     	return gt(nullThreshold)
@@ -342,7 +343,7 @@ public class AonRandom {
 	}
 	
 	public static String getRandomContractType() {
-		return getRandomContractType(0);
+		return getRandomContractType(-1);
 	}
 	public static String getRandomContractType(int nullThreshold) {
 		Integer  models [] = new ContractType().getContractTypes().keySet().toArray(Integer[]::new);
@@ -352,7 +353,7 @@ public class AonRandom {
 	}
 
 	public static String getRandomOccupation() {
-		return getRandomQuoteGroup(0);
+		return getRandomQuoteGroup(-1);
 	}
 	public static String getRandomOccupation(int nullThreshold) {
 		String occupations [] = {"a","b","c","d","e","f","g","h","i","v","w","x","y","z"};
@@ -360,14 +361,14 @@ public class AonRandom {
 	}
 
 	public static String getRandomQuoteGroup() {
-		return getRandomQuoteGroup(0);
+		return getRandomQuoteGroup(-1);
 	}
 	public static String getRandomQuoteGroup(int nullThreshold) {
     	return gt(nullThreshold)?String.format("%02d", faker.random().nextInt(1,10)):null;
 	}
 
 	public static Province getRandomProvince() {
-		return getRandomProvince(0);
+		return getRandomProvince(-1);
 	}
 	public static Province getRandomProvince(int nullThreshold) {
     	return gt(nullThreshold)
@@ -379,7 +380,7 @@ public class AonRandom {
 		return getRandomGender(-1).getName().substring(0,1).toUpperCase();
 	}
 	public static Gender getRandomGender() {
-		return getRandomGender(0);
+		return getRandomGender(-1);
 	}
 	public static Gender getRandomGender(int nullThreshold) {
     	return gt(nullThreshold)
@@ -391,7 +392,7 @@ public class AonRandom {
 		return getRandomSSRegimeType(-1).getCode();
 	}
 	public static SSRegimeType getRandomSSRegimeType() {
-		return getRandomSSRegimeType(0);
+		return getRandomSSRegimeType(-1);
 	}
 	public static SSRegimeType getRandomSSRegimeType(int nullThreshold) {
     	return gt(nullThreshold)
@@ -400,7 +401,7 @@ public class AonRandom {
 	}
 
 	public static Country getRandomCountry() {
-		return getRandomCountry(0);
+		return getRandomCountry(-1);
 	}
 	public static Country getRandomCountry(int nullThreshold) {
     	return gt(nullThreshold)
@@ -409,7 +410,7 @@ public class AonRandom {
 	}
 	
 	public static DocumentType getRandomDocumentType() {
-		return getRandomDocumentType (0);
+		return getRandomDocumentType (-1);
 	}
 	public static DocumentType getRandomDocumentType(int nullThreshold) {
 		return gt(nullThreshold)
@@ -418,7 +419,7 @@ public class AonRandom {
 	}
 	
 	public static InvoiceTransactionType getRandomInvoiceTransactionType() {
-		return getRandomInvoiceTransactionType (0);
+		return getRandomInvoiceTransactionType (-1);
 	}
 	public static InvoiceTransactionType getRandomInvoiceTransactionType(int nullThreshold) {
 		return gt(nullThreshold)
@@ -426,7 +427,7 @@ public class AonRandom {
 			:null;
 	} 
 	public static MediaType getRandomMediaType() {
-		return getRandomMediaType (0);
+		return getRandomMediaType (-1);
 	}
 	public static MediaType getRandomMediaType(int nullThreshold) {
 		return gt(nullThreshold)
@@ -434,7 +435,7 @@ public class AonRandom {
 			:null;
 	}
 	public static PayMethodType getRandomPayMethodType() {
-		return getRandomPayMethodType (0);
+		return getRandomPayMethodType (-1);
 	}
 	public static PayMethodType getRandomPayMethodType(int nullThreshold) {
 		return gt(nullThreshold)
@@ -442,7 +443,7 @@ public class AonRandom {
 			:null;
 	}
 	public static RectificationType getRandomRectificationType() {
-		return getRandomRectificationType (0);
+		return getRandomRectificationType (-1);
 	}
 	public static RectificationType getRandomRectificationType(int nullThreshold) {
 		return gt(nullThreshold)
@@ -451,7 +452,7 @@ public class AonRandom {
 	}
 	
 	public static VatSummaryType getRandomVatSummaryType() {
-		return getRandomVatSummaryType (0);
+		return getRandomVatSummaryType (-1);
 	}
 	public static VatSummaryType getRandomVatSummaryType(int nullThreshold) {
 		return gt(nullThreshold)
@@ -460,7 +461,7 @@ public class AonRandom {
 	}
 	
 	public static RegistryStatus getRandomRegistryStatus() {
-		return getRandomRegistryStatus (0);
+		return getRandomRegistryStatus (-1);
 	}
 	public static RegistryStatus getRandomRegistryStatus(int nullThreshold) {
 		return gt(nullThreshold)
@@ -469,7 +470,7 @@ public class AonRandom {
 	}
 	
 	public static SecurityLevel getRandomSecurityLevel() {
-		return getRandomSecurityLevel (0);
+		return getRandomSecurityLevel (-1);
 	}
 	public static SecurityLevel getRandomSecurityLevel(int nullThreshold) {
 		return gt(nullThreshold)
@@ -477,7 +478,7 @@ public class AonRandom {
 			:null;
 	} 
 	public static StreetType getRandomStreetType() {
-		return getRandomStreetType (0);
+		return getRandomStreetType (-1);
 	}
 	public static StreetType getRandomStreetType(int nullThreshold) {
 		return gt(nullThreshold)
@@ -485,6 +486,15 @@ public class AonRandom {
 			:null;
 	}
 	
+	public static ProductStatus getRandomProductStatus() {
+		return getProductStatus(-1);
+	}
+	public static ProductStatus getProductStatus(int nullThreshold) {
+		return gt(nullThreshold)
+			?ProductStatus.values()[faker.random().nextInt(ProductStatus.values().length)]
+			:null;
+	}
+
 	public static Invoice generateRandomRetentionInvoice(final AONContext ctx, final Occam occam, final AonConfiguration configuration, WithholdingType withholdingType) {
 		Invoice inv = withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
 

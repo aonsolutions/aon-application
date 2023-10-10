@@ -36,7 +36,7 @@ export class DocumentService extends CommonService {
     return (await this.singleObjectCrud.createElement(documents)).result;
   }
 
-  async getDocumentFile(document: IDocument): Promise<string> {
+  async getDocumentFile(document: IDocument): Promise<Blob> {
     return (await this.specificMethods.getRawFile(document)).result
   }
 

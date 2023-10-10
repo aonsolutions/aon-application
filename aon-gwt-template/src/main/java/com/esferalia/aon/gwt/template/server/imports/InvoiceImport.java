@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -742,6 +743,14 @@ public class InvoiceImport extends ImportUtils{
 					.setDueDate(ivs.get(i).getFinanceDate() != null ? ivs.get(i).getFinanceDate() : ai.getInvoice().getIssueDate())
 					.setPayMethod(pm.getId())
 					.setPayment(!invoice.isSales());
+				if(invoice.getRegistry() != null) {
+					RegistryPayMethod rpm = AON.getRegistryPayMethod(domain, user, d -> d.getRegistryProperty().eq(invoice.getRegistry()));
+					if(rpm.getId() != null)	{
+						f.setPayMethod(rpm.getPayMethod().getId());
+						f.setBankAccount(rpm.getRbank().getBankAccount());
+					}
+				}
+				
 				ai.getInvoice().getFinances().add(f);
 			} else {
 				for (Finance fin : ivs.get(i).getFinances()) {
@@ -766,6 +775,13 @@ public class InvoiceImport extends ImportUtils{
 						.setDueDate(ivs.get(i).getFinanceDate() != null ? ivs.get(i).getFinanceDate() : ai.getInvoice().getIssueDate())
 						.setPayMethod(pm.getId())
 						.setPayment(!invoice.isSales());
+					if(invoice.getRegistry() != null) {
+						RegistryPayMethod rpm = AON.getRegistryPayMethod(domain, user, d -> d.getRegistryProperty().eq(invoice.getRegistry()));
+						if(rpm.getId() != null)	{
+							f.setPayMethod(rpm.getPayMethod().getId());
+							f.setBankAccount(rpm.getRbank().getBankAccount());
+						}
+					}
 					insertFinances(domain, user.getLogin(), ai, f);
 				} else {
 					for (Finance fin : ivs.get(i).getFinances()) {
@@ -1077,7 +1093,13 @@ public class InvoiceImport extends ImportUtils{
 					.setDueDate(iic.getFinanceDate() != null ? iic.getFinanceDate() : ai.getInvoice().getIssueDate())
 					.setPayMethod(pm.getId())
 					.setPayment(!invoice.isSales());
-			
+				if(invoice.getRegistry() != null) {
+					RegistryPayMethod rpm = AON.getRegistryPayMethod(domain, user, d -> d.getRegistryProperty().eq(invoice.getRegistry()));
+					if(rpm.getId() != null)	{
+						f.setPayMethod(rpm.getPayMethod().getId());
+						f.setBankAccount(rpm.getRbank().getBankAccount());
+					}
+				}
 				if(financeAccount != null && financeAccount.getId() != null) {
 					ai.getInvoice().addFinance(f);
 				}
@@ -1103,6 +1125,13 @@ public class InvoiceImport extends ImportUtils{
 						.setDueDate(iic.getFinanceDate() != null ? iic.getFinanceDate() : ai.getInvoice().getIssueDate())
 						.setPayMethod(pm.getId())
 						.setPayment(!invoice.isSales());
+					if(invoice.getRegistry() != null) {
+						RegistryPayMethod rpm = AON.getRegistryPayMethod(domain, user, d -> d.getRegistryProperty().eq(invoice.getRegistry()));
+						if(rpm.getId() != null)	{
+							f.setPayMethod(rpm.getPayMethod().getId());
+							f.setBankAccount(rpm.getRbank().getBankAccount());
+						}
+					}
 					insertFinances(domain, user.getLogin(), ai, f);
 				} else {
 					for (Finance fin : iic.getFinances()) {

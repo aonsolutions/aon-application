@@ -1,27 +1,16 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import {
-  Factory,
-  CollectionFactory,
-  ErrorResponse,
-  ICollection,
-  FilterBuilder,
-  IMessageChat,
-  IMessage,
-  IFilter,
-} from 'libraries/AonSDK/src/aon';
-import { ReportingService } from 'src/app/core/services/reporting.service';
-import { MessageService } from 'src/app/core/services/message.service';
-import { MessageChatService } from 'src/app/core/services/message-chat.service';
-import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
-import { TableQueriesComponent } from '../components/table-queries/table-queries.component';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { TranslateService } from '@ngx-translate/core';
+
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
+import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
+import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { MessageChatService } from 'src/app/core/services/message-chat.service';
+import { MessageService } from 'src/app/core/services/message.service';
+import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
+import { OptionsService } from 'src/app/shared/services/options.service';
+import { ReportingService } from 'src/app/core/services/reporting.service';
+import { TablesInboxComponent } from '../components/tables-inbox/table-inbox.component';
 
 export interface Tabs {
   name: string;
@@ -35,16 +24,18 @@ export interface Tabs {
 })
 export class InboxviewComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
-  @ViewChild(TableQueriesComponent, { static: false })
+  @ViewChild(TablesInboxComponent, { static: false })
+
   collectionFactory = new CollectionFactory();
   entityFactory = new Factory();
   datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
+  messages: ICollection<IMessage> =
+  new CollectionFactory().createMessageCollection();
+  messagesChat: ICollection<IMessageChat> =
+  this.collectionFactory.createMessageChatCollection();
 
   messagesData: IMessage = this.entityFactory.createMessage();
   messageChat: IMessageChat = this.entityFactory.createMessageChat();
-
-  messagesChat: ICollection<IMessageChat> =
-    this.collectionFactory.createMessageChatCollection();
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
   tabsConsultas: Tabs[] = [];
@@ -60,10 +51,10 @@ export class InboxviewComponent implements OnInit {
   showSendButtons: boolean = false;
   filterDate: number = 1;
   selectedFilterText: string = '';
+  selectedFilterType: string = '';
   expandedIndex: number = -1;
   newMessageDescription: string = '';
-  noTasksMessageText: string = '';
-  filterPending: boolean = false;
+  spinner: boolean = true;
   @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
     new DropdownMenuComponent();
 
@@ -71,7 +62,6 @@ export class InboxviewComponent implements OnInit {
   tareasMessageCount: number = 0;
   notificacionesMessageCount: number = 0;
   totalMessageCount: number = 0;
-  tableQueriesComponent!: TableQueriesComponent;
   menuItem: MenuItem[] = [];
   selected: string = '';
   items: any[] = [];
@@ -81,7 +71,8 @@ export class InboxviewComponent implements OnInit {
     private translateService: TranslateService,
     public reportingService: ReportingService,
     private messageService: MessageService,
-    private messageChatService: MessageChatService
+    private messageChatService: MessageChatService,
+    private optionsService: OptionsService
   ) {
     this.translateService
       .get([
@@ -148,7 +139,8 @@ export class InboxviewComponent implements OnInit {
           ]);
 
         this.calculateMessageCounts();
-        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
+        this.selectedFilterText =
+          this.translateService.instant('INBOX.THIS_WEEK');
       });
   }
 
@@ -159,6 +151,25 @@ export class InboxviewComponent implements OnInit {
       this.messageService.getMessage(url).then((message) => {
         this.rowClickHandler(message);
       });
+  }
+
+  ngAfterViewInit(): void {
+    this.checkOpenModal();
+  }
+
+  /**
+  * Comprueba si el parametro "showModal" esta presente en los parametros de la consulta y, en caso afirmativo, muestra el modal.
+  *
+  * @private
+  * @returns {void}
+  */
+  private checkOpenModal(): void {
+    const options = this.optionsService.getOptions();
+
+    if (options && options.showModal) {
+      this.optionsService.clearOptions();
+      this.showModal();
+    }
   }
 
   afterModalClosed(result?: any) {
@@ -185,9 +196,6 @@ export class InboxviewComponent implements OnInit {
   }
 
   async rowClickHandler(message: any) {
-    console.log(message, 'message');
-
-    try {
       const isSameRow =
         this.messagesData && this.messagesData.Id === message.key;
       this.showDetail = !isSameRow ? true : !this.showDetail;
@@ -201,10 +209,23 @@ export class InboxviewComponent implements OnInit {
         );
       }
       this.changeView();
-    } catch (error) {
-      console.error('Error al cargar el chat del mensaje:', error);
+
+      this.messageService.getMessage(message.key).then((messageStatus) => {
+
+          if (message.type === 'notificacion') {
+            if (messageStatus.Status === StatusMessage.NUEVA) {
+            messageStatus.Status = StatusMessage.VISTA;
+            }
+          }
+
+          try {
+//            this.messageService.updateMessage(messageStatus);
+          } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
+          }
+
+      });
     }
-  }
 
   consultarClicked() {
     this.showSendButton = !this.showSendButton;
@@ -219,22 +240,24 @@ export class InboxviewComponent implements OnInit {
     this.selected = name;
     switch (optionValue) {
       case 1:
-        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
+        this.selectedFilterText =
+          this.translateService.instant('INBOX.THIS_WEEK');
         break;
       case 2:
-        this.selectedFilterText = this.translateService.instant('INBOX.THIS_MONTH');
+        this.selectedFilterText =
+          this.translateService.instant('INBOX.THIS_MONTH');
         break;
       case 0:
         this.selectedFilterText = this.translateService.instant('INBOX.ALLS');
         break;
       default:
-        this.selectedFilterText = this.translateService.instant('INBOX.THIS_WEEK');
+        this.selectedFilterText =
+          this.translateService.instant('INBOX.THIS_WEEK');
         break;
     }
   }
 
   async calculateMessageCounts() {
-    try {
       // Calcula el recuento para "consulta"
       let filterBuilder = new FilterBuilder();
       filterBuilder.addField('type', 'consulta');
@@ -260,11 +283,9 @@ export class InboxviewComponent implements OnInit {
         this.consultaMessageCount +
         this.tareasMessageCount +
         this.notificacionesMessageCount;
-    } catch (error) {
-      console.error('Error al calcular el recuento de mensajes:', error);
-    }
   }
 
+  // Cerrar details
   closeDetail() {
     this.showDetail = false;
   }
@@ -273,17 +294,21 @@ export class InboxviewComponent implements OnInit {
     this.expandedIndex = this.expandedIndex === index ? -1 : index;
   }
 
+  // ocultar o ver botones
   changeView(): void {
     this.showSendButton = false;
     this.showSendButtons = false;
   }
 
+  //Crear mensaje de consulta
   newMessageDescriptionChange(newValue: string) {
     this.newMessageDescription = newValue;
   }
 
+  //mensaje de chat de consultas
   async createChatMessage(description: string) {
-    if (this.messagesData && this.messageChat) {
+
+    if (this.messageChat && this.messagesData) {
 
       const newMessageChat = this.messageService.objectFactory.createMessageChat()
       .setIdMessage(this.messagesData.Id)
@@ -291,17 +316,38 @@ export class InboxviewComponent implements OnInit {
       .setDescription(description)
       .setType('chat');
 
-      try {
         // Crear el mensaje
         const createdMessageChat =
-          await this.messageChatService.createMessageChat(newMessageChat);
+        await this.messageChatService.createMessageChat(newMessageChat);
 
         // Agregar el nuevo mensaje
         this.messagesChat.add(createdMessageChat);
+        // Desactivo el spinner
+        this.spinner = false;
+    }
+  }
 
-      } catch (error) {
-        throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-      }
+  //mensaje de consulta
+  async createMessage(description: string){
+    if (this.messagesData) {
+
+      const newMessage = this.messageService.objectFactory.createMessage()
+      .setName(this.messagesData.Name)
+      .setDescription(description)
+      .setType(TypeMessage.CONSULTA)
+      .setStatus(StatusMessage.CERRADA)
+      .setLastMessageChatOrigin(false);
+
+        // Crear el mensaje
+        const createdMessage = await this.messageService.createMessage(newMessage);
+        this.messagesData = createdMessage;
+        // Agregar el nuevo mensaje
+        this.messages.add(createdMessage);
+        // Desactivo el spinner
+        setTimeout(() => {
+          this.spinner = false;
+
+        }, 2000)
     }
   }
 
@@ -310,9 +356,20 @@ export class InboxviewComponent implements OnInit {
     if (this.newMessageDescription.trim() === '') {
       return;
     }
-
     // Llama a la función para crear un nuevo mensaje de chat
     this.createChatMessage(this.newMessageDescription);
+
+    // Limpia el campo de entrada después de enviar el mensaje
+    this.newMessageDescription = '';
+  }
+
+  sendMessage() {
+    // para no enviar mensajes vacíos
+    if (this.newMessageDescription.trim() === '') {
+      return;
+    }
+    // Llama a la función para crear un nuevo mensaje
+    this.createMessage(this.newMessageDescription);
 
     // Limpia el campo de entrada después de enviar el mensaje
     this.newMessageDescription = '';

@@ -8,7 +8,6 @@ import { DuplicateFacturaComponent } from '../components/duplicate-factura/dupli
 import { DeleteFacturaComponent } from '../components/delete-factura/delete-factura.component';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { SetproductIcons } from 'libraries/setproduct-icons';
 
 interface ChartItem {
   name: string;
@@ -71,14 +70,6 @@ export class BillingComponent implements OnInit {
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
   ) {
-
-    SetproductIcons.add({
-      "add_note":
-      `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-240h80v-120h120v-80H520v-120h-80v120H320v80h120v120ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/></svg>`
-    })
-
-    console.log(SetproductIcons.get('add_note'));
-
     this.translateService
       .get(['BILLING.SALES', 'BILLING.BILLS', 'BILLING.REPORTS', 'BILLING.SALES_CHECK'])
       .subscribe((result) => {
@@ -117,7 +108,7 @@ export class BillingComponent implements OnInit {
 
     this.buttonsVentas = [
       {
-        shape: 'add_note',
+        shape: 'aon_note_add',
         modal: '',
       },
       {
@@ -149,7 +140,7 @@ export class BillingComponent implements OnInit {
 
     this.buttonsEdit = [
       {
-        shape: 'add_note',
+        shape: 'aon_note_add',
       },
       {
         shape: 'send',

@@ -19,6 +19,7 @@ import { AonDialog } from '../../components/aon-dialog.js';
 import { AonCheckbox } from '../../components/aon-checkbox.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
+import { AonBasicTable } from '../../components/aon-basic-table.js';
 export class AonBooking extends AonElement {
 
 	TOOLBAR;
@@ -459,11 +460,40 @@ export class AonBooking extends AonElement {
 			dialog.id = this.SAVE_DIALOG;
 			this.appendChild(dialog);
 		}
+
+		let div = this.createElement(TAG.DIV);
+		
+		let span = this.createElement(TAG.SPAN);
+		span.style.fontWeight = 'bold';
+		span.style.color = 'red';
+		span.innerHTML= 'Los cambios realizados pueden suponer variaciones en la facturación.';
+		div.appendChild(span);
+		
+		let table = new AonBasicTable();
+		table.style.top = '20px';
+		table.style.position = 'relative'; 
+		div.appendChild(table);
+
 		dialog.clear();
-		dialog.setTitle('Contratación');
-		dialog.setContent(this.saveDialogContent());
+		dialog.setTitle(MSG.BOOKING);
+		dialog.setContent(div);
 		dialog.addAcceptAction(() => this.save());
 		dialog.open();
+		dialog.getButtonAccept().disabled = true;
+
+		table.addRow();
+
+		let checkBox = new AonCheckbox();
+
+		let td = table.addCell(checkBox)
+		td.style.width = '15px';
+		let span3 = this.createElement(TAG.SPAN);
+		span3.innerHTML = 'He leido las <a target="_blank" class="aonLink" href="http://aonsolutions.es/docs/aon_condiciones_generales_del_contrato.pdf">condiciones de servicio</a> y estoy de acuerdo con las mismas'
+		table.addCell(span3);
+
+		checkBox.addEventListener(EVENT.CHANGE, () => {
+			dialog.getButtonAccept().disabled = !checkBox.isChecked();
+		});
 	}
 
 	editTypeDialog() {
@@ -511,12 +541,6 @@ export class AonBooking extends AonElement {
 
 	changeType(val) {
 		this.dur.domain.type = val;
-	}
-
-	saveDialogContent() {
-		let checkBox = new AonCheckbox();
-		checkBox.description = 'He leido las condiciones de servicio y estoy de acuerdo con las mismas';
-		return checkBox;
 	}
 
 	save() {
