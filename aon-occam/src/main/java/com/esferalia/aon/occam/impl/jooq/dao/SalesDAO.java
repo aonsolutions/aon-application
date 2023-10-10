@@ -67,7 +67,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalesDAO {
 	
-	private static final SalesPropertiesDAO SALES_PROPERTIES = new SalesPropertiesDAO();
+	public static final SalesPropertiesDAO SALES_PROPERTIES = new SalesPropertiesDAO();
 
 	private SalesDAO() {
 	

@@ -230,7 +230,8 @@ export class AonViewer extends AonElement {
 		const width = this.getAttribute('width');
 
 		this.waitLib().then(pdfjsLib=>{
-			pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
+			// pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
+			pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://sig.aonsolutions.org/html/build/pdf.worker.js';
 			// Asynchronous download of PDF
 			//		var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf';
 			// this.file = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";

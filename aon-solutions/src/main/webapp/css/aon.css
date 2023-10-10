@@ -2,6 +2,7 @@
   --aonBlue : #002469;
   --aonSecondary: #b10d4c;
   --aonOldSecondary: #12ccd1;
+  --aonError: #f6655a;
   --aonBackground: #f6f8fc;
   --aonLightBlue: #eaf1fb;
   --aonSelectedBlue: #d3e3fd;
@@ -158,6 +159,39 @@
 .aonButton[disabled], .aonButton:disabled {
   cursor: not-allowed;
   background-color: #cccccc !important;
+}
+
+.aonDashboardButton{
+  padding: 10px 20px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  color: #19191d;
+  border-radius: 0.2rem;
+  background-color: #fff;
+  border: solid 0.05rem #d2d2d6;
+  gap: .5rem;
+}
+
+.aonDashboardButton i {
+  padding: .2rem;
+  background-color: #f0f0f1;
+}
+
+.aonDashboardButton span {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: #19191d;
+}
+
+.aonDashboardButton:hover{
+  background-color: #f0f0f1;
+}
+
+.aonDashboardButton:hover i{
+  background-color: #fff;
 }
 
 .aonColorIcon {
@@ -462,12 +496,21 @@
 }
 
 .aonToolbar {
-  border-bottom: solid 0.05rem #d2d2d6;
-  height: 3.5rem;
   display: flex;
-  padding: 0 2rem;
+  height: 40px;
+  padding-left: 16px;
+  border-top: 0px none;
+  border-bottom: 1px solid rgb(221, 221, 221);
+  font-size: 16px;
+}
+
+.aonToolbar2 { /* NUEVO LOGIN */
+  display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 4rem;
+  border-bottom: solid 0.05rem #d2d2d6;
+  padding: 0 2rem;
 }
 
 .aonToolbarBeta {
@@ -586,9 +629,9 @@
   width: 60px;
   position: fixed;
   top: 60px;
-  right: 0;
+  left: 0;
   background-color: var(--aonWhite);
-  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
   overflow-x: hidden;
   z-index: 2;
 }
@@ -662,7 +705,7 @@
 
 
 .aonSidenavTitleBeta {
-  font-size: 12px;
+  font-size: 16px;
   margin-top: 15px;
   margin-bottom: 10px;
   font-weight: bold;
@@ -810,6 +853,15 @@
 .aonSearchBox {
   position: absolute;
   height: 40px;
+  border: none;
+  -webkit-appearance: none;
+  outline: 0px;
+  font-size: 14px;
+}
+
+.aonSearchBoxBeta {
+  position: absolute;
+  height: 38px;
   border: none;
   -webkit-appearance: none;
   outline: 0px;
@@ -1445,6 +1497,15 @@
   display: flex;
   height: 100%;
   width: 100%;
+}
+
+.aonNewUploadLabel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  color: #aaa;
 }
 
 .aonDesktopMenuClassicOption{

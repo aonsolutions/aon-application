@@ -136,6 +136,7 @@ export const isNewTheme = () => {
 
 export const setNewTheme = (newTheme) => {
     set(NEW_THEME, newTheme);
+    location.reload();
 }
 
 export const removeDomain = () => {

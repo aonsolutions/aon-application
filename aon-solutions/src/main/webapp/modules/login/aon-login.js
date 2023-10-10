@@ -22,6 +22,7 @@ import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { Language } from "../../models/Language.js";
 import * as COLORS from "../../environments/colors.js";
 import { AonNewInput } from "../../components/aon-new-input.js";
+import { AonEmail } from "../../components/aon-email.js";
 
 export class AonLogin extends AonElement {
   tag;
@@ -100,8 +101,9 @@ export class AonLogin extends AonElement {
     divContent.appendChild(aonLoader);
 
     let userInput = this.createAonElement(
-      LS.isNewTheme() ? new AonNewInput() : new AonInput()
+      LS.isNewTheme() ? new AonEmail() : new AonInput()
       , 'aonLoginUser', MSG.USER);
+    // userInput.setRequired(true);
     userInput.addEventListener(EVENT.KEYUP, () => {
       this.getElement('aonLoginMagicLink').setDisabled(!userInput.value.includes('@')); 
     })
@@ -110,6 +112,7 @@ export class AonLogin extends AonElement {
     let passwordInput = this.createAonElement(
       LS.isNewTheme() ? new AonNewInput() : new AonInput()
       , 'aonLoginPassword', MSG.PASSWORD);
+    // passwordInput.setRequired(true);
     passwordInput.type = 'password';
     divContent.appendChild(passwordInput);
 
@@ -143,10 +146,7 @@ export class AonLogin extends AonElement {
       certificateButton.setIcon(MATERIAL_ICONS.SECURITY);
       certificateButton.setTitle(MSG.SIGN_IN_WITH_CERTIFICATE);
       certificateButton.setColor("black");
-      certificateButton.addEventListener(EVENT.CLICK, () =>  {
-        window.open('/fnmtoauth2', '_blank', 'width=700,height=800,scrollbars=yes');
-        return false; 
-      });
+      certificateButton.addEventListener(EVENT.CLICK, () =>  LS.setNewTheme(true));
       divButtons.appendChild(certificateButton);
     }
 
@@ -423,5 +423,6 @@ export class AonLogin extends AonElement {
     }
   }
 }
-
-window.customElements.define("aon-login", AonLogin);
+if(!window.customElements.get(TAG.AON_LOGIN)){
+	window.customElements.define(TAG.AON_LOGIN, AonLogin);
+}

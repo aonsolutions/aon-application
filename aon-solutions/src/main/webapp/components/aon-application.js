@@ -366,7 +366,7 @@ export class AonApplication extends AonElement {
     sidenavTitle.title = data.name;
     sidenavTitle.style.cursor = "pointer";
     sidenavTitle.style.userSelect = "none";
-    sidenavTitle.style.marginLeft = "2px";
+    sidenavTitle.style.marginLeft = LS.isNewTheme() ? "10px": "2px";
 
     let arrowTitleSpan = this.createElement(TAG.SPAN);
     arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;

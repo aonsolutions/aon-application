@@ -8,6 +8,7 @@ import { AonMobileMenu } from './aon-mobile-menu.js';
 import { CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js'; 
 
 import * as LS from '../services/localStorageService.js';
+import { AonNewMenu } from './aon-new-menu.js';
 
 export class AonHome extends AonElement {
 
@@ -41,7 +42,7 @@ export class AonHome extends AonElement {
 	}
 
 	build() {
-		let aonMenu = new AonMenu();
+		let aonMenu = LS.isNewTheme() ? new AonNewMenu() : new AonMenu();
 		aonMenu.id = this.AON_MENU;
 		aonMenu.className = CSS.AON_MENU;
 
