@@ -1,0 +1,11 @@
+<div class="modal-completed">
+  <div class="iconBox">
+    <app-icon class="pink" shape="check_circle"></app-icon>
+  </div>
+  <p class="title">Archivo subido correctamente</p>
+  <div class="buttonsAccept">
+    <app-button [class]="'accept'" (click)="closeModal()">
+      {{ "COMMON.ACCEPT" | translate }}
+    </app-button>
+  </div>
+</div>
