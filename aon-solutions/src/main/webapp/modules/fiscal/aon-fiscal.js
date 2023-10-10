@@ -104,7 +104,8 @@ export class AonFiscal extends AonElement {
 			id: "Ejercicio",
 			title:"Ejercicio",
   		name:"Ejercicio",
-      color: Apps.FISCAL.color
+      color: Apps.FISCAL.color,
+      backgroundColor: Apps.FISCAL.backgroundColor
 		};
 
       application.addSidenavOptions2(data, ejercicios);
@@ -130,7 +131,8 @@ export class AonFiscal extends AonElement {
         id: "Periodo",
         title:"Periodo",
         name:"Periodo",
-        color: Apps.FISCAL.color
+        color: Apps.FISCAL.color, 
+        backgroundColor: Apps.FISCAL.backgroundColor
       };
       application.addSidenavOptions2(data2, periods);
 

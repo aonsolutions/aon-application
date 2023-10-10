@@ -15,6 +15,7 @@ import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
 import * as OPTION from '../invoice/InvoiceOptions.js';
 import * as GWT from "../../gwt/gwt.js";
+import * as LS from "../../services/localStorageService.js";
 import { TASK_SOURCE } from '../messenger/MessengerEnums.js';
 import { AonFiscal } from '../fiscal/aon-fiscal.js';
 import { AonLaboral } from '../laboral/aon-laboral.js';
@@ -27,8 +28,6 @@ import { getNoteCount } from '../../services/noteService.js';
 import { AonAccounting } from '../accounting/aon-accounting.js';
 import { Attach } from '../../models/Attach.js';
 import { AonWarehouse } from '../warehouse/aon-warehouse.js';
-
-import * as LS  from '../../services/localStorageService.js';
 import { AonTab } from '../../components/aon-tab.js';
 import { AonNewUpload } from '../../components/aon-new-upload.js'
 import { AonDashboardButton } from '../../components/aon-dashboard-button.js';
@@ -100,7 +99,9 @@ export class AonDesktop extends AonElement {
 		let divLogo = this.createElement(TAG.DIV);
 		divLogo.id = this.id + 'Logo';
 		aonDesktop.getSidenav().appendChild(divLogo);
-
+		if(LS.isNewTheme()) {
+			aonDesktop.getSidenav().style.display = 'none';
+		}
 		let filter = {
 			attachType: 'registry',
 			attachModule: company.registry,
@@ -478,13 +479,16 @@ export class AonDesktop extends AonElement {
 		} else {
 			let li = this.createElement(TAG.LI);
 			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
-			li.classList.add(CSS.AON_APP_LI);
+			if(!LS.isNewTheme()) {
+				li.classList.add(CSS.AON_APP_LI);
+			}
 			li.style.borderRight = '0px';
 			li.style.borderLeft = '0px';
 			li.style.cursor = 'pointer';
 			li.addEventListener(EVENT.CLICK, () => {
 				this.rootPanelHtml('<aon-configuration></aon-configuration>');
 			});
+			
 			let span = this.createElement(TAG.SPAN);
 			span.style.margin = '20px';
 
@@ -538,7 +542,9 @@ export class AonDesktop extends AonElement {
 			ul.appendChild(li)
 			li.id = this.AON_DESKTOP + app.app.initCap();
 			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
-			li.classList.add(CSS.AON_APP_LI);
+			if(!LS.isNewTheme()) {
+				li.classList.add(CSS.AON_APP_LI);
+			}
 			li.style.borderRight = '0px';
 			li.style.borderLeft = '0px';
 			li.style.cursor = 'pointer';
@@ -547,6 +553,17 @@ export class AonDesktop extends AonElement {
 				this.appSelection(app.app);
 				this.appOption = false
 			});
+			if(LS.isNewTheme()) {
+
+				li.addEventListener(EVENT.MOUSEOVER, () => {
+					li.style.backgroundColor = app.backgroundColor || '#eaf1fb';
+				});
+
+				li.addEventListener(EVENT.MOUSELEAVE, () => {
+					li.style.backgroundColor = 'transparent';
+				});
+			}
+
 			let span = this.createElement(TAG.SPAN);
 			span.style.margin = '20px';
 
@@ -632,6 +649,7 @@ export class AonDesktop extends AonElement {
 
 			span.appendChild(buttons);
 			li.appendChild(span);
+
 			if (app.options && app.options.upload) {
 				li.addEventListener(EVENT.DRAGOVER, (event) => {
 					event.preventDefault();
