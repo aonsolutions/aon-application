@@ -173,14 +173,14 @@ export class DocumentationComponent implements OnInit {
         path
       );
 
-      this.documentService
-        .createDocument(this.document)
-        .then((response) => {
-          this.uploadCompletedModal();
-        })
-        .catch((error) => {
-          this.uploadErrorModal();
-        });
+      // this.documentService
+      //   .createDocument(this.document)
+      //   .then((response) => {
+      //     this.uploadCompletedModal();
+      //   })
+      //   .catch((error) => {
+      //     this.uploadErrorModal();
+      //   });
     }
   }
 
