@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RenameFileComponent } from './rename-file.component';
+import { UploadErrorModalComponent } from './upload-error-modal.component';
 
-describe('RenameFileComponent', () => {
-  let component: RenameFileComponent;
-  let fixture: ComponentFixture<RenameFileComponent>;
+describe('UploadErrorModalComponent', () => {
+  let component: UploadErrorModalComponent;
+  let fixture: ComponentFixture<UploadErrorModalComponent>;
 
 //  beforeEach(async () => {
 //    await TestBed.configureTestingModule({
-//      declarations: [ RenameFileComponent ]
+//      declarations: [ UploadErrorModalComponent ]
 //    })
 //    .compileComponents();
 //  });
 //
 //  beforeEach(() => {
-//    fixture = TestBed.createComponent(RenameFileComponent);
+//    fixture = TestBed.createComponent(UploadErrorModalComponent);
 //    component = fixture.componentInstance;
 //    fixture.detectChanges();
 //  });

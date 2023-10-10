@@ -4,9 +4,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { DocumentService } from '../../../core/services/document.service';
 import { WorkingModalComponent } from '../components/working-modal/working-modal.component';
-import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/compoents/upload-modal/upload-modal.component';
-import { UploadErrorModalComponent } from 'src/app/shared/components/file-upload-button/compoents/upload-error-modal/upload-error-modal.component';
-import { UploadCompletedModalComponent } from 'src/app/shared/components/file-upload-button/compoents/upload-completed-modal/upload-completed-modal.component';
+import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
+import { UploadErrorModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-error-modal/upload-error-modal.component';
+import { UploadCompletedModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-completed-modal/upload-completed-modal.component';
 
  interface ShortcutDashboard {
   shape : string;

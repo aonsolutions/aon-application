@@ -12,9 +12,9 @@ import {
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 import { TranslateService } from '@ngx-translate/core';
-import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/compoents/upload-modal/upload-modal.component';
-import { UploadCompletedModalComponent } from 'src/app/shared/components/file-upload-button/compoents/upload-completed-modal/upload-completed-modal.component';
-import { UploadErrorModalComponent } from 'src/app/shared/components/file-upload-button/compoents/upload-error-modal/upload-error-modal.component';
+import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
+import { UploadCompletedModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-completed-modal/upload-completed-modal.component';
+import { UploadErrorModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-error-modal/upload-error-modal.component';
 import { RenameFileComponent } from '../components/rename-file/rename-file.component';
 
 @Component({
