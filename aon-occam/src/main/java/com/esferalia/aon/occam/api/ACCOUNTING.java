@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
+import com.esferalia.aon.occam.impl.jooq.validation.AmortizationTypeValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class ACCOUNTING {
@@ -721,22 +722,27 @@ public class ACCOUNTING {
 	// AMORTIZATION TYPE
 	
 	public static List<AmortizationType> getAmortizationTypeList(String domainName, int domain, String user, AmortizationTypeParams params) throws AonCoreException {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) { 
+			AmortizationTypeValidation.validateParams(params, ctx);
 			return getAccounting().getAmortizationTypeList(ctx, params);
+
 		}
 	}
 
-	public static void deleteAmortizationTypes(String domainName, int domain, String user, List<Integer> deleteIds) {
+	public static void deleteAmortizationTypes(String domainName, int domain, String user, List<Integer> deleteIds) throws AonCoreException  {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			AmortizationTypeValidation.validateList(ctx, deleteIds);
 			getAccounting().deleteAmortizationTypes(ctx, deleteIds);
 		}
 	}
 	
-	public static void saveAmortizationType(String domainName, int domain, String user, AmortizationType amortizationType) {
+	public static void saveAmortizationType(String domainName, int domain, String user, AmortizationType amortizationType) throws AonCoreException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			AmortizationTypeValidation.validate(ctx, amortizationType);
 			getAccounting().saveAmortizationType(ctx, amortizationType);
 		}
 	}
 
+	
 
 }

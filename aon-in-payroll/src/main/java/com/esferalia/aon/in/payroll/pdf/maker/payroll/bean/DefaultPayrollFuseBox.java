@@ -17,6 +17,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -106,6 +107,19 @@ public class DefaultPayrollFuseBox {
 		return getPaymentsByCras(allPayments, INDEMN_CRAS);
 	}
 	
+	public static List<PDFPayment> getInfos(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {
+		return getPaymentsByCras(allPayments, new Integer [] {IPayrollTemplate.INFO} );
+	}
+
+	public static List<PDFPayment> getNotes(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {
+		return getPaymentsByCras(allPayments, new Integer [] {IPayrollTemplate.NOTE} );
+	}
+	
+	public static List<PDFPayment> getWarnings(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {
+		return getPaymentsByCras(allPayments, new Integer [] {IPayrollTemplate.WARNING} );
+	}
+	
+
 	public static List<PDFPayment> getOtherPayments(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {
 		if (allPayments.isEmpty()) {
 			return Collections.emptyList();
@@ -114,6 +128,11 @@ public class DefaultPayrollFuseBox {
 		Set<Integer> filteredCras = new HashSet<>();
 		filteredCras.add(1);
 		filteredCras.add(100);
+		
+		filteredCras.add(IPayrollTemplate.INFO);
+		filteredCras.add(IPayrollTemplate.NOTE);
+		filteredCras.add(IPayrollTemplate.WARNING);
+		
 		filteredCras.addAll(Arrays.asList(EXTRA_HOUR_CRAS));
 		filteredCras.addAll(Arrays.asList(EXTRA_GRATIFICATIONS_CRAS));
 		filteredCras.addAll(Arrays.asList(IN_KIND_CRAS));

@@ -61,6 +61,7 @@ import com.esferalia.aon.watson.util.Pair;
 
 import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.SistemaRED.LiquidationType;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Idc;
 
@@ -150,16 +151,29 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 						Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
 						
 						SistemaRED2AON.addCalcs(aonContext, 
-								userLogin, 
-								domainName, 
-								domainId, 
-								certificate.getData(), 
-								certificate.getPassword(), 
-								certificate.getType(), 
-								ccc.getRegime(), 
-								ccc.getCode(), 
-								startDate, 
-								endDate);
+							userLogin, 
+							domainName, 
+							domainId, 
+							certificate.getData(), 
+							certificate.getPassword(), 
+							certificate.getType(), 
+							ccc.getRegime(), 
+							ccc.getCode(), 
+							startDate, 
+							endDate);
+						
+						SistemaRED2AON.addCalcs(aonContext, 
+							userLogin, 
+							domainName, 
+							domainId, 
+							certificate.getData(), 
+							certificate.getPassword(), 
+							certificate.getType(), 
+							ccc.getRegime(), 
+							ccc.getCode(), 
+							startDate, 
+							LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV);
+
 						writer.write(ccc.getCode());
 						writer.flush();
 					} catch ( Exception e ) {

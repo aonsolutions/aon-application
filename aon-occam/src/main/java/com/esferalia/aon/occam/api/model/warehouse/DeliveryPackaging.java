@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api.model.warehouse;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 
 public class DeliveryPackaging implements Serializable {
@@ -87,6 +86,11 @@ public class DeliveryPackaging implements Serializable {
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	
+	public boolean isEmpty() {
+		return getItem().isEmpty()
+			&& getDelivery().getId() == null;
 	}
 
 }

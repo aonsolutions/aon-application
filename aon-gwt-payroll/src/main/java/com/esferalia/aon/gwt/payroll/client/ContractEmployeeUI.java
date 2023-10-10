@@ -570,6 +570,8 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	}
 	
 	private void fillContractTable(ContractInfo contractData) {
+		employee.checkCCCType(contractData.getCccType());
+		
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
 		setSelectedValueLB(employee.mdTBTLB, contractData.getMdTBT()+"");
 		

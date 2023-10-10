@@ -29,10 +29,12 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.jooq.tables.SalaryDeduction;
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -1527,6 +1529,70 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 			System.out.println(e.getMessage());
 		}
 	}
+
+	@Test
+	public void testDeductionBonus() throws ExpressionException, SQLException,
+			SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		addFormacionAndTutoriaBonus(aonContext);
+
+
+
+		ContractRecord contract = newContract(
+				aonContext, 
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String,String>(){
+				{
+					put(ContextVariable.TC2.getName(), "'100'");
+					put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+					
+				}
+				},
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS/DIAS_MES",
+						}, 
+				new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						},
+				null
+			);
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		addBonus(aonContext, contract, startDate, endDate, 
+			"/*pec:16, quota:08*/"
+			+ "/*read.only*/"
+			+ "CHECK(\"100\".indexOf(TC2) >= 0,  \"El contrato de ser del tipo 100\");"
+			+ "SELF.addDeduction(\"BONIF\", \"BONIF. TEST DEDUCTION BONUS\", \"(-MIN(1000.00, CUOTA_TRABAJADOR))\");"
+			+ "CUOTA_EMPRESA"
+			+ "/**/" , 
+			"BONIF. TEST DEDUCTION BONUS");
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		Salary salary = calculator.calculate( getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		for (com.esferalia.aon.payroll.SalaryDeduction deduction : salary.getSalaryDeductions()) {
+			System.out.println(deduction.getDescription() +" = " + deduction.getAmount() );
+		}
+		
+
+		org.junit.Assert.assertEquals(3, salary.getSalaryDeductions().size());
+		org.junit.Assert.assertEquals(0.00, salary.getSocialSecurityContributions(), 0.00);
+
+		
+
+	}
+
 
 	// ------------------------------------------------------------------------
 

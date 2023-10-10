@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -57,10 +58,17 @@ public class DeliveryValidation {
 		}
 	};
 	
+	public static final BiConsumer<AONContext, Delivery> COMPLETE_REGISTRY_ADDRESS = (ctx, delivery) -> {
+		if(delivery.getAddress() == null || delivery.getAddress().getId() == null) {
+			RegistryAddressDAO.getMain(ctx, delivery.getCustomer().getId());
+		}
+	};
+	
 	public static void autocomplete(AONContext ctx, Delivery delivery) throws AonCoreException{
 		COMPLETE_DATE
 		.andThen(COMPLETE_TOTAL_PACKAGES)
 		.andThen(COMPLETE_TOTAL_WEIGHT)
+		.andThen(COMPLETE_REGISTRY_ADDRESS)
 		.accept(ctx, delivery);
 		
 	}

@@ -1,9 +1,8 @@
 
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CollectionFactory, ErrorResponse, Factory, ICollection, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, Factory, ICollection, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
 import { MessageService } from 'src/app/core/services/message.service';
-
 
 export interface Holders {
   Id: string;
@@ -16,7 +15,6 @@ export interface Holders {
   styleUrls: ['./modal-create.component.scss']
 })
 export class ModalCreateComponent implements OnInit {
-
   holders: any;
   advisors: any = "";
   advisorsList: any[] = [];
@@ -86,7 +84,6 @@ export class ModalCreateComponent implements OnInit {
         this.spinner = false;
     }
   }
-
   sendMessage() {
     // para no enviar mensajes vacíos
     if (this.newMessageDescription.trim() === '') {

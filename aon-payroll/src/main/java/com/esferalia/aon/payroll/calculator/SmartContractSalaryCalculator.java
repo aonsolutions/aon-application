@@ -1823,7 +1823,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 	
 	protected double getCgcBaseMin(ExpressionContext expressionContext, Period period) throws ExpressionException {
-		double cgcBaseMin = expressionContext.dryEval(ContextVariable.CGC_BASE_MIN.getName(), period.getStart(), period.getEnd()).stream()
+		double cgcBaseMin = expressionContext.dryEval(String.format(" %s * 14 / 12 * %s", ContextVariable.SMI, ContextVariable.PARTIAL_FACTOR ), period.getStart(), period.getEnd()).stream()
 		.map(v->v.getValue(v.getPeriod())).filter(v -> v != null && v instanceof Number)
 		.collect(Collectors.summingDouble(v -> ((Number)v).doubleValue()));
 		return cgcBaseMin;

@@ -38,7 +38,7 @@ export class DocumentationComponent implements OnInit {
   
   constructor(
     private translateService: TranslateService,
-    private documentService : DocumentService,
+    public documentService : DocumentService,
     private folderService   : FolderService)
   {
     /*

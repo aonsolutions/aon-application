@@ -10,8 +10,8 @@ import es.translogia.tedi.json.FunctionalInterfaces.ITediCommentsToJSON;
 public enum TediCommentsJSON {
 
 	DATE(
-		(comments, json) -> comments.setDate(TediJSONUtils.parseDate(json.optString(IConstants.DATE))),
-		(comments, json) -> TediJSONUtils.put(json, IConstants.DATE, comments.getDate())
+		(comments, json) -> comments.setDate(TediJSONUtils.parseDateTime(json.optString(IConstants.DATE))),
+		(comments, json) -> TediJSONUtils.putDateTime(json, IConstants.DATE, comments.getDate())
 	),
 	COMMENTS(
 		(comments, json) -> comments.setComment(json.optString(IConstants.COMMENT)),

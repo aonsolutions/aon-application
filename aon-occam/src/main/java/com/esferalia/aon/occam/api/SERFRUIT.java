@@ -37,6 +37,11 @@ public class SERFRUIT {
 		}
 	}
 	
+	public static Delivery saveDelivery(Domain domain, User user, Delivery delivery) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getSerfruit().saveDelivery(ctx, delivery);
+		}
+	}
 	
 	public static void saveDeliveryPackaging(Domain domain, User user, Delivery delivery, List<SerfruitDeliveryPackaging> packaging) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {

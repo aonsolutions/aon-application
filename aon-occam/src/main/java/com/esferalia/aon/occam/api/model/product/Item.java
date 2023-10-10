@@ -292,6 +292,11 @@ public class Item implements Serializable {
 		return this;
 	}
 	
+	public Item addItemComposition(ItemComposition itemComposition) {
+		getItemComposition().add(itemComposition);
+		return this;
+	}
+	
 	public String getCreationUser() {
 		return creationUser;
 	}

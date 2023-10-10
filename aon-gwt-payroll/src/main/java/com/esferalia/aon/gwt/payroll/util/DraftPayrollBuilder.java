@@ -5,6 +5,8 @@ import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionPDFTyp
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionTypeDescription;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NO_HOLIDAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.UNPAID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
@@ -164,7 +168,13 @@ public class DraftPayrollBuilder {
 				PDFPayment accrual = new PDFPayment(p.getAmount(), description);
 				
 				int craKey = p.getType().ordinal();
-				if (PaymentType.CRA_0001.equals(p.getType())) {
+				if ( Objects.equals(ContextVariable.NOTE, p.getName())) {
+				    craKey  = IPayrollTemplate.NOTE;
+				} else if ( Objects.equals(ContextVariable.INFO, p.getName())) {
+				    craKey  = IPayrollTemplate.INFO;
+				} else if ( Objects.equals(ContextVariable.CAUTION, p.getName())) {
+				    craKey  = IPayrollTemplate.WARNING;
+				} else if (PaymentType.CRA_0001.equals(p.getType())) {
 					//TODO: COMPROBAR PREST_IT, ERE% Y MTNAD
 					try {						
 						if (PRESTATION_CONCEPTS.contains(p.getName()) || AonStringUtils.equals("ERE_", AonStringUtils.substring(p.getName(), 0, 4))) {
@@ -521,12 +531,14 @@ public class DraftPayrollBuilder {
 	}
 	
 	private static boolean filter(SalaryPayment payment) {
-		List<String> excludedConcepts = Arrays.asList("PREST_IT");
-		List<String> excludedDescriptionWords = Arrays.asList("vacaciones");
+		List<String> logConcepts = Arrays.asList(ContextVariable.LOGS);
+		List<String> excludedDescriptionWords = Arrays.asList("VACACIONES");
+		List<String> excludedConcepts = Arrays.asList(PREST_IT, UNPAID.getName());
 		
 		return !(payment.getAmount() == 0 && payment.getQuote() == 0)
-				|| excludedConcepts.contains(payment.getName())
-				|| excludedDescriptionWords.stream().anyMatch(word -> AonStringUtils.containsIgnoreCase(payment.getDescription(), word));
+			|| logConcepts.contains(payment.getName())
+			|| excludedConcepts.contains(payment.getName())
+			|| excludedDescriptionWords.stream().anyMatch(word -> AonStringUtils.containsIgnoreCase(payment.getDescription(), word));
 	}
 
 //	private static boolean filter (SalaryPayment payment) {

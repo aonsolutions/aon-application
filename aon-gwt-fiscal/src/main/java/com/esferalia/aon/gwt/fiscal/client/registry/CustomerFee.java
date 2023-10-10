@@ -138,6 +138,7 @@ public class CustomerFee extends MainEntryPoint {
 	private Integer minYear;
 	private Integer maxYear;
 	
+	private HTMLPanel filterContentPanel;
 	private ListBox monthListBox;
 	private ListBox yearListBox;
 	private ListBox periocityListBox;
@@ -164,6 +165,7 @@ public class CustomerFee extends MainEntryPoint {
 	private SuggestBox projectSuggestBox;
 	
 	// Filter Customer
+	private HTMLPanel filterCustomerContentPanel;
 	private SuggestBox customerSuggestBoxCustomer;
 	private ListBox customerStatusListBoxCustomer;
 	
@@ -310,7 +312,7 @@ public class CustomerFee extends MainEntryPoint {
 				containerCustomer.add(deckPanelCustomer);
 				
 				scrollPanelCustomer = new ScrollPanel();
-				scrollPanelCustomer.setHeight((Window.getClientHeight() - 230) + "px");
+				scrollPanelCustomer.setHeight((Window.getClientHeight() - 230 - filterCustomerContentPanel.getOffsetHeight()) + "px");
 				scrollPanelCustomer.addScrollHandler(e -> {
 					// ------------------------------------ Ignore scroll up.
 					int oldScrollPos = lastScrollPosCusotmer;
@@ -362,7 +364,7 @@ public class CustomerFee extends MainEntryPoint {
 				container.add(deckPanel);
 				
 				scrollPanel = new ScrollPanel();
-				scrollPanel.setHeight((Window.getClientHeight() - 230) + "px");
+				scrollPanel.setHeight((Window.getClientHeight() - 180 - filterContentPanel.getOffsetHeight()) + "px");
 				scrollPanel.addScrollHandler(e -> {
 					// ------------------------------------ Ignore scroll up.
 					int oldScrollPos = lastScrollPos;
@@ -393,7 +395,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 
 	private void createFilterPanel(final RegistryModuleOptions opt, AsyncCallback<Void> endCallback) {
-		HTMLPanel filterContentPanel = new HTMLPanel("");
+		filterContentPanel = new HTMLPanel("");
 		filterContentPanel.addStyleName(AON.CSS.aonFlexBetween());
 		filterContentPanel.addStyleName(AON.CSS.aonFilterPanel());
 		filterContentPanel.getElement().getStyle().setProperty("margin", "0 1rem");
@@ -723,10 +725,10 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void createCustomerFilterPanel(final RegistryModuleOptions opt, AsyncCallback<Void> endCallback) {
-		HTMLPanel filterContentPanel = new HTMLPanel("");
-		filterContentPanel.addStyleName(AON.CSS.aonFlexBetween());
-		filterContentPanel.addStyleName(AON.CSS.aonFilterPanel());
-		filterContentPanel.getElement().getStyle().setProperty("margin", "0 1rem");
+		filterCustomerContentPanel = new HTMLPanel("");
+		filterCustomerContentPanel.addStyleName(AON.CSS.aonFlexBetween());
+		filterCustomerContentPanel.addStyleName(AON.CSS.aonFilterPanel());
+		filterCustomerContentPanel.getElement().getStyle().setProperty("margin", "0 1rem");
 		
 		HTMLPanel filterLeftPanel = new HTMLPanel("");
 		filterLeftPanel.addStyleName(AON.CSS.aonFlexColumn());
@@ -771,10 +773,10 @@ public class CustomerFee extends MainEntryPoint {
 		
 		filterRightPanel.add(resetBtn);
 		
-		filterContentPanel.add(filterLeftPanel);
-		filterContentPanel.add(filterRightPanel);
+		filterCustomerContentPanel.add(filterLeftPanel);
+		filterCustomerContentPanel.add(filterRightPanel);
 
-		containerCustomer.add(filterContentPanel);
+		containerCustomer.add(filterCustomerContentPanel);
 		
 		endCallback.onSuccess(null);
 	}
@@ -1435,7 +1437,7 @@ public class CustomerFee extends MainEntryPoint {
 		params.setMonth(AonStringUtils.isBlank(monthListBox.getSelectedValue()) ? null : Integer.parseInt(monthListBox.getSelectedValue()));
 		params.setYear(AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue()));
 		params.setPeriodicity(AonStringUtils.isBlank(periocityListBox.getSelectedValue()) ? null : Byte.parseByte(periocityListBox.getSelectedValue()));
-		params.setCustomer(null != customerSuggestions.get(customerSuggestBox.getValue()) ? customerSuggestions.get(customerSuggestBox.getValue()).getName() : null);
+		params.setCustomer(null != customerSuggestions.get(customerSuggestBox.getValue()) ? customerSuggestions.get(customerSuggestBox.getValue()).getId() : null);
 		params.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBox.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBox.getSelectedValue()));
 		params.setSegment(segmentListBox != null && segmentListBox.getSelectedIndex() > 0 ? AonNumberUtils.toInteger( segmentListBox.getSelectedValue()) : null);
 		params.setStartCompare(Byte.parseByte(startCompareLB.getSelectedValue()));
@@ -2751,7 +2753,7 @@ public class CustomerFee extends MainEntryPoint {
 			if(AonStringUtils.isNotBlank(periocityListBox.getSelectedValue())) json.put("periodicity", new JSONNumber(Integer.parseInt(periocityListBox.getSelectedValue())));
 			if(null != customerSuggestions.get(customerSuggestBox.getValue())) json.put("customer", new JSONNumber(customerSuggestions.get(customerSuggestBox.getValue()).getId()));
 			if(AonStringUtils.isNotBlank(customerStatusListBox.getSelectedValue())) json.put("status", new JSONNumber(Integer.parseInt(customerStatusListBox.getSelectedValue())));
-			if(null != segmentListBox && AonStringUtils.isNotBlank(segmentListBox.getSelectedValue())) json.put("segment", new JSONNumber(Integer.parseInt(segmentListBox.getSelectedValue())));
+			if(null != segmentListBox && AonStringUtils.isNotBlank(segmentListBox.getSelectedValue())) json.put("segmentId", new JSONNumber(Integer.parseInt(segmentListBox.getSelectedValue())));
 			if(AonStringUtils.isNotBlank(startCompareLB.getSelectedValue())) json.put("startDateCompare", new JSONNumber(Integer.parseInt(startCompareLB.getSelectedValue())));
 			if(null != startDateBox.getValue()) json.put("startDate", new JSONNumber(startDateBox.getValue().getTime()));
 			if(AonStringUtils.isNotBlank(endCompareLB.getSelectedValue())) json.put("endDateCompare", new JSONNumber(Integer.parseInt(endCompareLB.getSelectedValue())));

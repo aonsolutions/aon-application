@@ -4,16 +4,22 @@ public enum OffType {
 	
 	
 	 
-	 NOT_PAID_PERMISSION {
-		 @Override
-		 public<T> T accept(Visitor<T> visitor) {
-			return visitor.visitNotPaidPermission(this);
-		}
-	 };
-	 
+        NOT_PAID_PERMISSION {
+        	@Override
+        	public <T> T accept(Visitor<T> visitor) {
+        	    return visitor.visitNotPaidPermission(this);
+        	}
+        },
+        SUSPEND_JOB_AND_SALARY {
+        	@Override
+        	public <T> T accept(Visitor<T> visitor) {
+        	    return visitor.visitSuspendJobAndSalary(this);
+        	}
+        };	 
 	 
 	public static interface Visitor<T> {
 		T visitNotPaidPermission(OffType type);
+		T visitSuspendJobAndSalary(OffType type);
 	}
 	
 	public abstract <T> T accept(Visitor<T> visitor );

@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
-import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
@@ -29,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.cell.client.ActionCell;
@@ -212,6 +212,8 @@ public class MainContrataContract extends MainEntryPoint {
 	// ------------------------------------------ Variables
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private DateTimeFormat formatYear = DateTimeFormat.getFormat("yyyy");
+	private DateTimeFormat formatMonth = DateTimeFormat.getFormat("MMMM");
 	
 	private MainContrataContractObject mainContrataContractObject;
 	private EnterpriseSalaryObject enterpriseSalaryObject;
@@ -464,7 +466,8 @@ public class MainContrataContract extends MainEntryPoint {
 		ssNumberColumn.setSortable(true);
 		ssNumberColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		employeeDataGrid.setColumnWidth(ssNumberColumn, 10, Unit.PCT);
-
+		
+		// Columns
 		TextColumn<EmployeeContractInfo> contractTypeColumn = new TextColumn<EmployeeContractInfo>() {
 			@Override
 			public String getValue(EmployeeContractInfo employeeContractInfo) {
@@ -474,7 +477,25 @@ public class MainContrataContract extends MainEntryPoint {
 					return "BECARIO";
 				return employeeContractInfo.getContractInfo().getContractType();
 			}
+			
+			@Override
+			public void render(Context context, EmployeeContractInfo employeeContractInfo, SafeHtmlBuilder sb) {
+				if (null != employeeContractInfo) {
+					if((byte) 3 == employeeContractInfo.getContractInfo().getSsRegimen()) sb.appendHtmlConstant("<div title=\"Reta\">RETA</div>");
+					else if("000".equals(employeeContractInfo.getContractInfo().getContractType())) sb.appendHtmlConstant("<div title=\"Becario\">BECARIO</div>");
+					else sb.appendHtmlConstant("<div title=\"" + getContractTypeTitle(employeeContractInfo.getContractInfo().getContractType()) + "\">" + employeeContractInfo.getContractInfo().getContractType() + "</div>");
+				} else
+					super.render(context, employeeContractInfo, sb);
+			}
 
+			private String getContractTypeTitle(String contractType) {
+				if(AonStringUtils.isBlank(contractType)) return "";
+				try {
+					return contractType  + " - " + new ContractType().getContractTypes().get(Integer.parseInt(contractType)).getContractTypeDescription();
+				} catch (Exception e) {
+					return "";
+				}
+			}
 		};
 
 		contractTypeColumn.setSortable(true);
@@ -1471,15 +1492,17 @@ public class MainContrataContract extends MainEntryPoint {
 	
 	private void checkPDFToolbar(boolean isLaboralLife) {
 		if(isLaboralLife && pdfViewerToolbar.getButtonContainer().getWidgetCount() == 1) {
-			MonthListBox monthListBox = new MonthListBox();
-			Date lastMonth = DateUtils.getFirstDayOfMonth(); 
-			Date firstMonth = DateUtils.addYears2Date(DateUtils.getFirstDayOfMonth(), -4);
-			monthListBox.setFirstMonth(firstMonth);
-			monthListBox.setLastMonth(lastMonth);
-			monthListBox.setPageSize(52);
-			monthListBox.setVisibleRange(0, 52);
-			monthListBox.addChangeHandler(e -> onLaboralLifeCahngeDate(monthListBox.getSelected()));
-			monthListBox.setSelected(DateUtils.getFirstDayOfMonth(), true);
+			Date currentDate = DateUtils.getFirstDayOfMonth(); 
+			
+			ListBox monthListBox = new ListBox();
+			monthListBox.addItem(formatMonth.format(currentDate) + " de " + formatYear.format(currentDate), currentDate.getTime() + "");
+			
+			for(int i = 1; i < 4; i++) {
+				Date auxDate = DateUtils.addMonths2Date(DateUtils.copyDateOnly(currentDate), -i);
+				monthListBox.addItem(formatMonth.format(auxDate) + " de " + formatYear.format(auxDate), auxDate.getTime() + "");
+			}
+				
+			monthListBox.addChangeHandler(e -> onLaboralLifeCahngeDate(new Date(Long.parseLong(monthListBox.getSelectedValue()))));
 			monthListBox.setWidth("200px");
 			pdfViewerToolbar.add(monthListBox);
 		} else if(!isLaboralLife && pdfViewerToolbar.getButtonContainer().getWidgetCount() > 1)

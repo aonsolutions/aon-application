@@ -1,10 +1,14 @@
 package solutions.aon.sepe;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -684,9 +688,22 @@ public class Contrata {
 					handleSepeExceptions(htmlPage);
 
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-
-					((HtmlSelect) form.querySelector("select[name=codobjetointerinidad]"))
+					
+					// Claves menores de 30
+					List<String> causaSustitucionMenor31 = new ArrayList<>(List.of("H", "G", "R", "F", "N", "I", "O"));
+					if(causaSustitucionMenor31.contains(interinidad.get())) {
+						((HtmlRadioButtonInput) form.querySelector("input[name=causaSustitucionMenor31]")).click();
+						
+						((HtmlSelect) form.querySelector("select[name=codobjetointerinidadMenor31]"))
 							.setSelectedAttribute(interinidad.get(), true);
+					} else {
+						// Mayores de 31
+						((HtmlRadioButtonInput) form.querySelector("input[name=causaSustitucionMayor31]")).click();
+						
+						((HtmlSelect) form.querySelector("select[name=codobjetointerinidadMayor31]"))
+							.setSelectedAttribute(interinidad.get(), true);
+					}
+					
 				}
 			}
 			
@@ -2420,4 +2437,19 @@ public class Contrata {
 		}
 		return " "; //CIF
 	}
+	
+	// BUILD A FILE FROM ARRAY OF BYTES
+		public static void buildFile(byte[] bytes, String docName) {
+			File f = new File(docName);
+			try {
+				FileOutputStream fos = new FileOutputStream(f);
+				fos.write(bytes);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				System.err.println("Archivo no encontrado");
+			} catch (IOException e) {
+				System.err.println("Error al escribir");
+			}
+
+		}
 }

@@ -1,16 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage, IFilter } from 'libraries/AonSDK/src/aon';
-import { ReportingService } from 'src/app/core/services/reporting.service';
-import { MessageService } from 'src/app/core/services/message.service';
-import { MessageChatService } from 'src/app/core/services/message-chat.service';
-import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
-// import { TableQueriesComponent } from '../components/table-queries/table-queries.component';
 import { DatePipe } from '@angular/common';
-import { MenuItem } from 'src/app/core/models/interface/menu-item';
-import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
-import { TablesInboxComponent } from '../components/tables-inbox/table-inbox.component';
+import { TranslateService } from '@ngx-translate/core';
 
+import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
+import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
+import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { MessageChatService } from 'src/app/core/services/message-chat.service';
+import { MessageService } from 'src/app/core/services/message.service';
+import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
+import { OptionsService } from 'src/app/shared/services/options.service';
+import { ReportingService } from 'src/app/core/services/reporting.service';
+import { TablesInboxComponent } from '../components/tables-inbox/table-inbox.component';
 
 export interface Tabs {
   name: string;
@@ -25,6 +25,7 @@ export interface Tabs {
 export class InboxviewComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
   @ViewChild(TablesInboxComponent, { static: false })
+
   collectionFactory = new CollectionFactory();
   entityFactory = new Factory();
   datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
@@ -70,7 +71,8 @@ export class InboxviewComponent implements OnInit {
     private translateService: TranslateService,
     public reportingService: ReportingService,
     private messageService: MessageService,
-    private messageChatService: MessageChatService
+    private messageChatService: MessageChatService,
+    private optionsService: OptionsService
   ) {
     this.translateService
       .get([
@@ -142,7 +144,27 @@ export class InboxviewComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
+    this.checkOpenModal();
+  }
+
+  /**
+  * Comprueba si el parametro "showModal" esta presente en los parametros de la consulta y, en caso afirmativo, muestra el modal.
+  *
+  * @private
+  * @returns {void}
+  */
+  private checkOpenModal(): void {
+    const options = this.optionsService.getOptions();
+
+    if (options && options.showModal) {
+      this.optionsService.clearOptions();
+      this.showModal();
+    }
+  }
 
   afterModalClosed(result?: any) {
     console.log(result);
@@ -316,7 +338,10 @@ export class InboxviewComponent implements OnInit {
         // Agregar el nuevo mensaje
         this.messages.add(createdMessage);
         // Desactivo el spinner
-        this.spinner = false;
+        setTimeout(() => {
+          this.spinner = false;
+
+        }, 2000)
     }
   }
 
