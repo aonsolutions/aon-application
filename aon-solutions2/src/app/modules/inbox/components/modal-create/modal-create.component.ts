@@ -1,4 +1,3 @@
-
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CollectionFactory, Factory, ICollection, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';

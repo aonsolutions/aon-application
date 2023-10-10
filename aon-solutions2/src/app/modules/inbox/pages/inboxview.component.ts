@@ -1,16 +1,14 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage, IFilter } from 'libraries/AonSDK/src/aon';
+import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
 import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
-// import { TableQueriesComponent } from '../components/table-queries/table-queries.component';
 import { DatePipe } from '@angular/common';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 import { TablesInboxComponent } from '../components/tables-inbox/table-inbox.component';
-
 
 export interface Tabs {
   name: string;
@@ -45,13 +43,11 @@ export class InboxviewComponent implements OnInit {
   selectedFilterDate: number = 0;
   tabIndex: number = 0;
   showDetail: boolean = false;
-  noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
   showSendButton: boolean = false;
   showSendButtons: boolean = false;
   filterDate: number = 1;
   selectedFilterText: string = '';
-  selectedFilterType: string = '';
   expandedIndex: number = -1;
   newMessageDescription: string = '';
   spinner: boolean = true;
@@ -64,8 +60,6 @@ export class InboxviewComponent implements OnInit {
   totalMessageCount: number = 0;
   menuItem: MenuItem[] = [];
   selected: string = '';
-  items: any[] = [];
-  data: any[] = [];
 
   constructor(
     private translateService: TranslateService,

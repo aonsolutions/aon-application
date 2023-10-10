@@ -13,7 +13,6 @@ import { MessageChatService } from '../../../../core/services/message-chat.servi
   styleUrls: ['./table-inbox.component.scss'],
 })
 export class TablesInboxComponent implements OnChanges {
-  filterStatus: string[] = ['todas', 'pendiente', 'realizada', 'nueva', 'vista', 'cerrada', 'abierta'];
   @Input() filterTabSelec: number = 0;
   @Input() filterDate: number = 0;
   @Input() filter: any = {};
@@ -28,7 +27,6 @@ export class TablesInboxComponent implements OnChanges {
   newMessageDescription: string = '';
   entityFactory = new Factory();
   messagesData: IMessage = this.entityFactory.createMessage();
-  selectedMessage: IMessage | null = null;
   bodyTable: any[] = [];
   showDetail: boolean = false;
   totalMessages: string = '0';
