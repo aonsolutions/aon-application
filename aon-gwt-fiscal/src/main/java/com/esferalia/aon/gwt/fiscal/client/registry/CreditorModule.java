@@ -69,15 +69,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CreditorModule extends MainEntryPoint {
-	
-	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
-		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
-		SafeHtml tab(String title, String icon);
-	}
-	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
-	
-	private static final String FINANCE_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/FinanceReportExcelPrint";
-	
+		
 	private static RegistryServiceAsync service;
 	static {
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
@@ -112,16 +104,13 @@ public class CreditorModule extends MainEntryPoint {
 	private DockLayoutPanel dockLayoutPanel;
 	private FlowPanel container;
 	private AonDisplayGrid tab;
-	private SplitLayoutPanel splitLayoutPanel;
-	private AonMinimizePanel footPanel;
-	private TabLayoutPanel tabLayout;
-	private ScrollPanel extraInfoContainer;
 	
 	private LinkedHashMap<Integer,CreditorRow> creditors = new LinkedHashMap<>();
 	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<>();
 	
 	private CreditorModuleSearchPanel searchPanel;
 	private AonToolbar toolbar;
+	
 	private AonToolbarButton checkAll; 
 	private AonToolbarButton uncheckAll;
 	
@@ -129,8 +118,6 @@ public class CreditorModule extends MainEntryPoint {
 	private FlowPanel progress = new FlowPanel();
 
 	private InlineLabel selectedCount;
-	private boolean minimizedByUser;
-	private int extraInfoTabIndex;
 	
 	private static final int LIMIT = 100;
 	private static final MutableInt offset = new MutableInt(0);
@@ -180,7 +167,7 @@ public class CreditorModule extends MainEntryPoint {
 		progressContainer.setVisible(false);
 		progressContainer.add(progress);
 		dockLayoutPanel.addNorth(progressContainer, 5);
-		splitLayoutPanel = new SplitLayoutPanel();
+		SplitLayoutPanel splitLayoutPanel = new SplitLayoutPanel();
 		dockLayoutPanel.add(splitLayoutPanel);
 		SimpleLayoutPanel centerLayoutPanel = new SimpleLayoutPanel();
 		ScrollPanel centerPanel = new ScrollPanel();
@@ -380,36 +367,6 @@ public class CreditorModule extends MainEntryPoint {
 		}
 	}
 
-	private AonMinimizePanel getMinimizePanel() {
-		footPanel = new AonMinimizePanel();
-		
-		footPanel.addMinimizeHandler(event -> {
-				minimizedByUser = true;
-				closeFootPanel();
-		});
-		
-		footPanel.addMaximizeHandler(event -> openFootPanel());
-		
-		footPanel.setStyleName(AON.CSS.aonSelector());
-		tabLayout = new TabLayoutPanel(26, Unit.PX);
-		tabLayout.setWidth("100%");
-		
-		footPanel.add(tabLayout);
-		int tabIndex = 0;
-		
-		extraInfoContainer = new ScrollPanel();
-		tabLayout.add(extraInfoContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.additionalData(), AON.CSS.aonIconInfo()));
-		extraInfoTabIndex = tabIndex;
-
-		tabLayout.setAnimationDuration(300);
-		tabLayout.addSelectionHandler(event -> {
-				minimizedByUser = false;
-				openFootPanelIfNeeded();
-		});
-		
-		return footPanel; 
-	}
-
 	public void disableMoreData() {
 		moreData.setValue(-1);
 	}
@@ -473,41 +430,12 @@ public class CreditorModule extends MainEntryPoint {
 				});
 		
 	}
-	
-	public void addExtraInfo( String htmlText) {
-		HTMLPanel panel = new HTMLPanel(htmlText);
-		addExtraInfo(panel);
-	}
-	
-	public void addExtraInfo( Widget widget) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(extraInfoTabIndex);
-		extraInfoContainer.setWidget(widget);
-		extraInfoContainer.scrollToTop();
-	}
 
 	private void showError(String msg) {
 		if (AonStringUtils.isBlank(msg)) {
 			msg = "Se ha producido un error no codificado.";
 		}
 		toolbar.showErrorMessage(msg);
-	}
-
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 30);
-		splitLayoutPanel.animate(500);
-	}
-
-	private void openFootPanelIfNeeded() {
-		if (!minimizedByUser && splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
-			openFootPanel();
-		}
-	}
-	
-	private void openFootPanel() {
-		double effectiveHeigth = 5;
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / effectiveHeigth);
-		splitLayoutPanel.animate(500);
 	}
 
 	private void paintRow(final RegistryModuleOptions opt, Creditor creditor) {
