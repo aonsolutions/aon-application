@@ -1,6 +1,7 @@
 import {AonElement} from './AonElement.js';
 import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
 import { AonIconButton } from './aon-icon-button.js';
+import * as LS from "../services/localStorageService.js";
 
 export class AonCard extends AonElement {
  	CARD;
@@ -79,6 +80,7 @@ export class AonCard extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		div.id = this.CARD;
     	div.className = 'aonCard';
+		if(LS.isNewTheme()) div.style.boxShadow = "none";
 		if(this.flex) div.classList.add("aonCardFlex");
 		this.appendChild(div);
 

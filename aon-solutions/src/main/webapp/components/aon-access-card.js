@@ -53,7 +53,7 @@ export class AonAccessCard extends AonElement {
 
 		let spanIcon = this.createElement(TAG.SPAN);
 		if(option.icon) {
-			spanIcon.innerHTML = `<aon-icon icon="${option.icon}" color="${option.color}" size="30px"></aon-icon>`;
+			spanIcon.innerHTML = `<aon-icon icon="${option.icon}" color="${option.color}" size="30px" style="background-color: ${option.colorRGBA}"></aon-icon>`;
 		} else {
 			let img = this.createElement(TAG.IMG);
 			img.style.width = '30px';

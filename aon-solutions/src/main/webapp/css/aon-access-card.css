@@ -36,15 +36,17 @@
     width: 100%;
 }
 
-.aonAccessCardTextDiv i {
-    padding: 0.5rem;
-    border-radius: 0.2rem;
-    width: 2.5rem;
-    height: 2.5rem;
+.aonAccessCardTextDiv > span {
+    margin-top: 0.1rem;
 }
 
-.aonAccessCard:hover .aonAccessCardTextDiv i {
-    background-color: transparent;
+.aonAccessCardTextDiv > span > aon-icon {
+    padding: 0.1rem;
+    border-radius: 0.2rem;
+}
+
+.aonAccessCard:hover .aonAccessCardTextDiv > span > aon-icon {
+    background-color: transparent !important;
     transition: background-color 400ms linear;
 }
 
