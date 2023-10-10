@@ -11,11 +11,10 @@ import java.util.List;
 import com.amazonaws.util.IOUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeData;
 import com.esferalia.aon.in.payroll.img.DNIParser;
-import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.in.payroll.img.DniParserValidation;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.function.Consumer;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -102,46 +101,51 @@ public class DNIServlet extends HttpServlet {
 		String apellido2 = "";
 		String nacionalidad = "";
 		
-		validate(lineas);
+	DniParserValidation.validate(lineas);
 		
 		for (int i = 0; i < lineas.length; i++) {
 			String linea = lineas[i]; 
 			if (linea.startsWith("DNI") || linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
 				dni = lineas[i + 1];
-//				if (!dnip.validateDni(dni)) {
-//					dni = "";
-//					continue;
-//				}
+				
+				if (!DNIParser.validateDni(dni)) {
+					dni = "";
+				}
 
 			} else if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
 				apellido1 = lineas[i + 1];
+				if (!DNIParser.validateNames(apellido1)) {
+					apellido1 = "";
+				}
+				System.out.println(apellido1 + "APELLIDO1");
 				apellido2 = lineas[i + 2];
+				if (!DNIParser.validateNames(apellido2)) {
+					apellido2 = "";
+				}
 
 			} else if (linea.startsWith("NOMBRE") || linea.startsWith("NONBRE")) {
 				nombre = lineas[i + 1];
+				if (!DNIParser.validateNames(nombre)) {
+					nombre = "";
+				}
 
 			} else if (linea.startsWith("NACIONALIDAD")) {
 				nacionalidad = lineas[i + 3];
-//				if (!dnip.validateNationality(nacionalidad)) {
-//					nacionalidad = "";
-//					continue;
-//				}
+				if (!DNIParser.validateNationality(nacionalidad)) {
+					nacionalidad = "";
+				}
 				if (nacionalidad.equals("ESP")) {
 					nacionalidad = "ESPAÑA";
 				}
+				
 
 			}
 		}
 
-		validateDni(dni);
 		ed.setDni(dni.replaceAll("\\r", ""));
-		validateNationality(nacionalidad);
 		ed.setNacionalidad(nacionalidad.replaceAll("\\r", ""));
-		validateName(nombre);
 		ed.setNombre(nombre.replaceAll("\\r", ""));
-		validateFirstSurname(apellido1);
 		ed.setApellido1(apellido1.replaceAll("\\r", ""));
-		validateSecondSurname(apellido2);
 		ed.setApellido2(apellido2.replaceAll("\\r", ""));
 
 		try {
@@ -163,69 +167,5 @@ public class DNIServlet extends HttpServlet {
 		System.out.println(json);
 
 	}
-	
-	private static final Consumer<String []> NULL_ARRAY_LINES = lineas ->{
-		if (lineas == null) {
-			throw new AonCoreException(AonError.NULL_FILE_UPLOADED.getMessage());
-		}
-	};
-	
-	private static final Consumer <String> NULL_DNI = dni ->{
-		if (dni == null || dni.equals("")) {
-			throw new AonCoreException(AonError.INVALID_DNI_FORMAT.getMessage());
-		}
-	};
-	
-	private static final Consumer<String> NULL_NATIONALITY = nationality ->{
-		if (nationality == null|| nationality.equals("")) {
-			throw new AonCoreException(AonError.INVALID_NATIONALITY_FORMAT.getMessage());
-
-		}
-	};
-	
-	private static final Consumer<String> NULL_NAME = name ->{
-		if (name == null|| name.equals("")) {
-			throw new AonCoreException(AonError.INVALID_NAME_FORMAT.getMessage());
-
-		}
-	};
-	private static final Consumer<String> NULL_FIRST_SURNAME = firstSurname ->{
-		if (firstSurname == null|| firstSurname.equals("")) {
-			throw new AonCoreException(AonError.INVALID_FIRST_SURNAME.getMessage());
-
-		}
-	};
-	private static final Consumer<String> NULL_SECOND_SURNAME = secondSurname ->{
-		if (secondSurname == null|| secondSurname.equals("")) {
-			throw new AonCoreException(AonError.INVALID_SECOND_SURNAME.getMessage());
-
-		}
-	};
-	
-	
-	public static void validate(String [] lineas) throws AonCoreException {
-		NULL_ARRAY_LINES.accept(lineas);
-	}
-	
-	public static void validateDni(String dni) throws AonCoreException{
-		NULL_DNI.accept(dni);
-	}
-	
-	public static void validateNationality(String nacionalidad) throws AonCoreException {
-		NULL_NATIONALITY.accept(nacionalidad);
-	}
-	
-	public static void validateName(String name) throws AonCoreException{
-		NULL_NAME.accept(name);
-	}
-	
-	public static void validateFirstSurname(String firstSurname) throws AonCoreException{
-		NULL_FIRST_SURNAME.accept(firstSurname);
-	}
-	
-	public static void validateSecondSurname(String secondSurname) throws AonCoreException{
-		NULL_SECOND_SURNAME.accept(secondSurname);
-	}
-	
 	
 }

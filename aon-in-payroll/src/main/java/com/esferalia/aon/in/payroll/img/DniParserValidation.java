@@ -3,8 +3,6 @@ package com.esferalia.aon.in.payroll.img;
 import java.io.InputStream;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -18,6 +16,11 @@ public class DniParserValidation {
 	private DniParserValidation() {
 		
 	}
+	
+	
+	/*
+	 * Validations for DNIParser
+	 * */
 	
 	private static final Consumer<byte[]> NULL_BYTES_FILE_UPLOADED = bytes -> {
 		if (bytes == null) {
@@ -63,17 +66,6 @@ public class DniParserValidation {
 		}
 	};
 	
-//	private static final Consumer<String> INVALID_DNI_FORMAT = dni -> {
-//		dni = dni.trim();
-//		String patternDni = "\\d{8}[A-HJ-NP-TV-Z]";
-//		Pattern pattern = Pattern.compile(patternDni);
-//		Matcher matcher = pattern.matcher(dni);
-//		if (!matcher.matches()) {
-//			throw new AonCoreException(AonError.INVALID_DNI_FORMAT.getMessage());
-//		}
-//		
-//	};
-	
 	public static void validateBytes(byte[] bytes) throws AonCoreException{
 		NULL_BYTES_FILE_UPLOADED.accept(bytes);
 	}
@@ -100,7 +92,22 @@ public class DniParserValidation {
 		NULL_TEXT_RECEIVED.accept(text);
 	}
 	
-//	public static void validateDni(String dni) throws AonCoreException{
-//		INVALID_DNI_FORMAT.accept(dni);
-//	}
+	/*
+	 * Validations for DNIServlet
+	 * */
+	
+	
+	
+	private static final Consumer<String []> NULL_ARRAY_LINES = lineas ->{
+		if (lineas == null) {
+			throw new AonCoreException(AonError.NULL_FILE_UPLOADED.getMessage());
+		}
+	};
+	
+	public static void validate(String [] lineas) throws AonCoreException {
+		NULL_ARRAY_LINES.accept(lineas);
+	}
+	
+
+	
 }

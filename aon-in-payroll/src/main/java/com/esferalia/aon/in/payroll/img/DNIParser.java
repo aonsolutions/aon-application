@@ -4,9 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -32,7 +30,6 @@ import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
 import com.amazonaws.services.textract.model.DetectDocumentTextResult;
 import com.amazonaws.services.textract.model.Document;
 
-import solutions.aon.in.invoice.img.InvoiceIMGException;
 import solutions.aon.in.invoice.pdf.InvoicePDFException;
 
 public class DNIParser {
@@ -148,133 +145,30 @@ public class DNIParser {
 		return text;
 	}
 
-	// FORMATO PARA DNI POSTERIOR A 2021 VIENEN LAS DOS PARTES JUNTAS
-	// Y EL DOCUMENTO ES UNA IMAGEN
-//	public static void getNewDniBothJpg(String text, DniDataListener listener) {
-//		DniParserValidation.validateText(text);
-//		String[] lineas = text.split("\n");
-//		String dni = null;
-//		String nombre = null;
-//		String apellido1 = null;
-//		String apellido2 = null;
-//		String fechaNacimiento = null;
-//		Date fechaNac = null;
-//		String sexo = null;
-//		String nacionalidad = null;
-//		String direccion = null;
-//		String localidad = null;
-//		String lugarNacimiento = null;
-//		String nombrePadre = null;
-//		String nombreMadre = null;
-//
-//		for (int i = 0; i < lineas.length; i++) {
-//			String linea = lineas[i];
-//			if (linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
-//				dni = lineas[i + 1];
-//				listener.onDniData(dni);
-//			} else if (linea.startsWith("APELLIDOS")) {
-//				apellido1 = lineas[i + 1];
-//				apellido2 = lineas[i + 2];
-//				listener.onApellidosData(apellido1, apellido2);
-//			} else if (linea.startsWith("NOMBRE")) {
-//				nombre = lineas[i + 1];
-//				listener.onNombreData(nombre);
-//			} else if (linea.startsWith("SEXO")) {
-//				sexo = lineas[i + 1];
-//				listener.onSexoData(sexo);
-//			} else if (linea.startsWith("NACIONALIDAD")) {
-//				nacionalidad = lineas[i + 4];
-//				listener.onNacionalidadData(nacionalidad);
-//			} else if (linea.startsWith("NACIMIENTO")) {
-//				fechaNacimiento = lineas[i + 4];
-//				SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-//				try {
-//					fechaNac = format.parse(fechaNacimiento);
-//					listener.onFechaNacimientoData(fechaNac);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			} else if (linea.startsWith("DOMICILIO")) {
-//				direccion = lineas[i + 1];
-//				listener.onDireccionData(direccion);
-//				localidad = lineas[i + 2];
-//				listener.onLocalidadData(localidad);
-//			} else if (linea.startsWith("LUGAR DE NACIMIENTO")) {
-//				lugarNacimiento = lineas[i + 1];
-//				listener.onLugarNacimientoData(lugarNacimiento);
-//			} else if (linea.startsWith("HIJO/A DE")) {
-//				nombrePadre = lineas[i + 1];
-//				listener.onNombrePadreData(nombrePadre);
-//				nombreMadre = lineas[i + 2];
-//				listener.onNombreMadreData(nombreMadre);
-//			}
-//
-//		}
-//	}
-//
-//	
-//	public boolean validateDni(String dni) {
-//		dni = dni.trim();
-//        String patternDni = "\\d{8}[A-HJ-NP-TV-Z]";		
-//        Pattern pattern = Pattern.compile(patternDni);
-//        Matcher matcher = pattern.matcher(dni);
-//		return matcher.matches();
-//	}
-//	
-//	
-//	public boolean validateNationality(String nacionalidad) { 
-//		nacionalidad = nacionalidad.trim();
-//		String patternNat = "[A-Z]{3}";
-//		Pattern pattern = Pattern.compile(patternNat);
-//		Matcher matcher = pattern.matcher(nacionalidad);
-//		return matcher.matches();
-//	}
-//
-//	// FORMATO PARA DNI POSTERIOR A 2021 Y VIENEN LAS DOS PARTES JUNTAS EN PDF
-//	public static void getNewDniBothPdf(String text, DniDataListener listener) {
-//		DniParserValidation.validateText(text);
-//		String[] lineas = text.split("\n");
-//		String dni = null;
-//		String nombre = null;
-//		String apellido1 = null;
-//		String apellido2 = null;
-//		String fechaNacimiento = null;
-//		Date fechaNac = null;
-//		String sexo = null;
-//		String nacionalidad = null;
-//
-//		for (int i = 0; i < lineas.length; i++) {
-//			String linea = lineas[i];
-//
-//			if (linea.startsWith("APELLIDOS")) {
-//				apellido1 = lineas[i + 1];
-//				apellido2 = lineas[i + 2];
-//				listener.onApellidosData(apellido1, apellido2);
-//			} else if (linea.startsWith("NOMBRE")) {
-//				nombre = lineas[i + 1];
-//				listener.onNombreData(nombre);
-//			} else if (linea.startsWith("SEXO")) {
-//				sexo = lineas[i + 2];
-//				listener.onSexoData(sexo);
-//			} else if (linea.startsWith("NACIONALIDAD")) {
-//				nacionalidad = lineas[i + 2];
-//				listener.onNacionalidadData(nacionalidad);
-//			} else if (linea.startsWith("FECHA DE NACIMIENTO")) {
-//				fechaNacimiento = lineas[i + 1];
-//				SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-//				try {
-//					fechaNac = format.parse(fechaNacimiento);
-//					listener.onFechaNacimientoData(fechaNac);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			} else if (linea.startsWith("DNI")) {
-//				dni = lineas[i];
-//				listener.onDniData(dni);
-//
-//			}
-//		}
-//	}
+	
+	public static boolean validateNames(String name) {
+		name = name.trim();
+		String patternName = "[a-zA-Z]+";
+		Pattern pattern = Pattern.compile(patternName);
+		Matcher matcher = pattern.matcher(name);
+		return matcher.matches();
+	}
+	
+	public static boolean validateDni(String dni) {
+		dni = dni.trim();
+        String patternDni = "\\d{8}[A-HJ-NP-TV-Z]";		
+        Pattern pattern = Pattern.compile(patternDni);
+        Matcher matcher = pattern.matcher(dni);
+		return matcher.matches();
+	}
+
+	public static boolean validateNationality(String nacionalidad) { 
+		nacionalidad = nacionalidad.trim();
+		String patternNat = "[A-Z]{3}";
+		Pattern pattern = Pattern.compile(patternNat);
+		Matcher matcher = pattern.matcher(nacionalidad);
+		return matcher.matches();
+	}
 
 	private static boolean intersects(Block b1, Block b2) {
 		float top1 = b1.getGeometry().getBoundingBox().getTop();

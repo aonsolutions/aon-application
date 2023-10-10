@@ -245,12 +245,11 @@ public enum AonError implements Serializable{
 	,NULL_TYPE("El valor del tipo de la pregunta es nulo")
 	,INVALID_SIZE_QUESTION_TEXT("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	,INVALID_SIZE_ALIAS("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
-	
-	
-	
-	,NULL_FILE_UPLOADED("El archivo seleccionado es nulo")
 	,REPEATED_ALIAS("No puede haber dos preguntas con el mismo alias")
 
+	
+	//-----------------------------------------------UPLOAD OF DNI
+	,NULL_FILE_UPLOADED("El archivo seleccionado es nulo")
 	,NULL_FILES_UPLOADED("Los archivos seleccionados son nulos")
 	,FILE_SIZE_EXCEEDED("El tamaño de archivo no puede superar los 5MB")
 	,NULL_TEXT_RECEIVED("El texto recibido es nulo")

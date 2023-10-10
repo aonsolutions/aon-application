@@ -66,7 +66,6 @@ public class DNIParserTest {
 				() -> DNIParser.extract(document));
 		assertEquals(AonError.NULL_FILE_UPLOADED.getMessage(), e.getMessage());
 	}
-	
 
 	@Test
 	public void extractSizeExceededTest() throws Exception {
@@ -78,20 +77,4 @@ public class DNIParserTest {
 		assertEquals(AonError.FILE_SIZE_EXCEEDED.getMessage(), e.getMessage());
 	}
 
-//	public void getDniNullJpg() {
-//		String text = null;
-//		MyDniDataListener listener = new MyDniDataListener();
-//		AonCoreException e = assertThrows(AonCoreException.class,
-//				() -> DNIParser.getNewDniBothJpg(text, listener));
-//		assertEquals(AonError.NULL_TEXT_RECEIVED.getMessage(), e.getMessage());
-//	} 
-//	
-//	@Test
-//	public void getDniNullPdf() {
-//		String text = null;
-//		MyDniDataListener listener = new MyDniDataListener();
-//		AonCoreException e = assertThrows(AonCoreException.class,
-//				() -> DNIParser.getNewDniBothPdf(text, listener));
-//		assertEquals(AonError.NULL_TEXT_RECEIVED.getMessage(), e.getMessage());
-//	} 
 }

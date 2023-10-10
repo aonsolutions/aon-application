@@ -57,7 +57,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -447,8 +446,6 @@ public abstract class Employee extends ResizeComposite {
 			else
 				addErrorBorder(this.document);
 
-//			showNationality(documentTypeStr);	
-
 			onEmployeeDocumentChange(documentStr, documentTypeStr);
 		} else
 			removeErrorBorder(this.document);
@@ -457,9 +454,6 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiHandler("uploadButton")
 	void onUploadButtonClick(ClickEvent event) {
-//		fileUpload.click();
-//	}
-//
 		multiFileUpload.click();
 	}
 
@@ -474,26 +468,6 @@ public abstract class Employee extends ResizeComposite {
 			addUploadedFail(this.uploadButton);
 			Window.alert("El archivo no es valido");
 		}
-	}
-
-	private String getExtension(String fileName) {
-	    int dotIndex = fileName.lastIndexOf('.');
-	    return (dotIndex == -1) ? "" : fileName.substring(dotIndex + 1).toLowerCase();
-	}
-
-	private boolean allFilesHaveSameExtension(String[] filenames, String extension) {
-	    if (extension.isEmpty()) {
-	        return false;
-	    }
-
-	    for (String fileName : filenames) {
-	        String fileExtension = getExtension(fileName.trim());
-	        if (!fileExtension.equalsIgnoreCase(extension)) {
-	            return false;
-	        }
-	    }
-
-	    return true;
 	}
 
 	@UiHandler("nationality")
