@@ -1,22 +1,22 @@
 :root{
-  --aonBlue : #002469;
+  --aonBlue: #002469;
   --aonSecondary: #b10d4c;
   --aonOldSecondary: #12ccd1;
   --aonError: #f6655a;
   --aonBackground: #f6f8fc;
   --aonLightBlue: #eaf1fb;
   --aonSelectedBlue: #d3e3fd;
-  --aonGray : gray;
-  --aonLightGray : #f1f1f1;
-  --aonDarkGray : #5F6368;
-  --aonBlack : #212529;
-  --aonWhite : #ffffff;
-  --onlineGreen : #5cb85c;
-  --grayson : #787878;
-  --materialBlue : #007bff;
-  --materialBlack : #404040;
-  --materialRed : #f44336;
-  --materialSoftBlack : #202020;
+  --aonGray: gray;
+  --aonLightGray: #f1f1f1;
+  --aonDarkGray: #5F6368;
+  --aonBlack: #212529;
+  --aonWhite: #ffffff;
+  --onlineGreen: #5cb85c;
+  --grayson: #787878;
+  --materialBlue: #007bff;
+  --materialBlack: #404040;
+  --materialRed: #f44336;
+  --materialSoftBlack: #202020;
   --aonAeat: #005eb5;
   --aonGipuzkoa: #004996;
   --aonAraba: #c70061;
@@ -25,6 +25,19 @@
   --sar: env(safe-area-inset-right);
   --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
   --sal: env(safe-area-inset-left);
+
+  --aonInvoice: #4F91FF;
+  --aonInvoiceBackground: #ebf2ff;
+
+  --aonDocumental: #EF6292;
+  --aonDocumentalBackground: #fdedf2;
+
+  --aonPayroll: #33A9A9;
+  --aonPayrollBackground: #e8f5f5;
+
+  --aonFiscal: #FB982E;
+  --aonFiscalBackground: #fef3e7;
+
 }
 
 *, ::after, ::before {
