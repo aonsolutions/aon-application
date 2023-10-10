@@ -509,7 +509,7 @@ export class AonApplication extends AonElement {
       if (option.icon) {
         let i = this.createElement(TAG.I);
         let iconClass = "material-icons";
-        if(data.color) i.style.color = data.color;
+        if(LS.isNewTheme() && data.color) i.style.color = data.color;
         if(option.icon_color) i.style.color = option.icon_color;
         if(option.icon_class) iconClass = option.icon_class;
         i.className = `${iconClass} aonVerticalMiddle`;
@@ -521,13 +521,17 @@ export class AonApplication extends AonElement {
         ai.icon  = option.aonIcon.icon;
         ai.size  = "18px";
         li.appendChild(ai);
-        if(data.color) ai.color = data.color;
+        if(LS.isNewTheme() && data.color) ai.color = data.color;
         li.addEventListener(EVENT.MOUSEOVER, () => {
-          this.getElement(id + "AonIcon").color = data.color || option.aonIcon.color;
+          if(LS.isNewTheme()) {
+            this.getElement(id + "AonIcon").color = data.color || option.aonIcon.color;
+          } else this.getElement(id + "AonIcon").color = option.aonIcon.color;
         });
 
         li.addEventListener(EVENT.MOUSELEAVE, () => {
-          this.getElement(id + "AonIcon").color = data.color || "#5f6368";
+          if(LS.isNewTheme()) {
+            this.getElement(id + "AonIcon").color = data.color || "#5f6368";
+          } else this.getElement(id + "AonIcon").color = "#5f6368";
         });
       } else if (option.img) {
         let img = this.createElement(TAG.IMG);

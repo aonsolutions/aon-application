@@ -635,6 +635,7 @@ export class AonNewMenu extends AonElement {
 
 			let appMenu = new AonAppMenu();
 			appMenu.setApp(app);
+			appMenu.setDur(this.dur);
 			
 			div.appendChild(appMenu);
 	

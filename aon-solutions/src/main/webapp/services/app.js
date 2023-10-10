@@ -3,6 +3,9 @@ import * as GWT from "../gwt/gwt.js";
 import * as MSG_ES from "../environments/msg-es.js";
 import * as LS from  "./localStorageService.js";
 
+import * as DocumentalOptions from  "../modules/documental/DocumentalOptions.js";
+import * as InvoiceOptions from  "../modules/invoice/InvoiceOptions.js";
+
 export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
   title: MSG.TIMECONTROL,
@@ -32,7 +35,8 @@ export const TIMECONTROL = {
     add: false,
     upload: false,
     stat: false,
-  }
+  },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const ACCOUNTING = {
@@ -60,6 +64,7 @@ export const ACCOUNTING = {
     upload: false,
     stat: true,
   },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const FISCAL = {
@@ -88,6 +93,7 @@ export const FISCAL = {
     upload: false,
     stat: false,
   },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const PAYROLL = {
@@ -120,6 +126,7 @@ export const PAYROLL = {
     upload: false,
     stat: true,
   },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const TREASURY = {
@@ -131,7 +138,8 @@ export const TREASURY = {
   color: "#002469",
   colorRGBA: "rgba(0, 36, 105, .2)",
   price: " ", // '90€/mes',
-  disabled: false
+  disabled: false,
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 
@@ -144,7 +152,8 @@ export const MARKETING = {
   color: "#002469",
   colorRGBA: "rgba(0, 36, 105, .2)",
   price: " ", // '90€/mes',
-  disabled: false
+  disabled: false,
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const COMMERCIAL = {
@@ -156,7 +165,8 @@ export const COMMERCIAL = {
   color: "#002469",
   colorRGBA: "rgba(0, 36, 105, .2)",
   price: " ", // '90€/mes',
-  disabled: false
+  disabled: false,
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const GROUPWARE = {
@@ -168,6 +178,7 @@ export const GROUPWARE = {
   color: "#002469",
   colorRGBA: "rgba(0, 36, 105, .2)",
   price: " ", // '90€/mes',
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const COMUNICA = {
@@ -194,6 +205,7 @@ export const COMUNICA = {
   ],
 // apps: [TIMECONTROL],
   price: " ", // '60€/mes'
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const DOCUMENTAL = {
@@ -226,7 +238,8 @@ export const DOCUMENTAL = {
     add: true,
     upload: true,
     stat: false
-  }
+  },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const WAREHOUSE = {
@@ -245,6 +258,7 @@ export const WAREHOUSE = {
     upload: true,
     stat: false,
   },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 
@@ -278,7 +292,8 @@ export const INVOICE = {
     add: true,
     upload: true,
     stat: true,
-  }
+  },
+  getMenuOptions: (dur) => InvoiceOptions.getOptions(dur)
 };
 
 export const CONFIGURATION = {
@@ -287,6 +302,7 @@ export const CONFIGURATION = {
   description: MSG.CONFIGURATION,
   icon: AON_ICONS.AON_SETTINGS,
   color: "black",
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur),
   colorRGBA: "rgba(0, 0, 0, .2)",
 };
 
@@ -321,6 +337,7 @@ export const MESSENGER = {
     upload: false,
     stat: true,
   },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const TOOLS = {
@@ -330,6 +347,7 @@ export const TOOLS = {
   color: "#535353",
   colorRGBA: "rgba(83, 83, 83, .2)",
   price: " ", // '-'
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const NOTES = {
@@ -339,6 +357,7 @@ export const NOTES = {
   color: "#ffc000",
   colorRGBA: "rgba(255, 192, 0, .2)",
   price: " ", // '-'
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const AON_SOLUTIONS = {
@@ -388,6 +407,7 @@ export const AON_SALTRA = {
   color: "#002469",
   colorRGBA: "rgba(0, 36, 105, .2)",
   price: " ", // '-'
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const ALMA = {
@@ -443,6 +463,7 @@ export const OFFICE = {
   color: "black",
   colorRGBA: "rgba(0, 0, 0, .2)",
   domainType: true,
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const API_SERVICE = {
