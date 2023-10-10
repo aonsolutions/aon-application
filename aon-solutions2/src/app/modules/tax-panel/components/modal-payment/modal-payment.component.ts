@@ -1,15 +1,9 @@
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
-import {
-  CollectionFactory,
-  IBank,
-  ICollection,
-  statusTaxModel,
-} from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, IBank, ICollection,statusTaxModel } from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject } from 'rxjs';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BankService } from 'src/app/core/services/bank.service';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
-import { Status } from '../../../../../../libraries/AonSDK/src/interfaces/modelsInterfaces';
 
 @Component({
   selector: 'app-modal-payment',
@@ -31,6 +25,7 @@ export class ModalPaymentComponent implements OnInit {
   model: any;
   amountResult: number = 0;
   newStatus: string = '';
+  spinner: boolean = true;
 
   @Output() statusChanged: EventEmitter<string> = new EventEmitter<string>();
 
@@ -43,7 +38,8 @@ export class ModalPaymentComponent implements OnInit {
   constructor(
     private taxModelService: TaxModelService,
     private bankService: BankService,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<ModalPaymentComponent>
   ) {
     this.listBanks();
 
@@ -54,9 +50,7 @@ export class ModalPaymentComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   toggleCreateBank() {
     this.showCreateBank = !this.showCreateBank;
@@ -68,17 +62,20 @@ export class ModalPaymentComponent implements OnInit {
 
   listBanks() {
     this.bankService.getBankList().then((response) => {
-      this.banks = response;
-      this.banksSubject.next(this.banks);
-      this.showBanksList = true;
-      this.banksList = this.banks
-        .toArray()
-        .map((element) => ({ value: element.Iban, text: element.Iban }));
+      setTimeout(() => {
+        this.spinner = false;
+        this.banks = response;
+        this.banksSubject.next(this.banks);
+        this.showBanksList = true;
+        this.banksList = this.banks
+          .toArray()
+          .map((element) => ({ value: element.Iban, text: element.Iban }));
 
-      // Asigna el primer banco de la lista a selectedBank
-      if (this.banksList.length > 0) {
-        this.selectedBank = this.banksList[0].value;
-      }
+        // Asigna el primer banco de la lista a selectedBank
+        if (this.banksList.length > 0) {
+          this.selectedBank = this.banksList[0].value;
+        }
+      }, 2000);
     });
   }
 
@@ -131,8 +128,19 @@ export class ModalPaymentComponent implements OnInit {
     if (this.newStatus === statusTaxModel.PENDIENTE) {
       this.newStatus = statusTaxModel.PRESENTADO;
     }
+    // Oculta el spinner que se muestra cuando se abre el modal
+    this.spinner = false;
+
+    // Muestra el spinner mientras se envía el mensaje
+    this.spinner = true;
+
     // Emite el nuevo valor de status
     this.statusChanged.emit(this.newStatus);
     console.log('Nuevo status emitido:', this.newStatus);
+
+    setTimeout(() => {
+      this.spinner = false;
+      this.dialogRef.close();
+    }, 2000);
   }
 }

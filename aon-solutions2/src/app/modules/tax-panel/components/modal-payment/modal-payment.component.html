@@ -1,4 +1,5 @@
 <div class="modal-container">
+  <app-spinner *ngIf="spinner"></app-spinner>
   <p class="title-modal-payment">{{ "TAX_PANEL.PAYMENTMETHOD" | translate }}</p>
   <div *ngIf="!showConfirmation">
     <div class="border margin-bottom border-radius">
@@ -158,7 +159,9 @@
     class="button-container"
     *ngIf="selectedOption === '2' || selectedOption === '3'"
   >
-    <app-button [mat-dialog-close]="true" [class]="'orange left'"
+    <app-button
+    [mat-dialog-close]="true"
+    [class]="'orange left'"
     (click)="sendPayment()" >
       <app-icon shape="done_all"></app-icon>
       {{ "TAX_PANEL.CONFIRM" | translate }}
@@ -170,7 +173,6 @@
       {{ "TAX_PANEL.ON" | translate }}  'FECHA'
       {{ "TAX_PANEL.CHARGED_ACCOUNT" | translate }} {{ selectedBank }}
       {{ "TAX_PANEL.AN_AMOUNT" | translate }} {{ amountResult }}&euro;
-      <!-- {{ "TAX_PANEL.AN_AMOUNT" | translate }} {{ auxResult | currency:'EUR':'symbol':'1.0-2' }} -->
     </p>
     <div class="content-confirmation-view">
       <div class="line-content">
@@ -198,7 +200,7 @@
         </app-button>
       </div>
       <div>
-        <app-button [mat-dialog-close]="true"
+        <app-button 
         [class]="'orange left'"
         (click)="sendPayment()">
           <app-icon shape="done_all"></app-icon>

@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { CollectionFactory, ErrorResponse, Factory, ICollection, IMessage, StatusMessage, TypeMessage} from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, Factory, ICollection, IMessage, StatusMessage, TypeMessage, } from 'libraries/AonSDK/src/aon';
 import { MessageService } from 'src/app/core/services/message.service';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
@@ -19,6 +19,7 @@ export class ModalEditTaxModelComponent implements OnInit {
   messages: ICollection<IMessage> =
     this.collectionFactory.createMessageCollection();
   model: any;
+  spinner: boolean = false;
 
   newMessageDescriptionChange(newValue: string) {
     this.newMessageDescription = newValue;
@@ -71,10 +72,16 @@ export class ModalEditTaxModelComponent implements OnInit {
       newMessage.EndDate = new Date();
       newMessage.LastMessageChatOrigin = false;
 
-        // Crear el mensaje
-        const createdMessage = await this.messageService.createMessage(
-          newMessage
-        );
+      // Crear el mensaje
+      const createdMessage = await this.messageService.createMessage(
+        newMessage
+      );
+
+      setTimeout(() => {
+        // Ocultar el spinner después de crear el mensaje
+        this.spinner = false;
+        this.dialogRef.close();
+      }, 2000);
     }
   }
 
@@ -84,6 +91,8 @@ export class ModalEditTaxModelComponent implements OnInit {
       return;
     }
 
+    this.spinner = true;
+
     // Llama a la función para crear un nuevo mensaje
     this.createMessage(this.newMessageDescription);
 
@@ -91,6 +100,5 @@ export class ModalEditTaxModelComponent implements OnInit {
     this.newMessageDescription = '';
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 }
