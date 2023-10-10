@@ -1,5 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, CSS, EVENT, TAG } from "../../environments/environments";
+import * as LS from '../../services/localStorageService.js';
 
 export class AonMobileConsoleHome extends AonElement {
 
@@ -25,7 +26,7 @@ export class AonMobileConsoleHome extends AonElement {
         this.appendChild(div);
 	
 		let titleA = this.createElement(TAG.DIV);
-        titleA.className = 'aonSidenavTitle';
+        titleA.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
 	    titleA.innerHTML = 'UTILIDADES';
 		div.appendChild(titleA);
 

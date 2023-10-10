@@ -113,6 +113,12 @@ public class Product2Impl implements IProduct2{
 		ctx.getDslContext().transaction( configuration -> 
 		ItemDAO.deleteRItem(ctx, filter));
 	}
+	
+	@Override
+	public void updateRItemQuantity(AONContext ctx, String quantity, RegistryItemFilter filter) {
+		ctx.getDslContext().transaction( configuration -> 
+		ItemDAO.updateRItemQuantity(ctx, quantity, filter));
+	}
 
 	@Override
 	public void deleteItem(AONContext ctx, Integer id) {

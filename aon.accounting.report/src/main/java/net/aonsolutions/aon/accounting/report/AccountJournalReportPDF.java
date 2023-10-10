@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
@@ -32,12 +33,31 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class AccountJournalReportPDF {
+public class AccountJournalReportPDF implements IAccountReportPDF {
 
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00;(#,##0.00)");
 	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8);
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
+	
+	@Override
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
+		// TODO
+		// ESTE LISTADO USA OTRA CLASE PARA LOS PARAMETROS, POR LO TANTO AQUI HABRIA QUE ASIGNARLOS 
+		// DEPENDIENDO DE LOS PARAMETROS QUE NOS LLEGUEN, O BIEN HABRIA QUE ADAPTAR ESTE LISTADO PARA 
+		// QUE USE LA CLASE DE PARAMETROS QUE USAN EL RESTO DE LISTADOS
+		AccountEntryParams aeParams = new AccountEntryParams()
+				.setDomain(params.getDomain())
+				.setDomainName(params.getDomainName())
+				.setUser(params.getUser())
+				.setPeriod(params.getPeriod())
+				.setFromDate(params.getFromDate())
+				.setToDate(params.getToDate())
+				.setActivity(params.getActivity())
+				.setTitle(params.getTitle())
+				.setPageOffset(params.getPageOffset());
+		printBalanceReport(outputStream, aeParams);
+	}
 
 	public void printBalanceReport(OutputStream outputStream, AccountEntryParams params) throws DocumentException {
 		
@@ -132,7 +152,9 @@ public class AccountJournalReportPDF {
 		stream.close();
 	    
 		document.add(table);
+
 		document.close();
+
 	}
 
 	private void concat(StringBuffer buf, String string) {

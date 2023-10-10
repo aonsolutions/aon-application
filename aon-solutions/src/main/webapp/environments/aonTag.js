@@ -34,6 +34,7 @@ export const AON_AUTH = 'aon-auth';
 export const AON_AUTOSIZE_TEXTAREA = 'aon-autosize-textarea';
 export const AON_BASIC_TABLE = 'aon-basic-table';
 export const AON_BUTTON = 'aon-button';
+export const AON_DASHBOARD_BUTTON = 'aon-dashboard-button';
 export const AON_CARD = 'aon-card';
 export const AON_CHECKBOX = 'aon-checkbox';
 export const AON_CUSTOMER_SUGGESTION = 'aon-customer-suggestion';
@@ -42,10 +43,15 @@ export const AON_DATE = 'aon-date';
 export const AON_DIALOG_MENU = 'aon-dialog-menu';
 export const AON_DIALOG = 'aon-dialog';
 export const AON_DOMAIN_CUSTOMER = 'aon-domain-customer';
+export const AON_EMAIL = 'aon-email';
 export const AON_ICON_BUTTON = 'aon-icon-button';
 export const AON_ICON = 'aon-icon';
 export const AON_INPUT = 'aon-input';
+export const AON_NEW_INPUT = 'aon-new-input';
 export const AON_LOADER = 'aon-loader';
+export const AON_LOGIN = 'aon-login';
+export const AON_NEW_LOGIN = 'aon-new-login';
+export const AON_NEW_MENU = 'aon-new-menu';
 export const AON_MOBILE_LIST = 'aon-mobile-list';
 export const AON_NUMBER = 'aon-number';
 export const AON_REGISTRY = 'aon-registry';
@@ -61,6 +67,7 @@ export const AON_TOOLBAR = 'aon-toolbar';
 export const AON_VIEWER = 'aon-viewer';
 export const AON_NOTIFICATION_ICON = 'aon-notification-icon';
 export const AON_UPLOAD = 'aon-upload';
+export const AON_NEW_UPLOAD = 'aon-new-upload';
 export const AON_IBAN = 'aon-iban';
 export const AON_TEXTAREA ='aon-textarea';
 export const AON_ITEM_UPDATE ='aon-item-update';
@@ -145,8 +152,14 @@ export const AON_MOBILE_SALE = 'aon-mobile-sale';
 export const AON_SALES_LIST = 'aon-sales-list';
 export const AON_SALES = 'aon-sales';
 
+export const AON_MOBILE_DELIVERY_LIST = 'aon-mobile-delivery-list';
+export const AON_MOBILE_DELIVERY = 'aon-mobile-delivery';
+export const AON_DELIVERY_LIST = 'aon-delivery-list';
+export const AON_DELIVERY = 'aon-delivery';
+
 export const AON_MENU = 'aon-menu';
 export const AON_MOBILE_MENU = 'aon-mobile-menu';
 
 export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH, AON_AUTOSIZE_TEXTAREA, AON_CHECKBOX].join(", ");
 
+export const AON_QUANTITY = 'aon-quantity';

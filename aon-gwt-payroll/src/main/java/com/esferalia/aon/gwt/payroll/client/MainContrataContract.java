@@ -483,9 +483,18 @@ public class MainContrataContract extends MainEntryPoint {
 				if (null != employeeContractInfo) {
 					if((byte) 3 == employeeContractInfo.getContractInfo().getSsRegimen()) sb.appendHtmlConstant("<div title=\"Reta\">RETA</div>");
 					else if("000".equals(employeeContractInfo.getContractInfo().getContractType())) sb.appendHtmlConstant("<div title=\"Becario\">BECARIO</div>");
-					else sb.appendHtmlConstant("<div title=\"" + employeeContractInfo.getContractInfo().getContractType() + " - " + new ContractType().getContractTypes().get(Integer.parseInt(employeeContractInfo.getContractInfo().getContractType())).getContractTypeDescription() + "\">" + employeeContractInfo.getContractInfo().getContractType() + "</div>");
+					else sb.appendHtmlConstant("<div title=\"" + getContractTypeTitle(employeeContractInfo.getContractInfo().getContractType()) + "\">" + employeeContractInfo.getContractInfo().getContractType() + "</div>");
 				} else
 					super.render(context, employeeContractInfo, sb);
+			}
+
+			private String getContractTypeTitle(String contractType) {
+				if(AonStringUtils.isBlank(contractType)) return "";
+				try {
+					return contractType  + " - " + new ContractType().getContractTypes().get(Integer.parseInt(contractType)).getContractTypeDescription();
+				} catch (Exception e) {
+					return "";
+				}
 			}
 		};
 

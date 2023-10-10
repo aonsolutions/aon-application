@@ -8,6 +8,7 @@ import "./aon-icon.js";
 import "./aon-dialog.js";
 import "./aon-dialog-menu.js";
 import "./aon-toast.js";
+import * as LS from '../services/localStorageService.js';
 
 export class AonApplication extends AonElement {
   
@@ -132,7 +133,7 @@ export class AonApplication extends AonElement {
 
       <div class="${this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex'}">
         <!-- AON APPLICATION MENU (SIDENAV) -->
-         <div id="${this.SIDENAV}" class="${this.isMobile() ? 'aonMobileSidenav' : 'aonSidenavBeta'}"></div>
+         <div id="${this.SIDENAV}" class="${this.isMobile() || LS.isNewTheme() ? 'aonMobileSidenav' : 'aonSidenavBeta'}"></div>
 
 			   <!-- AON APPLICATION CONTENT -->
 			   <div id="${this.CONTENT}"></div>
@@ -306,7 +307,7 @@ export class AonApplication extends AonElement {
     sidenav.appendChild(div);
 
     let sidenavTitle = this.createElement(TAG.DIV);
-    sidenavTitle.className = "aonSidenavTitle";
+    sidenavTitle.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
     sidenavTitle.innerHTML = title.toUpperCase();
     sidenavTitle.title = title;
     div.appendChild(sidenavTitle);
@@ -325,7 +326,7 @@ export class AonApplication extends AonElement {
       sidenav.appendChild(div);
 
       let sidenavTitle = this.createElement(TAG.DIV);
-      sidenavTitle.className = "aonSidenavTitle";
+      sidenavTitle.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
       sidenavTitle.innerHTML = title.toUpperCase();
       sidenavTitle.title = title;
       div.appendChild(sidenavTitle);
@@ -360,16 +361,21 @@ export class AonApplication extends AonElement {
     }
 
     let sidenavTitle = this.createElement(TAG.DIV);
-    sidenavTitle.className = "aonSidenavTitle";
+    sidenavTitle.className = LS.isNewTheme() ? "aonSidenavTitleBeta" : "aonSidenavTitle";
     sidenavTitle.id = "aonSidenavTitle"+data.id;
     sidenavTitle.title = data.name;
     sidenavTitle.style.cursor = "pointer";
     sidenavTitle.style.userSelect = "none";
-    sidenavTitle.style.marginLeft = "2px";
+    sidenavTitle.style.marginLeft = LS.isNewTheme() ? "10px": "2px";
+
+    let arrowTitleSpan = this.createElement(TAG.SPAN);
+    arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
+    arrowTitleSpan.style.borderColor = data.color;
+
     let arrowTitle = this.createElement("i");
     arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
     arrowTitle.className = "material-icons aonVerticalMiddle";
-    sidenavTitle.appendChild(arrowTitle);
+    sidenavTitle.appendChild(LS.isNewTheme() ? arrowTitleSpan : arrowTitle);
 
     sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
       const ul = div.querySelector("ul");

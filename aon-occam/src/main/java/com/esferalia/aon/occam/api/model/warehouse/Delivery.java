@@ -69,6 +69,7 @@ public class Delivery implements Serializable {
 	// shippingAlternative
 	
 	private List<DeliveryDetail> details;
+	private List<DeliveryPackaging> packaging;
 	
 	private Date creationDate;
 	private String creationUser;
@@ -641,6 +642,23 @@ public class Delivery implements Serializable {
 	public List<DeliveryDetail> addDetail(DeliveryDetail detail) {
 		getDetails().add(detail);
 		return getDetails();
+	}
+	
+	public List<DeliveryPackaging> getPackaging() {
+		if(packaging == null) {
+			packaging = new LinkedList<>();
+		}
+		return packaging;
+	}
+	
+	public Delivery setPackaging(List<DeliveryPackaging> packaging) {
+		this.packaging = packaging;
+		return this;
+	}
+	
+	public List<DeliveryPackaging> addDetail(DeliveryPackaging packaging) {
+		getPackaging().add(packaging);
+		return getPackaging();
 	}
 	
 	public String getReferenceCode() {
