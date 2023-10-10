@@ -1,9 +1,4 @@
-import { Component, ViewChild,
-  EventEmitter,
-  HostBinding,
-  Input,
-
-  Output,  SimpleChanges, OnChanges} from '@angular/core';
+import { Component, ViewChild, EventEmitter, HostBinding, Input, Output, SimpleChanges, OnChanges} from '@angular/core';
 import { ModalEditTaxModelComponent } from '../components/modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../components/modal-payment/modal-payment.component';
 import { ModalTaxesDetailsComponent } from '../components/modal-taxes-details/modal-taxes-details.component';
