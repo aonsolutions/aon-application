@@ -45,6 +45,8 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info.Certifica2Period;
 import com.esferalia.aon.jooq.tables.records.Certifica2BatchRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -600,7 +602,8 @@ public class JooqCertifica2 {
 		
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(certifica2Info.getSSNumber()))
-				.and(SALARY.CCC.eq(certifica2Info.getCcc())).and(SALARY.TYPE.eq((byte) 0))
+				.and(SALARY.CCC.eq(certifica2Info.getCcc()))
+				.and(SALARY.TYPE.eq((byte) 0))
 				.and(SALARY.END_DATE.ge(filterDate))
 				.and(SALARY.END_DATE.le(parseDateToSQL(certifica2Info.getEndDate())))
 				.and(SALARY.CONTRACT.eq(contractId))
@@ -633,6 +636,9 @@ public class JooqCertifica2 {
 			
 			Double baseCGC = salary.get(SALARY.CGC_BASE);
 			Double baseCGP = salary.get(SALARY.CGP_BASE);
+			
+			baseCGC += checkCGCDelaySalary(dslContext, salaryStartDate, contractId);
+			baseCGP += checkCGPDelaySalary(dslContext, salaryStartDate, contractId);
 
 			// Initialize Certifica2Info
 			Certifica2Period certifica2Period = null;
@@ -681,6 +687,50 @@ public class JooqCertifica2 {
 			certifica2Info.setContractDuration(contractDuration);
 
 		certifica2Info.setQuoteDataList(quoteDataList);
+	}
+
+	private static Double checkCGCDelaySalary(DSLContext dslContext, Date salaryStartDate, Integer contractId) {
+		SalaryRecord delaySalary = dslContext.selectFrom(SALARY)
+			.where(SALARY.TYPE.eq((byte)3))
+			.and(SALARY.CONTRACT.eq(contractId))
+			.and(SALARY.START_DATE.le(salaryStartDate))
+			.and(SALARY.END_DATE.ge(salaryStartDate))
+			.fetchOne();
+		
+		if(delaySalary == null) return 0.00;
+		
+		SalaryDataRecord delaySalaryData = dslContext.selectFrom(SALARY_DATA)
+			.where(SALARY_DATA.SALARY.eq(delaySalary.getId()))
+			.and(SALARY_DATA.NAME.eq("BASE_CGC"))
+			.and(SALARY_DATA.START_DATE.le(salaryStartDate))
+			.and(SALARY_DATA.END_DATE.ge(salaryStartDate))
+			.fetchOne();
+		
+		if(delaySalaryData == null) return 0.00;
+		
+		return Double.parseDouble(delaySalaryData.getExpression());
+	}
+
+	private static Double checkCGPDelaySalary(DSLContext dslContext, Date salaryStartDate, Integer contractId) {
+		SalaryRecord delaySalary = dslContext.selectFrom(SALARY)
+				.where(SALARY.TYPE.eq((byte)3))
+				.and(SALARY.CONTRACT.eq(contractId))
+				.and(SALARY.START_DATE.le(salaryStartDate))
+				.and(SALARY.END_DATE.ge(salaryStartDate))
+				.fetchOne();
+			
+		if(delaySalary == null) return 0.00;
+		
+		SalaryDataRecord delaySalaryData = dslContext.selectFrom(SALARY_DATA)
+			.where(SALARY_DATA.SALARY.eq(delaySalary.getId()))
+			.and(SALARY_DATA.NAME.eq("BASE_CGP"))
+			.and(SALARY_DATA.START_DATE.le(salaryStartDate))
+			.and(SALARY_DATA.END_DATE.ge(salaryStartDate))
+			.fetchOne();
+		
+		if(delaySalaryData == null) return 0.00;
+		
+		return Double.parseDouble(delaySalaryData.getExpression());
 	}
 
 	private static boolean checkQuoteData(List<Map<String, String>> quoteDataList, Map<String, String> quoteData) {

@@ -13,6 +13,8 @@ public interface ISerfruit {
 
 	Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter, Options... options);
 
+	public Delivery saveDelivery(AONContext ctx, Delivery delivery);
+	
 	public void saveDeliveryPackaging(AONContext ctx, Delivery delivery, List<SerfruitDeliveryPackaging> packaging);
 	
 	public void saveCarrierPacking(AONContext ctx, Delivery delivery, CarrierPacking carrierPacking);

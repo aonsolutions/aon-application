@@ -21,7 +21,7 @@ export class ApiEnterpriseMultipleObjectCrudRepository extends APIGenericMultipl
             collection.add(this.apiModel.parseDataToReceive(element, GET_MULTIPLE, filter))
         })
         collection.forEach((element: Enterprise) => {
-            if(element.Key == ''){
+            if(element.Key == '' || element.Name == ''){
                 collection.remove(element.getKey());
             }
         })

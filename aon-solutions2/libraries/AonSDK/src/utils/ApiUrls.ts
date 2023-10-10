@@ -13,3 +13,12 @@ export const enum MESSAGE_URL {
     GET_ONE_MESSAGE = '/ms/api/task/one',
     SAVE_ONE_MESSAGE = '/ms/api/task',
 }
+
+export const enum TAXMODEL_URL {
+    GET_TAXMODEL_LIST = '/ms/api/fiscal/models',
+    PAY_TAXMODEL = '/ms/api/fiscal/markAsFinished',
+}
+
+export const enum INVOICE_URL {
+    GET_INVOICE_LIST = '/ms/api/invoice',
+}

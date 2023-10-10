@@ -176,8 +176,6 @@ import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
-import com.esferalia.aon.payroll.DelegateCollection;
-import com.esferalia.aon.payroll.DelegateIterator;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
@@ -185,6 +183,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.AbstractContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.CompositeCollection;
 import com.esferalia.aon.payroll.calculator.CompositeCosts;
+import com.esferalia.aon.payroll.calculator.CompositeDeductions;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader;
@@ -192,7 +191,6 @@ import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.DelegateSystemPayment;
 import com.esferalia.aon.payroll.calculator.DomainPayments;
-import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -235,6 +233,7 @@ import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.BonusType;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -1351,6 +1350,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	private Map<Double, Double> payments;
 	
 	private Set<IContractBonus> contextBonus; 
+	private Set<IContractDeduction> contextDeduction; 
 
 	/*
 	 * public SQLContractSalaryCalculatorContext(Connection connection, Date
@@ -1455,13 +1455,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		agreementContextFactory = new SQLAgreementContextFactory(connection, this::getCCCExpressionContext,
 				this.startDate, this.getEnd(), order);
-		this.agreementExpressionContexts = new LRUCache<AgreementContextKey, ExpressionContext>(CACHE_SIZE,
+		this.agreementExpressionContexts = new LRUCache<>(CACHE_SIZE,
 				agreementContextFactory);
 		this.leaveLoader = new SQLContractLeaveLoader(this.startDate, this.getEnd());
 
-		this.liquids = new HashMap<Double, Double>();
-		this.payments = new HashMap<Double, Double>();
-		this.contextBonus = new HashSet<IContractBonus>();
+		this.liquids = new HashMap<>();
+		this.payments = new HashMap<>();
+		this.contextBonus = new HashSet<>();
+		this.contextDeduction = new HashSet<>();
 
 	}
 
@@ -1733,8 +1734,26 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			deductionStmt.setInt(1, id);
 			ResultSet rs = deductionStmt.executeQuery();
 			this.sqlContractDeduction.setResultSet(rs);
-			HierarchyDeductions hierarchyDeductions = new HierarchyDeductions(this.sqlContractDeduction,
-					getCCCDeductions().iterator(), getSSRegimeDeductions().iterator());
+//			HierarchyDeductions hierarchyDeductions = new HierarchyDeductions(this.sqlContractDeduction,
+//					getCCCDeductions().iterator(), getSSRegimeDeductions().iterator());
+			CompositeDeductions hierarchyDeductions = new CompositeDeductions(
+				this.contextDeduction,
+				this.sqlContractDeduction,
+				getCCCDeductions(), 
+				getSSRegimeDeductions()) {
+
+			    	@Override
+				protected int getLevel(IContractDeduction item) {
+			    	    
+			    	    if ( item instanceof ISystemDeduction ) {
+			    		return ((ISystemDeduction) item).getDomain();
+			    	    } else {
+			    		int level =  super.getLevel(item);
+			    		return level + ( Integer.MAX_VALUE - 100 ) ;
+			    	    }
+				}
+			    
+			};
 			return hierarchyDeductions;
 		} catch (SQLException e) {
 			throw new AonException(e);
@@ -2200,7 +2219,115 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		contextBonus.add(bonus);
 	}
 
-//	protected Collection<ISystemPayment> getDefaultAgreementPayments() {
+	public void addDeduction (String name, String description, String expression) {
+	    addDeduction(name, getStartDate(), null, description, expression);
+	}
+
+	public void addDeduction (String name, Date startDate, Date endDate, String description, String expression) {
+	    	
+		IContractDeduction deduction = new ISystemDeduction() {
+			
+		    	@Override
+		    	public int getDomain() {
+		    	    return 0;
+		    	}
+		    
+			@Override
+			public Date getStartDate() {
+				return startDate;
+			}
+			
+			@Override
+			public Date getEndDate() {
+				return endDate;
+			}
+			
+			@Override
+			public DeductionType getType() {
+			    	switch (name) {
+				case "MEI":
+				    return DeductionType.MEI;
+				case "FP":
+				    return DeductionType.JOB_TRAINING;
+				case "DESMPL":
+				    return DeductionType.UNEMPLOYMENT;
+				case "CGC":
+				    return DeductionType.COMMON_CONTINGENCY;
+				case "BONIF":
+				    return DeductionType.BONUS;
+				default:
+				    return DeductionType.OTHER;
+				}
+			}
+			
+			@Override
+			public double getAmount() {
+				return 0;
+			}
+			
+			@Override
+			public boolean isReadOnly() {
+				return true;
+			}
+			
+			@Override
+			public ExpressionScope getScope() {
+				return ExpressionScope.SYSTEM;
+			}
+			
+			@Override
+			public String getName() {
+				return name;
+			}
+			
+			@Override
+			public Integer getId() {
+				return (int)(Math.random()*Integer.MAX_VALUE);
+			}
+			
+			@Override
+			public String getExpression() {
+				return String.format("/*read-only*/%s/**/", expression);
+			}
+			
+			@Override
+			public String getDescription() {
+				return description;
+			}
+			
+			@Override
+			public boolean equals(Object obj) {
+				if ( this == obj )
+					return true;
+				
+				if (!( obj instanceof IContractDeduction ))
+					return false;
+				
+				IContractDeduction deduction = (IContractDeduction) obj;
+				return ( AonUtils.equals(this.getStartDate(), deduction.getStartDate())
+						&& AonUtils.equals(this.getEndDate(), deduction.getEndDate())
+						&& AonUtils.equals( this.getExpression(), deduction.getExpression())
+						&& AonUtils.equals( this.getDescription(), deduction.getDescription()) )
+						;
+					
+			}
+			
+			@Override
+			public int hashCode() {
+			    int hash = 7;
+			    hash = 31 * hash + (startDate == null ? 0 : startDate.hashCode());
+			    hash = 31 * hash + (endDate == null ? 0 : endDate.hashCode());
+			    hash = 31 * hash + (expression == null ? 0 : expression.hashCode());
+			    hash = 31 * hash + (description == null ? 0 : description.hashCode());
+			    return hash;
+			}
+
+		};
+		
+		contextDeduction.add(deduction);
+	}
+
+	//	protected Collection<ISystemPayment> getDefaultAgreementPayments() {
 //		
 //		
 //		if ( getAgreementKey() != null ) 
@@ -6356,7 +6483,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public static Integer getDomain(SSRegimeType ssRegime) {
-		return (-1) * ssRegime.ordinal();
+	    	switch (ssRegime) {
+		case SEA_WORKERS: // Really ASSIMILATED
+			return (-1) * SSRegimeType.GENERAL.ordinal();
+		default:
+			return (-1) * ssRegime.ordinal();
+		}
 	}
 
 	protected static String orderBy(String stmt, OrderByList orderBy) {

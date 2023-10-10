@@ -22,6 +22,20 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.external.sources</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.xml.ws</groupId>
+					<artifactId>jaxws-ri</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		
 		<dependency>
 			<groupId>es.mityc</groupId>

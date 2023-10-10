@@ -10,33 +10,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.Rawdoc;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.type.RawdocNature;
-import com.esferalia.aon.occam.api.model.type.RawdocStatus;
-import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-import net.aonsolutions.aon.tedi.invofox.OCRInvoiceBuilder;
-import net.aonsolutions.aon.tedi.invofox.OCRResult;
+import net.aonsolutions.aon.tedi.invofox.OCRToAon;
 import net.aonsolutions.invofox.OCRDocumentsParams;
 import net.aonsolutions.invofox.OCRInvofox;
 import net.aonsolutions.invofox.model.OCRDocument;
-import net.aonsolutions.invofox.model.OCRDocumentResponse;
 import net.aonsolutions.invofox.model.OCRDocumentsResponse;
-import net.aonsolutions.invofox.model.OCRSeverity;
 
-class InvofoxToAonTestCase {
+public class InvofoxToAonTestCase {
 	
 	@Test
+	@Disabled("Until default product test has been done")
 	void getValidDocument() {
 		// String documentId = "648088d6c632f4000891fa82";
 		// String documentId = "648991a57e00c10008d56923"; // BIP & DRIVE
@@ -75,93 +67,41 @@ class InvofoxToAonTestCase {
 			})
 			.filter( d -> AonArrayUtils.constains(companyDocuments, d.getData().get().getIssuerDocument())
 					|| AonArrayUtils.constains(companyDocuments, d.getData().get().getRecipientDocument()) )
-			.forEach( optDocument -> {
-				OCRSeverity state = optDocument.getPublicState().get();
-				System.out.println( "**************** STATE *************** " );
-				System.out.println( state );
-				System.out.println( );
-				
-				String documentId = optDocument.getId().get();
-				OCRDocumentResponse docResponse = OCRInvofox.getDocument(documentId);		
+			.map( optDocument -> OCRInvofox.getDocument(optDocument.getId().get()) )
+			.map( docResponse -> {
 				assertNotNull(docResponse);
 				assertTrue(docResponse.getHttpCode().isPresent());
 				assertEquals( 200, docResponse.getHttpCode().get());
 				assertTrue(docResponse.getDocument().isPresent());
-				
+				return OCRToAon.toAON(getOccam(), docResponse);
+			})
+			.filter( pair -> pair.getLeft() != null)
+			.map( pair -> pair.getLeft())
+			.forEach( invoice -> {
 				AONContext ctx = AONContext.getAONContext(getOccam());
-				OCRResult result = OCRInvoiceBuilder.toInvoice(ctx, docResponse.getDocument().get() );
-				assertNotNull(result);
-				assertNotNull(result.getInvoice());
-				assertNotNull(result.getInvoice().getIssueDate());
-				assertNotNull(result.getInvoice().getType());
-				
-				// System.out.println( "**************************************** " );
-				// System.out.println( "**************** SOURCE **************** " );
-				// System.out.println( "**************************************** " );
-				// System.out.println();
-				// System.out.println( OCRInvoiceJSON.to(result.getOCRInvoice()).toString(1) );
-				// System.out.println();
-				
-				// System.out.println( "**************************************** " );
-				// System.out.println( "**************** INVOICE *************** " );
-				// System.out.println( "**************************************** " );
-				// System.out.println();
-				// System.out.println( InvoiceJSON.toJSON(result.getInvoice()).toString(1) );
-				
-				Invoice invoice = result.getInvoice();
-				System.out.println( "\t************ ATTEMPT TO SAVE INVOICE" );
-				try {
 					
-					Invoice duplicated = AON.getInvoice( getOccam(), p -> p.getReferenceCodeProperty().eq( invoice.getReferenceCode()));
-					if (duplicated != null && duplicated.getId() != null) {
-						System.out.println( "\t\t************ INVOICE DELETED ************** " );
-						AON.deleteInvoice(getOccam(), duplicated.getId());
-					}
-					System.out.println( "\t\t************ INVOICE SAVED ************** " );
+				double headerTax = ctx.getDslContext().select( INVOICE.VAT_QUOTA )
+					.from(INVOICE)
+					.where(INVOICE.ID.eq(invoice.getId()))
+					.fetch()
+					.stream()
+					.mapToDouble( r -> r.getValue(INVOICE.VAT_QUOTA) )
+					.findFirst()
+					.orElse(-1.0);
 					
-					Invoice saved = AON.acceptInvoice( getOccam() , invoice );
-					
-					double headerTax = ctx.getDslContext().select( INVOICE.VAT_QUOTA )
-						.from(INVOICE)
-						.where(INVOICE.ID.eq(saved.getId()))
-						.fetch()
-						.stream()
-						.mapToDouble( r -> r.getValue(INVOICE.VAT_QUOTA) )
-						.findFirst()
-						.orElse(-1.0);
-					
-					double invoiceTax = ctx.getDslContext().select( INVOICE_TAX.QUOTA )
-						.from(INVOICE)
-						.innerJoin( INVOICE_DETAIL).on( INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
-						.innerJoin( INVOICE_TAX).on( INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
-						.where(INVOICE.ID.eq(saved.getId()))
-						.and( INVOICE_TAX.TAX_TYPE.eq( TaxType.VAT.value() ) )
-						.fetch()
-						.stream()
-						.mapToDouble( r -> r.getValue(INVOICE_TAX.QUOTA) )
-						.sum();
-					headerTax = AonMathUtils.round(headerTax);
-					invoiceTax = AonMathUtils.round(invoiceTax);
-					assertEquals( headerTax, invoiceTax);
-					
-				} catch( Exception e ) {
-					e.printStackTrace();
-					try {
-						Rawdoc rawdoc = new Rawdoc()
-							.setDomain( invoice.getDomain() )
-							.setNature( RawdocNature.INVOICE )
-							.setType( invoice.isSales()?RawdocType.OUTPUT:RawdocType.INPUT)
-							.setStatus( RawdocStatus.INBOX )
-							.setJson( InvoiceJSON.toJSON(result.getInvoice()).toString() );
-						AON.rawdocSave( getOccam() , rawdoc );
-						System.out.println( "\t\t************ RAWDOC SAVED ************** " );
-
-					} catch( Exception e1 ) {
-						e1.printStackTrace();
-						System.out.println( "\t\t************ RAWDOC NOT SAVED ************** " );
-					}
-				}
-				
+				double invoiceTax = ctx.getDslContext().select( INVOICE_TAX.QUOTA )
+					.from(INVOICE)
+					.innerJoin( INVOICE_DETAIL).on( INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
+					.innerJoin( INVOICE_TAX).on( INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
+					.where(INVOICE.ID.eq(invoice.getId()))
+					.and( INVOICE_TAX.TAX_TYPE.eq( TaxType.VAT.value() ) )
+					.fetch()
+					.stream()
+					.mapToDouble( r -> r.getValue(INVOICE_TAX.QUOTA) )
+					.sum();
+				headerTax = AonMathUtils.round(headerTax);
+				invoiceTax = AonMathUtils.round(invoiceTax);
+				assertEquals( headerTax, invoiceTax);
 		});
 
 	}

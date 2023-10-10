@@ -102,9 +102,7 @@ public class DownloadFeeServlet extends HttpServlet {
         }
         Cell celdaf = fila.createCell(columns);
         celdaf.setCellStyle(style);
-   
-
-        
+  
         LinkedList<Fee> fees;
         if(filterJSON.opt("segment") != null) {
 			JSONArray segment = filterJSON.optJSONArray("segment");
@@ -117,6 +115,7 @@ public class DownloadFeeServlet extends HttpServlet {
 				fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, cIDs));
 			}else  fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, null));
 		} else  fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, null));
+       
         for(Integer i = 0; i < fees.size(); i++) {
         	Row row = hoja.createRow(i+1);
         	for(Integer j = 0; j < columnList.size(); j++) {
@@ -277,8 +276,8 @@ public class DownloadFeeServlet extends HttpServlet {
 			filter = filter.and(f.getStatusProperty().eq(status.byteValue()));
 		}
 		
-		if(filterJSON.opt("segment") != null) {
-			Integer segment = filterJSON.optInt("segment");
+		if(filterJSON.opt("segmentId") != null) {
+			Integer segment = filterJSON.optInt("segmentId");
 			if(segment > 0) filter = filter.and(f.getSegmentProperty().eq(segment));
 		}
 		

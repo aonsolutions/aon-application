@@ -2,18 +2,22 @@ package net.aonsolutions.aon.api.servlet.warehouse;
 
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.DeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.PackagingDeliveryJSON;
 import com.esferalia.aon.occam.api.json.PackagingJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
+import com.esferalia.aon.occam.api.model.warehouse.PackagingDelivery;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -50,6 +54,9 @@ public class PackagingServlet extends AonApiHttpServlet {
 			case "/":
 				response(req, resp, getPackaging(api));
 				break;
+			case "/deliveryPackaging":
+				response(req, resp, getDeliveryPackaging(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -66,6 +73,9 @@ public class PackagingServlet extends AonApiHttpServlet {
 			case "/":
 				response(req, resp, savePackaging(api));
 				break;
+			case "/deliveryPackaging":
+				response(req, resp, saveDeliveryPackaging(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -80,9 +90,22 @@ public class PackagingServlet extends AonApiHttpServlet {
 		return PackagingJSON.toJSON(packaging);
 	}
 	
-	private JSONObject savePackaging(AonApiData api) {
+	private JSONObject getDeliveryPackaging(AonApiData api) {
+		String sscc = JsonUtils.getString(api.getData(), IJsonNames.SSCC);
+		Integer delivery = JsonUtils.getInteger(api.getData(), IJsonNames.DELIVERY);
+		Integer product = JsonUtils.getInteger(api.getData(), IJsonNames.PRODUCT);
+		DeliveryPackaging deliveryPackaging = AON.getDeliveryPackaging(api.getDomain(), api.getUser(), sscc, delivery, product);
+		return DeliveryPackagingJSON.toJSON(deliveryPackaging);
+	}
+	
+	private JSONArray savePackaging(AonApiData api) {
 		Packaging packaging = PackagingJSON.fromJSON(api.getData());
-		packaging = AON.savePackaging(api.getDomain(), api.getUser(), packaging);
-		return PackagingJSON.toJSON(packaging);
+		return PackagingJSON.toJSON(AON.savePackaging(api.getDomain(), api.getUser(), packaging));
+	}
+	
+	private JSONObject saveDeliveryPackaging(AonApiData api) {
+		PackagingDelivery packaging = PackagingDeliveryJSON.fromJSON(api.getData());
+		packaging = AON.saveDeliveryPackaging(api.getDomain(), api.getUser(), packaging);
+		return PackagingDeliveryJSON.toJSON(packaging);
 	}
 }

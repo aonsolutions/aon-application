@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -91,19 +92,19 @@ public class SLDSalaries {
 		calcs.entrySet().stream()
 		.filter(e -> e.getKey() != null )
 		.filter(e -> contains(period, e.getKey()))
-		.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+		.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		
 		if ( periodCalcs.isEmpty() && "L13".equals(type)) {
 			periodCalcs = 
 			calcs.entrySet().stream()
 			.filter(e -> e.getKey() != null )
-			.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+			.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		} else if ( periodCalcs.isEmpty() ) {
 			periodCalcs = 
 			calcs.entrySet().stream()
 			.filter(e -> e.getKey() != null )
 			.filter(e -> intersects(period, e.getKey()))
-			.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+			.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		}
 		
 		return getPeriodSalary(type, ccc, naf, periodCalcs);

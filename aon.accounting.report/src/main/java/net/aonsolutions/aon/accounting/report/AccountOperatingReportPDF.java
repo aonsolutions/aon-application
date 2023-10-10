@@ -33,7 +33,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class AccountOperatingReportPDF {
+public class AccountOperatingReportPDF implements IAccountReportPDF {
 
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00"); //;(#,##0.00)
 	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
@@ -41,6 +41,11 @@ public class AccountOperatingReportPDF {
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 	private static Font BODY_RED_FONT = new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL, BaseColor.RED);
 	private static Font BODY_RED_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.RED);
+	
+	@Override
+	public void printReportPDF(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
+		printOperatingReport(outputStream, params);
+	}
 
 	public void printOperatingReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
 		
@@ -218,7 +223,9 @@ public class AccountOperatingReportPDF {
 			.forEach(action);		
 	    
 		document.add(table);
+
 		document.close();
+
 	}
 
 	private float getDescriptionColumnWidth(AccountOperatingReport report) {
@@ -398,5 +405,6 @@ public class AccountOperatingReportPDF {
 
 		
 	}
+
 	
 }

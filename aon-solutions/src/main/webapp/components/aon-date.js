@@ -1,5 +1,5 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MSG, TAG } from '../environments/environments.js';
 import { AonInput } from './aon-input.js';
 import { AonIconButton } from './aon-icon-button.js';
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
@@ -353,19 +353,19 @@ export class AonDate extends AonElement {
 
   getMonthName() {
     switch (this.month) {
-      case 0: return 'ENERO';
-      case 1: return 'FEBRERO';
-      case 2: return 'MARZO';
-      case 3: return 'ABRIL';
-      case 4: return 'MAYO';
-      case 5: return 'JUNIO';
-      case 6: return 'JULIO';
-      case 7: return 'AGOSTO';
-      case 8: return 'SEPTIEMBRE';
-      case 9: return 'OCTUBRE';
-      case 10: return 'NOVIEMBRE';
-      case 11: return 'DICIEMBRE';
-      default: return 'ENERO';
+      case 0: return MSG.JANUARY.toUpperCase();
+      case 1: return MSG.FEBRUARY.toUpperCase();
+      case 2: return MSG.MARCH.toUpperCase();
+      case 3: return MSG.APRIL.toUpperCase();
+      case 4: return MSG.MAY.toUpperCase();
+      case 5: return MSG.JUNE.toUpperCase();
+      case 6: return MSG.JULY.toUpperCase();
+      case 7: return MSG.AUGUST.toUpperCase();
+      case 8: return MSG.SEPTEMBER.toUpperCase();
+      case 9: return MSG.OCTOBER.toUpperCase();
+      case 10: return MSG.NOVEMBER.toUpperCase();
+      case 11: return MSG.DECEMBER.toUpperCase();
+      default: return MSG.JANUARY.toUpperCase();
     }
   }
 

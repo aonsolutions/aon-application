@@ -224,9 +224,10 @@ export class ApiDocument extends Document implements IApiModel {
 
     parseDataToReceive(data: any, currentMethod:string, filter: IFilter) {
         let document = new Document()
-        if(filter && filter.fields && filter.fields?.has('path') && filter.fields?.get('path')[0].indexOf('/laboral') !== -1){
+        let path = filter.fields?.get('path')[0];
+        if(path.indexOf(MainFolders.LABORAL) !== -1){
             document.ApiObject = data;
-            document.File = ''
+            document.File = '/ms/api/contract/salary/pdf?salaryId='+data.id+'&enterpriseId=1034696&type=SALARY'
             document.FileName = 'Nómina';
             document.FileSize = 0
             document.FileType = ''
@@ -234,9 +235,9 @@ export class ApiDocument extends Document implements IApiModel {
             document.Path = filter.fields?.get('path')
             document.Key = data.id ? data.id : ''
             document.Id = data.id ? data.id : ''
-        }else if(!data.title){
+        }else if(path == MainFolders.ACONTABILIZAR || path == MainFolders.PAPELERA){
             document.ApiObject = data;
-            document.File = data.file && data.file.path ? data.file.path : '';
+            document.File = data.file && data.file.path ? '/' + data.file.path : '';
             document.FileName = data.name ? data.name : '';
             document.FileSize = 0;
             document.FileType = data.file && data.file.content_type ? data.file.content_type : '';
@@ -244,21 +245,20 @@ export class ApiDocument extends Document implements IApiModel {
             document.Path = filter.fields?.get('path')
             document.Key = data.id ? data.id : '';
             document.Id = data.id ? data.id : '';
-        }else{
+        }else if(path == MainFolders.CONTABILIZADO){
             document.ApiObject = data;
-            document.File = data.file && data.file.url ? data.file.url : '';
-            document.FileName = data.title ? data.title : '';
-            document.FileSize = data.size ? data.size : 0;
-            document.FileType = data.file && data.file.type ? data.file.type : '';
-            document.Date = data.date ? data.date : new Date(data.date);
+            document.File = data.id;
+            document.Date = data.date;
+            document.Path = filter.fields?.get('path');
+        }else if (path == MainFolders.FISCAL){
+            document.ApiObject = data;
+            // TO DO => que es source? de donde lo obtiene?
+            document.File = '/ms/api/attach?attachType=data&file=true&source_id='+data.id+'&source=9'
+            document.FileName = data.model + '-' + data.year + '-' + data.period
+            document.FileSize = 0
+            document.FileType = 'application/pdf'
+            document.Date = new Date(data.year + "-" + data.period.replace('T','')*3 + "-1");
             document.Path = filter.fields?.get('path')
-            if(data.tags){
-                data.tags.forEach((tag: any) => {
-                    let newTag = new DocumentTag(tag)
-                    newTag.Key = tag.id
-                    document.Tag.add(newTag)
-                })
-            }
             document.Key = data.id ? data.id : '';
             document.Id = data.id ? data.id : '';
         }

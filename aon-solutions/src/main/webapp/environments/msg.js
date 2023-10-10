@@ -29,6 +29,7 @@ if(Language.ENGLISH === language) {
 export const ABOUT = MSG.ABOUT;
 export const ACCEPT = MSG.ACCEPT;
 export const ACCESS = MSG.ACCESS;
+export const ACCESS_TO_YOUR_AON_ACCOUNT = MSG.ACCESS_TO_YOUR_AON_ACCOUNT;
 export const ACCOUNT = MSG.ACCOUNT;
 export const ACCOUNTED = MSG.ACCOUNTED;
 export const ACCOUNTEDS = MSG.ACCOUNTEDS;
@@ -340,6 +341,8 @@ export const INVOICE_WORKPLACE_DESCRIPTION = 'Centro de Trabajo de la factura.';
 
 export const INVOICES = MSG.INVOICES;
 export const IRPF = MSG.IRPF;
+export const IS_REQUIRED = MSG.IS_REQUIRED;
+export const IS_NOT_VALID_EMAIL = MSG.IS_NOT_VALID_EMAIL;
 export const ISSUED = MSG.ISSUED;
 export const ISSUEDS = MSG.ISSUEDS;
 export const ISSUE = "Asunto"; //TODO
@@ -427,6 +430,7 @@ export const OPEN_MENU = MSG.OPEN_MENU;
 export const OPEN_REQUESTS = MSG.OPEN_REQUESTS;
 export const OPTIONS = MSG.OPTIONS;
 export const OPTIONAL = MSG.OPTIONAL;
+export const OR_ACCESS = MSG.OR_ACCESS;
 export const OTHER_SERVICES = MSG.OTHER_SERVICES;
 
 // ----- P

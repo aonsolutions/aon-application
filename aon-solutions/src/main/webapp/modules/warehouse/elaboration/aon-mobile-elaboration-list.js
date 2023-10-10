@@ -1,5 +1,5 @@
 import { AonMobileList } from '../../../components/aon-mobile-list.js';
-import { MATERIAL_ICONS, TAG } from '../../../environments/environments.js';
+import { EVENT, MATERIAL_ICONS, TAG } from '../../../environments/environments.js';
 import { getElaboration, getElaborations } from '../../../services/warehouseService.js';
 import { AonMobileElaboration } from './aon-mobile-elaboration.js';
 
@@ -11,18 +11,25 @@ export class AonMobileElaborationList extends AonMobileList {
         super();
     }
 
-    connectedCallback () {
+    connectedCallback() {
         this.initialize();
         this.init();
-        this.addEventListener('more', () => {
-    		if(this.more)
-    			this.loadMore()
-    	});
+        this.addEventListener(EVENT.MORE, this.moreFn);
+    }
+
+    moreFn = () => {
+        if(this.more)
+            this.loadMore()
+    };
+
+
+    disconnectedCallback() {
+        this.removeEventListener(EVENT.MORE, this.moreFn);
     }
 
     initialize() {
-        this.more = false;
-        this.filter = {
+        this.more = true;
+        this.filter = this.filter || {
             page:1,
             perPage:30
         }

@@ -198,7 +198,11 @@ public class DeliveryDAO {
 	}
 	
 	public static Delivery getFull(AONContext ctx, DeliveryFilter filter){
-		return getFullStream(ctx, filter).findFirst().orElse(new Delivery()); 
+		Delivery delivery = getFullStream(ctx, filter).findFirst().orElse(new Delivery()); 
+		if(delivery.getId() != null) {
+			delivery.setPackaging(DeliveryPackagingDAO.getList(ctx, f -> f.getDeliveryProperty().eq(delivery.getId())));
+		}
+		return delivery; 
 	}
 	
 	// ----- GET STREAM
@@ -206,7 +210,9 @@ public class DeliveryDAO {
 	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Options... options){
 		if(options.length > 0) 
 			return getStream(ctx, filter, options[0]);
-		return select(ctx, filter).fetch().stream().map(new DeliveryFiller());
+		return select(ctx, filter)
+			.orderBy(DELIVERY.ID.desc())
+			.fetch().stream().map(new DeliveryFiller());
 	}
 	
 	private static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Options options){
@@ -221,6 +227,7 @@ public class DeliveryDAO {
 	
 	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
 		return select(ctx, filter)
+			.orderBy(DELIVERY.ID.desc())
 			.limit(perPage).offset(perPage * (page -1))
 			.fetch().stream().map(new DeliveryFiller());
 	}
@@ -231,6 +238,7 @@ public class DeliveryDAO {
 		
 		Map<Delivery, List<DeliveryDetail>> map = selectFull(ctx, filter)
 			.groupBy(DELIVERY.ID, DELIVERY_DETAIL.ID)
+			.orderBy(DELIVERY.ID.desc())
 			.fetchGroups(
 				new DeliveryFiller()::apply,
 				new DeliveryDetailFiller()::apply
@@ -257,6 +265,7 @@ public class DeliveryDAO {
 	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
 		Map<Delivery, List<DeliveryDetail>> map = selectFull(ctx, filter)
 			.groupBy(DELIVERY.ID, DELIVERY_DETAIL.ID)
+			.orderBy(DELIVERY.ID.desc())
 			.fetchGroups(
 				new DeliveryFiller()::apply,
 				new DeliveryDetailFiller()::apply

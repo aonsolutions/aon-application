@@ -1,9 +1,9 @@
 import { ISingleObjectCrudFactory, IMultipleObjectCrudFactory } from "../interfaces/factoryInterfaces";
 import { IDocument } from "../interfaces/modelsInterfaces";
 import { ISingleObjectCrud, IMultipleObjectCrud, IDocumentSpecificMethods } from "../interfaces/serviceInterfaces";
-import { ApiDocument, StorableDocument } from "../models/Document";
-import { ApiDocumentSpecificMethodsRepository, LocalDocumentSpecificMethodsRepository } from "../repositorys/DocumentRepository";
-import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
+import { StorableDocument } from "../models/Document";
+import { ApiDocumentMultipleObjectCrudRepository, ApiDocumentSingleObjectCrudRepository, ApiDocumentSpecificMethodsRepository, LocalDocumentSpecificMethodsRepository } from "../repositorys/DocumentRepository";
+import { GenericSingleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
 import { DocumentSpecificMethods } from "../services/DocumentService";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
 import { APIEnvironment } from "../utils/Environment";
@@ -13,7 +13,7 @@ export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMu
     createSingleObjectCrud(): ISingleObjectCrud<IDocument> {
         return new GenericSingleObjectCrud<Document>(
             (APIEnvironment ?
-            new APIGenericSingleObjectCrudRepository<Document>(new ApiDocument(), Document) :
+            new ApiDocumentSingleObjectCrudRepository() :
             new GenericSingleObjectCrudRepository<Document>(new StorableDocument(), Document)
             ),
             Document);
@@ -21,7 +21,7 @@ export class DocumentFactory implements ISingleObjectCrudFactory<IDocument>, IMu
     createMultipleObjectCrud(): IMultipleObjectCrud<IDocument> {
         return new GenericMultipleObjectCrud<Document>(
             (APIEnvironment ?
-            new APIGenericMultipleObjectCrudRepository<Document>(new ApiDocument(), Document) :
+            new ApiDocumentMultipleObjectCrudRepository() :
             new GenericMultipleObjectCrudRepository<Document>(new StorableDocument(), Document)
             ),
             Document);

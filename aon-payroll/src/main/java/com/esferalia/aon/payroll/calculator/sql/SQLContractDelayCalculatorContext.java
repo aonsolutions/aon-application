@@ -639,7 +639,7 @@ public class SQLContractDelayCalculatorContext extends
 		SalaryDelayPaymentDecorator salaryPaymentDecorator = new SalaryDelayPaymentDecorator() {
 			@Override
 			public int getOrdinal(IContractPayment payment) {
-				return payments.size()+1;
+			    return AonDateUtils.getMonth(payment.getStartDate()) + 1; //payments.size()+1;
 			}
 			@Override
 			public PaymentType getPaymentType(IContractPayment payment) {
@@ -661,7 +661,7 @@ public class SQLContractDelayCalculatorContext extends
 		ExtraDelayPaymentDecorator extraPaymentDecorator = new ExtraDelayPaymentDecorator() {
 			@Override
 			public  int getOrdinal(IContractPayment payment) {
-				return payments.size()+1;
+				return AonDateUtils.getMonth(payment.getStartDate()) + 1 ; //payments.size()+1;
 			}
 			@Override
 			public PaymentType getPaymentType(IContractPayment payment) {
@@ -1015,6 +1015,26 @@ public class SQLContractDelayCalculatorContext extends
 				+", 0.00)";
 				;
 
+		private static final String DELAY_EXTRA_AMOUNT_SQL = 
+				"IFNULL((SELECT"
+				+ " SUM(" + SalaryPaymentColumns.AMOUNT+")"
+				+ " FROM " + SALARY_PAYMENT 
+				+ " WHERE " + SalaryPaymentColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryPaymentColumns.TYPE + " = 0 "
+				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " = ? )"
+				+", 0.00)";
+				;
+
+		private static final String DELAY_SALARY_AMOUNT_SQL = 
+				"IFNULL((SELECT"
+				+ " SUM(" + SalaryPaymentColumns.AMOUNT+")"
+				+ " FROM " + SALARY_PAYMENT 
+				+ " WHERE " + SalaryPaymentColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryPaymentColumns.TYPE + " = 8 "
+				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " = ? )"
+				+", 0.00)";
+				;
+
 		private static final String GARANTIZADO_AMOUNT_SQL = 
 				"IFNULL((SELECT"
 				+ " SUM(" + SalaryPaymentColumns.AMOUNT+")"
@@ -1129,8 +1149,8 @@ public class SQLContractDelayCalculatorContext extends
 				+ SalaryPaymentColumns.ID
 				+", ITDAYS"
 				+ ", " + SalaryColumns.CGC_BASE
-				+ ", IF ( ITDAYS IS NULL , "+ AMOUNT +" , " + IRPF + " ) AS " + SalaryColumns.IRPF_BASE
-				+ ", IF ( ITDAYS IS NULL , "+ AMOUNT +" , " + PAYMENT + " ) AS " + SalaryColumns.TOTAL_PAYMENT
+				+ ", IF ( DELAYSALARYAMOUNT > 0.00 , DELAYSALARYAMOUNT, IF ( ITDAYS IS NULL , "+ AMOUNT +" , " + IRPF + " )) AS " + SalaryColumns.IRPF_BASE
+				+ ", IF ( DELAYSALARYAMOUNT > 0.00 , DELAYSALARYAMOUNT, IF ( ITDAYS IS NULL , "+ AMOUNT +" , " + PAYMENT + " )) AS " + SalaryColumns.TOTAL_PAYMENT
 
 				+" FROM ("
 					+" SELECT " 
@@ -1173,6 +1193,9 @@ public class SQLContractDelayCalculatorContext extends
 					+ ", (" + OTHERS_AMOUNT_SQL +")" 
 					+ " AS OTHERSAMOUNT" 
 
+					+ ", (" + DELAY_SALARY_AMOUNT_SQL +")" 
+					+ " AS DELAYSALARYAMOUNT" 
+					
 					+ ", SUM(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 
 					+ ") AS " + SalaryColumns.CGC_BASE
 					
@@ -1385,8 +1408,7 @@ public class SQLContractDelayCalculatorContext extends
 
 
 			PaymentConcept paymentConcept = new PaymentConcept();
-			int ordinal = paymentDecorator.getOrdinal(payment);
-			paymentConcept.setCode("__" + RN.roman(ordinal));
+			paymentConcept.setCode(String.format("__%1$tY_%1$tm", startDate ) );
 			
 			// TODO: Generic Delays ? 
 			paymentConcept.setType( paymentDecorator.getPaymentType(payment) );
@@ -1443,9 +1465,11 @@ public class SQLContractDelayCalculatorContext extends
 			// DROP_DAYS
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
-			//PREST_IT
+			// PREST_IT
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
+			// DELAY_SALARY
+			stmt.setString(i++, getDelaySalaryConcept(startDate)); 
 			
 			// DATEDIFF(?, ?) 
 			//stmt.setDate(i++, sqlEndDate); 
@@ -1463,12 +1487,22 @@ public class SQLContractDelayCalculatorContext extends
 	private static class ExtrasDelayPaymentBuilder extends DelayPaymentBuilder {
 
 		private static final String EXTRA_PAYMENTS_SQL = 
-				"SELECT " 
-				+ SALARY_PAYMENT +"." + SalaryPaymentColumns.ID
+				"SELECT "
+				+ SALARY_PAYMENT +"." + SalaryPaymentColumns.ID 
 				+ ", 1.00 AS ITDAYS " 
 				+ ", 0.00 AS " + SalaryColumns.CGC_BASE
-				+ ", SUM(" + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.QUOTE + ") AS " + SalaryColumns.IRPF_BASE
-				+ ", SUM(" + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.QUOTE + ") AS " + SalaryColumns.TOTAL_PAYMENT 
+				
+				+ ", SUM(" + "IF(" 
+				+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.IRPF + " > 0.00 "  
+				+ ", " + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.IRPF  
+				+ ", " + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.QUOTE + "))"
+				+ " AS " + SalaryColumns.IRPF_BASE
+				
+				+ ", SUM(" + "IF(" 
+				+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.AMOUNT + " > 0.00 "  
+				+ ", " + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.AMOUNT  
+				+ ", " + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.QUOTE + "))"
+				+ " AS " + SalaryColumns.TOTAL_PAYMENT
 
 				+ " FROM " 	+ SQLConstants.SALARY
 				+ " INNER JOIN " + SQLConstants.SALARY_PAYMENT 
@@ -1477,11 +1511,18 @@ public class SQLContractDelayCalculatorContext extends
 				
 				+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.CONTRACT + " = ? " 
 				+ " AND " 	+ SQLConstants.SALARY + "." + SalaryColumns.TYPE + "  = ? " 
-				+ " AND " 	+ SQLConstants.SALARY + "." + SalaryColumns.START_DATE + "  = ? " 
+				+ " AND " 	+ SQLConstants.SALARY + "." + SalaryColumns.START_DATE + " <= ? " 
 				+ " AND " 	+ SQLConstants.SALARY + "." + SalaryColumns.END_DATE + " >= ? " 
-				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.TYPE + " = ? "
-				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.AMOUNT + " = 0.00 "
+				+ " AND ( "
+				+ " ( " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.TYPE + " = ? "
 				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.IRPF + " = 0.00 "
+				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.AMOUNT + " = 0.00 )"
+				+ " OR "
+				+ " ( " 	+ SQLConstants.SALARY + "." + SalaryColumns.TYPE + "  =  3 " 
+				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.TYPE + " = 0 "
+				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.QUOTE + " = 0.00 "
+				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.PAYMENT_CONCEPT + " = ? )"
+				+ " )"
 				;
 
 		public ExtrasDelayPaymentBuilder(Connection connection,
@@ -1562,6 +1603,8 @@ public class SQLContractDelayCalculatorContext extends
 			
 			stmt.setInt(5, PaymentType.CRA_0004.ordinal()  ); 
 
+			stmt.setString(6,  getDelayExtraConcept(startDate) ); 
+
 			return stmt.executeQuery();
 		}
 
@@ -1622,6 +1665,15 @@ public class SQLContractDelayCalculatorContext extends
 	    }
 
 	}
+
+	private static String getDelaySalaryConcept(Date startDate) {
+	    return String.format("__%1$tY_%1$tm", startDate );
+	}
+
+	private static String getDelayExtraConcept(Date startDate) {
+	    return String.format("__%1$tY_%1$tm", startDate );
+	}
+
 	private static Extra getAgreementExtra(Collection<Extra> agreementExtras,
 			Extra extra) {
 

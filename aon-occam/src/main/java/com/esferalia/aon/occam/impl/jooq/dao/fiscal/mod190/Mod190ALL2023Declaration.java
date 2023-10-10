@@ -81,10 +81,12 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 		.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 		.join(PERSON).on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
 		.leftOuterJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.equal(ENTERPRISE_CCC.ID))
+		.leftJoin(CONTRACT_DATA).on(SALARY.CONTRACT.equal(CONTRACT_DATA.CONTRACT).and(CONTRACT_DATA.NAME.equal("IRPF_TYPE")))
 		.where(dateField.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 		.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
 		.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
 		.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+		.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
 		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
 		.fetch()
 		.stream()
