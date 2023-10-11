@@ -386,6 +386,8 @@
 .aon_icon_register { background-image: iconRegister;}
 @url iconLink aonIconLink;
 .aon_icon_link { background-image: iconLink;}
+@url iconLinkOff aonIconLinkOff;
+.aon_icon_link_off { background-image: iconLinkOff;}
 @url iconNotification aonIconNotification;
 .aon_icon_notification { background-image: iconNotification;}
 @url iconDirty aonIconDirty;
