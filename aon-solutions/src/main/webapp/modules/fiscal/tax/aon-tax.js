@@ -15,35 +15,35 @@ import { DataAttachSource } from "../../../models/DataAttachSource.js";
 // import { Attach } from "../../../models/Attach.js";
 
 export class AonTax extends AonElement {
-	ERROR_TEMPLATE_START = "<html>"
-			+"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>"
-			+"<body>";
-	ERROR_TEMPLATE_AEAT = "<div style=\""
-				+"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
-				+"font-weight: bold;"
-				+"margin-top: 20px;"
-			+"\">"
-			+ "La Agencia Tributaria devolvió los siguientes mensajes de error, en la presentación del modelo:"
-			+"</div>";
-			
-	ERROR_TEMPLATE_BEFORE = "<html>"
-			+"<ul style=\""
-				 +"background-attachment: scroll;"
-				 +"background-clip: border-box;"
-				 +"background-position: 3px 2px;"
-				 +"background-repeat: no-repeat;"
-				 +"background-size: auto auto;"
-				 +"background-color: #ffd0d0;"
-				 +"border: solid black 1px;"
-				 +"font-size: small;"
-				 +"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
-				 +"font-weight: bold;"
-				 +"border: solid black 1px;"
-				 +"padding-top: 20px;"
-				 +"padding-bottom: 20px;"
-			+"\">";
-	ERROR_TEMPLATE_AFTER = "</ul>";
-	ERROR_TEMPLATE_END = "</body></html>";	
+	
+  ERROR_TEMPLATE_START = "<html>"
+		+ "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>"
+		+ "<body>";
+  ERROR_TEMPLATE_AEAT = "<div style=\""
+		+ "font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
+		+ "font-weight: bold;"
+		+ "margin-top: 20px;"
+		+ "\">"
+		+ "La Agencia Tributaria devolvió los siguientes mensajes de error, en la presentación del modelo:"
+		+ "</div>";
+  ERROR_TEMPLATE_BEFORE = "<html>"
+		+ "<ul style=\""
+		+ "background-attachment: scroll;"
+		+ "background-clip: border-box;"
+		+ "background-position: 3px 2px;"
+		+ "background-repeat: no-repeat;"
+		+ "background-size: auto auto;"
+		+ "background-color: #ffd0d0;"
+		+ "border: solid black 1px;"
+		+ "font-size: small;"
+		+ "font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
+		+ "font-weight: bold;"
+		+ "border: solid black 1px;"
+		+ "padding-top: 20px;"
+		+ "padding-bottom: 20px;"
+		+ "\">";
+  ERROR_TEMPLATE_AFTER = "</ul>";
+  ERROR_TEMPLATE_END = "</body></html>";	
 	
   TABLE_ID;
   DIALOG_CHECKBOX;
@@ -514,8 +514,7 @@ export class AonTax extends AonElement {
 					  aonTable.hidden = true;  
 				  }
 				  
-				  // FALTA 
-				  const aeatErrors = this.createElement(TAG.DIV);
+				  const aeatErrorsDiv = this.createElement(TAG.DIV);
 
 				  let text = '<span style="margin: 5px;color:red;font-weight: bold;font-size: medium;text-align: center; display: block">PRESENTACION DEL MODELO<br>Mensajes de Error devueltos por la Agencia Tributaria<br><hr></span>' +
          					  '<ul style="margin:5px;color:black;font-size: small;text-align: left;">';
@@ -526,8 +525,8 @@ export class AonTax extends AonElement {
 
 				  text = text + '</ul>';
 
-				  aeatErrors.innerHTML = text;
-				  this.appendChild(aeatErrors);
+				  aeatErrorsDiv.innerHTML = text;
+				  this.appendChild(aeatErrorsDiv);
 				  
 			  } else {
 				  

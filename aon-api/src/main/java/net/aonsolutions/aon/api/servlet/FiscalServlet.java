@@ -324,8 +324,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 							Mod303DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
 							// Finalizar el modelo
-							// FALTA - NO VOY A FINALIZAR EL MODELO POR AHORA PARA VER LOS ERRORES
-							//Mod303DAO.markAsFinished(ctx, model);
+							Mod303DAO.markAsFinished(ctx, model);
 							// Presentación automática del modelo 
 							if (presModelAuto == 1) {
 								AEATParams params = new AEATParams()
@@ -334,9 +333,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 										.setUser(api.getUser().getLogin())
 										.setMod(model.getId())
 										.setCertificateId(certi)
-										.setName("")      // Lo dejamos en blanco, para que se coja del certificado
-										.setDocument("")  // Lo dejamos en blanco, para que se coja del certificado										
-										.setPass("")      // La dejamos en blanco, para que se coja la que tiene guardada el certificado
+										.setName("")      // -------------------------------------------------------------------------
+										.setDocument("")  // Estos tres datos los dejamos en blanco, para que se cojan del certificado										
+										.setPass("")      // -------------------------------------------------------------------------
 										.setNrc(nrc)
 										.setTest(test);  
 								send(params, model);
