@@ -17,6 +17,7 @@ import { DuplicateFacturaComponent } from './components/modal-duplicate-factura/
 import { SendFacturaComponent } from './components/modal-send-factura/send-factura.component';
 import { DeleteFacturaComponent } from './components/modal-delete-factura/delete-factura.component';
 import { MatIconModule } from '@angular/material/icon';
+import { FacturaComponent } from './components/factura/factura.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { MatIconModule } from '@angular/material/icon';
     ChartDashboardReportsComponent,
     DuplicateFacturaComponent,
     SendFacturaComponent,
-    DeleteFacturaComponent
+    DeleteFacturaComponent,
+    FacturaComponent,
   ],
   imports: [
     CommonModule,

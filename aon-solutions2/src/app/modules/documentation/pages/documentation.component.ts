@@ -13,9 +13,9 @@ import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 import { TranslateService } from '@ngx-translate/core';
 import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
-import { UploadCompletedModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-completed-modal/upload-completed-modal.component';
-import { UploadErrorModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-error-modal/upload-error-modal.component';
+import { ErrorModalComponent } from 'src/app/shared/components/error-modal/error-modal.component';
 import { RenameFileComponent } from '../components/modal-rename-file/rename-file.component';
+import { ConfirmModalComponent } from 'src/app/shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-documentation',
@@ -144,6 +144,7 @@ export class DocumentationComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  // Acción que realiza al cerrar el modal
   // editName: any = (result: any) => this.renameFile(result, this);
   functionDocument: any = (result: any) => this.afterModalClosed(result);
 
@@ -159,38 +160,36 @@ export class DocumentationComponent implements OnInit {
 
   // Al cerrar el modal de subir documento se crea el documento en la base de datos
   afterModalClosed(result?: any) {
+    // Si se ha seleccionado un documento
     if (result) {
+      // Guardamos los datos del documento
       const fileName = result[0].document.name;
       const fileType = result[0].document.type;
       const fileSize = result[0].document.size;
-      const path = result[0].folder;
+      const path     = result[0].folder;
 
-      this.document = this.objectFactory.createDocument(
-        result[0].document,
-        fileName,
-        fileSize,
-        fileType,
-        new Date(),
-        path
-      );
+      // Creamos el documento
+      this.document = this.objectFactory.createDocument(result[0].document, fileName, fileSize, fileType, new Date(), path);
+      const file = result[0].document;
 
-      // this.documentService
-      //   .createDocument(this.document)
-      //   .then((response) => {
-      //     this.uploadCompletedModal();
-      //   })
-      //   .catch((error) => {
-      //     this.uploadErrorModal();
-      //   });
+      // Subimos el documento
+      this.documentService.uploadDocument(this.document, file)
+      .then((response) => {
+        this.uploadCompletedModal()
+      })
+      .catch((error) => {
+        this.uploadErrorModal()
+      })
+
     }
   }
 
   // Confirmación de subida de documento
   uploadCompletedModal() {
     this.modalComponent.openDialog(
-      UploadCompletedModalComponent,
+      ConfirmModalComponent,
       this.functionDocument,
-      'Data from home'
+      'Documento subido correctamente'
     );
     this.getDocumentation(this.folderSelected, this.idSelected);
   }
@@ -198,9 +197,9 @@ export class DocumentationComponent implements OnInit {
   // Si la subida da error
   uploadErrorModal() {
     this.modalComponent.openDialog(
-      UploadErrorModalComponent,
+      ErrorModalComponent,
       this.functionDocument,
-      'Data from home'
+      'Error al subir el documento'
     );
   }
 

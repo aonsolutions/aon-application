@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FolderService } from 'src/app/core/services/folder.service';
 
@@ -37,7 +37,6 @@ export class UploadModalComponent implements OnInit {
     // Guardamos las carpetas en un array para mostrarlas en el select
     this.folderService.getFolderList().then((listFolders) => {
       listFolders.forEach((folder) => {
-        console.log(folder.getKey());
         this.folderList.push({
           value: folder.getKey(),
           text: folder.Name,

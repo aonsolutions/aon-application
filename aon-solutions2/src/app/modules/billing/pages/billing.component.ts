@@ -9,6 +9,9 @@ import { DeleteFacturaComponent } from '../components/modal-delete-factura/delet
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
+import { DocumentService } from 'src/app/core/services/document.service';
+import { ErrorModalComponent } from 'src/app/shared/components/error-modal/error-modal.component';
+import { ConfirmModalComponent } from 'src/app/shared/components/confirm-modal/confirm-modal.component';
 
 interface ChartItem {
   name: string;
@@ -73,6 +76,7 @@ export class BillingComponent implements OnInit {
     private bankService: BankService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
+    private documentService: DocumentService
   ) {
     this.translateService
       .get(['BILLING.SALES', 'BILLING.BILLS', 'BILLING.REPORTS', 'BILLING.SALES_CHECK'])
@@ -250,26 +254,38 @@ export class BillingComponent implements OnInit {
       const fileName = result[0].document.name;
       const fileType = result[0].document.type;
       const fileSize = result[0].document.size;
-      const path = result[0].folder;
+      const path     = result[0].folder;
 
-      this.document = this.objectFactory.createDocument(
-        result[0].document,
-        fileName,
-        fileSize,
-        fileType,
-        new Date(),
-        path
-      );
+      this.document = this.objectFactory.createDocument(result[0].document, fileName, fileSize, fileType, new Date(), path);
+      const file = result[0].document;
 
-      // this.documentService
-      //   .createDocument(this.document)
-      //   .then((response) => {
-      //     this.uploadCompletedModal();
-      //   })
-      //   .catch((error) => {
-      //     this.uploadErrorModal();
-      //   });
+      this.documentService.uploadDocument(this.document, file)
+      .then((response) => {
+        this.uploadCompletedModal()
+      })
+      .catch((error) => {
+        this.uploadErrorModal()
+      })
+
     }
+  }
+
+  // Confirmación de subida de documento
+  uploadCompletedModal() {
+    this.modalComponent.openDialog(
+      ConfirmModalComponent,
+      this.functionHome,
+      'Documento subido correctamente'
+    )
+  }
+
+  // Si la subida da error
+  uploadErrorModal() {
+    this.modalComponent.openDialog(
+      ErrorModalComponent,
+      this.functionHome,
+      'Error al subir el documento'
+    )
   }
 
   openModal(modal: string) {
@@ -330,9 +346,12 @@ export class BillingComponent implements OnInit {
     this.selectedMenu = 1;
   }
 
-  showSales(data: any) {
+  atrasGasto() {
+    this.selectedTab = 2;
+    this.selectedMenu = 1;
+  }
 
-    console.log(data);
+  showSales(data: any) {
 
     // if (data[0].status) {
 
