@@ -23,6 +23,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.Window;
 
 public class DomainCompanyJSON {
 	
@@ -55,12 +56,9 @@ public class DomainCompanyJSON {
 		if(null != domainCompany.getSchema())
 			jsonObject.put(IJsonNames.SCHEMA, new JSONString(domainCompany.getSchema()));
 			
-		jsonObject
-			.put(IJsonNames.DOMAIN, domainToJSON(domainCompany.getDomain()))
-			.isObject()
-			.put(IJsonNames.COMPANY, companyToJSON(domainCompany.getCompany()))
-			.isObject()
-			;	
+		jsonObject.put(IJsonNames.DOMAIN, domainToJSON(domainCompany.getDomain()));
+		
+		jsonObject.put(IJsonNames.COMPANY, companyToJSON(domainCompany.getCompany()));
 		
 		return jsonObject;
 	}
@@ -100,56 +98,69 @@ public class DomainCompanyJSON {
 	
 	public static JSONObject domainToJSON(Domain domain) {
 		if(domain == null) return new JSONObject();
-		return new JSONObject()
-			.put(IJsonNames.ID, new JSONString(domain.getId().toString()))
-			.isObject()
-			.put(IJsonNames.NAME,new JSONString(domain.getName()))
-			.isObject()
-			.put(IJsonNames.DESCRIPTION, new JSONString(domain.getDescription()))
-			.isObject()
-			.put(IJsonNames.OWNER, new JSONString(domain.getOwner()))
-			.isObject()
-			.put(IJsonNames.PARENT_ID, new JSONString(domain.getParentId().toString()))
-			.isObject()
-			.put(IJsonNames.DOMAIN_TYPE, new JSONString(domain.getDomainType() == null?null:domain.getDomainType().toString()))
-			.isObject()
-			.put(IJsonNames.ENABLE_HEREDITY, new JSONString(domain.isEnableHeredity() + ""))
-			.isObject()
-			.put(IJsonNames.DOMAIN_MANAGEMENT, new JSONString(domain.isDomainManagement() + ""))
-			.isObject()
-			.put(IJsonNames.DISABLE_DOMAIN_MANAGEMENT, new JSONString(domain.isDisableDomainManagement() + ""))
-			.isObject()
-			.put(IJsonNames.ACTIVE, new JSONString(domain.isActive() + ""))
-			.isObject()
-			.put(IJsonNames.SCOPE, new JSONString(domain.getScope()+ ""))
-			.isObject()
-			.put(IJsonNames.MAX_DEFINED_USERS, new JSONString(domain.getMaxDefinedUsers() + ""))
-			.isObject()
-			.put(IJsonNames.DEFINED_USERS, new JSONString(domain.getDefinedUsers()+ ""))
-			.isObject()
-			.put(IJsonNames.MAX_DOCUMENT_SIZE, new JSONString(domain.getMaxDocumentSize() + ""))
-			.isObject()
-			.put(IJsonNames.MAX_TOTAL_DOCUMENT_SIZE,new JSONString( domain.getMaxTotalDocumentSize() + ""))
-			.isObject()
-			.put(IJsonNames.LAST_ACCESS_USER, new JSONString(domain.getLastAccessUser()))
-			.isObject()
-			.put(IJsonNames.LAST_ACCESS_DATE, new JSONString(formatFullDate.format(domain.getLastAccessDate())))
-			.isObject()
-			.put(IJsonNames.EXPIRATION_DATE, new JSONString(formatFullDate.format(domain.getExpirationDate())))
-			.isObject()
-			.put(IJsonNames.CREATION_USER, new JSONString(domain.getCreationUser()))
-			.isObject()
-			.put(IJsonNames.CREATION_DATE, new JSONString(formatFullDate.format(domain.getCreationDate())))
-			.isObject()
-			.put(IJsonNames.MODIFICATION_USER, new JSONString(domain.getModificationUser()))
-			.isObject()
-			.put(IJsonNames.MODIFICATION_DATE, new JSONString(formatFullDate.format(domain.getModificationDate())))
-			.isObject()
-			.put(IJsonNames.AON_CUSTOMER, new JSONString(domain.getAonCustomer() + ""))
-			.isObject()
-			.put(IJsonNames.AON_STATUS,new JSONString(domain.getAonStatus() == null?null:domain.getAonStatus().toString()))
-			.isObject()
-			;
+		
+		JSONObject obj = new JSONObject();	
+		obj.put(IJsonNames.ID, new JSONString(domain.getId().toString()));
+		obj.put(IJsonNames.NAME,new JSONString(domain.getName()));
+		obj.put(IJsonNames.DESCRIPTION, new JSONString(domain.getDescription()));
+		
+		if(null != domain.getOwner())
+			obj.put(IJsonNames.OWNER, new JSONString(domain.getOwner()));
+		
+		if(null != domain.getParentId())
+			obj.put(IJsonNames.PARENT_ID, new JSONString(domain.getParentId().toString()));
+		
+		if(null != domain.getDomainType())
+			obj.put(IJsonNames.DOMAIN_TYPE, new JSONString(domain.getDomainType().toString()));
+		
+		obj.put(IJsonNames.ENABLE_HEREDITY, new JSONString(domain.isEnableHeredity() + ""));
+		obj.put(IJsonNames.DOMAIN_MANAGEMENT, new JSONString(domain.isDomainManagement() + ""));
+		obj.put(IJsonNames.DISABLE_DOMAIN_MANAGEMENT, new JSONString(domain.isDisableDomainManagement() + ""));
+		obj.put(IJsonNames.ACTIVE, new JSONString(domain.isActive() + ""));
+		
+		if(null != domain.getScope())
+			obj.put(IJsonNames.SCOPE, new JSONString(domain.getScope().toString()));
+		
+		if(null != domain.getMaxDefinedUsers())
+			obj.put(IJsonNames.MAX_DEFINED_USERS, new JSONString(domain.getMaxDefinedUsers().toString()));
+		
+		if(null != domain.getDefinedUsers())
+			obj.put(IJsonNames.DEFINED_USERS, new JSONString(domain.getDefinedUsers().toString()));
+		
+		if(null != domain.getMaxDocumentSize())
+			obj.put(IJsonNames.MAX_DOCUMENT_SIZE, new JSONString(domain.getMaxDocumentSize().toString()));
+		
+		if(null != domain.getMaxTotalDocumentSize())
+			obj.put(IJsonNames.MAX_TOTAL_DOCUMENT_SIZE,new JSONString(domain.getMaxTotalDocumentSize().toString()));
+		
+		if(null != domain.getLastAccessUser())
+			obj.put(IJsonNames.LAST_ACCESS_USER, new JSONString(domain.getLastAccessUser()));
+		
+		if(null != domain.getLastAccessDate())
+			obj.put(IJsonNames.LAST_ACCESS_DATE, new JSONString(formatFullDate.format(domain.getLastAccessDate())));
+		
+		if(null != domain.getExpirationDate())
+			obj.put(IJsonNames.EXPIRATION_DATE, new JSONString(formatFullDate.format(domain.getExpirationDate())));
+		
+		if(null != domain.getCreationUser())
+			obj.put(IJsonNames.CREATION_USER, new JSONString(domain.getCreationUser()));
+		
+		if(null != domain.getCreationDate())
+			obj.put(IJsonNames.CREATION_DATE, new JSONString(formatFullDate.format(domain.getCreationDate())));
+		
+		if(null != domain.getModificationUser())
+			obj.put(IJsonNames.MODIFICATION_USER, new JSONString(domain.getModificationUser()));
+		
+		if(null != domain.getModificationDate())
+			obj.put(IJsonNames.MODIFICATION_DATE, new JSONString(formatFullDate.format(domain.getModificationDate())));
+		
+		if(null != domain.getAonCustomer())
+			obj.put(IJsonNames.AON_CUSTOMER, new JSONString(domain.getAonCustomer().toString()));
+		
+		if(null != domain.getAonStatus())
+			obj.put(IJsonNames.AON_STATUS,new JSONString(domain.getAonStatus().toString()));
+		
+		return obj;
 	}
 
 	private static Company parseCompanyJSON(JSONValue json) {
@@ -167,17 +178,15 @@ public class DomainCompanyJSON {
 	}
 	
 	private static JSONObject companyToJSON(Company company) {
-		return toJSONRegistry(company)
-				.put(IJsonNames.ACTIVE, new JSONString(company.isActive() + ""))
-				.isObject()
-				.put(IJsonNames.SURCHARGE, new JSONString(company.isSurcharge() + ""))
-				.isObject()
-				.put(IJsonNames.WITHHOLDING, new JSONString(company.isWithholding() + ""))
-				.isObject()
-				.put(IJsonNames.VAT_ACCRUAL_PAYMENT, new JSONString(company.isVatAccrualPayment() + ""))
-				.isObject()
-				.put(IJsonNames.E_INVOICE,new JSONString( company.iseInvoice() + ""))
-				.isObject();
+		JSONObject obj = toJSONRegistry(company);
+		
+		obj.put(IJsonNames.ACTIVE, new JSONString(company.isActive() + ""));
+		obj.put(IJsonNames.SURCHARGE, new JSONString(company.isSurcharge() + ""));
+		obj.put(IJsonNames.WITHHOLDING, new JSONString(company.isWithholding() + ""));
+		obj.put(IJsonNames.VAT_ACCRUAL_PAYMENT, new JSONString(company.isVatAccrualPayment() + ""));
+		obj.put(IJsonNames.E_INVOICE,new JSONString( company.iseInvoice() + ""));
+		
+		return obj;
 	}
 	
 	private static Registry parseRegistryJSON(JSONObject jsonObj) {
@@ -202,27 +211,21 @@ public class DomainCompanyJSON {
 	
 	private static JSONObject toJSONRegistry(Company registry) {
 		if(registry == null || registry.isEmpty()) return new JSONObject();
-		return new JSONObject()
-			.put(IJsonNames.ID, new JSONString(registry.getId().toString()))
-			.isObject()
-			.put(IJsonNames.DOMAIN, domainToJSON(registry.getDomain()))
-			.isObject()
-			.put(IJsonNames.DOCUMENT, new JSONString(registry.getDocument()))
-			.isObject()
-			.put(IJsonNames.DOCUMENT_COUNTRY, new JSONString(registry.getDocumentCountry() != null ? registry.getDocumentCountry().getIso2(): null))
-			.isObject()
-			.put(IJsonNames.DOCUMENT_TYPE, new JSONString(registry.getDocumentType() != null ? registry.getDocumentType().name(): null))
-			.isObject()
-			.put(IJsonNames.NAME, new JSONString(registry.getName()))
-			.isObject()
-			.put(IJsonNames.ALIAS, new JSONString(registry.getAlias()))
-			.isObject()
-			.put(IJsonNames.LEGAL_PERSON, new JSONString(registry.isLegalPerson() + ""))
-			.isObject()
-			.put(IJsonNames.NATIONALITY, new JSONString(registry.getNationality() != null ? registry.getNationality().getIso2() : null))
-			.isObject()
-			.put(IJsonNames.CONFIDENTIAL, new JSONString(registry.isConfidential() + ""))
-			.isObject();
+		
+		JSONObject obj = new JSONObject();
+		
+		obj.put(IJsonNames.ID, new JSONString(registry.getId().toString()));
+		obj.put(IJsonNames.DOMAIN, domainToJSON(registry.getDomain()));
+		obj.put(IJsonNames.DOCUMENT, new JSONString(registry.getDocument()));
+		obj.put(IJsonNames.DOCUMENT_COUNTRY, new JSONString(registry.getDocumentCountry() != null ? registry.getDocumentCountry().getIso2(): null));
+		obj.put(IJsonNames.DOCUMENT_TYPE, new JSONString(registry.getDocumentType() != null ? registry.getDocumentType().name(): null));
+		obj.put(IJsonNames.NAME, new JSONString(registry.getName()));
+		obj.put(IJsonNames.ALIAS, new JSONString(registry.getAlias()));
+		obj.put(IJsonNames.LEGAL_PERSON, new JSONString(registry.isLegalPerson() + ""));
+		obj.put(IJsonNames.NATIONALITY, new JSONString(registry.getNationality() != null ? registry.getNationality().getIso2() : null));
+		obj.put(IJsonNames.CONFIDENTIAL, new JSONString(registry.isConfidential() + ""));
+		
+		return obj;
 	}
 	
 	public static Booking parseBookingJSON(String json) {
