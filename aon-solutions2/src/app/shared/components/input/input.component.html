@@ -120,15 +120,14 @@
     [ngClass]="classSuffix"
     (click)="selectFunction($event)"
   >
-    <app-button class="icon-only">
+    <span class="icon-only">
       <app-icon
         *ngIf="suffixBehavior === 'showPass'"
         [shape]="suffixIcon"
         suffix
       ></app-icon>
       <ng-content *ngIf="suffixBehavior !== 'showPass'" select="[suffix]"></ng-content>
-    </app-button>
+    </span>
   </span>
-
   <mat-hint *ngIf="hint != ''">{{hint}}</mat-hint>
 </mat-form-field>
