@@ -5,7 +5,7 @@
     <mat-grid-list class="margin-top margin-bottom" [cols]="24" [rowHeight]="'2.8rem'">
       <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
       <mat-grid-tile [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
-        <app-file-upload-button>
+        <app-file-upload-button (click)="uploadDocument($event)">
           {{ 'COMMON.FILE_UPLOAD_BUTTON'|translate }}
           <app-icon shape="cloud_upload" class="margin-left"></app-icon>
         </app-file-upload-button>
@@ -51,24 +51,24 @@
           >
           </app-icon>
         </app-button>
-        <app-button
+        <!-- <app-button
           class="icon-border"
           [toolTip]="'DOCUMENTATION.FILE_SELECT_MOVE_TO' | translate"
         >
           <app-icon [shape]="'folder_special'"></app-icon>
-        </app-button>
+        </app-button> -->
         <app-button
           class="icon-border"
           [toolTip]="'DOCUMENTATION.FILE_SELECT_DOWLOAD' | translate"
         >
           <app-icon [shape]="'cloud_download'"></app-icon>
         </app-button>
-        <app-button
+        <!-- <app-button
           class="icon-border"
           [toolTip]="'DOCUMENTATION.FILE_SELECT_DELETE' | translate"
         >
           <app-icon [shape]="'delete'"></app-icon>
-        </app-button>
+        </app-button> -->
       </mat-grid-tile>
       <!--Opciones en los ficheros-->
     </mat-grid-list>
@@ -125,7 +125,7 @@
         (click)="loadFile(cardFile, 'file-'+i)"
       >
         <div header>
-          <input [id]="'fileCheck-'+i" (click)="selectViewFile('file-'+i)" type="checkbox">
+          <input [id]="'fileCheck-'+i" (click)="selectViewFile('file-'+i, $event)" type="checkbox">
           <!--Menu del archivo-->
           <span
             class='card-menu'
@@ -180,16 +180,21 @@
       <app-file-viewer
         [locale]="localePDF"
         [zoom]="'auto'"
-        [pdfSrc]="fileToShow.File"
+        [pdfSrc]="fileToShow"
       ></app-file-viewer>
     </div>
     <!--FIN Mostrar PDF-->
     <!--Mostrar imagen-->
     <ng-template #showImage>
-      <img [src]="'data:'+ fileToShow.FileType +';base64,' + fileToShow.File" alt="Image">
+      <app-file-viewer
+        [pdfSrc]="fileToShow"
+      ></app-file-viewer>
     </ng-template>
     <!--FIN Mostrar imagen-->
   <!--FIN Mostrar previo del fichero-->
   </div>
 <!--FIN Detail-->
+<!--Modal-->
+  <app-modal-controller #modal></app-modal-controller>
+<!--FIN Modal-->
 </app-grid-layout>

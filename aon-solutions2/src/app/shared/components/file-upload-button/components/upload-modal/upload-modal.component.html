@@ -1,0 +1,36 @@
+<div class="modal-container-send">
+  <div class="issue">
+    <div>
+      <span class="title"> Selecciona una carpeta </span>
+    </div>
+  </div>
+  <div class="formSend">
+    <app-input
+      [appearance]="'outline'"
+      [class]="'inputSelect'"
+      [type]="'select'"
+      [placeholder]="'INBOX.TEXT' | translate"
+      [options]="folderList"
+      (inputValue)="handleFolderSelected($event)"
+    ></app-input>
+    <app-file-upload-button class="uploadBox" (change)="documentUpload($event)" (click)="checkFolder($event)" *ngIf="!document">
+      {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
+      <app-icon shape="cloud_upload" class="margin-left"></app-icon>
+    </app-file-upload-button>
+    <p *ngIf="folderNoSelected" class="red">Debes seleccionar una carpeta primero</p>
+    <div class="documentCharge" *ngIf="document">
+      <app-icon shape="close" class="cancel" (click)="clearDocument()"></app-icon>
+      <div class="document">
+        <app-icon [backgroundColor]="'#FDEDF2'" [class]="'pink'" [padding]="'.5rem'" [borderRadius]="'.4rem'" shape="picture_as_pdf"></app-icon>
+        <span class="documentName"> {{ document.name }} </span>
+        <span>{{ currentDate }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="buttonsUpload" *ngIf="document">
+    <app-button [class]="'pink'" [width]="'10rem'" [matDialogClose]="fileAndFolder">
+      <app-icon shape="aon_upload" ></app-icon>
+      {{ "COMMON.UPLOAD" | translate }}
+    </app-button>
+  </div>
+</div>

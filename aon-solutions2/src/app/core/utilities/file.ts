@@ -6,7 +6,7 @@ export const FileToBase64 = (file: File) =>
     reader.onerror = (error) => reject(error);
 });
 
-export const Base64ToFile = (base64: string, fileName: string, fileType: string) => 
+export const Base64ToFile = (base64: string, fileName: string, fileType: string): File | unknown => 
   new Promise((resolve, reject) => {
     fetch(base64)
       .then(res => res.blob())

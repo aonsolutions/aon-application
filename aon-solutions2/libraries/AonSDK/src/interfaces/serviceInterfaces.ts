@@ -248,7 +248,8 @@ export interface IUserSpecificMethods {
 }
 
 export interface IDocumentSpecificMethods {
-    getRawFile(document: IDocument): Promise<IResponse<string>>;
+    uploadDocument(document: IDocument, file: File): Promise<IResponse<boolean>>;
+    getRawFile(document: IDocument): Promise<IResponse<any>>;
 }
 
 export interface ITaxModelSpecificMethods {

@@ -1,28 +1,41 @@
 import { IDocument, MainFolders } from "../interfaces/modelsInterfaces";
 import { IDocumentSpecificMethodsRepository } from "../interfaces/repositoryInterfaces";
-import { largeImage, smallImage, pdf } from "../utils/GenerateFakeData";
 import { ApiHttpRequest } from "../utils/Http";
 import { BASE_URL } from "../utils/Environment";
-import { APIGenericMultipleObjectCrudRepository, APIGenericSingleObjectCrudRepository } from "./GenericRepository";
-import { ApiDocument, Document } from "../models/Document";
+import { APIGenericMultipleObjectCrudRepository, APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository } from "./GenericRepository";
+import { ApiDocument, Document, StorableDocument } from "../models/Document";
 import { ICollection, IFilter } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
-import { TAXMODEL_URL } from "../utils/ApiUrls";
+import { INVOICE_URL, TAXMODEL_URL } from "../utils/ApiUrls";
 import { ErrorResponse } from "../utils/Response";
-import { FileToBase64 } from "../utils/FileHelper";
+import { Base64toBlob, FileToBase64 } from "../utils/FileHelper";
 
 export class LocalDocumentSpecificMethodsRepository implements IDocumentSpecificMethodsRepository {
-    async getRawFile(document: IDocument): Promise<string> {
-        switch(document.File){
-            case '/largeImage':
-                return largeImage;
-            case '/smallImage':
-                return smallImage;
-            case '/pdf':
-                return pdf;
-            default:
-                return smallImage;
+
+    async uploadDocument(document: Document, file: File): Promise<boolean> {
+        let storable = new StorableDocument();
+        if(document.Path && document.FileName){
+            storable.getCollection().forEach(item => {
+                if(item.Path == document.Path && item.FileName == document.FileName){
+                    throw new ErrorResponse('0303');
+                }
+            })
+            let base64 = await FileToBase64(file);
+            if(typeof base64 == 'string'){
+                new GenericSingleObjectCrudRepository(storable, Document).create(document);
+                localStorage.setItem(document.Path + document.FileName, base64)
+                return true;
+            }
         }
+        throw new ErrorResponse('0302')
+    }
+
+    async getRawFile(document: IDocument): Promise<any> {
+        let base64 = localStorage.getItem(document.Path + document.FileName);
+        if(base64){
+            return Base64toBlob(base64, document.FileType);
+        }
+        throw(new ErrorResponse('0206'))
     }
 }
 
@@ -41,20 +54,22 @@ export class ApiDocumentMultipleObjectCrudRepository extends APIGenericMultipleO
         let path: string = filter?.fields?.get('path')[0] || '';
         let collection = new Collection<Document>();
         let url;
+        let page = filter?.pageNum || 1;
+        let perPage = filter?.pageItems || 30;
         if(path == MainFolders.ACONTABILIZAR){
             // inbox(pendiente), rejected(rechazado), draft(eliminado en papelera) => 3 estados de facturas que estan en documentos pendientes
-            url = '/ms/api/invoice?status=inbox&page=1&per_page=50'
+            url = INVOICE_URL.GET_INVOICE_LIST + '?status=inbox&page=' + page + '&per_page=' + perPage
         }else if(path == MainFolders.CONTABILIZADO){
             // accounting puede tener estado pending o scored, scored es cuando esta contabilizado pero no se pueden pedir solo las contabilizadas.
-            url = '/ms/api/invoice?status=accounting&page=1&per_page=50'
+            url = INVOICE_URL.GET_INVOICE_LIST + '?status=accounting&page=' + page + '&per_page=' + perPage
         }else if(path == MainFolders.FISCAL){
             url = TAXMODEL_URL.GET_TAXMODEL_LIST
         }else if(path == MainFolders.PAPELERA){
-            url = '/ms/api/invoice?status=draft&page=1&per_page=50'
+            url = INVOICE_URL.GET_INVOICE_LIST + '?status=draft&page=' + page + '&per_page=' + perPage
         }else if(path.includes(MainFolders.LABORAL)){
             // Se deberia de llamar a la api para traer los documentos de un empleado, contrato, nominas, etc.
             throw new ErrorResponse('0199')
-        }else {
+        }else{
             throw new ErrorResponse('0199')
         }
         let response = await ApiHttpRequest.get(BASE_URL + url, {}, {});
@@ -68,11 +83,15 @@ export class ApiDocumentMultipleObjectCrudRepository extends APIGenericMultipleO
 
 export class ApiDocumentSpecificMethodsRepository implements IDocumentSpecificMethodsRepository {
 
-    async getRawFile(document: IDocument): Promise<File> {
+    async uploadDocument(document: IDocument, file: File): Promise<boolean> {
+        return true;
+    }
+
+    async getRawFile(document: IDocument): Promise<any> {
         if(document.File != ''){
             let url = document.File
             if(typeof document.File == 'number'){
-                let response = await ApiHttpRequest.get(BASE_URL + '/ms/api/invoice?id=' + document.File, {}, {});
+                let response = await ApiHttpRequest.get(BASE_URL + INVOICE_URL.GET_INVOICE__ONE + '?id=' + document.File, {}, {});
                 url = response?.file?.path ? response.file.path : '';
             }
             return await ApiHttpRequest.httpRequestFile(BASE_URL + url, {}, {});

@@ -21,4 +21,5 @@ export const enum TAXMODEL_URL {
 
 export const enum INVOICE_URL {
     GET_INVOICE_LIST = '/ms/api/invoice',
+    GET_INVOICE__ONE = '/ms/api/invoice',
 }

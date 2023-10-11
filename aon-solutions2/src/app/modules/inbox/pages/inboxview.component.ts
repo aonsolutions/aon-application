@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
@@ -5,11 +6,25 @@ import { ReportingService } from 'src/app/core/services/reporting.service';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
 import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
+=======
+import { Component, OnInit, ViewChild } from '@angular/core';
+>>>>>>> ncastaneda
 import { DatePipe } from '@angular/common';
-import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { TranslateService } from '@ngx-translate/core';
+
+<<<<<<< HEAD
+=======
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
+import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
+import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { MessageChatService } from 'src/app/core/services/message-chat.service';
+import { MessageService } from 'src/app/core/services/message.service';
+import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
+import { OptionsService } from 'src/app/shared/services/options.service';
+import { ReportingService } from 'src/app/core/services/reporting.service';
 import { TablesInboxComponent } from '../components/tables-inbox/table-inbox.component';
 
+>>>>>>> ncastaneda
 export interface Tabs {
   name: string;
   icon?: string;
@@ -66,7 +81,8 @@ export class InboxviewComponent implements OnInit {
     private translateService: TranslateService,
     public reportingService: ReportingService,
     private messageService: MessageService,
-    private messageChatService: MessageChatService
+    private messageChatService: MessageChatService,
+    private optionsService: OptionsService
   ) {
     this.translateService
       .get([
@@ -138,7 +154,33 @@ export class InboxviewComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const url = window.location.href.split('/')[4];
+
+    if(url)
+      this.messageService.getMessage(url).then((message) => {
+        this.rowClickHandler(message);
+      });
+  }
+
+  ngAfterViewInit(): void {
+    this.checkOpenModal();
+  }
+
+  /**
+  * Comprueba si el parametro "showModal" esta presente en los parametros de la consulta y, en caso afirmativo, muestra el modal.
+  *
+  * @private
+  * @returns {void}
+  */
+  private checkOpenModal(): void {
+    const options = this.optionsService.getOptions();
+
+    if (options && options.showModal) {
+      this.optionsService.clearOptions();
+      this.showModal();
+    }
+  }
 
   afterModalClosed(result?: any) {
     console.log(result);

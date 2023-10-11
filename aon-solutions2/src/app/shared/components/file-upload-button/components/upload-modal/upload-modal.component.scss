@@ -1,0 +1,71 @@
+@import "src/styles.scss";
+
+::ng-deep {
+
+  .modal-container-send {
+    width: 20rem;
+  }
+
+  .title {
+    font-size: 1rem;
+    font-family: "Roboto-Bold";
+  }
+
+  .formSend {
+
+    margin-top: $margin-top;
+    margin-bottom: $margin-bottom;
+
+    .inputText {
+      width: 100%;
+    }
+
+  }
+
+  .uploadBox {
+    height: 10rem;
+  }
+
+  .buttonsUpload {
+
+    display: flex;
+    justify-content: flex-end;
+
+    .upload {
+      background: $background-button-pink;
+      border: $border-button-pink;
+      color: $color-quarter;
+    }
+
+    .upload:hover {
+      background: $background-button-pink-hover;
+    }
+  }
+
+  .documentCharge {
+    border: $border;
+    border-radius: $border-radius;
+    padding: $padding;
+    display: flex;
+    flex-direction: column;
+
+    .cancel {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: $margin-bottom;
+    }
+
+    .document {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .documentName {
+      margin-top: $margin-top;
+    }
+
+  }
+
+}

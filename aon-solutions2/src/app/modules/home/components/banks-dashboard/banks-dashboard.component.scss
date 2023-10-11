@@ -1,1 +1,46 @@
-/*@import 'src/styles.scss';*/
+@import 'src/styles.scss';
+
+::ng-deep {
+
+  .list-bank {
+    cursor: pointer;
+  }
+
+  .list-bank-footer {
+    opacity: 0;
+    transform: translateY(30%);
+    transition: 0.3s ease-in;
+  }
+
+  .dashboard:hover .list-bank-footer {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .dashboard:hover .list-bank {
+    transform: translateY(20px);
+    transition: 0.3s ease-in;
+  }
+
+  .dashboard:not(:hover) .list-bank {
+    transition: 0.3s ease-out;
+  }
+
+  .sinDatos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+
+    .title {
+      color: $color-blue;
+      margin-bottom: 0.05rem;
+      cursor: pointer;
+    }
+
+    .text {
+      color: $color-placeholder;
+    }
+  }
+}

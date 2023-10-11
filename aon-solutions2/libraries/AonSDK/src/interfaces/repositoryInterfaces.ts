@@ -161,6 +161,7 @@ export interface IUserSpecificMethodsRepository {
 }
 
 export interface IDocumentSpecificMethodsRepository {
+    uploadDocument(document: IDocument, file: File): Promise<boolean>;
     getRawFile(document: IDocument): Promise<any>;
 }
 

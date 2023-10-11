@@ -1,0 +1,43 @@
+@import "src/styles.scss";
+
+::ng-deep {
+
+  .modal-container-send {
+    width: 20rem;
+  }
+
+  .title {
+    font-size: 1rem;
+    font-family: "Roboto-Bold";
+  }
+
+  .formSend {
+
+    margin-top: $margin-top;
+    margin-bottom: $margin-bottom;
+
+    .inputText {
+      width: 100%;
+    }
+
+  }
+
+  .buttonsSend {
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+
+    .send {
+      background: $background-button-dark;
+      color: $color-quarter;
+    }
+
+    .send:hover {
+      background: $background-button-dark-hover;
+    }
+  }
+
+
+}

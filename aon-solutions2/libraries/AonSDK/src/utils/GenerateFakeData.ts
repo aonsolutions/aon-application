@@ -230,22 +230,43 @@ export function generateData(){
     let localDocuments = new LocalStorage<Document>(Document);
     setDocuments(localDocuments.read(storableDocuments.getLocalStorage()))
     if(documents.size() == 0){
-        documents.add(new Document('/smallImage', 'file1', 1, 'image/png', new Date(), MainFolders.ACONTABILIZAR));
-        documents.add(new Document('/largeImage', 'file2', 2, 'image/png', new Date(), MainFolders.ACONTABILIZAR));
-        documents.add(new Document('/pdf', 'file3', 3, 'application/pdf', new Date(), MainFolders.CONTABILIZADO));
-        documents.add(new Document('/smallImage', 'file4', 4, 'image/png', new Date(), MainFolders.CONTABILIZADO));
-        documents.add(new Document('/smallImage', 'file5', 5, 'image/png', new Date(), MainFolders.PAPELERA));
-        documents.add(new Document('/largeImage', 'file6', 6, 'image/png', new Date(), MainFolders.PAPELERA));
-        documents.add(new Document('/pdf', 'file7', 6, 'application/pdf', new Date(), MainFolders.FISCAL));
-        documents.add(new Document('/largeImage', 'file8', 6, 'image/png', new Date(), MainFolders.FISCAL));
-        documents.add(new Document('/smallImage', 'file9', 6, 'image/png', new Date(), MainFolders.LABORAL + '/maria_rico_gómez'));
-        documents.add(new Document('/smallImage', 'file10', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
-        documents.add(new Document('/smallImage', 'file11', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
-        documents.add(new Document('/smallImage', 'file12', 6, 'image/png', new Date(), MainFolders.LABORAL + '/11556837G'));
-        documents.add(new Document('/smallImage', 'file13', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
-        documents.add(new Document('/smallImage', 'file14', 6, 'image/png', new Date(), MainFolders.LABORAL + '/86638678R'));
+        documents.add(new Document(MainFolders.ACONTABILIZAR, 'file1', 1, 'application/pdf', new Date(), MainFolders.ACONTABILIZAR));
+        documents.add(new Document(MainFolders.ACONTABILIZAR + 'file2', 'file2', 2, 'image/png', new Date(), MainFolders.ACONTABILIZAR));
+        documents.add(new Document(MainFolders.CONTABILIZADO + 'file3', 'file3', 3, 'image/png', new Date(), MainFolders.CONTABILIZADO));
+        documents.add(new Document(MainFolders.CONTABILIZADO + 'file4', 'file4', 4, 'application/pdf', new Date(), MainFolders.CONTABILIZADO));
+        documents.add(new Document(MainFolders.PAPELERA + 'file5', 'file5', 5, 'image/png', new Date(), MainFolders.PAPELERA));
+        documents.add(new Document(MainFolders.PAPELERA + 'file6', 'file6', 6, 'application/pdf', new Date(), MainFolders.PAPELERA));
+        documents.add(new Document(MainFolders.FISCAL + 'file7', 'file7', 6, 'image/png', new Date(), MainFolders.FISCAL));
+        documents.add(new Document(MainFolders.FISCAL + 'file8', 'file8', 6, 'image/png', new Date(), MainFolders.FISCAL));
+        documents.add(new Document(MainFolders.LABORAL + 'file9', 
+            'file9', 6, 'application/pdf', new Date(), MainFolders.LABORAL + '/maria_rico_gómez'));
+        documents.add(new Document(MainFolders.LABORAL + 'file10', 
+            'file10', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
+        documents.add(new Document(MainFolders.LABORAL + 'file11', 
+            'file11', 6, 'application/pdf', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
+        documents.add(new Document(MainFolders.LABORAL + 'file12', 
+            'file12', 6, 'image/png', new Date(), MainFolders.LABORAL + '/11556837G'));
+        documents.add(new Document(MainFolders.LABORAL + 'file13', 
+            'file13', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
+        documents.add(new Document(MainFolders.LABORAL + 'file14', 
+            'file14', 6, 'application/pdf', new Date(), MainFolders.LABORAL + '/86638678R'));
         localDocuments.write(storableDocuments.getLocalStorage(), documents);
     }
+
+    localStorage.setItem(MainFolders.ACONTABILIZAR + 'file1', pdf)
+    localStorage.setItem(MainFolders.ACONTABILIZAR + 'file2', smallImage)
+    localStorage.setItem(MainFolders.CONTABILIZADO + 'file3', largeImage)
+    localStorage.setItem(MainFolders.CONTABILIZADO + 'file4', pdf)
+    localStorage.setItem(MainFolders.PAPELERA + 'file5', largeImage)
+    localStorage.setItem(MainFolders.PAPELERA + 'file6', pdf)
+    localStorage.setItem(MainFolders.FISCAL + 'file7', smallImage)
+    localStorage.setItem(MainFolders.FISCAL + 'file8', largeImage)
+    localStorage.setItem(MainFolders.LABORAL + '/maria_rico_gómez' + 'file9', pdf)
+    localStorage.setItem(MainFolders.LABORAL + '/juan_carlos_aragón_pérez' + 'file10', largeImage)
+    localStorage.setItem(MainFolders.LABORAL + '/juan_carlos_aragón_pérez' + 'file11', pdf)
+    localStorage.setItem(MainFolders.LABORAL + '/juan_carlos_aragón_pérez' + 'file12', smallImage)
+    localStorage.setItem(MainFolders.LABORAL + '/juan_carlos_aragón_pérez' + 'file13', largeImage)
+    localStorage.setItem(MainFolders.LABORAL + '/86638678R' + 'file14', pdf)
 
 
     let storableDocumentTags = new StorableDocumentTag();
