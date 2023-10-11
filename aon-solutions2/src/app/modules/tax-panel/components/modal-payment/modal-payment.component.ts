@@ -143,4 +143,18 @@ export class ModalPaymentComponent implements OnInit {
       this.dialogRef.close();
     }, 2000);
   }
+
+
+
+  getValue(newValue:any){}
+
+  sendPaymentNRC(){
+
+
+  }
+
+
+
+
+
 }

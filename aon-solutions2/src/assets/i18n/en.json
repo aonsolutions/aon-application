@@ -182,7 +182,8 @@
     "AN_AMOUNT":"an amount of",
     "RECTIFYING_MODEL":"Rectifying model",
     "TRIMESTER":"Trimester",
-    "OF":"of"
+    "OF":"of",
+    "NO_MODELS":"No models to display"
   },
     "PROFILE": {
     "CONTACT_DETAILS":   "Contact details",

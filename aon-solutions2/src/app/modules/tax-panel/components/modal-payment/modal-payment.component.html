@@ -78,7 +78,7 @@
             [label]="'NRC'"
             [placeholder]="'NRC'"
             [required]="'required'"
-            [value]=""
+            (inputValue)="getValue($event)"
           >
           </app-input>
         </div>
@@ -160,9 +160,8 @@
     *ngIf="selectedOption === '2' || selectedOption === '3'"
   >
     <app-button
-    [mat-dialog-close]="true"
     [class]="'orange left'"
-    (click)="sendPayment()" >
+    (click)="sendPaymentNRC()" >
       <app-icon shape="done_all"></app-icon>
       {{ "TAX_PANEL.CONFIRM" | translate }}
     </app-button>
@@ -200,7 +199,7 @@
         </app-button>
       </div>
       <div>
-        <app-button 
+        <app-button
         [class]="'orange left'"
         (click)="sendPayment()">
           <app-icon shape="done_all"></app-icon>

@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
 import { ModalEditTaxModelComponent } from '../modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../modal-payment/modal-payment.component';
@@ -24,6 +18,7 @@ export class TableTaxModelComponent implements OnChanges {
   @Input() trimester: number = 0;
   @Input() inputModel: number = 0;
   @Input() inputYear: string = '';
+  @Input() models: any;
   headerTable: any = {};
   bodyTable: any = [];
   displayedColumns: string[] = [
@@ -133,9 +128,22 @@ export class TableTaxModelComponent implements OnChanges {
           // Add object date table
           tableRow.push(column);
         });
+
         // Tax date format for table
         this.bodyTable = tableRow;
-      });
+
+        // No tenemos modelos en la tabla
+    if(response.size() === 0){
+      this.translateService
+        .get([
+          'TAX_PANEL.NO_MODELS',
+        ])
+        .subscribe((result) => {
+          this.models = result['TAX_PANEL.NO_MODELS'];
+        });
+    }
+
+       });
   }
 
   receiveStatus($event: string) {
@@ -148,7 +156,7 @@ export class TableTaxModelComponent implements OnChanges {
     // Boton que ha sido clickeado
     console.log('esto es objetct', object);
     // reference icon click
-    console.log('esto keybutto',object.keyButton);
+    console.log('esto keybutto', object.keyButton);
 
     switch (object.keyButton) {
       case 'edit':
