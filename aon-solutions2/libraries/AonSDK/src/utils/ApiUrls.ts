@@ -23,3 +23,12 @@ export const enum INVOICE_URL {
     GET_INVOICE_LIST = '/ms/api/invoice',
     GET_INVOICE__ONE = '/ms/api/invoice',
 }
+
+export const enum REGISTRY_URL {
+    GET_FULL_REGISTRY = '/ms/api/company/one?additional_info=ADDRESSES%2CMEDIA%2CBANKS%2CPAYMETHOD%2CRECORD_DATA',
+    SAVE_FULL_REGISTRY = '/ms/api/registry',
+}
+
+export const enum BANK_URL {
+    GET_BANK_LIST = '/ms/api/company/banks',
+}
