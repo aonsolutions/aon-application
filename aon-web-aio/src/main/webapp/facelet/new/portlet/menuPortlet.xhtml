@@ -1,756 +1,523 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:f="http://java.sun.com/jsf/core">
-
-	<script type='text/javascript' >
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<style>
+	.aon-left-menu-item {
+		cursor: pointer;
+		text-align: left;
+	}
 	
-		function getParentForm(el){
-			return el.closest("form");
-		}
+	.aon-left-menu-item > * {
+		display: inline-block;
+		vertical-align: middle;
+	}
+	.aon-left-menu-bar-text{
+		width: 14.6rem;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		text-transform: uppercase;
+	}
 	
-		function scrollToTop(id) {
-		    const scrollContainer = document.getElementById(id);
-		    scrollContainer.scrollTop = 0;
-		}
-		
-		function showMenuPortlet(menuPortlet, commandLink){
-			
-			mainForm = getParentForm(commandLink).id;
-			
-			document.getElementById(mainForm+":mainMenuPortlet").style.display='none';
-			try {
-				document.getElementById(mainForm+":hideRightButton").style.display='none';
-				document.getElementById(mainForm+":infoGroupRightSupportDiv").style.visibility='hidden';
-			} catch ( e ) {
-			}
-
-			document.getElementById(mainForm+":"+menuPortlet+"MenuPortlet").style.display='block';
-		}
-		function hideMenuPortlet(menuPortlet, commandLink){
-
-			mainForm = getParentForm(commandLink).id;
-
-			document.getElementById(mainForm+":"+menuPortlet+"MenuPortlet").style.display='none';
-			
-			document.getElementById(mainForm+":mainMenuPortlet").style.display='block';
-		
-			try {
-				document.getElementById(mainForm+":hideRightButton").style.display='block';
-				document.getElementById(mainForm+":infoGroupRightSupportDiv").style.visibility='visible';
-			} catch ( e ) {
-			}
-			
-		}
-		
-		function addNote() {
-			noteEl = document.querySelector("#notesDiv aon-note");
-			if (noteEl) {
-				noteEl.addNote();
-				mainForm = getParentForm(noteEl).id;
-				scrollToTop(mainForm + ":" + "notes" + "notesContainer");
-			}
-		}
-
-	</script>
-
-	<aon:div id="mainMenuPortlet" styleClass="">	
-		<aon:if test="#{domainSwitcher.officeDomain and domainSwitcher.snapshot}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-office-parent">
-				<aon:commandLink 
-				id="new_menu_office" 
-				immediate="true"
-				action="portal_office"
-				value="#{bundle.aon_office}"
-				styleClass="aon-button-office" />
-			</aon:div>
-		</aon:if>
 	
-		<aon:if test="#{domainSwitcher.domainManagementAvailable and (aonRole.sysAdmin or !domainSwitcher.disableDomainManagement)}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-parent">
-				<aon:if test="#{aonRole.admin}">
-					<aon:commandLink 
-						id="new_menu_enterprise"
-						styleClass="aon-button" 
-						value="#{bundle.aon_module_enterprise}"
-						onclick="javascript:showMenuPortlet('enterprise', this); return;"
-						/>
-				</aon:if>
-			</aon:div>
-		</aon:if>
+	.aon-portlet-body .aon-direct-access-list-element {
+		border-radius: 0.2rem;
+	}
 
-		<aon:if test="#{(dur.accounting) and !domainSwitcher.domainManagementAvailable}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-account-parent">
-				<aon:commandLink 
-					id="new_menu_accounting"
-					immediate="true"
-					action="portal_accounting"
-					styleClass="aon-button-account" 
-					value="#{bundle.aon_module_accounting}"
-					/>
-			</aon:div>
-		</aon:if>
+	.aon-left-menu-bar-icon {
+		size : 1.7rem;
+		color: var(--main-color) !important;
+	} 
+	
+	.aon-left-menu-text,
+	.aon-left-help-text,
+	.aon-left-filter-text {
+		display:none;
+	}
+	
+	.aon-left-menu-item[id$=menu_enterprise] .material-icons {
+		color: var(--main-color) !important;
+	}
+	
+	.aon-left-menu-item[id$=menu_enterprise] .material-icons:hover,
+	.aon-left-menu-item[id$=menu_enterprise].selected .material-icons{
+		background-color: var(--main-background-color) !important;
+	}
 
-		<aon:if test="#{(dur.fiscal) and !domainSwitcher.domainManagementAvailable}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-fiscal-parent">
-				<aon:commandLink 
-					id="new_menu_fiscal"
-					immediate="true"
-					action="portal_fiscal"
-					styleClass="aon-button-fiscal" 
-					value="#{bundle.aon_module_fiscal}"
-				/>
-			</aon:div>
-		</aon:if>
+	.aon-left-menu-item[id$=menu_fiscal] .material-icons {
+		color: var(--fiscal-color) !important;
+	}
+	.aon-left-menu-item[id$=menu_fiscal] .material-icons:hover,
+	.aon-left-menu-item[id$=menu_fiscal].selected .material-icons{
+		background-color: var(--fiscal-background-color) !important;
+	}
 
-		<aon:if test="#{(dur.payroll) and !domainSwitcher.domainManagementAvailable}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-payroll-parent">
-				<aon:commandLink 
-					id="new_menu_payroll"
-					immediate="true"
-					action="portal_payroll"
-					value="#{bundle.aon_module_payroll}"
-					styleClass="aon-button-payroll"
-				/>
-			</aon:div>
-		</aon:if>
+	.aon-left-menu-item[id$=menu_payroll] .material-icons {
+		color: var(--payroll-color) !important;
+	}
+	.aon-left-menu-item[id$=menu_payroll] .material-icons:hover,
+	.aon-left-menu-item[id$=menu_payroll].selected .material-icons{
+		background-color: var(--payroll-background-color) !important;
+	}
+	
+	.aon-left-menu-item[id$=menu_accounting] .material-icons {
+		color: var(--accounting-color) !important;
+	}
+	.aon-left-menu-item[id$=menu_accounting] .material-icons:hover,
+	.aon-left-menu-item[id$=menu_accounting].selected .material-icons {
+		background-color: var(--accounting-background-color) !important;
+	}
+	
+	.aon-left-menu-item[id$=menu_configuration] .material-icons {
+		color: var(--configuration-color) !important;
+	}
+	.aon-left-menu-item[id$=menu_configuration] .material-icons:hover,
+	.aon-left-menu-item[id$=menu_configuration].selected .material-icons{
+		background-color: var(--configuration-background-color) !important;
+	}
 
-		<aon:if test="#{dur.documental}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
-				<aon:commandLink 
-					id="new_menu_document" 
-					immediate="true"
-					action="portal_documental"
-					value="#{bundle.aon_module_document}"
-					styleClass="aon-button-document" />
-			</aon:div>
-		</aon:if>
-		<aon:if test="#{dur.invoice and !domainSwitcher.domainManagementAvailable}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
-				<aon:commandLink 
-					id="new_menu_invoice" 
-					immediate="true"
-					action="portal_invoice"
-					value="#{bundle.aon_invoices}"
-					styleClass="aon-button-invoice" />
-			</aon:div>
-		</aon:if>
+	.aon-left-menu-item[id$=menu_help] .material-icons {
+		color: var(--help-color) !important;
+	}
+	.aon-left-menu-item[id$=menu_help] .material-icons:hover,
+	.aon-left-menu-item[id$=menu_help].selected .material-icons{
+		background-color: var(--help-background-color) !important;
+	}
+
+	.aon-help-menu-bar .aon-left-menu-bar-icon {
+		color: var(--help-color) !important;
+	}
+
+	.aon-fiscal-menu-bar .aon-left-menu-bar-icon {
+		color: var(--fiscal-color) !important;
+	}
+
+	.aon-payroll-menu-bar .aon-left-menu-bar-icon {
+		color: var(--payroll-color) !important;
+	}
+
+	.aon-enterprise-menu-bar .aon-left-menu-bar-icon {
+		color: var(--main-color) !important;
+	}
+	
+	.aon-accounting-menu-bar .aon-left-menu-bar-icon {
+		color: var(--accounting-color) !important;
+	}
+
+	[class$="-menu-bar"] .aon-direct-access-list-element{
+		padding : 10px;
+		text-align: left;
+		border-radius: 0.2rem;
+	}
+	
+	.aon-enterprise-menu-bar > .aon-direct-access-list-element{
+		background-color: var(--main-color) !important;
+	}
+
+	.aon-enterprise-menu-bar > .aon-direct-access-list-element:hover{
+		background-color: var(--main-color) !important;
+	}
+
+	.aon-enterprise-menu-bar > .aon-direct-access-list-element *{
+		font-weight:bold;
+		color: #fff !important;
+	}
+	
+	.aon-help-menu-bar .aon-direct-access-list-element:hover{
+		background-color: var(--help-background-color) ;
+	}
+
+	.aon-fiscal-menu-bar .aon-direct-access-list-element:hover{
+		background-color: var(--fiscal-background-color) ;
+	}
+
+	.aon-payroll-menu-bar .aon-direct-access-list-element:hover{
+		background-color: var(--payroll-background-color) ;
+	}
+
+	.aon-enterprise-menu-bar .aon-direct-access-list-element:hover{
+		background-color: var(--main-background-color) ;
+	}
+	
+	.aon-accounting-menu-bar .aon-direct-access-list-element:hover{
+		background-color: var(--accounting-background-color) ;
+	}
+	
+	.aon-menu-portlet-column1 {
+		border-right: solid 0.05rem #d2d2d6;
+	}
+	
+	.aon-menu-portlet-column1,
+	.aon-menu-portlet-column2 {
+		vertical-align: top;
+		height: calc(100vh - 66px);
+	}
+	.aon-menu-portlet-column2 > * {
+		height: calc(100vh - 70px);
+		overflow-y: scroll;
+	}
+	
+	.aon-menu-portlet-column2 {
+		display: none;
+		border-right: solid 0.05rem #d2d2d6;
+	}
+
+	.aon-menu-portlet-column2 [class$="-menu-bar"] {
+  		/*width: 100%;*/
+  		padding: 1rem;
+		min-width: 20.4rem;
+	}
+	
+	.aon-left-menu-bar-icon,
+	.aon-left-menu-bar-text {
+		display: inline-block;
+		vertical-align: middle;
+		padding-left: 0.5rem;
+	}
+	
+	.aon-portlet-title{
+		overflow: hidden;
+		color: black !important;
+		font-weight:bold !important;
+		margin-left: 5px !important;
+		margin-top: 0px  !important;
+		margin-bottom: 5px !important;
+		padding-top: 25px  !important;
+	}
+
+	.aon-portlet-title-line {
+		max-width: 0rem;
+  		height: 1.35rem;
+  		border-radius: 20rem;
+  		margin-right: 0.5rem;
+  		border: 0.15rem solid;
+	}
+	
+	.aon-help-menu-bar .aon-portlet-title-line{
+  		border-color: var(--help-color);
+  	}	
+
+	.aon-fiscal-menu-bar .aon-portlet-title-line{
+  		border-color: var(--fiscal-color);
+  	}	
+	.aon-payroll-menu-bar .aon-portlet-title-line{
+  		border-color: var(--payroll-color);
+  	}	
+
+	.aon-accounting-menu-bar .aon-portlet-title-line{
+  		border-color: var(--accounting-color);
+  	}	
+  	
+	.aon-configuration-menu-bar .aon-portlet-title-line{
+  		border-color: var(--configuration-color);
+  	}	
+
+  	.collapsed {
+  		display: none;
+  	}
+  	
+  	[id$="timeControlTodayTime"],
+  	[id$="timeControlContent"] ,
+  	[id$="timeControlContent"] * {
+		text-align: center;
+  	}
+
+	/* copied from aon.solutions's .aonButton */
+	.aonButton {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		background: var(--aonBlue);
+		border: none;
+		border-radius: 6px;
+		box-shadow: 0 2px 4px rgb(0,0,0,.15);
+		color: #fff;
+		cursor: pointer;
+		display: inline-block;
+		font-family: sans-serif;
+		font-size: 1rem;
+		font-weight: 700;
+		margin: 0;
+		outline: none !important;
+		padding: 1rem 2rem;
+		text-align: center;
+		text-decoration: none;
+		transition: background .25s ease-in-out,transform .15s ease;
+	}		
+
+</style>
+
+<script>
+
+	function expandMenuTexts(el) {
 		
-		<aon:if test="#{dur.timecontrol and !domainSwitcher.domainManagementAvailable}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
-				<aon:commandLink 
-				id="new_menu_timecontrol" 
-				immediate="true"
-				action="portal_timecontrol"
-				value="#{bundle.aon_timecontrol}"
-				styleClass="aon-button-timecontrol" />
-			</aon:div>
-		</aon:if>
+ 		const menuTexts = document.querySelectorAll(".aon-left-menu-text");
+		for ( const menuText of menuTexts ) {
+			menuText.style.display= "inline-block";
+			menuText.parentElement.style.width= "176px";
+		}
+		#{rich:element('expandMenuTextsButton')}.style.left = '178px';
+		#{rich:element('expandMenuTextsButton')}.textContent = 'keyboard_arrow_left';
+		el.onclick=function() { collapseMenuTexts(el) };
+	} 
+
+	function collapseMenuTexts(el) {
 		
-		<aon:if test="#{dur.messenger and !domainSwitcher.domainManagementAvailable}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
-				<aon:commandLink 
-				id="new_menu_messenger" 
-				immediate="true"
-				action="portal_messenger"
-				value="#{bundle.aon_messenger}"
-				styleClass="aon-button-messenger" />
-			</aon:div>
-		</aon:if>
-		
-		<aon:if test="#{domainSwitcher.paturpat}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
-				<aon:commandLink 
-				id="new_menu_warehouse" 
-				immediate="true"
-				action="portal_warehouse"
-				value="#{bundle.aon_warehouse}"
-				styleClass="aon-button-warehouse" />
-			</aon:div>
-		</aon:if>
-		
-<!-- 		<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-tools-parent">
-				<aon:commandLink 
-					id="new_menu_configuration"
-					styleClass="aon-button-tools" 
-					value="#{bundle.aon_module_configuration}"
-					onclick="javascript:showMenuPortlet('configuration', this); return;"
-					/>
-			</aon:div>
-		</aon:if> -->
- 		<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-tools-parent">
-			<aon:commandLink 
-				id="new_menu_configuration"
-				immediate="true"
-				action="portal_configuration"
-				styleClass="aon-button-tools" 
-				value="#{bundle.aon_module_configuration}"
+ 		const menuTexts = document.querySelectorAll(".aon-left-menu-text");
+		for ( const menuText of menuTexts ) {
+			menuText.style.display= "none";
+			menuText.parentElement.style.width= "46px";
+		}
+		#{rich:element('expandMenuTextsButton')}.style.left = '48px';
+		#{rich:element('expandMenuTextsButton')}.textContent = 'keyboard_arrow_right';
+		el.onclick=function() { expandMenuTexts(el); };
+	} 
+
+	function collapseMenuBar(el) {
+		el.nextSibling.style.display= "none";
+		el.onclick=function() { expandMenuBar(el); };
+	} 
+	function expandMenuBar(el) {
+		el.nextSibling.style.display= "block";
+		el.onclick=function() { collapseMenuBar(el); };
+	} 
+	
+	function showColumn(el) {
+		var parentElement = el.parentElement;
+		while ( parentElement ) {
+			if ( parentElement.tagName === 'TD' ) {
+				parentElement.style.display = 'table-cell';	
+				return;
+			}
+			parentElement = parentElement.parentElement;
+		}
+	}
+
+	function showMenu(el) {
+		showColumn(el);
+		el.style.display = 'block';
+	}
+	
+	function hideAllMenus() {
+		#{rich:element('helpMenuBar')}.style.display = 'none';
+		#{rich:element('fiscalMenuBar')}.style.display = 'none';
+		#{rich:element('payrollMenuBar')}.style.display = 'none';
+		#{rich:element('accountingMenuBar')}.style.display = 'none';
+		#{rich:element('enterpriseMenuBar')}.style.display = 'none';
+		#{rich:element('timeControlMenuBar')}.style.display = 'none';
+		#{rich:element('configurationMenuBar')}.style.display = 'none';
+	}
+ 	function selectMenu(el){
+		el.classList.add("selected");
+	}
+ 	function unselectMenu(el){
+ 		try {
+			el.classList.remove("selected");
+ 		} catch ( err ){
+ 		}
+	}
+	
+	function unselectMenus() {
+		unselectMenu(#{rich:element('menu_help')});
+		unselectMenu(#{rich:element('menu_fiscal')});
+		unselectMenu(#{rich:element('menu_payroll')});
+		unselectMenu(#{rich:element('menu_accounting')});
+		unselectMenu(#{rich:element('menu_enterprise')});
+		unselectMenu(#{rich:element('menu_time_control')});
+		unselectMenu(#{rich:element('menu_configuration')});
+	}
+
+	function showHelpMenu () {
+		hideAllMenus();	
+		unselectMenus();
+		showMenu(#{rich:element('helpMenuBar')});
+		selectMenu(#{rich:element('menu_help')});
+	}
+
+	function showFiscalMenu () {
+		hideAllMenus();	
+		unselectMenus();
+		showMenu(#{rich:element('fiscalMenuBar')});
+		selectMenu(#{rich:element('menu_fiscal')});
+	}
+
+	function showEnterpiseMenu () {
+		hideAllMenus();	
+		unselectMenus();
+		showMenu(#{rich:element('enterpriseMenuBar')});
+		selectMenu(#{rich:element('menu_enterprise')});
+	}
+	function showAccountingMenu () {
+		hideAllMenus();	
+		unselectMenus();
+		showMenu(#{rich:element('accountingMenuBar')});
+		selectMenu(#{rich:element('menu_accounting')});
+	}
+	function showPayrollMenu () {
+		hideAllMenus();	
+		unselectMenus();
+		showMenu(#{rich:element('payrollMenuBar')});
+		selectMenu(#{rich:element('menu_payroll')});
+	}
+
+	function showTimeControlMenu () {
+		hideAllMenus();	
+		unselectMenus();
+		showMenu(#{rich:element('timeControlMenuBar')});
+		selectMenu(#{rich:element('menu_time_control')});
+	}
+	
+	function showConfigurationMenu () {
+		hideAllMenus();	
+		unselectMenus();
+		showMenu(#{rich:element('configurationMenuBar')});
+		selectMenu(#{rich:element('menu_configuration')});
+	}
+	
+</script>
+
+<aon:panelGrid columns="2" styleClass=""
+				columnClasses="aon-menu-portlet-column1,aon-menu-portlet-column2">
+				
+	<aon:div id="menuControlPortlet" styleClass="aon-portlet aon-menu-portlet">
+		<aon:div 
+		style="cursor:pointer; overflow: visible" 
+		styleClass="aon-portlet-title" 
+		onclick="javascript:expandMenuTexts(this)"
+		>
+			<aon:outputText value="MENU" />
+			<aon:outputText 
+			id="expandMenuTextsButton"
+			styleClass="material-icons" 
+			value="keyboard_arrow_right" 
+			style="position:absolute; top: 20px; left: 48px; z-index: 6; color : #787885; border: solid 0.05rem #d2d2d6; border-radius: 8rem; background-color: #fff" 
 			/>
 		</aon:div>
-		<aon:if test="#{desktop.showGraphicsPortlet}">
-			<!--aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-notes-parent">
-				<aon:commandLink 
-					id="new_note-search" 
-					action="note_list"
-					value="#{bundle.aon_notes}"
-					styleClass="aon-button-notes"
-					actionListener="#{note.onSearch}" 
-					>
-				</aon:commandLink>
-			</aon:div-->
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-notes-parent">
-				<aon:commandLink 
-					id="new_note-search" 
-					value="#{bundle.aon_notes}"
-					styleClass="aon-button-notes"
-					onclick="javascript:showMenuPortlet('notes', this); return;"
-					reRender="notesContainer"
-					>
-				</aon:commandLink>
-			</aon:div>
-		</aon:if>
-
-	</aon:div>		
-
-
-	<aon:div 
-		id="enterpriseMenuPortlet" 
-		style="display:none"
-		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('enterprise', this);"  
-		onmouseover="javascript:showMenuPortlet('enterprise', this);" >
-		<aon:div styleClass="aon-direct-access-list">
+		
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
 			<aon:div 
-				style="background-color: #002469;" 
-				styleClass="aon-direct-access-list-head">
-				<aon:outputText value="#{bundle.aon_module_enterprise}" />
-				<aon:div style="vertical-align: middle; float:right; ">
-					<aon:commandLink 
-						id="main_menu_enterprise"
-						immediate="true"
-						action="menu_enterprise" >
-						<aon:graphicImage 
-								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
-					</aon:commandLink> 
-					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('enterprise', this);"
-							style="cursor:pointer;"
-							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
-				</aon:div>
+				id="menuMenuPortlet" >
 			</aon:div>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="newDomainEnterprise"
-					action="newDomain_form-enterprise"
-					actionListener="#{adminNewDomain.onInit}"
-					value="#{bundle.admin_new_domain}" />
-			</aon:div>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="removeDomainEnterprise"
-					action="removeDomain_form-enterprise"
-					actionListener="#{adminRemoveDomain.onInit}"
-					value="#{bundle.admin_remove_domain}" />
-			</aon:div>
-			
-		</aon:div>
-	</aon:div>		
-
-	<aon:div 
-		id="accountingMenuPortlet" 
-		style="display:none"
-		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('accounting', this);"  
-		onmouseover="javascript:showMenuPortlet('accounting', this);" >
-		<aon:div styleClass="aon-direct-access-list">
-			<aon:div 
-				style="background-color: #1fd8b9;" 
-				styleClass="aon-direct-access-list-head" >
-				<aon:outputText value="#{bundle.aon_module_accounting}" />
-				<aon:div style="vertical-align: middle; float:right; ">
-					<aon:commandLink 
-						id="main_menu_accounting"
-						immediate="true"
-						action="menu_accounting" >
-						<aon:graphicImage 
-								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
-					</aon:commandLink> 
-					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('accounting', this);"
-							style="cursor:pointer;"
-							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
-				</aon:div>
-			</aon:div>
-			
-			<aon:if test="#{domainSwitcher.domainManagementAvailable}">
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="account-parent"
-						action="account_list-parent" value="#{bundle.account_module}" />
-				</aon:div>
-				<aon:if test="#{aonRole.config}">
-					<aon:div styleClass="aon-direct-access-list-element">
-						<aon:commandLink id="autConcept-parent"
-							action="autConcept-parent"
-							value="#{bundle.accounting_aut_concept_module}" />
-					</aon:div>
-					<aon:div styleClass="aon-direct-access-list-element">
-						<aon:commandLink id="accounting_balance-parent"
-							action="balance_list-parent"
-							value="#{bundle.accounting_balance_menu2}" />
-					</aon:div>
-					<aon:div styleClass="aon-direct-access-list-element">
-						<aon:commandLink id="amortizationType-parent"
-							action="amortizationType_list-parent"
-							value="#{bundle.accounting_amortization_type_module}" />
-					</aon:div>
-					<aon:div styleClass="aon-direct-access-list-element">
-						<aon:commandLink id="gwt_accountingUtilities-parent"
-							action="gwt_accountingUtilities-parent"
-							title="Utilidades y chequeos contables"
-							value="Utilidades y chequeos contables" />
-					</aon:div>
-					<aon:if
-						test="#{domainSwitcher.udapa || domainSwitcher.paturpat || domainSwitcher.accountingConsolidationEnabled}">
-						<aon:div styleClass="aon-direct-access-list-element">
-							<aon:commandLink id="accPeriod-parent"
-								action="accPeriod-parent"
-								actionListener="#{accPeriod.onSearch}"
-								value="#{bundle.accounting_period_module}" />
+			<aon:div styleClass="aon-direct-access-list">
+					<aon:if test="#{domainSwitcher.domainManagementAvailable and (aonRole.sysAdmin or !domainSwitcher.disableDomainManagement)}">
+						<aon:if test="#{aonRole.admin}">
+							<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+								<aon:div 
+									id="menu_enterprise"
+									styleClass="aon-left-menu-item" 
+									onclick="javascript:showEnterpiseMenu();" 
+								>
+									<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="domain" />
+									<aon:outputText styleClass="aon-left-menu-text" value=" #{bundle.aon_module_enterprise}" />
+								</aon:div>
+							</aon:div>
+						</aon:if>
+					</aon:if>
+					
+					<aon:if test="#{aonRole.accountingOperator}">
+						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+							<aon:div 
+								id="menu_accounting"
+								styleClass="aon-left-menu-item" 
+								onclick="javascript:showAccountingMenu()"
+								>
+									<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="insert_chart" />
+									<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_accounting}" />
+								</aon:div>
 						</aon:div>
 					</aon:if>
-				</aon:if>
 
-				<aon:if test="#{domainSwitcher.udapa || domainSwitcher.paturpat || domainSwitcher.accountingConsolidationEnabled}">
-					<aon:div styleClass="aon-direct-access-list-element">
-						<aon:commandLink id="gwt_accountConsolidatedBalance"
-							action="gwt_accountConsolidatedBalance-acc"
-							title="Balances consolidados"
-							value="Balances consolidados">
-						</aon:commandLink>
+					<aon:if test="#{aonRole.fiscal}">
+						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+							<aon:div 
+								id="menu_fiscal"
+								styleClass="aon-left-menu-item" 
+								onclick="javascript:showFiscalMenu()"
+							>
+								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="euro" />
+								<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_fiscal}" />
+							</aon:div>
+						</aon:div>
+					</aon:if>
+
+					<aon:if test="#{aonRole.payroll}">
+						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+							<aon:div 
+								id="menu_payroll"
+								styleClass="aon-left-menu-item"
+								onclick="javascript:showPayrollMenu()" 
+							>
+								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="group" />
+								<aon:outputText styleClass="aon-left-menu-text" value=" #{bundle.aon_module_payroll}" />
+							</aon:div>
+						</aon:div>
+					</aon:if>
+
+					<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
+						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+							<aon:div id="menu_configuration"
+								styleClass="aon-left-menu-item" 
+								onclick="javascript:showConfigurationMenu()" 
+							>
+								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="construction" />
+								<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_configuration}" />
+							</aon:div>
+						</aon:div>
+					</aon:if>
+
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+						<aon:div id="menu_help"
+							styleClass="aon-left-menu-item"
+							onclick="javascript:showHelpMenu()" 
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="help_center" />
+							<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_configuration}" />
+						</aon:div>
 					</aon:div>
-				</aon:if>
+					
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+						<aon:div id="menu_time_control"
+							styleClass="aon-left-menu-item"
+							onclick="javascript:showTimeControlMenu()" 
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="timer" />
+							<aon:outputText styleClass="aon-left-menu-text"  value=" Control Horario" />
+						</aon:div>
+					</aon:div>
+					
 
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="gwt_deposit_text_mode"
-						action="gwt_deposit_text_mode"
-						title="#{bundle.accounting_annual_financial_statements_module}"
-						value="#{bundle.accounting_annual_financial_statements_module}" >
-					</aon:commandLink>
-				</aon:div>
-
-			</aon:if>
-
-			<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="gwt_accountEntryTEDI"
-						action="gwt_accountEntryTEDI-deposit"
-						title="#{bundle.accounting_entry_module}"
-						value="#{bundle.accounting_entry_module}" >
-					</aon:commandLink>
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="periodAmortization"
-						action="periodAmortization_search"
-						value="#{bundle.accounting_period_amortization_module}" />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="endPeriodEntries"
-						action="endPeriodEntries_form"
-						actionListener="#{endPeriodEntries.onInit}"
-						value="#{bundle.accounting_en_period_entries_management}" />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="invoiceRecorder-accounting"
-						action="invoiceRecorder_search-accounting"
-						actionListener="#{invoiceRecorder.onEditSearch}"
-						value="#{bundle.finance_invoice_recording_module}" />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="financeTrackingEntry-accounting"
-						action="financeTrackingEntry_form-accounting"
-						actionListener="#{financeTrackingEntry.onReset}"
-						value="#{bundle.accounting_entry_finance_tracking_module}" />
-				</aon:div>
+			</aon:div>
+		</aon:div>
 				
-				<aon:if test="#{marketplace.suitePortal}">
-					<aon:div styleClass="aon-direct-access-list-element">
-						<aon:commandLink id="gwt_rawdoc-accounting"
-							action="gwt_rawdoc-accounting"
-							title="Documentos Pendientes">
-							<aon:outputText
-								styleClass="aon-fiscal-link-label aon-icon-beta-text"
-								style="margin-left: 5px; padding-left: 20px;"
-								value="Documentos Pendientes" />
-						</aon:commandLink>
-					</aon:div>
-				</aon:if>
-			</aon:if>
-
-						
-		</aon:div>
-	</aon:div>		
-
-	<aon:div 
-		id="fiscalMenuPortlet" 
-		style="display:none"
-		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('fiscal', this);"  
-		onmouseover="javascript:showMenuPortlet('fiscal', this);" >
-		<aon:div styleClass="aon-direct-access-list">
-			<aon:div 
-				style="background-color: #1fbce5;" 
-				styleClass="aon-direct-access-list-head">
-				<aon:outputText value="#{bundle.aon_module_fiscal}" />
-				<aon:div style="vertical-align: middle; float:right; ">
-					<aon:commandLink 
-						id="main_menu_fiscal"
-						immediate="true"
-						action="menu_fiscal" >
-						<aon:graphicImage 
-								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
-					</aon:commandLink> 
-					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('fiscal', this);"
-							style="cursor:pointer;"
-							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
-				</aon:div>
-			</aon:div>
-			<aon:if test="#{domainSwitcher.domainManagementAvailable}">
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="gwt_modelMatrix" 
-						action="gwt_modelMatrix">
-						<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-							style="margin-left: 5px; padding-left: 20px;" 
-							value="Matriz de empresas y modelos fiscales" />												
-					</aon:commandLink>
-				</aon:div> 
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="fiscalMatrix" 
-						action="fiscalMatrix_list"
-						actionListener="#{fiscalMatrix.onSearch}"
-						title="Matriz de empresas y modelos fiscales (Obsoleta)"
-						value="Matriz de empresas y modelos fiscales (Obsoleta)" />
-				</aon:div>
-			</aon:if>
-			<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod303-new" 
-						action="gwt_mod303-new"
-						title="#{bundle.fiscal_model_303_module}"
-						value="Modelo 303 - IVA. Autoliquidaci&#243;n." />
-				</aon:div> 
-				<!--aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod140-new" 
-						action="gwt_mod140-new"
-						title="#{bundle.fiscal_model_140_module}"
-						value="Modelo 140 - #{fn:substring(bundle.fiscal_model_140_module,0,20)}" />
-				</aon:div-->
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod347-new" 
-						action="gwt_mod347-new"
-						title="#{bundle.fiscal_model_347_module}"
-						value="Modelo 347 - #{bundle.fiscal_model_347_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod349-new" 
-						action="gwt_mod349-new"
-						title="#{bundle.fiscal_model_349_module}"
-						value="Modelo 349 - #{bundle.fiscal_model_349_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod390-new" 
-						action="gwt_mod390-new"
-						title="#{bundle.fiscal_model_390_module}"
-						value="Modelo 390 - #{bundle.fiscal_model_390_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod111-new" 
-						action="gwt_mod111-new"
-						title="#{bundle.fiscal_model_111_module}"
-						value="Modelo 111 - #{bundle.fiscal_model_111_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod115-new" 
-						action="gwt_mod115-new"
-						title="#{bundle.fiscal_model_115_module}"
-						value="Modelo 115 - #{bundle.fiscal_model_115_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod123-new" 
-						action="gwt_mod123-new"
-						title="#{bundle.fiscal_model_123_module}"
-						value="Modelo 123 - #{bundle.fiscal_model_123_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod130-new" 
-						action="gwt_mod130-new"
-						title="#{bundle.fiscal_model_130_module}"
-						value="Modelo 130 - #{bundle.fiscal_model_130_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod131-new" 
-						action="gwt_mod131-new"
-						title="#{bundle.fiscal_model_131_module}"
-						value="Modelo 131 - #{bundle.fiscal_model_131_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod180-new" 
-						action="gwt_mod180-new"
-						title="#{bundle.fiscal_model_180_module}"
-						value="Modelo 180 - #{bundle.fiscal_model_180_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod184-new" 
-						action="gwt_mod184-new"
-						title="#{bundle.fiscal_model_184_module}"
-						value="Modelo 184 - #{bundle.fiscal_model_184_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod190-new" 
-						action="gwt_mod190-new"
-						title="#{bundle.fiscal_model_190_module}"
-						value="Modelo 190 - #{bundle.fiscal_model_190_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod193-new" 
-						action="gwt_mod193-new"
-						title="#{bundle.fiscal_model_193_module}"
-						value="Modelo 193 - #{bundle.fiscal_model_193_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_mod200-new" 
-						action="gwt_mod200-new"
-						title="#{bundle.fiscal_model_200_module}"
-						value="Modelo 200 - #{bundle.fiscal_model_200_module.substring(0,21)}..." />
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="gwt_sii-fiscal" 
-						action="gwt_sii-fiscal" 
-						title="SII - Suministro Inmediato de Informaci&#243;n"
-						value="SII - Suministro Inmediato de Infor..." />
-				</aon:div>
-			</aon:if>
-			
-			
-		</aon:div>
-	</aon:div>		
+	</aon:div>
 	
-	<aon:div 
-		id="payrollMenuPortlet" 
-		style="display:none;"
-		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('payroll', this);"  
-		onmouseover="javascript:showMenuPortlet('payroll', this);" >
-		
-		<aon:div styleClass="aon-direct-access-list">
-			<aon:div 
-				style="background-color: #1f8cff;" 
-				styleClass="aon-direct-access-list-head">
-				<aon:outputText value="#{bundle.aon_module_payroll}" />
-				<aon:div style="vertical-align: middle; float:right; ">
-					<aon:commandLink 
-						id="main_menu_payroll"
-						immediate="true"
-						action="menu_payroll" >
-						<aon:graphicImage 
-								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
-					</aon:commandLink> 
-					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('payroll', this);"
-							style="cursor:pointer;"
-							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
-				</aon:div>
-			</aon:div>
-			<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="new_gwt_employee" 
-						action="gwt_employee_tree"
-						value="#{bundle.menu_integral}" 
-						target="gwt">
-						<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
-						<aon:actionListener method="#{enterprise.onEditSearch}" />
-						</aon:commandLink>
-				</aon:div>
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="new_gwt_main_contrata" 
-						action="gwt_main_contrata"
-						title="#{bundle.payroll_contract_module}"
-						value="#{bundle.payroll_contract_module}" 
-						target="gwt">
-					</aon:commandLink>
-				</aon:div>
+	<aon:div id="menuBarPortlet" styleClass="aon-portlet aon-menu-bar-portlet" >
+		<aon:form id="menuBarPortletForm">
+	
+			<aon:if test="#{aonRole.admin}">
+				<ui:include src="/facelet/new/portlet/enterpriseMenuPortlet.xhtml" />
 			</aon:if>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="new_gwt_agreement"
-					action="gwt_main_agreement"
-					value="#{bundle.payroll_agreement_module}" 
-					target="gwt">
-				</aon:commandLink>
-			</aon:div>	
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="new_gwt-creta-payroll"
-				action="gwt_main_creta"
-				value="#{bundle.payroll_creta_module}" />
-			</aon:div>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="new_gwt_calculator"
-				action="gwt_main_calculator"
-				value="#{bundle.menu_main_calculator}" target="gwt">
-				</aon:commandLink>
-			</aon:div>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="new_gwt_main_trash"
-					action="gwt_main_trash"
-					value="#{bundle.trash}" target="gwt">
-				</aon:commandLink>
-			</aon:div>
-			
-		</aon:div>
-	</aon:div>		
-
-	<aon:div 
-		id="documentMenuPortlet" 
-		style="display:none"
-		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('document', this);"  
-		onmouseover="javascript:showMenuPortlet('document', this);" >
-		<aon:div styleClass="aon-direct-access-list">
-			<aon:div 
-				style="background-color:#6986bb;" 
-				styleClass="aon-direct-access-list-head">
-				<aon:outputText value="#{bundle.aon_module_document}" />
-				<aon:div style="vertical-align: middle; float:right; ">
-					<aon:commandLink 
-						id="main_menu_document"
-						immediate="true"
-						action="menu_document" >
-						<aon:graphicImage 
-								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
-					</aon:commandLink> 
-					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('document', this);"
-							style="cursor:pointer;"
-							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
-				</aon:div>
-			</aon:div>
-		</aon:div>
-	</aon:div>		
-
-	<aon:div 
-		id="configurationMenuPortlet" 
-		style="display:none"
-		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('configuration', this);"  
-		onmouseover="javascript:showMenuPortlet('configuration', this);" >
-		<aon:div styleClass="aon-direct-access-list">
-			<aon:div 
-				style="background-color:#535353;" 
-				styleClass="aon-direct-access-list-head">
-				<aon:outputText value="#{bundle.aon_module_configuration}"  />
-				<aon:div style="vertical-align: middle; float:right; ">
-					<aon:commandLink 
-						id="main_menu_configuration"
-						immediate="true"
-						action="menu_configuration" >
-						<aon:graphicImage 
-								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
-					</aon:commandLink> 
-					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('configuration', this);"
-							style="cursor:pointer;"
-							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
-				</aon:div>
-			</aon:div>
-			
-			<aon:if test="#{aonRole.admin or aonRole.config}">
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink 
-						id="newGlobalConfiguration"
-						action="globalConfig_form"
-						actionListener="#{globalConfig.onInit}"
-						value="#{bundle.admin_global_configuration}" />
-					</aon:div>
-					
-			</aon:if>
-			
-		</aon:div>
-	</aon:div>		
 		
-	<aon:div 
-		id="notesMenuPortlet" 
-		style="display:none; min-height: 400px !important;"
-		styleClass="aon-menu-portlet"
-		onmouseout="javascript:event.stopPropagation();"  
-		onmouseover="javascript:showMenuPortlet('notes', this);" 
-		onmouseout_="javascript:hideMenuPortlet('notes', this);"  
-		>
-		<aon:div styleClass="aon-direct-access-list">
-			<aon:div 
-				style="background-color:#FFD700;" 
-				styleClass="aon-direct-access-list-head">
-				<aon:outputText value="#{bundle.aon_notes}"  />
-				<aon:div style="vertical-align: middle; float:right; ">
-					<!--
-					<aon:outputText
-						value="add" 
-						styleClass="material-icons"
-						style="cursor:pointer; margin-right:1em;"
-						onclick="javascript:hideMenuPortlet('notes', this);"
-					/>
-					
-					
-					action="note_list" 
-						actionListener="#{note.onSearch}"
-					-->
-					
-					<aon:div
-							styleClass="material-icons"
-							style="cursor:pointer;"
-							value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}"
-							onclick="javascript:addNote();">
-						add
-					</aon:div>
-					 
-					<aon:graphicImage 
-							style="cursor:pointer;"
-							onclick="javascript:hideMenuPortlet('notes', this);"
-							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}"
-					/>
-				</aon:div>
-			</aon:div>
-			<aon:div id="notesContainer" style="max-height: 60vh; overflow-y: auto;">
-				<ui:include src="/facelet/portal/notes.xhtml"/>
-			</aon:div>
+			<ui:include src="/facelet/new/portlet/accountingMenuPortlet.xhtml" />
+		
+			<ui:include src="/facelet/new/portlet/fiscalMenuPortlet.xhtml" />
+	
+			<ui:include src="/facelet/new/portlet/payrollMenuPortlet.xhtml" />
+	
+			<ui:include src="/facelet/new/portlet/configurationMenuPortlet.xhtml" />
+	
+			<ui:include src="/facelet/new/portlet/helpMenuPortlet.xhtml" />
+	
+			<ui:include src="/facelet/new/portlet/timeControlMenuPortlet.xhtml" />
 
-			<!--aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink 
-					id="newGlobalConfiguration"
-					action="globalConfig_form"
-					actionListener="#{globalConfig.onInit}"
-					value="#{bundle.admin_global_configuration}" />
-			</aon:div-->
-					
-			
-		</aon:div>
-	</aon:div>		
-					
+		</aon:form>
+	</aon:div>
+	
+	
+</aon:panelGrid>		
+
 </ui:composition>

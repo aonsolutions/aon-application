@@ -202,6 +202,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return DomainManager.isParentDomainUserInChildDomain();
 	}
 
+	public boolean isAonSolutionsOrg() {
+		return AonStringUtils.endsWith(getDomainNameURL(),"aonsolutions.org");
+	}
+
 	public DataModel getModel() {
 
 		if (model == null) {

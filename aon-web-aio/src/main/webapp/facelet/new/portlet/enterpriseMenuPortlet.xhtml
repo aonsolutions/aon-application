@@ -1,0 +1,100 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+>
+	<aon:div id="enterpriseMenuBar" style="display:none" styleClass="aon-enterprise-menu-bar" >
+			
+			<aon:div styleClass="aon-direct-access-list-element aon-align-left " style="width: 60%; margin: auto; ">
+				<aon:commandLink id="newDomain-enterprise"
+					rendered="#{actionDenied.renderedOption('newDomain_form-enterprise')}"
+					action="newDomain_form-enterprise"
+					actionListener="#{adminNewDomain.onInit}"
+					>
+					<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-bar-icon" value="add_comment" />
+					<aon:outputText styleClass="aon-left-menu-bar-text" style="width:auto" value=" CREAR" />
+				</aon:commandLink>
+			</aon:div>
+	
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:collapseMenuBar(this)">
+				<aon:outputText value=" "/>
+			</aon:div>
+	
+			<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+				<aon:div 
+					id="menuEnterpriseMenuPortlet" >
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+			
+						<aon:commandLink id="activeDomainEnterprise"
+							actionListener="#{domainSwitcher.showActive}"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="domain" />
+							<aon:outputText styleClass="aon-left-menu-bar-text"  value=" ACTIVAS" />
+							<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+							<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
+						</aon:commandLink> 	
+						
+					</aon:div>
+	
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+			
+						<aon:commandLink id="sharedDomainEnterprise"
+							actionListener="#{domainSwitcher.showShared}"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="share" />
+							<aon:outputText styleClass="aon-left-menu-bar-text"  value=" COMPARTIDAS" />
+							<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+							<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
+						</aon:commandLink> 	
+						
+					</aon:div>
+	
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+			
+						<aon:commandLink id="officeDomainEnterprise"
+							actionListener="#{domainSwitcher.showOffice}"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="work" />
+							<aon:outputText styleClass="aon-left-menu-bar-text"  value=" DESPACHO" />
+							<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+							<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
+						</aon:commandLink> 	
+						
+					</aon:div>
+	
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+			
+						<aon:commandLink id="inactiveDomainEnterprise"
+							actionListener="#{domainSwitcher.showInactive}"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="domain_disabled" />
+							<aon:outputText styleClass="aon-left-menu-bar-text"  value=" INACTIVAS" />
+							<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+							<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
+						</aon:commandLink> 	
+						
+					</aon:div>
+	
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+						<aon:commandLink id="removeDomain-enterprise"
+							rendered="#{actionDenied.renderedOption('removeDomain_form-enterprise')}"
+							action="removeDomain_form-enterprise"
+							actionListener="#{adminRemoveDomain.onInit}"
+							>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="delete" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" BORRAR" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+	</aon:div>
+</ui:composition>

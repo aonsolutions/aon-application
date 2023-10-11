@@ -8,11 +8,11 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 	
 	
-	<aon:div id="desktopDiv1" style="padding-top: 5px; width:30px" >
+	<aon:div id="desktopDiv1" style="padding-top: 0px; width:3.5rem" >
 		
 	<style>
 		.aon-portlets-column1{
-			width : 30px;
+			width : 3.5rem;
 			padding: 0px;
 			text-align: right;
 		}
@@ -45,27 +45,6 @@
 			text-transform: uppercase;
 		}
 		
-		/* copied from aon.solutions's .aonButton */
-		.aonButton {
-			-webkit-appearance: none;
-			-moz-appearance: none;
-			background: var(--aonBlue);
-			border: none;
-			border-radius: 6px;
-			box-shadow: 0 2px 4px rgb(0,0,0,.15);
-			color: #fff;
-			cursor: pointer;
-			display: inline-block;
-			font-family: sans-serif;
-			font-size: 1rem;
-			font-weight: 700;
-			margin: 0;
-			outline: none !important;
-			padding: 1rem 2rem;
-			text-align: center;
-			text-decoration: none;
-			transition: background .25s ease-in-out,transform .15s ease;
-		}		
 	</style>
 	
 	<script type='text/javascript' >
@@ -81,42 +60,14 @@
 			el.onclick=function() { collapseMenuPortlet(el); };
 		} 
 
-		function showInfoGroup() {
-			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='250px';
-			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='100%';
-			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='block';
-		}
-		
-		function hideInfoGroup() {
-			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='30px';
-			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='30px';
-			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='none';
-		}
 	</script>
 
-		<aon:div id="infoGroupDiv" style="display:none;  position:relative; top: -0px" >
-
-			<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
-
-			<aon:if test="#{!domainSwitcher.childDomain}">
-			<ui:include src="/facelet/new/portlet/summaryControlPortlet.xhtml" /> 
-			<ui:include src="/facelet/new/portlet/filterControlPortlet.xhtml" />
-			</aon:if>
-			<aon:if test="#{dur.aula}">
-				<ui:include src="/facelet/new/portlet/helpControlPortlet.xhtml" />
-			</aon:if>
-			<aon:if test="#{timeControl.active}">
-				<ui:include src="/facelet/new/portlet/timeControlPortlet.xhtml" />
-			</aon:if>
-
+		<aon:div id="infoGroupDiv" style="position:relative; top: -0px" >
+			
+			<ui:include src="/facelet/new/portlet/menuPortlet.xhtml" />
+			
 		</aon:div>
 		
-		<aon:if test="#{!domainSwitcher.childDomain or timeControl.active or dur.aula}">
-			<script type='text/javascript' >
-				showInfoGroup();
-			</script>
-		</aon:if>
-	
 	</aon:div>
 					
 </ui:composition>
