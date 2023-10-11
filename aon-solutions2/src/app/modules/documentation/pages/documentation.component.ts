@@ -500,16 +500,6 @@ export class DocumentationComponent implements OnInit {
     const allSelected = this.selectedCards.length === documentsArray.length;
 
     documentsArray.forEach((card, i) => {
-      // // Deseleccionamos elementos
-      // if (allSelected && this.selectedCards.includes('file-' + i)) {
-      //   document.getElementById('fileCheck-' + i)?.click();
-      // } else {
-      //   // Seleccionamos elementos que no estén seleccionados previamente
-      //   if (!this.selectedCards.includes('file-' + i)) {
-      //     document.getElementById('fileCheck-' + i)?.click();
-      //   }
-      // }
-
       // Seleccionamos todos los elementos que no estén seleccionados previamente
       if (!this.selectedCards.includes('file-' + i)) {
         document.getElementById('fileCheck-' + i)?.click();
@@ -524,11 +514,16 @@ export class DocumentationComponent implements OnInit {
   toggleDeselectAll() {
     const documentsArray = this.documentsList.toArray();
     const allSelected = this.selectedCards.length === documentsArray.length;
-
     documentsArray.forEach((card, i) => {
       // Deseleccionamos elementos
       if (allSelected && this.selectedCards.includes('file-' + i)) {
         document.getElementById('fileCheck-' + i)?.click();
+      } else {
+        // Recorremos los elementos seleccionados y los deseleccionamos
+        this.selectedCards.forEach((card) => {
+          let index = parseInt(card.split('-')[1]);
+          document.getElementById('fileCheck-' + index)?.click()
+        });
       }
     });
   }

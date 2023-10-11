@@ -11,7 +11,8 @@
       [type]="'select'"
       [placeholder]="'INBOX.TEXT' | translate"
       [options]="folderList"
-      (inputValue)="handleFolderSelected($event)"
+      [value]="'/contabilizado'"
+      disabled
     ></app-input>
     <app-file-upload-button class="uploadBox" (change)="documentUpload($event)" (click)="checkFolder($event)" *ngIf="!document">
       {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}

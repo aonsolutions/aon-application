@@ -50,46 +50,40 @@
         {{ "BILLING.BILLING" | translate }}
       </div>
     </div>
-    <div id="list-billing" [class]="selectedMenu === 1 ? 'activated' : 'no-activated'">
-      <app-button
-        [width]="'100%'"
-        [class]="selectedTab === 1 ? 'blue left' : 'left'"
-        (click)="selectedTab = 1"
-      >
-        <app-icon class="blue" shape="trending_up"></app-icon>
-        {{ "BILLING.SALES" | translate }}
-      </app-button>
-      <app-button
-        [width]="'100%'"
-        [class]="selectedTab === 2 ? 'blue left' : 'left'"
-        (click)="selectedTab = 2"
-      >
-        <app-icon class="blue" shape="trending_down"></app-icon>
-        {{ "BILLING.BILLS" | translate }}
-      </app-button>
-      <app-button
-        [width]="'100%'"
-        [class]="selectedTab === 3 ? 'blue left' : 'left'"
-        (click)="selectedTab = 3"
-      >
-        <app-icon class="blue" shape="assignment"></app-icon>
-        {{ "BILLING.REPORTS" | translate }}
-      </app-button>
-    </div>
+    <app-list-element
+      class="blue"
+      [class]="selectedMenu === 1 ? 'activated' : 'no-activated'"
+    >
+      <div menu>
+        <li [ngClass]="{ select: selectedTab === 1 }" (click)="selectedTab = 1">
+          <app-icon shape="trending_up"></app-icon>
+          {{ "BILLING.SALES" | translate }}
+        </li>
+        <li [ngClass]="{ select: selectedTab === 2 }" (click)="selectedTab = 2">
+          <app-icon shape="trending_down"></app-icon>
+          {{ "BILLING.BILLS" | translate }}
+        </li>
+        <li [ngClass]="{ select: selectedTab === 3 }" (click)="selectedTab = 3">
+          <app-icon class="blue" shape="assignment"></app-icon>
+          {{ "BILLING.REPORTS" | translate }}
+        </li>
+      </div>
+    </app-list-element>
     <div class="header-submenu" (click)="selectedMenu = 2; selectedTab = 4">
       <div class="line blue"></div>
       <div class="text">{{ "BILLING.TREASURY" | translate }}</div>
     </div>
-    <div [class]="selectedMenu === 2 ? 'activated' : 'no-activated'">
-      <app-button
-        [width]="'100%'"
-        [class]="selectedTab === 4 ? 'blue left' : 'left'"
-        (click)="selectedTab = 4"
-      >
-        <app-icon class="blue" shape="account_balance"></app-icon>
-        {{ "BILLING.BANKS" | translate }}
-      </app-button>
-    </div>
+    <app-list-element
+      class="blue"
+      [class]="selectedMenu === 2 ? 'activated' : 'no-activated'"
+    >
+      <div menu>
+        <li [ngClass]="{ select: selectedTab === 4 }" (click)="selectedTab = 4">
+          <app-icon class="blue" shape="account_balance"></app-icon>
+          {{ "BILLING.BANKS" | translate }}
+        </li>
+      </div>
+    </app-list-element>
     <!--FIN List -->
   </div>
   <!--FIN SIDENAV-->
@@ -114,7 +108,7 @@
               class="icon-border"
               (click)="openModal(button.modal)"
             >
-              <app-icon [shape]="button.shape" ></app-icon>
+              <app-icon [shape]="button.shape"></app-icon>
             </app-button>
           </div>
         </div>
@@ -128,7 +122,7 @@
             </div>
             <div content class="padding">
               <div id="upload">
-                <app-file-upload-button>
+                <app-file-upload-button (click)="uploadDocument($event)">
                   {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
                   <app-icon shape="cloud_upload" class="margin-left"></app-icon>
                 </app-file-upload-button>
@@ -176,7 +170,7 @@
             </div>
             <div content class="padding">
               <div id="upload">
-                <app-file-upload-button>
+                <app-file-upload-button (click)="uploadDocument($event)">
                   {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
                   <app-icon shape="cloud_upload" class="margin-left"></app-icon>
                 </app-file-upload-button>

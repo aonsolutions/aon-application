@@ -13,9 +13,9 @@ import { SalesTableComponent } from './components/sales-table/sales-table.compon
 import { BillsTableComponent } from './components/bills-table/bills-table.component';
 import { BankTableComponent } from './components/bank-table/bank-table.component';
 import { ChartDashboardReportsComponent } from './components/chart-dashboard-reports/chart-dashboard-reports.component';
-import { DuplicateFacturaComponent } from './components/duplicate-factura/duplicate-factura.component';
-import { SendFacturaComponent } from './components/send-factura/send-factura.component';
-import { DeleteFacturaComponent } from './components/delete-factura/delete-factura.component';
+import { DuplicateFacturaComponent } from './components/modal-duplicate-factura/duplicate-factura.component';
+import { SendFacturaComponent } from './components/modal-send-factura/send-factura.component';
+import { DeleteFacturaComponent } from './components/modal-delete-factura/delete-factura.component';
 import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({

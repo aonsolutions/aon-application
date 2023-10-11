@@ -1,13 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CollectionFactory, IBank, ICollection } from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, Factory, IBank, ICollection, IDocument } from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject } from 'rxjs';
 import { BankService } from 'src/app/core/services/bank.service';
-import { SendFacturaComponent } from '../components/send-factura/send-factura.component';
-import { DuplicateFacturaComponent } from '../components/duplicate-factura/duplicate-factura.component';
-import { DeleteFacturaComponent } from '../components/delete-factura/delete-factura.component';
+import { SendFacturaComponent } from '../components/modal-send-factura/send-factura.component';
+import { DuplicateFacturaComponent } from '../components/modal-duplicate-factura/duplicate-factura.component';
+import { DeleteFacturaComponent } from '../components/modal-delete-factura/delete-factura.component';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
 
 interface ChartItem {
   name: string;
@@ -63,6 +64,9 @@ export class BillingComponent implements OnInit {
   );
 
   public banks$ = this.banksSubject.asObservable();
+
+  objectFactory = new Factory();
+  document: IDocument = this.objectFactory.createDocument();
 
   constructor(
     private translateService: TranslateService,
@@ -224,9 +228,48 @@ export class BillingComponent implements OnInit {
   }
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
+  functionDocument: any = (result: any) => this.afterModalClosedDocuement(result);
 
   afterModalClosed(result?: any) {
     console.log(result);
+  }
+
+    // Modal para subir el archivo
+  uploadDocument(event: Event) {
+    event.preventDefault();
+    this.modalComponent.openDialog(
+      UploadModalComponent,
+      this.functionDocument,
+      'Data from home'
+    );
+  }
+
+    // Al cerrar el modal de subir documento se crea el documento en la base de datos
+  afterModalClosedDocuement(result?: any) {
+    if (result) {
+      const fileName = result[0].document.name;
+      const fileType = result[0].document.type;
+      const fileSize = result[0].document.size;
+      const path = result[0].folder;
+
+      this.document = this.objectFactory.createDocument(
+        result[0].document,
+        fileName,
+        fileSize,
+        fileType,
+        new Date(),
+        path
+      );
+
+      // this.documentService
+      //   .createDocument(this.document)
+      //   .then((response) => {
+      //     this.uploadCompletedModal();
+      //   })
+      //   .catch((error) => {
+      //     this.uploadErrorModal();
+      //   });
+    }
   }
 
   openModal(modal: string) {

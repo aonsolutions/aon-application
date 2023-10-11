@@ -61,7 +61,7 @@
     display: grid;
     gap: $margin;
   }
-  
+
   .header-submenu .line {
     margin-right: 20px;
   }
@@ -109,21 +109,6 @@
     margin-left: $margin-left;
     margin-right: $margin-right;
     align-items: flex-end;
-  }
-
-  .lineBottomP {
-    border-bottom: 0.2rem solid $color-blue;
-    margin-bottom: $margin-bottom;
-    margin-left: $margin-left;
-    width: 5rem;
-    position: absolute;
-  }
-
-  .lineBottom {
-    border-bottom: 0.05rem solid $color-icon;
-    margin-bottom: $margin-bottom;
-    margin-left: $margin-left;
-    width: 97.5%;
   }
 
   .banks {
