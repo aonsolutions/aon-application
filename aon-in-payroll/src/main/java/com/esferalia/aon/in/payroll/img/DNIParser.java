@@ -114,6 +114,8 @@ public class DNIParser {
 		DetectDocumentTextRequest detectDocumentTextRequest = new DetectDocumentTextRequest().withDocument(doc);
 
 		DetectDocumentTextResult detectDocumentTextResult = client.detectDocumentText(detectDocumentTextRequest);
+		
+		System.out.println(detectDocumentTextResult.getBlocks());
 
 		detectDocumentTextResult.getBlocks().stream().filter(b -> b.getText() != null)
 				.filter(b -> b.getBlockType().equals("LINE")).forEach(b -> {
@@ -126,7 +128,7 @@ public class DNIParser {
 		String text = null;
 
 		if (blocks != null && blocks.length > 0) {
-			LinkedList<Block> lines = new LinkedList<Block>();
+			LinkedList<Block> lines = new LinkedList<>();
 			for (int i = 0; i < blocks.length; i++) {
 				lines.add(blocks[i]);
 			}
@@ -137,13 +139,62 @@ public class DNIParser {
 					line.setText(line.getText() + " " + block.getText());
 				else if (lines.equals(line))
 					lines.add(block);
-
 				text = lines.stream().map(Block::getText).collect(Collectors.joining("\r\n"));
 			}
 
 		}
 		return text;
 	}
+	
+
+	
+	public static void getNewDniBothPdf(String text, DniDataListener listener) {
+	DniParserValidation.validateText(text);
+	String[] lineas = text.split("\n");
+	String dni = null;
+	String nombre = null;
+	String apellido1 = null;
+	String apellido2 = null;
+	String nacionalidad = null;
+
+	for (int i = 0; i < lineas.length; i++) {
+		String linea = lineas[i]; 
+		if (linea.startsWith("DNI") || linea.startsWith("DOCUMENTO") || linea.startsWith("DNI NUM")) {
+			dni = lineas[i +1];
+			if (!DNIParser.validateDni(dni)) {
+				dni = ""; 
+			}
+			listener.onDniData(dni);
+		} else if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
+			apellido1 = lineas[i + 1];
+			if (!DNIParser.validateNames(apellido1)) {
+				apellido1 = "";
+			}
+			apellido2 = lineas[i + 2];
+			if (!DNIParser.validateNames(apellido2)) {
+				apellido2 = "";
+			}
+			listener.onApellidosData(apellido1, apellido2);
+		} else if (linea.startsWith("NOMBRE") || linea.startsWith("NONBRE")) {
+			nombre = lineas[i + 1];
+			if (!DNIParser.validateNames(nombre)) {
+				nombre = "";
+			}
+			listener.onNombreData(nombre);
+		} else if (linea.startsWith("NACIONALIDAD")) {
+			nacionalidad = lineas[i + 2];
+			if (!DNIParser.validateNationality(nacionalidad)) {
+				nacionalidad = "";
+			}
+			if (nacionalidad.equals("ESP")) {
+				nacionalidad = "ESPAÑA";
+			}
+			listener.onNacionalidadData(nacionalidad);
+		}
+	}
+}
+	
+	
 
 	
 	public static boolean validateNames(String name) {

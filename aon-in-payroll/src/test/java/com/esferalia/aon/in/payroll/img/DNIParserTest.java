@@ -19,7 +19,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 public class DNIParserTest {
 	DNIParser dniParser = new DNIParser(); 
 	
-
+	@Test
 	public void extractImageNullTest() {
 		byte [] bytes = null;
 		AonCoreException e = assertThrows(AonCoreException.class, 
@@ -50,7 +50,7 @@ public class DNIParserTest {
 				() -> DNIParser.getImages(document));
 		assertEquals(AonError.NULL_FILE_UPLOADED.getMessage(), e.getMessage());
 	}
-	 
+	
 	@Test
 	public void parserNullTest() {
 		PDDocument document = null;
@@ -76,5 +76,4 @@ public class DNIParserTest {
 				() -> DNIParser.extractImage(bytes));
 		assertEquals(AonError.FILE_SIZE_EXCEEDED.getMessage(), e.getMessage());
 	}
-
 }
