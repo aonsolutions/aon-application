@@ -30,7 +30,6 @@ import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
 import com.amazonaws.services.textract.model.DetectDocumentTextResult;
 import com.amazonaws.services.textract.model.Document;
 
-import solutions.aon.in.invoice.pdf.InvoicePDFException;
 
 public class DNIParser {
 
@@ -54,16 +53,16 @@ public class DNIParser {
 		DniParserValidation.validateInputstream(is);
 		try (PDDocument doc = Loader.loadPDF(is)) {
 			parser(doc);
-		} 
+		}
 	}
-	
+
 	public void parse(List<InputStream> inputStreams) throws IOException {
 		DniParserValidation.validateInputStreamList(inputStreams);
-	    for (InputStream is : inputStreams) {
-	        try (PDDocument doc = Loader.loadPDF(is)) { 
-	            parser(doc);
-	        }
-	    }
+		for (InputStream is : inputStreams) {
+			try (PDDocument doc = Loader.loadPDF(is)) {
+				parser(doc);
+			}
+		}
 	}
 
 	// RECOGE LAS IMAGENES DEL PDF Y LAS ALMACENA EN BYTE[]
@@ -71,7 +70,7 @@ public class DNIParser {
 		DniParserValidation.validatePDDoc(document);
 		LinkedList<byte[]> images = new LinkedList<byte[]>();
 		for (PDPage page : document.getPages()) {
-			PDResources pdResources = page.getResources(); 
+			PDResources pdResources = page.getResources();
 			for (COSName name : pdResources.getXObjectNames()) {
 				PDXObject o = pdResources.getXObject(name);
 				if (o instanceof PDImageXObject) {
@@ -87,25 +86,25 @@ public class DNIParser {
 
 	public static String parser(PDDocument doc) throws IOException {
 		DniParserValidation.validatePDDoc(doc);
-	    AccessPermission ap = doc.getCurrentAccessPermission();
-	    DNIParser dnip = new DNIParser();
+		AccessPermission ap = doc.getCurrentAccessPermission();
 
-	    if (!ap.canExtractContent()) {
-	        throw new InvoicePDFException("You do not have permission to extract text");
-	    }
-	    PDFTextStripper stripper = new PDFTextStripper();
-	    stripper.setSortByPosition(true);
-	    String extractedText = stripper.getText(doc);
-	    if (isBlank(extractedText)) {
-	        extractedText = getImages(doc).stream().map(img -> DNIParser.extractImage(img)).collect(Collectors.joining(System.lineSeparator()));
-	    }
-	    dnip.setText( extractedText);
-	    return DNIParser.getText();
+		if (!ap.canExtractContent()) {
+			//CREAR NUEVA EXCEPCION
+			throw new ImgDniException("You do not have permission to extract text");
+		}
+		PDFTextStripper stripper = new PDFTextStripper();
+		stripper.setSortByPosition(true);
+		String extractedText = stripper.getText(doc);
+		if (isBlank(extractedText)) {
+			extractedText = getImages(doc).stream().map(img -> DNIParser.extractImage(img))
+					.collect(Collectors.joining(System.lineSeparator()));
+		}
+		DNIParser.setText(extractedText);
+		return DNIParser.getText();
 	}
 
 	// UNA VEZ CONVERTIDO EL FORMATO DEL DNI LO PASA A TEXTO PLANO
 	public static String extract(Document doc) {
-
 
 		AmazonTextract client = AmazonTextractClientBuilder.defaultClient();
 
@@ -115,8 +114,6 @@ public class DNIParser {
 
 		DetectDocumentTextResult detectDocumentTextResult = client.detectDocumentText(detectDocumentTextRequest);
 		
-		System.out.println(detectDocumentTextResult.getBlocks());
-
 		detectDocumentTextResult.getBlocks().stream().filter(b -> b.getText() != null)
 				.filter(b -> b.getBlockType().equals("LINE")).forEach(b -> {
 
@@ -145,75 +142,69 @@ public class DNIParser {
 		}
 		return text;
 	}
-	
 
-	
 	public static void getNewDniBothPdf(String text, DniDataListener listener) {
-	DniParserValidation.validateText(text);
-	String[] lineas = text.split("\n");
-	String dni = null;
-	String nombre = null;
-	String apellido1 = null;
-	String apellido2 = null;
-	String nacionalidad = null;
+		DniParserValidation.validateText(text);
+		String[] lineas = text.split("\n");
+		
+		for (int i = 0; i < lineas.length; i++) {
+			String linea = lineas[i];
+			if (linea.startsWith("DNI") || linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
+				dni = lineas[i + 1];
+				if (!DNIParser.validateDni(dni)) {
+					dni = "";
+				}
+				listener.onDniData(dni);
+				System.out.println(dni);
 
-	for (int i = 0; i < lineas.length; i++) {
-		String linea = lineas[i]; 
-		if (linea.startsWith("DNI") || linea.startsWith("DOCUMENTO") || linea.startsWith("DNI NUM")) {
-			dni = lineas[i +1];
-			if (!DNIParser.validateDni(dni)) {
-				dni = ""; 
+			} else if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
+				apellido1 = lineas[i + 1];
+				if (!DNIParser.validateNames(apellido1)) {
+					apellido1 = "";
+				}
+				apellido2 = lineas[i + 2];
+				if (!DNIParser.validateNames(apellido2)) {
+					apellido2 = "";
+				}
+				listener.onApellidosData(apellido1, apellido2);
+			} else if (linea.startsWith("NOMBRE") || linea.startsWith("NONBRE")) {
+				nombre = lineas[i + 1];
+				if (!DNIParser.validateNames(nombre)) {
+					nombre = "";
+				}
+				listener.onNombreData(nombre);
+			} else if (linea.startsWith("NACIONALIDAD")) {
+				nacionalidad = lineas[i + 3];
+				if (!DNIParser.validateNationality(nacionalidad)) {
+					nacionalidad = "";
+				}
+				listener.onNacionalidadData(nacionalidad);
+				if (nacionalidad.equals("ESP")) {
+					nacionalidad = "ESPAÑA";
+				}
+
 			}
-			listener.onDniData(dni);
-		} else if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
-			apellido1 = lineas[i + 1];
-			if (!DNIParser.validateNames(apellido1)) {
-				apellido1 = "";
-			}
-			apellido2 = lineas[i + 2];
-			if (!DNIParser.validateNames(apellido2)) {
-				apellido2 = "";
-			}
-			listener.onApellidosData(apellido1, apellido2);
-		} else if (linea.startsWith("NOMBRE") || linea.startsWith("NONBRE")) {
-			nombre = lineas[i + 1];
-			if (!DNIParser.validateNames(nombre)) {
-				nombre = "";
-			}
-			listener.onNombreData(nombre);
-		} else if (linea.startsWith("NACIONALIDAD")) {
-			nacionalidad = lineas[i + 2];
-			if (!DNIParser.validateNationality(nacionalidad)) {
-				nacionalidad = "";
-			}
-			if (nacionalidad.equals("ESP")) {
-				nacionalidad = "ESPAÑA";
-			}
-			listener.onNacionalidadData(nacionalidad);
 		}
-	}
-}
-	
-	
 
-	
+	}
+
 	public static boolean validateNames(String name) {
 		name = name.trim();
-		String patternName = "[a-zA-Z]+";
+		String patternName = "[a-zA-Z\\s]+";
 		Pattern pattern = Pattern.compile(patternName);
 		Matcher matcher = pattern.matcher(name);
 		return matcher.matches();
 	}
-	
+
 	public static boolean validateDni(String dni) {
 		dni = dni.trim();
-        String patternDni = "\\d{8}[A-HJ-NP-TV-Z]";		
-        Pattern pattern = Pattern.compile(patternDni);
-        Matcher matcher = pattern.matcher(dni);
+		String patternDni = "\\d{8}[A-HJ-NP-TV-Z]";
+		Pattern pattern = Pattern.compile(patternDni);
+		Matcher matcher = pattern.matcher(dni);
 		return matcher.matches();
 	}
 
-	public static boolean validateNationality(String nacionalidad) { 
+	public static boolean validateNationality(String nacionalidad) {
 		nacionalidad = nacionalidad.trim();
 		String patternNat = "[A-Z]{3}";
 		Pattern pattern = Pattern.compile(patternNat);
@@ -243,7 +234,7 @@ public class DNIParser {
 		return text;
 	}
 
-	public void setText(String text) {
+	public static void setText(String text) {
 		DNIParser.text = text;
 	}
 

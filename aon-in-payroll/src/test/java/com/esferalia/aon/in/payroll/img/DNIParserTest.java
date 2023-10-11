@@ -69,11 +69,63 @@ public class DNIParserTest {
 
 	@Test
 	public void extractSizeExceededTest() throws Exception {
-		String file = "./Seguridadinf.pdf";
+		String file = "src/test/resources/com/esferalia/aon/in/payroll/pdf/SegInf.pdf";
 		InputStream is = new FileInputStream(file);
 		byte[] bytes = IOUtils.toByteArray(is);
 		AonCoreException e = assertThrows(AonCoreException.class, 
 				() -> DNIParser.extractImage(bytes));
 		assertEquals(AonError.FILE_SIZE_EXCEEDED.getMessage(), e.getMessage());
 	}
+	
+//	@Test
+//	public void getDniData() throws Exception {
+//		System.out.println("PDF: ");
+//		String file = "/tmp/dniJuanmaPDF.pdf";
+//		MyDniDataListener listener = new MyDniDataListener();
+//		InputStream is = new FileInputStream(file);
+//		DNIParser.parse(is);
+//		String text = DNIParser.getText();
+//		String expectedDNi = "45339825V\r";
+//		DNIParser.getNewDniBothPdf(text, listener);
+//		String actualDni = DNIParser.dni;
+//		assertEquals(expectedDNi, actualDni);
+//	}
+//	
+//	@Test
+//	public void getDniDataJpg() throws Exception{
+//		System.out.println("JPG: ");
+//		String file = "/tmp/dniJuanma.jpg";
+//		MyDniDataListener listener = new MyDniDataListener();
+//		InputStream is = new FileInputStream(file);
+//		byte [] bytes = IOUtils.toByteArray(is);
+//		String text = DNIParser.extractImage(bytes);
+//		String expectedDNi = "ESP\r";
+//		DNIParser.getNewDniBothPdf(text, listener);
+//		String actualDni = DNIParser.nacionalidad;
+//		System.out.println(expectedDNi +"-"+ actualDni);
+//		assertEquals(expectedDNi, actualDni);
+//		
+//	}
+//	
+//	@Test
+//	public void getDniOtherFormat() throws Exception{
+//		String file = "/tmp/pruebaDNI.pdf";
+//		MyDniDataListener listener = new MyDniDataListener();
+//		InputStream is = new FileInputStream(file);
+//		DNIParser.parse(is);
+//		String text = DNIParser.getText();
+//		System.out.println(text);
+//		DNIParser.getNewDniBothPdf(text, listener);
+//	}
+//	
+//	@Test
+//	public void getDniOtherFormatJpg() throws Exception{
+//		String file = "/tmp/DNIJordi.jpg";
+//		MyDniDataListener listener = new MyDniDataListener();
+//		InputStream is = new FileInputStream(file);
+//		byte [] bytes = IOUtils.toByteArray(is);
+//		String text = DNIParser.extractImage(bytes);
+//		System.out.println(text);
+//		DNIParser.getNewDniBothPdf(text, listener);
+//	}
 }
