@@ -43,15 +43,7 @@ export class BillingComponent implements OnInit {
   showMenu           : boolean                    = false;
   buttonsVentas      : any[]                      = [];
   buttonsGastos      : any[]                      = [];
-  buttonsFacturaVenta: any[]                      = [];
   buttonsEdit        : any[]                      = [];
-  optionsSerie       : any                        = {};
-  optionsCategory    : any                        = {};
-  optionsIVA         : any                        = {};
-  optionsIRPF        : any                        = {};
-  optionsTransaction : any                        = {};
-  optionsActivity    : any                        = {};
-  optionsPay         : any                        = {};
   addBank            : boolean                    = false;
   banksView          : any[]                      = [];
   editBank           : { [key: number]: boolean } = {};
@@ -164,21 +156,6 @@ export class BillingComponent implements OnInit {
       },
       {
         shape: 'cloud_download',
-      },
-      {
-        shape: 'delete',
-      },
-    ];
-
-    this.buttonsFacturaVenta = [
-      {
-        shape: 'note_add',
-      },
-      {
-        shape: 'send',
-      },
-      {
-        shape: 'file_copy',
       },
       {
         shape: 'delete',
