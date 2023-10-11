@@ -3,7 +3,7 @@
     <div class="line"></div>
     <div class="text">{{ 'HOME.YOUR_BANKS'| translate }}</div>
     <div class="options">
-      <app-icon [shape]="'add'"></app-icon>
+      <app-icon [shape]="'add'" [routerLink]="'/billing/creacion'"></app-icon>
     </div>
   </div>
   <div
@@ -11,7 +11,7 @@
     class="list-bank"
   >
   <app-spinner class="spinner" *ngIf="spinner"></app-spinner>
-    <div *ngIf="!spinner">
+    <div *ngIf="!spinner && hasBanks()">
       <div *ngFor="let bank of banks" class="list-bank-row">
         <div class="list-bank-name">
           {{ bank.Name }}
@@ -19,14 +19,18 @@
         </div>
         <div class="list-bank-money">{{ bank.Total }} €</div>
       </div>
-      <div class="bank-link-create" *ngIf="!hasBanks()">{{ 'HOME.CREATE_YOUR_FIRST_BANK'|translate }}</div>
-      <div class="banks-create-text" *ngIf="!hasBanks()">
-        {{ 'HOME.CONNECT_AON'|translate }}
-      </div>
+    </div>
+    <div class="bank-link-create" *ngIf="!hasBanks()">
+      <h5 class="title" [routerLink]="'/billing/creacion'">
+        {{ 'HOME.CREATE_YOUR_FIRST_BANK'|translate }}
+      </h5>
+    </div>
+    <div class="banks-create-text" *ngIf="!hasBanks()">
+      {{ 'HOME.CONNECT_AON'|translate }}
     </div>
   </div>
 <div
-*ngIf="!spinner"
+*ngIf="!spinner && hasBanks()"
 footer
 class="list-bank-footer"
 >

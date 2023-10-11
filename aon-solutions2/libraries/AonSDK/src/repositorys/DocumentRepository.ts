@@ -1,28 +1,41 @@
 import { IDocument, MainFolders } from "../interfaces/modelsInterfaces";
 import { IDocumentSpecificMethodsRepository } from "../interfaces/repositoryInterfaces";
-import { largeImage, smallImage, pdf } from "../utils/GenerateFakeData";
 import { ApiHttpRequest } from "../utils/Http";
 import { BASE_URL } from "../utils/Environment";
-import { APIGenericMultipleObjectCrudRepository, APIGenericSingleObjectCrudRepository } from "./GenericRepository";
-import { ApiDocument, Document } from "../models/Document";
+import { APIGenericMultipleObjectCrudRepository, APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository } from "./GenericRepository";
+import { ApiDocument, Document, StorableDocument } from "../models/Document";
 import { ICollection, IFilter } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
 import { INVOICE_URL, TAXMODEL_URL } from "../utils/ApiUrls";
 import { ErrorResponse } from "../utils/Response";
-import { Base64toBlob } from "../utils/FileHelper";
+import { Base64toBlob, FileToBase64 } from "../utils/FileHelper";
 
 export class LocalDocumentSpecificMethodsRepository implements IDocumentSpecificMethodsRepository {
-    async getRawFile(document: IDocument): Promise<any> {
-        switch(document.File){
-            case '/largeImage':
-                return Base64toBlob(largeImage);
-            case '/smallImage':
-                return Base64toBlob(smallImage);
-            case '/pdf':
-                return Base64toBlob(pdf);
-            default:
-                return Base64toBlob(smallImage);
+
+    async uploadDocument(document: Document, file: File): Promise<boolean> {
+        let storable = new StorableDocument();
+        if(document.Path && document.FileName){
+            storable.getCollection().forEach(item => {
+                if(item.Path == document.Path && item.FileName == document.FileName){
+                    throw new ErrorResponse('0303');
+                }
+            })
+            let base64 = await FileToBase64(file);
+            if(typeof base64 == 'string'){
+                new GenericSingleObjectCrudRepository(storable, Document).create(document);
+                localStorage.setItem(document.Path + document.FileName, base64)
+                return true;
+            }
         }
+        throw new ErrorResponse('0302')
+    }
+
+    async getRawFile(document: IDocument): Promise<any> {
+        let base64 = localStorage.getItem(document.Path + document.FileName);
+        if(base64){
+            return Base64toBlob(base64, document.FileType);
+        }
+        throw(new ErrorResponse('0206'))
     }
 }
 
@@ -69,6 +82,10 @@ export class ApiDocumentMultipleObjectCrudRepository extends APIGenericMultipleO
 }
 
 export class ApiDocumentSpecificMethodsRepository implements IDocumentSpecificMethodsRepository {
+
+    async uploadDocument(document: IDocument, file: File): Promise<boolean> {
+        return true;
+    }
 
     async getRawFile(document: IDocument): Promise<any> {
         if(document.File != ''){

@@ -12,6 +12,14 @@ export class DocumentSpecificMethods implements IDocumentSpecificMethods {
         this.SpecificMethodsRepository = SpecificMethodsRepository;
     }
 
+    async uploadDocument(document: IDocument, file: File): Promise<IResponse<boolean>> {
+        try {
+            return new Response<boolean>(await this.SpecificMethodsRepository.uploadDocument(document, file));
+        } catch (error) {
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+        }
+    }
+
     async getRawFile(document: IDocument): Promise<IResponse<string>> {
         try {
             return new Response<string>(await this.SpecificMethodsRepository.getRawFile(document));

@@ -8,7 +8,7 @@
       <app-dropdown-menu #model *ngIf="menuItem.length > 0" [menuItem]="menuItem"></app-dropdown-menu>
     </div>
   </div>
-  <div body class="list">
+  <div body class="list" *ngIf="models">
     <div *ngFor="let model of models" class="list-row">
       <div class="list-name">{{ 'HOME.MODEL'|translate }} {{ model.Name }}</div>
       <div class="list-date"> {{ model.TaxType }}</div>
@@ -17,6 +17,9 @@
         {{model.Result}} €
       </div>
     </div>
+  </div>
+  <div body class="sinDatos" *ngIf="!models">
+    <h5>Sin datos</h5>
   </div>
 </app-card>
 
