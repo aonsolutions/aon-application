@@ -16,7 +16,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridCell;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonRegistryFullPanel.AonRegistryFullPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSimpleDialog;
@@ -37,21 +36,16 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SupplierModule extends MainEntryPoint {
@@ -162,9 +156,9 @@ public class SupplierModule extends MainEntryPoint {
 		splitLayoutPanel.add(centerLayoutPanel);
 		
 		centerPanel.addScrollHandler(event -> {
-				// Ignore scroll up.
 				int oldScrollPos = lastScrollPos;
 				lastScrollPos = centerPanel.getVerticalScrollPosition();
+				
 				if (oldScrollPos >= lastScrollPos) {
 					return;
 				}
@@ -271,27 +265,27 @@ public class SupplierModule extends MainEntryPoint {
 				AonSupplierFullPanel creditorPanel = new AonSupplierFullPanel(opt, SupplierFull.initialize(opt.getDomain()), new AonRegistryFullPanelCallback<SupplierFull>() {
 					
 					@Override
-					public void setFocus(boolean b) {
-						// Empty method
-					}
-					
-					@Override
 					public void onError(Throwable caught) {
 						showError(caught.getMessage());
 					}
 					
 					@Override
-					public void onCancel() {
-						dialog.hide();		
+					public void onAccept(SupplierFull sf) {
+						// Add new supplier to table
 					}
 					
 					@Override
-					public void onAccept(SupplierFull rf) {
-						dialog.hide();
+					public void onCancel() {
+						// Empty method	
 					}
 
 					@Override
-					public void onDocumenthanged(SupplierFull registryFull) {
+					public void onDocumenthanged(SupplierFull supplierFull) {
+						// Empty method
+					}
+					
+					@Override
+					public void setFocus(boolean b) {
 						// Empty method
 					}
 				});
@@ -420,8 +414,56 @@ public class SupplierModule extends MainEntryPoint {
 		}
 		toolbar.showErrorMessage(msg);
 	}
+	
+	private static class SupplierTableRow {
+		Label confidential = new Label();
+		Label documentTypeLabel  = new Label();
+		Label documentCountryLabel  = new Label();
+		Label documentLabel  = new Label();
+		Label nameLabel  = new Label();
+		Label aliasLabel  = new Label();
+		Label status = new Label();
+		
+		public SupplierTableRow(Supplier supplier) {
+			setData(supplier);
+		}
+		
+		void setData(Supplier supplier) {
+			if (supplier.isConfidential()) {
+				confidential.setTitle(AON.MSG.confidential());
+				confidential.setStyleName(AON.CSS.aonIconLabel());
+				confidential.addStyleName(AON.CSS.aonIconConfidential());
+			}
+			
+			documentTypeLabel.setText(supplier.getDocumentType() == null ? AonStringUtils.EMPTY : supplier.getDocumentType().getDescription());
+			documentCountryLabel.setText(supplier.getDocumentCountry() == null ? AonStringUtils.EMPTY : supplier.getDocumentCountry().getIso2());
+			documentLabel.setText(supplier.getDocument());
+			nameLabel.setText(supplier.getName());
+			aliasLabel.setText(supplier.getAlias());
+			
+			status.setTitle(supplier.getStatus() == null ?"":supplier.getStatus().getDescription());
+			status.setStyleName(AON.CSS.aonIconLabel());
+			supplier.getStatus().visit( new IRegistryStatusVisitor() {
+				@Override
+				public void visitActive() {
+					status.addStyleName(AON.CSS.aonIconValid());
+				}
+				
+				@Override
+				public void visitInactive() {
+					status.addStyleName(AON.CSS.aonIconInvalid());
+				}
+				
+				@Override
+				public void visitBlocked() {
+					status.addStyleName(AON.CSS.aonIconBlock());
+				}
+			});
+		}
+	}
 
 	private void paintRow(final RegistryModuleOptions opt, Supplier supplier) {
+		
 		int row = tab.getWidgetCount();
 		suppliers.put(supplier.getId(), new SupplierRow(row, supplier));
 		
@@ -440,56 +482,48 @@ public class SupplierModule extends MainEntryPoint {
 					checkButton.removeStyleName(AON.CSS.aonIconCheck());
 				}
 		});
-
-		Label confidential = new Label();
-		if (supplier.isConfidential()) {
-			confidential.setTitle(AON.MSG.confidential());
-			confidential.setStyleName(AON.CSS.aonIconLabel());
-			confidential.addStyleName(AON.CSS.aonIconConfidential());
-		}
-
-		Label documentTypeLabel  = new Label( supplier.getDocumentType() == null ? AonStringUtils.EMPTY : supplier.getDocumentType().getDescription());
-		Label documentCountryLabel  = new Label( supplier.getDocumentCountry() == null ? AonStringUtils.EMPTY : supplier.getDocumentCountry().getIso2());
-		Label documentLabel  = new Label( supplier.getDocument() );
-		Label nameLabel  = new Label( supplier.getName() );
-		Label aliasLabel  = new Label( supplier.getAlias() );
 		
-		Label status = new Label();
-		status.setTitle(supplier.getStatus() == null ?"":supplier.getStatus().getDescription());
-		status.setStyleName(AON.CSS.aonIconLabel());
-		supplier.getStatus().visit( new IRegistryStatusVisitor() {
-			@Override
-			public void visitActive() {
-				status.addStyleName(AON.CSS.aonIconValid());
-			}
-			
-			@Override
-			public void visitInactive() {
-				status.addStyleName(AON.CSS.aonIconInvalid());
-			}
-			
-			@Override
-			public void visitBlocked() {
-				status.addStyleName(AON.CSS.aonIconBlock());
-			}
-		});
-		
+		SupplierTableRow supplierTableRow = new SupplierTableRow(supplier);
+
 		AonDisplayGridRow supplierRow = tab.addRow();
 		
-		supplierRow.addClickHandler(event -> selectSupplier(opt, supplier));
+		supplierRow.addClickHandler(event -> selectSupplier(opt, supplier, new AonRegistryFullPanelCallback<SupplierFull>() {
+			@Override
+			public void onError(Throwable caught) {
+				showError(caught.getMessage());
+			}
+			@Override
+			public void onAccept(SupplierFull sf) {
+				supplierTableRow.setData(sf.getRegistry());
+			}
+
+			@Override
+			public void onCancel() {
+				// Empty method
+			}
+
+			@Override
+			public void onDocumenthanged(SupplierFull supplierFull) {
+				// Empty method
+			}
+
+			@Override
+			public void setFocus(boolean b) {
+				// Empty method
+			}
+		}));
 		
 		supplierRow.addCell(checkButton)
-			.addCell(status)
-			.addCell(confidential)
-			.addCell(documentTypeLabel)
-			.addCell(documentCountryLabel)
-			.addCell(documentLabel)
-			.addCell(nameLabel)
-			.addCell(aliasLabel)
+			.addCell(supplierTableRow.status)
+			.addCell(supplierTableRow.confidential)
+			.addCell(supplierTableRow.documentTypeLabel)
+			.addCell(supplierTableRow.documentCountryLabel)
+			.addCell(supplierTableRow.documentLabel)
+			.addCell(supplierTableRow.nameLabel)
+			.addCell(supplierTableRow.aliasLabel)
 			// .addCell(detailsButton)
 			;
 	}
-	
 
 	private void clearSelection() {
 		selectedItems.clear();
@@ -507,47 +541,12 @@ public class SupplierModule extends MainEntryPoint {
 		selectedCount.setText( (!selectedItems.isEmpty())?  AonNumberUtils.toString(selectedItems.size()) :""); 
 	}
 	
-	private void selectSupplier(RegistryModuleOptions opt, Supplier supplier) {
+	private void selectSupplier(RegistryModuleOptions opt, Supplier supplier, AonRegistryFullPanelCallback<SupplierFull> panelCallback) {
+		
 		service.getSupplierFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), supplier.getId(), new AsyncCallback<SupplierFull>() {
-			
 			@Override
 			public void onSuccess(SupplierFull result) {
-				final AonSimpleDialog dialog = new AonSimpleDialog();
-				dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
-				dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-				dialog.setCaption(AON.MSG.supplier());
-				AonSupplierFullPanel supplierPanel = new AonSupplierFullPanel(opt, result, new AonRegistryFullPanelCallback<SupplierFull>() {
-					
-					@Override
-					public void setFocus(boolean b) {
-						// Empty method
-					}
-					
-					@Override
-					public void onError(Throwable caught) {
-						showError(caught.getMessage());
-					}
-					
-					@Override
-					public void onCancel() {
-						dialog.hide();		
-					}
-					
-					@Override
-					public void onAccept(SupplierFull rf) {
-						dialog.hide();
-					}
-					@Override
-					public void onDocumenthanged(SupplierFull registryFull) {
-						// Empty method
-					}
-
-				});
-				dialog.add( supplierPanel );
-				dialog.center();
-				dialog.show();
-				
-				Scheduler.get().scheduleDeferred(() -> supplierPanel.setFocus(true));	
+				selectSupplier(opt, result, panelCallback);
 			}
 			
 			@Override
@@ -555,6 +554,47 @@ public class SupplierModule extends MainEntryPoint {
 				showError(caught.getMessage());	
 			}
 		});					
+	}
+	
+	private void selectSupplier(RegistryModuleOptions opt, SupplierFull supplier,  AonRegistryFullPanelCallback<SupplierFull> panelCallback) {
+		final AonSimpleDialog dialog = new AonSimpleDialog();
+		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+		dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+		dialog.setCaption(AON.MSG.supplier());
+		
+		AonSupplierFullPanel supplierPanel = new AonSupplierFullPanel(opt, supplier, new AonRegistryFullPanelCallback<SupplierFull>() {
+			@Override
+			public void setFocus(boolean b) {
+				if (panelCallback != null) panelCallback.setFocus(b);
+			}
+			
+			@Override
+			public void onError(Throwable caught) {
+				if (panelCallback != null) panelCallback.onError(caught);
+			}
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+				if (panelCallback != null) panelCallback.onCancel();
+			}
+			
+			@Override
+			public void onAccept(SupplierFull sf) {
+				dialog.hide();
+				if (panelCallback != null) panelCallback.onAccept(sf);
+			}
+			@Override
+			public void onDocumenthanged(SupplierFull supplierFull) {
+				if (panelCallback != null) panelCallback.onDocumenthanged(supplierFull);
+			}
+
+		});
+		dialog.add( supplierPanel );
+		dialog.center();
+		dialog.show();
+		
+		Scheduler.get().scheduleDeferred(() -> supplierPanel.setFocus(true));	
 	}
 	
 }		

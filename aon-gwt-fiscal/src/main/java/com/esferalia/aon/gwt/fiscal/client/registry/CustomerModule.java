@@ -50,7 +50,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CustomerModule extends MainEntryPoint {
 	
-	private static RegistryServiceAsync service;
+	private static final RegistryServiceAsync service;
 	static {
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		service = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -259,44 +259,33 @@ public class CustomerModule extends MainEntryPoint {
 		AonToolbarButton addButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		
 		addButton.addClickHandler(event -> {
-			final AonSimpleDialog dialog = new AonSimpleDialog();
-			dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
-			dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-			dialog.setCaption(AON.MSG.customer());
-				
-			AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(opt, CustomerFull.initialize(opt.getDomain()), new AonRegistryFullPanelCallback<CustomerFull>() {
-				@Override
-				public void setFocus(boolean b) {
-					// Empty method
-				}
-						
+			CustomerFull newCustomer = CustomerFull.initialize(opt.getDomain());
+			selectCustomer(opt, newCustomer, new AonRegistryFullPanelCallback<CustomerFull>() {
 				@Override
 				public void onError(Throwable caught) {
 					showError(caught.getMessage());
 				}
 					
 				@Override
-				public void onCancel() {
-					dialog.hide();		
-				}
-						
-				@Override
 				public void onAccept(CustomerFull rf) {
-					dialog.hide();
+					// Add new customer to table
 				}
-	
+
+				@Override
+				public void onCancel() {
+					// Empty method
+				}
+
 				@Override
 				public void onDocumenthanged(CustomerFull registryFull) {
 					// Empty method
 				}
+
+				@Override
+				public void setFocus(boolean b) {
+					// Empty method	
+				}
 			});
-				
-			dialog.add( customerPanel );
-			dialog.center();
-			dialog.show();
-				
-			Scheduler.get().scheduleDeferred(() -> customerPanel.setFocus(true));	
-				
 		});
 		
 		toolbar.add(addButton);
@@ -316,7 +305,7 @@ public class CustomerModule extends MainEntryPoint {
 		checkAll = new AonToolbarButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
 		checkAll.setEnabled(false);
 		
-		checkAll .addClickHandler(event -> checkAll(true));
+		checkAll.addClickHandler(event -> checkAll(true));
 		
 		toolbar.add(checkAll );
 		
@@ -419,12 +408,61 @@ public class CustomerModule extends MainEntryPoint {
 		toolbar.showErrorMessage(msg);
 	}
 
+	private static class CustomerTableRow {
+		
+		Label confidential = new Label();
+		Label documentTypeLabel  = new Label();
+		Label documentCountryLabel = new Label();
+		Label documentLabel  = new Label();
+		Label nameLabel = new Label();
+		Label aliasLabel = new Label();
+		Label status = new Label();
+		
+		public CustomerTableRow(Customer customer) {
+			setData(customer);
+		}
+
+		void setData(Customer customer) {
+			 if (customer.isConfidential()) {
+				 confidential.setTitle(AON.MSG.confidential());
+				 confidential.setStyleName(AON.CSS.aonIconLabel());
+				 confidential.addStyleName(AON.CSS.aonIconConfidential());
+			 }
+			 
+			 documentTypeLabel.setText( customer.getDocumentType() == null ? AonStringUtils.EMPTY : customer.getDocumentType().getDescription());
+			 documentCountryLabel.setText( customer.getDocumentCountry() == null ? AonStringUtils.EMPTY : customer.getDocumentCountry().getIso2());
+			 documentLabel.setText( customer.getDocument() );
+			 nameLabel.setText( customer.getName() );
+			 aliasLabel.setText( customer.getAlias() );
+			 
+			 status.setTitle(customer.getStatus() == null ?"":customer.getStatus().getDescription());
+			 status.setStyleName(AON.CSS.aonIconLabel());
+			 customer.getStatus().visit( new IRegistryStatusVisitor() {
+				 @Override
+				 public void visitActive() {
+					 status.addStyleName(AON.CSS.aonIconValid());
+				 }
+				 
+				 @Override
+				 public void visitInactive() {
+					 status.addStyleName(AON.CSS.aonIconInvalid());
+				 }
+				 
+				 @Override
+				 public void visitBlocked() {
+					 status.addStyleName(AON.CSS.aonIconBlock());
+				 }
+			 });
+		 }
+		
+	}
+	
 	private void paintRow(final RegistryModuleOptions opt, Customer customer) {
+		
 		int row = tab.getWidgetCount();
 		customers.put(customer.getId(), new CustomerRow(row, customer));
 		
-		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction()
-				, selectedItems.contains(customer.getId())?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());
+		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedItems.contains(customer.getId())?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());
 		
 		checkButton.addClickHandler(event -> {
 				if (selectedItems.contains(customer.getId())) {
@@ -439,51 +477,46 @@ public class CustomerModule extends MainEntryPoint {
 					checkButton.removeStyleName(AON.CSS.aonIconCheck());
 				}
 		});
-
-		Label confidential = new Label();
-		if (customer.isConfidential()) {
-			confidential.setTitle(AON.MSG.confidential());
-			confidential.setStyleName(AON.CSS.aonIconLabel());
-			confidential.addStyleName(AON.CSS.aonIconConfidential());
-		}
-
-		Label documentTypeLabel  = new Label( customer.getDocumentType() == null ? AonStringUtils.EMPTY : customer.getDocumentType().getDescription());
-		Label documentCountryLabel  = new Label( customer.getDocumentCountry() == null ? AonStringUtils.EMPTY : customer.getDocumentCountry().getIso2());
-		Label documentLabel  = new Label( customer.getDocument() );
-		Label nameLabel  = new Label( customer.getName() );
-		Label aliasLabel  = new Label( customer.getAlias() );
 		
-		Label status = new Label();
-		status.setTitle(customer.getStatus() == null ?"":customer.getStatus().getDescription());
-		status.setStyleName(AON.CSS.aonIconLabel());
-		customer.getStatus().visit( new IRegistryStatusVisitor() {
-			@Override
-			public void visitActive() {
-				status.addStyleName(AON.CSS.aonIconValid());
-			}
-			
-			@Override
-			public void visitInactive() {
-				status.addStyleName(AON.CSS.aonIconInvalid());
-			}
-			
-			@Override
-			public void visitBlocked() {
-				status.addStyleName(AON.CSS.aonIconBlock());
-			}
-		});
+		CustomerTableRow customerTableRow = new CustomerTableRow(customer);
 		
 		AonDisplayGridRow customerRow = tab.addRow();
-		customerRow.addClickHandler(event -> selectCustomer(opt, customer));
+		
+		customerRow.addClickHandler(event -> selectCustomer(opt, customer, new AonRegistryFullPanelCallback<CustomerFull>() {
+			@Override
+			public void onError(Throwable caught) {
+				showError(caught.getMessage());
+			}
+			
+			@Override
+			public void onAccept(CustomerFull rf) {
+				customerTableRow.setData(rf.getRegistry());
+			}
+
+			@Override
+			public void onCancel() {
+				// Empty method
+			}
+
+			@Override
+			public void onDocumenthanged(CustomerFull registryFull) {
+				// Empty method
+			}
+
+			@Override
+			public void setFocus(boolean b) {
+				// Empty method
+			}
+		}));
 		
 		customerRow.addCell(checkButton)
-			.addCell(status)
-			.addCell(confidential)
-			.addCell(documentTypeLabel)
-			.addCell(documentCountryLabel)
-			.addCell(documentLabel)
-			.addCell(nameLabel)
-			.addCell(aliasLabel)
+			.addCell(customerTableRow.status)
+			.addCell(customerTableRow.confidential)
+			.addCell(customerTableRow.documentTypeLabel)
+			.addCell(customerTableRow.documentCountryLabel)
+			.addCell(customerTableRow.documentLabel)
+			.addCell(customerTableRow.nameLabel)
+			.addCell(customerTableRow.aliasLabel)
 			// .addCell(detailsButton)
 			;
 	}
@@ -506,48 +539,12 @@ public class CustomerModule extends MainEntryPoint {
 		selectedCount.setText( (!selectedItems.isEmpty())?  AonNumberUtils.toString(selectedItems.size()) :""); 
 	}
 	
-	private void selectCustomer(RegistryModuleOptions opt, Customer customer) {
-		service.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {
-			
+	private void selectCustomer(RegistryModuleOptions opt, Customer customer, AonRegistryFullPanelCallback<CustomerFull> panelCallback) {
+		
+		service.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {	
 			@Override
 			public void onSuccess(CustomerFull result) {
-				final AonSimpleDialog dialog = new AonSimpleDialog();
-				dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
-				dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-				dialog.setCaption(AON.MSG.customer());
-				AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(opt, result, new AonRegistryFullPanelCallback<CustomerFull>() {
-					
-					@Override
-					public void setFocus(boolean b) {
-						// Empty method
-					}
-					
-					@Override
-					public void onError(Throwable caught) {
-						showError(caught.getMessage());
-					}
-					
-					@Override
-					public void onCancel() {
-						dialog.hide();		
-					}
-					
-					@Override
-					public void onAccept(CustomerFull rf) {
-						dialog.hide();
-					}
-					@Override
-					public void onDocumenthanged(CustomerFull registryFull) {
-						// Empty method
-					}	
-				});
-				
-				dialog.add( customerPanel );
-				dialog.center();
-				dialog.show();
-				
-				Scheduler.get().scheduleDeferred(() -> customerPanel.setFocus(true));
-				
+				selectCustomer(opt, result, panelCallback);
 			}
 			
 			@Override
@@ -555,5 +552,46 @@ public class CustomerModule extends MainEntryPoint {
 				showError(caught.getMessage());	
 			}
 		});					
+	}
+	
+	private void selectCustomer(RegistryModuleOptions opt, CustomerFull customer, AonRegistryFullPanelCallback<CustomerFull> panelCallback) {
+		final AonSimpleDialog dialog = new AonSimpleDialog();
+		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+		dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+		dialog.setCaption(AON.MSG.customer());
+		
+		AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(opt, customer, new AonRegistryFullPanelCallback<CustomerFull>() {
+			@Override
+			public void setFocus(boolean b) {
+				if (panelCallback != null) panelCallback.setFocus(b);
+			}
+			
+			@Override
+			public void onError(Throwable caught) {
+				if (panelCallback != null) panelCallback.onError(caught);
+			}
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+				if (panelCallback != null) panelCallback.onCancel();
+			}
+			
+			@Override
+			public void onAccept(CustomerFull rf) {
+				dialog.hide();
+				if (panelCallback != null) panelCallback.onAccept(rf);
+			}
+			@Override
+			public void onDocumenthanged(CustomerFull registryFull) {
+				if (panelCallback != null) panelCallback.onDocumenthanged(registryFull);
+			}	
+		});
+		
+		dialog.add( customerPanel );
+		dialog.center();
+		dialog.show();
+		
+		Scheduler.get().scheduleDeferred(() -> customerPanel.setFocus(true));				
 	}
 }		
