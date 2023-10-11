@@ -1,21 +1,5 @@
-<<<<<<< HEAD
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
-import { ReportingService } from 'src/app/core/services/reporting.service';
-import { MessageService } from 'src/app/core/services/message.service';
-import { MessageChatService } from 'src/app/core/services/message-chat.service';
-import { ModalCreateComponent } from '../components/modal-create/modal-create.component';
-=======
-import { Component, OnInit, ViewChild } from '@angular/core';
->>>>>>> ncastaneda
-import { DatePipe } from '@angular/common';
-import { TranslateService } from '@ngx-translate/core';
-
-<<<<<<< HEAD
-=======
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
-import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
+import { Factory, CollectionFactory, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
 import { MessageService } from 'src/app/core/services/message.service';
@@ -23,8 +7,10 @@ import { ModalCreateComponent } from '../components/modal-create/modal-create.co
 import { OptionsService } from 'src/app/shared/services/options.service';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { TablesInboxComponent } from '../components/tables-inbox/table-inbox.component';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
 
->>>>>>> ncastaneda
 export interface Tabs {
   name: string;
   icon?: string;
@@ -36,18 +22,19 @@ export interface Tabs {
   styleUrls: ['./inboxview.component.scss'],
 })
 export class InboxviewComponent implements OnInit {
+  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
+    new DropdownMenuComponent();
   @ViewChild('modal') modalComponent: any = '';
   @ViewChild(TablesInboxComponent, { static: false })
   @Output() consultaCreated: EventEmitter<void> = new EventEmitter<void>();
 
+  datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
   collectionFactory = new CollectionFactory();
   entityFactory = new Factory();
-  datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
   messages: ICollection<IMessage> =
   new CollectionFactory().createMessageCollection();
   messagesChat: ICollection<IMessageChat> =
   this.collectionFactory.createMessageChatCollection();
-
   messagesData: IMessage = this.entityFactory.createMessage();
   messageChat: IMessageChat = this.entityFactory.createMessageChat();
 
@@ -67,15 +54,12 @@ export class InboxviewComponent implements OnInit {
   expandedIndex: number = -1;
   newMessageDescription: string = '';
   spinner: boolean = true;
-  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
-    new DropdownMenuComponent();
-
-  consultaMessageCount: number = 0;
-  tareasMessageCount: number = 0;
-  notificacionesMessageCount: number = 0;
   totalMessageCount: number = 0;
   menuItem: MenuItem[] = [];
   selected: string = '';
+  consultaMessageCount: number = 0;
+  tareasMessageCount: number = 0;
+  notificacionesMessageCount: number = 0;
 
   constructor(
     private translateService: TranslateService,
@@ -167,12 +151,6 @@ export class InboxviewComponent implements OnInit {
     this.checkOpenModal();
   }
 
-  /**
-  * Comprueba si el parametro "showModal" esta presente en los parametros de la consulta y, en caso afirmativo, muestra el modal.
-  *
-  * @private
-  * @returns {void}
-  */
   private checkOpenModal(): void {
     const options = this.optionsService.getOptions();
 
@@ -219,12 +197,6 @@ export class InboxviewComponent implements OnInit {
         );
       }
       this.changeView();
-
-      this.messageService.getMessage(message.key).then((messageStatus) => {
-        if (message.type === 'notificacion') {
-          this.messageService.markAsReadNotification(messageStatus);
-        }
-      });
       // Desactivo el spinner
       this.spinner = false;
     }
@@ -264,32 +236,28 @@ export class InboxviewComponent implements OnInit {
     this.consultaMessageCount++;
   }
 
+  // Calcula el total de mensajes
   async calculateMessageCounts() {
-      // Calcula el recuento para "consulta"
-      let filterBuilder = new FilterBuilder();
-      filterBuilder.addField('type', 'consulta');
-      this.consultaMessageCount = await this.messageService.getMessageCount(
+    const types = ['consulta', 'tarea', 'notificacion'];
+    this.totalMessageCount = 0;
+
+    for (const type of types) {
+      const filterBuilder = new FilterBuilder();
+      filterBuilder.addField('type', type);
+      const count = await this.messageService.getMessageCount(
         filterBuilder.getFilter()
       );
 
-      // Calcula el recuento para "tareas"
-      filterBuilder = new FilterBuilder();
-      filterBuilder.addField('type', 'tarea');
-      this.tareasMessageCount = await this.messageService.getMessageCount(
-        filterBuilder.getFilter()
-      );
+      if (type === 'consulta') {
+        this.consultaMessageCount = count;
+      } else if (type === 'tarea') {
+        this.tareasMessageCount = count;
+      } else if (type === 'notificacion') {
+        this.notificacionesMessageCount = count;
+      }
 
-      // Calcula el recuento para "notificaciones"
-      filterBuilder = new FilterBuilder();
-      filterBuilder.addField('type', 'notificacion');
-      this.notificacionesMessageCount =
-        await this.messageService.getMessageCount(filterBuilder.getFilter());
-
-      // Calcula el recuento total
-      this.totalMessageCount =
-        this.consultaMessageCount +
-        this.tareasMessageCount +
-        this.notificacionesMessageCount;
+      this.totalMessageCount += count;
+    }
   }
 
   // Cerrar details
@@ -297,6 +265,7 @@ export class InboxviewComponent implements OnInit {
     this.showDetail = false;
   }
 
+  // expande la descripción del mensaje
   toggleDescription(index: number): void {
     this.expandedIndex = this.expandedIndex === index ? -1 : index;
   }
@@ -324,13 +293,14 @@ export class InboxviewComponent implements OnInit {
       .setType('chat');
 
         // Crear el mensaje
-        const createdMessageChat =
-        await this.messageChatService.createMessageChat(newMessageChat);
 
+        await this.messageChatService.createMessageChat(newMessageChat).then((response) => {
+          this.messageChat = response;
+          // Desactivo el spinner
+          this.spinner = false;
+        })
         // Agregar el nuevo mensaje
-        this.messagesChat.add(createdMessageChat);
-        // Desactivo el spinner
-        this.spinner = false;
+        this.messagesChat.add(this.messageChat);
     }
   }
 
@@ -346,12 +316,14 @@ export class InboxviewComponent implements OnInit {
       .setLastMessageChatOrigin(false);
 
         // Crear el mensaje
-        const createdMessage = await this.messageService.createMessage(newMessage);
-        this.messagesData = createdMessage;
-        // Agregar el nuevo mensaje
-        this.messages.add(createdMessage);
-        // Desactivo el spinner
+        await this.messageService.createMessage(newMessage).then((response) => {
+          this.messagesData = response;
+          // Desactivo el spinner
           this.spinner = false;
+        })
+        // Agregar el nuevo mensaje
+        this.messages.add(this.messagesData);
+        window.location.reload();
     }
   }
 

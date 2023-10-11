@@ -1,25 +1,11 @@
 import { DatePipe } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  CollectionFactory,
-  Factory,
-  ICollection,
-  IMessage,
-  StatusMessage,
-} from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, Factory, ICollection, IMessage } from 'libraries/AonSDK/src/aon';
 import { FilterBuilder } from 'libraries/AonSDK/src/utils/FilterBuilder';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
-import { Status } from '../../../../../../libraries/AonSDK/src/interfaces/modelsInterfaces';
 
 @Component({
   selector: 'app-table-inbox',
@@ -31,23 +17,18 @@ export class TablesInboxComponent implements OnChanges {
   @Input() filterDate: number = 0;
   @Input() filter: any = {};
   @Input() public messageList: Observable<ICollection<IMessage>> | undefined;
-  @Input() id: number = 0;
   @Input() type: string = '';
   @Input() selectedTab: number = 0;
   @Input() tabIndex: number = 0;
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
   @Output() noPendingItems: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  newMessageDescription: string = '';
-  entityFactory = new Factory();
-  messagesData: IMessage = this.entityFactory.createMessage();
   bodyTable: any[] = [];
   showDetail: boolean = false;
   totalMessages: string = '0';
   message: string = '';
   spinner: boolean = true;
-  messages: ICollection<IMessage> =
-    new CollectionFactory().createMessageCollection();
+
   public collectionFactory = new CollectionFactory();
   //Inbox area
   messagess: ICollection<IMessage> =
@@ -65,7 +46,7 @@ export class TablesInboxComponent implements OnChanges {
     'description',
     'total',
     'date',
-    'action',
+    'actions',
   ];
 
   constructor(
@@ -81,7 +62,7 @@ export class TablesInboxComponent implements OnChanges {
     description: 'Description',
     total: 'Total',
     date: 'Date',
-    action: 'Action',
+    actions: 'Actions',
   };
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -289,25 +270,16 @@ export class TablesInboxComponent implements OnChanges {
                 : [],
               text: '',
             };
-            // Marcar como nueva
-            // column.action = {
-            //   icon: lowerCaseStatus.includes('abierta')
-            //     ? [{ archive: 'grey' }]
-            //     : [{ replay: 'grey' }],
-            // };
-            console.log(message.Status);
+            // Marcar como nueva o cerrada
             switch (message.Status) {
               case 'abierta':
+                column.actions = ['archive'];
+                break;
               case 'cerrada':
-                column.action = {
-                  icon: lowerCaseStatus.includes('abierta')
-                    ? [{ archive: 'grey' }]
-                    : [{ replay: 'grey' }],
-                  status: message.Status,
-                };
+                column.actions = ['replay'];
                 break;
               default:
-                column.action = [];
+                column.actions = [];
                 break;
             }
             column.status = {
@@ -353,24 +325,32 @@ export class TablesInboxComponent implements OnChanges {
         this.bodyTable = tableRow;
         this.noPendingItems.emit(!pendingItemsFound);
 
+        let messageType: string = '';
+        if (this.selectedTab === 1) {
+          messageType = 'QUERIES';
+        } else if (this.selectedTab === 2) {
+          messageType = 'TASKS';
+        } else if (this.selectedTab === 3) {
+          messageType = 'NOTIFICATIONS';
+        }
         // No tenemos mensajes en la tabla
         if (response.size() === 0) {
           this.translateService
             .get([
-              'INBOX.NOMESSAGESTHISWEEK',
-              'INBOX.NOMESSAGESTHISMONTH',
+              `INBOX.NO${messageType.toUpperCase()}THISWEEK`,
+              `INBOX.NO${messageType.toUpperCase()}THISMONTH`,
               'NOMESSAGES',
             ])
             .subscribe((result) => {
               switch (this.filterDate) {
                 case 1:
-                  this.message = result['INBOX.NOMESSAGESTHISWEEK'];
+                  this.message = result[`INBOX.NO${messageType.toUpperCase()}THISWEEK`];
                   break;
                 case 2:
-                  this.message = result['INBOX.NOMESSAGESTHISMONTH'];
+                  this.message = result[`INBOX.NO${messageType.toUpperCase()}THISMONTH`];
                   break;
                 default:
-                  this.message = result['INBOX.NOMESSAGES'];
+                  this.message = result['NOMESSAGES'];
                   break;
               }
             });
@@ -384,18 +364,19 @@ export class TablesInboxComponent implements OnChanges {
       });
   }
 
-  iconAction(message: any) {
-    console.log('entra en iconAction');
-    console.log(message);
-    this.messageService.getMessage(message.key).then((messageStatus) => {
-      if (message.Status === 'abierta') {
-        this.messageService.archiveMessage(messageStatus).then(() => {
-          this.updateTableData();
-        });
-      } else if (message.Status === 'cerrada') {
-        this.messageService.reopenMessage(messageStatus).then(() => {
-          this.updateTableData();
-        });
+  // Método para cambiar el estado de un mensaje consulta
+  iconAction(object: any) {
+    this.messageService.getMessage(object.key).then((messageStatus) => {
+    switch (object.keyButton) {
+      case 'archive':
+        this.messageService.archiveMessage(messageStatus)
+      this.updateTableData();
+        break;
+      case 'replay':
+        this.messageService.reopenMessage(messageStatus)
+        this.updateTableData();
+        break;
+      default:
       }
     });
   }
@@ -405,7 +386,12 @@ export class TablesInboxComponent implements OnChanges {
 
   rowClick(message: any) {
     this.rowClicked.emit(message);
-    this.iconAction(message);
-    console.log('sttus', message.Status);
+
+    this.messageService.getMessage(message.key).then((messageStatus) => {
+      if (message.type === 'notificacion') {
+        this.messageService.markAsReadNotification(messageStatus);
+        this.updateTableData();
+      }
+    });
   }
 }

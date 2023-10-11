@@ -76,13 +76,15 @@ export class ModalCreateComponent implements OnInit {
       .setLastMessageChatOrigin(false);
 
         // Crear el mensaje
-        const createdMessage = await this.messageService.createMessage(newMessage);
-        this.messagesData = createdMessage;
+        await this.messageService.createMessage(newMessage).then((response) => {
+          this.messagesData = response;
+          // Desactivo el spinner
+          this.spinner = false;
+
+        })
         // Agregar el nuevo mensaje
-        this.messages.add(createdMessage);
-        // Desactivo el spinner
-        this.spinner = false;
-        this.consultaCreated.emit();
+        this.messages.add(this.messagesData);
+        window.location.reload();
     }
   }
   sendMessage() {
