@@ -248,6 +248,7 @@ export interface IUserSpecificMethods {
 }
 
 export interface IDocumentSpecificMethods {
+    uploadDocument(document: IDocument, file: File): Promise<IResponse<boolean>>;
     getRawFile(document: IDocument): Promise<IResponse<any>>;
 }
 

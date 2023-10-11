@@ -116,13 +116,13 @@ export class HomeComponent implements OnInit {
 
       this.document = this.objectFactory.createDocument(result[0].document, fileName, fileSize, fileType, new Date(), path);
 
-      this.documentService.createDocument(this.document)
-      .then((response) => {
-        this.uploadCompletedModal()
-      })
-      .catch((error) => {
-        this.uploadErrorModal()
-      })
+      // this.documentService.createDocument(this.document)
+      // .then((response) => {
+      //   this.uploadCompletedModal()
+      // })
+      // .catch((error) => {
+      //   this.uploadErrorModal()
+      // })
 
     }
   }
