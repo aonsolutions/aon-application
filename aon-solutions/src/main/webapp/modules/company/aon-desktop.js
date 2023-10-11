@@ -36,6 +36,7 @@ import { AonDashboardGraphicsTrial } from '../accounting/aon-graphics-dashboard-
 import { AonCompanyDashboardCostsList } from '../laboral/company/aon-company-dashboard-costs-list.js';
 import { AonFiscalCard } from '../fiscal/aon-fiscal-card.js';
 import { AonAccessCard } from '../../components/aon-access-card.js';
+import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
 
 export class AonDesktop extends AonElement {
 
@@ -68,6 +69,9 @@ export class AonDesktop extends AonElement {
 		this.INPUT_INVOICE_FILE = this.id + 'InputInvoiceFile';
 		this.INPUT_DOCUMENT_FILE = this.id + 'InputDocumentFile';
 		this.SIDENAV_ACTIVITY_SUMMARY = [];
+		this.TIMECONTROL_TITLE = this.id + 'TimecontrolTitle';
+		this.TIMECONTROL_SIGN = this.id + 'TimecontrolSign';
+	
 	}	
 
 	getDur() {
@@ -262,7 +266,7 @@ export class AonDesktop extends AonElement {
 		if(classicOptions.length > 0)
 			aonDesktop.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicOptions);
 
-		if(this.getDur().isTimecontrol()) {
+		if(this.getDur().isTimecontrol() && !LS.isNewTheme()) {
 			getTimeControl().then(r => {
 				let aonSign = new AonSign();
 				aonDesktop.addSidenavWidget(MSG.TIMECONTROL.toUpperCase(), aonSign);
@@ -373,6 +377,32 @@ export class AonDesktop extends AonElement {
 		cardsPanel.style.flexWrap = 'wrap';
 		cardsPanel.id = "cardsPanel";
 		dashboard.appendChild(cardsPanel);
+
+		// Timecontrol
+		if(this.getDur().isTimecontrol()) {
+			let timecontrolCard = new AonCard();
+			timecontrolCard.id = CONSTANT.TIMECONTROL;
+			timecontrolCard.title = MSG.TIMECONTROL;
+			cardsPanel.appendChild(timecontrolCard);
+			timecontrolCard.firstChild.style.marginLeft = '0';
+			timecontrolCard.firstChild.style.minWidth = "350px";
+			timecontrolCard.firstChild.style.minHeight = "400px";
+			timecontrolCard.firstChild.children.item(1).style.height = "300px";
+
+			getTimeControl().then(r => {
+				let div = this.createElement(TAG.DIV);
+				timecontrolCard.setContent(div)
+				let aonSign = new AonSign();
+				div.appendChild(new AonStatistics());
+				div.appendChild(aonSign);
+
+				aonSign.buildSignin(r);
+				let aonHeader = this.getElement('aonHeader');
+				aonHeader.timeControlStatus(r);
+			});
+
+		}
+		
 
 		// PyG Card
 		let pygCard = new AonCard();
