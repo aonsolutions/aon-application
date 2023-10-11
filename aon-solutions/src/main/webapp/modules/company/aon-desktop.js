@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import { Apps, getAppsByDur} from  '../../services/app.js';
+import { Apps, ClassicApps, getAppsByDur} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -286,8 +286,8 @@ export class AonDesktop extends AonElement {
 		if(LS.isNewTheme()){
 			// Create tabs 
 			let tabOptions = this.tabOptions || [
-				{ title: "Aplicaciones", fn: () => this.createAppList(contentData, company)},
-				{ title: "Dashboard", fn: () => this.createDashboard(contentData, company)}
+				{ title: "Dashboard", fn: () => this.createDashboard(contentData, company)},
+				{ title: "Aplicaciones", fn: () => this.createAppList(contentData, company)}
 			];
 
 			let desktopTabs = new AonTab();
@@ -296,8 +296,8 @@ export class AonDesktop extends AonElement {
 			content.appendChild(desktopTabs);
 
 			// Intiliaze App List
-			this.createAppList(contentData, company);
 			content.appendChild(contentData);
+			this.createDashboard(contentData, company);
 		} else {
 			// Intiliaze App List
 			this.createAppList(contentData, company);
@@ -428,6 +428,13 @@ export class AonDesktop extends AonElement {
 					this.addAccess(app, fastAccessPanel);
 				}
 			}
+			for(let key2 in ClassicApps) {
+				const app = ClassicApps[key2];
+				if(this.isApp(app)) {
+					this.addAccess(app, fastAccessPanel);
+				}
+			}
+
 		}
 	}
 
@@ -742,6 +749,22 @@ export class AonDesktop extends AonElement {
 				case Apps.WAREHOUSE.app:
 					this.rootPanel(new AonWarehouse());
 					break;
+				case ClassicApps.AON_SOLUTIONS.app:
+					open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'));
+					break;
+				case ClassicApps.BIDOQ.app:
+					getAccessBidoq().then(r => {
+						const {datos} = r;
+						if(datos && datos.ruta) {
+							open(datos.respuesta);
+						} else {
+							open('https://mispapeles.es/');
+						}
+					});
+					break;
+				case ClassicApps.SELFCONTA.app:
+					open('https://mispapeles.es/selfconta/')
+					break;
 			}
 	}
 
@@ -772,6 +795,12 @@ export class AonDesktop extends AonElement {
 		else if(Apps.WAREHOUSE.app === app.app){
 			const domain = this.getDur().getDomain();
 			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
+		} else if(ClassicApps.AON_SOLUTIONS.app === app.app){
+			return this.getDur().isAon();	
+		} else if(ClassicApps.BIDOQ.app === app.app){
+			return this.getDur().isBidoq();	
+		} else if(ClassicApps.SELFCONTA.app === app.app){
+			return this.getDur().isSelfconta();	
 		} else return false;
 	}
 
