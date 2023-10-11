@@ -34,10 +34,10 @@
 	
 	<aon:form id="mainForm">
 
-		<aon:div styleClass="aon-scroll-area" style="padding: .7em 1.5em 0 0 !important;">
+		<aon:div styleClass="aon-scroll-area aon-height-all" style="padding: .0em 1.5em 0 0 !important;">
 
-			<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting"
-				columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
+			<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting aon-height-all"
+				columnClasses="aon-portlets-column1,aon-portlets-column2">
 
 				<aon:if test="#{!userUtils.newAONTheme}">				
 					<ui:include src="/facelet/homepage/portlet/infoLeftGroupPortlet.xhtml" />
@@ -86,7 +86,6 @@
 							<ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" />
 						</aon:if>
 	  					<aon:if test="#{userUtils.newAONTheme}">				
-							<!-- <ui:include src="/facelet/new/portlet/parentDomainInfoPortlet.xhtml" /> -->
 						</aon:if>
 						
 	  					<aon:if test="#{userUtils.newAONTheme}">				
@@ -183,8 +182,7 @@
 					</aon:if>
 					</aon:if>
 				</aon:div>
-
-				<ui:include src="/facelet/homepage/portlet/infoRightGroupPortlet.xhtml" />
+				<!-- ui:include src="/facelet/homepage/portlet/infoRightGroupPortlet.xhtml" /-->
 			</aon:panelGrid>
 	
 
@@ -197,6 +195,10 @@
 		allElements.forEach((element) => {
 		  element.classList.remove('aon-top-menu-item-select');
 		});
+	</script>
+	<script type='text/javascript' >
+		#{rich:element('desktopDiv1')}.style.width='100%';
+		#{rich:element('infoGroupDiv')}.style.display='block';
 	</script>
 	 
 </ui:composition>
