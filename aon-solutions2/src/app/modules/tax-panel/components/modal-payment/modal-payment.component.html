@@ -78,7 +78,8 @@
             [label]="'NRC'"
             [placeholder]="'NRC'"
             [required]="'required'"
-            (inputValue)="getValue($event)"
+            [value]="codeNrc"
+            (inputValue)="getNrc($event)"
           >
           </app-input>
         </div>
@@ -184,6 +185,7 @@
           [placeholder]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
           [disabled]="'disabled'"
           [value]="selectedBank"
+          (inputValue)="selectBank($event)"
         >
         </app-input>
       </div>
@@ -201,7 +203,7 @@
       <div>
         <app-button
         [class]="'orange left'"
-        (click)="sendPayment()">
+        (click)="sendPaymentIban()">
           <app-icon shape="done_all"></app-icon>
           {{ "TAX_PANEL.CONFIRM" | translate }}
         </app-button>

@@ -7,13 +7,12 @@
     [data]="bodyTable"
     (listenParentHandler)="modalClick($event)"
   >
-    <!-- Modales de acciones -->
-    <app-modal-controller #modalEdit></app-modal-controller>
-    <app-modal-controller #modalPayment></app-modal-controller>
-    <app-modal-controller #modalTaxesDetails></app-modal-controller>
   </app-table>
 </ng-container>
-
+<!-- Modales de acciones -->
+<app-modal-controller #modalEdit></app-modal-controller>
+<app-modal-controller #modalPayment></app-modal-controller>
+<app-modal-controller #modalTaxesDetails></app-modal-controller>
 <ng-template #noModelsTemplate>
   <div class="no-models padding">{{ models }}</div>
 </ng-template>

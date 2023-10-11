@@ -77,11 +77,10 @@ export class ModalEditTaxModelComponent implements OnInit {
         newMessage
       );
 
-      setTimeout(() => {
         // Ocultar el spinner después de crear el mensaje
         this.spinner = false;
         this.dialogRef.close();
-      }, 2000);
+
     }
   }
 

@@ -24,11 +24,27 @@
   </div>
   <div content class="padding" *ngIf="this.tabIndex == 0">
     <app-spinner *ngIf="spinner"></app-spinner>
-    <app-table-tax-model
-      [trimester]="1"
-      [inputModel]="this.selectedModel"
-      [inputYear]="this.selectedYear"
-    ></app-table-tax-model>
+
+      <app-table
+      *ngIf="bodyTable.length > 0; else noModelsTemplate"
+        mat-table
+        mat-flat-table
+        [displayedColumns]="displayedColumns"
+        [head]="headerTable"
+        [data]="bodyTable"
+        (listenParentHandler)="modalClick($event)"
+      >
+      </app-table>
+
+    <!-- Modales de acciones -->
+    <app-modal-controller #modalEdit></app-modal-controller>
+    <app-modal-controller #modalPayment></app-modal-controller>
+    <app-modal-controller #modalTaxesDetails></app-modal-controller>
+    <ng-template #noModelsTemplate>
+      <div class="no-models padding">{{ models }}</div>
+    </ng-template>
+
+
   </div>
 
   <div content class="padding" *ngIf="this.tabIndex == 1">
