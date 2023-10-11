@@ -323,8 +323,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if(reject) {
 							Mod303DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
-							// Finalizar el modelo	 
-							Mod303DAO.markAsFinished(ctx, model);
+							// Finalizar el modelo
+							// FALTA - NO VOY A FINALIZAR EL MODELO POR AHORA PARA VER LOS ERRORES
+							//Mod303DAO.markAsFinished(ctx, model);
 							// Presentación automática del modelo 
 							if (presModelAuto == 1) {
 								AEATParams params = new AEATParams()
@@ -413,7 +414,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
 			
 			if (response.statusCode() == 302) {
-				//giveRedirectBack( resp,response,httpClient );				
 				throw new AonApiException("ERROR EN LA PRESENTACION: Redirect code");
 			} else {
 				String ct = getContentTypeHeader(response);
@@ -422,10 +422,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 						throw new AonApiAeatError(new String(response.body()));
 					}
 				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
-					//ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
 					throw new AonApiAeatException(new String(response.body()));
 				} else {	
-					//ModelAdmonUtils.giveExceptionBack(resp,"No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
 					throw new AonApiException("ERROR EN LA PRESENTACION DEL MODELO");
 				}
 			}
@@ -433,7 +431,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 			// Restore interrupted state...
 			Thread.currentThread().interrupt();
 		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
-			//ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());			
 			throw new AonApiException("ERROR PRESENTACION: " + e.getMessage());
 		}
 		
@@ -614,9 +611,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 	    params.setDocument(AonStringUtils.trimToEmpty(info.getDocument()).toUpperCase());
 	    params.setName((AonStringUtils.trimToEmpty(info.getSurname()) + " " + AonStringUtils.trimToEmpty(info.getName())).toUpperCase());
 	    
-//	    System.out.println("surname: "  + params.getName());
-//	    System.out.println("document: "  + params.getDocument());   
-	    
     	KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
    		kmf.init(keyStore, params.getPass().toCharArray());
    		   		
@@ -744,42 +738,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 		
 	}
 	
-//	private synchronized void giveRedirectBack(HttpServletResponse resp, HttpResponse<byte[]> response, HttpClient httpClient) throws IOException, InterruptedException {
-//		String locationHeader = getLocationHeader(response); 
-//		if (AonStringUtils.isBlank( locationHeader)) {
-//			//giveExceptionBack(resp, "Redirect code");
-//			throw new AonApiException("ERROR EN LA PRESENTACION: Redirect code");
-//		} else {
-//			giveRedirectBack(httpClient, resp, locationHeader, MimeType.HTML);
-//		}
-//	}
-//	
-//	private String getLocationHeader(HttpResponse<byte[]> response) {
-//		return getHeader(response, AonHttpUtils.LOCATION);
-//	}
-//	
-//	private synchronized void giveRedirectBack( HttpClient httpClient, HttpServletResponse resp, String location, MimeType mimeType) throws IOException, InterruptedException {
-//		HttpRequest locationRequest = HttpRequest.newBuilder()
-//				.uri(URI.create( location ))
-//				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
-//				.GET()
-//				.build();
-//		HttpResponse<byte[]> locationResponse = httpClient
-//				.send(locationRequest, HttpResponse.BodyHandlers.ofByteArray());
-//		giveBase64Back(resp, locationResponse.body(), mimeType);
-//	}
-//	
-//	private synchronized void giveBase64Back( HttpServletResponse resp, byte[] data, MimeType mimeType )  {
-//		try {
-//			resp.setHeader(AonHttpUtils.CONTENT_TYPE, mimeType.getName());
-//			resp.setHeader(AonHttpUtils.CONTENT_ENCODING, StandardCharsets.UTF_8.displayName());				
-//			AonIOUtils.write( Base64.getEncoder().encode(data), resp.getOutputStream() );
-//			resp.flushBuffer();
-//		} catch (IOException e) {
-//			throw new AonCoreException(MessageFormat.format("Unexpected exception [{0}] ", e.getMessage()));	
-//		}
-//	}
-	
 	// Se utilizará para devolver los errores que se han producido en la presentación, es decir cuando la llamada al 
 	// servicio de presentación del modelo es correcta, pero la Agencia Tributaria devuelve mensajes de error
 	class AonApiAeatError extends AonApiException {
@@ -808,6 +766,5 @@ public class FiscalServlet extends AonApiHttpServlet{
 	        super(message);
 	    }
 	}
-
 	
 }

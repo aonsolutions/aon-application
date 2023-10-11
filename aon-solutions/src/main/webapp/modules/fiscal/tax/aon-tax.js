@@ -336,16 +336,17 @@ export class AonTax extends AonElement {
 
     div.appendChild(checkBox);
     
-    // Si esta configurado presentacion automatica, mostrar texto informandolo
+    // Si esta configurado presentacion automatica del modelo, mostrar texto informandolo (tambien se muestra si está en entorno de pruebas de la AEAT)
 	if (resp.presModelAuto==1) {
 	    const divTextPres =  this.createElement(TAG.DIV);
-	    divTextPres.style.marginTop = 4; 
+	    divTextPres.style.marginTop = 6; 
 	    divTextPres.style.textAlign = "center";
-	    if (resp.testEnvironment) {
-	       divTextPres.textContent = "ENTORNO DE PRUEBAS: Si acepta los datos, el modelo se presentará automaticamente.";
+	    divTextPres.style.fontWeight= "bold";
+	    if (resp.testEnvironment) {	       
+	       divTextPres.innerHTML = '<span style="color:red;">ENTORNO DE PRUEBAS DE LA AEAT</span><br>Si acepta los datos, el modelo se presentará automaticamente.';
 	    }
 	    else { 
-	       divTextPres.textContent = "Si acepta los datos, el modelo se presentará automaticamente.";
+	       divTextPres.innerHTML = '<span style="color:red;">PRESENTACION DEL MODELO</span><br>Si acepta los datos, el modelo se presentará automaticamente.';
 	    }
 	    div.appendChild(divTextPres);
 	     
@@ -410,13 +411,14 @@ export class AonTax extends AonElement {
     })
    
     const certi = this.getElement('certi');    
-    getAeatCertificates().then(certs => {
+    getAeatCertificates().then(certs => {		
 			certi.setOptions(certs.map(s => {
 				return {
 				  value: s.id,
 				  name: s.name
 				}
-			  }));			  
+			  }));
+			// Si solo hay un certificado, se muestra ese seleccionado por defecto			  
 			if (certi.getOptions().length == 1) {
 				certi.value = certi.getOptions()[0].value;
 			}
@@ -432,7 +434,7 @@ export class AonTax extends AonElement {
       let banks = this.getApplicationParent().BANKS;
       let formObj = serializeForm(this.getElement(`${this.id}Form`));
       if(!isEmptyObject(banks) && formObj.iban){
-        const bankObj = banks.find(bank =>  this.replaceAllPoint(bank.bank_account) == formObj.iban);
+        const bankObj = banks.find(bank => this.replaceAllPoint(bank.bank_account) == formObj.iban);
         if(bankObj){
           formObj["bankAlias"] = bankObj.alias;
           formObj["bic"] = bankObj.bic;
@@ -505,22 +507,28 @@ export class AonTax extends AonElement {
 			  
 			  if (this.isMobile()) {
 				  
-				  // MOBILE: Se muestran los mensajes de error en la misma tabla de los modelos
+				  // MOBILE: Se muestran los mensajes de error escondiendo la tabla de modelos
 				  
 				  const aonTable = this.getElement(this.TABLE_ID);
 				  if (aonTable) {
-					  aonTable.removeAllLi();
-					  aonTable.addLi({
-						  title: /*html*/ `<span style="text-wrap: wrap;text-align: center;color: red;display: block;">PRESENTACION DEL MODELO</span>`,
-					      subtitle: /*html*/ `<span style="text-wrap: wrap;text-align: center;color: red;display: block;">Mensajes de Error devueltos por la Agencia Tributaria:</span>`
-					  });
-					  errorMessages.respuesta.errores.forEach((res) => {
-						  aonTable.addLi({
-							  title: /*html*/ `<span style="text-wrap: wrap;font-size: small;">${res}</span>`
-						  });
-					  });
-					  
+					  aonTable.hidden = true;  
 				  }
+				  
+				  // FALTA 
+				  const aeatErrors = this.createElement(TAG.DIV);
+
+				  let text = '<span style="margin: 5px;color:red;font-weight: bold;font-size: medium;text-align: center; display: block">PRESENTACION DEL MODELO<br>Mensajes de Error devueltos por la Agencia Tributaria<br><hr></span>' +
+         					  '<ul style="margin:5px;color:black;font-size: small;text-align: left;">';
+
+				  errorMessages.respuesta.errores.forEach((res) => {
+					  text = text + `<li>${res}</li>`;
+				  });
+
+				  text = text + '</ul>';
+
+				  aeatErrors.innerHTML = text;
+				  this.appendChild(aeatErrors);
+				  
 			  } else {
 				  
 				  // DESKTOP: Se muestran los mensajes de error en una pestaña nueva del navegador
