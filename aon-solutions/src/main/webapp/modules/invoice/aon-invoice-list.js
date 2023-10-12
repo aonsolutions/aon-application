@@ -18,6 +18,8 @@ import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonIframe } from '../../components/aon-iframe.js';
 import { getInvofoxToken } from '../../services/invofoxService.js';
+import { INVOICE } from '../../services/app.js';
+import { AonTable } from '../../components/aon-table.js';
 
 export class AonInvoiceList extends AonElement {
 
@@ -48,9 +50,6 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	connectedCallback () {
-		this.innerHTML = `
-			<aon-table id='aonInvoiceTable' selectable='true'></aon-table>
-			`;
 		getDomainUserRoles({}).then(r => {
 			this.dur = new DomainUserRoles(r);
 			this.build();
@@ -62,7 +61,11 @@ export class AonInvoiceList extends AonElement {
 	}
 
  	build() {
-		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+		let aonInvoiceTable =  new AonTable();
+		aonInvoiceTable.id = 'aonInvoiceTable';
+		aonInvoiceTable.selectable = 'true';
+		aonInvoiceTable.setApp(INVOICE);
+		this.appendChild(aonInvoiceTable);
 		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '10%');
 		aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '25%');
 		aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', '35%');

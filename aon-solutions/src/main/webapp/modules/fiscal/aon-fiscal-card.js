@@ -7,7 +7,7 @@ import { FiscalOptions, FISCAL_VIEWS, TAX_ENUMS } from "./FiscalEnums.js";
 import { getAttach, openFileBase64, setModelStatus } from "../../services/service.js";
 import { AonTax } from "./tax/aon-tax.js";
 import { AonApplication } from "../../components/aon-application.js";
-import Apps from "../../services/app.js";
+import { FISCAL } from "../../services/app.js";
 import { getModelsFiscal } from "../../services/fiscalService.js";
 import { sortBy } from "../../services/utils.js";
 import { FiscalUtils } from "./FiscalUtils.js";
@@ -59,6 +59,7 @@ export class AonFiscalCard extends AonElement {
 
   paintView() {
     let aonTable = new AonTable();
+    aonTable.setApp(FISCAL);
     this.TABLE_ID = "fiscalCardTable";
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);

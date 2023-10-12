@@ -288,17 +288,6 @@ export class AonDesktop extends AonElement {
 		contentData.style.margin = '1rem';
 
 		if(LS.isNewTheme()){
-			// Create tabs 
-			let tabOptions = this.tabOptions || [
-				{ title: "Dashboard", fn: () => this.createDashboard(contentData, company)},
-				{ title: "Aplicaciones", fn: () => this.createAppList(contentData, company)}
-			];
-
-			let desktopTabs = new AonTab();
-			desktopTabs.id = this.TABS;
-			desktopTabs.setOptions(tabOptions);
-			content.appendChild(desktopTabs);
-
 			// Intiliaze App List
 			content.appendChild(contentData);
 			this.createDashboard(contentData, company);
