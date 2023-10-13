@@ -32,7 +32,7 @@
 	}
 	</style>	
 	
-	<aon:form id="mainForm">
+	<aon:form id="mainForm" >
 
 		<aon:div styleClass="aon-scroll-area aon-height-all" style="padding: .0em 1.5em 0 0 !important;">
 
@@ -46,140 +46,274 @@
 					<ui:include src="/facelet/new/portlet/infoLeftGroupPortlet.xhtml" />
 				</aon:if>
 				
-				<aon:div styleClass="aon-width-all">
-					<aon:if test="#{help.notificationsEnabled}">
-						<aon:div  >
-							<aon:div styleClass="aon-margin-left aon-margin-top aon-margin-right" >
-								<span class="material-icons aon-vertical-middle" >rss_feed</span><span class="aon-outputText aon-bold">NOTIFICACIONES</span>
-								<aon:commandLink id="closeInfoNotifications"
-									styleClass="aon-width-all aon-black "
-								>
-									<span class="material-icons aon-vertical-middle" style="float:right; " >close</span>
-									<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
-								</aon:commandLink>
-							</aon:div>
-							<aon:div styleClass="1aon-height-all" >
-								<ui:include src="/com/code/aon/web/help/facelet/notifications.xhtml" />
-							</aon:div>
-						</aon:div>
-					</aon:if>
-					<aon:if test="#{!help.notificationsEnabled and help.contentEnabled }" >
-						<aon:div  >
-							<aon:div styleClass="aon-margin-left aon-margin-top aon-margin-right" >
-								<span class="material-icons aon-vertical-middle" >help</span><span class="aon-outputText aon-bold"> ÍNDICE CONTENIDOS</span>
-								<aon:commandLink id="closeHelpIndex"
-									styleClass="aon-width-all aon-black "
-								>
-									<span class="material-icons aon-vertical-middle" style="float:right; " >close</span>
-									<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
-								</aon:commandLink>
-							</aon:div>
-							<aon:div styleClass="1aon-height-all" style="overflow-y: scroll; height: calc(100vh - 303px);">
-								<ui:include src="/com/code/aon/web/help/facelet/drive_content.xhtml" />
-							</aon:div>
-						</aon:div>
-					</aon:if>
-
-					<aon:if test="#{!help.notificationsEnabled and !help.contentEnabled  }" >
-					<aon:if test="#{domainSwitcher.childDomain}">
-	  					<aon:if test="#{!userUtils.newAONTheme}">				
-							<ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" />
-						</aon:if>
-	  					<aon:if test="#{userUtils.newAONTheme}">				
+				<aon:div id="aonDesktopContent" styleClass="aon-width-all">
+					
+					<aon:if test="#{userUtils.newAONTheme}">				
+						
+						<aon:if test="#{desktop.accountingSelected}">
+							<ui:include src="/facelet/new/portlet/accountingDesktopPortlet.xhtml" />
 						</aon:if>
 						
-	  					<aon:if test="#{userUtils.newAONTheme}">				
-							<ui:include src="/facelet/new/portlet/optionFavoritePortlet.xhtml" />
-						</aon:if>
-
-						<aon:if test="#{desktop.showGraphicsPortlet}">
-							<aon:if test="#{desktop.state.fiscalEnabled and !desktop.state.fiscalInfoVisibleForPortal}">
-								<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
-							</aon:if>
-							
-							<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal or desktop.state.accountingInfoVisibleForPortal or desktop.state.payrollInfoVisibleForPortal}">
-								<aon:div styleClass="aon-portlet">
-									
-									<aon:div styleClass="aon-portlet-title">								
-										<aon:div styleClass="aon-portlet-title-buttons">
+						<aon:if test="#{desktop.fiscalSelected}">
+							<aon:div id="accountingMenuDesktop" styleClass="aon-menu-desktop" >
+						
+									<aon:div styleClass="aon-margin aon-menu-desktop-panel">
+						
+										<aon:div styleClass="aon-menu-desktop-header" >
+											<aon:outputText styleClass="aon-menu-desktop-header-line" />
+											<aon:outputText styleClass="aon-menu-desktop-header-text" value="#{bundle.aon_module_accounting}" />
 										</aon:div>
-										<aon:outputText value="#{bundle.menu_enterprise_site} - #{bundle.finance_fiscal_account_information} XXXX" 
-											styleClass="aon-portlet-title-text aon-icon aon-icon-stat"/>
+										<aon:div id="fiscal_status_div" style="height: 400px; width: 100%;">
+											<ui:decorate template="/com/esferalia/aon/gwt/fiscal/facelet/innerGwt.xhtml">
+												<ui:param name="module" value="aon_gwt_fiscal" />
+												<ui:param name="entryPoint" value="ModelMatrix" />
+											</ui:decorate>
+										</aon:div>
+
 									</aon:div>
 									
-									<aon:div styleClass="aon-portlet-body">
-										<aon:panelTabSet id="fiscalPortletTab" selectedTab="#{dashboard.fiscalPortal.selectedTab}">
-										
-											<aon:panelTab id="fiscalPortletTabY" label="#{bundle.account_year_evolution}"
-												rendered="#{desktop.state.accountingInfoVisibleForPortal}"
-												actionListener="#{dashboard.fiscalPortal.onYearPygGraph}">
-												<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabY'}">
-													<ui:include	src="/facelet/homepage/portlet/yearPygGraphic.xhtml" />
-												</aon:if>
-											</aon:panelTab>
-						
-											<aon:panelTab id="fiscalPortletTabM" label="#{bundle.account_month_evolution}"
-												rendered="#{desktop.state.accountingInfoVisibleForPortal}"
-												actionListener="#{dashboard.fiscalPortal.onPygGraph}">
-												<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabM'}">
-													<ui:include	src="/facelet/homepage/portlet/monthPygGraphic.xhtml" />
-												</aon:if>
-											</aon:panelTab>
-						
-											<aon:panelTab id="fiscalPortletTabE" label="#{bundle.accounting_expense_breakdown}"
-												rendered="#{desktop.state.accountingInfoVisibleForPortal}"													
-												actionListener="#{dashboard.fiscalPortal.onExpenseGraph}">
-												<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabE'}">
-													<ui:include	src="/facelet/homepage/portlet/accountExpenseGraphic.xhtml" />
-												</aon:if>
-											</aon:panelTab>
-						
-											<aon:panelTab id="fiscalPortletTabF" label="#{bundle.finance_fiscal_information}"
-												rendered="#{desktop.state.fiscalInfoVisibleForPortal}">
-												<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabF'}">
-													<ui:include	src="/facelet/homepage/portlet/fiscalInfo.xhtml" />
-												</aon:if>
-											</aon:panelTab>
-											
-											<aon:panelTab id="fiscalPortletTabP" label="#{bundle.admin_portal_salary_info}"
-												rendered="#{desktop.state.payrollInfoVisibleForPortal}">
-												<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabP'}">
-													<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
-												</aon:if>
-											</aon:panelTab>
-											
-										</aon:panelTabSet>						
-									</aon:div>
-								</aon:div>
-							</aon:if>							
+							</aon:div>
+
+							<!--  ui:include src="/facelet/new/portlet/accountingDesktopPortlet.xhtml" /-->
+						</aon:if>
+
+
+						<aon:if test="#{desktop.enterpriseSelected or desktop.helpSelected or desktop.configurationSelected or desktop.payrollSelected}">
+							<aon:if test="#{!domainSwitcher.childDomain}">
+								<aon:if test="#{domainSwitcher.domainCount >= 0}">
+			  						<aon:if test="#{!userUtils.newAONTheme}">				
+										<ui:include	src="/facelet/homepage/portlet/domainSwitchPortlet.xhtml" />
+									</aon:if>
+			  						<aon:if test="#{userUtils.newAONTheme}">				
+										<ui:include	src="/facelet/new/portlet/domainSwitchPortlet.xhtml" />
+									</aon:if>
+									
+								</aon:if>
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+			  						<aon:if test="#{userUtils.newAONTheme}">				
+										<ui:include src="/facelet/new/portlet/optionFavoritePortlet.xhtml" />
+									</aon:if>
+			  						<aon:if test="#{!userUtils.newAONTheme}">				
+										<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
+									</aon:if>
+								</aon:if>
+							</aon:if>
+							<aon:if test="#{domainSwitcher.childDomain}">
+			  					<aon:if test="#{!userUtils.newAONTheme}">				
+									<ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" />
+								</aon:if>
+								
+			  					<aon:if test="#{userUtils.newAONTheme}">				
+									<ui:include src="/facelet/new/portlet/optionFavoritePortlet.xhtml" />
+								</aon:if>
 							
+								<aon:if test="#{desktop.showGraphicsPortlet}">
+									<aon:if test="#{desktop.state.fiscalEnabled and !desktop.state.fiscalInfoVisibleForPortal}">
+										<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
+									</aon:if>
+									
+									<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal or desktop.state.accountingInfoVisibleForPortal or desktop.state.payrollInfoVisibleForPortal}">
+										<aon:div styleClass="aon-portlet">
+											
+											<aon:div styleClass="aon-portlet-title">								
+												<aon:div styleClass="aon-portlet-title-buttons">
+												</aon:div>
+												<aon:outputText value="#{bundle.menu_enterprise_site} - #{bundle.finance_fiscal_account_information} XXXX" 
+													styleClass="aon-portlet-title-text aon-icon aon-icon-stat"/>
+											</aon:div>
+											
+											<aon:div styleClass="aon-portlet-body">
+												<aon:panelTabSet id="fiscalPortletTab" selectedTab="#{dashboard.fiscalPortal.selectedTab}">
+												
+													<aon:panelTab id="fiscalPortletTabY" label="#{bundle.account_year_evolution}"
+														rendered="#{desktop.state.accountingInfoVisibleForPortal}"
+														actionListener="#{dashboard.fiscalPortal.onYearPygGraph}">
+														<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabY'}">
+															<ui:include	src="/facelet/homepage/portlet/yearPygGraphic.xhtml" />
+														</aon:if>
+													</aon:panelTab>
+								
+													<aon:panelTab id="fiscalPortletTabM" label="#{bundle.account_month_evolution}"
+														rendered="#{desktop.state.accountingInfoVisibleForPortal}"
+														actionListener="#{dashboard.fiscalPortal.onPygGraph}">
+														<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabM'}">
+															<ui:include	src="/facelet/homepage/portlet/monthPygGraphic.xhtml" />
+														</aon:if>
+													</aon:panelTab>
+								
+													<aon:panelTab id="fiscalPortletTabE" label="#{bundle.accounting_expense_breakdown}"
+														rendered="#{desktop.state.accountingInfoVisibleForPortal}"													
+														actionListener="#{dashboard.fiscalPortal.onExpenseGraph}">
+														<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabE'}">
+															<ui:include	src="/facelet/homepage/portlet/accountExpenseGraphic.xhtml" />
+														</aon:if>
+													</aon:panelTab>
+								
+													<aon:panelTab id="fiscalPortletTabF" label="#{bundle.finance_fiscal_information}"
+														rendered="#{desktop.state.fiscalInfoVisibleForPortal}">
+														<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabF'}">
+															<ui:include	src="/facelet/homepage/portlet/fiscalInfo.xhtml" />
+														</aon:if>
+													</aon:panelTab>
+													
+													<aon:panelTab id="fiscalPortletTabP" label="#{bundle.admin_portal_salary_info}"
+														rendered="#{desktop.state.payrollInfoVisibleForPortal}">
+														<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabP'}">
+															<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
+														</aon:if>
+													</aon:panelTab>
+													
+												</aon:panelTabSet>						
+											</aon:div>
+										</aon:div>
+									</aon:if>							
+								</aon:if>
 							<aon:if test="#{desktop.state.payrollEnabled and !desktop.state.payrollInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/payrollDashboardPortlet.xhtml" />
 							</aon:if>
-							
- 							
-						</aon:if>
-
-					</aon:if>
-					<aon:if test="#{!domainSwitcher.childDomain}">
-						<aon:if test="#{domainSwitcher.domainCount >= 0}">
-	  						<aon:if test="#{!userUtils.newAONTheme}">				
-								<ui:include	src="/facelet/homepage/portlet/domainSwitchPortlet.xhtml" />
-							</aon:if>
-	  						<aon:if test="#{userUtils.newAONTheme}">				
-								<ui:include	src="/facelet/new/portlet/domainSwitchPortlet.xhtml" />
 							</aon:if>
 							
 						</aon:if>
-						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-	  						<aon:if test="#{userUtils.newAONTheme}">				
-								<ui:include src="/facelet/new/portlet/optionFavoritePortlet.xhtml" />
-							</aon:if>
-	  						<aon:if test="#{!userUtils.newAONTheme}">				
-								<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
-							</aon:if>
-						</aon:if>
 					</aon:if>
+					
+					
+					<aon:if test="#{!userUtils.newAONTheme}">				
+						<aon:if test="#{help.notificationsEnabled}">
+							<aon:div  >
+								<aon:div styleClass="aon-margin-left aon-margin-top aon-margin-right" >
+									<span class="material-icons aon-vertical-middle" >rss_feed</span><span class="aon-outputText aon-bold">NOTIFICACIONES</span>
+									<aon:commandLink id="closeInfoNotifications"
+										styleClass="aon-width-all aon-black "
+									>
+										<span class="material-icons aon-vertical-middle" style="float:right; " >close</span>
+										<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{false}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="1aon-height-all" >
+									<ui:include src="/com/code/aon/web/help/facelet/notifications.xhtml" />
+								</aon:div>
+							</aon:div>
+						</aon:if>
+						<aon:if test="#{!help.notificationsEnabled and help.contentEnabled }" >
+							<aon:div  >
+								<aon:div styleClass="aon-margin-left aon-margin-top aon-margin-right" >
+									<span class="material-icons aon-vertical-middle" >help</span><span class="aon-outputText aon-bold"> ÍNDICE CONTENIDOS</span>
+									<aon:commandLink id="closeHelpIndex"
+										styleClass="aon-width-all aon-black "
+									>
+										<span class="material-icons aon-vertical-middle" style="float:right; " >close</span>
+										<f:setPropertyActionListener target="#{help.contentEnabled}" value="#{false}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="1aon-height-all" style="overflow-y: scroll; height: calc(100vh - 303px);">
+									<ui:include src="/com/code/aon/web/help/facelet/drive_content.xhtml" />
+								</aon:div>
+							</aon:div>
+						</aon:if>
+	
+						<aon:if test="#{!help.notificationsEnabled and !help.contentEnabled  }" >
+							<aon:if test="#{domainSwitcher.childDomain}">
+			  					<aon:if test="#{!userUtils.newAONTheme}">				
+									<ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" />
+								</aon:if>
+			  					<aon:if test="#{userUtils.newAONTheme}">				
+								</aon:if>
+								
+			  					<aon:if test="#{userUtils.newAONTheme}">				
+									<ui:include src="/facelet/new/portlet/optionFavoritePortlet.xhtml" />
+								</aon:if>
+		
+								<aon:if test="#{desktop.showGraphicsPortlet}">
+									<aon:if test="#{desktop.state.fiscalEnabled and !desktop.state.fiscalInfoVisibleForPortal}">
+										<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
+									</aon:if>
+									
+									<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal or desktop.state.accountingInfoVisibleForPortal or desktop.state.payrollInfoVisibleForPortal}">
+										<aon:div styleClass="aon-portlet">
+											
+											<aon:div styleClass="aon-portlet-title">								
+												<aon:div styleClass="aon-portlet-title-buttons">
+												</aon:div>
+												<aon:outputText value="#{bundle.menu_enterprise_site} - #{bundle.finance_fiscal_account_information} XXXX" 
+													styleClass="aon-portlet-title-text aon-icon aon-icon-stat"/>
+											</aon:div>
+											
+											<aon:div styleClass="aon-portlet-body">
+												<aon:panelTabSet id="fiscalPortletTab" selectedTab="#{dashboard.fiscalPortal.selectedTab}">
+												
+													<aon:panelTab id="fiscalPortletTabY" label="#{bundle.account_year_evolution}"
+														rendered="#{desktop.state.accountingInfoVisibleForPortal}"
+														actionListener="#{dashboard.fiscalPortal.onYearPygGraph}">
+														<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabY'}">
+															<ui:include	src="/facelet/homepage/portlet/yearPygGraphic.xhtml" />
+														</aon:if>
+													</aon:panelTab>
+								
+													<aon:panelTab id="fiscalPortletTabM" label="#{bundle.account_month_evolution}"
+														rendered="#{desktop.state.accountingInfoVisibleForPortal}"
+														actionListener="#{dashboard.fiscalPortal.onPygGraph}">
+														<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabM'}">
+															<ui:include	src="/facelet/homepage/portlet/monthPygGraphic.xhtml" />
+														</aon:if>
+													</aon:panelTab>
+								
+													<aon:panelTab id="fiscalPortletTabE" label="#{bundle.accounting_expense_breakdown}"
+														rendered="#{desktop.state.accountingInfoVisibleForPortal}"													
+														actionListener="#{dashboard.fiscalPortal.onExpenseGraph}">
+														<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabE'}">
+															<ui:include	src="/facelet/homepage/portlet/accountExpenseGraphic.xhtml" />
+														</aon:if>
+													</aon:panelTab>
+								
+													<aon:panelTab id="fiscalPortletTabF" label="#{bundle.finance_fiscal_information}"
+														rendered="#{desktop.state.fiscalInfoVisibleForPortal}">
+														<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabF'}">
+															<ui:include	src="/facelet/homepage/portlet/fiscalInfo.xhtml" />
+														</aon:if>
+													</aon:panelTab>
+													
+													<aon:panelTab id="fiscalPortletTabP" label="#{bundle.admin_portal_salary_info}"
+														rendered="#{desktop.state.payrollInfoVisibleForPortal}">
+														<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabP'}">
+															<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
+														</aon:if>
+													</aon:panelTab>
+													
+												</aon:panelTabSet>						
+											</aon:div>
+										</aon:div>
+									</aon:if>							
+									
+									<aon:if test="#{desktop.state.payrollEnabled and !desktop.state.payrollInfoVisibleForPortal}">
+										<ui:include	src="/facelet/homepage/portlet/payrollDashboardPortlet.xhtml" />
+									</aon:if>
+									
+		 							
+								</aon:if>
+		
+							</aon:if>
+							
+							<aon:if test="#{!domainSwitcher.childDomain}">
+								<aon:if test="#{domainSwitcher.domainCount >= 0}">
+			  						<aon:if test="#{!userUtils.newAONTheme}">				
+										<ui:include	src="/facelet/homepage/portlet/domainSwitchPortlet.xhtml" />
+									</aon:if>
+			  						<aon:if test="#{userUtils.newAONTheme}">				
+										<ui:include	src="/facelet/new/portlet/domainSwitchPortlet.xhtml" />
+									</aon:if>
+									
+								</aon:if>
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+			  						<aon:if test="#{userUtils.newAONTheme}">				
+										<ui:include src="/facelet/new/portlet/optionFavoritePortlet.xhtml" />
+									</aon:if>
+			  						<aon:if test="#{!userUtils.newAONTheme}">				
+										<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
+									</aon:if>
+								</aon:if>
+							</aon:if>
+						
+						</aon:if>
 					</aon:if>
 				</aon:div>
 				<!-- ui:include src="/facelet/homepage/portlet/infoRightGroupPortlet.xhtml" /-->
