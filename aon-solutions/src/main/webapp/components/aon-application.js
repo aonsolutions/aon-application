@@ -457,7 +457,7 @@ export class AonApplication extends AonElement {
       li.title = option.name;
 
       li.className = LS.isNewTheme() 
-          ? "aonAppMenuSidenavList aonOpacity"
+          ? "aonAppMenuSidenavListBeta aonOpacity"
           : "aonAppMenuSidenavList aonOpacity sidenavHover";  
       
       if(LS.isNewTheme() ) {

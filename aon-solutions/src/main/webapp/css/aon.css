@@ -823,6 +823,14 @@
   border-radius: 20px;
 }
 
+.aonAppMenuSidenavListBeta {
+  line-height: 30px;
+  margin: 0;
+  padding: 0 26px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
 .aonVerticalMiddle {
   vertical-align: middle;
   font-size: 1.3rem;
@@ -904,6 +912,10 @@
   padding: 15px 22px;
   box-shadow: rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px, rgb(0 0 0 / 12%) 0px 1px 3px;
   background-color: white;
+}
+
+.aonCardHover:hover {
+  border: 1px solid black;
 }
 
 .aonCardFlex{
