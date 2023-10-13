@@ -40,7 +40,7 @@ const createStylePoint = (document, color) => {
 //   return total;
 // };
 
-const paintPieChart = async (data, parent, aonIframe) => {
+const paintPieChart = async (data, parent, aonIframe, leyend) => {
   const sumEnterpriseSs = data.reduce((sum,key)=> sum + (parseFloat(key.enterpriseSS) - parseFloat(key.bonuses)),0); 
   const sumEmployeeSs = data.reduce((sum,key)=>sum + (parseFloat(key.employeeSS) + parseFloat(key.otherDeductions)), 0); 
   const importIrpf = data.reduce((sum,key)=>sum + parseFloat(key.irpf), 0); 
@@ -57,7 +57,7 @@ const paintPieChart = async (data, parent, aonIframe) => {
 
   const colors = ['#0051C6','#db4437', '#B3B3B3', '#5e97f6'];
 
-  await pieChar(parent, aonIframe, fields, { slices: colors }, (evClick)=>{
+  await pieChar(parent, aonIframe, fields, { slices: colors }, leyend, (evClick)=>{
     console.log(evClick);
   });
 
@@ -71,7 +71,8 @@ const paintPieChart = async (data, parent, aonIframe) => {
   
   let newData = fields.map(el=> [el[0], formatNumber(el[1], 2, "EUR")]);
 
-  await addLegend(parent, aonIframe, newData, newColor, (evClick)=>console.log(evClick));
+  if(leyend)
+    await addLegend(parent, aonIframe, newData, newColor, (evClick)=>console.log(evClick));
 
   const workplaceEl = document.querySelector('#workplace');
 
@@ -101,7 +102,7 @@ const createButton = (parent, aonIframe, aonCompanyCostsList)=>{
 
 
 
-const pieChar = (parent, aonIframe, fields, opts, callBackClick) => {
+const pieChar = (parent, aonIframe, fields, opts, leyend, callBackClick) => {
 
   const google = aonIframe.getGoogle();
 
@@ -125,7 +126,7 @@ const pieChar = (parent, aonIframe, fields, opts, callBackClick) => {
       formatter.format(table, 1);
       let options = {
         theme: "material",
-        height: 300,
+        height: leyend ? 300 : 240,
         legend: "none",
       };
       if (opts) {

@@ -63,6 +63,10 @@ export class AonFiscalCard extends AonElement {
     this.TABLE_ID = "fiscalCardTable";
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
+
+    let totalDiv = this.createElement(TAG.DIV);
+    totalDiv.id = "fiscalTotalDiv";
+    this.appendChild(totalDiv);
   }
 
   buildToolbar() {
@@ -132,7 +136,7 @@ export class AonFiscalCard extends AonElement {
       aonTable.addColumn("Modelo", "", "model", "25%");
       aonTable.addColumn("Ejercicio", "", "year", "25%");
       aonTable.addColumn("Periodo", "", "period", "25%");
-      aonTable.addColumn("Importe", "number", "result", "25%");
+      aonTable.addColumn("Importe", "number", "result", "25%", "right");
 
       try {
         const resp = await this.getData();
@@ -144,11 +148,17 @@ export class AonFiscalCard extends AonElement {
             aonTable.addRow(res, () => {});
           });
 
-          let row = aonTable.addRow({
-            statusText:"Total",
-            result:this.getTotal(resp)
-          });
-          row.style.fontWeight = "600";
+          const fiscalTotalDiv = this.getElement("fiscalTotalDiv");
+          fiscalTotalDiv.style.textAlign = "right";
+          fiscalTotalDiv.style.fontSize = "1.2rem";
+          fiscalTotalDiv.style.paddingTop = "1rem";
+          fiscalTotalDiv.style.fontWeight = "500";
+          fiscalTotalDiv.innerHTML = this.getTotal(resp);
+          // let row = aonTable.addRow({
+          //   statusText:"Total",
+          //   result:this.getTotal(resp)
+          // });
+          // row.style.fontWeight = "600";
         } else {
           aonTable.empty();
         }

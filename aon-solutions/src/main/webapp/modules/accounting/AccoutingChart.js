@@ -71,7 +71,7 @@ function getTotalByColumn(selectedColumn) {
   }
 }
 
-const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe) => {
+const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend) => {
   const doc = aonIframe.getDocument();
   const google = aonIframe.getGoogle();
 
@@ -734,7 +734,8 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe) => {
           ? `Resultados ${UTILS.getPeriodName(sDteStr, eDteStr)}`
           : `Resultados ${selectedPeriod.name}`,
         vAxis: { title: "Cantidad (€)" },
-        height: isMobile ? window.innerHeight / 2 : window.innerWidth / 3,
+        height: isMobile ? window.innerHeight / 2 : (leyend ? window.innerWidth / 3 : 250),
+        width: leyend ? window.innerWidth / 3 : 240,
         isStacked: true,
         legend: {
           position: "none",
@@ -761,9 +762,8 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe) => {
       //Adding listener
       google.visualization.events.addListener(chart, "select", listener);
 
-      let legend = getColLegend(isMobile);
-
-      div.appendChild(legend);
+      // let legend = getColLegend(isMobile);
+      // div.appendChild(legend);
     }
 
     function getColLegend(isMobile) {

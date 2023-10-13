@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Objects;
 
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -299,7 +300,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		this.salary.getSalaryDatas().stream()
 		.filter( d -> name.equals(d.getName()))
 		.filter( d -> data.getPeriod().contains(new Period(d.getStartDate(),d.getEndDate())))
-		.toList();
+		.collect(Collectors.toList());
 		this.salary.getSalaryDatas().removeAll(olds);
 
 		this.salary.getSalaryDatas().add(salaryData);
