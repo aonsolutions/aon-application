@@ -11,7 +11,8 @@ import { sortBy } from "../../services/utils.js";
 import { FiscalUtils } from "./FiscalUtils.js";
 import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import * as GWT from '../../gwt/gwt.js';
-import { RETENTION_PANEL, VAT_PANEL } from "../invoice/InvoiceOptions.js";
+import { RETENTION_PANEL, VAT_PANEL } from "./FiscalOptions.js";
+import * as LS from '../../services/localStorageService.js';
 
 export class AonFiscal extends AonElement {
   AON_FISCAL;
@@ -65,17 +66,18 @@ export class AonFiscal extends AonElement {
     if(this.isMobile()){
 			application.addMobileSidenavHeader(Apps.FISCAL);
 		} else {
-    
-      application.addToolbarOption2(VAT_PANEL, () =>{
-        application.closeSidenav();
-        this.showView(FISCAL_VIEWS.VAT_PANEL);
-      });
+
+    if(!LS.isNewTheme()) {
+       application.addToolbarOption2(VAT_PANEL, () =>{
+          application.closeSidenav();
+          this.showView(FISCAL_VIEWS.VAT_PANEL);
+        });
   
-      application.addToolbarOption2(RETENTION_PANEL, () =>{
-        application.closeSidenav();
-        this.showView(FISCAL_VIEWS.IRPF_REPORT);
-      });
-  
+        application.addToolbarOption2(RETENTION_PANEL, () =>{
+         application.closeSidenav();
+         this.showView(FISCAL_VIEWS.IRPF_REPORT);
+        });
+      }
       application.addTitleToolSection("Estimaciones");
     }
 
@@ -104,8 +106,7 @@ export class AonFiscal extends AonElement {
 			id: "Ejercicio",
 			title:"Ejercicio",
   		name:"Ejercicio",
-      color: Apps.FISCAL.color,
-      backgroundColor: Apps.FISCAL.backgroundColor
+      app: Apps.FISCAL
 		};
 
       application.addSidenavOptions2(data, ejercicios);
@@ -131,8 +132,7 @@ export class AonFiscal extends AonElement {
         id: "Periodo",
         title:"Periodo",
         name:"Periodo",
-        color: Apps.FISCAL.color, 
-        backgroundColor: Apps.FISCAL.backgroundColor
+        app: Apps.FISCAL
       };
       application.addSidenavOptions2(data2, periods);
 
@@ -153,9 +153,28 @@ export class AonFiscal extends AonElement {
         id: "Modelo",
         title:"Modelo",
         name:"Modelo",
-        color: Apps.FISCAL.color
+        app: Apps.FISCAL
       };
       application.addSidenavOptions2(data3, models);
+
+      RETENTION_PANEL.fn = () =>{
+        application.closeSidenav();
+        this.showView(FISCAL_VIEWS.IRPF_REPORT);
+      }
+
+      VAT_PANEL.fn = () =>{
+        application.closeSidenav();
+        this.showView(FISCAL_VIEWS.VAT_PANEL);
+      }
+      let data4 = {
+        id: "panels",
+        title:"Paneles",
+        name:"Paneles",
+        app: Apps.FISCAL,
+        options: [VAT_PANEL, RETENTION_PANEL]
+      };
+
+      application.addSidenavOptions3(data4);
 
       this.showView(FISCAL_VIEWS.AON_TAX);
     })

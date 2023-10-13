@@ -1,4 +1,5 @@
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js"
+import { WAREHOUSE } from "../../services/app.js"
 
 export const ELABORATION = {
   id: CONSTANT.ELABORATION.initCap(),
@@ -33,11 +34,21 @@ export const TAGS = {
 export const WarehouseSidenav = {
   WAREHOUSES: {
     id: CONSTANT.WAREHOUSES.initCap(),
-    name: MSG.WAREHOUSES.toUpperCase()
+    name: MSG.WAREHOUSES.toUpperCase(),
+    app: WAREHOUSE
   },
   ELABORATION: {
     id: CONSTANT.ELABORATION.initCap(),
     name: MSG.ELABORATION.toUpperCase(),
+    app: WAREHOUSE,
+    options: [ELABORATION, PACKAGING, SALES_PREPARATION, DELIVERY, TAGS]
+  }
+}
+export const WarehouseOptions = {
+  ELABORATION: {
+    id: CONSTANT.ELABORATION.initCap(),
+    name: MSG.ELABORATION.toUpperCase(),
+    app: WAREHOUSE,
     options: [ELABORATION, PACKAGING, SALES_PREPARATION, DELIVERY, TAGS]
   }
 }
