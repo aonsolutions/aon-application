@@ -372,11 +372,12 @@ export class AonDesktop extends AonElement {
 			let timecontrolCard = new AonCard();
 			timecontrolCard.id = CONSTANT.TIMECONTROL;
 			timecontrolCard.title = MSG.TIMECONTROL;
+			timecontrolCard.setApp(Apps.TIMECONTROL);
 			cardsPanel.appendChild(timecontrolCard);
 			timecontrolCard.firstChild.style.marginLeft = '0';
 			timecontrolCard.firstChild.style.minWidth = "350px";
-			timecontrolCard.firstChild.style.minHeight = "400px";
-			timecontrolCard.firstChild.children.item(1).style.height = "300px";
+			timecontrolCard.firstChild.style.minHeight = "415px";
+			timecontrolCard.firstChild.children.item(1).style.height = "315px";
 
 			getTimeControl().then(r => {
 				let div = this.createElement(TAG.DIV);
@@ -392,45 +393,60 @@ export class AonDesktop extends AonElement {
 
 		}
 		
+		if(this.getDur().isAccounting()) {
+			// PyG Card
+			let pygCard = new AonCard();
+			pygCard.id = "pyg";
+			pygCard.title = "Pérdidas y Ganancias";
+			pygCard.setApp(Apps.ACCOUNTING);
+			cardsPanel.appendChild(pygCard);
 
-		// PyG Card
-		let pygCard = new AonCard();
-		pygCard.id = "pyg";
-		pygCard.title = "Pérdidas y Ganancias";
-		cardsPanel.appendChild(pygCard);
+			pygCard.setContent(new AonDashboardGraphicsTrial());
+			pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter PyG")});
+			pygCard.firstChild.style.marginLeft = '0';
+			pygCard.firstChild.style.minWidth = "350px";
+			pygCard.firstChild.style.minHeight = "415px";
+			pygCard.firstChild.children.item(1).style.height = "315px";
 
-		pygCard.setContent(new AonDashboardGraphicsTrial());
-		pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter PyG")});
-		pygCard.firstChild.style.marginLeft = '0';
-		pygCard.firstChild.style.minWidth = "350px";
-		pygCard.firstChild.style.minHeight = "400px";
-		pygCard.firstChild.children.item(1).style.height = "300px";
+			
+			
+		}
 
-		// PyG Card
-		let payrollCard = new AonCard();
-		payrollCard.id = "payroll";
-		payrollCard.title = MSG.COMPANY_COSTS;
-		cardsPanel.appendChild(payrollCard);
+		if(this.getDur().isPayrollManager()) {
+			// LABORAL
+			let payrollCard = new AonCard();
+			payrollCard.id = CONSTANT.PAYROLL;
+			payrollCard.title = MSG.COMPANY_COSTS;
+			payrollCard.setApp(Apps.PAYROLL);
+			cardsPanel.appendChild(payrollCard);
 
-		payrollCard.setContent(new AonCompanyDashboardCostsList());
-		payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Payroll")});
-		payrollCard.firstChild.style.marginLeft = '0';
-		payrollCard.firstChild.style.minWidth = "350px";
-		payrollCard.firstChild.style.minHeight = "400px";
-		payrollCard.firstChild.children.item(1).style.height = "300px";
+			payrollCard.setContent(new AonCompanyDashboardCostsList());
+			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Payroll")});
+			payrollCard.firstChild.style.marginLeft = '0';
+			payrollCard.firstChild.style.minWidth = "350px";
+			payrollCard.firstChild.style.minHeight = "415px";
+			payrollCard.firstChild.children.item(1).style.height = "315px";
+		} else if(this.getDur().isPayroll()) {
+			// TODO CARD DE NOMINAS.
+		}
 
-		// Impuestos
-		let fiscalCard = new AonCard();
-		fiscalCard.id = "fiscal";
-		fiscalCard.title = "Impuestos";
-		cardsPanel.appendChild(fiscalCard);
 
-		fiscalCard.setContent(new AonFiscalCard());
-		fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Fiscal")});
-		fiscalCard.firstChild.style.marginLeft = '0';
-		fiscalCard.firstChild.style.minWidth = "350px";
-		fiscalCard.firstChild.style.minHeight = "400px";
-		fiscalCard.firstChild.children.item(1).style.height = "300px";
+		if(this.getDur().isFiscal()) {
+			// Impuestos
+			let fiscalCard = new AonCard();
+			fiscalCard.id = "fiscal";
+			fiscalCard.title = "Impuestos";
+			fiscalCard.setApp(Apps.FISCAL);
+			cardsPanel.appendChild(fiscalCard);
+
+			fiscalCard.setContent(new AonFiscalCard());
+			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Fiscal")});
+			fiscalCard.firstChild.style.marginLeft = '0';
+			fiscalCard.firstChild.style.minWidth = "350px";
+			fiscalCard.firstChild.style.minHeight = "415px";
+			fiscalCard.firstChild.children.item(1).style.height = "315px";
+		}
+
 
 		// Fast Access Panel
 		if(company.parentId || company.type !== 'CONSULTANCY'){
@@ -466,8 +482,8 @@ export class AonDesktop extends AonElement {
 			title: app.title ? app.title : "No definido",
 			icon: app.icon,
 			logo: app.logo,
-			color: app.color ? app.color : "#000000",
-			colorRGBA: app.colorRGBA ? app.colorRGBA : "rgba(0, 0, 0, .2)"
+			color: app.color || "#000000",
+			colorRGBA: app.backgroundColor || "transparent"
 		}, () => this.appSelection(app.app));
 	}
 
