@@ -12,6 +12,7 @@ import { AonTable } from "../../../components/aon-table.js";
 import { FiscalUtils } from "../FiscalUtils.js";
 import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.js";
 import { DataAttachSource } from "../../../models/DataAttachSource.js";
+import { FISCAL } from "../../../services/app.js";
 // import { Attach } from "../../../models/Attach.js";
 
 export class AonTax extends AonElement {
@@ -61,6 +62,7 @@ export class AonTax extends AonElement {
   paintView() {
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
+    aonTable.setApp(FISCAL);
     this.appendChild(aonTable);
   }
 
