@@ -379,7 +379,6 @@
 	}
 	
 </script>
-
 <aon:panelGrid columns="2" styleClass=""
 				columnClasses="aon-menu-portlet-column1,aon-menu-portlet-column2">
 				
@@ -406,93 +405,108 @@
 					<aon:if test="#{domainSwitcher.domainManagementAvailable and (aonRole.sysAdmin or !domainSwitcher.disableDomainManagement)}">
 						<aon:if test="#{aonRole.admin}">
 							<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
-								<aon:div 
+								<aon:commandLink 
 									id="menu_enterprise"
+									reRender="aonDesktopContent"
 									styleClass="aon-left-menu-item" 
 									onclick="javascript:showEnterpiseMenu();" 
+									actionListener="#{desktop.onSelectEnterprise}"
 								>
 									<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="domain" />
 									<aon:outputText styleClass="aon-left-menu-text" value=" #{bundle.aon_module_enterprise}" />
-								</aon:div>
+								</aon:commandLink>
 							</aon:div>
 						</aon:if>
 					</aon:if>
-					
 					<aon:if test="#{aonRole.accountingOperator}">
 						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
-							<aon:div 
+							<aon:commandLink 
 								id="menu_accounting"
+								reRender="aonDesktopContent"
 								styleClass="aon-left-menu-item" 
 								onclick="javascript:showAccountingMenu()"
+								actionListener="#{desktop.onSelectAccounting}"
 								>
 									<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="insert_chart" />
 									<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_accounting}" />
-								</aon:div>
+								</aon:commandLink>
 						</aon:div>
 					</aon:if>
 
 					<aon:if test="#{aonRole.fiscal}">
 						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
-							<aon:div 
+							<aon:commandLink 
 								id="menu_fiscal"
+								reRender="aonDesktopContent"
 								styleClass="aon-left-menu-item" 
-								onclick="javascript:showFiscalMenu()"
+								onclick="#{ domainSwitcher.domainManagementAvailable ? 'javascript:showFiscalMenu()' : ''}"
+								actionListener="#{desktop.onSelectFiscal}"
 							>
 								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="euro" />
 								<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_fiscal}" />
-							</aon:div>
+							</aon:commandLink>
 						</aon:div>
 					</aon:if>
 
 					<aon:if test="#{aonRole.payroll}">
 						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
-							<aon:div 
+							<aon:commandLink 
 								id="menu_payroll"
+								reRender="aonDesktopContent"
 								styleClass="aon-left-menu-item"
 								onclick="javascript:showPayrollMenu()" 
+								actionListener="#{desktop.onSelectPayroll}"
 							>
 								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="group" />
 								<aon:outputText styleClass="aon-left-menu-text" value=" #{bundle.aon_module_payroll}" />
-							</aon:div>
+							</aon:commandLink>
 						</aon:div>
 					</aon:if>
 
 					<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
 						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
-							<aon:div id="menu_configuration"
+							<aon:commandLink 
+								id="menu_configuration"
+								reRender="aonDesktopContent"
 								styleClass="aon-left-menu-item" 
 								onclick="javascript:showConfigurationMenu()" 
+								actionListener="#{desktop.onSelectConfiguration}"
 							>
 								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="construction" />
 								<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_configuration}" />
-							</aon:div>
+							</aon:commandLink>
 						</aon:div>
 					</aon:if>
 
 					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
-						<aon:div id="menu_help"
+						<aon:commandLink 
+							id="menu_help"
+							reRender="aonDesktopContent"
 							styleClass="aon-left-menu-item"
 							onclick="javascript:showHelpMenu()" 
+							actionListener="#{desktop.onSelectHelp}"
 						>
 							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="help_center" />
 							<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_configuration}" />
-						</aon:div>
+						</aon:commandLink>
 					</aon:div>
 					
 					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
-						<aon:div id="menu_time_control"
+						<aon:commandLink 
+							id="menu_time_control"
+							reRender="aonDesktopContent"
 							styleClass="aon-left-menu-item"
 							onclick="javascript:showTimeControlMenu()" 
+							actionListener="#{desktop.onSelectTimeControl}"
 						>
 							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="timer" />
 							<aon:outputText styleClass="aon-left-menu-text"  value=" Control Horario" />
-						</aon:div>
+						</aon:commandLink>
 					</aon:div>
 					
 
 			</aon:div>
 		</aon:div>
-				
 	</aon:div>
 	
 	<aon:div id="menuBarPortlet" styleClass="aon-portlet aon-menu-bar-portlet" >
