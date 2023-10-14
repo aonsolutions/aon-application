@@ -20,7 +20,8 @@
 		}
       	//]]>
 	</script>
-    	
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>	
 
 	<ui:include	src="/facelet/shared/array.prototype.js.xhtml" />
 	
@@ -53,6 +54,9 @@
 						<aon:if test="#{desktop.accountingSelected}">
 							<ui:include src="/facelet/new/portlet/accountingDesktopPortlet.xhtml" />
 						</aon:if>
+						<aon:if test="#{desktop.payrollSelected}">
+							<ui:include src="/facelet/new/portlet/payrollDesktopPortlet.xhtml" />
+						</aon:if>
 						
 						<aon:if test="#{desktop.fiscalSelected}">
 							<aon:div id="accountingMenuDesktop" styleClass="aon-menu-desktop" >
@@ -74,11 +78,10 @@
 									
 							</aon:div>
 
-							<!--  ui:include src="/facelet/new/portlet/accountingDesktopPortlet.xhtml" /-->
 						</aon:if>
 
 
-						<aon:if test="#{desktop.enterpriseSelected or desktop.helpSelected or desktop.configurationSelected or desktop.payrollSelected}">
+						<aon:if test="#{desktop.enterpriseSelected or desktop.helpSelected or desktop.configurationSelected }">
 							<aon:if test="#{!domainSwitcher.childDomain}">
 								<aon:if test="#{domainSwitcher.domainCount >= 0}">
 			  						<aon:if test="#{!userUtils.newAONTheme}">				
