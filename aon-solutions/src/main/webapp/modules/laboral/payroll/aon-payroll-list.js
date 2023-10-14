@@ -8,7 +8,6 @@ import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import { PAYROLL } from "../../../services/app.js";
 
 
 export class AonPayrollList extends AonElement {
@@ -67,7 +66,6 @@ export class AonPayrollList extends AonElement {
   paintView() {    
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
-    aonTable.setApp(PAYROLL);
     this.appendChild(aonTable);
   }
 

@@ -186,6 +186,7 @@
   background-color: #fff;
   border: solid 0.05rem #d2d2d6;
   gap: .5rem;
+  width: 100%;
 }
 
 .aonDashboardButton i {
@@ -257,10 +258,8 @@
 
 .rootPanel {
   position: relative;
-  margin-right: 100px;
   height: calc(100vh - 61px);
   overflow-y: auto;
-  margin: 0;
 }
 
 .rootMobilePanel {
@@ -904,10 +903,14 @@
   border-radius: 10px;
 }
 
+aon-card{
+  width: 100%;
+}
+
 .aonCard {
   border: 1px solid #ebebeb;
   border-radius: 5px;
-  margin: 10px;
+  margin: 0;
   min-width: 250px;
   padding: 15px 22px;
   box-shadow: rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px, rgb(0 0 0 / 12%) 0px 1px 3px;
@@ -955,6 +958,22 @@
 
 .aonCardTitleSectionEnd {
   justify-content: flex-end;
+}
+
+.aonCardTotal{
+  text-align: right;
+  font-size: 1.5rem;
+  padding-top: 2rem;
+  font-weight: 500;
+
+  opacity: 0;
+  transform: translateY(30%);
+  transition: 0.3s ease-in;
+}
+
+.aonCard:hover .aonCardTotal{
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .aonDialog {
@@ -1560,3 +1579,94 @@ label.rating:hover {
   margin: revert;
   padding: revert;
 }
+
+
+
+
+/*
+********************************************
+            RESPONSIVE DASHBOARD
+********************************************
+*/
+
+.aonDashboard{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.aonUploadPanel{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.aonFastAccess{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#docUploadDiv, #factUploadDiv{
+  margin: 0;
+}
+
+#aon-company-costs-listpieChart {
+  display: flex;
+  justify-content: center;
+}
+
+#divCol > div{
+  display: flex;
+  justify-content: center;
+}
+
+aon-access-card{
+  width: 100%;
+}
+
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  #aonHeaderCompany{
+      display: none !important;
+  }
+
+  aon-new-menu{
+      display: none !important;
+  }
+
+  .rootPanel{
+      margin-left: 0px !important;
+  }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .rootPanel{
+      margin-left: 70px;
+  }
+
+  .aonUploadPanel, .aonFastAccess{
+      flex-direction: row;
+  }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+/* @media only screen and (min-width: 768px) {} */
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 850px) {
+  aon-card{
+      width: auto;
+      min-width: 350px;
+  }
+
+  aon-access-card{
+    width: auto;
+    min-width: 350px;
+}
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+/* @media only screen and (min-width: 1200px) {} */

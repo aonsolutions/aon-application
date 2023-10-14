@@ -734,8 +734,8 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
           ? `Resultados ${UTILS.getPeriodName(sDteStr, eDteStr)}`
           : `Resultados ${selectedPeriod.name}`,
         vAxis: { title: "Cantidad (€)" },
-        height: isMobile ? window.innerHeight / 2 : (leyend ? window.innerWidth / 3 : 250),
-        width: leyend ? window.innerWidth / 3 : 240,
+        height: isMobile ? window.innerHeight / 2 : (leyend ? window.innerWidth / 3 : 290),
+        // width: leyend ? window.innerWidth / 3 : 200,
         isStacked: true,
         legend: {
           position: "none",

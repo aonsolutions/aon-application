@@ -126,7 +126,7 @@ const pieChar = (parent, aonIframe, fields, opts, leyend, callBackClick) => {
       formatter.format(table, 1);
       let options = {
         theme: "material",
-        height: leyend ? 300 : 240,
+        height: leyend ? 300 : 260,
         legend: "none",
       };
       if (opts) {
