@@ -177,7 +177,7 @@ export class AonCompanyCostsList extends AonElement {
         div.style.textAlign = "center";
         main.appendChild(div);
       
-        const resp = await CompanyPieChart.paintPieChart(data, div, aonIframe);
+        const resp = await CompanyPieChart.paintPieChart(data, div, aonIframe, leyend);
         
         total = resp.total;
 
