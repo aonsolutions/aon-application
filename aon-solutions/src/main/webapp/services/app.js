@@ -14,6 +14,7 @@ export const TIMECONTROL = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_TIMECONTROL : AON_ICONS.AON_TIMECONTROL,
   color: "#D1C36D",
   backgroundColor: "rgba(209, 195, 109, .2)",
+  hover: 'aonTimecontrolHover',
   access: [
     {
       value: "Asesor",
@@ -47,6 +48,7 @@ export const ACCOUNTING = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_ACCOUNTING : AON_ICONS.AON_ACCOUNTING,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonAccountingHover',
   access: [
     {
       value: "Asesor",
@@ -75,6 +77,7 @@ export const FISCAL = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_FISCAL : AON_ICONS.AON_FISCAL,
   color: LS.isNewTheme() ? "#FB982E" : "#002469",
   backgroundColor: '#fef3e7',
+  hover: 'aonFiscalHover',
   access: [
     {
       value: "Asesor",
@@ -103,6 +106,7 @@ export const PAYROLL = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_PAYROLL :AON_ICONS.AON_PAYROLL,
   color: LS.isNewTheme() ? "#33A9A9" : "#002469",
   backgroundColor: '#e8f5f5',
+  hover: 'aonPayrollHover',
   access: [
     {
       value: "Asesor",
@@ -135,6 +139,7 @@ export const TREASURY = {
   icon: AON_ICONS.AON_TREASURY,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '90€/mes',
   disabled: false,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
@@ -149,6 +154,7 @@ export const MARKETING = {
   icon: AON_ICONS.AON_MARKETING,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '90€/mes',
   disabled: false,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
@@ -162,6 +168,7 @@ export const COMMERCIAL = {
   icon: AON_ICONS.AON_COMMERCIAL,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '90€/mes',
   disabled: false,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
@@ -175,6 +182,7 @@ export const GROUPWARE = {
   icon: AON_ICONS.AON_APP,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '90€/mes',
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -185,8 +193,9 @@ export const COMUNICA = {
   description: MSG.COMUNICA,
   tag: MSG_ES.COMUNICA,
   icon: AON_ICONS.AON_COMUNICA,
-  color: "#002469",
-  backgroundColor: "rgba(0, 36, 105, .2)",
+  color: "var(--aonPayroll)",
+  backgroundColor: "var(--aonPayrollBackground)",
+  hover: 'aonPayrollHover',
   access: [
     {
       value: "Asesor",
@@ -212,8 +221,9 @@ export const DOCUMENTAL = {
   description: MSG.DOCUMENTARY,
   tag: MSG_ES.DOCUMENTARY,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_DOCUMENTAL : AON_ICONS.AON_DOCUMENTAL,
-  color: LS.isNewTheme() ? "#EF6292" : "#6986BB",
-  backgroundColor: '#fdedf2',
+  color: LS.isNewTheme() ? "var(--aonDocumental)" : "#6986BB",
+  backgroundColor: 'var(--aonDocumentalBackground)',
+  hover: 'aonDocumentalHover',
   access: [
     {
       value: "Asesor",
@@ -247,6 +257,7 @@ export const WAREHOUSE = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_WAREHOUSE : AON_ICONS.AON_WAREHOUSE,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '-',
   disabled: false,
   options: {
@@ -267,6 +278,7 @@ export const INVOICE = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_INVOICE : AON_ICONS.AON_INVOICE,
   color: LS.isNewTheme() ? "#4F91FF" : "#4472C4",
   backgroundColor: '#ebf2ff',
+  hover: 'aonInvoiceHover',
   access: [
     {
       value: "Asesor",
@@ -298,6 +310,7 @@ export const CONFIGURATION = {
   description: MSG.CONFIGURATION,
   icon: AON_ICONS.AON_SETTINGS,
   color: "black",
+  hover: 'aonSidenavHover',
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur),
   backgroundColor: "rgba(0, 0, 0, .2)",
 };
@@ -310,6 +323,7 @@ export const MESSENGER = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_MESSENGER : AON_ICONS.AON_MESSENGER,
   color: LS.isNewTheme() ? "#f6655a" : "#1fd8b9",
   backgroundColor: '#feedec',
+  hover: 'aonMessengerHover',
   access: [
     {
       value: "Asesor",
@@ -341,6 +355,7 @@ export const TOOLS = {
   icon: AON_ICONS.AON_TOOLS,
   color: "#535353",
   backgroundColor: "rgba(83, 83, 83, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '-'
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -351,6 +366,7 @@ export const NOTES = {
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_NOTES : AON_ICONS.AON_NOTES,
   color: "#ffc000",
   backgroundColor: "rgba(255, 192, 0, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '-'
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -404,6 +420,7 @@ export const AON_SALTRA = {
   icon: AON_ICONS.AON_SALTRA,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '-'
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -423,6 +440,7 @@ export const OCR = {
   icon: AON_ICONS.AON_OCR,
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
 };
 
@@ -433,6 +451,7 @@ export const CONVENIOS = {
   icon: AON_ICONS.AON_CONVENIOS,
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
 };
 
@@ -443,6 +462,7 @@ export const BANK = {
   icon: AON_ICONS.AON_BANK,
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
 };
 
@@ -452,6 +472,7 @@ export const CONSOLE = {
   title: MSG.CONSOLE,
   color: COLORS.AON_BLACK,
   backgroundColor: "rgba(0, 0, 0, .2)",
+  hover: 'aonSidenavHover',
 };
 
 export const OFFICE = {
@@ -460,6 +481,7 @@ export const OFFICE = {
   title: "Despacho",
   color: "black",
   backgroundColor: "rgba(0, 0, 0, .2)",
+  hover: 'aonSidenavHover',
   domainType: true,
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
@@ -471,6 +493,7 @@ export const API_SERVICE = {
   icon: AON_ICONS.AON_APP,
   color: "#EA6D41",
   backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
 };
 
@@ -481,6 +504,7 @@ export const AULA = {
   icon: AON_ICONS.AON_AULA,
   color: "#000000",
   backgroundColor: "rgba(0, 0, 0, .2)",
+  hover: 'aonSidenavHover',
   moreInfo: "https://faqs.aonsolutions.es/",
   price: " ", // '-',
   disabled: false,
@@ -493,6 +517,7 @@ export const CUSTOM_VIEW = {
   icon: "aon_custom",
   color: "#CAF509",
   backgroundColor: "rgba(202, 245, 9, .2)",
+  hover: 'aonSidenavHover',
   price: " ",
 };
 

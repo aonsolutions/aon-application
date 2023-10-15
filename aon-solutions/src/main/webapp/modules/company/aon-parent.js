@@ -4,6 +4,7 @@ import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environ
 import {AonSign} from '../timecontrol/aon-sign.js';
 import { AonApplication } from '../../components/aon-application.js';
 import { AonDesktop } from './aon-desktop.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonParent extends AonElement {
 
@@ -321,7 +322,7 @@ export class AonParent extends AonElement {
 		const BASE_ID = 'aonHeader';
 		localStorage.setItem('company', JSON.stringify(company));
 
-		if(company.parentId || company.type !== 'CONSULTANCY'){
+		if(!LS.isNewTheme() && (company.parentId || company.type !== 'CONSULTANCY')){
 			let aonShowMenu = this.getElement('aonShowMenu');
 			aonShowMenu.style.display = 'block';
 		}

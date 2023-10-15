@@ -10,7 +10,7 @@ import { AonTable } from "../../../components/aon-table.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import Apps from "../../../services/app.js";
+import Apps, { TIMECONTROL } from "../../../services/app.js";
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
@@ -73,6 +73,7 @@ export class AonPresenceList extends AonElement {
   paintView() {
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
+    aonTable.setApp(TIMECONTROL)
     this.appendChild(aonTable);
   }
 

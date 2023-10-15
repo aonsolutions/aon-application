@@ -38,6 +38,15 @@
   --aonFiscal: #FB982E;
   --aonFiscalBackground: #fef3e7;
 
+  --aonMessenger: #f6655a;
+  --aonMessengerBackground: #feedec;
+
+  --aonTimecontrol: #D1C36D;
+  --aonTimecontrolBackground: rgba(209, 195, 109, .2);
+
+  --aonAccounting: #002469;
+  --aonAccountingBackground: rgba(0, 36, 105, .2);
+
 }
 
 *, ::after, ::before {
@@ -260,6 +269,7 @@
   position: relative;
   height: calc(100vh - 61px);
   overflow-y: auto;
+  margin: 0;
 }
 
 .rootMobilePanel {
@@ -400,8 +410,36 @@
 }
 
 .sidenavHover:hover{
-  /* background-color: var(--aonLightGray); */
   background-color: var(--aonLightBlue);
+}
+
+
+.aonInvoiceHover:hover{
+  background-color: var(--aonInvoiceBackground);
+}
+
+.aonPayrollHover:hover{
+  background-color: var(--aonPayrollBackground);
+}
+
+.aonFiscalHover:hover{
+  background-color: var(--aonFiscalBackground);
+}
+
+.aonDocumentalHover:hover{
+  background-color: var(--aonDocumentalBackground);
+}
+
+.aonMessengerHover:hover{
+  background-color: var(--aonMessengerBackground);
+}
+
+.aonTimecontrolHover:hover {
+  background-color: var(--aonTimecontrolBackground);
+}
+
+.aonAccountingHover:hover {
+  background-color: var(--aonAccountingBackground);
 }
 
 .aonMenuLink {
@@ -1631,21 +1669,10 @@ aon-access-card{
   #aonHeaderCompany{
       display: none !important;
   }
-
-  aon-new-menu{
-      display: none !important;
-  }
-
-  .rootPanel{
-      margin-left: 0px !important;
-  }
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
-  .rootPanel{
-      margin-left: 70px;
-  }
 
   .aonUploadPanel, .aonFastAccess{
       flex-direction: row;
