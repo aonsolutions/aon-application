@@ -26,7 +26,7 @@
 						<aon:panelGrid id="group_module_accounting"
 							columns="3"
 							headerClass="aon-menu-desktop-header"
-							columnClasses="aon-padding"
+							columnClasses="aon-padding aon-menu-desktop-element-col, aon-padding aon-menu-desktop-element-col, aon-menu-desktop-element-col"
 							styleClass="aon-width-all aon-menu-desktop-panel" 
 							rendered="#{actionDenied.renderedGroup('group_module_accounting')}"					
 							>
@@ -51,6 +51,64 @@
 										</aon:div>
 										<aon:outputText styleClass="material-icons aon-menu-desktop-element-go" value="keyboard_arrow_right" />
 									</h:panelGrid>
+									<aon:div id="accountingGraphContainer" 
+										style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
+										<aon:div styleClass="aon-bold">
+											<aon:outputText value="Apuntes por Meses del Ejercicio"/>
+											<!--
+											 								
+			 								-->								
+											<aon:selectOneMenu id="accountPeriodSelect"
+												style="border: none;"
+												value="#{dashboard.accountingPeriod}">
+												<a4j:support event="onchange"
+													actionListener="#{dashboard.onAccountingPeriodChanged}" 
+													reRender="accountMessagesDiv"
+													ajaxSingle="true" />
+												<f:selectItem itemLabel="-" itemValue="" />
+												<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
+											</aon:selectOneMenu>
+										</aon:div>
+										<!--
+										Loads account column chart
+										-->
+										<aon:div id="accountColumnChartDiv" style="width: 100%; min-height: 180px;"/>
+										<script type="text/javascript">
+											function drawAccountColumnChart(){
+												var data = new google.visualization.DataTable();
+												data.addColumn('string', 'Mes');
+												data.addColumn('number', 'Apuntes');
+												
+												<c:forEach var="entry" items="#{dashboard.periodEntriesCount}">
+												data.addRow(['#{entry.name}', #{entry.value} ]);
+												</c:forEach>
+												var options = {
+													chartArea:{
+														left:30,
+														right:5,
+														top:15,
+														width:"90%",
+														height:"60%"
+													},
+													legend: {
+														position: 'none'
+													},
+													tooltip: {
+														isHtml: true,
+														
+													},
+													theme: 'material'
+												};
+												var accountChart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:accountColumnChartDiv'));
+												accountChart.draw(data, options);
+												
+											}
+																			
+											google.charts.load('current', {packages: ['corechart']});
+											google.charts.setOnLoadCallback(drawAccountColumnChart);							
+											
+									   	</script>
+									</aon:div>
 							</aon:div>
 							<aon:div styleClass="aon-menu-desktop-element">
 									<h:panelGrid columns="3" styleClass="aon-width-all">
@@ -66,6 +124,8 @@
 										</aon:div>
 										<aon:outputText styleClass="material-icons aon-menu-desktop-element-go" value="keyboard_arrow_right" />
 									</h:panelGrid>
+									<aon:div  style="width: 98%; height: 200px; text-align: center; margin-left: 5px; padding-top: 5px;">
+									</aon:div>
 							</aon:div>
 							<aon:div styleClass="aon-menu-desktop-element">
 									<h:panelGrid columns="3" styleClass="aon-width-all">
@@ -82,6 +142,8 @@
 										</aon:div>
 										<aon:outputText styleClass="material-icons aon-menu-desktop-element-go" value="keyboard_arrow_right" />
 									</h:panelGrid>
+									<aon:div  style="width: 98%; height: 200px; text-align: center; margin-left: 5px; padding-top: 5px;">
+									</aon:div>
 							</aon:div>
 							<aon:div styleClass="aon-menu-desktop-element">
 									<h:panelGrid columns="3" styleClass="aon-width-all">
