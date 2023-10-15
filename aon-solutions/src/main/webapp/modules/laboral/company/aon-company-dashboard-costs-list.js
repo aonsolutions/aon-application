@@ -132,8 +132,6 @@ export class AonCompanyDashboardCostsList extends AonElement {
     let divTitle = this.createElement(TAG.DIV);
     divTitle.style.color  = "grey";
     divTitle.style.fontWeight ="500";
-    divTitle.style.margin = "20px";
-    divTitle.style.marginBottom = 0;
     main.appendChild(divTitle);
 
     try {
