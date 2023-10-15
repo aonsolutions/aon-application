@@ -583,10 +583,12 @@ export class AonApplication extends AonElement {
               el.style.removeProperty("font-weight");
               el.style.removeProperty("color");
               
-              let icon = this.getElement(el.id + 'icon');
-              if(icon && data.app) icon.style.color = data.app.color;
-              let aonIcon = this.getElement(el.id + 'AonIcon');
-              if(aonIcon && data.app) aonIcon.color = data.app.color;
+              if(LS.isNewTheme()) {
+                let icon = this.getElement(el.id + 'icon');
+                if(icon && data.app) icon.style.color = data.app.color;
+                let aonIcon = this.getElement(el.id + 'AonIcon');
+                if(aonIcon && data.app) aonIcon.color = data.app.color;
+              }
           });
           li.style.fontWeight= "bold"
           if(!LS.isNewTheme())

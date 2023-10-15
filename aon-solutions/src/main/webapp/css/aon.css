@@ -269,6 +269,7 @@
   position: relative;
   height: calc(100vh - 61px);
   overflow-y: auto;
+  margin: 0;
 }
 
 .rootMobilePanel {
@@ -1668,21 +1669,10 @@ aon-access-card{
   #aonHeaderCompany{
       display: none !important;
   }
-
-  aon-new-menu{
-      display: none !important;
-  }
-
-  .rootPanel{
-      margin-left: 0px !important;
-  }
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
-  .rootPanel{
-      margin-left: 70px;
-  }
 
   .aonUploadPanel, .aonFastAccess{
       flex-direction: row;
