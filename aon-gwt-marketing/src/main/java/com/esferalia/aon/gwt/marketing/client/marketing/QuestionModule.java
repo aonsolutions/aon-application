@@ -14,8 +14,6 @@ import com.esferalia.aon.gwt.marketing.client.marketing.panel.QuestionModulePane
 import com.esferalia.gwt.marketing.shared.IRequestParamsNames;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
