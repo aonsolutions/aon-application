@@ -102,7 +102,10 @@ export class Collection<T extends ICollectable> implements ICollection<T> {
         if(filter.intervalFields?.size != 0)
             filter.intervalFields?.forEach((value, key) => {
                 filteredArray = filteredArray.filter(element =>
-                    value.end >= element.getFilterableFields().get(key.toLowerCase()) <= value.start
+                    // console.log(value.end , " --- ", new Date(element.getFilterableFields().get(key.toLowerCase())), " --- " , value.start)
+                    value.start <= element.getFilterableFields().get(key.toLowerCase()) 
+                    &&
+                    element.getFilterableFields().get(key.toLowerCase()) <= value.end
                 )
             })
         let collection = new Collection<T>();

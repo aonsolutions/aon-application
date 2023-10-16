@@ -325,11 +325,28 @@ export enum StatusMessage {
     REALIZADA = 'realizada'
 }
 
+export enum ApiStatusMessage {
+  'vista' = 'read',
+  'nueva' = 'unread',
+  'abierta' = 'pending',
+  'cerrada' = 'deleted,finished',
+  'pendiente' = 'pending',
+  'realizada' = 'finished,deleted',
+  'allTask' = 'pending,finished,deleted',
+}
+
 export enum TypeMessage {
     CONSULTA = 'consulta',
     TAREA = 'tarea',
     NOTIFICACION = 'notificacion',
     NULL = 'null'
+}
+
+export enum ApiTypeMessage {
+    'consulta' = 'query',
+    'tarea' = 'task',
+    'notificacion' = 'notification',
+    'null' = 'null'
 }
 
 export interface IMessage extends ICollectable {
