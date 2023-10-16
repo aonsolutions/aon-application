@@ -29,7 +29,11 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class FiscalParametersController implements Serializable {
@@ -333,6 +337,31 @@ public class FiscalParametersController implements Serializable {
 		}
 		return adm; 
 	}
+	
+	public boolean isAdministrationEmpty() {
+		return getDefaultAdministration() == null;
+	}
+	public String getDefaultAdministrationModelName(String model) {
+		if (isAdministrationEmpty()) return model; 
+		FiscalModelType mod = FiscalModelType.safeValueByName(model);
+		if (mod == null) return model;
+		com.esferalia.aon.occam.api.model.fiscal.FiscalModel fm = new com.esferalia.aon.occam.api.model.fiscal.FiscalModel();
+		com.esferalia.aon.occam.api.model.type.Administration adm = com.esferalia.aon.occam.api.model.type.Administration.values()[ getDefaultAdministration().ordinal() ];
+		fm.setAdministration( adm );
+		fm.setModel( mod );
+		if (mod.isYearly() ) {
+			fm.setPeriod( Period.YEAR );
+			return FiscalModelUtils.getModelName( fm );
+		} else {
+			fm.setPeriod( Period.T1 );
+			String q = FiscalModelUtils.getModelName( fm );
+			fm.setPeriod( Period.M01 );
+			String m = FiscalModelUtils.getModelName( fm );
+			return (AonStringUtils.equals(q,m)) ? q : (q+"/"+m);
+		}
+		
+	}
+	
 	public boolean isAeat() {
 		return getDefaultAdministration() == null || getDefaultAdministration() == Administration.COMMON_TERRITORY;
 	}
