@@ -1,5 +1,5 @@
 import { enterprises } from './../../../../../../libraries/AonSDK/src/models/Enterprise';
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IEnterprise } from 'libraries/AonSDK/src/aon';
 import { EnterpriseService } from 'src/app/core/services/enterprise.service';
@@ -20,14 +20,13 @@ export class TabsProfileCompanyComponent implements OnInit {
   tabs: Tabs[] = [];
   registryEnterprises: any[] = [];
   users: any[] = [];
-  enterprise: IEnterprise | null = null;
+  @Input() enterprise: IEnterprise | null = null;
 
 
   constructor(
     private translateService: TranslateService,
     private registryEnterpriseService: RegistryEnterpriseService,
     private userService: UserService,
-    private enterpriseService: EnterpriseService
     ) {
       this.translateService
       .get([
@@ -84,7 +83,5 @@ export class TabsProfileCompanyComponent implements OnInit {
       if (storedRegistryEnterprise) {
         this.registryEnterprises[0] = JSON.parse(storedRegistryEnterprise);
       }
-
-      this.enterprise = await this.enterpriseService.getCurrentEntepriseData();
     }
   }
