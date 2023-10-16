@@ -308,21 +308,23 @@ export class AonTable extends AonElement {
           });
           td.addEventListener("contextmenu", contextMenu);
         }
-      } else if(item.type && item.type ==="number") {
-        let formatValue = formatNumber(value[id], 2, "EUR");
-        td.innerHTML = formatValue;
-        td.addEventListener(EVENT.CLICK, fn);
-        if (contextMenu) {
-          td.addEventListener("contextmenu", () => {
-            let cb = this.getElement(checkBoxId + "Input");
-            if(cb && !cb.checked){
-              this.deselectAll();
-              cb.click();
-            } 
-          });
-          td.addEventListener("contextmenu", contextMenu);
-        }
-      } else {
+      } 
+      // else if(item.type && item.type ==="number") {
+      //   let formatValue = formatNumber(value[id], 2, "EUR");
+      //   td.innerHTML = formatValue;
+      //   td.addEventListener(EVENT.CLICK, fn);
+      //   if (contextMenu) {
+      //     td.addEventListener("contextmenu", () => {
+      //       let cb = this.getElement(checkBoxId + "Input");
+      //       if(cb && !cb.checked){
+      //         this.deselectAll();
+      //         cb.click();
+      //       } 
+      //     });
+      //     td.addEventListener("contextmenu", contextMenu);
+      //   }
+      // } 
+      else {
         td.innerHTML = value[id] !== undefined? value[id] : "";
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {

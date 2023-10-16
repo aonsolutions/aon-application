@@ -127,7 +127,9 @@ public class SerfruitDAO {
 		for (DeliveryDetail detail : delivery.getDetails()) {
 			Item item = detail.getItem();
 			item.setId(null);
-			item.setDescription(item.getDescription() + " #" + item.getSerialNumber());
+			
+			String desc = !AonStringUtils.isBlank(item.getDescription()) ? item.getDescription() : item.getProduct().getName();
+			item.setDescription(desc + " #" + item.getSerialNumber());
 			item.setBarcode(null);
 			if(item.getProduct().isPerishable()) {
 				Date expireDate = AonDateUtils.addDays(item.getSerialDate(), 
