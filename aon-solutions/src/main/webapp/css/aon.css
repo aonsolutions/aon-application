@@ -1686,7 +1686,6 @@ aon-access-card{
 @media only screen and (min-width: 850px) {
   aon-card{
       width: auto;
-      min-width: 350px;
   }
 
   aon-access-card{

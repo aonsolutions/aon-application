@@ -365,6 +365,7 @@ export class AonDesktop extends AonElement {
 		// Cards Panel
 		let cardsPanel = this.createElement(TAG.DIV);
 		cardsPanel.className = CSS.FLEX_ROW;
+		cardsPanel.style.gap = '0';
 		cardsPanel.style.flexWrap = 'wrap';
 		cardsPanel.id = "cardsPanel";
 		dashboard.appendChild(cardsPanel);
@@ -376,7 +377,6 @@ export class AonDesktop extends AonElement {
 			timecontrolCard.title = MSG.TIMECONTROL;
 			timecontrolCard.setApp(Apps.TIMECONTROL);
 			cardsPanel.appendChild(timecontrolCard);
-			timecontrolCard.firstChild.style.marginLeft = '0';
 
 			getTimeControl().then(r => {
 				let div = this.createElement(TAG.DIV);
@@ -404,7 +404,6 @@ export class AonDesktop extends AonElement {
 
 			pygCard.setContent(new AonDashboardGraphicsTrial());
 			pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter PyG")});
-			pygCard.firstChild.style.marginLeft = '0';
 			pygCard.firstChild.style.minHeight = "420px";
 			pygCard.firstChild.children.item(1).style.height = "315px";
 		}
@@ -419,7 +418,6 @@ export class AonDesktop extends AonElement {
 
 			payrollCard.setContent(new AonCompanyDashboardCostsList());
 			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Payroll")});
-			payrollCard.firstChild.style.marginLeft = '0';
 			payrollCard.firstChild.style.minHeight = "420px";
 			payrollCard.firstChild.children.item(1).style.height = "315px";
 		} else if(this.getDur().isPayroll()) {
@@ -435,7 +433,6 @@ export class AonDesktop extends AonElement {
 			payrollCard.setContent(aonPayrollCard);
 			
 			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Fiscal")});
-			payrollCard.firstChild.style.marginLeft = '0';
 			payrollCard.firstChild.style.minWidth = "350px";
 			payrollCard.firstChild.style.minHeight = "420px";
 			payrollCard.firstChild.children.item(1).style.height = "315px";
@@ -460,7 +457,6 @@ export class AonDesktop extends AonElement {
 			fiscalCard.addSection2(spanPeriod);
 			
 			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Fiscal")});
-			fiscalCard.firstChild.style.marginLeft = '0';
 			fiscalCard.firstChild.style.minWidth = "350px";
 			fiscalCard.firstChild.style.minHeight = "420px";
 			fiscalCard.firstChild.children.item(1).style.height = "315px";
@@ -472,6 +468,7 @@ export class AonDesktop extends AonElement {
 
 			let fastAccessPanel = this.createElement(TAG.DIV);
 			fastAccessPanel.className = CSS.FLEX_ROW;
+			fastAccessPanel.style.gap = '0';
 			fastAccessPanel.style.flexWrap = 'wrap';
 			fastAccessPanel.id = "fastAccessPanel";
 			dashboard.appendChild(fastAccessPanel);
@@ -496,6 +493,7 @@ export class AonDesktop extends AonElement {
 		// App Access
 		let appAccess = new AonAccessCard();
 		appAccess.id = app.title;
+		appAccess.style.margin = '10px';
 		parent.appendChild(appAccess);
 		appAccess.addContent({
 			title: app.title ? app.title : "No definido",
