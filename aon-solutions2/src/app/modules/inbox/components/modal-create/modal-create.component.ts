@@ -1,5 +1,4 @@
-
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CollectionFactory, Factory, ICollection, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
 import { MessageService } from 'src/app/core/services/message.service';
@@ -15,6 +14,7 @@ export interface Holders {
   styleUrls: ['./modal-create.component.scss']
 })
 export class ModalCreateComponent implements OnInit {
+  @Output() consultaCreated: EventEmitter<void> = new EventEmitter<void>();
   holders: any;
   advisors: any = "";
   advisorsList: any[] = [];
@@ -45,11 +45,10 @@ export class ModalCreateComponent implements OnInit {
         text: element.Name
       }))
      })
-  }
+    }
 
   ngOnInit(): void {
   }
-
 
   closeModal(): void {
     this.dialogRef.close();
@@ -64,6 +63,7 @@ export class ModalCreateComponent implements OnInit {
     }
   }
 
+  // Crear un mensaje tipo consulta
   async createMessage(description: string, asunto: string){
     if (this.messagesData) {
 
@@ -76,14 +76,19 @@ export class ModalCreateComponent implements OnInit {
       .setLastMessageChatOrigin(false);
 
         // Crear el mensaje
-        const createdMessage = await this.messageService.createMessage(newMessage);
-        this.messagesData = createdMessage;
+        await this.messageService.createMessage(newMessage).then((response) => {
+          this.messagesData = response;
+          // Desactivo el spinner
+          this.spinner = false;
+
+        })
         // Agregar el nuevo mensaje
-        this.messages.add(createdMessage);
-        // Desactivo el spinner
-        this.spinner = false;
+        this.messages.add(this.messagesData);
+        window.location.reload();
     }
   }
+
+  // Enviar la consulta creada
   sendMessage() {
     // para no enviar mensajes vacíos
     if (this.newMessageDescription.trim() === '') {

@@ -1,9 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { TranslateService } from '@ngx-translate/core';
-
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
-import { Factory, CollectionFactory, ErrorResponse, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
+import { Factory, CollectionFactory, ICollection, FilterBuilder, IMessageChat, IMessage, StatusMessage, TypeMessage } from 'libraries/AonSDK/src/aon';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
 import { MessageService } from 'src/app/core/services/message.service';
@@ -11,6 +7,9 @@ import { ModalCreateComponent } from '../components/modal-create/modal-create.co
 import { OptionsService } from 'src/app/shared/services/options.service';
 import { ReportingService } from 'src/app/core/services/reporting.service';
 import { TablesInboxComponent } from '../components/tables-inbox/table-inbox.component';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface Tabs {
   name: string;
@@ -23,20 +22,21 @@ export interface Tabs {
   styleUrls: ['./inboxview.component.scss'],
 })
 export class InboxviewComponent implements OnInit {
+  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
+    new DropdownMenuComponent();
   @ViewChild('modal') modalComponent: any = '';
   @ViewChild(TablesInboxComponent, { static: false })
+  @Output() consultaCreated: EventEmitter<void> = new EventEmitter<void>();
 
+  datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
   collectionFactory = new CollectionFactory();
   entityFactory = new Factory();
-  datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
   messages: ICollection<IMessage> =
   new CollectionFactory().createMessageCollection();
   messagesChat: ICollection<IMessageChat> =
   this.collectionFactory.createMessageChatCollection();
-
   messagesData: IMessage = this.entityFactory.createMessage();
   messageChat: IMessageChat = this.entityFactory.createMessageChat();
-
   functionHome: any = (result: any) => this.afterModalClosed(result);
   tabsConsultas: Tabs[] = [];
   tabsTareas: Tabs[] = [];
@@ -44,29 +44,23 @@ export class InboxviewComponent implements OnInit {
   selectedTab: number = 0;
   selectedFilterDate: number = 0;
   tabIndex: number = 0;
+  disableTramitar: boolean = false; //desactiva el boton de tramitar
   showDetail: boolean = false;
-  noTasksMessage: boolean = false;
   isModalVisible: boolean = false;
   showSendButton: boolean = false;
   showSendButtons: boolean = false;
   filterDate: number = 1;
   selectedFilterText: string = '';
-  selectedFilterType: string = '';
   expandedIndex: number = -1;
   newMessageDescription: string = '';
   spinner: boolean = true;
-  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
-    new DropdownMenuComponent();
-
-  consultaMessageCount: number = 0;
-  tareasMessageCount: number = 0;
-  notificacionesMessageCount: number = 0;
   totalMessageCount: number = 0;
   menuItem: MenuItem[] = [];
   selected: string = '';
-  items: any[] = [];
-  data: any[] = [];
-
+  consultaMessageCount: number = 0;
+  tareasMessageCount: number = 0;
+  notificacionesMessageCount: number = 0;
+  updateTable: boolean = false;
   constructor(
     private translateService: TranslateService,
     public reportingService: ReportingService,
@@ -157,12 +151,6 @@ export class InboxviewComponent implements OnInit {
     this.checkOpenModal();
   }
 
-  /**
-  * Comprueba si el parametro "showModal" esta presente en los parametros de la consulta y, en caso afirmativo, muestra el modal.
-  *
-  * @private
-  * @returns {void}
-  */
   private checkOpenModal(): void {
     const options = this.optionsService.getOptions();
 
@@ -180,7 +168,7 @@ export class InboxviewComponent implements OnInit {
     this.modalComponent.openDialog(
       ModalCreateComponent,
       this.functionHome,
-      'Data from home'
+      'Data from home',
     );
   }
 
@@ -189,10 +177,6 @@ export class InboxviewComponent implements OnInit {
     this.showSendButton = false;
     this.showSendButtons = false;
     this.tabIndex = 0;
-  }
-
-  backTable() {
-    this.showDetail = false;
   }
 
   async rowClickHandler(message: any) {
@@ -209,32 +193,21 @@ export class InboxviewComponent implements OnInit {
         );
       }
       this.changeView();
-
-      this.messageService.getMessage(message.key).then((messageStatus) => {
-
-          if (message.type === 'notificacion') {
-            if (messageStatus.Status === StatusMessage.NUEVA) {
-            messageStatus.Status = StatusMessage.VISTA;
-            }
-          }
-
-          try {
-//            this.messageService.updateMessage(messageStatus);
-          } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse(error);
-          }
-
-      });
+      // Desactivo el spinner
+      this.spinner = false;
     }
 
+  // Ocultar o ver botones
   consultarClicked() {
     this.showSendButton = !this.showSendButton;
   }
 
+  // Ocultar o ver botones
   replyconsultarClicked() {
     this.showSendButtons = !this.showSendButtons;
   }
 
+  // Filtros para las tablas(semana, mes o todos)
   filterTable(optionValue: number, name: string) {
     this.filterDate = optionValue;
     this.selected = name;
@@ -257,32 +230,43 @@ export class InboxviewComponent implements OnInit {
     }
   }
 
+  // Calcula el total de mensajes
   async calculateMessageCounts() {
-      // Calcula el recuento para "consulta"
-      let filterBuilder = new FilterBuilder();
-      filterBuilder.addField('type', 'consulta');
-      this.consultaMessageCount = await this.messageService.getMessageCount(
+    const types = ['consulta', 'tarea', 'notificacion'];
+    this.totalMessageCount = 0;
+
+    for (const type of types) {
+      const filterBuilder = new FilterBuilder();
+      filterBuilder.addField('type', type);
+
+      if (type === 'consulta') {
+        filterBuilder.addField('status', 'abierta');
+      } else if (type === 'tarea') {
+        filterBuilder.addField('status', 'pendiente');
+      } else if (type === 'notificacion') {
+        filterBuilder.addField('status', 'nueva');
+      }
+      const count = await this.messageService.getMessageCount(
         filterBuilder.getFilter()
       );
 
-      // Calcula el recuento para "tareas"
-      filterBuilder = new FilterBuilder();
-      filterBuilder.addField('type', 'tarea');
-      this.tareasMessageCount = await this.messageService.getMessageCount(
-        filterBuilder.getFilter()
-      );
+      if (type === 'consulta') {
+        this.consultaMessageCount = count;
+      } else if (type === 'tarea') {
+        this.tareasMessageCount = count;
+      } else if (type === 'notificacion') {
+        this.notificacionesMessageCount = count;
+      }
 
-      // Calcula el recuento para "notificaciones"
-      filterBuilder = new FilterBuilder();
-      filterBuilder.addField('type', 'notificacion');
-      this.notificacionesMessageCount =
-        await this.messageService.getMessageCount(filterBuilder.getFilter());
+      this.totalMessageCount += count;
+    }
+  }
 
-      // Calcula el recuento total
-      this.totalMessageCount =
-        this.consultaMessageCount +
-        this.tareasMessageCount +
-        this.notificacionesMessageCount;
+  // Llamamos al servicio para cambiar el estado a "abierta"
+   archiveMessage() {
+    this.messageService.archiveMessage(this.messagesData);
+    this.calculateMessageCounts();
+    this.updateTable = !this.updateTable;
   }
 
   // Cerrar details
@@ -290,11 +274,12 @@ export class InboxviewComponent implements OnInit {
     this.showDetail = false;
   }
 
+  // expande la descripción del mensaje
   toggleDescription(index: number): void {
     this.expandedIndex = this.expandedIndex === index ? -1 : index;
   }
 
-  // ocultar o ver botones
+  // ocultar botones
   changeView(): void {
     this.showSendButton = false;
     this.showSendButtons = false;
@@ -305,7 +290,7 @@ export class InboxviewComponent implements OnInit {
     this.newMessageDescription = newValue;
   }
 
-  //mensaje de chat de consultas
+  //Crear mensaje de chat de consultas
   async createChatMessage(description: string) {
 
     if (this.messageChat && this.messagesData) {
@@ -317,17 +302,18 @@ export class InboxviewComponent implements OnInit {
       .setType('chat');
 
         // Crear el mensaje
-        const createdMessageChat =
-        await this.messageChatService.createMessageChat(newMessageChat);
 
+        await this.messageChatService.createMessageChat(newMessageChat).then((response) => {
+          this.messageChat = response;
+          // Desactivo el spinner
+          this.spinner = false;
+        })
         // Agregar el nuevo mensaje
-        this.messagesChat.add(createdMessageChat);
-        // Desactivo el spinner
-        this.spinner = false;
+        this.messagesChat.add(this.messageChat);
     }
   }
 
-  //mensaje de consulta
+  //Crear mensaje tipo consulta
   async createMessage(description: string){
     if (this.messagesData) {
 
@@ -339,15 +325,13 @@ export class InboxviewComponent implements OnInit {
       .setLastMessageChatOrigin(false);
 
         // Crear el mensaje
-        const createdMessage = await this.messageService.createMessage(newMessage);
-        this.messagesData = createdMessage;
-        // Agregar el nuevo mensaje
-        this.messages.add(createdMessage);
-        // Desactivo el spinner
-        setTimeout(() => {
+        await this.messageService.createMessage(newMessage).then((response) => {
+          this.messagesData = response;
+          // Desactivo el spinner
           this.spinner = false;
-
-        }, 2000)
+        })
+        // Agregar el nuevo mensaje
+        this.messages.add(this.messagesData);
     }
   }
 
@@ -373,5 +357,6 @@ export class InboxviewComponent implements OnInit {
 
     // Limpia el campo de entrada después de enviar el mensaje
     this.newMessageDescription = '';
+    window.location.reload();
   }
 }
