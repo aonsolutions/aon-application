@@ -2,6 +2,7 @@ export const BLUR = 'blur';
 export const INPUT = 'input';
 export const CHANGE = 'change';
 export const CLICK = 'click';
+export const CLICK_TITLE = 'clickTitle';
 export const CLOSE = 'close';
 export const CUSTOMER_CHANGE = 'customerChange';
 export const LOAD = 'load';

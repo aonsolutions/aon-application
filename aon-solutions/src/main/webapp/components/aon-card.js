@@ -10,7 +10,6 @@ export class AonCard extends AonElement {
 	TITLE_SECTION2;
 	CONTENT;
 	app;
-	clickEvent;
 
 	static get observedAttributes() {
 		return [CONSTANT.ID, CONSTANT.VISIBLE, 'flex'];
@@ -61,9 +60,8 @@ export class AonCard extends AonElement {
 		}
 	}
 
-	constructor (fn) {
+	constructor () {
 		super();
-		this.clickEvent = fn;
 	}
 
 	connectedCallback () {
@@ -94,36 +92,31 @@ export class AonCard extends AonElement {
 		title.id = this.TITLE;
 		title.className = 'aonCardTitle';
 
-		let titleDiv = this.createElement(TAG.DIV);
-		titleDiv.style.display = "flex";
-		titleDiv.style.width = "100%";
-		titleDiv.style.cursor = "pointer";
-		titleDiv.style.fontSize = "18px";
-		titleDiv.style.color = "#5f6368";
-		titleDiv.style.fontWeight = "bold";
-		titleDiv.addEventListener(EVENT.CLICK, this.clickEvent);
-		title.appendChild(titleDiv);
 
+		let section1 = this.createElement(TAG.SECTION);
+		section1.id = this.TITLE_SECTION1;
+		section1.className = 'aonCardTitleSection';
 		if(LS.isNewTheme() && this.getApp()) {
-
 			let arrowTitleSpan = this.createElement(TAG.SPAN);
 			arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
 			arrowTitleSpan.style.borderColor = this.getApp().color;
 			arrowTitleSpan.style.height = '2.35rem';
-			titleDiv.appendChild(arrowTitleSpan);
+			section1.appendChild(arrowTitleSpan);
 		}
-		let section1 = this.createElement(TAG.SECTION);
-		section1.id = this.TITLE_SECTION1;
-		section1.className = 'aonCardTitleSection';
-		section1.innerHTML = this.title;
-		titleDiv.appendChild(section1);
+		let titleSpan = this.createElement(TAG.DIV);
+		titleSpan.innerHTML = this.title;
+		section1.appendChild(titleSpan);
+
+		section1.addEventListener(EVENT.CLICK, () => this.dispatchEvent(new Event(EVENT.CLICK_TITLE)));
+
+		title.appendChild(section1);
 
 		let section2 = this.createElement(TAG.SECTION);
 		section2.id = this.TITLE_SECTION2;
 		section2.className = 'aonCardTitleSection aonCardTitleSectionEnd';
-		titleDiv.appendChild(section2);
+		title.appendChild(section2);
 
-		div.appendChild(titleDiv);
+		div.appendChild(title);
 
 		let content = this.createElement(TAG.DIV);
 		content.id = this.CONTENT;
