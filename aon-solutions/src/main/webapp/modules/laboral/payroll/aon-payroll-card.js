@@ -27,9 +27,7 @@ export class AonPayrollCard extends AonElement {
     });
   }
 
-  initialize() {
-    this.TBODY = "tbody";
-  }
+  initialize() {}
 
   getDur() {
     return this.dur;
@@ -49,8 +47,6 @@ export class AonPayrollCard extends AonElement {
 
   buildToolbar() {
     this.getPayrolls().then(payrolls => {
-      console.log("Payrolls");
-      console.log(payrolls);
       this.getTable(payrolls)
     });
   }
@@ -177,58 +173,6 @@ export class AonPayrollCard extends AonElement {
 
       content.appendChild(row);
     }
-  }
-
-  createStatus(status){
-    let span = this.createElement(TAG.DIV);
-    span.style.width = "10px";
-    span.style.height = "10px";
-    span.style.borderRadius = "50%";
-
-    switch (status) {
-      case "PENDING":
-        span.title= "Pendiente";
-        span.style.backgroundColor = "lightgray";
-        break;
-      case "FINISHED":
-        span.title= "Finalizado";
-        span.style.backgroundColor = "rgb(227, 255, 171)";
-        break;
-      case "BATCHED":
-        span.title= "En Lote";        
-        span.style.backgroundColor = "black";
-        break;
-      case "BLOCKED":
-        span.title= "Bloqueado";
-        span.style.backgroundColor = "black";
-        break;
-      case "SENT":
-        span.title= "Presentado";
-        span.style.backgroundColor = "rgb(62, 201, 70)";
-        break;
-      case "MISSING":
-        span.title= "Desconocido";
-        span.style.backgroundColor = "black";
-        break;
-      case "CUSTOMER_CHECK":
-        span.title= "Envio a cliente";
-        span.style.backgroundColor = "lightyellow";
-        break;
-      case "CUSTOMER_ACCEPTED":
-        span.title= "Aceptado por cliente";
-        span.style.backgroundColor = "rgb(233, 255, 219)";
-        break;
-      case "CUSTOMER_REJECTED":
-        span.title= "Rechazado por cliente";
-        span.style.backgroundColor = "darkred";
-        break;
-      default:
-        span.title= "";
-        span.style.backgroundColor = "black";
-        break;
-    }
-
-    return span;
   }
 
 }
