@@ -22,6 +22,8 @@ export class InputComponent implements OnInit {
   @Input() disabled         : string  = 'false';
   @Input() required         : string  = 'false';
   @Input() classes          : string  = '';
+  @Input() maxNumber        : string  = '';
+  @Input() minNumber        : string  = '';
   @Input() maxRow           : string  = '3';
   @Input() minRow           : string  = '10';
   @Input() appearanceDetail : string  = 'mat-form-field-appearance-bold-outline';
@@ -39,7 +41,6 @@ export class InputComponent implements OnInit {
     "hidden",
     "image",
     "month",
-    "number",
     "password",
     "radio",
     "range",
@@ -96,6 +97,38 @@ export class InputComponent implements OnInit {
 
   returnValue(value: any) {
     this.inputValue.emit(value);
+  }
+
+  /*
+    Input solo number
+  */
+  validateFormatNumber(event: any) {
+    let key;
+    key = event;
+//    if (event.type === 'paste') {
+//      key = event.clipboardData.getData('text/plain');
+//    } else {
+//      key = event.keyCode;
+//      key = String.fromCharCode(key);
+//    }
+    // 1 - Permitir del 0 al 9
+    // 2 - Permitir .
+    // 3 - Permitir ,
+    // 4 - Permitir -
+    const regex = /[0-9]|\.|\,|\-/;
+    if (!regex.test(key)) {
+      event.returnValue = false;
+      if (event.preventDefault) {
+        event.preventDefault();
+      }
+    }
+    
+    console.log(event);
+    console.log(key);
+    if (event >= this.minNumber && event <= this.maxNumber){
+//      this.row.percent_complete = event;
+    }
+    
   }
 
 }

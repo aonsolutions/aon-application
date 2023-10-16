@@ -10,17 +10,36 @@
   <span matPrefix><ng-content select="[prefix]"></ng-content></span>
 
   <input
-      *ngIf="intputType.includes(type)"
-      matInput
-      [(ngModel)]="value"
-      [ngClass]="['ng-pending']"
-      [disabled]="disabled"
-      [required]="required"
-      [type]="type"
-      [placeholder]="placeholder"
-      (ngModelChange)="returnValue($event)"
-      [class]="appearanceDetail"
+    *ngIf="intputType.includes(type)"
+    matInput
+    [(ngModel)]="value"
+    [ngClass]="['ng-pending']"
+    [disabled]="disabled"
+    [required]="required"
+    [type]="type"
+    [placeholder]="placeholder"
+    (ngModelChange)="returnValue($event)"
+    [class]="appearanceDetail"
   />
+
+  <!-- INPUT TIPO NUMBER -->
+  <input
+    *ngIf="type == 'number'"
+    matInput
+    [(ngModel)]="value"
+    [ngClass]="['ng-pending']"
+    [disabled]="disabled"
+    [required]="required"
+    [type]="type"
+    [placeholder]="placeholder"
+    (ngModelChange)="returnValue($event)"
+    [class]="appearanceDetail"
+    min="minNumber"
+    max="maxNumber"
+    (ngModelChange)="validateFormatNumber($event)"
+  />
+<!--    (keypress)="validateFormatNumber($event)"
+    (paste)="validateFormatNumber($event)"-->
 
   <div
     class='search-componet'
