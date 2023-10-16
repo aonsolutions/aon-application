@@ -16,13 +16,14 @@
     <app-input
       [type]="'text'"
       [value]="newMessageDescription"
+      [required]="'required'"
       (inputValue)="newMessageDescription = $event"
     >
     </app-input>
 
     <div class="container-button">
+      <app-spinner *ngIf="spinner"></app-spinner>
       <app-button
-        [mat-dialog-close]="true"
         [class]="'orange left'"
         (click)="sendMessage()"
       >

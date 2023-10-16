@@ -20,7 +20,7 @@ export class ApiHttpRequest {
 
     static async httpRequest(url: string, method: string, customHeaders: any = {}, data: any): Promise<any> {
         let options = await this.generateHttp(method, customHeaders);
-        if(method == 'POST') Object.defineProperty(options,'body',{value: JSON.stringify(data)});
+        if(method == 'POST' || method == 'PUT') Object.defineProperty(options,'body',{value: JSON.stringify(data)});
         let result = await fetch(url,options);
         let dataJson = await result.json();
         return dataJson;
