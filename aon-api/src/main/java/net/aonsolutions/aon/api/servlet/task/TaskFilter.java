@@ -54,10 +54,9 @@ public class TaskFilter {
 		if(!status.isEmpty() && !TaskStatus.safeValueOf(status).equals(TaskStatus.PENDING) ) {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
 		} else {	
-			List<Integer> statusList = getStatusList(status);
-			if(!statusList.isEmpty()) {
-				Byte[] bytes = statusList.stream().map(entero -> entero.byteValue()).toArray(Byte[]::new);
-				filter = filter.and(f.getStatusProperty().in(bytes));
+			Byte[] statusList = getStatusList(status);
+			if(statusList.length > 0) {
+				filter = filter.and(f.getStatusProperty().in(statusList));
 			} else {				
 				filter = filter.and(f.getStatusProperty().in(PENDING));
 			}
@@ -452,19 +451,15 @@ public class TaskFilter {
 		return filterCau;
 	}
 	
-	private static List<Integer> getStatusList(String statusStr) {
-		List<Integer> statusList = new ArrayList<>();
+	private static Byte[] getStatusList(String statusStr) {
+		List<Byte> statusList = new ArrayList<>();
 		if(!statusStr.isEmpty()) {
 			String [] str = statusStr.split(",");
 			for(int i = 0; i < str.length; i++) {
-				for(int j = 0; j < TaskStatus.values().length; j++) {
-					if(str[i].equalsIgnoreCase(TaskStatus.values()[j].toString())) {
-						statusList.add(j);
-					}					
-				}
+				statusList.add(TaskStatus.safeValueOf(str[i]).value());
 			}
 		}
-		return statusList;
+		return statusList.stream().toArray(Byte[]::new);
 	}
 	
 	private static List<Integer> getWorkgroupList(String workgroupStr) {
