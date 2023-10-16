@@ -13,29 +13,25 @@ import { MessageChatService } from 'src/app/core/services/message-chat.service';
   styleUrls: ['./table-inbox.component.scss'],
 })
 export class TablesInboxComponent implements OnChanges {
-  filterStatus: string[] = ['todas', 'pendiente', 'realizada', 'nueva', 'vista', 'cerrada', 'abierta'];
   @Input() filterTabSelec: number = 0;
   @Input() filterDate: number = 0;
   @Input() filter: any = {};
   @Input() public messageList: Observable<ICollection<IMessage>> | undefined;
-  @Input() id: number = 0;
   @Input() type: string = '';
   @Input() selectedTab: number = 0;
   @Input() tabIndex: number = 0;
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
   @Output() noPendingItems: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() statusChanged = new EventEmitter<void>();
+  @Output() archiveMessageEvent: EventEmitter<IMessage> = new EventEmitter<IMessage>();
+  @Input() updateTable: boolean = false;
 
-  newMessageDescription: string = '';
-  entityFactory = new Factory();
-  messagesData: IMessage = this.entityFactory.createMessage();
-  selectedMessage: IMessage | null = null;
   bodyTable: any[] = [];
   showDetail: boolean = false;
   totalMessages: string = '0';
   message: string = '';
   spinner: boolean = true;
-  messages: ICollection<IMessage> =
-    new CollectionFactory().createMessageCollection();
+
   public collectionFactory = new CollectionFactory();
   //Inbox area
   messagess: ICollection<IMessage> =
@@ -53,7 +49,7 @@ export class TablesInboxComponent implements OnChanges {
     'description',
     'total',
     'date',
-    'action',
+    'actions',
   ];
 
   constructor(
@@ -69,7 +65,7 @@ export class TablesInboxComponent implements OnChanges {
     description: 'Description',
     total: 'Total',
     date: 'Date',
-    action: 'Action',
+    actions: 'Actions',
   };
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -92,21 +88,18 @@ export class TablesInboxComponent implements OnChanges {
     return date;
   }
 
- /**
- * Esta función filtra el tipo según la pestaña seleccionada.
- *
- * @returns {string} El tipo filtrado.
- */
-   private filterType() {
+
+   // Esta función filtra el tipo según la pestaña seleccionada.
+  private filterType() {
     let type = {
-      'inbox': '',
-      'status': '',
-      'icon': '',
+      inbox: '',
+      status: '',
+      icon: '',
     };
 
     switch (this.selectedTab.toString()) {
       case '1':
-        type.inbox = 'consulta'
+        type.inbox = 'consulta';
         switch (this.filterTabSelec) {
           case 1:
             type.status = 'abierta';
@@ -116,8 +109,8 @@ export class TablesInboxComponent implements OnChanges {
             break;
         }
         break;
-      case '2' :
-        type.inbox = 'tarea'
+      case '2':
+        type.inbox = 'tarea';
         switch (this.filterTabSelec) {
           case 1:
             type.status = 'pendiente';
@@ -128,7 +121,7 @@ export class TablesInboxComponent implements OnChanges {
         }
         break;
       case '3':
-        type.inbox = 'notificacion'
+        type.inbox = 'notificacion';
         switch (this.filterTabSelec) {
           case 1:
             type.status = 'nueva';
@@ -137,7 +130,7 @@ export class TablesInboxComponent implements OnChanges {
             type.status = 'vista';
             break;
         }
-      break;
+        break;
     }
     return type;
   }
@@ -183,6 +176,7 @@ export class TablesInboxComponent implements OnChanges {
     return `${year}-${month}-${day}`;
   }
 
+  // Tabla
   private updateTableData() {
     let tableRow: any[] = [];
     const datepipe: DatePipe = new DatePipe(
@@ -198,7 +192,11 @@ export class TablesInboxComponent implements OnChanges {
     }
     if (this.filterDate > 0 && this.filterType().inbox !== '') {
       let dates = this.filterTableDate();
-      filterBuilder.addInterval('date', dates.start, dates.end);
+      filterBuilder.addInterval(
+        'date',
+        dates.start,
+        dates.end
+      );
     }
 
     // Obtener la lista de mensajes
@@ -217,31 +215,32 @@ export class TablesInboxComponent implements OnChanges {
 
           // Icono del mensaje
           if (this.selectedTab === 0) {
-          switch (message.Status) {
-            case 'abierta':
-            case 'cerrada':
-              column.name = {
-                icon: [{ speaker_notes: 'red' }],
-                text: message.Name
-              };
-              break;
-            case 'pendiente':
-            case 'realizada':
-              column.name = {
-                icon: [{ playlist_add_check: 'red' }],
-                text: message.Name
-              };
-              break;
-            case 'nueva':
-            case 'vista':
-              column.name = {
-                icon: [{ notifications: 'red' }],
-                text: message.Name
-              };
-              break;
+            switch (message.Status) {
+              case 'abierta':
+              case 'cerrada':
+                column.name = {
+                  icon: [{ speaker_notes: 'red' }],
+                  text: message.Name,
+                };
+                break;
+              case 'pendiente':
+              case 'realizada':
+                column.name = {
+                  icon: [{ playlist_add_check: 'red' }],
+                  text: message.Name,
+                };
+                break;
+              case 'nueva':
+              case 'vista':
+                column.name = {
+                  icon: [{ notifications: 'red' }],
+                  text: message.Name,
+                };
+                break;
+            }
           }
-        }
           // Lógica específica para cada tipo de mensaje
+          // tipo tarea
           if (message.Type === 'tarea') {
             column.status = {
               icon: lowerCaseStatus.includes('realizada') ? [{}] : [],
@@ -251,6 +250,7 @@ export class TablesInboxComponent implements OnChanges {
                   : 'background-text-griss-light'
               }">${message.Status}</span>`,
             };
+            // tipo consulta
           } else if (message.Type === 'consulta') {
             // Obtener el total de mensajes
             let FilterBuilderTotal = new FilterBuilder();
@@ -258,32 +258,45 @@ export class TablesInboxComponent implements OnChanges {
             this.messageChatService
               .getMessageChatCount(FilterBuilderTotal.getFilter())
               .then((response) => {
-                this.totalMessages! = response < 100 ? response.toString() : '+99';
+                this.totalMessages! =
+                  response < 100 ? response.toString() : '+99';
 
-                column.total = "<span class='circle green'>" +
-                this.totalMessages +
-                '</span>';
+                column.total =
+                  "<span class='circle green'>" +
+                  this.totalMessages +
+                  '</span>';
               });
-              // obtener el status
+            // obtener el status
             column.statusIcon = {
               icon: message.Status.toLowerCase().includes('abierta')
                 ? [{ reply_all: 'green' }]
                 : [],
-              text: "",
+              text: '',
             };
-            // Marcar como nueva
-            column.action = {
-              icon: lowerCaseStatus.includes('abierta')
-                ? [{ archive: 'grey' }]
-                : [{ replay: 'grey' }],
-            };
+            // Marcar como nueva o cerrada
+            switch (message.Status) {
+              case 'abierta':
+                column.actions = ['archive'];
+                break;
+              case 'cerrada':
+                column.actions = ['replay'];
+                break;
+              default:
+                column.actions = [];
+                break;
+            }
             column.status = {
               icon: [],
               text:
-              `<span class="${message.Status.toLowerCase() === 'cerrada' ? 'background-text-griss-light' : 'background-text-red-light'}">` +
-              message.Status +
-              '</span>',
+                `<span class="${
+                  message.Status.toLowerCase() === 'abierta'
+                  ? 'background-text-red-light'
+                  : 'background-text-griss-light'
+                }">` +
+                message.Status +
+                '</span>',
             };
+            // tipo notificación
           } else if (message.Type === 'notificacion') {
             column.status = {
               icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
@@ -307,8 +320,7 @@ export class TablesInboxComponent implements OnChanges {
           // Fecha
           column.date = datepipe.transform(message.Date, 'dd/MM/yyyy, HH:mm');
           // Marcar como nueva
-          column.class = message.Status == 'pendiente' ? 'border-red' : '';
-
+          column.class = ['pendiente', 'abierta', 'nueva'].includes(message.Status) ? 'border-red' : '';
           // Agregamos el mensaje
           tableRow.push(column);
         });
@@ -316,21 +328,30 @@ export class TablesInboxComponent implements OnChanges {
         this.bodyTable = tableRow;
         this.noPendingItems.emit(!pendingItemsFound);
 
+        // Tipo de mensajes
+        let messageType: string = '';
+        if (this.selectedTab === 1) {
+          messageType = 'QUERIES';
+        } else if (this.selectedTab === 2) {
+          messageType = 'TASKS';
+        } else if (this.selectedTab === 3) {
+          messageType = 'NOTIFICATIONS';
+        }
         // No tenemos mensajes en la tabla
         if (response.size() === 0) {
           this.translateService
             .get([
-              'INBOX.NOMESSAGESTHISWEEK',
-              'INBOX.NOMESSAGESTHISMONTH',
-              'NOMESSAGES',
+              `INBOX.NO${messageType.toUpperCase()}THISWEEK`,
+              `INBOX.NO${messageType.toUpperCase()}THISMONTH`,
+              'INBOX.NOMESSAGES',
             ])
             .subscribe((result) => {
               switch (this.filterDate) {
                 case 1:
-                  this.message = result['INBOX.NOMESSAGESTHISWEEK'];
+                  this.message = result[`INBOX.NO${messageType.toUpperCase()}THISWEEK`];
                   break;
                 case 2:
-                  this.message = result['INBOX.NOMESSAGESTHISMONTH'];
+                  this.message = result[`INBOX.NO${messageType.toUpperCase()}THISMONTH`];
                   break;
                 default:
                   this.message = result['INBOX.NOMESSAGES'];
@@ -347,10 +368,36 @@ export class TablesInboxComponent implements OnChanges {
       });
   }
 
+  // Método para cambiar el estado de un mensaje consulta
+  iconAction(object: any) {
+    this.messageService.getMessage(object.key).then((messageStatus) => {
+    switch (object.keyButton) {
+      case 'archive':
+        this.messageService.archiveMessage(messageStatus)
+      this.updateTableData();
+        break;
+      case 'replay':
+        this.messageService.reopenMessage(messageStatus)
+        this.updateTableData();
+        break;
+      default:
+      }
+      this.statusChanged.emit();
+    });
+  }
+
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
   rowClick(message: any) {
     this.rowClicked.emit(message);
+    // Cambiar el estado de notificación al hacer click en el mensaje
+    this.messageService.getMessage(message.key).then((messageStatus) => {
+      if (message.type === 'notificacion') {
+        this.messageService.markAsReadNotification(messageStatus);
+        this.updateTableData();
+        this.statusChanged.emit();
+      }
+    });
   }
 }

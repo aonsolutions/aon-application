@@ -7,6 +7,7 @@
     [displayedColumns]="displayedColumns"
     [data]="bodyTable"
     (listenParentRow)="rowClick($event)"
+    (listenParentHandler)="iconAction($event)"
   ></app-table>
 <div *ngIf="bodyTable.length === 0">
   <div class="inbox-noMessage padding">{{ message }}</div>
