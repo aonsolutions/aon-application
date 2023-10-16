@@ -1,4 +1,4 @@
-import { Component, ViewChild, EventEmitter, HostBinding, Input, Output, SimpleChanges, OnChanges} from '@angular/core';
+import { Component, ViewChild, EventEmitter, HostBinding, Input, Output, SimpleChanges, OnChanges, OnInit} from '@angular/core';
 import { ModalEditTaxModelComponent } from '../components/modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../components/modal-payment/modal-payment.component';
 import { ModalTaxesDetailsComponent } from '../components/modal-taxes-details/modal-taxes-details.component';
@@ -25,7 +25,12 @@ export interface Models {
   templateUrl: './taxPanel.component.html',
   styleUrls: ['./taxPanel.component.scss'],
 })
-export class TaxPanelComponent implements OnChanges {
+export class TaxPanelComponent implements OnChanges, OnInit {
+  @Input() tabColor: string = '';
+  @HostBinding('style.--styleTabColor') styleTabColor = '';
+  @ViewChild('modalEdit') modalComponentEdit: any = '';
+  @ViewChild('modalPayment') modalComponentPayment: any = '';
+  @ViewChild('modalTaxesDetails') modalComponentTaxesDetails: any = '';
   tabIndex: number = 0;
   modelsList: any[] = [];
   modelsYears: any[] = [];
@@ -34,18 +39,7 @@ export class TaxPanelComponent implements OnChanges {
   currentDate = new Date();
   selectedYear: string = this.currentDate.getFullYear().toString();
   spinner: boolean = true;
-
-  @Input() tabColor: string = '';
-  @HostBinding('style.--styleTabColor') styleTabColor = '';
-  @Output() inputValue = new EventEmitter<any>();
-  @Output() changeTabIndex = new EventEmitter<number>();
   showModal: any;
-  @ViewChild('modalEdit') modalComponentEdit: any = '';
-  @ViewChild('modalPayment') modalComponentPayment: any = '';
-  @ViewChild('modalTaxesDetails') modalComponentTaxesDetails: any = '';
-  @Input() trimester: number = 0;
-  @Input() inputModel: number = 0;
-  @Input() inputYear: string = '';
   headerTable: any = {};
   bodyTable: any = [];
   displayedColumns: string[] = [
@@ -109,7 +103,6 @@ export class TaxPanelComponent implements OnChanges {
 
     // Datos del modelo
     taxModelService.getTaxModelList().then((response) => {
-      // setTimeout(() => {
       this.spinner = false;
       this.models = response;
       this.translateService
@@ -126,57 +119,43 @@ export class TaxPanelComponent implements OnChanges {
           this.modelsYears.push({ value: element.Year, text: element.Year });
         }
       });
-      // }, 2000);
+      this.updateTableData();
     });
   }
+  ngOnChanges(changes: SimpleChanges): void {
+
+    }
+
+  ngOnInit(): void {
+    this.updateTableData();
+  }
+
+  changeTabIndex(index: number) {
+    this.tabIndex = index;
+    this.updateTableData();
+  }
+
+
+
   filterModel(value: number, type: number) {
     this.selectedModel = type === 1 ? value : this.selectedModel;
     this.selectedYear = type === 2 ? value.toString() : this.selectedYear;
-  }
 
-
-
-  showModalEdit() {
-    this.modalComponentEdit.openDialog(
-      ModalEditTaxModelComponent,
-      this.functionHome,
-      'Data from home'
-    );
-  }
-  showModalPayment() {
-    this.modalComponentPayment.openDialog(
-      ModalPaymentComponent,
-      this.functionHome,
-      'Data from home'
-    );
-  }
-
-  showModalTaxesDetails() {
-    this.modalComponentTaxesDetails.openDialog(
-      ModalTaxesDetailsComponent,
-      this.functionHome,
-      'Data from home'
-    );
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-    //Add '${implements OnChanges}' to the class.
     this.updateTableData();
   }
+
   private updateTableData() {
     let filterBuilder = new FilterBuilder();
-    if (this.trimester > 0) {
-      filterBuilder.addField('trimester', +this.trimester);
+    if (this.tabIndex < 4) {
+      filterBuilder.addField('trimester', +this.tabIndex + 1);
+      console.log(this.tabIndex);
     }
 
-    if (this.inputModel > 0) {
-      filterBuilder.addField('name', this.inputModel);
+    if (this.selectedModel > 0) {
+      filterBuilder.addField('name', this.selectedModel);
     }
 
-    if (this.inputYear !== '') {
-      filterBuilder.addField('year', +this.inputYear);
-    }
+    filterBuilder.addField('year', +this.selectedYear);
 
     this.taxModelService
       .getTaxModelList(filterBuilder.getFilter())
@@ -232,20 +211,47 @@ export class TaxPanelComponent implements OnChanges {
         });
         // Tax date format for table
         this.bodyTable = tableRow;
+
+        // No tenemos modelos en la tabla
+        if (response.size() === 0) {
+          this.translateService
+            .get(['TAX_PANEL.NO_MODELS'])
+            .subscribe((result) => {
+              this.models = result['TAX_PANEL.NO_MODELS'];
+            });
+        }
       });
   }
-
   receiveStatus($event: string) {
     this.statusCrudo = $event;
-    console.log('Nuevo status recibido:', $event);
   }
-
+  showModalEdit() {
+    this.modalComponentEdit.openDialog(
+      ModalEditTaxModelComponent,
+      this.functionHome,
+      'Data from home'
+    );
+  }
+  showModalPayment() {
+    this.modalComponentPayment.openDialog(
+      ModalPaymentComponent,
+      this.functionHome,
+      'Data from home'
+    );
+  }
+  showModalTaxesDetails() {
+    this.modalComponentTaxesDetails.openDialog(
+      ModalTaxesDetailsComponent,
+      this.functionHome,
+      'Data from home'
+    );
+  }
   modalClick(object: any) {
     // Fila de la tabla que se esta usando
     // Boton que ha sido clickeado
-    console.log('esto es objetct', object);
+    // console.log('esto es objetct', object);
     // reference icon click
-    console.log('esto keybutto',object.keyButton);
+    // console.log('esto keybutto',object.keyButton);
 
     switch (object.keyButton) {
       case 'edit':
