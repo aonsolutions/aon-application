@@ -15,7 +15,7 @@
           {{ "INBOX.CREATE" | translate }}
         </app-button>
         <app-modal-controller #modal>
-          <app-create-query *ngIf="isModalVisible" (consultaCreated)="onConsultaCreated()"></app-create-query>
+          <app-create-query *ngIf="isModalVisible"></app-create-query>
         </app-modal-controller>
       </span>
     </div>
@@ -96,6 +96,7 @@
         [filterDate]="this.filterDate"
         [selectedTab]="this.selectedTab"
         >
+        <app-spinner *ngIf="spinner"></app-spinner>
         </app-table-inbox>
       </div>
     </ng-container>
@@ -128,7 +129,10 @@
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
             [selectedTab]="this.selectedTab"
+            (statusChanged)="calculateMessageCounts()"
+            [updateTable]="updateTable"
           >
+          <app-spinner *ngIf="spinner"></app-spinner>
           </app-table-inbox>
         </div>
       </app-tabs>
@@ -164,6 +168,7 @@
             [filterDate]="this.filterDate"
             [selectedTab]="this.selectedTab"
           >
+          <app-spinner *ngIf="spinner"></app-spinner>
         </app-table-inbox>
         </div>
       </app-tabs>
@@ -197,7 +202,10 @@
             [filterTabSelec]="this.tabIndex"
             [filterDate]="this.filterDate"
             [selectedTab]="this.selectedTab"
-          ></app-table-inbox>
+            (statusChanged)="calculateMessageCounts()"
+          >
+          <app-spinner *ngIf="spinner"></app-spinner>
+        </app-table-inbox>
         </div>
       </app-tabs>
     </ng-container>
@@ -213,13 +221,13 @@
         </div>
         <div class="inbox-icons" *ngIf="messagesData.Type === 'consulta'">
           <app-icon class="inbox-icon-reply" shape="reply" (click)="replyconsultarClicked()"></app-icon>
-          <app-icon shape="archive"></app-icon>
+          <app-icon *ngIf="messagesData.Status === 'abierta'" (click)="archiveMessage()" shape="archive"></app-icon>
         </div>
       </div>
 
       <div class="inbox-message padding">
         <div class="inbox-message-title">
-          <app-icon class="inbox-icon-back" (click)="backTable()" shape="arrow_back"></app-icon>
+          <app-icon class="inbox-icon-back" (click)="closeDetail()" shape="arrow_back"></app-icon>
           {{ messagesData.Title }}
         </div>
         <div class="inbox-message-date">
@@ -266,6 +274,7 @@
           </app-button>
         </div>
       </div>
+      <app-spinner *ngIf="spinner"></app-spinner>
     </form>
 
       <div
@@ -281,6 +290,7 @@
         >
           <div class="inbox-btns">
             <app-button
+              *ngIf="disableTramitar"
               class="inbox-btn-01"
               [class]="'red left inbox-btn-01'"
               [width]="'11rem'"
@@ -328,6 +338,7 @@
             </app-button>
             </div>
           </div>
+          <app-spinner *ngIf="spinner"></app-spinner>
         </form>
         </div>
       </div>

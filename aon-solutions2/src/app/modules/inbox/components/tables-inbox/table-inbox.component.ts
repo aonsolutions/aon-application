@@ -22,6 +22,9 @@ export class TablesInboxComponent implements OnChanges {
   @Input() tabIndex: number = 0;
   @Output() rowClicked: EventEmitter<IMessage> = new EventEmitter<IMessage>();
   @Output() noPendingItems: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() statusChanged = new EventEmitter<void>();
+  @Output() archiveMessageEvent: EventEmitter<IMessage> = new EventEmitter<IMessage>();
+  @Input() updateTable: boolean = false;
 
   bodyTable: any[] = [];
   showDetail: boolean = false;
@@ -85,11 +88,8 @@ export class TablesInboxComponent implements OnChanges {
     return date;
   }
 
-  /**
-   * Esta función filtra el tipo según la pestaña seleccionada.
-   *
-   * @returns {string} El tipo filtrado.
-   */
+
+   // Esta función filtra el tipo según la pestaña seleccionada.
   private filterType() {
     let type = {
       inbox: '',
@@ -176,6 +176,7 @@ export class TablesInboxComponent implements OnChanges {
     return `${year}-${month}-${day}`;
   }
 
+  // Tabla
   private updateTableData() {
     let tableRow: any[] = [];
     const datepipe: DatePipe = new DatePipe(
@@ -193,8 +194,8 @@ export class TablesInboxComponent implements OnChanges {
       let dates = this.filterTableDate();
       filterBuilder.addInterval(
         'date',
-        new Date(dates.start),
-        new Date(dates.end)
+        dates.start,
+        dates.end
       );
     }
 
@@ -239,6 +240,7 @@ export class TablesInboxComponent implements OnChanges {
             }
           }
           // Lógica específica para cada tipo de mensaje
+          // tipo tarea
           if (message.Type === 'tarea') {
             column.status = {
               icon: lowerCaseStatus.includes('realizada') ? [{}] : [],
@@ -248,6 +250,7 @@ export class TablesInboxComponent implements OnChanges {
                   : 'background-text-griss-light'
               }">${message.Status}</span>`,
             };
+            // tipo consulta
           } else if (message.Type === 'consulta') {
             // Obtener el total de mensajes
             let FilterBuilderTotal = new FilterBuilder();
@@ -286,13 +289,14 @@ export class TablesInboxComponent implements OnChanges {
               icon: [],
               text:
                 `<span class="${
-                  message.Status.toLowerCase() === 'cerrada'
-                    ? 'background-text-griss-light'
-                    : 'background-text-red-light'
+                  message.Status.toLowerCase() === 'abierta'
+                  ? 'background-text-red-light'
+                  : 'background-text-griss-light'
                 }">` +
                 message.Status +
                 '</span>',
             };
+            // tipo notificación
           } else if (message.Type === 'notificacion') {
             column.status = {
               icon: lowerCaseStatus.includes('nueva') ? [{}] : [],
@@ -316,8 +320,7 @@ export class TablesInboxComponent implements OnChanges {
           // Fecha
           column.date = datepipe.transform(message.Date, 'dd/MM/yyyy, HH:mm');
           // Marcar como nueva
-          column.class = message.Status == 'pendiente' ? 'border-red' : '';
-
+          column.class = ['pendiente', 'abierta', 'nueva'].includes(message.Status) ? 'border-red' : '';
           // Agregamos el mensaje
           tableRow.push(column);
         });
@@ -325,6 +328,7 @@ export class TablesInboxComponent implements OnChanges {
         this.bodyTable = tableRow;
         this.noPendingItems.emit(!pendingItemsFound);
 
+        // Tipo de mensajes
         let messageType: string = '';
         if (this.selectedTab === 1) {
           messageType = 'QUERIES';
@@ -339,7 +343,7 @@ export class TablesInboxComponent implements OnChanges {
             .get([
               `INBOX.NO${messageType.toUpperCase()}THISWEEK`,
               `INBOX.NO${messageType.toUpperCase()}THISMONTH`,
-              'NOMESSAGES',
+              'INBOX.NOMESSAGES',
             ])
             .subscribe((result) => {
               switch (this.filterDate) {
@@ -350,7 +354,7 @@ export class TablesInboxComponent implements OnChanges {
                   this.message = result[`INBOX.NO${messageType.toUpperCase()}THISMONTH`];
                   break;
                 default:
-                  this.message = result['NOMESSAGES'];
+                  this.message = result['INBOX.NOMESSAGES'];
                   break;
               }
             });
@@ -378,6 +382,7 @@ export class TablesInboxComponent implements OnChanges {
         break;
       default:
       }
+      this.statusChanged.emit();
     });
   }
 
@@ -386,11 +391,12 @@ export class TablesInboxComponent implements OnChanges {
 
   rowClick(message: any) {
     this.rowClicked.emit(message);
-
+    // Cambiar el estado de notificación al hacer click en el mensaje
     this.messageService.getMessage(message.key).then((messageStatus) => {
       if (message.type === 'notificacion') {
         this.messageService.markAsReadNotification(messageStatus);
         this.updateTableData();
+        this.statusChanged.emit();
       }
     });
   }

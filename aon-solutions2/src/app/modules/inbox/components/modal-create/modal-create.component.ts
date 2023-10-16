@@ -50,7 +50,6 @@ export class ModalCreateComponent implements OnInit {
   ngOnInit(): void {
   }
 
-
   closeModal(): void {
     this.dialogRef.close();
   }
@@ -64,6 +63,7 @@ export class ModalCreateComponent implements OnInit {
     }
   }
 
+  // Crear un mensaje tipo consulta
   async createMessage(description: string, asunto: string){
     if (this.messagesData) {
 
@@ -87,6 +87,8 @@ export class ModalCreateComponent implements OnInit {
         window.location.reload();
     }
   }
+
+  // Enviar la consulta creada
   sendMessage() {
     // para no enviar mensajes vacíos
     if (this.newMessageDescription.trim() === '') {

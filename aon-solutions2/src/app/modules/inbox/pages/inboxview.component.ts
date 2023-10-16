@@ -37,7 +37,6 @@ export class InboxviewComponent implements OnInit {
   this.collectionFactory.createMessageChatCollection();
   messagesData: IMessage = this.entityFactory.createMessage();
   messageChat: IMessageChat = this.entityFactory.createMessageChat();
-
   functionHome: any = (result: any) => this.afterModalClosed(result);
   tabsConsultas: Tabs[] = [];
   tabsTareas: Tabs[] = [];
@@ -45,6 +44,7 @@ export class InboxviewComponent implements OnInit {
   selectedTab: number = 0;
   selectedFilterDate: number = 0;
   tabIndex: number = 0;
+  disableTramitar: boolean = false; //desactiva el boton de tramitar
   showDetail: boolean = false;
   isModalVisible: boolean = false;
   showSendButton: boolean = false;
@@ -60,7 +60,7 @@ export class InboxviewComponent implements OnInit {
   consultaMessageCount: number = 0;
   tareasMessageCount: number = 0;
   notificacionesMessageCount: number = 0;
-
+  updateTable: boolean = false;
   constructor(
     private translateService: TranslateService,
     public reportingService: ReportingService,
@@ -179,10 +179,6 @@ export class InboxviewComponent implements OnInit {
     this.tabIndex = 0;
   }
 
-  backTable() {
-    this.showDetail = false;
-  }
-
   async rowClickHandler(message: any) {
       const isSameRow =
         this.messagesData && this.messagesData.Id === message.key;
@@ -201,14 +197,17 @@ export class InboxviewComponent implements OnInit {
       this.spinner = false;
     }
 
+  // Ocultar o ver botones
   consultarClicked() {
     this.showSendButton = !this.showSendButton;
   }
 
+  // Ocultar o ver botones
   replyconsultarClicked() {
     this.showSendButtons = !this.showSendButtons;
   }
 
+  // Filtros para las tablas(semana, mes o todos)
   filterTable(optionValue: number, name: string) {
     this.filterDate = optionValue;
     this.selected = name;
@@ -231,11 +230,6 @@ export class InboxviewComponent implements OnInit {
     }
   }
 
-  onConsultaCreated() {
-    this.totalMessageCount++;
-    this.consultaMessageCount++;
-  }
-
   // Calcula el total de mensajes
   async calculateMessageCounts() {
     const types = ['consulta', 'tarea', 'notificacion'];
@@ -244,6 +238,14 @@ export class InboxviewComponent implements OnInit {
     for (const type of types) {
       const filterBuilder = new FilterBuilder();
       filterBuilder.addField('type', type);
+
+      if (type === 'consulta') {
+        filterBuilder.addField('status', 'abierta');
+      } else if (type === 'tarea') {
+        filterBuilder.addField('status', 'pendiente');
+      } else if (type === 'notificacion') {
+        filterBuilder.addField('status', 'nueva');
+      }
       const count = await this.messageService.getMessageCount(
         filterBuilder.getFilter()
       );
@@ -260,6 +262,13 @@ export class InboxviewComponent implements OnInit {
     }
   }
 
+  // Llamamos al servicio para cambiar el estado a "abierta"
+   archiveMessage() {
+    this.messageService.archiveMessage(this.messagesData);
+    this.calculateMessageCounts();
+    this.updateTable = !this.updateTable;
+  }
+
   // Cerrar details
   closeDetail() {
     this.showDetail = false;
@@ -270,7 +279,7 @@ export class InboxviewComponent implements OnInit {
     this.expandedIndex = this.expandedIndex === index ? -1 : index;
   }
 
-  // ocultar o ver botones
+  // ocultar botones
   changeView(): void {
     this.showSendButton = false;
     this.showSendButtons = false;
@@ -281,7 +290,7 @@ export class InboxviewComponent implements OnInit {
     this.newMessageDescription = newValue;
   }
 
-  //mensaje de chat de consultas
+  //Crear mensaje de chat de consultas
   async createChatMessage(description: string) {
 
     if (this.messageChat && this.messagesData) {
@@ -304,7 +313,7 @@ export class InboxviewComponent implements OnInit {
     }
   }
 
-  //mensaje de consulta
+  //Crear mensaje tipo consulta
   async createMessage(description: string){
     if (this.messagesData) {
 
@@ -323,7 +332,6 @@ export class InboxviewComponent implements OnInit {
         })
         // Agregar el nuevo mensaje
         this.messages.add(this.messagesData);
-        window.location.reload();
     }
   }
 
@@ -349,5 +357,6 @@ export class InboxviewComponent implements OnInit {
 
     // Limpia el campo de entrada después de enviar el mensaje
     this.newMessageDescription = '';
+    window.location.reload();
   }
 }
