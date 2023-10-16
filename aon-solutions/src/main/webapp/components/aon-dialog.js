@@ -326,6 +326,10 @@ export class AonDialog extends AonElement {
 		return this.getElement(this.ACCEPT);
 	}
 	
+	getButtonCancel(){
+		return this.getElement(this.CANCEL);
+	}
+	
 	getMain(){
 		return this.getElement(this.MAIN);
 	}
