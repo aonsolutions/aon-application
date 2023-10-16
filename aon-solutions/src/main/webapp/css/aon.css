@@ -311,7 +311,7 @@
 .aonLogo {
   max-width: 200px;
   max-height: 60px;
-  padding: 5px;
+  padding: 1rem;
 }
 
 .aonParentLogo {
@@ -1004,15 +1004,15 @@ aon-card{
   padding-top: 2rem;
   font-weight: 500;
 
-  opacity: 0;
+  /*opacity: 0;
   transform: translateY(30%);
-  transition: 0.3s ease-in;
+  transition: 0.3s ease-in;*/
 }
 
-.aonCard:hover .aonCardTotal{
+/*.aonCard:hover .aonCardTotal{
   transform: translateY(0);
   opacity: 1;
-}
+}*/
 
 .aonDialog {
   display: none;
@@ -1618,6 +1618,28 @@ label.rating:hover {
   padding: revert;
 }
 
+.aonMessengerCardButton{
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: .5rem;
+  border-radius: 5px;
+  transition: linear;
+}
+
+.aonMessengerCardButton:hover{
+  border: 1px solid rgb(246, 101, 90);
+}
+
+.aonBadge{
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  padding: .5rem;
+  color: white;
+  text-align: center;
+  background-color: rgba(246, 101, 90, 0.7);
+}
 
 
 
@@ -1659,6 +1681,13 @@ label.rating:hover {
   justify-content: center;
 }
 
+.aonEllipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 15rem;
+  white-space: nowrap;
+}
+
 aon-access-card{
   width: 100%;
 }
@@ -1673,7 +1702,6 @@ aon-access-card{
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
-
   .aonUploadPanel, .aonFastAccess{
       flex-direction: row;
   }
@@ -1681,18 +1709,31 @@ aon-access-card{
 
 /* Medium devices (landscape tablets, 768px and up) */
 /* @media only screen and (min-width: 768px) {} */
+@media only screen and (min-width: 768px) {
+  .aonEllipsis{
+      max-width: 24rem;
+  }
+}
 
 /* Large devices (laptops/desktops, 992px and up) */
-@media only screen and (min-width: 850px) {
+@media only screen and (min-width: 854px) {
+  #messengerCard{
+    min-width: 42.2rem;
+  }
+
   aon-card{
       width: auto;
-      min-width: 350px;
+      min-width: 22rem;
   }
 
   aon-access-card{
     width: auto;
-    min-width: 350px;
-}
+    min-width: 22rem;
+  }
+
+  .aonEllipsis{
+    max-width: 28rem;
+  }
 }
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
