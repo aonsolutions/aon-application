@@ -4,6 +4,7 @@ import { CONSTANT, MSG } from '../../environments/environments.js';
 import { getItem, getProducts } from '../../services/productService.js';
 import { AonProduct } from './aon-product.js';
 import * as OPTION from '../invoice/InvoiceOptions.js';
+import { INVOICE } from '../../services/app.js';
 
 export class AonProductList extends AonElement {
 
@@ -32,6 +33,7 @@ export class AonProductList extends AonElement {
 	build() {
 		let table = new AonTable();
 		table.id = this.TABLE;
+		table.setApp(INVOICE);
 		this.appendChild(table);
 		table.addColumn(MSG.CODE, CONSTANT.STRING, CONSTANT.CODE, '25%');
 		table.addColumn(MSG.NAME, CONSTANT.STRING, CONSTANT.NAME, '50%');

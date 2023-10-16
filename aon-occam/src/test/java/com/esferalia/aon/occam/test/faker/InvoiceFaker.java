@@ -505,17 +505,20 @@ public class InvoiceFaker {
 	}
 
 	private static InvoiceDetail getInvoiceDetail(InvoiceFakerParams params, Invoice invoice) {
-		
+		int basePrecision = 2;
+		if ( AonRandom.gt( 97 )) {
+			basePrecision = AonRandom.gt( 50 )? 3 : 4;
+		}
 		InvoiceDetail detail = new InvoiceDetail();
 		detail.setDomain(invoice.getDomain())
 			.setInvoice(invoice)
 			.setWorkPlace( params.getConfig().getWorkplaces().getFirst().getId() )
-			.setDescription(AonRandom.string(5, 50))
+			.setDescription(AonRandom.item(5, 50))
 			.setQuantity(AonRandom.getDouble(0, 10))
 			.setDiscountExpression( AonRandom.gt(10)
 					?null 
 					:AonNumberUtils.toString( AonRandom.getDouble(0, 100)))
-			.setPrice(AonRandom.getDouble(0, 100))
+			.setPrice(AonRandom.getDouble(0, 100, basePrecision))
 			.setSource(InvoiceSource.DIRECT_INVOICE) // Todo. Alternative.
 			.setInvoiceTaxes( getInvoiceTaxes(params,invoice, detail ))
 			.setPrepayment(AonRandom.gt(98))

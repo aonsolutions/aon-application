@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.common.client.json.BookingJSON;
 import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainSelectionDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainSyncSelectionDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -52,6 +54,8 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -62,7 +66,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class BookingCustomer extends HTMLPanel {
 	
@@ -118,6 +121,9 @@ public class BookingCustomer extends HTMLPanel {
 			            			
 			            			// Create Widget
 			            			String htmlBody = "<ul>";
+			            			
+			            			// Sort child domains
+			            			booking.getResume().getChilds().sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
 			            			
 			            			if(domainType.equals(DomainType.OFFICE)) {
 			            				for(Domain childDomain : booking.getResume().getChilds()) {
@@ -203,6 +209,9 @@ public class BookingCustomer extends HTMLPanel {
 			            		Booking booking = bookingList.get(0);
 			            		if(null != booking.getResume() && !booking.getResume().getChilds().isEmpty()) {
 			            			List<Domain> childConectaUsers = booking.getResume().getChilds().stream().filter(child -> child.getMaxDefinedUsers() != null && child.getMaxDefinedUsers() > 1).collect(Collectors.toList());
+			            			
+			            			// Sort child domains
+			            			childConectaUsers.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
 			            			
 			            			// Create Widget
 			            			String htmlBody = "<ul>";
@@ -828,13 +837,16 @@ public class BookingCustomer extends HTMLPanel {
 		
 		HTMLPanel buttonPanel = new HTMLPanel("");
 		buttonPanel.addStyleName(AON.CSS.aonItemFlex());
+		buttonPanel.getElement().getStyle().setProperty("min-width", "50px");
 		
-		AonTableButton syncBtn = new AonTableButton("Sincronizar", AON.CSS.aonIconSync());
+		AonTableButton syncBtn = new AonTableButton("Sincronizar Contrataci\u00f3n", AON.CSS.aonIconSync());
+		if (newRow % 2 == 0) syncBtn.addStyleName(AON.CSS.aonOddTableRow());
 		syncBtn.addClickHandler(e -> {
 			syncCustomerDomains();
 		});
 		
-		AonTableButton unSyncBtn = new AonTableButton("Desincronizar", AON.CSS.aonIconSyncDisabled());
+		AonTableButton unSyncBtn = new AonTableButton("Desincronizar Contrataci\u00f3n", AON.CSS.aonIconSyncDisabled());
+		if (newRow % 2 == 0) unSyncBtn.addStyleName(AON.CSS.aonOddTableRow());
 		unSyncBtn.addClickHandler(e -> {
 			unSyncCustomerDomains();
 		});
@@ -855,7 +867,6 @@ public class BookingCustomer extends HTMLPanel {
 			expirationLabel.addStyleName(AON.CSS.aonOddTableRow());
 			lastAccessLabel.addStyleName(AON.CSS.aonOddTableRow());
 			nameLabel.addStyleName(AON.CSS.aonOddTableRow());
-			syncBtn.addStyleName(AON.CSS.aonOddTableRow());
 			
 			customerTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
 			customerTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
@@ -995,102 +1006,423 @@ public class BookingCustomer extends HTMLPanel {
 		
 		scrollPanel.add(domainTable);
 		
-		for(DomainCompany domainCompany : customerDomains) {
+		// Create empty line for sync
+		if(null == customerDomains || customerDomains.isEmpty()) {
 			int newRow = domainTable.insertRow(domainTable.getRowCount());
 			
-			Label domainTypeLabel  = new Label(domainCompany.getDomain().getDomainType().getName());
-			Label idLabel = new Label(domainCompany.getDomain().getId().toString());
-			Label schemaLabel = new Label(domainCompany.getSchema());
-			Label descriptionLabel = new Label(domainCompany.getDomain().getDescription());
-			Label documentLabel = new Label(domainCompany.getCompany().getDocument());
-			Label statusLabel = new Label(domainCompany.getDomain().isActive() ? "Activo" : "Inactivo");
-			Label billableLabel = new Label(domainCompany.getDomain().getAonStatus().equals(AonStatus.BILLABLE) ? "SI" : "NO");
-			Label expirationLabel = new Label(formatDate(domainCompany.getDomain().getCreationDate()));
-			Label lastAccessLabel = new Label(formatDate(domainCompany.getDomain().getModificationDate()));
-			Label nameLabel = new Label(domainCompany.getDomain().getName());
-			nameLabel.getElement().getStyle().setCursor(Cursor.POINTER);
-			nameLabel.addClickHandler(e ->{
-				enableRemoteDomain(domainCompany.getDomain().getId(), domainCompany.getDomain().getName());
-			});
+			domainTable.setWidget(newRow, 0, new Label());
+			domainTable.setWidget(newRow, 1, new Label());
+			domainTable.setWidget(newRow, 2, new Label());
+			domainTable.setWidget(newRow, 3, new Label());
+			domainTable.setWidget(newRow, 4, new Label());
+			domainTable.setWidget(newRow, 5, new Label());
+			domainTable.setWidget(newRow, 6, new Label());
+			domainTable.setWidget(newRow, 7, new Label());
+			domainTable.setWidget(newRow, 8, new Label());
+			domainTable.setWidget(newRow, 9, new Label());
 			
-			// Status
-			if (!domainCompany.getDomain().isActive()) {
-				statusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-				statusLabel.getElement().getStyle().setColor("red");
-			}
+			HTMLPanel buttonPanel = new HTMLPanel("");
+			buttonPanel.addStyleName(AON.CSS.aonItemFlex());
+			buttonPanel.getElement().getStyle().setProperty("min-width", "50px");
+						
+			AonTableButton syncDomainBtn = new AonTableButton("Vincular Dominio", AON.CSS.aonIconLink());
+			syncDomainBtn.addClickHandler(e -> syncCustomerToDomain());
 			
-			if (domainCompany.getDomain().getAonStatus().equals(AonStatus.NOT_BILLABLE)) {
-				billableLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-				billableLabel.getElement().getStyle().setColor("orange");
-			}
+			buttonPanel.add(syncDomainBtn);
 			
-			if(null != domainCompany.getDomain().getExpirationDate()) {
-				Date today = new Date();
-				if(domainCompany.getDomain().getExpirationDate().after(today)) {
-					expirationLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-					expirationLabel.getElement().getStyle().setColor("orange");
-				} else if(domainCompany.getDomain().getExpirationDate().before(today)) {
-					expirationLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-					expirationLabel.getElement().getStyle().setColor("red");
-				}
-			}
+			domainTable.setWidget(newRow, 10, buttonPanel);
 			
-			domainTable.setWidget(newRow, 0, domainTypeLabel);
-			domainTable.setWidget(newRow, 1, idLabel);
-			domainTable.setWidget(newRow, 2, schemaLabel);
-			domainTable.setWidget(newRow, 3, descriptionLabel);
-			domainTable.setWidget(newRow, 4, documentLabel);
-			domainTable.setWidget(newRow, 5, statusLabel);
-			domainTable.setWidget(newRow, 6, billableLabel);
-			domainTable.setWidget(newRow, 7, expirationLabel);
-			domainTable.setWidget(newRow, 8, lastAccessLabel);
-			domainTable.setWidget(newRow, 9, nameLabel);
-			
-			AonTableButton urlBtn = new AonTableButton("Ir a", AON.CSS.aonIconGroup());
-			urlBtn.addClickHandler(e -> openUserTooltip(domainCompany.getDomain()));
-			
-			domainTable.setWidget(newRow, 10, urlBtn);
-			
-			if (newRow % 2 == 0) {
-				domainTypeLabel.addStyleName(AON.CSS.aonOddTableRow());
-				idLabel.addStyleName(AON.CSS.aonOddTableRow());
-				schemaLabel.addStyleName(AON.CSS.aonOddTableRow());
-				descriptionLabel.addStyleName(AON.CSS.aonOddTableRow());
-				documentLabel.addStyleName(AON.CSS.aonOddTableRow());
-				statusLabel.addStyleName(AON.CSS.aonOddTableRow());
-				billableLabel.addStyleName(AON.CSS.aonOddTableRow());
-				expirationLabel.addStyleName(AON.CSS.aonOddTableRow());
-				lastAccessLabel.addStyleName(AON.CSS.aonOddTableRow());
-				nameLabel.addStyleName(AON.CSS.aonOddTableRow());
-				urlBtn.addStyleName(AON.CSS.aonOddTableRow());
-				
-				domainTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
-				domainTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
-				domainTable.getCellFormatter().addStyleName(newRow, 2, AON.CSS.aonOddTableRow());
-				domainTable.getCellFormatter().addStyleName(newRow, 3, AON.CSS.aonOddTableRow());
-				domainTable.getCellFormatter().addStyleName(newRow, 4, AON.CSS.aonOddTableRow());
-				domainTable.getCellFormatter().addStyleName(newRow, 5, AON.CSS.aonOddTableRow());
-				domainTable.getCellFormatter().addStyleName(newRow, 6, AON.CSS.aonOddTableRow());
-				domainTable.getCellFormatter().addStyleName(newRow, 7, AON.CSS.aonOddTableRow());
-				domainTable.getCellFormatter().addStyleName(newRow, 8, AON.CSS.aonOddTableRow());
-				domainTable.getCellFormatter().addStyleName(newRow, 9, AON.CSS.aonOddTableRow());
-				domainTable.getCellFormatter().addStyleName(newRow, 10, AON.CSS.aonOddTableRow());
-			}
-			
-			domainTable.getCellFormatter().getElement(newRow, 0).getStyle().setTextAlign(TextAlign.CENTER);
-			domainTable.getCellFormatter().getElement(newRow, 1).getStyle().setTextAlign(TextAlign.CENTER);
-			domainTable.getCellFormatter().getElement(newRow, 4).getStyle().setTextAlign(TextAlign.CENTER);
-			domainTable.getCellFormatter().getElement(newRow, 5).getStyle().setTextAlign(TextAlign.CENTER);
-			domainTable.getCellFormatter().getElement(newRow, 6).getStyle().setTextAlign(TextAlign.CENTER);
-			domainTable.getCellFormatter().getElement(newRow, 7).getStyle().setTextAlign(TextAlign.CENTER);
-			domainTable.getCellFormatter().getElement(newRow, 8).getStyle().setTextAlign(TextAlign.CENTER);
 			domainTable.getCellFormatter().getElement(newRow, 10).getStyle().setTextAlign(TextAlign.CENTER);
 			
 			domainTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);
+			
+		} else {
+			for(DomainCompany domainCompany : customerDomains) {
+				int newRow = domainTable.insertRow(domainTable.getRowCount());
+				
+				Label domainTypeLabel  = new Label(domainCompany.getDomain().getDomainType().getName());
+				Label idLabel = new Label(domainCompany.getDomain().getId().toString());
+				Label schemaLabel = new Label(domainCompany.getSchema());
+				Label descriptionLabel = new Label(domainCompany.getDomain().getDescription());
+				Label documentLabel = new Label(domainCompany.getCompany().getDocument());
+				Label statusLabel = new Label(domainCompany.getDomain().isActive() ? "Activo" : "Inactivo");
+				Label billableLabel = new Label(domainCompany.getDomain().getAonStatus().equals(AonStatus.BILLABLE) ? "SI" : "NO");
+				Label expirationLabel = new Label(formatDate(domainCompany.getDomain().getExpirationDate()));
+				Label lastAccessLabel = new Label(formatDate(domainCompany.getDomain().getLastAccessDate()));
+				Label nameLabel = new Label(domainCompany.getDomain().getName());
+				nameLabel.getElement().getStyle().setCursor(Cursor.POINTER);
+				nameLabel.addClickHandler(e ->{
+					enableRemoteDomain(domainCompany.getDomain().getId(), domainCompany.getDomain().getName());
+				});
+				
+				// Status
+				if (!domainCompany.getDomain().isActive()) {
+					statusLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+					statusLabel.getElement().getStyle().setColor("red");
+				}
+				
+				if (domainCompany.getDomain().getAonStatus().equals(AonStatus.NOT_BILLABLE)) {
+					billableLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+					billableLabel.getElement().getStyle().setColor("orange");
+				}
+				
+				if(null != domainCompany.getDomain().getExpirationDate()) {
+					Date today = new Date();
+					if(domainCompany.getDomain().getExpirationDate().after(today)) {
+						expirationLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+						expirationLabel.getElement().getStyle().setColor("orange");
+					} else if(domainCompany.getDomain().getExpirationDate().before(today)) {
+						expirationLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+						expirationLabel.getElement().getStyle().setColor("red");
+					}
+				}
+				
+				domainTable.setWidget(newRow, 0, domainTypeLabel);
+				domainTable.setWidget(newRow, 1, idLabel);
+				domainTable.setWidget(newRow, 2, schemaLabel);
+				domainTable.setWidget(newRow, 3, descriptionLabel);
+				domainTable.setWidget(newRow, 4, documentLabel);
+				domainTable.setWidget(newRow, 5, statusLabel);
+				domainTable.setWidget(newRow, 6, billableLabel);
+				domainTable.setWidget(newRow, 7, expirationLabel);
+				domainTable.setWidget(newRow, 8, lastAccessLabel);
+				domainTable.setWidget(newRow, 9, nameLabel);
+				
+				HTMLPanel buttonPanel = new HTMLPanel("");
+				buttonPanel.addStyleName(AON.CSS.aonItemFlex());
+				buttonPanel.getElement().getStyle().setProperty("min-width", "50px");
+							
+				AonTableButton usersBtn = new AonTableButton("Usuarios Dominio", AON.CSS.aonIconGroup());
+				usersBtn.addClickHandler(e -> openUserTooltip(domainCompany.getDomain()));
+				
+				AonTableButton unsyncDomainBtn = new AonTableButton("Desvincular Dominio", AON.CSS.aonIconLinkOff());
+				unsyncDomainBtn.addClickHandler(e -> unSyncDomain(domainCompany));
+				
+				buttonPanel.add(usersBtn);
+				buttonPanel.add(unsyncDomainBtn);
+				
+				domainTable.setWidget(newRow, 10, buttonPanel);
+				
+				if (newRow % 2 == 0) {
+					domainTypeLabel.addStyleName(AON.CSS.aonOddTableRow());
+					idLabel.addStyleName(AON.CSS.aonOddTableRow());
+					schemaLabel.addStyleName(AON.CSS.aonOddTableRow());
+					descriptionLabel.addStyleName(AON.CSS.aonOddTableRow());
+					documentLabel.addStyleName(AON.CSS.aonOddTableRow());
+					statusLabel.addStyleName(AON.CSS.aonOddTableRow());
+					billableLabel.addStyleName(AON.CSS.aonOddTableRow());
+					expirationLabel.addStyleName(AON.CSS.aonOddTableRow());
+					lastAccessLabel.addStyleName(AON.CSS.aonOddTableRow());
+					nameLabel.addStyleName(AON.CSS.aonOddTableRow());
+					usersBtn.addStyleName(AON.CSS.aonOddTableRow());
+					
+					domainTable.getCellFormatter().addStyleName(newRow, 0, AON.CSS.aonOddTableRow());
+					domainTable.getCellFormatter().addStyleName(newRow, 1, AON.CSS.aonOddTableRow());
+					domainTable.getCellFormatter().addStyleName(newRow, 2, AON.CSS.aonOddTableRow());
+					domainTable.getCellFormatter().addStyleName(newRow, 3, AON.CSS.aonOddTableRow());
+					domainTable.getCellFormatter().addStyleName(newRow, 4, AON.CSS.aonOddTableRow());
+					domainTable.getCellFormatter().addStyleName(newRow, 5, AON.CSS.aonOddTableRow());
+					domainTable.getCellFormatter().addStyleName(newRow, 6, AON.CSS.aonOddTableRow());
+					domainTable.getCellFormatter().addStyleName(newRow, 7, AON.CSS.aonOddTableRow());
+					domainTable.getCellFormatter().addStyleName(newRow, 8, AON.CSS.aonOddTableRow());
+					domainTable.getCellFormatter().addStyleName(newRow, 9, AON.CSS.aonOddTableRow());
+					domainTable.getCellFormatter().addStyleName(newRow, 10, AON.CSS.aonOddTableRow());
+				}
+				
+				domainTable.getCellFormatter().getElement(newRow, 0).getStyle().setTextAlign(TextAlign.CENTER);
+				domainTable.getCellFormatter().getElement(newRow, 1).getStyle().setTextAlign(TextAlign.CENTER);
+				domainTable.getCellFormatter().getElement(newRow, 4).getStyle().setTextAlign(TextAlign.CENTER);
+				domainTable.getCellFormatter().getElement(newRow, 5).getStyle().setTextAlign(TextAlign.CENTER);
+				domainTable.getCellFormatter().getElement(newRow, 6).getStyle().setTextAlign(TextAlign.CENTER);
+				domainTable.getCellFormatter().getElement(newRow, 7).getStyle().setTextAlign(TextAlign.CENTER);
+				domainTable.getCellFormatter().getElement(newRow, 8).getStyle().setTextAlign(TextAlign.CENTER);
+				domainTable.getCellFormatter().getElement(newRow, 10).getStyle().setTextAlign(TextAlign.CENTER);
+				
+				domainTable.getRowFormatter().getElement(newRow).getStyle().setHeight(25.00, Unit.PX);
+			}
 		}
 		
 		domainsPanel.add(scrollPanel);
 		
+	}
+
+	private void syncCustomerToDomain() {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios ...");
+		
+		// Create the base URL
+		String baseUrl = "/ms/api/domain/";
+
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+//		urlBuilder.setHost("localhost:8080");
+		urlBuilder.setHost("aon.solutions"); 
+		urlBuilder.setPath(baseUrl);
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(null, new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+
+		                String responseBody = response.getText();
+		                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
+		                AonMessagePanel.hideMessage(messagePanel);
+		                showSelectSyncDomainsDialog(companies);
+		                
+		            } else {
+		            	AonMessagePanel.showError(messagePanel, response.getText());
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        }
+		    });
+		} catch (RequestException e) {
+			AonMessagePanel.showError(messagePanel, e.getMessage());
+		}
+	}
+	
+	private void showSelectSyncDomainsDialog(List<DomainCompany> companies) {
+		new AonDomainSyncSelectionDialog("Viculaci\u00f3n Dominios", companies, customer) {
+			
+			@Override
+			protected void onAccept(DomainCompany domainCompany) {
+				// Unsync Domain aonCustomer
+            	AonMessagePanel.showLoading(messagePanel, "Vinculando dominio del cliente " + customer.getName() + " ...");
+        		
+        		// Create the base URL
+        		String baseUrl = "/ms/api/domain/";
+
+        		// Create a URL builder and add query parameters
+        		UrlBuilder urlBuilder = new UrlBuilder();
+        		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+//        		urlBuilder.setHost("localhost:8080");
+        		urlBuilder.setHost("aon.solutions"); 
+        		urlBuilder.setPath(baseUrl);
+        		
+        		// Create the request builder with the complete URL
+        		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+        		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+        		
+        		JSONObject body = new JSONObject();
+        		body.put("customer", new JSONNumber(customer.getId()));
+        		
+        		JSONArray domains = new JSONArray();
+        		domains.set(0, DomainCompanyJSON.domainCompanyToJSON(domainCompany));
+        		body.put("domains", domains);
+        		
+        		try {
+        		    // Send the request
+        		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+        		        public void onResponseReceived(Request request, Response response) {
+        		            if (response.getStatusCode() == 200) {
+        		            	
+        		            	AonMessagePanel.showLoading(messagePanel, "Sincronizando contrataci\u00f3n para el cliente " + customer.getName() + " ...");
+        		        		
+        		        		// Create the base URL
+        		        		String baseUrl = "/ms/api/domain/booking-customer/";
+
+        		        		// Create a URL builder and add query parameters
+        		        		UrlBuilder urlBuilder = new UrlBuilder();
+        		        		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+        		        		urlBuilder.setHost(Window.Location.getHost()); 
+        		        		urlBuilder.setPath(baseUrl);
+        		        		
+        		        		// Create the request builder with the complete URL
+        		        		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+        		        		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+        		        		
+        		        		requestBuilder.setHeader("domain_name", options.getDomainName());
+        		        		requestBuilder.setHeader("domain_login", options.getUser());
+        		        		requestBuilder.setHeader("domain_id", String.valueOf(options.getDomain()));
+        		        		
+        		        		JSONObject body = new JSONObject();
+        		        		body.put("customer", new JSONNumber(customer.getId()));
+        		        		
+        		        		try {
+        		        		    // Send the request
+        		        		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+        		        		        public void onResponseReceived(Request request, Response response) {
+        		        		            if (response.getStatusCode() == 200) {
+        		        		            	
+        		        		            	AonMessagePanel.showSuccess(messagePanel, "La sincronizaci\u00f3n del cliente " + customer.getName() + " se ha realizado correctamente");
+        		        	            		
+        		        		            	Timer timer = new Timer() {
+        		        		           		     @Override
+        		        		           		     public void run() {
+        		        		           		    	AonMessagePanel.showLoading(messagePanel, "Obteniendo dominios del cliente ...");
+        		        		           				
+        		        		           				// Create the base URL
+        		        		           				String baseUrl = "/ms/api/domain/" + customer.getId().toString();
+
+        		        		           				// Create a URL builder and add query parameters
+        		        		           				UrlBuilder urlBuilder = new UrlBuilder();
+        		        		           				urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+//        		        		           				urlBuilder.setHost("localhost:8080");
+        		        		           				urlBuilder.setHost("aon.solutions"); 
+        		        		           				urlBuilder.setPath(baseUrl);
+        		        		           				
+        		        		           				// Create the request builder with the complete URL
+        		        		           				RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+        		        		           				requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+        		        		           				
+        		        		           				try {
+        		        		           				    // Send the request
+        		        		           				    requestBuilder.sendRequest(null, new RequestCallback() {
+        		        		           				        public void onResponseReceived(Request request, Response response) {
+        		        		           				            if (response.getStatusCode() == 200) {
+        		        		           				            	
+        		        		           				                String responseBody = response.getText();
+        		        		           				                List<DomainCompany> companies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
+        		        		           				                AonMessagePanel.hideMessage(messagePanel);
+        		        		           				                
+        		        		           				                setBookingCustomer(customer, companies);
+        		        		           				                
+        		        		           				            } else {
+        		        		           				            	AonMessagePanel.showError(messagePanel, response.getText());
+        		        		           				            }
+        		        		           				        }
+
+        		        		           						public void onError(Request request, Throwable exception) {
+        		        		           							AonMessagePanel.showError(messagePanel, exception.getMessage());
+        		        		           				        }
+        		        		           				    });
+        		        		           				} catch (RequestException e) {
+        		        		           					AonMessagePanel.showError(messagePanel, e.getMessage());
+        		        		           				} 
+        		        		           		     }
+        		        		           		};
+        		        		           		timer.schedule(2500);
+        		          		           		
+        		        		            } else {
+        		        		            	AonMessagePanel.showError(messagePanel, response.getText());
+        		        		            }
+        		        		        }
+
+        		        				public void onError(Request request, Throwable exception) {
+        		        					AonMessagePanel.showError(messagePanel, exception.getMessage());
+        		        		        }
+        		        		    });
+        		        		} catch (RequestException e) {
+        		        			AonMessagePanel.showError(messagePanel, e.getMessage());
+        		        		}
+        		            	
+          		           		
+        		            } else {
+        		            	AonMessagePanel.showError(messagePanel, response.getText());
+        		            }
+        		        }
+
+        				public void onError(Request request, Throwable exception) {
+        					AonMessagePanel.showError(messagePanel, exception.getMessage());
+        		        }
+        		    });
+        		} catch (RequestException e) {
+        			AonMessagePanel.showError(messagePanel, e.getMessage());
+        		}
+			}
+		};
+	}
+	
+	private void unSyncDomain(DomainCompany domainCompany) {
+		AonMessagePanel.showLoading(messagePanel, "Desincronizando contrataci\u00f3n para el cliente " + customer.getName() + " ...");
+		
+		// Create the base URL
+		String baseUrl = "/ms/api/domain/booking/";
+
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost(Window.Location.getHost()); 
+		urlBuilder.setPath(baseUrl);
+		
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.DELETE, urlBuilder.buildString());
+		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		
+		JSONObject body = new JSONObject();
+		body.put("customer", new JSONNumber(customer.getId()));
+		
+		try {
+		    // Send the request
+		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+		        public void onResponseReceived(Request request, Response response) {
+		            if (response.getStatusCode() == 200) {
+		            	
+		            	// Unsync Domain aonCustomer
+		            	AonMessagePanel.showLoading(messagePanel, "Desvinculando dominio del cliente " + customer.getName() + " ...");
+		        		
+		        		// Create the base URL
+		        		String baseUrl = "/ms/api/domain/";
+
+		        		// Create a URL builder and add query parameters
+		        		UrlBuilder urlBuilder = new UrlBuilder();
+		        		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+//		        		urlBuilder.setHost("localhost:8080");
+		        		urlBuilder.setHost("aon.solutions"); 
+		        		urlBuilder.setPath(baseUrl);
+		        		
+		        		// Create the request builder with the complete URL
+		        		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+		        		requestBuilder.setHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+		        		
+		        		JSONObject body = new JSONObject();
+		        		
+		        		JSONArray domains = new JSONArray();
+		        		domains.set(0, DomainCompanyJSON.domainCompanyToJSON(domainCompany));
+		        		body.put("domains", domains);
+		        		
+		        		try {
+		        		    // Send the request
+		        		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+		        		        public void onResponseReceived(Request request, Response response) {
+		        		            if (response.getStatusCode() == 200) {
+		        		            	
+		        		            	AonMessagePanel.showSuccess(messagePanel, "Dominio desvinculado del cliente correctamente");
+		        		            	
+		        		            	Timer timer = new Timer() {
+			       		           		     @Override
+			       		           		     public void run() {
+			       		           		    	// Remove unsync domain from customerDomains
+			       		           		    	customerDomains = customerDomains.stream().filter(domainCompanyIt -> !domainCompanyIt.getDomain().getId().equals(domainCompany.getDomain().getId())).collect(Collectors.toList());
+			       		           		    	setBookingCustomer(customer, customerDomains);
+			       		           		     }
+			       		           		};	
+			       		           		timer.schedule(2500);
+		        		            	
+		          		           		
+		        		            } else {
+		        		            	AonMessagePanel.showError(messagePanel, response.getText());
+		        		            }
+		        		        }
+
+		        				public void onError(Request request, Throwable exception) {
+		        					AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        		        }
+		        		    });
+		        		} catch (RequestException e) {
+		        			AonMessagePanel.showError(messagePanel, e.getMessage());
+		        		}
+		            	
+  		           		
+		            } else {
+		            	AonMessagePanel.showError(messagePanel, response.getText());
+		            }
+		        }
+
+				public void onError(Request request, Throwable exception) {
+					AonMessagePanel.showError(messagePanel, exception.getMessage());
+		        }
+		    });
+		} catch (RequestException e) {
+			AonMessagePanel.showError(messagePanel, e.getMessage());
+		}
 	}
 
 	private String formatDate(Date date) {
@@ -1282,6 +1614,10 @@ public class BookingCustomer extends HTMLPanel {
 		Integer quantityFee = AonStringUtils.isNotBlank(bookingCheck.getQuantityFee()) ? Integer.parseInt(bookingCheck.getQuantityFee()) : 0;
 		Integer quantityRItem = AonStringUtils.isNotBlank(bookingCheck.getQuantityRItem()) ? Integer.parseInt(bookingCheck.getQuantityRItem()) : 0;
 		
+		if(isAditionalUser(bookingCheck)) {
+//			Window.alert(bookingCheck.getItem().getProduct().getName());
+			quantityRItem--;
+		}
 		
 		if(quantityFee != quantityRItem) {
 			quantityLabel.setText(quantityFee.toString() + "  /  " +  quantityRItem.toString());
@@ -1291,6 +1627,25 @@ public class BookingCustomer extends HTMLPanel {
 		} else quantityLabel.setText(quantityRItem.toString());
 		
 		return quantityLabel;
+	}
+	
+	private boolean isAditionalUser(BookingCheck bookingCheck) {
+		List<String> barCodes = new ArrayList<>();
+		String barCode = bookingCheck.getItem().getBarcode();
+		if(barCode.contains("/")) {
+			String[] splits = barCode.split("/");
+			for(int i=0; i < splits.length; i++)
+				barCodes.add(splits[i].trim());
+		} else
+			barCodes.add(barCode);
+		
+		RegExp regExp = RegExp.compile("^\\d{2}.USR");
+		for(String barCodeIt : barCodes) {
+			MatchResult matcher = regExp.exec(barCodeIt);
+			if(null != matcher) return true;
+		}
+		
+		return false;
 	}
 
 	private void createBookingWithOutFeeMessage() {

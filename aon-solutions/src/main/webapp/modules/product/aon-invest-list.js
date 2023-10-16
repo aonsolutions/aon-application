@@ -6,6 +6,7 @@ import { AonInvest } from './aon-invest.js';
 import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonTable } from '../../components/aon-table.js';
 import { InvestAssetRegime, InvestAssetType } from '../../models/enums.js';
+import { INVOICE } from '../../services/app.js';
 
 export class AonInvestList extends AonElement {
 
@@ -46,6 +47,8 @@ export class AonInvestList extends AonElement {
 
 	build() {
 		let table = this.createAonElement(new AonTable(), this.TABLE);
+		table.setApp(INVOICE);
+
 		this.appendChild(table);
 
 		const btnSearch = this.getApplication().addSearchOption();

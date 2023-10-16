@@ -8,6 +8,7 @@ import { AonMobileMenu } from './aon-mobile-menu.js';
 import { CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js'; 
 
 import * as LS from '../services/localStorageService.js';
+import { AonNewMenu } from './aon-new-menu.js';
 
 export class AonHome extends AonElement {
 
@@ -41,27 +42,28 @@ export class AonHome extends AonElement {
 	}
 
 	build() {
-		let aonMenu = new AonMenu();
+		let aonMenu = LS.isNewTheme() ? new AonNewMenu() : new AonMenu();
 		aonMenu.id = this.AON_MENU;
 		aonMenu.className = CSS.AON_MENU;
-
-		let aonShowMenu = this.createElement(TAG.SPAN);
-		aonShowMenu.id = this.AON_SHOW_MENU;
-		aonShowMenu.className = CSS.AON_SHOW_MENU;
-		aonShowMenu.addEventListener(EVENT.CLICK, () => {
+		if(!LS.isNewTheme()) {
+			let aonShowMenu = this.createElement(TAG.SPAN);
+			aonShowMenu.id = this.AON_SHOW_MENU;
+			aonShowMenu.className = CSS.AON_SHOW_MENU;
+			aonShowMenu.addEventListener(EVENT.CLICK, () => {
 			if(LS.getDomainId())
 				aonMenu.toogle();
-		});
+			});
 
-		let aonShowMenuButton = new AonIconButton();
-		aonShowMenuButton.id = this.AON_SHOW_MENU_BUTTON
-		aonShowMenuButton.icon = MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
-		aonShowMenuButton.noHover = true;
-		aonShowMenuButton.title = "Mostrar Menu";
-		aonShowMenuButton.style.display = 'none';
-		aonShowMenu.appendChild(aonShowMenuButton);
-		this.appendChild(aonShowMenu);
 
+			let aonShowMenuButton = new AonIconButton();
+			aonShowMenuButton.id = this.AON_SHOW_MENU_BUTTON
+			aonShowMenuButton.icon = MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
+			aonShowMenuButton.noHover = true;
+			aonShowMenuButton.title = "Mostrar Menu";
+			aonShowMenuButton.style.display = 'none';
+			aonShowMenu.appendChild(aonShowMenuButton);
+			this.appendChild(aonShowMenu);
+		}
 		let aonHeader = new AonHeader();
 		aonHeader.id = this.AON_HEADER;
 		this.appendChild(aonHeader);
@@ -96,7 +98,7 @@ export class AonHome extends AonElement {
 			rootPanel.style.bottom = '60px';
 			let aonMobileMenu = this.getElement(this.AON_MOBILE_MENU);
 			if(aonMobileMenu) aonMobileMenu.style.height = '60px';
-		} else {
+		} else if(!LS.isNewTheme()){
 			let aonShowMenu = this.getElement(this.AON_SHOW_MENU);
 			aonShowMenu.style.display = bool ? 'block' : 'none';
 		}

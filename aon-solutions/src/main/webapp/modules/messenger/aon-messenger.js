@@ -1,7 +1,7 @@
 import { AonApplication } from '../../components/aon-application.js';
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
-import {Apps, getAppsByDur} from '../../services/app.js';
+import {Apps, MESSENGER, getAppsByDur} from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
@@ -368,7 +368,13 @@ export class AonMessenger extends AonElement {
 			}
 		});
 
-		this.getApplication().addSidenavOptions("MI BANDEJA", messengerOpts);
+		let data = {
+			id: "myInbox",
+			name: "Mi bandeja",
+			app: Apps.MESSENGER			
+		}
+
+		this.getApplication().addSidenavOptions2(data, messengerOpts);
 	}
 
 	inboxNavBarCau(){
@@ -397,7 +403,12 @@ export class AonMessenger extends AonElement {
 			}
 		];
 
-		this.getApplication().addSidenavOptions("BANDEJA", messengerOpts);
+		
+		this.getApplication().addSidenavOptions2({
+			id: 'inbox',
+			name: 'Bandeja',
+			app: Apps.MESSENGER			
+		}, messengerOpts);
 	}
 
 
@@ -437,13 +448,18 @@ export class AonMessenger extends AonElement {
 			},
 		];
 		
-		this.getApplication().addSidenavOptions(MSG.STATUS, messengerOpts);
+		this.getApplication().addSidenavOptions2({
+			id: CONSTANT.STATUS.initCap(),
+			name: MSG.STATUS,
+			app: Apps.MESSENGER			
+		}, messengerOpts);
 	}
 
     groupNavBar() {
 		this.getApplication().addSidenavOptions2({
 			id: 'Workgroup',
-			name: MSG.WORKGROUP
+			name: MSG.WORKGROUP,
+			app: Apps.MESSENGER			
 		}, []);
 	}
 
@@ -453,14 +469,16 @@ export class AonMessenger extends AonElement {
 		
 		this.getApplication().addSidenavOptions2({
 			id: TAG_TYPE.TASK_LABEL,
-			name: this.cau ? MSG.APPLICATION : MSG.TAG
+			name: this.cau ? MSG.APPLICATION : MSG.TAG,
+			app: Apps.MESSENGER
 		}, [], fnTag);
 
 		if(!this.cau){
 			const fnTagType = this.getDur().isMessengerManager() ? () => this.dialogTag({}, TAG_TYPE.TASK_TYPE) : null; 
 			this.getApplication().addSidenavOptions2({
 				id: TAG_TYPE.TASK_TYPE,
-				name: MSG.TYPE
+				name: MSG.TYPE,
+				app: Apps.MESSENGER
 			}, [], fnTagType);
 		}
 	}
@@ -534,7 +552,8 @@ export class AonMessenger extends AonElement {
 
 			this.getApplication().addSidenavOptionsList({
 				id: 'Workgroup',
-				name: MSG.WORKGROUP.toUpperCase()
+				name: MSG.WORKGROUP.toUpperCase(),
+				app: MESSENGER
 			}, options);
 		});
 	}
@@ -587,7 +606,8 @@ export class AonMessenger extends AonElement {
 
 			this.getApplication().addSidenavOptionsListValue({
 				id: type,
-				name: MSG.TAG.toUpperCase()
+				name: MSG.TAG.toUpperCase(),
+				app: MESSENGER
 			}, option);
 		});
 	}
@@ -621,7 +641,8 @@ export class AonMessenger extends AonElement {
 				}
 				this.getApplication().addSidenavOptionsListValue({
 					id: type,
-					name: MSG.TYPE.toUpperCase()
+					name: MSG.TYPE.toUpperCase(),
+					app: MESSENGER
 				}, option);
 			});
 		}

@@ -382,6 +382,12 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 				} catch (Exception e) {
 					errors.put(createError(barCode, domainCompany.getDomain().getDomainType(), null, "No se pudo guardar [" + e.getMessage() + "]"));
 				}
+			} else {
+				if(AonStringUtils.equalsIgnoreCase(quantity, "0") || AonStringUtils.equalsIgnoreCase(quantity, "0.00")) {
+					AON.deleteRItem(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(ritem.getId()));
+				} else {
+					AON.updateRItemQuantity(api.getDomain(), api.getUser(), quantity, f -> f.getIdProperty().eq(ritem.getId()));	
+				}
 			}
 		} else {
 			errors.put(createError(barCode, domainCompany.getDomain().getDomainType(), null, "Item no encontrado"));
@@ -415,6 +421,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 										api.getUser().getLogin(),
 										f -> f.getRegistryProperty().eq(customerId).and(f.getItemProperty().eq(itemId))
 								);
+								
 								if (ritem == null || ritem.getId() == null) {
 									RegistryItem newRitem = new RegistryItem()
 											.setDomain(api.getDomain().getId())
@@ -590,6 +597,13 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 					AON.saveRItem(api.getDomain(), api.getUser(), newRitem);								
 				} catch (Exception e) {
 //					throw new AonApiException("No se pudo guardar [" + e.getMessage() + "]");
+				}
+			} else {
+				if(AonStringUtils.equalsIgnoreCase(quantity, "0") || AonStringUtils.equalsIgnoreCase(quantity, "0.00")) {
+					AON.deleteRItem(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(ritem.getId()));
+				} else {
+					ritem.setQuantity(quantity);
+					AON.saveRItem(api.getDomain(), api.getUser(), ritem);		
 				}
 			}
 		} else {

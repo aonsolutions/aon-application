@@ -5,13 +5,15 @@
 
 .centerFlex {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .flexRow {
   display: flex;
   flex-direction: row;
+  gap: 1rem;
 }
 
 .flexColumn {

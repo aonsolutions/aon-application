@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ItemAutoComplete;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class ItemDAO {
@@ -342,6 +343,16 @@ public class ItemDAO {
 			.execute();
 		}
 	}
+	
+	public static void updateRItemQuantity(AONContext ctx, String quantity, RegistryItemFilter filter) {
+		if (AonStringUtils.isNotBlank(quantity)) {			
+			ctx.getDslContext()
+			.update(RITEM)
+			.set(RITEM.QUANTITY, quantity)
+			.where(RITEM_PROPERTIES.getConditions(filter))
+			.execute();
+		}
+	}
 
 	private static RegistryItem[] setRItem(AONContext ctx, RegistryItem ...ritems) {
 		ctx.checkWrite();
@@ -360,6 +371,9 @@ public class ItemDAO {
 			if(opt.isPresent()) { 		//------------------UPDATE ----------
 				RitemRecord ritemRecord = opt.get();
 				ritem.setId(ritemRecord.getId());
+				
+				ritemRecord.setQuantity(ritem.getQuantity());
+				ritemRecord.update();
 				
 //				if(ritem.getPrice()!=null) {
 //					ritemRecord.set(RITEM.PRICE, ritem.getPrice());

@@ -1,21 +1,26 @@
 import { MSG } from '../../environments/environments.js';
+import Apps from '../../services/app.js';
 
 export const DocumentalSidenav = {
   DOCUMENTS: {
     id: 'Documents',
-    name: MSG.DOCUMENTS.toUpperCase()
+    name: MSG.DOCUMENTS.toUpperCase(),
+    app: Apps.DOCUMENTAL
   },
   TYPES: {
     id: 'Types',
-    name: MSG.TYPES.toUpperCase()
+    name: MSG.TYPES.toUpperCase(),
+    app: Apps.DOCUMENTAL
   },
   CATEGORIES: {
     id: 'Categories',
-    name: MSG.CATEGORIES.toUpperCase()
+    name: MSG.CATEGORIES.toUpperCase(),
+    app: Apps.DOCUMENTAL
   },
   TAGS: {
     id: 'Tags',
-    name: MSG.TAGS.toUpperCase()
+    name: MSG.TAGS.toUpperCase(),
+    app: Apps.DOCUMENTAL
   }
 }
 

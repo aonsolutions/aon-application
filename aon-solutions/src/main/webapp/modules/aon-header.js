@@ -247,10 +247,10 @@ export class AonHeader extends AonElement {
 
 				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 				aonHeaderCompany.style.display = 'none';
-
-				let aonShowMenu = this.getElement('aonShowMenu');
-				aonShowMenu.style.display = 'none';
-
+				if(!LS.isNewTheme()){
+					let aonShowMenu = this.getElement('aonShowMenu');
+					aonShowMenu.style.display = 'none';
+				}
 				let aonMenu = this.getElement('aonMenu');
 				aonMenu.removeAttribute('company');
 				aonMenu.removeAttribute('user');

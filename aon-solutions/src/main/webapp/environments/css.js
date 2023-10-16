@@ -5,6 +5,7 @@ export const AON_UL = 'aonUl';
 export const AON_APP_LI = 'aonAppLi';
 export const AON_LINK = 'aonLink';
 export const AON_BUTTON = 'aonButton';
+export const AON_DASHBOARD_BUTTON = 'aonDashboardButton';
 export const AON_COLOR_ICON = 'aonColorIcon';
 export const AON_COLOR_GRAY = 'aonColorGray';
 export const AON_COLOR_PRIMARY = 'aonColorPrimary';
@@ -69,6 +70,7 @@ export const AON_CONTENT_BETA = 'aonContentBeta';
 export const AON_SUB_CONTENT = 'aonSubContent';
 export const AON_SCROLL = 'aonScroll';
 export const AON_APP_MENU_SIDENAV_LIST = 'aonAppMenuSidenavList';
+export const AON_APP_MENU_SIDENAV_LIST_BETA = 'aonAppMenuSidenavListBeta';
 export const AON_VERTICAL_MIDDLE = 'aonVerticalMiddle';
 export const AON_VERTICAL_CENTER = 'aonVerticalCenter';
 export const AON_CLIP = 'aonClip';
@@ -83,6 +85,7 @@ export const AON_CARD = 'aonCard';
 export const AON_CARD_TITLE = 'aonCardTitle';
 export const AON_CARD_TITLE_SECTION = 'aonCardTitleSection';
 export const AON_CARD_TITLE_SECTION_END = 'aonCardTitleSectionEnd';
+export const AON_CARD_TOTAL = 'aonCardTotal';
 export const AON_DIALOG = 'aonDialog';
 export const AON_DIALOG_CONTENT = 'aonDialogContent';
 export const AON_DIALOG_MENU_CONTENT = 'aonDialogMenuContent';
@@ -112,6 +115,7 @@ export const MATERIAL_SCROLL = 'materialScroll';
 export const AON_IMG_COMMENT = 'aonImgComment';
 export const AON_UPLOAD = 'aonUpload';
 export const AON_UPLOAD_LABEL = 'aonUploadLabel';
+export const AON_NEW_UPLOAD_LABEL = 'aonNewUploadLabel';
 export const AON_LIST_GROUP = 'aonListGroup';
 export const AON_LIST_GROUP_TOP = 'aonListGroupTop';
 export const AON_LIST_GROUP_ITEM = 'aonListGroupItem';
@@ -173,6 +177,16 @@ export const AON_INPUT_BOX_LABEL_SPAN_ERROR = 'aonInputBoxLabelSpanError'
 export const AON_INPUT_MSG = 'aonInputMsg';
 export const AON_INPUT_MSG_ERROR = 'aonInputMsgError';
 
+// aon-access-card.css
+export const AON_ACCESS_CARD = 'aonAccessCard';
+export const AON_ACCESS_CARD_CONTENT = 'aonAccessCardContent';
+export const AON_ACCESS_CARD_LINE = 'aonAccessCardLine';
+export const AON_ACCESS_CARD_TEXT_DIV = 'aonAccessCardTextDiv';
+export const AON_ACCESS_CARD_TEXT = 'aonAccessCardText';
+
+export const AON_DASHBOARD = 'aonDashboard';
+export const AON_UPLOAD_PANEL = 'aonUploadPanel';
+export const AON_FAST_ACCESS = 'aonFastAccess';
 
 // aon-input.css
 

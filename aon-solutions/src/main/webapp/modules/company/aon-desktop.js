@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import { Apps, getAppsByDur} from  '../../services/app.js';
+import { Apps, ClassicApps, getAppsByDur} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -15,6 +15,7 @@ import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
 import * as OPTION from '../invoice/InvoiceOptions.js';
 import * as GWT from "../../gwt/gwt.js";
+import * as LS from "../../services/localStorageService.js";
 import { TASK_SOURCE } from '../messenger/MessengerEnums.js';
 import { AonFiscal } from '../fiscal/aon-fiscal.js';
 import { AonLaboral } from '../laboral/aon-laboral.js';
@@ -27,6 +28,16 @@ import { getNoteCount } from '../../services/noteService.js';
 import { AonAccounting } from '../accounting/aon-accounting.js';
 import { Attach } from '../../models/Attach.js';
 import { AonWarehouse } from '../warehouse/aon-warehouse.js';
+import { AonTab } from '../../components/aon-tab.js';
+import { AonNewUpload } from '../../components/aon-new-upload.js'
+import { AonDashboardButton } from '../../components/aon-dashboard-button.js';
+import { AonCard } from '../../components/aon-card.js';
+import { AonDashboardGraphicsTrial } from '../accounting/aon-graphics-dashboard-trial.js';
+import { AonCompanyDashboardCostsList } from '../laboral/company/aon-company-dashboard-costs-list.js';
+import { AonFiscalCard } from '../fiscal/aon-fiscal-card.js';
+import { AonAccessCard } from '../../components/aon-access-card.js';
+import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
+import { AonPayrollCard } from '../laboral/payroll/aon-payroll-card.js';
 
 export class AonDesktop extends AonElement {
 
@@ -59,6 +70,9 @@ export class AonDesktop extends AonElement {
 		this.INPUT_INVOICE_FILE = this.id + 'InputInvoiceFile';
 		this.INPUT_DOCUMENT_FILE = this.id + 'InputDocumentFile';
 		this.SIDENAV_ACTIVITY_SUMMARY = [];
+		this.TIMECONTROL_TITLE = this.id + 'TimecontrolTitle';
+		this.TIMECONTROL_SIGN = this.id + 'TimecontrolSign';
+	
 	}	
 
 	getDur() {
@@ -90,7 +104,9 @@ export class AonDesktop extends AonElement {
 		let divLogo = this.createElement(TAG.DIV);
 		divLogo.id = this.id + 'Logo';
 		aonDesktop.getSidenav().appendChild(divLogo);
-
+		if(LS.isNewTheme()) {
+			aonDesktop.getSidenav().style.display = 'none';
+		}
 		let filter = {
 			attachType: 'registry',
 			attachModule: company.registry,
@@ -251,7 +267,7 @@ export class AonDesktop extends AonElement {
 		if(classicOptions.length > 0)
 			aonDesktop.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicOptions);
 
-		if(this.getDur().isTimecontrol()) {
+		if(this.getDur().isTimecontrol() && !LS.isNewTheme()) {
 			getTimeControl().then(r => {
 				let aonSign = new AonSign();
 				aonDesktop.addSidenavWidget(MSG.TIMECONTROL.toUpperCase(), aonSign);
@@ -260,17 +276,249 @@ export class AonDesktop extends AonElement {
 				aonHeader.timeControlStatus(r);
 			});
 		}
-		let div = this.createElement(TAG.DIV);
-		div.style.marginLeft = '100px';
-		div.style.marginRight = '100px';
-		aonDesktop.setContent(div);
 
-		div.appendChild(this.buildTitle(MSG.AVAILABLE.toUpperCase()));
+		// Content
+		let content = this.createElement(TAG.DIV);
+		content.id = "content";
+		content.style.margin = '0 1rem';
+		aonDesktop.setContent(content);
+
+		// Content data
+		let contentData = this.createElement(TAG.DIV);
+		contentData.id = "contentData";
+		contentData.style.margin = '1rem';
+
+		if(LS.isNewTheme()){
+			// Intiliaze App List
+			content.appendChild(contentData);
+			this.createDashboard(contentData, company);
+		} else {
+			// Intiliaze App List
+			this.createAppList(contentData, company);
+			content.appendChild(contentData);
+		}
+	}
+
+	uploadDocumentsDesktop(input, files){
+		uploadDocuments(input, files, this.getDur());
+	}
+
+	uploadInvoiceDesktop(input, files){
+		uploadInvoices(input, files);
+	}
+
+	createDashboard(parent, company){
+		// Clear parent
+		while (parent.lastElementChild) {
+			parent.removeChild(parent.lastElementChild);
+		}
+
+		let dashboard = this.createElement(TAG.DIV);
+		dashboard.id = "dashboard";
+		dashboard.className = CSS.AON_DASHBOARD;
+		parent.appendChild(dashboard);
+
+		// Upload Panel
+		let upload = this.createElement(TAG.DIV);
+		upload.className = CSS.AON_UPLOAD_PANEL;
+		upload.id = "uploads";
+		dashboard.appendChild(upload);
+
+		let uploadDoc = new AonNewUpload();
+		uploadDoc.id = "docUpload";
+		uploadDoc.setMessage("Subir documentación");
+		uploadDoc.setType("Documental");
+		upload.appendChild(uploadDoc);
+
+		let uploadInv = new AonNewUpload();
+		uploadInv.id = "factUpload";
+		uploadInv.setMessage("Subir factura");
+		uploadInv.setType("Invoice");
+		upload.appendChild(uploadInv);
+
+		// Fast Access Buttons Panel
+		let fastAccessButtons = this.createElement(TAG.DIV);
+		fastAccessButtons.className = CSS.AON_FAST_ACCESS;
+		fastAccessButtons.id = "fastAccessButtons";
+		dashboard.appendChild(fastAccessButtons);
+
+		let newInvoice = new AonDashboardButton();
+		newInvoice.setId('newInvoice');
+		newInvoice.setIcon('add');
+		newInvoice.setTitle('NUEVA FACTURA');
+		newInvoice.addEventListener(EVENT.CLICK, () => {
+			this.addInvoice(newInvoice);
+		});
+		fastAccessButtons.appendChild(newInvoice);
+
+		let newRequest = new AonDashboardButton();
+		newRequest.setId('newRequest');
+		newRequest.setIcon('add');
+		newRequest.setTitle('CREAR CONSULTA')
+		newRequest.addEventListener(EVENT.CLICK, () => {
+			let aonMessengerChat = new AonMessenger();	
+			aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+			this.rootPanel(aonMessengerChat);
+		});
+		fastAccessButtons.appendChild(newRequest);
+
+		// Cards Panel
+		let cardsPanel = this.createElement(TAG.DIV);
+		cardsPanel.className = CSS.FLEX_ROW;
+		cardsPanel.style.flexWrap = 'wrap';
+		cardsPanel.id = "cardsPanel";
+		dashboard.appendChild(cardsPanel);
+
+		// Timecontrol
+		if(this.getDur().isTimecontrol()) {
+			let timecontrolCard = new AonCard();
+			timecontrolCard.id = CONSTANT.TIMECONTROL;
+			timecontrolCard.title = MSG.TIMECONTROL;
+			timecontrolCard.setApp(Apps.TIMECONTROL);
+			cardsPanel.appendChild(timecontrolCard);
+			timecontrolCard.firstChild.style.marginLeft = '0';
+
+			getTimeControl().then(r => {
+				let div = this.createElement(TAG.DIV);
+				timecontrolCard.setContent(div)
+				let aonSign = new AonSign();
+				div.appendChild(new AonStatistics());
+				div.appendChild(aonSign);
+
+				aonSign.buildSignin(r);
+				let aonHeader = this.getElement('aonHeader');
+				aonHeader.timeControlStatus(r);
+				timecontrolCard.firstChild.style.minWidth = "350px";
+				timecontrolCard.firstChild.style.minHeight = "420px";
+			});
+
+		}
+		
+		if(this.getDur().isAccounting()) {
+			// PyG Card
+			let pygCard = new AonCard();
+			pygCard.id = "pyg";
+			pygCard.title = "Pérdidas y Ganancias";
+			pygCard.setApp(Apps.ACCOUNTING);
+			cardsPanel.appendChild(pygCard);
+
+			pygCard.setContent(new AonDashboardGraphicsTrial());
+			pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter PyG")});
+			pygCard.firstChild.style.marginLeft = '0';
+			pygCard.firstChild.style.minHeight = "420px";
+			pygCard.firstChild.children.item(1).style.height = "315px";
+		}
+
+		if(this.getDur().isPayrollManager()) {
+			// LABORAL
+			let payrollCard = new AonCard();
+			payrollCard.id = CONSTANT.PAYROLL;
+			payrollCard.title = MSG.COMPANY_COSTS;
+			payrollCard.setApp(Apps.PAYROLL);
+			cardsPanel.appendChild(payrollCard);
+
+			payrollCard.setContent(new AonCompanyDashboardCostsList());
+			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Payroll")});
+			payrollCard.firstChild.style.marginLeft = '0';
+			payrollCard.firstChild.style.minHeight = "420px";
+			payrollCard.firstChild.children.item(1).style.height = "315px";
+		} else if(this.getDur().isPayroll()) {
+			// TODO CARD DE NOMINAS.
+			// Nominas
+			let payrollCard = new AonCard();
+			payrollCard.id = "payroll";
+			payrollCard.title = "Nóminas";
+			payrollCard.setApp(Apps.PAYROLL);
+			cardsPanel.appendChild(payrollCard);
+
+			let aonPayrollCard = new AonPayrollCard();
+			payrollCard.setContent(aonPayrollCard);
+			
+			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Fiscal")});
+			payrollCard.firstChild.style.marginLeft = '0';
+			payrollCard.firstChild.style.minWidth = "350px";
+			payrollCard.firstChild.style.minHeight = "420px";
+			payrollCard.firstChild.children.item(1).style.height = "315px";
+		}
+
+		if(this.getDur().isFiscal()) {
+			// Impuestos
+			let fiscalCard = new AonCard();
+			fiscalCard.id = "fiscal";
+			fiscalCard.title = "Impuestos";
+			fiscalCard.setApp(Apps.FISCAL);
+			cardsPanel.appendChild(fiscalCard);
+
+			let aonFiscalCard = new AonFiscalCard();
+			fiscalCard.setContent(aonFiscalCard);
+			
+			let spanPeriod = this.createElement(TAG.SPAN);
+			spanPeriod.style.fontSize =  "1rem";
+			spanPeriod.style.color = "#d2d2d6";
+			spanPeriod.style.fontWeight = "500";
+			spanPeriod.innerHTML = aonFiscalCard.period;
+			fiscalCard.addSection2(spanPeriod);
+			
+			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Fiscal")});
+			fiscalCard.firstChild.style.marginLeft = '0';
+			fiscalCard.firstChild.style.minWidth = "350px";
+			fiscalCard.firstChild.style.minHeight = "420px";
+			fiscalCard.firstChild.children.item(1).style.height = "315px";
+		}
+
+
+		// Fast Access Panel
+		if(company.parentId || company.type !== 'CONSULTANCY'){
+
+			let fastAccessPanel = this.createElement(TAG.DIV);
+			fastAccessPanel.className = CSS.FLEX_ROW;
+			fastAccessPanel.style.flexWrap = 'wrap';
+			fastAccessPanel.id = "fastAccessPanel";
+			dashboard.appendChild(fastAccessPanel);
+
+			for (let key in Apps){
+				const app = Apps[key];
+				if(this.isApp(app)) {
+					this.addAccess(app, fastAccessPanel);
+				}
+			}
+			for(let key2 in ClassicApps) {
+				const app = ClassicApps[key2];
+				if(this.isApp(app)) {
+					this.addAccess(app, fastAccessPanel);
+				}
+			}
+
+		}
+	}
+
+	addAccess(app, parent){
+		// App Access
+		let appAccess = new AonAccessCard();
+		appAccess.id = app.title;
+		parent.appendChild(appAccess);
+		appAccess.addContent({
+			title: app.title ? app.title : "No definido",
+			icon: app.icon,
+			logo: app.logo,
+			color: app.color || "#000000",
+			colorRGBA: app.backgroundColor || "transparent"
+		}, () => this.appSelection(app.app));
+	}
+
+	createAppList(parent, company){
+		// Clear parent
+		while (parent.lastElementChild) {
+			parent.removeChild(parent.lastElementChild);
+		}
+
+		let appsList = this.createElement(TAG.DIV);
+		appsList.id = "apps"
+		parent.appendChild(appsList);
 
 		let ul = this.createElement(TAG.UL);
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.AON_LIST_GROUP);
-
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 			
@@ -292,13 +540,16 @@ export class AonDesktop extends AonElement {
 		} else {
 			let li = this.createElement(TAG.LI);
 			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
-			li.classList.add(CSS.AON_APP_LI);
+			if(!LS.isNewTheme()) {
+				li.classList.add(CSS.AON_APP_LI);
+			}
 			li.style.borderRight = '0px';
 			li.style.borderLeft = '0px';
 			li.style.cursor = 'pointer';
 			li.addEventListener(EVENT.CLICK, () => {
 				this.rootPanelHtml('<aon-configuration></aon-configuration>');
 			});
+			
 			let span = this.createElement(TAG.SPAN);
 			span.style.margin = '20px';
 
@@ -322,7 +573,7 @@ export class AonDesktop extends AonElement {
 			li.appendChild(span);
 			ul.appendChild(li);
 		}
-		div.appendChild(ul);
+		appsList.appendChild(ul);
 	}
 
 	openFirstApp(dur){
@@ -352,7 +603,9 @@ export class AonDesktop extends AonElement {
 			ul.appendChild(li)
 			li.id = this.AON_DESKTOP + app.app.initCap();
 			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
-			li.classList.add(CSS.AON_APP_LI);
+			if(!LS.isNewTheme()) {
+				li.classList.add(CSS.AON_APP_LI);
+			}
 			li.style.borderRight = '0px';
 			li.style.borderLeft = '0px';
 			li.style.cursor = 'pointer';
@@ -361,6 +614,17 @@ export class AonDesktop extends AonElement {
 				this.appSelection(app.app);
 				this.appOption = false
 			});
+			if(LS.isNewTheme()) {
+
+				li.addEventListener(EVENT.MOUSEOVER, () => {
+					li.style.backgroundColor = app.backgroundColor || '#eaf1fb';
+				});
+
+				li.addEventListener(EVENT.MOUSELEAVE, () => {
+					li.style.backgroundColor = 'transparent';
+				});
+			}
+
 			let span = this.createElement(TAG.SPAN);
 			span.style.margin = '20px';
 
@@ -446,6 +710,7 @@ export class AonDesktop extends AonElement {
 
 			span.appendChild(buttons);
 			li.appendChild(span);
+
 			if (app.options && app.options.upload) {
 				li.addEventListener(EVENT.DRAGOVER, (event) => {
 					event.preventDefault();
@@ -538,6 +803,22 @@ export class AonDesktop extends AonElement {
 				case Apps.WAREHOUSE.app:
 					this.rootPanel(new AonWarehouse());
 					break;
+				case ClassicApps.AON_SOLUTIONS.app:
+					open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'));
+					break;
+				case ClassicApps.BIDOQ.app:
+					getAccessBidoq().then(r => {
+						const {datos} = r;
+						if(datos && datos.ruta) {
+							open(datos.respuesta);
+						} else {
+							open('https://mispapeles.es/');
+						}
+					});
+					break;
+				case ClassicApps.SELFCONTA.app:
+					open('https://mispapeles.es/selfconta/')
+					break;
 			}
 	}
 
@@ -568,6 +849,12 @@ export class AonDesktop extends AonElement {
 		else if(Apps.WAREHOUSE.app === app.app){
 			const domain = this.getDur().getDomain();
 			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
+		} else if(ClassicApps.AON_SOLUTIONS.app === app.app){
+			return this.getDur().isAon();	
+		} else if(ClassicApps.BIDOQ.app === app.app){
+			return this.getDur().isBidoq();	
+		} else if(ClassicApps.SELFCONTA.app === app.app){
+			return this.getDur().isSelfconta();	
 		} else return false;
 	}
 

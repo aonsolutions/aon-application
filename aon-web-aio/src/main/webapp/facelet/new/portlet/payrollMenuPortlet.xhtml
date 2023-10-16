@@ -1,0 +1,512 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+>
+	<aon:div id="payrollMenuBar" style="display:none" styleClass="aon-payroll-menu-bar" >
+	
+		<!--
+			SALARIES 
+		-->
+		<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+			
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:collapseMenuBar(this)"
+			rendered="#{actionDenied.renderedGroup('group_main_payroll')}">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.payroll_salary_menu_group}" />
+			</aon:div>
+			<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+				<aon:div styleClass="aon-direct-access-list">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="gwt_employee" 
+							rendered="#{actionDenied.renderedOption('gwt_employee_tree')}"
+							action="gwt_employee_tree"
+							target="gwt">
+							<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
+							<aon:actionListener method="#{enterprise.onEditSearch}" />
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="account_tree" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.menu_integral}" />
+						</aon:commandLink>
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="gwt_main_contrata"
+							rendered="#{actionDenied.renderedOption('gwt_main_contrata')}" 
+							action="gwt_main_contrata"
+							title="#{bundle.payroll_contract_module}"
+							target="gwt">
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="group" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_contract_module}" />
+						</aon:commandLink>
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="gwt_main_it" 
+							rendered="#{actionDenied.renderedOption('gwt_main_it')}"
+							action="gwt_main_it"
+							title="#{bundle.payroll_contractLeave_module_new}"
+							target="gwt">
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="personal_injury" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_contractLeave_module_new}" />
+						</aon:commandLink>
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="gwt_agreement"
+							rendered="#{actionDenied.renderedOption('gwt_main_agreement')}"
+							action="gwt_main_agreement"
+							title="#{bundle.payroll_agreement_module}"
+							target="gwt">
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="handshake" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_agreement_module}" />
+						</aon:commandLink>
+					</aon:div>	
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">		
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="gwt_calculator"
+								rendered="#{actionDenied.renderedOption('gwt_main_calculator')}"
+								action="gwt_main_calculator"
+								target="gwt">
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="calculate" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.menu_main_calculator}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:if>
+	
+				</aon:div>
+			</aon:div>
+			
+		</aon:if>
+	
+		<aon:if test="#{actionDenied.renderedGroup('group_seguridad_social')}" >
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:#{!domainSwitcher.domainManagementAvailable ? 'expand' : 'collapse' }MenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.payroll_ss_menu_group}" />
+			</aon:div>
+	
+			<aon:div styleClass="aon-direct-access-list #{!domainSwitcher.domainManagementAvailable ? 'collapsed' : '' }">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt-creta-payroll"
+						rendered="#{actionDenied.renderedOption('gwt_main_creta')}"
+						action="gwt_main_creta"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_creta_module}" />
+						</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt-cra-payroll"
+						rendered="#{actionDenied.renderedOption('gwt_main_cra')}"
+						action="gwt_main_cra"
+						title="#{bundle.payroll_cra_module}">											
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_cra_module}" />
+						</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="contractBatch-payroll"
+						rendered="#{actionDenied.renderedOption('contractBatch_search-payroll')}"
+						action="contractBatch_search-payroll"
+						actionListener="#{contractBatch.onEditSearch}"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_contrata_contractBatch_module}" />
+						</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt-afi-payroll"
+						rendered="#{actionDenied.renderedOption('gwt_main_afi')}"
+						action="gwt_main_afi"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_afi_module}" />
+						</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="leaveBatch-payroll"
+						rendered="#{actionDenied.renderedOption('leaveBatch_search-payroll')}"
+						action="leaveBatch_search-payroll"
+						actionListener="#{leaveBatch.onEditSearch}"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_leaveBatchWizard_module}" />
+						</aon:commandLink>
+				</aon:div>							 
+			</aon:div>
+		</aon:if>
+		
+		<aon:if test="#{actionDenied.renderedGroup('group_payroll_contrata_batch')}">
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:#{!domainSwitcher.domainManagementAvailable ? 'expand' : 'collapse' }MenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.payroll_sepe_menu_group}" />
+			</aon:div>
+	
+			<aon:div styleClass="aon-direct-access-list #{!domainSwitcher.domainManagementAvailable ? 'collapsed' : '' } ">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="contrataBatch-payroll"
+						rendered="#{actionDenied.renderedOption('contrataBatch_search-payroll')}"
+						action="contrataBatch_search-payroll"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.sepe_contrataBatch_module}" />
+						<aon:actionListener method="#{contrataBatch.onEditSearch}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="certifica2Batch-payroll"
+						rendered="#{actionDenied.renderedOption('certifica2Batch_search-payroll')}"
+						action="certifica2Batch_search-payroll"
+						actionListener="#{certifica2Batch.onEditSearch}"
+					>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{bundle.sepe_certifica2Batch_module}" />
+					</aon:commandLink>
+				</aon:div>
+			</aon:div>
+		</aon:if>
+	
+		<aon:if test="#{domainSwitcher.domainManagementAvailable and actionDenied.renderedGroup('group_payroll_contrata_auxiliaries2')}">
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.aon_auxiliaries}" />
+			</aon:div>
+	
+			<aon:div styleClass="aon-direct-access-list collapsed">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink
+						target="gwt" 
+						id="gwt_agreement2"
+						rendered="#{actionDenied.renderedOption('gwt_main_agreement')}"
+						action="gwt_main_agreement"
+						title="#{bundle.payroll_agreement_module}"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_agreement_module}" />
+						</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="contractMode-payroll2"
+						rendered="#{actionDenied.renderedOption('contractOption_list-payroll')}"
+						action="contractOption_list-payroll"
+						actionListener="#{contractModel.onReset}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_contract_mode_module}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="trainingCenter-payroll2"
+						rendered="#{actionDenied.renderedOption('trainingCenter_list-payroll')}"
+						action="trainingCenter_list-payroll"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_trainingCenter_module}" />
+						</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="holiday-payroll2" 
+						rendered="#{actionDenied.renderedOption('holiday_search')}"
+						action="holiday_search"
+						actionListener="#{holiday.onEditSearch}"
+						>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.calendar_holidays}" />
+						</aon:commandLink>
+				</aon:div>
+			</aon:div>
+		</aon:if>		
+	
+		<aon:if test="#{actionDenied.renderedGroup('group_process_payroll')}" >
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.aon_processes}" />
+			</aon:div>
+	
+			<aon:div styleClass="aon-direct-access-list collapsed">
+				<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="gwt_calculator2"
+							rendered="#{actionDenied.renderedOption('gwt_main_calculator')}"
+							action="gwt_main_calculator"
+							target="gwt">
+									<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+									<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.menu_main_calculator}" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:if>
+				
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_salary_print"
+						rendered="#{actionDenied.renderedOption('gwt_main_salary_print')}"
+						action="gwt_main_salary_print"
+						title="#{bundle.payroll_salaryPrint_module}"
+						target="gwt">
+									<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+									<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_salaryPrint_module}" />
+					</aon:commandLink>
+				</aon:div>	
+				
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="reportPrint-payroll"
+						rendered="#{actionDenied.renderedOption('reportPrint_search-payroll')}"
+						action="reportPrint_search-payroll"
+						actionListener="#{reportPrint.onInit}"
+						>
+									<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+									<aon:outputText styleClass="aon-left-menu-bar-text" value=" Listado de costes" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_activitySummary"
+						rendered="#{actionDenied.renderedOption('gwt_activity_summary')}"
+						action="gwt_activity_summary"
+						target="gwt">
+									<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+									<aon:outputText styleClass="aon-left-menu-bar-text" value=" Resumen de actividad" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="gwt_massive_fie"
+							rendered="#{actionDenied.renderedOption('gwt_main_massive_fie')}"
+							action="gwt_main_massive_fie"
+							title="#{bundle.payroll_massive_fie_module}"
+							target="gwt">
+									<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+									<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_massive_fie_module}" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:if>
+				
+				<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="gwt_contractMedia"
+							rendered="#{actionDenied.renderedOption('gwt_contract_media')}"
+							action="gwt_contract_media"
+							target="gwt">
+									<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+									<aon:outputText styleClass="aon-left-menu-bar-text" value=" Informe de personal asalariado" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:if>
+				
+				<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="gwt_massive_contracts"
+							rendered="#{actionDenied.renderedOption('gwt_main_massive_contracts')}"
+							action="gwt_main_massive_contracts"
+							title="#{bundle.payroll_massive_contracts_module}"
+							target="gwt">
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_massive_contracts_module}" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:if>
+			</aon:div>
+		</aon:if>
+	
+		<aon:if test="#{actionDenied.renderedGroup('group_configuration_utilities')}" >
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.aon_utilities}" />
+			</aon:div>
+	
+			<aon:div styleClass="aon-direct-access-list collapsed">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_main_certificates" 
+						rendered="#{actionDenied.renderedOption('gwt_main_certificates')}"
+						action="gwt_main_certificates"
+						title="#{bundle.certificate_management_menu}"
+						target="gwt">
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.certificate_management_menu}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_main_trash"
+						rendered="#{actionDenied.renderedOption('gwt_main_trash')}"
+						action="gwt_main_trash"
+						target="gwt">
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.trash}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:if test="#{domainSwitcher.betaUser}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="gwt_main_ccc" 
+							rendered="#{actionDenied.renderedOption('gwt_main_ccc')}"
+							action="gwt_main_ccc"
+							title="#{bundle.payroll_ccc_maintenance}"
+							target="gwt">
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_ccc_maintenance}" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:if>
+				<aon:if test="#{domainSwitcher.comunica and domainSwitcher.childDomain}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="aon_comunica" 
+							rendered="#{actionDenied.renderedOption('portal_comunica')}"
+							title="Comunic@"
+							action="portal_comunica" >
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" Comunic@" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:if>
+			</aon:div>
+		</aon:if>
+	
+		<!--
+			HACIENDA 
+		 -->
+		<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="Modelos tributarios" />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list collapsed">				
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="irpfData-payroll"
+						rendered="#{actionDenied.renderedOption('irpfData_search-payroll')}"
+						action="irpfData_search-payroll" style="white-space: nowrap;"
+						actionListener="#{irpfData.onEditSearch}"
+						title="#{bundle.payroll_model_145_module}">
+						<aon:actionListener method="#{contract.onEditSearch}" />
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text"
+							style="white-space: normal;" 
+							value="Modelo 145" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="mod111-payroll" 
+						rendered="#{actionDenied.renderedOption('gwt_mod111-payroll')}"
+						action="gwt_mod111-payroll" style="white-space: nowrap;"
+						title="#{bundle.fiscal_model_111_module}">
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text"
+							style="white-space: normal;" 
+							value="Modelo 111" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_mod190-payroll"
+						rendered="#{actionDenied.renderedOption('gwt_mod190-payroll')}"
+						action="gwt_mod190-payroll" style="white-space: nowrap;"
+						title="#{bundle.fiscal_model_190_module}">
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text"
+							style="white-space: normal;" 
+							value="Modelo 190" />
+					</aon:commandLink>
+				</aon:div>
+			</aon:div>
+
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="Gestión" />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list collapsed">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="fbatchPayment-payroll"
+						rendered="#{actionDenied.renderedOption('fbatch_search-Payroll')}"
+						action="fbatch_search-Payroll"
+						actionListener="#{fbatch.onEditSearchPayment}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_fbatch_payment_module}" />
+						<f:setPropertyActionListener target="#{fbatch.payroll}"
+							value="#{true}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="financePayment-payroll"
+						rendered="#{actionDenied.renderedOption('finance_search-Payroll')}"
+						action="finance_search-Payroll"
+						actionListener="#{finance.onEditSearchPayroll}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_finance_payment_module}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="expenseInvoice-payroll"
+						rendered="#{actionDenied.renderedOption('expenseInvoice_search-payroll')}"
+						action="expenseInvoice_search-payroll"
+						actionListener="#{expenseInvoice.onEditSearch}"
+						>
+									<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+									<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_expense_invoice_management_module}" />
+							</aon:commandLink>
+				</aon:div>
+			</aon:div>
+
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.aon_auxiliaries}" />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list collapsed">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="contractMode-payroll"
+						rendered="#{actionDenied.renderedOption('contractOption_list-payroll')}"
+						action="contractOption_list-payroll"
+						actionListener="#{contractModel.onReset}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_contract_mode_module}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="trainingCenter-payroll"
+						rendered="#{actionDenied.renderedOption('trainingCenter_list-payroll')}"
+						action="trainingCenter_list-payroll"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.payroll_trainingCenter_module}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="holiday-payroll" 
+						rendered="#{actionDenied.renderedOption('holiday_search')}"
+						action="holiday_search"
+						actionListener="#{holiday.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.calendar_holidays}" />
+					</aon:commandLink>
+				</aon:div>
+			</aon:div>
+		</aon:if>
+
+	</aon:div>
+</ui:composition>

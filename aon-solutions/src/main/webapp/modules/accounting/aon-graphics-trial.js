@@ -96,8 +96,10 @@ export class AonGraphicsTrial extends AonElement {
 
   buildPyGToolbar() {
     const toolbar = this.getElement(this.TOOLBAR);
-    toolbar.removeButtons();
-    toolbar.addButton2(ACTION.BACK, null);
+    if(toolbar){
+      toolbar.removeButtons();
+      toolbar.addButton2(ACTION.BACK, null);
+    }
   }
 
   async buildFilter() {

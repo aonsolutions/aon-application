@@ -5,9 +5,12 @@ import { AonCheckbox } from "./aon-checkbox.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
 import { AonIcon } from "./aon-icon.js";
 import { AonDateUtils } from "../modules/utils/AonDateUtils.js";
+import * as LS from "../services/localStorageService.js";
+import { formatNumber } from "../services/utils.js";
 
 
 export class AonTable extends AonElement {
+  app;
   columns;
   selected;
   selectedAll;
@@ -135,7 +138,7 @@ export class AonTable extends AonElement {
 
   }
 
-  addColumn(name, type, id, width) {
+  addColumn(name, type, id, width, textAlign) {
     if (this.hasAttribute("selectable")) {
       this.paintCheckboxHeader();
     }
@@ -143,7 +146,7 @@ export class AonTable extends AonElement {
     let th = this.createElement(TAG.TH);
     th.innerHTML = name;
     th.style.width = width;
-    this.columns.push({ name, type, id, width });
+    this.columns.push({ name, type, id, width, textAlign });
     header.appendChild(th);
   }
 
@@ -172,7 +175,17 @@ export class AonTable extends AonElement {
     let tr = this.createElement(TAG.TR);
     // tr.id = Math.random().toString(36).substring(7);
     tr.className ="aonTableTr";
-    tr.style.cursor = "pointer";
+    tr.style.cursor = "pointer";  
+    if(this.getApp() && LS.isNewTheme()) {
+      tr.addEventListener(EVENT.MOUSEOVER, () => {
+        tr.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb'; 
+      });
+
+      tr.addEventListener(EVENT.MOUSELEAVE, () => {
+        tr.style.backgroundColor = 'transparent'; 
+      });
+    }
+
     
     if(this.selectedColor){
       tr.addEventListener(EVENT.CLICK, () => this.addBackgroundTr(tr, "#d3e3fd"));
@@ -207,6 +220,7 @@ export class AonTable extends AonElement {
     this.columns.forEach((item, i) => {
       let td = this.createElement(TAG.TD);
       td.style.width = item.width;
+      td.style.textAlign = item.textAlign;
 
       let id = item.id;
       if ("option" === id && value[id]) {
@@ -283,6 +297,20 @@ export class AonTable extends AonElement {
           val = dateValue;
         }
         td.innerHTML = val;
+        td.addEventListener(EVENT.CLICK, fn);
+        if (contextMenu) {
+          td.addEventListener("contextmenu", () => {
+            let cb = this.getElement(checkBoxId + "Input");
+            if(cb && !cb.checked){
+              this.deselectAll();
+              cb.click();
+            } 
+          });
+          td.addEventListener("contextmenu", contextMenu);
+        }
+      } else if(item.type && item.type ==="number") {
+        let formatValue = formatNumber(value[id], 2, "EUR");
+        td.innerHTML = formatValue;
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
@@ -405,6 +433,14 @@ export class AonTable extends AonElement {
     } else if (!b && tr) {
       tr.remove();
     }
+  }
+
+  getApp() {
+    return this.app;
+  }
+
+  setApp(app) {
+    this.app = app;
   }
 
 }
