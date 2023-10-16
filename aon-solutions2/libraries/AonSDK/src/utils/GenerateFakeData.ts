@@ -238,17 +238,17 @@ export function generateData(){
         documents.add(new Document(MainFolders.PAPELERA + 'file6', 'file6', 6, 'application/pdf', new Date(), MainFolders.PAPELERA));
         documents.add(new Document(MainFolders.FISCAL + 'file7', 'file7', 6, 'image/png', new Date(), MainFolders.FISCAL));
         documents.add(new Document(MainFolders.FISCAL + 'file8', 'file8', 6, 'image/png', new Date(), MainFolders.FISCAL));
-        documents.add(new Document(MainFolders.LABORAL + 'file9', 
+        documents.add(new Document(MainFolders.LABORAL + 'file9',
             'file9', 6, 'application/pdf', new Date(), MainFolders.LABORAL + '/maria_rico_gómez'));
-        documents.add(new Document(MainFolders.LABORAL + 'file10', 
+        documents.add(new Document(MainFolders.LABORAL + 'file10',
             'file10', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
-        documents.add(new Document(MainFolders.LABORAL + 'file11', 
+        documents.add(new Document(MainFolders.LABORAL + 'file11',
             'file11', 6, 'application/pdf', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
-        documents.add(new Document(MainFolders.LABORAL + 'file12', 
+        documents.add(new Document(MainFolders.LABORAL + 'file12',
             'file12', 6, 'image/png', new Date(), MainFolders.LABORAL + '/11556837G'));
-        documents.add(new Document(MainFolders.LABORAL + 'file13', 
+        documents.add(new Document(MainFolders.LABORAL + 'file13',
             'file13', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
-        documents.add(new Document(MainFolders.LABORAL + 'file14', 
+        documents.add(new Document(MainFolders.LABORAL + 'file14',
             'file14', 6, 'application/pdf', new Date(), MainFolders.LABORAL + '/86638678R'));
         localDocuments.write(storableDocuments.getLocalStorage(), documents);
     }
@@ -321,7 +321,7 @@ export function generateData(){
         enterprises.add(new Enterprise('Pet Estudio', 'B16880148'));
         enterprises.add(new Enterprise('MENG SA', 'U14241855'));
         enterprises.add(new Enterprise('PORTABAGE SL', 'U53716270'));
-        enterprises.add(new Enterprise('Reséndez, Briones and Barragán', 'V74530528'));
+        enterprises.add(new Enterprise('Reséndez, Briones and Barragán', 'V74530528', '', 'C/Rosenda 23', 'España', 'Madrid'));
         enterprises.add(new Enterprise('Marrero S.A.', 'N3038065C'));
         enterprises.add(new Enterprise('Gallegos e Hijos S.L.', 'J85226413'));
         enterprises.add(new Enterprise('Aponte S.L.', 'S9668644I'));

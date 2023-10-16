@@ -26,9 +26,9 @@
     <app-grid-layout>
       <div content id="company" class="margin">
         <!-- pestaña datos empresa, apartado información general -->
-        <app-input-profile-company-information></app-input-profile-company-information>
+        <app-input-profile-company-information [enterprise]="enterprise"></app-input-profile-company-information>
         <!-- pestaña datos empresa, apartado datos contacto -->
-        <app-input-profile-company-data></app-input-profile-company-data>
+        <app-input-profile-company-data [enterprise]="enterprise"></app-input-profile-company-data>
       </div>
     </app-grid-layout>
   </div>

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { EnterpriseService } from '../../../../core/services/enterprise.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { IEnterprise } from 'libraries/AonSDK/src/aon';
 
 @Component({
   selector: 'app-input-profile-company-data',
@@ -7,19 +7,15 @@ import { EnterpriseService } from '../../../../core/services/enterprise.service'
   styleUrls: ['./input-profile-company-data.component.scss'],
 })
 export class InputProfileCompanyDataComponent implements OnInit {
-  enterprises: any[] = [];
+  @Input() enterprise: IEnterprise | null = null;
   emailList: string[] = ['', ''];
   addForm: number = 0;
   addMail: number = 0;
 
-  constructor(private enterpriseService: EnterpriseService) {
-    this.enterpriseService.getEnterprise('B16880148').then((enterprise) => {
-      this.enterprises.push(enterprise);
-    });
+  constructor() {
   }
 
-  ngOnInit(): void {
-
+  async ngOnInit() {
   }
 
   addEmail() {

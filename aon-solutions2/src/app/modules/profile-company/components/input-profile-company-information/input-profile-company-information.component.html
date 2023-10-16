@@ -4,7 +4,7 @@
 
 <hr />
 
-<div *ngFor="let enterprise of enterprises" class="structure-container">
+<div *ngIf="enterprise" class="structure-container">
   <div class="structure-photo">
     <p class="photo">{{ "PROFILE.PHOTO" | translate }}</p>
     <div class="upload-circle">
@@ -55,6 +55,7 @@
         [type]="'select'"
         [label]="'PROFILE.CITY' | translate"
         [placeholder]="'PROFILE.CITY' | translate"
+        [options]="optionsProvince"
         [value]="enterprise.Province"
       >
       </app-input>

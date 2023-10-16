@@ -251,7 +251,7 @@ export class Enterprise implements IEnterprise, IModel {
     }
 
     getKey(): string {
-        return this.Key;
+        return this.document;
     }
 
     getFilterableFields(): Map<string, any> {

@@ -2,7 +2,7 @@
   {{ "PROFILE.CONTACT_DETAILS" | translate }}
 </div>
 <hr />
-<div *ngFor="let enterprise of enterprises">
+<div *ngIf="enterprise">
   <div class="form">
     <div class="email-row">
       <app-input
