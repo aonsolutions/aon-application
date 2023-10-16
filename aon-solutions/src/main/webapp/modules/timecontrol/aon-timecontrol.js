@@ -94,8 +94,8 @@ export class AonTimecontrol extends AonElement {
     let data = {
 			id: MSG.TIMECONTROL,
 			title: MSG.TIMECONTROL,
-  		name: MSG.TIMECONTROL,
-      color: Apps.TIMECONTROL.color
+      name: MSG.TIMECONTROL,
+  		app: Apps.TIMECONTROL
 		}
     this.applicationEl.addSidenavOptions2(data, options);
 
@@ -127,7 +127,7 @@ export class AonTimecontrol extends AonElement {
 			id: "Periodo",
 			title: "Periodo",
       name: "Periodo",
-			color: Apps.TIMECONTROL.color
+      app: Apps.TIMECONTROL
 		}
     
     this.applicationEl.addSidenavOptions2(data2, options2);

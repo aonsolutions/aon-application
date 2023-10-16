@@ -1,4 +1,5 @@
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js"
+import { CONSOLE } from "../../services/app.js"
 
 export const LINK_DOMAINS = {
   id: CONSTANT.LINK_DOMAINS.initCap(),
@@ -10,6 +11,7 @@ export const ConsoleSidenav = {
   UTILITIES: {
     id: CONSTANT.UTILITIES.initCap(),
     name: MSG.UTILITIES.toUpperCase(),
+    app: CONSOLE,
     options: [LINK_DOMAINS]
   }
 }

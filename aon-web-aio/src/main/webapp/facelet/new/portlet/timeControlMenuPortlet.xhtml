@@ -1,0 +1,151 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+>
+	<aon:div id="timeControlMenuBar" style="display:none" styleClass="aon-time-control-menu-bar" >
+	
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:collapseMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="Control Horario" />
+			</aon:div>
+	
+			<h:inputHidden id="latitude" value="#{timeControl.latitude}" />
+			<h:inputHidden id="longitude" value="#{timeControl.longitude}" />
+	
+			<script type='text/javascript' >
+				
+				var options = {
+					timeout: 5000,
+					maximumAge: 0,
+					enableHighAccuracy: true
+				};
+	
+				function logError(err){
+					console.warn('ERROR(' + err.code + '): ' + err.message);
+				}						
+				
+				function setPosition(pos){
+					var coords = pos.coords;
+	
+					console.log('Your current position is:');
+					console.log('Latitude : ' + coords.latitude);
+					console.log('Longitude: ' + coords.longitude);
+					console.log('More or less ' + coords.accuracy + ' meters.');
+					
+	
+					document.getElementById('aonContent:mainForm:latitude').value = coords.latitude;
+					document.getElementById('aonContent:mainForm:longitude').value = coords.longitude;
+				}
+				
+				function getCoordinates(){
+					navigator.geolocation.getCurrentPosition(setPosition, logError, options);
+				}
+			</script>
+			
+			<aon:div 
+				id="timeControlTodayTime" 
+				style="font-size: 30px; cursor: default;" >
+				#{timeControl.todayTime}
+			</aon:div>
+	
+			<aon:div id="timeControlContent">
+				<aon:if test="#{timeControl.in}">
+					<aon:commandButton 
+						value="SALIDA" 
+						styleClass="aonButton" 
+						id="timeControlButtonOut"
+						onclick="getCoordinates()"
+						actionListener="#{timeControl.out}"
+						style="background-color: rgb(220, 77, 48); padding: 1rem; width: 100px; margin-right:10px;" />
+					<aon:commandButton 
+						value="PAUSA" 
+						styleClass="aonButton" 
+						onclick="getCoordinates()"
+						id="timeControlButtonPause"
+						actionListener="#{timeControl.pause}"
+						style="background-color: rgb(243, 159, 29); padding: 1rem; width: 100px; " />
+					<aon:if test="#{timeControl.todayLastTimeIn != null}" >
+						<aon:div id="timeControltodayLastTimeIn" style="margin-top: 10px; color: grey; font-size: 12px; cursor: default;">Ult. entrada hoy, #{timeControl.todayLastTimeIn}</aon:div>
+					</aon:if>
+					<script type='text/javascript' >
+							
+						function chronometer () {
+							timeControlTodayTime = #{rich:element('timeControlTodayTime')};
+							todayTimeString = timeControlTodayTime.textContent.trim();
+							todayDateTime = new Date('1975-05-03T' + todayTimeString  + '');
+							
+							todayDateTime.setSeconds(todayDateTime.getSeconds()+1);
+							
+							hours = todayDateTime.getHours();
+							minutes = todayDateTime.getMinutes();
+							seconds = todayDateTime.getSeconds();
+	
+							timeControlButtonOut = #{rich:element('timeControlButtonOut')};
+							if ( !timeControlButtonOut ) 
+								return;
+	
+							timeControlTodayTime.textContent = 
+							String(hours).padStart(2,'0') 
+							+ ":" + String(minutes).padStart(2,'0') 
+							+ ":" + String(seconds).padStart(2,'0');							
+							
+							timeoutId = setTimeout(chronometer, 1000);	
+						}
+						
+						if ( timeoutId ) { 
+							clearTimeout( timeoutId );
+						}
+						
+						var timeoutId = setTimeout(chronometer, 1000);
+							
+					</script>
+				</aon:if>
+				<aon:if test="#{timeControl.out}">
+					
+					<aon:commandButton 
+						value="ENTRADA"
+						styleClass="aonButton" 
+						id="timeControlButtonIn" 
+						onclick="getCoordinates()"
+						actionListener="#{timeControl.in}"
+						style="background-color: rgb(134, 211, 100); padding: 1rem; width: 120px;"/>
+					<aon:if test="#{timeControl.todayLastTimeOut != null}" >
+						<aon:div id="timeControltodayLastTimeOut" style="margin-top: 10px; color: grey; font-size: 12px; cursor: default;">Ult. salida hoy, #{timeControl.todayLastTimeOut}</aon:div>
+					</aon:if>
+					<script type='text/javascript' >
+						function chronometer () {
+						}
+					</script>
+				</aon:if>
+				<aon:if test="#{timeControl.pause}">
+					<aon:commandButton
+						value="VUELTA" 
+						styleClass="aonButton" 
+						id="timeControlButtonBack" 
+						onclick="getCoordinates()"
+						actionListener="#{timeControl.back}"
+						style="background-color: rgb(134, 211, 100); padding: 1rem; width: 120px;" />
+					<aon:if test="#{timeControl.todayLastTimePause != null}" >
+						<aon:div id="timeControltodayLastTimePause" style="margin-top: 10px; color: grey; font-size: 12px; cursor: default;">Ult. pausa hoy, #{timeControl.todayLastTimePause}</aon:div>
+					</aon:if>
+					<script type='text/javascript' >
+						function chronometer () {
+						}
+					</script>
+				</aon:if>
+				
+				<aon:div id="timeControlWeekTime" style="margin-top: 10px; color: grey; font-size: 12px; cursor: default;" data-sum-hour="169888000">Horas semana actual: <span style="font-weight: 800; color: black;" id="timeControlWeekTimeSpan">#{timeControl.weekTime}</span>
+	
+				</aon:div>
+			</aon:div>		
+	
+		</aon:div>
+</ui:composition>

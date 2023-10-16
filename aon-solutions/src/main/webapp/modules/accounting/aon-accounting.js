@@ -74,8 +74,14 @@ export class AonAccounting extends AonElement {
 			name: 'Pérdidas y Ganancias',
 			icon: MATERIAL_ICONS.BAR_CHART,
 			fn: () => {
-				application.removeSidenavById("Opciones");
-				application.addSidenavOptions(MSG.OPTIONS , options2);
+				let data = {
+					id: CONSTANT.OPTIONS,
+					name: MSG.OPTIONS,
+					app: ACCOUNTING,
+					options: options2
+				}
+				application.removeSidenavById( CONSTANT.OPTIONS);
+				application.addSidenavOptions3(data);
 				this.clearElementById(this.getApplication().getContent().id);
 				this.aonGraphicsTrialView ();
 			}
@@ -87,16 +93,29 @@ export class AonAccounting extends AonElement {
 				name: MSG.BANKS,
 				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
 				fn: () => {
-					this.getApplication().removeSidenavById("Opciones");
+					this.getApplication().removeSidenavById(CONSTANT.OPTIONS);
 					this.clearElementById(this.getApplication().getContent().id);
 					GWT.load(GWT.NORDIGEN, this.getApplication().CONTENT);
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
 		}
+		let data1 = {
+			id: CONSTANT.ACCOUNTING,
+			name: MSG.ACCOUNTING,
+			app: ACCOUNTING,
+			options
+		}
 
-		application.addSidenavOptions(MSG.ACCOUNTING, options);
-		application.addSidenavOptions(MSG.OPTIONS , options2);
+		let data2 = {
+			id: CONSTANT.OPTIONS,
+			name: MSG.OPTIONS,
+			app: ACCOUNTING,
+			options: options2
+		}
+		
+		application.addSidenavOptions3(data1);
+		application.addSidenavOptions3(data2);
 	}
 
 	async loader(selector, doc=undefined) {

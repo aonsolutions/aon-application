@@ -229,6 +229,16 @@ export class AonMobileList extends AonElement {
       load.remove();
     }
   }
+
+  app;
+  
+  getApp() {
+    return this.app;
+  }
+
+  setApp(app) {
+    this.app = app;
+  }
 }
 if(!window.customElements.get('aon-mobile-list')){
   window.customElements.define("aon-mobile-list", AonMobileList);

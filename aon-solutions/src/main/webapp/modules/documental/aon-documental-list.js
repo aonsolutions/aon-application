@@ -7,6 +7,8 @@ import '../../components/aon-table.js';
 import { CONSTANT, MSG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
+import { DOCUMENTAL } from '../../services/app.js';
+import { AonTable } from '../../components/aon-table.js';
 
 export class AonDocumentalList extends AonElement {
 
@@ -37,9 +39,6 @@ export class AonDocumentalList extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-		this.innerHTML = `
-			<aon-table id='${this.TABLE}' selectable='true'></aon-table>
-		`;
 		getDomainUserRoles({}).then(r => {
 			this._roles = new DomainUserRoles(r);
 			this.build();
@@ -52,7 +51,12 @@ export class AonDocumentalList extends AonElement {
 	}
 
  	build() {
-		let aonDocumentalTable = this.getElement(this.TABLE);
+		let aonDocumentalTable =  new AonTable();
+		aonDocumentalTable.id = this.TABLE;
+		aonDocumentalTable.selectable = 'true';
+		aonDocumentalTable.setApp(DOCUMENTAL);
+		this.appendChild(aonDocumentalTable);
+
 		aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');
 		aonDocumentalTable.addColumn(MSG.NAME, 'string', 'title', '60%');
 		aonDocumentalTable.addColumn(MSG.SIZE, 'string', 'size', '15%');

@@ -70,6 +70,7 @@ export const AON_CONTENT_BETA = 'aonContentBeta';
 export const AON_SUB_CONTENT = 'aonSubContent';
 export const AON_SCROLL = 'aonScroll';
 export const AON_APP_MENU_SIDENAV_LIST = 'aonAppMenuSidenavList';
+export const AON_APP_MENU_SIDENAV_LIST_BETA = 'aonAppMenuSidenavListBeta';
 export const AON_VERTICAL_MIDDLE = 'aonVerticalMiddle';
 export const AON_VERTICAL_CENTER = 'aonVerticalCenter';
 export const AON_CLIP = 'aonClip';
@@ -84,6 +85,7 @@ export const AON_CARD = 'aonCard';
 export const AON_CARD_TITLE = 'aonCardTitle';
 export const AON_CARD_TITLE_SECTION = 'aonCardTitleSection';
 export const AON_CARD_TITLE_SECTION_END = 'aonCardTitleSectionEnd';
+export const AON_CARD_TOTAL = 'aonCardTotal';
 export const AON_DIALOG = 'aonDialog';
 export const AON_DIALOG_CONTENT = 'aonDialogContent';
 export const AON_DIALOG_MENU_CONTENT = 'aonDialogMenuContent';
@@ -181,6 +183,10 @@ export const AON_ACCESS_CARD_CONTENT = 'aonAccessCardContent';
 export const AON_ACCESS_CARD_LINE = 'aonAccessCardLine';
 export const AON_ACCESS_CARD_TEXT_DIV = 'aonAccessCardTextDiv';
 export const AON_ACCESS_CARD_TEXT = 'aonAccessCardText';
+
+export const AON_DASHBOARD = 'aonDashboard';
+export const AON_UPLOAD_PANEL = 'aonUploadPanel';
+export const AON_FAST_ACCESS = 'aonFastAccess';
 
 // aon-input.css
 
