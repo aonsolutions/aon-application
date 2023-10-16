@@ -180,11 +180,12 @@ export class AonGraphicsTrial extends AonElement {
       div.style.flexWrap = "wrap";
       div.style.overflowY = "auto";
       div.style.height = "100%";
+      div.style.alignItems = "center";
       div.className = CSS.MATERIAL_SCROLL;
 
       aonIframe.addContent(div);
 
-      AccoutingChart.colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter,  aonIframe);
+      AccoutingChart.colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter,  aonIframe, true);
 
       let sidenavBaseId = null;
       try {
@@ -226,7 +227,8 @@ export class AonGraphicsTrial extends AonElement {
       this.selectedPeriod,
       this.isMobile(),
       this.filter,
-      aonIframe
+      aonIframe,
+      true
     );
   }
 

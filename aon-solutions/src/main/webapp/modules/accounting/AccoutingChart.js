@@ -195,12 +195,7 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
           hAxis: { title: "Mes" },
           seriesType: "bars",
           series: { 2: { type: "line" } },
-          height: isMobile ? window.innerHeight / 2 : window.innerWidth / 3,
-          legend: "none",
-          // legend: {
-          //   position: position,
-          //   alignment: "center",
-          // },
+          height: isMobile ? window.innerHeight / 2 : window.innerWidth / 3
         };
 
         divCombo.style.width = isMobile ? "100%" : "70%";
@@ -762,8 +757,10 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
       //Adding listener
       google.visualization.events.addListener(chart, "select", listener);
 
-      // let legend = getColLegend(isMobile);
-      // div.appendChild(legend);
+      if(leyend){
+        let legend = getColLegend(isMobile);
+        div.appendChild(legend);
+      }      
     }
 
     function getColLegend(isMobile) {

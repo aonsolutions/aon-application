@@ -107,12 +107,12 @@ export class AonFiscalCard extends AonElement {
       description.style.fontSize = "1.2rem";
       description.style.color = "#fb982e";
       description.style.fontWeight = "500";
-      description.innerHTML = "Modelo " + modelData.model;
+      description.innerHTML = "Modelo " + modelData.newModel;
       leftContent.appendChild(description);
 
       let iva = this.createElement(TAG.SPAN);
       iva.style.color = "rgb(120, 120, 133)";
-      iva.innerHTML = "IVA";
+      iva.innerHTML = this.getModelType(modelData.newModel);
       leftContent.appendChild(iva);
 
       let rightContent = this.createElement(TAG.DIV);
@@ -141,6 +141,15 @@ export class AonFiscalCard extends AonElement {
     const fiscalTotalDiv = this.getElement("fiscalTotalDiv");
     fiscalTotalDiv.className = CSS.AON_CARD_TOTAL;
     fiscalTotalDiv.innerHTML = this.getTotal(modelDatas);
+  }
+
+  getModelType(model){
+    switch (model.charAt(0)) {
+      case "1":
+        return "IRPF"
+      default:
+        return "IVA";
+    }
   }
 
   getTotal(models){

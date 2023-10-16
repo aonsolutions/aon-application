@@ -38,6 +38,7 @@ import { AonFiscalCard } from '../fiscal/aon-fiscal-card.js';
 import { AonAccessCard } from '../../components/aon-access-card.js';
 import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
 import { AonPayrollCard } from '../laboral/payroll/aon-payroll-card.js';
+import { AonMessengerCard } from '../messenger/aon-messenger-card.js';
 
 export class AonDesktop extends AonElement {
 
@@ -371,7 +372,7 @@ export class AonDesktop extends AonElement {
 
 		// Timecontrol
 		if(this.getDur().isTimecontrol()) {
-			let timecontrolCard = new AonCard();
+			let timecontrolCard = new AonCard(() => this.appSelection(Apps.TIMECONTROL.app));
 			timecontrolCard.id = CONSTANT.TIMECONTROL;
 			timecontrolCard.title = MSG.TIMECONTROL;
 			timecontrolCard.setApp(Apps.TIMECONTROL);
@@ -396,7 +397,7 @@ export class AonDesktop extends AonElement {
 		
 		if(this.getDur().isAccounting()) {
 			// PyG Card
-			let pygCard = new AonCard();
+			let pygCard = new AonCard(() => this.appSelection(Apps.ACCOUNTING.app));
 			pygCard.id = "pyg";
 			pygCard.title = "Pérdidas y Ganancias";
 			pygCard.setApp(Apps.ACCOUNTING);
@@ -411,7 +412,7 @@ export class AonDesktop extends AonElement {
 
 		if(this.getDur().isPayrollManager()) {
 			// LABORAL
-			let payrollCard = new AonCard();
+			let payrollCard = new AonCard(() => this.appSelection(Apps.PAYROLL.app));
 			payrollCard.id = CONSTANT.PAYROLL;
 			payrollCard.title = MSG.COMPANY_COSTS;
 			payrollCard.setApp(Apps.PAYROLL);
@@ -423,9 +424,8 @@ export class AonDesktop extends AonElement {
 			payrollCard.firstChild.style.minHeight = "420px";
 			payrollCard.firstChild.children.item(1).style.height = "315px";
 		} else if(this.getDur().isPayroll()) {
-			// TODO CARD DE NOMINAS.
 			// Nominas
-			let payrollCard = new AonCard();
+			let payrollCard = new AonCard(() => this.appSelection(Apps.PAYROLL.app));
 			payrollCard.id = "payroll";
 			payrollCard.title = "Nóminas";
 			payrollCard.setApp(Apps.PAYROLL);
@@ -434,7 +434,7 @@ export class AonDesktop extends AonElement {
 			let aonPayrollCard = new AonPayrollCard();
 			payrollCard.setContent(aonPayrollCard);
 			
-			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Fiscal")});
+			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Payroll")});
 			payrollCard.firstChild.style.marginLeft = '0';
 			payrollCard.firstChild.style.minWidth = "350px";
 			payrollCard.firstChild.style.minHeight = "420px";
@@ -443,7 +443,7 @@ export class AonDesktop extends AonElement {
 
 		if(this.getDur().isFiscal()) {
 			// Impuestos
-			let fiscalCard = new AonCard();
+			let fiscalCard = new AonCard(() => this.appSelection(Apps.FISCAL.app));
 			fiscalCard.id = "fiscal";
 			fiscalCard.title = "Impuestos";
 			fiscalCard.setApp(Apps.FISCAL);
@@ -464,6 +464,25 @@ export class AonDesktop extends AonElement {
 			fiscalCard.firstChild.style.minWidth = "350px";
 			fiscalCard.firstChild.style.minHeight = "420px";
 			fiscalCard.firstChild.children.item(1).style.height = "315px";
+		}
+
+		if(this.getDur().isMessengerManager() || this.getDur().isMessenger()) {
+			// Solicitudes
+			let messengerCard = new AonCard(() => this.appSelection(Apps.MESSENGER.app));
+			messengerCard.id = "messengerCard";
+			messengerCard.title = "Solicitudes";
+			messengerCard.setApp(Apps.MESSENGER);
+			cardsPanel.appendChild(messengerCard);
+
+			let aonMessengerCard = new AonMessengerCard(() => this.appSelection(Apps.MESSENGER.app));
+
+			messengerCard.setContent(aonMessengerCard);
+			
+			messengerCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Messenger")});
+			messengerCard.firstChild.style.marginLeft = '0';
+			messengerCard.firstChild.style.minWidth = "350px";
+			messengerCard.firstChild.style.minHeight = "420px";
+			messengerCard.firstChild.children.item(1).style.height = "315px";
 		}
 
 
