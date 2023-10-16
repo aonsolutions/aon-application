@@ -2,8 +2,8 @@ import { ISingleObjectCrudFactory, IMultipleObjectCrudFactory } from "../interfa
 import { IBank } from "../interfaces/modelsInterfaces";
 import { ISingleObjectCrud, IMultipleObjectCrud } from "../interfaces/serviceInterfaces";
 import { Bank, ApiBank, StorableBank } from "../models/Bank";
-import { APIBankMultipleObjectCrudRepository } from "../repositorys/BankRepository";
-import { APIGenericSingleObjectCrudRepository, GenericSingleObjectCrudRepository, APIGenericMultipleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
+import { APIBankMultipleObjectCrudRepository, APIBankSingleObjectCrudRepository } from "../repositorys/BankRepository";
+import { GenericSingleObjectCrudRepository, GenericMultipleObjectCrudRepository } from "../repositorys/GenericRepository";
 import { GenericSingleObjectCrud, GenericMultipleObjectCrud } from "../services/GenericCrudService";
 import { APIEnvironment } from "../utils/Environment";
 
@@ -11,7 +11,7 @@ export class BankFactory implements ISingleObjectCrudFactory<IBank>, IMultipleOb
     createSingleObjectCrud(): ISingleObjectCrud<IBank> {
         return new GenericSingleObjectCrud<Bank>(
             (APIEnvironment ?
-            new APIGenericSingleObjectCrudRepository<Bank>(new ApiBank(), Bank) :
+                new APIBankSingleObjectCrudRepository():
             new GenericSingleObjectCrudRepository<Bank>(new StorableBank(), Bank)
             ),
             Bank);

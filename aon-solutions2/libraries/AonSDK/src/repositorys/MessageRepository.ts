@@ -1,4 +1,4 @@
-import { IMessage, TypeMessage, StatusMessage } from "../interfaces/modelsInterfaces";
+import { IMessage, TypeMessage, StatusMessage, ApiTypeMessage, ApiStatusMessage } from "../interfaces/modelsInterfaces";
 import { IMessageSpecificMethodsRepository } from "../interfaces/repositoryInterfaces";
 import { ICollection, IFilter } from "../interfaces/utilitiesInterfaces";
 import { Message, ApiMessage, StorableMessage } from "../models/Message";
@@ -80,23 +80,33 @@ export class APIMessageSingleObjectCrudRepository extends APIGenericSingleObject
 let generateParams = (pageNum?: number, perPageItems?: number, source?: string, status?: any): any => {
     let params = {
         page: pageNum ? pageNum : 1,
-        perPage: perPageItems ? perPageItems : source && source != 'notification' ? 10 : 30,
+        perPage: perPageItems ? perPageItems : !source ? 10 : 30,
     }
-    if(source == 'notification')
+    let statusString = '';
+    if(status){
+        if(typeof status == 'object'){
+            status.forEach((element: any) => {
+                statusString += ApiStatusMessage[element as keyof typeof ApiStatusMessage] + ","
+            })
+            statusString = statusString.substring(0, statusString.length - 1);
+        }
+        else
+            statusString = ApiStatusMessage[status as keyof typeof ApiStatusMessage]
         Object.defineProperties(params, {
             'status': {
-                value: status,
+                value: statusString,
                 enumerable : true,
             },
         })
-    if(source && source != 'notification')
+    }else if(source == TypeMessage.CONSULTA || source == TypeMessage.TAREA){
         Object.defineProperties(params, {
             'status': {
-                value: status,
+                value: ApiStatusMessage.allTask,
                 enumerable : true,
             },
         })
-    if(source && source != 'notification')
+    }
+    if(source! != TypeMessage.NOTIFICACION){
         Object.defineProperties(params, {
             'task_holder': {
                 value: localStorage.getItem('registry'),
@@ -107,11 +117,11 @@ let generateParams = (pageNum?: number, perPageItems?: number, source?: string, 
                 enumerable : true,
             }
         })
-    if(source && source != 'notification')
-        Object.defineProperty(params, 'source', {
-            value: source,
-            enumerable : true,
-        })
+    }
+    Object.defineProperty(params, 'source', {
+        value: ApiTypeMessage[source as keyof typeof ApiTypeMessage],
+        enumerable : true,
+    })
     return params;
 }
 
@@ -122,45 +132,19 @@ export class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleOb
 
     async get(filter?: IFilter | undefined): Promise<ICollection<Message>> {
         let url: any = [];
-        let perPage = filter?.pageItems ? filter?.pageItems : 0;
-        let pageNum = filter?.pageNum ? filter?.pageNum : 0;
-        if(filter?.fields?.get('type') == TypeMessage.NOTIFICACION)
-            if(filter?.fields?.get('status') == StatusMessage.NUEVA){
-                console.log('nueva')
-                url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage, 'notification', 0))]
-            }else if(filter?.fields?.get('status') == StatusMessage.VISTA){
-                console.log('vista')
-                url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage, 'notification', 1))]
-            }else{
-                console.log('todas')
-                url = [
-                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage/2, 'notification', 1)),
-                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage/2, 'notification', 0))
-                ]
-            }
-        else if(filter?.fields?.get('type') == TypeMessage.CONSULTA || filter?.fields?.get('type') == TypeMessage.TAREA){
-            if(filter?.fields?.get('status') == StatusMessage.ABIERTA || filter?.fields?.get('status') == StatusMessage.PENDIENTE)
-                url = [
-                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'pending'))
-                ]
-            else if (filter?.fields?.get('status') == StatusMessage.CERRADA || filter?.fields?.get('status') == StatusMessage.REALIZADA){
-                url = [
-                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage/2, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'finished')),
-                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage/2, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'deleted'))
-                ]
-            }else{
-                url = [
-                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage/3, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'pending')),
-                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage/3, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'finished')),
-                    ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage/3, filter?.fields?.get('type') == TypeMessage.CONSULTA ? 'query' : 'task', 'deleted'))
-                ]
-            }
-        }
-        else
+        let perPage = filter?.pageItems ? filter?.pageItems : 15;
+        let pageNum = filter?.pageNum ? filter?.pageNum : 1;
+        let typeMessage = filter?.fields?.get('type')[0];
+        let statusMessage = filter?.fields?.get('status');
+        if(typeMessage == TypeMessage.NOTIFICACION){
+            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage, typeMessage, statusMessage))]
+        }else if(typeMessage == TypeMessage.CONSULTA || typeMessage == TypeMessage.TAREA){
+            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, typeMessage, statusMessage))]
+        }else
             url = [
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage, 'notification', 0)),
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, 'query', 'pending')),
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, 'task', 'pending')),
+                ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage, TypeMessage.NOTIFICACION, StatusMessage.NUEVA)),
+                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, TypeMessage.CONSULTA, StatusMessage.ABIERTA)),
+                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, TypeMessage.TAREA, StatusMessage.PENDIENTE)),
             ]
         let collection: ICollection<Message> = new Collection<Message>();
         for(let element of url){
