@@ -426,6 +426,7 @@
 								styleClass="aon-left-menu-item" 
 								onclick="javascript:showAccountingMenu()"
 								actionListener="#{desktop.onSelectAccounting}"
+								title=" #{bundle.aon_module_accounting}"
 								>
 									<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="insert_chart" />
 									<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_accounting}" />
@@ -441,6 +442,7 @@
 								styleClass="aon-left-menu-item" 
 								onclick="#{ domainSwitcher.domainManagementAvailable ? 'javascript:showFiscalMenu()' : ''}"
 								actionListener="#{desktop.onSelectFiscal}"
+								title=" #{bundle.aon_module_fiscal}"
 							>
 								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="euro" />
 								<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_fiscal}" />
@@ -456,6 +458,7 @@
 								styleClass="aon-left-menu-item"
 								onclick="javascript:showPayrollMenu()" 
 								actionListener="#{desktop.onSelectPayroll}"
+								title=" #{bundle.aon_module_payroll}"
 							>
 								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="group" />
 								<aon:outputText styleClass="aon-left-menu-text" value=" #{bundle.aon_module_payroll}" />
@@ -471,6 +474,7 @@
 								styleClass="aon-left-menu-item" 
 								onclick="javascript:showConfigurationMenu()" 
 								actionListener="#{desktop.onSelectConfiguration}"
+								title=" #{bundle.aon_module_configuration}"
 							>
 								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="construction" />
 								<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_configuration}" />
@@ -498,6 +502,7 @@
 							styleClass="aon-left-menu-item"
 							onclick="javascript:showTimeControlMenu()" 
 							actionListener="#{desktop.onSelectTimeControl}"
+							title=" Control Horario"
 						>
 							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="timer" />
 							<aon:outputText styleClass="aon-left-menu-text"  value=" Control Horario" />
