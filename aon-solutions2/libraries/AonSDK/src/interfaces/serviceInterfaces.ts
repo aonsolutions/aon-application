@@ -124,7 +124,7 @@ export interface IAuthenticationManager {
  */
 export interface IReportingDataAccess {
     cobrosPagos(from: Date, to: Date): Promise<IResponse<Object>>;
-    ventasGastos(): Promise<IResponse<Object>>;
+    ventasGastos(from: Date): Promise<IResponse<Object>>;
 }
 
 /**

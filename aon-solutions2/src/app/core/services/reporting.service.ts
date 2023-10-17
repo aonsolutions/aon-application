@@ -13,13 +13,14 @@ export class ReportingService extends CommonService {
     super();
   }
 
-  async getVentasGastos(): Promise<any> {
-    return (await this.reportingDataAccesss.ventasGastos()).result;
+  async getVentasGastos(from?: Date): Promise<any> {
+    let dateFrom = new Date(new Date().setMonth(new Date().getMonth()-12));
+    return (await this.reportingDataAccesss.ventasGastos(from || dateFrom)).result;
   }
 
   async getCobrosPagos(from?: Date, to?: Date): Promise<any> {
-    let dateFrom = new Date(new Date().setMonth(new Date().getMonth()-8));
-    let dateTo = new Date(new Date().setMonth(new Date().getMonth()+8));
+    let dateFrom = new Date();
+    let dateTo = new Date(new Date().setMonth(new Date().getMonth()+12));
     return (await this.reportingDataAccesss.cobrosPagos(from || dateFrom, to || dateTo)).result;
   }
 }

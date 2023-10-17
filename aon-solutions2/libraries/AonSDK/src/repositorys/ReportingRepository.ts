@@ -39,23 +39,23 @@ export class ApiReportingRepository implements IReportingRepository {
         let datasets: any[] = [], ventas: any[] = [], gastos: any[] = [], fechas: any[] = [];
         for(let i = 0; i < keys.length; i++){
             fechas.push(keys[i].date)
-            ventas.push(keys[i].pago)
-            gastos.push(keys[i].cobro)
+            ventas.push(keys[i].pago ? keys[i].pago : 0)
+            gastos.push(keys[i].cobro ? keys[i].cobro : 0)
         }
         datasets.push({data:ventas, label:'cobros'})
         datasets.push({data:gastos, label:'pagos'})
         return { datasets: datasets, label: fechas };
     }
 
-    async ventasGastos(): Promise<any> {
-        let json = await ApiHttpRequest.get(BASE_URL + '/ms/api/stat/invoice', {}, {})
+    async ventasGastos(from: Date): Promise<any> {
+        let json = await ApiHttpRequest.get(BASE_URL + '/ms/api/stat/invoice?from='+from.toISOString(), {}, {})
         /** PARSE JSON TO CHARTS.JS LIBRARY => MAYBE THIS WILL BE DO IT IN THE FUTURE IN ANGULAR PROJECT SERVICE */
         let keys = json.data;
         let datasets: any[] = [], ventas: any[] = [], gastos: any[] = [], fechas: any[] = [];
         for(let i = 0; i < keys.length; i++){
             fechas.push(keys[i].date)
-            ventas.push(keys[i].Ventas)
-            gastos.push(keys[i].Gastos)
+            ventas.push(keys[i].Ventas ? keys[i].Ventas : 0)
+            gastos.push(keys[i].Gastos ? keys[i].Gastos : 0)
         }
         datasets.push({data:ventas, label:'ventas'})
         datasets.push({data:gastos, label:'gastos'})

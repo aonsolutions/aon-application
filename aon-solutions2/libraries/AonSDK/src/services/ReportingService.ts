@@ -15,8 +15,8 @@ export class ReportingDataAccess implements IReportingDataAccess {
         return new Response<Object>(await this.reportingRepository.cobrosPagos(from, to));
     }
 
-    async ventasGastos(): Promise<IResponse<Object>> {
-        return new Response<Object>(await this.reportingRepository.ventasGastos());
+    async ventasGastos(from: Date): Promise<IResponse<Object>> {
+        return new Response<Object>(await this.reportingRepository.ventasGastos(from));
     }
 
 }
