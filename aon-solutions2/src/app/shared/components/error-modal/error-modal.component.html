@@ -2,9 +2,9 @@
   <div class="iconBox">
     <app-icon class="pink" shape="error_circle"></app-icon>
   </div>
-  <p class="title">Error al subir el archivo</p>
+  <p class="title">{{textoError}}</p>
   <div class="buttonsAccept">
-    <app-button [class]="'accept'">
+    <app-button [class]="'accept'" (click)="closeModal()">
       {{ "COMMON.ACCEPT" | translate }}
     </app-button>
   </div>

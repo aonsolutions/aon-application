@@ -22,6 +22,8 @@ export class InputComponent implements OnInit {
   @Input() disabled         : string  = 'false';
   @Input() required         : string  = 'false';
   @Input() classes          : string  = '';
+  @Input() maxNumber        : string  = '';
+  @Input() minNumber        : string  = '';
   @Input() maxRow           : string  = '3';
   @Input() minRow           : string  = '10';
   @Input() appearanceDetail : string  = 'mat-form-field-appearance-bold-outline';
@@ -39,7 +41,6 @@ export class InputComponent implements OnInit {
     "hidden",
     "image",
     "month",
-    "number",
     "password",
     "radio",
     "range",
@@ -99,5 +100,40 @@ export class InputComponent implements OnInit {
   returnValue(value: any) {
     this.inputValue.emit(value);
   }
+
+  /*
+    Input solo number
+  */
+    returnValueNumber(value: any) {
+      if (this.minNumber !== '' && this.minNumber > value){
+        value = this.minNumber;
+      }
+      if (this.maxNumber !== '' && this.maxNumber < value){
+        value = this.maxNumber;
+      }
+      
+      this.inputValue.emit(value);
+    }
+    validateFormatNumber(event: any) {
+      let key;
+      if (event.type === 'paste') {
+        key = event.clipboardData.getData('text/plain');
+      } else {
+        key = event.keyCode;
+        key = String.fromCharCode(key);
+      }
+      // 1 - Permitir del 0 al 9
+      // 2 - Permitir .
+      // 3 - Permitir ,
+      // 4 - Permitir -
+      const regex = /[0-9]|\.|\,|\-/;
+      if (!regex.test(key)) {
+        if(event.returnValue)
+          event.returnValue = false;
+        if (event.preventDefault) {
+          event.preventDefault();
+        }
+      }
+    }
 
 }

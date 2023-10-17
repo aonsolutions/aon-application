@@ -17,7 +17,7 @@
     display: grid;
     gap: $margin;
   }
-  
+
   #file-detail{
     min-width       : 25rem;
     display         : flex;
@@ -33,16 +33,15 @@
   #file-detail .close, #selected-elements span app-icon{
     cursor: pointer;
   }
-  
+
   #doc-file-viewer{
     height: 34.5rem;
   }
 
   #selected-elements {
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 100%;
+    height: 50%;
   }
 
   .folder.select-folder .appButton.icon-background-pink{
