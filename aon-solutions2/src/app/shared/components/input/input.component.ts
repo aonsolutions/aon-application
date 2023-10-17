@@ -66,6 +66,8 @@ export class InputComponent implements OnInit {
       this.suffixIcon     = 'eye';
       this.suffixBehavior = 'showPass';
     }
+    // Con esto establecemos que el primer dia de la semana sea el lunes
+    this.dateAdapter.getFirstDayOfWeek = () => { return 1; };
   }
 
   selectFunction(event: MouseEvent) {

@@ -31,8 +31,6 @@ export class InputProfileRegistryDataComponent implements OnInit {
     if (storedRegistryEnterprise) {
       this.registryEnterprise = JSON.parse(storedRegistryEnterprise);
     }
-
-    console.log('registryEnterpruise recibido del padre', this.registryEnterprise);
-
   }
+
 }
