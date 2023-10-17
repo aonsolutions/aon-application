@@ -30,7 +30,7 @@
     "LOGIN": "Log in",
     "LOG_IN": "Log in",
     "ACCESS_YOUR_AON_ACCOUNT": "Access your AON account",
-    "OR_ACCESS": "or LOG IN",
+    "OR_ACCESS": "OR LOG IN",
     "WITHOUT_PASSWORD": "WITHOUT PASSWORD",
     "USER": "User",
     "PASSWORD": "Password"
@@ -87,8 +87,8 @@
     "DESCRIPTION": "Description",
     "TEXT": "Text",
     "ASSIGN_TO":"assign to",
-    "NOMESSAGESTHISWEEK": "No assignments this week.",
-    "NOMESSAGESTHISMONTH": "No assignments this month.",
+    "NOTASKSTHISWEEK": "No assignments this week.",
+    "NOTASKSTHISMONTH": "No assignments this month.",
     "NONOTIFICATIONSTHISWEEK": "No notifications this week.",
     "NONOTIFICATIONSTHISMONTH": "No notifications this month.",
     "NOQUERIESTHISWEEK": "No queries this week.",
@@ -182,7 +182,8 @@
     "AN_AMOUNT":"an amount of",
     "RECTIFYING_MODEL":"Rectifying model",
     "TRIMESTER":"Trimester",
-    "OF":"of"
+    "OF":"of",
+    "NO_MODELS":"No models to display"
   },
     "PROFILE": {
     "CONTACT_DETAILS":   "Contact details",

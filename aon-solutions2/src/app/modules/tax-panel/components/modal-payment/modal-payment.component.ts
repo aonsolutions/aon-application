@@ -1,13 +1,14 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import {
   CollectionFactory,
-  ErrorResponse,
   IBank,
   ICollection,
+  statusTaxModel,
 } from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BankService } from 'src/app/core/services/bank.service';
+import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 @Component({
   selector: 'app-modal-payment',
@@ -22,10 +23,17 @@ export class ModalPaymentComponent implements OnInit {
   showBanksList: boolean = false;
   banksList: any[] = [];
   selectedBank: string = '';
+  codeNrc: any;
   isCreateBankOpen: boolean = false;
   newBankDescription: string = '';
   newBankIban: string = '';
   newBankBic: string = '';
+  model: any;
+  amountResult: number = 0;
+  newStatus: string = '';
+  spinner: boolean = true;
+
+  @Output() statusChanged: EventEmitter<string> = new EventEmitter<string>();
 
   public collectionFactory = new CollectionFactory();
   banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
@@ -34,14 +42,23 @@ export class ModalPaymentComponent implements OnInit {
   );
 
   constructor(
+    private taxModelService: TaxModelService,
     private bankService: BankService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ModalPaymentComponent>
   ) {
     this.listBanks();
+
+    this.taxModelService.getTax(data.key).then((response) => {
+      this.model = response;
+      this.amountResult = this.model.Result;
+      this.newStatus = this.model.Status;
+    });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+  }
 
   toggleCreateBank() {
     this.showCreateBank = !this.showCreateBank;
@@ -53,11 +70,10 @@ export class ModalPaymentComponent implements OnInit {
 
   listBanks() {
     this.bankService.getBankList().then((response) => {
+      this.spinner = false;
       this.banks = response;
       this.banksSubject.next(this.banks);
-
       this.showBanksList = true;
-
       this.banksList = this.banks
         .toArray()
         .map((element) => ({ value: element.Iban, text: element.Iban }));
@@ -103,20 +119,92 @@ export class ModalPaymentComponent implements OnInit {
     newBank.LastUpdate = new Date();
     newBank.SyncStatus = '';
 
-    try {
-      //  Crear el banco
-      const createdBank = await this.bankService.createBank(newBank);
+    //  Crear el banco
+    const createdBank = await this.bankService.createBank(newBank);
 
-      // Después de enviar el mensaje, restablece los valores de los campos
-      this.newBankDescription = '';
-      this.newBankIban = '';
-      this.newBankBic = '';
-    } catch (error) {
-      throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
-    }
-
+    // Después de enviar el mensaje, restablece los valores de los campos
+    this.newBankDescription = '';
+    this.newBankIban = '';
+    this.newBankBic = '';
     this.showCreateBank = false;
-
     this.listBanks();
+  }
+  
+  // sendPayment() {
+  //   if (this.newStatus === statusTaxModel.PENDIENTE) {
+  //     this.newStatus = statusTaxModel.PRESENTADO;
+  //   }
+  //   // Oculta el spinner que se muestra cuando se abre el modal
+  //   this.spinner = false;
+
+  //   // Muestra el spinner mientras se envía el mensaje
+  //   this.spinner = true;
+
+  //   // Emite el nuevo valor de status
+  //   this.statusChanged.emit(this.newStatus);
+  //   console.log('Nuevo status emitido:', this.newStatus);
+
+  //   this.spinner = false;
+  //   this.dialogRef.close();
+  // }
+
+  getNrc(event: any) {
+    this.codeNrc = event;
+  }
+
+  async sendPaymentNRC() {
+    if (this.codeNrc) {
+      // Oculta el spinner que se muestra cuando se abre el modal
+      this.spinner = false;
+
+      // Muestra el spinner mientras se envía el mensaje
+      this.spinner = true;
+      const nrcPay = await this.taxModelService.payTaxModel(
+        this.model,
+        this.codeNrc
+      );
+
+      if (nrcPay) {
+        // Pago exitoso, realiza las acciones necesarias
+        console.log('Pago exitoso.');
+        // Limpia el campo NRC
+        this.codeNrc = ''; // Establece el campo en una cadena vacía para borrar su contenido
+      } else {
+        // Pago fallido, realiza las acciones necesarias
+        console.log('El pago falló.');
+      }
+      this.spinner = false;
+      this.dialogRef.close();
+      window.location.reload();
+    } else {
+      // Campo NRC vacío o no válido
+      console.log('El campo NRC está vacío o no tiene un valor válido.');
+    }
+  }
+  async sendPaymentIban() {
+    if (this.selectedBank) {
+      // Oculta el spinner que se muestra cuando se abre el modal
+      this.spinner = false;
+      // Muestra el spinner mientras se envía el mensaje
+      this.spinner = true;
+      const ibanPay = await this.taxModelService.payTaxModel(
+        this.model,
+        this.selectedBank
+      );
+      if (ibanPay) {
+        // Pago exitoso, realiza las acciones necesarias
+        console.log('Pago exitoso.');
+
+      } else {
+        // Pago fallido, realiza las acciones necesarias
+        console.log('El pago falló.');
+      }
+      this.spinner = false;
+      this.dialogRef.close();
+      window.location.reload();
+    } else {
+      // Campo NRC vacío o no válido
+      console.log('El campo  está vacío o no tiene un valor válido.');
+    }
   }
 }

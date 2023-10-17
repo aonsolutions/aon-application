@@ -5,8 +5,8 @@ import { BehaviorSubject } from 'rxjs';
 import { DocumentService } from '../../../core/services/document.service';
 import { WorkingModalComponent } from '../components/working-modal/working-modal.component';
 import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
-import { UploadErrorModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-error-modal/upload-error-modal.component';
-import { UploadCompletedModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-completed-modal/upload-completed-modal.component';
+import { ConfirmModalComponent } from 'src/app/shared/components/confirm-modal/confirm-modal.component';
+import { ErrorModalComponent } from 'src/app/shared/components/error-modal/error-modal.component';
 
  interface ShortcutDashboard {
   shape : string;
@@ -105,24 +105,31 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  // Acción que realiza al cerrar el modal
   functionHome: any = (result: any) => this.afterModalClosed(result);
 
+  // Función que se ejecuta al cerrar el modal
   afterModalClosed(result: any) {
+    // Si se ha seleccionado un documento
     if (result) {
+      // Guardamos los datos del documento
       const fileName = result[0].document.name;
       const fileType = result[0].document.type;
       const fileSize = result[0].document.size;
       const path     = result[0].folder;
 
+      // Creamos el documento
       this.document = this.objectFactory.createDocument(result[0].document, fileName, fileSize, fileType, new Date(), path);
+      const file = result[0].document;
 
-      // this.documentService.createDocument(this.document)
-      // .then((response) => {
-      //   this.uploadCompletedModal()
-      // })
-      // .catch((error) => {
-      //   this.uploadErrorModal()
-      // })
+      // Subimos el documento
+      this.documentService.uploadDocument(this.document, file)
+      .then((response) => {
+        this.uploadCompletedModal()
+      })
+      .catch((error) => {
+        this.uploadErrorModal()
+      })
 
     }
   }
@@ -132,25 +139,24 @@ export class HomeComponent implements OnInit {
     this.modalComponent.openDialog(
       WorkingModalComponent,
       this.functionHome,
-      'Data from home'
     );
   }
 
   // Confirmación de subida de documento
   uploadCompletedModal() {
     this.modalComponent.openDialog(
-      UploadCompletedModalComponent,
+      ConfirmModalComponent,
       this.functionHome,
-      'Data from home'
+      'Documento subido correctamente'
     )
   }
 
   // Si la subida da error
   uploadErrorModal() {
     this.modalComponent.openDialog(
-      UploadErrorModalComponent,
+      ErrorModalComponent,
       this.functionHome,
-      'Data from home'
+      'Error al subir el documento'
     )
   }
 
@@ -162,7 +168,6 @@ export class HomeComponent implements OnInit {
     this.modalComponent.openDialog(
       UploadModalComponent,
       this.functionHome,
-      'Data from home'
     )
   }
 

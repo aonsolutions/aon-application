@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UploadErrorModalComponent } from './upload-error-modal.component';
+import { UploadErrorModalComponent } from './error-modal.component';
 
 describe('UploadErrorModalComponent', () => {
   let component: UploadErrorModalComponent;
