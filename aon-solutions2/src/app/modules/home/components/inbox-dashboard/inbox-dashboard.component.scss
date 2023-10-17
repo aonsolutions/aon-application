@@ -5,12 +5,12 @@
     border  : $border;
     padding : $padding;
   }
-  
+
   #home-inbox [header]{
     display       : flex;
     gap           : $margin / 2;
     width         : 100%;
-    padding-bottom: $padding-bottom; 
+    padding-bottom: $padding-bottom;
   }
   #home-inbox [header] .line {
     max-width     : 0rem;
@@ -32,18 +32,22 @@
   #home-inbox td{
     cursor: pointer;
   }
-  
+
   #home-inbox hr{
     margin-top  : 0;
     margin-left : 0;
     margin-right: 0;
   }
-  
+
   #home-inbox #home-inbox-total .text{
     font-family : Roboto-Medium;
     font-size   : 0.7rem;
     color       : $color-red;
-    cursor      : pointer; 
+    cursor      : pointer;
+  }
+
+  .dashboard-text{
+    color: $color-secondary;
   }
 
 }

@@ -57,9 +57,9 @@ import { TagComponent } from './components/tag/tag.component';
 import { TopBarComponent } from './layouts/top-bar/top-bar.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { UploadErrorModalComponent } from './components/file-upload-button/components/upload-error-modal/upload-error-modal.component';
-import { UploadCompletedModalComponent } from './components/file-upload-button/components/upload-completed-modal/upload-completed-modal.component';
+import { ErrorModalComponent } from './components/error-modal/error-modal.component';
 import { UploadModalComponent } from './components/file-upload-button/components/upload-modal/upload-modal.component';
+import { ConfirmModalComponent } from './components/confirm-modal/confirm-modal.component';
 
 @NgModule({
   declarations: [
@@ -95,8 +95,8 @@ import { UploadModalComponent } from './components/file-upload-button/components
     TagComponent,
     TopBarComponent,
     SpinnerComponent,
-    UploadErrorModalComponent,
-    UploadCompletedModalComponent,
+    ErrorModalComponent,
+    ConfirmModalComponent,
     UploadModalComponent
   ],
   imports: [
