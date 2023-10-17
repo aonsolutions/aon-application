@@ -17,7 +17,9 @@ export class ReportingService extends CommonService {
     return (await this.reportingDataAccesss.ventasGastos()).result;
   }
 
-  async getCobrosPagos(): Promise<any> {
-    return (await this.reportingDataAccesss.cobrosPagos()).result;
+  async getCobrosPagos(from?: Date, to?: Date): Promise<any> {
+    let dateFrom = new Date(new Date().setMonth(new Date().getMonth()-8));
+    let dateTo = new Date(new Date().setMonth(new Date().getMonth()+8));
+    return (await this.reportingDataAccesss.cobrosPagos(from || dateFrom, to || dateTo)).result;
   }
 }

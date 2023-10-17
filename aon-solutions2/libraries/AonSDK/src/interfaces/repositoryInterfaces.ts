@@ -99,7 +99,7 @@ export interface IAuthenticationRepository {
 }
 
 export interface IReportingRepository {
-    cobrosPagos(): Promise<any>;
+    cobrosPagos(from: Date, to: Date): Promise<any>;
     ventasGastos(): Promise<any>;
 }
 

@@ -8,7 +8,7 @@ export class ReportingFunctions {
         return (await this.reportingDataAccesss.ventasGastos());
     }
 
-    static async getCobrosPagos(): Promise<IResponse<any>> {
-        return (await this.reportingDataAccesss.cobrosPagos());
+    static async getCobrosPagos(from: Date, to: Date): Promise<IResponse<any>> {
+        return (await this.reportingDataAccesss.cobrosPagos(from, to));
     }
 }

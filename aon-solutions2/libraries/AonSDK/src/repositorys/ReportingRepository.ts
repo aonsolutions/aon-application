@@ -32,21 +32,33 @@ export class ApiReportingRepository implements IReportingRepository {
 
     private httpRequest = new ApiHttpRequest();
 
-    async cobrosPagos(): Promise<any> {
-        throw new Error("Method not implemented.");
+    async cobrosPagos(from: Date, to: Date): Promise<any> {
+        let json = await ApiHttpRequest.get(BASE_URL + '/ms/api/stat/finance?from='+from.toISOString()+'&to='+to.toISOString(), {}, {})
+        /** PARSE JSON TO CHARTS.JS LIBRARY => MAYBE THIS WILL BE DO IT IN THE FUTURE IN ANGULAR PROJECT SERVICE */
+        let keys = json.data;
+        let datasets: any[] = [], ventas: any[] = [], gastos: any[] = [], fechas: any[] = [];
+        for(let i = 0; i < keys.length; i++){
+            fechas.push(keys[i].date)
+            ventas.push(keys[i].pago)
+            gastos.push(keys[i].cobro)
+        }
+        datasets.push({data:ventas, label:'cobros'})
+        datasets.push({data:gastos, label:'pagos'})
+        return { datasets: datasets, label: fechas };
     }
 
     async ventasGastos(): Promise<any> {
         let json = await ApiHttpRequest.get(BASE_URL + '/ms/api/stat/invoice', {}, {})
         /** PARSE JSON TO CHARTS.JS LIBRARY => MAYBE THIS WILL BE DO IT IN THE FUTURE IN ANGULAR PROJECT SERVICE */
-        let keys = Object.keys(json);
-        let datasets: any[] = [], ventas: any[] = [], gastos: any[] = [];
+        let keys = json.data;
+        let datasets: any[] = [], ventas: any[] = [], gastos: any[] = [], fechas: any[] = [];
         for(let i = 0; i < keys.length; i++){
-            ventas.push(json[keys[i]].Ventas)
-            gastos.push(json[keys[i]].Gastos)
+            fechas.push(keys[i].date)
+            ventas.push(keys[i].Ventas)
+            gastos.push(keys[i].Gastos)
         }
         datasets.push({data:ventas, label:'ventas'})
         datasets.push({data:gastos, label:'gastos'})
-        return { datasets: datasets, label: keys };
+        return { datasets: datasets, label: fechas };
     }
 }
