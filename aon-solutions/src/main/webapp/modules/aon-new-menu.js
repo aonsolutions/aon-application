@@ -106,6 +106,30 @@ export class AonNewMenu extends AonElement {
 		return this.dur;
 	}
 
+	expand() {
+		if(this.isExpanded()) {
+			aonMenuSidenav.style.width = '70px';
+			this.getRootPanel().style.marginLeft = '70px';
+			this.setExpanded(false);
+			document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+				item.style.display = 'none';
+			});
+
+		} else {
+			aonMenuSidenav.style.width = '250px';
+			this.getRootPanel().style.marginLeft = '250px';
+			this.setExpanded(true);
+
+			document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+				item.style.display = 'inline-block';
+				item.style.fontSize = '0.7rem';
+				item.style.fontWeight = '500';
+				item.style.marginLeft = '10px';
+				item.style.position = 'relative';
+			});
+		}
+	}
+
 	toogle() {
 		const aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		
@@ -182,22 +206,22 @@ export class AonNewMenu extends AonElement {
 		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV;
 		this.appendChild(aonMenuSidenav);
 
-		aonMenuSidenav.addEventListener(EVENT.MOUSELEAVE, () => {
-			if(this.CLOSE){
-				aonMenuSidenav.style.transitionDuration = '500ms';
-				if(this.getAttribute('opened')) {
-					aonMenuSidenav.style.width = '70px';
-					this.getRootPanel().style.marginLeft = '70px';
-				} else {
-					aonMenuSidenav.style.width = '0px';
-					this.getRootPanel().style.marginLeft = '0px';
-				}
-				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
-					item.style.display = 'none';
-				});
-				this.buildMenu();
-			}
-		});
+		// aonMenuSidenav.addEventListener(EVENT.MOUSELEAVE, () => {
+		// 	if(this.CLOSE){
+		// 		aonMenuSidenav.style.transitionDuration = '500ms';
+		// 		if(this.getAttribute('opened')) {
+		// 			aonMenuSidenav.style.width = '70px';
+		// 			this.getRootPanel().style.marginLeft = '70px';
+		// 		} else {
+		// 			aonMenuSidenav.style.width = '0px';
+		// 			this.getRootPanel().style.marginLeft = '0px';
+		// 		}
+		// 		document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+		// 			item.style.display = 'none';
+		// 		});
+		// 		this.buildMenu();
+		// 	}
+		// });
 
 		if(this.getAttribute('opened')) {
 			aonMenuSidenav.style.width = '70px';
@@ -219,8 +243,8 @@ export class AonNewMenu extends AonElement {
 		ul.style.listStyle = 'none';
 
 		let li = this.createElement(TAG.LI);
-		li.style.textAlign =  'right';
 		li.style.paddingRight = '15px';
+		li.style.paddingLeft = '15px';
 		li.style.paddingTop = '15px';
 		li.style.paddingBottom = '10px';
 		li.style.fontWeight = 'bold';
@@ -231,6 +255,9 @@ export class AonNewMenu extends AonElement {
 		// 	let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
 		// 	appOptions.style.display = 'none';
 		// });
+		li.addEventListener(EVENT.CLICK, () => {
+			this.expand();
+		})
 		ul.appendChild(li);
 		
 		li.innerHTML ='MENU';
@@ -274,7 +301,6 @@ export class AonNewMenu extends AonElement {
 
 	    let a = this.createElement(TAG.A);
 	    a.style.cursor = 'pointer';
-	    a.style.textAlign = 'right';
 	    a.addEventListener(EVENT.CLICK, () => {
 	      this.appSelection(app);
 	    });
@@ -315,36 +341,37 @@ export class AonNewMenu extends AonElement {
 
 		
 	    if (app.icon) {
-			const span = this.createElement(TAG.SPAN);
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImg-${app.app}`;
+			aonIcon.icon = app.icon;
+			aonIcon.color = app.color;
+			aonIcon.size = "40px";
+			div.appendChild(aonIcon);
+
+			let span = this.createElement(TAG.SPAN);
 			span.id = `aonMenuListApp-${app.app}`;
 			span.style.display = "none";
-			span.innerHTML = app.title;
+			span.innerHTML = app.title.toUpperCase();
 			div.appendChild(span);
-
-			const aonIcon = new AonIcon();
-			aonIcon.id    = `aonMenuListAppImg-${app.app}`;
-			aonIcon.icon  = app.icon;
-			aonIcon.color = app.color;
-			aonIcon.size  = "40px";
-			div.appendChild(aonIcon);
 	    } else {
-	      let span = this.createElement(TAG.SPAN);
-	      span.id = 'aonMenuListApp-' + app.app;
-	      span.style.display = 'none';
-	      span.style.marginRight = '5px';
-	      span.innerHTML = app.title;
-	      div.appendChild(span);
+	      	let img = this.createElement(TAG.IMG);
+	      	img.id = 'aonMenuListAppImg-' + app.app;
+	      	img.style.width = '30px';
+	      	img.src = app.logo;
+	      	img.title = app.title;
+	      	div.appendChild(img);
 
-	      let img = this.createElement(TAG.IMG);
-	      img.id = 'aonMenuListAppImg-' + app.app;
-	      img.style.width = '30px';
-	      img.src = app.logo;
-	      img.title = app.title;
-	      div.appendChild(img);
+		  	let span = this.createElement(TAG.SPAN);
+	      	span.id = 'aonMenuListApp-' + app.app;
+	      	span.style.display = 'none';
+	      	span.style.marginRight = '5px';
+	      	span.innerHTML = app.title.toUpperCase();
+	      	div.appendChild(span);
 	    }
 
 	    a.appendChild(div);
 	    li.appendChild(a);
+		
 	  }
 		return li;
 	}
@@ -582,6 +609,14 @@ export class AonNewMenu extends AonElement {
 					toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
 			}
 		}
+	}
+
+	isExpanded() {
+		return this.expanded;
+	}
+
+	setExpanded(expanded) {
+		this.expanded = expanded;
 	}
 
 	isApp(app) {

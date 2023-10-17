@@ -117,6 +117,7 @@ export const EVENT = 'event';
 export const EXTENSION = 'extension';
 export const EXPAND_LESS = 'expand_less';
 export const EXPAND_MORE = 'expand_more';
+export const EXPAND_CIRCLE_RIGHT = 'expand_circle_right';
 
 // ----- F
 
