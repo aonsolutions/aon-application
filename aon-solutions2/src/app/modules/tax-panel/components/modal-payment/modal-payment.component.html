@@ -1,7 +1,8 @@
 <div class="modal-container">
+  <app-spinner *ngIf="spinner"></app-spinner>
   <p class="title-modal-payment">{{ "TAX_PANEL.PAYMENTMETHOD" | translate }}</p>
   <div *ngIf="!showConfirmation">
-    <div class="border margin-bottom">
+    <div class="border margin-bottom border-radius">
       <mat-radio-group
         aria-label="Select an option"
         [(ngModel)]="selectedOption"
@@ -63,7 +64,7 @@
       </div>
     </div>
     <!-- Opción 2: NRC -->
-    <div class="border margin-bottom">
+    <div class="border margin-bottom border-radius">
       <mat-radio-group
         aria-label="Select an option"
         [(ngModel)]="selectedOption"
@@ -76,14 +77,16 @@
             [type]="'text'"
             [label]="'NRC'"
             [placeholder]="'NRC'"
-            [value]=""
+            [required]="'required'"
+            [value]="codeNrc"
+            (inputValue)="getNrc($event)"
           >
           </app-input>
         </div>
       </mat-radio-group>
     </div>
     <!-- Opción 3: DEFERRAL INSTALLMENT -->
-    <div class="border margin-bottom">
+    <!-- <div class="border margin-bottom border-radius">
       <mat-radio-group
         aria-label="Select an option"
         [(ngModel)]="selectedOption"
@@ -120,7 +123,7 @@
               ></app-input>
             </div>
           </div>
-          <!-- vista info -->
+         ***** vista info
           <div *ngIf="showText">
             <div class="close-icon">
               <app-icon
@@ -137,7 +140,7 @@
           </div>
         </div>
       </mat-radio-group>
-    </div>
+    </div> -->
     <!-- Botón siguiente para Domiciliación Bancaria -->
     <div class="button-container">
       <app-button
@@ -157,7 +160,9 @@
     class="button-container"
     *ngIf="selectedOption === '2' || selectedOption === '3'"
   >
-    <app-button [mat-dialog-close]="true" [class]="'orange left'">
+    <app-button
+    [class]="'orange left'"
+    (click)="sendPaymentNRC()" >
       <app-icon shape="done_all"></app-icon>
       {{ "TAX_PANEL.CONFIRM" | translate }}
     </app-button>
@@ -165,9 +170,9 @@
   <!-- Vista Confirmación para IBAN -->
   <div class="confirmation-view" *ngIf="showConfirmation">
     <p class="text-confirmation-view">
-      {{ "TAX_PANEL.ON" | translate }} + 'FECHA' +
-      {{ "TAX_PANEL.CHARGED_ACCOUNT" | translate }} + 'IBAN' +
-      {{ "TAX_PANEL.AN_AMOUNT" | translate }} + '€€€€'
+      {{ "TAX_PANEL.ON" | translate }}  'FECHA'
+      {{ "TAX_PANEL.CHARGED_ACCOUNT" | translate }} {{ selectedBank }}
+      {{ "TAX_PANEL.AN_AMOUNT" | translate }} {{ amountResult }}&euro;
     </p>
     <div class="content-confirmation-view">
       <div class="line-content">
@@ -180,6 +185,7 @@
           [placeholder]="'TAX_PANEL.ACCOUNT_NUMBER' | translate"
           [disabled]="'disabled'"
           [value]="selectedBank"
+          (inputValue)="selectBank($event)"
         >
         </app-input>
       </div>
@@ -195,11 +201,13 @@
         </app-button>
       </div>
       <div>
-        <app-button [mat-dialog-close]="true" [class]="'orange left'">
+        <app-button
+        [class]="'orange left'"
+        (click)="sendPaymentIban()">
           <app-icon shape="done_all"></app-icon>
           {{ "TAX_PANEL.CONFIRM" | translate }}
         </app-button>
       </div>
     </div>
   </div>
-</div>
+ </div>

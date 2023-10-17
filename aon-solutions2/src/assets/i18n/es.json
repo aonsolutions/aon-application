@@ -87,8 +87,8 @@
     "DESCRIPTION": "Descripción",
     "TEXT": "Texto",
     "ASSIGN_TO": "Asignar a",
-    "NOMESSAGESTHISWEEK": "No hay tareas esta semana.",
-    "NOMESSAGESTHISMONTH": "No hay tareas este mes.",
+    "NOTASKSTHISWEEK": "No hay tareas esta semana.",
+    "NOTASKSTHISMONTH": "No hay tareas este mes.",
     "NONOTIFICATIONSTHISWEEK": "No hay notificaciones esta semana.",
     "NONOTIFICATIONSTHISMONTH": "No hay notificaciones este mes.",
     "NOQUERIESTHISWEEK": "No hay consultas esta semana.",
@@ -185,7 +185,8 @@
     "AN_AMOUNT":"un importe de",
     "RECTIFYING_MODEL":"Rectificando el modelo",
     "TRIMESTER": "Trimestre",
-    "OF":"del"
+    "OF":"del",
+    "NO_MODELS":"No hay modelos que mostrar"
    },
   "PROFILE": {
     "CONTACT_DETAILS":   "Datos contacto",

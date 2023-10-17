@@ -1,1 +1,117 @@
-<app-tabs-tax-model></app-tabs-tax-model>
+<app-grid-layout>
+  <div content>
+    <app-tabs
+      [tabs]="tabs"
+      [tabIndex]="tabIndex"
+      (changeTabIndex)="changeTabIndex($event)"
+      [tabColor]="'orange'"
+    >
+      <div tool>
+        <div class="input-tax-model">
+          <app-input
+            (inputValue)="filterModel($event, 1)"
+            [type]="'select'"
+            [label]="'TAX_PANEL.MODEL' | translate"
+            [options]="modelsList"
+            [value]="selectedModel"
+          ></app-input>
+          <app-input
+            (inputValue)="filterModel($event, 2)"
+            [type]="'select'"
+            [label]="'TAX_PANEL.YEAR' | translate"
+            [options]="modelsYears"
+            [value]="selectedYear"
+          ></app-input>
+        </div>
+      </div>
+      <div content class="padding" *ngIf="this.tabIndex == 0">
+        <app-spinner *ngIf="spinner"></app-spinner>
+        <app-table
+          *ngIf="bodyTable.length > 0; else noModelsTemplate"
+          mat-table
+          mat-flat-table
+          [displayedColumns]="displayedColumns"
+          [head]="headerTable"
+          [data]="bodyTable"
+          (listenParentHandler)="modalClick($event)"
+        >
+        </app-table>
+        <ng-template #noModelsTemplate>
+          <div class="no-models padding">{{ models }}</div>
+        </ng-template>
+      </div>
+
+      <div content class="padding" *ngIf="this.tabIndex == 1">
+        <app-spinner *ngIf="spinner"></app-spinner>
+        <app-table
+          *ngIf="bodyTable.length > 0; else noModelsTemplate"
+          mat-table
+          mat-flat-table
+          [displayedColumns]="displayedColumns"
+          [head]="headerTable"
+          [data]="bodyTable"
+          (listenParentHandler)="modalClick($event)"
+        >
+        </app-table>
+        <ng-template #noModelsTemplate>
+          <div class="no-models padding">{{ models }}</div>
+        </ng-template>
+      </div>
+
+      <div content class="padding" *ngIf="this.tabIndex == 2">
+        <app-spinner *ngIf="spinner"></app-spinner>
+        <app-table
+          *ngIf="bodyTable.length > 0; else noModelsTemplate"
+          mat-table
+          mat-flat-table
+          [displayedColumns]="displayedColumns"
+          [head]="headerTable"
+          [data]="bodyTable"
+          (listenParentHandler)="modalClick($event)"
+        >
+        </app-table>
+        <ng-template #noModelsTemplate>
+          <div class="no-models padding">{{ models }}</div>
+        </ng-template>
+      </div>
+
+      <div content class="padding" *ngIf="this.tabIndex == 3">
+        <app-spinner *ngIf="spinner"></app-spinner>
+        <app-table
+          *ngIf="bodyTable.length > 0; else noModelsTemplate"
+          mat-table
+          mat-flat-table
+          [displayedColumns]="displayedColumns"
+          [head]="headerTable"
+          [data]="bodyTable"
+          (listenParentHandler)="modalClick($event)"
+        >
+        </app-table>
+        <ng-template #noModelsTemplate>
+          <div class="no-models padding">{{ models }}</div>
+        </ng-template>
+      </div>
+
+      <div content class="padding" *ngIf="this.tabIndex == 4">
+        <app-table
+          *ngIf="bodyTable.length > 0; else noModelsTemplate"
+          mat-table
+          mat-flat-table
+          [displayedColumns]="displayedColumns"
+          [head]="headerTable"
+          [data]="bodyTable"
+          (listenParentHandler)="modalClick($event)"
+        >
+        </app-table>
+
+        <ng-template #noModelsTemplate>
+          <div class="no-models padding">{{ models }}</div>
+        </ng-template>
+      </div>
+      <!-- Modales de acciones -->
+      <app-modal-controller #modalEdit></app-modal-controller>
+      <app-modal-controller #modalPayment></app-modal-controller>
+      <app-modal-controller #modalTaxesDetails></app-modal-controller>
+    </app-tabs>
+  </div>
+</app-grid-layout>
