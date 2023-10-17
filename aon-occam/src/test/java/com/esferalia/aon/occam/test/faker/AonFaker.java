@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.test.faker;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.QuestionValue;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -44,6 +46,7 @@ import com.esferalia.aon.occam.api.model.registry.QuestionType;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -675,7 +678,6 @@ public class AonFaker {
 			.setDetail3(AonRandom.string(50, 10));
 	}
 	
-	/* */
 	public static Question getQuestion(AONContext ctx) {
 		QuestionType type = getQuestionType();
 			
@@ -713,6 +715,84 @@ public class AonFaker {
 		QuestionType[] types = QuestionType.values();
 		int type = random.nextInt(types.length);
 		return types[type];
+	}
+	
+	public static Account getAccount(AONContext ctx) {
+		Random random = new Random();
+		int b = random.nextInt(0,1);
+
+		return new Account()
+			.setActive(true)
+			.setAlias(faker.lordOfTheRings().character())
+			.setCode(faker.gameOfThrones().quote())
+			.setCostCenter(faker.gameOfThrones().character())
+			.setDescription(faker.lordOfTheRings().location())
+			.setDomain(ctx.getDomainId())
+			.setEntryEnabled(random.nextBoolean())
+			.setHasRegistry(random.nextBoolean())
+			.setLevel((byte) b);
+	}
+	
+	public static Country getCountry(AONContext ctx) {
+		Random random = new Random();
+		Country[] countries = Country.values();
+		Country randomCountry = countries[random.nextInt(countries.length)];
+		return randomCountry;
+	}
+	
+	public static BankAccount getBankAccount(AONContext ctx) {
+		String value = AonStringUtils.repeat("h", RBANK.BANK_ACCOUNT.getDataType().length());
+		BankAccount bankAccount = new BankAccount(value);
+		bankAccount.setCountry(AonFaker.getCountry(ctx));
+		bankAccount.setCheck("hh");
+			
+		return bankAccount;
+	}
+	
+	public static RegistryBank getRegistryBank(AONContext ctx) {	
+		Account account = AonFaker.getAccount(ctx);
+		BankAccount bankAccount = AonFaker.getBankAccount(ctx);
+		Random random = new Random();
+		
+		String bic = faker.lordOfTheRings().character();
+		if (bic.length() > RBANK.BIC.getDataType().length()) {
+			bic = bic.substring(0, RBANK.BIC.getDataType().length());
+		}
+		
+		String suffix = faker.friends().character();
+		if (suffix.length() > RBANK.SUFIX.getDataType().length()) {
+			suffix = suffix.substring(0, RBANK.SUFIX.getDataType().length());
+		}
+		
+		String alias = faker.gameOfThrones().dragon();
+		if (alias.length() > RBANK.ALIAS.getDataType().length()) {
+			alias = alias.substring(0, RBANK.ALIAS.getDataType().length());
+		}
+		
+		String requisition = faker.rickAndMorty().character();
+		if (requisition.length() > RBANK.REQUISITION.getDataType().length()) {
+			requisition = requisition.substring(0, RBANK.REQUISITION.getDataType().length());
+		}
+		
+		String sepaMandateRef = faker.friends().quote();
+		if (sepaMandateRef.length() > RBANK.SEPA_MANDATE_REF.getDataType().length()) {
+			sepaMandateRef = sepaMandateRef.substring(0, RBANK.SEPA_MANDATE_REF.getDataType().length());
+		}
+		 
+		
+		return new RegistryBank()
+				.setDomain(ctx.getDomainId())
+				.setAccount(account)
+				.setActive(random.nextBoolean())
+				.setAlias(alias)
+				.setBankAccount(bankAccount)
+				.setBic(bic)
+				.setDirty(random.nextBoolean())
+				.setRegistry(random.nextInt(0,1000))
+				.setRemoved(random.nextBoolean())
+				.setRequisition(requisition)
+				.setSepaMandateRef(sepaMandateRef)
+				.setSuffix(suffix);
 	}
 }
 

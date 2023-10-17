@@ -232,8 +232,17 @@ public enum AonError implements Serializable{
 	,INVALID_SIZE_QUESTION_TEXT("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	,INVALID_SIZE_ALIAS("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	,REPEATED_ALIAS("No puede haber dos preguntas con el mismo alias")
+	// ---------------------------------------------- REGISTRY_BANK
+	,REGISTRY_BANK_NULL("El registro del banco no puede ser nulo")
+	,REGISTRY_BANK_EMPTY("El registro del banco no puede estar vac\u00EDo")
+	,REGISTRY_BANK_NULL_DOMAIN("El dominio del registro del banco no puede ser nulo")
+	,REGISTRY_BANK_NULL_REGISTRY("El registro del registro del banco no puede ser nulo")
+	,REGISTRY_BANK_NULL_BANK_ACCOUNT("La cuenta de banco del registro del banco no puede ser nula")
+	,REGISTRY_BANK_INVALID_BIC_SIZE("El tama\u00F1o de la cuenta de banco del registro del banco es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_SUFFIX_SIZE("El tama\u00F1o del sufijo del registro del banco es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_REQUISITION_SIZE("El tama\u00F1o de la requisici\u00F3n del registro del banco es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_SEPA_MANDATE_REF_SIZE("El tama\u00F1o de la referencia de la orden de domicilizaci\u00F3n de adeudo directo SEPA del registro del banco es inv\u00E1lido")
 	;
-	
 	
 	private String msg;
 	private AonError(String msg) {
