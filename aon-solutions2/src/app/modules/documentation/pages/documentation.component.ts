@@ -14,8 +14,9 @@ import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/d
 import { TranslateService } from '@ngx-translate/core';
 import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
 import { ErrorModalComponent } from 'src/app/shared/components/error-modal/error-modal.component';
-import { RenameFileComponent } from '../components/modal-rename-file/rename-file.component';
-import { ConfirmModalComponent } from 'src/app/shared/components/confirm-modal/confirm-modal.component';
+// import { RenameFileComponent } from '../components/modal-rename-file/rename-file.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ResultSnackBarComponent } from 'src/app/shared/components/result-snack-bar/result-snack-bar.component';
 
 @Component({
   selector: 'app-documentation',
@@ -64,7 +65,8 @@ export class DocumentationComponent implements OnInit {
   constructor(
     private translateService: TranslateService,
     private documentService: DocumentService,
-    private folderService: FolderService
+    private folderService: FolderService,
+    public snackBar: MatSnackBar
   ) {
     /*
       Inicialmente solo devolvemos carpetas correspondientes a la rai�z
@@ -186,21 +188,37 @@ export class DocumentationComponent implements OnInit {
 
   // Confirmación de subida de documento
   uploadCompletedModal() {
-    this.modalComponent.openDialog(
-      ConfirmModalComponent,
-      this.functionDocument,
-      'Documento subido correctamente'
-    );
+    this.snackBar.openFromComponent(ResultSnackBarComponent, {
+      data: {
+        message: 'Documento subido correctamente',
+        icon: 'check_circle',
+        preClose: () => {
+          this.snackBar.dismiss();
+        },
+      },
+      panelClass: ['correcto-snackbar'],
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: 3000,
+    });
     this.getDocumentation(this.folderSelected, this.idSelected);
   }
 
   // Si la subida da error
   uploadErrorModal() {
-    this.modalComponent.openDialog(
-      ErrorModalComponent,
-      this.functionDocument,
-      'Error al subir el documento'
-    );
+    this.snackBar.openFromComponent(ResultSnackBarComponent, {
+      data: {
+        message: 'Error al subir el documento',
+        icon: 'error',
+        preClose: () => {
+          this.snackBar.dismiss();
+        },
+      },
+      panelClass: ['error-snackbar'],
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: 3000,
+    });
   }
 
   /*
