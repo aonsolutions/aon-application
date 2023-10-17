@@ -219,7 +219,7 @@ export const INVOICE_RECEIVED = 'Factura Recibida';
 export const INVOICES = 'Facturas';
 export const IRPF = 'IRPF';
 export const IS_REQUIRED = 'es obligatorio';
-export const IS_NOT_VALID_EMAIL = 'no es un email valido';
+export const IS_NOT_VALID_EMAIL = 'no es un email válido';
 export const ISSUED = 'Emitida';
 export const ISSUEDS = 'Emitidas';
 
