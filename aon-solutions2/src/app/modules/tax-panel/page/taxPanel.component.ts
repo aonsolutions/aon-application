@@ -1,4 +1,4 @@
-import { Component, ViewChild, EventEmitter, HostBinding, Input, Output, SimpleChanges, OnChanges, OnInit} from '@angular/core';
+import { Component, ViewChild, HostBinding, Input, OnInit} from '@angular/core';
 import { ModalEditTaxModelComponent } from '../components/modal-edit-tax-model/modal-edit-tax-model.component';
 import { ModalPaymentComponent } from '../components/modal-payment/modal-payment.component';
 import { ModalTaxesDetailsComponent } from '../components/modal-taxes-details/modal-taxes-details.component';
@@ -25,7 +25,7 @@ export interface Models {
   templateUrl: './taxPanel.component.html',
   styleUrls: ['./taxPanel.component.scss'],
 })
-export class TaxPanelComponent implements OnChanges, OnInit {
+export class TaxPanelComponent implements  OnInit {
   @Input() tabColor: string = '';
   @HostBinding('style.--styleTabColor') styleTabColor = '';
   @ViewChild('modalEdit') modalComponentEdit: any = '';
@@ -84,7 +84,7 @@ export class TaxPanelComponent implements OnChanges, OnInit {
           // Le restamos 1 para que coincida con el valor del Tabs
           this.tabIndex = response - 1;
         });
-        // Cabecera de los tags
+        // Cabecera de los tabs
         this.tabs = [
           { name: result['TAX_PANEL.1_TRIMESTER'] },
           { name: result['TAX_PANEL.2_TRIMESTER'] },
@@ -122,9 +122,6 @@ export class TaxPanelComponent implements OnChanges, OnInit {
       this.updateTableData();
     });
   }
-  ngOnChanges(changes: SimpleChanges): void {
-
-    }
 
   ngOnInit(): void {
     this.updateTableData();
@@ -134,8 +131,6 @@ export class TaxPanelComponent implements OnChanges, OnInit {
     this.tabIndex = index;
     this.updateTableData();
   }
-
-
 
   filterModel(value: number, type: number) {
     this.selectedModel = type === 1 ? value : this.selectedModel;
@@ -148,7 +143,6 @@ export class TaxPanelComponent implements OnChanges, OnInit {
     let filterBuilder = new FilterBuilder();
     if (this.tabIndex < 4) {
       filterBuilder.addField('trimester', +this.tabIndex + 1);
-      console.log(this.tabIndex);
     }
 
     if (this.selectedModel > 0) {

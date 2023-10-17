@@ -1,24 +1,17 @@
 @import "src/styles.scss";
 
 ::ng-deep{
-  
-  #build{
-    width: 100%;
-    height: calc(100vh - 10rem);
-    display: grid;
-    align-content: center;
-    justify-items: center;
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: $margin-right;
+    gap: $margin;
+    color: black !important;
+  }
+  .no-models{
+    display:flex;
     justify-content: center;
   }
-  #build app-icon svg{
-    width: 2.95rem;
-    height: 2.95rem;
-    fill: $color-icon;
-  }
-  #build p{
-    font-family: Roboto-Bold;
-    color: $color-icon;
-    font-size: 1.5rem;
-  }
-  
 }

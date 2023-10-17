@@ -141,8 +141,17 @@
 
   },
   "EMPLOYEE_PANEL": {
-
+    "TO_REGISTER": "REGISTER EMPLOYEE",
+    "EMPLOYEE":"Employee",
+    "GROSSCOST":"Gross Cost",
+    "TYPE_OF_CONTRACT":"Type of contract",
+    "DATE_START_END":"Stard/End Date",
+    "WORKCENTER":"Workcenter",
+    "CURRENT_CONTRACTS":"Current Contracts",
+    "EXPIRED_CONTRACTS":"Expired Contracts",
+    "NO_CONTRACTS":"No contracts to display"
   },
+
   "TAX_PANEL": {
     "1_TRIMESTER":   "1 Trimester",
     "2_TRIMESTER":   "2 Trimester",

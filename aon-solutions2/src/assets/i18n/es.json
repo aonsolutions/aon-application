@@ -144,7 +144,15 @@
 
   },
   "EMPLOYEE_PANEL": {
-
+    "TO_REGISTER": "DAR DE ALTA",
+    "EMPLOYEE":"Empleado",
+    "GROSSCOST":"Bruto",
+    "TYPE_OF_CONTRACT":"Tipo de contrato",
+    "DATE_START_END":"Fecha inicio/fin",
+    "WORKCENTER":"Centro de trabajo",
+    "CURRENT_CONTRACTS":"Contratos Vigentes",
+    "EXPIRED_CONTRACTS":"Contratos Extinguidos",
+    "NO_CONTRACTS":"No hay contratos que mostrar"
   },
   "TAX_PANEL": {
     "1_TRIMESTER":   "1 Trimestre",

@@ -1,8 +1,81 @@
 <app-grid-layout>
-  <div content id="build">
-    <app-icon [shape]="'aon_build'"></app-icon>
-    <p>
-      Estamos construyendo esta página
-    </p>
+  <!-- encabezado con boton dar de alta -->
+  <div header class="padding">
+    <app-button
+      class="icon-background"
+      [width]="'width'"
+      (click)="addEmployee()"
+    >
+      <app-icon shape="person_add"></app-icon>
+      {{ "EMPLOYEE_PANEL.TO_REGISTER" | translate }}
+    </app-button>
   </div>
+  <!-- fin encabezado -->
+  <div content>
+    <!-- <button (click)="detail ? detail = false : detail = true">showDetail</button> -->
+
+    <!-- buscador -->
+    <div class="padding-top padding-right padding-left">
+      <div class="width-40">
+        <app-input
+          [appearance]="'outline'"
+          [class]="'search'"
+          [type]="'search'"
+          [placeholder]="'INBOX.TEXT' | translate"
+        ></app-input>
+      </div>
+    </div>
+
+    <app-tabs
+      [tabs]="tabs"
+      [tabIndex]="tabIndex"
+      (changeTabIndex)="changeTabIndex($event)"
+      [tabColor]="'green'"
+    >
+    <div tool>
+      <div class="buttons">
+        <app-button
+          *ngFor="let button of buttonsGastos"
+          class="icon-border"
+        >
+          <app-icon [shape]="button.shape"></app-icon>
+        </app-button>
+      </div>
+    </div>
+
+    <div content class="padding" *ngIf="this.tabIndex == 0">
+      <app-spinner *ngIf="spinner"></app-spinner>
+      <app-table
+      *ngIf="bodyTable.length > 0; else noModelsTemplate"
+        mat-table
+        mat-flat-table
+        [displayedColumns]="displayedColumns"
+        [head]="headerTable"
+        [data]="bodyTable"
+      >
+      </app-table>
+      <ng-template #noModelsTemplate>
+        <div class="no-models padding">{{ contracts }}</div>
+      </ng-template>
+    </div>
+
+    <div content class="padding" *ngIf="this.tabIndex == 1">
+      <app-spinner *ngIf="spinner"></app-spinner>
+      <app-table
+        *ngIf="bodyTable.length > 0; else noModelsTemplate"
+        mat-table
+        mat-flat-table
+        [displayedColumns]="displayedColumns"
+        [head]="headerTable"
+        [data]="bodyTable"
+      >
+      </app-table>
+      <ng-template #noModelsTemplate>
+        <div class="no-models padding">{{ contracts }}</div>
+      </ng-template>
+    </div>
+  </app-tabs>
+  </div>
+
+
 </app-grid-layout>
