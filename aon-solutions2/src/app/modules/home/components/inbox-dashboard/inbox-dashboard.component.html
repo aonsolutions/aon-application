@@ -9,9 +9,10 @@
     [displayedColumns]="displayedColumns"
     [data]="bodyTable"
     (listenParentRow)="rowClick($event)"
+    (listenParentHandler)="actionIcon($event)"
   ></app-table>
   <hr>
   <div id="home-inbox-total">
-    <span class="text" [routerLink]="routerlink" >ver todo los mensajes</span> <span class="circle red">{{ messageTotal }}</span>
+    <span class="text" [routerLink]="routerlink" >{{ "HOME.ALL_MESSAGES" | translate}}</span> <span class="circle red">{{ messageTotal }}</span>
   </div>
 </div>
