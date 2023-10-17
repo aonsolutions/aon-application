@@ -1,12 +1,10 @@
 import { Injectable, NgZone } from '@angular/core';
 import { CustomErrorList } from '../models/enum/custom-error-list.enum';
-import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorSnackBarComponent } from 'src/app/shared/components/error-snack-bar/error-snack-bar.component';
 import { CustomError } from '../models/class/custom-error';
 import { ICustomError } from '../models/interface/icustom-error';
-import { IResponse } from 'libraries/AonSDK/src/aon';
-import { Response } from 'libraries/AonSDK/src/aon';
-import { ErrorResponse } from 'libraries/AonSDK/src/aon';
+import { IResponse, Response, ErrorResponse } from 'libraries/AonSDK/src/aon';
 
 @Injectable({
   providedIn: 'root'

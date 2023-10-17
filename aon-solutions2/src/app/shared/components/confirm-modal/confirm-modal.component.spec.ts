@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UploadCompletedModalComponent } from './upload-completed-modal.component';
+import { ConfirmModalComponent } from './confirm-modal.component';
 
 describe('UploadCompletedModalComponent', () => {
-  let component: UploadCompletedModalComponent;
-  let fixture: ComponentFixture<UploadCompletedModalComponent>;
+  let component: ConfirmModalComponent;
+  let fixture: ComponentFixture<ConfirmModalComponent>;
 
 //  beforeEach(async () => {
 //    await TestBed.configureTestingModule({

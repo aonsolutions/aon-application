@@ -135,8 +135,6 @@
     "AMOUNT": "Cantidad",
     "SEND_BILL": "Enviar factura",
     "SEND": "Enviar",
-    "CANCEL": "Cancelar",
-    "ACCEPT": "Aceptar",
     "DUPLICATE_BILL": "Vas a duplicar esta factura, ¿Deseas continuar?",
     "DELETE_BILL": "¿Deseas eliminar esta factura?"
   },
