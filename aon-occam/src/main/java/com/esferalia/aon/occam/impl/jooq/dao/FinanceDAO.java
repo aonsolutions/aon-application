@@ -58,9 +58,9 @@ public class FinanceDAO {
 	
 	// ---------------------------------------------------------- FILTROS
 	private static final FinancePropertiesDAO FINANCE_PROPERTIES = new FinancePropertiesDAO();
-	private static class FinancePropertiesDAO implements FinanceProperties {
+	protected static class FinancePropertiesDAO implements FinanceProperties {
 
-		private Condition[] getConditions(FinanceFilter filter) {
+		public Condition[] getConditions(FinanceFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null)
 				return new Condition[0];

@@ -12,11 +12,11 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.StatDataJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.stat.StatType;
 import com.esferalia.aon.occam.api.model.stat.invoice.InvoiceChartType;
-import com.esferalia.aon.occam.api.model.type.ChartType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -28,6 +28,7 @@ public class StatServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(StatServlet.class.getName());
 	
 	public static final String INVOICE = "/invoice";
+	public static final String FINANCE = "/finance";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -46,6 +47,7 @@ public class StatServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(INVOICE, StatServlet::getAction)
+				.addRoute(FINANCE, StatServlet::getFinanceStat)
 				.apply();
 			
 			response(req, resp, object);
@@ -68,6 +70,20 @@ public class StatServlet extends AonApiHttpServlet {
 				.setFrom(from != null ? from : AonDateUtils.getMonthFirstDay(AonDateUtils.addMonths(new Date(), -11)))
 				.setTo(AonDateUtils.getMonthLastDay(new Date()))
 				;
+	}
+	
+	private static JSONObject getFinanceStat(AonApiData api) {
+		StatData<String, String, Double> result = AON.getFinanceStat(
+				api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+				getFinanceStatFilter(api));
+		return StatDataJSON.toJSON(result);
+	}
+	
+	private static FinanceFilter getFinanceStatFilter(AonApiData api) {
+		Date from = JsonUtils.getDate(api.getData(), IJsonNames.FROM);
+		Date to = JsonUtils.getDate(api.getData(), IJsonNames.TO);
+		Integer status = 0;
+		return f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getDueDateProperty().between(from, to)).and(f.getStatusProperty().eq(status.byteValue()));
 	}
 	
 }
