@@ -1,11 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FolderService } from 'src/app/core/services/folder.service';
 
 interface Folder {
   value: string;
   text: string;
-  disabled?: boolean;
 }
 
 @Component({
@@ -18,7 +17,7 @@ export class UploadModalComponent implements OnInit {
   document: any;
   docName: string = '';
   folderList: Folder[] = [];
-  folderSelected: string = '';
+  folderSelected: string = '/contabilizado';
   folderNoSelected: boolean = false;
   fileAndFolder: any[] = [];
 
@@ -41,7 +40,6 @@ export class UploadModalComponent implements OnInit {
         this.folderList.push({
           value: folder.getKey(),
           text: folder.Name,
-          disabled: folder.Name !== 'Contabilizado' ? true : false,
         });
       });
     });
@@ -55,9 +53,9 @@ export class UploadModalComponent implements OnInit {
   }
 
   // Guardamos la carpeta seleccionada
-  handleFolderSelected(event: any) {
-    this.folderSelected = event;
-  }
+  // handleFolderSelected(event: any) {
+  //   this.folderSelected = event;
+  // }
 
   // Comprobamos si se ha seleccionado una carpeta antes de subir el documento
   checkFolder(event: Event) {

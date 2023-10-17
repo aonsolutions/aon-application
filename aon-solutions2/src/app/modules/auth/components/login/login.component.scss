@@ -38,8 +38,9 @@
   display     : flex;
   align-items : center;
   margin      : $margin 0;
-  color       : $color-third;
+  font-family : "Roboto-Medium";
   font-size   : 0.5rem;
+  color       : $color-third;
 }
 
 .divider::before, .divider::after {
