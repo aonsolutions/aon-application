@@ -332,6 +332,10 @@ export function generateData(){
         registryEnterprises.add(new RegistryEnterprise('B16880148', 'lorem ipsum ...', new Date(), new Date(), 'Esperanza', 'Protocolo 1', 'Inscripción 1'));
         registryEnterprises.add(new RegistryEnterprise('U14241855', 'lorem ipsum ...', new Date(), new Date(), 'Jorge Luis', 'Protocolo 2', 'Inscripción 2'));
         registryEnterprises.add(new RegistryEnterprise('U53716270', 'lorem ipsum ...', new Date(), new Date(), 'Manuela', 'Protocolo 3', 'Inscripción 3'));
+        registryEnterprises.add(new RegistryEnterprise('V74530528', 'lorem ipsum ...', new Date(), new Date(), 'Pedro', 'Protocolo 4', 'Inscripción 4'));
+        registryEnterprises.add(new RegistryEnterprise('N3038065C', 'lorem ipsum ...', new Date(), new Date(), 'Pedro', 'Protocolo 5', 'Inscripción 5'));
+        registryEnterprises.add(new RegistryEnterprise('J85226413', 'lorem ipsum ...', new Date(), new Date(), 'Pedro', 'Protocolo 6', 'Inscripción 6'));
+        registryEnterprises.add(new RegistryEnterprise('S9668644I', 'lorem ipsum ...', new Date(), new Date(), 'Pedro', 'Protocolo 7', 'Inscripción 7'));
         localRegistryEnterprises.write(storableRegistryEnterprises.getLocalStorage(), registryEnterprises);
     }
 
