@@ -24,7 +24,7 @@
 
   <!-- INPUT TIPO NUMBER -->
   <input
-    *ngIf="type == 'number'"
+    *ngIf="type == 'number' && minNumber === '' && maxNumber === ''"
     matInput
     [(ngModel)]="value"
     [ngClass]="['ng-pending']"
@@ -32,14 +32,63 @@
     [required]="required"
     [type]="type"
     [placeholder]="placeholder"
-    (ngModelChange)="returnValue($event)"
     [class]="appearanceDetail"
-    min="minNumber"
-    max="maxNumber"
-    (ngModelChange)="validateFormatNumber($event)"
+    (ngModelChange)="returnValue($event)"
+    (keypress)="validateFormatNumber($event)"
+    (paste)="validateFormatNumber($event)"
   />
-<!--    (keypress)="validateFormatNumber($event)"
-    (paste)="validateFormatNumber($event)"-->
+  <!-- INPUT TIPO NUMBER MIN  -->
+  <input
+    *ngIf="type == 'number' && minNumber !== '' && maxNumber === ''"
+    matInput
+    [(ngModel)]="value"
+    [ngClass]="['ng-pending']"
+    [disabled]="disabled"
+    [required]="required"
+    [type]="type"
+    [placeholder]="placeholder"
+    [class]="appearanceDetail"
+    (ngModelChange)="returnValueNumber($event)"
+    (change)= "this.value < minNumber ? this.value = minNumber : this.value"
+    [min]="minNumber"
+    (keypress)="validateFormatNumber($event)"
+    (paste)="validateFormatNumber($event)"
+  />
+  <!-- INPUT TIPO NUMBER MAX -->
+  <input
+    *ngIf="type == 'number' && minNumber === '' && maxNumber !== ''"
+    matInput
+    [(ngModel)]="value"
+    [ngClass]="['ng-pending']"
+    [disabled]="disabled"
+    [required]="required"
+    [type]="type"
+    [placeholder]="placeholder"
+    [class]="appearanceDetail"
+    (ngModelChange)="returnValueNumber($event)"
+    (change)= "this.value > maxNumber ? this.value = maxNumber : this.value"
+    [max]="maxNumber"
+    (keypress)="validateFormatNumber($event)"
+    (paste)="validateFormatNumber($event)"
+  />
+  <!-- INPUT TIPO NUMBER MIN AND MAX -->
+  <input
+    *ngIf="type == 'number' && minNumber !== '' && maxNumber !== ''"
+    matInput
+    [(ngModel)]="value"
+    [ngClass]="['ng-pending']"
+    [disabled]="disabled"
+    [required]="required"
+    [type]="type"
+    [placeholder]="placeholder"
+    [class]="appearanceDetail"
+    (ngModelChange)="returnValueNumber($event)"
+    [min]="minNumber"
+    [max]="maxNumber"
+    (change)= "this.value < minNumber ? this.value = minNumber : this.value; this.value > maxNumber ? this.value = maxNumber : this.value"
+    (keypress)="validateFormatNumber($event)"
+    (paste)="validateFormatNumber($event)"
+  />
 
   <div
     class='search-componet'

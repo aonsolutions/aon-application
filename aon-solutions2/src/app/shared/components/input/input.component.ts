@@ -102,33 +102,36 @@ export class InputComponent implements OnInit {
   /*
     Input solo number
   */
-  validateFormatNumber(event: any) {
-    let key;
-    key = event;
-//    if (event.type === 'paste') {
-//      key = event.clipboardData.getData('text/plain');
-//    } else {
-//      key = event.keyCode;
-//      key = String.fromCharCode(key);
-//    }
-    // 1 - Permitir del 0 al 9
-    // 2 - Permitir .
-    // 3 - Permitir ,
-    // 4 - Permitir -
-    const regex = /[0-9]|\.|\,|\-/;
-    if (!regex.test(key)) {
-      event.returnValue = false;
-      if (event.preventDefault) {
-        event.preventDefault();
+    returnValueNumber(value: any) {
+      if (this.minNumber !== '' && this.minNumber > value){
+        value = this.minNumber;
+      }
+      if (this.maxNumber !== '' && this.maxNumber < value){
+        value = this.maxNumber;
+      }
+      
+      this.inputValue.emit(value);
+    }
+    validateFormatNumber(event: any) {
+      let key;
+      if (event.type === 'paste') {
+        key = event.clipboardData.getData('text/plain');
+      } else {
+        key = event.keyCode;
+        key = String.fromCharCode(key);
+      }
+      // 1 - Permitir del 0 al 9
+      // 2 - Permitir .
+      // 3 - Permitir ,
+      // 4 - Permitir -
+      const regex = /[0-9]|\.|\,|\-/;
+      if (!regex.test(key)) {
+        if(event.returnValue)
+          event.returnValue = false;
+        if (event.preventDefault) {
+          event.preventDefault();
+        }
       }
     }
-    
-    console.log(event);
-    console.log(key);
-    if (event >= this.minNumber && event <= this.maxNumber){
-//      this.row.percent_complete = event;
-    }
-    
-  }
 
 }
