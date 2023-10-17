@@ -200,4 +200,27 @@
     mat-form-field .appButton:hover{
       background-color: $background-button-hover-view-rgba !important;
     }
+
+  /*
+    span only icon
+  */
+    mat-form-field .icon-only{
+      box-sizing      : border-box;
+      cursor          : pointer;
+      display         : flex;
+      align-items     : center;
+      text-transform  : uppercase;
+      white-space     : nowrap;
+      overflow        : hidden;
+      text-overflow   : ellipsis;
+      font-size       : $font-size-button;
+      color           : $color-primary;
+      justify-content : center;
+      border-radius   : 50rem;
+      width           : 2rem!important;
+      height          : 2rem!important;
+    }
+    mat-form-field .icon-only:hover{
+      background-color: $background-button-hover;
+    }
 }
