@@ -34,7 +34,11 @@ export class LoginComponent implements OnInit {
 
     this.auth.login(this.username, this.password).then(() => {
       this.spinner = false;
-    });
+    }).catch((error: ErrorResponse) => {
+      this.spinner = false;
+      throw error;
+    })
+
   }
 
   ngOnDestroy() {
