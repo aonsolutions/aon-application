@@ -1,16 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  CollectionFactory,
-  ErrorResponse,
-  Factory,
-  ICollection,
-  IMessage,
-  StatusMessage,
-  TypeMessage,
-} from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, Factory, ICollection, IMessage, StatusMessage, TypeMessage, } from 'libraries/AonSDK/src/aon';
 import { MessageService } from 'src/app/core/services/message.service';
+import { TaxModelService } from 'src/app/core/services/tax-model.service';
 
 @Component({
   selector: 'app-modal-edit-tax-model',
@@ -25,9 +18,8 @@ export class ModalEditTaxModelComponent implements OnInit {
   collectionFactory = new CollectionFactory();
   messages: ICollection<IMessage> =
     this.collectionFactory.createMessageCollection();
-
-  dataSeparator: string = ';';
-  dataParts: string[] = [];
+  model: any;
+  spinner: boolean = false;
 
   newMessageDescriptionChange(newValue: string) {
     this.newMessageDescription = newValue;
@@ -38,11 +30,17 @@ export class ModalEditTaxModelComponent implements OnInit {
   }
 
   constructor(
+    private taxModelService: TaxModelService,
     private messageService: MessageService,
     private translateService: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ModalEditTaxModelComponent>
-  ) {}
+  ) {
+    this.taxModelService.getTax(data.key).then((response) => {
+      this.model = response;
+      console.log('El modelo en edit', this.model.Result);
+    });
+  }
 
   async createMessage(description: string) {
     if (this.messagesData) {
@@ -55,16 +53,15 @@ export class ModalEditTaxModelComponent implements OnInit {
           this.translateService
             .get('TAX_PANEL.TRIMESTER')
             .subscribe((trimester) => {
-              this.translateService
-                .get('TAX_PANEL.OF')
-                .subscribe((of) => {
-                  title = `${rectifyingModel} ${this.dataParts[0]}, ${trimester} ${this.dataParts[1]}, ${of} ${this.dataParts[2]}`;
-                  console.log(title);
-                });
+              this.translateService.get('TAX_PANEL.OF').subscribe((of) => {
+                title = `${rectifyingModel} ${this.model.Name}, ${trimester} ${this.model.Trimester}, ${of} ${this.model.Year}`;
+                console.log(title);
+              });
             });
         });
 
-      const newMessage: IMessage = this.messageService.objectFactory.createMessage();
+      const newMessage: IMessage =
+        this.messageService.objectFactory.createMessage();
       newMessage.Id = messageId;
       newMessage.Name = '';
       newMessage.Title = title;
@@ -75,17 +72,15 @@ export class ModalEditTaxModelComponent implements OnInit {
       newMessage.EndDate = new Date();
       newMessage.LastMessageChatOrigin = false;
 
-      try {
-        // Crear el mensaje
-        const createdMessage = await this.messageService.createMessage(
-          newMessage
-         );
+      // Crear el mensaje
+      const createdMessage = await this.messageService.createMessage(
+        newMessage
+      );
 
-        // Agregar el nuevo mensaje
-        // this.messages.add(createdMessage);
-      } catch (error) {
-        throw error instanceof ErrorResponse ? error : new ErrorResponse(error);
-      }
+        // Ocultar el spinner después de crear el mensaje
+        this.spinner = false;
+        this.dialogRef.close();
+
     }
   }
 
@@ -95,6 +90,8 @@ export class ModalEditTaxModelComponent implements OnInit {
       return;
     }
 
+    this.spinner = true;
+
     // Llama a la función para crear un nuevo mensaje
     this.createMessage(this.newMessageDescription);
 
@@ -102,8 +99,5 @@ export class ModalEditTaxModelComponent implements OnInit {
     this.newMessageDescription = '';
   }
 
-  ngOnInit(): void {
-    this.dataParts = this.data['key'].split(this.dataSeparator);
-    console.log(this.dataParts);
-  }
+  ngOnInit(): void {}
 }
