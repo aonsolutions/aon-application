@@ -62,6 +62,14 @@ export class AonElement extends HTMLElement{
     return el;
   }
 
+  createSpan(id, className) {
+    return this.createElement(TAG.SPAN, id, className);
+  }
+
+  createDiv(id, className) {
+    return this.createElement(TAG.DIV, id, className);
+  }
+
   createAonElement(el, id, title, main){
     el.id = id || '';
     el.title = title || '';

@@ -1659,12 +1659,14 @@ label.rating:hover {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-left: 10px;
 }
 
 .aonFastAccess{
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-left: 10px;
 }
 
 #docUploadDiv, #factUploadDiv{
