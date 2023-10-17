@@ -3,6 +3,7 @@
     <div class="line"></div>
     <div class="text">{{ 'HOME.INBOX'|translate }}</div>
   </div>
+  <app-spinner *ngIf="spinner"></app-spinner>
   <app-table
     mat-table
     mat-flat-table
