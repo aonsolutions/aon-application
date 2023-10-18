@@ -9,7 +9,8 @@ import { ModalDeleteCertificateComponent } from '../components/modal-delete-cert
 export class ProfileCompanyComponent implements OnInit {
   modalComponentDelete: any;
 
-  constructor() {}
+  constructor() {
+  }
 
   @ViewChild('modalDelete') modalComponentEdit: any = '';
 
@@ -27,5 +28,7 @@ export class ProfileCompanyComponent implements OnInit {
     );
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
+
 }

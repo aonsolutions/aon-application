@@ -1,0 +1,33 @@
+@import "src/styles.scss";
+
+::ng-deep {
+  .closeSnackBar {
+    cursor: pointer;
+  }
+  .error-snackbar {
+    background: #f8d7da !important;
+    color: #752129 !important;
+    box-shadow: none !important;
+    width: 100%;
+    margin: none;
+    box-sizing: border-box;
+  }
+
+  .correct-snackbar {
+    background: #d7f8dd !important;
+    color: #287521 !important;
+    box-shadow: none !important;
+    width: 100%;
+    margin: none;
+    box-sizing: border-box;
+  }
+
+  .correct-snackbar {
+    background: #d7f8dd !important;
+    color: #287521 !important;
+    box-shadow: none !important;
+    width: 100%;
+    margin: none;
+    box-sizing: border-box;
+  }
+}

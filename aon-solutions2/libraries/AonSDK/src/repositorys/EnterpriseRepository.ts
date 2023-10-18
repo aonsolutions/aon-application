@@ -35,10 +35,10 @@ export class ApiEnterpriseSingleObjectCrudRepository extends APIGenericSingleObj
     }
 
     async get(key: string, type?: string | undefined): Promise<Enterprise> {
-        let response: IEnterprise = await ApiHttpRequest.get('/ms/api/company/one', {}, {})    
+        let response: IEnterprise = await ApiHttpRequest.get('/ms/api/company/one', {}, {})
         return this.apiModel.parseDataToReceive(response, GET_SINGLE);
     }
-    
+
 }
 
 export class LocalEnterpriseSpecificMethodsRepository implements IEnterpriseSpecificMethodsRepository {
@@ -47,7 +47,7 @@ export class LocalEnterpriseSpecificMethodsRepository implements IEnterpriseSpec
     }
 
     async updateCurrentEntepriseData(enterprise: Enterprise): Promise<IEnterprise> {
-        return  new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise).update(enterprise);
+        return new GenericSingleObjectCrudRepository<Enterprise>(new StorableEnterprise(), Enterprise).update(enterprise);
     }
 
     async getCurrentEnterpriseRegistryData(): Promise<IRegistryEnterprise> {

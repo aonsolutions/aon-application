@@ -12,12 +12,11 @@ interface Folder {
   templateUrl: './upload-modal.component.html',
   styleUrls: ['./upload-modal.component.scss'],
 })
-
 export class UploadModalComponent implements OnInit {
   document: any;
   docName: string = '';
   folderList: Folder[] = [];
-  folderSelected: string = '/contabilizado';
+  folderSelected: string = '/a_contabilizar';
   folderNoSelected: boolean = false;
   fileAndFolder: any[] = [];
 
@@ -68,7 +67,8 @@ export class UploadModalComponent implements OnInit {
   }
 
   // Guardamos el documento y la carpeta seleccionada
-  documentUpload(event: Event) {
+  async documentUpload(event: any) {
+    console.log(event);
     const target = event.target as HTMLInputElement;
     const file: File = (target.files as FileList)[0];
     this.document = file;
@@ -85,4 +85,5 @@ export class UploadModalComponent implements OnInit {
     this.document = null;
     this.docName = '';
   }
+
 }

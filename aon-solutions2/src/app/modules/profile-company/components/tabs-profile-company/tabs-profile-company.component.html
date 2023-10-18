@@ -7,6 +7,7 @@
   <div tool>
     <app-button [class]="'dark'" [width]="'100%'" (click)="onSave()">
       {{ "PROFILE.SAVE" | translate }}
+
     </app-button>
     <app-button [class]="'white'" [width]="'100%'" (click)="onCancel()">
       {{ "PROFILE.CANCEL" | translate }}</app-button
@@ -17,7 +18,7 @@
     <!-- datos personales -->
     <app-grid-layout>
       <div content>
-        <app-input-profile-personal-data></app-input-profile-personal-data>
+        <app-input-profile-personal-data [user]="user"></app-input-profile-personal-data>
       </div>
     </app-grid-layout>
   </div>
@@ -26,9 +27,9 @@
     <app-grid-layout>
       <div content id="company" class="margin">
         <!-- pestaña datos empresa, apartado información general -->
-        <app-input-profile-company-information></app-input-profile-company-information>
+        <app-input-profile-company-information [enterprise]="enterprise"></app-input-profile-company-information>
         <!-- pestaña datos empresa, apartado datos contacto -->
-        <app-input-profile-company-data></app-input-profile-company-data>
+        <app-input-profile-company-data [enterprise]="enterprise"></app-input-profile-company-data>
       </div>
     </app-grid-layout>
   </div>
@@ -38,8 +39,7 @@
     <app-grid-layout>
       <div content>
         <app-input-profile-registry-data
-        [registryEnterprise]="registryEnterprises[0]"
-        (registryEnterpriseChange)="updateRegistryEnterprise($event)"
+        [registryEnterprise]="registryEnterprise"
         ></app-input-profile-registry-data>
       </div>
     </app-grid-layout>

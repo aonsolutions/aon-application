@@ -1,16 +1,10 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
-
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+
 import { CertificateService } from '../../../../core/services/certificate.service';
-import { ModalValidatedCertificateComponent } from '../modal-validated-certificate/modal-validated-certificate.component';
-import { ModalInfoCertificateComponent } from '../modal-info-certificate/modal-info-certificate.component';
 import { ModalDeleteCertificateComponent } from '../modal-delete-certificate/modal-delete-certificate.component';
+import { ModalInfoCertificateComponent } from '../modal-info-certificate/modal-info-certificate.component';
+import { ModalValidatedCertificateComponent } from '../modal-validated-certificate/modal-validated-certificate.component';
 
 @Component({
   selector: 'app-table-profile-certificate',
@@ -60,30 +54,7 @@ export class TableProfileCertificateComponent implements OnInit {
           aeat: result['PROFILE.AEAT'],
           actions: result['PROFILE.ACTIONS'],
         };
-
-        let tableRow: any = [];
-        let column: any = {};
-
-        certificateService.getCertificateList().then((response) => {
-          response.forEach(function (certificate, certificateKey) {
-            column = Object.assign({}, certificate);
-            column.key = certificateKey;
-            column.name = certificate.Name;
-            column.representationType = certificate.RepresentationType;
-            column.expirationDate = certificate.ExpirationDate;
-            column.alias = certificate.Alias;
-            column.type = certificate.Type;
-            column.tgss = certificate.Tgss;
-            column.sepe = certificate.Sepe;
-            column.aeat = certificate.Aeat;
-            column.actions = ['verified_user', 'delete'];
-
-            tableRow.push(column);
-            console.log(column);
-          });
-
-          this.bodyTable = tableRow;
-        });
+        this.getCertificates();
       });
   }
 
@@ -124,4 +95,30 @@ export class TableProfileCertificateComponent implements OnInit {
     console.log(object);
     // }
   }
+
+  private getCertificates() {
+    let tableRow: any = [];
+    let column: any = {};
+
+    this.certificateService.getCertificateList().then((response) => {
+      response.forEach(function (certificate, certificateKey) {
+        column = Object.assign({}, certificate);
+        column.key = certificateKey;
+        column.name = certificate.Name;
+        column.representationType = certificate.RepresentationType;
+        column.expirationDate = certificate.ExpirationDate;
+        column.alias = certificate.Alias;
+        column.type = certificate.Type;
+        column.tgss = certificate.Tgss;
+        column.sepe = certificate.Sepe;
+        column.aeat = certificate.Aeat;
+        column.actions = ['verified_user', 'delete'];
+
+        tableRow.push(column);
+      });
+
+      this.bodyTable = tableRow;
+    });
+  }
+
 }
