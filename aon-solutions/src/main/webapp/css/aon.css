@@ -450,18 +450,24 @@
 
 .aonHeader {
   background-color: var(--aonWhite);
-  padding: 0 !important;
   margin: 0 !important;
   border-bottom: 1px solid #ddd;
   color: #5f6368;
   height: 60px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
 }
 
 .aonHeaderBeta {
-  padding: 0 !important;
   margin: 0 !important;
   color: #5f6368;
   height: 60px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
 }
 
 .aonHeaderButton {
@@ -941,7 +947,6 @@
 }
 
 .aonSearchBox {
-  position: absolute;
   height: 40px;
   border: none;
   -webkit-appearance: none;
@@ -950,7 +955,6 @@
 }
 
 .aonSearchBoxBeta {
-  position: absolute;
   height: 38px;
   border: none;
   -webkit-appearance: none;
@@ -973,7 +977,7 @@
   border-radius: 10px;
 }
 
-aon-card{
+.aonDashboardCard{
   width: 100%;
 }
 
@@ -1663,6 +1667,20 @@ label.rating:hover {
   border: 1px solid rgb(246, 101, 90);
 }
 
+.aonMessengerCardRow{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border-bottom: 1px solid rgb(221, 221, 221);
+  padding: 1rem 0px;
+  cursor: pointer;
+}
+
+.aonMessengerCardRow:hover{
+  border-top: 1px solid rgb(246, 101, 90);
+  border-bottom: 1px solid rgb(246, 101, 90);
+}
+
 .aonBadge{
   border-radius: 50%;
   width: 34px;
@@ -1671,6 +1689,7 @@ label.rating:hover {
   color: white;
   text-align: center;
   background-color: rgba(246, 101, 90, 0.7);
+  font-weight: 600;
 }
 
 
@@ -1718,7 +1737,7 @@ label.rating:hover {
 .aonEllipsis {
   text-overflow: ellipsis;
   overflow: hidden;
-  max-width: 15rem;
+  max-width: 14rem;
   white-space: nowrap;
 }
 
@@ -1745,7 +1764,7 @@ aon-access-card{
 /* @media only screen and (min-width: 768px) {} */
 @media only screen and (min-width: 768px) {
   .aonEllipsis{
-      max-width: 24rem;
+      max-width: 20rem;
   }
 }
 
@@ -1755,8 +1774,9 @@ aon-access-card{
     min-width: 42.2rem;
   }
 
-  aon-card{
-      width: auto
+  .aonDashboardCard{
+      width: auto;
+      min-width: 22rem;
   }
 
   aon-access-card{
@@ -1765,7 +1785,7 @@ aon-access-card{
   }
 
   .aonEllipsis{
-    max-width: 28rem;
+    max-width: 26rem;
   }
 }
 

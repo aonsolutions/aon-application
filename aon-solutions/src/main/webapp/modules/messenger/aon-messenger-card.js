@@ -10,6 +10,8 @@ import { getTaskHolder } from "../../services/taskHolderService.js";
 import { TaskListUtils } from "../messenger/utils/TaskListUtils.js";
 import * as LS from "../../services/localStorageService.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
+import {getWorkgroups} from '../../services/workgroupService.js';
+import { NotificationUtils } from "../notification/utils/NotificationUtils.js";
 
 export class AonMessengerCard extends AonElement {
   AON_FISCAL;
@@ -73,8 +75,6 @@ export class AonMessengerCard extends AonElement {
 
   buildToolbar() {
     this.getMeseggers().then(messengers => {
-      console.log("Messengers");
-      console.log(messengers);
       this.getTable(this.getDataDesktop(messengers));
       this.getMessage(messengers.length);
     });
@@ -86,11 +86,19 @@ export class AonMessengerCard extends AonElement {
 
     const taskholder = await getTaskHolder({ reload: false }).catch(() => null);
     if (taskholder) {
-      console.log("taskholder");
-      console.log(taskholder);
       this.TASK_HOLDER = taskholder;
       filter.task_holder = taskholder.id;
     }
+
+    let filterWorkgroup = {status:"ACTIVE"};
+    let isManager = this.getDur().isMessengerManager();
+    if(!isManager && this.TASK_HOLDER) {
+      filterWorkgroup.task_holder = this.TASK_HOLDER.id;
+    }
+
+    await getWorkgroups(filterWorkgroup).then( workgroup => {
+      filter.workgroups = workgroup.map(t => t.id);
+    });
 
     try {
       let tasks = await getTasks(filter);
@@ -118,20 +126,28 @@ export class AonMessengerCard extends AonElement {
   getDataDesktop(datos) {
     try {
       const documents = this.getDocuments();
-      return datos.map(dato => ({
+      return datos.map((dato, idx) => ({
         ...dato,
         dateParse: this.getDateParseNew(dato.date),
         newTitle: this.getTitleDesktop(dato, documents.document, documents.documentTh),
         assigned: TaskListUtils.getAssignedHtml(dato, documents.domainId),
-        lettersHtml: TaskListUtils.getIcon(dato)
+        lettersHtml: TaskListUtils.getIcon(dato),
+        fn: () => this.goMessengerChat(dato, idx)
       }));
     } catch (e) {
       console.log(e);
     }
   }
 
+  async goMessengerChat(res, idx) {
+    let data = {source: "MESSENGER", source_id: res.id, domain: res.domain};
+    const aonComponent = NotificationUtils.getNotificationComponent(data);
+    if(aonComponent){
+      this.rootPanel(aonComponent);
+    }
+  }
+
   getDateParseNew(date) {
-    console.log("getDateParseNew : " + window.innerWidth);
     return window.innerWidth < 768 ? AonDateUtils.getDayMonthOrFull(date) : AonDateUtils.setDateTpDay(date);
   }
 
@@ -148,7 +164,7 @@ export class AonMessengerCard extends AonElement {
     };
   }
 
-  getTitleDesktop(messenger) {
+  getTitleDesktop(messenger, document, documentTh) {
     let div = this.createElement(TAG.DIV);
     div.className = CSS.AON_FLEX_COLUMN;
     div.style.alignItems = "flex-start";
@@ -167,6 +183,8 @@ export class AonMessengerCard extends AonElement {
     content.className = CSS.AON_ELLIPSIS;
     div.appendChild(content);
 
+    let sender = this.getSender(messenger, document, documentTh);
+
     let description = messenger.description;
     try {
       description = JSON.parse(messenger.description).observation;
@@ -174,15 +192,31 @@ export class AonMessengerCard extends AonElement {
 
     if (description) {
       const dText = description.replace(/<[^>]+>|&nbsp;|\n/g, " ");
-      content.innerHTML = dText;
+      content.innerHTML = `<b>${sender}</b> ${dText}`;
       content.title = dText;
     } else {
-      content.innerHTML = description;
+      content.innerHTML = `<b>${sender}</b> ${description}`;
       content.title = description;
     }
 
     return div;
   }
+
+  getSender(res, document, documentTh) {
+    let sender = "";
+    if (res.registry && res.registry.name && document !== res.registry.document) {
+      sender = `${res.registry.name} ${sender}`;
+    } else if (res.sender && res.sender.name && documentTh !== res.sender.document) {
+      sender = `${res.sender.name} ${sender}`;
+    } else if (res.workgroup && res.workgroup.description) {
+      // GRUPO ASIGNADO
+      sender = res.workgroup.description;
+    } else {
+      sender = "SIN GRUPO ASIGNADO";
+    }
+  
+    return sender;
+  };
 
   getTable(messengers) {
     let content = this.getElement("messengerCardTable");
@@ -192,11 +226,11 @@ export class AonMessengerCard extends AonElement {
       const messenger = messengers[index];
       
       let row = this.createElement(TAG.DIV);
-      row.className = CSS.AON_FLEX;
-      row.style.justifyContent = "space-between";
-      row.style.width = "100%";
-      row.style.borderBottom = "1px solid #ddd";
-      row.style.padding = "1rem 0";
+      row.classList = CSS.AON_MESSENGER_CARD_ROW;
+      row.addEventListener(EVENT.CLICK, () => {
+        messenger.fn();
+        // () => messenger.fn;
+      });
 
       let leftContent = this.createElement(TAG.DIV);
       leftContent.className = CSS.AON_FLEX;
@@ -215,17 +249,16 @@ export class AonMessengerCard extends AonElement {
       let rightContent = this.createElement(TAG.DIV);
       rightContent.className = CSS.AON_FLEX;
       rightContent.style.alignItems = "center";
-      rightContent.style.gap = "1rem";
+      rightContent.style.gap = ".5rem";
 
       let assigned = messenger.assigned;
       rightContent.appendChild(assigned);
 
       let date = this.createElement(TAG.SPAN);
       date.style.whiteSpace = "nowrap";
+      date.style.minWidth = window.innerWidth < 768 ? "5rem" : "9rem";
+      date.style.textAlign = "right";
       date.innerHTML = messenger.dateParse;
-      document.addEventListener("resize", (event) => {
-        date.innerHTML = this.getDateParseNew(messenger.date);
-      });
 
       rightContent.appendChild(date);
 

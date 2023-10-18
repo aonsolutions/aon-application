@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps, ClassicApps, getAppsByDur} from  '../../services/app.js';
-import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach} from  '../../services/service.js';
+import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -39,6 +39,9 @@ import { AonAccessCard } from '../../components/aon-access-card.js';
 import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
 import { AonPayrollCard } from '../laboral/payroll/aon-payroll-card.js';
 import { AonMessengerCard } from '../messenger/aon-messenger-card.js';
+import { getModelsFiscal } from '../../services/service.js';
+import { sortBy } from '../../services/utils.js';
+import { FiscalUtils } from '../fiscal/FiscalUtils.js';
 
 export class AonDesktop extends AonElement {
 
@@ -366,7 +369,7 @@ export class AonDesktop extends AonElement {
 		// Cards Panel
 		let cardsPanel = this.createElement(TAG.DIV);
 		cardsPanel.className = CSS.FLEX_ROW;
-		cardsPanel.style.gap = '0';
+		cardsPanel.style.gap = '1rem';
 		cardsPanel.style.flexWrap = 'wrap';
 		cardsPanel.id = "cardsPanel";
 		dashboard.appendChild(cardsPanel);
@@ -374,13 +377,14 @@ export class AonDesktop extends AonElement {
 		// Timecontrol
 		if(this.getDur().isTimecontrol()) {
 			let timecontrolCard = new AonCard();
+			timecontrolCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			timecontrolCard.id = CONSTANT.TIMECONTROL;
 			timecontrolCard.title = MSG.TIMECONTROL;
 			timecontrolCard.setApp(Apps.TIMECONTROL);
 			timecontrolCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.TIMECONTROL.app));
 			cardsPanel.appendChild(timecontrolCard);	
 			timecontrolCard.getCardTitle1().style.cursor = 'pointer';
-			timecontrolCard.style.minWidth = "350px";
+
 			getTimeControl().then(r => {
 				let div = this.createElement(TAG.DIV);
 				timecontrolCard.setContent(div)
@@ -391,8 +395,8 @@ export class AonDesktop extends AonElement {
 				aonSign.buildSignin(r);
 				let aonHeader = this.getElement('aonHeader');
 				aonHeader.timeControlStatus(r);
-				timecontrolCard.style.minWidth = "350px";
 				timecontrolCard.firstChild.style.minHeight = "420px";
+				timecontrolCard.firstChild.style.margin = '0';
 			});
 
 		}
@@ -400,84 +404,94 @@ export class AonDesktop extends AonElement {
 		if(this.getDur().isAccounting()) {
 			// PyG Card
 			let pygCard = new AonCard();
+			pygCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			pygCard.id = "pyg";
 			pygCard.title = "Pérdidas y Ganancias";
 			pygCard.setApp(Apps.ACCOUNTING);
 			pygCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.ACCOUNTING.app));
 			cardsPanel.appendChild(pygCard);
 			pygCard.getCardTitle1().style.cursor = 'pointer';
+			pygCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardPyGOption'> </aon-dialog-menu>" );
 
-
-			pygCard.setContent(new AonDashboardGraphicsTrial());
-			pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter PyG")});
-			pygCard.style.minWidth = "350px";
+			pygCard.setContent(new AonDashboardGraphicsTrial("yearly"));
+			pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPyG(pygCard));
+			pygCard.firstChild.style.marginLeft = '0';
 			pygCard.firstChild.style.minHeight = "420px";
 			pygCard.firstChild.children.item(1).style.height = "315px";
+			pygCard.firstChild.style.margin = '0';
 		}
 
 		if(this.getDur().isPayrollManager()) {
 			// LABORAL
 			let payrollCard = new AonCard();
+			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollCard.id = CONSTANT.PAYROLL;
 			payrollCard.title = MSG.COMPANY_COSTS;
 			payrollCard.setApp(Apps.PAYROLL);
 			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => this.appSelection(Apps.PAYROLL.app));
 			cardsPanel.appendChild(payrollCard);
 			payrollCard.getCardTitle1().style.cursor = 'pointer';
+			payrollCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardPayrollOption'> </aon-dialog-menu>" );
 			
-			payrollCard.setContent(new AonCompanyDashboardCostsList());
-			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Payroll")});
-			payrollCard.style.minWidth = "350px";
+			let lastMonthFilter = getPeriodLaboral("last_month");
+			lastMonthFilter.period = lastMonthFilter.value;
+
+			payrollCard.setContent(new AonCompanyDashboardCostsList(lastMonthFilter));
+			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPayrollStatics(payrollCard));
 			payrollCard.firstChild.style.minHeight = "420px";
 			payrollCard.firstChild.children.item(1).style.height = "315px";
+			payrollCard.firstChild.style.margin = '0';
 		} else if(this.getDur().isPayroll()) {
 			// Nominas
 			let payrollCard = new AonCard(() => this.appSelection(Apps.PAYROLL.app));
+			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollCard.id = "payroll";
 			payrollCard.title = "Nóminas";
 			payrollCard.setApp(Apps.PAYROLL);
 			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => this.appSelection(Apps.PAYROLL.app));
 			cardsPanel.appendChild(payrollCard);
-			payrollCard.getCardTitle1().style.cursor = 'pointer';
 
 			let aonPayrollCard = new AonPayrollCard();
 			payrollCard.setContent(aonPayrollCard);
 			
-			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Fiscal")});
-			payrollCard.style.minWidth = "350px";
 			payrollCard.firstChild.style.minHeight = "420px";
 			payrollCard.firstChild.children.item(1).style.height = "315px";
+			payrollCard.firstChild.style.margin = '0';
 		}
 
 		if(this.getDur().isFiscal()) {
 			// Impuestos
 			let fiscalCard = new AonCard();
+			fiscalCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			fiscalCard.id = "fiscal";
 			fiscalCard.title = "Impuestos";
 			fiscalCard.setApp(Apps.FISCAL);
 			fiscalCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.FISCAL.app));
 			cardsPanel.appendChild(fiscalCard);
 			fiscalCard.getCardTitle1().style.cursor = 'pointer';
-
-			let aonFiscalCard = new AonFiscalCard();
+			fiscalCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardFiscalOption'> </aon-dialog-menu>" );
+    
+			let fiscalDefaultFilter = this.getFiscalFilter();
+			let aonFiscalCard = new AonFiscalCard(fiscalDefaultFilter);
 			fiscalCard.setContent(aonFiscalCard);
 			
 			let spanPeriod = this.createElement(TAG.SPAN);
 			spanPeriod.style.fontSize =  "1rem";
 			spanPeriod.style.color = "#d2d2d6";
 			spanPeriod.style.fontWeight = "500";
-			spanPeriod.innerHTML = aonFiscalCard.period;
+			fiscalDefaultFilter.then(filter => spanPeriod.innerHTML = filter.title);
 			fiscalCard.addSection2(spanPeriod);
 			
-			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Fiscal")});
-			fiscalCard.style.minWidth = "350px";
+			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterFiscal(fiscalCard));
 			fiscalCard.firstChild.style.minHeight = "420px";
 			fiscalCard.firstChild.children.item(1).style.height = "315px";
+			fiscalCard.firstChild.style.margin = '0';
 		}
 
 		if(this.getDur().isMessengerManager() || this.getDur().isMessenger()) {
 			// Solicitudes
 			let messengerCard = new AonCard();
+			messengerCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			messengerCard.id = "messengerCard";
 			messengerCard.title = "Solicitudes";
 			messengerCard.setApp(Apps.MESSENGER);
@@ -488,19 +502,17 @@ export class AonDesktop extends AonElement {
 
 			messengerCard.setContent(aonMessengerCard);
 			
-			messengerCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {alert("Filter Messenger")});
-			messengerCard.style.minWidth = "350px";
 			messengerCard.firstChild.style.minHeight = "420px";
 			messengerCard.firstChild.children.item(1).style.height = "315px";
+			messengerCard.firstChild.style.margin = '0';
 		}
-
 
 		// Fast Access Panel
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 
 			let fastAccessPanel = this.createElement(TAG.DIV);
 			fastAccessPanel.className = CSS.FLEX_ROW;
-			fastAccessPanel.style.gap = '0';
+			fastAccessPanel.style.gap = '1rem';
 			fastAccessPanel.style.flexWrap = 'wrap';
 			fastAccessPanel.id = "fastAccessPanel";
 			dashboard.appendChild(fastAccessPanel);
@@ -521,11 +533,151 @@ export class AonDesktop extends AonElement {
 		}
 	}
 
+	filterPyG(pygCard){
+		let button = this.getElement('pygTitleSection2OpcionesButtonIconButton');
+		let height = window.innerHeight;
+		let top  = button.getBoundingClientRect().top;
+		const left = button.getBoundingClientRect().left;
+
+		if((height - top) < (height / 2)) {
+				top = top - (ayudat ? 205 : 170);
+		}
+
+		let d = document.getElementById('aonCardPyGOption');
+
+		const anual = {
+			name: 'Vista Anual',
+			title:"Vista Anual",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn: () => pygCard.setContent(new AonDashboardGraphicsTrial("yearly"))
+		};
+
+		const trimestral = {
+			name: 'Vista Trimestral',
+			title:"Vista Trimestral",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn : () => pygCard.setContent(new AonDashboardGraphicsTrial("quarterly"))
+		};
+
+		const mensual = {
+			name: "Vista Mensual",
+			title: "Vista Mensual",
+			icon: 'calendar_today',
+			backgroundColor: "#4472C4",
+			fn :  () => pygCard.setContent(new AonDashboardGraphicsTrial("monthly"))
+		};
+	
+		let options = [anual, trimestral, mensual];
+		
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
+
+	filterPayrollStatics(payrollCard){
+		let button = this.getElement('payrollTitleSection2OpcionesButtonIconButton');
+		let height = window.innerHeight;
+		let top  = button.getBoundingClientRect().top;
+		const left = button.getBoundingClientRect().left;
+
+		if((height - top) < (height / 2)) {
+				top = top - (ayudat ? 205 : 170);
+		}
+
+		let d = document.getElementById('aonCardPayrollOption');
+ 
+		let periods = getPeriodLaboral();
+		periods.pop();
+
+		let options = periods.map(option => ({
+			...option,
+			period: option.value,
+			fn: () => payrollCard.setContent(new AonCompanyDashboardCostsList({...option, period: option.value}))
+		  }));
+
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
+
+	async getFiscalFilter(){
+		let result = await this.getFilterModels();
+		let period = result[0];
+		return {year: period.year, period: period.period, title: period.periodText + " " + period.year};
+	}
+
+	async getFilterModels(){
+		const datos = await getModelsFiscal();
+		let orderDatos = [];
+        if (datos) {
+			orderDatos = sortBy(datos,'year','desc')
+				.map((model) => FiscalUtils.getModelNew(model));
+        }
+
+		const result = orderDatos.filter(function (a) {
+		  var key = a.year + '|' + a.period;
+		  if (!this[key]) {
+			  this[key] = true;
+			  return true;
+		  }
+		}, Object.create(null));
+
+		result.sort(function (a, b) {
+		  var aSize = a.year;
+		  var bSize = b.year;
+		  var aLow = a.period;
+		  var bLow = b.period;
+	  
+		  if(aSize == bSize)
+		  {
+			  return (aLow < bLow) ? -1 : (aLow > bLow) ? 1 : 0;
+		  }
+		  else
+		  {
+			  return (aSize < bSize) ? -1 : 1;
+		  }
+		});
+	
+		return result.reverse();
+	  }
+
+	filterFiscal(){
+		let button = this.getElement('fiscalTitleSection2OpcionesButtonIconButton');
+		let height = window.innerHeight;
+		let top  = button.getBoundingClientRect().top;
+		const left = button.getBoundingClientRect().left;
+
+		if((height - top) < (height / 2)) {
+				top = top - 170;
+		}
+
+		let d = document.getElementById('aonCardFiscalOption');
+
+		let aonFiscalCard = document.getElementById('aonFiscalCard');
+		let result = aonFiscalCard.getFilterModels;
+		
+		let options = [];
+
+		for (let index = 0; index < 4; index++) {
+			const period = result[index];
+			const periodOpt = {
+				name: period.periodText + " " + period.year,
+				title: period.periodText + " " + period.year,
+				icon: MATERIAL_ICONS.EVENT,
+				backgroundColor: "#4472C4",
+				fn: () => aonFiscalCard.filterTable({year: period.year, period: period.period, title: period.periodText + " " + period.year})
+			};
+			options.push(periodOpt);
+		}
+		
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
+
 	addAccess(app, parent){
 		// App Access
 		let appAccess = new AonAccessCard();
 		appAccess.id = app.title;
-		appAccess.style.margin = '10px';
 		parent.appendChild(appAccess);
 		appAccess.addContent({
 			title: app.title ? app.title : "No definido",
