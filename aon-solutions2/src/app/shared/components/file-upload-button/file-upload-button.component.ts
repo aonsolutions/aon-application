@@ -37,15 +37,10 @@ export class FileUploadButtonComponent implements OnInit {
   onDrop(event: DragEvent) {
     event.preventDefault();
     if (event.dataTransfer && event.dataTransfer.files) {
-      const files = event.dataTransfer.files;
-      this.emitDrop(files);
+      this.getUploadedFiles.emit(event.dataTransfer.files);
     }
 
     this.isDropOver = false;
-  }
-
-  emitDrop(fileList: FileList) {
-    this.getUploadedFiles.emit(fileList);
   }
 
   onDragOver(event: any) {
