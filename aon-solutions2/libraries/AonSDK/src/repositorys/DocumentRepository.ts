@@ -84,7 +84,49 @@ export class ApiDocumentMultipleObjectCrudRepository extends APIGenericMultipleO
 export class ApiDocumentSpecificMethodsRepository implements IDocumentSpecificMethodsRepository {
 
     async uploadDocument(document: IDocument, file: File): Promise<boolean> {
-        return true;
+        let json = {
+            file: {
+                content: await FileToBase64(file),
+                contentEncoding: "base64",
+                contentName: document.FileName,
+                contentSize: file.size,
+                contentType: file.type,
+                date: new Date(),
+                domain: {id: localStorage.getItem("domainId"), name: localStorage.getItem("domainName")},
+                name: document.FileName,
+                size: file.size,
+            },
+            invoice: {
+                category: "",
+                comments: "",
+                creation_user: localStorage.getItem("login"),
+                date: new Date(),
+                details: [],
+                domain: localStorage.getItem("domainId"),
+                finances: [],
+                number: "",
+                receiver: {document: "", name: "", address: {country: "", address: "", zip: "", city: "", province: ""}},
+                address: {country: "", address: "", zip: "", city: "", province: ""},
+                reference: "",
+                remarks: [],
+                selfconta: false,
+                sender: {document: "", name: "", address: {country: "", address: "", zip: "", city: "", province: ""}},
+                serie: new Date().getFullYear(),
+                series: new Date().getFullYear(),
+                status: "inbox",
+                suplidos: {active: false, description: "", total: 0},
+                taxes: [],
+                tbai: false,
+                tbaiUrl: "",
+                total: 0,
+                transaction: "NAC",
+                type: "recibida",
+                withholding: false,
+            }
+        }
+        let response = await ApiHttpRequest.post(BASE_URL + INVOICE_URL.GET_INVOICE__ONE, {}, json)
+        if(response?.type == 'error') return false; 
+        else return true;
     }
 
     async getRawFile(document: IDocument): Promise<any> {

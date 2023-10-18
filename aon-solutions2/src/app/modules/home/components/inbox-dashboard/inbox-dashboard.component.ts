@@ -26,6 +26,7 @@ export class InboxDashboardComponent implements OnInit {
   ];
   messageTotal: string = '0';
   totalMessages: string = '0';
+  spinner: boolean = true;
   constructor(
     private translateService: TranslateService,
     private messageService: MessageService,
@@ -149,6 +150,8 @@ export class InboxDashboardComponent implements OnInit {
       .then((response) => {
         this.messageTotal = response < 100 ? response.toString() : '+99';
       });
+    // Desactivo el spinner
+     this.spinner = false;
   }
 
   // Método para cambiar el estado de un mensaje consulta

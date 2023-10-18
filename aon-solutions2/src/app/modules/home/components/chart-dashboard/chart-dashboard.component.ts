@@ -36,15 +36,15 @@ export class ChartDashboardComponent implements OnInit {
       this.selected = result['HOME.LAST_12_MONTHS'];
       // Opciones de filtrado
       this.menuItem! = [
-        {root: true, text: result['HOME.LAST_12_MONTHS'], click:() => this.filterReporting(12, result['HOME.LAST_12_MONTHS'])},
-        {root: true, text: result['HOME.LAST_6_MONTHS'] , click:() => this.filterReporting(6,  result["HOME.LAST_6_MONTHS"])},
-        {root: true, text: result['HOME.QUARTERLY']     , click:() => this.filterReporting(13, result["HOME.QUARTERLY"])},
+        {root: true, text: result['HOME.LAST_12_MONTHS'], click:() => this.filterReporting(-12, result['HOME.LAST_12_MONTHS'])},
+        {root: true, text: result['HOME.LAST_6_MONTHS'] , click:() => this.filterReporting(-6,  result["HOME.LAST_6_MONTHS"])},
+        {root: true, text: result['HOME.QUARTERLY']     , click:() => this.filterReporting(-3, result["HOME.QUARTERLY"])},
       ];
     });
   }
    
   ngOnInit(): void {
-    this.filterReporting(12);
+    this.filterReporting(0);
   }
 
   // Cambiar el estilo del char
@@ -70,7 +70,8 @@ export class ChartDashboardComponent implements OnInit {
       case 1:
         this.chartType  = 'line';
         this.getToggleIcon();
-        this.reportingService.getVentasGastos().then((response) => {
+        let month1 = monthFilter != 0 ? monthFilter : -12;
+        this.reportingService.getVentasGastos(new Date(new Date().setMonth(new Date().getMonth()+month1))).then((response) => {
           this.chartData = response.datasets.map(
             (dataset: any) => dataset.data
           );
@@ -81,11 +82,22 @@ export class ChartDashboardComponent implements OnInit {
       case 2:
         this.chartType = 'bar';
         this.getToggleIcon();
-        this.reportingService.getCobrosPagos().then((response) => {
+        let month2 = monthFilter != 0 ? monthFilter : 12;
+        this.reportingService.getCobrosPagos(new Date(), new Date(new Date().setMonth(new Date().getMonth()+month2))).then((response) => {
           this.chartData = response.datasets.map(
             (dataset: any) => dataset.data
           );
           this.chartLabels = response.label;
+        });
+        this.translateService.get([
+          'HOME.NEXT_12_MONTHS', 'HOME.NEXT_6_MONTHS','HOME.NEXT_3_MONTHS'
+        ]).subscribe((result) => {
+          this.selected = name === '' ? result['HOME.NEXT_12_MONTHS'] : name;
+          this.menuItem = [
+            {root: true, text: result['HOME.NEXT_12_MONTHS'], click:() => this.filterReporting(12, result['HOME.NEXT_12_MONTHS'])},
+            {root: true, text: result['HOME.NEXT_6_MONTHS'], click:() => this.filterReporting(6,  result["HOME.NEXT_6_MONTHS"])},
+            {root: true, text: result['HOME.NEXT_3_MONTHS'], click:() => this.filterReporting(3, result["HOME.NEXT_3_MONTHS"])},
+          ];
         });
       break
     }
