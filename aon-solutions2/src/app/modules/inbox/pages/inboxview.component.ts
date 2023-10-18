@@ -44,7 +44,6 @@ export class InboxviewComponent implements OnInit {
   selectedTab: number = 0;
   selectedFilterDate: number = 0;
   tabIndex: number = 0;
-  disableTramitar: boolean = false; //desactiva el boton de tramitar
   showDetail: boolean = false;
   isModalVisible: boolean = false;
   showSendButton: boolean = false;
@@ -321,7 +320,7 @@ export class InboxviewComponent implements OnInit {
       .setName(this.messagesData.Name)
       .setDescription(description)
       .setType(TypeMessage.CONSULTA)
-      .setStatus(StatusMessage.CERRADA)
+      .setStatus(StatusMessage.ABIERTA)
       .setLastMessageChatOrigin(false);
 
         // Crear el mensaje
@@ -357,6 +356,5 @@ export class InboxviewComponent implements OnInit {
 
     // Limpia el campo de entrada después de enviar el mensaje
     this.newMessageDescription = '';
-    window.location.reload();
   }
 }
