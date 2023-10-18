@@ -2,8 +2,8 @@ package com.esferalia.aon.occam.test.faker;
 
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
-import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -22,7 +22,6 @@ import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionValue;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
-import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.Offer;
@@ -750,7 +749,7 @@ public class AonFaker {
 	}
 	
 	public static RegistryBank getRegistryBank(AONContext ctx) {	
-		Account account = AonFaker.getAccount(ctx);
+		Account account = AonRandom.getAccount(ctx, "572");
 		BankAccount bankAccount = AonFaker.getBankAccount(ctx);
 		Random random = new Random();
 		

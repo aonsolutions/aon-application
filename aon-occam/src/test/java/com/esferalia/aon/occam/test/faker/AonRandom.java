@@ -205,21 +205,6 @@ public class AonRandom {
         return list.get(faker.random().nextInt(0, (list.size() - 1)));
     }	
 
-//    public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
-//    	return randomEnum(clazz,0);
-//    }	
-//    public static <T extends Enum<?>> T randomEnum(Class<T> clazz, int nullThreshold){
-//    	// ******
-//    	// ¡¡En algún caso puede devolver NULL!!
-//    	// Sobre todo si el item del enumerado tienen implementación
-//    	// VER --> https://stackoverflow.com/questions/33358616/reflection-on-enums
-//    	// *****
-//    	
-//    	return gt(nullThreshold)
-//    			?clazz.getEnumConstants()[faker.random().nextInt(clazz.getEnumConstants().length-1)]
-//				:null;
-//    }	
-
 	public static Tariff getTariff(AONContext ctx) {
 		return getTariff(ctx, 0);
 	}
@@ -275,15 +260,25 @@ public class AonRandom {
 	}
 	
 	public static Account getAccount(AONContext ctx) {
-		return getAccount(ctx, 0);
+		return getAccount(ctx, -1, null);
 	}
-	public static Account getAccount(AONContext ctx, int nullThreshold){
-		return gt(nullThreshold)
-			?AccountDAO.getRandom(ctx, null )
-			:null;
+	public static Account getAccount(AONContext ctx, int nullThreshold) {
+		return getAccount(ctx, nullThreshold, null);
+	}
+	public static Account getAccount(AONContext ctx, String codePrefix) {
+		return getAccount(ctx, -1, codePrefix);
+	}
+	public static Account getAccount(AONContext ctx, int nullThreshold, String codePrefix){
+		if (gt(nullThreshold)) {
+			return AccountDAO.getRandom(ctx, 
+				AonStringUtils.isBlank(codePrefix)
+					? null 
+					: f -> f.getCodeProperty().like(codePrefix + "%") );	
+		}
+		return null;
 	}
 	public static AccountPeriod getAccountPeriod(AONContext ctx) {
-		return getAccountPeriod(ctx, 0);
+		return getAccountPeriod(ctx, -1);
 	}
 	public static AccountPeriod getAccountPeriod(AONContext ctx, int nullThreshold){
 		return gt(nullThreshold)
