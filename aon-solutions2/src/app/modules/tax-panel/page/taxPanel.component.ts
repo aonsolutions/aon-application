@@ -148,8 +148,7 @@ export class TaxPanelComponent implements OnChanges, OnInit {
     let filterBuilder = new FilterBuilder();
     if (this.tabIndex < 4) {
       filterBuilder.addField('trimester', +this.tabIndex + 1);
-      console.log(this.tabIndex);
-    }
+    } 
 
     if (this.selectedModel > 0) {
       filterBuilder.addField('name', this.selectedModel);
@@ -249,10 +248,7 @@ export class TaxPanelComponent implements OnChanges, OnInit {
   modalClick(object: any) {
     // Fila de la tabla que se esta usando
     // Boton que ha sido clickeado
-    // console.log('esto es objetct', object);
     // reference icon click
-    // console.log('esto keybutto',object.keyButton);
-
     switch (object.keyButton) {
       case 'edit':
         this.modalComponentEdit.openDialog(

@@ -55,9 +55,6 @@ export class ModelsDashboardComponent implements OnInit {
     filterBuilder.addField('trimester', trimester);
     filterBuilder.addField('year', currentYear);
     this.taxModelService.getTaxModelList(filterBuilder.getFilter()).then((models) => {
-      
-      console.log(models)
-      
       this.models = models;
     });
   }

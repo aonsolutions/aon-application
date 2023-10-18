@@ -17,10 +17,11 @@ export class ChartDashboardComponent implements OnInit {
   @Input() shape    : string = '';
   @Input() typeDate : number = 0;
   // Parametros que enviamos al Chart
-  chartType   : ChartType = 'line';
-  chartLabels : any = [];
-  chartData   : any = [];
-  chartColors : any = [];
+  chartType     : ChartType = 'line';
+  chartDataLabel: any = [];
+  chartData     : any = [];
+  chartLabels   : any = [];
+  chartColors   : any = [];
   // Parametros para la opcion de filtrado
   selected: string      = '';
   menuItem: MenuItem [] = []
@@ -75,6 +76,15 @@ export class ChartDashboardComponent implements OnInit {
           this.chartData = response.datasets.map(
             (dataset: any) => dataset.data
           );
+          this.translateService.get([
+            'BILLING.SALES', 'BILLING.BILLS'
+          ]).subscribe((result) => {
+            this.chartDataLabel = response.datasets.map(
+              (dataset: any) => {
+                return {label: result['BILLING.' + dataset.label]};
+              }
+            )
+          });
           this.chartLabels = response.label;
         });
       break
@@ -87,6 +97,15 @@ export class ChartDashboardComponent implements OnInit {
           this.chartData = response.datasets.map(
             (dataset: any) => dataset.data
           );
+          this.translateService.get([
+            'BILLING.COLLECTIONS', 'BILLING.PAYMENTS'
+          ]).subscribe((result) => {
+            this.chartDataLabel = response.datasets.map(
+              (dataset: any) => {
+                return {label: result['BILLING.' + dataset.label]};
+              }
+            )
+          });
           this.chartLabels = response.label;
         });
         this.translateService.get([
@@ -95,8 +114,8 @@ export class ChartDashboardComponent implements OnInit {
           this.selected = name === '' ? result['HOME.NEXT_12_MONTHS'] : name;
           this.menuItem = [
             {root: true, text: result['HOME.NEXT_12_MONTHS'], click:() => this.filterReporting(12, result['HOME.NEXT_12_MONTHS'])},
-            {root: true, text: result['HOME.NEXT_6_MONTHS'], click:() => this.filterReporting(6,  result["HOME.NEXT_6_MONTHS"])},
-            {root: true, text: result['HOME.NEXT_3_MONTHS'], click:() => this.filterReporting(3, result["HOME.NEXT_3_MONTHS"])},
+            {root: true, text: result['HOME.NEXT_6_MONTHS'],  click:() => this.filterReporting(6,  result["HOME.NEXT_6_MONTHS"])},
+            {root: true, text: result['HOME.NEXT_3_MONTHS'],  click:() => this.filterReporting(3,  result["HOME.NEXT_3_MONTHS"])},
           ];
         });
       break

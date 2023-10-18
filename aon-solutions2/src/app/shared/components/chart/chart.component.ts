@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ChartType } from 'chart.js';
+import { ChartType, ChartDataSets } from 'chart.js';
 import { MultiDataSet, Label, Color } from 'ng2-charts';
 
 @Component({
@@ -8,10 +8,11 @@ import { MultiDataSet, Label, Color } from 'ng2-charts';
   styleUrls: ['./chart.component.scss']
 })
 export class ChartComponent implements OnInit {
-  @Input() chartLabels  : Label[] = [];
-  @Input() chartData    : MultiDataSet = [];
-  @Input() chartType    : ChartType = "doughnut";
-  @Input() colors       : Color[] = [];
+  @Input() chartLabels    : Label[] = [];
+  @Input() chartDataLabel : ChartDataSets[] = [];
+  @Input() chartData      : MultiDataSet = [];
+  @Input() chartType      : ChartType = "doughnut";
+  @Input() colors         : Color[] = [];
 
   constructor() { }
 

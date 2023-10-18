@@ -114,6 +114,8 @@
     "BILLING": "Billing",
     "SALES": "Sales",
     "BILLS": "Bills",
+    "COLLECTIONS": "Collections",
+    "PAYMENTS": "Payments",
     "SALES_CHECK": "Sales check",
     "REPORTS": "Reports",
     "TREASURY": "Treasury",
