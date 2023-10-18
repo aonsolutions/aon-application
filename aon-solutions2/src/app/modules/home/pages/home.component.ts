@@ -13,6 +13,8 @@ import { WorkingModalComponent } from '../components/working-modal/working-modal
 import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
 import { ResultSnackBarComponent } from 'src/app/shared/components/result-snack-bar/result-snack-bar.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ModalCreateComponent } from '../../inbox/components/modal-create/modal-create.component';
+import { Router } from '@angular/router';
 
 interface ShortcutDashboard {
   shape: string;
@@ -38,11 +40,12 @@ interface MenuItems {
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  shortcuts: ShortcutDashboard[] = [];
-  chartItems: ChartItem[] = [];
-  menuItems: MenuItems[] = [];
+  shortcuts   : ShortcutDashboard[] = [];
+  chartItems  : ChartItem[]         = [];
+  menuItems   : MenuItems[]         = [];
+  routerlink: string = '/inbox';
+  public collectionFactory  = new CollectionFactory();
 
-  public collectionFactory = new CollectionFactory();
 
   //banks area
   banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
@@ -59,81 +62,57 @@ export class HomeComponent implements OnInit {
   constructor(
     private translateService: TranslateService,
     private documentService: DocumentService,
-    public snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router,
   ) {
-    this.translateService
-      .get([
-        'HOME.SALES_EXPENSES',
-        'HOME.COLLECTIONS_PAYMENTS',
-        'HOME.CREATE_INVOICE',
-        'HOME.REGISTER_EMPLOYEE',
-        'HOME.CREATE_QUERY',
-        'HOME.TIMING',
-        'HOME.ASSESSMENT',
-        'HOME.TAX_PANEL',
-        'HOME.EMPLOYEE_PANEL',
-        'HOME.DOCUMENTATION',
-      ])
-      .subscribe((result) => {
-        this.shortcuts = [
-          {
-            shape: 'add_box',
-            name: result['HOME.CREATE_INVOICE'],
-            modal: 'workingModal',
-          },
-          {
-            shape: 'person_add',
-            name: result['HOME.REGISTER_EMPLOYEE'],
-            modal: 'workingModal',
-          },
-          {
-            shape: 'add_comment',
-            name: result['HOME.CREATE_QUERY'],
-            modal: 'workingModal',
-          },
-          {
-            shape: 'alarm',
-            name: result['HOME.TIMING'],
-            modal: 'workingModal',
-          },
-        ];
-        this.chartItems = [
-          {
-            name: result['HOME.SALES_EXPENSES'],
-            typeDate: 1, // Ventas/Gastos
-          },
-          {
-            name: result['HOME.COLLECTIONS_PAYMENTS'],
-            typeDate: 2, // Cobros/Pagos
-          },
-        ];
-        this.menuItems = [
-          {
-            routerlink: '/billing',
-            shape: 'assessment',
-            name: result['HOME.ASSESSMENT'],
-            class: 'button-dashboard blue',
-          },
-          {
-            routerlink: '/tax-panel',
-            shape: 'euro_symbol',
-            name: result['HOME.TAX_PANEL'],
-            class: 'button-dashboard orange',
-          },
-          {
-            routerlink: '/employee-panel',
-            shape: 'people',
-            name: result['HOME.EMPLOYEE_PANEL'],
-            class: 'button-dashboard green',
-          },
-          {
-            routerlink: '/documentation',
-            shape: 'description',
-            name: result['HOME.DOCUMENTATION'],
-            class: 'button-dashboard pink',
-          },
-        ];
-      });
+    this.translateService.get([
+      'HOME.SALES_EXPENSES', 'HOME.COLLECTIONS_PAYMENTS', 'HOME.CREATE_INVOICE',
+      'HOME.REGISTER_EMPLOYEE', 'HOME.CREATE_QUERY', 'HOME.TIMING', 'HOME.ASSESSMENT',
+      'HOME.TAX_PANEL', 'HOME.EMPLOYEE_PANEL', 'HOME.DOCUMENTATION',
+    ]).subscribe((result) => {
+      this.shortcuts = [
+        { shape: 'add_box'    , name: result['HOME.CREATE_INVOICE'], modal: 'workingModal' },
+        { shape: 'person_add' , name: result['HOME.REGISTER_EMPLOYEE'], modal: 'workingModal' },
+        { shape: 'add_comment', name: result['HOME.CREATE_QUERY'], modal: 'createQuery' },
+        { shape: 'alarm'      , name: result['HOME.TIMING'], modal: 'workingModal' },
+      ];
+      this.chartItems = [
+        {
+          name      : result['HOME.SALES_EXPENSES'],
+          typeDate  : 1, // Ventas/Gastos
+        },
+        {
+          name      : result['HOME.COLLECTIONS_PAYMENTS'],
+          typeDate  : 2, // Cobros/Pagos
+        },
+      ];
+      this.menuItems = [
+        {
+          routerlink: '/billing',
+          shape     : 'assessment',
+          name      : result['HOME.ASSESSMENT'],
+          class     : 'button-dashboard blue'
+        },
+        {
+          routerlink: '/tax-panel',
+          shape     : 'euro_symbol',
+          name      : result['HOME.TAX_PANEL'],
+          class     : 'button-dashboard orange'
+        },
+        {
+          routerlink: '/employee-panel',
+          shape     : 'people',
+          name      : result['HOME.EMPLOYEE_PANEL'],
+          class     : 'button-dashboard green'
+        },
+        {
+          routerlink: '/documentation',
+          shape     : 'description',
+          name      : result['HOME.DOCUMENTATION'],
+          class     : 'button-dashboard pink'
+        },
+      ];
+    });
   }
 
   // Acción que realiza al cerrar el modal
@@ -172,9 +151,30 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  openModal(modalName: string) {
+    switch (modalName) {
+      case 'workingModal':
+        this.workingModal();
+        break;
+        case 'createQuery':
+        this.router.navigate([this.routerlink]);
+        this.createQuery();
+        break;
+      default:
+        break;
+    }
+  }
+
   // Modal para cosas aún en construcción
   workingModal() {
     this.modalComponent.openDialog(WorkingModalComponent, this.functionHome);
+  }
+
+  createQuery() {
+    this.modalComponent.openDialog(
+      ModalCreateComponent,
+      this.functionHome,
+    );
   }
 
   // Confirmación de subida de documento

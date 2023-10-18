@@ -38,7 +38,6 @@ export class ModalEditTaxModelComponent implements OnInit {
   ) {
     this.taxModelService.getTax(data.key).then((response) => {
       this.model = response;
-      console.log('El modelo en edit', this.model.Result);
     });
   }
 
@@ -55,7 +54,6 @@ export class ModalEditTaxModelComponent implements OnInit {
             .subscribe((trimester) => {
               this.translateService.get('TAX_PANEL.OF').subscribe((of) => {
                 title = `${rectifyingModel} ${this.model.Name}, ${trimester} ${this.model.Trimester}, ${of} ${this.model.Year}`;
-                console.log(title);
               });
             });
         });
