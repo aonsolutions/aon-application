@@ -13,7 +13,6 @@ import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 import { TranslateService } from '@ngx-translate/core';
 import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
-import { ErrorModalComponent } from 'src/app/shared/components/error-modal/error-modal.component';
 // import { RenameFileComponent } from '../components/modal-rename-file/rename-file.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ResultSnackBarComponent } from 'src/app/shared/components/result-snack-bar/result-snack-bar.component';
@@ -196,7 +195,7 @@ export class DocumentationComponent implements OnInit {
           this.snackBar.dismiss();
         },
       },
-      panelClass: ['correcto-snackbar'],
+      panelClass: ['correct-snackbar'],
       horizontalPosition: 'center',
       verticalPosition: 'top',
       duration: 3000,

@@ -57,7 +57,6 @@ import { TagComponent } from './components/tag/tag.component';
 import { TopBarComponent } from './layouts/top-bar/top-bar.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ErrorModalComponent } from './components/error-modal/error-modal.component';
 import { UploadModalComponent } from './components/file-upload-button/components/upload-modal/upload-modal.component';
 import { ResultSnackBarComponent } from './components/result-snack-bar/result-snack-bar.component';
 
@@ -95,7 +94,6 @@ import { ResultSnackBarComponent } from './components/result-snack-bar/result-sn
     TagComponent,
     TopBarComponent,
     SpinnerComponent,
-    ErrorModalComponent,
     UploadModalComponent,
     ResultSnackBarComponent
   ],

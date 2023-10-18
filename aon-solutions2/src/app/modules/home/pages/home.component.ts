@@ -187,7 +187,7 @@ export class HomeComponent implements OnInit {
           this.snackBar.dismiss();
         },
       },
-      panelClass: ['correcto-snackbar'],
+      panelClass: ['correct-snackbar'],
       horizontalPosition: 'center',
       verticalPosition: 'top',
       duration: 3000,

@@ -16,7 +16,6 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
 import { DocumentService } from 'src/app/core/services/document.service';
-import { ErrorModalComponent } from 'src/app/shared/components/error-modal/error-modal.component';
 import { ResultSnackBarComponent } from 'src/app/shared/components/result-snack-bar/result-snack-bar.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -276,7 +275,7 @@ export class BillingComponent implements OnInit {
           this.snackBar.dismiss();
         },
       },
-      panelClass: ['correcto-snackbar'],
+      panelClass: ['correct-snackbar'],
       horizontalPosition: 'center',
       verticalPosition: 'top',
       duration: 3000,
