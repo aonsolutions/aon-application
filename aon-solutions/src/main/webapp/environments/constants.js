@@ -165,6 +165,7 @@ export const ITEM = 'item';
 // ----- L
 
 export const LABEL = 'label';
+export const LANGUAGE = 'language';
 export const LAST_ACCESS = 'lastAccess';
 export const LINK_DOMAINS = 'linkDomains';
 export const LIST = 'list';
