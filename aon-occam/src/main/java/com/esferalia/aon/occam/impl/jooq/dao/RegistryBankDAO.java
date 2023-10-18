@@ -79,6 +79,9 @@ public class RegistryBankDAO {
 					.setSepaMandateRef(r.getValue(RBANK.SEPA_MANDATE_REF))
 					.setBic(r.getValue(RBANK.BIC))
 					.setSuffix(r.getValue(RBANK.SUFIX))
+					.setBalance(r.getValue(RBANK.BALANCE))
+					.setAvaibleBalance(r.getValue(RBANK.AVAILABLE_BALANCE))
+					.setBalanceDate(r.getValue(RBANK.BALANCE_DATE))
 					.setDirty(false)
 					.setRemoved(false);
 		}

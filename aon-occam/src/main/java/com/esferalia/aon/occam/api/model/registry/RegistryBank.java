@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -21,6 +22,11 @@ public class RegistryBank implements Serializable {
 	private Account account;
 	private String requisition;
 	private String sepaMandateRef;
+	
+	private Double balance;
+	private Double avaibleBalance;
+	private Date balanceDate;
+	
 	private Boolean active;
 	private boolean dirty;
 	private boolean removed;
@@ -143,6 +149,33 @@ public class RegistryBank implements Serializable {
 	public RegistryBank setSepaMandateRef(String sepaMandateRef) {
 		this.setDirty(isDirty()?true:AonUtils.notEquals(this.sepaMandateRef, sepaMandateRef));
 		this.sepaMandateRef = sepaMandateRef;
+		return this;
+	}
+	
+	public Double getBalance() {
+		return balance;
+	}
+	
+	public RegistryBank setBalance(Double balance) {
+		this.balance = balance;
+		return this;
+	}
+	
+	public Double getAvaibleBalance() {
+		return avaibleBalance;
+	}
+	
+	public RegistryBank setAvaibleBalance(Double avaibleBalance) {
+		this.avaibleBalance = avaibleBalance;
+		return this;
+	}
+	
+	public Date getBalanceDate() {
+		return balanceDate;
+	}
+	
+	public RegistryBank setBalanceDate(Date balanceDate) {
+		this.balanceDate = balanceDate;
 		return this;
 	}
 	
