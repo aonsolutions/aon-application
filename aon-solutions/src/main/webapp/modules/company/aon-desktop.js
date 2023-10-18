@@ -498,10 +498,8 @@ export class AonDesktop extends AonElement {
 			bankCard.setApp(Apps.ACCOUNTING);
 			bankCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				this.appSelection(Apps.ACCOUNTING.app);
-				console.log("FIND BANK LABEL");
 				this.isElementLoaded("#aonAccountingSidenavbanksnordigen")
 					.then(selector => {
-						console.log(selector);
 						selector.click();
 					});
 			});
