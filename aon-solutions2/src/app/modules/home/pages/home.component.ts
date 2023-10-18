@@ -7,6 +7,8 @@ import { WorkingModalComponent } from '../components/working-modal/working-modal
 import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
 import { ConfirmModalComponent } from 'src/app/shared/components/confirm-modal/confirm-modal.component';
 import { ErrorModalComponent } from 'src/app/shared/components/error-modal/error-modal.component';
+import { ModalCreateComponent } from '../../inbox/components/modal-create/modal-create.component';
+import { Router } from '@angular/router';
 
  interface ShortcutDashboard {
   shape : string;
@@ -36,7 +38,7 @@ export class HomeComponent implements OnInit {
   shortcuts   : ShortcutDashboard[] = [];
   chartItems  : ChartItem[]         = [];
   menuItems   : MenuItems[]         = [];
-
+  routerlink: string = '/inbox';
   public collectionFactory  = new CollectionFactory();
 
   //banks area
@@ -53,7 +55,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private translateService: TranslateService,
-    private documentService: DocumentService
+    private documentService: DocumentService,
+    private router: Router,
   ) {
     this.translateService.get([
       'HOME.SALES_EXPENSES', 'HOME.COLLECTIONS_PAYMENTS', 'HOME.CREATE_INVOICE',
@@ -63,7 +66,7 @@ export class HomeComponent implements OnInit {
       this.shortcuts = [
         { shape: 'add_box'    , name: result['HOME.CREATE_INVOICE'], modal: 'workingModal' },
         { shape: 'person_add' , name: result['HOME.REGISTER_EMPLOYEE'], modal: 'workingModal' },
-        { shape: 'add_comment', name: result['HOME.CREATE_QUERY'], modal: 'workingModal' },
+        { shape: 'add_comment', name: result['HOME.CREATE_QUERY'], modal: 'createQuery' },
         { shape: 'alarm'      , name: result['HOME.TIMING'], modal: 'workingModal' },
       ];
       this.chartItems = [
@@ -134,10 +137,31 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  openModal(modalName: string) {
+    switch (modalName) {
+      case 'workingModal':
+        this.workingModal();
+        break;
+        case 'createQuery':
+        this.router.navigate([this.routerlink]);
+        this.createQuery();
+        break;
+      default:
+        break;
+    }
+  }
+
   // Modal para cosas aún en construcción
   workingModal() {
     this.modalComponent.openDialog(
       WorkingModalComponent,
+      this.functionHome,
+    );
+  }
+
+  createQuery() {
+    this.modalComponent.openDialog(
+      ModalCreateComponent,
       this.functionHome,
     );
   }

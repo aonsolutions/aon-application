@@ -123,8 +123,8 @@ export interface IAuthenticationManager {
  * Interface for methods of reporting data
  */
 export interface IReportingDataAccess {
-    cobrosPagos(): Promise<IResponse<Object>>;
-    ventasGastos(): Promise<IResponse<Object>>;
+    cobrosPagos(from: Date, to: Date): Promise<IResponse<Object>>;
+    ventasGastos(from: Date): Promise<IResponse<Object>>;
 }
 
 /**

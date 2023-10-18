@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DocumentFactory, ICollection, IDocument, IFilter } from 'libraries/AonSDK/src/aon';
 import { CommonService } from './common.service';
-import { Base64ToFile, Base64toBlob, FileToBase64 } from '../utilities/file';
-import { MainFolders } from 'libraries/AonSDK/src/interfaces/modelsInterfaces';
 
 @Injectable({
   providedIn: 'root',
