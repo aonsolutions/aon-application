@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { CollectionFactory, Factory, ICollection, IMessage, StatusMessage, TypeMessage, } from 'libraries/AonSDK/src/aon';
 import { MessageService } from 'src/app/core/services/message.service';
 import { TaxModelService } from 'src/app/core/services/tax-model.service';
+import { Holders } from 'src/app/modules/inbox/components/modal-create/modal-create.component';
 
 @Component({
   selector: 'app-modal-edit-tax-model',
@@ -20,6 +21,10 @@ export class ModalEditTaxModelComponent implements OnInit {
     this.collectionFactory.createMessageCollection();
   model: any;
   spinner: boolean = false;
+  selectedAdvisor: string | undefined;
+  advisors: any = "";
+  advisorsList: any[] = [];
+  holders: any;
 
   newMessageDescriptionChange(newValue: string) {
     this.newMessageDescription = newValue;
@@ -40,6 +45,13 @@ export class ModalEditTaxModelComponent implements OnInit {
       this.model = response;
       console.log('El modelo en edit', this.model.Result);
     });
+    messageService.getTaskHoldersList().then((response) => {
+      this.holders = response;
+      this.advisorsList = this.holders.toArray().map((element: Holders) =>({
+        value: element.Name,
+        text: element.Name
+      }))
+     })
   }
 
   async createMessage(description: string) {
@@ -63,7 +75,7 @@ export class ModalEditTaxModelComponent implements OnInit {
       const newMessage: IMessage =
         this.messageService.objectFactory.createMessage();
       newMessage.Id = messageId;
-      newMessage.Name = '';
+      newMessage.Name = this.messagesData.Name;
       newMessage.Title = title;
       newMessage.Description = description;
       newMessage.Date = new Date();
@@ -98,6 +110,15 @@ export class ModalEditTaxModelComponent implements OnInit {
     // Limpia el campo de entrada después de enviar el mensaje
     this.newMessageDescription = '';
   }
+
+    // Cargar los asesores
+    loadAdvisors(event: any) {
+      this.selectedAdvisor = event;
+      if (this.selectedAdvisor) {
+        this.messagesData.Name = this.selectedAdvisor;
+        this.messagesData.Title = 'Sin titulo';
+      }
+    }
 
   ngOnInit(): void {}
 }

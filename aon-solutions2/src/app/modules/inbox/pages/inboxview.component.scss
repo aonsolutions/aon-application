@@ -41,6 +41,11 @@
     justify-content: center;
     margin-top: $margin-head-top;
   }
+
+  .inbox-icons{
+    cursor: pointer;
+  }
+
   .inbox-content-state .inbox-icons{
     width: 100%;
     display: flex;
@@ -84,8 +89,8 @@
     border-bottom: $border;
     gap: $margin;
     padding: $padding ;
-    cursor: pointer;
   }
+
   .inbox-chat .inbox-chat-name{
     font-family: Roboto-Medium;
   }
@@ -122,5 +127,9 @@
   .inbox-chat-description .ng-star-inserted{
     font-size: 16px;
     color: $color-border-secondary;
+  }
+
+  .inbox-tramit{
+    visibility: hidden;
   }
 }

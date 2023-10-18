@@ -2,7 +2,7 @@
   <ng-container>
 <div class="modal-container">
   <div class="button-close-query">
-    <app-icon shape="fullscreen"></app-icon>
+    <app-icon class="modal-inbox-fullscreen" shape="fullscreen"></app-icon>
     <app-icon shape="close" (click)="closeModal()"></app-icon>
   </div>
   <div class="issue-query">
@@ -23,14 +23,14 @@
     </app-input>
        <app-input
       [type]="'text'"
-      [placeholder]="'INBOX.TEXT' | translate"
+      [placeholder]="'INBOX.SUBJECT' | translate"
       [label]="'INBOX.SUBJECT' | translate"
       [value]="newMessageAsunto"
       (inputValue)="newMessageAsunto = $event"
     ></app-input>
     <app-input
       [type]="'textarea'"
-      [placeholder]="'INBOX.TEXT' | translate"
+      [placeholder]="'INBOX.DESCRIPTION' | translate"
       [label]="'INBOX.DESCRIPTION' | translate"
       [value]="newMessageDescription"
       (inputValue)="newMessageDescription = $event"
