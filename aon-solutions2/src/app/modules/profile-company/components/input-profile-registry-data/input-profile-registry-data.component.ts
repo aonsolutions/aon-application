@@ -9,7 +9,7 @@ import { IRegistryEnterprise } from 'libraries/AonSDK/src/aon';
 export class InputProfileRegistryDataComponent implements OnInit {
   documentEnterprise: string = '';
   @Input() registryEnterprise: IRegistryEnterprise | null = null;
-  @Output() registryEnterpriseChange: EventEmitter<any> = new EventEmitter<any>();
+  // @Output() registryEnterpriseChange: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() {
   }
@@ -17,20 +17,15 @@ export class InputProfileRegistryDataComponent implements OnInit {
     // Actualiza el valor correspondiente en el objeto registryEnterprise
     registryEnterprise[propertyName] = newValue;
 
-    localStorage.setItem('registryEnterprise', JSON.stringify(this.registryEnterprise));
+    // localStorage.setItem('registryEnterprise', JSON.stringify(this.registryEnterprise));
     // Emite el evento con los datos actualizados
-    this.registryEnterpriseChange.emit(this.registryEnterprise);
+    // this.registryEnterpriseChange.emit(this.registryEnterprise);
 
   }
 
 
 
   ngOnInit(): void {
-    // Recuperar el objeto registryEnterprise desde el LocalStorage al inicializar el componente
-    const storedRegistryEnterprise = localStorage.getItem('registryEnterprise');
-    if (storedRegistryEnterprise) {
-      this.registryEnterprise = JSON.parse(storedRegistryEnterprise);
-    }
   }
 
 }
