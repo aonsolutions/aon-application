@@ -4,13 +4,14 @@ import { ICommunity, ICountry } from 'libraries/AonSDK/src/aon';
 import { environment } from 'src/environments/environment';
 import { ErrorService } from './error.service';
 import { CommonService } from './common.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CountryService extends CommonService {
 
-  constructor(private http: HttpClient, private errorService: ErrorService) {
+  constructor(private http: HttpClient, private errorService: ErrorService, private translateService: TranslateService) {
     super();
   }
 
@@ -30,7 +31,7 @@ export class CountryService extends CommonService {
         }
 
         return data.map(country => {
-          const name = country.name.common;
+          const name = (this.translateService.currentLang === 'es') ? country.translations.spa.common : country.name.common;
           const code = country.cca2;
 
           return { name, code };
@@ -44,7 +45,7 @@ export class CountryService extends CommonService {
    * @returns Una promesa que se resuelve en un array de objetos con los datos solicitados.
    * @throws Un error si se proporciona un tipo no válido.
    */
-  async getDataSpain(type: string): Promise<Array<{}>> {
+  async getDataSpain(type: string): Promise<Array<{ name: string }>> {
     let typeSearch: string = '';
 
     switch (type) {
