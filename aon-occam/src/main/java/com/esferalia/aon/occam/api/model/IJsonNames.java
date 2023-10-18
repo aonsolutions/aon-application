@@ -52,7 +52,7 @@ public final class IJsonNames {
 	public static final String AUTH = "auth";
 	public static final String AUTOSEND = "autosend";
 	public static final String AVATAR = "avatar";
-	public static final String AVAIBLE_BALANCE = "avaibleBalance";
+	public static final String AVAILABLE_BALANCE = "availableBalance";
 	public static final String ADVERTISING = "advertising";
 	
 	
