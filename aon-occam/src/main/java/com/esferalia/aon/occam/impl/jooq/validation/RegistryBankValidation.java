@@ -48,15 +48,6 @@ public class RegistryBankValidation {
 	};
 	
 	/**
-	 * Throws an exception if the registryBank's bank account is null
-	 */
-	private static final BiConsumer<AONContext, RegistryBank> EMPTY_BANK_ACCOUNT = (ctx, registryBank) -> {
-		if (registryBank.getBankAccount() == null) {
-			throw new AonCoreException(AonError.REGISTRY_BANK_NULL_BANK_ACCOUNT.getMessage());
-		}
-	};
-	
-	/**
 	 * Throws an exception if the size of the registryBank's bic is invalid
 	 */
 	private static final BiConsumer<AONContext, RegistryBank> INVALID_SIZE_BIC = (ctx, registryBank) -> {
@@ -96,7 +87,6 @@ public class RegistryBankValidation {
 		NULL.andThen(EMPTY)
 		.andThen(EMPTY_DOMAIN)
 		.andThen(EMPTY_REGISTRY)
-		.andThen(EMPTY_BANK_ACCOUNT)
 		.andThen(INVALID_SIZE_BIC)
 		.andThen(INVALID_SIZE_SUFFIX)
 		.andThen(INVALID_SIZE_REQUISITION)

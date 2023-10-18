@@ -121,6 +121,116 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		assertEquals(AonError.REGISTRY_BANK_INVALID_SEPA_MANDATE_REF_SIZE.getMessage(), e.getMessage());
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
+	
+	@Test
+	public void getDomainFilterRegistryBank() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		int domain = registryBank.getDomain();
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		
+		RegistryBank inserted = RegistryBankDAO.get(ctx, f -> f.getDomainProperty().eq(domain));
+		assertEquals(registryBank.getDomain(), inserted.getDomain());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
+	}
+	
+	@Test
+	public void getRegistryFilterRegistryBank() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		int registry = registryBank.getRegistry();
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		
+		RegistryBank inserted = RegistryBankDAO.get(ctx, f -> f.getRegistryProperty().eq(registry));
+		assertEquals(registryBank.getRegistry(), inserted.getRegistry());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
+	}
+	
+	@Test
+	public void getBankAccountFilterRegistryBank() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		String bankAccount = registryBank.getBankAccount().getIban();
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		
+		RegistryBank inserted = RegistryBankDAO.get(ctx, f -> f.getBankAccountProperty().eq(bankAccount));
+		Asserts.assertEqualsBankAccount(registryBank.getBankAccount(), inserted.getBankAccount());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
+	}
+	
+	@Test
+	public void getBicFilterRegistryBank() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		String bic = registryBank.getBic();
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		
+		RegistryBank inserted = RegistryBankDAO.get(ctx, f -> f.getBicProperty().eq(bic));
+		assertEquals(registryBank.getBic(), inserted.getBic());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
+	}
+	
+	@Test
+	public void getSuffixFilterRegistryBank() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		String suffix = registryBank.getSuffix();
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		
+		RegistryBank inserted = RegistryBankDAO.get(ctx, f -> f.getSufixProperty().eq(suffix));
+		assertEquals(registryBank.getSuffix(), inserted.getSuffix());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
+	}
+	
+	@Test
+	public void getAliasFilterRegistryBank() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		String alias = registryBank.getAlias();
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		
+		RegistryBank inserted = RegistryBankDAO.get(ctx, f -> f.getAliasProperty().eq(alias));
+		assertEquals(registryBank.getAlias(), inserted.getAlias());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
+	}
+	
+	@Test
+	public void getActiveFilterRegistryBank() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		Byte active = registryBank.getActive();
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		
+		RegistryBank inserted = RegistryBankDAO.get(ctx, f -> f.getActiveProperty().eq(active));
+		assertEquals(registryBank.getActive(), inserted.getActive());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
+	}
+	
+	@Test
+	public void getAccountFilterRegistryBank() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		int account = registryBank.getAccount().getId();
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		
+		RegistryBank inserted = RegistryBankDAO.get(ctx, f -> f.getAccountProperty().eq(account));
+		Asserts.assertEqualsAccount(registryBank.getAccount(), inserted.getAccount());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
+	}
+	
+	@Test
+	public void getRequisitionFilterRegistryBank() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		String requisition = registryBank.getRequisition();
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		
+		RegistryBank inserted = RegistryBankDAO.get(ctx, f -> f.getRequisitionProperty().eq(requisition));
+		assertEquals(registryBank.getRequisition(), inserted.getRequisition());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
+	}
+	
+	@Test
+	public void getSepaMandateRefFilterRegistryBank() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		String sepaMandateRef = registryBank.getSepaMandateRef();
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		
+		RegistryBank inserted = RegistryBankDAO.get(ctx, f -> f.getSepaMandateRefProperty().eq(sepaMandateRef));
+		assertEquals(registryBank.getSepaMandateRef(), inserted.getSepaMandateRef());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
+	}
 }
 
 

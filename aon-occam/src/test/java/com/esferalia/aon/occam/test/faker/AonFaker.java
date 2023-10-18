@@ -749,8 +749,6 @@ public class AonFaker {
 	}
 	
 	public static RegistryBank getRegistryBank(AONContext ctx) {	
-		Account account = AonRandom.getAccount(ctx, "572");
-		BankAccount bankAccount = AonFaker.getBankAccount(ctx);
 		Random random = new Random();
 		
 		String bic = faker.lordOfTheRings().character();
@@ -781,10 +779,10 @@ public class AonFaker {
 		
 		return new RegistryBank()
 				.setDomain(ctx.getDomainId())
-				.setAccount(account)
+				.setAccount(AonRandom.getAccount(ctx, "572"))
 				.setActive(random.nextBoolean())
 				.setAlias(alias)
-				.setBankAccount(bankAccount)
+				.setBankAccount(AonFaker.getBankAccount(ctx))
 				.setBic(bic)
 				.setDirty(random.nextBoolean())
 				.setRegistry(AonRandom.getRegistry(ctx).getId())

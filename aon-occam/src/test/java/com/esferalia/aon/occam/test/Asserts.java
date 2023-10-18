@@ -967,7 +967,7 @@ public class Asserts {
 	}
 	
 	public static void assertEqualsQuestion(Question expected, Question actual) {
-		if (expected != null && actual != null) {
+		if (expected != null) {
 			assertEquals("Id",expected.getId(),actual.getId());
 			assertEquals("Domain",expected.getDomain(),actual.getDomain());
 			assertEquals("Active",expected.isActive(),actual.isActive());
@@ -1017,7 +1017,7 @@ public class Asserts {
 	}
 	
 	public static void assertEqualsBankAccount(BankAccount expected, BankAccount actual) {
-		if (expected != null && actual != null) {
+		if (expected != null) {
 			assertEquals("BankCode", expected.getBankCode(), actual.getBankCode());
 			assertEquals("BankCodeLenght", expected.getBankCodeLength(), actual.getBankCodeLength());
 			assertEquals("Bban", expected.getBban(), actual.getBban());
@@ -1046,7 +1046,7 @@ public class Asserts {
 	}
 	
 	public static void assertEqualsRegistryBank(RegistryBank expected, RegistryBank actual) {
-		if (expected != null && actual != null) {
+		if (expected != null) {
 			assertEquals("Id", expected.getId(), actual.getId());
 			assertEqualsAccount(expected.getAccount(), actual.getAccount());
 			assertEquals("Active", expected.getActive(), actual.getActive());
