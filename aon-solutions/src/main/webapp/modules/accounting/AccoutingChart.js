@@ -195,10 +195,10 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
           hAxis: { title: "Mes" },
           seriesType: "bars",
           series: { 2: { type: "line" } },
-          height: isMobile ? window.innerHeight / 2 : window.innerWidth / 3
+          height: isMobile ? window.innerHeight / 2 : (leyend ? window.innerWidth / 3 : 300)
         };
 
-        divCombo.style.width = isMobile ? "100%" : "70%";
+        divCombo.style.width = isMobile ? "100%" : (leyend ? "70%" : "auto");
         setStyles(div, {display : "flex", flexWrap : "wrap", justifyContent : "center", alignItems : "center"});
         div.appendChild(divCombo);
         chart = new google.visualization.ComboChart(divCombo);
@@ -213,8 +213,11 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
         
         chart.draw(table, options);
 
-        let mobileLegend = UTILS.getMobileLegend(accounts, isMobile);
-        div.appendChild(mobileLegend);
+        if(leyend){
+          let mobileLegend = UTILS.getMobileLegend(accounts, isMobile);
+          div.appendChild(mobileLegend);
+        }
+        
         if (isMobile) {
           let firstChild = divCombo.querySelector(":nth-child(1)");
           if (firstChild){
