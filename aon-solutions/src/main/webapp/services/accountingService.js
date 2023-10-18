@@ -1,8 +1,9 @@
-import { post } from "./request.js";
+import { post, get} from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 export const getAccounting = (data) => post(`${API_URL}/accounting/pyg`, data);
 export const getPeriods = (data) => post(`${API_URL}/accounting/periods`, data);
+export const getBanks = (data) => get(`${API_URL}/companies/${data.id}/banks`, data);
 
 export const PERIOD_FILTER = [
   {

@@ -50,6 +50,11 @@ export class AonFiscalCard extends AonElement {
   }
 
   paintView() {
+    this.style.display = "flex";
+    this.style.flexDirection = "column";
+    this.style.justifyContent = "space-between";
+    this.style.height = "100%";
+
     let cardContent = this.createElement(TAG.DIV);
     cardContent.className = CSS.AON_FLEX_COLUMN;
     cardContent.id = "fiscalCardTable";

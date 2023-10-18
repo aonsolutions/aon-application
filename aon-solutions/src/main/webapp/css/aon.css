@@ -1041,14 +1041,15 @@
   font-weight: 500;
 
   /*opacity: 0;
-  transform: translateY(30%);
-  transition: 0.3s ease-in;*/
+  transform: translateY(30%);*/
+  transition: 0.3s ease-in;
 }
 
-/*.aonCard:hover .aonCardTotal{
-  transform: translateY(0);
-  opacity: 1;
-}*/
+.aonCard:hover .aonCardTotal{
+  /*transform: translateY(0);
+  opacity: 1;*/
+  font-size: 1.8rem;
+}
 
 .aonDialog {
   display: none;

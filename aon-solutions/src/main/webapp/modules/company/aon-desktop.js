@@ -42,6 +42,7 @@ import { AonMessengerCard } from '../messenger/aon-messenger-card.js';
 import { getModelsFiscal } from '../../services/service.js';
 import { sortBy } from '../../services/utils.js';
 import { FiscalUtils } from '../fiscal/FiscalUtils.js';
+import { AonBankCard } from '../accounting/aon-bank-card.js';
 
 export class AonDesktop extends AonElement {
 
@@ -311,7 +312,7 @@ export class AonDesktop extends AonElement {
 		uploadInvoices(input, files);
 	}
 
-	createDashboard(parent, company){
+	async createDashboard(parent, company){
 		// Clear parent
 		while (parent.lastElementChild) {
 			parent.removeChild(parent.lastElementChild);
@@ -488,6 +489,33 @@ export class AonDesktop extends AonElement {
 			fiscalCard.firstChild.style.margin = '0';
 		}
 
+		if(this.getDur().isBank()) {
+			// Bancos
+			let bankCard = new AonCard();
+			bankCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			bankCard.id = "bank";
+			bankCard.title = "Bancos";
+			bankCard.setApp(Apps.ACCOUNTING);
+			bankCard.addEventListener(EVENT.CLICK_TITLE, () => {
+				this.appSelection(Apps.ACCOUNTING.app);
+				console.log("FIND BANK LABEL");
+				this.isElementLoaded("#aonAccountingSidenavbanksnordigen")
+					.then(selector => {
+						console.log(selector);
+						selector.click();
+					});
+			});
+			cardsPanel.appendChild(bankCard);
+			bankCard.getCardTitle1().style.cursor = 'pointer';
+			
+			let aonBankCard = new AonBankCard(company.registry);
+			bankCard.setContent(aonBankCard);
+			
+			bankCard.firstChild.style.minHeight = "420px";
+			bankCard.firstChild.children.item(1).style.height = "315px";
+			bankCard.firstChild.style.margin = '0';
+		}
+
 		if(this.getDur().isMessengerManager() || this.getDur().isMessenger()) {
 			// Solicitudes
 			let messengerCard = new AonCard();
@@ -532,6 +560,13 @@ export class AonDesktop extends AonElement {
 
 		}
 	}
+
+	async isElementLoaded(selector){
+		while ( document.querySelector(selector) === null) {
+		  await new Promise( resolve =>  requestAnimationFrame(resolve) )
+		}
+		return document.querySelector(selector);
+	  };
 
 	filterPyG(pygCard){
 		let button = this.getElement('pygTitleSection2OpcionesButtonIconButton');
