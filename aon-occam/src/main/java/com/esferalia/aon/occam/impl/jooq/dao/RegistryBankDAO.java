@@ -80,7 +80,7 @@ public class RegistryBankDAO {
 					.setBic(r.getValue(RBANK.BIC))
 					.setSuffix(r.getValue(RBANK.SUFIX))
 					.setBalance(r.getValue(RBANK.BALANCE))
-					.setAvaibleBalance(r.getValue(RBANK.AVAILABLE_BALANCE))
+					.setAvailableBalance(r.getValue(RBANK.AVAILABLE_BALANCE))
 					.setBalanceDate(r.getValue(RBANK.BALANCE_DATE))
 					.setDirty(false)
 					.setRemoved(false);
