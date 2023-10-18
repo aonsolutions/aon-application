@@ -214,6 +214,7 @@ export class ApiBank extends Bank implements IApiModel {
         let bank = new Bank();
         bank.ApiObject = data;
         bank.Key = data.id
+        bank.Iban = data.bank_account
         bank.Logo = ''
         bank.Name = data.alias ? data.alias : ''
         bank.Total = 0
