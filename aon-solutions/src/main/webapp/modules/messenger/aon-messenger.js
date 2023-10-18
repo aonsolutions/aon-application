@@ -991,7 +991,7 @@ export class AonMessenger extends AonElement {
 			}
 			if(aonView){
 				aonView.id = view;
-				if(filter) aonView.setFilter(filter);
+				if(filter){ aonView._filter = filter; } 
 				if(data) aonView.data = data;
 				this.getApplication().setContent(aonView);
 			}
