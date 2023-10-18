@@ -1,6 +1,6 @@
-package nordigen;
+package net.aonsolutions.aon.bank.nordigen;
 
-import static nordigen.NordigenUtils.isRequisitionLinked;
+import static net.aonsolutions.aon.bank.nordigen.NordigenUtils.isRequisitionLinked;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,7 +53,7 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import nordigen.NordigenAPIAbstract.CreateRequisitionParams;
+import net.aonsolutions.aon.bank.nordigen.NordigenAPIAbstract.CreateRequisitionParams;
 
 public class AonNordigen {
 	

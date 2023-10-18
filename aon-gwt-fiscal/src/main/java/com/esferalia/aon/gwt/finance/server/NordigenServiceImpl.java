@@ -32,7 +32,7 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
-import nordigen.AonNordigen;
+import net.aonsolutions.aon.bank.nordigen.AonNordigen;
 
 @WebServlet(name = "Nordigen Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/nordigen" })
 public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implements NordigenService {
