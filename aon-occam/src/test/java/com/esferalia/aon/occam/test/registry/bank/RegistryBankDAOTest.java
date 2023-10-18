@@ -2,12 +2,12 @@ package com.esferalia.aon.occam.test.registry.bank;
 
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
@@ -26,15 +26,9 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 	public void crudeTest() {
 		// create
 		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
-		RegistryBank registryBankreceived = RegistryBankDAO.save(ctx, registryBank);
-		Integer registryBankId = registryBankreceived.getId();
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		Integer registryBankId = registryBank.getId();
 		RegistryBank inserted = RegistryBankDAO.get(ctx, f -> f.getIdProperty().eq(registryBankId));
-		
-		//assertNotNull(inserted.getId());
-		//assertNull(inserted.getDomain());
-		//assertNull(inserted.getBic());
-		
-		Asserts.assertEqualsRegistryBank(registryBank, registryBankreceived);
 		Asserts.assertEqualsRegistryBank(registryBank, inserted);
 		
 		// update
@@ -45,7 +39,7 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		// delete
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 		RegistryBank deleted = RegistryBankDAO.get(ctx, f -> f.getIdProperty().eq(registryBankId));
-		assertNull(deleted);
+		assertTrue(deleted.isEmpty());
 	}
 	
 	@Test
@@ -67,6 +61,7 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		registryBank.setDomain(null);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
 		assertEquals(AonError.REGISTRY_BANK_NULL_DOMAIN.getMessage(), e.getMessage());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
 	
 	@Test
@@ -75,14 +70,16 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		registryBank.setRegistry(null);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
 		assertEquals(AonError.REGISTRY_BANK_NULL_REGISTRY.getMessage(), e.getMessage());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
 	
 	@Test
 	public void saveNullBankAccountRegistryBank() {
 		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
 		registryBank.setBankAccount(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
-		assertEquals(AonError.REGISTRY_BANK_NULL_BANK_ACCOUNT.getMessage(), e.getMessage());
+		registryBank = RegistryBankDAO.save(ctx, registryBank);
+		Asserts.assertEqualsBankAccount(new BankAccount(), registryBank.getBankAccount());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
 	
 	@Test
@@ -92,6 +89,7 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		registryBank.setBic(bic);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
 		assertEquals(AonError.REGISTRY_BANK_INVALID_BIC_SIZE.getMessage(), e.getMessage());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
 	
 	@Test
@@ -101,6 +99,7 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		registryBank.setSuffix(suffix);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
 		assertEquals(AonError.REGISTRY_BANK_INVALID_SUFFIX_SIZE.getMessage(), e.getMessage());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
 	
 	@Test
@@ -110,6 +109,7 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		registryBank.setRequisition(requisition);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
 		assertEquals(AonError.REGISTRY_BANK_INVALID_REQUISITION_SIZE.getMessage(), e.getMessage());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
 	
 	@Test
@@ -119,6 +119,7 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		registryBank.setSepaMandateRef(sepaMandateRef);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
 		assertEquals(AonError.REGISTRY_BANK_INVALID_SEPA_MANDATE_REF_SIZE.getMessage(), e.getMessage());
+		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
 }
 

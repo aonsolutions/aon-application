@@ -773,7 +773,7 @@ public class AonFaker {
 			requisition = requisition.substring(0, RBANK.REQUISITION.getDataType().length());
 		}
 		
-		String sepaMandateRef = faker.friends().quote();
+		String sepaMandateRef = faker.gameOfThrones().dragon();
 		if (sepaMandateRef.length() > RBANK.SEPA_MANDATE_REF.getDataType().length()) {
 			sepaMandateRef = sepaMandateRef.substring(0, RBANK.SEPA_MANDATE_REF.getDataType().length());
 		}
@@ -787,8 +787,8 @@ public class AonFaker {
 				.setBankAccount(bankAccount)
 				.setBic(bic)
 				.setDirty(random.nextBoolean())
-				.setRegistry(random.nextInt(0,1000))
-				.setRemoved(random.nextBoolean())
+				.setRegistry(AonRandom.getRegistry(ctx).getId())
+				.setRemoved(false)
 				.setRequisition(requisition)
 				.setSepaMandateRef(sepaMandateRef)
 				.setSuffix(suffix);
