@@ -557,6 +557,7 @@ export const SHOW_FILE = MSG.SHOW_FILE;
 export const SIGN_IN = MSG.SIGN_IN;
 export const SIGN_IN_WITHOUT_PASSWORD = MSG.SIGN_IN_WITHOUT_PASSWORD;
 export const SIGN_IN_WITH_CERTIFICATE = MSG.SIGN_IN_WITH_CERTIFICATE;
+export const SIGNING = 'Fichaje' // TODO
 export const SII = MSG.SII;
 export const SII_TICKETBAI = MSG.SII_TICKETBAI;
 export const SIZE = MSG.SIZE;

@@ -324,6 +324,22 @@ export class AonApplication extends AonElement {
     div.appendChild(content);
   }
 
+
+  addSidenavWidget2(data, element) {
+    this.addSidenavOptionsTitle(data);
+
+    let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
+    if(data && data.id && sidenav) {
+        let div = this.getElement(sidenav.id + data.id);
+        if(div){
+          let content = this.createElement(TAG.DIV);
+          content.style.paddingLeft = "26px";
+          content.appendChild(element);
+          div.appendChild(content);
+        }
+    }
+  }
+
   addSidenavWidgetHTML(title, html) {
     let sidenav = this.getElement(this.SIDENAV);
     if(sidenav){
