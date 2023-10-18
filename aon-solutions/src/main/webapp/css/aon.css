@@ -312,6 +312,7 @@
   max-width: 200px;
   max-height: 60px;
   padding: 5px;
+  cursor: pointer;
 }
 
 .aonParentLogo {
@@ -466,7 +467,7 @@
   height: 60px;
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  /*justify-content: space-between;*/
   padding: 0 1rem;
 }
 
