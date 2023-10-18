@@ -1,11 +1,14 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.BankStatement.BANK_STATEMENT;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -22,6 +25,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_BALANCE_TYPE;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
@@ -33,6 +38,7 @@ import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.validation.BankStatementValidator;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -270,5 +276,53 @@ public class NordigenDAO {
 			return null;
 		}
 	}
+
+	public static void updateRegistryBank(Domain domain, String login, NordigenBankAccount account) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, login)) {
+			RegistryBank rb = account.getRbank();
+			Double balance = 0.0;
+			Double remainder = 0.0;
+			List<NordigenAccountBalance> balances = account.getBalances();
+			NordigenAccountBalance consolidado = filterConsolidado(balances);
+			NordigenAccountBalance real = filterReal(balances);
+			if (consolidado != null && consolidado.getBalanceAmount() != null) {
+				balance += AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount());
+			}
+			if (real == null || real.getBalanceAmount() == null) {
+				real = consolidado;
+			}
+			if (real != null && real.getBalanceAmount() != null) {
+				remainder += AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
+			}
+			Date date = account.getLastMovementDate();
+			aonContext.getDslContext().update(RBANK)
+				.set(RBANK.BALANCE, AonNumberUtils.zeroIfNull(balance))
+				.set(RBANK.AVAILABLE_BALANCE, AonNumberUtils.zeroIfNull(remainder))
+				.set(RBANK.BALANCE_DATE, new Timestamp(date.getTime()))
+				.where(RBANK.ID.eq(rb.getId()))
+				.execute();
+		}
+	}
+	
+	private static NordigenAccountBalance filterConsolidado(List<NordigenAccountBalance> balances) {
+		NordigenAccountBalance consolidado = balances.stream()
+			.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+			.findFirst().orElse(null);
+		if (consolidado == null && !balances.isEmpty()) {
+			return balances.get(0);
+		}
+		return consolidado;
+	}
+	
+	private static NordigenAccountBalance filterReal(List<NordigenAccountBalance> balances) {
+		NordigenAccountBalance real = balances.stream()
+			.filter(bal -> !NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+			.findFirst().orElse(null);
+		if (real == null) {
+			return filterConsolidado(balances);
+		}
+		return real;
+	}
+	
 	
 }
