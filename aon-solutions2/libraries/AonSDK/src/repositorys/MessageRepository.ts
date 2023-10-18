@@ -184,13 +184,13 @@ export class APIMessageSpecificMethodsRepository implements IMessageSpecificMeth
             let result = await ApiHttpRequest.get(BASE_URL + MESSAGE_URL.GET_COUNT_NOTIFICATION, {}, {})
             return result.notification
         } else if(filter?.fields?.get('type') == TypeMessage.TAREA){
-            return (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(1, 100, 'task', 'pending')), {}, {})).length
+            return (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_COUNT_TASK_QUERY, generateParams(1, 100, TypeMessage.TAREA, filter?.fields?.get('type'))), {}, {}))
         } else if(filter?.fields?.get('type') == TypeMessage.CONSULTA){
-            return (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(1, 100, 'query', 'pending')), {}, {})).length
+            return (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_COUNT_TASK_QUERY, generateParams(1, 100, TypeMessage.CONSULTA, filter?.fields?.get('type'))), {}, {}))
         } else {
             let result1 = await ApiHttpRequest.get(BASE_URL + MESSAGE_URL.GET_COUNT_NOTIFICATION, {}, {})
-            let result2 = (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(1, 100, 'task', 'pending')), {}, {})).length
-            let result3 = (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(1, 100, 'query', 'pending')), {}, {})).length
+            let result2 = (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_COUNT_TASK_QUERY, generateParams(1, 100, TypeMessage.TAREA, filter?.fields?.get('type'))), {}, {}))
+            let result3 = (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_COUNT_TASK_QUERY, generateParams(1, 100, TypeMessage.CONSULTA, filter?.fields?.get('type'))), {}, {}))
             return result1.notification + result2 + result3;
         }
     }

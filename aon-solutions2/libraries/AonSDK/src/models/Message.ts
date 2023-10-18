@@ -245,7 +245,7 @@ export class ApiMessage extends Message implements IApiModel {
             let description = JSON.parse(data.description);
             message.ApiObject = data;
             message.Id = data.id + (data.source == 'query' ? ';' + TypeMessage.CONSULTA : ';' + TypeMessage.TAREA);
-            message.Name = data.sender.name  ? data.sender.name : '';
+            message.Name = data.sender.id == localStorage.getItem('registry') ? data.task_holder.name : data.sender.name;
             message.Title = data.title ? data.title : '';
             message.Description = description.observation ? description.observation : '';
             message.Date = new Date(data.start_date);

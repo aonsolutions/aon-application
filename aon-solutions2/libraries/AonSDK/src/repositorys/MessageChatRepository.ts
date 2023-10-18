@@ -18,7 +18,7 @@ export class APIMessageChatSingleObjectCrudRepository extends APIGenericSingleOb
             comment: messageChat.Description,
             domain: localStorage.getItem('domainId'),
             email: '',
-            task: messageChat.IdMessage,
+            task: messageChat.IdMessage.split(';')[0],
             task_holder: sender,
             type: 'comment'
         }
@@ -35,8 +35,8 @@ export class APIMessageChatMultipleObjectCrudRepository extends APIGenericMultip
 
     async get(filter?: IFilter | undefined): Promise<ICollection<MessageChat>> {
         let url;
-        if(filter && filter.fields)
-            url = '/ms/api/task/workflow?task='+filter.fields.get('idMessage')+'&domainId='+localStorage.getItem('domainId')+'&domainName='+localStorage.getItem('domainName');
+        if(filter && filter.fields && filter.fields.get('idMessage'))
+            url = '/ms/api/task/workflow?task='+filter.fields.get('idMessage')[0].split(';')[0]+'&domainId='+localStorage.getItem('domainId')+'&domainName='+localStorage.getItem('domainName');
         else
             throw new Error('No se ha introducido el id')
         let response = await ApiHttpRequest.get(BASE_URL + url, {}, {});
