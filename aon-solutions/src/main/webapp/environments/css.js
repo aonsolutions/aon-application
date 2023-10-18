@@ -128,6 +128,8 @@ export const AON_MESSENGER_CARD_ROW = 'aonMessengerCardRow';
 export const AON_BADGE = 'aonBadge';
 export const AON_DASHBOARD_CARD = 'aonDashboardCard';
 
+export const AON_COMPANY_DIV = 'aonCompanyDiv';
+
 // aon-figma.css
 
 export const AON_LOGIN = 'aonLogin';

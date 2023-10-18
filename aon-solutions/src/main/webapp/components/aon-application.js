@@ -324,6 +324,22 @@ export class AonApplication extends AonElement {
     div.appendChild(content);
   }
 
+
+  addSidenavWidget2(data, element) {
+    this.addSidenavOptionsTitle(data);
+
+    let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
+    if(data && data.id && sidenav) {
+        let div = this.getElement(sidenav.id + data.id);
+        if(div){
+          let content = this.createElement(TAG.DIV);
+          content.style.paddingLeft = "26px";
+          content.appendChild(element);
+          div.appendChild(content);
+        }
+    }
+  }
+
   addSidenavWidgetHTML(title, html) {
     let sidenav = this.getElement(this.SIDENAV);
     if(sidenav){
@@ -670,18 +686,34 @@ export class AonApplication extends AonElement {
   }
 
 
-  removeBackgroundSidenavAll(){
+  removeBackgroundSidenavAll(color){
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((li) => {
-      li.style.backgroundColor = null;
+      li.style.removeProperty("background-color");
+      li.style.removeProperty("font-weight");
+      li.style.removeProperty("color");
+
+      if(LS.isNewTheme()) {
+        let icon = this.getElement(li.id + 'icon');
+        if(icon && color) icon.style.color = color;
+        let aonIcon = this.getElement(li.id + 'AonIcon');
+        if(aonIcon && color) aonIcon.color = color;
+      }
     });
   }
 
-  addBackgroundSidenav(id){
+  addBackgroundSidenav(id, color){
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     const li =  this.getElement(sidenavId + id);
     if(li){
-      li.style.backgroundColor = "#d3e3fd";
+      if(LS.isNewTheme()) {
+        li.style.color = 'white';
+        li.style.backgroundColor = color && LS.isNewTheme() ? color : "#d3e3fd";
+        let icon = this.getElement(li.id + 'icon');
+        if(icon) icon.style.color = 'white';
+        let aonIcon = this.getElement(li.id + 'AonIcon');
+        if(aonIcon) aonIcon.color = 'white';
+      } else li.style.backgroundColor = "#d3e3fd";
     }
   }
 
