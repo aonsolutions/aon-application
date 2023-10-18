@@ -126,6 +126,8 @@ export const AON_ELLIPSIS = 'aonEllipsis';
 export const AON_MESSENGER_CARD_BUTTON = 'aonMessengerCardButton';
 export const AON_BADGE = 'aonBadge';
 
+export const AON_COMPANY_DIV = 'aonCompanyDiv';
+
 // aon-figma.css
 
 export const AON_LOGIN = 'aonLogin';

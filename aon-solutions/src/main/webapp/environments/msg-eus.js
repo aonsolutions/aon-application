@@ -81,6 +81,7 @@ export const COMPANIES = 'Enpresak';
 export const COMPANY = 'Enpresa';
 export const COMPANY_COSTS = 'Enpresaren kostuak';
 export const COMPANY_MANAGEMENT = 'Enpresen Kudeaketa';
+export const COMPANY_SELECTION = 'Enpresa hautaketa';
 export const COMPONENTS = 'Osagaiak';
 export const CONCEPT = 'Kontzeptua';
 export const CONCEPTS = 'Kontzeptuak';

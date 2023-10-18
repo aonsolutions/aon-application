@@ -108,7 +108,7 @@ export class AonNewMenu extends AonElement {
 
 	expand() {
 		if(this.isExpanded()) {
-			aonMenuSidenav.style.width = '70px';
+			this.getElement(this.AON_MENU_SIDENAV).style.width = '70px';
 			this.getRootPanel().style.marginLeft = '70px';
 			this.setExpanded(false);
 			document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
@@ -116,7 +116,7 @@ export class AonNewMenu extends AonElement {
 			});
 
 		} else {
-			aonMenuSidenav.style.width = '250px';
+			this.getElement(this.AON_MENU_SIDENAV).style.width = '250px';
 			this.getRootPanel().style.marginLeft = '250px';
 			this.setExpanded(true);
 
@@ -486,8 +486,8 @@ export class AonNewMenu extends AonElement {
 		div.appendChild(span3);
 
 		aibC.addEventListener(EVENT.CLICK,()=>{
-			this.CLOSE = true;
-			aonMenuSidenav.style.width = '175px';
+			aonMenuSidenav.style.width = '70px';
+			if(rootPanel) rootPanel.style.marginLeft = '70px';			
 			this.buildMenu();
 		});
 

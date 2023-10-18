@@ -206,7 +206,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		}
 	}
 
-	private JSONArray getCompanies(AonApiData api) {
+	public static JSONArray getCompanies(AonApiData api) {
 		if((JsonUtils.has(api.getData(), IJsonNames.PARENT) && JsonUtils.getboolean(api.getData(), IJsonNames.PARENT))
 				|| JsonUtils.has(api.getData(), IJsonNames.DOCUMENT) || JsonUtils.has(api.getData(), IJsonNames.PARENT_ID)) {
 			
@@ -278,7 +278,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		return jsArray;
 	}
 	
-	private Filter companyFilter(AonApiData api, CompanyProperties f) {
+	private static Filter companyFilter(AonApiData api, CompanyProperties f) {
 		JSONObject params = api.getData();
 		Filter filter = f.getIdProperty().isNotNull();
 
@@ -336,7 +336,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		return filter;
 	}
 	
-	private JSONObject getCompany(AonApiData api) {
+	public static JSONObject getCompany(AonApiData api) {
 		Company company =  api.getData().opt(IJsonNames.ID) != null
 			? AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 				f.getIdProperty().eq(api.getData().optInt(IJsonNames.ID))) 

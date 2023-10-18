@@ -134,6 +134,7 @@ export const COMPANIES = MSG.COMPANIES;
 export const COMPANY = MSG.COMPANY;
 export const COMPANY_COSTS = MSG.COMPANY_COSTS;
 export const COMPANY_MANAGEMENT = MSG.COMPANY_MANAGEMENT;
+export const COMPANY_SELECTION = MSG.COMPANY_SELECTION;
 export const COMPONENTS = MSG.COMPONENTS;
 export const COMPOSITION = 'Composición';
 export const COMUNICA = "Comunic@";// TODO
