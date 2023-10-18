@@ -778,7 +778,7 @@ public class AonFaker {
 		if (sepaMandateRef.length() > RBANK.SEPA_MANDATE_REF.getDataType().length()) {
 			sepaMandateRef = sepaMandateRef.substring(0, RBANK.SEPA_MANDATE_REF.getDataType().length());
 		}
-		 
+		
 		
 		return new RegistryBank()
 				.setDomain(ctx.getDomainId())

@@ -62,7 +62,7 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 	}
 	
 	@Test
-	public void saveNullRegistryBankDomain() {
+	public void saveNullDomainRegistryBank() {
 		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
 		registryBank.setDomain(null);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
@@ -70,7 +70,7 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 	}
 	
 	@Test
-	public void saveNullRegistryBankRegistry() {
+	public void saveNullRegistryRegistryBank() {
 		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
 		registryBank.setRegistry(null);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
@@ -78,7 +78,7 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 	}
 	
 	@Test
-	public void saveRegistryBankBankAccount() {
+	public void saveNullBankAccountRegistryBank() {
 		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
 		registryBank.setBankAccount(null);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryBankDAO.save(ctx, registryBank));
