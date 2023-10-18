@@ -1,7 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-
-import { EnterpriseService } from 'src/app/core/services/enterprise.service';
-import { IEnterprise, IRegistryEnterprise } from 'libraries/AonSDK/src/aon';
 import { ModalDeleteCertificateComponent } from '../components/modal-delete-certificate/modal-delete-certificate.component';
 
 @Component({
@@ -11,10 +8,8 @@ import { ModalDeleteCertificateComponent } from '../components/modal-delete-cert
 })
 export class ProfileCompanyComponent implements OnInit {
   modalComponentDelete: any;
-  enterprise: IEnterprise | null = null;
-  registryEnterprise: IRegistryEnterprise | null = null;
 
-  constructor(private enterpriseService: EnterpriseService) {
+  constructor() {
   }
 
   @ViewChild('modalDelete') modalComponentEdit: any = '';
@@ -33,8 +28,7 @@ export class ProfileCompanyComponent implements OnInit {
     );
   }
 
-  async ngOnInit() {
-    this.enterprise = await this.enterpriseService.getCurrentEntepriseData();
-    this.registryEnterprise = await this.enterpriseService.getCurrentEnterpriseRegistryData();
+  ngOnInit() {
   }
+
 }

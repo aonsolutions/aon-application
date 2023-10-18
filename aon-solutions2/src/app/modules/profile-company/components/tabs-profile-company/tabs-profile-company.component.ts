@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-import { IEnterprise, IRegistryEnterprise } from 'libraries/AonSDK/src/aon';
+import { IEnterprise, IRegistryEnterprise, IUser } from 'libraries/AonSDK/src/aon';
+import { EnterpriseService } from 'src/app/core/services/enterprise.service';
 import { UserService } from 'src/app/core/services/user.service';
 
 export interface Tabs {
@@ -14,15 +15,19 @@ export interface Tabs {
   styleUrls: ['./tabs-profile-company.component.scss'],
 })
 export class TabsProfileCompanyComponent implements OnInit {
+  enterprise: IEnterprise | null = null;
+  registryEnterprise: IRegistryEnterprise | null = null;
+  user: IUser | null = null;
+  originalEnterprise!: IEnterprise;
+  originalRegistryEnterprise!: IRegistryEnterprise;
+  originalUser!: IUser;
   tabIndex: number = 0;
   tabs: Tabs[] = [];
-  users: any[] = [];
-  @Input() enterprise: IEnterprise | null = null;
-  @Input() registryEnterprise: IRegistryEnterprise | null = null;
 
   constructor(
     private translateService: TranslateService,
-    private userService: UserService,
+    private enterpriseService: EnterpriseService,
+    private userService: UserService
     ) {
       this.translateService
       .get([
@@ -47,25 +52,26 @@ export class TabsProfileCompanyComponent implements OnInit {
     }
 
     onSave() {
-      // Llama a la función para actualizar los datos en el servidor
-      console.log('guardar', this.users);
+      let isSaved: boolean = false;
+      const userModified: boolean = this.checkIfDataModified(this.originalUser, this.user!);
+      const enterpriseModified: boolean = this.checkIfDataModified(this.originalEnterprise, this.enterprise!);
+      const registryEnterpriseModified: boolean = this.checkIfDataModified(this.originalRegistryEnterprise, this.registryEnterprise!);
 
-      // this.registryEnterpriseService
-      // .updateRegistryEnterprise(this.registryEnterprises[0])
-      // .then((updatedRegistry) => {
-      //   // Actualiza el valor correspondiente en el objeto registryEnterprise
-      //   this.registryEnterprises[0] = updatedRegistry;
-      // });
+      // Verificamos si existen cambios en el usuario
+      if (userModified) {
+        this.userService.updateCurrentUserData(this.user!);
+      }
 
-      this.userService
-      .updateUser(this.users[0])
-      .then((updatedUser) => {
-        // Actualiza el valor correspondiente en el objeto user
-        this.users[0] = updatedUser;
-      });
+      // Verificamos si existen cambios en el enterprise
+      if (enterpriseModified) {
+        this.enterpriseService.updateCurrentEnterpriseData(this.enterprise!);
+      }
+
+      // Verificamos si existen cambios en el registryEnterprise
+      if (registryEnterpriseModified) {
+        this.enterpriseService.updateCurrentEnterpriseRegistryData(this.registryEnterprise!);
+      }
     }
-
-
 
     onCancel() {
       // Obtén el objeto registryEnterprise original antes de realizar cambios
@@ -76,6 +82,29 @@ export class TabsProfileCompanyComponent implements OnInit {
     }
 
     async ngOnInit() {
+      this.enterprise = await this.enterpriseService.getCurrentEntepriseData();
+      this.registryEnterprise = await this.enterpriseService.getCurrentEnterpriseRegistryData();
+      this.user = await this.userService.getCurrentUserData();
+
+      // Copia de datos originales
+      this.originalUser = { ...this.user };
+      this.originalEnterprise = { ... this.enterprise };
+      this.originalRegistryEnterprise = { ... this.registryEnterprise };
+    }
+
+    /**
+     * Comprueba si los datos han sido modificados comparando los datos originales con los datos actuales.
+     *
+     * @param {IUser | IEnterprise | IRegistryEnterprise} originalData - Los datos originales a comparar.
+     * @param {IUser | IEnterprise | IRegistryEnterprise} actualData - Los datos actuales a comparar con los datos originales.
+     * @returns {boolean} - Devuelve true si los datos han sido modificados de lo contrario, devuelve false.
+     */
+    private checkIfDataModified(originalData: IUser|IEnterprise|IRegistryEnterprise, actualData: IUser|IEnterprise|IRegistryEnterprise) {
+      if (originalData) {
+        const isModified = JSON.stringify(originalData) !== JSON.stringify(actualData);
+        return isModified;
+      }
+      return false;
     }
 
   }

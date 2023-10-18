@@ -234,6 +234,7 @@
     "SECUNDARY_USERS":"Secondary users",
     "STATUS": "Status",
     "STATUS_DATE": "Status Date",
-    "NAF": "NAF"
+    "NAF": "NAF",
+    "CERTIFICATE_UPLOAD": "Upload your digital certificate"
   }
 }

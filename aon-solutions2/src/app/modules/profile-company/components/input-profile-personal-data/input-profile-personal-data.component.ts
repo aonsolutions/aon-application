@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-
-import { UserService } from '../../../../core/services/user.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { IUser } from 'libraries/AonSDK/src/aon';
 
 @Component({
   selector: 'app-input-profile-personal-data',
@@ -8,14 +7,10 @@ import { UserService } from '../../../../core/services/user.service';
   styleUrls: ['./input-profile-personal-data.component.scss'],
 })
 export class InputProfilePersonalDataComponent implements OnInit {
-  users: any[] = [];
   showPasswordFields: boolean = false;
+  @Input() user: IUser | null = null;
 
-
-  constructor(private userService: UserService) {
-    this.userService.getCurrentUserData().then((user) => {
-      this.users.push(user);
-    });
+  constructor() {
   }
 
   togglePasswordFields() {
@@ -30,18 +25,12 @@ export class InputProfilePersonalDataComponent implements OnInit {
   }
 
   onSave() {
-    this.userService
-      .updateUser(this.users[0])
-      .then((updatedUser) => {
-      // Actualiza el valor correspondiente en el objeto user
-      this.users[0] = updatedUser;
-    });
   }
 
   onCancel() {
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
   }
 
 }
