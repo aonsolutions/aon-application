@@ -78,4 +78,15 @@ export class InputProfileCompanyInformationComponent implements OnInit {
       this.selectedCountry !== null && this.selectedCountry.name === 'Spain'
     );
   }
+
+  /**
+   * Actualiza el valor correspondiente en el objeto enterprise.
+   *
+   * @param {any} newValue - El nuevo valor que se va a asignar.
+   * @param {any} enterprise - El objeto enterprise.
+   * @param {string} propertyName - El nombre de la propiedad que se va a actualizar.
+   */
+  getValue(newValue: any, enterprise: any, propertyName: string) {
+    enterprise[propertyName] = newValue;
+  }
 }

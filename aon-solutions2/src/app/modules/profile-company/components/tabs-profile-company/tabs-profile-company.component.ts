@@ -60,17 +60,24 @@ export class TabsProfileCompanyComponent implements OnInit {
       // Verificamos si existen cambios en el usuario
       if (userModified) {
         this.userService.updateCurrentUserData(this.user!);
+        isSaved = true;
       }
 
       // Verificamos si existen cambios en el enterprise
+      console.log('datos a pasar', this.enterprise);
       if (enterpriseModified) {
+
         this.enterpriseService.updateCurrentEnterpriseData(this.enterprise!);
+        isSaved = true;
       }
 
       // Verificamos si existen cambios en el registryEnterprise
       if (registryEnterpriseModified) {
         this.enterpriseService.updateCurrentEnterpriseRegistryData(this.registryEnterprise!);
+        isSaved = true;
       }
+
+      return isSaved;
     }
 
     onCancel() {
@@ -88,8 +95,8 @@ export class TabsProfileCompanyComponent implements OnInit {
 
       // Copia de datos originales
       this.originalUser = { ...this.user };
-      this.originalEnterprise = { ... this.enterprise };
-      this.originalRegistryEnterprise = { ... this.registryEnterprise };
+      this.originalEnterprise = { ...this.enterprise };
+      this.originalRegistryEnterprise = { ...this.registryEnterprise };
     }
 
     /**
@@ -106,5 +113,6 @@ export class TabsProfileCompanyComponent implements OnInit {
       }
       return false;
     }
+
 
   }
