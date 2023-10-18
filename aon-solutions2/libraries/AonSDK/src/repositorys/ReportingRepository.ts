@@ -10,8 +10,8 @@ export class ReportingRepository implements IReportingRepository {
             cobros.push(Math.floor(Math.random()*2000))
             pagos.push(Math.floor(Math.random()*2000))
         }
-        datasets.push({data:cobros, label:'cobros'})
-        datasets.push({data:pagos, label:'pagos'})
+        datasets.push({data:cobros, label:'COLLECTIONS'})
+        datasets.push({data:pagos, label:'PAYMENTS'})
         return { datasets: datasets, label: [1,2,3,4,5,6,7,8,9,10,11,12] };
     }
 
@@ -21,8 +21,8 @@ export class ReportingRepository implements IReportingRepository {
             ventas.push(Math.floor(Math.random()*2000))
             gastos.push(Math.floor(Math.random()*2000))
         }
-        datasets.push({data:ventas, label:'ventas'})
-        datasets.push({data:gastos, label:'gastos'})
+        datasets.push({data:ventas, label:'SALES'})
+        datasets.push({data:gastos, label:'BILLS'})
         return { datasets: datasets, label: [1,2,3,4,5,6,7,8,9,10,11,12] };
     }
 
@@ -42,8 +42,8 @@ export class ApiReportingRepository implements IReportingRepository {
             ventas.push(keys[i].pago ? keys[i].pago : 0)
             gastos.push(keys[i].cobro ? keys[i].cobro : 0)
         }
-        datasets.push({data:ventas, label:'cobros'})
-        datasets.push({data:gastos, label:'pagos'})
+        datasets.push({data:ventas, label:'COLLECTIONS'})
+        datasets.push({data:gastos, label:'PAYMENTS'})
         return { datasets: datasets, label: fechas };
     }
 
@@ -57,8 +57,8 @@ export class ApiReportingRepository implements IReportingRepository {
             ventas.push(keys[i].Ventas ? keys[i].Ventas : 0)
             gastos.push(keys[i].Gastos ? keys[i].Gastos : 0)
         }
-        datasets.push({data:ventas, label:'ventas'})
-        datasets.push({data:gastos, label:'gastos'})
+        datasets.push({data:ventas, label:'SALES'})
+        datasets.push({data:gastos, label:'BILLS'})
         return { datasets: datasets, label: fechas };
     }
 }
