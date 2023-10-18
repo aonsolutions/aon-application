@@ -248,7 +248,7 @@ export class ApiMessage extends Message implements IApiModel {
             message.Name = data.sender.id == localStorage.getItem('registry') ? data.task_holder.name : data.sender.name;
             message.Title = data.title ? data.title : '';
             message.Description = description.observation ? description.observation : '';
-            message.Date = new Date(data.start_date);
+            message.Date = data.start_date ? new Date(data.start_date) : new Date();
             message.Type = data.source == 'query' ? TypeMessage.CONSULTA : TypeMessage.TAREA;
             if(data.source == 'task')
                 message.Status = data.status && data.status == 'pending' ? StatusMessage.PENDIENTE : StatusMessage.REALIZADA;
@@ -263,7 +263,7 @@ export class ApiMessage extends Message implements IApiModel {
             message.Name = data.source ? data.source : '';
             message.Title = data.title ? data.title : '';
             message.Description = data.body ? data.body : '';
-            message.Date = new Date(data.date);
+            message.Date = data.date ? new Date(data.date) : new Date();
             message.Type = TypeMessage.NOTIFICACION;
             message.Status = data.status && data.status == 1 ? StatusMessage.VISTA : StatusMessage.NUEVA;
             message.EndDate = new Date();

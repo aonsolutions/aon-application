@@ -17,7 +17,10 @@ export class APIMessageSingleObjectCrudRepository extends APIGenericSingleObject
 
     async get(key: string): Promise<Message> {
         if(key.split(';')[1] == TypeMessage.NOTIFICACION){
-            throw new ErrorResponse('0199')
+            let params = {
+                id: key.split(';')[0]
+            }
+            return this.apiModel.parseDataToReceive(await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_ONE_NOTIFICATION, params), {}, {}));
         }else {
             let params = {
                 id: key.split(';')[0]
