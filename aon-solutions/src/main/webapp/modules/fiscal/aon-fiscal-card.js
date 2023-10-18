@@ -8,6 +8,7 @@ import { getModelsFiscal } from "../../services/fiscalService.js";
 import { sortBy } from "../../services/utils.js";
 import { FiscalUtils } from "./FiscalUtils.js";
 import { TAG } from "../../environments/environments.js";
+import { MATERIAL_ICONS } from "../../environments/environments.js";
 
 export class AonFiscalCard extends AonElement {
   AON_FISCAL;
@@ -18,11 +19,11 @@ export class AonFiscalCard extends AonElement {
   content;
   _filter;
 
-  period;
+  defaultFilter;
   
-  constructor() {
+  constructor(filter) {
     super();
-    this.period = "2º Trimestre";
+    this.defaultFilter = filter;
   }
 
   connectedCallback() {
@@ -36,6 +37,7 @@ export class AonFiscalCard extends AonElement {
   initialize() {
     this.AON_FISCAL = FISCAL_VIEWS.AON_FISCAL;
     this.TBODY = "tbody";
+    this.id = "aonFiscalCard";
   }
 
   getDur() {
@@ -60,7 +62,7 @@ export class AonFiscalCard extends AonElement {
 
   buildToolbar() {
     this.getModelsFiscal().then(filteredData => {
-      this.getTable(filteredData)
+      this.getTable(filteredData);
     });
   }
 
@@ -73,21 +75,28 @@ export class AonFiscalCard extends AonElement {
           .map((model) => FiscalUtils.getModelNew(model));
         }
 
-        let currentYear = new Date().getFullYear();
-        let filterDatos = this.MODELS.filter(dato => { return dato.year == currentYear && dato.period === "T2"});
-        console.log(filterDatos);
+        const filter = await this.defaultFilter;
+        let filterDatos = this.MODELS.filter(dato => { return dato.year == filter.year && dato.period === filter.period});
         return filterDatos;
 
       } catch (error) {
         console.error(error);
         this.showError(error);
       }
+    } else {
+      return this.MODELS;
     }
-    return this.MODELS;
+    
+  }
+
+  getDataForKey(models, key){
+    let datas = models.map(m => m[key]);
+    return datas.filter((item, pos) => datas.indexOf(item) === pos);
   }
 
   getTable(modelDatas) {
     let content = this.getElement("fiscalCardTable");
+    this.removeAllChildNodes(content);
 
     modelDatas.forEach(modelData => {
       let row = this.createElement(TAG.DIV);
@@ -142,6 +151,12 @@ export class AonFiscalCard extends AonElement {
     fiscalTotalDiv.className = CSS.AON_CARD_TOTAL;
     fiscalTotalDiv.innerHTML = this.getTotal(modelDatas);
   }
+
+  removeAllChildNodes(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
 
   getModelType(model){
     switch (model.charAt(0)) {
@@ -207,6 +222,43 @@ export class AonFiscalCard extends AonElement {
     }
 
     return span;
+  }
+
+  get getFilterModels(){
+    const result = this.MODELS.filter(function (a) {
+      var key = a.year + '|' + a.period;
+      if (!this[key]) {
+          this[key] = true;
+          return true;
+      }
+    }, Object.create(null));
+
+    result.sort(function (a, b) {
+      var aSize = a.year;
+      var bSize = b.year;
+      var aLow = a.period;
+      var bLow = b.period;
+  
+      if(aSize == bSize)
+      {
+          return (aLow < bLow) ? -1 : (aLow > bLow) ? 1 : 0;
+      }
+      else
+      {
+          return (aSize < bSize) ? -1 : 1;
+      }
+    });
+
+    return result.reverse();
+  }
+
+  filterTable(filter){
+    let section2 = this.getElement("fiscalTitleSection2");
+    let titleSection2 = section2.firstChild;
+
+    titleSection2.innerHTML = filter.title;
+    let filterDatos = this.MODELS.filter(dato => { return dato.year == filter.year && dato.period === filter.period});
+    this.getTable(filterDatos);
   }
 
 }
