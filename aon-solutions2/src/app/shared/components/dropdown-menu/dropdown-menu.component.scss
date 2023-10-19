@@ -7,15 +7,19 @@
     box-shadow      : $box-shadow;
     background-color: $color-quarter;
   }
-  
+
   .mat-menu-panel set-icon{
     margin-right: $margin-right / 2;
     color: $color-primary;
   }
-  
+
   .mat-menu-item:hover:not(.set-menu-item-active) {
     background    : $background-button-hover;
     border-radius : $border-radius;
     color         : $color-primary;
+  }
+
+  .children-menu-item {
+    margin-right: $margin-right;
   }
 }
