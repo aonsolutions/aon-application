@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FileViewerComponent } from './file-viewer.component';
+import { ResultSnackBarComponent } from './result-snack-bar.component';
 
-describe('FileViewerComponent', () => {
-  // let component: FileViewerComponent;
-  // let fixture: ComponentFixture<FileViewerComponent>;
+describe('ResultSnackBarComponent', () => {
+  // let component: ResultSnackBarComponent;
+  // let fixture: ComponentFixture<ResultSnackBarComponent>;
 
   // beforeEach(async () => {
   //   await TestBed.configureTestingModule({
-  //     declarations: [ FileViewerComponent ]
+  //     declarations: [ ResultSnackBarComponent ]
   //   })
   //   .compileComponents();
   // });
 
   // beforeEach(() => {
-  //   fixture = TestBed.createComponent(FileViewerComponent);
+  //   fixture = TestBed.createComponent(ResultSnackBarComponent);
   //   component = fixture.componentInstance;
   //   fixture.detectChanges();
   // });

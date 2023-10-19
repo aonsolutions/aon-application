@@ -16,6 +16,10 @@
     display: none;
   }
 
+  .drag-over{
+    background: #f8d7da;
+  }
+
   :host {
     display : flex;
     width   : var(--widthHost);

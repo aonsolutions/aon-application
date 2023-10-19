@@ -13,9 +13,10 @@ import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/d
 
 export class ChartDashboardComponent implements OnInit {
   @ViewChild('chart') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
-  @Input() name     : string = '';
-  @Input() shape    : string = '';
-  @Input() typeDate : number = 0;
+  @Input() name     : string  = '';
+  @Input() shape    : string  = '';
+  @Input() typeDate : number  = 0;
+  spinner           : boolean = true;
   // Parametros que enviamos al Chart
   chartType     : ChartType = 'line';
   chartDataLabel: any = [];
@@ -86,6 +87,7 @@ export class ChartDashboardComponent implements OnInit {
             )
           });
           this.chartLabels = response.label;
+          this.spinner = false;
         });
       break
     // Cobros/Pagos
@@ -107,6 +109,7 @@ export class ChartDashboardComponent implements OnInit {
             )
           });
           this.chartLabels = response.label;
+          this.spinner = false;
         });
         this.translateService.get([
           'HOME.NEXT_12_MONTHS', 'HOME.NEXT_6_MONTHS','HOME.NEXT_3_MONTHS'

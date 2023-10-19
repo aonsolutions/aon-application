@@ -24,15 +24,6 @@
     height: 11.8rem;
   }
 
-  [footer] {
-    display: flex;
-    gap: $margin;
-  }
-
-  [footer]:hover {
-    cursor: pointer;
-  }
-
   .no-selected {
     color: $color-secondary;
     z-index: 2;

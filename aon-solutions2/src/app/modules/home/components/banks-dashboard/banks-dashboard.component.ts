@@ -12,14 +12,15 @@ import { Component, OnInit } from '@angular/core';
   },
 })
 export class BanksDashboardComponent implements OnInit {
-  spinner: boolean = true;
-  totalAmount: number = 0;
+  spinner     : boolean = true;
+  totalAmount : number  = 0;
   banks!: ICollection<IBank>;
 
   constructor(private bankService: BankService) {
     this.bankService.getBankList().then((response) => {
       this.banks = response;
       response.forEach((bank) => {
+        if(typeof bank.Total == 'number')
         this.totalAmount += bank.Total;
       });
       this.spinner = false;

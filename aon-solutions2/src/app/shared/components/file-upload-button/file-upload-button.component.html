@@ -1,6 +1,10 @@
-<label 
-  appDragAndDrop 
-  (filesChangeEmiter)="onDrop($event)" 
+<!-- (filesChangeEmiter)="onDrop($event)" -->
+<label
+  appDragAndDrop
+  (dragover)="onDragOver($event)"
+  (drop)="onDrop($event)"
+  (dragleave)="onDragLeave($event)"
+  [ngClass]="{'drag-over': isDropOver}"
   id="file-upload"
 >
   <input

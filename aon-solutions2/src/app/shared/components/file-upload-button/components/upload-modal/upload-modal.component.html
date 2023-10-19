@@ -11,26 +11,48 @@
       [type]="'select'"
       [placeholder]="'INBOX.TEXT' | translate"
       [options]="folderList"
-      [value]="'/contabilizado'"
+      [value]="folderSelected"
       disabled
     ></app-input>
-    <app-file-upload-button class="uploadBox" (change)="documentUpload($event)" (click)="checkFolder($event)" *ngIf="!document">
+    <app-file-upload-button
+      class="uploadBox"
+      id="uploadBox"
+      (change)="documentUpload($event)"
+      (click)="checkFolder($event)"
+      *ngIf="!document"
+    >
       {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
       <app-icon shape="cloud_upload" class="margin-left"></app-icon>
     </app-file-upload-button>
-    <p *ngIf="folderNoSelected" class="red">Debes seleccionar una carpeta primero</p>
+    <p *ngIf="folderNoSelected" class="red">
+      Debes seleccionar una carpeta primero
+    </p>
     <div class="documentCharge" *ngIf="document">
-      <app-icon shape="close" class="cancel" (click)="clearDocument()"></app-icon>
+      <app-icon
+        shape="close"
+        class="cancel"
+        (click)="clearDocument()"
+      ></app-icon>
       <div class="document">
-        <app-icon [backgroundColor]="'#FDEDF2'" [class]="'pink'" [padding]="'.5rem'" [borderRadius]="'.4rem'" shape="picture_as_pdf"></app-icon>
+        <app-icon
+          [backgroundColor]="'#FDEDF2'"
+          [class]="'pink'"
+          [padding]="'.5rem'"
+          [borderRadius]="'.4rem'"
+          shape="picture_as_pdf"
+        ></app-icon>
         <span class="documentName"> {{ document.name }} </span>
         <span>{{ currentDate }}</span>
       </div>
     </div>
   </div>
   <div class="buttonsUpload" *ngIf="document">
-    <app-button [class]="'pink'" [width]="'10rem'" [matDialogClose]="fileAndFolder">
-      <app-icon shape="aon_upload" ></app-icon>
+    <app-button
+      [class]="'pink'"
+      [width]="'10rem'"
+      [matDialogClose]="fileAndFolder"
+    >
+      <app-icon shape="aon_upload"></app-icon>
       {{ "COMMON.UPLOAD" | translate }}
     </app-button>
   </div>
