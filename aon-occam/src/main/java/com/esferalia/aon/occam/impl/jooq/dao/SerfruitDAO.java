@@ -133,9 +133,7 @@ public class SerfruitDAO {
 		for (DeliveryDetail detail : delivery.getDetails()) {
 			Item item = detail.getItem();
 			item.setId(null);
-			
-			String desc = !AonStringUtils.isBlank(item.getDescription()) ? item.getDescription() : item.getProduct().getName();
-			item.setDescription(desc + " #" + item.getSerialNumber());
+			item.setDescription(item.getProduct().getName() + " #" + item.getSerialNumber());
 			item.setBarcode(null);
 			if(item.getSerialDate() == null) item.setSerialDate(new Date());
 			if(item.getProduct().isPerishable()) {
@@ -170,6 +168,7 @@ public class SerfruitDAO {
 					elaboration.setStatus(ElaborationStatus.CLOSED);
 					ElaborationDAO.save(ctx, elaboration);
 				}
+				
 				return sd.getSales().getId();
 			}).distinct().forEach(id -> {
 				Sales ss = SalesDAO.getFull(ctx, f -> f.getIdProperty().eq(id));
