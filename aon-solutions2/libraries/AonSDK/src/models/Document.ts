@@ -247,6 +247,7 @@ export class ApiDocument extends Document implements IApiModel {
             document.Id = data.id ? data.id : '';
         }else if(path == MainFolders.CONTABILIZADO){
             document.ApiObject = data;
+            document.FileType = 'application/pdf'
             document.File = data.id;
             document.Date = data.date;
             document.Path = filter.fields?.get('path');
