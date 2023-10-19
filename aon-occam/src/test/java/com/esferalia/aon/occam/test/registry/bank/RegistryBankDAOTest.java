@@ -6,6 +6,9 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -168,9 +171,10 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		registryBank1 = RegistryBankDAO.save(ctx, registryBank1);
 		registryBank2 = RegistryBankDAO.save(ctx, registryBank2);
 		
-		Collection<RegistryBank> collection = RegistryBankDAO.getByDomain(ctx, domain);
-		collection.forEach(f -> assertEquals(domain, f.getDomain()));
-		assertTrue(collection.size() >= 2);
+		List<RegistryBank> registryBankList = RegistryBankDAO.getByDomain(ctx, domain).collect(Collectors.toList());
+
+		registryBankList.forEach(f -> assertEquals(domain, f.getDomain()));
+		assertTrue(registryBankList.size() >= 2);
 		
 		RegistryBankDAO.delete(ctx, registryBank1.getId());
 		RegistryBankDAO.delete(ctx, registryBank1.getId());
@@ -189,10 +193,10 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		registryBank1 = RegistryBankDAO.save(ctx, registryBank1);
 		registryBank2 = RegistryBankDAO.save(ctx, registryBank2);
 		
-		Collection<RegistryBank> collection = RegistryBankDAO.getByRegistry(ctx, registry);
+		List<RegistryBank> registryBankList = RegistryBankDAO.getByRegistry(ctx, registry).collect(Collectors.toList());
 		
-		collection.forEach(f -> assertEquals(registry, f.getRegistry()));
-		assertTrue(collection.size() >= 2);
+		registryBankList.forEach(f -> assertEquals(registry, f.getRegistry()));
+		assertTrue(registryBankList.size() >= 2);
 		
 		RegistryBankDAO.delete(ctx, registryBank1.getId());
 		RegistryBankDAO.delete(ctx, registryBank2.getId());
@@ -207,10 +211,10 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		String bankAccount = registryBank.getBankAccount().getIban();
 		registryBank = RegistryBankDAO.save(ctx, registryBank);
 		
-		Collection<RegistryBank> collection = RegistryBankDAO.getByBankAccount(ctx, bankAccount);
+		List<RegistryBank> registryBankList = RegistryBankDAO.getByBankAccount(ctx, bankAccount).collect(Collectors.toList());
 		
-		collection.forEach(f -> assertEquals(bankAccount, f.getBankAccount().getIban()));
-		assertTrue(collection.size() >= 1);
+		registryBankList.forEach(f -> assertEquals(bankAccount, f.getBankAccount().getIban()));
+		assertTrue(registryBankList.size() >= 1);
 		
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
@@ -224,10 +228,10 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		String bic = registryBank.getBic();
 		registryBank = RegistryBankDAO.save(ctx, registryBank);
 		
-		Collection<RegistryBank> collection = RegistryBankDAO.getByBic(ctx, bic);
+		List<RegistryBank> registryBankList = RegistryBankDAO.getByBic(ctx, bic).collect(Collectors.toList());
 		
-		collection.forEach(f -> assertEquals(bic, f.getBic()));
-		assertTrue(collection.size() >= 1);
+		registryBankList.forEach(f -> assertEquals(bic, f.getBic()));
+		assertTrue(registryBankList.size() >= 1);
 		
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
@@ -241,10 +245,10 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		String suffix = registryBank.getSuffix();
 		registryBank = RegistryBankDAO.save(ctx, registryBank);
 		
-		Collection<RegistryBank> collection = RegistryBankDAO.getBySuffix(ctx, suffix);
+		List<RegistryBank> registryBankList = RegistryBankDAO.getBySuffix(ctx, suffix).collect(Collectors.toList());
 		
-		collection.forEach(f -> assertEquals(suffix, f.getSuffix()));
-		assertTrue(collection.size() >= 1);
+		registryBankList.forEach(f -> assertEquals(suffix, f.getSuffix()));
+		assertTrue(registryBankList.size() >= 1);
 		
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
@@ -258,10 +262,10 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		String alias = registryBank.getAlias();
 		registryBank = RegistryBankDAO.save(ctx, registryBank);
 		
-		Collection<RegistryBank> collection = RegistryBankDAO.getByAlias(ctx, alias);
+		List<RegistryBank> registryBankList = RegistryBankDAO.getByAlias(ctx, alias).collect(Collectors.toList());
 		
-		collection.forEach(f -> assertEquals(alias, f.getAlias()));
-		assertTrue(collection.size() >= 1);
+		registryBankList.forEach(f -> assertEquals(alias, f.getAlias()));
+		assertTrue(registryBankList.size() >= 1);
 		
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
@@ -275,10 +279,10 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		Byte active = registryBank.getActive();
 		registryBank = RegistryBankDAO.save(ctx, registryBank);
 		
-		Collection<RegistryBank> collection = RegistryBankDAO.getByActive(ctx, active);
+		List<RegistryBank> registryBankList = RegistryBankDAO.getByActive(ctx, active).collect(Collectors.toList());
 		
-		collection.forEach(f -> assertEquals(active, f.getActive()));
-		assertTrue(collection.size() >= 1);
+		registryBankList.forEach(f -> assertEquals(active, f.getActive()));
+		assertTrue(registryBankList.size() >= 1);
 		
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
@@ -292,10 +296,10 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		Account account = registryBank.getAccount();
 		registryBank = RegistryBankDAO.save(ctx, registryBank);
 		
-		Collection<RegistryBank> collection = RegistryBankDAO.getByAccount(ctx, account.getId());
+		List<RegistryBank> registryBankList = RegistryBankDAO.getByAccount(ctx, account.getId()).collect(Collectors.toList());
 		
-		collection.forEach(f -> Asserts.assertEqualsAccount(account, f.getAccount()));
-		assertTrue(collection.size() >= 1);
+		registryBankList.forEach(f -> Asserts.assertEqualsAccount(account, f.getAccount()));
+		assertTrue(registryBankList.size() >= 1);
 		
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
@@ -309,10 +313,10 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		String requisition = registryBank.getRequisition();
 		registryBank = RegistryBankDAO.save(ctx, registryBank);
 		
-		Collection<RegistryBank> collection = RegistryBankDAO.getByRequisition(ctx, requisition);
+		List<RegistryBank> registryBankList = RegistryBankDAO.getByRequisition(ctx, requisition).collect(Collectors.toList());
 		
-		collection.forEach(f -> assertEquals(requisition, f.getRequisition()));
-		assertTrue(collection.size() >= 1);
+		registryBankList.forEach(f -> assertEquals(requisition, f.getRequisition()));
+		assertTrue(registryBankList.size() >= 1);
 		
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
@@ -326,10 +330,10 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		String sepaMandateRef = registryBank.getSepaMandateRef();
 		registryBank = RegistryBankDAO.save(ctx, registryBank);
 		
-		Collection<RegistryBank> collection = RegistryBankDAO.getBySepaMandateRef(ctx, sepaMandateRef);
+		List<RegistryBank> registryBankList = RegistryBankDAO.getBySepaMandateRef(ctx, sepaMandateRef).collect(Collectors.toList());
 		
-		collection.forEach(f -> assertEquals(sepaMandateRef, f.getSepaMandateRef()));
-		assertTrue(collection.size() >= 1);
+		registryBankList.forEach(f -> assertEquals(sepaMandateRef, f.getSepaMandateRef()));
+		assertTrue(registryBankList.size() >= 1);
 		
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}

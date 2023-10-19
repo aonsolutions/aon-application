@@ -38,7 +38,7 @@ public class QuestionAONTest extends AbstractOccamTest {
 	}
 	
 	/**
-	 * Test that it throws and exception if we get a list without the params that we set
+	 * Test that it throws an exception if we get a list without the params that we set
 	 */
 	@Test
 	public void checkQuestionListTest() {
