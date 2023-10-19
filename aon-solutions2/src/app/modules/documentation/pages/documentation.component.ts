@@ -52,6 +52,7 @@ export class DocumentationComponent implements OnInit {
   menuItem: MenuItem[] = [];
   subMenuItemFolder: MenuItem[] = [];
   search: string = '';
+  spinnerContent: boolean = true;
   localePDF: string =
     this.translateService.getDefaultLang() === 'es' ? 'es-ES' : 'en-EN';
 
@@ -261,7 +262,7 @@ export class DocumentationComponent implements OnInit {
 
     let filter = new FilterBuilder();
     filter.addField('parent', folder);
-
+    this.spinnerContent = true;
     this.search = '';
     this.documentationListFolders = this.originalListFolders;
 
@@ -273,6 +274,7 @@ export class DocumentationComponent implements OnInit {
         this.showMenu = false;
         this.originalListFolders = listFolders;
         this.documentationListFolders = listFolders;
+        this.spinnerContent = false;
       } else {
         // Si contiene sub carpetas
         const firstValue =
@@ -286,6 +288,7 @@ export class DocumentationComponent implements OnInit {
           this.showNoElements = false;
           this.documentationListSubFolders = listFolders;
           this.originalDocListSubFolders = listFolders;
+          this.spinnerContent = false;
         } else {
           // 3 - No tiene sub carpetas, cargamos los documentos
           const filterDocument = new FilterBuilder();
@@ -299,10 +302,11 @@ export class DocumentationComponent implements OnInit {
                 Object.keys(documentsList).length > 0
                   ? Object.values(documentsList)[0]
                   : 0;
-              this.showNoElements = firstValue.size > 0 ? false : true;
-              // Agregamos los datos devueltos
-              this.originalListDocuments = documentsList;
-              this.documentsList = documentsList;
+                  this.showNoElements = firstValue.size > 0 ? false : true;
+                  // Agregamos los datos devueltos
+                  this.originalListDocuments = documentsList;
+                  this.documentsList = documentsList;
+                  this.spinnerContent = false;
             });
           this.showFiles = true;
         }

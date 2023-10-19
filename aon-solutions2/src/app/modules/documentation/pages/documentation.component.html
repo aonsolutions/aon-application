@@ -1,30 +1,42 @@
 <app-grid-layout>
-<!--Header-->
+  <!--Header-->
   <div header>
-  <!-- Subir documentacion -->
-    <mat-grid-list class="margin-top margin-bottom" [cols]="24" [rowHeight]="'2.8rem'">
-      <mat-grid-tile [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"></mat-grid-tile>
+    <!-- Subir documentacion -->
+    <mat-grid-list
+      class="margin-top margin-bottom"
+      [cols]="24"
+      [rowHeight]="'2.8rem'"
+    >
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
       <mat-grid-tile [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
         <app-file-upload-button (click)="uploadDocument($event)">
-          {{ 'COMMON.FILE_UPLOAD_BUTTON'|translate }}
+          {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
           <app-icon shape="cloud_upload" class="margin-left"></app-icon>
         </app-file-upload-button>
       </mat-grid-tile>
     </mat-grid-list>
-  <!-- FIN Subir documentacion -->
-  <!-- Busqueda y opciones en los documentos -->
+    <!-- FIN Subir documentacion -->
+    <!-- Busqueda y opciones en los documentos -->
     <!--<mat-grid-list class="margin-top margin-bottom" [cols]="24" [rowHeight]="'3.8rem'">-->
-    <mat-grid-list class="margin-top margin-bottom" [cols]="24" [rowHeight]="'3.8rem'">
-      <mat-grid-tile [gridCols]="{xs:1,sm:1,md:1,lg:1,xl:1}"></mat-grid-tile>
+    <mat-grid-list
+      class="margin-top margin-bottom"
+      [cols]="24"
+      [rowHeight]="'3.8rem'"
+    >
+      <mat-grid-tile
+        [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
+      ></mat-grid-tile>
       <!--Buscar-->
-      <mat-grid-tile [gridCols]="{xs:20,sm:18,md:14,lg:11,xl:11}">
+      <mat-grid-tile [gridCols]="{ xs: 20, sm: 18, md: 14, lg: 11, xl: 11 }">
         <app-input
           [appearance]="'outline'"
           [appearanceDetail]="''"
           [class]="'search'"
           [type]="'search'"
           [value]="search"
-          (inputValue)="searchDocumentation(search = $event)"
+          (inputValue)="searchDocumentation((search = $event))"
         ></app-input>
       </mat-grid-tile>
       <!--FIN Buscar-->
@@ -32,7 +44,7 @@
       <mat-grid-tile
         id="document-options"
         *ngIf="showFiles"
-        [gridCols]="{xs:23,sm:23,md:23,lg:11,xl:11}"
+        [gridCols]="{ xs: 23, sm: 23, md: 23, lg: 11, xl: 11 }"
       >
         <div id="selected-elements">
           <span *ngIf="showSelectedCount" (click)="toggleDeselectAll()">
@@ -46,10 +58,7 @@
           [toolTip]="'DOCUMENTATION.FILE_SELECT_ALL' | translate"
           (click)="toggleSelectAll()"
         >
-          <app-icon
-            [shape]="'select_all'"
-          >
-          </app-icon>
+          <app-icon [shape]="'select_all'"> </app-icon>
         </app-button>
         <!-- <app-button
           class="icon-border"
@@ -73,42 +82,44 @@
       </mat-grid-tile>
       <!--Opciones en los ficheros-->
     </mat-grid-list>
-  <!-- FIN Busqueda y opciones en los documentos -->
+    <!-- FIN Busqueda y opciones en los documentos -->
   </div>
-<!--FIN Header-->
-<!--Nav-->
+  <!--FIN Header-->
+  <!--Nav-->
   <div id="list-folder" nav *ngIf="showMenu">
     <app-button
       *ngFor="let folder of documentationListFolders; let i = index"
       (click)="
         getDocumentation(folder.Path);
         selectFolder(folder.Path);
-        toggleDeselectAll();
+        toggleDeselectAll()
       "
       [id]="folder.Path"
-      [ngClass]="{'select-folder': selecFolder == folder.Path}"
+      [ngClass]="{ 'select-folder': selecFolder == folder.Path }"
       class="folder icon-background-pink bold item-folder left"
       [width]="'100%'"
-    ><app-icon [shape]="'folder_open'"></app-icon>
+      ><app-icon [shape]="'folder_open'"></app-icon>
       {{ folder.Name }}
       <app-icon [shape]="'arrow_forward_ios'" class="icon-right"></app-icon>
     </app-button>
   </div>
-<!--FIN Nav-->
-<!--Content-->
+  <!--FIN Nav-->
+  <!--Content-->
   <div content id="document-content" class="margin">
-  <!--No ducumentos-->
-    <div *ngIf="showNoElements">
-      No hay elementos que mostrar
-    </div>
-  <!--FIN No ducumentos-->
-  <!--Mostrar carpetas-->
+    <!--No ducumentos-->
+    <div *ngIf="showNoElements">No hay elementos que mostrar</div>
+    <!--FIN No ducumentos-->
+    <!--Mostrar carpetas-->
+    <app-spinner *ngIf="spinnerContent"></app-spinner>
     <ng-container *ngIf="!showFiles">
       <app-button
-        *ngFor="let folder of ( !showMenu ? documentationListFolders : documentationListSubFolders); let i = index"
-        (click)="
-          getDocumentation(folder.Path, folder.Path);
+        *ngFor="
+          let folder of !showMenu
+            ? documentationListFolders
+            : documentationListSubFolders;
+          let i = index
         "
+        (click)="getDocumentation(folder.Path, folder.Path)"
         class="icon-background-pink bold left"
         width="width"
       >
@@ -117,68 +128,68 @@
         <app-icon [shape]="'arrow_forward_ios'" class="icon-right"></app-icon>
       </app-button>
     </ng-container>
-  <!--FIN Mostrar carpetas-->
-  <!--Mostrar ficheros-->
+    <!--FIN Mostrar carpetas-->
+    <!--Mostrar ficheros-->
     <ng-container *ngIf="showFiles">
       <app-card
         [class]="'file pink'"
         *ngFor="let cardFile of documentsList; let i = index"
-        [id]="'file-'+i"
-        (click)="loadFile(cardFile, 'file-'+i)"
+        [id]="'file-' + i"
+        (click)="loadFile(cardFile, 'file-' + i)"
       >
         <div header>
-          <input [id]="'fileCheck-'+i" (click)="selectViewFile('file-'+i, $event)" type="checkbox">
+          <input
+            [id]="'fileCheck-' + i"
+            (click)="selectViewFile('file-' + i, $event)"
+            type="checkbox"
+          />
           <!--Menu del archivo-->
           <span
-            class='card-menu'
-            (click)="this.dropdownMenuComponent.openDropdownMenu();"
+            class="card-menu"
+            (click)="this.dropdownMenuComponent.openDropdownMenu()"
           >
             <app-icon [shape]="'more_vert'"></app-icon>
-            <app-dropdown-menu #file *ngIf="this.menuItem.length > 0" [menuItem]="this.menuItem"></app-dropdown-menu>
+            <app-dropdown-menu
+              #file
+              *ngIf="this.menuItem.length > 0"
+              [menuItem]="this.menuItem"
+            ></app-dropdown-menu>
           </span>
         </div>
         <div body>
           <span class="icon-background">
-            <app-icon
-              [shape]="'picture_as_pdf'"
-            ></app-icon>
+            <app-icon [shape]="'picture_as_pdf'"></app-icon>
           </span>
         </div>
         <div footer>
           <div class="bold">
             {{ getNameWithExtension(cardFile.FileName, cardFile.FileType) }}
           </div>
-          <div class="griss">
-            dd/mm/yyyy
-          </div>
+          <div class="griss">dd/mm/yyyy</div>
         </div>
       </app-card>
     </ng-container>
-  <!--FIN Mostrar ficheros-->
+    <!--FIN Mostrar ficheros-->
   </div>
-<!--FIN Content-->
-<!--Detail-->
+  <!--FIN Content-->
+  <!--Detail-->
   <div detail *ngIf="showDetail">
-  <!--Nombre fichero-->
-    <div id='file-detail'>
-      <span
-        class="name"
-      >
+    <!--Nombre fichero-->
+    <div id="file-detail">
+      <span class="name">
         {{ getNameWithExtension(fileToShow.FileName, fileToShow.FileType) }}
       </span>
-      <span
-        class="close"
-        (click)="
-          closeShowDocumentation()
-        "
-      >
+      <span class="close" (click)="closeShowDocumentation()">
         <app-icon [shape]="'close'"></app-icon>
       </span>
     </div>
-  <!--FIN Nombre fichero-->
-  <!--Mostrar previo del fichero-->
+    <!--FIN Nombre fichero-->
+    <!--Mostrar previo del fichero-->
     <!--Mostrar PDF-->
-    <div id="doc-file-viewer" *ngIf="fileToShow.FileType.split('/')[1] === 'pdf'; else showImage">
+    <div
+      id="doc-file-viewer"
+      *ngIf="fileToShow.FileType.split('/')[1] === 'pdf'; else showImage"
+    >
       <app-file-viewer
         [locale]="localePDF"
         [zoom]="'auto'"
@@ -188,15 +199,13 @@
     <!--FIN Mostrar PDF-->
     <!--Mostrar imagen-->
     <ng-template #showImage>
-      <app-file-viewer
-        [pdfSrc]="fileToShow"
-      ></app-file-viewer>
+      <app-file-viewer [pdfSrc]="fileToShow"></app-file-viewer>
     </ng-template>
     <!--FIN Mostrar imagen-->
-  <!--FIN Mostrar previo del fichero-->
+    <!--FIN Mostrar previo del fichero-->
   </div>
-<!--FIN Detail-->
-<!--Modal-->
+  <!--FIN Detail-->
+  <!--Modal-->
   <app-modal-controller #modal></app-modal-controller>
-<!--FIN Modal-->
+  <!--FIN Modal-->
 </app-grid-layout>
