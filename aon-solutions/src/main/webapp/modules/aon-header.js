@@ -87,7 +87,44 @@ export class AonHeader extends AonElement {
 		userOption.id = 'aonHeaderDialogUserOption';
 		this.appendChild(userOption);
 
-		div.innerHTML = /*html*/`
+		if(LS.isNewTheme()){ // Change logo size
+			div.innerHTML = /*html*/`
+				<img id="aonLogo" class="aonNewLogo"/>
+
+				<span id="aonHeaderSearch" style="display: flex; align-items: center; width: 100%; min-width: 150px; max-width: 500px;" >
+					<aon-search-box id="aonHeaderSearchBox"></aon-search-box>
+				</span>
+
+				<div class="aonHeaderButtons">
+
+					<span id="aonHeaderCompany" style="display:none;">
+						<span id="aonHeaderCompanyName"> </span>
+					</span>	
+
+					<span id="aonHeaderHome" style="display:none;">
+						<aon-icon-button id="aonHeaderHomeButton" icon="home" outlined="true"></aon-icon-button>
+					</span>
+ 
+					<span id="aonHeaderCompanyList" style="display:none;">
+						<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
+					</span>
+
+					<span id="aonHeaderHelp">
+						<aon-icon-button id="aonHeaderHelpButton" icon="help_outline"></aon-icon-button>
+					</span>
+
+					<span id="aonHeaderNotiication" >
+						<aon-notification-icon></aon-notification-icon>
+					</span>
+
+					<span id="aonHeaderUser" >
+						<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
+					</span>
+				
+				</div>
+			`;
+		} else {
+			div.innerHTML = /*html*/`
 				<img id="aonLogo" class="aonLogo"  />
 
 				<span id="aonHeaderSearch" style="display: flex; align-items: center; width: 100%; min-width: 150px; max-width: 500px;" >
@@ -122,6 +159,7 @@ export class AonHeader extends AonElement {
 				
 				</div>
 			`;
+		}
 
 		this.buildLogo();
 
