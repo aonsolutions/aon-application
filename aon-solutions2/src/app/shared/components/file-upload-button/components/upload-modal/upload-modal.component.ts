@@ -8,17 +8,17 @@ interface Folder {
 }
 
 @Component({
-  selector: 'app-upload-modal',
-  templateUrl: './upload-modal.component.html',
-  styleUrls: ['./upload-modal.component.scss'],
+  selector    : 'app-upload-modal',
+  templateUrl : './upload-modal.component.html',
+  styleUrls   : ['./upload-modal.component.scss'],
 })
 export class UploadModalComponent implements OnInit {
-  document: any;
-  docName: string = '';
-  folderList: Folder[] = [];
-  folderSelected: string = '/a_contabilizar';
+  document        : any;
+  docName         : string = '';
+  folderList      : Folder[] = [];
+  folderSelected  : string = '/a_contabilizar';
   folderNoSelected: boolean = false;
-  fileAndFolder: any[] = [];
+  fileAndFolder   : any[] = [];
 
   currentDate = new Date()
     .toLocaleDateString('es-ES', {
@@ -67,16 +67,17 @@ export class UploadModalComponent implements OnInit {
   }
 
   // Guardamos el documento y la carpeta seleccionada
-  async documentUpload(event: any) {
-    console.log(event);
-    const target = event.target as HTMLInputElement;
-    const file: File = (target.files as FileList)[0];
-    this.document = file;
-    this.docName = file.name;
-
-    this.fileAndFolder.push({
-      document: this.document,
-      folder: this.folderSelected,
+  async previewDocumentsUpload(event: any) {
+    const files =  event;
+    
+    Array.from(files).forEach(file => { 
+      this.document = file;
+      this.docName  = this.document['name'];
+      
+      this.fileAndFolder.push({
+        document: this.document,
+        folder  : this.folderSelected,
+      });
     });
   }
 
@@ -85,5 +86,76 @@ export class UploadModalComponent implements OnInit {
     this.document = null;
     this.docName = '';
   }
+  
+  /*
+  // Acción que realiza al cerrar el modal
+  functionHome: any = (result: any) => this.afterModalClosed(result);
 
+  // Función que se ejecuta al cerrar el modal
+  afterModalClosed(result: any) {
+    // Si se ha seleccionado un documento
+    if (result) {
+      // Guardamos los datos del documento
+      const fileName = result[0].document.name;
+      const fileType = result[0].document.type;
+      const fileSize = result[0].document.size;
+      const path = result[0].folder;
+
+      // Creamos el documento
+      this.document = this.objectFactory.createDocument(
+        result[0].document,
+        fileName,
+        fileSize,
+        fileType,
+        new Date(),
+        path
+      );
+      const file = result[0].document;
+
+      // Subimos el documento
+      this.documentService
+        .uploadDocument(this.document, file)
+        .then((response) => {
+          this.uploadCompletedModal();
+        })
+        .catch((error) => {
+          this.uploadErrorModal();
+        });
+    }
+  }
+
+  // Confirmación de subida de documento
+  uploadCompletedModal() {
+    this.snackBar.openFromComponent(ResultSnackBarComponent, {
+      data: {
+        message: 'Documento subido correctamente',
+        icon: 'check_circle',
+        preClose: () => {
+          this.snackBar.dismiss();
+        },
+      },
+      panelClass: ['correct-snackbar'],
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: 3000,
+    });
+  }
+
+  // Si la subida da error
+  uploadErrorModal() {
+    this.snackBar.openFromComponent(ResultSnackBarComponent, {
+      data: {
+        message: 'Error al subir el documento',
+        icon: 'error',
+        preClose: () => {
+          this.snackBar.dismiss();
+        },
+      },
+      panelClass: ['error-snackbar'],
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: 3000,
+    });
+  }
+*/
 }
