@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ContractService } from 'src/app/core/services/contract.service';
 
+
 export interface Tabs {
   name: string; // Nombre de la tab
 }
@@ -118,6 +119,7 @@ export class EmployeeComponent implements OnInit {
           column.workCenter = contract.workCenter;
           column.marcaje = contract.marcaje;
 
+
           tableRow.push(column);
         });
 
@@ -182,20 +184,13 @@ export class EmployeeComponent implements OnInit {
 // }
 
 async rowClick(contract: any){
-//   const isSameRow =
-//   this.contractsData && this.contractsData.Id === contract.key;
-// this.showDetail = !isSameRow ? true : !this.showDetail;
-// this.contractsData = await this.contractService.getContract(contract.key);
+  console.log('entro');
+// CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
+ const isSameRow =
+ this.dataBody && this.dataBody[0].key === contract.key;
+this.showDetail = !isSameRow ? true : !this.showDetail;
+// this.dataBody[0] = await this.contractService.getContract(contract.key);
 
-
-// this.changeView();
-// // Desactivo el spinner
-// this.spinner = false;
-// }
-// changeView(): void {
-//   this.showSendButton = false;
-//   this.showSendButtons = false;
-// }
 
 }
 }

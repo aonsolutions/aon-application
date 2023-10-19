@@ -79,7 +79,7 @@ export class ModalPaymentComponent implements OnInit {
       // Asigna el primer banco de la lista a selectedBank
       if (this.banksList.length > 0) {
         this.selectedBank = this.banksList[0].value;
-        console.log('aqui litado selectedBank', this.selectedBank);
+        console.log('aqui  selectedBank', this.selectedBank);
       }
     });
   }
@@ -175,26 +175,27 @@ export class ModalPaymentComponent implements OnInit {
   }
 
   async sendPaymentIban() {
-    let filteredBanks = this.banks
-      .toArray()
-      .filter((bank) => bank.Iban === this.selectedBank);
+    const filteredBanks = this.banks
+    .toArray()
+    .filter((bank) => bank.Iban === this.selectedBank);
 
-      console.log('antes filteredBanks', filteredBanks);
-    if (filteredBanks.length > 0) {
-      if (this.selectedBank) {
-        // Oculta el spinner que se muestra cuando se abre el modal
-        this.spinner = false;
-        // Muestra el spinner mientras se envía el mensaje
-        this.spinner = true;
-        const ibanPay = await this.taxModelService.payTaxModel(
-          this.model,
-          filteredBanks[0]
+    console.log('antes filteredBanks', filteredBanks);
+  if (filteredBanks.length > 0) {
+    if (this.selectedBank) {
+      // Oculta el spinner que se muestra cuando se abre el modal
+      this.spinner = false;
+      // Muestra el spinner mientras se envía el mensaje
+      this.spinner = true;
+      const ibanPay = await this.taxModelService.payTaxModel(
+        this.model,
+        filteredBanks[0]
 
-        );
+      );
 
         console.log('esto es model', this.model);
         console.log('esto es selectedBank', this.selectedBank);
-        console.log('esto es filteredBanks', filteredBanks);
+        console.dir('esto es filteredBanks', filteredBanks);
+        console.log('esto son los bancos guardados', this.banks);
 
         if (ibanPay) {
           // Pago exitoso, realiza las acciones necesarias

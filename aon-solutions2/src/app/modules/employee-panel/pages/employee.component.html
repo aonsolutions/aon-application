@@ -12,8 +12,6 @@
   </div>
   <!-- fin encabezado -->
   <div content>
-    <!-- <button (click)="detail ? detail = false : detail = true">showDetail</button> -->
-
     <!-- buscador -->
     <div class="padding-top padding-right padding-left">
       <div class="width-40">
@@ -23,62 +21,72 @@
           [type]="'search'"
           [placeholder]="'INBOX.TEXT' | translate"
           [value]="search"
-          (inputValue)="searchContract(search = $event)"
+          (inputValue)="searchContract((search = $event))"
         ></app-input>
       </div>
     </div>
-
+    <!-- fin buscador -->
+    <!-- tablas tabs -->
     <app-tabs
       [tabs]="tabs"
       [tabIndex]="tabIndex"
       (changeTabIndex)="changeTabIndex($event)"
       [tabColor]="'green'"
     >
-    <div tool>
-      <div class="buttons">
-        <app-button
-          *ngFor="let button of buttonsGastos"
-          class="icon-border"
-        >
-          <app-icon [shape]="button.shape"></app-icon>
-        </app-button>
+      <div tool>
+        <div class="buttons">
+          <app-button *ngFor="let button of buttonsGastos" class="icon-border">
+            <app-icon [shape]="button.shape"></app-icon>
+          </app-button>
+        </div>
       </div>
-    </div>
 
-    <div content class="padding" *ngIf="this.tabIndex == 0">
-      <app-spinner *ngIf="spinner"></app-spinner>
-      <app-table
-      *ngIf="bodyTable.length > 0; else noModelsTemplate"
-        mat-table
-        mat-flat-table
-        [displayedColumns]="displayedColumns"
-        [head]="headerTable"
-        [data]="bodyTable"
-        (listenParentRow)="rowClick($event)"
-      >
-      </app-table>
-      <ng-template #noModelsTemplate>
-        <div class="no-models padding">{{ contracts }}</div>
-      </ng-template>
-    </div>
+      <div content class="padding" *ngIf="this.tabIndex == 0">
+        <app-spinner *ngIf="spinner"></app-spinner>
+        <app-table
+          *ngIf="bodyTable.length > 0; else noModelsTemplate"
+          mat-table
+          mat-flat-table
+          [displayedColumns]="displayedColumns"
+          [head]="headerTable"
+          [data]="bodyTable"
+          (listenParentRow)="rowClick($event)"
+        >
+        </app-table>
+        <ng-template #noModelsTemplate>
+          <div class="no-models padding">{{ contracts }}</div>
+        </ng-template>
+      </div>
 
-    <div content class="padding" *ngIf="this.tabIndex == 1">
-      <app-spinner *ngIf="spinner"></app-spinner>
-      <app-table
-        *ngIf="bodyTable.length > 0; else noModelsTemplate"
-        mat-table
-        mat-flat-table
-        [displayedColumns]="displayedColumns"
-        [head]="headerTable"
-        [data]="bodyTable"
-      >
-      </app-table>
-      <ng-template #noModelsTemplate>
-        <div class="no-models padding">{{ contracts }}</div>
-      </ng-template>
-    </div>
-  </app-tabs>
+      <div content class="padding" *ngIf="this.tabIndex == 1">
+        <app-spinner *ngIf="spinner"></app-spinner>
+        <app-table
+          *ngIf="bodyTable.length > 0; else noModelsTemplate"
+          mat-table
+          mat-flat-table
+          [displayedColumns]="displayedColumns"
+          [head]="headerTable"
+          [data]="bodyTable"
+        >
+        </app-table>
+        <ng-template #noModelsTemplate>
+          <div class="no-models padding">{{ contracts }}</div>
+        </ng-template>
+      </div>
+    </app-tabs>
   </div>
+<!-- fin contenido -->
+
+<!-- mostrar detalles -->
+<div detail *ngIf="showDetail">
+<div class="padding">
+<p class="">{{ dataBody[0].employee }}</p>
+{{ dataBody[0].type }}
+
+</div>
+</div>
+
+
 
 
 </app-grid-layout>

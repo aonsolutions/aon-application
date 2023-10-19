@@ -25,12 +25,6 @@ export class ModelsDashboardComponent implements OnInit {
     this.translateService.get([
       'HOME.1_TRIMESTER', 'HOME.2_TRIMESTER', 'HOME.3_TRIMESTER', 'HOME.4_TRIMESTER'
     ]).subscribe((result) => {
-
-        taxModelService.thisTrimester().then((trimester) => {
-          // Seleccionamos el trimestre en el que estamos
-          this.ModelsThisTrimester(trimester, result["HOME."+trimester+"_TRIMESTER"])
-        });
-
       // Trimestre en el menu
         this.menuItem! = [
           {root: true, text: result["HOME.1_TRIMESTER"], click:() => this.ModelsThisTrimester(1, result["HOME.1_TRIMESTER"])},
