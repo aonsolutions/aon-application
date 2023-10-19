@@ -41,6 +41,7 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		Asserts.assertEqualsRegistryBank(registryBank, inserted);
 		
 		// update
+		registryBank.setActive(!registryBank.isActive());
 		registryBank = RegistryBankDAO.save(ctx, registryBank);
 		RegistryBank updated = RegistryBankDAO.get(ctx, f -> f.getIdProperty().eq(registryBankId));
 		Asserts.assertEqualsRegistryBank(registryBank, updated);
@@ -336,6 +337,19 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		assertTrue(registryBankList.size() >= 1);
 		
 		RegistryBankDAO.delete(ctx, registryBank.getId());
+	}
+	
+	@Test
+	public void deleteByRegistryRegistryBank() {
+		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
+		Integer registry = registryBank.getRegistry();
+		RegistryBank inserted = RegistryBankDAO.save(ctx, registryBank);
+		
+		Asserts.assertEqualsRegistryBank(registryBank, inserted);
+		
+		RegistryBankDAO.deleteByRegistry(ctx, registry);
+		RegistryBank deleted = RegistryBankDAO.get(ctx, inserted.getId());
+		assertTrue(deleted.isEmpty());
 	}
 }
 
