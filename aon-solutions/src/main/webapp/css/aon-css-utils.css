@@ -188,7 +188,20 @@
   content: "";
   position: absolute;
   top: 1px;
-  right: -3;
+  right: 37px;
+  width: 0;
+  height: 0;
+  transform: translate(-1rem, -100%);
+  border-left: 0.75rem solid transparent;
+  border-right: 0.75rem solid transparent;
+  border-bottom: 0.75rem solid white;
+}
+
+.aonNotificationContentBeta:before {
+  content: "";
+  position: absolute;
+  top: 1px;
+  right: 53px;
   width: 0;
   height: 0;
   transform: translate(-1rem, -100%);

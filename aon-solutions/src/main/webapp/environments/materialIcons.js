@@ -83,6 +83,7 @@ export const CARD_TRAVEL = 'card_travel';
 export const CHANGE_HISTORY = 'change_history';
 export const CHECK_CIRCLE = 'check_circle';
 export const CHECK_CIRCLE_OUTLINE = 'check_circle_outline';
+export const CHEVRON_RIGHT = 'chevron_right';
 export const CHROME_READER_MODE = 'chrome_reader_mode';
 export const CLASS = 'class';
 export const CLOSE = 'close';
@@ -109,11 +110,14 @@ export const DONE = 'done';
 // ----- E
 
 export const EDIT = 'edit';
+export const EQUALIZER = 'equalizer';
 export const ERROR = 'error';
+export const EURO = 'euro';
 export const EVENT = 'event';
 export const EXTENSION = 'extension';
 export const EXPAND_LESS = 'expand_less';
 export const EXPAND_MORE = 'expand_more';
+export const EXPAND_CIRCLE_RIGHT = 'expand_circle_right';
 
 // ----- F
 

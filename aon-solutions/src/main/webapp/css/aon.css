@@ -1,22 +1,22 @@
 :root{
-  --aonBlue : #002469;
+  --aonBlue: #002469;
   --aonSecondary: #b10d4c;
   --aonOldSecondary: #12ccd1;
   --aonError: #f6655a;
   --aonBackground: #f6f8fc;
   --aonLightBlue: #eaf1fb;
   --aonSelectedBlue: #d3e3fd;
-  --aonGray : gray;
-  --aonLightGray : #f1f1f1;
-  --aonDarkGray : #5F6368;
-  --aonBlack : #212529;
-  --aonWhite : #ffffff;
-  --onlineGreen : #5cb85c;
-  --grayson : #787878;
-  --materialBlue : #007bff;
-  --materialBlack : #404040;
-  --materialRed : #f44336;
-  --materialSoftBlack : #202020;
+  --aonGray: gray;
+  --aonLightGray: #f1f1f1;
+  --aonDarkGray: #5F6368;
+  --aonBlack: #212529;
+  --aonWhite: #ffffff;
+  --onlineGreen: #5cb85c;
+  --grayson: #787878;
+  --materialBlue: #007bff;
+  --materialBlack: #404040;
+  --materialRed: #f44336;
+  --materialSoftBlack: #202020;
   --aonAeat: #005eb5;
   --aonGipuzkoa: #004996;
   --aonAraba: #c70061;
@@ -25,6 +25,28 @@
   --sar: env(safe-area-inset-right);
   --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
   --sal: env(safe-area-inset-left);
+
+  --aonInvoice: #4F91FF;
+  --aonInvoiceBackground: #ebf2ff;
+
+  --aonDocumental: #EF6292;
+  --aonDocumentalBackground: #fdedf2;
+
+  --aonPayroll: #33A9A9;
+  --aonPayrollBackground: #e8f5f5;
+
+  --aonFiscal: #FB982E;
+  --aonFiscalBackground: #fef3e7;
+
+  --aonMessenger: #f6655a;
+  --aonMessengerBackground: #feedec;
+
+  --aonTimecontrol: #D1C36D;
+  --aonTimecontrolBackground: rgba(209, 195, 109, .2);
+
+  --aonAccounting: #002469;
+  --aonAccountingBackground: rgba(0, 36, 105, .2);
+
 }
 
 *, ::after, ::before {
@@ -173,6 +195,7 @@
   background-color: #fff;
   border: solid 0.05rem #d2d2d6;
   gap: .5rem;
+  width: 100%;
 }
 
 .aonDashboardButton i {
@@ -244,7 +267,6 @@
 
 .rootPanel {
   position: relative;
-  margin-right: 100px;
   height: calc(100vh - 61px);
   overflow-y: auto;
   margin: 0;
@@ -290,6 +312,7 @@
   max-width: 200px;
   max-height: 60px;
   padding: 5px;
+  cursor: pointer;
 }
 
 .aonParentLogo {
@@ -388,8 +411,36 @@
 }
 
 .sidenavHover:hover{
-  /* background-color: var(--aonLightGray); */
   background-color: var(--aonLightBlue);
+}
+
+
+.aonInvoiceHover:hover{
+  background-color: var(--aonInvoiceBackground);
+}
+
+.aonPayrollHover:hover{
+  background-color: var(--aonPayrollBackground);
+}
+
+.aonFiscalHover:hover{
+  background-color: var(--aonFiscalBackground);
+}
+
+.aonDocumentalHover:hover{
+  background-color: var(--aonDocumentalBackground);
+}
+
+.aonMessengerHover:hover{
+  background-color: var(--aonMessengerBackground);
+}
+
+.aonTimecontrolHover:hover {
+  background-color: var(--aonTimecontrolBackground);
+}
+
+.aonAccountingHover:hover {
+  background-color: var(--aonAccountingBackground);
 }
 
 .aonMenuLink {
@@ -400,18 +451,24 @@
 
 .aonHeader {
   background-color: var(--aonWhite);
-  padding: 0 !important;
   margin: 0 !important;
   border-bottom: 1px solid #ddd;
   color: #5f6368;
   height: 60px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
 }
 
 .aonHeaderBeta {
-  padding: 0 !important;
   margin: 0 !important;
   color: #5f6368;
   height: 60px;
+  width: 100%;
+  display: flex;
+  /*justify-content: space-between;*/
+  padding: 0 1rem;
 }
 
 .aonHeaderButton {
@@ -438,6 +495,30 @@
 
 .aonLi {
   border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  height: 72px;
+  align-items: center;
+  display: flex;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: .04em;
+  line-height: 1;
+  min-height: 48px;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  padding: 16px;
+  color: rgba(0,0,0,.87);
+  overflow: hidden;
+}
+
+.aonLiBeta {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin: 10px;
   cursor: pointer;
   height: 72px;
   align-items: center;
@@ -676,6 +757,14 @@
   overflow: auto;
 }
 
+.aonCompanyDiv {
+  width: 500px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .aonCompanyList {
   margin: 0px;
   padding: 0px;
@@ -810,6 +899,14 @@
   border-radius: 20px;
 }
 
+.aonAppMenuSidenavListBeta {
+  line-height: 30px;
+  margin: 0;
+  padding: 0 26px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
 .aonVerticalMiddle {
   vertical-align: middle;
   font-size: 1.3rem;
@@ -851,7 +948,6 @@
 }
 
 .aonSearchBox {
-  position: absolute;
   height: 40px;
   border: none;
   -webkit-appearance: none;
@@ -860,7 +956,6 @@
 }
 
 .aonSearchBoxBeta {
-  position: absolute;
   height: 38px;
   border: none;
   -webkit-appearance: none;
@@ -883,6 +978,10 @@
   border-radius: 10px;
 }
 
+.aonDashboardCard{
+  width: 100%;
+}
+
 .aonCard {
   border: 1px solid #ebebeb;
   border-radius: 5px;
@@ -891,6 +990,10 @@
   padding: 15px 22px;
   box-shadow: rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px, rgb(0 0 0 / 12%) 0px 1px 3px;
   background-color: white;
+}
+
+.aonCardHover:hover {
+  border: 1px solid black;
 }
 
 .aonCardFlex{
@@ -930,6 +1033,23 @@
 
 .aonCardTitleSectionEnd {
   justify-content: flex-end;
+}
+
+.aonCardTotal{
+  text-align: right;
+  font-size: 1.5rem;
+  padding-top: 2rem;
+  font-weight: 500;
+
+  /*opacity: 0;
+  transform: translateY(30%);*/
+  transition: 0.3s ease-in;
+}
+
+.aonCard:hover .aonCardTotal{
+  /*transform: translateY(0);
+  opacity: 1;*/
+  font-size: 1.8rem;
 }
 
 .aonDialog {
@@ -1535,3 +1655,141 @@ label.rating:hover {
   margin: revert;
   padding: revert;
 }
+
+.aonMessengerCardButton{
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: .5rem;
+  border-radius: 5px;
+  transition: linear;
+}
+
+.aonMessengerCardButton:hover{
+  border: 1px solid rgb(246, 101, 90);
+}
+
+.aonMessengerCardRow{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border-bottom: 1px solid rgb(221, 221, 221);
+  padding: 1rem 0px;
+  cursor: pointer;
+}
+
+.aonMessengerCardRow:hover{
+  border-top: 1px solid rgb(246, 101, 90);
+  border-bottom: 1px solid rgb(246, 101, 90);
+}
+
+.aonBadge{
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  padding: .5rem;
+  color: white;
+  text-align: center;
+  background-color: rgba(246, 101, 90, 0.7);
+  font-weight: 600;
+}
+
+
+
+/*
+********************************************
+            RESPONSIVE DASHBOARD
+********************************************
+*/
+
+.aonDashboard{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.aonUploadPanel{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-left: 10px;
+}
+
+.aonFastAccess{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-left: 10px;
+}
+
+#docUploadDiv, #factUploadDiv{
+  margin: 0;
+}
+
+#aon-company-costs-listpieChart {
+  display: flex;
+  justify-content: center;
+}
+
+#divCol > div{
+  display: flex;
+  justify-content: center;
+}
+
+.aonEllipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 14rem;
+  white-space: nowrap;
+}
+
+aon-access-card{
+  width: 100%;
+}
+
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  #aonHeaderCompany{
+      display: none !important;
+  }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .aonUploadPanel, .aonFastAccess{
+      flex-direction: row;
+  }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+/* @media only screen and (min-width: 768px) {} */
+@media only screen and (min-width: 768px) {
+  .aonEllipsis{
+      max-width: 20rem;
+  }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 854px) {
+  #messengerCard{
+    min-width: 42.2rem;
+  }
+
+  .aonDashboardCard{
+      width: auto;
+      min-width: 22rem;
+  }
+
+  aon-access-card{
+    width: auto;
+    min-width: 22rem;
+  }
+
+  .aonEllipsis{
+    max-width: 26rem;
+  }
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+/* @media only screen and (min-width: 1200px) {} */

@@ -5,22 +5,22 @@ export const DocumentalSidenav = {
   DOCUMENTS: {
     id: 'Documents',
     name: MSG.DOCUMENTS.toUpperCase(),
-    color: Apps.DOCUMENTAL.color
+    app: Apps.DOCUMENTAL
   },
   TYPES: {
     id: 'Types',
     name: MSG.TYPES.toUpperCase(),
-    color: Apps.DOCUMENTAL.color
+    app: Apps.DOCUMENTAL
   },
   CATEGORIES: {
     id: 'Categories',
     name: MSG.CATEGORIES.toUpperCase(),
-    color: Apps.DOCUMENTAL.color
+    app: Apps.DOCUMENTAL
   },
   TAGS: {
     id: 'Tags',
     name: MSG.TAGS.toUpperCase(),
-    color: Apps.DOCUMENTAL.color
+    app: Apps.DOCUMENTAL
   }
 }
 

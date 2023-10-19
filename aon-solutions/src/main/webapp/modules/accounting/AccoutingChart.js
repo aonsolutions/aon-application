@@ -71,7 +71,7 @@ function getTotalByColumn(selectedColumn) {
   }
 }
 
-const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe) => {
+const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend) => {
   const doc = aonIframe.getDocument();
   const google = aonIframe.getGoogle();
 
@@ -195,15 +195,10 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe) => {
           hAxis: { title: "Mes" },
           seriesType: "bars",
           series: { 2: { type: "line" } },
-          height: isMobile ? window.innerHeight / 2 : window.innerWidth / 3,
-          legend: "none",
-          // legend: {
-          //   position: position,
-          //   alignment: "center",
-          // },
+          height: isMobile ? window.innerHeight / 2 : (leyend ? window.innerWidth / 3 : 300)
         };
 
-        divCombo.style.width = isMobile ? "100%" : "70%";
+        divCombo.style.width = isMobile ? "100%" : (leyend ? "70%" : "auto");
         setStyles(div, {display : "flex", flexWrap : "wrap", justifyContent : "center", alignItems : "center"});
         div.appendChild(divCombo);
         chart = new google.visualization.ComboChart(divCombo);
@@ -218,8 +213,11 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe) => {
         
         chart.draw(table, options);
 
-        let mobileLegend = UTILS.getMobileLegend(accounts, isMobile);
-        div.appendChild(mobileLegend);
+        if(leyend){
+          let mobileLegend = UTILS.getMobileLegend(accounts, isMobile);
+          div.appendChild(mobileLegend);
+        }
+        
         if (isMobile) {
           let firstChild = divCombo.querySelector(":nth-child(1)");
           if (firstChild){
@@ -734,7 +732,8 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe) => {
           ? `Resultados ${UTILS.getPeriodName(sDteStr, eDteStr)}`
           : `Resultados ${selectedPeriod.name}`,
         vAxis: { title: "Cantidad (€)" },
-        height: isMobile ? window.innerHeight / 2 : window.innerWidth / 3,
+        height: isMobile ? window.innerHeight / 2 : (leyend ? window.innerWidth / 3 : 290),
+        // width: leyend ? window.innerWidth / 3 : 200,
         isStacked: true,
         legend: {
           position: "none",
@@ -761,9 +760,10 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe) => {
       //Adding listener
       google.visualization.events.addListener(chart, "select", listener);
 
-      let legend = getColLegend(isMobile);
-
-      div.appendChild(legend);
+      if(leyend){
+        let legend = getColLegend(isMobile);
+        div.appendChild(legend);
+      }      
     }
 
     function getColLegend(isMobile) {

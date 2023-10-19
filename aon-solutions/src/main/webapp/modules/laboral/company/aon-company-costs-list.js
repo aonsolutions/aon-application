@@ -174,10 +174,11 @@ export class AonCompanyCostsList extends AonElement {
         //-----DIV CHART--------------
         let div = this.createElement(TAG.DIV);
         div.id = this.id+ "pieChart";
-        div.style.textAlign = "center";
+        div.style.flexDirection = "column";
+        div.style.alignItems = "center";
         main.appendChild(div);
       
-        const resp = await CompanyPieChart.paintPieChart(data, div, aonIframe);
+        const resp = await CompanyPieChart.paintPieChart(data, div, aonIframe, true);
         
         total = resp.total;
 

@@ -45,7 +45,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API DOWNLOAD INVOICE PDF");
 		try {
-			
+			addCorsHeader(resp);
 			JSONObject json = new JSONObject();
 			String idStr = req.getParameter("id");
 			if(idStr != null) {

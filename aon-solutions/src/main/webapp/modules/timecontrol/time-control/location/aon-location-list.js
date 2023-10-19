@@ -4,6 +4,7 @@ import { SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { CONSTANT, MSG } from "../../../../environments/environments.js";
 import { AonMobileList } from "../../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../../components/aon-table.js";
+import { TIMECONTROL } from "../../../../services/app.js";
 
 
 export class AonLocationList extends AonElement {
@@ -54,6 +55,7 @@ export class AonLocationList extends AonElement {
   paintView() {
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
+    aonTable.setApp(TIMECONTROL);
     this.appendChild(aonTable);
   }
 

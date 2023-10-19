@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -21,6 +22,11 @@ public class RegistryBank implements Serializable {
 	private Account account;
 	private String requisition;
 	private String sepaMandateRef;
+	
+	private Double balance;
+	private Double availableBalance;
+	private Date balanceDate;
+	
 	private Boolean active;
 	private boolean dirty;
 	private boolean removed;
@@ -107,7 +113,7 @@ public class RegistryBank implements Serializable {
 		return bic;
 	}
 	public RegistryBank setBic(String bic) {
-		this.setDirty(isDirty()?true:AonUtils.notEquals(this.bic , bic));
+		this.setDirty(isDirty() || AonUtils.notEquals(this.bic , bic));
 		this.bic = bic;
 		return this;
 	}
@@ -115,7 +121,7 @@ public class RegistryBank implements Serializable {
 		return suffix;
 	}
 	public RegistryBank setSuffix(String suffix) {
-		this.setDirty(isDirty()?true:AonUtils.notEquals(this.suffix, suffix));
+		this.setDirty(isDirty() || AonUtils.notEquals(this.suffix, suffix));
 		this.suffix = suffix;
 		return this;
 	}
@@ -123,7 +129,7 @@ public class RegistryBank implements Serializable {
 		return alias;
 	}
 	public RegistryBank setAlias(String alias) {
-		this.setDirty(isDirty()?true:AonUtils.notEquals(this.alias, alias));
+		this.setDirty(isDirty() || AonUtils.notEquals(this.alias, alias));
 		this.alias = alias;
 		return this;
 	}
@@ -132,7 +138,7 @@ public class RegistryBank implements Serializable {
 		return requisition;
 	}
 	public RegistryBank setRequisition(String requisition) {
-		this.setDirty(isDirty()?true:AonUtils.notEquals(this.requisition , requisition));
+		this.setDirty(isDirty() || AonUtils.notEquals(this.requisition , requisition));
 		this.requisition = requisition;
 		return this;
 	}
@@ -141,8 +147,38 @@ public class RegistryBank implements Serializable {
 		return sepaMandateRef;
 	}
 	public RegistryBank setSepaMandateRef(String sepaMandateRef) {
-		this.setDirty(isDirty()?true:AonUtils.notEquals(this.sepaMandateRef, sepaMandateRef));
+		this.setDirty(isDirty() || AonUtils.notEquals(this.sepaMandateRef, sepaMandateRef));
 		this.sepaMandateRef = sepaMandateRef;
+		return this;
+	}
+	
+	public Double getBalance() {
+		return balance;
+	}
+	
+	public RegistryBank setBalance(Double balance) {
+		this.setDirty(isDirty() || AonUtils.notEquals(this.balance, balance));
+		this.balance = balance;
+		return this;
+	}
+	
+	public Double getAvailableBalance() {
+		return availableBalance;
+	}
+	
+	public RegistryBank setAvailableBalance(Double availableBalance) {
+		this.setDirty(isDirty() || AonUtils.notEquals(this.availableBalance, availableBalance));
+		this.availableBalance = availableBalance;
+		return this;
+	}
+	
+	public Date getBalanceDate() {
+		return balanceDate;
+	}
+	
+	public RegistryBank setBalanceDate(Date balanceDate) {
+		this.setDirty(isDirty() || AonUtils.notEquals(this.balanceDate, balanceDate));
+		this.balanceDate = balanceDate;
 		return this;
 	}
 	
@@ -155,7 +191,7 @@ public class RegistryBank implements Serializable {
 	}
 	
 	public RegistryBank setActive(Boolean active) {
-		this.setDirty(isDirty()?true:AonUtils.notEquals(this.active, active));
+		this.setDirty(isDirty() || AonUtils.notEquals(this.active, active));
 		this.active = active;
 		return this;
 	}

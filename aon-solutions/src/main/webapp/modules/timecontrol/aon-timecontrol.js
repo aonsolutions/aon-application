@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 
 import {AonPresenceList} from "./time-control/aon-presence-list.js";
-import { domainId, getAuthNoCache, getDomainUserRoles, getPeriod, getTaskHoldersUser, getTastHolders } from "../../services/service.js";
+import { domainId, getAuthNoCache, getDomainUserRoles, getPeriod, getTaskHoldersUser, getTastHolders, getTimeControl } from "../../services/service.js";
 import {  isEmptyObject, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
@@ -13,8 +13,9 @@ import { AonEventAdd } from "./time-control/event/aon-event-add.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { MSG } from "../../environments/environments.js";
 import Apps from "../../services/app.js";
-
+import * as LS from '../../services/localStorageService.js';
 import '../../css/aon.css';
+import { AonSign } from "./aon-sign.js";
 
 export class AonTimecontrol extends AonElement {
   AON_SIGNIN;
@@ -94,8 +95,8 @@ export class AonTimecontrol extends AonElement {
     let data = {
 			id: MSG.TIMECONTROL,
 			title: MSG.TIMECONTROL,
-  		name: MSG.TIMECONTROL,
-      color: Apps.TIMECONTROL.color
+      name: MSG.TIMECONTROL,
+  		app: Apps.TIMECONTROL
 		}
     this.applicationEl.addSidenavOptions2(data, options);
 
@@ -127,11 +128,28 @@ export class AonTimecontrol extends AonElement {
 			id: "Periodo",
 			title: "Periodo",
       name: "Periodo",
-			color: Apps.TIMECONTROL.color
+      app: Apps.TIMECONTROL
 		}
     
     this.applicationEl.addSidenavOptions2(data2, options2);
 
+
+    if(this.getDur().isTimecontrol() && LS.isNewTheme()) {
+			getTimeControl().then(r => {
+		    let data3 = {
+          id: "signing",
+          title: MSG.SIGNING.toUpperCase(),
+          name: MSG.SIGNING.toUpperCase(),
+          app: Apps.TIMECONTROL
+        }
+    
+        let aonSign = new AonSign();
+        this.applicationEl.addSidenavWidget2(data3, aonSign);
+				aonSign.buildSignin(r);
+				let aonHeader = this.getElement('aonHeader');
+				aonHeader.timeControlStatus(r);
+			});
+		}
   }
 
   periodSideNavDisplay(b){

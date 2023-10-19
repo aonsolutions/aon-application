@@ -52,6 +52,7 @@ export const AON_LOADER = 'aon-loader';
 export const AON_LOGIN = 'aon-login';
 export const AON_NEW_LOGIN = 'aon-new-login';
 export const AON_NEW_MENU = 'aon-new-menu';
+export const AON_APP_MENU = 'aon-app-menu';
 export const AON_MOBILE_LIST = 'aon-mobile-list';
 export const AON_NUMBER = 'aon-number';
 export const AON_REGISTRY = 'aon-registry';
