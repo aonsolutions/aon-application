@@ -127,8 +127,8 @@ const pieChar = (parent, aonIframe, fields, opts, leyend, callBackClick) => {
       let options = {
         theme: "material",
         height: leyend ? 500 : 250,
-        width: leyend ? 500 : 260,
-        legend: "none",
+        width: leyend ? 500 : 290,
+        legend: "none"
       };
       if (opts) {
         if (opts.slices && opts.slices.length > 0) {
