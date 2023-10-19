@@ -42,16 +42,16 @@ export class TopBarComponent implements OnInit, OnChanges {
     })
 
     this.translateService.get(
-      ['HEADER.EDIT_PROFILE','HEADER.HELP','HEADER.LOGOUT']
+      ['HEADER.EDIT_PROFILE','HEADER.HELP','HEADER.LOGOUT', 'HEADER.LANGUAGE', 'LANGUAGE.ENGLISH', 'LANGUAGE.SPANISH']
     ).subscribe( result => {
       this.menuItem = [
         {root:true, text: result['HEADER.EDIT_PROFILE'] , icon:'person_pin' , colorIcon:'black', routerlink: 'edit-profile'},
-        {root:true, text: result['HEADER.HELP']         , icon:'help'       , colorIcon:'black'},
+        // {root:true, text: result['HEADER.HELP']         , icon:'help'       , colorIcon:'black'},
+        {root:true, text: result['HEADER.LANGUAGE'], icon:'language',  colorIcon:'black', children:[
+          {root:false, text: result['LANGUAGE.ENGLISH'] , click:() => this.selectLanguage('en')},
+          {root:false, text: result['LANGUAGE.SPANISH'] , click:() => this.selectLanguage('es')},
+        ]},
         {root:true, text: result['HEADER.LOGOUT']       , icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
-
-        {root:true, text: '    '    , icon:'remove' , colorIcon:'black'},
-        {root:true, text: 'English' , icon:'flag'   , colorIcon:'black' , click:() => this.selectLanguage('en')},
-        {root:true, text: 'Spanish' , icon:'flag'   , colorIcon:'black' , click:() => this.selectLanguage('es')},
       ]
     });
   }
