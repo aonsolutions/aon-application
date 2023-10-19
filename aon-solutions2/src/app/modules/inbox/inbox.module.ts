@@ -14,12 +14,14 @@ import { ModalCreateComponent } from './components/modal-create/modal-create.com
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { TablesInboxComponent } from './components/tables-inbox/table-inbox.component';
+import { ModalConfirmQueryComponent } from './components/modal-confirm-query/modal-confirm-query.component';
 
 @NgModule({
   declarations: [
     InboxviewComponent,
     ModalCreateComponent,
     TablesInboxComponent,
+    ModalConfirmQueryComponent,
   ],
   imports: [
     CommonModule,

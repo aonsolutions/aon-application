@@ -231,7 +231,7 @@
           {{ messagesData.Title }}
         </div>
         <div class="inbox-message-date">
-          {{ datepipe.transform(messagesData.Date, 'MM/dd/yyyy, HH:mm') }}
+          {{ datepipe.transform(messagesData.Date, 'dd/MM/yyyy, HH:mm') }}
         </div>
       </div>
     <!--Chat-->
@@ -249,7 +249,7 @@
           <div class="inbox-chat-description">
             <div *ngIf="expandedIndex !== i">{{ messageChat.Description }}</div>
           </div>
-          <div class="inbox-chat-date">{{ datepipe.transform(messageChat.Date, 'MM/dd/yyyy, HH:mm') }}</div>
+          <div class="inbox-chat-date">{{ datepipe.transform(messageChat.Date, 'dd/MM/yyyy, HH:mm') }}</div>
         </div>
       </div>
       <div class="padding" *ngIf="showSendButtons && messagesData.Type === 'consulta'">
@@ -330,7 +330,7 @@
                 [width]="'11rem'"
                 [fontSize]="'0.7rem'"
                 [padding]="'0rem 1rem'"
-                (click)="sendMessage()"
+                (click)="sendMessageAndOpenModal()"
             >
             <app-icon shape="send"></app-icon>
             {{ "COMMON.SEND" | translate }}

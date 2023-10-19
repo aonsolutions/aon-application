@@ -10,6 +10,8 @@ import { TablesInboxComponent } from '../components/tables-inbox/table-inbox.com
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalConfirmQueryComponent } from '../components/modal-confirm-query/modal-confirm-query.component';
 
 export interface Tabs {
   name: string;
@@ -60,12 +62,15 @@ export class InboxviewComponent implements OnInit {
   tareasMessageCount: number = 0;
   notificacionesMessageCount: number = 0;
   updateTable: boolean = false;
+  newMessageDescriptionTemp: string = '';
+
   constructor(
     private translateService: TranslateService,
     public reportingService: ReportingService,
     private messageService: MessageService,
     private messageChatService: MessageChatService,
-    private optionsService: OptionsService
+    private optionsService: OptionsService,
+    private dialog: MatDialog
   ) {
     this.translateService
       .get([
@@ -138,6 +143,8 @@ export class InboxviewComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log("init");
+
     const url = window.location.href.split('/')[4];
 
     if(url)
@@ -152,7 +159,6 @@ export class InboxviewComponent implements OnInit {
 
   private checkOpenModal(): void {
     const options = this.optionsService.getOptions();
-
     if (options && options.showModal) {
       this.optionsService.clearOptions();
       this.showModal();
@@ -331,6 +337,7 @@ export class InboxviewComponent implements OnInit {
         })
         // Agregar el nuevo mensaje
         this.messages.add(this.messagesData);
+        console.log(newMessage)
     }
   }
 
@@ -351,10 +358,33 @@ export class InboxviewComponent implements OnInit {
     if (this.newMessageDescription.trim() === '') {
       return;
     }
+    if (!this.isModalVisible) {
     // Llama a la función para crear un nuevo mensaje
     this.createMessage(this.newMessageDescription);
+    }
+  }
 
-    // Limpia el campo de entrada después de enviar el mensaje
+  // función para pasar los datos al modal de confirmación
+  sendMessageAndOpenModal(): void {
+    const dialogRef = this.dialog.open(ModalConfirmQueryComponent, {
+      data: {
+        sendMessage: () => {
+          this.createMessage(this.newMessageDescriptionTemp);
+          this.isModalVisible = false;
+        }
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.isModalVisible = true;
+        this.newMessageDescription = '';
+      } else {
+        this.newMessageDescription = this.newMessageDescriptionTemp;
+      }
+    });
+
+    this.newMessageDescriptionTemp = this.newMessageDescription;
     this.newMessageDescription = '';
   }
 }
