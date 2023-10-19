@@ -18,16 +18,15 @@ export class BanksDashboardComponent implements OnInit {
 
   constructor(private bankService: BankService) {
     this.bankService.getBankList().then((response) => {
-      this.banks = response;
+     this.banks = response;
       response.forEach((bank) => {
         this.totalAmount += bank.Total;
       });
-      this.spinner = false;
+     this.spinner = false;
     });
   }
 
   ngOnInit(): void {
-
   }
 
   hasBanks(): boolean {

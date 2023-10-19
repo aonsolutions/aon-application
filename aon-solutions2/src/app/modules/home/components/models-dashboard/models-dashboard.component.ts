@@ -28,7 +28,7 @@ export class ModelsDashboardComponent implements OnInit {
           // Seleccionamos el trimestre en el que estamos
           this.ModelsThisTrimester(trimester, result["HOME."+trimester+"_TRIMESTER"])
         });
-      
+
       // Trimestre en el menu
         this.menuItem! = [
           {root: true, text: result["HOME.1_TRIMESTER"], click:() => this.ModelsThisTrimester(1, result["HOME.1_TRIMESTER"])},
@@ -42,22 +42,22 @@ export class ModelsDashboardComponent implements OnInit {
   ngOnInit(): void {
 
   }
-  
+
   ModelsThisTrimester(trimester : number, name: string){
     // Nombre
     this.selected = name
     // Year que estamos
     const currentDate   = new Date();
     const currentYear   = currentDate.getFullYear();
-    
+
     // modelos del trimestre escogido
     let filterBuilder = new FilterBuilder();
     filterBuilder.addField('trimester', trimester);
     filterBuilder.addField('year', currentYear);
     this.taxModelService.getTaxModelList(filterBuilder.getFilter()).then((models) => {
-      
+
       console.log(models)
-      
+
       this.models = models;
     });
   }

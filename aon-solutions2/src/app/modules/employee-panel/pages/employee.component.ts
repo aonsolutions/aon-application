@@ -27,7 +27,9 @@ export class EmployeeComponent implements OnInit {
   tabs: Tabs[] = [{ name: 'tab1' }, { name: 'tab2' }];
   buttonsGastos: any[] = [];
   showDetail: boolean = false;
-
+  search: string = '';
+  showSendButton: boolean = false;
+  showSendButtons: boolean = false;
 
   //hardcodeo para mostrar showdetail
   dataBody: any[] = [
@@ -42,21 +44,21 @@ export class EmployeeComponent implements OnInit {
     },
     {
       key: 2,
-      employee: 'Antonia Diaz',
-      grossCost: '1500',
+      employee: 'Pepa Lopez',
+      grossCost: '1800',
       type: 'Indefinido',
       date: '30/05/2023 - 01/06/2023',
       workCenter: 'Principal',
-      marcaje: '20 horas',
+      marcaje: '30 horas',
     },
     {
       key: 3,
-      employee: 'Antonia Diaz',
-      grossCost: '1500',
+      employee: 'Maria Fernandez',
+      grossCost: '2500',
       type: 'Indefinido',
       date: '30/05/2023 - 01/06/2023',
       workCenter: 'Principal',
-      marcaje: '20 horas',
+      marcaje: '40 horas',
     },
   ];
 
@@ -157,5 +159,43 @@ export class EmployeeComponent implements OnInit {
     // this.updateTableData();
   }
 
-  private updateTableData() {}
+  searchContract(search: string) {
+    // Si el término de búsqueda está vacío, muestra todos los elementos de la tabla.
+    if (!search) {
+      this.bodyTable = this.dataBody;
+      return;
+    }
+    // Convierte el término de búsqueda a minúsculas para hacer una búsqueda insensible a mayúsculas y minúsculas.
+    search = search.toLowerCase();
+
+    // Filtra TODAS LAS COLUMNAS de la tabla en función del término de búsqueda
+      this.bodyTable = this.dataBody.filter((item: any) => {
+        return Object.values(item).some((value: any) =>
+          value.toString().toLowerCase().includes(search)
+        );
+      });
+    }
+  // Filtra en la columna "employee".
+//   this.bodyTable = this.dataBody.filter((item) => {
+//     return item.employee.toLowerCase().includes(search);
+//   });
+// }
+
+async rowClick(contract: any){
+//   const isSameRow =
+//   this.contractsData && this.contractsData.Id === contract.key;
+// this.showDetail = !isSameRow ? true : !this.showDetail;
+// this.contractsData = await this.contractService.getContract(contract.key);
+
+
+// this.changeView();
+// // Desactivo el spinner
+// this.spinner = false;
+// }
+// changeView(): void {
+//   this.showSendButton = false;
+//   this.showSendButtons = false;
+// }
+
+}
 }

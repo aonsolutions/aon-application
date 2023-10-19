@@ -22,6 +22,8 @@
           [class]="'search'"
           [type]="'search'"
           [placeholder]="'INBOX.TEXT' | translate"
+          [value]="search"
+          (inputValue)="searchContract(search = $event)"
         ></app-input>
       </div>
     </div>
@@ -52,6 +54,7 @@
         [displayedColumns]="displayedColumns"
         [head]="headerTable"
         [data]="bodyTable"
+        (listenParentRow)="rowClick($event)"
       >
       </app-table>
       <ng-template #noModelsTemplate>
