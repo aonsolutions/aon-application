@@ -10,9 +10,6 @@ import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -488,12 +485,10 @@ public class TaskDAO {
 		return map;
 	}
 	
-	public static Integer getTaskCountFilter(AONContext ctx, TaskFilter taskFilter){
-		Collection<Condition> whereConditions = new ArrayList<>();
-		whereConditions.addAll(Arrays.asList(TASK_PROPERTIES.getConditions(taskFilter)));		
+	public static Integer getTaskCountFilter(AONContext ctx, TaskFilter taskFilter){		
 		return ctx.getDslContext().select(DSL.count())
 		.from(TASK)
-		.where(whereConditions).fetchOne(0, int.class);
+		.where(TASK_PROPERTIES.getConditions(taskFilter)).fetchOne(0, int.class);
 	}
 	
 	

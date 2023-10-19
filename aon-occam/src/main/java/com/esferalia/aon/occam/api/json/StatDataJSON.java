@@ -1,8 +1,6 @@
 package com.esferalia.aon.occam.api.json;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -12,14 +10,14 @@ public class StatDataJSON {
 	
 	public static JSONObject toJSON(StatData<String, String, Double> statdata) {
 		JSONObject json = new JSONObject();
-		List<JSONObject> list = new ArrayList<>(); 
+		JSONArray list = new JSONArray(); 
 		statdata.getMap().keySet().stream().forEach(mes -> {
 			JSONObject typeJSON = new JSONObject();
 			statdata.getMap().get(mes).keySet().stream().forEach(type -> {
 				typeJSON.put(type, statdata.getMap().get(mes).get(type));
 			});
 			typeJSON.put(IJsonNames.DATE, mes);
-			list.add(typeJSON);
+			list.put(typeJSON);
 		});
 		json.put("data", list);
 		return json;
