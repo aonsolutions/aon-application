@@ -9,6 +9,7 @@
     </div>
   </div>
   <div body class="list" *ngIf="models">
+    <app-spinner *ngIf="spinner"></app-spinner>    
     <div *ngFor="let model of models" class="list-row">
       <div class="list-name">{{ 'HOME.MODEL'|translate }} {{ model.Name }}</div>
       <div class="list-date"> {{ model.TaxType }}</div>

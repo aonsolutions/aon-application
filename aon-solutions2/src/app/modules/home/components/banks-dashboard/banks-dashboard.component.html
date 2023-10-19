@@ -10,7 +10,7 @@
     body
     class="list-bank"
   >
-  <app-spinner class="spinner" *ngIf="spinner"></app-spinner>
+    <app-spinner *ngIf="spinner"></app-spinner>
     <div *ngIf="!spinner && hasBanks()">
       <div *ngFor="let bank of banks" class="list-bank-row">
         <div class="list-bank-name">

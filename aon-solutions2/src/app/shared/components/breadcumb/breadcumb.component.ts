@@ -51,6 +51,7 @@ export class BreadcumbComponent implements OnInit {
 
   setEnterpriseSelected(element: IEnterprise){
     this.selectedEnterprise = element.Name;
+    window.location.reload();
     this.authService.setEnterprise(element);
   }
 

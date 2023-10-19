@@ -2,35 +2,40 @@
   {{ "PROFILE.CONTACT_DETAILS" | translate }}
 </div>
 <hr />
-<div *ngFor="let enterprise of enterprises">
-  <div class="form">
-    <div class="email-row">
+<form #formEnterprise="ngForm">
+  <div *ngIf="enterprise">
+    <div class="form">
+      <div class="email-row">
+        <app-input
+          (inputValue)="getValue($event, enterprise, 'Email')"
+          *ngFor="let email of emailList; let i = index"
+          [type]="'text'"
+          [label]="'Email ' + (i + 1) | translate"
+          [placeholder]="'PROFILE.EMAIL' | translate"
+          [value]="enterprise.Email"
+        ></app-input>
+      </div>
+      <div class="button-add-mail">
+        <app-button class="icon-border" (click)="addEmail()">
+          <app-icon [shape]="'add'"></app-icon>
+        </app-button>
+      </div>
+    </div>
+    <div class="form">
       <app-input
-        *ngFor="let email of emailList; let i = index"
+        (inputValue)="getValue($event, enterprise, 'Phone')"
         [type]="'text'"
-        [label]="'Email ' + (i + 1) | translate"
-        [placeholder]="'PROFILE.EMAIL' | translate"
-        [value]="enterprise.Email"
+        [label]="'PROFILE.PHONE' | translate"
+        [placeholder]="'PROFILE.PHONE' | translate"
+        [value]="enterprise.Phone"
+      ></app-input>
+      <app-input
+        (inputValue)="getValue($event, enterprise, 'Website')"
+        [type]="'text'"
+        [label]="'PROFILE.WEB' | translate"
+        [placeholder]="'PROFILE.WEB' | translate"
+        [value]="enterprise.Website"
       ></app-input>
     </div>
-    <div class="button-add-mail">
-      <app-button class="icon-border" (click)="addEmail()">
-        <app-icon [shape]="'add'"></app-icon>
-      </app-button>
-    </div>
   </div>
-  <div class="form">
-    <app-input
-      [type]="'text'"
-      [label]="'PROFILE.PHONE' | translate"
-      [placeholder]="'PROFILE.PHONE' | translate"
-      [value]="enterprise.Phone"
-    ></app-input>
-    <app-input
-      [type]="'text'"
-      [label]="'PROFILE.WEB' | translate"
-      [placeholder]="'PROFILE.WEB' | translate"
-      [value]="enterprise.Website"
-    ></app-input>
-  </div>
-</div>
+</form>

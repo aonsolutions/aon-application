@@ -3,17 +3,21 @@
     <div class="line"></div>
     <div class="text">{{ 'HOME.INBOX'|translate }}</div>
   </div>
-  <app-spinner *ngIf="spinner"></app-spinner>
-  <app-table
-    mat-table
-    mat-flat-table
-    [displayedColumns]="displayedColumns"
-    [data]="bodyTable"
-    (listenParentRow)="rowClick($event)"
-    (listenParentHandler)="actionIcon($event)"
-  ></app-table>
-  <hr>
-  <div id="home-inbox-total">
-    <span class="text" [routerLink]="routerlink" >{{ "HOME.ALL_MESSAGES" | translate}}</span> <span class="circle red">{{ messageTotal }}</span>
+  <div
+    body
+  >
+    <app-spinner *ngIf="spinner"></app-spinner>
+    <app-table
+      mat-table
+      mat-flat-table
+      [displayedColumns]="displayedColumns"
+      [data]="bodyTable"
+      (listenParentRow)="rowClick($event)"
+      (listenParentHandler)="actionIcon($event)"
+    ></app-table>
+    <hr>
+    <div id="home-inbox-total">
+      <span class="text" [routerLink]="routerlink" >{{ "HOME.ALL_MESSAGES" | translate}}</span> <span class="circle red">{{ messageTotal }}</span>
+    </div>
   </div>
 </div>

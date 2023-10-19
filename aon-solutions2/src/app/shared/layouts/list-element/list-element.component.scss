@@ -15,9 +15,10 @@
     display       : flex;
     gap           : $margin;
     cursor        : pointer;
-    text-transform: uppercase;
+    text-transform: capitalize;
     padding       : $padding;
     align-items   : center;
+    font-size     : 1rem; 
   }
   
   app-list-element .list-element ul li .right{

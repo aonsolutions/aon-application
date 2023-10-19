@@ -1,0 +1,10 @@
+<div class="header">
+  <app-icon [shape]="data.icon"></app-icon>
+  {{ data.message }}
+  <app-icon
+    matSnackBarAction
+    class="closeSnackBar"
+    shape="close"
+    (click)="this.destroy()"
+  ></app-icon>
+</div>

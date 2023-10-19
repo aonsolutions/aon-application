@@ -114,6 +114,8 @@
     "BILLING": "Facturación",
     "SALES": "Ventas",
     "BILLS": "Gastos",
+    "COLLECTIONS": "Cobros",
+    "PAYMENTS": "Pagos",
     "SALES_CHECK": "Facturas",
     "REPORTS": "Informes",
     "TREASURY": "Tesorería",
@@ -238,7 +240,8 @@
     "SECUNDARY_USERS":"Usuarios secundarios",
     "STATUS": "Estado",
     "STATUS_DATE": "Fecha estado",
-    "NAF": "NAF"
+    "NAF": "NAF",
+    "CERTIFICATE_UPLOAD": "Sube tu certificado digital"
   }
 }
 

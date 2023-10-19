@@ -25,6 +25,14 @@ export class SelectEnterpriseComponent implements OnInit {
  */
   constructor(private authService: AuthService, private enterpriseService: EnterpriseService, private router: Router) {
     this.enterpriseService.getEnterpriseList().then((enterprises) => {
+
+      // Verificamos numero de empresas, en caso de obtener solamente una, se navega a la pagina de inicio
+
+      if (enterprises.size() === 1) {
+        const arrayEnterprises = enterprises.toArray();
+        this.selectEnterprise(arrayEnterprises[0]);
+      }
+
       this.spinner = false;
       this.enterprises = enterprises;
     })

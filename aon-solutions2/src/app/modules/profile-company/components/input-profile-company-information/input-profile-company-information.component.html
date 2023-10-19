@@ -4,7 +4,7 @@
 
 <hr />
 
-<div *ngFor="let enterprise of enterprises" class="structure-container">
+<div *ngIf="enterprise" class="structure-container">
   <div class="structure-photo">
     <p class="photo">{{ "PROFILE.PHOTO" | translate }}</p>
     <div class="upload-circle">
@@ -24,6 +24,7 @@
 
     <div class="form">
       <app-input
+        (inputValue)="getValue($event, enterprise, 'Name')"
         [type]="'text'"
         [label]="'PROFILE.TRADE_NAME' | translate"
         [placeholder]="'PROFILE.TRADE_NAME' | translate"
@@ -33,6 +34,7 @@
     </div>
     <div class="form">
       <app-input
+        (inputValue)="getValue($event, enterprise, 'Address')"
         [type]="'text'"
         [label]="'PROFILE.ADRESS' | translate"
         [placeholder]="'PROFILE.ADRESS' | translate"
@@ -43,6 +45,7 @@
 
     <div class="form">
       <app-input
+        (inputValue)="getValue($event, enterprise, 'Country')"
         [type]="'select'"
         [label]="'PROFILE.COUNTRY' | translate"
         [placeholder]="'PROFILE.COUNTRY' | translate"
@@ -52,9 +55,11 @@
       >
       </app-input>
       <app-input
+        (inputValue)="getValue($event, enterprise, 'Province')"
         [type]="'select'"
         [label]="'PROFILE.CITY' | translate"
         [placeholder]="'PROFILE.CITY' | translate"
+        [options]="optionsProvince"
         [value]="enterprise.Province"
       >
       </app-input>
@@ -62,6 +67,7 @@
 
     <div class="form">
       <app-input
+        (inputValue)="getValue($event, enterprise, 'SocialReason')"
         [type]="'text'"
         [label]="'PROFILE.LEGAL_NAME' | translate"
         [placeholder]="'PROFILE.LEGAL_NAME' | translate"
@@ -70,6 +76,7 @@
       >
       </app-input>
       <app-input
+        (inputValue)="getValue($event, enterprise, 'Document')"
         [type]="'text'"
         [label]="'PROFILE.TIN' | translate"
         [placeholder]="'PROFILE.TIN' | translate"
