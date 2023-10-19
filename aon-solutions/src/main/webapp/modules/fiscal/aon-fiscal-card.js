@@ -109,20 +109,30 @@ export class AonFiscalCard extends AonElement {
       row.style.justifyContent = "space-between";
       row.style.width = "100%";
       row.style.borderBottom = "1px solid #ddd";
-      row.style.padding = "1rem 0";
+      row.style.padding = ".8rem 0";
 
       let leftContent = this.createElement(TAG.DIV);
       leftContent.className = CSS.AON_FLEX;
-      leftContent.style.gap = "1rem";
-      leftContent.style.alignContent = "center";
       leftContent.style.alignItems = "center";
+      leftContent.style.gap = "1rem";
+
+      let descriptionContent = this.createElement(TAG.DIV);
+      descriptionContent.className = CSS.AON_FLEX;
+      descriptionContent.style.flexDirection = "column";
+      leftContent.appendChild(descriptionContent);
 
       let description = this.createElement(TAG.SPAN);
       description.style.fontSize = "1.2rem";
       description.style.color = "#fb982e";
       description.style.fontWeight = "500";
       description.innerHTML = "Modelo " + modelData.newModel;
-      leftContent.appendChild(description);
+      descriptionContent.appendChild(description);
+
+      let territory = this.createElement(TAG.SPAN);
+      territory.style.color = "rgb(120, 120, 133)";
+      territory.style.fontSize = ".8rem";
+      territory.innerHTML = this.getModelTerritory(modelData.administration);
+      descriptionContent.appendChild(territory);
 
       let iva = this.createElement(TAG.SPAN);
       iva.style.color = "rgb(120, 120, 133)";
@@ -136,6 +146,7 @@ export class AonFiscalCard extends AonElement {
 
       let status = this.createElement(TAG.SPAN);
       status.style.textAlign = "center";
+      status.style.cursor = "pointer";
       status.appendChild(this.createStatus(modelData.status));
       rightContent.appendChild(status);
 
@@ -169,6 +180,15 @@ export class AonFiscalCard extends AonElement {
         return "IRPF"
       default:
         return "IVA";
+    }
+  }
+
+  getModelTerritory(territory){
+    switch (territory) {
+      case "COMMON_TERRITORY":
+        return "AEAT";
+      default:
+        return territory.charAt(0) + territory.slice(1).toLowerCase();
     }
   }
 
