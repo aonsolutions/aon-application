@@ -12,8 +12,8 @@ import { Component, OnInit } from '@angular/core';
   },
 })
 export class BanksDashboardComponent implements OnInit {
-  spinner: boolean = true;
-  totalAmount: number = 0;
+  spinner     : boolean = true;
+  totalAmount : number  = 0;
   banks!: ICollection<IBank>;
 
   constructor(private bankService: BankService) {
