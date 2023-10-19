@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { EnterpriseService } from 'src/app/core/services/enterprise.service';
+import { Component, Input, OnInit } from '@angular/core';
+
 import { CountryService } from '../../../../core/services/country.service';
+import { IEnterprise } from 'libraries/AonSDK/src/aon';
 
 export interface OptionsCountry {
   name: string;
@@ -18,111 +19,54 @@ export interface OptionsProvince {
   styleUrls: ['./input-profile-company-information.component.scss'],
 })
 export class InputProfileCompanyInformationComponent implements OnInit {
-  enterprises: any[] = [];
+  @Input() enterprise: IEnterprise | null = null;
   selectedCountry: OptionsCountry | null = null;
-  optionsCountry = this.countryService.getAllCountries();
-
-
-
-  // optionsCountry: OptionsCountry[] = [
-  //   { text: 'Alemania' },
-  //   { text: 'Austria' },
-  //   { text: 'Bélgica' },
-  //   { text: 'Bulgaria' },
-  //   { text: 'Chipre' },
-  //   { text: 'Croacia' },
-  //   { text: 'Dinamarca' },
-  //   { text: 'Eslovaquia' },
-  //   { text: 'Eslovenia' },
-  //   { text: 'España' },
-  //   { text: 'Estonia' },
-  //   { text: 'Finlandia' },
-  //   { text: 'Francia' },
-  //   { text: 'Grecia' },
-  //   { text: 'Hungría' },
-  //   { text: 'Irlanda' },
-  //   { text: 'Italia' },
-  //   { text: 'Letonia' },
-  //   { text: 'Lituania' },
-  //   { text: 'Luxemburgo' },
-  //   { text: 'Malta' },
-  //   { text: 'Países Bajos' },
-  //   { text: 'Polonia' },
-  //   { text: 'Portugal' },
-  //   { text: 'República Checa' },
-  //   { text: 'Rumania' },
-  //   { text: 'Suecia' },
-  // ];
-
-  // optionsProvince: OptionsProvince[] = [
-  //   { value: 1, text: 'Álava' },
-  //   { value: 2, text: 'Albacete' },
-  //   { value: 3, text: 'Alicante' },
-  //   { value: 4, text: 'Almería' },
-  //   { value: 5, text: 'Asturias' },
-  //   { value: 6, text: 'Ávila' },
-  //   { value: 7, text: 'Badajoz' },
-  //   { value: 8, text: 'Barcelona' },
-  //   { value: 9, text: 'Burgos' },
-  //   { value: 10, text: 'Cáceres' },
-  //   { value: 11, text: 'Cádiz' },
-  //   { value: 12, text: 'Cantabria' },
-  //   { value: 13, text: 'Castellón' },
-  //   { value: 14, text: 'Ceuta' },
-  //   { value: 15, text: 'Ciudad Real' },
-  //   { value: 16, text: 'Córdoba' },
-  //   { value: 17, text: 'Cuenca' },
-  //   { value: 18, text: 'Gerona' },
-  //   { value: 19, text: 'Granada' },
-  //   { value: 20, text: 'Guadalajara' },
-  //   { value: 21, text: 'Guipúzcoa' },
-  //   { value: 22, text: 'Huelva' },
-  //   { value: 23, text: 'Huesca' },
-  //   { value: 24, text: 'Islas Baleares' },
-  //   { value: 25, text: 'Jaén' },
-  //   { value: 26, text: 'La Coruña' },
-  //   { value: 27, text: 'La Rioja' },
-  //   { value: 28, text: 'Las Palmas' },
-  //   { value: 29, text: 'León' },
-  //   { value: 30, text: 'Lérida' },
-  //   { value: 31, text: 'Lugo' },
-  //   { value: 32, text: 'Madrid' },
-  //   { value: 33, text: 'Málaga' },
-  //   { value: 34, text: 'Melilla' },
-  //   { value: 35, text: 'Murcia' },
-  //   { value: 36, text: 'Navarra' },
-  //   { value: 37, text: 'Orense' },
-  //   { value: 38, text: 'Palencia' },
-  //   { value: 39, text: 'Pontevedra' },
-  //   { value: 40, text: 'Salamanca' },
-  //   { value: 41, text: 'Santa Cruz de Tenerife' },
-  //   { value: 42, text: 'Segovia' },
-  //   { value: 43, text: 'Sevilla' },
-  //   { value: 44, text: 'Soria' },
-  //   { value: 45, text: 'Tarragona' },
-  //   { value: 46, text: 'Teruel' },
-  //   { value: 47, text: 'Toledo' },
-  //   { value: 48, text: 'Valencia' },
-  //   { value: 49, text: 'Valladolid' },
-  //   { value: 50, text: 'Vizcaya' },
-  //   { value: 51, text: 'Zamora' },
-  //   { value: 52, text: 'Zaragoza' },
-  // ];
+  optionsCountry: any[] = [];
+  optionsProvince: any[] = [];
 
   constructor(
-    private enterpriseService: EnterpriseService,
     private countryService: CountryService
   ) {
-    this.enterpriseService.getEnterprise('B16880148').then((enterprise) => {
-
-      this.enterprises.push(enterprise);
-      console.log("prueba", this.enterprises);
-    });
-    console.log('texto2' + this.enterprises);
-    console.log("optionsCountry", this.optionsCountry);
   }
 
   async ngOnInit() {
+    this.loadCountriesProvinces();
+  }
+
+/**
+ * Carga los datos de paises y provincias.
+ *
+ * @private
+ * @async
+ * @return {Promise<void>} - Se resuelve una vez que los datos se hayan cargado.
+ */
+  private async loadCountriesProvinces() {
+    const countries = await this.countryService.getAllCountries();
+
+    // Se prepara el array tal como lo espera el componente global
+    if (countries) {
+      this.optionsCountry = countries.map((country) => {
+        return {
+          text: country.name,
+          value: country.name
+        };
+      });
+    }
+
+    if (this.enterprise?.Country === 'España') {
+      const provinces = await this.countryService.getDataSpain('provinces');
+
+    // Se prepara el array tal como lo espera el componente global
+      if (provinces) {
+        this.optionsProvince = provinces.map((province) => {
+          return {
+            text: province.name,
+            value: province.name
+          };
+        });
+      }
+
+    }
   }
 
   onCountrySelection(event: any) {
@@ -131,7 +75,18 @@ export class InputProfileCompanyInformationComponent implements OnInit {
 
   showProvinceField(): boolean {
     return (
-      this.selectedCountry !== null && this.selectedCountry.name === 'España'
+      this.selectedCountry !== null && this.selectedCountry.name === 'Spain'
     );
+  }
+
+  /**
+   * Actualiza el valor correspondiente en el objeto enterprise.
+   *
+   * @param {any} newValue - El nuevo valor que se va a asignar.
+   * @param {any} enterprise - El objeto enterprise.
+   * @param {string} propertyName - El nombre de la propiedad que se va a actualizar.
+   */
+  getValue(newValue: any, enterprise: any, propertyName: string) {
+    enterprise[propertyName] = newValue;
   }
 }

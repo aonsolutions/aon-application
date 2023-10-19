@@ -238,17 +238,17 @@ export function generateData(){
         documents.add(new Document(MainFolders.PAPELERA + 'file6', 'file6', 6, 'application/pdf', new Date(), MainFolders.PAPELERA));
         documents.add(new Document(MainFolders.FISCAL + 'file7', 'file7', 6, 'image/png', new Date(), MainFolders.FISCAL));
         documents.add(new Document(MainFolders.FISCAL + 'file8', 'file8', 6, 'image/png', new Date(), MainFolders.FISCAL));
-        documents.add(new Document(MainFolders.LABORAL + 'file9', 
+        documents.add(new Document(MainFolders.LABORAL + 'file9',
             'file9', 6, 'application/pdf', new Date(), MainFolders.LABORAL + '/maria_rico_gómez'));
-        documents.add(new Document(MainFolders.LABORAL + 'file10', 
+        documents.add(new Document(MainFolders.LABORAL + 'file10',
             'file10', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
-        documents.add(new Document(MainFolders.LABORAL + 'file11', 
+        documents.add(new Document(MainFolders.LABORAL + 'file11',
             'file11', 6, 'application/pdf', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
-        documents.add(new Document(MainFolders.LABORAL + 'file12', 
+        documents.add(new Document(MainFolders.LABORAL + 'file12',
             'file12', 6, 'image/png', new Date(), MainFolders.LABORAL + '/11556837G'));
-        documents.add(new Document(MainFolders.LABORAL + 'file13', 
+        documents.add(new Document(MainFolders.LABORAL + 'file13',
             'file13', 6, 'image/png', new Date(), MainFolders.LABORAL + '/juan_carlos_aragón_pérez'));
-        documents.add(new Document(MainFolders.LABORAL + 'file14', 
+        documents.add(new Document(MainFolders.LABORAL + 'file14',
             'file14', 6, 'application/pdf', new Date(), MainFolders.LABORAL + '/86638678R'));
         localDocuments.write(storableDocuments.getLocalStorage(), documents);
     }
@@ -321,7 +321,7 @@ export function generateData(){
         enterprises.add(new Enterprise('Pet Estudio', 'B16880148'));
         enterprises.add(new Enterprise('MENG SA', 'U14241855'));
         enterprises.add(new Enterprise('PORTABAGE SL', 'U53716270'));
-        enterprises.add(new Enterprise('Reséndez, Briones and Barragán', 'V74530528'));
+        enterprises.add(new Enterprise('Reséndez, Briones and Barragán', 'V74530528', '', 'C/Rosenda 23', 'España', 'Madrid'));
         enterprises.add(new Enterprise('Marrero S.A.', 'N3038065C'));
         enterprises.add(new Enterprise('Gallegos e Hijos S.L.', 'J85226413'));
         enterprises.add(new Enterprise('Aponte S.L.', 'S9668644I'));
@@ -332,6 +332,10 @@ export function generateData(){
         registryEnterprises.add(new RegistryEnterprise('B16880148', 'lorem ipsum ...', new Date(), new Date(), 'Esperanza', 'Protocolo 1', 'Inscripción 1'));
         registryEnterprises.add(new RegistryEnterprise('U14241855', 'lorem ipsum ...', new Date(), new Date(), 'Jorge Luis', 'Protocolo 2', 'Inscripción 2'));
         registryEnterprises.add(new RegistryEnterprise('U53716270', 'lorem ipsum ...', new Date(), new Date(), 'Manuela', 'Protocolo 3', 'Inscripción 3'));
+        registryEnterprises.add(new RegistryEnterprise('V74530528', 'lorem ipsum ...', new Date(), new Date(), 'Pedro', 'Protocolo 4', 'Inscripción 4'));
+        registryEnterprises.add(new RegistryEnterprise('N3038065C', 'lorem ipsum ...', new Date(), new Date(), 'Pedro', 'Protocolo 5', 'Inscripción 5'));
+        registryEnterprises.add(new RegistryEnterprise('J85226413', 'lorem ipsum ...', new Date(), new Date(), 'Pedro', 'Protocolo 6', 'Inscripción 6'));
+        registryEnterprises.add(new RegistryEnterprise('S9668644I', 'lorem ipsum ...', new Date(), new Date(), 'Pedro', 'Protocolo 7', 'Inscripción 7'));
         localRegistryEnterprises.write(storableRegistryEnterprises.getLocalStorage(), registryEnterprises);
     }
 

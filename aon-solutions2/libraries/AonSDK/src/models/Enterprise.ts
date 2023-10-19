@@ -153,7 +153,7 @@ export class Enterprise implements IEnterprise, IModel {
         this.phone = phone || '';
         this.website = website || '';
         this.document = document || document || '';
-        this.key = KeyGenerator.generate(15);
+        this.key = document || '';
         this.domainId = '';
         this.domainName = '';
         this.registry = '';
@@ -251,7 +251,7 @@ export class Enterprise implements IEnterprise, IModel {
     }
 
     getKey(): string {
-        return this.Key;
+        return this.document;
     }
 
     getFilterableFields(): Map<string, any> {

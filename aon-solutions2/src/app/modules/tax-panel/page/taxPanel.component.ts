@@ -243,10 +243,7 @@ export class TaxPanelComponent implements  OnInit {
   modalClick(object: any) {
     // Fila de la tabla que se esta usando
     // Boton que ha sido clickeado
-    // console.log('esto es objetct', object);
     // reference icon click
-    // console.log('esto keybutto',object.keyButton);
-
     switch (object.keyButton) {
       case 'edit':
         this.modalComponentEdit.openDialog(
