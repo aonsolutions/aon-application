@@ -1,6 +1,6 @@
 <span *ngIf="this.menuItem[0].root == true" [matMenuTriggerFor]="menu"></span>
 <mat-menu
-  #menu="matMenu"
+  #menu="matMenu" yPosition="above"
 >
   <span *ngFor="let item of menuItem">
     <span *ngIf="item.children != null">
@@ -21,7 +21,7 @@
   </span>
 </mat-menu>
 
-<mat-menu #submenu="matMenu">
+<mat-menu #submenu="matMenu" class="children-menu-item">
   <div *ngFor="let item of menuItem">
     <div *ngFor="let subitem of item.children">
       <a
