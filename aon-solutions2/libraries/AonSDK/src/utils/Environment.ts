@@ -3,7 +3,7 @@
  */
 
 // true para activar que los datos lleguen desde la api, false para usar datos ficticion locales
-export let APIEnvironment  = true;
+export let APIEnvironment  = false;
 // true activa unos tests simples para ver que los métodos funcionan correctamente, false para desactivarlos
 export let test: boolean   = false;
 
@@ -14,9 +14,9 @@ export let test: boolean   = false;
  */
 
 // URL for test environment
-export const BASE_URL = 'https://aonsolutions.org';
+//export const BASE_URL = 'https://aonsolutions.org';
 
-//export const BASE_URL = 'http://localhost:8080';
+export const BASE_URL = 'http://localhost:8080';
 
 export const GET_SINGLE = 'singleObjectGet'
 export const CREATE_SINGLE = 'singleObjectCreate';
