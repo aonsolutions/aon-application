@@ -17,12 +17,14 @@
   		--fiscal-color: #fb982e;
   		--payroll-color: #33a9a9;
   		--accounting-color: #4f91ff;
+  		--management-color: #7884ca;
   		--configuration-color: #ef6292;
 
   		--main-background-color: #feedec;
   		--help-background-color: #ebf2ff;
   		--fiscal-background-color: #fef3e7;
   		--payroll-background-color: #e8f5f5;
+  		--management-background-color: #edeff8;
   		--accounting-background-color: #ebf2ff;
   		--configuration-background-color: #fdedf2;
   		
@@ -32,11 +34,60 @@
   		--configuration-icon: euro-symbol;
 	}
 	
-	
 	body {
 		background-color: #fff;
 	}
 	
+	.aon-textField,
+	.aon-dropDownOneMenu  {
+		width: max-content;
+		padding: 0px 8px 8px;
+		border-radius: 4px;
+		border: 1px solid rgb(210, 210, 214);
+	}
+	
+	.aon-textField:focus-within,
+	.aon-dropDownOneMenu:focus-within  {
+		border: 1px solid rgb(120, 120, 133);
+	}
+	.aon-textField > div,
+	.aon-dropDownOneMenu > div {
+		top : -8px;
+		background: #fff;
+		width: min-content;
+		position: relative;
+		white-space: nowrap;
+		padding: 0px 2px 0px;
+	}
+	
+	.aon-textField > input,
+	.aon-dropDownOneMenu > select,
+	.aon-textField > input:focus,
+	.aon-dropDownOneMenu > select:focus  {
+		border: none !important;
+		box-shadow: none !important;
+	}
+	
+	.aon-textField > .emptyTitle,
+	.aon-dropDownOneMenu > .emptyTitle {
+		height: 16px;
+		padding: 0px;
+	}
+ 	
+	.aon-dropDownOneMenu > select {
+		width: 95%;
+}
+	}
+	
+	.tbl-tab-search-odd,
+	.tbl-tab-search-even {
+		padding-bottom: 6px;
+	}
+	
+	.aon-search-content-width{
+		width: 100%;
+	}
+
 	.aon-dropDownMenu,
 	.aon_search_panel {
 		background-color: #fff !important;
@@ -423,7 +474,6 @@
 	.aon-portlet-body,
 	.aon-portlet-title {
 		border: none;
-		text-transform: uppercase;
 	}
 	
 	.aon-portlet-title{
