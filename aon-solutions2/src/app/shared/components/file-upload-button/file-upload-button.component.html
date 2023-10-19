@@ -10,6 +10,7 @@
   <input
     multiple
     type="file"
+    (click)="uploadDocument($event)"
     (change)="onFileSelected($event)"
   />
   <ng-content></ng-content>

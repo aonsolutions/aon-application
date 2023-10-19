@@ -19,6 +19,7 @@
       id="uploadBox"
       (getUploadedFiles)="previewDocumentsUpload($event)"
       (click)="checkFolder($event)"
+      [isOpenUploadModal]="isOpenUploadModal"
       *ngIf="!document"
     >
       {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
@@ -33,7 +34,7 @@
         class="cancel"
         (click)="clearDocument()"
       ></app-icon>
-      <div class="document">
+      <div class="document" *ngFor="let file of fileAndFolder">
         <app-icon
           [backgroundColor]="'#FDEDF2'"
           [class]="'pink'"
@@ -41,7 +42,7 @@
           [borderRadius]="'.4rem'"
           shape="picture_as_pdf"
         ></app-icon>
-        <span class="documentName"> {{ document.name }} </span>
+        <span class="documentName"> {{ file['document'].name }} </span>
         <span>{{ currentDate }}</span>
       </div>
     </div>
@@ -51,6 +52,7 @@
       [class]="'pink'"
       [width]="'10rem'"
       [matDialogClose]="fileAndFolder"
+      (click)="uploadDocument()"
     >
       <app-icon shape="aon_upload"></app-icon>
       {{ "COMMON.UPLOAD" | translate }}

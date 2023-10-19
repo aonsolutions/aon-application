@@ -1,9 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CollectionFactory, ICollection } from 'libraries/AonSDK/src/aon';
+import { CollectionFactory } from 'libraries/AonSDK/src/aon';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
 import { WorkingModalComponent } from '../components/working-modal/working-modal.component';
-import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
 import { ModalCreateComponent } from '../../inbox/components/modal-create/modal-create.component';
 import { Router } from '@angular/router';
 
@@ -94,12 +92,6 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {}
 
- // Modal para subir el archivo
-  uploadDocument(event: Event) {
-    event.preventDefault();
-    this.modalComponent.openDialog(UploadModalComponent);
-  }
-  
   openModal(modalName: string) {
     switch (modalName) {
       case 'workingModal':
@@ -113,13 +105,13 @@ export class HomeComponent implements OnInit {
         break;
     }
   }
-  
+
   createQuery() {
     this.modalComponent.openDialog(
       ModalCreateComponent
     );
   }
-  
+
   workingModal() {
     this.modalComponent.openDialog(WorkingModalComponent);
   }

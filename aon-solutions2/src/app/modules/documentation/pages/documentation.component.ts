@@ -379,7 +379,7 @@ export class DocumentationComponent implements OnInit {
     (seria uno varios)
   */
   getMoveFile(folder: string) {
-    console.log(folder);
+    // console.log(folder);
   }
 
   /*

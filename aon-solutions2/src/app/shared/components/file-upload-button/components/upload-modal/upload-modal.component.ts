@@ -1,6 +1,11 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FolderService } from 'src/app/core/services/folder.service';
+import { ResultSnackBarComponent } from '../../../result-snack-bar/result-snack-bar.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { DocumentService } from '../../../../../core/services/document.service';
+import { Factory } from 'libraries/AonSDK/src/aon';
+import { documents } from '../../../../../../../libraries/AonSDK/src/models/Document';
 
 interface Folder {
   value: string;
@@ -8,18 +13,18 @@ interface Folder {
 }
 
 @Component({
-  selector    : 'app-upload-modal',
-  templateUrl : './upload-modal.component.html',
-  styleUrls   : ['./upload-modal.component.scss'],
+  selector: 'app-upload-modal',
+  templateUrl: './upload-modal.component.html',
+  styleUrls: ['./upload-modal.component.scss'],
 })
 export class UploadModalComponent implements OnInit {
-  document        : any;
-  docName         : string = '';
-  folderList      : Folder[] = [];
-  folderSelected  : string = '/a_contabilizar';
+  document: any;
+  docName: string = '';
+  folderList: Folder[] = [];
+  folderSelected: string = '/a_contabilizar';
   folderNoSelected: boolean = false;
-  fileAndFolder   : any[] = [];
-
+  fileAndFolder: any[] = [];
+  isOpenUploadModal: boolean = true;
   currentDate = new Date()
     .toLocaleDateString('es-ES', {
       year: 'numeric',
@@ -28,10 +33,14 @@ export class UploadModalComponent implements OnInit {
     })
     .replace(/(\d+)\/(\d+)\/(\d+)/, '$1-$2-$3');
 
+  objectFactory = new Factory();
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<UploadModalComponent>,
-    private folderService: FolderService
+    private folderService: FolderService,
+    private documentService: DocumentService,
+    private snackBar: MatSnackBar
   ) {
     // Guardamos las carpetas en un array para mostrarlas en el select
     this.folderService.getFolderList().then((listFolders) => {
@@ -68,59 +77,43 @@ export class UploadModalComponent implements OnInit {
 
   // Guardamos el documento y la carpeta seleccionada
   async previewDocumentsUpload(event: any) {
-    const files =  event;
-    
-    Array.from(files).forEach(file => { 
+    const files = event;
+
+    Array.from(files).forEach((file) => {
       this.document = file;
-      this.docName  = this.document['name'];
-      
+      this.docName = this.document['name'];
       this.fileAndFolder.push({
         document: this.document,
-        folder  : this.folderSelected,
+        folder: this.folderSelected,
       });
     });
   }
 
   // Limpiamos el documento subido
   clearDocument() {
+    this.fileAndFolder = [];
     this.document = null;
     this.docName = '';
   }
-  
-  /*
-  // Acción que realiza al cerrar el modal
-  functionHome: any = (result: any) => this.afterModalClosed(result);
 
-  // Función que se ejecuta al cerrar el modal
-  afterModalClosed(result: any) {
-    // Si se ha seleccionado un documento
-    if (result) {
-      // Guardamos los datos del documento
-      const fileName = result[0].document.name;
-      const fileType = result[0].document.type;
-      const fileSize = result[0].document.size;
-      const path = result[0].folder;
-
-      // Creamos el documento
-      this.document = this.objectFactory.createDocument(
-        result[0].document,
-        fileName,
-        fileSize,
-        fileType,
-        new Date(),
-        path
-      );
-      const file = result[0].document;
-
-      // Subimos el documento
-      this.documentService
-        .uploadDocument(this.document, file)
-        .then((response) => {
+  // Guardamos los documentos y la carpeta seleccionada
+  uploadDocument() {
+    //Si se ha seleccionado un documento
+    if (this.fileAndFolder.length > 0) {
+      // Guardamos el documento en la carpeta seleccionada
+      this.fileAndFolder.forEach((file) => {
+        console.log(file.document);
+        console.log(file.folder);
+        this.documentService.uploadDocument(file.folder, file.document)
+        .then(() => {
           this.uploadCompletedModal();
         })
-        .catch((error) => {
+        .catch((err) => {
+          console.log('Error: ', err);
           this.uploadErrorModal();
         });
+      });
+      this.closeModal();
     }
   }
 
@@ -157,5 +150,4 @@ export class UploadModalComponent implements OnInit {
       duration: 3000,
     });
   }
-*/
 }
