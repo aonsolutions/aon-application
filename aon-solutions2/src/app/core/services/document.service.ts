@@ -41,6 +41,9 @@ export class DocumentService extends CommonService {
 
   async downloadDocument(documentData: IDocument): Promise<void> {
     let response: Blob = (await this.getDocumentFile(documentData))
+    if(response.type == ''){
+      response = new Blob([response], {type: 'application/pdf'});
+    }
     const blobUrl = URL.createObjectURL(response);
     const a = document.createElement('a')
     a.href = blobUrl
