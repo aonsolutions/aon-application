@@ -154,7 +154,9 @@ export class InboxviewComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    this.checkOpenModal();
+    this.optionsService.optionsUpdated.subscribe(() => {
+      this.checkOpenModal();
+    });
   }
 
   private checkOpenModal(): void {
