@@ -460,6 +460,31 @@ export class AonDesktop extends AonElement {
 			payrollCard.firstChild.style.margin = '0';
 		}
 
+		if(this.getDur().isBank()) {
+			// Bancos
+			let bankCard = new AonCard();
+			bankCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			bankCard.id = "bank";
+			bankCard.title = "Bancos";
+			bankCard.setApp(Apps.ACCOUNTING);
+			bankCard.addEventListener(EVENT.CLICK_TITLE, () => {
+				this.appSelection(Apps.ACCOUNTING.app);
+				this.isElementLoaded("#aonAccountingSidenavbanksnordigen")
+					.then(selector => {
+						selector.click();
+					});
+			});
+			cardsPanel.appendChild(bankCard);
+			bankCard.getCardTitle1().style.cursor = 'pointer';
+			
+			let aonBankCard = new AonBankCard(company.registry);
+			bankCard.setContent(aonBankCard);
+			
+			bankCard.firstChild.style.minHeight = "420px";
+			bankCard.firstChild.children.item(1).style.height = "315px";
+			bankCard.firstChild.style.margin = '0';
+		}
+
 		if(this.getDur().isFiscal()) {
 			// Impuestos
 			let fiscalCard = new AonCard();
@@ -487,31 +512,6 @@ export class AonDesktop extends AonElement {
 			fiscalCard.firstChild.style.minHeight = "420px";
 			fiscalCard.firstChild.children.item(1).style.height = "315px";
 			fiscalCard.firstChild.style.margin = '0';
-		}
-
-		if(this.getDur().isBank()) {
-			// Bancos
-			let bankCard = new AonCard();
-			bankCard.classList.add(CSS.AON_DASHBOARD_CARD);
-			bankCard.id = "bank";
-			bankCard.title = "Bancos";
-			bankCard.setApp(Apps.ACCOUNTING);
-			bankCard.addEventListener(EVENT.CLICK_TITLE, () => {
-				this.appSelection(Apps.ACCOUNTING.app);
-				this.isElementLoaded("#aonAccountingSidenavbanksnordigen")
-					.then(selector => {
-						selector.click();
-					});
-			});
-			cardsPanel.appendChild(bankCard);
-			bankCard.getCardTitle1().style.cursor = 'pointer';
-			
-			let aonBankCard = new AonBankCard(company.registry);
-			bankCard.setContent(aonBankCard);
-			
-			bankCard.firstChild.style.minHeight = "420px";
-			bankCard.firstChild.children.item(1).style.height = "315px";
-			bankCard.firstChild.style.margin = '0';
 		}
 
 		if(this.getDur().isMessengerManager() || this.getDur().isMessenger()) {

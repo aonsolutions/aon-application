@@ -97,7 +97,7 @@ export class AonBankCard extends AonElement {
       row.style.justifyContent = "space-between";
       row.style.width = "100%";
       row.style.borderBottom = "1px solid #ddd";
-      row.style.padding = "1rem 0";
+      row.style.padding = ".8rem 0";
 
       let leftContent = this.createElement(TAG.DIV);
       leftContent.className = CSS.AON_FLEX;
@@ -152,14 +152,12 @@ export class AonBankCard extends AonElement {
   }
 
   formatNumber(number){
-    let numberFormat = number && number > 0 ? number : 9999999.99; 
-    return formatNumber(numberFormat, 2, "EUR");
+    return !number || number == 0 ? "No disponible" : formatNumber(number, 2, "EUR");
   }
 
   getTotal(banks){
     let total = banks.reduce((t, bank) => t + bank.balance, 0);
-    total = total > 0 ? total : 9999999.99;
-    return formatNumber(total, 2, "EUR");
+    return total > 0 ? formatNumber(total, 2, "EUR") : "No disponible";
   }
 
 }
