@@ -46,10 +46,9 @@ export class TopBarComponent implements OnInit, OnChanges {
     ).subscribe( result => {
       this.menuItem = [
         {root:true, text: result['HEADER.EDIT_PROFILE'] , icon:'person_pin' , colorIcon:'black', routerlink: 'edit-profile'},
-        // {root:true, text: result['HEADER.HELP']         , icon:'help'       , colorIcon:'black'},
         {root:true, text: result['HEADER.LANGUAGE'], icon:'language',  colorIcon:'black', children:[
-          {root:false, text: result['LANGUAGE.ENGLISH'] , click:() => this.selectLanguage('en')},
           {root:false, text: result['LANGUAGE.SPANISH'] , click:() => this.selectLanguage('es')},
+          {root:false, text: result['LANGUAGE.ENGLISH'] , click:() => this.selectLanguage('en')},
         ]},
         {root:true, text: result['HEADER.LOGOUT']       , icon:'exit_to_app', colorIcon:'black', click:() => this.logout()},
       ]
