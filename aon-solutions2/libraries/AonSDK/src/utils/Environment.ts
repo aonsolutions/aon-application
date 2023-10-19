@@ -14,7 +14,7 @@ export let test: boolean   = false;
  */
 
 // URL for test environment
-// export const BASE_URL = 'https://aonsolutions.org';
+//export const BASE_URL = 'https://aonsolutions.org';
 
 export const BASE_URL = 'http://localhost:8080';
 
