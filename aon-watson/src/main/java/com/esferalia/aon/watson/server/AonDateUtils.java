@@ -42,6 +42,7 @@ public class AonDateUtils {
 	public static final String SIMPLE_DATE_FORMAT4 = "yyyy-MM-dd";
 	public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	public static final String DATE_TIME_FORMAT_AUX = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+	public static final String DATE_TIME_FORMAT_2 = "dd/MM/yyyy HH:mm:ss";
 
 	public static final String TIME_FORMAT = "HH:mm";
 	
@@ -1120,6 +1121,7 @@ public class AonDateUtils {
 		if(date == null) return null;
 		Date d = parse(date, DATE_TIME_FORMAT);
 		if(d == null) d = parse(date, DATE_TIME_FORMAT_AUX);
+		if(d == null) d = parse(date, DATE_TIME_FORMAT_2);
 		return d;
 	}
 	

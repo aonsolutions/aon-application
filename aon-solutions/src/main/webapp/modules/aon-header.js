@@ -10,7 +10,7 @@ import './company/aon-desktop.js';
 import './company/aon-mobile-desktop.js';
 import './company/aon-parent.js';
 import './notification/aon-notification-icon.js';
-import { CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { AonApiDoc } from './dev/aon-api-doc.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonComponentsDoc } from './dev/aon-components-doc.js';
@@ -131,7 +131,7 @@ export class AonHeader extends AonElement {
 					<aon-search-box id="aonHeaderSearchBox"></aon-search-box>
 				</span>
 
-				<div style="display: flex; align-items: center;">
+				<div id="aonHeaderButtons" style="display: flex; align-items: center;">
 
 					<span id="aonHeaderCompany" style="display:none;">
 						<span id="aonHeaderCompanyName"> </span>
@@ -164,6 +164,16 @@ export class AonHeader extends AonElement {
 		this.buildLogo();
 
 		if(!this.isMobile()) {
+			if(!LS.isNewTheme()) {
+				let aonHeaderButtons = this.getElement('aonHeaderButtons');
+				aonHeaderButtons.style.position = 'absolute';
+				aonHeaderButtons.style.right = '20px';
+ 		 		aonHeaderButtons.style.top = '10px';
+
+				let aonHeaderSearch2 = this.getElement('aonHeaderSearch');
+				aonHeaderSearch2.style.marginLeft = '33px';
+			}
+
 			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
 				this.rootPanelHtml(this.isMobile()
@@ -193,6 +203,7 @@ export class AonHeader extends AonElement {
 					// };
 					
 					let language = {
+						id: CONSTANT.LANGUAGE,
 						name: MSG.LANGUAGE,
 						icon: 'language',
 						options: [{
@@ -454,6 +465,8 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderSearch = this.getElement(this.AON_HEADER_SEARCH);
 		aonHeaderSearch.style.display = company ? 'none' : 'flex';
+		if(!LS.isNewTheme())
+			aonHeaderSearch.style.marginLeft = '33px';
 
 		let aonHeaderHome = this.getElement(this.AON_HEADER_HOME);
 		aonHeaderHome.style.display = company ? 'block' : 'none';

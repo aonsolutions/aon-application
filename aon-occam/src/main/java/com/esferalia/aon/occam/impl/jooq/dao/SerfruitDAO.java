@@ -124,7 +124,8 @@ public class SerfruitDAO {
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(SALES.WORKPLACE))
 			.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(SALES.SHIPPING_ADDRESS))
-			.where(SalesDAO.SALES_PROPERTIES.getConditions(filter));
+			.where(SalesDAO.SALES_PROPERTIES.getConditions(filter))
+			.and(ELABORATION.STATUS.eq(ElaborationStatus.PENDING.value()));
 	}
 	
 
@@ -132,10 +133,9 @@ public class SerfruitDAO {
 		for (DeliveryDetail detail : delivery.getDetails()) {
 			Item item = detail.getItem();
 			item.setId(null);
-			
-			String desc = !AonStringUtils.isBlank(item.getDescription()) ? item.getDescription() : item.getProduct().getName();
-			item.setDescription(desc + " #" + item.getSerialNumber());
+			item.setDescription(item.getProduct().getName() + " #" + item.getSerialNumber());
 			item.setBarcode(null);
+			if(item.getSerialDate() == null) item.setSerialDate(new Date());
 			if(item.getProduct().isPerishable()) {
 				Date expireDate = AonDateUtils.addDays(item.getSerialDate(), 
 					item.getProduct().getDaysToExpire() != null ? item.getProduct().getDaysToExpire() : 0);
@@ -168,6 +168,7 @@ public class SerfruitDAO {
 					elaboration.setStatus(ElaborationStatus.CLOSED);
 					ElaborationDAO.save(ctx, elaboration);
 				}
+				
 				return sd.getSales().getId();
 			}).distinct().forEach(id -> {
 				Sales ss = SalesDAO.getFull(ctx, f -> f.getIdProperty().eq(id));
