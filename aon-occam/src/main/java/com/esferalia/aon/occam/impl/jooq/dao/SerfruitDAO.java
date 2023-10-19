@@ -124,7 +124,8 @@ public class SerfruitDAO {
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(SALES.WORKPLACE))
 			.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(SALES.SHIPPING_ADDRESS))
-			.where(SalesDAO.SALES_PROPERTIES.getConditions(filter));
+			.where(SalesDAO.SALES_PROPERTIES.getConditions(filter))
+			.and(ELABORATION.STATUS.eq(ElaborationStatus.PENDING.value()));
 	}
 	
 
@@ -136,6 +137,7 @@ public class SerfruitDAO {
 			String desc = !AonStringUtils.isBlank(item.getDescription()) ? item.getDescription() : item.getProduct().getName();
 			item.setDescription(desc + " #" + item.getSerialNumber());
 			item.setBarcode(null);
+			if(item.getSerialDate() == null) item.setSerialDate(new Date());
 			if(item.getProduct().isPerishable()) {
 				Date expireDate = AonDateUtils.addDays(item.getSerialDate(), 
 					item.getProduct().getDaysToExpire() != null ? item.getProduct().getDaysToExpire() : 0);
