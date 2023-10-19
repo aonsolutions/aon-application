@@ -6,6 +6,7 @@ import { ErrorResponse } from "../utils/Response";
 import { GET_MULTIPLE, GET_METHOD } from "../utils/Environment";
 
 export class Bank implements IBank, IModel  {
+    private active: boolean;
     private swiftBic: string;
     private iban: string;
     private lastUpdate: Date;
@@ -16,7 +17,7 @@ export class Bank implements IBank, IModel  {
     private logo: string;
     protected apiObject: any;
 
-    constructor(name?: string, total?: number, logo?: string, swift?: string, iban?: string, lastUpdate?: Date, syncStatus?: string) {
+    constructor(name?: string, total?: number, logo?: string, swift?: string, iban?: string, lastUpdate?: Date, syncStatus?: string, active?: boolean) {
         this.name = name || '';
         this.total = total || 0;
         this.logo = logo || '';
@@ -25,6 +26,23 @@ export class Bank implements IBank, IModel  {
         this.iban = iban || '';
         this.lastUpdate = lastUpdate || new Date();
         this.syncStatus = syncStatus || '';
+        this.active = false;
+    }
+    public get Active(): boolean {
+        return this.active;
+    }
+
+    public set Active(value: boolean) {
+        this.active = value;
+    }
+
+    public getActive(): boolean {
+        return this.active;
+    }
+
+    public setActive(value: boolean): Bank {
+        this.active = value;
+        return this;
     }
 
     public get Iban(): string {
@@ -169,6 +187,7 @@ export class Bank implements IBank, IModel  {
     getFilterableFields(): Map<string,any> {
         let map = new Map<string, any>();
         map.set('name', this.Name);
+        map.set('active', this.Active);
         map.set('total', this.Total);
         map.set('swift', this.SwiftBic);
         map.set('iban', this.Iban);
@@ -180,6 +199,7 @@ export class Bank implements IBank, IModel  {
     getSortableFields(): Map<string,any> {
         let map = new Map<string, any>();
         map.set('name', this.Name);
+        map.set('active', this.Active);
         map.set('total', this.Total);
         map.set('swift', this.SwiftBic);
         map.set('iban', this.Iban);
@@ -218,6 +238,7 @@ export class ApiBank extends Bank implements IApiModel {
         bank.Logo = ''
         bank.Name = data.alias ? data.alias : ''
         bank.Total = data.balance ? data.balance : 'N/D'
+        bank.Active = data.active;
         return bank;
     }
 }
