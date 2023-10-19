@@ -45,10 +45,13 @@ export class AonSearchBox extends AonElement {
 	}
 
 	connectedCallback () {
+		this.style.width = "100%";
+
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aon-search-div';
 		div.style.height = '40px';
-		div.style.minWidth = '400px';
+		div.style.borderRadius = '20px';
+		div.style.display = "flex";
 		if(!LS.isNewTheme()) {
 			div.style.backgroundColor = '#eaf1fb';
 			div.style.borderRadius = '10px';
@@ -71,7 +74,8 @@ export class AonSearchBox extends AonElement {
 		input.title = MSG.SEARCH;
 		input.className = LS.isNewTheme() ? CSS.AON_SEARCH_BOX_BETA : CSS.AON_SEARCH_BOX;
 		if(!LS.isNewTheme()) input.style.backgroundColor = '#eaf1fb';
-		input.style.width = '340px';
+		input.style.width = '100%';
+		input.style.borderRadius = '20px';
 		div.appendChild(input);
 
 		this.setAttribute('opened', true);

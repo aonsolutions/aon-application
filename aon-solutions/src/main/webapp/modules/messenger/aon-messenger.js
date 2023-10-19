@@ -670,49 +670,49 @@ export class AonMessenger extends AonElement {
 	addBackgroundSidenav(filter){
 		if(filter){
 			const application = this.getApplication();
-			application.removeBackgroundSidenavAll();
+			application.removeBackgroundSidenavAll(MESSENGER.color);
 			if(this.cau){
-				application.addBackgroundSidenav(filter.document ? MATERIAL_ICONS.ALL_INBOX: MATERIAL_ICONS.MOVE_TO_INBOX);
+				application.addBackgroundSidenav(filter.document ? MATERIAL_ICONS.ALL_INBOX: MATERIAL_ICONS.MOVE_TO_INBOX, MESSENGER.color);
 			} else {
 				
 				if(filter.workgroup){
-					application.addBackgroundSidenav(filter.workgroup);
+					application.addBackgroundSidenav(filter.workgroup, MESSENGER.color);
 				} else if(filter.workgroups && filter.workgroups.includes("all")){
-					application.addBackgroundSidenav(MATERIAL_ICONS.GROUPS);
+					application.addBackgroundSidenav(MATERIAL_ICONS.GROUPS, MESSENGER.color);
 				} 
 
 				if(filter.sender && filter.task_holder){
-					application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
+					application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX, MESSENGER.color);
 				} else if(filter.sender){
-					application.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX);
+					application.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX, MESSENGER.color);
 				} else if(filter.task_holder){
-					application.addBackgroundSidenav(MATERIAL_ICONS.MOVE_TO_INBOX);
+					application.addBackgroundSidenav(MATERIAL_ICONS.MOVE_TO_INBOX, MESSENGER.color);
 				} else {
-					application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
+					application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX, MESSENGER.color);
 				}
 			}
 	
 			switch (filter.status){
 				case TASK_STATUS.IN_PROGRESS:
-					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS.name, MESSENGER.color);
 					break;
 				case TASK_STATUS.FINISHED:
-					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_CLOSE.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_CLOSE.name, MESSENGER.color);
 					break;
 				case TASK_STATUS.DELETED:
-					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.name, MESSENGER.color);
 					break;
 				default:
-					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_OPEN.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_OPEN.name, MESSENGER.color);
 					break;
 			}
 
 			if(filter.workgroup){
-				application.addBackgroundSidenav(filter.workgroup);
+				application.addBackgroundSidenav(filter.workgroup, MESSENGER.color);
 			}
 
 			if(filter.tag){
-				application.addBackgroundSidenav(filter.tag);
+				application.addBackgroundSidenav(filter.tag, MESSENGER.color);
 			}
 		}
 	}
@@ -991,7 +991,7 @@ export class AonMessenger extends AonElement {
 			}
 			if(aonView){
 				aonView.id = view;
-				if(filter) aonView.setFilter(filter);
+				if(filter){ aonView._filter = filter; } 
 				if(data) aonView.data = data;
 				this.getApplication().setContent(aonView);
 			}

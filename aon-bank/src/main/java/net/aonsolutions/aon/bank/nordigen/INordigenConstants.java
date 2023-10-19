@@ -1,4 +1,4 @@
-package nordigen;
+package net.aonsolutions.aon.bank.nordigen;
 
 public interface INordigenConstants {
 	public static final String ACCEPT_PARAM = "accept";

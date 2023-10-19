@@ -312,6 +312,7 @@
   max-width: 200px;
   max-height: 60px;
   padding: 5px;
+  cursor: pointer;
 }
 
 .aonParentLogo {
@@ -450,18 +451,24 @@
 
 .aonHeader {
   background-color: var(--aonWhite);
-  padding: 0 !important;
   margin: 0 !important;
   border-bottom: 1px solid #ddd;
   color: #5f6368;
   height: 60px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
 }
 
 .aonHeaderBeta {
-  padding: 0 !important;
   margin: 0 !important;
   color: #5f6368;
   height: 60px;
+  width: 100%;
+  display: flex;
+  /*justify-content: space-between;*/
+  padding: 0 1rem;
 }
 
 .aonHeaderButton {
@@ -488,6 +495,30 @@
 
 .aonLi {
   border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  height: 72px;
+  align-items: center;
+  display: flex;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: .04em;
+  line-height: 1;
+  min-height: 48px;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  padding: 16px;
+  color: rgba(0,0,0,.87);
+  overflow: hidden;
+}
+
+.aonLiBeta {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin: 10px;
   cursor: pointer;
   height: 72px;
   align-items: center;
@@ -726,6 +757,14 @@
   overflow: auto;
 }
 
+.aonCompanyDiv {
+  width: 500px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .aonCompanyList {
   margin: 0px;
   padding: 0px;
@@ -909,7 +948,6 @@
 }
 
 .aonSearchBox {
-  position: absolute;
   height: 40px;
   border: none;
   -webkit-appearance: none;
@@ -918,7 +956,6 @@
 }
 
 .aonSearchBoxBeta {
-  position: absolute;
   height: 38px;
   border: none;
   -webkit-appearance: none;
@@ -941,14 +978,14 @@
   border-radius: 10px;
 }
 
-aon-card{
+.aonDashboardCard{
   width: 100%;
 }
 
 .aonCard {
   border: 1px solid #ebebeb;
   border-radius: 5px;
-  margin: 0;
+  margin: 10px;
   min-width: 250px;
   padding: 15px 22px;
   box-shadow: rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px, rgb(0 0 0 / 12%) 0px 1px 3px;
@@ -1004,14 +1041,15 @@ aon-card{
   padding-top: 2rem;
   font-weight: 500;
 
-  opacity: 0;
-  transform: translateY(30%);
+  /*opacity: 0;
+  transform: translateY(30%);*/
   transition: 0.3s ease-in;
 }
 
 .aonCard:hover .aonCardTotal{
-  transform: translateY(0);
-  opacity: 1;
+  /*transform: translateY(0);
+  opacity: 1;*/
+  font-size: 1.8rem;
 }
 
 .aonDialog {
@@ -1618,6 +1656,43 @@ label.rating:hover {
   padding: revert;
 }
 
+.aonMessengerCardButton{
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: .5rem;
+  border-radius: 5px;
+  transition: linear;
+}
+
+.aonMessengerCardButton:hover{
+  border: 1px solid rgb(246, 101, 90);
+}
+
+.aonMessengerCardRow{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border-bottom: 1px solid rgb(221, 221, 221);
+  padding: 1rem 0px;
+  cursor: pointer;
+}
+
+.aonMessengerCardRow:hover{
+  border-top: 1px solid rgb(246, 101, 90);
+  border-bottom: 1px solid rgb(246, 101, 90);
+}
+
+.aonBadge{
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  padding: .5rem;
+  color: white;
+  text-align: center;
+  background-color: rgba(246, 101, 90, 0.7);
+  font-weight: 600;
+}
 
 
 
@@ -1637,12 +1712,14 @@ label.rating:hover {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-left: 10px;
 }
 
 .aonFastAccess{
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-left: 10px;
 }
 
 #docUploadDiv, #factUploadDiv{
@@ -1659,6 +1736,13 @@ label.rating:hover {
   justify-content: center;
 }
 
+.aonEllipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 14rem;
+  white-space: nowrap;
+}
+
 aon-access-card{
   width: 100%;
 }
@@ -1673,7 +1757,6 @@ aon-access-card{
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
-
   .aonUploadPanel, .aonFastAccess{
       flex-direction: row;
   }
@@ -1681,18 +1764,31 @@ aon-access-card{
 
 /* Medium devices (landscape tablets, 768px and up) */
 /* @media only screen and (min-width: 768px) {} */
+@media only screen and (min-width: 768px) {
+  .aonEllipsis{
+      max-width: 20rem;
+  }
+}
 
 /* Large devices (laptops/desktops, 992px and up) */
-@media only screen and (min-width: 850px) {
-  aon-card{
+@media only screen and (min-width: 854px) {
+  #messengerCard{
+    min-width: 42.2rem;
+  }
+
+  .aonDashboardCard{
       width: auto;
-      min-width: 350px;
+      min-width: 22rem;
   }
 
   aon-access-card{
     width: auto;
-    min-width: 350px;
-}
+    min-width: 22rem;
+  }
+
+  .aonEllipsis{
+    max-width: 26rem;
+  }
 }
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */

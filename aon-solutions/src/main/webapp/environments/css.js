@@ -122,6 +122,14 @@ export const AON_LIST_GROUP_ITEM = 'aonListGroupItem';
 export const AON_DESKTOP_MENU_CLASSIC_OPTION = 'aonDesktopMenuClassicOption';
 export const AON_DESKTOP_MENU_CLASSIC_OPTION_AON = 'aonDesktopMenuClassicOptionAon';
 export const AON_NOTIFICATION_CONTENT = 'aonNotificationContent';
+export const AON_NOTIFICATION_CONTENT_BETA = 'aonNotificationContentBeta';
+export const AON_ELLIPSIS = 'aonEllipsis';
+export const AON_MESSENGER_CARD_BUTTON = 'aonMessengerCardButton';
+export const AON_MESSENGER_CARD_ROW = 'aonMessengerCardRow';
+export const AON_BADGE = 'aonBadge';
+export const AON_DASHBOARD_CARD = 'aonDashboardCard';
+
+export const AON_COMPANY_DIV = 'aonCompanyDiv';
 
 // aon-figma.css
 

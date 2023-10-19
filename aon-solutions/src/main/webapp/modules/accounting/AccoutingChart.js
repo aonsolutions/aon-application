@@ -195,15 +195,10 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
           hAxis: { title: "Mes" },
           seriesType: "bars",
           series: { 2: { type: "line" } },
-          height: isMobile ? window.innerHeight / 2 : window.innerWidth / 3,
-          legend: "none",
-          // legend: {
-          //   position: position,
-          //   alignment: "center",
-          // },
+          height: isMobile ? window.innerHeight / 2 : (leyend ? window.innerWidth / 3 : 300)
         };
 
-        divCombo.style.width = isMobile ? "100%" : "70%";
+        divCombo.style.width = isMobile ? "100%" : (leyend ? "70%" : "auto");
         setStyles(div, {display : "flex", flexWrap : "wrap", justifyContent : "center", alignItems : "center"});
         div.appendChild(divCombo);
         chart = new google.visualization.ComboChart(divCombo);
@@ -218,8 +213,11 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
         
         chart.draw(table, options);
 
-        let mobileLegend = UTILS.getMobileLegend(accounts, isMobile);
-        div.appendChild(mobileLegend);
+        if(leyend){
+          let mobileLegend = UTILS.getMobileLegend(accounts, isMobile);
+          div.appendChild(mobileLegend);
+        }
+        
         if (isMobile) {
           let firstChild = divCombo.querySelector(":nth-child(1)");
           if (firstChild){
@@ -762,8 +760,10 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
       //Adding listener
       google.visualization.events.addListener(chart, "select", listener);
 
-      // let legend = getColLegend(isMobile);
-      // div.appendChild(legend);
+      if(leyend){
+        let legend = getColLegend(isMobile);
+        div.appendChild(legend);
+      }      
     }
 
     function getColLegend(isMobile) {

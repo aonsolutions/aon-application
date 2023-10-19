@@ -1,6 +1,6 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { isEmptyObject, serializeForm, waitEl, disabledForm, formatNumber } from "../../../services/utils.js";
-import { getAttach, openFileBase64, setModelStatus } from "../../../services/service.js";
+import { getAttach, openFileBase64, setModelStatus, getAeatCertificates } from "../../../services/service.js";
 import { CONST_FISCAL } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
@@ -16,6 +16,36 @@ import { FISCAL } from "../../../services/app.js";
 // import { Attach } from "../../../models/Attach.js";
 
 export class AonTax extends AonElement {
+	
+  ERROR_TEMPLATE_START = "<html>"
+		+ "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>"
+		+ "<body>";
+  ERROR_TEMPLATE_AEAT = "<div style=\""
+		+ "font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
+		+ "font-weight: bold;"
+		+ "margin-top: 20px;"
+		+ "\">"
+		+ "La Agencia Tributaria devolvió los siguientes mensajes de error, en la presentación del modelo:"
+		+ "</div>";
+  ERROR_TEMPLATE_BEFORE = "<html>"
+		+ "<ul style=\""
+		+ "background-attachment: scroll;"
+		+ "background-clip: border-box;"
+		+ "background-position: 3px 2px;"
+		+ "background-repeat: no-repeat;"
+		+ "background-size: auto auto;"
+		+ "background-color: #ffd0d0;"
+		+ "border: solid black 1px;"
+		+ "font-size: small;"
+		+ "font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
+		+ "font-weight: bold;"
+		+ "border: solid black 1px;"
+		+ "padding-top: 20px;"
+		+ "padding-bottom: 20px;"
+		+ "\">";
+  ERROR_TEMPLATE_AFTER = "</ul>";
+  ERROR_TEMPLATE_END = "</body></html>";	
+	
   TABLE_ID;
   DIALOG_CHECKBOX;
   searchFilter;
@@ -166,12 +196,17 @@ export class AonTax extends AonElement {
     return formatNumber(total, 2, "EUR");
   }
 
-  openDialog(resp) {
+  openDialog(resp) {	
     const dialog = this.applicationEl.getDialog();
-    dialog.clear();
+    dialog.clear();    
     if (!this.isMobile()){ 
       dialog.width = "500px";
     }
+    
+    if (dialog.getButtonAccept())
+       dialog.getButtonAccept().remove();
+    if (dialog.getButtonCancel())
+       dialog.getButtonCancel().remove();
 
     let div = this.builDialog(resp);
     dialog.setContent(div);
@@ -269,6 +304,14 @@ export class AonTax extends AonElement {
     aonInputNrc.disabled = true;
     if(resp.nrc) aonInputNrc.value = resp.nrc;
     divNrc.appendChild(aonInputNrc);
+    
+    const aonSelect2 = new AonSelect();
+    aonSelect2.name = "certi";
+    aonSelect2.id = "certi";
+    aonSelect2.title = "Certificado para la Presentación";
+    aonSelect2.hidden = (resp.presModelAuto==0 || "CUSTOMER_CHECK"!=resp.status);
+    form.appendChild(aonSelect2);
+    
     //---END FORM---
 
     return div;
@@ -294,6 +337,23 @@ export class AonTax extends AonElement {
     })
 
     div.appendChild(checkBox);
+    
+    // Si esta configurado presentacion automatica del modelo, mostrar texto informandolo (tambien se muestra si está en entorno de pruebas de la AEAT)
+	if (resp.presModelAuto==1) {
+	    const divTextPres =  this.createElement(TAG.DIV);
+	    divTextPres.style.marginTop = 6; 
+	    divTextPres.style.textAlign = "center";
+	    divTextPres.style.fontWeight= "bold";
+	    if (resp.testEnvironment) {	       
+	       divTextPres.innerHTML = '<span style="color:red;">ENTORNO DE PRUEBAS DE LA AEAT</span><br>Si acepta los datos, el modelo se presentará automaticamente.';
+	    }
+	    else { 
+	       divTextPres.innerHTML = '<span style="color:red;">PRESENTACION DEL MODELO</span><br>Si acepta los datos, el modelo se presentará automaticamente.';
+	    }
+	    div.appendChild(divTextPres);
+	     
+    }    
+    
     divMain.appendChild(div);
 
     const buttonCancel = dialog.addCancelAction(() =>{
@@ -318,7 +378,7 @@ export class AonTax extends AonElement {
         if(!value) return false;
       } 
       this.save(resp).then(()=>{
-        dialog.close();
+        dialog.close();        
       });
     });
 
@@ -351,6 +411,21 @@ export class AonTax extends AonElement {
         }
       }
     })
+   
+    const certi = this.getElement('certi');    
+    getAeatCertificates().then(certs => {		
+			certi.setOptions(certs.map(s => {
+				return {
+				  value: s.id,
+				  name: s.name
+				}
+			  }));
+			// Si solo hay un certificado, se muestra ese seleccionado por defecto			  
+			if (certi.getOptions().length == 1) {
+				certi.value = certi.getOptions()[0].value;
+			}
+		});
+    
   }
 
   replaceAllPoint(str){
@@ -361,16 +436,23 @@ export class AonTax extends AonElement {
       let banks = this.getApplicationParent().BANKS;
       let formObj = serializeForm(this.getElement(`${this.id}Form`));
       if(!isEmptyObject(banks) && formObj.iban){
-        const bankObj = banks.find(bank =>  this.replaceAllPoint(bank.bankAccount) === formObj.iban);
+        const bankObj = banks.find(bank => this.replaceAllPoint(bank.bank_account) == formObj.iban);
         if(bankObj){
           formObj["bankAlias"] = bankObj.alias;
-          formObj["bankBic"] = bankObj.bic;
-        }
-      }
+          formObj["bic"] = bankObj.bic;
+        } 
+      } 
+      
+      const nrc = this.getElement('nrc');
+      formObj["nrc"] = nrc.value;      
+      
+      const certi = this.getElement('certi');
+      formObj["certi"] = certi.value;
+      
       return formObj;
   }
 
-  visibleFields({type}){
+  visibleFields({type,status}){
     if(type){
       let iban = this.getElement("iban");
       let divNrc = this.getElement("divNrc");
@@ -378,7 +460,8 @@ export class AonTax extends AonElement {
       let nrcHidden  = true;
       switch(type){
         case CONST_FISCAL.DEPOSIT:
-          ibanHidden = nrcHidden = false;
+          // ibanHidden = false; // El IBAN no se necesita en el ingreso, solo se necesita el NRC 
+          nrcHidden = "CUSTOMER_CHECK"!=status;
         break;
         case CONST_FISCAL.BANK:
         case CONST_FISCAL.PAYBACK:
@@ -401,17 +484,106 @@ export class AonTax extends AonElement {
   }
 
   async save(resp){
+	  
     this.applicationEl.startLoading();
     try {
+		
       const form = {...resp,...this.getFormValues()};
       this.clearModels();
       await setModelStatus(form);
-      await this.getTable();
+      await this.getTable();      
       this.showMessage();
+      
     } catch (error) {
+      
       console.error(error);
-      this.showToast(error);
-    }
+          
+      // Controlar los posibles errores    
+      let errorJson = JSON.parse(error);      
+      if (errorJson) {
+		  if (errorJson.class_name == "AonApiAeatError") {
+			  
+			  // La Agencia Tributaria ha devuelto errores en la presentación del modelo, mostramos los errores
+			  
+			  let errorMessages = JSON.parse(errorJson.message);
+			  
+			  if (this.isMobile()) {
+				  
+				  // MOBILE: Se muestran los mensajes de error escondiendo la tabla de modelos
+				  
+				  const aonTable = this.getElement(this.TABLE_ID);
+				  if (aonTable) {
+					  aonTable.hidden = true;  
+				  }
+				  
+				  const aeatErrorsDiv = this.createElement(TAG.DIV);
+
+				  let text = '<span style="margin: 5px;color:red;font-weight: bold;font-size: medium;text-align: center; display: block">PRESENTACION DEL MODELO<br>Mensajes de Error devueltos por la Agencia Tributaria<br><hr></span>' +
+         					  '<ul style="margin:5px;color:black;font-size: small;text-align: left;">';
+
+				  errorMessages.respuesta.errores.forEach((res) => {
+					  text = text + `<li>${res}</li>`;
+				  });
+
+				  text = text + '</ul>';
+
+				  aeatErrorsDiv.innerHTML = text;
+				  this.appendChild(aeatErrorsDiv);
+				  
+			  } else {
+				  
+				  // DESKTOP: Se muestran los mensajes de error en una pestaña nueva del navegador
+			  
+			  	  let text = this.ERROR_TEMPLATE_START + 
+			                 this.ERROR_TEMPLATE_AEAT + 
+			                 this.ERROR_TEMPLATE_BEFORE;
+			                 
+			      errorMessages.respuesta.errores.forEach((res) => {
+					  text = text + "<li>" + res + "</li>";
+				  }); 	  
+			                 
+			      text = text + this.ERROR_TEMPLATE_AFTER +
+			                    this.ERROR_TEMPLATE_END;
+			      let file = new Blob([text], { type: "text/html" });
+      			  let url = URL.createObjectURL(file);
+      	          window.open(url, '_blank');
+      	          await this.getTable();
+				  
+			  }
+			  		  
+		  } else if (errorJson.class_name == "AonApiAeatException") {
+			  
+			  // La presentación del modelo no se ha producido correctamente
+			  
+			  if (this.isMobile()) {
+				  
+				  // MOBILE: Simplemente se muestra error en la presentación del modelo				  
+				  await this.getTable();
+				  this.showMessageError("ERROR EN LA PRESENTACIÓN DEL MODELO");
+				  
+			  } else {
+				  
+				  // DESKTOP: Se intenta mostrar en una ventana nueva del navegador el documento HTML devuelto en la llamada a la presentación				  
+				  let text = errorJson.message;
+			      let file = new Blob([text], { type: "text/html" });
+      			  let url = URL.createObjectURL(file);
+      	          window.open(url, '_blank');
+      	          await this.getTable();
+				  
+			  }
+			  
+		  } else {
+			  
+			  // Otros errores no relacionados directamente con la llamada a la presentación del modelo
+			  
+			  await this.getTable();
+			  this.showMessageError(errorJson.message);
+			  			  
+		  }		  
+	  } else {
+		this.showMessageError(error);  
+	  }
+    }     
     this.applicationEl.stopLoading();
   }
 

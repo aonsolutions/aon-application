@@ -92,18 +92,23 @@ export class AonCard extends AonElement {
 		title.id = this.TITLE;
 		title.className = 'aonCardTitle';
 
-		if(LS.isNewTheme() && this.getApp()) {
 
+		let section1 = this.createElement(TAG.SECTION);
+		section1.id = this.TITLE_SECTION1;
+		section1.className = 'aonCardTitleSection';
+		if(LS.isNewTheme() && this.getApp()) {
 			let arrowTitleSpan = this.createElement(TAG.SPAN);
 			arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
 			arrowTitleSpan.style.borderColor = this.getApp().color;
 			arrowTitleSpan.style.height = '2.35rem';
-			title.appendChild(arrowTitleSpan);
+			section1.appendChild(arrowTitleSpan);
 		}
-		let section1 = this.createElement(TAG.SECTION);
-		section1.id = this.TITLE_SECTION1;
-		section1.className = 'aonCardTitleSection';
-		section1.innerHTML = this.title;
+		let titleSpan = this.createElement(TAG.DIV);
+		titleSpan.innerHTML = this.title;
+		section1.appendChild(titleSpan);
+
+		section1.addEventListener(EVENT.CLICK, () => this.dispatchEvent(new Event(EVENT.CLICK_TITLE)));
+
 		title.appendChild(section1);
 
 		let section2 = this.createElement(TAG.SECTION);

@@ -52,10 +52,18 @@ export class AonTable extends AonElement {
     table.appendChild(thead);
     let tr = this.createElement(TAG.TR);
     tr.id = this.THEADER;
+    if(LS.isNewTheme()) {
+      tr.style.paddingLeft = '10px';
+      tr.style.paddingRight = '10px';
+    }
     thead.appendChild(tr);
 
     let tbody = this.createElement("tbody");
     tbody.id = this.TBODY;
+    if(LS.isNewTheme()) {
+      tbody.style.paddingLeft = '10px';
+      tbody.style.paddingRight = '10px';
+    }
     table.appendChild(tbody);
 
     if (this.hasAttribute("selectable")){
@@ -175,7 +183,13 @@ export class AonTable extends AonElement {
     let tr = this.createElement(TAG.TR);
     // tr.id = Math.random().toString(36).substring(7);
     tr.className ="aonTableTr";
-    tr.style.cursor = "pointer";  
+    tr.style.cursor = "pointer";
+    if(LS.isNewTheme()) {
+      tr.style.marginTop = '10px';
+      tr.style.marginBottom = '10px';
+      tr.style.border = '1px solid #ddd';
+      tr.style.borderRadius = '5px';
+    }  
     if(this.getApp() && LS.isNewTheme()) {
       tr.addEventListener(EVENT.MOUSEOVER, () => {
         tr.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb'; 
@@ -308,21 +322,23 @@ export class AonTable extends AonElement {
           });
           td.addEventListener("contextmenu", contextMenu);
         }
-      } else if(item.type && item.type ==="number") {
-        let formatValue = formatNumber(value[id], 2, "EUR");
-        td.innerHTML = formatValue;
-        td.addEventListener(EVENT.CLICK, fn);
-        if (contextMenu) {
-          td.addEventListener("contextmenu", () => {
-            let cb = this.getElement(checkBoxId + "Input");
-            if(cb && !cb.checked){
-              this.deselectAll();
-              cb.click();
-            } 
-          });
-          td.addEventListener("contextmenu", contextMenu);
-        }
-      } else {
+      } 
+      // else if(item.type && item.type ==="number") {
+      //   let formatValue = formatNumber(value[id], 2, "EUR");
+      //   td.innerHTML = formatValue;
+      //   td.addEventListener(EVENT.CLICK, fn);
+      //   if (contextMenu) {
+      //     td.addEventListener("contextmenu", () => {
+      //       let cb = this.getElement(checkBoxId + "Input");
+      //       if(cb && !cb.checked){
+      //         this.deselectAll();
+      //         cb.click();
+      //       } 
+      //     });
+      //     td.addEventListener("contextmenu", contextMenu);
+      //   }
+      // } 
+      else {
         td.innerHTML = value[id] !== undefined? value[id] : "";
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {

@@ -5,7 +5,7 @@ import {  MSG, MATERIAL_ICONS } from "../../environments/environments.js";
 import { FiscalOptions, FISCAL_VIEWS, TAX_ENUMS } from "./FiscalEnums.js";
 import { AonTax } from "./tax/aon-tax.js";
 import { AonApplication } from "../../components/aon-application.js";
-import Apps from "../../services/app.js";
+import { FISCAL } from "../../services/app.js";
 import { getModelsFiscal } from "../../services/fiscalService.js";
 import { sortBy } from "../../services/utils.js";
 import { FiscalUtils } from "./FiscalUtils.js";
@@ -64,7 +64,7 @@ export class AonFiscal extends AonElement {
 		);
 
     if(this.isMobile()){
-			application.addMobileSidenavHeader(Apps.FISCAL);
+			application.addMobileSidenavHeader(FISCAL);
 		} else {
 
     if(!LS.isNewTheme()) {
@@ -106,7 +106,7 @@ export class AonFiscal extends AonElement {
 			id: "Ejercicio",
 			title:"Ejercicio",
   		name:"Ejercicio",
-      app: Apps.FISCAL
+      app: FISCAL
 		};
 
       application.addSidenavOptions2(data, ejercicios);
@@ -132,7 +132,7 @@ export class AonFiscal extends AonElement {
         id: "Periodo",
         title:"Periodo",
         name:"Periodo",
-        app: Apps.FISCAL
+        app: FISCAL
       };
       application.addSidenavOptions2(data2, periods);
 
@@ -153,7 +153,7 @@ export class AonFiscal extends AonElement {
         id: "Modelo",
         title:"Modelo",
         name:"Modelo",
-        app: Apps.FISCAL
+        app: FISCAL
       };
       application.addSidenavOptions2(data3, models);
 
@@ -170,7 +170,7 @@ export class AonFiscal extends AonElement {
         id: "panels",
         title:"Paneles",
         name:"Paneles",
-        app: Apps.FISCAL,
+        app: FISCAL,
         options: [VAT_PANEL, RETENTION_PANEL]
       };
 
@@ -229,15 +229,15 @@ export class AonFiscal extends AonElement {
     const application = this.getApplication();
     const filter = this._filter;
 		if(filter){
-			application.removeBackgroundSidenavAll();
+			application.removeBackgroundSidenavAll(FISCAL.color);
 			if(filter.year){
-				application.addBackgroundSidenav(filter.year);
+				application.addBackgroundSidenav(filter.year, FISCAL.color);
 			} 
       if(filter.period){
-				application.addBackgroundSidenav(filter.period);
+				application.addBackgroundSidenav(filter.period, FISCAL.color);
 			} 
       if(filter.model){
-				application.addBackgroundSidenav(filter.model);
+				application.addBackgroundSidenav(filter.model, FISCAL.color);
 			} 
 		}
 	}

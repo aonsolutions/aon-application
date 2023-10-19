@@ -106,7 +106,7 @@ public class BookingDAO {
 		
 			Map<DomainType, DomainTypeInfo> domainTypes = new HashMap<>();
 			for (DomainType dt : DomainType.values()) {
-				List<Domain> dtChilds = childs.stream().filter(d -> d.getDomainType().equals(dt)).collect(Collectors.toList());
+				List<Domain> dtChilds = childs.stream().filter(d -> d.getDomainType().equals(dt)).toList();
 				if(dtChilds.size() > 0) {
 					DomainTypeInfo dti = new DomainTypeInfo();
 					dti.setChilds(dtChilds);
@@ -250,7 +250,7 @@ public class BookingDAO {
 				.and(DOMAIN.AONCUSTOMER.isNull())
 				.and(DOMAIN_APP.ACTIVE.eq((byte) 1))
 				.fetch()
-				.stream().collect(Collectors.toList());
+				.stream().toList();
 				
 		Map<Integer, List<Record>> b = a.stream().collect(Collectors.groupingBy(r -> r.getValue(DOMAIN.ID)));
 
@@ -259,12 +259,12 @@ public class BookingDAO {
 		.filter(d -> d.getId() != null)
 		.map(d -> d.setUsers(b.get(d.getId()).stream().filter(f -> f.getValue(USER.ID) != null)
 			.collect(Collectors.groupingBy(r -> r.getValue(USER.ID)))
-			.entrySet().stream().map(o -> o.getValue().stream().findFirst().map(new UserFiller()).orElse(new User())).collect(Collectors.toList()))
+			.entrySet().stream().map(o -> o.getValue().stream().findFirst().map(new UserFiller()).orElse(new User())).toList())
 		)
 		.map(e -> e.setApps(b.get(e.getId()).stream().filter(f -> f.getValue(DOMAIN_APP.ID) != null)
 			.collect(Collectors.groupingBy(r -> r.getValue(DOMAIN_APP.ID)))
-			.entrySet().stream().map(o -> o.getValue().stream().findFirst().map(new DomainAppFiller()).orElse(new DomainApp())).collect(Collectors.toList())))
-		.collect(Collectors.toList());
+			.entrySet().stream().map(o -> o.getValue().stream().findFirst().map(new DomainAppFiller()).orElse(new DomainApp())).toList()))
+		.toList();
 	}
 	
 	public static void changeDomainType(AONContext ctx, Booking booking){
