@@ -1193,7 +1193,7 @@ public class SQLContractDelayCalculatorContext extends
 					+ ", (" + OTHERS_AMOUNT_SQL +")" 
 					+ " AS OTHERSAMOUNT" 
 
-					+ ", (" + DELAY_SALARY_AMOUNT_SQL +")" 
+					+ ", SUM(" + DELAY_SALARY_AMOUNT_SQL +")" 
 					+ " AS DELAYSALARYAMOUNT" 
 					
 					+ ", SUM(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 

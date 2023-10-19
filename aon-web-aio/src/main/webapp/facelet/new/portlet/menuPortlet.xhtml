@@ -60,6 +60,7 @@
 	.aon-left-menu-item[id$=menu_payroll] .material-icons {
 		color: var(--payroll-color) !important;
 	}
+
 	.aon-left-menu-item[id$=menu_payroll] .material-icons:hover,
 	.aon-left-menu-item[id$=menu_payroll].selected .material-icons{
 		background-color: var(--payroll-background-color) !important;
@@ -89,6 +90,15 @@
 		background-color: var(--help-background-color) !important;
 	}
 
+	.aon-left-menu-item[id$=menu_management] .material-icons {
+		color: var(--management-color) !important;
+	}
+
+	.aon-left-menu-item[id$=menu_management] .material-icons:hover,
+	.aon-left-menu-item[id$=menu_management].selected .material-icons{
+		background-color: var(--management-background-color) !important;
+	}
+
 	.aon-help-menu-bar .aon-left-menu-bar-icon {
 		color: var(--help-color) !important;
 	}
@@ -99,6 +109,10 @@
 
 	.aon-payroll-menu-bar .aon-left-menu-bar-icon {
 		color: var(--payroll-color) !important;
+	}
+
+	.aon-management-menu-bar .aon-left-menu-bar-icon {
+		color: var(--management-color) !important;
 	}
 
 	.aon-enterprise-menu-bar .aon-left-menu-bar-icon {
@@ -134,6 +148,10 @@
 
 	.aon-fiscal-menu-bar .aon-direct-access-list-element:hover{
 		background-color: var(--fiscal-background-color) ;
+	}
+
+	.aon-management-menu-bar .aon-direct-access-list-element:hover{
+		background-color: var(--management-background-color) ;
 	}
 
 	.aon-payroll-menu-bar .aon-direct-access-list-element:hover{
@@ -180,6 +198,11 @@
 		padding-left: 0.5rem;
 	}
 	
+	.aon-portlet-body,
+	.aon-portlet-title {
+		text-transform: uppercase;
+	}
+	
 	.aon-portlet-title{
 		overflow: hidden;
 		color: black !important;
@@ -207,6 +230,10 @@
   	}	
 	.aon-payroll-menu-bar .aon-portlet-title-line{
   		border-color: var(--payroll-color);
+  	}	
+
+	.aon-management-menu-bar .aon-portlet-title-line{
+  		border-color: var(--management-color);
   	}	
 
 	.aon-accounting-menu-bar .aon-portlet-title-line{
@@ -308,6 +335,7 @@
 		#{rich:element('payrollMenuBar')}.style.display = 'none';
 		#{rich:element('accountingMenuBar')}.style.display = 'none';
 		#{rich:element('enterpriseMenuBar')}.style.display = 'none';
+		#{rich:element('managementMenuBar')}.style.display = 'none';
 		#{rich:element('timeControlMenuBar')}.style.display = 'none';
 		#{rich:element('configurationMenuBar')}.style.display = 'none';
 	}
@@ -325,6 +353,7 @@
 		unselectMenu(#{rich:element('menu_help')});
 		unselectMenu(#{rich:element('menu_fiscal')});
 		unselectMenu(#{rich:element('menu_payroll')});
+		unselectMenu(#{rich:element('menu_management')});
 		unselectMenu(#{rich:element('menu_accounting')});
 		unselectMenu(#{rich:element('menu_enterprise')});
 		unselectMenu(#{rich:element('menu_time_control')});
@@ -378,6 +407,13 @@
 		selectMenu(#{rich:element('menu_configuration')});
 	}
 	
+	function showManagementMenu () {
+		hideAllMenus();	
+		unselectMenus();
+		showMenu(#{rich:element('managementMenuBar')});
+		selectMenu(#{rich:element('menu_management')});
+	}
+
 </script>
 <aon:panelGrid columns="2" styleClass=""
 				columnClasses="aon-menu-portlet-column1,aon-menu-portlet-column2">
@@ -417,6 +453,22 @@
 								</aon:commandLink>
 							</aon:div>
 						</aon:if>
+					</aon:if>
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.financeOperator}">
+							<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+								<aon:commandLink 
+									id="menu_management"
+									reRender="aonDesktopContent"
+									styleClass="aon-left-menu-item"
+									onclick="javascript:showManagementMenu()"
+									actionListener="#{desktop.onSelectManagement}"
+								>
+									<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="work" />
+									<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_management}" />
+								</aon:commandLink>
+							</aon:div>
+						</aon:if>	
 					</aon:if>
 					<aon:if test="#{aonRole.accountingOperator}">
 						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
@@ -532,6 +584,8 @@
 			<ui:include src="/facelet/new/portlet/helpMenuPortlet.xhtml" />
 	
 			<ui:include src="/facelet/new/portlet/timeControlMenuPortlet.xhtml" />
+
+			<ui:include src="/facelet/new/portlet/managementMenuPortlet.xhtml" />
 
 		</aon:form>
 	</aon:div>
