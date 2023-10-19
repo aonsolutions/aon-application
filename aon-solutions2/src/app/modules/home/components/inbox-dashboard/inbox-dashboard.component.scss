@@ -26,6 +26,11 @@
     font-size   : 1.2rem;
   }
 
+  #home-inbox [body]{
+    position: relative;
+    height  : 100%;
+  }
+  
   #home-inbox thead{
     display: none;
   }
