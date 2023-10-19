@@ -4,7 +4,6 @@ import { TestBed } from '@angular/core/testing';
 import { MatSnackBar, MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar';
 import { ErrorService } from 'src/app/core/services/error.service';
 import { GlobalErrorHandlerService } from 'src/app/core/services/global-error-handler.service';
-import { ErrorSnackBarComponent } from 'src/app/shared/components/error-snack-bar/error-snack-bar.component';
 
 describe('GlobalErrorHandlerService', () => {
   let service: GlobalErrorHandlerService;

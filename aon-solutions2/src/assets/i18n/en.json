@@ -15,7 +15,8 @@
   "HEADER": {
     "EDIT_PROFILE": "Edit profile",
     "HELP": "Help",
-    "LOGOUT": "Logout"
+    "LOGOUT": "Logout",
+    "LANGUAGE": "Language"
   },
   "MENU": {
     "MENU": "menu",
@@ -241,5 +242,9 @@
     "STATUS_DATE": "Status Date",
     "NAF": "NAF",
     "CERTIFICATE_UPLOAD": "Upload your digital certificate"
+  },
+  "LANGUAGE": {
+    "ENGLISH": "English",
+    "SPANISH": "Spanish"
   }
 }

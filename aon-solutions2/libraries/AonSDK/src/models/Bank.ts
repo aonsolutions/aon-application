@@ -217,7 +217,7 @@ export class ApiBank extends Bank implements IApiModel {
         bank.Iban = data.bank_account
         bank.Logo = ''
         bank.Name = data.alias ? data.alias : ''
-        bank.Total = 0
+        bank.Total = data.balance ? data.balance : 'N/D'
         return bank;
     }
 }

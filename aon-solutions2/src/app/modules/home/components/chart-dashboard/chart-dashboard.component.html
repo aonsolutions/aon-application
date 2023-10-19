@@ -9,6 +9,7 @@
     </div>
   </div>
   <div body>
+    <app-spinner *ngIf="spinner"></app-spinner>
     <app-chart
       [chartType]       = "chartType"
       [chartDataLabel]  = "chartDataLabel"
