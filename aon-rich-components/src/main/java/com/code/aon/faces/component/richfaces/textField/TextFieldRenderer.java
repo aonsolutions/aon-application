@@ -47,10 +47,15 @@ public class TextFieldRenderer extends Renderer {
 	writer.writeAttribute("onclick", "javascript:document.getElementById('" + clientId + "').focus()", null);
 	
 	writer.startElement("div", component);
-	writer.write(title);
 	if ( required ) {
+	    writer.write(title);
 	    writer.write(" * ");
+	} else 	if ( title.isBlank() ) {
+	    writer.writeAttribute("class", "emptyTitle", null);
+	} else {
+	    writer.write(title);
 	}
+
 	writer.endElement("div");
 	
 	

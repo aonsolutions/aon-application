@@ -43,13 +43,17 @@
 			<aon:valueParam name="skipFax" default="#{false}"/>
 			<aon:valueParam name="skipEmail" default="#{false}"/>
 			<aon:valueParam name="skipWeb" default="#{false}"/>
+			<aon:valueParam name="includeRegistryScope" default="#{true}"/>
 			
 			<c:set var="pojoName" value="#{controller.pojoShortName}" />
 			<c:set var="registry" value="#{controller.to.registry}"/>
+			<c:set var="controllerLookupListener" value="#{customerForm}" />
+			<c:set var="registryAddress" value="#{controllerLookupListener.mainAddress}"/>
+			
 			
 			<aon:panelGrid 
 				columns="2" 
-				columnClasses="aon-padding aon-width-half aon-vertical-alig-top" >
+				columnClasses="aon-padding aon-width-half aon-vertical-align-top" >
 				
 				<!-- 
 					Personal Data
@@ -73,7 +77,7 @@
 									title="#{bundle.aon_entity}"
 									>
 									<f:selectItems value="#{registryCollections.registryTypes}" />
-									<a4j:support event="onclick" focus="#{pojoName}_document"
+									<a4j:support event="onchange" focus="#{pojoName}_document"
 										actionListener="#{controller.onChangeRegistryType}"
 										reRender="#{pojoName}DocumentPanel,#{registryTypeReRender}" 
 										ajaxSingle="true" />
@@ -159,7 +163,7 @@
 					
 					</aon:panelGrid>
 					
-					<aon:panelGrid columns="2" columnClasses="aon-padding-left aon-padding-bottom" >
+					<aon:panelGrid columns="2" columnClasses="aon-padding-left aon-padding-bottom aon-padding-top" >
 		
 						<aon:if test="#{includeRegistryScope}">
 							<aon:dropDownOneMenu 
@@ -179,6 +183,15 @@
 							title="#{bundle.aon_company_alias}">
 							<f:validateLength minimum="1" maximum="32" />
 						</aon:textField>
+						
+						<aon:dropDownOneMenu 
+						id="Customer_status"
+						title="#{bundle.aon_status}"  
+						value="#{controller.to.status}" 
+						>
+							<f:selectItems value="#{customerCollections.customerStatuses}" />
+						</aon:dropDownOneMenu>
+						
 					
 					</aon:panelGrid>
 					
@@ -328,23 +341,170 @@
 								
 					<aon:panelGrid columns="1" columnClasses="aon-padding-left aon-padding-bottom" >
 						
-						<c:set var="controllerLookupListener" value="#{customerForm}" />
-						
 						<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
-							<aon:panelGrid columns="2" columnClasses="aon-padding-right aon-padding-top ">
-						
-								<aon:dropDownOneMenu 
-									id="RegistryPayMethod_payment"
-									title="#{bundle.finance_payMethod}" 
-									reRender="Registry-PayMethodDiv,Registry-PayMethodDiv2"
-									value="#{controllerLookupListener.registryPayMethod.payment}"
-									valueChangeListener="#{controllerLookupListener.onPayMethodChanged}"
-									>
-									<f:selectItem value="#{null}" />
-									<f:selectItems value="#{configCollections.payMethods}" />
-								</aon:dropDownOneMenu>
-								<aon:div></aon:div>
-							</aon:panelGrid>				
+							<aon:div id="Registry-PayMethodDiv" >
+								<aon:panelGrid columns="2" columnClasses="aon-padding-right aon-padding-bottom aon-vertical-align-top">
+							
+									<aon:dropDownOneMenu 
+										id="RegistryPayMethod_payment"
+										title="#{bundle.finance_payMethod}" 
+										reRender="Registry-PayMethodDiv,Registry-PayMethodDiv2"
+										value="#{controllerLookupListener.registryPayMethod.payment}"
+										valueChangeListener="#{controllerLookupListener.onPayMethodChanged}"
+										>
+										<f:selectItem value="#{null}" />
+										<f:selectItems value="#{configCollections.payMethods}" />
+									</aon:dropDownOneMenu>
+									<aon:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">
+										<aon:if test="#{controllerLookupListener.showCompanyBanks}">
+											<aon:dropDownOneMenu 
+												id="RegistryBank_id"
+												title="#{bundle.aon_bank}"
+												value="#{controllerLookupListener.registryBank}"
+												>
+												<f:selectItem value="#{null}" />
+												<f:selectItems value="#{companyCollections.allCompanyBanks}" />
+											</aon:dropDownOneMenu>
+										</aon:if>
+										<aon:if test="#{!controllerLookupListener.showCompanyBanks}">
+											<aon:div>
+												<c:set var="bankCodeChangeReRender" value="RegistryBank_alias,RegistryBank_bic" />
+												<c:set var="bankAccountController" value="#{controllerLookupListener.accountHelper}" />
+												<c:set var="bankAccountPrefix" value="#{controllerLookupListener.controller.beanName}" />
+
+												<c:set var="renderBankAccount" value="#{true}" />
+												<c:set var="bankAccountDisabled" value="#{false}" />
+												<c:set var="bankAccountReRenderEx" value="#{bankCodeChangeReRender}#{(bankCodeChangeReRender != null)?',':''}#{bankAccountReRender}"/>
+
+											
+												<aon:panelGrid 
+													columns="11"
+													columnClasses="aon-padding-right aon-padding-bottom"
+													id="#{bankAccountPrefix}_BankAccountDiv#{bankAccountSuffix}" 
+													rendered="#{renderBankAccount}">
+													<aon:dropDownOneMenu 
+														id="#{bankAccountPrefix}_BankAccount_country#{bankAccountSuffix}"
+														disabled="#{bankAccountDisabled}"
+														styleClass="aon-vertical-align-middle"
+														value="#{bankAccountController.to.bankAccount.country}" 
+														required="true"
+														>
+														<f:selectItems value="#{commonCollections.countryCodes}" />
+														<a4j:support event="onchange" focus="#{bankAccountPrefix}_BankAccount_check#{bankAccountSuffix}"
+															reRender="#{bankAccountPrefix}_BankAccountDiv#{bankAccountSuffix}"
+															actionListener="#{bankAccountController.onBankAccountData}"
+															ajaxSingle="true" />
+													</aon:dropDownOneMenu>
+													<aon:textField id="#{bankAccountPrefix}_BankAccount_check#{bankAccountSuffix}"
+														label="#{bundle.config_iban_check_digits}"
+														value="#{bankAccountController.to.bankAccount.check}"
+														styleClass="aon-inputText aon-width-20 aon-vertical-align-middle"
+														size="1" maxlength="2"
+														disabled="#{bankAccountDisabled}"
+														ajaxSingle="true"
+														>
+														<f:validateLength minimum="2" maximum="2" />
+														<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+													</aon:textField>
+													<aon:textField value="#{bankAccountController.to.bankAccount.bban1}"
+														label="#{bundle.aon_iban}"
+														styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+														size="3" maxlength="4"
+														disabled="#{bankAccountDisabled}"
+														ajaxSingle="true"
+														>
+														<a4j:support event="onchange" reRender="#{bankAccountReRenderEx}" ajaxSingle="true"
+															actionListener="#{bankAccountController.onBankAccountData}" />
+													</aon:textField>
+													<aon:textField value="#{bankAccountController.to.bankAccount.bban2}"
+														styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+														size="3" maxlength="4"
+														disabled="#{bankAccountDisabled}"
+														ajaxSingle="true"
+														>
+														<a4j:support event="onchange" reRender="#{bankAccountReRenderEx}" ajaxSingle="true"
+															actionListener="#{bankAccountController.onBankAccountData2}" />
+													</aon:textField>
+													<aon:textField value="#{bankAccountController.to.bankAccount.bban3}"
+														styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+														size="3" maxlength="4"
+														disabled="#{bankAccountDisabled}"
+														ajaxSingle="true"
+														>
+														<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+													</aon:textField>
+													<aon:if test="#{bankAccountController.to.bankAccount.ibanLength > 16}">
+														<aon:textField value="#{bankAccountController.to.bankAccount.bban4}"
+															styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+															size="3" maxlength="4"
+															disabled="#{bankAccountDisabled}"
+															ajaxSingle="true">
+															<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+														</aon:textField>
+													</aon:if>
+													<aon:if test="#{bankAccountController.to.bankAccount.ibanLength > 20}">
+														<aon:textField value="#{bankAccountController.to.bankAccount.bban5}"
+															styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+															size="3" maxlength="4"
+															disabled="#{bankAccountDisabled}"
+															ajaxSingle="true">
+															<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+														</aon:textField>
+													</aon:if>
+													<aon:if test="#{bankAccountController.to.bankAccount.ibanLength > 24}">
+														<aon:textField value="#{bankAccountController.to.bankAccount.bban6}"
+															styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+															size="3" maxlength="4"
+															ajaxSingle="true">
+															<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+														</aon:textField>
+													</aon:if>
+													<aon:if test="#{bankAccountController.to.bankAccount.ibanLength > 28}">
+														<aon:textField value="#{bankAccountController.to.bankAccount.bban7}"
+															styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+															size="3" maxlength="4"
+															disabled="#{bankAccountDisabled}"
+															ajaxSingle="true">
+															<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+														</aon:textField>
+													</aon:if>
+													<aon:if test="#{bankAccountController.to.bankAccount.ibanLength > 32}">
+														<aon:textField value="#{bankAccountController.to.bankAccount.bban8}"
+															styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+															size="1" maxlength="2"
+															disabled="#{bankAccountDisabled}"
+															ajaxSingle="true">
+															<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+														</aon:textField>
+													</aon:if>
+													<aon:commandButton
+														title="#{bundle.aon_bank_data}"
+														styleClass="material-icons aon-icon-commandButton" style="background: none;"
+														actionListener="#{bankAccountController.onShowBankAccountWindow}"
+														rendered="#{renderBankAccount}" 
+														reRender="showNewBankAccountWindow#{bankAccountWindowSuffix}"
+														ajaxSingle="true"
+														value="account_balance" />
+												</aon:panelGrid>
+											</aon:div>
+											<aon:textField 
+												id="RegistryBank_alias"
+												size="25" maxlength="25" required="#{true}" 
+												title="#{bundle.aon_description} #{bundle.aon_bank}" 
+												value="#{controllerLookupListener.registryBank.bankAlias}" 
+											/>
+											<aon:textField 
+												id="RegistryBank_bic" 
+												validator="BICValidator"
+												title="#{bundle.aon_bic}"  
+												size="12" maxlength="11" required="#{true}" 
+												value="#{controllerLookupListener.registryBank.bic}" 
+												>
+											</aon:textField>
+										</aon:if>			
+									</aon:if>			
+								</aon:panelGrid>
+							</aon:div>				
 						</aon:if>	
 						
 					</aon:panelGrid>

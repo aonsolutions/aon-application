@@ -35,18 +35,26 @@ public class DropDownOneMenuRenderer extends Renderer {
     @Override
     public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
 
-	String title = (String) component.getAttributes().get("title");
+	String clientId = component.getClientId(context);
+	String title = convertToString(component.getAttributes().get("title"));
+	boolean required = convertToBoolean(component.getAttributes().get("required"));
 	String mainStyleClass = convertToString(component.getAttributes().get("mainStyleClass"));
-	String id = component.getClientId(context);
 	
 	
 	ResponseWriter writer = context.getResponseWriter();
 	writer.startElement("div", component);
-        writer.writeAttribute("id", id + ":Panel","id");
+        writer.writeAttribute("id", clientId + ":Panel","id");
 	writer.writeAttribute("class", mainStyleClass, null);
 	
 	writer.startElement("div", component);
-	writer.write(title);
+	if ( required ) {
+	    writer.write(title);
+	    writer.write(" * ");
+	} else 	if ( title.isBlank() ) {
+	    writer.writeAttribute("class", "emptyTitle", null);
+	} else {
+	    writer.write(title);
+	}
 	writer.endElement("div");
 	
 	
@@ -75,5 +83,9 @@ public class DropDownOneMenuRenderer extends Renderer {
     private String convertToString(Object obj ) {
         return ( obj == null ? "" : obj.toString() );
     }
+    private boolean convertToBoolean(Object obj ) {
+        return Boolean.valueOf(obj.toString());
+    }
+    
 
 }
