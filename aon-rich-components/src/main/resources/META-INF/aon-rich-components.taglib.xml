@@ -208,6 +208,17 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>textField</tag-name>
+		<component>
+			<component-type>
+				com.code.aon.faces.TextField
+			</component-type>
+			<handler-class>
+				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+			</handler-class>
+		</component>
+	</tag>
+	<tag>
 		<tag-name>inputRichText</tag-name>
 		<component>
 			<component-type>
@@ -237,6 +248,17 @@
 		<component>
 			<component-type>
 				com.code.aon.faces.SelectOneMenu
+			</component-type>
+			<handler-class>
+				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+			</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>dropDownOneMenu</tag-name>
+		<component>
+			<component-type>
+				com.code.aon.faces.DropDownOneMenu
 			</component-type>
 			<handler-class>
 				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
