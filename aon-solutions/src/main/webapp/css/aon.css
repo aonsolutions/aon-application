@@ -1706,6 +1706,7 @@ label.rating:hover {
 .aonNewLogo{
   max-width: 9rem;
   padding: 5px;
+  cursor: pointer;
 }
 
 .aonHeaderButtons{
