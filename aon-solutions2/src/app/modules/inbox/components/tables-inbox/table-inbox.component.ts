@@ -26,6 +26,7 @@ export class TablesInboxComponent implements OnChanges {
   @Output() archiveMessageEvent: EventEmitter<IMessage> = new EventEmitter<IMessage>();
   @Input() updateTable: boolean = false;
 
+  dataBody: any[] = [];
   bodyTable: any[] = [];
   showDetail: boolean = false;
   totalMessages: string = '0';
@@ -324,7 +325,7 @@ export class TablesInboxComponent implements OnChanges {
           // Agregamos el mensaje
           tableRow.push(column);
         });
-
+        this.dataBody = tableRow;
         this.bodyTable = tableRow;
         this.noPendingItems.emit(!pendingItemsFound);
 
@@ -385,6 +386,32 @@ export class TablesInboxComponent implements OnChanges {
       this.statusChanged.emit();
     });
   }
+
+  searchMessage(search: string) {
+    // Si el término de búsqueda está vacío, muestra todos los elementos en la tabla.
+    if (!search) {
+      this.bodyTable = this.dataBody;
+      return;
+    }
+    // Convierte el término de búsqueda a minúsculas.
+    search = search.toLowerCase();
+
+    // Filtra la tabla en función del término de búsqueda
+    this.bodyTable = this.dataBody.filter((item: any) => {
+      // Comprueba si alguna de las columnas contiene el término de búsqueda.
+      return Object.values(item).some((value: any) => {
+        if (typeof value === 'string') {
+          return value.toLowerCase().includes(search);
+        } else if (typeof value === 'object') {
+      // Manejar el caso en el que el valor de la columna es un objeto.
+      // Utilizar JSON.stringify para convertir el objeto en una cadena de texto para la búsqueda.
+          return JSON.stringify(value).toLowerCase().includes(search);
+        }
+        return false;
+      });
+    });
+  }
+
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}

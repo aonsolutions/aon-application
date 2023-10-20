@@ -25,7 +25,7 @@ export class InboxviewComponent implements OnInit {
   @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
     new DropdownMenuComponent();
   @ViewChild('modal') modalComponent: any = '';
-  @ViewChild(TablesInboxComponent, { static: false })
+  @ViewChild(TablesInboxComponent, { static: false }) tablesInboxComponent!: TablesInboxComponent;
   @Output() consultaCreated: EventEmitter<void> = new EventEmitter<void>();
 
   datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
@@ -356,5 +356,12 @@ export class InboxviewComponent implements OnInit {
 
     // Limpia el campo de entrada después de enviar el mensaje
     this.newMessageDescription = '';
+  }
+
+  // Filtro de busqueda atraves de la tabla
+  search(search: string) {
+    if (this.tablesInboxComponent) {
+      this.tablesInboxComponent.searchMessage(search);
+    }
   }
 }
