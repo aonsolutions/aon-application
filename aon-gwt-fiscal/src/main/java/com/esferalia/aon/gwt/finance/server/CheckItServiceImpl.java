@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.servlet.annotation.WebServlet;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,10 +24,13 @@ import com.esferalia.aon.occam.api.model.finance.checkit.CheckitUnlinkedBankAcco
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
 import net.aonsolutions.aon.bank.checkit.CheckItAPI;
 import net.aonsolutions.aon.bank.checkit.CheckItException;
+import net.aonsolutions.aon.bank.checkit.CheckItNoConnectionException;
 import net.aonsolutions.aon.bank.checkit.IParamNames;
 
 @WebServlet(name = "CheckIt Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/CheckIt" })
@@ -78,6 +79,11 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 				
 			});
 		}
+		
+		
+		
+		 AonCollectionUtils.stream( checkitAccounts )
+		 	.forEach( a -> CheckItDAO.updateRegistryBank(domainName, domain, user, a ));
 		
 		return new CheckItConfiguration()
 			.setConfiguration( AON.getConfiguration(domainName, domain,user) )
