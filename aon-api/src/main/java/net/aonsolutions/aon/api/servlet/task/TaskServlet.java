@@ -100,6 +100,9 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/count":
 					response(req, resp, getTaskCount(api));
 					break;
+				case "/filter/count":
+					response(req, resp, getTaskCountFilter(api));
+					break;
 				case "/status/count":
 					response(req, resp, getTaskStatusCount(api));
 					break;
@@ -460,6 +463,12 @@ public class TaskServlet extends AonApiHttpServlet{
 
 		
 		return json;
+	}
+	
+	private Integer getTaskCountFilter(AonApiData api) {
+		return AON_SOLUTIONS.getTaskCountFilter(api.getDomain(), api.getUser(),
+				f -> TaskFilter.task(api, f, api.getDomain(), new Customer())
+		);
 	}
 	
 	private JSONObject getTaskGeneralCount(AonApiData api) {
