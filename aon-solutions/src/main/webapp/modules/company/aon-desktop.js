@@ -43,6 +43,7 @@ import { getModelsFiscal } from '../../services/service.js';
 import { sortBy } from '../../services/utils.js';
 import { FiscalUtils } from '../fiscal/FiscalUtils.js';
 import { AonBankCard } from '../accounting/aon-bank-card.js';
+import { AonDashboardUploadButton } from '../../components/aon-dashboard-upload-button.js';
 
 export class AonDesktop extends AonElement {
 
@@ -324,22 +325,22 @@ export class AonDesktop extends AonElement {
 		parent.appendChild(dashboard);
 
 		// Upload Panel
-		let upload = this.createElement(TAG.DIV);
-		upload.className = CSS.AON_UPLOAD_PANEL;
-		upload.id = "uploads";
-		dashboard.appendChild(upload);
+		// let upload = this.createElement(TAG.DIV);
+		// upload.className = CSS.AON_UPLOAD_PANEL;
+		// upload.id = "uploads";
+		// dashboard.appendChild(upload);
 
-		let uploadDoc = new AonNewUpload();
-		uploadDoc.id = "docUpload";
-		uploadDoc.setMessage("Subir documentación");
-		uploadDoc.setType("Documental");
-		upload.appendChild(uploadDoc);
+		// let uploadDoc = new AonNewUpload();
+		// uploadDoc.id = "docUpload";
+		// uploadDoc.setMessage("Subir documentación");
+		// uploadDoc.setType("Documental");
+		// upload.appendChild(uploadDoc);
 
-		let uploadInv = new AonNewUpload();
-		uploadInv.id = "factUpload";
-		uploadInv.setMessage("Subir factura");
-		uploadInv.setType("Invoice");
-		upload.appendChild(uploadInv);
+		// let uploadInv = new AonNewUpload();
+		// uploadInv.id = "factUpload";
+		// uploadInv.setMessage("Subir factura");
+		// uploadInv.setType("Invoice");
+		// upload.appendChild(uploadInv);
 
 		// Fast Access Buttons Panel
 		let fastAccessButtons = this.createElement(TAG.DIV);
@@ -347,18 +348,28 @@ export class AonDesktop extends AonElement {
 		fastAccessButtons.id = "fastAccessButtons";
 		dashboard.appendChild(fastAccessButtons);
 
-		let newInvoice = new AonDashboardButton();
-		newInvoice.setId('newInvoice');
-		newInvoice.setIcon('add');
-		newInvoice.setTitle('NUEVA FACTURA');
-		newInvoice.addEventListener(EVENT.CLICK, () => {
-			this.addInvoice(newInvoice);
-		});
-		fastAccessButtons.appendChild(newInvoice);
+		if(this.getDur().isInvoice()){
+			let newInvoice = new AonDashboardButton();
+			newInvoice.setId('newInvoice');
+			newInvoice.setIcon('note_add');
+			newInvoice.setTitle('NUEVA FACTURA');
+			newInvoice.addEventListener(EVENT.CLICK, () => {
+				this.addInvoice(newInvoice, dashboard);
+			});
+			fastAccessButtons.appendChild(newInvoice);
+		}
+
+		if(this.getDur().isDocumental()){
+			let newDocument = new AonDashboardUploadButton();
+			newDocument.setId('newDocument');
+			newDocument.setIcon('post_add');
+			newDocument.setTitle('NUEVO DOCUMENTO');
+			fastAccessButtons.appendChild(newDocument);
+		}
 
 		let newRequest = new AonDashboardButton();
 		newRequest.setId('newRequest');
-		newRequest.setIcon('add');
+		newRequest.setIcon('add_comment');
 		newRequest.setTitle('CREAR CONSULTA')
 		newRequest.addEventListener(EVENT.CLICK, () => {
 			let aonMessengerChat = new AonMessenger();	
@@ -366,6 +377,43 @@ export class AonDesktop extends AonElement {
 			this.rootPanel(aonMessengerChat);
 		});
 		fastAccessButtons.appendChild(newRequest);
+
+		if(this.getDur().isAon()){
+			let conecta = new AonDashboardButton();
+			conecta.setId('conecta');
+			conecta.setLogo('aon_app');
+			conecta.setTitle('CONECT@')
+			conecta.addEventListener(EVENT.CLICK, () => {
+				this.appSelection(ClassicApps.AON_SOLUTIONS.app);
+			});
+			fastAccessButtons.appendChild(conecta);
+		}
+
+		if(this.getDur().isAon()){
+			let newEmployee = new AonDashboardButton();
+			newEmployee.setId('newEmployee');
+			newEmployee.setIcon('person_add');
+			newEmployee.setTitle('NUEVO EMPLEADO')
+			newEmployee.addEventListener(EVENT.CLICK, () => {
+				let aonMessengerChat = new AonMessenger();	
+				aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
+				this.rootPanel(aonMessengerChat);
+
+				this.isElementLoaded("#sourceTask").then(sourceTaskSelect => {
+					console.log(sourceTaskSelect);
+					sourceTaskSelect.value = "request";
+					this.isElementLoaded("#processType").then(processTypeSelect => {
+						console.log(processTypeSelect);
+						processTypeSelect.value = "2";
+						this.isElementLoaded("#aonMessengerToolbarHeaderTitleSectionMenuIconButton").then(sidenavBtn => {
+							console.log(sidenavBtn);
+							sidenavBtn.click();
+						});
+					});
+				});
+			});
+			fastAccessButtons.appendChild(newEmployee);
+		}
 
 		// Cards Panel
 		let cardsPanel = this.createElement(TAG.DIV);
@@ -558,6 +606,13 @@ export class AonDesktop extends AonElement {
 
 		}
 	}
+
+	async isElementLoaded(selector){
+		while ( document.querySelector(selector) === null) {
+		  await new Promise( resolve =>  requestAnimationFrame(resolve) )
+		}
+		return document.querySelector(selector);
+	};
 
 	async isElementLoaded(selector){
 		while ( document.querySelector(selector) === null) {
@@ -1310,10 +1365,18 @@ export class AonDesktop extends AonElement {
 	  	d.open();
 	}
 
-	addInvoice(button) {		
+	addInvoice(button, dashboard) {		
 		let invoicePanel = new AonInvoicePanel();	
-		let top  = button.getBoundingClientRect().top;
-		const left = button.getBoundingClientRect().left;
+		let top;
+		let left;
+		if(dashboard){
+			top  = button.getBoundingClientRect().top + 55;
+			left = button.getBoundingClientRect().right + 7;
+		} else {
+			top  = button.getBoundingClientRect().top;
+			left = button.getBoundingClientRect().left;
+		}
+		
 		let d = this.getApplication().getOptionDialog();
 		let options = [{
 			name: 'Emitidas',
