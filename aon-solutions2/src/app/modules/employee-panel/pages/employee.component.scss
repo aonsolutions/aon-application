@@ -1,7 +1,6 @@
 @import "src/styles.scss";
 
-::ng-deep{
-
+::ng-deep {
   .buttons {
     display: flex;
     align-items: center;
@@ -10,12 +9,43 @@
     gap: $margin;
     color: black !important;
   }
-  .no-models{
-    display:flex;
+  .no-models {
+    display: flex;
     justify-content: center;
   }
 
+  .register-employee {
+    hr {
+      margin: 0 !important;
+    }
 
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
 
+      .arrow {
+        display: flex;
+        gap: $margin;
 
+        .button {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  .title {
+    display:flex;
+    font-family: "Roboto-Medium";
+    // padding-left: $padding;
+    // padding-right: $padding;
+    // padding-top: $padding;
+    padding: $padding;
+    align-items: center;
+
+  }
+
+  hr{
+    margin-top: 0 !important;
+  }
 }

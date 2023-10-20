@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ContractService } from 'src/app/core/services/contract.service';
+import { CreateNewContractComponent } from '../components/create-new-contract/create-new-contract.component';
 
 
 export interface Tabs {
@@ -31,6 +32,8 @@ export class EmployeeComponent implements OnInit {
   search: string = '';
   showSendButton: boolean = false;
   showSendButtons: boolean = false;
+  selectedTab: number = 1;
+
 
   //hardcodeo para mostrar showdetail
   dataBody: any[] = [
@@ -154,7 +157,12 @@ export class EmployeeComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  addEmployee() {}
+  addEmployee() {
+
+  }
+  atras() {
+    this.selectedTab = 0;
+  }
 
   changeTabIndex(index: number) {
     this.tabIndex = index;

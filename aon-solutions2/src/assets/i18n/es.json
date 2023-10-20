@@ -156,7 +156,16 @@
     "WORKCENTER":"Centro de trabajo",
     "CURRENT_CONTRACTS":"Contratos Vigentes",
     "EXPIRED_CONTRACTS":"Contratos Extinguidos",
-    "NO_CONTRACTS":"No hay contratos que mostrar"
+    "NO_CONTRACTS":"No hay contratos que mostrar",
+    "REGISTER_EMPLOYEE":"Alta empleado",
+    "ID_NUMBER":"DNI/NIE",
+    "SURNAME_1":"Apellido 1",
+    "SURNAME_2":"Apellido 2",
+    "SSN":"NSS/NAF",
+    "CONTRIBUTION_ACCOUNT":"Cuenta de cotización",
+    "EMPLOYEE_DATA":"Datos del trabajador",
+    "CONTRACT_DETAILS":"Datos contrato"
+
   },
   "TAX_PANEL": {
     "1_TRIMESTER":   "1 Trimestre",

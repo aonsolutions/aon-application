@@ -155,7 +155,15 @@
     "WORKCENTER":"Workcenter",
     "CURRENT_CONTRACTS":"Current Contracts",
     "EXPIRED_CONTRACTS":"Expired Contracts",
-    "NO_CONTRACTS":"No contracts to display"
+    "NO_CONTRACTS":"No contracts to display",
+    "REGISTER_EMPLOYEE":"Register employee",
+    "ID_NUMBER":"ID Number",
+    "SURNAME_1":"Surname 1",
+    "SURNAME_2":"Surname 2",
+    "SSN":"SSN",
+    "CONTRIBUTION_ACCOUNT":"Contribution account",
+    "EMPLOYEE_DATA":"Employee data",
+    "CONTRACT_DETAILS":"Contract details"
   },
 
   "TAX_PANEL": {

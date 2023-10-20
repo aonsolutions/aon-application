@@ -4,7 +4,8 @@
     <app-button
       class="icon-background"
       [width]="'width'"
-      (click)="addEmployee()"
+      (click)="selectedTab = 3"
+      *ngIf="selectedTab !== 3" 
     >
       <app-icon shape="person_add"></app-icon>
       {{ "EMPLOYEE_PANEL.TO_REGISTER" | translate }}
@@ -12,6 +13,7 @@
   </div>
   <!-- fin encabezado -->
   <div content>
+    <ng-container *ngIf="selectedTab == 1">
     <!-- buscador -->
     <div class="padding-top padding-right padding-left">
       <div class="width-40">
@@ -29,8 +31,6 @@
     <!-- tablas tabs -->
     <app-tabs
       [tabs]="tabs"
-      [tabIndex]="tabIndex"
-      (changeTabIndex)="changeTabIndex($event)"
       [tabColor]="'green'"
     >
       <div tool>
@@ -41,7 +41,7 @@
         </div>
       </div>
 
-      <div content class="padding" *ngIf="this.tabIndex == 0">
+      <div content class="padding" (click)="selectedTab = 0">
         <app-spinner *ngIf="spinner"></app-spinner>
         <app-table
           *ngIf="bodyTable.length > 0; else noModelsTemplate"
@@ -58,7 +58,7 @@
         </ng-template>
       </div>
 
-      <div content class="padding" *ngIf="this.tabIndex == 1">
+      <div content class="padding"(click)="selectedTab = 1">
         <app-spinner *ngIf="spinner"></app-spinner>
         <app-table
           *ngIf="bodyTable.length > 0; else noModelsTemplate"
@@ -74,8 +74,15 @@
         </ng-template>
       </div>
     </app-tabs>
+  </ng-container>
+   <!-- ALTA EMPLEADO-->
+ <ng-container *ngIf="selectedTab == 3">
+  <app-create-new-contract></app-create-new-contract>
+</ng-container>
+<!-- FIN ALTA EMPLEADO -->
   </div>
 <!-- fin contenido -->
+
 
 <!-- mostrar detalles -->
 <div detail *ngIf="showDetail">
