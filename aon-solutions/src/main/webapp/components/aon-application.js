@@ -515,7 +515,11 @@ export class AonApplication extends AonElement {
         i.id = id + 'icon';
         let iconClass = "material-icons";
         if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
-        if(option.icon_color) i.style.color = option.icon_color;
+        if(option.icon_color) {
+          i.title = option.id;
+          i.color = option.icon_color;
+          i.style.color = option.icon_color;
+        }
         if(option.icon_class) iconClass = option.icon_class;
         i.className = `${iconClass} aonVerticalMiddle`;
         i.innerHTML = option.icon;
@@ -527,6 +531,10 @@ export class AonApplication extends AonElement {
         ai.size  = "18px";
         li.appendChild(ai);
         if(LS.isNewTheme() && data.app) ai.color = data.app.color;
+        if(option.icon_color) {
+          ai.title = option.id;
+          ai.color = option.icon_color;
+        }
         li.addEventListener(EVENT.MOUSEOVER, () => {
           if(!LS.isNewTheme()) 
             this.getElement(id + "AonIcon").color = option.aonIcon.color;
@@ -601,9 +609,14 @@ export class AonApplication extends AonElement {
               
               if(LS.isNewTheme()) {
                 let icon = this.getElement(el.id + 'icon');
-                if(icon && data.app) icon.style.color = data.app.color;
+                if(icon && data.app) {
+                  icon.style.color = icon.color || data.app.color;
+                } 
+
                 let aonIcon = this.getElement(el.id + 'AonIcon');
-                if(aonIcon && data.app) aonIcon.color = data.app.color;
+                if(aonIcon && data.app) {
+                  aonIcon.color = data.app.color;
+                }
               }
           });
           li.style.fontWeight= "bold"
@@ -694,8 +707,8 @@ export class AonApplication extends AonElement {
       li.style.removeProperty("color");
 
       if(LS.isNewTheme()) {
-        let icon = this.getElement(li.id + 'icon');
-        if(icon && color) icon.style.color = color;
+        let icon = this.getElement(li.id + 'icon'); 
+        if(icon && color) icon.style.color = icon.color || color;
         let aonIcon = this.getElement(li.id + 'AonIcon');
         if(aonIcon && color) aonIcon.color = color;
       }

@@ -447,11 +447,12 @@ export class AonMessenger extends AonElement {
 			},
 		];
 		
-		this.getApplication().addSidenavOptions2({
+		this.getApplication().addSidenavOptions3({
 			id: CONSTANT.STATUS.initCap(),
 			name: MSG.STATUS,
-			app: Apps.MESSENGER			
-		}, messengerOpts);
+			app: Apps.MESSENGER,
+			options: messengerOpts			
+		});
 	}
 
     groupNavBar() {
