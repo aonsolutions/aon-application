@@ -38,7 +38,7 @@ public class Mod123DAO extends FiscalModelDAO {
 	
 	
 	public static Stream<Mod123> getMod123s(AONContext ctx,int domain, FiscalModelFilter filter) {
-		return FiscalModelDAO.getFiscalModels(ctx,domain,FiscalModelType.M123,filter, Mod123::new);
+		return FiscalModelDAO.getFullFiscalModels(ctx,domain,FiscalModelType.M123,filter, Mod123::new);
 	}
 
 	public static Stream<Mod123> getMod123s(AONContext ctx,int domain) {

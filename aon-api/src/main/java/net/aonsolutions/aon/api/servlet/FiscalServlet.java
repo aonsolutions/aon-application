@@ -1,4 +1,5 @@
 package net.aonsolutions.aon.api.servlet;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,6 +37,12 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.fiscal.MODEL111;
+import com.esferalia.aon.occam.api.fiscal.MODEL115;
+import com.esferalia.aon.occam.api.fiscal.MODEL123;
+import com.esferalia.aon.occam.api.fiscal.MODEL130;
+import com.esferalia.aon.occam.api.fiscal.MODEL131;
+import com.esferalia.aon.occam.api.fiscal.MODEL202;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.json.FiscalMatrixParamsJSON;
 import com.esferalia.aon.occam.api.json.FiscalModelJSON;
@@ -170,7 +177,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 				try {
 					jsonModels.put(FiscalModelJSON.toJSON(model)
 							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY && model.getModel() == FiscalModelType.M303 ? presModelAutoEnabled : 0) // Presentación automática del modelo (por ahora solo modelo 303 de la Agencia Tributaria)
-							.put("testEnvironment", testEnvironment)  // Entorno de pruebas							
+							.put("testEnvironment", testEnvironment)  // Entorno de pruebas de la AEAT
+							.put("nrc", model.getNrc())
 							);
 					
 				}
@@ -215,7 +223,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				// Comprobar si hay presentación autómatica, es domiciliación o devolución y no se ha indicado IBAN
 				if (presModelAuto == 1 && (declarationType == FiscalModelDeclarationType.BANK || declarationType == FiscalModelDeclarationType.PAYBACK) && AonStringUtils.isBlank(iban)) {
 					throw new AonApiException("ERROR: Debe indicar IBAN.");
-				}				
+				}
 				
 				modelType.visit(new IFiscalModelTypeVisitor() {
 					@Override
@@ -231,6 +239,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if(reject) {
 							Mod111DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
+							model.setNrc(nrc);
 							Mod111DAO.markAsFinished(ctx, model); 
 						}
 					
@@ -249,6 +258,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if(reject) {
 							Mod115DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
+							model.setNrc(nrc);
 							Mod115DAO.markAsFinished(ctx, model); 
 						}
 					}
@@ -266,9 +276,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if(reject) {
 							Mod123DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
+							model.setNrc(nrc);
 							Mod123DAO.markAsFinished(ctx, model); 
 						}
 					}
+					
+					// FALTA - LOS MODELOS 130, 131 Y 202 NO SE CONTROLA EL RECHAZO POR EL CLIENTE, DIRECTAMENTE SE DAN POR FINALIZADOS ¿POR QUE?
 
 					@Override
 					public void visitM130() {
@@ -280,7 +293,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 							model.getFinance().setBankAlias(bankAlias);
 							model.getFinance().setBic(bankBIC);
 						}
-	
+						model.setNrc(nrc);	
 						Mod130DAO.markAsFinished(ctx, model); 
 					}
 
@@ -294,6 +307,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 							model.getFinance().setBankAlias(bankAlias);
 							model.getFinance().setBic(bankBIC);
 						}
+						model.setNrc(nrc);
 						Mod131DAO.markAsFinished(ctx, model);
 					}
 
@@ -307,6 +321,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 							model.getFinance().setBankAlias(bankAlias);
 							model.getFinance().setBic(bankBIC);
 						}
+						model.setNrc(nrc);
 						Mod202DAO.markAsFinished(ctx, model); 
 					}
 
@@ -323,7 +338,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if(reject) {
 							Mod303DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
+							// FALTA - AL GRABAR AQUI EL NRC Y HACER QUE SE GRABE EL NRC AL FINALIZAR EL MODELO, YA NO ES NECESARIO GRABARLO SI LA PRESENTACION DA ERROR
 							// Finalizar el modelo
+							model.setNrc(nrc);
 							Mod303DAO.markAsFinished(ctx, model);
 							// Presentación automática del modelo 
 							if (presModelAuto == 1) {
@@ -573,6 +590,31 @@ public class FiscalServlet extends AonApiHttpServlet{
 		return (fm instanceof Mod303)?(Mod303)fm:null;
 	}
 	
+	private Mod111 getMod111(IFiscalModel fm) {
+		return (fm instanceof Mod111)?(Mod111)fm:null;
+	}
+	
+	private Mod115 getMod115(IFiscalModel fm) {
+		return (fm instanceof Mod115)?(Mod115)fm:null;
+	}
+	
+	private Mod123 getMod123(IFiscalModel fm) {
+		return (fm instanceof Mod123)?(Mod123)fm:null;
+	}
+	
+	private Mod130 getMod130(IFiscalModel fm) {
+		return (fm instanceof Mod130)?(Mod130)fm:null;
+	}
+	
+	private Mod131 getMod131(IFiscalModel fm) {
+		return (fm instanceof Mod131)?(Mod131)fm:null;
+	}
+	
+	private static Mod202 getMod202(IFiscalModel fm) {
+		return (fm instanceof Mod202)?(Mod202)fm:null;
+	}
+	
+	
 	private synchronized String getUnencodedFile(byte[] content, Charset charset) {
 		return changeCharacters(new String(content, charset));
 	}
@@ -647,13 +689,15 @@ public class FiscalServlet extends AonApiHttpServlet{
 	
 	private boolean manageJSONContent(AEATParams aeatParams, IFiscalModel fm, byte[] body) {
 		AEATResponse response = AEATJson.toJSON(body); 
-		// Si la presentacion es correcta, grabar la respuesta y el PDF y marcar el modelo como presentado
-		if (response.isCorrect())
+		if (response.isCorrect()) 
 			manageRightResponse(aeatParams, fm, new String(body));
+//		else manageWrongResponse(aeatParams, fm);		
 		return response.isCorrect();
 	}
 	
+	// Grabar la respuesta, el PDF y marcar el modelo como presentado
 	private void manageRightResponse(AEATParams aeatParams, IFiscalModel fm, String aeatResponse) {
+		fm.setNrc(aeatParams.getNrc());
 		Occam occam = new Occam()
 				.setDomainName(aeatParams.getDomainName())
 				.setDomain(aeatParams.getDomainId())
@@ -736,6 +780,85 @@ public class FiscalServlet extends AonApiHttpServlet{
 		});
 		
 	}
+
+	// FALTA - ESTO CREO QUE NO ES NECESARIO PUES EL NRC YA SE HA GRABADO AL FINALIZAR EL MODELO
+	// Grabar el modelo, si el NRC ha cambiado
+//	private void manageWrongResponse(AEATParams aeatParams, IFiscalModel fm) {
+//		
+//		if (AonStringUtils.notEquals(fm.getNrc(), aeatParams.getNrc())) {
+//			fm.setNrc(aeatParams.getNrc());
+//			Occam occam = new Occam()
+//					.setDomainName(aeatParams.getDomainName())
+//					.setDomain(aeatParams.getDomainId())
+//					.setUser(aeatParams.getUser());
+//			fm.getModel().visit(new IFiscalModelTypeVisitor() {
+//
+//				@Override
+//				public void visitM111() {
+//					MODEL111.save(occam, getMod111(fm));
+//				}
+//
+//				@Override
+//				public void visitM115() {
+//					MODEL115.save(occam, getMod115(fm));
+//				}
+//
+//				@Override
+//				public void visitM123() {
+//					MODEL123.save(occam, getMod123(fm));
+//				}
+//
+//				@Override
+//				public void visitM130() {
+//					MODEL130.save(occam, getMod130(fm));
+//				}
+//
+//				@Override
+//				public void visitM131() {
+//					MODEL131.save(occam, getMod131(fm));
+//				}
+//
+//				@Override
+//				public void visitM202() {
+//					MODEL202.save(occam, getMod202(fm));
+//				}
+//				
+//				@Override
+//				public void visitM303() {
+//					MODEL303.save(occam, getMod303(fm));
+//				}
+//
+//				@Override
+//				public void visitM347() {}
+//
+//				@Override
+//				public void visitM349() {}
+//
+//				@Override
+//				public void visitM390() {}
+//
+//				@Override
+//				public void visitM390HF() {}
+//
+//				@Override
+//				public void visitM180() {}
+//
+//				@Override
+//				public void visitM184() {}
+//
+//				@Override
+//				public void visitM190() {}
+//
+//				@Override
+//				public void visitM193() {}
+//
+//				@Override
+//				public void visitM200() {}
+//
+//			});
+//		}			
+//		
+//	}	
 	
 	// Se utilizará para devolver los errores que se han producido en la presentación, es decir cuando la llamada al 
 	// servicio de presentación del modelo es correcta, pero la Agencia Tributaria devuelve mensajes de error

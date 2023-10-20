@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
@@ -101,7 +102,7 @@ public class AonFinishDeclarationPopup<T extends FiscalModel,O extends FiscalMod
 		} else {
 			final AonCreditorBox creditorBox = new AonCreditorBox(callback.getOptions().getOccam());
 			final AonIbanTextBox iban = new AonIbanTextBox( new EnterpriseSuggestOracle<T,O>(callback) );
-			
+			final AonTextBox nrc = new AonTextBox();
 			final ListBox listBox = new ListBox();
 			listBox.setSelectedIndex(0);
 			listBox.addItem(FiscalModelDeclarationType.DEPOSIT.getDescription(), FiscalModelDeclarationType.DEPOSIT.getValue());
@@ -114,6 +115,11 @@ public class AonFinishDeclarationPopup<T extends FiscalModel,O extends FiscalMod
 				model.setDeclarationResultType( type );
 				iban.setEnabled( type.isBankRequired() );
 				creditorBox.setEnabled(type.mustCreateFinance());
+				nrc.setEnabled(type == FiscalModelDeclarationType.DEPOSIT);
+				if (type != FiscalModelDeclarationType.DEPOSIT) {
+					nrc.setValue("");
+					model.setNrc("");
+				}
 			});
 			tab.setWidget(row, 1, listBox );
 			row++;
@@ -155,6 +161,20 @@ public class AonFinishDeclarationPopup<T extends FiscalModel,O extends FiscalMod
 				model.getFinance().setBankAlias(cont.getAlias());
 				model.getFinance().setBic(cont.getBic());
 			});
+			
+			// NRC (Solo si el resultado es positivo)
+			if (model.getDeclarationResult() > 0) {
+				row++;
+				tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
+				tab.setWidget(row, 0, new Label("NRC"));
+				
+				nrc.setText(model.getNrc());
+				nrc.addValueChangeHandler(event -> {
+					model.setNrc(nrc.getValue());
+				});
+				tab.setWidget(row, 1, nrc);
+			}
+
 		}
 		
 		row++;

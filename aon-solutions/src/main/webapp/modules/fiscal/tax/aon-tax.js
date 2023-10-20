@@ -287,21 +287,22 @@ export class AonTax extends AonElement {
     divNrc.id= "divNrc";
     form.appendChild(divNrc);
 
-    const aonSwitch = new AonSwitch();
-    aonSwitch.className = "aonWidth25";
-    aonSwitch.style.width= "26%";
-    aonSwitch.id = "switchDni";
-    aonSwitch.title = "NRC";
-    divNrc.appendChild(aonSwitch);
+    //const aonSwitch = new AonSwitch();
+    //aonSwitch.className = "aonWidth25";
+    //aonSwitch.style.width= "26%";
+    //aonSwitch.id = "switchDni";
+    //aonSwitch.title = "NRC";
+    //divNrc.appendChild(aonSwitch);
 
     const aonInputNrc = new AonInput();
     aonInputNrc.className = "aonWidth75";
     aonInputNrc.style.width= "72%";
     aonInputNrc.id = "nrc";
-    aonInputNrc.description = "Nº Ref Completo";
+    //aonInputNrc.description = "Nº Ref Completo";
+    aonInputNrc.description = "NRC";
     aonInputNrc.name = "nrc";
     aonInputNrc.type = "text";
-    aonInputNrc.disabled = true;
+    //aonInputNrc.disabled = true;
     if(resp.nrc) aonInputNrc.value = resp.nrc;
     divNrc.appendChild(aonInputNrc);
     
@@ -387,15 +388,15 @@ export class AonTax extends AonElement {
   }
 
   eventData(resp){
-    this.getElement('switchDni').addEventListener(EVENT.CHANGE, ({ target }) => {
-        let nrc = this.getElement("nrc");
-        if(nrc) {
-          nrc.disabled = !target.checked;
-        }
-        if(!target.checked) {
-          nrc.value ="";
-        }
-    });
+    //this.getElement('switchDni').addEventListener(EVENT.CHANGE, ({ target }) => {
+    //    let nrc = this.getElement("nrc");
+    //    if(nrc) {
+    //      nrc.disabled = !target.checked;
+    //    }
+    //    if(!target.checked) {
+    //      nrc.value ="";
+    //    }
+    //});
 
     const iban = this.getElement('iban');
     this.getApplicationParent()
@@ -461,7 +462,8 @@ export class AonTax extends AonElement {
       switch(type){
         case CONST_FISCAL.DEPOSIT:
           // ibanHidden = false; // El IBAN no se necesita en el ingreso, solo se necesita el NRC 
-          nrcHidden = "CUSTOMER_CHECK"!=status;
+          //nrcHidden = "CUSTOMER_CHECK"!=status;
+          nrcHidden = false;
         break;
         case CONST_FISCAL.BANK:
         case CONST_FISCAL.PAYBACK:

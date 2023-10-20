@@ -23,7 +23,6 @@ import org.jooq.BatchBindStep;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectOnConditionStep;
-import org.jooq.conf.ParamType;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
@@ -291,6 +290,13 @@ public class FiscalModelDAO {
 		try {
 			ctx.checkWrite();
 			FiscalModelValidation.validate(ctx,fm);
+			
+			// El NRC solo se graba si está cumplimentado y el tipo de declaración es "Ingreso"
+			if ((fm.getDeclarationResultType() != null && fm.getDeclarationResultType() != FiscalModelDeclarationType.DEPOSIT) || AonStringUtils.isBlank(fm.getNrc())) {
+				fm.setNrc("");
+				fm.getMap().remove("NRC");
+			}
+			
 			if (fm.getId() == null) {
 				insert(ctx, fm);
 			} else {

@@ -130,5 +130,11 @@ public interface IFiscalModel extends Serializable {
 			;
 	}
 	
+	public default String getNrc() {
+		return "";
+	}
+	public default IFiscalModel setNrc(String nrc) {
+		return this;
+	}
 	
 }

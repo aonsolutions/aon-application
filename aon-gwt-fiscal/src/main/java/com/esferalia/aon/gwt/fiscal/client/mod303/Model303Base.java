@@ -1411,23 +1411,24 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			this.forceLayout();
 		}
 		if (mod.isFinished() || mod.isSent()) {
-			StringBuilder buff = new StringBuilder(AON.MSG.result());
-			buff.append(AonStringUtils.SPACE);
-			double result = AonNumberUtils.todouble(mod.getDeclarationResult());
-			buff.append(AON.FMT.format(result));
-			if (mod.getDeclarationResultType() != null) {
-				buff.append(AonStringUtils.SPACE);
-				buff.append(mod.getDeclarationResultType().getDescription());
-			}
-			if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null && AonStringUtils.isNotBlank(mod.getFinance().getBankAccount().getIban())) {
-				buff.append(AonStringUtils.SPACE);
-				buff.append(AonStringUtils.defaultString(mod.getFinance().getBankAccount().getIban()));
-				buff.append(AonStringUtils.SPACE);
-				buff.append(AonStringUtils.defaultString(mod.getFinance().getBankAlias()));
-			}
+//			StringBuilder buff = new StringBuilder(AON.MSG.result());
+//			buff.append(AonStringUtils.SPACE);
+//			double result = AonNumberUtils.todouble(mod.getDeclarationResult());
+//			buff.append(AON.FMT.format(result));
+//			if (mod.getDeclarationResultType() != null) {
+//				buff.append(AonStringUtils.SPACE);
+//				buff.append(mod.getDeclarationResultType().getDescription());
+//			}
+//			if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null && AonStringUtils.isNotBlank(mod.getFinance().getBankAccount().getIban())) {
+//				buff.append(AonStringUtils.SPACE);
+//				buff.append(AonStringUtils.defaultString(mod.getFinance().getBankAccount().getIban()));
+//				buff.append(AonStringUtils.SPACE);
+//				buff.append(AonStringUtils.defaultString(mod.getFinance().getBankAlias()));
+//			}
 			paymentContainer = new FlowPanel();
 			paymentContainer.setStyleName(AON.CSS.aonWidthAll());
-			Label label = new Label( buff.toString() );
+//			Label label = new Label( buff.toString() );
+			Label label = new Label( FiscalModelUtils.getPaymentInfo(mod) );
 			label.setStyleName(AON.CSS.aonWidthAll());
 			label.addStyleName(AON.CSS.aonTextCenter());
 			label.addStyleName(AON.CSS.aonBold());
