@@ -30,7 +30,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import jakarta.servlet.annotation.WebServlet;
 import net.aonsolutions.aon.bank.checkit.CheckItAPI;
 import net.aonsolutions.aon.bank.checkit.CheckItException;
-import net.aonsolutions.aon.bank.checkit.CheckItNoConnectionException;
 import net.aonsolutions.aon.bank.checkit.IParamNames;
 
 @WebServlet(name = "CheckIt Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/CheckIt" })
