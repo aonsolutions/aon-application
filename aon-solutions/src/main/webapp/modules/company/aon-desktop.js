@@ -397,16 +397,16 @@ export class AonDesktop extends AonElement {
 		});
 		fastAccessButtons.appendChild(newRequest);
 
-		if(this.getDur().isAon()){
-			let conecta = new AonDashboardButton();
-			conecta.setId('conecta');
-			conecta.setLogo('aon_app');
-			conecta.setTitle('CONECT@')
-			conecta.addEventListener(EVENT.CLICK, () => {
-				this.appSelection(ClassicApps.AON_SOLUTIONS.app);
-			});
-			fastAccessButtons.appendChild(conecta);
-		}
+		// if(this.getDur().isAon()){
+		// 	let conecta = new AonDashboardButton();
+		// 	conecta.setId('conecta');
+		// 	conecta.setLogo('aon_app');
+		// 	conecta.setTitle('CONECT@')
+		// 	conecta.addEventListener(EVENT.CLICK, () => {
+		// 		this.appSelection(ClassicApps.AON_SOLUTIONS.app);
+		// 	});
+		// 	fastAccessButtons.appendChild(conecta);
+		// }
 
 		if(this.getDur().isAon()){
 			let newEmployee = new AonDashboardButton();
