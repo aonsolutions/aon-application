@@ -86,12 +86,31 @@ export class AonDesktop extends AonElement {
 	}
 
 	connectedCallback () {
+		if(LS.isNewTheme()) {
+			let span = this.getElement('aonHeaderHome');
+			if(span) span.style.display = 'none';
+
+			let expandButtonDiv = this.getElement('aonExpandButtonDiv');
+			if(expandButtonDiv) expandButtonDiv.style.display = 'block';
+		}
+
 		this.initialize();
 		getDomainUserRoles({}).then(r => {
 			this.dur = new DomainUserRoles(r);
 			this.build();
 		});
   	}
+
+	disconnectedCallback () {
+		if(LS.isNewTheme()) {
+			let span = this.getElement('aonHeaderHome');
+			if(span) span.style.display = 'block';
+
+			let expandButtonDiv = this.getElement('aonExpandButtonDiv');
+			if(expandButtonDiv) expandButtonDiv.style.display = 'none';
+		}
+	}	
+
 
 	build() {
 		let company = JSON.parse(localStorage.getItem("company"));
