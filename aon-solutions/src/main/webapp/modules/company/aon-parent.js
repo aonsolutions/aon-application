@@ -405,8 +405,10 @@ export class AonParent extends AonElement {
 		let aonHeaderSearch = this.getElement(BASE_ID + 'Search');
 		aonHeaderSearch.style.display = 'none';
 
-		let aonHeaderHome = this.getElement(BASE_ID + 'Home');
-		aonHeaderHome.style.display = 'block';
+		if(!LS.isNewTheme()) {
+			let aonHeaderHome = this.getElement(BASE_ID + 'Home');
+			aonHeaderHome.style.display = 'block';
+		}
 
 		let aonHeaderCompanyName = this.getElement(BASE_ID + 'CompanyName');
 		aonHeaderCompanyName.innerHTML = company.name;
