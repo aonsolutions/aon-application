@@ -14,45 +14,60 @@
       [value]="folderSelected"
       disabled
     ></app-input>
-    <app-file-upload-button
-      class="uploadBox"
-      id="uploadBox"
+    <label
+      id="upload-box"
+      [ngClass]="{'drag-over': isDropOver}"
+      *ngIf="filesAndFolder.length === 0"
+      (drop)="onDrop($event)"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
       (getUploadedFiles)="previewDocumentsUpload($event)"
-      (click)="checkFolder($event)"
-      [isOpenUploadModal]="isOpenUploadModal"
-      *ngIf="!document"
     >
+      <input
+        multiple
+        type="file"
+        (change)="onFileSelected($event)"
+      />
       {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
       <app-icon shape="cloud_upload" class="margin-left"></app-icon>
-    </app-file-upload-button>
+    </label>
     <p *ngIf="folderNoSelected" class="red">
       Debes seleccionar una carpeta primero
     </p>
-    <div class="documentCharge" *ngIf="document">
-      <app-icon
-        shape="close"
-        class="cancel"
-        (click)="clearDocument()"
-      ></app-icon>
-      <div class="document" *ngFor="let file of fileAndFolder">
-        <app-icon
-          [backgroundColor]="'#FDEDF2'"
-          [class]="'pink'"
-          [padding]="'.5rem'"
-          [borderRadius]="'.4rem'"
-          shape="picture_as_pdf"
-        ></app-icon>
-        <span class="documentName"> {{ file['document'].name }} </span>
-        <span>{{ currentDate }}</span>
+    <div id="documentCharge" *ngIf="filesAndFolder.length > 0">
+      <div class="document">
+        <app-card
+          [class] = "'file pink'"
+          *ngFor  = "let file of filesAndFolder; let i = index"
+        >
+          <div header>
+            <div class = "cancel">
+              <app-icon
+                shape   = "close"
+                (click) = "clearDocument(i)"
+              ></app-icon>
+            </div>
+          </div>
+          <div body>
+            <span class="icon-background">
+              <app-icon [shape]="'picture_as_pdf'"></app-icon>
+            </span>
+          </div>
+          <div footer>
+            <div class="bold">
+              {{ file['document'].name }}
+            </div>
+            <div class="griss">{{ currentDate }}</div>
+          </div>
+        </app-card>
       </div>
     </div>
   </div>
-  <div class="buttonsUpload" *ngIf="document">
+  <div class="buttonsUpload" *ngIf="filesAndFolder.length > 0">
     <app-button
       [class]="'pink'"
       [width]="'10rem'"
-      [matDialogClose]="fileAndFolder"
-      (click)="uploadDocument()"
+      [matDialogClose]="filesAndFolder"
     >
       <app-icon shape="aon_upload"></app-icon>
       {{ "COMMON.UPLOAD" | translate }}

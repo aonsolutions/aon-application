@@ -13,10 +13,11 @@ import { TaxModelService } from 'src/app/core/services/tax-model.service';
 })
 export class ModelsDashboardComponent implements OnInit {
   @ViewChild('model') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
-  models  : any;
-  menuItem: MenuItem [] = []
-  selected: string      = '';
-  spinner : boolean     = false;
+  models      : any;
+  existModels : boolean     = false;
+  menuItem    : MenuItem [] = []
+  selected    : string      = '';
+  spinner     : boolean     = false;
 
   constructor(
     private translateService: TranslateService,
@@ -56,8 +57,10 @@ export class ModelsDashboardComponent implements OnInit {
     filterBuilder.addField('trimester', trimester);
     filterBuilder.addField('year', currentYear);
     this.taxModelService.getTaxModelList(filterBuilder.getFilter()).then((models) => {
-      this.models   = models;
-      this.spinner  = false;
+      this.models       = models;
+      this.existModels  = this.models.isEmpty() ? false : true;
+      this.spinner      = false;
+      this.models.isEmpty()
     });
   }
 

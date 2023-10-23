@@ -10,7 +10,7 @@
   </div>
   <div body class="list">
     <app-spinner *ngIf="spinner"></app-spinner>    
-    <div *ngIf="!models.isEmpty()">
+    <div *ngIf="existModels">
       <div *ngFor="let model of models" class="list-row">
         <div class="list-name">{{ 'HOME.MODEL'|translate }} {{ model.Name }}</div>
         <div class="list-date"> {{ model.TaxType }}</div>
@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <div class="sinDatos" *ngIf="models.isEmpty() && !spinner">
+    <div class="sinDatos" *ngIf="!existModels && !spinner">
       {{ 'TAX_PANEL.NO_MODELS'|translate }}
     </div>
   </div>

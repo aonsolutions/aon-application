@@ -1,21 +1,71 @@
 <!-- (filesChangeEmiter)="onDrop($event)" -->
 <label
-  appDragAndDrop
-  (dragover)="onDragOver($event)"
-  (drop)="onDrop($event)"
-  (dragleave)="onDragLeave($event)"
-  [ngClass]="{'drag-over': isDropOver}"
   id="file-upload"
+  [ngClass]="{'drag-over': isDropOver}"
+  appDragAndDrop
+  (click)="modalUploadDocument($event)"
+  (drop)="onDrop($event)"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
 >
-  <input
-    multiple
-    type="file"
-    (click)="uploadDocument($event)"
-    (change)="onFileSelected($event)"
-  />
   <ng-content></ng-content>
 </label>
 
 <!-- Modal -->
-<app-modal-controller #modal></app-modal-controller>
+<app-modal-controller
+  #modalUploadFile
+></app-modal-controller>
 <!-- Fin Modal -->
+
+<div 
+  id="uploading-files"
+  *ngIf="filesAndFolderUploaded.length > 0 && filesAndFolderUploadedView"
+>
+  <div head>
+    <div id="head-text">
+      Subiendo {{ filesAndFolderUploaded.length }} archivos
+    </div>
+    <div id="uploading-files-close">
+      <app-icon 
+        [shape]="'clear'"
+        (click)="closeUploadingFiles()"
+      ></app-icon>
+    </div>
+  </div>
+  <div body>
+    <div
+      class="uploading"
+      *ngFor  = "let file of filesAndFolderUploaded; let i = index"
+    > 
+      <div
+        class="uploaded"
+      > 
+        <app-icon class="pink" [shape]="'picture_as_pdf'"></app-icon>
+        <span class="name">
+            {{ file.document.name }}
+        </span>
+        <span class="subido">
+          <mat-spinner
+            *ngIf="file.uploaded === 'uploaded'"
+            [color]="'alt-warning'" 
+            [diameter]="'26'" 
+            [strokeWidth]="'4'"
+          ></mat-spinner>
+          <app-icon 
+            *ngIf="file.uploaded === 'up'"
+            class="pink"
+            [shape]="'check_circle'"
+          ></app-icon>
+          <app-icon 
+            *ngIf="file.uploaded === 'error'"
+            class="pink"
+            [shape]="'cancel'"
+          ></app-icon>
+        </span>
+      </div>
+      <div class="upload-error" *ngIf="file.error !== ''">
+          {{ file.error }}
+      </div>
+    </div>
+  </div>
+</div>

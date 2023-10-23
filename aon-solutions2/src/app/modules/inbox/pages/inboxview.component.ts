@@ -167,8 +167,7 @@ export class InboxviewComponent implements OnInit {
   showModal() {
     this.modalComponent.openDialog(
       ModalCreateComponent,
-      this.functionHome,
-      'Data from home',
+      this.functionHome
     );
   }
 

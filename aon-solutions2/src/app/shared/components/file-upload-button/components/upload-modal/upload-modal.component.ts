@@ -1,69 +1,87 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FolderService } from 'src/app/core/services/folder.service';
-import { ResultSnackBarComponent } from '../../../result-snack-bar/result-snack-bar.component';
+import { Component, EventEmitter, Inject, Output, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { DocumentService } from '../../../../../core/services/document.service';
-import { Factory } from 'libraries/AonSDK/src/aon';
-import { documents } from '../../../../../../../libraries/AonSDK/src/models/Document';
+import { ResultSnackBarComponent } from 'src/app/shared/components/result-snack-bar/result-snack-bar.component';
+import { FolderService } from 'src/app/core/services/folder.service';
 
 interface Folder {
-  value: string;
-  text: string;
+  value : string;
+  text  : string;
 }
 
 @Component({
-  selector: 'app-upload-modal',
-  templateUrl: './upload-modal.component.html',
-  styleUrls: ['./upload-modal.component.scss'],
+  selector    : 'app-upload-modal',
+  templateUrl : './upload-modal.component.html',
+  styleUrls   : ['./upload-modal.component.scss'],
 })
+
 export class UploadModalComponent implements OnInit {
-  document: any;
-  docName: string = '';
-  folderList: Folder[] = [];
-  folderSelected: string = '/a_contabilizar';
-  folderNoSelected: boolean = false;
-  fileAndFolder: any[] = [];
-  isOpenUploadModal: boolean = true;
+  @Output() getUploadingdFiles: EventEmitter<any> = new EventEmitter();
+  isDropOver      : boolean   = false;
+  folderList      : Folder[]  = [];
+  folderSelected  : string    = '/a_contabilizar';
+  folderNoSelected: boolean   = false;
+  filesAndFolder  : any[]     = [];
   currentDate = new Date()
     .toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
+      year  : 'numeric',
+      month : '2-digit',
+      day   : '2-digit'
     })
     .replace(/(\d+)\/(\d+)\/(\d+)/, '$1-$2-$3');
 
-  objectFactory = new Factory();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<UploadModalComponent>,
-    private folderService: FolderService,
-    private documentService: DocumentService,
-    private snackBar: MatSnackBar
+    private folderService   : FolderService,
+    private snackBar        : MatSnackBar
   ) {
     // Guardamos las carpetas en un array para mostrarlas en el select
     this.folderService.getFolderList().then((listFolders) => {
       listFolders.forEach((folder) => {
         this.folderList.push({
-          value: folder.getKey(),
-          text: folder.Name,
+          value : folder.getKey(),
+          text  : folder.Name,
         });
       });
     });
   }
 
-  ngOnInit(): void {}
-
-  // Cerramos el modal
-  closeModal(): void {
-    this.dialogRef.close();
+  ngOnInit(): void {
+    
   }
 
-  // Guardamos la carpeta seleccionada
-  // handleFolderSelected(event: any) {
-  //   this.folderSelected = event;
-  // }
+/*
+  Evento cogiendo documentos
+*/
+  onFileSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      this.previewDocumentsUpload(target.files);
+    }
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    if (event.dataTransfer && event.dataTransfer.files) {
+      this.previewDocumentsUpload(event.dataTransfer.files);
+    }
+    this.isDropOver = false;
+  }
+
+  onDragOver(event: any) {
+    event.preventDefault();
+    this.isDropOver = true;
+  }
+
+  onDragLeave(event: any) {
+    event.preventDefault();
+    this.isDropOver = false;
+  }
+
+/*
+  FIN - Evento cogiendo documentos
+*/
 
   // Comprobamos si se ha seleccionado una carpeta antes de subir el documento
   checkFolder(event: Event) {
@@ -77,68 +95,35 @@ export class UploadModalComponent implements OnInit {
 
   // Guardamos el documento y la carpeta seleccionada
   async previewDocumentsUpload(event: any) {
-    const files = event;
-
-    Array.from(files).forEach((file) => {
-      this.document = file;
-      this.docName = this.document['name'];
-      this.fileAndFolder.push({
-        document: this.document,
-        folder: this.folderSelected,
-      });
-    });
-  }
-
-  // Limpiamos el documento subido
-  clearDocument() {
-    this.fileAndFolder = [];
-    this.document = null;
-    this.docName = '';
-  }
-
-  // Guardamos los documentos y la carpeta seleccionada
-  uploadDocument() {
-    //Si se ha seleccionado un documento
-    if (this.fileAndFolder.length > 0) {
-      // Guardamos el documento en la carpeta seleccionada
-      this.fileAndFolder.forEach((file) => {
-        console.log(file.document);
-        console.log(file.folder);
-        this.documentService.uploadDocument(file.folder, file.document)
-        .then(() => {
-          this.uploadCompletedModal();
-        })
-        .catch((err) => {
-          console.log('Error: ', err);
-          this.uploadErrorModal();
+    // Mirar si tenemos carpeta marcada
+    if(!this.folderNoSelected){
+      const files = event;
+      Array.from(files).forEach((file) => {
+        // Montamos los datos a enviar, cuando se cierre el modal
+        this.filesAndFolder.push({
+          document: file,
+          path    : this.folderSelected,
+          uploaded: 'uploaded',
+          error   : ''
         });
       });
-      this.closeModal();
+    } else {
+      const err = {result: 'Selecciona una carpeta'};
+      this.uploadErrorModal(err);
     }
   }
 
-  // Confirmación de subida de documento
-  uploadCompletedModal() {
-    this.snackBar.openFromComponent(ResultSnackBarComponent, {
-      data: {
-        message: 'Documento subido correctamente',
-        icon: 'check_circle',
-        preClose: () => {
-          this.snackBar.dismiss();
-        },
-      },
-      panelClass: ['correct-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      duration: 3000,
-    });
+  // Limpiamos el documento subido
+  clearDocument(index: number) {
+    // Quitamos el documento escogido
+    this.filesAndFolder.splice(index, 1);
   }
-
+  
   // Si la subida da error
-  uploadErrorModal() {
+  uploadErrorModal(err: any) {
     this.snackBar.openFromComponent(ResultSnackBarComponent, {
       data: {
-        message: 'Error al subir el documento',
+        message: err.result,
         icon: 'error',
         preClose: () => {
           this.snackBar.dismiss();
@@ -150,4 +135,5 @@ export class UploadModalComponent implements OnInit {
       duration: 3000,
     });
   }
+
 }

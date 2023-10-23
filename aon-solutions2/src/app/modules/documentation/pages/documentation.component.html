@@ -11,7 +11,7 @@
         [gridCols]="{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }"
       ></mat-grid-tile>
       <mat-grid-tile [gridCols]="{ xs: 22, sm: 22, md: 22, lg: 22, xl: 22 }">
-        <app-file-upload-button (click)="uploadDocument($event)">
+        <app-file-upload-button>
           {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
           <app-icon shape="cloud_upload" class="margin-left"></app-icon>
         </app-file-upload-button>
@@ -206,6 +206,6 @@
   </div>
   <!--FIN Detail-->
   <!--Modal-->
-  <app-modal-controller #modal></app-modal-controller>
+  <app-modal-controller #modalDocumentationRename></app-modal-controller>
   <!--FIN Modal-->
 </app-grid-layout>
