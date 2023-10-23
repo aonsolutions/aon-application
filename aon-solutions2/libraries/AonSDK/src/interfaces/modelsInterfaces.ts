@@ -186,6 +186,9 @@ export interface ICertificate extends ICollectable {
 }
 
 export interface IEnterprise extends ICollectable {
+    Id: string;
+    getId(): string;
+    setId(value: string): IEnterprise;
     Name: string;
     getName(): string;
     setName(value: string): IEnterprise;
@@ -259,6 +262,9 @@ export interface IDocumentNote extends ICollectable {
 }
 
 export interface IBank extends ICollectable {
+    Active: boolean;
+    getActive(): boolean;
+    setActive(value: boolean): IBank;
     Name: string;
     getName(): string;
     setName(value: string): IBank;

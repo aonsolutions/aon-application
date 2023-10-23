@@ -20,6 +20,7 @@ export class BanksDashboardComponent implements OnInit {
     this.bankService.getBankList().then((response) => {
      this.banks = response;
       response.forEach((bank) => {
+        if(typeof bank.Total == 'number')
         this.totalAmount += bank.Total;
       });
      this.spinner = false;

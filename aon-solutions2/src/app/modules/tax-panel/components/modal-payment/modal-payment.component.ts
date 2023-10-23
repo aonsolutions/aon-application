@@ -1,10 +1,5 @@
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
-import {
-  CollectionFactory,
-  IBank,
-  ICollection,
-  statusTaxModel,
-} from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, IBank, ICollection} from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BankService } from 'src/app/core/services/bank.service';
@@ -75,18 +70,16 @@ export class ModalPaymentComponent implements OnInit {
       this.banksList = this.banks
         .toArray()
         .map((element) => ({ value: element.Iban, text: element.Iban }));
-      console.log('lista de bancos', this.banksList);
+
       // Asigna el primer banco de la lista a selectedBank
       if (this.banksList.length > 0) {
         this.selectedBank = this.banksList[0].value;
-        console.log('aqui  selectedBank', this.selectedBank);
       }
     });
   }
 
   selectBank(event: any) {
     this.selectedBank = event;
-    console.log('banco seleccionado', this.selectedBank);
   }
 
   async createBank() {
@@ -105,7 +98,6 @@ export class ModalPaymentComponent implements OnInit {
 
     if (isDuplicateIban) {
       // Muestra un mensaje de error o realiza la acción adecuada para manejar un IBAN duplicado
-      console.log('El IBAN ya existe en la lista de bancos.');
       return;
     }
 
@@ -134,7 +126,6 @@ export class ModalPaymentComponent implements OnInit {
     this.newBankBic = '';
     this.showCreateBank = false;
     this.listBanks();
-    console.log('los bancos guardados', this.banks);
   }
 
   getNrc(event: any) {
@@ -145,10 +136,6 @@ export class ModalPaymentComponent implements OnInit {
     if (this.codeNrc) {
       // Oculta el spinner que se muestra cuando se abre el modal
       this.spinner = false;
-
-      console.log('esto es model', this.model);
-      console.log('esto es condeNrc', this.codeNrc);
-
       // Muestra el spinner mientras se envía el mensaje
       this.spinner = true;
       const nrcPay = await this.taxModelService.payTaxModel(
@@ -158,19 +145,16 @@ export class ModalPaymentComponent implements OnInit {
 
       if (nrcPay) {
         // Pago exitoso, realiza las acciones necesarias
-        console.log('Pago exitoso.');
         // Limpia el campo NRC
         this.codeNrc = ''; // Establece el campo en una cadena vacía para borrar su contenido
       } else {
         // Pago fallido, realiza las acciones necesarias
-        console.log('El pago falló.');
       }
       this.spinner = false;
       this.dialogRef.close();
       window.location.reload();
     } else {
       // Campo NRC vacío o no válido
-      console.log('El campo NRC está vacío o no tiene un valor válido.');
     }
   }
 
@@ -179,7 +163,6 @@ export class ModalPaymentComponent implements OnInit {
     .toArray()
     .filter((bank) => bank.Iban === this.selectedBank);
 
-    console.log('antes filteredBanks', filteredBanks);
   if (filteredBanks.length > 0) {
     if (this.selectedBank) {
       // Oculta el spinner que se muestra cuando se abre el modal
@@ -189,27 +172,18 @@ export class ModalPaymentComponent implements OnInit {
       const ibanPay = await this.taxModelService.payTaxModel(
         this.model,
         filteredBanks[0]
-
       );
-
-        console.log('esto es model', this.model);
-        console.log('esto es selectedBank', this.selectedBank);
-        console.dir('esto es filteredBanks', filteredBanks);
-        console.log('esto son los bancos guardados', this.banks);
 
         if (ibanPay) {
           // Pago exitoso, realiza las acciones necesarias
-          console.log('Pago exitoso.');
         } else {
           // Pago fallido, realiza las acciones necesarias
-          console.log('El pago falló.');
         }
         this.spinner = false;
         this.dialogRef.close();
         window.location.reload();
       } else {
         // Campo NRC vacío o no válido
-        console.log('El campo  está vacío o no tiene un valor válido.');
       }
     }
   }

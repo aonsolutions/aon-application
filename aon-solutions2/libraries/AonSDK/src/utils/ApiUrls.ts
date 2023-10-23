@@ -34,3 +34,7 @@ export const enum REGISTRY_URL {
 export const enum BANK_URL {
     GET_BANK_LIST = '/ms/api/company/banks',
 }
+
+export const enum DOCUMENT_URL {
+    GET_PAYROLL_LIST = '/ms/api/contract/enterprise/salaries',
+}

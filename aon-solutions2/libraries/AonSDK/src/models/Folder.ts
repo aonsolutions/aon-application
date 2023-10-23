@@ -120,7 +120,7 @@ export class ApiFolder extends Folder implements IApiModel {
         folder.Key = data.ipf ? data.ipf : '';
         folder.Name = data.name ? data.name : '';
         folder.Parent = '/laboral';
-        folder.Path = '/laboral/' + folder.Key;
+        folder.Path = '/laboral/' + data.id;
         return folder;
         throw new ErrorResponse('0199')
     }
