@@ -7,6 +7,14 @@ const routes: Routes = [
     path: '',
     component: InboxviewComponent
   },
+  {
+    path: ':id',
+    component: InboxviewComponent
+  },
+  {
+    path: 'create',
+    component: InboxviewComponent
+  }
 ];
 
 @NgModule({

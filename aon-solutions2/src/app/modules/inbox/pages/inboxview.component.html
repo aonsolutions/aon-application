@@ -14,7 +14,7 @@
           <app-icon shape="add_comment"></app-icon>
           {{ "INBOX.CREATE" | translate }}
         </app-button>
-        <app-modal-controller #modal>
+        <app-modal-controller #modalCreateInbox>
           <app-create-query *ngIf="isModalVisible"></app-create-query>
         </app-modal-controller>
       </span>

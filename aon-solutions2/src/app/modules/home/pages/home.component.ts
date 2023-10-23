@@ -20,6 +20,7 @@ interface ShortcutDashboard {
   shape: string;
   name: string;
   modal: string;
+  routerlink?: string;
 }
 
 interface ChartItem {
@@ -43,9 +44,7 @@ export class HomeComponent implements OnInit {
   shortcuts   : ShortcutDashboard[] = [];
   chartItems  : ChartItem[]         = [];
   menuItems   : MenuItems[]         = [];
-  routerlink: string = '/inbox';
   public collectionFactory  = new CollectionFactory();
-
 
   //banks area
   banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
@@ -73,7 +72,7 @@ export class HomeComponent implements OnInit {
       this.shortcuts = [
         { shape: 'add_box'    , name: result['HOME.CREATE_INVOICE'], modal: 'workingModal' },
         { shape: 'person_add' , name: result['HOME.REGISTER_EMPLOYEE'], modal: 'workingModal' },
-        { shape: 'add_comment', name: result['HOME.CREATE_QUERY'], modal: 'createQuery' },
+        { shape: 'add_comment', name: result['HOME.CREATE_QUERY'], modal: '', routerlink: '/inbox/create'},
         { shape: 'alarm'      , name: result['HOME.TIMING'], modal: 'workingModal' },
       ];
       this.chartItems = [
@@ -156,10 +155,6 @@ export class HomeComponent implements OnInit {
       case 'workingModal':
         this.workingModal();
         break;
-        case 'createQuery':
-        this.router.navigate([this.routerlink]);
-        this.createQuery();
-        break;
       default:
         break;
     }
@@ -168,13 +163,6 @@ export class HomeComponent implements OnInit {
   // Modal para cosas aún en construcción
   workingModal() {
     this.modalComponent.openDialog(WorkingModalComponent, this.functionHome);
-  }
-
-  createQuery() {
-    this.modalComponent.openDialog(
-      ModalCreateComponent,
-      this.functionHome,
-    );
   }
 
   // Confirmación de subida de documento

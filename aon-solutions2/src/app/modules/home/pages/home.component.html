@@ -15,6 +15,7 @@
         class="icon-background"
         [width]="'width'"
         (click)="openModal(shortcut.modal)"
+        [routerLink]="shortcut.routerlink"
       >
         <app-icon [shape]="shortcut.shape"></app-icon>
         {{ shortcut.name }}

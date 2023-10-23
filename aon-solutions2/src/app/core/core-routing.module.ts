@@ -28,13 +28,6 @@ const routes: Routes = [
           import('src/app/modules/home/home.module').then((m) => m.HomeModule),
       },
       {
-        path: 'inbox/:id_message',
-        loadChildren: () =>
-          import('src/app/modules/inbox/inbox.module').then(
-            (m) => m.InboxModule
-          ),
-      },
-      {
         path: 'inbox',
         loadChildren: () =>
           import('src/app/modules/inbox/inbox.module').then(

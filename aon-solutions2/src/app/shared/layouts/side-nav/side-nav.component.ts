@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  EventEmitter,
-  Output,
-  ViewChild,
-  Input,
-} from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, ViewChild, Input} from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -31,7 +24,8 @@ export class SideNavComponent implements OnInit {
   @Input() hide: boolean;
   @Output() onSelected = new EventEmitter<any>();
   @ViewChild('iconHover') iconHover: any;
-  @ViewChild('modal') modalComponent: any = '';
+  @ViewChild('modalCreateInbox') modalCreateInboxComponent: any = '';
+  functionHome: any = (result: any) => this.afterModalClosed(result);
 
   constructor(
     private optionsService: OptionsService,
@@ -68,7 +62,7 @@ export class SideNavComponent implements OnInit {
         this.shortcuts = [
           { routerlink: 'home', shape: 'add_box', toolTip: 'En construcción' },
           { routerlink: 'tax-panel', shape: 'person_add', toolTip: 'En construcción', },
-          { routerlink: 'inbox', shape: 'add_comment', toolTip: result['HOME.CREATE_QUERY'], options: { showModal: true }, },
+          { routerlink: 'inbox/create', shape: 'add_comment', toolTip: result['HOME.CREATE_QUERY'], options: { showModal: true }, },
           { routerlink: 'tax-panel', shape: 'alarm', toolTip: 'En construcción', },
         ];
       });
@@ -124,24 +118,18 @@ export class SideNavComponent implements OnInit {
         if (this.opened === true) this.opened = false;
         // La ruta seleccionada
         element.selected = true;
-        if (element.routerlink === 'inbox') {
-          this.showModal();
-        }
       }
     });
   }
-
-  functionHome: any = (result: any) => this.afterModalClosed(result);
 
   afterModalClosed(result?: any) {
     console.log(result);
   }
 
   showModal() {
-    this.modalComponent.openDialog(
+    this.modalCreateInboxComponent.openDialog(
       ModalCreateComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
   }
 
