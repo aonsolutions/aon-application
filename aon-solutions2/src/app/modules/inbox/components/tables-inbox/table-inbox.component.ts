@@ -368,9 +368,6 @@ export class TablesInboxComponent implements OnChanges {
       });
   }
 
-  //filtro
-
-
   // Método para cambiar el estado de un mensaje consulta
   iconAction(object: any) {
     this.messageService.getMessage(object.key).then((messageStatus) => {

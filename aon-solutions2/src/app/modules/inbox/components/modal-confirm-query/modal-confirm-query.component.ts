@@ -18,15 +18,16 @@ export class ModalConfirmQueryComponent implements OnInit {
 
   closeModal(): void {
   this.dialogRef.close();
+  window.location.reload();
   }
 
   // Llama a la función para crear un nuevo mensaje
-  sendMessage(): void {
-    if (typeof this.data.sendMessage === 'function') {
-      this.data.sendMessage();
-      this.closeModal();
-    }
-    window.location.reload();
-  }
+  // sendMessage(): void {
+  //   if (typeof this.data.sendMessage === 'function') {
+  //     this.data.sendMessage();
+  //     this.closeModal();
+  //   }
+  //   window.location.reload();
+  // }
 
 }

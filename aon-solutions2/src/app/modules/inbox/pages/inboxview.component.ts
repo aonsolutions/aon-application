@@ -24,8 +24,7 @@ export interface Tabs {
   styleUrls: ['./inboxview.component.scss'],
 })
 export class InboxviewComponent implements OnInit {
-  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent =
-    new DropdownMenuComponent();
+  @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent();
   @ViewChild('modal') modalComponent: any = '';
   @ViewChild(TablesInboxComponent, { static: false })
   @Output() consultaCreated: EventEmitter<void> = new EventEmitter<void>();
@@ -55,14 +54,13 @@ export class InboxviewComponent implements OnInit {
   expandedIndex: number = -1;
   newMessageDescription: string = '';
   spinner: boolean = true;
-  totalMessageCount: number = 0;
   menuItem: MenuItem[] = [];
   selected: string = '';
+  totalMessageCount: number = 0;
   consultaMessageCount: number = 0;
   tareasMessageCount: number = 0;
   notificacionesMessageCount: number = 0;
   updateTable: boolean = false;
-  newMessageDescriptionTemp: string = '';
 
   constructor(
     private translateService: TranslateService,
@@ -364,29 +362,47 @@ export class InboxviewComponent implements OnInit {
     // Llama a la función para crear un nuevo mensaje
     this.createMessage(this.newMessageDescription);
     }
+    this.openConfirmQueryModal();
+    this.newMessageDescription = '';
   }
 
   // función para pasar los datos al modal de confirmación
-  sendMessageAndOpenModal(): void {
+  // sendMessageAndOpenModal(): void {
+  //   const dialogRef = this.dialog.open(ModalConfirmQueryComponent, {
+  //     data: {
+  //       sendMessage: () => {
+  //         this.createMessage(this.newMessageDescriptionTemp);
+  //         this.isModalVisible = false;
+  //       }
+  //     }
+  //   });
+
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (result) {
+  //       this.isModalVisible = true;
+  //       this.newMessageDescription = '';
+  //     } else {
+  //       this.newMessageDescription = this.newMessageDescriptionTemp;
+  //     }
+  //   });
+
+  //   this.newMessageDescriptionTemp = this.newMessageDescription;
+  //   this.newMessageDescription = '';
+  // }
+
+  // funcion para mostrar el modal cuando envio una consulta desde tarea
+  openConfirmQueryModal() {
     const dialogRef = this.dialog.open(ModalConfirmQueryComponent, {
       data: {
         sendMessage: () => {
-          this.createMessage(this.newMessageDescriptionTemp);
-          this.isModalVisible = false;
-        }
-      }
+          this.createMessage(this.newMessageDescription);
+          // Agrega cualquier otra lógica que desees ejecutar después de enviar la consulta.
+        },
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.isModalVisible = true;
-        this.newMessageDescription = '';
-      } else {
-        this.newMessageDescription = this.newMessageDescriptionTemp;
-      }
+    dialogRef.afterClosed().subscribe((result) => {
+      // Maneja cualquier acción después de que se cierra el modal, si es necesario.
     });
-
-    this.newMessageDescriptionTemp = this.newMessageDescription;
-    this.newMessageDescription = '';
   }
 }
