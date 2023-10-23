@@ -97,7 +97,6 @@ export class FileUploadButtonComponent implements OnInit {
           );
         // FIN Montamos el documento, para enviar
         // Subimos el documento
-        /*
           this.documentService.uploadDocument(document, file.document).then((response) => {
             if(response)
               filesAndFolder[key].uploaded = 'up';
@@ -110,7 +109,6 @@ export class FileUploadButtonComponent implements OnInit {
             console.log('Error: ', err);
 //            this.uploadErrorModal(err);
           });
-        */
         // FIN Subimos el documento
       });
     }
