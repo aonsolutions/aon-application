@@ -103,7 +103,11 @@ export class AonFiscalCard extends AonElement {
     let content = this.getElement("fiscalCardTable");
     this.removeAllChildNodes(content);
 
-    modelDatas.forEach(modelData => {
+    let maxModels = modelDatas && modelDatas.length < 4 ? modelDatas.length : 4;
+
+    for (let index = 0; index < maxModels; index++) {
+      const modelData = modelDatas[index];
+    
       let row = this.createElement(TAG.DIV);
       row.className = CSS.AON_FLEX;
       row.style.justifyContent = "space-between";
@@ -161,7 +165,7 @@ export class AonFiscalCard extends AonElement {
       row.appendChild(rightContent);
 
       content.appendChild(row);
-    });
+    }
 
     const fiscalTotalDiv = this.getElement("fiscalTotalDiv");
     fiscalTotalDiv.className = CSS.AON_CARD_TOTAL;
