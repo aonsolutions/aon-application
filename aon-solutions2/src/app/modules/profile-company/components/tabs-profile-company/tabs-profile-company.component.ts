@@ -23,6 +23,7 @@ export class TabsProfileCompanyComponent implements OnInit {
   originalUser!: IUser;
   tabIndex: number = 0;
   tabs: Tabs[] = [];
+  spinner: boolean = false;
 
   constructor(
     private translateService: TranslateService,
@@ -46,38 +47,39 @@ export class TabsProfileCompanyComponent implements OnInit {
       });
     }
 
-    updateRegistryEnterprise(updatedRegistry: any) {
-      // Actualiza el objeto registryEnterprises con el valor recibido del hijo
-      // this.registryEnterprises[0] = updatedRegistry;
-    }
-
     onSave() {
-      let isSaved: boolean = false;
-      const userModified: boolean = this.checkIfDataModified(this.originalUser, this.user!);
-      const enterpriseModified: boolean = this.checkIfDataModified(this.originalEnterprise, this.enterprise!);
-      const registryEnterpriseModified: boolean = this.checkIfDataModified(this.originalRegistryEnterprise, this.registryEnterprise!);
+      this.spinner = true;
 
-      // Verificamos si existen cambios en el usuario
-      if (userModified) {
-        this.userService.updateCurrentUserData(this.user!);
-        isSaved = true;
-      }
+      setTimeout(() => {
 
-      // Verificamos si existen cambios en el enterprise
-      console.log('datos a pasar', this.enterprise);
-      if (enterpriseModified) {
+        let isSaved: boolean = false;
+        const userModified: boolean = this.checkIfDataModified(this.originalUser, this.user!);
+        const enterpriseModified: boolean = this.checkIfDataModified(this.originalEnterprise, this.enterprise!);
+        const registryEnterpriseModified: boolean = this.checkIfDataModified(this.originalRegistryEnterprise, this.registryEnterprise!);
 
-        this.enterpriseService.updateCurrentEnterpriseData(this.enterprise!);
-        isSaved = true;
-      }
+        // Verificamos si existen cambios en el usuario
+        if (userModified) {
+          this.userService.updateCurrentUserData(this.user!);
+          isSaved = true;
+        }
 
-      // Verificamos si existen cambios en el registryEnterprise
-      if (registryEnterpriseModified) {
-        this.enterpriseService.updateCurrentEnterpriseRegistryData(this.registryEnterprise!);
-        isSaved = true;
-      }
+        // Verificamos si existen cambios en el enterprise
+        console.log('datos a pasar', this.enterprise);
+        if (enterpriseModified) {
 
-      return isSaved;
+          this.enterpriseService.updateCurrentEnterpriseData(this.enterprise!);
+          isSaved = true;
+        }
+
+        // Verificamos si existen cambios en el registryEnterprise
+        if (registryEnterpriseModified) {
+          this.enterpriseService.updateCurrentEnterpriseRegistryData(this.registryEnterprise!);
+          isSaved = true;
+        }
+
+        this.spinner = false;
+        return isSaved;
+      }, 2000);
     }
 
     onCancel() {

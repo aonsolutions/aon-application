@@ -5,6 +5,7 @@ import { CertificateService } from '../../../../core/services/certificate.servic
 import { ModalDeleteCertificateComponent } from '../modal-delete-certificate/modal-delete-certificate.component';
 import { ModalInfoCertificateComponent } from '../modal-info-certificate/modal-info-certificate.component';
 import { ModalValidatedCertificateComponent } from '../modal-validated-certificate/modal-validated-certificate.component';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-table-profile-certificate',
@@ -99,6 +100,8 @@ export class TableProfileCertificateComponent implements OnInit {
   private getCertificates() {
     let tableRow: any = [];
     let column: any = {};
+    const resYes = this.translateService.instant('COMMON.YES');
+    const resNo = this.translateService.instant('COMMON.NO');
 
     this.certificateService.getCertificateList().then((response) => {
       response.forEach(function (certificate, certificateKey) {
@@ -106,12 +109,15 @@ export class TableProfileCertificateComponent implements OnInit {
         column.key = certificateKey;
         column.name = certificate.Name;
         column.representationType = certificate.RepresentationType;
-        column.expirationDate = certificate.ExpirationDate;
+        column.expirationDate = new DatePipe('es-ES').transform(
+          certificate.ExpirationDate,
+          'dd/MM/yyyy'
+        );
         column.alias = certificate.Alias;
         column.type = certificate.Type;
-        column.tgss = certificate.Tgss;
-        column.sepe = certificate.Sepe;
-        column.aeat = certificate.Aeat;
+        column.tgss = (certificate.Tgss) ? resYes : resNo;
+        column.sepe = (certificate.Sepe) ? resYes : resNo;
+        column.aeat = (certificate.Aeat) ? resYes : resNo;
         column.actions = ['verified_user', 'delete'];
 
         tableRow.push(column);
