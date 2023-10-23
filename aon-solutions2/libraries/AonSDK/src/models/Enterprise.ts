@@ -6,6 +6,7 @@ import { KeyGenerator } from "../utils/KeyGenerator";
 import { ErrorResponse } from "../utils/Response";
 
 export class Enterprise implements IEnterprise, IModel {
+    private id: string;
     private domainName: string;
     private domainId: string;
     private name: string;
@@ -21,6 +22,23 @@ export class Enterprise implements IEnterprise, IModel {
     private registry: string;
     private key: string;
     protected apiObject: any;
+
+    public get Id(): string {
+        return this.id;
+    }
+
+    public set Id(value: string) {
+        this.id = value;
+    }
+
+    public getId(): string {
+        return this.id;
+    }
+
+    public setId(value: string): IEnterprise {
+        this.id = value;
+        return this
+    }
 
     public get ApiObject(): any {
         return this.apiObject;
@@ -142,7 +160,8 @@ export class Enterprise implements IEnterprise, IModel {
         this.key = key;
     }
 
-    constructor(name?: string, document?: string, profilePhoto?: string, address?: string, country?: string, province?: string, socialReason?: string, email?: string, phone?: string, website?: string, registry?: string, key?: string) {
+    constructor(name?: string, document?: string, profilePhoto?: string, address?: string, country?: string, province?: string, socialReason?: string, email?: string, phone?: string, website?: string, registry?: string, key?: string, id?:string) {
+        this.id = '';
         this.name = name || '';
         this.profilePhoto = profilePhoto || '';
         this.address = address || '';
@@ -306,10 +325,12 @@ export class ApiEnterprise extends Enterprise implements IApiModel {
             enterprise.DomainName = data.domain ? data.domain : '';
             enterprise.DomainId = data.id ? data.id : '';
             enterprise.Registry = data.registry ? data.registry : '';
+            enterprise.Id = data.registry;
             return enterprise;
         }else if (currentMethod == GET_SINGLE){
             let enterprise = new Enterprise();
             enterprise.ApiObject = data;
+            enterprise.Id = data.id;
             enterprise.Address = data.address.address
             enterprise.Country = data.address.country
             enterprise.Document = data.document
@@ -321,7 +342,7 @@ export class ApiEnterprise extends Enterprise implements IApiModel {
             enterprise.Phone = '' // TO DO
             enterprise.ProfilePhoto =
             enterprise.Province = data.address.province
-            enterprise.Registry = data.id
+            enterprise.Registry = data.registry
             enterprise.SocialReason = '' // TO DO
             enterprise.Website = '' // TO DO
             return enterprise;

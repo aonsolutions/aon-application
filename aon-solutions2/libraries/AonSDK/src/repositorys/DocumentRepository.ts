@@ -6,7 +6,7 @@ import { APIGenericMultipleObjectCrudRepository, APIGenericSingleObjectCrudRepos
 import { ApiDocument, Document, StorableDocument } from "../models/Document";
 import { ICollection, IFilter } from "../interfaces/utilitiesInterfaces";
 import { Collection } from "../utils/Collection";
-import { INVOICE_URL, TAXMODEL_URL } from "../utils/ApiUrls";
+import { DOCUMENT_URL, INVOICE_URL, TAXMODEL_URL } from "../utils/ApiUrls";
 import { ErrorResponse } from "../utils/Response";
 import { Base64toBlob, FileToBase64 } from "../utils/FileHelper";
 
@@ -67,8 +67,7 @@ export class ApiDocumentMultipleObjectCrudRepository extends APIGenericMultipleO
         }else if(path == MainFolders.PAPELERA){
             url = INVOICE_URL.GET_INVOICE_LIST + '?status=draft&page=' + page + '&per_page=' + perPage
         }else if(path.includes(MainFolders.LABORAL)){
-            // Se deberia de llamar a la api para traer los documentos de un empleado, contrato, nominas, etc.
-            throw new ErrorResponse('0199')
+            url = DOCUMENT_URL.GET_PAYROLL_LIST + '?employee=' + path.split('/')[2]
         }else{
             throw new ErrorResponse('0199')
         }
