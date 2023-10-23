@@ -23,6 +23,14 @@ export class AonDashboardButton extends AonElement {
     this.setAttribute('icon', icon);
   }
 
+  get logo() {
+    return this.getAttribute('logo');
+  }
+
+  set logo(logo) {
+    this.setAttribute('logo', logo);
+  }
+
   get title() {
     return this.getAttribute('title');
   }
@@ -82,6 +90,12 @@ export class AonDashboardButton extends AonElement {
       button.appendChild(icon);
     }
 
+    if(this.logo){
+      let spanIcon = this.createElement(TAG.SPAN);
+		  spanIcon.innerHTML = `<aon-icon icon="${this.logo}" color="black" size="30px"></aon-icon>`;
+		  button.appendChild(spanIcon);
+    }
+
     if(this.title) {
       let text = this.createElement(TAG.SPAN);
       text.id = this.TEXT;
@@ -104,6 +118,14 @@ export class AonDashboardButton extends AonElement {
 
   setIcon(icon) {
     this.icon = icon;
+  }
+
+  getLogo() {
+    return this.logo;
+  }
+
+  setLogo(logo) {
+    this.logo = logo;
   }
 
   getTitle() {

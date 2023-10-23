@@ -201,6 +201,34 @@ export class AonNewMenu extends AonElement {
 	}
 
 	build() {
+		let expandButtonDiv = this.createDiv('aonExpandButton');
+		expandButtonDiv.id = 'aonExpandButtonDiv';
+		expandButtonDiv.style.cursor = 'pointer';
+		expandButtonDiv.style.position = 'absolute';
+		expandButtonDiv.style.border = '0.05rem  solid #d2d2d6';
+		expandButtonDiv.style.borderRadius = '8rem';
+		expandButtonDiv.style.zIndex = '999';
+		expandButtonDiv.style.top = '10.5px';
+		expandButtonDiv.style.left = '57px';					
+		expandButtonDiv.style.backgroundColor = 'white';	
+		this.appendChild(expandButtonDiv);
+
+		let expandButton = this.createElement(TAG.I);
+		expandButton.className = CSS.MATERIAL_ICONS;
+		expandButton.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
+		expandButtonDiv.appendChild(expandButton);
+		expandButton.addEventListener(EVENT.CLICK, () => {
+			if(this.isExpanded()) {
+				expandButtonDiv.style.left = '57px';
+				expandButton.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
+			} else {
+				expandButtonDiv.style.left = '237px';
+				expandButton.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
+			}
+
+			this.expand();
+		});
+
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = "aonMenuSidenav";
 		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV;
