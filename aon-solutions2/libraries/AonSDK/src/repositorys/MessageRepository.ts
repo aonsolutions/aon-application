@@ -147,7 +147,7 @@ export class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleOb
         let url: any = [];
         let perPage = filter?.pageItems ? filter?.pageItems : 15;
         let pageNum = filter?.pageNum ? filter?.pageNum : 1;
-        let typeMessage = filter?.fields?.get('type')[0];
+        let typeMessage = filter?.fields?.get('type') ? filter?.fields?.get('type')[0] : '';
         let statusMessage = filter?.fields?.get('status');
         if(typeMessage == TypeMessage.NOTIFICACION){
             url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(filter || {}, pageNum, perPage, typeMessage, statusMessage))]

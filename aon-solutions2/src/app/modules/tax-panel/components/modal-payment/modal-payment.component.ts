@@ -1,10 +1,5 @@
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
-import {
-  CollectionFactory,
-  IBank,
-  ICollection,
-  statusTaxModel,
-} from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, IBank, ICollection} from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BankService } from 'src/app/core/services/bank.service';
@@ -56,9 +51,7 @@ export class ModalPaymentComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   toggleCreateBank() {
     this.showCreateBank = !this.showCreateBank;
@@ -105,7 +98,6 @@ export class ModalPaymentComponent implements OnInit {
 
     if (isDuplicateIban) {
       // Muestra un mensaje de error o realiza la acción adecuada para manejar un IBAN duplicado
-      console.log('El IBAN ya existe en la lista de bancos.');
       return;
     }
 
@@ -122,6 +114,12 @@ export class ModalPaymentComponent implements OnInit {
     //  Crear el banco
     const createdBank = await this.bankService.createBank(newBank);
 
+    // Agregar el banco recién creado a la colección this.banks
+    this.banks.add(createdBank);
+
+    // Actualizar this.banksSubject con la nueva colección
+    this.banksSubject.next(this.banks);
+
     // Después de enviar el mensaje, restablece los valores de los campos
     this.newBankDescription = '';
     this.newBankIban = '';
@@ -129,24 +127,6 @@ export class ModalPaymentComponent implements OnInit {
     this.showCreateBank = false;
     this.listBanks();
   }
-  
-  // sendPayment() {
-  //   if (this.newStatus === statusTaxModel.PENDIENTE) {
-  //     this.newStatus = statusTaxModel.PRESENTADO;
-  //   }
-  //   // Oculta el spinner que se muestra cuando se abre el modal
-  //   this.spinner = false;
-
-  //   // Muestra el spinner mientras se envía el mensaje
-  //   this.spinner = true;
-
-  //   // Emite el nuevo valor de status
-  //   this.statusChanged.emit(this.newStatus);
-  //   console.log('Nuevo status emitido:', this.newStatus);
-
-  //   this.spinner = false;
-  //   this.dialogRef.close();
-  // }
 
   getNrc(event: any) {
     this.codeNrc = event;
@@ -156,7 +136,6 @@ export class ModalPaymentComponent implements OnInit {
     if (this.codeNrc) {
       // Oculta el spinner que se muestra cuando se abre el modal
       this.spinner = false;
-
       // Muestra el spinner mientras se envía el mensaje
       this.spinner = true;
       const nrcPay = await this.taxModelService.payTaxModel(
@@ -166,22 +145,25 @@ export class ModalPaymentComponent implements OnInit {
 
       if (nrcPay) {
         // Pago exitoso, realiza las acciones necesarias
-        console.log('Pago exitoso.');
         // Limpia el campo NRC
         this.codeNrc = ''; // Establece el campo en una cadena vacía para borrar su contenido
       } else {
         // Pago fallido, realiza las acciones necesarias
-        console.log('El pago falló.');
       }
       this.spinner = false;
       this.dialogRef.close();
       window.location.reload();
     } else {
       // Campo NRC vacío o no válido
-      console.log('El campo NRC está vacío o no tiene un valor válido.');
     }
   }
+
   async sendPaymentIban() {
+    const filteredBanks = this.banks
+    .toArray()
+    .filter((bank) => bank.Iban === this.selectedBank);
+
+  if (filteredBanks.length > 0) {
     if (this.selectedBank) {
       // Oculta el spinner que se muestra cuando se abre el modal
       this.spinner = false;
@@ -189,22 +171,20 @@ export class ModalPaymentComponent implements OnInit {
       this.spinner = true;
       const ibanPay = await this.taxModelService.payTaxModel(
         this.model,
-        this.selectedBank
+        filteredBanks[0]
       );
-      if (ibanPay) {
-        // Pago exitoso, realiza las acciones necesarias
-        console.log('Pago exitoso.');
 
+        if (ibanPay) {
+          // Pago exitoso, realiza las acciones necesarias
+        } else {
+          // Pago fallido, realiza las acciones necesarias
+        }
+        this.spinner = false;
+        this.dialogRef.close();
+        window.location.reload();
       } else {
-        // Pago fallido, realiza las acciones necesarias
-        console.log('El pago falló.');
+        // Campo NRC vacío o no válido
       }
-      this.spinner = false;
-      this.dialogRef.close();
-      window.location.reload();
-    } else {
-      // Campo NRC vacío o no válido
-      console.log('El campo  está vacío o no tiene un valor válido.');
     }
   }
 }

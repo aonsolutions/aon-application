@@ -44,7 +44,7 @@ export class ChartDashboardComponent implements OnInit {
       ];
     });
   }
-   
+
   ngOnInit(): void {
     this.filterReporting(0);
   }
@@ -87,6 +87,21 @@ export class ChartDashboardComponent implements OnInit {
             )
           });
           this.chartLabels = response.label;
+          this.chartColors = [{
+            backgroundColor: 'rgba(41,121,255,0.4)',
+            borderColor: 'rgba(41,121,255,0.6)',
+            pointBackgroundColor: 'rgba(41,121,255,0.2)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(41,121,255,0.2)'
+          },{
+            backgroundColor: 'rgba(255,80,41,0.4)',
+            borderColor: 'rgba(255,80,41,0.6)',
+            pointBackgroundColor: 'rgba(255,80,41,0.2)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(255,80,41,0.2)'
+          }];
           this.spinner = false;
         });
       break
@@ -109,6 +124,21 @@ export class ChartDashboardComponent implements OnInit {
             )
           });
           this.chartLabels = response.label;
+          this.chartColors = [{
+            backgroundColor: 'rgba(41,121,255,0.4)',
+            borderColor: 'rgba(41,121,255,0.6)',
+            pointBackgroundColor: 'rgba(41,121,255,0.2)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(41,121,255,0.2)'
+          },{
+            backgroundColor: 'rgba(255,80,41,0.4)',
+            borderColor: 'rgba(255,80,41,0.6)',
+            pointBackgroundColor: 'rgba(255,80,41,0.2)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(255,80,41,0.2)'
+          }];
           this.spinner = false;
         });
         this.translateService.get([
