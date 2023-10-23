@@ -1,12 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  CollectionFactory,
-  Factory,
-  IBank,
-  ICollection,
-  IDocument,
-} from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, Factory, IBank, ICollection, IDocument } from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject } from 'rxjs';
 import { BankService } from 'src/app/core/services/bank.service';
 import { SendFacturaComponent } from '../components/modal-send-factura/send-factura.component';
@@ -14,7 +8,7 @@ import { DuplicateFacturaComponent } from '../components/modal-duplicate-factura
 import { DeleteFacturaComponent } from '../components/modal-delete-factura/delete-factura.component';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
+import { ModalCreateComponent } from '../../inbox/components/modal-create/modal-create.component';
 import { DocumentService } from 'src/app/core/services/document.service';
 import { ResultSnackBarComponent } from 'src/app/shared/components/result-snack-bar/result-snack-bar.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -55,6 +49,7 @@ export class BillingComponent implements OnInit {
   editBank: { [key: number]: boolean } = {};
   salesSelected: any[] = [];
   tabs: Tabs[] = [];
+  functionHome: any = (result: any) => this.afterModalClosed(result);
 
   @ViewChild('modal') modalComponent: any = '';
 
@@ -218,10 +213,6 @@ export class BillingComponent implements OnInit {
     );
   }
 
-  functionHome: any = (result: any) => this.afterModalClosed(result);
-  functionDocument: any = (result: any) =>
-    this.afterModalClosedDocuement(result);
-
   afterModalClosed(result?: any) {
     console.log(result);
   }
@@ -230,73 +221,8 @@ export class BillingComponent implements OnInit {
   uploadDocument(event: Event) {
     event.preventDefault();
     this.modalComponent.openDialog(
-      UploadModalComponent,
-      this.functionDocument,
-      'Data from home'
+      ModalCreateComponent
     );
-  }
-
-  // Al cerrar el modal de subir documento se crea el documento en la base de datos
-  afterModalClosedDocuement(result?: any) {
-    if (result) {
-      const fileName = result[0].document.name;
-      const fileType = result[0].document.type;
-      const fileSize = result[0].document.size;
-      const path = result[0].folder;
-
-      this.document = this.objectFactory.createDocument(
-        result[0].document,
-        fileName,
-        fileSize,
-        fileType,
-        new Date(),
-        path
-      );
-      const file = result[0].document;
-
-      this.documentService
-        .uploadDocument(this.document, file)
-        .then((response) => {
-          this.uploadCompletedModal();
-        })
-        .catch((error) => {
-          this.uploadErrorModal();
-        });
-    }
-  }
-
-  // Confirmación de subida de documento
-  uploadCompletedModal() {
-    this.snackBar.openFromComponent(ResultSnackBarComponent, {
-      data: {
-        message: 'Documento subido correctamente',
-        icon: 'check_circle',
-        preClose: () => {
-          this.snackBar.dismiss();
-        },
-      },
-      panelClass: ['correct-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      duration: 3000,
-    });
-  }
-
-  // Si la subida da error
-  uploadErrorModal() {
-    this.snackBar.openFromComponent(ResultSnackBarComponent, {
-      data: {
-        message: 'Error al subir el documento',
-        icon: 'error',
-        preClose: () => {
-          this.snackBar.dismiss();
-        },
-      },
-      panelClass: ['error-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      duration: 3000,
-    });
   }
 
   openModal(modal: string) {
@@ -318,24 +244,21 @@ export class BillingComponent implements OnInit {
   showModalSend() {
     this.modalComponent.openDialog(
       SendFacturaComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
   }
 
   showModalCopy() {
     this.modalComponent.openDialog(
       DuplicateFacturaComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
   }
 
   showModalDelete() {
     this.modalComponent.openDialog(
       DeleteFacturaComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
   }
 
