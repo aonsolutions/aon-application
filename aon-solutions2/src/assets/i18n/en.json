@@ -163,7 +163,12 @@
     "SSN":"SSN",
     "CONTRIBUTION_ACCOUNT":"Contribution account",
     "EMPLOYEE_DATA":"Employee data",
-    "CONTRACT_DETAILS":"Contract details"
+    "CONTRACT_DETAILS":"Contract details",
+    "CONTRIBUTION_GROUP":"Contribution group",
+    "OCCUPATION":"Occupation",
+    "NCO": "NCO",
+    "EMPLOYMENT_RELATIONSHIP":"Special Employment Relationship",
+    "WORKFORCE":"Workforce"
   },
 
   "TAX_PANEL": {

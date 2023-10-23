@@ -164,7 +164,12 @@
     "SSN":"NSS/NAF",
     "CONTRIBUTION_ACCOUNT":"Cuenta de cotización",
     "EMPLOYEE_DATA":"Datos del trabajador",
-    "CONTRACT_DETAILS":"Datos contrato"
+    "CONTRACT_DETAILS":"Datos contrato",
+    "CONTRIBUTION_GROUP":"Grupo de cotización",
+    "OCCUPATION":"Ocupación",
+    "NCO": "CNO",
+    "EMPLOYMENT_RELATIONSHIP":"RLCE",
+    "WORKFORCE":"Colectivo trabajador"
 
   },
   "TAX_PANEL": {

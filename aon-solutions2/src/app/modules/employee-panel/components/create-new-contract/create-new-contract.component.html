@@ -29,6 +29,7 @@
         [label]="'EMPLOYEE_PANEL.ID_NUMBER' | translate"
         [placeholder]="'EMPLOYEE_PANEL.ID_NUMBER' | translate"
         [value]=""
+        [required]="'required'"
       >
       </app-input>
 
@@ -100,6 +101,7 @@
       <app-input
         [label]="'PROFILE.REGISTRATION_DATE' | translate"
         [type]="'date'"
+        [required]="'required'"
       ></app-input>
 
       <app-input
@@ -114,8 +116,8 @@
     <div class="form">
       <app-input
         [type]="'select'"
-        [label]="'EMPLOYEE_PANEL.TYPE_OF_CONTRACT' | translate"
-        [placeholder]="'EMPLOYEE_PANEL.TYPE_OF_CONTRACT' | translate"
+        [label]="'EMPLOYEE_PANEL.CONTRIBUTION_GROUP' | translate"
+        [placeholder]="'EMPLOYEE_PANEL.CONTRIBUTION_GROUP' | translate"
         [options]=""
         [value]=""
       >
@@ -123,8 +125,8 @@
 
       <app-input
         [type]="'select'"
-        [label]="'EMPLOYEE_PANEL.TYPE_OF_CONTRACT' | translate"
-        [placeholder]="'EMPLOYEE_PANEL.TYPE_OF_CONTRACT' | translate"
+        [label]="'EMPLOYEE_PANEL.OCCUPATION' | translate"
+        [placeholder]="'EMPLOYEE_PANEL.OCCUPATION' | translate"
         [options]=""
         [value]=""
       >
@@ -134,34 +136,33 @@
     <div class="form">
       <app-input
         [type]="'select'"
-        [label]="'PROFILE.COUNTRY' | translate"
-        [placeholder]="'PROFILE.COUNTRY' | translate"
+        [label]="'EMPLOYEE_PANEL.NCO' | translate"
+        [placeholder]="'EMPLOYEE_PANEL.NCO' | translate"
         [options]=""
         [value]=""
-      >
-      </app-input>
-      <app-input
-        [type]="'select'"
-        [label]="'PROFILE.CITY' | translate"
-        [placeholder]="'PROFILE.CITY' | translate"
-        [options]=""
+        [required]="'required'" 
       >
       </app-input>
     </div>
 
     <div class="form">
       <app-input
-        [type]="'text'"
-        [label]="'PROFILE.LEGAL_NAME' | translate"
-        [placeholder]="'PROFILE.LEGAL_NAME' | translate"
-        [disabled]="'disabled'"
+        [type]="'select'"
+        [label]="'EMPLOYEE_PANEL.EMPLOYMENT_RELATIONSHIP' | translate"
+        [placeholder]="'EMPLOYEE_PANEL.EMPLOYMENT_RELATIONSHIP' | translate"
+        [options]=""
+        [value]=""
       >
       </app-input>
+    </div>
+
+    <div class="form">
       <app-input
-        [type]="'text'"
-        [label]="'PROFILE.TIN' | translate"
-        [placeholder]="'PROFILE.TIN' | translate"
-        [disabled]="'disabled'"
+        [type]="'select'"
+        [label]="'EMPLOYEE_PANEL.WORKFORCE' | translate"
+        [placeholder]="'EMPLOYEE_PANEL.WORKFORCE' | translate"
+        [options]=""
+        [value]=""
       >
       </app-input>
     </div>

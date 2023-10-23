@@ -32,7 +32,7 @@ export class EmployeeComponent implements OnInit {
   search: string = '';
   showSendButton: boolean = false;
   showSendButtons: boolean = false;
-  selectedTab: number = 1;
+  selectedTab: number = 0;
 
 
   //hardcodeo para mostrar showdetail
@@ -155,7 +155,9 @@ export class EmployeeComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+  }
 
   addEmployee() {
 
@@ -197,7 +199,7 @@ async rowClick(contract: any){
  const isSameRow =
  this.dataBody && this.dataBody[0].key === contract.key;
 this.showDetail = !isSameRow ? true : !this.showDetail;
-// this.dataBody[0] = await this.contractService.getContract(contract.key);
+//this.dataBody[0] = await this.contractService.getContract(contract.key);
 
 
 }
