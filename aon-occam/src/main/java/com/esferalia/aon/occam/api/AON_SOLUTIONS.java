@@ -964,6 +964,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Stream<Object> getTaskAndNotification(Domain domain, User user, TaskFilter taskFilter, NotificationFilter notificationFilter, Integer page, Integer perPage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskAndNotification(ctx, taskFilter, notificationFilter, page, perPage);
+		}
+	}
+	
 	public static Stream<Task> getTaskParentOrChildStream(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskParentOrChildStream(ctx, filter, page, perPage);

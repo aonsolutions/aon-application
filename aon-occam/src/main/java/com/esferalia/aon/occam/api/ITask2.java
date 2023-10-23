@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.DailyTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.JobTypeFilter;
+import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
@@ -33,6 +34,8 @@ public interface ITask2 {
 	public Map<String, Integer> getTaskCount(AONContext ctx, TaskFilter sender, TaskFilter receiver);
 	public TaskCounts getTaskGeneralCount(AONContext ctx, Optional<TaskFilter> status, Optional<TaskFilter> workgroup, Optional<TaskFilter> tags);
 	public Integer getTaskCountFilter(AONContext ctx, TaskFilter taskFilter);
+	public Stream<Object> getTaskAndNotification(AONContext ctx, TaskFilter taskFilter, NotificationFilter notificationFilter, Integer page, Integer perPage);
+	
 	
 	//TASKWORKFLOW
 	public TaskWorkflow getTaskWorkflow(AONContext ctx, TaskWorkflowFilter filter);
