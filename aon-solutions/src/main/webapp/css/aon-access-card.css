@@ -1,8 +1,7 @@
 .aonAccessCard{
-    min-width: 300px;
     min-height: 125px;
     padding: 1rem;
-    border: 1px solid #d2d2d6;
+    border: 1px solid #ebebeb;
     border-radius: 0.2rem;
     cursor: pointer;
 }
@@ -63,4 +62,10 @@
 .aonAccessCard:hover > .aonAccessCardContent > i {
     display: none;
     transition: display 400ms linear;
+}
+
+.fiscalTitleRow{
+    font-size: 1.2rem;
+    color: rgb(251, 152, 46);
+    font-weight: 500;
 }

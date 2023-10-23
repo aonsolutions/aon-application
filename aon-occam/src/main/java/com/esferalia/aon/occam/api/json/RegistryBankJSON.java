@@ -37,7 +37,10 @@ public class RegistryBankJSON {
 				.setActive(JsonUtils.getBoolean(json, IJsonNames.ACTIVE))
 				.setAccount(AccountJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACCOUNT)))
 				.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY))
-				.setRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED));
+				.setRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED))
+				.setBalance(JsonUtils.getdouble(json, IJsonNames.BALANCE))
+				.setAvailableBalance(JsonUtils.getdouble(json, IJsonNames.AVAILABLE_BALANCE))
+				.setBalanceDate(JsonUtils.getDate(json, IJsonNames.BALANCE_DATE));
 	}
 	
 	public static JSONArray toJSON(List<RegistryBank> rbanks) {
@@ -62,6 +65,10 @@ public class RegistryBankJSON {
 				.put(IJsonNames.ACTIVE, rbank.isActive())
 				.put(IJsonNames.ACCOUNT, AccountJSON.toJSON(rbank.getAccount()))
 				.put(IJsonNames.DIRTY, rbank.isDirty())
-				.put(IJsonNames.REMOVED, rbank.isRemoved());
+				.put(IJsonNames.REMOVED, rbank.isRemoved())
+				.put(IJsonNames.BALANCE, rbank.getBalance())
+				.put(IJsonNames.AVAILABLE_BALANCE, rbank.getAvailableBalance())
+				.put(IJsonNames.BALANCE_DATE, rbank.getBalanceDate())
+				;
 	}
 }

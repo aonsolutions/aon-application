@@ -1,4 +1,4 @@
-package nordigen;
+package net.aonsolutions.aon.bank.nordigen;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -15,7 +15,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_ACCESS_SCOPES;
 import com.esferalia.aon.occam.api.model.type.Country;
 
-import nordigen.NordigenAPIAbstract.CreateRequisitionParams;
+import net.aonsolutions.aon.bank.nordigen.NordigenAPIAbstract.CreateRequisitionParams;
 
 
 public class NordigenAPITestCase {

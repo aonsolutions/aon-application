@@ -1,7 +1,7 @@
 import { AonApplication } from '../../components/aon-application.js';
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
-import {Apps, getAppsByDur} from '../../services/app.js';
+import {Apps, MESSENGER, getAppsByDur} from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
@@ -103,7 +103,6 @@ export class AonMessenger extends AonElement {
 
 		this.createApplication(this.AON_MESSENGER, title, new AonApplication());
 
-		
 		this.isTaskHolder().then(async (exist) => {
 			if(exist){
 				localStorage.setItem("taskCau", this.cau ? 1 : 0);
@@ -156,7 +155,7 @@ export class AonMessenger extends AonElement {
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
 		} else if(this.cau){
-			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this._filter);
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, undefined, this._filter);
 		} else if(this.value){
 			getTaskOne({id:this.value}).then(task=>this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task)).catch(e=>this.showError(e));
 		} else if(this.TASK_HOLDER && this.TASK_HOLDER.id){
@@ -368,7 +367,13 @@ export class AonMessenger extends AonElement {
 			}
 		});
 
-		this.getApplication().addSidenavOptions("MI BANDEJA", messengerOpts);
+		let data = {
+			id: "myInbox",
+			name: "Mi bandeja",
+			app: Apps.MESSENGER			
+		}
+
+		this.getApplication().addSidenavOptions2(data, messengerOpts);
 	}
 
 	inboxNavBarCau(){
@@ -397,7 +402,12 @@ export class AonMessenger extends AonElement {
 			}
 		];
 
-		this.getApplication().addSidenavOptions("BANDEJA", messengerOpts);
+		
+		this.getApplication().addSidenavOptions2({
+			id: 'inbox',
+			name: 'Bandeja',
+			app: Apps.MESSENGER			
+		}, messengerOpts);
 	}
 
 
@@ -437,13 +447,19 @@ export class AonMessenger extends AonElement {
 			},
 		];
 		
-		this.getApplication().addSidenavOptions(MSG.STATUS, messengerOpts);
+		this.getApplication().addSidenavOptions3({
+			id: CONSTANT.STATUS.initCap(),
+			name: MSG.STATUS,
+			app: Apps.MESSENGER,
+			options: messengerOpts			
+		});
 	}
 
     groupNavBar() {
 		this.getApplication().addSidenavOptions2({
 			id: 'Workgroup',
-			name: MSG.WORKGROUP
+			name: MSG.WORKGROUP,
+			app: Apps.MESSENGER			
 		}, []);
 	}
 
@@ -453,14 +469,16 @@ export class AonMessenger extends AonElement {
 		
 		this.getApplication().addSidenavOptions2({
 			id: TAG_TYPE.TASK_LABEL,
-			name: this.cau ? MSG.APPLICATION : MSG.TAG
+			name: this.cau ? MSG.APPLICATION : MSG.TAG,
+			app: Apps.MESSENGER
 		}, [], fnTag);
 
 		if(!this.cau){
 			const fnTagType = this.getDur().isMessengerManager() ? () => this.dialogTag({}, TAG_TYPE.TASK_TYPE) : null; 
 			this.getApplication().addSidenavOptions2({
 				id: TAG_TYPE.TASK_TYPE,
-				name: MSG.TYPE
+				name: MSG.TYPE,
+				app: Apps.MESSENGER
 			}, [], fnTagType);
 		}
 	}
@@ -534,7 +552,8 @@ export class AonMessenger extends AonElement {
 
 			this.getApplication().addSidenavOptionsList({
 				id: 'Workgroup',
-				name: MSG.WORKGROUP.toUpperCase()
+				name: MSG.WORKGROUP.toUpperCase(),
+				app: MESSENGER
 			}, options);
 		});
 	}
@@ -587,7 +606,8 @@ export class AonMessenger extends AonElement {
 
 			this.getApplication().addSidenavOptionsListValue({
 				id: type,
-				name: MSG.TAG.toUpperCase()
+				name: MSG.TAG.toUpperCase(),
+				app: MESSENGER
 			}, option);
 		});
 	}
@@ -621,7 +641,8 @@ export class AonMessenger extends AonElement {
 				}
 				this.getApplication().addSidenavOptionsListValue({
 					id: type,
-					name: MSG.TYPE.toUpperCase()
+					name: MSG.TYPE.toUpperCase(),
+					app: MESSENGER
 				}, option);
 			});
 		}
@@ -649,49 +670,49 @@ export class AonMessenger extends AonElement {
 	addBackgroundSidenav(filter){
 		if(filter){
 			const application = this.getApplication();
-			application.removeBackgroundSidenavAll();
+			application.removeBackgroundSidenavAll(MESSENGER.color);
 			if(this.cau){
-				application.addBackgroundSidenav(filter.document ? MATERIAL_ICONS.ALL_INBOX: MATERIAL_ICONS.MOVE_TO_INBOX);
+				application.addBackgroundSidenav(filter.document ? MATERIAL_ICONS.ALL_INBOX: MATERIAL_ICONS.MOVE_TO_INBOX, MESSENGER.color);
 			} else {
 				
 				if(filter.workgroup){
-					application.addBackgroundSidenav(filter.workgroup);
+					application.addBackgroundSidenav(filter.workgroup, MESSENGER.color);
 				} else if(filter.workgroups && filter.workgroups.includes("all")){
-					application.addBackgroundSidenav(MATERIAL_ICONS.GROUPS);
+					application.addBackgroundSidenav(MATERIAL_ICONS.GROUPS, MESSENGER.color);
 				} 
 
 				if(filter.sender && filter.task_holder){
-					application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
+					application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX, MESSENGER.color);
 				} else if(filter.sender){
-					application.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX);
+					application.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX, MESSENGER.color);
 				} else if(filter.task_holder){
-					application.addBackgroundSidenav(MATERIAL_ICONS.MOVE_TO_INBOX);
+					application.addBackgroundSidenav(MATERIAL_ICONS.MOVE_TO_INBOX, MESSENGER.color);
 				} else {
-					application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
+					application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX, MESSENGER.color);
 				}
 			}
 	
 			switch (filter.status){
 				case TASK_STATUS.IN_PROGRESS:
-					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS.name, MESSENGER.color);
 					break;
 				case TASK_STATUS.FINISHED:
-					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_CLOSE.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_CLOSE.name, MESSENGER.color);
 					break;
 				case TASK_STATUS.DELETED:
-					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.name, MESSENGER.color);
 					break;
 				default:
-					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_OPEN.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_OPEN.name, MESSENGER.color);
 					break;
 			}
 
 			if(filter.workgroup){
-				application.addBackgroundSidenav(filter.workgroup);
+				application.addBackgroundSidenav(filter.workgroup, MESSENGER.color);
 			}
 
 			if(filter.tag){
-				application.addBackgroundSidenav(filter.tag);
+				application.addBackgroundSidenav(filter.tag, MESSENGER.color);
 			}
 		}
 	}
@@ -955,6 +976,7 @@ export class AonMessenger extends AonElement {
 
 
 	showView(view, data = undefined, filter = undefined){
+		if(filter && filter.workgroups == undefined) filter.workgroups = this.getWorkgroupsStr();
 		return new Promise(async(resolve)=>{
 			let aonView = undefined;
 			switch(view){

@@ -12,6 +12,8 @@ import { AonNotification } from './aon-notification.js';
 import { NotificationCreateComponent } from './createComponent.js';
 import { NotificationUtils } from './utils/NotificationUtils.js';
 
+import * as LS from '../../services/localStorageService.js';
+
 export class AonNotificationIcon extends AonElement {
 
     AON_NOTIFICATION_ICON;
@@ -174,7 +176,7 @@ export class AonNotificationIcon extends AonElement {
             justify-content: center;
             align-items: center;
         `;
-        div.className = CSS.AON_NOTIFICATION_CONTENT;
+        div.className = LS.isNewTheme() ? CSS.AON_NOTIFICATION_CONTENT_BETA : CSS.AON_NOTIFICATION_CONTENT;
         div.onclick = (ev)=>{
             ev.preventDefault();
             ev.stopPropagation();

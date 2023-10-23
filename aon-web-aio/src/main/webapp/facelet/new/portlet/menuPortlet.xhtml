@@ -497,6 +497,7 @@
 								styleClass="aon-left-menu-item" 
 								actionListener="#{desktop.onSelectAccounting}"
 								onclick="showAccountingMenu(); #{empty reRender?'return false;':''}"
+								title=" #{bundle.aon_module_accounting}"
 								>
 									<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="insert_chart" />
 									<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_accounting}" />
@@ -510,8 +511,10 @@
 								id="menu_fiscal"
 								reRender="#{reRender}"
 								styleClass="aon-left-menu-item" 
+								title=" #{bundle.aon_module_fiscal}"
 								actionListener="#{desktop.onSelectFiscal}"
-								onclick="#{ domainSwitcher.domainManagementAvailable ? 'showFiscalMenu();' : ''}#{empty reRender?'return false;':''}"
+								actionListener="#{desktop.onSelectFiscal}"
+								onclick="showFiscalMenu(); #{empty reRender?'return false;':''}"
 							>
 								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="euro" />
 								<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_fiscal}" />
@@ -525,6 +528,7 @@
 								id="menu_payroll"
 								reRender="#{reRender}"
 								styleClass="aon-left-menu-item"
+								title=" #{bundle.aon_module_payroll}"
 								actionListener="#{desktop.onSelectPayroll}"
 								onclick="showPayrollMenu(); #{empty reRender?'return false;':''}" 
 							>
@@ -540,6 +544,7 @@
 								id="menu_configuration"
 								reRender="#{reRender}"
 								styleClass="aon-left-menu-item" 
+								title=" #{bundle.aon_module_configuration}"
 								actionListener="#{desktop.onSelectConfiguration}"
 								onclick="showConfigurationMenu(); #{empty reRender?'return false;':''}" 
 							>
@@ -566,6 +571,7 @@
 						<aon:commandLink 
 							id="menu_time_control"
 							reRender="#{reRender}"
+							title=" Control Horario"
 							styleClass="aon-left-menu-item"
 							actionListener="#{desktop.onSelectTimeControl}"
 							onclick="showTimeControlMenu(); #{empty reRender?'return false;':''}" 

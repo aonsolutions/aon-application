@@ -485,6 +485,13 @@ public class TaskDAO {
 		return map;
 	}
 	
+	public static Integer getTaskCountFilter(AONContext ctx, TaskFilter taskFilter){		
+		return ctx.getDslContext().select(DSL.count())
+		.from(TASK)
+		.where(TASK_PROPERTIES.getConditions(taskFilter)).fetchOne(0, int.class);
+	}
+	
+	
 	public static TaskCounts getTaskGeneralCount(AONContext ctx, Optional<TaskFilter> status, Optional<TaskFilter> workgroup, Optional<TaskFilter> tags){
 		TaskCounts taskCounts = new TaskCounts();
 		String count = "count";

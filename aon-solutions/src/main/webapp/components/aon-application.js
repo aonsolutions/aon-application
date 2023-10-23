@@ -324,6 +324,22 @@ export class AonApplication extends AonElement {
     div.appendChild(content);
   }
 
+
+  addSidenavWidget2(data, element) {
+    this.addSidenavOptionsTitle(data);
+
+    let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
+    if(data && data.id && sidenav) {
+        let div = this.getElement(sidenav.id + data.id);
+        if(div){
+          let content = this.createElement(TAG.DIV);
+          content.style.paddingLeft = "26px";
+          content.appendChild(element);
+          div.appendChild(content);
+        }
+    }
+  }
+
   addSidenavWidgetHTML(title, html) {
     let sidenav = this.getElement(this.SIDENAV);
     if(sidenav){
@@ -376,7 +392,7 @@ export class AonApplication extends AonElement {
 
     let arrowTitleSpan = this.createElement(TAG.SPAN);
     arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
-    arrowTitleSpan.style.borderColor = data.color;
+    arrowTitleSpan.style.borderColor = data.app && data.app.color ? data.app.color : 'black';
 
     let arrowTitle = this.createElement("i");
     arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
@@ -457,20 +473,8 @@ export class AonApplication extends AonElement {
       li.title = option.name;
 
       li.className = LS.isNewTheme() 
-          ? "aonAppMenuSidenavList aonOpacity"
+          ? `aonAppMenuSidenavListBeta aonOpacity ${data.app ? data.app.hover : 'sidenavHover'}`
           : "aonAppMenuSidenavList aonOpacity sidenavHover";  
-      
-      if(LS.isNewTheme() ) {
-        li.addEventListener(EVENT.MOUSEOVER, () => {
-					li.style.backgroundColor = data.backgroundColor || '#eaf1fb';
-				});
-
-				li.addEventListener(EVENT.MOUSELEAVE, () => {
-					li.style.backgroundColor = 'transparent';
-				});
-      }
-
-
       ul.appendChild(li);
       if(option.options) {
         li.style.paddingLeft = '6px';
@@ -508,9 +512,14 @@ export class AonApplication extends AonElement {
 
       if (option.icon) {
         let i = this.createElement(TAG.I);
+        i.id = id + 'icon';
         let iconClass = "material-icons";
-        if(LS.isNewTheme() && data.color) i.style.color = data.color;
-        if(option.icon_color) i.style.color = option.icon_color;
+        if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
+        if(option.icon_color) {
+          i.title = option.id;
+          i.color = option.icon_color;
+          i.style.color = option.icon_color;
+        }
         if(option.icon_class) iconClass = option.icon_class;
         i.className = `${iconClass} aonVerticalMiddle`;
         i.innerHTML = option.icon;
@@ -521,17 +530,19 @@ export class AonApplication extends AonElement {
         ai.icon  = option.aonIcon.icon;
         ai.size  = "18px";
         li.appendChild(ai);
-        if(LS.isNewTheme() && data.color) ai.color = data.color;
+        if(LS.isNewTheme() && data.app) ai.color = data.app.color;
+        if(option.icon_color) {
+          ai.title = option.id;
+          ai.color = option.icon_color;
+        }
         li.addEventListener(EVENT.MOUSEOVER, () => {
-          if(LS.isNewTheme()) {
-            this.getElement(id + "AonIcon").color = data.color || option.aonIcon.color;
-          } else this.getElement(id + "AonIcon").color = option.aonIcon.color;
+          if(!LS.isNewTheme()) 
+            this.getElement(id + "AonIcon").color = option.aonIcon.color;
         });
 
         li.addEventListener(EVENT.MOUSELEAVE, () => {
-          if(LS.isNewTheme()) {
-            this.getElement(id + "AonIcon").color = data.color || "#5f6368";
-          } else this.getElement(id + "AonIcon").color = "#5f6368";
+          if(!LS.isNewTheme()) 
+            this.getElement(id + "AonIcon").color = "#5f6368";
         });
       } else if (option.img) {
         let img = this.createElement(TAG.IMG);
@@ -594,11 +605,31 @@ export class AonApplication extends AonElement {
             if (el.id !== sidenavId)
               el.style.removeProperty("background-color");
               el.style.removeProperty("font-weight");
+              el.style.removeProperty("color");
+              
+              if(LS.isNewTheme()) {
+                let icon = this.getElement(el.id + 'icon');
+                if(icon && data.app) {
+                  icon.style.color = icon.color || data.app.color;
+                } 
+
+                let aonIcon = this.getElement(el.id + 'AonIcon');
+                if(aonIcon && data.app) {
+                  aonIcon.color = data.app.color;
+                }
+              }
           });
           li.style.fontWeight= "bold"
           if(!LS.isNewTheme())
             li.style.backgroundColor = "#d3e3fd";
-
+          else if(data.app){
+            li.style.color = 'white';
+            li.style.backgroundColor = data.app.color;
+            let icon = this.getElement(id + 'icon');
+            if(icon) icon.style.color = 'white';
+            let aonIcon = this.getElement(id + 'AonIcon');
+            if(aonIcon) aonIcon.color = 'white';
+          }
           this.selected = id;
           let toolbar = this.getElement(this.TOOLBAR);
           if(toolbar) toolbar.setAttribute("option", option.name);
@@ -668,18 +699,34 @@ export class AonApplication extends AonElement {
   }
 
 
-  removeBackgroundSidenavAll(){
+  removeBackgroundSidenavAll(color){
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((li) => {
-      li.style.backgroundColor = null;
+      li.style.removeProperty("background-color");
+      li.style.removeProperty("font-weight");
+      li.style.removeProperty("color");
+
+      if(LS.isNewTheme()) {
+        let icon = this.getElement(li.id + 'icon'); 
+        if(icon && color) icon.style.color = icon.color || color;
+        let aonIcon = this.getElement(li.id + 'AonIcon');
+        if(aonIcon && color) aonIcon.color = color;
+      }
     });
   }
 
-  addBackgroundSidenav(id){
+  addBackgroundSidenav(id, color){
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     const li =  this.getElement(sidenavId + id);
     if(li){
-      li.style.backgroundColor = "#d3e3fd";
+      if(LS.isNewTheme()) {
+        li.style.color = 'white';
+        li.style.backgroundColor = color && LS.isNewTheme() ? color : "#d3e3fd";
+        let icon = this.getElement(li.id + 'icon');
+        if(icon) icon.style.color = 'white';
+        let aonIcon = this.getElement(li.id + 'AonIcon');
+        if(aonIcon) aonIcon.color = 'white';
+      } else li.style.backgroundColor = "#d3e3fd";
     }
   }
 

@@ -106,23 +106,45 @@ export class AonNewMenu extends AonElement {
 		return this.dur;
 	}
 
+	expand() {
+		if(this.isExpanded()) {
+			this.getElement(this.AON_MENU_SIDENAV).style.width = '70px';
+			this.getRootPanel().style.marginLeft = '70px';
+			this.setExpanded(false);
+			document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+				item.style.display = 'none';
+			});
+
+		} else {
+			this.getElement(this.AON_MENU_SIDENAV).style.width = '250px';
+			this.getRootPanel().style.marginLeft = '250px';
+			this.setExpanded(true);
+
+			document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+				item.style.display = 'inline-block';
+				item.style.fontSize = '0.7rem';
+				item.style.fontWeight = '500';
+				item.style.marginLeft = '10px';
+				item.style.position = 'relative';
+			});
+		}
+	}
+
 	toogle() {
 		const aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		
 		let open = this.getAttribute('opened');
 
 		if(open) {
-			this.getElement('aonShowMenuButton').style.display = 'block';
+
 			this.close();
 		} else if(this.getAttribute('app')){
 			aonMenuSidenav.style.width = '250px';
 			this.setAttribute('opened', true);
-			this.getElement('aonShowMenuButton').style.display = 'none';
 		} else {
 			aonMenuSidenav.style.width = '70px';
 			this.getRootPanel().style.marginLeft = '70px';
 			this.setAttribute('opened', true);
-			this.getElement('aonShowMenuButton').style.display = 'none';
 		}
 		this.toolbarClose();
 	}
@@ -179,27 +201,55 @@ export class AonNewMenu extends AonElement {
 	}
 
 	build() {
+		let expandButtonDiv = this.createDiv('aonExpandButton');
+		expandButtonDiv.id = 'aonExpandButtonDiv';
+		expandButtonDiv.style.cursor = 'pointer';
+		expandButtonDiv.style.position = 'absolute';
+		expandButtonDiv.style.border = '0.05rem  solid #d2d2d6';
+		expandButtonDiv.style.borderRadius = '8rem';
+		expandButtonDiv.style.zIndex = '999';
+		expandButtonDiv.style.top = '10.5px';
+		expandButtonDiv.style.left = '57px';					
+		expandButtonDiv.style.backgroundColor = 'white';	
+		this.appendChild(expandButtonDiv);
+
+		let expandButton = this.createElement(TAG.I);
+		expandButton.className = CSS.MATERIAL_ICONS;
+		expandButton.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
+		expandButtonDiv.appendChild(expandButton);
+		expandButton.addEventListener(EVENT.CLICK, () => {
+			if(this.isExpanded()) {
+				expandButtonDiv.style.left = '57px';
+				expandButton.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
+			} else {
+				expandButtonDiv.style.left = '237px';
+				expandButton.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
+			}
+
+			this.expand();
+		});
+
 		let aonMenuSidenav = this.createElement(TAG.DIV);
 		aonMenuSidenav.id = "aonMenuSidenav";
 		aonMenuSidenav.className = CSS.AON_MENU_SIDENAV;
 		this.appendChild(aonMenuSidenav);
 
-		aonMenuSidenav.addEventListener(EVENT.MOUSELEAVE, () => {
-			if(this.CLOSE){
-				aonMenuSidenav.style.transitionDuration = '500ms';
-				if(this.getAttribute('opened')) {
-					aonMenuSidenav.style.width = '70px';
-					this.getRootPanel().style.marginLeft = '70px';
-				} else {
-					aonMenuSidenav.style.width = '0px';
-					this.getRootPanel().style.marginLeft = '0px';
-				}
-				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
-					item.style.display = 'none';
-				});
-				this.buildMenu();
-			}
-		});
+		// aonMenuSidenav.addEventListener(EVENT.MOUSELEAVE, () => {
+		// 	if(this.CLOSE){
+		// 		aonMenuSidenav.style.transitionDuration = '500ms';
+		// 		if(this.getAttribute('opened')) {
+		// 			aonMenuSidenav.style.width = '70px';
+		// 			this.getRootPanel().style.marginLeft = '70px';
+		// 		} else {
+		// 			aonMenuSidenav.style.width = '0px';
+		// 			this.getRootPanel().style.marginLeft = '0px';
+		// 		}
+		// 		document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+		// 			item.style.display = 'none';
+		// 		});
+		// 		this.buildMenu();
+		// 	}
+		// });
 
 		if(this.getAttribute('opened')) {
 			aonMenuSidenav.style.width = '70px';
@@ -221,17 +271,21 @@ export class AonNewMenu extends AonElement {
 		ul.style.listStyle = 'none';
 
 		let li = this.createElement(TAG.LI);
-		li.style.textAlign =  'right';
 		li.style.paddingRight = '15px';
+		li.style.paddingLeft = '15px';
 		li.style.paddingTop = '15px';
 		li.style.paddingBottom = '10px';
 		li.style.fontWeight = 'bold';
 		li.style.backgroundColor = 'transparent';
 		li.style.cursor = 'pointer';
-		li.addEventListener(EVENT.MOUSEOVER, (e) => {
-			let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
-			appOptions.style.display = 'none';
-		});
+		// TODO APP MENU
+		// li.addEventListener(EVENT.MOUSEOVER, (e) => {
+		// 	let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
+		// 	appOptions.style.display = 'none';
+		// });
+		li.addEventListener(EVENT.CLICK, () => {
+			this.expand();
+		})
 		ul.appendChild(li);
 		
 		li.innerHTML ='MENU';
@@ -246,10 +300,11 @@ export class AonNewMenu extends AonElement {
 
 			let li2 = this.createElement(TAG.LI);
 			li2.style.height = '10px'
-			li2.addEventListener(EVENT.MOUSEOVER, (e) => {
-				let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
-				appOptions.style.display = 'none';
-			});
+			// TODO APP MENU
+			// li2.addEventListener(EVENT.MOUSEOVER, (e) => {
+			// 	let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
+			// 	appOptions.style.display = 'none';
+			// });
 			ul.appendChild(li2);
 	
 			aonMenuSidenav.innerHTML = '';
@@ -274,7 +329,6 @@ export class AonNewMenu extends AonElement {
 
 	    let a = this.createElement(TAG.A);
 	    a.style.cursor = 'pointer';
-	    a.style.textAlign = 'right';
 	    a.addEventListener(EVENT.CLICK, () => {
 	      this.appSelection(app);
 	    });
@@ -284,65 +338,68 @@ export class AonNewMenu extends AonElement {
 		div.style.borderRadius = '5px';
 		li.addEventListener(EVENT.MOUSEOVER, () => {
 			div.style.backgroundColor = app.backgroundColor || '#f1f1f1';
-			let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
-			if(appOptions) appOptions.style.display = 'none';
-			this.buildAppMenuOptions(app);
+			// TODO MENU APP
+			// let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
+			// if(appOptions) appOptions.style.display = 'none';
+			// this.buildAppMenuOptions(app);
 
 
-			appOptions.addEventListener(EVENT.MOUSELEAVE, () => {
-				appOptions.style.display = 'none';
-			});
-			appOptions.addEventListener(EVENT.MOUSEOVER, (e) => {
-				let isClickInside = 
-					li.contains(e.target)		
-					|| li === e.target
-					|| appOptions.contains(e.target) 
-					|| appOptions === e.target;
-				if (!isClickInside) appOptions.style.display = 'none';
-			})
+			// appOptions.addEventListener(EVENT.MOUSELEAVE, () => {
+			// 	appOptions.style.display = 'none';
+			// });
+			// appOptions.addEventListener(EVENT.MOUSEOVER, (e) => {
+			// 	let isClickInside = 
+			// 		li.contains(e.target)		
+			// 		|| li === e.target
+			// 		|| appOptions.contains(e.target) 
+			// 		|| appOptions === e.target;
+			// 	if (!isClickInside) appOptions.style.display = 'none';
+			// })
 		});
 
 	    li.addEventListener(EVENT.MOUSELEAVE, (e) => {
 			div.style.backgroundColor = 'transparent';
-			let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
-			let isClickInside = li.contains(e.target) 
-				|| li === e.target 
-			if (!isClickInside) appOptions.style.display = 'none';
+			// TODO APP MENU
+			// let appOptions = this.getElement(this.AON_MENU_APP_OPTIONS);
+			// let isClickInside = li.contains(e.target) 
+			// 	|| li === e.target 
+			// if (!isClickInside) appOptions.style.display = 'none';
 	    });
 
 
 		
 	    if (app.icon) {
-			const span = this.createElement(TAG.SPAN);
+			let aonIcon = new AonIcon();
+			aonIcon.id = `aonMenuListAppImg-${app.app}`;
+			aonIcon.icon = app.icon;
+			aonIcon.color = app.color;
+			aonIcon.size = "40px";
+			div.appendChild(aonIcon);
+
+			let span = this.createElement(TAG.SPAN);
 			span.id = `aonMenuListApp-${app.app}`;
 			span.style.display = "none";
-			span.innerHTML = app.title;
+			span.innerHTML = app.title.toUpperCase();
 			div.appendChild(span);
-
-			const aonIcon = new AonIcon();
-			aonIcon.id    = `aonMenuListAppImg-${app.app}`;
-			aonIcon.icon  = app.icon;
-			aonIcon.color = app.color;
-			aonIcon.size  = "40px";
-			div.appendChild(aonIcon);
 	    } else {
-	      let span = this.createElement(TAG.SPAN);
-	      span.id = 'aonMenuListApp-' + app.app;
-	      span.style.display = 'none';
-	      span.style.marginRight = '5px';
-	      span.innerHTML = app.title;
-	      div.appendChild(span);
+	      	let img = this.createElement(TAG.IMG);
+	      	img.id = 'aonMenuListAppImg-' + app.app;
+	      	img.style.width = '30px';
+	      	img.src = app.logo;
+	      	img.title = app.title;
+	      	div.appendChild(img);
 
-	      let img = this.createElement(TAG.IMG);
-	      img.id = 'aonMenuListAppImg-' + app.app;
-	      img.style.width = '30px';
-	      img.src = app.logo;
-	      img.title = app.title;
-	      div.appendChild(img);
+		  	let span = this.createElement(TAG.SPAN);
+	      	span.id = 'aonMenuListApp-' + app.app;
+	      	span.style.display = 'none';
+	      	span.style.marginRight = '5px';
+	      	span.innerHTML = app.title.toUpperCase();
+	      	div.appendChild(span);
 	    }
 
 	    a.appendChild(div);
 	    li.appendChild(a);
+		
 	  }
 		return li;
 	}
@@ -457,8 +514,8 @@ export class AonNewMenu extends AonElement {
 		div.appendChild(span3);
 
 		aibC.addEventListener(EVENT.CLICK,()=>{
-			this.CLOSE = true;
-			aonMenuSidenav.style.width = '175px';
+			aonMenuSidenav.style.width = '70px';
+			if(rootPanel) rootPanel.style.marginLeft = '70px';			
 			this.buildMenu();
 		});
 
@@ -565,7 +622,6 @@ export class AonNewMenu extends AonElement {
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		aonMenuSidenav.style.transitionDuration = '0ms';
 		aonMenuSidenav.style.width = '0px';
-		this.getElement('aonShowMenuButton').style.display = 'block';
 		this.getRootPanel().style.marginLeft = '0px';
 		this.removeAttribute('opened');
 		this.toolbarClose();
@@ -581,6 +637,14 @@ export class AonNewMenu extends AonElement {
 					toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
 			}
 		}
+	}
+
+	isExpanded() {
+		return this.expanded;
+	}
+
+	setExpanded(expanded) {
+		this.expanded = expanded;
 	}
 
 	isApp(app) {

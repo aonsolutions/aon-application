@@ -1,21 +1,13 @@
 import { AonElement } from "../../components/AonElement.js";
-import { CSS, TAG, EVENT } from "../../environments/environments.js";
+import { CSS, TAG } from "../../environments/environments.js";
 import { isEmptyObject } from "../../services/utils.js";
 import { AccoutingChart } from "./AccoutingChart.js";
-import {
-  getAccounting,
-  getPeriods,
-  PERIOD_FILTER,
-} from "../../services/accountingService.js";
-import { getPeriodAccounting } from "../../services/service.js";
-import { ToolbarType } from "../../models/enums.js";
+import { getAccounting, getPeriods } from "../../services/accountingService.js";
 import { AonIframe } from "../../components/aon-iframe.js";
-import * as ACTION from "../actions.js";
 
 export class AonDashboardGraphicsTrial extends AonElement {
   PERIODS;
   ACCOUNTS;
-  params;
   filter;
   selectedPeriod;
   params = {
@@ -34,10 +26,13 @@ export class AonDashboardGraphicsTrial extends AonElement {
     return this.getAttribute("id");
   }
 
-  constructor() {
+  constructor(period) {
     super();
     this.id = this.id || "aonGraphicsDashboardTrial";
     this.applicationEl = document.querySelector("#pygContent");
+    this.filter = {};
+    this.filter.show = period;
+    this.filter.year = new Date().getFullYear();
   }
 
   connectedCallback() {
@@ -141,7 +136,7 @@ export class AonDashboardGraphicsTrial extends AonElement {
 
   async getData() {
     if (this.filter) {
-      this.selectedPeriod = this.PERIODS.find((p) => p.id == this.filter.year);
+      this.selectedPeriod = this.PERIODS.find((p) => p.name == this.filter.year);
       this.params.level = this.filter.detail;
     }
 

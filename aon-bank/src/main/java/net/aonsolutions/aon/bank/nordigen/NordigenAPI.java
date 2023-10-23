@@ -1,4 +1,4 @@
-package nordigen;
+package net.aonsolutions.aon.bank.nordigen;
 
 import static com.esferalia.aon.watson.server.AonDateUtils.SIMPLE_DATE_FORMAT4;
 

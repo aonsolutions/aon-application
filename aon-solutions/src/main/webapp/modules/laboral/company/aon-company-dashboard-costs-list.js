@@ -1,29 +1,11 @@
 import { AonElement } from "../../../components/AonElement.js";
-
 import { AonIframe } from "../../../components/aon-iframe.js";
-
-import {
-  formatNumber,
-  isEmptyObject,
-  sortBy,
-  waitEl,
-  setValueName
-} from "../../../services/utils.js";
-import {
-  getWorkplaceCCCs,
-  getCompanyCosts,
-  getCompanyCostsExcel,
-  getPeriodLaboral,
-} from "../../../services/service.js";
-import { PRESENCE_FILTER, SigninSidenav } from "../../timecontrol/signinEnums.js";
-import {
-  PAYROLL_FILTER,
-  PAYROLL_VIEWS,
-} from "../PayrollEnums.js";
+import { formatNumber, isEmptyObject, sortBy } from "../../../services/utils.js";
+import { getCompanyCosts } from "../../../services/service.js";
+import { PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CompanyPieChart } from "./CompanyPieChart.js";
-import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { CONSTANT, CSS, MSG, TAG } from "../../../environments/environments.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-
 
 export class AonCompanyDashboardCostsList extends AonElement {
   TABLE_ID;
@@ -51,8 +33,11 @@ export class AonCompanyDashboardCostsList extends AonElement {
     if (CONSTANT.FILTER === name) this.getTable();
   }
 
-  constructor() {
+  filterPeriod;
+
+  constructor(period) {
     super();
+    this.filterPeriod = period;
   }
 
   connectedCallback() {
@@ -66,38 +51,8 @@ export class AonCompanyDashboardCostsList extends AonElement {
   }
 
   async build() {
-    // await this.searchValueDefault();
     await this.getTable();
   }
-
-  // async searchValueDefault() {
-  //   // ----------WORKPLACES ------------
-  //   let workplaces = await getWorkplaceCCCs();
-  //   let workplaceEl = this.getElement("workplace");
-  //   workplaceEl.options = JSON.stringify(
-  //     workplaces.map(({ workplace }) => ({
-  //       name: workplace.description,
-  //       value: workplace.id,
-  //     }))
-  //   );
-  //   // ----------WORKPLACES END ------------
-
-  //   //------------------PERIOD---------
-  //   let periodEl = this.getElement("period");
-  //   periodEl.options = JSON.stringify(getPeriodLaboral());
-  //   periodEl.addEventListener(EVENT.CHANGE, ({ detail }) => {
-  //     if (detail) {
-  //       const { startDate, endDate } = detail;
-  //       setValueName("startDate", startDate);
-  //       setValueName("endDate", endDate);
-  //     }
-  //   });
-  //   // ----------PERIOD END ------------
-  //   let startDateEl = this.getElement("startDate");
-  //   startDateEl.addEventListener(EVENT.CHANGE, () => periodEl.value = "personalized");
-  //   let endDateEl =this.getElement("endDate");
-  //   endDateEl.addEventListener(EVENT.CHANGE,() => periodEl.value = "personalized" );
-  // }
 
   async getTable() {
     await this.paintPieChar();
@@ -132,8 +87,6 @@ export class AonCompanyDashboardCostsList extends AonElement {
     let divTitle = this.createElement(TAG.DIV);
     divTitle.style.color  = "grey";
     divTitle.style.fontWeight ="500";
-    divTitle.style.margin = "20px";
-    divTitle.style.marginBottom = 0;
     main.appendChild(divTitle);
 
     try {
@@ -156,8 +109,6 @@ export class AonCompanyDashboardCostsList extends AonElement {
         total = resp.total;
 
         workplaceText = resp.workplaceText;
-
-        // CompanyPieChart.createButton(main, aonIframe, this);
       }
 
       let startDateText = AonDateUtils.getMonthYear(startDate),
@@ -175,20 +126,13 @@ export class AonCompanyDashboardCostsList extends AonElement {
     } catch (error) {
       console.log(error);
     }
-
-    // aonIframe.firstChild.style.height = '';
   }
 
   async getData() {
     let data = [];
     try {
-      let filter = null;
-      try {filter = {...this.getApplicationParent()._filter};} catch (error) {}
-      let datos = await getCompanyCosts(filter);
+      let datos = await getCompanyCosts(this.filterPeriod);
       if (!isEmptyObject(datos)) {
-        // if(datos[0] && datos[0].startDate){
-        //   this.changeFilterTime({startDate: datos[0].startDate,endDate: datos[0].endDate, value:"personalized"});
-        // }
         sortBy(datos, "employee", "asc").map((resp) => {
          const lettersType = this.getTypeSalaryText(
             resp.salaryType
@@ -203,8 +147,6 @@ export class AonCompanyDashboardCostsList extends AonElement {
           };
           data.push(obj);
         });
-      } else {
-        // this.changeFilterTime();
       }
     } catch (e) {
       console.log(e);

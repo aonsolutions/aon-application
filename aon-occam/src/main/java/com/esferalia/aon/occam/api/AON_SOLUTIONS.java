@@ -946,6 +946,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Integer getTaskCountFilter(Domain domain, User user, TaskFilter taskFilter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskCountFilter(ctx, taskFilter);
+		}
+	}
+	
 	public static Stream<Task> getTaskStream(Domain domain, User user, TaskFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskStream(ctx, filter);

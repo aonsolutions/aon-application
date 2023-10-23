@@ -25,6 +25,7 @@ public class FiscalConfig implements Serializable {
 	private boolean mod303ByDifferenceDisabled;
 
 	private boolean customerCheckEnabled;
+	private boolean presModelAutoEnabled;
 
 	private String certificateDocument;
 	private String certificateName;
@@ -151,6 +152,14 @@ public class FiscalConfig implements Serializable {
 	}
 	public FiscalConfig setCustomerCheckEnabled(boolean customerCheckEnabled) {
 		this.customerCheckEnabled = customerCheckEnabled;
+		return this;
+	}
+	
+	public boolean isPresModelAutoEnabled() {
+		return presModelAutoEnabled;
+	}
+	public FiscalConfig setPresModelAutoEnabled(boolean presModelAutoEnabled) {
+		this.presModelAutoEnabled = presModelAutoEnabled;
 		return this;
 	}
 	

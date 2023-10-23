@@ -1,4 +1,4 @@
-package nordigen;
+package net.aonsolutions.aon.bank.nordigen;
 
 import org.json.JSONObject;
 

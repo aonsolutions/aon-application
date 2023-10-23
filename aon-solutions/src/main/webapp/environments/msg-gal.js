@@ -82,6 +82,7 @@ export const COMPANIES = 'Empresas';
 export const COMPANY = 'Empresa';
 export const COMPANY_COSTS = 'Custos da Empresa';
 export const COMPANY_MANAGEMENT = 'Xestión de Empresas';
+export const COMPANY_SELECTION = 'Selección de Empresa';
 export const COMPONENTS = 'Compoñentes';
 export const CONCEPT = 'Concepto';
 export const CONCEPTS = 'Conceptos';

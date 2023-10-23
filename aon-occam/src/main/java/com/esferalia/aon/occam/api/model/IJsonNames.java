@@ -52,6 +52,7 @@ public final class IJsonNames {
 	public static final String AUTH = "auth";
 	public static final String AUTOSEND = "autosend";
 	public static final String AVATAR = "avatar";
+	public static final String AVAILABLE_BALANCE = "availableBalance";
 	public static final String ADVERTISING = "advertising";
 	
 	
@@ -60,6 +61,7 @@ public final class IJsonNames {
 	public static final String BACKGROUND_ATTACH = "backgroundAttach";
 	public static final String BALANCE_TYPE = "balanceType";
 	public static final String BALANCE = "balance";
+	public static final String BALANCE_DATE = "balanceDate";
 	public static final String BALANCES = "balances";
 	public static final String BALANCING_ACCOUNT = "balancingAccount";
 	public static final String BANK = "bank";
