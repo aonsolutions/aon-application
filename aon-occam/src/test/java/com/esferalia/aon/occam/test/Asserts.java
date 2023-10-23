@@ -1028,7 +1028,7 @@ public class Asserts {
 			assertEquals("Bban4", expected.getBban4(), actual.getBban4());
 			assertEquals("Bban5", expected.getBban5(), actual.getBban5());
 			assertEquals("Bban6", expected.getBban6(), actual.getBban6());
-			assertEquals("Bban7", expected.getBban1(), actual.getBban7());
+			assertEquals("Bban7", expected.getBban7(), actual.getBban7());
 			assertEquals("Bban8", expected.getBban8(), actual.getBban8());
 			assertEquals("CCC", expected.getCCC(), actual.getCCC());
 			assertEquals("CCC1", expected.getCCC1(), actual.getCCC1());

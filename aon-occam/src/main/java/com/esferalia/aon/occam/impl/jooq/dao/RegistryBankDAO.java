@@ -56,7 +56,7 @@ public class RegistryBankDAO {
 		@Override public Property<String> getSufixProperty() {return new FilterDAO.PropertyDAO<>(RBANK.SUFIX);}
 		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(RBANK.ALIAS);}
 		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(RBANK.ACTIVE);}
-		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(RBANK.REGISTRY);}
+		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(RBANK.ACCOUNT);}
 		@Override public Property<String> getRequisitionProperty() {return new FilterDAO.PropertyDAO<>(RBANK.REQUISITION);}
 		@Override public Property<String> getSepaMandateRefProperty() {return new FilterDAO.PropertyDAO<>(RBANK.SEPA_MANDATE_REF);}
 	}

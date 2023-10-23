@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import org.apache.commons.lang.RandomStringUtils;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Company;
@@ -740,12 +742,7 @@ public class AonFaker {
 	}
 	
 	public static BankAccount getBankAccount(AONContext ctx) {
-		String value = AonStringUtils.repeat("h", RBANK.BANK_ACCOUNT.getDataType().length());
-		BankAccount bankAccount = new BankAccount(value);
-		bankAccount.setCountry(AonFaker.getCountry(ctx));
-		bankAccount.setCheck("hh");
-			
-		return bankAccount;
+		return new BankAccount(Faker.instance().finance().iban());
 	}
 	
 	public static RegistryBank getRegistryBank(AONContext ctx) {	
@@ -784,9 +781,7 @@ public class AonFaker {
 				.setAlias(alias)
 				.setBankAccount(AonFaker.getBankAccount(ctx))
 				.setBic(bic)
-				.setDirty(random.nextBoolean())
 				.setRegistry(AonRandom.getRegistry(ctx).getId())
-				.setRemoved(false)
 				.setRequisition(requisition)
 				.setSepaMandateRef(sepaMandateRef)
 				.setSuffix(suffix);

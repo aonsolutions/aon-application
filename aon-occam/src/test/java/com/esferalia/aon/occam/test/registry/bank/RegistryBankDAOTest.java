@@ -175,6 +175,8 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		List<RegistryBank> registryBankList = RegistryBankDAO.getByDomain(ctx, domain).collect(Collectors.toList());
 
 		registryBankList.forEach(f -> assertEquals(domain, f.getDomain()));
+		registryBankList.contains(registryBank2);
+		
 		assertTrue(registryBankList.size() >= 2);
 		
 		RegistryBankDAO.delete(ctx, registryBank1.getId());
@@ -197,6 +199,8 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		List<RegistryBank> registryBankList = RegistryBankDAO.getByRegistry(ctx, registry).collect(Collectors.toList());
 		
 		registryBankList.forEach(f -> assertEquals(registry, f.getRegistry()));
+		registryBankList.contains(registryBank1);
+		registryBankList.contains(registryBank2);
 		assertTrue(registryBankList.size() >= 2);
 		
 		RegistryBankDAO.delete(ctx, registryBank1.getId());
@@ -339,6 +343,9 @@ public class RegistryBankDAOTest extends AbstractOccamTest {
 		RegistryBankDAO.delete(ctx, registryBank.getId());
 	}
 	
+	/**
+	 * Tests the method deleteByRegistry
+	 */
 	@Test
 	public void deleteByRegistryRegistryBank() {
 		RegistryBank registryBank = AonFaker.getRegistryBank(ctx);
