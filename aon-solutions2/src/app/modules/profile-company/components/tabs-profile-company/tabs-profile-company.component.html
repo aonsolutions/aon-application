@@ -1,8 +1,11 @@
+<app-spinner *ngIf="spinner"></app-spinner>
+
 <app-tabs
   [tabs]="tabs"
   (changeTabIndex)="this.tabIndex = $event"
   [tabColor]="'dark'"
   [paddingLeftHeader]="'1rem'"
+  *ngIf="!spinner"
 >
   <div tool>
     <app-button [class]="'dark'" [width]="'100%'" (click)="onSave()">
