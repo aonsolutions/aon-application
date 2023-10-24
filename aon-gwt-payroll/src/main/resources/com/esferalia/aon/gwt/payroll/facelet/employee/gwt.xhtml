@@ -26,11 +26,25 @@
 		</aon:form>
 	</aon:if>
 
-	<style>
-		body {
-			margin: 0;
-		}
-	</style>
+  	<aon:if test="#{!userUtils.newAONTheme}">
+		<style>
+			body {
+				margin: 0;
+			}
+		</style>
+	</aon:if>
+  	<aon:if test="#{userUtils.newAONTheme}">
+		<style>
+			body {
+				margin: 0;
+			}
+			
+			#rootPanel > div {
+				left: 68px !important;
+			} 
+		</style>
+	</aon:if>
+	
 	
 	<ui:include
 		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
@@ -99,10 +113,17 @@
 	<script type="text/javascript"
 		src="aon_gwt_payroll/aon_gwt_payroll.nocache.js?entryPoint=#{entryPoint}&amp;horribleFix=666&amp;employeeSearch=#{employeeSearch}" />
 
+
 	<div id="rootPanel"
-		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;">
+		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0; ">
 	</div>
 
+
+  	<aon:if test="#{userUtils.newAONTheme}">
+		<aon:div style="overflow: auto; height: calc(100vh - 66px); width: min-content; position:fixed; z-index: 6; background-color: #fff" id="sidebarScrollDiv" >
+			<ui:include src="/facelet/new/sidebar.xhtml" />
+		</aon:div>
+	</aon:if>
 
 
 
