@@ -26,14 +26,25 @@
 		</aon:form>
 	</aon:if>
 
-	<style>
-		body {
-			margin: 0;
-		}
-		#rootPanel > div {
-			left: 68px !important;
-		} 
-	</style>
+  	<aon:if test="#{!userUtils.newAONTheme}">
+		<style>
+			body {
+				margin: 0;
+			}
+		</style>
+	</aon:if>
+  	<aon:if test="#{userUtils.newAONTheme}">
+		<style>
+			body {
+				margin: 0;
+			}
+			
+			#rootPanel > div {
+				left: 68px !important;
+			} 
+		</style>
+	</aon:if>
+	
 	
 	<ui:include
 		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
