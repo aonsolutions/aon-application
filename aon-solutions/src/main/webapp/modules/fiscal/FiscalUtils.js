@@ -35,6 +35,9 @@ const getModelNew = (model)=> {
   const statusText = TAX_ENUMS.TAX_STATUS[model.status];
   let color = "";
 
+  let colorStatus = statusText && statusText === "Pendiente" ? "#fb982e" : "#fddcb9";
+  const statusHtml = /*html*/`<div style="padding: 0.5rem;border-radius: 0.2rem;background-color: ${colorStatus};font-weight: bold;max-width: 6rem;text-align: center;" title="${TAX_ENUMS.TAX_STATUS[model.status]}">${TAX_ENUMS.TAX_STATUS[model.status]}</div>`;
+
   if(["PENDING", "CUSTOMER_CHECK"].includes(model.status))  {
     color = "fin";
   } else if("FINISHED" === model.status) {
@@ -50,6 +53,7 @@ const getModelNew = (model)=> {
     modelText: TAX_ENUMS.TAX_MODEL_TEXT[newModel],
     typeText: TAX_ENUMS.TAX_TYPE[model.type],
     statusText,
+    statusHtml,
     lettersHtml,
     newModel
   }

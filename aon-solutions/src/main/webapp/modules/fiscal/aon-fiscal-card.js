@@ -104,6 +104,7 @@ export class AonFiscalCard extends AonElement {
     this.removeAllChildNodes(content);
 
     let maxModels = modelDatas && modelDatas.length < 4 ? modelDatas.length : 4;
+    let accumulatedModels = 0;
 
     for (let index = 0; index < maxModels; index++) {
       const modelData = modelDatas[index];
@@ -126,7 +127,7 @@ export class AonFiscalCard extends AonElement {
       leftContent.appendChild(descriptionContent);
 
       let description = this.createElement(TAG.SPAN);
-      description.style.fontSize = "1.2rem";
+      description.style.fontSize = modelDatas.length > 4 ? "1rem" : "1.2rem";
       description.style.color = "#fb982e";
       description.style.fontWeight = "500";
       description.innerHTML = "Modelo " + modelData.newModel;
@@ -134,12 +135,13 @@ export class AonFiscalCard extends AonElement {
 
       let territory = this.createElement(TAG.SPAN);
       territory.style.color = "rgb(120, 120, 133)";
-      territory.style.fontSize = ".8rem";
+      territory.style.fontSize = modelDatas.length > 4 ? ".7rem" : ".8rem";
       territory.innerHTML = this.getModelTerritory(modelData.administration);
       descriptionContent.appendChild(territory);
 
       let iva = this.createElement(TAG.SPAN);
       iva.style.color = "rgb(120, 120, 133)";
+      iva.style.fontSize = modelDatas.length > 4 ? ".8rem" : "1rem";
       iva.innerHTML = this.getModelType(modelData.newModel);
       leftContent.appendChild(iva);
 
@@ -159,6 +161,48 @@ export class AonFiscalCard extends AonElement {
       amount.style.minWidth = "5rem";
       amount.style.textAlign = "right";
       amount.innerHTML = formatNumber(modelData.result, 2, "EUR");
+      rightContent.appendChild(amount);
+
+      accumulatedModels += modelData.result;
+
+      row.appendChild(leftContent);
+      row.appendChild(rightContent);
+
+      content.appendChild(row);
+    }
+
+    // Create others row
+    let total = modelDatas.reduce((t, model) => t + model.result, 0);
+    if(modelDatas.length > 4){
+      let row = this.createElement(TAG.DIV);
+      row.className = CSS.AON_FLEX;
+      row.style.justifyContent = "space-between";
+      row.style.width = "100%";
+      row.style.borderBottom = "1px solid #ddd";
+      row.style.padding = ".8rem 0";
+
+      let leftContent = this.createElement(TAG.DIV);
+      leftContent.className = CSS.AON_FLEX;
+      leftContent.style.alignItems = "center";
+      leftContent.style.gap = "1rem";
+
+      let description = this.createElement(TAG.SPAN);
+      description.style.fontSize = "1rem";
+      description.style.color = "#fb982e";
+      description.style.fontWeight = "500";
+      description.innerHTML = "Otros";
+      leftContent.appendChild(description);
+
+      let rightContent = this.createElement(TAG.DIV);
+      rightContent.className = CSS.AON_FLEX;
+      rightContent.style.alignItems = "center";
+      rightContent.style.gap = "1rem";
+
+      let amount = this.createElement(TAG.SPAN);
+      amount.style.fontWeight = "bold";
+      amount.style.minWidth = "5rem";
+      amount.style.textAlign = "right";
+      amount.innerHTML = formatNumber(total - accumulatedModels, 2, "EUR");
       rightContent.appendChild(amount);
 
       row.appendChild(leftContent);

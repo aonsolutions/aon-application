@@ -44,6 +44,7 @@ import { sortBy } from '../../services/utils.js';
 import { FiscalUtils } from '../fiscal/FiscalUtils.js';
 import { AonBankCard } from '../accounting/aon-bank-card.js';
 import { AonDashboardUploadButton } from '../../components/aon-dashboard-upload-button.js';
+import { AonDocumentalCard } from '../documental/aon-documental-card.js';
 
 export class AonDesktop extends AonElement {
 
@@ -579,6 +580,27 @@ export class AonDesktop extends AonElement {
 			fiscalCard.firstChild.style.minHeight = "420px";
 			fiscalCard.firstChild.children.item(1).style.height = "315px";
 			fiscalCard.firstChild.style.margin = '0';
+		}
+
+		if(this.getDur().isDocumental()) {
+			// Documental
+			let documentalCard = new AonCard();
+			documentalCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			documentalCard.id = "documental";
+			documentalCard.title = "Documental";
+			documentalCard.setApp(Apps.DOCUMENTAL);
+			documentalCard.addEventListener(EVENT.CLICK_TITLE, () => {
+				this.appSelection(Apps.DOCUMENTAL.app);
+			});
+			cardsPanel.appendChild(documentalCard);
+			documentalCard.getCardTitle1().style.cursor = 'pointer';
+			
+			let aonBankCard = new AonDocumentalCard();
+			documentalCard.setContent(aonBankCard);
+			
+			documentalCard.firstChild.style.minHeight = "420px";
+			documentalCard.firstChild.children.item(1).style.height = "315px";
+			documentalCard.firstChild.style.margin = '0';
 		}
 
 		if(this.getDur().isMessengerManager() || this.getDur().isMessenger()) {
