@@ -3736,6 +3736,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static StatData<String, String, Double> getFinanceStat(String domainName, Integer domainId, String user, FinanceFilter financeFilter){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName,domainId,user);
+			return getStats().getFinanceStat(ctx, financeFilter);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}
+	}
 
 	public static String getInvoicesReport(String domainName, int domain, String userLogin, StatParams params) {
 		CloseableAONContext ctx = null;

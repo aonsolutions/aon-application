@@ -110,6 +110,11 @@
 		<attribute name="disabledStyleClass" value="aon-inputText-disabled" />
 	</component>
 
+	<component localName="textField">
+    	<attribute name="mainStyleClass" value="aon-textField" />
+		<attribute name="disabledStyleClass" value="aon-textField-disabled" />
+	</component>
+
 	<component localName="inputTextarea">
     	<attribute name="styleClass" value="aon-inputTextarea" />
     	<attribute name="disabledStyleClass" value="aon-inputTextarea-disabled" />			
@@ -127,6 +132,10 @@
 
 	<component localName="selectOneMenu">
     	<attribute name="styleClass" value="aon-selectOneMenu" />			
+	</component>
+
+	<component localName="dropDownOneMenu">
+    	<attribute name="mainStyleClass" value="aon-dropDownOneMenu" />			
 	</component>
 
 	<component localName="selectOneRadio">

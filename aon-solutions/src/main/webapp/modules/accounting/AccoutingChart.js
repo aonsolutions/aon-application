@@ -3,6 +3,7 @@ import { waitEl } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import * as UTILS from "./AccountingUtils.js";
+import * as LS from "../../services/localStorageService.js";
 
 let selectedElement,
   chartData,
@@ -195,7 +196,9 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
           hAxis: { title: "Mes" },
           seriesType: "bars",
           series: { 2: { type: "line" } },
-          height: isMobile ? window.innerHeight / 2 : (leyend ? window.innerWidth / 3 : 300)
+          width: leyend ? window.innerWidth / 2 : 270,
+          height: isMobile ? window.innerHeight / 2 : (leyend ? window.innerWidth / 3 : 300),
+          legend: "none"
         };
 
         divCombo.style.width = isMobile ? "100%" : (leyend ? "70%" : "auto");
@@ -733,7 +736,7 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
           : `Resultados ${selectedPeriod.name}`,
         vAxis: { title: "Cantidad (€)" },
         height: isMobile ? window.innerHeight / 2 : (leyend ? window.innerWidth / 3 : 290),
-        // width: leyend ? window.innerWidth / 3 : 200,
+        width: leyend ? window.innerWidth / 2 : 270,
         isStacked: true,
         legend: {
           position: "none",
@@ -743,7 +746,7 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
       setStyles(div, {display : "flex", flexWrap : "wrap", justifyContent : "center"});
 
       let divCol = document.createElement("div");
-      divCol.style.width = isMobile ? "100%" : "70%";
+      divCol.style.width = isMobile ? "100%" : (LS.isNewTheme() && !leyend ? "100%" : "70%");
       divCol.id = "divCol";
       div.appendChild(divCol);
 

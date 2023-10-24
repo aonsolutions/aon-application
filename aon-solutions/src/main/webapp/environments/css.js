@@ -130,6 +130,7 @@ export const AON_BADGE = 'aonBadge';
 export const AON_DASHBOARD_CARD = 'aonDashboardCard';
 
 export const AON_COMPANY_DIV = 'aonCompanyDiv';
+export const AON_COMPANY_TITLE_DIV = 'aonCompanyTitleDiv';
 
 // aon-figma.css
 

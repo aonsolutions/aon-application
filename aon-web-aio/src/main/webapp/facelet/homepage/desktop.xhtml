@@ -31,6 +31,15 @@
 		overflow-y: auto; 
 		max-height: calc(100vh - 303px);
 	}
+	[id$="fiscal_status_div"] *{
+		color: #4b4b4b !important;
+		text-transform: uppercase;
+	}
+	
+	[id$="fiscal_status_div"] .aon_width_400 {
+		width: 66% !important;
+		min-width: 400px;
+	}
 	</style>	
 	
 	<aon:form id="mainForm" >
@@ -43,10 +52,11 @@
 				<aon:if test="#{!userUtils.newAONTheme}">				
 					<ui:include src="/facelet/homepage/portlet/infoLeftGroupPortlet.xhtml" />
 				</aon:if>
+				<!--  
 				<aon:if test="#{userUtils.newAONTheme}">				
 					<ui:include src="/facelet/new/portlet/infoLeftGroupPortlet.xhtml" />
 				</aon:if>
-				
+				-->
 				<aon:div id="aonDesktopContent" styleClass="aon-width-all">
 					
 					<aon:if test="#{userUtils.newAONTheme}">				
@@ -67,7 +77,7 @@
 											<aon:outputText styleClass="aon-menu-desktop-header-line" />
 											<aon:outputText styleClass="aon-menu-desktop-header-text" value="#{bundle.config_tax_module}" />
 										</aon:div>
-										<aon:div id="fiscal_status_div" style="height: 400px; width: 100%;">
+										<aon:div id="fiscal_status_div" style="width: 100%;">
 											<ui:decorate template="/com/esferalia/aon/gwt/fiscal/facelet/innerGwt.xhtml">
 												<ui:param name="module" value="aon_gwt_fiscal" />
 												<ui:param name="entryPoint" value="ModelMatrix" />

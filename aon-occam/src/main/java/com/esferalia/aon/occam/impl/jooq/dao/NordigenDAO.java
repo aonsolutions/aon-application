@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -38,7 +37,6 @@ import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.validation.BankStatementValidator;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -294,11 +292,10 @@ public class NordigenDAO {
 			if (real != null && real.getBalanceAmount() != null) {
 				remainder += AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
 			}
-			Date date = account.getLastMovementDate();
 			aonContext.getDslContext().update(RBANK)
 				.set(RBANK.BALANCE, AonNumberUtils.zeroIfNull(balance))
 				.set(RBANK.AVAILABLE_BALANCE, AonNumberUtils.zeroIfNull(remainder))
-				.set(RBANK.BALANCE_DATE, new Timestamp(date.getTime()))
+				.set(RBANK.BALANCE_DATE, new Timestamp(new Date().getTime()))
 				.where(RBANK.ID.eq(rb.getId()))
 				.execute();
 		}

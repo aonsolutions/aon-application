@@ -120,7 +120,9 @@ export class AonPayrollCard extends AonElement {
 
     let content = this.getElement("payrollCardTable");
 
-    for (let index = 0; index < 5; index++) {
+    let maxPayrolls = payrolls && payrolls.length < 5 ? payrolls.length : 5;
+
+    for (let index = 0; index < maxPayrolls; index++) {
       const payroll = payrolls[index];
       
       let row = this.createElement(TAG.DIV);

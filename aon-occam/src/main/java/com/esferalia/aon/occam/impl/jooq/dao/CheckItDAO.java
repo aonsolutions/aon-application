@@ -4,7 +4,9 @@ import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.BankStatement.BANK_STATEMENT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -24,8 +26,12 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.validation.BankStatementValidator;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -257,4 +263,25 @@ public class CheckItDAO {
 			return null;
 		}
 	}
+	
+	
+	public static void updateRegistryBank(String domainName, Integer domainId, String user, CheckItBankAccount account) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
+			String iban = account.getCcc();
+			RegistryBank rb = getRbankByIban(aonContext, iban);
+			if (rb != null && !rb.isEmpty()) {
+				double balance = account.getBalance();
+				double remainder = account.getRemainder();
+				aonContext.getDslContext().update(RBANK)
+					.set(RBANK.BALANCE, AonNumberUtils.zeroIfNull(balance))
+					.set(RBANK.AVAILABLE_BALANCE, AonNumberUtils.zeroIfNull(remainder))
+					.set(RBANK.BALANCE_DATE, new Timestamp(new Date().getTime()))
+					.where(RBANK.ID.eq(rb.getId()))
+					.and(RBANK.REQUISITION.isNull())	// SKIP NORDIGEN BANKS.
+					.execute();
+			}
+		}
+	}
+	
+
 }

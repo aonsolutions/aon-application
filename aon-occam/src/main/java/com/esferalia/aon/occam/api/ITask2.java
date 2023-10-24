@@ -32,6 +32,7 @@ public interface ITask2 {
 	public void deleteTask(AONContext ctx, Integer id);
 	public Map<String, Integer> getTaskCount(AONContext ctx, TaskFilter sender, TaskFilter receiver);
 	public TaskCounts getTaskGeneralCount(AONContext ctx, Optional<TaskFilter> status, Optional<TaskFilter> workgroup, Optional<TaskFilter> tags);
+	public Integer getTaskCountFilter(AONContext ctx, TaskFilter taskFilter);
 	
 	//TASKWORKFLOW
 	public TaskWorkflow getTaskWorkflow(AONContext ctx, TaskWorkflowFilter filter);
