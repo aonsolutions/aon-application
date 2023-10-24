@@ -217,14 +217,6 @@ export class BillingComponent implements OnInit {
     console.log(result);
   }
 
-  // Modal para subir el archivo
-  uploadDocument(event: Event) {
-    event.preventDefault();
-    this.modalComponent.openDialog(
-      ModalCreateComponent
-    );
-  }
-
   openModal(modal: string) {
     switch (modal) {
       case 'showModalSend':
