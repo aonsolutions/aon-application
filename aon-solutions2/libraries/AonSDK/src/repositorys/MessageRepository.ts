@@ -16,14 +16,14 @@ export class APIMessageSingleObjectCrudRepository extends APIGenericSingleObject
     }
 
     async get(key: string): Promise<Message> {
-        if(key.split(';')[1] == TypeMessage.NOTIFICACION){
+        if(decodeURIComponent(key).split(';')[1] == TypeMessage.NOTIFICACION){
             let params = {
-                id: key.split(';')[0]
+                id: decodeURIComponent(key).split(';')[0]
             }
             return this.apiModel.parseDataToReceive(await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_ONE_NOTIFICATION, params), {}, {}));
         }else {
             let params = {
-                id: key.split(';')[0]
+                id: decodeURIComponent(key).split(';')[0]
             }
             return this.apiModel.parseDataToReceive(await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_ONE_MESSAGE, params), {}, {}));
         }
