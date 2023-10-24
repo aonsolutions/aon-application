@@ -8,10 +8,10 @@ import { DuplicateFacturaComponent } from '../components/modal-duplicate-factura
 import { DeleteFacturaComponent } from '../components/modal-delete-factura/delete-factura.component';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
+import { ModalCreateComponent } from '../../inbox/components/modal-create/modal-create.component';
 import { DocumentService } from 'src/app/core/services/document.service';
-import { ErrorModalComponent } from 'src/app/shared/components/error-modal/error-modal.component';
-import { ConfirmModalComponent } from 'src/app/shared/components/confirm-modal/confirm-modal.component';
+import { ResultSnackBarComponent } from 'src/app/shared/components/result-snack-bar/result-snack-bar.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface ChartItem {
   name: string;
@@ -36,19 +36,20 @@ interface Tabs {
   styleUrls: ['./billing.component.scss'],
 })
 export class BillingComponent implements OnInit {
-  chartItems         : ChartItem[]                = [];
-  chartReports       : ChartReports[]             = [];
-  selectedMenu       : number                     = 1;
-  selectedTab        : number                     = 1;
-  showMenu           : boolean                    = false;
-  buttonsVentas      : any[]                      = [];
-  buttonsGastos      : any[]                      = [];
-  buttonsEdit        : any[]                      = [];
-  addBank            : boolean                    = false;
-  banksView          : any[]                      = [];
-  editBank           : { [key: number]: boolean } = {};
-  salesSelected      : any[]                      = [];
-  tabs               : Tabs[]                     = [];
+  chartItems: ChartItem[] = [];
+  chartReports: ChartReports[] = [];
+  selectedMenu: number = 1;
+  selectedTab: number = 1;
+  showMenu: boolean = false;
+  buttonsVentas: any[] = [];
+  buttonsGastos: any[] = [];
+  buttonsEdit: any[] = [];
+  addBank: boolean = false;
+  banksView: any[] = [];
+  editBank: { [key: number]: boolean } = {};
+  salesSelected: any[] = [];
+  tabs: Tabs[] = [];
+  functionHome: any = (result: any) => this.afterModalClosed(result);
 
   @ViewChild('modal') modalComponent: any = '';
 
@@ -68,10 +69,16 @@ export class BillingComponent implements OnInit {
     private bankService: BankService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
-    private documentService: DocumentService
+    private documentService: DocumentService,
+    public snackBar: MatSnackBar
   ) {
     this.translateService
-      .get(['BILLING.SALES', 'BILLING.BILLS', 'BILLING.REPORTS', 'BILLING.SALES_CHECK'])
+      .get([
+        'BILLING.SALES',
+        'BILLING.BILLS',
+        'BILLING.REPORTS',
+        'BILLING.SALES_CHECK',
+      ])
       .subscribe((result) => {
         this.chartItems = [
           {
@@ -94,9 +101,8 @@ export class BillingComponent implements OnInit {
         this.tabs = [
           {
             name: result['BILLING.SALES_CHECK'],
-          }
-        ]
-
+          },
+        ];
       });
 
     this.chartReports = [
@@ -204,65 +210,19 @@ export class BillingComponent implements OnInit {
       this.domSanitizer.bypassSecurityTrustResourceUrl(
         '../../../../assets/images/note_add.svg'
       )
-    )
-
+    );
   }
-
-  functionHome: any = (result: any) => this.afterModalClosed(result);
-  functionDocument: any = (result: any) => this.afterModalClosedDocuement(result);
 
   afterModalClosed(result?: any) {
     console.log(result);
   }
 
-    // Modal para subir el archivo
+  // Modal para subir el archivo
   uploadDocument(event: Event) {
     event.preventDefault();
     this.modalComponent.openDialog(
-      UploadModalComponent,
-      this.functionDocument,
-      'Data from home'
+      ModalCreateComponent
     );
-  }
-
-    // Al cerrar el modal de subir documento se crea el documento en la base de datos
-  afterModalClosedDocuement(result?: any) {
-    if (result) {
-      const fileName = result[0].document.name;
-      const fileType = result[0].document.type;
-      const fileSize = result[0].document.size;
-      const path     = result[0].folder;
-
-      this.document = this.objectFactory.createDocument(result[0].document, fileName, fileSize, fileType, new Date(), path);
-      const file = result[0].document;
-
-      this.documentService.uploadDocument(this.document, file)
-      .then((response) => {
-        this.uploadCompletedModal()
-      })
-      .catch((error) => {
-        this.uploadErrorModal()
-      })
-
-    }
-  }
-
-  // Confirmación de subida de documento
-  uploadCompletedModal() {
-    this.modalComponent.openDialog(
-      ConfirmModalComponent,
-      this.functionHome,
-      'Documento subido correctamente'
-    )
-  }
-
-  // Si la subida da error
-  uploadErrorModal() {
-    this.modalComponent.openDialog(
-      ErrorModalComponent,
-      this.functionHome,
-      'Error al subir el documento'
-    )
   }
 
   openModal(modal: string) {
@@ -284,24 +244,21 @@ export class BillingComponent implements OnInit {
   showModalSend() {
     this.modalComponent.openDialog(
       SendFacturaComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
   }
 
   showModalCopy() {
     this.modalComponent.openDialog(
       DuplicateFacturaComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
   }
 
   showModalDelete() {
     this.modalComponent.openDialog(
       DeleteFacturaComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
   }
 
@@ -329,27 +286,21 @@ export class BillingComponent implements OnInit {
   }
 
   showSales(data: any) {
-
     // if (data[0].status) {
-
     //   this.selectedTab = 7;
-
     // } else {
-
     //   console.log('editar factura');
-
     // }
   }
 
   ngOnInit(): void {
     const url = window.location.href.split('/')[4];
 
-    if( url === 'creacion' ) {
+    if (url === 'creacion') {
       this.selectedMenu = 2;
       this.selectedTab = 4;
       this.showMenu = true;
       this.addBank = true;
     }
-
   }
 }

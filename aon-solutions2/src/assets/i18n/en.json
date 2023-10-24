@@ -15,7 +15,8 @@
   "HEADER": {
     "EDIT_PROFILE": "Edit profile",
     "HELP": "Help",
-    "LOGOUT": "Logout"
+    "LOGOUT": "Logout",
+    "LANGUAGE": "Language"
   },
   "MENU": {
     "MENU": "menu",
@@ -96,7 +97,9 @@
     "NONOTIFICATIONSTHISMONTH": "No notifications this month.",
     "NOQUERIESTHISWEEK": "No queries this week.",
     "NOQUERIESTHISMONTH": "No queries this month.",
-    "NOMESSAGES": "No messages."
+    "NOMESSAGES": "No messages.",
+    "PROCESS": "Process",
+    "CONSULT": "Consultar"
   },
   "DOCUMENTATION": {
     "FILE_SELECT_ALL"       : "Select all",
@@ -241,5 +244,9 @@
     "STATUS_DATE": "Status Date",
     "NAF": "NAF",
     "CERTIFICATE_UPLOAD": "Upload your digital certificate"
+  },
+  "LANGUAGE": {
+    "ENGLISH": "English",
+    "SPANISH": "Spanish"
   }
 }

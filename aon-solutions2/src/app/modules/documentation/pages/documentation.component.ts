@@ -1,45 +1,30 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DocumentService } from 'src/app/core/services/document.service';
 import { FolderService } from 'src/app/core/services/folder.service';
-import {
-  CollectionFactory,
-  Factory,
-  FilterBuilder,
-  ICollection,
-  IDocument,
-  IFolder,
-} from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, Factory, FilterBuilder, ICollection, IDocument, IFolder } from 'libraries/AonSDK/src/aon';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
 import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/dropdown-menu.component';
 import { TranslateService } from '@ngx-translate/core';
 import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
-import { ErrorModalComponent } from 'src/app/shared/components/error-modal/error-modal.component';
-import { RenameFileComponent } from '../components/modal-rename-file/rename-file.component';
-import { ConfirmModalComponent } from 'src/app/shared/components/confirm-modal/confirm-modal.component';
+// import { RenameFileComponent } from '../components/modal-rename-file/rename-file.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-documentation',
-  templateUrl: './documentation.component.html',
-  styleUrls: ['./documentation.component.scss'],
+  selector    : 'app-documentation',
+  templateUrl : './documentation.component.html',
+  styleUrls   : ['./documentation.component.scss'],
 })
 export class DocumentationComponent implements OnInit {
-  @ViewChild('file') dropdownMenuComponent: DropdownMenuComponent =
-    new DropdownMenuComponent();
-  @ViewChild('modal') modalComponent: any = '';
+  @ViewChild('file') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent();
+  @ViewChild('modalDocumentationRename') modalDocumentationRename: any = '';
   collectionFactory = new CollectionFactory();
   factory = new Factory();
-  originalListFolders: ICollection<IFolder> =
-    this.collectionFactory.createFolderCollection();
-  documentationListFolders: ICollection<IFolder> =
-    this.collectionFactory.createFolderCollection();
-  documentationListSubFolders: ICollection<IFolder> =
-    this.collectionFactory.createFolderCollection();
-  originalDocListSubFolders: ICollection<IFolder> =
-    this.collectionFactory.createFolderCollection();
-  originalListDocuments: ICollection<IDocument> =
-    this.collectionFactory.createDocumentCollection();
-  documentsList: ICollection<IDocument> =
-    this.collectionFactory.createDocumentCollection();
+  originalListFolders: ICollection<IFolder> = this.collectionFactory.createFolderCollection();
+  documentationListFolders: ICollection<IFolder> = this.collectionFactory.createFolderCollection();
+  documentationListSubFolders: ICollection<IFolder> = this.collectionFactory.createFolderCollection();
+  originalDocListSubFolders: ICollection<IFolder> = this.collectionFactory.createFolderCollection();
+  originalListDocuments: ICollection<IDocument> = this.collectionFactory.createDocumentCollection();
+  documentsList: ICollection<IDocument> = this.collectionFactory.createDocumentCollection();
   fileToShow: IDocument = this.factory.createDocument();
   showMenu: boolean = false;
   selecFolder: string = '';
@@ -52,19 +37,17 @@ export class DocumentationComponent implements OnInit {
   menuItem: MenuItem[] = [];
   subMenuItemFolder: MenuItem[] = [];
   search: string = '';
-  localePDF: string =
-    this.translateService.getDefaultLang() === 'es' ? 'es-ES' : 'en-EN';
-
+  spinnerContent: boolean = true;
+  localePDF: string = this.translateService.getDefaultLang() === 'es' ? 'es-ES' : 'en-EN';
   folderSelected: string = '';
   idSelected: string = '';
 
-  objectFactory = new Factory();
-  document: IDocument = this.objectFactory.createDocument();
 
   constructor(
     private translateService: TranslateService,
     private documentService: DocumentService,
-    private folderService: FolderService
+    private folderService: FolderService,
+    public snackBar: MatSnackBar
   ) {
     /*
       Inicialmente solo devolvemos carpetas correspondientes a la rai�z
@@ -144,70 +127,11 @@ export class DocumentationComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  // Acción que realiza al cerrar el modal
-  // editName: any = (result: any) => this.renameFile(result, this);
-  functionDocument: any = (result: any) => this.afterModalClosed(result);
-
-  // Modal para subir el archivo
-  uploadDocument(event: Event) {
-    event.preventDefault();
-    this.modalComponent.openDialog(
-      UploadModalComponent,
-      this.functionDocument,
-      'Data from home'
-    );
-  }
-
-  // Al cerrar el modal de subir documento se crea el documento en la base de datos
-  afterModalClosed(result?: any) {
-    // Si se ha seleccionado un documento
-    if (result) {
-      // Guardamos los datos del documento
-      const fileName = result[0].document.name;
-      const fileType = result[0].document.type;
-      const fileSize = result[0].document.size;
-      const path     = result[0].folder;
-
-      // Creamos el documento
-      this.document = this.objectFactory.createDocument(result[0].document, fileName, fileSize, fileType, new Date(), path);
-      const file = result[0].document;
-
-      // Subimos el documento
-      this.documentService.uploadDocument(this.document, file)
-      .then((response) => {
-        this.uploadCompletedModal()
-      })
-      .catch((error) => {
-        this.uploadErrorModal()
-      })
-
-    }
-  }
-
-  // Confirmación de subida de documento
-  uploadCompletedModal() {
-    this.modalComponent.openDialog(
-      ConfirmModalComponent,
-      this.functionDocument,
-      'Documento subido correctamente'
-    );
-    this.getDocumentation(this.folderSelected, this.idSelected);
-  }
-
-  // Si la subida da error
-  uploadErrorModal() {
-    this.modalComponent.openDialog(
-      ErrorModalComponent,
-      this.functionDocument,
-      'Error al subir el documento'
-    );
-  }
-
   /*
     Abrir modal para renombrar documento
   */
   // openModalRename(document: any) {
-  //   this.modalComponent.openDialog(
+  //   this.modalDocumentationRename.openDialog(
   //     RenameFileComponent,
   //     this.editName,
   //     document.fileToShow
@@ -244,7 +168,7 @@ export class DocumentationComponent implements OnInit {
 
     let filter = new FilterBuilder();
     filter.addField('parent', folder);
-
+    this.spinnerContent = true;
     this.search = '';
     this.documentationListFolders = this.originalListFolders;
 
@@ -256,6 +180,7 @@ export class DocumentationComponent implements OnInit {
         this.showMenu = false;
         this.originalListFolders = listFolders;
         this.documentationListFolders = listFolders;
+        this.spinnerContent = false;
       } else {
         // Si contiene sub carpetas
         const firstValue =
@@ -269,6 +194,7 @@ export class DocumentationComponent implements OnInit {
           this.showNoElements = false;
           this.documentationListSubFolders = listFolders;
           this.originalDocListSubFolders = listFolders;
+          this.spinnerContent = false;
         } else {
           // 3 - No tiene sub carpetas, cargamos los documentos
           const filterDocument = new FilterBuilder();
@@ -282,10 +208,11 @@ export class DocumentationComponent implements OnInit {
                 Object.keys(documentsList).length > 0
                   ? Object.values(documentsList)[0]
                   : 0;
-              this.showNoElements = firstValue.size > 0 ? false : true;
-              // Agregamos los datos devueltos
-              this.originalListDocuments = documentsList;
-              this.documentsList = documentsList;
+                  this.showNoElements = firstValue.size > 0 ? false : true;
+                  // Agregamos los datos devueltos
+                  this.originalListDocuments = documentsList;
+                  this.documentsList = documentsList;
+                  this.spinnerContent = false;
             });
           this.showFiles = true;
         }
@@ -358,7 +285,7 @@ export class DocumentationComponent implements OnInit {
     (seria uno varios)
   */
   getMoveFile(folder: string) {
-    console.log(folder);
+    // console.log(folder);
   }
 
   /*

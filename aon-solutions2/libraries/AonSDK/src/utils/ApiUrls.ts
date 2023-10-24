@@ -12,6 +12,8 @@ export const enum MESSAGE_URL {
     GET_MARK_READ_NOTIFICATION = '/ms/api/notification/mark-read-notification',
     GET_ONE_MESSAGE = '/ms/api/task/one',
     SAVE_ONE_MESSAGE = '/ms/api/task',
+    GET_COUNT_TASK_QUERY = '/ms/api/task/filter/count',
+    GET_ONE_NOTIFICATION = '/ms/api/notification/one',
 }
 
 export const enum TAXMODEL_URL {
@@ -31,4 +33,8 @@ export const enum REGISTRY_URL {
 
 export const enum BANK_URL {
     GET_BANK_LIST = '/ms/api/company/banks',
+}
+
+export const enum DOCUMENT_URL {
+    GET_PAYROLL_LIST = '/ms/api/contract/enterprise/salaries',
 }

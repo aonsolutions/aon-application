@@ -6,6 +6,7 @@ import { BASE_URL } from "../utils/Environment";
 import { ApiHttpRequest } from "../utils/Http";
 import { APIGenericMultipleObjectCrudRepository, APIGenericSingleObjectCrudRepository } from "./GenericRepository";
 import { BANK_URL, REGISTRY_URL } from "../utils/ApiUrls";
+import { FilterBuilder } from "../utils/FilterBuilder";
 
 
 export class APIBankMultipleObjectCrudRepository extends APIGenericMultipleObjectCrudRepository<Bank> {
@@ -19,7 +20,9 @@ export class APIBankMultipleObjectCrudRepository extends APIGenericMultipleObjec
         response.forEach((element: any) => {
             collection.add(this.apiModel.parseDataToReceive(element))
         })
-        return collection;
+        let active = new FilterBuilder();
+        active.addField('active', true);
+        return collection.filter(active.getFilter());
     }
 }
 

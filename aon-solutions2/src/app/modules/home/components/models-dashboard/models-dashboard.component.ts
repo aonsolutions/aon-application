@@ -13,9 +13,11 @@ import { TaxModelService } from 'src/app/core/services/tax-model.service';
 })
 export class ModelsDashboardComponent implements OnInit {
   @ViewChild('model') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
-  models  : any;
-  menuItem: MenuItem [] = []
-  selected: string    = '';
+  models      : any;
+  existModels : boolean     = false;
+  menuItem    : MenuItem [] = []
+  selected    : string      = '';
+  spinner     : boolean     = false;
 
   constructor(
     private translateService: TranslateService,
@@ -24,11 +26,6 @@ export class ModelsDashboardComponent implements OnInit {
     this.translateService.get([
       'HOME.1_TRIMESTER', 'HOME.2_TRIMESTER', 'HOME.3_TRIMESTER', 'HOME.4_TRIMESTER'
     ]).subscribe((result) => {
-        taxModelService.thisTrimester().then((trimester) => {
-          // Seleccionamos el trimestre en el que estamos
-          this.ModelsThisTrimester(trimester, result["HOME."+trimester+"_TRIMESTER"])
-        });
-      
       // Trimestre en el menu
         this.menuItem! = [
           {root: true, text: result["HOME.1_TRIMESTER"], click:() => this.ModelsThisTrimester(1, result["HOME.1_TRIMESTER"])},
@@ -36,6 +33,10 @@ export class ModelsDashboardComponent implements OnInit {
           {root: true, text: result["HOME.3_TRIMESTER"], click:() => this.ModelsThisTrimester(3, result["HOME.3_TRIMESTER"])},
           {root: true, text: result["HOME.4_TRIMESTER"], click:() => this.ModelsThisTrimester(4, result["HOME.4_TRIMESTER"])}
         ];
+      // Seleccionamos el trimestre en el que estamos
+        taxModelService.thisTrimester().then((trimester) => {
+          this.ModelsThisTrimester(trimester, result["HOME."+trimester+"_TRIMESTER"])
+        });
     });
   }
 
@@ -44,6 +45,7 @@ export class ModelsDashboardComponent implements OnInit {
   }
   
   ModelsThisTrimester(trimester : number, name: string){
+    this.spinner = true;
     // Nombre
     this.selected = name
     // Year que estamos
@@ -55,7 +57,10 @@ export class ModelsDashboardComponent implements OnInit {
     filterBuilder.addField('trimester', trimester);
     filterBuilder.addField('year', currentYear);
     this.taxModelService.getTaxModelList(filterBuilder.getFilter()).then((models) => {
-      this.models = models;
+      this.models       = models;
+      this.existModels  = this.models.isEmpty() ? false : true;
+      this.spinner      = false;
+      this.models.isEmpty()
     });
   }
 

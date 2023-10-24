@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CollectionFactory, Factory, ICollection, IMessage } from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, Factory, ICollection, IMessage, IMessageChat } from 'libraries/AonSDK/src/aon';
 import { FilterBuilder } from 'libraries/AonSDK/src/utils/FilterBuilder';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
@@ -26,13 +26,18 @@ export class TablesInboxComponent implements OnChanges {
   @Output() archiveMessageEvent: EventEmitter<IMessage> = new EventEmitter<IMessage>();
   @Input() updateTable: boolean = false;
 
+  public collectionFactory = new CollectionFactory();
+  messagesChat: ICollection<IMessageChat> =
+  this.collectionFactory.createMessageChatCollection();
+  entityFactory = new Factory();
+  messagesData: IMessage = this.entityFactory.createMessage();
+  dataBody: any[] = [];
   bodyTable: any[] = [];
   showDetail: boolean = false;
   totalMessages: string = '0';
   message: string = '';
   spinner: boolean = true;
 
-  public collectionFactory = new CollectionFactory();
   //Inbox area
   messagess: ICollection<IMessage> =
     this.collectionFactory.createMessageCollection();
@@ -177,7 +182,7 @@ export class TablesInboxComponent implements OnChanges {
   }
 
   // Tabla
-  private updateTableData() {
+  updateTableData() {
     let tableRow: any[] = [];
     const datepipe: DatePipe = new DatePipe(
       this.translateService.getDefaultLang()
@@ -324,7 +329,7 @@ export class TablesInboxComponent implements OnChanges {
           // Agregamos el mensaje
           tableRow.push(column);
         });
-
+        this.dataBody = tableRow;
         this.bodyTable = tableRow;
         this.noPendingItems.emit(!pendingItemsFound);
 
@@ -386,18 +391,36 @@ export class TablesInboxComponent implements OnChanges {
     });
   }
 
+  searchMessage(search: string) {
+    // Si el término de búsqueda está vacío, muestra todos los elementos en la tabla.
+    if (!search) {
+      this.bodyTable = this.dataBody;
+      return;
+    }
+    // Convierte el término de búsqueda a minúsculas.
+    search = search.toLowerCase();
+
+    // Filtra la tabla en función del término de búsqueda
+    this.bodyTable = this.dataBody.filter((item: any) => {
+      // Comprueba si alguna de las columnas contiene el término de búsqueda.
+      return Object.values(item).some((value: any) => {
+        if (typeof value === 'string') {
+          return value.toLowerCase().includes(search);
+        } else if (typeof value === 'object') {
+      // Manejar el caso en el que el valor de la columna es un objeto.
+      // Utilizar JSON.stringify para convertir el objeto en una cadena de texto para la búsqueda.
+          return JSON.stringify(value).toLowerCase().includes(search);
+        }
+        return false;
+      });
+    });
+  }
+
+
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
-  rowClick(message: any) {
+  async rowClick(message: any) {
     this.rowClicked.emit(message);
-    // Cambiar el estado de notificación al hacer click en el mensaje
-    this.messageService.getMessage(message.key).then((messageStatus) => {
-      if (message.type === 'notificacion') {
-        this.messageService.markAsReadNotification(messageStatus);
-        this.updateTableData();
-        this.statusChanged.emit();
-      }
-    });
   }
 }

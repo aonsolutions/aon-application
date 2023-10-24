@@ -12,6 +12,7 @@ import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalConfirmQueryComponent } from '../components/modal-confirm-query/modal-confirm-query.component';
+import { EnterpriseService } from 'src/app/core/services/enterprise.service';
 
 export interface Tabs {
   name: string;
@@ -25,10 +26,11 @@ export interface Tabs {
 })
 export class InboxviewComponent implements OnInit {
   @ViewChild('menu') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent();
-  @ViewChild('modal') modalComponent: any = '';
-  @ViewChild(TablesInboxComponent, { static: false })
+  @ViewChild('modalCreateInbox') modalCreateInboxComponent: any = '';
+  functionModalCreateInbox: any = (result: any) => this.afterModalCreateInboxClosed(result);
+  @ViewChild(TablesInboxComponent, { static: false }) tablesInboxComponent!: TablesInboxComponent;
   @Output() consultaCreated: EventEmitter<void> = new EventEmitter<void>();
-
+  messChat: IMessageChat[] = [];
   datepipe: DatePipe = new DatePipe(this.translateService.getDefaultLang());
   collectionFactory = new CollectionFactory();
   entityFactory = new Factory();
@@ -38,7 +40,7 @@ export class InboxviewComponent implements OnInit {
   this.collectionFactory.createMessageChatCollection();
   messagesData: IMessage = this.entityFactory.createMessage();
   messageChat: IMessageChat = this.entityFactory.createMessageChat();
-  functionHome: any = (result: any) => this.afterModalClosed(result);
+
   tabsConsultas: Tabs[] = [];
   tabsTareas: Tabs[] = [];
   tabsNotificaciones: Tabs[] = [];
@@ -68,7 +70,8 @@ export class InboxviewComponent implements OnInit {
     private messageService: MessageService,
     private messageChatService: MessageChatService,
     private optionsService: OptionsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private enterpriseService: EnterpriseService
   ) {
     this.translateService
       .get([
@@ -144,36 +147,28 @@ export class InboxviewComponent implements OnInit {
     console.log("init");
 
     const url = window.location.href.split('/')[4];
-
-    if(url)
-      this.messageService.getMessage(url).then((message) => {
-        this.rowClickHandler(message);
-      });
   }
 
   ngAfterViewInit(): void {
-    this.optionsService.optionsUpdated.subscribe(() => {
-      this.checkOpenModal();
-    });
-  }
+    const url = window.location.href.split('/').pop();
 
-  private checkOpenModal(): void {
-    const options = this.optionsService.getOptions();
-    if (options && options.showModal) {
-      this.optionsService.clearOptions();
+    if (url === 'create'){
       this.showModal();
+    } else if(url !== 'inbox'){
+      this.messageService.getMessage(url).then((message) => {
+        this.rowClickHandler(message);
+      });
     }
   }
 
-  afterModalClosed(result?: any) {
-    console.log(result);
+  afterModalCreateInboxClosed(result?: any) {
+    // console.log(result);
   }
 
   showModal() {
-    this.modalComponent.openDialog(
+    this.modalCreateInboxComponent.openDialog(
       ModalCreateComponent,
-      this.functionHome,
-      'Data from home',
+      this.functionModalCreateInbox,
     );
   }
 
@@ -185,22 +180,25 @@ export class InboxviewComponent implements OnInit {
   }
 
   async rowClickHandler(message: any) {
-      const isSameRow =
-        this.messagesData && this.messagesData.Id === message.key;
-      this.showDetail = !isSameRow ? true : !this.showDetail;
-      this.messagesData = await this.messageService.getMessage(message.key);
-
-      if (message.type == 'consulta') {
-        let filterBuilder = new FilterBuilder();
-        filterBuilder.addField('idMessage', message.key);
-        this.messagesChat = await this.messageChatService.getMessageChatList(
-          filterBuilder.getFilter()
+    const isSameRow =
+    this.messagesData && this.messagesData.Id === message.key;
+    this.showDetail = !isSameRow ? true : !this.showDetail;
+    this.messagesData = await this.messageService.getMessage(message.key);
+    if (message.type == 'consulta') {
+      let filterBuilder = new FilterBuilder();
+      filterBuilder.addField('idMessage', message.key);
+      this.messagesChat = await this.messageChatService.getMessageChatList(
+        filterBuilder.getFilter()
         );
-      }
-      this.changeView();
-      // Desactivo el spinner
-      this.spinner = false;
     }
+    if (message.type === 'notificacion') {
+      this.messageService.markAsReadNotification(this.messagesData);
+      this.tablesInboxComponent.updateTableData();
+    }
+    this.changeView();
+    // Desactivo el spinner
+    this.spinner = false;
+  }
 
   // Ocultar o ver botones
   consultarClicked() {
@@ -298,18 +296,19 @@ export class InboxviewComponent implements OnInit {
   //Crear mensaje de chat de consultas
   async createChatMessage(description: string) {
 
+    const currentEnterprise = await this.enterpriseService.getCurrentEntepriseData()
     if (this.messageChat && this.messagesData) {
 
       const newMessageChat = this.messageService.objectFactory.createMessageChat()
       .setIdMessage(this.messagesData.Id)
-      .setName(this.messagesData.Name)
+      .setName(currentEnterprise.Name)
       .setDescription(description)
       .setType('chat');
 
         // Crear el mensaje
-
         await this.messageChatService.createMessageChat(newMessageChat).then((response) => {
           this.messageChat = response;
+          this.tablesInboxComponent.updateTableData();
           // Desactivo el spinner
           this.spinner = false;
         })
@@ -320,10 +319,12 @@ export class InboxviewComponent implements OnInit {
 
   //Crear mensaje tipo consulta
   async createMessage(description: string){
+    const currentEnterprise = await this.enterpriseService.getCurrentEntepriseData()
+
     if (this.messagesData) {
 
       const newMessage = this.messageService.objectFactory.createMessage()
-      .setName(this.messagesData.Name)
+      .setName(currentEnterprise.Name)
       .setDescription(description)
       .setType(TypeMessage.CONSULTA)
       .setStatus(StatusMessage.ABIERTA)
@@ -332,12 +333,13 @@ export class InboxviewComponent implements OnInit {
         // Crear el mensaje
         await this.messageService.createMessage(newMessage).then((response) => {
           this.messagesData = response;
+          this.tablesInboxComponent.updateTableData();
           // Desactivo el spinner
           this.spinner = false;
         })
         // Agregar el nuevo mensaje
         this.messages.add(this.messagesData);
-        console.log(newMessage)
+        this.messChat = [];
     }
   }
 
@@ -366,30 +368,6 @@ export class InboxviewComponent implements OnInit {
     this.newMessageDescription = '';
   }
 
-  // función para pasar los datos al modal de confirmación
-  // sendMessageAndOpenModal(): void {
-  //   const dialogRef = this.dialog.open(ModalConfirmQueryComponent, {
-  //     data: {
-  //       sendMessage: () => {
-  //         this.createMessage(this.newMessageDescriptionTemp);
-  //         this.isModalVisible = false;
-  //       }
-  //     }
-  //   });
-
-  //   dialogRef.afterClosed().subscribe(result => {
-  //     if (result) {
-  //       this.isModalVisible = true;
-  //       this.newMessageDescription = '';
-  //     } else {
-  //       this.newMessageDescription = this.newMessageDescriptionTemp;
-  //     }
-  //   });
-
-  //   this.newMessageDescriptionTemp = this.newMessageDescription;
-  //   this.newMessageDescription = '';
-  // }
-
   // funcion para mostrar el modal cuando envio una consulta desde tarea
   openConfirmQueryModal() {
     const dialogRef = this.dialog.open(ModalConfirmQueryComponent, {
@@ -404,5 +382,13 @@ export class InboxviewComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       // Maneja cualquier acción después de que se cierra el modal, si es necesario.
     });
-  }
+
+  // Filtro de busqueda atraves de la tabla
+  // search(search: string) {
+  //   if (this.tablesInboxComponent) {
+  //     this.tablesInboxComponent.searchMessage(search);
+  //   }
+
+  // }
+}
 }

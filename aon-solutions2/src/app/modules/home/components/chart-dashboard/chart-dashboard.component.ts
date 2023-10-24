@@ -13,9 +13,10 @@ import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/d
 
 export class ChartDashboardComponent implements OnInit {
   @ViewChild('chart') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
-  @Input() name     : string = '';
-  @Input() shape    : string = '';
-  @Input() typeDate : number = 0;
+  @Input() name     : string  = '';
+  @Input() shape    : string  = '';
+  @Input() typeDate : number  = 0;
+  spinner           : boolean = true;
   // Parametros que enviamos al Chart
   chartType     : ChartType = 'line';
   chartDataLabel: any = [];
@@ -43,7 +44,7 @@ export class ChartDashboardComponent implements OnInit {
       ];
     });
   }
-   
+
   ngOnInit(): void {
     this.filterReporting(0);
   }
@@ -86,6 +87,22 @@ export class ChartDashboardComponent implements OnInit {
             )
           });
           this.chartLabels = response.label;
+          this.chartColors = [{
+            backgroundColor: 'rgba(41,121,255,0.4)',
+            borderColor: 'rgba(41,121,255,0.6)',
+            pointBackgroundColor: 'rgba(41,121,255,0.2)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(41,121,255,0.2)'
+          },{
+            backgroundColor: 'rgba(255,80,41,0.4)',
+            borderColor: 'rgba(255,80,41,0.6)',
+            pointBackgroundColor: 'rgba(255,80,41,0.2)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(255,80,41,0.2)'
+          }];
+          this.spinner = false;
         });
       break
     // Cobros/Pagos
@@ -107,6 +124,22 @@ export class ChartDashboardComponent implements OnInit {
             )
           });
           this.chartLabels = response.label;
+          this.chartColors = [{
+            backgroundColor: 'rgba(41,121,255,0.4)',
+            borderColor: 'rgba(41,121,255,0.6)',
+            pointBackgroundColor: 'rgba(41,121,255,0.2)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(41,121,255,0.2)'
+          },{
+            backgroundColor: 'rgba(255,80,41,0.4)',
+            borderColor: 'rgba(255,80,41,0.6)',
+            pointBackgroundColor: 'rgba(255,80,41,0.2)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(255,80,41,0.2)'
+          }];
+          this.spinner = false;
         });
         this.translateService.get([
           'HOME.NEXT_12_MONTHS', 'HOME.NEXT_6_MONTHS','HOME.NEXT_3_MONTHS'

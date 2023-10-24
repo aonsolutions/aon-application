@@ -227,11 +227,11 @@ export class ApiDocument extends Document implements IApiModel {
         let path = filter.fields?.get('path')[0];
         if(path.indexOf(MainFolders.LABORAL) !== -1){
             document.ApiObject = data;
-            document.File = '/ms/api/contract/salary/pdf?salaryId='+data.id+'&enterpriseId=1034696&type=SALARY'
-            document.FileName = 'Nómina';
+            document.File = '/ms/api/contract/salary/pdf?salaryId='+data.id+'&enterpriseId='+localStorage.getItem('enterpriseId')+'&type=SALARY'
+            document.FileName = data.employeeName;
             document.FileSize = 0
-            document.FileType = ''
-            document.Date = new Date()
+            document.FileType = 'application/pdf'
+            document.Date = data.startDate
             document.Path = filter.fields?.get('path')
             document.Key = data.id ? data.id : ''
             document.Id = data.id ? data.id : ''
@@ -247,6 +247,7 @@ export class ApiDocument extends Document implements IApiModel {
             document.Id = data.id ? data.id : '';
         }else if(path == MainFolders.CONTABILIZADO){
             document.ApiObject = data;
+            document.FileType = 'application/pdf'
             document.File = data.id;
             document.Date = data.date;
             document.Path = filter.fields?.get('path');

@@ -2,7 +2,7 @@
   <div content class="padding">
   <!-- Subir documentacion -->
     <div id="upload">
-      <app-file-upload-button (click)="uploadDocument($event)">
+      <app-file-upload-button>
        {{ 'COMMON.FILE_UPLOAD_BUTTON'|translate }}
         <app-icon shape="cloud_upload" class="margin-left"></app-icon>
       </app-file-upload-button>
@@ -15,6 +15,7 @@
         class="icon-background"
         [width]="'width'"
         (click)="openModal(shortcut.modal)"
+        [routerLink]="shortcut.routerlink"
       >
         <app-icon [shape]="shortcut.shape"></app-icon>
         {{ shortcut.name }}
@@ -61,7 +62,4 @@
     </div>
   <!-- FIN Acceso a gestion, panel de impuestos, empleados y doc -->
   </div>
-  <!-- Modal -->
-  <app-modal-controller #modal></app-modal-controller>
-  <!-- Fin Modal -->
 </app-grid-layout>

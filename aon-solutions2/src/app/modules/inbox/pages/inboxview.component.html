@@ -14,7 +14,7 @@
           <app-icon shape="add_comment"></app-icon>
           {{ "INBOX.CREATE" | translate }}
         </app-button>
-        <app-modal-controller #modal>
+        <app-modal-controller #modalCreateInbox>
           <app-create-query *ngIf="isModalVisible"></app-create-query>
         </app-modal-controller>
       </span>
@@ -85,6 +85,7 @@
           [class]="'search'"
           [type]="'search'"
           [placeholder]="'INBOX.TEXT' | translate"
+          (inputValue)="search($event)"
         ></app-input>
       </div>
     </div>
@@ -297,7 +298,7 @@
               [padding]="'0rem 1rem'"
             >
               <app-icon shape="playlist_add_check"></app-icon>
-              Tramitar
+             {{'INBOX.PROCESS' | translate }}
             </app-button>
             <app-button
             [width]="'11rem'"
@@ -312,7 +313,7 @@
             (click)="consultarClicked()"
             >
               <app-icon shape="chat"></app-icon>
-              Consultar
+              {{ 'INBOX.CONSULT' | translate }}
             </app-button>
           </div>
         <form (ngSubmit)="sendMessage()">

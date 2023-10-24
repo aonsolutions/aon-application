@@ -17,7 +17,10 @@ export class APIMessageSingleObjectCrudRepository extends APIGenericSingleObject
 
     async get(key: string): Promise<Message> {
         if(key.split(';')[1] == TypeMessage.NOTIFICACION){
-            throw new ErrorResponse('0199')
+            let params = {
+                id: key.split(';')[0]
+            }
+            return this.apiModel.parseDataToReceive(await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_ONE_NOTIFICATION, params), {}, {}));
         }else {
             let params = {
                 id: key.split(';')[0]
@@ -77,7 +80,7 @@ export class APIMessageSingleObjectCrudRepository extends APIGenericSingleObject
     }
 }
 
-let generateParams = (pageNum?: number, perPageItems?: number, source?: string, status?: any): any => {
+let generateParams = (filter?: IFilter, pageNum?: number, perPageItems?: number, source?: string, status?: any): any => {
     let params = {
         page: pageNum ? pageNum : 1,
         perPage: perPageItems ? perPageItems : !source ? 10 : 30,
@@ -122,6 +125,16 @@ let generateParams = (pageNum?: number, perPageItems?: number, source?: string, 
         value: ApiTypeMessage[source as keyof typeof ApiTypeMessage],
         enumerable : true,
     })
+    if(filter?.intervalFields?.get('date')){
+        Object.defineProperty(params, 'startDate', {
+            value: new Date(filter?.intervalFields?.get('date').start).toISOString(),
+            enumerable : true,
+        })
+        Object.defineProperty(params, 'endDate', {
+            value: new Date(filter?.intervalFields?.get('date').end).toISOString(),
+            enumerable : true,
+        })
+    }
     return params;
 }
 
@@ -134,17 +147,17 @@ export class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleOb
         let url: any = [];
         let perPage = filter?.pageItems ? filter?.pageItems : 15;
         let pageNum = filter?.pageNum ? filter?.pageNum : 1;
-        let typeMessage = filter?.fields?.get('type')[0];
+        let typeMessage = filter?.fields?.get('type') ? filter?.fields?.get('type')[0] : '';
         let statusMessage = filter?.fields?.get('status');
         if(typeMessage == TypeMessage.NOTIFICACION){
-            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage, typeMessage, statusMessage))]
+            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(filter || {}, pageNum, perPage, typeMessage, statusMessage))]
         }else if(typeMessage == TypeMessage.CONSULTA || typeMessage == TypeMessage.TAREA){
-            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, typeMessage, statusMessage))]
+            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(filter || {}, pageNum, perPage, typeMessage, statusMessage))]
         }else
             url = [
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(pageNum, perPage, TypeMessage.NOTIFICACION, StatusMessage.NUEVA)),
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, TypeMessage.CONSULTA, StatusMessage.ABIERTA)),
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(pageNum, perPage, TypeMessage.TAREA, StatusMessage.PENDIENTE)),
+                ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(filter || {}, pageNum, perPage, TypeMessage.NOTIFICACION, StatusMessage.NUEVA)),
+                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(filter || {}, pageNum, perPage, TypeMessage.CONSULTA, StatusMessage.ABIERTA)),
+                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(filter || {}, pageNum, perPage, TypeMessage.TAREA, StatusMessage.PENDIENTE)),
             ]
         let collection: ICollection<Message> = new Collection<Message>();
         for(let element of url){
@@ -184,13 +197,13 @@ export class APIMessageSpecificMethodsRepository implements IMessageSpecificMeth
             let result = await ApiHttpRequest.get(BASE_URL + MESSAGE_URL.GET_COUNT_NOTIFICATION, {}, {})
             return result.notification
         } else if(filter?.fields?.get('type') == TypeMessage.TAREA){
-            return (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(1, 100, 'task', 'pending')), {}, {})).length
+            return (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_COUNT_TASK_QUERY, generateParams(filter || {}, 1, 100, TypeMessage.TAREA, filter?.fields?.get('type'))), {}, {}))
         } else if(filter?.fields?.get('type') == TypeMessage.CONSULTA){
-            return (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(1, 100, 'query', 'pending')), {}, {})).length
+            return (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_COUNT_TASK_QUERY, generateParams(filter || {}, 1, 100, TypeMessage.CONSULTA, filter?.fields?.get('type'))), {}, {}))
         } else {
             let result1 = await ApiHttpRequest.get(BASE_URL + MESSAGE_URL.GET_COUNT_NOTIFICATION, {}, {})
-            let result2 = (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(1, 100, 'task', 'pending')), {}, {})).length
-            let result3 = (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(1, 100, 'query', 'pending')), {}, {})).length
+            let result2 = (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_COUNT_TASK_QUERY, generateParams(filter || {}, 1, 100, TypeMessage.TAREA, filter?.fields?.get('type'))), {}, {}))
+            let result3 = (await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_COUNT_TASK_QUERY, generateParams(filter || {}, 1, 100, TypeMessage.CONSULTA, filter?.fields?.get('type'))), {}, {}))
             return result1.notification + result2 + result3;
         }
     }

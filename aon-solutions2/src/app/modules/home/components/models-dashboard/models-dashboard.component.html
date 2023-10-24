@@ -8,22 +8,20 @@
       <app-dropdown-menu #model *ngIf="menuItem.length > 0" [menuItem]="menuItem"></app-dropdown-menu>
     </div>
   </div>
-  <div body class="list" *ngIf="models">
-    <div *ngFor="let model of models" class="list-row">
-      <div class="list-name">{{ 'HOME.MODEL'|translate }} {{ model.Name }}</div>
-      <div class="list-date"> {{ model.TaxType }}</div>
-      <div class="list-money">
-        <span class="list-money-icon"></span>
-        {{model.Result}} €
+  <div body class="list">
+    <app-spinner *ngIf="spinner"></app-spinner>    
+    <div *ngIf="existModels">
+      <div *ngFor="let model of models" class="list-row">
+        <div class="list-name">{{ 'HOME.MODEL'|translate }} {{ model.Name }}</div>
+        <div class="list-date"> {{ model.TaxType }}</div>
+        <div class="list-money">
+          <span class="list-money-icon"></span>
+          {{model.Result}} €
+        </div>
       </div>
     </div>
-  </div>
-  <div body class="sinDatos" *ngIf="!models">
-    <h5>{{ 'TAX_PANEL.NO_MODELS'|translate }} </h5>
+    <div class="sinDatos" *ngIf="!existModels && !spinner">
+      {{ 'TAX_PANEL.NO_MODELS'|translate }}
+    </div>
   </div>
 </app-card>
-
-
-
-
-
