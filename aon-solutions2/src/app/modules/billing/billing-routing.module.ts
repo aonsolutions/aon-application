@@ -7,6 +7,10 @@ const routes: Routes = [
     path: '',
     component: BillingComponent,
   },
+  {
+    path: 'creacion',
+    component: BillingComponent,
+  }
 ];
 
 @NgModule({

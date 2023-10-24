@@ -42,11 +42,6 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'billing/:paso',
-        loadChildren: () =>
-          import('src/app/modules/billing/billing.module').then((m) => m.BillingModule),
-      },
-      {
         path: 'billing',
         loadChildren: () =>
           import('src/app/modules/billing/billing.module').then((m) => m.BillingModule),

@@ -6,7 +6,7 @@
         shape="arrow_back"
         (click)="paginaAtras()"
       ></app-icon>
-      {{titulo}}
+      {{ titulo }}
     </div>
     <div class="right">
       <app-button [class]="'button'" [width]="'5rem'">
@@ -151,18 +151,18 @@
         [options]="optionsActivity"
         [width]="'20rem'"
       ></app-input>
-      <label class="centered-label" for="criterio">
-        <input type="checkbox" name="criterio" id="criterio" />
-        <p>Criterio de caja</p>
-      </label>
-      <label class="centered-label" for="re">
-        <input type="checkbox" name="re" id="re" />
-        <p>R.E.</p>
-      </label>
-      <label class="centered-label" for="reg">
-        <input type="checkbox" name="reg" id="reg" />
-        <p>Reg. agri. gan. y pesca</p>
-      </label>
+      <app-input
+        [type]="'checkbox'"
+        [label]="'Criterio de caja'"
+      ></app-input>
+      <app-input
+        [type]="'checkbox'"
+        [label]="'R.E.'"
+      ></app-input>
+      <app-input
+        [type]="'checkbox'"
+        [label]="'Reg. agri. gan. y pesca'"
+      ></app-input>
       <app-input
         [appearance]="'outline'"
         [label]="'IVA'"

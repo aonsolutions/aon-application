@@ -22,14 +22,20 @@ export class BanksDashboardComponent implements OnInit {
   ngOnInit(): void {
     if (this.bankList) {
       this.bankList.subscribe((banks) => {
-        this.banks = banks
-        this.calculateTotalAmount()
-        });
+        this.banks = banks;
+        this.calculateTotalAmount();
+      });
     }
   }
 
   calculateTotalAmount(): void {
-    this.totalAmount = this.banks.toArray().reduce((sum, bank) => sum + bank.Total, 0);
+    this.totalAmount = this.banks.toArray().reduce((sum, bank) => {
+      if (!isNaN(bank.Total)) {
+        return sum + bank.Total;
+      } else {
+        return sum;
+      }
+    }, 0);
   }
 
   hasBanks(): boolean {

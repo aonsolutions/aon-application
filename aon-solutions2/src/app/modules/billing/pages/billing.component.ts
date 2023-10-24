@@ -1,6 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CollectionFactory, Factory, IBank, ICollection, IDocument } from 'libraries/AonSDK/src/aon';
+import {
+  CollectionFactory,
+  Factory,
+  IBank,
+  ICollection,
+  IDocument,
+} from 'libraries/AonSDK/src/aon';
 import { BehaviorSubject } from 'rxjs';
 import { BankService } from 'src/app/core/services/bank.service';
 import { SendFacturaComponent } from '../components/modal-send-factura/send-factura.component';
@@ -44,14 +50,16 @@ export class BillingComponent implements OnInit {
   buttonsVentas: any[] = [];
   buttonsGastos: any[] = [];
   buttonsEdit: any[] = [];
+  name: string = '';
+  swift: string = '';
+  iban: string = '';
   addBank: boolean = false;
-  banksView: any[] = [];
-  editBank: { [key: number]: boolean } = {};
+  editBank: { [key: string]: boolean } = {};
   salesSelected: any[] = [];
   tabs: Tabs[] = [];
   functionHome: any = (result: any) => this.afterModalClosed(result);
 
-  @ViewChild('modal') modalComponent: any = '';
+  @ViewChild('modalBilling') modalComponent: any = '';
 
   public collectionFactory = new CollectionFactory();
   banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
@@ -101,6 +109,9 @@ export class BillingComponent implements OnInit {
         this.tabs = [
           {
             name: result['BILLING.SALES_CHECK'],
+          },
+          {
+            name: '',
           },
         ];
       });
@@ -167,38 +178,37 @@ export class BillingComponent implements OnInit {
         shape: 'delete',
       },
     ];
-
-    this.banksView = [
-      {
-        id: 1,
-        name: 'Caixabank',
-        balance: '5.487,55',
-        iban: 'ES123456789123456789',
-        date: '30/05/2023',
-        swift: 'CAIXESBBXXX',
-        sync: 'sync',
-      },
-      {
-        id: 2,
-        name: 'Santander',
-        balance: '8.887,02',
-        iban: 'ES123456789123456789',
-        date: '12/01/2023',
-        swift: 'BSCHESMMXXX',
-        sync: 'syncProblem',
-      },
-      {
-        id: 3,
-        name: 'Cajamar',
-        balance: '1.125,54',
-        iban: 'ES123456789123456789',
-        date: '30/05/2023',
-        swift: 'CCRIES2AXXX',
-        sync: 'syncLost',
-      },
-    ];
+    //   {
+    //     id: 1,
+    //     name: 'Caixabank',
+    //     balance: '5.487,55',
+    //     iban: 'ES123456789123456789',
+    //     date: '30/05/2023',
+    //     swift: 'CAIXESBBXXX',
+    //     sync: 'sync',
+    //   },
+    //   {
+    //     id: 2,
+    //     name: 'Santander',
+    //     balance: '8.887,02',
+    //     iban: 'ES123456789123456789',
+    //     date: '12/01/2023',
+    //     swift: 'BSCHESMMXXX',
+    //     sync: 'syncProblem',
+    //   },
+    //   {
+    //     id: 3,
+    //     name: 'Cajamar',
+    //     balance: '1.125,54',
+    //     iban: 'ES123456789123456789',
+    //     date: '30/05/2023',
+    //     swift: 'CCRIES2AXXX',
+    //     sync: 'syncLost',
+    //   },
+    // ];
 
     //bankService
+
     this.bankService.getBankList().then((response) => {
       this.banks = response;
       this.banksSubject.next(this.banks);
@@ -213,6 +223,17 @@ export class BillingComponent implements OnInit {
     );
   }
 
+  ngOnInit(): void {
+    const url = window.location.href.split('/')[4];
+
+    if (url === 'creacion') {
+      this.selectedMenu = 2;
+      this.selectedTab = 4;
+      this.showMenu = true;
+      this.addBank = true;
+    }
+  }
+
   afterModalClosed(result?: any) {
     console.log(result);
   }
@@ -220,9 +241,7 @@ export class BillingComponent implements OnInit {
   // Modal para subir el archivo
   uploadDocument(event: Event) {
     event.preventDefault();
-    this.modalComponent.openDialog(
-      ModalCreateComponent
-    );
+    this.modalComponent.openDialog(ModalCreateComponent);
   }
 
   openModal(modal: string) {
@@ -242,10 +261,7 @@ export class BillingComponent implements OnInit {
   }
 
   showModalSend() {
-    this.modalComponent.openDialog(
-      SendFacturaComponent,
-      this.functionHome
-    );
+    this.modalComponent.openDialog(SendFacturaComponent, this.functionHome);
   }
 
   showModalCopy() {
@@ -256,17 +272,14 @@ export class BillingComponent implements OnInit {
   }
 
   showModalDelete() {
-    this.modalComponent.openDialog(
-      DeleteFacturaComponent,
-      this.functionHome
-    );
+    this.modalComponent.openDialog(DeleteFacturaComponent, this.functionHome);
   }
 
-  editar(idBank: number) {
+  editar(idBank: string) {
     this.editBank[idBank] = true;
   }
 
-  guardar(idBank: number) {
+  guardar(idBank: string) {
     this.editBank[idBank] = false;
   }
 
@@ -285,6 +298,16 @@ export class BillingComponent implements OnInit {
     this.selectedMenu = 1;
   }
 
+  transformDate(date: Date) {
+    // Transformar la fecha a formato dd/mm/yyyy
+    const dateTransform = new Date(date);
+    const day = dateTransform.getDate();
+    const month = dateTransform.getMonth() + 1;
+    const year = dateTransform.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  }
+
   showSales(data: any) {
     // if (data[0].status) {
     //   this.selectedTab = 7;
@@ -293,14 +316,27 @@ export class BillingComponent implements OnInit {
     // }
   }
 
-  ngOnInit(): void {
-    const url = window.location.href.split('/')[4];
+  createBank() {
+    this.addBank = false;
+    const bank = this.objectFactory.createBank();
+    bank.Name = this.name;
+    bank.SwiftBic = this.swift;
+    bank.Iban = this.iban;
 
-    if (url === 'creacion') {
-      this.selectedMenu = 2;
-      this.selectedTab = 4;
-      this.showMenu = true;
-      this.addBank = true;
-    }
+    this.bankService
+      .createBank(bank)
+      .then((response) => {
+        console.log(response);
+        this.snackBar.openFromComponent(ResultSnackBarComponent, {
+          data: {
+            message: 'Se ha creado el banco correctamente',
+            icon: 'check_circle',
+          },
+          panelClass: ['correct-snackbar'],
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      })
   }
 }

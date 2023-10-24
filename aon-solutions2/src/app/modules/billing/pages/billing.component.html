@@ -41,6 +41,7 @@
     </div>
     <!-- Fin Tesoreria -->
   </div>
+
   <!--SIDENAV-->
   <div nav *ngIf="showMenu">
     <!--List -->
@@ -214,7 +215,7 @@
           <app-icon
             class="blue button"
             shape="add"
-            (click)="addBank = false"
+            (click)="createBank()"
           ></app-icon>
           <!-- Formulario añadir banco -->
           <div class="form">
@@ -224,13 +225,15 @@
               [class]="'text'"
               [type]="'text'"
               [placeholder]="'BILLING.IBAN_PLACEHOLDER' | translate"
+              (inputValue)="iban = $event"
             ></app-input>
             <app-input
               [appearance]="'outline'"
-              [label]="'BILLING.DESCRIPTION' | translate"
+              [label]="'BILLING.NAME' | translate"
               [class]="'text'"
               [type]="'text'"
-              [placeholder]="'BILLING.DESCRIPTION_PLACEHOLDER' | translate"
+              [placeholder]="'BILLING.NAME_PLACEHOLDER' | translate"
+              (inputValue)="name = $event"
             ></app-input>
             <app-input
               [appearance]="'outline'"
@@ -238,32 +241,33 @@
               [class]="'text'"
               [type]="'text'"
               [placeholder]="'BILLING.SWIFT_PLACEHOLDER' | translate"
+              (inputValue)="swift = $event"
             ></app-input>
             <!-- Fin formulario añadir banco -->
           </div>
         </div>
         <!-- Fin añadir banco -->
         <!-- Listado de bancos -->
-        <div *ngFor="let bank of banksView">
+        <div *ngFor="let bank of banks">
           <div
-            class="bank"
-            *ngIf="!editBank[bank.id]"
-            (click)="selectedTab = 9"
+          class="bank"
+          *ngIf="!editBank[bank.getKey()]"
+          (click)="selectedTab = 9"
           >
-            <div class="buttons">
+          <div class="buttons">
               <!-- Icono de sincronización -->
               <app-icon
-                *ngIf="bank.sync === 'sync'"
+                *ngIf="bank.SyncStatus === 'sync'"
                 class="griss"
                 shape="autorenew"
               ></app-icon>
               <app-icon
-                *ngIf="bank.sync === 'syncProblem'"
+                *ngIf="bank.SyncStatus === 'syncProblem'"
                 class="griss"
                 shape="sync_problem"
               ></app-icon>
               <app-icon
-                *ngIf="bank.sync === 'syncLost'"
+                *ngIf="bank.SyncStatus === 'syncLost'"
                 class="griss"
                 shape="sync_disabled"
               ></app-icon>
@@ -271,46 +275,48 @@
               <app-icon
                 class="griss"
                 shape="edit"
-                (click)="editar(bank.id)"
-              ></app-icon>
+                (click)="editar(bank.getKey())"
+                ></app-icon>
             </div>
             <app-icon class="blue" shape="account_balance"></app-icon>
-            <p class="name-bank">{{ bank.name }}</p>
+            <p class="name-bank">{{ bank.Name }}</p>
             <div class="money">
               <p class="balance">{{ "BILLING.BALANCE" | translate }}</p>
-              <p>{{ bank.balance }} €</p>
+              <p>{{ bank.Total }} €</p>
             </div>
             <div class="iban">
-              <p>{{ bank.iban }}</p>
+              <p>{{ bank.Iban }}</p>
             </div>
             <div class="footer">
               <p>{{ "BILLING.LAST_UPDATE" | translate }}</p>
-              <p>{{ bank.date }}</p>
+              <p>{{ transformDate(bank.LastUpdate) }}</p>
             </div>
           </div>
           <!-- Edición del banco -->
-          <div class="bank" *ngIf="editBank[bank.id]">
+          <div class="bank"
+          *ngIf="editBank[bank.getKey()]"
+          >
             <div class="buttons">
               <app-icon
-                *ngIf="bank.sync === 'sync'"
+                *ngIf="bank.SyncStatus === 'sync'"
                 class="griss"
                 shape="autorenew"
               ></app-icon>
               <app-icon
-                *ngIf="bank.sync === 'syncProblem'"
+                *ngIf="bank.SyncStatus === 'syncProblem'"
                 class="griss"
                 shape="sync_problem"
               ></app-icon>
               <app-icon
-                *ngIf="bank.sync === 'syncLost'"
+                *ngIf="bank.SyncStatus === 'syncLost'"
                 class="griss"
                 shape="sync_disabled"
               ></app-icon>
               <app-icon
                 class="griss"
                 shape="done"
-                (click)="guardar(bank.id)"
-              ></app-icon>
+                (click)="guardar(bank.getKey())"
+                ></app-icon>
             </div>
             <div class="form">
               <app-input
@@ -318,7 +324,7 @@
                 [label]="'IBAN'"
                 [class]="'text'"
                 [type]="'text'"
-                [value]="bank.iban"
+                [value]="bank.Iban"
                 [placeholder]="'BILLING.IBAN_PLACEHOLDER' | translate"
               ></app-input>
               <app-input
@@ -326,7 +332,7 @@
                 [label]="'BILLING.DESCRIPTION' | translate"
                 [class]="'text'"
                 [type]="'text'"
-                [value]="bank.name"
+                [value]="bank.Name"
                 [placeholder]="'BILLING.DESCRIPTION_PLACEHOLDER' | translate"
               ></app-input>
               <app-input
@@ -334,9 +340,9 @@
                 [label]="'BIC SWIFT'"
                 [class]="'text'"
                 [type]="'text'"
-                [value]="bank.swift"
+                [value]="bank.SwiftBic"
                 [placeholder]="'BILLING.SWIFT_PLACEHOLDER' | translate"
-              ></app-input>
+                ></app-input>
             </div>
           </div>
           <!-- Fin de edición de banco -->
@@ -348,25 +354,37 @@
 
     <!-- CREAR FACTURA VENTA-->
     <ng-container *ngIf="selectedTab == 5">
-      <app-factura (atras)="atrasVenta()" [titulo]="'Factura de venta'" ></app-factura>
+      <app-factura
+        (atras)="atrasVenta()"
+        [titulo]="'Factura de venta'"
+      ></app-factura>
     </ng-container>
     <!-- FIN CREAR FACTURA VENTA -->
 
     <!-- CREAR FACTURA GASTO -->
     <ng-container *ngIf="selectedTab == 6">
-      <app-factura (atras)="atrasGasto()" [titulo]="'Factura de gasto'" ></app-factura>
+      <app-factura
+        (atras)="atrasGasto()"
+        [titulo]="'Factura de gasto'"
+      ></app-factura>
     </ng-container>
     <!-- FIN CREAR FACTURA GASTO -->
 
     <!-- VER FACTURA -->
     <ng-container *ngIf="selectedTab == 7">
-      <app-factura (atras)="atrasVenta()" [titulo]="'Factura 8123123912841'" ></app-factura>
+      <app-factura
+        (atras)="atrasVenta()"
+        [titulo]="'Factura 8123123912841'"
+      ></app-factura>
     </ng-container>
     <!-- FIN VER FACTURA -->
 
     <!-- EDITAR FACTURA -->
     <ng-container *ngIf="selectedTab == 8">
-      <app-factura (atras)="atrasVenta()" [titulo]="'Factura 8123123912841'" ></app-factura>
+      <app-factura
+        (atras)="atrasVenta()"
+        [titulo]="'Factura 8123123912841'"
+      ></app-factura>
     </ng-container>
     <!-- FIN EDITAR FACTURA -->
 
@@ -419,7 +437,7 @@
   </div>
 
   <!-- MODALES -->
-  <app-modal-controller #modal> </app-modal-controller>
+  <app-modal-controller #modalBilling> </app-modal-controller>
   <!-- FIN MODALES -->
 
   <!--FIN CONTENIDO-->
