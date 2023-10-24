@@ -289,10 +289,9 @@ export class InboxviewComponent implements OnInit {
 
   //Crear mensaje de chat de consultas
   async createChatMessage(description: string) {
-
     const currentEnterprise = await this.enterpriseService.getCurrentEntepriseData()
-    if (this.messageChat && this.messagesData) {
 
+    if (this.messageChat && this.messagesData) {
       const newMessageChat = this.messageService.objectFactory.createMessageChat()
       .setIdMessage(this.messagesData.Id)
       .setName(currentEnterprise.Name)
@@ -328,6 +327,8 @@ export class InboxviewComponent implements OnInit {
         await this.messageService.createMessage(newMessage).then((response) => {
           this.messagesData = response;
           this.tablesInboxComponent.updateTableData();
+          // actualizar total de mensajes
+          this.calculateMessageCounts();
           // Desactivo el spinner
           this.spinner = false;
         })
@@ -337,6 +338,7 @@ export class InboxviewComponent implements OnInit {
     }
   }
 
+  // Enviar el mensaje de chat creado
   sendChatMessage() {
     // para no enviar mensajes vacíos
     if (this.newMessageDescription.trim() === '') {
@@ -349,6 +351,7 @@ export class InboxviewComponent implements OnInit {
     this.newMessageDescription = '';
   }
 
+  // Enviar el mensaje de consulta
   sendMessage() {
     // para no enviar mensajes vacíos
     if (this.newMessageDescription.trim() === '') {
