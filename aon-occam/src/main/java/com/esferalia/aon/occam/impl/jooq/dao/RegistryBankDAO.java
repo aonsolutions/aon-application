@@ -1,13 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;

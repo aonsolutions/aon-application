@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-import org.apache.commons.lang.RandomStringUtils;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Company;
@@ -748,7 +746,7 @@ public class AonFaker {
 	public static RegistryBank getRegistryBank(AONContext ctx) {	
 		Random random = new Random();
 		
-		String bic = faker.lordOfTheRings().character();
+		String bic = Faker.instance().finance().bic();
 		if (bic.length() > RBANK.BIC.getDataType().length()) {
 			bic = bic.substring(0, RBANK.BIC.getDataType().length());
 		}
