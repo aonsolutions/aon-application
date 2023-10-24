@@ -168,7 +168,9 @@
     "OCCUPATION":"Occupation",
     "NCO": "NCO",
     "EMPLOYMENT_RELATIONSHIP":"Special Employment Relationship",
-    "WORKFORCE":"Workforce"
+    "WORKFORCE":"Workforce",
+    "CURRENT_CONTRACT":"Current Contract",
+    "EXPIRED_CONTRACT": "Expired contract"
   },
 
   "TAX_PANEL": {

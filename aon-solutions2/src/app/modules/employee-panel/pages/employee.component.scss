@@ -35,22 +35,152 @@
     }
   }
   .title {
-    display:flex;
+    display: flex;
     font-family: "Roboto-Medium";
     padding: $padding;
     align-items: center;
-
   }
 
-  hr{
+  hr {
     margin-top: 0 !important;
   }
 
-  .structure-form{
+  .structure-form {
     width: 100%;
   }
 
   app-input {
     width: 100%;
+  }
+
+  .employee-detail {
+    padding: $padding;
+  }
+
+  .employee-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: Roboto-Medium;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: $font-size-800;
+    color: $color-green;
+    text-transform: uppercase;
+    padding-bottom: $padding;
+  }
+
+  .employee-detail-title {
+    display: flex;
+    align-items: center;
+
+    .title-contract{
+      margin-left: $margin-left;
+      color: $color-green;
+    }
+  }
+
+  .employee-detail-edit {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .info-contract {
+    display: flex;
+    min-width: 30.1rem;
+    flex-direction: column;
+
+    .info-status {
+      justify-content: space-between;
+    }
+
+    .info-line {
+      display: flex;
+      font-size: $font-size-primary;
+    }
+
+    .info-title {
+      font-weight: 400;
+      color: $color-secondary;
+      text-transform: uppercase;
+    }
+
+    .info-main-title {
+      font-family: "Roboto-Bold";
+      font-size: $font-size-24;
+      color: $color-dark;
+    }
+
+    .info-data {
+      font-weight: 500;
+      color: $color-dark;
+      margin-left: $margin-left;
+    }
+  }
+
+  .contenedor-principal {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .contenedor-izq {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .entrada {
+    display: flex;
+    flex-direction: column;
+    margin-right: $margin-right;
+  }
+
+  .salida {
+    display: flex;
+    flex-direction: column;
+    border-right: 0.05rem solid #d2d2d6;
+    padding-right: $padding-right*2;
+  }
+
+  .contenedor-derecha {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-left: $margin-left*2;
+  }
+
+  .hora {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Roboto-Bold";
+    font-size: $font-size-24;
+    color: $color-dark;
+
+  }
+
+  .titulo {
+
+    font-family: "Roboto-Medium";
+    font-size: $font-size-800;
+    color: $color-dark;
+    text-transform: uppercase;
+
+  }
+
+  .fecha{
+    font-size: $font-size-800;
+    color: $color-border-primary;
+   
+  }
+
+  .titulo-margin{
+    margin-right: $margin-right;
+  }
+
+  .titulo-icon{
+    margin-right: $margin-right/2;
   }
 }

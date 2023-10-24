@@ -169,7 +169,10 @@
     "OCCUPATION":"Ocupación",
     "NCO": "CNO",
     "EMPLOYMENT_RELATIONSHIP":"RLCE",
-    "WORKFORCE":"Colectivo trabajador"
+    "WORKFORCE":"Colectivo trabajador",
+    "CURRENT_CONTRACT":"Contrato Vigente",
+    "EXPIRED_CONTRACT": "Contrato Extinguido"
+
 
   },
   "TAX_PANEL": {

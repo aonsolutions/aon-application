@@ -13,51 +13,51 @@
   </div>
   <!-- fin encabezado -->
   <div content>
-    <ng-container *ngIf="selectedTab == 0">
-    <!-- buscador -->
-    <div class="padding-top padding-right padding-left">
-      <div class="width-40">
-        <app-input
-          [appearance]="'outline'"
-          [class]="'search'"
-          [type]="'search'"
-          [placeholder]="'INBOX.TEXT' | translate"
-          [value]="search"
-          (inputValue)="searchContract((search = $event))"
-        ></app-input>
-      </div>
-    </div>
-    <!-- fin buscador -->
-    <!-- tablas tabs -->
-    <app-tabs
-      [tabs]="tabs"
-      [tabColor]="'green'"
-    >
-      <div tool>
-        <div class="buttons">
-          <app-button *ngFor="let button of buttonsGastos" class="icon-border">
-            <app-icon [shape]="button.shape"></app-icon>
-          </app-button>
+    <ng-container>
+      <!-- buscador -->
+      <div class="padding-top padding-right padding-left">
+        <div class="width-40">
+          <app-input
+            [appearance]="'outline'"
+            [class]="'search'"
+            [type]="'search'"
+            [placeholder]="'INBOX.TEXT' | translate"
+            [value]="search"
+            (inputValue)="searchContract((search = $event))"
+          ></app-input>
         </div>
       </div>
+      <!-- fin buscador -->
+      <!-- tablas tabs -->
+      <app-tabs [tabs]="tabs" [tabColor]="'green'">
+        <div tool>
+          <div class="buttons">
+            <app-button
+              *ngFor="let button of buttonsGastos"
+              class="icon-border"
+            >
+              <app-icon [shape]="button.shape"></app-icon>
+            </app-button>
+          </div>
+        </div>
 
-      <div content class="padding" (click)="selectedTab = 0">
-        <app-spinner *ngIf="spinner"></app-spinner>
-        <app-table
-          *ngIf="bodyTable.length > 0; else noModelsTemplate"
-          mat-table
-          mat-flat-table
-          [displayedColumns]="displayedColumns"
-          [head]="headerTable"
-          [data]="bodyTable"
-          (listenParentRow)="rowClick($event)"
-        >
-        </app-table>
-        <ng-template #noModelsTemplate>
-          <div class="no-models padding">{{ contracts }}</div>
-        </ng-template>
-      </div>
-<!--
+        <div content class="padding" (click)="selectedTab = 0">
+          <app-spinner *ngIf="spinner"></app-spinner>
+          <app-table
+            *ngIf="bodyTable.length > 0; else noModelsTemplate"
+            mat-table
+            mat-flat-table
+            [displayedColumns]="displayedColumns"
+            [head]="headerTable"
+            [data]="bodyTable"
+            (listenParentRow)="rowClick($event)"
+          >
+          </app-table>
+          <ng-template #noModelsTemplate>
+            <div class="no-models padding">{{ contracts }}</div>
+          </ng-template>
+        </div>
+        <!--
       <div content class="padding"(click)="selectedTab = 1">
         <app-spinner *ngIf="spinner"></app-spinner>
         <app-table
@@ -73,27 +73,122 @@
           <div class="no-models padding">{{ contracts }}</div>
         </ng-template>
       </div> -->
-    </app-tabs>
-  </ng-container>
-   <!-- ALTA EMPLEADO-->
- <ng-container *ngIf="selectedTab == 3">
-  <app-create-new-contract></app-create-new-contract>
-</ng-container>
-<!-- FIN ALTA EMPLEADO -->
+      </app-tabs>
+    </ng-container>
+    <!-- ALTA EMPLEADO-->
+    <ng-container *ngIf="selectedTab == 3">
+      <app-create-new-contract></app-create-new-contract>
+    </ng-container>
+    <!-- FIN ALTA EMPLEADO -->
   </div>
-<!-- fin contenido -->
+  <!-- fin contenido -->
 
+  <!-- mostrar detalles contratos vigentes-->
+  <!-- <div detail *ngIf="showDetail">
+    <div class="employee-detail padding">
+      <div class="employee-detail-header">
+        <div class="employee-detail-title">
+          <app-icon class="griss button" shape="arrow_back"></app-icon>
+          <p class="title-contract">
+            {{ "EMPLOYEE_PANEL.CURRENT_CONTRACT" | translate }}
+          </p>
+        </div>
+        <div class="employee-detail-edit">
+          <app-icon class="griss button" shape="edit"></app-icon>
+        </div>
+      </div>
 
-<!-- mostrar detalles -->
-<div detail *ngIf="showDetail">
-<div class="padding">
-<p class="">{{ dataBody[0].employee }}</p>
-{{ dataBody[0].type }}
+      <div class="info-contract border padding">
+        <div class="info-status info-line">
+          <p class="info-main-title">
+            {{ dataBody[0].employee }}
+          </p>
+          <p class="info-data">EN LINEA</p>
+        </div>
 
-</div>
-</div>
+        <div class="info-line">
+          <p class="info-title">
+            {{ "EMPLOYEE_PANEL.ID_NUMBER" | translate }}
+          </p>
+          <p class="info-data">12345678-D</p>
+        </div>
+        <div class="info-line">
+          <p class="info-title">{{ "PROFILE.EMAIL" | translate }}</p>
+          <p class="info-data">prueba@gmail.com</p>
+        </div>
+        <div class="info-line">
+          <p class="info-title">{{ "PROFILE.PHONE" | translate }}</p>
+          <p class="info-data">600000000</p>
+        </div>
 
+        <hr class="line" />
 
+        <p class="info-title">{{ "HOME.TIMING" | translate }}</p>
 
+        <div class="contenedor-principal">
+          <div class="contenedor-izq">
+            <div class="entrada">
+              <p class="titulo">Entrada</p>
+              <p class="hora">
+                <app-icon class="green button titulo-icon" shape="input"></app-icon>
+                07:00:22
+              </p>
+              <p class="fecha">fecha</p>
+            </div>
 
+            <div class="salida">
+              <p class="titulo">Salida</p>
+              <p class="hora">
+                <app-icon class="red button titulo-icon" shape="input"></app-icon>
+                07:00:22
+              </p>
+              <p class="fecha">fecha</p>
+            </div>
+          </div>
+
+          <div class="contenedor-derecha">
+            <p class="titulo titulo-margin">Total</p>
+            <p class="hora"> 07:00:22</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <!-- mostrar detalles contratos extinguidos-->
+  <div detail *ngIf="showDetail">
+    <div class="employee-detail padding">
+      <div class="employee-detail-header">
+        <div class="employee-detail-title">
+          <app-icon class="griss button" shape="arrow_back"></app-icon>
+          <p class="title-contract">
+            {{ "EMPLOYEE_PANEL.EXPIRED_CONTRACT" | translate }}
+          </p>
+        </div>
+      </div>
+
+      <div class="info-contract border padding">
+        <div class="info-status info-line">
+          <p class="info-main-title">
+            {{ dataBody[0].employee }}
+          </p>
+          <p class="info-data">INACTIVO</p>
+        </div>
+
+        <div class="info-line">
+          <p class="info-title">
+            {{ "EMPLOYEE_PANEL.ID_NUMBER" | translate }}
+          </p>
+          <p class="info-data">12345678-D</p>
+        </div>
+        <div class="info-line">
+          <p class="info-title">{{ "PROFILE.EMAIL" | translate }}</p>
+          <p class="info-data">prueba@gmail.com</p>
+        </div>
+        <div class="info-line">
+          <p class="info-title">{{ "PROFILE.PHONE" | translate }}</p>
+          <p class="info-data">600000000</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-grid-layout>

@@ -167,8 +167,8 @@ export class EmployeeComponent implements OnInit {
   }
 
   changeTabIndex(index: number) {
-    this.tabIndex = index;
-    // this.updateTableData();
+    this.selectedTab = index;
+    //this.updateTableData();
   }
 
   searchContract(search: string) {
