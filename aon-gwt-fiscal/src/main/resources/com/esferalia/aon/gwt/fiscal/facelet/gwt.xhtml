@@ -16,11 +16,24 @@
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
 	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
 	
-	<style>
-		body {
-			margin: 0;
-		}
-	</style>
+  	<aon:if test="#{!userUtils.newAONTheme}">
+		<style>
+			body {
+				margin: 0;
+			}
+		</style>
+	</aon:if>
+  	<aon:if test="#{userUtils.newAONTheme}">
+		<style>
+			body {
+				margin: 0;
+			}
+			
+			#rootPanel > div {
+				left: 68px !important;
+			} 
+		</style>
+	</aon:if>
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 	<ui:include src="/facelet/homepage/menu.xhtml" />
@@ -28,6 +41,12 @@
 	<div id="rootPanel"
 		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;">
 	</div>
+
+  	<aon:if test="#{userUtils.newAONTheme}">
+		<aon:div style="overflow: auto; height: calc(100vh - 66px); width: min-content; position:fixed; z-index: 6; background-color: #fff" id="sidebarScrollDiv" >
+			<ui:include src="/facelet/new/sidebar.xhtml" />
+		</aon:div>
+	</aon:if>
 
 	<script type="text/javascript">
 	<![CDATA[
