@@ -89,9 +89,8 @@ public class DNIServlet extends HttpServlet {
 
 	}
 	
-	public void fillJson(HttpServletResponse resp, String lineas[]) {
+	public void fillJson(HttpServletResponse resp, String[] lineas) {
 		EmployeeData ed = new EmployeeData();
-		DNIParser dnip = new DNIParser();
 		PrintWriter os;
 		ObjectMapper objectMapper = new ObjectMapper();
 		String json = "";
@@ -106,31 +105,52 @@ public class DNIServlet extends HttpServlet {
 		for (int i = 0; i < lineas.length; i++) {
 			String linea = lineas[i]; 
 			if (linea.startsWith("DNI") || linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
-				dni = lineas[i + 1];
-				
+				//VALIDAR AQUI DONDE BUSCA LA LINEA
+				try {
+					dni = lineas[i + 1];
+				} catch (ArrayIndexOutOfBoundsException e) {
+					e.printStackTrace();
+				}
 				if (!DNIParser.validateDni(dni)) {
 					dni = "";
 				}
 
 			} else if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
-				apellido1 = lineas[i + 1];
+				try {
+					apellido1 = lineas[i + 1];
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					e.printStackTrace();
+				}
 				if (!DNIParser.validateNames(apellido1)) {
 					apellido1 = "";
 				}
-				System.out.println(apellido1 + "APELLIDO1");
-				apellido2 = lineas[i + 2];
+				try {
+					apellido2 = lineas[i + 2];
+				} catch (ArrayIndexOutOfBoundsException e) {
+					e.printStackTrace();
+				}
 				if (!DNIParser.validateNames(apellido2)) {
 					apellido2 = "";
 				}
 
 			} else if (linea.startsWith("NOMBRE") || linea.startsWith("NONBRE")) {
-				nombre = lineas[i + 1];
+				
+				try {
+					nombre = lineas[i + 1];
+				}	catch (ArrayIndexOutOfBoundsException e) {
+					e.printStackTrace();
+				}
 				if (!DNIParser.validateNames(nombre)) {
 					nombre = "";
 				}
 
 			} else if (linea.startsWith("NACIONALIDAD")) {
-				nacionalidad = lineas[i + 3];
+				try {
+					nacionalidad = lineas[i + 3];
+				} catch (ArrayIndexOutOfBoundsException e) {
+					e.printStackTrace();
+				}
 				if (!DNIParser.validateNationality(nacionalidad)) {
 					nacionalidad = "";
 				}

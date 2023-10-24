@@ -155,8 +155,7 @@ public class DNIParser {
 					dni = "";
 				}
 				listener.onDniData(dni);
-				System.out.println(dni);
-
+				
 			} else if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
 				apellido1 = lineas[i + 1];
 				if (!DNIParser.validateNames(apellido1)) {
