@@ -32,7 +32,11 @@ export class BanksDashboardComponent implements OnInit {
   }
 
   hasBanks(): boolean {
-    return this.banks.size() > 0;
+    if (!this.banks) {
+      return false;
+    } else {
+      return this.banks.size() > 0;
+    }
   }
 
 }

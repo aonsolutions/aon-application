@@ -10,7 +10,9 @@
     "SEND": "Send",
     "UPLOAD": "Upload",
     "CANCEL": "Cancel",
-    "ACCEPT": "Accept"
+    "ACCEPT": "Accept",
+    "YES"             : "Yes",
+    "NO"              : "No"
   },
   "HEADER": {
     "EDIT_PROFILE": "Edit profile",
