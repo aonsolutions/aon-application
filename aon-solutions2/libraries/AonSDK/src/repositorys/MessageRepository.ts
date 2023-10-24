@@ -16,14 +16,14 @@ export class APIMessageSingleObjectCrudRepository extends APIGenericSingleObject
     }
 
     async get(key: string): Promise<Message> {
-        if(key.split(';')[1] == TypeMessage.NOTIFICACION){
+        if(decodeURIComponent(key).split(';')[1] == TypeMessage.NOTIFICACION){
             let params = {
-                id: key.split(';')[0]
+                id: decodeURIComponent(key).split(';')[0]
             }
             return this.apiModel.parseDataToReceive(await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_ONE_NOTIFICATION, params), {}, {}));
         }else {
             let params = {
-                id: key.split(';')[0]
+                id: decodeURIComponent(key).split(';')[0]
             }
             return this.apiModel.parseDataToReceive(await ApiHttpRequest.get(BASE_URL + ApiHttpRequest.makeURL(MESSAGE_URL.GET_ONE_MESSAGE, params), {}, {}));
         }
@@ -121,10 +121,11 @@ let generateParams = (filter?: IFilter, pageNum?: number, perPageItems?: number,
             }
         })
     }
-    Object.defineProperty(params, 'source', {
-        value: ApiTypeMessage[source as keyof typeof ApiTypeMessage],
-        enumerable : true,
-    })
+    if(source)
+        Object.defineProperty(params, 'source', {
+            value: ApiTypeMessage[source as keyof typeof ApiTypeMessage],
+            enumerable : true,
+        })
     if(filter?.intervalFields?.get('date')){
         Object.defineProperty(params, 'startDate', {
             value: new Date(filter?.intervalFields?.get('date').start).toISOString(),
@@ -154,11 +155,7 @@ export class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleOb
         }else if(typeMessage == TypeMessage.CONSULTA || typeMessage == TypeMessage.TAREA){
             url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(filter || {}, pageNum, perPage, typeMessage, statusMessage))]
         }else
-            url = [
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(filter || {}, pageNum, perPage, TypeMessage.NOTIFICACION, StatusMessage.NUEVA)),
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(filter || {}, pageNum, perPage, TypeMessage.CONSULTA, StatusMessage.ABIERTA)),
-                ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(filter || {}, pageNum, perPage, TypeMessage.TAREA, StatusMessage.PENDIENTE)),
-            ]
+            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_ALL, generateParams(filter || {}, pageNum, perPage))]
         let collection: ICollection<Message> = new Collection<Message>();
         for(let element of url){
             let response = await ApiHttpRequest.get(BASE_URL + element, {}, {});
