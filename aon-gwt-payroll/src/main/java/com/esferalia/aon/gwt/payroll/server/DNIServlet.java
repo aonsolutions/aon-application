@@ -105,52 +105,30 @@ public class DNIServlet extends HttpServlet {
 		for (int i = 0; i < lineas.length; i++) {
 			String linea = lineas[i]; 
 			if (linea.startsWith("DNI") || linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
-				//VALIDAR AQUI DONDE BUSCA LA LINEA
-				try {
+					DniParserValidation.validateLine(lineas);
 					dni = lineas[i + 1];
-				} catch (ArrayIndexOutOfBoundsException e) {
-					e.printStackTrace();
-				}
 				if (!DNIParser.validateDni(dni)) {
 					dni = "";
 				}
 
 			} else if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
-				try {
-					apellido1 = lineas[i + 1];
-
-				} catch (ArrayIndexOutOfBoundsException e) {
-					e.printStackTrace();
-				}
+					apellido1 = lineas[i + 1];				
 				if (!DNIParser.validateNames(apellido1)) {
 					apellido1 = "";
 				}
-				try {
 					apellido2 = lineas[i + 2];
-				} catch (ArrayIndexOutOfBoundsException e) {
-					e.printStackTrace();
-				}
 				if (!DNIParser.validateNames(apellido2)) {
 					apellido2 = "";
 				}
 
 			} else if (linea.startsWith("NOMBRE") || linea.startsWith("NONBRE")) {
-				
-				try {
 					nombre = lineas[i + 1];
-				}	catch (ArrayIndexOutOfBoundsException e) {
-					e.printStackTrace();
-				}
 				if (!DNIParser.validateNames(nombre)) {
 					nombre = "";
 				}
 
 			} else if (linea.startsWith("NACIONALIDAD")) {
-				try {
 					nacionalidad = lineas[i + 3];
-				} catch (ArrayIndexOutOfBoundsException e) {
-					e.printStackTrace();
-				}
 				if (!DNIParser.validateNationality(nacionalidad)) {
 					nacionalidad = "";
 				}

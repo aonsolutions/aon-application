@@ -258,6 +258,7 @@ public enum AonError implements Serializable{
 	,INVALID_NAME_FORMAT("El formato para el campo del nombre no es valido")
 	,INVALID_FIRST_SURNAME("El formato para el campo del primer apellido no es valido")
 	,INVALID_SECOND_SURNAME("El formato para el campo del segundo apellido no es valido")
+	,NULL_NEXT_LINE("Error al cargar los datos, intentelo otra vez")
 	;
 	
 	

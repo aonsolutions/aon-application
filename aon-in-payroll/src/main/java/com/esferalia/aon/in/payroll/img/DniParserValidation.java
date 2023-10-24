@@ -96,8 +96,74 @@ public class DniParserValidation {
 		}
 	};
 	
+	private static final Consumer<String[]> NULL_NEXT_LINE_DNI = lineas -> {
+		for (int i = 0; i < lineas.length; i++) {
+			String linea = lineas[i];
+			String dni = "";
+			if (linea.startsWith("DNI") || linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
+				try {
+					dni = lineas[i+1];
+				} catch (ArrayIndexOutOfBoundsException e) {
+					throw new AonCoreException(AonError.NULL_NEXT_LINE.getMessage());
+				}
+			}
+		}
+	};
+	
+	private static final Consumer<String[]> NULL_NEXT_LINE_SURNAME = lineas -> {
+		for (int i = 0; i < lineas.length; i++) {
+			String linea = lineas[i];
+			String apellido1 = "";
+			String apellido2 = "";
+			if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
+				try {
+					apellido1 = lineas[i+1];
+					apellido2 = lineas[i+2];
+				} catch (ArrayIndexOutOfBoundsException e) {
+					throw new AonCoreException(AonError.NULL_NEXT_LINE.getMessage());
+				}
+			}
+		}
+	};
+	
+	private static final Consumer<String[]> NULL_NEXT_LINE_NAME = lineas -> {
+		for (int i = 0; i < lineas.length; i++) {
+			String linea = lineas[i];
+			String nombre = "";
+			if (linea.startsWith("NOMBRE") || linea.startsWith("NONBRE")) {
+				try {
+					nombre = lineas[i+1];
+				} catch (ArrayIndexOutOfBoundsException e) {
+					throw new AonCoreException(AonError.NULL_NEXT_LINE.getMessage());
+				}
+			}
+		}
+	};
+	
+	private static final Consumer<String[]> NULL_NEXT_LINE_NATIONALITY = lineas -> {
+		for (int i = 0; i < lineas.length; i++) {
+			String linea = lineas[i];
+			String nacionalidad = "";
+			if (linea.startsWith("NACIONALIDAD")) {
+				try {
+					nacionalidad = lineas[i+1];
+				} catch (ArrayIndexOutOfBoundsException e) {
+					throw new AonCoreException(AonError.NULL_NEXT_LINE.getMessage());
+				}
+			}
+		}
+	};
+	
 	public static void validate(String[] lineas) throws AonCoreException {
 		NULL_ARRAY_LINES
+		.accept(lineas);
+	}
+
+	public static void validateLine(String[] lineas) throws AonCoreException{
+		NULL_NEXT_LINE_DNI
+		.andThen(NULL_NEXT_LINE_SURNAME)
+		.andThen(NULL_NEXT_LINE_NAME)
+		.andThen(NULL_NEXT_LINE_NATIONALITY)
 		.accept(lineas);
 	}
 }
