@@ -298,7 +298,7 @@
               [padding]="'0rem 1rem'"
             >
               <app-icon shape="playlist_add_check"></app-icon>
-              Tramitar
+             {{'INBOX.PROCESS' | translate }}
             </app-button>
             <app-button
             [width]="'11rem'"
@@ -313,7 +313,7 @@
             (click)="consultarClicked()"
             >
               <app-icon shape="chat"></app-icon>
-              Consultar
+              {{ 'INBOX.CONSULT' | translate }}
             </app-button>
           </div>
         <form (ngSubmit)="sendMessage()">
