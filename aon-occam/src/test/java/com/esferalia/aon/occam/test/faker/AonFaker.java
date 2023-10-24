@@ -740,7 +740,20 @@ public class AonFaker {
 	}
 	
 	public static BankAccount getBankAccount(AONContext ctx) {
-		return new BankAccount(Faker.instance().finance().iban());
+		BankAccount bankAccount = new BankAccount(Faker.instance().finance().iban());
+		
+		if (bankAccount.getCountry() == null) { bankAccount.setCountry(AonFaker.getCountry(ctx)); }
+		if (bankAccount.getCheck() == null) { bankAccount.setCheck(faker.letterify("??")); }
+		if (bankAccount.getBban1() == null) { bankAccount.setBban1(faker.letterify("????")); }
+		if (bankAccount.getBban2() == null) { bankAccount.setBban2(faker.letterify("????")); }
+		if (bankAccount.getBban3() == null) { bankAccount.setBban3(faker.letterify("????")); }
+		if (bankAccount.getBban4() == null) { bankAccount.setBban4(faker.letterify("????")); }
+		if (bankAccount.getBban5() == null) { bankAccount.setBban5(faker.letterify("????")); }
+		if (bankAccount.getBban6() == null) { bankAccount.setBban6(faker.letterify("????")); }
+		if (bankAccount.getBban7() == null) { bankAccount.setBban7(faker.letterify("????")); }
+		if (bankAccount.getBban8() == null) { bankAccount.setBban8(faker.letterify("????")); }
+
+		return bankAccount;		
 	}
 	
 	public static RegistryBank getRegistryBank(AONContext ctx) {	
