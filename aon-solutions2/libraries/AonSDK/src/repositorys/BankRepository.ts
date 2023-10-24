@@ -60,9 +60,27 @@ export class APIBankSingleObjectCrudRepository extends APIGenericSingleObjectCru
         }
         fullRegistry.banks.push(jsonBank);
         let response = await ApiHttpRequest.put(BASE_URL + REGISTRY_URL.SAVE_FULL_REGISTRY, {}, fullRegistry);
-        if(!response.error)
+        if(response?.ok)
             return element;
         else
             throw new ErrorResponse('0201');
+    }
+
+    async update(element: Bank): Promise<Bank> {
+        let fullRegistry = await ApiHttpRequest.get(BASE_URL + REGISTRY_URL.GET_FULL_REGISTRY, {}, {})
+        delete fullRegistry.addresses;
+        delete fullRegistry.media;
+        delete fullRegistry.paymethod;
+        delete fullRegistry.record_data;
+        fullRegistry.banks.forEach((e:any) => {
+            if(e.id == element.getKey()){
+                e.alias = element.Name;
+                e.bank_account = element.Iban;
+                e.bic = element.SwiftBic;
+                e.fullName = element.Iban + " - " + "";
+                e.iban = element.Iban;
+            }   
+        });
+        return element;
     }
 }
