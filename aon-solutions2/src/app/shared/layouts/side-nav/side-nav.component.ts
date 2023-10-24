@@ -118,6 +118,7 @@ export class SideNavComponent implements OnInit {
         if (this.opened === true) this.opened = false;
         // La ruta seleccionada
         element.selected = true;
+        this.showModal();
       }
     });
   }

@@ -10,8 +10,6 @@ import { TablesInboxComponent } from '../components/tables-inbox/table-inbox.com
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { MatDialog } from '@angular/material/dialog';
-import { ModalConfirmQueryComponent } from '../components/modal-confirm-query/modal-confirm-query.component';
 import { EnterpriseService } from 'src/app/core/services/enterprise.service';
 
 export interface Tabs {
@@ -56,21 +54,19 @@ export class InboxviewComponent implements OnInit {
   expandedIndex: number = -1;
   newMessageDescription: string = '';
   spinner: boolean = true;
+  totalMessageCount: number = 0;
   menuItem: MenuItem[] = [];
   selected: string = '';
-  totalMessageCount: number = 0;
   consultaMessageCount: number = 0;
   tareasMessageCount: number = 0;
   notificacionesMessageCount: number = 0;
   updateTable: boolean = false;
-
   constructor(
     private translateService: TranslateService,
     public reportingService: ReportingService,
     private messageService: MessageService,
     private messageChatService: MessageChatService,
     private optionsService: OptionsService,
-    private dialog: MatDialog,
     private enterpriseService: EnterpriseService
   ) {
     this.translateService
@@ -144,9 +140,7 @@ export class InboxviewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log("init");
 
-    const url = window.location.href.split('/')[4];
   }
 
   ngAfterViewInit(): void {
@@ -360,35 +354,17 @@ export class InboxviewComponent implements OnInit {
     if (this.newMessageDescription.trim() === '') {
       return;
     }
-    if (!this.isModalVisible) {
     // Llama a la función para crear un nuevo mensaje
     this.createMessage(this.newMessageDescription);
-    }
-    this.openConfirmQueryModal();
+
+    // Limpia el campo de entrada después de enviar el mensaje
     this.newMessageDescription = '';
   }
 
-  // funcion para mostrar el modal cuando envio una consulta desde tarea
-  openConfirmQueryModal() {
-    const dialogRef = this.dialog.open(ModalConfirmQueryComponent, {
-      data: {
-        sendMessage: () => {
-          this.createMessage(this.newMessageDescription);
-          // Agrega cualquier otra lógica que desees ejecutar después de enviar la consulta.
-        },
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      // Maneja cualquier acción después de que se cierra el modal, si es necesario.
-    });
-
   // Filtro de busqueda atraves de la tabla
-  // search(search: string) {
-  //   if (this.tablesInboxComponent) {
-  //     this.tablesInboxComponent.searchMessage(search);
-  //   }
-
-  // }
-}
+  search(search: string) {
+    if (this.tablesInboxComponent) {
+      this.tablesInboxComponent.searchMessage(search);
+    }
+  }
 }
