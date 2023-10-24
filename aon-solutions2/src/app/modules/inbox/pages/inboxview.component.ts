@@ -328,6 +328,8 @@ export class InboxviewComponent implements OnInit {
         await this.messageService.createMessage(newMessage).then((response) => {
           this.messagesData = response;
           this.tablesInboxComponent.updateTableData();
+          // actualizar total de mensajes
+          this.calculateMessageCounts();
           // Desactivo el spinner
           this.spinner = false;
         })
