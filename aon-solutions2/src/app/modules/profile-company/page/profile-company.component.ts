@@ -7,14 +7,12 @@ import { ModalDeleteCertificateComponent } from '../components/modal-delete-cert
   styleUrls: ['./profile-company.component.scss'],
 })
 export class ProfileCompanyComponent implements OnInit {
+  @ViewChild('modalDelete') modalComponentEdit: any = '';
+  functionHome: any = (result: any) => this.afterModalClosed(result);
   modalComponentDelete: any;
 
   constructor() {
   }
-
-  @ViewChild('modalDelete') modalComponentEdit: any = '';
-
-  functionHome: any = (result: any) => this.afterModalClosed(result);
 
   afterModalClosed(result?: any) {
     console.log(result);
@@ -23,8 +21,7 @@ export class ProfileCompanyComponent implements OnInit {
   showModalDelete() {
     this.modalComponentDelete.openDialog(
       ModalDeleteCertificateComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
   }
 
