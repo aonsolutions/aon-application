@@ -1,10 +1,18 @@
-@import 'src/styles.scss';
+@import "src/styles.scss";
 
-  #file-upload{
+::ng-deep {
+  app-file-upload-button{
+    width: 100%;
+  }
+  app-upload-modal app-file-upload-button #file-upload{
+    height: 5rem;
+  }
+  
+  app-file-upload-button #file-upload{
     cursor          : pointer;
     width           : 100%;
     min-height      : 2.8rem;
-    border          : .11rem dashed #e1e1e3;
+    border          : .11rem dashed $color-border-primary;
     border-radius   : .2rem;
     display         : flex;
     align-items     : center;
@@ -12,16 +20,83 @@
     box-sizing      : border-box;
   }
 
-  #file-upload input[type="file"] {
+  app-file-upload-button #file-upload input[type="file"] {
     display: none;
   }
 
-  .drag-over{
-    background: #f8d7da;
+  app-file-upload-button #file-upload.drag-over{
+    background  : $background-button-pink-hover2;
+    color       : $color-pink;
+    border-color: $color-pink;
   }
+  app-file-upload-button #file-upload.drag-over mat-icon svg,
+  app-file-upload-button #file-upload.drag-over set-icon svg{
+    fill: $color-pink;
+  }
+  
+/*
+  Se estan subiendo
+*/
+  app-file-upload-button #uploading-files{
+    position      : fixed;
+    bottom        : $margin;
+    right         : $margin;
+    background    : $background-button-pink-hover2;
+    padding       : $padding;
+    border-radius : $border-radius;
+    font-family   : Roboto-Medium;
+    font-size     : 0.7rem;
+    width         : 19.35rem;
+    height        : 13.65rem;
+    z-index       : 1;
+  }
+  app-file-upload-button #uploading-files [head]{
+    display       : flex;
+    border-bottom : $border;
+    
+    #head-text{
+      width         : 100%;
+      padding-bottom: $padding-bottom;
+      font-family   : Roboto-Medium;
+      font-size     : 0.7rem;
+    }
+    #uploading-files-close app-icon{
+      cursor: pointer;
+    }
+  }
+  app-file-upload-button #uploading-files [body]{
+    padding       : $padding;
+    font-family   : Roboto-Medium;
+    font-size     : 0.7rem;
+    overflow-y    : auto;
+    position      : relative;
+    height        : 9.5rem;
+    
+    .uploading{
+      border-bottom : $border-button-pink;
+      margin-bottom : $margin-bottom;
+      padding-bottom: $padding-bottom;
+      
+      .uploaded{
+        display : flex;
+        gap     : $margin;
 
-  :host {
-    display : flex;
-    width   : var(--widthHost);
-    height  : var(--heightHost);
+        .name{
+          width         : 246px;
+          height        : 23px;
+          overflow      : hidden;
+          text-overflow : ellipsis;
+        }
+      }
+      
+      .upload-error{
+        padding : $padding/2;
+        color   : $color-pink;
+      }
+    }
   }
+/*
+  FIN - Se estan subiendo
+*/
+  
+}

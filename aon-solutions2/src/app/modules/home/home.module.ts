@@ -45,5 +45,4 @@ import { WorkingModalComponent } from './components/working-modal/working-modal.
 })
 export class HomeModule {
 
-
 }

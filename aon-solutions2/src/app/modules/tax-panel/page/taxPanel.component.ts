@@ -227,22 +227,19 @@ export class TaxPanelComponent implements OnChanges, OnInit {
   showModalEdit() {
     this.modalComponentEdit.openDialog(
       ModalEditTaxModelComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
   }
   showModalPayment() {
     this.modalComponentPayment.openDialog(
       ModalPaymentComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
   }
   showModalTaxesDetails() {
     this.modalComponentTaxesDetails.openDialog(
       ModalTaxesDetailsComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
   }
   modalClick(object: any) {

@@ -21,7 +21,7 @@ export class APIBankMultipleObjectCrudRepository extends APIGenericMultipleObjec
             collection.add(this.apiModel.parseDataToReceive(element))
         })
         let active = new FilterBuilder();
-        active.addField('active', 'true');
+        active.addField('active', true);
         return collection.filter(active.getFilter());
     }
 }

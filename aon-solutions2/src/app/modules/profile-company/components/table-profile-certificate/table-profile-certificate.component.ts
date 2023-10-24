@@ -72,15 +72,13 @@ export class TableProfileCertificateComponent implements OnInit {
       case 'delete':
         this.ModalDeleteCertificateComponent.openDialog(
           ModalDeleteCertificateComponent,
-          this.functionHome,
-          'Data from home'
+          this.functionHome
         );
         break;
       case 'verified_user':
         this.ModalValidatedCertificateComponent.openDialog(
           ModalValidatedCertificateComponent,
-          this.functionHome,
-          'Data from home'
+          this.functionHome
         );
         break;
     }
@@ -89,8 +87,7 @@ export class TableProfileCertificateComponent implements OnInit {
     // if (object.keyName === 'name') {
     this.ModalInfoCertificateComponent.openDialog(
       ModalInfoCertificateComponent,
-      this.functionHome,
-      'Data from home'
+      this.functionHome
     );
     console.log(object);
     // }
