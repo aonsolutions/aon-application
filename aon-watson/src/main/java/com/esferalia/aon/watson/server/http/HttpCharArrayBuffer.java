@@ -304,7 +304,7 @@ final class HttpCharArrayBuffer implements CharSequence, Serializable {
      * @return {@code true} if this buffer is empty, {@code false}
      *   otherwise.
      */
-    boolean isEmpty() {
+    boolean emptyBuffer() {
         return this.len == 0;
     }
 

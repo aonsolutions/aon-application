@@ -99,7 +99,7 @@ class HttpURLEncodedUtils {
         } finally {
             inStream.close();
         }
-        if (buf.isEmpty()) {
+        if (buf.emptyBuffer()) {
             return createEmptyList();
         }
         return parse(buf, charset, QP_SEP_A);
