@@ -13,9 +13,9 @@
   }
 
   #tabs-header .mat-tab-list .mat-tab-label .tab-name{
-    display       :inline-block;
-    text-align    :center;
-    text-transform: uppercase;
+    display       : inline-block;
+    text-align    : center;
+    text-transform: capitalize;
   }
   #tabs-header .mat-tab-list .mat-tab-label app-icon{
     margin-right : $margin / 2;

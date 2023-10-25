@@ -311,7 +311,7 @@
     min-width     : 7.7rem;
     max-width     : 7.7rem;
     min-height    : 7.7rem;
-    max-height    : 7.7rem;
+    /*max-height    : 7.7rem;*/
     padding       : .4rem;
     cursor        : pointer;
     gap           : $margin / 4;
@@ -347,6 +347,7 @@
     padding-top : .1rem;
   }
   .card.file .card-footer .bold{
+    white-space   : nowrap;
     overflow      : hidden;
     text-overflow : ellipsis;
   }

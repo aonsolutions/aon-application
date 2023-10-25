@@ -165,7 +165,8 @@
           <div class="bold">
             {{ getNameWithExtension(cardFile.FileName, cardFile.FileType) }}
           </div>
-          <div class="griss">dd/mm/yyyy</div>
+          <div class="griss">{{ getFileDate(cardFile.Date) }}</div>
+          <div class="griss">{{ getFileHour(cardFile.Date) }}</div>
         </div>
       </app-card>
     </ng-container>
