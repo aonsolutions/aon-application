@@ -241,19 +241,19 @@ export class ApiMessage extends Message implements IApiModel {
 
     parseDataToReceive(data: any) {
         let message = new Message();
-        if(data.source && (data.source == 'task' || data.source == 'query')){
+        if(data.source && (data.source.toLowerCase() == 'task' || data.source.toLowerCase() == 'query')){
             let description = JSON.parse(data.description);
             message.ApiObject = data;
-            message.Id = data.id + (data.source == 'query' ? ';' + TypeMessage.CONSULTA : ';' + TypeMessage.TAREA);
+            message.Id = data.id + (data.source.toLowerCase() == 'query' ? ';' + TypeMessage.CONSULTA : ';' + TypeMessage.TAREA);
             message.Name = data.sender.id == localStorage.getItem('registry') ? data.task_holder.name : data.sender.name;
             message.Title = data.title ? data.title : '';
             message.Description = description.observation ? description.observation : '';
             message.Date = data.start_date ? new Date(data.start_date) : new Date();
             message.Type = data.source == 'query' ? TypeMessage.CONSULTA : TypeMessage.TAREA;
             if(data.source == 'task')
-                message.Status = data.status && data.status == 'pending' ? StatusMessage.PENDIENTE : StatusMessage.REALIZADA;
+                message.Status = data.status && data.status.toLowerCase() == 'pending' ? StatusMessage.PENDIENTE : StatusMessage.REALIZADA;
             else
-                message.Status = data.status && data.status == 'pending' ? StatusMessage.ABIERTA : StatusMessage.CERRADA;
+                message.Status = data.status && data.status.toLowerCase() == 'pending' ? StatusMessage.ABIERTA : StatusMessage.CERRADA;
             message.EndDate = new Date();
             message.Key = message.Id;
             return message;

@@ -14,6 +14,7 @@ export const enum MESSAGE_URL {
     SAVE_ONE_MESSAGE = '/ms/api/task',
     GET_COUNT_TASK_QUERY = '/ms/api/task/filter/count',
     GET_ONE_NOTIFICATION = '/ms/api/notification/one',
+    GET_ALL = '/ms/api/task/task-and-notification'
 }
 
 export const enum TAXMODEL_URL {
