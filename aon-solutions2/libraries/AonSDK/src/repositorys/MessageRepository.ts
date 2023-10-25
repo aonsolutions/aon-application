@@ -155,7 +155,12 @@ export class APIMessageMultipleObjectCrudRepository extends APIGenericMultipleOb
         }else if(typeMessage == TypeMessage.CONSULTA || typeMessage == TypeMessage.TAREA){
             url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(filter || {}, pageNum, perPage, typeMessage, statusMessage))]
         }else
-            url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_ALL, generateParams(filter || {}, pageNum, perPage))]
+        url = [
+            ApiHttpRequest.makeURL(MESSAGE_URL.GET_NOTIFICATION_LIST, generateParams(filter || {}, pageNum, perPage, TypeMessage.NOTIFICACION, StatusMessage.NUEVA)),
+            ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(filter || {}, pageNum, perPage, TypeMessage.CONSULTA, StatusMessage.ABIERTA)),
+            ApiHttpRequest.makeURL(MESSAGE_URL.GET_TASK_QUERY_LIST, generateParams(filter || {}, pageNum, perPage, TypeMessage.TAREA, StatusMessage.PENDIENTE)),
+        ]
+            // url = [ApiHttpRequest.makeURL(MESSAGE_URL.GET_ALL, generateParams(filter || {}, pageNum, perPage))]
         let collection: ICollection<Message> = new Collection<Message>();
         for(let element of url){
             let response = await ApiHttpRequest.get(BASE_URL + element, {}, {});
