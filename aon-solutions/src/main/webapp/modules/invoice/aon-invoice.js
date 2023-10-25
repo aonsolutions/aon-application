@@ -30,10 +30,10 @@ import { AonSelect } from '../../components/aon-select.js';
 import { AonSuggestion } from '../../components/aon-suggestion.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { AonTab } from '../../components/aon-tab.js';
+import { AonEmail } from '../../components/aon-email.js';
 import { AonAutosizeTextarea } from '../../components/aon-autosize-textarea.js';
 
 import {INVOICE} from  '../../services/app.js';
-
 export class AonInvoice extends AonElement {
 
 	invoice;
@@ -2204,8 +2204,8 @@ export class AonInvoice extends AonElement {
 			viewer.type = !this.getInvoice().file || this.getInvoice().isEmitida()
 				? 'application/pdf' : this.getInvoice().file.content_type;
 			viewer.file = !this.getInvoice().file || this.getInvoice().isEmitida()
-				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(json))
-				: this.getInvoice().file.path;
+			 	? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(json))
+			 	: this.getInvoice().file.path;
 			viewer.width = fileDiv.offsetWidth;
 			viewer.addEventListener(EVENT.SEND_MAIL, () => this.sendInvoice());
 			fileDiv.appendChild(viewer);
@@ -2485,11 +2485,15 @@ export class AonInvoice extends AonElement {
 
 	sendInvoice() {
 		let aonInvoice = this.getElement('aonInvoice');
+
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.SEND_INVOICES);
-		d.setContentHTML('<aon-input id="sendInvoicesMail" description="Email"></aon-input>');
+		if(LS.isNewTheme()){
+			let aonEmail = this.createAonElement(new AonEmail(), 'sendInvoicesMail',MSG.EMAIL);
+			d.setContent(aonEmail);
+		} else d.setContentHTML('<aon-input id="sendInvoicesMail" description="Email"></aon-input>');
 		d.addAcceptAction(() => {
 			let mail = this.getElement('sendInvoicesMail');
 			let message = {
@@ -2516,7 +2520,9 @@ export class AonInvoice extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle("FACTURAE");
+		let div  =this.createDiv();
 		let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+		div.appendChild(certSelect);
 		getAeatCertificates().then(certs => {
 			certSelect.setOptions(certs.map(s => {
 				return {
@@ -2525,7 +2531,10 @@ export class AonInvoice extends AonElement {
 				}
 			  }));
 		}); 
-		d.setContent(certSelect);
+		let span = this.createSpan();
+		span.innerHTML = '<textarea id="legalLiterals" maxlength="250" style="width:100%;" class="aonTextarea" placeholder="Literales Legales..."></textarea>';
+		div.appendChild(span);
+		d.setContent(div);
 		d.addAcceptAction(() => {
 			let data = {
 				id: this.invoice.id,
@@ -2533,6 +2542,7 @@ export class AonInvoice extends AonElement {
 				domainId: LS.getDomainId()
 			}
 			data.cert = certSelect.value;
+			data.legalLiterals = this.getElement('legalLiterals').value;
 			downloadFacturae(data).then(r => {});
 		});			
 		d.open();
