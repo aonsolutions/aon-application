@@ -1678,7 +1678,7 @@ label.rating:hover {
   border: 1px solid rgb(246, 101, 90);
 }
 
-.aonMessengerCardRow{
+.aonMessengerCardRow, .aonDocumentalCardRow{
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -1690,6 +1690,11 @@ label.rating:hover {
 .aonMessengerCardRow:hover{
   border-top: 1px solid rgb(246, 101, 90);
   border-bottom: 1px solid rgb(246, 101, 90);
+}
+
+.aonDocumentalCardRow:hover{
+  border-top: 1px solid var(--aonDocumental);
+  border-bottom: 1px solid var(--aonDocumental);
 }
 
 .aonBadge{
@@ -1750,7 +1755,7 @@ label.rating:hover {
 .aonEllipsis {
   text-overflow: ellipsis;
   overflow: hidden;
-  max-width: 14rem;
+  max-width: 13rem;
   white-space: nowrap;
 }
 
@@ -1771,13 +1776,21 @@ aon-access-card{
   .aonUploadPanel, .aonFastAccess{
       flex-direction: row;
   }
+
+  .aonDocumentalCardRow > .aonFlex > .aonEllipsis{
+    max-width: 21rem;
+  }
 }
 
 /* Medium devices (landscape tablets, 768px and up) */
 /* @media only screen and (min-width: 768px) {} */
 @media only screen and (min-width: 768px) {
-  .aonEllipsis{
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
       max-width: 20rem;
+  }
+
+  .aonDocumentalCardRow > .aonFlex > .aonEllipsis{
+    max-width: 30rem;
   }
 }
 
@@ -1797,8 +1810,12 @@ aon-access-card{
     min-width: 22rem;
   }
 
-  .aonEllipsis{
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
     max-width: 26rem;
+  }
+
+  .aonDocumentalCardRow > .aonFlex > .aonEllipsis{
+    max-width: 14rem;
   }
 
   .aonNewLogo{

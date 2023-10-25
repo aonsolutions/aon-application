@@ -88,6 +88,7 @@ export class AonBankCard extends AonElement {
     this.removeAllChildNodes(content);
 
     let maxLength = banks.length > 4 ? 4 : banks.length;
+    let accumulatedBanks = 0;
 
     for (let index = 0; index < maxLength; index++) {
       const bank = banks[index];
@@ -105,7 +106,7 @@ export class AonBankCard extends AonElement {
       leftContent.style.flexDirection = "column";
 
       let description = this.createElement(TAG.SPAN);
-      description.style.fontSize = "1.1rem";
+      description.style.fontSize = banks.length > 4 ? "1rem" : "1.2rem";
       description.style.color = "rgb(0, 36, 105)";
       description.style.fontWeight = "500";
       description.innerHTML = bank.alias;
@@ -113,7 +114,7 @@ export class AonBankCard extends AonElement {
 
       let date = this.createElement(TAG.SPAN);
       date.style.color = "rgb(120, 120, 133)";
-      date.style.fontSize = ".8rem";
+      date.style.fontSize = banks.length > 4 ? ".7rem" : ".8rem";
       date.innerHTML = this.formatDate(bank.balanceDate);
       leftContent.appendChild(date);
 
@@ -127,6 +128,48 @@ export class AonBankCard extends AonElement {
       amount.style.minWidth = "5rem";
       amount.style.textAlign = "right";
       amount.innerHTML = this.formatNumber(bank.balance);
+      rightContent.appendChild(amount);
+
+      accumulatedBanks += bank.balance;
+
+      row.appendChild(leftContent);
+      row.appendChild(rightContent);
+
+      content.appendChild(row);
+    }
+
+    // Create others row
+    let total = banks.reduce((t, bank) => t + bank.balance, 0);
+    if(banks.length > 4){
+      let row = this.createElement(TAG.DIV);
+      row.className = CSS.AON_FLEX;
+      row.style.justifyContent = "space-between";
+      row.style.width = "100%";
+      row.style.borderBottom = "1px solid #ddd";
+      row.style.padding = ".8rem 0";
+
+      let leftContent = this.createElement(TAG.DIV);
+      leftContent.className = CSS.AON_FLEX;
+      leftContent.style.alignItems = "center";
+      leftContent.style.gap = "1rem";
+
+      let description = this.createElement(TAG.SPAN);
+      description.style.fontSize = "1rem";
+      description.style.color = "#fb982e";
+      description.style.fontWeight = "500";
+      description.innerHTML = "Otros";
+      leftContent.appendChild(description);
+
+      let rightContent = this.createElement(TAG.DIV);
+      rightContent.className = CSS.AON_FLEX;
+      rightContent.style.alignItems = "center";
+      rightContent.style.gap = "1rem";
+
+      let amount = this.createElement(TAG.SPAN);
+      amount.style.fontWeight = "bold";
+      amount.style.minWidth = "5rem";
+      amount.style.textAlign = "right";
+      amount.innerHTML = formatNumber(total - accumulatedBanks, 2, "EUR");
       rightContent.appendChild(amount);
 
       row.appendChild(leftContent);

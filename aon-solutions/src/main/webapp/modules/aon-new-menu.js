@@ -284,6 +284,16 @@ export class AonNewMenu extends AonElement {
 		// 	appOptions.style.display = 'none';
 		// });
 		li.addEventListener(EVENT.CLICK, () => {
+			let expandButtonDiv = this.getElement("aonExpandButtonDiv");
+			let expandButton = expandButtonDiv.firstChild;
+			if(this.isExpanded()) {
+				expandButtonDiv.style.left = '57px';
+				expandButton.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
+			} else {
+				expandButtonDiv.style.left = '237px';
+				expandButton.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
+			}
+			
 			this.expand();
 		})
 		ul.appendChild(li);
