@@ -29,10 +29,11 @@ export class EmployeeComponent implements OnInit {
   tabs: Tabs[] = [{ name: 'tab1' }, { name: 'tab2' }];
   buttonsGastos: any[] = [];
   showDetail: boolean = false;
+  showDetail1: boolean = false;
   search: string = '';
   showSendButton: boolean = false;
   showSendButtons: boolean = false;
-  selectedTab: number = 0;
+
 
 
   //hardcodeo para mostrar showdetail
@@ -163,12 +164,13 @@ export class EmployeeComponent implements OnInit {
 
   }
   atras() {
-    this.selectedTab = 0;
+    this.tabIndex = 0;
   }
 
   changeTabIndex(index: number) {
-    this.selectedTab = index;
-    //this.updateTableData();
+    this.tabIndex = index;
+    this.showDetail = false;
+    // this.updateTableData();
   }
 
   searchContract(search: string) {
@@ -200,7 +202,18 @@ async rowClick(contract: any){
  this.dataBody && this.dataBody[0].key === contract.key;
 this.showDetail = !isSameRow ? true : !this.showDetail;
 //this.dataBody[0] = await this.contractService.getContract(contract.key);
-
-
 }
+
+async rowClick1(contract: any){
+  console.log('entro');
+// CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
+ const isSameRow =
+ this.dataBody && this.dataBody[0].key === contract.key;
+this.showDetail1 = !isSameRow ? true : !this.showDetail;
+//this.dataBody[0] = await this.contractService.getContract(contract.key);
+}
+
+
+
+
 }

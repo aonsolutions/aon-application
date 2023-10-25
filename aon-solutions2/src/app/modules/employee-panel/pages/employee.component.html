@@ -4,8 +4,8 @@
     <app-button
       class="icon-background"
       [width]="'width'"
-      (click)="selectedTab = 3"
-      *ngIf="selectedTab !== 3"
+      (click)="tabIndex = 3"
+      *ngIf="tabIndex !== 3"
     >
       <app-icon shape="person_add"></app-icon>
       {{ "EMPLOYEE_PANEL.TO_REGISTER" | translate }}
@@ -29,7 +29,12 @@
       </div>
       <!-- fin buscador -->
       <!-- tablas tabs -->
-      <app-tabs [tabs]="tabs" [tabColor]="'green'">
+      <app-tabs
+        [tabs]="tabs"
+        [tabColor]="'green'"
+        [tabIndex]="tabIndex"
+        (changeTabIndex)="changeTabIndex($event)"
+      >
         <div tool>
           <div class="buttons">
             <app-button
@@ -41,7 +46,7 @@
           </div>
         </div>
 
-        <div content class="padding" (click)="selectedTab = 0">
+        <div content class="padding" *ngIf="this.tabIndex == 0">
           <app-spinner *ngIf="spinner"></app-spinner>
           <app-table
             *ngIf="bodyTable.length > 0; else noModelsTemplate"
@@ -57,136 +62,138 @@
             <div class="no-models padding">{{ contracts }}</div>
           </ng-template>
         </div>
-        <!--
-      <div content class="padding"(click)="selectedTab = 1">
-        <app-spinner *ngIf="spinner"></app-spinner>
-        <app-table
-          *ngIf="bodyTable.length > 0; else noModelsTemplate"
-          mat-table
-          mat-flat-table
-          [displayedColumns]="displayedColumns"
-          [head]="headerTable"
-          [data]="bodyTable"
-        >
-        </app-table>
-        <ng-template #noModelsTemplate>
-          <div class="no-models padding">{{ contracts }}</div>
-        </ng-template>
-      </div> -->
+
+        <div content class="padding" *ngIf="this.tabIndex == 1">
+          <app-spinner *ngIf="spinner"></app-spinner>
+          <app-table
+            *ngIf="bodyTable.length > 0; else noModelsTemplate"
+            mat-table
+            mat-flat-table
+            [displayedColumns]="displayedColumns"
+            [head]="headerTable"
+            [data]="bodyTable"
+            (listenParentRow)="rowClick1($event)"
+          >
+          </app-table>
+          <ng-template #noModelsTemplate>
+            <div class="no-models padding">{{ contracts }}</div>
+          </ng-template>
+        </div>
       </app-tabs>
     </ng-container>
+
     <!-- ALTA EMPLEADO-->
-    <ng-container *ngIf="selectedTab == 3">
+    <ng-container *ngIf="tabIndex == 3">
       <app-create-new-contract></app-create-new-contract>
     </ng-container>
     <!-- FIN ALTA EMPLEADO -->
+
   </div>
   <!-- fin contenido -->
 
   <!-- mostrar detalles contratos vigentes-->
-  <!-- <div detail *ngIf="showDetail">
+  <div detail *ngIf="showDetail">
     <div class="employee-detail padding">
       <div class="employee-detail-header">
         <div class="employee-detail-title">
           <app-icon class="griss button" shape="arrow_back"></app-icon>
-          <p class="title-contract">
+          <div class="title-contract">
             {{ "EMPLOYEE_PANEL.CURRENT_CONTRACT" | translate }}
-          </p>
+          </div>
         </div>
         <div class="employee-detail-edit">
           <app-icon class="griss button" shape="edit"></app-icon>
         </div>
       </div>
 
-      <div class="info-contract border padding">
+      <div class="info-contract border padding ">
         <div class="info-status info-line">
-          <p class="info-main-title">
+          <div class="info-main-title">
             {{ dataBody[0].employee }}
-          </p>
-          <p class="info-data">EN LINEA</p>
+          </div>
+          <div class="info-data">EN LINEA</div>
         </div>
 
         <div class="info-line">
-          <p class="info-title">
+          <div class="info-title">
             {{ "EMPLOYEE_PANEL.ID_NUMBER" | translate }}
-          </p>
-          <p class="info-data">12345678-D</p>
+          </div>
+          <div class="info-data">12345678-D</div>
         </div>
         <div class="info-line">
-          <p class="info-title">{{ "PROFILE.EMAIL" | translate }}</p>
-          <p class="info-data">prueba@gmail.com</p>
+          <div class="info-title">{{ "PROFILE.EMAIL" | translate }}</div>
+          <div class="info-data">prueba@gmail.com</div>
         </div>
-        <div class="info-line">
-          <p class="info-title">{{ "PROFILE.PHONE" | translate }}</p>
-          <p class="info-data">600000000</p>
+        <div class="info-line separacion">
+          <div class="info-title">{{ "PROFILE.PHONE" | translate }}</div>
+          <div class="info-data ">600000000</div>
         </div>
 
-        <hr class="line" />
-
-        <p class="info-title">{{ "HOME.TIMING" | translate }}</p>
+        <div class="info-title-timing">{{ "HOME.TIMING" | translate }}</div>
 
         <div class="contenedor-principal">
           <div class="contenedor-izq">
             <div class="entrada">
-              <p class="titulo">Entrada</p>
-              <p class="hora">
+              <div class="titulo">Entrada</div>
+              <div class="hora">
                 <app-icon class="green button titulo-icon" shape="input"></app-icon>
                 07:00:22
-              </p>
-              <p class="fecha">fecha</p>
+              </div>
+              <div class="fecha">fecha</div>
             </div>
 
             <div class="salida">
-              <p class="titulo">Salida</p>
-              <p class="hora">
+              <div class="titulo">Salida</div>
+              <div class="hora">
                 <app-icon class="red button titulo-icon" shape="input"></app-icon>
                 07:00:22
-              </p>
-              <p class="fecha">fecha</p>
+              </div>
+              <div class="fecha">fecha</div>
             </div>
           </div>
 
           <div class="contenedor-derecha">
-            <p class="titulo titulo-margin">Total</p>
-            <p class="hora"> 07:00:22</p>
+            <div class="titulo titulo-margin">Total</div>
+            <div class="hora"> 07:00:22</div>
           </div>
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
+
   <!-- mostrar detalles contratos extinguidos-->
-  <div detail *ngIf="showDetail">
+  <div detail *ngIf="showDetail1">
     <div class="employee-detail padding">
       <div class="employee-detail-header">
         <div class="employee-detail-title">
           <app-icon class="griss button" shape="arrow_back"></app-icon>
-          <p class="title-contract">
+          <div class="title-contract">
             {{ "EMPLOYEE_PANEL.EXPIRED_CONTRACT" | translate }}
-          </p>
+          </div>
         </div>
       </div>
 
       <div class="info-contract border padding">
         <div class="info-status info-line">
-          <p class="info-main-title">
+          <div class="info-main-title">
             {{ dataBody[0].employee }}
-          </p>
-          <p class="info-data">INACTIVO</p>
+          </div>
+          <div class="info-data">INACTIVO</div>
         </div>
 
         <div class="info-line">
-          <p class="info-title">
+          <div class="info-title">
             {{ "EMPLOYEE_PANEL.ID_NUMBER" | translate }}
-          </p>
-          <p class="info-data">12345678-D</p>
+          </div>
+          <div class="info-data">12345678-D</div>
         </div>
         <div class="info-line">
-          <p class="info-title">{{ "PROFILE.EMAIL" | translate }}</p>
-          <p class="info-data">prueba@gmail.com</p>
+          <div class="info-title">{{ "PROFILE.EMAIL" | translate }}</div>
+          <div class="info-data">prueba@gmail.com</div>
         </div>
         <div class="info-line">
-          <p class="info-title">{{ "PROFILE.PHONE" | translate }}</p>
-          <p class="info-data">600000000</p>
+          <div class="info-title">{{ "PROFILE.PHONE" | translate }}</div>
+          <div class="info-data">600000000</div>
         </div>
       </div>
     </div>

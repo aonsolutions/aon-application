@@ -75,7 +75,8 @@
     display: flex;
     align-items: center;
 
-    .title-contract{
+    .title-contract {
+      font-family: "Roboto-Medium";
       margin-left: $margin-left;
       color: $color-green;
     }
@@ -91,20 +92,35 @@
     display: flex;
     min-width: 30.1rem;
     flex-direction: column;
+    border-radius: $border-radius;
 
     .info-status {
       justify-content: space-between;
+      padding-bottom: $padding-bottom;
     }
 
     .info-line {
       display: flex;
-      font-size: $font-size-primary;
+      font-family: Roboto-Medium;
+      font-size: $font-size-800;
     }
 
     .info-title {
-      font-weight: 400;
       color: $color-secondary;
       text-transform: uppercase;
+      padding-bottom: $padding-bottom;
+    }
+
+    .info-title-timing{
+      color: $color-secondary;
+      text-transform: uppercase;
+      padding-bottom: $padding-bottom;
+      padding-top: $padding-top;
+    }
+
+    .separacion {
+      border-bottom: 0.05rem solid #d2d2d6;
+      width: 100%;
     }
 
     .info-main-title {
@@ -114,9 +130,10 @@
     }
 
     .info-data {
-      font-weight: 500;
       color: $color-dark;
       margin-left: $margin-left;
+      font-family: Roboto-Medium;
+      font-size: $font-size-800;
     }
   }
 
@@ -133,14 +150,14 @@
   .entrada {
     display: flex;
     flex-direction: column;
-    margin-right: $margin-right;
+    margin-right: $margin-right * 2;
   }
 
   .salida {
     display: flex;
     flex-direction: column;
     border-right: 0.05rem solid #d2d2d6;
-    padding-right: $padding-right*2;
+    padding-right: $padding-right * 2;
   }
 
   .contenedor-derecha {
@@ -148,7 +165,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    margin-left: $margin-left*2;
+    margin-left: $margin-left * 2;
   }
 
   .hora {
@@ -158,29 +175,27 @@
     font-family: "Roboto-Bold";
     font-size: $font-size-24;
     color: $color-dark;
-
+    padding-bottom: $padding-bottom/2;
   }
 
   .titulo {
-
     font-family: "Roboto-Medium";
     font-size: $font-size-800;
     color: $color-dark;
     text-transform: uppercase;
-
+    padding-bottom: $padding-bottom/2;
   }
 
-  .fecha{
+  .fecha {
     font-size: $font-size-800;
     color: $color-border-primary;
-   
   }
 
-  .titulo-margin{
+  .titulo-margin {
     margin-right: $margin-right;
   }
 
-  .titulo-icon{
+  .titulo-icon {
     margin-right: $margin-right/2;
   }
 }
