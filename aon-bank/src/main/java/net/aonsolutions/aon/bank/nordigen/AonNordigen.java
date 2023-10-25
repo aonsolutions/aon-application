@@ -3,7 +3,6 @@ package net.aonsolutions.aon.bank.nordigen;
 import static net.aonsolutions.aon.bank.nordigen.NordigenUtils.isRequisitionLinked;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,289 +46,206 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.NordigenDAO;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.bank.nordigen.NordigenAPIAbstract.CreateRequisitionParams;
-
 public class AonNordigen {
 	
-	private static final String[] EXTENDED_HISTORY_INSTITUTION_BLACKLIST = {
-			"BRED_BREDFRPPXXX",
-			"INDUSTRA_MULTLV2X",
-			"LHV_LHVBEE22",
-			"LUMINOR_",
-			"SWEDBANK_",
-			"SEB_",
-			"LABORALKUTXA_CLPEES2M",
-			"BANKINTER_BKBKESMM",
-			"CAIXABANK_CAIXESBB",
-			"BBVA_BBVAESMM",
-			"COOP_EKRDEE22"
-	};
+//	private static final String[] EXTENDED_HISTORY_INSTITUTION_BLACKLIST = {
+//			"BRED_BREDFRPPXXX",
+//			"INDUSTRA_MULTLV2X",
+//			"LHV_LHVBEE22",
+//			"LUMINOR_",
+//			"SWEDBANK_",
+//			"SEB_",
+//			"LABORALKUTXA_CLPEES2M",
+//			"BANKINTER_BKBKESMM",
+//			"CAIXABANK_CAIXESBB",
+//			"BBVA_BBVAESMM",
+//			"COOP_EKRDEE22"
+//	};
+//	private static boolean isBlacklistedInstitution(NordigenInstitution institution) {
+//		if (institution == null) return false;
+//		return Arrays.stream(EXTENDED_HISTORY_INSTITUTION_BLACKLIST)
+//			.anyMatch(inst -> AonStringUtils.containsIgnoreCase(institution.getId(), inst));
+//	}
 	
 	private AonNordigen() throws IllegalAccessException {
 		throw new IllegalAccessException("Utility class");
 	}
 	
-	public static NordigenAccessToken getNewAccessToken() throws Exception {
-		try {			
-			JSONObject tokenJson = NordigenAPI.newAccessToken();
-			Date tokenCreationDate = new Date();
-			return NordigenJSONUtils.accessTokenFromJSON(tokenJson)
-					.setCreationDate(tokenCreationDate)
-					.setRefreshDate(tokenCreationDate);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
+	public static NordigenAccessToken getNewAccessToken() {
+		JSONObject tokenJson = NordigenAPI.newAccessToken();
+		Date tokenCreationDate = new Date();
+		return NordigenJSONUtils.accessTokenFromJSON(tokenJson)
+				.setCreationDate(tokenCreationDate)
+				.setRefreshDate(tokenCreationDate);
 	}
 	
-	public static void refreshToken(NordigenAccessToken token) throws Exception {
-		try {
-			JSONObject json = NordigenAPI.refreshAccessToken(token.getRefresh());
-			Date tokenRefreshDate = new Date();
-			NordigenJSONUtils.updateAccessToken(json, token);
-			token.setRefreshDate(tokenRefreshDate);			
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
+	public static void refreshToken(NordigenAccessToken token)  {
+		JSONObject json = NordigenAPI.refreshAccessToken(token.getRefresh());
+		Date tokenRefreshDate = new Date();
+		NordigenJSONUtils.updateAccessToken(json, token);
+		token.setRefreshDate(tokenRefreshDate);			
 	}
 	
-	public static List<NordigenInstitution> getInstitutions(NordigenAccessToken token, Country country, Boolean paymentsEnabled) throws Exception {
-		try {
-			JSONArray json = NordigenAPI.getInstitutions(token.getAccess(), country, paymentsEnabled);
-			return NordigenInstitutionJSON.fromJSONArray(json);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
+	public static List<NordigenInstitution> getInstitutions(NordigenAccessToken token, Country country, Boolean paymentsEnabled) {
+		JSONArray json = NordigenAPI.getInstitutions(token.getAccess(), country, paymentsEnabled);
+		return NordigenInstitutionJSON.fromJSONArray(json);
 	}
 	
-	public static NordigenInstitution getInstitution(NordigenAccessToken token, String institutionId) throws Exception {
-		try {
-			JSONObject json = NordigenAPI.getInstitution(token.getAccess(), institutionId);
-			return NordigenInstitutionJSON.fromJSON(json);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
+	public static NordigenInstitution getInstitution(NordigenAccessToken token, String institutionId) {
+		JSONObject json = NordigenAPI.getInstitution(token.getAccess(), institutionId);
+		return NordigenInstitutionJSON.fromJSON(json);
 	}
 	
-	private static boolean isBlacklistedInstitution(NordigenInstitution institution) {
-		if (institution == null) {
-			return false;
-		}
-		return Arrays.stream(EXTENDED_HISTORY_INSTITUTION_BLACKLIST)
-				.anyMatch(inst -> AonStringUtils.containsIgnoreCase(institution.getId(), inst));
+	public static NordigenAgreement createAgreement(NordigenAccessToken token, String institutionId)  {
+//		NordigenInstitution institution = getInstitution(token, institutionId);
+		Integer maxDays = 90;
+		// BORRAR ESTA CONDICIÓN SI MUCHAS INSTITUCIONES DAN PROBLEMAS. QUEDARÁN TODOS LOS ACCESOS A 90 DÍAS
+//		if (institution != null &&
+//				institution.getTransactionTotalDays() != null &&
+//				institution.getTransactionTotalDays() > 0 &&
+//				!isBlacklistedInstitution(institution)) {
+//			maxDays = institution.getTransactionTotalDays();
+//		}
+		JSONObject json = NordigenAPI.createEndUserAgreement(token.getAccess(), maxDays, 90, null, institutionId);
+		return NordigenAgreementJSON.fromJSON(json);
 	}
 	
-	public static NordigenAgreement createAgreement(NordigenAccessToken token, String institutionId) throws Exception {
-		try {
-//			NordigenInstitution institution = getInstitution(token, institutionId);
-			Integer maxDays = 90;
-			// BORRAR ESTA CONDICIÓN SI MUCHAS INSTITUCIONES DAN PROBLEMAS. QUEDARÁN TODOS LOS ACCESOS A 90 DÍAS
-//			if (institution != null &&
-//					institution.getTransactionTotalDays() != null &&
-//					institution.getTransactionTotalDays() > 0 &&
-//					!isBlacklistedInstitution(institution)) {
-//				maxDays = institution.getTransactionTotalDays();
-//			}
-			JSONObject json = NordigenAPI.createEndUserAgreement(token.getAccess(), maxDays, 90, null, institutionId);
-			return NordigenAgreementJSON.fromJSON(json);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
+	public static NordigenAgreement getAgreement(NordigenAccessToken token, String agreementId) {
+		JSONObject json = NordigenAPI.getEndUserAgreement(token.getAccess(), agreementId);
+		return NordigenAgreementJSON.fromJSON(json);
 	}
 	
-	public static NordigenAgreement getAgreement(NordigenAccessToken token, String agreementId) throws Exception {
-		try {
-			JSONObject json = NordigenAPI.getEndUserAgreement(token.getAccess(), agreementId);
-			return NordigenAgreementJSON.fromJSON(json);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
+	public static void deleteAgreement(NordigenAccessToken token, String agreementId) {
+		NordigenAPI.deleteEndUserAgreement(token.getAccess(), agreementId);
 	}
 	
-	public static void deleteAgreement(NordigenAccessToken token, String agreementId) throws Exception {
-		try {
-			NordigenAPI.deleteEndUserAgreement(token.getAccess(), agreementId);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
+	public static void deleteAgreement(NordigenAccessToken token, NordigenAgreement agreement)  {
+		NordigenAPI.deleteEndUserAgreement(token.getAccess(), agreement != null ? agreement.getId() : null);
 	}
 	
-	public static void deleteAgreement(NordigenAccessToken token, NordigenAgreement agreement) throws Exception {
-		try {
-			NordigenAPI.deleteEndUserAgreement(token.getAccess(), agreement != null ? agreement.getId() : null);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
+	public static NordigenRequisition createRequisition(NordigenAccessToken token, String agreementId, String institutionId, String redirect) {
+		RequisitionParams params = new RequisitionParams()
+			.setAgreement(agreementId)
+			.setRedirect(redirect)
+			.setInstitutionId(institutionId)
+			.setUserLanguage(AonLanguage.SPANISH)
+			.setRedirectImmediate(true);
+		JSONObject json = NordigenAPI.createRequisition(token.getAccess(), params);
+		return NordigenRequisitionJSON.fromJSON(json);
 	}
 	
-	public static NordigenRequisition createRequisition(NordigenAccessToken token, String agreementId, String institutionId, String redirect) throws Exception {
-		try {
-			CreateRequisitionParams params = new CreateRequisitionParams()
-					.setAgreement(agreementId)
-					.setRedirect(redirect)
-					.setInstitutionId(institutionId)
-					.setUserLanguage(AonLanguage.SPANISH)
-					.setRedirectImmediate(true);
-			
-			JSONObject json = NordigenAPI.createRequisition(token.getAccess(), params);
-			return NordigenRequisitionJSON.fromJSON(json);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
-	}
-	
-	public static NordigenRequisition createRequisition(NordigenAccessToken token, NordigenAgreement agreement, String redirect) throws Exception {
+	public static NordigenRequisition createRequisition(NordigenAccessToken token, NordigenAgreement agreement, String redirect)  {
 		return  createRequisition(token,
-				agreement != null ? agreement.getId() : null,
-				agreement != null ? agreement.getInstitutionId() : null,
-				redirect);
+			agreement != null ? agreement.getId() : null,
+			agreement != null ? agreement.getInstitutionId() : null,
+			redirect);
 	}
 	
-	public static NordigenRequisition getRequisition(NordigenAccessToken token, String requisitionId) throws Exception {
-		try {
-			JSONObject json = NordigenAPI.getRequisition(token.getAccess(), requisitionId);
-			return NordigenRequisitionJSON.fromJSON(json);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
+	public static NordigenRequisition getRequisition(NordigenAccessToken token, String requisitionId) {
+		JSONObject json = NordigenAPI.getRequisition(token.getAccess(), requisitionId);
+		return NordigenRequisitionJSON.fromJSON(json);
+	}
+	
+	public static void deleteRequisition(NordigenAccessToken token, String requisitionId)  {
+		NordigenAPI.deleteRequisition(token.getAccess(), requisitionId);
+	}
+	
+	public static void deleteRequisition(NordigenAccessToken token, NordigenRequisition requisition) {
+		deleteRequisition(token, requisition != null ? requisition.getId() : null);
+	}
+	
+	public static NordigenAccountMetadata getAccountMetadata(NordigenAccessToken token, String nordigenAccountId)  {
+		JSONObject json = NordigenAPI.getAccount(token.getAccess(), nordigenAccountId);
+		return NordigenAccountMetadataJSON.fromJSON(json);
+	}
+	
+	public static NordigenAccountDetails getAccountDetails(NordigenAccessToken token, String nordigenAccountId) {
+		JSONObject json = NordigenAPI.getDetails(token.getAccess(), nordigenAccountId);
+		if (json != null) {
+			return NordigenAccountDetailsJSON.fromJSON(json.optJSONObject("account"));
 		}
+		return null;
 	}
 	
-	public static void deleteRequisition(NordigenAccessToken token, String requisitionId) throws Exception {
-		try {
-			NordigenAPI.deleteRequisition(token.getAccess(), requisitionId);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
+	public static List<NordigenAccountBalance> getAccountBalances(NordigenAccessToken token, String nordigenAccountId) {
+		JSONObject json = NordigenAPI.getBalances(token.getAccess(), nordigenAccountId);
+		if (json != null) {
+			JSONArray balancesJson = json.optJSONArray("balances");
+			return NordigenAccountBalanceJSON.fromJSONArray(balancesJson);
 		}
+		return Collections.emptyList();
 	}
 	
-	public static void deleteRequisition(NordigenAccessToken token, NordigenRequisition requisition) throws Exception {
-		try {
-			deleteRequisition(token, requisition != null ? requisition.getId() : null);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
-	}
 	
-	public static NordigenAccountMetadata getAccountMetadata(NordigenAccessToken token, String nordigenAccountId) throws Exception {
-		try {
-			JSONObject json = NordigenAPI.getAccount(token.getAccess(), nordigenAccountId);
-			return NordigenAccountMetadataJSON.fromJSON(json);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
-	}
-	
-	public static NordigenAccountDetails getAccountDetails(NordigenAccessToken token, String nordigenAccountId) throws Exception {
-		try {
-			JSONObject json = NordigenAPI.getDetails(token.getAccess(), nordigenAccountId);
-			if (json != null) {
-				return NordigenAccountDetailsJSON.fromJSON(json.optJSONObject("account"));
+	public static List<NordigenAccountTransaction> getBookedAccountTransactionsByBookingDate(NordigenAccessToken token, NordigenRequisition requisition, String nordigenAccountId, Date dateFrom) {
+		JSONObject json = NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, null, null);
+		if (json != null) {
+			JSONObject transactionsJson = json.optJSONObject("transactions");
+			JSONArray bookedTransactionsJson = null;
+			if (transactionsJson != null) {
+				bookedTransactionsJson = transactionsJson.optJSONArray("booked");
 			}
-			return null;
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
+			List<NordigenAccountTransaction> allTransactions = NordigenAccountTransactionJSON.fromJSONArray(bookedTransactionsJson);
+			if (allTransactions != null) {
+				return allTransactions.stream().filter(tr -> {
+					Date bookingDate = tr.getBookingDate() != null ? tr.getBookingDate() : new Date();
+					return com.esferalia.aon.watson.util.AonDateUtils.compare(bookingDate, dateFrom) >= 0;
+				}).collect(Collectors.toList());
+			}
 		}
+		return Collections.emptyList();
 	}
 	
-	public static List<NordigenAccountBalance> getAccountBalances(NordigenAccessToken token, String nordigenAccountId) throws Exception {
-		try {
-			JSONObject json = NordigenAPI.getBalances(token.getAccess(), nordigenAccountId);
-			if (json != null) {
-				JSONArray balancesJson = json.optJSONArray("balances");
-				return NordigenAccountBalanceJSON.fromJSONArray(balancesJson);
+	public static List<NordigenAccountTransaction> getBookedAccountTransactions(NordigenAccessToken token, String nordigenAccountId, Date dateFrom) {
+		JSONObject json = NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, dateFrom, new Date());
+		if (json != null) {
+			JSONObject transactionsJson = json.optJSONObject("transactions");
+			JSONArray bookedTransactionsJson = null;
+			if (transactionsJson != null) {
+				bookedTransactionsJson = transactionsJson.optJSONArray("booked");
 			}
-			return Collections.emptyList();
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
+			return NordigenAccountTransactionJSON.fromJSONArray(bookedTransactionsJson);
 		}
+		return Collections.emptyList();
 	}
 	
-	
-	public static List<NordigenAccountTransaction> getBookedAccountTransactionsByBookingDate(NordigenAccessToken token, NordigenRequisition requisition, String nordigenAccountId, Date dateFrom) throws Exception {
-		try {
-			JSONObject json = NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, null, null);
-			if (json != null) {
-				JSONObject transactionsJson = json.optJSONObject("transactions");
-				JSONArray bookedTransactionsJson = null;
-				if (transactionsJson != null) {
-					bookedTransactionsJson = transactionsJson.optJSONArray("booked");
-				}
-				List<NordigenAccountTransaction> allTransactions = NordigenAccountTransactionJSON.fromJSONArray(bookedTransactionsJson);
-				if (allTransactions != null) {
-					return allTransactions.stream().filter(tr -> {
-						Date bookingDate = tr.getBookingDate() != null ? tr.getBookingDate() : new Date();
-						return com.esferalia.aon.watson.util.AonDateUtils.compare(bookingDate, dateFrom) >= 0;
-					}).collect(Collectors.toList());
-				}
+	public static List<NordigenAccountTransaction> getPendingAccountTransactions(NordigenAccessToken token, String nordigenAccountId, Date dateFrom) {
+		JSONObject json = NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, dateFrom, null);
+		if (json != null) {
+			
+			JSONObject transactionsJson = json.optJSONObject("transactions");
+			JSONArray pendingTransactionsJson = null;
+			if (transactionsJson != null) {
+				pendingTransactionsJson = transactionsJson.optJSONArray("pending");				
 			}
-			return Collections.emptyList();
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
+			return NordigenAccountTransactionJSON.fromJSONArray(pendingTransactionsJson);
 		}
-	}
-	
-	public static List<NordigenAccountTransaction> getBookedAccountTransactions(NordigenAccessToken token, String nordigenAccountId, Date dateFrom) throws Exception {
-		try {
-			JSONObject json = NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, dateFrom, new Date());
-			if (json != null) {
-				JSONObject transactionsJson = json.optJSONObject("transactions");
-				JSONArray bookedTransactionsJson = null;
-				if (transactionsJson != null) {
-					bookedTransactionsJson = transactionsJson.optJSONArray("booked");
-				}
-				return NordigenAccountTransactionJSON.fromJSONArray(bookedTransactionsJson);
-			}
-			return Collections.emptyList();
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
-	}
-	
-	public static List<NordigenAccountTransaction> getPendingAccountTransactions(NordigenAccessToken token, String nordigenAccountId, Date dateFrom) throws Exception {
-		try {
-			JSONObject json = NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, dateFrom, null);
-			if (json != null) {
-				
-				JSONObject transactionsJson = json.optJSONObject("transactions");
-				JSONArray pendingTransactionsJson = null;
-				if (transactionsJson != null) {
-					pendingTransactionsJson = transactionsJson.optJSONArray("pending");				
-				}
-				return NordigenAccountTransactionJSON.fromJSONArray(pendingTransactionsJson);
-			}
-			return Collections.emptyList();
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
+		return Collections.emptyList();
 	}
 	
 	public static List<NordigenBankStatement> getStoredBankStatements(Domain domain, String user, RegistryBank rbank, Date dateFrom) {
 		return NordigenDAO.getBankStatements(domain, user, rbank, dateFrom, new Date());
 	}
 	
-	public static NordigenBankAccount getAccountByRbank(Domain domain, String login, Integer rbankId) throws Exception {
-		try {
-			RegistryBank rbank = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbankId));
-			Date lastMovementDate = getLastMovementDate(domain, login, rbankId);
-			return new NordigenBankAccount()
-					.setRbank(rbank)
-					.setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
-					.setBankAlias(rbank != null ? rbank.getAlias() : null)
-					.setLinked(AonStringUtils.isNotBlank(rbank.getRequisition()))
-					.setRequisitionId(rbank.getRequisition())
-					.setLastMovementDate(lastMovementDate);
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
-		}
+	public static NordigenBankAccount getAccountByRbank(Domain domain, String login, Integer rbankId) {
+		RegistryBank rbank = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbankId));
+		Date lastMovementDate = getLastMovementDate(domain, login, rbankId);
+		return new NordigenBankAccount()
+				.setRbank(rbank)
+				.setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
+				.setBankAlias(rbank != null ? rbank.getAlias() : null)
+				.setLinked(AonStringUtils.isNotBlank(rbank.getRequisition()))
+				.setRequisitionId(rbank.getRequisition())
+				.setLastMovementDate(lastMovementDate);
 	}
 	
-	
-	public static NordigenBankAccount setNordigenBankAccountValues(Domain domain, String user, NordigenAccessToken token, NordigenBankAccount account) throws Exception {
+	public static NordigenBankAccount setNordigenBankAccountValues(Domain domain, String user, NordigenAccessToken token, NordigenBankAccount account) {
 		try {
 			RegistryBank rbank = account.getRbank();
 			if (rbank.getRequisition() != null) {
@@ -396,8 +312,9 @@ public class AonNordigen {
 				}
 			}
 			return account;
-		} catch (NordigenException e) {
-			throw new Exception(e.getMessage());
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new AonCoreException(e);
 		}
 	}
 	
@@ -675,29 +592,5 @@ public class AonNordigen {
 	public static RegistryBank updateRbank(Domain domain, String login, RegistryBank rbank) {
 		return AON.saveRegistryBank(domain, login, rbank);
 	}
-	
-	public static void main(String[] args) throws Exception {
-		Integer rbank = 6740;
-		String access = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjczNTk4NTkwLCJqdGkiOiI4NWViYzZjYjQ1NDI0NWRkYmQwNGIzMzMwMzlmN2U1ZSIsImlkIjoxNjM5Miwic2VjcmV0X2lkIjoiZjM1NTk2ODUtYmJlYy00NWM0LTlkZmEtZjAxNzIxZTcxOTBlIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.ZYtjqT0vJceYcDker2ihaIeDG_-x3uuR8aMmGo_Lxo8";
-		NordigenAccessToken token = new NordigenAccessToken().setAccess(access);
-//		Domain domain = new Domain().setId(7138).setName("b72384936-ayudat.aonsolutions.net");
-//		String reqId = "4a7c2d29-6ab0-4afe-99bd-84c7ad7f76d7";
-//		updateRequisitionId(domain, "", getRequisition(token, reqId), rbank);
-		
-		List<NordigenRequisition> reqs = getAllRequisitions(token);
-		
-//		List<NordigenAccountTransaction> newTr = getNewTransactions(token, domain, "", rbank);
-//		List<NordigenBankAccount> allAccounts = getAllAccounts(token, domain, "");
-//		allAccounts.forEach(acc -> {
-//			System.out.println(acc.getIban() + " - " + acc.isLinked());
-//		});
-//			NordigenBankAccount acc = getAccountByRbank(token, domain, "", rbank);
-//			RegistryAddInfo info = insertNewRequisitionId(domain, "", getRequisition(getNewAccessToken(), reqId), rbank);
-		System.out.println("ok");
-	}
-	
-	
-	
-	
 	
 }

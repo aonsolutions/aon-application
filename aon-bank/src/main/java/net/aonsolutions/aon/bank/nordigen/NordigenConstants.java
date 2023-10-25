@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.bank.nordigen;
 
-public interface INordigenConstants {
+public final class NordigenConstants {
+	
 	public static final String ACCEPT_PARAM = "accept";
 	public static final String ACCESS_SCOPE_PARAM = "access_scope";
 	public static final String ACCESS_VALID_FOR_DAYS_PARAM = "access_valid_for_days";
@@ -26,4 +27,9 @@ public interface INordigenConstants {
 	public static final String SECRET_ID_PARAM = "secret_id";
 	public static final String SECRET_KEY_PARAM = "secret_key";
 	public static final String USER_AGENT_PARAM = "user_agent";
+	
+	private NordigenConstants() {
+		
+	}
+	
 }

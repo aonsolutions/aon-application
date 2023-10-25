@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.bank.nordigen;
 
+import static net.aonsolutions.aon.bank.nordigen.NordigenConstants.RADD_INFO_REQUISITION_ATTRIBUTE_PATTERN;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -18,7 +20,7 @@ public class NordigenUtils {
 		if (raddinfo == null) {
 			return null;
 		}
-		final Pattern aatrRegex = Pattern.compile(INordigenConstants.RADD_INFO_REQUISITION_ATTRIBUTE_PATTERN);
+		final Pattern aatrRegex = Pattern.compile(RADD_INFO_REQUISITION_ATTRIBUTE_PATTERN);
 		Matcher matcher = aatrRegex.matcher(AonStringUtils.trimToEmpty(raddinfo.getAttribute()));
 		if (matcher.matches()) {
 			String id = matcher.group("rbank");
