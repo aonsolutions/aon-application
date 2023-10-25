@@ -1,18 +1,18 @@
 package net.aonsolutions.aon.bank.nordigen;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_ACCESS_SCOPES;
@@ -28,57 +28,58 @@ public class NordigenTestCase {
 	private static NordigenAccessToken nordigenToken;
 	
 	private void assertAgreement(NordigenAgreement agreement) {
-		assertNotNull("Null agreement", agreement);			
+		assertNotNull(agreement, "Null agreement");			
 		NORDIGEN_ACCESS_SCOPES[] accessScopes = agreement.getAccessScope();
-		assertNotNull("Null agreement access scope", agreement.getAccessScope());
-		Arrays.stream(NORDIGEN_ACCESS_SCOPES.values()).forEach(scope -> assertTrue(scope + " missing", Arrays.stream(accessScopes).anyMatch(s -> s.equals(scope))));
-		assertNotNull("Null agreement access valid for days", agreement.getAccessValidForDays());
-		assertNotNull("Null agreement creation date", agreement.getCreated());
-		assertNotNull("Null agreement id", agreement.getId());
-		assertNotNull("Null agreement institution id", agreement.getInstitutionId());
-		assertNotNull("Null agreement max historical days", agreement.getMaxHistoricalDays());
+		assertNotNull(agreement.getAccessScope(),"Null agreement access scope");
+		Arrays.stream(NORDIGEN_ACCESS_SCOPES.values())
+			.forEach(scope -> assertTrue(Arrays.stream(accessScopes).anyMatch(s -> s.equals(scope)), scope + " missing"));
+		assertNotNull(agreement.getAccessValidForDays(), "Null agreement access valid for days");
+		assertNotNull(agreement.getCreated(), "Null agreement creation date");
+		assertNotNull(agreement.getId(), "Null agreement id");
+		assertNotNull(agreement.getInstitutionId(), "Null agreement institution id");
+		assertNotNull(agreement.getMaxHistoricalDays(), "Null agreement max historical days");
 	}
 	
 	private void assertRequisition(NordigenRequisition requisition) {
-		assertNotNull("Null requisition", requisition);			
+		assertNotNull(requisition, "Null requisition");			
 		assertEquals(AonLanguage.SPANISH.getLanguage(), requisition.getUserLanguage());
-		assertNotNull("Null requisition agreement", requisition.getAgreement());			
+		assertNotNull(requisition.getAgreement(), "Null requisition agreement");			
 		assertEquals(NORDIGEN_REQUISITION_STATUS.CR, requisition.getStatus());			
-		assertNotNull("Null requisition redirect", requisition.getRedirect());
-		assertNotNull("Null requisition redirect inmediate", requisition.getRedirectImmediate());
-		assertNotNull("Null requisition created date", requisition.getCreated());
-		assertNotNull("Null requisition account selection", requisition.getAccountSelection());
-		assertNotNull("Null requisition ID", requisition.getId());
-		assertNotNull("Null requisition institution ID", requisition.getInstitutionId());
-		assertNotNull("Null requisition link", requisition.getLink());
-		assertNull("Requisition SSN should be null", requisition.getSsn());
+		assertNotNull(requisition.getRedirect(), "Null requisition redirect");
+		assertNotNull(requisition.getRedirectImmediate(), "Null requisition redirect inmediate");
+		assertNotNull(requisition.getCreated(), "Null requisition created date");
+		assertNotNull(requisition.getAccountSelection(), "Null requisition account selection");
+		assertNotNull(requisition.getId(), "Null requisition ID");
+		assertNotNull(requisition.getInstitutionId(), "Null requisition institution ID");
+		assertNotNull(requisition.getLink(), "Null requisition link");
+		assertNull(requisition.getSsn(), "Requisition SSN should be null");
 		assertEquals(requisition.getId(), requisition.getReference());
 		assertTrue(requisition.getAccounts().isEmpty());
 	}	
 	
-	@BeforeClass
+	@BeforeAll
 	public static void initialize() throws Exception {
 		nordigenToken = AonNordigen.getNewAccessToken();
 	}
 	
 	@Test
-	public void testObtainNewAccessToken() {
+	void testObtainNewAccessToken() {
 		try {
 			NordigenAccessToken token = AonNordigen.getNewAccessToken();
-			assertNotNull("Null token", token);
-			assertNotNull("Null access", token.getAccess());
-			assertNotNull("Null access expires", token.getAccessExpires());
-			assertNotNull("Null refresh", token.getRefresh());
-			assertNotNull("Null refresh expires", token.getRefreshExpires());
-			assertNotNull("Null creation date", token.getCreationDate());
-			assertNotNull("Null refresh date", token.getRefreshDate());
+			assertNotNull(token, "Null token");
+			assertNotNull(token.getAccess(), "Null access");
+			assertNotNull(token.getAccessExpires(), "Null access expires");
+			assertNotNull(token.getRefresh(), "Null refresh");
+			assertNotNull(token.getRefreshExpires(), "Null refresh expires");
+			assertNotNull(token.getCreationDate(), "Null creation date");
+			assertNotNull(token.getRefreshDate(), "Null refresh date");
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
 
 	@Test
-	public void testRefreshAccessToken() {
+	void testRefreshAccessToken() {
 		try {
 			
 			String originalAccess = nordigenToken.getAccess();
@@ -86,13 +87,13 @@ public class NordigenTestCase {
 			
 			AonNordigen.refreshToken(nordigenToken);
 			
-			assertNotNull("Null token", nordigenToken);
-			assertNotNull("Null access", nordigenToken.getAccess());
-			assertNotNull("Null access expires", nordigenToken.getAccessExpires());
-			assertNotNull("Null refresh", nordigenToken.getRefresh());
-			assertNotNull("Null refresh expires", nordigenToken.getRefreshExpires());
-			assertNotNull("Null creation date", nordigenToken.getCreationDate());
-			assertNotNull("Null refresh date", nordigenToken.getRefreshDate());
+			assertNotNull(nordigenToken, "Null token");
+			assertNotNull(nordigenToken.getAccess(), "Null access");
+			assertNotNull(nordigenToken.getAccessExpires(), "Null access expires");
+			assertNotNull(nordigenToken.getRefresh(), "Null refresh");
+			assertNotNull(nordigenToken.getRefreshExpires(), "Null refresh expires");
+			assertNotNull(nordigenToken.getCreationDate(), "Null creation date");
+			assertNotNull(nordigenToken.getRefreshDate(), "Null refresh date");
 			assertNotEquals(originalRefreshDate, nordigenToken.getRefreshDate());
 			assertNotEquals(nordigenToken.getCreationDate(), nordigenToken.getRefreshDate());
 			assertNotEquals(originalAccess, nordigenToken.getAccess());
@@ -104,7 +105,7 @@ public class NordigenTestCase {
 	}
 	
 	@Test
-	public void testGetAllInstitutions() {
+	void testGetAllInstitutions() {
 		try {
 			List<NordigenInstitution> allInstitutions = AonNordigen.getInstitutions(nordigenToken, null, null);
 			assertTrue(allInstitutions != null && allInstitutions.size() > 2000);
@@ -114,7 +115,7 @@ public class NordigenTestCase {
 	}
 
 	@Test
-	public void testGetAllSpanishInstitutions() {
+	void testGetAllSpanishInstitutions() {
 		try {
 			List<NordigenInstitution> allInstitutions = AonNordigen.getInstitutions(nordigenToken, Country.ES, null);
 			assertNotNull(allInstitutions);
@@ -125,15 +126,15 @@ public class NordigenTestCase {
 	}
 	
 	@Test
-	public void testGetCaixabankInstitution() {
+	void testGetCaixabankInstitution() {
 		try {
 			NordigenInstitution caixaBank = AonNordigen.getInstitution(nordigenToken, "CAIXABANK_CAIXESBB");
 			assertNotNull(caixaBank);
-			assertNotNull("Null countries", caixaBank.getCountries());
-			assertNotNull("Null ID", caixaBank.getId());
-			assertNotNull("Null logo", caixaBank.getLogo());
-			assertNotNull("Null name", caixaBank.getName());
-			assertNotNull("Null transaction total days", caixaBank.getTransactionTotalDays());
+			assertNotNull(caixaBank.getCountries(), "Null countries");
+			assertNotNull(caixaBank.getId(), "Null ID");
+			assertNotNull(caixaBank.getLogo(), "Null logo");
+			assertNotNull(caixaBank.getName(),"Null name");
+			assertNotNull(caixaBank.getTransactionTotalDays(), "Null transaction total days");
 			assertEquals("CAIXESBB", caixaBank.getBic());
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -141,9 +142,8 @@ public class NordigenTestCase {
 	}
 	
 	@Test
-	public void testCrdAgreements() {
+	void testCrdAgreements() {
 		try {
-			NordigenInstitution caixaBank = AonNordigen.getInstitution(nordigenToken, "CAIXABANK_CAIXESBB");
 			NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, "CAIXABANK_CAIXESBB");
 			//COMENTADO PORQUE LA API NO OBTIENE LOS "SCOPES" CUANDO SE CREA
 //			assertAgreement(agreement);
@@ -159,7 +159,7 @@ public class NordigenTestCase {
 	}
 	
 	@Test
-	public void testCrdRequisitions() {
+	void testCrdRequisitions() {
 		try {
 			NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, "CAIXABANK_CAIXESBB");
 			NordigenRequisition requisition = AonNordigen.createRequisition(nordigenToken, agreement, "https://aonsolutions.org/");

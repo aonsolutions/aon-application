@@ -30,5 +30,6 @@ public interface IParamNames {
 	String CCC = "ccc";
 	String BANK_ID = "id_banco";
 	String EXTRA_FIELD = "campo_extra";
+	String ACCOUNT_ID = "cuentabancaria_id";
 	
 }

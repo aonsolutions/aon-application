@@ -1,6 +1,6 @@
-package net.aonsolutions.aon.bank.checkit;
+package net.aonsolutions.aon.bank;
 
-public class CheckItException extends Exception {
+public class CheckItException extends RuntimeException {
 
 	private static final long serialVersionUID = -5640775455927597322L;
 	

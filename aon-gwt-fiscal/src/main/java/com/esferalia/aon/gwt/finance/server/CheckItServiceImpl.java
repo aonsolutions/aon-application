@@ -28,8 +28,8 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
+import net.aonsolutions.aon.bank.CheckItException;
 import net.aonsolutions.aon.bank.checkit.CheckItAPI;
-import net.aonsolutions.aon.bank.checkit.CheckItException;
 import net.aonsolutions.aon.bank.checkit.IParamNames;
 
 @WebServlet(name = "CheckIt Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/CheckIt" })
@@ -39,7 +39,6 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 
 	@Override
 	public CheckItConfiguration getConfiguration(String domainName, int domain, String user) throws AonCoreException {
-		List<CheckItBank> bankIds = new LinkedList<>();
 		ApplicationParameter appParam = AON.getApplicationParameter(domainName, domain, user, AppParam.CHECK_IT_ENTERPRISE_ID);
 		Integer enterpriseId = null;
 		if (appParam != null) {
@@ -63,8 +62,8 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 			checkitUnlinkedAccounts = CheckItAPI.getUnlinkedActive(domainName, domain, user, enterpriseId);
 		} catch (CheckItException e) {
 		}
-
-		CheckItAPI.getBanksMap().forEach((k, v) -> bankIds.add(new CheckItBank(v, k)));
+		
+		List<CheckItBank> bankIds = CheckItAPI.getBankList();
 	
 		Integer empresaId = enterpriseId;
 		if (checkitAccounts != null) {
