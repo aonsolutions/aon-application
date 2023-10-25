@@ -227,11 +227,11 @@ public abstract class AbsExcelAction  {
         
         @Override
         public File createTempDirectory(String prefix) throws IOException {
-            File dir = new File(System.getProperty("java.io.tmpdir"), prefix);
-            dir.mkdir();
+            File directory = new File(System.getProperty("java.io.tmpdir"), prefix);
+            directory.mkdir();
             if (System.getProperty(PROPERTY) == null)
-                dir.deleteOnExit();
-            return dir;
+            	directory.deleteOnExit();
+            return directory;
         }
 		
 	}

@@ -20,6 +20,7 @@ export const charts = (div, data) => new Promise(async(resolve) => {
         theme: "material",
         legend: "none",
         lineWidth: 5,
+        width: 260,
         vAxis: {
           textStyle: {
             bold: true,
@@ -48,9 +49,9 @@ export const charts = (div, data) => new Promise(async(resolve) => {
           }
         },
         // animation: {
-          // duration: 800,
-          // easing: 'in',
-          // startup: true
+        //   duration: 800,
+        //   easing: 'in',
+        //   startup: true
         // }
       };
 

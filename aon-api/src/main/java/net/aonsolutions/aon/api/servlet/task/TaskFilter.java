@@ -54,7 +54,12 @@ public class TaskFilter {
 		if(!status.isEmpty() && !TaskStatus.safeValueOf(status).equals(TaskStatus.PENDING) ) {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
 		} else {	
-			filter = filter.and(f.getStatusProperty().in(PENDING));
+			Byte[] statusList = getStatusList(status);
+			if(statusList.length > 0) {
+				filter = filter.and(f.getStatusProperty().in(statusList));
+			} else {				
+				filter = filter.and(f.getStatusProperty().in(PENDING));
+			}
 		}
 		
 		if(!params.optString(START_DATE).isEmpty() && !params.optString(END_DATE).isEmpty()) {
@@ -444,6 +449,17 @@ public class TaskFilter {
 			}
 		}
 		return filterCau;
+	}
+	
+	private static Byte[] getStatusList(String statusStr) {
+		List<Byte> statusList = new ArrayList<>();
+		if(!statusStr.isEmpty()) {
+			String [] str = statusStr.split(",");
+			for(int i = 0; i < str.length; i++) {
+				statusList.add(TaskStatus.safeValueOf(str[i]).value());
+			}
+		}
+		return statusList.stream().toArray(Byte[]::new);
 	}
 	
 	private static List<Integer> getWorkgroupList(String workgroupStr) {

@@ -31,6 +31,7 @@ import net.aonsolutions.db.up2date.payroll.ContractSepeIdUpdate;
 import net.aonsolutions.db.up2date.payroll.FixBofFormTDistan;
 import net.aonsolutions.db.up2date.payroll.NoteInsert;
 import net.aonsolutions.db.up2date.product.ProductPerishableUpdate;
+import net.aonsolutions.db.up2date.registry.AlterRegistryBankBalance;
 import net.aonsolutions.db.up2date.tgss.PermissionUnPaidDaysFix;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023Insert;
 import net.aonsolutions.db.up2date.tgss.SuspendJobAndSalaryDaysInsert;
@@ -409,7 +410,8 @@ public class Up2Date {
 	    SalesInfoCreation.SALES_INFO_CREATION,
 	    InsertIAE1516.INSERT_IAE_1516,
 	    UdpateAonPacks.UPDATE_AON_PACKS,
-	    InsertIAE474.INSERT_IAE_474
+	    InsertIAE474.INSERT_IAE_474,
+	    AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE
 	};
 
     // ------------------------------------------------------------------------

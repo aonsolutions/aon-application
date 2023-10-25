@@ -18,6 +18,7 @@ import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.stat.IStatFilterItemVisitor;
@@ -69,6 +71,7 @@ import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO.ElaborationPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO.FinancePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomePropertiesDAO;
@@ -354,6 +357,7 @@ public class StatDAO {
 	private static final SalesPropertiesDAO SALES_PROPERTIES = new SalesPropertiesDAO();
 	private static final PurchasePropertiesDAO PURCHASE_PROPERTIES = new PurchasePropertiesDAO();
 	private static final ElaborationPropertiesDAO ELABORATION_PROPERTIES = new ElaborationPropertiesDAO();
+	private static final FinancePropertiesDAO FINANCE_PROPERTIES = new FinancePropertiesDAO();
 	
 	public static StatData<Integer, String, Double> getProductStat(AONContext ctx, ProductFilter productFilter,
 			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter,
@@ -616,6 +620,21 @@ public class StatDAO {
 		// TODO method::getProductStock
 		
 		return map;
+	}
+	
+	public static StatData<String, String, Double> getFinanceStat(AONContext ctx, FinanceFilter financeFilter) {
+		StatData<String, String, Double> stat = new StatData<>();
+		Collection<Condition> whereConditions = new ArrayList<>();
+		whereConditions.addAll(Arrays.asList(FINANCE_PROPERTIES.getConditions(financeFilter)));
+		ctx.getDslContext().select(FINANCE.PAYMENT, DSL.month(FINANCE.DUE_DATE), DSL.year(FINANCE.DUE_DATE), DSL.sum(FINANCE.AMOUNT).plus(FINANCE.EXPENSES))
+		.from(FINANCE)
+		.where(whereConditions)
+		.groupBy(FINANCE.PAYMENT, DSL.month(FINANCE.DUE_DATE), DSL.year(FINANCE.DUE_DATE))
+		.orderBy(FINANCE.DUE_DATE.asc())
+		.forEach(record -> {
+			stat.put(record.value2().toString() + "/" + record.value3().toString(), record.value1() == 0 ? "cobro" : "pago", record.value4().doubleValue());
+		});
+		return stat;
 	}
 	
 }

@@ -12,6 +12,7 @@ import { TaskListUtils } from "./utils/TaskListUtils.js";
 import { getTaskHolder } from "../../services/taskHolderService.js";
 import * as LS from "../../services/localStorageService.js";
 import { SigninSidenav } from "../timecontrol/signinEnums.js";
+import { MESSENGER } from "../../services/app.js";
 
 export class AonMessengerList extends AonElement {
   MORE;
@@ -70,6 +71,7 @@ export class AonMessengerList extends AonElement {
   async paintTable(divNotification) {
     this.AON_TABLE = this.isMobile() ? new AonMobileList() : new AonTable();
     this.AON_TABLE.id = this.id + "Table";
+    this.AON_TABLE.setApp(MESSENGER);
     if (divNotification) {
       await this.isFromNotification(this.AON_TABLE, divNotification);
     } else {

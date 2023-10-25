@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.finance.server;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,8 +8,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import jakarta.servlet.annotation.WebServlet;
 
 import org.json.JSONObject;
 
@@ -29,11 +26,13 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.impl.jooq.dao.NordigenDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.gargoylesoftware.htmlunit.javascript.host.Console;
 
-import nordigen.AonNordigen;
+import jakarta.servlet.annotation.WebServlet;
+import net.aonsolutions.aon.bank.nordigen.AonNordigen;
 
 @WebServlet(name = "Nordigen Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/nordigen" })
 public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implements NordigenService {
@@ -208,7 +207,9 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public NordigenBankAccount setNordigenAccountValues(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount account)
 			throws Exception {
 		Domain d = new Domain().setName(domainName).setId(domain);
-		return AonNordigen.setNordigenBankAccountValues(d, user, token, account);
+		NordigenBankAccount a = AonNordigen.setNordigenBankAccountValues(d, user, token, account);
+		NordigenDAO.updateRegistryBank(d, user, a);
+		return a;		
 	}
 
 

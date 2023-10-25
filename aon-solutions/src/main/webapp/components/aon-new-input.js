@@ -1,6 +1,7 @@
 import { AonElement } from "./AonElement.js";
 import {CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS, COLORS, MSG} from '../environments/environments.js'
 import '../css/aon-new-input.css';
+import { AonIconButton } from "./aon-icon-button.js";
 
 export class AonNewInput extends AonElement {
 
@@ -8,6 +9,8 @@ export class AonNewInput extends AonElement {
     BOX;
     LABEL;
     INPUT;
+    ICON;
+    ICON_BUTTON;
     TITLE;
     MSG;
     MSG_SPAN;
@@ -65,8 +68,11 @@ export class AonNewInput extends AonElement {
         this.INPUT = this.id + CONSTANT.INPUT.initCap();
         this.TITLE = this.id + CONSTANT.TITLE.initCap();
         this.MSG = this.id + CONSTANT.MSG.initCap();
+        this.ICON = this.id + CONSTANT.ICON.initCap();
+        this.ICON_BUTTON = this.id + CONSTANT.ICON_BUTTON.initCap();
         this.value = this.value || CONSTANT.EMPTY;
         this.type = this.type || CONSTANT.TEXT;
+
     }
 
     build() {
@@ -105,6 +111,14 @@ export class AonNewInput extends AonElement {
         let requiredText = this.isRequired() ? " *" : "";
         span.innerHTML = this.getTitle() + requiredText;
         label.appendChild(span);
+
+        if(this.isPassword()) {
+            this.addIcon(MATERIAL_ICONS.VISIBILITY, undefined,() => {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                this.getElement(this.ICON_BUTTON).icon =  type === 'password' ? 'visibility' : 'visibility_off';
+                input.type = type;
+            })
+        }
     }
 
     buildMsg(parent) {
@@ -138,6 +152,29 @@ export class AonNewInput extends AonElement {
         } else if(this.isRequired()) {
             this.removeError();
         }
+    }
+
+
+    addIcon(icon, color, fn) {
+        let div = this.getElement(this.BOX);
+        let iconLabel = this.getElement(this.ICON);
+        if (!iconLabel) {
+          iconLabel = this.createElement(TAG.LABEL);
+          div.appendChild(iconLabel);
+        }
+        iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
+        iconLabel.style.top = '5px';
+        iconLabel.id = this.ICON;
+        iconLabel.setAttribute("for", this.INPUT);
+        let aonIconButton = new AonIconButton();
+        aonIconButton.id = this.ICON_BUTTON;
+        aonIconButton.icon = icon;
+        aonIconButton.noHover = "true";
+        if(fn) aonIconButton.addEventListener(EVENT.CLICK, fn);
+        iconLabel.appendChild(aonIconButton);
+        
+        iconLabel.color = color;
+        this.getElement(this.INPUT).style.paddingRight = '40px';
     }
 
     addError(message) {
@@ -185,6 +222,10 @@ export class AonNewInput extends AonElement {
 
     setType(type) {
         this.type = type;
+    }
+
+    isPassword() {
+        return this.type === CONSTANT.PASSWORD;
     }
 
     getValue() {

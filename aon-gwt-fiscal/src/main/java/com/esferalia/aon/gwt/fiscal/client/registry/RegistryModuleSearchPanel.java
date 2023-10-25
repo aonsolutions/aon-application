@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class RegistryModuleSearchPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<RegistryParams>{
 
-	public static final double HEIGHT = 130;
+	public static final double HEIGHT = 75;
 	
 	private DocumentTypeListBox documentTypeBox;
 	private CountryListBox documentCountryBox;

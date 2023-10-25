@@ -1,5 +1,7 @@
 package com.code.aon.ui.config.util;
 
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
@@ -59,7 +61,7 @@ public class UserUtils implements Serializable {
 	}
 
 	public boolean isNewAONTheme() {
-		return getLoggedUser().getToolbar() == Toolbar.AON_SOLUTIONS;
+		return getLoggedUser().getToolbar() == Toolbar.AON_SOLUTIONS  && isAonSolutionsOrg();
 	}
 	
 	public void disableNewAONTheme(ActionEvent event) {
@@ -346,5 +348,8 @@ public class UserUtils implements Serializable {
 		return this.addScopeExpression;
 	}	
 	
+	public boolean isAonSolutionsOrg() {
+		return ((DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER)).isAonSolutionsOrg();
+	}
 	
 }

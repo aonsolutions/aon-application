@@ -217,7 +217,7 @@ export class AonInvoicePanel extends AonElement {
 			id: MSG.PENDING_DOCUMENTS,
 			title: MSG.PENDING_DOCUMENTS,
 			name: MSG.PENDING_DOCUMENTS,
-			color: Apps.INVOICE.color
+			app: Apps.INVOICE
 		}
 		this.getApplication().addSidenavOptions2(data, pendingOptions);
 	}
@@ -232,7 +232,7 @@ export class AonInvoicePanel extends AonElement {
 			id: MSG.INVOICES,
 			title: MSG.INVOICES,
 			name: MSG.INVOICES,
-			color: Apps.INVOICE.color
+			app: Apps.INVOICE
 		}
 		
 		this.getApplication().addSidenavOptions2(data, invoiceOptions);
@@ -245,7 +245,7 @@ export class AonInvoicePanel extends AonElement {
 				id: MSG.BUDGETS,
 				title: MSG.BUDGETS,
 				name:  MSG.BUDGETS,
-				color: Apps.INVOICE.color
+				app: Apps.INVOICE
 			}
 			this.getApplication().addSidenavOptions2(data, budgetOptions);
 		}
@@ -261,7 +261,7 @@ export class AonInvoicePanel extends AonElement {
 			id: MSG.MANAGEMENT,
 			title: MSG.MANAGEMENT,
 			name:  MSG.MANAGEMENT,
-			color: Apps.INVOICE.color
+			app: Apps.INVOICE
 		}
 		this.getApplication().addSidenavOptions2(data, settingOptions);
 	}

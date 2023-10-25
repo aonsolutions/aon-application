@@ -11,13 +11,96 @@
 	
 	<style>
 	
-	body {
-		background-color: #f6f8fc;
+	:root {
+  		--main-color: #f6655a;
+  		--help-color: #4f91ff;
+  		--fiscal-color: #fb982e;
+  		--payroll-color: #33a9a9;
+  		--accounting-color: #4f91ff;
+  		--management-color: #7884ca;
+  		--configuration-color: #ef6292;
+
+  		--main-background-color: #feedec;
+  		--help-background-color: #ebf2ff;
+  		--fiscal-background-color: #fef3e7;
+  		--payroll-background-color: #e8f5f5;
+  		--management-background-color: #edeff8;
+  		--accounting-background-color: #ebf2ff;
+  		--configuration-background-color: #fdedf2;
+  		
+  		--fiscal-icon: euro-symbol;
+  		--payroll-icon: group;
+  		--accounting-icon: euro-symbol;
+  		--configuration-icon: euro-symbol;
 	}
 	
+	body {
+		background-color: #fff;
+	}
+	
+	.aon-none {
+		margin: 0px;
+		padding: 0px;
+		border: none;
+	}
+	
+	.aon-width-min {
+		width: min-content; 
+	}
+	
+	.aon-textField,
+	.aon-dropDownOneMenu  {
+		width: max-content;
+		padding: 0px 8px 8px;
+		border-radius: 4px;
+		border: 1px solid rgb(210, 210, 214);
+	}
+	
+	.aon-textField:focus-within,
+	.aon-dropDownOneMenu:focus-within  {
+		border: 1px solid rgb(120, 120, 133);
+	}
+	.aon-textField > div,
+	.aon-dropDownOneMenu > div {
+		top : -8px;
+		background: #fff;
+		width: min-content;
+		position: relative;
+		white-space: nowrap;
+		padding: 0px 2px 0px;
+	}
+	
+	.aon-textField > input,
+	.aon-dropDownOneMenu > select,
+	.aon-textField > input:focus,
+	.aon-dropDownOneMenu > select:focus  {
+		border: none !important;
+		box-shadow: none !important;
+	}
+	
+	.aon-textField > .emptyTitle,
+	.aon-dropDownOneMenu > .emptyTitle {
+		height: 16px;
+		padding: 0px;
+	}
+ 	
+	.aon-dropDownOneMenu > select {
+		width: 95%;
+}
+	}
+	
+	.tbl-tab-search-odd,
+	.tbl-tab-search-even {
+		padding-bottom: 6px;
+	}
+	
+	.aon-search-content-width{
+		width: 100%;
+	}
+
 	.aon-dropDownMenu,
 	.aon_search_panel {
-		background-color: #f6f8fc !important;
+		background-color: #fff !important;
 	}
 	
 	#aonContent\:contentScrollDiv{
@@ -91,7 +174,7 @@
 	}
 	
 	.aon-top-menu-item-select {
-    	background-color: #f6f8fc !important;
+    	background-color: #fff !important;
 		font-weight: bold;
 		<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
 			border-bottom: 2px solid #002469;
@@ -141,31 +224,42 @@
 	}	
 	
 	.aon-direct-access-panel img {
+  		display: none;
   		filter: grayscale(100%);
 	}
 	
 	.aon-direct-access-list-element {
     	background: none;
     	border-bottom: none;
-    	padding: 5px 0 8px 12px;
+    	padding: 0px 0 8px 0px;
 	}
+
 	.aon-direct-access-list-element a{
     	width: 95%;
     	height: 100%;
     	display: inline-block;
 	}
 		
-	.aon-direct-access-list-element:hover {
-		border-radius: 50px;
-    	background-color: rgb(32,33,36,0.059) !important;
+	.aon-direct-access-list-element .aon-left-menu-icon {
+		padding: 10px;
+		border-radius: 0.2rem;
+    	color: var(--main-color) !important;
+	}	
+
+	.aon-direct-access-list-element .aon-left-menu-icon:hover {
+    	background-color: var(--main-background-color) !important;
 	}	
 	
-	.aon-direct-access-list-element.selected {
+	.aon-direct-access-list-element.selected1 .aon-left-menu-icon{
 		font-weight: bold;
-		border-radius: 50px;
-    	background-color: #d3e3fd !important;
+		border-radius: 0.2rem;
+    	background-color: var(--main-background-color) !important;
 	}
 	
+	.aon-direct-access-list-element.selected a *{
+		color: #fff !important;
+	}
+
 	.aon-finding-title {
     	background: none;
 	}
@@ -394,16 +488,18 @@
 	
 	.aon-portlet-title{
 		overflow: hidden;
+		color: black !important;
+		font-weight:bold !important;
+		margin-left: 5px !important;
 		margin-top: 5px  !important;
 		margin-bottom: 5px !important;
 	}
 	
 	.aon-portlets-column1 {
-    	background-color: #f6f8fc !important;
+    	background-color: #fff !important;
 	}
 
 	.aon-portlets-column2 {
-		border-radius: 16px;
     	background-color: #ffffff !important;
 	}	
 	
@@ -461,6 +557,10 @@
 		margin-bottom: 68px;
 	}
  */	
+	table[id$='domainSwitcherData'].aon-dataTable{
+		border-collapse: separate;
+		border-spacing: 0 0.9rem !important;
+	}
 	
 	.aon-dataTable,
 	.aon-dataTable tr ,
@@ -468,6 +568,10 @@
 	.aon-editDataTable tr
 	{
 		border: none;
+	}
+	
+	table[id$='domainSwitcherData'].aon-dataTable tr {
+		height: 60px;
 	}
 	
 	.aon-dataTable td,
@@ -484,6 +588,19 @@
 		border-bottom: none;
     	box-shadow: inset 0 -1px 0 0 rgba(100,121,143,0.122);
 	}	
+	
+	table[id$='domainSwitcherData'] td,
+	table[id$='domainSwitcherData'] th,
+	table[id$='domainSwitcherData'] .aon-table-row-hover {
+    	box-shadow: none;
+	}
+	
+
+	table[id$='domainSwitcherData'].aon-dataTable-header{
+		font-size: 13px;
+	}
+	
+
 	.aon-dataTable table td {
     	box-shadow: none;
 	}
@@ -492,6 +609,33 @@
 		border-bottom: none;
 	}
 
+	table[id$='domainSwitcherData'].aon-dataTable tr td,
+	table[id$='domainSwitcherData'].aon-dataTable tr th {
+		height: 480x;
+		padding: .35rem .4rem;
+    	padding-bottom: 0.35rem;
+    	padding-left: 0.4rem;
+  		padding-bottom: .15rem;	  
+		padding-left: 1rem !important;
+		box-sizing: border-box;
+
+	}
+	
+	table[id$='domainSwitcherData'].aon-dataTable tr td {
+  		border-top: solid 0.05rem #d2d2d6;
+  		border-bottom: solid 0.05rem #d2d2d6;  		
+	}
+	
+	table[id$='domainSwitcherData'].aon-dataTable tbody tr td:first-child {
+		border-left: solid 0.05rem #d2d2d6;
+	  	border-radius: 0.2rem 0 0 0.2rem;
+	}
+	
+	table[id$='domainSwitcherData'].aon-dataTable tbody tr td:last-child {
+		border-right: solid 0.05rem #d2d2d6;
+  		border-radius: 0 0.2rem 0.2rem 0;	
+	}
+	
 	.gwt-Selector .aon-dataTable 
 	.gwt-Selector .aon-editDataTable
 	{
@@ -552,27 +696,34 @@
     	background-color: transparent;
 	}	
 	
+	.aon-panel-search{
+		display: flex;
+		width: calc(80% - 1.2rem);
+  		border-radius: 20rem !important;
+  		box-shadow: 0 0.1rem 0.2rem 0 #d2d2d6, 0 0.1rem 0.2rem 0 #b4b4bb !important;		
+	}
+	
 	.aon-input-search {
 		width: 75%;
 		padding: 4px; 
-		border: 1px solid #ddd;
-		border-radius: .3rem;
+		border: solid 2px red;
 	}
 	
 	
 	.aon-input-search:focus {
 		outline:none;
-		background-color:white;
 	}
 
 	.aon-header .aon-input-search {
 		width: 75%;
-		height: 28px;
+		height: 36px;
 		padding: 4px; 
-		border-radius: 8px;
-		border: 1px solid #eaf1fb;
-		background-color: #eaf1fb;
-		
+		border: none;
+		box-shadow: none;
+	}
+	.aon-panel-search .aon-input-search:focus {
+		border: none !important;
+		box-shadow: none !important;
 	}
 	
 	.aon-MainCreta-Enterprises .aon-SearchTextBox,
@@ -583,7 +734,6 @@
 		background-color: #eaf1fb;
 	}
 
-	.aon-header .aon-input-search:focus,
 	.aon-MainAgreement-Agreements .aon-SearchTextBox:focus,
 	.aon-MainCreta-Enterprises .aon-SearchTextBox:focus, 
 	.aon-EmployeeTree-Employees .aon-SearchTextBox:focus {
@@ -1250,15 +1400,10 @@
 	.aon-menu-popup
 	 {
 		opacity:0.94;
-		border-radius: 16px;	 
+		border-radius: 0.2rem;	 
 	 	color: #FFF !important;
-	 	<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-    		background: linear-gradient(to top, #b10d4c, #002469) !important;
-    	</c:if>
-	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-		 	background-color: #2152A5 !important;
-		 	box-shadow: 3px 6px 12px #2152A5;
-	 	</c:if>
+	 	background-color: var(--main-color) !important;
+	 	/*box-shadow: 3px 6px 12px var(--main-color);*/
     }
     
 
@@ -1281,12 +1426,7 @@
     	color: #FFF;
     	height: 24px;
     	border-bottom: 1px solid #FFF;
-	 	<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-    	background-color: transparent !important;
-    	</c:if>
-	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-	 	background-color: #2152A5 !important;
-	 	</c:if>
+	 	background-color: var(--main-color) !important;
     	padding-left: 12px;
     	background-image: none;
 	}   
@@ -1297,24 +1437,14 @@
     .aon-menu-popup .aon-menu-icon-gipuzkoa,
     .aon-menu-popup .aon-menu-icon-navarra
      {
-		<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-			border: none;
-    	</c:if>
-	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-			border-color: #2152A5;
-	 	</c:if>
+		border-color: var(--main-color);
     }
     
     .aon-menu-popup .aon-menu-fiscal-label {
     	background-image: none;
     }
 	.aon-menu-popup .aon-menu-fiscal{
-		<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-			border: none;
-    	</c:if>
-	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-			border-bottom: 1px solid #2152A5;
-	 	</c:if>
+		border-bottom: 1px solid var(--main-color);
 	}
     
     .aon-menu-popup .aon-direct-access-list-element {
@@ -1327,18 +1457,13 @@
 
     .aon-menu-popup .aon-direct-access-list-element:hover {
     	color: #FFF;
-	 	<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-    	background-color: transparent !important;
-    	</c:if>
-	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-	 	background-color: #2152A5 !important;
-	 	</c:if> 
+	 	background-color: var(--main-color) !important;
 	}
 
     .aon-menu-popup .aon-direct-access-list-element *:hover {
     	/*font-weight: bold;*/
-		border-radius: 50px;
-    	color: #2152A5 !important;
+		border-radius: 0.2rem;
+    	color: var(--main-color) !important;
     	background-color: #FFF !important;
 	}
 	
@@ -1346,14 +1471,9 @@
 	.aon-top-menu-item-selected {
     	opacity: 95%;
     	color: #FFF !important;
-    	border-top-left-radius: 6px;
-    	border-top-right-radius: 6px;
-	 	<c:if test="#{fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-    	background: #002469 !important;
-    	</c:if>
-	 	<c:if test="#{!fn:endsWith(domainSwitcher.domainNameURL, 'aonsolutions.org')}" >
-	 	background-color: #2152A5 !important;
-	 	</c:if> 
+    	border-top-left-radius: 0.2rem;
+    	border-top-right-radius: 0.2rem;
+	 	background-color: var(--main-color) !important;
 	}
 
 	div[id$='aonContentPopup']{
@@ -1724,7 +1844,7 @@
 	
 	// GMail LookAndFeel		
 	.gmail-background {
-		background-color: #f6f8fc;
+		background-color: #fff;
 	}
 	
 	.aon-EmployeeTree-Employees .gwt-Tree table{
@@ -1741,7 +1861,7 @@
 	}
 
 	.aon-MainTrash-Stack .gwt-TreeItem:hover,
-	.aon-MainCreta-Enterprises .gwt-TreeItem:hover,
+	.aon-MainCreta-Enterprises .gwt-TreeItem:hover,\[id\$
 	.aon-MainAgreement-Agreements .gwt-TreeItem:hover,
 	.aon-EmployeeTree-Employees .gwt-TreeItem:hover {
 		border-radius: 50px;
@@ -1794,7 +1914,7 @@
 	.aon-EmployeeTree .gwt-SplitLayoutPanel-VDragger,
 	.aon-EmployeeTree-Events .gwt-MenuBar-horizontal, 
 	.aon-EmployeeTree-Employees .gwt-MenuBar-horizontal {
-		background-color: #f6f8fc !important;
+		background-color: #fff !important;
 	}
 
 	.aon-Model-Detail{
@@ -1813,16 +1933,16 @@
 	
 	.aon-MainCreta-Events *,
 	.aon-EmployeeTree-Events * {
-		border-color : #f6f8fc !important;
-		background-color: #f6f8fc !important;
+		border-color : #fff !important;
+		background-color: #fff !important;
 	}
 	
 	.gwt-Selector .gwt-SplitLayoutPanel-VDragger {
-		background-color: #f6f8fc !important;
+		background-color: #fff !important;
 	}
 	
 	.aon-Model-Info * {
-		border-color : #f6f8fc !important;
+		border-color : #fff !important;
 		background-color: transparent !important;
 	}
 
@@ -1860,6 +1980,86 @@
 		position: inherit;		
 	} 
 	
+
+	.aon-menu-desktop * {
+		color : #19191d;
+		font-size: 15px !important;
+	}
+	.aon-menu-desktop-panel {
+ 			padding: 1rem;
+ 			border-radius: 0.2rem;
+		border: solid 0.05rem #d2d2d6;
+	}
+	
+	.aon-menu-desktop-header {
+		text-align: left;
+		text-transform: uppercase;
+	}
+	
+	.aon-menu-desktop-element {
+ 		margin-top: 1rem;	
+		padding: 2rem;
+ 		border-radius: 0.2rem;
+		border: solid 0.05rem #d2d2d6;
+	}
+	.aon-menu-desktop-element * {
+	}
+	.aon-menu-desktop-element:hover {
+		border: solid 0.05rem #000;
+	}
+
+	.aon-menu-desktop-header * {
+		vertical-align: middle;
+	}
+		
+	.aon-menu-desktop-header-line {
+		max-width: 0rem;
+		height: 27px;
+		display: inline-block;
+		border-radius: 20rem;
+		border: 4px solid #4f91ff;
+ 		}
+	
+	.aon-menu-desktop-header-text {
+		margin-left: 10px;
+		font-weight: bold;
+ 	}
+ 		
+	.aon-menu-desktop-element-col {
+		width: 33%;
+ 	}
+
+	.aon-menu-desktop-element-line {
+		max-width: 0rem;
+		height: 80px;
+		display: block;
+		border-radius: 20rem;
+		border: 3px solid #4f91ff;
+ 		}
+ 		
+	.aon-menu-desktop-element-text {
+		display: block;
+		padding: 10px;
+		font-size: 15px !important;
+		
+	}
+	
+	.aon-menu-desktop-element-icon{
+		width: 24px;
+		display: block;
+		padding: 10px;
+		margin-left: 10px;
+ 			border-radius: 0.2rem;
+		font-size: 24px !important;
+	}
+	
+	.aon-menu-desktop-element-go {
+		font-size: 36px !important;
+	}
+	
+	table[id$='domainSwitcherData'] td:first-child span {
+		color : var(--main-color);
+	}
 
 	</style>
 
@@ -2202,12 +2402,11 @@
 				
 			}, 300000);
 			
-		
 	</script>
 
 	<aon:outputConnectionStatus id="aonStatus"/>
 		
-	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 0px solid #ddd;" >
+	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: solid 0.05rem #d2d2d6; height: 65.4px " >
 		<aon:form id="headerOptionsForm">
 		<aon:panelGrid columns="4" width="100%" 
 			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-name,aon-header-name  aon-width-all, aon-header-options aon-width-300 aon-pl-10" style="height:60px;" >
@@ -2216,8 +2415,8 @@
 
 				<aon:div style="margin-bottom:2px;">
 					<aon:commandLink id="index" action="start" title="#{bundle.aon_home}" >
-					<aon:graphicImage style="height: 24px; vertical-align: middle; padding-left: 6px;"
-						value="#{customize.headerLogo}" />
+					<aon:graphicImage style="vertical-align: middle; padding-left: 6px;"
+						value="#{aonResource.resolve['/images/logo-aon.png']}" />
 					</aon:commandLink>
 					<aon:if test="#{customize.separator != null}">					
 						<aon:outputText value="#{customize.separator}"
@@ -2228,54 +2427,55 @@
 				</aon:div>
 			</aon:panelGroup>
 			<aon:panelGroup>
-		<aon:commandLink 
-			id="new_aon"
-			action="start" 
-			immediate="true"
-			style="color: #002469;"
-			styleClass="aon-top-menu-item"
-			actionListener="#{userUtils.disableNewAONTheme}" >
-			<aon:outputText
-				value="toggle_on"  
-				styleClass="material-icons" 
-				style="position:absolute; font-size:38px; transform: translateY(-10px); " 
-				/>
-			<aon:outputText
-			value="Nuevo Diseño" 
-			style="padding-left: 38px; white-space: nowrap;" 
-			/>
-		</aon:commandLink>
+				<aon:commandLink 
+					id="new_aon"
+					action="start" 
+					immediate="true"
+					style="color: #000;"
+					styleClass="aon-top-menu-item"
+					actionListener="#{userUtils.disableNewAONTheme}" >
+					<aon:outputText
+						value="toggle_on"  
+						styleClass="material-icons" 
+						style="position:absolute; font-size:38px; transform: translateY(-10px); " 
+						/>
+					<aon:outputText
+					value="Nuevo Diseño" 
+					style="padding-left: 38px; white-space: nowrap;" 
+					/>
+				</aon:commandLink>
 			</aon:panelGroup>
 			
 			<aon:panelGroup style="text-align:left; display:flex" >
-					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" onclick="javascript:focusSearchResults(); return true;">
-					</aon:commandLink>
-					<aon:inputText 
-						id="smartFilter" 
-						size="60" 
-						value="#{search.filter}" 
-						placeholder="Buscar Empresas y Trabajadores" 
-						styleClass="aon-input-search aon-skip-focus"
-						autocomplete="off" 
-						onblur="javascript:hideSearchResults()" 
-						onfocus="javascript:showSearchResults()" 
-						onkeydown="javascript:escSearchResults(event)"
-						style="width:100%"
-						>
-						<a4j:support 
-						event="onkeyup"
-						onsubmit="if (window.event.which == 27 || window.event.which == 38 || window.event.which == 40) {return false;}"
-						oncomplete="javascript:showSearchResults()"
-						reRender="smartFilterTableContainer"
-						eventsQueue="domainSwitcherFilterKeyUp"
-						requestDelay="500"
-						ajaxSingle="true"
-						ignoreDupResponses="true"
-						limitToList="true">
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
-						</a4j:support> 
-						
-					</aon:inputText>
+					<aon:div styleClass="aon-panel-search" >
+						<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" onclick="javascript:focusSearchResults(); return true;">
+						</aon:commandLink>
+						<aon:inputText 
+							id="smartFilter" 
+							size="60" 
+							value="#{search.filter}" 
+							placeholder="Buscar Empresas y Trabajadores" 
+							styleClass="aon-input-search aon-skip-focus"
+							autocomplete="off" 
+							onblur="javascript:hideSearchResults()" 
+							onfocus="javascript:showSearchResults()" 
+							onkeydown="javascript:escSearchResults(event)"
+							>
+							<a4j:support 
+							event="onkeyup"
+							onsubmit="if (window.event.which == 27 || window.event.which == 38 || window.event.which == 40) {return false;}"
+							oncomplete="javascript:showSearchResults()"
+							reRender="smartFilterTableContainer"
+							eventsQueue="domainSwitcherFilterKeyUp"
+							requestDelay="500"
+							ajaxSingle="true"
+							ignoreDupResponses="true"
+							limitToList="true">
+								<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
+							</a4j:support> 
+							
+						</aon:inputText>
+					</aon:div>
 					
 					<aon:div id="smartFilterTableContainer" 
 							styleClass="search-results-popup" 

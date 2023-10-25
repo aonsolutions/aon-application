@@ -1,6 +1,7 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonIconButton } from './aon-icon-button.js';
+import * as LS from "../services/localStorageService.js";
 
 export class AonCard extends AonElement {
  	CARD;
@@ -8,6 +9,7 @@ export class AonCard extends AonElement {
 	TITLE_SECTION1;
 	TITLE_SECTION2;
 	CONTENT;
+	app;
 
 	static get observedAttributes() {
 		return [CONSTANT.ID, CONSTANT.VISIBLE, 'flex'];
@@ -79,6 +81,10 @@ export class AonCard extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		div.id = this.CARD;
     	div.className = 'aonCard';
+		if(LS.isNewTheme()) {
+			div.style.boxShadow = "none";
+			div.classList.add('aonCardHover');
+		} 
 		if(this.flex) div.classList.add("aonCardFlex");
 		this.appendChild(div);
 
@@ -86,10 +92,23 @@ export class AonCard extends AonElement {
 		title.id = this.TITLE;
 		title.className = 'aonCardTitle';
 
+
 		let section1 = this.createElement(TAG.SECTION);
 		section1.id = this.TITLE_SECTION1;
 		section1.className = 'aonCardTitleSection';
-		section1.innerHTML = this.title;
+		if(LS.isNewTheme() && this.getApp()) {
+			let arrowTitleSpan = this.createElement(TAG.SPAN);
+			arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
+			arrowTitleSpan.style.borderColor = this.getApp().color;
+			arrowTitleSpan.style.height = '2.35rem';
+			section1.appendChild(arrowTitleSpan);
+		}
+		let titleSpan = this.createElement(TAG.DIV);
+		titleSpan.innerHTML = this.title;
+		section1.appendChild(titleSpan);
+
+		section1.addEventListener(EVENT.CLICK, () => this.dispatchEvent(new Event(EVENT.CLICK_TITLE)));
+
 		title.appendChild(section1);
 
 		let section2 = this.createElement(TAG.SECTION);
@@ -123,10 +142,7 @@ export class AonCard extends AonElement {
 		span.id = id + "Span";
 		span.appendChild(aib);
 		
-		console.log("title : " + this.TITLE_SECTION2);
-		console.log("title");
 		let title = this.getElement(this.TITLE_SECTION2);
-		console.log(title);
 		title.appendChild(span);
 	}
 
@@ -186,6 +202,14 @@ export class AonCard extends AonElement {
 	
 	getCardTitle(){
 		return this.getElement(this.TITLE);
+	}
+
+	getApp(){
+		return this.app;
+	}
+
+	setApp(app) {
+		this.app = app;
 	}
 }
 

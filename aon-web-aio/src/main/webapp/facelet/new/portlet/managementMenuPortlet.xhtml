@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:div id="managementMenuBar" style="display:none" styleClass="aon-management-menu-bar" >
+
+		<aon:div 
+		style="cursor:pointer;" 
+		styleClass="aon-portlet-title" 
+		onclick="javascript:collapseMenuBar(this)">
+			<aon:outputText styleClass="aon-portlet-title-line"/>
+			<aon:outputText value="#{bundle.aon_sales}" />
+		</aon:div>
+
+		<aon:div styleClass="aon-direct-access-list">
+			<aon:div styleClass="aon-direct-access-list-element">
+				<aon:commandLink 
+					id="customer-management"
+					rendered="#{actionDenied.renderedOption('customer_search-management')}"
+					action="customer_search-management"
+					actionListener="#{customer.onEditSearch}" >
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="group" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.customer_finance_checking}" />
+				</aon:commandLink>
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list-element">
+				<aon:commandLink id="saleInvoiceManagement"
+					rendered="#{actionDenied.renderedOption('saleInvoice_search')}"
+					action="saleInvoice_search"
+					actionListener="#{saleInvoice.onEditSearch}">
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="description" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_sale_invoice_management_module}" />
+				</aon:commandLink>
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list-element">
+				<aon:commandLink id="invoicePrint"
+					rendered="#{actionDenied.renderedOption('invoicePrint_search')}"
+					action="invoicePrint_search"
+					actionListener="#{invoicePrint.onEditSearch}">
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="print" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_invoice_print_module}" />
+				</aon:commandLink>
+			</aon:div>
+		</aon:div>
+
+
+	</aon:div>
+</ui:composition>

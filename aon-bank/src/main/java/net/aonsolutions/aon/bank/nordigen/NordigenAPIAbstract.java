@@ -1,4 +1,4 @@
-package nordigen;
+package net.aonsolutions.aon.bank.nordigen;
 
 import java.io.IOException;
 import java.net.URI;

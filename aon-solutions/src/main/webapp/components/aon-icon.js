@@ -65,8 +65,10 @@ export class AonIcon extends AonElement {
 
   build() {
     let icon = icons[this.getAttribute('icon')];
+    let left = icon.left || 0;
+    let top = icon.top || 0;
     if(icon && icon.paths) {
-      let html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${icon.width} ${icon.height}"
+      let html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${left} ${top} ${icon.width} ${icon.height}"
         width="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}"
         height="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}">
         <g id="${this.getAttribute('icon')}">`;
@@ -79,7 +81,7 @@ export class AonIcon extends AonElement {
       this.innerHTML = html;
     } else if (icon && icon.path) {
       this.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${icon.width} ${icon.height}"
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="${left} ${top} ${icon.width} ${icon.height}"
           width="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}"
           height="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}">
         <g id="${this.getAttribute('icon')}">

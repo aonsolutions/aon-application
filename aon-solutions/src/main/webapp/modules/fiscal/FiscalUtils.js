@@ -35,6 +35,8 @@ const getModelNew = (model)=> {
   const statusText = TAX_ENUMS.TAX_STATUS[model.status];
   let color = "";
 
+  const statusHtml = createStatus(model.status);
+  
   if(["PENDING", "CUSTOMER_CHECK"].includes(model.status))  {
     color = "fin";
   } else if("FINISHED" === model.status) {
@@ -50,9 +52,51 @@ const getModelNew = (model)=> {
     modelText: TAX_ENUMS.TAX_MODEL_TEXT[newModel],
     typeText: TAX_ENUMS.TAX_TYPE[model.type],
     statusText,
+    statusHtml,
     lettersHtml,
     newModel
   }
+
+}
+
+const createStatus = (modeStatus) => {
+  let colorStatus;
+
+  switch (modeStatus) {
+    case "PENDING":
+      colorStatus = "lightgray";
+      break;
+    case "FINISHED":
+      colorStatus = "rgb(227, 255, 171)";
+      break;
+    case "BATCHED":      
+      colorStatus = "black";
+      break;
+    case "BLOCKED":
+      colorStatus = "black";
+      break;
+    case "SENT":
+      colorStatus = "transparent";
+      break;
+    case "MISSING":
+      colorStatus = "black";
+      break;
+    case "CUSTOMER_CHECK":
+      colorStatus = "lightyellow";
+      break;
+    case "CUSTOMER_ACCEPTED":
+      colorStatus = "rgb(233, 255, 219)";
+      break;
+    case "CUSTOMER_REJECTED":
+      span.style.backgroundColor = "darkred";
+      break;
+    default:
+      span.style.backgroundColor = "black";
+      break;
+  }
+
+  return /*html*/`<div style="padding: 0.5rem;border-radius: 0.2rem;background-color: ${colorStatus};font-weight: bold;max-width: 6rem;text-align: center;" title="${TAX_ENUMS.TAX_STATUS[modeStatus]}">${TAX_ENUMS.TAX_STATUS[modeStatus]}</div>`;
+
 }
 
 const groupBy = (list, keyGetter) =>{

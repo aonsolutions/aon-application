@@ -223,6 +223,87 @@ public class DesktopController implements Serializable {
 		return false;
 	}
 	
+	// --------------------------------------------------------------------
+	
+	private enum MenuOption {
+	    HELP,
+	    FISCAL,
+	    PAYROLL,
+	    MANAGEMENT,
+	    ENTERPRISE,
+	    ACCOUNTING,
+	    CONFIGURATION,
+	    TIME_COONTROL
+	    ;
+	}
+	
+	private MenuOption menuOptionSelected = MenuOption.ENTERPRISE;
+	
+	
+	public boolean isHelpSelected() {
+	    return menuOptionSelected == MenuOption.HELP;
+	}
+
+	public boolean isFiscalSelected() {
+	    return menuOptionSelected == MenuOption.FISCAL;
+	}
+
+	public boolean isPayrollSelected() {
+	    return menuOptionSelected == MenuOption.PAYROLL;
+	}
+
+	public boolean isManagementSelected() {
+	    return menuOptionSelected == MenuOption.MANAGEMENT;
+	}
+
+	public boolean isEnterpriseSelected() {
+	    return menuOptionSelected == MenuOption.ENTERPRISE;
+	}
+
+	public boolean isAccountingSelected() {
+	    return menuOptionSelected == MenuOption.ACCOUNTING;
+	}
+
+	public boolean isConfigurationSelected() {
+	    return menuOptionSelected == MenuOption.CONFIGURATION;
+	}
+
+	public boolean isTimeControlSelected() {
+	    return menuOptionSelected == MenuOption.TIME_COONTROL;
+	}
+
+	public void onSelectHelp(ActionEvent event) {
+	    menuOptionSelected = MenuOption.HELP;
+	}
+
+	public void onSelectFiscal(ActionEvent event) {
+	    menuOptionSelected = MenuOption.FISCAL;
+	}
+
+	public void onSelectPayroll(ActionEvent event) {
+	    menuOptionSelected = MenuOption.PAYROLL;
+	}
+
+	public void onSelectManagement(ActionEvent event) {
+	    menuOptionSelected = MenuOption.MANAGEMENT;
+	}
+
+	public void onSelectEnterprise(ActionEvent event) {
+	    menuOptionSelected = MenuOption.ENTERPRISE;
+	}
+	
+	public void onSelectAccounting(ActionEvent event) {
+	    menuOptionSelected = MenuOption.ACCOUNTING;
+	}
+	
+	public void onSelectConfiguration(ActionEvent event) {
+	    menuOptionSelected = MenuOption.CONFIGURATION;
+	}
+	
+	public void onSelectTimeControl(ActionEvent event) {
+	    menuOptionSelected = MenuOption.TIME_COONTROL;
+	}
+
 	private void checkInitAction() {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		if(principal.getInitAction() != null) {
