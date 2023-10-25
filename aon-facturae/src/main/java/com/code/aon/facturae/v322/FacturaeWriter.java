@@ -102,6 +102,7 @@ public class FacturaeWriter {
 	private Invoice invoice;
 	private CompanyFull company;
 	private Workplace workplace;
+	private String legalLiterals;
 	
 	public FacturaeWriter(Domain domain, User user, CompanyFull company, Workplace workplace, Invoice invoice) {
 		this.domain = domain;
@@ -109,6 +110,15 @@ public class FacturaeWriter {
 		this.company = company;
 		this.workplace = workplace;
 		this.invoice = invoice;
+	}
+	
+	public FacturaeWriter(Domain domain, User user, CompanyFull company, Workplace workplace, Invoice invoice, String legalLiterals) {
+		this.domain = domain;
+		this.user = user;
+		this.company = company;
+		this.workplace = workplace;
+		this.invoice = invoice;
+		this.legalLiterals = legalLiterals;
 	}
 	
 	// ----- GETTERS & SETTERS
@@ -512,6 +522,10 @@ public class FacturaeWriter {
 		invoiceType.setInvoiceTotals( getInvoiceTotals() );
 		if ( this.invoice.isVatAccrualPayment() ) {
 			invoiceType.setLegalLiterals( getLegalLiterals() );			
+		} else if(!AonStringUtils.isBlank(legalLiterals)) {
+			LegalLiteralsType llt = new LegalLiteralsType();
+			llt.getLegalReference().add(legalLiterals);
+			invoiceType.setLegalLiterals(llt);
 		}
 		invoiceType.setItems( getItems(invoiceType) );
 		addPaymentDetails( invoiceType );

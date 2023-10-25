@@ -179,7 +179,7 @@
 				    			<g:ScrollPanel ui:field="userSecondaryUserScrollPanel" styleName="{style.scrollStyle}">
 					    			<g:DeckPanel ui:field="userSecondaryUserDeckPanel">
 					    				<g:HTMLPanel ui:field="userLoadingPanel" styleName="{style.message}"></g:HTMLPanel>
-					    				<g:Label styleName="{style.message}">No eisten usuarios secundarios</g:Label>
+					    				<g:Label styleName="{style.message}">No existen usuarios secundarios</g:Label>
 					    				<g:Grid ui:field="userSecondaryUserDataTable"></g:Grid>
 					    			</g:DeckPanel>
 					    		</g:ScrollPanel>
@@ -209,7 +209,7 @@
 				    			<g:ScrollPanel ui:field="enterpriseSecondaryUserScrollPanel" styleName="{style.scrollStyle}">
 					    			<g:DeckPanel ui:field="enterpriseSecondaryUserDeckPanel">
 					    				<g:HTMLPanel ui:field="enterpriseLoadingPanel" styleName="{style.message}"></g:HTMLPanel>
-					    				<g:Label styleName="{style.message}">No eisten usuarios secundarios</g:Label>
+					    				<g:Label styleName="{style.message}">No existen usuarios secundarios</g:Label>
 					    				<g:Grid ui:field="enterpriseSecondaryUserDataTable"></g:Grid>
 					    			</g:DeckPanel>
 					    		</g:ScrollPanel>
