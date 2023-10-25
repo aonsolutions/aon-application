@@ -229,6 +229,7 @@ public class DesktopController implements Serializable {
 	    HELP,
 	    FISCAL,
 	    PAYROLL,
+	    TREASURY,
 	    MANAGEMENT,
 	    ENTERPRISE,
 	    ACCOUNTING,
@@ -246,6 +247,10 @@ public class DesktopController implements Serializable {
 
 	public boolean isFiscalSelected() {
 	    return menuOptionSelected == MenuOption.FISCAL;
+	}
+
+	public boolean isTreasurySelected() {
+	    return menuOptionSelected == MenuOption.TREASURY;
 	}
 
 	public boolean isPayrollSelected() {
@@ -278,6 +283,10 @@ public class DesktopController implements Serializable {
 
 	public void onSelectFiscal(ActionEvent event) {
 	    menuOptionSelected = MenuOption.FISCAL;
+	}
+
+	public void onSelectTreasury(ActionEvent event) {
+	    menuOptionSelected = MenuOption.TREASURY;
 	}
 
 	public void onSelectPayroll(ActionEvent event) {
