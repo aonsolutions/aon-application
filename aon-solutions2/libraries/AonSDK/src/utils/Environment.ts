@@ -3,7 +3,7 @@
  */
 
 // true para activar que los datos lleguen desde la api, false para usar datos ficticion locales
-export let APIEnvironment  = true;
+export let APIEnvironment  = false;
 // true activa unos tests simples para ver que los métodos funcionan correctamente, false para desactivarlos
 export let test: boolean   = false;
 
