@@ -27,26 +27,26 @@ export class InboxDashboardComponent implements OnInit {
   messageTotal: string = '0';
   totalMessages: string = '0';
   spinner: boolean = true;
+  headerTable: any = {
+    name: 'Name',
+    status: 'Status',
+    title: 'Title',
+    description: 'Description',
+    total: 'Total',
+    date: 'Date',
+    actions: 'Actions',
+  };
+  
   constructor(
     private translateService: TranslateService,
     private messageService: MessageService,
     private messageChatService: MessageChatService,
     private router: Router
-    ) {}
+  ) {}
 
-    headerTable: any = {
-      name: 'Name',
-      status: 'Status',
-      title: 'Title',
-      description: 'Description',
-      total: 'Total',
-      date: 'Date',
-      actions: 'Actions',
-    };
-
-    ngOnInit(): void {
-      this.tableData();
-    }
+  ngOnInit(): void {
+    this.tableData();
+  }
 
   // Mensajes - datos de la tabla
   private tableData() {
