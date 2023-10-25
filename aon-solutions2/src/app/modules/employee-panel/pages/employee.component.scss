@@ -1,6 +1,10 @@
 @import "src/styles.scss";
 
 ::ng-deep {
+  .fit-button {
+    width: fit-content;
+  }
+
   .buttons {
     display: flex;
     align-items: center;
@@ -34,6 +38,11 @@
       }
     }
   }
+
+  .form {
+    padding: 0 1rem 1rem 1rem !important;
+  }
+
   .title {
     display: flex;
     font-family: "Roboto-Medium";
@@ -47,6 +56,7 @@
 
   .structure-form {
     width: 100%;
+    margin-right: $margin-right * 2;
   }
 
   app-input {
@@ -69,6 +79,10 @@
     color: $color-green;
     text-transform: uppercase;
     padding-bottom: $padding;
+
+    app-icon {
+      cursor: pointer;
+    }
   }
 
   .employee-detail-title {
@@ -111,7 +125,7 @@
       padding-bottom: $padding-bottom;
     }
 
-    .info-title-timing{
+    .info-title-timing {
       color: $color-secondary;
       text-transform: uppercase;
       padding-bottom: $padding-bottom;

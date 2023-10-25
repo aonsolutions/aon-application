@@ -3,7 +3,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { ContractService } from 'src/app/core/services/contract.service';
 import { CreateNewContractComponent } from '../components/create-new-contract/create-new-contract.component';
 
-
 export interface Tabs {
   name: string; // Nombre de la tab
 }
@@ -33,8 +32,6 @@ export class EmployeeComponent implements OnInit {
   search: string = '';
   showSendButton: boolean = false;
   showSendButtons: boolean = false;
-
-
 
   //hardcodeo para mostrar showdetail
   dataBody: any[] = [
@@ -123,7 +120,6 @@ export class EmployeeComponent implements OnInit {
           column.workCenter = contract.workCenter;
           column.marcaje = contract.marcaje;
 
-
           tableRow.push(column);
         });
 
@@ -156,20 +152,18 @@ export class EmployeeComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
 
-  }
-
-  addEmployee() {
-
-  }
+  addEmployee() {}
   atras() {
     this.tabIndex = 0;
   }
 
   changeTabIndex(index: number) {
     this.tabIndex = index;
-    this.showDetail = false;
+    this.closeDetail();
+    this.closeDetail1();
+
     // this.updateTableData();
   }
 
@@ -183,37 +177,39 @@ export class EmployeeComponent implements OnInit {
     search = search.toLowerCase();
 
     // Filtra TODAS LAS COLUMNAS de la tabla en función del término de búsqueda
-      this.bodyTable = this.dataBody.filter((item: any) => {
-        return Object.values(item).some((value: any) =>
-          value.toString().toLowerCase().includes(search)
-        );
-      });
-    }
+    this.bodyTable = this.dataBody.filter((item: any) => {
+      return Object.values(item).some((value: any) =>
+        value.toString().toLowerCase().includes(search)
+      );
+    });
+  }
   // Filtra en la columna "employee".
-//   this.bodyTable = this.dataBody.filter((item) => {
-//     return item.employee.toLowerCase().includes(search);
-//   });
-// }
+  //   this.bodyTable = this.dataBody.filter((item) => {
+  //     return item.employee.toLowerCase().includes(search);
+  //   });
+  // }
 
-async rowClick(contract: any){
-  console.log('entro');
-// CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
- const isSameRow =
- this.dataBody && this.dataBody[0].key === contract.key;
-this.showDetail = !isSameRow ? true : !this.showDetail;
-//this.dataBody[0] = await this.contractService.getContract(contract.key);
-}
+  async rowClick(contract: any) {
+    // CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
+    const isSameRow = this.dataBody && this.dataBody[0].key === contract.key;
+    this.showDetail = !isSameRow ? true : !this.showDetail;
+    //this.dataBody[0] = await this.contractService.getContract(contract.key);
+  }
 
-async rowClick1(contract: any){
-  console.log('entro');
-// CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
- const isSameRow =
- this.dataBody && this.dataBody[0].key === contract.key;
-this.showDetail1 = !isSameRow ? true : !this.showDetail;
-//this.dataBody[0] = await this.contractService.getContract(contract.key);
-}
+  async rowClick1(contract: any) {
+    // CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
+    const isSameRow = this.dataBody && this.dataBody[0].key === contract.key;
+    this.showDetail1 = !isSameRow ? true : !this.showDetail1;
+    //this.dataBody[0] = await this.contractService.getContract(contract.key);
+  }
 
+  // Cerrar details contratos vigentes
+  closeDetail() {
+    this.showDetail = false;
+  }
 
-
-
+  // Cerrar details contratos extinguidos
+  closeDetail1() {
+    this.showDetail1 = false;
+  }
 }
