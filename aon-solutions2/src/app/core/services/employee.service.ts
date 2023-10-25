@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { CommonService } from './common.service';
-import { EmployeeFactory, ICollection, IContract, IEmployee, IFilter } from 'libraries/AonSDK/src/aon';
-import { ErrorService } from './error.service';
+import { EmployeeFactory, ICollection, IEmployee, IFilter } from 'libraries/AonSDK/src/aon';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +11,7 @@ export class EmployeeService extends CommonService {
   private singleObjectCrud = new EmployeeFactory().createSingleObjectCrud();
   private employeeCollectionCrud = new EmployeeFactory().createMultipleObjectCrud();
 
-  constructor(private errorService: ErrorService) {
+  constructor() {
     super();
   }
 
@@ -23,7 +22,6 @@ export class EmployeeService extends CommonService {
      * @return {Promise<ICollection<IEmployee>>} una promesa que se resuelve a una colección de empleados
      */
   async getEmployeeList(filter?: IFilter): Promise<ICollection<IEmployee>> {
-    // return (await this.multipleObjectCrud.getCollection(filter)).result;
     return (await this.employeeCollectionCrud.getCollection(filter)).result;
   }
 
