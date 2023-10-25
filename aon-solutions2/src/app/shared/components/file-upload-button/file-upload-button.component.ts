@@ -21,7 +21,7 @@ export class FileUploadButtonComponent implements OnInit {
   width                     : string  = '100%';
   height                    : string  = '100%';
   isDropOver                : boolean = false;
-  filesAndFolderUploaded    : any[]     = [];
+  filesAndFolderUploaded    : any[]   = [];
   filesAndFolderUploadedView: boolean = true;
   
   constructor(

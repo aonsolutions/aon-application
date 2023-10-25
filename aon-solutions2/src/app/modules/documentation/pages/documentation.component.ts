@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DocumentService } from 'src/app/core/services/document.service';
+import { DateFormat } from 'src/app/core/utilities/time';
 import { FolderService } from 'src/app/core/services/folder.service';
 import { CollectionFactory, Factory, FilterBuilder, ICollection, IDocument, IFolder } from 'libraries/AonSDK/src/aon';
 import { MenuItem } from 'src/app/core/models/interface/menu-item';
@@ -42,12 +43,11 @@ export class DocumentationComponent implements OnInit {
   folderSelected: string = '';
   idSelected: string = '';
 
-
   constructor(
     private translateService: TranslateService,
-    private documentService: DocumentService,
-    private folderService: FolderService,
-    public snackBar: MatSnackBar
+    private documentService : DocumentService,
+    private folderService   : FolderService,
+    public snackBar         : MatSnackBar
   ) {
     /*
       Inicialmente solo devolvemos carpetas correspondientes a la rai�z
@@ -233,6 +233,15 @@ export class DocumentationComponent implements OnInit {
   getNameWithExtension(name: string, extension: string): string {
     const finalExtension = extension.split('/').pop();
     return name + '.' + finalExtension;
+  }
+  /*
+    Devuelve la fecha formateada
+  */
+  getFileDate(date: any){
+    return DateFormat(date, 'dd/MM/yyyy');
+  }
+  getFileHour(date: any){
+    return DateFormat(date, 'HH:mm');
   }
 
   /*
