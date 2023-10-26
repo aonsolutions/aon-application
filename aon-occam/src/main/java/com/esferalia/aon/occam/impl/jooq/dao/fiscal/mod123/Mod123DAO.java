@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123Declaration.Com
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -141,7 +142,7 @@ public class Mod123DAO extends FiscalModelDAO {
 		Integer oldFinanceId = FiscalModelDAO.getFinance(ctx, mod123);
 		mod123 = FiscalModelDAO.finish(ctx, mod123);
 		mod123 = save(ctx, mod123);
-		if (oldFinanceId != null) {
+		if (oldFinanceId != null && AonNumberUtils.notEquals(oldFinanceId, mod123.getFinanceId())) {
 			FinanceDAO.delete(ctx, oldFinanceId);
 		}
 		return mod123;

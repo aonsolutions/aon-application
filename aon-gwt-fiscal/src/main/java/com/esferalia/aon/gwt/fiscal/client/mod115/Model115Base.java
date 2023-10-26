@@ -603,6 +603,7 @@ public abstract class Model115Base extends DockLayoutPanel {
 				select(result);
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
+				showPaymentInfo(result);
 			}
 
 			@Override
@@ -619,7 +620,7 @@ public abstract class Model115Base extends DockLayoutPanel {
 			this.remove(paymentContainer);
 			this.forceLayout();
 		}
-		if (mod.isFinished() || mod.isSent()) {
+		if (mod.isFinished() || mod.isSent() || mod.isCustomerCheck()) {
 //			StringBuilder buff = new StringBuilder(AON.MSG.result());
 //			buff.append(AonStringUtils.SPACE);
 //			buff.append(AON.FMT.format(mod.getDeclarationResult()));

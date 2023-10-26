@@ -338,18 +338,21 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		
 		deleteButton.setVisible(!getModel().isNew() && canBeSaved);
 		printButton.setVisible(!getModel().isNew());
-		markAsPendingButton.setVisible(!getModel().isNew() && !getModel().isRecorded() &&
-				(getModel().getStatus() == FiscalStatus.FINISHED 
-				|| getModel().getStatus() == FiscalStatus.BATCHED
-				|| getModel().getStatus() == FiscalStatus.SENT
-				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| getModel().getStatus() == FiscalStatus.BLOCKED));
-		markAsFinishedButton.setVisible(!getModel().isNew() &&
-				(getModel().getStatus() == FiscalStatus.PENDING
-				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| getModel().getStatus() == FiscalStatus.MISSING));
-		markAsSentButton.setVisible(!getModel().isNew() &&
-				(getModel().getStatus() == FiscalStatus.FINISHED));
+//		markAsPendingButton.setVisible(!getModel().isNew() && !getModel().isRecorded() &&
+//				(getModel().getStatus() == FiscalStatus.FINISHED 
+//				|| getModel().getStatus() == FiscalStatus.BATCHED
+//				|| getModel().getStatus() == FiscalStatus.SENT
+//				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
+//				|| getModel().getStatus() == FiscalStatus.BLOCKED));
+//		markAsFinishedButton.setVisible(!getModel().isNew() &&
+//				(getModel().getStatus() == FiscalStatus.PENDING
+//				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
+//				|| getModel().getStatus() == FiscalStatus.MISSING));
+//		markAsSentButton.setVisible(!getModel().isNew() &&
+//				(getModel().getStatus() == FiscalStatus.FINISHED));
+		markAsPendingButton.setVisible(!getModel().isNew() && !getModel().isRecorded() && FiscalModelUtils.canChangeStatus(getModel(), FiscalStatus.PENDING));
+		markAsFinishedButton.setVisible(!getModel().isNew() && FiscalModelUtils.canChangeStatus(getModel(), FiscalStatus.FINISHED));
+		markAsSentButton.setVisible(!getModel().isNew() && FiscalModelUtils.canChangeStatus(getModel(), FiscalStatus.SENT));
 	}
 
 	protected EnumMap<Mod303Key, AonDoubleBox> getFieldsMap() {
@@ -1410,7 +1413,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			this.remove(paymentContainer);
 			this.forceLayout();
 		}
-		if (mod.isFinished() || mod.isSent()) {
+		if (mod.isFinished() || mod.isSent() || mod.isCustomerCheck()) {
 //			StringBuilder buff = new StringBuilder(AON.MSG.result());
 //			buff.append(AonStringUtils.SPACE);
 //			double result = AonNumberUtils.todouble(mod.getDeclarationResult());

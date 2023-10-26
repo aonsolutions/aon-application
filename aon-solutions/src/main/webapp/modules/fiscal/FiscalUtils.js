@@ -88,10 +88,12 @@ const createStatus = (modeStatus) => {
       colorStatus = "rgb(233, 255, 219)";
       break;
     case "CUSTOMER_REJECTED":
-      span.style.backgroundColor = "darkred";
+      //span.style.backgroundColor = "darkred";
+      colorStatus = "darkred";
       break;
     default:
-      span.style.backgroundColor = "black";
+      //span.style.backgroundColor = "black";
+      colorStatus = "black";
       break;
   }
 

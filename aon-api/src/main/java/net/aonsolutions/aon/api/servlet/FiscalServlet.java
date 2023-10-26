@@ -284,9 +284,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 							model.getFinance().setBankAlias(bankAlias);
 							model.getFinance().setBic(bankBIC);
 						}
-						model.setNrc(nrc);	
-						// FALTA - POR QUE ESTE MODELO SE MARCA SIEMPRE FINALIZADO Y NO SE DA OPCION A RECHAZADO ??
-						Mod130DAO.markAsFinished(ctx, model); 
+						if(reject) {
+							Mod130DAO.markAsCustomerRejected(ctx, model, reasonReject);
+						} else {
+							model.setNrc(nrc);	
+							Mod130DAO.markAsFinished(ctx, model);
+						}
 					}
 
 					@Override
@@ -299,9 +302,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 							model.getFinance().setBankAlias(bankAlias);
 							model.getFinance().setBic(bankBIC);
 						}
-						model.setNrc(nrc);
-						// FALTA - POR QUE ESTE MODELO SE MARCA SIEMPRE FINALIZADO Y NO SE DA OPCION A RECHAZADO ??
-						Mod131DAO.markAsFinished(ctx, model);
+						if(reject) {
+							Mod131DAO.markAsCustomerRejected(ctx, model, reasonReject);
+						} else {
+							model.setNrc(nrc);
+							Mod131DAO.markAsFinished(ctx, model);
+						}
 					}
 
 					@Override
@@ -314,9 +320,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 							model.getFinance().setBankAlias(bankAlias);
 							model.getFinance().setBic(bankBIC);
 						}
-						model.setNrc(nrc);
-						// FALTA - POR QUE ESTE MODELO SE MARCA SIEMPRE FINALIZADO Y NO SE DA OPCION A RECHAZADO ??
-						Mod202DAO.markAsFinished(ctx, model); 
+						if(reject) {
+							Mod202DAO.markAsCustomerRejected(ctx, model, reasonReject);
+						} else {
+							model.setNrc(nrc);
+							Mod202DAO.markAsFinished(ctx, model);
+						}
 					}
 
 					@Override
@@ -603,7 +612,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 //		return (fm instanceof Mod131)?(Mod131)fm:null;
 //	}
 //	
-//	private static Mod202 getMod202(IFiscalModel fm) {
+//	private Mod202 getMod202(IFiscalModel fm) {
 //		return (fm instanceof Mod202)?(Mod202)fm:null;
 //	}
 	
@@ -683,7 +692,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 		AEATResponse response = AEATJson.toJSON(body); 
 		if (response.isCorrect()) 
 			manageRightResponse(aeatParams, fm, new String(body));
-//		else manageWrongResponse(aeatParams, fm);		
 		return response.isCorrect();
 	}
 	
