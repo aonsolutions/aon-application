@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_ACCESS_SCOPES;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessScope;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -213,7 +213,7 @@ class NordigenAPI {
 	}
 
 	public static JSONObject createEndUserAgreement(String token, Integer maxHistoricalDays, Integer accessValidForDays
-			,NORDIGEN_ACCESS_SCOPES[] accessScopes, String institutionId) throws NordigenException {
+			,NordigenAccessScope[] accessScopes, String institutionId) throws NordigenException {
 		
 		JSONObject paramJson = new JSONObject()
 			.put(MAX_HISTORICAL_DAYS_PARAM, maxHistoricalDays)

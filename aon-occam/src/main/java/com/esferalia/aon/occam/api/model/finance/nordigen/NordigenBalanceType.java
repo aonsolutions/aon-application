@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.finance.nordigen;
 
 import java.util.Arrays;
 
-public enum NORDIGEN_BALANCE_TYPE {
+public enum NordigenBalanceType {
 	CLOSING_BOOKED("closingBooked"),
 	EXPECTED("expected"),
 	OPENING_BOOKED("openingBooked"),
@@ -17,7 +17,7 @@ public enum NORDIGEN_BALANCE_TYPE {
 	
 	private String value;
 	
-	private NORDIGEN_BALANCE_TYPE(String value) {
+	private NordigenBalanceType(String value) {
 		this.value = value;
 	}
 
@@ -25,8 +25,8 @@ public enum NORDIGEN_BALANCE_TYPE {
 		return value;
 	}
 	
-	public static NORDIGEN_BALANCE_TYPE getByValue(String value) {
-		return Arrays.stream(NORDIGEN_BALANCE_TYPE.values())
+	public static NordigenBalanceType getByValue(String value) {
+		return Arrays.stream(NordigenBalanceType.values())
 				.filter(bt -> bt.getValue().equals(value))
 				.findFirst()
 				.orElse(null);

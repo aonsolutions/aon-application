@@ -15,8 +15,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_ACCESS_SCOPES;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_REQUISITION_STATUS;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessScope;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitionStatus;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAgreement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
@@ -29,9 +29,9 @@ public class NordigenTestCase {
 	
 	private void assertAgreement(NordigenAgreement agreement) {
 		assertNotNull(agreement, "Null agreement");			
-		NORDIGEN_ACCESS_SCOPES[] accessScopes = agreement.getAccessScope();
+		NordigenAccessScope[] accessScopes = agreement.getAccessScope();
 		assertNotNull(agreement.getAccessScope(),"Null agreement access scope");
-		Arrays.stream(NORDIGEN_ACCESS_SCOPES.values())
+		Arrays.stream(NordigenAccessScope.values())
 			.forEach(scope -> assertTrue(Arrays.stream(accessScopes).anyMatch(s -> s.equals(scope)), scope + " missing"));
 		assertNotNull(agreement.getAccessValidForDays(), "Null agreement access valid for days");
 		assertNotNull(agreement.getCreated(), "Null agreement creation date");
@@ -44,7 +44,7 @@ public class NordigenTestCase {
 		assertNotNull(requisition, "Null requisition");			
 		assertEquals(AonLanguage.SPANISH.getLanguage(), requisition.getUserLanguage());
 		assertNotNull(requisition.getAgreement(), "Null requisition agreement");			
-		assertEquals(NORDIGEN_REQUISITION_STATUS.CR, requisition.getStatus());			
+		assertEquals(NordigenRequisitionStatus.CR, requisition.getStatus());			
 		assertNotNull(requisition.getRedirect(), "Null requisition redirect");
 		assertNotNull(requisition.getRedirectImmediate(), "Null requisition redirect inmediate");
 		assertNotNull(requisition.getCreated(), "Null requisition created date");

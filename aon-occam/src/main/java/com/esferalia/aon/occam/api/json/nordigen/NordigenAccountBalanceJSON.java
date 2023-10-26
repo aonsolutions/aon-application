@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenAccountBalanceFromJSON;
 import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenAccountBalanceToJSON;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_BALANCE_TYPE;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -19,7 +19,7 @@ public enum NordigenAccountBalanceJSON {
 			(balance, json) -> json.put("balanceAmount", NordigenJSONUtils.accountAmountToJSON(balance.getBalanceAmount()))
 	),
 	BALANCE_TYPE(			
-			(balance, json) -> balance.setBalanceType(NORDIGEN_BALANCE_TYPE.getByValue(json.optString("balanceType"))),
+			(balance, json) -> balance.setBalanceType(NordigenBalanceType.getByValue(json.optString("balanceType"))),
 			(balance, json) -> json.put("balanceType", balance.getBalanceType() != null ? balance.getBalanceType().getValue() : null)
 	),
 	REFERENCE_DATE(

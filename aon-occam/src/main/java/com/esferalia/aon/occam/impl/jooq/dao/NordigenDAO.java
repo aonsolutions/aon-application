@@ -17,7 +17,7 @@ import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_BALANCE_TYPE;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
@@ -266,7 +266,7 @@ public class NordigenDAO {
 	
 	private static NordigenAccountBalance filterConsolidado(List<NordigenAccountBalance> balances) {
 		NordigenAccountBalance consolidado = balances.stream()
-			.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+			.filter(bal -> NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
 			.findFirst().orElse(null);
 		if (consolidado == null && !balances.isEmpty()) {
 			return balances.get(0);
@@ -276,7 +276,7 @@ public class NordigenDAO {
 	
 	private static NordigenAccountBalance filterReal(List<NordigenAccountBalance> balances) {
 		NordigenAccountBalance real = balances.stream()
-			.filter(bal -> !NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+			.filter(bal -> !NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
 			.findFirst().orElse(null);
 		if (real == null) {
 			return filterConsolidado(balances);

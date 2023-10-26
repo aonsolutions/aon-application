@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_ACCESS_SCOPES;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessScope;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.occam.api.model.type.Country;
 
@@ -23,7 +23,7 @@ public class NordigenAPITestCase {
 	
 	private static String accessToken;
 	private static String refreshAccessToken;
-	private static NORDIGEN_ACCESS_SCOPES[] ALL_SCOPES = {NORDIGEN_ACCESS_SCOPES.DETAILS, NORDIGEN_ACCESS_SCOPES.BALANCES, NORDIGEN_ACCESS_SCOPES.TRANSACTIONS};
+	private static NordigenAccessScope[] ALL_SCOPES = {NordigenAccessScope.DETAILS, NordigenAccessScope.BALANCES, NordigenAccessScope.TRANSACTIONS};
 	
 	@BeforeAll
 	public static void initialize() throws NordigenException {
