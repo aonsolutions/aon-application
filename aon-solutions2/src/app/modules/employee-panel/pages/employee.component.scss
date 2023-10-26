@@ -36,6 +36,11 @@
           cursor: pointer;
         }
       }
+      .prueba {
+        display: flex;
+        justify-content: flex-end;
+        gap: $margin;
+      }
     }
   }
 

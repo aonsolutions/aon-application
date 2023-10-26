@@ -6,13 +6,16 @@
         shape="arrow_back"
         (click)="goBack()"
       ></app-icon>
-      {{ "EMPLOYEE_PANEL.REGISTER_EMPLOYEE" | translate }}
+      {{ "EMPLOYEE_PANEL.EDIT_USER" | translate }}
     </div>
-
-    <app-button class="green button" [align]="'left'">
-      <app-icon shape="person_add"></app-icon>
-      {{ "EMPLOYEE_PANEL.TO_REGISTER" | translate }}
-    </app-button>
+    <div class="prueba">
+      <app-button [class]="'dark'" [width]="'100%'">
+        {{ "PROFILE.SAVE" | translate }}
+      </app-button>
+      <app-button [class]="'white'" [width]="'100%'">
+        {{ "PROFILE.CANCEL" | translate }}
+      </app-button>
+    </div>
   </div>
   <hr />
 </div>

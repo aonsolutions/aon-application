@@ -1,11 +1,11 @@
 <app-grid-layout>
   <!-- encabezado con boton dar de alta -->
-  <div header class="padding fit-button">
+  <div header class="padding fit-button" *ngIf="tabIndex !== 3">
     <app-button
-      class="icon-background "
+      class="icon-background"
       [width]="'width'"
-      (click)= "changeTabIndex(3)"
-      *ngIf="tabIndex !== 3"
+      (click)="changeTabIndex(2)"
+      *ngIf="tabIndex !== 2"
     >
       <app-icon shape="person_add"></app-icon>
       {{ "EMPLOYEE_PANEL.TO_REGISTER" | translate }}
@@ -15,7 +15,10 @@
   <div content>
     <ng-container>
       <!-- buscador -->
-      <div class="padding-top padding-right padding-left" *ngIf="tabIndex !== 3">
+      <div
+        class="padding-top padding-right padding-left"
+        *ngIf="tabIndex !== 2 && tabIndex !== 3"
+      >
         <div class="width-40">
           <app-input
             [appearance]="'outline'"
@@ -28,13 +31,14 @@
         </div>
       </div>
       <!-- fin buscador -->
+
       <!-- tablas tabs -->
       <app-tabs
         [tabs]="tabs"
         [tabColor]="'green'"
         [tabIndex]="tabIndex"
         (changeTabIndex)="changeTabIndex($event)"
-        *ngIf="tabIndex !== 3"
+        *ngIf="tabIndex !== 2 && tabIndex !== 3"
       >
         <div tool>
           <div class="buttons">
@@ -84,31 +88,48 @@
     </ng-container>
 
     <!-- ALTA EMPLEADO-->
-    <ng-container *ngIf="tabIndex == 3">
+    <ng-container *ngIf="tabIndex == 2">
       <app-create-new-contract
-      (changeTabIndex)="changeTabIndex($event)"></app-create-new-contract>
+        (changeTabIndex)="changeTabIndex($event)"
+      ></app-create-new-contract>
     </ng-container>
     <!-- FIN ALTA EMPLEADO -->
 
+    <!--EDITAR EMPLEADO-->
+    <ng-container *ngIf="tabIndex == 3">
+      <app-edit-user-contract (changeTabIndex)="changeTabIndex($event)">
+      </app-edit-user-contract>
+    </ng-container>
+    <!-- FIN EDITAR EMPLEADO -->
   </div>
   <!-- fin contenido -->
 
   <!-- mostrar detalles contratos vigentes-->
-  <div detail *ngIf="showDetail">
+  <div detail *ngIf="showDetailCurrentContract">
     <div class="employee-detail padding">
       <div class="employee-detail-header">
         <div class="employee-detail-title">
-          <app-icon class="griss button" (click)="closeDetail()" shape="arrow_back"></app-icon>
+          <app-icon
+            class="griss button"
+            (click)="closeDetailCurrentContract()"
+            shape="arrow_back"
+          ></app-icon>
           <div class="title-contract">
             {{ "EMPLOYEE_PANEL.CURRENT_CONTRACT" | translate }}
           </div>
         </div>
+
         <div class="employee-detail-edit">
-          <app-icon class="griss button" shape="edit"></app-icon>
+          <app-icon
+            class="griss button"
+            shape="edit"
+            (click)="changeTabIndex(3)"
+            *ngIf="tabIndex !== 3"
+          ></app-icon>
         </div>
       </div>
 
-      <div class="info-contract border padding ">
+      <div class="info-contract border padding">
         <div class="info-status info-line">
           <div class="info-main-title">
             {{ dataBody[0].employee }}
@@ -128,7 +149,7 @@
         </div>
         <div class="info-line separacion">
           <div class="info-title">{{ "PROFILE.PHONE" | translate }}</div>
-          <div class="info-data ">600000000</div>
+          <div class="info-data">600000000</div>
         </div>
 
         <div class="info-title-timing">{{ "HOME.TIMING" | translate }}</div>
@@ -138,7 +159,10 @@
             <div class="entrada">
               <div class="titulo">Entrada</div>
               <div class="hora">
-                <app-icon class="green button titulo-icon" shape="input"></app-icon>
+                <app-icon
+                  class="green button titulo-icon"
+                  shape="input"
+                ></app-icon>
                 07:00:22
               </div>
               <div class="fecha">fecha</div>
@@ -147,7 +171,10 @@
             <div class="salida">
               <div class="titulo">Salida</div>
               <div class="hora">
-                <app-icon class="red button titulo-icon" shape="input"></app-icon>
+                <app-icon
+                  class="red button titulo-icon"
+                  shape="input"
+                ></app-icon>
                 07:00:22
               </div>
               <div class="fecha">fecha</div>
@@ -156,7 +183,7 @@
 
           <div class="contenedor-derecha">
             <div class="titulo titulo-margin">Total</div>
-            <div class="hora"> 07:00:22</div>
+            <div class="hora">07:00:22</div>
           </div>
         </div>
       </div>
@@ -164,11 +191,15 @@
   </div>
 
   <!-- mostrar detalles contratos extinguidos-->
-  <div detail *ngIf="showDetail1">
+  <div detail *ngIf="showDetailExpiredContract">
     <div class="employee-detail padding">
       <div class="employee-detail-header">
         <div class="employee-detail-title">
-          <app-icon class="griss button" (click)="closeDetail1()" shape="arrow_back"></app-icon>
+          <app-icon
+            class="griss button"
+            (click)="closeDetailExpiredContract()"
+            shape="arrow_back"
+          ></app-icon>
           <div class="title-contract">
             {{ "EMPLOYEE_PANEL.EXPIRED_CONTRACT" | translate }}
           </div>

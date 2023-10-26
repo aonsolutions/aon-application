@@ -5,12 +5,14 @@ import { EmployeePanelRoutingModule } from './employee-panel-routing.module';
 import { EmployeeComponent } from './pages/employee.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CreateNewContractComponent } from './components/create-new-contract/create-new-contract.component';
+import { EditUserContractComponent } from './components/edit-user-contract/edit-user-contract.component';
 
 
 @NgModule({
   declarations: [
     EmployeeComponent,
-    CreateNewContractComponent
+    CreateNewContractComponent,
+    EditUserContractComponent
   ],
   imports: [
     CommonModule,

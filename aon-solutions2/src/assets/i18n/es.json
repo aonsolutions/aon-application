@@ -173,7 +173,8 @@
     "EMPLOYMENT_RELATIONSHIP":"RLCE",
     "WORKFORCE":"Colectivo trabajador",
     "CURRENT_CONTRACT":"Contrato Vigente",
-    "EXPIRED_CONTRACT": "Contrato Extinguido"
+    "EXPIRED_CONTRACT": "Contrato Extinguido",
+    "EDIT_USER": "Editar usuario"
 
 
   },

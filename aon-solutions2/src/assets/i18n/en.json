@@ -172,7 +172,8 @@
     "EMPLOYMENT_RELATIONSHIP":"Special Employment Relationship",
     "WORKFORCE":"Workforce",
     "CURRENT_CONTRACT":"Current Contract",
-    "EXPIRED_CONTRACT": "Expired contract"
+    "EXPIRED_CONTRACT": "Expired contract",
+    "EDIT_USER": "Edit user"
   },
 
   "TAX_PANEL": {

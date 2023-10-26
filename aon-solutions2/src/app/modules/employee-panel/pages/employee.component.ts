@@ -27,8 +27,8 @@ export class EmployeeComponent implements OnInit {
   contracts: any;
   tabs: Tabs[] = [{ name: 'tab1' }, { name: 'tab2' }];
   buttonsGastos: any[] = [];
-  showDetail: boolean = false;
-  showDetail1: boolean = false;
+  showDetailCurrentContract: boolean = false;
+  showDetailExpiredContract: boolean = false;
   search: string = '';
   showSendButton: boolean = false;
   showSendButtons: boolean = false;
@@ -155,14 +155,11 @@ export class EmployeeComponent implements OnInit {
   ngOnInit(): void {}
 
   addEmployee() {}
-  atras() {
-    this.tabIndex = 0;
-  }
 
   changeTabIndex(index: number) {
     this.tabIndex = index;
-    this.closeDetail();
-    this.closeDetail1();
+    this.closeDetailCurrentContract();
+    this.closeDetailExpiredContract();
 
     // this.updateTableData();
   }
@@ -192,24 +189,24 @@ export class EmployeeComponent implements OnInit {
   async rowClick(contract: any) {
     // CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
     const isSameRow = this.dataBody && this.dataBody[0].key === contract.key;
-    this.showDetail = !isSameRow ? true : !this.showDetail;
+    this.showDetailCurrentContract = !isSameRow ? true : !this.showDetailCurrentContract;
     //this.dataBody[0] = await this.contractService.getContract(contract.key);
   }
 
   async rowClick1(contract: any) {
     // CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
     const isSameRow = this.dataBody && this.dataBody[0].key === contract.key;
-    this.showDetail1 = !isSameRow ? true : !this.showDetail1;
+    this.showDetailExpiredContract = !isSameRow ? true : !this.showDetailExpiredContract;
     //this.dataBody[0] = await this.contractService.getContract(contract.key);
   }
 
   // Cerrar details contratos vigentes
-  closeDetail() {
-    this.showDetail = false;
+  closeDetailCurrentContract() {
+    this.showDetailCurrentContract = false;
   }
 
   // Cerrar details contratos extinguidos
-  closeDetail1() {
-    this.showDetail1 = false;
+  closeDetailExpiredContract() {
+    this.showDetailExpiredContract = false;
   }
 }
