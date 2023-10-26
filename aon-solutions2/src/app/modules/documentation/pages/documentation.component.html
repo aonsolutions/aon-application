@@ -98,7 +98,7 @@
       [ngClass]="{ 'select-folder': selecFolder == folder.Path }"
       class="folder icon-background-pink bold item-folder left"
       [width]="'100%'"
-      ><app-icon [shape]="'folder_open'"></app-icon>
+     ><app-icon [shape]="'folder_open'"></app-icon>
       {{ folder.Name }}
       <app-icon [shape]="'arrow_forward_ios'" class="icon-right"></app-icon>
     </app-button>
@@ -130,12 +130,13 @@
     </ng-container>
     <!--FIN Mostrar carpetas-->
     <!--Mostrar ficheros-->
-    <ng-container *ngIf="showFiles">
+    <ng-container *ngIf="showFiles && !spinnerContent">
       <app-card
         [class]="'file pink'"
         *ngFor="let cardFile of documentsList; let i = index"
         [id]="'file-' + i"
         (click)="loadFile(cardFile, 'file-' + i)"
+        cardMatTooltip="{{ getNameWithExtension(cardFile.FileName, cardFile.FileType) }}"
       >
         <div header>
           <input

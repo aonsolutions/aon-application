@@ -8,7 +8,6 @@ import { DropdownMenuComponent } from 'src/app/shared/components/dropdown-menu/d
 import { TranslateService } from '@ngx-translate/core';
 import { UploadModalComponent } from 'src/app/shared/components/file-upload-button/components/upload-modal/upload-modal.component';
 // import { RenameFileComponent } from '../components/modal-rename-file/rename-file.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector    : 'app-documentation',
@@ -46,8 +45,7 @@ export class DocumentationComponent implements OnInit {
   constructor(
     private translateService: TranslateService,
     private documentService : DocumentService,
-    private folderService   : FolderService,
-    public snackBar         : MatSnackBar
+    private folderService   : FolderService
   ) {
     /*
       Inicialmente solo devolvemos carpetas correspondientes a la rai�z
@@ -159,8 +157,9 @@ export class DocumentationComponent implements OnInit {
   getDocumentation(folder: string = '', id: string = '') {
     this.search = '';
     this.documentationListFolders = this.originalListFolders;
-
-    // Si la carpeta no está vacía guardamos los valores
+    this.showNoElements = false;
+    
+    // Si la carpeta no esta vaci�a guardamos los valores
     if (folder !== '') {
       this.folderSelected = folder;
       this.idSelected = id;
@@ -191,7 +190,6 @@ export class DocumentationComponent implements OnInit {
           // 2 - Cargamos subcarpetas
           this.showFiles = false;
           this.showDetail = false;
-          this.showNoElements = false;
           this.documentationListSubFolders = listFolders;
           this.originalDocListSubFolders = listFolders;
           this.spinnerContent = false;
@@ -203,16 +201,12 @@ export class DocumentationComponent implements OnInit {
             .getDocumentList(filterDocument.getFilter())
             .then((documentsList) => {
               // 4 - Se mira si tenemos documentos o no, Si no tenemos:
-              // this.showNoElements = true, para mostrar el mensaje correspondiente
-              const firstValue =
-                Object.keys(documentsList).length > 0
-                  ? Object.values(documentsList)[0]
-                  : 0;
-                  this.showNoElements = firstValue.size > 0 ? false : true;
-                  // Agregamos los datos devueltos
-                  this.originalListDocuments = documentsList;
-                  this.documentsList = documentsList;
-                  this.spinnerContent = false;
+              const firstValue = Object.keys(documentsList).length > 0 ? Object.values(documentsList)[0] : 0;
+              this.showNoElements = firstValue.size > 0 ? false : true; // Como true si tenemos documentos
+              // Agregamos los datos devueltos
+              this.originalListDocuments = documentsList;
+              this.documentsList = documentsList;
+              this.spinnerContent = false;
             });
           this.showFiles = true;
         }

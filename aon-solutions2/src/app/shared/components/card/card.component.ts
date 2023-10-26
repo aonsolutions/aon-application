@@ -6,10 +6,9 @@ import { Component, HostBinding, Input, OnInit } from '@angular/core';
   styleUrls   : ['./card.component.scss']
 })
 export class CardComponent implements OnInit {
-  @Input() width  : string = 'auto';
-  @Input() height : string = 'auto';
-  @Input() id     : string = '';
-  @Input() class  : string = '';
+  @Input() id             : string = '';
+  @Input() class          : string = '';
+  @Input() cardMatTooltip : any = '';
 
   constructor() { }
 

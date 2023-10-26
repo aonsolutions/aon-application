@@ -23,14 +23,14 @@ export class UploadModalComponent implements OnInit {
   folderSelected  : string    = '/a_contabilizar';
   folderNoSelected: boolean   = false;
   filesAndFolder  : any[]     = [];
-  currentDate = new Date()
-    .toLocaleDateString('es-ES', {
-      year  : 'numeric',
-      month : '2-digit',
-      day   : '2-digit'
-    })
-    .replace(/(\d+)\/(\d+)\/(\d+)/, '$1-$2-$3');
-
+  currentDate = 
+    DateFormat(new Date().toISOString()
+    , 'dd/MM/yyyy'
+  );
+  currentDateHour = 
+    DateFormat(new Date().toISOString()
+    , 'HH:mm'
+  );
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
