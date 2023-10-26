@@ -38,7 +38,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod115DAO extends FiscalModelDAO {
 	
 	public static Stream<Mod115> getMod115s(AONContext ctx,int domain, FiscalModelFilter filter) {
-		return FiscalModelDAO.getFiscalModels(ctx,domain,FiscalModelType.M115,filter, Mod115::new);
+		return FiscalModelDAO.getFullFiscalModels(ctx,domain,FiscalModelType.M115,filter, Mod115::new);
 	}
 
 	public static Stream<Mod115> getMod115s(AONContext ctx,int domain) {

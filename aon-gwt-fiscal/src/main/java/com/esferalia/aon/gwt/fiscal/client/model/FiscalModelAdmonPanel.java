@@ -264,6 +264,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 					.setName(getCallback().getOptions().getConfiguration().fiscal().getCertificateName())
 					.setTestEnvironment(getCallback().getOptions().getConfiguration().fiscal().isTestEnvironment())
 					.setShowNRC(getCallback().getModel().isStrictToDeposit())
+					.setNrc(getCallback().getModel().getNrc())					
 					.setInfoMessage("Va a proceder a la presentaci\u00F3n del Modelo.");
 				AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
 					
@@ -315,8 +316,8 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 			if (state == XMLHttpRequest.DONE) {
 				ArrayBuffer buff = xhreq.getResponseArrayBuffer();
 				String contentTypeHeader = xhreq.getResponseHeader( AonHttpUtils.CONTENT_TYPE);
+				getCallback().sendSuccessfully(); // Siempre se recarga el modelo, por si se ha grabado el NRC
 				if (AonStringUtils.equals(MimeType.PDF.getName(), contentTypeHeader)) {
-					getCallback().sendSuccessfully();
 					Scheduler.get().scheduleDeferred(() -> showPDF( buff.toString() ));
 				} else {
 					showHtml( buff.toString() );

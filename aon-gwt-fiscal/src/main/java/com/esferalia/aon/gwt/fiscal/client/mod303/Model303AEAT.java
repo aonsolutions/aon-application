@@ -63,6 +63,7 @@ abstract class Model303AEAT extends Model303Base {
 							@Override
 							public void onSuccess(Mod303 selected) {
 								selectAndPopulate(selected);
+								showPaymentInfo(selected);
 							}
 							@Override
 							public void onFailure(Throwable caught) {
