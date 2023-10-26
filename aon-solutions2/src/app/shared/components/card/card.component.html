@@ -1,10 +1,7 @@
 <div 
-  [ngStyle]="{
-    'width': '100%',
-    'height': height
-  }"
   id="{{id}}"
   class="{{class}} card"
+  [matTooltip]="cardMatTooltip"
 >
   <div class="card-header">
     <ng-content select="[header]"></ng-content>

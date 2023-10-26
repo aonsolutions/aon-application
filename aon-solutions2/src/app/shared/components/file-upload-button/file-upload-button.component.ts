@@ -1,9 +1,7 @@
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UploadModalComponent } from './components/upload-modal/upload-modal.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Factory } from 'libraries/AonSDK/src/aon';
-import { ResultSnackBarComponent } from 'src/app/shared/components/result-snack-bar/result-snack-bar.component';
 import { DocumentService } from 'src/app/core/services/document.service';
 
 @Component({
@@ -25,7 +23,6 @@ export class FileUploadButtonComponent implements OnInit {
   filesAndFolderUploadedView: boolean = true;
   
   constructor(
-    private snackBar: MatSnackBar,
     private documentService : DocumentService,
   ) {
    
@@ -113,42 +110,6 @@ export class FileUploadButtonComponent implements OnInit {
       });
     }
   }
-
-/*  
-  // Confirmación de subida de documento
-  uploadCompletedModal() {
-    this.snackBar.openFromComponent(ResultSnackBarComponent, {
-      data: {
-        message: 'Documento subido correctamente',
-        icon: 'check_circle',
-        preClose: () => {
-          this.snackBar.dismiss();
-        },
-      },
-      panelClass: ['correct-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      duration: 3000,
-    });
-  }
-
-  // Si la subida da error
-  uploadErrorModal(err: any) {
-    this.snackBar.openFromComponent(ResultSnackBarComponent, {
-      data: {
-        message: err.result,
-        icon: 'error',
-        preClose: () => {
-          this.snackBar.dismiss();
-        },
-      },
-      panelClass: ['error-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      duration: 3000,
-    });
-  }
-*/
 /*
   FIN - Subir documento
 */
