@@ -12,7 +12,7 @@ public class NordigenAccountMetadata implements Serializable {
 	private Date lastAccessed;
 	private String iban;
 	private String institutionId;
-	private NORDIGEN_ACCOUNT_STATUS status;
+	private NordigenAccountStatus status;
 	private String ownerName;
 	
 	public String getId() {
@@ -50,10 +50,10 @@ public class NordigenAccountMetadata implements Serializable {
 		this.institutionId = institutionId;
 		return this;
 	}
-	public NORDIGEN_ACCOUNT_STATUS getStatus() {
+	public NordigenAccountStatus getStatus() {
 		return status;
 	}
-	public NordigenAccountMetadata setStatus(NORDIGEN_ACCOUNT_STATUS status) {
+	public NordigenAccountMetadata setStatus(NordigenAccountStatus status) {
 		this.status = status;
 		return this;
 	}

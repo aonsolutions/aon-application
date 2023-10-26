@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.api.model.finance.nordigen;
 
-public enum NORDIGEN_CASH_ACCOUNT_TYPE {
+public enum NordigenCashAccountType {
 	CACC,
 	CASH,
 	CISH,
@@ -21,9 +21,9 @@ public enum NORDIGEN_CASH_ACCOUNT_TYPE {
 	TRAN,
 	TRAS;
 	
-	public static NORDIGEN_CASH_ACCOUNT_TYPE safeValueOf(String value) {
+	public static NordigenCashAccountType safeValueOf(String value) {
 		try {
-			return NORDIGEN_CASH_ACCOUNT_TYPE.valueOf(value);
+			return NordigenCashAccountType.valueOf(value);
 		} catch (NullPointerException | IllegalArgumentException e) {
 			return null;
 		}

@@ -28,8 +28,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_BALANCE_TYPE;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_REQUISITION_STATUS;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitionStatus;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
@@ -265,7 +265,7 @@ public class NordigenModule extends MainEntryPoint {
 							reqTable.getColumnFormatter().setWidth(2, "25%");
 							tableBodyPanel.add(reqTable);
 							Label bankName = new Label(req.getInstitutionId());
-							boolean linked = NORDIGEN_REQUISITION_STATUS.LN.equals(req.getStatus());
+							boolean linked = NordigenRequisitionStatus.LN.equals(req.getStatus());
 							Label vinculado = new Label(linked ? "S\u00ED" : "No");
 							vinculado.addStyleName(AON.CSS.aonTextCenter());
 							Label delete = new Label();
@@ -334,7 +334,7 @@ public class NordigenModule extends MainEntryPoint {
 		NordigenAccountBalance consolidado = null;
 		
 		consolidado = balances.stream()
-				.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+				.filter(bal -> NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
 				.findFirst().orElse(null);
 		
 		if (consolidado == null && !balances.isEmpty()) {
@@ -348,7 +348,7 @@ public class NordigenModule extends MainEntryPoint {
 		NordigenAccountBalance real = null;
 		
 		real = balances.stream()
-				.filter(bal -> !NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+				.filter(bal -> !NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
 				.findFirst().orElse(null);
 		
 		if (real == null) {
@@ -1119,7 +1119,7 @@ public class NordigenModule extends MainEntryPoint {
 			NordigenRequisition requisition = result.getRequisition();
 			if (requisition != null) {
 				
-				if (NORDIGEN_REQUISITION_STATUS.LN.equals(requisition.getStatus())) {
+				if (NordigenRequisitionStatus.LN.equals(requisition.getStatus())) {
 					List<NordigenBankStatement> movs = result.getNotInsertedMovements();
 					long movCount = movs.stream().filter(m -> m != null && !m.isPending()).count();
 					long pendingMovCount = movs.stream().filter(m -> m != null && m.isPending()).count();
@@ -1148,9 +1148,9 @@ public class NordigenModule extends MainEntryPoint {
 					}
 //						getMenuPanel().add(balanceJsonButton);
 //						balanceJsonButton.setVisible(true);
-				} else if (NORDIGEN_REQUISITION_STATUS.EX.equals(requisition.getStatus())) {
+				} else if (NordigenRequisitionStatus.EX.equals(requisition.getStatus())) {
 					showBottomMessage("red", "Las credenciales expiraron, debe volver a vincular la cuenta");
-				} else if (NORDIGEN_REQUISITION_STATUS.RJ.equals(requisition.getStatus())) {
+				} else if (NordigenRequisitionStatus.RJ.equals(requisition.getStatus())) {
 					showBottomMessage("red", "El proceso de vinclaci\u00F3n fall\u00F3");
 				} else {
 					showBottomMessage("red", "La vinculaci\u00F3n no se ha completado a\u00FAn");
@@ -1746,8 +1746,8 @@ public class NordigenModule extends MainEntryPoint {
 					@Override
 					public void onSuccess(NordigenRequisition result) {
 						onFinalize(
-							NORDIGEN_REQUISITION_STATUS.LN == result.getStatus() ||
-							NORDIGEN_REQUISITION_STATUS.RJ == result.getStatus()
+							NordigenRequisitionStatus.LN == result.getStatus() ||
+							NordigenRequisitionStatus.RJ == result.getStatus()
 						);							
 					}
 					

@@ -26,8 +26,8 @@ import com.esferalia.aon.occam.api.json.nordigen.NordigenRequisitionJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_BALANCE_TYPE;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_REQUISITION_STATUS;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitionStatus;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountDetails;
@@ -118,7 +118,7 @@ public class AonNordigen  {
 					
 					if (account.getMetadata() != null
 						&& AonStringUtils.isNotBlank(accountId)
-						&& NORDIGEN_REQUISITION_STATUS.LN.equals(account.getRequisition().getStatus())
+						&& NordigenRequisitionStatus.LN.equals(account.getRequisition().getStatus())
 					) {
 						
 						Thread thread1 = new Thread(() -> {
@@ -672,7 +672,7 @@ public class AonNordigen  {
 		NordigenAccountBalance consolidado = null;
 		
 		consolidado = balances.stream()
-				.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+				.filter(bal -> NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
 				.findFirst().orElse(null);
 		
 		if (consolidado == null && balances.size() > 0) {
@@ -686,7 +686,7 @@ public class AonNordigen  {
 		NordigenAccountBalance real = null;
 		
 		real = balances.stream()
-				.filter(bal -> !NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+				.filter(bal -> !NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
 				.findFirst().orElse(null);
 		
 		if (real == null) {
