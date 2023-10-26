@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCards;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCards.AonCard;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -53,8 +54,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -71,27 +70,20 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class NordigenModule extends MainEntryPoint {
+
+	private static final String GWT_SELECTOR_CLASS = "gwt-Selector";
 	private static final String WHITE = "white";
-
 	private static final String CENTER = "center";
-
 	private static final String MIN_WIDTH = "minWidth";
 	
 	private static final Logger LOGGER = Logger.getLogger(NordigenModule.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
-	
-	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
-		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
-		SafeHtml tab(String title, String icon);
-	}
-	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	private static final String EURO = "\u20AC";
 	private static final String AON_BLUE = "#002469";
 	private static final String HOVER_COLOR = "#7A9AD7";
@@ -134,7 +126,7 @@ public class NordigenModule extends MainEntryPoint {
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		opt.getParentWidget().add(dockLayoutPanel);
 		if ( opt.getConfiguration() == null) {
-			NORDIGEN_SERVICE.getConfiguration(opt.getDomainName(),opt.getDomain(),opt.getUser(),new AsyncCallback<NordigenConfiguration>() {
+			NORDIGEN_SERVICE.getConfiguration(opt.getOccam(),new AsyncCallback<NordigenConfiguration>() {
 				@Override
 				public void onSuccess(NordigenConfiguration result) {
 					opt.setConfiguration(result);
@@ -293,7 +285,7 @@ public class NordigenModule extends MainEntryPoint {
 							}
 							
 							delete.addClickHandler(event -> 
-								NORDIGEN_SERVICE.deleteRequisitionById(opt.getConfiguration().getToken(), opt.getDomainName(), opt.getDomain(), opt.getUser(), req.getId()
+								NORDIGEN_SERVICE.deleteRequisitionById(opt.getConfiguration().getToken(), opt.getOccam(), req.getId()
 									, new AsyncCallback<Boolean>() {
 										@Override
 										public void onFailure(Throwable caught) {
@@ -644,30 +636,24 @@ public class NordigenModule extends MainEntryPoint {
 				Button hai = new Button(AON.MSG.accept());
 				
 				hai.addClickHandler((event) -> {
-					NORDIGEN_SERVICE.cancelRequisition(opt.getConfiguration().getToken(),
-							opt.getDomainName(),
-							opt.getDomain(),
-							opt.getUser(),
-							rbank != null ? rbank.getId() : null, new AsyncCallback<Boolean>() {
+					NORDIGEN_SERVICE.cancelRequisition(opt.getConfiguration().getToken(), opt.getOccam(),
+						rbank != null ? rbank.getId() : null, new AsyncCallback<Void>() {
 
-								@Override
-								public void onFailure(Throwable caught) {
-									if (!isMobile()) {
-										Label label = new Label(caught.getMessage());
-										label.addStyleName(AON.CSS.aonColorRed());
-										sessionLog.add(label);
-										openFootPanel();							
-									}
-								}
+						@Override
+						public void onFailure(Throwable caught) {
+							if (!isMobile()) {
+								Label label = new Label(caught.getMessage());
+								label.addStyleName(AON.CSS.aonColorRed());
+								sessionLog.add(label);
+								openFootPanel();							
+							}
+						}
 
-								@Override
-								public void onSuccess(Boolean result) {
-									reloadPage(opt, () -> {
-										dialog.hide();
-									});
-									
-								}
-							});
+						@Override
+						public void onSuccess(Void result) {
+							reloadPage(opt, dialog::hide);
+						}
+					});
 				});
 				
 				if (isMobile()) {
@@ -730,8 +716,7 @@ public class NordigenModule extends MainEntryPoint {
 			});
 			
 			insertMovementsButton.addClickHandler(event -> {
-//				showBottomMessage(AON.CSS.aonLoader());
-				NORDIGEN_SERVICE.insertTransactions(opt.getDomainName(), opt.getDomain(), opt.getUser(), nordigenBankAccount, new AsyncCallback<Integer>() {
+				NORDIGEN_SERVICE.insertTransactions(opt.getOccam(), nordigenBankAccount, new AsyncCallback<Integer>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -999,7 +984,7 @@ public class NordigenModule extends MainEntryPoint {
 			allMovementsButton.setVisible(false);
 			insertMovementsButton.setVisible(false);
 			showBottomMessage("red", AON.CSS.aonLoader());
-			NORDIGEN_SERVICE.setNordigenAccountValues(opt.getConfiguration().getToken(), opt.getDomainName(), opt.getDomain(), opt.getUser(), nordigenBankAccount, new AsyncCallback<NordigenBankAccount>() {
+			NORDIGEN_SERVICE.setAccountValues(opt.getConfiguration().getToken(), opt.getOccam(), nordigenBankAccount, new AsyncCallback<NordigenBankAccount>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -1542,7 +1527,7 @@ public class NordigenModule extends MainEntryPoint {
 		
 		private void countryChange(NordigenModuleOptions opt, ListBox countryList, FlexTable registrationTable, NordigenBankAccount nordigenBankAccount) {
 			String countryIso2 = countryList.getSelectedValue();
-			NORDIGEN_SERVICE.getNordigenInstitutions(opt.getConfiguration().getToken(), Country.valueOf(countryIso2), new AsyncCallback<List<NordigenInstitution>>() {
+			NORDIGEN_SERVICE.getInstitutions(opt.getConfiguration().getToken(), Country.valueOf(countryIso2), new AsyncCallback<List<NordigenInstitution>>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -1649,7 +1634,7 @@ public class NordigenModule extends MainEntryPoint {
 			AonDialog dial = dialog;
 			
 			hai.addClickHandler(handler -> {
-				NORDIGEN_SERVICE.addAccount(opt.getDomainName(), opt.getDomain(), opt.getUser(), opt.getConfiguration().getToken(), nordigenBankAccount, new AsyncCallback<NordigenRequisition>() {
+				NORDIGEN_SERVICE.addAccount(opt.getConfiguration().getToken(), opt.getOccam(), nordigenBankAccount, new AsyncCallback<NordigenRequisition>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -1660,7 +1645,7 @@ public class NordigenModule extends MainEntryPoint {
 						errLabel.setText("No se pudo detectar la entidad bancaria, por favor, el\u00EDjala manualmente:");
 						registrationTable.setWidget(4, 0, errLabel);
 						
-						NORDIGEN_SERVICE.getNordigenInstitutionsByBic(opt.getConfiguration().getToken(), bic, new AsyncCallback<List<NordigenInstitution>>() {
+						NORDIGEN_SERVICE.getInstitutionsByBic(opt.getConfiguration().getToken(), bic, new AsyncCallback<List<NordigenInstitution>>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
@@ -1760,13 +1745,10 @@ public class NordigenModule extends MainEntryPoint {
 
 					@Override
 					public void onSuccess(NordigenRequisition result) {
-						if (NORDIGEN_REQUISITION_STATUS.LN.equals(result.getStatus()) ||
-							NORDIGEN_REQUISITION_STATUS.RJ.equals(result.getStatus()))
-						{
-							onFinalize(true);
-						} else {
-							onFinalize(false);							
-						}
+						onFinalize(
+							NORDIGEN_REQUISITION_STATUS.LN == result.getStatus() ||
+							NORDIGEN_REQUISITION_STATUS.RJ == result.getStatus()
+						);							
 					}
 					
 					private void onFinalize(boolean finalize) {
@@ -1788,8 +1770,6 @@ public class NordigenModule extends MainEntryPoint {
 		};
 		
 		timer.schedule(3000);
-//		timer.scheduleRepeating(5000);
-		
 		Button cancelLink = new Button(AON.MSG.cancelAction());
 		HorizontalPanel hp = new HorizontalPanel();
 		registrationTable.setWidget(3, 0, hp);
@@ -1803,33 +1783,27 @@ public class NordigenModule extends MainEntryPoint {
 		cancelLink.addClickHandler((ev) -> {
 			
 			timer.cancel();
-			NORDIGEN_SERVICE.cancelRequisition(
-					opt.getConfiguration().getToken(),
-					opt.getDomainName(),
-					opt.getDomain(),
-					opt.getUser(),
-					nordigenBankAccount.getRbank().getId(),
-					new AsyncCallback<Boolean>() {
+			NORDIGEN_SERVICE.cancelRequisition(opt.getConfiguration().getToken(), opt.getOccam()
+				, nordigenBankAccount.getRbank().getId(),new AsyncCallback<Void>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						reloadPage(opt, () -> {
+							if (dial != null) {
+								dial.hide();
+							}								
+						});
+					}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							reloadPage(opt, () -> {
-								if (dial != null) {
-									dial.hide();
-								}								
-							});
-						}
-
-						@Override
-						public void onSuccess(Boolean result) {
-							reloadPage(opt, () -> {
-								if (dial != null) {
-									dial.hide();
-								}								
-							});
-						}
-					});
-			
+					@Override
+					public void onSuccess(Void result) {
+						reloadPage(opt, () -> {
+							if (dial != null) {
+								dial.hide();
+							}								
+						});
+					}
+				}
+			);
 		});
 	}
 	
@@ -1839,7 +1813,7 @@ public class NordigenModule extends MainEntryPoint {
 	}
 	
 	private void reloadPage(NordigenModuleOptions opt, ReloadPageCallback callback) {
-		NORDIGEN_SERVICE.getConfiguration(opt.getDomainName(),opt.getDomain(),opt.getUser(),new AsyncCallback<NordigenConfiguration>() {
+		NORDIGEN_SERVICE.getConfiguration(opt.getOccam(),new AsyncCallback<NordigenConfiguration>() {
 			@Override
 			public void onSuccess(NordigenConfiguration result) {
 				callback.run();
@@ -1883,14 +1857,14 @@ public class NordigenModule extends MainEntryPoint {
 		});
 		footPanel.addMaximizeHandler(event -> openFootPanel());
 		footPanel.setStyleName(AON.CSS.aonSelector());
-		TabLayoutPanel tabLayout = new TabLayoutPanel(26, Unit.PX);
+		AonTabLayoutPanel tabLayout = new AonTabLayoutPanel(26, Unit.PX);
 		tabLayout.setWidth("100%");
 		
 		sessionLog = new FlowPanel();
 		sessionLog.getElement().getStyle().setOverflowY(Overflow.SCROLL);
 		footPanel.addStyleName(AON.AON_CSS.aonBackgroundWhite());
 			
-		tabLayout.add(sessionLog, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.information(), AON.CSS.aonIconHistory()));
+		tabLayout.add(sessionLog, AON.MSG.information());
 		
 		footPanel.add(tabLayout);
 		
@@ -1959,7 +1933,7 @@ public class NordigenModule extends MainEntryPoint {
 			}
 		}
 		
-		NORDIGEN_SERVICE.getMovements(token, opt.getDomainName(), opt.getDomain(), opt.getUser(), nordigenBankAccount, startDate, online, new AsyncCallback<List<NordigenBankStatement>>() {
+		NORDIGEN_SERVICE.getMovements(token, opt.getOccam(), nordigenBankAccount, startDate, online, new AsyncCallback<List<NordigenBankStatement>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -2249,13 +2223,12 @@ public class NordigenModule extends MainEntryPoint {
 		return iban;
 	}
 	
-	public static void ensureGwtSelector() {
+	private static void ensureGwtSelector() {
 		BodyElement body = Document.get().getBody();
 		String className = body.getClassName();
-		if (AonStringUtils.isBlank(className)
-				|| (className.indexOf("gwt-Selector") == -1))
-			body.addClassName("gwt-Selector");
-
+		if (AonStringUtils.isBlank(className) || (className.indexOf(GWT_SELECTOR_CLASS) == -1)) {
+			body.addClassName(GWT_SELECTOR_CLASS);
+		}
 	}
 
 	private static boolean isMobile() {

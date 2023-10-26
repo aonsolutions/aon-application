@@ -40,14 +40,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_ACCESS_SCOPES;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.http.AonURIBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.bank.NordigenException;
-
-public class NordigenAPI {
+class NordigenAPI {
 	private static final Logger LOGGER = Logger.getLogger(NordigenAPI.class.getName()); 
 	
 	static final String SECRET_ID = "f3559685-bbec-45c4-9dfa-f01721e7190e";
@@ -163,7 +162,12 @@ public class NordigenAPI {
 			String errStr = resp.body();					
 			if (errStr != null && errStr.charAt(0) == '{') {						
 				JSONObject errJson = new JSONObject(errStr);
-				NordigenException.throwNordigenException(errJson);
+				throw new NordigenException(
+					errJson.optString("summary")
+					,errJson.optString("detail")
+					,errJson.optString("type")
+					,errJson.optString("country")
+					,errJson.optInt("status_code"));
 			}
 		}
 	}
