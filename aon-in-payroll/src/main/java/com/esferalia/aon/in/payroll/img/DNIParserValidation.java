@@ -10,9 +10,9 @@ import com.amazonaws.services.textract.model.Document;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-public class DniParserValidation {
+public class DNIParserValidation {
 
-	private DniParserValidation() {
+	private DNIParserValidation() {
 
 	}
 	/*
@@ -97,9 +97,10 @@ public class DniParserValidation {
 	};
 	
 	private static final Consumer<String[]> NULL_NEXT_LINE_DNI = lineas -> {
+	    @SuppressWarnings("unused")
+		String dni = "";
 		for (int i = 0; i < lineas.length; i++) {
 			String linea = lineas[i];
-			String dni = "";
 			if (linea.startsWith("DNI") || linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
 				try {
 					dni = lineas[i+1];
@@ -109,12 +110,16 @@ public class DniParserValidation {
 			}
 		}
 	};
+
 	
 	private static final Consumer<String[]> NULL_NEXT_LINE_SURNAME = lineas -> {
+	    @SuppressWarnings("unused")
+		String apellido1 = "";
+	    @SuppressWarnings("unused")
+		String apellido2 = "";
 		for (int i = 0; i < lineas.length; i++) {
 			String linea = lineas[i];
-			String apellido1 = "";
-			String apellido2 = "";
+			
 			if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
 				try {
 					apellido1 = lineas[i+1];
@@ -127,9 +132,10 @@ public class DniParserValidation {
 	};
 	
 	private static final Consumer<String[]> NULL_NEXT_LINE_NAME = lineas -> {
+	    @SuppressWarnings("unused")
+		String nombre = "";
 		for (int i = 0; i < lineas.length; i++) {
 			String linea = lineas[i];
-			String nombre = "";
 			if (linea.startsWith("NOMBRE") || linea.startsWith("NONBRE")) {
 				try {
 					nombre = lineas[i+1];
@@ -141,9 +147,10 @@ public class DniParserValidation {
 	};
 	
 	private static final Consumer<String[]> NULL_NEXT_LINE_NATIONALITY = lineas -> {
+	    @SuppressWarnings("unused")
+		String nacionalidad = "";
 		for (int i = 0; i < lineas.length; i++) {
 			String linea = lineas[i];
-			String nacionalidad = "";
 			if (linea.startsWith("NACIONALIDAD")) {
 				try {
 					nacionalidad = lineas[i+1];

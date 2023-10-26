@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,34 +32,27 @@ import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
 import com.amazonaws.services.textract.model.DetectDocumentTextResult;
 import com.amazonaws.services.textract.model.Document;
 
-
 public class DNIParser {
 
-	public static String text;
-	public static String dni;
-	public static String nombre;
-	public static String apellido1;
-	public static String apellido2;
-	public static String nacionalidad;
+	private static String text;
 
 	// CONVIERTE IMAGEN DEL DNI A DOCUMENT USANDO BYTES
-	public static String extractImage(byte[] bytes) {
-		DniParserValidation.validateBytes(bytes);
+	public String extractImage(byte[] bytes) {
+		DNIParserValidation.validateBytes(bytes);
 		return extract(new Document().withBytes(ByteBuffer.wrap(bytes)));
-
 	}
 
 	// RECOGE UN INPUTSTREAM Y LO TRANSFORMA EN PDDocument
 
-	public static void parse(InputStream is) throws IOException {
-		DniParserValidation.validateInputstream(is);
+	public void parse(InputStream is) throws IOException {
+		DNIParserValidation.validateInputstream(is);
 		try (PDDocument doc = Loader.loadPDF(is)) {
 			parser(doc);
 		}
 	}
 
 	public void parse(List<InputStream> inputStreams) throws IOException {
-		DniParserValidation.validateInputStreamList(inputStreams);
+		DNIParserValidation.validateInputStreamList(inputStreams);
 		for (InputStream is : inputStreams) {
 			try (PDDocument doc = Loader.loadPDF(is)) {
 				parser(doc);
@@ -66,9 +61,9 @@ public class DNIParser {
 	}
 
 	// RECOGE LAS IMAGENES DEL PDF Y LAS ALMACENA EN BYTE[]
-	public static Collection<byte[]> getImages(PDDocument document) throws IOException {
-		DniParserValidation.validatePDDoc(document);
-		LinkedList<byte[]> images = new LinkedList<byte[]>();
+	protected static Collection<byte[]> getImages(PDDocument document) throws IOException {
+		DNIParserValidation.validatePDDoc(document);
+		LinkedList<byte[]> images = new LinkedList<>();
 		for (PDPage page : document.getPages()) {
 			PDResources pdResources = page.getResources();
 			for (COSName name : pdResources.getXObjectNames()) {
@@ -84,19 +79,19 @@ public class DNIParser {
 		return images;
 	}
 
-	public static String parser(PDDocument doc) throws IOException {
-		DniParserValidation.validatePDDoc(doc);
+	protected String parser(PDDocument doc) throws IOException {
+		DNIParserValidation.validatePDDoc(doc);
 		AccessPermission ap = doc.getCurrentAccessPermission();
 
 		if (!ap.canExtractContent()) {
-			//CREAR NUEVA EXCEPCION
-			throw new ImgDniException("You do not have permission to extract text");
+			// CREAR NUEVA EXCEPCION
+			throw new ImgDNIException("You do not have permission to extract text");
 		}
 		PDFTextStripper stripper = new PDFTextStripper();
 		stripper.setSortByPosition(true);
 		String extractedText = stripper.getText(doc);
 		if (isBlank(extractedText)) {
-			extractedText = getImages(doc).stream().map(img -> DNIParser.extractImage(img))
+			extractedText = getImages(doc).stream().map(img -> extractImage(img))
 					.collect(Collectors.joining(System.lineSeparator()));
 		}
 		DNIParser.setText(extractedText);
@@ -104,90 +99,94 @@ public class DNIParser {
 	}
 
 	// UNA VEZ CONVERTIDO EL FORMATO DEL DNI LO PASA A TEXTO PLANO
-	public static String extract(Document doc) {
+	protected String extract(Document doc) {
 
 		AmazonTextract client = AmazonTextractClientBuilder.defaultClient();
 
-		DniParserValidation.validateDoc(doc);
+		DNIParserValidation.validateDoc(doc);
 
 		DetectDocumentTextRequest detectDocumentTextRequest = new DetectDocumentTextRequest().withDocument(doc);
 
 		DetectDocumentTextResult detectDocumentTextResult = client.detectDocumentText(detectDocumentTextRequest);
-		
+
 		detectDocumentTextResult.getBlocks().stream().filter(b -> b.getText() != null)
 				.filter(b -> b.getBlockType().equals("LINE")).forEach(b -> {
 
 				});
 
-		Block blocks[] = detectDocumentTextResult.getBlocks().stream().filter(b -> b.getText() != null)
+		Block[] blocks = detectDocumentTextResult.getBlocks().stream().filter(b -> b.getText() != null)
 				.filter(b -> b.getBlockType().equals("LINE")).toArray(Block[]::new);
 
-		String text = null;
+		String extract = null;
 
 		if (blocks != null && blocks.length > 0) {
 			LinkedList<Block> lines = new LinkedList<>();
 			for (int i = 0; i < blocks.length; i++) {
-				lines.add(blocks[i]);
+				lines.addAll(Arrays.asList(blocks));
 			}
 			for (int i = 1; i < blocks.length; i++) {
 				Block block = blocks[i];
 				Block line = lines.peekLast();
 				if (intersects(line, block))
 					line.setText(line.getText() + " " + block.getText());
-				else if (lines.equals(line))
+				else
 					lines.add(block);
-				text = lines.stream().map(Block::getText).collect(Collectors.joining("\r\n"));
+				extract = lines.stream().map(Block::getText).collect(Collectors.joining("\r\n"));
 			}
 
 		}
-		return text;
+		return extract;
 	}
 
-	public static void getNewDniBothPdf(String text, DniDataListener listener) {
-		DniParserValidation.validateText(text);
+	public List<String> getDNIData(String text) {
+		DNIParserValidation.validateText(text);
 		String[] lineas = text.split("\n");
-		
+		DNIParserValidation.validate(lineas);
+		ArrayList<String> result = new ArrayList<>();
+		String dni = "";
+		String nombre = "";
+		String apellido1 = "";
+		String apellido2 = "";
+		String nacionalidad = "";
+
 		for (int i = 0; i < lineas.length; i++) {
 			String linea = lineas[i];
 			if (linea.startsWith("DNI") || linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
 				dni = lineas[i + 1];
-				if (!DNIParser.validateDni(dni)) {
+				if (!validateDni(dni)) 
 					dni = "";
-				}
-				listener.onDniData(dni);
 				
 			} else if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
 				apellido1 = lineas[i + 1];
-				if (!DNIParser.validateNames(apellido1)) {
+				if (!validateNames(apellido1)) {
 					apellido1 = "";
 				}
 				apellido2 = lineas[i + 2];
-				if (!DNIParser.validateNames(apellido2)) {
+				if (!validateNames(apellido2)) {
 					apellido2 = "";
 				}
-				listener.onApellidosData(apellido1, apellido2);
 			} else if (linea.startsWith("NOMBRE") || linea.startsWith("NONBRE")) {
 				nombre = lineas[i + 1];
-				if (!DNIParser.validateNames(nombre)) {
+				if (!validateNames(nombre)) {
 					nombre = "";
 				}
-				listener.onNombreData(nombre);
 			} else if (linea.startsWith("NACIONALIDAD")) {
 				nacionalidad = lineas[i + 3];
-				if (!DNIParser.validateNationality(nacionalidad)) {
+				if (!validateNationality(nacionalidad)) {
 					nacionalidad = "";
 				}
-				listener.onNacionalidadData(nacionalidad);
-				if (nacionalidad.equals("ESP")) {
-					nacionalidad = "ESPAÑA";
-				}
-
 			}
 		}
+		result.add(dni);
+		result.add(apellido1);
+		result.add(apellido2);
+		result.add(nombre);
+		result.add(nacionalidad);
 
+		return result;
 	}
 
-	public static boolean validateNames(String name) {
+	private boolean validateNames(String name) {
 		name = name.trim();
 		String patternName = "[a-zA-Z\\s]+";
 		Pattern pattern = Pattern.compile(patternName);
@@ -195,7 +194,7 @@ public class DNIParser {
 		return matcher.matches();
 	}
 
-	public static boolean validateDni(String dni) {
+	private boolean validateDni(String dni) {
 		dni = dni.trim();
 		String patternDni = "\\d{8}[A-HJ-NP-TV-Z]";
 		Pattern pattern = Pattern.compile(patternDni);
@@ -203,7 +202,7 @@ public class DNIParser {
 		return matcher.matches();
 	}
 
-	public static boolean validateNationality(String nacionalidad) {
+	private boolean validateNationality(String nacionalidad) {
 		nacionalidad = nacionalidad.trim();
 		String patternNat = "[A-Z]{3}";
 		Pattern pattern = Pattern.compile(patternNat);
@@ -214,12 +213,10 @@ public class DNIParser {
 	private static boolean intersects(Block b1, Block b2) {
 		float top1 = b1.getGeometry().getBoundingBox().getTop();
 		float height1 = b1.getGeometry().getBoundingBox().getHeight();
-
 		float top2 = b2.getGeometry().getBoundingBox().getTop();
-		if (Math.abs(top2 - top1) <= height1 / 2.00) {
-			return true;
-		}
-		return false;
+		
+		return (Math.abs(top2 - top1) <= height1 / 2.00); 
+	
 	}
 
 	private static boolean isBlank(String cs) {
