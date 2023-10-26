@@ -37,8 +37,9 @@
     <div id="documentCharge" *ngIf="filesAndFolder.length > 0">
       <div class="document">
         <app-card
-          [class] = "'file pink'"
-          *ngFor  = "let file of filesAndFolder; let i = index"
+          [class]        = "'file pink'"
+          *ngFor         = "let file of filesAndFolder; let i = index"
+          cardMatTooltip = "{{ file['document'].name }}"
         >
           <div header>
             <div class = "cancel">
@@ -54,10 +55,13 @@
             </span>
           </div>
           <div footer>
-            <div class="bold">
+            <div 
+              class="bold"
+            >
               {{ file['document'].name }}
             </div>
             <div class="griss">{{ currentDate }}</div>
+            <div class="griss">{{ currentDateHour }}</div>
           </div>
         </app-card>
       </div>
