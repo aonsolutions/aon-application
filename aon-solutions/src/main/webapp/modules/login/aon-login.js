@@ -58,21 +58,25 @@ export class AonLogin extends AonElement {
     }
     div.appendChild(div2);
     
-    if(!this.isMobile()) {
-      let divLanguage = this.createElement(TAG.DIV);
-      divLanguage.id = 'aonLoginLanguageDiv';
-      divLanguage.style.display = 'flex';
-      divLanguage.style.justifyContent = 'right';
-      divLanguage.style.marginBottom = '5px';
-      div2.appendChild(divLanguage);
+    let divLanguage = this.createElement(TAG.DIV);
+    divLanguage.id = 'aonLoginLanguageDiv';
+    divLanguage.style.display = 'flex';
+    divLanguage.style.justifyContent = 'right';
+    divLanguage.style.marginBottom = '5px';
+    div2.appendChild(divLanguage);
 
-      let spanLanguage = this.createElement(TAG.SPAN);
-      spanLanguage.id = 'aonLoginLanguageSpan';
-      spanLanguage.style.color = 'lightgray';
-      spanLanguage.innerHTML = this.getLanguageText();
+    let spanLanguage = this.createElement(TAG.SPAN);
+    spanLanguage.id = 'aonLoginLanguageSpan';
+    spanLanguage.style.color = 'lightgray';
+    spanLanguage.innerHTML = this.getLanguageText();
+    if(this.isMobile()) {
+      spanLanguage.addEventListener(EVENT.CLICK, () => this.languageDialog());
+    } else {
       spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
-      divLanguage.appendChild(spanLanguage);
     }
+
+    divLanguage.appendChild(spanLanguage);
+    
 
     let divLogo = this.createElement(TAG.DIV);
     divLogo.id = 'aonLoginLogoDiv';
@@ -205,31 +209,56 @@ export class AonLogin extends AonElement {
       d.id = 'aonHeaderDialogHelpOption';
       this.appendChild(d);
     }  
-    d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
+    if(!this.isMobile())
+      d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
 
     let options = [{
       name: MSG.SPANISH,
+      title: MSG.SPANISH,
       image: '../assets/img/aonIconCastellano.png',
+      backgroundColor: 'white',
+      permission: true,
+      language: true,
       fn: () => LS.setLanguage(Language.SPANISH)
     }, {
       name: MSG.ENGLISH,
+      title: MSG.ENGLISH,
       image: '../assets/img/aonIconEnglish.png',
+      backgroundColor: 'white',
+      permission: true,
+      language: true,
       fn: () => LS.setLanguage(Language.ENGLISH)
     }, {
       name: MSG.DEUTSCH,
+      title: MSG.DEUTSCH,
       image: '../assets/img/aonIconDeutsch.png',
+      backgroundColor: 'white',
+      permission: true,
+      language: true,
       fn: () => LS.setLanguage(Language.DEUTSCH)
     }, {
       name: MSG.BASQUE,
+      title: MSG.BASQUE,
       image: '../assets/img/aonIconEuskera.png',
+      backgroundColor: 'white',
+      permission: true,
+      language: true,
       fn: () => LS.setLanguage(Language.BASQUE)
     }, {
       name: MSG.CATALAN,
+      title: MSG.CATALAN,
       image: '../assets/img/aonIconCatala.png',
+      backgroundColor: 'white',
+      permission: true,
+      language: true,
       fn: () => LS.setLanguage(Language.CATALAN)
     }, {
       name: MSG.GALICIAN,
+      title: MSG.GALICIAN,
       image: '../assets/img/aonIconGalego.png',
+      backgroundColor: 'white',
+      permission: true,
+      language: true,
       fn: () => LS.setLanguage(Language.GALICIAN)
     } ];
 
