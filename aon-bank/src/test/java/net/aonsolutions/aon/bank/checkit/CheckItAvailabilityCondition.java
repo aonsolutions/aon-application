@@ -8,10 +8,8 @@ import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import net.aonsolutions.aon.bank.nordigen.NordigenAPI;
-
 public class CheckItAvailabilityCondition implements ExecutionCondition {
-	private static final Logger LOGGER = Logger.getLogger(NordigenAPI.class.getName()); 
+	private static final Logger LOGGER = Logger.getLogger(CheckItAvailabilityCondition.class.getName()); 
 	
     @Override
     public ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext context) {

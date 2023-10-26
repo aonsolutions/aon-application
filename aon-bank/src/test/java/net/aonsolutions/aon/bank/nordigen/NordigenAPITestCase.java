@@ -16,9 +16,8 @@ import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_ACCESS_SCOPES;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.occam.api.model.type.Country;
-
-import net.aonsolutions.aon.bank.NordigenException;
 
 public class NordigenAPITestCase {
 	

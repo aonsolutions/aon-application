@@ -1,8 +1,8 @@
-package net.aonsolutions.aon.bank;
+package com.esferalia.aon.occam.api.model.finance.nordigen;
 
-import org.json.JSONObject;
+import com.esferalia.aon.watson.error.AonCoreException;
 
-public class NordigenException extends RuntimeException {
+public class NordigenException extends AonCoreException {
 	
 	private static final long serialVersionUID = -6384010753448554063L;
 
@@ -13,18 +13,19 @@ public class NordigenException extends RuntimeException {
 	private Integer statusCode;
 
 	public NordigenException() {
-		super();
+		this(null,null,null,null,null);
 	}
 	
 	public NordigenException(String message) {
-		super(message);
+		this(null,message,null,null,null);
 	}
 
-	private NordigenException(String summary, String detail, String type, String country, Integer statusCode) {
+	public NordigenException(String summary, String detail, String type, String country, Integer statusCode) {
 		super(detail);
 		this.summary = summary;
 		this.detail = detail;
 		this.type = type;
+		this.country = country;
 		this.statusCode = statusCode;
 	}
 
@@ -50,19 +51,6 @@ public class NordigenException extends RuntimeException {
 	
 	public static long getSerialversionuid() {
 		return serialVersionUID;
-	}
-
-	public static void throwNordigenException(JSONObject errJson) throws NordigenException {
-		if (errJson != null) {
-			String message = errJson.optString("detail");
-			throw new NordigenException(
-			errJson.optString("summary")
-			,message
-			,errJson.optString("type")
-			,errJson.optString("country")
-			,errJson.optInt("status_code"));
-		}
-		throw new NordigenException();
 	}
 	
 }
