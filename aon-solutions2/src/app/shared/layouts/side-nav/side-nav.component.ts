@@ -48,21 +48,21 @@ export class SideNavComponent implements OnInit {
         'MENU.TAX_PANEL',
         'MENU.EMPLOYEE_PANEL',
         'MENU.DOCUMENTATION',
-        'HOME.CREATE_QUERY',
+        'INBOX.CREATE_QUERY',
       ])
       .subscribe((result) => {
         this.items = [
-          { routerlink: 'inbox', shape: 'inbox', text: result['MENU.INBOX'], class: 'red', selected: false, },
-          { routerlink: 'billing', shape: 'assessment', text: result['MENU.BILLING'], class: 'blue', selected: false,},
+          { routerlink: 'inbox', shape: 'inbox', text: result['MENU.INBOX'],  class: 'red', selected: false, },
+          { routerlink: 'billing', shape: 'assessment', text: result['MENU.BILLING'],  class: 'blue', selected: false,},
           { routerlink: 'tax-panel', shape: 'euro_symbol', text: result['MENU.TAX_PANEL'], class: 'orange', selected: false, },
-          { routerlink: 'employee-panel', shape: 'people', text: result['MENU.EMPLOYEE_PANEL'], class: 'green', selected: false, },
+          { routerlink: 'employee-panel', shape: 'people', text: result['MENU.EMPLOYEE_PANEL'],  class: 'green', selected: false, },
           { routerlink: 'documentation', shape: 'description', text: result['MENU.DOCUMENTATION'], class: 'pink', selected: false, },
           //    {routerlink: 'consulting',      shape: 'work',        text: 'ASESORÍA',           class: 'purple',  selected: false}
         ];
         this.shortcuts = [
           { routerlink: 'home', shape: 'add_box', toolTip: 'En construcción' },
           { routerlink: 'tax-panel', shape: 'person_add', toolTip: 'En construcción', },
-          { routerlink: 'inbox/create', shape: 'add_comment', toolTip: result['HOME.CREATE_QUERY'], options: { showModal: true }, },
+          { routerlink: 'inbox/create', shape: 'add_comment', toolTip: result['INBOX.CREATE_QUERY'], options: { showModal: true }, },
           { routerlink: 'tax-panel', shape: 'alarm', toolTip: 'En construcción', },
         ];
       });

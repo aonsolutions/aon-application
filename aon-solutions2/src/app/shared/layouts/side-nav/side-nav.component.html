@@ -21,7 +21,8 @@
         (click)="deselectAll();select(item);"
         routerLink={{item.routerlink}}
       >
-        <app-icon class="{{item.class}}" [shape]="item.shape"></app-icon>
+      <app-icon class="{{ item.class }}" [shape]="item.shape" [matTooltip]="item.text" [matTooltipDisabled]="opened || this.items.length === 0"
+      ></app-icon>
         <span *ngIf="opened && this.items.length > 0" >
           {{item.text}}
         </span>

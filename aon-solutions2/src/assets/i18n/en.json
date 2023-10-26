@@ -101,7 +101,8 @@
     "NOQUERIESTHISMONTH": "No queries this month.",
     "NOMESSAGES": "No messages.",
     "PROCESS": "Process",
-    "CONSULT": "Consultar"
+    "CONSULT": "Consultar",
+    "CREATE_QUERY": "Create query"
   },
   "DOCUMENTATION": {
     "FILE_SELECT_ALL"       : "Select all",
