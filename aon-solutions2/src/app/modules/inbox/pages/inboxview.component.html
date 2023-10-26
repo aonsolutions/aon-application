@@ -232,7 +232,7 @@
           {{ messagesData.Title }}
         </div>
         <div class="inbox-message-date">
-          {{ datepipe.transform(messagesData.Date, 'MM/dd/yyyy, HH:mm') }}
+          {{ datepipe.transform(messagesData.Date, 'dd/MM/yyyy, HH:mm') }}
         </div>
       </div>
     <!--Chat-->
@@ -240,17 +240,17 @@
       <div class="padding" *ngIf="messagesData.Type === 'consulta'">
         <div class="padding-bottom">
           <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
-          {{ messagesData.Description }}
+          <p [innerHTML]="messagesData.Description"></p>
         </div>
         <div class="inbox-chat" (click)="toggleDescription(i)" *ngFor="let messageChat of messagesChat; let i = index">
           <div class="inbox-chat-name">
             {{ messageChat.Name }}
-            <div *ngIf="expandedIndex === i" class="inbox-chat-description-side">{{ messageChat.Description }}</div>
+            <div *ngIf="expandedIndex === i" class="inbox-chat-description-side" [innerHTML]="messageChat.Description"> </div>
           </div>
           <div class="inbox-chat-description">
-            <div *ngIf="expandedIndex !== i">{{ messageChat.Description }}</div>
+            <div *ngIf="expandedIndex !== i" [innerHTML]="messageChat.Description"></div>
           </div>
-          <div class="inbox-chat-date">{{ datepipe.transform(messageChat.Date, 'MM/dd/yyyy, HH:mm') }}</div>
+          <div class="inbox-chat-date">{{ datepipe.transform(messageChat.Date, 'dd/MM/yyyy, HH:mm') }}</div>
         </div>
       </div>
       <div class="padding" *ngIf="showSendButtons && messagesData.Type === 'consulta'">
@@ -283,7 +283,7 @@
         *ngIf="messagesData.Type === 'notificacion' || messagesData.Type === 'tarea'"
         >
         <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
-        {{ messagesData.Description }}
+        <p [innerHTML]="messagesData.Description"></p>
 
         <div
           class="inbox-btns-content"
