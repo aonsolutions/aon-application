@@ -1,11 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ContractService } from 'src/app/core/services/contract.service';
-import { CreateNewContractComponent } from '../components/create-new-contract/create-new-contract.component';
+import {
+  CollectionFactory,
+  Factory,
+  ICollection,
+  IContract,
+} from 'libraries/AonSDK/src/aon';
+import { DateFormat } from 'src/app/core/utilities/time';
 
 export interface Tabs {
-  name: string; // Nombre de la tab
+  name: string; // Nombre de la pestaña
 }
+
 @Component({
   selector: 'app-employee',
   templateUrl: './employee.component.html',
@@ -14,7 +21,9 @@ export interface Tabs {
 export class EmployeeComponent implements OnInit {
   tabIndex: number = 0;
   spinner: boolean = false;
-
+  entityFactory = new Factory();
+  contracts: ICollection<IContract> =
+    new CollectionFactory().createContractCollection();
   displayedColumns: string[] = [
     'employee',
     'grossCost',
@@ -24,7 +33,7 @@ export class EmployeeComponent implements OnInit {
     'marcaje',
   ];
   headerTable: any = {};
-  contracts: any;
+
   tabs: Tabs[] = [{ name: 'tab1' }, { name: 'tab2' }];
   buttonsGastos: any[] = [];
   showDetailCurrentContract: boolean = false;
@@ -32,44 +41,21 @@ export class EmployeeComponent implements OnInit {
   search: string = '';
   showSendButton: boolean = false;
   showSendButtons: boolean = false;
-
-  //hardcodeo para mostrar showdetail
-  dataBody: any[] = [
-    {
-      key: 1,
-      employee: 'Antonia Diaz',
-      grossCost: '1500',
-      type: 'Indefinido',
-      date: '30/05/2023 - 01/06/2023',
-      workCenter: 'Principal',
-      marcaje: '20 horas',
-    },
-    {
-      key: 2,
-      employee: 'Pepa Lopez',
-      grossCost: '1800',
-      type: 'Indefinido',
-      date: '30/05/2023 - 01/06/2023',
-      workCenter: 'Principal',
-      marcaje: '30 horas',
-    },
-    {
-      key: 3,
-      employee: 'Maria Fernandez',
-      grossCost: '2500',
-      type: 'Indefinido',
-      date: '30/05/2023 - 01/06/2023',
-      workCenter: 'Principal',
-      marcaje: '40 horas',
-    },
-  ];
+  contratosActivos: IContract[] = [];
+  contratosInactivos: IContract[] = [];
 
   bodyTable: any = [];
 
   constructor(
     public contractService: ContractService,
     private translateService: TranslateService
-  ) {
+  ) {}
+
+  ngOnInit(): void {
+    this.initializeComponent();
+  }
+
+  private initializeComponent() {
     this.translateService
       .get([
         'EMPLOYEE_PANEL.EMPLOYEE',
@@ -90,12 +76,12 @@ export class EmployeeComponent implements OnInit {
             shape: 'aon_excel',
           },
         ];
-        // Cabecera de los tabs
+
         this.tabs = [
           { name: result['EMPLOYEE_PANEL.CURRENT_CONTRACTS'] },
           { name: result['EMPLOYEE_PANEL.EXPIRED_CONTRACTS'] },
         ];
-        // Cabecera de la tabla
+
         this.headerTable = {
           employee: result['EMPLOYEE_PANEL.EMPLOYEE'],
           grossCost: result['EMPLOYEE_PANEL.GROSSCOST'],
@@ -105,99 +91,115 @@ export class EmployeeComponent implements OnInit {
           marcaje: result['HOME.TIMING'],
         };
 
-        let tableRow: any = [];
-        let column: any = {};
-
-        this.dataBody.forEach((contract: any) => {
-          console.log(contract);
-          column = Object.assign({}, contract);
-
-          column.key = contract.key;
-          column.employee = contract.employee;
-          column.grossCost = contract.grossCost + ' &euro;';
-          column.type = contract.type;
-          column.date = contract.date;
-          column.workCenter = contract.workCenter;
-          column.marcaje = contract.marcaje;
-
-          tableRow.push(column);
-        });
-
-        // contractService.getContractList().then((response) => {
-        //   this.spinner = false;
-        //   // console.log(response);
-        //   response.forEach(function (contract, contractKey) {
-        //     column = Object.assign({}, contract);
-        //     column.key = contractKey;
-        //     column.employee = contract.Name;
-        //     column.grossCost = contract.GrossCost;
-        //     column.type = contract.Type;
-        //     column.date = contract.StartDate;
-        //     column.workCenter = contract.WorkCenter;
-        //     column.marcaje = contract.Name;
-
-        //     tableRow.push(column);
-        //   });
-
-        this.bodyTable = tableRow;
-        //   // No tenemos modelos en la tabla
-        //   if (response.size() === 0) {
-        //     this.translateService
-        //       .get(['EMPLOYEE_PANEL.NO_CONTRACTS'])
-        //       .subscribe((result) => {
-        //         this.contracts = result['EMPLOYEE_PANEL.NO_CONTRACTS'];
-        //       });
-        //   }
-        // });
+        this.updateTableData();
       });
   }
 
-  ngOnInit(): void {}
+  addEmployee() {
+    // Agregar la lógica para agregar un empleado
+  }
 
-  addEmployee() {}
+  private updateTableData() {
+    this.contractService.getContractList().then((response) => {
+      this.spinner = false;
+      this.contratosActivos = [];
+      this.contratosInactivos = [];
+
+      response.forEach((contract, contractKey) => {
+        const column: any = {
+          key: contractKey,
+          employee: `${contract.Name} ${contract.LastName}`,
+          grossCost: `${contract.GrossCost} &euro;`,
+          type: contract.Type,
+        };
+
+        if (contract.StartDate && contract.EndDate) {
+          const formattedStartDate = DateFormat(
+            new Date(contract.StartDate),
+            'dd/MM/yyyy'
+          );
+          const formattedEndDate = DateFormat(
+            new Date(contract.EndDate),
+            'dd/MM/yyyy'
+          );
+          column.date = `${formattedStartDate} - ${formattedEndDate}`;
+        } else {
+          column.date = '';
+        }
+
+        column.workCenter = contract.WorkCenter;
+        column.marcaje = '';
+
+        if (contract.Active) {
+          this.contratosActivos.push(column);
+        } else {
+          this.contratosInactivos.push(column);
+        }
+      });
+
+      this.bodyTable =
+        this.tabIndex === 0 ? this.contratosActivos : this.contratosInactivos;
+      console.log('esto es bodytable', this.bodyTable);
+    });
+  }
 
   changeTabIndex(index: number) {
     this.tabIndex = index;
     this.closeDetailCurrentContract();
     this.closeDetailExpiredContract();
-
-    // this.updateTableData();
+    this.updateTableData();
   }
 
   searchContract(search: string) {
-    // Si el término de búsqueda está vacío, muestra todos los elementos de la tabla.
     if (!search) {
-      this.bodyTable = this.dataBody;
+      // Si el término de búsqueda está vacío, mostrar todos los elementos de la tabla
+      this.updateTableData();
       return;
     }
-    // Convierte el término de búsqueda a minúsculas para hacer una búsqueda insensible a mayúsculas y minúsculas.
-    search = search.toLowerCase();
 
-    // Filtra TODAS LAS COLUMNAS de la tabla en función del término de búsqueda
-    this.bodyTable = this.dataBody.filter((item: any) => {
-      return Object.values(item).some((value: any) =>
-        value.toString().toLowerCase().includes(search)
-      );
-    });
+    // Convertir el término de búsqueda a minúsculas y quitar las tildes
+    search = search.toLowerCase();
+    search = this.removeAccents(search);
+
+    // Filtrar los elementos en función del término de búsqueda
+    this.bodyTable = this.bodyTable.filter((item: any) =>
+      Object.values(item).some((value: any) => {
+        // Convierte el valor a minúsculas y quita las tildes antes de comparar
+        const cleanedValue = this.removeAccents(value.toString().toLowerCase());
+        return cleanedValue.includes(search);
+      })
+    );
+
+    // Filtra en la columna "employee".
+    //   this.bodyTable = this.bodyTable.filter((item) => {
+    //     return item.employee.toLowerCase().includes(search);
+    //   });
+    // }
   }
-  // Filtra en la columna "employee".
-  //   this.bodyTable = this.dataBody.filter((item) => {
-  //     return item.employee.toLowerCase().includes(search);
-  //   });
-  // }
+
+  // Función para quitar las tildes
+  removeAccents(str: string) {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
 
   async rowClick(contract: any) {
+    console.log('contract', contract);
+
     // CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
-    const isSameRow = this.dataBody && this.dataBody[0].key === contract.key;
-    this.showDetailCurrentContract = !isSameRow ? true : !this.showDetailCurrentContract;
-    //this.dataBody[0] = await this.contractService.getContract(contract.key);
+    const isSameRow = this.bodyTable && this.bodyTable.Id === contract.key;
+    this.showDetailCurrentContract = !isSameRow
+      ? true
+      : !this.showDetailCurrentContract;
   }
 
   async rowClick1(contract: any) {
+    console.log('contract', contract);
     // CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
-    const isSameRow = this.dataBody && this.dataBody[0].key === contract.key;
-    this.showDetailExpiredContract = !isSameRow ? true : !this.showDetailExpiredContract;
-    //this.dataBody[0] = await this.contractService.getContract(contract.key);
+    const isSameRow = this.bodyTable && this.bodyTable.Id === contract.key;
+    this.showDetailExpiredContract = !isSameRow
+      ? true
+      : !this.showDetailExpiredContract;
+
   }
 
   // Cerrar details contratos vigentes

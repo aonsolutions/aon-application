@@ -131,25 +131,25 @@
 
       <div class="info-contract border padding">
         <div class="info-status info-line">
-          <div class="info-main-title">
-            {{ dataBody[0].employee }}
+          <div class="info-main-title" *ngIf="bodyTable">
+            {{ bodyTable.employee }}
           </div>
-          <div class="info-data">EN LINEA</div>
+          <div class="info-data"></div>
         </div>
 
         <div class="info-line">
           <div class="info-title">
             {{ "EMPLOYEE_PANEL.ID_NUMBER" | translate }}
           </div>
-          <div class="info-data">12345678-D</div>
+          <div class="info-data"></div>
         </div>
         <div class="info-line">
           <div class="info-title">{{ "PROFILE.EMAIL" | translate }}</div>
-          <div class="info-data">prueba@gmail.com</div>
+          <div class="info-data"></div>
         </div>
         <div class="info-line separacion">
           <div class="info-title">{{ "PROFILE.PHONE" | translate }}</div>
-          <div class="info-data">600000000</div>
+          <div class="info-data"></div>
         </div>
 
         <div class="info-title-timing">{{ "HOME.TIMING" | translate }}</div>
@@ -157,33 +157,33 @@
         <div class="contenedor-principal">
           <div class="contenedor-izq">
             <div class="entrada">
-              <div class="titulo">Entrada</div>
+              <div class="titulo"></div>
               <div class="hora">
                 <app-icon
                   class="green button titulo-icon"
                   shape="input"
                 ></app-icon>
-                07:00:22
+
               </div>
-              <div class="fecha">fecha</div>
+              <div class="fecha"></div>
             </div>
 
             <div class="salida">
-              <div class="titulo">Salida</div>
+              <div class="titulo"></div>
               <div class="hora">
                 <app-icon
                   class="red button titulo-icon"
                   shape="input"
                 ></app-icon>
-                07:00:22
+
               </div>
-              <div class="fecha">fecha</div>
+              <div class="fecha"></div>
             </div>
           </div>
 
           <div class="contenedor-derecha">
-            <div class="titulo titulo-margin">Total</div>
-            <div class="hora">07:00:22</div>
+            <div class="titulo titulo-margin"></div>
+            <div class="hora"></div>
           </div>
         </div>
       </div>
@@ -209,24 +209,24 @@
       <div class="info-contract border padding">
         <div class="info-status info-line">
           <div class="info-main-title">
-            {{ dataBody[0].employee }}
+            {{ bodyTable.employee }}
           </div>
-          <div class="info-data">INACTIVO</div>
+          <div class="info-data"></div>
         </div>
 
         <div class="info-line">
           <div class="info-title">
             {{ "EMPLOYEE_PANEL.ID_NUMBER" | translate }}
           </div>
-          <div class="info-data">12345678-D</div>
+          <div class="info-data"></div>
         </div>
         <div class="info-line">
           <div class="info-title">{{ "PROFILE.EMAIL" | translate }}</div>
-          <div class="info-data">prueba@gmail.com</div>
+          <div class="info-data"></div>
         </div>
         <div class="info-line">
           <div class="info-title">{{ "PROFILE.PHONE" | translate }}</div>
-          <div class="info-data">600000000</div>
+          <div class="info-data"></div>
         </div>
       </div>
     </div>
