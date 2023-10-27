@@ -91,7 +91,7 @@ public class DNIParser {
 		stripper.setSortByPosition(true);
 		String extractedText = stripper.getText(doc);
 		if (isBlank(extractedText)) {
-			extractedText = getImages(doc).stream().map(img -> extractImage(img))
+			extractedText = getImages(doc).stream().map(this::extractImage)
 					.collect(Collectors.joining(System.lineSeparator()));
 		}
 		DNIParser.setText(extractedText);
@@ -137,54 +137,85 @@ public class DNIParser {
 		}
 		return extract;
 	}
-
+	
 	public List<String> getDNIData(String text) {
-		DNIParserValidation.validateText(text);
-		String[] lineas = text.split("\n");
-		DNIParserValidation.validate(lineas);
-		ArrayList<String> result = new ArrayList<>();
-		String dni = "";
-		String nombre = "";
-		String apellido1 = "";
-		String apellido2 = "";
-		String nacionalidad = "";
+	    String[] lines = text.split("\n");
+	    List<String> result = new ArrayList<>();
 
-		for (int i = 0; i < lineas.length; i++) {
-			String linea = lineas[i];
-			if (linea.startsWith("DNI") || linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
-				dni = lineas[i + 1];
-				if (!validateDni(dni)) 
-					dni = "";
-				
-			} else if (linea.startsWith("APELLIDOS") || linea.startsWith("APALLIDOS")) {
-				apellido1 = lineas[i + 1];
-				if (!validateNames(apellido1)) {
-					apellido1 = "";
-				}
-				apellido2 = lineas[i + 2];
-				if (!validateNames(apellido2)) {
-					apellido2 = "";
-				}
-			} else if (linea.startsWith("NOMBRE") || linea.startsWith("NONBRE")) {
-				nombre = lineas[i + 1];
-				if (!validateNames(nombre)) {
-					nombre = "";
-				}
-			} else if (linea.startsWith("NACIONALIDAD")) {
-				nacionalidad = lineas[i + 3];
-				if (!validateNationality(nacionalidad)) {
-					nacionalidad = "";
+	    String dni = extractDNI(lines);
+	    String apellido1 = extractApellido1(lines);
+	    String apellido2 = extractApellido2(lines);
+	    String nombre = extractNombre(lines);
+	    String nacionalidad = extractNacionalidad(lines);
+
+	    result.add(dni);
+	    result.add(apellido1);
+	    result.add(apellido2);
+	    result.add(nombre);
+	    result.add(nacionalidad);
+
+	    return result;
+	}
+
+	private String extractDNI(String[] lines) {
+		for (int i = 0; i < lines.length; i++) {
+			if (lines[i].startsWith("DNI") || lines[i].startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
+				String dni = lines[i + 1];
+				if (validateDni(dni)) {
+					return dni;
 				}
 			}
 		}
-		result.add(dni);
-		result.add(apellido1);
-		result.add(apellido2);
-		result.add(nombre);
-		result.add(nacionalidad);
-
-		return result;
+		return "";
 	}
+	
+	private String extractApellido1(String[] lines) {
+		for (int i = 0; i < lines.length; i++) {
+			if (lines[i].startsWith("APELLIDOS") || lines[i].startsWith("APALLIDOS")) {
+				String apellido1 = lines[i + 1];
+				if (validateNames(apellido1)) {
+					return apellido1;
+				}
+			}
+		}
+		return "";
+	}
+
+	private String extractApellido2(String[] lines) {
+		for (int i = 0; i < lines.length; i++) {
+			if (lines[i].startsWith("APELLIDOS") || lines[i].startsWith("APALLIDOS")) {
+				String apellido2 = lines[i + 2];
+				if (validateNames(apellido2)) {
+					return apellido2;
+				}
+			}
+		}
+		return "";
+	}
+
+	private String extractNombre(String[] lines) {
+		for (int i = 0; i < lines.length; i++) {
+			if (lines[i].startsWith("NOMBRE") || lines[i].startsWith("NONBRE")) {
+				String nombre = lines[i + 1];
+				if (validateNames(nombre)) {
+					return nombre;
+				}
+			}
+		}
+		return "";	}
+
+	private String extractNacionalidad(String[] lines) {
+		for (int i = 0; i < lines.length; i++) {
+			if (lines[i].startsWith("NACIONALIDAD")) {
+				String nacionalidad = lines[i + 1];
+				if (validateNationality(nacionalidad)) {
+					return nacionalidad;
+				}
+			}
+		}
+		return "";	}
+	
+	
 
 	private boolean validateNames(String name) {
 		name = name.trim();
@@ -214,9 +245,9 @@ public class DNIParser {
 		float top1 = b1.getGeometry().getBoundingBox().getTop();
 		float height1 = b1.getGeometry().getBoundingBox().getHeight();
 		float top2 = b2.getGeometry().getBoundingBox().getTop();
-		
-		return (Math.abs(top2 - top1) <= height1 / 2.00); 
-	
+
+		return (Math.abs(top2 - top1) <= height1 / 2.00);
+
 	}
 
 	private static boolean isBlank(String cs) {

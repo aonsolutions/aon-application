@@ -24,7 +24,7 @@ import jakarta.servlet.http.Part;
 
 @WebServlet(name = "DNI-SERVLET", urlPatterns = "/DNIServlet")
 @MultipartConfig
-public class DNIServlet extends HttpServlet { 
+public class DNIServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
@@ -51,7 +51,7 @@ public class DNIServlet extends HttpServlet {
 
 		if (fileName.contains(".pdf")) {
 			accion = 0;
-		} else if (fileName.contains(".jpg")) {
+		} else if (fileName.contains(".jpg")|| (fileName.contains(".png"))) {
 			accion = 1;
 		} else {
 			accion = 2;
@@ -70,15 +70,18 @@ public class DNIServlet extends HttpServlet {
 				text = dnip.extractImage(bytes);
 			}
 			break;
+		default:
+			break;
+
 		}
 		List<String> result = dnip.getDNIData(text);
-	
+
 		String dni = result.get(0);
 		String apellido1 = result.get(1);
 		String apellido2 = result.get(2);
 		String nombre = result.get(3);
 		String nacionalidad = result.get(4);
-		
+
 		ed.setDni(dni.replace("\\r", ""));
 		ed.setNacionalidad(nacionalidad.replace("\\r", ""));
 		ed.setNombre(nombre.replace("\\r", ""));

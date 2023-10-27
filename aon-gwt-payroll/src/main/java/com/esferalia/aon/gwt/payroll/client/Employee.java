@@ -408,8 +408,8 @@ public abstract class Employee extends ResizeComposite {
 			}
 			@Override
 			public void onFailure(Throwable f) {
-				Window.alert("fallo");
-
+				Label errorMessage = new Label("Parece que algo ha fallado, pruebe con una imagen de mayor resolucion");
+				employeeTablePanel.add(errorMessage);
 			}
 		};
 				formPanel.addSubmitCompleteHandler(event -> {
@@ -461,12 +461,15 @@ public abstract class Employee extends ResizeComposite {
 	void onMultiFileUpload(ChangeEvent event) {
 		multiFileUpload.setName("archivo");
 
-		if (multiFileUpload.getFilename().contains(".jpg") || multiFileUpload.getFilename().contains(".pdf")) {
+		if (multiFileUpload.getFilename().contains(".jpg")
+				|| multiFileUpload.getFilename().contains(".pdf") 
+					|| multiFileUpload.getFilename().contains(".png")) {
 			addUploadedBorder(this.uploadButton);
 			fillFormDniData();
 		}else {
 			addUploadedFail(this.uploadButton);
-			Window.alert("El archivo no es valido");
+			Label errorMessage = new Label("Parece que algo ha fallado, pruebe con una imagen de mayor resolucion");
+			employeeTablePanel.add(errorMessage);
 		}
 	}
 
