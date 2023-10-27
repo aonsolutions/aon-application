@@ -5,7 +5,6 @@ import { CONST_FISCAL } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonInput } from "../../../components/aon-input.js";
-//import { AonSwitch } from "../../../components/aon-switch.js";
 import { EVENT, TAG,  MSG, CONSTANT, MATERIAL_ICONS } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
@@ -14,7 +13,6 @@ import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.j
 import { DataAttachSource } from "../../../models/DataAttachSource.js";
 import { FISCAL } from "../../../services/app.js";
 import * as LS from "../../../services/localStorageService.js";
-// import { Attach } from "../../../models/Attach.js";
 
 export class AonTax extends AonElement {
 	
@@ -292,13 +290,6 @@ export class AonTax extends AonElement {
     divNrc.id= "divNrc";
     form.appendChild(divNrc);
 
-    //const aonSwitch = new AonSwitch();
-    //aonSwitch.className = "aonWidth25";
-    //aonSwitch.style.width= "26%";
-    //aonSwitch.id = "switchDni";
-    //aonSwitch.title = "NRC";
-    //divNrc.appendChild(aonSwitch);
-
     const aonInputNrc = new AonInput();
     aonInputNrc.className = "aonWidth75";
     aonInputNrc.style.width= "72%";
@@ -307,7 +298,6 @@ export class AonTax extends AonElement {
     aonInputNrc.description = "NRC";
     aonInputNrc.name = "nrc";
     aonInputNrc.type = "text";
-    //aonInputNrc.disabled = true;
     if(resp.nrc) aonInputNrc.value = resp.nrc;
     divNrc.appendChild(aonInputNrc);
     
@@ -356,14 +346,17 @@ export class AonTax extends AonElement {
 	    else { 
 	       divTextPres.innerHTML = '<span style="color:red;">PRESENTACION DEL MODELO</span><br>Si acepta los datos, el modelo se presentará automaticamente.';
 	    }
-	    div.appendChild(divTextPres);
-	     
+	    div.appendChild(divTextPres);	     
     }    
     
     divMain.appendChild(div);
 
+    // Boton Rechazar
     const buttonCancel = dialog.addCancelAction(() =>{
       this.visibleFields({type:"d"})
+      const certi = this.getElement('certi');
+      if (certi)
+      	certi.hidden = true;
       div.innerHTML = "";
       textArea = new AonAutosizeTextarea();
       textArea.name = "reasonReject";
@@ -393,15 +386,6 @@ export class AonTax extends AonElement {
   }
 
   eventData(resp){
-    //this.getElement('switchDni').addEventListener(EVENT.CHANGE, ({ target }) => {
-    //    let nrc = this.getElement("nrc");
-    //    if(nrc) {
-    //      nrc.disabled = !target.checked;
-    //    }
-    //    if(!target.checked) {
-    //      nrc.value ="";
-    //    }
-    //});
 
     const iban = this.getElement('iban');
     this.getApplicationParent()
@@ -458,7 +442,7 @@ export class AonTax extends AonElement {
       return formObj;
   }
 
-  visibleFields({type,status}){
+  visibleFields({type}){
     if(type){
       let iban = this.getElement("iban");
       let divNrc = this.getElement("divNrc");
@@ -466,8 +450,6 @@ export class AonTax extends AonElement {
       let nrcHidden  = true;
       switch(type){
         case CONST_FISCAL.DEPOSIT:
-          // ibanHidden = false; // El IBAN no se necesita en el ingreso, solo se necesita el NRC 
-          //nrcHidden = "CUSTOMER_CHECK"!=status;
           nrcHidden = false;
         break;
         case CONST_FISCAL.BANK:
@@ -613,14 +595,6 @@ export class AonTax extends AonElement {
       } else {
         this.showMessageError("Declaración no encontrada!");
       }
-      // const attach = new Attach(r);
-      // const data = {
-      //   domain_id: attach.getDomain().getId(),
-      //   attach_type: attach.getAttachType(),
-      //   domain_name: attach.getDomain().getName(),
-      //   id: attach.getId()
-      // };
-      // openFileUrl(location.href + 'ms/api/file/' + btoa(JSON.stringify(data)), attach.getContentType());
     })
     .catch(error=>{ 
       this.showError(error);
