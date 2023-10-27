@@ -5,6 +5,7 @@ import { Collection } from "../utils/Collection";
 export class Contract implements IContract, IModel  {
     private name: string;
     private lastName: string;
+    private document: string;
     private type: string;
     private grossCost: number;
     private startDate: Date;
@@ -22,10 +23,11 @@ export class Contract implements IContract, IModel  {
         return this.apiObject;
     }
 
-    constructor(name?: string, lastName?: string, type?: string, grossCost?: number, startDate?: Date, endDate?: Date, workCenter?: string, active?: boolean) {
-        this.key = name || '';
+    constructor(name?: string, lastName?: string, document?: string, type?: string, grossCost?: number, startDate?: Date, endDate?: Date, workCenter?: string, active?: boolean) {
+        this.key = (document) ? document : '';
         this.name = name || '';
         this.lastName = lastName || '';
+        this.document = document || '';
         this.type = type || '';
         this.grossCost = grossCost || 0;
         this.startDate = startDate || new Date();
@@ -47,6 +49,16 @@ export class Contract implements IContract, IModel  {
         this.lastName = value;
         return this
     }
+
+    getDocument(): string {
+      return this.document
+    }
+
+    setDocument(value: string): IContract {
+      this.document = value;
+      return this
+    }
+
     getType(): string {
         return this.type
     }
@@ -105,6 +117,14 @@ export class Contract implements IContract, IModel  {
 
     public set LastName(value: string) {
       this.lastName = value;
+    }
+
+    public get Document(): string {
+      return this.document;
+    }
+
+    public set Document(value: string) {
+      this.document = value;
     }
 
     public get Type(): string {

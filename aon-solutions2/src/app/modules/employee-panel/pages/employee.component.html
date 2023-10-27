@@ -131,8 +131,8 @@
 
       <div class="info-contract border padding">
         <div class="info-status info-line">
-          <div class="info-main-title" *ngIf="bodyTable">
-            {{ bodyTable.employee }}
+          <div class="info-main-title">
+            {{ this.empleadoDetail?.Name + " " + this.empleadoDetail?.Lastname }}
           </div>
           <div class="info-data"></div>
         </div>
@@ -141,7 +141,7 @@
           <div class="info-title">
             {{ "EMPLOYEE_PANEL.ID_NUMBER" | translate }}
           </div>
-          <div class="info-data"></div>
+          <div class="info-data">{{ empleadoDetail?.Document }}</div>
         </div>
         <div class="info-line">
           <div class="info-title">{{ "PROFILE.EMAIL" | translate }}</div>
@@ -163,9 +163,11 @@
                   class="green button titulo-icon"
                   shape="input"
                 ></app-icon>
-
+                {{ marcajeEmpleado?.EntryDate | date: 'HH:mm:ss' : 'es-ES' }}
               </div>
-              <div class="fecha"></div>
+              <div class="fecha">
+                {{ marcajeEmpleado?.EntryDate | date: 'dd/MM/yyyy' }}
+              </div>
             </div>
 
             <div class="salida">
@@ -183,7 +185,7 @@
 
           <div class="contenedor-derecha">
             <div class="titulo titulo-margin"></div>
-            <div class="hora"></div>
+                <div class="hora">{{ marcajeEmpleado?.Time | date: 'hh:mm:ss' }}</div>
           </div>
         </div>
       </div>

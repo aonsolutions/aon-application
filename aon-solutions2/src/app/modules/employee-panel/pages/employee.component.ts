@@ -1,3 +1,4 @@
+import { marks } from './../../../../../libraries/AonSDK/src/models/Mark';
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ContractService } from 'src/app/core/services/contract.service';
@@ -6,8 +7,12 @@ import {
   Factory,
   ICollection,
   IContract,
+  IEmployee,
+  IMark,
 } from 'libraries/AonSDK/src/aon';
 import { DateFormat } from 'src/app/core/utilities/time';
+import { EmployeeService } from 'src/app/core/services/employee.service';
+import { MarkService } from 'src/app/core/services/mark.service';
 
 export interface Tabs {
   name: string; // Nombre de la pestaña
@@ -43,11 +48,15 @@ export class EmployeeComponent implements OnInit {
   showSendButtons: boolean = false;
   contratosActivos: IContract[] = [];
   contratosInactivos: IContract[] = [];
+  empleadoDetail: IEmployee | undefined;
+  marcajeEmpleado: IMark | undefined;
 
   bodyTable: any = [];
 
   constructor(
-    public contractService: ContractService,
+    private contractService: ContractService,
+    private employeeService: EmployeeService,
+    private markService: MarkService,
     private translateService: TranslateService
   ) {}
 
@@ -141,6 +150,8 @@ export class EmployeeComponent implements OnInit {
         this.tabIndex === 0 ? this.contratosActivos : this.contratosInactivos;
       console.log('esto es bodytable', this.bodyTable);
     });
+
+
   }
 
   changeTabIndex(index: number) {
@@ -183,9 +194,13 @@ export class EmployeeComponent implements OnInit {
   }
 
   async rowClick(contract: any) {
-    console.log('contract', contract);
+    // Obtener empleado
+    this.empleadoDetail = await this.employeeService.getEmployee(contract.key);
+    this.marcajeEmpleado= await this.markService.getMark(contract.key);
+    console.log('marcaje', this.marcajeEmpleado);
 
-    // CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
+
+
     const isSameRow = this.bodyTable && this.bodyTable.Id === contract.key;
     this.showDetailCurrentContract = !isSameRow
       ? true
