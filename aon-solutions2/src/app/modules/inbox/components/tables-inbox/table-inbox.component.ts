@@ -6,6 +6,7 @@ import { FilterBuilder } from 'libraries/AonSDK/src/utils/FilterBuilder';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
+import { DateFormat, getEndDateOfMonth, getEndDateOfWeek, getStartDateOfMonth, getStartDateOfWeek } from 'src/app/core/utilities/time';
 
 @Component({
   selector: 'app-table-inbox',
@@ -82,12 +83,12 @@ export class TablesInboxComponent implements OnChanges {
     let date: { start: string; end: string } = { start: '', end: '' };
     switch (this.filterDate) {
       case 1:
-        date.start = this.getStartDateOfWeek();
-        date.end = this.getEndDateOfWeek();
+        date.start = getStartDateOfWeek();
+        date.end = getEndDateOfWeek();
         break;
       case 2:
-        date.start = this.getStartDateOfMonth();
-        date.end = this.getEndDateOfMonth();
+        date.start = getStartDateOfMonth();
+        date.end = getEndDateOfMonth();
         break;
     }
     return date;
@@ -140,53 +141,9 @@ export class TablesInboxComponent implements OnChanges {
     return type;
   }
 
-  // Filtros fechas principio semana
-  private getStartDateOfWeek(): string {
-    const startDate = new Date();
-    const currentDay = startDate.getDay();
-    const startDay = currentDay === 0 ? 6 : currentDay - 1;
-    startDate.setDate(startDate.getDate() - startDay);
-    return this.formatDate(startDate);
-  }
-
-  // Filtos fechas final semana
-  private getEndDateOfWeek(): string {
-    const endDate = new Date();
-    const currentDay = endDate.getDay();
-    const remainingDays = 7 - currentDay - 1;
-    endDate.setDate(endDate.getDate() + remainingDays);
-    return this.formatDate(endDate);
-  }
-
-  // Filtros fechas principio mes
-  private getStartDateOfMonth(): string {
-    const startDate = new Date();
-    startDate.setDate(1);
-    return this.formatDate(startDate);
-  }
-
-  // Filtros fechas final mes
-  private getEndDateOfMonth(): string {
-    const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + 1);
-    endDate.setDate(0);
-    return this.formatDate(endDate);
-  }
-
-  // Filtros fechas
-  private formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
   // Tabla
   updateTableData() {
     let tableRow: any[] = [];
-    const datepipe: DatePipe = new DatePipe(
-      this.translateService.getDefaultLang()
-    );
 
     let filterBuilder = new FilterBuilder();
     if (this.filterType().inbox !== '') {
@@ -323,7 +280,7 @@ export class TablesInboxComponent implements OnChanges {
           // Mensaje
           column.description = message.Description.substring(0, 50) + '...';
           // Fecha
-          column.date = datepipe.transform(message.Date, 'dd/MM/yyyy, HH:mm');
+          column.date = DateFormat(message.Date, 'dd/MM/yyyy, HH:mm');
           // Marcar como nueva
           column.class = ['pendiente', 'abierta', 'nueva'].includes(message.Status) ? 'border-red' : '';
           // Agregamos el mensaje

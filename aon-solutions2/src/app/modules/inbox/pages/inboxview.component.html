@@ -232,7 +232,7 @@
           {{ messagesData.Title }}
         </div>
         <div class="inbox-message-date">
-          {{ datepipe.transform(messagesData.Date, 'dd/MM/yyyy, HH:mm') }}
+          <div class="inbox-chat-date">{{ datepipe.transform(messagesData.Date, 'dd/MM/yyyy, HH:mm') }}</div>
         </div>
       </div>
     <!--Chat-->

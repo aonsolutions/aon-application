@@ -124,7 +124,7 @@ export class InboxviewComponent implements OnInit {
               root: true,
               text: result['INBOX.THIS_MONTH'],
               click: () =>
-                this.filterTable(2, result['INBOX.THIS_MONTHTHIS_MONTH']),
+                this.filterTable(2, result['INBOX.THIS_MONTH']),
             },
             {
               root: true,
@@ -209,6 +209,9 @@ export class InboxviewComponent implements OnInit {
     this.filterDate = optionValue;
     this.selected = name;
     switch (optionValue) {
+      case 0:
+        this.selectedFilterText = this.translateService.instant('INBOX.ALLS');
+        break;
       case 1:
         this.selectedFilterText =
           this.translateService.instant('INBOX.THIS_WEEK');
@@ -217,14 +220,12 @@ export class InboxviewComponent implements OnInit {
         this.selectedFilterText =
           this.translateService.instant('INBOX.THIS_MONTH');
         break;
-      case 0:
-        this.selectedFilterText = this.translateService.instant('INBOX.ALLS');
-        break;
       default:
         this.selectedFilterText =
           this.translateService.instant('INBOX.THIS_WEEK');
         break;
-    }
+      }
+      console.log(this.selected);
   }
 
   // Calcula el total de mensajes
