@@ -87,7 +87,6 @@ public class Invoice implements Serializable, HasAudit {
 	private String siiStatus;
 
 	private List<InvoiceDetail> details;
-	private List<InvoiceBreakdown> breakdown;
 	private List<Finance> finances;
 
 	private InvoiceFiscal fiscal;
@@ -95,9 +94,12 @@ public class Invoice implements Serializable, HasAudit {
 	private String tediCategory;
 	private String fileUrl;
 	
+	private TaxBreakdown taxBreakdown;
+	
 	// ***************************
 	// ATRIBUTOS CON DUDOSO FUTURO
 	// ***************************
+	private List<InvoiceBreakdown> breakdown;
 	private Registry registryData;
 	// ***************************
 
@@ -723,6 +725,16 @@ public class Invoice implements Serializable, HasAudit {
 	public Invoice setInvoiceInfo(InvoiceInfo invoiceInfo) {
 		this.invoiceInfo = invoiceInfo;
 		return this;
+	}
+	
+	public TaxBreakdown getTaxBreakdown() {
+		if (taxBreakdown == null) {
+			InvoiceCalculator.generateTaxBreakdown( this );
+		}
+		return taxBreakdown;
+	}
+	public void setTaxBreakdown(TaxBreakdown taxBreakdown) {
+		this.taxBreakdown = taxBreakdown;
 	}
 	
 }
