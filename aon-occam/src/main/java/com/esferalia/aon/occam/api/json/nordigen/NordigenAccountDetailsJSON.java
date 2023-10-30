@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenAccountDetailsFromJSON;
 import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenAccountDetailsToJSON;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_CASH_ACCOUNT_TYPE;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenCashAccountType;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountDetails;
 
 public enum NordigenAccountDetailsJSON {
@@ -33,7 +33,7 @@ public enum NordigenAccountDetailsJSON {
 			(detail, json) -> json.put("name", detail.getName())
 	),
 	CASH_ACCOUNT_TYPE(
-			(detail, json) -> detail.setCashAccountType(NORDIGEN_CASH_ACCOUNT_TYPE.safeValueOf(json.optString("cashAccountType"))),
+			(detail, json) -> detail.setCashAccountType(NordigenCashAccountType.safeValueOf(json.optString("cashAccountType"))),
 			(detail, json) -> json.put("cashAccountType", detail.getCashAccountType() != null ? detail.getCashAccountType().toString() : null)
 	),
 	PRODUCT(

@@ -60,11 +60,21 @@
 	.aon-left-menu-item[id$=menu_payroll] .material-icons {
 		color: var(--payroll-color) !important;
 	}
+
 	.aon-left-menu-item[id$=menu_payroll] .material-icons:hover,
 	.aon-left-menu-item[id$=menu_payroll].selected .material-icons{
 		background-color: var(--payroll-background-color) !important;
 	}
 	
+	.aon-left-menu-item[id$=menu_treasury] .material-icons {
+		color: var(--treasury-color) !important;
+	}
+
+	.aon-left-menu-item[id$=menu_treasury] .material-icons:hover,
+	.aon-left-menu-item[id$=menu_treasury].selected .material-icons{
+		background-color: var(--treasury-background-color) !important;
+	}
+
 	.aon-left-menu-item[id$=menu_accounting] .material-icons {
 		color: var(--accounting-color) !important;
 	}
@@ -89,6 +99,15 @@
 		background-color: var(--help-background-color) !important;
 	}
 
+	.aon-left-menu-item[id$=menu_management] .material-icons {
+		color: var(--management-color) !important;
+	}
+
+	.aon-left-menu-item[id$=menu_management] .material-icons:hover,
+	.aon-left-menu-item[id$=menu_management].selected .material-icons{
+		background-color: var(--management-background-color) !important;
+	}
+
 	.aon-help-menu-bar .aon-left-menu-bar-icon {
 		color: var(--help-color) !important;
 	}
@@ -99,6 +118,14 @@
 
 	.aon-payroll-menu-bar .aon-left-menu-bar-icon {
 		color: var(--payroll-color) !important;
+	}
+
+	.aon-treasury-menu-bar .aon-left-menu-bar-icon {
+		color: var(--treasury-color) !important;
+	}
+
+	.aon-management-menu-bar .aon-left-menu-bar-icon {
+		color: var(--management-color) !important;
 	}
 
 	.aon-enterprise-menu-bar .aon-left-menu-bar-icon {
@@ -136,8 +163,16 @@
 		background-color: var(--fiscal-background-color) ;
 	}
 
+	.aon-management-menu-bar .aon-direct-access-list-element:hover{
+		background-color: var(--management-background-color) ;
+	}
+
 	.aon-payroll-menu-bar .aon-direct-access-list-element:hover{
 		background-color: var(--payroll-background-color) ;
+	}
+
+	.aon-treasury-menu-bar .aon-direct-access-list-element:hover{
+		background-color: var(--treasury-background-color) ;
 	}
 
 	.aon-enterprise-menu-bar .aon-direct-access-list-element:hover{
@@ -158,8 +193,8 @@
 		height: calc(100vh - 66px);
 	}
 	.aon-menu-portlet-column2 > * {
-		height: calc(100vh - 70px);
-		overflow-y: scroll;
+		height: calc(100vh - 72px);
+		overflow-y: auto;
 	}
 	
 	.aon-menu-portlet-column2 {
@@ -178,6 +213,11 @@
 		display: inline-block;
 		vertical-align: middle;
 		padding-left: 0.5rem;
+	}
+	
+	.aon-portlet-body,
+	.aon-portlet-title {
+		text-transform: uppercase;
 	}
 	
 	.aon-portlet-title{
@@ -205,8 +245,17 @@
 	.aon-fiscal-menu-bar .aon-portlet-title-line{
   		border-color: var(--fiscal-color);
   	}	
+
 	.aon-payroll-menu-bar .aon-portlet-title-line{
   		border-color: var(--payroll-color);
+  	}	
+
+	.aon-treasury-menu-bar .aon-portlet-title-line{
+  		border-color: var(--treasury-color);
+  	}	
+
+	.aon-management-menu-bar .aon-portlet-title-line{
+  		border-color: var(--management-color);
   	}	
 
 	.aon-accounting-menu-bar .aon-portlet-title-line{
@@ -253,6 +302,8 @@
 
 <script>
 
+	//<![CDATA[
+		
 	function expandMenuTexts(el) {
 		
  		const menuTexts = document.querySelectorAll(".aon-left-menu-text");
@@ -277,14 +328,31 @@
 		el.onclick=function() { expandMenuTexts(el); };
 	} 
 
+	function collapseAll(el){
+		try {
+			const menuBar = el.parentElement;
+			const children = menuBar.children;
+					
+			for (let i = 0; i < children.length; i++ ) {
+				child = children.item(i);
+				if ( child.className.includes("aon-portlet-title")) 
+					collapseMenuBar(child);
+			}	
+		} catch ( e ) {
+			
+		}
+	}
+	
 	function collapseMenuBar(el) {
 		el.nextSibling.style.display= "none";
 		el.onclick=function() { expandMenuBar(el); };
 	} 
 	function expandMenuBar(el) {
+		collapseAll(el);
 		el.nextSibling.style.display= "block";
 		el.onclick=function() { collapseMenuBar(el); };
 	} 
+	
 	
 	function showColumn(el) {
 		var parentElement = el.parentElement;
@@ -297,17 +365,30 @@
 		}
 	}
 
+	function hideColumn(el) {
+		var parentElement = el.parentElement;
+		while ( parentElement ) {
+			if ( parentElement.tagName === 'TD' ) {
+				parentElement.style.display = 'none';	
+				return;
+			}
+			parentElement = parentElement.parentElement;
+		}
+	}
+
 	function showMenu(el) {
 		showColumn(el);
 		el.style.display = 'block';
 	}
-	
+
 	function hideAllMenus() {
 		#{rich:element('helpMenuBar')}.style.display = 'none';
 		#{rich:element('fiscalMenuBar')}.style.display = 'none';
 		#{rich:element('payrollMenuBar')}.style.display = 'none';
+		#{rich:element('treasuryMenuBar')}.style.display = 'none';
 		#{rich:element('accountingMenuBar')}.style.display = 'none';
 		#{rich:element('enterpriseMenuBar')}.style.display = 'none';
+		#{rich:element('managementMenuBar')}.style.display = 'none';
 		#{rich:element('timeControlMenuBar')}.style.display = 'none';
 		#{rich:element('configurationMenuBar')}.style.display = 'none';
 	}
@@ -325,6 +406,8 @@
 		unselectMenu(#{rich:element('menu_help')});
 		unselectMenu(#{rich:element('menu_fiscal')});
 		unselectMenu(#{rich:element('menu_payroll')});
+		unselectMenu(#{rich:element('menu_treasury')});
+		unselectMenu(#{rich:element('menu_management')});
 		unselectMenu(#{rich:element('menu_accounting')});
 		unselectMenu(#{rich:element('menu_enterprise')});
 		unselectMenu(#{rich:element('menu_time_control')});
@@ -357,6 +440,14 @@
 		showMenu(#{rich:element('accountingMenuBar')});
 		selectMenu(#{rich:element('menu_accounting')});
 	}
+
+	function showTreasuryMenu () {
+		hideAllMenus();	
+		unselectMenus();
+		showMenu(#{rich:element('treasuryMenuBar')});
+		selectMenu(#{rich:element('menu_treasury')});
+	}
+
 	function showPayrollMenu () {
 		hideAllMenus();	
 		unselectMenus();
@@ -378,7 +469,24 @@
 		selectMenu(#{rich:element('menu_configuration')});
 	}
 	
+	function showManagementMenu () {
+		hideAllMenus();	
+		unselectMenus();
+		showMenu(#{rich:element('managementMenuBar')});
+		selectMenu(#{rich:element('menu_management')});
+	}
+
+	function hideMenuBar(el) {
+		hideAllMenus();	
+		unselectMenus();
+		hideColumn(el);
+	}
+
+	//]]>
+
 </script>
+<aon:form id="menuBarPortletForm">
+
 <aon:panelGrid columns="2" styleClass=""
 				columnClasses="aon-menu-portlet-column1,aon-menu-portlet-column2">
 				
@@ -393,7 +501,7 @@
 			id="expandMenuTextsButton"
 			styleClass="material-icons" 
 			value="keyboard_arrow_right" 
-			style="position:absolute; top: 20px; left: 48px; z-index: 6; color : #787885; border: solid 0.05rem #d2d2d6; border-radius: 8rem; background-color: #fff" 
+			style="position:fixed; top: 86px; left: 48px; z-index: 6; color : #787885; border: solid 0.05rem #d2d2d6; border-radius: 8rem; background-color: #fff" 
 			/>
 		</aon:div>
 		
@@ -407,10 +515,10 @@
 							<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
 								<aon:commandLink 
 									id="menu_enterprise"
-									reRender="aonDesktopContent"
+									reRender="#{reRender}"
 									styleClass="aon-left-menu-item" 
-									onclick="javascript:showEnterpiseMenu();" 
 									actionListener="#{desktop.onSelectEnterprise}"
+									onclick="showEnterpiseMenu(); #{empty reRender?'return false;':''}" 
 								>
 									<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="domain" />
 									<aon:outputText styleClass="aon-left-menu-text" value=" #{bundle.aon_module_enterprise}" />
@@ -418,14 +526,46 @@
 							</aon:div>
 						</aon:if>
 					</aon:if>
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.financeOperator}">
+							<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+								<aon:commandLink 
+									id="menu_management"
+									reRender="#{reRender}"
+									styleClass="aon-left-menu-item"
+									actionListener="#{desktop.onSelectManagement}"
+									onclick="showManagementMenu(); #{empty reRender?'return false;':''}"
+								>
+									<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="work" />
+									<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_management}" />
+								</aon:commandLink>
+							</aon:div>
+						</aon:if>	
+					</aon:if>
+					
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+							<aon:commandLink 
+								id="menu_treasury"
+								reRender="#{reRender}"
+								styleClass="aon-left-menu-item"
+								actionListener="#{desktop.onSelectTreasury}"
+								onclick="showTreasuryMenu(); #{empty reRender?'return false;':''}"
+							>
+								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="local_mall" />
+								<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_finance}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:if>
+					
 					<aon:if test="#{aonRole.accountingOperator}">
 						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
 							<aon:commandLink 
 								id="menu_accounting"
-								reRender="aonDesktopContent"
+								reRender="#{reRender}"
 								styleClass="aon-left-menu-item" 
-								onclick="javascript:showAccountingMenu()"
 								actionListener="#{desktop.onSelectAccounting}"
+								onclick="showAccountingMenu(); #{empty reRender?'return false;':''}"
 								title=" #{bundle.aon_module_accounting}"
 								>
 									<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="insert_chart" />
@@ -438,11 +578,11 @@
 						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
 							<aon:commandLink 
 								id="menu_fiscal"
-								reRender="aonDesktopContent"
+								reRender="#{reRender}"
 								styleClass="aon-left-menu-item" 
-								onclick="javascript:showFiscalMenu()"
-								actionListener="#{desktop.onSelectFiscal}"
 								title=" #{bundle.aon_module_fiscal}"
+								actionListener="#{desktop.onSelectFiscal}"
+								onclick="showFiscalMenu(); #{empty reRender?'return false;':''}"
 							>
 								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="euro" />
 								<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_fiscal}" />
@@ -454,11 +594,11 @@
 						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
 							<aon:commandLink 
 								id="menu_payroll"
-								reRender="aonDesktopContent"
+								reRender="#{reRender}"
 								styleClass="aon-left-menu-item"
-								onclick="javascript:showPayrollMenu()" 
-								actionListener="#{desktop.onSelectPayroll}"
 								title=" #{bundle.aon_module_payroll}"
+								actionListener="#{desktop.onSelectPayroll}"
+								onclick="showPayrollMenu(); #{empty reRender?'return false;':''}" 
 							>
 								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="group" />
 								<aon:outputText styleClass="aon-left-menu-text" value=" #{bundle.aon_module_payroll}" />
@@ -470,11 +610,11 @@
 						<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
 							<aon:commandLink 
 								id="menu_configuration"
-								reRender="aonDesktopContent"
+								reRender="#{reRender}"
 								styleClass="aon-left-menu-item" 
-								onclick="javascript:showConfigurationMenu()" 
-								actionListener="#{desktop.onSelectConfiguration}"
 								title=" #{bundle.aon_module_configuration}"
+								actionListener="#{desktop.onSelectConfiguration}"
+								onclick="showConfigurationMenu(); #{empty reRender?'return false;':''}" 
 							>
 								<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="construction" />
 								<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_configuration}" />
@@ -485,10 +625,10 @@
 					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
 						<aon:commandLink 
 							id="menu_help"
-							reRender="aonDesktopContent"
+							reRender="#{reRender}"
 							styleClass="aon-left-menu-item"
-							onclick="javascript:showHelpMenu()" 
 							actionListener="#{desktop.onSelectHelp}"
+							onclick="showHelpMenu(); #{empty reRender?'return false;':''}" 
 						>
 							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="help_center" />
 							<aon:outputText styleClass="aon-left-menu-text"  value=" #{bundle.aon_module_configuration}" />
@@ -498,11 +638,11 @@
 					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
 						<aon:commandLink 
 							id="menu_time_control"
-							reRender="aonDesktopContent"
-							styleClass="aon-left-menu-item"
-							onclick="javascript:showTimeControlMenu()" 
-							actionListener="#{desktop.onSelectTimeControl}"
+							reRender="#{reRender}"
 							title=" Control Horario"
+							styleClass="aon-left-menu-item"
+							actionListener="#{desktop.onSelectTimeControl}"
+							onclick="showTimeControlMenu(); #{empty reRender?'return false;':''}" 
 						>
 							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-left-menu-icon" value="timer" />
 							<aon:outputText styleClass="aon-left-menu-text"  value=" Control Horario" />
@@ -515,7 +655,6 @@
 	</aon:div>
 	
 	<aon:div id="menuBarPortlet" styleClass="aon-portlet aon-menu-bar-portlet" >
-		<aon:form id="menuBarPortletForm">
 	
 			<aon:if test="#{aonRole.admin}">
 				<ui:include src="/facelet/new/portlet/enterpriseMenuPortlet.xhtml" />
@@ -533,10 +672,27 @@
 	
 			<ui:include src="/facelet/new/portlet/timeControlMenuPortlet.xhtml" />
 
-		</aon:form>
+			<ui:include src="/facelet/new/portlet/managementMenuPortlet.xhtml" />
+
+			<ui:include src="/facelet/new/portlet/treasuryMenuPortlet.xhtml" />
+
+			<aon:div 
+				style="cursor:pointer; 
+				overflow: visible" 
+				onclick="javascript:hideMenuBar(this)"
+			>
+				<aon:outputText 
+				id="collapseMenuBarButton"
+				styleClass="material-icons" 
+				value="keyboard_arrow_left" 
+				style="position:fixed; top: 86px; left: 410px; z-index: 6; color : #787885; border: solid 0.05rem #d2d2d6; border-radius: 8rem; background-color: #fff" 
+				/>
+			</aon:div>
+
 	</aon:div>
 	
 	
 </aon:panelGrid>		
+</aon:form>
 
 </ui:composition>

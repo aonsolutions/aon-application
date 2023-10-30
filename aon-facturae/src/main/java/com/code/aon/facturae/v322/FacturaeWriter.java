@@ -79,6 +79,7 @@ import es.gob.facturae.formato.versiones.facturaev3_2_2.LegalLiteralsType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.ModalityType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.OverseasAddressType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.PartiesType;
+import es.gob.facturae.formato.versiones.facturaev3_2_2.PeriodDates;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.PersonTypeCodeType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.RegistrationDataType;
 import es.gob.facturae.formato.versiones.facturaev3_2_2.ResidenceTypeCodeType;
@@ -101,6 +102,7 @@ public class FacturaeWriter {
 	private Invoice invoice;
 	private CompanyFull company;
 	private Workplace workplace;
+	private String legalLiterals;
 	
 	public FacturaeWriter(Domain domain, User user, CompanyFull company, Workplace workplace, Invoice invoice) {
 		this.domain = domain;
@@ -108,6 +110,15 @@ public class FacturaeWriter {
 		this.company = company;
 		this.workplace = workplace;
 		this.invoice = invoice;
+	}
+	
+	public FacturaeWriter(Domain domain, User user, CompanyFull company, Workplace workplace, Invoice invoice, String legalLiterals) {
+		this.domain = domain;
+		this.user = user;
+		this.company = company;
+		this.workplace = workplace;
+		this.invoice = invoice;
+		this.legalLiterals = legalLiterals;
 	}
 	
 	// ----- GETTERS & SETTERS
@@ -511,6 +522,10 @@ public class FacturaeWriter {
 		invoiceType.setInvoiceTotals( getInvoiceTotals() );
 		if ( this.invoice.isVatAccrualPayment() ) {
 			invoiceType.setLegalLiterals( getLegalLiterals() );			
+		} else if(!AonStringUtils.isBlank(legalLiterals)) {
+			LegalLiteralsType llt = new LegalLiteralsType();
+			llt.getLegalReference().add(legalLiterals);
+			invoiceType.setLegalLiterals(llt);
 		}
 		invoiceType.setItems( getItems(invoiceType) );
 		addPaymentDetails( invoiceType );
@@ -571,6 +586,10 @@ public class FacturaeWriter {
 		XMLGregorianCalendar issuedDate = Util.toXMLCalendar(getInvoice().getIssueDate());
 		invoiceIssueData.setIssueDate( issuedDate );
 		invoiceIssueData.setOperationDate(issuedDate);
+		PeriodDates period = new PeriodDates();
+		period.setStartDate(issuedDate);
+		period.setEndDate(issuedDate);
+		invoiceIssueData.setInvoicingPeriod(period);
 		invoiceIssueData.setInvoiceCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setTaxCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setLanguageName(LanguageCodeType.ES);

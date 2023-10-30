@@ -29,7 +29,6 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.BienAfectoIRPFYOIVAEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveCodigoFacturaRectificativaEnum;
@@ -196,7 +195,6 @@ public class LROE140_2_1 extends LROE140 {
 		RentaIVAGastoType renta = new RentaIVAGastoType();
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
-			InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
 			tax.setBase(AonMathUtils.round(tax.getBase()));			
 			if(invoice.isExtracommunity()) {
 				tax.setPercentage(0.0);
@@ -220,15 +218,9 @@ public class LROE140_2_1 extends LROE140 {
 			r.setCuotaIVASoportada(Double.toString(AonMathUtils.round(tax.getQuota())));
 
 			r.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
-			if(!AonStringUtils.isBlank(detail.getAccountCode())) {
-				r.setConcepto(detail.getAccountCode().substring(0, 3));
-				if(irpf != null) {
-					if(irpf.getPercentage() > 0 && irpf.getQuota() == 0.0) {
-						irpf.setQuota(AonMathUtils.round(irpf.getBase() * irpf.getPercentage() / 100));
-					}
-					r.setImporteGastoIRPF(Double.toString(irpf.getQuota()));
-				}
-			}			
+
+			r.setImporteGastoIRPF(Double.toString(tax.getBase()));
+					
 			r.setInversionSujetoPasivo(invoice.isIsp() ? SiNoEnum.S : SiNoEnum.N);
 			if(invoice.isSurcharge()) {
 				r.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(OperacionRecargoEquivalenciaORegimenSimplificadoEnum.E);

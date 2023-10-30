@@ -103,7 +103,6 @@ export class AonMessenger extends AonElement {
 
 		this.createApplication(this.AON_MESSENGER, title, new AonApplication());
 
-		
 		this.isTaskHolder().then(async (exist) => {
 			if(exist){
 				localStorage.setItem("taskCau", this.cau ? 1 : 0);
@@ -156,7 +155,7 @@ export class AonMessenger extends AonElement {
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
 		} else if(this.cau){
-			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this._filter);
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, undefined, this._filter);
 		} else if(this.value){
 			getTaskOne({id:this.value}).then(task=>this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task)).catch(e=>this.showError(e));
 		} else if(this.TASK_HOLDER && this.TASK_HOLDER.id){
@@ -448,11 +447,12 @@ export class AonMessenger extends AonElement {
 			},
 		];
 		
-		this.getApplication().addSidenavOptions2({
+		this.getApplication().addSidenavOptions3({
 			id: CONSTANT.STATUS.initCap(),
 			name: MSG.STATUS,
-			app: Apps.MESSENGER			
-		}, messengerOpts);
+			app: Apps.MESSENGER,
+			options: messengerOpts			
+		});
 	}
 
     groupNavBar() {
@@ -976,6 +976,7 @@ export class AonMessenger extends AonElement {
 
 
 	showView(view, data = undefined, filter = undefined){
+		if(filter && filter.workgroups == undefined) filter.workgroups = this.getWorkgroupsStr();
 		return new Promise(async(resolve)=>{
 			let aonView = undefined;
 			switch(view){
@@ -991,7 +992,7 @@ export class AonMessenger extends AonElement {
 			}
 			if(aonView){
 				aonView.id = view;
-				if(filter){ aonView._filter = filter; } 
+				if(filter) aonView.setFilter(filter);
 				if(data) aonView.data = data;
 				this.getApplication().setContent(aonView);
 			}

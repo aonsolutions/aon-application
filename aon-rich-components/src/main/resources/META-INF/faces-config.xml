@@ -69,6 +69,10 @@
         <component-class>javax.faces.component.html.HtmlInputText</component-class>
     </component>
     <component>
+        <component-type>com.code.aon.faces.TextField</component-type>
+        <component-class>com.code.aon.faces.component.richfaces.textField.HtmlTextField</component-class>
+    </component>
+    <component>
         <component-type>com.code.aon.faces.InputTextarea</component-type>
         <component-class>javax.faces.component.html.HtmlInputTextarea</component-class>
     </component>
@@ -79,6 +83,10 @@
     <component>
         <component-type>com.code.aon.faces.SelectOneMenu</component-type>
         <component-class>javax.faces.component.html.HtmlSelectOneMenu</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.DropDownOneMenu</component-type>
+        <component-class>com.code.aon.faces.component.richfaces.dropDownOneMenu.HtmlDropDownOneMenu</component-class>
     </component>
     <component>
         <component-type>com.code.aon.faces.SelectOneRadio</component-type>

@@ -1,0 +1,426 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+>
+	<aon:div id="treasuryMenuBar" style="display:none" styleClass="aon-treasury-menu-bar" >
+		<aon:if test="#{aonRole.financeOperator}">
+				<aon:div 
+				style="cursor:pointer;" 
+				styleClass="aon-portlet-title" 
+				onclick="javascript:collapseMenuBar(this)"
+				rendered="#{actionDenied.renderedGroup('group_treasury_charge-treasury')}" >
+					<aon:outputText styleClass="aon-portlet-title-line"/>
+					<aon:outputText value="#{bundle.finance_charge_menu}" />
+				</aon:div>
+				
+				<aon:div 
+				styleClass="aon-direct-access-list" 
+				rendered="#{actionDenied.renderedGroup('group_treasury_charge-treasury')}">
+					<!-- Gestión de Cobros -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="financeCharge-treasury"
+							rendered="#{actionDenied.renderedOption('finance_search-charge-treasury')}"
+							action="finance_search-charge-treasury"
+							actionListener="#{finance.onEditSearchCharge}"
+							>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_charge_module}" />
+					</aon:commandLink>
+					</aon:div>
+					
+					<!-- Remesas de Cobro -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="fbatchCharge-treasury" 
+							rendered="#{actionDenied.renderedOption('fbatch_search-charge-treasury')}"
+							action="fbatch_search-charge-treasury"
+							actionListener="#{fbatch.onEditSearchCharge}"
+						>
+							<f:setPropertyActionListener target="#{fbatch.payroll}"
+								value="#{false}" />
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_fbatch_charge_module}" />
+						</aon:commandLink>
+					</aon:div>
+					
+					<aon:if test="#{actionDenied.moduleEnabled['hotel']}">
+						<!-- Remesar Cobros de Cajas -->
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="pos_finance_batch-treasury" 
+								rendered="#{actionDenied.renderedOption('posFinance_search-treasury')}"
+								action="posFinance_search-treasury"
+								actionListener="#{posFinance.onEditSearch}"
+								>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_posFinance_module}" />
+					</aon:commandLink>
+						</aon:div>
+						
+						<!-- Remesar Cobros de Reservas -->
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="reservation_finance_batch-treasury" 
+								rendered="#{actionDenied.renderedOption('reservationFinanceBatch-treasury')}"
+								action="reservationFinanceBatch-treasury"
+								actionListener="#{reservationFinanceBatch.onEditSearch}"
+								>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.pms_reservation_finance_batch_module}" />
+					</aon:commandLink>
+						</aon:div>
+						
+						<!-- Registro Cartas de Cliente -->
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="paymentCardSettle-treasury" 
+								rendered="#{actionDenied.renderedOption('paymentCardSettle_search-treasury')}"
+								action="paymentCardSettle_search-treasury"
+								actionListener="#{paymentCardSettle.onInit}"
+								>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.pms_paymentCardSettle_module}" />
+					</aon:commandLink>
+						</aon:div>
+					</aon:if>
+					
+					<!-- Orden de domiciliación de adeudo directo SEPA -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="sddMandate-treasury"
+							rendered="#{actionDenied.renderedOption('sddMandate_search-treasury')}"
+							action="sddMandate_search-treasury"
+							actionListener="#{sddMandate.onEditSearch}"
+							>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_sddMandate_module}" />
+					</aon:commandLink>
+					</aon:div>
+				</aon:div>
+		</aon:if>	
+
+		<aon:if test="#{aonRole.financeOperator}">
+				<aon:div 
+				style="cursor:pointer;" 
+				styleClass="aon-portlet-title" 
+				onclick="javascript:expandMenuBar(this)"
+				rendered="#{actionDenied.renderedGroup('group_treasury_charge-treasury')}" >
+					<aon:outputText styleClass="aon-portlet-title-line"/>
+					<aon:outputText value="#{bundle.finance_statement_menu}" />
+				</aon:div>
+				
+				<aon:div styleClass="aon-direct-access-list collapsed">
+					<!-- Conciliador Bancario -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="bankStatement-treasury"
+							rendered="#{actionDenied.renderedOption('bankStatement_search-treasury')}"
+							action="bankStatement_search-treasury"
+							actionListener="#{bankStatement.onEditSearch}"
+							>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" Conciliador Bancario" />
+						</aon:commandLink>
+					</aon:div>
+	
+					<aon:if test="#{dur.bank}"> 
+						<!-- Agregador Bancario -->								
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="gwt_nordigen-treasury"
+								rendered="#{actionDenied.renderedOption('gwt_nordigen-treasury')}"
+								action="gwt_nordigen-treasury"
+								title="Agregador Bancario">
+								<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+								<aon:outputText styleClass="aon-left-menu-bar-text" value=" Agregador Bancario" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:if>
+	
+					<!-- Gestion de Suplidos -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="prepayment-treasury"
+							rendered="#{actionDenied.renderedOption('prepayment_search-treasury')}"
+							action="prepayment_search-treasury"
+							actionListener="#{prepayment.onEditSearch}"
+							>
+								<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+								<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_prepayment_module}" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:div> 
+			
+		</aon:if>	
+		
+		<aon:if test="#{aonRole.financeOperator}">
+				<aon:div 
+				style="cursor:pointer;" 
+				styleClass="aon-portlet-title" 
+				onclick="javascript:expandMenuBar(this)"
+				rendered="#{actionDenied.renderedGroup('group_treasury_charge-treasury')}" >
+					<aon:outputText styleClass="aon-portlet-title-line"/>
+					<aon:outputText value="#{bundle.finance_payment_menu}" />
+				</aon:div>
+				
+				<aon:div styleClass="aon-direct-access-list collapsed">
+					<!-- Gestión de Pagos -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="financePayment-treasury"
+							rendered="#{actionDenied.renderedOption('finance_search-payment-treasury')}"
+							action="finance_search-payment-treasury"
+							actionListener="#{finance.onEditSearchPayment}"
+							>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_payment_module}" />
+						</aon:commandLink>
+					</aon:div>
+					
+					<!-- Remesas de Pago -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="fbatchPayment-treasury" 
+							rendered="#{actionDenied.renderedOption('fbatch_search-payment-treasury')}"
+							action="fbatch_search-payment-treasury"
+							actionListener="#{fbatch.onEditSearchPayment}"
+							>
+							<f:setPropertyActionListener target="#{fbatch.payroll}" value="#{false}" />
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_fbatch_payment_module}" />
+						</aon:commandLink>
+					</aon:div>
+					
+					<!-- Impresión de Pagarés -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="fPaymentPrint-treasury" 
+							rendered="#{actionDenied.renderedOption('fPaymentPrint_search-treasury')}"
+							action="fPaymentPrint_search-treasury"
+							actionListener="#{fPaymentPrint.onEditSearchPayment}"
+							>
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_fPaymentPrint_module}" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:div> 
+		</aon:if>
+
+		<aon:if test="#{aonRole.saleOperator}">
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)"
+			rendered="#{actionDenied.renderedGroup('group_treasury_charge-treasury')}" >
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.finance_fees_module}" />
+			</aon:div>
+			
+			<aon:div styleClass="aon-direct-access-list collapsed">
+				<!-- Listado de Pre-facturación -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="aon_pre_invoicing-treasury"
+						rendered="#{actionDenied.renderedOption('feePreInvoicing-treasury')}"
+						action="feePreInvoicing-treasury"
+						actionListener="#{preInvoicing.onInitialize}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_pre_invoicing_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Facturación de Cuotas -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="aon_invoicing-treasury"
+						rendered="#{actionDenied.renderedOption('feeInvoicing-treasury')}"
+						action="feeInvoicing-treasury"
+						actionListener="#{feeInvoicing.onInitialize}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_fee_invoicing_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Asignar Cuotas a Clientes -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="aon_fee_assignment-treasury" 
+						rendered="#{actionDenied.renderedOption('feeAssignment_search-treasury')}"
+						action="feeAssignment_search-treasury"
+						actionListener="#{feeAssignment.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_fee_assignment_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Listado de Cuotas -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="aon_fee_print-treasury"
+						rendered="#{actionDenied.renderedOption('feePrint_search-treasury')}"
+						action="feePrint_search-treasury"
+						actionListener="#{feePrint.onEditSearch}"
+					>
+						<f:setPropertyActionListener value="#{false}"
+							target="#{feePrintSearch.anual}" />
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_fee_print_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Panel Facturación Cuotas -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_customer_fee_list"
+						rendered="#{actionDenied.renderedOption('gwt_main_customer_fee_list')}"
+						action="gwt_main_customer_fee_list"
+						title="Panel Facturación de Cuotas"
+						target="gwt">
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="Panel Facturación de Cuotas"  />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Panel Contratación -->
+				<aon:if test="#{domainSwitcher.sig}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="gwt_booking_list"
+							action="gwt_main_booking_list"
+							title="Panel Contratación"
+							target="gwt">
+							<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value="Panel Contratación"  />
+						</aon:commandLink>
+					</aon:div>
+				</aon:if>
+			</aon:div>
+		</aon:if>
+		<aon:if test="#{aonRole.saleOperator}">
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)"
+			rendered="#{actionDenied.renderedGroup('group_treasury_charge-treasury')}" >
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.finance_forecast_menu}" />
+			</aon:div>
+			
+			<aon:div styleClass="aon-direct-access-list collapsed">
+				<!-- Gestión de Previsiones -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="cashFlowForecast-treasury"
+						rendered="#{actionDenied.renderedOption('cashFlowForecast_search-treasury')}"
+						action="cashFlowForecast_search-treasury"
+						actionListener="#{cashFlowForecast.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_cashflow_forecast_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Listado de Previsión -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="cashFlowForecastReport-treasury"
+						rendered="#{actionDenied.renderedOption('cashFlowForecastReport_search-treasury')}"
+						action="cashFlowForecastReport_search-treasury"
+						actionListener="#{cashFlowForecastReport.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_cashflow_forecast_report_module}" />
+					</aon:commandLink>
+				</aon:div>
+			
+				<!-- Proyección de Cuotas -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_fee_print_anual-treasury"
+						rendered="#{actionDenied.renderedOption('gwt_fee_projection-treasury')}"
+						action="gwt_fee_projection-treasury"
+						title="#{bundle.finance_fee_print_proy_module}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_fee_print_proy_module}" />
+
+					</aon:commandLink>
+				</aon:div>
+			</aon:div>
+		</aon:if>
+
+		<aon:if test="#{aonRole.saleOperator}">
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:expandMenuBar(this)"
+			rendered="#{actionDenied.renderedGroup('group_treasury_charge-treasury')}" >
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="#{bundle.aon_utilities}" />
+			</aon:div>
+			
+			<aon:div styleClass="aon-direct-access-list collapsed">
+				<!-- Recargos en Facturas -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="increaseItem-treasury" 
+						rendered="#{actionDenied.renderedOption('increaseItem-treasury')}"
+						action="increaseItem-treasury" 
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.aon_increases}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Grupos de Facturación -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="aon_invoicing_group-treasury"
+						rendered="#{actionDenied.renderedOption('invoicingGroup_list-treasury')}"
+						action="invoicingGroup_list-treasury"
+						actionListener="#{invoicingGroup.onEditSearch}"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.customer_invoicing_group_module}" />
+						<aon:actionListener method="#{invoicingGroup.onSearch}"/>
+					</aon:commandLink>
+				</aon:div>
+				
+				<aon:if test="#{aonRole.ESignature and company.EInvoice and certificate.certificateCount > 0}">
+					<!-- Firma de Facturas -->
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="saleInvoiceSigner-treasury"
+							rendered="#{actionDenied.renderedOption('invoiceSigner_search-treasury')}"
+							action="invoiceSigner_search-treasury"
+							actionListener="#{invoiceSigner.onEditSearch}"
+							>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_invoice_signing_module}" />
+					</aon:commandLink>
+					</aon:div>								
+				</aon:if>
+				
+				<!-- Utilidades Tesorería -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_financeUtilities-treasury"
+						rendered="#{actionDenied.renderedOption('gwt_financeUtilities-treasury')}"
+						action="gwt_financeUtilities-treasury"
+						title="#{bundle.aon_utilities_treasury}">
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.aon_utilities_treasury}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Chequeo de Datos Financieros -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="checks-treasury"
+						rendered="#{actionDenied.renderedOption('financePrint_checking-treasury')}"
+						action="financePrint_checking-treasury"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_checking_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<!-- Chequeo de Facturas / Vencimientos -->
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="checks2-treasury"
+						rendered="#{actionDenied.renderedOption('financeChecking_form')}"
+						action="financeChecking_form-treasury"
+						>
+						<aon:outputText styleClass="material-icons  aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" #{bundle.finance_invoice_checking_module}" />
+					</aon:commandLink>
+				</aon:div>
+			</aon:div>
+			
+		</aon:if>
+		
+	</aon:div>
+</ui:composition>

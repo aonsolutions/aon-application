@@ -1,11 +1,8 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.logging.Logger;
-
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -16,6 +13,11 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
+
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 @SuppressWarnings("serial")
@@ -41,16 +43,17 @@ public class GenerateTokenServlet extends AonApiHttpServlet {
 		String domainName = JsonUtils.getString(json, IJsonNames.DOMAIN_NAME);
 		String login = JsonUtils.getString(json, IJsonNames.DOMAIN_LOGIN);
 		Integer id = JsonUtils.getInteger(json, IJsonNames.ID); 
-		
+		Integer time = JsonUtils.getInteger(json, "time");
+	
 		User user = AON.getUser(new Domain().setId(domainId).setName(domainName), login, f -> 
 			f.getDomainProperty().eq(domainId)
 			.and(f.getIdProperty().eq(id)));
-
+		Date expireDate = getExpireDate(time); 
 		return new JSONObject()
 			.put("domain_name", domainName)
 			.put("domain_id", domainId)
 			.put("domain_login", user.getLogin())
-			.put("session_id", AonToken.build(user, null, domainName));
+			.put("session_id", AonToken.build(user, expireDate, domainName));
 	}
 	
 	@Override
@@ -58,4 +61,18 @@ public class GenerateTokenServlet extends AonApiHttpServlet {
 		doGet(req, resp);
 	}
 
+	
+	private Date getExpireDate(Integer time) {
+		if(time == null) return null;
+		else if(time == 0) {
+			return AonDateUtils.addMonths(new Date(), 1);			
+		} else if(time == 1) {
+			return AonDateUtils.addMonths(new Date(), 3);
+		} else if(time == 2) {
+			return AonDateUtils.addYears(new Date(), 1);
+		} else if(time == 3) {
+			return AonDateUtils.getDate(2099, 1, 1);
+		} else return null;
+
+	}
 }

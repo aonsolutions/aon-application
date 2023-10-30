@@ -110,7 +110,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		JSONArray array = new JSONArray();
 		
 		AON.getDocumentalAttachStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-				f -> attachFilter(api, f),AttachType.REGISTRY, false).forEach(a -> {
+				f -> attachFilter(api, f),AttachType.REGISTRY, false).sorted((o1, o2) -> o2.getDate().compareTo(o1.getDate())).forEach(a -> {
 			array.put(attachToJSON(a));
 		});
 		return array;

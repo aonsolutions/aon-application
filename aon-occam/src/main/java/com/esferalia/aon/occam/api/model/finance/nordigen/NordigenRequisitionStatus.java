@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.api.model.finance.nordigen;
 
-public enum NORDIGEN_REQUISITION_STATUS {
+public enum NordigenRequisitionStatus {
 	CR("CR", "CREATED", "Requisition has been successfully created"),
 	LN("LN", "LINKED", "Account has been successfully linked to requisition"),
 	EX("EX", "EXPIRED", "Access to account has expired as set in End User Agreement"),
@@ -16,7 +16,7 @@ public enum NORDIGEN_REQUISITION_STATUS {
 	private String longName;
 	private String description;
 	
-	private NORDIGEN_REQUISITION_STATUS(String shortName, String longName, String description) {
+	private NordigenRequisitionStatus(String shortName, String longName, String description) {
 		this.shortName = shortName;
 		this.longName = longName;
 		this.description = description;
@@ -34,9 +34,9 @@ public enum NORDIGEN_REQUISITION_STATUS {
 		return description;
 	}
 	
-	public static NORDIGEN_REQUISITION_STATUS safeValueOf(String shortName) {
+	public static NordigenRequisitionStatus safeValueOf(String shortName) {
 		try {
-			return NORDIGEN_REQUISITION_STATUS.valueOf(shortName);
+			return NordigenRequisitionStatus.valueOf(shortName);
 		} catch (NullPointerException | IllegalArgumentException e) {
 			return null;
 		}

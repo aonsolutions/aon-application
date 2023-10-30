@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.api.model.finance.nordigen;
 
-public enum NORDIGEN_ACCOUNT_STATUS {
+public enum NordigenAccountStatus {
 	DISCOVERED("User has successfully authenticated and account is discovered"),
 	PROCESSING("Account is being processed by the Institution"),
 	ERROR("An error was encountered when processing account"),
@@ -11,7 +11,7 @@ public enum NORDIGEN_ACCOUNT_STATUS {
 	
 	private String description;
 	
-	private NORDIGEN_ACCOUNT_STATUS(String description) {
+	private NordigenAccountStatus(String description) {
 		this.description = description;
 	}
 
@@ -19,9 +19,9 @@ public enum NORDIGEN_ACCOUNT_STATUS {
 		return description;
 	}
 	
-	public static NORDIGEN_ACCOUNT_STATUS safeValueOf(String description) {
+	public static NordigenAccountStatus safeValueOf(String description) {
 		try {
-			return NORDIGEN_ACCOUNT_STATUS.valueOf(description);
+			return NordigenAccountStatus.valueOf(description);
 		} catch (NullPointerException | IllegalArgumentException e) {
 			return null;
 		}

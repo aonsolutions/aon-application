@@ -1083,6 +1083,10 @@ public class AON {
 		}
 
 	}
+		
+	public static Company getCompany(Occam occam, CompanyFilter filter){
+		return getCompany(occam.getDomainName(), occam.getDomain(), occam.getUser(), filter);
+	}
 	public static Company getCompany(Domain domain, User user, CompanyFilter filter){
 		return getCompany(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
@@ -5239,15 +5243,32 @@ public class AON {
 		}
 	}
 
+	public static RegistryBank getRegistryBank(Occam occam, RegistryBankFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getRegistry().getRegistryBank(ctx, filter);
+		}
+	}
 	public static RegistryBank getRegistryBank(Domain domain, String login, RegistryBankFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
 			return getRegistry().getRegistryBank(ctx, filter);
 		}
 	}
 	
+	public static Stream<RegistryBank> getRegistryBankStream(Occam occam, RegistryBankFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getRegistry().getRegistryBankStream(ctx, filter);
+		}
+	}
+
 	public static Stream<RegistryBank> getRegistryBankStream(Domain domain, String login, RegistryBankFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
 			return getRegistry().getRegistryBankStream(ctx, filter);
+		}
+	}
+	
+	public static RegistryBank saveRegistryBank(Occam occam, RegistryBank rbank) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getRegistry().saveRegistryBank(ctx, rbank);
 		}
 	}
 	

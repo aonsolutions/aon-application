@@ -1,35 +1,40 @@
 package net.aonsolutions.aon.bank.checkit;
 
+
 import static com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO.CHECKIT_R1;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
+import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBank;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLog;
@@ -44,920 +49,248 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
+import net.aonsolutions.aon.bank.CheckItException;
+
 public class CheckItAPI implements IParamNames{
-	
+	private static final Logger LOGGER = Logger.getLogger(CheckItAPI.class.getName()); 
+
 	private CheckItAPI() {
-		throw new IllegalStateException("Utility class");
 	}
 
-	private static final DateFormat DF_TIME = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", new Locale("es", "ES") );
+	private static final DateFormat DF_TIME = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	
-	private static final String BASE_URL = "https://www.checkitbancario.com/";
+	private static final String HOST = "www.checkitbancario.com";
+	private static final String BASE_URL = "https://"+HOST+"/";
 	private static final String API_URL = BASE_URL + "openapi/";
 	private static final String LOGO_BASE_URL = BASE_URL + "login/img/logos/bancos/";
 	private static final String API_KEY = "84d9ee44e457ddef7f2c4f25dc8fa865";
-	private static final DateFormat DF = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "ES"));
+	private static final DateFormat DF = new SimpleDateFormat("yyyy-MM-dd");
+	private static final String APPLICATION_JSON = "application/json";
 
-	private static Object post(String url, JSONObject params) throws CheckItException {
-		try (CloseableHttpClient client = HttpClients.createDefault()) {
-			HttpPost post = new HttpPost(url);
-			StringEntity entity = new StringEntity(params.toString());
-			post.addHeader("Content-Type", "application/json");
-			post.setEntity(entity);
-			try (CloseableHttpResponse resp = client.execute(post)) {
-				if (resp.getStatusLine().getStatusCode() != 200)
-					throw new CheckItException(CheckItException.NO_CONNECTION_MSG);
-				if (resp.getEntity() != null) {
-					String str = EntityUtils.toString(resp.getEntity());
-					if (str != null && str.charAt(0) == '[') {
-						return new JSONArray(str);
-					} else if (str != null && str.charAt(0) == '{') {
-						return new JSONObject(str);
-					} else {
-						return str;
-					}
-				}
-			}
-			return null;
-		} catch (IOException e) {			
-			return null;
-		}
-	}
-
-	private static JSONArray parseJSONArray(Object json) throws CheckItException {
-		if (json == null)
-			return null;
+	
+    public static boolean isCheckItAvailabilitySocketAlive() {
+        boolean isAlive = false;
+        int timeout = 2000;
+        try (Socket socket = new Socket()) {
+        	SocketAddress socketAddress = new InetSocketAddress(HOST, 80);
+            socket.connect(socketAddress, timeout);
+            isAlive = true;
+        } catch (SocketTimeoutException exception) {
+        	LOGGER.severe("SocketTimeoutException " + HOST + ":80. " + exception.getMessage() );
+        } catch (IOException exception) {
+        	LOGGER.severe("IOException - Unable to connect to " + HOST + ":80. " + exception.getMessage());
+        }
+        return isAlive;
+    }
+    
+    private static <T> T post(String url, JSONObject postData, Function<String,T> responseBuilder) throws CheckItException {
 		try {
-			return (JSONArray) json;
-		} catch (ClassCastException e) {
-			throw new CheckItException(json.toString());
-		}
-	}
-
-	private static JSONObject parseJSONObject(Object json) throws CheckItException {
-		if (json == null)
-			return null;
-		try {
-			JSONObject jsonObj = (JSONObject) json;
-			String result = jsonObj.optString("result");
-			String message= jsonObj.optString("message");
-			if (result.isEmpty() || result.equalsIgnoreCase("Success") || AonStringUtils.containsIgnoreCase(message, "cuenta creada") || AonStringUtils.containsIgnoreCase(result, "cuenta creada")) {
-				return jsonObj;
-			} else {				
-				throw new CheckItException(json.toString());
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri( URI.create(url) )
+				.header("accept", APPLICATION_JSON)
+				.header("Content-Type", APPLICATION_JSON)
+				.POST( HttpRequest.BodyPublishers.ofString(postData.toString()) )
+				.build();
+			HttpResponse<String> resp = HttpClient.newBuilder()
+				.build()
+				.send(request, BodyHandlers.ofString());
+			if (resp.statusCode() != 200) {
+				throw new CheckItException( CheckItException.NO_CONNECTION_MSG );
 			}
-		} catch (ClassCastException e) {
-			throw new CheckItException(json.toString());
+			return responseBuilder.apply(resp.body());
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new CheckItException(e.getMessage());
+		} catch (IOException e) {
+			throw new CheckItException(e.getMessage());
 		}
-
 	}
-
-//----------------------------------------GET BANKS-----------------------------------------
-	/**
-	 * Función encargada de devolver el listado de los bancos que continen robots
-	 * 
-	 * @param params
-	 *               <ul>
-	 *               <li><strong>claveApi</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Token que identifica el despacho
-	 *               </p>
-	 *               </li>
-	 *               </ul>
-	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONArray getBanks(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "bancos", params);
-		return parseJSONArray(json);
-	}
-
-	/**
-	 * Función encargada de devolver el listado de los bancos que continen robots
-	 * 
-	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
+	
 	public static JSONArray getBanks() throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, API_KEY);
-		return getBanks(params);
+		return getBanks( new JSONObject().put(API_KEY_PARAM, API_KEY) );
 	}
 
-//------------------------------------------------------------------------------------------
-
-//----------------------------------------GET LOGINS----------------------------------------	
-	/**
-	 * Función encgarada de devolver el listado con los tipos de logins
-	 * 
-	 * @param params
-	 *               <ul>
-	 *               <li><strong>banco_id</strong>: <em>required (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica el banco. Se obtiene de /bancos
-	 *               </p>
-	 *               </li>
-	 *               </ul>
-	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONArray getLogins(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "bancos/logins", params);
-		return parseJSONArray(json);
+	public static List<CheckItBank>  getBankList() {
+		try {
+			return JsonUtils.stream( getBanks() )
+				.map( bank -> new CheckItBank()
+						.setId(bank.optInt(BANK_ID))
+						.setName(bank.optString(BANK_NAME_PARAM)))
+				.collect(Collectors.toCollection(LinkedList::new));
+		} catch (CheckItException e) {
+			return Collections.emptyList();
+		}
 	}
 
-	/**
-	 * Función encgarada de devolver el listado con los tipos de logins
-	 * 
-	 * @param bancoId <em>required (integer)</em>
-	 *                <p>
-	 *                Campo único que identifica el banco. Se obtiene de /bancos
-	 *                </p>
-	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONArray getLogins(Integer bancoId) throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(BANK_ID_PARAM, bancoId);
-		return getLogins(params);
-	}
-
-//------------------------------------------------------------------------------------------
-
-//-------------------------------------GET LOGIN FIELDS-------------------------------------
-
-	/**
-	 * Función encargada de devolver los campos necesarios para el login según el
-	 * tipo_login_id
-	 * 
-	 * @param params
-	 *               <ul>
-	 *               <li><strong>tipo_login_banco_id</strong>: <em>required
-	 *               (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica el tipo login del banco. Se obtiene
-	 *               de /bancos/logins
-	 *               </p>
-	 *               </li>
-	 *               </ul>
-	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONArray getLoginFields(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "bancos/logins/campos", params);
-		return parseJSONArray(json);
-	}
-
-	/**
-	 * Función encargada de devolver los campos necesarios para el login según el
-	 * tipo_login_id
-	 * 
-	 * @param tipoLoginBancoId <em>required (integer)</em>
-	 *                         <p>
-	 *                         Campo único que identifica el tipo login del banco.
-	 *                         Se obtiene de /bancos/logins
-	 *                         </p>
-	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONArray getLoginFields(Integer tipoLoginBancoId) throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
-		return getLoginFields(params);
-	}
-
-//------------------------------------------------------------------------------------------
-
-//-------------------------------------GET CREDENTIALS--------------------------------------
-	/**
-	 * Función encargada de devolver las credenciales y el tipo de login al que
-	 * pertenecen.
-	 * 
-	 * @param params
-	 *               <ul>
-	 *               <li><strong>claveApi</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Token que identifica el despacho
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>empresa_id</strong>: <em>required (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica la empresa. Se obtiene de /empresas
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>tipo_login_banco_id</strong>: <em>required
-	 *               (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica el tipo del login del banco. Se
-	 *               obtiene de /bancos/logins
-	 *               </p>
-	 *               </li>
-	 *               </ul>
-	 * @return JSONObject
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONObject getCredentials(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "credenciales", params);
-		return parseJSONObject(json);
-	}
-
-	/**
-	 * Función encargada de devolver las credenciales y el tipo de login al que
-	 * pertenecen.
-	 * @param empresaId        <em>required (integer)</em>
-	 *                         <p>
-	 *                         Campo único que identifica la empresa. Se obtiene de
-	 *                         /empresas
-	 *                         </p>
-	 * @param tipoLoginBancoId <em>required (integer)</em>
-	 *                         <p>
-	 *                         Campo único que identifica el tipo del login del
-	 *                         banco. Se obtiene de /bancos/logins
-	 *                         </p>
-	 * 
-	 * @return JSONObject
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONObject getCredentials(Integer empresaId, Integer tipoLoginBancoId)
-			throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, API_KEY);
-		params.put(ENTERPRISE_ID_PARAM, empresaId);
-		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
-		return getCredentials(params);
-	}
-
-//------------------------------------------------------------------------------------------
-
-//-------------------------------------ADD CREDENTIALS--------------------------------------	
-
-	/**
-	 * Función que inserta o modifca credenciales para la empresa y
-	 * tipo_login_banco_id
-	 * 
-	 * @param params
-	 *               <ul>
-	 *               <li><strong>claveApi</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Token que identifica el despacho
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>empresa_id</strong>: <em>required (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica la empresa. Se obtiene de /empresas
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>tipo_login_banco_id</strong>: <em>required
-	 *               (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica el tipo del login del banco. Se
-	 *               obtiene de /bancos/logins
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>userID</strong>: <em>(string)</em>
-	 *               <p>
-	 *               Campo del login del tipo_login_banco_id
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>userPassword</strong>: <em>(string)</em>
-	 *               <p>
-	 *               Campo del login del tipo_login_banco_id
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>userPIN</strong>: <em>(string)</em>
-	 *               <p>
-	 *               Campo del login del tipo_login_banco_id
-	 *               </p>
-	 *               </li>
-	 *               </ul>
-	 * @return JSONObject
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONObject addCredentials(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "credenciales/add", params);
-		return parseJSONObject(json);
-	}
-
-	/**
-	 * Función que inserta o modifca credenciales para la empresa y
-	 * tipo_login_banco_id
-	 * @param empresaId        <em>required (integer)</em>
-	 *                         <p>
-	 *                         Campo único que identifica la empresa. Se obtiene de
-	 *                         /empresas
-	 *                         </p>
-	 * @param tipoLoginBancoId <em>required (integer)</em>
-	 *                         <p>
-	 *                         Campo único que identifica el tipo del login del
-	 *                         banco. Se obtiene de /bancos/logins
-	 *                         </p>
-	 * @param userID           <em>(string)</em>
-	 *                         <p>
-	 *                         Campo del login del tipo_login_banco_id
-	 *                         </p>
-	 * @param userPassword     <em>(string)</em>
-	 *                         <p>
-	 *                         Campo del login del tipo_login_banco_id
-	 *                         </p>
-	 * @param userPIN          <em>(string)</em>
-	 *                         <p>
-	 *                         Campo del login del tipo_login_banco_id
-	 *                         </p>
-	 * 
-	 * @return JSONObject
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONObject addCredentials(Integer empresaId, Integer tipoLoginBancoId, String userID, String userPassword,
-			String userPIN) throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, API_KEY);
-		params.put(ENTERPRISE_ID_PARAM, empresaId);
-		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
-		params.put(USER_ID_PARAM, userID);
-		params.put(USER_PASSWORD_PARAM, userPassword);
-		params.put(USER_PIN_PARAM, userPIN);
-		return addCredentials(params);
-	}
-
-//------------------------------------------------------------------------------------------
-	
-//------------------------------------ADD EXTRA FIELD---------------------------------------
-	/**
-	 * Función que inserta el campo extra en credenciales
-	 * para la empresa y tipo_login_banco_id
-	 * 
-	 * @param params
-	 *               <ul>
-	 *               <li><strong>claveApi</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Token que identifica el despacho
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>empresa_id</strong>: <em>required (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica la empresa. Se obtiene de /empresas
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>tipo_login_banco_id</strong>: <em>required
-	 *               (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica el tipo del login del banco. Se
-	 *               obtiene de /bancos/logins
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>campo_extra</strong>: <em>(string)</em>
-	 *               <p>
-	 *               campo_extra
-	 *               </p>
-	 *               </li>
-	 *               </ul>
-	 * @return JSONObject
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONObject addExtraField(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "credenciales/campoextra", params);
-		return parseJSONObject(json);
+	public static JSONArray getLogins(Integer bankId) throws CheckItException {
+		return getLogins( new JSONObject().put(BANK_ID_PARAM, bankId) );
 	}
 	
-	public static JSONObject addExtraField(Integer empresaId, Integer tipoLoginBancoId, String extraField) throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, API_KEY);
-		params.put(ENTERPRISE_ID_PARAM, empresaId);
-		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
-		params.put(EXTRA_FIELD, extraField);
-		return addExtraField(params);
-	}
-//------------------------------------------------------------------------------------------
-
-
-//--------------------------------------GET ACCOUNTS----------------------------------------
-	/**
-	 * Función encargada de mostrar todas las cuentas bancarias de una empresa.
-	 * 
-	 * @param params
-	 *               <ul>
-	 *               <li><strong>claveApi</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Token que identifica el despacho
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>empresa_id</strong>: <em>required (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica la empresa. Se obtiene de /empresas
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>tipo_cuenta_bancaria_id</strong>:
-	 *               <em>(integer)</em>
-	 *               <p>
-	 *               Si es cuenta corriente '1', si es tarjeta '2'
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>iban</strong>: <em>(string)</em>
-	 *               <p>
-	 *               Si se envia tipo_cuenta_bancaria_id e iban, Se buscara la
-	 *               cuenta por el Iban
-	 *               </p>
-	 *               </li>
-	 *               </ul>
-	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONArray getAccounts(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "cuentas", params);
-		return parseJSONArray(json);
-	}
-
-	/**
-	 * Función encargada de mostrar todas las cuentas bancarias de una empresa.
-	 * @param empresaId            <em>required (integer)</em>
-	 *                             <p>
-	 *                             Campo único que identifica la empresa. Se obtiene
-	 *                             de /empresas
-	 *                             </p>
-	 * @param tipocuentaBancariaId <em>(integer)</em>
-	 *                             <p>
-	 *                             Si es cuenta corriente '1', si es tarjeta '2'
-	 *                             </p>
-	 * @param iban                 <em>(string)</em>
-	 *                             <p>
-	 *                             Si se envia tipo_cuenta_bancaria_id e iban, Se
-	 *                             buscara la cuenta por el Iban
-	 *                             </p>
-	 * 
-	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONArray getAccounts(Integer empresaId, Integer tipocuentaBancariaId, String iban)
-			throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, API_KEY);
-		params.put(ENTERPRISE_ID_PARAM, empresaId);
-		params.put(ACCOUNT_TYPE_ID_PARAM, tipocuentaBancariaId);
-		params.put(IBAN_PARAM, iban);
-		return getAccounts(params);
-	}
-//------------------------------------------------------------------------------------------
-
-//--------------------------------------ADD ACCOUNT-----------------------------------------
-	/**
-	 * Funcion encargada de añadir nuevas cuentas.
-	 * 
-	 * @param params
-	 *               <ul>
-	 *               <li><strong>claveApi</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Token que identifica el despacho
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>empresa_id</strong>: <em>required (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica la empresa. Se obtiene de /empresas
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>banco_id</strong>: <em>required (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica el banco. Se obtiene de /bancos
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>tipo_login_banco_id</strong>: <em>required
-	 *               (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica el tipo del login del banco. Se
-	 *               obtiene de /bancos/logins
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>iban</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Iban de la cuenta bancaria para dar de alta
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>tipo_cuenta_bancaria_id</strong>: <em>(integer -
-	 *               default: 1)</em>
-	 *               <p>
-	 *               Si es cuenta corriente '1', si es tarjeta '2'
-	 *               </p>
-	 *               </li>
-	 *               </ul>
-	 * @return JSONObject
-	 * @throws CheckItException Exception exception containing the error JSON as
-	 *                          String as message
-	 */
-	public static JSONObject addAccount(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "cuentas/add", params);
-		return parseJSONObject(json);
-	}
-
-	/**
-	 * Funcion encargada de añadir nuevas cuentas.
-	 * @param empresaId            <em>required (integer)</em>
-	 *                             <p>
-	 *                             Campo único que identifica la empresa. Se obtiene
-	 *                             de /empresas
-	 *                             </p>
-	 * @param bancoId              <em>required (integer)</em>
-	 *                             <p>
-	 *                             Campo único que identifica el banco. Se obtiene
-	 *                             de /bancos
-	 *                             </p>
-	 * @param tipoLoginBancoId     <em>required (integer)</em>
-	 *                             <p>
-	 *                             Campo único que identifica el tipo del login del
-	 *                             banco. Se obtiene de /bancos/logins
-	 *                             </p>
-	 * @param iban                 <em>(string)</em>
-	 *                             <p>
-	 *                             Si se envia tipo_cuenta_bancaria_id e iban, Se
-	 *                             buscara la cuenta por el Iban
-	 *                             </p>
-	 * @param tipoCuentaBancariaId <em>(integer - default: 1)</em>
-	 *                             <p>
-	 *                             Si es cuenta corriente '1', si es tarjeta '2'
-	 *                             </p>
-	 * 
-	 * @return JSONObject
-	 * @throws CheckItException Exception exception containing the error JSON as
-	 *                          String as message
-	 */
-	public static JSONObject addAccount(Integer empresaId, Integer bancoId, Integer tipoLoginBancoId, String iban,
-			Integer tipoCuentaBancariaId) throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, API_KEY);
-		params.put(ENTERPRISE_ID_PARAM, empresaId);
-		params.put(BANK_ID_PARAM, bancoId);
-		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
-		params.put(IBAN_PARAM, iban);
-		params.put(ACCOUNT_TYPE_ID_PARAM, tipoCuentaBancariaId);
-		return addAccount(params);
-
-	}
-//------------------------------------------------------------------------------------------
-
-//------------------------------------ADD ACCOUNT API---------------------------------------
-	/**
-	 * Funcion encargada de añadir nuevas cuentas desde Api Servicios.
-	 * 
-	 * @param params
-	 *               <ul>
-	 *               <li><strong>claveApi</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Token que identifica el despacho
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>empresa_id</strong>: <em>required (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica la empresa. Se obtiene de /empresas
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>banco_id</strong>: <em>required (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica el banco. Se obtiene de /bancos
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>iban</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Iban de la cuenta bancaria para dar de alta
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>saldo</strong>: <em>required (number)</em>
-	 *               <p>
-	 *               Saldo inicial al dar de alta la cuenta
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>disponible</strong>: <em>required (number)</em>
-	 *               <p>
-	 *               Saldo disponible al dar de alta la cuenta
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>fecha_saldo</strong>: <em>required (date)</em>
-	 *               <p>
-	 *               Fecha de la extaccion del saldo
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>identificador</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Identificador del la cuenta con el que la Api Servicios va a
-	 *               hacer la consulta de movimientos, en ocasiones puede coincidir
-	 *               con el iban de la cuenta.
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>api_servicio_id</strong>: <em>required
-	 *               (integer)</em>
-	 *               <p>
-	 *               La id del servicio (#Id tabla apiServicios)
-	 *               </p>
-	 *               </li>
-	 *               </ul>
-	 * @return
-	 * @throws CheckItException exception containing the error JSON as String as
-	 *                          message
-	 */
-	public static JSONObject addAccountApi(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "cuentas/add/api", params);
-		return parseJSONObject(json);
-	}
-
-	/**
-	 * Funcion encargada de añadir nuevas cuentas desde Api Servicios.
-	 * @param empresaId     <em>required (integer)</em>
-	 *                      <p>
-	 *                      Campo único que identifica la empresa. Se obtiene de
-	 *                      /empresas
-	 *                      </p>
-	 * @param bancoId       <em>required (integer)</em>
-	 *                      <p>
-	 *                      Campo único que identifica el banco. Se obtiene de
-	 *                      /bancos
-	 *                      </p>
-	 * @param iban          <em>required (string)</em>
-	 *                      <p>
-	 *                      Iban de la cuenta bancaria para dar de alta
-	 *                      </p>
-	 * @param saldo         <em>required (number)</em>
-	 *                      <p>
-	 *                      Saldo inicial al dar de alta la cuenta
-	 *                      </p>
-	 * @param disponible    <em>required (number)</em>
-	 *                      <p>
-	 *                      Saldo disponible al dar de alta la cuenta
-	 *                      </p>
-	 * @param fechaSaldo    <em>required (date)</em>
-	 *                      <p>
-	 *                      Fecha de la extaccion del saldo
-	 *                      </p>
-	 * @param identificador <em>required (string)</em>
-	 *                      <p>
-	 *                      Identificador del la cuenta con el que la Api Servicios
-	 *                      va a hacer la consulta de movimientos, en ocasiones
-	 *                      puede coincidir con el iban de la cuenta.
-	 *                      </p>
-	 * @param apiServicioId <em>required (integer)</em>
-	 *                      <p>
-	 *                      La id del servicio (#Id tabla apiServicios)
-	 *                      </p>
-	 * 
-	 * @return JSONObject
-	 * @throws CheckItException Exception exception containing the error JSON as
-	 *                          String as message
-	 */
-	public static JSONObject addAccountApi(Integer empresaId, Integer bancoId, String iban, Double saldo,
-			Double disponible, Date fechaSaldo, String identificador, Integer apiServicioId)
-			throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, API_KEY);
-		params.put(ENTERPRISE_ID_PARAM, empresaId);
-		params.put(BANK_ID_PARAM, bancoId);
-		params.put(IBAN_PARAM, iban);
-		params.put(BALANCE_PARAM, saldo);
-		params.put(AVAILABLE_PARAM, disponible);
-		params.put(BALANCE_DATE_PARAM, fechaSaldo);
-		params.put(ID_PARAM, identificador);
-		params.put(SERVICE_API_ID_PARAM, apiServicioId);
-		return addAccountApi(params);
-	}
-
-//------------------------------------------------------------------------------------------
-	
-//---------------------------------------GET LOGS-------------------------------------------
-	
-	public static JSONArray getLogs(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "logs/robot/list", params);
-		return parseJSONArray(json);
+	public static JSONArray getLoginFields(Integer bankLoginTypeId) throws CheckItException {
+		return getLoginFields(new JSONObject().put(LOGIN_TYPE_ID_PARAM, bankLoginTypeId));
 	}
 	
-	public static JSONArray getLogs(Integer empresaId, Integer cuentabancariaId) throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, API_KEY);
-		params.put(ENTERPRISE_ID_PARAM, empresaId);
-		params.put("cuentabancaria_id", cuentabancariaId);
-		return getLogs(params);
+	public static JSONObject getCredentials(Integer enterpriseId, Integer bankLoginTypeId) throws CheckItException {
+		return getCredentials(new JSONObject()
+			.put(API_KEY_PARAM, API_KEY)
+			.put(ENTERPRISE_ID_PARAM, enterpriseId)
+			.put(LOGIN_TYPE_ID_PARAM, bankLoginTypeId)
+		);
 	}
 	
-//------------------------------------------------------------------------------------------
+	public static JSONObject addCredentials(Integer enterpriseId, Integer bankLoginTypeId, String userID, String userPassword, String userPIN) throws CheckItException {
+		return addCredentials(new JSONObject()
+			.put(API_KEY_PARAM, API_KEY)
+			.put(ENTERPRISE_ID_PARAM, enterpriseId)
+			.put(LOGIN_TYPE_ID_PARAM, bankLoginTypeId)
+			.put(USER_ID_PARAM, userID)
+			.put(USER_PASSWORD_PARAM, userPassword)
+			.put(USER_PIN_PARAM, userPIN)
+		);
+	}
+
+	public static JSONObject addExtraField(Integer enterpriseId, Integer bankLoginTypeId, String extraField) throws CheckItException {
+		return addExtraField(new JSONObject()
+			.put(API_KEY_PARAM, API_KEY)
+			.put(ENTERPRISE_ID_PARAM, enterpriseId)
+			.put(LOGIN_TYPE_ID_PARAM, bankLoginTypeId)
+			.put(EXTRA_FIELD, extraField)
+		);
+	}
 	
-//------------------------------------GET ENTERPRISE----------------------------------------
-	
-	public static JSONArray getEnterprise(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "empresas", params);
-		return parseJSONArray(json);
+	public static JSONArray getAccounts(Integer enterpriseId, Integer accountTypeId, String iban) throws CheckItException {
+		return getAccounts(new JSONObject()
+			.put(API_KEY_PARAM, API_KEY)
+			.put(ENTERPRISE_ID_PARAM, enterpriseId)
+			.put(ACCOUNT_TYPE_ID_PARAM, accountTypeId)
+			.put(IBAN_PARAM, iban));
 	}
 	
 	public static JSONArray getEnterprise(String cif) throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, API_KEY);
-		params.put(CIF_PARAM, cif);
-		return getEnterprise(params);
+		return getEnterprise(new JSONObject()
+			.put(API_KEY_PARAM, API_KEY)
+			.put(CIF_PARAM, cif));
+	}
+	public static JSONArray getLogs(Integer enterpriseId, Integer accountId) throws CheckItException {
+		return getLogs(new JSONObject()
+			.put(API_KEY_PARAM, API_KEY)
+			.put(ENTERPRISE_ID_PARAM, enterpriseId)
+			.put(ACCOUNT_ID, accountId)
+		);
+	}
+
+	public static JSONObject addAccount(Integer enterpriseId, Integer bankId, Integer bankLoginTypeId, String iban, Integer accountTypeId) throws CheckItException {
+		return addAccount(new JSONObject()
+			.put(API_KEY_PARAM, API_KEY)
+			.put(ENTERPRISE_ID_PARAM, enterpriseId)
+			.put(BANK_ID_PARAM, bankId)
+			.put(LOGIN_TYPE_ID_PARAM, bankLoginTypeId)
+			.put(IBAN_PARAM, iban)
+			.put(ACCOUNT_TYPE_ID_PARAM, accountTypeId));
 	}
 	
-//------------------------------------------------------------------------------------------
-
-//------------------------------------ADD ENTERPRISE----------------------------------------
-	/**
-	 * Funcion que da de alta una empresa, la petición se hace por POST.
-	 * Automáticamente se dará de alta un usuario para dicha empresa con los
-	 * siguientes datos; Username - Email de la empresa. Password - <strike>Serán
-	 * los 5 primeros caracteres de la id_empresa hasheada con MD5.</strike> Llegará
-	 * un correo de confirmación al email de la empresa para establecer la
-	 * contraseña.
-	 * 
-	 * @param params
-	 *               <ul>
-	 *               <li><strong>claveApi</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               ClaveApi del despacho
-	 *               </p>
-	 *               </i>
-	 *               <li><strong>nombre</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Nombre de la nueva empresa
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>cif</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Cif de la nueva empresa
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>email</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Email de la empresa, este campo sera el 'username' del usuario
-	 *               creado pararelamente
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>nombrecorto</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               Nombre corto de la empresa
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>url</strong>: <em>(string)</em>
-	 *               <p>
-	 *               Url de la web de la empresa
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>telefono</strong>: <em>(integer)</em>
-	 *               <p>
-	 *               Telefono de la empresa
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>direccion</strong>: <em>(string)</em>
-	 *               <p>
-	 *               Direccion de la empresa
-	 *               </p>
-	 *               </li>
-	 *               </ul>
-	 * @return JSONObject
-	 * @throws BankException
-	 */
-	public static JSONObject addEnterprise(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "empresas/add", params);
-		return parseJSONObject(json);
+	public static JSONObject addAccountApi(Integer enterpriseId, Integer bankId, String iban, Double balance, Double available, Date balanceDate, String id, Integer apiServiceId) throws CheckItException {
+		return addAccountApi(new JSONObject()
+			.put(API_KEY_PARAM, API_KEY)
+			.put(ENTERPRISE_ID_PARAM, enterpriseId)
+			.put(BANK_ID_PARAM, bankId)
+			.put(IBAN_PARAM, iban)
+			.put(BALANCE_PARAM, balance)
+			.put(AVAILABLE_PARAM, available)
+			.put(BALANCE_DATE_PARAM, balanceDate)
+			.put(ID_PARAM, id)
+			.put(SERVICE_API_ID_PARAM, apiServiceId));
+	}
+	
+	public static JSONObject addEnterprise(String name, String cif, String email, String abbrName,String url, String phone, String address) throws CheckItException { 
+		return addEnterprise(new JSONObject()
+			.put(API_KEY_PARAM, API_KEY)
+			.put(NAME_PARAM, name)
+			.put(CIF_PARAM, cif)
+			.put(EMAIL_PARAM, email)
+			.put(SHORT_NAME_PARAM, abbrName)
+			.put(URL_PARAM, url)
+			.put(PHONE_PARAM, phone)
+			.put(ADDRESS_PARAM, address));
+	}
+	public static JSONArray getTransactions(Integer enterpriseIdId, Date fromDate, Date toDate, String accountId) throws CheckItException {
+		return getTransactions(new JSONObject()
+			.put(API_KEY_PARAM, API_KEY)
+			.put(ENTERPRISE_ID_PARAM, enterpriseIdId)
+			.put(DATE_FROM_PARAM, formatDateForTransactions(fromDate))
+			.put(DATE_TO_PARAM, formatDateForTransactions(toDate))
+			.put(ACCOUNT_ID_PARAM, accountId));
+	}
+	
+	// -------------------------------------------------- [PRIVATE]
+	
+	private static JSONArray getTransactions(JSONObject params) throws CheckItException {
+		return post(API_URL + "movimientos", params, JSONArray::new);
+	}
+	
+	private static JSONObject addEnterprise(JSONObject params) throws CheckItException {
+		return post(API_URL + "empresas/add", params, JSONObject::new);
 	}
 
-	/**
-	 * Funcion que da de alta una empresa, la petición se hace por POST.
-	 * Automáticamente se dará de alta un usuario para dicha empresa con los
-	 * siguientes datos; Username - Email de la empresa. Password - <strike>Serán
-	 * los 5 primeros caracteres de la id_empresa hasheada con MD5.</strike> Llegará
-	 * un correo de confirmación al email de la empresa para establecer la
-	 * contraseña.
-	 * 
-	 * @param claveApi    <em>required (string)</em>
-	 *                    <p>
-	 *                    ClaveApi del despacho
-	 *                    </p>
-	 * @param nombre      <em>required (string)</em>
-	 *                    <p>
-	 *                    Nombre de la nueva empresa
-	 *                    </p>
-	 * @param cif         <em>required (string)</em>
-	 *                    <p>
-	 *                    Nombre de la nueva empresa
-	 *                    </p>
-	 * @param email       <em>required (string)</em>
-	 *                    <p>
-	 *                    Email de la empresa, este campo sera el 'username' del
-	 *                    usuario creado pararelamente
-	 *                    </p>
-	 * @param nombrecorto <em>required (string)</em>
-	 *                    <p>
-	 *                    Nombre corto de la empresa
-	 *                    </p>
-	 * @param url         <em>(string)</em>
-	 *                    <p>
-	 *                    Url de la web de la empresa
-	 *                    </p>
-	 * @param telefono    <em>(integer)</em>
-	 *                    <p>
-	 *                    Telefono de la empresa
-	 *                    </p>
-	 * @param direccion   <em>(string)</em>
-	 *                    <p>
-	 *                    Direccion de la empresa
-	 *                    </p>
-	 * @return JSONObject
-	 * @throws BankException 
-	 */
-	public static JSONObject addEnterprise(String nombre, String cif, String email, String nombrecorto,
-			String url, String telefono, String direccion) throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, API_KEY);
-		params.put(NAME_PARAM, nombre);
-		params.put(CIF_PARAM, cif);
-		params.put(EMAIL_PARAM, email);
-		params.put(SHORT_NAME_PARAM, nombrecorto);
-		params.put(URL_PARAM, url);
-		params.put(PHONE_PARAM, telefono);
-		params.put(ADDRESS_PARAM, direccion);
-		return addEnterprise(params);
+	private static JSONObject addAccountApi(JSONObject params) throws CheckItException {
+		return post(API_URL + "cuentas/add/api", params, JSONObject::new);
 	}
-//------------------------------------------------------------------------------------------
-
-//------------------------------------ADD ENTERPRISE----------------------------------------
-	/**
-	 * Funcion que devuleve movimientos de un rango de fechas y cuenta bancaria
-	 * 
-	 * @param params
-	 *               <ul>
-	 *               <li><strong>claveApi</strong>: <em>required (string)</em>
-	 *               <p>
-	 *               ClaveApi del despacho
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>empresa_id</strong>: <em>required (integer)</em>
-	 *               <p>
-	 *               Campo único que identifica la empresa. Se obtiene de /empresas
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>fecha_desde</strong>: <em>required (date)</em>
-	 *               <p>
-	 *               Fecha inicio de la extracción
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>fecha_hasta</strong>: <em>required (date)</em>
-	 *               <p>
-	 *               Fecha final de la extracción
-	 *               </p>
-	 *               </li>
-	 *               <li><strong>cuenta_bancaria_id</strong>: <em>required
-	 *               (string)</em>
-	 *               <p>
-	 *               Id de la cuenta bancaria. Se obtiene de /cuentas
-	 *               </p>
-	 *               </li>
-	 *               </ul>
-	 * @return JSONArray
-	 * @throws CheckItException Exception exception containing the error JSON as
-	 *                          String as message
-	 */
-	public static JSONArray getTransactions(JSONObject params) throws CheckItException {
-		Object json = post(API_URL + "movimientos", params);
-		return parseJSONArray(json);
+	
+	private static JSONObject addAccount(JSONObject params) throws CheckItException {
+		return post(API_URL + "cuentas/add", params, JSONObject::new);
 	}
 
-	/**
-	 * Funcion que devuleve movimientos de un rango de fechas y cuenta bancaria
-	 * @param empresaId        <em>required (integer)</em>
-	 *                         <p>
-	 *                         Campo único que identifica la empresa. Se obtiene de
-	 *                         /empresas
-	 *                         </p>
-	 * @param fechaDesde       <em>required (date)</em>
-	 *                         <p>
-	 *                         Fecha inicio de la extracción
-	 *                         </p>
-	 * @param fechaHasta       <em>required (date)</em>
-	 *                         <p>
-	 *                         Fecha final de la extracción
-	 *                         </p>
-	 * @param cuentaBancariaId <em>required (string)</em>
-	 *                         <p>
-	 *                         Id de la cuenta bancaria. Se obtiene de /cuentas
-	 *                         </p>
-	 * 
-	 * @return JSONArray
-	 * @throws CheckItException Exception exception containing the error JSON as
-	 *                          String as message
-	 */
-	public static JSONArray getTransactions(Integer empresaId, Date fechaDesde, Date fechaHasta, String cuentaBancariaId) throws CheckItException {
-		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, API_KEY);
-		params.put(ENTERPRISE_ID_PARAM, empresaId);
-		params.put(DATE_FROM_PARAM, formatDateForTransactions(fechaDesde));
-		params.put(DATE_TO_PARAM, formatDateForTransactions(fechaHasta));
-		params.put(ACCOUNT_ID_PARAM, cuentaBancariaId);
-		return getTransactions(params);
+	private static JSONArray getLogs(JSONObject params) throws CheckItException {
+		return post(API_URL + "logs/robot/list", params, JSONArray::new);
 	}
+
+	private static JSONArray getEnterprise(JSONObject params) throws CheckItException {
+		return post(API_URL + "empresas", params, JSONArray::new);
+	}
+
+	private static JSONArray getAccounts(JSONObject params) throws CheckItException {
+		return post(API_URL + "cuentas", params, JSONArray::new);
+	}
+
+	private static JSONObject addExtraField(JSONObject params) throws CheckItException {
+		return post(API_URL + "credenciales/campoextra", params, JSONObject::new);
+	}
+
+	private static JSONObject addCredentials(JSONObject params) throws CheckItException {
+		return post(API_URL + "credenciales/add", params, JSONObject::new);
+	}
+	
+	private static JSONObject getCredentials(JSONObject params) throws CheckItException {
+		return post(API_URL + "credenciales", params, JSONObject::new);
+	}
+
+	private static JSONArray getLoginFields(JSONObject params) throws CheckItException {
+		return post(API_URL + "bancos/logins/campos", params, JSONArray::new);
+	}
+	
+	private static JSONArray getBanks(JSONObject params) throws CheckItException {
+		return post(API_URL + "bancos", params, JSONArray::new);
+	}
+
+	private static JSONArray getLogins(JSONObject params) throws CheckItException {
+		return post(API_URL + "bancos/logins", params, JSONArray::new);
+	}
+
+	// ***************************************************************************
+	// ***************************************************************************
+	// ***************************************************************************
+	// ***************************************************************************
+	// ***************************************************************************
+	// ***************************************************************************
+	// ***************************************************************************
+	// ***************************************************************************
+	// ***************************************************************************
+	// ***************************************************************************
+	// ***************************************************************************
+	// ***************************************************************************
+	// ***************************************************************************
+	
+
 //------------------------------------------------------------------------------------------
 	
 	public static Integer getAccountIdByIBAN(Integer empresaId, String iban) throws CheckItException {
@@ -1002,7 +335,7 @@ public class CheckItAPI implements IParamNames{
 		}
 		
 		return new CheckItLog()
-				.setBankAccountId(json.optInt("cuentabancaria_id"))
+				.setBankAccountId(json.optInt(ACCOUNT_ID))
 				.setErrorMessage(json.optString("error_message"))
 				.setUserError(json.optInt("is_user_error", 0) == 1)
 				.setPending(json.optInt("is_pending", 0) == 1)
@@ -1070,12 +403,10 @@ public class CheckItAPI implements IParamNames{
 	public static List<CheckItBankStatement> getBankStatements(Integer empresaId, Integer accountId, Date lastOperationDate, Integer maximumId) throws CheckItException {
 		Date today = new Date();
 		
-		
 		Calendar nextOperationCalendar= Calendar.getInstance();
 		nextOperationCalendar.setTime(lastOperationDate);
 		nextOperationCalendar.add(Calendar.DATE, 1);
 		Date nextOperationDate = clearDate(nextOperationCalendar.getTime());
-		
 		
 		JSONObject requestParams = new JSONObject();
 		
@@ -1156,10 +487,7 @@ public class CheckItAPI implements IParamNames{
 	 * @return The number of rows inserted into the DB
 	 * @throws BankException
 	 */
-	public static int insertTransactions(CheckItParams params)
-			throws CheckItException {
-		
-		
+	public static int insertTransactions(CheckItParams params) throws CheckItException {
 		String domainName = params.getDomainName();
 		String user = params.getUser();
 		Integer domainId = params.getDomainId();
@@ -1172,24 +500,8 @@ public class CheckItAPI implements IParamNames{
 						confi -> CheckItDAO.insertStatements(aonContext, bankStatements)
 					);		
 		}
-
-		
-
-		
-		
 	}
 	
-	/**
-	 * Method which picks up bank transactions from CheckIt and records them into
-	 * the DB.
-	 * 
-	 * @param domainName The <u>AON DB</u> domain name
-	 * @param user       The <u>AON DB</u> user name
-	 * @param empresaId  The <u>CheckIt</u> Enterprise ID
-	 * @param iban       The bank account number
-	 * @return The number of rows inserted into the DB
-	 * @throws BankException
-	 */
 	public static int insertTransactions(String domainName, Integer domainId, String user, Integer empresaId, String iban)
 			throws CheckItException {
 		CheckItParams params = new CheckItParams();
@@ -1230,9 +542,7 @@ public class CheckItAPI implements IParamNames{
 	
 	public static List<CheckItBankStatement> getMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban, Date startDate, Date endDate) throws CheckItException {
 		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
-//			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
 			List<CheckItBankStatement> bankStatements = getAllBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban));
-//			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
 			return bankStatements;
 		}
 	}
@@ -1254,7 +564,7 @@ public class CheckItAPI implements IParamNames{
 	}
 
 	private static Date parseTZDate(String dateStr) throws CheckItException {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", new Locale("es", "ES"));
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		format.setTimeZone(TimeZone.getTimeZone("UTC"));
 		try {
 			return format.parse(dateStr);
@@ -1274,24 +584,10 @@ public class CheckItAPI implements IParamNames{
 			return null;
 	}
 
-	
-	
-	
 	public static LinkedList<CheckItBankAccount> getLinkedAccountsToDisplay(String domainName, Integer domainId, String user, Integer empresaId ) throws CheckItException {
 		List<String> activeIbans= CheckItDAO.getActiveIbans(domainName, domainId, user);
 		return getAccounts(empresaId, activeIbans);
 	}
-	
-//	public static LinkedList<CheckItBankAccount> getAccountsFromDB(String domainName, Integer domainId, String user) throws CheckItException {
-//		LinkedList<RegistryBank> activeAccounts = CheckItDAO.getActiveAccounts(domainName, domainId, user);
-//		activeAccounts.stream().map(acc -> {
-//			
-//			Aon.
-//			
-//			return null;
-//		}
-//		).forEach(System.out::println);
-//	}
 	
 	public static LinkedList<CheckItBankAccount> getAccounts( Integer empresaId, List<String> activeIbans ) throws CheckItException {
 		JSONArray accounts = getAccounts(empresaId, 1, null);
@@ -1394,35 +690,15 @@ public class CheckItAPI implements IParamNames{
 		}
 	}
 	
-	public static Map<String, Integer> getBanksMap() {
-		try {
-			JSONArray banksJson = getBanks();
-			LinkedHashMap<String, Integer> bankMap = new LinkedHashMap<String, Integer>();
-			if (banksJson != null) {
-				for(int i=0; i<banksJson.length(); i++) {
-					JSONObject bank = banksJson.getJSONObject(i);
-					int bankId = bank.optInt(BANK_ID);
-					String bankName = bank.optString(BANK_NAME_PARAM);
-					bankMap.put(bankName, bankId);
-				}
-			}
-			return bankMap;
-		} catch (CheckItException e) {
-			return Collections.emptyMap();
-		}
-		
-	}
-	
-	public static Date clearDate(Date date) {
-		if (date == null)
-			return null;
-		Calendar calendar = Calendar.getInstance(new Locale("es", "ES"));
+	private static Date clearDate(Date date) {
+		if (date == null) return null;
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		calendar.set(Calendar.MILLISECOND, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar.getTime();
 	}
-	
+
 }

@@ -758,11 +758,20 @@
 }
 
 .aonCompanyDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.aonCompanyTitleDiv{
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
   width: 500px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  align-items: center;
 }
 
 .aonCompanyList {
@@ -1038,7 +1047,7 @@
 .aonCardTotal{
   text-align: right;
   font-size: 1.5rem;
-  padding-top: 2rem;
+  padding-top: 1.5rem;
   font-weight: 500;
 
   /*opacity: 0;
@@ -1669,7 +1678,7 @@ label.rating:hover {
   border: 1px solid rgb(246, 101, 90);
 }
 
-.aonMessengerCardRow{
+.aonMessengerCardRow, .aonDocumentalCardRow{
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -1683,6 +1692,11 @@ label.rating:hover {
   border-bottom: 1px solid rgb(246, 101, 90);
 }
 
+.aonDocumentalCardRow:hover{
+  border-top: 1px solid var(--aonDocumental);
+  border-bottom: 1px solid var(--aonDocumental);
+}
+
 .aonBadge{
   border-radius: 50%;
   width: 34px;
@@ -1694,7 +1708,16 @@ label.rating:hover {
   font-weight: 600;
 }
 
+.aonNewLogo{
+  max-width: 9rem;
+  padding: 5px;
+  cursor: pointer;
+}
 
+.aonHeaderButtons{
+  display: flex;
+  align-items: center;
+}
 
 /*
 ********************************************
@@ -1708,18 +1731,11 @@ label.rating:hover {
   gap: 1rem;
 }
 
-.aonUploadPanel{
+.aonUploadPanel, .aonFastAccess{
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-left: 10px;
-}
-
-.aonFastAccess{
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-left: 10px;
+  flex-wrap: wrap;
 }
 
 #docUploadDiv, #factUploadDiv{
@@ -1739,7 +1755,7 @@ label.rating:hover {
 .aonEllipsis {
   text-overflow: ellipsis;
   overflow: hidden;
-  max-width: 14rem;
+  max-width: 13rem;
   white-space: nowrap;
 }
 
@@ -1760,13 +1776,21 @@ aon-access-card{
   .aonUploadPanel, .aonFastAccess{
       flex-direction: row;
   }
+
+  .aonDocumentalCardRow > .aonFlex > .aonEllipsis{
+    max-width: 21rem;
+  }
 }
 
 /* Medium devices (landscape tablets, 768px and up) */
 /* @media only screen and (min-width: 768px) {} */
 @media only screen and (min-width: 768px) {
-  .aonEllipsis{
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
       max-width: 20rem;
+  }
+
+  .aonDocumentalCardRow > .aonFlex > .aonEllipsis{
+    max-width: 30rem;
   }
 }
 
@@ -1786,10 +1810,31 @@ aon-access-card{
     min-width: 22rem;
   }
 
-  .aonEllipsis{
+  .aonMessengerCardRow > .aonFlex > .aonFlexColumn > .aonEllipsis{
     max-width: 26rem;
+  }
+
+  .aonDocumentalCardRow > .aonFlex > .aonEllipsis{
+    max-width: 14rem;
+  }
+
+  .aonNewLogo{
+    max-width: 10rem;
+  }
+  
+  .aonHeaderButtons{
+    margin-left: 2rem;
   }
 }
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 /* @media only screen and (min-width: 1200px) {} */
+@media only screen and (min-width: 1000px) {
+  .aonNewLogo{
+    max-width: 12rem;
+  }
+  
+  .aonHeaderButtons{
+    margin-left: 4.5rem;
+  }
+}

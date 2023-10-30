@@ -7,14 +7,6 @@ public class CheckItBank implements Serializable{
 	private Integer id;
 	private String name;
 
-	public CheckItBank() {
-		super();
-	}
-	public CheckItBank(Integer id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
-	}
 	public Integer getId() {
 		return id;
 	}
@@ -29,6 +21,4 @@ public class CheckItBank implements Serializable{
 		this.name = name;
 		return this;
 	}
-	
-	
 }

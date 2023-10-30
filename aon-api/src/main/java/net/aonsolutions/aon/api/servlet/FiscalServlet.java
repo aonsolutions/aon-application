@@ -1,4 +1,5 @@
 package net.aonsolutions.aon.api.servlet;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -96,7 +97,6 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @WebServlet(name = "AonFiscalServlet", urlPatterns = {"/ms/api/fiscal/*"})
-
 public class FiscalServlet extends AonApiHttpServlet{
 		
 	private static final long serialVersionUID = -8021598700474389724L;
@@ -170,7 +170,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 				try {
 					jsonModels.put(FiscalModelJSON.toJSON(model)
 							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY && model.getModel() == FiscalModelType.M303 ? presModelAutoEnabled : 0) // Presentación automática del modelo (por ahora solo modelo 303 de la Agencia Tributaria)
-							.put("testEnvironment", testEnvironment)  // Entorno de pruebas							
+							.put("testEnvironment", testEnvironment)  // Entorno de pruebas de la AEAT
+							.put("nrc", model.getNrc())
 							);
 					
 				}
@@ -215,7 +216,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				// Comprobar si hay presentación autómatica, es domiciliación o devolución y no se ha indicado IBAN
 				if (presModelAuto == 1 && (declarationType == FiscalModelDeclarationType.BANK || declarationType == FiscalModelDeclarationType.PAYBACK) && AonStringUtils.isBlank(iban)) {
 					throw new AonApiException("ERROR: Debe indicar IBAN.");
-				}				
+				}
 				
 				modelType.visit(new IFiscalModelTypeVisitor() {
 					@Override
@@ -231,6 +232,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if(reject) {
 							Mod111DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
+							model.setNrc(nrc);
 							Mod111DAO.markAsFinished(ctx, model); 
 						}
 					
@@ -249,6 +251,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if(reject) {
 							Mod115DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
+							model.setNrc(nrc);
 							Mod115DAO.markAsFinished(ctx, model); 
 						}
 					}
@@ -266,10 +269,11 @@ public class FiscalServlet extends AonApiHttpServlet{
 						if(reject) {
 							Mod123DAO.markAsCustomerRejected(ctx, model, reasonReject);
 						} else {
+							model.setNrc(nrc);
 							Mod123DAO.markAsFinished(ctx, model); 
 						}
 					}
-
+					
 					@Override
 					public void visitM130() {
 						Mod130 model = Mod130DAO.get(ctx, id);	
@@ -280,8 +284,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 							model.getFinance().setBankAlias(bankAlias);
 							model.getFinance().setBic(bankBIC);
 						}
-	
-						Mod130DAO.markAsFinished(ctx, model); 
+						if(reject) {
+							Mod130DAO.markAsCustomerRejected(ctx, model, reasonReject);
+						} else {
+							model.setNrc(nrc);	
+							Mod130DAO.markAsFinished(ctx, model);
+						}
 					}
 
 					@Override
@@ -294,7 +302,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 							model.getFinance().setBankAlias(bankAlias);
 							model.getFinance().setBic(bankBIC);
 						}
-						Mod131DAO.markAsFinished(ctx, model);
+						if(reject) {
+							Mod131DAO.markAsCustomerRejected(ctx, model, reasonReject);
+						} else {
+							model.setNrc(nrc);
+							Mod131DAO.markAsFinished(ctx, model);
+						}
 					}
 
 					@Override
@@ -307,7 +320,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 							model.getFinance().setBankAlias(bankAlias);
 							model.getFinance().setBic(bankBIC);
 						}
-						Mod202DAO.markAsFinished(ctx, model); 
+						if(reject) {
+							Mod202DAO.markAsCustomerRejected(ctx, model, reasonReject);
+						} else {
+							model.setNrc(nrc);
+							Mod202DAO.markAsFinished(ctx, model);
+						}
 					}
 
 					@Override
@@ -322,8 +340,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 						}
 						if(reject) {
 							Mod303DAO.markAsCustomerRejected(ctx, model, reasonReject);
-						} else {
+						} else {							
 							// Finalizar el modelo
+							model.setNrc(nrc);
 							Mod303DAO.markAsFinished(ctx, model);
 							// Presentación automática del modelo 
 							if (presModelAuto == 1) {
@@ -573,6 +592,30 @@ public class FiscalServlet extends AonApiHttpServlet{
 		return (fm instanceof Mod303)?(Mod303)fm:null;
 	}
 	
+//	private Mod111 getMod111(IFiscalModel fm) {
+//		return (fm instanceof Mod111)?(Mod111)fm:null;
+//	}
+//	
+//	private Mod115 getMod115(IFiscalModel fm) {
+//		return (fm instanceof Mod115)?(Mod115)fm:null;
+//	}
+//	
+//	private Mod123 getMod123(IFiscalModel fm) {
+//		return (fm instanceof Mod123)?(Mod123)fm:null;
+//	}
+//	
+//	private Mod130 getMod130(IFiscalModel fm) {
+//		return (fm instanceof Mod130)?(Mod130)fm:null;
+//	}
+//	
+//	private Mod131 getMod131(IFiscalModel fm) {
+//		return (fm instanceof Mod131)?(Mod131)fm:null;
+//	}
+//	
+//	private Mod202 getMod202(IFiscalModel fm) {
+//		return (fm instanceof Mod202)?(Mod202)fm:null;
+//	}
+	
 	private synchronized String getUnencodedFile(byte[] content, Charset charset) {
 		return changeCharacters(new String(content, charset));
 	}
@@ -647,13 +690,14 @@ public class FiscalServlet extends AonApiHttpServlet{
 	
 	private boolean manageJSONContent(AEATParams aeatParams, IFiscalModel fm, byte[] body) {
 		AEATResponse response = AEATJson.toJSON(body); 
-		// Si la presentacion es correcta, grabar la respuesta y el PDF y marcar el modelo como presentado
-		if (response.isCorrect())
+		if (response.isCorrect()) 
 			manageRightResponse(aeatParams, fm, new String(body));
 		return response.isCorrect();
 	}
 	
+	// Grabar la respuesta, el PDF y marcar el modelo como presentado
 	private void manageRightResponse(AEATParams aeatParams, IFiscalModel fm, String aeatResponse) {
+		fm.setNrc(aeatParams.getNrc());
 		Occam occam = new Occam()
 				.setDomainName(aeatParams.getDomainName())
 				.setDomain(aeatParams.getDomainId())

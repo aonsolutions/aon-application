@@ -225,12 +225,16 @@ export class AonParent extends AonElement {
 			content.className = CSS.AON_COMPANY_DIV;
 		}
 		let div = this.createDiv();
-		if(!LS.isNewTheme()) div.style.borderBottom = '1px solid #5f6368';
-		div.style.marginTop = '15px';
-		div.style.marginLeft = '20px';
-		div.style.marginRight = '20px';
-		div.style.paddingBottom = '10px';
-		div.style.paddingLeft = '16px';
+		if(!LS.isNewTheme()) {
+			div.style.borderBottom = '1px solid #5f6368';
+			div.style.marginTop = '15px';
+			div.style.marginLeft = '20px';
+			div.style.marginRight = '20px';
+			div.style.paddingBottom = '10px';
+			div.style.paddingLeft = '16px';
+		} else {
+			div.className = CSS.AON_COMPANY_TITLE_DIV;
+		}
 
 		if(LS.isNewTheme()) {
 
@@ -246,9 +250,7 @@ export class AonParent extends AonElement {
 		
 			let filterButton = new AonIconButton();
 			filterButton.icon = MATERIAL_ICONS.MORE_VERT;	
-			filterButton.style.right = '20px';
-			filterButton.style.position = 'absolute';
-			filterButton.style.top = '10px';
+			filterButton.title = "Filtrar";
 			filterButton.onClick((() => {
 				const top  = filterButton.getBoundingClientRect().top;
 				const left = filterButton.getBoundingClientRect().left;
@@ -292,16 +294,17 @@ export class AonParent extends AonElement {
 		ul.id = "UlCompanies";
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.NO_SCROLLBAR);
-		ul.style.marginLeft = '20px';
-		ul.style.marginRight = '20px';
 		ul.style.overflowY = 'auto';
 		if(!LS.isNewTheme()) {
+			ul.style.marginLeft = '20px';
+			ul.style.marginRight = '20px';
 			ul.style.height = 'calc(100vh - 104px)';
 		} else {
 			ul.style.maxHeight = '700px';
-			ul.style.padding = '10px';
+			ul.style.padding = '.5rem';
 			ul.style.border = '1px solid #ddd';
 			ul.style.borderRadius = '5px';
+			ul.style.width = "500px";
 		}
 		
 		content.appendChild(ul);
@@ -402,8 +405,10 @@ export class AonParent extends AonElement {
 		let aonHeaderSearch = this.getElement(BASE_ID + 'Search');
 		aonHeaderSearch.style.display = 'none';
 
-		let aonHeaderHome = this.getElement(BASE_ID + 'Home');
-		aonHeaderHome.style.display = 'block';
+		if(!LS.isNewTheme()) {
+			let aonHeaderHome = this.getElement(BASE_ID + 'Home');
+			aonHeaderHome.style.display = 'block';
+		}
 
 		let aonHeaderCompanyName = this.getElement(BASE_ID + 'CompanyName');
 		aonHeaderCompanyName.innerHTML = company.name;
