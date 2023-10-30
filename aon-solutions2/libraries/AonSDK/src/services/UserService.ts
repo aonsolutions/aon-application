@@ -13,19 +13,30 @@ export class UserSpecificMethods implements IUserSpecificMethods {
         this.SpecificMethodsRepository = SpecificMethodsRepository;
     }
 
+    /**
+     * Recupera los datos del usuario actual.
+     *
+     * @return {Promise<IResponse<IUser>>} El objeto de respuesta que contiene los datos del usuario.
+     */
     async getCurrentUserData(): Promise<IResponse<IUser>> {
         try {
             return new Response<IUser>(await this.SpecificMethodsRepository.getCurrentUserData());
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123', 'User');
         }
     }
 
+    /**
+     * Actualiza los datos del usuario actual.
+     *
+     * @param {User} user - El objeto de usuario que contiene los datos actualizados.
+     * @returns {Promise<IResponse<IUser>>} Una promesa que se resuelve en el objeto de respuesta que contiene los datos actualizados del usuario.
+     */
     async updateCurrentUserData(user: User): Promise<IResponse<IUser>> {
         try {
             return new Response<IUser>(await this.SpecificMethodsRepository.updateCurrentUserData(user));
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0202', 'User');
         }
     }
 }
