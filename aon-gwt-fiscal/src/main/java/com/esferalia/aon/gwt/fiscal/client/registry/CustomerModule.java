@@ -318,7 +318,7 @@ public class CustomerModule extends MainEntryPoint {
 
 		return toolbar;
 	}
-
+	
 	protected void checkAll(boolean check) {
 		for (CustomerRow customerRow : customers.values()) {
 			customerRow.getCustomer().setSelected(check);
@@ -356,11 +356,6 @@ public class CustomerModule extends MainEntryPoint {
 		searchEnabled.setValue(-1);
 	}
 
-	/**
-	 * Method that searchs a customer calling the method search
-	 * @param opt
-	 * @param params
-	 */
 	protected void search(final RegistryModuleOptions opt,RegistryParams params) {
 		enableMoreData();
 		customers.clear();
@@ -372,12 +367,6 @@ public class CustomerModule extends MainEntryPoint {
 		search(opt, params, offset.getValue());
 	}
 
-	/**
-	 * Gets a customer with the given params
-	 * @param opt module options
-	 * @param params customer params
-	 * @param ofs offset
-	 */
 	private void search(final RegistryModuleOptions opt, RegistryParams params, final int ofs) {
 		if (!isMoreData()) return;
 		
@@ -444,7 +433,7 @@ public class CustomerModule extends MainEntryPoint {
 			 documentCountryLabel.setText( customer.getDocumentCountry() == null ? AonStringUtils.EMPTY : customer.getDocumentCountry().getIso2());
 			 documentLabel.setText( customer.getDocument() );
 			 nameLabel.setText( customer.getName() );
-			 aliasLabel.setText( customer.getAlias() );			 
+			 aliasLabel.setText( customer.getAlias() );
 			 
 			 status.setTitle(customer.getStatus() == null ?"":customer.getStatus().getDescription());
 			 status.setStyleName(AON.CSS.aonIconLabel());
@@ -468,11 +457,6 @@ public class CustomerModule extends MainEntryPoint {
 		
 	}
 	
-	/**
-	 * Paints a row of the customer table for a determined customer
-	 * @param opt module options
-	 * @param customer the customer
-	 */
 	private void paintRow(final RegistryModuleOptions opt, Customer customer) {
 		
 		int row = tab.getWidgetCount();
@@ -555,12 +539,6 @@ public class CustomerModule extends MainEntryPoint {
 		selectedCount.setText( (!selectedItems.isEmpty())?  AonNumberUtils.toString(selectedItems.size()) :""); 
 	}
 	
-	/**
-	 * Method that gets a customerFull to call selectCustomer with that customerFull 
-	 * @param opt module options
-	 * @param customer customer
-	 * @param panelCallback
-	 */
 	private void selectCustomer(RegistryModuleOptions opt, Customer customer, AonRegistryFullPanelCallback<CustomerFull> panelCallback) {
 		
 		service.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {	
@@ -576,13 +554,6 @@ public class CustomerModule extends MainEntryPoint {
 		});					
 	}
 	
-	/**
-	 * When the user clicks on a customer of the customer table, this panel opens and allows to edit and to see more details.
-	 * The customerPanel shows the customer data. AonCustomerFullPanel extends AonRegistryFullPanel which includes more methods.
-	 * @param opt module options
-	 * @param customer the costumer
-	 * @param panelCallback
-	 */
 	private void selectCustomer(RegistryModuleOptions opt, CustomerFull customer, AonRegistryFullPanelCallback<CustomerFull> panelCallback) {
 		final AonSimpleDialog dialog = new AonSimpleDialog();
 		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");

@@ -225,7 +225,7 @@ public class RegistryBankDAO {
 	}
 	
 	public static RegistryBank save(AONContext ctx, RegistryBank rbank) {
-		//RegistryBankValidation.validate(ctx, rbank);
+		RegistryBankValidation.validate(ctx, rbank);
 		ctx.checkWrite();
 		if(rbank.getId() != null && rbank.isRemoved()) { 
 			delete(ctx, rbank.getId());
