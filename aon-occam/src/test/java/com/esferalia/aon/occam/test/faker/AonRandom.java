@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
@@ -34,7 +33,6 @@ import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -60,7 +58,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -213,6 +210,21 @@ public class AonRandom {
         return list.get(faker.random().nextInt(0, (list.size() - 1)));
     }	
 
+//    public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
+//    	return randomEnum(clazz,0);
+//    }	
+//    public static <T extends Enum<?>> T randomEnum(Class<T> clazz, int nullThreshold){
+//    	// ******
+//    	// ¡¡En algún caso puede devolver NULL!!
+//    	// Sobre todo si el item del enumerado tienen implementación
+//    	// VER --> https://stackoverflow.com/questions/33358616/reflection-on-enums
+//    	// *****
+//    	
+//    	return gt(nullThreshold)
+//    			?clazz.getEnumConstants()[faker.random().nextInt(clazz.getEnumConstants().length-1)]
+//				:null;
+//    }	
+
 	public static Tariff getTariff(AONContext ctx) {
 		return getTariff(ctx, 0);
 	}
@@ -245,10 +257,6 @@ public class AonRandom {
 	public static RegistryAddress getRegistryAddress(AONContext ctx, RegistryAddressFilter filter) {
 		return RegistryAddressDAO.getRandom(ctx, filter );
 	}
-	
-	public static RegistryBank getRegistryBank(AONContext ctx, RegistryBankFilter filter) {
-		return RegistryBankDAO.getRandom(ctx, filter);
-	}
 
 	public static Customer getCustomer(AONContext ctx) {
 		return getCustomer(ctx,null);	
@@ -272,25 +280,15 @@ public class AonRandom {
 	}
 	
 	public static Account getAccount(AONContext ctx) {
-		return getAccount(ctx, -1, null);
+		return getAccount(ctx, 0);
 	}
-	public static Account getAccount(AONContext ctx, int nullThreshold) {
-		return getAccount(ctx, nullThreshold, null);
-	}
-	public static Account getAccount(AONContext ctx, String codePrefix) {
-		return getAccount(ctx, -1, codePrefix);
-	}
-	public static Account getAccount(AONContext ctx, int nullThreshold, String codePrefix){
-		if (gt(nullThreshold)) {
-			return AccountDAO.getRandom(ctx, 
-				AonStringUtils.isBlank(codePrefix)
-					? null 
-					: f -> f.getCodeProperty().like(codePrefix + "%") );	
-		}
-		return null;
+	public static Account getAccount(AONContext ctx, int nullThreshold){
+		return gt(nullThreshold)
+			?AccountDAO.getRandom(ctx, null )
+			:null;
 	}
 	public static AccountPeriod getAccountPeriod(AONContext ctx) {
-		return getAccountPeriod(ctx, -1);
+		return getAccountPeriod(ctx, 0);
 	}
 	public static AccountPeriod getAccountPeriod(AONContext ctx, int nullThreshold){
 		return gt(nullThreshold)

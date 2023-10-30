@@ -21,7 +21,6 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -177,28 +176,19 @@ public class RegistryDAO {
 	// *************************************************
 	// ********** FULL REGISTRY *****************
 	// *************************************************
+/*	
+	public static RegistryFull getFull(AONContext ctx, Integer id){
+		return getFull(ctx, id, null);
+	}
+ */
 
 	public static <R extends RegistryFull<?>> R fillChilds(AONContext ctx, R full){
-		full.setBanks(RegistryBankDAO.getStream(ctx, f -> f.getRegistryProperty().eq(full.getRegistry().getId())).collect(Collectors.toCollection(LinkedList::new)))
-			.setAddresses( RegistryAddressDAO.getStreamByRegistry(ctx, full.getId()).collect(Collectors.toCollection(LinkedList::new)))
+		full.setAddresses( RegistryAddressDAO.getStreamByRegistry(ctx, full.getId()).collect(Collectors.toCollection(LinkedList::new)))
 			.setMedias( RegistryMediaDAO.getStreamByRegistry(ctx, full.getId()).collect(Collectors.toCollection(LinkedList::new)))
 			.setRecordDatas(RegistryOldDAO.getRecordDataStream(ctx, f-> f.getRegistryProperty().eq(full.getId())).collect(Collectors.toCollection(LinkedList::new)));
 		return full;
 	}
 	public static <R extends RegistryFull<?>> R saveChilds(AONContext ctx, R registryFull) {
-		// Registry Bank
-		if (registryFull.hasBanks()) {
-			for (RegistryBank bank : registryFull.getBanks()) {
-				if (bank.isRemoved()) {
-					RegistryBankDAO.delete(ctx, bank.getId());
-				} else if (bank.isDirty()) {
-					bank.setRegistry(registryFull.getId());
-					bank.setDomain(registryFull.getDomain());
-					RegistryBankDAO.save(ctx, bank);
-				}
-			}
-		}
-		
 		// Registry Addresses
 		if (registryFull.hasAddresses()) {
 			for (RegistryAddress address : registryFull.getAddresses()) {
@@ -207,11 +197,10 @@ public class RegistryDAO {
 				} else if (address.isDirty()) {
 					address.setRegistry(registryFull.getId());
 					address.setDomain(registryFull.getDomain());
-					RegistryAddressDAO.save(ctx, address);
+					address = RegistryAddressDAO.save(ctx, address);
 				}
 			}
 		}
-		
 		// Registry Medias
 		if (registryFull.hasMedias()) {
 			for (RegistryMedia media : registryFull.getMedias()) {
@@ -220,7 +209,7 @@ public class RegistryDAO {
 				} else if (media.isDirty()) {
 					media.setRegistry(registryFull.getId());
 					media.setDomain(registryFull.getDomain());
-					RegistryMediaDAO.save(ctx, media);
+					media = RegistryMediaDAO.save(ctx, media);
 				}
 			}
 		}
@@ -228,15 +217,6 @@ public class RegistryDAO {
 	}
 	
 	public static <R extends RegistryFull<?>> void delete(AONContext ctx, R registryFull) {
-		// Registry Bank
-		if (registryFull.hasBanks()) {
-			for (RegistryBank bank : registryFull.getBanks()) {
-				RegistryBankDAO.delete(ctx, bank.getId());
-			}
-		}
-		
-		// RegistryAddress ??
-		
 		// Registry Medias
 		if (registryFull.hasMedias()) {
 			for (RegistryMedia media : registryFull.getMedias()) {
