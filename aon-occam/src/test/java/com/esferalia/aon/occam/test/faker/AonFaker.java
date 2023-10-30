@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.test.faker;
 
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
 import java.util.Date;
@@ -21,7 +22,7 @@ import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionValue;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
-import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -44,6 +45,7 @@ import com.esferalia.aon.occam.api.model.registry.QuestionType;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -687,7 +689,6 @@ public class AonFaker {
 			.setDetail3(AonRandom.string(50, 10));
 	}
 	
-	/* */
 	public static Question getQuestion(AONContext ctx) {
 		QuestionType type = getQuestionType();
 			
@@ -725,6 +726,88 @@ public class AonFaker {
 		QuestionType[] types = QuestionType.values();
 		int type = random.nextInt(types.length);
 		return types[type];
+	}
+	
+	public static Account getAccount(AONContext ctx) {
+		Random random = new Random();
+		int b = random.nextInt(0,1);
+
+		return new Account()
+			.setActive(true)
+			.setAlias(faker.lordOfTheRings().character())
+			.setCode(faker.gameOfThrones().quote())
+			.setCostCenter(faker.gameOfThrones().character())
+			.setDescription(faker.lordOfTheRings().location())
+			.setDomain(ctx.getDomainId())
+			.setEntryEnabled(random.nextBoolean())
+			.setHasRegistry(random.nextBoolean())
+			.setLevel((byte) b);
+	}
+	
+	public static Country getCountry(AONContext ctx) {
+		Random random = new Random();
+		Country[] countries = Country.values();
+		Country randomCountry = countries[random.nextInt(countries.length)];
+		return randomCountry;
+	}
+	
+	public static BankAccount getBankAccount(AONContext ctx) {
+		BankAccount bankAccount = new BankAccount(Faker.instance().finance().iban());
+		
+		if (bankAccount.getCountry() == null) { bankAccount.setCountry(AonFaker.getCountry(ctx)); }
+		if (bankAccount.getCheck() == null) { bankAccount.setCheck(faker.letterify("??")); }
+		if (bankAccount.getBban1() == null) { bankAccount.setBban1(faker.letterify("????")); }
+		if (bankAccount.getBban2() == null) { bankAccount.setBban2(faker.letterify("????")); }
+		if (bankAccount.getBban3() == null) { bankAccount.setBban3(faker.letterify("????")); }
+		if (bankAccount.getBban4() == null) { bankAccount.setBban4(faker.letterify("????")); }
+		if (bankAccount.getBban5() == null) { bankAccount.setBban5(faker.letterify("????")); }
+		if (bankAccount.getBban6() == null) { bankAccount.setBban6(faker.letterify("????")); }
+		if (bankAccount.getBban7() == null) { bankAccount.setBban7(faker.letterify("????")); }
+		if (bankAccount.getBban8() == null) { bankAccount.setBban8(faker.letterify("????")); }
+
+		return bankAccount;		
+	}
+	
+	public static RegistryBank getRegistryBank(AONContext ctx) {	
+		Random random = new Random();
+		
+		String bic = Faker.instance().finance().bic();
+		if (bic.length() > RBANK.BIC.getDataType().length()) {
+			bic = bic.substring(0, RBANK.BIC.getDataType().length());
+		}
+		
+		String suffix = faker.friends().character();
+		if (suffix.length() > RBANK.SUFIX.getDataType().length()) {
+			suffix = suffix.substring(0, RBANK.SUFIX.getDataType().length());
+		}
+		
+		String alias = faker.gameOfThrones().dragon();
+		if (alias.length() > RBANK.ALIAS.getDataType().length()) {
+			alias = alias.substring(0, RBANK.ALIAS.getDataType().length());
+		}
+		
+		String requisition = faker.rickAndMorty().character();
+		if (requisition.length() > RBANK.REQUISITION.getDataType().length()) {
+			requisition = requisition.substring(0, RBANK.REQUISITION.getDataType().length());
+		}
+		
+		String sepaMandateRef = faker.gameOfThrones().dragon();
+		if (sepaMandateRef.length() > RBANK.SEPA_MANDATE_REF.getDataType().length()) {
+			sepaMandateRef = sepaMandateRef.substring(0, RBANK.SEPA_MANDATE_REF.getDataType().length());
+		}
+		
+		
+		return new RegistryBank()
+				.setDomain(ctx.getDomainId())
+				.setAccount(AonRandom.getAccount(ctx, "572"))
+				.setActive(random.nextBoolean())
+				.setAlias(alias)
+				.setBankAccount(AonFaker.getBankAccount(ctx))
+				.setBic(bic)
+				.setRegistry(AonRandom.getRegistry(ctx).getId())
+				.setRequisition(requisition)
+				.setSepaMandateRef(sepaMandateRef)
+				.setSuffix(suffix);
 	}
 }
 

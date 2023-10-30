@@ -283,8 +283,8 @@ public class BankAccount implements Serializable {
 	public String getMaskedIban(){
 		StringBuilder sb = new StringBuilder();
 		String bban = getBban();
-		if (AonStringUtils.isNotBlank(bban)) {
-			sb.append(getCountry().getIso2());
+		if (AonStringUtils.isNotBlank(bban) && getCountry() != null) {
+			sb.append(getCountry() == null?"":getCountry().getIso2());
 			sb.append(getCheck());
 			sb.append("." + getBban1());
 			for (int i=4; i<bban.length(); i=i+4) {
@@ -302,7 +302,7 @@ public class BankAccount implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		String bban = getBban();
 		if (AonStringUtils.isNotBlank(bban)) {
-			sb.append(getCountry().getIso2());
+			sb.append(getCountry() == null?"":getCountry().getIso2());
 			sb.append(getCheck());
 			sb.append(" " + getBban1());
 			for (int i=4; i<bban.length(); i=i+4) {

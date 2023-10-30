@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
@@ -22,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryBankProperties;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.RegistryBankValidation;
 
 public class RegistryBankDAO {
 
@@ -52,7 +52,7 @@ public class RegistryBankDAO {
 		@Override public Property<String> getSufixProperty() {return new FilterDAO.PropertyDAO<>(RBANK.SUFIX);}
 		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(RBANK.ALIAS);}
 		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(RBANK.ACTIVE);}
-		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(RBANK.REGISTRY);}
+		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(RBANK.ACCOUNT);}
 		@Override public Property<String> getRequisitionProperty() {return new FilterDAO.PropertyDAO<>(RBANK.REQUISITION);}
 		@Override public Property<String> getSepaMandateRefProperty() {return new FilterDAO.PropertyDAO<>(RBANK.SEPA_MANDATE_REF);}
 	}
@@ -101,6 +101,122 @@ public class RegistryBankDAO {
 				.findFirst().orElse(new RegistryBank());
 	}
 	
+	/**
+	 * Get the RegistryBank object with the given id
+	 * @param ctx context
+	 * @param id RegistryBank's id
+	 * @return RegistryBank
+	 */
+	public static RegistryBank get(AONContext ctx, Integer id) {
+		return RegistryBankDAO.get(ctx, f -> f.getIdProperty().eq(id));
+	}
+	
+	/**
+	 * Get a collection of RegistryBank with the given domain
+	 * @param ctx context
+	 * @param domain RegistryBank's domain
+	 * @return Collection of RegistryBank
+	 */
+	public static Stream<RegistryBank> getByDomain(AONContext ctx, Integer domain) {
+		return RegistryBankDAO.getStream(ctx, f -> f.getDomainProperty().eq(domain));
+	}
+	
+	/**
+	 * Get a collection of RegistryBank with the given registry
+	 * @param ctx context
+	 * @param registry RegistryBank's registry
+	 * @return Collection of RegistryBank
+	 */
+	public static Stream<RegistryBank> getByRegistry(AONContext ctx, Integer registry) {
+		return RegistryBankDAO.getStream(ctx, f -> f.getRegistryProperty().eq(registry));
+	}
+	
+	/**
+	 * Get a collection of RegistryBank with the given bic
+	 * @param ctx context
+	 * @param bic RegistryBank's bic
+	 * @return Collection of RegistryBank
+	 */
+	public static Stream<RegistryBank> getByBic(AONContext ctx, String bic) {
+		return RegistryBankDAO.getStream(ctx, f -> f.getBicProperty().eq(bic));
+	}
+	
+	/**
+	 * Get a collection of RegistryBank with the given suffix
+	 * @param ctx context
+	 * @param suffix RegistryBank's suffix
+	 * @return Collection of RegistryBank
+	 */
+	public static Stream<RegistryBank> getBySuffix(AONContext ctx, String suffix) {
+		return RegistryBankDAO.getStream(ctx, f -> f.getSufixProperty().eq(suffix));
+	}
+	
+	/**
+	 * Get a collection of RegistryBank with the given alias
+	 * @param ctx context
+	 * @param alias RegistryBank's alias
+	 * @return Collection of RegistryBank
+	 */
+	public static Stream<RegistryBank> getByAlias(AONContext ctx, String alias) {
+		return RegistryBankDAO.getStream(ctx, f -> f.getAliasProperty().eq(alias));
+	}
+	
+	/**
+	 * Get a collection of RegistryBank with that the value of active
+	 * @param ctx context
+	 * @param active RegistryBank's active
+	 * @return Collection of RegistryBank
+	 */
+	public static Stream<RegistryBank> getByActive(AONContext ctx, Byte active) {
+		return RegistryBankDAO.getStream(ctx, f -> f.getActiveProperty().eq(active));
+	}
+	
+	/**
+	 * Get a collection of RegistryBank with the given account
+	 * @param ctx context
+	 * @param account RegistryBank's account
+	 * @return Collection of RegistryBank
+	 */
+	public static Stream<RegistryBank> getByAccount(AONContext ctx, Integer account) {
+		return RegistryBankDAO.getStream(ctx, f -> f.getAccountProperty().eq(account));
+	}
+	
+	/**
+	 * Get a collection of RegistryBank with the given requisition
+	 * @param ctx context
+	 * @param requisition RegistryBank's requisition
+	 * @return Collection of RegistryBank
+	 */
+	public static Stream<RegistryBank> getByRequisition(AONContext ctx, String requisition) {
+		return RegistryBankDAO.getStream(ctx, f -> f.getRequisitionProperty().eq(requisition));
+	}
+	
+	/**
+	 * Get a collection of RegistryBank with the given sepaMandateRef
+	 * @param ctx context
+	 * @param sepaMandateRef RegistryBank's sepaMandateRef
+	 * @return Collection of RegistryBank
+	 */
+	public static Stream<RegistryBank> getBySepaMandateRef(AONContext ctx, String sepaMandateRef) {
+		return RegistryBankDAO.getStream(ctx, f -> f.getSepaMandateRefProperty().eq(sepaMandateRef));
+	}
+	
+	/**
+	 * Get a collection of RegistryBank with the given BankAccount
+	 * @param ctx context
+	 * @param bankAccount RegistryBank's bank account
+	 * @return Collection of RegistryBank
+	 */
+	public static Stream<RegistryBank> getByBankAccount(AONContext ctx, String bankAccount) {
+		return RegistryBankDAO.getStream(ctx, f -> f.getBankAccountProperty().eq(bankAccount));
+	}
+	
+	/**
+	 * Get a stream of RegistryBank with the given filter
+	 * @param ctx context
+	 * @param filter the filter
+	 * @return Stream of RegistryBank
+	 */
 	public static Stream<RegistryBank> getStream(AONContext ctx, RegistryBankFilter filter) {
 		return select(ctx,filter)
 			.fetch()
@@ -109,6 +225,7 @@ public class RegistryBankDAO {
 	}
 	
 	public static RegistryBank save(AONContext ctx, RegistryBank rbank) {
+		//RegistryBankValidation.validate(ctx, rbank);
 		ctx.checkWrite();
 		if(rbank.getId() != null && rbank.isRemoved()) { 
 			delete(ctx, rbank.getId());

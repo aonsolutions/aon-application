@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.test.registry;
 
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
+import com.esferalia.aon.occam.test.registry.bank.RegistryBankAONTest;
+import com.esferalia.aon.occam.test.registry.bank.RegistryBankDAOTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -17,7 +19,10 @@ import org.junit.runners.Suite.SuiteClasses;
 	ValidationSaveEmptyNationality.class,
 	ValidationSaveLegalEntity.class,
 	CRUDETest.class,
-})
-public class RegistryTestSuite {
 	
-}
+	// bank
+	RegistryBankDAOTest.class,
+	RegistryBankAONTest.class
+})
+
+public class RegistryTestSuite {}
