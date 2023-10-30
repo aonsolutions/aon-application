@@ -445,11 +445,14 @@ export function generateData(){
 
     let storableContracts = new StorableContract();
     let localContracts = new LocalStorage<Contract>(Contract);
+    let endDateContractAux = new Date();
+    endDateContractAux.setMonth(endDateContractAux.getMonth()+3);
+
     setContracts(localContracts.read(storableContracts.getLocalStorage()));
     if(contracts.size() == 0) {
-        contracts.add(new Contract('Maria', 'Rico Gómez', 'Indefinido', 55224.23, new Date(), new Date(), 'Alcoy', true));
-        contracts.add(new Contract('Gloria', 'Pérez Álvarez', 'Indefinido', 55224.23, new Date(), new Date(), 'Alcantarilla', false));
-        contracts.add(new Contract('Juan Carlos', 'Aragón Álvarez', 'Indefinido', 55224.23, new Date(), new Date(), 'Guarroman', true));
+        contracts.add(new Contract('Maria', 'Rico Gómez', '48150243L', 'Indefinido', 55224.23, new Date(), undefined, 'Alcoy', true));
+        contracts.add(new Contract('Gloria', 'Pérez Álvarez', '86638678R', 'Indefinido', 55224.23, new Date(), new Date(), 'Alcantarilla', false));
+        contracts.add(new Contract('Juan Carlos', 'Aragón Álvarez', '11556837G', 'Temporal', 55224.23, new Date(), endDateContractAux, 'Guarroman', true));
         localContracts.write(storableContracts.getLocalStorage(), contracts);
     }
 
@@ -458,7 +461,7 @@ export function generateData(){
     let localMarks = new LocalStorage<Mark>(Mark);
     setMarks(localMarks.read(storableMarks.getLocalStorage()));
     if(marks.size() == 0){
-      contacts.forEach(contract => {
+      contracts.forEach(contract => {
         const entryDateAux: Date = new Date();
         const randomHours = Math.floor(Math.random() * 7) + 1;
         // instancia de date con la hora aumentada en randomHours. Si lo sumo tal cual es un number y no un date
@@ -466,7 +469,8 @@ export function generateData(){
         const timeDifference: number = exitDateAux.getTime() - entryDateAux.getTime();
         // instancia de date a partir de la diferencia
         const timeDifferenceDate: Date = new Date(timeDifference);
-        marks.add(new Mark(contract.Name, contract.Document, entryDateAux, entryDateAux, exitDateAux, timeDifferenceDate, contract.Address, 'Finalizado'));
+
+        marks.add(new Mark(contract.Name, contract.Document, entryDateAux, entryDateAux, exitDateAux, timeDifferenceDate, contract.WorkCenter, 'Finalizado'));
       });
       localMarks.write(storableMarks.getLocalStorage(), marks);
     }

@@ -97,16 +97,16 @@ export class Mark implements IMark, IModel  {
         this.status = value;
     }
 
-    constructor(name?: string, idUser?: string, date?: Date, entryDate?: Date, exitDate?: Date, time?: Date, location?: any, status?: string) {
-        this.key = KeyGenerator.generate(15);
-        this.name = name || '';
-        this.idUser = idUser || '';
-        this.date = date || new Date();
-        this.entryDate = entryDate || new Date();
-        this.exitDate = exitDate || new Date();
-        this.time = time || new Date();
-        this.location = location || '';
-        this.status = status || '';
+    constructor(name?: string, idUser?: string, date?: Date, entryDate?: Date, exitDate?: Date, time?: Date, location?: any, status?: string ) {
+      this.name = name || '';
+      this.idUser = idUser || '';
+      this.key = (idUser) ? idUser : KeyGenerator.generate(15);
+      this.date = date || new Date();
+      this.entryDate = entryDate || new Date();
+      this.exitDate = exitDate || new Date();
+      this.time = time || new Date();
+      this.location = location || '';
+      this.status = status || '';
     }
     getName(): string {
         return this.name;
