@@ -68,7 +68,7 @@ export const ERRORS = {
     '0401': {description:'ERROR_MESSAGE_ARCHIVE', result:'Error al intentar archivar el mensaje'},
     '0402': {description:'ERROR_MESSAGE_REOPEN', result:'Error al intentar reabrir el mensaje'},
     '0403': {description:'ERROR_MESSAGE_COUNT', result:'Error al intentar obtener el numero de mensajes'},
-    '0404': {description:'ERROR_MESSAGE_READ', result:'Error al intentar marcar como leido el mensaje'},
+    '0404': {description:'ERROR_MESSAGE_READ', result:'Error al intentar marcar como leído el mensaje'},
     /* 05XX  REPORT ERRORS */
     '0501': {description:'ERROR_REPORT_PAYMENTH', result:'Error al intentar recuperar cobros y pagos'},
     '0502': {description:'ERROR_REPORT_SALES', result:'Error al intentar recuperar ventas y gastos'},
