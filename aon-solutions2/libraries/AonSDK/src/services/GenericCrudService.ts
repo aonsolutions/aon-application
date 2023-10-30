@@ -59,10 +59,11 @@ export class GenericMultipleObjectCrud<T extends IModel> implements IMultipleObj
 
     async getCollection(filter?: IFilter): Promise<IResponse<ICollection<T>>> {
         try {
+            throw new Error('Method not implemented.');
             return new Response<ICollection<T>>(await this.repository.get(filter));
         } catch (error) {
-            throw error;
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0206');
+            // throw error;
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0206', this.type.name);
         }
     }
 
@@ -70,7 +71,7 @@ export class GenericMultipleObjectCrud<T extends IModel> implements IMultipleObj
         try {
             return new Response<ICollection<T>>(await this.repository.create(collection));
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0201');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0201', this.type.name);
         }
     }
 
@@ -78,7 +79,7 @@ export class GenericMultipleObjectCrud<T extends IModel> implements IMultipleObj
         try {
             return new Response<ICollection<T>>(await this.repository.update(collection));
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0202');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0202', this.type.name);
         }
     }
 
@@ -87,7 +88,7 @@ export class GenericMultipleObjectCrud<T extends IModel> implements IMultipleObj
             this.repository.delete(keys);
             return new Response<boolean>(true);
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0203');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0203', this.type.name);
         }
     }
 }

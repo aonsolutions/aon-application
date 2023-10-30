@@ -63,4 +63,5 @@ export const ERRORS = {
     '0301': {description:'ERROR_DOCUMENT_UPLOAD', result:'Error al intentar subir el documento'},
     '0302': {description:'ERROR_DOCUMENT_UPLOAD', result:'Ruta o nombre del documento incorrectos'},
     '0303': {description:'ERROR_DOCUMENT_UPLOAD', result:'Ya existe un documento con ese nombre'},
+    '0304': {description:'ERROR_DOCUMENT_RAW', result:'Error al intentar obtener el documento'},
 }

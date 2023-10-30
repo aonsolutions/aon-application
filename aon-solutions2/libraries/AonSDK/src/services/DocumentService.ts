@@ -16,7 +16,7 @@ export class DocumentSpecificMethods implements IDocumentSpecificMethods {
         try {
             return new Response<boolean>(await this.SpecificMethodsRepository.uploadDocument(document, file));
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('301');
         }
     }
 
@@ -24,7 +24,7 @@ export class DocumentSpecificMethods implements IDocumentSpecificMethods {
         try {
             return new Response<string>(await this.SpecificMethodsRepository.getRawFile(document));
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0304');
         }
     }
 }

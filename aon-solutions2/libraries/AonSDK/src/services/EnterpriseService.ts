@@ -18,7 +18,7 @@ export class EnterpriseSpecificMethods implements IEnterpriseSpecificMethods {
         try {
             return new Response<IEnterprise>(await this.SpecificMethodsRepository.getCurrentEnterpriseData());
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123', 'Enterprise');
         }
     }
 
@@ -26,7 +26,7 @@ export class EnterpriseSpecificMethods implements IEnterpriseSpecificMethods {
         try {
             return new Response<IRegistryEnterprise>(await this.SpecificMethodsRepository.getCurrentEnterpriseRegistryData());
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123', 'Enterprise Registry');
         }
     }
 
@@ -34,7 +34,7 @@ export class EnterpriseSpecificMethods implements IEnterpriseSpecificMethods {
         try {
             return new Response<IEnterprise>(await this.SpecificMethodsRepository.updateCurrentEntepriseData(enterprise));
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0202', 'Enterprise');
         }
     }
 
@@ -42,7 +42,7 @@ export class EnterpriseSpecificMethods implements IEnterpriseSpecificMethods {
         try {
             return new Response<IRegistryEnterprise>(await this.SpecificMethodsRepository.updateCurrentEnterpriseRegistryData(registryEnterprise));
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0123');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0202', 'Enterprise Registry');
         }
     }
 }
