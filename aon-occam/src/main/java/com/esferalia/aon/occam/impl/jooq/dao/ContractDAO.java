@@ -36,7 +36,6 @@ import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.util.Date;
 import java.util.stream.Stream;
 
 import org.jooq.*;
@@ -129,7 +128,6 @@ public class ContractDAO {
 				.innerJoin(ENTERPRISE_CCC).onKey()
 				.innerJoin(WORKPLACE).onKey()
 				.having(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
-				.and(CONTRACT.END_DATE.ge(DSL.date(new Date())).or(CONTRACT.END_DATE.isNull()))
 				.orderBy(PERSON.FIRST_SURNAME.asc(), PERSON.SECOND_SURNAME.asc())
 				.limit(perPage).offset(perPage * (page -1))
 				.fetch().stream().map(new ContractExtendedDataFiller());

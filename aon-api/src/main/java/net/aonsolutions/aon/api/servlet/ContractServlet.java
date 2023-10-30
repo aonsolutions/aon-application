@@ -1,4 +1,5 @@
 package net.aonsolutions.aon.api.servlet;
+
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -70,20 +71,34 @@ public class ContractServlet extends AonApiHttpServlet {
 		JSONObject params = api.getData();
 		Filter filter = properties.getDomainProperty().eq(api.getDomain().getId());
 		String name = JsonUtils.getString(params, IJsonNames.NAME);
+		Boolean status = JsonUtils.getBoolean(params, IJsonNames.STATUS);
 		Integer workplace = JsonUtils.getInteger(params, IJsonNames.WORKPLACE);
 		Date to = JsonUtils.getDate(params, IJsonNames.TO);
 		Date from = JsonUtils.getDate(params, IJsonNames.FROM);
+		System.out.println(status);
 		if(name != null) {
 			filter = filter.and(properties.getPersonFullNameProperty().like("%"+name+"%"));
 		}
-		if(from != null) {
-			filter = filter.and(properties.getStartDateProperty().le(AonDateUtils.toSql(from)));
-		}
-		if(to != null) {
-			filter = filter.and(properties.getEndDateProperty().ge(AonDateUtils.toSql(to)).or(properties.getEndDateProperty().isNull()));
-		}
 		if(workplace != null) {
 			filter = filter.and(properties.getWorkplaceProperty().eq(workplace));
+		}
+		if(status != null) {			
+			if(Boolean.TRUE.equals(status)) {
+				if(to != null) {
+					filter = filter.and(properties.getEndDateProperty().ge(AonDateUtils.toSql(to)).or(properties.getEndDateProperty().isNull()));
+				} else {
+					filter = filter.and(properties.getEndDateProperty().ge(AonDateUtils.toSql(new Date())).or(properties.getEndDateProperty().isNull()));
+				}
+			} else {
+				if(to != null) {
+					filter = filter.and(properties.getEndDateProperty().le(AonDateUtils.toSql(to)));
+				} else {
+					filter = filter.and(properties.getEndDateProperty().le(AonDateUtils.toSql(new Date())));
+				}
+			}
+		}
+		if(from != null) {
+			filter = filter.and(properties.getStartDateProperty().le(AonDateUtils.toSql(from)));
 		}
 		return filter;
 	}
