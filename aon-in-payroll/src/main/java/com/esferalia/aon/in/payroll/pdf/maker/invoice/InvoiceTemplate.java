@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -366,7 +367,7 @@ public class InvoiceTemplate {
 	
 	private void drawFooter(PDDocument doc, CompanyFull company, PrintInvoiceThemeConfiguration theme) throws IOException {
 		if(company != null) {
-			RecordData recordData = company.getRecordDatas() != null && !company.getRecordDatas().isEmpty() ? company.getRecordDatas().get(0) : null;
+			RecordData recordData = company.getRecordDatas() != null && !company.getRecordDatas().isEmpty() ? (RecordData) ((Properties) company.getRecordDatas()).get(0) : null;
 			String registration = "";
 			String tomo = "";
 			String folio = "";

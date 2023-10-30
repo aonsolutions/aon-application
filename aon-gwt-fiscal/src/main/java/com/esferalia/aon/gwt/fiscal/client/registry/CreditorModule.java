@@ -366,6 +366,11 @@ public class CreditorModule extends MainEntryPoint {
 		searchEnabled.setValue(-1);
 	}
 
+	/**
+	 * Method that searchs a creditor calling the method search
+	 * @param opt
+	 * @param params
+	 */
 	protected void search(final RegistryModuleOptions opt,RegistryParams params) {
 		enableMoreData();
 		creditors.clear();
@@ -377,6 +382,12 @@ public class CreditorModule extends MainEntryPoint {
 		search(opt, params, offset.getValue());
 	}
 
+	/**
+	 * Gets a creditor with the given params
+	 * @param opt module options
+	 * @param params creditor params
+	 * @param ofs offset
+	 */
 	private void search(final RegistryModuleOptions opt, RegistryParams params, final int ofs) {
 		if (!isMoreData()) return; 
 		service.getCreditors(opt.getDomainName(),opt.getDomain(),opt.getUser(), params, ofs, LIMIT
@@ -465,6 +476,11 @@ public class CreditorModule extends MainEntryPoint {
 		}
 	}
 
+	/**
+	 * Paints a row of the creditor table for a determined creditor
+	 * @param opt module options
+	 * @param creditor the creditor
+	 */
 	private void paintRow(final RegistryModuleOptions opt, Creditor creditor) {
 		int row = tab.getWidgetCount();
 		creditors.put(creditor.getId(), new CreditorRow(row, creditor));
@@ -544,6 +560,12 @@ public class CreditorModule extends MainEntryPoint {
 		selectedCount.setText( (!selectedItems.isEmpty())?  AonNumberUtils.toString(selectedItems.size()) :""); 
 	}
 	
+	/**
+	 * Method that gets a creditorFull to call selectCreditor with that creditorFull 
+	 * @param opt module options
+	 * @param creditor creditor
+	 * @param panelCallback
+	 */
 	private void selectCreditor(RegistryModuleOptions opt, Creditor creditor, AonRegistryFullPanelCallback<CreditorFull> panelCallback) {
 		
 		service.getCreditorFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), creditor.getId(), new AsyncCallback<CreditorFull>() {	
@@ -559,6 +581,13 @@ public class CreditorModule extends MainEntryPoint {
 		});					
 	}
 	
+	/**
+	 * When the user clicks on a creditor of the creditor table, this panel opens and allows to edit and to see more details.
+	 * The creditorPanel shows the creditor data. AonCreditorFullPanel extends AonRegistryFullPanel which includes more methods.
+	 * @param opt module options
+	 * @param creditor the creditor
+	 * @param panelCallback
+	 */
 	private void selectCreditor(RegistryModuleOptions opt, CreditorFull creditor, AonRegistryFullPanelCallback<CreditorFull> panelCallback) {
 		final AonSimpleDialog dialog = new AonSimpleDialog();
 		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
