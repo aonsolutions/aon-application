@@ -25,6 +25,7 @@ import { BasicLayoutComponent } from './layouts/basic-layout/basic-layout.compon
 import { BreadcumbComponent } from './components/breadcumb/breadcumb.component';
 import { ButtonComponent } from './components/button/button.component';
 import { CardComponent } from './components/card/card.component';
+import { CardBankComponent } from './components/card/components/card-bank/card-bank.component';
 import { ChartComponent } from './components/chart/chart.component';
 import { ChartsModule } from 'ng2-charts';
 import { ContentComponent } from './layouts/content/content.component';
@@ -67,6 +68,7 @@ import { ResultSnackBarComponent } from './components/result-snack-bar/result-sn
     BreadcumbComponent,
     ButtonComponent,
     CardComponent,
+    CardBankComponent,
     ChartComponent,
     ContentComponent,
     ContentDetailComponent,
@@ -130,6 +132,7 @@ import { ResultSnackBarComponent } from './components/result-snack-bar/result-sn
     BasicLayoutComponent,
     ButtonComponent,
     CardComponent,
+    CardBankComponent,
     ChartComponent,
     ContentComponent,
     ContentDetailComponent,
