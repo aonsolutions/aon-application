@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DateAdapter } from '@angular/material/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
-
+import { validateFormatNumber } from 'src/app/core/utilities/number';
 @Component({
   selector    : 'app-input',
   templateUrl : './input.component.html',
@@ -104,36 +104,18 @@ export class InputComponent implements OnInit {
   /*
     Input solo number
   */
-    returnValueNumber(value: any) {
+    returnValueInputNumber(value: any) {
       if (this.minNumber !== '' && this.minNumber > value){
         value = this.minNumber;
       }
       if (this.maxNumber !== '' && this.maxNumber < value){
         value = this.maxNumber;
       }
-      
+
       this.inputValue.emit(value);
     }
-    validateFormatNumber(event: any) {
-      let key;
-      if (event.type === 'paste') {
-        key = event.clipboardData.getData('text/plain');
-      } else {
-        key = event.keyCode;
-        key = String.fromCharCode(key);
-      }
-      // 1 - Permitir del 0 al 9
-      // 2 - Permitir .
-      // 3 - Permitir ,
-      // 4 - Permitir -
-      const regex = /[0-9]|\.|\,|\-/;
-      if (!regex.test(key)) {
-        if(event.returnValue)
-          event.returnValue = false;
-        if (event.preventDefault) {
-          event.preventDefault();
-        }
-      }
+    validateInputFormatNumber(event: any) {
+      validateFormatNumber(event);
     }
 
 }

@@ -197,10 +197,6 @@ export class InboxviewComponent implements OnInit {
   // Ocultar o ver botones
   consultarClicked() {
     this.showSendButton = !this.showSendButton;
-  }
-
-  // Ocultar o ver botones
-  replyconsultarClicked() {
     this.showSendButtons = !this.showSendButtons;
   }
 
@@ -225,7 +221,6 @@ export class InboxviewComponent implements OnInit {
           this.translateService.instant('INBOX.THIS_WEEK');
         break;
       }
-      console.log(this.selected);
   }
 
   // Calcula el total de mensajes

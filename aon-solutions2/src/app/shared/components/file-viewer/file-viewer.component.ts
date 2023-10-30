@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { IDocument } from 'libraries/AonSDK/src/aon';
 import { DocumentService } from 'src/app/core/services/document.service';
 import { FileToBase64 } from 'src/app/core/utilities/file';
@@ -12,7 +12,7 @@ export class FileViewerComponent implements OnChanges {
   @Input() pdfSrc : IDocument = this.documentService.objectFactory.createDocument();
   @Input() zoom   : string = 'page-width'
   @Input() locale : string = 'es-ES';
-  pdfBytes        : any;
+  fileBytes        : any;
 
   constructor(private documentService: DocumentService){
 
@@ -23,11 +23,11 @@ export class FileViewerComponent implements OnChanges {
       if(this.pdfSrc.FileType.split('/')[1] === 'pdf')
         response.arrayBuffer().then((response) => {
           const arr1 = new Uint8Array(response);
-          this.pdfBytes = arr1
+          this.fileBytes = arr1
         })
       else
         FileToBase64(new File([response], this.pdfSrc.FileName)).then((response) => {
-          this.pdfBytes = response;
+          this.fileBytes = response;
         })
       })
   }

@@ -348,6 +348,12 @@ export class TablesInboxComponent implements OnChanges {
     });
   }
 
+  //Función para devolver una cadena de texto sin tildes
+  removeAccents(str: string): string {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  // Filtro de busqueda teniendo en cuenta mayúsculas y minúsculas
   searchMessage(search: string) {
     // Si el término de búsqueda está vacío, muestra todos los elementos en la tabla.
     if (!search) {
@@ -356,23 +362,25 @@ export class TablesInboxComponent implements OnChanges {
     }
     // Convierte el término de búsqueda a minúsculas.
     search = search.toLowerCase();
+    search = this.removeAccents(search);
 
     // Filtra la tabla en función del término de búsqueda
     this.bodyTable = this.dataBody.filter((item: any) => {
       // Comprueba si alguna de las columnas contiene el término de búsqueda.
       return Object.values(item).some((value: any) => {
         if (typeof value === 'string') {
-          return value.toLowerCase().includes(search);
+          // Convierte el valor a minúsculas y quita las tildes antes de comparar
+        const cleanedValue = this.removeAccents(value.toLowerCase());
+        return cleanedValue.includes(search);
         } else if (typeof value === 'object') {
-      // Manejar el caso en el que el valor de la columna es un objeto.
       // Utilizar JSON.stringify para convertir el objeto en una cadena de texto para la búsqueda.
-          return JSON.stringify(value).toLowerCase().includes(search);
-        }
+        const cleanedValue = this.removeAccents(JSON.stringify(value).toLowerCase());
+        return cleanedValue.includes(search);
+      }
         return false;
       });
     });
   }
-
 
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}

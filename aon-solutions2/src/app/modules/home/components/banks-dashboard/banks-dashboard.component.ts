@@ -1,6 +1,7 @@
 import { ErrorResponse, IBank, ICollection } from 'libraries/AonSDK/src/aon';
 import { BankService } from './../../../../core/services/bank.service';
 import { Component, OnInit } from '@angular/core';
+import { formatNumber,validateFormatNumber } from 'src/app/core/utilities/number';
 
 @Component({
   selector: 'app-banks-dashboard',
@@ -37,6 +38,14 @@ export class BanksDashboardComponent implements OnInit {
     } else {
       return this.banks.size() > 0;
     }
+  }
+
+  formatTotal(value: number): string {
+    return formatNumber(value);
+  }
+
+  validateInputFormatNumber(event: any) {
+    validateFormatNumber(event);
   }
 
 }

@@ -221,7 +221,7 @@
           {{ messagesData.Status }}
         </div>
         <div class="inbox-icons" *ngIf="messagesData.Type === 'consulta'">
-          <app-icon class="inbox-icon-reply" shape="reply" (click)="replyconsultarClicked()"></app-icon>
+          <app-icon class="inbox-icon-reply" shape="reply" (click)="consultarClicked()"></app-icon>
           <app-icon *ngIf="messagesData.Status === 'abierta'" (click)="archiveMessage()" shape="archive"></app-icon>
         </div>
       </div>
