@@ -57,7 +57,13 @@ public class AonCustomerFullPanel extends AonRegistryFullPanel<CustomerFull> imp
 		
 		final InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
 		transactionBox.setValue(customer.getTransaction());
-		transactionBox.addChangeHandler(event -> customer.setTransaction(transactionBox.getValue()));
+		transactionBox.addChangeHandler( new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				customer.setTransaction(transactionBox.getValue());
+			}
+		});
 		
 		addBasicRow(displayTab,new InlineLabel(AON.MSG.transactionType()), transactionBox);
 
@@ -69,13 +75,25 @@ public class AonCustomerFullPanel extends AonRegistryFullPanel<CustomerFull> imp
 		surcharge.setValue(customer.isSurcharge());
 		surcharge.setStyleName(AON.CSS.aonMarginRight());
 		surcharge.addStyleName(AON.CSS.aonNowrap());
-		surcharge.addClickHandler(event -> customer.setSurcharge(surcharge.getValue()));
+		surcharge.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				customer.setSurcharge(surcharge.getValue());
+			}
+		});
 		taxPanel.add(surcharge);
 		
 		withholding.setValue(customer.isWithholding());
 		withholding.setStyleName(AON.CSS.aonMarginRight());
 		withholding.addStyleName(AON.CSS.aonNowrap());
-		withholding.addClickHandler(event -> customer.setWithholding(withholding.getValue()));
+		withholding.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				customer.setWithholding(withholding.getValue());
+			}
+		});
 		taxPanel.add(withholding);
 		
 		addBasicRow(displayTab,new InlineLabel(AON.MSG.fiscalInformation()), taxPanel);				
@@ -118,22 +136,25 @@ public class AonCustomerFullPanel extends AonRegistryFullPanel<CustomerFull> imp
     	buttons.addStyleName(AON.CSS.aonNowrap());
     	okButton.setStyleName(AON.CSS.aonOkButton());    	
     	okButton.setText( AON.MSG.accept());
-    	
-    	okButton.addClickHandler(event -> {
-			okButton.setEnabled(false);
-			getService().save(options.getDomainName(), options.getDomain(), options.getUser(), customerFull, new AsyncCallback<CustomerFull>() {
+    	okButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				okButton.setEnabled(false);
+				getService().save(options.getDomainName(), options.getDomain(), options.getUser(), customerFull, new AsyncCallback<CustomerFull>() {
 
-				@Override
-				public void onSuccess(CustomerFull result) {
-					callback.onAccept(result);
-				}
+					@Override
+					public void onSuccess(CustomerFull result) {
+						callback.onAccept(result);
+					}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					okButton.setEnabled(true);
-					callback.onError(caught);
-				}
-			});
+					@Override
+					public void onFailure(Throwable caught) {
+						okButton.setEnabled(true);
+						callback.onError(caught);
+					}
+				});
+			}
 		});
     	buttons.add(okButton);
     	
@@ -141,12 +162,14 @@ public class AonCustomerFullPanel extends AonRegistryFullPanel<CustomerFull> imp
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());
     	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
-    	
-    	cancelButton.addClickHandler(event -> {
-			cancelButton.setEnabled(false);
-			callback.onCancel();
+    	cancelButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				cancelButton.setEnabled(false);
+				callback.onCancel();
+			}
 		});
-    	
     	buttons.add(cancelButton);
     	
     	return buttons;

@@ -8,7 +8,9 @@ import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -19,7 +21,9 @@ import static com.esferalia.aon.jooq.tables.Question.QUESTION;
 
 public class QuestionValidation {
 	
-	private QuestionValidation() {}
+	private QuestionValidation() {
+		
+	}
 	
 	/**
 	 * Throws an exception if the question is null

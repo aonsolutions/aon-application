@@ -10,6 +10,10 @@ import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -20,7 +24,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 
 public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> implements Focusable {
 	
-	private RegistryServiceAsync service;
+	private RegistryServiceAsync SERVICE;
 	
 	private static final Logger LOGGER = Logger.getLogger(AonSupplierFullPanel.class.getName());
 	static {
@@ -31,8 +35,8 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
 		super(options, supplierFull,callback);
 		
 		RegistryServiceAsync serviceRaw = GWT.create(RegistryService.class);
-		service = new RegistryServiceAsyncDecorator(serviceRaw);
-	
+		SERVICE = new RegistryServiceAsyncDecorator(serviceRaw);
+
 		getRootPanel().add(addButtons(options,supplierFull,callback));
 	}
 
@@ -57,7 +61,14 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
 
 		final InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
 		transactionBox.setValue(supplier.getTransaction());
-		transactionBox.addChangeHandler(event -> supplier.setTransaction(transactionBox.getValue()));
+		transactionBox.addChangeHandler( new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				supplier.setTransaction(transactionBox.getValue());
+			}
+		});
+		
 		addBasicRow(displayTab,new InlineLabel(AON.MSG.transactionType()), transactionBox);
 
 		final CheckBox vatAccualPayment = new CheckBox(AON.MSG.vatAccrualPayment());
@@ -70,13 +81,25 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
 		vatAccualPayment.setValue(supplier.isVatAccrualPayment());
 		vatAccualPayment.setStyleName(AON.CSS.aonMarginRight());
 		vatAccualPayment.addStyleName(AON.CSS.aonNowrap());
-		vatAccualPayment.addClickHandler(event -> supplier.setVatAccrualPayment(vatAccualPayment.getValue()));
+		vatAccualPayment.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				supplier.setVatAccrualPayment(vatAccualPayment.getValue());
+			}
+		});
 		taxPanel0.add(vatAccualPayment);
 		
 		withholdingFarmer.setValue(supplier.isWithholdingFarmer());
 		withholdingFarmer.setStyleName(AON.CSS.aonMarginRight());
 		withholdingFarmer.addStyleName(AON.CSS.aonNowrap());
-		withholdingFarmer.addClickHandler(event -> supplier.setWithholdingFarmer(withholdingFarmer.getValue()));
+		withholdingFarmer.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				supplier.setWithholdingFarmer(withholdingFarmer.getValue());
+			}
+		});
 		taxPanel0.add(withholdingFarmer);
 		
 		FlowPanel taxPanel1 = new  FlowPanel();
@@ -84,7 +107,13 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
 		withholding.setValue(supplier.isWithholding());
 		withholding.setStyleName(AON.CSS.aonMarginRight());
 		withholding.addStyleName(AON.CSS.aonNowrap());
-		withholding.addClickHandler(event -> supplier.setWithholding(withholding.getValue()));
+		withholding.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				supplier.setWithholding(withholding.getValue());
+			}
+		});
 		taxPanel1.add(withholding);
 		
 		addBasicRow(displayTab, new InlineLabel(AON.MSG.fiscalInformation()), taxPanel);				
@@ -99,22 +128,25 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
     	buttons.addStyleName(AON.CSS.aonNowrap());
     	okButton.setStyleName(AON.CSS.aonOkButton());    	
     	okButton.setText( AON.MSG.accept());
-    	
-    	okButton.addClickHandler(event -> {
-			okButton.setEnabled(false);
-			service.save(options.getDomainName(), options.getDomain(), options.getUser(), supplierFull, new AsyncCallback<SupplierFull>() {
+    	okButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				okButton.setEnabled(false);
+				SERVICE.save(options.getDomainName(), options.getDomain(), options.getUser(), supplierFull, new AsyncCallback<SupplierFull>() {
 
-				@Override
-				public void onSuccess(SupplierFull result) {
-					callback.onAccept(result);
-				}
+					@Override
+					public void onSuccess(SupplierFull result) {
+						callback.onAccept(result);
+					}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					okButton.setEnabled(true);
-					callback.onError(caught);
-				}
-			});
+					@Override
+					public void onFailure(Throwable caught) {
+						okButton.setEnabled(true);
+						callback.onError(caught);
+					}
+				});
+			}
 		});
     	buttons.add(okButton);
     	
@@ -122,9 +154,13 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());
     	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
-    	cancelButton.addClickHandler(event -> {
-			cancelButton.setEnabled(false);
-			callback.onCancel();
+    	cancelButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				cancelButton.setEnabled(false);
+				callback.onCancel();
+			}
 		});
     	buttons.add(cancelButton);
     	

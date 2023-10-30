@@ -22,7 +22,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import static com.esferalia.aon.jooq.tables.Question.QUESTION;;
 
 /**
- * Tests the methods of the class QuestionDAO
+ * Tests the mehotds of the class QuestionDAO
  */
 public class QuestionDAOTest extends AbstractOccamTest {
 	
