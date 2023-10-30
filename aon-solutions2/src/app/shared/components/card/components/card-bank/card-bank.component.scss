@@ -1,0 +1,90 @@
+@import 'src/styles.scss';
+
+::ng-deep {
+/*
+  List BANK
+*/
+  .card.dashboard.banks-card{
+    [body] {
+      cursor      : pointer;
+      width       : 100%;
+      height      : 10.1rem;
+      margin-top  : $margin-top/2;
+
+      .list-banks {
+        overflow-y: auto;
+
+        .list-bank-row{
+          display       : flex;
+          gap           : $margin;
+          padding       : $padding/2 0;
+          margin-right  : $margin-right/2;
+
+          .list-bank-name{
+            min-width   : 50%;
+          }
+          .list-bank-money{
+            width           : 50%;
+            display         : flex;
+            justify-content : flex-end;
+            align-items     : center;
+            font-family     : Roboto-Medium;
+          }
+        }
+      }
+
+      .bank-create {
+        height          : 12.3rem;
+        display         : flex;
+        align-items     : center;
+        justify-content : center;
+        flex-direction  : column;
+        text-align      : center;
+        gap             : 1rem;
+
+        .title {
+          font-family   : Roboto-medium;
+          font-size     : 1rem;
+          color         : $color-blue;
+        }
+        .banks-create-text {
+          font-family   : Roboto-medium;
+          font-size     : 0.7rem;
+          color         : $color-placeholder;
+        }
+      }
+    }
+
+    [footer] {
+      opacity     : 0;
+      transform   : translateY(30%);
+      transition  : 0.3s ease-in;
+      font-size   : 1.2rem;
+      font-family : Roboto-bold;
+      border-top  : $border;
+      padding-top : $padding-top;
+    }
+  }
+  .card.dashboard.banks-card:hover{
+    [body] .list-banks {
+      transform   : translateY(1rem);
+      transition  : 0.3s ease-in;
+      height      : 9.1rem;
+    }
+    [footer] {
+      transform : translateY(0);
+      opacity   : 1;
+    }
+  }
+  .card.dashboard.banks-card:not(:hover){
+    [body] .list-banks{
+      transition: 0.4s ease-out;
+    }
+    [footer] {
+      transition: 0.3s ease-out;
+    }
+  }
+/*
+  FIN List BANK
+*/
+}

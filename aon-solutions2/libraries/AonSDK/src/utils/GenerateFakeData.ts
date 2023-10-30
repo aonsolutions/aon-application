@@ -1,8 +1,10 @@
+import { Location } from '@angular/common';
+import { contracts } from './../models/Contract';
 import { IInvoiceLine, MainFolders, TypeMessage, StatusMessage, statusTaxModel } from "../interfaces/modelsInterfaces";
 import { Bank, StorableBank, setBanks } from "../models/Bank";
 import { Certificate, StorableCertificate, certificates, setCertificates } from "../models/Certificate";
 import { Contact, StorableContact, contacts, setContacts } from "../models/Contact";
-import { Contract, StorableContract } from "../models/Contract";
+import { Contract, StorableContract, setContracts } from "../models/Contract";
 import { StorableDocument, documents, setDocuments } from "../models/Document";
 import { DocumentNote, StorableDocumentNote, documentNotes, setDocumentNotes } from "../models/DocumentNote";
 import { DocumentTag, StorableDocumentTag, documentTags, setDocumentTags } from "../models/DocumentTag";
@@ -15,8 +17,8 @@ import { InvoiceActivity, StorableInvoiceActivity, invoiceActivities, setInvoice
 import { InvoiceCategory, StorableInvoiceCategory, invoiceCategories, setInvoiceCategories } from "../models/InvoiceCategory";
 import { InvoiceLine } from "../models/InvoiceLine";
 import { InvoiceSerie, StorableInvoiceSerie, invoiceSeries, setInvoiceSeries } from "../models/InvoiceSerie";
-import { Mark, StorableMark } from "../models/Mark";
-import { MarkDetail, StorableMarkDetail } from "../models/MarkDetail";
+import { Mark, StorableMark, marks, setMarks } from "../models/Mark";
+import { MarkDetail, StorableMarkDetail, marksDetails, setMarksDetails } from "../models/MarkDetail";
 import { Message, StorableMessage, messages, setMessages } from "../models/Message";
 import { MessageChat, StorableMessageChat, messageChats, setMessageChats } from "../models/MessageChat";
 import { PaymentMethod, StorablePaymentMethod, paymentMethods, setPaymentMethods } from "../models/PaymenMethod";
@@ -435,7 +437,7 @@ export function generateData(){
     setEmployees(localEmployees.read(storableEmployees.getLocalStorage()));
     if(employees.size() == 0){
         employees.add(new Employee('Maria','Rico Gómez','48150243L','mariaricogomez@gmail.test','690619302','390423363729',true));
-        employees.add(new Employee('Maria','Pérez Álvarez','86638678R','mariaperezalvarez@gmail.test','656796396','650423363729',false));
+        employees.add(new Employee('Gloria','Pérez Álvarez','86638678R','mariaperezalvarez@gmail.test','656796396','650423363729',false));
         employees.add(new Employee('Juan Carlos','Aragón Pérez','11556837G','juancarlosaragonperez@gmail.test','619068048','490423363729',true));
         localEmployees.write(storableEmployees.getLocalStorage(), employees);
     }
@@ -443,14 +445,47 @@ export function generateData(){
 
     let storableContracts = new StorableContract();
     let localContracts = new LocalStorage<Contract>(Contract);
+    let endDateContractAux = new Date();
+    endDateContractAux.setMonth(endDateContractAux.getMonth()+3);
+
+    setContracts(localContracts.read(storableContracts.getLocalStorage()));
+    if(contracts.size() == 0) {
+        contracts.add(new Contract('Maria', 'Rico Gómez', '48150243L', 'Indefinido', 55224.23, new Date(), undefined, 'Alcoy', true));
+        contracts.add(new Contract('Gloria', 'Pérez Álvarez', '86638678R', 'Indefinido', 55224.23, new Date(), new Date(), 'Alcantarilla', false));
+        contracts.add(new Contract('Juan Carlos', 'Aragón Álvarez', '11556837G', 'Temporal', 55224.23, new Date(), endDateContractAux, 'Guarroman', true));
+        localContracts.write(storableContracts.getLocalStorage(), contracts);
+    }
 
 
     let storableMarks = new StorableMark();
     let localMarks = new LocalStorage<Mark>(Mark);
+    setMarks(localMarks.read(storableMarks.getLocalStorage()));
+    if(marks.size() == 0){
+      contracts.forEach(contract => {
+        const entryDateAux: Date = new Date();
+        const randomHours = Math.floor(Math.random() * 7) + 1;
+        // instancia de date con la hora aumentada en randomHours. Si lo sumo tal cual es un number y no un date
+        const exitDateAux: Date = new Date(entryDateAux.getTime() + randomHours * 60 * 60 * 1000);
+        const timeDifference: number = exitDateAux.getTime() - entryDateAux.getTime();
+        // instancia de date a partir de la diferencia
+        const timeDifferenceDate: Date = new Date(timeDifference);
+
+        marks.add(new Mark(contract.Name, contract.Document, entryDateAux, entryDateAux, exitDateAux, timeDifferenceDate, contract.WorkCenter, 'Finalizado'));
+      });
+      localMarks.write(storableMarks.getLocalStorage(), marks);
+    }
 
 
     let storableMarksDetails = new StorableMarkDetail();
     let localMarksDetails = new LocalStorage<MarkDetail>(MarkDetail);
+    setMarksDetails(localMarksDetails.read(storableMarksDetails.getLocalStorage()));
+    if(marksDetails.size() == 0){
+        marks.forEach(mark => {
+          marksDetails.add(new MarkDetail(mark.Key, mark.Date, mark.EntryDate, 'Entrada', '579 Alejandra Carretera, 10887,'+mark.Location ));
+          marksDetails.add(new MarkDetail(mark.Key, mark.Date, mark.ExitDate, 'Salida', '579 Alejandra Carretera, 10887,'+mark.Location ));
+        });
+        localMarksDetails.write(storableMarksDetails.getLocalStorage(), marksDetails);
+    }
 
 
     let storableUsers = new StorableUser();

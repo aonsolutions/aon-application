@@ -1,23 +1,22 @@
-import { ErrorResponse, IBank, ICollection } from 'libraries/AonSDK/src/aon';
-import { BankService } from './../../../../core/services/bank.service';
 import { Component, OnInit } from '@angular/core';
 import { formatNumber,validateFormatNumber } from 'src/app/core/utilities/number';
+import { ErrorResponse, IBank, ICollection } from 'libraries/AonSDK/src/aon';
+import { BankService } from 'src/app//core/services/bank.service';
 
 @Component({
-  selector: 'app-banks-dashboard',
-  templateUrl: './banks-dashboard.component.html',
-  styleUrls: ['./banks-dashboard.component.scss'],
-  host: {
-    '[style.width]': "'100%'",
-    '[style.height]': "'100%'",
-  },
+  selector    : 'app-card-bank',
+  templateUrl : './card-bank.component.html',
+  styleUrls   : ['./card-bank.component.scss']
 })
-export class BanksDashboardComponent implements OnInit {
+
+export class CardBankComponent implements OnInit {
   spinner     : boolean = true;
   totalAmount : number  = 0;
-  banks!: ICollection<IBank>;
+  banks      !: ICollection<IBank>;
 
-  constructor(private bankService: BankService) {
+  constructor(
+    private bankService: BankService
+  ) {
     this.bankService.getBankList().then((response) => {
       this.banks = response;
       response.forEach((bank) => {

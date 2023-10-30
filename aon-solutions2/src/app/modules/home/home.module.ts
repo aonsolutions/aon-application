@@ -7,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { NgModule } from '@angular/core';
 
-import { BanksDashboardComponent } from './components/banks-dashboard/banks-dashboard.component';
 import { ChartDashboardComponent } from './components/chart-dashboard/chart-dashboard.component';
 import { HomeComponent } from './pages/home.component';
 import { HomeRoutingModule } from './home-routing.module';
@@ -21,7 +20,6 @@ import { WorkingModalComponent } from './components/working-modal/working-modal.
 
 @NgModule({
   declarations: [
-    BanksDashboardComponent,
     ChartDashboardComponent,
     HomeComponent,
     InboxDashboardComponent,
@@ -43,6 +41,7 @@ import { WorkingModalComponent } from './components/working-modal/working-modal.
     SharedModule
   ]
 })
+
 export class HomeModule {
 
 }

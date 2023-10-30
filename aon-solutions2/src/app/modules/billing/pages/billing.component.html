@@ -32,10 +32,9 @@
       </div>
       <div class="data">
         <div class="chart">
-          <app-banks-dashboard
-            [bankList]="banks$"
+          <app-card-bank
             (click)="selectedTab = 4; selectedMenu = 2; showMenu = true"
-          ></app-banks-dashboard>
+          ></app-card-bank>
         </div>
       </div>
     </div>
@@ -207,7 +206,7 @@
           <app-icon class="blue icono" shape="account_balance"></app-icon>
           <p class="title">{{ "BILLING.ADD_BANK" | translate }}</p>
           <p>
-            Conecta AON con tus bancos para tener un control de tus movimientos
+            {{ 'HOME.CONNECT_AON'|translate }}
           </p>
         </div>
         <div class="add-bank-true" *ngIf="addBank">
