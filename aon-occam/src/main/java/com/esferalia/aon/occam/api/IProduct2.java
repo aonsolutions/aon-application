@@ -39,6 +39,7 @@ public interface IProduct2 {
 	public void deleteItem(AONContext ctx, Integer id);
 	public RegistryItem[] saveRItem(AONContext ctx, RegistryItem ...ritems);
 	public void deleteRItem(AONContext ctx, RegistryItemFilter filter);
+	public void updateRItemQuantity(AONContext ctx, String quantity, RegistryItemFilter filter);
 	public void updateAllTargetItem(AONContext ctx, InvoiceFilter filter, boolean disable);
 	
 	// INVEST ASSET

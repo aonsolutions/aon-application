@@ -655,6 +655,17 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 			&& getStatus() != FiscalStatus.CUSTOMER_CHECK
 			&& getStatus() != FiscalStatus.CUSTOMER_ACCEPTED;
 	}
-
+	
+	@Override
+	public String getNrc() {
+    	return ensureDetail("NRC").getDescription();
+	}
+	
+	@Override
+	public FiscalModel setNrc(String nrc) {
+		ensureDetail("NRC").setDescription(nrc);
+		return this;
+	}
+	
 }
 

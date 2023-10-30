@@ -3,6 +3,7 @@
 export const ABOUT = 'About';
 export const ACCEPT = 'Accept';
 export const ACCESS = "Access";
+export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Acces to your AON account';
 export const ACCOUNT = 'Account';
 export const ACCOUNTED = 'Accounted';
 export const ACCOUNTEDS = 'Accounted';
@@ -80,6 +81,7 @@ export const COMPANIES = 'Companies';
 export const COMPANY = 'Company';
 export const COMPANY_COSTS = 'Company Costs';
 export const COMPANY_MANAGEMENT = 'Company Management';
+export const COMPANY_SELECTION = 'Company Selection';
 export const COMPONENTS = 'Components';
 export const CONCEPT = 'Concept';
 export const CONCEPTS = 'Concepts';
@@ -214,6 +216,8 @@ export const INVOICE_PRINTING = 'Invoice Printing';
 export const INVOICE_RECEIVED = 'Invoice Received';
 export const INVOICES = 'Invoices';
 export const IRPF = 'IRPF';
+export const IS_REQUIRED = 'is required';
+export const IS_NOT_VALID_EMAIL = 'is not a valid email';
 export const ISSUED = 'Issued';
 export const ISSUEDS = 'Issued';
 
@@ -281,6 +285,7 @@ export const OPEN_MENU = 'Open Menu';
 export const OPEN_REQUESTS = 'Open Requests';
 export const OPTIONAL = "Optional"; 
 export const OPTIONS = 'Options';
+export const OR_ACCESS = 'or ACCESS';
 export const OTHER_SERVICES = 'Other Services';
 
 

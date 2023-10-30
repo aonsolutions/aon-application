@@ -277,6 +277,7 @@ import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
+import com.esferalia.aon.occam.api.model.warehouse.PackagingDelivery;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
@@ -1082,6 +1083,10 @@ public class AON {
 		}
 
 	}
+		
+	public static Company getCompany(Occam occam, CompanyFilter filter){
+		return getCompany(occam.getDomainName(), occam.getDomain(), occam.getUser(), filter);
+	}
 	public static Company getCompany(Domain domain, User user, CompanyFilter filter){
 		return getCompany(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
@@ -1442,6 +1447,12 @@ public class AON {
 	public static void deleteRItem(Domain domain, User user, RegistryItemFilter filter) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, user)){
 			getNewProduct().deleteRItem(ctx, filter);
+		}
+	}
+	
+	public static void updateRItemQuantity(Domain domain, User user, String quantity, RegistryItemFilter filter) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, user)){
+			getNewProduct().updateRItemQuantity(ctx, quantity, filter);
 		}
 	}
 	
@@ -3729,6 +3740,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static StatData<String, String, Double> getFinanceStat(String domainName, Integer domainId, String user, FinanceFilter financeFilter){
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName,domainId,user);
+			return getStats().getFinanceStat(ctx, financeFilter);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}
+	}
 
 	public static String getInvoicesReport(String domainName, int domain, String userLogin, StatParams params) {
 		CloseableAONContext ctx = null;
@@ -5221,15 +5243,32 @@ public class AON {
 		}
 	}
 
+	public static RegistryBank getRegistryBank(Occam occam, RegistryBankFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getRegistry().getRegistryBank(ctx, filter);
+		}
+	}
 	public static RegistryBank getRegistryBank(Domain domain, String login, RegistryBankFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
 			return getRegistry().getRegistryBank(ctx, filter);
 		}
 	}
 	
+	public static Stream<RegistryBank> getRegistryBankStream(Occam occam, RegistryBankFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getRegistry().getRegistryBankStream(ctx, filter);
+		}
+	}
+
 	public static Stream<RegistryBank> getRegistryBankStream(Domain domain, String login, RegistryBankFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
 			return getRegistry().getRegistryBankStream(ctx, filter);
+		}
+	}
+	
+	public static RegistryBank saveRegistryBank(Occam occam, RegistryBank rbank) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getRegistry().saveRegistryBank(ctx, rbank);
 		}
 	}
 	
@@ -7834,15 +7873,21 @@ public class AON {
 		}
 	}
 	
-	public static Packaging savePackaging(Domain domain, User user, Packaging packaging) {
+	public static List<Packaging> savePackaging(Domain domain, User user, Packaging packaging) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getWarehouse().savePackaging(ctx, packaging);
 		}
 	}
 	
-	public static DeliveryPackaging getDeliveryPackaging(Domain domain, User user, String sscc, Integer delivery) {
+	public static DeliveryPackaging getDeliveryPackaging(Domain domain, User user, String sscc, Integer delivery, Integer product) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getWarehouse().getDeliveryPackaging(ctx, sscc, delivery);
+			return getWarehouse().getDeliveryPackaging(ctx, sscc, delivery, product);
+		}
+	}
+	
+	public static PackagingDelivery saveDeliveryPackaging(Domain domain, User user, PackagingDelivery packaging) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getWarehouse().saveDeliveryPackaging(ctx, packaging);
 		}
 	}
 	

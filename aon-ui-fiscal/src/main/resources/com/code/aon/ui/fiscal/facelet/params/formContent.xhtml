@@ -137,6 +137,16 @@
 				<aon:outputLabel for="default_customer_check_enabled"
 					value="#{bundle.fiscal_customer_check_enabled}" />
 			</aon:div>
+			
+			<aon:outputText value="&#160;" />
+			<aon:div>
+				<aon:selectBooleanCheckbox id="default_pres_model_auto_enabled"
+					value="#{fiscalParams.fiscalPresModelAutoEnabled}">
+				</aon:selectBooleanCheckbox>
+				<aon:outputLabel for="default_pres_model_auto_enabled"
+					value="#{bundle.fiscal_pres_model_auto_enabled}" />
+			</aon:div>
+			
 		</aon:panelGrid>
 
 		<aon:div styleClass="aon-margin-top aon-width-all"> 

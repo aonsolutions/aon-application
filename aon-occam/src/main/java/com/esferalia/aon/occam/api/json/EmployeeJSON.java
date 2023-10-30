@@ -36,6 +36,7 @@ public class EmployeeJSON {
 		json.put("ipf", employee.getDni());
 		json.put("naf", employee.getNaf());
 		json.put("startDate", employee.getStartDate());
+		json.put("id", employee.getEmployeeId());
 		
 		employee.getName().ifPresent(name-> json.put("name", name));
 		employee.getEndDate().ifPresent(endDate -> json.put("endDate", endDate));

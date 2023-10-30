@@ -6,14 +6,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public enum AonError implements Serializable{
-	// Á --> \u00C1 á --> \u00E1
-	// É --> \u00C9 é --> \u00E9
-	// Í --> \u00CD í --> \u00ED  
-	// Ó --> \u00D3 ó --> \u00F3
-	// Ú --> \u00DA ú --> \u00FA
-	// Ñ --> \u00D1 ñ --> \u00F1
-	// º --> \u00AA ª --> \u00BA
-	// ¿ --> \u00BF 
+	// Ã --> \u00C1 Ã¡ --> \u00E1
+	// Ã‰ --> \u00C9 Ã© --> \u00E9
+	// Ã --> \u00CD Ã­ --> \u00ED  
+	// Ã“ --> \u00D3 Ã³ --> \u00F3
+	// Ãš --> \u00DA Ãº --> \u00FA
+	// Ã‘ --> \u00D1 Ã± --> \u00F1
+	// Âº --> \u00AA Âª --> \u00BA
+	// Â¿ --> \u00BF 
 	
 	
 	// -----------------------------------------------------------
@@ -153,8 +153,22 @@ public enum AonError implements Serializable{
 
 	// --------------------------------------------- BRAND
 	, BRAND_NULL("El valor de la marca es nulo.")
-	, BRAND_EMPTY("El valor de la marca esta vacío.")
+	, BRAND_EMPTY("El valor de la marca esta vacÃ­o.")
 	, BRAND_REPEAT("Ya existe una marca con el mismo nombre.")
+	
+	
+	// --------------------------------------------- AMORTIZATION TYPE
+	,AMORTIZATION_TYPE_NULL("El tipo de amortizacion es nulo.")
+	,AMORTIZATION_TYPE_NULL_DESCRIPTION("La descripcion del tipo de amortizacion es nula")
+	,AMORTIZATION_TYPE_NULL_FIXED_ASSET_ACCOUNT("El valor de la cuenta fija de activos es nulo")
+	,AMORTIZATION_TYPE_NULL_ACCUMULATED_ACCOUNT("El valor de la cuenta acumulada es nulo")
+	,AMORTIZATION_TYPE_NULL_ALLOCATION_ACCOUNT("El valor de la cuenta de asignacion es nulo")
+	,AMORTIZATION_TYPE_NULL_PERCENTAGE("El valor del porcentaje es nulo")
+	,AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT_LENGTH("La longitud del dato para la cuenta fija excede el permitido")
+	,AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT_LENGTH("La longitud del campo para la cuenta acumulada excede el permitido")
+	,AMORTIZATION_TYPE_ALLOCATION_ACCOUNT_LENGTH("La longitud del campo para la cuenta de asignacion excede el permitido")
+	,AMORTIZATION_TYPE_FIXED_DESCRIPTION_LENGTH("La longitud del campo para la descripcion excede el permitido")
+	,AMORTIZATION_TYPE_PARAMS_NULL("Los parametros son nulos")
 	
 	// --------------------------------------------- INVOICE
 	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
@@ -231,7 +245,12 @@ public enum AonError implements Serializable{
 	,NULL_TYPE("El valor del tipo de la pregunta es nulo")
 	,INVALID_SIZE_QUESTION_TEXT("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
 	,INVALID_SIZE_ALIAS("El tama\u00F1o del texto de la pregunta es inv\u00E1lido")
+	
+	
+	
+	,NULL_FILE_UPLOADED("El archivo seleccionado es nulo")
 	,REPEATED_ALIAS("No puede haber dos preguntas con el mismo alias")
+
 	// ---------------------------------------------- REGISTRY_BANK
 	,REGISTRY_BANK_NULL("El registro no puede ser nulo")
 	,REGISTRY_BANK_EMPTY("El registro no puede estar vac\u00EDo")

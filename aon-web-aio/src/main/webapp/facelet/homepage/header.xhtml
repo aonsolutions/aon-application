@@ -8,6 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich">
 	
 	
+	
 	<style>
 	
 	body {
@@ -2190,25 +2191,27 @@
 
 				</aon:div>
 			</aon:panelGroup>
-			<aon:panelGroup>
-		<aon:commandLink 
-			id="new_aon"
-			action="start" 
-			immediate="true"
-			style="color: #777;"
-			styleClass="aon-top-menu-item"
-			actionListener="#{userUtils.enableNewAONTheme}" >
-			<aon:outputText
-				value="toggle_off"  
-				styleClass="material-icons" 
-				style="position:absolute; font-size:38px; transform: translateY(-10px); " 
-				/>
-			<aon:outputText
-			value="Nuevo Diseño" 
-			style="padding-left: 38px; white-space: nowrap;" 
-			/>
-		</aon:commandLink>
-			</aon:panelGroup>
+				<aon:panelGroup>
+					<c:if test="#{domainSwitcher.aonSolutionsOrg}" >
+						<aon:commandLink 
+							id="new_aon"
+							action="start" 
+							immediate="true"
+							style="color: #777;"
+							styleClass="aon-top-menu-item"
+							actionListener="#{userUtils.enableNewAONTheme}" >
+							<aon:outputText
+								value="toggle_off"  
+								styleClass="material-icons" 
+								style="position:absolute; font-size:38px; transform: translateY(-10px); " 
+								/>
+							<aon:outputText
+							value="Nuevo Diseño" 
+							style="padding-left: 38px; white-space: nowrap;" 
+							/>
+						</aon:commandLink>
+					</c:if>
+				</aon:panelGroup>
 			
 			<aon:panelGroup style="text-align:left; display:flex" >
 					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" onclick="javascript:focusSearchResults(); return true;">

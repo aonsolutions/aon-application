@@ -1,7 +1,8 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import './aon-icon-button.js';
 import { AonIconButton } from './aon-icon-button.js';
+import * as LS from '../services/localStorageService.js';
 
 export class AonSearchBox extends AonElement {
 
@@ -44,12 +45,21 @@ export class AonSearchBox extends AonElement {
 	}
 
 	connectedCallback () {
+		this.style.width = "100%";
+
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aon-search-div';
 		div.style.height = '40px';
-		div.style.minWidth = '400px';
-		div.style.backgroundColor = '#eaf1fb';
-		div.style.borderRadius = '10px';
+		div.style.borderRadius = '20px';
+		div.style.display = "flex";
+		if(!LS.isNewTheme()) {
+			div.style.backgroundColor = '#eaf1fb';
+			div.style.borderRadius = '10px';
+		} else {
+			div.style.borderRadius = '20px';
+			div.style.border = '1px solid #d2d2d6';
+		}
+		
 		this.appendChild(div);
 
 		let iconButton = new AonIconButton();
@@ -62,9 +72,10 @@ export class AonSearchBox extends AonElement {
 		input.autocomplete = 'off';
 		input.placeholder = MSG.SEARCH;
 		input.title = MSG.SEARCH;
-		input.className = 'aonSearchBox';
-		input.style.backgroundColor = '#eaf1fb';
-		input.style.width = '350px';
+		input.className = LS.isNewTheme() ? CSS.AON_SEARCH_BOX_BETA : CSS.AON_SEARCH_BOX;
+		if(!LS.isNewTheme()) input.style.backgroundColor = '#eaf1fb';
+		input.style.width = '100%';
+		input.style.borderRadius = '20px';
 		div.appendChild(input);
 
 		this.setAttribute('opened', true);

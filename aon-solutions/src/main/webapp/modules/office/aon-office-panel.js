@@ -13,10 +13,11 @@ import { getTastHolders } from '../../services/taskHolderService.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { ProjectUtils } from '../project/ProjectUtils.js';
 import { saveRelationShip } from '../../services/registryService.js';
-import { BOOKING_PANEL, ConsoleSidenav, LINK_DOMAINS } from './ConsoleOptions.js';
+import { BOOKING_PANEL, LINK_DOMAINS } from './ConsoleOptions.js';
 import { AonLinkDomains } from '../domains/aon-link-domains.js';
 
 import * as GWT from '../../gwt/gwt.js';
+import * as LS from '../../services/localStorageService.js';
 import { BOOK } from '../../environments/materialIcons.js';
 
 export class AonOfficePanel extends AonElement {
@@ -106,7 +107,7 @@ export class AonOfficePanel extends AonElement {
         options.push(taskHolder);
 
 
-        if(this.isSig()){
+        if(this.isSig() && !LS.isNewTheme()){
             let consoleOptions = [];
             let linkDomain = LINK_DOMAINS;
             linkDomain.fn = () => this.showView(LINK_DOMAINS.id);
@@ -121,7 +122,12 @@ export class AonOfficePanel extends AonElement {
 
         application.addSidenavOptions(MSG.OFFICE, options);
 
-        application.addSidenavOptions2({...DocumentalSidenav.TYPES, name:"Tipos de expediente"}, [], ({target}) =>
+        let types = {
+            id: 'Types',
+            name: "Tipos de expediente",
+        };
+
+        application.addSidenavOptions2(types, [], ({target}) =>
             this.getApplication().buildOptionsMenu(target, [
                 {
                     name: "Añadir expediente",

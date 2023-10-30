@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.finance.nordigen;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.google.gwt.user.client.ui.HasWidgets;
 
@@ -61,4 +62,10 @@ public class NordigenModuleOptions implements Serializable {
 		return this;
 	}
 
+	public Occam getOccam() {
+		return new Occam()
+			.setDomainName( getDomainName())
+			.setDomain(getDomain())
+			.setUser(getUser());
+	}
 }

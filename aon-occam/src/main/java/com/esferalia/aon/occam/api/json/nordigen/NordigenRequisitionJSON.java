@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenRequisitionFromJSON;
 import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenRequisitionToJSON;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_REQUISITION_STATUS;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitionStatus;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -26,7 +26,7 @@ public enum NordigenRequisitionJSON {
 			(requisition, json) -> json.put("redirect", requisition.getRedirect())
 	),
 	STATUS(
-			(requisition, json) -> requisition.setStatus(NORDIGEN_REQUISITION_STATUS.safeValueOf(json.optString("status", null))),
+			(requisition, json) -> requisition.setStatus(NordigenRequisitionStatus.safeValueOf(json.optString("status", null))),
 			(requisition, json) -> json.put("status", requisition.getStatus() != null ? requisition.getStatus().getShortName() : null)
 	),
 	INSTITUTION_ID(

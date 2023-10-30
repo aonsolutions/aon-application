@@ -96,6 +96,11 @@ public class AonRandom {
         		?faker.lorem().characters(0, maxLength)
         		:null;
     }
+    public static String item( int nullThreshold,  int maxLength ) {
+    	return ( gt(nullThreshold) )
+        		?AonStringUtils.abbreviate(faker.book().title(),maxLength)
+        		:null;
+    }
     public static Integer integer( int nullThreshold,  int maxLength ) {
     	return ( gt(nullThreshold) )
         		?Integer.valueOf( getInt(0, 20) )

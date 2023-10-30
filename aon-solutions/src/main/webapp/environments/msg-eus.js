@@ -3,6 +3,7 @@
 export const ABOUT = 'Guri buruz';
 export const ACCEPT = 'Onartu';
 export const ACCESS = "Sarbidea";
+export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Sartu zure AON kontura';
 export const ACCOUNT = 'Kuenta';
 export const ACCOUNTED = 'Kontabilizatuta';
 export const ACCOUNTEDS = 'Kontabilizatutak';
@@ -80,6 +81,7 @@ export const COMPANIES = 'Enpresak';
 export const COMPANY = 'Enpresa';
 export const COMPANY_COSTS = 'Enpresaren kostuak';
 export const COMPANY_MANAGEMENT = 'Enpresen Kudeaketa';
+export const COMPANY_SELECTION = 'Enpresa hautaketa';
 export const COMPONENTS = 'Osagaiak';
 export const CONCEPT = 'Kontzeptua';
 export const CONCEPTS = 'Kontzeptuak';
@@ -214,6 +216,8 @@ export const INVOICE_PRINTING = 'Fakturen Inprimazioa';
 export const INVOICE_RECEIVED = 'Jasotako Faktura';
 export const INVOICES = 'Fakturak';
 export const IRPF = 'PFEZ';
+export const IS_REQUIRED = 'derrigorrezkoa da';
+export const IS_NOT_VALID_EMAIL = 'ez da baliozko posta elektronikoa';
 export const ISSUED = 'Igorritakoa';
 export const ISSUEDS = 'Igorritakoak';
 
@@ -281,6 +285,7 @@ export const OPEN_MENU = 'Ireki Menua';
 export const OPEN_REQUESTS = 'Irekita Dauden Eskaerak';
 export const OPTIONAL = "Aukerako";
 export const OPTIONS = 'Aukerak';
+export const OR_ACCESS = 'edo SARTU';
 export const OTHER_SERVICES = 'Beste Zerbitzuak';
 
 // ----- P

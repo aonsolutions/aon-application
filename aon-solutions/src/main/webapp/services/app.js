@@ -1,14 +1,20 @@
 import { MSG, CONSTANT, AON_ICONS, COLORS } from "../environments/environments.js";
 import * as GWT from "../gwt/gwt.js";
 import * as MSG_ES from "../environments/msg-es.js";
+import * as LS from  "./localStorageService.js";
+
+import * as DocumentalOptions from  "../modules/documental/DocumentalOptions.js";
+import * as InvoiceOptions from  "../modules/invoice/InvoiceOptions.js";
 
 export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
   title: MSG.TIMECONTROL,
   description: MSG.TIMECONTROL,
   tag: MSG_ES.TIMECONTROL,
-  icon: AON_ICONS.AON_TIMECONTROL,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_TIMECONTROL : AON_ICONS.AON_TIMECONTROL,
   color: "#D1C36D",
+  backgroundColor: "rgba(209, 195, 109, .2)",
+  hover: 'aonTimecontrolHover',
   access: [
     {
       value: "Asesor",
@@ -30,7 +36,8 @@ export const TIMECONTROL = {
     add: false,
     upload: false,
     stat: false,
-  }
+  },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const ACCOUNTING = {
@@ -38,8 +45,10 @@ export const ACCOUNTING = {
   title: MSG.ACCOUNTING,
   description: MSG.ACCOUNTING,
   tag: MSG_ES.ACCOUNTING,
-  icon: AON_ICONS.AON_ACCOUNTING,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_ACCOUNTING : AON_ICONS.AON_ACCOUNTING,
   color: "#002469",
+  backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonAccountingHover',
   access: [
     {
       value: "Asesor",
@@ -57,6 +66,7 @@ export const ACCOUNTING = {
     upload: false,
     stat: true,
   },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const FISCAL = {
@@ -64,8 +74,10 @@ export const FISCAL = {
   title: MSG.FISCAL,
   description: MSG.FISCAL,
   tag: MSG_ES.FISCAL,
-  icon: AON_ICONS.AON_FISCAL,
-  color: "#002469",
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_FISCAL : AON_ICONS.AON_FISCAL,
+  color: LS.isNewTheme() ? "#FB982E" : "#002469",
+  backgroundColor: '#fef3e7',
+  hover: 'aonFiscalHover',
   access: [
     {
       value: "Asesor",
@@ -83,6 +95,7 @@ export const FISCAL = {
     upload: false,
     stat: false,
   },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const PAYROLL = {
@@ -90,8 +103,10 @@ export const PAYROLL = {
   title: MSG.PAYROLL,
   description: MSG.PAYROLL,
   tag: MSG.PAYROLL,
-  icon: AON_ICONS.AON_PAYROLL,
-  color: "#002469",
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_PAYROLL :AON_ICONS.AON_PAYROLL,
+  color: LS.isNewTheme() ? "#33A9A9" : "#002469",
+  backgroundColor: '#e8f5f5',
+  hover: 'aonPayrollHover',
   access: [
     {
       value: "Asesor",
@@ -113,6 +128,7 @@ export const PAYROLL = {
     upload: false,
     stat: true,
   },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const TREASURY = {
@@ -122,8 +138,11 @@ export const TREASURY = {
   tag: MSG.TREASURY,
   icon: AON_ICONS.AON_TREASURY,
   color: "#002469",
+  backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '90€/mes',
-  disabled: false
+  disabled: false,
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 
@@ -134,8 +153,11 @@ export const MARKETING = {
   tag: MSG.MARKETING,
   icon: AON_ICONS.AON_MARKETING,
   color: "#002469",
+  backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '90€/mes',
-  disabled: false
+  disabled: false,
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const COMMERCIAL = {
@@ -145,8 +167,11 @@ export const COMMERCIAL = {
   tag: MSG.COMMERCIAL,
   icon: AON_ICONS.AON_COMMERCIAL,
   color: "#002469",
+  backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '90€/mes',
-  disabled: false
+  disabled: false,
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const GROUPWARE = {
@@ -156,7 +181,10 @@ export const GROUPWARE = {
   tag: 'Expedientes',
   icon: AON_ICONS.AON_APP,
   color: "#002469",
+  backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '90€/mes',
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const COMUNICA = {
@@ -165,7 +193,9 @@ export const COMUNICA = {
   description: MSG.COMUNICA,
   tag: MSG_ES.COMUNICA,
   icon: AON_ICONS.AON_COMUNICA,
-  color: "#002469",
+  color: "var(--aonPayroll)",
+  backgroundColor: "var(--aonPayrollBackground)",
+  hover: 'aonPayrollHover',
   access: [
     {
       value: "Asesor",
@@ -182,6 +212,7 @@ export const COMUNICA = {
   ],
 // apps: [TIMECONTROL],
   price: " ", // '60€/mes'
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const DOCUMENTAL = {
@@ -189,8 +220,10 @@ export const DOCUMENTAL = {
   title: MSG.DOCUMENTARY,
   description: MSG.DOCUMENTARY,
   tag: MSG_ES.DOCUMENTARY,
-  icon: AON_ICONS.AON_DOCUMENTAL,
-  color: "#6986BB",
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_DOCUMENTAL : AON_ICONS.AON_DOCUMENTAL,
+  color: LS.isNewTheme() ? "var(--aonDocumental)" : "#6986BB",
+  backgroundColor: 'var(--aonDocumentalBackground)',
+  hover: 'aonDocumentalHover',
   access: [
     {
       value: "Asesor",
@@ -212,7 +245,8 @@ export const DOCUMENTAL = {
     add: true,
     upload: true,
     stat: false
-  }
+  },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const WAREHOUSE = {
@@ -220,8 +254,10 @@ export const WAREHOUSE = {
   title: MSG.WAREHOUSE,
   description: MSG.WAREHOUSE,
   tag: MSG_ES.WAREHOUSE,
-  icon: AON_ICONS.AON_WAREHOUSE,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_WAREHOUSE : AON_ICONS.AON_WAREHOUSE,
   color: "#002469",
+  backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '-',
   disabled: false,
   options: {
@@ -230,6 +266,7 @@ export const WAREHOUSE = {
     upload: true,
     stat: false,
   },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 
@@ -238,8 +275,10 @@ export const INVOICE = {
   title: MSG.INVOICES,
   description: MSG.INVOICES,
   tag: MSG_ES.INVOICES,
-  icon: AON_ICONS.AON_INVOICE,
-  color: "#4472C4",
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_INVOICE : AON_ICONS.AON_INVOICE,
+  color: LS.isNewTheme() ? "#4F91FF" : "#4472C4",
+  backgroundColor: '#ebf2ff',
+  hover: 'aonInvoiceHover',
   access: [
     {
       value: "Asesor",
@@ -261,7 +300,8 @@ export const INVOICE = {
     add: true,
     upload: true,
     stat: true,
-  }
+  },
+  getMenuOptions: (dur) => InvoiceOptions.getOptions(dur)
 };
 
 export const CONFIGURATION = {
@@ -270,6 +310,9 @@ export const CONFIGURATION = {
   description: MSG.CONFIGURATION,
   icon: AON_ICONS.AON_SETTINGS,
   color: "black",
+  hover: 'aonSidenavHover',
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur),
+  backgroundColor: "rgba(0, 0, 0, .2)",
 };
 
 export const MESSENGER = {
@@ -277,8 +320,10 @@ export const MESSENGER = {
   title: MSG.REQUESTS,
   description: MSG.REQUESTS,
   tag: MSG_ES.REQUESTS,
-  icon: AON_ICONS.AON_MESSENGER,
-  color: "#1fd8b9",
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_MESSENGER : AON_ICONS.AON_MESSENGER,
+  color: LS.isNewTheme() ? "#f6655a" : "#1fd8b9",
+  backgroundColor: '#feedec',
+  hover: 'aonMessengerHover',
   access: [
     {
       value: "Asesor",
@@ -301,6 +346,7 @@ export const MESSENGER = {
     upload: false,
     stat: true,
   },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const TOOLS = {
@@ -308,21 +354,30 @@ export const TOOLS = {
   title: MSG.TOOLS,
   icon: AON_ICONS.AON_TOOLS,
   color: "#535353",
+  backgroundColor: "rgba(83, 83, 83, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '-'
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const NOTES = {
   app: "note",
   title: MSG.NOTES,
-  icon: AON_ICONS.AON_NOTES,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_NOTES : AON_ICONS.AON_NOTES,
   color: "#ffc000",
+  backgroundColor: "rgba(255, 192, 0, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '-'
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const AON_SOLUTIONS = {
   app: "aio",
   title: "aonSolutions",
   description: "aonSolutions.",
+
+  icon: AON_ICONS.AON_APP,
+  color: "var(--aonBlue)", 
   logo: "../assets/aon.png",
   price: " ", //  '-'
 };
@@ -364,7 +419,10 @@ export const AON_SALTRA = {
   ],
   icon: AON_ICONS.AON_SALTRA,
   color: "#002469",
+  backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // '-'
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const ALMA = {
@@ -381,6 +439,8 @@ export const OCR = {
   description: "Gestor OCR.",
   icon: AON_ICONS.AON_OCR,
   color: "#EA6D41",
+  backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
 };
 
@@ -390,6 +450,8 @@ export const CONVENIOS = {
   description: "Convenios",
   icon: AON_ICONS.AON_CONVENIOS,
   color: "#EA6D41",
+  backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
 };
 
@@ -399,6 +461,8 @@ export const BANK = {
   description: "Gestor de Bancos.",
   icon: AON_ICONS.AON_BANK,
   color: "#EA6D41",
+  backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
 };
 
@@ -406,15 +470,20 @@ export const CONSOLE = {
   app: CONSTANT.CONSOLE,
   icon: AON_ICONS.AON_APP,
   title: MSG.CONSOLE,
-  color: COLORS.AON_BLACK
+  color: COLORS.AON_BLACK,
+  backgroundColor: "rgba(0, 0, 0, .2)",
+  hover: 'aonSidenavHover',
 };
 
 export const OFFICE = {
   app: "office",
-  icon: AON_ICONS.AON_OFFICE,
+  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_OFFICE : AON_ICONS.AON_OFFICE,
   title: "Despacho",
   color: "black",
+  backgroundColor: "rgba(0, 0, 0, .2)",
+  hover: 'aonSidenavHover',
   domainType: true,
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
 export const API_SERVICE = {
@@ -423,6 +492,8 @@ export const API_SERVICE = {
   description: "Cuentas de Servicio | Acceso API.",
   icon: AON_ICONS.AON_APP,
   color: "#EA6D41",
+  backgroundColor: "rgba(234, 109, 65, .2)",
+  hover: 'aonSidenavHover',
   price: " ", // 'Desde 45€/mes'
 };
 
@@ -432,6 +503,8 @@ export const AULA = {
   description: "Aula.",
   icon: AON_ICONS.AON_AULA,
   color: "#000000",
+  backgroundColor: "rgba(0, 0, 0, .2)",
+  hover: 'aonSidenavHover',
   moreInfo: "https://faqs.aonsolutions.es/",
   price: " ", // '-',
   disabled: false,
@@ -443,6 +516,8 @@ export const CUSTOM_VIEW = {
   description: MSG.CUSTOM_VIEW,
   icon: "aon_custom",
   color: "#CAF509",
+  backgroundColor: "rgba(202, 245, 9, .2)",
+  hover: 'aonSidenavHover',
   price: " ",
 };
 

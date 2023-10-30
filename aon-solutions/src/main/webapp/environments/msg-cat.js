@@ -3,6 +3,7 @@
 export const ABOUT = 'Acerca de';
 export const ACCEPT = 'Acceptar';
 export const ACCESS = "Accés";
+export const ACCESS_TO_YOUR_AON_ACCOUNT = "Accedeix al teu compte d'AON";
 export const ACCOUNT = 'Cuenta';
 export const ACCOUNTED = 'Comptabilitzada';
 export const ACCOUNTEDS = 'Comptabilitzades';
@@ -79,6 +80,7 @@ export const COMPANIES = 'Empreses';
 export const COMPANY = 'Empresa';
 export const COMPANY_COSTS = `Costos d'Empresa`;
 export const COMPANY_MANAGEMENT = `Gestió d'Empreses`;
+export const COMPANY_SELECTION = `Selecció d'Empresa`;
 export const COMPONENTS = 'Components';
 export const CONCEPT = 'Concepte';
 export const CONCEPTS = 'Conceptes';
@@ -213,6 +215,8 @@ export const INVOICE_PRINTING = 'Impressió de Factures';
 export const INVOICE_RECEIVED = 'Factura Rebuda';
 export const INVOICES = 'Factures';
 export const IRPF = 'IRPF';
+export const IS_REQUIRED = 'és obligatori';
+export const IS_NOT_VALID_EMAIL = 'no és un email vàlid';
 export const ISSUED = 'Emesa';
 export const ISSUEDS = 'Emeses';
 
@@ -281,6 +285,7 @@ export const OPEN_MENU = 'Obrir Menú';
 export const OPEN_REQUESTS = 'Sol·licituds Obertes';
 export const OPTIONAL = "Opcional"; 
 export const OPTIONS = 'Opcions';
+export const OR_ACCESS = 'o ACCEDEIX';
 export const OTHER_SERVICES = 'Altres Serveis';
 
 // ----- P

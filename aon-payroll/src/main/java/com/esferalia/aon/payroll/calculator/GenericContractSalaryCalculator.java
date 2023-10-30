@@ -543,7 +543,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		fillEmployeeData(contractSalaryCalculatorContext);
 		fillSalaryData(contractSalaryCalculatorContext);
 		Double totalPayment = fillPayments(contractSalaryCalculatorContext);
-		sectionByBonus(contractSalaryCalculatorContext);
+		sectionAndDeductionByBonus(contractSalaryCalculatorContext);
 		Double totalSS = fillSSDeductions(contractSalaryCalculatorContext);
 		Double totalIrpf = fillIrpf(contractSalaryCalculatorContext);
 		Double totalOthers = fillOtherDeductions(contractSalaryCalculatorContext);
@@ -1005,7 +1005,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			Collection<IContractDeduction> contractDeductions = ctx.getContractDeductions();
 			ExpressionContext expressionContext = ctx.getExpressionContext();
 			for (IContractDeduction contractDeduction : contractDeductions) {
-				
 				if ( !predicate.test(contractDeduction) )
 					continue;
 				
@@ -1295,7 +1294,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return total;
 	}
 
-	protected void sectionByBonus(IContractSalaryCalculatorContext ctx) throws SalaryException {
+	protected void sectionAndDeductionByBonus(IContractSalaryCalculatorContext ctx) throws SalaryException {
 		try {
 
 			Date start = ctx.getStartDate();
@@ -1306,15 +1305,32 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			Collection<IContractBonus> contractBonuses = ctx.getContractBonus();
 
 			for (IContractBonus contractBonus : contractBonuses) {
-
 				sectionByItem(start, end, expressionContext, contractBonus);
-					
+				deductionByBonus(start, end, expressionContext, contractBonus);	
 			}
 
 		} catch (AonException e) {
 			throw new SalaryException(e.getMessage(), e);
 		}
 
+	}
+
+	
+	private void deductionByBonus(Date start, Date end, ExpressionContext expressionContext,
+		IContractBonus contractBonus) {
+	    
+	    
+	    try {
+		Matcher matcher = Pattern
+			.compile("SELF\\.addDeduction.*;", Pattern.MULTILINE )
+			.matcher(contractBonus.getExpression());
+		while ( matcher.find() ) {
+        		String addDeductionExpression = matcher.group(); 
+        		expressionContext.eval(addDeductionExpression, start, end);
+		}
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    } 
 	}
 
 	private void sectionByItem(Date start, Date end, ExpressionContext expressionContext,

@@ -1574,11 +1574,11 @@ public abstract class Employee extends ResizeComposite {
 	}
 
 	public void blockVariablesExistingContract() {
-		String documentStr = this.document.getValue().trim();
-		if (AonStringUtils.isNotBlank(documentStr)) {
-			document.setEnabled(!checkDocumentValidation(documentStr));
-		} else
-			document.setEnabled(true);
+//		String documentStr = this.document.getValue().trim();
+//		if (AonStringUtils.isNotBlank(documentStr)) {
+//			document.setEnabled(!checkDocumentValidation(documentStr));
+//		} else
+//			document.setEnabled(true);
 
 		nationality.setEnabled(true);
 
@@ -1590,7 +1590,7 @@ public abstract class Employee extends ResizeComposite {
 	}
 
 	public void unblockVariablesExistingContract() {
-		document.setEnabled(true);
+//		document.setEnabled(true);
 		nationality.setEnabled(true);
 		securitySocialNum.setEnabled(true);
 	}

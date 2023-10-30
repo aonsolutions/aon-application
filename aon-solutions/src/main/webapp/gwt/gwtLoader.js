@@ -32,7 +32,7 @@
 	}
 
 	export const preStartModule = (module) => {
-		google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
+		// google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
 		let search = `/${module}.nocache.js`;
 		let scripts = window.document.getElementsByTagName("script");
 		for (let i = 0; i < scripts.length; ++i) {
@@ -78,6 +78,7 @@
 		} else {
 			localStorage.removeItem('rootPanel');
 		}
+		localStorage.setItem('aon_solutions', true);
 		removeRootPanel(panel);
 		preStartModule(module);
 		if (window.document.createElement && window.document.getElementsByTagName) {

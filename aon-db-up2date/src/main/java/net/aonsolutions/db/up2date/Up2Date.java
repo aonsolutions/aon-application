@@ -19,12 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.config.InsertIAE1516;
-import net.aonsolutions.db.up2date.config.InsertIAE474;
-import net.aonsolutions.db.up2date.config.InsertIAE575576;
-import net.aonsolutions.db.up2date.security.UdpateAonPacks;
-import net.aonsolutions.db.up2date.warehouse.DeliveryPackagingCreation;
-import net.aonsolutions.db.up2date.warehouse.SalesInfoCreation;
+import net.aonsolutions.db.up2date.registry.AlterRegistryBankBalance;
+import net.aonsolutions.db.up2date.security.RemovePayrollPortal;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023Insert;
 
 public class Up2Date {
 
@@ -372,6 +369,7 @@ public class Up2Date {
 	    // PermissionUnPaidDaysFix.PERMISSIONNOTPAIDDAYSFIX,
 	    // NoteInsert.NOTEINSERT,
 	    // SuspendJobAndSalaryDaysInsert.SUSPENDJOBANDSALARYDAYSINSERT,
+		RealDecreeLaw012023Insert.REALDECREELAW012023INSERT,
 
 		
 	    // ----------------------------------------------------------------
@@ -388,13 +386,15 @@ public class Up2Date {
 	    // UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
 	    // UdpateAonSmb.UPDATE_AON_SMB,
 	    // UdpateAonProfessional.UPDATE_AON_PROFESSIONAL,
-	    InsertIAE575576.INSERT_IAE_755756,
+	    // InsertIAE575576.INSERT_IAE_755756,
 	    // ProductPerishableUpdate.PRODUCT_PEISHABLE_UPDATE,
-	    DeliveryPackagingCreation.DELIVERY_PACKAGING_CREATION,
-	    SalesInfoCreation.SALES_INFO_CREATION,
-	    InsertIAE1516.INSERT_IAE_1516,
-	    UdpateAonPacks.UPDATE_AON_PACKS,
-	    InsertIAE474.INSERT_IAE_474
+	    // DeliveryPackagingCreation.DELIVERY_PACKAGING_CREATION,
+	    // SalesInfoCreation.SALES_INFO_CREATION,
+	    // InsertIAE1516.INSERT_IAE_1516,
+	    // UdpateAonPacks.UPDATE_AON_PACKS,
+	    // InsertIAE474.INSERT_IAE_474,
+	    AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
+	    RemovePayrollPortal.REMOVE_PAYROLL_PORTAL
 	};
 
     // ------------------------------------------------------------------------

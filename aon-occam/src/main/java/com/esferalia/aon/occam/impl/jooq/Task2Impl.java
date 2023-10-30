@@ -89,7 +89,12 @@ public class Task2Impl implements ITask2 {
 	@Override
 	public TaskCounts getTaskGeneralCount(AONContext ctx, Optional<TaskFilter> status, Optional<TaskFilter> workgroup, Optional<TaskFilter> tags) {
 		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.getTaskGeneralCount(ctx, status, workgroup, tags));
-	}	
+	}
+	
+	@Override
+	public Integer getTaskCountFilter(AONContext ctx, TaskFilter taskFilter) {
+		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.getTaskCountFilter(ctx, taskFilter));
+	}
 	
 	@Override
 	public void deleteTask(AONContext ctx, Integer id) {

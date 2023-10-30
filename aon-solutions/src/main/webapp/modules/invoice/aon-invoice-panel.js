@@ -213,7 +213,13 @@ export class AonInvoicePanel extends AonElement {
 			OPTION.RAWDOC_REJECT, 
 			OPTION.RAWDOC_DRAFT
 		];
-		this.getApplication().addSidenavOptions(MSG.PENDING_DOCUMENTS, pendingOptions);
+		let data = {
+			id: MSG.PENDING_DOCUMENTS,
+			title: MSG.PENDING_DOCUMENTS,
+			name: MSG.PENDING_DOCUMENTS,
+			app: Apps.INVOICE
+		}
+		this.getApplication().addSidenavOptions2(data, pendingOptions);
 	}
 
 	buildInvoiceOptions() {
@@ -222,14 +228,26 @@ export class AonInvoicePanel extends AonElement {
 			OPTION.INVOICE_RECEIVED, 
 			OPTION.INVOICE_TICKET
 		];
+		let data = {
+			id: MSG.INVOICES,
+			title: MSG.INVOICES,
+			name: MSG.INVOICES,
+			app: Apps.INVOICE
+		}
 		
-		this.getApplication().addSidenavOptions(MSG.INVOICES, invoiceOptions);
+		this.getApplication().addSidenavOptions2(data, invoiceOptions);
 	}
 
 	buildOfferOptions() {
 		if(this.getDur().isAlpha() && (this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager())){
 			let budgetOptions = [ OPTION.OFFER ];
-			this.getApplication().addSidenavOptions(MSG.BUDGETS, budgetOptions);
+			let data = {
+				id: MSG.BUDGETS,
+				title: MSG.BUDGETS,
+				name:  MSG.BUDGETS,
+				app: Apps.INVOICE
+			}
+			this.getApplication().addSidenavOptions2(data, budgetOptions);
 		}
 	}
 
@@ -239,8 +257,13 @@ export class AonInvoicePanel extends AonElement {
 			settingOptions = [ OPTION.REGISTRY, OPTION.CONCEPTS, OPTION.CHARGES_PAYMENTS, OPTION.VAT_PANEL, OPTION.RETENTION_PANEL ];
 		} else settingOptions = [ OPTION.REGISTRY, OPTION.PRODUCT ];
 
-
-		this.getApplication().addSidenavOptions(MSG.MANAGEMENT, settingOptions);
+		let data = {
+			id: MSG.MANAGEMENT,
+			title: MSG.MANAGEMENT,
+			name:  MSG.MANAGEMENT,
+			app: Apps.INVOICE
+		}
+		this.getApplication().addSidenavOptions2(data, settingOptions);
 	}
 
 	add(){

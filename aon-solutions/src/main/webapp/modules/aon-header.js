@@ -10,7 +10,7 @@ import './company/aon-desktop.js';
 import './company/aon-mobile-desktop.js';
 import './company/aon-parent.js';
 import './notification/aon-notification-icon.js';
-import { CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { AonApiDoc } from './dev/aon-api-doc.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonComponentsDoc } from './dev/aon-components-doc.js';
@@ -76,7 +76,7 @@ export class AonHeader extends AonElement {
 	build() {
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aonHeaderWeb';
-		div.className = CSS.AON_HEADER_BETA;
+		div.className = LS.isNewTheme() ? CSS.AON_HEADER : CSS.AON_HEADER_BETA;
 		this.appendChild(div);
 
 		let helpOption = new AonDialogMenu();
@@ -87,43 +87,93 @@ export class AonHeader extends AonElement {
 		userOption.id = 'aonHeaderDialogUserOption';
 		this.appendChild(userOption);
 
-		div.innerHTML = /*html*/`
-				<span class="aonHeaderLogoSpan">
-					<img id="aonLogo" class="aonLogo"  />
-				</span>
+		if(LS.isNewTheme()){ // Change logo size
+			div.innerHTML = /*html*/`
+				<img id="aonLogo" class="aonNewLogo"/>
 
-				<span id="aonHeaderSearch" class="aonLeft250 aonHeaderButton" >
+				<span id="aonHeaderSearch" style="display: flex; align-items: center; width: 100%; min-width: 150px; max-width: 500px;" >
 					<aon-search-box id="aonHeaderSearchBox"></aon-search-box>
 				</span>
 
-				<span id="aonHeaderUser" class="aonRight20 aonHeaderButton">
-					<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
-				</span>
+				<div class="aonHeaderButtons">
 
-				<span id="aonHeaderNotiication" class="aonRight60 aonHeaderButton">
-					<aon-notification-icon></aon-notification-icon>
-				</span>
+					<span id="aonHeaderCompany" style="display:none;">
+						<span id="aonHeaderCompanyName"> </span>
+					</span>	
 
-				<span id="aonHeaderHelp" class="aonRight100 aonHeaderButton">
-					<aon-icon-button id="aonHeaderHelpButton" icon="help_outline"></aon-icon-button>
-				</span>
+					<span id="aonHeaderHome" style="display:none;">
+						<aon-icon-button id="aonHeaderHomeButton" icon="home" outlined="true"></aon-icon-button>
+					</span>
+ 
+					<span id="aonHeaderCompanyList" style="display:none;">
+						<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
+					</span>
 
-				<span id="aonHeaderCompanyList" class="aonRight140 aonHeaderButton" style="display:none;">
-					<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
-				</span>
+					<span id="aonHeaderHelp">
+						<aon-icon-button id="aonHeaderHelpButton" icon="help_outline"></aon-icon-button>
+					</span>
 
-				<span id="aonHeaderHome" class="aonRight180 aonHeaderButton" style="display:none;">
-					<aon-icon-button id="aonHeaderHomeButton" icon="home" outlined="true"></aon-icon-button>
-				</span>
+					<span id="aonHeaderNotiication" >
+						<aon-notification-icon></aon-notification-icon>
+					</span>
 
-				<span id="aonHeaderCompany" class="aonHeaderButton" style="display:none;top:25px;right: 220px;">
-					<span id="aonHeaderCompanyName"> </span>
-				</span>			
+					<span id="aonHeaderUser" >
+						<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
+					</span>
+				
+				</div>
 			`;
+		} else {
+			div.innerHTML = /*html*/`
+				<img id="aonLogo" class="aonLogo"  />
+
+				<span id="aonHeaderSearch" style="display: flex; align-items: center; width: 100%; min-width: 150px; max-width: 500px;" >
+					<aon-search-box id="aonHeaderSearchBox"></aon-search-box>
+				</span>
+
+				<div id="aonHeaderButtons" style="display: flex; align-items: center;">
+
+					<span id="aonHeaderCompany" style="display:none;">
+						<span id="aonHeaderCompanyName"> </span>
+					</span>	
+
+					<span id="aonHeaderHome" style="display:none;">
+						<aon-icon-button id="aonHeaderHomeButton" icon="home" outlined="true"></aon-icon-button>
+					</span>
+ 
+					<span id="aonHeaderCompanyList" style="display:none;">
+						<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
+					</span>
+
+					<span id="aonHeaderHelp">
+						<aon-icon-button id="aonHeaderHelpButton" icon="help_outline"></aon-icon-button>
+					</span>
+
+					<span id="aonHeaderNotiication" >
+						<aon-notification-icon></aon-notification-icon>
+					</span>
+
+					<span id="aonHeaderUser" >
+						<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
+					</span>
+				
+				</div>
+			`;
+		}
 
 		this.buildLogo();
 
 		if(!this.isMobile()) {
+			if(!LS.isNewTheme()) {
+				let aonHeaderButtons = this.getElement('aonHeaderButtons');
+				aonHeaderButtons.style.position = 'absolute';
+				aonHeaderButtons.style.right = '20px';
+ 		 		aonHeaderButtons.style.top = '10px';
+
+				let aonHeaderSearch2 = this.getElement('aonHeaderSearch');
+				aonHeaderSearch2.style.marginLeft = '33px';
+			}
+
 			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
 				this.rootPanelHtml(this.isMobile()
@@ -153,6 +203,7 @@ export class AonHeader extends AonElement {
 					// };
 					
 					let language = {
+						id: CONSTANT.LANGUAGE,
 						name: MSG.LANGUAGE,
 						icon: 'language',
 						options: [{
@@ -240,17 +291,17 @@ export class AonHeader extends AonElement {
 		aonHeaderCompanyListButton.addEventListener('click', () => {
 			if(!this.isMobile()) {
 				let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
-				aonHeaderSearch.style.display = 'block';
+				aonHeaderSearch.style.display = 'flex';
 
 				let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
 				aonHeaderHome.style.display = 'none';
 
 				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 				aonHeaderCompany.style.display = 'none';
-
-				let aonShowMenu = this.getElement('aonShowMenu');
-				aonShowMenu.style.display = 'none';
-
+				if(!LS.isNewTheme()){
+					let aonShowMenu = this.getElement('aonShowMenu');
+					aonShowMenu.style.display = 'none';
+				}
 				let aonMenu = this.getElement('aonMenu');
 				aonMenu.removeAttribute('company');
 				aonMenu.removeAttribute('user');
@@ -267,7 +318,6 @@ export class AonHeader extends AonElement {
 
 			clearDurum();
 			this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
-			this.defaultLogo();
 		});
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
@@ -395,15 +445,6 @@ export class AonHeader extends AonElement {
 		})
 	}
 
-	defaultLogo() {
-		let aonLogo = this.getElement('aonLogo');
-		if(window.location.href.includes('ayudat')){
-			aonLogo.src = '../assets/ayudat-logo2.png';
-		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
-			aonLogo.src = '../assets/ayudat-logo3.png';
-		} else aonLogo.src = '../assets/aon-logo2.png';
-	}
-
 	aonConfiguration() {
 		this.rootPanelHtml('<aon-configuration id="aon-configuration"></aon-configuration>');
 		let aonConfiguration = this.getElement('aon-configuration');
@@ -423,7 +464,9 @@ export class AonHeader extends AonElement {
 		aonHeaderHelp.style.display = company ? 'block' : 'none';
 
 		let aonHeaderSearch = this.getElement(this.AON_HEADER_SEARCH);
-		aonHeaderSearch.style.display = company ? 'none' : 'block';
+		aonHeaderSearch.style.display = company ? 'none' : 'flex';
+		if(!LS.isNewTheme())
+			aonHeaderSearch.style.marginLeft = '33px';
 
 		let aonHeaderHome = this.getElement(this.AON_HEADER_HOME);
 		aonHeaderHome.style.display = company ? 'block' : 'none';
@@ -435,8 +478,8 @@ export class AonHeader extends AonElement {
 		aonHeaderCompanyName.innerHTML = company ? company.name : '';
 
 		if(onlyOne) {
-			aonHeaderHome.style.right = '140px';
-			aonHeaderCompany.style.right = '180px';
+			// aonHeaderHome.style.right = '140px';
+			// aonHeaderCompany.style.right = '180px';
 			aonHeaderCompanyList.style.display = 'none';
 		}
 	}
@@ -460,7 +503,7 @@ export class AonHeader extends AonElement {
 		let aboutContent = this.createElement(TAG.DIV);
 
 		let img = this.createElement(TAG.IMG);
-		img.src = '../assets/aon-logo2.png';
+		img.src = '../assets/aon-logo.svg';
 		img.style.maxWidth = '360px';
 		img.style.maxHeight = '60px';
 		aboutContent.appendChild(img);

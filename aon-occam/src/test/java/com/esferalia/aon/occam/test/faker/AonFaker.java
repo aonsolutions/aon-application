@@ -465,6 +465,18 @@ public class AonFaker {
 			.setName(AonRandom.string(-1, 1, 14));
 	}
 	
+	public static AmortizationType getAmortizationType(AONContext ctx) {
+		return new AmortizationType()
+				.setDomain(new Domain() 
+				.setId(ctx.getDomainId())
+				.setName(AonRandom.string(-1, 1, 14))) //creo q no hace falta, comprobar luego
+				.setFixedAssetAccount(	AonRandom.string(-1, 1, 4))
+				.setAccumulatedAccount(AonRandom.string(-1, 1, 4))
+				.setAllocationAccount(AonRandom.string(-1, 1, 4))
+				.setPercentage(AonRandom.getDouble(0, 15))
+				.setDescription(faker.beer().name());
+	}
+	
 	
 	public static Workgroup getWorkgroup( AONContext ctx ) {
 		return new Workgroup()

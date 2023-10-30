@@ -31,6 +31,7 @@ export const AON_SALES = 'aonSales';
 export const AON_SALES_LIST = 'aonSalesList';
 export const AON_MOBILE_SALES_LIST = 'aonMobileSalesList';
 export const AON_SERVICE_ACCOUNT_LIST = 'aonServiceAccountList';
+export const APP = 'app';
 export const ARRAY = 'array';
 export const AUTOCOMPLETE = 'autocomplete';
 export const AUTOSAVE = 'autosave';
@@ -48,6 +49,7 @@ export const BIC = 'bic';
 export const BLANK = 'blank';
 export const BOOKING_PANEL = 'bookingPanel'
 export const BOOLEAN = 'boolean';
+export const BOX = 'box';
 export const BUTTON = 'button';
 
 // ----- C
@@ -89,6 +91,7 @@ export const DELETE = 'delete';
 export const DELETE_INVOICE = 'deleteInvoice';
 export const DELETE_FILE = 'deleteFile';
 export const DELETE_FOREVER = 'deleteForever';
+export const DELIVERY = 'delivery';
 export const DESCRIPTION = 'description';
 export const DETAILS = 'details';
 export const DISCOUNT = 'discount';
@@ -142,6 +145,7 @@ export const HTML_ELEMENT = 'htmlElement';
 
 export const IBAN = 'iban';
 export const ICON = 'icon';
+export const ICON_BUTTON = 'iconButton';
 export const ID = 'id';
 export const INBOX = 'inbox';
 export const INPUT = 'input';
@@ -160,6 +164,8 @@ export const ITEM = 'item';
 
 // ----- L
 
+export const LABEL = 'label';
+export const LANGUAGE = 'language';
 export const LAST_ACCESS = 'lastAccess';
 export const LINK_DOMAINS = 'linkDomains';
 export const LIST = 'list';
@@ -168,14 +174,15 @@ export const LOGO = 'logo';
 // ----- M
 
 export const MARKETING = 'marketing';
-export const MAX = 'max';
-export const MESSENGER = 'messenger';
-export const MIN = 'min';
-export const MOVABLE_CAPITAL = 'movableCapital';
 export const MATERIAL = "material";
 export const MATERIAL_ICONS = 'material-icons';
 export const MATERIAL_OUTLINED = 'material_outlined';
 export const MATERIAL_ICONS_OUTLINED = 'material-icons-outlined';
+export const MAX = 'max';
+export const MESSENGER = 'messenger';
+export const MIN = 'min';
+export const MOVABLE_CAPITAL = 'movableCapital';
+export const MSG = 'msg';
 
 // ----- N
 
@@ -196,6 +203,7 @@ export const OPTIONS = 'options';
 // ----- P
 
 export const PACKAGING = 'packaging';
+export const PASSWORD = 'password';
 export const PATTERN = 'pattern';
 export const PAYMETHOD = 'paymethod';
 export const PAYROLL = 'payroll';
@@ -249,6 +257,7 @@ export const RETENTION_PERCENT = 'retentionPercent';
 export const REQUIRED = 'required';
 export const RESTORE = 'restore';
 export const RESTORE_INVOICE = 'restoreInvoice';
+export const ROOT = 'root';
 export const ROOT_PANEL = 'rootPanel';
 export const ROW = 'row';
 

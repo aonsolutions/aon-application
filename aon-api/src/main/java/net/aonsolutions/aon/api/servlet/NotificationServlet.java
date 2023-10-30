@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.LinkedList;
+
 import java.util.logging.Logger;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -24,7 +25,6 @@ import com.esferalia.aon.occam.api.model.aonsolutions.NotificationStatus;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -47,6 +47,10 @@ public class NotificationServlet extends AonApiHttpServlet{
 			case "/":
 				LOGGER.info("AON API GET NOTIFICATION SERVLET");
 				response(req, resp, getNotification(api));
+				break;
+			case "/one":
+				LOGGER.info("AON API GET ONE NOTIFICATION SERVLET");
+				response(req, resp, getOneNotification(api));
 				break;
 			case "/domain":
 				LOGGER.info("AON API GET NOTIFICATION DOMAIN SERVLET");
@@ -129,6 +133,14 @@ public class NotificationServlet extends AonApiHttpServlet{
 	    	notification.send();
 		}
 		return new JSONObject();
+	}
+	
+	private JSONObject getOneNotification(AonApiData api) {
+		JSONObject params = api.getData();
+		JSONArray array = new JSONArray();
+		AON_SOLUTIONS.getNotificationStream(api.getDomain().getId(), api.getDomain().getName(), api.getUser().getLogin(),
+				f -> getFilterByUser(api, f).and(f.getReceiverIdProperty().eq(params.optInt(IJsonNames.ID)))).forEach(nt -> array.put(nt.toJSON()));
+		return array.getJSONObject(0);
 	}
 
 	private JSONArray getNotification(AonApiData api) {

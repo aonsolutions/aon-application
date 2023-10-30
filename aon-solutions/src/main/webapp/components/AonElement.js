@@ -3,6 +3,7 @@ import { CONSTANT, EVENT, MSG, TAG } from "../environments/environments.js";
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { getDomainUserRoles } from '../services/companyService.js';
 import * as COLORS from '../environments/colors.js';
+import * as LS from '../services/localStorageService.js';
 
 export class AonElement extends HTMLElement{
 
@@ -59,6 +60,14 @@ export class AonElement extends HTMLElement{
     if(id) el.id = id;
     if(className) el.className = className;
     return el;
+  }
+
+  createSpan(id, className) {
+    return this.createElement(TAG.SPAN, id, className);
+  }
+
+  createDiv(id, className) {
+    return this.createElement(TAG.DIV, id, className);
   }
 
   createAonElement(el, id, title, main){
@@ -176,7 +185,8 @@ export class AonElement extends HTMLElement{
 
   isSig(){
     const href = window.location.href;
-		return href.includes('sig.aonsolutions.org');
+		return href.includes('sig.aonsolutions.org')
+      || LS.getDomainName() === 'sig.aonsolutions.org';
 	}
 
   showMessage(msg) {

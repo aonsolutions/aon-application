@@ -1186,8 +1186,8 @@ public class InvoiceTemplate {
 			if (line++ == 0) {
 				x += 250;
 				
-				String amount = detail.getQuantity() != 0 ? toLatinNumber(detail.getQuantity()) : "";
-				String price = detail.getPrice() != 0 ? toLatinNumber(detail.getPrice()) : "";
+				String amount = detail.getQuantity() != 0 ? toLatinNumber(detail.getQuantity(), 3) : "";
+				String price = detail.getPrice() != 0 ? toLatinNumber(detail.getPrice(), 4) : "";
 				String discount = "";
 				
 				try {

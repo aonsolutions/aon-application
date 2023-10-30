@@ -1,0 +1,293 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+>
+	<aon:div id="fiscalMenuBar" style="display:none" styleClass="aon-fiscal-menu-bar" >
+
+		<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:collapseMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="Matriz de empresas y modelos fiscales" />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="gwt_modelMatrix" 
+						rendered="#{actionDenied.renderedOption('gwt_modelMatrix')}"
+						action="gwt_modelMatrix"
+						>
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value=" Matriz de empresas y modelos fiscales" />
+					</aon:commandLink>
+				</aon:div>
+			</aon:div>
+		</aon:if>
+			
+		<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:collapseMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="Panel de control ..." />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list">
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_vatReport-fiscalPortlet"
+						action="gwt_vatReport-fiscalPortlet" 
+						title="Panel de control de IVA">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="... de IVA" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_irpfReport-fiscalPortlet"
+						action="gwt_irpfReport-fiscalPortlet" 
+						title="Panel de control de IRPF">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="... de IRPF" />
+					</aon:commandLink>
+				</aon:div>
+			</aon:div>
+
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:collapseMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="I.V.A." />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list">
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_mod303-new" 
+						rendered="#{actionDenied.renderedOption('gwt_mod303-new')}"
+						action="gwt_mod303-new"
+						title="#{bundle.fiscal_model_303_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('303')} - IVA. Autoliquidaci&#243;n." />
+					</aon:commandLink>
+				</aon:div>
+				
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_mod347-new" 
+						rendered="#{actionDenied.renderedOption('gwt_mod347-new')}"
+						action="gwt_mod347-new"
+						title="#{bundle.fiscal_model_347_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('347')} - #{bundle.fiscal_model_347_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_mod349-new" 
+						rendered="#{actionDenied.renderedOption('gwt_mod349-new')}"
+						action="gwt_mod349-new"
+						title="#{bundle.fiscal_model_349_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('349')} - #{bundle.fiscal_model_349_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left"
+					rendered="#{fiscalParams.aeat}">
+					<aon:commandLink id="gwt_mod390-new" 
+						rendered="#{actionDenied.renderedOption('gwt_mod390-new')}"
+						action="gwt_mod390-new"
+						title="#{bundle.fiscal_model_390_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('390')} - #{bundle.fiscal_model_390_module}" />
+					</aon:commandLink>
+				</aon:div>
+
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left" 
+					rendered="#{fiscalParams.bizkaia || fiscalParams.araba || fiscalParams.gipuzkoa}">
+					<aon:commandLink id="gwt_mod390HF-new"
+						rendered="#{actionDenied.renderedOption('gwt_mod390HF-new')}"
+						action="gwt_mod390HF-new"
+						title="Haciendas Forales. #{bundle.fiscal_model_390_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('390')} - Haciendas Forales. #{bundle.fiscal_model_390_module}" />
+					</aon:commandLink>
+				</aon:div>
+
+			</aon:div>
+			
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:collapseMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="I.R.P.F." />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list">
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_mod111" 
+						rendered="#{actionDenied.renderedOption('gwt_mod111')}"
+						action="gwt_mod111"
+						title="#{bundle.fiscal_model_111_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('111')} - #{bundle.fiscal_model_111_module}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_mod115" 
+						rendered="#{actionDenied.renderedOption('gwt_mod115')}"
+						action="gwt_mod115"
+						title="#{bundle.fiscal_model_115_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('115')} - #{bundle.fiscal_model_115_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_mod123" 
+						rendered="#{actionDenied.renderedOption('gwt_mod123')}"
+						action="gwt_mod123"
+						title="#{bundle.fiscal_model_123_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('123')} - #{bundle.fiscal_model_123_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left"
+					rendered="#{fiscalParams.aeat or fiscalParams.bizkaia}">
+					<aon:commandLink id="gwt_mod130" 
+						rendered="#{actionDenied.renderedOption('gwt_mod130')}"
+						action="gwt_mod130"
+						title="#{bundle.fiscal_model_130_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('130')} - #{bundle.fiscal_model_130_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left"
+ 					rendered="#{fiscalParams.aeat}">
+					<aon:commandLink id="gwt_mod131" 
+						rendered="#{actionDenied.renderedOption('gwt_mod131')}"
+						action="gwt_mod131"
+						title="#{bundle.fiscal_model_131_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('131')} - #{bundle.fiscal_model_131_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_mod180-new" 
+						rendered="#{actionDenied.renderedOption('gwt_mod180-new')}"
+						action="gwt_mod180-new"
+						title="#{bundle.fiscal_model_180_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('180')} - #{bundle.fiscal_model_180_module}" />
+					</aon:commandLink>
+				</aon:div>
+
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_mod184-new" 
+						rendered="#{actionDenied.renderedOption('gwt_mod184-new')}"
+						action="gwt_mod184-new"
+						title="#{bundle.fiscal_model_184_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('184')} - #{bundle.fiscal_model_184_module}" />
+					</aon:commandLink>
+				</aon:div>
+
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_mod190-new" 
+						rendered="#{actionDenied.renderedOption('gwt_mod190-new')}"
+						action="gwt_mod190-new"
+						title="#{bundle.fiscal_model_190_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('190')} - #{bundle.fiscal_model_190_module}" />
+					</aon:commandLink>
+				</aon:div>
+
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_mod193-new" 
+						rendered="#{actionDenied.renderedOption('gwt_mod193-new')}"
+						action="gwt_mod193-new"
+						title="#{bundle.fiscal_model_193_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('193')} - #{bundle.fiscal_model_193_module}" />
+					</aon:commandLink>
+				</aon:div>
+				
+			</aon:div>
+			
+			<aon:if test="#{fiscalParams.aeat}">
+				<aon:div 
+				style="cursor:pointer;" 
+				styleClass="aon-portlet-title" 
+				onclick="javascript:collapseMenuBar(this)">
+					<aon:outputText styleClass="aon-portlet-title-line"/>
+					<aon:outputText value="Impuesto Sociedades" />
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+						<aon:commandLink id="gwt_mod202-new" 
+							rendered="#{actionDenied.renderedOption('gwt_mod202-new')}"
+							action="gwt_mod202-new"
+							title="#{bundle.fiscal_model_202_module}">
+							<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('202')} - Impuesto Sociedades. Pago fraccionado." />
+						</aon:commandLink>
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+						<aon:commandLink id="gwt_mod200-new" 
+							rendered="#{actionDenied.renderedOption('gwt_mod200')}"
+							action="gwt_mod200"
+							title="#{bundle.fiscal_model_200_module}">
+							<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+							<aon:outputText styleClass="aon-left-menu-bar-text" value="#{fiscalParams.getDefaultAdministrationModelName('200')} - #{bundle.fiscal_model_200_module}" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:div>
+			</aon:if>
+			
+			<aon:div 
+			style="cursor:pointer;" 
+			styleClass="aon-portlet-title" 
+			onclick="javascript:collapseMenuBar(this)">
+				<aon:outputText styleClass="aon-portlet-title-line"/>
+				<aon:outputText value="Información continua" />
+			</aon:div>
+			<aon:div styleClass="aon-direct-access-list">
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left"
+					rendered="#{fiscalParams.bizkaia and fiscalParams.personaFisica}">
+					<aon:commandLink id="gwt_mod140-new" 
+						rendered="#{actionDenied.renderedOption('gwt_mod140-new')}"
+						action="gwt_mod140-new"
+						title="#{bundle.fiscal_model_140_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="140 - #{bundle.fiscal_model_140_module}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left"
+					rendered="#{fiscalParams.bizkaia and !fiscalParams.personaFisica}">
+					<aon:commandLink id="gwt_mod240-new" 
+						rendered="#{actionDenied.renderedOption('gwt_mod240-new')}"
+						action="gwt_mod240-new"
+						title="#{bundle.fiscal_model_240_module}">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="240 - #{bundle.fiscal_model_240_module}" />
+					</aon:commandLink>
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+					<aon:commandLink id="gwt_sii-fiscal" 
+						rendered="#{actionDenied.renderedOption('gwt_sii-fiscal')}"
+						action="gwt_sii-fiscal"
+						title="SII - Suministro Inmediato de Información">
+						<aon:outputText styleClass="material-icons aon-left-menu-bar-icon" value="list" />
+						<aon:outputText styleClass="aon-left-menu-bar-text" value="SII - Suministro Inmediato de Información" />
+					</aon:commandLink>
+				</aon:div>
+			</aon:div>
+		</aon:if>
+	</aon:div>
+</ui:composition>
