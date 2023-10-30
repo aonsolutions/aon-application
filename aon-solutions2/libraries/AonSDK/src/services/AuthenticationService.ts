@@ -36,7 +36,7 @@ export class AuthenticationManager implements IAuthenticationManager {
             await this.authenticationRepository.tokenLogin(token)
             return new Response<boolean>(true);
         } catch (error) {
-            throw error instanceof ErrorResponse ?  error : new ErrorResponse('0101');
+            throw error instanceof ErrorResponse ?  error : new ErrorResponse('114');
         }
     }
 
@@ -62,6 +62,10 @@ export class AuthenticationManager implements IAuthenticationManager {
     }
 
     getEnterpriseSelected(): IResponse<string> {
+      try {
         return new Response<string>(localStorage.getItem('enterprise'));
+      } catch (error) {
+        throw error instanceof ErrorResponse ?  error : new ErrorResponse('0112');
+      }
     }
 }

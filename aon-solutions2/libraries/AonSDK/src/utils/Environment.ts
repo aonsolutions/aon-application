@@ -48,6 +48,7 @@ export const ERRORS = {
     '0111': {description:'SESSION_EXPIRED', result:'No existe sesión'},
     '0112': {description:'ERROR_SESSION', result:'No se ha seleccionado empresa'},
     '0113': {description:'ERROR_SESSION', result:'Error al seleccionar la empresa'},
+    '0114': {description:'ERROR_SESSION', result:'Error al establecer token'},
     '0123': {description:'ERROR_MODEL', result:'Error al intentar acceder al modelo'},
     '0124': {description:'ERROR_DENIED', result:'No tiene permiso para acceder al recurso'},
     '0199': {description:'ERROR_NOT_IMPLEMENTED', result:'Paciencia amigo, paciencia'},
