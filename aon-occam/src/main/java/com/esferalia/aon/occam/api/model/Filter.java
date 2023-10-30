@@ -488,6 +488,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface ContractExtendedDataFilter{
+		Filter filter(ContractExtendedDataProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface ContractDocFilter{
 		Filter filter(ContractDocProperties properties);
 	}

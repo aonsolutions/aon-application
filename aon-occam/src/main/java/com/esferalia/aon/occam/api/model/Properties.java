@@ -1290,6 +1290,10 @@ public interface Properties {
 		Property<Byte> getSSStatusProperty();
 	}
 	
+	public interface ContractExtendedDataProperties extends ContractProperties{
+		Property<String> getPersonFullNameProperty();
+	}
+	
 	public interface ContractDocProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
