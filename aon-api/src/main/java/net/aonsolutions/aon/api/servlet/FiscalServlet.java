@@ -180,7 +180,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.forEach(model-> {
 				try {
 					jsonModels.put(FiscalModelJSON.toJSON(model)
-//							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY && model.getModel() == FiscalModelType.M303 ? presModelAutoEnabled : 0) // Presentación automática del modelo 
 							.put("presModelAuto", model.getAdministration() == Administration.COMMON_TERRITORY ? presModelAutoEnabled : 0) // Presentación automática del modelo (solo modelos de la Agencia Tributaria)							
 							.put("testEnvironment", testEnvironment)  // Entorno de pruebas de la AEAT
 							.put("nrc", model.getNrc())
@@ -195,210 +194,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 			return jsonModels; 
 		} 
 	}
-	
-//	private JSONObject markAsFinished(AonApiData api) {
-//		try ( final CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
-//			JSONObject params = api.getData();			
-//			FiscalModelDeclarationType declarationType = FiscalModelDeclarationType.valueOf(JsonUtils.getString(params, IJsonNames.TYPE));
-//			if (declarationType!=null) {
-//				Integer id = JsonUtils.getInteger(params, IJsonNames.ID);
-//				String iban = JsonUtils.getString(params, IJsonNames.IBAN);
-//				String bankAlias = JsonUtils.getString(params, IJsonNames.BANK_ALIAS);
-//				String bankBIC = JsonUtils.getString(params, IJsonNames.BIC);
-//				String reasonReject = params.optString("reasonReject");
-//				boolean reject = !reasonReject.isEmpty();
-//				String nrc = JsonUtils.optString(params, "nrc");  
-//				Integer certi = JsonUtils.getInteger(params, "certi");  				
-//				int presModelAuto = reject ? 0 : JsonUtils.getInt(params, "presModelAuto");  // Presentación automática del modelo				
-//				boolean test = JsonUtils.getboolean(params, "testEnvironment");  // Entorno de pruebas
-//				
-//				FiscalModelType modelType = FiscalModelType.safeValueOf(JsonUtils.getString(params , IJsonNames.MODEL));
-//				
-//				// Comprobar si hay presentacion automática del modelo y no se ha seleccionado certificado
-//				if (presModelAuto == 1 && certi == null) {
-//					throw new AonApiException("ERROR: Debe seleccionar certificado.");
-//				}
-//				
-//				// Comprobar si hay presentación automática, es ingreso y no se ha indicado NRC
-//				if (presModelAuto == 1 && declarationType == FiscalModelDeclarationType.DEPOSIT && AonStringUtils.isBlank(nrc)) {
-//					throw new AonApiException("ERROR: Debe indicar NRC.");
-//				}
-//				
-//				// Comprobar si hay presentación autómatica, es domiciliación o devolución y no se ha indicado IBAN
-//				if (presModelAuto == 1 && (declarationType == FiscalModelDeclarationType.BANK || declarationType == FiscalModelDeclarationType.PAYBACK) && AonStringUtils.isBlank(iban)) {
-//					throw new AonApiException("ERROR: Debe indicar IBAN.");
-//				}
-//				
-//				// Parámetros para la posible presentación automática del modelo 
-//				AEATParams aeatParams = new AEATParams()
-//						.setDomainName(api.getDomain().getName())
-//						.setDomainId(api.getDomain().getId())
-//						.setUser(api.getUser().getLogin())
-//						.setMod(id)
-//						.setCertificateId(certi)
-//						.setName("")      // -------------------------------------------------------------------------
-//						.setDocument("")  // Estos tres datos los dejamos en blanco, para que se cojan del certificado										
-//						.setPass("")      // -------------------------------------------------------------------------
-//						.setNrc(nrc)
-//						.setTest(test);  				
-//				
-//				modelType.visit(new IFiscalModelTypeVisitor() {
-//					@Override
-//					public void visitM111() {
-//						Mod111 model = Mod111DAO.get(ctx, id);	
-//						model.setDeclarationResultType(declarationType);
-//						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-//							BankAccount ba = new BankAccount( iban );
-//							model.getFinance().setBankAccount(ba);
-//							model.getFinance().setBankAlias(bankAlias);
-//							model.getFinance().setBic(bankBIC);
-//						}
-//						if(reject) {
-//							Mod111DAO.markAsCustomerRejected(ctx, model, reasonReject);
-//						} else {
-//							// Finalizar el modelo
-//							model.setNrc(nrc);
-//							Mod111DAO.markAsFinished(ctx, model);
-//							// Presentación automática del modelo 
-//							if (presModelAuto == 1) {
-//								send(aeatParams, model);
-//							}
-//						}					
-//					}
-//					
-//					@Override
-//					public void visitM115() {
-//						Mod115 model = Mod115DAO.get(ctx, id);	
-//						model.setDeclarationResultType(declarationType);
-//						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-//							BankAccount ba = new BankAccount( iban );
-//							model.getFinance().setBankAccount(ba);
-//							model.getFinance().setBankAlias(bankAlias);
-//							model.getFinance().setBic(bankBIC);
-//						}
-//						if(reject) {
-//							Mod115DAO.markAsCustomerRejected(ctx, model, reasonReject);
-//						} else {
-//							// Finalizar el modelo
-//							model.setNrc(nrc);
-//							Mod115DAO.markAsFinished(ctx, model); 
-//						}
-//					}
-//
-//					@Override
-//					public void visitM123() {
-//						Mod123 model = Mod123DAO.get(ctx, id);	
-//						model.setDeclarationResultType(declarationType);
-//						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-//							BankAccount ba = new BankAccount( iban );
-//							model.getFinance().setBankAccount(ba);
-//							model.getFinance().setBankAlias(bankAlias);
-//							model.getFinance().setBic(bankBIC);
-//						}
-//						if(reject) {
-//							Mod123DAO.markAsCustomerRejected(ctx, model, reasonReject);
-//						} else {
-//							// Finalizar el modelo
-//							model.setNrc(nrc);
-//							Mod123DAO.markAsFinished(ctx, model); 
-//						}
-//					}
-//					
-//					@Override
-//					public void visitM130() {
-//						Mod130 model = Mod130DAO.get(ctx, id);	
-//						model.setDeclarationResultType(declarationType);
-//						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-//							BankAccount ba = new BankAccount( iban );
-//							model.getFinance().setBankAccount(ba);
-//							model.getFinance().setBankAlias(bankAlias);
-//							model.getFinance().setBic(bankBIC);
-//						}
-//						if(reject) {
-//							Mod130DAO.markAsCustomerRejected(ctx, model, reasonReject);
-//						} else {
-//							// Finalizar el modelo
-//							model.setNrc(nrc);	
-//							Mod130DAO.markAsFinished(ctx, model);
-//						}
-//					}
-//
-//					@Override
-//					public void visitM131() {
-//						Mod131 model = Mod131DAO.getMod131(ctx, id);	
-//						model.setDeclarationResultType(declarationType);
-//						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-//							BankAccount ba = new BankAccount( iban );
-//							model.getFinance().setBankAccount(ba);
-//							model.getFinance().setBankAlias(bankAlias);
-//							model.getFinance().setBic(bankBIC);
-//						}
-//						if(reject) {
-//							Mod131DAO.markAsCustomerRejected(ctx, model, reasonReject);
-//						} else {
-//							// Finalizar el modelo
-//							model.setNrc(nrc);
-//							Mod131DAO.markAsFinished(ctx, model);
-//						}
-//					}
-//
-//					@Override
-//					public void visitM202() {
-//						Mod202 model = Mod202DAO.getMod202(ctx, id);	
-//						model.setDeclarationResultType(declarationType);
-//						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-//							BankAccount ba = new BankAccount( iban );
-//							model.getFinance().setBankAccount(ba);
-//							model.getFinance().setBankAlias(bankAlias);
-//							model.getFinance().setBic(bankBIC);
-//						}
-//						if(reject) {
-//							Mod202DAO.markAsCustomerRejected(ctx, model, reasonReject);
-//						} else {
-//							// Finalizar el modelo
-//							model.setNrc(nrc);
-//							Mod202DAO.markAsFinished(ctx, model);
-//						}
-//					}
-//
-//					@Override
-//					public void visitM303() {
-//						Mod303 model = Mod303DAO.get(ctx, id);
-//						model.setDeclarationResultType(declarationType);
-//						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {							
-//							BankAccount ba = new BankAccount( iban );
-//							model.getFinance().setBankAccount(ba);
-//							model.getFinance().setBankAlias(bankAlias);
-//							model.getFinance().setBic(bankBIC);
-//						}
-//						if(reject) {
-//							Mod303DAO.markAsCustomerRejected(ctx, model, reasonReject);
-//						} else {							
-//							// Finalizar el modelo
-//							model.setNrc(nrc);
-//							Mod303DAO.markAsFinished(ctx, model);
-//							// Presentación automática del modelo 
-//							if (presModelAuto == 1) {
-//								send(aeatParams, model);
-//							}							
-//						}
-//					}
-//					
-//					@Override public void visitM347() {}
-//					@Override public void visitM349() {}
-//					@Override public void visitM390() {}
-//					@Override public void visitM390HF() {}
-//					@Override public void visitM180() {}
-//					@Override public void visitM184() {}
-//					@Override public void visitM190() {}
-//					@Override public void visitM193() {}
-//					@Override public void visitM200() {}
-//				});
-//				return new JSONObject().put("status", "OK"); 
-//			} else 
-//				throw new AonApiException("Tipo requerido");
-//		}
-//	}
 	
 	private JSONObject markAsFinished(AonApiData api) {
 		try ( final CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
@@ -450,7 +245,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				FiscalModel model = getModel(ctx, modelType, id);	
 				model.setDeclarationResultType(declarationType);
 				if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-					BankAccount ba = new BankAccount( iban );
+					BankAccount ba = new BankAccount(iban);
 					model.getFinance().setBankAccount(ba);
 					model.getFinance().setBankAlias(bankAlias);
 					model.getFinance().setBic(bankBIC);
@@ -611,154 +406,17 @@ public class FiscalServlet extends AonApiHttpServlet{
 		
 	}
 	
-	
-//	private byte[] getModelFile(IFiscalModel fm) throws AonCoreException {
-//		ByteArrayOutputStream output = new ByteArrayOutputStream();
-//		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
-//		fm.getModel().visit(new IFiscalModelTypeVisitor() {
-//			
-//			@Override 
-//			public void visitM111() {
-//				try {
-//					//Mod111Writer.fillWriter( getMod111(fm) , writer);
-//					Mod111Writer.fillWriter( (Mod111) fm , writer);
-//				} catch (IOException e) {
-//					throw new AonCoreException(e);
-//				}
-//			}
-//			
-//			@Override public void visitM115() { 
-////				try {
-////					Mod115Writer.fillWriter( getMod115(fm), writer);
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//			@Override 
-//			public void visitM123() { 
-////				try {
-////					Mod123Writer.fillWriter( getMod123(fm) , writer);
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//			@Override 
-//			public void visitM130() { 
-////				try {
-////					Mod130Writer.fillWriter( getMod130(fm) , writer);
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//			@Override 
-//			public void visitM131() { 
-////				try {
-////					Mod131Writer.fillWriter( getMod131(fm) , writer);
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//			@Override 
-//			public void visitM202() { 
-////				try {
-////					Mod202Writer.fillWriter( getMod202(fm) , writer);
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//			@Override 
-//			public void visitM303() { 
-//				try {
-//					//Mod303Writer.fillWriter( getMod303(fm) , writer);
-//					Mod303Writer.fillWriter( (Mod303) fm , writer);
-//				} catch (IOException e) {
-//					throw new AonCoreException(e);
-//				}
-//			}
-//			@Override 
-//			public void visitM190() { 
-////				try {
-////					Mod190Writer.fillWriter( getMod190(fm) , writer);
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//			
-//			@Override 
-//			public void visitM390() { 
-////				try {
-////					if (fm instanceof Mod3902022) {
-////						Mod3902022 mod = (Mod3902022) fm;
-////						Mod3902022Writer.fillWriter( mod , writer);
-////					} else  if (fm instanceof Mod3902021) {
-////						Mod3902021 mod = (Mod3902021) fm;
-////						Mod3902021Writer.fillWriter( mod , writer);
-////					}
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//			@Override public void visitM390HF() { /* Auto-generated method stub */}
-//			@Override 
-//			public void visitM349() { 
-////				try {
-////					Mod349Writer.fillWriter( getMod349(fm), writer);
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//			
-//			@Override 
-//			public void visitM347() { 
-////				try {
-////					Mod347Writer.fillWriter( getMod347(fm), writer);
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//			
-//			@Override public void visitM200() { /* Auto-generated method stub */}
-//			@Override 
-//			public void visitM193() { 
-////				try {
-////					Mod193Writer.fillWriter( getMod193(fm), writer);
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//			
-//			@Override 
-//			public void visitM184() { 
-////				try {
-////					Mod184Writer.fillWriter( getMod184(fm), writer);
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//			
-//			@Override 
-//			public void visitM180() {				
-////				try {
-////					Mod180Writer.fillWriter( getMod180(fm), writer);
-////				} catch (IOException e) {
-////					throw new AonCoreException(e);
-////				}
-//			}
-//		});
-//		return output.toByteArray();
-//	}
-	
 	private byte[] getModelFile(IFiscalModel fm) throws AonCoreException {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
 		try {
 			switch (fm.getModel()) {		
 				case M111: Mod111Writer.fillWriter( (Mod111) fm, writer); break;
-				case M115: Mod115Writer.fillWriter( (Mod115) fm, writer);  break;
+				case M115: Mod115Writer.fillWriter( (Mod115) fm, writer); break;
 				case M123: Mod123Writer.fillWriter( (Mod123) fm, writer); break;
-				case M130: Mod130Writer.fillWriter( (Mod130) fm, writer);  break;
-				case M131: Mod131Writer.fillWriter( (Mod131) fm, writer);  break;
-				case M202: Mod202Writer.fillWriter( (Mod202) fm, writer);  break;
+				case M130: Mod130Writer.fillWriter( (Mod130) fm, writer); break;
+				case M131: Mod131Writer.fillWriter( (Mod131) fm, writer); break;
+				case M202: Mod202Writer.fillWriter( (Mod202) fm, writer); break;
 				case M303: Mod303Writer.fillWriter( (Mod303) fm, writer); break;
 				default: throw new AonApiException("Unexpected value FiscalModelType: " + fm.getModel());
 			} 
@@ -768,35 +426,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 			
 		return output.toByteArray();
 	}
-	
-	
-//	private Mod303 getMod303(IFiscalModel fm) {
-//		return (fm instanceof Mod303)?(Mod303)fm:null;
-//	}
-//	
-//	private Mod111 getMod111(IFiscalModel fm) {
-//		return (fm instanceof Mod111)?(Mod111)fm:null;
-//	}
-	
-//	private Mod115 getMod115(IFiscalModel fm) {
-//		return (fm instanceof Mod115)?(Mod115)fm:null;
-//	}
-//	
-//	private Mod123 getMod123(IFiscalModel fm) {
-//		return (fm instanceof Mod123)?(Mod123)fm:null;
-//	}
-//	
-//	private Mod130 getMod130(IFiscalModel fm) {
-//		return (fm instanceof Mod130)?(Mod130)fm:null;
-//	}
-//	
-//	private Mod131 getMod131(IFiscalModel fm) {
-//		return (fm instanceof Mod131)?(Mod131)fm:null;
-//	}
-//	
-//	private Mod202 getMod202(IFiscalModel fm) {
-//		return (fm instanceof Mod202)?(Mod202)fm:null;
-//	}
 	
 	private synchronized String getUnencodedFile(byte[] content, Charset charset) {
 		return changeCharacters(new String(content, charset));
@@ -878,91 +507,6 @@ public class FiscalServlet extends AonApiHttpServlet{
 	}
 	
 	// Grabar la respuesta, el PDF y marcar el modelo como presentado
-//	private void manageRightResponse(AEATParams aeatParams, IFiscalModel fm, String aeatResponse) {
-//		fm.setNrc(aeatParams.getNrc());
-//		Occam occam = new Occam()
-//				.setDomainName(aeatParams.getDomainName())
-//				.setDomain(aeatParams.getDomainId())
-//				.setUser(aeatParams.getUser());
-//		fm.getModel().visit(new IFiscalModelTypeVisitor() {
-//			
-//			@Override 
-//			public void visitM111() {
-//				MODEL111.aeatPresentation(occam, getMod111(fm) , aeatResponse);
-//			}
-//			@Override 
-//			public void visitM115() { 
-////				MODEL115.aeatPresentation(occam, getMod115(fm) , aeatResponse);
-//			}
-//			@Override 
-//			public void visitM123() { 
-////				MODEL123.aeatPresentation(occam, getMod123(fm) , aeatResponse);
-//			}
-//			@Override 
-//			public void visitM130() { 
-////				MODEL130.aeatPresentation(occam, getMod130(fm) , aeatResponse);
-//			}
-//			@Override 
-//			public void visitM131() { 
-////				MODEL131.aeatPresentation(occam, getMod131(fm) , aeatResponse);
-//			}
-//			@Override 
-//			public void visitM202() { 
-////				MODEL202.aeatPresentation(occam, getMod202(fm) , aeatResponse);
-//			}
-//			@Override 
-//			public void visitM303() { 
-//				MODEL303.aeatPresentation(occam, getMod303(fm) , aeatResponse);
-//			}
-//			@Override 
-//			public void visitM390() { 
-////				if (fm instanceof Mod3902021) {
-////					Mod3902021 mod = (Mod3902021) fm;
-////					MODEL3902021.aeatPresentation(occam, mod , aeatResponse);
-////				}
-////				if (fm instanceof Mod3902022) {
-////					Mod3902022 mod = (Mod3902022) fm;
-////					MODEL3902022.aeatPresentation(occam, mod , aeatResponse);
-////				}
-//			}
-//			@Override public void visitM390HF() { /* Auto-generated method stub */}
-//			
-//			@Override 
-//			public void visitM349() {
-////				MODEL349.aeatPresentation(occam, getMod349(fm) , aeatResponse);
-//			}
-//			
-//			@Override 
-//			public void visitM347() { 
-////				MODEL347.aeatPresentation(occam, getMod347(fm) , aeatResponse);
-//			}
-//			
-//			@Override public void visitM200() { /* Auto-generated method stub */}
-//			
-//			@Override 
-//			public void visitM193() { 
-////				MODEL193.aeatPresentation(occam, getMod193(fm) , aeatResponse);				
-//			}
-//			
-//			@Override 
-//			public void visitM190() { 
-////				MODEL190.aeatPresentation(occam, getMod190(fm) , aeatResponse);
-//			}
-//			
-//			@Override 
-//			public void visitM184() { 
-////				MODEL184.aeatPresentation(occam, getMod184(fm) , aeatResponse);
-//			}
-//			
-//			@Override 
-//			public void visitM180() {
-////				MODEL180.aeatPresentation(occam, getMod180(fm) , aeatResponse);
-//			}
-//			
-//		});
-//		
-//	}
-	
 	private void manageRightResponse(AEATParams aeatParams, IFiscalModel fm, String aeatResponse) {
 		
 		fm.setNrc(aeatParams.getNrc());

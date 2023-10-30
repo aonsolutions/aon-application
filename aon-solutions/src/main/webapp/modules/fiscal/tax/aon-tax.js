@@ -294,7 +294,6 @@ export class AonTax extends AonElement {
     aonInputNrc.className = "aonWidth75";
     aonInputNrc.style.width= "72%";
     aonInputNrc.id = "nrc";
-    //aonInputNrc.description = "Nº Ref Completo";
     aonInputNrc.description = "NRC";
     aonInputNrc.name = "nrc";
     aonInputNrc.type = "text";
