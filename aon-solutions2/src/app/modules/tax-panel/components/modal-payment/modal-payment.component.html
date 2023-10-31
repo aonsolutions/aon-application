@@ -160,9 +160,7 @@
     class="button-container"
     *ngIf="selectedOption === '2' || selectedOption === '3'"
   >
-    <app-button
-    [class]="'orange left'"
-    (click)="sendPaymentNRC()" >
+    <app-button [class]="'orange left'" (click)="sendPaymentNRC()">
       <app-icon shape="done_all"></app-icon>
       {{ "TAX_PANEL.CONFIRM" | translate }}
     </app-button>
@@ -170,7 +168,7 @@
   <!-- Vista Confirmación para IBAN -->
   <div class="confirmation-view" *ngIf="showConfirmation">
     <p class="text-confirmation-view">
-      {{ "TAX_PANEL.ON" | translate }}  'FECHA'
+      {{ "TAX_PANEL.ON" | translate }} 'FECHA'
       {{ "TAX_PANEL.CHARGED_ACCOUNT" | translate }} {{ selectedBank }}
       {{ "TAX_PANEL.AN_AMOUNT" | translate }} {{ amountResult }}&euro;
     </p>
@@ -201,13 +199,11 @@
         </app-button>
       </div>
       <div>
-        <app-button
-        [class]="'orange left'"
-        (click)="sendPaymentIban()">
+        <app-button [class]="'orange left'" (click)="sendPaymentIban()">
           <app-icon shape="done_all"></app-icon>
           {{ "TAX_PANEL.CONFIRM" | translate }}
         </app-button>
       </div>
     </div>
   </div>
- </div>
+</div>

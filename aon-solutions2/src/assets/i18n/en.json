@@ -173,7 +173,8 @@
     "WORKFORCE":"Workforce",
     "CURRENT_CONTRACT":"Current Contract",
     "EXPIRED_CONTRACT": "Expired contract",
-    "EDIT_USER": "Edit user"
+    "EDIT_USER": "Edit user",
+    "TOTAL": "Total"
   },
 
   "TAX_PANEL": {

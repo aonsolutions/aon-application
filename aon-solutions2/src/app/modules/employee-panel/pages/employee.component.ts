@@ -50,6 +50,7 @@ export class EmployeeComponent implements OnInit {
   contratosInactivos: IContract[] = [];
   empleadoDetail: IEmployee | undefined;
   marcajeEmpleado: IMark | undefined;
+  selectedContract: IContract | undefined;
 
   bodyTable: any = [];
 
@@ -124,13 +125,10 @@ export class EmployeeComponent implements OnInit {
 
         if (contract.StartDate && contract.EndDate) {
           const formattedStartDate = DateFormat(
-            new Date(contract.StartDate),
+            contract.StartDate,
             'dd/MM/yyyy'
           );
-          const formattedEndDate = DateFormat(
-            new Date(contract.EndDate),
-            'dd/MM/yyyy'
-          );
+          const formattedEndDate = DateFormat(contract.EndDate, 'dd/MM/yyyy');
           column.date = `${formattedStartDate} - ${formattedEndDate}`;
         } else {
           column.date = '';
@@ -150,8 +148,6 @@ export class EmployeeComponent implements OnInit {
         this.tabIndex === 0 ? this.contratosActivos : this.contratosInactivos;
       console.log('esto es bodytable', this.bodyTable);
     });
-
-
   }
 
   changeTabIndex(index: number) {
@@ -194,28 +190,26 @@ export class EmployeeComponent implements OnInit {
   }
 
   async rowClick(contract: any) {
-    // Obtener empleado
+
+    this.selectedContract = await this.contractService.getContract(contract.key)
+        // Obtener empleado
     this.empleadoDetail = await this.employeeService.getEmployee(contract.key);
-    this.marcajeEmpleado= await this.markService.getMark(contract.key);
+    this.marcajeEmpleado = await this.markService.getMark(contract.key);
     console.log('marcaje', this.marcajeEmpleado);
 
-
-
     const isSameRow = this.bodyTable && this.bodyTable.Id === contract.key;
-    this.showDetailCurrentContract = !isSameRow
-      ? true
-      : !this.showDetailCurrentContract;
+
+    if (this.tabIndex === 0) {
+      this.showDetailCurrentContract = !isSameRow
+        ? true
+        : !this.showDetailCurrentContract;
+    } else {
+      this.showDetailExpiredContract = !isSameRow
+        ? true
+        : !this.showDetailExpiredContract;
+    }
   }
 
-  async rowClick1(contract: any) {
-    console.log('contract', contract);
-    // CAMBIAR NOMBRES Y DESCOMENTAR EL SERVICIO
-    const isSameRow = this.bodyTable && this.bodyTable.Id === contract.key;
-    this.showDetailExpiredContract = !isSameRow
-      ? true
-      : !this.showDetailExpiredContract;
-
-  }
 
   // Cerrar details contratos vigentes
   closeDetailCurrentContract() {

@@ -77,7 +77,7 @@
             [displayedColumns]="displayedColumns"
             [head]="headerTable"
             [data]="bodyTable"
-            (listenParentRow)="rowClick1($event)"
+            (listenParentRow)="rowClick($event)"
           >
           </app-table>
           <ng-template #noModelsTemplate>
@@ -97,7 +97,10 @@
 
     <!--EDITAR EMPLEADO-->
     <ng-container *ngIf="tabIndex == 3">
-      <app-edit-user-contract (changeTabIndex)="changeTabIndex($event)">
+      <app-edit-user-contract
+      [empleadoDetail]="empleadoDetail"
+      [selectedContract]="selectedContract"
+      (changeTabIndex)="changeTabIndex($event)">
       </app-edit-user-contract>
     </ng-container>
     <!-- FIN EDITAR EMPLEADO -->
@@ -132,7 +135,7 @@
       <div class="info-contract border padding">
         <div class="info-status info-line">
           <div class="info-main-title">
-            {{ this.empleadoDetail?.Name + " " + this.empleadoDetail?.Lastname }}
+            {{ this.empleadoDetail?.Name + ", " + this.empleadoDetail?.Lastname }}
           </div>
           <div class="info-data"></div>
         </div>
@@ -145,11 +148,11 @@
         </div>
         <div class="info-line">
           <div class="info-title">{{ "PROFILE.EMAIL" | translate }}</div>
-          <div class="info-data"></div>
+          <div class="info-data">{{ empleadoDetail?.Email }}</div>
         </div>
         <div class="info-line separacion">
           <div class="info-title">{{ "PROFILE.PHONE" | translate }}</div>
-          <div class="info-data"></div>
+          <div class="info-data">{{ empleadoDetail?.Phone }}</div>
         </div>
 
         <div class="info-title-timing">{{ "HOME.TIMING" | translate }}</div>
@@ -163,7 +166,7 @@
                   class="green button titulo-icon"
                   shape="input"
                 ></app-icon>
-                {{ marcajeEmpleado?.EntryDate | date: 'HH:mm:ss' : 'es-ES' }}
+                {{ marcajeEmpleado?.EntryDate | date: 'HH:mm:ss' }}
               </div>
               <div class="fecha">
                 {{ marcajeEmpleado?.EntryDate | date: 'dd/MM/yyyy' }}
@@ -177,14 +180,16 @@
                   class="red button titulo-icon"
                   shape="input"
                 ></app-icon>
-
+                {{ marcajeEmpleado?.ExitDate | date: 'HH:mm:ss' : 'es-ES' }}
               </div>
-              <div class="fecha"></div>
+              <div class="fecha">
+                {{ marcajeEmpleado?.ExitDate| date: 'dd/MM/yyyy' }}
+              </div>
             </div>
           </div>
 
           <div class="contenedor-derecha">
-            <div class="titulo titulo-margin"></div>
+            <div class="titulo titulo-margin">{{ "EMPLOYEE_PANEL.TOTAL" | translate }}</div>
                 <div class="hora">{{ marcajeEmpleado?.Time | date: 'hh:mm:ss' }}</div>
           </div>
         </div>
@@ -211,7 +216,7 @@
       <div class="info-contract border padding">
         <div class="info-status info-line">
           <div class="info-main-title">
-            {{ bodyTable.employee }}
+            {{ this.empleadoDetail?.Name + ", " + this.empleadoDetail?.Lastname }}
           </div>
           <div class="info-data"></div>
         </div>
@@ -220,15 +225,15 @@
           <div class="info-title">
             {{ "EMPLOYEE_PANEL.ID_NUMBER" | translate }}
           </div>
-          <div class="info-data"></div>
+          <div class="info-data">{{ empleadoDetail?.Document }}</div>
         </div>
         <div class="info-line">
           <div class="info-title">{{ "PROFILE.EMAIL" | translate }}</div>
-          <div class="info-data"></div>
+          <div class="info-data">{{ empleadoDetail?.Email }}</div>
         </div>
         <div class="info-line">
           <div class="info-title">{{ "PROFILE.PHONE" | translate }}</div>
-          <div class="info-data"></div>
+          <div class="info-data">{{ empleadoDetail?.Phone }}</div>
         </div>
       </div>
     </div>

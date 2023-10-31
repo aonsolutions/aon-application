@@ -9,10 +9,10 @@
       {{ "EMPLOYEE_PANEL.EDIT_USER" | translate }}
     </div>
     <div class="prueba">
-      <app-button [class]="'dark'" [width]="'100%'">
+      <app-button [class]="'dark'" [width]="'100%'" (click)="onSave()">
         {{ "PROFILE.SAVE" | translate }}
       </app-button>
-      <app-button [class]="'white'" [width]="'100%'">
+      <app-button [class]="'white'" [width]="'100%'" (click)="onCancel()">
         {{ "PROFILE.CANCEL" | translate }}
       </app-button>
     </div>
@@ -26,25 +26,31 @@
       {{ "EMPLOYEE_PANEL.EMPLOYEE_DATA" | translate }}
     </div>
     <hr />
+
+    <!-- Datos del trabajador -->
     <div class="form">
       <app-input
+        (inputValue)="getValue($event)"
+        [value]="empleadoDetail?.Document"
         [type]="'text'"
         [label]="'EMPLOYEE_PANEL.ID_NUMBER' | translate"
         [placeholder]="'EMPLOYEE_PANEL.ID_NUMBER' | translate"
-        [value]=""
         [required]="'required'"
       >
       </app-input>
 
       <app-input
+        (inputValue)="getValue($event)"
+        [value]="splitLastname.surname1"
         [type]="'text'"
         [label]="'EMPLOYEE_PANEL.SURNAME_1' | translate"
         [placeholder]="'EMPLOYEE_PANEL.SURNAME_1' | translate"
-        [value]=""
       >
       </app-input>
 
       <app-input
+        (inputValue)="getValue($event)"
+        [value]="splitLastname.surname2"
         [type]="'text'"
         [label]="'EMPLOYEE_PANEL.SURNAME_2' | translate"
         [placeholder]="'EMPLOYEE_PANEL.SURNAME_2' | translate"
@@ -55,29 +61,36 @@
 
     <div class="form">
       <app-input
+        (inputValue)="getValue($event)"
+        [value]="empleadoDetail?.Name"
         [type]="'text'"
         [label]="'PROFILE.NAME' | translate"
         [placeholder]="'PROFILE.NAME' | translate"
       >
       </app-input>
       <app-input
+        (inputValue)="getValue($event)"
+        [value]="empleadoDetail?.Naf"
         [type]="'text'"
         [label]="'EMPLOYEE_PANEL.SSN' | translate"
         [placeholder]="'EMPLOYEE_PANEL.SSN' | translate"
       >
       </app-input>
     </div>
+
+    <!-- Datos de la empresa -->
     <div class="title">
       {{ "PROFILE.COMPANY_INFORMATION" | translate }}
     </div>
     <hr />
     <div class="form">
       <app-input
-        [type]="'select'"
+        (inputValue)="getValue($event)"
+        [value]="selectedContract?.WorkCenter"
+        [type]="'text'"
         [label]="'EMPLOYEE_PANEL.WORKCENTER' | translate"
         [placeholder]="'EMPLOYEE_PANEL.WORKCENTER' | translate"
         [options]=""
-        [value]=""
       >
       </app-input>
     </div>
@@ -93,6 +106,8 @@
       </app-input>
     </div>
   </div>
+
+  <!-- Datos contrato -->
   <div class="structure-form">
     <div class="title">
       {{ "EMPLOYEE_PANEL.CONTRACT_DETAILS" | translate }}
@@ -103,6 +118,7 @@
         [label]="'PROFILE.REGISTRATION_DATE' | translate"
         [type]="'date'"
         [required]="'required'"
+        [value]="selectedContract?.StartDate"
       ></app-input>
 
       <app-input

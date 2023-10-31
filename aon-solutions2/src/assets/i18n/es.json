@@ -174,9 +174,8 @@
     "WORKFORCE":"Colectivo trabajador",
     "CURRENT_CONTRACT":"Contrato Vigente",
     "EXPIRED_CONTRACT": "Contrato Extinguido",
-    "EDIT_USER": "Editar usuario"
-
-
+    "EDIT_USER": "Editar usuario",
+    "TOTAL": "Total"
   },
   "TAX_PANEL": {
     "1_TRIMESTER":   "1 Trimestre",
