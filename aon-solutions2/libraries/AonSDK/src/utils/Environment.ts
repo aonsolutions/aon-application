@@ -48,6 +48,7 @@ export const ERRORS = {
     '0111': {description:'SESSION_EXPIRED', result:'No existe sesión'},
     '0112': {description:'ERROR_SESSION', result:'No se ha seleccionado empresa'},
     '0113': {description:'ERROR_SESSION', result:'Error al seleccionar la empresa'},
+    '0114': {description:'ERROR_SESSION', result:'Error al establecer token'},
     '0123': {description:'ERROR_MODEL', result:'Error al intentar acceder al modelo'},
     '0124': {description:'ERROR_DENIED', result:'No tiene permiso para acceder al recurso'},
     '0199': {description:'ERROR_NOT_IMPLEMENTED', result:'Paciencia amigo, paciencia'},
@@ -62,4 +63,16 @@ export const ERRORS = {
     '0301': {description:'ERROR_DOCUMENT_UPLOAD', result:'Error al intentar subir el documento'},
     '0302': {description:'ERROR_DOCUMENT_UPLOAD', result:'Ruta o nombre del documento incorrectos'},
     '0303': {description:'ERROR_DOCUMENT_UPLOAD', result:'Ya existe un documento con ese nombre'},
+    '0304': {description:'ERROR_DOCUMENT_RAW', result:'Error al intentar obtener el documento'},
+    /* 04XX  MESSAGE ERRORS */
+    '0401': {description:'ERROR_MESSAGE_ARCHIVE', result:'Error al intentar archivar el mensaje'},
+    '0402': {description:'ERROR_MESSAGE_REOPEN', result:'Error al intentar reabrir el mensaje'},
+    '0403': {description:'ERROR_MESSAGE_COUNT', result:'Error al intentar obtener el numero de mensajes'},
+    '0404': {description:'ERROR_MESSAGE_READ', result:'Error al intentar marcar como leído el mensaje'},
+    /* 05XX  REPORT ERRORS */
+    '0501': {description:'ERROR_REPORT_PAYMENTH', result:'Error al intentar recuperar cobros y pagos'},
+    '0502': {description:'ERROR_REPORT_SALES', result:'Error al intentar recuperar ventas y gastos'},
+    /* 06XX  TAX ERRORS */
+    '0601': {description:'ERROR_TAX_MODEL_PAYMENTH', result:'Error al intentar realizar pago mediante NRC'},
+    '0602': {description:'ERROR_TAX_MODEL_PAYMENTH', result:'Error al intentar realizar pago mediante cuenta bancaria'},
 }
