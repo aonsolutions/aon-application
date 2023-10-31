@@ -95,10 +95,8 @@ export class GenericMultipleObjectCrud<T extends IModel> implements IMultipleObj
      */
     async getCollection(filter?: IFilter): Promise<IResponse<ICollection<T>>> {
         try {
-            throw new Error('Method not implemented.');
             return new Response<ICollection<T>>(await this.repository.get(filter));
         } catch (error) {
-            // throw error;
             throw error instanceof ErrorResponse ?  error : new ErrorResponse('0206', this.type.name);
         }
     }
