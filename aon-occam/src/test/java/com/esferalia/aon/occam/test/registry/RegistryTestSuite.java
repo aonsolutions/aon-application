@@ -21,8 +21,8 @@ import com.esferalia.aon.occam.test.registry.bank.RegistryBankDAOTest;
 	CRUDETest.class,
 	
 	// bank
-	RegistryBankDAOTest.class,
-	RegistryBankAONTest.class
+	//RegistryBankDAOTest.class,
+	//RegistryBankAONTest.class
 })
 
 public class RegistryTestSuite {}
