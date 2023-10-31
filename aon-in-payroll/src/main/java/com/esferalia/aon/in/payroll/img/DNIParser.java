@@ -4,11 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -39,27 +37,26 @@ public class DNIParser {
 	private static String text;
 
 	// CONVIERTE IMAGEN DEL DNI A DOCUMENT USANDO BYTES
-	public String extractImage(byte[] bytes) {
+	private String extractImage(byte[] bytes) {
 		DNIParserValidation.validateBytes(bytes);
 		return extract(new Document().withBytes(ByteBuffer.wrap(bytes)));
 	}
 
+	public String extractImages(byte[] bytes) {
+		return extractImage(bytes);
+	}
+
 	// RECOGE UN INPUTSTREAM Y LO TRANSFORMA EN PDDocument
 
-	public void parse(InputStream is) throws IOException {
+	private void parse(InputStream is) throws IOException {
 		DNIParserValidation.validateInputstream(is);
 		try (PDDocument doc = Loader.loadPDF(is)) {
 			parser(doc);
 		}
 	}
-
-	public void parse(List<InputStream> inputStreams) throws IOException {
-		DNIParserValidation.validateInputStreamList(inputStreams);
-		for (InputStream is : inputStreams) {
-			try (PDDocument doc = Loader.loadPDF(is)) {
-				parser(doc);
-			}
-		}
+	
+	public void parsePublic(InputStream is) throws IOException{
+		parse(is);
 	}
 
 	// RECOGE LAS IMAGENES DEL PDF Y LAS ALMACENA EN BYTE[]
@@ -86,7 +83,6 @@ public class DNIParser {
 		AccessPermission ap = doc.getCurrentAccessPermission();
 
 		if (!ap.canExtractContent()) {
-			// CREAR NUEVA EXCEPCION
 			throw new ImgDNIException("You do not have permission to extract text");
 		}
 		PDFTextStripper stripper = new PDFTextStripper();
@@ -139,147 +135,30 @@ public class DNIParser {
 		}
 		return extract;
 	}
-	
-	
-	//PENDIENTE DE BORRAR
-	public List<String> getDNIData(String text) {
-	    List<String> result = new ArrayList<>();
-	    String[] lines = text.split("\n");
-	    DNIParserValidation.validateLine(lines);
 
-	    String dni = extractDNI(lines);
-	    String apellido1 = extractApellido1(lines);
-	    String apellido2 = extractApellido2(lines);
-	    String nombre = extractNombre(lines);
-	    String nacionalidad = extractNacionalidad(lines);
+	private Person getDniDataPerson(String text) {
+		Person person = new Person();
 
-	    result.add(dni);
-	    result.add(apellido1);
-	    result.add(apellido2);
-	    result.add(nombre);
-	    result.add(nacionalidad);
+		
+		String dni = getDocumentDNI(text);
+		String name = getDocumentName(text);
+		String[] surnames = getDocumentSurnames(text);
+		String surName1 = surnames[0];
+		String surName2 = surnames[1];
+		Country country = getNationality(text);
 
-	    return result;
+		person.setDocument(dni);
+		person.setFirstSurname(surName1);
+		person.setSecondSurname(surName2);
+		person.setName(name);
+		person.setNationality(country);
+		
+		return person;
 	}
 	
 	
-	public Person getDniDataPerson(String text) {
-		Person persona = new Person();
-	    String[] lines = text.split("\n");
-	    
-	    DNIParserValidation.validateLineDNI(lines);
-	    String dni = extractDNI(lines);
-	    DNIParserValidation.validateLineSurnames(lines);
-	    String apellido1 = extractApellido1(lines);
-	    String apellido2 = extractApellido2(lines);
-	    DNIParserValidation.validateLineName(lines);
-	    String nombre = extractNombre(lines);
-	    DNIParserValidation.validateLineNationality(lines);
-	    String nacionalidad = extractNacionalidad(lines);
-	    
-	    persona.setDocument(dni);
-	    persona.setFirstSurname(apellido1);
-	    persona.setSecondSurname(apellido2);
-	    persona.setName(nombre);
-	    Country pais = getCountryByPrefix(nacionalidad.replaceAll("\\r", ""));
-	    persona.setNationality(pais);
-	 
-		return persona;
-	}
-
-	private String extractDNI(String[] lines) {
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].startsWith("DNI") || lines[i].startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
-				String dni = lines[i + 1];
-				if (validateDni(dni)) {
-					return dni;
-				}
-			}
-		}
-		return "";
-	}
-	
-	private String extractApellido1(String[] lines) {
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].startsWith("APELLIDOS") || lines[i].startsWith("APALLIDOS")) {
-				String apellido1 = lines[i + 1];
-				if (validateNames(apellido1)) {
-					return apellido1;
-				}
-			}
-		}
-		return "";
-	}
-
-	private String extractApellido2(String[] lines) {
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].startsWith("APELLIDOS") || lines[i].startsWith("APALLIDOS")) {
-				String apellido2 = lines[i + 2];
-				if (validateNames(apellido2)) {
-					return apellido2;
-				}
-			}
-		}
-		return "";
-	}
-
-	private String extractNombre(String[] lines) {
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].startsWith("NOMBRE") || lines[i].startsWith("NONBRE")) {
-				String nombre = lines[i + 1];
-				if (validateNames(nombre)) {
-					return nombre;
-				}
-			}
-		}
-		return "";	}
-
-	private String extractNacionalidad(String[] lines) {
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].startsWith("NACIONALIDAD")) {
-				String nacionalidad = lines[i + 3];
-				if (validateNationality(nacionalidad)) {
-					return nacionalidad;
-				}
-			}
-		}
-		return "";	}
-
-	private Country getCountryByPrefix(String nacionalidad) {
-		for (Country country : Country.values()) {
-			if (country.getIso3().equalsIgnoreCase(nacionalidad)) {
-				return country;
-			}
-		}
-		return null;
-	}
-	
-	
-	
-	
-
-	private boolean validateNames(String name) {
-		name = name.trim();
-		String patternName = "[a-zA-Z\\s]+";
-		Pattern pattern = Pattern.compile(patternName);
-		Matcher matcher = pattern.matcher(name);
-		return matcher.matches();
-	}
-
-	private boolean validateDni(String dni) {
-		dni = dni.trim();
-		String patternDni = "\\d{8}[A-HJ-NP-TV-Z]";
-		Pattern pattern = Pattern.compile(patternDni);
-		Matcher matcher = pattern.matcher(dni);
-		return matcher.matches();
-	}
-
-	private boolean validateNationality(String nacionalidad) {
-		nacionalidad = nacionalidad.trim();
-		String patternNat = "[A-Z]{3}";
-		Pattern pattern = Pattern.compile(patternNat);
-		Matcher matcher = pattern.matcher(nacionalidad);
-		return matcher.matches();
+	public Person getDniPerson(String text) {
+		return getDniDataPerson(text);
 	}
 
 	private static boolean intersects(Block b1, Block b2) {
@@ -306,4 +185,83 @@ public class DNIParser {
 		DNIParser.text = text;
 	}
 
+	private String getDocumentDNI(String text) {
+		String document = "";
+		String documentDNIRegex = "^[0-9]{8}[A-HJ-NP-TV-Z]$";
+		Pattern pattern = Pattern.compile(documentDNIRegex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(text);
+		if (matcher.find()) {
+			document = matcher.group();
+		}
+		
+		return document;
+	}
+	
+	//sin usar de momento
+//	private String getDocumentCIF(String text) {
+//		String document = "";
+//		String documentCIFRegex = "^[A-HJ-NP-TV-Z][0-9]{8}$";
+//		Pattern pattern = Pattern.compile(documentCIFRegex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		if (matcher.find()) {
+//			document = matcher.group();
+//		}
+//		
+//		return document;
+//	}
+//	
+//	private String getForeignDocument(String text) {
+//		String document = "";
+//		String documentForeignRegex = "^[A-HJ-NP-TV-Z][0-9]{7}[A-HJ-NP-TV-Z]$";
+//		Pattern pattern = Pattern.compile(documentForeignRegex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+//		Matcher matcher = pattern.matcher(text);
+//		if (matcher.find()) {
+//			document = matcher.group();
+//		}
+//		
+//		return document;
+//	}
+	
+	private Country getNationality(String text) {
+	    String nationalityRegex = "\\b[A-Z][A-Z]+\\b";
+	    Pattern pattern = Pattern.compile(nationalityRegex);
+	    Matcher matcher = pattern.matcher(text);
+
+	    while (matcher.find()) {
+	        String potentialNationality = matcher.group();
+	        for (Country country : Country.values()) {
+	            if (country.getIso3().equals(potentialNationality)) {
+	                return country;
+	            }
+	        }
+	    }
+	    return null; 
+	}
+	
+	private String getDocumentName(String text) {
+	    String name = null;
+	    Pattern pattern = Pattern.compile("DNI[\\s\\S]*?(NOMBRE|NONBRE)\\s+([^\\n]+)", Pattern.CASE_INSENSITIVE);
+	    Matcher matcher = pattern.matcher(text);
+
+	    if (matcher.find()) {
+	        name = matcher.group(2).trim();
+	    }
+
+	    return name;
+	}
+	
+	private String[] getDocumentSurnames(String text) {
+		  String[] apellidos = new String[2];
+		    Pattern pattern = Pattern.compile("DNI[\\s\\S]*?(APELLIDOS|APALLIDOS)\\s+([^\\n]+)\\s+([^\\n]+)", Pattern.CASE_INSENSITIVE);
+		    Matcher matcher = pattern.matcher(text);
+
+		    if (matcher.find()) {
+		        apellidos[0] = matcher.group(2).trim();
+		        apellidos[1] = matcher.group(3).trim();
+		    }
+
+		    return apellidos;
+	}
+
+	
 }
