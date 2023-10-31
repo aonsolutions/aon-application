@@ -6,8 +6,6 @@ import { BankService } from 'src/app/core/services/bank.service';
 import { SendFacturaComponent } from '../components/modal-send-factura/send-factura.component';
 import { DuplicateFacturaComponent } from '../components/modal-duplicate-factura/duplicate-factura.component';
 import { DeleteFacturaComponent } from '../components/modal-delete-factura/delete-factura.component';
-import { MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ModalCreateComponent } from '../../inbox/components/modal-create/modal-create.component';
 import { DocumentService } from 'src/app/core/services/document.service';
 import { ResultSnackBarComponent } from 'src/app/shared/components/result-snack-bar/result-snack-bar.component';
@@ -54,12 +52,9 @@ export class BillingComponent implements OnInit {
   @ViewChild('modal') modalComponent: any = '';
 
   public collectionFactory = new CollectionFactory();
-  banks: ICollection<IBank> = this.collectionFactory.createBankCollection();
   private banksSubject = new BehaviorSubject<ICollection<IBank>>(
     this.collectionFactory.createBankCollection()
   );
-
-  public banks$ = this.banksSubject.asObservable();
 
   objectFactory = new Factory();
   document: IDocument = this.objectFactory.createDocument();
@@ -67,8 +62,6 @@ export class BillingComponent implements OnInit {
   constructor(
     private translateService: TranslateService,
     private bankService: BankService,
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer,
     private documentService: DocumentService,
     public snackBar: MatSnackBar
   ) {
@@ -200,17 +193,9 @@ export class BillingComponent implements OnInit {
 
     //bankService
     this.bankService.getBankList().then((response) => {
-      this.banks = response;
-      this.banksSubject.next(this.banks);
+      this.banksSubject.next(response);
     });
 
-    //Iconos personalizados
-    this.matIconRegistry.addSvgIcon(
-      'add-note',
-      this.domSanitizer.bypassSecurityTrustResourceUrl(
-        '../../../../assets/images/note_add.svg'
-      )
-    );
   }
 
   afterModalClosed(result?: any) {

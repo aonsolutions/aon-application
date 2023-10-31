@@ -169,41 +169,6 @@
   */
 
   /*
-    List BANK
-  */
-    .card.dashboard .card-body .list-bank{
-      width       : 100%;
-      height      : 10.1rem;
-      overflow-y  : auto;
-      margin-top  : $margin-top/2;
-    }
-    .card.dashboard .card-body .list-bank .list-bank-row{
-      display       : flex;
-      gap           : $margin;
-      padding       : $padding/2 0;
-      margin-right  : $margin-right/2;
-    }
-    .card.dashboard .card-body .list-bank .list-bank-name{
-      min-width   : 50%;
-    }
-    .card.dashboard .card-body .list-bank .list-bank-money{
-      width           : 50%;
-      display         : flex;
-      justify-content : flex-end;
-      align-items     : center;
-      font-family     : Roboto-Medium;
-    }
-    .card.dashboard .card-footer .list-bank-footer{
-      font-size   : 1.2rem;
-      font-family : Roboto-bold;
-      border-top  : $border;
-      padding-top : $padding-top;
-    }
-  /*
-    FIN List BANK
-  */
-
-  /*
     Animation hover
   */
     .card.dashboard:hover .card-body [body] app-chart div{
