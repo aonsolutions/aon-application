@@ -31,6 +31,8 @@ import com.amazonaws.services.textract.model.Block;
 import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
 import com.amazonaws.services.textract.model.DetectDocumentTextResult;
 import com.amazonaws.services.textract.model.Document;
+import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.type.Country;
 
 public class DNIParser {
 
@@ -95,7 +97,7 @@ public class DNIParser {
 					.collect(Collectors.joining(System.lineSeparator()));
 		}
 		DNIParser.setText(extractedText);
-		return DNIParser.getText();
+		return getText();
 	}
 
 	// UNA VEZ CONVERTIDO EL FORMATO DEL DNI LO PASA A TEXTO PLANO
@@ -138,9 +140,12 @@ public class DNIParser {
 		return extract;
 	}
 	
+	
+	//PENDIENTE DE BORRAR
 	public List<String> getDNIData(String text) {
-	    String[] lines = text.split("\n");
 	    List<String> result = new ArrayList<>();
+	    String[] lines = text.split("\n");
+	    DNIParserValidation.validateLine(lines);
 
 	    String dni = extractDNI(lines);
 	    String apellido1 = extractApellido1(lines);
@@ -155,6 +160,31 @@ public class DNIParser {
 	    result.add(nacionalidad);
 
 	    return result;
+	}
+	
+	
+	public Person getDniDataPerson(String text) {
+		Person persona = new Person();
+	    String[] lines = text.split("\n");
+	    
+	    DNIParserValidation.validateLineDNI(lines);
+	    String dni = extractDNI(lines);
+	    DNIParserValidation.validateLineSurnames(lines);
+	    String apellido1 = extractApellido1(lines);
+	    String apellido2 = extractApellido2(lines);
+	    DNIParserValidation.validateLineName(lines);
+	    String nombre = extractNombre(lines);
+	    DNIParserValidation.validateLineNationality(lines);
+	    String nacionalidad = extractNacionalidad(lines);
+	    
+	    persona.setDocument(dni);
+	    persona.setFirstSurname(apellido1);
+	    persona.setSecondSurname(apellido2);
+	    persona.setName(nombre);
+	    Country pais = getCountryByPrefix(nacionalidad.replaceAll("\\r", ""));
+	    persona.setNationality(pais);
+	 
+		return persona;
 	}
 
 	private String extractDNI(String[] lines) {
@@ -207,13 +237,24 @@ public class DNIParser {
 	private String extractNacionalidad(String[] lines) {
 		for (int i = 0; i < lines.length; i++) {
 			if (lines[i].startsWith("NACIONALIDAD")) {
-				String nacionalidad = lines[i + 1];
+				String nacionalidad = lines[i + 3];
 				if (validateNationality(nacionalidad)) {
 					return nacionalidad;
 				}
 			}
 		}
 		return "";	}
+
+	private Country getCountryByPrefix(String nacionalidad) {
+		for (Country country : Country.values()) {
+			if (country.getIso3().equalsIgnoreCase(nacionalidad)) {
+				return country;
+			}
+		}
+		return null;
+	}
+	
+	
 	
 	
 
@@ -257,7 +298,7 @@ public class DNIParser {
 		return cs.trim().length() == 0;
 	}
 
-	public static String getText() {
+	public String getText() {
 		return text;
 	}
 

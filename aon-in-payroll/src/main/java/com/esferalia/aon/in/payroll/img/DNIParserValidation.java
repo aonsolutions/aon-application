@@ -173,4 +173,29 @@ public class DNIParserValidation {
 		.andThen(NULL_NEXT_LINE_NATIONALITY)
 		.accept(lineas);
 	}
+	
+	
+	
+	//Controlas asi la linea ??
+	public static void validateLineDNI(String[] lineas) throws AonCoreException{
+		NULL_NEXT_LINE_DNI
+		.accept(lineas);
+	}
+	
+	public static void validateLineName(String[] lineas) throws AonCoreException{
+		NULL_NEXT_LINE_NAME
+		.accept(lineas);
+	}
+	
+	public static void validateLineSurnames(String[] lineas) throws AonCoreException{
+		NULL_NEXT_LINE_SURNAME
+		.accept(lineas);
+	}
+	
+	public static void validateLineNationality(String[] lineas) throws AonCoreException{
+		NULL_NEXT_LINE_NATIONALITY
+		.accept(lineas);
+	}
+	
+	
 }
