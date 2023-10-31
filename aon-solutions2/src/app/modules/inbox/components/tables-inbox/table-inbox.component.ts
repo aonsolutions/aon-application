@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CollectionFactory, Factory, ICollection, IMessage } from 'libraries/AonSDK/src/aon';
+import { CollectionFactory, Factory, ICollection, IMessage, IMessageChat } from 'libraries/AonSDK/src/aon';
 import { FilterBuilder } from 'libraries/AonSDK/src/utils/FilterBuilder';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from 'src/app/core/services/message.service';
 import { MessageChatService } from 'src/app/core/services/message-chat.service';
+import { DateFormat, getEndDateOfMonth, getEndDateOfWeek, getStartDateOfMonth, getStartDateOfWeek } from 'src/app/core/utilities/time';
 
 @Component({
   selector: 'app-table-inbox',
@@ -26,13 +27,18 @@ export class TablesInboxComponent implements OnChanges {
   @Output() archiveMessageEvent: EventEmitter<IMessage> = new EventEmitter<IMessage>();
   @Input() updateTable: boolean = false;
 
+  public collectionFactory = new CollectionFactory();
+  messagesChat: ICollection<IMessageChat> =
+  this.collectionFactory.createMessageChatCollection();
+  entityFactory = new Factory();
+  messagesData: IMessage = this.entityFactory.createMessage();
+  dataBody: any[] = [];
   bodyTable: any[] = [];
   showDetail: boolean = false;
   totalMessages: string = '0';
   message: string = '';
   spinner: boolean = true;
 
-  public collectionFactory = new CollectionFactory();
   //Inbox area
   messagess: ICollection<IMessage> =
     this.collectionFactory.createMessageCollection();
@@ -77,12 +83,12 @@ export class TablesInboxComponent implements OnChanges {
     let date: { start: string; end: string } = { start: '', end: '' };
     switch (this.filterDate) {
       case 1:
-        date.start = this.getStartDateOfWeek();
-        date.end = this.getEndDateOfWeek();
+        date.start = getStartDateOfWeek();
+        date.end = getEndDateOfWeek();
         break;
       case 2:
-        date.start = this.getStartDateOfMonth();
-        date.end = this.getEndDateOfMonth();
+        date.start = getStartDateOfMonth();
+        date.end = getEndDateOfMonth();
         break;
     }
     return date;
@@ -135,53 +141,9 @@ export class TablesInboxComponent implements OnChanges {
     return type;
   }
 
-  // Filtros fechas principio semana
-  private getStartDateOfWeek(): string {
-    const startDate = new Date();
-    const currentDay = startDate.getDay();
-    const startDay = currentDay === 0 ? 6 : currentDay - 1;
-    startDate.setDate(startDate.getDate() - startDay);
-    return this.formatDate(startDate);
-  }
-
-  // Filtos fechas final semana
-  private getEndDateOfWeek(): string {
-    const endDate = new Date();
-    const currentDay = endDate.getDay();
-    const remainingDays = 7 - currentDay - 1;
-    endDate.setDate(endDate.getDate() + remainingDays);
-    return this.formatDate(endDate);
-  }
-
-  // Filtros fechas principio mes
-  private getStartDateOfMonth(): string {
-    const startDate = new Date();
-    startDate.setDate(1);
-    return this.formatDate(startDate);
-  }
-
-  // Filtros fechas final mes
-  private getEndDateOfMonth(): string {
-    const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + 1);
-    endDate.setDate(0);
-    return this.formatDate(endDate);
-  }
-
-  // Filtros fechas
-  private formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
   // Tabla
-  private updateTableData() {
+  updateTableData() {
     let tableRow: any[] = [];
-    const datepipe: DatePipe = new DatePipe(
-      this.translateService.getDefaultLang()
-    );
 
     let filterBuilder = new FilterBuilder();
     if (this.filterType().inbox !== '') {
@@ -318,13 +280,13 @@ export class TablesInboxComponent implements OnChanges {
           // Mensaje
           column.description = message.Description.substring(0, 50) + '...';
           // Fecha
-          column.date = datepipe.transform(message.Date, 'dd/MM/yyyy, HH:mm');
+          column.date = DateFormat(message.Date, 'dd/MM/yyyy, HH:mm');
           // Marcar como nueva
           column.class = ['pendiente', 'abierta', 'nueva'].includes(message.Status) ? 'border-red' : '';
           // Agregamos el mensaje
           tableRow.push(column);
         });
-
+        this.dataBody = tableRow;
         this.bodyTable = tableRow;
         this.noPendingItems.emit(!pendingItemsFound);
 
@@ -386,18 +348,44 @@ export class TablesInboxComponent implements OnChanges {
     });
   }
 
+  //Función para devolver una cadena de texto sin tildes
+  removeAccents(str: string): string {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  // Filtro de busqueda teniendo en cuenta mayúsculas y minúsculas
+  searchMessage(search: string) {
+    // Si el término de búsqueda está vacío, muestra todos los elementos en la tabla.
+    if (!search) {
+      this.bodyTable = this.dataBody;
+      return;
+    }
+    // Convierte el término de búsqueda a minúsculas.
+    search = search.toLowerCase();
+    search = this.removeAccents(search);
+
+    // Filtra la tabla en función del término de búsqueda
+    this.bodyTable = this.dataBody.filter((item: any) => {
+      // Comprueba si alguna de las columnas contiene el término de búsqueda.
+      return Object.values(item).some((value: any) => {
+        if (typeof value === 'string') {
+          // Convierte el valor a minúsculas y quita las tildes antes de comparar
+        const cleanedValue = this.removeAccents(value.toLowerCase());
+        return cleanedValue.includes(search);
+        } else if (typeof value === 'object') {
+      // Utilizar JSON.stringify para convertir el objeto en una cadena de texto para la búsqueda.
+        const cleanedValue = this.removeAccents(JSON.stringify(value).toLowerCase());
+        return cleanedValue.includes(search);
+      }
+        return false;
+      });
+    });
+  }
+
   functionHome: any = (result: any) => this.afterModalClosed(result);
   afterModalClosed(result?: any) {}
 
-  rowClick(message: any) {
+  async rowClick(message: any) {
     this.rowClicked.emit(message);
-    // Cambiar el estado de notificación al hacer click en el mensaje
-    this.messageService.getMessage(message.key).then((messageStatus) => {
-      if (message.type === 'notificacion') {
-        this.messageService.markAsReadNotification(messageStatus);
-        this.updateTableData();
-        this.statusChanged.emit();
-      }
-    });
   }
 }

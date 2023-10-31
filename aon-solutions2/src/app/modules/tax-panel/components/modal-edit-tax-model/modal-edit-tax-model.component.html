@@ -12,12 +12,22 @@
     <p class="text-modal-edit-tax-model">
       {{ "TAX_PANEL.RECTIFIED_MODEL" | translate }}
     </p>
-
     <app-input
-      [type]="'text'"
+    (inputValue)="loadAdvisors($event)"
+    [type]="'select'"
+    [options]="advisorsList"
+    [required]="'required'"
+    [value]="this.advisors"
+    [label]="'INBOX.ASSIGN_TO' | translate"
+    >
+    </app-input>
+    <app-input
+      [type]="'textarea'"
       [value]="newMessageDescription"
       [required]="'required'"
       (inputValue)="newMessageDescription = $event"
+      [placeholder]="'INBOX.DESCRIPTION' | translate"
+      [label]="'INBOX.DESCRIPTION' | translate"
     >
     </app-input>
 

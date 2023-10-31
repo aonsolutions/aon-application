@@ -270,6 +270,7 @@ export class DocumentationComponent implements OnInit {
     // Cogemos el document
     this.showDetail = true;
     this.fileToShow = file;
+
     return file;
   }
 

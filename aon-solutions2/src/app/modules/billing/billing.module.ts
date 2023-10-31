@@ -8,7 +8,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FormsModule } from '@angular/forms';
 import { ModelsDashboardComponent } from './components/models-dashboard/models-dashboard.component';
 import { ChartDashboardComponent } from './components/chart-dashboard/chart-dashboard.component';
-import { BanksDashboardComponent } from './components/banks-dashboard/banks-dashboard.component';
 import { SalesTableComponent } from './components/sales-table/sales-table.component';
 import { BillsTableComponent } from './components/bills-table/bills-table.component';
 import { BankTableComponent } from './components/bank-table/bank-table.component';
@@ -24,7 +23,6 @@ import { FacturaComponent } from './components/factura/factura.component';
     BillingComponent,
     ModelsDashboardComponent,
     ChartDashboardComponent,
-    BanksDashboardComponent,
     SalesTableComponent,
     BillsTableComponent,
     BankTableComponent,

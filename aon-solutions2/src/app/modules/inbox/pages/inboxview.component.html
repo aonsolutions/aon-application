@@ -14,7 +14,7 @@
           <app-icon shape="add_comment"></app-icon>
           {{ "INBOX.CREATE" | translate }}
         </app-button>
-        <app-modal-controller #modal>
+        <app-modal-controller #modalCreateInbox>
           <app-create-query *ngIf="isModalVisible"></app-create-query>
         </app-modal-controller>
       </span>
@@ -85,6 +85,7 @@
           [class]="'search'"
           [type]="'search'"
           [placeholder]="'INBOX.TEXT' | translate"
+          (inputValue)="search($event)"
         ></app-input>
       </div>
     </div>
@@ -220,7 +221,7 @@
           {{ messagesData.Status }}
         </div>
         <div class="inbox-icons" *ngIf="messagesData.Type === 'consulta'">
-          <app-icon class="inbox-icon-reply" shape="reply" (click)="replyconsultarClicked()"></app-icon>
+          <app-icon class="inbox-icon-reply" shape="reply" (click)="consultarClicked()"></app-icon>
           <app-icon *ngIf="messagesData.Status === 'abierta'" (click)="archiveMessage()" shape="archive"></app-icon>
         </div>
       </div>
@@ -231,7 +232,7 @@
           {{ messagesData.Title }}
         </div>
         <div class="inbox-message-date">
-          {{ datepipe.transform(messagesData.Date, 'MM/dd/yyyy, HH:mm') }}
+          <div class="inbox-chat-date">{{ datepipe.transform(messagesData.Date, 'dd/MM/yyyy, HH:mm') }}</div>
         </div>
       </div>
     <!--Chat-->
@@ -239,17 +240,17 @@
       <div class="padding" *ngIf="messagesData.Type === 'consulta'">
         <div class="padding-bottom">
           <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
-          {{ messagesData.Description }}
+          <p [innerHTML]="messagesData.Description"></p>
         </div>
         <div class="inbox-chat" (click)="toggleDescription(i)" *ngFor="let messageChat of messagesChat; let i = index">
           <div class="inbox-chat-name">
             {{ messageChat.Name }}
-            <div *ngIf="expandedIndex === i" class="inbox-chat-description-side">{{ messageChat.Description }}</div>
+            <div *ngIf="expandedIndex === i" class="inbox-chat-description-side" [innerHTML]="messageChat.Description"> </div>
           </div>
           <div class="inbox-chat-description">
-            <div *ngIf="expandedIndex !== i">{{ messageChat.Description }}</div>
+            <div *ngIf="expandedIndex !== i" [innerHTML]="messageChat.Description"></div>
           </div>
-          <div class="inbox-chat-date">{{ datepipe.transform(messageChat.Date, 'MM/dd/yyyy, HH:mm') }}</div>
+          <div class="inbox-chat-date">{{ datepipe.transform(messageChat.Date, 'dd/MM/yyyy, HH:mm') }}</div>
         </div>
       </div>
       <div class="padding" *ngIf="showSendButtons && messagesData.Type === 'consulta'">
@@ -282,7 +283,7 @@
         *ngIf="messagesData.Type === 'notificacion' || messagesData.Type === 'tarea'"
         >
         <p class="inbox-name-tasks">{{ messagesData.Name }}</p>
-        {{ messagesData.Description }}
+        <p [innerHTML]="messagesData.Description"></p>
 
         <div
           class="inbox-btns-content"
@@ -290,15 +291,14 @@
         >
           <div class="inbox-btns">
             <app-button
-              *ngIf="disableTramitar"
               class="inbox-btn-01"
-              [class]="'red left inbox-btn-01'"
+              [class]="'red left inbox-btn-01 inbox-tramit'"
               [width]="'11rem'"
               [fontSize]="'0.7rem'"
               [padding]="'0rem 1rem'"
             >
               <app-icon shape="playlist_add_check"></app-icon>
-              Tramitar
+             {{'INBOX.PROCESS' | translate }}
             </app-button>
             <app-button
             [width]="'11rem'"
@@ -313,7 +313,7 @@
             (click)="consultarClicked()"
             >
               <app-icon shape="chat"></app-icon>
-              Consultar
+              {{ 'INBOX.CONSULT' | translate }}
             </app-button>
           </div>
         <form (ngSubmit)="sendMessage()">

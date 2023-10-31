@@ -9,6 +9,7 @@ interface ShortcutDashboard {
   shape: string;
   name: string;
   modal: string;
+  routerlink?: string;
 }
 
 interface ChartItem {
@@ -32,7 +33,6 @@ export class HomeComponent implements OnInit {
   shortcuts   : ShortcutDashboard[] = [];
   chartItems  : ChartItem[]         = [];
   menuItems   : MenuItems[]         = [];
-  routerlink: string = '/inbox';
   public collectionFactory  = new CollectionFactory();
   @ViewChild('modal') modalComponent: any = '';
 
@@ -48,7 +48,7 @@ export class HomeComponent implements OnInit {
       this.shortcuts = [
         { shape: 'add_box'    , name: result['HOME.CREATE_INVOICE'], modal: 'workingModal' },
         { shape: 'person_add' , name: result['HOME.REGISTER_EMPLOYEE'], modal: 'workingModal' },
-        { shape: 'add_comment', name: result['HOME.CREATE_QUERY'], modal: 'createQuery' },
+        { shape: 'add_comment', name: result['HOME.CREATE_QUERY'], modal: '', routerlink: '/inbox/create'},
         { shape: 'alarm'      , name: result['HOME.TIMING'], modal: 'workingModal' },
       ];
       this.chartItems = [
@@ -96,10 +96,6 @@ export class HomeComponent implements OnInit {
     switch (modalName) {
       case 'workingModal':
         this.workingModal();
-        break;
-        case 'createQuery':
-        this.router.navigate([this.routerlink]);
-        this.createQuery();
         break;
       default:
         break;

@@ -31,10 +31,9 @@
       </div>
       <div class="data">
         <div class="chart">
-          <app-banks-dashboard
-            [bankList]="banks$"
+          <app-card-bank
             (click)="selectedTab = 4; selectedMenu = 2; showMenu = true"
-          ></app-banks-dashboard>
+          ></app-card-bank>
         </div>
       </div>
     </div>
@@ -121,7 +120,7 @@
             </div>
             <div content class="padding">
               <div id="upload">
-                <app-file-upload-button (click)="uploadDocument($event)">
+                <app-file-upload-button>
                   {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
                   <app-icon shape="cloud_upload" class="margin-left"></app-icon>
                 </app-file-upload-button>
@@ -169,7 +168,7 @@
             </div>
             <div content class="padding">
               <div id="upload">
-                <app-file-upload-button (click)="uploadDocument($event)">
+                <app-file-upload-button>
                   {{ "COMMON.FILE_UPLOAD_BUTTON" | translate }}
                   <app-icon shape="cloud_upload" class="margin-left"></app-icon>
                 </app-file-upload-button>
@@ -206,7 +205,7 @@
           <app-icon class="blue icono" shape="account_balance"></app-icon>
           <p class="title">{{ "BILLING.ADD_BANK" | translate }}</p>
           <p>
-            Conecta AON con tus bancos para tener un control de tus movimientos
+            {{ 'HOME.CONNECT_AON'|translate }}
           </p>
         </div>
         <div class="add-bank-true" *ngIf="addBank">

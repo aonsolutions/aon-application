@@ -99,7 +99,10 @@
     "NONOTIFICATIONSTHISMONTH": "No hay notificaciones este mes.",
     "NOQUERIESTHISWEEK": "No hay consultas esta semana.",
     "NOQUERIESTHISMONTH": "No hay consultas este mes.",
-    "NOMESSAGES": "No hay mensajes."
+    "NOMESSAGES": "No hay mensajes.",
+    "PROCESS": "Tramitar",
+    "CONSULT": "Consultar",
+    "CREATE_QUERY": "Crear consulta"
   },
   "DOCUMENTATION": {
     "FILE_SELECT_ALL"       : "Seleccionar todos",

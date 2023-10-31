@@ -34,8 +34,8 @@
     [placeholder]="placeholder"
     [class]="appearanceDetail"
     (ngModelChange)="returnValue($event)"
-    (keypress)="validateFormatNumber($event)"
-    (paste)="validateFormatNumber($event)"
+    (keypress)="validateInputFormatNumber($event)"
+    (paste)="validateInputFormatNumber($event)"
   />
   <!-- INPUT TIPO NUMBER MIN  -->
   <input
@@ -48,11 +48,11 @@
     [type]="type"
     [placeholder]="placeholder"
     [class]="appearanceDetail"
-    (ngModelChange)="returnValueNumber($event)"
+    (ngModelChange)="returnValueInputNumber($event)"
     (change)= "this.value < minNumber ? this.value = minNumber : this.value"
     [min]="minNumber"
-    (keypress)="validateFormatNumber($event)"
-    (paste)="validateFormatNumber($event)"
+    (keypress)="validateInputFormatNumber($event)"
+    (paste)="validateInputFormatNumber($event)"
   />
   <!-- INPUT TIPO NUMBER MAX -->
   <input
@@ -65,11 +65,11 @@
     [type]="type"
     [placeholder]="placeholder"
     [class]="appearanceDetail"
-    (ngModelChange)="returnValueNumber($event)"
+    (ngModelChange)="returnValueInputNumber($event)"
     (change)= "this.value > maxNumber ? this.value = maxNumber : this.value"
     [max]="maxNumber"
-    (keypress)="validateFormatNumber($event)"
-    (paste)="validateFormatNumber($event)"
+    (keypress)="validateInputFormatNumber($event)"
+    (paste)="validateInputFormatNumber($event)"
   />
   <!-- INPUT TIPO NUMBER MIN AND MAX -->
   <input
@@ -82,12 +82,12 @@
     [type]="type"
     [placeholder]="placeholder"
     [class]="appearanceDetail"
-    (ngModelChange)="returnValueNumber($event)"
+    (ngModelChange)="returnValueInputNumber($event)"
     [min]="minNumber"
     [max]="maxNumber"
     (change)= "this.value < minNumber ? this.value = minNumber : this.value; this.value > maxNumber ? this.value = maxNumber : this.value"
-    (keypress)="validateFormatNumber($event)"
-    (paste)="validateFormatNumber($event)"
+    (keypress)="validateInputFormatNumber($event)"
+    (paste)="validateInputFormatNumber($event)"
   />
 
   <div

@@ -1,6 +1,6 @@
-<ng2-pdfjs-viewer *ngIf="this.pdfBytes && pdfSrc.FileType.split('/')[1] === 'pdf'"
+<ng2-pdfjs-viewer *ngIf="this.fileBytes && pdfSrc.FileType.split('/')[1] === 'pdf'"
   [zoom]  = "zoom"
   [locale]= "locale"
-  [pdfSrc]= "pdfBytes"
+  [pdfSrc]= "fileBytes"
 ></ng2-pdfjs-viewer>
-<img *ngIf="this.pdfBytes && pdfSrc.FileType.split('/')[1] !== 'pdf'" [src]="'data:'+ pdfSrc.FileType +';base64,' + pdfBytes" alt="Image">
+<img *ngIf="this.fileBytes && pdfSrc.FileType.split('/')[1] !== 'pdf'" [src]="'data:'+ pdfSrc.FileType +';base64,' + fileBytes" alt="Image">

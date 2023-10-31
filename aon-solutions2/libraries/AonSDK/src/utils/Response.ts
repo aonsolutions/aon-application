@@ -16,9 +16,13 @@ export class ErrorResponse implements IResponse<string> {
     code: string;
     description: string;
     result: string;
-    constructor(data: any) {
+    constructor(data: any, model?: string) {
+        // this.code = data as string;
+        // this.description = ERRORS[data as keyof typeof ERRORS].description;
+        // this.result = ERRORS[data as keyof typeof ERRORS].result;
         this.code = data as string;
-        this.description = ERRORS[data as keyof typeof ERRORS].description;
-        this.result = ERRORS[data as keyof typeof ERRORS].result;
+        const errorData = ERRORS[data as keyof typeof ERRORS];
+        this.description = errorData.description;
+        this.result = errorData.result + (model ? ` (${model})` : '');
     }
 }

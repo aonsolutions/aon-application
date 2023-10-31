@@ -25,3 +25,36 @@ import { DatePipe } from '@angular/common';
     // Retornamos el valor formateado
     return new DatePipe(language || 'es').transform(dateFormat, format);
   }
+
+  // Filtros fechas principio semana
+export const getStartDateOfWeek = (): string => {
+  const startDate = new Date();
+  const currentDay = startDate.getDay();
+  const startDay = currentDay === 0 ? 6 : currentDay - 1;
+  startDate.setDate(startDate.getDate() - startDay);
+  return DateFormat(startDate, 'yyyy-MM-dd')|| '';
+};
+
+// Filtros fechas final semana
+export const getEndDateOfWeek = (): string => {
+  const endDate = new Date();
+  const currentDay = endDate.getDay();
+  const remainingDays = 7 - currentDay - 1;
+  endDate.setDate(endDate.getDate() + remainingDays);
+  return DateFormat(endDate, 'yyyy-MM-dd')|| '';
+};
+
+// Filtros fechas principio mes
+export const getStartDateOfMonth = (): string => {
+  const startDate = new Date();
+  startDate.setDate(1);
+  return DateFormat(startDate, 'yyyy-MM-dd')|| '';
+};
+
+// Filtros fechas final mes
+export const getEndDateOfMonth = (): string => {
+  const endDate = new Date();
+  endDate.setMonth(endDate.getMonth() + 1);
+  endDate.setDate(0);
+  return DateFormat(endDate, 'yyyy-MM-dd')|| '';
+};
