@@ -1,6 +1,7 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { CONSTANT, MSG } from "../../../environments/environments.js";
 import * as GWT from "../../../gwt/gwt.js";
+import * as LS from "../../../services/localStorageService.js";
 import { DomainUserRoles } from "../../../models/DomainUserRoles.js";
 import {
   getDomainUserRoles,
@@ -17,6 +18,7 @@ import { AonCtaList } from "../cta/aon-cta-list.js";
 import { AonContractList } from "../payroll/aon-contract-list.js";
 import { AonPayrollList } from "../payroll/aon-payroll-list.js";
 import { CONTRACT_OPTIONS, PAYROLL_VIEWS } from "../PayrollEnums.js";
+import { AonCompanyCostsListNew, paintCompanyCostPieChart } from "../company/aon-company-costs-list-new.js";
 
 export class AonComunicaUtils extends AonElement {
   static get observedAttributes() {
@@ -236,7 +238,11 @@ export class AonComunicaUtils extends AonElement {
           aonView = new AonAltaDirecta();
           break;
         case PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST:
-          aonView = new AonCompanyCostsList();
+          if(LS.isNewTheme()){
+            aonView = new AonCompanyCostsListNew();
+          } else {
+            aonView = new AonCompanyCostsList();
+          }
           break;
       }
       if (aonView) {
@@ -244,6 +250,10 @@ export class AonComunicaUtils extends AonElement {
         if (filter) aonView.filter = filter;
         if (data) aonView.data = data;
         this.getApplication().setContent(aonView);
+        
+        if(LS.isNewTheme() && view === PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST){
+          await paintCompanyCostPieChart();
+        }
       }
       resolve(aonView);
     });

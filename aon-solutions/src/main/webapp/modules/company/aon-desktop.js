@@ -33,7 +33,6 @@ import { AonNewUpload } from '../../components/aon-new-upload.js'
 import { AonDashboardButton } from '../../components/aon-dashboard-button.js';
 import { AonCard } from '../../components/aon-card.js';
 import { AonDashboardGraphicsTrial } from '../accounting/aon-graphics-dashboard-trial.js';
-import { AonCompanyDashboardCostsList } from '../laboral/company/aon-company-dashboard-costs-list.js';
 import { AonFiscalCard } from '../fiscal/aon-fiscal-card.js';
 import { AonAccessCard } from '../../components/aon-access-card.js';
 import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
@@ -45,6 +44,7 @@ import { FiscalUtils } from '../fiscal/FiscalUtils.js';
 import { AonBankCard } from '../accounting/aon-bank-card.js';
 import { AonDashboardUploadButton } from '../../components/aon-dashboard-upload-button.js';
 import { AonDocumentalCard } from '../documental/aon-documental-card.js';
+import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/company/aon-company-costs-card.js';
 
 export class AonDesktop extends AonElement {
 
@@ -398,17 +398,6 @@ export class AonDesktop extends AonElement {
 		});
 		fastAccessButtons.appendChild(newRequest);
 
-		// if(this.getDur().isAon()){
-		// 	let conecta = new AonDashboardButton();
-		// 	conecta.setId('conecta');
-		// 	conecta.setLogo('aon_app');
-		// 	conecta.setTitle('CONECT@')
-		// 	conecta.addEventListener(EVENT.CLICK, () => {
-		// 		this.appSelection(ClassicApps.AON_SOLUTIONS.app);
-		// 	});
-		// 	fastAccessButtons.appendChild(conecta);
-		// }
-
 		if(this.getDur().isAon()){
 			let newEmployee = new AonDashboardButton();
 			newEmployee.setId('newEmployee');
@@ -505,7 +494,9 @@ export class AonDesktop extends AonElement {
 			let lastMonthFilter = getPeriodLaboral("last_month");
 			lastMonthFilter.period = lastMonthFilter.value;
 
-			payrollCard.setContent(new AonCompanyDashboardCostsList(lastMonthFilter));
+			let aonCompanyCostsCard = new AonCompanyCostsCard(lastMonthFilter);
+			payrollCard.setContent(aonCompanyCostsCard);
+			await paintCompanyCostPieChart();
 			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPayrollStatics(payrollCard));
 			payrollCard.firstChild.style.minHeight = "420px";
 			payrollCard.firstChild.children.item(1).style.height = "315px";
@@ -722,7 +713,10 @@ export class AonDesktop extends AonElement {
 		let options = periods.map(option => ({
 			...option,
 			period: option.value,
-			fn: () => payrollCard.setContent(new AonCompanyDashboardCostsList({...option, period: option.value}))
+			fn: async () => {
+				payrollCard.setContent(new AonCompanyCostsCard({...option, period: option.value}));
+				await paintCompanyCostPieChart();
+			}
 		  }));
 
 		d.setMenuOptions(options, top, left);
