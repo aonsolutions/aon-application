@@ -17,6 +17,8 @@ public class FiscalMatrixParams implements Serializable{
 	private boolean configuredVisible;
 	private boolean madeModelsVisible;
 	
+	private FiscalStatus status;
+	
 	public int getYear() {
 		return year;
 	}
@@ -71,6 +73,14 @@ public class FiscalMatrixParams implements Serializable{
 		return this;
 	}
 	
+	public FiscalStatus getStatus() {
+		return status;
+	}
+	public FiscalMatrixParams setStatus(FiscalStatus status) {
+		this.status = status;
+		return this;
+	}
+	
 	public boolean isFiscalModelTypePresent() {
 		return model != null; 
 	}
@@ -81,4 +91,5 @@ public class FiscalMatrixParams implements Serializable{
 	public boolean accept(FiscalModelType modelType) {
 		return (getModel() == null  || getModel() == modelType);
 	}
+	
 }

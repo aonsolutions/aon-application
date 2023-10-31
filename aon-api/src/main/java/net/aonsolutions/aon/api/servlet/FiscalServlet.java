@@ -194,7 +194,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			return jsonModels; 
 		} 
 	}
-	
+
 	private JSONObject markAsFinished(AonApiData api) {
 		try ( final CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
 			JSONObject params = api.getData();			

@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -35,7 +36,6 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
-
 	private static CommonServiceAsync COMMON_SERVICE;
 
 	private ListBox year;
@@ -47,7 +47,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 	private AonTextBox declared;
 	private AonSearchPanelButton refreshButton;
 	private AonSearchPanelButton configButton;
-
+	private ListBox status;
 	
 	protected ModelMatrixFilterPanel(MatrixModuleOptions options) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
@@ -66,7 +66,6 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			}
 		});
 	}
-
 	
 	protected void load(MatrixModuleOptions options) {
 		if (!options.isCompactMode()) {
@@ -120,7 +119,6 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		}
 		admon.addChangeHandler(event -> fireValueChangeEvent());
 		
-		
 		InlineLabel scopeLabel = new InlineLabel(AON.MSG.scope());
 		scopeBox = new ListBox();
 		boolean showScopes = (options != null && options.getConfiguration() != null && options.getConfiguration().hasAvailableScopes());
@@ -133,8 +131,6 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			}
 			scopeBox.addChangeHandler(event -> fireValueChangeEvent());
 		}
-		
-		
 
 		showConfigurated = new CheckBox();
 		showConfigurated.setValue(false);
@@ -156,6 +152,17 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		configButton.addStyleName(AON.CSS.aonMarginRight());
 		configButton.addClickHandler(event -> showConfigurationPanel());
 		
+		InlineLabel statusLabel = new InlineLabel(AON.MSG.status());
+		statusLabel.setStyleName(AON.CSS.aonMarginRight());
+
+		status = new ListBox();
+		status.setStyleName(AON.CSS.aonMarginRight());
+		status.addItem(" TODOS ", "");
+		for (FiscalStatus fs : FiscalStatus.values()) {
+			status.addItem(fs.getName());
+		}
+		status.addChangeHandler(event -> fireValueChangeEvent());
+		
 		if (!options.isCompactMode()) {
 			addRow()
 				.addCell(yearLabel,AON.CSS.aonTableLabel())
@@ -165,6 +172,8 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				.addCell(showConfigurated)
 				.addCell(declaredLabel)
 				.addCell(declared)
+				.addCell(new InlineLabel())
+				.addCell(new InlineLabel())
 				.addCell(new InlineLabel(),AON.CSS.aonFlexGrow1())
 				;
 			
@@ -174,6 +183,8 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				.addCell(showScopes?scopeLabel:new InlineLabel(),AON.CSS.aonTableLabel())
 				.addCell(showScopes?scopeBox:new InlineLabel())
 				.addCell(showMadeModels)
+				.addCell(statusLabel,AON.CSS.aonTableLabel())
+				.addCell(status)
 				.addCell(refreshButton)
 				.addCell(new InlineLabel())
 				.addCell(new InlineLabel(),AON.CSS.aonFlexGrow1())
@@ -211,6 +222,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			.setConfiguredVisible(showConfigurated.getValue())
 			.setMadeModelsVisible(showMadeModels.getValue())
 			.setDeclared( declared.getValue() )
+			.setStatus( status.getSelectedIndex() > 0 ? FiscalStatus.values()[status.getSelectedIndex() - 1] : null )
 			;
 
 		ValueChangeEvent.fire(ModelMatrixFilterPanel.this, params);
