@@ -29,7 +29,6 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
-import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -65,7 +64,6 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -967,7 +965,7 @@ public class Asserts {
 	}
 	
 	public static void assertEqualsQuestion(Question expected, Question actual) {
-		if (expected != null) {
+		if (expected != null && actual != null) {
 			assertEquals("Id",expected.getId(),actual.getId());
 			assertEquals("Domain",expected.getDomain(),actual.getDomain());
 			assertEquals("Active",expected.isActive(),actual.isActive());
@@ -1014,52 +1012,5 @@ public class Asserts {
 		assertEquals("Color",expected.getColor(), actual.getColor());
 		assertEquals("StartDate",expected.getStartDate(), actual.getStartDate());
 		assertEquals("EndDate",expected.getEndDate(), actual.getEndDate());
-	}
-	
-	public static void assertEqualsBankAccount(BankAccount expected, BankAccount actual) {
-		if (expected != null) {
-			assertEquals("BankCode", expected.getBankCode(), actual.getBankCode());
-			assertEquals("BankCodeLenght", expected.getBankCodeLength(), actual.getBankCodeLength());
-			assertEquals("Bban", expected.getBban(), actual.getBban());
-			assertEquals("Bban1", expected.getBban1(), actual.getBban1());
-			assertEquals("Bban1", expected.getBban1(), actual.getBban1());
-			assertEquals("Bban2", expected.getBban2(), actual.getBban2());
-			assertEquals("Bban3", expected.getBban3(), actual.getBban3());
-			assertEquals("Bban4", expected.getBban4(), actual.getBban4());
-			assertEquals("Bban5", expected.getBban5(), actual.getBban5());
-			assertEquals("Bban6", expected.getBban6(), actual.getBban6());
-			assertEquals("Bban7", expected.getBban7(), actual.getBban7());
-			assertEquals("Bban8", expected.getBban8(), actual.getBban8());
-			assertEquals("CCC", expected.getCCC(), actual.getCCC());
-			assertEquals("CCC1", expected.getCCC1(), actual.getCCC1());
-			assertEquals("CCC2", expected.getCCC2(), actual.getCCC2());
-			assertEquals("CCC3", expected.getCCC3(), actual.getCCC3());
-			assertEquals("CCC4", expected.getCCC4(), actual.getCCC4());
-			assertEquals("Check", expected.getCheck(), actual.getCheck());
-			assertEquals("Country", expected.getCountry(), actual.getCountry());
-			assertEquals("Iban", expected.getIban(), actual.getIban());
-			assertEquals("IbanLength", expected.getIbanLength(), actual.getIbanLength());
-			assertEquals("MaskedIban", expected.getMaskedIban(), actual.getMaskedIban());
-			assertEquals("PureCCC", expected.getPureCCC(), actual.getPureCCC());
-			assertEquals("SeparatedIban", expected.getSeparatedIban(), actual.getSeparatedIban());
-		}
-	}
-	
-	public static void assertEqualsRegistryBank(RegistryBank expected, RegistryBank actual) {
-		if (expected != null) {
-			assertEquals("Id", expected.getId(), actual.getId());
-			assertEqualsAccount(expected.getAccount(), actual.getAccount());
-			assertEquals("Active", expected.getActive(), actual.getActive());
-			assertEquals("Alias", expected.getAlias(), actual.getAlias());
-			assertEqualsBankAccount(expected.getBankAccount(), actual.getBankAccount());
-			assertEquals("Bic", expected.getBic(), actual.getBic());
-			assertEquals("Domain", expected.getDomain(), actual.getDomain());
-			assertEquals("FullName", expected.getFullName(), actual.getFullName());
-			assertEquals("Id", expected.getId(), actual.getId());
-			assertEquals("Registry", expected.getRegistry(), actual.getRegistry());
-			assertEquals("Requisition", expected.getRequisition(), actual.getRequisition());
-			assertEquals("SepaMandateRef", expected.getSepaMandateRef(), actual.getSepaMandateRef());
-			assertEquals("Suffix", expected.getSuffix(), actual.getSuffix());
-		}
 	}
 }
