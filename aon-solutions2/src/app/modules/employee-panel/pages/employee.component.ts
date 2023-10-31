@@ -38,7 +38,6 @@ export class EmployeeComponent implements OnInit {
     'marcaje',
   ];
   headerTable: any = {};
-
   tabs: Tabs[] = [{ name: 'tab1' }, { name: 'tab2' }];
   buttonsGastos: any[] = [];
   showDetailCurrentContract: boolean = false;
@@ -157,6 +156,15 @@ export class EmployeeComponent implements OnInit {
     this.updateTableData();
   }
 
+  updateEmployeeData(updatedData: any) {
+    console.log('updateEmployeeData después del edit', updatedData);
+    // Actualiza los datos del empleado en el componente padre
+    this.empleadoDetail = updatedData;
+
+    // Vuelve a cargar los datos de la tabla
+    this.updateTableData();
+  }
+
   searchContract(search: string) {
     if (!search) {
       // Si el término de búsqueda está vacío, mostrar todos los elementos de la tabla
@@ -190,9 +198,10 @@ export class EmployeeComponent implements OnInit {
   }
 
   async rowClick(contract: any) {
-
-    this.selectedContract = await this.contractService.getContract(contract.key)
-        // Obtener empleado
+    this.selectedContract = await this.contractService.getContract(
+      contract.key
+    );
+    // Obtener empleado
     this.empleadoDetail = await this.employeeService.getEmployee(contract.key);
     this.marcajeEmpleado = await this.markService.getMark(contract.key);
     console.log('marcaje', this.marcajeEmpleado);
@@ -209,7 +218,6 @@ export class EmployeeComponent implements OnInit {
         : !this.showDetailExpiredContract;
     }
   }
-
 
   // Cerrar details contratos vigentes
   closeDetailCurrentContract() {

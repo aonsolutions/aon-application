@@ -8,7 +8,6 @@
       ></app-icon>
       {{ "EMPLOYEE_PANEL.REGISTER_EMPLOYEE" | translate }}
     </div>
-
     <app-button class="green button" [align]="'left'">
       <app-icon shape="person_add"></app-icon>
       {{ "EMPLOYEE_PANEL.TO_REGISTER" | translate }}
@@ -25,26 +24,18 @@
     <hr />
     <div class="form">
       <app-input
+        [value]=""
         [type]="'text'"
         [label]="'EMPLOYEE_PANEL.ID_NUMBER' | translate"
         [placeholder]="'EMPLOYEE_PANEL.ID_NUMBER' | translate"
-        [value]=""
         [required]="'required'"
       >
       </app-input>
 
       <app-input
         [type]="'text'"
-        [label]="'EMPLOYEE_PANEL.SURNAME_1' | translate"
-        [placeholder]="'EMPLOYEE_PANEL.SURNAME_1' | translate"
-        [value]=""
-      >
-      </app-input>
-
-      <app-input
-        [type]="'text'"
-        [label]="'EMPLOYEE_PANEL.SURNAME_2' | translate"
-        [placeholder]="'EMPLOYEE_PANEL.SURNAME_2' | translate"
+        [label]="'PROFILE.LAST_NAME' | translate"
+        [placeholder]="'PROFILE.LAST_NAME' | translate"
         [value]=""
       >
       </app-input>

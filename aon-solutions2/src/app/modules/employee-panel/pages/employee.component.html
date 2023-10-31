@@ -100,7 +100,8 @@
       <app-edit-user-contract
       [empleadoDetail]="empleadoDetail"
       [selectedContract]="selectedContract"
-      (changeTabIndex)="changeTabIndex($event)">
+      (changeTabIndex)="changeTabIndex($event)"
+      (changeData)="updateEmployeeData($event)">
       </app-edit-user-contract>
     </ng-container>
     <!-- FIN EDITAR EMPLEADO -->
