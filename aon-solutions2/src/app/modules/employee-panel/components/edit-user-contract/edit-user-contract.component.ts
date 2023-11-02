@@ -25,13 +25,25 @@ export class EditUserContractComponent implements OnInit {
 
   // @ViewChild(EmployeeComponent) employeeComponent!: EmployeeComponent;
 
-
   // Variable para almacenar el tipo de contrato seleccionado
+
+// Agrega un objeto para almacenar los apellidos separados
+splitLastname: { surname1: string, surname2: string } = { surname1: '', surname2: '' };
+
+
+
   selectedContractType: string | undefined;
 
   constructor(private employeeService: EmployeeService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+     // Divide el campo Lastname en apellidos separados
+   if (this.empleadoDetail && this.empleadoDetail.Lastname) {
+    const surname = this.empleadoDetail.Lastname.split(' ');
+    this.splitLastname.surname1 = surname[0] || '';
+    this.splitLastname.surname2 = surname[1] || '';
+  }
+  }
 
   goBack() {
     const tabIndex = 0;
@@ -56,7 +68,7 @@ export class EditUserContractComponent implements OnInit {
         (await this.employeeService.updateEmployee(this.empleadoDetail));
       console.log('Empleado actualizado:', this.empleadoDetail);
 
-    
+
       this.changeData.emit(this.empleadoDetail); // Emite un evento con los datos actualizados
 
     } catch (error) {

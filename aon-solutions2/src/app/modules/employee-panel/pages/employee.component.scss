@@ -5,13 +5,11 @@
     width: fit-content;
   }
 
-  .buttons {
+  [tool].buttons {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-right: $margin-right;
     gap: $margin;
-    color: black !important;
   }
   .no-models {
     display: flex;

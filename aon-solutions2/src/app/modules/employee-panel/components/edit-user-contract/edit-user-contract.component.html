@@ -40,11 +40,21 @@
       </app-input>
 
       <app-input
-        (inputValue)="getValueEmployee($event, empleadoDetail, 'Lastname')"
-        [value]="empleadoDetail?.Lastname"
+        (inputValue)="getValueEmployee($event, empleadoDetail, 'Surname1')"
+        [value]="splitLastname.surname1"
         [type]="'text'"
-        [label]="'PROFILE.LAST_NAME' | translate"
-        [placeholder]="'PROFILE.LAST_NAME' | translate"
+        [label]="'EMPLOYEE_PANEL.SURNAME_1' | translate"
+        [placeholder]="'EMPLOYEE_PANEL.SURNAME_1' | translate"
+      >
+      </app-input>
+
+      <app-input
+        (inputValue)="getValueEmployee($event, empleadoDetail, 'Surname2')"
+        [value]="splitLastname.surname2"
+        [type]="'text'"
+        [label]="'EMPLOYEE_PANEL.SURNAME_2' | translate"
+        [placeholder]="'EMPLOYEE_PANEL.SURNAME_2' | translate"
+        [value]=""
       >
       </app-input>
     </div>

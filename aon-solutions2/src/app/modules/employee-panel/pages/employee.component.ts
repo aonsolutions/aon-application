@@ -198,12 +198,12 @@ export class EmployeeComponent implements OnInit {
   }
 
   async rowClick(contract: any) {
-    this.selectedContract = await this.contractService.getContract(
-      contract.key
-    );
+    // this.selectedContract = await this.contractService.getContract(
+    //   contract.key
+    // );
     // Obtener empleado
-    this.empleadoDetail = await this.employeeService.getEmployee(contract.key);
-    this.marcajeEmpleado = await this.markService.getMark(contract.key);
+    // this.empleadoDetail = await this.employeeService.getEmployee(contract.key);
+    // this.marcajeEmpleado = await this.markService.getMark(contract.key);
     console.log('marcaje', this.marcajeEmpleado);
 
     const isSameRow = this.bodyTable && this.bodyTable.Id === contract.key;

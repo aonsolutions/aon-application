@@ -40,15 +40,13 @@
         (changeTabIndex)="changeTabIndex($event)"
         *ngIf="tabIndex !== 2 && tabIndex !== 3"
       >
-        <div tool>
-          <div class="buttons">
+        <div tool class="buttons" >
             <app-button
               *ngFor="let button of buttonsGastos"
-              class="icon-border"
+              class="icon-border black"
             >
               <app-icon [shape]="button.shape"></app-icon>
             </app-button>
-          </div>
         </div>
 
         <div content class="padding" *ngIf="this.tabIndex == 0">
