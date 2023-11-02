@@ -432,8 +432,9 @@ public class Invoice2tbai {
 					? "0.0" : doubleToString(AonMathUtils.round(r.getSurcharge())));
 				
 				detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(SiNoType.N);//invoice.isSurcharge() ? SiNoType.S : SiNoType.N);
-				if(r.getBase() != 0.0)
-					desgloseIVA.getDetalleIVA().add(detalleIVA);
+				
+				// if(r.getBase() != 0.0)
+				desgloseIVA.getDetalleIVA().add(detalleIVA);
 			});
 		
 			if(!desgloseIVA.getDetalleIVA().isEmpty()) {
