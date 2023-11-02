@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;

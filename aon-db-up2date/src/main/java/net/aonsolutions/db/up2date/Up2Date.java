@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.registry.AlterRegistryBankBalance;
 import net.aonsolutions.db.up2date.security.RemovePayrollPortal;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw012023Insert;
+import net.aonsolutions.db.up2date.warehouse.DeliveryInfoCreation;
 
 public class Up2Date {
 
@@ -394,7 +395,9 @@ public class Up2Date {
 	    // UdpateAonPacks.UPDATE_AON_PACKS,
 	    // InsertIAE474.INSERT_IAE_474,
 	    AlterRegistryBankBalance.ALTER_REGISTRY_BANK_BALANCE,
-	    RemovePayrollPortal.REMOVE_PAYROLL_PORTAL
+	    RemovePayrollPortal.REMOVE_PAYROLL_PORTAL,
+	    DeliveryInfoCreation.DELIVERY_INFO_CREATION
+	    
 	};
 
     // ------------------------------------------------------------------------
