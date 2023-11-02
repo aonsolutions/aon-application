@@ -103,7 +103,7 @@ export class AonFiscalCard extends AonElement {
     let content = this.getElement("fiscalCardTable");
     this.removeAllChildNodes(content);
 
-    let maxModels = modelDatas && modelDatas.length < 4 ? modelDatas.length : 4;
+    let maxModels = modelDatas && modelDatas.length < 5 ? modelDatas.length : 5;
     let accumulatedModels = 0;
 
     for (let index = 0; index < maxModels; index++) {
@@ -121,29 +121,18 @@ export class AonFiscalCard extends AonElement {
       leftContent.style.alignItems = "center";
       leftContent.style.gap = "1rem";
 
-      let descriptionContent = this.createElement(TAG.DIV);
-      descriptionContent.className = CSS.AON_FLEX;
-      descriptionContent.style.flexDirection = "column";
-      leftContent.appendChild(descriptionContent);
-
       let description = this.createElement(TAG.SPAN);
-      description.style.fontSize = modelDatas.length > 4 ? "1rem" : "1.2rem";
+      description.style.fontSize = modelDatas.length > 5 ? "1rem" : "1.2rem";
       description.style.color = "#fb982e";
       description.style.fontWeight = "500";
-      description.innerHTML = "Modelo " + modelData.newModel;
-      descriptionContent.appendChild(description);
+      description.innerHTML = "Modelo " + this.getParsedModel(modelData);
+      leftContent.appendChild(description);
 
       let territory = this.createElement(TAG.SPAN);
       territory.style.color = "rgb(120, 120, 133)";
-      territory.style.fontSize = modelDatas.length > 4 ? ".7rem" : ".8rem";
+      territory.style.fontSize = modelDatas.length > 5 ? ".8rem" : "1rem";
       territory.innerHTML = this.getModelTerritory(modelData.administration);
-      descriptionContent.appendChild(territory);
-
-      let iva = this.createElement(TAG.SPAN);
-      iva.style.color = "rgb(120, 120, 133)";
-      iva.style.fontSize = modelDatas.length > 4 ? ".8rem" : "1rem";
-      iva.innerHTML = this.getModelType(modelData.newModel);
-      leftContent.appendChild(iva);
+      leftContent.appendChild(territory);
 
       let rightContent = this.createElement(TAG.DIV);
       rightContent.className = CSS.AON_FLEX;
@@ -173,7 +162,7 @@ export class AonFiscalCard extends AonElement {
 
     // Create others row
     let total = modelDatas.reduce((t, model) => t + model.result, 0);
-    if(modelDatas.length > 4){
+    if(modelDatas.length > 5){
       let row = this.createElement(TAG.DIV);
       row.className = CSS.AON_FLEX;
       row.style.justifyContent = "space-between";
@@ -222,13 +211,10 @@ export class AonFiscalCard extends AonElement {
     }
 }
 
-  getModelType(model){
-    switch (model.charAt(0)) {
-      case "1":
-        return "IRPF"
-      default:
-        return "IVA";
-    }
+getParsedModel(modelData){
+    let model = modelData.newModel;
+    let territory = modelData.administration;
+    return model === "111" && territory === "ALAVA" ? "110" : model;
   }
 
   getModelTerritory(territory){
