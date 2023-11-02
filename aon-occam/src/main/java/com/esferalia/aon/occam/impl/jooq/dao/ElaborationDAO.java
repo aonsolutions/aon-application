@@ -23,7 +23,6 @@ import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
@@ -31,6 +30,7 @@ import com.esferalia.aon.occam.api.model.ElaborationDetailCompositionProperties;
 import com.esferalia.aon.occam.api.model.ElaborationDetailProperties;
 import com.esferalia.aon.occam.api.model.ElaborationDetailType;
 import com.esferalia.aon.occam.api.model.ElaborationProperties;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;

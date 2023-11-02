@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
-@WebServlet(urlPatterns = "/DNIServlet")
+@WebServlet(name = "DNIServlet", urlPatterns = "/DNIServlet")
 @MultipartConfig
 public class DNIServlet extends HttpServlet {
 
