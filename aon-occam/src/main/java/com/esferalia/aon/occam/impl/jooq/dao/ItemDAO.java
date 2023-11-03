@@ -28,8 +28,8 @@ import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.jooq.tables.records.RitemRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
