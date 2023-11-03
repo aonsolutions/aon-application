@@ -42,10 +42,6 @@ public class DNIParser {
 		return extract(new Document().withBytes(ByteBuffer.wrap(bytes)));
 	}
 
-	public String extractImages(byte[] bytes) {
-		return extractImage(bytes);
-	}
-
 	// RECOGE UN INPUTSTREAM Y LO TRANSFORMA EN PDDocument
 
 	private void parse(InputStream is) throws IOException {
@@ -55,12 +51,21 @@ public class DNIParser {
 		}
 	}
 	
-	public void parsePublic(InputStream is) throws IOException{
-		parse(is);
+	public String getTextPrueba(byte [] bytes, InputStream is) throws IOException {
+		String text = "";
+		if (bytes != null) {
+			DNIParserValidation.validateBytes(bytes);
+			text = extractImage(bytes);
+		}else if (is != null) {
+			DNIParserValidation.validateInputstream(is);
+			parse(is);
+			text = getText();
+		}
+		return text;
 	}
 
 	// RECOGE LAS IMAGENES DEL PDF Y LAS ALMACENA EN BYTE[]
-	protected static Collection<byte[]> getImages(PDDocument document) throws IOException {
+	public static Collection<byte[]> getImages(PDDocument document) throws IOException {
 		DNIParserValidation.validatePDDoc(document);
 		LinkedList<byte[]> images = new LinkedList<>();
 		for (PDPage page : document.getPages()) {
@@ -138,7 +143,6 @@ public class DNIParser {
 
 	private Person getDniDataPerson(String text) {
 		Person person = new Person();
-
 		
 		String dni = getDocumentDNI(text);
 		String name = getDocumentName(text);

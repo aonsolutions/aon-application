@@ -15,78 +15,46 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.occam.api.model.type.Country;
 
-
 public class DNIParserTest {
 	DNIParser dniParser = new DNIParser();
-//	@Test
-//	public void getDocumentDNIRegexTest() throws Exception {
-//		InputStream is = new FileInputStream("/tmp/dniJuanmaPDF.pdf");
-//		dniParser.parse(is); 
-//		String text = dniParser.getText();
-//		String dni = dniParser.getDocumentDNI(text);
-//		System.out.println(dni + "dni");
-//	}
-//	
-//	@Test
-//	public void getDocumentNationalityRegexTest() throws Exception {
-//		InputStream is = new FileInputStream("/tmp/dniJuanmaPDF.pdf");
-//		dniParser.parse(is); 
-//		String text = dniParser.getText();
-//		System.out.println(text);
-//		Country nationality = dniParser.getNationality(text);
-//		System.out.println(nationality + " nacionalidad");
-//	}
-//	
-//	@Test 
-//	public void getDocumentNameRegexTest() throws Exception{
-//		InputStream is = new FileInputStream("/tmp/dniJuanmaPDF.pdf");
-//		dniParser.parse(is); 
-//		String text = dniParser.getText();
-//		String name = dniParser.getDocumentName(text);
-//		
-//		System.out.println(name+ "nombre ");
-//	}
-//	
-//	@Test
-//	public void getDocumentSurnamesRegexTest() throws Exception{
-//		InputStream is = new FileInputStream("/tmp/dniJuanmaPDF.pdf");
-//		dniParser.parse(is); 
-//		String text = dniParser.getText();
-//		String[] surname = dniParser.getDocumentSurnames(text);
-//		String primerApellido = surname[0];
-//		String segundoApellido = surname[1];
-//
-//		System.out.println(primerApellido +""+ segundoApellido + "apellidos");
-//	}
-//	
-//	
-//	@Test
-//	public void getDocumentData() throws Exception{
-//		Person person = new Person();
-//		InputStream is = new FileInputStream("/tmp/dniJuanmaPDF.pdf");
-//		dniParser.parse(is); 
-//		String text = dniParser.getText();
-//		person = dniParser.getDniDataPerson(text);
-//		
-//		System.out.println(person.getDocument());
-//		System.out.println(person.getName());
-//		System.out.println(person.getFirstSurname());
-//		System.out.println(person.getSecondSurname());
-//		System.out.println(person.getNationality());
-//	}
- 
-	@Test
-	public void extractImageNullTest() {
-		byte[] bytes = null;
-		AonCoreException e = assertThrows(AonCoreException.class, () -> dniParser.extractImages(bytes));
-		assertEquals(AonError.NULL_FILE_UPLOADED.getMessage(), e.getMessage());
-	}
+
 
 	@Test
-	public void parseNullTest() {
-		InputStream is = null;
-		AonCoreException e = assertThrows(AonCoreException.class, () -> dniParser.parsePublic(is));
-		assertEquals(AonError.NULL_FILE_UPLOADED.getMessage(), e.getMessage());
+	public void getDocumentDataFactory() throws Exception {
+		Person person = new Person();
+		DNIFactoryManager dfm = new DNIFactoryManager();
+		String file = "com/esferalia/aon/in/payroll/pdf/dniJuanmaTorcido.pdf";
+		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
+		InputStream is = classLoader.getResourceAsStream(file);
+		String text = dniParser.getTextPrueba(null, is);
+
+		Factory factoria = dfm.getFactory(text);
+		person = factoria.getPerson(text);
+
+		String expectedDNi = "45339825V";
+		String actualDni = person.getDocument();
+
+		assertEquals(expectedDNi, actualDni);
+	}
+	
+
+	@Test
+	public void getDocumentDataFactoryJpg() throws Exception {
+		Person person = new Person();
+		DNIFactoryManager dfm = new DNIFactoryManager();
+		String file = "com/esferalia/aon/in/payroll/pdf/dniJuanmaRotate.jpg";
+		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
+		InputStream is = classLoader.getResourceAsStream(file);
+		byte[] bytes = IOUtils.toByteArray(is);
+		
+		String text = dniParser.getTextPrueba(bytes, null);
+		Factory factoria = dfm.getFactory(text);
+		person = factoria.getPerson(text);
+
+		String expectedDNi = "45339825V";
+		String actualDni = person.getDocument();
+
+		assertEquals(expectedDNi, actualDni);
 	}
 
 	@Test
@@ -116,38 +84,37 @@ public class DNIParserTest {
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(filePath);
 		byte[] bytes = IOUtils.toByteArray(is);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> dniParser.extractImages(bytes));
+		AonCoreException e = assertThrows(AonCoreException.class, () -> dniParser.getTextPrueba(bytes,null));
 		assertEquals(AonError.FILE_SIZE_EXCEEDED.getMessage(), e.getMessage());
 	}
 
-	@Test 
-	public void getDNIDataJpeg() throws Exception{
+	@Test
+	public void getDNIDataJpeg() throws Exception {
 		DNIParser dnip = new DNIParser();
 		String file = "com/esferalia/aon/in/payroll/pdf/pruebaDNI4.jpeg";
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
 		byte[] bytes = IOUtils.toByteArray(is);
-		String text = dnip.extractImages(bytes);
+		String text = dnip.getTextPrueba(bytes,null);
 		Person persona = new Person();
 		persona = dnip.getDniPerson(text);
 		String expectedName = "CARMEN";
 		String actualName = persona.getName();
 		assertEquals(expectedName, actualName);
 	}
-	
-	
+
 	@Test
 	public void getDNIDataPdf() throws Exception {
 		DNIParser dnip = new DNIParser();
 		String file = "com/esferalia/aon/in/payroll/pdf/DNIJordi.pdf";
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
-		dnip.parsePublic(is);
+		dnip.getTextPrueba(null,is);
 		String text = dnip.getText();
 		String expectedName = "JORDI";
 		Person persona = new Person();
 		persona = dnip.getDniPerson(text);
-		String actualName = persona.getName(); 
+		String actualName = persona.getName();
 		assertEquals(expectedName, actualName);
 	}
 
@@ -158,7 +125,7 @@ public class DNIParserTest {
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
 		byte[] bytes = IOUtils.toByteArray(is);
-		String text = dnip.extractImages(bytes);
+		String text = dnip.getTextPrueba(bytes,null);
 		System.out.println(text);
 		String expectedDNi = "12345678A";
 		Person persona = new Person();
@@ -174,7 +141,7 @@ public class DNIParserTest {
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
 		byte[] bytes = IOUtils.toByteArray(is);
-		String text = dnip.extractImages(bytes);
+		String text = dnip.getTextPrueba(bytes,null);
 		String expectedDNi = "12345678A";
 		Person persona = new Person();
 		persona = dnip.getDniPerson(text);
@@ -188,7 +155,7 @@ public class DNIParserTest {
 		String file = "com/esferalia/aon/in/payroll/pdf/DNIJordiRotate.pdf";
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
-		dnip.parsePublic(is);
+		dnip.getTextPrueba(null,is);
 		String text = dnip.getText();
 		String expectedName = "JORDI";
 		Person persona = new Person();
@@ -203,7 +170,7 @@ public class DNIParserTest {
 		String file = "com/esferalia/aon/in/payroll/pdf/pruebaDNI.pdf";
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
-		dnip.parsePublic(is);
+		dnip.getTextPrueba(null, is);
 		String text = dnip.getText();
 		System.out.println(text);
 		String expectedDNi = "65004204V";
@@ -220,7 +187,7 @@ public class DNIParserTest {
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
 		byte[] bytes = IOUtils.toByteArray(is);
-		String text = dnip.extractImages(bytes);
+		String text = dnip.getTextPrueba(bytes,null);
 		String expectedDNi = "45339825V";
 		Person persona = new Person();
 		persona = dnip.getDniPerson(text);
@@ -235,22 +202,22 @@ public class DNIParserTest {
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
 		byte[] bytes = IOUtils.toByteArray(is);
-		String text = dnip.extractImages(bytes);
+		String text = dnip.getTextPrueba(bytes,null);
 		String expectedName = "JUAN MANUEL";
 		Person persona = new Person();
 		persona = dnip.getDniPerson(text);
 		String actualName = persona.getName();
 		assertEquals(expectedName, actualName);
 	}
-	
+
 	@Test
-	public void getDNIDataJpegRotate() throws Exception{
+	public void getDNIDataJpegRotate() throws Exception {
 		DNIParser dnip = new DNIParser();
 		String file = "com/esferalia/aon/in/payroll/pdf/dniJuanmaRotate.jpeg";
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
 		byte[] bytes = IOUtils.toByteArray(is);
-		String text = dnip.extractImages(bytes);
+		String text = dnip.getTextPrueba(bytes,null);
 		Person persona = new Person();
 		persona = dnip.getDniPerson(text);
 		Country expectedNationality = Country.ES;
@@ -265,7 +232,7 @@ public class DNIParserTest {
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
 		byte[] bytes = IOUtils.toByteArray(is);
-		String text = dnip.extractImages(bytes);
+		String text = dnip.getTextPrueba(bytes,null);
 		String expectedSecondSurname = "ALVAREZ";
 		Person persona = new Person();
 		persona = dnip.getDniPerson(text);
@@ -280,7 +247,7 @@ public class DNIParserTest {
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
 		byte[] bytes = IOUtils.toByteArray(is);
-		String text = dnip.extractImages(bytes);
+		String text = dnip.getTextPrueba(bytes,null);
 		String expectedFirstSurname = "ORTEGA";
 		Person persona = new Person();
 		persona = dnip.getDniPerson(text);
@@ -294,7 +261,7 @@ public class DNIParserTest {
 		String file = "com/esferalia/aon/in/payroll/pdf/dniJuanmaTorcido.pdf";
 		ClassLoader classLoader = DNIParserTest.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(file);
-		dnip.parsePublic(is);
+		dnip.getTextPrueba(null, is);
 		String text = dnip.getText();
 		String expectedDNi = "45339825V";
 		Person persona = new Person();
@@ -302,6 +269,5 @@ public class DNIParserTest {
 		Object actualDni = persona.getDocument();
 		assertEquals(expectedDNi, actualDni);
 	}
-	
-	
+
 }

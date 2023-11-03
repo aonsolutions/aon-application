@@ -165,6 +165,7 @@ public class DNIParserValidation {
 		NULL_ARRAY_LINES
 		.accept(lineas);
 	}
+	
 
 	public static void validateLine(String[] lineas) throws AonCoreException{
 		NULL_NEXT_LINE_DNI
