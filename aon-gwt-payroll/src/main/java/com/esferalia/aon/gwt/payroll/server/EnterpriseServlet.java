@@ -14,6 +14,7 @@ import com.esferalia.aon.in.payroll.excel.EnterpriseContractExcel;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
@@ -33,7 +34,15 @@ public class EnterpriseServlet extends AonApiHttpServlet {
 			String domainName = api.getData().getString("domain");
 			Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
 			
-			responseFile(resp, "Contratos", new FileInputStream(getEnterpriseContractsExcel(api, domain.getId())), MimeType.MS_EXCEL);
+			String inactiveData = api.getData().getString("inactive");
+			Boolean inactive = Boolean.parseBoolean(inactiveData);
+			
+			String workplaceData = api.getData().getString("workplace");
+			Integer workplaceId = AonStringUtils.isBlank(workplaceData) ? null : Integer.parseInt(workplaceData);
+			
+			String employee = api.getData().getString("employee");
+			
+			responseFile(resp, "Contratos", new FileInputStream(getEnterpriseContractsExcel(api, domain.getId(), inactive, workplaceId, employee)), MimeType.MS_EXCEL);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -44,12 +53,12 @@ public class EnterpriseServlet extends AonApiHttpServlet {
 		doGet(req, resp);
 	}
 	
-	private File getEnterpriseContractsExcel(AonApiData api, Integer domainId) throws Exception {
+	private File getEnterpriseContractsExcel(AonApiData api, Integer domainId, Boolean inactive, Integer workplaceId, String employee) throws Exception {
 		logger.info("[GET] ENTERPRISE CONTRACTS EXCEL");
 		
 		File file = File.createTempFile("Contratos Empresa", "");
 	
-		EnterpriseContractExcel.simpleEnterpriseContractGenerator(api.getDomain().getName(), api.getUser().getLogin(), domainId, new FileOutputStream(file));
+		EnterpriseContractExcel.simpleEnterpriseContractGenerator(api.getDomain().getName(), api.getUser().getLogin(), domainId, inactive, workplaceId, employee, new FileOutputStream(file));
 		
 		return file;
 	}
