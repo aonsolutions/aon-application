@@ -226,6 +226,7 @@ export const ISSUEDS = 'Emeses';
 
 // ----- L
 
+export const LABORAL_COSTS = 'Costos Laborals';
 export const LANGUAGE = 'Idioma';
 export const LAST = 'Última';
 export const LAST_LOCATION = 'Última ubicació';
