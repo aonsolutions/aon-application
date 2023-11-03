@@ -484,7 +484,7 @@ export class AonDesktop extends AonElement {
 			let payrollCard = new AonCard();
 			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollCard.id = CONSTANT.PAYROLL;
-			payrollCard.title = MSG.COMPANY_COSTS;
+			payrollCard.title = MSG.LABORAL_COSTS;
 			payrollCard.setApp(Apps.PAYROLL);
 			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => this.appSelection(Apps.PAYROLL.app));
 			cardsPanel.appendChild(payrollCard);
@@ -781,6 +781,37 @@ export class AonDesktop extends AonElement {
 		
 		let options = [];
 
+		// Borrador
+		let period;
+		let periodText;
+		let year;
+		if(result[0].period == "T1") {
+			period = "T2";
+			periodText = "2º Trim.";
+			year = result[0].year;
+		} else if(result[0].period == "T2") {
+			period = "T3";
+			periodText = "3º Trim.";
+			year = result[0].year;
+		} else if(result[0].period == "T3") {
+			period = "T4";
+			periodText = "4º Trim.";
+			year = result[0].year;
+		} else {
+			period = "T1";
+			periodText = "1º Trim.";
+			year = result[0].year + 1;
+		}
+		const periodOpt = {
+			name: periodText + " " + year + " (B)",
+			title: periodText + " " + year + " (Borrador)",
+			icon: MATERIAL_ICONS.EVENT,
+			backgroundColor: "#4472C4",
+			fn: () => aonFiscalCard.filterEstimationTable({year: year, period: period, title: "Borrador " + periodText})
+		};
+		options.push(periodOpt);
+
+		// Filtros
 		for (let index = 0; index < 4; index++) {
 			const period = result[index];
 			const periodOpt = {

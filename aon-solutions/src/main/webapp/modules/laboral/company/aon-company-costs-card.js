@@ -55,11 +55,18 @@ export class AonCompanyCostsCard extends AonElement {
     canvasDiv.style.maxWidth = "19rem";
     canvasDiv.style.maxHeight = "15rem";
     canvasDiv.style.height = "100%";
+    canvasDiv.style.alignItems = "center";
     main.appendChild(canvasDiv);
 
     let canvasChart = this.createElement(TAG.CANVAS);
     canvasChart.id = this.id + "Chart";
     canvasDiv.appendChild(canvasChart);
+
+    let emptyData = this.createElement(TAG.DIV);
+    emptyData.id = this.id + "EmptyMessage";
+    emptyData.innerHTML = "No existen nóminas para calcular costes";
+    emptyData.style.fontWeight = "500";
+    canvasDiv.appendChild(emptyData);
   }
 
 }
@@ -134,12 +141,22 @@ const paintCompanyCostPieChart = async () => {
       }
 
       let canvasChart = document.getElementById("aon-company-costs-cardChart");
+      canvasChart.style.display = 'block';
+
+      let emptyMessage = document.getElementById("aon-company-costs-cardEmptyMessage");
+      emptyMessage.style.display = 'none';
 
       if(chartCanva){
         chartCanva.destroy();
       }
 
       chartCanva = new Chart(canvasChart, config);
+    } else {
+      let canvasChart = document.getElementById("aon-company-costs-cardChart");
+      canvasChart.style.display = 'none';
+
+      let emptyMessage = document.getElementById("aon-company-costs-cardEmptyMessage");
+      emptyMessage.style.display = 'block';
     }
 
     let startDateText = AonDateUtils.getMonthYear(startDate),
