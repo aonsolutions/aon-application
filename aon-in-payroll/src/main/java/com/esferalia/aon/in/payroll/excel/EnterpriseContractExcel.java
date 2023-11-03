@@ -33,6 +33,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Result;
 
@@ -65,11 +66,11 @@ public class EnterpriseContractExcel {
 		
 	}
 	
-	public static void simpleEnterpriseContractGenerator (String domainName, String user, Integer domainId, OutputStream outputStream) {
+	public static void simpleEnterpriseContractGenerator (String domainName, String user, Integer domainId, Boolean inactive, Integer workplaceId, String employee, OutputStream outputStream) {
 		
 		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			
-			List<EnterpriseContract> contracts = getEnterpriseContracts(aonContext, domainId);
+			List<EnterpriseContract> contracts = getEnterpriseContracts(aonContext, domainId, inactive, workplaceId, employee);
 			contracts.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
 			
 			String enterpriseName = getEnterpriseName(aonContext, domainId);
@@ -510,18 +511,28 @@ public class EnterpriseContractExcel {
 		cell.setCellStyle(stylesMap.get(ContractCellStyle.STRING_CELL_STYLE));
 	}
 
-	public static List<EnterpriseContract> getEnterpriseContracts(AONContext aonContext, Integer domainId) {
-
+	public static List<EnterpriseContract> getEnterpriseContracts(AONContext aonContext, Integer domainId, Boolean inactive, Integer workplaceId, String employee) {
 		Date currentDate = new Date();
 		java.sql.Date currentDateSQL = new java.sql.Date(currentDate.getTime());
+		
+		Condition condition = CONTRACT.DOMAIN.eq(domainId);
+		condition = condition.and(CONTRACT.ID.gt(0));
+		condition = null == workplaceId ? condition : condition.and(CONTRACT.WORKPLACE.eq(workplaceId));
+		if(!AonStringUtils.isBlank(employee)) {
+			condition = condition.and(
+					(PERSON.NAME.contains(employee).or(PERSON.FIRST_SURNAME.contains(employee).or(PERSON.SECOND_SURNAME.contains(employee))))
+					.or(REGISTRY.DOCUMENT.contains(employee))
+					.or(PERSON.SOCIAL_SECURITY_NUM.contains(employee))
+					);
+		}
+		
+		condition = inactive ? condition : CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(currentDateSQL));
 		
 		Result<Record> contractRecords = aonContext.getDslContext().select().from(CONTRACT)
 			.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 			.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
 			.innerJoin(REGISTRY).on(CONTRACT.PERSON.eq(REGISTRY.ID))
-			.where(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(currentDateSQL)))
-			.and(CONTRACT.DOMAIN.eq(domainId))
-			.and(CONTRACT.ID.gt(0))
+			.where(condition)
 			.fetch();
 		
 		List<EnterpriseContract> contracts = new ArrayList<>();
