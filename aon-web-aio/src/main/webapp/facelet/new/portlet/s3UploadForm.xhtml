@@ -56,12 +56,18 @@
 	       			  el.classList.remove('highlight');
 	       		  }, false)
 	       		});   
-
+	       		
 	       		el.addEventListener('drop', (e) => {
 	    		  let dt = e.dataTransfer;
 	    		  let files = dt.files;
 	    		  ([...files]).forEach( (file) => upload(file,success, error ) );
 	       		}, false)
+
+	       		document.forms.s3UploadForm.file.addEventListener('change', (e) => {
+	    		  let files = document.forms.s3UploadForm.file.files;
+	    		  ([...files]).forEach( (file) => upload(file,success, error ) );
+	       		});
+
 	       		
 	       		el.addEventListener('click', (e) => {
 	       			document.forms.s3UploadForm.file.click();
@@ -112,7 +118,7 @@
 	  
 	  
 	  <!-- File: --> 
-	  <input type="file"  name="file" /> <br />
+	  <input type="file"  name="file" multiple="multiple" /> <br />
 	  <!-- The elements after this will be ignored -->
 	  <input type="submit" name="submit" value="Upload to Amazon S3" />
 	</form>
