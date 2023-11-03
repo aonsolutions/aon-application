@@ -363,6 +363,11 @@ public class SupplierModule extends MainEntryPoint {
 		searchEnabled.setValue(-1);
 	}
 
+	/**
+	 * Method that searchs a supplier calling the method search
+	 * @param opt
+	 * @param params
+	 */
 	protected void search(final RegistryModuleOptions opt,RegistryParams params) {
 		enableMoreData();
 		suppliers.clear();
@@ -374,6 +379,12 @@ public class SupplierModule extends MainEntryPoint {
 		search(opt, params, offset.getValue());
 	}
 
+	/**
+	 * Gets a supplier with the given params
+	 * @param opt module options
+	 * @param params supplier params
+	 * @param ofs offset
+	 */
 	private void search(final RegistryModuleOptions opt, RegistryParams params, final int ofs) {
 		if (!isMoreData()) return; 
 		service.getSuppliers(opt.getDomainName(),opt.getDomain(),opt.getUser(), params, ofs, LIMIT	
@@ -462,6 +473,11 @@ public class SupplierModule extends MainEntryPoint {
 		}
 	}
 
+	/**
+	 * Paints a row of the supplier table for a determined supplier
+	 * @param opt module options
+	 * @param supplier the supplier
+	 */
 	private void paintRow(final RegistryModuleOptions opt, Supplier supplier) {
 		
 		int row = tab.getWidgetCount();
@@ -541,6 +557,12 @@ public class SupplierModule extends MainEntryPoint {
 		selectedCount.setText( (!selectedItems.isEmpty())?  AonNumberUtils.toString(selectedItems.size()) :""); 
 	}
 	
+	/**
+	 * Method that gets a supplierFull to call selectSupplier with that supplierFull 
+	 * @param opt module options
+	 * @param supplier supplier
+	 * @param panelCallback
+	 */
 	private void selectSupplier(RegistryModuleOptions opt, Supplier supplier, AonRegistryFullPanelCallback<SupplierFull> panelCallback) {
 		
 		service.getSupplierFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), supplier.getId(), new AsyncCallback<SupplierFull>() {
@@ -556,6 +578,13 @@ public class SupplierModule extends MainEntryPoint {
 		});					
 	}
 	
+	/**
+	 * When the user clicks on a supplier of the supplier table, this panel opens and allows to edit and to see more details.
+	 * The supplierPanel shows the suplier data. AonSupplierFullPanel extends AonRegistryFullPanel which includes more methods.
+	 * @param opt module options
+	 * @param supplier the supplier
+	 * @param panelCallback
+	 */
 	private void selectSupplier(RegistryModuleOptions opt, SupplierFull supplier,  AonRegistryFullPanelCallback<SupplierFull> panelCallback) {
 		final AonSimpleDialog dialog = new AonSimpleDialog();
 		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
