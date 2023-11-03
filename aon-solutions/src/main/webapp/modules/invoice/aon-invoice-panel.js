@@ -38,6 +38,7 @@ import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { AonInvestList } from '../product/aon-invest-list.js';
 import { AonInvest } from '../product/aon-invest.js';
 import { AonSelect } from '../../components/aon-select.js';
+import { generateJobId, s3UploadInvoices } from './InvoiceUtils.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -53,6 +54,8 @@ export class AonInvoicePanel extends AonElement {
 	SUPPLIER_LIST;
 	CREDITOR_LIST;
 	INVEST_LIST;
+	UPLOAD_JOB_ID;
+
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -106,6 +109,8 @@ export class AonInvoicePanel extends AonElement {
 		}
 		this.option = this.option || (CONSTANT.REJECTED === this.status
 			? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX); 
+
+		this.UPLOAD_JOB_ID = generateJobId();
 	}
 
 	getDur(){
@@ -120,11 +125,12 @@ export class AonInvoicePanel extends AonElement {
 		let aonInvoice = this.getElement(this.INVOICE);
 
 		let input = this.getElement(this.INPUT_FILE);
-		input.addEventListener(EVENT.CHANGE, () => this.preview(input.files));
+		input.addEventListener(EVENT.CHANGE, () => this.preview(input, input.files));
 
-		this.getElement(this.INPUT_CAMERA).addEventListener(EVENT.CHANGE,  ({target}) => this.preview(target.files));
+		let inputCamera = this.getElement(this.INPUT_CAMERA);
+		inputCamera.addEventListener(EVENT.CHANGE,  ({target}) => this.preview(inputCamera, target.files));
 
-		aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.preview(e.detail));
+		aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.preview(aonInvoice, e.detail));
 
 		if(this.isMobile()) {
 			aonInvoice.addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
@@ -570,11 +576,15 @@ export class AonInvoicePanel extends AonElement {
 		this.getElement(this.INPUT_FILE).click();
 	}
 
-	preview(files) {
-		for(let i = 0; i < files.length; i++) {
-			getReader(files[i]).then(f=>{
-				this.attach(f);
-			});
+	preview(el, files) {
+		if(this.isBeta() && this.getDur().isOcr()) {
+			s3UploadInvoices(el, files, this.UPLOAD_JOB_ID);
+		} else{
+			for(let i = 0; i < files.length; i++) {
+				getReader(files[i]).then(f=>{
+					this.attach(f);
+				});
+			}
 		}
 	}
 

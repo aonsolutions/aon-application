@@ -348,7 +348,7 @@ public class Invoice2tbai {
 				detalle.setDescuento(doubleToString(0.0));
 				double total = AonMathUtils.round(detail.getQuantity() * detail.getPrice());
 				detalle.setImporteTotal(doubleToString(total));
-				if(total != 0.0)
+				if(detail.getPrice() != 0.0)
 					detalles.getIDDetalleFactura().add(detalle);
 			}
 		});

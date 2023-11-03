@@ -164,12 +164,7 @@ export class AonInvoiceList extends AonElement {
 
 			
 			if(this.isBeta() && this.getFilter().status === 'inbox') {
-				let data = {
-					skip:0,
-					limit: 10,
-					company: "6480556355f159000abb18eb",
-					publicState: "pendingCorrection"
-				};
+				let data = {};
 				getInvofoxDocuments(data).then(r => {
 					r.forEach((invoice, i) => {	
 						let date = new Date(invoice.date);
