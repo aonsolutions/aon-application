@@ -1055,10 +1055,30 @@
   transition: 0.3s ease-in;
 }
 
+.aonFiscalCardTotal .aonBankCardTotal{
+  color: var(--dark-color);
+}
+
 .aonCard:hover .aonCardTotal{
   /*transform: translateY(0);
   opacity: 1;*/
   font-size: 1.8rem;
+  color: var(--aonFiscal);
+}
+
+.aonCard:hover .aonCardTotal{
+  /*transform: translateY(0);
+  opacity: 1;*/
+  font-size: 1.8rem;
+  color: var(--aonAccounting);
+}
+
+.aonCard:hover .aonFiscalCardTotal{
+  color: var(--aonFiscal);
+}
+
+.aonCard:hover .aonBankCardTotal{
+  color: var(--aonAccounting);
 }
 
 .aonDialog {
