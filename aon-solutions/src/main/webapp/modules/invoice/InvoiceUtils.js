@@ -2,7 +2,7 @@ import { downscaleImage } from "../../services/compressImg.js";
 import { insertInvoice } from "../../services/invoiceService.js";
 import { getReader } from "../../services/utils.js";
 import { Invoice } from "./Invoice.js";
-
+import * as LS from '../../services/localStorageService.js';
 export const uploadInvoices = async(el, files) => {
     let arr = [];
     for await (let file of files) {
@@ -34,4 +34,53 @@ export const uploadInvoice = async(file) => {
             return null;
         });
     }
+}
+
+export const s3UploadInvoices = (el, files, jobId) => {
+    let arr = [];
+    for (let file of files) {
+        s3UploadInvoice(file, jobId, (f) => alert(f.name + ' ok'), (f) => alert(f.name + ' error'));
+    }
+    el.value = null;
+    return arr;
+}
+
+export const s3UploadInvoice = (file, jobId, success, error) => {
+    let formData = new FormData();
+    let xhr = new XMLHttpRequest();
+  
+    formData.append('key', 
+        'invoices'
+        + `/${LS.getDomainName()}`
+        + `/${LS.getDomainDocument()}`
+        + `/${LS.getDomainLogin()}`
+        + `/${jobId}` 
+        + `/${file.name}`);
+    formData.append('success_action_status', '201');
+    formData.append('Content-Type', file.type);
+    formData.append('file', file);
+
+    xhr.open('POST', "https://aon-upload-post.s3.amazonaws.com/", true);
+    xhr.addEventListener('readystatechange', (e) => {
+        if (xhr.readyState == 4 && xhr.status == 201) {
+          // Done. Inform the user
+          success(file);
+        } else if (xhr.readyState == 4 && xhr.status != 200) {
+          // Error. Inform the user
+          error(file, xhr);
+        }
+    });
+    xhr.send(formData);
+}
+
+export const generateJobId = () => {
+    const date = new Date(Date.now());
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+
+    return `${year}${month}${day}${hours}${minutes}${seconds}`;
 }

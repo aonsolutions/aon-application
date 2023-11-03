@@ -148,7 +148,13 @@ export class AonNewUpload extends AonElement {
             element.style.borderColor = "#aaa";
   
             if(event && event.dataTransfer && event.dataTransfer.files){
-                const [file] =  event.dataTransfer.files;
+                let files = event.dataTransfer.files;
+                let desktop = this.getElement('aonDesktop');
+                if(this.type === "Documental"){
+                    desktop.uploadDocumentsDesktop(element, files);
+                } else if(this.type === "Invoice"){
+                    desktop.uploadInvoiceDesktop(element, files);
+                }
             }
         };
 
