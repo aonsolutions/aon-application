@@ -211,11 +211,18 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	buildRawdocOptions() {
-		let pendingOptions = [ 
+		let pendingOptions = (this.isBeta() && this.getDur().isOcr()) ? 
+		[ 
+			OPTION.RAWDOC_INBOX,
+			OPTION.RAWDOC_OCR,
+			OPTION.RAWDOC_REJECT, 
+			OPTION.RAWDOC_DRAFT
+		]
+		:[ 
 			OPTION.RAWDOC_INBOX,
 			OPTION.RAWDOC_REJECT, 
 			OPTION.RAWDOC_DRAFT
-		];
+		] ;
 		let data = {
 			id: MSG.PENDING_DOCUMENTS,
 			title: MSG.PENDING_DOCUMENTS,
@@ -663,6 +670,9 @@ export class AonInvoicePanel extends AonElement {
 				break;
 			case OPTION.RAWDOC_REJECT.id:
 				this.aonInvoiceList({status: CONSTANT.REJECTED});
+				break;
+			case OPTION.RAWDOC_OCR.id:
+				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR});
 				break;
 			case OPTION.RAWDOC_DRAFT.id:
 				this.aonInvoiceList({status: CONSTANT.DRAFT});
