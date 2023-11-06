@@ -38,7 +38,7 @@ import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { AonInvestList } from '../product/aon-invest-list.js';
 import { AonInvest } from '../product/aon-invest.js';
 import { AonSelect } from '../../components/aon-select.js';
-import { generateJobId, s3UploadInvoices } from './InvoiceUtils.js';
+import { AonUploadToast } from '../../components/aon-upload-toast.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -54,8 +54,6 @@ export class AonInvoicePanel extends AonElement {
 	SUPPLIER_LIST;
 	CREDITOR_LIST;
 	INVEST_LIST;
-	UPLOAD_JOB_ID;
-
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -110,7 +108,6 @@ export class AonInvoicePanel extends AonElement {
 		this.option = this.option || (CONSTANT.REJECTED === this.status
 			? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX); 
 
-		this.UPLOAD_JOB_ID = generateJobId();
 	}
 
 	getDur(){
@@ -214,11 +211,18 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	buildRawdocOptions() {
-		let pendingOptions = [ 
+		let pendingOptions = (this.isBeta() && this.getDur().isOcr()) ? 
+		[ 
+			OPTION.RAWDOC_INBOX,
+			OPTION.RAWDOC_OCR,
+			OPTION.RAWDOC_REJECT, 
+			OPTION.RAWDOC_DRAFT
+		]
+		:[ 
 			OPTION.RAWDOC_INBOX,
 			OPTION.RAWDOC_REJECT, 
 			OPTION.RAWDOC_DRAFT
-		];
+		] ;
 		let data = {
 			id: MSG.PENDING_DOCUMENTS,
 			title: MSG.PENDING_DOCUMENTS,
@@ -578,7 +582,15 @@ export class AonInvoicePanel extends AonElement {
 
 	preview(el, files) {
 		if(this.isBeta() && this.getDur().isOcr()) {
-			s3UploadInvoices(el, files, this.UPLOAD_JOB_ID);
+			let uploadToast = this.getElement('aonUploadToast');
+			if(!uploadToast){ 
+				uploadToast = new AonUploadToast();
+				uploadToast.setDur(this.getDur());
+				this.appendChild(uploadToast);
+			}
+			for (let file of files) {
+				uploadToast.addFile("invoice", file);
+			}
 		} else{
 			for(let i = 0; i < files.length; i++) {
 				getReader(files[i]).then(f=>{
@@ -658,6 +670,9 @@ export class AonInvoicePanel extends AonElement {
 				break;
 			case OPTION.RAWDOC_REJECT.id:
 				this.aonInvoiceList({status: CONSTANT.REJECTED});
+				break;
+			case OPTION.RAWDOC_OCR.id:
+				this.aonInvoiceList({status: CONSTANT.RAWDOC_OCR});
 				break;
 			case OPTION.RAWDOC_DRAFT.id:
 				this.aonInvoiceList({status: CONSTANT.DRAFT});

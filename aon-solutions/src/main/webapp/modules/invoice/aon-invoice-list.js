@@ -126,44 +126,7 @@ export class AonInvoiceList extends AonElement {
 		this.more = true;
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		if(aonInvoiceTable) {
-			getInvoices(this.getFilter()).then(invoices => {
-				if(!this.getDur().isInvoiceManager() && !this.getDur().isInvoicePortal()) {
-					invoices = invoices.filter(f => f.creation_user === LS.getDomainLogin());
-				} 
-
-				if(this.getFilter().status === CONSTANT.INBOX && this.getFilter().type) {
-					invoices = invoices.filter(f => f.type === this.getFilter().type);
-				}
-				invoices = invoices.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-				setInvoices(invoices);
-				
-				aonInvoiceTable.removeRows();
-				aonInvoiceTable.selected = [];
-				this.removeInvoiceActions();
-				invoices.forEach((invoice, i) => {
-					if(!invoice.name){
-						invoice.name = invoice.type === 'emitida'
-							? (invoice.receiver ? invoice.receiver.name : '')
-							: (invoice.sender ? invoice.sender.name : '');
-					}
-					invoice.paymethod = invoice.finances && invoice.finances.length > 0
-						? this.getPaymethod(invoice.finances[0].paymethod) : '';
-					let date = new Date(invoice.date);
-					let day = date.getDate();
-					let month = date.getMonth() + 1;
-					let year = date.getFullYear();
-					invoice.dateTable = day + '/' + month + '/' + year;
-					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
-					invoice.icon = this.getInvoiceStatusIcon(invoice);
-					invoice.icon_title = this.getInvoiceStatusIconText(invoice);
-					invoice.icon_color = this.getInvoiceStatusIconColor(invoice);
-					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
-				});
-			});
-
-			
-			if(this.isBeta() && this.getFilter().status === 'inbox') {
+			if(this.getFilter().status === CONSTANT.RAWDOC_OCR) {
 				let data = {};
 				getInvofoxDocuments(data).then(r => {
 					r.forEach((invoice, i) => {	
@@ -186,6 +149,42 @@ export class AonInvoiceList extends AonElement {
 							iframe.style.border = '0';
 							this.getApplication().setContent(iframe);
 						},() => {});
+					});
+				});
+			} else {
+				getInvoices(this.getFilter()).then(invoices => {
+					if(!this.getDur().isInvoiceManager() && !this.getDur().isInvoicePortal()) {
+						invoices = invoices.filter(f => f.creation_user === LS.getDomainLogin());
+					} 
+
+					if(this.getFilter().status === CONSTANT.INBOX && this.getFilter().type) {
+						invoices = invoices.filter(f => f.type === this.getFilter().type);
+					}
+					invoices = invoices.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+					setInvoices(invoices);
+				
+					aonInvoiceTable.removeRows();
+					aonInvoiceTable.selected = [];
+					this.removeInvoiceActions();
+					invoices.forEach((invoice, i) => {
+						if(!invoice.name){
+							invoice.name = invoice.type === 'emitida'
+								? (invoice.receiver ? invoice.receiver.name : '')
+								: (invoice.sender ? invoice.sender.name : '');
+						}
+						invoice.paymethod = invoice.finances && invoice.finances.length > 0
+							? this.getPaymethod(invoice.finances[0].paymethod) : '';
+						let date = new Date(invoice.date);
+						let day = date.getDate();
+						let month = date.getMonth() + 1;
+						let year = date.getFullYear();
+						invoice.dateTable = day + '/' + month + '/' + year;
+						invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+						invoice.icon = this.getInvoiceStatusIcon(invoice);
+						invoice.icon_title = this.getInvoiceStatusIconText(invoice);
+						invoice.icon_color = this.getInvoiceStatusIconColor(invoice);
+						aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 					});
 				});
 			}
