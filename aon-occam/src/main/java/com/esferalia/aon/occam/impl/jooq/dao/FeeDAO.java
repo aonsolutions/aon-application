@@ -12,11 +12,13 @@ import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
+import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
-import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_COMERCIAL_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_SUPPORT_ALIAS;
 
 import java.sql.Date;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.Table;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
@@ -66,6 +69,9 @@ import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FeeDAO {
+	
+	public static final com.esferalia.aon.jooq.tables.Seller SELLER_COMERCIAL = SELLER.as("seller_comercial");
+    public static final com.esferalia.aon.jooq.tables.Seller SELLER_SUPPORT = SELLER.as("seller_support");
 	
 	private static final FeePropertiesDAO FEE_PROPERTIES = new FeePropertiesDAO();
 	private static class FeePropertiesDAO implements FeeProperties {
@@ -114,7 +120,7 @@ public class FeeDAO {
 //				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
-				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
@@ -280,7 +286,7 @@ public class FeeDAO {
 			condition = condition.and(CUSTOMER_FEE.DISCOUNT_EXPR.eq(customerFeeParams.getDiscount()));
 		
 		if(AonStringUtils.isNotBlank(customerFeeParams.getSeller())) 
-			condition = condition.and(SELLER_ALIAS.NAME.eq(customerFeeParams.getSeller()));
+			condition = condition.and(SELLER_COMERCIAL_ALIAS.NAME.eq(customerFeeParams.getSeller()));
 		
 		if(AonStringUtils.isNotBlank(customerFeeParams.getWorkplace())) 
 			condition = condition.and(WORKPLACE.DESCRIPTION.eq(customerFeeParams.getWorkplace()));
@@ -302,12 +308,15 @@ public class FeeDAO {
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
-				.leftOuterJoin(RSEGMENT).on(CUSTOMER.REGISTRY.eq(RSEGMENT.REGISTRY))
+//				.leftOuterJoin(RSEGMENT).on(CUSTOMER.REGISTRY.eq(RSEGMENT.REGISTRY))
 				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
 				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
-				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
-				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+				.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
+				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
+				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY))
+				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
+				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
 				.where(FEE_PROPERTIES.getConditions(filter))
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
@@ -352,9 +361,12 @@ public class FeeDAO {
 				.setProject(new Project().setId(r.getValue(CUSTOMER_FEE.PROJECT)))
 				.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
 				.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
-				.setSeller(checkField(r, SELLER.REGISTRY)
-					? SellerFiller.build(r)
+				.setSeller(checkField(r, SELLER_COMERCIAL.REGISTRY)
+					? SellerFiller.build(r, true)
 					: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
+				.setSellerSupport(checkField(r, SELLER_SUPPORT.REGISTRY)
+						? SellerFiller.build(r, false)
+						: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setWorkplace(checkField(r, WORKPLACE.ID)
 					? WorkplaceFiller.build(r)
 					: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)))
@@ -639,7 +651,7 @@ public class FeeDAO {
 				.fetch();
 		
 		sellerRecords.forEach(r -> {
-			Seller seller = SellerFiller.build(r);
+			Seller seller = SellerFiller.build(r, true);
 			suggestions.put(r.get(REGISTRY.NAME), seller);
 		});
 		
@@ -718,7 +730,7 @@ public class FeeDAO {
 				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
-				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
 			if(customerFeeParams.getSegment() == -1)
@@ -780,7 +792,7 @@ public class FeeDAO {
 				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
-				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
 			if(customerFeeParams.getSegment() == -1)
@@ -804,7 +816,7 @@ public class FeeDAO {
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
-				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
 				.where(condition)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
