@@ -33,7 +33,7 @@ public class RegistrySellerDAO {
 
     }
 	
-    public static final com.esferalia.aon.jooq.tables.Registry SELLER_ALIAS = SellerDAO.SELLER_ALIAS;
+    public static final com.esferalia.aon.jooq.tables.Registry SELLER_ALIAS = SellerDAO.SELLER_COMERCIAL_ALIAS;
 	private static final RegistrySellerPropertiesDAO REGISTRY_SELLER_PROPERTIES = new RegistrySellerPropertiesDAO();
 	
 	public static class RegistrySellerPropertiesDAO implements RegistrySellerProperties {
@@ -154,7 +154,7 @@ public class RegistrySellerDAO {
 			return new RegistrySeller()
 					.setId(r.getValue(RSELLER.ID))
 					.setDomain(DomainFiller.build(r))
-					.setSeller(SellerFiller.build(r))
+					.setSeller(SellerFiller.build(r, true))
 					.setRegistry(r.getValue(RSELLER.REGISTRY))
 					.setStartDate(r.getValue(RSELLER.START_DATE))
 					.setEndDate(r.getValue(RSELLER.END_DATE))
