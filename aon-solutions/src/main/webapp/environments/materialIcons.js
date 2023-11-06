@@ -75,6 +75,7 @@ export const CACHED = 'cached';
 export const CALENDAR_TODAY = 'calendar_today';
 export const CALENDAR_VIEW_DAY = 'calendar_view_day';
 export const CAMERA_ENHANCE = 'camera_enhance';
+export const CANCEL = 'cancel';
 export const CANCEL_SCHEDULE_END = 'cancel_schedule_end';
 export const CANCEL_SCHEDULE_SEND = 'cancel_schedule_send';
 export const CARD_GIFTCARD = 'card_giftcard';

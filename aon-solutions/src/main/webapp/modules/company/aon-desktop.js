@@ -8,7 +8,6 @@ import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.
 import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../timecontrol/aon-sign.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
-import { generateJobId, s3UploadInvoices, uploadInvoices } from "../invoice/InvoiceUtils.js";
 import { uploadDocuments } from "../documental/DocumentalUtils.js";
 import { AonMessenger } from '../messenger/aon-messenger.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
@@ -45,6 +44,7 @@ import { AonBankCard } from '../accounting/aon-bank-card.js';
 import { AonDashboardUploadButton } from '../../components/aon-dashboard-upload-button.js';
 import { AonDocumentalCard } from '../documental/aon-documental-card.js';
 import { AonCompanyCostsCard, paintCompanyCostPieChart } from '../laboral/company/aon-company-costs-card.js';
+import { AonUploadToast } from '../../components/aon-upload-toast.js';
 
 export class AonDesktop extends AonElement {
 
@@ -54,7 +54,6 @@ export class AonDesktop extends AonElement {
 	INPUT_DOCUMENT_FILE;
 	appOption;
 	SIDENAV_ACTIVITY_SUMMARY;
-	UPLOAD_JOB_ID;
 
 	static get observedAttributes() {
 		return [];
@@ -80,7 +79,6 @@ export class AonDesktop extends AonElement {
 		this.SIDENAV_ACTIVITY_SUMMARY = [];
 		this.TIMECONTROL_TITLE = this.id + 'TimecontrolTitle';
 		this.TIMECONTROL_SIGN = this.id + 'TimecontrolSign';
-		this.UPLOAD_JOB_ID = generateJobId();
 	}	
 
 	getDur() {
@@ -124,9 +122,7 @@ export class AonDesktop extends AonElement {
 
 		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
 		inputInvoiceFile.addEventListener(EVENT.CHANGE, ({target}) => {
-			if(this.isBeta() && this.getDur().isOcr())
-				s3UploadInvoices(inputInvoiceFile, target.files, this.UPLOAD_JOB_ID);
-			else uploadInvoices(inputInvoiceFile, target.files);
+			this.uploadInvoiceDesktop(undefined, target.files);
 		});
 		
 		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
@@ -335,9 +331,15 @@ export class AonDesktop extends AonElement {
 	}
 
 	uploadInvoiceDesktop(input, files){
-		if(this.isBeta() && this.getDur().isOcr())
-			s3UploadInvoices(input, files, this.UPLOAD_JOB_ID);
-		else uploadInvoices(input, files);
+		let uploadToast = this.getElement('aonUploadToast');
+		if(!uploadToast){ 
+			uploadToast = new AonUploadToast();
+			uploadToast.setDur(this.getDur());
+			this.appendChild(uploadToast);
+		}
+		for (let file of files) {
+			uploadToast.addFile("invoice", file);
+		}
 	}
 
 	async createDashboard(parent, company){
@@ -1100,10 +1102,7 @@ export class AonDesktop extends AonElement {
 							break;
 						case Apps.INVOICE.app:
 							let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
-							
-							if(this.isBeta() && this.getDur().isOcr())
-								s3UploadInvoices(inputInvoiceFile, files, this.UPLOAD_JOB_ID);
-							else uploadInvoices(inputInvoiceFile, files);
+							this.uploadInvoiceDesktop(undefined, files);
 							break;								
 						}
 					}
