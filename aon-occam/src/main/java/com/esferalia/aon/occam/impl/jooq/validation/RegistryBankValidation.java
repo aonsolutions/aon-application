@@ -51,7 +51,7 @@ public class RegistryBankValidation {
 	 * Throws an exception if the size of the registryBank's bic is invalid
 	 */
 	private static final BiConsumer<AONContext, RegistryBank> INVALID_SIZE_BIC = (ctx, registryBank) -> {
-		if (registryBank.getBic().length() > RBANK.BIC.getDataType().length()) {
+		if (registryBank != null && registryBank.getBic() != null  && registryBank.getBic().length() > RBANK.BIC.getDataType().length()) {
 			throw new AonCoreException(AonError.REGISTRY_BANK_INVALID_BIC_SIZE.getMessage());
 		}
 	};
@@ -60,7 +60,7 @@ public class RegistryBankValidation {
 	 * Throws an exception if the size of the registryBank's suffix is invalid
 	 */
 	private static final BiConsumer<AONContext, RegistryBank> INVALID_SIZE_SUFFIX = (ctx, registryBank) -> {
-		if (registryBank.getSuffix().length() > RBANK.SUFIX.getDataType().length()) {
+		if (registryBank != null && registryBank.getSuffix() != null && registryBank.getSuffix().length() > RBANK.SUFIX.getDataType().length()) {
 			throw new AonCoreException(AonError.REGISTRY_BANK_INVALID_SUFFIX_SIZE.getMessage());
 		}
 	};
@@ -69,7 +69,7 @@ public class RegistryBankValidation {
 	 * Throws an exception if the size of the registryBank's requisition is invalid
 	 */
 	private static final BiConsumer<AONContext, RegistryBank> INVALID_SIZE_REQUISITION = (ctx, registryBank) -> {
-		if (registryBank.getRequisition().length() > RBANK.REQUISITION.getDataType().length()) {
+		if (registryBank != null && registryBank.getRequisition() != null && registryBank.getRequisition().length() > RBANK.REQUISITION.getDataType().length()) {
 			throw new AonCoreException(AonError.REGISTRY_BANK_INVALID_REQUISITION_SIZE.getMessage());
 		}
 	};
@@ -78,7 +78,7 @@ public class RegistryBankValidation {
 	 * Throws an exception if the size of the registryBank's SEPA mandate reference is invalid
 	 */
 	private static final BiConsumer<AONContext, RegistryBank> INVALID_SIZE_SEPA_MANDATE_REF = (ctx, registryBank) -> {
-		if (registryBank.getSepaMandateRef().length() > RBANK.SEPA_MANDATE_REF.getDataType().length()) {
+		if (registryBank != null && registryBank.getSepaMandateRef() != null && registryBank.getSepaMandateRef().length() > RBANK.SEPA_MANDATE_REF.getDataType().length()) {
 			throw new AonCoreException(AonError.REGISTRY_BANK_INVALID_SEPA_MANDATE_REF_SIZE.getMessage());
 		}
 	};

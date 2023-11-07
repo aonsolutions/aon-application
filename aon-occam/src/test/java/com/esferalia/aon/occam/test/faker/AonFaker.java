@@ -777,26 +777,10 @@ public class AonFaker {
 			bic = bic.substring(0, RBANK.BIC.getDataType().length());
 		}
 		
-		String suffix = faker.friends().character();
-		if (suffix.length() > RBANK.SUFIX.getDataType().length()) {
-			suffix = suffix.substring(0, RBANK.SUFIX.getDataType().length());
-		}
-		
-		String alias = faker.gameOfThrones().dragon();
-		if (alias.length() > RBANK.ALIAS.getDataType().length()) {
-			alias = alias.substring(0, RBANK.ALIAS.getDataType().length());
-		}
-		
-		String requisition = faker.rickAndMorty().character();
-		if (requisition.length() > RBANK.REQUISITION.getDataType().length()) {
-			requisition = requisition.substring(0, RBANK.REQUISITION.getDataType().length());
-		}
-		
-		String sepaMandateRef = faker.gameOfThrones().dragon();
-		if (sepaMandateRef.length() > RBANK.SEPA_MANDATE_REF.getDataType().length()) {
-			sepaMandateRef = sepaMandateRef.substring(0, RBANK.SEPA_MANDATE_REF.getDataType().length());
-		}
-		
+		String suffix = AonRandom.string(50,RBANK.SUFIX.getDataType().length());
+		String alias = AonRandom.string(50,RBANK.ALIAS.getDataType().length());
+		String requisition = AonRandom.string(50,RBANK.REQUISITION.getDataType().length());
+		String sepaMandateRef = AonRandom.string(50,RBANK.SEPA_MANDATE_REF.getDataType().length());		
 		
 		return new RegistryBank()
 				.setDomain(ctx.getDomainId())
