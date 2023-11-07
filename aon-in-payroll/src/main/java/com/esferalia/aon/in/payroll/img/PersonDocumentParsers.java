@@ -11,13 +11,12 @@ public class PersonDocumentParsers {
 		Person parse(String text);
 	}
 
-	public static Person parse(String text) {
+	public static IPersonDocumentParser getParser(String text) {
 		IPersonDocumentParser [] parses = new IPersonDocumentParser[] {
 				new DNICommonParser()
 		};
 		return Arrays.stream(parses)
 				.filter(e ->e.accept(text))
-				.map(e -> e.parse(text))
 				.findFirst()
 				.orElseThrow(() -> new PersonDocumentParserException("El formato no es soportado"));
 	}

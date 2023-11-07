@@ -1,8 +1,8 @@
 package com.esferalia.aon.in.payroll.img;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,8 +31,12 @@ import com.esferalia.aon.in.payroll.pdf.util.PDFTextStripper;
 public class PDFExtracter implements IPersonDocumentExtracter {
 
 	@Override
-	public boolean accept(InputStream is) {
-		return isPDF(is);
+	public boolean accept(byte[] bytes) {
+		try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {
+            return ( Loader.loadPDF(is) != null );
+		} catch (IOException e) {
+			throw new PersonDocumentExtractException("El formato no es soportado");
+		}
 	}
 
 	@Override
@@ -52,16 +56,6 @@ public class PDFExtracter implements IPersonDocumentExtracter {
 		}
 		return text;
 	}
-	
-    public boolean isPDF (InputStream is)  {
-        try {
-            PDDocument doc = Loader.loadPDF(is);
-            return (doc != null);
-            
-        } catch (IOException e) {
-            return false;
-        }
-    }
 	
 	private static boolean isBlank(String cs) {
 		if (cs == null || (cs.length()) == 0) {

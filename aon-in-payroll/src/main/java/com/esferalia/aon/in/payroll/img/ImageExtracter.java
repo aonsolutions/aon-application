@@ -1,7 +1,7 @@
 package com.esferalia.aon.in.payroll.img;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -20,24 +20,18 @@ import com.esferalia.aon.in.payroll.img.PersonDocumentExtracters.IPersonDocument
 public class ImageExtracter implements IPersonDocumentExtracter {
 
 	@Override
-	public boolean accept(InputStream is) {
-		return isImage(is);
+	public boolean accept(byte[] bytes) {
+		try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {
+			ImageIO.read(is);
+			return true;
+		} catch (IOException e) {
+			throw new PersonDocumentExtractException("El formato no es soportado");
+		}
 	}
 
 	@Override
 	public String extract(byte[] bytes) {
 		return extractImage(bytes);
-	}
-
-	private boolean isImage(InputStream is) {
-		boolean resultado = false;
-		try {
-			ImageIO.read(is);
-			resultado = true;
-		} catch (IOException e) {
-			throw new PersonDocumentExtractException("El formato no es soportado");
-		}
-		return resultado;
 	}
 
 	private String extractImage(byte[] bytes) {
