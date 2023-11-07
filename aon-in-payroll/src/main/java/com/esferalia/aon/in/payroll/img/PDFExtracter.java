@@ -31,6 +31,7 @@ public class PDFExtracter implements IPersonDocumentExtracter {
 	@Override
 	public boolean accept(InputStream is) {
 		return isPDF(is);
+//		return true;
 	}
 
 	@Override
@@ -50,20 +51,16 @@ public class PDFExtracter implements IPersonDocumentExtracter {
 		return text;
 	}
 	
-	public boolean isPDF (InputStream is)  {
-		boolean resultado = false;
-		PDDocument doc;
-		try {
-			doc = Loader.loadPDF(is);
-			if (doc != null) {
-				resultado = true;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-			return resultado;
-	}
-
+    public boolean isPDF (InputStream is)  {
+        try {
+            PDDocument doc = Loader.loadPDF(is);
+            return (doc != null);
+            
+        } catch (IOException e) {
+            return false;
+        }
+    }
+	
 	private static boolean isBlank(String cs) {
 		if (cs == null || (cs.length()) == 0) {
 			return true;
