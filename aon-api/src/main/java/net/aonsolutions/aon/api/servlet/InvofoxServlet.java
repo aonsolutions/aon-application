@@ -13,7 +13,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gson.JsonArray;
 
@@ -45,6 +47,9 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
+			
+			Integer page = JsonUtils.getInteger(api.getData(), IJsonNames.PAGE);
+			Integer perPage = JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE);
 			String token = OCRInvofox.getLoginToken().getLoginToken()
 					.orElse(new OCRLoginToken()).getToken().orElse(null);
 			Company cp = AON.getCompany(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId()));
@@ -56,7 +61,10 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					OCRDocumentsResponse response = OCRInvofox.getDocuments(
 						OCRDocumentsParams.get().withType(OCRType.invoice)
 //						.withPublicState(OCRSeverity.pendingCorrection)
-						.withCompany(company.getId()));
+						.withCompany(company.getId())
+						.skiping(page * perPage)
+						.limit(perPage)
+					);
 					
 					JSONArray array = new JSONArray();
 

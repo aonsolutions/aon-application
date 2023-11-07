@@ -86,6 +86,7 @@ export const CHECK_CIRCLE = 'check_circle';
 export const CHECK_CIRCLE_OUTLINE = 'check_circle_outline';
 export const CHEVRON_RIGHT = 'chevron_right';
 export const CHROME_READER_MODE = 'chrome_reader_mode';
+export const CIRCLE = 'circle';
 export const CLASS = 'class';
 export const CLOSE = 'close';
 export const CLOSE_FULLSCREEN = 'close_fullscreen';
