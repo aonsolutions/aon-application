@@ -203,7 +203,10 @@ public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel
 	 */
 	private void paintBankHeader(AonDisplayGrid displayTab) {
 		displayTab.addHeaderRow()
-			.addCell(new InlineLabel(AON.MSG.bankAccount()));
+			.addCell(new InlineLabel(AON.MSG.bankAccount()))
+			.addCell(new InlineLabel(AON.MSG.description()))
+			.addCell(new InlineLabel("Bic / Swift"))
+			.addCell(new InlineLabel("Activo"));
 	}
 	
 	/**
@@ -213,13 +216,33 @@ public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel
 	 * @param registryAddress
 	 */
 	private void paintBank(AonDisplayGrid displayTab, AonModuleOptions<?> options, RegistryBank registryBank) {
-			
+		
 		// ***************************************************************** [BANK ACCOUNT]		
 		final AonBankAccountBox aonBankAccountBox = new AonBankAccountBox();
 		aonBankAccountBox.setWidth("250px");
 		aonBankAccountBox.setValue(registryBank.getBankAccount());
 		aonBankAccountBox.addValueChangeHandler(event -> registryBank.setBankAccount(aonBankAccountBox.getValue()));
+		
+		// ***************************************************************** [DESCRIPTION]		
+		final AonTextBox descriptionText = new AonTextBox();
+		descriptionText.setValue(registryBank.getAlias());
+		descriptionText.setVisibleLength(20);
+		descriptionText.setMaxLength(25);
+		descriptionText.addValueChangeHandler(event -> registryBank.setAlias(descriptionText.getValue()));
+		 
 
+		// ***************************************************************** [BIC / SWIFT]		
+		final AonTextBox bicText = new AonTextBox();
+		bicText.setValue(registryBank.getBic());
+		bicText.setVisibleLength(10);
+		bicText.setMaxLength(15);
+		bicText.addValueChangeHandler(event -> registryBank.setBic(bicText.getValue()));
+		
+		// ***************************************************************** [ACTIVE]	
+		final CheckBox activeBox = new CheckBox();
+		activeBox.setValue(registryBank.isActive());
+		activeBox.addClickHandler(event -> registryBank.setActive(activeBox.getValue()));
+		
 		final AonTableButton deleteBankButton = new AonTableButton( AON.MSG.deleteBank(),AON.CSS.aonIconDelete());
 		final AonTableButton restoreBankButton = new AonTableButton( AON.MSG.restoreAction(),AON.CSS.aonIconRestoreDeleted());
 		
@@ -248,6 +271,9 @@ public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel
 		
 		displayTab.addHeaderRow()
 			.addCell(aonBankAccountBox)
+			.addCell(descriptionText)
+			.addCell(bicText)
+			.addCell(activeBox)
 			.addCell(buttons);
 	}
 	
