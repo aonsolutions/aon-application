@@ -40,6 +40,7 @@ public enum AonError implements Serializable{
 	,EMPTY_EPIGRAPH("El ep\u00EDgrafe es un dato obligatorio, no puede estar vac\u00EDo")
 	,INVALID_LENGTH("La longitud del dato \"{0}\" no puede superar los {1} car\u00E1cteres")
 	,INVALID_FORMAT("El formato del dato \"{0}\" no es correcto: \"{1}\"")
+	,NOT_EXIST("No existe \"{0}\"")
 	
 	// -----------------------------------------------------------
 	// --------------------- ENUMERATION -------------------------
