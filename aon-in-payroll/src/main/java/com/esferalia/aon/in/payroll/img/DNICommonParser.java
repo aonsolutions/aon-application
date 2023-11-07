@@ -3,7 +3,7 @@ package com.esferalia.aon.in.payroll.img;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.esferalia.aon.in.payroll.img.PersonDocumentExtracters.IPersonDocumentParser;
+import com.esferalia.aon.in.payroll.img.PersonDocumentParsers.IPersonDocumentParser;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;

@@ -8,7 +8,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
+
 import javax.imageio.ImageIO;
+
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -23,7 +25,7 @@ import com.amazonaws.services.textract.model.Block;
 import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
 import com.amazonaws.services.textract.model.DetectDocumentTextResult;
 import com.amazonaws.services.textract.model.Document;
-import com.esferalia.aon.in.payroll.img.PersonDocumentParser.IPersonDocumentExtracter;
+import com.esferalia.aon.in.payroll.img.PersonDocumentExtracters.IPersonDocumentExtracter;
 import com.esferalia.aon.in.payroll.pdf.util.PDFTextStripper;
 
 public class PDFExtracter implements IPersonDocumentExtracter {
@@ -31,14 +33,13 @@ public class PDFExtracter implements IPersonDocumentExtracter {
 	@Override
 	public boolean accept(InputStream is) {
 		return isPDF(is);
-//		return true;
 	}
 
 	@Override
-	public String extract(InputStream is) {
+	public String extract(byte[] bytes) {
 		String text = "";
 		try {
-			PDDocument document = Loader.loadPDF(is);			
+			PDDocument document = Loader.loadPDF(bytes);			
 			PDFTextStripper stripper = new PDFTextStripper();
 			text = stripper.getText(document);
 			if (isBlank(text)) {
@@ -46,6 +47,7 @@ public class PDFExtracter implements IPersonDocumentExtracter {
 						.collect(Collectors.joining(System.lineSeparator()));
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new PersonDocumentExtractException("Error al procesar el pdf");
 		}
 		return text;

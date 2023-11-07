@@ -2,15 +2,18 @@ package com.esferalia.aon.in.payroll.img;
 
 import java.util.Arrays;
 
-import com.esferalia.aon.in.payroll.img.PersonDocumentExtracters.IPersonDocumentParser;
 import com.esferalia.aon.occam.api.model.Person;
 
 public class PersonDocumentParsers {
 
+	public interface IPersonDocumentParser {
+		boolean accept (String text);
+		Person parse(String text);
+	}
+
 	public static Person parse(String text) {
 		IPersonDocumentParser [] parses = new IPersonDocumentParser[] {
-				new DNICommonParser(),
-				new DNIVascoParser() 
+				new DNICommonParser()
 		};
 		return Arrays.stream(parses)
 				.filter(e ->e.accept(text))

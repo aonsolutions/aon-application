@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
-import org.apache.commons.io.IOUtils;
 
 import com.amazonaws.services.textract.AmazonTextract;
 import com.amazonaws.services.textract.AmazonTextractClientBuilder;
@@ -16,7 +15,7 @@ import com.amazonaws.services.textract.model.Block;
 import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
 import com.amazonaws.services.textract.model.DetectDocumentTextResult;
 import com.amazonaws.services.textract.model.Document;
-import com.esferalia.aon.in.payroll.img.PersonDocumentParser.IPersonDocumentExtracter;
+import com.esferalia.aon.in.payroll.img.PersonDocumentExtracters.IPersonDocumentExtracter;
 
 public class ImageExtracter implements IPersonDocumentExtracter {
 
@@ -26,15 +25,8 @@ public class ImageExtracter implements IPersonDocumentExtracter {
 	}
 
 	@Override
-	public String extract(InputStream is) {
-		String text = "";
-		try {
-			text = extractImage(isToByte(is));
-		} catch (IOException e) {
-			throw new PersonDocumentExtractException("El formato no es soportado");
-		}
-		return text;
-
+	public String extract(byte[] bytes) {
+		return extractImage(bytes);
 	}
 
 	private boolean isImage(InputStream is) {
@@ -46,10 +38,6 @@ public class ImageExtracter implements IPersonDocumentExtracter {
 			throw new PersonDocumentExtractException("El formato no es soportado");
 		}
 		return resultado;
-	}
-
-	private byte[] isToByte(InputStream is) throws IOException {
-		return IOUtils.toByteArray(is);
 	}
 
 	private String extractImage(byte[] bytes) {
