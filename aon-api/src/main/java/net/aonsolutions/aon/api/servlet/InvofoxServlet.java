@@ -55,7 +55,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 					OCRCompany company = companies.get(0);
 					OCRDocumentsResponse response = OCRInvofox.getDocuments(
 						OCRDocumentsParams.get().withType(OCRType.invoice)
-						.withPublicState(OCRSeverity.pendingCorrection)
+//						.withPublicState(OCRSeverity.pendingCorrection)
 						.withCompany(company.getId()));
 					
 					JSONArray array = new JSONArray();
@@ -68,6 +68,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						json.put("date", r.getData().get().getIssueDate().get().getValue().orElse(""));
 						json.put("total", r.getData().get().getTotalAmount().get().getValue().orElse(new BigDecimal(0)));
 						json.put("token", token);
+						json.put("status", r.getPublicState().get().name());
 						array.put(json);
 					});			
 			
