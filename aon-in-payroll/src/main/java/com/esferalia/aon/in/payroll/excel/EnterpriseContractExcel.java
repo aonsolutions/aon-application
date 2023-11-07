@@ -526,7 +526,7 @@ public class EnterpriseContractExcel {
 					);
 		}
 		
-		condition = inactive ? condition : CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(currentDateSQL));
+		condition = inactive ? condition : condition.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(currentDateSQL)));
 		
 		Result<Record> contractRecords = aonContext.getDslContext().select().from(CONTRACT)
 			.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
