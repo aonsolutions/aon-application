@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
-import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.occam.api.AON;
@@ -221,12 +220,6 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 			values.put(DEPARTMENT, m.groupCount()>7 ? m.group(8) : null);
 		}
 		return values;
-	}
-	
-
-	private String obtainEdiCompanyCode() {
-		ApplicationParameter param = AON.getApplicationParameter(domainName, domainId, login, AppParam.EDI_COMPANY_CODE.getValue());
-		return param!=null ? param.getValue() : null;
 	}
 	
 	public String obtainPackingTag(Integer registryId, Integer rAddressId) throws AonException{
