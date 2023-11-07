@@ -8,9 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
-
 import javax.imageio.ImageIO;
-
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -39,7 +37,7 @@ public class PDFExtracter implements IPersonDocumentExtracter {
 	public String extract(InputStream is) {
 		String text = "";
 		try {
-			PDDocument document = Loader.loadPDF(is);
+			PDDocument document = Loader.loadPDF(is);			
 			PDFTextStripper stripper = new PDFTextStripper();
 			text = stripper.getText(document);
 			if (isBlank(text)) {
@@ -49,19 +47,21 @@ public class PDFExtracter implements IPersonDocumentExtracter {
 		} catch (Exception e) {
 			throw new PersonDocumentExtractException("Error al procesar el pdf");
 		}
-
 		return text;
-
 	}
-
-	private boolean isPDF(InputStream is) {
+	
+	public boolean isPDF (InputStream is)  {
+		boolean resultado = false;
+		PDDocument doc;
 		try {
-			@SuppressWarnings("unused")
-			PDDocument doc = Loader.loadPDF(is);
-			return true;
-		} catch (Exception e) {
-			throw new PersonDocumentExtractException("El formato no es soportado");
+			doc = Loader.loadPDF(is);
+			if (doc != null) {
+				resultado = true;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+			return resultado;
 	}
 
 	private static boolean isBlank(String cs) {
@@ -141,5 +141,4 @@ public class PDFExtracter implements IPersonDocumentExtracter {
 		return (Math.abs(top2 - top1) <= height1 / 2.00);
 
 	}
-
 }

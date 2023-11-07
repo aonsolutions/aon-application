@@ -34,7 +34,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 
 public class DNIParser {
 
-	private static String text;
+	private String text;
 
 	// CONVIERTE IMAGEN DEL DNI A DOCUMENT USANDO BYTES
 	private String extractImage(byte[] bytes) {
@@ -51,17 +51,10 @@ public class DNIParser {
 		}
 	}
 	
-	public String getTextPrueba(byte [] bytes, InputStream is) throws IOException {
-		String text = "";
-		if (bytes != null) {
-			DNIParserValidation.validateBytes(bytes);
-			text = extractImage(bytes);
-		}else if (is != null) {
-			DNIParserValidation.validateInputstream(is);
-			parse(is);
-			text = getText();
-		}
-		return text;
+	public String parsePublic(InputStream is) throws IOException{
+		parse(is);
+		return getText();
+		
 	}
 
 	// RECOGE LAS IMAGENES DEL PDF Y LAS ALMACENA EN BYTE[]
@@ -88,7 +81,7 @@ public class DNIParser {
 		AccessPermission ap = doc.getCurrentAccessPermission();
 
 		if (!ap.canExtractContent()) {
-			throw new ImgDNIException("You do not have permission to extract text");
+			throw new PersonDocumentExtractException("You do not have permission to extract text");
 		}
 		PDFTextStripper stripper = new PDFTextStripper();
 		stripper.setSortByPosition(true);
@@ -97,7 +90,7 @@ public class DNIParser {
 			extractedText = getImages(doc).stream().map(this::extractImage)
 					.collect(Collectors.joining(System.lineSeparator()));
 		}
-		DNIParser.setText(extractedText);
+		setText(extractedText);
 		return getText();
 	}
 
@@ -185,11 +178,11 @@ public class DNIParser {
 		return text;
 	}
 
-	public static void setText(String text) {
-		DNIParser.text = text;
+	public void setText(String text) {
+		this.text = text;
 	}
 
-	private String getDocumentDNI(String text) {
+	public String getDocumentDNI(String text) {
 		String document = "";
 		String documentDNIRegex = "^[0-9]{8}[A-HJ-NP-TV-Z]$";
 		Pattern pattern = Pattern.compile(documentDNIRegex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
@@ -242,15 +235,15 @@ public class DNIParser {
 	    return null; 
 	}
 	
+
+	
 	private String getDocumentName(String text) {
 	    String name = null;
 	    Pattern pattern = Pattern.compile("DNI[\\s\\S]*?(NOMBRE|NONBRE)\\s+([^\\n]+)", Pattern.CASE_INSENSITIVE);
 	    Matcher matcher = pattern.matcher(text);
-
 	    if (matcher.find()) {
 	        name = matcher.group(2).trim();
 	    }
-
 	    return name;
 	}
 	
@@ -258,14 +251,11 @@ public class DNIParser {
 		  String[] apellidos = new String[2];
 		    Pattern pattern = Pattern.compile("DNI[\\s\\S]*?(APELLIDOS|APALLIDOS)\\s+([^\\n]+)\\s+([^\\n]+)", Pattern.CASE_INSENSITIVE);
 		    Matcher matcher = pattern.matcher(text);
-
+		    
 		    if (matcher.find()) {
 		        apellidos[0] = matcher.group(2).trim();
 		        apellidos[1] = matcher.group(3).trim();
 		    }
-
 		    return apellidos;
 	}
-
-	
 }

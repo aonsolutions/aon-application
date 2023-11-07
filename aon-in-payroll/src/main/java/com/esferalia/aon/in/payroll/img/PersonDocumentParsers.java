@@ -10,7 +10,7 @@ public class PersonDocumentParsers {
 	public static Person parse(String text) {
 		IPersonDocumentParser [] parses = new IPersonDocumentParser[] {
 				new DNICommonParser(),
-				new DNIVascoParser()
+				new DNIVascoParser() 
 		};
 		return Arrays.stream(parses)
 				.filter(e ->e.accept(text))

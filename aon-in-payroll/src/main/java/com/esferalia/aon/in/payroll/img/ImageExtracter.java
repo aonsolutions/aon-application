@@ -38,12 +38,14 @@ public class ImageExtracter implements IPersonDocumentExtracter {
 	}
 
 	private boolean isImage(InputStream is) {
+		boolean resultado = false;
 		try {
 			ImageIO.read(is);
-			return true;
+			resultado = true;
 		} catch (IOException e) {
 			throw new PersonDocumentExtractException("El formato no es soportado");
 		}
+		return resultado;
 	}
 
 	private byte[] isToByte(InputStream is) throws IOException {
@@ -74,7 +76,7 @@ public class ImageExtracter implements IPersonDocumentExtracter {
 				.filter(b -> b.getBlockType().equals("LINE")).toArray(Block[]::new);
 
 		String extract = null;
-
+ 
 		if (blocks != null && blocks.length > 0) {
 			LinkedList<Block> lines = new LinkedList<>();
 			for (int i = 0; i < blocks.length; i++) {

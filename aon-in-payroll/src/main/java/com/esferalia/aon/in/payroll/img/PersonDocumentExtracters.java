@@ -10,8 +10,8 @@ public class PersonDocumentExtracters {
 
 	public static String extract(InputStream is) {
 		IPersonDocumentExtracter [] extracters = new IPersonDocumentExtracter[] {
-				new ImageExtracter(),
-				new PDFExtracter()
+				new PDFExtracter(),
+				new ImageExtracter() 
 		};
 		
 		return Arrays.stream(extracters)

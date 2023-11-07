@@ -13,7 +13,7 @@ public class DNIVascoParser implements IPersonDocumentParser{
 	@Override
 	public boolean accept(String text) {
 		boolean result = false;
-		if (!text.contains("IZENA")) {
+		if (!text.contains("IZENA")) { 
 			result = true ;
 		}
 		return result;
