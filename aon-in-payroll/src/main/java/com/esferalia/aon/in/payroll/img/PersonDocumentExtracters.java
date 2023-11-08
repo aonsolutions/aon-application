@@ -1,28 +1,29 @@
 package com.esferalia.aon.in.payroll.img;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import com.esferalia.aon.in.payroll.img.PersonDocumentParser.IPersonDocumentExtracter;
-import com.esferalia.aon.occam.api.model.Person;
 
 public class PersonDocumentExtracters {
 
-	public static String extract(InputStream is) {
-		IPersonDocumentExtracter [] extracters = new IPersonDocumentExtracter[] {
-				new PDFExtracter(),
-				new ImageExtracter() 
-		};
-		
-		return Arrays.stream(extracters)
-				.filter(e -> e.accept(is))
-				.map(e -> e.extract(is))
-				.findFirst()
-				.orElseThrow(() -> new PersonDocumentExtractException("El formato no es soportado"));
+	public interface IPersonDocumentExtracter{
+		boolean accept (InputStream is);
+		String extract(byte [] bytes);
 	}
 	
-	public interface IPersonDocumentParser{
-		boolean accept (String text);
-		Person parse(String text);
+	public static IPersonDocumentExtracter getExtracter(byte[] bytes) {
+		try ( ByteArrayInputStream is = new ByteArrayInputStream(bytes) ) {
+			return Arrays.stream(new IPersonDocumentExtracter[] {
+					new PDFExtracter(),
+					new ImageExtracter()})
+					.filter(e -> e.accept(is))
+					.findFirst()
+					.orElseThrow(() -> new PersonDocumentExtractException("El formato no es soportado"));
+		} catch (IOException e1) {
+			throw new PersonDocumentExtractException("Error input");
+		}
 	}
 }
+ 

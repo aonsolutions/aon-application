@@ -8,36 +8,18 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
-import org.apache.commons.io.IOUtils;
-
 import com.amazonaws.services.textract.AmazonTextract;
 import com.amazonaws.services.textract.AmazonTextractClientBuilder;
 import com.amazonaws.services.textract.model.Block;
 import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
 import com.amazonaws.services.textract.model.DetectDocumentTextResult;
 import com.amazonaws.services.textract.model.Document;
-import com.esferalia.aon.in.payroll.img.PersonDocumentParser.IPersonDocumentExtracter;
+import com.esferalia.aon.in.payroll.img.PersonDocumentExtracters.IPersonDocumentExtracter;
 
 public class ImageExtracter implements IPersonDocumentExtracter {
 
 	@Override
 	public boolean accept(InputStream is) {
-		return isImage(is);
-	}
-
-	@Override
-	public String extract(InputStream is) {
-		String text = "";
-		try {
-			text = extractImage(isToByte(is));
-		} catch (IOException e) {
-			throw new PersonDocumentExtractException("El formato no es soportado");
-		}
-		return text;
-
-	}
-
-	private boolean isImage(InputStream is) {
 		boolean resultado = false;
 		try {
 			ImageIO.read(is);
@@ -48,12 +30,14 @@ public class ImageExtracter implements IPersonDocumentExtracter {
 		return resultado;
 	}
 
-	private byte[] isToByte(InputStream is) throws IOException {
-		return IOUtils.toByteArray(is);
+	@Override
+	public String extract(byte [] bytes) {
+		return extractImage(bytes);
+
 	}
 
 	private String extractImage(byte[] bytes) {
-		DNIParserValidation.validateBytes(bytes);
+		PersonDocumentParserValidation.validateBytes(bytes);
 		return extract(new Document().withBytes(ByteBuffer.wrap(bytes)));
 	}
 
@@ -61,7 +45,7 @@ public class ImageExtracter implements IPersonDocumentExtracter {
 
 		AmazonTextract client = AmazonTextractClientBuilder.defaultClient();
 
-		DNIParserValidation.validateDoc(doc);
+		PersonDocumentParserValidation.validateDoc(doc);
 
 		DetectDocumentTextRequest detectDocumentTextRequest = new DetectDocumentTextRequest().withDocument(doc);
 
