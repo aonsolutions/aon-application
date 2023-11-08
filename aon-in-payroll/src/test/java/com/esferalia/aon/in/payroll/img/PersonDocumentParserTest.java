@@ -31,9 +31,10 @@ public class PersonDocumentParserTest {
 		});
 	}
 	
-	public PersonDocumentParserTest(String fileName) {
+	public PersonDocumentParserTest(String fileName ) {
 		this.fileName = fileName;
 	}
+	
 	
 	@Test
 	public void personDocumentParserParameterizedTest() throws Exception {
@@ -42,9 +43,9 @@ public class PersonDocumentParserTest {
 		try (InputStream is = classLoader.getResourceAsStream(file)) {
 			byte[] bytes = AonIOUtils.toByteArray(is);
 			Person person = PersonDocumentParser.parse(bytes);
-			String expectedSecondSurname = "ALVAREZ";
-			String actualSecondSurname = person.getSecondSurname();
-			assertEquals(expectedSecondSurname, actualSecondSurname);
+			String expectedName = "JUAN MANUEL";
+			String actualName = person.getName();
+			assertEquals(expectedName , actualName);
 		}
 	}
 	
@@ -55,9 +56,9 @@ public class PersonDocumentParserTest {
 		try (InputStream is = classLoader.getResourceAsStream(file)) {
 			byte[] bytes = AonIOUtils.toByteArray(is);
 			Person person = PersonDocumentParser.parse(bytes);
-			String expectedFirstSurname = "MUESTRA";
-			String actualFirstSurname = person.getFirstSurname();
-			assertEquals(expectedFirstSurname, actualFirstSurname);
+			String expectedDocument = "12345678A";
+			String actualDocument = person.getDocument();
+			assertEquals(expectedDocument, actualDocument);
 		}
 	}
 
@@ -94,9 +95,9 @@ public class PersonDocumentParserTest {
 		try (InputStream is = classLoader.getResourceAsStream(file)) {
 			byte[] bytes = AonIOUtils.toByteArray(is);
 			Person person = PersonDocumentParser.parse(bytes);
-			String expectedSecondSurname = "CASTELLANO";
-			String actualSecondSurname = person.getSecondSurname();
-			assertEquals(expectedSecondSurname, actualSecondSurname);
+			Country expectedNation = Country.ES;
+			Country actualNation = person.getNationality();
+			assertEquals(expectedNation, actualNation);
 		}
 	}
 
