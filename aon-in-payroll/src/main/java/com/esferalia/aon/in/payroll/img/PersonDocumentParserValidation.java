@@ -9,7 +9,7 @@ import com.amazonaws.services.textract.model.Document;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-public class PersonDocumentParserValidation {
+class PersonDocumentParserValidation {
 
 	private PersonDocumentParserValidation() {
 
@@ -49,19 +49,19 @@ public class PersonDocumentParserValidation {
 		}
 	};
 
-	public static void validateBytes(byte[] bytes) throws AonCoreException {
+	static void validateBytes(byte[] bytes) throws AonCoreException {
 		NULL_BYTES_FILE_UPLOADED.accept(bytes);
 	}
 
-	public static void validatePDDoc(PDDocument document) throws AonCoreException {
+	static void validatePDDoc(PDDocument document) throws AonCoreException {
 		NULL_PDDOC_FILE_UPLOADED.accept(document);
 	}
 
-	public static void validateDoc(Document document) throws AonCoreException {
+	static void validateDoc(Document document) throws AonCoreException {
 		NULL_DOC_FILE_UPLOADED.andThen(DOC_FILE_SIZE_EXCEEDED).accept(document);
 	}
 
-	public static void validateText(String text) throws AonCoreException {
+	static void validateText(String text) throws AonCoreException {
 		NULL_TEXT_RECEIVED.accept(text);
 	}	
 }
