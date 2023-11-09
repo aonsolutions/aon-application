@@ -1,12 +1,13 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.util.function.BiConsumer;
+import java.util.function.ObjIntConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -39,16 +40,21 @@ public class RegistryAddressValidation {
 			throw new AonCoreException(AonError.INVALID_LENGTH.format( ADDRESS_ZIP_LABEL, RADDRESS.ZIP.getDataType().length() ));
 	};
 	
-	public static final BiConsumer<AONContext, RegistryAddress> DELETE_FOREIGN_KEY = (ctx,registryAddress) -> {
-		try {
-			RegistryAddressDAO.delete(ctx, registryAddress.getId());
-		} catch(Exception e) {
-			if (e instanceof java.sql.SQLIntegrityConstraintViolationException)
-				throw new AonCoreException(AonError.DELETE_RADDRESS_INVOICE.getMessage());
+	public static final ObjIntConsumer<AONContext> CHECK_INVOICE = (ctx,registryAddressId) -> {
+		Integer invoiceId = ctx.getDslContext().select(INVOICE.ID)
+				.from(INVOICE)
+				.where(INVOICE.RADDRESS.eq(registryAddressId))
+				.fetch()
+				.stream()
+				.map (rec -> rec.getValue(INVOICE.ID))
+				.findAny()
+				.orElse(null);
+		
+		if (invoiceId != null) {
+			throw new AonCoreException(AonError.DELETE_RADDRESS_INVOICE.getMessage());
 		}
 	};
 	
-
 	public static void validate(AONContext ctx, RegistryAddress registryAddress) throws AonCoreException {
 			EMPTY_DOMAIN
 			.andThen(EMPTY_REGISTRY)
@@ -58,6 +64,7 @@ public class RegistryAddressValidation {
 	}
 	
 	public static void validateDeletion(AONContext ctx, Integer id) {
-		// Empty method
+		CHECK_INVOICE
+			.accept(ctx,id);
 	}
 }
