@@ -349,3 +349,11 @@
 		    			<g:SuggestBox ui:field="account" debugId="account" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
 		    			<g:Label styleName='{style.mw}' text="BIC" />
 		    			<g:TextBox ui:field="bic" debugId="bic" styleName='aon-inputText {style.widthAll} {style.heightTB}' />
+					</g:HTMLPanel>
+		    	</g:HTMLPanel>
+		    </g:HTMLPanel>
+	   	</g:HTMLPanel>
+			
+	</g:HTMLPanel> 
+</ui:UiBinder> 
+
