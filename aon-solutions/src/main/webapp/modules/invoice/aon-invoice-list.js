@@ -165,6 +165,9 @@ export class AonInvoiceList extends AonElement {
 		if(aonInvoiceTable) {
 			if(this.getFilter().status === CONSTANT.RAWDOC_OCR) {
 				getInvofoxDocuments(this.getFilter()).then(r => {
+					aonInvoiceTable.removeRows();
+					aonInvoiceTable.selected = [];
+					this.removeInvoiceActions();
 					r.forEach((invoice, i) => {	
 						let date = new Date(invoice.date);
 						let day = date.getDate();
