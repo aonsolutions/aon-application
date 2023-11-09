@@ -23,7 +23,10 @@ public enum SalesStatus implements IResourceable{
     CLOSED,
 	
     /** INVOICED. */
-    INVOICED;
+    INVOICED,
+	
+    /** IN PREPARATION. */
+    IN_PREPARATION;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_sales_status_";

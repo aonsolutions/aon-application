@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
@@ -70,6 +71,8 @@ public class Delivery implements Serializable {
 	
 	private List<DeliveryDetail> details;
 	private List<DeliveryPackaging> packaging;
+	private String packagingData;
+	private EdiCodes ediCodes;
 	
 	private Date creationDate;
 	private String creationUser;
@@ -653,6 +656,30 @@ public class Delivery implements Serializable {
 	
 	public Delivery setPackaging(List<DeliveryPackaging> packaging) {
 		this.packaging = packaging;
+		return this;
+	}
+	
+	public String getPackagingData() {
+		return packagingData;
+	}
+	
+	public Delivery setPackagingData(String packagingData) {
+		this.packagingData = packagingData;
+		return this;
+	}
+	
+	public Delivery setPackagingData(byte[] packagingData) {
+		if(packagingData != null)
+			this.packagingData = new String(packagingData);
+		return this;
+	}
+	
+	public EdiCodes getEdiCodes() {
+		return ediCodes;
+	}
+	
+	public Delivery setEdiCodes(EdiCodes ediCodes) {
+		this.ediCodes = ediCodes;
 		return this;
 	}
 	

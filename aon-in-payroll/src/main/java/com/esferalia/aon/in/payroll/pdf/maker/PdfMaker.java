@@ -22,9 +22,11 @@ import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlePrintConfiguratio
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlementTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.warehouse.MultipleWarehouseTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.warehouse.PackagingTag;
+import com.esferalia.aon.in.payroll.pdf.maker.warehouse.WarehouseSaleTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.warehouse.WarehouseTemplate;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 
@@ -67,6 +69,15 @@ public class PdfMaker {
 	public static void printMultiplePackaging(OutputStream out, PackagingTag packagingTag) {
 		try {
 			MultipleWarehouseTemplate template = new MultipleWarehouseTemplate(packagingTag);
+			template.print(out);
+		} catch (CanNotCreatePdfException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	public static void printSalesPackaging(OutputStream out, Sales sales) {
+		try {
+			WarehouseSaleTemplate template = new WarehouseSaleTemplate(sales);
 			template.print(out);
 		} catch (CanNotCreatePdfException e) {
 			e.printStackTrace();

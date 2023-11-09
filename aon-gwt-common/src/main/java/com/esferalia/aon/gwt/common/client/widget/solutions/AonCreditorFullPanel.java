@@ -10,10 +10,6 @@ import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -24,7 +20,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 
 public class AonCreditorFullPanel extends AonRegistryFullPanel<CreditorFull> implements Focusable {
 
-	private RegistryServiceAsync SERVICE;
+	private RegistryServiceAsync service;
 
 	private static final Logger LOGGER = Logger.getLogger(AonCreditorFullPanel.class.getName());
 	static {
@@ -35,7 +31,7 @@ public class AonCreditorFullPanel extends AonRegistryFullPanel<CreditorFull> imp
 		super( options, creditorFull,callback);
 
 		RegistryServiceAsync serviceRaw = GWT.create(RegistryService.class);
-		SERVICE = new RegistryServiceAsyncDecorator(serviceRaw);
+		service = new RegistryServiceAsyncDecorator(serviceRaw);
 		
 		getRootPanel().add(addButtons(options,creditorFull,callback));
 	}
@@ -60,14 +56,7 @@ public class AonCreditorFullPanel extends AonRegistryFullPanel<CreditorFull> imp
 		
 		final InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
 		transactionBox.setValue(creditor.getTransaction());
-		transactionBox.addChangeHandler( new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				creditor.setTransaction(transactionBox.getValue());
-			}
-		});
-		
+		transactionBox.addChangeHandler(event -> creditor.setTransaction(transactionBox.getValue()));
 		addBasicRow(displayTab,new InlineLabel(AON.MSG.transactionType()), transactionBox);
 		
 		final CheckBox vatAccualPayment = new CheckBox(AON.MSG.vatAccrualPayment());
@@ -77,25 +66,13 @@ public class AonCreditorFullPanel extends AonRegistryFullPanel<CreditorFull> imp
 		vatAccualPayment.setValue(creditor.isVatAccrualPayment());
 		vatAccualPayment.setStyleName(AON.CSS.aonMarginRight());
 		vatAccualPayment.addStyleName(AON.CSS.aonNowrap());
-		vatAccualPayment.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				creditor.setVatAccrualPayment(vatAccualPayment.getValue());
-			}
-		});
+		vatAccualPayment.addClickHandler(event -> creditor.setVatAccrualPayment(vatAccualPayment.getValue()));
 		taxPanel.add(vatAccualPayment);
 		
 		withholding.setValue(creditor.isWithholding());
 		withholding.setStyleName(AON.CSS.aonMarginRight());
 		withholding.addStyleName(AON.CSS.aonNowrap());
-		withholding.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				creditor.setWithholding(withholding.getValue());
-			}
-		});
+		withholding.addClickHandler(event -> creditor.setWithholding(withholding.getValue()));
 		taxPanel.add(withholding);
 		
 		addBasicRow(displayTab,new InlineLabel(AON.MSG.fiscalInformation()), taxPanel);				
@@ -110,39 +87,33 @@ public class AonCreditorFullPanel extends AonRegistryFullPanel<CreditorFull> imp
     	buttons.addStyleName(AON.CSS.aonNowrap());
     	okButton.setStyleName(AON.CSS.aonOkButton());    	
     	okButton.setText( AON.MSG.accept());
-    	okButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				okButton.setEnabled(false);
-				SERVICE.save(options.getDomainName(), options.getDomain(), options.getUser(), creditorFull, new AsyncCallback<CreditorFull>() {
+    	
+    	okButton.addClickHandler(event -> {
+			okButton.setEnabled(false);
+			service.save(options.getDomainName(), options.getDomain(), options.getUser(), creditorFull, new AsyncCallback<CreditorFull>() {
 
-					@Override
-					public void onSuccess(CreditorFull result) {
-						callback.onAccept(result);
-					}
+				@Override
+				public void onSuccess(CreditorFull result) {
+					callback.onAccept(result);
+				}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						okButton.setEnabled(true);
-						callback.onError(caught);
-					}
-				});
-			}
+				@Override
+				public void onFailure(Throwable caught) {
+					okButton.setEnabled(true);
+					callback.onError(caught);
+				}
+			});
 		});
+    	
     	buttons.add(okButton);
     	
     	final Button cancelButton = new Button();
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());
     	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
-    	cancelButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				cancelButton.setEnabled(false);
-				callback.onCancel();
-			}
+    	cancelButton.addClickHandler(event -> {
+			cancelButton.setEnabled(false);
+			callback.onCancel();
 		});
     	buttons.add(cancelButton);
     	
@@ -155,4 +126,3 @@ public class AonCreditorFullPanel extends AonRegistryFullPanel<CreditorFull> imp
 	}
 	
 }
-
