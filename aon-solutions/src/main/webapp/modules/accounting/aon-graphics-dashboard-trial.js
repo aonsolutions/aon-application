@@ -1,9 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CSS, TAG } from "../../environments/environments.js";
 import { isEmptyObject } from "../../services/utils.js";
-import { AccoutingChartNew } from "./AccoutingChartNew.js";
 import { getAccounting, getPeriods } from "../../services/accountingService.js";
-import { AonIframe } from "../../components/aon-iframe.js";
 import * as UTILS from "./AccountingUtils.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 
