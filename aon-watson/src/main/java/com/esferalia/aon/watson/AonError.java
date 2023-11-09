@@ -40,6 +40,7 @@ public enum AonError implements Serializable{
 	,EMPTY_EPIGRAPH("El ep\u00EDgrafe es un dato obligatorio, no puede estar vac\u00EDo")
 	,INVALID_LENGTH("La longitud del dato \"{0}\" no puede superar los {1} car\u00E1cteres")
 	,INVALID_FORMAT("El formato del dato \"{0}\" no es correcto: \"{1}\"")
+	,NOT_EXIST("No existe \"{0}\"")
 	
 	// -----------------------------------------------------------
 	// --------------------- ENUMERATION -------------------------
@@ -251,6 +252,16 @@ public enum AonError implements Serializable{
 	,NULL_FILE_UPLOADED("El archivo seleccionado es nulo")
 	,REPEATED_ALIAS("No puede haber dos preguntas con el mismo alias")
 
+	// ---------------------------------------------- REGISTRY_BANK
+	,REGISTRY_BANK_NULL("El registro no puede ser nulo")
+	,REGISTRY_BANK_EMPTY("El registro no puede estar vac\u00EDo")
+	,REGISTRY_BANK_NULL_DOMAIN("El dominio no puede ser nulo")
+	,REGISTRY_BANK_NULL_REGISTRY("El registro no puede ser nulo")
+	,REGISTRY_BANK_NULL_BANK_ACCOUNT("La cuenta de banco no puede ser nula")
+	,REGISTRY_BANK_INVALID_BIC_SIZE("El tama\u00F1o del bic es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_SUFFIX_SIZE("El tama\u00F1o del sufijo es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_REQUISITION_SIZE("El tama\u00F1o de la requisici\u00F3n es inv\u00E1lido")
+	,REGISTRY_BANK_INVALID_SEPA_MANDATE_REF_SIZE("El tama\u00F1o de la referencia de la orden de domicilizaci\u00F3n de adeudo directo SEPA es inv\u00E1lido")
 	;
 	
 	

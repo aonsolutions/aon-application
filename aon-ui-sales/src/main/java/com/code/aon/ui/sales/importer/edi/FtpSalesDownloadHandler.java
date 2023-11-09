@@ -48,7 +48,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.RECTL;
 import com.esferalia.aon.file.seres.connect2.salesresponse.v2.data.ORSPC;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.Options;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.seres.ftp.FtpException;
 import com.esferalia.aon.seres.ftp.FtpFile;

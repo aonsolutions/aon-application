@@ -20,7 +20,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.Options;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryPackagingFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryPackagingProperties;

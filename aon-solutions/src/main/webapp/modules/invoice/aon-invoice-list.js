@@ -92,7 +92,7 @@ export class AonInvoiceList extends AonElement {
 	loadMore() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		let filter = this.getFilter();
-
+		
 		if(aonInvoiceTable && filter.page && filter.status === 'accounting') {
 			filter.page = filter.page + 1;
 			this.setFilter(filter);
@@ -119,6 +119,43 @@ export class AonInvoiceList extends AonElement {
 					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});
+		} else if(aonInvoiceTable && filter.status === CONSTANT.RAWDOC_OCR){
+			filter.page = filter.page + 1;
+			this.setFilter(filter);
+			getInvofoxDocuments(filter).then(r => {
+				if(r.length == 0)
+					this.more = false;
+				r.forEach((invoice, i) => {	
+					let date = new Date(invoice.date);
+					let day = date.getDate();
+					let month = date.getMonth() + 1;
+					let year = date.getFullYear();
+					invoice.dateTable = day + '/' + month + '/' + year;
+				
+					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+					invoice.icon = MATERIAL_ICONS.CIRCLE;
+					invoice.aonIcon = "invofox";
+					invoice.icon_title = "Recibida"
+					if(invoice.status === "processing") {
+						invoice.icon_color = '#bbb';
+					}  else if(invoice.status === "error" || invoice.status === "rejected" || invoice.status === "discarded") {
+						invoice.icon_color = 'red';
+					} else if(invoice.status === "pendingCorrection" || invoice.status === "pendingDecission") {
+						invoice.icon_color = 'orange';
+					} else if(invoice.status === "approved" || invoice.status === "exported") {
+						invoice.icon_color = 'green';
+					 } else invoice.icon_color = "#5f6368";
+
+					aonInvoiceTable.addRow(invoice, () => {
+						let iframe = this.createElement(TAG.IFRAME);
+						iframe.src = `https://app.invofox.com/documents/${invoice.id}?token=${invoice.token}`;
+						iframe.style.height = '100%';
+						iframe.style.width = '100%';
+						iframe.style.border = '0';
+						this.getApplication().setContent(iframe);
+					},() => {});
+				});
+			});
 		}
 	}
 
@@ -126,51 +163,8 @@ export class AonInvoiceList extends AonElement {
 		this.more = true;
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		if(aonInvoiceTable) {
-			getInvoices(this.getFilter()).then(invoices => {
-				if(!this.getDur().isInvoiceManager() && !this.getDur().isInvoicePortal()) {
-					invoices = invoices.filter(f => f.creation_user === LS.getDomainLogin());
-				} 
-
-				if(this.getFilter().status === CONSTANT.INBOX && this.getFilter().type) {
-					invoices = invoices.filter(f => f.type === this.getFilter().type);
-				}
-				invoices = invoices.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-				setInvoices(invoices);
-				
-				aonInvoiceTable.removeRows();
-				aonInvoiceTable.selected = [];
-				this.removeInvoiceActions();
-				invoices.forEach((invoice, i) => {
-					if(!invoice.name){
-						invoice.name = invoice.type === 'emitida'
-							? (invoice.receiver ? invoice.receiver.name : '')
-							: (invoice.sender ? invoice.sender.name : '');
-					}
-					invoice.paymethod = invoice.finances && invoice.finances.length > 0
-						? this.getPaymethod(invoice.finances[0].paymethod) : '';
-					let date = new Date(invoice.date);
-					let day = date.getDate();
-					let month = date.getMonth() + 1;
-					let year = date.getFullYear();
-					invoice.dateTable = day + '/' + month + '/' + year;
-					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
-					invoice.icon = this.getInvoiceStatusIcon(invoice);
-					invoice.icon_title = this.getInvoiceStatusIconText(invoice);
-					invoice.icon_color = this.getInvoiceStatusIconColor(invoice);
-					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
-				});
-			});
-
-			
-			if(this.isBeta() && this.getFilter().status === 'inbox') {
-				let data = {
-					skip:0,
-					limit: 10,
-					company: "6480556355f159000abb18eb",
-					publicState: "pendingCorrection"
-				};
-				getInvofoxDocuments(data).then(r => {
+			if(this.getFilter().status === CONSTANT.RAWDOC_OCR) {
+				getInvofoxDocuments(this.getFilter()).then(r => {
 					r.forEach((invoice, i) => {	
 						let date = new Date(invoice.date);
 						let day = date.getDate();
@@ -179,10 +173,19 @@ export class AonInvoiceList extends AonElement {
 						invoice.dateTable = day + '/' + month + '/' + year;
 					
 						invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
-						invoice.icon = MATERIAL_ICONS.ARCHIVE;
+						invoice.icon = MATERIAL_ICONS.CIRCLE;
 						invoice.aonIcon = "invofox";
 						invoice.icon_title = "Recibida"
-						invoice.icon_color = "#5f6368";
+						if(invoice.status === "processing") {
+							invoice.icon_color = '#bbb';
+						}  else if(invoice.status === "error" || invoice.status === "rejected" || invoice.status === "discarded") {
+							invoice.icon_color = 'red';
+						} else if(invoice.status === "pendingCorrection" || invoice.status === "pendingDecission") {
+							invoice.icon_color = 'orange';
+						} else if(invoice.status === "approved" || invoice.status === "exported") {
+							invoice.icon_color = 'green';
+ 						} else invoice.icon_color = "#5f6368";
+
 						aonInvoiceTable.addRow(invoice, () => {
 							let iframe = this.createElement(TAG.IFRAME);
 							iframe.src = `https://app.invofox.com/documents/${invoice.id}?token=${invoice.token}`;
@@ -191,6 +194,42 @@ export class AonInvoiceList extends AonElement {
 							iframe.style.border = '0';
 							this.getApplication().setContent(iframe);
 						},() => {});
+					});
+				});
+			} else {
+				getInvoices(this.getFilter()).then(invoices => {
+					if(!this.getDur().isInvoiceManager() && !this.getDur().isInvoicePortal()) {
+						invoices = invoices.filter(f => f.creation_user === LS.getDomainLogin());
+					} 
+
+					if(this.getFilter().status === CONSTANT.INBOX && this.getFilter().type) {
+						invoices = invoices.filter(f => f.type === this.getFilter().type);
+					}
+					invoices = invoices.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+					setInvoices(invoices);
+				
+					aonInvoiceTable.removeRows();
+					aonInvoiceTable.selected = [];
+					this.removeInvoiceActions();
+					invoices.forEach((invoice, i) => {
+						if(!invoice.name){
+							invoice.name = invoice.type === 'emitida'
+								? (invoice.receiver ? invoice.receiver.name : '')
+								: (invoice.sender ? invoice.sender.name : '');
+						}
+						invoice.paymethod = invoice.finances && invoice.finances.length > 0
+							? this.getPaymethod(invoice.finances[0].paymethod) : '';
+						let date = new Date(invoice.date);
+						let day = date.getDate();
+						let month = date.getMonth() + 1;
+						let year = date.getFullYear();
+						invoice.dateTable = day + '/' + month + '/' + year;
+						invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+						invoice.icon = this.getInvoiceStatusIcon(invoice);
+						invoice.icon_title = this.getInvoiceStatusIconText(invoice);
+						invoice.icon_color = this.getInvoiceStatusIconColor(invoice);
+						aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 					});
 				});
 			}

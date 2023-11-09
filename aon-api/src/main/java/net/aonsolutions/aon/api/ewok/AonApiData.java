@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.User;
 
