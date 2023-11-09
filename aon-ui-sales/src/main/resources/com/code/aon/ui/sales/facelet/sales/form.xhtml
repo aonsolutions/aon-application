@@ -76,6 +76,16 @@
 									value="#{true}" />
 							</aon:menuItem>
 						</aon:if>
+						<aon:if test="#{domainSwitcher.paturpat}">
+							<aon:menuItem id="prepareSale"
+								value="#{bundle.prepare_sale}"
+								immediate="#{true}" rendered="#{sales.pending}"
+								iconClass="aon-icon-package"
+								reRender="showPrepareSaleWindow">
+								<f:setPropertyActionListener target="#{sales.showPrepareSaleWindow}"
+									value="#{true}" />
+							 </aon:menuItem>
+						</aon:if>
 						<aon:if test="#{aonRole.warehouseOperator}">
 							<aon:menuItem id="manufacture"
 								value="#{bundle.warehouse_manufacture}"
@@ -560,6 +570,7 @@
 		<aon:lookupButtonPopup lookup="#{allItemLookup}" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalDelivery.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalElaboration.xhtml" />
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalPrepareSale.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalPurchase.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalSerialNumber.xhtml">

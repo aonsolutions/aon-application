@@ -1205,6 +1205,7 @@ public interface Properties {
 		Property<String> getBicProperty();		
 		Property<Byte> getPurchaseGeneratedProperty();
 		Property<Integer> getCarrierProperty();
+		Property<Integer> getCarrierPackingProperty();
 		Property<String> getShippingAlternativeAddressProperty();
 		Property<String> getShippingAlternativeAddress2Property();
 		Property<String> getShippingAlternativeZipProperty();

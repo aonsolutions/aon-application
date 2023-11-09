@@ -60,6 +60,7 @@ public class SalesJSON {
 			.setBic(JsonUtils.getString(json, IJsonNames.BIC))
 			
 			.setCarrier(CarrierJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.CARRIER)))
+			.setCarrierPacking(JsonUtils.getInteger(json, IJsonNames.CARRIER_PACKING))
 			
 			.setShippingAlternativeAddress(JsonUtils.getString(json, IJsonNames.SHIPPING_ALTERNATIVE_ADDRESS))
 			.setShippingAlternativeAddress2(JsonUtils.getString(json, IJsonNames.SHIPPING_ALTERNATIVE_ADDRESS2))
@@ -113,6 +114,7 @@ public class SalesJSON {
 		
 			.put(IJsonNames.DISCOUNT, object.getDiscountExpr())
 			.put(IJsonNames.CARRIER, CarrierJSON.toJSON(object.getCarrier()))
+			.put(IJsonNames.CARRIER_PACKING, object.getCarrierPacking())
 			.put(IJsonNames.DELIVERY_DATE,  AonDateUtils.format(object.getDeliveryDate(), AonDateUtils.DATE_TIME_FORMAT))
 			
 			.put(IJsonNames.SHIPPING_ALTERNATIVE_ADDRESS, object.getShippingAlternativeAddress())

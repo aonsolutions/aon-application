@@ -51,6 +51,7 @@ public class Sales implements Serializable {
 	private boolean purchaseGenerated;
 	private Date deliveryDate;
 	private Carrier carrier;
+	private Integer carrierPacking;
 	
 	private String shippingAlternativeAddress;
 	private String shippingAlternativeAddress2;
@@ -383,6 +384,15 @@ public class Sales implements Serializable {
 	
 	public Sales setCarrier(Carrier carrier) {
 		this.carrier = carrier;
+		return this;
+	}
+	
+	public Integer getCarrierPacking() {
+		return carrierPacking;
+	}
+	
+	public Sales setCarrierPacking(Integer carrierPacking) {
+		this.carrierPacking = carrierPacking;
 		return this;
 	}
 	

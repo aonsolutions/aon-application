@@ -18,7 +18,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -70,6 +69,7 @@ import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
@@ -92,9 +92,17 @@ import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 public class SalesController extends HeaderObjectController implements ISalesConstants, IAuditableController {
 	
@@ -111,6 +119,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private boolean showPurchaseWindow;
 	private boolean showDeliveryWindow;
 	private boolean showElaborationWindow;
+	private boolean showPrepareSaleWindow;
 	private String deliverySeries;
 	private int deliveryNumber;
 	private Date deliveryDate;
@@ -132,6 +141,11 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private Carrier savedCarrier;
 	private boolean showPurchaseReferenceWindow;
 	private RegistryAddressFilter addressesFilter;
+	
+	private Date chargeDate;
+	private String numberPlate;
+	private String driverName;
+	private String driverDocument;
 
 
 	private EdiSalesImporterHandler ediImporter;
@@ -211,6 +225,14 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	
 	public void setShowElaborationWindow(boolean value) {
 		this.showElaborationWindow = value;
+	}
+	
+	public boolean isShowPrepareSaleWindow() {
+		return showPrepareSaleWindow;
+	}
+	
+	public void setShowPrepareSaleWindow(boolean value) {
+		this.showPrepareSaleWindow = value;
 	}
 
 	public boolean isShowDeliveryWindow() {
@@ -355,6 +377,38 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 
 	public void setSavedCarrier(Carrier savedCarrier) {
 		this.savedCarrier = savedCarrier;
+	}
+	
+	public Date getChargeDate() {
+		return chargeDate;
+	}
+	
+	public void setChargeDate(Date chargeDate) {
+		this.chargeDate = chargeDate;
+	}
+	
+	public String getNumberPlate() {
+		return numberPlate;
+	}
+	
+	public void setNumberPlate(String numberPlate) {
+		this.numberPlate = numberPlate;
+	}
+	
+	public String getDriverName() {
+		return driverName;
+	}
+	
+	public void setDriverName(String driverName) {
+		this.driverName = driverName;
+	}
+	
+	public String getDriverDocument() {
+		return driverDocument;
+	}
+	
+	public void setDriverDocument(String driverDocument) {
+		this.driverDocument = driverDocument;
 	}
 	
 	public boolean isShowPurchaseReferenceWindow() {
@@ -1110,5 +1164,49 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		} finally {
 			DownloadUtil.finishDownload(response, out);
 		}
+	}
+	
+	public void onPrepareSale(ActionEvent event) {
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		String series = Integer.toString(AonDateUtils.getYear(new Date()));
+		Sales to = (Sales)this.getTo();
+		to.setStatus(SalesStatus.IN_PREPARATION);
+
+		
+		CarrierPacking cp = new CarrierPacking()
+				.setDomain(to.getDomain())
+				.setSeries(series)
+				.setType(CarrierPackingType.WAYBILL)
+				.setStatus(CarrierPackingStatus.PENDING)
+				.setCarrier(to.getCarrier().getId())
+				.setCarrierDocument(to.getCarrier().getRegistry().getDocument())
+				.setDriverDocument(getDriverDocument())
+				.setDriverName(getDriverName())
+				.setIssueDate(getChargeDate())
+				.setDeliveryDate(to.getDeliveryDate())
+				.setNumberPlate(getNumberPlate());
+		
+		Integer cpId = AON.insertCarrierPacking(domainName, to.getDomain(), login, cp);
+		to.setCarrierPacking(cpId);
+		com.esferalia.aon.occam.api.model.warehouse.Delivery delivery = new com.esferalia.aon.occam.api.model.warehouse.Delivery()
+				.setDomain(to.getDomain())
+				.setCustomer(new com.esferalia.aon.occam.api.model.Customer().setId(to.getCustomer().getId()))
+				.setSeries(series)
+				.setAddress(new com.esferalia.aon.occam.api.model.registry.RegistryAddress().setId(to.getShippingAddress().getId()))
+				.setDate(new Date())
+				.setStatus(DeliveryStatus.PENDING)
+				.setWorkplace(new Workplace().setId(to.getWorkPlace().getId()))
+				.setScope(new Scope().setId(to.getScope().getId()))
+				.setCarrier(to.getCarrier().getId())
+				.setCarrierPacking(cpId)
+				.setNumberPlate(getNumberPlate())
+				.setDriver(getDriverName())
+				.setDriverDocument(getDriverDocument());
+		AON.saveDelivery(domainName, to.getDomain(), login, delivery);
+		
+		accept(event);
+		
+
 	}
 }
