@@ -2746,7 +2746,7 @@ public class CustomerFee extends MainEntryPoint {
 	private void exportFees(List<Integer> feeIds) {
 		JSONObject json = new JSONObject();
 		
-		if(null == feeIds) {
+		if(null == feeIds || feeIds.size() == 0) {
 			
 			if(AonStringUtils.isNotBlank(monthListBox.getSelectedValue())) json.put("month", new JSONNumber(Integer.parseInt(monthListBox.getSelectedValue())));
 			if(AonStringUtils.isNotBlank(yearListBox.getSelectedValue())) json.put("year", new JSONNumber(Integer.parseInt(yearListBox.getSelectedValue())));
@@ -2766,9 +2766,9 @@ public class CustomerFee extends MainEntryPoint {
 			if(AonStringUtils.isNotBlank(priceTextBox.getValue()))  json.put("price", new JSONNumber(Double.parseDouble(priceTextBox.getValue())));
 			if(AonStringUtils.isNotBlank(discountTextBox.getValue()))  json.put("discount", new JSONString(discountTextBox.getValue()));
 			
-			if(null != sellerSuggestions.get(sellerSuggestBox.getValue())) json.put("seller", new JSONNumber(sellerSuggestions.get(sellerSuggestBox.getValue()).getId()));
-			if(null != workplaceSuggestions.get(workplaceSuggestBox.getValue())) json.put("workplace", new JSONNumber(workplaceSuggestions.get(workplaceSuggestBox.getValue()).getId()));
-			if(null != invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue())) json.put("invoicingGroup", new JSONNumber(invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()).getId()));
+			if(null != sellerSuggestions.get(sellerSuggestBox.getValue())) json.put("seller", new JSONString(sellerSuggestBox.getValue()));
+			if(null != workplaceSuggestions.get(workplaceSuggestBox.getValue())) json.put("workplace", new JSONString(workplaceSuggestBox.getValue()));
+			if(null != invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue())) json.put("invoicingGroup", new JSONString(invoicingGroupSuggestBox.getValue()));
 			if(null != projectSuggestions.get(projectSuggestBox.getValue())) json.put("project", new JSONNumber(projectSuggestions.get(projectSuggestBox.getValue()).getId()));
 			
 		} else {
@@ -2778,6 +2778,8 @@ public class CustomerFee extends MainEntryPoint {
 			
 			json.put("feeIds", feeJson);
 		}
+		
+		json.put("isCustomerFee", new JSONString("true"));
 		
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "ms/gwt_download_fee/"
             	+ "?filter=" + btoa(json.toString())

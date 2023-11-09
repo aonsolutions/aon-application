@@ -35,7 +35,6 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.SelectOnConditionStep;
-import org.jooq.Table;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
@@ -119,8 +118,11 @@ public class FeeDAO {
 //				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
 //				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
-				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
-				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
+				.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
+				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
+				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY))
+				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
+				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
@@ -297,6 +299,10 @@ public class FeeDAO {
 		if(null != customerFeeParams.getProject()) 
 			condition = condition.and(CUSTOMER_FEE.PROJECT.eq(customerFeeParams.getProject()));
 		
+		if(null != customerFeeParams.getFeeIds() && customerFeeParams.getFeeIds().length > 0) {
+			condition = condition.and(CUSTOMER_FEE.ID.in(customerFeeParams.getFeeIds()));
+		}
+		
 		return condition;
 	}
 
@@ -308,7 +314,7 @@ public class FeeDAO {
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
-//				.leftOuterJoin(RSEGMENT).on(CUSTOMER.REGISTRY.eq(RSEGMENT.REGISTRY))
+				.leftOuterJoin(RSEGMENT).on(CUSTOMER.REGISTRY.eq(RSEGMENT.REGISTRY))
 				.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
 				.leftOuterJoin(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
