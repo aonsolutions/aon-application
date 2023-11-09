@@ -919,7 +919,11 @@ public class JooqEmployee {
 				contractData.setPartialityCoefId(r.get(CONTRACT_DATA.ID));
 				String partiality = r.get(CONTRACT_DATA.EXPRESSION);
 				partiality = partiality.replace(',', '.');
-				contractData.setPartialityCoef(Double.parseDouble(partiality));
+				try {
+					contractData.setPartialityCoef(Double.parseDouble(partiality));
+				} catch (Exception e) {
+					contractData.setPartialityCoef(0.00);
+				}
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "MODELO_COTIZACION_AGRARIO")) {
 				contractData.setMdctzId(r.get(CONTRACT_DATA.ID));
 				contractData.setMdctz(r.get(CONTRACT_DATA.EXPRESSION));

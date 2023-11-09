@@ -38,6 +38,7 @@ public class Fee implements Serializable{
 	private Workplace workplace;
 	private boolean modify = false;
 	private Boolean hasRItem = false;
+	private Seller sellerSupport;
 	
 		
 	public Double getQuantity() {
@@ -113,6 +114,18 @@ public class Fee implements Serializable{
 	
 	public Fee setSeller(Seller seller) {
 		this.seller = seller;
+		return this;
+	}
+	
+	public Seller getSellerSupport() {
+		if(sellerSupport == null) {
+			this.sellerSupport = new Seller();
+		}
+		return sellerSupport;
+	}
+	
+	public Fee setSellerSupport(Seller sellerSupport) {
+		this.sellerSupport = sellerSupport;
 		return this;
 	}
 

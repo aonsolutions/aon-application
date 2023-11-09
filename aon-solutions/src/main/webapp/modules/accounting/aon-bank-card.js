@@ -180,6 +180,7 @@ export class AonBankCard extends AonElement {
 
     const bankTotalDiv = this.getElement("bankTotalDiv");
     bankTotalDiv.className = CSS.AON_CARD_TOTAL;
+    bankTotalDiv.classList.add(CSS.AON_BANK_CARD_TOTAL);
     bankTotalDiv.innerHTML = this.getTotal(banks);
   }
 

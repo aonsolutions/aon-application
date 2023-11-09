@@ -1,7 +1,11 @@
 package com.esferalia.aon.occam.api.model.seres;
 
-public class SeresInfo {
+import java.io.Serializable;
+
+public class SeresInfo implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	private String server;
 	private Integer port;
 	private String user;

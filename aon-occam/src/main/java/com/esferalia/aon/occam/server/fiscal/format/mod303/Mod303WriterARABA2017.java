@@ -138,7 +138,7 @@ public class Mod303WriterARABA2017 implements IMod303Writer{
 			,(wr, mod) -> wr.append("036" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C036),15))
 			,(wr, mod) -> wr.append("037" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C037),15))
 			
-			// FALTA - Casilla [46] no existe en el modelo
+			// Casilla [46] no existe en el modelo
 			,(wr, mod) -> wr.append("046" + AonFiscalFileUtils.signedSpace(0.0,15))
 			
 			,(wr, mod) -> wr.append("038" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C038),15))

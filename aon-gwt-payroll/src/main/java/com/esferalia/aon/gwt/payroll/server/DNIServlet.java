@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "DNI-SERVLET", urlPatterns = "/DNIServlet")
+@WebServlet(name = "DNIServlet", urlPatterns = "/DNIServlet")
 @MultipartConfig
 public class DNIServlet extends HttpServlet {
 

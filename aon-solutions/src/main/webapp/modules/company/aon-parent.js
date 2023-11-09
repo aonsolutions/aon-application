@@ -426,6 +426,7 @@ export class AonParent extends AonElement {
 		
 		localStorage.setItem("aon_domain_id", company.id);
 		localStorage.setItem("aon_domain_name", company.domain);
+		localStorage.setItem("aon_domain_document", company.document);
 
 		this.clearElementById('aonMenu');
 		let aonMenu = this.getElement('aonMenu');

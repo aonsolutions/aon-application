@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.json;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -157,4 +159,11 @@ public class JsonUtils {
 	public static boolean has(JSONObject json, String key) {
 		return json.opt(key) != null;
 	}
+	public static Stream<JSONObject> stream( JSONArray array ) {
+		if (array == null) return Stream.empty();
+		return IntStream
+	    	.range(0,array.length())
+	    	.mapToObj(i -> array.getJSONObject(i));
+	}
+
 }

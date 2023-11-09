@@ -12,7 +12,6 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CalendarHours.DayHours.DayHour;
-import com.google.gwt.user.client.Window;
 
 @SuppressWarnings("serial")
 public class CalendarHours implements Serializable {
@@ -172,7 +171,6 @@ public class CalendarHours implements Serializable {
 								newHourList.add(dayHour);
 								newHourList.add(newDayHour);
 								
-								Window.alert("EndDate : " + newDayHour.getEndDate());
 								Date newStartDate = DateUtils.copyDateOnly(newDayHour.getEndDate());
 								newStartDate = DateUtils.addDays2Date(newStartDate, 1);
 								DayHour postNewDayHour = new DayHour(newStartDate, oldEndDate, dayHour.getValue());
@@ -197,7 +195,6 @@ public class CalendarHours implements Serializable {
 							DayHour postNewDayHour = null;
 							
 							if(!isNullOrEndContract(newDayHour.getEndDate()) && newDayHour.getEndDate().before(dayHour.getEndDate())) {
-								Window.alert("EndDate 2 : " + newDayHour.getEndDate());
 								Date newStartDate = DateUtils.copyDateOnly(newDayHour.getEndDate());
 								newStartDate = DateUtils.addDays2Date(newStartDate, 1);
 								

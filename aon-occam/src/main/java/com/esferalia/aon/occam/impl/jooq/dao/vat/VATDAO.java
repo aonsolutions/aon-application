@@ -13,7 +13,11 @@ import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -51,6 +55,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class VATDAO  {
 	private static final byte FALSE_BYTE = 0;
@@ -634,7 +639,55 @@ public class VATDAO  {
 	// ***********************************************
 	// ****** RESUMEN PANEL DE CONTROL DE IVA ********
 	// ***********************************************
+	
+	public static Double getVatSummaryEstimation(AONContext ctx, AccountingReportParams params) {
+		Stream<VatSummaryContext> vatSummaryContexts = getVatSummary(ctx, params);
+		TreeMap<VatSummaryType,TreeMap<Double,Pair<VatSummaryContext, VatSummaryContext>>> map = sort( vatSummaryContexts.collect(Collectors.toList()) );
+		
+		double estimation = 0;
 
+		for (Entry<VatSummaryType, TreeMap<Double, Pair<VatSummaryContext, VatSummaryContext>>> entry :  map.entrySet() ) {
+			VatSummaryType type = entry.getKey();
+			TreeMap<Double, Pair<VatSummaryContext, VatSummaryContext>> value = entry.getValue();
+			
+			double typeOutputQuota = 0;
+			double typeInputDeductibleQuota = 0;
+
+			for (Pair<VatSummaryContext,VatSummaryContext> pair : value.values() ) {
+				if (pair.getLeft() != null) typeOutputQuota = typeOutputQuota + pair.getLeft().getQuota();
+				if (pair.getRight() != null) typeInputDeductibleQuota = typeInputDeductibleQuota + pair.getRight().getDeductibleQuota();
+			}
+				
+			if (type == VatSummaryType.NATIONAL
+				|| type == VatSummaryType.SURCHARGE
+				|| type == VatSummaryType.FARMER) {
+					estimation = estimation + typeOutputQuota;	
+					estimation = estimation - typeInputDeductibleQuota;
+				}
+		}
+		
+		return estimation;
+	}
+
+	private static TreeMap<VatSummaryType, TreeMap<Double, Pair<VatSummaryContext, VatSummaryContext>>> sort(List<VatSummaryContext> data) {
+		TreeMap<VatSummaryType,TreeMap<Double,Pair<VatSummaryContext, VatSummaryContext>>> map = new TreeMap<>();
+		for (VatSummaryContext vat : data){
+			TreeMap<Double,Pair<VatSummaryContext,VatSummaryContext>> block = map.get(vat.getSummaryType());
+			if (block == null) {
+				block = new TreeMap<>();
+				map.put(vat.getSummaryType(), block);
+			}
+			Pair<VatSummaryContext,VatSummaryContext> line = block.get(vat.getPercentage());
+			if (line == null) {
+				line = Pair.of(vat.isOutput()?vat:null, vat.isOutput()?null:vat);
+			} else {
+				line = Pair.of(vat.isOutput()?vat:line.getLeft(), vat.isOutput()?line.getRight():vat);
+			}
+			block.put(vat.getPercentage(), line);					
+		}
+		return map;
+	}
+	
 	public static Stream<VatSummaryContext> getVatSummary(AONContext ctx, AccountingReportParams params) {
 		LinkedList<VatSummaryContext> list = new LinkedList<>();
 		getVatBreakdown(ctx, params)

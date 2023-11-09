@@ -11,7 +11,7 @@ public class NordigenRequisition implements Serializable {
 	private String id;
 	private Date created;
 	private String redirect;
-	private NORDIGEN_REQUISITION_STATUS status;
+	private NordigenRequisitionStatus status;
 	private String institutionId;
 	private String agreement;
 	private String reference;
@@ -43,10 +43,10 @@ public class NordigenRequisition implements Serializable {
 		this.redirect = redirect;
 		return this;
 	}
-	public NORDIGEN_REQUISITION_STATUS getStatus() {
+	public NordigenRequisitionStatus getStatus() {
 		return status;
 	}
-	public NordigenRequisition setStatus(NORDIGEN_REQUISITION_STATUS status) {
+	public NordigenRequisition setStatus(NordigenRequisitionStatus status) {
 		this.status = status;
 		return this;
 	}

@@ -146,6 +146,7 @@ export class AonMobileParent extends AonElement {
       localStorage.setItem('company', JSON.stringify(company));
       localStorage.setItem("aon_domain_id", company.id);
       localStorage.setItem("aon_domain_name", company.domain);
+	  localStorage.setItem("aon_domain_document", company.document);
 	  localStorage.setItem("onlyOne", onlyOne);
 
       let home = this.getElement('aonHome');

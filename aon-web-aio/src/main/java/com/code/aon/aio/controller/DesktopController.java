@@ -7,6 +7,7 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -176,6 +177,10 @@ public class DesktopController implements Serializable {
     public TaskInfo getTaskInfo() {
     	return getState().getTaskInfo();
     }
+    
+    public String getTime(String pattern) {
+	return new SimpleDateFormat(pattern).format(new Date());
+    }
 
     public NoticeInfo getNoticeInfo() {
     	return getState().getNoticeInfo();
@@ -229,6 +234,7 @@ public class DesktopController implements Serializable {
 	    HELP,
 	    FISCAL,
 	    PAYROLL,
+	    TREASURY,
 	    MANAGEMENT,
 	    ENTERPRISE,
 	    ACCOUNTING,
@@ -246,6 +252,10 @@ public class DesktopController implements Serializable {
 
 	public boolean isFiscalSelected() {
 	    return menuOptionSelected == MenuOption.FISCAL;
+	}
+
+	public boolean isTreasurySelected() {
+	    return menuOptionSelected == MenuOption.TREASURY;
 	}
 
 	public boolean isPayrollSelected() {
@@ -278,6 +288,10 @@ public class DesktopController implements Serializable {
 
 	public void onSelectFiscal(ActionEvent event) {
 	    menuOptionSelected = MenuOption.FISCAL;
+	}
+
+	public void onSelectTreasury(ActionEvent event) {
+	    menuOptionSelected = MenuOption.TREASURY;
 	}
 
 	public void onSelectPayroll(ActionEvent event) {

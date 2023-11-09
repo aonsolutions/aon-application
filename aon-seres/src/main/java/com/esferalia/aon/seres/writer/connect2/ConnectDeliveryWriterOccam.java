@@ -72,7 +72,17 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		this.domainId = domainId;
 		this.login = login;
 	}
+	
+	public ConnectDeliveryWriterOccam(Domain domain, String login) {
+		this.domainName = domain.getName();
+		this.domainId = domain.getId();
+		this.login = login;
+	}
 
+	public FileOutput createFile(Delivery delivery) throws FileNotFoundException, UnsupportedEncodingException {
+		return createFile(delivery, delivery.getPackagingData(), delivery.getEdiCodes());
+	}
+	
 	public FileOutput createFile(Delivery delivery, String packageData, EdiCodes codes) throws FileNotFoundException, UnsupportedEncodingException {
 		RECTL rectl = createRECTLRecord(delivery, packageData, codes);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

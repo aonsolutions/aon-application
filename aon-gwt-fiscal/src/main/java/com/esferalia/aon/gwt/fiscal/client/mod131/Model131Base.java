@@ -19,10 +19,10 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131.Model131Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131Activity.IMod131ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
+import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
 import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup.IFinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
-import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
 import com.esferalia.aon.gwt.fiscal.shared.mod131.Model131AEATScript;
 import com.esferalia.aon.gwt.fiscal.shared.mod131.Model131ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -138,7 +138,7 @@ public abstract class Model131Base extends DockLayoutPanel {
 	}
 
 	private void select( Mod131 mod131) {
-		setModel(mod131);
+		setModel(mod131);		
 		refreshToolbarState();
 		styleStatusLabel(mod131);
 	}
@@ -318,18 +318,21 @@ public abstract class Model131Base extends DockLayoutPanel {
 		saveButton.setVisible(!model.isFinished() && !model.isSent());
 		deleteButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
 		printButton.setVisible(!model.isNew());
-		markAsPendingButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.FINISHED 
-				|| model.getStatus() == FiscalStatus.BATCHED
-				|| model.getStatus() == FiscalStatus.SENT
-				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| model.getStatus() == FiscalStatus.BLOCKED));
-		markAsFinishedButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.PENDING
-				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| model.getStatus() == FiscalStatus.MISSING));
-		markAsSentButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.FINISHED));
+//		markAsPendingButton.setVisible(!model.isNew() &&
+//				(model.getStatus() == FiscalStatus.FINISHED 
+//				|| model.getStatus() == FiscalStatus.BATCHED
+//				|| model.getStatus() == FiscalStatus.SENT
+//				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
+//				|| model.getStatus() == FiscalStatus.BLOCKED));
+//		markAsFinishedButton.setVisible(!model.isNew() &&
+//				(model.getStatus() == FiscalStatus.PENDING
+//				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
+//				|| model.getStatus() == FiscalStatus.MISSING));
+//		markAsSentButton.setVisible(!model.isNew() &&
+//				(model.getStatus() == FiscalStatus.FINISHED));
+		markAsPendingButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.PENDING));
+		markAsFinishedButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.FINISHED));
+		markAsSentButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.SENT));
 	}
 	
 	private void styleStatusLabel(Mod131 mod131) {

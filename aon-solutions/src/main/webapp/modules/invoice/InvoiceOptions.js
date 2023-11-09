@@ -43,7 +43,13 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     clickable: true,
     options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
   }
-  
+
+  export const RAWDOC_OCR = {
+    id: CONSTANT.RAWDOC_OCR.initCap(),
+    name: 'OCR',
+    icon: MATERIAL_ICONS.INBOX
+  }
+
   export const RAWDOC_REJECT = {
     id: CONSTANT.RAWDOC_REJECT.initCap(),
     name: MSG.REJECTEDS,

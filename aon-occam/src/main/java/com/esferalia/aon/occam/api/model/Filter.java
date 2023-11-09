@@ -157,6 +157,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface DeliveryInfoFilter{
+		Filter filter(DeliveryInfoProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface TagFilter{
 		Filter filter(TagProperties properties);
 	}
@@ -465,6 +470,11 @@ public interface Filter extends Serializable{
 	@FunctionalInterface
 	public interface SalesDetailFilter{
 		Filter filter(SalesDetailProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface SalesInfoFilter{
+		Filter filter(SalesInfoProperties properties);
 	}
 	
 	@FunctionalInterface

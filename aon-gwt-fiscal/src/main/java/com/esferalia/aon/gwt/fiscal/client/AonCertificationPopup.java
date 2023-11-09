@@ -39,6 +39,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		private boolean showNRC;
 		private boolean testEnvironment;
 		private String infoMessage;
+		private String nrc;
 		
 		public String getName() {
 			return name;
@@ -93,6 +94,13 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		}
 		public AonCertificationPopupParams setInfoMessage(String infoMessage) {
 			this.infoMessage = infoMessage;
+			return this;
+		}
+		public String getNrc() {
+			return nrc;
+		}
+		public AonCertificationPopupParams setNrc(String nrc) {
+			this.nrc = nrc;
 			return this;
 		}
 	}
@@ -282,10 +290,10 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 			.addCell(l2)
 			.addCell(password);
 
+		nrc.setText(params.getNrc());
 		if (params.isShowNRC()) {
 			Label lx = new Label("NRC");
-			lx.addStyleName(AON.CSS.aonTableLabel());
-			nrc.setText("");
+			lx.addStyleName(AON.CSS.aonTableLabel());			
 			table.addRow()
 				.addCell(lx)
 				.addCell(nrc);

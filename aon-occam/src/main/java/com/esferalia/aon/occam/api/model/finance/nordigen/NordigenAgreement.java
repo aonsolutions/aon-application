@@ -11,7 +11,7 @@ public class NordigenAgreement implements Serializable {
 	private Date created;
 	private Integer maxHistoricalDays;
 	private Integer accessValidForDays;
-	private NORDIGEN_ACCESS_SCOPES[] accessScope;
+	private NordigenAccessScope[] accessScope;
 	private Date accepted;
 	private String institutionId;
 	
@@ -43,10 +43,10 @@ public class NordigenAgreement implements Serializable {
 		this.accessValidForDays = accessValidForDays;
 		return this;
 	}
-	public NORDIGEN_ACCESS_SCOPES[] getAccessScope() {
+	public NordigenAccessScope[] getAccessScope() {
 		return accessScope;
 	}
-	public NordigenAgreement setAccessScope(NORDIGEN_ACCESS_SCOPES[] accessScope) {
+	public NordigenAgreement setAccessScope(NordigenAccessScope[] accessScope) {
 		this.accessScope = accessScope;
 		return this;
 	}

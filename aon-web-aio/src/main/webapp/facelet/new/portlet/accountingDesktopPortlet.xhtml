@@ -14,10 +14,16 @@
 			background-color: var(--accounting-background-color);
 		}
 		
+		
+		
 	</style>
 
 	<aon:div id="accountingMenuDesktop" styleClass="aon-menu-desktop" >
-			<aon:div styleClass="aon-scroll-area">
+		<aon:div id="s3InvoiceUploadPanel"  styleClass="aon-file-upload-panel" >
+			<aon:outputText styleClass="aon-padding" value="Subir facturas" />
+			<aon:outputText styleClass="material-icons" value="cloud_upload" />
+		</aon:div>
+		<aon:div styleClass="aon-scroll-area">
 
 				<h:panelGrid styleClass="aon-width-all" columns="1" cellspacing="15"
 					columnClasses="aon-vertical-align-top aon-width-200">
@@ -742,4 +748,11 @@
 			</aon:div>
 
 	</aon:div>
+
+	<script type='text/javascript' >
+    //<![CDATA[
+    	setupS3UploadPanel(#{rich:element('s3InvoiceUploadPanel')});
+    //]]>
+	</script>
+	
 </ui:composition>

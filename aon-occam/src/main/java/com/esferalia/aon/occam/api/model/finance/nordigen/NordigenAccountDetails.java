@@ -11,7 +11,7 @@ public class NordigenAccountDetails implements Serializable {
 	private String currency;	
 	private String ownerName;
 	private String name;
-	private NORDIGEN_CASH_ACCOUNT_TYPE cashAccountType;
+	private NordigenCashAccountType cashAccountType;
 	private String product;
 	private String status;
 	private String bic;
@@ -55,10 +55,10 @@ public class NordigenAccountDetails implements Serializable {
 		this.name = name;
 		return this;
 	}
-	public NORDIGEN_CASH_ACCOUNT_TYPE getCashAccountType() {
+	public NordigenCashAccountType getCashAccountType() {
 		return cashAccountType;
 	}
-	public NordigenAccountDetails setCashAccountType(NORDIGEN_CASH_ACCOUNT_TYPE cashAccountType) {
+	public NordigenAccountDetails setCashAccountType(NordigenCashAccountType cashAccountType) {
 		this.cashAccountType = cashAccountType;
 		return this;
 	}

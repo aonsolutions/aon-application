@@ -2067,4 +2067,21 @@ public class Mod131DAO extends FiscalModelDAO {
 		}
 		return mod131;
 	}
+	
+	public static Mod131 markAsCustomerRejected(AONContext ctx, Mod131 mod131, String reason) {
+		FiscalModelValidation.statusChange(mod131, FiscalStatus.CUSTOMER_REJECTED);
+		mod131.setStatus(FiscalStatus.CUSTOMER_REJECTED);
+		if (AonStringUtils.isNotBlank(reason)) {
+			String comments = mod131.getComments();
+			if (AonStringUtils.isNotBlank(comments)) {
+				comments = AonStringUtils.join(comments, "\n", reason);
+			} else {
+				comments = reason; 
+			}
+			mod131.setComments( comments );
+		}
+		mod131 = saveMod131(ctx, mod131);
+		return mod131;
+	}
+	
 }

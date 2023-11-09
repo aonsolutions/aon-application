@@ -348,7 +348,7 @@ public class Invoice2tbai {
 				detalle.setDescuento(doubleToString(0.0));
 				double total = AonMathUtils.round(detail.getQuantity() * detail.getPrice());
 				detalle.setImporteTotal(doubleToString(total));
-				if(total != 0.0)
+				if(detail.getPrice() != 0.0)
 					detalles.getIDDetalleFactura().add(detalle);
 			}
 		});
@@ -432,8 +432,9 @@ public class Invoice2tbai {
 					? "0.0" : doubleToString(AonMathUtils.round(r.getSurcharge())));
 				
 				detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(SiNoType.N);//invoice.isSurcharge() ? SiNoType.S : SiNoType.N);
-				if(r.getBase() != 0.0)
-					desgloseIVA.getDetalleIVA().add(detalleIVA);
+				
+				// if(r.getBase() != 0.0)
+				desgloseIVA.getDetalleIVA().add(detalleIVA);
 			});
 		
 			if(!desgloseIVA.getDetalleIVA().isEmpty()) {

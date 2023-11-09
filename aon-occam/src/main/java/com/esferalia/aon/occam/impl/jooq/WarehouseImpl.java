@@ -9,13 +9,14 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IWarehouse;
-import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.DeliveryInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryInfo;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
@@ -56,6 +58,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PackagingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.QualityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SeriesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.delivery.DeliveryInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class WarehouseImpl implements IWarehouse {
@@ -513,5 +516,25 @@ public class WarehouseImpl implements IWarehouse {
 	public PackagingDelivery saveDeliveryPackaging(AONContext ctx, PackagingDelivery packaging) {
 		return ctx.getDslContext().transactionResult(configuration ->
 			PackagingDAO.saveDeliveryPackaging(ctx, packaging));
+	}
+	
+	// DELIVERY INFO
+	
+	@Override
+	public DeliveryInfo getDeliveryInfo(AONContext ctx, DeliveryInfoFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DeliveryInfoDAO.get(ctx, filter));
+	}
+	
+	@Override
+	public DeliveryInfo saveDeliveryInfo(AONContext ctx, DeliveryInfo deliveryInfo) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DeliveryInfoDAO.save(ctx, deliveryInfo));				
+	}
+
+	@Override
+	public void deleteDeliveryInfo(AONContext ctx, Integer deliveryId) {
+		ctx.getDslContext().transaction(
+				configuration -> DeliveryInfoDAO.delete(ctx, f -> f.getDeliveryProperty().eq(deliveryId)));
 	}
 }
